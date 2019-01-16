@@ -13,7 +13,7 @@ public class InteractionState {
     //protected bool _isTimed;
     protected Action _effect;
     //protected GameDate _timeDate;
-    protected Minion _assignedMinion;
+    protected Character _assignedPlayerCharacter;
     protected ActionOption _chosenOption;
     protected ActionOption _defaultOption;
     protected Log _descriptionLog;
@@ -65,6 +65,9 @@ public class InteractionState {
     public Minion assignedMinion {
         get { return (_assignedObjects == null ? null : GetAssignedObjectOfType(typeof(Minion)) as Minion); }
     }
+    public Character assignedPlayerCharacter {
+        get { return _assignedPlayerCharacter; }
+    }
     public List<object> assignedObjects {
         get { return _assignedObjects; }
     }
@@ -89,8 +92,8 @@ public class InteractionState {
     public void SetUseTokeneerMinionOnly(bool state) {
         _useTokeneerMinionOnly = state;
     }
-    public void SetAssignedMinion(Minion minion) {
-        _assignedMinion = minion;
+    public void SetAssignedPlayerCharacter(Character character) {
+        _assignedPlayerCharacter = character;
     }
     public void SetAssignedObjects(List<object> objects) {
         _assignedObjects = objects;
@@ -149,20 +152,20 @@ public class InteractionState {
         //TODO: make this more performant
         if(_descriptionLog != null) {
             if (!_useInvestigatorMinionOnly && !_useTokeneerMinionOnly) {
-                if (_interaction.investigatorMinion != null) {
-                    _descriptionLog.AddToFillers(_interaction.investigatorMinion.character, _interaction.investigatorMinion.character.name, LOG_IDENTIFIER.MINION_1);
+                if (_interaction.investigatorCharacter != null) {
+                    _descriptionLog.AddToFillers(_interaction.investigatorCharacter, _interaction.investigatorCharacter.name, LOG_IDENTIFIER.MINION_1);
                 }
             } else if (_useInvestigatorMinionOnly && _useTokeneerMinionOnly) {
-                if (_interaction.investigatorMinion != null) {
-                    _descriptionLog.AddToFillers(_interaction.investigatorMinion.character, _interaction.investigatorMinion.character.name, LOG_IDENTIFIER.MINION_1);
+                if (_interaction.investigatorCharacter != null) {
+                    _descriptionLog.AddToFillers(_interaction.investigatorCharacter, _interaction.investigatorCharacter.name, LOG_IDENTIFIER.MINION_1);
                 }
                 if (_interaction.tokeneerMinion != null) {
                     _descriptionLog.AddToFillers(_interaction.tokeneerMinion.character, _interaction.tokeneerMinion.character.name, LOG_IDENTIFIER.MINION_2);
                 }
             } else {
                 if (_useInvestigatorMinionOnly) {
-                    if (_interaction.investigatorMinion != null) {
-                        _descriptionLog.AddToFillers(_interaction.investigatorMinion.character, _interaction.investigatorMinion.character.name, LOG_IDENTIFIER.MINION_1);
+                    if (_interaction.investigatorCharacter != null) {
+                        _descriptionLog.AddToFillers(_interaction.investigatorCharacter, _interaction.investigatorCharacter.name, LOG_IDENTIFIER.MINION_1);
                     }
                 }
                 if (_useTokeneerMinionOnly) {
@@ -183,20 +186,20 @@ public class InteractionState {
         }
         if (otherLogs != null) {
             if (!_useInvestigatorMinionOnly && !_useTokeneerMinionOnly) {
-                if (_interaction.investigatorMinion != null) {
-                    logFillers.Add(new LogFiller(_interaction.investigatorMinion.character, _interaction.investigatorMinion.character.name, LOG_IDENTIFIER.MINION_1));
+                if (_interaction.investigatorCharacter != null) {
+                    logFillers.Add(new LogFiller(_interaction.investigatorCharacter, _interaction.investigatorCharacter.name, LOG_IDENTIFIER.MINION_1));
                 }
             } else if (_useInvestigatorMinionOnly && _useTokeneerMinionOnly) {
-                if (_interaction.investigatorMinion != null) {
-                    logFillers.Add(new LogFiller(_interaction.investigatorMinion.character, _interaction.investigatorMinion.character.name, LOG_IDENTIFIER.MINION_1));
+                if (_interaction.investigatorCharacter != null) {
+                    logFillers.Add(new LogFiller(_interaction.investigatorCharacter, _interaction.investigatorCharacter.name, LOG_IDENTIFIER.MINION_1));
                 }
                 if (_interaction.tokeneerMinion != null) {
                     logFillers.Add(new LogFiller(_interaction.tokeneerMinion.character, _interaction.tokeneerMinion.character.name, LOG_IDENTIFIER.MINION_2));
                 }
             } else {
                 if (_useInvestigatorMinionOnly) {
-                    if (_interaction.investigatorMinion != null) {
-                        logFillers.Add(new LogFiller(_interaction.investigatorMinion.character, _interaction.investigatorMinion.character.name, LOG_IDENTIFIER.MINION_1));
+                    if (_interaction.investigatorCharacter != null) {
+                        logFillers.Add(new LogFiller(_interaction.investigatorCharacter, _interaction.investigatorCharacter.name, LOG_IDENTIFIER.MINION_1));
                     }
                 }
                 if (_useTokeneerMinionOnly) {
@@ -251,11 +254,11 @@ public class InteractionState {
         interaction.EndInteraction();
     }
     public void AssignedMinionGoesBack() {
-        if (_assignedMinion != null) {
-            if (_assignedMinion.character.currentParty.currentAction == null || _assignedMinion.character.currentParty.iactionData.isDoneAction) {
-                _assignedMinion.GoBackFromAssignment();
+        if (_assignedPlayerCharacter != null && _assignedPlayerCharacter.minion != null) {
+            if (_assignedPlayerCharacter.currentParty.currentAction == null || _assignedPlayerCharacter.currentParty.iactionData.isDoneAction) {
+                _assignedPlayerCharacter.minion.GoBackFromAssignment();
             } else {
-                _assignedMinion.character.currentParty.currentAction.SetOnEndAction(() => _assignedMinion.GoBackFromAssignment());
+                _assignedPlayerCharacter.currentParty.currentAction.SetOnEndAction(() => _assignedPlayerCharacter.minion.GoBackFromAssignment());
             }
         }
     }

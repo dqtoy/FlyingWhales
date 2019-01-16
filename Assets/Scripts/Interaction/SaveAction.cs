@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SaveAction : Interaction {
 
-    private Character targetCharacter;
+    private Character _targetCharacter;
 
     private const string Assisted_Release_Success = "Assisted Release Success";
     private const string Assisted_Release_Fail = "Assisted Release Fail";
@@ -17,6 +17,10 @@ public class SaveAction : Interaction {
     private const string Normal_Release_Success = "Normal Release Success";
     private const string Normal_Release_Fail = "Normal Release Fail";
     private const string Normal_Release_Critical_Fail = "Normal Release Critical Fail";
+
+    public override Character targetCharacter {
+        get { return _targetCharacter; }
+    }
 
     public SaveAction(BaseLandmark interactable) 
         : base(interactable, INTERACTION_TYPE.SAVE_ACTION, 0) {
@@ -38,7 +42,7 @@ public class SaveAction : Interaction {
         InteractionState normalReleaseCriticalFail = new InteractionState(Normal_Release_Critical_Fail, this);
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
-        startStateDescriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        startStateDescriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 
         CreateActionOptions(startState);
@@ -77,7 +81,7 @@ public class SaveAction : Interaction {
                 name = "Assist " + _characterInvolved.name,
                 effect = () => AssistOptionEffect(state),
                 jobNeeded = JOB.INSTIGATOR,
-                doesNotMeetRequirementsStr = "Minion must be an instigator",
+                doesNotMeetRequirementsStr = "Must have instigator minion.",
             };
             ActionOption thwart = new ActionOption {
                 interactionState = state,
@@ -85,7 +89,7 @@ public class SaveAction : Interaction {
                 name = "Thwart " + _characterInvolved.name,
                 effect = () => ThwartOptionEffect(state),
                 jobNeeded = JOB.DIPLOMAT,
-                doesNotMeetRequirementsStr = "Minion must be a diplomat",
+                doesNotMeetRequirementsStr = "Must have diplomat minion.",
             };
             ActionOption doNothing = new ActionOption {
                 interactionState = state,
@@ -104,10 +108,10 @@ public class SaveAction : Interaction {
          Once the actual action is triggered, the character will check if the target to be saved is still in the location and 
          if its original home still has available resident capacity.
          */
-        if (targetCharacter == null 
-            || targetCharacter.specificLocation.tileLocation.areaOfTile.id != interactable.tileLocation.areaOfTile.id
-            || targetCharacter.GetTrait("Abducted") == null
-            || (targetCharacter.GetTrait("Abducted") as Abducted).originalHomeLandmark.tileLocation.areaOfTile.IsResidentsFull()) {
+        if (_targetCharacter == null 
+            || _targetCharacter.specificLocation.tileLocation.areaOfTile.id != interactable.tileLocation.areaOfTile.id
+            || _targetCharacter.GetTrait("Abducted") == null
+            || (_targetCharacter.GetTrait("Abducted") as Abducted).originalHomeLandmark.tileLocation.areaOfTile.IsResidentsFull()) {
             return false;
         }
         return base.CanInteractionBeDoneBy(character);
@@ -174,31 +178,31 @@ public class SaveAction : Interaction {
     #region Reward Effect
     private void AssistedReleaseSuccessRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             state.descriptionLog.AddToFillers(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
         }
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
         state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1));
 
         //**Mechanics**: Remove Abducted trait from Character 2. Change Character 2 Home to its original one. Override his next tick to return home.
-        targetCharacter.ReleaseFromAbduction();
+        _targetCharacter.ReleaseFromAbduction();
 
         //**Mechanics**: Abducted and Releaser personal relationship +1
-        CharacterManager.Instance.ChangePersonalRelationshipBetweenTwoCharacters(targetCharacter, _characterInvolved, 1);
+        CharacterManager.Instance.ChangePersonalRelationshipBetweenTwoCharacters(_targetCharacter, _characterInvolved, 1);
 
         //**Mechanics**: Relationship between the two factions -1
         AdjustFactionsRelationship(_characterInvolved.faction, interactable.tileLocation.areaOfTile.owner, -1, state);
 
         //**Level Up**: Releaser Character +1, Instigator Minion +1
         _characterInvolved.LevelUp();
-        investigatorMinion.LevelUp();
+        investigatorCharacter.LevelUp();
     }
     private void AssistedReleaseFailRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             state.descriptionLog.AddToFillers(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
         }
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
         state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1));
 
         //**Mechanics**: Relationship between the two factions -1
@@ -206,46 +210,46 @@ public class SaveAction : Interaction {
     }
     private void AssistedReleaseCriticalFailRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         }
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
         //**Mechanics**: Character Name 1 dies.
         _characterInvolved.Death();
     }
     private void ThwartedReleaseSuccessRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         }
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
         //**Mechanics**: Remove Abducted trait from Character 2. Change Character 2 Home to its original one. Override his next tick to return home.
-        targetCharacter.ReleaseFromAbduction();
+        _targetCharacter.ReleaseFromAbduction();
 
         //**Mechanics**: Abducted and Releaser personal relationship +1
-        CharacterManager.Instance.ChangePersonalRelationshipBetweenTwoCharacters(targetCharacter, _characterInvolved, 1);
+        CharacterManager.Instance.ChangePersonalRelationshipBetweenTwoCharacters(_targetCharacter, _characterInvolved, 1);
 
         //**Level Up**: Releaseer Character +1
         _characterInvolved.LevelUp();
     }
     private void ThwartedReleaseFailRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             state.descriptionLog.AddToFillers(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_2);
         }
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
         state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_2));
 
         //**Level Up**: Diplomat Minion +1
-        investigatorMinion.LevelUp();
+        investigatorCharacter.LevelUp();
         //**Mechanics**: Relationship between the player faction and Faction 2 +1
         AdjustFactionsRelationship(PlayerManager.Instance.player.playerFaction, interactable.tileLocation.areaOfTile.owner, 1, state);
     }
     private void ThwartedReleaseCriticalFailRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             state.descriptionLog.AddToFillers(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_2);
         }
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
         state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_2));
 
         //**Mechanics**: Relationship between the player faction and Faction 2 +1
@@ -255,34 +259,34 @@ public class SaveAction : Interaction {
         _characterInvolved.Death();
 
         //**Level Up**: Diplomat Minion +1
-        investigatorMinion.LevelUp();
+        investigatorCharacter.LevelUp();
     }
     private void NormalReleaseSuccessRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         }
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
         //**Mechanics**: Remove Abducted trait from Character 2. Change Character 2 Home to its original one. Override his next tick to return home.
-        targetCharacter.ReleaseFromAbduction();
+        _targetCharacter.ReleaseFromAbduction();
 
         //**Mechanics**: Abducted and Releaser personal relationship +1
-        CharacterManager.Instance.ChangePersonalRelationshipBetweenTwoCharacters(targetCharacter, _characterInvolved, 1);
+        CharacterManager.Instance.ChangePersonalRelationshipBetweenTwoCharacters(_targetCharacter, _characterInvolved, 1);
 
         //**Level Up**: Releaseer Character +1
         _characterInvolved.LevelUp();
     }
     private void NormalReleaseFailRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         }
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     private void NormalReleaseCriticalFailRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         }
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
         //**Mechanics**: Character Name 1 dies.
         _characterInvolved.Death();
@@ -290,7 +294,7 @@ public class SaveAction : Interaction {
     #endregion
 
     public void SetTargetCharacter(Character targetCharacter) {
-        this.targetCharacter = targetCharacter;
+        this._targetCharacter = targetCharacter;
         AddToDebugLog("Set " + targetCharacter.name + " as target");
     }
 }

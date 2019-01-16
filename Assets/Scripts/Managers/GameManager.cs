@@ -48,6 +48,8 @@ public class GameManager : MonoBehaviour {
     [SerializeField] private CursorMode cursorMode = CursorMode.Auto;
     [SerializeField] private Vector2 hotSpot = Vector2.zero;
 
+    public bool pauseDayEnded2 = false;
+
     #region getters/setters
     public bool gameHasStarted {
         get { return _gameHasStarted; }
@@ -72,7 +74,7 @@ public class GameManager : MonoBehaviour {
             this.timeElapsed += Time.deltaTime;
             if (this.timeElapsed >= this.progressionSpeed) {
                 this.timeElapsed = 0f;
-                this.DayEnded();
+                StartCoroutine(this.DayEnded());
             }
         }
         if (Input.GetKeyDown(KeyCode.BackQuote)) {
@@ -213,9 +215,12 @@ public class GameManager : MonoBehaviour {
     /*
      * Function that triggers daily actions
      * */
-    public void DayEnded(){
+    public IEnumerator DayEnded(){
         Messenger.Broadcast(Signals.DAY_ENDED);
         Messenger.Broadcast(Signals.DAY_ENDED_2);
+        while (pauseDayEnded2) {
+            yield return null;
+        }
         Messenger.Broadcast(Signals.UPDATE_UI);
 
         this.days += 1;

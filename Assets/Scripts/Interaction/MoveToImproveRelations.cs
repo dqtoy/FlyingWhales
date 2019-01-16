@@ -53,7 +53,7 @@ public class MoveToImproveRelations : Interaction {
                 duration = 0,
                 effect = () => DiscourageFromLeavingOptionEffect(state),
                 jobNeeded = JOB.DEBILITATOR,
-                doesNotMeetRequirementsStr = "Minion must be a dissuader",
+                doesNotMeetRequirementsStr = "Must have dissuader minion."
             };
             ActionOption doNothing = new ActionOption {
                 interactionState = state,
@@ -71,7 +71,7 @@ public class MoveToImproveRelations : Interaction {
 
     #region Option Effects
     private void DiscourageFromLeavingOptionEffect(InteractionState state) {
-        WeightedDictionary<RESULT> resultWeights = investigatorMinion.character.job.GetJobRateWeights();
+        WeightedDictionary<RESULT> resultWeights = investigatorCharacter.job.GetJobRateWeights();
         resultWeights.RemoveElement(RESULT.CRITICAL_FAIL);
 
         string nextState = string.Empty;
@@ -94,7 +94,7 @@ public class MoveToImproveRelations : Interaction {
     private void ImproveRelationsCancelledRewardEffect(InteractionState state) {
         //**Mechanics**: Character will no longer leave.
         //**Level Up**: Dissuader Minion +1
-        investigatorMinion.LevelUp();
+        investigatorCharacter.LevelUp();
         MinionSuccess();
     }
     private void ImproveRelationsProceedsRewardEffect(InteractionState state) {

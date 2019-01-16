@@ -50,7 +50,11 @@ public class InteractionUI : MonoBehaviour {
             return;
         }
         if (interaction != null) {
+            Debug.Log(GameManager.Instance.TodayLogString() + " Showing " + interaction.name + " to player.");
             _interaction = interaction;
+            if (!_interaction.hasInitialized) {
+                _interaction.Initialize();
+            }
             if (!interaction.hasActivatedTimeOut) {
                 interaction.SetActivatedTimeOutState(true);
             }

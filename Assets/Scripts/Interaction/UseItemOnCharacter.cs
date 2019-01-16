@@ -10,7 +10,11 @@ public class UseItemOnCharacter : Interaction {
     //private const string Stop_Fail = "Stop Fail";
     private const string Do_Nothing = "Do nothing";
 
-    private Character targetCharacter;
+    private Character _targetCharacter;
+
+    public override Character targetCharacter {
+        get { return _targetCharacter; }
+    }
 
     public UseItemOnCharacter(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.USE_ITEM_ON_CHARACTER, 0) {
         _name = "Use Item On Character";
@@ -28,7 +32,12 @@ public class UseItemOnCharacter : Interaction {
         //InteractionState stopFail = new InteractionState(Stop_Fail, this);
         InteractionState doNothing = new InteractionState(Do_Nothing, this);
 
-        targetCharacter = _tokenToBeUsed.GetTargetCharacterFor(_characterInvolved);
+        _targetCharacter = _tokenToBeUsed.GetTargetCharacterFor(_characterInvolved);
+
+        Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
+        startStateDescriptionLog.AddToFillers(null, _tokenToBeUsed.nameInBold, LOG_IDENTIFIER.STRING_1);
+        startStateDescriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        startState.OverrideDescriptionLog(startStateDescriptionLog);
 
         CreateActionOptions(startState);
 
@@ -51,7 +60,7 @@ public class UseItemOnCharacter : Interaction {
                 name = "Stop " + _characterInvolved.name + ".",
                 effect = () => StopOptionEffect(state),
                 jobNeeded = JOB.DEBILITATOR,
-                doesNotMeetRequirementsStr = "Minion must be a dissuader",
+                doesNotMeetRequirementsStr = "Must have dissuader minion."
             };
             ActionOption doNothing = new ActionOption {
                 interactionState = state,
@@ -68,7 +77,7 @@ public class UseItemOnCharacter : Interaction {
 
     #region Option Effects
     private void StopOptionEffect(InteractionState state) {
-        WeightedDictionary<RESULT> resultWeights = investigatorMinion.character.job.GetJobRateWeights();
+        WeightedDictionary<RESULT> resultWeights = investigatorCharacter.job.GetJobRateWeights();
         resultWeights.RemoveElement(RESULT.CRITICAL_FAIL);
 
         string nextState = string.Empty;
@@ -77,7 +86,7 @@ public class UseItemOnCharacter : Interaction {
                 nextState = Stop_Successful;
                 break;
             case RESULT.FAIL:
-                _tokenToBeUsed.CreateJointInteractionStates(this, _characterInvolved, targetCharacter);
+                _tokenToBeUsed.CreateJointInteractionStates(this, _characterInvolved, _targetCharacter);
                 nextState = _tokenToBeUsed.Stop_Fail;
                 break;
             default:
@@ -86,7 +95,7 @@ public class UseItemOnCharacter : Interaction {
         SetCurrentState(_states[nextState]);
     }
     private void DoNothingOptionEffect(InteractionState state) {
-        _tokenToBeUsed.CreateJointInteractionStates(this, _characterInvolved, targetCharacter);
+        _tokenToBeUsed.CreateJointInteractionStates(this, _characterInvolved, _targetCharacter);
         if (!_states.ContainsKey(_tokenToBeUsed.Item_Used)) {
             throw new System.Exception(this.name + " does have state " + _tokenToBeUsed.Item_Used + " when using token " + _tokenToBeUsed.name);
         }
@@ -99,13 +108,13 @@ public class UseItemOnCharacter : Interaction {
     private void StopSuccessfulRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(null, _tokenToBeUsed.nameInBold, LOG_IDENTIFIER.STRING_1);
-            state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         }
         state.AddLogFiller(new LogFiller(null, _tokenToBeUsed.nameInBold, LOG_IDENTIFIER.STRING_1));
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
         //**Level Up**: Dissuader Minion +1
-        investigatorMinion.LevelUp();
+        investigatorCharacter.LevelUp();
     }
     private void StopFailRewardEffect(InteractionState state) {        
         //if (state.descriptionLog != null) {

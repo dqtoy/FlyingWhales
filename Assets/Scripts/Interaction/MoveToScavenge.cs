@@ -51,11 +51,11 @@ public class MoveToScavenge : Interaction {
             ActionOption stopThem = new ActionOption {
                 interactionState = state,
                 cost = new CurrenyCost { amount = 50, currency = CURRENCY.SUPPLY },
-                name = "Prevent " + Utilities.GetPossessivePronounForCharacter(_characterInvolved, false) + " from leaving.",
+                name = "Prevent " + Utilities.GetPronounString(_characterInvolved.gender, PRONOUN_TYPE.OBJECTIVE, false) + " from leaving.",
                 duration = 0,
                 effect = () => PursuadeToCancelEffect(state),
                 jobNeeded = JOB.DEBILITATOR,
-                doesNotMeetRequirementsStr = "Minion must be a dissuader",
+                doesNotMeetRequirementsStr = "Must have debilitator minion.",
             };
             ActionOption doNothing = new ActionOption {
                 interactionState = state,
@@ -78,7 +78,7 @@ public class MoveToScavenge : Interaction {
     #region Action Option Effects
     private void PursuadeToCancelEffect(InteractionState state) {
         //Compute Dissuader success rate
-        WeightedDictionary<RESULT> resultWeights = investigatorMinion.character.job.GetJobRateWeights();
+        WeightedDictionary<RESULT> resultWeights = investigatorCharacter.job.GetJobRateWeights();
         resultWeights.RemoveElement(RESULT.CRITICAL_FAIL);
         AddToDebugLog("Chose to pursuade to cancel. " + resultWeights.GetWeightsSummary("Summary of weights are: "));
         string nextState = string.Empty;
@@ -102,7 +102,7 @@ public class MoveToScavenge : Interaction {
 
     private void ScavengeCancelledRewardEffect(InteractionState state) {
         //**Level Up**: Dissuader Minion +1
-        investigatorMinion.LevelUp();
+        investigatorCharacter.LevelUp();
         MinionSuccess();
     }
     private void ScavengeProceedsRewardEffect(InteractionState state) {

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class AbductAction : Interaction {
 
-    private Character targetCharacter;
+    private Character _targetCharacter;
 
     private const string Start = "Start";
     private const string Assisted_Abduction_Success = "Assisted Abduction Success";
@@ -16,6 +16,10 @@ public class AbductAction : Interaction {
     private const string Normal_Abduction_Success = "Normal Abduction Success";
     private const string Normal_Abduction_Fail = "Normal Abduction Fail";
     private const string Normal_Abduction_Critical_Fail = "Normal Abduction Critical Fail";
+
+    public override Character targetCharacter {
+        get { return _targetCharacter; }
+    }
 
     public AbductAction(BaseLandmark interactable): base(interactable, INTERACTION_TYPE.ABDUCT_ACTION, 0) {
         _name = "Abduct Action";
@@ -184,7 +188,7 @@ public class AbductAction : Interaction {
         AbductCharacter(targetCharacter);
         //**Level Up**: Abductioner Character +1, Instigator Minion +1
         _characterInvolved.LevelUp();
-        investigatorMinion.LevelUp();
+        investigatorCharacter.LevelUp();
         //**Mechanics**: Relationship between the two factions -1
         AdjustFactionsRelationship(targetCharacter.faction, _characterInvolved.faction, -1, state);
     }
@@ -225,7 +229,7 @@ public class AbductAction : Interaction {
         state.AddLogFiller(new LogFiller(targetCharacter.faction, targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_2));
 
         //**Level Up**: Diplomat Minion +1
-        investigatorMinion.LevelUp();
+        investigatorCharacter.LevelUp();
         //**Mechanics**: Player relationship with abductee's faction +1
         AdjustFactionsRelationship(PlayerManager.Instance.player.playerFaction, targetCharacter.faction, 1, state);
     }
@@ -241,7 +245,7 @@ public class AbductAction : Interaction {
         AdjustFactionsRelationship(_characterInvolved.faction, targetCharacter.faction, -1, state);
 
         //**Level Up**: Diplomat Minion +1
-        investigatorMinion.LevelUp();
+        investigatorCharacter.LevelUp();
 
         //**Mechanics**: Character Name 1 dies.
         _characterInvolved.Death();
@@ -292,7 +296,7 @@ public class AbductAction : Interaction {
     }
 
     public void SetTargetCharacter(Character targetCharacter) {
-        this.targetCharacter = targetCharacter;
+        this._targetCharacter = targetCharacter;
     }
     public Character GetTargetCharacter(Character characterInvolved) {
         WeightedDictionary<Character> characterWeights = new WeightedDictionary<Character>();

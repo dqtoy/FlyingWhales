@@ -54,7 +54,7 @@ public class WorkEvent : Interaction {
                 duration = 0,
                 effect = () => StopOptionEffect(state),
                 jobNeeded = JOB.DEBILITATOR,
-                doesNotMeetRequirementsStr = "Minion must be a dissuader",
+                doesNotMeetRequirementsStr = "Must have debilitator minion.",
             };
             ActionOption steal = new ActionOption {
                 interactionState = state,
@@ -63,7 +63,7 @@ public class WorkEvent : Interaction {
                 duration = 0,
                 effect = () => StealOptionEffect(state),
                 jobNeeded = JOB.INSTIGATOR,
-                doesNotMeetRequirementsStr = "Minion must be an instigator",
+                doesNotMeetRequirementsStr = "Must have instigator minion.",
             };
             ActionOption doNothing = new ActionOption {
                 interactionState = state,
@@ -82,7 +82,7 @@ public class WorkEvent : Interaction {
 
     #region Option Effects
     private void StopOptionEffect(InteractionState state) {
-        WeightedDictionary<RESULT> resultWeights = investigatorMinion.character.job.GetJobRateWeights();
+        WeightedDictionary<RESULT> resultWeights = investigatorCharacter.job.GetJobRateWeights();
         resultWeights.RemoveElement(RESULT.CRITICAL_FAIL);
 
         string nextState = string.Empty;
@@ -99,7 +99,7 @@ public class WorkEvent : Interaction {
         SetCurrentState(_states[nextState]);
     }
     private void StealOptionEffect(InteractionState state) {
-        WeightedDictionary<RESULT> resultWeights = investigatorMinion.character.job.GetJobRateWeights();
+        WeightedDictionary<RESULT> resultWeights = investigatorCharacter.job.GetJobRateWeights();
         resultWeights.RemoveElement(RESULT.CRITICAL_FAIL);
 
         string nextState = string.Empty;
@@ -123,7 +123,7 @@ public class WorkEvent : Interaction {
     #region Reward Effects
     private void StopWorkSuccessfulRewardEffect(InteractionState state) {
         //**Level Up**: Dissuader Minion +1
-        investigatorMinion.LevelUp();
+        investigatorCharacter.LevelUp();
 
         int obtainedSupplies = interactable.tileLocation.areaOfTile.monthlySupply;
         state.AddLogFiller(new LogFiller(null, obtainedSupplies.ToString(), LOG_IDENTIFIER.STRING_1));
@@ -141,7 +141,7 @@ public class WorkEvent : Interaction {
         int obtainedSupplies = interactable.tileLocation.areaOfTile.monthlySupply;
         PlayerManager.Instance.player.AdjustCurrency(CURRENCY.SUPPLY, obtainedSupplies);
         //**Level Up**: Instigator Minion +1
-        investigatorMinion.LevelUp();
+        investigatorCharacter.LevelUp();
         //**Mechanics**: Favor Count -2
         _characterInvolved.faction.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, -2);
 

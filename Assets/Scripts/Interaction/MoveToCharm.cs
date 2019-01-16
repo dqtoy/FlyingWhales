@@ -50,7 +50,7 @@ public class MoveToCharm : Interaction {
                 duration = 0,
                 effect = () => PreventFromLeavingOptionEffect(state),
                 jobNeeded = JOB.DEBILITATOR,
-                doesNotMeetRequirementsStr = "Minion must be a dissuader",
+                doesNotMeetRequirementsStr = "Must have debilitator minion.",
             };
             ActionOption doNothing = new ActionOption {
                 interactionState = state,
@@ -74,7 +74,7 @@ public class MoveToCharm : Interaction {
 
     #region Option Effects
     private void PreventFromLeavingOptionEffect(InteractionState state) {
-        WeightedDictionary<RESULT> resultWeights = investigatorMinion.character.job.GetJobRateWeights();
+        WeightedDictionary<RESULT> resultWeights = investigatorCharacter.job.GetJobRateWeights();
         resultWeights.RemoveElement(RESULT.CRITICAL_FAIL);
 
         string nextState = string.Empty;
@@ -97,7 +97,7 @@ public class MoveToCharm : Interaction {
     private void CharacterCharmCancelledRewardEffect(InteractionState state) {
         //**Mechanics**: Character will no longer leave.
         //**Level Up**: Dissuader Minion +1
-        investigatorMinion.LevelUp();
+        investigatorCharacter.LevelUp();
         MinionSuccess();
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1);

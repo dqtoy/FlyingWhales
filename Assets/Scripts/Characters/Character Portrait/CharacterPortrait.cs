@@ -338,9 +338,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         }
         if (eventData.button == PointerEventData.InputButton.Right) {
             //Debug.Log("Right clicked character portrait!");
-            if (_character != null) {
-                UIManager.Instance.ShowCharacterInfo(_character);
-            }
+            OnRightClick();
         }
         
 #endif
@@ -350,6 +348,11 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
             return;
         }
         OnPointerClick(eventData as PointerEventData);
+    }
+    public void OnRightClick() {
+        if (_character != null) {
+            UIManager.Instance.ShowCharacterInfo(_character);
+        }
     }
     #endregion
 

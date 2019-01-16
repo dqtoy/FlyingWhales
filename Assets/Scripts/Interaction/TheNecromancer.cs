@@ -246,12 +246,12 @@ public class TheNecromancer : Interaction {
     #region End Result Effects
     private void ManaDrainSuccessRewardEffect(InteractionState state) {
         //**Reward**: Mana Cache 1, Demon gains Exp 1
-        investigatorMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
+        investigatorCharacter.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
         PlayerManager.Instance.player.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Mana_Cache_Reward_1));
     }
     private void ManaDrainFailedRewardEffect(InteractionState state) {
         //**Reward**: Demon gains Exp 1
-        investigatorMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
+        investigatorCharacter.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
     }
     private void DoNothingRewardEffect(InteractionState state) {
         //**Mechanics**: Characters home area will gain Supply Cache Reward 1

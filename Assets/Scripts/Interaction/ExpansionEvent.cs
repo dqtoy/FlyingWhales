@@ -52,7 +52,7 @@ public class ExpansionEvent : Interaction {
                 name = "Assault " + Utilities.GetPronounString(_characterInvolved.gender, PRONOUN_TYPE.POSSESSIVE, false) + " group. They must be stopped",
                 effect = () => AssaultOptionEffect(state),
                 jobNeeded = JOB.INSTIGATOR,
-                doesNotMeetRequirementsStr = "Minion must be an instigator",
+                doesNotMeetRequirementsStr = "Must have instigator minion.",
             };
             ActionOption doNothing = new ActionOption {
                 interactionState = state,
@@ -71,7 +71,7 @@ public class ExpansionEvent : Interaction {
     private void AssaultOptionEffect(InteractionState state) {
         int minionWeight = 0;
         int characterWeight = 0;
-        CombatManager.Instance.GetCombatWeightsOfTwoLists(investigatorMinion.character.currentParty.characters, _characterInvolved.currentParty.characters, out minionWeight, out characterWeight);
+        CombatManager.Instance.GetCombatWeightsOfTwoLists(investigatorCharacter.currentParty.characters, _characterInvolved.currentParty.characters, out minionWeight, out characterWeight);
         WeightedDictionary<string> combatWeights = new WeightedDictionary<string>();
         combatWeights.AddElement("Minion Won", minionWeight);
         combatWeights.AddElement("Minion Lost", characterWeight);
@@ -113,13 +113,13 @@ public class ExpansionEvent : Interaction {
         //**Mechanic**: Character Dies, Expansion cancelled
         _characterInvolved.Death();
         //**Level Up**: Instigator Minion +1
-        investigatorMinion.LevelUp();
+        investigatorCharacter.LevelUp();
     }
     private void MinionInjuredCharacterRewardEffect(InteractionState state) {
         //**Mechanic**: Character Injured, Expansion cancelled
         _characterInvolved.AddTrait(AttributeManager.Instance.allTraits["Injured"]);
         //**Level Up**: Instigator Minion +1
-        investigatorMinion.LevelUp();
+        investigatorCharacter.LevelUp();
 
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(null, _characterInvolved.characterClass.className, LOG_IDENTIFIER.STRING_1);
@@ -128,7 +128,7 @@ public class ExpansionEvent : Interaction {
     }
     private void CharacterKilledMinionRewardEffect(InteractionState state) {
         //**Mechanic**: Minion Killed, Location becomes part of Character's faction and its Race will be set as Character's Race
-        investigatorMinion.character.Death();
+        investigatorCharacter.Death();
         OwnArea(_characterInvolved);
         //Migrate Character to the new settlement
         _characterInvolved.MigrateTo(interactable);
@@ -137,7 +137,7 @@ public class ExpansionEvent : Interaction {
     }
     private void CharacterInjuredMinionRewardEffect(InteractionState state) {
         //**Mechanic**: Minion Injured, Location becomes part of Character's faction and its Race will be set as Character's Race
-        investigatorMinion.character.AddTrait(AttributeManager.Instance.allTraits["Injured"]);
+        investigatorCharacter.AddTrait(AttributeManager.Instance.allTraits["Injured"]);
         OwnArea(_characterInvolved);
         //Migrate Character to the new settlement
         _characterInvolved.MigrateTo(interactable);

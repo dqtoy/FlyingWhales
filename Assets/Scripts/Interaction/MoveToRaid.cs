@@ -57,7 +57,7 @@ public class MoveToRaid : Interaction {
                 duration = 0,
                 effect = () => PursuadeToCancelEffect(state),
                 jobNeeded = JOB.DEBILITATOR,
-                doesNotMeetRequirementsStr = "Minion must be a dissuader",
+                doesNotMeetRequirementsStr = "Must have debilitator minion.",
             };
             ActionOption doNothing = new ActionOption {
                 interactionState = state,
@@ -104,7 +104,7 @@ public class MoveToRaid : Interaction {
     #endregion
 
     private void RaidCancelledRewardEffect(InteractionState state) {
-        investigatorMinion.LevelUp();
+        investigatorCharacter.LevelUp();
         MinionSuccess();
     }
     private void RaidProceedsRewardEffect(InteractionState state) {

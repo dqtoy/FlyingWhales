@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class HuntAction : Interaction {
-    private Character targetCharacter;
+    private Character _targetCharacter;
 
     private const string Start = "Start";
     private const string Assisted_Hunter_Killed_Character = "Assisted Hunter Killed Character";
@@ -26,13 +26,17 @@ public class HuntAction : Interaction {
     private const string Default_Character_Killed_Hunter = "Default Character Killed Hunter";
     private const string Default_Character_Injured_Hunter = "Default Character Injured Hunter";
 
+    public override Character targetCharacter {
+        get { return _targetCharacter; }
+    }
+
     public HuntAction(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.HUNT_ACTION, 0) {
         _name = "Hunt Action";
     }
 
     #region Override
     public override void CreateStates() {
-        if (targetCharacter == null) {
+        if (_targetCharacter == null) {
             SetTargetCharacter(GetTargetCharacter(_characterInvolved));
         }
 
@@ -58,7 +62,7 @@ public class HuntAction : Interaction {
         InteractionState defaultCharacterInjuredHunter = new InteractionState(Default_Character_Injured_Hunter, this);
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
-        startStateDescriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        startStateDescriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 
         CreateActionOptions(startState);
@@ -149,7 +153,7 @@ public class HuntAction : Interaction {
     }
     public override bool CanInteractionBeDoneBy(Character character) {
         SetTargetCharacter(GetTargetCharacter(character));
-        if (targetCharacter == null) {
+        if (_targetCharacter == null) {
             return false;
         }
         return base.CanInteractionBeDoneBy(character);
@@ -160,10 +164,10 @@ public class HuntAction : Interaction {
     private void AssistOptionEffect(InteractionState state) {
         List<Character> attackers = new List<Character>();
         attackers.Add(_characterInvolved);
-        attackers.Add(investigatorMinion.character);
+        attackers.Add(investigatorCharacter);
 
         List<Character> defenders = new List<Character>();
-        defenders.Add(targetCharacter);
+        defenders.Add(_targetCharacter);
 
         float attackersChance = 0f;
         float defendersChance = 0f;
@@ -190,8 +194,8 @@ public class HuntAction : Interaction {
         attackers.Add(_characterInvolved);
 
         List<Character> defenders = new List<Character>();
-        defenders.Add(targetCharacter);
-        defenders.Add(investigatorMinion.character);
+        defenders.Add(_targetCharacter);
+        defenders.Add(investigatorCharacter);
 
         float attackersChance = 0f;
         float defendersChance = 0f;
@@ -245,7 +249,7 @@ public class HuntAction : Interaction {
         attackers.Add(_characterInvolved);
 
         List<Character> defenders = new List<Character>();
-        defenders.Add(targetCharacter);
+        defenders.Add(_targetCharacter);
 
         float attackersChance = 0f;
         float defendersChance = 0f;
@@ -271,221 +275,221 @@ public class HuntAction : Interaction {
 
     #region Reward Effect
     private void AssistedHunterKilledCharacterEffect(InteractionState state) {
-        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
         _characterInvolved.LevelUp();
-        investigatorMinion.LevelUp();
+        investigatorCharacter.LevelUp();
 
-        if(!targetCharacter.isFactionless && !_characterInvolved.isFactionless) {
-            AdjustFactionsRelationship(targetCharacter.faction, _characterInvolved.faction, -1, state);
+        if(!_targetCharacter.isFactionless && !_characterInvolved.isFactionless) {
+            AdjustFactionsRelationship(_targetCharacter.faction, _characterInvolved.faction, -1, state);
         }
 
-        targetCharacter.Death();
+        _targetCharacter.Death();
     }
     private void AssistedHunterInjuredCharacterEffect(InteractionState state) {
-        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
         _characterInvolved.LevelUp();
-        investigatorMinion.LevelUp();
+        investigatorCharacter.LevelUp();
 
-        if (!targetCharacter.isFactionless && !_characterInvolved.isFactionless) {
-            AdjustFactionsRelationship(targetCharacter.faction, _characterInvolved.faction, -1, state);
+        if (!_targetCharacter.isFactionless && !_characterInvolved.isFactionless) {
+            AdjustFactionsRelationship(_targetCharacter.faction, _characterInvolved.faction, -1, state);
         }
 
-        targetCharacter.AddTrait(AttributeManager.Instance.allTraits["Injured"]);
+        _targetCharacter.AddTrait(AttributeManager.Instance.allTraits["Injured"]);
     }
     private void AssistedCharacterKilledHunterEffect(InteractionState state) {
-        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
-        targetCharacter.LevelUp();
+        _targetCharacter.LevelUp();
 
-        if (!targetCharacter.isFactionless && !_characterInvolved.isFactionless) {
-            AdjustFactionsRelationship(targetCharacter.faction, _characterInvolved.faction, -1, state);
+        if (!_targetCharacter.isFactionless && !_characterInvolved.isFactionless) {
+            AdjustFactionsRelationship(_targetCharacter.faction, _characterInvolved.faction, -1, state);
         }
 
         _characterInvolved.Death();
     }
     private void AssistedCharacterInjuredHunterEffect(InteractionState state) {
-        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
-        targetCharacter.LevelUp();
+        _targetCharacter.LevelUp();
 
-        if (!targetCharacter.isFactionless && !_characterInvolved.isFactionless) {
-            AdjustFactionsRelationship(targetCharacter.faction, _characterInvolved.faction, -1, state);
+        if (!_targetCharacter.isFactionless && !_characterInvolved.isFactionless) {
+            AdjustFactionsRelationship(_targetCharacter.faction, _characterInvolved.faction, -1, state);
         }
 
         _characterInvolved.AddTrait(AttributeManager.Instance.allTraits["Injured"]);
     }
     private void ThwartedHunterKilledCharacterEffect(InteractionState state) {
-        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
         _characterInvolved.LevelUp();
 
-        if (!targetCharacter.isFactionless && !_characterInvolved.isFactionless) {
-            AdjustFactionsRelationship(targetCharacter.faction, _characterInvolved.faction, -1, state);
+        if (!_targetCharacter.isFactionless && !_characterInvolved.isFactionless) {
+            AdjustFactionsRelationship(_targetCharacter.faction, _characterInvolved.faction, -1, state);
         }
 
-        targetCharacter.Death();
+        _targetCharacter.Death();
     }
     private void ThwartedHunterInjuredCharacterEffect(InteractionState state) {
-        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
         _characterInvolved.LevelUp();
 
-        if (!targetCharacter.isFactionless && !_characterInvolved.isFactionless) {
-            AdjustFactionsRelationship(targetCharacter.faction, _characterInvolved.faction, -1, state);
+        if (!_targetCharacter.isFactionless && !_characterInvolved.isFactionless) {
+            AdjustFactionsRelationship(_targetCharacter.faction, _characterInvolved.faction, -1, state);
         }
 
-        targetCharacter.AddTrait(AttributeManager.Instance.allTraits["Injured"]);
+        _targetCharacter.AddTrait(AttributeManager.Instance.allTraits["Injured"]);
     }
     private void ThwartedCharacterKilledHunterEffect(InteractionState state) {
-        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
-        targetCharacter.LevelUp();
-        investigatorMinion.LevelUp();
+        _targetCharacter.LevelUp();
+        investigatorCharacter.LevelUp();
 
-        if (!targetCharacter.isFactionless && !_characterInvolved.isFactionless) {
-            AdjustFactionsRelationship(targetCharacter.faction, _characterInvolved.faction, -1, state);
+        if (!_targetCharacter.isFactionless && !_characterInvolved.isFactionless) {
+            AdjustFactionsRelationship(_targetCharacter.faction, _characterInvolved.faction, -1, state);
         }
 
         _characterInvolved.Death();
     }
     private void ThwartedCharacterInjuredHunterEffect(InteractionState state) {
-        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
-        targetCharacter.LevelUp();
-        investigatorMinion.LevelUp();
+        _targetCharacter.LevelUp();
+        investigatorCharacter.LevelUp();
 
-        if (!targetCharacter.isFactionless && !_characterInvolved.isFactionless) {
-            AdjustFactionsRelationship(targetCharacter.faction, _characterInvolved.faction, -1, state);
+        if (!_targetCharacter.isFactionless && !_characterInvolved.isFactionless) {
+            AdjustFactionsRelationship(_targetCharacter.faction, _characterInvolved.faction, -1, state);
         }
 
         _characterInvolved.AddTrait(AttributeManager.Instance.allTraits["Injured"]);
     }
     private void RedirectedHunterKilledCharacterEffect(InteractionState state) {
-        targetCharacter = state.assignedCharacter.character;
+        _targetCharacter = state.assignedCharacter.character;
 
-        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
         _characterInvolved.LevelUp();
 
-        if (!targetCharacter.isFactionless && !_characterInvolved.isFactionless) {
-            AdjustFactionsRelationship(targetCharacter.faction, _characterInvolved.faction, -1, state);
+        if (!_targetCharacter.isFactionless && !_characterInvolved.isFactionless) {
+            AdjustFactionsRelationship(_targetCharacter.faction, _characterInvolved.faction, -1, state);
         }
 
-        targetCharacter.Death();
+        _targetCharacter.Death();
     }
     private void RedirectedHunterInjuredCharacterEffect(InteractionState state) {
-        targetCharacter = state.assignedCharacter.character;
+        _targetCharacter = state.assignedCharacter.character;
 
-        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
         _characterInvolved.LevelUp();
 
-        if (!targetCharacter.isFactionless && !_characterInvolved.isFactionless) {
-            AdjustFactionsRelationship(targetCharacter.faction, _characterInvolved.faction, -1, state);
+        if (!_targetCharacter.isFactionless && !_characterInvolved.isFactionless) {
+            AdjustFactionsRelationship(_targetCharacter.faction, _characterInvolved.faction, -1, state);
         }
 
-        targetCharacter.AddTrait(AttributeManager.Instance.allTraits["Injured"]);
+        _targetCharacter.AddTrait(AttributeManager.Instance.allTraits["Injured"]);
     }
     private void RedirectedCharacterKilledHunterEffect(InteractionState state) {
-        targetCharacter = state.assignedCharacter.character;
+        _targetCharacter = state.assignedCharacter.character;
 
-        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
-        targetCharacter.LevelUp();
+        _targetCharacter.LevelUp();
 
-        if (!targetCharacter.isFactionless && !_characterInvolved.isFactionless) {
-            AdjustFactionsRelationship(targetCharacter.faction, _characterInvolved.faction, -1, state);
+        if (!_targetCharacter.isFactionless && !_characterInvolved.isFactionless) {
+            AdjustFactionsRelationship(_targetCharacter.faction, _characterInvolved.faction, -1, state);
         }
 
         _characterInvolved.Death();
     }
     private void RedirectedCharacterInjuredHunterEffect(InteractionState state) {
-        targetCharacter = state.assignedCharacter.character;
+        _targetCharacter = state.assignedCharacter.character;
 
-        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
-        targetCharacter.LevelUp();
+        _targetCharacter.LevelUp();
 
-        if (!targetCharacter.isFactionless && !_characterInvolved.isFactionless) {
-            AdjustFactionsRelationship(targetCharacter.faction, _characterInvolved.faction, -1, state);
+        if (!_targetCharacter.isFactionless && !_characterInvolved.isFactionless) {
+            AdjustFactionsRelationship(_targetCharacter.faction, _characterInvolved.faction, -1, state);
         }
 
         _characterInvolved.AddTrait(AttributeManager.Instance.allTraits["Injured"]);
     }
     private void DefaultHunterKilledCharacterEffect(InteractionState state) {
-        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
         _characterInvolved.LevelUp();
 
-        if (!targetCharacter.isFactionless && !_characterInvolved.isFactionless) {
-            AdjustFactionsRelationship(targetCharacter.faction, _characterInvolved.faction, -1, state);
+        if (!_targetCharacter.isFactionless && !_characterInvolved.isFactionless) {
+            AdjustFactionsRelationship(_targetCharacter.faction, _characterInvolved.faction, -1, state);
         }
 
-        targetCharacter.Death();
+        _targetCharacter.Death();
     }
     private void DefaultHunterInjuredCharacterEffect(InteractionState state) {
-        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
         _characterInvolved.LevelUp();
 
-        if (!targetCharacter.isFactionless && !_characterInvolved.isFactionless) {
-            AdjustFactionsRelationship(targetCharacter.faction, _characterInvolved.faction, -1, state);
+        if (!_targetCharacter.isFactionless && !_characterInvolved.isFactionless) {
+            AdjustFactionsRelationship(_targetCharacter.faction, _characterInvolved.faction, -1, state);
         }
 
-        targetCharacter.AddTrait(AttributeManager.Instance.allTraits["Injured"]);
+        _targetCharacter.AddTrait(AttributeManager.Instance.allTraits["Injured"]);
     }
     private void DefaultCharacterKilledHunterEffect(InteractionState state) {
-        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
-        targetCharacter.LevelUp();
+        _targetCharacter.LevelUp();
 
-        if (!targetCharacter.isFactionless && !_characterInvolved.isFactionless) {
-            AdjustFactionsRelationship(targetCharacter.faction, _characterInvolved.faction, -1, state);
+        if (!_targetCharacter.isFactionless && !_characterInvolved.isFactionless) {
+            AdjustFactionsRelationship(_targetCharacter.faction, _characterInvolved.faction, -1, state);
         }
 
         _characterInvolved.Death();
     }
     private void DefaultCharacterInjuredHunterEffect(InteractionState state) {
-        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
-        targetCharacter.LevelUp();
+        _targetCharacter.LevelUp();
 
-        if (!targetCharacter.isFactionless && !_characterInvolved.isFactionless) {
-            AdjustFactionsRelationship(targetCharacter.faction, _characterInvolved.faction, -1, state);
+        if (!_targetCharacter.isFactionless && !_characterInvolved.isFactionless) {
+            AdjustFactionsRelationship(_targetCharacter.faction, _characterInvolved.faction, -1, state);
         }
 
         _characterInvolved.AddTrait(AttributeManager.Instance.allTraits["Injured"]);
@@ -493,7 +497,7 @@ public class HuntAction : Interaction {
     #endregion
 
     public void SetTargetCharacter(Character targetCharacter) {
-        this.targetCharacter = targetCharacter;
+        this._targetCharacter = targetCharacter;
     }
     public Character GetTargetCharacter(Character characterInvolved) {
         WeightedDictionary<Character> characterWeights = new WeightedDictionary<Character>();

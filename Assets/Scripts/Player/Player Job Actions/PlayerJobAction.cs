@@ -24,6 +24,9 @@ public class PlayerJobAction {
 
     #region Virtuals
     public virtual void ActivateAction(Character assignedCharacter) { //this is called when the actions button is pressed
+        if (this.isActive) { //if this action is still active, deactivate it first
+            DeactivateAction();
+        }
         this.assignedCharacter = assignedCharacter;
         isActive = true;
         ActivateCooldown();
@@ -64,10 +67,15 @@ public class PlayerJobAction {
     public virtual bool ShouldButtonBeInteractable(Character character, object obj) {
         if (obj is Character) {
             return ShouldButtonBeInteractable(character, obj as Character);
+        } else if (obj is Area) {
+            return ShouldButtonBeInteractable(character, obj as Area);
         }
         return ShouldButtonBeInteractable();
     }
-    public virtual bool ShouldButtonBeInteractable(Character character, Character targetCharacter) {
+    protected virtual bool ShouldButtonBeInteractable(Character character, Character targetCharacter) {
+        return ShouldButtonBeInteractable();
+    }
+    protected virtual bool ShouldButtonBeInteractable(Character character, Area targetCharacter) {
         return ShouldButtonBeInteractable();
     }
     #endregion

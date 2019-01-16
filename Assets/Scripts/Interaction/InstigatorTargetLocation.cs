@@ -93,7 +93,7 @@ public class InstigatorTargetLocation : Interaction {
 
     #region State Effects
     private void InduceAttackEffect(InteractionState state) {
-        investigatorMinion.LevelUp();
+        investigatorCharacter.LevelUp();
 
         FactionRelationship relationship = interactable.tileLocation.areaOfTile.owner.GetRelationshipWith(_targetLocationToken.location.owner);
         if(relationship.relationshipStatus != FACTION_RELATIONSHIP_STATUS.ENEMY) {

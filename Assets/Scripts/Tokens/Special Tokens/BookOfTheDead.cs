@@ -110,9 +110,9 @@ public class BookOfTheDead : SpecialToken {
         state.tokenUser.ChangeClass("Necromancer");
         state.tokenUser.ConsumeToken();
 
-        state.descriptionLog.AddToFillers(state.interaction.investigatorMinion, state.interaction.investigatorMinion.name, LOG_IDENTIFIER.MINION_1);
+        state.descriptionLog.AddToFillers(state.interaction.investigatorCharacter, state.interaction.investigatorCharacter.name, LOG_IDENTIFIER.MINION_1);
 
-        state.AddLogFiller(new LogFiller(state.interaction.investigatorMinion, state.interaction.investigatorMinion.name, LOG_IDENTIFIER.MINION_1));
+        state.AddLogFiller(new LogFiller(state.interaction.investigatorCharacter, state.interaction.investigatorCharacter.name, LOG_IDENTIFIER.MINION_1));
 
         Debug.LogWarning("[Day " + GameManager.Instance.continuousDays + "] " + state.tokenUser.name + " used " + name + " on " + Utilities.GetPronounString(state.tokenUser.gender, PRONOUN_TYPE.REFLEXIVE, false) + " and became a " + state.tokenUser.characterClass.className + " at " + state.tokenUser.specificLocation.tileLocation.areaOfTile.name);
         //state.tokenUser.ChangeClass("Necromancer");

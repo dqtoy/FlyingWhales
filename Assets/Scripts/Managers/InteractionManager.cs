@@ -36,7 +36,7 @@ public class InteractionManager : MonoBehaviour {
         Messenger.AddListener<Interaction>(Signals.CLICKED_INTERACTION_BUTTON, OnClickInteraction);
     }
     public void Initialize() {
-        Messenger.AddListener(Signals.DAY_ENDED_2, ExecuteInteractionsDefault);
+        Messenger.AddListener(Signals.DAY_ENDED_2, TryExecuteInteractionsDefault);
     }
     public Interaction CreateNewInteraction(INTERACTION_TYPE interactionType, BaseLandmark interactable) {
         Interaction createdInteraction = null;
@@ -831,10 +831,82 @@ public class InteractionManager : MonoBehaviour {
     }
 
     private void TryExecuteInteractionsDefault() {
+        List<Character> trackedCharacters = PlayerManager.Instance.player.GetTrackedCharacters();
+        if (trackedCharacters.Count > 0) {
+            for (int i = 0; i < trackedCharacters.Count; i++) {
+                Character currCharacter = trackedCharacters[i];
+                List<Interaction> interactionsInvolved = GetAllValidInteractionsInvolving(currCharacter);
+                for (int j = 0; j < interactionsInvolved.Count; j++) {
+                    Interaction interaction = interactionsInvolved[j];
+                    if (!interactionUIQueue.Contains(interaction)) {
+                        AddToInteractionQueue(interaction);
+                        Debug.Log(GameManager.Instance.TodayLogString() + " Added " + interaction.name + " from " + currCharacter.name + " to execute interactions queue.");
+                    }
+                }
+            }
+        }
 
+        List<Area> trackedAreas = PlayerManager.Instance.player.GetTrackedAreas();
+        if (trackedAreas.Count > 0) {
+            for (int i = 0; i < trackedAreas.Count; i++) {
+                Area currArea = trackedAreas[i];
+                List<Interaction> interactionsInvolved = GetAllValidInteractionsInvolving(currArea).Where(x => !interactionUIQueue.Contains(x)).ToList();
+                if (interactionsInvolved.Count > 0) {
+                    Interaction chosen = interactionsInvolved[Random.Range(0, interactionsInvolved.Count)];
+                    AddToInteractionQueue(chosen);
+                    Debug.Log(GameManager.Instance.TodayLogString() + " Added " + chosen.name + " from " + currArea.name + " to execute interactions queue.");
+                }
+            }
+        }
+
+        if (interactionUIQueue.Count > 0) {
+            //set the last interaction to execute all defaults after it
+            Interaction lastInteraction = interactionUIQueue.Last();
+            lastInteraction.AddEndInteractionAction(() => ExecuteInteractionsDefault());
+            //then show the first interaction, that will then start the line of queues
+            Interaction interactionToShow = interactionUIQueue.Dequeue();
+            InteractionUI.Instance.OpenInteractionUI(interactionToShow);
+            GameManager.Instance.pauseDayEnded2 = true;
+        } else {
+            ExecuteInteractionsDefault();
+        }
+    }
+
+    private List<Interaction> GetAllValidInteractionsInvolving(Character character) {
+        List<Interaction> interactions = new List<Interaction>();
+        for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
+            Area currArea = LandmarkManager.Instance.allAreas[i];
+            for (int j = 0; j < currArea.currentInteractions.Count; j++) {
+                Interaction currInteraction = currArea.currentInteractions[j];
+                if (currInteraction.type == INTERACTION_TYPE.MOVE_TO_RETURN_HOME
+                    || currInteraction.type == INTERACTION_TYPE.CHARACTER_FLEES 
+                    || !currInteraction.CanInteractionBeDoneBy(currInteraction.characterInvolved)) {
+                    continue;
+                }
+                if ((currInteraction.targetCharacter != null && currInteraction.targetCharacter.id == character.id)
+                    || (currInteraction.characterInvolved != null && currInteraction.characterInvolved.id == character.id)) {
+                    interactions.Add(currInteraction);
+                }
+            }
+        }
+        return interactions;
+    }
+    private List<Interaction> GetAllValidInteractionsInvolving(Area currArea) {
+        List<Interaction> interactions = new List<Interaction>();
+        for (int i = 0; i < currArea.currentInteractions.Count; i++) {
+            Interaction currInteraction = currArea.currentInteractions[i];
+            if (currInteraction.type == INTERACTION_TYPE.MOVE_TO_RETURN_HOME
+                || currInteraction.type == INTERACTION_TYPE.CHARACTER_FLEES
+                || !currInteraction.CanInteractionBeDoneBy(currInteraction.characterInvolved)) {
+                continue;
+            }
+            interactions.Add(currInteraction);
+        }
+        return interactions;
     }
 
     private void ExecuteInteractionsDefault() {
+        GameManager.Instance.pauseDayEnded2 = false;
         dailyInteractionSummary = GameManager.Instance.TodayLogString() + "Executing interactions";
         for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
             Area currArea = LandmarkManager.Instance.allAreas[i];

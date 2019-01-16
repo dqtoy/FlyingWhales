@@ -84,7 +84,7 @@ public class ExploreEvent : Interaction {
                 duration = 0,
                 effect = () => TrapsOptionEffect(state),
                 jobNeeded = JOB.INSTIGATOR,
-                doesNotMeetRequirementsStr = "Minion must be an instigator",
+                doesNotMeetRequirementsStr = "Must have instigator minion.",
             };
             ActionOption assist = new ActionOption {
                 interactionState = state,
@@ -92,7 +92,7 @@ public class ExploreEvent : Interaction {
                 name = "Assist with the exploration.",
                 duration = 0,
                 jobNeeded = JOB.DIPLOMAT,
-                doesNotMeetRequirementsStr = "Minion must be a diplomat",
+                doesNotMeetRequirementsStr = "Must have diplomat minion.",
                 effect = () => AssistOptionEffect(state),
             };
             ActionOption doNothing = new ActionOption {
@@ -113,7 +113,7 @@ public class ExploreEvent : Interaction {
     #region Action Option Effects
     private void TrapsOptionEffect(InteractionState state) {
         WeightedDictionary<RESULT> resultWeights = _characterInvolved.job.GetJobRateWeights();
-        WeightedDictionary<RESULT> minionInstigatorWeights = investigatorMinion.character.job.GetJobRateWeights();
+        WeightedDictionary<RESULT> minionInstigatorWeights = investigatorCharacter.job.GetJobRateWeights();
         switch (minionInstigatorWeights.PickRandomElementGivenWeights()) {
             case RESULT.SUCCESS:
                 resultWeights.AddWeightToElement(RESULT.FAIL, 30);
@@ -143,7 +143,7 @@ public class ExploreEvent : Interaction {
     }
     private void AssistOptionEffect(InteractionState state) {
         WeightedDictionary<RESULT> resultWeights = _characterInvolved.job.GetJobRateWeights();
-        WeightedDictionary<RESULT> minionInstigatorWeights = investigatorMinion.character.job.GetJobRateWeights();
+        WeightedDictionary<RESULT> minionInstigatorWeights = investigatorCharacter.job.GetJobRateWeights();
         switch (minionInstigatorWeights.PickRandomElementGivenWeights()) {
             case RESULT.SUCCESS:
                 resultWeights.AddWeightToElement(RESULT.FAIL, 30);
@@ -215,8 +215,8 @@ public class ExploreEvent : Interaction {
         
     }
     private void ExploreFailRewardEffect(InteractionState state) {
-        if (investigatorMinion != null) {
-            investigatorMinion.LevelUp();
+        if (investigatorCharacter != null) {
+            investigatorCharacter.LevelUp();
         }
     }
     private void ExploreCriticalFailRewardEffect(InteractionState state) {
@@ -226,8 +226,8 @@ public class ExploreEvent : Interaction {
         }
         //**Mechanic**: Character dies.
         _characterInvolved.Death();
-        if (investigatorMinion != null) {
-            investigatorMinion.LevelUp();
+        if (investigatorCharacter != null) {
+            investigatorCharacter.LevelUp();
         }
     }
 

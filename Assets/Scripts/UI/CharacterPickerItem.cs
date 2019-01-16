@@ -3,9 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class CharacterPickerItem : ObjectPickerItem<Character> {
+public class CharacterPickerItem : ObjectPickerItem<Character>, IPointerClickHandler {
 
     public Action<Character> onClickAction;
 
@@ -30,9 +31,18 @@ public class CharacterPickerItem : ObjectPickerItem<Character> {
         subLbl.text = Utilities.GetNormalizedSingularRace(character.race) + " " + character.characterClass.className;
     }
 
-    public void OnClick() {
+    private void OnClick() {
         if (onClickAction != null) {
             onClickAction.Invoke(character);
+        }
+    }
+
+    public void OnPointerClick(PointerEventData eventData) {
+        if (eventData.button == PointerEventData.InputButton.Right) {
+            //Debug.Log("Right clicked character portrait!");
+            portrait.OnRightClick();
+        } else {
+            OnClick();
         }
     }
 }

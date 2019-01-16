@@ -20,7 +20,11 @@ public class PatrolAction : Interaction {
     private const string Normal_Character_Injured_Patroller = "Normal Character Injured Patroller";
     private const string Normal_Patrol_Failed = "Normal Patrol Failed";
 
-    private Character targetCharacter;
+    private Character _targetCharacter;
+
+    public override Character targetCharacter {
+        get { return _targetCharacter; }
+    }
 
     public PatrolAction(BaseLandmark interactable) 
         : base(interactable, INTERACTION_TYPE.PATROL_ACTION, 0) {
@@ -106,7 +110,7 @@ public class PatrolAction : Interaction {
                     }
                 },
                 jobNeeded = JOB.INSTIGATOR,
-                doesNotMeetRequirementsStr = "Minion must be an instigator",
+                doesNotMeetRequirementsStr = "Must have instigator minion."
             };
             ActionOption pursuade = new ActionOption {
                 interactionState = state,
@@ -114,7 +118,7 @@ public class PatrolAction : Interaction {
                 name = "Pursuade to stop " + Utilities.GetPronounString(_characterInvolved.gender, PRONOUN_TYPE.POSSESSIVE, false) + " patrol.",
                 effect = () => PursuadeOptionEffect(state),
                 jobNeeded = JOB.DEBILITATOR,
-                doesNotMeetRequirementsStr = "Minion must be a dissuader",
+                doesNotMeetRequirementsStr = "Must have dissuader minion."
             };
             ActionOption doNothing = new ActionOption {
                 interactionState = state,
@@ -136,7 +140,7 @@ public class PatrolAction : Interaction {
         int tokenChance = 0;
         SetTargetCharacter(state.assignedCharacter.character);
         CombatManager.Instance.GetCombatWeightsOfTwoLists(_characterInvolved.currentParty.characters,
-            targetCharacter.currentParty.characters, out patrollerChance, out tokenChance);
+            _targetCharacter.currentParty.characters, out patrollerChance, out tokenChance);
         WeightedDictionary<string> combatResults = new WeightedDictionary<string>();
         combatResults.AddElement("Patroller Won", patrollerChance);
         combatResults.AddElement("Patroller Lost", tokenChance);
@@ -154,11 +158,11 @@ public class PatrolAction : Interaction {
             default:
                 break;
         }
-        investigatorMinion.LevelUp();
+        investigatorCharacter.LevelUp();
         SetCurrentState(_states[nextStateWeights.PickRandomElementGivenWeights()]);
     }
     private void PursuadeOptionEffect(InteractionState state) {
-        WeightedDictionary<RESULT> dissuaderSuccessRate = investigatorMinion.character.job.GetJobRateWeights();
+        WeightedDictionary<RESULT> dissuaderSuccessRate = investigatorCharacter.job.GetJobRateWeights();
         dissuaderSuccessRate.RemoveElement(RESULT.CRITICAL_FAIL);
 
         string nextState = string.Empty;
@@ -170,11 +174,11 @@ public class PatrolAction : Interaction {
             if (patrollerSuccessRate.PickRandomElementGivenWeights() == RESULT.SUCCESS) {
                 //**Mechanics**: Combat Patroller vs Selected Character
                 SetTargetCharacter(GetTargetCharacter());
-                if (targetCharacter != null) {
+                if (_targetCharacter != null) {
                     int patrollerChance = 0;
                     int targetCharacterChance = 0;
                     CombatManager.Instance.GetCombatWeightsOfTwoLists(_characterInvolved.currentParty.characters,
-                        targetCharacter.currentParty.characters, out patrollerChance, out targetCharacterChance);
+                        _targetCharacter.currentParty.characters, out patrollerChance, out targetCharacterChance);
                     WeightedDictionary<string> combatResults = new WeightedDictionary<string>();
                     combatResults.AddElement("Patroller Won", patrollerChance);
                     combatResults.AddElement("Patroller Lost", targetCharacterChance);
@@ -209,16 +213,16 @@ public class PatrolAction : Interaction {
         if (patrollerSuccessRate.PickRandomElementGivenWeights() == RESULT.SUCCESS) {
             //**Mechanics**: Combat Patroller vs Selected Character
             SetTargetCharacter(GetTargetCharacter());
-            if (targetCharacter != null) {
+            if (_targetCharacter != null) {
                 int patrollerChance = 0;
                 int targetCharacterChance = 0;
                 CombatManager.Instance.GetCombatWeightsOfTwoLists(_characterInvolved.currentParty.characters,
-                    targetCharacter.currentParty.characters, out patrollerChance, out targetCharacterChance);
+                    _targetCharacter.currentParty.characters, out patrollerChance, out targetCharacterChance);
                 WeightedDictionary<string> combatResults = new WeightedDictionary<string>();
                 combatResults.AddElement("Patroller Won", patrollerChance);
                 combatResults.AddElement("Patroller Lost", targetCharacterChance);
                 if (patrollerChance <= 0 && targetCharacterChance <= 0) {
-                    throw new System.Exception("Both patroller and target has no chance to win combat! Patroller is " + _characterInvolved.name + ". Target is " + targetCharacter.name + ".");
+                    throw new System.Exception("Both patroller and target has no chance to win combat! Patroller is " + _characterInvolved.name + ". Target is " + _targetCharacter.name + ".");
                 }
                 WeightedDictionary<string> nextStateWeights = new WeightedDictionary<string>();
                 switch (combatResults.PickRandomElementGivenWeights()) {
@@ -247,131 +251,131 @@ public class PatrolAction : Interaction {
     #region Reward Effects
     private void RevealedPatrollerKilledCharacter(InteractionState state) {
         //**Mechanics**: Character is killed. Reduce relationship between the two factions.
-        AdjustFactionsRelationship(_characterInvolved.faction, targetCharacter.faction, -1, state);
-        targetCharacter.Death();
+        AdjustFactionsRelationship(_characterInvolved.faction, _targetCharacter.faction, -1, state);
+        _targetCharacter.Death();
         //**Level Up**: Patroller +1
         _characterInvolved.LevelUp();
 
-        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     private void RevealedPatrollerInjuredCharacter(InteractionState state) {
         //**Mechanics**: Character gains Injured.
-        targetCharacter.AddTrait(AttributeManager.Instance.allTraits["Injured"]);
+        _targetCharacter.AddTrait(AttributeManager.Instance.allTraits["Injured"]);
 
         //**Level Up**: Patroller +1
         _characterInvolved.LevelUp();
 
-        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     private void RevealedCharacterKilledPatroller(InteractionState state) {
         //**Mechanics**: Patroller is killed. Reduce relationship between the two factions.
-        AdjustFactionsRelationship(_characterInvolved.faction, targetCharacter.faction, -1, state);
+        AdjustFactionsRelationship(_characterInvolved.faction, _targetCharacter.faction, -1, state);
         _characterInvolved.Death();
 
         //**Level Up**: Character +1
-        targetCharacter.LevelUp();
+        _targetCharacter.LevelUp();
 
-        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     private void RevealedCharacterInjuredPatroller(InteractionState state) {
         //**Mechanics**: Patroller gains Injured.
         _characterInvolved.AddTrait(AttributeManager.Instance.allTraits["Injured"]);
 
         //**Level Up**: Character +1
-        targetCharacter.LevelUp();
+        _targetCharacter.LevelUp();
 
-        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     private void PursuadedPatrolStopped(InteractionState state) {
         
     }
     private void PursuadedPatrollerKilledCharacter(InteractionState state) {
         //**Mechanics**: Character is killed. Reduce relationship between the two factions.
-        AdjustFactionsRelationship(_characterInvolved.faction, targetCharacter.faction, -1, state);
-        targetCharacter.Death();
+        AdjustFactionsRelationship(_characterInvolved.faction, _targetCharacter.faction, -1, state);
+        _targetCharacter.Death();
 
         //**Level Up**: Character +1
         _characterInvolved.LevelUp();
 
-        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     private void PursuadedPatrollerInjuredCharacter(InteractionState state) {
         //**Mechanics**: Character gains Injured.
-        targetCharacter.AddTrait(AttributeManager.Instance.allTraits["Injured"]);
+        _targetCharacter.AddTrait(AttributeManager.Instance.allTraits["Injured"]);
 
         //**Level Up**: Patroller +1
         _characterInvolved.LevelUp();
 
-        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     private void PursuadedCharacterKilledPatroller(InteractionState state) {
         //**Mechanics**: Patroller is killed. Reduce relationship between the two factions.
-        AdjustFactionsRelationship(_characterInvolved.faction, targetCharacter.faction, -1, state);
+        AdjustFactionsRelationship(_characterInvolved.faction, _targetCharacter.faction, -1, state);
         _characterInvolved.Death();
 
         //**Level Up**: Character +1
-        targetCharacter.LevelUp();
+        _targetCharacter.LevelUp();
     }
     private void PursuadedCharacterInjuredPatroller(InteractionState state) {
         //**Mechanics**: Patroller gains Injured.
         _characterInvolved.AddTrait(AttributeManager.Instance.allTraits["Injured"]);
 
         //**Level Up**: Character +1
-        targetCharacter.LevelUp();
+        _targetCharacter.LevelUp();
 
-        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     private void PursuadedPatrolFailed(InteractionState state) {
 
     }
     private void NormalPatrollerKilledCharacter(InteractionState state) {
         //**Mechanics**: Character is killed. Reduce relationship between the two factions.
-        AdjustFactionsRelationship(_characterInvolved.faction, targetCharacter.faction, -1, state);
-        targetCharacter.Death();
+        AdjustFactionsRelationship(_characterInvolved.faction, _targetCharacter.faction, -1, state);
+        _targetCharacter.Death();
 
         //**Level Up**: Patroller +1
         _characterInvolved.LevelUp();
 
-        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     private void NormalPatrollerInjuredCharacter(InteractionState state) {
         //**Mechanics**: Character gains Injured.
-        targetCharacter.AddTrait(AttributeManager.Instance.allTraits["Injured"]);
+        _targetCharacter.AddTrait(AttributeManager.Instance.allTraits["Injured"]);
 
         //**Level Up**: Patroller +1
         _characterInvolved.LevelUp();
 
-        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     private void NormalCharacterKilledPatroller(InteractionState state) {
         //**Mechanics**: Patroller is killed. Reduce relationship between the two factions.
-        AdjustFactionsRelationship(_characterInvolved.faction, targetCharacter.faction, -1, state);
+        AdjustFactionsRelationship(_characterInvolved.faction, _targetCharacter.faction, -1, state);
         _characterInvolved.Death();
 
         //**Level Up**: Character +1
-        targetCharacter.LevelUp();
+        _targetCharacter.LevelUp();
 
-        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     private void NormalCharacterInjuredPatroller(InteractionState state) {
         //**Mechanics**: Patroller gains Injured.
         _characterInvolved.AddTrait(AttributeManager.Instance.allTraits["Injured"]);
 
         //**Level Up**: Character +1
-        targetCharacter.LevelUp();
+        _targetCharacter.LevelUp();
 
-        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     private void NormalPatrolFailed(InteractionState state) {
 
@@ -411,9 +415,9 @@ public class PatrolAction : Interaction {
     }
 
     private void SetTargetCharacter(Character character) {
-        targetCharacter = character;
-        if (targetCharacter != null) {
-            AddLogFillerToAllStates(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        _targetCharacter = character;
+        if (_targetCharacter != null) {
+            AddLogFillerToAllStates(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
         }
     }
     #endregion

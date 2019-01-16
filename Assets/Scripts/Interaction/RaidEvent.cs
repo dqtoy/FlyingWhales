@@ -65,7 +65,7 @@ public class RaidEvent : Interaction {
                 duration = 0,
                 effect = () => AlertOptionEffect(state),
                 jobNeeded = JOB.DIPLOMAT,
-                doesNotMeetRequirementsStr = "Minion must be a diplomat",
+                doesNotMeetRequirementsStr = "Must have diplomat minion.",
             };
             ActionOption assist = new ActionOption {
                 interactionState = state,
@@ -74,7 +74,7 @@ public class RaidEvent : Interaction {
                 duration = 0,
                 effect = () => AssistOptionEffect(state),
                 jobNeeded = JOB.INSTIGATOR,
-                doesNotMeetRequirementsStr = "Minion must be an instigator",
+                doesNotMeetRequirementsStr = "Must have instigator minion.",
             };
             ActionOption doNothing = new ActionOption {
                 interactionState = state,
@@ -177,7 +177,7 @@ public class RaidEvent : Interaction {
         state.AddLogFiller(new LogFiller(null, obtainedSupply.ToString(), LOG_IDENTIFIER.STRING_1));
     }
     private void AlertedRaidFailRewardEffect(InteractionState state) {
-        investigatorMinion.LevelUp(); //**Level Up**: Diplomat Minion +1
+        investigatorCharacter.LevelUp(); //**Level Up**: Diplomat Minion +1
         //**Mechanics**: Player Relationship +1 on Raided Faction
         interactable.owner.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, 1);
         state.AddLogFiller(new LogFiller(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_1));
@@ -186,7 +186,7 @@ public class RaidEvent : Interaction {
     }
     private void AlertedRaidCriticallyFailRewardEffect(InteractionState state) {
         //**Mechanics**: Raider dies. Player Relationship +1 on Raided Faction
-        investigatorMinion.LevelUp(); //**Level Up**: Diplomat Minion +1
+        investigatorCharacter.LevelUp(); //**Level Up**: Diplomat Minion +1
         _characterInvolved.Death();
 
         //**Mechanics**: Raider dies. Player Relationship +1 on Raided Faction
@@ -197,7 +197,7 @@ public class RaidEvent : Interaction {
     private void AssistedRaidSuccessRewardEffect(InteractionState state) {
         //**Mechanics**: Compute Supply obtained by raider and transfer it to his home area. Player Relationship +1 on Raider Faction
         //**Level Up**: Raider +1, Instigator Minion +1
-        investigatorMinion.LevelUp();
+        investigatorCharacter.LevelUp();
         _characterInvolved.LevelUp();
 
         int obtainedSupply = _characterInvolved.job.GetSupplyObtained(interactable.tileLocation.areaOfTile);
@@ -217,7 +217,7 @@ public class RaidEvent : Interaction {
     }
     private void AssistedRaidFailedRewardEffect(InteractionState state) {
         //**Level Up**: Diplomat Minion +1 (if alerted)
-        investigatorMinion.LevelUp();
+        investigatorCharacter.LevelUp();
         _characterInvolved.faction.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, 1);
 
         state.AddLogFiller(new LogFiller(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1));
@@ -226,7 +226,7 @@ public class RaidEvent : Interaction {
     private void AssistedRaidCriticallyFailedRewardEffect(InteractionState state) {
         //**Mechanics**: Raider dies.
         _characterInvolved.Death();
-        investigatorMinion.LevelUp();
+        investigatorCharacter.LevelUp();
     }
     private void NormalRaidSuccessRewardEffect(InteractionState state) {
         //**Level Up**: Raider Character +1

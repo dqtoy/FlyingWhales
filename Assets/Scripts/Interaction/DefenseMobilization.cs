@@ -41,7 +41,7 @@ public class DefenseMobilization : Interaction {
                 name = "Stop them.",
                 duration = 0,
                 jobNeeded = JOB.DEBILITATOR,
-                doesNotMeetRequirementsStr = "Minion must be Dissuader.",
+                doesNotMeetRequirementsStr = "Must have debilitator minion.",
                 effect = () => StopOption(),
             };
             ActionOption doNothingOption = new ActionOption {
@@ -62,8 +62,8 @@ public class DefenseMobilization : Interaction {
     #region Action Options
     private void StopOption() {
         WeightedDictionary<string> effectWeights = new WeightedDictionary<string>();
-        effectWeights.AddElement(Stop_Mobilization_Successful, investigatorMinion.character.job.GetSuccessRate());
-        effectWeights.AddElement(Stop_Mobilization_Fail, investigatorMinion.character.job.GetFailRate());
+        effectWeights.AddElement(Stop_Mobilization_Successful, investigatorCharacter.job.GetSuccessRate());
+        effectWeights.AddElement(Stop_Mobilization_Fail, investigatorCharacter.job.GetFailRate());
 
         string chosenEffect = effectWeights.PickRandomElementGivenWeights();
         SetCurrentState(_states[chosenEffect]);
@@ -79,7 +79,7 @@ public class DefenseMobilization : Interaction {
 
     #region State Effects
     private void StopMobilizationSuccessEffect(InteractionState state) {
-        investigatorMinion.LevelUp();
+        investigatorCharacter.LevelUp();
     }
     private void StopMobilizationFailEffect(InteractionState state) {
         DefenderGroup newDefenderGroup = CreateNewDefenderGroupFromIdleCharactersInArea();
