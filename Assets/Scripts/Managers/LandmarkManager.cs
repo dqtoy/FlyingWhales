@@ -25,7 +25,7 @@ public class LandmarkManager : MonoBehaviour {
     private Dictionary<LANDMARK_TYPE, LandmarkData> landmarkDataDict;
 
     public RaceClassListDictionary defaultRaceDefenders;
-    public LocationPortraitDictionary locationPortraits; //NOTE: Move this to world creation when time permits.
+    public StringSpriteDictionary locationPortraits; //NOTE: Move this to world creation when time permits.
 
     #region Monobehaviours
     private void Awake() {

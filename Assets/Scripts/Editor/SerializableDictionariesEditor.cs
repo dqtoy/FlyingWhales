@@ -32,7 +32,7 @@ public class JobPortraitFramesDictionaryPropertyDrawer : SerializableDictionaryP
 public class BiomeSpriteAnimationDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(LogReplacerDictionary))]
 public class LogReplacerDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
-[CustomPropertyDrawer(typeof(LocationPortraitDictionary))]
+[CustomPropertyDrawer(typeof(StringSpriteDictionary))]
 public class LocationPortraitDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(FactionEmblemDictionary))]
 public class FactionEmblemDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
