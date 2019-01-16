@@ -207,14 +207,14 @@ public class AreaInvestigation {
         _assignedMinion.SetExploringArea(null);
         SetAssignedMinion(null);
         _currentlyExploredLandmark = null;
-        UIManager.Instance.areaInfoUI.ResetMinionAssignment();
+        //UIManager.Instance.areaInfoUI.ResetMinionAssignment();
     }
     public void UnattackLandmark() {
         _isAttacking = false;
         _assignedMinionAttack.SetAttackingArea(null);
         SetAssignedMinionAttack(null);
         _currentlyAttackedLandmark = null;
-        UIManager.Instance.areaInfoUI.ResetMinionAssignmentParty();
+        //UIManager.Instance.areaInfoUI.ResetMinionAssignmentParty();
     }
     //private void ClickedInteractionTimerButton(BaseLandmark landmark) {
     //    if (_assignedMinion != null && landmark.tileLocation.areaOfTile == _area) {
@@ -277,7 +277,7 @@ public class AreaInvestigation {
         tokenCollector.SetCollectingTokenArea(null);
         SetTokenCollector(null);
         if (UIManager.Instance.areaInfoUI.isShowing && UIManager.Instance.areaInfoUI.activeArea.id == _area.id) {
-            UIManager.Instance.areaInfoUI.ResetTokenCollectorAssignment();
+            //UIManager.Instance.areaInfoUI.ResetTokenCollectorAssignment();
         }
         Messenger.Broadcast(Signals.AREA_TOKEN_COLLECTION_CHANGED, _area);
     }

@@ -13,10 +13,10 @@ public class InvestigateButton : MonoBehaviour {
 
     public void OnClickThis(bool state) {
         if (state) {
-            UIManager.Instance.areaInfoUI.SetCurentSelectedInvestigateButton(this);
+            //UIManager.Instance.areaInfoUI.SetCurentSelectedInvestigateButton(this);
         } else {
             if (!toggle.group.AnyTogglesOn()) {
-                UIManager.Instance.areaInfoUI.SetCurentSelectedInvestigateButton(null);
+                //UIManager.Instance.areaInfoUI.SetCurentSelectedInvestigateButton(null);
             }
         }
     }

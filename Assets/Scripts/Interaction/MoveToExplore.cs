@@ -135,13 +135,13 @@ public class MoveToExplore : Interaction {
                 int weight = 0;
                 if (currArea.owner != null) {
                     if (currArea.owner.id == character.faction.id) {
-                        weight += 10; // Location is owned by the character's faction: Weight +10
-                    } else {
+                        //weight += 10; // Location is owned by the character's faction: Weight +10
+                    } else {    
                         FactionRelationship rel = currArea.owner.GetRelationshipWith(character.faction);
                         if (rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.ENEMY) {
                             weight += 20; //Location is owned by an Enemy faction: Weight +20
                         } else {
-                            weight += 50; //Location is owned by a non-Enemy faction: Weight +50
+                            weight += 30; //Location is owned by a non-Enemy faction: Weight +30
                         }
                     }
                 } else {

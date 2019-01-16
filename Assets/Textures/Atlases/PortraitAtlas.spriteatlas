@@ -57,19 +57,30 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 1e82455a81caebb48bcc4204465c36c6, type: 3}
   - {fileID: 21300000, guid: 2abf9aa574b041c479f1d067793a0c33, type: 3}
   - {fileID: 21300000, guid: 7514cfaa8b6928c49ae846264fccba01, type: 3}
+  - {fileID: 21300000, guid: e41ec74344b1b3b44899f7ed500eeeff, type: 3}
   - {fileID: 21300000, guid: 15f890e3e4e2dbe489f30640f9216043, type: 3}
+  - {fileID: 21300000, guid: 9cf9fb20030d8b6408dd1563a08e2045, type: 3}
   - {fileID: 21300000, guid: a34aeae4a70d5274db9c2f551390673f, type: 3}
   - {fileID: 21300000, guid: 76281f5e595b10341a1cfcf28ada49f0, type: 3}
   - {fileID: 21300000, guid: d0bab72205ba05c46a58108cb567e4ed, type: 3}
   - {fileID: 21300000, guid: 76777303e5e4de04ca96fb3200b75bf9, type: 3}
   - {fileID: 21300000, guid: 12f193c25cad8824a978c1a8d9d8377f, type: 3}
   - {fileID: 21300000, guid: 04ef7d1d8eae8034ea5fca1b1cfaf3ea, type: 3}
+  - {fileID: 21300000, guid: 070434e37543e004d98c623ba8080920, type: 3}
   - {fileID: 21300000, guid: 94079e3476351c243b5ce1bc5dfdd56c, type: 3}
   - {fileID: 21300000, guid: 1a3fc1ca90050a74aa21609e4eeb7ebc, type: 3}
+  - {fileID: 21300000, guid: 4f117727fece67040a6c3082f72b0111, type: 3}
   - {fileID: 21300000, guid: fd831390331f6a9438bcbbdbc410df2b, type: 3}
+  - {fileID: 21300000, guid: de2218b3503e67748a7bb0a94e722a5b, type: 3}
+  - {fileID: 21300000, guid: 4ceb2b47beb2817498a263252bf1e68f, type: 3}
   - {fileID: 21300000, guid: c18f5d6f944cfbc48819debe987cdaba, type: 3}
+  - {fileID: 21300000, guid: 8f57444b93359594096b1dd546244094, type: 3}
   - {fileID: 21300000, guid: f261d9fe21365c246a0f3849c9c58ca8, type: 3}
   - {fileID: 21300000, guid: b1facc086f831d64990f9d4056411274, type: 3}
+  - {fileID: 21300000, guid: 383ae1de09e8119428f08e6cb2fb1bc5, type: 3}
+  - {fileID: 21300000, guid: 6f75ba663ebe87c429d4a71a991f723b, type: 3}
+  - {fileID: 21300000, guid: 3ea140c9cdcc60b46a257c943a010d0c, type: 3}
+  - {fileID: 21300000, guid: 8b69e1c43d456b1479f998800d8a6f31, type: 3}
   - {fileID: 21300000, guid: 95fdf5d018ae0a44f8f6c14311eacbf7, type: 3}
   - {fileID: 21300000, guid: 7cbb3446f1ca8a64b8c1e2f0e6649137, type: 3}
   - {fileID: 21300000, guid: 0eee50aade62d9146b483bfbfd3b234b, type: 3}
@@ -80,17 +91,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 0958b75698307094fb50c3c54dd47799, type: 3}
   - {fileID: 21300000, guid: 3be87161752773b42818660252d1dccb, type: 3}
   - {fileID: 21300000, guid: 882d2ae67ca6c4242b8bc08270a4dd0c, type: 3}
-  - {fileID: 21300000, guid: de065925292803e41918d3489cbfaf40, type: 3}
-  - {fileID: 21300000, guid: ae076f5ba3e7ec242be227bfeee11dfe, type: 3}
-  - {fileID: 21300000, guid: 5b5fd7dfb6c09fe419150cfdc5f8493e, type: 3}
-  - {fileID: 21300000, guid: e7f267b27fc9d0540bfde09eb7615d39, type: 3}
-  - {fileID: 21300000, guid: b30af01a1bcb4a446aa708207bfcee38, type: 3}
-  - {fileID: 21300000, guid: 4d6cd19941e19a14c8803b0509b32866, type: 3}
-  - {fileID: 21300000, guid: d8fad059b8ecabe41a647fb0bf810b5c, type: 3}
-  - {fileID: 21300000, guid: b728ca31f80c045498540a439b457efb, type: 3}
-  - {fileID: 21300000, guid: 8508cc219c2f52a4eb35f23afe659c70, type: 3}
-  - {fileID: 21300000, guid: 1a744fd672e8a5845bb49e214b4dfbc1, type: 3}
-  - {fileID: 21300000, guid: b2c69e79d3587374c8666bd30defd411, type: 3}
   - {fileID: 21300000, guid: c29537a92c447b245a8366b7eb41be4f, type: 3}
   - {fileID: 21300000, guid: 1b2543ea6fe624447a93bb7c092ec762, type: 3}
   - {fileID: 21300000, guid: 69923ae63c671ce4688429533b6782e3, type: 3}
@@ -396,19 +396,30 @@ SpriteAtlas:
   - portrait_border_locked_dissuader
   - portrait_border_locked_instigator
   - portrait_border_locked_diplomat
+  - location_cindermaul_portrait
   - portrait_container_green_default
+  - location_narris_portrait
   - demon_lust_portrait
   - portrait_container_pink_default
   - demon_sloth_portrait
   - portrait_container_yellow_default
   - demon_envy_portrait
   - demon_pride_portrait
+  - location_redheart_portrait
   - portrait_container_purple_default
   - portrait_container_red_default
+  - location_portal_portrait
   - portrait_container_brown_default
+  - location_odiouslair_portrait
+  - location_triangle_portrait
   - portrait_container_gray_locked
+  - location_cardell_portrait
   - demon_greed_portrait
   - portrait_container_blue_default
+  - location_blisteringhollow_portrait
+  - location_pitthize_portrait
+  - location_gloomhollow_portrait
+  - location_radisle_portrait
   - portrait_border_drag
   - portrait_border_drag
   - portrait_bg_instigator
@@ -419,17 +430,6 @@ SpriteAtlas:
   - portrait_bg_spy
   - portrait_bg_worker
   - portrait_bg_diplomat
-  - icon_blistering_hollow
-  - icon_odious_lair
-  - icon_portal
-  - icon_redheart_den
-  - icon_radisle_cavern
-  - icon_cindermaul_hideout
-  - icon_pitthize
-  - icon_narris
-  - icon_cardell
-  - icon_tessellated_triangle
-  - icon_gloomhollow_crypts
   - av-h_f-nose-9
   - av-e_m-mouth-9
   - av-h_f-nose-8

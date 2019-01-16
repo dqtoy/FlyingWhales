@@ -73,6 +73,14 @@ public class UseItemOnCharacter : Interaction {
             state.SetDefaultOption(doNothing);
         }
     }
+    public override bool CanInteractionBeDoneBy(Character character) {
+        if (character.tokenInInventory == null 
+            || character.tokenInInventory != _tokenToBeUsed 
+            || _tokenToBeUsed.GetTargetCharacterFor(character) == null) {
+            return false;
+        }
+        return base.CanInteractionBeDoneBy(character);
+    }
     #endregion
 
     #region Option Effects

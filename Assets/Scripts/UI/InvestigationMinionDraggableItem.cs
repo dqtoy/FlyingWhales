@@ -47,9 +47,9 @@ public class InvestigationMinionDraggableItem : DraggableItem {
                 }
                 if (UIManager.Instance.areaInfoUI.isShowing) {
                     if (_index == -1) {
-                        UIManager.Instance.areaInfoUI.AssignMinionToInvestigate(null);
+                        //UIManager.Instance.areaInfoUI.AssignMinionToInvestigate(null);
                     } else if (_index == -2) {
-                        UIManager.Instance.areaInfoUI.AssignMinionToTokenCollection(null);
+                        //UIManager.Instance.areaInfoUI.AssignMinionToTokenCollection(null);
                     } else {
                         //UIManager.Instance.areaInfoUI.AssignPartyMinionToInvestigate(null, _index);
                     }

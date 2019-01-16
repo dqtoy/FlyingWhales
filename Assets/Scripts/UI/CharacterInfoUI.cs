@@ -547,7 +547,7 @@ public class CharacterInfoUI : UIMenu {
         for (int i = 0; i < inventoryItemContainers.Length; i++) {
             ItemContainer currContainer = inventoryItemContainers[i];
             Item currInventoryItem = inventory.ElementAtOrDefault(i);
-            currContainer.SetItem(currInventoryItem);
+            //currContainer.SetItem(currInventoryItem);
         }
     }
     #endregion

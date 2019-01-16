@@ -632,6 +632,9 @@ public class UIManager : MonoBehaviour {
         } else if (playerLandmarkInfoUI.isShowing) {
             lastOpenedMenu = playerLandmarkInfoUI;
         }
+        //if (objectPicker.gameObject.activeSelf) {
+        //    HideObjectPicker();
+        //}
         //HideMenus();
         if (areaInfoUI.isShowing) {
             areaInfoUI.gameObject.SetActive(false);
@@ -770,7 +773,7 @@ public class UIManager : MonoBehaviour {
         }
         areaInfoUI.SetData(area);
         areaInfoUI.OpenMenu();
-        areaInfoUI.UpdateInvestigation(indexToggleToBeActivated);
+        //areaInfoUI.UpdateInvestigation(indexToggleToBeActivated);
         areaInfoUI.CenterOnCoreLandmark();
         //		playerActionsUI.ShowPlayerActionsUI ();
     }
