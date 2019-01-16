@@ -31,7 +31,7 @@ public class BiomeSpriteAnimationDictionary : SerializableDictionary<Sprite, Run
 [System.Serializable]
 public class LogReplacerDictionary : SerializableDictionary<string, LOG_IDENTIFIER> { }
 [System.Serializable]
-public class LocationPortraitDictionary : SerializableDictionary<string, Sprite> { }
+public class StringSpriteDictionary : SerializableDictionary<string, Sprite> { }
 [System.Serializable]
 public class FactionEmblemDictionary : SerializableDictionary<int, Sprite> { }
 [System.Serializable]

@@ -36,6 +36,7 @@ public class CharacterManager : MonoBehaviour {
     [SerializeField] private List<RacePortraitAssets> portraitAssets;
     public List<Color> hairColors;
     [SerializeField] private JobPortraitFramesDictionary portraitFrames;
+    [SerializeField] private StringSpriteDictionary demonPortraits;
 
     [Header("Character Role Animators")]
     [SerializeField] private RuntimeAnimatorController[] characterAnimators;
@@ -632,6 +633,12 @@ public class CharacterManager : MonoBehaviour {
             return portraitFrames[job];
         }
         throw new System.Exception("There is no frame for job " + job.ToString());
+    }
+    public Sprite GetDemonPortraitSprite(string className) {
+        if (demonPortraits.ContainsKey(className)) {
+            return demonPortraits[className];
+        }
+        return null;
     }
     #endregion
 
