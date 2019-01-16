@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SpreadUndeathAction : Interaction {
 
-    private Character targetCharacter;
+    private Character _targetCharacter;
 
     private const string Assisted_Conversion_Success = "Assisted Conversion Success";
     private const string Assisted_Conversion_Fail = "Assisted Conversion Fail";
@@ -17,6 +17,10 @@ public class SpreadUndeathAction : Interaction {
     private const string Normal_Conversion_Success = "Normal Conversion Success";
     private const string Normal_Conversion_Fail = "Normal Conversion Fail";
     private const string Normal_Conversion_Critical_Fail = "Normal Conversion Critical Fail";
+
+    public override Character targetCharacter {
+        get { return _targetCharacter; }
+    }
 
     public SpreadUndeathAction(BaseLandmark interactable) 
         : base(interactable, INTERACTION_TYPE.SPREAD_UNDEATH_ACTION, 0) {
@@ -41,7 +45,7 @@ public class SpreadUndeathAction : Interaction {
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
         startStateDescriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
-        startStateDescriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        startStateDescriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 
         CreateActionOptions(startState);
@@ -80,7 +84,7 @@ public class SpreadUndeathAction : Interaction {
                 name = "Assist with the conversion.",
                 effect = () => AssistOptionEffect(state),
                 jobNeeded = JOB.INSTIGATOR,
-                doesNotMeetRequirementsStr = "Minion must be an instigator",
+                doesNotMeetRequirementsStr = "Must have instigator minion.",
             };
             ActionOption thwart = new ActionOption {
                 interactionState = state,
@@ -88,7 +92,7 @@ public class SpreadUndeathAction : Interaction {
                 name = "Thwart the convertion.",
                 effect = () => ThwartOptionEffect(state),
                 jobNeeded = JOB.DIPLOMAT,
-                doesNotMeetRequirementsStr = "Minion must be a diplomat",
+                doesNotMeetRequirementsStr = "Must have diplomat minion.",
             };
             ActionOption doNothing = new ActionOption {
                 interactionState = state,
@@ -170,118 +174,118 @@ public class SpreadUndeathAction : Interaction {
     #region Reward Effect
     private void AssistedConversionSuccessRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             state.descriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
-            state.descriptionLog.AddToFillers(targetCharacter.faction, targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_2);
+            state.descriptionLog.AddToFillers(_targetCharacter.faction, _targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_2);
         }
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
         state.AddLogFiller(new LogFiller(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1));
-        state.AddLogFiller(new LogFiller(targetCharacter.faction, targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_2));
+        state.AddLogFiller(new LogFiller(_targetCharacter.faction, _targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_2));
 
 
         //**Mechanics**: Relationship between the two factions -1
-        AdjustFactionsRelationship(targetCharacter.faction, _characterInvolved.faction, -1, state);
+        AdjustFactionsRelationship(_targetCharacter.faction, _characterInvolved.faction, -1, state);
 
         /* Mechanics**: Transfer Character 2 to Character 1's Faction. 
          * Change its home to be the same as Character 1's home Area. 
          * Override his next action as https://trello.com/c/PTkSE6DZ/439-character-move-to-return-home
          * Change Character 2's race to Skeleton.
          */
-        TransferCharacter(targetCharacter, _characterInvolved.faction);
+        TransferCharacter(_targetCharacter, _characterInvolved.faction);
         //**Level Up**: Converter Character +1, Instigator Minion +1
         _characterInvolved.LevelUp();
-        investigatorMinion.LevelUp();
+        investigatorCharacter.LevelUp();
     }
     private void AssistedConversionFailRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         }
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     private void AssistedConversionCriticalFailRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         }
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
         //**Mechanics**: Character Name 1 dies.
         _characterInvolved.Death();
     }
     private void ThwartedConversionSuccessRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             state.descriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
         }
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
         state.AddLogFiller(new LogFiller(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1));
 
         /* Mechanics**: Transfer Character 2 to Character 1's Faction. 
          * Change its home to be the same as Character 1's home Area. 
          * Override his next action as https://trello.com/c/PTkSE6DZ/439-character-move-to-return-home
          */
-        TransferCharacter(targetCharacter, _characterInvolved.faction);
+        TransferCharacter(_targetCharacter, _characterInvolved.faction);
         //**Level Up**: Converter Character +1
         _characterInvolved.LevelUp();
     }
     private void ThwartedConversionFailRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-            state.descriptionLog.AddToFillers(targetCharacter.faction, targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_2);
+            state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            state.descriptionLog.AddToFillers(_targetCharacter.faction, _targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_2);
         }
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
-        state.AddLogFiller(new LogFiller(targetCharacter.faction, targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_2));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_targetCharacter.faction, _targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_2));
 
         //**Level Up**: Diplomat Minion +1
-        investigatorMinion.LevelUp();
+        investigatorCharacter.LevelUp();
         //**Mechanics**: Player relationship with abductee's faction +1
-        AdjustFactionsRelationship(PlayerManager.Instance.player.playerFaction, targetCharacter.faction, 1, state);
+        AdjustFactionsRelationship(PlayerManager.Instance.player.playerFaction, _targetCharacter.faction, 1, state);
     }
     private void ThwartedConversionCriticalFailRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-            state.descriptionLog.AddToFillers(targetCharacter.faction, targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_2);
+            state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            state.descriptionLog.AddToFillers(_targetCharacter.faction, _targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_2);
         }
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
-        state.AddLogFiller(new LogFiller(targetCharacter.faction, targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_2));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_targetCharacter.faction, _targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_2));
 
         //**Mechanics**: Player relationship with abductee's faction +1
-        AdjustFactionsRelationship(PlayerManager.Instance.player.playerFaction, targetCharacter.faction, 1, state);
+        AdjustFactionsRelationship(PlayerManager.Instance.player.playerFaction, _targetCharacter.faction, 1, state);
 
         //**Mechanics**: Character Name 1 dies.
         _characterInvolved.Death();
 
         //**Level Up**: Diplomat Minion +1
-        investigatorMinion.LevelUp();
+        investigatorCharacter.LevelUp();
     }
     private void NormalConversionSuccessRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             state.descriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
         }
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
         state.AddLogFiller(new LogFiller(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1));
 
         //**Mechanics**: Relationship between the two factions -1
-        AdjustFactionsRelationship(targetCharacter.faction, _characterInvolved.faction, -1, state);
+        AdjustFactionsRelationship(_targetCharacter.faction, _characterInvolved.faction, -1, state);
 
         /* Mechanics**: Transfer Character 2 to Character 1's Faction. 
          * Change its home to be the same as Character 1's home Area. 
          * Override his next action as https://trello.com/c/PTkSE6DZ/439-character-move-to-return-home
          */
-        TransferCharacter(targetCharacter, _characterInvolved.faction);
+        TransferCharacter(_targetCharacter, _characterInvolved.faction);
         //**Level Up**: Charmer Character +1
         _characterInvolved.LevelUp();
     }
     private void NormalConversionFailRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         }
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     private void NormalConversionCriticalFailRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         }
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
         //**Mechanics**: Character Name 1 dies.
         _characterInvolved.Death();
@@ -299,7 +303,7 @@ public class SpreadUndeathAction : Interaction {
     }
 
     public void SetTargetCharacter(Character targetCharacter) {
-        this.targetCharacter = targetCharacter;
+        this._targetCharacter = targetCharacter;
     }
     public Character GetTargetCharacter(Character characterInvolved) {
         WeightedDictionary<Character> characterWeights = new WeightedDictionary<Character>();

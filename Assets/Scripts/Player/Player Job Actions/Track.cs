@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class Track : PlayerJobAction {
 
-    private object target;
-    private JOB_ACTION_TARGET currentTargetType;
+    public object target { get; private set; }
+    public JOB_ACTION_TARGET currentTargetType { get; private set; }
 
     public Track() {
         actionName = "Track";
@@ -18,13 +18,15 @@ public class Track : PlayerJobAction {
         base.ActivateAction(assignedCharacter, targetArea);
         currentTargetType = JOB_ACTION_TARGET.AREA;
         target = targetArea;
+        targetArea.SetTrackedState(true);
+        Debug.Log(GameManager.Instance.TodayLogString() + assignedCharacter.name + " is now tracking " + targetArea.name);
         SetSubText("Currently tracking " + targetArea.name);
     }
     public override void ActivateAction(Character assignedCharacter, Character targetCharacter) {
+        base.ActivateAction(assignedCharacter, targetCharacter);
         currentTargetType = JOB_ACTION_TARGET.CHARACTER;
         target = targetCharacter;
         targetCharacter.ownParty.icon.SetVisualState(true);
-        base.ActivateAction(assignedCharacter, targetCharacter);
         Debug.Log(GameManager.Instance.TodayLogString() + assignedCharacter.name + " is now tracking " + targetCharacter.name);
         SetSubText("Currently tracking " + targetCharacter.name);
     }
@@ -32,12 +34,14 @@ public class Track : PlayerJobAction {
         base.DeactivateAction();
         if (target is Character) {
             (target as Character).ownParty.icon.SetVisualState(false);
+        } else if (target is Area) {
+            (target as Area).SetTrackedState(false);
         }
         currentTargetType = JOB_ACTION_TARGET.NONE;
         target = null;
         SetSubText(string.Empty);
     }
-    public override bool ShouldButtonBeInteractable(Character character, Character targetCharacter) {
+    protected override bool ShouldButtonBeInteractable(Character character, Character targetCharacter) {
         if (targetCharacter.isDead) {
             return false;
         }
@@ -50,6 +54,14 @@ public class Track : PlayerJobAction {
             }
         }
         return base.ShouldButtonBeInteractable(character, targetCharacter);
+    }
+    protected override bool ShouldButtonBeInteractable(Character character, Area targetArea) {
+        if (currentTargetType != JOB_ACTION_TARGET.NONE) {
+            if (target is Area && targetArea.id == (target as Area).id) {
+                return false;
+            }
+        }
+        return base.ShouldButtonBeInteractable(character, targetArea);
     }
     protected override void OnCharacterDied(Character characterThatDied) {
         base.OnCharacterDied(characterThatDied);

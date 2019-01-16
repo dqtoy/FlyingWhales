@@ -71,7 +71,7 @@ public class ScavengeEvent : Interaction {
                 duration = 0,
                 effect = () => LayTrapOptionEffect(state),
                 jobNeeded = JOB.INSTIGATOR,
-                doesNotMeetRequirementsStr = "Minion must be a instigator",
+                doesNotMeetRequirementsStr = "Must have instigator minion."
             };
             ActionOption assist = new ActionOption {
                 interactionState = state,
@@ -80,7 +80,7 @@ public class ScavengeEvent : Interaction {
                 duration = 0,
                 effect = () => AssistOptionEffect(state),
                 jobNeeded = JOB.DIPLOMAT,
-                doesNotMeetRequirementsStr = "Minion must be a diplomat",
+                doesNotMeetRequirementsStr = "Must have diplomat minion."
             };
             ActionOption doNothing = new ActionOption {
                 interactionState = state,
@@ -102,7 +102,7 @@ public class ScavengeEvent : Interaction {
         WeightedDictionary<RESULT> scavengerResultWeights = _characterInvolved.job.GetJobRateWeights();
         if (this.isChosen) {
             //Compute Scavenger success rate (Minion Instigator Success = +30 to Fail Rate, +20 to Critical Fail Rate)
-            WeightedDictionary<RESULT> minionResultWeights = investigatorMinion.character.job.GetJobRateWeights();
+            WeightedDictionary<RESULT> minionResultWeights = investigatorCharacter.job.GetJobRateWeights();
             if (minionResultWeights.PickRandomElementGivenWeights() == RESULT.SUCCESS) {
                 scavengerResultWeights.AddWeightToElement(RESULT.FAIL, 30);
             } else {
@@ -172,15 +172,15 @@ public class ScavengeEvent : Interaction {
         state.AddLogFiller(new LogFiller(null, obtainedSupply.ToString(), LOG_IDENTIFIER.STRING_1));
     }
     private void TrappedScavengeFailRewardEffect(InteractionState state) {
-        investigatorMinion.LevelUp();
+        investigatorCharacter.LevelUp();
     }
     private void TrappedScavengeCriticalFailRewardEffect(InteractionState state) {
         //**Mechanics**: Scavenger dies.
-        investigatorMinion.LevelUp();
+        investigatorCharacter.LevelUp();
         _characterInvolved.Death();
     }
     private void AssistedScavengeSuccessRewardEffect(InteractionState state) {
-        investigatorMinion.LevelUp();
+        investigatorCharacter.LevelUp();
         _characterInvolved.LevelUp();
 
         int obtainedSupply = (_characterInvolved.job as Raider).GetSupplyObtained(interactable.tileLocation.areaOfTile);
@@ -202,7 +202,7 @@ public class ScavengeEvent : Interaction {
     }
     private void AssistedScavengeCriticallyFailRewardEffect(InteractionState state) {
         _characterInvolved.Death(); 
-        investigatorMinion.LevelUp();
+        investigatorCharacter.LevelUp();
     }
     private void NormalScavengeSuccessRewardEffect(InteractionState state) {
         //**Mechanics**: Compute Supply obtained by scavenger and transfer it to his home area. Scavenger also travels back to his home area.

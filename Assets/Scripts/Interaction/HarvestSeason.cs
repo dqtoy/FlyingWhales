@@ -96,7 +96,7 @@ public class HarvestSeason : Interaction {
 
     #region Action Option Effects
     private void BurnOptionEffect(InteractionState state) {
-        WeightedDictionary<RESULT> resultWeights = investigatorMinion.character.job.GetJobRateWeights();
+        WeightedDictionary<RESULT> resultWeights = investigatorCharacter.job.GetJobRateWeights();
         resultWeights.RemoveElement(RESULT.CRITICAL_FAIL);
         string nextState = string.Empty;
         switch (resultWeights.PickRandomElementGivenWeights()) {
@@ -112,7 +112,7 @@ public class HarvestSeason : Interaction {
         SetCurrentState(_states[nextState]);
     }
     private void PoisonOptionEffect(InteractionState state) {
-        WeightedDictionary<RESULT> resultWeights = investigatorMinion.character.job.GetJobRateWeights();
+        WeightedDictionary<RESULT> resultWeights = investigatorCharacter.job.GetJobRateWeights();
         resultWeights.RemoveElement(RESULT.CRITICAL_FAIL);
         string nextState = string.Empty;
         switch (resultWeights.PickRandomElementGivenWeights()) {
@@ -128,7 +128,7 @@ public class HarvestSeason : Interaction {
         SetCurrentState(_states[nextState]);
     }
     private void StealOptionEffect(InteractionState state) {
-        WeightedDictionary<RESULT> resultWeights = investigatorMinion.character.job.GetJobRateWeights();
+        WeightedDictionary<RESULT> resultWeights = investigatorCharacter.job.GetJobRateWeights();
         string nextState = string.Empty;
         switch (resultWeights.PickRandomElementGivenWeights()) {
             case RESULT.SUCCESS:
@@ -155,7 +155,7 @@ public class HarvestSeason : Interaction {
         GameDate dueDate = GameManager.Instance.Today();
         dueDate.AddMonths(5);
         //farm.DisableSupplyProductionUntil(dueDate);
-        investigatorMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1)); //**Reward**: Demon gains Exp 1
+        investigatorCharacter.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1)); //**Reward**: Demon gains Exp 1
     }
     private void BurnFarmFailRewardEffect(InteractionState state) {
         //**Effect**: Kill a random Farmer staying at that farm, City gains Supply Cache 1
@@ -167,11 +167,11 @@ public class HarvestSeason : Interaction {
         state.AddLogFiller(new LogFiller(chosenFarmer, chosenFarmer.name, LOG_IDENTIFIER.TARGET_CHARACTER));
         chosenFarmer.Death();
         farm.tileLocation.areaOfTile.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Supply_Cache_Reward_1));
-        investigatorMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1)); //**Reward**: Demon gains Exp 1
+        investigatorCharacter.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1)); //**Reward**: Demon gains Exp 1
     }
     private void PoisonCropsSuccessRewardEffect(InteractionState state) {
         //**Reward**: Supply Cache 1, Demon gains Exp 1
-        investigatorMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
+        investigatorCharacter.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
         Reward reward = InteractionManager.Instance.GetReward(InteractionManager.Supply_Cache_Reward_1);
         PlayerManager.Instance.player.ClaimReward(reward);
         farm.tileLocation.areaOfTile.PayForReward(reward);
@@ -180,7 +180,7 @@ public class HarvestSeason : Interaction {
         //**Effect**: Faction declares war vs player, City gains Supply Cache 1
         FactionManager.Instance.DeclareWarBetween(farm.tileLocation.areaOfTile.owner, PlayerManager.Instance.player.playerFaction);
         farm.tileLocation.areaOfTile.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Supply_Cache_Reward_1));
-        investigatorMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1)); //**Reward**: Demon gains Exp 1
+        investigatorCharacter.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1)); //**Reward**: Demon gains Exp 1
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(farm.tileLocation.areaOfTile.owner, farm.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
         }
@@ -190,19 +190,19 @@ public class HarvestSeason : Interaction {
         //City gains Supply Cache 1
         farm.tileLocation.areaOfTile.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Supply_Cache_Reward_1));
         //**Effect**: Demon is removed from Minion List
-        PlayerManager.Instance.player.RemoveMinion(investigatorMinion);
+        PlayerManager.Instance.player.RemoveMinion(investigatorCharacter.minion);
     }
     private void StealCropsFailRewardEffect(InteractionState state) {
         //City gains Supply Cache 1
         farm.tileLocation.areaOfTile.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Supply_Cache_Reward_1));
         //**Effect**: Demon is removed from Minion List
-        PlayerManager.Instance.player.RemoveMinion(investigatorMinion);
+        PlayerManager.Instance.player.RemoveMinion(investigatorCharacter.minion);
     }
     private void StealCropsCriticalFailRewardEffect(InteractionState state) {
         //City gains Supply Cache 1
         farm.tileLocation.areaOfTile.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Supply_Cache_Reward_1));
         //**Effect**: Demon is removed from Minion List
-        PlayerManager.Instance.player.RemoveMinion(investigatorMinion);
+        PlayerManager.Instance.player.RemoveMinion(investigatorCharacter.minion);
     }
     private void DoNothingRewardEffect(InteractionState state) {
         //**Effect**: City gains Supply Cache 1

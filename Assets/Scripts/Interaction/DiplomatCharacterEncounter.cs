@@ -46,7 +46,7 @@ public class DiplomatCharacterEncounter : Interaction {
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Train " + Utilities.GetPronounString(_characterInvolved.gender, PRONOUN_TYPE.OBJECTIVE, false) + ".",
                 enabledTooltipText = _characterInvolved.name + " will level up.",
-                disabledTooltipText = _characterInvolved.name + " is already more powerful than " + investigatorMinion.name + ".",
+                disabledTooltipText = _characterInvolved.name + " is already more powerful than " + investigatorCharacter.name + ".",
                 effect = () => TrainOption(),
             };
             trainOption.canBeDoneAction = () => CanBeTrained(trainOption);
@@ -68,14 +68,14 @@ public class DiplomatCharacterEncounter : Interaction {
 
     #region Action Options
     private bool CanBeTrained(ActionOption option) {
-        if(_characterInvolved.level >= investigatorMinion.character.level) {
+        if(_characterInvolved.level >= investigatorCharacter.level) {
             return false;
         }
         return true;
     }
     private void UseTokenOption(InteractionState state) {
         SpecialToken specialToken = state.assignedSpecialToken;
-        specialToken.CreateJointInteractionStates(this, investigatorMinion.character, _characterInvolved);
+        specialToken.CreateJointInteractionStates(this, investigatorCharacter, _characterInvolved);
         SetCurrentState(_states[specialToken.Item_Used]);
     }
     private void TrainOption() {
@@ -88,7 +88,7 @@ public class DiplomatCharacterEncounter : Interaction {
 
     #region State Effects
     private void TrainCharacterEffect(InteractionState state) {
-        investigatorMinion.LevelUp();
+        investigatorCharacter.LevelUp();
         characterInvolved.LevelUp();
     }
     private void DoNothingEffect(InteractionState state) {

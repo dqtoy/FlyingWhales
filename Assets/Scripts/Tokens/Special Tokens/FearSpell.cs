@@ -84,10 +84,10 @@ public class FearSpell : SpecialToken {
             target.SetForcedInteraction(interaction);
         }
 
-        state.descriptionLog.AddToFillers(state.interaction.investigatorMinion, state.interaction.investigatorMinion.name, LOG_IDENTIFIER.MINION_1);
+        state.descriptionLog.AddToFillers(state.interaction.investigatorCharacter, state.interaction.investigatorCharacter.name, LOG_IDENTIFIER.MINION_1);
         state.descriptionLog.AddToFillers(null, this.name, LOG_IDENTIFIER.ITEM_1);
 
-        state.AddLogFiller(new LogFiller(state.interaction.investigatorMinion, state.interaction.investigatorMinion.name, LOG_IDENTIFIER.MINION_1));
+        state.AddLogFiller(new LogFiller(state.interaction.investigatorCharacter, state.interaction.investigatorCharacter.name, LOG_IDENTIFIER.MINION_1));
         state.AddLogFiller(new LogFiller(null, this.name, LOG_IDENTIFIER.ITEM_1));
     }
 }

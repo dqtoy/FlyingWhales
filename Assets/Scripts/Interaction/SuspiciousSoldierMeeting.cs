@@ -162,7 +162,7 @@ public class SuspiciousSoldierMeeting : Interaction {
 
                     //this is for deserter2
                     Log newMinionLog = new Log(GameManager.Instance.Today(), "Events", GetType().ToString(), state.name.ToLower() + "_log1");
-                    newMinionLog.AddToFillers(investigatorMinion.character, investigatorMinion.character.name, LOG_IDENTIFIER.MINION_1);
+                    newMinionLog.AddToFillers(investigatorCharacter, investigatorCharacter.name, LOG_IDENTIFIER.MINION_1);
                     newMinionLog.AddToFillers(interactable.tileLocation.areaOfTile, interactable.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
                     newMinionLog.AddToFillers(deserter2, deserter2.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     newMinionLog.AddLogToInvolvedObjects();
@@ -203,13 +203,13 @@ public class SuspiciousSoldierMeeting : Interaction {
                 //}
             //}
         }
-        investigatorMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
+        investigatorCharacter.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
 
 
     }
     private void WarDeclaredRewardEffect(InteractionState state) {
         //Tile owner faction will declare war on player
-        investigatorMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
+        investigatorCharacter.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
         FactionManager.Instance.DeclareWarBetween(_interactable.faction, PlayerManager.Instance.player.playerFaction);
         //if(state.descriptionLog != null) {
         //    state.descriptionLog.AddToFillers(_interactable.faction, _interactable.faction.name, LOG_IDENTIFIER.FACTION_1);
@@ -220,7 +220,7 @@ public class SuspiciousSoldierMeeting : Interaction {
         state.AddLogFiller(new LogFiller(_interactable.faction, _interactable.faction.name, LOG_IDENTIFIER.FACTION_1));
     }
     private void ArmyGainedRewardEffect(InteractionState state) {
-        investigatorMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
+        investigatorCharacter.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
         Minion newMinion = PlayerManager.Instance.player.CreateNewMinion("Knights", RACE.HUMANS, false);
         newMinion.character.SetLevel(UnityEngine.Random.Range(5, 9));
         PlayerManager.Instance.player.AddMinion(newMinion);
@@ -234,7 +234,7 @@ public class SuspiciousSoldierMeeting : Interaction {
         //}
     }
     private void NothingHappensRewardEffect(InteractionState state) {
-        investigatorMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
+        investigatorCharacter.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
     }
     private void DoNothingRewardEffect(InteractionState state) {
         //explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_2));

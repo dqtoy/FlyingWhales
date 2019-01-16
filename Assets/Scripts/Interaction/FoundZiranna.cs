@@ -102,7 +102,7 @@ public class FoundZiranna : Interaction {
 
     #region Action Options
     private void TurnOption() {
-        Job job = investigatorMinion.character.job;
+        Job job = investigatorCharacter.job;
         WeightedDictionary<string> effectWeights = new WeightedDictionary<string>();
         effectWeights.AddElement(Turn_Success, job.GetSuccessRate());
         effectWeights.AddElement(Turn_Fail, job.GetFailRate());
@@ -112,7 +112,7 @@ public class FoundZiranna : Interaction {
         SetCurrentState(_states[result]);
     }
     private void AllyOption() {
-        Job job = investigatorMinion.character.job;
+        Job job = investigatorCharacter.job;
         WeightedDictionary<string> effectWeights = new WeightedDictionary<string>();
         effectWeights.AddElement(Alliance_Success, job.GetSuccessRate());
         effectWeights.AddElement(Alliance_Fail, job.GetFailRate());
@@ -122,7 +122,7 @@ public class FoundZiranna : Interaction {
         SetCurrentState(_states[result]);
     }
     private void DissuadeOption() {
-        Job job = investigatorMinion.character.job;
+        Job job = investigatorCharacter.job;
         WeightedDictionary<string> effectWeights = new WeightedDictionary<string>();
         effectWeights.AddElement(Dissuade_Success, job.GetSuccessRate());
         effectWeights.AddElement(Dissuade_Fail, job.GetFailRate());
@@ -137,7 +137,7 @@ public class FoundZiranna : Interaction {
 
     #region State Effects
     private void TurnSuccessEffect(InteractionState state) {
-        investigatorMinion.LevelUp();
+        investigatorCharacter.LevelUp();
 
         //Remove character from her current Faction and turn her into the Faction Leader of a new Ziranna faction. Current area becomes owned by Ziranna faction, set its race to Skeleton.
         Faction oldFaction = _characterInvolved.faction;
@@ -190,7 +190,7 @@ public class FoundZiranna : Interaction {
         state.AddLogFiller(new LogFiller(oldFaction, oldFaction.name, LOG_IDENTIFIER.FACTION_2));
     }
     private void AllianceSuccessEffect(InteractionState state) {
-        investigatorMinion.LevelUp();
+        investigatorCharacter.LevelUp();
 
         //Remove character from her current Faction and turn her into the Faction Leader of a new Ziranna faction. Current area becomes owned by Ziranna faction, set its race to Skeleton.
         _characterInvolved.FoundFaction("Ziranna", interactable);
@@ -222,7 +222,7 @@ public class FoundZiranna : Interaction {
         interactable.SpawnRandomCharacters(6);
     }
     private void DissuadeSuccessEffect(InteractionState state) {
-        investigatorMinion.LevelUp();
+        investigatorCharacter.LevelUp();
     }
     private void DissuadeFailEffect(InteractionState state) {
         //Remove character from her current Faction and turn her into the Faction Leader of a new Ziranna faction. Current area becomes owned by Ziranna faction, set its race to Skeleton.

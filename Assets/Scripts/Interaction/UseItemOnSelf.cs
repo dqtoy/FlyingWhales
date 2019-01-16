@@ -25,6 +25,10 @@ public class UseItemOnSelf : Interaction {
 
         //targetCharacter = _characterInvolved;
 
+        Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
+        startStateDescriptionLog.AddToFillers(null, _tokenToBeUsed.nameInBold, LOG_IDENTIFIER.STRING_1);
+        startState.OverrideDescriptionLog(startStateDescriptionLog);
+
         CreateActionOptions(startState);
 
         stopSuccessful.SetEffect(() => StopSuccessfulRewardEffect(stopSuccessful));
@@ -42,7 +46,7 @@ public class UseItemOnSelf : Interaction {
                 name = "Stop " + _characterInvolved.name + ".",
                 effect = () => StopOptionEffect(state),
                 jobNeeded = JOB.DEBILITATOR,
-                doesNotMeetRequirementsStr = "Minion must be a dissuader",
+                doesNotMeetRequirementsStr = "Must have debilitator minion.",
             };
             ActionOption doNothing = new ActionOption {
                 interactionState = state,
@@ -59,7 +63,7 @@ public class UseItemOnSelf : Interaction {
 
     #region Option Effects
     private void StopOptionEffect(InteractionState state) {
-        WeightedDictionary<RESULT> resultWeights = investigatorMinion.character.job.GetJobRateWeights();
+        WeightedDictionary<RESULT> resultWeights = investigatorCharacter.job.GetJobRateWeights();
         resultWeights.RemoveElement(RESULT.CRITICAL_FAIL);
 
         string nextState = string.Empty;
@@ -93,7 +97,7 @@ public class UseItemOnSelf : Interaction {
         state.AddLogFiller(new LogFiller(null, _tokenToBeUsed.nameInBold, LOG_IDENTIFIER.STRING_1));
 
         //**Level Up**: Dissuader Minion +1
-        investigatorMinion.LevelUp();
+        investigatorCharacter.LevelUp();
     }
     #endregion
 }

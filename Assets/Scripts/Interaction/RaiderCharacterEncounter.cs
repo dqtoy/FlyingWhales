@@ -99,7 +99,7 @@ public class RaiderCharacterEncounter : Interaction {
     private void AssaultOption() {
         int minionWeight = 0;
         int characterWeight = 0;
-        CombatManager.Instance.GetCombatWeightsOfTwoLists(investigatorMinion.character.currentParty.characters, _characterInvolved.currentParty.characters, out minionWeight, out characterWeight);
+        CombatManager.Instance.GetCombatWeightsOfTwoLists(investigatorCharacter.currentParty.characters, _characterInvolved.currentParty.characters, out minionWeight, out characterWeight);
         WeightedDictionary<string> effectWeights = new WeightedDictionary<string>();
         effectWeights.AddElement("Minion", minionWeight);
         effectWeights.AddElement("Character", characterWeight);
@@ -125,7 +125,7 @@ public class RaiderCharacterEncounter : Interaction {
 
     #region State Effects
     private void InduceRaidEffect(InteractionState state) {
-        investigatorMinion.LevelUp();
+        investigatorCharacter.LevelUp();
 
         string raidOrScavengeText = string.Empty;
         if(_targetArea.owner != null) {
@@ -148,13 +148,13 @@ public class RaiderCharacterEncounter : Interaction {
         state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2));
     }
     private void MinionKilledCharacterEffect(InteractionState state) {
-        investigatorMinion.LevelUp();
+        investigatorCharacter.LevelUp();
         characterInvolved.Death();
 
         state.descriptionLog.AddToFillers(null, characterInvolved.characterClass.className, LOG_IDENTIFIER.STRING_1);
     }
     private void MinionInjuredCharacterEffect(InteractionState state) {
-        investigatorMinion.LevelUp();
+        investigatorCharacter.LevelUp();
         Trait injuredTrait = AttributeManager.Instance.allTraits["Injured"];
         characterInvolved.AddTrait(injuredTrait);
 
@@ -165,16 +165,16 @@ public class RaiderCharacterEncounter : Interaction {
     private void CharacterKilledMinionEffect(InteractionState state) {
         characterInvolved.LevelUp();
 
-        state.descriptionLog.AddToFillers(investigatorMinion.character, investigatorMinion.character.name, LOG_IDENTIFIER.MINION_1);
+        state.descriptionLog.AddToFillers(investigatorCharacter, investigatorCharacter.name, LOG_IDENTIFIER.MINION_1);
 
-        state.AddLogFiller(new LogFiller(investigatorMinion.character, investigatorMinion.character.name, LOG_IDENTIFIER.MINION_1));
+        state.AddLogFiller(new LogFiller(investigatorCharacter, investigatorCharacter.name, LOG_IDENTIFIER.MINION_1));
 
         DemonDisappearsRewardEffect(state);
     }
     private void CharacterInjuredMinionEffect(InteractionState state) {
         characterInvolved.LevelUp();
         Trait injuredTrait = AttributeManager.Instance.allTraits["Injured"];
-        investigatorMinion.character.AddTrait(injuredTrait);
+        investigatorCharacter.AddTrait(injuredTrait);
 
         state.AddLogFiller(new LogFiller(null, injuredTrait.name, LOG_IDENTIFIER.STRING_1));
     }

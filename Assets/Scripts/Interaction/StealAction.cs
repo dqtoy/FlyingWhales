@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class StealAction : Interaction {
 
-    private Character targetCharacter;
+    private Character _targetCharacter;
 
     private const string Assisted_Theft_Success = "Assisted Theft Success";
     private const string Assisted_Theft_Fail = "Assisted Theft Fail";
@@ -17,6 +17,10 @@ public class StealAction : Interaction {
     private const string Normal_Theft_Success = "Normal Theft Success";
     private const string Normal_Theft_Fail = "Normal Theft Fail";
     private const string Normal_Theft_Critical_Fail = "Normal Theft Critical Fail";
+
+    public override Character targetCharacter {
+        get { return _targetCharacter; }
+    }
 
     public StealAction(BaseLandmark interactable)
         : base(interactable, INTERACTION_TYPE.STEAL_ACTION, 0) {
@@ -40,8 +44,8 @@ public class StealAction : Interaction {
         SetTargetCharacter(GetTargetCharacter(_characterInvolved));
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
-        startStateDescriptionLog.AddToFillers(null, targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1);
-        startStateDescriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        startStateDescriptionLog.AddToFillers(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1);
+        startStateDescriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 
         CreateActionOptions(startState);
@@ -80,7 +84,7 @@ public class StealAction : Interaction {
                 name = "Assist with the theft.",
                 effect = () => AssistOptionEffect(state),
                 jobNeeded = JOB.INSTIGATOR,
-                doesNotMeetRequirementsStr = "Minion must be an instigator",
+                doesNotMeetRequirementsStr = "Must have instigator minion.",
             };
             ActionOption thwart = new ActionOption {
                 interactionState = state,
@@ -88,7 +92,7 @@ public class StealAction : Interaction {
                 name = "Thwart the theft.",
                 effect = () => ThwartOptionEffect(state),
                 jobNeeded = JOB.DIPLOMAT,
-                doesNotMeetRequirementsStr = "Minion must be a diplomat",
+                doesNotMeetRequirementsStr = "Must have diplomat minion.",
             };
             ActionOption doNothing = new ActionOption {
                 interactionState = state,
@@ -173,80 +177,80 @@ public class StealAction : Interaction {
     #region Reward Effect
     private void AssistedTheftSuccessRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(null, targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1);
-            state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-            state.descriptionLog.AddToFillers(targetCharacter.faction, targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_1);
+            state.descriptionLog.AddToFillers(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1);
+            state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            state.descriptionLog.AddToFillers(_targetCharacter.faction, _targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_1);
         }
-        state.AddLogFiller(new  LogFiller(null, targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1));
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
-        state.AddLogFiller(new LogFiller(targetCharacter.faction, targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_1));
+        state.AddLogFiller(new  LogFiller(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_targetCharacter.faction, _targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_1));
 
         //**Mechanics**: Transfer item from target character to the thief.
-        TransferItem(targetCharacter, _characterInvolved);
+        TransferItem(_targetCharacter, _characterInvolved);
 
-        if (targetCharacter.faction.id != _characterInvolved.faction.id) {
+        if (_targetCharacter.faction.id != _characterInvolved.faction.id) {
             //**Mechanics**: If different faction, relationship between the two factions -1.
-            AdjustFactionsRelationship(targetCharacter.faction, _characterInvolved.faction, -1, state);
+            AdjustFactionsRelationship(_targetCharacter.faction, _characterInvolved.faction, -1, state);
         } else {
             //**Mechanics**: If same faction, personal relationship between the two characters -1. Thief gains Criminal trait.
-            CharacterManager.Instance.ChangePersonalRelationshipBetweenTwoCharacters(targetCharacter, _characterInvolved, -1);
+            CharacterManager.Instance.ChangePersonalRelationshipBetweenTwoCharacters(_targetCharacter, _characterInvolved, -1);
             _characterInvolved.AddTrait(new Criminal());
         }
 
 
         //**Level Up**: Thief Character +1, Instigator +1
         _characterInvolved.LevelUp();
-        investigatorMinion.LevelUp();
+        investigatorCharacter.LevelUp();
     }
     private void AssistedTheftFailRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(null, targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1);
-            state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-            state.descriptionLog.AddToFillers(targetCharacter.faction, targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_1);
+            state.descriptionLog.AddToFillers(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1);
+            state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            state.descriptionLog.AddToFillers(_targetCharacter.faction, _targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_1);
         }
-        state.AddLogFiller(new LogFiller(null, targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1));
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
-        state.AddLogFiller(new LogFiller(targetCharacter.faction, targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_1));
+        state.AddLogFiller(new LogFiller(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_targetCharacter.faction, _targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_1));
 
 
-        if (targetCharacter.faction.id != _characterInvolved.faction.id) {
+        if (_targetCharacter.faction.id != _characterInvolved.faction.id) {
             //**Mechanics**: If different faction, relationship between the two factions -1.
-            AdjustFactionsRelationship(targetCharacter.faction, _characterInvolved.faction, -1, state);
+            AdjustFactionsRelationship(_targetCharacter.faction, _characterInvolved.faction, -1, state);
         } else {
             //**Mechanics**: If same faction, personal relationship between the two characters -1. Thief gains Criminal trait.
-            CharacterManager.Instance.ChangePersonalRelationshipBetweenTwoCharacters(targetCharacter, _characterInvolved, -1);
+            CharacterManager.Instance.ChangePersonalRelationshipBetweenTwoCharacters(_targetCharacter, _characterInvolved, -1);
             _characterInvolved.AddTrait(new Criminal());
         }
     }
     private void AssistedTheftCriticalFailRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(null, targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1);
-            state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            state.descriptionLog.AddToFillers(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1);
+            state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         }
-        state.AddLogFiller(new LogFiller(null, targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1));
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
         //**Mechanics**: Character Name 1 dies.
         _characterInvolved.Death();
     }
     private void ThwartedTheftSuccessRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(null, targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1);
-            state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            state.descriptionLog.AddToFillers(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1);
+            state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             state.descriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
-            state.descriptionLog.AddToFillers(targetCharacter.faction, targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_2);
+            state.descriptionLog.AddToFillers(_targetCharacter.faction, _targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_2);
         }
-        state.AddLogFiller(new LogFiller(null, targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1));
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
         state.AddLogFiller(new LogFiller(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1));
-        state.AddLogFiller(new LogFiller(targetCharacter.faction, targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_2));
+        state.AddLogFiller(new LogFiller(_targetCharacter.faction, _targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_2));
 
         //**Mechanics**: Transfer item from target character to the thief.
-        TransferItem(targetCharacter, _characterInvolved);
+        TransferItem(_targetCharacter, _characterInvolved);
 
         //**Mechanics**: If same faction, 50% chance that personal relationship between the two characters -1 and Thief gains Criminal trait.
-        if (targetCharacter.faction.id == _characterInvolved.faction.id) {
+        if (_targetCharacter.faction.id == _characterInvolved.faction.id) {
             if (Random.Range(0, 100) < 50) {
-                CharacterManager.Instance.ChangePersonalRelationshipBetweenTwoCharacters(targetCharacter, _characterInvolved, -1);
+                CharacterManager.Instance.ChangePersonalRelationshipBetweenTwoCharacters(_targetCharacter, _characterInvolved, -1);
                 _characterInvolved.AddTrait(new Criminal());
             }
         }
@@ -256,53 +260,53 @@ public class StealAction : Interaction {
     }
     private void ThwartedTheftFailRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(null, targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1);
-            state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-            state.descriptionLog.AddToFillers(targetCharacter.faction, targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_2);
+            state.descriptionLog.AddToFillers(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1);
+            state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            state.descriptionLog.AddToFillers(_targetCharacter.faction, _targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_2);
         }
-        state.AddLogFiller(new LogFiller(null, targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1));
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
-        state.AddLogFiller(new LogFiller(targetCharacter.faction, targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_2));
+        state.AddLogFiller(new LogFiller(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_targetCharacter.faction, _targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_2));
 
         //**Level Up**: Diplomat Minion +1
-        investigatorMinion.LevelUp();
+        investigatorCharacter.LevelUp();
         //**Mechanics**: Relationship between the player factions and Faction 2 +1
-        AdjustFactionsRelationship(PlayerManager.Instance.player.playerFaction, targetCharacter.faction, 1, state);
+        AdjustFactionsRelationship(PlayerManager.Instance.player.playerFaction, _targetCharacter.faction, 1, state);
     }
     private void ThwartedTheftCriticalFailRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(null, targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1);
-            state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-            state.descriptionLog.AddToFillers(targetCharacter.faction, targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_2);
+            state.descriptionLog.AddToFillers(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1);
+            state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            state.descriptionLog.AddToFillers(_targetCharacter.faction, _targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_2);
         }
-        state.AddLogFiller(new LogFiller(null, targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1));
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
-        state.AddLogFiller(new LogFiller(targetCharacter.faction, targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_2));
+        state.AddLogFiller(new LogFiller(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_targetCharacter.faction, _targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_2));
 
         //**Mechanics**: Character Name 1 dies.
         _characterInvolved.Death();
 
         //**Level Up**: Diplomat Minion +1
-        investigatorMinion.LevelUp();
+        investigatorCharacter.LevelUp();
 
         //**Mechanics**: Relationship between the player factions and Faction 2 +1
-        AdjustFactionsRelationship(PlayerManager.Instance.player.playerFaction, targetCharacter.faction, 1, state);
+        AdjustFactionsRelationship(PlayerManager.Instance.player.playerFaction, _targetCharacter.faction, 1, state);
     }
     private void NormalTheftSuccessRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(null, targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1);
-            state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            state.descriptionLog.AddToFillers(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1);
+            state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         }
-        state.AddLogFiller(new LogFiller(null, targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1));
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
         //**Mechanics**: Transfer item from target character to the thief.
-        TransferItem(targetCharacter, _characterInvolved);
+        TransferItem(_targetCharacter, _characterInvolved);
 
         //**Mechanics**: If same faction, 50% chance that personal relationship between the two characters -1 and Thief gains Criminal trait.
-        if (targetCharacter.faction.id == _characterInvolved.faction.id) {
+        if (_targetCharacter.faction.id == _characterInvolved.faction.id) {
             if (Random.Range(0, 100) < 50) {
-                CharacterManager.Instance.ChangePersonalRelationshipBetweenTwoCharacters(targetCharacter, _characterInvolved, -1);
+                CharacterManager.Instance.ChangePersonalRelationshipBetweenTwoCharacters(_targetCharacter, _characterInvolved, -1);
                 _characterInvolved.AddTrait(new Criminal());
         }
     }
@@ -312,19 +316,19 @@ public class StealAction : Interaction {
     }
     private void NormalTheftFailRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(null, targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1);
-            state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            state.descriptionLog.AddToFillers(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1);
+            state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         }
-        state.AddLogFiller(new LogFiller(null, targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1));
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     private void NormalTheftCriticalFailRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(null, targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1);
-            state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            state.descriptionLog.AddToFillers(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1);
+            state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         }
-        state.AddLogFiller(new LogFiller(null, targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1));
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
         //**Mechanics**: Character Name 1 dies.
         _characterInvolved.Death();
@@ -337,7 +341,7 @@ public class StealAction : Interaction {
     }
 
     public void SetTargetCharacter(Character targetCharacter) {
-        this.targetCharacter = targetCharacter;
+        this._targetCharacter = targetCharacter;
     }
     public Character GetTargetCharacter(Character characterInvolved) {
         /*

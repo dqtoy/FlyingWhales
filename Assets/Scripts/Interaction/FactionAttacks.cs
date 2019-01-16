@@ -119,19 +119,19 @@ public class FactionAttacks : Interaction {
 
     #region State Effects
     private void AttackStoppedEffect(InteractionState state) {
-        investigatorMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
+        investigatorCharacter.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
         state.AddLogFiller(new LogFiller(interactable.faction, interactable.faction.name, LOG_IDENTIFIER.FACTION_1));
         state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.STRING_1));
     }
     private void AttackContinuesEffect(InteractionState state) {
-        investigatorMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
+        investigatorCharacter.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
         state.AddLogFiller(new LogFiller(interactable.faction.leader, interactable.faction.leader.name, LOG_IDENTIFIER.STRING_1));
         state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.STRING_1));
 
         AttackTargetArea();
     }
     private void SuccessfulEmpowermentEffect(InteractionState state) {
-        investigatorMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
+        investigatorCharacter.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
         interactable.faction.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, 2);
         //Add Empowered Trait to Attacking Units - just one attacking unit or all?
 
@@ -140,7 +140,7 @@ public class FactionAttacks : Interaction {
         AttackTargetArea();
     }
     private void FailedEmpowermentEffect(InteractionState state) {
-        investigatorMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
+        investigatorCharacter.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
 
         int chance = UnityEngine.Random.Range(0, 100);
         if(chance < 95) {
@@ -152,14 +152,14 @@ public class FactionAttacks : Interaction {
         }
     }
     private void RedirectedEffect(InteractionState state) {
-        investigatorMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
+        investigatorCharacter.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
         SetTargetArea(state.assignedLocation.location);
         state.AddLogFiller(new LogFiller(interactable.faction, interactable.faction.name, LOG_IDENTIFIER.FACTION_1));
         state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.STRING_1));
         AttackTargetArea();
     }
     private void DoNothingEffect(InteractionState state) {
-        investigatorMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
+        investigatorCharacter.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
         state.AddLogFiller(new LogFiller(interactable.faction, interactable.faction.name, LOG_IDENTIFIER.FACTION_1));
         AttackTargetArea();
     }

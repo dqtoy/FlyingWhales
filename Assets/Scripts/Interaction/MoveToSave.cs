@@ -10,7 +10,11 @@ public class MoveToSave : Interaction {
     private const string Normal_Save = "Normal Save";
 
     public Area targetLocation { get; private set; }
-    public Character targetCharacter { get; private set; }
+    private Character _targetCharacter;
+
+    public override Character targetCharacter {
+        get { return _targetCharacter; }
+    }
 
     public MoveToSave(BaseLandmark interactable) 
         : base(interactable, INTERACTION_TYPE.MOVE_TO_SAVE, 0) {
@@ -25,7 +29,7 @@ public class MoveToSave : Interaction {
         InteractionState saveProceeds = new InteractionState(Save_Proceeds, this);
         InteractionState normalSave = new InteractionState(Normal_Save, this);
 
-        targetLocation = targetCharacter.specificLocation.tileLocation.areaOfTile;
+        targetLocation = _targetCharacter.specificLocation.tileLocation.areaOfTile;
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
         startStateDescriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1);
@@ -52,7 +56,7 @@ public class MoveToSave : Interaction {
                 duration = 0,
                 effect = () => PreventFromLeavingOptionEffect(state),
                 jobNeeded = JOB.DEBILITATOR,
-                doesNotMeetRequirementsStr = "Minion must be a dissuader",
+                doesNotMeetRequirementsStr = "Must have debilitator minion.",
             };
             ActionOption doNothing = new ActionOption {
                 interactionState = state,
@@ -67,8 +71,8 @@ public class MoveToSave : Interaction {
         }
     }
     public override bool CanInteractionBeDoneBy(Character character) {
-        targetCharacter = GetTargetCharacter(character);
-        if (targetCharacter == null) {
+        _targetCharacter = GetTargetCharacter(character);
+        if (_targetCharacter == null) {
             return false;
         }
         return base.CanInteractionBeDoneBy(character);
@@ -77,7 +81,7 @@ public class MoveToSave : Interaction {
 
     #region Option Effects
     private void PreventFromLeavingOptionEffect(InteractionState state) {
-        WeightedDictionary<RESULT> resultWeights = investigatorMinion.character.job.GetJobRateWeights();
+        WeightedDictionary<RESULT> resultWeights = investigatorCharacter.job.GetJobRateWeights();
         resultWeights.RemoveElement(RESULT.CRITICAL_FAIL);
 
         string nextState = string.Empty;
@@ -100,26 +104,26 @@ public class MoveToSave : Interaction {
     private void SaveCancelledRewardEffect(InteractionState state) {
         //**Mechanics**: Character will no longer leave.
         //**Level Up**: Dissuader Minion +1
-        investigatorMinion.LevelUp();
+        investigatorCharacter.LevelUp();
         MinionSuccess();
     }
     private void SaveProceedsRewardEffect(InteractionState state) {
         GoToTargetLocation();
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2);
-            state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         }
         state.AddLogFiller(new LogFiller(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2));
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     private void NormalSaveRewardEffect(InteractionState state) {
         GoToTargetLocation();
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2);
-            state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         }
         state.AddLogFiller(new LogFiller(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2));
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     #endregion
 
@@ -129,7 +133,7 @@ public class MoveToSave : Interaction {
 
     private void CreateEvent() {
         SaveAction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.SAVE_ACTION, _characterInvolved.specificLocation.tileLocation.landmarkOnTile) as SaveAction;
-        interaction.SetTargetCharacter(targetCharacter);
+        interaction.SetTargetCharacter(_targetCharacter);
         _characterInvolved.SetForcedInteraction(interaction);
     }
 

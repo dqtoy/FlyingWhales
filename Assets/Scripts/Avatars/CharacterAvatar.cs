@@ -59,7 +59,18 @@ public class CharacterAvatar : MonoBehaviour{
         get { return _hasArrived; }
     }
     public bool isVisualShowing {
-        get { return _isVisualShowing; }
+        get {
+            if (_isVisualShowing) {
+                return _isVisualShowing;
+            } else {
+                //check if this characters current location area is being tracked
+                if (party.specificLocation.tileLocation.areaOfTile != null 
+                    && party.specificLocation.tileLocation.areaOfTile.isBeingTracked) {
+                    return true;
+                }
+            }
+            return _isVisualShowing;
+        }
     }
     public GameObject avatarVisual {
         get { return _avatarVisual; }
@@ -150,7 +161,7 @@ public class CharacterAvatar : MonoBehaviour{
         float distance = Vector3.Distance(_party.specificLocation.tileLocation.transform.position, targetLocation.tileLocation.transform.position);
         _distanceToTarget = (Mathf.CeilToInt(distance / 2.315188f)) * 2; //6
         _travelLine = _party.specificLocation.tileLocation.CreateTravelLine(targetLocation.tileLocation, _distanceToTarget);
-        _travelLine.SetActiveMeter(_isVisualShowing);
+        _travelLine.SetActiveMeter(isVisualShowing);
         Messenger.AddListener(Signals.DAY_STARTED, TraverseCurveLine);
     }
     private void TraverseCurveLine() {
@@ -374,15 +385,20 @@ public class CharacterAvatar : MonoBehaviour{
     public void SetVisualState(bool state) {
         _isVisualShowing = state;
         if(_travelLine != null) {
-            _travelLine.SetActiveMeter(_isVisualShowing);
+            _travelLine.SetActiveMeter(isVisualShowing);
+        }
+    }
+    public void UpdateTravelLineVisualState() {
+        if (_travelLine != null) {
+            _travelLine.SetActiveMeter(isVisualShowing);
         }
     }
     public void UpdateVisualState() {
         if (GameManager.Instance.allCharactersAreVisible) {
-            _avatarVisual.SetActive(_isVisualShowing);
+            _avatarVisual.SetActive(isVisualShowing);
         } else {
             if (_party.IsPartyBeingInspected()) {
-                _avatarVisual.SetActive(_isVisualShowing);
+                _avatarVisual.SetActive(isVisualShowing);
             } else {
                 _avatarVisual.SetActive(false);
             }

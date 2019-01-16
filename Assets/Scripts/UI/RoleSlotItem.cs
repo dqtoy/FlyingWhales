@@ -61,6 +61,12 @@ public class RoleSlotItem : MonoBehaviour {
         if (this.character != null && this.character.id == character.id) {
             return false; //This means that the character is already assigned to this job
         }
+        JOB charactersJob = PlayerManager.Instance.player.GetCharactersCurrentJob(character);
+        if (charactersJob != JOB.NONE 
+            && PlayerManager.Instance.player.roleSlots[charactersJob].activeAction != null
+            && PlayerManager.Instance.player.roleSlots[charactersJob].activeAction.isInCooldown) {
+            return false;
+        }
         return PlayerManager.Instance.player.CanAssignCharacterToJob(slotJob, character);
     }
     private void AssignCharacterToJob(Character character) {
@@ -102,10 +108,12 @@ public class RoleSlotItem : MonoBehaviour {
             PlayerJobActionButton btn = buttonGO.GetComponent<PlayerJobActionButton>();
             switch (actionTarget) {
                 case JOB_ACTION_TARGET.CHARACTER:
-                    btn.SetAction(currAction, character, UIManager.Instance.characterInfoUI.activeCharacter);
+                    btn.SetJobAction(currAction, character, UIManager.Instance.characterInfoUI.activeCharacter);
                     btn.SetClickAction(() => currAction.ActivateAction(character, UIManager.Instance.characterInfoUI.activeCharacter));
                     break;
                 case JOB_ACTION_TARGET.AREA:
+                    btn.SetJobAction(currAction, character, UIManager.Instance.areaInfoUI.activeArea);
+                    btn.SetClickAction(() => currAction.ActivateAction(character, UIManager.Instance.areaInfoUI.activeArea));
                     break;
                 case JOB_ACTION_TARGET.FACTION:
                     break;
@@ -122,8 +130,10 @@ public class RoleSlotItem : MonoBehaviour {
         UpdateActionButtons();
     }
     private void UpdateActionButtons() {
-        if (UIManager.Instance.characterInfoUI.isShowing) {
+        if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.minion == null) {
             ShowActionButtons(JOB_ACTION_TARGET.CHARACTER);
+        } else if (UIManager.Instance.areaInfoUI.isShowing && UIManager.Instance.areaInfoUI.activeArea.id != PlayerManager.Instance.player.playerArea.id) {
+            ShowActionButtons(JOB_ACTION_TARGET.AREA);
         } else {
             HideActionButtons();
         }

@@ -525,7 +525,7 @@ public class Player : ILeader {
             Debug.LogWarning("There is something trying to assign a character to " + job.ToString() + " but the player doesn't have a slot for it.");
             return;
         }
-        if (roleSlots[job] != null) {
+        if (roleSlots[job].assignedCharacter != null) {
             UnassignCharacterFromJob(job);
         }
         JOB charactersCurrentJob = GetCharactersCurrentJob(character);
@@ -565,6 +565,9 @@ public class Player : ILeader {
     public bool HasCharacterAssignedToJob(JOB job) {
         return roleSlots[job].assignedCharacter != null;
     }
+    public Character GetCharacterAssignedToJob(JOB job) {
+        return roleSlots[job].assignedCharacter;
+    }
     #endregion
 
     #region Role Actions
@@ -582,11 +585,44 @@ public class Player : ILeader {
     }
     #endregion
 
+    #region Utilities
     private void OnCharacterDied(Character character) {
         JOB job = GetCharactersCurrentJob(character);
         if (job != JOB.NONE) {
             UnassignCharacterFromJob(job);
         }
     }
+    #endregion
+
+    #region Tracking
+    public List<Character> GetTrackedCharacters() {
+        List<Character> characters = new List<Character>();
+        foreach (KeyValuePair<JOB, PlayerJobData> keyValuePair in roleSlots) {
+            if (keyValuePair.Value.activeAction != null) {
+                if (keyValuePair.Value.activeAction is Track) {
+                    Track track = keyValuePair.Value.activeAction as Track;
+                    if (track.currentTargetType == JOB_ACTION_TARGET.CHARACTER) {
+                        characters.Add(track.target as Character);
+                    }
+                }
+            }
+        }
+        return characters;
+    }
+    public List<Area> GetTrackedAreas() {
+        List<Area> characters = new List<Area>();
+        foreach (KeyValuePair<JOB, PlayerJobData> keyValuePair in roleSlots) {
+            if (keyValuePair.Value.activeAction != null) {
+                if (keyValuePair.Value.activeAction is Track) {
+                    Track track = keyValuePair.Value.activeAction as Track;
+                    if (track.currentTargetType == JOB_ACTION_TARGET.AREA) {
+                        characters.Add(track.target as Area);
+                    }
+                }
+            }
+        }
+        return characters;
+    }
+    #endregion
 }
 

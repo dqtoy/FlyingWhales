@@ -52,6 +52,8 @@ public class Area {
     //special tokens
     public List<SpecialToken> possibleSpecialTokenSpawns { get; private set; }
 
+    public bool isBeingTracked { get; private set; }
+
     //misc
     public Sprite locationPortrait { get; private set; }
     public Vector2 nameplatePos { get; private set; }
@@ -1373,6 +1375,16 @@ public class Area {
         choices.Remove(character.tokenInInventory);
         //Utilities.ListRemoveRange(choices, character.tokenInInventory);
         return choices;
+    }
+    #endregion
+
+    #region Tracking
+    public void SetTrackedState(bool state) {
+        isBeingTracked = state;
+        for (int i = 0; i < charactersAtLocation.Count; i++) {
+            Character currCharacter = charactersAtLocation[i];
+            currCharacter.ownParty.icon.UpdateTravelLineVisualState();
+        }
     }
     #endregion
 }

@@ -80,8 +80,8 @@ public class MoveToAbduct : Interaction {
     #region Action Options
     private void PreventOption() {
         WeightedDictionary<string> effectWeights = new WeightedDictionary<string>();
-        effectWeights.AddElement(Abduct_Cancelled, investigatorMinion.character.job.GetSuccessRate());
-        effectWeights.AddElement(Abduct_Proceeds, investigatorMinion.character.job.GetFailRate());
+        effectWeights.AddElement(Abduct_Cancelled, investigatorCharacter.job.GetSuccessRate());
+        effectWeights.AddElement(Abduct_Proceeds, investigatorCharacter.job.GetFailRate());
         string chosenEffect = effectWeights.PickRandomElementGivenWeights();
         SetCurrentState(_states[chosenEffect]);
     }
@@ -92,7 +92,7 @@ public class MoveToAbduct : Interaction {
 
     #region State Effects
     private void AbductCancelledEffect(InteractionState state) {
-        investigatorMinion.LevelUp();
+        investigatorCharacter.LevelUp();
     }
     private void AbductProceedsEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2);

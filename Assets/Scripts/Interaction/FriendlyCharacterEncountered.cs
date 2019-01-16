@@ -87,7 +87,7 @@ public class FriendlyCharacterEncountered : Interaction {
 
     #region State Effects
     private void RecruitEffect(InteractionState state) {
-        investigatorMinion.LevelUp();
+        investigatorCharacter.LevelUp();
         _characterInvolved.RecruitAsMinion();
     }
     private void NothingHappenedEffect(InteractionState state) {

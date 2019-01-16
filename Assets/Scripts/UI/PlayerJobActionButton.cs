@@ -29,7 +29,7 @@ public class PlayerJobActionButton : MonoBehaviour {
         Messenger.RemoveListener<PlayerJobAction>(Signals.JOB_ACTION_SUB_TEXT_CHANGED, OnSubTextChanged);
     }
 
-    public void SetAction(PlayerJobAction action, Character character, object target) {
+    public void SetJobAction(PlayerJobAction action, Character character, object target) {
         this.action = action;
         this.character = character;
         this.target = target;

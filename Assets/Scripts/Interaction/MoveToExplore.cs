@@ -47,11 +47,11 @@ public class MoveToExplore : Interaction {
             ActionOption prevent = new ActionOption {
                 interactionState = state,
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
-                name = "Prevent " + Utilities.GetPronounString(_characterInvolved.gender, PRONOUN_TYPE.POSSESSIVE, false) +" from leaving.",
+                name = "Prevent " + Utilities.GetPronounString(_characterInvolved.gender, PRONOUN_TYPE.OBJECTIVE, false) +" from leaving.",
                 duration = 0,
                 effect = () => PreventFromLeavingOptionEffect(state),
                 jobNeeded = JOB.DEBILITATOR,
-                doesNotMeetRequirementsStr = "Minion must be a dissuader",
+                doesNotMeetRequirementsStr = "Must have debilitator minion.",
             };
             ActionOption doNothing = new ActionOption {
                 interactionState = state,
@@ -75,7 +75,7 @@ public class MoveToExplore : Interaction {
 
     #region Option Effects
     private void PreventFromLeavingOptionEffect(InteractionState state) {
-        WeightedDictionary<RESULT> resultWeights = investigatorMinion.character.job.GetJobRateWeights();
+        WeightedDictionary<RESULT> resultWeights = investigatorCharacter.job.GetJobRateWeights();
         resultWeights.RemoveElement(RESULT.CRITICAL_FAIL);
 
         string nextState = string.Empty;
@@ -98,7 +98,7 @@ public class MoveToExplore : Interaction {
     private void CharacterExploreCancelledRewardEffect(InteractionState state) {
         //**Mechanics**: Character will no longer leave.
         //**Level Up**: Dissuader Minion +1
-        investigatorMinion.LevelUp();
+        investigatorCharacter.LevelUp();
     }
     private void CharacterExploreContinuesRewardEffect(InteractionState state) {
         //**Mechanics**: Character will start its travel to selected location to start an Explore event.

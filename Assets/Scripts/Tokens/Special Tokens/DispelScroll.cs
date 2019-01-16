@@ -83,8 +83,8 @@ public class DispelScroll : SpecialToken {
         //**Mechanics**: User and Character personal relationship +1
         CharacterManager.Instance.ChangePersonalRelationshipBetweenTwoCharacters(targetCharacter, state.tokenUser, 1);
 
-        state.descriptionLog.AddToFillers(state.interaction.investigatorMinion, state.interaction.investigatorMinion.name, LOG_IDENTIFIER.MINION_1);
-        state.AddLogFiller(new LogFiller(state.interaction.investigatorMinion, state.interaction.investigatorMinion.name, LOG_IDENTIFIER.MINION_1));
+        state.descriptionLog.AddToFillers(state.interaction.investigatorCharacter, state.interaction.investigatorCharacter.name, LOG_IDENTIFIER.MINION_1);
+        state.AddLogFiller(new LogFiller(state.interaction.investigatorCharacter, state.interaction.investigatorCharacter.name, LOG_IDENTIFIER.MINION_1));
     }
 
     private void RemoveCharmFromTarget(Character target) {

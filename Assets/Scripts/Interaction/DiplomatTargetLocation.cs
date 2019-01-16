@@ -83,7 +83,7 @@ public class DiplomatTargetLocation : Interaction {
 
     #region State Effects
     private void InduceExpansionEffect(InteractionState state) {
-        investigatorMinion.LevelUp();
+        investigatorCharacter.LevelUp();
 
         MoveToExpand moveToExpand = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_EXPAND, interactable) as MoveToExpand;
         moveToExpand.SetTargetLocation(_targetLocationToken.location);

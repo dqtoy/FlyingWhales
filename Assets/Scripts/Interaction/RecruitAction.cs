@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class RecruitAction : Interaction {
 
-    public Character targetCharacter;
+    private Character _targetCharacter;
 
     private const string Disrupted_Recruitment_Success = "Disrupted Recruitment Success";
     private const string Disrupted_Recruitment_Fail = "Disrupted Recruitment Fail";
@@ -12,6 +12,10 @@ public class RecruitAction : Interaction {
     private const string Assisted_Recruitment_Fail = "Assisted Recruitment Fail";
     private const string Normal_Recruitment_Success = "Normal Recruitment Success";
     private const string Normal_Recruitment_Fail = "Normal Recruitment Fail";
+
+    public override Character targetCharacter {
+        get { return _targetCharacter; }
+    }
 
     public RecruitAction(BaseLandmark interactable) 
         : base(interactable, INTERACTION_TYPE.RECRUIT_ACTION, 0) {
@@ -29,13 +33,13 @@ public class RecruitAction : Interaction {
         InteractionState normalRecruitmenSuccess = new InteractionState(Normal_Recruitment_Success, this);
         InteractionState normalRecruitmentFail = new InteractionState(Normal_Recruitment_Fail, this);
 
-        if (targetCharacter == null) {
+        if (_targetCharacter == null) {
             SetTargetCharacter(GetTargetCharacter(_characterInvolved));
         }
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
         startStateDescriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
-        startStateDescriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        startStateDescriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 
         CreateActionOptions(startState);
@@ -64,7 +68,7 @@ public class RecruitAction : Interaction {
                 name = "Disrupt the meeting.",
                 effect = () => DisruptOptionEffect(state),
                 jobNeeded = JOB.INSTIGATOR,
-                doesNotMeetRequirementsStr = "Minion must be an instigator",
+                doesNotMeetRequirementsStr = "Must have instigator minion.",
             };
             ActionOption assist = new ActionOption {
                 interactionState = state,
@@ -72,7 +76,7 @@ public class RecruitAction : Interaction {
                 name = "Assist with the recruitment.",
                 effect = () => AssistOptionEffect(state),
                 jobNeeded = JOB.DIPLOMAT,
-                doesNotMeetRequirementsStr = "Minion must be a diplomat",
+                doesNotMeetRequirementsStr = "Must have diplomat minion.",
             };
             ActionOption doNothing = new ActionOption {
                 interactionState = state,
@@ -90,8 +94,8 @@ public class RecruitAction : Interaction {
         if (interactable.tileLocation.areaOfTile.IsResidentsFull()) {
             return false;
         }
-        if (targetCharacter != null) { //if there is a target character, he/she must still be in this location
-            return targetCharacter.specificLocation.tileLocation.areaOfTile.id == interactable.tileLocation.areaOfTile.id;
+        if (_targetCharacter != null) { //if there is a target character, he/she must still be in this location
+            return _targetCharacter.specificLocation.tileLocation.areaOfTile.id == interactable.tileLocation.areaOfTile.id;
         } else { //if there is no set target character
             if (GetTargetCharacter(character) == null) { //check if a target character can be found using the provided weights
                 return false;
@@ -157,24 +161,24 @@ public class RecruitAction : Interaction {
          * Change its home to be the same as Character 1's home Area. 
          * Override his next action as https://trello.com/c/PTkSE6DZ/439-character-move-to-return-home
          */
-        TransferCharacter(targetCharacter, _characterInvolved.faction);
+        TransferCharacter(_targetCharacter, _characterInvolved.faction);
         //**Level Up**: Recruiting Character +1
         _characterInvolved.LevelUp();
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             state.descriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
         }
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
         state.AddLogFiller(new LogFiller(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1));
     }
     private void DisruptedRecruitmentFailRewardEffect(InteractionState state) {
         //**Level Up**: Instigator Minion +1
-        investigatorMinion.LevelUp();
+        investigatorCharacter.LevelUp();
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             state.descriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
         }
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
         state.AddLogFiller(new LogFiller(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1));
     }
     private void AssistedRecruitmentSuccessRewardEffect(InteractionState state) {
@@ -182,24 +186,24 @@ public class RecruitAction : Interaction {
          * Change its home to be the same as Character 1's home Area. 
          * Override his next action as https://trello.com/c/PTkSE6DZ/439-character-move-to-return-home
          */
-        TransferCharacter(targetCharacter, _characterInvolved.faction);
+        TransferCharacter(_targetCharacter, _characterInvolved.faction);
         //**Level Up**: Diplomat +1, Recruiting Character +1
         _characterInvolved.LevelUp();
-        investigatorMinion.LevelUp();
+        investigatorCharacter.LevelUp();
 
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             state.descriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
         }
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
         state.AddLogFiller(new LogFiller(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1));
     }
     private void AssistedRecruitmentFailRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             state.descriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
         }
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
         state.AddLogFiller(new LogFiller(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1));
     }
     private void NormalRecruitmentSuccessRewardEffect(InteractionState state) {
@@ -207,22 +211,22 @@ public class RecruitAction : Interaction {
          * Change its home to be the same as Character 1's home Area. 
          * Override his next action as https://trello.com/c/PTkSE6DZ/439-character-move-to-return-home
          */
-        TransferCharacter(targetCharacter, _characterInvolved.faction);
+        TransferCharacter(_targetCharacter, _characterInvolved.faction);
         //**Level Up**: Recruiting Character +1
         _characterInvolved.LevelUp();
 
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             state.descriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
         }
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
         state.AddLogFiller(new LogFiller(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1));
     }
     private void NormalRecruitmentFailRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         }
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     #endregion
 
@@ -236,7 +240,7 @@ public class RecruitAction : Interaction {
     }
 
     public void SetTargetCharacter(Character targetCharacter) {
-        this.targetCharacter = targetCharacter;
+        this._targetCharacter = targetCharacter;
         AddToDebugLog("Set target character to " + targetCharacter.name);
     }
     public Character GetTargetCharacter(Character characterInvolved) {

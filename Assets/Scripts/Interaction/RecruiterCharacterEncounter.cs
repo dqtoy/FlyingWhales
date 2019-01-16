@@ -84,8 +84,8 @@ public class RecruiterCharacterEncounter : Interaction {
     }
     private void RecruitOption() {
         WeightedDictionary<string> effectWeights = new WeightedDictionary<string>();
-        effectWeights.AddElement(Recruitment_Success, investigatorMinion.character.job.GetSuccessRate());
-        effectWeights.AddElement(Recruitment_Fail, investigatorMinion.character.job.GetFailRate());
+        effectWeights.AddElement(Recruitment_Success, investigatorCharacter.job.GetSuccessRate());
+        effectWeights.AddElement(Recruitment_Fail, investigatorCharacter.job.GetFailRate());
         string result = effectWeights.PickRandomElementGivenWeights();
         SetCurrentState(_states[result]);
     }
@@ -96,7 +96,7 @@ public class RecruiterCharacterEncounter : Interaction {
 
     #region State Effects
     private void InduceRecruitEffect(InteractionState state) {
-        investigatorMinion.LevelUp();
+        investigatorCharacter.LevelUp();
 
         MoveToRecruit moveToRecruit = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RECRUIT, interactable) as MoveToRecruit;
         Character characterToBeRecruited = moveToRecruit.GetTargetCharacter(_characterInvolved);
@@ -110,7 +110,7 @@ public class RecruiterCharacterEncounter : Interaction {
         state.AddLogFiller(new LogFiller(targetArea, targetArea.name, LOG_IDENTIFIER.LANDMARK_2));
     }
     private void RecruitmentSuccessEffect(InteractionState state) {
-        investigatorMinion.LevelUp();
+        investigatorCharacter.LevelUp();
         characterInvolved.RecruitAsMinion();
     }
     private void RecruitmentFailEffect(InteractionState state) {

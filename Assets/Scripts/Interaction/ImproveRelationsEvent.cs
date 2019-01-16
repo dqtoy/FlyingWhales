@@ -36,12 +36,13 @@ public class ImproveRelationsEvent : Interaction {
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
         startStateDescriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
+        startStateDescriptionLog.AddToFillers(targetFaction, targetFaction.name, LOG_IDENTIFIER.FACTION_2);
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 
         CreateActionOptions(startState);
         disruptedImproveRelationsSuccess.SetEffect(() => DisruptedImproveRelationsSuccessRewardEffect(disruptedImproveRelationsSuccess));
         disruptedImproveRelationsFail.SetEffect(() => DisruptedImproveRelationsFailRewardEffect(disruptedImproveRelationsFail));
-        disruptedImproveRelationsCriticalFail.SetEffect(() => DisruptedImproveRelationsCriticallyFailRewardEffect(disruptedImproveRelationsFail));
+        disruptedImproveRelationsCriticalFail.SetEffect(() => DisruptedImproveRelationsCriticallyFailRewardEffect(disruptedImproveRelationsCriticalFail));
         assistedImproveRelationsSuccess.SetEffect(() => AssistedImproveRelationsSuccessRewardEffect(assistedImproveRelationsSuccess));
         assistedImproveRelationsFail.SetEffect(() => AssistedImproveRelationsFailRewardEffect(assistedImproveRelationsFail));
         assistedImproveRelationsCriticalFail.SetEffect(() => AssistedImproveRelationsCriticallyFailRewardEffect(assistedImproveRelationsFail));
@@ -70,7 +71,7 @@ public class ImproveRelationsEvent : Interaction {
                 name = "Disrupt the meeting.",
                 effect = () => DisruptOptionEffect(state),
                 jobNeeded = JOB.INSTIGATOR,
-                doesNotMeetRequirementsStr = "Minion must be an instigator",
+                doesNotMeetRequirementsStr = "Must have instigator minion.",
             };
             ActionOption assist = new ActionOption {
                 interactionState = state,
@@ -78,7 +79,7 @@ public class ImproveRelationsEvent : Interaction {
                 name = "Assist with the meeting.",
                 effect = () => AssistOptionEffect(state),
                 jobNeeded = JOB.DIPLOMAT,
-                doesNotMeetRequirementsStr = "Minion must be a diplomat",
+                doesNotMeetRequirementsStr = "Must have diplomat minion.",
             };
             ActionOption doNothing = new ActionOption {
                 interactionState = state,
@@ -167,7 +168,7 @@ public class ImproveRelationsEvent : Interaction {
         //_characterInvolved.faction.AdjustRelationshipFor(targetFaction, 1);
         //**Level Up**: Diplomat Character +1, Diplomat Minion +1 (if assisted)
         _characterInvolved.LevelUp();
-        investigatorMinion.LevelUp();
+        investigatorCharacter.LevelUp();
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
             state.descriptionLog.AddToFillers(targetFaction, targetFaction.name, LOG_IDENTIFIER.FACTION_2);
@@ -179,7 +180,7 @@ public class ImproveRelationsEvent : Interaction {
     }
     private void DisruptedImproveRelationsFailRewardEffect(InteractionState state) {
         //**Level Up**: Diplomat Minion +1
-        investigatorMinion.LevelUp();
+        investigatorCharacter.LevelUp();
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
             state.descriptionLog.AddToFillers(targetFaction, targetFaction.name, LOG_IDENTIFIER.FACTION_2);
@@ -192,7 +193,7 @@ public class ImproveRelationsEvent : Interaction {
         AdjustFactionsRelationship(_characterInvolved.faction, targetFaction, -1, state);
         //_characterInvolved.faction.AdjustRelationshipFor(targetFaction, -1);
         //**Level Up**: Diplomat Minion +1
-        investigatorMinion.LevelUp();
+        investigatorCharacter.LevelUp();
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
             state.descriptionLog.AddToFillers(targetFaction, targetFaction.name, LOG_IDENTIFIER.FACTION_2);
@@ -206,7 +207,7 @@ public class ImproveRelationsEvent : Interaction {
         //_characterInvolved.faction.AdjustRelationshipFor(targetFaction, 1);
         //**Level Up**: Diplomat Character +1, Diplomat Minion +1 (if assisted)
         _characterInvolved.LevelUp();
-        investigatorMinion.LevelUp();
+        investigatorCharacter.LevelUp();
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
             state.descriptionLog.AddToFillers(targetFaction, targetFaction.name, LOG_IDENTIFIER.FACTION_2);

@@ -19,8 +19,12 @@ public class ChanceEncounter : Interaction {
     private const string Neutral = "Neutral";
     private const string Negative = "Negative";
 
-    private Character targetCharacter;
+    private Character _targetCharacter;
     private WeightedDictionary<string> encounterWeights = new WeightedDictionary<string>();
+
+    public override Character targetCharacter {
+        get { return _targetCharacter; }
+    }
 
     public ChanceEncounter(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.CHANCE_ENCOUNTER, 0) {
         _name = "Chance Encounter";
@@ -29,7 +33,7 @@ public class ChanceEncounter : Interaction {
 
     #region Overrides
     public override void CreateStates() {
-        if (targetCharacter == null) {
+        if (_targetCharacter == null) {
             SetTargetCharacter(GetTargetCharacter(_characterInvolved));
         }
 
@@ -37,12 +41,12 @@ public class ChanceEncounter : Interaction {
         encounterWeights.AddElement(Neutral, 100);
         encounterWeights.AddElement(Negative, 100);
 
-        if(!_characterInvolved.isFactionless && !targetCharacter.isFactionless) {
-            if (_characterInvolved.faction == targetCharacter.faction) {
+        if(!_characterInvolved.isFactionless && !_targetCharacter.isFactionless) {
+            if (_characterInvolved.faction == _targetCharacter.faction) {
                 encounterWeights.AddWeightToElement(Positive, 100);
                 encounterWeights.AddWeightToElement(Neutral, 50);
             } else {
-                FactionRelationship relationship = _characterInvolved.faction.GetRelationshipWith(targetCharacter.faction);
+                FactionRelationship relationship = _characterInvolved.faction.GetRelationshipWith(_targetCharacter.faction);
                 if(relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.ALLY || relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.FRIEND) {
                     encounterWeights.AddWeightToElement(Positive, 50);
                     encounterWeights.AddWeightToElement(Neutral, 100);
@@ -52,15 +56,15 @@ public class ChanceEncounter : Interaction {
                     encounterWeights.AddWeightToElement(Negative, 100);
                 }
             }
-            if(_characterInvolved.race == targetCharacter.race) {
+            if(_characterInvolved.race == _targetCharacter.race) {
                 encounterWeights.AddWeightToElement(Positive, 100);
                 encounterWeights.AddWeightToElement(Neutral, 50);
             } else {
-                if(Utilities.AreTwoCharactersFromOpposingRaces(_characterInvolved, targetCharacter)) {
+                if(Utilities.AreTwoCharactersFromOpposingRaces(_characterInvolved, _targetCharacter)) {
                     encounterWeights.AddWeightToElement(Negative, 100);
                 }
             }
-            if (_characterInvolved.characterClass.rangeType == targetCharacter.characterClass.rangeType &&_characterInvolved.characterClass.attackType == targetCharacter.characterClass.attackType) {
+            if (_characterInvolved.characterClass.rangeType == _targetCharacter.characterClass.rangeType &&_characterInvolved.characterClass.attackType == _targetCharacter.characterClass.attackType) {
                 encounterWeights.AddWeightToElement(Positive, 100);
                 encounterWeights.AddWeightToElement(Neutral, 50);
             }
@@ -79,7 +83,7 @@ public class ChanceEncounter : Interaction {
         InteractionState normalEncounterNegative = new InteractionState(Normal_Encounter_Negative, this);
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
-        startStateDescriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        startStateDescriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 
         CreateActionOptions(startState);
@@ -141,7 +145,7 @@ public class ChanceEncounter : Interaction {
     }
     public override bool CanInteractionBeDoneBy(Character character) {
         SetTargetCharacter(GetTargetCharacter(character));
-        if (targetCharacter == null) {
+        if (_targetCharacter == null) {
             return false;
         }
         return base.CanInteractionBeDoneBy(character);
@@ -191,68 +195,68 @@ public class ChanceEncounter : Interaction {
 
     #region State Effects
     private void InstigatedEncounterPositiveEffect(InteractionState state) {
-        CharacterManager.Instance.ChangePersonalRelationshipBetweenTwoCharacters(_characterInvolved, targetCharacter, 1);
+        CharacterManager.Instance.ChangePersonalRelationshipBetweenTwoCharacters(_characterInvolved, _targetCharacter, 1);
 
-        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     private void InstigatedEncounterNeutralEffect(InteractionState state) {
-        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     private void InstigatedEncounterNegativeEffect(InteractionState state) {
-        investigatorMinion.LevelUp();
-        CharacterManager.Instance.ChangePersonalRelationshipBetweenTwoCharacters(_characterInvolved, targetCharacter, -1);
+        investigatorCharacter.LevelUp();
+        CharacterManager.Instance.ChangePersonalRelationshipBetweenTwoCharacters(_characterInvolved, _targetCharacter, -1);
 
-        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     private void AssistedEncounterPositiveEffect(InteractionState state) {
-        investigatorMinion.LevelUp();
-        CharacterManager.Instance.ChangePersonalRelationshipBetweenTwoCharacters(_characterInvolved, targetCharacter, 1);
+        investigatorCharacter.LevelUp();
+        CharacterManager.Instance.ChangePersonalRelationshipBetweenTwoCharacters(_characterInvolved, _targetCharacter, 1);
 
-        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     private void AssistedEncounterNeutralEffect(InteractionState state) {
-        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     private void AssistedEncounterNegativeEffect(InteractionState state) {
-        CharacterManager.Instance.ChangePersonalRelationshipBetweenTwoCharacters(_characterInvolved, targetCharacter, -1);
+        CharacterManager.Instance.ChangePersonalRelationshipBetweenTwoCharacters(_characterInvolved, _targetCharacter, -1);
 
-        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     private void NormalEncounterPositiveEffect(InteractionState state) {
-        CharacterManager.Instance.ChangePersonalRelationshipBetweenTwoCharacters(_characterInvolved, targetCharacter, 1);
+        CharacterManager.Instance.ChangePersonalRelationshipBetweenTwoCharacters(_characterInvolved, _targetCharacter, 1);
 
-        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     private void NormalEncounterNeutralEffect(InteractionState state) {
-        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     private void NormalEncounterNegativeEffect(InteractionState state) {
-        CharacterManager.Instance.ChangePersonalRelationshipBetweenTwoCharacters(_characterInvolved, targetCharacter, -1);
+        CharacterManager.Instance.ChangePersonalRelationshipBetweenTwoCharacters(_characterInvolved, _targetCharacter, -1);
 
-        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     #endregion
 
     public void SetTargetCharacter(Character targetCharacter) {
-        this.targetCharacter = targetCharacter;
+        this._targetCharacter = targetCharacter;
     }
     public Character GetTargetCharacter(Character characterInvolved) {
         List<Character> characterList = new List<Character>();

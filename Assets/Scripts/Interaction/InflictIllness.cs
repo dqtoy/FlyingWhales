@@ -57,7 +57,7 @@ public class InflictIllness : Interaction {
                 },
                 neededObjects = new List<System.Type>() { typeof(CharacterToken) },
                 //jobNeeded = JOB.DISSUADER,
-                //doesNotMeetRequirementsStr = "Minion must be a dissuader",
+                //doesNotMeetRequirementsStr = "Must have debilitator minion."",
             };
             ActionOption doNothing = new ActionOption {
                 interactionState = state,

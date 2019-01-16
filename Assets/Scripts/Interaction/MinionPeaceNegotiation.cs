@@ -65,8 +65,8 @@ public class MinionPeaceNegotiation : Interaction {
     #region Action Options
     private void ProceedOption() {
         WeightedDictionary<string> effectWeights = new WeightedDictionary<string>();
-        effectWeights.AddElement(Peace_Negotiations_Successful, investigatorMinion.character.job.GetSuccessRate());
-        effectWeights.AddElement(Peace_Negotiations_Failed, investigatorMinion.character.job.GetFailRate());
+        effectWeights.AddElement(Peace_Negotiations_Successful, investigatorCharacter.job.GetSuccessRate());
+        effectWeights.AddElement(Peace_Negotiations_Failed, investigatorCharacter.job.GetFailRate());
 
         string chosenEffect = effectWeights.PickRandomElementGivenWeights();
         SetCurrentState(_states[chosenEffect]);
@@ -83,7 +83,7 @@ public class MinionPeaceNegotiation : Interaction {
     #region State Effects
     private void PeaceNegotiationsSuccessEffect(InteractionState state) {
         FactionManager.Instance.DeclarePeaceBetween(PlayerManager.Instance.player.playerFaction, interactable.tileLocation.areaOfTile.owner);
-        investigatorMinion.LevelUp();
+        investigatorCharacter.LevelUp();
 
         state.descriptionLog.AddToFillers(interactable.tileLocation.areaOfTile.owner.leader, interactable.tileLocation.areaOfTile.owner.leader.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 

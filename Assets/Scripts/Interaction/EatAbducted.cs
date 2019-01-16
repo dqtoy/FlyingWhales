@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class EatAbducted : Interaction {
 
-    private Character targetCharacter;
+    private Character _targetCharacter;
 
     private const string Start = "Start";
     private const string Release_Success = "Release Success";
@@ -15,6 +15,9 @@ public class EatAbducted : Interaction {
     private const string Persuade_Critical_Fail = "Persuade Critical Fail";
     private const string Character_Eaten = "Character Eaten";
 
+    public override Character targetCharacter {
+        get { return _targetCharacter; }
+    }
 
     public EatAbducted(BaseLandmark interactable): base(interactable, INTERACTION_TYPE.EAT_ABDUCTED, 0) {
         _name = "Eat Abducted";
@@ -23,7 +26,7 @@ public class EatAbducted : Interaction {
 
     #region Override
     public override void CreateStates() {
-        if (targetCharacter == null) {
+        if (_targetCharacter == null) {
             SetTargetCharacter(GetTargetCharacter(_characterInvolved));
         }
 
@@ -37,7 +40,7 @@ public class EatAbducted : Interaction {
         InteractionState characterEaten = new InteractionState(Character_Eaten, this);
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
-        startStateDescriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        startStateDescriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 
         CreateActionOptions(startState);
@@ -70,7 +73,7 @@ public class EatAbducted : Interaction {
             ActionOption release = new ActionOption {
                 interactionState = state,
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
-                name = "Release " + targetCharacter.name + " before " + Utilities.GetPronounString(targetCharacter.gender, PRONOUN_TYPE.SUBJECTIVE, false) + " gets eaten.",
+                name = "Release " + _targetCharacter.name + " before " + Utilities.GetPronounString(_targetCharacter.gender, PRONOUN_TYPE.SUBJECTIVE, false) + " gets eaten.",
                 effect = () => ReleaseOptionEffect(state),
                 jobNeeded = JOB.DIPLOMAT,
                 disabledTooltipText = "Minion must be a Diplomat",
@@ -78,7 +81,7 @@ public class EatAbducted : Interaction {
             ActionOption persuade = new ActionOption {
                 interactionState = state,
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
-                name = "Persuade to stop " + Utilities.GetPronounString(_characterInvolved.gender, PRONOUN_TYPE.POSSESSIVE, false) + " plan to eat " + targetCharacter.name + ".",
+                name = "Persuade to stop " + Utilities.GetPronounString(_characterInvolved.gender, PRONOUN_TYPE.POSSESSIVE, false) + " plan to eat " + _targetCharacter.name + ".",
                 effect = () => PersuadeOptionEffect(state),
                 jobNeeded = JOB.DEBILITATOR,
                 disabledTooltipText = "Minion must be a Dissuader",
@@ -97,7 +100,7 @@ public class EatAbducted : Interaction {
     }
     public override bool CanInteractionBeDoneBy(Character character) {
         SetTargetCharacter(GetTargetCharacter(character));
-        if (targetCharacter == null) {
+        if (_targetCharacter == null) {
             return false;
         }
         return base.CanInteractionBeDoneBy(character);
@@ -106,7 +109,7 @@ public class EatAbducted : Interaction {
 
     #region Option Effect
     private void ReleaseOptionEffect(InteractionState state) {
-        WeightedDictionary<RESULT> resultWeights = investigatorMinion.character.job.GetJobRateWeights();
+        WeightedDictionary<RESULT> resultWeights = investigatorCharacter.job.GetJobRateWeights();
 
         string nextState = string.Empty;
         switch (resultWeights.PickRandomElementGivenWeights()) {
@@ -123,7 +126,7 @@ public class EatAbducted : Interaction {
         SetCurrentState(_states[nextState]);
     }
     private void PersuadeOptionEffect(InteractionState state) {
-        WeightedDictionary<RESULT> resultWeights = investigatorMinion.character.job.GetJobRateWeights();
+        WeightedDictionary<RESULT> resultWeights = investigatorCharacter.job.GetJobRateWeights();
 
         string nextState = string.Empty;
         switch (resultWeights.PickRandomElementGivenWeights()) {
@@ -146,75 +149,75 @@ public class EatAbducted : Interaction {
 
     #region Reward Effect
     private void ReleaseSuccessEffect(InteractionState state) {
-        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
-        investigatorMinion.LevelUp();
-        AdjustFactionsRelationship(PlayerManager.Instance.player.playerFaction, targetCharacter.faction, 1, state);
+        investigatorCharacter.LevelUp();
+        AdjustFactionsRelationship(PlayerManager.Instance.player.playerFaction, _targetCharacter.faction, 1, state);
 
-        targetCharacter.ReleaseFromAbduction();
+        _targetCharacter.ReleaseFromAbduction();
     }
     private void ReleaseFailEffect(InteractionState state) {
-        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
         _characterInvolved.LevelUp();
-        targetCharacter.Death();
+        _targetCharacter.Death();
     }
     private void ReleaseCritFailEffect(InteractionState state) {
-        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        state.descriptionLog.AddToFillers(investigatorMinion, investigatorMinion.name, LOG_IDENTIFIER.MINION_1);
+        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.descriptionLog.AddToFillers(investigatorCharacter, investigatorCharacter.name, LOG_IDENTIFIER.MINION_1);
 
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
-        state.AddLogFiller(new LogFiller(investigatorMinion, investigatorMinion.name, LOG_IDENTIFIER.MINION_1));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(investigatorCharacter, investigatorCharacter.name, LOG_IDENTIFIER.MINION_1));
 
         AdjustFactionsRelationship(PlayerManager.Instance.player.playerFaction, _characterInvolved.faction, -1, state);
 
         _characterInvolved.LevelUp();
-        targetCharacter.Death();
-        investigatorMinion.character.Death();
+        _targetCharacter.Death();
+        investigatorCharacter.Death();
     }
     private void PersuadeSuccessEffect(InteractionState state) {
-        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
-        investigatorMinion.LevelUp();
+        investigatorCharacter.LevelUp();
     }
     private void PersuadeFailEffect(InteractionState state) {
-        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
         _characterInvolved.LevelUp();
-        targetCharacter.Death();
+        _targetCharacter.Death();
     }
     private void PersuadeCritFailEffect(InteractionState state) {
-        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        state.descriptionLog.AddToFillers(investigatorMinion, investigatorMinion.name, LOG_IDENTIFIER.MINION_1);
+        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.descriptionLog.AddToFillers(investigatorCharacter, investigatorCharacter.name, LOG_IDENTIFIER.MINION_1);
 
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
-        state.AddLogFiller(new LogFiller(investigatorMinion, investigatorMinion.name, LOG_IDENTIFIER.MINION_1));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(investigatorCharacter, investigatorCharacter.name, LOG_IDENTIFIER.MINION_1));
 
         AdjustFactionsRelationship(PlayerManager.Instance.player.playerFaction, _characterInvolved.faction, -1, state);
 
         _characterInvolved.LevelUp();
-        targetCharacter.Death();
-        investigatorMinion.character.Death();
+        _targetCharacter.Death();
+        investigatorCharacter.Death();
     }
     private void CharacterEatenEffect(InteractionState state) {
-        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
-        targetCharacter.Death();
+        _targetCharacter.Death();
     }
     #endregion
 
     public void SetTargetCharacter(Character targetCharacter) {
-        this.targetCharacter = targetCharacter;
+        this._targetCharacter = targetCharacter;
     }
     public Character GetTargetCharacter(Character characterInvolved) {
         WeightedDictionary<Character> characterWeights = new WeightedDictionary<Character>();

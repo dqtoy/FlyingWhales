@@ -75,7 +75,7 @@ public class DiplomatFactionMediation : Interaction {
 
     #region State Effects
     private void ImproveRelationshipEffect(InteractionState state) {
-        investigatorMinion.LevelUp();
+        investigatorCharacter.LevelUp();
 
         FactionRelationship relationship = interactable.tileLocation.areaOfTile.owner.GetRelationshipWith(_targetFactionToken.faction);
         relationship.AdjustRelationshipStatus(1);

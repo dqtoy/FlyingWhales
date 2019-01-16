@@ -44,6 +44,12 @@ public class ActionOption {
         if (interactionState.interaction.isChosen) { //Only those interaction that pops up must have cost, all other interactions are free since they will all default
             PlayerManager.Instance.player.AdjustCurrency(cost.currency, -cost.amount);
         }
+        if (jobNeeded != JOB.NONE) {
+            interactionState.SetAssignedPlayerCharacter(PlayerManager.Instance.player.GetCharacterAssignedToJob(jobNeeded));
+        } 
+        //else {
+        //    interactionState.SetAssignedPlayerCharacter(null);
+        //}
         interactionState.interaction.SetActivatedState(true);
         StartDuration();
         interactionState.SetChosenOption(this);
@@ -52,10 +58,13 @@ public class ActionOption {
     public bool CanBeDone() {
         if(canBeDoneAction != null) {
             if (canBeDoneAction()) {
-                if(jobNeeded != JOB.NONE && jobNeeded != interactionState.interaction.investigatorMinion.character.job.jobType) {
+                if (jobNeeded != JOB.NONE && !PlayerManager.Instance.player.HasCharacterAssignedToJob(jobNeeded)) {
                     return false;
                 }
-                if(interactionState.interaction.isChosen) {
+                //if(jobNeeded != JOB.NONE && jobNeeded != interactionState.interaction.investigatorMinion.character.job.jobType) {
+                //    return false;
+                //}
+                if (interactionState.interaction.isChosen) {
                     if(PlayerManager.Instance.player.currencies[cost.currency] >= cost.amount) {
                         return true;
                     }
@@ -64,9 +73,12 @@ public class ActionOption {
                 }
             }
         } else {
-            if (jobNeeded != JOB.NONE && jobNeeded != interactionState.interaction.investigatorMinion.character.job.jobType) {
+            if (jobNeeded != JOB.NONE && !PlayerManager.Instance.player.HasCharacterAssignedToJob(jobNeeded)) {
                 return false;
             }
+            //if (jobNeeded != JOB.NONE && jobNeeded != interactionState.interaction.investigatorMinion.character.job.jobType) {
+            //    return false;
+            //}
             if (interactionState.interaction.isChosen) {
                 if (PlayerManager.Instance.player.currencies[cost.currency] >= cost.amount) {
                     return true;

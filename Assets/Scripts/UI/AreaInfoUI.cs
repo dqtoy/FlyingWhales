@@ -189,9 +189,9 @@ public class AreaInfoUI : UIMenu {
     #endregion
 
     public override void OpenMenu() {
-        base.OpenMenu();
         Area previousArea = activeArea;
         activeArea = _data as Area;
+        base.OpenMenu();
         if(previousArea == null || (previousArea != null && previousArea != activeArea)) {
             ResetMinionAssignment();
             ResetMinionAssignmentParty();

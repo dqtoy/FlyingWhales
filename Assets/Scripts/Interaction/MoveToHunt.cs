@@ -71,8 +71,8 @@ public class MoveToHunt : Interaction {
     #region Action Options
     private void PreventOption() {
         WeightedDictionary<string> effectWeights = new WeightedDictionary<string>();
-        effectWeights.AddElement(Hunt_Cancelled, investigatorMinion.character.job.GetSuccessRate());
-        effectWeights.AddElement(Hunt_Proceeds, investigatorMinion.character.job.GetFailRate());
+        effectWeights.AddElement(Hunt_Cancelled, investigatorCharacter.job.GetSuccessRate());
+        effectWeights.AddElement(Hunt_Proceeds, investigatorCharacter.job.GetFailRate());
         string chosenEffect = effectWeights.PickRandomElementGivenWeights();
         SetCurrentState(_states[chosenEffect]);
     }
@@ -83,7 +83,7 @@ public class MoveToHunt : Interaction {
 
     #region State Effects
     private void HuntCancelledEffect(InteractionState state) {
-        investigatorMinion.LevelUp();
+        investigatorCharacter.LevelUp();
     }
     private void HuntProceedsEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2);
