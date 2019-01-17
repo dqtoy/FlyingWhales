@@ -3292,7 +3292,6 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
             if(specificLocation.tileLocation.areaOfTile.id != homeLandmark.tileLocation.areaOfTile.id) {
                 //Character actions away from home
                 WeightedDictionary<string> awayFromHomeInteractionWeights = new WeightedDictionary<string>();
-                awayFromHomeInteractionWeights.AddElement("Return", 100);
                 awayFromHomeInteractionWeights.AddElement("DoNothing", 50);
 
                 if (tokenInInventory != null && tokenInInventory.CanBeUsedBy(this) && InteractionManager.Instance.CanCreateInteraction(tokenInInventory.npcAssociatedInteractionType, this)) {
@@ -3307,10 +3306,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
 
                 string result = awayFromHomeInteractionWeights.PickRandomElementGivenWeights();
                 if(result == "DoNothing") {
-                }else if (result == "Return") {
-                    Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, specificLocation as BaseLandmark);
-                    AddInteraction(interaction);
-                } else if (tokenInInventory != null && result == tokenInInventory.tokenName) {
+                }else if (tokenInInventory != null && result == tokenInInventory.tokenName) {
                     Interaction interaction = InteractionManager.Instance.CreateNewInteraction(tokenInInventory.npcAssociatedInteractionType, specificLocation as BaseLandmark);
                     if (interaction.type == INTERACTION_TYPE.USE_ITEM_ON_CHARACTER) {
                         (interaction as UseItemOnCharacter).SetItemToken(tokenInInventory);

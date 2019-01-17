@@ -335,6 +335,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.MOVE_TO_VISIT:
                 createdInteraction = new MoveToVisit(interactable);
                 break;
+            case INTERACTION_TYPE.TRANSFER_HOME:
+                createdInteraction = new TransferHome(interactable);
+                break;
         }
         return createdInteraction;
     }
@@ -727,6 +730,16 @@ public class InteractionManager : MonoBehaviour {
                     return false;
                 }
                 return true;
+            case INTERACTION_TYPE.TRANSFER_HOME:
+                if(character.specificLocation.tileLocation.areaOfTile.id != character.homeLandmark.tileLocation.areaOfTile.id
+                    && character.specificLocation.tileLocation.areaOfTile.owner == character.faction) {
+                    int targetRemainingResidentCap = character.specificLocation.tileLocation.areaOfTile.residentCapacity - character.specificLocation.tileLocation.areaOfTile.areaResidents.Count;
+                    int homeRemainingResidentCap = character.homeLandmark.tileLocation.areaOfTile.residentCapacity - character.homeLandmark.tileLocation.areaOfTile.areaResidents.Count;
+                    if(targetRemainingResidentCap - homeRemainingResidentCap >= 3) {
+                        return true;
+                    }
+                }
+                return false;
             default:
                 return true;
         }

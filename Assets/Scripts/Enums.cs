@@ -1137,6 +1137,7 @@ public enum INTERACTION_TYPE {
     FOUND_ZIRANNA,
     FOUND_RIKITIK,
     MOVE_TO_VISIT,
+    TRANSFER_HOME,
 }
 public enum REWARD {
     SUPPLY,
