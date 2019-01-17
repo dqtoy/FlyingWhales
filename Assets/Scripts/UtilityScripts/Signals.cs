@@ -74,6 +74,7 @@ public static class Signals {
     public static string CHARACTER_LEVEL_CHANGED = "OnCharacterLevelChange"; //Parameters (Character character)
     public static string TRAIT_ADDED = "OnTraitAdded";
     public static string TRAIT_REMOVED = "OnTraitRemoved"; //Parameters (Character character)
+    public static string ADJUSTED_HP = "OnAdjustedHP";
     #endregion
 
     #region UI

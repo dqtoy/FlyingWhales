@@ -701,6 +701,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         int previous = this._currentHP;
         this._currentHP += amount;
         this._currentHP = Mathf.Clamp(this._currentHP, 0, maxHP);
+        Messenger.Broadcast(Signals.ADJUSTED_HP, this);
         if (triggerDeath && previous != this._currentHP) {
             if (this._currentHP == 0) {
                 Death();
