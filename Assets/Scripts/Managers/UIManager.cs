@@ -233,6 +233,9 @@ public class UIManager : MonoBehaviour {
         if (playerLandmarkInfoUI.isShowing) {
             playerLandmarkInfoUI.CloseMenu();
         }
+        if (factionInfoUI.isShowing) {
+            factionInfoUI.CloseMenu();
+        }
         if (areaInfoUI.isShowing) {
             areaInfoUI.CloseMenu();
         }
@@ -774,9 +777,9 @@ public class UIManager : MonoBehaviour {
     public void ShowAreaInfo(Area area, int indexToggleToBeActivated = 0) {
         //BeforeOpeningMenu(areaInfoUI);
         //HideMainUI();
-        //if (factionInfoUI.isShowing) {
-        //    factionInfoUI.HideMenu();
-        //}
+        if (factionInfoUI.isShowing) {
+            factionInfoUI.CloseMenu();
+        }
         if (characterInfoUI.isShowing) {
             characterInfoUI.CloseMenu();
         }
@@ -883,6 +886,9 @@ public class UIManager : MonoBehaviour {
         if (areaInfoUI.isShowing) {
             areaInfoUI.CloseMenu();
         }
+        if (factionInfoUI.isShowing) {
+            factionInfoUI.CloseMenu();
+        }
         playerLandmarkInfoUI.SetData(landmark);
         playerLandmarkInfoUI.OpenMenu();
         playerLandmarkInfoUI.CenterOnLandmark();
@@ -903,12 +909,12 @@ public class UIManager : MonoBehaviour {
     public void ShowFactionInfo(Faction faction) {
         //BeforeOpeningMenu(factionInfoUI);
         //HideMainUI();
-        //if (landmarkInfoUI.isShowing) {
-        //    landmarkInfoUI.HideMenu();
-        //}
-        //if (characterInfoUI.isShowing) {
-        //    characterInfoUI.HideMenu();
-        //}
+        if (areaInfoUI.isShowing) {
+            areaInfoUI.CloseMenu();
+        }
+        if (characterInfoUI.isShowing) {
+            characterInfoUI.CloseMenu();
+        }
         //if (hexTileInfoUI.isShowing) {
         //    hexTileInfoUI.HideMenu();
         //}
@@ -948,9 +954,9 @@ public class UIManager : MonoBehaviour {
         if (areaInfoUI.isShowing) {
             areaInfoUI.CloseMenu();
         }
-        //if (factionInfoUI.isShowing) {
-        //    factionInfoUI.HideMenu();
-        //}
+        if (factionInfoUI.isShowing) {
+            factionInfoUI.CloseMenu();
+        }
         //if (hexTileInfoUI.isShowing) {
         //    hexTileInfoUI.HideMenu();
         //}

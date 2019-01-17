@@ -352,4 +352,16 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         factionEmblem.SetFaction(_character.faction);
     }
     #endregion
+
+    public void RandomizeHSV() {
+        Color origRGBCcolor = wholeImage.color;
+        float H, S, V;
+        Color.RGBToHSV(origRGBCcolor, out H, out S, out V);
+        Debug.Log("H: " + H + " S: " + S + " V: " + V);
+
+        H = Random.Range(140f, 220f) / 360f;
+        S = 50f/100f;
+        wholeImage.color = Color.HSVToRGB(H, S, V);
+
+    }
 }

@@ -85,6 +85,8 @@ public class Log {
                     (obj as Area).AddHistory(this);
                 } else if (obj is Minion) {
                     (obj as Minion).character.AddHistory(this);
+                } else if (obj is Faction) {
+                    (obj as Faction).AddHistory(this);
                 }
             }
         }
