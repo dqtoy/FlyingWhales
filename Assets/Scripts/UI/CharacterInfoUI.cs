@@ -38,8 +38,8 @@ public class CharacterInfoUI : UIMenu {
 
     [Space(10)]
     [Header("Item And Location")]
-    [SerializeField] private Image visitorImage;
-    [SerializeField] private Image residentImage;
+    [SerializeField] private LocationPortrait visitorLocationPortrait;
+    [SerializeField] private LocationPortrait residentLocationPortrait;
     [SerializeField] private ItemContainer itemContainer;
 
     //[Space(10)]
@@ -350,8 +350,8 @@ public class CharacterInfoUI : UIMenu {
 
     #region Location
     private void UpdateLocationInfo() {
-        visitorImage.sprite = LandmarkManager.Instance.locationPortraits[_activeCharacter.specificLocation.tileLocation.areaOfTile.name];
-        residentImage.sprite = LandmarkManager.Instance.locationPortraits[_activeCharacter.homeLandmark.tileLocation.areaOfTile.name];
+        visitorLocationPortrait.SetLocation(_activeCharacter.specificLocation.tileLocation.areaOfTile);
+        residentLocationPortrait.SetLocation(_activeCharacter.homeLandmark.tileLocation.areaOfTile);
     }
     #endregion
 
