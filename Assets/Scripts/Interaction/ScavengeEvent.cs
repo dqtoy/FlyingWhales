@@ -198,7 +198,7 @@ public class ScavengeEvent : Interaction {
             Utilities.NormalizeString(_characterInvolved.faction.GetRelationshipWith(PlayerManager.Instance.player.playerFaction).relationshipStatus.ToString()), LOG_IDENTIFIER.STRING_2));
     }
     private void AssistedScavengeFailRewardEffect(InteractionState state) {
-        _investigatorMinion.LevelUp();
+        _defaultInvestigatorCharacter.LevelUp();
     }
     private void AssistedScavengeCriticallyFailRewardEffect(InteractionState state) {
         _characterInvolved.Death(); 

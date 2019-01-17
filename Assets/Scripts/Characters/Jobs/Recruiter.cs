@@ -60,7 +60,7 @@ public class Recruiter : Job {
             string result = "Success"; // weights.PickRandomElementGivenWeights();
             Interaction interaction = null;
             if (result == "Success") {
-                interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.FRIENDLY_CHARACTER_ENCOUNTERED, area.coreTile.landmarkOnTile);
+                interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_RECRUIT_CHARACTER, area.coreTile.landmarkOnTile);
                 interaction.AddEndInteractionAction(() => StartJobAction());
                 interaction.ScheduleSecondTimeOut();
                 chosenCharacter.AddInteraction(interaction);

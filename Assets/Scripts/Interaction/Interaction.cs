@@ -23,7 +23,7 @@ public class Interaction {
     protected Action _initializeAction;
     protected InteractionState _previousState;
     protected InteractionState _currentState;
-    protected Minion _investigatorMinion;
+    protected Character _defaultInvestigatorCharacter;
     protected Character _characterInvolved;
     protected Token _tokenTrigger;
     protected Action _minionSuccessfulAction;
@@ -59,7 +59,10 @@ public class Interaction {
             //    return _interactable.tileLocation.areaOfTile.areaInvestigation.assignedMinion;
             //}
             //Only used for Minion Critical Fail Event since assignedMinion will be null, interaction must still have reference of the dead minion
-            return currentState.assignedPlayerCharacter;
+            if (currentState.assignedPlayerCharacter != null) {
+               return currentState.assignedPlayerCharacter;
+            }
+            return _defaultInvestigatorCharacter;
         }
     }
     public Minion tokeneerMinion {
@@ -275,8 +278,8 @@ public class Interaction {
             summary += "\nInteraction summary :" + interactionDebugLog;
         }
     }
-    public void SetExplorerMinion(Minion minion) {
-        _investigatorMinion = minion;
+    public void SetDefaultInvestigatorCharacter(Character character) {
+        _defaultInvestigatorCharacter = character;
         //if(_explorerMinion != null) {
         //    _currentState.CreateLogs();
         //    _currentState.SetDescription();

@@ -114,7 +114,7 @@ public class InduceGrudge : Interaction {
 
         state.AddLogFiller(new LogFiller(investigatorCharacter, investigatorCharacter.name, LOG_IDENTIFIER.MINION_1));
 
-        DemonDisappearsRewardEffect(state);
+        investigatorCharacter.Death();
     }
     private void DoNothingEffect(InteractionState state) {
     }
