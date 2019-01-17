@@ -75,6 +75,8 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler{
                         UIManager.Instance.ShowLandmarkInfo(lf.obj as BaseLandmark);
                     } else if (lf.obj is Area) {
                         UIManager.Instance.ShowAreaInfo(lf.obj as Area);
+                    } else if (lf.obj is Faction) {
+                        UIManager.Instance.ShowFactionInfo((lf.obj as Faction));
                     } else if (lf.obj is Minion) {
                         UIManager.Instance.ShowCharacterInfo((lf.obj as Minion).character);
                     } else if (lf.obj is Combat) {

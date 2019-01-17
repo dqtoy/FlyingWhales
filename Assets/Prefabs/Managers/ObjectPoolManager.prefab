@@ -57,13 +57,7 @@ MonoBehaviour:
   - {fileID: 1995387493181358, guid: cdfed07929227104599994075478446b, type: 2}
   - {fileID: 1404552397919108, guid: 44606a74032cb404ca32744b5b0b1489, type: 2}
   - {fileID: 1635049517752946, guid: dd80f663ef5751843b3ef77c38facc41, type: 2}
-  - {fileID: 1323376486220886, guid: 8b315b73eb1701645a23483f853911f9, type: 2}
-  - {fileID: 1428498123381938, guid: 318502796838aa34eb5754035a0ce7e1, type: 2}
-  - {fileID: 1308317708236742, guid: a77d0b0d34409c44d97b6892c745b712, type: 2}
   - {fileID: 1668576898731800, guid: e2d243a395fd9384a8973709eb9bc9b9, type: 2}
-  - {fileID: 1840537741665150, guid: 7debc64f5ae926e44811b3640de3815f, type: 2}
-  - {fileID: 1518694227041076, guid: 7c09472d5a3ac27458474a3119bcf96f, type: 2}
-  - {fileID: 1367640640183718, guid: f0c29c4565ca9044ea599abe7365f27c, type: 2}
   - {fileID: 1618945397602768, guid: 2975c486214c95b4ab5eed6af62fba90, type: 2}
   - {fileID: 1632239326956908, guid: 6a3fbd7f8a25b814bb4c4e417caae8ec, type: 2}
   - {fileID: 1960029943899900, guid: 40796bb49d293324490f615d012de961, type: 2}
@@ -71,13 +65,14 @@ MonoBehaviour:
   - {fileID: 1487682449734014, guid: d5974a5f53223bc4c8579f3cc89ea982, type: 2}
   - {fileID: 1619904414207612, guid: fdc88c23db2dd3249b18b559e50f7f3d, type: 2}
   - {fileID: 1566534850646756, guid: 08bcf5cfb762d5e40bb44f794b472876, type: 2}
-  - {fileID: 1662102530042056, guid: c05e125abbaae31498da82dac4e008dd, type: 2}
   - {fileID: 1960029943899900, guid: e494a759a881ec348bff58d5240594c9, type: 2}
   - {fileID: 1763281387834148, guid: 9e936abe468e502459315397d81dc971, type: 2}
   - {fileID: 1677564857695062, guid: 52b80ee5fdeff7946bfa7fea000b7c07, type: 2}
   - {fileID: 1918348133013666, guid: 65f91393e3c6b264fbfc1545702ef828, type: 2}
   - {fileID: 1281087095607850, guid: a2e8dcf04a730f542b0dbeb63f54d763, type: 2}
   - {fileID: 1407515856224950, guid: 0c64f5050d08386459366dc1cbd0f055, type: 2}
+  - {fileID: 1843790752060090, guid: 2674725fb5f60ba47aa65b6afbc32fba, type: 2}
+  - {fileID: 1897089078281118, guid: db15a42321436b0418accd5b6584fe1b, type: 2}
   otherPrefabs:
   - {fileID: 1000012712350628, guid: 5372250d22a51bc40a200236eee58ac2, type: 2}
   UIObjectPoolParent: {fileID: 0}

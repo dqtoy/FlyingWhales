@@ -38,6 +38,7 @@ public class Faction {
     public FactionToken factionToken { get; private set; }
     public WeightedDictionary<AreaCharacterClass> additionalClassWeights { get; private set; }
     public bool isActive { get; private set; }
+    public List<Log> history { get; private set; }
 
     #region getters/setters
     public int id {
@@ -133,6 +134,7 @@ public class Faction {
         _recruitableRaces = new List<RACE>();
         _startingFollowers = new List<RACE>();
         factionToken = new FactionToken(this);
+        history = new List<Log>();
         //favor = new Dictionary<Faction, int>();
         //defenderWeights = new WeightedDictionary<AreaCharacterClass>();
         additionalClassWeights = new WeightedDictionary<AreaCharacterClass>();
@@ -172,6 +174,7 @@ public class Faction {
             _startingFollowers = new List<RACE>();
         }
         factionToken = new FactionToken(this);
+        history = new List<Log>();
         //favor = new Dictionary<Faction, int>();
         //if (data.defenderWeights != null) {
         //    defenderWeights = new WeightedDictionary<AreaCharacterClass>(data.defenderWeights);
@@ -376,7 +379,11 @@ public class Faction {
         _level += amount;
     }
     public void SetFactionActiveState(bool state) {
+        if (isActive == state) {
+            return; //ignore change
+        }
         isActive = state;
+        Messenger.Broadcast(Signals.FACTION_ACTIVE_CHANGED, this);
     }
     public void GenerateStartingLeader(int leaderLevel) {
         Character leader = CharacterManager.Instance.CreateNewCharacter(_initialLeaderClass, _initialLeaderRace, _initialLeaderGender,
@@ -481,10 +488,13 @@ public class Faction {
     public void AddToOwnedAreas(Area area) {
         if (!_ownedAreas.Contains(area)) {
             _ownedAreas.Add(area);
+            Messenger.Broadcast(Signals.FACTION_OWNED_AREA_ADDED, this, area);
         }
     }
     public void RemoveFromOwnedAreas(Area area) {
-        _ownedAreas.Remove(area);
+        if (_ownedAreas.Remove(area)) {
+            Messenger.Broadcast(Signals.FACTION_OWNED_AREA_REMOVED, this, area);
+        }
     }
     #endregion
 
@@ -659,6 +669,18 @@ public class Faction {
     #region Class Weights
     public void AddClassWeight(string className, int weight) {
         additionalClassWeights.AddElement(new AreaCharacterClass(className), weight);
+    }
+    #endregion
+
+    #region Logs
+    public void AddHistory(Log log) {
+        if (!history.Contains(log)) {
+            history.Add(log);
+            if (this.history.Count > 60) {
+                this.history.RemoveAt(0);
+            }
+            Messenger.Broadcast(Signals.HISTORY_ADDED, this as object);
+        }
     }
     #endregion
 }

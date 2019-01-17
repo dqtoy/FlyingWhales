@@ -378,7 +378,8 @@ public class Interaction {
         }
         factionRelationshipLog.AddToFillers(new LogFiller(interactable.tileLocation.areaOfTile, interactable.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1));
         factionRelationshipLog.SetFillerLockedState(true);
-        state.AddOtherLog(factionRelationshipLog);
+        //state.AddOtherLog(factionRelationshipLog);
+        factionRelationshipLog.AddLogToInvolvedObjects();
     }
     #endregion
 

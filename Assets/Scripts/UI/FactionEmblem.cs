@@ -4,8 +4,8 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-[RequireComponent(typeof(UIHoverHandler))]
-public class FactionEmblem : MonoBehaviour{
+//[RequireComponent(typeof(UIHoverHandler))]
+public class FactionEmblem : MonoBehaviour, IPointerClickHandler{
 
     private Faction faction;
 
@@ -64,6 +64,12 @@ public class FactionEmblem : MonoBehaviour{
             if (this.faction != null && (token as FactionToken).faction.id == this.faction.id) {
                 UpdateEmblem();
             }
+        }
+    }
+
+    public void OnPointerClick(PointerEventData eventData) {
+        if (faction != null) {
+            UIManager.Instance.ShowFactionInfo(faction);
         }
     }
 }
