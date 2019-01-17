@@ -3017,6 +3017,22 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         }
         return null;
     }
+    public bool HasTraitOf(TRAIT_TYPE traitType) {
+        for (int i = 0; i < _traits.Count; i++) {
+            if (_traits[i].type == traitType) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public void RemoveAllTraitsByType(TRAIT_TYPE traitType) {
+        for (int i = 0; i < _traits.Count; i++) {
+            if (_traits[i].type == traitType) {
+                _traits.RemoveAt(i);
+                i--;
+            }
+        }
+    }
     public Trait GetRandomNegativeTrait() {
         List<Trait> negativeTraits = new List<Trait>();
         for (int i = 0; i < _traits.Count; i++) {
