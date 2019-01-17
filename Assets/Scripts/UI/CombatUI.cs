@@ -19,9 +19,11 @@ public class CombatUI : MonoBehaviour {
 	
 	private void Initialize() {
         for (int i = 0; i < leftSlots.Length; i++) {
+            leftSlots[i].Initialize();
             leftSlots[i].SetGridNumber(i);
         }
         for (int i = 0; i < rightSlots.Length; i++) {
+            rightSlots[i].Initialize();
             rightSlots[i].SetGridNumber(i);
         }
         Messenger.AddListener<string>(Signals.ADD_TO_COMBAT_LOGS, AddCombatLogs);

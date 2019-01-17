@@ -1,11 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CombatSlotItem : MonoBehaviour {
     public CharacterPortrait portrait;
     public GameObject glowGO;
     public GameObject targetSelectGO;
+    public Image hpProgress; 
     public SIDES side;
 
     public Character character { get; private set; }
@@ -16,12 +18,16 @@ public class CombatSlotItem : MonoBehaviour {
         get { return targetSelectGO.activeSelf; }
     }
 
+    public void Initialize() {
+        Messenger.AddListener<Character>(Signals.ADJUSTED_HP, OnAdjustCharacterHP);
+    }
     public void SetCharacter(Character character) {
         this.character = character;
         if(this.character != null) {
             portrait.gameObject.SetActive(true);
             portrait.GeneratePortrait(character);
             hoverInfo = this.character.name;
+            UpdateHPBar();
         } else {
             portrait.gameObject.SetActive(false);
         }
@@ -44,6 +50,13 @@ public class CombatSlotItem : MonoBehaviour {
         }
         UIManager.Instance.combatUI.HideTargetCharacters(this);
     }
+    public void OnHoverHP() {
+        string hp = character.currentHP + "/" + character.maxHP;
+        UIManager.Instance.ShowSmallInfo(hp);
+    }
+    public void OnHoverOutHP() {
+        UIManager.Instance.HideSmallInfo();
+    }
     public void SetHighlight(bool state) {
         glowGO.SetActive(state);
     }
@@ -52,5 +65,13 @@ public class CombatSlotItem : MonoBehaviour {
     }
     public void OnClickCombatSlot() {
         UIManager.Instance.combatUI.SelectTargetCharacters(this);
+    }
+    private void OnAdjustCharacterHP(Character character) {
+        if(this.character != null && this.character.id == character.id) {
+            UpdateHPBar();
+        }
+    }
+    private void UpdateHPBar() {
+        hpProgress.fillAmount = this.character.currentHP / (float) this.character.maxHP;
     }
 }
