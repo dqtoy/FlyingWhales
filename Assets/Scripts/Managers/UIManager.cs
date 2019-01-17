@@ -244,6 +244,10 @@ public class UIManager : MonoBehaviour {
         }
     }
     public void AddToUIMenuHistory(object data) {
+        if(_uiMenuHistory.Count > 0 && _uiMenuHistory[_uiMenuHistory.Count - 1] == data) {
+            //This will prevent from having same consecutive objects to go back
+            return;
+        }
         _uiMenuHistory.Add(data);
     }
     public void ClearUIMenuHistory() {
