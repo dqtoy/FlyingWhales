@@ -85,7 +85,7 @@ public class CombatGrid {
             }
         } else if (character.characterClass.occupiedTileType == COMBAT_OCCUPIED_TILE.COLUMN) {
             if (overwrite) {
-                for (int i = 0; i < _columnReference.Length; i++) {
+                for (int i = 0; i < _columnReference.GetLength(0); i++) {
                     if (_slots[_columnReference[i, 0]].gridNumber == slotIndex || _slots[_columnReference[i, 1]].gridNumber == slotIndex) {
                         _slots[_columnReference[i, 0]].OccupySlot(character);
                         _slots[_columnReference[i, 1]].OccupySlot(character);
@@ -93,7 +93,7 @@ public class CombatGrid {
                     }
                 }
             } else {
-                for (int i = 0; i < _columnReference.Length; i++) {
+                for (int i = 0; i < _columnReference.GetLength(0); i++) {
                     if (_slots[_columnReference[i, 0]].gridNumber == slotIndex || _slots[_columnReference[i, 1]].gridNumber == slotIndex) {
                         if (!_slots[_columnReference[i, 0]].isOccupied && !_slots[_columnReference[i, 1]].isOccupied) {
                             _slots[_columnReference[i, 0]].OccupySlot(character);
@@ -106,7 +106,7 @@ public class CombatGrid {
             return false;
         } else if (character.characterClass.occupiedTileType == COMBAT_OCCUPIED_TILE.ROW) {
             if (overwrite) {
-                for (int i = 0; i < _rowReference.Length; i++) {
+                for (int i = 0; i < _rowReference.GetLength(0); i++) {
                     if (_slots[_rowReference[i, 0]].gridNumber == slotIndex || _slots[_rowReference[i, 1]].gridNumber == slotIndex) {
                         _slots[_rowReference[i, 0]].OccupySlot(character);
                         _slots[_rowReference[i, 1]].OccupySlot(character);
@@ -114,7 +114,7 @@ public class CombatGrid {
                     }
                 }
             } else {
-                for (int i = 0; i < _rowReference.Length; i++) {
+                for (int i = 0; i < _rowReference.GetLength(0); i++) {
                     if (_slots[_rowReference[i, 0]].gridNumber == slotIndex || _slots[_rowReference[i, 1]].gridNumber == slotIndex) {
                         if (!_slots[_rowReference[i, 0]].isOccupied && !_slots[_rowReference[i, 1]].isOccupied) {
                             _slots[_rowReference[i, 0]].OccupySlot(character);
@@ -149,7 +149,7 @@ public class CombatGrid {
                 _slots[i].OccupySlot(character);
             }
         } else if (character.characterClass.occupiedTileType == COMBAT_OCCUPIED_TILE.COLUMN) {
-            for (int i = 0; i < _columnReference.Length; i++) {
+            for (int i = 0; i < _columnReference.GetLength(0); i++) {
                 if (!_slots[_columnReference[i, 0]].isOccupied && !_slots[_columnReference[i, 1]].isOccupied) {
                     _slots[_columnReference[i, 0]].OccupySlot(character);
                     _slots[_columnReference[i, 1]].OccupySlot(character);
@@ -158,7 +158,7 @@ public class CombatGrid {
             }
             return false;
         } else if (character.characterClass.occupiedTileType == COMBAT_OCCUPIED_TILE.ROW) {
-            for (int i = 0; i < _rowReference.Length; i++) {
+            for (int i = 0; i < _rowReference.GetLength(0); i++) {
                 if (!_slots[_rowReference[i, 0]].isOccupied && !_slots[_rowReference[i, 1]].isOccupied) {
                     _slots[_rowReference[i, 0]].OccupySlot(character);
                     _slots[_rowReference[i, 1]].OccupySlot(character);
