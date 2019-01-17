@@ -11,7 +11,7 @@ public class MinionCriticalFail : Interaction {
 
     #region Overrides
     public override void Initialize() {
-        SetExplorerMinion(interactable.tileLocation.areaOfTile.areaInvestigation.assignedMinion);
+        SetDefaultInvestigatorCharacter(interactable.tileLocation.areaOfTile.areaInvestigation.assignedMinion.character);
         base.Initialize();
     }
     public override void CreateStates() {
@@ -38,7 +38,7 @@ public class MinionCriticalFail : Interaction {
         if (investigatorCharacter.job.jobType == JOB.RAIDER && interactable.tileLocation.areaOfTile.owner != null) {
             interactable.tileLocation.areaOfTile.owner.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, -1);
         }
-        DemonDisappearsRewardEffect(state);
+        investigatorCharacter.Death();
     }
     #endregion
 }

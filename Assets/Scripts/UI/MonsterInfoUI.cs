@@ -90,8 +90,8 @@ public class MonsterInfoUI : UIMenu {
         Messenger.AddListener<Token>(Signals.TOKEN_ADDED, OnIntelAdded);
 
         currentActionIcon.Initialize();
-        InititalizeLogsMenu();
-        InititalizeInventoryMenu();
+        InitializeLogsMenu();
+        InitializeInventoryMenu();
         InitializeInfoMenu();
     }
     public override void OpenMenu() {
@@ -139,7 +139,7 @@ public class MonsterInfoUI : UIMenu {
     }
     #endregion
 
-    private void InititalizeLogsMenu() {
+    private void InitializeLogsMenu() {
         logHistoryItems = new LogHistoryItem[MAX_HISTORY_LOGS];
         //populate history logs table
         for (int i = 0; i < MAX_HISTORY_LOGS; i++) {
@@ -152,7 +152,7 @@ public class MonsterInfoUI : UIMenu {
             logHistoryItems[i].gameObject.SetActive(false);
         }
     }
-    private void InititalizeInventoryMenu() {
+    private void InitializeInventoryMenu() {
         inventoryItemContainers = Utilities.GetComponentsInDirectChildren<ItemContainer>(inventoryItemContainersParent.gameObject);
     }
 

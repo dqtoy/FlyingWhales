@@ -21,6 +21,9 @@ public class PlayerJobData {
             case JOB.SPY:
                 jobActions.Add(new Track());
                 break;
+            case JOB.RECRUITER:
+                jobActions.Add(new Recruit());
+                break;
         }
         for (int i = 0; i < jobActions.Count; i++) {
             jobActions[i].SetParentData(this);

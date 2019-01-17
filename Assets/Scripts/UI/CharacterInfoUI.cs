@@ -167,11 +167,11 @@ public class CharacterInfoUI : UIMenu {
         //affiliations.Initialize();
         //currentActionIcon.Initialize();
         //Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
-        InititalizeLogsMenu();
+        InitializeLogsMenu();
         //InititalizeInventoryMenu();
         //InitializeSchedulingMenu();
     }
-    private void InititalizeLogsMenu() {
+    private void InitializeLogsMenu() {
         logHistoryItems = new LogHistoryItem[MAX_HISTORY_LOGS];
         //populate history logs table
         for (int i = 0; i < MAX_HISTORY_LOGS; i++) {
@@ -184,7 +184,7 @@ public class CharacterInfoUI : UIMenu {
             logHistoryItems[i].gameObject.SetActive(false);
         }
     }
-    private void InititalizeInventoryMenu() {
+    private void InitializeInventoryMenu() {
         inventoryItemContainers = Utilities.GetComponentsInDirectChildren<ItemContainer>(inventoryItemContainersParent.gameObject);
     }
 
