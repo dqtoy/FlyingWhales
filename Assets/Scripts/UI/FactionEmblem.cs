@@ -42,7 +42,7 @@ public class FactionEmblem : MonoBehaviour{
 
     private void UpdateEmblem() {
         if (faction == null || (FactionManager.Instance.neutralFaction != null && faction.id == FactionManager.Instance.neutralFaction.id)) {
-            this.gameObject.SetActive(false);
+            this.gameObject.SetActive(false);   
         } else {
             this.gameObject.SetActive(true);
             emblemImage.sprite = faction.emblem.GetSpriteForSize(emblemImage);

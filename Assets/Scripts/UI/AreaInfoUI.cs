@@ -286,14 +286,14 @@ public class AreaInfoUI : UIMenu {
         residentsEmblem.gameObject.SetActive(firstResident != null);
         if (firstVisitor != null) {
             visitorsEmblem.SetParent(firstVisitor.transform);
-            visitorsEmblem.anchoredPosition = new Vector2(-16.5f, -55f);
+            visitorsEmblem.anchoredPosition = new Vector2(-18.3f, -55f);
         } else {
             visitorsEmblem.SetParent(charactersScrollView.transform);
         }
 
         if (firstResident != null) {
             residentsEmblem.SetParent(firstResident.transform);
-            residentsEmblem.anchoredPosition = new Vector2(-16.5f, -55f);
+            residentsEmblem.anchoredPosition = new Vector2(-18.3f, -55f);
         } else {
             residentsEmblem.SetParent(charactersScrollView.transform);
         }

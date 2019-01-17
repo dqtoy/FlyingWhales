@@ -55,6 +55,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
 
     [Header("Other")]
     [SerializeField] private GameObject unknownGO;
+    [SerializeField] private FactionEmblem factionEmblem;
 
     #region getters/setters
     public Character thisCharacter {
@@ -70,6 +71,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
 
     private void OnEnable() {
         Messenger.AddListener<Character>(Signals.CHARACTER_LEVEL_CHANGED, OnCharacterLevelChanged);
+        Messenger.AddListener<Character>(Signals.FACTION_SET, OnFactionSet);
     }
     private void OnDisable() {
         RemoveListeners();
@@ -101,6 +103,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         nameLbl.text = character.urlName;
         UpdateLvl();
         UpdateFrame();
+        UpdateFactionEmblem();
         //UpdateUnknownVisual();
     }
     public void GeneratePortrait(PortraitSettings portraitSettings) {
@@ -120,6 +123,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         SetFacialHair(portraitSettings.facialHairIndex);
         SetHairColor(portraitSettings.hairColor);
         SetWholeImageSprite(null);
+        UpdateFactionEmblem();
     }
 
     #region Utilities
@@ -131,9 +135,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     }
     private void SetWholeImageSprite(Sprite sprite) {
         wholeImage.sprite = sprite;
-        if (sprite != null) {
-            SetBodyPartsState(false);
-        }
+        SetBodyPartsState(sprite == null);
         SetWholeImageState(sprite != null);
     }
     private void SetWholeImageState(bool state) {
@@ -325,6 +327,9 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         if (Messenger.eventTable.ContainsKey(Signals.CHARACTER_LEVEL_CHANGED)) {
             Messenger.RemoveListener<Character>(Signals.CHARACTER_LEVEL_CHANGED, OnCharacterLevelChanged);
         }
+        if (Messenger.eventTable.ContainsKey(Signals.FACTION_SET)) {
+            Messenger.RemoveListener<Character>(Signals.FACTION_SET, OnFactionSet);
+        }
     }
     #endregion
 
@@ -334,6 +339,17 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         _character = null;
         ignoreInteractions = false;
         RemoveListeners();
+    }
+    #endregion
+
+    #region Faction
+    public void OnFactionSet(Character character) {
+        if (_character != null && _character.id == character.id) {
+            UpdateFactionEmblem();
+        }
+    }
+    private void UpdateFactionEmblem() {
+        factionEmblem.SetFaction(_character.faction);
     }
     #endregion
 }

@@ -6286,7 +6286,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1890355616314036
 GameObject:
   m_ObjectHideFlags: 1
@@ -7415,7 +7415,6 @@ GameObject:
   - component: {fileID: 224976815688809406}
   - component: {fileID: 222183351736059192}
   - component: {fileID: 114036181928794364}
-  - component: {fileID: 114649635049277072}
   m_Layer: 5
   m_Name: StructureNameLbl_HEADER_NO
   m_TagString: Untagged
@@ -8109,11 +8108,11 @@ MonoBehaviour:
     lineCount: 1
     pageCount: 1
     materialCount: 1
-  m_havePropertiesChanged: 0
+  m_havePropertiesChanged: 1
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
-  m_isInputParsingRequired: 0
+  m_isInputParsingRequired: 1
   m_inputSource: 0
   m_hasFontAssetChanged: 0
   m_subTextObjects:
@@ -9466,11 +9465,11 @@ MonoBehaviour:
     lineCount: 1
     pageCount: 1
     materialCount: 1
-  m_havePropertiesChanged: 0
+  m_havePropertiesChanged: 1
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
-  m_isInputParsingRequired: 0
+  m_isInputParsingRequired: 1
   m_inputSource: 0
   m_hasFontAssetChanged: 0
   m_subTextObjects:
@@ -10859,6 +10858,7 @@ MonoBehaviour:
   wholeImage: {fileID: 114537862685649662}
   nameLbl: {fileID: 114289851951595500}
   unknownGO: {fileID: 1042615310374466}
+  factionEmblem: {fileID: 0}
 --- !u!114 &114201666785098654
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -11576,6 +11576,7 @@ MonoBehaviour:
   wholeImage: {fileID: 114329102087572914}
   nameLbl: {fileID: 114825095449677728}
   unknownGO: {fileID: 1820794586297920}
+  factionEmblem: {fileID: 0}
 --- !u!114 &114231951934313354
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -12507,6 +12508,7 @@ MonoBehaviour:
   wholeImage: {fileID: 114086233551146816}
   nameLbl: {fileID: 114179111508235746}
   unknownGO: {fileID: 1852069623488892}
+  factionEmblem: {fileID: 0}
 --- !u!114 &114280929784370322
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -13832,11 +13834,11 @@ MonoBehaviour:
     lineCount: 1
     pageCount: 1
     materialCount: 1
-  m_havePropertiesChanged: 0
+  m_havePropertiesChanged: 1
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
-  m_isInputParsingRequired: 0
+  m_isInputParsingRequired: 1
   m_inputSource: 0
   m_hasFontAssetChanged: 0
   m_subTextObjects:
@@ -14266,6 +14268,7 @@ MonoBehaviour:
   wholeImage: {fileID: 114748694200658604}
   nameLbl: {fileID: 114767523440367120}
   unknownGO: {fileID: 1687433837539736}
+  factionEmblem: {fileID: 0}
 --- !u!114 &114368684592800152
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -15652,6 +15655,7 @@ MonoBehaviour:
   wholeImage: {fileID: 114620299697746060}
   nameLbl: {fileID: 114399063553268410}
   unknownGO: {fileID: 1051376540964496}
+  factionEmblem: {fileID: 0}
 --- !u!114 &114436637906951340
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -16980,6 +16984,7 @@ MonoBehaviour:
   wholeImage: {fileID: 114167310123868354}
   nameLbl: {fileID: 114032692784092060}
   unknownGO: {fileID: 1976920702382410}
+  factionEmblem: {fileID: 0}
 --- !u!114 &114494934993596838
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -17356,6 +17361,7 @@ MonoBehaviour:
   wholeImage: {fileID: 114772968850684244}
   nameLbl: {fileID: 114126186458997636}
   unknownGO: {fileID: 1665648681109488}
+  factionEmblem: {fileID: 0}
 --- !u!114 &114514125452480014
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -18796,6 +18802,7 @@ MonoBehaviour:
   wholeImage: {fileID: 114174847005703952}
   nameLbl: {fileID: 114822652328175134}
   unknownGO: {fileID: 1648808533484092}
+  factionEmblem: {fileID: 0}
 --- !u!114 &114610114461234228
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -19351,51 +19358,6 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
---- !u!114 &114649635049277072
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1999972128491324}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: be97d49975a8ba24683fa964f9c21b16, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  tooltipPos: {fileID: 0}
-  tooltipHeader: 
-  onHoverOverAction:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 114679814638103120}
-        m_MethodName: ShowSpecialTokensAtLocation
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  onHoverExitAction:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 114679814638103120}
-        m_MethodName: HideSpecialTokensAtLocation
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
 --- !u!114 &114651897873981972
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -22429,6 +22391,7 @@ MonoBehaviour:
   wholeImage: {fileID: 114470536900551604}
   nameLbl: {fileID: 114220332707389084}
   unknownGO: {fileID: 1799998832691786}
+  factionEmblem: {fileID: 0}
 --- !u!114 &114783716585738168
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -25573,6 +25536,7 @@ MonoBehaviour:
   wholeImage: {fileID: 114339320655292232}
   nameLbl: {fileID: 114782770369430710}
   unknownGO: {fileID: 1882807743230136}
+  factionEmblem: {fileID: 0}
 --- !u!114 &114939684353365440
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -26090,6 +26054,7 @@ MonoBehaviour:
   wholeImage: {fileID: 114344969477963976}
   nameLbl: {fileID: 114801643540639722}
   unknownGO: {fileID: 1963622485351492}
+  factionEmblem: {fileID: 0}
 --- !u!114 &114959412449619192
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -31461,7 +31426,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 38.58, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: -412.58, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!224 &224344925418710142
 RectTransform:
@@ -31949,11 +31914,11 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 224744014004181932}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 22.080002, y: -61.200027}
+  m_AnchoredPosition: {x: 20.279953, y: -61.200012}
   m_SizeDelta: {x: 38, y: 95}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224410242306278694
@@ -32006,7 +31971,7 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0.0000023841858, y: -0.4500122}
   m_SizeDelta: {x: 13.41, y: 18.61}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -34214,11 +34179,11 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 224744014004181932}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 22.080002, y: -61.200012}
+  m_AnchoredPosition: {x: 20.299973, y: -61.200012}
   m_SizeDelta: {x: 33, y: 97}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224676141087877396
@@ -34817,8 +34782,8 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 224404642921558748}
   - {fileID: 224674939660672128}
+  - {fileID: 224404642921558748}
   - {fileID: 224894836932739038}
   m_Father: {fileID: 224519580947173752}
   m_RootOrder: 5
