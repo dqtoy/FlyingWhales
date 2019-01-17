@@ -68,6 +68,10 @@ public class CharmSpell : SpecialToken {
         //**Mechanics**: Target character will transfer to character or player's faction
         if (state.target is Character) {
             Character target = state.target as Character;
+            if (target.GetTrait("Charmed") == null) {
+                Charmed charmedTrait = new Charmed(target.faction, target.homeLandmark);
+                target.AddTrait(charmedTrait);
+            }
             FactionManager.Instance.TransferCharacter(target, state.tokenUser.faction, state.tokenUser.homeLandmark);
         }
 
@@ -81,6 +85,10 @@ public class CharmSpell : SpecialToken {
         //**Mechanics**: Target character will transfer to character or player's faction
         if (state.target is Character) {
             Character target = state.target as Character;
+            if (target.GetTrait("Charmed") == null) {
+                Charmed charmedTrait = new Charmed(target.faction, target.homeLandmark);
+                target.AddTrait(charmedTrait);
+            }
             FactionManager.Instance.TransferCharacter(target, state.tokenUser.faction, state.tokenUser.homeLandmark);
         }
 
