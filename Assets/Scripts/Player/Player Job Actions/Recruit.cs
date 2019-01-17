@@ -35,11 +35,8 @@ public class Recruit : PlayerJobAction {
         if (character.id == targetCharacter.id && targetCharacter.faction == PlayerManager.Instance.player.playerFaction) {
             return false;
         }
-        if (target != null && target is Character) {
-            Character targetChar = target as Character;
-            if (targetChar.isLeader || targetChar.currentParty.icon.isTravelling || targetChar.isDefender || !targetChar.IsInOwnParty() || targetChar.doNotDisturb > 0) {
-                return false;
-            }
+        if (targetCharacter.isLeader || targetCharacter.currentParty.icon.isTravelling || targetCharacter.isDefender || !targetCharacter.IsInOwnParty() || targetCharacter.doNotDisturb > 0) {
+            return false;
         }
         return base.ShouldButtonBeInteractable(character, targetCharacter);
     }

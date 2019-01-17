@@ -47,8 +47,6 @@ public class MinionRecruitCharacter : Interaction {
         _characterInvolved.RecruitAsMinion();
     }
     private void RecruitFailEffect(InteractionState state) {
-        investigatorCharacter.LevelUp();
-        _characterInvolved.RecruitAsMinion();
     }
     private void RecruitCritFailEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(investigatorCharacter, investigatorCharacter.name, LOG_IDENTIFIER.MINION_1);

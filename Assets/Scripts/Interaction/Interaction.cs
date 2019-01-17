@@ -59,7 +59,7 @@ public class Interaction {
             //    return _interactable.tileLocation.areaOfTile.areaInvestigation.assignedMinion;
             //}
             //Only used for Minion Critical Fail Event since assignedMinion will be null, interaction must still have reference of the dead minion
-            if (currentState.assignedPlayerCharacter != null) {
+            if (currentState != null && currentState.assignedPlayerCharacter != null) {
                return currentState.assignedPlayerCharacter;
             }
             return _defaultInvestigatorCharacter;
