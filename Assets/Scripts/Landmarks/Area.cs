@@ -847,6 +847,7 @@ public class Area {
             {INTERACTION_TYPE.TORTURE_ACTION, 25},
             {INTERACTION_TYPE.MOVE_TO_SPREAD_UNDEATH, 20},
             {INTERACTION_TYPE.MOVE_TO_SAVE, 30},
+            {INTERACTION_TYPE.MOVE_TO_VISIT, 50},
         };
     }
     public void AddInteraction(Interaction interaction) {

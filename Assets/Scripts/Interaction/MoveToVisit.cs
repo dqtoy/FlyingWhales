@@ -23,9 +23,9 @@ public class MoveToVisit : Interaction {
         }
 
         InteractionState startState = new InteractionState(Start, this);
-        InteractionState abductCancelledState = new InteractionState(Visit_Cancelled, this);
-        InteractionState abductProceedsState = new InteractionState(Visit_Proceeds, this);
-        InteractionState normalAbductState = new InteractionState(Normal_Visit, this);
+        InteractionState visitCancelledState = new InteractionState(Visit_Cancelled, this);
+        InteractionState visitProceedsState = new InteractionState(Visit_Proceeds, this);
+        InteractionState normalVisitState = new InteractionState(Normal_Visit, this);
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
         startStateDescriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2);
@@ -33,14 +33,14 @@ public class MoveToVisit : Interaction {
 
         CreateActionOptions(startState);
 
-        abductCancelledState.SetEffect(() => AbductCancelledEffect(abductCancelledState));
-        abductProceedsState.SetEffect(() => AbductProceedsEffect(abductProceedsState));
-        normalAbductState.SetEffect(() => NormalAbductEffect(normalAbductState));
+        visitCancelledState.SetEffect(() => VisitCancelledEffect(visitCancelledState));
+        visitProceedsState.SetEffect(() => VisitProceedsEffect(visitProceedsState));
+        normalVisitState.SetEffect(() => NormalVisitEffect(normalVisitState));
 
         _states.Add(startState.name, startState);
-        _states.Add(abductCancelledState.name, abductCancelledState);
-        _states.Add(abductProceedsState.name, abductProceedsState);
-        _states.Add(normalAbductState.name, normalAbductState);
+        _states.Add(visitCancelledState.name, visitCancelledState);
+        _states.Add(visitProceedsState.name, visitProceedsState);
+        _states.Add(normalVisitState.name, normalVisitState);
 
         SetCurrentState(startState);
     }
@@ -49,7 +49,7 @@ public class MoveToVisit : Interaction {
             ActionOption preventOption = new ActionOption {
                 interactionState = state,
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
-                name = "Prevent " + Utilities.GetPronounString(_characterInvolved.gender, PRONOUN_TYPE.OBJECTIVE, false) + ".",
+                name = "Prevent " + Utilities.GetPronounString(_characterInvolved.gender, PRONOUN_TYPE.OBJECTIVE, false) + " from leaving.",
                 duration = 0,
                 jobNeeded = JOB.DEBILITATOR,
                 disabledTooltipText = "Must be a Dissuader.",
@@ -91,18 +91,18 @@ public class MoveToVisit : Interaction {
     #endregion
 
     #region State Effects
-    private void AbductCancelledEffect(InteractionState state) {
+    private void VisitCancelledEffect(InteractionState state) {
         investigatorCharacter.LevelUp();
     }
-    private void AbductProceedsEffect(InteractionState state) {
+    private void VisitProceedsEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2);
 
         state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2));
 
         StartMove();
     }
-    private void NormalAbductEffect(InteractionState state) {
-        state.descriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2);
+    private void NormalVisitEffect(InteractionState state) {
+        //state.descriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2);
 
         state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2));
 
@@ -110,27 +110,8 @@ public class MoveToVisit : Interaction {
     }
     #endregion
     private void StartMove() {
-        AddToDebugLog(_characterInvolved.name + " starts moving towards " + _targetArea.name + "(" + _targetArea.coreTile.landmarkOnTile.name + ") to abduct!");
-        _characterInvolved.currentParty.GoToLocation(_targetArea.coreTile.landmarkOnTile, PATHFINDING_MODE.NORMAL, () => CreateAbductAction());
-    }
-    private void CreateAbductAction() {
-        AddToDebugLog(_characterInvolved.name + " will now create abduct action");
-        Interaction abduct = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.ABDUCT_ACTION, _characterInvolved.specificLocation.tileLocation.landmarkOnTile);
-        abduct.SetCanInteractionBeDoneAction(IsAbductStillValid);
-        _characterInvolved.SetForcedInteraction(abduct);
-    }
-    private bool IsAbductStillValid() {
-        if (!_characterInvolved.homeLandmark.tileLocation.areaOfTile.IsResidentsFull()) {
-            for (int i = 0; i < _targetArea.charactersAtLocation.Count; i++) {
-                Character currCharacter = _targetArea.charactersAtLocation[i];
-                if (currCharacter.id != _characterInvolved.id && !currCharacter.currentParty.icon.isTravelling && currCharacter.IsInOwnParty()) {
-                    if (currCharacter.isFactionless || currCharacter.faction.id != _characterInvolved.faction.id) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
+        AddToDebugLog(_characterInvolved.name + " starts moving towards " + _targetArea.name + "(" + _targetArea.coreTile.landmarkOnTile.name + ") to visit!");
+        _characterInvolved.currentParty.GoToLocation(_targetArea.coreTile.landmarkOnTile, PATHFINDING_MODE.NORMAL);
     }
 
     private Area GetTargetLocation(Character characterInvolved) {

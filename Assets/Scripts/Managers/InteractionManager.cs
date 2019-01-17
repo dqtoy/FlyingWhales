@@ -332,6 +332,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.SAVE_ACTION:
                 createdInteraction = new SaveAction(interactable);
                 break;
+            case INTERACTION_TYPE.MOVE_TO_VISIT:
+                createdInteraction = new MoveToVisit(interactable);
+                break;
         }
         return createdInteraction;
     }

@@ -37,9 +37,11 @@ public class CharacterInfoUI : UIMenu {
     //[SerializeField] private GameObject characterTagPrefab;
 
     [Space(10)]
-    [Header("Location")]
+    [Header("Item And Location")]
     [SerializeField] private Image visitorImage;
     [SerializeField] private Image residentImage;
+    [SerializeField] private ItemContainer itemContainer;
+
     //[Space(10)]
     //[Header("Mood")]
     //[SerializeField] private GameObject moodMenuGO;
@@ -276,6 +278,7 @@ public class CharacterInfoUI : UIMenu {
         UpdateBasicInfo();
         UpdateStatInfo();
         UpdateLocationInfo();
+        UpdateItemInfo();
         UpdateAllHistoryInfo();
 
         //if (GameManager.Instance.inspectAll) {
@@ -449,9 +452,10 @@ public class CharacterInfoUI : UIMenu {
     #endregion
 
     #region Items
-    private void UpdateItemsInfo() {
+    private void UpdateItemInfo() {
         //UpdateEquipmentInfo(_activeCharacter.equippedItems);
-        UpdateInventoryInfo(_activeCharacter.inventory);
+        //UpdateInventoryInfo(_activeCharacter.inventory);
+        itemContainer.SetItem(_activeCharacter.tokenInInventory);
     }
     private void UpdateItemsInfo(CharacterUIData uiData) {
         //UpdateEquipmentInfo(uiData.equippedItems);
