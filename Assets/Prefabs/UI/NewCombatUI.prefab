@@ -4604,11 +4604,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ParentPool: {fileID: 0}
-  forceShowPortrait: 0
   ignoreInteractions: 0
   baseBG: {fileID: 114446120449447092}
   lockedFrame: {fileID: 114793192693471030}
-  draggableFrameGO: {fileID: 1450581348436326}
   lvlTxt: {fileID: 114388558303881770}
   lvlGO: {fileID: 1363854734183318}
   faceParentGO: {fileID: 1136875074411922}
@@ -5336,11 +5334,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ParentPool: {fileID: 0}
-  forceShowPortrait: 0
   ignoreInteractions: 0
   baseBG: {fileID: 114873784925155558}
   lockedFrame: {fileID: 114259532943253942}
-  draggableFrameGO: {fileID: 1462579589732262}
   lvlTxt: {fileID: 114709619422925652}
   lvlGO: {fileID: 1968816998948486}
   faceParentGO: {fileID: 1132176216528176}
@@ -5494,11 +5490,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ParentPool: {fileID: 0}
-  forceShowPortrait: 0
   ignoreInteractions: 0
   baseBG: {fileID: 114529111662350206}
   lockedFrame: {fileID: 114607984703964028}
-  draggableFrameGO: {fileID: 1721817416758722}
   lvlTxt: {fileID: 114001343742206204}
   lvlGO: {fileID: 1387773297360348}
   faceParentGO: {fileID: 1171731639708934}
@@ -5991,11 +5985,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ParentPool: {fileID: 0}
-  forceShowPortrait: 0
   ignoreInteractions: 0
   baseBG: {fileID: 114777166055978036}
   lockedFrame: {fileID: 114764287348578628}
-  draggableFrameGO: {fileID: 1876868205091924}
   lvlTxt: {fileID: 114740418025056678}
   lvlGO: {fileID: 1551260137260294}
   faceParentGO: {fileID: 1616139357502084}
@@ -7066,11 +7058,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ParentPool: {fileID: 0}
-  forceShowPortrait: 0
   ignoreInteractions: 0
   baseBG: {fileID: 114416605232742280}
   lockedFrame: {fileID: 114200151562134384}
-  draggableFrameGO: {fileID: 1041393670985226}
   lvlTxt: {fileID: 114632794712060084}
   lvlGO: {fileID: 1330719235774336}
   faceParentGO: {fileID: 1974108939653458}
@@ -7101,11 +7091,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ParentPool: {fileID: 0}
-  forceShowPortrait: 0
   ignoreInteractions: 0
   baseBG: {fileID: 114317035618839970}
   lockedFrame: {fileID: 114311094762183258}
-  draggableFrameGO: {fileID: 1296557213951360}
   lvlTxt: {fileID: 114522347000157028}
   lvlGO: {fileID: 1141307784794476}
   faceParentGO: {fileID: 1522143850767226}
@@ -7607,11 +7595,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ParentPool: {fileID: 0}
-  forceShowPortrait: 0
   ignoreInteractions: 0
   baseBG: {fileID: 114570663396571776}
   lockedFrame: {fileID: 114739348218720416}
-  draggableFrameGO: {fileID: 1551608084777940}
   lvlTxt: {fileID: 114739142631111492}
   lvlGO: {fileID: 1626448060062746}
   faceParentGO: {fileID: 1227162425787362}
@@ -8338,7 +8324,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Content: {fileID: 224119050136175476}
-  m_Horizontal: 1
+  m_Horizontal: 0
   m_Vertical: 1
   m_MovementType: 1
   m_Elasticity: 0.1
@@ -11973,11 +11959,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ParentPool: {fileID: 0}
-  forceShowPortrait: 0
   ignoreInteractions: 0
   baseBG: {fileID: 114953636817533280}
   lockedFrame: {fileID: 114579671566683790}
-  draggableFrameGO: {fileID: 1708424830498026}
   lvlTxt: {fileID: 114276746077531656}
   lvlGO: {fileID: 1553217121985416}
   faceParentGO: {fileID: 1001945300832260}
