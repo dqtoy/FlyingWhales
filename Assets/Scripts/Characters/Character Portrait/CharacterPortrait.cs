@@ -229,7 +229,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
 #endif
     }
     public void OnClick(BaseEventData eventData) {
-        if (ignoreInteractions) {
+        if (ignoreInteractions || !gameObject.activeSelf) {
             return;
         }
         OnPointerClick(eventData as PointerEventData);
