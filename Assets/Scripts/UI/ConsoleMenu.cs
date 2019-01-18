@@ -3,10 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 using System.Linq;
-
 using TMPro;
 using UnityEngine.UI;
 using System.Text.RegularExpressions;
+using System.IO;
 
 public class ConsoleMenu : UIMenu {
 
@@ -20,6 +20,10 @@ public class ConsoleMenu : UIMenu {
 
     [SerializeField] private GameObject commandHistoryGO;
     [SerializeField] private TextMeshProUGUI commandHistoryLbl;
+
+    [SerializeField] private Dropdown raceDropdown;
+    [SerializeField] private Dropdown classDropdown;
+    [SerializeField] private InputField levelInput;
 
     internal override void Initialize() {
         commandHistory = new List<string>();
@@ -43,6 +47,7 @@ public class ConsoleMenu : UIMenu {
 #if UNITY_EDITOR
         Messenger.AddListener(Signals.DAY_ENDED, CheckForWrongCharacterData);
 #endif
+        InitializeMinion();
     }
 
     public void ShowConsole() {
@@ -531,6 +536,40 @@ public class ConsoleMenu : UIMenu {
     #region Interactions
     private void SubscribeToInteraction(string[] parameters) {
 
+    }
+    #endregion
+
+    #region Minion
+    private void InitializeMinion() {
+        levelInput.text = "1";
+        ConstructRaceDropdown();
+        ConstructClassDropdown();
+    }
+    private void ConstructRaceDropdown() {
+        raceDropdown.ClearOptions();
+        string[] races = System.Enum.GetNames(typeof(RACE));
+        raceDropdown.AddOptions(races.ToList());
+    }
+    private void ConstructClassDropdown() {
+        List<string> allClasses = new List<string>();
+        string path = Utilities.dataPath + "CharacterClasses/";
+        foreach (string file in Directory.GetFiles(path, "*.json")) {
+            allClasses.Add(Path.GetFileNameWithoutExtension(file));
+        }
+        classDropdown.ClearOptions();
+        classDropdown.AddOptions(allClasses);
+    }
+    public void AddMinion() {
+        RACE race = (RACE) System.Enum.Parse(typeof(RACE), raceDropdown.options[raceDropdown.value].text);
+        string className = classDropdown.options[classDropdown.value].text;
+        int level = int.Parse(levelInput.text);
+        if(race != RACE.NONE && level > 0) {
+            Minion minion = PlayerManager.Instance.player.CreateNewMinion(className, race, false);
+            if(level > 1) {
+                minion.character.LevelUp(level - 1);
+            }
+            PlayerManager.Instance.player.AddMinion(minion);
+        }
     }
     #endregion
 }
