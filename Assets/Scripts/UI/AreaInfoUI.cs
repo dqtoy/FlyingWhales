@@ -66,8 +66,13 @@ public class AreaInfoUI : UIMenu {
         Messenger.AddListener(Signals.INSPECT_ALL, OnInspectAll);
         Messenger.AddListener<Party, BaseLandmark>(Signals.PARTY_ENTERED_LANDMARK, OnPartyEnteredLandmark);
         Messenger.AddListener<Party, BaseLandmark>(Signals.PARTY_EXITED_LANDMARK, OnPartyExitedLandmark);
+        Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         Messenger.AddListener<Area>(Signals.AREA_SUPPLIES_CHANGED, OnAreaSuppliesSet);
         Messenger.AddListener<Area>(Signals.AREA_OWNER_CHANGED, OnAreaOwnerChanged);
+        //Messenger.AddListener<Area, Character>(Signals.AREA_RESIDENT_ADDED, OnAreaResidentAdded);
+        //Messenger.AddListener<Area, Character>(Signals.AREA_RESIDENT_REMOVED, OnAreaResidentRemoved);
+        Messenger.AddListener<Character>(Signals.CHARACTER_LEVEL_CHANGED, OnCharacterLevelChanged);
+        Messenger.AddListener<Character, Area, Area>(Signals.CHARACTER_MIGRATED_HOME, OnCharacterMigratedHome);
     }
 
     public override void OpenMenu() {
@@ -91,7 +96,7 @@ public class AreaInfoUI : UIMenu {
         }
     }
     public override void CloseMenu() {
-        Utilities.DestroyChildren(charactersScrollView.content);
+        //Utilities.DestroyChildren(charactersScrollView.content);
         base.CloseMenu();
         if (activeArea != null) {
             activeArea.SetOutlineState(false);
@@ -290,6 +295,8 @@ public class AreaInfoUI : UIMenu {
         }
     }
     public void OrderCharacterItems() {
+        visitorsEmblem.SetParent(this.transform);
+        residentsEmblem.SetParent(this.transform);
         List<LandmarkCharacterItem> nonTravellingVisitors = new List<LandmarkCharacterItem>();
         List<LandmarkCharacterItem> travellingVisitors = new List<LandmarkCharacterItem>();
 
@@ -297,7 +304,7 @@ public class AreaInfoUI : UIMenu {
         List<LandmarkCharacterItem> nonTravellingResidents = new List<LandmarkCharacterItem>();
         for (int i = 0; i < characterItems.Count; i++) {
             LandmarkCharacterItem currItem = characterItems[i];
-            if (activeArea.id == currItem.character.homeArea.id) {
+            if (currItem.character.homeArea != null && activeArea.id == currItem.character.homeArea.id) {
                 if (currItem.character.currentParty.specificLocation.tileLocation.areaOfTile.id != activeArea.id || currItem.character.currentParty.icon.isTravelling) { //character is away from home
                     travellingResidents.Add(currItem);
                 } else {
@@ -344,6 +351,40 @@ public class AreaInfoUI : UIMenu {
         for (int i = 0; i < orderedItems.Count; i++) {
             LandmarkCharacterItem currItem = orderedItems[i];
             currItem.transform.SetSiblingIndex(i);
+        }
+    }
+    private void OnCharacterDied(Character character) {
+        if (this.isShowing) {
+            LandmarkCharacterItem item = GetItem(character);
+            if (item != null) {
+                characterItems.Remove(item);
+                ObjectPoolManager.Instance.DestroyObject(item.gameObject);
+                OrderCharacterItems();
+            }
+        }
+    }
+    //private void OnAreaResidentAdded(Area area, Character character) {
+    //    if (this.isShowing && area.id == activeArea.id) {
+    //        UpdateCharacters();
+    //    }
+    //}
+    //private void OnAreaResidentRemoved(Area area, Character character) {
+    //    if (this.isShowing && area.id == activeArea.id) {
+    //        UpdateCharacters();
+    //    }
+    //}
+    private void OnCharacterMigratedHome(Character character, Area previousHome, Area newHome) {
+        if (this.isShowing) {
+            if ((previousHome != null && previousHome.id == activeArea.id) || newHome.id == activeArea.id) {
+                UpdateCharacters();
+            }
+        }
+    }
+    private void OnCharacterLevelChanged(Character character) {
+        if (this.isShowing) {
+            if (GetItem(character) != null) {
+                OrderCharacterItems();
+            }
         }
     }
     #endregion

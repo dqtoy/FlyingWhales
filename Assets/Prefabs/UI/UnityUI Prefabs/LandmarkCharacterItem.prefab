@@ -608,6 +608,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ParentPool: {fileID: 0}
   portrait: {fileID: 114174166455219772}
+  thisTrans: {fileID: 224572432994399424}
   nameLbl: {fileID: 114452098088619398}
   subLbl: {fileID: 114437745713896690}
   travellingIcon: {fileID: 1416366799180608}

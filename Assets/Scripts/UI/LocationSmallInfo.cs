@@ -17,6 +17,7 @@ public class LocationSmallInfo : MonoBehaviour {
         nameLbl.text = area.name;
         typeLbl.text = area.GetAreaTypeString();
         subLbl.text = subText;
+        portrait.SetLocation(area);
         this.gameObject.SetActive(true);
     }
 

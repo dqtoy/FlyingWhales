@@ -196,6 +196,12 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
             lockedFrame.sprite = frame.frameOutline;
         }
     }
+    public void ShowCharacterInfo() {
+        UIManager.Instance.ShowSmallInfo(_character.name);
+    }
+    public void HideCharacterInfo() {
+        UIManager.Instance.HideSmallInfo();
+    }
     #endregion
 
     #region Pointer Actions

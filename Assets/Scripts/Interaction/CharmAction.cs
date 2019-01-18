@@ -304,8 +304,9 @@ public class CharmAction : Interaction {
         character.faction.RemoveCharacter(character);
         faction.AddNewCharacter(character);
         AddToDebugLog("Successfully transferred " + character.name + " to " + character.faction.name);
-        character.homeLandmark.RemoveCharacterHomeOnLandmark(character);
-        _characterInvolved.homeLandmark.AddCharacterHomeOnLandmark(character);
+        character.MigrateTo(_characterInvolved.homeArea);
+        //character.homeLandmark.RemoveCharacterHomeOnLandmark(character);
+        //_characterInvolved.homeLandmark.AddCharacterHomeOnLandmark(character);
         AddToDebugLog("Set " + character.name + "'s home to " + character.homeLandmark.tileLocation.areaOfTile.name);
         Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, character.specificLocation.tileLocation.landmarkOnTile);
         character.SetForcedInteraction(interaction);
