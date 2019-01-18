@@ -568,7 +568,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         ConstructDefaultMiscActions();
         //_combatHistoryID = 0;
 #if !WORLD_CREATION_TOOL
-        SetDailyInteractionGenerationTick();
+        SetDailyInteractionGenerationTick(GetMonthInteractionTick());
 #endif
         SubscribeToSignals();
     }
@@ -3244,6 +3244,12 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     }
 
     #region Interaction
+    private int GetMonthInteractionTick() {
+        int daysInMonth = GameManager.daysInMonth[GameManager.Instance.month];
+        int remainingDaysInMonth = GameManager.Instance.continuousDays % daysInMonth;
+        int startDay = GameManager.Instance.continuousDays + remainingDaysInMonth + 1;
+        return UnityEngine.Random.Range(startDay, startDay + daysInMonth);
+    }
     public void DisableInteractionGeneration() {
         Messenger.RemoveListener(Signals.DAY_STARTED, DailyInteractionGeneration);
     }
@@ -3254,9 +3260,13 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         interactionWeights.RemoveElement(type);
     }
     public void SetDailyInteractionGenerationTick() {
-        int remainingDaysInWeek = GameManager.Instance.continuousDays % 7;
-        int startDay = GameManager.Instance.continuousDays + remainingDaysInWeek + 1;
-        _currentInteractionTick = UnityEngine.Random.Range(startDay, startDay + 7);
+        if(specificLocation == null || specificLocation.tileLocation.areaOfTile.id == homeLandmark.tileLocation.areaOfTile.id) {
+            _currentInteractionTick = GetMonthInteractionTick();
+        } else {
+            int remainingDaysInWeek = GameManager.Instance.continuousDays % 7;
+            int startDay = GameManager.Instance.continuousDays + remainingDaysInWeek + 1;
+            _currentInteractionTick = UnityEngine.Random.Range(startDay, startDay + 7);
+        }
     }
     public void SetDailyInteractionGenerationTick(int tick) {
         _currentInteractionTick = tick;
