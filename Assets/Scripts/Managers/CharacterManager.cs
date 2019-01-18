@@ -564,38 +564,38 @@ public class CharacterManager : MonoBehaviour {
     }
     public HairSetting GetHairSprite(int index, RACE race, GENDER gender) {
         PortraitAssetCollection pac = GetPortraitAssets(race, gender);
-        return pac.hairAssets[index];
+        return pac.hairAssets.ElementAtOrDefault(index);
     }
     public Sprite GetBodySprite(int index, RACE race, GENDER gender) {
         PortraitAssetCollection pac = GetPortraitAssets(race, gender);
-        return pac.bodyAssets[index];
+        return pac.bodyAssets.ElementAtOrDefault(index);
     }
     public Sprite GetFacialHairSprite(int index, RACE race, GENDER gender) {
         PortraitAssetCollection pac = GetPortraitAssets(race, gender);
         if (pac.facialHairAssets.Count <= 0) {
             return null;
         }
-        return pac.facialHairAssets[index];
+        return pac.facialHairAssets.ElementAtOrDefault(index);
     }
     public Sprite GetHeadSprite(int index, RACE race, GENDER gender) {
         PortraitAssetCollection pac = GetPortraitAssets(race, gender);
-        return pac.headAssets[index];
+        return pac.headAssets.ElementAtOrDefault(index);
     }
     public Sprite GetNoseSprite(int index, RACE race, GENDER gender) {
         PortraitAssetCollection pac = GetPortraitAssets(race, gender);
-        return pac.noseAssets[index];
+        return pac.noseAssets.ElementAtOrDefault(index);
     }
     public Sprite GetMouthSprite(int index, RACE race, GENDER gender) {
         PortraitAssetCollection pac = GetPortraitAssets(race, gender);
-        return pac.mouthAssets[index];
+        return pac.mouthAssets.ElementAtOrDefault(index);
     }
     public Sprite GetEyeSprite(int index, RACE race, GENDER gender) {
         PortraitAssetCollection pac = GetPortraitAssets(race, gender);
-        return pac.eyeAssets[index];
+        return pac.eyeAssets.ElementAtOrDefault(index);
     }
     public Sprite GetEyebrowSprite(int index, RACE race, GENDER gender) {
         PortraitAssetCollection pac = GetPortraitAssets(race, gender);
-        return pac.eyebrowAssets[index];
+        return pac.eyebrowAssets.ElementAtOrDefault(index);
     }
     public int GetHairSpriteCount(RACE race, GENDER gender) {
         PortraitAssetCollection pac = GetPortraitAssets(race, gender);

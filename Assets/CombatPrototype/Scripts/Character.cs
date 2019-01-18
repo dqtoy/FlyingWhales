@@ -2143,7 +2143,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
             //if (UIManager.Instance.characterInfoUI.currentlyShowingCharacter != null && this.id == UIManager.Instance.characterInfoUI.currentlyShowingCharacter.id) {
             //    Debug.Log("Added log to history of " + this.name + ". " + log.isInspected);
             //}
-            if (this._history.Count > 60) {
+            if (this._history.Count > 300) {
                 this._history.RemoveAt(0);
             }
             Messenger.Broadcast(Signals.HISTORY_ADDED, this as object);

@@ -57,6 +57,9 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     [SerializeField] private GameObject unknownGO;
     [SerializeField] private FactionEmblem factionEmblem;
 
+    private Vector2 defaultPos = new Vector2(11.7f, -3f);
+    private Vector2 defaultSize = new Vector2(97f, 97f);
+
     #region getters/setters
     public Character thisCharacter {
         get { return _character; }
@@ -109,6 +112,15 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         UpdateLvl();
         UpdateFrame();
         UpdateFactionEmblem();
+
+        RectTransform faceRT = faceParentGO.GetComponent<RectTransform>();
+        if (character.gender == GENDER.MALE && character.race != RACE.HUMANS && character.race != RACE.DEMON) {
+            faceRT.sizeDelta = new Vector2(108f, 108f);
+            faceRT.anchoredPosition = Vector2.zero;
+        } else {
+            faceRT.sizeDelta = defaultSize;
+            faceRT.anchoredPosition = defaultPos;
+        }
         //UpdateUnknownVisual();
     }
     public void GeneratePortrait(PortraitSettings portraitSettings) {
@@ -273,7 +285,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         //if (!_ignoreSize) {
         //    eyes.SetNativeSize();
         //}
-        eyes.gameObject.SetActive(true);
+        eyes.gameObject.SetActive(eyeSprite != null);
     }
     public void SetEyebrows(int index) {
         Sprite eyeBrowSprite = CharacterManager.Instance.GetEyebrowSprite(index, _portraitSettings.race, _portraitSettings.gender);
@@ -281,21 +293,21 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         //if (!_ignoreSize) {
         //    eyebrows.SetNativeSize();
         //}
-        eyebrows.gameObject.SetActive(true);
+        eyebrows.gameObject.SetActive(eyeBrowSprite != null);
     }
     public void SetNose(int index) {
         nose.sprite = CharacterManager.Instance.GetNoseSprite(index, _portraitSettings.race, _portraitSettings.gender);
         //if (!_ignoreSize) {
         //    nose.SetNativeSize();
         //}
-        nose.gameObject.SetActive(true);
+        nose.gameObject.SetActive(nose.sprite != null);
     }
     public void SetMouth(int index) {
         mouth.sprite = CharacterManager.Instance.GetMouthSprite(index, _portraitSettings.race, _portraitSettings.gender);
         //if (!_ignoreSize) {
         //    mouth.SetNativeSize();
         //}
-        mouth.gameObject.SetActive(true);
+        mouth.gameObject.SetActive(mouth.sprite != null);
     }
     public void SetFacialHair(int index) {
         facialHair.sprite = CharacterManager.Instance.GetFacialHairSprite(index, _portraitSettings.race, _portraitSettings.gender);
@@ -316,7 +328,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         //if (!_ignoreSize) {
         //    body.SetNativeSize();
         //}
-        body.gameObject.SetActive(true);
+        body.gameObject.SetActive(body.sprite != null);
     }
     public void SetHairColor(Color hairColor) {
         //hair.color = hairColor;

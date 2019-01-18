@@ -9,7 +9,7 @@ using System;
 
 public class CharacterInfoUI : UIMenu {
 
-    private const int MAX_HISTORY_LOGS = 60;
+    private const int MAX_HISTORY_LOGS = 300;
     private const int MAX_INVENTORY = 16;
     public bool isWaitingForAttackTarget;
     public bool isWaitingForJoinBattleTarget;
