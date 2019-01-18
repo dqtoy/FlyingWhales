@@ -92,12 +92,12 @@ public class LandmarkCharacterItem : PooledObject {
 
     #region Listeners
     private void OnPartyStartedTravelling(Party party) {
-        if (character.currentParty.id == party.id) {
+        if (character.currentParty == party) {
             UpdateLocationIcons();
         }
     }
     private void OnPartyDoneTravelling(Party party) {
-        if (character.currentParty.id == party.id) {
+        if (character.currentParty == party) {
             UpdateLocationIcons();
         }
     }
