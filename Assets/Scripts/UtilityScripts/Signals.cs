@@ -75,6 +75,8 @@ public static class Signals {
     public static string TRAIT_ADDED = "OnTraitAdded";
     public static string TRAIT_REMOVED = "OnTraitRemoved"; //Parameters (Character character)
     public static string ADJUSTED_HP = "OnAdjustedHP";
+    public static string PARTY_STARTED_TRAVELLING = "OnPartyStartedTravelling"; //Parameters (Party travellingParty)
+    public static string PARTY_DONE_TRAVELLING = "OnPartyDoneTravelling"; //Parameters (Party travellingParty)
     #endregion
 
     #region UI

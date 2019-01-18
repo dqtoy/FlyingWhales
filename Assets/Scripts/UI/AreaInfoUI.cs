@@ -91,6 +91,7 @@ public class AreaInfoUI : UIMenu {
         }
     }
     public override void CloseMenu() {
+        Utilities.DestroyChildren(charactersScrollView.content);
         base.CloseMenu();
         if (activeArea != null) {
             activeArea.SetOutlineState(false);
@@ -211,8 +212,16 @@ public class AreaInfoUI : UIMenu {
         Utilities.DestroyChildren(charactersScrollView.content);
         characterItems.Clear();
 
-        for (int i = 0; i < activeArea.charactersAtLocation.Count; i++) {
-            Character currCharacter = activeArea.charactersAtLocation[i];
+        List<Character> charactersToShow = new List<Character>(activeArea.charactersAtLocation);
+        for (int i = 0; i < activeArea.areaResidents.Count; i++) {
+            Character resident = activeArea.areaResidents[i];
+            if (!charactersToShow.Contains(resident)) {
+                charactersToShow.Add(resident);
+            }
+        }
+
+        for (int i = 0; i < charactersToShow.Count; i++) {
+            Character currCharacter = charactersToShow[i];
             CreateNewCharacterItem(currCharacter);
         }
     }
@@ -241,19 +250,24 @@ public class AreaInfoUI : UIMenu {
         return null;
     }
     private LandmarkCharacterItem CreateNewCharacterItem(Character character) {
+        if (AlreadyHasItem(character)) {
+            return null;
+        }
         GameObject characterGO = UIManager.Instance.InstantiateUIObject(landmarkCharacterPrefab.name, charactersScrollView.content);
         LandmarkCharacterItem item = characterGO.GetComponent<LandmarkCharacterItem>();
-        item.SetCharacter(character);
+        item.SetCharacter(character, this);
         characterItems.Add(item);
         OrderCharacterItems();
         return item;
     }
-    private void CreateNewCharacterItem(LandmarkPartyData partyData) {
-        GameObject characterGO = UIManager.Instance.InstantiateUIObject(landmarkCharacterPrefab.name, charactersScrollView.content);
-        LandmarkCharacterItem item = characterGO.GetComponent<LandmarkCharacterItem>();
-        item.SetCharacter(partyData.partyMembers[0]);
-        characterItems.Add(item);
-        OrderCharacterItems();
+    private bool AlreadyHasItem(Character character) {
+        for (int i = 0; i < characterItems.Count; i++) {
+            LandmarkCharacterItem item = characterItems[i];
+            if (item.character.id == character.id) {
+                return true;
+            }
+        }
+        return false;
     }
     private void OnPartyEnteredLandmark(Party party, BaseLandmark landmark) {
         if (isShowing && activeArea != null && activeArea.id == landmark.tileLocation.areaOfTile.id) { //&& (_activeLandmark.isBeingInspected || GameManager.Instance.inspectAll)
@@ -262,6 +276,10 @@ public class AreaInfoUI : UIMenu {
     }
     private void OnPartyExitedLandmark(Party party, BaseLandmark landmark) {
         if (isShowing && activeArea != null && activeArea.id == landmark.tileLocation.areaOfTile.id) {
+            if (activeArea.areaResidents.Contains(party.owner)) {
+                OrderCharacterItems();
+                return; //do not destroy items of area residents
+            }
             LandmarkCharacterItem item = GetItem(party);
             if(item != null) {
                 characterItems.Remove(item);
@@ -271,9 +289,33 @@ public class AreaInfoUI : UIMenu {
             }
         }
     }
-    private void OrderCharacterItems() {
-        List<LandmarkCharacterItem> orderedVisitors = new List<LandmarkCharacterItem>(characterItems.Where(x => !activeArea.areaResidents.Contains(x.character)).OrderByDescending(x => x.character.level));
-        List<LandmarkCharacterItem> orderedResidents = new List<LandmarkCharacterItem>(characterItems.Where(x => activeArea.areaResidents.Contains(x.character)).OrderByDescending(x => x.character.level));
+    public void OrderCharacterItems() {
+        List<LandmarkCharacterItem> nonTravellingVisitors = new List<LandmarkCharacterItem>();
+        List<LandmarkCharacterItem> travellingVisitors = new List<LandmarkCharacterItem>();
+
+        List<LandmarkCharacterItem> travellingResidents = new List<LandmarkCharacterItem>();
+        List<LandmarkCharacterItem> nonTravellingResidents = new List<LandmarkCharacterItem>();
+        for (int i = 0; i < characterItems.Count; i++) {
+            LandmarkCharacterItem currItem = characterItems[i];
+            if (activeArea.id == currItem.character.homeArea.id) {
+                if (currItem.character.currentParty.specificLocation.tileLocation.areaOfTile.id != activeArea.id || currItem.character.currentParty.icon.isTravelling) { //character is away from home
+                    travellingResidents.Add(currItem);
+                } else {
+                    nonTravellingResidents.Add(currItem);
+                }
+            } else {
+                if (currItem.character.currentParty.icon.isTravelling) {
+                    travellingVisitors.Add(currItem);
+                } else {
+                    nonTravellingVisitors.Add(currItem);
+                }
+            }
+        }
+
+        List<LandmarkCharacterItem> orderedVisitors = new List<LandmarkCharacterItem>(nonTravellingVisitors.OrderByDescending(x => x.character.level));
+        orderedVisitors.AddRange(travellingVisitors.OrderByDescending(x => x.character.level));
+        List<LandmarkCharacterItem> orderedResidents = new List<LandmarkCharacterItem>(nonTravellingResidents.OrderByDescending(x => x.character.level));
+        orderedResidents.AddRange(travellingResidents.OrderByDescending(x => x.character.level));
 
         List<LandmarkCharacterItem> orderedItems = new List<LandmarkCharacterItem>();
         orderedItems.AddRange(orderedVisitors);

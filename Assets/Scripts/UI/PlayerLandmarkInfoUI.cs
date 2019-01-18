@@ -273,7 +273,7 @@ public class PlayerLandmarkInfoUI : UIMenu {
     private LandmarkCharacterItem CreateNewCharacterItem(Character character) {
         GameObject characterGO = UIManager.Instance.InstantiateUIObject(landmarkCharacterPrefab.name, charactersScrollView.content);
         LandmarkCharacterItem item = characterGO.GetComponent<LandmarkCharacterItem>();
-        item.SetCharacter(character);
+        item.SetCharacter(character, this);
         characterItems.Add(item);
         //CheckScrollers();
         return item;
@@ -281,7 +281,7 @@ public class PlayerLandmarkInfoUI : UIMenu {
     private void CreateNewCharacterItem(LandmarkPartyData partyData) {
         GameObject characterGO = UIManager.Instance.InstantiateUIObject(landmarkCharacterPrefab.name, charactersScrollView.content);
         LandmarkCharacterItem item = characterGO.GetComponent<LandmarkCharacterItem>();
-        item.SetCharacter(partyData.partyMembers[0]);
+        item.SetCharacter(partyData.partyMembers[0], this);
     }
     private void OnResidentAddedToLandmark(BaseLandmark landmark, Character character) {
         if (isShowing && _activeLandmark != null && _activeLandmark.id == landmark.id) { // && (_activeLandmark.isBeingInspected || GameManager.Instance.inspectAll)

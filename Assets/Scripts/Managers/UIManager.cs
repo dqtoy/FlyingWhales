@@ -41,6 +41,7 @@ public class UIManager : MonoBehaviour {
     public RectTransform smallInfoRT;
     public TextMeshProUGUI smallInfoLbl;
     public EnvelopContentUnityUI smallInfoEnvelopContent;
+    public LocationSmallInfo locationSmallInfo;
 
     [Space(10)]
     [Header("Detailed Info")]
@@ -552,6 +553,10 @@ public class UIManager : MonoBehaviour {
             }
             rt.position = Input.mousePosition;
         }
+    }
+    public void ShowSmallLocationInfo(Area area, Vector3 pos, string subText = "") {
+        locationSmallInfo.ShowAreaInfo(area, subText);
+        locationSmallInfo.transform.position = pos;
     }
     #endregion
 
