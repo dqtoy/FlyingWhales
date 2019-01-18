@@ -742,7 +742,7 @@ public class Area {
 
         for (int i = 0; i < areaResidents.Count; i++) {
             Character resident = areaResidents[i];
-            if (resident.doNotDisturb <= 0 && !resident.isDefender && !resident.currentParty.icon.isTravelling && resident.faction == owner && resident.specificLocation.tileLocation.areaOfTile.id == id) {
+            if (resident.doNotDisturb <= 0 && !resident.isDefender && !resident.currentParty.icon.isTravelling && resident.specificLocation.tileLocation.areaOfTile.id == id) {
                 if (attackCharacters != null && attackCharacters.Contains(resident)) {
                     continue;
                 }
@@ -750,7 +750,9 @@ public class Area {
                 //    defenderCandidates.Add(resident);
                 //}
                 //if (!resident.isDefender) {
-                interactionCandidates.Add(resident);
+                if((owner == null && resident.faction == FactionManager.Instance.neutralFaction) || resident.faction == owner) {
+                    interactionCandidates.Add(resident);
+                }
                 //}
             }
         }
@@ -927,52 +929,48 @@ public class Area {
     }
     private void AssignInteractionsToResidents(List<Character> candidates) {
         string testLog = "[Day " + GameManager.Instance.continuousDays + "] AREA TASKS FOR " + this.name;
-        if (owner != null) {
-            int supplySpent = 0;
-            if(candidates.Count <= 0) {
-                testLog += "\nNo available residents to be chosen!";
-            } else {
-                testLog += "\nAvailable residents to choose from: " + candidates[0].name;
-                for (int i = 1; i < candidates.Count; i++) {
-                    testLog += ", " + candidates[i].name;
-                }
-                while (candidates.Count > 0) {
-                    int index = UnityEngine.Random.Range(0, candidates.Count);
-                    Character chosenCandidate = candidates[index];
-                    candidates.RemoveAt(index);
-                    testLog += "\nChosen Resident: " + chosenCandidate.name;
-                    string validInteractionsLog = string.Empty;
-                    INTERACTION_TYPE interactionType = GetInteractionTypeForResidentCharacter(chosenCandidate, out validInteractionsLog);
-                    testLog += validInteractionsLog;
-                    Interaction interaction = null;
-                    if (interactionType != INTERACTION_TYPE.MOVE_TO_RAID && interactionType != INTERACTION_TYPE.MOVE_TO_SCAVENGE) {
-                        supplySpent += 100;
-                        if (supplySpent <= suppliesInBank) {
-                            testLog += "\nChosen Interaction: " + interactionType.ToString();
-                            interaction = InteractionManager.Instance.CreateNewInteraction(interactionType, chosenCandidate.specificLocation as BaseLandmark);
-                            interaction.SetCanInteractionBeDoneAction(() => CanDoAreaTaskInteraction(interaction.type, chosenCandidate));
-                            interaction.SetInitializeAction(() => AdjustSuppliesInBank(-100));
-                            interaction.SetMinionSuccessAction(() => AdjustSuppliesInBank(100));
-                            chosenCandidate.SetForcedInteraction(interaction);
-                            if (supplySpent == suppliesInBank) {
-                                testLog += "\nAssigning area tasks will stop, all area supplies have been allotted.";
-                                break;
-                            }
-                        } else {
-                            testLog += "\nCan't do " + interactionType.ToString() + "! Area cannot accomodate supply cost anymore!";
+        int supplySpent = 0;
+        if (candidates.Count <= 0) {
+            testLog += "\nNo available residents to be chosen!";
+        } else {
+            testLog += "\nAvailable residents to choose from: " + candidates[0].name;
+            for (int i = 1; i < candidates.Count; i++) {
+                testLog += ", " + candidates[i].name;
+            }
+            while (candidates.Count > 0) {
+                int index = UnityEngine.Random.Range(0, candidates.Count);
+                Character chosenCandidate = candidates[index];
+                candidates.RemoveAt(index);
+                testLog += "\nChosen Resident: " + chosenCandidate.name;
+                string validInteractionsLog = string.Empty;
+                INTERACTION_TYPE interactionType = GetInteractionTypeForResidentCharacter(chosenCandidate, out validInteractionsLog);
+                testLog += validInteractionsLog;
+                Interaction interaction = null;
+                if (interactionType != INTERACTION_TYPE.MOVE_TO_RAID && interactionType != INTERACTION_TYPE.MOVE_TO_SCAVENGE) {
+                    supplySpent += 100;
+                    if (supplySpent <= suppliesInBank) {
+                        testLog += "\nChosen Interaction: " + interactionType.ToString();
+                        interaction = InteractionManager.Instance.CreateNewInteraction(interactionType, chosenCandidate.specificLocation as BaseLandmark);
+                        interaction.SetCanInteractionBeDoneAction(() => CanDoAreaTaskInteraction(interaction.type, chosenCandidate));
+                        interaction.SetInitializeAction(() => AdjustSuppliesInBank(-100));
+                        interaction.SetMinionSuccessAction(() => AdjustSuppliesInBank(100));
+                        chosenCandidate.SetForcedInteraction(interaction);
+                        if (supplySpent == suppliesInBank) {
+                            testLog += "\nAssigning area tasks will stop, all area supplies have been allotted.";
                             break;
                         }
                     } else {
-                        interaction = InteractionManager.Instance.CreateNewInteraction(interactionType, chosenCandidate.specificLocation as BaseLandmark);
-                        interaction.SetCanInteractionBeDoneAction(() => InteractionManager.Instance.CanCreateInteraction(interaction.type, chosenCandidate));
-                        chosenCandidate.SetForcedInteraction(interaction);
+                        testLog += "\nCan't do " + interactionType.ToString() + "! Area cannot accomodate supply cost anymore!";
+                        break;
                     }
+                } else {
+                    interaction = InteractionManager.Instance.CreateNewInteraction(interactionType, chosenCandidate.specificLocation as BaseLandmark);
+                    interaction.SetCanInteractionBeDoneAction(() => InteractionManager.Instance.CanCreateInteraction(interaction.type, chosenCandidate));
+                    chosenCandidate.SetForcedInteraction(interaction);
                 }
             }
-        } else {
-            testLog += "\nNo Area Tasks because this area has NO FACTION!";
         }
-        if(UIManager.Instance.areaInfoUI.activeArea != null && UIManager.Instance.areaInfoUI.activeArea.id == id) {
+        if (UIManager.Instance.areaInfoUI.activeArea != null && UIManager.Instance.areaInfoUI.activeArea.id == id) {
             Debug.Log(testLog);
         }
     }

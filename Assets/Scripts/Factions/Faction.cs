@@ -523,14 +523,18 @@ public class Faction {
         };
     }
     private void SetDailyInteractionGenerationTick() {
-        _currentInteractionTick = UnityEngine.Random.Range(1, GameManager.hoursPerDay + 1);
+        //_currentInteractionTick = UnityEngine.Random.Range(1, GameManager.hoursPerDay + 1);
+        int daysInMonth = GameManager.daysInMonth[GameManager.Instance.month];
+        int remainingDaysInMonth = GameManager.Instance.continuousDays % daysInMonth;
+        int startDay = GameManager.Instance.continuousDays + remainingDaysInMonth + 1;
+        _currentInteractionTick = UnityEngine.Random.Range(startDay, startDay + daysInMonth);
     }
     private void DailyInteractionGeneration() {
-        if (_usedMonthForInteraction == GameManager.Instance.month) {
-            return;
-        }
-        if (_currentInteractionTick == GameManager.Instance.days) {
-            _usedMonthForInteraction = GameManager.Instance.month;
+        //if (_usedMonthForInteraction == GameManager.Instance.month) {
+        //    return;
+        //}
+        if (_currentInteractionTick == GameManager.Instance.continuousDays) { //.days
+            //_usedMonthForInteraction = GameManager.Instance.month;
             GenerateDailyInteraction();
             SetDailyInteractionGenerationTick();
         }
