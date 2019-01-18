@@ -245,6 +245,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 8aa19a68d3ea1d54e8ab581e3d5dd5ff, type: 3}
   - {fileID: 21300000, guid: 54202d4c9c12b6c42b0a5d56630b9b11, type: 3}
   - {fileID: 21300000, guid: 5ee84a390fa69e34783a13747e97ab9e, type: 3}
+  - {fileID: 21300000, guid: 68dded9b2946a9346a8043772426280e, type: 3}
   - {fileID: 21300000, guid: 87bb45208dd227c4692921a192026acb, type: 3}
   - {fileID: 21300000, guid: b26562098a29bbb4695da637ab5ce5ba, type: 3}
   - {fileID: 21300000, guid: 8aeae44373a78434bac8f9df85ccad8e, type: 3}
@@ -256,6 +257,8 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 00217fe9096ed3d45b81d2d815267235, type: 3}
   - {fileID: 21300000, guid: c11cdd95d9cf04c44b9712b03115fac9, type: 3}
   - {fileID: 21300000, guid: e73b98880b3bac5428be2c89e7e93810, type: 3}
+  - {fileID: 21300000, guid: 31d9b739849770f43ab4f323b40635cf, type: 3}
+  - {fileID: 21300000, guid: 2914eb20255e070448ce2bab92c250a6, type: 3}
   - {fileID: 21300000, guid: 1f589b68222dcea4fa1e1d129cd7cbf5, type: 3}
   - {fileID: 21300000, guid: 50b2e9143d30d444581537d6fbb83b9c, type: 3}
   - {fileID: 21300000, guid: 68d992c4014feb04986516d28be61453, type: 3}
@@ -481,6 +484,7 @@ SpriteAtlas:
   - button_back_disabled
   - button_close_hover
   - button_close_default
+  - tile_log_divider
   - assault_icon
   - minion_icon_debilitator
   - minion_icon_diplomat
@@ -492,6 +496,8 @@ SpriteAtlas:
   - minion_icon_recruiter
   - minion_icon_attacker
   - defense_icon
+  - travelled_icon
+  - footprint_icon
   - text_scroll_thumb
   - player_s
   - bestalia_s

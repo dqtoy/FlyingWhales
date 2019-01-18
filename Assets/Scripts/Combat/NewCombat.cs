@@ -69,7 +69,9 @@ public class NewCombat : MonoBehaviour {
     }
     private void ReorderCombat() {
         for (int i = 0; i < _combatOrder.Count; i++) {
-            _combatOrder[i].ReEvaluateSpeed();
+            CombatCharacter combatChar = _combatOrder[i];
+            combatChar.speed = combatChar.character.speed;
+            _combatOrder[i] = combatChar;
             for (int j = 0; j < i; j++) {
                 if(_combatOrder[i].speed > _combatOrder[j].speed) {
                     CombatCharacter combatCharacter = _combatOrder[i];

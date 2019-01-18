@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class CombatSlotItem : MonoBehaviour {
     public CharacterPortrait portrait;
@@ -38,10 +39,9 @@ public class CombatSlotItem : MonoBehaviour {
     public void ShowCharacterInfo() {
         if (UIManager.Instance.combatUI.CanSlotBeTarget(this)) {
             UIManager.Instance.combatUI.ShowTargetCharacters(this);
-        } else {
-            if (character != null) {
-                UIManager.Instance.ShowSmallInfo(hoverInfo);
-            }
+        }
+        if (character != null) {
+            UIManager.Instance.ShowSmallInfo(hoverInfo);
         }
     }
     public void HideCharacterInfo() {
@@ -49,6 +49,11 @@ public class CombatSlotItem : MonoBehaviour {
             UIManager.Instance.HideSmallInfo();
         }
         UIManager.Instance.combatUI.HideTargetCharacters(this);
+    }
+    public void ShowCharacterUI() {
+        if (character != null && portrait.gameObject.activeSelf) {
+            UIManager.Instance.ShowCharacterInfo(character);
+        }
     }
     public void OnHoverHP() {
         string hp = character.currentHP + "/" + character.maxHP;
@@ -63,8 +68,13 @@ public class CombatSlotItem : MonoBehaviour {
     public void SetTargetable(bool state) {
         targetSelectGO.SetActive(state);
     }
-    public void OnClickCombatSlot() {
-        UIManager.Instance.combatUI.SelectTargetCharacters(this);
+    public void OnClickCombatSlot(BaseEventData eventData) {
+        PointerEventData pointerEvent = eventData as PointerEventData;
+        if (pointerEvent.button == PointerEventData.InputButton.Left) {
+            UIManager.Instance.combatUI.SelectTargetCharacters(this);
+        } else if (pointerEvent.button == PointerEventData.InputButton.Right) {
+            ShowCharacterUI();
+        }
     }
     private void OnAdjustCharacterHP(Character character) {
         if(this.character != null && this.character.id == character.id) {
