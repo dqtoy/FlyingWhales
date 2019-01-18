@@ -69,6 +69,11 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     }
     #endregion
 
+    void Awake() {
+        //Material mat = Instantiate(wholeImage.material);
+        //wholeImage.material = mat;
+    }
+
     private void OnEnable() {
         Messenger.AddListener<Character>(Signals.CHARACTER_LEVEL_CHANGED, OnCharacterLevelChanged);
         Messenger.AddListener<Character>(Signals.FACTION_SET, OnFactionSet);
@@ -354,14 +359,15 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     #endregion
 
     public void RandomizeHSV() {
-        Color origRGBCcolor = wholeImage.color;
-        float H, S, V;
-        Color.RGBToHSV(origRGBCcolor, out H, out S, out V);
-        Debug.Log("H: " + H + " S: " + S + " V: " + V);
+        //Color origRGBCcolor = wholeImage.color;
+        //float H, S, V;
+        //Color.RGBToHSV(origRGBCcolor, out H, out S, out V);
+        //Debug.Log("H: " + H + " S: " + S + " V: " + V);
 
-        H = Random.Range(140f, 220f) / 360f;
-        S = 50f/100f;
-        wholeImage.color = Color.HSVToRGB(H, S, V);
+        //H = Random.Range(140f, 220f) / 360f;
+        //S = 50f/100f;
+        //wholeImage.color = Color.HSVToRGB(H, S, V);
+        wholeImage.material.SetVector("_HSVAAdjust", new Vector4(Random.Range(-0.4f, 0.4f), 0f, 0f, 0f));
 
     }
 }

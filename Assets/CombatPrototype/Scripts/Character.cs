@@ -211,6 +211,9 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     public BaseLandmark homeLandmark {
         get { return _homeLandmark; }
     }
+    public Area homeArea {
+        get { return _homeLandmark.tileLocation.areaOfTile; }
+    }
     public BaseLandmark workplace {
         get { return _workplace; }
     }

@@ -23,7 +23,7 @@ public class CharacterAvatar : MonoBehaviour{
 
     protected Party _party;
 
-    protected ILocation targetLocation;
+    public ILocation targetLocation { get; protected set; }
 
     [SerializeField] protected List<HexTile> path;
 
@@ -163,6 +163,7 @@ public class CharacterAvatar : MonoBehaviour{
         _travelLine = _party.specificLocation.tileLocation.CreateTravelLine(targetLocation.tileLocation, _distanceToTarget);
         _travelLine.SetActiveMeter(isVisualShowing);
         Messenger.AddListener(Signals.DAY_STARTED, TraverseCurveLine);
+        Messenger.Broadcast(Signals.PARTY_STARTED_TRAVELLING, this.party);
     }
     private void TraverseCurveLine() {
         if (_travelLine == null) {
@@ -220,6 +221,7 @@ public class CharacterAvatar : MonoBehaviour{
         if (onPathFinished != null) {
             onPathFinished();
         }
+        Messenger.Broadcast(Signals.PARTY_DONE_TRAVELLING, this.party);
     }
     public virtual void ReceivePath(List<HexTile> path, PathFindingThread fromThread) {
         if (!_isInitialized) {

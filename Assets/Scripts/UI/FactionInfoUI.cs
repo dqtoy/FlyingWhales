@@ -202,7 +202,7 @@ public class FactionInfoUI : UIMenu {
     private LandmarkCharacterItem CreateNewCharacterItem(Character character) {
         GameObject characterGO = UIManager.Instance.InstantiateUIObject(landmarkCharacterPrefab.name, charactersScrollView.content);
         LandmarkCharacterItem item = characterGO.GetComponent<LandmarkCharacterItem>();
-        item.SetCharacter(character);
+        item.SetCharacter(character, this);
         characterItems.Add(item);
         OrderCharacterItems();
         return item;
@@ -210,7 +210,7 @@ public class FactionInfoUI : UIMenu {
     private void CreateNewCharacterItem(LandmarkPartyData partyData) {
         GameObject characterGO = UIManager.Instance.InstantiateUIObject(landmarkCharacterPrefab.name, charactersScrollView.content);
         LandmarkCharacterItem item = characterGO.GetComponent<LandmarkCharacterItem>();
-        item.SetCharacter(partyData.partyMembers[0]);
+        item.SetCharacter(partyData.partyMembers[0], this);
         characterItems.Add(item);
         OrderCharacterItems();
     }
