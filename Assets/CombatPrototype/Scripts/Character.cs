@@ -13,6 +13,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     public DailyAction onDailyAction;
 
     protected string _name;
+    protected string _firstName;
     protected string _characterColorCode;
     protected int _id;
     protected int _gold;
@@ -107,14 +108,14 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
 
     #region getters / setters
     public string firstName {
-        get { return name.Split(' ')[0]; }
+        get { return _firstName; }
     }
     public virtual string name {
         get {
             //if(_minion != null) {
             //    return _minion.name;
             //}
-            return this._name;
+            return _firstName;
         }
     }
     public string coloredName {
@@ -448,7 +449,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
             throw new Exception("There is no class named " + className + " but it is being assigned to " + this.name);
         }
         _gender = gender;
-        _name = RandomNameGenerator.Instance.GenerateRandomName(_raceSetting.race, _gender);
+        SetName(RandomNameGenerator.Instance.GenerateRandomName(_raceSetting.race, _gender));
         if (this is CharacterArmyUnit) {
             _portraitSettings = CharacterManager.Instance.GenerateRandomPortrait(RACE.HUMANS, GENDER.MALE);
         } else {
@@ -481,7 +482,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         _raceSetting = RaceManager.Instance.racesDictionary[data.race.ToString()].CreateNewCopy();
         AssignClass(CharacterManager.Instance.classesDictionary[data.className]);
         _gender = data.gender;
-        _name = data.name;
+        SetName(data.name);
         //LoadRelationships(data.relationshipsData);
         _portraitSettings = data.portraitSettings;
         if (_characterClass.roleType != CHARACTER_ROLE.NONE) {
@@ -1886,6 +1887,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     }
     public void SetName(string newName) {
         _name = newName;
+        _firstName = _name.Split(' ')[0];
     }
     //If true, character can't do daily action (onDailyAction), i.e. actions, needs
     //public void SetIsIdle(bool state) {

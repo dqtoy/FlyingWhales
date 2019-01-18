@@ -143,7 +143,7 @@ public class NewCombat : MonoBehaviour {
                 previousCombatCharacter = sourceCombatCharacter;
                 UIManager.Instance.combatUI.HighlightAttacker(sourceCombatCharacter.character, sourceCombatCharacter.side);
                 //Messenger.Broadcast(Signals.HIGHLIGHT_ATTACKER, sourceCombatCharacter.character, sourceCombatCharacter.side);
-                UIManager.Instance.combatUI.AddCombatLogs(sourceCombatCharacter.character.name + " will now attack!");
+                UIManager.Instance.combatUI.AddCombatLogs(sourceCombatCharacter.character.name + " will now attack!", sourceCombatCharacter.side);
                 //Messenger.Broadcast(Signals.ADD_TO_COMBAT_LOGS, sourceCombatCharacter.character.name + " will now attack!");
 
                 //if (sourceCombatCharacter.character.currentHP <= 0) {
@@ -184,7 +184,7 @@ public class NewCombat : MonoBehaviour {
                         }
                     }
                     attackLog += " for " + sourceAttack.ToString() + ".";
-                    UIManager.Instance.combatUI.AddCombatLogs(attackLog);
+                    UIManager.Instance.combatUI.AddCombatLogs(attackLog, sourceCombatCharacter.side);
                     //Messenger.Broadcast(Signals.ADD_TO_COMBAT_LOGS, attackLog);
 
                     string deathLog = string.Empty;
@@ -199,12 +199,12 @@ public class NewCombat : MonoBehaviour {
                     }
                     if (deathLog != string.Empty) {
                         deathLog += " is dead!";
-                        UIManager.Instance.combatUI.AddCombatLogs(deathLog);
+                        UIManager.Instance.combatUI.AddCombatLogs(deathLog, sourceCombatCharacter.side);
                     }
                     //Messenger.Broadcast(Signals.ADD_TO_COMBAT_LOGS, deathLog);
                 } else {
                     attackLog = "No target for " + sourceCombatCharacter.character.name + ": " + sourceCombatCharacter.character.characterClass.combatTarget.ToString();
-                    UIManager.Instance.combatUI.AddCombatLogs(attackLog);
+                    UIManager.Instance.combatUI.AddCombatLogs(attackLog, sourceCombatCharacter.side);
                     //Messenger.Broadcast(Signals.ADD_TO_COMBAT_LOGS, attackLog);
                 }
 
@@ -220,11 +220,11 @@ public class NewCombat : MonoBehaviour {
         }
         if (rightSide.IsGridEmpty()) {
             winningSide = SIDES.A;
-            UIManager.Instance.combatUI.AddCombatLogs("Left Side Wins!");
+            UIManager.Instance.combatUI.AddCombatLogs("Left Side Wins!", SIDES.A);
             //Messenger.Broadcast(Signals.ADD_TO_COMBAT_LOGS, "Left Side Wins!");
         } else {
             winningSide = SIDES.B;
-            UIManager.Instance.combatUI.AddCombatLogs("Right Side Wins!");
+            UIManager.Instance.combatUI.AddCombatLogs("Right Side Wins!", SIDES.B);
             //Messenger.Broadcast(Signals.ADD_TO_COMBAT_LOGS, "Right Side Wins!");
         }
         for (int i = 0; i < _combatOrder.Count; i++) {

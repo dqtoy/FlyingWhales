@@ -8,9 +8,11 @@ public class CombatUI : MonoBehaviour {
     public CombatSlotItem[] leftSlots;
     public CombatSlotItem[] rightSlots;
 
-    public TextMeshProUGUI resultsText;
     public GameObject combatGO;
     public GameObject selectTargetIndicatorGO;
+    public GameObject combatLogItemPrefab;
+
+    public ScrollRect combatLogsScrollView;
 
     // Use this for initialization
     void Start () {
@@ -26,16 +28,16 @@ public class CombatUI : MonoBehaviour {
             rightSlots[i].Initialize();
             rightSlots[i].SetGridNumber(i);
         }
-        Messenger.AddListener<string>(Signals.ADD_TO_COMBAT_LOGS, AddCombatLogs);
-        Messenger.AddListener<Character, SIDES>(Signals.HIGHLIGHT_ATTACKER, HighlightAttacker);
-        Messenger.AddListener<Character, SIDES>(Signals.UNHIGHLIGHT_ATTACKER, UnhighlightAttacker);
-        Messenger.AddListener(Signals.UPDATE_COMBAT_GRIDS, UpdateCombatSlotItems);
+        //Messenger.AddListener<string>(Signals.ADD_TO_COMBAT_LOGS, AddCombatLogs);
+        //Messenger.AddListener<Character, SIDES>(Signals.HIGHLIGHT_ATTACKER, HighlightAttacker);
+        //Messenger.AddListener<Character, SIDES>(Signals.UNHIGHLIGHT_ATTACKER, UnhighlightAttacker);
+        //Messenger.AddListener(Signals.UPDATE_COMBAT_GRIDS, UpdateCombatSlotItems);
     }
     public void OpenCombatUI(bool triggerCombatFight) {
         GameManager.Instance.SetPausedState(true);
         combatGO.SetActive(true);
         if (triggerCombatFight) {
-            resultsText.text = string.Empty;
+            ResetCombatLogs();
             FillLeftSlots();
             FillRightSlots();
             CombatManager.Instance.newCombat.Fight();
@@ -56,11 +58,16 @@ public class CombatUI : MonoBehaviour {
         }
     }
 
-    public void AddCombatLogs(string text) {
+    public void AddCombatLogs(string text, SIDES side) {
         if (!combatGO.activeSelf) {
             return;
         }
-        resultsText.text += "\n" + text;
+        GameObject go = Instantiate(combatLogItemPrefab, combatLogsScrollView.content);
+        go.GetComponent<CombatLogItem>().SetLog(text, side);
+        //resultsText.text += "\n" + text;
+    }
+    private void ResetCombatLogs() {
+        combatLogsScrollView.content.DestroyChildren();
     }
     public void HighlightAttacker(Character character, SIDES side) {
         if (!combatGO.activeSelf) {
