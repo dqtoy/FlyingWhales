@@ -14,6 +14,7 @@ public class LandmarkCharacterItem : PooledObject {
 
     private UIMenu parentMenu;
 
+    [SerializeField] private RectTransform thisTrans;
     [SerializeField] private TextMeshProUGUI nameLbl;
     [SerializeField] private TextMeshProUGUI subLbl;
     [SerializeField] private GameObject travellingIcon;
@@ -27,8 +28,6 @@ public class LandmarkCharacterItem : PooledObject {
         nameLbl.text = character.name;
         subLbl.text = Utilities.GetNormalizedSingularRace(character.race) + " " + character.characterClass.className;
         UpdateLocationIcons();
-        Messenger.AddListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnPartyStartedTravelling);
-        Messenger.AddListener<Party>(Signals.PARTY_DONE_TRAVELLING, OnPartyDoneTravelling);
     }
     public void ShowCharacterInfo() {
         UIManager.Instance.ShowCharacterInfo(character);
@@ -81,13 +80,18 @@ public class LandmarkCharacterItem : PooledObject {
     }
 
     public void ShowTravellingTooltip() {
-        UIManager.Instance.ShowSmallInfo("Travelling to " + character.currentParty.icon.targetLocation.tileLocation.areaOfTile.name);
+        //UIManager.Instance.ShowSmallInfo("Travelling to " + character.currentParty.icon.targetLocation.tileLocation.areaOfTile.name);
+        //UIManager.Instance.ShowSmallLocationInfo(character.currentParty.icon.targetLocation.tileLocation.areaOfTile, thisTrans, new Vector3(434f, 0f, 0f), "Travelling to:");
+        float x = thisTrans.position.x + thisTrans.sizeDelta.x + 50f;
+        UIManager.Instance.ShowSmallLocationInfo(character.currentParty.icon.targetLocation.tileLocation.areaOfTile, new Vector3(x, thisTrans.position.y, 0f), "Travelling to:");
     }
     public void ShowArrivedTooltip() {
-        UIManager.Instance.ShowSmallInfo("Arrived at " + character.currentParty.specificLocation.tileLocation.areaOfTile.name);
+        //UIManager.Instance.ShowSmallInfo("Arrived at " + character.currentParty.specificLocation.tileLocation.areaOfTile.name);
+        float x = thisTrans.position.x + thisTrans.sizeDelta.x + 50f;
+        UIManager.Instance.ShowSmallLocationInfo(character.currentParty.icon.targetLocation.tileLocation.areaOfTile, new Vector3(x, thisTrans.position.y, 0f), "Arrived at:");
     }
     public void HideToolTip() {
-        UIManager.Instance.HideSmallInfo();
+        UIManager.Instance.HideSmallLocationInfo();
     }
 
     #region Listeners
@@ -106,7 +110,21 @@ public class LandmarkCharacterItem : PooledObject {
 
     public override void Reset() {
         base.Reset();
-        Messenger.RemoveListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnPartyStartedTravelling);
-        Messenger.RemoveListener<Party>(Signals.PARTY_DONE_TRAVELLING, OnPartyDoneTravelling);
+        //Messenger.RemoveListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnPartyStartedTravelling);
+        //Messenger.RemoveListener<Party>(Signals.PARTY_DONE_TRAVELLING, OnPartyDoneTravelling);
+    }
+
+    private void OnEnable() {
+        Messenger.AddListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnPartyStartedTravelling);
+        Messenger.AddListener<Party>(Signals.PARTY_DONE_TRAVELLING, OnPartyDoneTravelling);
+    }
+
+    private void OnDisable() {
+        if (Messenger.eventTable.ContainsKey(Signals.PARTY_STARTED_TRAVELLING)) {
+            Messenger.RemoveListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnPartyStartedTravelling);
+        }
+        if (Messenger.eventTable.ContainsKey(Signals.PARTY_DONE_TRAVELLING)) {
+            Messenger.RemoveListener<Party>(Signals.PARTY_DONE_TRAVELLING, OnPartyDoneTravelling);
+        }
     }
 }

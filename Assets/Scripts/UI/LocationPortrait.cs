@@ -20,4 +20,11 @@ public class LocationPortrait : MonoBehaviour, IPointerClickHandler {
         this.area = area;
         portrait.sprite = LandmarkManager.Instance.locationPortraits[area.name];
     }
+
+    public void ShowLocationInfo() {
+        UIManager.Instance.ShowSmallInfo(this.area.name);
+    }
+    public void HideLocationInfo() {
+        UIManager.Instance.HideSmallInfo();
+    }
 }

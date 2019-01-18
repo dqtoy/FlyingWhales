@@ -347,8 +347,9 @@ public class FactionManager : MonoBehaviour {
             character.faction.RemoveCharacter(character);
         }
         faction.AddNewCharacter(character);
-        character.homeLandmark.RemoveCharacterHomeOnLandmark(character);
-        newHome.AddCharacterHomeOnLandmark(character);
+        character.MigrateTo(newHome);
+        //character.homeLandmark.RemoveCharacterHomeOnLandmark(character);
+        //newHome.AddCharacterHomeOnLandmark(character);
         //Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, _characterInvolved.specificLocation.tileLocation.landmarkOnTile);
         //character.SetForcedInteraction(interaction);
     }

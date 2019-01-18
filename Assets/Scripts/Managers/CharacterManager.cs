@@ -172,8 +172,9 @@ public class CharacterManager : MonoBehaviour {
             party.icon.SetPosition(homeLocation.tileLocation.transform.position);
             if (homeLocation is BaseLandmark) {
                 BaseLandmark homeLandmark = homeLocation as BaseLandmark;
-                homeLandmark.AddCharacterHomeOnLandmark(newCharacter);
                 homeLandmark.AddCharacterToLocation(party);
+                newCharacter.MigrateTo(homeLandmark);
+                //homeLandmark.AddCharacterHomeOnLandmark(newCharacter);
             }
         }
 #endif

@@ -1154,10 +1154,13 @@ public class Area {
                 }
             }
             areaResidents.Add(character);
+            //Messenger.Broadcast(Signals.AREA_RESIDENT_ADDED, this, character);
         }
     }
     public void RemoveResident(Character character) {
-        areaResidents.Remove(character);
+        if (areaResidents.Remove(character)) {
+            //Messenger.Broadcast(Signals.AREA_RESIDENT_REMOVED, this, character);
+        }
     }
     public void AddCharacterAtLocation(Character character) {
         if (!charactersAtLocation.Contains(character)) {

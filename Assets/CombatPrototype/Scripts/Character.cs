@@ -212,7 +212,12 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         get { return _homeLandmark; }
     }
     public Area homeArea {
-        get { return _homeLandmark.tileLocation.areaOfTile; }
+        get {
+            if (_homeLandmark == null) {
+                return null;
+            }
+            return _homeLandmark.tileLocation.areaOfTile;
+        }
     }
     public BaseLandmark workplace {
         get { return _workplace; }
@@ -2782,10 +2787,13 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     //    return false;
     //}
     public void MigrateTo(BaseLandmark newHomeLandmark) {
+        Area previousHome = null;
         if(_homeLandmark != null) {
+            previousHome = _homeLandmark.tileLocation.areaOfTile;
             _homeLandmark.RemoveCharacterHomeOnLandmark(this);
         }
         newHomeLandmark.AddCharacterHomeOnLandmark(this);
+        Messenger.Broadcast(Signals.CHARACTER_MIGRATED_HOME, this, previousHome, newHomeLandmark.tileLocation.areaOfTile);
     }
     public void MigrateTo(Area newHomeArea) {
         MigrateTo(newHomeArea.coreTile.landmarkOnTile);

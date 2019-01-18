@@ -295,8 +295,9 @@ public class SpreadUndeathAction : Interaction {
     private void TransferCharacter(Character character, Faction faction) {
         character.faction.RemoveCharacter(character);
         faction.AddNewCharacter(character);
-        character.homeLandmark.RemoveCharacterHomeOnLandmark(character);
-        _characterInvolved.homeLandmark.AddCharacterHomeOnLandmark(character);
+        character.MigrateTo(_characterInvolved.homeArea);
+        //character.homeLandmark.RemoveCharacterHomeOnLandmark(character);
+        //_characterInvolved.homeLandmark.AddCharacterHomeOnLandmark(character);
         Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, character.specificLocation.tileLocation.landmarkOnTile);
         character.SetForcedInteraction(interaction);
         character.ChangeRace(RACE.SKELETON);
