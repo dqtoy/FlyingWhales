@@ -7038,10 +7038,6 @@ Prefab:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
-    - target: {fileID: 1496571332359616, guid: 1343fb7b1218afd4a81d7f444bd9624f, type: 2}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 1343fb7b1218afd4a81d7f444bd9624f, type: 2}
   m_IsPrefabParent: 0
@@ -7050,6 +7046,12 @@ RectTransform:
   m_PrefabParentObject: {fileID: 224975986086156516, guid: 1343fb7b1218afd4a81d7f444bd9624f,
     type: 2}
   m_PrefabInternal: {fileID: 231483862}
+--- !u!114 &231483864 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 114484762333683540, guid: 1343fb7b1218afd4a81d7f444bd9624f,
+    type: 2}
+  m_PrefabInternal: {fileID: 231483862}
+  m_Script: {fileID: 11500000, guid: dc93c7e790fdcc948b863fee9f1bc05b, type: 3}
 --- !u!1 &233660857
 GameObject:
   m_ObjectHideFlags: 0
@@ -49317,7 +49319,7 @@ MonoBehaviour:
   BODY_FONT_SIZE: 20
   TOOLTIP_FONT_SIZE: 15
   SMALLEST_FONT_SIZE: 12
-  combatUI: {fileID: 0}
+  combatUI: {fileID: 231483864}
   areaInfoUI: {fileID: 1741253390}
   landmarkInfoUI: {fileID: 914495163}
   playerLandmarkInfoUI: {fileID: 497507705}
