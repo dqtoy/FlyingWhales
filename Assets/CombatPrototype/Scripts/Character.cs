@@ -106,6 +106,9 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
 
     public Dictionary<int, Combat> combatHistory;
 
+    public Color skinColor { get; private set; }
+    public Color hairColor { get; private set; }
+
     #region getters / setters
     public string firstName {
         get { return _firstName; }
@@ -569,6 +572,10 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         //AllocateStats();
         //EquipItemsByClass();
         //ConstructBuffs();
+
+        skinColor = Color.HSVToRGB(UnityEngine.Random.Range(1, 80f)/360f, 15f/100f, 100f/100f);
+        hairColor = Color.HSVToRGB(UnityEngine.Random.Range(0f, 360f)/360f, 25f/100f, 90f/100f);
+
         GetRandomCharacterColor();
         ConstructDefaultMiscActions();
         //_combatHistoryID = 0;

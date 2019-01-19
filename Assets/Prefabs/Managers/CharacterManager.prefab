@@ -157,91 +157,18 @@ MonoBehaviour:
     maleAssets:
       gender: 0
       bodyAssets:
-      - {fileID: 21300000, guid: a2ae8a3ff13657644b77264488a16ea4, type: 3}
+      - {fileID: 21300000, guid: d1e293e4ab9575f45bfc675399f0f8ca, type: 3}
       hairAssets:
-      - hairSprite: {fileID: 21300000, guid: 6df5e95934ed3824f97e1f8016e95267, type: 3}
-        hairBackSprite: {fileID: 21300000, guid: 3a6408f8c9a400349b0f4bd73b544804,
-          type: 3}
-      - hairSprite: {fileID: 21300000, guid: fabd45fe283583b4297d9cba67447828, type: 3}
-        hairBackSprite: {fileID: 21300000, guid: 58ba89fd582365f45aa0c4a195348bf1,
-          type: 3}
-      - hairSprite: {fileID: 21300000, guid: 955e994f6116605428d60f2a080cc813, type: 3}
+      - hairSprite: {fileID: 21300000, guid: 1b91b08cb71bcbb43ba36bfe6018df78, type: 3}
         hairBackSprite: {fileID: 0}
-      - hairSprite: {fileID: 21300000, guid: 29d53d0b05f08e14384e7db1cd9ac47b, type: 3}
-        hairBackSprite: {fileID: 0}
-      - hairSprite: {fileID: 21300000, guid: 9de9b52844130a048b34892ae787e5e4, type: 3}
-        hairBackSprite: {fileID: 21300000, guid: 280d84667023f104392c67feb449d67c,
-          type: 3}
-      - hairSprite: {fileID: 21300000, guid: 2b90a53bf20d8d14199e2a1227cde6f7, type: 3}
-        hairBackSprite: {fileID: 0}
-      - hairSprite: {fileID: 21300000, guid: ad6c95dbd5849bd4997409a983b36f6e, type: 3}
-        hairBackSprite: {fileID: 21300000, guid: 06d1d0f929491094d88a951c44733a62,
-          type: 3}
-      - hairSprite: {fileID: 21300000, guid: 0b7bdeb527ec03046a233526b3189f4f, type: 3}
-        hairBackSprite: {fileID: 21300000, guid: 9f6be0f1d205db14cae0291e9950ac68,
-          type: 3}
-      - hairSprite: {fileID: 21300000, guid: 56268bc1b5178264b8ee37b24c04f1c5, type: 3}
-        hairBackSprite: {fileID: 21300000, guid: fb27166ceb62403469aa147d4b8bc7e9,
-          type: 3}
-      - hairSprite: {fileID: 21300000, guid: b80aff1bc38ec0e49a5c061bb2aeee69, type: 3}
-        hairBackSprite: {fileID: 21300000, guid: a1605c8f8f6ab2f41943a88e4d34e6bf,
-          type: 3}
       headAssets:
-      - {fileID: 21300000, guid: cdf83030059f9a14e8e49b20822f3e0f, type: 3}
-      - {fileID: 21300000, guid: 0c1c4d1ac7de98c44ade877b67b1c9f1, type: 3}
-      - {fileID: 21300000, guid: 95421133d2fe2794f8d2b902842988fb, type: 3}
-      - {fileID: 21300000, guid: e3ff749f858c0674e84c4d084f5ff39e, type: 3}
-      - {fileID: 21300000, guid: 98da32403ee98f34fbc6cb6745a9e9c9, type: 3}
-      - {fileID: 21300000, guid: 3a51654f0c2edb241b9b0e5fba916b98, type: 3}
-      - {fileID: 21300000, guid: c528c4c72568ace44a85186a9fd6052c, type: 3}
-      - {fileID: 21300000, guid: b9fe6a8091b85b64b9df81b66b12f41b, type: 3}
-      - {fileID: 21300000, guid: f6823ab78676900479c1e088de929051, type: 3}
-      - {fileID: 21300000, guid: eee4b3507925d00429e76fa3c0319061, type: 3}
-      noseAssets:
-      - {fileID: 21300000, guid: 4fa356d23382db3458b21e2ffd78f0b0, type: 3}
-      - {fileID: 21300000, guid: 20162fcfd6c0ff2409579ed6fcf17dd9, type: 3}
-      - {fileID: 21300000, guid: c489c41ab4a86714991c4dd7b508f032, type: 3}
-      - {fileID: 21300000, guid: 72f2b9a9e2eb9e24897dc613c4d38103, type: 3}
-      - {fileID: 21300000, guid: f5d610cf53597f94887dc8e91b25041c, type: 3}
-      - {fileID: 21300000, guid: 8a24fb6618dd7214bbe8b7cca64685ab, type: 3}
-      - {fileID: 21300000, guid: 53b4aab7563bda446bc13ee5adb70956, type: 3}
-      - {fileID: 21300000, guid: bb5aa636f28a2ff45b484d02460de363, type: 3}
-      - {fileID: 21300000, guid: 79d84754018f74d4c9e6bf4bfc9c772e, type: 3}
-      - {fileID: 21300000, guid: 207234fa8b7b40e41ad809e1a30ddf54, type: 3}
-      mouthAssets:
-      - {fileID: 21300000, guid: 927dc4656cf0de84e9bd3848c5937f25, type: 3}
-      - {fileID: 21300000, guid: 97fc9183111327f4a9e329abab38012d, type: 3}
-      - {fileID: 21300000, guid: 2b6b8ef1720998f4db7ee1c398ad439d, type: 3}
-      - {fileID: 21300000, guid: 12d4c19dc27955848a72b0783d602369, type: 3}
-      - {fileID: 21300000, guid: 09c51eeba1a11cc4f88b9d130173565b, type: 3}
-      - {fileID: 21300000, guid: c5a98ac35c337104d9aa8563e9f9e6bd, type: 3}
-      - {fileID: 21300000, guid: f377641dbbf8a6d458d45a24aba2b943, type: 3}
-      - {fileID: 21300000, guid: ae294f6606e52d343811b23a6aef821c, type: 3}
-      - {fileID: 21300000, guid: 1b2543ea6fe624447a93bb7c092ec762, type: 3}
-      - {fileID: 21300000, guid: 04ce4eb6ee42e0e41bd362b027bf256f, type: 3}
-      eyeAssets:
-      - {fileID: 21300000, guid: bf5194dc13cd54c499b03e172305a602, type: 3}
-      - {fileID: 21300000, guid: d0841a36715dfa84aa142c91f7bc9c3d, type: 3}
-      - {fileID: 21300000, guid: 55418ba616da77d4d97f2c99ffe72034, type: 3}
-      - {fileID: 21300000, guid: 0a2c0eb90fa66264dae41a92e4a422ea, type: 3}
-      - {fileID: 21300000, guid: 0604281d82f7c6f40a762a5839545c08, type: 3}
-      - {fileID: 21300000, guid: ee32c8f232fecca45aeed9777bb3b2b3, type: 3}
-      - {fileID: 21300000, guid: 05ba32aaa2663e04fb0a1f94f6898a80, type: 3}
-      - {fileID: 21300000, guid: b4933a6266f42df468b427e295e47a03, type: 3}
-      - {fileID: 21300000, guid: 6d5e750c2b273aa4b8048c762478c0b3, type: 3}
-      - {fileID: 21300000, guid: 1d0e446bd708b394e9f472e3d04aeecd, type: 3}
-      eyebrowAssets:
-      - {fileID: 21300000, guid: c190ebeb904ffcd4dbdf474e951dab28, type: 3}
-      - {fileID: 21300000, guid: 35d48a1ead8462f4faf38af74c2dda14, type: 3}
-      - {fileID: 21300000, guid: e7342166a004a0c41a4be5de47015693, type: 3}
-      - {fileID: 21300000, guid: de43cd3489f768143852db98be41e4e1, type: 3}
-      - {fileID: 21300000, guid: d996eaa1d7c0bbe46b2be155c6d01927, type: 3}
-      - {fileID: 21300000, guid: cd9359152cc5274478c134977fb51fe8, type: 3}
-      - {fileID: 21300000, guid: b521a67f6b3db50499ee0d98b7684ddb, type: 3}
-      - {fileID: 21300000, guid: 795851f242f57984d93dad52b49fd8d3, type: 3}
-      - {fileID: 21300000, guid: 57c9424f4cb2b6148aef63bfcac9a7f2, type: 3}
-      - {fileID: 21300000, guid: a8471f7e31464a842b2461078ecde7cf, type: 3}
-      facialHairAssets: []
+      - {fileID: 21300000, guid: cd165ebab941dbe43a6cf5f753ca8fd0, type: 3}
+      noseAssets: []
+      mouthAssets: []
+      eyeAssets: []
+      eyebrowAssets: []
+      facialHairAssets:
+      - {fileID: 21300000, guid: 817355204bfba5f42a48d97c6b159ccf, type: 3}
     femaleAssets:
       gender: 1
       bodyAssets:
