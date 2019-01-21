@@ -7,7 +7,8 @@ public class Reanimated : Trait {
     public Reanimated() {
         name = "Reanimated";
         description = "Brought back to life by some unholy magic.";
-        type = TRAIT_TYPE.NEUTRAL;
+        type = TRAIT_TYPE.ENCHANTMENT;
+        effect = TRAIT_EFFECT.POSITIVE;
         daysDuration = 0;
         effects = new List<TraitEffect>();
     }
