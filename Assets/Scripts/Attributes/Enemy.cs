@@ -13,7 +13,8 @@ public class Enemy : Trait {
         targetCharacter = target;
         name = "Enemy";
         description = "This character is an enemy of " + targetCharacter.name;
-        type = TRAIT_TYPE.NEGATIVE;
+        type = TRAIT_TYPE.STATUS;
+        effect = TRAIT_EFFECT.NEGATIVE;
         daysDuration = 0;
         effects = new List<TraitEffect>();
     }

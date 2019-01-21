@@ -1145,10 +1145,17 @@ public enum REWARD {
     LEVEL,
 }
 public enum TRAIT_TYPE {
+    ILLNESS,
+    ATTACK,
+    ABILITY,
+    STATUS,
+    COMBAT_POSITION,
+    ENCHANTMENT,
+}
+public enum TRAIT_EFFECT {
     NEUTRAL,
     POSITIVE,
     NEGATIVE,
-    ILLNESS,
 }
 public enum TRAIT_REQUIREMENT_SEPARATOR {
     OR,

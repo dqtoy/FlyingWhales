@@ -18,6 +18,7 @@ public class CombatAttributePanelUI : MonoBehaviour {
     public InputField descriptionInput;
     public InputField durationInput;
     public Dropdown traitTypeOptions;
+    public Dropdown traitEffectOptions;
 
     //Effects
     public InputField amountInput;
@@ -68,6 +69,7 @@ public class CombatAttributePanelUI : MonoBehaviour {
 
         statOptions.ClearOptions();
         traitTypeOptions.ClearOptions();
+        traitEffectOptions.ClearOptions();
         requirementTypeOptions.ClearOptions();
         requirementOptions.ClearOptions();
         requirementTargetOptions.ClearOptions();
@@ -75,12 +77,14 @@ public class CombatAttributePanelUI : MonoBehaviour {
 
         string[] stats = System.Enum.GetNames(typeof(STAT));
         string[] traitTypes = System.Enum.GetNames(typeof(TRAIT_TYPE));
+        string[] traitEffects = System.Enum.GetNames(typeof(TRAIT_EFFECT));
         string[] requirementTypes = System.Enum.GetNames(typeof(TRAIT_REQUIREMENT));
         string[] requirementTargets = System.Enum.GetNames(typeof(TRAIT_REQUIREMENT_TARGET));
         string[] requirementSeparators = System.Enum.GetNames(typeof(TRAIT_REQUIREMENT_SEPARATOR));
 
         statOptions.AddOptions(stats.ToList());
         traitTypeOptions.AddOptions(traitTypes.ToList());
+        traitEffectOptions.AddOptions(traitEffects.ToList());
         requirementTypeOptions.AddOptions(requirementTypes.ToList());
         requirementTargetOptions.AddOptions(requirementTargets.ToList());
         requirementSeparatorOptions.AddOptions(requirementSeparators.ToList());
@@ -96,6 +100,7 @@ public class CombatAttributePanelUI : MonoBehaviour {
 
         statOptions.value = 0;
         traitTypeOptions.value = 0;
+        traitEffectOptions.value = 0;
         requirementTypeOptions.value = 0;
         requirementOptions.value = 0;
         requirementTargetOptions.value = 0;
@@ -144,6 +149,7 @@ public class CombatAttributePanelUI : MonoBehaviour {
             name = nameInput.text,
             description = descriptionInput.text,
             type = (TRAIT_TYPE) System.Enum.Parse(typeof(TRAIT_TYPE), traitTypeOptions.options[traitTypeOptions.value].text),
+            effect = (TRAIT_EFFECT) System.Enum.Parse(typeof(TRAIT_EFFECT), traitEffectOptions.options[traitEffectOptions.value].text),
             daysDuration = int.Parse(durationInput.text),
             effects = _effects
         };
@@ -177,6 +183,7 @@ public class CombatAttributePanelUI : MonoBehaviour {
         nameInput.text = trait.name;
         descriptionInput.text = trait.description;
         traitTypeOptions.value = GetOptionIndex(trait.type.ToString(), traitTypeOptions);
+        traitEffectOptions.value = GetOptionIndex(trait.effect.ToString(), traitEffectOptions);
         durationInput.text = trait.daysDuration.ToString();
 
         for (int i = 0; i < trait.effects.Count; i++) {

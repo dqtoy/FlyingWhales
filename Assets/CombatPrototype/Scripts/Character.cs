@@ -3057,7 +3057,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     public Trait GetRandomNegativeTrait() {
         List<Trait> negativeTraits = new List<Trait>();
         for (int i = 0; i < _traits.Count; i++) {
-            if (_traits[i].type == TRAIT_TYPE.NEGATIVE) {
+            if (_traits[i].effect == TRAIT_EFFECT.NEGATIVE) {
                 negativeTraits.Add(_traits[i]);
             }
         }

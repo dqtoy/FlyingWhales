@@ -62,9 +62,11 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 9cf9fb20030d8b6408dd1563a08e2045, type: 3}
   - {fileID: 21300000, guid: a34aeae4a70d5274db9c2f551390673f, type: 3}
   - {fileID: 21300000, guid: 76281f5e595b10341a1cfcf28ada49f0, type: 3}
+  - {fileID: 21300000, guid: cd165ebab941dbe43a6cf5f753ca8fd0, type: 3}
   - {fileID: 21300000, guid: d0bab72205ba05c46a58108cb567e4ed, type: 3}
   - {fileID: 21300000, guid: 76777303e5e4de04ca96fb3200b75bf9, type: 3}
   - {fileID: 21300000, guid: 12f193c25cad8824a978c1a8d9d8377f, type: 3}
+  - {fileID: 21300000, guid: d1e293e4ab9575f45bfc675399f0f8ca, type: 3}
   - {fileID: 21300000, guid: 04ef7d1d8eae8034ea5fca1b1cfaf3ea, type: 3}
   - {fileID: 21300000, guid: 070434e37543e004d98c623ba8080920, type: 3}
   - {fileID: 21300000, guid: 94079e3476351c243b5ce1bc5dfdd56c, type: 3}
@@ -80,7 +82,9 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 383ae1de09e8119428f08e6cb2fb1bc5, type: 3}
   - {fileID: 21300000, guid: 6f75ba663ebe87c429d4a71a991f723b, type: 3}
   - {fileID: 21300000, guid: 3ea140c9cdcc60b46a257c943a010d0c, type: 3}
+  - {fileID: 21300000, guid: 817355204bfba5f42a48d97c6b159ccf, type: 3}
   - {fileID: 21300000, guid: 8b69e1c43d456b1479f998800d8a6f31, type: 3}
+  - {fileID: 21300000, guid: 1b91b08cb71bcbb43ba36bfe6018df78, type: 3}
   - {fileID: 21300000, guid: 95fdf5d018ae0a44f8f6c14311eacbf7, type: 3}
   - {fileID: 21300000, guid: 7cbb3446f1ca8a64b8c1e2f0e6649137, type: 3}
   - {fileID: 21300000, guid: 0eee50aade62d9146b483bfbfd3b234b, type: 3}
@@ -401,9 +405,11 @@ SpriteAtlas:
   - location_narris_portrait
   - demon_lust_portrait
   - portrait_container_pink_default
+  - elf_m_skin
   - demon_sloth_portrait
   - portrait_container_yellow_default
   - demon_envy_portrait
+  - elf_m_clothes
   - demon_pride_portrait
   - location_redheart_portrait
   - portrait_container_purple_default
@@ -419,7 +425,9 @@ SpriteAtlas:
   - location_blisteringhollow_portrait
   - location_pitthize_portrait
   - location_gloomhollow_portrait
+  - elf_m_top
   - location_radisle_portrait
+  - elf_m_hair
   - portrait_border_drag
   - portrait_border_drag
   - portrait_bg_instigator
