@@ -64,14 +64,14 @@ public class CharacterPortraitEditor : MonoBehaviour {
         portrait.GeneratePortrait(portraitSettings);
     }
     private void SetStepperValues() {
-        headStepper.maximum = CharacterManager.Instance.GetHeadSpriteCount(chosenRace, chosenGender) - 1;
-        hairStepper.maximum = CharacterManager.Instance.GetHairSpriteCount(chosenRace, chosenGender) - 1;
-        eyesStepper.maximum = CharacterManager.Instance.GetEyeSpriteCount(chosenRace, chosenGender) - 1;
-        noseStepper.maximum = CharacterManager.Instance.GetNoseSpriteCount(chosenRace, chosenGender) - 1;
-        mouthStepper.maximum = CharacterManager.Instance.GetMouthSpriteCount(chosenRace, chosenGender) - 1;
-        eyebrowsStepper.maximum = CharacterManager.Instance.GetEyebrowSpriteCount(chosenRace, chosenGender) - 1;
-        bodyStepper.maximum = CharacterManager.Instance.GetBodySpriteCount(chosenRace, chosenGender) - 1;
-        facialHairStepper.maximum = Mathf.Max(0, CharacterManager.Instance.GetFacialHairSpriteCount(chosenRace, chosenGender) - 1);
+        //headStepper.maximum = CharacterManager.Instance.GetHeadSpriteCount(chosenRace, chosenGender) - 1;
+        //hairStepper.maximum = CharacterManager.Instance.GetHairSpriteCount(chosenRace, chosenGender) - 1;
+        //eyesStepper.maximum = CharacterManager.Instance.GetEyeSpriteCount(chosenRace, chosenGender) - 1;
+        //noseStepper.maximum = CharacterManager.Instance.GetNoseSpriteCount(chosenRace, chosenGender) - 1;
+        //mouthStepper.maximum = CharacterManager.Instance.GetMouthSpriteCount(chosenRace, chosenGender) - 1;
+        //eyebrowsStepper.maximum = CharacterManager.Instance.GetEyebrowSpriteCount(chosenRace, chosenGender) - 1;
+        //bodyStepper.maximum = CharacterManager.Instance.GetBodySpriteCount(chosenRace, chosenGender) - 1;
+        //facialHairStepper.maximum = Mathf.Max(0, CharacterManager.Instance.GetFacialHairSpriteCount(chosenRace, chosenGender) - 1);
     }
     private void LoadDropdownSettings() {
         raceDropdown.ClearOptions();
@@ -84,30 +84,30 @@ public class CharacterPortraitEditor : MonoBehaviour {
         genderDropdown.AddOptions(Utilities.GetEnumChoices<GENDER>());
     }
     private void UpdatePortraitControls() {
-        headStepper.SetStepperValue(portraitSettings.headIndex);
+        headStepper.SetStepperValue(portraitSettings.skinIndex);
         hairStepper.SetStepperValue(portraitSettings.hairIndex);
-        eyesStepper.SetStepperValue(portraitSettings.eyesIndex);
-        noseStepper.SetStepperValue(portraitSettings.noseIndex);
-        mouthStepper.SetStepperValue(portraitSettings.mouthIndex);
-        eyebrowsStepper.SetStepperValue(portraitSettings.eyeBrowIndex);
-        facialHairStepper.SetStepperValue(portraitSettings.facialHairIndex);
+        //eyesStepper.SetStepperValue(portraitSettings.eyesIndex);
+        //noseStepper.SetStepperValue(portraitSettings.noseIndex);
+        //mouthStepper.SetStepperValue(portraitSettings.mouthIndex);
+        //eyebrowsStepper.SetStepperValue(portraitSettings.eyeBrowIndex);
+        //facialHairStepper.SetStepperValue(portraitSettings.facialHairIndex);
         bodyStepper.SetStepperValue(portraitSettings.bodyIndex);
-        hairColorImage.color = portraitSettings.hairColor;
-        hairColorPicker.CurrentColor = portraitSettings.hairColor;
+        //hairColorImage.color = portraitSettings.hairColor;
+        //hairColorPicker.CurrentColor = portraitSettings.hairColor;
     }
     private void UpdatePortraitControls(PortraitSettings settings) {
         raceDropdown.value = Utilities.GetOptionIndex(raceDropdown, settings.race.ToString());
         genderDropdown.value = Utilities.GetOptionIndex(genderDropdown, settings.gender.ToString());
-        headStepper.SetStepperValue(settings.headIndex);
+        headStepper.SetStepperValue(settings.skinIndex);
         hairStepper.SetStepperValue(settings.hairIndex);
-        eyesStepper.SetStepperValue(settings.eyesIndex);
-        noseStepper.SetStepperValue(settings.noseIndex);
-        mouthStepper.SetStepperValue(settings.mouthIndex);
-        eyebrowsStepper.SetStepperValue(settings.eyeBrowIndex);
+        //eyesStepper.SetStepperValue(settings.eyesIndex);
+        //noseStepper.SetStepperValue(settings.noseIndex);
+        //mouthStepper.SetStepperValue(settings.mouthIndex);
+        //eyebrowsStepper.SetStepperValue(settings.eyeBrowIndex);
         bodyStepper.SetStepperValue(settings.bodyIndex);
-        facialHairStepper.SetStepperValue(settings.facialHairIndex);
-        hairColorImage.color = settings.hairColor;
-        hairColorPicker.CurrentColor = settings.hairColor;
+        //facialHairStepper.SetStepperValue(settings.facialHairIndex);
+        //hairColorImage.color = settings.hairColor;
+        //hairColorPicker.CurrentColor = settings.hairColor;
     }
     public void ShowHairColorPicker() {
         hairColorPicker.ShowMenu();
@@ -117,36 +117,36 @@ public class CharacterPortraitEditor : MonoBehaviour {
         portraitSettings.hairIndex = index;
     }
     public void UpdateHead(int index) {
-        portrait.SetHead(index);
-        portraitSettings.headIndex = index;
+        portrait.SetSkin(index);
+        portraitSettings.skinIndex = index;
     }
     public void UpdateEyes(int index) {
-        portrait.SetEyes(index);
-        portraitSettings.eyesIndex = index;
+        //portrait.SetEyes(index);
+        //portraitSettings.eyesIndex = index;
     }
     public void UpdateNose(int index) {
-        portrait.SetNose(index);
-        portraitSettings.noseIndex = index;
+        //portrait.SetNose(index);
+        //portraitSettings.noseIndex = index;
     }
     public void UpdateMouth(int index) {
-        portrait.SetMouth(index);
-        portraitSettings.mouthIndex = index;
+        //portrait.SetMouth(index);
+        //portraitSettings.mouthIndex = index;
     }
     public void UpdateEyebrows(int index) {
-        portrait.SetEyebrows(index);
-        portraitSettings.eyeBrowIndex = index;
+        //portrait.SetEyebrows(index);
+        //portraitSettings.eyeBrowIndex = index;
     }
     public void UpdateBody(int index) {
         portrait.SetBody(index);
         portraitSettings.bodyIndex = index;
     }
     public void UpdateFacialHair(int index) {
-        portrait.SetFacialHair(index);
-        portraitSettings.facialHairIndex = index;
+        //portrait.SetFacialHair(index);
+        //portraitSettings.facialHairIndex = index;
     }
     public void UpdateHairColor(Color color) {
         portrait.SetHairColor(color);
-        portraitSettings.hairColor = color;
+        //portraitSettings.hairColor = color;
     }
     public void OnClickSave() {
         string saveName = fileNameField.text;

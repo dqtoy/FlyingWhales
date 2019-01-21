@@ -86,14 +86,14 @@ public class ActionThread : Multithread {
         chosenObject = character.homeLandmark.landmarkObj;
 
         return;
-        List<ActionThreadItem> actionChoices = GetActionsByCategory(character.schedule.currentPhase);
-        if (actionChoices.Count > 0) {
-            ActionThreadItem chosenItem = actionChoices[Utilities.rng.Next(0, actionChoices.Count)];
-            chosenObject = chosenItem.targetObj;
-            chosenAction = chosenItem.action;
-        } else {
-            throw new Exception(character.name + " could not find action!");
-        }
+        //List<ActionThreadItem> actionChoices = GetActionsByCategory(character.schedule.currentPhase);
+        //if (actionChoices.Count > 0) {
+        //    ActionThreadItem chosenItem = actionChoices[Utilities.rng.Next(0, actionChoices.Count)];
+        //    chosenObject = chosenItem.targetObj;
+        //    chosenAction = chosenItem.action;
+        //} else {
+        //    throw new Exception(character.name + " could not find action!");
+        //}
     }
 
     private List<ActionThreadItem> GetActionsByCategory(SCHEDULE_ACTION_CATEGORY category) {

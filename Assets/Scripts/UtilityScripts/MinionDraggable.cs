@@ -61,9 +61,9 @@ public class MinionDraggable : DraggableItem {
         if (_isDraggable != state) {
             base.SetDraggable(state);
             if (state) {
-                _characterItem.portrait.SwitchBGToDraggable();
+                //_characterItem.portrait.SwitchBGToDraggable();
             } else {
-                _characterItem.portrait.SwitchBGToLocked();
+                //_characterItem.portrait.SwitchBGToLocked();
             }
         }
     }

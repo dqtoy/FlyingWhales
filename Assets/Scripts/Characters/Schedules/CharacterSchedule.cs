@@ -146,7 +146,7 @@ public class CharacterSchedule {
     public void Initialize() {
         currentPhaseIndex = 0;
         previousPhaseIndex = -1;
-        owner.OnSchedulePhaseStarted(currentPhase);
+        //owner.OnSchedulePhaseStarted(currentPhase);
         //if (owner.homeLandmark != null) {
         //    owner.party.actionData.ForceDoAction(ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.REST), owner.homeLandmark.landmarkObj);
         //}
@@ -157,7 +157,7 @@ public class CharacterSchedule {
         //move to next phase
         previousPhaseIndex = currentPhaseIndex;
         currentPhaseIndex = GetNextPhaseIndex();
-        owner.OnSchedulePhaseStarted(currentPhase);
+        //owner.OnSchedulePhaseStarted(currentPhase);
     }
 
     private int GetNextPhaseIndex() {

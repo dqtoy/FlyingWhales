@@ -21,7 +21,7 @@ public class CharacterManagerEditor : Editor {
         GUILayout.Label("Asset Path");
         assetPath = EditorGUILayout.TextField(assetPath);
         if (GUILayout.Button("Load Portrait Assets")) {
-            myTarget.LoadPortraitAssets(assetPath);
+            //myTarget.LoadPortraitAssets(assetPath);
         }
     }
 }

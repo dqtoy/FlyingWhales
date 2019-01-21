@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SpreadUndeathAction : Interaction {
+public class ReanimateAction : Interaction {
 
     private Character _targetCharacter;
 
@@ -22,9 +22,9 @@ public class SpreadUndeathAction : Interaction {
         get { return _targetCharacter; }
     }
 
-    public SpreadUndeathAction(BaseLandmark interactable) 
-        : base(interactable, INTERACTION_TYPE.SPREAD_UNDEATH_ACTION, 0) {
-        _name = "Spread Undeath";
+    public ReanimateAction(BaseLandmark interactable) 
+        : base(interactable, INTERACTION_TYPE.REANIMATE_ACTION, 0) {
+        _name = "Reanimate";
         _jobFilter = new JOB[] { JOB.INSTIGATOR, JOB.DIPLOMAT };
     }
 
@@ -78,30 +78,30 @@ public class SpreadUndeathAction : Interaction {
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {
-            ActionOption assist = new ActionOption {
-                interactionState = state,
-                cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
-                name = "Assist with the conversion.",
-                effect = () => AssistOptionEffect(state),
-                jobNeeded = JOB.INSTIGATOR,
-                doesNotMeetRequirementsStr = "Must have instigator minion.",
-            };
-            ActionOption thwart = new ActionOption {
-                interactionState = state,
-                cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
-                name = "Thwart the convertion.",
-                effect = () => ThwartOptionEffect(state),
-                jobNeeded = JOB.DIPLOMAT,
-                doesNotMeetRequirementsStr = "Must have diplomat minion.",
-            };
+            //ActionOption assist = new ActionOption {
+            //    interactionState = state,
+            //    cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
+            //    name = "Assist with the conversion.",
+            //    effect = () => AssistOptionEffect(state),
+            //    jobNeeded = JOB.INSTIGATOR,
+            //    doesNotMeetRequirementsStr = "Must have instigator minion.",
+            //};
+            //ActionOption thwart = new ActionOption {
+            //    interactionState = state,
+            //    cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
+            //    name = "Thwart the convertion.",
+            //    effect = () => ThwartOptionEffect(state),
+            //    jobNeeded = JOB.DIPLOMAT,
+            //    doesNotMeetRequirementsStr = "Must have diplomat minion.",
+            //};
             ActionOption doNothing = new ActionOption {
                 interactionState = state,
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Do nothing.",
                 effect = () => DoNothingOptionEffect(state),
             };
-            state.AddActionOption(assist);
-            state.AddActionOption(thwart);
+            //state.AddActionOption(assist);
+            //state.AddActionOption(thwart);
             state.AddActionOption(doNothing);
             state.SetDefaultOption(doNothing);
         }
@@ -293,11 +293,15 @@ public class SpreadUndeathAction : Interaction {
     #endregion
 
     private void TransferCharacter(Character character, Faction faction) {
-        character.faction.RemoveCharacter(character);
+        interactable.tileLocation.areaOfTile.RemoveCorpse(character);
+        character.ReturnToLife();
+        if (character.faction != null) {
+            character.faction.RemoveCharacter(character);
+        }
         faction.AddNewCharacter(character);
         character.MigrateTo(_characterInvolved.homeArea);
-        //character.homeLandmark.RemoveCharacterHomeOnLandmark(character);
-        //_characterInvolved.homeLandmark.AddCharacterHomeOnLandmark(character);
+        Reanimated trait = new Reanimated();
+        character.AddTrait(trait);
         Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, character.specificLocation.tileLocation.landmarkOnTile);
         character.SetForcedInteraction(interaction);
         character.ChangeRace(RACE.SKELETON);
@@ -307,44 +311,8 @@ public class SpreadUndeathAction : Interaction {
         this._targetCharacter = targetCharacter;
     }
     public Character GetTargetCharacter(Character characterInvolved) {
-        WeightedDictionary<Character> characterWeights = new WeightedDictionary<Character>();
-        for (int i = 0; i < interactable.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
-            Character currCharacter = interactable.tileLocation.areaOfTile.charactersAtLocation[i];
-            if (currCharacter.id != characterInvolved.id 
-                && !currCharacter.isLeader 
-                && !currCharacter.isDefender
-                && !currCharacter.currentParty.icon.isTravelling
-                && currCharacter.minion == null 
-                && currCharacter.faction.id != characterInvolved.faction.id) {
-                int weight = 0;
-                if (currCharacter.isFactionless) {
-                    weight += 15; //character is not part of any Faction: Weight +15
-                } else if (currCharacter.faction.id != characterInvolved.faction.id) {
-                    FactionRelationship rel = currCharacter.faction.GetRelationshipWith(characterInvolved.faction);
-                    switch (rel.relationshipStatus) {
-                        case FACTION_RELATIONSHIP_STATUS.ENEMY:
-                        case FACTION_RELATIONSHIP_STATUS.DISLIKED:
-                            weight += 25; //character is part of a Faction that is Enemy or Disliked by Spreader's Faction: Weight +25
-                            break;
-                        case FACTION_RELATIONSHIP_STATUS.FRIEND:
-                        case FACTION_RELATIONSHIP_STATUS.ALLY:
-                            weight -= 5; //character is part of a Faction with Friend or Ally relationship with Spreader's Faction: Weight -5
-                            break;
-                    }
-                }
-
-                if (currCharacter.level > characterInvolved.level) {
-                    weight -= 15; //character is higher level than Spreader: Weight -15
-                } else if (currCharacter.level < characterInvolved.level) {
-                    weight += 15; //character is lower level than Spreader: Weight +15
-                }
-                if (weight > 0) {
-                    characterWeights.AddElement(currCharacter, weight);
-                }
-            }
-        }
-        if (characterWeights.GetTotalOfWeights() > 0) {
-            return characterWeights.PickRandomElementGivenWeights();
+        if (interactable.tileLocation.areaOfTile.corpsesInArea.Count > 0) {
+            return interactable.tileLocation.areaOfTile.corpsesInArea[Random.Range(0, interactable.tileLocation.areaOfTile.corpsesInArea.Count)].character;
         }
         return null;
         //throw new System.Exception("Could not find any character to recruit!");

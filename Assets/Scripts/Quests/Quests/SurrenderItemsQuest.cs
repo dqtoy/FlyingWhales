@@ -39,8 +39,8 @@ public class SurrenderItemsQuest : Quest {
     protected override void OnQuestDone() {
         base.OnQuestDone();
         Character character = owner;
-        character.currentQuest.OnQuestTurnedIn();
-        character.SetQuest(null);
+        //character.currentQuest.OnQuestTurnedIn();
+        //character.SetQuest(null);
     }
     //protected override void CancelQuest() {
     //    base.CancelQuest();
