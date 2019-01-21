@@ -97,9 +97,9 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         UpdateFactionEmblem();
 
         body.rectTransform.SetSiblingIndex(0);
-        skin.rectTransform.SetSiblingIndex(1);
-        hair.rectTransform.SetSiblingIndex(2);
-        under.rectTransform.SetSiblingIndex(3);
+        under.rectTransform.SetSiblingIndex(1);
+        skin.rectTransform.SetSiblingIndex(2);
+        hair.rectTransform.SetSiblingIndex(3);
         top.rectTransform.SetSiblingIndex(4);
         //float skinH;
         //float skinS;
