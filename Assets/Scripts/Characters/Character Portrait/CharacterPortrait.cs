@@ -23,38 +23,23 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     [Header("Face")]
     [SerializeField] private GameObject faceParentGO;
 
-    [Header("Head")]
-    [SerializeField] private Image head;
-
-    [Header("Eyes")]
-    [SerializeField] private Image eyes;
-    [SerializeField] private Image eyebrows;
-    
-    [Header("Nose")]
-    [SerializeField] private Image nose;
-
-    [Header("Mouth")]
-    [SerializeField] private Image mouth;
+    [Header("Skin")]
+    [SerializeField] private Image skin;
 
     [Header("Hair")]
     [SerializeField] private Image hair;
-    [SerializeField] private Image hairBack;
-    [SerializeField] private Image hairOverlay;
-    [SerializeField] private Image hairBackOverlay;
-    [SerializeField] private Image facialHair;
-    [SerializeField] private Image facialHairOverlay;
 
     [Header("Body")]
     [SerializeField] private Image body;
 
-    [Header("Monster")]
-    [SerializeField] private Image wholeImage;
+    [Header("Top")]
+    [SerializeField] private Image top;
 
-    [Header("Name")]
-    [SerializeField] private TextMeshProUGUI nameLbl;
+    [Header("Under")]
+    [SerializeField] private Image under;
 
     [Header("Other")]
-    [SerializeField] private GameObject unknownGO;
+    [SerializeField] private Image wholeImage;
     [SerializeField] private FactionEmblem factionEmblem;
 
     private Vector2 defaultPos = new Vector2(11.7f, -3f);
@@ -66,9 +51,6 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     }
     public PortraitSettings portraitSettings {
         get { return _portraitSettings; }
-    }
-    public bool isLocked {
-        get { return unknownGO.activeSelf; }
     }
     #endregion
 
@@ -98,34 +80,31 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
             SetWholeImageSprite(CharacterManager.Instance.GetDemonPortraitSprite(character.characterClass.className));
         } else {
             SetBody(character.portraitSettings.bodyIndex);
-            SetHead(character.portraitSettings.headIndex);
-            SetEyes(character.portraitSettings.eyesIndex);
-            SetEyebrows(character.portraitSettings.eyesIndex);
-            SetNose(character.portraitSettings.noseIndex);
-            SetMouth(character.portraitSettings.mouthIndex);
+            SetSkin(character.portraitSettings.skinIndex);
             SetHair(character.portraitSettings.hairIndex);
-            SetFacialHair(character.portraitSettings.facialHairIndex);
-            SetHairColor(character.portraitSettings.hairColor);
+            SetUnder(character.portraitSettings.underIndex);
+            SetTop(character.portraitSettings.topIndex);
             SetWholeImageSprite(null);
         }
-        nameLbl.text = character.urlName;
         UpdateLvl();
         UpdateFrame();
         UpdateFactionEmblem();
 
-        RectTransform faceRT = faceParentGO.GetComponent<RectTransform>();
-        if (character.gender == GENDER.MALE && character.race != RACE.HUMANS && character.race != RACE.DEMON) {
-            faceRT.sizeDelta = new Vector2(108f, 108f);
-            faceRT.anchoredPosition = Vector2.zero;
-            head.color = character.skinColor;
-            hair.color = character.hairColor;
-        } else {
-            faceRT.sizeDelta = defaultSize;
-            faceRT.anchoredPosition = defaultPos;
-            head.color = Color.white;
-            hair.color = Color.white;
-        }
-        //UpdateUnknownVisual();
+        skin.color = character.skinColor;
+        hair.color = character.hairColor;
+
+        //RectTransform faceRT = faceParentGO.GetComponent<RectTransform>();
+        //if (character.gender == GENDER.MALE && character.race != RACE.HUMANS && character.race != RACE.DEMON) {
+        //    faceRT.sizeDelta = new Vector2(108f, 108f);
+        //    faceRT.anchoredPosition = Vector2.zero;
+        //    skin.color = character.skinColor;
+        //    hair.color = character.hairColor;
+        //} else {
+        //    faceRT.sizeDelta = defaultSize;
+        //    faceRT.anchoredPosition = defaultPos;
+        //    skin.color = Color.white;
+        //    hair.color = Color.white;
+        //}
     }
     public void GeneratePortrait(PortraitSettings portraitSettings) {
         _portraitSettings = portraitSettings;
@@ -135,14 +114,9 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
             return;
         }
         SetBody(portraitSettings.bodyIndex);
-        SetHead(portraitSettings.headIndex);
-        SetEyes(portraitSettings.eyesIndex);
-        SetEyebrows(portraitSettings.eyesIndex);
-        SetNose(portraitSettings.noseIndex);
-        SetMouth(portraitSettings.mouthIndex);
+        SetSkin(portraitSettings.skinIndex);
         SetHair(portraitSettings.hairIndex);
-        SetFacialHair(portraitSettings.facialHairIndex);
-        SetHairColor(portraitSettings.hairColor);
+        //SetHairColor(portraitSettings.hairColor);
         SetWholeImageSprite(null);
         UpdateFactionEmblem();
     }
@@ -165,46 +139,6 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     public Color GetHairColor() {
         return hair.color;
     }
-    public void ToggleNameLabel(bool state) {
-        if (nameLbl.gameObject.activeSelf != state) {
-            nameLbl.gameObject.SetActive(state);
-        }
-    }
-    public void SwitchBGToLocked() {
-        lockedFrame.gameObject.SetActive(true);
-        //draggableFrameGO.SetActive(false);
-    }
-    public void SwitchBGToDraggable() {
-        lockedFrame.gameObject.SetActive(false);
-        //draggableFrameGO.SetActive(true);
-    }
-    //public void UpdateUnknownVisual() {
-    //    if (_character != null) {
-    //        if (_character.isDefender) {
-    //            if (forceShowPortrait || GameManager.Instance.inspectAll) {
-    //                lvlGO.SetActive(true);
-    //                unknownGO.SetActive(false);
-    //                SetBodyPartsState(true);
-    //            } else {
-    //                lvlGO.SetActive(_character.defendingArea.areaInvestigation.isActivelyCollectingToken);
-    //                unknownGO.SetActive(!_character.defendingArea.areaInvestigation.isActivelyCollectingToken);
-    //                SetBodyPartsState(_character.defendingArea.areaInvestigation.isActivelyCollectingToken);
-    //            }
-    //        } else {
-    //            CharacterToken characterToken = _character.characterToken;
-    //            if (forceShowPortrait || GameManager.Instance.inspectAll) {
-    //                lvlGO.SetActive(true);
-    //                unknownGO.SetActive(false);
-    //                SetBodyPartsState(true);
-    //            } else {
-    //                lvlGO.SetActive(characterToken.isObtainedByPlayer);
-    //                unknownGO.SetActive(!characterToken.isObtainedByPlayer);
-    //                SetBodyPartsState(characterToken.isObtainedByPlayer);
-    //            }
-    //        }
-            
-    //    }
-    //}
     private void UpdateFrame() {
         if (_character != null && _character.job.jobType != JOB.NONE) {
             PortraitFrame frame = CharacterManager.Instance.GetPortraitFrame(_character.job.jobType);
@@ -223,7 +157,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     #region Pointer Actions
     public void OnPointerClick(PointerEventData eventData) {
 #if !WORLD_CREATION_TOOL
-        if (ignoreInteractions || isLocked) {
+        if (ignoreInteractions) {
             return;
         }
         if (eventData.button == PointerEventData.InputButton.Right) {
@@ -247,100 +181,36 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
 
     #region Body Parts
     public void SetHair(int index) {
-        HairSetting chosenHairSettings = CharacterManager.Instance.GetHairSprite(index, _portraitSettings.race, _portraitSettings.gender);
+        Sprite chosenHairSettings = CharacterManager.Instance.GetHairSprite(index, _portraitSettings.race, _portraitSettings.gender);
         //Sprite hairSprite = CharacterManager.Instance.GetHairSprite(index, _imgSize, _character.);
-        hair.sprite = chosenHairSettings.hairSprite;
-        hairOverlay.sprite = chosenHairSettings.hairSprite;
-        hairBack.sprite = chosenHairSettings.hairBackSprite;
-        hairBackOverlay.sprite = chosenHairSettings.hairBackSprite;
-        if (chosenHairSettings.hairBackSprite == null) {
-            hairBack.gameObject.SetActive(false);
-            hairBackOverlay.gameObject.SetActive(false);
-        } else {
-            hairBack.gameObject.SetActive(true);
-            hairBackOverlay.gameObject.SetActive(true);
-        }
+        hair.sprite = chosenHairSettings;
 
-        //if (!_ignoreSize) {
-        //    hair.SetNativeSize();
-        //    hairBack.SetNativeSize();
-        //    hairOverlay.SetNativeSize();
-        //    hairBackOverlay.SetNativeSize();
-        //}
         hair.gameObject.SetActive(true);
-        hairOverlay.gameObject.SetActive(true);
-        //if (chosenHairSettings.hairBackSprite == null) {
-        //    hairBack.sprite = chosenHairSettings.hairSprite;
-        //} else {
-        //    hairBack.sprite = chosenHairSettings.hairBackSprite;
-        //}
     }
-    public void SetHead(int index) {
-        Sprite headSprite = CharacterManager.Instance.GetHeadSprite(index, _portraitSettings.race, _portraitSettings.gender);
-        head.sprite = headSprite;
-        //if (!_ignoreSize) {
-        //    head.SetNativeSize();
-        //}
-        head.gameObject.SetActive(headSprite != null);
-    }
-    public void SetEyes(int index) {
-        Sprite eyeSprite = CharacterManager.Instance.GetEyeSprite(index, _portraitSettings.race, _portraitSettings.gender);
-        eyes.sprite = eyeSprite;
-        //if (!_ignoreSize) {
-        //    eyes.SetNativeSize();
-        //}
-        eyes.gameObject.SetActive(eyeSprite != null);
-    }
-    public void SetEyebrows(int index) {
-        Sprite eyeBrowSprite = CharacterManager.Instance.GetEyebrowSprite(index, _portraitSettings.race, _portraitSettings.gender);
-        eyebrows.sprite = eyeBrowSprite;
-        //if (!_ignoreSize) {
-        //    eyebrows.SetNativeSize();
-        //}
-        eyebrows.gameObject.SetActive(eyeBrowSprite != null);
-    }
-    public void SetNose(int index) {
-        nose.sprite = CharacterManager.Instance.GetNoseSprite(index, _portraitSettings.race, _portraitSettings.gender);
-        //if (!_ignoreSize) {
-        //    nose.SetNativeSize();
-        //}
-        nose.gameObject.SetActive(nose.sprite != null);
-    }
-    public void SetMouth(int index) {
-        mouth.sprite = CharacterManager.Instance.GetMouthSprite(index, _portraitSettings.race, _portraitSettings.gender);
-        //if (!_ignoreSize) {
-        //    mouth.SetNativeSize();
-        //}
-        mouth.gameObject.SetActive(mouth.sprite != null);
-    }
-    public void SetFacialHair(int index) {
-        facialHair.sprite = CharacterManager.Instance.GetFacialHairSprite(index, _portraitSettings.race, _portraitSettings.gender);
-        facialHairOverlay.sprite = facialHair.sprite;
-        if (facialHair.sprite == null) {
-            facialHair.gameObject.SetActive(false);
-            facialHairOverlay.gameObject.SetActive(false);
-        } else {
-            facialHair.gameObject.SetActive(true);
-            facialHairOverlay.gameObject.SetActive(true);
-        }
-        //if (!_ignoreSize) {
-        //    body.SetNativeSize();
-        //}
+    public void SetSkin(int index) {
+        Sprite headSprite = CharacterManager.Instance.GetSkinSprite(index, _portraitSettings.race, _portraitSettings.gender);
+        skin.sprite = headSprite;
+        skin.gameObject.SetActive(headSprite != null);
     }
     public void SetBody(int index) {
         body.sprite = CharacterManager.Instance.GetBodySprite(index, _portraitSettings.race, _portraitSettings.gender);
-        //if (!_ignoreSize) {
-        //    body.SetNativeSize();
-        //}
         body.gameObject.SetActive(body.sprite != null);
+    }
+    public void SetUnder(int index) {
+        under.sprite = CharacterManager.Instance.GetUnderSprite(index, _portraitSettings.race, _portraitSettings.gender);
+        under.gameObject.SetActive(under.sprite != null);
+    }
+    public void SetTop(int index) {
+        top.sprite = CharacterManager.Instance.GetTopSprite(index, _portraitSettings.race, _portraitSettings.gender);
+        top.gameObject.SetActive(top.sprite != null);
     }
     public void SetHairColor(Color hairColor) {
         //hair.color = hairColor;
         //hairBack.color = hairColor;
         Color newColor = new Color(hairColor.r, hairColor.g, hairColor.b, 115f/255f);
-        hairOverlay.color = newColor;
-        hairBackOverlay.color = newColor;
-        facialHairOverlay.color = newColor;
+        //hairOverlay.color = newColor;
+        //hairBackOverlay.color = newColor;
+        //facialHairOverlay.color = newColor;
     }
     #endregion
 

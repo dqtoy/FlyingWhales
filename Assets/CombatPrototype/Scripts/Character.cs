@@ -492,7 +492,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         _gender = data.gender;
         SetName(data.name);
         //LoadRelationships(data.relationshipsData);
-        _portraitSettings = data.portraitSettings;
+        _portraitSettings = CharacterManager.Instance.GenerateRandomPortrait(race, gender);
         if (_characterClass.roleType != CHARACTER_ROLE.NONE) {
             AssignRole(_characterClass.roleType);
         }
