@@ -281,3 +281,4 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 41b46e5c79a790a4587ee7aef9acb301, type: 3}
     - {fileID: 21300000, guid: 00217fe9096ed3d45b81d2d815267235, type: 3}
     - {fileID: 21300000, guid: 1c0d578e62658cb41889305f732afc6e, type: 3}
+  hsvMaterial: {fileID: 2100000, guid: f635580cdf2e2344ea31e0dba17cb9b5, type: 2}

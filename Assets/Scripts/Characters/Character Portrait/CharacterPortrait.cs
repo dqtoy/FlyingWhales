@@ -55,8 +55,14 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     #endregion
 
     void Awake() {
-        //Material mat = Instantiate(wholeImage.material);
-        //wholeImage.material = mat;
+        //if (skin != null) {
+        //    Material mat = Instantiate(CharacterManager.Instance.hsvMaterial);
+        //    skin.material = mat;
+        //}
+        //if (hair != null) {
+        //    Material mat = Instantiate(CharacterManager.Instance.hsvMaterial);
+        //    hair.material = mat;
+        //}
     }
 
     private void OnEnable() {
@@ -90,21 +96,33 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         UpdateFrame();
         UpdateFactionEmblem();
 
-        skin.color = character.skinColor;
-        hair.color = character.hairColor;
+        body.rectTransform.SetSiblingIndex(0);
+        skin.rectTransform.SetSiblingIndex(1);
+        hair.rectTransform.SetSiblingIndex(2);
+        under.rectTransform.SetSiblingIndex(3);
+        top.rectTransform.SetSiblingIndex(4);
+        //float skinH;
+        //float skinS;
+        //float skinV;
+        //Color.RGBToHSV(character.skinColor, out skinH, out skinS, out skinV);
+
+        //float hairH;
+        //float hairS;
+        //float hairV;
+        //Color.RGBToHSV(character.hairColor, out hairH, out hairS, out hairV);
+
+        //skin.material.SetVector("_HSVAAdjust", new Vector4(skinH, skinS, skinV, 0f));
+        //hair.material.SetVector("_HSVAAdjust", new Vector4(hairH, hairS, hairV, 0f));
 
         //RectTransform faceRT = faceParentGO.GetComponent<RectTransform>();
-        //if (character.gender == GENDER.MALE && character.race != RACE.HUMANS && character.race != RACE.DEMON) {
-        //    faceRT.sizeDelta = new Vector2(108f, 108f);
-        //    faceRT.anchoredPosition = Vector2.zero;
-        //    skin.color = character.skinColor;
-        //    hair.color = character.hairColor;
-        //} else {
-        //    faceRT.sizeDelta = defaultSize;
-        //    faceRT.anchoredPosition = defaultPos;
-        //    skin.color = Color.white;
-        //    hair.color = Color.white;
-        //}
+
+        
+        hair.color = character.hairColor;
+        if (character.race == RACE.GOBLIN) {
+            skin.color = Color.white;
+        } else {
+            skin.color = character.skinColor;
+        }
     }
     public void GeneratePortrait(PortraitSettings portraitSettings) {
         _portraitSettings = portraitSettings;

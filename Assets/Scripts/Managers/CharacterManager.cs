@@ -44,6 +44,8 @@ public class CharacterManager : MonoBehaviour {
     [Header("Job Icons")]
     [SerializeField] private JobIconsDictionary jobIcons;
 
+    public Material hsvMaterial;
+
     public Dictionary<Character, List<string>> allCharacterLogs { get; private set; }
     public Dictionary<INTERACTION_TYPE, int> awayFromHomeInteractionWeights { get; private set; }
     public Dictionary<INTERACTION_TYPE, int> atHomeInteractionWeights { get; private set; }
