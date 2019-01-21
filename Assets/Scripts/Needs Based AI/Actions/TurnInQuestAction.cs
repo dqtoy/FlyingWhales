@@ -17,18 +17,18 @@ public class TurnInQuestAction : CharacterAction {
     public override void PerformAction(Party party, IObject targetObject) {
         base.PerformAction(party, targetObject);
         Character mainCharacter = party.owner;
-        if (mainCharacter.currentQuest == null) {
-            //if the main character's current quest is null,
-            //this would ususally happen because something unusual happened to the
-            //current quest of the character. So therefore, it was set to null
-            EndAction(party, targetObject);
-        } else {
-            //turn in the quest
-            //mainCharacter.TurnInQuest();
-            mainCharacter.currentQuest.OnQuestTurnedIn();
-            mainCharacter.SetQuest(null);
-            EndAction(party, targetObject);
-        }
+        //if (mainCharacter.currentQuest == null) {
+        //    //if the main character's current quest is null,
+        //    //this would ususally happen because something unusual happened to the
+        //    //current quest of the character. So therefore, it was set to null
+        //    EndAction(party, targetObject);
+        //} else {
+        //    //turn in the quest
+        //    //mainCharacter.TurnInQuest();
+        //    mainCharacter.currentQuest.OnQuestTurnedIn();
+        //    mainCharacter.SetQuest(null);
+        //    EndAction(party, targetObject);
+        //}
     }
     public override void EndAction(Party party, IObject targetObject) {
         base.EndAction(party, targetObject);

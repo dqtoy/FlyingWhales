@@ -305,11 +305,11 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.TORTURE_ACTION:
                 createdInteraction = new TortureAction(interactable);
                 break;
-            case INTERACTION_TYPE.MOVE_TO_SPREAD_UNDEATH:
-                createdInteraction = new MoveToSpreadUndeath(interactable);
+            case INTERACTION_TYPE.MOVE_TO_REANIMATE:
+                createdInteraction = new MoveToReanimate(interactable);
                 break;
-            case INTERACTION_TYPE.SPREAD_UNDEATH_ACTION:
-                createdInteraction = new SpreadUndeathAction(interactable);
+            case INTERACTION_TYPE.REANIMATE_ACTION:
+                createdInteraction = new ReanimateAction(interactable);
                 break;
             case INTERACTION_TYPE.CHANCE_ENCOUNTER:
                 createdInteraction = new ChanceEncounter(interactable);
@@ -690,12 +690,13 @@ public class InteractionManager : MonoBehaviour {
                     }
                 }
                 return false;
-            case INTERACTION_TYPE.MOVE_TO_SPREAD_UNDEATH:
+            case INTERACTION_TYPE.MOVE_TO_REANIMATE:
                 if (character.race == RACE.SKELETON && !character.homeLandmark.tileLocation.areaOfTile.IsResidentsFull()) {
-                    for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
-                        Faction currFaction = FactionManager.Instance.allFactions[i];
-                        if (currFaction.id != character.faction.id && currFaction.characters.Count > 1) { //used 1 because faction leader should be excluded
-                            return true; //**Trigger Criteria 2**: There must be at least one other character not part of current faction.
+                    //**Trigger Criteria 1**: There must be at least one dead corpse in any area
+                    for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
+                        Area currArea = LandmarkManager.Instance.allAreas[i];
+                        if (currArea.id != character.specificLocation.tileLocation.areaOfTile.id && currArea.corpsesInArea.Count > 1) { 
+                            return true;
                         }
                     }
                     

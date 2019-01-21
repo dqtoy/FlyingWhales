@@ -182,6 +182,15 @@ public class Party {
 
     #region Virtuals
     public virtual void CreateIcon() { }
+    public virtual void ReturnToLife() {
+        if (!_isDead) {
+            return;
+        }
+        _isDead = false;
+
+        CreateIcon();
+        this.specificLocation.AddCharacterToLocation(this);
+    }
     public virtual void PartyDeath() {
         if (_isDead) {
             return;

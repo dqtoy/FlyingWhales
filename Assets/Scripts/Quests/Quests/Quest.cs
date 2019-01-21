@@ -77,7 +77,7 @@ public class Quest {
      this quest invalid (i.e. quest giver died/quest giver landmark is destroyed)
          */
     protected virtual void CancelQuest() {
-        owner.SetQuest(null);
+        //owner.SetQuest(null);
         RemoveListeners();
     }
     /*

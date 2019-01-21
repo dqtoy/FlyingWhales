@@ -36,6 +36,7 @@ public class Area {
     public List<Interaction> currentInteractions { get; private set; }
     public Dictionary<INTERACTION_TYPE, int> areaTasksInteractionWeights { get; private set; }
     public int initialResidents { get; private set; }
+    public List<Corpse> corpsesInArea { get; private set; }
 
     //defenders
     public int maxDefenderGroups { get; private set; }
@@ -101,6 +102,7 @@ public class Area {
         defaultRace = new Race(RACE.HUMANS, RACE_SUB_TYPE.NORMAL);
         possibleSpecialTokenSpawns = new List<SpecialToken>();
         charactersAtLocationHistory = new List<string>();
+        corpsesInArea = new List<Corpse>();
         SetAreaType(areaType);
         SetCoreTile(coreTile);
         //SetSupplyCapacity(1000);
@@ -137,6 +139,7 @@ public class Area {
         charactersAtLocationHistory = new List<string>();
         possibleSpecialTokenSpawns = new List<SpecialToken>();
         supplyLog = new List<string>();
+        corpsesInArea = new List<Corpse>();
         if (data.raceSetup != null) {
             initialRaceSetup = new List<InitialRaceSetup>(data.raceSetup);
         } else {
@@ -847,7 +850,7 @@ public class Area {
             {INTERACTION_TYPE.PATROL_ACTION, 50},
             {INTERACTION_TYPE.EAT_ABDUCTED, 20},
             {INTERACTION_TYPE.TORTURE_ACTION, 25},
-            {INTERACTION_TYPE.MOVE_TO_SPREAD_UNDEATH, 20},
+            {INTERACTION_TYPE.MOVE_TO_REANIMATE, 20},
             {INTERACTION_TYPE.MOVE_TO_SAVE, 30},
             {INTERACTION_TYPE.MOVE_TO_VISIT, 50},
         };
@@ -1387,6 +1390,35 @@ public class Area {
             Character currCharacter = charactersAtLocation[i];
             currCharacter.ownParty.icon.UpdateTravelLineVisualState();
         }
+    }
+    #endregion
+
+    #region Corpses
+    public void AddCorpse(Character character) {
+        if (!HasCorpseOf(character)) {
+            corpsesInArea.Add(new Corpse(character));
+        }
+    }
+    public void RemoveCorpse(Character character) {
+        corpsesInArea.Remove(GetCorpseOf(character));
+    }
+    private bool HasCorpseOf(Character character) {
+        for (int i = 0; i < corpsesInArea.Count; i++) {
+            Corpse currCorpse = corpsesInArea[i];
+            if (currCorpse.character.id == character.id) {
+                return true;
+            }
+        }
+        return false;
+    }
+    private Corpse GetCorpseOf(Character character) {
+        for (int i = 0; i < corpsesInArea.Count; i++) {
+            Corpse currCorpse = corpsesInArea[i];
+            if (currCorpse.character.id == character.id) {
+                return currCorpse;
+            }
+        }
+        return null;
     }
     #endregion
 }

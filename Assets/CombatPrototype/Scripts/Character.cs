@@ -46,7 +46,6 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     protected CharacterBattleTracker _battleTracker;
     protected CharacterBattleOnlyTracker _battleOnlyTracker;
     protected PortraitSettings _portraitSettings;
-    protected CharacterPortrait _characterPortrait;
     protected Color _characterColor;
     protected CharacterAction _genericWorkAction;
     protected Minion _minion;
@@ -91,15 +90,11 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     protected int _combatPowerFlat;
     protected int _combatPowerMultiplier;
 
-    public CharacterSchedule schedule { get; private set; }
-    public Quest currentQuest { get; private set; }
-    public CharacterEventSchedule eventSchedule { get; private set; }
     public CharacterUIData uiData { get; private set; }
     public Area defendingArea { get; private set; }
     public MORALITY morality { get; private set; }
     public CharacterToken characterToken { get; private set; }
     public WeightedDictionary<INTERACTION_TYPE> interactionWeights { get; private set; }
-    public WeightedDictionary<bool> eventTriggerWeights { get; private set; }
     public SpecialToken tokenInInventory { get; private set; }
 
     private Dictionary<STAT, float> _buffs;
@@ -257,9 +252,6 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     }
     public PortraitSettings portraitSettings {
         get { return _portraitSettings; }
-    }
-    public CharacterPortrait characterPortrait {
-        get { return _characterPortrait; }
     }
     public int level {
         get { return _level; }
@@ -498,12 +490,6 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         }
         AssignRandomJob();
         SetMorality(data.morality);
-#if !WORLD_CREATION_TOOL
-        GameObject portraitGO = UIManager.Instance.InstantiateUIObject(CharacterManager.Instance.characterPortraitPrefab.name, UIManager.Instance.characterPortraitsParent);
-        _characterPortrait = portraitGO.GetComponent<CharacterPortrait>();
-        _characterPortrait.GeneratePortrait(this, data.role);
-        portraitGO.SetActive(false);
-#endif
 
         //_bodyParts = new List<BodyPart>(_raceSetting.bodyParts);
         //ConstructBodyPartDict(_raceSetting.bodyParts);
@@ -534,7 +520,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     public Character() {
         _attributes = new List<CharacterAttribute>();
         _exploredLandmarks = new List<BaseLandmark>();
-        _isDead = false;
+        SetIsDead(false);
         _isFainted = false;
         //_isDefeated = false;
         //_isIdle = false;
@@ -561,14 +547,11 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         _inventory = new List<Item>();
         combatHistory = new Dictionary<int, Combat>();
         _currentInteractions = new List<Interaction>();
-        eventSchedule = new CharacterEventSchedule(this);
         uiData = new CharacterUIData();
         characterToken = new CharacterToken(this);
         tokenInInventory = null;
         interactionWeights = new WeightedDictionary<INTERACTION_TYPE>();
-        eventTriggerWeights = new WeightedDictionary<bool>();
-        eventTriggerWeights.AddElement(true, 200); //Hard coded for now
-        eventTriggerWeights.AddElement(false, 1000);
+
         //AllocateStats();
         //EquipItemsByClass();
         //ConstructBuffs();
@@ -609,7 +592,6 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         Messenger.RemoveListener(Signals.DAY_STARTED, DailyInteractionGeneration);
         //Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, RemoveRelationshipWith);
         if (Messenger.eventTable.ContainsKey(Signals.DAY_ENDED)) {
-            Messenger.RemoveListener(Signals.DAY_ENDED, EventEveryTick);
         }
     }
     #endregion
@@ -793,9 +775,19 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         }
     }
     //Character's death
+    public void SetIsDead(bool isDead) {
+        _isDead = isDead;
+    }
+    public void ReturnToLife() {
+        if (_isDead) {
+            SetIsDead(false);
+            UnsubscribeSignals();
+            _ownParty.ReturnToLife();
+        }
+    }
     public void Death() {
         if (!_isDead) {
-            _isDead = true;
+            SetIsDead(true);
             UnsubscribeSignals();
 
             CombatManager.Instance.ReturnCharacterColorToPool(_characterColor);
@@ -822,7 +814,9 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
                 tokenInInventory.SetOwner(null);
                 DropToken(ownParty.specificLocation as BaseLandmark);
             }
-
+            if (this.race != RACE.SKELETON && this.race != RACE.BEAST) {
+                ownParty.specificLocation.tileLocation.areaOfTile.AddCorpse(this);
+            }
             if (!IsInOwnParty()) {
                 _currentParty.RemoveCharacter(this);
             }
@@ -870,9 +864,6 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
             //				if(Messenger.eventTable.ContainsKey("CharacterDeath")){
             //					Messenger.Broadcast ("CharacterDeath", this);
             //				}
-            if (schedule != null) {
-                schedule.OnOwnerDied();
-            }
             if (_minion != null) {
                 PlayerManager.Instance.player.RemoveMinion(_minion);
             }
@@ -884,10 +875,6 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
             //if (killer != null) {
             //    Messenger.Broadcast(Signals.CHARACTER_KILLED, killer, this);
             //}
-            if (_characterPortrait != null) {
-                GameObject.Destroy(_characterPortrait.gameObject);
-                _characterPortrait = null;
-            }
 
 
             //ObjectState deadState = _characterObject.GetState("Dead");
@@ -1848,19 +1835,6 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
             }
         }
         return false;
-    }
-    #endregion
-
-    #region Quests
-    public bool HasQuest() {
-        return currentQuest != null;
-    }
-    public void SetQuest(Quest quest) {
-        currentQuest = quest;
-        if (currentQuest != null) {
-            currentQuest.OnAcceptQuest(this);
-            Debug.Log("Set " + this.name + "'s quest to " + currentQuest.name);
-        }
     }
     #endregion
 
@@ -2836,118 +2810,6 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
                 _actionQueue.RemoveAt(i);
                 break;
             }
-        }
-    }
-    #endregion
-
-    #region Schedule
-    public void SetSchedule(CharacterSchedule schedule) {
-        this.schedule = schedule;
-        if (schedule != null) {
-            schedule.Initialize();
-        }
-    }
-    public void OnSchedulePhaseStarted(SCHEDULE_ACTION_CATEGORY startedPhase) {
-        return; //disable scheduled movement
-        Debug.Log(this.name + " started phase " + startedPhase.ToString());
-        //once a new phase has started
-        //check if it is a different phase from the one before it
-        if (schedule.previousPhase != SCHEDULE_ACTION_CATEGORY.NONE && startedPhase != schedule.previousPhase) {//if it is
-            if (_ownParty.actionData.currentAction != null && _ownParty.actionData.currentAction.actionType != ACTION_TYPE.DEFENDER) {
-                _ownParty.actionData.EndAction(); //end the current action
-                _ownParty.actionData.LookForAction(); //then look for a new action that is part of the phase category (Work/Rest)
-            }
-        }
-        //if it is not, do nothing (continue current action)
-    }
-    public int GetWorkDeadlineTick() {
-        return 0;
-        //return this.dailySchedule.currentPhase.startTick + 7; //start of work phase + 1 hour(6 ticks) + 1 tick (because if other character arrives at exactly the work deadline, he/she will not be included in party, even though they are technically not late)
-    }
-    #endregion
-
-    #region Event Schedule
-    private GameEvent nextScheduledEvent;
-    private DateRange nextScheduledEventDate;
-    public void AddScheduledEvent(DateRange dateRange, GameEvent gameEvent) {
-        Debug.Log("[" + GameManager.Instance.continuousDays + "]" + this.name + " will schedule an event to " + dateRange.ToString());
-        if (eventSchedule.HasConflictingSchedule(dateRange)) {
-            //There is a conflict in the current schedule of the character, move the new event to a new schedule.
-            GameDate nextFreeDate = eventSchedule.GetNextFreeDateForEvent(gameEvent);
-            GameDate endDate = nextFreeDate;
-            endDate.AddDays(gameEvent.GetEventDurationRoughEstimateInTicks());
-            DateRange newSched = new DateRange(nextFreeDate, endDate);
-            eventSchedule.AddElement(newSched, gameEvent);
-            Debug.Log("[" + GameManager.Instance.continuousDays + "]" + this.name + " has a conflicting schedule. Rescheduled event to " + newSched.ToString());
-        } else {
-            eventSchedule.AddElement(dateRange, gameEvent);
-            Debug.Log("[" + GameManager.Instance.continuousDays + "]" + this.name + " added scehduled event " + gameEvent.name + " on " + dateRange.ToString());
-
-            GameDate checkDate = dateRange.startDate;
-            checkDate.ReduceHours(GameManager.hoursPerDay);
-            if (checkDate.IsBefore(GameManager.Instance.Today())) { //if the check date is before today
-                //start check on the next tick
-                checkDate = GameManager.Instance.Today();
-                checkDate.AddDays(1);
-            }
-            //Once event has been scheduled, schedule every tick checking 144 ticks before the start date of the new event
-            SchedulingManager.Instance.AddEntry(checkDate, () => StartEveryTickCheckForEvent());
-            Debug.Log(this.name + " scheduled every tick check for event " + gameEvent.name + " on " + checkDate.GetDayAndTicksString());
-        }
-    }
-    public void AddScheduledEvent(GameDate startDate, GameEvent gameEvent) {
-        GameDate endDate = startDate;
-        endDate.AddDays(gameEvent.GetEventDurationRoughEstimateInTicks());
-
-        DateRange dateRange = new DateRange(startDate, endDate);
-        AddScheduledEvent(dateRange, gameEvent);
-    }
-    public void AddScheduledEvent(GameEvent gameEvent) {
-        //schedule a game event without specifing a date
-        GameDate nextFreeDate = eventSchedule.GetNextFreeDateForEvent(gameEvent);
-        GameDate endDate = nextFreeDate;
-        endDate.AddDays(gameEvent.GetEventDurationRoughEstimateInTicks());
-        DateRange newSched = new DateRange(nextFreeDate, endDate);
-        AddScheduledEvent(newSched, gameEvent);
-    }
-    public void ForceEvent(GameEvent gameEvent) {
-        //if we need to force an event to happen (i.e. Defend Action for Monster Attacks Event)
-        //
-    }
-    public bool HasEventScheduled(GameDate date) {
-        return eventSchedule[date] != null;
-    }
-    public bool HasEventScheduled(GAME_EVENT eventType) {
-        return eventSchedule.HasEventOfType(eventType);
-    }
-    public GameEvent GetScheduledEvent(GameDate date) {
-        return eventSchedule[date];
-    }
-    private void StartEveryTickCheckForEvent() {
-        nextScheduledEvent = eventSchedule.GetNextEvent(); //Set next game event variable to the next event, to prevent checking the schecule every tick
-        nextScheduledEventDate = eventSchedule.GetDateRangeForEvent(nextScheduledEvent);
-        Debug.Log(this.name + " started checking every tick for event " + nextScheduledEvent.name);
-        Messenger.AddListener(Signals.DAY_ENDED, EventEveryTick); //Add every tick listener for events
-    }
-    private void EventEveryTick() {
-        HexTile currentLoc = this.currentParty.specificLocation.tileLocation; //check the character's current location
-        EventAction nextEventAction = nextScheduledEvent.PeekNextEventAction(this);
-        int travelTime = PathGenerator.Instance.GetTravelTimeInTicks(this.specificLocation, nextEventAction.targetLocation, PATHFINDING_MODE.PASSABLE);
-
-        GameDate eventArrivalDate = GameManager.Instance.Today();
-        eventArrivalDate.AddDays(travelTime); //given the start date and the travel time, check if the character has to leave now to reach the event in time
-        if (!eventArrivalDate.IsBefore(nextScheduledEventDate.startDate) && !party.actionData.isCurrentActionFromEvent) { //if the estimated arrival date is NOT before the next events' scheduled start date
-            if (party.actionData.isCurrentActionFromEvent) { //if this character's current action is from an event, do not perform the action from the next scheduled event.
-                Debug.LogWarning(this.name + " did not perform the next event action, since their current action is already from an event");
-            } else { //else if this character's action is not from an event
-                     //leave now and do the event action
-                AddActionToQueue(nextScheduledEvent.GetNextEventAction(this), nextScheduledEvent); //queue the event action
-                _ownParty.actionData.EndCurrentAction();  //then end their current action
-            }
-            Messenger.RemoveListener(Signals.DAY_ENDED, EventEveryTick);
-            Debug.Log(GameManager.Instance.TodayLogString() + this.name + " stopped checking every tick for event " + nextScheduledEvent.name);
-            nextScheduledEvent = null;
-
         }
     }
     #endregion

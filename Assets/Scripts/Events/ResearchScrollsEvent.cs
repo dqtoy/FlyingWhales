@@ -26,7 +26,7 @@ public class ResearchScrollsEvent : GameEvent {
         GameDate endDate = startDate;
         endDate.AddDays(GetEventDurationRoughEstimateInTicks());
 
-        researcher.AddScheduledEvent(new DateRange(startDate, endDate), this);
+        //researcher.AddScheduledEvent(new DateRange(startDate, endDate), this);
 
     }
 }
