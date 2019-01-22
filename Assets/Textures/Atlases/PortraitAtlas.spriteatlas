@@ -57,36 +57,63 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 1e82455a81caebb48bcc4204465c36c6, type: 3}
   - {fileID: 21300000, guid: 2abf9aa574b041c479f1d067793a0c33, type: 3}
   - {fileID: 21300000, guid: 7514cfaa8b6928c49ae846264fccba01, type: 3}
+  - {fileID: 21300000, guid: eff8e75c95241b647a9c6262bd0e7677, type: 3}
   - {fileID: 21300000, guid: e41ec74344b1b3b44899f7ed500eeeff, type: 3}
+  - {fileID: 21300000, guid: e72bed9a548399643ab13b657422f96a, type: 3}
   - {fileID: 21300000, guid: 15f890e3e4e2dbe489f30640f9216043, type: 3}
   - {fileID: 21300000, guid: 9cf9fb20030d8b6408dd1563a08e2045, type: 3}
+  - {fileID: 21300000, guid: 9930f8ed4460676498f2f0f6df8950b6, type: 3}
+  - {fileID: 21300000, guid: ad1260b7d58e7024ab2f91db0ea3f878, type: 3}
+  - {fileID: 21300000, guid: d85aec5f060f8bc4da5774b24ee10a7c, type: 3}
   - {fileID: 21300000, guid: a34aeae4a70d5274db9c2f551390673f, type: 3}
+  - {fileID: 21300000, guid: cb84bbe08448c7241894d4524f80afd8, type: 3}
+  - {fileID: 21300000, guid: e765731094e366b4e994b986d8936893, type: 3}
+  - {fileID: 21300000, guid: 2fa16072e345a2443bd576f71f493d25, type: 3}
+  - {fileID: 21300000, guid: d1f9f7e38553ec540a9f3764ee2a7f48, type: 3}
   - {fileID: 21300000, guid: 76281f5e595b10341a1cfcf28ada49f0, type: 3}
+  - {fileID: 21300000, guid: ee7d36392ffa72e4a80cbac7eeae27c9, type: 3}
+  - {fileID: 21300000, guid: 070b902b466eacd4a873738cd3ee49c5, type: 3}
+  - {fileID: 21300000, guid: 5a073390453fa67419b175a6bf687faf, type: 3}
+  - {fileID: 21300000, guid: fea919a7ae8173840b98caae1ebd236e, type: 3}
   - {fileID: 21300000, guid: cd165ebab941dbe43a6cf5f753ca8fd0, type: 3}
   - {fileID: 21300000, guid: d0bab72205ba05c46a58108cb567e4ed, type: 3}
+  - {fileID: 21300000, guid: 7892274fdaaa3dc46b7c0bb8c528052d, type: 3}
   - {fileID: 21300000, guid: 76777303e5e4de04ca96fb3200b75bf9, type: 3}
+  - {fileID: 21300000, guid: 5f3b0c65fd6d5bf4ab76f1012baef0e8, type: 3}
   - {fileID: 21300000, guid: 12f193c25cad8824a978c1a8d9d8377f, type: 3}
   - {fileID: 21300000, guid: d1e293e4ab9575f45bfc675399f0f8ca, type: 3}
+  - {fileID: 21300000, guid: b76a9ce8dfe1a854a8a16b119d7ff9bd, type: 3}
+  - {fileID: 21300000, guid: 65a2870c390ea9940b1625a498e9a58f, type: 3}
   - {fileID: 21300000, guid: 04ef7d1d8eae8034ea5fca1b1cfaf3ea, type: 3}
   - {fileID: 21300000, guid: 070434e37543e004d98c623ba8080920, type: 3}
   - {fileID: 21300000, guid: 94079e3476351c243b5ce1bc5dfdd56c, type: 3}
+  - {fileID: 21300000, guid: 1dd0dcfe5d71bd646928f15ca52f2808, type: 3}
   - {fileID: 21300000, guid: 1a3fc1ca90050a74aa21609e4eeb7ebc, type: 3}
+  - {fileID: 21300000, guid: 7610ac2719b4c7642b4e010c714cfe7e, type: 3}
   - {fileID: 21300000, guid: 4f117727fece67040a6c3082f72b0111, type: 3}
   - {fileID: 21300000, guid: fd831390331f6a9438bcbbdbc410df2b, type: 3}
   - {fileID: 21300000, guid: de2218b3503e67748a7bb0a94e722a5b, type: 3}
   - {fileID: 21300000, guid: 4ceb2b47beb2817498a263252bf1e68f, type: 3}
+  - {fileID: 21300000, guid: 1a45ea94f7edbfe4c88c1db67f2fdb52, type: 3}
   - {fileID: 21300000, guid: c18f5d6f944cfbc48819debe987cdaba, type: 3}
   - {fileID: 21300000, guid: 8f57444b93359594096b1dd546244094, type: 3}
   - {fileID: 21300000, guid: f261d9fe21365c246a0f3849c9c58ca8, type: 3}
+  - {fileID: 21300000, guid: e21d66cd6130a3644bd64ed60f0b6485, type: 3}
   - {fileID: 21300000, guid: b1facc086f831d64990f9d4056411274, type: 3}
+  - {fileID: 21300000, guid: 874a241692c0c6248bc7c9896a470fcf, type: 3}
   - {fileID: 21300000, guid: 383ae1de09e8119428f08e6cb2fb1bc5, type: 3}
   - {fileID: 21300000, guid: 6f75ba663ebe87c429d4a71a991f723b, type: 3}
+  - {fileID: 21300000, guid: 7258784b1956cd94e8f33a62a2f4f135, type: 3}
   - {fileID: 21300000, guid: 3ea140c9cdcc60b46a257c943a010d0c, type: 3}
+  - {fileID: 21300000, guid: a7831b868d3b7c14b85f09a75e1b43f0, type: 3}
   - {fileID: 21300000, guid: 817355204bfba5f42a48d97c6b159ccf, type: 3}
+  - {fileID: 21300000, guid: 12840219a9c159f43b7aca15ff1e30b6, type: 3}
+  - {fileID: 21300000, guid: 23ab76e4a1ebd16469fa06b56fd308fa, type: 3}
   - {fileID: 21300000, guid: 8b69e1c43d456b1479f998800d8a6f31, type: 3}
+  - {fileID: 21300000, guid: 30629198a8e5b584fa18943160148ec9, type: 3}
   - {fileID: 21300000, guid: 1b91b08cb71bcbb43ba36bfe6018df78, type: 3}
-  - {fileID: 21300000, guid: 95fdf5d018ae0a44f8f6c14311eacbf7, type: 3}
   - {fileID: 21300000, guid: 7cbb3446f1ca8a64b8c1e2f0e6649137, type: 3}
+  - {fileID: 21300000, guid: 95fdf5d018ae0a44f8f6c14311eacbf7, type: 3}
   - {fileID: 21300000, guid: 0eee50aade62d9146b483bfbfd3b234b, type: 3}
   - {fileID: 21300000, guid: b0b59a0625d27b540828242b4da855cb, type: 3}
   - {fileID: 21300000, guid: 0c8bdc28ff116d24086cd06a6b50a1ae, type: 3}
@@ -400,33 +427,60 @@ SpriteAtlas:
   - portrait_border_locked_dissuader
   - portrait_border_locked_instigator
   - portrait_border_locked_diplomat
+  - goblin_m_clothes
   - location_cindermaul_portrait
+  - goblin_f_clothes
   - portrait_container_green_default
   - location_narris_portrait
+  - human_m_under
+  - human_f_under
+  - human_m_skin
   - demon_lust_portrait
+  - human_m_clothes
+  - human_f_top
+  - human_m_top
+  - goblin_m_skin
   - portrait_container_pink_default
+  - elf_f_hair
+  - goblin_f_skin
+  - goblin_m_top
+  - elf_m_skin
   - elf_m_skin
   - demon_sloth_portrait
+  - elf_f_skin
   - portrait_container_yellow_default
+  - goblin_f_top
   - demon_envy_portrait
   - elf_m_clothes
+  - elf_m_clothes
+  - elf_f_under
   - demon_pride_portrait
   - location_redheart_portrait
   - portrait_container_purple_default
+  - goblin_m_hair
   - portrait_container_red_default
+  - human_f_hair
   - location_portal_portrait
   - portrait_container_brown_default
   - location_odiouslair_portrait
   - location_triangle_portrait
+  - human_m_hair
   - portrait_container_gray_locked
   - location_cardell_portrait
   - demon_greed_portrait
+  - human_f_skin
   - portrait_container_blue_default
+  - goblin_f_hair
   - location_blisteringhollow_portrait
   - location_pitthize_portrait
+  - elf_f_top
   - location_gloomhollow_portrait
+  - elf_f_clothes
   - elf_m_top
+  - elf_m_top
+  - human_f_clothes
   - location_radisle_portrait
+  - elf_m_hair
   - elf_m_hair
   - portrait_border_drag
   - portrait_border_drag
