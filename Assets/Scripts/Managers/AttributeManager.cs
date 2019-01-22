@@ -53,7 +53,7 @@ public class AttributeManager : MonoBehaviour {
         for (int i = 0; i < files.Length; i++) {
             Trait attribute = JsonUtility.FromJson<Trait>(System.IO.File.ReadAllText(files[i]));
             _allTraits.Add(attribute.name, attribute);
-            if(attribute.type == TRAIT_TYPE.POSITIVE) {
+            if(attribute.effect == TRAIT_EFFECT.POSITIVE) {
                 _allPositiveTraits.Add(attribute.name, attribute);
             } else if (attribute.type == TRAIT_TYPE.ILLNESS) {
                 _allIlnesses.Add(attribute.name, attribute);

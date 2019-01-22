@@ -9,7 +9,7 @@ using System;
 
 public class CharacterInfoUI : UIMenu {
 
-    private const int MAX_HISTORY_LOGS = 60;
+    private const int MAX_HISTORY_LOGS = 300;
     private const int MAX_INVENTORY = 16;
     public bool isWaitingForAttackTarget;
     public bool isWaitingForJoinBattleTarget;
@@ -893,11 +893,11 @@ public class CharacterInfoUI : UIMenu {
         //testEvent.Initialize(new List<Character>() { _activeCharacter });
         //testEvent.ScheduleEvent();
     }
-    public void LogEventSchedule() {
-        string text = _activeCharacter.name + "'s Event Schedule: \n";
-        text += _activeCharacter.eventSchedule.GetEventScheduleSummary();
-        Debug.Log(text);
-    }
+    //public void LogEventSchedule() {
+    //    string text = _activeCharacter.name + "'s Event Schedule: \n";
+    //    text += _activeCharacter.eventSchedule.GetEventScheduleSummary();
+    //    Debug.Log(text);
+    //}
     //private void Update() {
     //    int month;
     //    int day;

@@ -108,6 +108,13 @@ public class RandomNameGenerator : MonoBehaviour {
         "Valac", "Vapula", "Vassago", "Valefor", "Vepar", "Vine", "Vual", "Zepar", "Zagan"
     };
 
+    private string[] spiderNames = new string[] {
+        "Glork", "Rakkan", "Bumble", "Lartath", "Typchray", "Kahu", "Kaljou", "Tuvok", "Kyshf", "Palluhae", "Ezeroc",
+        "Spidrid", "Slerdach", "Meleth", "Snendos", "Libnrak", "Umusaq", "Serpigo", "Ijushir", "Eshacer", "Alakyrr", "Iguker", "Skirax",
+        "Ujarak", "Eruanna", "Annelida", "Naraku", "Xaggavea", "Ilphstra", "Ekicak", "Scissa", "Lakkucoa", "Tsuki", "Incey", "Ahmose", "Aurantia", "Alta", "Hesutu",
+        "Anastera", "Krigon", "Seti", "Meleth", "Feriave", "Elifif", "Arkaitz", "Adiyis", "Shelob", "Xennowua", "Aine", "Gigit",
+    };
+
 	#region Alliance
 	private string[] allianceType = new string[]{
 		"Alliance", "League", "Coalition", "Axis", "Union", "Entente", "Accord"
@@ -169,6 +176,7 @@ public class RandomNameGenerator : MonoBehaviour {
 	private List<string> tileNames;
     private List<string> regionNames;
     private List<string> availableMinionNames;
+    private List<string> availableSpiderNames;
 
     void Awake(){
 		Instance = this;
@@ -256,6 +264,7 @@ public class RandomNameGenerator : MonoBehaviour {
         regionNames = Utilities.Shuffle(regionNames);
 
         availableMinionNames = new List<string>(minionNames);
+        availableSpiderNames = new List<string>(spiderNames);
 
         //generatedHumanSurnames = new MarkovNameGenerator(baseHumanSurnames, 3, 5);
         //      generatedHumanKingdomNames = new MarkovNameGenerator(baseHumanKingdomNames, 3, 5);
@@ -275,6 +284,15 @@ public class RandomNameGenerator : MonoBehaviour {
         return chosenName;
     }
 
+    public string GenerateSpiderName() {
+        string chosenName = availableSpiderNames[Random.Range(0, availableSpiderNames.Count)];
+        availableSpiderNames.Remove(chosenName);
+        //if (availableSpiderNames.Count == 0) {
+        //    availableSpiderNames.AddRange(minionNames);
+        //}
+        return chosenName;
+    }
+
     private void OnCharacterDied(Character characterThatDied) {
         if (characterThatDied.minion != null) {
             //minion that died
@@ -289,8 +307,10 @@ public class RandomNameGenerator : MonoBehaviour {
 			return GenerateWholeHumanName(gender);
 		} else if(race == RACE.ELVES) {
 			return GenerateElvenName(gender);
-		}
-		return GenerateElvenName(gender);
+        } else if (race == RACE.SPIDER) {
+            return GenerateSpiderName();
+        }
+        return GenerateElvenName(gender);
 	}
 
 	public string GenerateKingdomName(){
@@ -354,6 +374,7 @@ public class RandomNameGenerator : MonoBehaviour {
 		}
 //		return "";
 	}
+
 
 	public string GenerateWholeHumanName(GENDER gender){
 		string firstName = GetHumanFirstName(gender);

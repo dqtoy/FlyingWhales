@@ -13,7 +13,8 @@ public class Friend : Trait {
         targetCharacter = target;
         name = "Friend";
         description = "This character is a friend of " + targetCharacter.name;
-        type = TRAIT_TYPE.POSITIVE;
+        type = TRAIT_TYPE.STATUS;
+        effect = TRAIT_EFFECT.POSITIVE;
         daysDuration = 0;
         effects = new List<TraitEffect>();
     }

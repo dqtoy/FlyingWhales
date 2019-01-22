@@ -61,9 +61,9 @@ public class InvestigationMinionDraggableItem : DraggableItem {
         if(_isDraggable != state) {
             base.SetDraggable(state);
             if (state) {
-                _portrait.SwitchBGToDraggable();
+                //_portrait.SwitchBGToDraggable();
             } else {
-                _portrait.SwitchBGToLocked();
+                //_portrait.SwitchBGToLocked();
             }
         }
     }

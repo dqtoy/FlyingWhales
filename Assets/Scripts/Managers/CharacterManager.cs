@@ -44,6 +44,8 @@ public class CharacterManager : MonoBehaviour {
     [Header("Job Icons")]
     [SerializeField] private JobIconsDictionary jobIcons;
 
+    public Material hsvMaterial;
+
     public Dictionary<Character, List<string>> allCharacterLogs { get; private set; }
     public Dictionary<INTERACTION_TYPE, int> awayFromHomeInteractionWeights { get; private set; }
     public Dictionary<INTERACTION_TYPE, int> atHomeInteractionWeights { get; private set; }
@@ -522,9 +524,9 @@ public class CharacterManager : MonoBehaviour {
 
     #region Character Portraits
     public PortraitAssetCollection GetPortraitAssets(RACE race, GENDER gender) {
-        if (race != RACE.HUMANS) {
-            race = RACE.ELVES; //TODO: Change this when needed assets arrive
-        }
+        //if (race != RACE.HUMANS) {
+        //    race = RACE.ELVES; //TODO: Change this when needed assets arrive
+        //}
         for (int i = 0; i < portraitAssets.Count; i++) {
             RacePortraitAssets racePortraitAssets = portraitAssets[i];
             if (racePortraitAssets.race == race) {
@@ -535,22 +537,24 @@ public class CharacterManager : MonoBehaviour {
                 }
             }
         }
-        throw new System.Exception("No portraits for " + race.ToString() + " " + gender.ToString());
+
+        if (gender == GENDER.MALE) {
+            return portraitAssets[0].maleAssets;
+        } else {
+            return portraitAssets[0].femaleAssets;
+        }
+        //throw new System.Exception("No portraits for " + race.ToString() + " " + gender.ToString());
     }
     public PortraitSettings GenerateRandomPortrait(RACE race, GENDER gender) {
         PortraitAssetCollection pac = GetPortraitAssets(race, gender);
         PortraitSettings ps = new PortraitSettings();
         ps.race = race;
         ps.gender = gender;
-        ps.headIndex = Random.Range(0, pac.headAssets.Count);
-        ps.eyesIndex = Random.Range(0, pac.eyeAssets.Count);
-        ps.eyeBrowIndex = Random.Range(0, pac.eyebrowAssets.Count);
+        ps.skinIndex = Random.Range(0, pac.skinAssets.Count);
         ps.hairIndex = Random.Range(0, pac.hairAssets.Count);
-        ps.noseIndex = Random.Range(0, pac.noseAssets.Count);
-        ps.mouthIndex = Random.Range(0, pac.mouthAssets.Count);
+        ps.underIndex = Random.Range(0, pac.underAssets.Count);
+        ps.topIndex = Random.Range(0, pac.topAssets.Count);
         ps.bodyIndex = Random.Range(0, pac.bodyAssets.Count);
-        ps.facialHairIndex = Random.Range(0, pac.facialHairAssets.Count);
-        ps.hairColor = hairColors[Random.Range(0, hairColors.Count)];
         return ps;
     }
     public PortraitSettings GenerateRandomPortrait() {
@@ -562,72 +566,25 @@ public class CharacterManager : MonoBehaviour {
         GENDER randomGender = genderChoices[Random.Range(0, genderChoices.Length)];
         return GenerateRandomPortrait(randomRace, randomGender);
     }
-    public HairSetting GetHairSprite(int index, RACE race, GENDER gender) {
+    public Sprite GetHairSprite(int index, RACE race, GENDER gender) {
         PortraitAssetCollection pac = GetPortraitAssets(race, gender);
-        return pac.hairAssets[index];
+        return pac.hairAssets.ElementAtOrDefault(index);
     }
     public Sprite GetBodySprite(int index, RACE race, GENDER gender) {
         PortraitAssetCollection pac = GetPortraitAssets(race, gender);
-        return pac.bodyAssets[index];
+        return pac.bodyAssets.ElementAtOrDefault(index);
     }
-    public Sprite GetFacialHairSprite(int index, RACE race, GENDER gender) {
+    public Sprite GetSkinSprite(int index, RACE race, GENDER gender) {
         PortraitAssetCollection pac = GetPortraitAssets(race, gender);
-        if (pac.facialHairAssets.Count <= 0) {
-            return null;
-        }
-        return pac.facialHairAssets[index];
+        return pac.skinAssets.ElementAtOrDefault(index);
     }
-    public Sprite GetHeadSprite(int index, RACE race, GENDER gender) {
+    public Sprite GetTopSprite(int index, RACE race, GENDER gender) {
         PortraitAssetCollection pac = GetPortraitAssets(race, gender);
-        return pac.headAssets[index];
+        return pac.topAssets.ElementAtOrDefault(index);
     }
-    public Sprite GetNoseSprite(int index, RACE race, GENDER gender) {
+    public Sprite GetUnderSprite(int index, RACE race, GENDER gender) {
         PortraitAssetCollection pac = GetPortraitAssets(race, gender);
-        return pac.noseAssets[index];
-    }
-    public Sprite GetMouthSprite(int index, RACE race, GENDER gender) {
-        PortraitAssetCollection pac = GetPortraitAssets(race, gender);
-        return pac.mouthAssets[index];
-    }
-    public Sprite GetEyeSprite(int index, RACE race, GENDER gender) {
-        PortraitAssetCollection pac = GetPortraitAssets(race, gender);
-        return pac.eyeAssets[index];
-    }
-    public Sprite GetEyebrowSprite(int index, RACE race, GENDER gender) {
-        PortraitAssetCollection pac = GetPortraitAssets(race, gender);
-        return pac.eyebrowAssets[index];
-    }
-    public int GetHairSpriteCount(RACE race, GENDER gender) {
-        PortraitAssetCollection pac = GetPortraitAssets(race, gender);
-        return pac.hairAssets.Count;
-    }
-    public int GetBodySpriteCount(RACE race, GENDER gender) {
-        PortraitAssetCollection pac = GetPortraitAssets(race, gender);
-        return pac.bodyAssets.Count;
-    }
-    public int GetFacialHairSpriteCount(RACE race, GENDER gender) {
-        PortraitAssetCollection pac = GetPortraitAssets(race, gender);
-        return pac.facialHairAssets.Count;
-    }
-    public int GetHeadSpriteCount(RACE race, GENDER gender) {
-        PortraitAssetCollection pac = GetPortraitAssets(race, gender);
-        return pac.headAssets.Count;
-    }
-    public int GetNoseSpriteCount(RACE race, GENDER gender) {
-        PortraitAssetCollection pac = GetPortraitAssets(race, gender);
-        return pac.noseAssets.Count;
-    }
-    public int GetMouthSpriteCount(RACE race, GENDER gender) {
-        PortraitAssetCollection pac = GetPortraitAssets(race, gender);
-        return pac.mouthAssets.Count;
-    }
-    public int GetEyeSpriteCount(RACE race, GENDER gender) {
-        PortraitAssetCollection pac = GetPortraitAssets(race, gender);
-        return pac.eyeAssets.Count;
-    }
-    public int GetEyebrowSpriteCount(RACE race, GENDER gender) {
-        PortraitAssetCollection pac = GetPortraitAssets(race, gender);
-        return pac.eyebrowAssets.Count;
+        return pac.underAssets.ElementAtOrDefault(index);
     }
     public PortraitFrame GetPortraitFrame(JOB job) {
         if (portraitFrames.ContainsKey(job)) {
@@ -720,87 +677,6 @@ public class CharacterManager : MonoBehaviour {
         return null;
     }
     #endregion
-
-#if UNITY_EDITOR
-    #region Editor
-    public void LoadPortraitAssets(string assetsPath) {
-        portraitAssets.Clear();
-
-        string[] subdirectories = System.IO.Directory.GetDirectories(assetsPath); //races
-        for (int i = 0; i < subdirectories.Length; i++) {
-            string fullSubDirPath = subdirectories[i];
-            string dirFileName = System.IO.Path.GetFileName(fullSubDirPath);
-            RACE currRace;
-            if (System.Enum.TryParse(dirFileName, out currRace)) {
-                RacePortraitAssets currRaceAssets = new RacePortraitAssets(currRace);
-                string[] genderDirs = System.IO.Directory.GetDirectories(fullSubDirPath);
-                for (int j = 0; j < genderDirs.Length; j++) {
-                    string fullGenderPath = genderDirs[j];
-                    GENDER currGender = (GENDER)System.Enum.Parse(typeof(GENDER), System.IO.Path.GetFileName(fullGenderPath));
-                    string[] files = System.IO.Directory.GetFiles(fullGenderPath, "*.png");
-                    PortraitAssetCollection collectionToUse = currRaceAssets.maleAssets;
-                    if (currGender == GENDER.FEMALE) {
-                        collectionToUse = currRaceAssets.femaleAssets;
-                    }
-                    LoadSpritesToList(files, collectionToUse);
-                }
-                portraitAssets.Add(currRaceAssets);
-            }
-        }
-    }
-    private void LoadSpritesToList(string[] files, PortraitAssetCollection collectionToUse) {
-        for (int k = 0; k < files.Length; k++) {
-            string fullFilePath = files[k];
-            string fileName = System.IO.Path.GetFileName(fullFilePath);
-            Sprite currSprite = UnityEditor.AssetDatabase.LoadAssetAtPath<Sprite>(fullFilePath);
-            if (fileName.Contains("body")) {
-                collectionToUse.bodyAssets.Add(currSprite);
-            } else if (fileName.Contains("brow")) {
-                collectionToUse.eyebrowAssets.Add(currSprite);
-            } else if (fileName.Contains("eye")) {
-                collectionToUse.eyeAssets.Add(currSprite);
-            } else if (fileName.Contains("face")) {
-                collectionToUse.headAssets.Add(currSprite);
-            } else if (fileName.Contains("hair")) {
-                if (fileName.Contains("b")) {
-                    for (int l = 0; l < collectionToUse.hairAssets.Count; l++) {
-                        HairSetting hairSetting = collectionToUse.hairAssets[l];
-                        string currSpriteID = System.Text.RegularExpressions.Regex.Match(currSprite.name, @"\d+").Value;
-                        string currSettingID = System.Text.RegularExpressions.Regex.Match(hairSetting.hairSprite.name, @"\d+").Value;
-                        if (currSpriteID.Equals(currSettingID)) {
-                            hairSetting.hairBackSprite = currSprite;
-                            break;
-                        }
-                    }
-                } else {
-                    HairSetting newHair = new HairSetting();
-                    newHair.hairSprite = currSprite;
-                    collectionToUse.hairAssets.Add(newHair);
-                }
-            } else if (fileName.Contains("mouth")) {
-                collectionToUse.mouthAssets.Add(currSprite);
-            } else if (fileName.Contains("nose")) {
-                collectionToUse.noseAssets.Add(currSprite);
-            } else if (fileName.Contains("beard")) {
-                collectionToUse.facialHairAssets.Add(currSprite);
-            }
-        }
-        OrganizeLists(collectionToUse);
-    }
-    private void OrganizeLists(PortraitAssetCollection collection) {
-        collection.bodyAssets = collection.bodyAssets.OrderBy(x => System.Int32.Parse(System.Text.RegularExpressions.Regex.Match(x.name, @"\d+").Value)).ToList();
-        collection.eyebrowAssets = collection.eyebrowAssets.OrderBy(x => System.Int32.Parse(System.Text.RegularExpressions.Regex.Match(x.name, @"\d+").Value)).ToList();
-        collection.eyeAssets = collection.eyeAssets.OrderBy(x => System.Int32.Parse(System.Text.RegularExpressions.Regex.Match(x.name, @"\d+").Value)).ToList();
-        collection.headAssets = collection.headAssets.OrderBy(x => System.Int32.Parse(System.Text.RegularExpressions.Regex.Match(x.name, @"\d+").Value)).ToList();
-        collection.hairAssets = collection.hairAssets.OrderBy(x => System.Int32.Parse(System.Text.RegularExpressions.Regex.Match(x.hairSprite.name, @"\d+").Value)).ToList();
-        collection.mouthAssets = collection.mouthAssets.OrderBy(x => System.Int32.Parse(System.Text.RegularExpressions.Regex.Match(x.name, @"\d+").Value)).ToList();
-        collection.noseAssets = collection.noseAssets.OrderBy(x => System.Int32.Parse(System.Text.RegularExpressions.Regex.Match(x.name, @"\d+").Value)).ToList();
-        if (collection.facialHairAssets != null) {
-            collection.facialHairAssets = collection.facialHairAssets.OrderBy(x => System.Int32.Parse(System.Text.RegularExpressions.Regex.Match(x.name, @"\d+").Value)).ToList();
-        }
-    }
-    #endregion
-#endif
 
     #region Squad Emblems
     public EmblemBG GetRandomEmblemBG() {

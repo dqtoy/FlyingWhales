@@ -189,8 +189,8 @@ public class ConsoleMenu : UIMenu {
         bool isFaction1Numeric = int.TryParse(faction1ParameterString, out faction1ID);
         bool isFaction2Numeric = int.TryParse(faction2ParameterString, out faction2ID);
 
-        string faction1Name = parameters[1];
-        string faction2Name = parameters[2];
+        string faction1Name = faction1ParameterString;
+        string faction2Name = faction2ParameterString;
 
         FACTION_RELATIONSHIP_STATUS newRelStatus;
 

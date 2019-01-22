@@ -62,7 +62,10 @@ public class Interaction {
             if (currentState != null && currentState.assignedPlayerCharacter != null) {
                return currentState.assignedPlayerCharacter;
             }
-            return _defaultInvestigatorCharacter;
+            if (_defaultInvestigatorCharacter != null) {
+                return _defaultInvestigatorCharacter;
+            }
+            return PlayerManager.Instance.player.roleSlots[JOB.SPY].assignedCharacter; //TODO: Change this when design has said which minion to use as the default for interactions
         }
     }
     public Minion tokeneerMinion {
@@ -513,4 +516,8 @@ public class Interaction {
         }
     }
     #endregion
+
+    public override string ToString() {
+        return name;
+    }
 }

@@ -111,7 +111,8 @@ public class SaveAction : Interaction {
         if (_targetCharacter == null 
             || _targetCharacter.specificLocation.tileLocation.areaOfTile.id != interactable.tileLocation.areaOfTile.id
             || _targetCharacter.GetTrait("Abducted") == null
-            || (_targetCharacter.GetTrait("Abducted") as Abducted).originalHomeLandmark.tileLocation.areaOfTile.IsResidentsFull()) {
+            || (_targetCharacter.GetTrait("Abducted") as Abducted).originalHomeLandmark.tileLocation.areaOfTile.IsResidentsFull()
+            || targetCharacter.isDead) {
             return false;
         }
         return base.CanInteractionBeDoneBy(character);

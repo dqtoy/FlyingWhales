@@ -218,6 +218,14 @@ public class AreaInfoUI : UIMenu {
         characterItems.Clear();
 
         List<Character> charactersToShow = new List<Character>(activeArea.charactersAtLocation);
+        for (int i = 0; i < activeArea.charactersAtLocation.Count; i++) {
+            Character character = activeArea.charactersAtLocation[i];
+            for (int j = 0; j < character.ownParty.characters.Count; j++) {
+                Character currCharacter = character.ownParty.characters[j];
+                charactersToShow.Add(currCharacter);
+            }
+        }
+
         for (int i = 0; i < activeArea.areaResidents.Count; i++) {
             Character resident = activeArea.areaResidents[i];
             if (!charactersToShow.Contains(resident)) {
@@ -229,18 +237,6 @@ public class AreaInfoUI : UIMenu {
             Character currCharacter = charactersToShow[i];
             CreateNewCharacterItem(currCharacter);
         }
-    }
-    private LandmarkCharacterItem GetItem(Party party) {
-        LandmarkCharacterItem[] items = Utilities.GetComponentsInDirectChildren<LandmarkCharacterItem>(charactersScrollView.content.gameObject);
-        for (int i = 0; i < items.Length; i++) {
-            LandmarkCharacterItem item = items[i];
-            if (item.character != null) {
-                if (item.character.ownParty.id == party.id) {
-                    return item;
-                }
-            }
-        }
-        return null;
     }
     private LandmarkCharacterItem GetItem(Character character) {
         LandmarkCharacterItem[] items = Utilities.GetComponentsInDirectChildren<LandmarkCharacterItem>(charactersScrollView.content.gameObject);
@@ -275,23 +271,30 @@ public class AreaInfoUI : UIMenu {
         return false;
     }
     private void OnPartyEnteredLandmark(Party party, BaseLandmark landmark) {
-        if (isShowing && activeArea != null && activeArea.id == landmark.tileLocation.areaOfTile.id) { //&& (_activeLandmark.isBeingInspected || GameManager.Instance.inspectAll)
-            CreateNewCharacterItem(party.owner);
+        if (isShowing && activeArea != null && activeArea.id == landmark.tileLocation.areaOfTile.id) {
+            for (int i = 0; i < party.characters.Count; i++) {
+                Character currCharacter = party.characters[i];
+                CreateNewCharacterItem(currCharacter);
+            }
         }
     }
     private void OnPartyExitedLandmark(Party party, BaseLandmark landmark) {
         if (isShowing && activeArea != null && activeArea.id == landmark.tileLocation.areaOfTile.id) {
-            if (activeArea.areaResidents.Contains(party.owner)) {
-                OrderCharacterItems();
-                return; //do not destroy items of area residents
+            for (int i = 0; i < party.characters.Count; i++) {
+                Character currCharacter = party.characters[i];
+                if (!activeArea.areaResidents.Contains(currCharacter)) {
+                    DestroyItemOfCharacter(currCharacter);
+                }
             }
-            LandmarkCharacterItem item = GetItem(party);
-            if(item != null) {
-                characterItems.Remove(item);
-                ObjectPoolManager.Instance.DestroyObject(item.gameObject);
-                //CheckScrollers();
-                OrderCharacterItems();
-            }
+            OrderCharacterItems();
+        }
+    }
+    private void DestroyItemOfCharacter(Character character) {
+        LandmarkCharacterItem item = GetItem(character);
+        if (item != null) {
+            characterItems.Remove(item);
+            ObjectPoolManager.Instance.DestroyObject(item.gameObject);
+            OrderCharacterItems();
         }
     }
     public void OrderCharacterItems() {
@@ -355,24 +358,9 @@ public class AreaInfoUI : UIMenu {
     }
     private void OnCharacterDied(Character character) {
         if (this.isShowing) {
-            LandmarkCharacterItem item = GetItem(character);
-            if (item != null) {
-                characterItems.Remove(item);
-                ObjectPoolManager.Instance.DestroyObject(item.gameObject);
-                OrderCharacterItems();
-            }
+            DestroyItemOfCharacter(character);
         }
     }
-    //private void OnAreaResidentAdded(Area area, Character character) {
-    //    if (this.isShowing && area.id == activeArea.id) {
-    //        UpdateCharacters();
-    //    }
-    //}
-    //private void OnAreaResidentRemoved(Area area, Character character) {
-    //    if (this.isShowing && area.id == activeArea.id) {
-    //        UpdateCharacters();
-    //    }
-    //}
     private void OnCharacterMigratedHome(Character character, Area previousHome, Area newHome) {
         if (this.isShowing) {
             if ((previousHome != null && previousHome.id == activeArea.id) || newHome.id == activeArea.id) {
@@ -419,23 +407,19 @@ public class AreaInfoUI : UIMenu {
     #endregion
 
     #region For Testing
-    public void ShowSpecialTokensAtLocation() {
-        string summary = "Items at " + activeArea.name + ": ";
-        if (activeArea.possibleSpecialTokenSpawns.Count > 0) {
-            for (int i = 0; i < activeArea.possibleSpecialTokenSpawns.Count; i++) {
-                SpecialToken currToken = activeArea.possibleSpecialTokenSpawns[i];
-                summary += "\n" + currToken.name;
-                if (currToken is SecretScroll) {
-                    summary += ": " + (currToken as SecretScroll).grantedClass;
-                }
-                summary +=  " owned by " + currToken.ownerName;
+    public void ShowLocationInfo() {
+        string summary = "Corpses at " + activeArea.name + ": ";
+        if (activeArea.corpsesInArea.Count > 0) {
+            for (int i = 0; i < activeArea.corpsesInArea.Count; i++) {
+                Corpse currCorpse = activeArea.corpsesInArea[i];
+                summary += "\n" + currCorpse.character.name;
             }
         } else {
             summary += "None";
         }
         UIManager.Instance.ShowSmallInfo(summary);
     }
-    public void HideSpecialTokensAtLocation() {
+    public void HideLocationInfo() {
         UIManager.Instance.HideSmallInfo();
     }
     public void ClearOutFaction() {

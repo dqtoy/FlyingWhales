@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MoveToSpreadUndeath : Interaction {
+public class MoveToReanimate : Interaction {
 
     private const string Undeath_Cancelled = "Undeath Cancelled";
     private const string Undeath_Proceeds = "Undeath Proceeds";
@@ -10,9 +10,9 @@ public class MoveToSpreadUndeath : Interaction {
 
     public Area targetLocation { get; private set; }
 
-    public MoveToSpreadUndeath(BaseLandmark interactable) 
-        : base(interactable, INTERACTION_TYPE.MOVE_TO_SPREAD_UNDEATH, 0) {
-        _name = "Move To Spread Undeath";
+    public MoveToReanimate(BaseLandmark interactable) 
+        : base(interactable, INTERACTION_TYPE.MOVE_TO_REANIMATE, 0) {
+        _name = "Move To Reanimate";
         _jobFilter = new JOB[] { JOB.DEBILITATOR };
     }
 
@@ -80,10 +80,10 @@ public class MoveToSpreadUndeath : Interaction {
         string nextState = string.Empty;
         switch (resultWeights.PickRandomElementGivenWeights()) {
             case RESULT.SUCCESS:
-                nextState = Undeath_Cancelled;
+                nextState = Undeath_Proceeds;
                 break;
             case RESULT.FAIL:
-                nextState = Undeath_Proceeds;
+                nextState = Undeath_Cancelled;
                 break;
         }
         SetCurrentState(_states[nextState]);
@@ -125,52 +125,41 @@ public class MoveToSpreadUndeath : Interaction {
     }
 
     private void CreateEvent() {
-        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.SPREAD_UNDEATH_ACTION, targetLocation.coreTile.landmarkOnTile);
+        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.REANIMATE_ACTION, targetLocation.coreTile.landmarkOnTile);
         _characterInvolved.SetForcedInteraction(interaction);
     }
 
     private Area GetTargetLocation(Character character) {
-        /* A character travels to an area that his faction does not own that has at least one character not part of his faction. This action may be done by Skeletons
-         * 
-         * From all locations that has at least one character not part of same faction, choose via weight based:
-            - Location is not owned by any faction: Weight +15
-            - Location is owned by a Faction that is Enemy or Disliked by Abductor's Faction: Weight +25
-            - Location is owned by a Faction with Neutral relationship with Abductor's Faction: Weight +15
-            - Location is owned by a Faction with Friend relationship with Abductor's Faction: Weight +5
-            - Location is owned by a Faction with Ally relationship with Abductor's Faction: Weight +2 */
         WeightedDictionary<Area> choices = new WeightedDictionary<Area>();
         for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
             Area currArea = LandmarkManager.Instance.allAreas[i];
-            if (currArea.owner != null && currArea.owner.id == character.faction.id) {
+            if (currArea.id == character.specificLocation.tileLocation.areaOfTile.id || currArea.corpsesInArea.Count == 0) {
                 continue; //skip
             }
-            if (currArea.HasCharacterThatIsNotFromFaction(character.faction)) {
-                int weight = 0;
-
-                if (currArea.owner == null) {
-                    weight += 15; //Location is not owned by any faction: Weight +15
-                } else {
-                    FactionRelationship rel = currArea.owner.GetRelationshipWith(character.faction);
-                    switch (rel.relationshipStatus) {
-                        case FACTION_RELATIONSHIP_STATUS.ENEMY:
-                        case FACTION_RELATIONSHIP_STATUS.DISLIKED:
-                            weight += 25;
-                            break;
-                        case FACTION_RELATIONSHIP_STATUS.NEUTRAL:
-                            weight += 15;
-                            break;
-                        case FACTION_RELATIONSHIP_STATUS.FRIEND:
-                            weight += 5;
-                            break;
-                        case FACTION_RELATIONSHIP_STATUS.ALLY:
-                            weight += 2;
-                            break;
-                    }
+            int weight = 0;
+            if (currArea.owner == null) {
+                weight += 15; //- Location is not owned by any faction: Weight +15
+            } else if (currArea.owner.id == character.faction.id) {
+                weight += 10; //- Location is owned by this faction: Weight +10
+            } else {
+                FactionRelationship rel = currArea.owner.GetRelationshipWith(character.faction);
+                switch (rel.relationshipStatus) {
+                    case FACTION_RELATIONSHIP_STATUS.ENEMY:
+                    case FACTION_RELATIONSHIP_STATUS.DISLIKED:
+                    case FACTION_RELATIONSHIP_STATUS.NEUTRAL:
+                        weight += 20; // - Location is owned by a Faction that is Enemy, Disliked or Neutral with Resurrector's Faction: Weight +20
+                        break;
+                    case FACTION_RELATIONSHIP_STATUS.FRIEND:
+                        weight += 5; //- Location is owned by a Faction with Friend relationship with Resurrector's Faction: Weight +5
+                        break;
+                    case FACTION_RELATIONSHIP_STATUS.ALLY:
+                        weight += 2; //- Location is owned by a Faction with Ally relationship with Resurrector's Faction: Weight +2
+                        break;
                 }
+            }
 
-                if (weight > 0) {
-                    choices.AddElement(currArea, weight);
-                }
+            if (weight > 0) {
+                choices.AddElement(currArea, weight);
             }
         }
 
@@ -178,6 +167,5 @@ public class MoveToSpreadUndeath : Interaction {
             return choices.PickRandomElementGivenWeights();
         }
         return null;
-        //throw new System.Exception("Could not find target location for move to charm of " + _characterInvolved.faction.name);
     }
 }

@@ -33,9 +33,9 @@ public class CharacterDraggable : DraggableItem {
         if (_isDraggable != state) {
             base.SetDraggable(state);
             if (state) {
-                parentItem.characterPortrait.SwitchBGToDraggable();
+                //parentItem.characterPortrait.SwitchBGToDraggable();
             } else {
-                parentItem.characterPortrait.SwitchBGToLocked();
+                //parentItem.characterPortrait.SwitchBGToLocked();
             }
         }
     }

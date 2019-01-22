@@ -18,7 +18,7 @@ public class SuicideEvent : GameEvent {
         CharacterAction suicideAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.SUICIDE);
         eventActions[character].Enqueue(new EventAction(suicideAction, character.homeLandmark.landmarkObj, this, 1));
 
-        character.AddScheduledEvent(this);
+        //character.AddScheduledEvent(this);
     }
 
     public override bool MeetsRequirements(Character character) {
