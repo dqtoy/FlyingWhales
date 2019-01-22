@@ -2289,10 +2289,10 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     private bool hpMagicRangedStatMod;
     public void LevelUp() {
         //Only level up once per day
-        if (_lastLevelUpDay == GameManager.Instance.continuousDays) {
-            return;
-        }
-        _lastLevelUpDay = GameManager.Instance.continuousDays;
+        //if (_lastLevelUpDay == GameManager.Instance.continuousDays) {
+        //    return;
+        //}
+        //_lastLevelUpDay = GameManager.Instance.continuousDays;
         if (_level < CharacterManager.Instance.maxLevel) {
             _level += 1;
             //Add stats per level from class
@@ -2332,10 +2332,10 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     }
     public void LevelUp(int amount) {
         //Only level up once per day
-        if (_lastLevelUpDay == GameManager.Instance.continuousDays) {
-            return;
-        }
-        _lastLevelUpDay = GameManager.Instance.continuousDays;
+        //if (_lastLevelUpDay == GameManager.Instance.continuousDays) {
+        //    return;
+        //}
+        //_lastLevelUpDay = GameManager.Instance.continuousDays;
         int supposedLevel = _level + amount;
         if (supposedLevel > CharacterManager.Instance.maxLevel) {
             amount = CharacterManager.Instance.maxLevel - level;

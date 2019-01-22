@@ -345,6 +345,9 @@ public class CharacterInfoUI : UIMenu {
         hpLbl.text = _activeCharacter.maxHP.ToString();
         attackLbl.text = _activeCharacter.attackPower.ToString();
         speedLbl.text = _activeCharacter.speed.ToString();
+        if(characterPortrait.thisCharacter != null) {
+            characterPortrait.UpdateLvl();
+        }
     }
     #endregion
 
@@ -824,6 +827,11 @@ public class CharacterInfoUI : UIMenu {
     #region Level Up
     public void LevelUpCharacter() {
         _activeCharacter.LevelUp();
+        UpdateStatInfo();
+    }
+    public void LevelDownCharacter() {
+        _activeCharacter.LevelUp(-1);
+        UpdateStatInfo();
     }
     #endregion
 
