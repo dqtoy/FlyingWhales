@@ -345,7 +345,7 @@ public class BaseLandmark : ILocation, IInteractable {
     }
     public virtual void UnoccupyLandmark() {
         if (_owner == null) {
-            throw new System.Exception("Landmark doesn't have an owner but something is trying to unoccupy it!");
+            //throw new System.Exception("Landmark doesn't have an owner but something is trying to unoccupy it!");
         }
         _isOccupied = false;
         _location.Unoccupy();

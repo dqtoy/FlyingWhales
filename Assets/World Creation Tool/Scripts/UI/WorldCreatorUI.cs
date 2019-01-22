@@ -510,6 +510,9 @@ namespace worldcreator {
             }
             return false;
         }
+        public void ToggleBorders(bool state) {
+            WorldCreatorManager.Instance.SetBorderTilesVisualState(state);
+        }
         #endregion
 
         #region Landmark Info Editor

@@ -709,14 +709,14 @@ public class LandmarkManager : MonoBehaviour {
         //return null;
     }
     public Vector2 GetAreaNameplatePosition(Area area) {
-        switch (area.name) {
-            case "Cardell":
-                return new Vector2(-1.1f, 4.6f);
-            case "Narris":
-                return new Vector2(20.5f, -3f);
-            default:
-                break;
-        }
+        //switch (area.name) {
+        //    case "Cardell":
+        //        return new Vector2(-1.1f, 4.6f);
+        //    case "Narris":
+        //        return new Vector2(20.5f, -3f);
+        //    default:
+        //        break;
+        //}
         Vector2 defaultPos = area.coreTile.transform.position;
         defaultPos.y -= 1f;
         return defaultPos;

@@ -353,7 +353,7 @@ public enum LANDMARK_TYPE {
     HOUSES = 12,
     //HUMAN_HOUSES = 13,
     MONSTER_DEN = 14,
-    SNATCHER_DEMONS_LAIR = 15,
+    //SNATCHER_DEMONS_LAIR = 15,
     SHOP = 16,
     FARM = 17,
     GOLD_MINE = 18,
@@ -1029,7 +1029,12 @@ public enum TRAIT_REQUIREMENT {
 }
 public enum MORALITY {
     GOOD,
-    EVIL
+    EVIL,
+    NEUTRAL,
+}
+public enum FACTION_SIZE {
+    MAJOR,
+    MINOR
 }
 public enum MINIONS_SORT_TYPE {
     DEFAULT,

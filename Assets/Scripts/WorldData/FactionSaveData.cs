@@ -17,6 +17,7 @@ public class FactionSaveData {
     public int level;
     public bool isActive;
     public MORALITY morality;
+    public FACTION_SIZE size;
     public GENDER initialLeaderGender;
     public RACE initialLeaderRace;
     public string initialLeaderClass;
@@ -46,6 +47,7 @@ public class FactionSaveData {
         //}
         emblemIndex = FactionManager.Instance.GetFactionEmblemIndex(faction.emblem);
         morality = faction.morality;
+        size = faction.size;
         //defenderWeights = faction.defenderWeights.dictionary;
         level = faction.level;
         isActive = faction.isActive;

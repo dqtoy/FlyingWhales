@@ -252,26 +252,6 @@ MonoBehaviour:
     - {fileID: 114946858911628526, guid: b009362f85c338a4cb7562d893989c55, type: 2}
     - {fileID: 114946858911628526, guid: a0544bd14333e4f4fbdc419042f7be25, type: 2}
     monsterSpawnCooldown: 15
-  - landmarkTypeString: Snatcher Demons Lair
-    landmarkType: 15
-    minimumTileCount: 1
-    connectedTileDirection: 0
-    uniqueTags: 
-    landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
-      type: 3}
-    landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
-    biomeTileSprites:
-      m_keys: 
-      m_values: []
-    neutralTileSprites: []
-    humansLandmarkTileSprites: []
-    elvenLandmarkTileSprites: []
-    possibleSpawnPoints: 01000000020000000600000007000000
-    isUnique: 0
-    startingMonsterSpawn: {fileID: 0}
-    isMonsterSpawner: 0
-    monsterSets: []
-    monsterSpawnCooldown: 0
   - landmarkTypeString: Shop
     landmarkType: 16
     minimumTileCount: 1
@@ -393,8 +373,8 @@ MonoBehaviour:
       tintSprite: {fileID: 21300000, guid: 2509d8d1c25f61343a7e20c936950617, type: 3}
       animation: {fileID: 0}
     elvenLandmarkTileSprites:
-    - mainSprite: {fileID: 21300000, guid: 8b326c962728b624abba32e9ef63bc02, type: 3}
-      tintSprite: {fileID: 21300000, guid: 66e430c20799c3848917240b6ef2dd7c, type: 3}
+    - mainSprite: {fileID: 21300000, guid: 3a45dae052a768e45b88c6a722e03f8d, type: 3}
+      tintSprite: {fileID: 21300000, guid: 9f89551edef6d6743a2486dea9f60a21, type: 3}
       animation: {fileID: 0}
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0
@@ -1370,17 +1350,19 @@ MonoBehaviour:
         weight: 40
   locationPortraits:
     m_keys:
-    - Blistering Hollow
+    - Visteri
     - Cardell
-    - Cindermaul Hideout
-    - Gloomhollow Crypts
+    - Cindermaul
+    - Gloomhollow
     - Narris
-    - Odious Lair
+    - Odious
     - Pitthize
     - Player Area
-    - Radisle Cavern
-    - Redheart Den
-    - Tessellated Triangle
+    - Radisle
+    - Denrio
+    - Tribu
+    - Moringa
+    - Lamina
     m_values:
     - {fileID: 21300000, guid: 383ae1de09e8119428f08e6cb2fb1bc5, type: 3}
     - {fileID: 21300000, guid: 8f57444b93359594096b1dd546244094, type: 3}
@@ -1392,4 +1374,6 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 4f117727fece67040a6c3082f72b0111, type: 3}
     - {fileID: 21300000, guid: 8b69e1c43d456b1479f998800d8a6f31, type: 3}
     - {fileID: 21300000, guid: 070434e37543e004d98c623ba8080920, type: 3}
+    - {fileID: 21300000, guid: 4ceb2b47beb2817498a263252bf1e68f, type: 3}
+    - {fileID: 21300000, guid: 4ceb2b47beb2817498a263252bf1e68f, type: 3}
     - {fileID: 21300000, guid: 4ceb2b47beb2817498a263252bf1e68f, type: 3}

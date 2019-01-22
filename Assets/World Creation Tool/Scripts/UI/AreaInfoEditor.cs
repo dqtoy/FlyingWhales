@@ -17,6 +17,7 @@ public class AreaInfoEditor : MonoBehaviour {
     //[SerializeField] private InputField initialSupplyField;
     [SerializeField] private InputField residentCapacityField;
     [SerializeField] private InputField monthlySupplyField;
+    [SerializeField] private InputField monthlyActionsField;
     [SerializeField] private InputField initialResidentsField;
     [SerializeField] private Dropdown possibleOccupantsRaceDropdown;
     [SerializeField] private Text occupantsSummary;
@@ -54,6 +55,7 @@ public class AreaInfoEditor : MonoBehaviour {
         //initialSupplyField.text = currentArea.initialSupply.ToString();
         residentCapacityField.text = currentArea.residentCapacity.ToString();
         monthlySupplyField.text = currentArea.monthlySupply.ToString();
+        monthlyActionsField.text = currentArea.monthlyActions.ToString();
         initialResidentsField.text = currentArea.initialResidents.ToString();
         //defaultRaceDropdown.value = Utilities.GetOptionIndex(defaultRaceDropdown, currentArea.defaultRace.ToString());
         occupantsSummary.text = string.Empty;
@@ -117,6 +119,11 @@ public class AreaInfoEditor : MonoBehaviour {
             currentArea.SetMonthlySupply(System.Int32.Parse(amountStr));
         }
     }
+    public void SetMonthlyActions(string amountStr) {
+        if (!string.IsNullOrEmpty(amountStr)) {
+            currentArea.SetMonthlyActions(System.Int32.Parse(amountStr));
+        }
+    }
     public void SetInitialResidents(string amountStr) {
         if (!string.IsNullOrEmpty(amountStr)) {
             currentArea.SetInitialResidents(System.Int32.Parse(amountStr));
@@ -138,8 +145,8 @@ public class AreaInfoEditor : MonoBehaviour {
     }
     private void UpdateRaceSpawnData() {
         Utilities.DestroyChildren(raceSpawnScrollView.content);
-        for (int i = 0; i < currentArea.initialRaceSetup.Count; i++) {
-            InitialRaceSetup setup = currentArea.initialRaceSetup[i];
+        for (int i = 0; i < currentArea.initialSpawnSetup.Count; i++) {
+            InitialRaceSetup setup = currentArea.initialSpawnSetup[i];
             GameObject go = GameObject.Instantiate(raceSpawnPrefab, raceSpawnScrollView.content);
             go.GetComponent<RaceSpawnItem>().SetSetup(setup);
         }

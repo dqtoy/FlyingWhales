@@ -20,6 +20,7 @@ public class AreaSaveData {
     //public int initialSupply;
     public int residentCapacity;
     public int monthlySupply;
+    public int monthlyActions;
     //public List<string> possibleSpecialTokenSpawns;
     public int initialResidents;
 
@@ -43,12 +44,12 @@ public class AreaSaveData {
         initialDefenderGroups = area.initialDefenderGroups;
         //supplyCapacity = area.supplyCapacity;
         possibleOccupants = new List<RACE>(area.possibleOccupants);
-        raceSetup = new List<InitialRaceSetup>(area.initialRaceSetup);
+        raceSetup = new List<InitialRaceSetup>(area.initialSpawnSetup);
         //initialSupply = area.initialSupply;
         residentCapacity = area.residentCapacity;
         monthlySupply = area.monthlySupply;
         initialResidents = area.initialResidents;
-
+        monthlyActions = area.monthlyActions;
         //possibleSpecialTokenSpawns = new List<string>();
         //for (int i = 0; i < area.possibleSpecialTokenSpawns.Count; i++) {
         //    SpecialToken currToken = area.possibleSpecialTokenSpawns[i];

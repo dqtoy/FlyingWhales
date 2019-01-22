@@ -25,6 +25,7 @@ public class FactionInfoEditor : MonoBehaviour {
     [SerializeField] private Dropdown leadersClassDropdown;
     [SerializeField] private Dropdown emblemDropdown;
     [SerializeField] private Dropdown moralityDropdown;
+    [SerializeField] private Dropdown sizeDropdown;
     [SerializeField] private Dropdown raceDropdown;
     [SerializeField] private Dropdown subRaceDropdown;
     [SerializeField] private Dropdown recruitableRacesDropdown;
@@ -56,6 +57,7 @@ public class FactionInfoEditor : MonoBehaviour {
         LoadRelationshipChoices();
         LoadEmblemChoices();
         LoadMoralityChoices();
+        LoadSizeChoices();
         LoadRaceChoices();
         LoadRecruitableRacesChoices();
         LoadStartingFollowersChoices();
@@ -113,6 +115,7 @@ public class FactionInfoEditor : MonoBehaviour {
 
         emblemDropdown.value = Utilities.GetOptionIndex(emblemDropdown, FactionManager.Instance.GetFactionEmblemIndex(_faction.emblem).ToString());
         moralityDropdown.value = Utilities.GetOptionIndex(moralityDropdown, _faction.morality.ToString());
+        sizeDropdown.value = Utilities.GetOptionIndex(sizeDropdown, _faction.size.ToString());
         raceDropdown.value = Utilities.GetOptionIndex(raceDropdown, _faction.raceType.ToString());
         subRaceDropdown.value = Utilities.GetOptionIndex(subRaceDropdown, _faction.subRaceType.ToString());
         levelInputField.text = _faction.level.ToString();
@@ -160,6 +163,15 @@ public class FactionInfoEditor : MonoBehaviour {
         string chosen = subRaceDropdown.options[choice].text;
         RACE_SUB_TYPE race = (RACE_SUB_TYPE)System.Enum.Parse(typeof(RACE_SUB_TYPE), chosen);
         _faction.SetSubRaceType(race);
+    }
+    private void LoadSizeChoices() {
+        sizeDropdown.ClearOptions();
+        sizeDropdown.AddOptions(Utilities.GetEnumChoices<FACTION_SIZE>());
+    }
+    public void ChangeSize(int choice) {
+        string chosen = sizeDropdown.options[choice].text;
+        FACTION_SIZE size = (FACTION_SIZE)System.Enum.Parse(typeof(FACTION_SIZE), chosen);
+        _faction.SetSize(size);
     }
     #endregion
 

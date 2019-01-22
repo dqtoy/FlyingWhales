@@ -118,7 +118,12 @@ public class TokenManager : MonoBehaviour {
         List<Area> areas = new List<Area>();
         for (int i = 0; i < setting.areaLocations.Count; i++) {
             string areaName = setting.areaLocations[i];
-            areas.Add(LandmarkManager.Instance.GetAreaByName(areaName));
+            Area area = LandmarkManager.Instance.GetAreaByName(areaName);
+            if (area == null) {
+                throw new System.Exception("There is no area named " + areaName);
+            } else {
+                areas.Add(area);
+            }
         }
         return areas;
     }

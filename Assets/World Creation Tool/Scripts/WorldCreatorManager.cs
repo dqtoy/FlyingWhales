@@ -94,7 +94,7 @@ namespace worldcreator {
             }
 
             WorldCreatorUI.Instance.InitializeMenus();
-            CombatManager.Instance.Initialize();
+            //CombatManager.Instance.Initialize();
             //TokenManager.Instance.Initialize();
             //Biomes.Instance.GenerateTileBiomeDetails(hexTiles);
             Biomes.Instance.LoadPassableStates(hexTiles);
@@ -142,7 +142,7 @@ namespace worldcreator {
             Biomes.Instance.LoadPassableStates(hexTiles);
 
             WorldCreatorUI.Instance.InitializeMenus();
-            CombatManager.Instance.Initialize();
+            //CombatManager.Instance.Initialize();
             LoadRegions(data);
             FactionManager.Instance.LoadFactions(data);
             LandmarkManager.Instance.LoadAreas(data);
@@ -422,6 +422,9 @@ namespace worldcreator {
                 }
             }
             return null;
+        }
+        public void SetBorderTilesVisualState(bool state) {
+            _borderParent.gameObject.SetActive(state);
         }
         #endregion
 

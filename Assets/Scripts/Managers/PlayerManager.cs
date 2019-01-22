@@ -119,9 +119,9 @@ public class PlayerManager : MonoBehaviour {
         newLandmark.SetIsBeingInspected(true);
         newLandmark.SetHasBeenInspected(true);
         switch (newLandmark.specificLandmarkType) {
-            case LANDMARK_TYPE.SNATCHER_DEMONS_LAIR:
-                //player.AdjustSnatchCredits(1);
-                break;
+            //case LANDMARK_TYPE.SNATCHER_DEMONS_LAIR:
+            //    //player.AdjustSnatchCredits(1);
+            //    break;
             case LANDMARK_TYPE.DWELLINGS:
                 //add 2 minion slots
                 //player.AdjustMaxMinions(2);

@@ -384,9 +384,9 @@ public class ObjectManager : MonoBehaviour {
             case LANDMARK_TYPE.MONSTER_DEN:
                 structureObj = new MonsterDen();
                 break;
-            case LANDMARK_TYPE.SNATCHER_DEMONS_LAIR:
-                structureObj = new SnatcherDemonsLair();
-                break;
+            //case LANDMARK_TYPE.SNATCHER_DEMONS_LAIR:
+            //    structureObj = new SnatcherDemonsLair();
+            //    break;
             case LANDMARK_TYPE.SHOP:
                 structureObj = new Shop();
                 break;

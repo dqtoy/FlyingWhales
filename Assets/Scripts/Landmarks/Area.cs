@@ -37,13 +37,14 @@ public class Area {
     public Dictionary<INTERACTION_TYPE, int> areaTasksInteractionWeights { get; private set; }
     public int initialResidents { get; private set; }
     public List<Corpse> corpsesInArea { get; private set; }
+    public int monthlyActions { get; private set; }
 
     //defenders
     public int maxDefenderGroups { get; private set; }
     public int initialDefenderGroups { get; private set; }
     public List<DefenderGroup> defenderGroups { get; private set; }
     public List<RACE> possibleOccupants { get; private set; }
-    public List<InitialRaceSetup> initialRaceSetup { get; private set; }
+    public List<InitialRaceSetup> initialSpawnSetup { get; private set; } //only to be used when unoccupied
     public Dictionary<JOB, List<INTERACTION_TYPE>> jobInteractionTypes { get; private set; }
     public int initialSupply { get; private set; } //this should not change when scavenging
     public int residentCapacity { get; private set; }
@@ -53,11 +54,10 @@ public class Area {
     //special tokens
     public List<SpecialToken> possibleSpecialTokenSpawns { get; private set; }
 
-    public bool isBeingTracked { get; private set; }
-
     //misc
     public Sprite locationPortrait { get; private set; }
     public Vector2 nameplatePos { get; private set; }
+    public bool isBeingTracked { get; private set; }
 
     //for testing
     public List<string> supplyLog { get; private set; } //limited to 100 entries
@@ -96,13 +96,14 @@ public class Area {
         defenderToken = new DefenderToken(this);
         areaInvestigation = new AreaInvestigation(this);
         jobInteractionTypes = new Dictionary<JOB, List<INTERACTION_TYPE>>();
-        initialRaceSetup = new List<InitialRaceSetup>();
+        initialSpawnSetup = new List<InitialRaceSetup>();
         eventsTargettingThis = new List<Interaction>();
         supplyLog = new List<string>();
         defaultRace = new Race(RACE.HUMANS, RACE_SUB_TYPE.NORMAL);
         possibleSpecialTokenSpawns = new List<SpecialToken>();
         charactersAtLocationHistory = new List<string>();
         corpsesInArea = new List<Corpse>();
+        SetMonthlyActions(2);
         SetAreaType(areaType);
         SetCoreTile(coreTile);
         //SetSupplyCapacity(1000);
@@ -141,15 +142,16 @@ public class Area {
         supplyLog = new List<string>();
         corpsesInArea = new List<Corpse>();
         if (data.raceSetup != null) {
-            initialRaceSetup = new List<InitialRaceSetup>(data.raceSetup);
+            initialSpawnSetup = new List<InitialRaceSetup>(data.raceSetup);
         } else {
-            initialRaceSetup = new List<InitialRaceSetup>();
+            initialSpawnSetup = new List<InitialRaceSetup>();
         }
         SetMaxDefenderGroups(data.maxDefenderGroups);
         SetInitialDefenderGroups(data.initialDefenderGroups);
         SetResidentCapacity(data.residentCapacity);
         SetMonthlySupply(data.monthlySupply);
         SetInitialResidents(data.initialResidents);
+        SetMonthlyActions(data.monthlyActions);
 #if WORLD_CREATION_TOOL
         SetCoreTile(worldcreator.WorldCreatorManager.Instance.GetHexTile(data.coreTileID));
 #else
@@ -187,8 +189,8 @@ public class Area {
         possibleOccupants.Remove(race);
     }
     public bool HasRaceSetup(RACE race, RACE_SUB_TYPE subType) {
-        for (int i = 0; i < initialRaceSetup.Count; i++) {
-            InitialRaceSetup raceSetup = initialRaceSetup[i];
+        for (int i = 0; i < initialSpawnSetup.Count; i++) {
+            InitialRaceSetup raceSetup = initialSpawnSetup[i];
             if (raceSetup.race.race == race && raceSetup.race.subType == subType) {
                 return true;
             }
@@ -197,20 +199,20 @@ public class Area {
     }
     public void AddRaceSetup(RACE race, RACE_SUB_TYPE subType) {
         Race newRace = new Race(race, subType);
-        initialRaceSetup.Add(new InitialRaceSetup(newRace));
+        initialSpawnSetup.Add(new InitialRaceSetup(newRace));
     }
     public void RemoveRaceSetup(RACE race, RACE_SUB_TYPE subType) {
-        for (int i = 0; i < initialRaceSetup.Count; i++) {
-            InitialRaceSetup raceSetup = initialRaceSetup[i];
+        for (int i = 0; i < initialSpawnSetup.Count; i++) {
+            InitialRaceSetup raceSetup = initialSpawnSetup[i];
             if (raceSetup.race.race == race && raceSetup.race.subType == subType) {
-                initialRaceSetup.RemoveAt(i);
+                initialSpawnSetup.RemoveAt(i);
                 break;
             }
         }
     }
     private InitialRaceSetup GetRaceSetup(Race race) {
-        for (int i = 0; i < initialRaceSetup.Count; i++) {
-            InitialRaceSetup raceSetup = initialRaceSetup[i];
+        for (int i = 0; i < initialSpawnSetup.Count; i++) {
+            InitialRaceSetup raceSetup = initialSpawnSetup[i];
             if (raceSetup.race.race == race.race && raceSetup.race.subType == race.subType) {
                 return raceSetup;
             }
@@ -227,8 +229,8 @@ public class Area {
         monthlySupply = amount;
     }
     private void GenerateDefaultRace() {
-        if (initialRaceSetup.Count > 0) {
-            InitialRaceSetup chosenSetup = initialRaceSetup[UnityEngine.Random.Range(0, initialRaceSetup.Count)];
+        if (initialSpawnSetup.Count > 0) {
+            InitialRaceSetup chosenSetup = initialSpawnSetup[UnityEngine.Random.Range(0, initialSpawnSetup.Count)];
             defaultRace = chosenSetup.race;
             SetRaceType(defaultRace.race);
         } else {
@@ -1267,6 +1269,9 @@ public class Area {
         }
         return false;
     }
+    public void SetMonthlyActions(int amount) {
+        monthlyActions = amount;
+    }
     #endregion
 
     #region Logs
@@ -1447,9 +1452,11 @@ public struct Race {
 public class InitialRaceSetup {
     public Race race;
     public IntRange spawnRange;
+    public IntRange levelRange;
 
     public InitialRaceSetup(Race race) {
         this.race = race;
-        spawnRange = new IntRange(0,0);
+        spawnRange = new IntRange(0, 0);
+        levelRange = new IntRange(0, 0);
     }
 }

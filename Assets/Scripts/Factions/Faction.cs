@@ -35,6 +35,7 @@ public class Faction {
     protected Dictionary<INTERACTION_TYPE, int> _neutralInteractionTypes;
 
     public MORALITY morality { get; private set; }
+    public FACTION_SIZE size { get; private set; }
     public FactionToken factionToken { get; private set; }
     public WeightedDictionary<AreaCharacterClass> additionalClassWeights { get; private set; }
     public bool isActive { get; private set; }
@@ -123,6 +124,7 @@ public class Faction {
         SetFactionColor (Utilities.GetColorForFaction());
         SetRace(new Race(RACE.HUMANS, RACE_SUB_TYPE.NORMAL));
         SetMorality(MORALITY.GOOD);
+        SetSize(FACTION_SIZE.MAJOR);
         SetFactionActiveState(true);
         _level = 1;
         _characters = new List<Character>();
@@ -283,6 +285,9 @@ public class Faction {
     }
     public void SetSubRaceType(RACE_SUB_TYPE race) {
         _race.subType = race;
+    }
+    public void SetSize(FACTION_SIZE size) {
+        this.size = size;
     }
     public void SetFactionColor(Color color) {
         _factionColor = color;
