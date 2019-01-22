@@ -2908,14 +2908,27 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         }
         return false;
     }
-    public void RemoveAllTraitsByType(TRAIT_TYPE traitType) {
+    public bool HasTraitOf(TRAIT_EFFECT effect, TRAIT_TYPE type) {
+        for (int i = 0; i < traits.Count; i++) {
+            Trait currTrait = traits[i];
+            if (currTrait.effect == effect && currTrait.type == type) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public List<Trait> RemoveAllTraitsByType(TRAIT_TYPE traitType) {
+        List<Trait> removedTraits = new List<Trait>();
         for (int i = 0; i < _traits.Count; i++) {
             if (_traits[i].type == traitType) {
+                removedTraits.Add(_traits[i]);
                 _traits.RemoveAt(i);
                 i--;
             }
         }
+        return removedTraits;
     }
+    
     public Trait GetRandomNegativeTrait() {
         List<Trait> negativeTraits = new List<Trait>();
         for (int i = 0; i < _traits.Count; i++) {
