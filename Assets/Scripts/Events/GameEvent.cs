@@ -86,7 +86,7 @@ public class GameEvent {
         EventManager.Instance.RemoveEvent(this);
     }
     public virtual void EndEventForCharacter(Character character) {
-        character.eventSchedule.RemoveElement(this);
+        //character.eventSchedule.RemoveElement(this);
     }
     public virtual bool MeetsRequirements(Character character) {
         return true;

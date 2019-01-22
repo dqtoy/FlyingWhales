@@ -11,6 +11,7 @@ public class Trait {
     public string name;
     public string description;
     public TRAIT_TYPE type;
+    public TRAIT_EFFECT effect;
     public int daysDuration; //Zero (0) means Permanent
     public List<TraitEffect> effects;
 

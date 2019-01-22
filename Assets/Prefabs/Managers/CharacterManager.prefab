@@ -157,289 +157,74 @@ MonoBehaviour:
     maleAssets:
       gender: 0
       bodyAssets:
-      - {fileID: 21300000, guid: b76a9ce8dfe1a854a8a16b119d7ff9bd, type: 3}
+      - {fileID: 21300000, guid: d1e293e4ab9575f45bfc675399f0f8ca, type: 3}
       hairAssets:
-      - hairSprite: {fileID: 21300000, guid: 30629198a8e5b584fa18943160148ec9, type: 3}
-        hairBackSprite: {fileID: 0}
-      headAssets:
-      - {fileID: 21300000, guid: fea919a7ae8173840b98caae1ebd236e, type: 3}
-      noseAssets: []
-      mouthAssets: []
-      eyeAssets: []
-      eyebrowAssets: []
-      facialHairAssets:
-      - {fileID: 21300000, guid: 12840219a9c159f43b7aca15ff1e30b6, type: 3}
+      - {fileID: 21300000, guid: 1b91b08cb71bcbb43ba36bfe6018df78, type: 3}
+      skinAssets:
+      - {fileID: 21300000, guid: cd165ebab941dbe43a6cf5f753ca8fd0, type: 3}
+      underAssets: []
+      topAssets:
+      - {fileID: 21300000, guid: 817355204bfba5f42a48d97c6b159ccf, type: 3}
     femaleAssets:
       gender: 1
       bodyAssets:
-      - {fileID: 21300000, guid: 11d3ba89182914544a69047128543f8e, type: 3}
+      - {fileID: 21300000, guid: a7831b868d3b7c14b85f09a75e1b43f0, type: 3}
       hairAssets:
-      - hairSprite: {fileID: 21300000, guid: be9ded8c50ca20b45bca3e77908820f7, type: 3}
-        hairBackSprite: {fileID: 0}
-      - hairSprite: {fileID: 21300000, guid: 8a1ac329e3bcf8e499b174cafb590df6, type: 3}
-        hairBackSprite: {fileID: 21300000, guid: d61efa2449f1bf5469f5d83060b57e62,
-          type: 3}
-      - hairSprite: {fileID: 21300000, guid: 5e90679092c051e4ba1fea8b3c20d74d, type: 3}
-        hairBackSprite: {fileID: 21300000, guid: 470a13f2a4fd7d74cb16beabd9bd9f61,
-          type: 3}
-      - hairSprite: {fileID: 21300000, guid: 865ad30f4172bc44cbeb06f75d43f601, type: 3}
-        hairBackSprite: {fileID: 21300000, guid: 96969a61680b7484cbc76b44b661a528,
-          type: 3}
-      - hairSprite: {fileID: 21300000, guid: e2010f8d9d2040643b192ac83839c687, type: 3}
-        hairBackSprite: {fileID: 21300000, guid: 1a0aaf23fc4549444b59076d74f26b61,
-          type: 3}
-      - hairSprite: {fileID: 21300000, guid: e9e4bba973194c24184980294daadd34, type: 3}
-        hairBackSprite: {fileID: 21300000, guid: 453c2fdd7d4fc0d46a752bd4696ffb3b,
-          type: 3}
-      - hairSprite: {fileID: 21300000, guid: dfaa32089ae6e4e45a980d9aa99a4b13, type: 3}
-        hairBackSprite: {fileID: 0}
-      - hairSprite: {fileID: 21300000, guid: ae2f7f649e1b014458063ba66dd577ba, type: 3}
-        hairBackSprite: {fileID: 21300000, guid: 715376ba44ab654478fac50d572d5850,
-          type: 3}
-      - hairSprite: {fileID: 21300000, guid: 4e5426804b090dd4ca48f577eea73cd4, type: 3}
-        hairBackSprite: {fileID: 21300000, guid: 1751559ee0b8eb74191ab43ac25a85cd,
-          type: 3}
-      - hairSprite: {fileID: 21300000, guid: aae3b6e9f8fa07243b9b7cbd517eb96d, type: 3}
-        hairBackSprite: {fileID: 21300000, guid: 15726a84f9da8524581c82fa5d54eeef,
-          type: 3}
-      headAssets:
-      - {fileID: 21300000, guid: 25682144d29cb7b42a576400f9afa759, type: 3}
-      - {fileID: 21300000, guid: 08582e331ed0db546b99615734e17706, type: 3}
-      - {fileID: 21300000, guid: b65b51b0f163528409b27d3c66920d90, type: 3}
-      - {fileID: 21300000, guid: 71684587c4f221b409c09ad0c7cddd25, type: 3}
-      - {fileID: 21300000, guid: d4768971b99e67643a165f835c0c4367, type: 3}
-      - {fileID: 21300000, guid: 442a25ce84716fe4aa7a13d4199ae765, type: 3}
-      - {fileID: 21300000, guid: 238920d2179459542b5212ca02979431, type: 3}
-      - {fileID: 21300000, guid: 24dc4e9a0c955d64388130e87b84735e, type: 3}
-      - {fileID: 21300000, guid: cb190dfd06cd9ce45b2997f2a9f3ffa4, type: 3}
-      - {fileID: 21300000, guid: f1e808f5948a3464989afca2ce265052, type: 3}
-      noseAssets:
-      - {fileID: 21300000, guid: a141bfa0ad7e53a429e65e1e4b975ea8, type: 3}
-      - {fileID: 21300000, guid: 7a770529c8a8e9b448cd962f7ad87179, type: 3}
-      - {fileID: 21300000, guid: 523262d3f3a7f1247a43eada84578a34, type: 3}
-      - {fileID: 21300000, guid: 61c63000c32db034eb1d9361b83d4af4, type: 3}
-      - {fileID: 21300000, guid: 7a4ae5e820d1b8f4686db21881151bca, type: 3}
-      - {fileID: 21300000, guid: dd619de59f8d07d48807ed046b8c1100, type: 3}
-      - {fileID: 21300000, guid: 90a7e174d6e5ddc49a694bcbbe69eee2, type: 3}
-      - {fileID: 21300000, guid: 6f28b9e728749d6469e03e939683350e, type: 3}
-      - {fileID: 21300000, guid: f9bae7c560fad7440af6f295324a00f7, type: 3}
-      - {fileID: 21300000, guid: 0b5c0dee54ed3be418d2ab9fdf95c8e1, type: 3}
-      mouthAssets:
-      - {fileID: 21300000, guid: 523c119d318e11e47b2de5a07181fcff, type: 3}
-      - {fileID: 21300000, guid: 5345106b5b6db2f44ba587a5cfbdd9b7, type: 3}
-      - {fileID: 21300000, guid: 0b2eb6cc2a77eeb4da48d853f2ed9a4f, type: 3}
-      - {fileID: 21300000, guid: 408e2ce3abdbee7458b29d7c24b27573, type: 3}
-      - {fileID: 21300000, guid: 4372d8362fb05fa41aba42310d8c0ba2, type: 3}
-      - {fileID: 21300000, guid: c483fa7cf1aefaa44bfe48f3894c57c9, type: 3}
-      - {fileID: 21300000, guid: 7da1be72bd366c545867e963650021f9, type: 3}
-      - {fileID: 21300000, guid: ddb59a0c64b46544f92c0ac8fb94b42b, type: 3}
-      - {fileID: 21300000, guid: f68e1fdf9b715c74b9b8df7e235e8903, type: 3}
-      - {fileID: 21300000, guid: abb0f2ac20758d7488c4f52c598c639b, type: 3}
-      eyeAssets:
-      - {fileID: 21300000, guid: 0d2cd5d0e12069a44923c93948115b15, type: 3}
-      - {fileID: 21300000, guid: 4d77df67c3608b1458a1ab161e5bf4fb, type: 3}
-      - {fileID: 21300000, guid: 6ae48ab7e8961034a9e9dfb7ad196ca9, type: 3}
-      - {fileID: 21300000, guid: ba0fc3828133c0d42be179961035c5e6, type: 3}
-      - {fileID: 21300000, guid: c53abec6a7f049c40b666213647da00a, type: 3}
-      - {fileID: 21300000, guid: 8c0cd691966c5e04e89548179189849c, type: 3}
-      - {fileID: 21300000, guid: 99525e39b2ae22b448ad664c81da821c, type: 3}
-      - {fileID: 21300000, guid: 21afe22aab3974243bef1dc803b42007, type: 3}
-      - {fileID: 21300000, guid: 4bcc27f12241ee1459adaf351c629306, type: 3}
-      - {fileID: 21300000, guid: 46ee8bf355cf6ff4fb3d162e2a563a66, type: 3}
-      eyebrowAssets:
-      - {fileID: 21300000, guid: 813db4804df096b40950dc4c7ea11925, type: 3}
-      - {fileID: 21300000, guid: 13c21ae927a3a1249a3c7944db87a95e, type: 3}
-      - {fileID: 21300000, guid: 2d67f964dfa60a04597e6133df5949c6, type: 3}
-      - {fileID: 21300000, guid: 96fe0c782352568429c6a94b2cf81da3, type: 3}
-      - {fileID: 21300000, guid: 1b8b236f1b994e24fa4887925ea5ef54, type: 3}
-      - {fileID: 21300000, guid: ff2604fa4e0266048b2f52919ef7ea7a, type: 3}
-      - {fileID: 21300000, guid: ab51fdd7c50094a4ebc18cc008de1f48, type: 3}
-      - {fileID: 21300000, guid: fd537a939ffc09549a77b17fcf541c4d, type: 3}
-      - {fileID: 21300000, guid: f24ef182f2c352046ace6aa76d7a3a73, type: 3}
-      - {fileID: 21300000, guid: ec382fa9a954b744983040a06c3537e0, type: 3}
-      facialHairAssets: []
+      - {fileID: 21300000, guid: ee7d36392ffa72e4a80cbac7eeae27c9, type: 3}
+      skinAssets:
+      - {fileID: 21300000, guid: 7892274fdaaa3dc46b7c0bb8c528052d, type: 3}
+      underAssets:
+      - {fileID: 21300000, guid: 65a2870c390ea9940b1625a498e9a58f, type: 3}
+      topAssets:
+      - {fileID: 21300000, guid: 7258784b1956cd94e8f33a62a2f4f135, type: 3}
   - race: 1
     maleAssets:
       gender: 0
       bodyAssets:
-      - {fileID: 21300000, guid: a465e68af9f55934285f3f00baedb880, type: 3}
+      - {fileID: 21300000, guid: cb84bbe08448c7241894d4524f80afd8, type: 3}
       hairAssets:
-      - hairSprite: {fileID: 21300000, guid: fce77b3a36b510a45ae6109a82210810, type: 3}
-        hairBackSprite: {fileID: 0}
-      - hairSprite: {fileID: 21300000, guid: 55805110b13b3404ca20ea57ea0a56a4, type: 3}
-        hairBackSprite: {fileID: 0}
-      - hairSprite: {fileID: 21300000, guid: 95531ef270211654abc573a63b5f7e5b, type: 3}
-        hairBackSprite: {fileID: 0}
-      - hairSprite: {fileID: 21300000, guid: b8d930db76646ac40803a1e37d05ec87, type: 3}
-        hairBackSprite: {fileID: 21300000, guid: f92806d76410c4749b33e8891ee195c4,
-          type: 3}
-      - hairSprite: {fileID: 21300000, guid: 4d607140a50fc2e48b8d2c5e8c45f7c3, type: 3}
-        hairBackSprite: {fileID: 21300000, guid: b457668afea194446a18248680ae1e92,
-          type: 3}
-      - hairSprite: {fileID: 21300000, guid: 853d924ac2a12594db91415c1997cb52, type: 3}
-        hairBackSprite: {fileID: 0}
-      - hairSprite: {fileID: 21300000, guid: 9d6584f0ba6cf3d409ea9fbf7951ba14, type: 3}
-        hairBackSprite: {fileID: 21300000, guid: f1e0dcbb3e6f3c04c9b9709635cfa2f1,
-          type: 3}
-      - hairSprite: {fileID: 21300000, guid: 99bebf37469243347adf13bf692acd4e, type: 3}
-        hairBackSprite: {fileID: 21300000, guid: aff62b398fdf4894783f7247bebeca78,
-          type: 3}
-      - hairSprite: {fileID: 21300000, guid: bb3f51e50d58b4e4d944fce13aae9aed, type: 3}
-        hairBackSprite: {fileID: 0}
-      - hairSprite: {fileID: 21300000, guid: 89bc228ef3eeb90479c712f53586e847, type: 3}
-        hairBackSprite: {fileID: 21300000, guid: 19b91c02f997c3545aa5ecccba2c5d0f,
-          type: 3}
-      headAssets:
-      - {fileID: 21300000, guid: c53feb040efea0d4585ef5894a1e1f8f, type: 3}
-      - {fileID: 21300000, guid: 331e5bab15e05224499c951ff69ae27b, type: 3}
-      - {fileID: 21300000, guid: e1903f36f8e711441bdc7403f0b002b3, type: 3}
-      - {fileID: 21300000, guid: a733a6f5bc3f5054faf2db6758beb85f, type: 3}
-      - {fileID: 21300000, guid: 1ab800be433af8340ad067660e0f37d7, type: 3}
-      - {fileID: 21300000, guid: 2ccae49a6bb329441a6652edd6da083c, type: 3}
-      - {fileID: 21300000, guid: f6c0635d4100ac445b606bcafe7c9da6, type: 3}
-      - {fileID: 21300000, guid: 458861693dacf204eae8ffa4e536f0f5, type: 3}
-      - {fileID: 21300000, guid: d9bfd5afc1744ea4da2ea0c5bc729a44, type: 3}
-      - {fileID: 21300000, guid: 518acff87f730194b8d6a011fe37d154, type: 3}
-      noseAssets:
-      - {fileID: 21300000, guid: da61828bcf862794982aa37224856703, type: 3}
-      - {fileID: 21300000, guid: 32d11459930846d479389df1d15a9060, type: 3}
-      - {fileID: 21300000, guid: fe34e0485bddf104d8d98eed51c230d6, type: 3}
-      - {fileID: 21300000, guid: 07145f423dc12574788bba69fa143ed5, type: 3}
-      - {fileID: 21300000, guid: bdfd5dd36804f8b4995592277d016c4f, type: 3}
-      - {fileID: 21300000, guid: 9e7bcd33880cb464389d963b84f8be3c, type: 3}
-      - {fileID: 21300000, guid: 982ee8d8b16c7944ba32f8f9a43018ec, type: 3}
-      - {fileID: 21300000, guid: dc3bbb51fbe507c43b9ec26e298a8221, type: 3}
-      - {fileID: 21300000, guid: 475cb0e38e4c8844281495fd99b2a1ee, type: 3}
-      - {fileID: 21300000, guid: 161d5885032042540973a2be365e5ad3, type: 3}
-      mouthAssets:
-      - {fileID: 21300000, guid: e1a97000aafb15c4a865d2acc50b8c49, type: 3}
-      - {fileID: 21300000, guid: c39da918d0d351f408f3668c18502562, type: 3}
-      - {fileID: 21300000, guid: 356fbb78b07fba448afeb34b17cf4e4b, type: 3}
-      - {fileID: 21300000, guid: 26838dc1244bfc647bcabf3f8942b06d, type: 3}
-      - {fileID: 21300000, guid: fbb4842f5d3d2a2499bf042de9c1e8c3, type: 3}
-      - {fileID: 21300000, guid: 54226fc4087de944d8c5c184a2b553cc, type: 3}
-      - {fileID: 21300000, guid: 293a85261d2d6ab4fb22f250f38f38c1, type: 3}
-      - {fileID: 21300000, guid: 8296a3cb37a00d249aad437d946671b6, type: 3}
-      - {fileID: 21300000, guid: bdfd6217730f3a143be39647c5c539c5, type: 3}
-      - {fileID: 21300000, guid: cd208a5178023ce459ca5a4c7555ab65, type: 3}
-      eyeAssets:
-      - {fileID: 21300000, guid: c2fa6cd6581f44a49b0ccce981f6c01d, type: 3}
-      - {fileID: 21300000, guid: cbef3e31ff998154394146ce01c601f5, type: 3}
-      - {fileID: 21300000, guid: e4765274e5d6cea42beb240e58e2e95e, type: 3}
-      - {fileID: 21300000, guid: d650dadbe4741364284beba27a9cc43b, type: 3}
-      - {fileID: 21300000, guid: d167465309b74e348939bd576af45722, type: 3}
-      - {fileID: 21300000, guid: b3270e98ba3749945b03ce551ccd7714, type: 3}
-      - {fileID: 21300000, guid: d442e02494c0383459ea58c68e65a63f, type: 3}
-      - {fileID: 21300000, guid: deaa0c186fe247e4d8e239db94677267, type: 3}
-      - {fileID: 21300000, guid: 9237d58155773d04199166e8574d094f, type: 3}
-      - {fileID: 21300000, guid: 26d4171328b97054eaf4fefb4b238472, type: 3}
-      eyebrowAssets:
-      - {fileID: 21300000, guid: e0138002694afc749bd7c5121ccd6cdb, type: 3}
-      - {fileID: 21300000, guid: 1f41a93de977cdd40a28b1625c8e1bf6, type: 3}
-      - {fileID: 21300000, guid: 5060c0e8dafe57742a6a6a713e7ba868, type: 3}
-      - {fileID: 21300000, guid: 1819f0b362455684696ea358f3aef956, type: 3}
-      - {fileID: 21300000, guid: fc930c56478794f44b8c5b92b9e46a11, type: 3}
-      - {fileID: 21300000, guid: 9eb00b36c8a194f4cae2fb49dafb9ce6, type: 3}
-      - {fileID: 21300000, guid: b474da7fd40dcfe48976485ffabf087b, type: 3}
-      - {fileID: 21300000, guid: 03072de52474ce24d852efa5908193a1, type: 3}
-      - {fileID: 21300000, guid: 6b1f96e4ac997ae40976afd161990edc, type: 3}
-      - {fileID: 21300000, guid: c6c6d764484dd724e959da9633800a3e, type: 3}
-      facialHairAssets:
-      - {fileID: 21300000, guid: 95b125b817b0be1408acb68501aa2e49, type: 3}
-      - {fileID: 21300000, guid: 88dd0953a052d514b859912c37952a93, type: 3}
-      - {fileID: 21300000, guid: 13ff2ac1e5554af49b00ba5695357db5, type: 3}
-      - {fileID: 21300000, guid: 394aa4fd5942cb241bc0b16085e7cf43, type: 3}
-      - {fileID: 21300000, guid: 57352a09531daf84191212581c810992, type: 3}
-      - {fileID: 21300000, guid: d049d32b0248a184b9ee0edc2ca73c3f, type: 3}
+      - {fileID: 21300000, guid: 1a45ea94f7edbfe4c88c1db67f2fdb52, type: 3}
+      skinAssets:
+      - {fileID: 21300000, guid: d85aec5f060f8bc4da5774b24ee10a7c, type: 3}
+      underAssets:
+      - {fileID: 21300000, guid: 9930f8ed4460676498f2f0f6df8950b6, type: 3}
+      topAssets:
+      - {fileID: 21300000, guid: 2fa16072e345a2443bd576f71f493d25, type: 3}
     femaleAssets:
       gender: 1
       bodyAssets:
-      - {fileID: 21300000, guid: 147581201e456b941825b9a9f0abc8e9, type: 3}
+      - {fileID: 21300000, guid: 23ab76e4a1ebd16469fa06b56fd308fa, type: 3}
       hairAssets:
-      - hairSprite: {fileID: 21300000, guid: 69ea0f986ae2ef1439b806d464c64177, type: 3}
-        hairBackSprite: {fileID: 0}
-      - hairSprite: {fileID: 21300000, guid: 1b49d3c0a6e63d740ba880c39deb2e83, type: 3}
-        hairBackSprite: {fileID: 21300000, guid: ef77e663d5485c34c94899eaa38de451,
-          type: 3}
-      - hairSprite: {fileID: 21300000, guid: bac97e61e24dd3b4f859b77624a2e4a5, type: 3}
-        hairBackSprite: {fileID: 21300000, guid: 45334ebc6852c5549bd96df66ac22ecf,
-          type: 3}
-      - hairSprite: {fileID: 21300000, guid: da171dd54e8a21b40b6958a5a6bc0782, type: 3}
-        hairBackSprite: {fileID: 21300000, guid: 0474d43a6d99cf6499a8c939cdd80786,
-          type: 3}
-      - hairSprite: {fileID: 21300000, guid: 65b41f670911e334eaa9c2254f4b58a6, type: 3}
-        hairBackSprite: {fileID: 21300000, guid: 56ee69e3648a13449b7cc3eaef318f55,
-          type: 3}
-      - hairSprite: {fileID: 21300000, guid: df8bbeb08fc67d648ae2774501221e79, type: 3}
-        hairBackSprite: {fileID: 21300000, guid: da6818628eb5dbc44a06b49caf27e15a,
-          type: 3}
-      - hairSprite: {fileID: 21300000, guid: aa2ee0df78b90d24d9e45d37d29979c5, type: 3}
-        hairBackSprite: {fileID: 21300000, guid: 71c00c40f6ee1864fab58e7dbd15837e,
-          type: 3}
-      - hairSprite: {fileID: 21300000, guid: a5168e9ef292b434a930f0558eeb0d04, type: 3}
-        hairBackSprite: {fileID: 21300000, guid: 0ad167dd82c7d4a4d92f41f321f61523,
-          type: 3}
-      - hairSprite: {fileID: 21300000, guid: 53da753965f78b247be9e3d8b02b0c59, type: 3}
-        hairBackSprite: {fileID: 0}
-      - hairSprite: {fileID: 21300000, guid: b463547aeb30394478540ed019d8a9fc, type: 3}
-        hairBackSprite: {fileID: 21300000, guid: 3e9e9e5d9c9b88847ab5b03efdf86a68,
-          type: 3}
-      headAssets:
-      - {fileID: 21300000, guid: 1b3fa37ed55b7b54588cac78c847069a, type: 3}
-      - {fileID: 21300000, guid: 73c49159af982004386cec8b63b43bff, type: 3}
-      - {fileID: 21300000, guid: 4620d079a828cb743adbe53174c6b792, type: 3}
-      - {fileID: 21300000, guid: ff556163d5ddc4b48bac70553cae9891, type: 3}
-      - {fileID: 21300000, guid: a304c08b8a33b77489c4cafd85a16d40, type: 3}
-      - {fileID: 21300000, guid: 83bf80f3e5b726a40bcda52e464bcbda, type: 3}
-      - {fileID: 21300000, guid: 0e2b82d5c2de26447b33e8331e393179, type: 3}
-      - {fileID: 21300000, guid: 17a27ba990a5b5d4d9c7e6def6c72917, type: 3}
-      - {fileID: 21300000, guid: 777ed31f8a267c8409ba14aa7ec3097a, type: 3}
-      - {fileID: 21300000, guid: b37b7b0061e3c2b4f89de7e748789b95, type: 3}
-      noseAssets:
-      - {fileID: 21300000, guid: 64252eccc4380df44b28aa757e4a563e, type: 3}
-      - {fileID: 21300000, guid: f911ecdf886cabd4e898b064c000939f, type: 3}
-      - {fileID: 21300000, guid: 74158844490518a46aeb6fb05b4599a1, type: 3}
-      - {fileID: 21300000, guid: c89e1f6e24763d24195e969f3a2e7fec, type: 3}
-      - {fileID: 21300000, guid: a2bcb92664ad4fb47aa4a506fbcf87cf, type: 3}
-      - {fileID: 21300000, guid: 86e39274d666b93468e402b1f18555a7, type: 3}
-      - {fileID: 21300000, guid: 2030f1f6920b8e94dbae78ba85a6bd5f, type: 3}
-      - {fileID: 21300000, guid: 69923ae63c671ce4688429533b6782e3, type: 3}
-      - {fileID: 21300000, guid: c29537a92c447b245a8366b7eb41be4f, type: 3}
-      - {fileID: 21300000, guid: 12f652ee88a55bc40bc4fb4ae850d21a, type: 3}
-      mouthAssets:
-      - {fileID: 21300000, guid: f73cd304cee272f4a9957c2e57ff4d2d, type: 3}
-      - {fileID: 21300000, guid: cec37a023be4ce3489d52907e7829e30, type: 3}
-      - {fileID: 21300000, guid: 0fe354f5681ba994283ac0638a1fa0c8, type: 3}
-      - {fileID: 21300000, guid: 3935cc538885a0048bfdb03ba8dc6f3f, type: 3}
-      - {fileID: 21300000, guid: b077bde1bea0c5845bd722d97d908e81, type: 3}
-      - {fileID: 21300000, guid: 7ebd12583adb45e40bc03fef427b9527, type: 3}
-      - {fileID: 21300000, guid: 1ebc84ae3f98f7b4e95c2358a9db00c4, type: 3}
-      - {fileID: 21300000, guid: 70df6d3970b98814cbb038f73a3f364f, type: 3}
-      - {fileID: 21300000, guid: 259eaabc4cc2e9e45a06ce1c35efa33f, type: 3}
-      - {fileID: 21300000, guid: e47ef0f91a80437469989156fa448142, type: 3}
-      eyeAssets:
-      - {fileID: 21300000, guid: 204850225c36adb459c086bfb4363355, type: 3}
-      - {fileID: 21300000, guid: 89f8123e86045c541b8af3645196bc7a, type: 3}
-      - {fileID: 21300000, guid: ff174b61bed4c6c4380e148bb67175f5, type: 3}
-      - {fileID: 21300000, guid: 5bbdd9dc1d6dfc347870f1281bf4e419, type: 3}
-      - {fileID: 21300000, guid: 348999f3e86f99e4c8c55ee87e1fddfb, type: 3}
-      - {fileID: 21300000, guid: 2201afe71fa46ff47a79ff54da18420c, type: 3}
-      - {fileID: 21300000, guid: 5739d2899cb6001438f1cbb1772159bf, type: 3}
-      - {fileID: 21300000, guid: 52f02371db00af741b8dd0f4a3195184, type: 3}
-      - {fileID: 21300000, guid: a393ea4e2584def47bc931fc4166d55f, type: 3}
-      - {fileID: 21300000, guid: d3df822b325a65c4bafe32253bd31eb6, type: 3}
-      eyebrowAssets:
-      - {fileID: 21300000, guid: 729b0cc2b91ca5542b8a2c3a806c960a, type: 3}
-      - {fileID: 21300000, guid: a8bad24424ba09f47b289335099f7e26, type: 3}
-      - {fileID: 21300000, guid: f3236f69e3c3bf441a43df1a7579b6b4, type: 3}
-      - {fileID: 21300000, guid: 99abdda0b81bf464486575bc69064079, type: 3}
-      - {fileID: 21300000, guid: baad5f2729363384dbd9a8f4c95d44e7, type: 3}
-      - {fileID: 21300000, guid: 317a1f4cd304ed5458d2665fa9da97c9, type: 3}
-      - {fileID: 21300000, guid: 6a703ae329cca8545a560db4dac22f5e, type: 3}
-      - {fileID: 21300000, guid: b11103c9b7820974582c52423e4ac4c9, type: 3}
-      - {fileID: 21300000, guid: 7d596ab07dd46d041a23ea2bb0b9dfc7, type: 3}
-      - {fileID: 21300000, guid: c28d19671c025de49a9ce27efad004f6, type: 3}
-      facialHairAssets: []
+      - {fileID: 21300000, guid: 7610ac2719b4c7642b4e010c714cfe7e, type: 3}
+      skinAssets:
+      - {fileID: 21300000, guid: e21d66cd6130a3644bd64ed60f0b6485, type: 3}
+      underAssets:
+      - {fileID: 21300000, guid: ad1260b7d58e7024ab2f91db0ea3f878, type: 3}
+      topAssets:
+      - {fileID: 21300000, guid: e765731094e366b4e994b986d8936893, type: 3}
+  - race: 6
+    maleAssets:
+      gender: 0
+      bodyAssets:
+      - {fileID: 21300000, guid: eff8e75c95241b647a9c6262bd0e7677, type: 3}
+      hairAssets:
+      - {fileID: 21300000, guid: 1dd0dcfe5d71bd646928f15ca52f2808, type: 3}
+      skinAssets:
+      - {fileID: 21300000, guid: d1f9f7e38553ec540a9f3764ee2a7f48, type: 3}
+      underAssets: []
+      topAssets:
+      - {fileID: 21300000, guid: 5a073390453fa67419b175a6bf687faf, type: 3}
+    femaleAssets:
+      gender: 1
+      bodyAssets:
+      - {fileID: 21300000, guid: e72bed9a548399643ab13b657422f96a, type: 3}
+      hairAssets:
+      - {fileID: 21300000, guid: 874a241692c0c6248bc7c9896a470fcf, type: 3}
+      skinAssets:
+      - {fileID: 21300000, guid: 070b902b466eacd4a873738cd3ee49c5, type: 3}
+      underAssets: []
+      topAssets:
+      - {fileID: 21300000, guid: 5f3b0c65fd6d5bf4ab76f1012baef0e8, type: 3}
   hairColors:
   - {r: 0, g: 0, b: 0, a: 1}
   - {r: 0.8396226, g: 0.32872015, b: 0.32872015, a: 1}
@@ -496,3 +281,4 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 41b46e5c79a790a4587ee7aef9acb301, type: 3}
     - {fileID: 21300000, guid: 00217fe9096ed3d45b81d2d815267235, type: 3}
     - {fileID: 21300000, guid: 1c0d578e62658cb41889305f732afc6e, type: 3}
+  hsvMaterial: {fileID: 2100000, guid: f635580cdf2e2344ea31e0dba17cb9b5, type: 2}

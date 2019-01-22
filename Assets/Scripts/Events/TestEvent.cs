@@ -23,12 +23,12 @@ public class TestEvent : GameEvent {
         SetupEventActions();
         GameDate endDate = startDate;
         endDate.AddDays(GetEventDurationRoughEstimateInTicks());
-        character.AddScheduledEvent(new DateRange(startDate, endDate), this);
+        //character.AddScheduledEvent(new DateRange(startDate, endDate), this);
     }
 
     public void ScheduleEvent() {
         SetupEventActions();
-        character.AddScheduledEvent(this);
+        //character.AddScheduledEvent(this);
     }
 
     public override void EndEventForCharacter(Character character) {

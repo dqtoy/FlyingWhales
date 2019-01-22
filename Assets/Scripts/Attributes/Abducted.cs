@@ -10,7 +10,8 @@ public class Abducted : Trait {
         this.originalHomeLandmark = originalHomeLandmark;
         //name = "Charmed from " + originalFaction.name;
         description = "This character has been abducted!";
-        type = TRAIT_TYPE.NEGATIVE;
+        type = TRAIT_TYPE.STATUS;
+        effect = TRAIT_EFFECT.NEGATIVE;
         daysDuration = 0;
         effects = new List<TraitEffect>();
     }

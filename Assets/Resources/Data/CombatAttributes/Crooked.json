@@ -1,1 +1,1 @@
-{"name":"Crooked","description":"Hidden Trait. This character steals from his/her own faction.","type":2,"daysDuration":0,"effects":[]}
+{"name":"Crooked","description":"Hidden Trait. This character steals from his/her own faction.","type":3,"effect":2,"daysDuration":0,"effects":[]}

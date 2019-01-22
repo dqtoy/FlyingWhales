@@ -77,8 +77,8 @@ public class SecretMeeting : GameEvent {
         GameDate endDate = meetingDate;
         endDate.AddDays(GetEventDurationRoughEstimateInTicks());
 
-        _generalMax.AddScheduledEvent(new DateRange(meetingDate, endDate), this);
-        _ladyOfTheLake.AddScheduledEvent(new DateRange(meetingDate, endDate), this);
+        //_generalMax.AddScheduledEvent(new DateRange(meetingDate, endDate), this);
+        //_ladyOfTheLake.AddScheduledEvent(new DateRange(meetingDate, endDate), this);
     }
     private GameDate GetInitialMeetingDate() {
         //int initialMeetingDay = 1; //4//Thursday

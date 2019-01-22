@@ -47,7 +47,6 @@ public interface ICharacter {
     CharacterRole role { get; } //Character only
     CharacterClass characterClass { get; } //Character only
     Job job { get; } //Character only
-    CharacterPortrait characterPortrait { get; }
     Weapon equippedWeapon { get; }
     Armor equippedArmor { get; }
     Item equippedAccessory { get; }

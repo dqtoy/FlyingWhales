@@ -12,7 +12,8 @@ public class Charmed : Trait {
         this.originalHome = originalHome;
         //name = "Charmed from " + originalFaction.name;
         description = "This character has been bewitched!";
-        type = TRAIT_TYPE.NEGATIVE;
+        type = TRAIT_TYPE.STATUS;
+        effect = TRAIT_EFFECT.NEGATIVE;
         daysDuration = 0;
         effects = new List<TraitEffect>();
     }

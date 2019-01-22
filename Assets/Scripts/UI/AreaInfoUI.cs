@@ -407,23 +407,19 @@ public class AreaInfoUI : UIMenu {
     #endregion
 
     #region For Testing
-    public void ShowSpecialTokensAtLocation() {
-        string summary = "Items at " + activeArea.name + ": ";
-        if (activeArea.possibleSpecialTokenSpawns.Count > 0) {
-            for (int i = 0; i < activeArea.possibleSpecialTokenSpawns.Count; i++) {
-                SpecialToken currToken = activeArea.possibleSpecialTokenSpawns[i];
-                summary += "\n" + currToken.name;
-                if (currToken is SecretScroll) {
-                    summary += ": " + (currToken as SecretScroll).grantedClass;
-                }
-                summary +=  " owned by " + currToken.ownerName;
+    public void ShowLocationInfo() {
+        string summary = "Corpses at " + activeArea.name + ": ";
+        if (activeArea.corpsesInArea.Count > 0) {
+            for (int i = 0; i < activeArea.corpsesInArea.Count; i++) {
+                Corpse currCorpse = activeArea.corpsesInArea[i];
+                summary += "\n" + currCorpse.character.name;
             }
         } else {
             summary += "None";
         }
         UIManager.Instance.ShowSmallInfo(summary);
     }
-    public void HideSpecialTokensAtLocation() {
+    public void HideLocationInfo() {
         UIManager.Instance.HideSmallInfo();
     }
     public void ClearOutFaction() {

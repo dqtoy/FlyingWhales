@@ -37,9 +37,6 @@ public class LandmarkCharacterItem : PooledObject {
         if (character == null) {
             return;
         }
-        if (portrait.isLocked) {
-            return;
-        }
         if (character.currentParty.characters.Count > 1) {
             UIManager.Instance.ShowSmallInfo(character.currentParty.name);
         } else {

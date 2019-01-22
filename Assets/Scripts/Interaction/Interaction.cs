@@ -513,4 +513,8 @@ public class Interaction {
         }
     }
     #endregion
+
+    public override string ToString() {
+        return name;
+    }
 }

@@ -7,23 +7,17 @@ public class PortraitAssetCollection {
 
     public GENDER gender;
     public List<Sprite> bodyAssets;
-    public List<HairSetting> hairAssets;
-    public List<Sprite> headAssets;
-    public List<Sprite> noseAssets;
-    public List<Sprite> mouthAssets;
-    public List<Sprite> eyeAssets;
-    public List<Sprite> eyebrowAssets;
-    public List<Sprite> facialHairAssets;
+    public List<Sprite> hairAssets;
+    public List<Sprite> skinAssets;
+    public List<Sprite> underAssets;
+    public List<Sprite> topAssets;
 
     public PortraitAssetCollection(GENDER gender) {
         this.gender = gender;
         bodyAssets = new List<Sprite>();
-        hairAssets = new List<HairSetting>();
-        headAssets = new List<Sprite>();
-        noseAssets = new List<Sprite>();
-        mouthAssets = new List<Sprite>();
-        eyeAssets = new List<Sprite>();
-        eyebrowAssets = new List<Sprite>();
-        facialHairAssets = new List<Sprite>();
+        hairAssets = new List<Sprite>();
+        skinAssets = new List<Sprite>();
+        underAssets = new List<Sprite>();
+        topAssets = new List<Sprite>();
     }
 }
