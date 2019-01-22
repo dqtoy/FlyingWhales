@@ -132,7 +132,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     }
 
     #region Utilities
-    private void UpdateLvl() {
+    public void UpdateLvl() {
         lvlTxt.text = _character.level.ToString();
     }
     private void SetBodyPartsState(bool state) {
