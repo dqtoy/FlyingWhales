@@ -344,6 +344,12 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.STEAL_ACTION_FACTION:
                 createdInteraction = new StealActionFaction(interactable);
                 break;
+            case INTERACTION_TYPE.MOVE_TO_RECRUIT_FACTION:
+                createdInteraction = new MoveToRecruitFaction(interactable);
+                break;
+            case INTERACTION_TYPE.RECRUIT_ACTION_FACTION:
+                createdInteraction = new RecruitActionFaction(interactable);
+                break;
         }
         return createdInteraction;
     }
@@ -759,6 +765,11 @@ public class InteractionManager : MonoBehaviour {
                     }
                 }
                 return false;
+            case INTERACTION_TYPE.MOVE_TO_RECRUIT_FACTION:
+                if (character.homeLandmark.tileLocation.areaOfTile.IsResidentsFull()) { //check if resident capacity is full
+                    return false;
+                }
+                return true;
             default:
                 return true;
         }
