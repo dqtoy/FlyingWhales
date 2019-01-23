@@ -860,6 +860,7 @@ public class Area {
             {INTERACTION_TYPE.MOVE_TO_VISIT, 50},
             {INTERACTION_TYPE.MOVE_TO_ASSASSINATE_FACTION, 5000},
             {INTERACTION_TYPE.MOVE_TO_LOOT, 50},
+            {INTERACTION_TYPE.MOVE_TO_TAME_BEAST, 50},
         };
     }
     public void AddInteraction(Interaction interaction) {

@@ -362,6 +362,12 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.LOOT_ACTION:
                 createdInteraction = new LootAction(interactable);
                 break;
+            case INTERACTION_TYPE.MOVE_TO_TAME_BEAST:
+                createdInteraction = new MoveToTameBeast(interactable);
+                break;
+            case INTERACTION_TYPE.TAME_BEAST_ACTION:
+                createdInteraction = new TameBeastAction(interactable);
+                break;
         }
         return createdInteraction;
     }
@@ -806,6 +812,16 @@ public class InteractionManager : MonoBehaviour {
                 return false;
             case INTERACTION_TYPE.MOVE_TO_LOOT:
                 return !character.isHoldingItem;
+            case INTERACTION_TYPE.MOVE_TO_TAME_BEAST:
+                if (!character.homeLandmark.tileLocation.areaOfTile.IsResidentsFull()) {
+                    for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+                        Character currCharacter = CharacterManager.Instance.allCharacters[i];
+                        if (currCharacter.role.roleType == CHARACTER_ROLE.BEAST && currCharacter.faction == FactionManager.Instance.neutralFaction) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
             default:
                 return true;
         }
