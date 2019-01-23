@@ -125,6 +125,14 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     public string coloredUrlName {
         get { return "<link=" + '"' + this._id.ToString() + "_character" + '"' + ">" + "<color=#" + this._characterColorCode + ">" + name + "</color></link>"; }
     }
+    public string raceClassName {
+        get {
+            if (Utilities.IsRaceBeast(race)) {
+                return Utilities.NormalizeString(race.ToString());
+            }
+            return Utilities.NormalizeString(race.ToString()) + " " + characterClass.className;
+        }
+    }
     public int id {
         get { return _id; }
     }

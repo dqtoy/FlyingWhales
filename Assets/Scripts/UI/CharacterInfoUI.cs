@@ -323,7 +323,7 @@ public class CharacterInfoUI : UIMenu {
 //#if UNITY_EDITOR
 //        nameLbl.text += " (" + _activeCharacter.currentInteractionTick.ToString() + ")";
 //#endif
-        lvlClassLbl.text = Utilities.NormalizeString(_activeCharacter.race.ToString()) + " " + _activeCharacter.characterClass.className;
+        lvlClassLbl.text = _activeCharacter.raceClassName;
 
         //if (_activeCharacter.schedule != null) {
         //    phaseLbl.text = _activeCharacter.schedule.currentPhase.ToString();

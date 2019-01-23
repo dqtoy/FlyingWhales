@@ -26,7 +26,7 @@ public class LandmarkCharacterItem : PooledObject {
         this.parentMenu = parentMenu;
         portrait.GeneratePortrait(character);
         nameLbl.text = character.name;
-        subLbl.text = Utilities.GetNormalizedSingularRace(character.race) + " " + character.characterClass.className;
+        subLbl.text = character.raceClassName;
         UpdateLocationIcons();
     }
     public void ShowCharacterInfo() {

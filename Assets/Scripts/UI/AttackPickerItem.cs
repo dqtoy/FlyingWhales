@@ -30,6 +30,6 @@ public class AttackPickerItem : ObjectPickerItem<Character>, IDragParentItem {
     private void UpdateVisuals() {
         portrait.GeneratePortrait(character);
         mainLbl.text = character.name;
-        subLbl.text = Utilities.GetNormalizedSingularRace(character.race) + " " + character.characterClass.className;
+        subLbl.text = character.raceClassName;
     }
 }
