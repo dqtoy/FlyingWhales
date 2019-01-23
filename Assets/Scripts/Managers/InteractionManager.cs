@@ -338,6 +338,12 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.TRANSFER_HOME:
                 createdInteraction = new TransferHome(interactable);
                 break;
+            case INTERACTION_TYPE.MOVE_TO_STEAL_FACTION:
+                createdInteraction = new MoveToStealFaction(interactable);
+                break;
+            case INTERACTION_TYPE.STEAL_ACTION_FACTION:
+                createdInteraction = new StealActionFaction(interactable);
+                break;
         }
         return createdInteraction;
     }
@@ -641,6 +647,18 @@ public class InteractionManager : MonoBehaviour {
                                 if (currCharacter.isFactionless || currCharacter.faction.id != character.faction.id) {
                                     return true;
                                 }
+                            }
+                        }
+                    }
+                }
+                return false;
+            case INTERACTION_TYPE.MOVE_TO_STEAL_FACTION:
+                if (character.tokenInInventory == null) {
+                    for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+                        Character currCharacter = CharacterManager.Instance.allCharacters[i];
+                        if (currCharacter.id != character.id && !currCharacter.isDead && currCharacter.tokenInInventory != null) {
+                            if (currCharacter.isFactionless || currCharacter.faction.id != character.faction.id) {
+                                return true;
                             }
                         }
                     }
