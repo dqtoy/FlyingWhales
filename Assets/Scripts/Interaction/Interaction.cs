@@ -10,6 +10,8 @@ public class Interaction {
     protected int _timeOutTicks;
     protected GameDate _timeDate;
     protected INTERACTION_TYPE _type;
+    protected INTERACTION_CATEGORY _category;
+    protected INTERACTION_ALIGNMENT _alignment;
     protected BaseLandmark _interactable;
     protected Dictionary<string, InteractionState> _states;
     //protected InteractionItem _interactionItem;
@@ -40,6 +42,12 @@ public class Interaction {
     #region getters/setters
     public INTERACTION_TYPE type {
         get { return _type; }
+    }
+    public INTERACTION_CATEGORY category {
+        get { return _category; }
+    }
+    public INTERACTION_ALIGNMENT alignment {
+        get { return _alignment; }
     }
     public string name {
         get { return _name; }
