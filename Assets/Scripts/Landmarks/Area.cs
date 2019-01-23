@@ -858,7 +858,6 @@ public class Area {
             {INTERACTION_TYPE.MOVE_TO_REANIMATE, 20},
             {INTERACTION_TYPE.MOVE_TO_SAVE, 30},
             {INTERACTION_TYPE.MOVE_TO_VISIT, 50},
-            {INTERACTION_TYPE.MOVE_TO_ASSASSINATE_FACTION, 5000},
         };
     }
     public void AddInteraction(Interaction interaction) {
