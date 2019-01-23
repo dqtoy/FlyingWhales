@@ -782,10 +782,6 @@ public class InteractionManager : MonoBehaviour {
                     return false;
                 }
                 return true;
-<<<<<<< HEAD
-            case INTERACTION_TYPE.MOVE_TO_LOOT:
-                return !character.isHoldingItem;
-=======
             case INTERACTION_TYPE.MOVE_TO_ASSASSINATE_FACTION:
                 //**Trigger Criteria 1**: There must be at least one non-Warded character belonging to an Enemy or War faction.
                 for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
@@ -808,7 +804,8 @@ public class InteractionManager : MonoBehaviour {
                     }
                 }
                 return false;
->>>>>>> c07147ce55be1e6f599d66200b692c5ae2cf4f6c
+            case INTERACTION_TYPE.MOVE_TO_LOOT:
+                return !character.isHoldingItem;
             default:
                 return true;
         }
