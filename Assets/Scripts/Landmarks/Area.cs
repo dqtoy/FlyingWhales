@@ -78,6 +78,9 @@ public class Area {
     //public int elligibleResidents {
     //    get { return areaResidents.Where(x => !x.isDefender).Count(); }
     //}
+    public List<Character> visitors {
+        get { return charactersAtLocation.Where(x => !areaResidents.Contains(x)).ToList(); }
+    }
     #endregion
 
     public Area(HexTile coreTile, AREA_TYPE areaType) {

@@ -224,7 +224,7 @@ public class CameraMove : MonoBehaviour {
 #if WORLD_CREATION_TOOL
         newBounds.extents = new Vector3(Mathf.Abs(rightMostTile.transform.position.x) + (1.28f * (float)(worldcreator.WorldCreatorManager.Instance._borderThickness + 2f)), Mathf.Abs(topMostTile.transform.position.y) + (1.28f * 4f), 0f);
 #else
-        newBounds.extents = new Vector3(Mathf.Abs(rightMostTile.transform.position.x) + (1.28f * (float)(GridMap.Instance._borderThickness + 2f)), Mathf.Abs(topMostTile.transform.position.y) + (1.28f * 4f), 0f);
+        newBounds.extents = new Vector3(Mathf.Abs(rightMostTile.transform.position.x) + (1.28f * (float)(GridMap.Instance._borderThickness)), Mathf.Abs(topMostTile.transform.position.y) + (1.28f * 4f), 0f);
 #endif
         SetCameraBounds(newBounds, horzExtent, vertExtent);
 

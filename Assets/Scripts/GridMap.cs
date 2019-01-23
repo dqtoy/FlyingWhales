@@ -34,7 +34,6 @@ public class GridMap : MonoBehaviour {
     public List<HexTile> hexTiles;
     public List<Region> allRegions;
 	public HexTile[,] map;
-    public HexTile[,] outerGrid;
 
 	internal float mapWidth;
 	internal float mapHeight;

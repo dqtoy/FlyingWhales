@@ -10,6 +10,14 @@ public class AreaNameplate : MonoBehaviour {
     [SerializeField] private FactionEmblem emblem;
     [SerializeField] private TextMeshProUGUI areaNameLbl;
 
+    [Header("Residents")]
+    [SerializeField] private GameObject residentsGO;
+    [SerializeField] private TextMeshProUGUI residentsLbl;
+
+    [Header("Visitors")]
+    [SerializeField] private GameObject visitorsGO;
+    [SerializeField] private TextMeshProUGUI visitorsLbl;
+
     public void SetArea(Area area) {
         this.area = area;
         name = area.name + " Nameplate";
@@ -39,5 +47,19 @@ public class AreaNameplate : MonoBehaviour {
         if (this.area.id == area.id) {
             UpdateVisuals();
         }
+    }
+
+    public void ShowResidentsAndVisitors() {
+        if (!residentsGO.activeSelf) {
+            residentsGO.SetActive(true);
+            visitorsGO.SetActive(true);
+        }
+        residentsLbl.text = area.areaResidents.Count.ToString();
+        visitorsLbl.text = area.visitors.Count.ToString();
+    }
+
+    public void HideResidentsAndVisitors() {
+        residentsGO.SetActive(false);
+        visitorsGO.SetActive(false);
     }
 }

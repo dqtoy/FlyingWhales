@@ -117,9 +117,22 @@ public class Biomes : MonoBehaviour {
     }
     public void UpdateTileVisuals(HexTile currentHexTile) {
 #if WORLD_CREATION_TOOL
-        int sortingOrder = (((int)worldcreator.WorldCreatorManager.Instance.height - 1) -  (currentHexTile.yCoordinate - 2)) * 10;
+        int sortingOrder = 0;
+        int mapHeight = (int)worldcreator.WorldCreatorManager.Instance.height - 1;
+        int yCoordinate = currentHexTile.yCoordinate - 2;
+        if (worldcreator.WorldCreatorManager.Instance.outerGridList.Contains(currentHexTile)) {
+            mapHeight += worldcreator.WorldCreatorManager.Instance._borderThickness * 2;
+        }
+        sortingOrder = (mapHeight -  yCoordinate) * 10;
 #else
-        int sortingOrder = (((int)GridMap.Instance.height - 1) -  (currentHexTile.yCoordinate - 2)) * 10; //10 is the number of sorting order between rows
+        int sortingOrder = 0;
+        int mapHeight = (int)GridMap.Instance.height - 1;
+        int yCoordinate = currentHexTile.yCoordinate - 2;
+        if (GridMap.Instance.outerGridList.Contains(currentHexTile)) {
+            mapHeight += GridMap.Instance._borderThickness * 2;
+        }
+        sortingOrder = (mapHeight -  yCoordinate) * 10; //10 is the number of sorting order between rows
+
         if (PlayerManager.Instance.player != null &&  PlayerManager.Instance.player.playerArea != null 
             && PlayerManager.Instance.player.playerArea.tiles.Contains(currentHexTile)) {
             return;

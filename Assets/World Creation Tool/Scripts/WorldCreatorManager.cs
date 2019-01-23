@@ -100,7 +100,7 @@ namespace worldcreator {
             Biomes.Instance.LoadPassableStates(hexTiles);
             CreateNewRegion(hexTiles);
             GenerateOuterGrid();
-            Biomes.Instance.UpdateTileVisuals(hexTiles);
+            Biomes.Instance.UpdateTileVisuals(allTiles);
             WorldCreatorUI.Instance.OnDoneLoadingGrid();
         }
         public IEnumerator GenerateGrid(WorldSaveData data) {
@@ -156,7 +156,7 @@ namespace worldcreator {
             //CharacterManager.Instance.LoadSquads(data);
             //LandmarkManager.Instance.LoadDefenders(data);
             //CharacterManager.Instance.LoadCharactersInfo(data);
-            Biomes.Instance.UpdateTileVisuals(hexTiles);
+            Biomes.Instance.UpdateTileVisuals(allTiles);
             //PathfindingManager.Instance.LoadSettings(data.pathfindingSettings);
 
             WorldCreatorUI.Instance.OnDoneLoadingGrid();
