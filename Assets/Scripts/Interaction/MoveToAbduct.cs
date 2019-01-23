@@ -116,7 +116,7 @@ public class MoveToAbduct : Interaction {
     private void CreateAbductAction() {
         AddToDebugLog(_characterInvolved.name + " will now create abduct action");
         Interaction abduct = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.ABDUCT_ACTION, _characterInvolved.specificLocation.tileLocation.landmarkOnTile);
-        abduct.SetCanInteractionBeDoneAction(IsAbductStillValid);
+        //abduct.SetCanInteractionBeDoneAction(IsAbductStillValid);
         _characterInvolved.SetForcedInteraction(abduct);
     }
     private bool IsAbductStillValid() {

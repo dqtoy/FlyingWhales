@@ -350,6 +350,12 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.RECRUIT_ACTION_FACTION:
                 createdInteraction = new RecruitActionFaction(interactable);
                 break;
+            case INTERACTION_TYPE.MOVE_TO_LOOT:
+                createdInteraction = new MoveToLoot(interactable);
+                break;
+            case INTERACTION_TYPE.LOOT_ACTION:
+                createdInteraction = new LootAction(interactable);
+                break;
         }
         return createdInteraction;
     }
@@ -770,6 +776,8 @@ public class InteractionManager : MonoBehaviour {
                     return false;
                 }
                 return true;
+            case INTERACTION_TYPE.MOVE_TO_LOOT:
+                return !character.isHoldingItem;
             default:
                 return true;
         }

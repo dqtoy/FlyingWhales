@@ -173,7 +173,7 @@ public class AbductAction : Interaction {
     }
     #endregion
 
-    #region Reward Effect
+    #region State Effect
     private void AssistedAbductionSuccessRewardEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         state.descriptionLog.AddToFillers(targetCharacter.faction, targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_1);
