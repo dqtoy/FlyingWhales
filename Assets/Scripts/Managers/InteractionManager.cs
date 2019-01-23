@@ -350,6 +350,12 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.RECRUIT_ACTION_FACTION:
                 createdInteraction = new RecruitActionFaction(interactable);
                 break;
+            case INTERACTION_TYPE.MOVE_TO_ASSASSINATE_FACTION:
+                createdInteraction = new MoveToAssassinateFaction(interactable);
+                break;
+            case INTERACTION_TYPE.ASSASSINATE_ACTION_FACTION:
+                createdInteraction = new AssassinateActionFaction(interactable);
+                break;
         }
         return createdInteraction;
     }
@@ -770,6 +776,28 @@ public class InteractionManager : MonoBehaviour {
                     return false;
                 }
                 return true;
+            case INTERACTION_TYPE.MOVE_TO_ASSASSINATE_FACTION:
+                //**Trigger Criteria 1**: There must be at least one non-Warded character belonging to an Enemy or War faction.
+                for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
+                    Area currArea = LandmarkManager.Instance.allAreas[i];
+                    if (currArea.id == PlayerManager.Instance.player.playerArea.id) {
+                        continue; //skip
+                    }
+                    for (int j = 0; j < currArea.charactersAtLocation.Count; j++) {
+                        Character currCharacter = currArea.charactersAtLocation[j];
+                        if (currCharacter.GetTrait("Warded") == null
+                            && !currCharacter.currentParty.icon.isTravelling
+                            && currCharacter.faction.id != character.faction.id) {
+                            switch (currCharacter.faction.GetRelationshipWith(character.faction).relationshipStatus) {
+                                case FACTION_RELATIONSHIP_STATUS.AT_WAR:
+                                case FACTION_RELATIONSHIP_STATUS.ENEMY:
+                                    return true;
+
+                            }
+                        }
+                    }
+                }
+                return false;
             default:
                 return true;
         }
