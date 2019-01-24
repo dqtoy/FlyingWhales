@@ -9,7 +9,7 @@ public class HumanBanditReinforcements : Interaction {
 
     private WeightedDictionary<DefenderSetting> assaultSpawnWeights;
 
-    public HumanBanditReinforcements(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.HUMAN_BANDIT_REINFORCEMENTS, 50) {
+    public HumanBanditReinforcements(Area interactable) : base(interactable, INTERACTION_TYPE.HUMAN_BANDIT_REINFORCEMENTS, 50) {
         _name = "Human Bandit Reinforcements";
     }
 
@@ -17,7 +17,6 @@ public class HumanBanditReinforcements : Interaction {
     public override void CreateStates() {
         //CreateExploreStates();
         //CreateWhatToDoNextState("What do you want %minion% to do next?");
-        landmark = _interactable;
         ConstructDefenseSpawnWeights();
 
         InteractionState startState = new InteractionState("Start", this);

@@ -10,7 +10,7 @@ public class UseItemOnSelf : Interaction {
 
     //private Character targetCharacter;
 
-    public UseItemOnSelf(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.USE_ITEM_ON_SELF, 0) {
+    public UseItemOnSelf(Area interactable) : base(interactable, INTERACTION_TYPE.USE_ITEM_ON_SELF, 0) {
         _name = "Use Item On Self";
     }
 

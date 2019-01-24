@@ -10,7 +10,7 @@ public class MoveToSteal : Interaction {
 
     public Area targetLocation { get; private set; }
 
-    public MoveToSteal(BaseLandmark interactable)
+    public MoveToSteal(Area interactable)
         : base(interactable, INTERACTION_TYPE.MOVE_TO_STEAL, 0) {
         _name = "Move To Steal";
         _jobFilter = new JOB[] { JOB.DEBILITATOR };
@@ -121,7 +121,7 @@ public class MoveToSteal : Interaction {
     }
 
     private void CreateEvent() {
-        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.STEAL_ACTION, _characterInvolved.specificLocation.coreTile.landmarkOnTile);
+        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.STEAL_ACTION, _characterInvolved.specificLocation);
         //(interaction as ImproveRelationsEvent).SetTargetFaction(targetFaction);
         //interaction.SetCanInteractionBeDoneAction(IsImproveRelationsValid);
         _characterInvolved.SetForcedInteraction(interaction);

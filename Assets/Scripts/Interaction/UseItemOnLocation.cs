@@ -10,7 +10,7 @@ public class UseItemOnLocation : Interaction {
     private const string Do_Nothing = "Do nothing";
 
 
-    public UseItemOnLocation(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.USE_ITEM_ON_LOCATION, 0) {
+    public UseItemOnLocation(Area interactable) : base(interactable, INTERACTION_TYPE.USE_ITEM_ON_LOCATION, 0) {
         _name = "Use Item On Location";
         _jobFilter = new JOB[] { JOB.DEBILITATOR };
     }
@@ -74,7 +74,7 @@ public class UseItemOnLocation : Interaction {
                 nextState = Stop_Successful;
                 break;
             case RESULT.FAIL:
-                _tokenToBeUsed.CreateJointInteractionStates(this, _characterInvolved, interactable.tileLocation.areaOfTile);
+                _tokenToBeUsed.CreateJointInteractionStates(this, _characterInvolved, interactable);
                 nextState = _tokenToBeUsed.Stop_Fail;
                 break;
             default:
@@ -83,7 +83,7 @@ public class UseItemOnLocation : Interaction {
         SetCurrentState(_states[nextState]);
     }
     private void DoNothingOptionEffect(InteractionState state) {
-        _tokenToBeUsed.CreateJointInteractionStates(this, _characterInvolved, interactable.tileLocation.areaOfTile);
+        _tokenToBeUsed.CreateJointInteractionStates(this, _characterInvolved, interactable);
         if (!_states.ContainsKey(_tokenToBeUsed.Item_Used)) {
             throw new System.Exception(this.name + " does have state " + _tokenToBeUsed.Item_Used + " when using token " + _tokenToBeUsed.name);
         }

@@ -15,7 +15,7 @@ public class CharacterTracking : Interaction {
     private const string Do_Nothing = "Do nothing";
 
 
-    public CharacterTracking(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.CHARACTER_TRACKING, 70) {
+    public CharacterTracking(Area interactable) : base(interactable, INTERACTION_TYPE.CHARACTER_TRACKING, 70) {
         _name = "Character Tracking";
     }
 

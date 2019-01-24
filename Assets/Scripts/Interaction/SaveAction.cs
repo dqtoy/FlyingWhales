@@ -22,7 +22,7 @@ public class SaveAction : Interaction {
         get { return _targetCharacter; }
     }
 
-    public SaveAction(BaseLandmark interactable) 
+    public SaveAction(Area interactable) 
         : base(interactable, INTERACTION_TYPE.SAVE_ACTION, 0) {
         _name = "Save Action";
         _jobFilter = new JOB[] { JOB.INSTIGATOR, JOB.DIPLOMAT };
@@ -109,7 +109,7 @@ public class SaveAction : Interaction {
          if its original home still has available resident capacity.
          */
         if (_targetCharacter == null 
-            || _targetCharacter.specificLocation.id != interactable.tileLocation.areaOfTile.id
+            || _targetCharacter.specificLocation.id != interactable.id
             || _targetCharacter.GetTrait("Abducted") == null
             || (_targetCharacter.GetTrait("Abducted") as Abducted).originalHome.IsResidentsFull()
             || targetCharacter.isDead) {
@@ -180,10 +180,10 @@ public class SaveAction : Interaction {
     private void AssistedReleaseSuccessRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-            state.descriptionLog.AddToFillers(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
+            state.descriptionLog.AddToFillers(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_1);
         }
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
-        state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1));
+        state.AddLogFiller(new LogFiller(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_1));
 
         //**Mechanics**: Remove Abducted trait from Character 2. Change Character 2 Home to its original one. Override his next tick to return home.
         _targetCharacter.ReleaseFromAbduction();
@@ -192,7 +192,7 @@ public class SaveAction : Interaction {
         CharacterManager.Instance.ChangePersonalRelationshipBetweenTwoCharacters(_targetCharacter, _characterInvolved, 1);
 
         //**Mechanics**: Relationship between the two factions -1
-        AdjustFactionsRelationship(_characterInvolved.faction, interactable.tileLocation.areaOfTile.owner, -1, state);
+        AdjustFactionsRelationship(_characterInvolved.faction, interactable.owner, -1, state);
 
         //**Level Up**: Releaser Character +1, Instigator Minion +1
         _characterInvolved.LevelUp();
@@ -201,13 +201,13 @@ public class SaveAction : Interaction {
     private void AssistedReleaseFailRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-            state.descriptionLog.AddToFillers(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
+            state.descriptionLog.AddToFillers(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_1);
         }
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
-        state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1));
+        state.AddLogFiller(new LogFiller(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_1));
 
         //**Mechanics**: Relationship between the two factions -1
-        AdjustFactionsRelationship(_characterInvolved.faction, interactable.tileLocation.areaOfTile.owner, -1, state);
+        AdjustFactionsRelationship(_characterInvolved.faction, interactable.owner, -1, state);
     }
     private void AssistedReleaseCriticalFailRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
@@ -235,26 +235,26 @@ public class SaveAction : Interaction {
     private void ThwartedReleaseFailRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-            state.descriptionLog.AddToFillers(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_2);
+            state.descriptionLog.AddToFillers(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_2);
         }
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
-        state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_2));
+        state.AddLogFiller(new LogFiller(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_2));
 
         //**Level Up**: Diplomat Minion +1
         investigatorCharacter.LevelUp();
         //**Mechanics**: Relationship between the player faction and Faction 2 +1
-        AdjustFactionsRelationship(PlayerManager.Instance.player.playerFaction, interactable.tileLocation.areaOfTile.owner, 1, state);
+        AdjustFactionsRelationship(PlayerManager.Instance.player.playerFaction, interactable.owner, 1, state);
     }
     private void ThwartedReleaseCriticalFailRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-            state.descriptionLog.AddToFillers(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_2);
+            state.descriptionLog.AddToFillers(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_2);
         }
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
-        state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_2));
+        state.AddLogFiller(new LogFiller(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_2));
 
         //**Mechanics**: Relationship between the player faction and Faction 2 +1
-        AdjustFactionsRelationship(PlayerManager.Instance.player.playerFaction, interactable.tileLocation.areaOfTile.owner, 1, state);
+        AdjustFactionsRelationship(PlayerManager.Instance.player.playerFaction, interactable.owner, 1, state);
         
         //**Mechanics**: Character Name 1 dies.
         _characterInvolved.Death();

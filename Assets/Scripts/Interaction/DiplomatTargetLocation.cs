@@ -11,7 +11,7 @@ public class DiplomatTargetLocation : Interaction {
     private LocationToken _targetLocationToken;
     private Character _expander;
 
-    public DiplomatTargetLocation(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.DIPLOMAT_TARGET_LOCATION, 0) {
+    public DiplomatTargetLocation(Area interactable) : base(interactable, INTERACTION_TYPE.DIPLOMAT_TARGET_LOCATION, 0) {
         _name = "Diplomat Target Location";
         _jobFilter = new JOB[] { JOB.DIPLOMAT };
     }
@@ -48,7 +48,7 @@ public class DiplomatTargetLocation : Interaction {
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Induce an expansion to " + _targetLocationToken.nameInBold + ".",
                 enabledTooltipText = "This location will send someone to occupy " + _targetLocationToken.location.name + ".",
-                disabledTooltipText = interactable.tileLocation.areaOfTile.owner.name + " cannot occupy " + _targetLocationToken.location.name + " due to racial incompatibility.",
+                disabledTooltipText = interactable.owner.name + " cannot occupy " + _targetLocationToken.location.name + " due to racial incompatibility.",
                 canBeDoneAction = () => CanInduceExpansion(),
                 effect = () => InduceOption(state),
             };
@@ -103,9 +103,9 @@ public class DiplomatTargetLocation : Interaction {
 
     private void SetExpander() {
         List<Character> expanders = new List<Character>();
-        for (int i = 0; i < interactable.tileLocation.areaOfTile.areaResidents.Count; i++) {
-            Character resident = interactable.tileLocation.areaOfTile.areaResidents[i];
-            if (resident.forcedInteraction == null && resident.doNotDisturb <= 0 && resident.IsInOwnParty() && !resident.isLeader && !resident.isDefender && !resident.currentParty.icon.isTravelling && resident.specificLocation.id == interactable.tileLocation.areaOfTile.id && _targetLocationToken.location.possibleOccupants.Contains(resident.race)) {
+        for (int i = 0; i < interactable.areaResidents.Count; i++) {
+            Character resident = interactable.areaResidents[i];
+            if (resident.forcedInteraction == null && resident.doNotDisturb <= 0 && resident.IsInOwnParty() && !resident.isLeader && !resident.isDefender && !resident.currentParty.icon.isTravelling && resident.specificLocation.id == interactable.id && _targetLocationToken.location.possibleOccupants.Contains(resident.race)) {
                 expanders.Add(resident);
             }
         }

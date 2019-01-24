@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class SuspiciousSoldierMeeting : Interaction {
 
-    public SuspiciousSoldierMeeting(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.SUSPICIOUS_SOLDIER_MEETING, 80) {
+    public SuspiciousSoldierMeeting(Area interactable) : base(interactable, INTERACTION_TYPE.SUSPICIOUS_SOLDIER_MEETING, 80) {
         _name = "Suspicious Soldier Meeting";
     }
 
@@ -81,7 +81,7 @@ public class SuspiciousSoldierMeeting : Interaction {
         effectWeights.AddElement("Demon Disappears", 5);
         effectWeights.AddElement("Nothing Happens", 15);
         effectWeights.AddElement("Army Gained", 5);
-        if (_interactable.faction.GetRelationshipWith(PlayerManager.Instance.player.playerFaction).relationshipStatus != FACTION_RELATIONSHIP_STATUS.ENEMY) {
+        if (_interactable.owner.GetRelationshipWith(PlayerManager.Instance.player.playerFaction).relationshipStatus != FACTION_RELATIONSHIP_STATUS.ENEMY) {
             effectWeights.AddElement("War Declared", 5);
         }
         string chosenEffect = effectWeights.PickRandomElementGivenWeights();
@@ -136,8 +136,7 @@ public class SuspiciousSoldierMeeting : Interaction {
     #region State Effects
     private void ReduceDefendersRewardEffect(InteractionState state) {
         //Each Defender slot in the Garrison loses a random percentage between 15% to 50%
-        BaseLandmark landmark = _interactable;
-        DefenderGroup randomGroup = landmark.tileLocation.areaOfTile.GetRandomDefenderGroup();
+        DefenderGroup randomGroup = interactable.GetRandomDefenderGroup();
         if(randomGroup != null) {
             if(randomGroup.party.characters.Count >= 2) {
                 int numOfDeserters = UnityEngine.Random.Range(1, 3);
@@ -163,7 +162,7 @@ public class SuspiciousSoldierMeeting : Interaction {
                     //this is for deserter2
                     Log newMinionLog = new Log(GameManager.Instance.Today(), "Events", GetType().ToString(), state.name.ToLower() + "_log1");
                     newMinionLog.AddToFillers(investigatorCharacter, investigatorCharacter.name, LOG_IDENTIFIER.MINION_1);
-                    newMinionLog.AddToFillers(interactable.tileLocation.areaOfTile, interactable.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
+                    newMinionLog.AddToFillers(interactable, interactable.name, LOG_IDENTIFIER.LANDMARK_1);
                     newMinionLog.AddToFillers(deserter2, deserter2.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     newMinionLog.AddLogToInvolvedObjects();
 
@@ -210,14 +209,14 @@ public class SuspiciousSoldierMeeting : Interaction {
     private void WarDeclaredRewardEffect(InteractionState state) {
         //Tile owner faction will declare war on player
         investigatorCharacter.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
-        FactionManager.Instance.DeclareWarBetween(_interactable.faction, PlayerManager.Instance.player.playerFaction);
+        FactionManager.Instance.DeclareWarBetween(_interactable.owner, PlayerManager.Instance.player.playerFaction);
         //if(state.descriptionLog != null) {
         //    state.descriptionLog.AddToFillers(_interactable.faction, _interactable.faction.name, LOG_IDENTIFIER.FACTION_1);
         //}
         //if (state.minionLog != null) {
         //    state.minionLog.AddToFillers(_interactable.faction, _interactable.faction.name, LOG_IDENTIFIER.FACTION_1);
         //}
-        state.AddLogFiller(new LogFiller(_interactable.faction, _interactable.faction.name, LOG_IDENTIFIER.FACTION_1));
+        state.AddLogFiller(new LogFiller(_interactable.owner, _interactable.owner.name, LOG_IDENTIFIER.FACTION_1));
     }
     private void ArmyGainedRewardEffect(InteractionState state) {
         investigatorCharacter.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));

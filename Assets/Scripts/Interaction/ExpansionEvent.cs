@@ -10,7 +10,7 @@ public class ExpansionEvent : Interaction {
     private const string Character_Injured_Minion = "Character Injured Minion";
     private const string Normal_Expansion = "Normal Expansion";
 
-    public ExpansionEvent(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.EXPANSION_EVENT, 0) {
+    public ExpansionEvent(Area interactable) : base(interactable, INTERACTION_TYPE.EXPANSION_EVENT, 0) {
         _name = "Expansion Event";
         _jobFilter = new JOB[] { JOB.INSTIGATOR };
     }
@@ -131,7 +131,7 @@ public class ExpansionEvent : Interaction {
         investigatorCharacter.Death();
         OwnArea(_characterInvolved);
         //Migrate Character to the new settlement
-        _characterInvolved.MigrateHomeTo(interactable.tileLocation.areaOfTile);
+        _characterInvolved.MigrateHomeTo(interactable);
         //**Level Up**: Expanding Character +1
         _characterInvolved.LevelUp();
     }
@@ -140,7 +140,7 @@ public class ExpansionEvent : Interaction {
         investigatorCharacter.AddTrait(AttributeManager.Instance.allTraits["Injured"]);
         OwnArea(_characterInvolved);
         //Migrate Character to the new settlement
-        _characterInvolved.MigrateHomeTo(interactable.tileLocation.areaOfTile);
+        _characterInvolved.MigrateHomeTo(interactable);
         //**Level Up**: Expanding Character +1
         _characterInvolved.LevelUp();
     }
@@ -148,14 +148,14 @@ public class ExpansionEvent : Interaction {
         //**Mechanic**: Location becomes part of Character's faction and its Race will be set as Character's Race
         OwnArea(_characterInvolved);
         //Migrate Character to the new settlement
-        _characterInvolved.MigrateHomeTo(interactable.tileLocation.areaOfTile);
+        _characterInvolved.MigrateHomeTo(interactable);
         //**Level Up**: Expanding Character +1
         _characterInvolved.LevelUp();
     }
     #endregion
 
     private void OwnArea(Character character) {
-        Area area = interactable.tileLocation.areaOfTile;
+        Area area = interactable;
         if (area.owner == null) {
             FactionManager.Instance.neutralFaction.RemoveFromOwnedAreas(area);
         }

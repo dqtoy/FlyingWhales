@@ -13,7 +13,7 @@ public class RecruitActionFaction : Interaction {
         get { return _targetCharacter; }
     }
 
-    public RecruitActionFaction(BaseLandmark interactable) 
+    public RecruitActionFaction(Area interactable) 
         : base(interactable, INTERACTION_TYPE.RECRUIT_ACTION_FACTION, 0) {
         _name = "Recruit Action Faction";
         _jobFilter = new JOB[] { JOB.INSTIGATOR, JOB.DIPLOMAT };
@@ -56,11 +56,11 @@ public class RecruitActionFaction : Interaction {
         }
     }
     public override bool CanInteractionBeDoneBy(Character character) {
-        if (interactable.tileLocation.areaOfTile.IsResidentsFull()) {
+        if (interactable.IsResidentsFull()) {
             return false;
         }
         if (_targetCharacter != null) { //if there is a target character, he/she must still be in this location
-            return _targetCharacter.specificLocation.id == interactable.tileLocation.areaOfTile.id;
+            return _targetCharacter.specificLocation.id == interactable.id;
         } else { //if there is no set target character
             if (GetTargetCharacter(character) == null) { //check if a target character can be found using the provided weights
                 return false;
@@ -119,7 +119,7 @@ public class RecruitActionFaction : Interaction {
         character.MigrateHomeTo(_characterInvolved.homeArea);
         //character.homeLandmark.RemoveCharacterHomeOnLandmark(character);
         //_characterInvolved.homeLandmark.AddCharacterHomeOnLandmark(character);
-        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, character.specificLocation.coreTile.landmarkOnTile);
+        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, character.specificLocation);
         character.SetForcedInteraction(interaction);
     }
 
@@ -135,8 +135,8 @@ public class RecruitActionFaction : Interaction {
             - not a Beast and not a Skeleton
          */
         List<Character> choices = new List<Character>();
-        for (int i = 0; i < interactable.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
-            Character currCharacter = interactable.tileLocation.areaOfTile.charactersAtLocation[i];
+        for (int i = 0; i < interactable.charactersAtLocation.Count; i++) {
+            Character currCharacter = interactable.charactersAtLocation[i];
             if (characterInvolved.GetFriendTraitWith(currCharacter) != null
                 && (currCharacter.isFactionless || currCharacter.faction.id != characterInvolved.faction.id) 
                 && !Utilities.IsRaceBeast(currCharacter.race)

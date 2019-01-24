@@ -64,7 +64,7 @@ public class Job {
             //area.SetStopDefaultInteractionsState(true);
             Interaction interaction = null;
             if (_attachedToken.tokenType != TOKEN_TYPE.SPECIAL) {
-                interaction = InteractionManager.Instance.CreateNewInteraction(_tokenInteractionTypes[_attachedToken.tokenType], _character.specificLocation.coreTile.landmarkOnTile);
+                interaction = InteractionManager.Instance.CreateNewInteraction(_tokenInteractionTypes[_attachedToken.tokenType], _character.specificLocation);
                 //interaction.AddEndInteractionAction(() => SetJobActionPauseState(false));
                 //interaction.AddEndInteractionAction(() => ForceDefaultAllExistingInteractions());
 
@@ -111,7 +111,7 @@ public class Job {
     }
     public virtual Interaction CreateSpecialTokenInteraction(SpecialToken specialToken) {
         if(specialToken.specialTokenType == SPECIAL_TOKEN.BOOK_OF_THE_DEAD) {
-            Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.CREATE_NECROMANCER, _character.specificLocation.coreTile.landmarkOnTile);
+            Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.CREATE_NECROMANCER, _character.specificLocation);
             for (int i = 0; i < _character.specificLocation.charactersAtLocation.Count; i++) {
                 //location has a male Human, Goblin or Elven character that is part of a Faction
                 Character characterAtLocation = _character.specificLocation.charactersAtLocation[i];
@@ -181,8 +181,8 @@ public class Job {
     }
     public void StopCreatedInteraction() {
         if(_createdInteraction != null) {
-            _createdInteraction.interactable.landmarkVisual.StopInteractionTimer();
-            _createdInteraction.interactable.landmarkVisual.HideInteractionTimer();
+            //_createdInteraction.interactable.landmarkVisual.StopInteractionTimer();
+            //_createdInteraction.interactable.landmarkVisual.HideInteractionTimer();
             string summary = string.Empty;
             _createdInteraction.TimedOutRunDefault(ref summary);
         }
@@ -251,7 +251,7 @@ public class Job {
             Area area = _character.specificLocation;
             INTERACTION_TYPE chosenType = choices[Random.Range(0, choices.Count)];
             //Get Random Explorer Event
-            return InteractionManager.Instance.CreateNewInteraction(chosenType, area.coreTile.landmarkOnTile);
+            return InteractionManager.Instance.CreateNewInteraction(chosenType, area);
         }
         return null;
     }

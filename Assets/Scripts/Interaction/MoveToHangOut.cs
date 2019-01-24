@@ -10,7 +10,7 @@ public class MoveToHangOut : Interaction {
 
     public Area targetLocation { get; private set; }
 
-    public MoveToHangOut(BaseLandmark interactable) 
+    public MoveToHangOut(Area interactable) 
         : base(interactable, INTERACTION_TYPE.MOVE_TO_HANG_OUT, 0) {
         _name = "Move To Hang Out";
         _jobFilter = new JOB[] { JOB.DEBILITATOR };
@@ -122,7 +122,7 @@ public class MoveToHangOut : Interaction {
     }
 
     private void CreateCharmEvent() {
-        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.CHARM_ACTION, _characterInvolved.specificLocation.coreTile.landmarkOnTile);
+        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.CHARM_ACTION, _characterInvolved.specificLocation);
         //(interaction as ImproveRelationsEvent).SetTargetFaction(targetFaction);
         //interaction.SetCanInteractionBeDoneAction(IsImproveRelationsValid);
         _characterInvolved.SetForcedInteraction(interaction);

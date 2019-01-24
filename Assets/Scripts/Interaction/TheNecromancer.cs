@@ -27,15 +27,13 @@ public class TheNecromancer : Interaction {
     private string Necromancer_Created = "Necromancer Created";
     private string Do_Nothing = "Do nothing";
 
-    public TheNecromancer(BaseLandmark interactable) 
+    public TheNecromancer(Area interactable) 
         : base(interactable, INTERACTION_TYPE.CREATE_NECROMANCER, 250) {
         _name = "The Necromancer";
     }
 
     #region Overrides
     public override void CreateStates() {
-        landmark = interactable;
-
         InteractionState startState = new InteractionState("Start", this);
 
         chosenMotivation = motivations[Random.Range(0, motivations.Length)];

@@ -26,7 +26,7 @@ public class ChanceEncounter : Interaction {
         get { return _targetCharacter; }
     }
 
-    public ChanceEncounter(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.CHANCE_ENCOUNTER, 0) {
+    public ChanceEncounter(Area interactable) : base(interactable, INTERACTION_TYPE.CHANCE_ENCOUNTER, 0) {
         _name = "Chance Encounter";
         _jobFilter = new JOB[] { JOB.INSTIGATOR, JOB.DIPLOMAT };
     }
@@ -260,8 +260,8 @@ public class ChanceEncounter : Interaction {
     }
     public Character GetTargetCharacter(Character characterInvolved) {
         List<Character> characterList = new List<Character>();
-        for (int i = 0; i < interactable.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
-            Character currCharacter = interactable.tileLocation.areaOfTile.charactersAtLocation[i];
+        for (int i = 0; i < interactable.charactersAtLocation.Count; i++) {
+            Character currCharacter = interactable.charactersAtLocation[i];
             if (currCharacter.forcedInteraction == null && currCharacter.id != characterInvolved.id
                 && currCharacter.characterClass.roleType != CHARACTER_ROLE.BEAST && currCharacter.race != RACE.SKELETON) {
                 characterList.Add(currCharacter);

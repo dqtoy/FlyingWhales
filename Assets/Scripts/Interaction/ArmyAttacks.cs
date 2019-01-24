@@ -15,13 +15,12 @@ public class ArmyAttacks : Interaction {
     private const string redirectionFailure = "Redirection Failure";
     private const string doNothing = "Do nothing";
 
-    public ArmyAttacks(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.ARMY_ATTACKS, 150) {
+    public ArmyAttacks(Area interactable) : base(interactable, INTERACTION_TYPE.ARMY_ATTACKS, 150) {
         _name = "Army Attacks";
     }
 
     #region Overrides
     public override void CreateStates() {
-        landmark = _interactable;
         Faction targetFaction = landmark.owner.GetFactionWithRelationship(FACTION_RELATIONSHIP_STATUS.ENEMY);
         targetArea = targetFaction.ownedAreas[Random.Range(0, targetFaction.ownedAreas.Count)];
         target = targetArea.GetRandomExposedLandmark();

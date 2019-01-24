@@ -15,7 +15,7 @@ public class MoveToRecruit : Interaction {
         get { return _targetCharacter; }
     }
 
-    public MoveToRecruit(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_RECRUIT, 0) {
+    public MoveToRecruit(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_RECRUIT, 0) {
         _name = "Move To Recruit";
         _jobFilter = new JOB[] { JOB.DEBILITATOR };
     }
@@ -138,7 +138,7 @@ public class MoveToRecruit : Interaction {
         _characterInvolved.ownParty.GoToLocation(targetLocation, PATHFINDING_MODE.NORMAL, () => CreateRecruitEvent());
     }
     private void CreateRecruitEvent() {
-        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.RECRUIT_ACTION, targetLocation.coreTile.landmarkOnTile);
+        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.RECRUIT_ACTION, targetLocation);
         (interaction as RecruitAction).SetTargetCharacter(_targetCharacter);
         //interaction.SetCanInteractionBeDoneAction(() => IsRecruitActionStillValid(interaction as RecruitAction));
         _characterInvolved.SetForcedInteraction(interaction);

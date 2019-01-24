@@ -40,7 +40,7 @@ public class ActionOption {
         duration = 0;
     }
 
-    public void ActivateOption(BaseLandmark interactable) {
+    public void ActivateOption(Area interactable) {
         if (interactionState.interaction.isChosen) { //Only those interaction that pops up must have cost, all other interactions are free since they will all default
             PlayerManager.Instance.player.AdjustCurrency(cost.currency, -cost.amount);
         }

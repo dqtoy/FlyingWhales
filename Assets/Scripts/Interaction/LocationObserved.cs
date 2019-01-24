@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class LocationObserved : Interaction {
 
-    public LocationObserved(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.LOCATION_OBSERVED, 70) {
+    public LocationObserved(Area interactable) : base(interactable, INTERACTION_TYPE.LOCATION_OBSERVED, 70) {
         _name = "Location Observed";
     }
 
@@ -23,7 +23,7 @@ public class LocationObserved : Interaction {
     private void LocationObservedEffect(InteractionState state) {
         //**Mechanics**: Unlock Location Intel
         //**Log**: [Minion Name] obtained intel about [Location Name].
-        PlayerManager.Instance.player.AddToken(interactable.tileLocation.areaOfTile.locationToken);
+        PlayerManager.Instance.player.AddToken(interactable.locationToken);
         investigatorCharacter.LevelUp();
     }
 }

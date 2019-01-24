@@ -11,7 +11,7 @@ public class SpySpawnInteraction4 : Interaction {
 
     private Character _character1;
 
-    public SpySpawnInteraction4(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.SPY_SPAWN_INTERACTION_4, 0) {
+    public SpySpawnInteraction4(Area interactable) : base(interactable, INTERACTION_TYPE.SPY_SPAWN_INTERACTION_4, 0) {
         _name = "Spy Spawn Interaction 4";
         _jobFilter = new JOB[] { JOB.SPY };
     }
@@ -154,7 +154,7 @@ public class SpySpawnInteraction4 : Interaction {
 
         state.descriptionLog.AddToFillers(null, _character1.faction.factionToken.tokenName, LOG_IDENTIFIER.STRING_1);
 
-        //state.AddLogFiller(new LogFiller(null, interactable.tileLocation.areaOfTile.locationToken.ToString(), LOG_IDENTIFIER.STRING_1));
+        //state.AddLogFiller(new LogFiller(null, interactable.locationToken.ToString(), LOG_IDENTIFIER.STRING_1));
     }
     private void DoNothingEffect(InteractionState state) {
         state.SetUseTokeneerMinionOnly(true);
@@ -163,9 +163,9 @@ public class SpySpawnInteraction4 : Interaction {
 
     private void SetCharacter1() {
         List<Character> characters = new List<Character>();
-        for (int i = 0; i < interactable.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
-            Character character = interactable.tileLocation.areaOfTile.charactersAtLocation[i];
-            if (character.faction.id != PlayerManager.Instance.player.playerFaction.id && character.faction.id != FactionManager.Instance.neutralFaction.id && character.homeArea.id != interactable.tileLocation.areaOfTile.id) {
+        for (int i = 0; i < interactable.charactersAtLocation.Count; i++) {
+            Character character = interactable.charactersAtLocation[i];
+            if (character.faction.id != PlayerManager.Instance.player.playerFaction.id && character.faction.id != FactionManager.Instance.neutralFaction.id && character.homeArea.id != interactable.id) {
                 characters.Add(character);
             }
         }

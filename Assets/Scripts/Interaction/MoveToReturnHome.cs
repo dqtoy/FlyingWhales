@@ -6,7 +6,7 @@ public class MoveToReturnHome : Interaction {
 
     private Area targetLocation;
 
-    public MoveToReturnHome(BaseLandmark interactable) 
+    public MoveToReturnHome(Area interactable) 
         : base(interactable, INTERACTION_TYPE.MOVE_TO_RETURN_HOME, 0) {
         _name = "Move To Return Home";
     }

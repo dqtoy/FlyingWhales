@@ -58,14 +58,14 @@ public class Explorer : Job {
                     }
                     break;
                 case RESULT.FAIL:
-                    interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_FAILED, character.specificLocation.coreTile.landmarkOnTile);
+                    interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_FAILED, character.specificLocation);
                     interaction.AddEndInteractionAction(() => StartJobAction());
                     interaction.ScheduleSecondTimeOut();
                     character.specificLocation.coreTile.landmarkOnTile.AddInteraction(interaction);
                     SetCreatedInteraction(interaction);
                     break;
                 case RESULT.CRITICAL_FAIL:
-                    interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_CRITICAL_FAIL, character.specificLocation.coreTile.landmarkOnTile);
+                    interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_CRITICAL_FAIL, character.specificLocation);
                     interaction.AddEndInteractionAction(() => StartJobAction());
                     interaction.ScheduleSecondTimeOut();
                     character.specificLocation.coreTile.landmarkOnTile.AddInteraction(interaction);
@@ -118,7 +118,7 @@ public class Explorer : Job {
             area.SetStopDefaultInteractionsState(true);
             SetJobActionPauseState(true);
             INTERACTION_TYPE chosenInteractionType = choices[UnityEngine.Random.Range(0, choices.Count)];
-            Interaction interaction = InteractionManager.Instance.CreateNewInteraction(chosenInteractionType, _character.specificLocation.coreTile.landmarkOnTile);
+            Interaction interaction = InteractionManager.Instance.CreateNewInteraction(chosenInteractionType, _character.specificLocation);
             interaction.AddEndInteractionAction(() => SetJobActionPauseState(false));
             interaction.AddEndInteractionAction(() => ForceDefaultAllExistingInteractions());
             _character.specificLocation.coreTile.landmarkOnTile.AddInteraction(interaction);
@@ -144,7 +144,7 @@ public class Explorer : Job {
             Area area = _character.specificLocation;
             INTERACTION_TYPE chosenType = choices[Random.Range(0, choices.Count)];
             //Get Random Explorer Event
-            return InteractionManager.Instance.CreateNewInteraction(chosenType, area.coreTile.landmarkOnTile);
+            return InteractionManager.Instance.CreateNewInteraction(chosenType, area);
         }
         return null;
     }

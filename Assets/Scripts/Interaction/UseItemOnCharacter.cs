@@ -16,7 +16,7 @@ public class UseItemOnCharacter : Interaction {
         get { return _targetCharacter; }
     }
 
-    public UseItemOnCharacter(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.USE_ITEM_ON_CHARACTER, 0) {
+    public UseItemOnCharacter(Area interactable) : base(interactable, INTERACTION_TYPE.USE_ITEM_ON_CHARACTER, 0) {
         _name = "Use Item On Character";
         _jobFilter = new JOB[] { JOB.DEBILITATOR };
     }

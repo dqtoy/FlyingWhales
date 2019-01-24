@@ -10,7 +10,7 @@ public class MoveToReanimate : Interaction {
 
     public Area targetLocation { get; private set; }
 
-    public MoveToReanimate(BaseLandmark interactable) 
+    public MoveToReanimate(Area interactable) 
         : base(interactable, INTERACTION_TYPE.MOVE_TO_REANIMATE, 0) {
         _name = "Move To Reanimate";
         _jobFilter = new JOB[] { JOB.DEBILITATOR };
@@ -125,7 +125,7 @@ public class MoveToReanimate : Interaction {
     }
 
     private void CreateEvent() {
-        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.REANIMATE_ACTION, targetLocation.coreTile.landmarkOnTile);
+        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.REANIMATE_ACTION, targetLocation);
         _characterInvolved.SetForcedInteraction(interaction);
     }
 

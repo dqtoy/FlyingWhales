@@ -69,7 +69,7 @@ public class FearSpell : SpecialToken {
         //**Mechanics**: Target character will trigger https://trello.com/c/vDKl0cyy/859-character-flees on the next tick (overriding any other action).
         if (state.target is Character) {
             Character target = state.target as Character;
-            Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.CHARACTER_FLEES, target.specificLocation.coreTile.landmarkOnTile);
+            Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.CHARACTER_FLEES, target.specificLocation);
             target.SetForcedInteraction(interaction);
         }
     }
@@ -80,7 +80,7 @@ public class FearSpell : SpecialToken {
         //**Mechanics**: Target character will trigger https://trello.com/c/vDKl0cyy/859-character-flees on the next tick (overriding any other action).
         if (state.target is Character) {
             Character target = state.target as Character;
-            Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.CHARACTER_FLEES, target.specificLocation.coreTile.landmarkOnTile);
+            Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.CHARACTER_FLEES, target.specificLocation);
             target.SetForcedInteraction(interaction);
         }
 

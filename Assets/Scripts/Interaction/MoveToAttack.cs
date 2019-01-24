@@ -7,7 +7,7 @@ public class MoveToAttack : Interaction {
     private Area _target;
     private List<Character> _attackers;
 
-    public MoveToAttack(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_ATTACK, 0) {
+    public MoveToAttack(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_ATTACK, 0) {
         _name = "Move To Attack";
         _jobFilter = new JOB[] { JOB.DEBILITATOR };
     }
@@ -20,7 +20,7 @@ public class MoveToAttack : Interaction {
     #region Overrides
     public override void CreateStates() {
         if (_target != null && _attackers != null) {
-            interactable.tileLocation.areaOfTile.SetAttackTargetAndCharacters(_target, _attackers);
+            interactable.SetAttackTargetAndCharacters(_target, _attackers);
         }
         InteractionState startState = new InteractionState("Start", this);
         InteractionState stopSuccessfulState = new InteractionState("Stop Successful", this);
@@ -28,9 +28,9 @@ public class MoveToAttack : Interaction {
         InteractionState doNothingState = new InteractionState("Do Nothing", this);
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
-        startStateDescriptionLog.AddToFillers(interactable.tileLocation.areaOfTile.attackTarget, interactable.tileLocation.areaOfTile.attackTarget.name, LOG_IDENTIFIER.LANDMARK_2);
-        for (int i = 0; i < interactable.tileLocation.areaOfTile.attackCharacters.Count; i++) {
-            startStateDescriptionLog.AddToFillers(interactable.tileLocation.areaOfTile.attackCharacters[i], interactable.tileLocation.areaOfTile.attackCharacters[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1, false);
+        startStateDescriptionLog.AddToFillers(interactable.attackTarget, interactable.attackTarget.name, LOG_IDENTIFIER.LANDMARK_2);
+        for (int i = 0; i < interactable.attackCharacters.Count; i++) {
+            startStateDescriptionLog.AddToFillers(interactable.attackCharacters[i], interactable.attackCharacters[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1, false);
         }
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 
@@ -73,10 +73,10 @@ public class MoveToAttack : Interaction {
         }
     }
     public override bool CanInteractionBeDoneBy(Character character) {
-        return interactable.tileLocation.areaOfTile.owner != null;
+        return interactable.owner != null;
     }
     //public override bool CanStillDoInteraction() {
-    //    return interactable.tileLocation.areaOfTile.owner != null;
+    //    return interactable.owner != null;
     //}
     #endregion
 
@@ -102,41 +102,41 @@ public class MoveToAttack : Interaction {
         investigatorCharacter.LevelUp();
         MinionSuccess();
 
-        if (interactable.tileLocation.areaOfTile.owner == null) {
+        if (interactable.owner == null) {
             state.descriptionLog.AddToFillers(null, FactionManager.Instance.neutralFaction.name, LOG_IDENTIFIER.FACTION_1);
             state.AddLogFiller(new LogFiller(null, FactionManager.Instance.neutralFaction.name, LOG_IDENTIFIER.FACTION_1));
         } else {
-            state.descriptionLog.AddToFillers(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
-            state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1));
+            state.descriptionLog.AddToFillers(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_1);
+            state.AddLogFiller(new LogFiller(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_1));
         }
-        state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.attackTarget, interactable.tileLocation.areaOfTile.attackTarget.name, LOG_IDENTIFIER.LANDMARK_2));
+        state.AddLogFiller(new LogFiller(interactable.attackTarget, interactable.attackTarget.name, LOG_IDENTIFIER.LANDMARK_2));
 
-        interactable.tileLocation.areaOfTile.SetAttackTargetAndCharacters(null, null);
+        interactable.SetAttackTargetAndCharacters(null, null);
     }
     private void StopFailEffect(InteractionState state) {
-        if (interactable.tileLocation.areaOfTile.owner == null) {
+        if (interactable.owner == null) {
             state.descriptionLog.AddToFillers(null, FactionManager.Instance.neutralFaction.name, LOG_IDENTIFIER.FACTION_1);
             state.AddLogFiller(new LogFiller(null, FactionManager.Instance.neutralFaction.name, LOG_IDENTIFIER.FACTION_1));
         } else {
-            state.descriptionLog.AddToFillers(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
-            state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1));
+            state.descriptionLog.AddToFillers(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_1);
+            state.AddLogFiller(new LogFiller(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_1));
         }
-        state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.attackTarget, interactable.tileLocation.areaOfTile.attackTarget.name, LOG_IDENTIFIER.LANDMARK_2));
+        state.AddLogFiller(new LogFiller(interactable.attackTarget, interactable.attackTarget.name, LOG_IDENTIFIER.LANDMARK_2));
 
-        interactable.tileLocation.areaOfTile.AttackTarget();
+        interactable.AttackTarget();
     }
     private void DoNothingEffect(InteractionState state) {
-        if(interactable.tileLocation.areaOfTile.owner == null) {
+        if(interactable.owner == null) {
             state.AddLogFiller(new LogFiller(null, FactionManager.Instance.neutralFaction.name, LOG_IDENTIFIER.FACTION_1));
         } else {
-            state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1));
+            state.AddLogFiller(new LogFiller(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_1));
         }
-        state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.attackTarget, interactable.tileLocation.areaOfTile.attackTarget.name, LOG_IDENTIFIER.LANDMARK_2));
-        for (int i = 0; i < interactable.tileLocation.areaOfTile.attackCharacters.Count; i++) {
-            state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.attackCharacters[i], interactable.tileLocation.areaOfTile.attackCharacters[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1), false);
+        state.AddLogFiller(new LogFiller(interactable.attackTarget, interactable.attackTarget.name, LOG_IDENTIFIER.LANDMARK_2));
+        for (int i = 0; i < interactable.attackCharacters.Count; i++) {
+            state.AddLogFiller(new LogFiller(interactable.attackCharacters[i], interactable.attackCharacters[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1), false);
         }
 
-        interactable.tileLocation.areaOfTile.AttackTarget();
+        interactable.AttackTarget();
     }
     #endregion
 }

@@ -45,8 +45,6 @@ public class BaseLandmark : ILocation {
     
     public bool hasAdjacentCorruptedLandmark;
 
-    //private List<Buff> defenderBuffs;
-
     #region getters/setters
     public int id {
         get { return _id; }
@@ -284,22 +282,6 @@ public class BaseLandmark : ILocation {
         _owner = newOwner;
         _isOccupied = true;
         _location.Occupy();
-    }
-    #endregion
-
-    #region Characters
-    public void SpawnRandomCharacters(int howMany) {
-        if (tileLocation.areaOfTile.IsResidentsFull()) {
-            return;
-        }
-        WeightedDictionary<AreaCharacterClass> classWeights = tileLocation.areaOfTile.GetClassWeights();
-        for (int i = 0; i < howMany; i++) {
-            if (tileLocation.areaOfTile.IsResidentsFull()) {
-                break;
-            }
-            string classNameToBeSpawned = classWeights.PickRandomElementGivenWeights().className;
-            Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(classNameToBeSpawned, tileLocation.areaOfTile.raceType, Utilities.GetRandomGender(), tileLocation.areaOfTile.owner, this.tileLocation.areaOfTile);
-        }
     }
     #endregion
 

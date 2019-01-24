@@ -16,7 +16,7 @@ public class MoveToSave : Interaction {
         get { return _targetCharacter; }
     }
 
-    public MoveToSave(BaseLandmark interactable) 
+    public MoveToSave(Area interactable) 
         : base(interactable, INTERACTION_TYPE.MOVE_TO_SAVE, 0) {
         _name = "Move To Save";
         _jobFilter = new JOB[] { JOB.DEBILITATOR };
@@ -132,7 +132,7 @@ public class MoveToSave : Interaction {
     }
 
     private void CreateEvent() {
-        SaveAction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.SAVE_ACTION, _characterInvolved.specificLocation.coreTile.landmarkOnTile) as SaveAction;
+        SaveAction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.SAVE_ACTION, _characterInvolved.specificLocation) as SaveAction;
         interaction.SetTargetCharacter(_targetCharacter);
         _characterInvolved.SetForcedInteraction(interaction);
     }

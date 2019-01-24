@@ -60,17 +60,17 @@ public class Recruiter : Job {
             string result = "Success"; // weights.PickRandomElementGivenWeights();
             Interaction interaction = null;
             if (result == "Success") {
-                interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_RECRUIT_CHARACTER, area.coreTile.landmarkOnTile);
+                interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_RECRUIT_CHARACTER, area);
                 interaction.AddEndInteractionAction(() => StartJobAction());
                 interaction.ScheduleSecondTimeOut();
                 chosenCharacter.AddInteraction(interaction);
             } else if (result == "Fail") {
-                interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_FAILED, area.coreTile.landmarkOnTile);
+                interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_FAILED, area);
                 interaction.AddEndInteractionAction(() => StartJobAction());
                 interaction.ScheduleSecondTimeOut();
                 _character.specificLocation.coreTile.landmarkOnTile.AddInteraction(interaction);
             } else if (result == "Crit Fail") {
-                interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_CRITICAL_FAIL, area.coreTile.landmarkOnTile);
+                interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_CRITICAL_FAIL, area);
                 interaction.AddEndInteractionAction(() => StartJobAction());
                 interaction.ScheduleSecondTimeOut();
                 _character.specificLocation.coreTile.landmarkOnTile.AddInteraction(interaction);
@@ -129,7 +129,7 @@ public class Recruiter : Job {
         if (result == "Success") {
             SetCreatedInteraction(choices[UnityEngine.Random.Range(0, choices.Count)]);
         } else if (result == "Crit Fail") {
-            Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_CRITICAL_FAIL, area.coreTile.landmarkOnTile);
+            Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_CRITICAL_FAIL, area);
             _character.specificLocation.coreTile.landmarkOnTile.AddInteraction(interaction);
             SetCreatedInteraction(interaction);
         }

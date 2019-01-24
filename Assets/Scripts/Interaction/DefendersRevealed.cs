@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class DefendersRevealed : Interaction {
-    public DefendersRevealed(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.DEFENDERS_REVEALED, 70) {
+    public DefendersRevealed(Area interactable) : base(interactable, INTERACTION_TYPE.DEFENDERS_REVEALED, 70) {
     }
 
     #region Overrides
@@ -22,7 +22,7 @@ public class DefendersRevealed : Interaction {
     private void DefenderRevealedEffect(InteractionState state) {
         //**Mechanics**: Unlock Location's Defender Tile
         //**Log**: [Minion Name] obtained intel about [Location Name]'s defenders.
-        PlayerManager.Instance.player.AddToken(interactable.tileLocation.areaOfTile.defenderToken);
+        PlayerManager.Instance.player.AddToken(interactable.defenderToken);
         investigatorCharacter.LevelUp();
     }
 }

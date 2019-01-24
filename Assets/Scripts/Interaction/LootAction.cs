@@ -8,7 +8,7 @@ public class LootAction : Interaction {
     private const string Normal_Loot_Fail = "Normal Loot Fail";
     private const string Normal_Loot_Critical_Fail = "Normal Loot Critical Fail";
 
-    public LootAction(BaseLandmark interactable): base(interactable, INTERACTION_TYPE.LOOT_ACTION, 0) {
+    public LootAction(Area interactable): base(interactable, INTERACTION_TYPE.LOOT_ACTION, 0) {
         _name = "Loot Action";
         _category = INTERACTION_CATEGORY.INVENTORY;
         _alignment = INTERACTION_ALIGNMENT.EVIL;
@@ -48,7 +48,7 @@ public class LootAction : Interaction {
         }
     }
     public override bool CanInteractionBeDoneBy(Character character) {
-        if(character.isHoldingItem || interactable.tileLocation.areaOfTile.possibleSpecialTokenSpawns.Count <= 0) {
+        if(character.isHoldingItem || interactable.possibleSpecialTokenSpawns.Count <= 0) {
             return false;
         }
         return base.CanInteractionBeDoneBy(character);
@@ -71,9 +71,9 @@ public class LootAction : Interaction {
     private void NormalLootSuccessEffect(InteractionState state) {
         _characterInvolved.LevelUp();
 
-        SpecialToken lootedItem = interactable.tileLocation.areaOfTile.possibleSpecialTokenSpawns[UnityEngine.Random.Range(0, interactable.tileLocation.areaOfTile.possibleSpecialTokenSpawns.Count)];
+        SpecialToken lootedItem = interactable.possibleSpecialTokenSpawns[UnityEngine.Random.Range(0, interactable.possibleSpecialTokenSpawns.Count)];
         _characterInvolved.ObtainToken(lootedItem);
-        interactable.tileLocation.areaOfTile.RemoveSpecialTokenFromLocation(lootedItem);
+        interactable.RemoveSpecialTokenFromLocation(lootedItem);
 
         state.descriptionLog.AddToFillers(lootedItem, lootedItem.name, LOG_IDENTIFIER.ITEM_1);
 

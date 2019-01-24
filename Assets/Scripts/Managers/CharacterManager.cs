@@ -194,16 +194,13 @@ public class CharacterManager : MonoBehaviour {
         Party party = newCharacter.CreateOwnParty();
         if (data.locationID != -1) {
             Area currentLocation = LandmarkManager.Instance.GetAreaByID(data.locationID);
+            if (currentLocation != null) {
 #if !WORLD_CREATION_TOOL
-            party.CreateIcon();
-            party.icon.SetPosition(currentLocation.coreTile.transform.position);            
+                party.CreateIcon();
+                party.icon.SetPosition(currentLocation.coreTile.transform.position);            
 #endif
-            currentLocation.AddCharacterToLocation(party);
-#if WORLD_CREATION_TOOL
-            else{
-                party.SetSpecificLocation(currentLocation);
+                currentLocation.AddCharacterToLocation(party);
             }
-#endif
         }
 
         if (data.equipmentData != null) {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Attack : Interaction {
-    //interactable.tileLocation.areaOfTile is the TARGET
+    //interactable is the TARGET
     //characterInvolved.currentParty.characters are the ATTACKERS
 
     private DefenderGroup _defenderGroup;
@@ -22,7 +22,7 @@ public class Attack : Interaction {
     private const string Normal_Attackers_Lost = "Normal Attackers Lost";
     private const string Normal_Attackers_No_Defense = "Normal Attackers No Defense";
 
-    public Attack(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.ATTACK, 0) {
+    public Attack(Area interactable) : base(interactable, INTERACTION_TYPE.ATTACK, 0) {
         _name = "Attack";
         _jobFilter = new JOB[] { JOB.DIPLOMAT };
     }
@@ -116,7 +116,7 @@ public class Attack : Interaction {
         //Add minion to support
         _characterInvolved.currentParty.AddCharacter(_supporterMinion.character);
 
-        _defenderGroup = interactable.tileLocation.areaOfTile.GetDefenseGroup();
+        _defenderGroup = interactable.GetDefenseGroup();
         _combat = null;
         if (_defenderGroup != null && _defenderGroup.party != null) {
             _combat = _characterInvolved.currentParty.CreateCombatWith(_defenderGroup.party);
@@ -137,7 +137,7 @@ public class Attack : Interaction {
     }
     private void SupportDefendersOption(InteractionState state) {
         _supporterMinion = state.assignedMinion;
-        _defenderGroup = interactable.tileLocation.areaOfTile.GetDefenseGroup();
+        _defenderGroup = interactable.GetDefenseGroup();
         _combat = null;
         if (_defenderGroup != null && _defenderGroup.party != null) {
             //Add minion to support
@@ -167,7 +167,7 @@ public class Attack : Interaction {
         }
     }
     private void StandAsideOption() {
-        _defenderGroup = interactable.tileLocation.areaOfTile.GetDefenseGroup();
+        _defenderGroup = interactable.GetDefenseGroup();
         _combat = null;
         if (_defenderGroup != null && _defenderGroup.party != null) {
             _combat = _characterInvolved.currentParty.CreateCombatWith(_defenderGroup.party);
@@ -211,19 +211,19 @@ public class Attack : Interaction {
                 state.AddLogFiller(new LogFiller(_combat.charactersSideB[i], _combat.charactersSideB[i].name, LOG_IDENTIFIER.CHARACTER_LIST_2), false);
             }
         }
-        //DefenderGroup newDefenders = interactable.tileLocation.areaOfTile.GetFirstDefenderGroup();
+        //DefenderGroup newDefenders = interactable.GetFirstDefenderGroup();
         //if (newDefenders == null) {
 
         Log log = new Log(GameManager.Instance.Today(), "Events", GetType().ToString(), state.name.ToLower() + "_special");
-        log.AddToFillers(interactable.tileLocation.areaOfTile, interactable.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
-        if(interactable.tileLocation.areaOfTile.owner == null) {
+        log.AddToFillers(interactable, interactable.name, LOG_IDENTIFIER.LANDMARK_1);
+        if(interactable.owner == null) {
             log.AddToFillers(null, FactionManager.Instance.neutralFaction.name, LOG_IDENTIFIER.FACTION_1);
         } else {
-            log.AddToFillers(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
+            log.AddToFillers(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_1);
         }
         state.AddLogToInvolvedObjects(log);
 
-        interactable.tileLocation.areaOfTile.Death();
+        interactable.Death();
         //}
     }
     private void HelpedAttackersLostEffect(InteractionState state) {
@@ -254,19 +254,19 @@ public class Attack : Interaction {
         state.descriptionLog.AddToFillers(_supporterMinion.character, _supporterMinion.character.name, LOG_IDENTIFIER.MINION_2);
 
         state.AddLogFiller(new LogFiller(_supporterMinion.character, _supporterMinion.character.name, LOG_IDENTIFIER.MINION_2));
-        if (interactable.tileLocation.areaOfTile.owner == null) {
+        if (interactable.owner == null) {
             state.AddLogFiller(new LogFiller(null, FactionManager.Instance.neutralFaction.name, LOG_IDENTIFIER.FACTION_1));
         } else {
-            state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1));
+            state.AddLogFiller(new LogFiller(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_1));
         }
         for (int i = 0; i < characterInvolved.currentParty.characters.Count; i++) {
             state.AddLogFiller(new LogFiller(characterInvolved.currentParty.characters[i], characterInvolved.currentParty.characters[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1), false);
         }
 
-        interactable.tileLocation.areaOfTile.Death();
+        interactable.Death();
     }
     private void HelpedDefendersLostEffect(InteractionState state) {
-        interactable.tileLocation.areaOfTile.owner.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, 1);
+        interactable.owner.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, 1);
 
         state.descriptionLog.AddToFillers(_supporterMinion.character, _supporterMinion.character.name, LOG_IDENTIFIER.MINION_2);
         state.AddLogFiller(new LogFiller(_supporterMinion.character, _supporterMinion.character.name, LOG_IDENTIFIER.MINION_2));
@@ -278,23 +278,23 @@ public class Attack : Interaction {
             state.AddLogFiller(new LogFiller(_combat.charactersSideB[i], _combat.charactersSideB[i].name, LOG_IDENTIFIER.CHARACTER_LIST_2), false);
         }
 
-        //DefenderGroup newDefenders = interactable.tileLocation.areaOfTile.GetFirstDefenderGroup();
+        //DefenderGroup newDefenders = interactable.GetFirstDefenderGroup();
         //if (newDefenders == null) {
 
         Log log = new Log(GameManager.Instance.Today(), "Events", GetType().ToString(), state.name.ToLower() + "_special");
-        log.AddToFillers(interactable.tileLocation.areaOfTile, interactable.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
-        if (interactable.tileLocation.areaOfTile.owner == null) {
+        log.AddToFillers(interactable, interactable.name, LOG_IDENTIFIER.LANDMARK_1);
+        if (interactable.owner == null) {
             log.AddToFillers(null, FactionManager.Instance.neutralFaction.name, LOG_IDENTIFIER.FACTION_1);
         } else {
-            log.AddToFillers(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
+            log.AddToFillers(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_1);
         }
         state.AddLogToInvolvedObjects(log);
 
-        interactable.tileLocation.areaOfTile.Death();
+        interactable.Death();
         //}
     }
     private void HelpedDefendersWonEffect(InteractionState state) {
-        interactable.tileLocation.areaOfTile.owner.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, 2);
+        interactable.owner.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, 2);
         _supporterMinion.character.currentParty.RemoveCharacter(_supporterMinion.character);
         _supporterMinion.SetEnabledState(true);
 
@@ -309,24 +309,24 @@ public class Attack : Interaction {
         }
     }
     private void SoloDefenseLostEffect(InteractionState state) {
-        interactable.tileLocation.areaOfTile.owner.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, 1);
+        interactable.owner.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, 1);
 
         state.descriptionLog.AddToFillers(_supporterMinion.character, _supporterMinion.character.name, LOG_IDENTIFIER.MINION_2);
         state.AddLogFiller(new LogFiller(_supporterMinion.character, _supporterMinion.character.name, LOG_IDENTIFIER.MINION_2));
-        if (interactable.tileLocation.areaOfTile.owner == null) {
+        if (interactable.owner == null) {
             state.AddLogFiller(new LogFiller(null, FactionManager.Instance.neutralFaction.name, LOG_IDENTIFIER.FACTION_1));
         } else {
-            state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1));
+            state.AddLogFiller(new LogFiller(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_1));
         }
         for (int i = 0; i < _combat.charactersSideA.Count; i++) {
             state.descriptionLog.AddToFillers(_combat.charactersSideA[i], _combat.charactersSideA[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1, false);
             state.AddLogFiller(new LogFiller(_combat.charactersSideA[i], _combat.charactersSideA[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1), false);
         }
 
-        interactable.tileLocation.areaOfTile.Death();
+        interactable.Death();
     }
     private void SoloDefenseWonEffect(InteractionState state) {
-        interactable.tileLocation.areaOfTile.owner.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, 2);
+        interactable.owner.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, 2);
         _supporterMinion.SetEnabledState(true);
 
         state.descriptionLog.AddToFillers(_supporterMinion.character, _supporterMinion.character.name, LOG_IDENTIFIER.MINION_2);
@@ -347,19 +347,19 @@ public class Attack : Interaction {
             state.AddLogFiller(new LogFiller(_combat.charactersSideB[i], _combat.charactersSideB[i].name, LOG_IDENTIFIER.CHARACTER_LIST_2), false);
         }
 
-        //DefenderGroup newDefenders = interactable.tileLocation.areaOfTile.GetFirstDefenderGroup();
+        //DefenderGroup newDefenders = interactable.GetFirstDefenderGroup();
         //if (newDefenders == null) {
 
         Log log = new Log(GameManager.Instance.Today(), "Events", GetType().ToString(), state.name.ToLower() + "_special");
-        log.AddToFillers(interactable.tileLocation.areaOfTile, interactable.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
-        if (interactable.tileLocation.areaOfTile.owner == null) {
+        log.AddToFillers(interactable, interactable.name, LOG_IDENTIFIER.LANDMARK_1);
+        if (interactable.owner == null) {
             log.AddToFillers(null, FactionManager.Instance.neutralFaction.name, LOG_IDENTIFIER.FACTION_1);
         } else {
-            log.AddToFillers(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
+            log.AddToFillers(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_1);
         }
         state.AddLogToInvolvedObjects(log);
 
-        interactable.tileLocation.areaOfTile.Death();
+        interactable.Death();
         //}
     }
     private void NormalAttackersLostEffect(InteractionState state) {
@@ -373,17 +373,17 @@ public class Attack : Interaction {
         }
     }
     private void NormalAttackersNoDefenseEffect(InteractionState state) {
-        if (interactable.tileLocation.areaOfTile.owner == null) {
+        if (interactable.owner == null) {
             state.AddLogFiller(new LogFiller(null, FactionManager.Instance.neutralFaction.name, LOG_IDENTIFIER.FACTION_1));
         } else {
-            state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1));
+            state.AddLogFiller(new LogFiller(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_1));
         }
         for (int i = 0; i < characterInvolved.currentParty.characters.Count; i++) {
             state.descriptionLog.AddToFillers(characterInvolved.currentParty.characters[i], characterInvolved.currentParty.characters[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1, false);
             state.AddLogFiller(new LogFiller(characterInvolved.currentParty.characters[i], characterInvolved.currentParty.characters[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1), false);
         }
 
-        interactable.tileLocation.areaOfTile.Death();
+        interactable.Death();
     }
     #endregion
 }

@@ -10,7 +10,7 @@ public class MoveToVisit : Interaction {
 
     private Area _targetArea;
 
-    public MoveToVisit(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_VISIT, 0) {
+    public MoveToVisit(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_VISIT, 0) {
         _name = "Move To Visit";
         _jobFilter = new JOB[] { JOB.DEBILITATOR };
     }

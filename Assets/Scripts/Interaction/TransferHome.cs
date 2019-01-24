@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class TransferHome : Interaction {
 
-    public TransferHome(BaseLandmark interactable) 
+    public TransferHome(Area interactable) 
         : base(interactable, INTERACTION_TYPE.TRANSFER_HOME, 0) {
         _name = "Transfer Home";
     }
@@ -15,7 +15,7 @@ public class TransferHome : Interaction {
 
         //**Text Description**: [Character Name] is about to leave for [Location Name 1] to scavenge for supplies.
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
-        startStateDescriptionLog.AddToFillers(interactable.tileLocation.areaOfTile, interactable.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_2);
+        startStateDescriptionLog.AddToFillers(interactable, interactable.name, LOG_IDENTIFIER.LANDMARK_2);
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 
         startState.SetEffect(() => StartStateRewardEffect(startState));
@@ -27,9 +27,9 @@ public class TransferHome : Interaction {
     #endregion
 
     private void StartStateRewardEffect(InteractionState state) {
-        //BaseLandmark landmark = interactable.tileLocation.areaOfTile.landmarks[UnityEngine.Random.Range(0, interactable.tileLocation.areaOfTile.landmarks.Count)];
-        _characterInvolved.MigrateHomeTo(interactable.tileLocation.areaOfTile);
+        //BaseLandmark landmark = interactable.landmarks[UnityEngine.Random.Range(0, interactable.landmarks.Count)];
+        _characterInvolved.MigrateHomeTo(interactable);
 
-        state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile, interactable.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_2));
+        state.AddLogFiller(new LogFiller(interactable, interactable.name, LOG_IDENTIFIER.LANDMARK_2));
     }
 }

@@ -16,7 +16,7 @@ public class MoveToPeaceNegotiation : Interaction {
     private const string Faction_Leader_Rejected = "Faction Leader Rejected";
     private const string Do_Nothing = "Do nothing";
 
-    public MoveToPeaceNegotiation(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_PEACE_NEGOTIATION, 0) {
+    public MoveToPeaceNegotiation(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_PEACE_NEGOTIATION, 0) {
         _name = "Move to Peace Negotiation";
         _jobFilter = new JOB[] { JOB.INSTIGATOR, JOB.DIPLOMAT };
     }

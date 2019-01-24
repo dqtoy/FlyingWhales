@@ -71,7 +71,7 @@ public class Spy : Job {
                         Success(chosenToken);
                         break;
                     case RESULT.FAIL:
-                        interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_FAILED, character.specificLocation.coreTile.landmarkOnTile);
+                        interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_FAILED, character.specificLocation);
                         //raidSuccess.SetEndInteractionAction(() => GoBackHome());
                         interaction.AddEndInteractionAction(() => StartJobAction());
                         interaction.ScheduleSecondTimeOut();
@@ -84,7 +84,7 @@ public class Spy : Job {
                         //StartJobAction();
                         break;
                     case RESULT.CRITICAL_FAIL:
-                        interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_CRITICAL_FAIL, character.specificLocation.coreTile.landmarkOnTile);
+                        interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_CRITICAL_FAIL, character.specificLocation);
                         //raidSuccess.SetEndInteractionAction(() => GoBackHome());
                         interaction.AddEndInteractionAction(() => StartJobAction());
                         interaction.ScheduleSecondTimeOut();
@@ -149,7 +149,7 @@ public class Spy : Job {
             area.SetStopDefaultInteractionsState(true);
             SetJobActionPauseState(true);
             INTERACTION_TYPE chosenInteractionType = choices[UnityEngine.Random.Range(0, choices.Count)];
-            Interaction interaction = InteractionManager.Instance.CreateNewInteraction(chosenInteractionType, _character.specificLocation.coreTile.landmarkOnTile);
+            Interaction interaction = InteractionManager.Instance.CreateNewInteraction(chosenInteractionType, _character.specificLocation);
             interaction.AddEndInteractionAction(() => SetJobActionPauseState(false));
             interaction.AddEndInteractionAction(() => ForceDefaultAllExistingInteractions());
             _character.specificLocation.coreTile.landmarkOnTile.AddInteraction(interaction);
@@ -170,13 +170,13 @@ public class Spy : Job {
     private void Success(Token chosenToken) {
         Interaction interaction = null;
         if (chosenToken is FactionToken) {
-            interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.FACTION_DISCOVERED, character.specificLocation.coreTile.landmarkOnTile);
+            interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.FACTION_DISCOVERED, character.specificLocation);
         } else if (chosenToken is LocationToken) {
-            interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.LOCATION_OBSERVED, character.specificLocation.coreTile.landmarkOnTile);
+            interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.LOCATION_OBSERVED, character.specificLocation);
         } else if (chosenToken is CharacterToken) {
-            interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.CHARACTER_ENCOUNTERED, character.specificLocation.coreTile.landmarkOnTile);
+            interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.CHARACTER_ENCOUNTERED, character.specificLocation);
         } else if (chosenToken is DefenderToken) {
-            interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.DEFENDERS_REVEALED, character.specificLocation.coreTile.landmarkOnTile);
+            interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.DEFENDERS_REVEALED, character.specificLocation);
             //_createdInteraction.SetOtherData(new object[] { chosenToken });
         }
         if (interaction != null) {

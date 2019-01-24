@@ -22,7 +22,7 @@ public class ReanimateAction : Interaction {
         get { return _targetCharacter; }
     }
 
-    public ReanimateAction(BaseLandmark interactable) 
+    public ReanimateAction(Area interactable) 
         : base(interactable, INTERACTION_TYPE.REANIMATE_ACTION, 0) {
         _name = "Reanimate";
         _jobFilter = new JOB[] { JOB.INSTIGATOR, JOB.DIPLOMAT };
@@ -293,7 +293,7 @@ public class ReanimateAction : Interaction {
     #endregion
 
     private void TransferCharacter(Character character, Faction faction) {
-        interactable.tileLocation.areaOfTile.RemoveCorpse(character);
+        interactable.RemoveCorpse(character);
         character.ReturnToLife();
         if (character.faction != null) {
             character.faction.RemoveCharacter(character);
@@ -302,7 +302,7 @@ public class ReanimateAction : Interaction {
         character.MigrateHomeTo(_characterInvolved.homeArea);
         Reanimated trait = new Reanimated();
         character.AddTrait(trait);
-        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, character.specificLocation.coreTile.landmarkOnTile);
+        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, character.specificLocation);
         character.SetForcedInteraction(interaction);
         character.ChangeRace(RACE.SKELETON);
     }
@@ -311,8 +311,8 @@ public class ReanimateAction : Interaction {
         this._targetCharacter = targetCharacter;
     }
     public Character GetTargetCharacter(Character characterInvolved) {
-        if (interactable.tileLocation.areaOfTile.corpsesInArea.Count > 0) {
-            return interactable.tileLocation.areaOfTile.corpsesInArea[Random.Range(0, interactable.tileLocation.areaOfTile.corpsesInArea.Count)].character;
+        if (interactable.corpsesInArea.Count > 0) {
+            return interactable.corpsesInArea[Random.Range(0, interactable.corpsesInArea.Count)].character;
         }
         return null;
         //throw new System.Exception("Could not find any character to recruit!");

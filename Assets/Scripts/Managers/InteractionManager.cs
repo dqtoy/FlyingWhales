@@ -38,7 +38,7 @@ public class InteractionManager : MonoBehaviour {
     public void Initialize() {
         Messenger.AddListener(Signals.DAY_ENDED_2, TryExecuteInteractionsDefault);
     }
-    public Interaction CreateNewInteraction(INTERACTION_TYPE interactionType, BaseLandmark interactable) {
+    public Interaction CreateNewInteraction(INTERACTION_TYPE interactionType, Area interactable) {
         Interaction createdInteraction = null;
         switch (interactionType) {
             case INTERACTION_TYPE.BANDIT_RAID:
@@ -1053,7 +1053,7 @@ public class InteractionManager : MonoBehaviour {
                     currInteraction.EndInteraction();
                     log += "\n" + character.name + " is unable to perform " + currInteraction.name + "!";
                     //Unable to perform
-                    Interaction unable = CreateNewInteraction(INTERACTION_TYPE.UNABLE_TO_PERFORM, area.coreTile.landmarkOnTile);
+                    Interaction unable = CreateNewInteraction(INTERACTION_TYPE.UNABLE_TO_PERFORM, area);
                     character.AddInteraction(unable);
                     unable.TimedOutRunDefault(ref log);
                     log += "\n";

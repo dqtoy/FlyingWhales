@@ -139,7 +139,7 @@ public class Raider : Job {
         if (result == "Success") {
             SetCreatedInteraction(choices[UnityEngine.Random.Range(0, choices.Count)]);
         } else if (result == "Crit Fail") {
-            Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_CRITICAL_FAIL, area.coreTile.landmarkOnTile);
+            Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_CRITICAL_FAIL, area);
             _character.specificLocation.coreTile.landmarkOnTile.AddInteraction(interaction);
             SetCreatedInteraction(interaction);
         }
@@ -151,7 +151,7 @@ public class Raider : Job {
 
     private void RaidSuccess() {
         int obtainedSupply = GetSupplyObtained(character.specificLocation);
-        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.RAID_SUCCESS, character.specificLocation.coreTile.landmarkOnTile);
+        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.RAID_SUCCESS, character.specificLocation);
         interaction.AddEndInteractionAction(() => GoBackHomeSuccess(obtainedSupply));
         interaction.ScheduleSecondTimeOut();
         interaction.SetOtherData(new object[] { obtainedSupply });
@@ -161,7 +161,7 @@ public class Raider : Job {
         //FavorEffects(-2);
     }
     private void RaidFail() {
-        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_FAILED, character.specificLocation.coreTile.landmarkOnTile);
+        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_FAILED, character.specificLocation);
         interaction.AddEndInteractionAction(() => GoBackHome());
         interaction.ScheduleSecondTimeOut();
         character.AddInteraction(interaction);
@@ -172,7 +172,7 @@ public class Raider : Job {
     }
     private void CriticalRaidFail() {
         //When a raid critically fails, the target Faction's Favor Count towards the raider is reduced by -1. The raider will also perish.
-        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_CRITICAL_FAIL, character.specificLocation.coreTile.landmarkOnTile);
+        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_CRITICAL_FAIL, character.specificLocation);
         interaction.AddEndInteractionAction(() => GoBackHome());
         interaction.ScheduleSecondTimeOut();
         character.AddInteraction(interaction);

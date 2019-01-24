@@ -856,7 +856,7 @@ public class Area {
                     supplySpent += 100;
                     if (supplySpent <= suppliesInBank) {
                         testLog += "\nChosen Interaction: " + interactionType.ToString();
-                        interaction = InteractionManager.Instance.CreateNewInteraction(interactionType, chosenCandidate.specificLocation.coreTile.landmarkOnTile);
+                        interaction = InteractionManager.Instance.CreateNewInteraction(interactionType, chosenCandidate.specificLocation);
                         interaction.SetCanInteractionBeDoneAction(() => CanDoAreaTaskInteraction(interaction.type, chosenCandidate));
                         interaction.SetInitializeAction(() => AdjustSuppliesInBank(-100));
                         interaction.SetMinionSuccessAction(() => AdjustSuppliesInBank(100));
@@ -870,7 +870,7 @@ public class Area {
                         break;
                     }
                 } else {
-                    interaction = InteractionManager.Instance.CreateNewInteraction(interactionType, chosenCandidate.specificLocation.coreTile.landmarkOnTile);
+                    interaction = InteractionManager.Instance.CreateNewInteraction(interactionType, chosenCandidate.specificLocation);
                     interaction.SetCanInteractionBeDoneAction(() => InteractionManager.Instance.CanCreateInteraction(interaction.type, chosenCandidate));
                     chosenCandidate.SetForcedInteraction(interaction);
                 }
@@ -1185,6 +1185,19 @@ public class Area {
     }
     public void SetMonthlyActions(int amount) {
         monthlyActions = amount;
+    }
+    public void SpawnRandomCharacters(int howMany) {
+        if (IsResidentsFull()) {
+            return;
+        }
+        WeightedDictionary<AreaCharacterClass> classWeights = GetClassWeights();
+        for (int i = 0; i < howMany; i++) {
+            if (IsResidentsFull()) {
+                break;
+            }
+            string classNameToBeSpawned = classWeights.PickRandomElementGivenWeights().className;
+            Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(classNameToBeSpawned, raceType, Utilities.GetRandomGender(), owner, this);
+        }
     }
     #endregion
 

@@ -13,7 +13,7 @@ public class UnfinishedCurse : Interaction {
 
     private WeightedDictionary<string> curseWeights;
 
-    public UnfinishedCurse(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.UNFINISHED_CURSE, 100) {
+    public UnfinishedCurse(Area interactable) : base(interactable, INTERACTION_TYPE.UNFINISHED_CURSE, 100) {
         _name = "Unfinished Curse";
     }
 

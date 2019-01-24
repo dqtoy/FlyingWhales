@@ -10,7 +10,7 @@ public class MoveToScavenge : Interaction {
 
     private Area targetArea;
 
-    public MoveToScavenge(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_SCAVENGE, 70) {
+    public MoveToScavenge(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_SCAVENGE, 70) {
         _name = "Move To Scavenge";
         _jobFilter = new JOB[] { JOB.DEBILITATOR };
     }
@@ -128,7 +128,7 @@ public class MoveToScavenge : Interaction {
     }
     private void CreateScavengeEvent() {
         AddToDebugLog(_characterInvolved.name + " will now create scavenge event");
-        Interaction scavenge = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.SCAVENGE_EVENT, _characterInvolved.specificLocation.coreTile.landmarkOnTile);
+        Interaction scavenge = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.SCAVENGE_EVENT, _characterInvolved.specificLocation);
         scavenge.SetCanInteractionBeDoneAction(IsScavengeStillValid);
         _characterInvolved.SetForcedInteraction(scavenge);
     }

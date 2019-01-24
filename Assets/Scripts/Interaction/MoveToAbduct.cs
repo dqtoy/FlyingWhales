@@ -10,7 +10,7 @@ public class MoveToAbduct : Interaction {
 
     private Area _targetArea;
 
-    public MoveToAbduct(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_ABDUCT, 0) {
+    public MoveToAbduct(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_ABDUCT, 0) {
         _name = "Move To Abduct";
         _jobFilter = new JOB[] { JOB.DEBILITATOR };
     }
@@ -115,7 +115,7 @@ public class MoveToAbduct : Interaction {
     }
     private void CreateAbductAction() {
         AddToDebugLog(_characterInvolved.name + " will now create abduct action");
-        Interaction abduct = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.ABDUCT_ACTION, _characterInvolved.specificLocation.coreTile.landmarkOnTile);
+        Interaction abduct = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.ABDUCT_ACTION, _characterInvolved.specificLocation);
         //abduct.SetCanInteractionBeDoneAction(IsAbductStillValid);
         _characterInvolved.SetForcedInteraction(abduct);
     }

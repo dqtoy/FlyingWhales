@@ -11,7 +11,7 @@ public class ExplorerSpawnInteraction1 : Interaction {
 
     private SpecialToken _chosenSpecialToken;
 
-    public ExplorerSpawnInteraction1(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.EXPLORER_SPAWN_INTERACTION_1, 0) {
+    public ExplorerSpawnInteraction1(Area interactable) : base(interactable, INTERACTION_TYPE.EXPLORER_SPAWN_INTERACTION_1, 0) {
         _name = "Explorer Spawn Interaction 1";
         _jobFilter = new JOB[] { JOB.EXPLORER };
     }
@@ -53,7 +53,7 @@ public class ExplorerSpawnInteraction1 : Interaction {
             ActionOption locationTokenOption = new ActionOption {
                 interactionState = state,
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
-                name = "Get Location Token: " + interactable.tileLocation.areaOfTile.locationToken.nameInBold,
+                name = "Get Location Token: " + interactable.locationToken.nameInBold,
                 duration = 0,
                 canBeDoneAction = () => CanGetLocationToken(),
                 effect = () => LocationTokenOption(),
@@ -101,7 +101,7 @@ public class ExplorerSpawnInteraction1 : Interaction {
         return !PlayerManager.Instance.player.HasSpecialToken(token.name);
     }
     private bool CanGetLocationToken() {
-        return PlayerManager.Instance.player.GetToken(interactable.tileLocation.areaOfTile.locationToken) == null;
+        return PlayerManager.Instance.player.GetToken(interactable.locationToken) == null;
     }
     #endregion
 
@@ -110,7 +110,7 @@ public class ExplorerSpawnInteraction1 : Interaction {
         state.SetUseTokeneerMinionOnly(true);
 
         PlayerManager.Instance.player.AddToken(_chosenSpecialToken);
-        interactable.tileLocation.areaOfTile.RemoveSpecialTokenFromLocation(_chosenSpecialToken);
+        interactable.RemoveSpecialTokenFromLocation(_chosenSpecialToken);
 
         state.descriptionLog.AddToFillers(null, _chosenSpecialToken.tokenName, LOG_IDENTIFIER.STRING_1);
 
@@ -119,11 +119,11 @@ public class ExplorerSpawnInteraction1 : Interaction {
     private void CurrentLocationTokenObtainedEffect(InteractionState state) {
         state.SetUseTokeneerMinionOnly(true);
 
-        PlayerManager.Instance.player.AddToken(interactable.tileLocation.areaOfTile.locationToken);
+        PlayerManager.Instance.player.AddToken(interactable.locationToken);
 
-        state.descriptionLog.AddToFillers(null, interactable.tileLocation.areaOfTile.locationToken.tokenName, LOG_IDENTIFIER.STRING_1);
+        state.descriptionLog.AddToFillers(null, interactable.locationToken.tokenName, LOG_IDENTIFIER.STRING_1);
 
-        state.AddLogFiller(new LogFiller(null, interactable.tileLocation.areaOfTile.locationToken.tokenName, LOG_IDENTIFIER.STRING_1));
+        state.AddLogFiller(new LogFiller(null, interactable.locationToken.tokenName, LOG_IDENTIFIER.STRING_1));
     }
     private void DoNothingEffect(InteractionState state) {
         state.SetUseTokeneerMinionOnly(true);
@@ -131,9 +131,9 @@ public class ExplorerSpawnInteraction1 : Interaction {
     #endregion
 
     private void SetChosenSpecialToken() {
-        if (interactable.tileLocation.areaOfTile.possibleSpecialTokenSpawns.Count == 0) {
-            throw new System.Exception("No more special token spawns in " + interactable.tileLocation.areaOfTile.name);
+        if (interactable.possibleSpecialTokenSpawns.Count == 0) {
+            throw new System.Exception("No more special token spawns in " + interactable.name);
         }
-        _chosenSpecialToken = interactable.tileLocation.areaOfTile.possibleSpecialTokenSpawns[Random.Range(0, interactable.tileLocation.areaOfTile.possibleSpecialTokenSpawns.Count)];
+        _chosenSpecialToken = interactable.possibleSpecialTokenSpawns[Random.Range(0, interactable.possibleSpecialTokenSpawns.Count)];
     }
 }

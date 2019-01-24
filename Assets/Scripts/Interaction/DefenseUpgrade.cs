@@ -8,7 +8,7 @@ public class DefenseUpgrade : Interaction {
     private const string Stop_Defense_Upgrade_Fail = "Stop Defense Upgrade Fail";
     private const string Defender_Group_Upgraded = "Defender Group Upgraded";
 
-    public DefenseUpgrade(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.DEFENSE_UPGRADE, 0) {
+    public DefenseUpgrade(Area interactable) : base(interactable, INTERACTION_TYPE.DEFENSE_UPGRADE, 0) {
         _name = "Defense Upgrade";
         _jobFilter = new JOB[] { JOB.DEBILITATOR };
     }
@@ -82,10 +82,10 @@ public class DefenseUpgrade : Interaction {
         investigatorCharacter.LevelUp();
     }
     private void StopDefenseUpgradeFailEffect(InteractionState state) {
-        interactable.tileLocation.areaOfTile.UpgradeDefendersToMatchFactionLvl();
+        interactable.UpgradeDefendersToMatchFactionLvl();
     }
     private void DefenseGroupsUpgradedEffect(InteractionState state) {
-        interactable.tileLocation.areaOfTile.UpgradeDefendersToMatchFactionLvl();
+        interactable.UpgradeDefendersToMatchFactionLvl();
     }
     #endregion
 }

@@ -10,7 +10,7 @@ public class RecruiterCharacterEncounter : Interaction {
     private const string Recruitment_Fail = "Recruitment Fail";
     private const string Do_Nothing = "Do Nothing";
 
-    public RecruiterCharacterEncounter(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.RECRUITER_CHARACTER_ENCOUNTER, 0) {
+    public RecruiterCharacterEncounter(Area interactable) : base(interactable, INTERACTION_TYPE.RECRUITER_CHARACTER_ENCOUNTER, 0) {
         _name = "Recruiter Character Encounter";
         _jobFilter = new JOB[] { JOB.RECRUITER };
     }

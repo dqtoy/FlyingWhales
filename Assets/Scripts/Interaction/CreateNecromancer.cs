@@ -8,7 +8,7 @@ public class CreateNecromancer : Interaction {
     private const string Necromancer_Created = "Necromancer Created";
     private const string Do_Nothing = "Do Nothing";
 
-    public CreateNecromancer(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.CREATE_NECROMANCER, 0) {
+    public CreateNecromancer(Area interactable) : base(interactable, INTERACTION_TYPE.CREATE_NECROMANCER, 0) {
         _name = "Create Necromancer";
     }
 
@@ -72,7 +72,7 @@ public class CreateNecromancer : Interaction {
         _characterInvolved.SetForcedInteraction(null);
 
         Faction oldFaction = _characterInvolved.faction;
-        _characterInvolved.FoundFaction("Ziranna", interactable.tileLocation.areaOfTile);
+        _characterInvolved.FoundFaction("Ziranna", interactable);
 
         _characterInvolved.faction.GetRelationshipWith(oldFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.ENEMY);
         _characterInvolved.faction.GetRelationshipWith(PlayerManager.Instance.player.playerFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.ALLY);

@@ -11,7 +11,7 @@ public class MoveToRaid : Interaction {
     private Area targetArea;
     private Faction targetFaction;
 
-    public MoveToRaid(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_RAID, 0) {
+    public MoveToRaid(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_RAID, 0) {
         _name = "Move To Raid";
         _jobFilter = new JOB[] { JOB.DEBILITATOR };
     }
@@ -134,7 +134,7 @@ public class MoveToRaid : Interaction {
     }
     private void CreateRaidEvent() {
         AddToDebugLog(_characterInvolved.name + " will now create raid event");
-        Interaction raid = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.RAID_EVENT, _characterInvolved.specificLocation.coreTile.landmarkOnTile);
+        Interaction raid = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.RAID_EVENT, _characterInvolved.specificLocation);
         raid.SetCanInteractionBeDoneAction(IsRaidStillValid);
         _characterInvolved.SetForcedInteraction(raid);
     }

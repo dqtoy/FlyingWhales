@@ -6,7 +6,7 @@ public class CharacterFlees : Interaction {
 
     private Area targetArea;
 
-    public CharacterFlees(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.CHARACTER_FLEES, 0) {
+    public CharacterFlees(Area interactable) : base(interactable, INTERACTION_TYPE.CHARACTER_FLEES, 0) {
         _name = "Character Flees";
     }
 

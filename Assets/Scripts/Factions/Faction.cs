@@ -583,10 +583,10 @@ public class Faction {
                 if (interactionCandidates.Count > 0) {
                     INTERACTION_TYPE chosenInteraction = interactionCandidates.PickRandomElementGivenWeights();
                     area.AdjustSuppliesInBank(-100);
-                    Interaction createdInteraction = InteractionManager.Instance.CreateNewInteraction(chosenInteraction, area.coreTile.landmarkOnTile);
+                    Interaction createdInteraction = InteractionManager.Instance.CreateNewInteraction(chosenInteraction, area);
                     createdInteraction.SetMinionSuccessAction(() => area.AdjustSuppliesInBank(100));
                     area.coreTile.landmarkOnTile.AddInteraction(createdInteraction);
-                    interactionLog += "\nCreated " + createdInteraction.type.ToString() + " on " + createdInteraction.interactable.tileLocation.areaOfTile.name;
+                    interactionLog += "\nCreated " + createdInteraction.type.ToString() + " on " + createdInteraction.interactable.name;
                     Debug.Log(interactionLog);
                 } else {
                     interactionLog += "\nCannot create interaction because all interactions do not meet the requirements";
@@ -627,10 +627,10 @@ public class Faction {
                 InteractionAndInteractable chosenInteraction = interactionCandidates.PickRandomElementGivenWeights();
                 Area area = chosenInteraction.landmark.tileLocation.areaOfTile;
                 area.AdjustSuppliesInBank(-100);
-                Interaction createdInteraction = InteractionManager.Instance.CreateNewInteraction(chosenInteraction.interactionType, chosenInteraction.landmark);
+                Interaction createdInteraction = InteractionManager.Instance.CreateNewInteraction(chosenInteraction.interactionType, area);
                 createdInteraction.SetMinionSuccessAction(() => area.AdjustSuppliesInBank(100));
                 chosenInteraction.landmark.AddInteraction(createdInteraction);
-                interactionLog += "\nCreated " + createdInteraction.type.ToString() + " on " + createdInteraction.interactable.tileLocation.areaOfTile.name;
+                interactionLog += "\nCreated " + createdInteraction.type.ToString() + " on " + createdInteraction.interactable.name;
                 Debug.Log(interactionLog);
             } else {
                 interactionLog += "\nCannot create interaction because all interactions do not meet the requirements";
@@ -663,9 +663,9 @@ public class Faction {
             }
             if (interactionCandidates.Count > 0) {
                 InteractionAndInteractable chosenInteraction = interactionCandidates.PickRandomElementGivenWeights();
-                Interaction createdInteraction = InteractionManager.Instance.CreateNewInteraction(chosenInteraction.interactionType, chosenInteraction.landmark);
+                Interaction createdInteraction = InteractionManager.Instance.CreateNewInteraction(chosenInteraction.interactionType, chosenInteraction.landmark.tileLocation.areaOfTile);
                 chosenInteraction.landmark.AddInteraction(createdInteraction);
-                interactionLog += "\nCreated " + createdInteraction.type.ToString() + " on " + createdInteraction.interactable.tileLocation.areaOfTile.name;
+                interactionLog += "\nCreated " + createdInteraction.type.ToString() + " on " + createdInteraction.interactable.name;
                 Debug.Log(interactionLog);
             } else {
                 interactionLog += "\nCannot create interaction because all interactions do not meet the requirements";

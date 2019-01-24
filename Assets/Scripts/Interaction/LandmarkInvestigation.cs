@@ -208,7 +208,7 @@ public class LandmarkInvestigation {
             }
             _landmark.landmarkVisual.StopInteractionTimer();
             _landmark.landmarkVisual.HideInteractionTimer();
-            if(InteractionUI.Instance.interactionItem.interaction != null && InteractionUI.Instance.interactionItem.interaction.interactable == _landmark) {
+            if(InteractionUI.Instance.interactionItem.interaction != null && InteractionUI.Instance.interactionItem.interaction.interactable == _landmark.tileLocation.areaOfTile) {
                 InteractionUI.Instance.HideInteractionUI();
             }
             RecallMinion("attack");
@@ -235,7 +235,7 @@ public class LandmarkInvestigation {
         //Popup interaction
     }
     private Interaction GetNothingHappenedInteraction() {
-        Interaction chosenInteraction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.NOTHING_HAPPENED, _landmark);
+        Interaction chosenInteraction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.NOTHING_HAPPENED, _landmark.tileLocation.areaOfTile);
         //chosenInteraction.CancelFirstTimeOut();
         chosenInteraction.ScheduleSecondTimeOut();
         return chosenInteraction;

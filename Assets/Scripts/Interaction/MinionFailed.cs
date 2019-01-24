@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class MinionFailed : Interaction {
 
-    public MinionFailed(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.MINION_FAILED, 70) {
+    public MinionFailed(Area interactable) : base(interactable, INTERACTION_TYPE.MINION_FAILED, 70) {
         _name = "Minion Failed";
     }
 
@@ -31,8 +31,8 @@ public class MinionFailed : Interaction {
 
     #region State Effects
     private void StartEffect(InteractionState state) {
-        if (investigatorCharacter.job.jobType == JOB.RAIDER && interactable.tileLocation.areaOfTile.owner != null) {
-            interactable.tileLocation.areaOfTile.owner.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, -1);
+        if (investigatorCharacter.job.jobType == JOB.RAIDER && interactable.owner != null) {
+            interactable.owner.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, -1);
         }
     }
     #endregion

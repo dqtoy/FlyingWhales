@@ -9,7 +9,7 @@ public class InflictIllness : Interaction {
     private const string Induce_Illness_Critical_Fail = "Induce Illness Critical Fail";
     private const string Do_Nothing = "Do nothing";
 
-    public InflictIllness(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.INFLICT_ILLNESS, 0) {
+    public InflictIllness(Area interactable) : base(interactable, INTERACTION_TYPE.INFLICT_ILLNESS, 0) {
         _name = "Inflict Illness";
     }
 
@@ -52,7 +52,7 @@ public class InflictIllness : Interaction {
                 effect = () => InduceIllnessOptionEffect(state),
                 neededObjectsChecker = new List<ActionOptionNeededObjectChecker>() {
                     new ActionOptionLocationRequirement {
-                        requiredLocation = interactable.tileLocation.areaOfTile,
+                        requiredLocation = interactable,
                     }
                 },
                 neededObjects = new List<System.Type>() { typeof(CharacterToken) },

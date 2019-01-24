@@ -6,7 +6,7 @@ public class PickItem : Interaction {
 
     WeightedDictionary<SpecialToken> pickWeights = new WeightedDictionary<SpecialToken>();
 
-    public PickItem(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.PICK_ITEM, 0) {
+    public PickItem(Area interactable) : base(interactable, INTERACTION_TYPE.PICK_ITEM, 0) {
         _name = "Pick Item";
     }
 
@@ -23,8 +23,8 @@ public class PickItem : Interaction {
         if (character.tokenInInventory != null) {
             return false;
         } else {
-            for (int i = 0; i < interactable.tileLocation.areaOfTile.possibleSpecialTokenSpawns.Count; i++) {
-                SpecialToken token = interactable.tileLocation.areaOfTile.possibleSpecialTokenSpawns[i];
+            for (int i = 0; i < interactable.possibleSpecialTokenSpawns.Count; i++) {
+                SpecialToken token = interactable.possibleSpecialTokenSpawns[i];
                 if (token.npcAssociatedInteractionType != INTERACTION_TYPE.USE_ITEM_ON_SELF) {
                     pickWeights.AddElement(token, 60);
                 } else if (token.CanBeUsedBy(character)) {
@@ -41,8 +41,8 @@ public class PickItem : Interaction {
     //    if (_characterInvolved.tokenInInventory != null) {
     //        return false;
     //    } else {
-    //        for (int i = 0; i < interactable.tileLocation.areaOfTile.possibleSpecialTokenSpawns.Count; i++) {
-    //            SpecialToken token = interactable.tileLocation.areaOfTile.possibleSpecialTokenSpawns[i];
+    //        for (int i = 0; i < interactable.possibleSpecialTokenSpawns.Count; i++) {
+    //            SpecialToken token = interactable.possibleSpecialTokenSpawns[i];
     //            if (token.npcAssociatedInteractionType != INTERACTION_TYPE.USE_ITEM_ON_SELF) {
     //                pickWeights.AddElement(token, 60);
     //            } else if (token.CanBeUsedBy(_characterInvolved)) {

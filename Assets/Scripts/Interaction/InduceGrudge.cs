@@ -9,7 +9,7 @@ public class InduceGrudge : Interaction {
     private const string Induce_Grudge_Critical_Fail = "Induce Grudge Critical Fail";
     private const string Do_Nothing = "Do Nothing";
 
-    public InduceGrudge(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.INDUCE_GRUDGE, 0) {
+    public InduceGrudge(Area interactable) : base(interactable, INTERACTION_TYPE.INDUCE_GRUDGE, 0) {
         _name = "Induce Grudge";
     }
 

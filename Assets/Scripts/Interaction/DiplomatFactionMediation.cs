@@ -10,7 +10,7 @@ public class DiplomatFactionMediation : Interaction {
 
     private FactionToken _targetFactionToken;
 
-    public DiplomatFactionMediation(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.DIPLOMAT_FACTION_MEDIATION, 0) {
+    public DiplomatFactionMediation(Area interactable) : base(interactable, INTERACTION_TYPE.DIPLOMAT_FACTION_MEDIATION, 0) {
         _name = "Diplomat Faction Mediation";
         _jobFilter = new JOB[] { JOB.DIPLOMAT };
     }
@@ -25,7 +25,7 @@ public class DiplomatFactionMediation : Interaction {
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
         startStateDescriptionLog.AddToFillers(_targetFactionToken, _targetFactionToken.ToString(), LOG_IDENTIFIER.STRING_1);
-        startStateDescriptionLog.AddToFillers(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
+        startStateDescriptionLog.AddToFillers(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_1);
         startStateDescriptionLog.AddToFillers(_targetFactionToken.faction, _targetFactionToken.faction.name, LOG_IDENTIFIER.FACTION_2);
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 
@@ -45,8 +45,8 @@ public class DiplomatFactionMediation : Interaction {
             ActionOption improveOption = new ActionOption {
                 interactionState = state,
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
-                name = "Improve relationship between " + interactable.tileLocation.areaOfTile.owner.name + " and " + _targetFactionToken.faction.name + ".",
-                enabledTooltipText = "Improve relationship between " + interactable.tileLocation.areaOfTile.owner.name + " and " + _targetFactionToken.faction.name + ".",
+                name = "Improve relationship between " + interactable.owner.name + " and " + _targetFactionToken.faction.name + ".",
+                enabledTooltipText = "Improve relationship between " + interactable.owner.name + " and " + _targetFactionToken.faction.name + ".",
                 effect = () => ImproveOption(state),
             };
 
@@ -77,13 +77,13 @@ public class DiplomatFactionMediation : Interaction {
     private void ImproveRelationshipEffect(InteractionState state) {
         investigatorCharacter.LevelUp();
 
-        FactionRelationship relationship = interactable.tileLocation.areaOfTile.owner.GetRelationshipWith(_targetFactionToken.faction);
+        FactionRelationship relationship = interactable.owner.GetRelationshipWith(_targetFactionToken.faction);
         relationship.AdjustRelationshipStatus(1);
 
-        state.descriptionLog.AddToFillers(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
+        state.descriptionLog.AddToFillers(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_1);
         state.descriptionLog.AddToFillers(_targetFactionToken.faction, _targetFactionToken.faction.name, LOG_IDENTIFIER.FACTION_2);
 
-        state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1));
+        state.AddLogFiller(new LogFiller(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_1));
         state.AddLogFiller(new LogFiller(_targetFactionToken.faction, _targetFactionToken.faction.name, LOG_IDENTIFIER.FACTION_2));
         state.AddLogFiller(new LogFiller(null, Utilities.NormalizeString(relationship.relationshipStatus.ToString()), LOG_IDENTIFIER.STRING_1));
 

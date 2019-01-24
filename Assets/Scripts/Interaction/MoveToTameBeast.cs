@@ -10,7 +10,7 @@ public class MoveToTameBeast : Interaction {
 
     private Area _targetArea;
 
-    public MoveToTameBeast(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_TAME_BEAST, 0) {
+    public MoveToTameBeast(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_TAME_BEAST, 0) {
         _name = "Move To Tame Beast";
         _category = INTERACTION_CATEGORY.RECRUITMENT;
         _alignment = INTERACTION_ALIGNMENT.NEUTRAL;
@@ -116,7 +116,7 @@ public class MoveToTameBeast : Interaction {
     }
     private void CreateTameAction() {
         AddToDebugLog(_characterInvolved.name + " will now create tame action");
-        Interaction tame = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.TAME_BEAST_ACTION, _characterInvolved.specificLocation.coreTile.landmarkOnTile);
+        Interaction tame = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.TAME_BEAST_ACTION, _characterInvolved.specificLocation);
         //tame.SetCanInteractionBeDoneAction(IsTameStillValid);
         _characterInvolved.SetForcedInteraction(tame);
     }

@@ -5,13 +5,13 @@ using UnityEngine;
 
 public class MinionCriticalFail : Interaction {
 
-    public MinionCriticalFail(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.MINION_CRITICAL_FAIL, 70) {
+    public MinionCriticalFail(Area interactable) : base(interactable, INTERACTION_TYPE.MINION_CRITICAL_FAIL, 70) {
         _name = "Minion Critical Fail";
     }
 
     #region Overrides
     public override void Initialize() {
-        SetDefaultInvestigatorCharacter(interactable.tileLocation.areaOfTile.areaInvestigation.assignedMinion.character);
+        SetDefaultInvestigatorCharacter(interactable.areaInvestigation.assignedMinion.character);
         base.Initialize();
     }
     public override void CreateStates() {
@@ -35,8 +35,8 @@ public class MinionCriticalFail : Interaction {
 
     #region State Effects
     private void StartEffect(InteractionState state) {
-        if (investigatorCharacter.job.jobType == JOB.RAIDER && interactable.tileLocation.areaOfTile.owner != null) {
-            interactable.tileLocation.areaOfTile.owner.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, -1);
+        if (investigatorCharacter.job.jobType == JOB.RAIDER && interactable.owner != null) {
+            interactable.owner.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, -1);
         }
         investigatorCharacter.Death();
     }

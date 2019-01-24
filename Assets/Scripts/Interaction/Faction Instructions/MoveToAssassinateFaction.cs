@@ -10,7 +10,7 @@ public class MoveToAssassinateFaction : Interaction {
 
     public Area targetLocation { get; private set; }
 
-    public MoveToAssassinateFaction(BaseLandmark interactable)
+    public MoveToAssassinateFaction(Area interactable)
         : base(interactable, INTERACTION_TYPE.MOVE_TO_ASSASSINATE_FACTION, 0) {
         _name = "Move To Assassinate Faction";
         _jobFilter = new JOB[] { JOB.DEBILITATOR };
@@ -121,7 +121,7 @@ public class MoveToAssassinateFaction : Interaction {
     }
 
     private void CreateEvent() {
-        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.ASSASSINATE_ACTION_FACTION, _characterInvolved.specificLocation.coreTile.landmarkOnTile);
+        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.ASSASSINATE_ACTION_FACTION, _characterInvolved.specificLocation);
         //(interaction as ImproveRelationsEvent).SetTargetFaction(targetFaction);
         //interaction.SetCanInteractionBeDoneAction(IsImproveRelationsValid);
         _characterInvolved.SetForcedInteraction(interaction);

@@ -1638,13 +1638,13 @@ public class Character : ICharacter, ILeader, IInteractable {
         _alreadyTargetedByGrudge = state;
     }
     public void AttackAnArea(Area target) {
-        Interaction attackInteraction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.ATTACK, target.coreTile.landmarkOnTile);
+        Interaction attackInteraction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.ATTACK, target);
         attackInteraction.AddEndInteractionAction(() => _ownParty.GoHomeAndDisband());
         attackInteraction.SetCanInteractionBeDoneAction(() => IsTargetStillViable(target));
         _ownParty.GoToLocation(target, PATHFINDING_MODE.NORMAL, () => SetForcedInteraction(attackInteraction));
     }
     public void GoToAreaToMakePeaceWithFaction(Area target) {
-        Interaction peaceInteraction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.CHARACTER_PEACE_NEGOTIATION, target.coreTile.landmarkOnTile);
+        Interaction peaceInteraction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.CHARACTER_PEACE_NEGOTIATION, target);
         peaceInteraction.AddEndInteractionAction(() => _ownParty.GoHome());
         _ownParty.GoToLocation(target, PATHFINDING_MODE.NORMAL, () => SetForcedInteraction(peaceInteraction));
     }
@@ -2376,7 +2376,7 @@ public class Character : ICharacter, ILeader, IInteractable {
             ReturnToOriginalHomeAndFaction(abductedTrait.originalHome, this.faction);
             //MigrateTo(abductedTrait.originalHomeLandmark);
 
-            Interaction interactionAbducted = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, specificLocation.coreTile.landmarkOnTile);
+            Interaction interactionAbducted = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, specificLocation);
             SetForcedInteraction(interactionAbducted);
             SetDailyInteractionGenerationTick(GameManager.Instance.continuousDays + 1);
             return true;
@@ -2521,7 +2521,7 @@ public class Character : ICharacter, ILeader, IInteractable {
                 string result = awayFromHomeInteractionWeights.PickRandomElementGivenWeights();
                 if(result == "DoNothing") {
                 }else if (tokenInInventory != null && result == tokenInInventory.tokenName) {
-                    Interaction interaction = InteractionManager.Instance.CreateNewInteraction(tokenInInventory.npcAssociatedInteractionType, specificLocation.coreTile.landmarkOnTile);
+                    Interaction interaction = InteractionManager.Instance.CreateNewInteraction(tokenInInventory.npcAssociatedInteractionType, specificLocation);
                     if (interaction.type == INTERACTION_TYPE.USE_ITEM_ON_CHARACTER) {
                         (interaction as UseItemOnCharacter).SetItemToken(tokenInInventory);
                     } else if (interaction.type == INTERACTION_TYPE.USE_ITEM_ON_SELF) {
@@ -2532,7 +2532,7 @@ public class Character : ICharacter, ILeader, IInteractable {
                     AddInteraction(interaction);
                 } else {
                     INTERACTION_TYPE interactionType = (INTERACTION_TYPE) Enum.Parse(typeof(INTERACTION_TYPE), result);
-                    Interaction interaction = InteractionManager.Instance.CreateNewInteraction(interactionType, specificLocation.coreTile.landmarkOnTile);
+                    Interaction interaction = InteractionManager.Instance.CreateNewInteraction(interactionType, specificLocation);
                     AddInteraction(interaction);
                 }
             } else {
@@ -2562,13 +2562,13 @@ public class Character : ICharacter, ILeader, IInteractable {
 
                 if (result == "DoNothing") {
                 }   else if (result == "ItemNotUsable") {
-                    Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.DROP_ITEM, specificLocation.coreTile.landmarkOnTile);
+                    Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.DROP_ITEM, specificLocation);
                     AddInteraction(interaction);
                 } else if (result == "PickUp") {
-                    Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.PICK_ITEM, specificLocation.coreTile.landmarkOnTile);
+                    Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.PICK_ITEM, specificLocation);
                     AddInteraction(interaction);
                 } else if (tokenInInventory != null && result == tokenInInventory.tokenName) {
-                    Interaction interaction = InteractionManager.Instance.CreateNewInteraction(tokenInInventory.npcAssociatedInteractionType, specificLocation.coreTile.landmarkOnTile);
+                    Interaction interaction = InteractionManager.Instance.CreateNewInteraction(tokenInInventory.npcAssociatedInteractionType, specificLocation);
                     if (interaction.type == INTERACTION_TYPE.USE_ITEM_ON_CHARACTER) {
                         (interaction as UseItemOnCharacter).SetItemToken(tokenInInventory);
                     } else if (interaction.type == INTERACTION_TYPE.USE_ITEM_ON_SELF) {
@@ -2579,7 +2579,7 @@ public class Character : ICharacter, ILeader, IInteractable {
                     AddInteraction(interaction);
                 } else {
                     INTERACTION_TYPE interactionType = (INTERACTION_TYPE) Enum.Parse(typeof(INTERACTION_TYPE), result);
-                    Interaction interaction = InteractionManager.Instance.CreateNewInteraction(interactionType, specificLocation.coreTile.landmarkOnTile);
+                    Interaction interaction = InteractionManager.Instance.CreateNewInteraction(interactionType, specificLocation);
                     AddInteraction(interaction);
                 }
             }
@@ -2704,17 +2704,17 @@ public class Character : ICharacter, ILeader, IInteractable {
             tokenInInventory = null;
         }
     }
-    public void PickUpToken(SpecialToken token, BaseLandmark location) {
+    public void PickUpToken(SpecialToken token, Area location) {
         if (tokenInInventory == null) {
             tokenInInventory = token;
-            location.tileLocation.areaOfTile.RemoveSpecialTokenFromLocation(token);
+            location.RemoveSpecialTokenFromLocation(token);
         }
     }
-    public void PickUpRandomToken(BaseLandmark location) {
+    public void PickUpRandomToken(Area location) {
         if (tokenInInventory == null) {
             WeightedDictionary<SpecialToken> pickWeights = new WeightedDictionary<SpecialToken>();
-            for (int i = 0; i < location.tileLocation.areaOfTile.possibleSpecialTokenSpawns.Count; i++) {
-                SpecialToken token = location.tileLocation.areaOfTile.possibleSpecialTokenSpawns[i];
+            for (int i = 0; i < location.possibleSpecialTokenSpawns.Count; i++) {
+                SpecialToken token = location.possibleSpecialTokenSpawns[i];
                 if(token.npcAssociatedInteractionType != INTERACTION_TYPE.USE_ITEM_ON_SELF) {
                     pickWeights.AddElement(token, 60);
                 } else if(token.CanBeUsedBy(this)) {

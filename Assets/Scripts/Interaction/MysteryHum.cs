@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class MysteryHum : Interaction {
-    public MysteryHum(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.MYSTERY_HUM, 150) {
+    public MysteryHum(Area interactable) : base(interactable, INTERACTION_TYPE.MYSTERY_HUM, 150) {
         _name = "Mystery Hum";
     }
 

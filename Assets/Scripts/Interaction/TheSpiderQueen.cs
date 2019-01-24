@@ -8,55 +8,52 @@ public class TheSpiderQueen : Interaction {
     private BaseLandmark landmark;
     private WeightedDictionary<DefenderSetting> assaultSpawnWeights;
 
-    public TheSpiderQueen(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.SPIDER_QUEEN, 70) {
+    public TheSpiderQueen(Area interactable) : base(interactable, INTERACTION_TYPE.SPIDER_QUEEN, 70) {
         _name = "The Spider Queen";
     }
 
     #region Overrides
     public override void CreateStates() {
-        if (_interactable is BaseLandmark) {
-            landmark = _interactable;
-            //Spawn spider queen
-            SpawnSpiderQueen();
-            ConstructAssaultSpawnWeights();
+        //Spawn spider queen
+        SpawnSpiderQueen();
+        ConstructAssaultSpawnWeights();
 
-            InteractionState startState = new InteractionState("State 1", this);
-            //string startStateDesc = "Our Imp reported that the Spider Queen has been spotted out of the heavily protected hive core. Should we do something before it gets back in?";
-            //startState.SetDescription(startStateDesc);
-            CreateActionOptions(startState);
-            //GameDate dueDate = GameManager.Instance.Today();
-            //dueDate.AddHours(100);
-            //startState.SetTimeSchedule(startState.actionOptions[3], dueDate); //default is do nothing
+        InteractionState startState = new InteractionState("State 1", this);
+        //string startStateDesc = "Our Imp reported that the Spider Queen has been spotted out of the heavily protected hive core. Should we do something before it gets back in?";
+        //startState.SetDescription(startStateDesc);
+        CreateActionOptions(startState);
+        //GameDate dueDate = GameManager.Instance.Today();
+        //dueDate.AddHours(100);
+        //startState.SetTimeSchedule(startState.actionOptions[3], dueDate); //default is do nothing
 
-            //action option states
-            InteractionState attackLocationState = new InteractionState("Attack Location", this);
-            InteractionState transformRitualSuccessState = new InteractionState("Transform Ritual Success", this);
-            InteractionState transformRitualFailState = new InteractionState("Transform Ritual Fail", this);
-            InteractionState transformRitualCriticalFailState = new InteractionState("Transform Ritual Critical Fail", this);
-            InteractionState gainSuppliesState = new InteractionState("Gain Supplies", this);
-            InteractionState demonDiesState = new InteractionState("Demon Dies", this);
-            InteractionState spidersAttackState = new InteractionState("Spiders Attack", this);
+        //action option states
+        InteractionState attackLocationState = new InteractionState("Attack Location", this);
+        InteractionState transformRitualSuccessState = new InteractionState("Transform Ritual Success", this);
+        InteractionState transformRitualFailState = new InteractionState("Transform Ritual Fail", this);
+        InteractionState transformRitualCriticalFailState = new InteractionState("Transform Ritual Critical Fail", this);
+        InteractionState gainSuppliesState = new InteractionState("Gain Supplies", this);
+        InteractionState demonDiesState = new InteractionState("Demon Dies", this);
+        InteractionState spidersAttackState = new InteractionState("Spiders Attack", this);
 
-            attackLocationState.SetEffect(() => AttackLocationEffect(attackLocationState));
-            transformRitualSuccessState.SetEffect(() => TransformRitualSuccessEffect(transformRitualSuccessState));
-            transformRitualFailState.SetEffect(() => TransformRitualFailureEffect(transformRitualFailState));
-            transformRitualCriticalFailState.SetEffect(() => TransformRitualCriticalFailureEffect(transformRitualCriticalFailState));
-            gainSuppliesState.SetEffect(() => GainSuppliesEffect(gainSuppliesState));
-            demonDiesState.SetEffect(() => DemonDiesEffect(demonDiesState));
-            spidersAttackState.SetEffect(() => SpidersAttackEffect(spidersAttackState));
+        attackLocationState.SetEffect(() => AttackLocationEffect(attackLocationState));
+        transformRitualSuccessState.SetEffect(() => TransformRitualSuccessEffect(transformRitualSuccessState));
+        transformRitualFailState.SetEffect(() => TransformRitualFailureEffect(transformRitualFailState));
+        transformRitualCriticalFailState.SetEffect(() => TransformRitualCriticalFailureEffect(transformRitualCriticalFailState));
+        gainSuppliesState.SetEffect(() => GainSuppliesEffect(gainSuppliesState));
+        demonDiesState.SetEffect(() => DemonDiesEffect(demonDiesState));
+        spidersAttackState.SetEffect(() => SpidersAttackEffect(spidersAttackState));
 
 
-            _states.Add(startState.name, startState);
-            _states.Add(attackLocationState.name, attackLocationState);
-            _states.Add(transformRitualSuccessState.name, transformRitualSuccessState);
-            _states.Add(transformRitualFailState.name, transformRitualFailState);
-            _states.Add(transformRitualCriticalFailState.name, transformRitualCriticalFailState);
-            _states.Add(gainSuppliesState.name, gainSuppliesState);
-            _states.Add(demonDiesState.name, demonDiesState);
-            _states.Add(spidersAttackState.name, spidersAttackState);
+        _states.Add(startState.name, startState);
+        _states.Add(attackLocationState.name, attackLocationState);
+        _states.Add(transformRitualSuccessState.name, transformRitualSuccessState);
+        _states.Add(transformRitualFailState.name, transformRitualFailState);
+        _states.Add(transformRitualCriticalFailState.name, transformRitualCriticalFailState);
+        _states.Add(gainSuppliesState.name, gainSuppliesState);
+        _states.Add(demonDiesState.name, demonDiesState);
+        _states.Add(spidersAttackState.name, spidersAttackState);
 
-            SetCurrentState(startState);
-        }
+        SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "State 1") {

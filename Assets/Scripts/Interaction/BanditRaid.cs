@@ -11,13 +11,12 @@ public class BanditRaid : Interaction {
     //private WeightedDictionary<LandmarkDefender> assaultSpawnWeights;
     //private WeightedDictionary<LandmarkDefender> firstElementAssaultSpawnWeights; //TODO: Make this more elegant!
 
-    public BanditRaid(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.BANDIT_RAID, 70) {
+    public BanditRaid(Area interactable) : base(interactable, INTERACTION_TYPE.BANDIT_RAID, 70) {
         _name = "Bandit Raid";
     }
 
     #region Overrides
     public override void CreateStates() {
-        originLandmark = interactable;
         //CreateExploreStates();
         //CreateWhatToDoNextState("What do you want %minion% to do next?");
         //ConstructAssaultSpawnWeights();

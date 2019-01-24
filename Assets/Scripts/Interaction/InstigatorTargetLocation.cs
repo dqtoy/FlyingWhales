@@ -11,7 +11,7 @@ public class InstigatorTargetLocation : Interaction {
     private LocationToken _targetLocationToken;
     private List<Character> _attackers;
 
-    public InstigatorTargetLocation(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.INSTIGATOR_TARGET_LOCATION, 0) {
+    public InstigatorTargetLocation(Area interactable) : base(interactable, INTERACTION_TYPE.INSTIGATOR_TARGET_LOCATION, 0) {
         _name = "Instigator Target Location";
         _jobFilter = new JOB[] { JOB.INSTIGATOR };
     }
@@ -72,7 +72,7 @@ public class InstigatorTargetLocation : Interaction {
             option.disabledTooltipText = "This location is not strong enough to launch an assault on " + _targetLocationToken.nameInBold;
             return false;
         } else {
-            FactionRelationship relationship = interactable.tileLocation.areaOfTile.owner.GetRelationshipWith(_targetLocationToken.location.owner);
+            FactionRelationship relationship = interactable.owner.GetRelationshipWith(_targetLocationToken.location.owner);
             if (relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.ALLY) {
                 option.disabledTooltipText = "This location refuses to attack an Ally Faction.";
                 return false;
@@ -95,12 +95,12 @@ public class InstigatorTargetLocation : Interaction {
     private void InduceAttackEffect(InteractionState state) {
         investigatorCharacter.LevelUp();
 
-        FactionRelationship relationship = interactable.tileLocation.areaOfTile.owner.GetRelationshipWith(_targetLocationToken.location.owner);
+        FactionRelationship relationship = interactable.owner.GetRelationshipWith(_targetLocationToken.location.owner);
         if(relationship.relationshipStatus != FACTION_RELATIONSHIP_STATUS.ENEMY) {
             relationship.SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.ENEMY);
 
             Log log = new Log(GameManager.Instance.Today(), "Events", GetType().ToString(), state.name.ToLower() + "_special");
-            log.AddToFillers(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
+            log.AddToFillers(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_1);
             log.AddToFillers(_targetLocationToken.location.owner, _targetLocationToken.location.owner.name, LOG_IDENTIFIER.FACTION_2);
             state.AddLogToInvolvedObjects(log);
         }
@@ -122,7 +122,7 @@ public class InstigatorTargetLocation : Interaction {
     #endregion
 
     private void SetAttackers() {
-        Area areaToAttack = interactable.tileLocation.areaOfTile;
+        Area areaToAttack = interactable;
         Area targetArea = _targetLocationToken.location;
         _attackers = areaToAttack.FormCombatCharacters();
         //List<Character> residentsAtArea = new List<Character>();

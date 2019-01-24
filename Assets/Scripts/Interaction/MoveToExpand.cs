@@ -11,7 +11,7 @@ public class MoveToExpand : Interaction {
 
     public Area targetLocation { get; private set; }
 
-    public MoveToExpand(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_EXPAND, 0) {
+    public MoveToExpand(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_EXPAND, 0) {
         _name = "Move to Expand";
         _jobFilter = new JOB[] { JOB.DEBILITATOR };
     }
@@ -125,7 +125,7 @@ public class MoveToExpand : Interaction {
     }
 
     private void CreateExpansionEvent() {
-        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.EXPANSION_EVENT, _characterInvolved.specificLocation.coreTile.landmarkOnTile);
+        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.EXPANSION_EVENT, _characterInvolved.specificLocation);
         _characterInvolved.SetForcedInteraction(interaction);
         interaction.SetCanInteractionBeDoneAction(IsExpansionStillValid);
         targetLocation.RemoveEventTargettingThis(this);

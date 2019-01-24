@@ -10,7 +10,7 @@ public class MoveToExplore : Interaction {
 
     private Area targetLocation;
 
-    public MoveToExplore(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_EXPLORE, 0) {
+    public MoveToExplore(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_EXPLORE, 0) {
         _name = "Move to Explore";
         _jobFilter = new JOB[] { JOB.DEBILITATOR };
     }
@@ -121,7 +121,7 @@ public class MoveToExplore : Interaction {
     }
 
     private void CreateExploreEvent() {
-        Interaction exploreEvent = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.EXPLORE_EVENT, _characterInvolved.specificLocation.coreTile.landmarkOnTile);
+        Interaction exploreEvent = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.EXPLORE_EVENT, _characterInvolved.specificLocation);
         if (exploreEvent != null) {
             _characterInvolved.SetForcedInteraction(exploreEvent);
         }
