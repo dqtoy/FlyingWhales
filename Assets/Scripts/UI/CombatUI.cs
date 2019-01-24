@@ -106,10 +106,8 @@ public class CombatUI : MonoBehaviour {
         }
     }
     public bool CanSlotBeTarget(CombatSlotItem combatSlotItem) {
-        if (!CombatManager.Instance.newCombat.isSelectingTarget) {
-            return false;
-        }
-        return CombatManager.Instance.newCombat.currentAttacker.side != combatSlotItem.side;
+        return CombatManager.Instance.newCombat.isSelectingTarget && 
+            CombatManager.Instance.newCombat.currentAttacker.side != combatSlotItem.side && combatSlotItem.character != null;
     }
     public void ShowTargetCharacters(CombatSlotItem combatSlotItem) {
         List<int> targetIndexes = CombatManager.Instance.newCombat.GetTargetIndexesForCurrentAttackByIndex(combatSlotItem.gridNumber);
