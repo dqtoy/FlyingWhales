@@ -13,8 +13,6 @@ public class AreaInfoEditor : MonoBehaviour {
     [SerializeField] private InputField areaNameField;
     [SerializeField] private InputField maxDefendersField;
     [SerializeField] private InputField initialDefenderGroupsField;
-    //[SerializeField] private InputField supplyCapacityField;
-    //[SerializeField] private InputField initialSupplyField;
     [SerializeField] private InputField residentCapacityField;
     [SerializeField] private InputField monthlySupplyField;
     [SerializeField] private InputField monthlyActionsField;
@@ -28,14 +26,22 @@ public class AreaInfoEditor : MonoBehaviour {
     [SerializeField] private Dropdown initialRaceDropdown;
     [SerializeField] private Dropdown initialRaceSubTypeDropdown;
 
+    [Header("Structures")]
+    [SerializeField] private GameObject structureItemPrefab;
+    [SerializeField] private ScrollRect structureItemsScrollView;
+    [SerializeField] private Dropdown structureItemsDropdown;
+    [SerializeField] private Text structuresSummary;
+
     public void Initialize() {
         possibleOccupantsRaceDropdown.ClearOptions();
         initialRaceDropdown.ClearOptions();
         initialRaceSubTypeDropdown.ClearOptions();
+        structureItemsDropdown.ClearOptions();
 
         initialRaceDropdown.AddOptions(Utilities.GetEnumChoices<RACE>());
         initialRaceSubTypeDropdown.AddOptions(Utilities.GetEnumChoices<RACE_SUB_TYPE>(true));
         possibleOccupantsRaceDropdown.AddOptions(Utilities.GetEnumChoices<RACE>());
+        structureItemsDropdown.AddOptions(Utilities.GetEnumChoices<STRUCTURE_TYPE>());
     }
 
     public void Show(Area area) {
@@ -64,6 +70,7 @@ public class AreaInfoEditor : MonoBehaviour {
             occupantsSummary.text += "(" + race.ToString() + ")";
         }
         UpdateRaceSpawnData();
+        UpdateStructures();
     }
 
     #region Basic Info
@@ -150,6 +157,33 @@ public class AreaInfoEditor : MonoBehaviour {
             GameObject go = GameObject.Instantiate(raceSpawnPrefab, raceSpawnScrollView.content);
             go.GetComponent<RaceSpawnItem>().SetSetup(setup);
         }
+    }
+    #endregion
+
+    #region Structures
+    private void UpdateStructures() {
+        Utilities.DestroyChildren(structureItemsScrollView.content);
+        structuresSummary.text = "Structures Summary:";
+        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in currentArea.structures) {
+            int inside = 0;
+            int outside = 0;
+            for (int i = 0; i < keyValuePair.Value.Count; i++) {
+                LocationStructure structure = keyValuePair.Value[i];
+                GameObject go = GameObject.Instantiate(structureItemPrefab, structureItemsScrollView.content);
+                go.GetComponent<StructureItem>().SetStructure(structure);
+                if (structure.isInside) {
+                    inside++;
+                } else {
+                    outside++;
+                }
+            }
+            structuresSummary.text += "\n" + keyValuePair.Key.ToString() + " - " + keyValuePair.Value.Count.ToString() + "(Inside - " + inside.ToString() + " Outside - " + outside.ToString() + ")";
+        }
+    }
+    public void AddNewStructure() {
+        STRUCTURE_TYPE chosenType = (STRUCTURE_TYPE)Enum.Parse(typeof(STRUCTURE_TYPE), structureItemsDropdown.options[structureItemsDropdown.value].text);
+        currentArea.AddStructure(new LocationStructure(chosenType, currentArea));
+        UpdateStructures();
     }
     #endregion
 

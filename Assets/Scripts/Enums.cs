@@ -118,12 +118,6 @@ public enum RESOURCE {
     FOOD,
 
 }
-//public enum RESOURCE_TYPE{
-//	NONE,
-//	FOOD,
-//	MATERIAL,
-//	ORE,
-//}
 public enum MATERIAL{
 	NONE, //0
 	CLAY, //11
@@ -156,77 +150,6 @@ public enum MATERIAL_CATEGORY{
 	PLANT,
 	MEAT,
 	LEATHER,
-}
-//public enum ROLE{
-//	UNTRAINED,
-//	FOODIE, //Farming or Hunting
-//	GATHERER, //Lumberyard or Quarry
-//	MINER, 
-//	TRADER,
-//	SPY,
-//	GUARDIAN,
-//	ENVOY,
-//	GENERAL,
-//	GOVERNOR,
-//	KING,
-//	EXPANDER,
-//	RAIDER,
-//	REINFORCER,
-//	REBEL,
-//    EXTERMINATOR,
-//    SCOURGE,
-//    HEALER,
-//	PROVOKER,
-//	MISSIONARY,
-//	ABDUCTOR,
-//    LYCANTHROPE,
-//	INVESTIGATOR,
-//	THIEF,
-//    WITCH,
-//    ADVENTURER,
-//	RELIEVER,
-//	INTERCEPTER,
-//	RANGER,
-//    MILITARY_ALLIANCE_OFFICER,
-//	TREATYOFFICER,
-//	TRIBUTER,
-//	INSTIGATOR,
-//    GRAND_CHANCELLOR,
-//    GRAND_MARSHAL,
-//    QUEEN,
-//    CROWN_PRINCE,
-//	CARAVAN,
-//	REFUGEE,
-//}
-//public enum BASE_RESOURCE_TYPE{
-//	FOOD,
-//	WOOD,
-//	STONE,
-//	MANA_STONE,
-//	MITHRIL,
-//	COBALT,
-//	GOLD,
-//	NONE
-//}
-public enum STRUCTURE_TYPE{
-	NONE,
-	CITY,
-	FARM,
-	HUNTING_LODGE,
-	QUARRY,
-	LUMBERYARD,
-	MINE,
-	TRADING_POST,
-    GENERIC
-	//BARRACKS,
-	//SPY_GUILD,
-	//MINISTRY,
-	//KEEP
-}
-public enum STRUCTURE_QUALITY{
-	NONE,
-	BASIC,
-	ADVANCED,
 }
 public enum LANGUAGES{
 	NONE,
@@ -325,13 +248,6 @@ public enum ROAD_TYPE{
 	MINOR,
 	ALL,
 }
-//public enum BASE_LANDMARK_TYPE {
-//    NONE,
-//    SETTLEMENT,
-//    RESOURCE,
-//    DUNGEON,
-//    LAIR
-//}
 public enum LANDMARK_TAG {
     CAN_HUNT,
     CAN_SCAVENGE,
@@ -468,14 +384,6 @@ public enum CHARACTER_CLASS {
     FARMER,
     RETIRED_HERO
 }
-//public enum CHARACTER_JOB {
-//    NONE,
-//    SHOPKEEPER,
-//    MINER,
-//    WOODCUTTER,
-//    FARMER,
-//    RETIRED_HERO
-//}
 public enum QUEST_TYPE { 
     RELEASE_CHARACTER,
     BUILD_STRUCTURE,
@@ -854,14 +762,6 @@ public enum PASSABLE_TYPE {
     WIDE_OPEN,
     OPEN
 }
-
-//public enum IMAGE_SIZE {
-//    X64,
-//    X256,
-//    X72,
-//    X36,
-//}
-
 public enum LEVEL {
     HIGH,
     AVERAGE,
@@ -1262,4 +1162,12 @@ public enum JOB_ACTION_TARGET {
     CHARACTER,
     AREA,
     FACTION
+}
+public enum STRUCTURE_TYPE {
+    DWELLING,
+    DUNGEON,
+    WILDERNESS,
+    INN,
+    WAREHOUSE,
+    WORK_AREA,
 }

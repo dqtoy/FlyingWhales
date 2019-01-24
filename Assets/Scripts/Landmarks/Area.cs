@@ -45,13 +45,15 @@ public class Area {
     public List<RACE> possibleOccupants { get; private set; }
     public List<InitialRaceSetup> initialSpawnSetup { get; private set; } //only to be used when unoccupied
     public Dictionary<JOB, List<INTERACTION_TYPE>> jobInteractionTypes { get; private set; }
-    public int initialSupply { get; private set; } //this should not change when scavenging
     public int residentCapacity { get; private set; }
     public int monthlySupply { get; private set; }
     public List<Interaction> eventsTargettingThis { get; private set; }
 
     //special tokens
     public List<SpecialToken> possibleSpecialTokenSpawns { get; private set; }
+
+    //structures
+    public Dictionary<STRUCTURE_TYPE, List<LocationStructure>> structures { get; private set; }
 
     //misc
     public Sprite locationPortrait { get; private set; }
@@ -99,6 +101,7 @@ public class Area {
         possibleSpecialTokenSpawns = new List<SpecialToken>();
         charactersAtLocationHistory = new List<string>();
         corpsesInArea = new List<Corpse>();
+        structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
         SetMonthlyActions(2);
         SetAreaType(areaType);
         SetCoreTile(coreTile);
@@ -161,6 +164,12 @@ public class Area {
         if (data.possibleOccupants != null) {
             possibleOccupants.AddRange(data.possibleOccupants);
         }
+        if (data.structures != null) {
+            structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>(data.structures);
+        } else {
+            structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
+        }
+        
         //LoadSpecialTokens(data);
         AddTile(Utilities.GetTilesFromIDs(data.tileData)); //exposed tiles will be determined after loading landmarks at MapGeneration
         UpdateBorderColors();
@@ -1351,6 +1360,28 @@ public class Area {
             }
         }
         return null;
+    }
+    #endregion
+
+    #region Structures
+    public void AddStructure(LocationStructure structure) {
+        if (!structures.ContainsKey(structure.structureType)) {
+            structures.Add(structure.structureType, new List<LocationStructure>());
+        }
+
+        if (!structures[structure.structureType].Contains(structure)) {
+            structures[structure.structureType].Add(structure);
+        }
+    }
+    public void RemoveStructure(LocationStructure structure) {
+        if (structures.ContainsKey(structure.structureType)) {
+            if (structures[structure.structureType].Remove(structure)) {
+
+                if (structures[structure.structureType].Count == 0) { //this is only for optimization
+                    structures.Remove(structure.structureType);
+                }
+            }
+        }
     }
     #endregion
 }

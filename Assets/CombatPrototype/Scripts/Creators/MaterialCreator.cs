@@ -88,7 +88,7 @@ public class MaterialCreator : Editor {
 //		material.technology = materialComponent.technology;
 		material.weight = materialComponent.weight;
 		material.isEdible = materialComponent.isEdible;
-		material.structure = materialComponent.structure;
+		//material.structure = materialComponent.structure;
 		material.weaponData = materialComponent.weaponData;
 		material.armorData = materialComponent.armorData;
 		material.sturdiness = materialComponent.sturdiness;
