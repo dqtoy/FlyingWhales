@@ -15,9 +15,10 @@ public class LocationStructure {
     }
     #endregion
 
-    public LocationStructure(STRUCTURE_TYPE structureType, Area location) {
+    public LocationStructure(STRUCTURE_TYPE structureType, Area location, bool isInside = true) {
         this.structureType = structureType;
         this._location = location;
+        this.isInside = isInside;
     }
 
     public void SetInsideState(bool isInside) {

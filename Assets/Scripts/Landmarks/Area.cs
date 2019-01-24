@@ -164,11 +164,7 @@ public class Area {
         if (data.possibleOccupants != null) {
             possibleOccupants.AddRange(data.possibleOccupants);
         }
-        if (data.structures != null) {
-            structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>(data.structures);
-        } else {
-            structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
-        }
+        LoadStructures(data);
         
         //LoadSpecialTokens(data);
         AddTile(Utilities.GetTilesFromIDs(data.tileData)); //exposed tiles will be determined after loading landmarks at MapGeneration
@@ -1364,6 +1360,18 @@ public class Area {
     #endregion
 
     #region Structures
+    private void LoadStructures(AreaSaveData data) {
+        structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
+        if (data.structures == null) {
+            return;
+        }
+        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp in data.structures) {
+            for (int i = 0; i < kvp.Value.Count; i++) {
+                LocationStructure currStructure = kvp.Value[i];
+                AddStructure(new LocationStructure(currStructure.structureType, this, currStructure.isInside));
+            }
+        }
+    }
     public void AddStructure(LocationStructure structure) {
         if (!structures.ContainsKey(structure.structureType)) {
             structures.Add(structure.structureType, new List<LocationStructure>());
