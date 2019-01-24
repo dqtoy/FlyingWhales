@@ -298,8 +298,8 @@ public class AreaInvestigation {
         }
     }
     private bool IsActivelyCollectingTokens() {
-        if (tokenCollector != null && tokenCollector.character.specificLocation.tileLocation.areaOfTile != null 
-            && tokenCollector.character.specificLocation.tileLocation.areaOfTile.id == _area.id) {
+        if (tokenCollector != null && tokenCollector.character.specificLocation != null 
+            && tokenCollector.character.specificLocation.id == _area.id) {
             return true;
         }
         return false;

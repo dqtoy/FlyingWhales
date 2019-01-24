@@ -22,7 +22,7 @@ public class Explorer : Job {
     #region Overrides
     public override void DoJobAction() {
         base.DoJobAction();
-        Area area = _character.specificLocation.tileLocation.areaOfTile;
+        Area area = _character.specificLocation;
         string jobSummary = GameManager.Instance.TodayLogString() + " " + _character.name + " job summary: ";
 
         int baseSuccessRate = 50;
@@ -58,17 +58,17 @@ public class Explorer : Job {
                     }
                     break;
                 case RESULT.FAIL:
-                    interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_FAILED, character.specificLocation.tileLocation.landmarkOnTile);
+                    interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_FAILED, character.specificLocation.coreTile.landmarkOnTile);
                     interaction.AddEndInteractionAction(() => StartJobAction());
                     interaction.ScheduleSecondTimeOut();
-                    character.specificLocation.tileLocation.areaOfTile.coreTile.landmarkOnTile.AddInteraction(interaction);
+                    character.specificLocation.coreTile.landmarkOnTile.AddInteraction(interaction);
                     SetCreatedInteraction(interaction);
                     break;
                 case RESULT.CRITICAL_FAIL:
-                    interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_CRITICAL_FAIL, character.specificLocation.tileLocation.landmarkOnTile);
+                    interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_CRITICAL_FAIL, character.specificLocation.coreTile.landmarkOnTile);
                     interaction.AddEndInteractionAction(() => StartJobAction());
                     interaction.ScheduleSecondTimeOut();
-                    character.specificLocation.tileLocation.areaOfTile.coreTile.landmarkOnTile.AddInteraction(interaction);
+                    character.specificLocation.coreTile.landmarkOnTile.AddInteraction(interaction);
                     SetCreatedInteraction(interaction);
                     break;
                 default:
@@ -114,14 +114,14 @@ public class Explorer : Job {
     private void GenerateSpawnedInteraction() {
         List<INTERACTION_TYPE> choices = GetValidExplorerEvents();
         if (choices.Count > 0) {
-            Area area = _character.specificLocation.tileLocation.areaOfTile;
+            Area area = _character.specificLocation;
             area.SetStopDefaultInteractionsState(true);
             SetJobActionPauseState(true);
             INTERACTION_TYPE chosenInteractionType = choices[UnityEngine.Random.Range(0, choices.Count)];
-            Interaction interaction = InteractionManager.Instance.CreateNewInteraction(chosenInteractionType, _character.specificLocation as BaseLandmark);
+            Interaction interaction = InteractionManager.Instance.CreateNewInteraction(chosenInteractionType, _character.specificLocation.coreTile.landmarkOnTile);
             interaction.AddEndInteractionAction(() => SetJobActionPauseState(false));
             interaction.AddEndInteractionAction(() => ForceDefaultAllExistingInteractions());
-            _character.specificLocation.tileLocation.landmarkOnTile.AddInteraction(interaction);
+            _character.specificLocation.coreTile.landmarkOnTile.AddInteraction(interaction);
             SetCreatedInteraction(interaction);
             InteractionUI.Instance.OpenInteractionUI(_createdInteraction);
         }
@@ -131,7 +131,7 @@ public class Explorer : Job {
         List<INTERACTION_TYPE> validTypes = new List<INTERACTION_TYPE>();
         for (int i = 0; i < explorerEvents.Length; i++) {
             INTERACTION_TYPE type = explorerEvents[i];
-            if (InteractionManager.Instance.CanCreateInteraction(type, _character.specificLocation as BaseLandmark)) {
+            if (InteractionManager.Instance.CanCreateInteraction(type, _character.specificLocation)) {
                 validTypes.Add(type);
             }
         }
@@ -141,7 +141,7 @@ public class Explorer : Job {
     public Interaction CreateExplorerEvent() {
         List<INTERACTION_TYPE> choices = GetValidExplorerEvents();
         if (choices.Count > 0) {
-            Area area = _character.specificLocation.tileLocation.areaOfTile;
+            Area area = _character.specificLocation;
             INTERACTION_TYPE chosenType = choices[Random.Range(0, choices.Count)];
             //Get Random Explorer Event
             return InteractionManager.Instance.CreateNewInteraction(chosenType, area.coreTile.landmarkOnTile);

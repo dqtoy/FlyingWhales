@@ -175,9 +175,9 @@ public class CharacterTracking : Interaction {
     }
     private void DoNothingRewardEffect(InteractionState state) {
         //**Mechanics**: Characters home area will gain Supply Cache Reward 1
-        if (characterInvolved.homeLandmark != null && characterInvolved.homeLandmark.tileLocation.areaOfTile != null) {
-            characterInvolved.homeLandmark.tileLocation.areaOfTile.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Supply_Cache_Reward_1));
-        }
+        //if (characterInvolved.homeLandmark != null && characterInvolved.homeLandmark.tileLocation.areaOfTile != null) {
+        //    characterInvolved.homeLandmark.tileLocation.areaOfTile.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Supply_Cache_Reward_1));
+        //}
         if (state.descriptionLog != null) {
             //state.descriptionLog.AddToFillers(characterInvolved, characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             state.descriptionLog.AddToFillers(targetArea, targetArea.name, LOG_IDENTIFIER.LANDMARK_1);
@@ -189,9 +189,9 @@ public class CharacterTracking : Interaction {
 
     private Area GetTargetArea() {
         List<Area> choices = new List<Area>(LandmarkManager.Instance.allAreas);
-        if (characterInvolved.homeLandmark != null && characterInvolved.homeLandmark.tileLocation.areaOfTile != null) {
-            choices.Remove(characterInvolved.homeLandmark.tileLocation.areaOfTile);
-        }
+        //if (characterInvolved.homeLandmark != null && characterInvolved.homeLandmark.tileLocation.areaOfTile != null) {
+        //    choices.Remove(characterInvolved.homeLandmark.tileLocation.areaOfTile);
+        //}
         if (choices.Count > 0) {
             return choices[Random.Range(0, choices.Count)];
         }

@@ -124,17 +124,17 @@ public class MoveToScavenge : Interaction {
 
     private void StartMove() {
         AddToDebugLog(_characterInvolved.name + " starts moving towards " + targetArea.name + "(" + targetArea.coreTile.landmarkOnTile.name + ")");
-        _characterInvolved.ownParty.GoToLocation(targetArea.coreTile.landmarkOnTile, PATHFINDING_MODE.NORMAL, () => CreateScavengeEvent());
+        _characterInvolved.ownParty.GoToLocation(targetArea, PATHFINDING_MODE.NORMAL, () => CreateScavengeEvent());
     }
     private void CreateScavengeEvent() {
         AddToDebugLog(_characterInvolved.name + " will now create scavenge event");
-        Interaction scavenge = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.SCAVENGE_EVENT, _characterInvolved.specificLocation.tileLocation.landmarkOnTile);
+        Interaction scavenge = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.SCAVENGE_EVENT, _characterInvolved.specificLocation.coreTile.landmarkOnTile);
         scavenge.SetCanInteractionBeDoneAction(IsScavengeStillValid);
         _characterInvolved.SetForcedInteraction(scavenge);
     }
 
     private bool IsScavengeStillValid() {
-        return _characterInvolved.specificLocation.tileLocation.areaOfTile != null && _characterInvolved.specificLocation.tileLocation.areaOfTile.owner == null;
+        return _characterInvolved.specificLocation != null && _characterInvolved.specificLocation.owner == null;
     }
 
     private Area GetTargetArea() {

@@ -64,7 +64,7 @@ public class AssassinateActionFaction : Interaction {
             return false;
         }
         if (_targetCharacter != null) { //if there is a target character, he/she must still be in this location
-            return _targetCharacter.specificLocation.tileLocation.areaOfTile.id == interactable.tileLocation.areaOfTile.id;
+            return _targetCharacter.specificLocation.id == interactable.tileLocation.areaOfTile.id;
         } else { //if there is no set target character
             if (GetTargetCharacter(character) == null) { //check if a target character can be found using the provided weights
                 return false;

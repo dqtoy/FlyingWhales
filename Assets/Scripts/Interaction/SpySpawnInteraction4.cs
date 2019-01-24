@@ -56,9 +56,9 @@ public class SpySpawnInteraction4 : Interaction {
             ActionOption homeTokenOption = new ActionOption {
                 interactionState = state,
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
-                name = "Get Location Token: " + _character1.homeLandmark.tileLocation.areaOfTile.locationToken.nameInBold,
+                name = "Get Location Token: " + _character1.homeArea.locationToken.nameInBold,
                 duration = 0,
-                canBeDoneAction = () => CanGetLocationToken(_character1.homeLandmark.tileLocation.areaOfTile),
+                canBeDoneAction = () => CanGetLocationToken(_character1.homeArea),
                 effect = () => Character1TokenOption(),
                 doesNotMeetRequirementsStr = "You already have this token."
             };
@@ -141,9 +141,9 @@ public class SpySpawnInteraction4 : Interaction {
     private void HomeTokenObtainedEffect(InteractionState state) {
         state.SetUseTokeneerMinionOnly(true);
 
-        PlayerManager.Instance.player.AddToken(_character1.homeLandmark.tileLocation.areaOfTile.locationToken);
+        PlayerManager.Instance.player.AddToken(_character1.homeArea.locationToken);
 
-        state.descriptionLog.AddToFillers(null, _character1.homeLandmark.tileLocation.areaOfTile.locationToken.tokenName, LOG_IDENTIFIER.STRING_1);
+        state.descriptionLog.AddToFillers(null, _character1.homeArea.locationToken.tokenName, LOG_IDENTIFIER.STRING_1);
 
         //state.AddLogFiller(new LogFiller(null, _character1.characterToken.ToString(), LOG_IDENTIFIER.STRING_1));
     }
@@ -165,7 +165,7 @@ public class SpySpawnInteraction4 : Interaction {
         List<Character> characters = new List<Character>();
         for (int i = 0; i < interactable.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
             Character character = interactable.tileLocation.areaOfTile.charactersAtLocation[i];
-            if (character.faction.id != PlayerManager.Instance.player.playerFaction.id && character.faction.id != FactionManager.Instance.neutralFaction.id && character.homeLandmark.tileLocation.areaOfTile.id != interactable.tileLocation.areaOfTile.id) {
+            if (character.faction.id != PlayerManager.Instance.player.playerFaction.id && character.faction.id != FactionManager.Instance.neutralFaction.id && character.homeArea.id != interactable.tileLocation.areaOfTile.id) {
                 characters.Add(character);
             }
         }

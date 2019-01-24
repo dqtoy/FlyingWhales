@@ -141,7 +141,7 @@ public class FoundMagus : Interaction {
 
         //Remove character from her current Faction and turn her into the Faction Leader of a new Magus faction. Current area becomes owned by Magus faction, set its race to the character's race.
         Faction oldFaction = _characterInvolved.faction;
-        _characterInvolved.FoundFaction("Magus", interactable);
+        _characterInvolved.FoundFaction("Magus", interactable.tileLocation.areaOfTile);
 
         //Set Magus faction to Enemy of character's original faction
         _characterInvolved.faction.GetRelationshipWith(oldFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.ENEMY);
@@ -158,7 +158,7 @@ public class FoundMagus : Interaction {
     private void TurnFailEffect(InteractionState state) {
         //Remove character from her current Faction and turn her into the Faction Leader of a new Magus faction. Current area becomes owned by Magus faction, set its race to the character's race.
         Faction oldFaction = _characterInvolved.faction;
-        _characterInvolved.FoundFaction("Magus", interactable);
+        _characterInvolved.FoundFaction("Magus", interactable.tileLocation.areaOfTile);
 
         //Spawn 4 new characters in the location or until the resident capacity has been reached. Race is the same as the character's.
         interactable.SpawnRandomCharacters(4);
@@ -172,7 +172,7 @@ public class FoundMagus : Interaction {
     private void TurnCritFailEffect(InteractionState state) {
         //Remove character from her current Faction and turn her into the Faction Leader of a new Magus faction. Current area becomes owned by Magus faction, set its race to the character's race.
         Faction oldFaction = _characterInvolved.faction;
-        _characterInvolved.FoundFaction("Magus", interactable);
+        _characterInvolved.FoundFaction("Magus", interactable.tileLocation.areaOfTile);
 
         //Set Magus faction to Friend of character's original faction
         _characterInvolved.faction.GetRelationshipWith(oldFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.FRIEND);
@@ -190,7 +190,7 @@ public class FoundMagus : Interaction {
         investigatorCharacter.LevelUp();
 
         //Remove character from her current Faction and turn her into the Faction Leader of a new Magus faction. Current area becomes owned by Magus faction, set its race to the character's race.
-        _characterInvolved.FoundFaction("Magus", interactable);
+        _characterInvolved.FoundFaction("Magus", interactable.tileLocation.areaOfTile);
 
         //Set Magus faction to Ally of player faction.
         _characterInvolved.faction.GetRelationshipWith(PlayerManager.Instance.player.playerFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.ALLY);
@@ -200,14 +200,14 @@ public class FoundMagus : Interaction {
     }
     private void AllianceFailEffect(InteractionState state) {
         //Remove character from her current Faction and turn her into the Faction Leader of a new Magus faction. Current area becomes owned by Magus faction, set its race to the character's race.
-        _characterInvolved.FoundFaction("Magus", interactable);
+        _characterInvolved.FoundFaction("Magus", interactable.tileLocation.areaOfTile);
 
         //Spawn 4 new characters in the location or until the resident capacity has been reached. Race is the same as the character's.
         interactable.SpawnRandomCharacters(4);
     }
     private void AllianceCritFailEffect(InteractionState state) {
         //Remove character from her current Faction and turn her into the Faction Leader of a new Magus faction. Current area becomes owned by Magus faction, set its race to the character's race.
-        _characterInvolved.FoundFaction("Magus", interactable);
+        _characterInvolved.FoundFaction("Magus", interactable.tileLocation.areaOfTile);
 
         //Set Magus faction to Disliked of player faction.
         _characterInvolved.faction.GetRelationshipWith(PlayerManager.Instance.player.playerFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.DISLIKED);
@@ -220,14 +220,14 @@ public class FoundMagus : Interaction {
     }
     private void DissuadeFailEffect(InteractionState state) {
         //Remove character from her current Faction and turn her into the Faction Leader of a new Magus faction. Current area becomes owned by Magus faction, set its race to the character's race.
-        _characterInvolved.FoundFaction("Magus", interactable);
+        _characterInvolved.FoundFaction("Magus", interactable.tileLocation.areaOfTile);
 
         //Spawn 4 new characters in the location or until the resident capacity has been reached. Race is the same as the character's.
         interactable.SpawnRandomCharacters(4);
     }
     private void MagusFoundEffect(InteractionState state) {
         //Remove character from her current Faction and turn her into the Faction Leader of a new Magus faction. Current area becomes owned by Magus faction, set its race to the character's race.
-        _characterInvolved.FoundFaction("Magus", interactable);
+        _characterInvolved.FoundFaction("Magus", interactable.tileLocation.areaOfTile);
 
         //Spawn 4 new characters in the location or until the resident capacity has been reached. Race is the same as the character's.
         interactable.SpawnRandomCharacters(4);

@@ -158,9 +158,9 @@ public class LandmarkInvestigation {
         if(_assignedMinion == null) {
             return;
         }
-        if (_landmark.landmarkObj.isRuined) {
-            return;
-        }
+        //if (_landmark.landmarkObj.isRuined) {
+        //    return;
+        //}
         if (!_landmark.hasBeenInspected) {
             _landmark.SetHasBeenInspected(true);
         }

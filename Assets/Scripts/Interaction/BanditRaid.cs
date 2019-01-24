@@ -174,8 +174,8 @@ public class BanditRaid : Interaction {
         investigatorCharacter.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1)); //**Reward**: Demon gains Exp 1
         //**Mechanics**: combine characters into a single party of up to 4 units and send it to raid target
         Party createdParty = CombineCharacters(4);
-        CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.RAID_LANDMARK);
-        createdParty.iactionData.AssignAction(characterAction, chosenLandmarkToRaid.landmarkObj);
+        //CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.RAID_LANDMARK);
+        //createdParty.iactionData.AssignAction(characterAction, chosenLandmarkToRaid.landmarkObj);
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(originLandmark.tileLocation.areaOfTile, originLandmark.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
             state.descriptionLog.AddToFillers(chosenLandmarkToRaid.tileLocation.areaOfTile, chosenLandmarkToRaid.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_2);
@@ -188,8 +188,8 @@ public class BanditRaid : Interaction {
         BaseLandmark newRaidTarget = PlayerManager.Instance.player.playerArea.GetRandomExposedLandmark();
         //**Mechanics**: combine characters into a single party of up to 4 units and send it to raid target
         Party createdParty = CombineCharacters(4);
-        CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.RAID_LANDMARK);
-        createdParty.iactionData.AssignAction(characterAction, newRaidTarget.landmarkObj);
+        //CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.RAID_LANDMARK);
+        //createdParty.iactionData.AssignAction(characterAction, newRaidTarget.landmarkObj);
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(originLandmark.tileLocation.areaOfTile, originLandmark.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
             state.descriptionLog.AddToFillers(newRaidTarget.tileLocation.areaOfTile, newRaidTarget.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_2);
@@ -201,8 +201,8 @@ public class BanditRaid : Interaction {
         investigatorCharacter.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1)); //**Reward**: Demon gains Exp 1
         //**Mechanics**: combine characters into a single party of up to 4 units and send it to raid target, all raiding units gain "Empowered" buff
         Party createdParty = CombineCharacters(4);
-        CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.RAID_LANDMARK);
-        createdParty.iactionData.AssignAction(characterAction, chosenLandmarkToRaid.landmarkObj);
+        //CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.RAID_LANDMARK);
+        //createdParty.iactionData.AssignAction(characterAction, chosenLandmarkToRaid.landmarkObj);
         Trait empoweredTrait = AttributeManager.Instance.allTraits["Empowered"];
         for (int i = 0; i < createdParty.characters.Count; i++) {
             createdParty.characters[i].AddTrait(empoweredTrait);
@@ -218,8 +218,8 @@ public class BanditRaid : Interaction {
         investigatorCharacter.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1)); //**Reward**: Demon gains Exp 1
         //**Mechanics**: combine characters into a single party of up to 4 units and send it to raid target, add 100 Supply to Bandit Camp
         Party createdParty = CombineCharacters(4);
-        CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.RAID_LANDMARK);
-        createdParty.iactionData.AssignAction(characterAction, chosenLandmarkToRaid.landmarkObj);
+        //CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.RAID_LANDMARK);
+        //createdParty.iactionData.AssignAction(characterAction, chosenLandmarkToRaid.landmarkObj);
         originLandmark.tileLocation.areaOfTile.AdjustSuppliesInBank(100);
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(originLandmark.tileLocation.areaOfTile, originLandmark.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
@@ -233,49 +233,49 @@ public class BanditRaid : Interaction {
         PlayerManager.Instance.player.RemoveMinion(investigatorCharacter.minion);
         //**Mechanics**: combine characters into a single party of up to 4 units and send it to raid target
         Party createdParty = CombineCharacters(4);
-        CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.RAID_LANDMARK);
-        createdParty.iactionData.AssignAction(characterAction, chosenLandmarkToRaid.landmarkObj);
+        //CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.RAID_LANDMARK);
+        //createdParty.iactionData.AssignAction(characterAction, chosenLandmarkToRaid.landmarkObj);
         state.AddLogFiller(new LogFiller(originLandmark.owner, originLandmark.owner.name, LOG_IDENTIFIER.FACTION_1));
         state.AddLogFiller(new LogFiller(chosenLandmarkToRaid.tileLocation.areaOfTile, chosenLandmarkToRaid.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1));
     }
     private void DoNothingRewardEffect(InteractionState state) {
         //**Mechanics**: combine characters into a single party of up to 4 units and send it to raid target
         Party createdParty = CombineCharacters(4);
-        CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.RAID_LANDMARK);
-        createdParty.iactionData.AssignAction(characterAction, chosenLandmarkToRaid.landmarkObj);
+        //CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.RAID_LANDMARK);
+        //createdParty.iactionData.AssignAction(characterAction, chosenLandmarkToRaid.landmarkObj);
         state.AddLogFiller(new LogFiller(originLandmark.owner, originLandmark.owner.name, LOG_IDENTIFIER.FACTION_1));
         state.AddLogFiller(new LogFiller(chosenLandmarkToRaid.tileLocation.areaOfTile, chosenLandmarkToRaid.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1));
     }
 
     private Party CombineCharacters(int upTo) {
         Party partyToUse = null;
-        for (int i = 0; i < originLandmark.charactersWithHomeOnLandmark.Count; i++) {
-            Character currCharacter = originLandmark.charactersWithHomeOnLandmark[i];
-            if (currCharacter.isDefender) {
-                continue; //skip characters that are defending
-            }
-            Party currCharacterParty = currCharacter.ownParty;
-            if (partyToUse == null || currCharacterParty == null ||
-                (currCharacterParty != null && currCharacterParty.characters.Count > partyToUse.characters.Count)) {
-                partyToUse = currCharacterParty;
-            }
-        }
-        if (partyToUse != null) {
-            if (partyToUse.characters.Count < upTo) {
-                for (int i = 0; i < originLandmark.charactersWithHomeOnLandmark.Count; i++) {
-                    Character currCharacter = originLandmark.charactersWithHomeOnLandmark[i];
-                    if (currCharacter.isDefender) {
-                        continue; //skip characters that are defending
-                    }
-                    if (partyToUse.owner.id != currCharacter.id && !currCharacter.IsInParty()) { //the current character is not the owner of the party
-                        partyToUse.AddCharacter(currCharacter);
-                        if (partyToUse.characters.Count >= upTo) {
-                            break;
-                        }
-                    }
-                }
-            }
-        }
+        //for (int i = 0; i < originLandmark.charactersWithHomeOnLandmark.Count; i++) {
+        //    Character currCharacter = originLandmark.charactersWithHomeOnLandmark[i];
+        //    if (currCharacter.isDefender) {
+        //        continue; //skip characters that are defending
+        //    }
+        //    Party currCharacterParty = currCharacter.ownParty;
+        //    if (partyToUse == null || currCharacterParty == null ||
+        //        (currCharacterParty != null && currCharacterParty.characters.Count > partyToUse.characters.Count)) {
+        //        partyToUse = currCharacterParty;
+        //    }
+        //}
+        //if (partyToUse != null) {
+        //    if (partyToUse.characters.Count < upTo) {
+        //        for (int i = 0; i < originLandmark.charactersWithHomeOnLandmark.Count; i++) {
+        //            Character currCharacter = originLandmark.charactersWithHomeOnLandmark[i];
+        //            if (currCharacter.isDefender) {
+        //                continue; //skip characters that are defending
+        //            }
+        //            if (partyToUse.owner.id != currCharacter.id && !currCharacter.IsInParty()) { //the current character is not the owner of the party
+        //                partyToUse.AddCharacter(currCharacter);
+        //                if (partyToUse.characters.Count >= upTo) {
+        //                    break;
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
 
         return partyToUse;
     }

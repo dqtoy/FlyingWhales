@@ -18,7 +18,7 @@ public class DefenderGroup {
     public void AddCharacterToGroup(Character character) {
         if (party == null) {
             party = character.ownParty;
-            party.specificLocation.RemoveCharacterFromLocation(party, false);
+            party.specificLocation.RemoveCharacterFromLocation(party);
         } else {
             party.AddCharacter(character);
         }
@@ -51,7 +51,7 @@ public class DefenderGroup {
                     //set the defenders to null
                     party = null;
                 }
-                defendingArea.coreTile.landmarkOnTile.AddCharacterToLocation(defender.ownParty);
+                defendingArea.AddCharacterToLocation(defender.ownParty);
                 defender.OnRemoveAsDefender();
             } else {
                 if (party.characters.Contains(defender)) {

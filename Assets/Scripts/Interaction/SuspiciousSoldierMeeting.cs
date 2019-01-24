@@ -221,7 +221,7 @@ public class SuspiciousSoldierMeeting : Interaction {
     }
     private void ArmyGainedRewardEffect(InteractionState state) {
         investigatorCharacter.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
-        Minion newMinion = PlayerManager.Instance.player.CreateNewMinion("Knights", RACE.HUMANS, false);
+        Minion newMinion = PlayerManager.Instance.player.CreateNewMinion("Knights", RACE.HUMANS);
         newMinion.character.SetLevel(UnityEngine.Random.Range(5, 9));
         PlayerManager.Instance.player.AddMinion(newMinion);
 

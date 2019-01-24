@@ -161,7 +161,7 @@ public class ArmyUnitTraining : Interaction {
         //}
     }
     private void ArmyProducedRewardEffect(InteractionState state) {
-        CharacterManager.Instance.CreateNewCharacter(_chosenClassName, interactable.faction.raceType, GENDER.MALE, interactable.faction, interactable);
+        CharacterManager.Instance.CreateNewCharacter(_chosenClassName, interactable.faction.raceType, GENDER.MALE, interactable.faction, interactable.tileLocation.areaOfTile);
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(_interactable.faction.raceType), LOG_IDENTIFIER.STRING_1);
             state.descriptionLog.AddToFillers(null, _chosenClassName, LOG_IDENTIFIER.STRING_2);

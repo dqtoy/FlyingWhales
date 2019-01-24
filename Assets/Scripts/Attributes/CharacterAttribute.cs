@@ -57,11 +57,6 @@ public class CharacterAttribute {
         //    onRemoveBehavior(_character);
         //}
     }
-
-    //Checks if the given action of a character will undergo changes by this attribute
-    public virtual void CharacterHasAction(CharacterAction action) {
-
-    }
     #endregion
 
     public CharacterAttribute(ATTRIBUTE_CATEGORY category, ATTRIBUTE attribute) {

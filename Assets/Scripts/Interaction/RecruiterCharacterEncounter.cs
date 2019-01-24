@@ -103,7 +103,7 @@ public class RecruiterCharacterEncounter : Interaction {
         moveToRecruit.SetCharacterToBeRecruited(characterToBeRecruited);
         _characterInvolved.InduceInteraction(moveToRecruit);
 
-        Area targetArea = characterToBeRecruited.specificLocation.tileLocation.areaOfTile;
+        Area targetArea = characterToBeRecruited.specificLocation;
 
         state.descriptionLog.AddToFillers(targetArea, targetArea.name, LOG_IDENTIFIER.LANDMARK_2);
 

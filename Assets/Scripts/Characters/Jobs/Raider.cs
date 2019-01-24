@@ -32,13 +32,13 @@ public class Raider : Job {
     protected override bool IsTokenCompatibleWithJob(Token token) {
         if (token.tokenType == TOKEN_TYPE.CHARACTER) {
             CharacterToken characterToken = token as CharacterToken;
-            return characterToken.character.IsInOwnParty() && characterToken.character.doNotDisturb <= 0 && characterToken.character.specificLocation.tileLocation.areaOfTile.id == _character.specificLocation.tileLocation.areaOfTile.id && !characterToken.character.currentParty.icon.isTravelling;
+            return characterToken.character.IsInOwnParty() && characterToken.character.doNotDisturb <= 0 && characterToken.character.specificLocation.id == _character.specificLocation.id && !characterToken.character.currentParty.icon.isTravelling;
         } else if (token.tokenType == TOKEN_TYPE.LOCATION) {
             LocationToken locationToken = token as LocationToken;
             //If current area has faction, and target area's faction is different from current area's faction or target area has no faction, and target area is not the current area - return true
-            return _character.specificLocation.tileLocation.areaOfTile.owner != null
-                && (locationToken.location.owner == null || (locationToken.location.owner != null && locationToken.location.owner.id != _character.specificLocation.tileLocation.areaOfTile.owner.id))
-                && locationToken.location.id != _character.specificLocation.tileLocation.areaOfTile.id;
+            return _character.specificLocation.owner != null
+                && (locationToken.location.owner == null || (locationToken.location.owner != null && locationToken.location.owner.id != _character.specificLocation.owner.id))
+                && locationToken.location.id != _character.specificLocation.id;
         }
         return base.IsTokenCompatibleWithJob(token);
     }
@@ -61,7 +61,7 @@ public class Raider : Job {
         rateWeights.AddElement(RESULT.FAIL, baseFailRate);
         rateWeights.AddElement(RESULT.CRITICAL_FAIL, criticalFailRate);
 
-        if (character.specificLocation.tileLocation.landmarkOnTile.owner == null) {
+        if (character.specificLocation.coreTile.landmarkOnTile.owner == null) {
             _action = "scavenge";
         } else {
             _action = "raid";
@@ -96,7 +96,7 @@ public class Raider : Job {
         return baseRate + multiplier;
     }
     public override void CaptureRandomLandmarkEvent() {
-        Area area = _character.specificLocation.tileLocation.areaOfTile;
+        Area area = _character.specificLocation;
         if (area == null) {
             //Current location has no area
             return;
@@ -140,7 +140,7 @@ public class Raider : Job {
             SetCreatedInteraction(choices[UnityEngine.Random.Range(0, choices.Count)]);
         } else if (result == "Crit Fail") {
             Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_CRITICAL_FAIL, area.coreTile.landmarkOnTile);
-            _character.specificLocation.tileLocation.landmarkOnTile.AddInteraction(interaction);
+            _character.specificLocation.coreTile.landmarkOnTile.AddInteraction(interaction);
             SetCreatedInteraction(interaction);
         }
         _createdInteraction.AddEndInteractionAction(() => SetJobActionPauseState(false));
@@ -150,8 +150,8 @@ public class Raider : Job {
     #endregion
 
     private void RaidSuccess() {
-        int obtainedSupply = GetSupplyObtained(character.specificLocation.tileLocation.areaOfTile);
-        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.RAID_SUCCESS, character.specificLocation.tileLocation.landmarkOnTile);
+        int obtainedSupply = GetSupplyObtained(character.specificLocation);
+        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.RAID_SUCCESS, character.specificLocation.coreTile.landmarkOnTile);
         interaction.AddEndInteractionAction(() => GoBackHomeSuccess(obtainedSupply));
         interaction.ScheduleSecondTimeOut();
         interaction.SetOtherData(new object[] { obtainedSupply });
@@ -161,7 +161,7 @@ public class Raider : Job {
         //FavorEffects(-2);
     }
     private void RaidFail() {
-        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_FAILED, character.specificLocation.tileLocation.landmarkOnTile);
+        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_FAILED, character.specificLocation.coreTile.landmarkOnTile);
         interaction.AddEndInteractionAction(() => GoBackHome());
         interaction.ScheduleSecondTimeOut();
         character.AddInteraction(interaction);
@@ -172,7 +172,7 @@ public class Raider : Job {
     }
     private void CriticalRaidFail() {
         //When a raid critically fails, the target Faction's Favor Count towards the raider is reduced by -1. The raider will also perish.
-        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_CRITICAL_FAIL, character.specificLocation.tileLocation.landmarkOnTile);
+        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_CRITICAL_FAIL, character.specificLocation.coreTile.landmarkOnTile);
         interaction.AddEndInteractionAction(() => GoBackHome());
         interaction.ScheduleSecondTimeOut();
         character.AddInteraction(interaction);
@@ -183,7 +183,7 @@ public class Raider : Job {
 
     private void GoBackHome() {
         if (character.minion != null) {
-            character.specificLocation.tileLocation.areaOfTile.areaInvestigation.RecallMinion("explore");
+            character.specificLocation.areaInvestigation.RecallMinion("explore");
         } else {
             character.currentParty.GoHome();
         }
@@ -194,13 +194,13 @@ public class Raider : Job {
             PlayerManager.Instance.player.AdjustCurrency(CURRENCY.SUPPLY, supplyObtained);
             //character.homeLandmark.tileLocation.areaOfTile.AdjustSuppliesInBank(supplyObtained);
         } else {
-            character.homeLandmark.tileLocation.areaOfTile.AdjustSuppliesInBank(supplyObtained);
+            character.homeArea.AdjustSuppliesInBank(supplyObtained);
         }
         GoBackHome();
     }
 
     private void FavorEffects(int amount) {
-        Area targetArea = character.specificLocation.tileLocation.areaOfTile;
+        Area targetArea = character.specificLocation;
         if (targetArea.owner != null) {
             targetArea.owner.AdjustRelationshipFor(character.faction, amount);
         }

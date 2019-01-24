@@ -60,7 +60,7 @@ public class RecruitActionFaction : Interaction {
             return false;
         }
         if (_targetCharacter != null) { //if there is a target character, he/she must still be in this location
-            return _targetCharacter.specificLocation.tileLocation.areaOfTile.id == interactable.tileLocation.areaOfTile.id;
+            return _targetCharacter.specificLocation.id == interactable.tileLocation.areaOfTile.id;
         } else { //if there is no set target character
             if (GetTargetCharacter(character) == null) { //check if a target character can be found using the provided weights
                 return false;
@@ -116,10 +116,10 @@ public class RecruitActionFaction : Interaction {
     private void TransferCharacter(Character character, Faction faction) {
         character.faction.RemoveCharacter(character);
         faction.AddNewCharacter(character);
-        character.MigrateTo(_characterInvolved.homeArea);
+        character.MigrateHomeTo(_characterInvolved.homeArea);
         //character.homeLandmark.RemoveCharacterHomeOnLandmark(character);
         //_characterInvolved.homeLandmark.AddCharacterHomeOnLandmark(character);
-        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, character.specificLocation.tileLocation.landmarkOnTile);
+        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, character.specificLocation.coreTile.landmarkOnTile);
         character.SetForcedInteraction(interaction);
     }
 

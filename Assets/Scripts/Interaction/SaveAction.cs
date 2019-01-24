@@ -109,9 +109,9 @@ public class SaveAction : Interaction {
          if its original home still has available resident capacity.
          */
         if (_targetCharacter == null 
-            || _targetCharacter.specificLocation.tileLocation.areaOfTile.id != interactable.tileLocation.areaOfTile.id
+            || _targetCharacter.specificLocation.id != interactable.tileLocation.areaOfTile.id
             || _targetCharacter.GetTrait("Abducted") == null
-            || (_targetCharacter.GetTrait("Abducted") as Abducted).originalHomeLandmark.tileLocation.areaOfTile.IsResidentsFull()
+            || (_targetCharacter.GetTrait("Abducted") as Abducted).originalHome.IsResidentsFull()
             || targetCharacter.isDead) {
             return false;
         }

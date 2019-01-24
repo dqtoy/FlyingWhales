@@ -117,7 +117,7 @@ public class SpawnNeutralCharacter : Interaction {
         state.AddLogFiller(new LogFiller(null, _classNameToBeSpawned, LOG_IDENTIFIER.STRING_2));
     }
     private void FailCancelEffect(InteractionState state) {
-        Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(_classNameToBeSpawned, interactable.tileLocation.areaOfTile.raceType, Utilities.GetRandomGender(), FactionManager.Instance.neutralFaction, interactable);
+        Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(_classNameToBeSpawned, interactable.tileLocation.areaOfTile.raceType, Utilities.GetRandomGender(), FactionManager.Instance.neutralFaction, interactable.tileLocation.areaOfTile);
         createdCharacter.SetLevel(createdCharacter.raceSetting.neutralSpawnLevel);
         //Debug.Log("CREATED NEW NEUTRAL CHARACTER: " + createdCharacter.name + " - " + createdCharacter.level);
 
@@ -131,7 +131,7 @@ public class SpawnNeutralCharacter : Interaction {
     private void SuccessRecruitEffect(InteractionState state) {
         investigatorCharacter.LevelUp();
 
-        Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(_classNameToBeSpawned, interactable.tileLocation.areaOfTile.raceType, Utilities.GetRandomGender(), FactionManager.Instance.neutralFaction, interactable);
+        Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(_classNameToBeSpawned, interactable.tileLocation.areaOfTile.raceType, Utilities.GetRandomGender(), FactionManager.Instance.neutralFaction, interactable.tileLocation.areaOfTile);
         createdCharacter.SetLevel(createdCharacter.raceSetting.neutralSpawnLevel);
         createdCharacter.RecruitAsMinion();
 
@@ -146,7 +146,7 @@ public class SpawnNeutralCharacter : Interaction {
         state.AddLogFiller(new LogFiller(createdCharacter, createdCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     private void FailRecruitEffect(InteractionState state) {
-        Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(_classNameToBeSpawned, interactable.tileLocation.areaOfTile.raceType, Utilities.GetRandomGender(), FactionManager.Instance.neutralFaction, interactable);
+        Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(_classNameToBeSpawned, interactable.tileLocation.areaOfTile.raceType, Utilities.GetRandomGender(), FactionManager.Instance.neutralFaction, interactable.tileLocation.areaOfTile);
         createdCharacter.SetLevel(createdCharacter.raceSetting.neutralSpawnLevel);
         //Debug.Log("CREATED NEW NEUTRAL CHARACTER: " + createdCharacter.name + " - " + createdCharacter.level);
 
@@ -158,7 +158,7 @@ public class SpawnNeutralCharacter : Interaction {
         state.AddLogFiller(new LogFiller(createdCharacter, createdCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     private void NormalSpawnEffect(InteractionState state) {
-        Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(_classNameToBeSpawned, interactable.tileLocation.areaOfTile.raceType, Utilities.GetRandomGender(), FactionManager.Instance.neutralFaction, interactable);
+        Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(_classNameToBeSpawned, interactable.tileLocation.areaOfTile.raceType, Utilities.GetRandomGender(), FactionManager.Instance.neutralFaction, interactable.tileLocation.areaOfTile);
         createdCharacter.SetLevel(createdCharacter.raceSetting.neutralSpawnLevel);
         //Debug.Log("CREATED NEW NEUTRAL CHARACTER: " + createdCharacter.name + " - " + createdCharacter.level);
 

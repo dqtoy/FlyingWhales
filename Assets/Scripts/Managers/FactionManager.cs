@@ -342,15 +342,15 @@ public class FactionManager : MonoBehaviour {
         }
         return null;
     }
-    public void TransferCharacter(Character character, Faction faction, BaseLandmark newHome) {
+    public void TransferCharacter(Character character, Faction faction, Area newHome) {
         if (character.faction != null) {
             character.faction.RemoveCharacter(character);
         }
         faction.AddNewCharacter(character);
-        character.MigrateTo(newHome);
+        character.MigrateHomeTo(newHome);
         //character.homeLandmark.RemoveCharacterHomeOnLandmark(character);
         //newHome.AddCharacterHomeOnLandmark(character);
-        //Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, _characterInvolved.specificLocation.tileLocation.landmarkOnTile);
+        //Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, _characterInvolved.specificLocation.coreTile.landmarkOnTile);
         //character.SetForcedInteraction(interaction);
     }
     #endregion

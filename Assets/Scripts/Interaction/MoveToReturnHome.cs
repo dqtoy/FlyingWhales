@@ -14,7 +14,7 @@ public class MoveToReturnHome : Interaction {
     #region Override
     public override void CreateStates() {
         InteractionState startState = new InteractionState("Start", this);
-        targetLocation = _characterInvolved.homeLandmark.tileLocation.areaOfTile;
+        targetLocation = _characterInvolved.homeArea;
 
         //**Text Description**: [Character Name] is about to leave for [Location Name 1] to scavenge for supplies.
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");

@@ -53,7 +53,7 @@ public class Recruit : PlayerJobAction {
     }
 
     private void CreateRecruitInteraction(Character target) {
-        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_RECRUIT_CHARACTER, target.specificLocation as BaseLandmark);
+        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_RECRUIT_CHARACTER, target.specificLocation.coreTile.landmarkOnTile);
         interaction.SetDefaultInvestigatorCharacter(assignedCharacter);
         target.AddInteraction(interaction);
         InteractionUI.Instance.OpenInteractionUI(interaction);

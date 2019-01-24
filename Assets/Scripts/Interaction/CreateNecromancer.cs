@@ -72,7 +72,7 @@ public class CreateNecromancer : Interaction {
         _characterInvolved.SetForcedInteraction(null);
 
         Faction oldFaction = _characterInvolved.faction;
-        _characterInvolved.FoundFaction("Ziranna", interactable);
+        _characterInvolved.FoundFaction("Ziranna", interactable.tileLocation.areaOfTile);
 
         _characterInvolved.faction.GetRelationshipWith(oldFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.ENEMY);
         _characterInvolved.faction.GetRelationshipWith(PlayerManager.Instance.player.playerFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.ALLY);

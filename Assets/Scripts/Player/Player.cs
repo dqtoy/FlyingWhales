@@ -43,8 +43,8 @@ public class Player : ILeader {
     public BaseLandmark demonicPortal {
         get { return _demonicPortal; }
     }
-    public ILocation specificLocation {
-        get { return _demonicPortal; }
+    public Area specificLocation {
+        get { return playerArea; }
     }
     public List<Token> tokens {
         get { return _tokens; }
@@ -214,7 +214,7 @@ public class Player : ILeader {
         PlayerUI.Instance.ResetAllMinionItems();
         _minions = new List<Minion>();
         for (int i = 0; i < 20; i++) {
-            AddMinion(CreateNewMinion(CharacterManager.Instance.GetDeadlySinsClassNameFromRotation(), RACE.DEMON, false));
+            AddMinion(CreateNewMinion(CharacterManager.Instance.GetDeadlySinsClassNameFromRotation(), RACE.DEMON));
         }
         //AddMinion(CreateNewMinion(CharacterManager.Instance.GetRandomDeadlySinsClassName(), RACE.DEMON, false));
         //AddMinion(CreateNewMinion(CharacterManager.Instance.GetRandomDeadlySinsClassName(), RACE.DEMON, false));
@@ -229,13 +229,8 @@ public class Player : ILeader {
     public Minion CreateNewMinion(Character character) {
         return new Minion(character, true);
     }
-    public Minion CreateNewMinion(string className, RACE race, bool isArmy) {
-        Minion minion = null;
-        if (isArmy) {
-            minion = new Minion(CharacterManager.Instance.CreateCharacterArmyUnit(className, race, playerFaction, _demonicPortal), false);
-        } else {
-            minion = new Minion(CharacterManager.Instance.CreateNewCharacter(className, race, GENDER.MALE, playerFaction, _demonicPortal, false), false);
-        }
+    public Minion CreateNewMinion(string className, RACE race) {
+        Minion minion = new Minion(CharacterManager.Instance.CreateNewCharacter(className, race, GENDER.MALE, playerFaction, playerArea, false), false);
         return minion;
     }
     public void UpdateMinions() {

@@ -353,8 +353,8 @@ public class CharacterInfoUI : UIMenu {
 
     #region Location
     private void UpdateLocationInfo() {
-        visitorLocationPortrait.SetLocation(_activeCharacter.specificLocation.tileLocation.areaOfTile);
-        residentLocationPortrait.SetLocation(_activeCharacter.homeLandmark.tileLocation.areaOfTile);
+        visitorLocationPortrait.SetLocation(_activeCharacter.specificLocation);
+        residentLocationPortrait.SetLocation(_activeCharacter.homeArea);
     }
     #endregion
 
@@ -657,65 +657,6 @@ public class CharacterInfoUI : UIMenu {
     }
     #endregion
 
-    #region Character Tags
-    private List<CharacterAttributeIcon> shownAttributes = new List<CharacterAttributeIcon>();
-    private void UpdateTagInfo(List<CharacterAttribute> attributes) {
-        List<CharacterAttribute> attributesToShow = new List<CharacterAttribute>(attributes);
-        //Utilities.DestroyChildren(tagsScrollView.content);
-        List<CharacterAttributeIcon> iconsToRemove = new List<CharacterAttributeIcon>();
-        for (int i = 0; i < shownAttributes.Count; i++) {
-            CharacterAttributeIcon shownIcon = shownAttributes[i];
-            if (attributesToShow.Contains(shownIcon.attribute)) {
-                //remove the tag from the attributes list so it doesn't get loaded again later
-                attributesToShow.Remove(shownIcon.attribute);
-            } else {
-                //destroy the tag
-                iconsToRemove.Add(shownIcon);
-            }
-        }
-
-        for (int i = 0; i < iconsToRemove.Count; i++) {
-            CharacterAttributeIcon icon = iconsToRemove[i];
-            RemoveIcon(icon);
-        }
-
-        for (int i = 0; i < attributesToShow.Count; i++) { //show the remaining attributes
-            CharacterAttribute currTag = attributesToShow[i];
-            AddTag(currTag);
-        }
-    }
-    private void AddTag(CharacterAttribute tag) {
-        //GameObject tagGO = UIManager.Instance.InstantiateUIObject(characterTagPrefab.name, tagsScrollView.content);
-        //CharacterAttributeIcon icon = tagGO.GetComponent<CharacterAttributeIcon>();
-        //icon.SetTag(tag);
-        //shownAttributes.Add(icon);
-    }
-    private void RemoveTag(CharacterAttribute tag) {
-        //CharacterAttributeIcon[] icons = Utilities.GetComponentsInDirectChildren<CharacterAttributeIcon>(tagsScrollView.content.gameObject);
-        //for (int i = 0; i < icons.Length; i++) {
-        //    CharacterAttributeIcon icon = icons[i];
-        //    if (icon.attribute == tag) {
-        //        RemoveIcon(icon);
-        //        break;
-        //    }
-        //}
-    }
-    private void RemoveIcon(CharacterAttributeIcon icon) {
-        ObjectPoolManager.Instance.DestroyObject(icon.gameObject);
-        shownAttributes.Remove(icon);
-    }
-    private void OnCharacterAttributeAdded(Character affectedCharacter, CharacterAttribute tag) {
-        if (_activeCharacter != null && _activeCharacter.id == affectedCharacter.id && _activeCharacter.isBeingInspected) {
-            AddTag(tag);
-        }
-    }
-    private void OnCharacterAttributeRemoved(Character affectedCharacter, CharacterAttribute tag) {
-        if (_activeCharacter != null && _activeCharacter.id == affectedCharacter.id && _activeCharacter.isBeingInspected) {
-            RemoveTag(tag);
-        }
-    }
-    #endregion
-
     #region History
     private void UpdateHistory(object obj) {
         if (obj is Character && _activeCharacter != null && (obj as Character).id == _activeCharacter.id) {
@@ -800,21 +741,6 @@ public class CharacterInfoUI : UIMenu {
     }
     public void SetActiveJoinBattleButtonGO(bool state) {
         joinBattleButtonGO.SetActive(state);
-    }
-    #endregion
-
-    #region Release Character
-    public void ShowReleaseButton() {
-        if (_activeCharacter.party != null && _activeCharacter.party.characterObject.currentState.stateName == "Imprisoned") {
-            releaseBtnGO.SetActive(true);
-        } else {
-            releaseBtnGO.SetActive(false);
-        }
-    }
-    public void ReleaseCharacter() {
-        CharacterAction action = _activeCharacter.party.characterObject.currentState.GetAction(ACTION_TYPE.RELEASE);
-        ReleaseAction releaseAction = action as ReleaseAction;
-        releaseAction.ReleaseCharacter(_activeCharacter.party.characterObject);
     }
     #endregion
 

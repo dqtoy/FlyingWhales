@@ -27,8 +27,8 @@ public class TransferHome : Interaction {
     #endregion
 
     private void StartStateRewardEffect(InteractionState state) {
-        BaseLandmark landmark = interactable.tileLocation.areaOfTile.landmarks[UnityEngine.Random.Range(0, interactable.tileLocation.areaOfTile.landmarks.Count)];
-        _characterInvolved.MigrateTo(landmark);
+        //BaseLandmark landmark = interactable.tileLocation.areaOfTile.landmarks[UnityEngine.Random.Range(0, interactable.tileLocation.areaOfTile.landmarks.Count)];
+        _characterInvolved.MigrateHomeTo(interactable.tileLocation.areaOfTile);
 
         state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile, interactable.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_2));
     }

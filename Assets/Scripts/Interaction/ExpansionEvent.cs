@@ -131,7 +131,7 @@ public class ExpansionEvent : Interaction {
         investigatorCharacter.Death();
         OwnArea(_characterInvolved);
         //Migrate Character to the new settlement
-        _characterInvolved.MigrateTo(interactable);
+        _characterInvolved.MigrateHomeTo(interactable.tileLocation.areaOfTile);
         //**Level Up**: Expanding Character +1
         _characterInvolved.LevelUp();
     }
@@ -140,7 +140,7 @@ public class ExpansionEvent : Interaction {
         investigatorCharacter.AddTrait(AttributeManager.Instance.allTraits["Injured"]);
         OwnArea(_characterInvolved);
         //Migrate Character to the new settlement
-        _characterInvolved.MigrateTo(interactable);
+        _characterInvolved.MigrateHomeTo(interactable.tileLocation.areaOfTile);
         //**Level Up**: Expanding Character +1
         _characterInvolved.LevelUp();
     }
@@ -148,7 +148,7 @@ public class ExpansionEvent : Interaction {
         //**Mechanic**: Location becomes part of Character's faction and its Race will be set as Character's Race
         OwnArea(_characterInvolved);
         //Migrate Character to the new settlement
-        _characterInvolved.MigrateTo(interactable);
+        _characterInvolved.MigrateHomeTo(interactable.tileLocation.areaOfTile);
         //**Level Up**: Expanding Character +1
         _characterInvolved.LevelUp();
     }

@@ -31,8 +31,8 @@ public class BookOfTheDead : SpecialToken {
     public override bool CanBeUsedBy(Character sourceCharacter) {
         //return true;
         return (sourceCharacter.race == RACE.HUMANS || sourceCharacter.race == RACE.GOBLIN || sourceCharacter.race == RACE.ELVES) 
-            && sourceCharacter.gender == GENDER.MALE && sourceCharacter.specificLocation.tileLocation.areaOfTile.name == "Gloomhollow Crypts" 
-            && sourceCharacter.specificLocation.tileLocation.areaOfTile.owner == null;
+            && sourceCharacter.gender == GENDER.MALE && sourceCharacter.specificLocation.name == "Gloomhollow Crypts" 
+            && sourceCharacter.specificLocation.owner == null;
     }
     #endregion
 
@@ -57,7 +57,7 @@ public class BookOfTheDead : SpecialToken {
 
         //Faction oldFaction = targetCharacter.faction;
 
-        //targetCharacter.FoundFaction("Ziranna", targetCharacter.specificLocation as BaseLandmark);
+        //targetCharacter.FoundFaction("Ziranna", targetCharacter.specificLocation.coreTile.landmarkOnTile);
 
         //targetCharacter.faction.GetRelationshipWith(oldFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.ENEMY);
         //targetCharacter.faction.GetRelationshipWith(PlayerManager.Instance.player.playerFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.ALLY);
@@ -84,14 +84,14 @@ public class BookOfTheDead : SpecialToken {
         log.AddToFillers(state.tokenUser, state.tokenUser.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         state.AddLogToInvolvedObjects(log);
 
-        Debug.LogWarning("[Day " + GameManager.Instance.continuousDays + "] " + state.tokenUser.name + " used " + name + " on " + Utilities.GetPronounString(state.tokenUser.gender, PRONOUN_TYPE.REFLEXIVE, false) + " and became a " + state.tokenUser.characterClass.className + " at " + state.tokenUser.specificLocation.tileLocation.areaOfTile.name);
+        Debug.LogWarning("[Day " + GameManager.Instance.continuousDays + "] " + state.tokenUser.name + " used " + name + " on " + Utilities.GetPronounString(state.tokenUser.gender, PRONOUN_TYPE.REFLEXIVE, false) + " and became a " + state.tokenUser.characterClass.className + " at " + state.tokenUser.specificLocation.name);
         //state.tokenUser.ChangeClass("Necromancer");
         //state.tokenUser.ChangeRace(RACE.SKELETON);
         //state.tokenUser.SetForcedInteraction(null);
-        //state.tokenUser.MigrateTo(state.tokenUser.specificLocation as BaseLandmark);
+        //state.tokenUser.MigrateTo(state.tokenUser.specificLocation.coreTile.landmarkOnTile);
 
         //Faction oldFaction = state.tokenUser.faction;
-        //state.tokenUser.FoundFaction("Ziranna", state.tokenUser.specificLocation as BaseLandmark);
+        //state.tokenUser.FoundFaction("Ziranna", state.tokenUser.specificLocation.coreTile.landmarkOnTile);
 
         //state.tokenUser.faction.GetRelationshipWith(oldFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.DISLIKED);
         //state.tokenUser.faction.GetRelationshipWith(PlayerManager.Instance.player.playerFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.DISLIKED);
@@ -104,7 +104,7 @@ public class BookOfTheDead : SpecialToken {
         //log.AddToFillers(state.tokenUser, state.tokenUser.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         //state.AddLogToInvolvedObjects(log);
 
-        //Debug.LogWarning("[Day " + GameManager.Instance.continuousDays + "] " + state.tokenUser.name + " used " + name + " on " + Utilities.GetPronounString(state.tokenUser.gender, PRONOUN_TYPE.REFLEXIVE, false) + " and became a " + state.tokenUser.characterClass.className + " at " + state.tokenUser.specificLocation.tileLocation.areaOfTile.name);
+        //Debug.LogWarning("[Day " + GameManager.Instance.continuousDays + "] " + state.tokenUser.name + " used " + name + " on " + Utilities.GetPronounString(state.tokenUser.gender, PRONOUN_TYPE.REFLEXIVE, false) + " and became a " + state.tokenUser.characterClass.className + " at " + state.tokenUser.specificLocation.name);
     }
     private void StopFailEffect(TokenInteractionState state) {
         state.tokenUser.ChangeClass("Necromancer");
@@ -114,13 +114,13 @@ public class BookOfTheDead : SpecialToken {
 
         state.AddLogFiller(new LogFiller(state.interaction.investigatorCharacter, state.interaction.investigatorCharacter.name, LOG_IDENTIFIER.MINION_1));
 
-        Debug.LogWarning("[Day " + GameManager.Instance.continuousDays + "] " + state.tokenUser.name + " used " + name + " on " + Utilities.GetPronounString(state.tokenUser.gender, PRONOUN_TYPE.REFLEXIVE, false) + " and became a " + state.tokenUser.characterClass.className + " at " + state.tokenUser.specificLocation.tileLocation.areaOfTile.name);
+        Debug.LogWarning("[Day " + GameManager.Instance.continuousDays + "] " + state.tokenUser.name + " used " + name + " on " + Utilities.GetPronounString(state.tokenUser.gender, PRONOUN_TYPE.REFLEXIVE, false) + " and became a " + state.tokenUser.characterClass.className + " at " + state.tokenUser.specificLocation.name);
         //state.tokenUser.ChangeClass("Necromancer");
         //state.tokenUser.ChangeRace(RACE.SKELETON);
         //state.tokenUser.SetForcedInteraction(null);
 
         //Faction oldFaction = state.tokenUser.faction;
-        //state.tokenUser.FoundFaction("Ziranna", state.tokenUser.specificLocation as BaseLandmark);
+        //state.tokenUser.FoundFaction("Ziranna", state.tokenUser.specificLocation.coreTile.landmarkOnTile);
 
         //state.tokenUser.faction.GetRelationshipWith(oldFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.DISLIKED);
         //state.tokenUser.faction.GetRelationshipWith(PlayerManager.Instance.player.playerFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.DISLIKED);
@@ -129,6 +129,6 @@ public class BookOfTheDead : SpecialToken {
 
         //state.AddLogFiller(new LogFiller(state.interaction.investigatorMinion, state.interaction.investigatorMinion.name, LOG_IDENTIFIER.MINION_1));
 
-        //Debug.LogWarning("[Day " + GameManager.Instance.continuousDays + "] " + state.tokenUser.name + " used " + name + " on " + Utilities.GetPronounString(state.tokenUser.gender, PRONOUN_TYPE.REFLEXIVE, false) + " and became a " + state.tokenUser.characterClass.className + " at " + state.tokenUser.specificLocation.tileLocation.areaOfTile.name);
+        //Debug.LogWarning("[Day " + GameManager.Instance.continuousDays + "] " + state.tokenUser.name + " used " + name + " on " + Utilities.GetPronounString(state.tokenUser.gender, PRONOUN_TYPE.REFLEXIVE, false) + " and became a " + state.tokenUser.characterClass.className + " at " + state.tokenUser.specificLocation.name);
     }
 }

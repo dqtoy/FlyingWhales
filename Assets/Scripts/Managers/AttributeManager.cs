@@ -8,27 +8,11 @@ using System.Linq;
 public class AttributeManager : MonoBehaviour {
     public static AttributeManager Instance;
 
-    private List<CharacterAttribute> _allAttributes;
-    private List<CharacterAttribute> _allCharacterAttributes;
-    private List<CharacterAttribute> _allItemAttributes;
-    private List<CharacterAttribute> _allStructureAttributes;
     private Dictionary<string, Trait> _allTraits;
     private Dictionary<string, Trait> _allPositiveTraits;
     private Dictionary<string, Trait> _allIlnesses;
 
     #region getters/setters
-    public List<CharacterAttribute> allAttributes {
-        get { return _allAttributes; }
-    }
-    public List<CharacterAttribute> allCharacterAttributes {
-        get { return _allCharacterAttributes; }
-    }
-    public List<CharacterAttribute> allItemAttributes {
-        get { return _allItemAttributes; }
-    }
-    public List<CharacterAttribute> allStructureAttributes {
-        get { return _allStructureAttributes; }
-    }
     public Dictionary<string, Trait> allTraits {
         get { return _allTraits; }
     }

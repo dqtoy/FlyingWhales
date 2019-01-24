@@ -129,9 +129,9 @@ public class LandmarkManager : MonoBehaviour {
         if (landmarkOnTile == null) {
             return;
         }
-        while (landmarkOnTile.charactersAtLocation.Count != 0) {
-            landmarkOnTile.RemoveCharacterFromLocation(landmarkOnTile.charactersAtLocation[0]);
-        }
+        //while (landmarkOnTile.charactersAtLocation.Count != 0) {
+        //    landmarkOnTile.RemoveCharacterFromLocation(landmarkOnTile.charactersAtLocation[0]);
+        //}
         //while (landmarkOnTile.charactersWithHomeOnLandmark.Count != 0) {
         //    landmarkOnTile.charactersWithHomeOnLandmark[0].SetHome(null);
         //    landmarkOnTile.RemoveCharacterHomeOnLandmark(landmarkOnTile.charactersWithHomeOnLandmark[0]);
@@ -447,17 +447,6 @@ public class LandmarkManager : MonoBehaviour {
             }
         }
         return null;
-    }
-    public List<BaseLandmark> GetAllLandmarksWithQuestBoard() {
-        List<BaseLandmark> allLandmarks = GetAllLandmarks();
-        List<BaseLandmark> relevantLandmarks = new List<BaseLandmark>();
-        for (int i = 0; i < allLandmarks.Count; i++) {
-            BaseLandmark currLandmark = allLandmarks[i];
-            if (currLandmark.HasQuestBoard()) {
-                relevantLandmarks.Add(currLandmark);
-            }
-        }
-        return relevantLandmarks;
     }
     #endregion
 

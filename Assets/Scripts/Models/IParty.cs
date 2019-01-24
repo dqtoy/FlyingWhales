@@ -20,11 +20,8 @@ public interface IParty {
     Combat currentCombat { get; set; }
     BaseLandmark landmarkLocation { get; }
     BaseLandmark homeLandmark { get; }
-    CharacterAction currentAction { get; }
     Character mainCharacter { get; }
-    ICharacterObject icharacterObject { get; }
     ILocation specificLocation { get; }
-    IActionData iactionData { get; }
     List<Character> characters { get; }
 
     void EndAction();

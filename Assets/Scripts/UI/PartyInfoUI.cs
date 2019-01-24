@@ -35,7 +35,6 @@ public class PartyInfoUI : UIMenu {
             //currSlot.SetNeededType(typeof(IUnit));
             currSlot.SetSlotIndex(i);
         }
-        Messenger.AddListener<CharacterAction, Party>(Signals.ACTION_TAKEN, OnActionTakenByParty);
     }
 
     public override void OpenMenu() {
@@ -105,23 +104,16 @@ public class PartyInfoUI : UIMenu {
     }
     private void UpdateLocation() {
         locationGO.SetActive(true);
-        if (currentlyShowingParty.specificLocation is BaseLandmark) {
-            locationLbl.text = Utilities.NormalizeStringUpperCaseFirstLetters((currentlyShowingParty.specificLocation as BaseLandmark).specificLandmarkType.ToString());
-            locationImg.sprite = currentlyShowingParty.specificLocation.tileLocation.mainStructureSprite.sprite;
-            locationImg.gameObject.SetActive(true);
-        } else {
-            locationLbl.text = currentlyShowingParty.specificLocation.locationName;
-            locationImg.gameObject.SetActive(false);
-        }
+        //if (currentlyShowingParty.specificLocation is BaseLandmark) {
+        //    locationLbl.text = Utilities.NormalizeStringUpperCaseFirstLetters((currentlyShowingParty.specificLocation.coreTile.landmarkOnTile).specificLandmarkType.ToString());
+        //    locationImg.sprite = currentlyShowingParty.specificLocation.tileLocation.mainStructureSprite.sprite;
+        //    locationImg.gameObject.SetActive(true);
+        //} else {
+        //    locationLbl.text = currentlyShowingParty.specificLocation.locationName;
+        //    locationImg.gameObject.SetActive(false);
+        //}
         
     }
-
-    private void OnActionTakenByParty(CharacterAction action, Party party) {
-        if (currentlyShowingParty != null && currentlyShowingParty.id == party.id) {
-            SetData(party); //show the info of the party that took the action. This will result in locking the slots and undoing any changes to the party
-        }
-    }
-
     #region Create/Edit Party
     public void ShowCreatePartyUI() {
         base.OpenMenu();

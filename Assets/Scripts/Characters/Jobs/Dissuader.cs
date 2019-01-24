@@ -12,7 +12,7 @@ public class Dissuader : Job {
 
     #region Overrides
     public override void CaptureRandomLandmarkEvent() {
-        Area area = _character.specificLocation.tileLocation.areaOfTile;
+        Area area = _character.specificLocation;
         if (area == null) {
             //Current location has no area
             return;
@@ -55,7 +55,7 @@ public class Dissuader : Job {
             SetCreatedInteraction(choices[UnityEngine.Random.Range(0, choices.Count)]);
         } else if (result == "Crit Fail") {
             Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_CRITICAL_FAIL, area.coreTile.landmarkOnTile);
-            _character.specificLocation.tileLocation.landmarkOnTile.AddInteraction(interaction);
+            _character.specificLocation.coreTile.landmarkOnTile.AddInteraction(interaction);
             SetCreatedInteraction(interaction);
         }
         _createdInteraction.AddEndInteractionAction(() => SetJobActionPauseState(false));

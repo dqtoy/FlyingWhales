@@ -112,11 +112,11 @@ public class MoveToTameBeast : Interaction {
 
     private void StartMove() {
         AddToDebugLog(_characterInvolved.name + " starts moving towards " + _targetArea.name + "(" + _targetArea.coreTile.landmarkOnTile.name + ") to tame!");
-        _characterInvolved.currentParty.GoToLocation(_targetArea.coreTile.landmarkOnTile, PATHFINDING_MODE.NORMAL, () => CreateTameAction());
+        _characterInvolved.currentParty.GoToLocation(_targetArea, PATHFINDING_MODE.NORMAL, () => CreateTameAction());
     }
     private void CreateTameAction() {
         AddToDebugLog(_characterInvolved.name + " will now create tame action");
-        Interaction tame = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.TAME_BEAST_ACTION, _characterInvolved.specificLocation.tileLocation.landmarkOnTile);
+        Interaction tame = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.TAME_BEAST_ACTION, _characterInvolved.specificLocation.coreTile.landmarkOnTile);
         //tame.SetCanInteractionBeDoneAction(IsTameStillValid);
         _characterInvolved.SetForcedInteraction(tame);
     }
@@ -132,7 +132,7 @@ public class MoveToTameBeast : Interaction {
             for (int j = 0; j < currArea.areaResidents.Count; j++) {
                 Character resident = currArea.areaResidents[j];
                 if(!resident.currentParty.icon.isTravelling && resident.doNotDisturb <= 0 && resident.IsInOwnParty() 
-                    && resident.specificLocation.tileLocation.areaOfTile.id == currArea.id && resident.faction == FactionManager.Instance.neutralFaction
+                    && resident.specificLocation.id == currArea.id && resident.faction == FactionManager.Instance.neutralFaction
                     && resident.role.roleType == CHARACTER_ROLE.BEAST) {
                     weight += 35;
                     break;

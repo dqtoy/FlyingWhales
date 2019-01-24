@@ -392,7 +392,7 @@ public class Faction {
     }
     public void GenerateStartingLeader(int leaderLevel) {
         Character leader = CharacterManager.Instance.CreateNewCharacter(_initialLeaderClass, _initialLeaderRace, _initialLeaderGender,
-                    this, _ownedAreas[0].coreTile.landmarkOnTile);
+                    this, _ownedAreas[0]);
         leader.LevelUp(leaderLevel - 1);
         SetLeader(leader);
         Debug.Log(GameManager.Instance.TodayLogString() + "LEADER Generated Lvl. " + leader.level.ToString() +
@@ -575,7 +575,7 @@ public class Faction {
                         type = INTERACTION_TYPE.SPAWN_NEUTRAL_CHARACTER;
                         weight = 25;
                     }
-                    if (InteractionManager.Instance.CanCreateInteraction(type, area.coreTile.landmarkOnTile)) {
+                    if (InteractionManager.Instance.CanCreateInteraction(type, area)) {
                         interactionCandidates.AddElement(type, weight);
                     }
                 }
@@ -613,7 +613,7 @@ public class Faction {
                     foreach(KeyValuePair<INTERACTION_TYPE, int> kvp in _nonNeutralInteractionTypes) {
                         INTERACTION_TYPE type = kvp.Key;
                         int weight = kvp.Value;
-                        if (InteractionManager.Instance.CanCreateInteraction(type, area.coreTile.landmarkOnTile)) {
+                        if (InteractionManager.Instance.CanCreateInteraction(type, area)) {
                             InteractionAndInteractable candidate = new InteractionAndInteractable {
                                 interactionType = type,
                                 landmark = area.coreTile.landmarkOnTile,
@@ -652,7 +652,7 @@ public class Faction {
                 foreach (KeyValuePair<INTERACTION_TYPE, int> kvp in _neutralInteractionTypes) {
                     INTERACTION_TYPE type = kvp.Key;
                     int weight = kvp.Value;
-                    if (InteractionManager.Instance.CanCreateInteraction(type, area.coreTile.landmarkOnTile)) {
+                    if (InteractionManager.Instance.CanCreateInteraction(type, area)) {
                         InteractionAndInteractable candidate = new InteractionAndInteractable {
                             interactionType = type,
                             landmark = area.coreTile.landmarkOnTile,

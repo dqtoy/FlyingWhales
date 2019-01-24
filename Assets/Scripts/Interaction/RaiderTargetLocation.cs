@@ -150,7 +150,7 @@ public class RaiderTargetLocation : Interaction {
         for (int i = 0; i < interactable.tileLocation.areaOfTile.areaResidents.Count; i++) {
             Character resident = interactable.tileLocation.areaOfTile.areaResidents[i];
             if(resident.forcedInteraction == null && resident.doNotDisturb <= 0 && resident.IsInOwnParty() && !resident.isDefender && !resident.currentParty.icon.isTravelling && resident.job.jobType == JOB.RAIDER && resident.faction.id == interactable.tileLocation.areaOfTile.owner.id 
-                && resident.specificLocation.tileLocation.areaOfTile.id == interactable.tileLocation.areaOfTile.id) {
+                && resident.specificLocation.id == interactable.tileLocation.areaOfTile.id) {
                 raiders.Add(resident);
             }
         }

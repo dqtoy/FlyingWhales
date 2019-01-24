@@ -63,7 +63,7 @@ public class Interaction {
     }
     public Character investigatorCharacter {
         get {
-            //if(_interactable.tileLocation.areaOfTile.areaInvestigation.assignedMinion != null && _interactable.tileLocation.areaOfTile == _interactable.tileLocation.areaOfTile.areaInvestigation.assignedMinion.character.specificLocation.tileLocation.areaOfTile) {
+            //if(_interactable.tileLocation.areaOfTile.areaInvestigation.assignedMinion != null && _interactable.tileLocation.areaOfTile == _interactable.tileLocation.areaOfTile.areaInvestigation.assignedMinion.character.specificLocation) {
             //    return _interactable.tileLocation.areaOfTile.areaInvestigation.assignedMinion;
             //}
             //Only used for Minion Critical Fail Event since assignedMinion will be null, interaction must still have reference of the dead minion
@@ -78,7 +78,7 @@ public class Interaction {
     }
     public Minion tokeneerMinion {
         get {
-            if (_interactable.tileLocation.areaOfTile.areaInvestigation.tokenCollector != null && _interactable.tileLocation.areaOfTile == _interactable.tileLocation.areaOfTile.areaInvestigation.tokenCollector.character.specificLocation.tileLocation.areaOfTile) {
+            if (_interactable.tileLocation.areaOfTile.areaInvestigation.tokenCollector != null && _interactable.tileLocation.areaOfTile == _interactable.tileLocation.areaOfTile.areaInvestigation.tokenCollector.character.specificLocation) {
                 return _interactable.tileLocation.areaOfTile.areaInvestigation.tokenCollector;
             }
             return null;

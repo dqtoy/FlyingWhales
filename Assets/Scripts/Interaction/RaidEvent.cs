@@ -169,7 +169,7 @@ public class RaidEvent : Interaction {
         //**Level Up**: Raider Character +1
         _characterInvolved.LevelUp(); //Raider Character
         int obtainedSupply = _characterInvolved.job.GetSupplyObtained(interactable.tileLocation.areaOfTile);
-        TransferSupplies(obtainedSupply, _characterInvolved.homeLandmark.tileLocation.areaOfTile,
+        TransferSupplies(obtainedSupply, _characterInvolved.homeArea,
             interactable.tileLocation.areaOfTile);
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(null, obtainedSupply.ToString(), LOG_IDENTIFIER.STRING_1);
@@ -201,7 +201,7 @@ public class RaidEvent : Interaction {
         _characterInvolved.LevelUp();
 
         int obtainedSupply = _characterInvolved.job.GetSupplyObtained(interactable.tileLocation.areaOfTile);
-        TransferSupplies(obtainedSupply, _characterInvolved.homeLandmark.tileLocation.areaOfTile,
+        TransferSupplies(obtainedSupply, _characterInvolved.homeArea,
             interactable.tileLocation.areaOfTile);
         _characterInvolved.faction.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, 1);
         
@@ -234,7 +234,7 @@ public class RaidEvent : Interaction {
 
         //**Mechanics**: Compute Supply obtained by Raider and transfer it to his home area. Raider also travels back to his home area.
         int obtainedSupply = _characterInvolved.job.GetSupplyObtained(interactable.tileLocation.areaOfTile);
-        TransferSupplies(obtainedSupply, _characterInvolved.homeLandmark.tileLocation.areaOfTile,
+        TransferSupplies(obtainedSupply, _characterInvolved.homeArea,
             interactable.tileLocation.areaOfTile);
 
         //Raider Faction and Raided Faction -1 Relationship.

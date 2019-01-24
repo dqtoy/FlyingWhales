@@ -117,11 +117,11 @@ public class MoveToSteal : Interaction {
     #endregion
 
     private void GoToTargetLocation() {
-        _characterInvolved.ownParty.GoToLocation(targetLocation.coreTile.landmarkOnTile, PATHFINDING_MODE.NORMAL, () => CreateEvent());
+        _characterInvolved.ownParty.GoToLocation(targetLocation, PATHFINDING_MODE.NORMAL, () => CreateEvent());
     }
 
     private void CreateEvent() {
-        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.STEAL_ACTION, _characterInvolved.specificLocation.tileLocation.landmarkOnTile);
+        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.STEAL_ACTION, _characterInvolved.specificLocation.coreTile.landmarkOnTile);
         //(interaction as ImproveRelationsEvent).SetTargetFaction(targetFaction);
         //interaction.SetCanInteractionBeDoneAction(IsImproveRelationsValid);
         _characterInvolved.SetForcedInteraction(interaction);

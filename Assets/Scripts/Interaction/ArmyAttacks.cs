@@ -139,9 +139,9 @@ public class ArmyAttacks : Interaction {
         //**Reward**: Demon gains Exp 1
         investigatorCharacter.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
         //**Mechanics**: Army Unit with most occupied slots will Attack the selected enemy location.
-        CharacterParty army = landmark.GetArmyWithMostOccupiedSlots();
-        CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ATTACK_LANDMARK);
-        army.iactionData.AssignAction(characterAction, target.landmarkObj);
+        //CharacterParty army = landmark.GetArmyWithMostOccupiedSlots();
+        //CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ATTACK_LANDMARK);
+        //army.iactionData.AssignAction(characterAction, target.landmarkObj);
         //if (state.minionLog != null) {
         //    state.minionLog.AddToFillers(landmark.tileLocation.areaOfTile.owner, landmark.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
         //    state.minionLog.AddToFillers(targetArea, targetArea.name, LOG_IDENTIFIER.LANDMARK_1);
@@ -156,9 +156,9 @@ public class ArmyAttacks : Interaction {
     private void StopCriticalFailureRewardEffect(InteractionState state) {
         //**Mechanics**: Army Unit with most occupied slots will Attack a player location. Demon ends Explore and must return to Portal.
         BaseLandmark target = PlayerManager.Instance.player.playerArea.GetRandomExposedLandmark();
-        CharacterParty army = landmark.GetArmyWithMostOccupiedSlots();
-        CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ATTACK_LANDMARK);
-        army.iactionData.AssignAction(characterAction, target.landmarkObj);
+        //CharacterParty army = landmark.GetArmyWithMostOccupiedSlots();
+        //CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ATTACK_LANDMARK);
+        //army.iactionData.AssignAction(characterAction, target.landmarkObj);
         landmark.tileLocation.areaOfTile.areaInvestigation.RecallMinion("attack");
         //**Reward**: Demon gains Exp 1
         investigatorCharacter.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
@@ -175,9 +175,9 @@ public class ArmyAttacks : Interaction {
         investigatorCharacter.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
         //**Mechanics**: Army Unit with most occupied slots will Attack assigned Location Intel.
         BaseLandmark target = state.chosenOption.assignedLocation.location.GetRandomExposedLandmark();
-        CharacterParty army = landmark.GetArmyWithMostOccupiedSlots();
-        CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ATTACK_LANDMARK);
-        army.iactionData.AssignAction(characterAction, target.landmarkObj);
+        //CharacterParty army = landmark.GetArmyWithMostOccupiedSlots();
+        //CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ATTACK_LANDMARK);
+        //army.iactionData.AssignAction(characterAction, target.landmarkObj);
         //if (state.minionLog != null) {
         //    state.minionLog.AddToFillers(landmark.tileLocation.areaOfTile.owner, landmark.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
         //    state.minionLog.AddToFillers(targetArea, targetArea.name, LOG_IDENTIFIER.LANDMARK_1);
@@ -197,9 +197,9 @@ public class ArmyAttacks : Interaction {
         investigatorCharacter.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
         //**Mechanics**: Army Unit with most occupied slots will Attack a player location.
         BaseLandmark target = PlayerManager.Instance.player.playerArea.GetRandomExposedLandmark();
-        CharacterParty army = landmark.GetArmyWithMostOccupiedSlots();
-        CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ATTACK_LANDMARK);
-        army.iactionData.AssignAction(characterAction, target.landmarkObj);
+        //CharacterParty army = landmark.GetArmyWithMostOccupiedSlots();
+        //CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ATTACK_LANDMARK);
+        //army.iactionData.AssignAction(characterAction, target.landmarkObj);
         //if (state.minionLog != null) {
         //    state.minionLog.AddToFillers(landmark.tileLocation.areaOfTile.owner, landmark.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
         //    state.minionLog.AddToFillers(targetArea, targetArea.name, LOG_IDENTIFIER.LANDMARK_1);
@@ -217,9 +217,9 @@ public class ArmyAttacks : Interaction {
 
     private void DoNothingRewardEffect(InteractionState state) {
         //**Mechanics**: Army Unit with most occupied slots will Attack the selected enemy location.
-        CharacterParty army = landmark.GetArmyWithMostOccupiedSlots();
-        CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ATTACK_LANDMARK);
-        army.iactionData.AssignAction(characterAction, target.landmarkObj);
+        //CharacterParty army = landmark.GetArmyWithMostOccupiedSlots();
+        //CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ATTACK_LANDMARK);
+        //army.iactionData.AssignAction(characterAction, target.landmarkObj);
         //if (state.minionLog != null) {
         //    state.minionLog.AddToFillers(landmark.tileLocation.areaOfTile.owner, landmark.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
         //    state.minionLog.AddToFillers(targetArea, targetArea.name, LOG_IDENTIFIER.LANDMARK_1);

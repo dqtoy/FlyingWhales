@@ -44,7 +44,7 @@ public class AbductAction : Interaction {
         InteractionState normalAbductionCriticalFail = new InteractionState(Normal_Abduction_Critical_Fail, this);
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
-        startStateDescriptionLog.AddToFillers(_characterInvolved.homeLandmark.tileLocation.areaOfTile, _characterInvolved.homeLandmark.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_2);
+        startStateDescriptionLog.AddToFillers(_characterInvolved.homeArea, _characterInvolved.homeArea.name, LOG_IDENTIFIER.LANDMARK_2);
         startStateDescriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 
@@ -286,9 +286,9 @@ public class AbductAction : Interaction {
 
     private void AbductCharacter(Character character) {
         //only add abducted trait to characters that have not been abducted yet, this is to retain it's original faction
-        Abducted abductedTrait = new Abducted(character.homeLandmark);
+        Abducted abductedTrait = new Abducted(character.homeArea);
         character.AddTrait(abductedTrait);
-        character.MigrateTo(_characterInvolved.homeLandmark);
+        character.MigrateHomeTo(_characterInvolved.homeArea);
         _characterInvolved.ownParty.AddCharacter(character);
         Interaction interactionAbductor = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, interactable);
         _characterInvolved.SetForcedInteraction(interactionAbductor);

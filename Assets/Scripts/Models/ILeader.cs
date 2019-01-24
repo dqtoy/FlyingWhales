@@ -7,7 +7,7 @@ public interface ILeader {
     int id { get; }
     string name { get; }
     RACE race { get; }
-    ILocation specificLocation { get; }
+    Area specificLocation { get; }
 
     void LevelUp();
 }

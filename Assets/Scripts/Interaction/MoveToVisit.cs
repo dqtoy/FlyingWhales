@@ -111,7 +111,7 @@ public class MoveToVisit : Interaction {
     #endregion
     private void StartMove() {
         AddToDebugLog(_characterInvolved.name + " starts moving towards " + _targetArea.name + "(" + _targetArea.coreTile.landmarkOnTile.name + ") to visit!");
-        _characterInvolved.currentParty.GoToLocation(_targetArea.coreTile.landmarkOnTile, PATHFINDING_MODE.NORMAL);
+        _characterInvolved.currentParty.GoToLocation(_targetArea, PATHFINDING_MODE.NORMAL);
     }
 
     private Area GetTargetLocation(Character characterInvolved) {

@@ -1294,7 +1294,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 	public void AddCharacterToLocation(Party iparty) {
 		if (!_charactersAtLocation.Contains(iparty)) {
 			_charactersAtLocation.Add(iparty);
-            iparty.SetSpecificLocation(this);
+            iparty.SetSpecificLocation(this.areaOfTile);
             //if (character.icharacterType == ICHARACTER_TYPE.CHARACTER){
             //  Character currChar = character as Character;
             //  currChar.SetSpecificLocation(this);
@@ -1326,7 +1326,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             int indexOfCharacterToReplace = _charactersAtLocation.IndexOf(ipartyToReplace);
             _charactersAtLocation.Insert(indexOfCharacterToReplace, ipartyToAdd);
             _charactersAtLocation.Remove(ipartyToReplace);
-            ipartyToAdd.SetSpecificLocation(this);
+            ipartyToAdd.SetSpecificLocation(this.areaOfTile);
             //if (characterToAdd.icharacterType == ICHARACTER_TYPE.CHARACTER) {
             //    Character currChar = characterToAdd as Character;
             //    currChar.SetSpecificLocation(this);

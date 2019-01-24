@@ -130,11 +130,11 @@ public class MoveToRaid : Interaction {
 
     private void StartMove() {
         AddToDebugLog(_characterInvolved.name + " starts moving towards " + targetArea.name + "(" + targetArea.coreTile.landmarkOnTile.name + ")");
-        _characterInvolved.ownParty.GoToLocation(targetArea.coreTile.landmarkOnTile, PATHFINDING_MODE.NORMAL, () => CreateRaidEvent());
+        _characterInvolved.ownParty.GoToLocation(targetArea, PATHFINDING_MODE.NORMAL, () => CreateRaidEvent());
     }
     private void CreateRaidEvent() {
         AddToDebugLog(_characterInvolved.name + " will now create raid event");
-        Interaction raid = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.RAID_EVENT, _characterInvolved.specificLocation.tileLocation.landmarkOnTile);
+        Interaction raid = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.RAID_EVENT, _characterInvolved.specificLocation.coreTile.landmarkOnTile);
         raid.SetCanInteractionBeDoneAction(IsRaidStillValid);
         _characterInvolved.SetForcedInteraction(raid);
     }

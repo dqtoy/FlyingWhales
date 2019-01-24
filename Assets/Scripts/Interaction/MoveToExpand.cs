@@ -121,18 +121,18 @@ public class MoveToExpand : Interaction {
     #endregion
 
     private void GoToTargetLocation() {
-        _characterInvolved.ownParty.GoToLocation(targetLocation.coreTile.landmarkOnTile, PATHFINDING_MODE.NORMAL, () => CreateExpansionEvent());
+        _characterInvolved.ownParty.GoToLocation(targetLocation, PATHFINDING_MODE.NORMAL, () => CreateExpansionEvent());
     }
 
     private void CreateExpansionEvent() {
-        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.EXPANSION_EVENT, _characterInvolved.specificLocation.tileLocation.landmarkOnTile);
+        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.EXPANSION_EVENT, _characterInvolved.specificLocation.coreTile.landmarkOnTile);
         _characterInvolved.SetForcedInteraction(interaction);
         interaction.SetCanInteractionBeDoneAction(IsExpansionStillValid);
         targetLocation.RemoveEventTargettingThis(this);
     }
 
     private bool IsExpansionStillValid() {
-        return _characterInvolved.specificLocation.tileLocation.areaOfTile != null && _characterInvolved.specificLocation.tileLocation.areaOfTile.owner == null;
+        return _characterInvolved.specificLocation != null && _characterInvolved.specificLocation.owner == null;
     }
 
     private Area GetTargetLocation() {

@@ -71,12 +71,12 @@ public class Relationship {
         if (!_relationshipStatuses.Contains(relStat)) {
             _relationshipStatuses.Add(relStat);
 #if !WORLD_CREATION_TOOL
-            if(relStat == CHARACTER_RELATIONSHIP.STALKER) {
-                Stalker stalker = targetCharacter.AddAttribute(ATTRIBUTE.STALKER) as Stalker;
-                if(stalker != null) {
-                    stalker.SetStalkee(sourceCharacter);
-                }
-            }
+            //if(relStat == CHARACTER_RELATIONSHIP.STALKER) {
+            //    Stalker stalker = targetCharacter.AddAttribute(ATTRIBUTE.STALKER) as Stalker;
+            //    if(stalker != null) {
+            //        stalker.SetStalkee(sourceCharacter);
+            //    }
+            //}
 #endif
         }
     }
@@ -87,9 +87,9 @@ public class Relationship {
     }
     public void RemoveRelationshipStatus(CHARACTER_RELATIONSHIP relStat) {
         _relationshipStatuses.Remove(relStat);
-        if (relStat == CHARACTER_RELATIONSHIP.STALKER) {
-            targetCharacter.RemoveAttribute(ATTRIBUTE.STALKER);
-        }
+        //if (relStat == CHARACTER_RELATIONSHIP.STALKER) {
+        //    targetCharacter.RemoveAttribute(ATTRIBUTE.STALKER);
+        //}
     }
     //public bool HasCategory(CHARACTER_RELATIONSHIP_CATEGORY category){
     //	for (int i = 0; i < _relationshipStatus.Count; i++) {

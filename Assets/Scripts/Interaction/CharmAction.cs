@@ -299,16 +299,16 @@ public class CharmAction : Interaction {
         //    character.defendingArea.GetFirstDefenderGroup().RemoveCharacterFromGroup(character);
         //}
         //only add charmed trait to characters that have not been charmed yet, this is to retain it's original faction
-        Charmed charmedTrait = new Charmed(character.faction, character.homeLandmark);
+        Charmed charmedTrait = new Charmed(character.faction, character.homeArea);
         character.AddTrait(charmedTrait);
         character.faction.RemoveCharacter(character);
         faction.AddNewCharacter(character);
         AddToDebugLog("Successfully transferred " + character.name + " to " + character.faction.name);
-        character.MigrateTo(_characterInvolved.homeArea);
+        character.MigrateHomeTo(_characterInvolved.homeArea);
         //character.homeLandmark.RemoveCharacterHomeOnLandmark(character);
         //_characterInvolved.homeLandmark.AddCharacterHomeOnLandmark(character);
-        AddToDebugLog("Set " + character.name + "'s home to " + character.homeLandmark.tileLocation.areaOfTile.name);
-        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, character.specificLocation.tileLocation.landmarkOnTile);
+        AddToDebugLog("Set " + character.name + "'s home to " + character.homeArea.name);
+        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, character.specificLocation.coreTile.landmarkOnTile);
         character.SetForcedInteraction(interaction);
         AddToDebugLog("Forced " + character.name + " to go home");
     }

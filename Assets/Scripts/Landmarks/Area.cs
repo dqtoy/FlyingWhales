@@ -7,7 +7,6 @@ using UnityEngine;
 public class Area {
 
     public int id { get; private set; }
-    public int totalCivilians { get { return landmarks.Sum(x => x.civilianCount); } }
     public int suppliesInBank { get; private set; }
     public int supplyCapacity { get; private set; }
     public string name { get; private set; }
@@ -72,12 +71,6 @@ public class Area {
     public RACE raceType {
         get { return _raceType; }
     }
-    //public RACE raceType {
-    //    get { return owner == null ? defaultRace.race : _raceType; }
-    //}
-    //public int elligibleResidents {
-    //    get { return areaResidents.Where(x => !x.isDefender).Count(); }
-    //}
     public List<Character> visitors {
         get { return charactersAtLocation.Where(x => !areaResidents.Contains(x)).ToList(); }
     }
@@ -304,18 +297,6 @@ public class Area {
             Messenger.Broadcast(Signals.AREA_TILE_REMOVED, this, tile);
         }
     }
-    //private void RevalidateTiles() {
-    //    List<HexTile> tilesToCheck = new List<HexTile>(tiles);
-    //    tilesToCheck.Remove(coreTile);
-    //    while (tilesToCheck.Count != 0) {
-    //        HexTile currTile = tilesToCheck[0];
-    //        if (PathGenerator.Instance.GetPath(currTile, coreTile, PATHFINDING_MODE.AREA_ONLY, this) == null) {
-    //            RemoveTile(currTile); //Remove tile from area
-    //            currTile.UnHighlightTile();
-    //        }
-    //        tilesToCheck.Remove(currTile);
-    //    }
-    //}
     public List<HexTile> GetAdjacentBuildableTiles() {
         List<HexTile> elligibleTiles = new List<HexTile>();
         for (int i = 0; i < tiles.Count; i++) {
@@ -546,15 +527,15 @@ public class Area {
         previousOwner = this.owner;
         this.owner = owner;
         UpdateBorderColors();
-        if (owner != null) {
-            for (int i = 0; i < landmarks.Count; i++) {
-                landmarks[i].OccupyLandmark(owner);
-            }
-        } else {
-            for (int i = 0; i < landmarks.Count; i++) {
-                landmarks[i].UnoccupyLandmark();
-            }
-        }
+        //if (owner != null) {
+        //    for (int i = 0; i < landmarks.Count; i++) {
+        //        landmarks[i].OccupyLandmark(owner);
+        //    }
+        //} else {
+        //    for (int i = 0; i < landmarks.Count; i++) {
+        //        landmarks[i].UnoccupyLandmark();
+        //    }
+        //}
         Messenger.Broadcast(Signals.AREA_OWNER_CHANGED, this);
     }
     public void SetRaceType(RACE raceType) {
@@ -565,43 +546,10 @@ public class Area {
     #region Utilities
     public void LoadAdditionalData() {
         //DetermineExposedTiles();
-        Messenger.AddListener<StructureObj, ObjectState>(Signals.STRUCTURE_STATE_CHANGED, OnStructureStateChanged);
         //Messenger.AddListener<Interaction>(Signals.INTERACTION_ENDED, RemoveEventTargettingThis); 
         //GenerateInitialDefenders();
         //GenerateInitialResidents();
         CreateNameplate();
-    }
-    public bool HasLandmarkOfType(LANDMARK_TYPE type) {
-        return landmarks.Where(x => x.specificLandmarkType == type).Any();
-    }
-    //private void StartOfMonth() {
-    //    if(orderClasses.Count > 0) {
-    //        UpdateExcessAndMissingClasses();
-    //        ScheduleStartOfMonthActions();
-    //    }
-    //}
-    //private void ScheduleStartOfMonthActions() {
-    //    GameDate gameDate = GameManager.Instance.Today();
-    //    gameDate.SetHours(1);
-    //    gameDate.AddDays(1);
-    //    SchedulingManager.Instance.AddEntry(gameDate, () => StartOfMonth());
-    //}
-    //private void ScheduleFirstAction() {
-    //    GameDate gameDate = new GameDate(1, 1, GameManager.Instance.year, 1);
-    //    SchedulingManager.Instance.AddEntry(gameDate, () => StartOfMonth());
-    //}
-    private void OnStructureStateChanged(StructureObj structureObj, ObjectState state) {
-        if (structureObj.objectLocation == null) {
-            return;
-        }
-        if (tiles.Contains(structureObj.objectLocation.tileLocation)) {
-            if (state.stateName.Equals("Ruined")) {
-                DetermineIfTileIsExposed(structureObj.objectLocation.tileLocation);
-                if (this.areaType == AREA_TYPE.DEMONIC_INTRUSION) { //if player area
-                    PlayerManager.Instance.player.OnPlayerLandmarkRuined(structureObj.objectLocation);
-                }
-            }
-        }
     }
     private void UpdateBorderColors() {
         for (int i = 0; i < tiles.Count; i++) {
@@ -635,7 +583,7 @@ public class Area {
             if (owner != null) {
                 for (int i = 0; i < areaResidents.Count; i++) {
                     Character resident = areaResidents[i];
-                    if (!resident.isFactionless && !resident.currentParty.icon.isTravelling && resident.faction.id == owner.id && resident.id != resident.faction.leader.id && resident.specificLocation.tileLocation.areaOfTile.id == id) {
+                    if (!resident.isFactionless && !resident.currentParty.icon.isTravelling && resident.faction.id == owner.id && resident.id != resident.faction.leader.id && resident.specificLocation.id == id) {
                         resident.Death();
                     }
                 }
@@ -645,7 +593,7 @@ public class Area {
 
             if (previousOwner != null && previousOwner.leader != null && previousOwner.leader is Character) {
                 Character leader = previousOwner.leader as Character;
-                if (!leader.currentParty.icon.isTravelling && leader.specificLocation.tileLocation.areaOfTile.id == id && leader.homeLandmark.tileLocation.areaOfTile.id == id) {
+                if (!leader.currentParty.icon.isTravelling && leader.specificLocation.id == id && leader.homeArea.id == id) {
                     leader.Death();
                 }
             }
@@ -695,43 +643,6 @@ public class Area {
     }
     #endregion
 
-    #region Camp
-    public BaseLandmark CreateCampOnTile(HexTile tile) {
-        tile.SetArea(this);
-        BaseLandmark camp = LandmarkManager.Instance.CreateNewLandmarkOnTile(tile, LANDMARK_TYPE.CAMP);
-        return camp;
-    }
-    public BaseLandmark CreateCampForHouse(HexTile houseTile) {
-        HexTile campsite = GetCampsiteForHouse(houseTile);
-        return CreateCampOnTile(campsite);
-    }
-    private HexTile GetCampsiteForHouse(HexTile houseTile) {
-        HexTile chosenTile = null;
-        for (int i = 0; i < houseTile.AllNeighbours.Count; i++) {
-            HexTile neighbor = houseTile.AllNeighbours[i];
-            if (neighbor.isPassable && neighbor.landmarkOnTile == null) {
-                chosenTile = neighbor;
-                break;
-            }
-        }
-        if(chosenTile != null) {
-            return chosenTile;
-        }
-
-        List<HexTile> potentialCampsites = new List<HexTile>();
-        for (int i = 0; i < landmarks.Count; i++) {
-            for (int j = 0; j < landmarks[i].tileLocation.AllNeighbours.Count; j++) {
-                HexTile neighbor = landmarks[i].tileLocation.AllNeighbours[j];
-                if(neighbor.isPassable && neighbor.landmarkOnTile == null) {
-                    potentialCampsites.Add(neighbor);
-                }
-            }
-        }
-        chosenTile = potentialCampsites[UnityEngine.Random.Range(0, potentialCampsites.Count)];
-        return chosenTile;
-    }
-    #endregion
-
     #region Supplies
     private void StartSupplyLine() {
         //AdjustSuppliesInBank(100);
@@ -750,7 +661,7 @@ public class Area {
 
         for (int i = 0; i < areaResidents.Count; i++) {
             Character resident = areaResidents[i];
-            if (resident.doNotDisturb <= 0 && !resident.isDefender && !resident.currentParty.icon.isTravelling && resident.specificLocation.tileLocation.areaOfTile.id == id) {
+            if (resident.doNotDisturb <= 0 && !resident.isDefender && !resident.currentParty.icon.isTravelling && resident.specificLocation.id == id) {
                 if (attackCharacters != null && attackCharacters.Contains(resident)) {
                     continue;
                 }
@@ -773,12 +684,6 @@ public class Area {
             areaInvestigation.assignedMinion.character.job.DoPassiveEffect(this);
         }
     }
-    //private void LandmarkStartMonthActions() {
-    //    for (int i = 0; i < landmarks.Count; i++) {
-    //        BaseLandmark currLandmark = landmarks[i];
-    //        currLandmark.landmarkObj.StartMonthAction();
-    //    }
-    //}
     public void SetSuppliesInBank(int amount) {
         suppliesInBank = amount;
         suppliesInBank = Mathf.Clamp(suppliesInBank, 0, monthlySupply);
@@ -807,10 +712,6 @@ public class Area {
             AdjustSuppliesInBank(-reward.amount);
         }
     }
-    //public void SetSupplyCapacity(int supplyCapacity) {
-    //    this.supplyCapacity = supplyCapacity;
-    //    //suppliesInBank = Mathf.Clamp(suppliesInBank, 0, supplyCapacity);
-    //}
     #endregion
 
     #region Rewards
@@ -826,14 +727,6 @@ public class Area {
     #endregion
 
     #region Landmarks
-    //public BaseLandmark GetFirstAliveExposedTile() {
-    //    for (int i = 0; i < exposedTiles.Count; i++) {
-    //        if (!exposedTiles[i].landmarkObj.isRuined) {
-    //            return exposedTiles[i];
-    //        }
-    //    }
-    //    return null;
-    //}
     public void CenterOnCoreLandmark() {
         CameraMove.Instance.CenterCameraOn(coreTile.gameObject);
     }
@@ -860,6 +753,9 @@ public class Area {
             {INTERACTION_TYPE.MOVE_TO_VISIT, 50},
             {INTERACTION_TYPE.MOVE_TO_LOOT, 50},
             {INTERACTION_TYPE.MOVE_TO_TAME_BEAST, 50},
+            //{INTERACTION_TYPE.MOVE_TO_ASSASSINATE_FACTION, 5000},
+            //{INTERACTION_TYPE.MOVE_TO_RECRUIT_FACTION, 5000},
+            //{INTERACTION_TYPE.MOVE_TO_STEAL_FACTION, 5000},
         };
     }
     public void AddInteraction(Interaction interaction) {
@@ -960,7 +856,7 @@ public class Area {
                     supplySpent += 100;
                     if (supplySpent <= suppliesInBank) {
                         testLog += "\nChosen Interaction: " + interactionType.ToString();
-                        interaction = InteractionManager.Instance.CreateNewInteraction(interactionType, chosenCandidate.specificLocation as BaseLandmark);
+                        interaction = InteractionManager.Instance.CreateNewInteraction(interactionType, chosenCandidate.specificLocation.coreTile.landmarkOnTile);
                         interaction.SetCanInteractionBeDoneAction(() => CanDoAreaTaskInteraction(interaction.type, chosenCandidate));
                         interaction.SetInitializeAction(() => AdjustSuppliesInBank(-100));
                         interaction.SetMinionSuccessAction(() => AdjustSuppliesInBank(100));
@@ -974,7 +870,7 @@ public class Area {
                         break;
                     }
                 } else {
-                    interaction = InteractionManager.Instance.CreateNewInteraction(interactionType, chosenCandidate.specificLocation as BaseLandmark);
+                    interaction = InteractionManager.Instance.CreateNewInteraction(interactionType, chosenCandidate.specificLocation.coreTile.landmarkOnTile);
                     interaction.SetCanInteractionBeDoneAction(() => InteractionManager.Instance.CanCreateInteraction(interaction.type, chosenCandidate));
                     chosenCandidate.SetForcedInteraction(interaction);
                 }
@@ -1163,26 +1059,42 @@ public class Area {
                     return; //area is at capacity
                 }
             }
+            character.SetHome(this);
             areaResidents.Add(character);
             //Messenger.Broadcast(Signals.AREA_RESIDENT_ADDED, this, character);
         }
     }
     public void RemoveResident(Character character) {
         if (areaResidents.Remove(character)) {
+            character.SetHome(null);
             //Messenger.Broadcast(Signals.AREA_RESIDENT_REMOVED, this, character);
         }
     }
-    public void AddCharacterAtLocation(Character character) {
+    public void AddCharacterToLocation(Character character) {
         if (!charactersAtLocation.Contains(character)) {
             charactersAtLocation.Add(character);
+            character.ownParty.SetSpecificLocation(this);
             AddCharacterAtLocationHistory("Added " + character.name + "ST: " + StackTraceUtility.ExtractStackTrace());
+            Messenger.Broadcast(Signals.CHARACTER_ENTERED_AREA, this, character);
         }
     }
-    public void RemoveCharacterAtLocation(Character character) {
+    public void AddCharacterToLocation(Party party) {
+        for (int i = 0; i < party.characters.Count; i++) {
+            AddCharacterToLocation(party.characters[i]);
+        }
+    }
+    public void RemoveCharacterFromLocation(Character character) {
         if (charactersAtLocation.Remove(character)) {
+            //character.ownParty.SetSpecificLocation(null);
             AddCharacterAtLocationHistory("Removed " + character.name + "ST: " + StackTraceUtility.ExtractStackTrace());
+            Messenger.Broadcast(Signals.CHARACTER_EXITED_AREA, this, character);
         }
 
+    }
+    public void RemoveCharacterFromLocation(Party party) {
+        for (int i = 0; i < party.characters.Count; i++) {
+            RemoveCharacterFromLocation(party.characters[i]);
+        }
     }
     private void AddCharacterAtLocationHistory(string str) {
 #if !WORLD_CREATION_TOOL
@@ -1222,9 +1134,8 @@ public class Area {
         if (classWeights.GetTotalOfWeights() > 0) {
             for (int i = 0; i < charactersToCreate; i++) {
                 AreaCharacterClass chosenClass = classWeights.PickRandomElementGivenWeights();
-                BaseLandmark randomHome = this.landmarks[UnityEngine.Random.Range(0, landmarks.Count)];
                 Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(chosenClass.className, defaultRace.race, Utilities.GetRandomGender(), 
-                    FactionManager.Instance.neutralFaction, randomHome);
+                    FactionManager.Instance.neutralFaction, this);
                 createdCharacter.SetLevel(createdCharacter.raceSetting.neutralSpawnLevel);
                 Debug.Log(GameManager.Instance.TodayLogString() + "Generated Lvl. " + createdCharacter.level.ToString() + 
                     " neutral character " + createdCharacter.characterClass.className + " " + createdCharacter.name + " at " + this.name);
@@ -1243,9 +1154,8 @@ public class Area {
         int remainingCharactersToGenerate = initialResidents - areaResidents.Count;
         for (int i = 0; i < remainingCharactersToGenerate; i++) {
             AreaCharacterClass chosenClass = classWeights.PickRandomElementGivenWeights();
-            BaseLandmark randomHome = this.landmarks[UnityEngine.Random.Range(0, landmarks.Count)];
             Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(chosenClass.className, this.raceType, Utilities.GetRandomGender(),
-                owner, randomHome);
+                owner, this);
             createdCharacter.SetLevel(owner.level);
             Debug.Log(GameManager.Instance.TodayLogString() + "Generated Lvl. " + createdCharacter.level.ToString() +
                     " character " + createdCharacter.characterClass.className + " " + createdCharacter.name + " at " + this.name + " for faction " + this.owner.name);
@@ -1256,9 +1166,8 @@ public class Area {
             for (int i = 0; i < owner.startingFollowers.Count; i++) {
                 WeightedDictionary<AreaCharacterClass> classWeights = GetClassWeights(owner.startingFollowers[i]);
                 AreaCharacterClass chosenClass = classWeights.PickRandomElementGivenWeights();
-                BaseLandmark randomHome = this.landmarks[UnityEngine.Random.Range(0, landmarks.Count)];
                 Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(chosenClass.className, owner.startingFollowers[i], Utilities.GetRandomGender(),
-                    owner, randomHome);
+                    owner, this);
                 createdCharacter.LevelUp(followersLevel - 1);
                 Debug.Log(GameManager.Instance.TodayLogString() + "Generated Lvl. " + createdCharacter.level.ToString() +
                         " character " + createdCharacter.characterClass.className + " " + createdCharacter.name + " at " + this.name + " for faction " + this.owner.name);
@@ -1307,7 +1216,7 @@ public class Area {
             Character resident = areaResidents[i];
             if (resident.forcedInteraction == null && resident.doNotDisturb <= 0 && resident.IsInOwnParty() && !resident.isLeader
                 && resident.role.roleType != CHARACTER_ROLE.CIVILIAN && !resident.currentParty.icon.isTravelling
-                && !resident.isDefender && resident.specificLocation.tileLocation.areaOfTile.id == id) {
+                && !resident.isDefender && resident.specificLocation.id == id) {
                 if((owner != null && resident.faction == owner) || (owner == null && resident.faction == FactionManager.Instance.neutralFaction)) {
                     residentsAtArea.Add(resident);
                 }

@@ -23,23 +23,23 @@ public class Diplomat : Job {
     protected override bool IsTokenCompatibleWithJob(Token token) {
         if (token.tokenType == TOKEN_TYPE.CHARACTER) {
             CharacterToken characterToken = token as CharacterToken;
-            return characterToken.character.IsInOwnParty() && characterToken.character.doNotDisturb <= 0 && characterToken.character.specificLocation.tileLocation.areaOfTile.id == _character.specificLocation.tileLocation.areaOfTile.id && !characterToken.character.currentParty.icon.isTravelling;
+            return characterToken.character.IsInOwnParty() && characterToken.character.doNotDisturb <= 0 && characterToken.character.specificLocation.id == _character.specificLocation.id && !characterToken.character.currentParty.icon.isTravelling;
         } else if (token.tokenType == TOKEN_TYPE.LOCATION) {
             LocationToken locationToken = token as LocationToken;
             //If current area has faction, and target area's faction is different from current area's faction or target area has no faction, and target area is not the current area - return true
-            return _character.specificLocation.tileLocation.areaOfTile.owner != null
+            return _character.specificLocation.owner != null
                 && locationToken.location.owner == null
-                && locationToken.location.id != _character.specificLocation.tileLocation.areaOfTile.id;
+                && locationToken.location.id != _character.specificLocation.id;
         } else if (token.tokenType == TOKEN_TYPE.FACTION) {
             FactionToken factionToken = token as FactionToken;
             //If current area has faction, and target faction is different from current area's faction - return true
-            return _character.specificLocation.tileLocation.areaOfTile.owner != null
-                && factionToken.faction.id != _character.specificLocation.tileLocation.areaOfTile.owner.id;
+            return _character.specificLocation.owner != null
+                && factionToken.faction.id != _character.specificLocation.owner.id;
         }
         return base.IsTokenCompatibleWithJob(token);
     }
     public override void CaptureRandomLandmarkEvent() {
-        Area area = _character.specificLocation.tileLocation.areaOfTile;
+        Area area = _character.specificLocation;
         if (area == null) {
             //Current location has no area
             return;
@@ -82,7 +82,7 @@ public class Diplomat : Job {
             SetCreatedInteraction(choices[UnityEngine.Random.Range(0, choices.Count)]);
         } else if (result == "Crit Fail") {
             Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_CRITICAL_FAIL, area.coreTile.landmarkOnTile);
-            _character.specificLocation.tileLocation.landmarkOnTile.AddInteraction(interaction);
+            _character.specificLocation.coreTile.landmarkOnTile.AddInteraction(interaction);
             SetCreatedInteraction(interaction);
         }
         _createdInteraction.AddEndInteractionAction(() => SetJobActionPauseState(false));

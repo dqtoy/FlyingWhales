@@ -125,7 +125,7 @@ public class SpawnCharacter : Interaction {
         state.AddLogFiller(new LogFiller(null, _classNameToBeSpawned, LOG_IDENTIFIER.STRING_2));
     }
     private void FailCancelEffect(InteractionState state) {
-        Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(_classNameToBeSpawned, interactable.tileLocation.areaOfTile.raceType, Utilities.GetRandomGender(), interactable.tileLocation.areaOfTile.owner, interactable);
+        Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(_classNameToBeSpawned, interactable.tileLocation.areaOfTile.raceType, Utilities.GetRandomGender(), interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile);
 
         state.descriptionLog.AddToFillers(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
         state.descriptionLog.AddToFillers(null, Utilities.NormalizeString(interactable.tileLocation.areaOfTile.raceType.ToString()), LOG_IDENTIFIER.STRING_1);
@@ -140,7 +140,7 @@ public class SpawnCharacter : Interaction {
     private void SuccessCurseEffect(InteractionState state) {
         investigatorCharacter.LevelUp();
 
-        Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(_classNameToBeSpawned, interactable.tileLocation.areaOfTile.raceType, Utilities.GetRandomGender(), interactable.tileLocation.areaOfTile.owner, interactable);
+        Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(_classNameToBeSpawned, interactable.tileLocation.areaOfTile.raceType, Utilities.GetRandomGender(), interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile);
         Trait curse = AttributeManager.Instance.allTraits["Placeholder Curse 1"];
         createdCharacter.AddTrait(curse);
 
@@ -156,7 +156,7 @@ public class SpawnCharacter : Interaction {
         state.AddLogFiller(new LogFiller(null, curse.name, LOG_IDENTIFIER.OTHER));
     }
     private void FailCurseEffect(InteractionState state) {
-        Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(_classNameToBeSpawned, interactable.tileLocation.areaOfTile.raceType, Utilities.GetRandomGender(), interactable.tileLocation.areaOfTile.owner, interactable);
+        Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(_classNameToBeSpawned, interactable.tileLocation.areaOfTile.raceType, Utilities.GetRandomGender(), interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile);
 
         state.descriptionLog.AddToFillers(null, Utilities.NormalizeString(interactable.tileLocation.areaOfTile.raceType.ToString()), LOG_IDENTIFIER.STRING_1);
         state.descriptionLog.AddToFillers(null, _classNameToBeSpawned, LOG_IDENTIFIER.STRING_2);
@@ -167,7 +167,7 @@ public class SpawnCharacter : Interaction {
         state.AddLogFiller(new LogFiller(createdCharacter, createdCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     private void NormalSpawnEffect(InteractionState state) {
-        Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(_classNameToBeSpawned, interactable.tileLocation.areaOfTile.raceType, Utilities.GetRandomGender(), interactable.tileLocation.areaOfTile.owner, interactable);
+        Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(_classNameToBeSpawned, interactable.tileLocation.areaOfTile.raceType, Utilities.GetRandomGender(), interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile);
 
         state.descriptionLog.AddToFillers(null, Utilities.NormalizeString(interactable.tileLocation.areaOfTile.raceType.ToString()), LOG_IDENTIFIER.STRING_1);
         state.descriptionLog.AddToFillers(null, _classNameToBeSpawned, LOG_IDENTIFIER.STRING_2);

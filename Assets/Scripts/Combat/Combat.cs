@@ -12,7 +12,7 @@ public enum SIDES{
 public class Combat {
     private List<Character> _charactersSideA, _charactersSideB;
     private SIDES _winningSide, _losingSide;
-    private BaseLandmark _location;
+    private Area _location;
     private Action afterCombatAction;
     private List<string> resultsLog;
 
@@ -29,11 +29,11 @@ public class Combat {
     public SIDES losingSide {
         get { return _losingSide; }
     }
-    public BaseLandmark location {
+    public Area location {
         get { return _location; }
     }
     #endregion
-    public Combat(Party party1, Party party2, BaseLandmark location) {
+    public Combat(Party party1, Party party2, Area location) {
         if(party1 == null) {
             _charactersSideA = null;
         } else {
@@ -53,7 +53,7 @@ public class Combat {
         _location = location;
         this.resultsLog = new List<string>();
     }
-    public Combat(List<Character> icharacters1, List<Character> icharacters2, BaseLandmark location) {
+    public Combat(List<Character> icharacters1, List<Character> icharacters2, Area location) {
         if(icharacters1 == null) {
             this._charactersSideA = null;
         } else {

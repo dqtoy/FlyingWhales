@@ -25,8 +25,8 @@ public interface ILocation {
     //void CheckPatrollingGroupsCombat();
     //bool HasHostilities();
     //bool HasHostilitiesWith(Faction faction, bool withFactionOnly = false);
-    bool HasHostileCharactersWith(Character character);
-    bool IsCharacterAtLocation(Character character);
+    //bool HasHostileCharactersWith(Character character);
+    //bool IsCharacterAtLocation(Character character);
     //List<Character> GetAttackingGroups();
     //List<Character> GetPatrollingGroups();
     //List<Character> GetGroupsBasedOnStance(STANCE stance, bool notInCombatOnly, Character except = null);

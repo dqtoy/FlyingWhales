@@ -87,7 +87,7 @@ public class PlayerLandmarkInfoUI : UIMenu {
         //Messenger.AddListener<BaseLandmark>(Signals.LANDMARK_INSPECTED, OnLandmarkInspected);
         Messenger.AddListener<BaseLandmark, Character>(Signals.LANDMARK_RESIDENT_ADDED, OnResidentAddedToLandmark);
         Messenger.AddListener<BaseLandmark, Character>(Signals.LANDMARK_RESIDENT_REMOVED, OnResidentRemovedFromLandmark);
-        Messenger.AddListener<RitualCircle>(Signals.UPDATE_RITUAL_CIRCLE_TRAIT, OnUpdateRitualCircleTrait);
+        //Messenger.AddListener<RitualCircle>(Signals.UPDATE_RITUAL_CIRCLE_TRAIT, OnUpdateRitualCircleTrait);
     }
     public override void OpenMenu() {
         base.OpenMenu();
@@ -181,7 +181,7 @@ public class PlayerLandmarkInfoUI : UIMenu {
         //UpdateHP();
     }
     private void UpdateHP() {
-        healthProgressBar.fillAmount = _activeLandmark.currDurability / (float) _activeLandmark.totalDurability;
+        //healthProgressBar.fillAmount = _activeLandmark.currDurability / (float) _activeLandmark.totalDurability;
     }
     #endregion
 
@@ -240,11 +240,11 @@ public class PlayerLandmarkInfoUI : UIMenu {
         Utilities.DestroyChildren(charactersScrollView.content);
         characterItems.Clear();
         //CheckScrollers();
-        for (int i = 0; i < _activeLandmark.charactersAtLocation.Count; i++) {
-            //if (!_activeLandmark.IsDefenderOfLandmark(_activeLandmark.charactersAtLocation[i])) {
-                CreateNewCharacterItem(_activeLandmark.charactersAtLocation[i].owner);
-            //}
-        }
+        //for (int i = 0; i < _activeLandmark.charactersAtLocation.Count; i++) {
+        //    //if (!_activeLandmark.IsDefenderOfLandmark(_activeLandmark.charactersAtLocation[i])) {
+        //        CreateNewCharacterItem(_activeLandmark.charactersAtLocation[i].owner);
+        //    //}
+        //}
     }
     private LandmarkCharacterItem GetItem(Party party) {
         LandmarkCharacterItem[] items = Utilities.GetComponentsInDirectChildren<LandmarkCharacterItem>(charactersScrollView.content.gameObject);
@@ -277,11 +277,6 @@ public class PlayerLandmarkInfoUI : UIMenu {
         characterItems.Add(item);
         //CheckScrollers();
         return item;
-    }
-    private void CreateNewCharacterItem(LandmarkPartyData partyData) {
-        GameObject characterGO = UIManager.Instance.InstantiateUIObject(landmarkCharacterPrefab.name, charactersScrollView.content);
-        LandmarkCharacterItem item = characterGO.GetComponent<LandmarkCharacterItem>();
-        item.SetCharacter(partyData.partyMembers[0], this);
     }
     private void OnResidentAddedToLandmark(BaseLandmark landmark, Character character) {
         if (isShowing && _activeLandmark != null && _activeLandmark.id == landmark.id) { // && (_activeLandmark.isBeingInspected || GameManager.Instance.inspectAll)
@@ -373,25 +368,25 @@ public class PlayerLandmarkInfoUI : UIMenu {
         if (_activeLandmark == null) {
             return;
         }
-        if (_activeLandmark.landmarkObj.assignedCharacter != null) {
-            minionAssignmentConfirmButton.gameObject.SetActive(true);
-            //minionAssignmentConfirmButton.gameObject.SetActive(false);
-            //minionAssignmentRecallButton.gameObject.SetActive(true);
-            minionAssignmentDraggableItem.SetDraggable(false);
-            minionAssignmentConfirmButton.interactable = false;
-            //minionAssignmentRecallButton.interactable = true;
-        } else {
-            if (_assignedMinion != null) {
-                minionAssignmentConfirmButton.gameObject.SetActive(true);
-                //minionAssignmentConfirmButton.gameObject.SetActive(false);
-                //minionAssignmentRecallButton.gameObject.SetActive(true);
-                minionAssignmentDraggableItem.SetDraggable(true);
-                minionAssignmentConfirmButton.interactable = true;
-                //minionAssignmentRecallButton.interactable = false;
-            } else {
-                ResetMinionAssignment();
-            }
-        }
+        //if (_activeLandmark.landmarkObj.assignedCharacter != null) {
+        //    minionAssignmentConfirmButton.gameObject.SetActive(true);
+        //    //minionAssignmentConfirmButton.gameObject.SetActive(false);
+        //    //minionAssignmentRecallButton.gameObject.SetActive(true);
+        //    minionAssignmentDraggableItem.SetDraggable(false);
+        //    minionAssignmentConfirmButton.interactable = false;
+        //    //minionAssignmentRecallButton.interactable = true;
+        //} else {
+        //    if (_assignedMinion != null) {
+        //        minionAssignmentConfirmButton.gameObject.SetActive(true);
+        //        //minionAssignmentConfirmButton.gameObject.SetActive(false);
+        //        //minionAssignmentRecallButton.gameObject.SetActive(true);
+        //        minionAssignmentDraggableItem.SetDraggable(true);
+        //        minionAssignmentConfirmButton.interactable = true;
+        //        //minionAssignmentRecallButton.interactable = false;
+        //    } else {
+        //        ResetMinionAssignment();
+        //    }
+        //}
     }
     public void OnMinionDrop(GameObject go) {
         PlayerCharacterItem minionItem = go.GetComponent<PlayerCharacterItem>();
@@ -411,25 +406,25 @@ public class PlayerLandmarkInfoUI : UIMenu {
         }
     }
     public void OnClickConfirmInvestigation() {
-        _activeLandmark.landmarkObj.SetAssignedCharacter(_assignedMinion.character);
+        //_activeLandmark.landmarkObj.SetAssignedCharacter(_assignedMinion.character);
         OnUpdateLandmarkInvestigationState();
     }
     //public void OnClickRecall() {
     //    _activeLandmark.tileLocation.areaOfTile.areaInvestigation.RecallMinion("explore");
     //}
     private void ShowHideRitualCircleTraitText() {
-        if (_activeLandmark.landmarkObj.specificObjectType == LANDMARK_TYPE.RITUAL_CIRCLE) {
-            RitualCircle ritualCircle = _activeLandmark.landmarkObj as RitualCircle;
-            ritualCircleTraitText.text = ritualCircle.traitForTheDay;
-            ritualCircleTraitText.gameObject.SetActive(true);
-        } else {
-            ritualCircleTraitText.gameObject.SetActive(false);
-        }
+        //if (_activeLandmark.landmarkObj.specificObjectType == LANDMARK_TYPE.RITUAL_CIRCLE) {
+        //    RitualCircle ritualCircle = _activeLandmark.landmarkObj as RitualCircle;
+        //    ritualCircleTraitText.text = ritualCircle.traitForTheDay;
+        //    ritualCircleTraitText.gameObject.SetActive(true);
+        //} else {
+        //    ritualCircleTraitText.gameObject.SetActive(false);
+        //}
     }
-    private void OnUpdateRitualCircleTrait(RitualCircle ritualCircle) {
-        if (_activeLandmark != null && _activeLandmark.landmarkObj == ritualCircle) {
-            ritualCircleTraitText.text = ritualCircle.traitForTheDay;
-        }
-    }
+    //private void OnUpdateRitualCircleTrait(RitualCircle ritualCircle) {
+    //    if (_activeLandmark != null && _activeLandmark.landmarkObj == ritualCircle) {
+    //        ritualCircleTraitText.text = ritualCircle.traitForTheDay;
+    //    }
+    //}
     #endregion
 }

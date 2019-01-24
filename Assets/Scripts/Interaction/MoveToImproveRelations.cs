@@ -120,11 +120,11 @@ public class MoveToImproveRelations : Interaction {
     #endregion
 
     private void GoToTargetLocation() {
-        _characterInvolved.ownParty.GoToLocation(targetLocation.coreTile.landmarkOnTile, PATHFINDING_MODE.NORMAL, () => CreateImproveRelationsEvent());
+        _characterInvolved.ownParty.GoToLocation(targetLocation, PATHFINDING_MODE.NORMAL, () => CreateImproveRelationsEvent());
     }
 
     private void CreateImproveRelationsEvent() {
-        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.IMPROVE_RELATIONS_EVENT, _characterInvolved.specificLocation.tileLocation.landmarkOnTile);
+        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.IMPROVE_RELATIONS_EVENT, _characterInvolved.specificLocation.coreTile.landmarkOnTile);
         (interaction as ImproveRelationsEvent).SetTargetFaction(targetFaction);
         interaction.SetCanInteractionBeDoneAction(IsImproveRelationsValid);
         _characterInvolved.SetForcedInteraction(interaction);

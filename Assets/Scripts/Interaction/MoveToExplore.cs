@@ -117,11 +117,11 @@ public class MoveToExplore : Interaction {
 
     private void GoToTargetLocation() {
         AddToDebugLog(_characterInvolved.name + " will  no go to " + targetLocation.name + " to explore");
-        _characterInvolved.ownParty.GoToLocation(targetLocation.coreTile.landmarkOnTile, PATHFINDING_MODE.NORMAL, () => CreateExploreEvent());
+        _characterInvolved.ownParty.GoToLocation(targetLocation, PATHFINDING_MODE.NORMAL, () => CreateExploreEvent());
     }
 
     private void CreateExploreEvent() {
-        Interaction exploreEvent = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.EXPLORE_EVENT, _characterInvolved.specificLocation.tileLocation.landmarkOnTile);
+        Interaction exploreEvent = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.EXPLORE_EVENT, _characterInvolved.specificLocation.coreTile.landmarkOnTile);
         if (exploreEvent != null) {
             _characterInvolved.SetForcedInteraction(exploreEvent);
         }

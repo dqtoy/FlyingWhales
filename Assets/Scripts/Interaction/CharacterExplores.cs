@@ -33,7 +33,6 @@ public class CharacterExplores : Interaction {
 
     #region Overrides
     public override void CreateStates() {
-        landmark = characterInvolved.ownParty.specificLocation;
         //Select a different random location not owned by a Hostile faction and set it as the target location.
         targetLandmark = GetTargetLandmark();
 
@@ -174,8 +173,8 @@ public class CharacterExplores : Interaction {
     #endregion
 
     private void CharacterTravelToLocation(BaseLandmark target) {
-        CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.REST);
-        (characterInvolved.ownParty as CharacterParty).iactionData.AssignAction(characterAction, target.landmarkObj);
+        //CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.REST);
+        //(characterInvolved.ownParty as CharacterParty).iactionData.AssignAction(characterAction, target.landmarkObj);
     }
 
     private BaseLandmark GetTargetLandmark() {
@@ -186,8 +185,8 @@ public class CharacterExplores : Interaction {
             Faction currFaction = nonHostileFactions[i];
             for (int j = 0; j < currFaction.ownedAreas.Count; j++) {
                 Area currArea = currFaction.ownedAreas[j];
-                if (characterInvolved.ownParty.specificLocation.tileLocation.areaOfTile == null || currArea.id != characterInvolved.ownParty.specificLocation.tileLocation.areaOfTile.id) {
-                    choices.AddRange(currArea.landmarks);
+                if (characterInvolved.ownParty.specificLocation == null || currArea.id != characterInvolved.ownParty.specificLocation.id) {
+                    //choices.AddRange(currArea.landmarks);
                 }
             }
         }
@@ -197,13 +196,13 @@ public class CharacterExplores : Interaction {
         return null;
     }
     private BaseLandmark GetTargetLandmark(Area currArea) {
-        List<BaseLandmark> choices = new List<BaseLandmark>(currArea.landmarks);
-        if (characterInvolved.ownParty.specificLocation is BaseLandmark) {
-            choices.Remove(characterInvolved.ownParty.specificLocation as BaseLandmark);
-        }
-        if (choices.Count > 0) {
-            return choices[Random.Range(0, choices.Count)];
-        }
+        //List<BaseLandmark> choices = new List<BaseLandmark>(currArea.landmarks);
+        //if (characterInvolved.ownParty.specificLocation is BaseLandmark) {
+        //    choices.Remove(characterInvolved.ownParty.specificLocation.coreTile.landmarkOnTile);
+        //}
+        //if (choices.Count > 0) {
+        //    return choices[Random.Range(0, choices.Count)];
+        //}
         return null;
     }
 }

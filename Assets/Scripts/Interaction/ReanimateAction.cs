@@ -299,10 +299,10 @@ public class ReanimateAction : Interaction {
             character.faction.RemoveCharacter(character);
         }
         faction.AddNewCharacter(character);
-        character.MigrateTo(_characterInvolved.homeArea);
+        character.MigrateHomeTo(_characterInvolved.homeArea);
         Reanimated trait = new Reanimated();
         character.AddTrait(trait);
-        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, character.specificLocation.tileLocation.landmarkOnTile);
+        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, character.specificLocation.coreTile.landmarkOnTile);
         character.SetForcedInteraction(interaction);
         character.ChangeRace(RACE.SKELETON);
     }

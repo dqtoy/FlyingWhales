@@ -163,7 +163,7 @@ public class ScavengeEvent : Interaction {
     private void TrappedScavengeSuccessRewardEffect(InteractionState state) {
         _characterInvolved.LevelUp();
         int obtainedSupply = _characterInvolved.job.GetSupplyObtained(interactable.tileLocation.areaOfTile);
-        _characterInvolved.homeLandmark.tileLocation.areaOfTile.AdjustSuppliesInBank(obtainedSupply);
+        _characterInvolved.homeArea.AdjustSuppliesInBank(obtainedSupply);
         interactable.tileLocation.areaOfTile.AdjustSuppliesInBank(-obtainedSupply);
 
         if (state.descriptionLog != null) {
@@ -184,7 +184,7 @@ public class ScavengeEvent : Interaction {
         _characterInvolved.LevelUp();
 
         int obtainedSupply = (_characterInvolved.job as Raider).GetSupplyObtained(interactable.tileLocation.areaOfTile);
-        _characterInvolved.homeLandmark.tileLocation.areaOfTile.AdjustSuppliesInBank(obtainedSupply);
+        _characterInvolved.homeArea.AdjustSuppliesInBank(obtainedSupply);
         interactable.tileLocation.areaOfTile.AdjustSuppliesInBank(-obtainedSupply);
 
         _characterInvolved.faction.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, 1);
@@ -209,7 +209,7 @@ public class ScavengeEvent : Interaction {
         _characterInvolved.LevelUp();
 
         int obtainedSupply = _characterInvolved.job.GetSupplyObtained(interactable.tileLocation.areaOfTile);
-        _characterInvolved.homeLandmark.tileLocation.areaOfTile.AdjustSuppliesInBank(obtainedSupply);
+        _characterInvolved.homeArea.AdjustSuppliesInBank(obtainedSupply);
         interactable.tileLocation.areaOfTile.AdjustSuppliesInBank(-obtainedSupply);
 
         if (state.descriptionLog != null) {

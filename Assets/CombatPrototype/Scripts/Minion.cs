@@ -86,10 +86,10 @@ public class Minion {
     //public void SetDemonType(DEMON_TYPE type) {
     //    _type = type;
     //}
-    public void SendMinionToPerformAbility(IInteractable target) {
-        _target = target;
-        _character.ownParty.GoToLocation(target.specificLocation, PATHFINDING_MODE.PASSABLE);
-    }
+    //public void SendMinionToPerformAbility(IInteractable target) {
+    //    _target = target;
+    //    _character.ownParty.GoToLocation(target.specificLocation, PATHFINDING_MODE.PASSABLE);
+    //}
     public void SetEnabledState(bool state) {
         if (character.IsInOwnParty()) {
             //also set enabled state of other party members
@@ -170,28 +170,28 @@ public class Minion {
     public void SetIndexDefaultSort(int index) {
         _indexDefaultSort = index;
     }
-    public void GoToAssignment(BaseLandmark interactable) {
-        SetEnabledState(false);
-        character.currentParty.specificLocation.RemoveCharacterFromLocation(character.currentParty);
-        interactable.AddCharacterToLocation(character.currentParty);
-    }
-    public void GoBackFromAssignment() {
-        if (character.isDead) {
-            return;
-        }
-        SetEnabledState(true);
-        character.currentParty.specificLocation.RemoveCharacterFromLocation(character.currentParty);
-        PlayerManager.Instance.player.demonicPortal.AddCharacterToLocation(character.currentParty);
-    }
+    //public void GoToAssignment(BaseLandmark interactable) {
+    //    SetEnabledState(false);
+    //    character.currentParty.specificLocation.RemoveCharacterFromLocation(character.currentParty);
+    //    interactable.AddCharacterToLocation(character.currentParty);
+    //}
+    //public void GoBackFromAssignment() {
+    //    if (character.isDead) {
+    //        return;
+    //    }
+    //    SetEnabledState(true);
+    //    character.currentParty.specificLocation.RemoveCharacterFromLocation(character.currentParty);
+    //    PlayerManager.Instance.player.demonicPortal.AddCharacterToLocation(character.currentParty);
+    //}
     public void TravelToAssignment(BaseLandmark target, Action action) {
-        _character.currentParty.GoToLocation(target, PATHFINDING_MODE.PASSABLE, () => action());
+        _character.currentParty.GoToLocation(target.tileLocation.areaOfTile, PATHFINDING_MODE.PASSABLE, () => action());
     }
     public void TravelBackFromAssignment(Action action = null) {
         _travelBackAction = action;
         if (_character.currentParty.icon.isTravelling) {
             _character.currentParty.CancelTravel(() => TravelBackFromAssignmentComplete());
         } else {
-            _character.currentParty.GoToLocation(PlayerManager.Instance.player.demonicPortal, PATHFINDING_MODE.PASSABLE, () => TravelBackFromAssignmentComplete());
+            _character.currentParty.GoToLocation(PlayerManager.Instance.player.playerArea, PATHFINDING_MODE.PASSABLE, () => TravelBackFromAssignmentComplete());
         }
     }
     private void TravelBackFromAssignmentComplete() {

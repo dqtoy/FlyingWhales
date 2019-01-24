@@ -112,11 +112,11 @@ public class MoveToLoot : Interaction {
 
     private void StartMove() {
         AddToDebugLog(_characterInvolved.name + " starts moving towards " + _targetArea.name + "(" + _targetArea.coreTile.landmarkOnTile.name + ") to loot!");
-        _characterInvolved.currentParty.GoToLocation(_targetArea.coreTile.landmarkOnTile, PATHFINDING_MODE.NORMAL, () => CreateLootAction());
+        _characterInvolved.currentParty.GoToLocation(_targetArea, PATHFINDING_MODE.NORMAL, () => CreateLootAction());
     }
     private void CreateLootAction() {
         AddToDebugLog(_characterInvolved.name + " will now create loot action");
-        Interaction loot = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.LOOT_ACTION, _characterInvolved.specificLocation.tileLocation.landmarkOnTile);
+        Interaction loot = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.LOOT_ACTION, _characterInvolved.specificLocation.coreTile.landmarkOnTile);
         //loot.SetCanInteractionBeDoneAction(IsLootStillValid);
         _characterInvolved.SetForcedInteraction(loot);
     }

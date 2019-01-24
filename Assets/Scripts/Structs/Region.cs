@@ -61,9 +61,6 @@ public class Region : IHasNeighbours<Region> {
     internal BaseLandmark mainLandmark {
         get { return _centerOfMass.landmarkOnTile; }
     }
-    internal int numOfCharactersInLandmarks {
-        get { return landmarks.Sum(x => x.charactersAtLocation.Count); }
-    }
     public List<SpriteRenderer> regionBorderLines { get; private set; }
     #endregion
 

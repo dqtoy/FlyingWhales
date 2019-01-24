@@ -371,34 +371,34 @@ public class InteractionManager : MonoBehaviour {
         }
         return createdInteraction;
     }
-    public bool CanCreateInteraction(INTERACTION_TYPE interactionType, BaseLandmark landmark) {
+    public bool CanCreateInteraction(INTERACTION_TYPE interactionType, Area location) {
         int count = 0;
         FactionRelationship relationship = null;
         switch (interactionType) {
             case INTERACTION_TYPE.SPAWN_CHARACTER:
             case INTERACTION_TYPE.SPAWN_NEUTRAL_CHARACTER:
-                return landmark.tileLocation.areaOfTile.areaResidents.Count < landmark.tileLocation.areaOfTile.residentCapacity && landmark.tileLocation.areaOfTile.raceType != RACE.NONE;
-            case INTERACTION_TYPE.BANDIT_RAID:
-                //Random event that occurs on Bandit Camps. Requires at least 3 characters or army units in the Bandit Camp 
-                //character list owned by the Faction owner.
-                return landmark.GetIdleResidents().Count >= 3;
+                return location.areaResidents.Count < location.residentCapacity && location.raceType != RACE.NONE;
+            //case INTERACTION_TYPE.BANDIT_RAID:
+            //    //Random event that occurs on Bandit Camps. Requires at least 3 characters or army units in the Bandit Camp 
+            //    //character list owned by the Faction owner.
+            //    return landmark.GetIdleResidents().Count >= 3;
             case INTERACTION_TYPE.MOVE_TO_ATTACK:
-                Area target = GetAttackTarget(landmark.tileLocation.areaOfTile);
+                Area target = GetAttackTarget(location);
                 return target != null;
             case INTERACTION_TYPE.MINION_PEACE_NEGOTIATION:
-                if(landmark.tileLocation.areaOfTile.owner.id != PlayerManager.Instance.player.playerFaction.id) {
-                    relationship = PlayerManager.Instance.player.playerFaction.GetRelationshipWith(landmark.tileLocation.areaOfTile.owner);
-                    if (relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.ENEMY && landmark.tileLocation.areaOfTile.owner.leader.specificLocation.tileLocation.areaOfTile.id == landmark.tileLocation.areaOfTile.id) {
+                if(location.owner.id != PlayerManager.Instance.player.playerFaction.id) {
+                    relationship = PlayerManager.Instance.player.playerFaction.GetRelationshipWith(location.owner);
+                    if (relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.ENEMY && location.owner.leader.specificLocation.id == location.id) {
                         return true;
                     }
                 }
                 return false;
             case INTERACTION_TYPE.DEFENSE_MOBILIZATION:
-                if(landmark.tileLocation.areaOfTile.defenderGroups.Count < landmark.tileLocation.areaOfTile.maxDefenderGroups) {
+                if(location.defenderGroups.Count < location.maxDefenderGroups) {
                     int idleCharactersCount = 0;
-                    for (int i = 0; i < landmark.tileLocation.areaOfTile.areaResidents.Count; i++) {
-                        Character resident = landmark.tileLocation.areaOfTile.areaResidents[i];
-                        if (resident.forcedInteraction == null && resident.doNotDisturb <= 0 && resident.IsInOwnParty() && !resident.isLeader && !resident.isDefender && !resident.currentParty.icon.isTravelling && resident.role.roleType != CHARACTER_ROLE.CIVILIAN && resident.specificLocation.tileLocation.areaOfTile.id == landmark.tileLocation.areaOfTile.id) {
+                    for (int i = 0; i < location.areaResidents.Count; i++) {
+                        Character resident = location.areaResidents[i];
+                        if (resident.forcedInteraction == null && resident.doNotDisturb <= 0 && resident.IsInOwnParty() && !resident.isLeader && !resident.isDefender && !resident.currentParty.icon.isTravelling && resident.role.roleType != CHARACTER_ROLE.CIVILIAN && resident.specificLocation.id == location.id) {
                             idleCharactersCount++;
                             if (idleCharactersCount >= 4) {
                                 return true;
@@ -409,11 +409,11 @@ public class InteractionManager : MonoBehaviour {
                 }
                 return false;
             case INTERACTION_TYPE.MYSTERIOUS_SARCOPHAGUS:
-                return landmark.specificLocation.tileLocation.areaOfTile.name == "Tessellated Triangle" || landmark.specificLocation.tileLocation.areaOfTile.name == "Gloomhollow Crypts";
+                return location.name == "Tessellated Triangle" || location.name == "Gloomhollow Crypts";
             case INTERACTION_TYPE.SPY_SPAWN_INTERACTION_1:
                 count = 0;
-                for (int i = 0; i < landmark.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
-                    Character character = landmark.tileLocation.areaOfTile.charactersAtLocation[i];
+                for (int i = 0; i < location.charactersAtLocation.Count; i++) {
+                    Character character = location.charactersAtLocation[i];
                     if(character.faction.id != PlayerManager.Instance.player.playerFaction.id) {
                         count++;
                         if(count >= 2) {
@@ -424,8 +424,8 @@ public class InteractionManager : MonoBehaviour {
                 return false;
             case INTERACTION_TYPE.SPY_SPAWN_INTERACTION_2:
                 count = 0;
-                for (int i = 0; i < landmark.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
-                    Character character = landmark.tileLocation.areaOfTile.charactersAtLocation[i];
+                for (int i = 0; i < location.charactersAtLocation.Count; i++) {
+                    Character character = location.charactersAtLocation[i];
                     if (character.faction.id != PlayerManager.Instance.player.playerFaction.id) {
                         count++;
                         if (count >= 3) {
@@ -435,23 +435,23 @@ public class InteractionManager : MonoBehaviour {
                 }
                 return false;
             case INTERACTION_TYPE.SPY_SPAWN_INTERACTION_3:
-                for (int i = 0; i < landmark.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
-                    Character character = landmark.tileLocation.areaOfTile.charactersAtLocation[i];
+                for (int i = 0; i < location.charactersAtLocation.Count; i++) {
+                    Character character = location.charactersAtLocation[i];
                     if (character.faction.id != PlayerManager.Instance.player.playerFaction.id) {
                         return true;
                     }
                 }
                 return false;
             case INTERACTION_TYPE.SPY_SPAWN_INTERACTION_4:
-                for (int i = 0; i < landmark.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
-                    Character character = landmark.tileLocation.areaOfTile.charactersAtLocation[i];
-                    if (character.faction.id != PlayerManager.Instance.player.playerFaction.id && character.faction.id != FactionManager.Instance.neutralFaction.id && character.homeLandmark.tileLocation.areaOfTile.id != landmark.tileLocation.areaOfTile.id) {
+                for (int i = 0; i < location.charactersAtLocation.Count; i++) {
+                    Character character = location.charactersAtLocation[i];
+                    if (character.faction.id != PlayerManager.Instance.player.playerFaction.id && character.faction.id != FactionManager.Instance.neutralFaction.id && character.homeArea.id != location.id) {
                         return true;
                     }
                 }
                 return false;
             case INTERACTION_TYPE.EXPLORER_SPAWN_INTERACTION_1:
-                return landmark.tileLocation.areaOfTile.possibleSpecialTokenSpawns.Count > 0;
+                return location.possibleSpecialTokenSpawns.Count > 0;
             default:
                 return true;
         }
@@ -461,37 +461,37 @@ public class InteractionManager : MonoBehaviour {
         FactionRelationship relationship = null;
         switch (interactionType) {
             case INTERACTION_TYPE.RETURN_HOME:
-                return character.specificLocation.tileLocation.areaOfTile.id != character.homeLandmark.tileLocation.areaOfTile.id;
+                return character.specificLocation.id != character.homeArea.id;
             case INTERACTION_TYPE.CHARACTER_TRACKING:
-                return character.specificLocation != character.homeLandmark;
+                return character.specificLocation.id != character.homeArea.id;
             case INTERACTION_TYPE.INDUCE_WAR:
-                if (character.specificLocation.tileLocation.landmarkOnTile.owner != null) {
-                    return character.specificLocation.tileLocation.landmarkOnTile.owner.GetFactionsWithRelationship(FACTION_RELATIONSHIP_STATUS.DISLIKED).Count > 0;
+                if (character.specificLocation.owner != null) {
+                    return character.specificLocation.owner.GetFactionsWithRelationship(FACTION_RELATIONSHIP_STATUS.DISLIKED).Count > 0;
                 }
                 return false;
             case INTERACTION_TYPE.FACTION_UPGRADE:
-                return character.specificLocation.tileLocation.areaOfTile.id == character.homeLandmark.tileLocation.areaOfTile.id && character.specificLocation.tileLocation.areaOfTile.suppliesInBank >= 100;
+                return character.specificLocation.id == character.homeArea.id && character.specificLocation.suppliesInBank >= 100;
             case INTERACTION_TYPE.WORK_EVENT:
                 //if character is at home, allow
-                return character.specificLocation.tileLocation.areaOfTile.id == character.homeLandmark.tileLocation.areaOfTile.id;
+                return character.specificLocation.id == character.homeArea.id;
             case INTERACTION_TYPE.INDUCE_GRUDGE:
-                Area targetArea = character.specificLocation.tileLocation.areaOfTile;
+                Area targetArea = character.specificLocation;
                 for (int i = 0; i < targetArea.areaResidents.Count; i++) {
                     Character resident = targetArea.areaResidents[i];
                     if(resident.forcedInteraction == null && resident.doNotDisturb <= 0 && !resident.currentParty.icon.isTravelling && 
                     !resident.alreadyTargetedByGrudge && !resident.isDefender && (resident.race == RACE.HUMANS || resident.race == RACE.ELVES || resident.race == RACE.GOBLIN) && 
-                    resident.specificLocation.tileLocation.areaOfTile.id == targetArea.id) {
+                    resident.specificLocation.id == targetArea.id) {
                         return true;
                     }
                 }
                 return false;
             case INTERACTION_TYPE.MYSTERIOUS_SARCOPHAGUS:
-                return character.specificLocation.tileLocation.areaOfTile.name == "Tessellated Triangle" || character.specificLocation.tileLocation.areaOfTile.name == "Gloomhollow Crypts";
+                return character.specificLocation.name == "Tessellated Triangle" || character.specificLocation.name == "Gloomhollow Crypts";
             case INTERACTION_TYPE.INFLICT_ILLNESS:
                 /*You can inflict a random illness on a character. Trigger requirements:
                 - there must be at least one character in the location
                 - the player must have intel of at least one of these characters*/
-                area = character.specificLocation.tileLocation.areaOfTile;
+                area = character.specificLocation;
                 List<Character> choices = new List<Character>(area.charactersAtLocation);
                 choices.Remove(character);
                 for (int i = 0; i < choices.Count; i++) {
@@ -529,8 +529,8 @@ public class InteractionManager : MonoBehaviour {
                 }
                 return false;
             case INTERACTION_TYPE.MOVE_TO_PEACE_NEGOTIATION:
-                if (character.specificLocation.tileLocation.landmarkOnTile.owner != null) {
-                    foreach (KeyValuePair<Faction, FactionRelationship> keyValuePair in character.specificLocation.tileLocation.landmarkOnTile.owner.relationships) {
+                if (character.specificLocation.owner != null) {
+                    foreach (KeyValuePair<Faction, FactionRelationship> keyValuePair in character.specificLocation.owner.relationships) {
                         if (keyValuePair.Value.relationshipStatus == FACTION_RELATIONSHIP_STATUS.ENEMY && keyValuePair.Value.currentWarCombatCount >= 3) {
                             return true;
                         }
@@ -540,7 +540,7 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.MOVE_TO_EXPAND:
                 for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
                     area = LandmarkManager.Instance.allAreas[i];
-                    if (area.id != character.specificLocation.tileLocation.areaOfTile.id && area.owner == null && area.possibleOccupants.Contains(character.race)) {
+                    if (area.id != character.specificLocation.id && area.owner == null && area.possibleOccupants.Contains(character.race)) {
                         return true;
                     }
                 }
@@ -565,7 +565,7 @@ public class InteractionManager : MonoBehaviour {
                     return false;
             case INTERACTION_TYPE.MOVE_TO_RECRUIT:
                 if (character.race == RACE.ELVES || character.race == RACE.HUMANS) {
-                    if (character.homeLandmark.tileLocation.areaOfTile.IsResidentsFull()) { //check if resident capacity is full
+                    if (character.homeArea.IsResidentsFull()) { //check if resident capacity is full
                         return false;
                     }
                     //**Trigger Criteria 1**: There must be at least one other unaligned character or the character must have a personal friend not from the same faction
@@ -603,12 +603,12 @@ public class InteractionManager : MonoBehaviour {
                 return false;
             case INTERACTION_TYPE.MOVE_TO_RETURN_HOME:
                 //if character is NOT at home, allow
-                return character.specificLocation.tileLocation.areaOfTile.id != character.homeLandmark.tileLocation.areaOfTile.id;
+                return character.specificLocation.id != character.homeArea.id;
             case INTERACTION_TYPE.MOVE_TO_EXPLORE:
                 if(character.tokenInInventory == null) {
                     for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
                         area = LandmarkManager.Instance.allAreas[i];
-                        if (area.id != character.specificLocation.tileLocation.areaOfTile.id && (area.owner == null || (area.owner != null && area.owner.id != character.faction.id && area.owner.id != PlayerManager.Instance.player.playerFaction.id))) {
+                        if (area.id != character.specificLocation.id && (area.owner == null || (area.owner != null && area.owner.id != character.faction.id && area.owner.id != PlayerManager.Instance.player.playerFaction.id))) {
                             return true;
                         }
                     }
@@ -616,7 +616,7 @@ public class InteractionManager : MonoBehaviour {
                 return false;
             case INTERACTION_TYPE.MOVE_TO_CHARM:
                 if (character.race == RACE.FAERY) {
-                    if (!character.homeLandmark.tileLocation.areaOfTile.IsResidentsFull()) {
+                    if (!character.homeArea.IsResidentsFull()) {
                         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
                             Character currCharacter = CharacterManager.Instance.allCharacters[i];
                             if(currCharacter.id != character.id && !currCharacter.isDead) {
@@ -638,7 +638,7 @@ public class InteractionManager : MonoBehaviour {
                 return false;
             case INTERACTION_TYPE.MOVE_TO_ABDUCT:
                 if (character.race == RACE.GOBLIN || character.race == RACE.SPIDER) {
-                    if (!character.homeLandmark.tileLocation.areaOfTile.IsResidentsFull()) {
+                    if (!character.homeArea.IsResidentsFull()) {
                         for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
                             Area currArea = LandmarkManager.Instance.allAreas[i];
                             if (currArea.owner == null || currArea.owner.id != PlayerManager.Instance.player.playerFaction.id && currArea.owner.id != character.faction.id) {
@@ -692,7 +692,7 @@ public class InteractionManager : MonoBehaviour {
                 if(character.race == RACE.WOLF || character.race == RACE.SPIDER || character.race == RACE.DRAGON) {
                     for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
                         area = LandmarkManager.Instance.allAreas[i];
-                        if (area.id != character.specificLocation.tileLocation.areaOfTile.id && (area.owner == null || (area.owner != null && area.owner.id != character.faction.id && area.owner.id != PlayerManager.Instance.player.playerFaction.id))) {
+                        if (area.id != character.specificLocation.id && (area.owner == null || (area.owner != null && area.owner.id != character.faction.id && area.owner.id != PlayerManager.Instance.player.playerFaction.id))) {
                             return true;
                         }
                     }
@@ -701,21 +701,21 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.MOVE_TO_SAVE:
                 return CanCreateMoveToSave(character);
             case INTERACTION_TYPE.FOUND_LUCARETH:
-                return character.characterClass.className == "Witch" && character.specificLocation.tileLocation.areaOfTile.owner == null 
-                    && character.specificLocation.tileLocation.areaOfTile.possibleOccupants.Contains(character.race) && !FactionManager.Instance.GetFactionBasedOnName("Lucareth").isActive;
+                return character.characterClass.className == "Witch" && character.specificLocation.owner == null 
+                    && character.specificLocation.possibleOccupants.Contains(character.race) && !FactionManager.Instance.GetFactionBasedOnName("Lucareth").isActive;
             case INTERACTION_TYPE.FOUND_BESTALIA:
-                return character.characterClass.className == "Beastmaster" && character.specificLocation.tileLocation.areaOfTile.owner == null
-                    && character.specificLocation.tileLocation.areaOfTile.possibleOccupants.Contains(character.race) && !FactionManager.Instance.GetFactionBasedOnName("Bestalia").isActive;
+                return character.characterClass.className == "Beastmaster" && character.specificLocation.owner == null
+                    && character.specificLocation.possibleOccupants.Contains(character.race) && !FactionManager.Instance.GetFactionBasedOnName("Bestalia").isActive;
             case INTERACTION_TYPE.FOUND_MAGUS:
-                return character.characterClass.className == "Archmage" && character.specificLocation.tileLocation.areaOfTile.owner == null
-                    && character.specificLocation.tileLocation.areaOfTile.possibleOccupants.Contains(character.race) && !FactionManager.Instance.GetFactionBasedOnName("Magus").isActive;
+                return character.characterClass.className == "Archmage" && character.specificLocation.owner == null
+                    && character.specificLocation.possibleOccupants.Contains(character.race) && !FactionManager.Instance.GetFactionBasedOnName("Magus").isActive;
             case INTERACTION_TYPE.FOUND_ZIRANNA:
-                return character.characterClass.className == "Necromancer" && character.specificLocation.tileLocation.areaOfTile.owner == null
-                    && character.specificLocation.tileLocation.areaOfTile.possibleOccupants.Contains(character.race) && !FactionManager.Instance.GetFactionBasedOnName("Ziranna").isActive;
+                return character.characterClass.className == "Necromancer" && character.specificLocation.owner == null
+                    && character.specificLocation.possibleOccupants.Contains(character.race) && !FactionManager.Instance.GetFactionBasedOnName("Ziranna").isActive;
             case INTERACTION_TYPE.EAT_ABDUCTED:
                 if (character.race == RACE.GOBLIN || character.race == RACE.SPIDER || character.race == RACE.WOLF) {
-                    for (int i = 0; i < character.specificLocation.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
-                        Character characterAtLocation = character.specificLocation.tileLocation.areaOfTile.charactersAtLocation[i];
+                    for (int i = 0; i < character.specificLocation.charactersAtLocation.Count; i++) {
+                        Character characterAtLocation = character.specificLocation.charactersAtLocation[i];
                         if (characterAtLocation.id != character.id && !characterAtLocation.currentParty.icon.isTravelling && characterAtLocation.IsInOwnParty() && characterAtLocation.GetTrait("Abducted") != null) {
                             return true;
                         }
@@ -724,8 +724,8 @@ public class InteractionManager : MonoBehaviour {
                 return false;
             case INTERACTION_TYPE.TORTURE_ACTION:
                 if (character.race == RACE.GOBLIN || character.race == RACE.HUMANS || character.race == RACE.SKELETON) {
-                    for (int i = 0; i < character.specificLocation.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
-                        Character characterAtLocation = character.specificLocation.tileLocation.areaOfTile.charactersAtLocation[i];
+                    for (int i = 0; i < character.specificLocation.charactersAtLocation.Count; i++) {
+                        Character characterAtLocation = character.specificLocation.charactersAtLocation[i];
                         if (characterAtLocation.id != character.id && !characterAtLocation.currentParty.icon.isTravelling && characterAtLocation.IsInOwnParty() && characterAtLocation.GetTrait("Abducted") != null) {
                             return true;
                         }
@@ -733,11 +733,11 @@ public class InteractionManager : MonoBehaviour {
                 }
                 return false;
             case INTERACTION_TYPE.MOVE_TO_REANIMATE:
-                if (character.race == RACE.SKELETON && !character.homeLandmark.tileLocation.areaOfTile.IsResidentsFull()) {
+                if (character.race == RACE.SKELETON && !character.homeArea.IsResidentsFull()) {
                     //**Trigger Criteria 1**: There must be at least one dead corpse in any area
                     for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
                         Area currArea = LandmarkManager.Instance.allAreas[i];
-                        if (currArea.id != character.specificLocation.tileLocation.areaOfTile.id && currArea.corpsesInArea.Count > 1) { 
+                        if (currArea.id != character.specificLocation.id && currArea.corpsesInArea.Count > 1) { 
                             return true;
                         }
                     }
@@ -746,8 +746,8 @@ public class InteractionManager : MonoBehaviour {
                 return false;
             case INTERACTION_TYPE.CHANCE_ENCOUNTER:
                 if(character.characterClass.roleType != CHARACTER_ROLE.BEAST && character.race != RACE.SKELETON) {
-                    for (int i = 0; i < character.specificLocation.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
-                        Character currCharacter = character.specificLocation.tileLocation.areaOfTile.charactersAtLocation[i];
+                    for (int i = 0; i < character.specificLocation.charactersAtLocation.Count; i++) {
+                        Character currCharacter = character.specificLocation.charactersAtLocation[i];
                         if (currCharacter.id != character.id && currCharacter.characterClass.roleType != CHARACTER_ROLE.BEAST && currCharacter.race != RACE.SKELETON) {
                             return true;
                         }
@@ -760,11 +760,11 @@ public class InteractionManager : MonoBehaviour {
                 }
                 return false;
             case INTERACTION_TYPE.STEAL_ACTION:
-                if(character.specificLocation.tileLocation.areaOfTile.id == character.homeLandmark.tileLocation.areaOfTile.id) {
+                if(character.specificLocation.id == character.homeArea.id) {
                     //If At Home
                     if(character.GetTrait("Crooked") != null) {
-                        for (int i = 0; i < character.specificLocation.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
-                            Character currCharacter = character.specificLocation.tileLocation.areaOfTile.charactersAtLocation[i];
+                        for (int i = 0; i < character.specificLocation.charactersAtLocation.Count; i++) {
+                            Character currCharacter = character.specificLocation.charactersAtLocation[i];
                             if (currCharacter.id != character.id && currCharacter.isHoldingItem) {
                                 return true;
                             }
@@ -774,17 +774,17 @@ public class InteractionManager : MonoBehaviour {
                 }
                 return true;
             case INTERACTION_TYPE.TRANSFER_HOME:
-                if(character.specificLocation.tileLocation.areaOfTile.id != character.homeLandmark.tileLocation.areaOfTile.id
-                    && character.specificLocation.tileLocation.areaOfTile.owner == character.faction) {
-                    int targetRemainingResidentCap = character.specificLocation.tileLocation.areaOfTile.residentCapacity - character.specificLocation.tileLocation.areaOfTile.areaResidents.Count;
-                    int homeRemainingResidentCap = character.homeLandmark.tileLocation.areaOfTile.residentCapacity - character.homeLandmark.tileLocation.areaOfTile.areaResidents.Count;
+                if(character.specificLocation.id != character.homeArea.id
+                    && character.specificLocation.owner == character.faction) {
+                    int targetRemainingResidentCap = character.specificLocation.residentCapacity - character.specificLocation.areaResidents.Count;
+                    int homeRemainingResidentCap = character.homeArea.residentCapacity - character.homeArea.areaResidents.Count;
                     if(targetRemainingResidentCap - homeRemainingResidentCap >= 3) {
                         return true;
                     }
                 }
                 return false;
             case INTERACTION_TYPE.MOVE_TO_RECRUIT_FACTION:
-                if (character.homeLandmark.tileLocation.areaOfTile.IsResidentsFull()) { //check if resident capacity is full
+                if (character.homeArea.IsResidentsFull()) { //check if resident capacity is full
                     return false;
                 }
                 return true;
@@ -813,7 +813,7 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.MOVE_TO_LOOT:
                 return !character.isHoldingItem;
             case INTERACTION_TYPE.MOVE_TO_TAME_BEAST:
-                if (!character.homeLandmark.tileLocation.areaOfTile.IsResidentsFull()) {
+                if (!character.homeArea.IsResidentsFull()) {
                     for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
                         Character currCharacter = CharacterManager.Instance.allCharacters[i];
                         if (currCharacter.role.roleType == CHARACTER_ROLE.BEAST && currCharacter.faction == FactionManager.Instance.neutralFaction) {
@@ -861,7 +861,7 @@ public class InteractionManager : MonoBehaviour {
             //    Character resident = areaToAttack.areaResidents[i];
             //    if(resident.forcedInteraction == null && resident.doNotDisturb <= 0 && resident.IsInOwnParty() && !resident.isLeader 
             //        && resident.role.roleType != CHARACTER_ROLE.CIVILIAN && !resident.currentParty.icon.isTravelling 
-            //        && !resident.isDefender && resident.specificLocation.tileLocation.areaOfTile.id == areaToAttack.id
+            //        && !resident.isDefender && resident.specificLocation.id == areaToAttack.id
             //        && resident.faction == areaToAttack.owner) {
             //        residentsAtArea.Add(resident);
             //    }

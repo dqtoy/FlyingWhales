@@ -34,6 +34,8 @@ public static class Signals {
     public static string AREA_OWNER_CHANGED = "OnAreaOwnerChanged"; //Parameters (Area affectedArea)
     public static string AREA_RESIDENT_ADDED = "OnAreaResidentAdded"; //Parameters (Area affectedArea, Character newResident)
     public static string AREA_RESIDENT_REMOVED = "OnAreaResidentRemoved"; //Parameters (Area affectedArea, Character removedResident)
+    public static string CHARACTER_ENTERED_AREA = "OnCharacterEnteredArea"; //Parameters (Area affectedArea, Character character)
+    public static string CHARACTER_EXITED_AREA = "OnCharacterExitedArea"; //Parameters (Area affectedArea, Character character)
     #endregion
 
     #region Landmarks

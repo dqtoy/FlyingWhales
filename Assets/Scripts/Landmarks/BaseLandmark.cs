@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 
-public class BaseLandmark : ILocation, IInteractable {
+public class BaseLandmark : ILocation {
     protected int _id;
     protected string _landmarkName;
     protected LANDMARK_TYPE _specificLandmarkType;
@@ -24,18 +24,14 @@ public class BaseLandmark : ILocation, IInteractable {
     protected HexTile _location;
     protected HexTile _connectedTile;
     protected Faction _owner;
-    protected StructureObj _landmarkObj;
     protected LandmarkVisual _landmarkVisual;
-    //protected LandmarkInvestigation _landmarkInvestigation;
-    protected List<Character> _charactersWithHomeOnLandmark;
+    //protected List<Character> _charactersWithHomeOnLandmark;
     protected List<BaseLandmark> _connections;
     protected List<Character> _prisoners; //list of prisoners on landmark
     protected List<Log> _history;
-    protected List<Party> _charactersAtLocation;
+    //protected List<Party> _charactersAtLocation;
     protected List<Party> _assaultParties;
-    protected List<LandmarkPartyData> _lastInspectedOfCharactersAtLocation;
     protected List<Item> _itemsInLandmark;
-    protected List<Item> _lastInspectedItemsInLandmark;
     protected List<LANDMARK_TAG> _landmarkTags;
     protected List<HexTile> _nextCorruptedTilesToCheck;
     protected List<HexTile> _wallTiles;
@@ -48,17 +44,6 @@ public class BaseLandmark : ILocation, IInteractable {
     protected Dictionary<RESOURCE, int> _resourceInventory;
     
     public bool hasAdjacentCorruptedLandmark;
-    public QuestBoard questBoard { get; private set; }
-    public List<GameEvent> advertisedEvents { get; private set; } //events happening at this landmark, that other characters can partake in
-    //public Party defenders { get; private set; }
-    //public bool canProduceSupplies { get; private set; }
-    public WeightedDictionary<INTERACTION_TYPE> scenarios { get; private set; }
-    public WeightedDictionary<bool> eventTriggerWeights { get; private set; }
-    public int eventTriggerWeight { get; private set; }
-    public int noEventTriggerWeight { get; private set; }
-    //public int maxDailySupplyProduction { get; private set; }
-    //public int minDailySupplyProduction { get; private set; }
-    public int maxDefenderCount { get; private set; }
 
     //private List<Buff> defenderBuffs;
 
@@ -99,24 +84,12 @@ public class BaseLandmark : ILocation, IInteractable {
     public Faction faction {
         get { return _owner; }
     }
-    public List<Character> charactersWithHomeOnLandmark {
-        get { return _charactersWithHomeOnLandmark; }
-    }
-    //  public virtual int totalPopulation {
-    //get { return civilians + CharactersCount(); }
-    //  }
-    //public int civilians {
-    //	get { return _civiliansByRace.Sum(x => x.Value); }
-    //   }
-    //   public Dictionary<RACE, int> civiliansByRace {
-    //       get { return _civiliansByRace; }
-    //   }
+    //public List<Character> charactersWithHomeOnLandmark {
+    //    get { return _charactersWithHomeOnLandmark; }
+    //}
     public LandmarkVisual landmarkVisual {
         get { return _landmarkVisual; }
     }
-    //public LandmarkInvestigation landmarkInvestigation {
-    //    get { return _landmarkInvestigation; }
-    //}
     public List<Character> prisoners {
         get { return _prisoners; }
     }
@@ -127,25 +100,13 @@ public class BaseLandmark : ILocation, IInteractable {
         get { return _combatHistory; }
     }
     public List<Party> charactersAtLocation {
-        get { return _charactersAtLocation; }
-    }
-    public List<LandmarkPartyData> lastInspectedOfCharactersAtLocation {
-        get { return _lastInspectedOfCharactersAtLocation; }
+        get { return null; }
     }
     public List<Item> itemsInLandmark {
         get { return _itemsInLandmark; }
     }
-    public List<Item> lastInspectedItemsInLandmark {
-        get { return _lastInspectedItemsInLandmark; }
-    }
-    //public List<Secret> secrets {
-    //    get { return _secrets; }
-    //}
     public List<Token> tokens {
         get { return _tokens; }
-    }
-    public List<string> encounters {
-        get { return _encounters; }
     }
     public List<Interaction> currentInteractions {
         get { return _currentInteractions; }
@@ -158,12 +119,6 @@ public class BaseLandmark : ILocation, IInteractable {
     }
     public Dictionary<Character, GameDate> characterTraces {
         get { return _characterTraces; }
-    }
-    public int currDurability {
-        get { return _landmarkObj.currentHP; }
-    }
-    public int totalDurability {
-        get { return _landmarkObj.maxHP; }
     }
     public int civilianCount {
         get { return _civilianCount; }
@@ -189,12 +144,6 @@ public class BaseLandmark : ILocation, IInteractable {
     public HexTile connectedTile {
         get { return _connectedTile; }
     }
-    public StructureObj landmarkObj {
-        get { return _landmarkObj; }
-    }
-    //public HiddenDesire hiddenDesire {
-    //    get { return null; }
-    //}
     public ILocation specificLocation {
         get { return this; }
     }
@@ -206,16 +155,13 @@ public class BaseLandmark : ILocation, IInteractable {
         _hasBeenCorrupted = false;
         hasAdjacentCorruptedLandmark = false;
         _connections = new List<BaseLandmark>();
-        _charactersWithHomeOnLandmark = new List<Character>();
+        //_charactersWithHomeOnLandmark = new List<Character>();
         _prisoners = new List<Character>();
         _history = new List<Log>();
-        _charactersAtLocation = new List<Party>();
-        _lastInspectedOfCharactersAtLocation = new List<LandmarkPartyData>();
+        //_charactersAtLocation = new List<Party>();
         _itemsInLandmark = new List<Item>();
-        _lastInspectedItemsInLandmark = new List<Item>();
         _nextCorruptedTilesToCheck = new List<HexTile>();
         _wallTiles = new List<HexTile>();
-        advertisedEvents = new List<GameEvent>();
         //_secrets = new List<Secret>();
         _tokens = new List<Token>();
         _encounters = new List<string>();
@@ -223,8 +169,6 @@ public class BaseLandmark : ILocation, IInteractable {
         _combatHistory = new Dictionary<int, Combat>();
         _characterTraces = new Dictionary<Character, GameDate>();
         _assaultParties = new List<Party>();
-        scenarios = new WeightedDictionary<INTERACTION_TYPE>();
-        eventTriggerWeights = new WeightedDictionary<bool>();
         //SetSupplyProductionState(true);
         //SetMaxDefenderCount(4);
         //defenderBuffs = new List<Buff>();
@@ -249,21 +193,6 @@ public class BaseLandmark : ILocation, IInteractable {
         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(specificLandmarkType);
         ConstructTags(landmarkData);
         SpawnInitialLandmarkItems();
-
-        if (data.scenarioWeights != null) {
-            scenarios = new WeightedDictionary<INTERACTION_TYPE>(data.scenarioWeights);
-        }
-        SetEventTriggerWeight(data.eventTriggerWeight);
-        SetNoEventTriggerWeight(data.noEventTriggerWeight);
-        eventTriggerWeights.AddElement(true, eventTriggerWeight);
-        eventTriggerWeights.AddElement(false, noEventTriggerWeight);
-
-        //if (data.defenderWeights != null) {
-        //    defenderWeights = new WeightedDictionary<DefenderSetting>(data.defenderWeights);
-        //}
-        //SetMaxDailySupplyProductionAmount(data.maxDailySupplyAmount);
-        //SetInitialDefenderCount(data.initialDefenderCount);
-        //SetMaxDefenderCount(data.maxDefenderCount);
     }
 
     public void SetName(string name) {
@@ -359,55 +288,6 @@ public class BaseLandmark : ILocation, IInteractable {
     #endregion
 
     #region Characters
-    public void AddCharacterHomeOnLandmark(Character character, bool ignoreAreaResidentCapacity = false, bool broadcast = true) {
-        if (!_charactersWithHomeOnLandmark.Contains(character)) {
-            _charactersWithHomeOnLandmark.Add(character);
-            character.SetHomeLandmark(this, ignoreAreaResidentCapacity);
-            if (broadcast) {
-                Messenger.Broadcast(Signals.LANDMARK_RESIDENT_ADDED, this, character);
-            }
-        }
-    }
-    public void RemoveCharacterHomeOnLandmark(Character character) {
-        if (_charactersWithHomeOnLandmark.Remove(character)) {
-            Messenger.Broadcast(Signals.LANDMARK_RESIDENT_REMOVED, this, character);
-        }
-        character.SetHomeLandmark(null);
-    }
-    public bool IsResident(Character character) {
-        return _charactersWithHomeOnLandmark.Contains(character);
-    }
-    public Character GetPrisonerByID(int id) {
-        for (int i = 0; i < _prisoners.Count; i++) {
-            if (_prisoners[i].id == id) {
-                return _prisoners[i];
-            }
-        }
-        return null;
-    }
-    public List<Character> GetCharactersOfType(string className) {
-        List<Character> characters = new List<Character>();
-        for (int i = 0; i < charactersAtLocation.Count; i++) {
-            Party currParty = charactersAtLocation[i];
-            if (currParty is CharacterParty) {
-                for (int j = 0; j < currParty.characters.Count; j++) {
-                    Character character = currParty.characters[j];
-                    if (character.characterClass.className.Contains(className)) {
-                        characters.Add(character);
-                    }
-                }
-            }
-        }
-        return characters;
-    }
-    public Character GetResidentCharacterOfClass(string className) {
-        for (int i = 0; i < _charactersWithHomeOnLandmark.Count; i++) {
-            if(_charactersWithHomeOnLandmark[i].characterClass != null && _charactersWithHomeOnLandmark[i].characterClass.className == className && _charactersWithHomeOnLandmark[i].currentParty.specificLocation == this) {
-                return _charactersWithHomeOnLandmark[i];
-            }
-        }
-        return null;
-    }
     public void SpawnRandomCharacters(int howMany) {
         if (tileLocation.areaOfTile.IsResidentsFull()) {
             return;
@@ -418,129 +298,51 @@ public class BaseLandmark : ILocation, IInteractable {
                 break;
             }
             string classNameToBeSpawned = classWeights.PickRandomElementGivenWeights().className;
-            Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(classNameToBeSpawned, tileLocation.areaOfTile.raceType, Utilities.GetRandomGender(), tileLocation.areaOfTile.owner, this);
+            Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(classNameToBeSpawned, tileLocation.areaOfTile.raceType, Utilities.GetRandomGender(), tileLocation.areaOfTile.owner, this.tileLocation.areaOfTile);
         }
     }
     #endregion
 
     #region Location
     public void AddCharacterToLocation(Party iparty) {
-        //if(iparty.owner.homeLandmark == this) {
-        if (!_charactersAtLocation.Contains(iparty)) {
-            //if (!IsDefenderOfLandmark(iparty)) {
-            _charactersAtLocation.Add(iparty); //only add to characters list if the party is not a defender of the landmark
-            //}
-            //this.tileLocation.RemoveCharacterFromLocation(iparty);
-            //if (iparty.specificLocation != null) {
-            //    iparty.specificLocation.RemoveCharacterFromLocation(iparty);
-            //}
-            iparty.SetSpecificLocation(this);
-            tileLocation.areaOfTile.AddCharacterAtLocation(iparty.owner);
-#if !WORLD_CREATION_TOOL
-            //_landmarkVisual.OnCharacterEnteredLandmark(iparty);
-            Messenger.Broadcast<Party, BaseLandmark>(Signals.PARTY_ENTERED_LANDMARK, iparty, this);
-#endif
-        }
-        //}
+//        //if(iparty.owner.homeLandmark == this) {
+//        if (!_charactersAtLocation.Contains(iparty)) {
+//            //if (!IsDefenderOfLandmark(iparty)) {
+//            _charactersAtLocation.Add(iparty); //only add to characters list if the party is not a defender of the landmark
+//            //}
+//            //this.tileLocation.RemoveCharacterFromLocation(iparty);
+//            //if (iparty.specificLocation != null) {
+//            //    iparty.specificLocation.RemoveCharacterFromLocation(iparty);
+//            //}
+//            iparty.SetSpecificLocation(this.tileLocation.areaOfTile);
+//            tileLocation.areaOfTile.AddCharacterToLocation(iparty.owner);
+//#if !WORLD_CREATION_TOOL
+//            //_landmarkVisual.OnCharacterEnteredLandmark(iparty);
+//            Messenger.Broadcast<Party, BaseLandmark>(Signals.PARTY_ENTERED_LANDMARK, iparty, this);
+//#endif
+//        }
+//        //}
     }
     public void RemoveCharacterFromLocation(Party iparty, bool addToTile = false) {
-        if (_charactersAtLocation.Remove(iparty)) {
-            if (addToTile) {
-                this.tileLocation.AddCharacterToLocation(iparty);
-            }
-            tileLocation.areaOfTile.RemoveCharacterAtLocation(iparty.owner);
-#if !WORLD_CREATION_TOOL
-            Messenger.Broadcast<Party, BaseLandmark>(Signals.PARTY_EXITED_LANDMARK, iparty, this);
-#endif
-        } else {
-            Debug.LogWarning("Cannot remove character from " + this.name + " because he/she is not here");
-        }
+//        if (_charactersAtLocation.Remove(iparty)) {
+//            if (addToTile) {
+//                this.tileLocation.AddCharacterToLocation(iparty);
+//            }
+//            tileLocation.areaOfTile.RemoveCharacterFromLocation(iparty.owner);
+//#if !WORLD_CREATION_TOOL
+//            Messenger.Broadcast<Party, BaseLandmark>(Signals.PARTY_EXITED_LANDMARK, iparty, this);
+//#endif
+//        } else {
+//            Debug.LogWarning("Cannot remove character from " + this.name + " because he/she is not here");
+//        }
     }
     public void ReplaceCharacterAtLocation(Party ipartyToReplace, Party ipartyToAdd) {
-        if (_charactersAtLocation.Contains(ipartyToReplace)) {
-            int indexOfCharacterToReplace = _charactersAtLocation.IndexOf(ipartyToReplace);
-            _charactersAtLocation.Insert(indexOfCharacterToReplace, ipartyToAdd);
-            _charactersAtLocation.Remove(ipartyToReplace);
-            ipartyToAdd.SetSpecificLocation(this);
-        }
-    }
-    public bool IsCharacterAtLocation(Character character) {
-        for (int i = 0; i < _charactersAtLocation.Count; i++) {
-            Party currParty = _charactersAtLocation[i];
-            if (currParty.characters.Contains(character)) {
-                return true;
-            }
-        }
-        return false;
-    }
-    public int GetInspectedCharactersCount() {
-        int count = 0;
-        for (int i = 0; i < _charactersAtLocation.Count; i++) {
-            if (_charactersAtLocation[i].IsPartyBeingInspected()) {
-                count++;
-            }
-        }
-        return count;
-    }
-    public int GetCharactersInsideLandmarkCount() {
-        int count = 0;
-        for (int i = 0; i < _charactersAtLocation.Count; i++) {
-            if (!_charactersAtLocation[i].icon.isMovingToHex) {
-                count++;
-            }
-        }
-        return count;
-    }
-    public CharacterParty GetArmyWithMostOccupiedSlots() {
-        CharacterParty mostArmy = null;
-        for (int i = 0; i < charactersWithHomeOnLandmark.Count; i++) {
-            Character currCharacter = charactersWithHomeOnLandmark[i];
-            if (currCharacter is CharacterArmyUnit) {
-                CharacterArmyUnit currUnit = (currCharacter as CharacterArmyUnit);
-                if (mostArmy == null || mostArmy.characters.Count > currUnit.currentParty.characters.Count) {
-                    mostArmy = currUnit.currentParty as CharacterParty;
-                }
-            }
-        }
-        return mostArmy;
-    }
-    public List<Character> GetIdleResidents() {
-        List<Character> idleResidents = new List<Character>();
-        for (int i = 0; i < charactersWithHomeOnLandmark.Count; i++) {
-            Character currCharacter = charactersWithHomeOnLandmark[i];
-            if (currCharacter.isDefender) {
-                continue; //skip
-            }
-            if (currCharacter.ownParty is CharacterParty && (currCharacter.ownParty as CharacterParty).isBusy) {
-                continue; //skip
-            }
-            idleResidents.Add(currCharacter);
-        }
-        return idleResidents;
-    }
-    public bool HasResidentAtHome() {
-        for (int i = 0; i < charactersWithHomeOnLandmark.Count; i++) {
-            Character currCharacter = charactersWithHomeOnLandmark[i];
-            if (currCharacter.isDefender) {
-                continue; //skip
-            }
-            if (currCharacter.ownParty.icon.isTravelling) {
-                continue; //skip
-            }
-            if (currCharacter.ownParty.specificLocation.id == this.id) {
-                return true;
-            }
-        }
-        return false;
-    }
-    #endregion
-
-    #region Combat
-    public bool HasHostileCharactersWith(Character character) {
-        if (_charactersAtLocation.Where(x => x is MonsterParty).Any()) {
-            return true;
-        }
-        return false;
+        //if (_charactersAtLocation.Contains(ipartyToReplace)) {
+        //    int indexOfCharacterToReplace = _charactersAtLocation.IndexOf(ipartyToReplace);
+        //    _charactersAtLocation.Insert(indexOfCharacterToReplace, ipartyToAdd);
+        //    _charactersAtLocation.Remove(ipartyToReplace);
+        //    ipartyToAdd.SetSpecificLocation(this.tileLocation.areaOfTile);
+        //}
     }
     #endregion
 
@@ -698,14 +500,6 @@ public class BaseLandmark : ILocation, IInteractable {
         ////add common tags from base landmark type
         //BaseLandmarkData baseLandmarkData = LandmarkManager.Instance.GetBaseLandmarkData(landmarkData.baseLandmarkType);
         //_landmarkTags.AddRange(baseLandmarkData.baseLandmarkTags);
-    }
-    #endregion
-
-    #region Objects
-    public void SetObject(StructureObj obj) {
-        //_landmarkObj = obj;
-        //obj.SetObjectLocation(this);
-        //obj.OnAddToLandmark(this);
     }
     #endregion
 
@@ -1016,15 +810,6 @@ public class BaseLandmark : ILocation, IInteractable {
     }
     #endregion
 
-    #region Quest Board
-    public void CreateQuestBoard() {
-        questBoard = new QuestBoard(this);
-    }
-    public bool HasQuestBoard() {
-        return questBoard != null;
-    }
-    #endregion
-
     #region IInteractable
     public void SetIsBeingInspected(bool state) {
         _isBeingInspected = state;
@@ -1048,17 +833,7 @@ public class BaseLandmark : ILocation, IInteractable {
         UpdateLastInspection();
     }
     private void UpdateLastInspection() {
-        _lastInspectedOfCharactersAtLocation.Clear();
-        for (int i = 0; i < _charactersAtLocation.Count; i++) {
-            LandmarkPartyData landmarkPartyData = new LandmarkPartyData {
-                partyMembers = new List<Character>(_charactersAtLocation[i].characters),
-                action = _charactersAtLocation[i].currentAction,
-                currentDuration = _charactersAtLocation[i].currentDay
-            };
-            _lastInspectedOfCharactersAtLocation.Add(landmarkPartyData);
-        }
-        _lastInspectedItemsInLandmark.Clear();
-        _lastInspectedItemsInLandmark.AddRange(_itemsInLandmark);
+        
     }
     #endregion
 
@@ -1144,25 +919,6 @@ public class BaseLandmark : ILocation, IInteractable {
     //    }
     //    return chosenLandmarks;
     //}
-    #endregion
-
-    #region Events
-    public void AddAdvertisedEvent(GameEvent gameEvent) {
-        if (!advertisedEvents.Contains(gameEvent)) {
-            advertisedEvents.Add(gameEvent);
-        }
-    }
-    public void RemoveAdvertisedEvent(GameEvent gameEvent) {
-        advertisedEvents.Remove(gameEvent);
-    }
-    public bool HasEventOfType(GAME_EVENT eventType) {
-        for (int i = 0; i < advertisedEvents.Count; i++) {
-            if (advertisedEvents[i].type == eventType) {
-                return true;
-            }
-        }
-        return false;
-    }
     #endregion
 
     //#region Supplies
@@ -1314,27 +1070,6 @@ public class BaseLandmark : ILocation, IInteractable {
         }
         return null;
     }
-    public void SetEventTriggerWeight(int weight) {
-        this.eventTriggerWeight = weight;
-    }
-    public void SetNoEventTriggerWeight(int weight) {
-        this.noEventTriggerWeight = weight;
-    }
-    public WeightedDictionary<INTERACTION_TYPE> GetInteractionWeights(BaseLandmark landmark) {
-        WeightedDictionary<INTERACTION_TYPE> weights = new WeightedDictionary<INTERACTION_TYPE>();
-        foreach (KeyValuePair<INTERACTION_TYPE, int> kvp in scenarios.dictionary) {
-            if (GetInteractionOfType(kvp.Key) == null && InteractionManager.Instance.CanCreateInteraction(kvp.Key, landmark)) {
-                weights.AddElement(kvp.Key, kvp.Value);
-            }
-        }
-        return weights;
-    }
-    //public void SetMaxDailySupplyProductionAmount(int amount) {
-    //    this.maxDailySupplyProduction = amount;
-    //}
-    //public void SetMinDailySupplyProductionAmount(int amount) {
-    //    this.minDailySupplyProduction = amount;
-    //}
     #endregion
 
     #region Raid
@@ -1385,11 +1120,11 @@ public class BaseLandmark : ILocation, IInteractable {
     #region Mobilization
     public void StartMobilization() {
         List<Character> charactersNotAssigned = new List<Character>();
-        for (int i = 0; i < _charactersWithHomeOnLandmark.Count; i++) {
-            charactersNotAssigned.Add(_charactersWithHomeOnLandmark[i]);
-            //if((_charactersWithHomeOnLandmark[i] is CharacterArmyUnit || _charactersWithHomeOnLandmark[i] is MonsterArmyUnit) && _charactersWithHomeOnLandmark[i].currentParty.icharacters.Count == 1 && _charactersWithHomeOnLandmark[i].currentParty.specificLocation == this) {
-            //}
-        }
+        //for (int i = 0; i < _charactersWithHomeOnLandmark.Count; i++) {
+        //    charactersNotAssigned.Add(_charactersWithHomeOnLandmark[i]);
+        //    //if((_charactersWithHomeOnLandmark[i] is CharacterArmyUnit || _charactersWithHomeOnLandmark[i] is MonsterArmyUnit) && _charactersWithHomeOnLandmark[i].currentParty.icharacters.Count == 1 && _charactersWithHomeOnLandmark[i].currentParty.specificLocation == this) {
+        //    //}
+        //}
 
         //Assign army units to external tiles of area
         for (int i = 0; i < tileLocation.areaOfTile.exposedTiles.Count; i++) {

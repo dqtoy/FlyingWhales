@@ -40,10 +40,10 @@ public interface ICharacter {
     ICHARACTER_TYPE icharacterType { get; }
     MODE currentMode { get; }
     RACE race { get; }
-    ILocation specificLocation { get; }
+    Area specificLocation { get; }
     CharacterBattleOnlyTracker battleOnlyTracker { get; }
     Faction faction { get; }
-    BaseLandmark homeLandmark { get; }
+    Area homeArea { get; }
     CharacterRole role { get; } //Character only
     CharacterClass characterClass { get; } //Character only
     Job job { get; } //Character only
@@ -55,17 +55,13 @@ public interface ICharacter {
     PairCombatStats[] pairCombatStats { get; set; }
     Dictionary<ELEMENT, float> elementalWeaknesses { get; }
     Dictionary<ELEMENT, float> elementalResistances { get; }
-    //Dictionary<Character, Relationship> relationships { get; }
     List<Skill> skills { get; }
-    List<CharacterAction> miscActions { get; }
-    List<CharacterAttribute> attributes { get; }
     List<Item> inventory { get; }
     List<Log> history { get; }
     List<Trait> traits { get; }
     PortraitSettings portraitSettings { get; }
     Party ownParty { get; }
     Party currentParty { get; }
-    CharacterActionQueue<ActionQueueItem> actionQueue { get; }
     Dictionary<STAT, float> buffs { get; }
     PlayerCharacterItem playerCharacterItem { get; }
     WeightedDictionary<INTERACTION_TYPE> interactionWeights { get; }
@@ -95,11 +91,9 @@ public interface ICharacter {
     void EnableDisableSkills(Combat combat);
     void SetOwnedParty(Party party);
     void SetCurrentParty(Party party);
-    void SetHomeLandmark(BaseLandmark newHomeLandmark, bool ignoreAreaResidentCapacity = false);
+    void SetHome(Area newHome);
     void AddHistory(Log log); //Character only
     void SetMode(MODE mode);
-    void AddMiscAction(CharacterAction characterAction);
-    void RemoveMiscAction(ACTION_TYPE actionType);
     void SetMinion(Minion minion);
     void Assassinate(Character assassin);
     void AddTrait(Trait combatAttribute);
@@ -107,13 +101,7 @@ public interface ICharacter {
     bool IsInOwnParty();
     bool RemoveTrait(Trait combatAttribute, bool triggerOnRemove = true);
     Party CreateOwnParty();
-    CharacterAttribute GetAttribute(string attribute);
-    CharacterAction GetRandomMiscAction(ref IObject targetObject);
-    CharacterAction GetMiscAction(ACTION_TYPE type);
-    CharacterAttribute AddAttribute(ATTRIBUTE tag); //Character only
     Trait GetTrait(string name);
-    void AddActionToQueue(CharacterAction action, IObject targetObject, Quest associatedQuest = null, int position = -1);
-    void RemoveActionFromQueue(ActionQueueItem item);
     void ConstructBuffs();
     void AddBuff(Buff buff);
     void RemoveBuff(Buff buff);

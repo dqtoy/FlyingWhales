@@ -121,7 +121,7 @@ public class MoveToReanimate : Interaction {
     #endregion
 
     private void GoToTargetLocation() {
-        _characterInvolved.ownParty.GoToLocation(targetLocation.coreTile.landmarkOnTile, PATHFINDING_MODE.NORMAL, () => CreateEvent());
+        _characterInvolved.ownParty.GoToLocation(targetLocation, PATHFINDING_MODE.NORMAL, () => CreateEvent());
     }
 
     private void CreateEvent() {
@@ -133,7 +133,7 @@ public class MoveToReanimate : Interaction {
         WeightedDictionary<Area> choices = new WeightedDictionary<Area>();
         for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
             Area currArea = LandmarkManager.Instance.allAreas[i];
-            if (currArea.id == character.specificLocation.tileLocation.areaOfTile.id || currArea.corpsesInArea.Count == 0) {
+            if (currArea.id == character.specificLocation.id || currArea.corpsesInArea.Count == 0) {
                 continue; //skip
             }
             int weight = 0;

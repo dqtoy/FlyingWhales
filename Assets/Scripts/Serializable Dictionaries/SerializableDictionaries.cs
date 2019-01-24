@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class ScheduleTemplateDictionary : SerializableDictionary<string, CharacterScheduleTemplate> { }
-[System.Serializable]
 public class PhaseItemDictionary : SerializableDictionary<SCHEDULE_ACTION_CATEGORY, int> { }
 [System.Serializable]
 public class StringIntDictionary : SerializableDictionary<string, int> { }

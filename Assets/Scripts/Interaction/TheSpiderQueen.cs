@@ -152,7 +152,7 @@ public class TheSpiderQueen : Interaction {
         //**Note**: Queen should join combat.
 
         //force spawned army to raid target
-        CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ATTACK_LANDMARK);
+        //CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ATTACK_LANDMARK);
         //state.chosenOption.assignedUnit.party.iactionData.AssignAction(characterAction, landmark.landmarkObj);
     }
     private void AttackLocationEffect(InteractionState state) {
@@ -165,7 +165,7 @@ public class TheSpiderQueen : Interaction {
     }
     private void TransformRitualSuccessEffect(InteractionState state) {
         //**Reward**: Gain a new Level 10 Sloth Demon
-        Minion newMinion = PlayerManager.Instance.player.CreateNewMinion("Sloth", RACE.DEMON, false);
+        Minion newMinion = PlayerManager.Instance.player.CreateNewMinion("Sloth", RACE.DEMON);
         newMinion.SetLevel(10);
         PlayerManager.Instance.player.AddMinion(newMinion);
     }
@@ -211,7 +211,7 @@ public class TheSpiderQueen : Interaction {
         //**Mechanics**: create a 4 army attack unit from Assault Spawn Weights 1.
         MonsterParty army = CreateAssaultArmy(4);
         //attack player area
-        CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ATTACK_LANDMARK);
+        //CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ATTACK_LANDMARK);
         //army.iactionData.AssignAction(characterAction, PlayerManager.Instance.player.playerArea.GetRandomExposedLandmark().landmarkObj);
     }
     private void SpidersAttackEffect(InteractionState state) {
@@ -242,7 +242,7 @@ public class TheSpiderQueen : Interaction {
         MonsterParty monsterParty = new MonsterParty();
         monsterParty.CreateIcon();
         monsterParty.icon.SetPosition(landmark.tileLocation.transform.position);
-        landmark.AddCharacterToLocation(monsterParty);
+        //landmark.AddCharacterToLocation(monsterParty);
         //for (int i = 0; i < unitCount; i++) {
         //    DefenderSetting chosenDefender = assaultSpawnWeights.PickRandomElementGivenWeights();
         //    MonsterArmyUnit armyUnit = MonsterManager.Instance.CreateNewMonsterArmyUnit(chosenDefender.className);
