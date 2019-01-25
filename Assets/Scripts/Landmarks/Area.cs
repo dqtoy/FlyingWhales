@@ -1221,7 +1221,7 @@ public class Area {
                 AreaCharacterClass chosenClass = classWeights.PickRandomElementGivenWeights();
                 Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(chosenClass.className, defaultRace.race, Utilities.GetRandomGender(), 
                     FactionManager.Instance.neutralFaction, this);
-                createdCharacter.SetLevel(createdCharacter.raceSetting.neutralSpawnLevel);
+                createdCharacter.SetLevel(UnityEngine.Random.Range(setup.levelRange.lowerBound, setup.levelRange.upperBound + 1));
                 Debug.Log(GameManager.Instance.TodayLogString() + "Generated Lvl. " + createdCharacter.level.ToString() + 
                     " neutral character " + createdCharacter.characterClass.className + " " + createdCharacter.name + " at " + this.name);
             }
