@@ -15,6 +15,9 @@ public class LocationStructure {
     public Area location {
         get { return _location; }
     }
+    public List<SpecialToken> itemsInStructure {
+        get { return _itemsHere; }
+    }
     #endregion
 
     public LocationStructure(STRUCTURE_TYPE structureType, Area location, bool isInside) {

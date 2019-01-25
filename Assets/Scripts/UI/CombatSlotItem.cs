@@ -56,7 +56,7 @@ public class CombatSlotItem : MonoBehaviour {
         }
     }
     public void OnHoverHP() {
-        string hp = character.currentHP + "/" + character.maxHP;
+        string hp = character.currentHP + "/" + character.currentCombatCharacter.maxHP;
         UIManager.Instance.ShowSmallInfo(hp);
     }
     public void OnHoverOutHP() {

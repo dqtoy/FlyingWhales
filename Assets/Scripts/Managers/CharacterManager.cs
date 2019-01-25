@@ -176,6 +176,7 @@ public class CharacterManager : MonoBehaviour {
         if (generateTraits) {
             newCharacter.GenerateRandomTraits();
         }
+        newCharacter.CreateInitialTraitsByClass();
         _allCharacters.Add(newCharacter);
         //CheckForDuplicateIDs(newCharacter);
         Messenger.Broadcast(Signals.CHARACTER_CREATED, newCharacter);

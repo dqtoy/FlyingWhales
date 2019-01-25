@@ -1,1 +1,1 @@
-{"name":"Warded","description":"This character cannot be directly targeted by your minion actions.","type":3,"effect":1,"daysDuration":0,"effects":[]}
+{"name":"Warded","description":"This character cannot be directly targeted by your minion actions.","type":3,"effect":1,"trigger":0,"daysDuration":0,"effects":[]}

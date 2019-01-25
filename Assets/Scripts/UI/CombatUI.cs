@@ -14,6 +14,10 @@ public class CombatUI : MonoBehaviour {
 
     public ScrollRect combatLogsScrollView;
 
+    public Toggle playToggle;
+    public Toggle pauseToggle;
+
+
     // Use this for initialization
     void Start () {
         Initialize();
@@ -37,6 +41,7 @@ public class CombatUI : MonoBehaviour {
         GameManager.Instance.SetPausedState(true);
         combatGO.SetActive(true);
         if (triggerCombatFight) {
+            playToggle.isOn = true;
             ResetCombatLogs();
             FillLeftSlots();
             FillRightSlots();
@@ -124,17 +129,17 @@ public class CombatUI : MonoBehaviour {
         }
     }
     public void SelectTargetCharacters(CombatSlotItem combatSlotItem) {
-        List<Character> targetCharacters = new List<Character>();
+        List<CombatCharacter> targetCharacters = new List<CombatCharacter>();
         if (combatSlotItem.side == SIDES.A) {
             for (int i = 0; i < leftSlots.Length; i++) {
                 if (leftSlots[i].character != null && leftSlots[i].isTargetable) {
-                    targetCharacters.Add(leftSlots[i].character);
+                    targetCharacters.Add(leftSlots[i].character.currentCombatCharacter);
                 }
             }
         } else {
             for (int i = 0; i < rightSlots.Length; i++) {
                 if (rightSlots[i].character != null && rightSlots[i].isTargetable) {
-                    targetCharacters.Add(rightSlots[i].character);
+                    targetCharacters.Add(rightSlots[i].character.currentCombatCharacter);
                 }
             }
         }
@@ -160,5 +165,15 @@ public class CombatUI : MonoBehaviour {
     }
     public void OnClickPassSelectionOfTargets() {
         CombatManager.Instance.newCombat.OnSelectTargets(null);
+    }
+    public void OnTogglePlay(bool state) {
+        if (state) {
+            CombatManager.Instance.newCombat.SetPausedState(false);
+        }
+    }
+    public void OnTogglePause(bool state) {
+        if (state) {
+            CombatManager.Instance.newCombat.SetPausedState(state);
+        }
     }
 }

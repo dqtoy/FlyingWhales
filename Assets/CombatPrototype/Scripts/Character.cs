@@ -47,6 +47,7 @@ public class Character : ICharacter, ILeader, IInteractable {
     protected Color _characterColor;
     protected Minion _minion;
     protected Interaction _forcedInteraction;
+    protected CombatCharacter _currentCombatCharacter;
     protected PairCombatStats[] _pairCombatStats;
     protected List<Item> _inventory;
     protected List<Skill> _skills;
@@ -397,6 +398,9 @@ public class Character : ICharacter, ILeader, IInteractable {
     }
     public bool isHoldingItem {
         get { return tokenInInventory != null; }
+    }
+    public CombatCharacter currentCombatCharacter {
+        get { return _currentCombatCharacter; }
     }
     #endregion
 
@@ -1497,6 +1501,16 @@ public class Character : ICharacter, ILeader, IInteractable {
     public void SetCurrentStructureLocation(LocationStructure currentStructure) {
         this.currentStructure = currentStructure;
     }
+    public void MoveToRandomStructureInArea() {
+        LocationStructure locationStructure = specificLocation.GetRandomStructure();
+        MoveToAnotherStructure(locationStructure);
+    }
+    public void MoveToAnotherStructure(LocationStructure newStructure) {
+        if(currentStructure != null) {
+            currentStructure.RemoveCharacterAtLocation(this);
+        }
+        newStructure.AddCharacterAtLocation(this);
+    }
     #endregion
 
     #region Utilities
@@ -1836,6 +1850,9 @@ public class Character : ICharacter, ILeader, IInteractable {
     #region Combat Handlers
     public void SetIsInCombat(bool state) {
         _isInCombat = state;
+    }
+    public void SetCombatCharacter(CombatCharacter combatCharacter) {
+        _currentCombatCharacter = combatCharacter;
     }
     #endregion
 
@@ -2193,6 +2210,27 @@ public class Character : ICharacter, ILeader, IInteractable {
     #endregion
 
     #region Traits
+    public void CreateInitialTraitsByClass() {
+        if(characterClass.className == "Knight" || characterClass.className == "Marauder" || characterClass.className == "Barbarian") {
+            AddTrait(AttributeManager.Instance.allTraits["Melee Trait"]);
+        } else if (characterClass.className == "Stalker" || characterClass.className == "Archer" || characterClass.className == "Hunter") {
+            AddTrait(AttributeManager.Instance.allTraits["Ranged Trait"]);
+        } else if (characterClass.className == "Druid" || characterClass.className == "Mage" || characterClass.className == "Shaman") {
+            AddTrait(AttributeManager.Instance.allTraits["Magic Trait"]);
+        } else if (characterClass.className == "Spinner" || characterClass.className == "Abomination") {
+            AddTrait(AttributeManager.Instance.allTraits["Melee Vulnerable"]);
+        } else if (characterClass.className == "Ravager") {
+            AddTrait(AttributeManager.Instance.allTraits["Ranged Vulnerable"]);
+        } else if (characterClass.className == "Dragon") {
+            AddTrait(AttributeManager.Instance.allTraits["Dragon Trait"]);
+        } else if (characterClass.className == "Greed") {
+            AddTrait(AttributeManager.Instance.allTraits["Greed Trait"]);
+        } else if (characterClass.className == "Lust") {
+            AddTrait(AttributeManager.Instance.allTraits["Lust Trait"]);
+        } else if (characterClass.className == "Envy") {
+            AddTrait(AttributeManager.Instance.allTraits["Envy Trait"]);
+        }
+    }
     public void AddTrait(Trait trait) {
         if (trait.IsUnique() && GetTrait(trait.name) != null) {
             return;
