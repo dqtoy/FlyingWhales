@@ -788,7 +788,9 @@ public class Character : ICharacter, ILeader, IInteractable {
                 _role.DeathRole();
             }
             if (homeArea != null) {
+                Area home = homeArea;
                 homeArea.RemoveResident(this);
+                SetHome(home); //keep this data with character to prevent errors
             }
             //while(_tags.Count > 0){
             //	RemoveCharacterAttribute (_tags [0]);
@@ -2355,6 +2357,18 @@ public class Character : ICharacter, ILeader, IInteractable {
                 Enemy enemyTrait = _traits[i] as Enemy;
                 if (enemyTrait.targetCharacter == character) {
                     return enemyTrait;
+                }
+            }
+        }
+        return null;
+    }
+    public RelationshipTrait GetRelationshipTraitWith(Character character, RELATIONSHIP_TRAIT type) {
+        for (int i = 0; i < traits.Count; i++) {
+            Trait currTrait = traits[i];
+            if (currTrait is RelationshipTrait) {
+                RelationshipTrait relTrait = currTrait as RelationshipTrait;
+                if (relTrait.relType == type && relTrait.targetCharacter.id == character.id) {
+                    return relTrait;
                 }
             }
         }
