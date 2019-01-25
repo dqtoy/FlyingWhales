@@ -1314,7 +1314,7 @@ public class Area {
             Character resident = areaResidents[i];
             if (resident.forcedInteraction == null && resident.doNotDisturb <= 0 && resident.IsInOwnParty() && !resident.isLeader
                 && resident.role.roleType != CHARACTER_ROLE.CIVILIAN && !resident.currentParty.icon.isTravelling
-                && !resident.isDefender && resident.specificLocation.id == id) {
+                && !resident.isDefender && resident.specificLocation.id == id && resident.currentStructure.isInside) {
                 if((owner != null && resident.faction == owner) || (owner == null && resident.faction == FactionManager.Instance.neutralFaction)) {
                     residentsAtArea.Add(resident);
                 }
