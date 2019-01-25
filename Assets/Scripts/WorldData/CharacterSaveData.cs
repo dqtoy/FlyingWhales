@@ -13,7 +13,7 @@ public class CharacterSaveData {
     public LOCATION_IDENTIFIER locationType;
     public int locationID;
     public int homeID;
-    public int homeLandmarkID;
+    public int homeAreaID;
     public int factionID;
     public PortraitSettings portraitSettings;
     public List<string> equipmentData;
@@ -35,22 +35,16 @@ public class CharacterSaveData {
         className = character.characterClass.className;
 
         if (character.party.specificLocation != null) {
-            locationType = character.party.specificLocation.locIdentifier;
+            //locationType = character.party.specificLocation.locIdentifier;
             locationID = character.party.specificLocation.id;
         } else {
             locationID = -1;
         }
-        homeID = -1;
-        //if (character.home != null) {
-        //    homeID = character.home.id;
-        //} else {
-            
-        //}
 
-        if (character.homeLandmark != null) {
-            homeLandmarkID = character.homeLandmark.id;
+        if (character.homeArea != null) {
+            homeAreaID = character.homeArea.id;
         } else {
-            homeLandmarkID = -1;
+            homeAreaID = -1;
         }
 
         if (character.faction != null) {
@@ -78,10 +72,10 @@ public class CharacterSaveData {
         //    relationshipsData.Add(new RelationshipSaveData(kvp.Value));
         //}
 
-        attributes = new List<ATTRIBUTE>();
-        for (int i = 0; i < character.attributes.Count; i++) {
-            attributes.Add(character.attributes[i].attribute);
-        }
+        //attributes = new List<ATTRIBUTE>();
+        //for (int i = 0; i < character.attributes.Count; i++) {
+        //    attributes.Add(character.attributes[i].attribute);
+        //}
 
         morality = character.morality;
         level = character.level;

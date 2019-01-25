@@ -14,7 +14,7 @@ public class RaiderCharacterEncounter : Interaction {
 
     private Area _targetArea;
 
-    public RaiderCharacterEncounter(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.RAIDER_CHARACTER_ENCOUNTER, 0) {
+    public RaiderCharacterEncounter(Area interactable) : base(interactable, INTERACTION_TYPE.RAIDER_CHARACTER_ENCOUNTER, 0) {
         _name = "Raider Character Encounter";
         _jobFilter = new JOB[] { JOB.RAIDER };
     }
@@ -186,12 +186,12 @@ public class RaiderCharacterEncounter : Interaction {
         List<Area> targets = new List<Area>();
         for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
             Area potentialTarget = LandmarkManager.Instance.allAreas[i];
-            if (interactable.tileLocation.areaOfTile.id != potentialTarget.id) {
+            if (interactable.id != potentialTarget.id) {
                 if (potentialTarget.owner == null) {
                     targets.Add(potentialTarget);
                 } else {
-                    if(interactable.tileLocation.areaOfTile.owner.id != potentialTarget.owner.id) {
-                        FactionRelationship relationship = interactable.tileLocation.areaOfTile.owner.GetRelationshipWith(potentialTarget.owner);
+                    if(interactable.owner.id != potentialTarget.owner.id) {
+                        FactionRelationship relationship = interactable.owner.GetRelationshipWith(potentialTarget.owner);
                         if (relationship.relationshipStatus != FACTION_RELATIONSHIP_STATUS.ALLY && relationship.relationshipStatus != FACTION_RELATIONSHIP_STATUS.FRIEND) {
                             targets.Add(potentialTarget);
                         }

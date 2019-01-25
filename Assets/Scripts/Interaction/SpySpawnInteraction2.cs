@@ -14,7 +14,7 @@ public class SpySpawnInteraction2 : Interaction {
     private Character _character2;
     private Character _character3;
 
-    public SpySpawnInteraction2(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.SPY_SPAWN_INTERACTION_2, 0) {
+    public SpySpawnInteraction2(Area interactable) : base(interactable, INTERACTION_TYPE.SPY_SPAWN_INTERACTION_2, 0) {
         _name = "Spy Spawn Interaction 2";
         _jobFilter = new JOB[] { JOB.SPY };
     }
@@ -160,8 +160,8 @@ public class SpySpawnInteraction2 : Interaction {
 
     private void SetCharacters123() {
         List<Character> characters = new List<Character>();
-        for (int i = 0; i < interactable.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
-            Character character = interactable.tileLocation.areaOfTile.charactersAtLocation[i];
+        for (int i = 0; i < interactable.charactersAtLocation.Count; i++) {
+            Character character = interactable.charactersAtLocation[i];
             if (character.faction.id != PlayerManager.Instance.player.playerFaction.id) {
                 characters.Add(character);
             }

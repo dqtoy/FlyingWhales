@@ -64,8 +64,8 @@ public class AreaInfoUI : UIMenu {
         itemContainers = Utilities.GetComponentsInDirectChildren<ItemContainer>(itemsParent.gameObject);
         Messenger.AddListener<object>(Signals.HISTORY_ADDED, UpdateHistory);
         Messenger.AddListener(Signals.INSPECT_ALL, OnInspectAll);
-        Messenger.AddListener<Party, BaseLandmark>(Signals.PARTY_ENTERED_LANDMARK, OnPartyEnteredLandmark);
-        Messenger.AddListener<Party, BaseLandmark>(Signals.PARTY_EXITED_LANDMARK, OnPartyExitedLandmark);
+        Messenger.AddListener<Area, Character>(Signals.CHARACTER_ENTERED_AREA, OnCharacterEnteredArea);
+        Messenger.AddListener<Area, Character>(Signals.CHARACTER_EXITED_AREA, OnCharacterExitedArea);
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         Messenger.AddListener<Area>(Signals.AREA_SUPPLIES_CHANGED, OnAreaSuppliesSet);
         Messenger.AddListener<Area>(Signals.AREA_OWNER_CHANGED, OnAreaOwnerChanged);
@@ -73,6 +73,8 @@ public class AreaInfoUI : UIMenu {
         //Messenger.AddListener<Area, Character>(Signals.AREA_RESIDENT_REMOVED, OnAreaResidentRemoved);
         Messenger.AddListener<Character>(Signals.CHARACTER_LEVEL_CHANGED, OnCharacterLevelChanged);
         Messenger.AddListener<Character, Area, Area>(Signals.CHARACTER_MIGRATED_HOME, OnCharacterMigratedHome);
+        Messenger.AddListener<Area, SpecialToken>(Signals.ITEM_ADDED_TO_AREA, OnItemAddedToArea);
+        Messenger.AddListener<Area, SpecialToken>(Signals.ITEM_REMOVED_FROM_AREA, OnItemRemovedFromArea);
     }
 
     public override void OpenMenu() {
@@ -270,22 +272,22 @@ public class AreaInfoUI : UIMenu {
         }
         return false;
     }
-    private void OnPartyEnteredLandmark(Party party, BaseLandmark landmark) {
-        if (isShowing && activeArea != null && activeArea.id == landmark.tileLocation.areaOfTile.id) {
-            for (int i = 0; i < party.characters.Count; i++) {
-                Character currCharacter = party.characters[i];
-                CreateNewCharacterItem(currCharacter);
-            }
+    private void OnCharacterEnteredArea(Area area, Character character) {
+        if (isShowing && activeArea != null && activeArea.id == area.id) {
+            //for (int i = 0; i < character.characters.Count; i++) {
+            //    Character currCharacter = character.characters[i];
+                CreateNewCharacterItem(character);
+            //}
         }
     }
-    private void OnPartyExitedLandmark(Party party, BaseLandmark landmark) {
-        if (isShowing && activeArea != null && activeArea.id == landmark.tileLocation.areaOfTile.id) {
-            for (int i = 0; i < party.characters.Count; i++) {
-                Character currCharacter = party.characters[i];
-                if (!activeArea.areaResidents.Contains(currCharacter)) {
-                    DestroyItemOfCharacter(currCharacter);
+    private void OnCharacterExitedArea(Area area, Character character) {
+        if (isShowing && activeArea != null && activeArea.id == area.id) {
+            //for (int i = 0; i < character.characters.Count; i++) {
+            //    Character currCharacter = character.characters[i];
+                if (!activeArea.areaResidents.Contains(character)) {
+                    DestroyItemOfCharacter(character);
                 }
-            }
+            //}
             OrderCharacterItems();
         }
     }
@@ -308,7 +310,7 @@ public class AreaInfoUI : UIMenu {
         for (int i = 0; i < characterItems.Count; i++) {
             LandmarkCharacterItem currItem = characterItems[i];
             if (currItem.character.homeArea != null && activeArea.id == currItem.character.homeArea.id) {
-                if (currItem.character.currentParty.specificLocation.tileLocation.areaOfTile.id != activeArea.id || currItem.character.currentParty.icon.isTravelling) { //character is away from home
+                if (currItem.character.currentParty.specificLocation.id != activeArea.id || currItem.character.currentParty.icon.isTravelling) { //character is away from home
                     travellingResidents.Add(currItem);
                 } else {
                     nonTravellingResidents.Add(currItem);
@@ -378,6 +380,16 @@ public class AreaInfoUI : UIMenu {
     #endregion
 
     #region Items
+    private void OnItemAddedToArea(Area area, SpecialToken token) {
+        if (this.isShowing && activeArea.id == area.id) {
+            UpdateItems();
+        }
+    }
+    private void OnItemRemovedFromArea(Area area, SpecialToken token) {
+        if (this.isShowing && activeArea.id == area.id) {
+            UpdateItems();
+        }
+    }
     private void UpdateItems() {
         for (int i = 0; i < itemContainers.Length; i++) {
             ItemContainer currContainer = itemContainers[i];
@@ -417,6 +429,15 @@ public class AreaInfoUI : UIMenu {
         } else {
             summary += "None";
         }
+        summary += "\nStructures at " + activeArea.name + ": ";
+        if (activeArea.structures.Count > 0) {
+            foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp in activeArea.structures) {
+                summary += "\n" + kvp.Value.Count.ToString() + " " + kvp.Key.ToString();
+            }
+        } else {
+            summary += "None";
+        }
+
         UIManager.Instance.ShowSmallInfo(summary);
     }
     public void HideLocationInfo() {
@@ -452,8 +473,9 @@ public class AreaInfoUI : UIMenu {
             Area moveLocation = choices[Random.Range(0, choices.Count)];
             for (int i = 0; i < charactersToMove.Count; i++) {
                 Character currCharacter = charactersToMove[i];
-                currCharacter.homeLandmark.RemoveCharacterHomeOnLandmark(currCharacter);
-                moveLocation.coreTile.landmarkOnTile.AddCharacterHomeOnLandmark(currCharacter, true);
+                currCharacter.MigrateHomeTo(moveLocation);
+                //currCharacter.homeArea.RemoveResident(currCharacter);
+                //moveLocation.AddResident(currCharacter, true);
             }
 
             LandmarkManager.Instance.UnownArea(activeArea);

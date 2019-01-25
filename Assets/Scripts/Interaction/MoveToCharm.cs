@@ -10,7 +10,7 @@ public class MoveToCharm : Interaction {
 
     public Area targetLocation { get; private set; }
 
-    public MoveToCharm(BaseLandmark interactable) 
+    public MoveToCharm(Area interactable) 
         : base(interactable, INTERACTION_TYPE.MOVE_TO_CHARM, 0) {
         _name = "Move To Charm";
         _jobFilter = new JOB[] { JOB.DEBILITATOR };
@@ -118,11 +118,11 @@ public class MoveToCharm : Interaction {
     #endregion
 
     private void GoToTargetLocation() {
-        _characterInvolved.ownParty.GoToLocation(targetLocation.coreTile.landmarkOnTile, PATHFINDING_MODE.NORMAL, () => CreateCharmEvent());
+        _characterInvolved.ownParty.GoToLocation(targetLocation, PATHFINDING_MODE.NORMAL, () => CreateCharmEvent());
     }
 
     private void CreateCharmEvent() {
-        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.CHARM_ACTION, _characterInvolved.specificLocation.tileLocation.landmarkOnTile);
+        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.CHARM_ACTION, _characterInvolved.specificLocation);
         //(interaction as ImproveRelationsEvent).SetTargetFaction(targetFaction);
         //interaction.SetCanInteractionBeDoneAction(IsImproveRelationsValid);
         _characterInvolved.SetForcedInteraction(interaction);

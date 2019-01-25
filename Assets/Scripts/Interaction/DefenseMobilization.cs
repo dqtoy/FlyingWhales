@@ -8,7 +8,7 @@ public class DefenseMobilization : Interaction {
     private const string Stop_Mobilization_Fail = "Stop Mobilization Fail";
     private const string Defender_Group_Created = "Defender Group Created";
 
-    public DefenseMobilization(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.DEFENSE_MOBILIZATION, 0) {
+    public DefenseMobilization(Area interactable) : base(interactable, INTERACTION_TYPE.DEFENSE_MOBILIZATION, 0) {
         _name = "Defense Mobilization";
         _jobFilter = new JOB[] { JOB.DEBILITATOR };
     }
@@ -99,10 +99,10 @@ public class DefenseMobilization : Interaction {
 
     private DefenderGroup CreateNewDefenderGroupFromIdleCharactersInArea() {
         DefenderGroup newDefenders = new DefenderGroup();
-        interactable.tileLocation.areaOfTile.AddDefenderGroup(newDefenders);
-        for (int i = 0; i < interactable.tileLocation.areaOfTile.areaResidents.Count; i++) {
-            Character resident = interactable.tileLocation.areaOfTile.areaResidents[i];
-            if (resident.forcedInteraction == null && resident.doNotDisturb <= 0 && resident.IsInOwnParty() && !resident.isLeader && !resident.isDefender && !resident.currentParty.icon.isTravelling && resident.role.roleType != CHARACTER_ROLE.CIVILIAN && resident.specificLocation.tileLocation.areaOfTile.id == interactable.tileLocation.areaOfTile.id) {
+        interactable.AddDefenderGroup(newDefenders);
+        for (int i = 0; i < interactable.areaResidents.Count; i++) {
+            Character resident = interactable.areaResidents[i];
+            if (resident.forcedInteraction == null && resident.doNotDisturb <= 0 && resident.IsInOwnParty() && !resident.isLeader && !resident.isDefender && !resident.currentParty.icon.isTravelling && resident.role.roleType != CHARACTER_ROLE.CIVILIAN && resident.specificLocation.id == interactable.id) {
                 newDefenders.AddCharacterToGroup(resident);
                 if (newDefenders.party.characters.Count >= 4) {
                     break;

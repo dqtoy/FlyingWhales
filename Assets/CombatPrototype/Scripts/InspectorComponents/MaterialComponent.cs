@@ -8,7 +8,7 @@ public class MaterialComponent: MonoBehaviour {
 //	public TECHNOLOGY technology;
 	public int weight;
 	public bool isEdible;
-	public Structure structure;
+	//public Structure structure;
 
 	//Weapon Data
 	public WeaponMaterial weaponData;

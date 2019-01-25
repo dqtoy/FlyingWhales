@@ -7,7 +7,7 @@ public class MinionRecruitCharacter : Interaction {
     private const string Recruitment_Fail = "Recruitment Fail";
     private const string Recruitment_Critical_Fail = "Recruitment Critical Fail";
 
-    public MinionRecruitCharacter(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.MINION_RECRUIT_CHARACTER, 0) {
+    public MinionRecruitCharacter(Area interactable) : base(interactable, INTERACTION_TYPE.MINION_RECRUIT_CHARACTER, 0) {
         _name = "Minion Recruit Character";
     }
 

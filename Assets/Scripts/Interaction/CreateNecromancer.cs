@@ -8,7 +8,7 @@ public class CreateNecromancer : Interaction {
     private const string Necromancer_Created = "Necromancer Created";
     private const string Do_Nothing = "Do Nothing";
 
-    public CreateNecromancer(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.CREATE_NECROMANCER, 0) {
+    public CreateNecromancer(Area interactable) : base(interactable, INTERACTION_TYPE.CREATE_NECROMANCER, 0) {
         _name = "Create Necromancer";
     }
 

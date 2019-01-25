@@ -52,7 +52,7 @@ public class MapGenerator : MonoBehaviour {
 
         UIManager.Instance.InitializeUI();
         //ObjectManager.Instance.Initialize();
-        CharacterScheduleManager.Instance.Initialize();
+        //CharacterScheduleManager.Instance.Initialize();
 
         LevelLoaderManager.UpdateLoadingInfo("Generating Factions...");
         yield return null;
@@ -81,8 +81,8 @@ public class MapGenerator : MonoBehaviour {
         LandmarkManager.Instance.InitializeLandmarks();
         //CharacterManager.Instance.GenerateCharactersForTesting(8);
         CameraMove.Instance.UpdateMinimapTexture();
-        QuestManager.Instance.Initialize();
-        EventManager.Instance.Initialize();
+        //QuestManager.Instance.Initialize();
+        //EventManager.Instance.Initialize();
         CharacterManager.Instance.LoadCharactersInfo();
         if (SteamManager.Initialized) {
             AchievementManager.Instance.Initialize();
@@ -128,7 +128,7 @@ public class MapGenerator : MonoBehaviour {
 
         Biomes.Instance.LoadPassableStates(GridMap.Instance.hexTiles, GridMap.Instance.outerGridList);
 
-        RoadManager.Instance.GenerateTilePassableTypes();
+        //RoadManager.Instance.GenerateTilePassableTypes();
 
         UIManager.Instance.InitializeUI();
         //ObjectManager.Instance.Initialize();
@@ -165,21 +165,20 @@ public class MapGenerator : MonoBehaviour {
         //Biomes.Instance.GenerateTileBiomeDetails(GridMap.Instance.hexTiles);
 
         LandmarkManager.Instance.InitializeLandmarks();
-        CharacterScheduleManager.Instance.Initialize();
+        //CharacterScheduleManager.Instance.Initialize();
         //CharacterManager.Instance.GenerateCharactersForTesting(1);
         CharacterManager.Instance.LoadCharacters(data);
         LandmarkManager.Instance.LoadAdditionalAreaData();
         //CharacterManager.Instance.LoadRelationships(data);
 
-        MonsterManager.Instance.LoadMonsters(data);
         TokenManager.Instance.Initialize();
 
         //CharacterManager.Instance.LoadSquads(data);
         //LandmarkManager.Instance.LoadDefenders(data);
 
         CameraMove.Instance.UpdateMinimapTexture();
-        QuestManager.Instance.Initialize();
-        EventManager.Instance.Initialize();
+        //QuestManager.Instance.Initialize();
+        //EventManager.Instance.Initialize();
         //CharacterManager.Instance.LoadCharactersInfo(data);
         FactionManager.Instance.RandomizeStartingFactions(data);
         CharacterManager.Instance.CreateNeutralCharacters();

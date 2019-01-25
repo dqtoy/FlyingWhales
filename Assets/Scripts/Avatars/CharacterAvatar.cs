@@ -23,7 +23,7 @@ public class CharacterAvatar : MonoBehaviour{
 
     protected Party _party;
 
-    public ILocation targetLocation { get; protected set; }
+    public Area targetLocation { get; protected set; }
 
     [SerializeField] protected List<HexTile> path;
 
@@ -36,7 +36,7 @@ public class CharacterAvatar : MonoBehaviour{
     private bool _isVisualShowing;
     private bool _isTravelCancelled;
     private PATHFINDING_MODE _pathfindingMode;
-    private Character _trackTarget = null;
+    //private Character _trackTarget = null;
     private TravelLine _travelLine;
     private Action queuedAction = null;
 
@@ -64,8 +64,8 @@ public class CharacterAvatar : MonoBehaviour{
                 return _isVisualShowing;
             } else {
                 //check if this characters current location area is being tracked
-                if (party.specificLocation.tileLocation.areaOfTile != null 
-                    && party.specificLocation.tileLocation.areaOfTile.isBeingTracked) {
+                if (party.specificLocation != null 
+                    && party.specificLocation.isBeingTracked) {
                     return true;
                 }
             }
@@ -125,7 +125,7 @@ public class CharacterAvatar : MonoBehaviour{
     #endregion
 
     #region Pathfinding
-    public void SetTarget(ILocation target) {
+    public void SetTarget(Area target) {
         targetLocation = target;
     }
     public void StartPath(PATHFINDING_MODE pathFindingMode, Action actionOnPathFinished = null, Character trackTarget = null, Action actionOnPathReceived = null) {
@@ -158,9 +158,9 @@ public class CharacterAvatar : MonoBehaviour{
     }
     private void StartTravelling() {
         _isTravelling = true;
-        float distance = Vector3.Distance(_party.specificLocation.tileLocation.transform.position, targetLocation.tileLocation.transform.position);
+        float distance = Vector3.Distance(_party.specificLocation.coreTile.transform.position, targetLocation.coreTile.transform.position);
         _distanceToTarget = (Mathf.CeilToInt(distance / 2.315188f)) * 2; //6
-        _travelLine = _party.specificLocation.tileLocation.CreateTravelLine(targetLocation.tileLocation, _distanceToTarget);
+        _travelLine = _party.specificLocation.coreTile.CreateTravelLine(targetLocation.coreTile, _distanceToTarget);
         _travelLine.SetActiveMeter(isVisualShowing);
         Messenger.AddListener(Signals.DAY_STARTED, TraverseCurveLine);
         Messenger.Broadcast(Signals.PARTY_STARTED_TRAVELLING, this.party);
@@ -206,7 +206,7 @@ public class CharacterAvatar : MonoBehaviour{
         SetHasArrivedState(true);
         _party.specificLocation.RemoveCharacterFromLocation(_party);
         targetLocation.AddCharacterToLocation(_party);
-        Debug.Log(GameManager.Instance.TodayLogString() + _party.name + " has arrived at " + targetLocation.locationName + " on " + GameManager.Instance.continuousDays);
+        Debug.Log(GameManager.Instance.TodayLogString() + _party.name + " has arrived at " + targetLocation.name + " on " + GameManager.Instance.continuousDays);
         if(_party.characters.Count > 0) {
             Log arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "arrive_location");
             for (int i = 0; i < _party.characters.Count; i++) {
@@ -214,7 +214,7 @@ public class CharacterAvatar : MonoBehaviour{
                 character.SetDailyInteractionGenerationTick();
                 arriveLog.AddToFillers(character, character.name, LOG_IDENTIFIER.CHARACTER_LIST_1, false);
             }
-            arriveLog.AddToFillers(targetLocation.tileLocation.areaOfTile, targetLocation.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
+            arriveLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1);
             arriveLog.AddLogToInvolvedObjects();
         }
 
@@ -235,7 +235,7 @@ public class CharacterAvatar : MonoBehaviour{
             }
         }
         if (path == null) {
-            Debug.LogError(_party.name + ". There is no path from " + _party.specificLocation.tileLocation.name + " to " + targetLocation.tileLocation.name, this);
+            Debug.LogError(_party.name + ". There is no path from " + _party.specificLocation.name + " to " + targetLocation.name, this);
             return;
         }
         if (path != null && path.Count > 0) {
@@ -243,7 +243,7 @@ public class CharacterAvatar : MonoBehaviour{
             _currPathfindingRequest = null;
             _isTravelling = true;
             //if(_party.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
-            //    _party.specificLocation.tileLocation.landmarkOnTile.landmarkVisual.OnCharacterExitedLandmark(_party);
+            //    _party.specificLocation.coreTile.landmarkOnTile.landmarkVisual.OnCharacterExitedLandmark(_party);
             //}
             NewMove();
             if(onPathReceived != null) {
@@ -254,20 +254,20 @@ public class CharacterAvatar : MonoBehaviour{
     public virtual void NewMove() {
         if (this.targetLocation != null && this.path != null) {
             if (this.path.Count > 0) {
-				this.MakeCitizenMove(_party.specificLocation.tileLocation, this.path[0]);
-                if(_party.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
-                    RemoveCharactersFromLocation(_party.specificLocation);
-                }
+				//this.MakeCitizenMove(_party.specificLocation.tileLocation, this.path[0]);
+    //            if(_party.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
+    //                RemoveCharactersFromLocation(_party.specificLocation);
+    //            }
                 //AddCharactersToLocation(this.path[0]);
                 //this.path.RemoveAt(0);
             }
         }
     }
-    public void MakeCitizenMove(HexTile startTile, HexTile targetTile) {
-		//CharacterHasLeftTile ();
-		_isMovingToHex = true;
-        this.smoothMovement.Move(targetTile.transform.position, this.direction);
-    }
+  //  public void MakeCitizenMove(HexTile startTile, HexTile targetTile) {
+		////CharacterHasLeftTile ();
+		//_isMovingToHex = true;
+  //      this.smoothMovement.Move(targetTile.transform.position, this.direction);
+  //  }
     /*
      This is called each time the avatar traverses a node in the
      saved path.
@@ -276,31 +276,31 @@ public class CharacterAvatar : MonoBehaviour{
 		_isMovingToHex = false;
 		if(this.path == null){
 			Debug.LogError (GameManager.Instance.Today ().ToStringDate());
-			Debug.LogError ("Location: " + _party.specificLocation.locationName);
+			Debug.LogError ("Location: " + _party.specificLocation.name);
 		}
-        if (_trackTarget != null) {
-            if(_trackTarget.currentParty.specificLocation.tileLocation.id != targetLocation.tileLocation.id) {
-                _party.GoToLocation(_trackTarget.currentParty.specificLocation, _pathfindingMode, onPathFinished, _trackTarget, onPathReceived);
-                return;
-            }
-        }
+        //if (_trackTarget != null) {
+        //    if(_trackTarget.currentParty.specificLocation.id != targetLocation.id) {
+        //        _party.GoToLocation(_trackTarget.currentParty.specificLocation.coreTile, _pathfindingMode, onPathFinished, _trackTarget, onPathReceived);
+        //        return;
+        //    }
+        //}
         if (this.path.Count > 0) {
-            if(_party.specificLocation.locIdentifier == LOCATION_IDENTIFIER.HEXTILE) {
-                RemoveCharactersFromLocation(_party.specificLocation);
-            }
-            AddCharactersToLocation(this.path[0]);
+            //if(_party.specificLocation.locIdentifier == LOCATION_IDENTIFIER.HEXTILE) {
+            //    RemoveCharactersFromLocation(_party.specificLocation);
+            //}
+            //AddCharactersToLocation(this.path[0]);
             this.path.RemoveAt(0);
         }
         HasArrivedAtTargetLocation();
     }
     public virtual void HasArrivedAtTargetLocation() {
-		if (_party.specificLocation.tileLocation.id == targetLocation.tileLocation.id) {
+		if (_party.specificLocation.coreTile.id == targetLocation.id) {
             if (!this._hasArrived) {
                 _isTravelling = false;
-                _trackTarget = null;
+                //_trackTarget = null;
                 SetHasArrivedState(true);
                 targetLocation.AddCharacterToLocation(_party);
-                Debug.Log(_party.name + " has arrived at " + targetLocation.locationName + " on " + GameManager.Instance.continuousDays);
+                Debug.Log(_party.name + " has arrived at " + targetLocation.name + " on " + GameManager.Instance.continuousDays);
                 ////Every time the party arrives at home, check if it still not ruined
                 //if(_party.mainCharacter.homeLandmark.specificLandmarkType == LANDMARK_TYPE.CAMP) {
                 //    //Check if the location the character arrived at is the character's home landmark
@@ -366,18 +366,6 @@ public class CharacterAvatar : MonoBehaviour{
          */
     public void DestroyObject() {
         ObjectPoolManager.Instance.DestroyObject(this.gameObject);
-    }
-    protected void RemoveCharactersFromLocation(ILocation location) {
-        location.RemoveCharacterFromLocation(_party);
-        //UIManager.Instance.UpdateHexTileInfo();
-    }
-	protected void AddCharactersToLocation(ILocation location) {
-        if(location.tileLocation.id == targetLocation.id) {
-            targetLocation.AddCharacterToLocation(_party);
-        } else {
-            location.AddCharacterToLocation(_party);
-        }
-		//UIManager.Instance.UpdateHexTileInfo();
     }
     public void ReclaimPortrait() {
         characterPortrait.transform.SetParent(this.transform);
@@ -457,7 +445,7 @@ public class CharacterAvatar : MonoBehaviour{
         _isMovementPaused = false;
         _hasArrived = false;
         _isTravelCancelled = false;
-        _trackTarget = null;
+        //_trackTarget = null;
         //_isInitialized = false;
         _currPathfindingRequest = null;
         SetHighlightState(false);

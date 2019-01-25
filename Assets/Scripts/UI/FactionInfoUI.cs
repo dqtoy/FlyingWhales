@@ -207,13 +207,6 @@ public class FactionInfoUI : UIMenu {
         OrderCharacterItems();
         return item;
     }
-    private void CreateNewCharacterItem(LandmarkPartyData partyData) {
-        GameObject characterGO = UIManager.Instance.InstantiateUIObject(landmarkCharacterPrefab.name, charactersScrollView.content);
-        LandmarkCharacterItem item = characterGO.GetComponent<LandmarkCharacterItem>();
-        item.SetCharacter(partyData.partyMembers[0], this);
-        characterItems.Add(item);
-        OrderCharacterItems();
-    }
     private void OrderCharacterItems() {
         if (activeFaction.leader is Character) {
             LandmarkCharacterItem leaderItem = GetItem(activeFaction.leader as Character);

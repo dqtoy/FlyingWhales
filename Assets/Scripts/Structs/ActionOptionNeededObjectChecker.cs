@@ -29,8 +29,8 @@ public class ActionOptionLocationRequirement : ActionOptionNeededObjectChecker {
         if (requiredLocation == null) {
             return false;
         }
-        if (character.specificLocation.tileLocation.areaOfTile != null 
-            && character.specificLocation.tileLocation.areaOfTile.id == requiredLocation.id) {
+        if (character.specificLocation != null 
+            && character.specificLocation.id == requiredLocation.id) {
             return true;
         }
         return false;

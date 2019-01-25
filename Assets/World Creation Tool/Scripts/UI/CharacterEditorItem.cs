@@ -39,12 +39,13 @@ namespace worldcreator {
         public void SetLocation() {
             List<HexTile> choices = new List<HexTile>(WorldCreatorManager.Instance.selectionComponent.nonOuterSelection);
             HexTile chosenTile = choices[Random.Range(0, choices.Count)];
-            if (chosenTile.landmarkOnTile != null) {
-                chosenTile.landmarkOnTile.AddCharacterToLocation(_character.party);
+            if (chosenTile.areaOfTile != null) {
+                chosenTile.areaOfTile.AddCharacterToLocation(_character.party);
                 //_character.party.SetSpecificLocation(chosenTile.landmarkOnTile);
-            } else {
-                _character.party.SetSpecificLocation(chosenTile);
-            }
+            } 
+            //else {
+            //    _character.party.SetSpecificLocation(chosenTile);
+            //}
             if (WorldCreatorUI.Instance.editCharactersMenu.characterInfoEditor.gameObject.activeSelf) {
                 WorldCreatorUI.Instance.editCharactersMenu.characterInfoEditor.UpdateBasicInfo();
             }
@@ -59,7 +60,10 @@ namespace worldcreator {
             //}
             HexTile chosenTile = choices[Random.Range(0, choices.Count)];
             //_character.SetHome(chosenTile.areaOfTile);
-            chosenTile.landmarkOnTile.AddCharacterHomeOnLandmark(_character, true);
+            if (chosenTile.areaOfTile != null) {
+                _character.MigrateHomeTo(chosenTile.areaOfTile);
+                //chosenTile.areaOfTile.AddResident(_character, true);
+            }
             //BaseLandmark chosenLandmark = choices[Random.Range(0, choices.Count)];
             //_character.SetHome(chosenLandmark);
             if (WorldCreatorUI.Instance.editCharactersMenu.characterInfoEditor.gameObject.activeSelf) {

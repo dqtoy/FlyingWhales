@@ -12,7 +12,7 @@ public class MonsterSaveData {
     public MonsterSaveData(MonsterParty monsterParty) {
         id = monsterParty.id;
         monsterName = monsterParty.setupName;
-        locationType = monsterParty.specificLocation.locIdentifier;
+        //locationType = monsterParty.specificLocation.locIdentifier;
         locationID = monsterParty.specificLocation.id;
     }
 }

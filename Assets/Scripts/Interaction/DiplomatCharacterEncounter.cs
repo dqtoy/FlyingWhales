@@ -8,7 +8,7 @@ public class DiplomatCharacterEncounter : Interaction {
     private const string Train_Character = "Train Character";
     private const string Do_Nothing = "Do Nothing";
 
-    public DiplomatCharacterEncounter(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.DIPLOMAT_CHARACTER_ENCOUNTER, 0) {
+    public DiplomatCharacterEncounter(Area interactable) : base(interactable, INTERACTION_TYPE.DIPLOMAT_CHARACTER_ENCOUNTER, 0) {
         _name = "Diplomat Character Encounter";
         _jobFilter = new JOB[] { JOB.DIPLOMAT };
     }

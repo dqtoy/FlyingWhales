@@ -4,10 +4,9 @@ using UnityEngine;
 
 public class Armies : Party {
 
-    public ArmyActionData actionData { get; private set; }
 
     public Armies(Character owner) : base(owner) {
-        actionData = new ArmyActionData(this);
+        //actionData = new ArmyActionData(this);
     }
 
     #region overrides

@@ -30,7 +30,7 @@ public class DispelScroll : SpecialToken {
     }
     public override Character GetTargetCharacterFor(Character sourceCharacter) {
         Faction characterFaction = sourceCharacter.faction;
-        Area currentLocation = sourceCharacter.specificLocation.tileLocation.areaOfTile;
+        Area currentLocation = sourceCharacter.specificLocation;
         List<Character> choices = new List<Character>();
         for (int i = 0; i < currentLocation.charactersAtLocation.Count; i++) {
             Character currCharacter = currentLocation.charactersAtLocation[i];

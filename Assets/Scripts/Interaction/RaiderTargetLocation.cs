@@ -12,7 +12,7 @@ public class RaiderTargetLocation : Interaction {
     private LocationToken _targetLocationToken;
     private Character _raiderOrScavenger;
 
-    public RaiderTargetLocation(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.RAIDER_TARGET_LOCATION, 0) {
+    public RaiderTargetLocation(Area interactable) : base(interactable, INTERACTION_TYPE.RAIDER_TARGET_LOCATION, 0) {
         _name = "Raider Target Location";
         _jobFilter = new JOB[] { JOB.RAIDER };
     }
@@ -147,10 +147,10 @@ public class RaiderTargetLocation : Interaction {
 
     private void SetRaider() {
         List<Character> raiders = new List<Character>();
-        for (int i = 0; i < interactable.tileLocation.areaOfTile.areaResidents.Count; i++) {
-            Character resident = interactable.tileLocation.areaOfTile.areaResidents[i];
-            if(resident.forcedInteraction == null && resident.doNotDisturb <= 0 && resident.IsInOwnParty() && !resident.isDefender && !resident.currentParty.icon.isTravelling && resident.job.jobType == JOB.RAIDER && resident.faction.id == interactable.tileLocation.areaOfTile.owner.id 
-                && resident.specificLocation.tileLocation.areaOfTile.id == interactable.tileLocation.areaOfTile.id) {
+        for (int i = 0; i < interactable.areaResidents.Count; i++) {
+            Character resident = interactable.areaResidents[i];
+            if(resident.forcedInteraction == null && resident.doNotDisturb <= 0 && resident.IsInOwnParty() && !resident.isDefender && !resident.currentParty.icon.isTravelling && resident.job.jobType == JOB.RAIDER && resident.faction.id == interactable.owner.id 
+                && resident.specificLocation.id == interactable.id) {
                 raiders.Add(resident);
             }
         }

@@ -7,7 +7,7 @@ public class FactionAttacks : Interaction {
 
     private Area _targetArea;
 
-    public FactionAttacks(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.FACTION_ATTACKS, 70) {
+    public FactionAttacks(Area interactable) : base(interactable, INTERACTION_TYPE.FACTION_ATTACKS, 70) {
         _name = "Faction Attacks";
     }
 
@@ -120,22 +120,22 @@ public class FactionAttacks : Interaction {
     #region State Effects
     private void AttackStoppedEffect(InteractionState state) {
         investigatorCharacter.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
-        state.AddLogFiller(new LogFiller(interactable.faction, interactable.faction.name, LOG_IDENTIFIER.FACTION_1));
+        state.AddLogFiller(new LogFiller(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_1));
         state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.STRING_1));
     }
     private void AttackContinuesEffect(InteractionState state) {
         investigatorCharacter.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
-        state.AddLogFiller(new LogFiller(interactable.faction.leader, interactable.faction.leader.name, LOG_IDENTIFIER.STRING_1));
+        state.AddLogFiller(new LogFiller(interactable.owner.leader, interactable.owner.leader.name, LOG_IDENTIFIER.STRING_1));
         state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.STRING_1));
 
         AttackTargetArea();
     }
     private void SuccessfulEmpowermentEffect(InteractionState state) {
         investigatorCharacter.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
-        interactable.faction.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, 2);
+        interactable.owner.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, 2);
         //Add Empowered Trait to Attacking Units - just one attacking unit or all?
 
-        state.AddLogFiller(new LogFiller(interactable.faction, interactable.faction.name, LOG_IDENTIFIER.FACTION_1));
+        state.AddLogFiller(new LogFiller(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_1));
 
         AttackTargetArea();
     }
@@ -154,22 +154,22 @@ public class FactionAttacks : Interaction {
     private void RedirectedEffect(InteractionState state) {
         investigatorCharacter.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
         SetTargetArea(state.assignedLocation.location);
-        state.AddLogFiller(new LogFiller(interactable.faction, interactable.faction.name, LOG_IDENTIFIER.FACTION_1));
+        state.AddLogFiller(new LogFiller(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_1));
         state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.STRING_1));
         AttackTargetArea();
     }
     private void DoNothingEffect(InteractionState state) {
         investigatorCharacter.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
-        state.AddLogFiller(new LogFiller(interactable.faction, interactable.faction.name, LOG_IDENTIFIER.FACTION_1));
+        state.AddLogFiller(new LogFiller(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_1));
         AttackTargetArea();
     }
 
 
     #endregion
     private void WeakenedUnits(InteractionState state) {
-        state.AddLogFiller(new LogFiller(interactable.faction, interactable.faction.name, LOG_IDENTIFIER.FACTION_1));
+        state.AddLogFiller(new LogFiller(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_1));
 
-        interactable.faction.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, -3);
+        interactable.owner.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, -3);
         //Add Weakened Trait to Attacking Units - just one attacking unit or all?
         //How do logs work? How can I override it?
     }
@@ -178,7 +178,7 @@ public class FactionAttacks : Interaction {
 
         int chance = UnityEngine.Random.Range(0, 100);
         if(chance < 60) {
-            FactionRelationship relationship = interactable.faction.GetRelationshipWith(PlayerManager.Instance.player.playerFaction);
+            FactionRelationship relationship = interactable.owner.GetRelationshipWith(PlayerManager.Instance.player.playerFaction);
             relationship.SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.ENEMY);
         }
     }

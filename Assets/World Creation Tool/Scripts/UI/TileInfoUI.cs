@@ -48,11 +48,11 @@ public class TileInfoUI : MonoBehaviour {
         info += "\nLandmark Name: [" + landmark.id + "] " + landmark.landmarkName;
         info += "\nLandmark Type: " + landmark.specificLandmarkType.ToString();
         info += "\nCivilians: " + landmark.civilianCount.ToString();
-        info += "\nCharacters located here: ";
-        for (int i = 0; i < landmark.charactersAtLocation.Count; i++) {
-            Party currChar = landmark.charactersAtLocation[i];
-            info += "\n   - " + currChar.name;
-        }
+        //info += "\nCharacters located here: ";
+        //for (int i = 0; i < landmark.charactersAtLocation.Count; i++) {
+        //    Party currChar = landmark.charactersAtLocation[i];
+        //    info += "\n   - " + currChar.name;
+        //}
         info += "\nItems here: ";
         for (int i = 0; i < landmark.itemsInLandmark.Count; i++) {
             Item currItem = landmark.itemsInLandmark[i];
@@ -92,9 +92,6 @@ public class TileInfoUI : MonoBehaviour {
         info += "\nArea Type: " + area.areaType.ToString();
         info += "\nCore Tile: " + area.coreTile.tileName;
         info += "\nTile Count: " + area.tiles.Count.ToString();
-        info += "\nLandmarks: " + area.landmarks.Count.ToString();
-        info += "\nTotal Civilian Count: " + area.totalCivilians.ToString();
-
         return info;
     }
 }

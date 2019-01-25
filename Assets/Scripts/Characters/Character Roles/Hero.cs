@@ -12,40 +12,6 @@ public class Hero : CharacterRole {
 
 	public Hero(Character character): base (character) {
         _roleType = CHARACTER_ROLE.HERO;
-   //     _allowedQuestTypes = new List<QUEST_TYPE>() {
-   //         QUEST_TYPE.DEFEND,
-   //         QUEST_TYPE.EXPLORE_TILE,
-   //         QUEST_TYPE.EXPAND,
-			//QUEST_TYPE.EXPEDITION,
-			//QUEST_TYPE.SAVE_LANDMARK,
-   //     };
-
-   //     _allowedQuestAlignments = new List<ACTION_ALIGNMENT>() {
-   //         ACTION_ALIGNMENT.HEROIC,
-   //         ACTION_ALIGNMENT.LAWFUL,
-   //         ACTION_ALIGNMENT.UNLAWFUL,
-			//ACTION_ALIGNMENT.PEACEFUL,
-   //     };
-
-        //_roleTasks.Add (new DoNothing (this._character));
-        //_roleTasks.Add (new Rest (this._character));
-        //_roleTasks.Add (new ExploreTile (this._character, 5));
-        //_roleTasks.Add (new UpgradeGear (this._character));
-        //_roleTasks.Add (new MoveTo (this._character));
-        //_roleTasks.Add (new TakeQuest (this._character));
-        //_roleTasks.Add (new Attack (this._character, 10));
-        //_roleTasks.Add (new Patrol (this._character, 10));
-
-        //_defaultRoleTask = _roleTasks [1];
-
-        //Messenger.AddListener(Signals.HOUR_ENDED, StartDepletion);
-        SetFullness(100);
-        SetEnergy(100);
-        SetFun(60);
-        //SetPrestige(0);
-        //SetSanity(100);
-        //UpdateSafety();
-        UpdateHappiness();
     }
 
     //#region Overrides
@@ -67,13 +33,13 @@ public class Hero : CharacterRole {
     //#endregion
 
     //private void LandmarkUnderAttack(Party attacker, GameEvent associatedEvent) {
-    //    if(_character.currentParty.currentCombat == null && attacker.specificLocation.tileLocation.landmarkOnTile != null && attacker.specificLocation.tileLocation.areaOfTile.id == _character.homeLandmark.tileLocation.areaOfTile.id) {
+    //    if(_character.currentParty.currentCombat == null && attacker.specificLocation.coreTile.landmarkOnTile != null && attacker.specificLocation.id == _character.homeLandmark.tileLocation.areaOfTile.id) {
     //        DefendAction defendAction = _character.GetMiscAction(ACTION_TYPE.DEFEND) as DefendAction;
     //        if (!_character.IsInOwnParty()) {
     //            _character.currentParty.RemoveCharacter(_character);
     //        }
     //        CharacterParty characterParty = _character.ownParty as CharacterParty;
-    //        characterParty.actionData.AssignAction(defendAction, attacker.specificLocation.tileLocation.landmarkOnTile.landmarkObj, null, associatedEvent);
+    //        characterParty.actionData.AssignAction(defendAction, attacker.specificLocation.coreTile.landmarkOnTile.landmarkObj, null, associatedEvent);
     //    }
     //}
 }

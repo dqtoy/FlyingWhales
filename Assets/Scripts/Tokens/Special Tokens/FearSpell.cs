@@ -27,7 +27,7 @@ public class FearSpell : SpecialToken {
     public override Character GetTargetCharacterFor(Character sourceCharacter) {
         //NPC Usage Requirement: Character must be part of a Disliked or Enemy Faction
         if (!sourceCharacter.isFactionless) {
-            Area location = sourceCharacter.ownParty.specificLocation.tileLocation.areaOfTile;
+            Area location = sourceCharacter.ownParty.specificLocation;
             List<Character> choices = new List<Character>();
             for (int i = 0; i < location.charactersAtLocation.Count; i++) {
                 Character currCharacter = location.charactersAtLocation[i];
@@ -46,7 +46,7 @@ public class FearSpell : SpecialToken {
     }
     public override bool CanBeUsedBy(Character sourceCharacter) {
         if (!sourceCharacter.isFactionless) {
-            Area location = sourceCharacter.ownParty.specificLocation.tileLocation.areaOfTile;
+            Area location = sourceCharacter.ownParty.specificLocation;
             List<Character> choices = new List<Character>();
             for (int i = 0; i < location.charactersAtLocation.Count; i++) {
                 Character currCharacter = location.charactersAtLocation[i];
@@ -69,7 +69,7 @@ public class FearSpell : SpecialToken {
         //**Mechanics**: Target character will trigger https://trello.com/c/vDKl0cyy/859-character-flees on the next tick (overriding any other action).
         if (state.target is Character) {
             Character target = state.target as Character;
-            Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.CHARACTER_FLEES, target.specificLocation.tileLocation.landmarkOnTile);
+            Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.CHARACTER_FLEES, target.specificLocation);
             target.SetForcedInteraction(interaction);
         }
     }
@@ -80,7 +80,7 @@ public class FearSpell : SpecialToken {
         //**Mechanics**: Target character will trigger https://trello.com/c/vDKl0cyy/859-character-flees on the next tick (overriding any other action).
         if (state.target is Character) {
             Character target = state.target as Character;
-            Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.CHARACTER_FLEES, target.specificLocation.tileLocation.landmarkOnTile);
+            Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.CHARACTER_FLEES, target.specificLocation);
             target.SetForcedInteraction(interaction);
         }
 

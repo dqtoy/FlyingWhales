@@ -23,6 +23,7 @@ public class AreaSaveData {
     public int monthlyActions;
     //public List<string> possibleSpecialTokenSpawns;
     public int initialResidents;
+    public Dictionary<STRUCTURE_TYPE, List<LocationStructure>> structures;
 
     public AreaSaveData(Area area) {
         areaID = area.id;
@@ -50,6 +51,7 @@ public class AreaSaveData {
         monthlySupply = area.monthlySupply;
         initialResidents = area.initialResidents;
         monthlyActions = area.monthlyActions;
+        structures = area.structures;
         //possibleSpecialTokenSpawns = new List<string>();
         //for (int i = 0; i < area.possibleSpecialTokenSpawns.Count; i++) {
         //    SpecialToken currToken = area.possibleSpecialTokenSpawns[i];

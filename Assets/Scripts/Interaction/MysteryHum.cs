@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class MysteryHum : Interaction {
-    public MysteryHum(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.MYSTERY_HUM, 150) {
+    public MysteryHum(Area interactable) : base(interactable, INTERACTION_TYPE.MYSTERY_HUM, 150) {
         _name = "Mystery Hum";
     }
 
@@ -98,13 +98,13 @@ public class MysteryHum : Interaction {
         PlayerManager.Instance.player.RemoveMinion(investigatorCharacter.minion);
         investigatorCharacter.minion.SetEnabledState(true);
 
-        List<BaseLandmark> playerLandmarks = PlayerManager.Instance.player.demonicPortal.tileLocation.areaOfTile.landmarks;
-        BaseLandmark playerLandmarkToAttack = playerLandmarks[UnityEngine.Random.Range(0, playerLandmarks.Count)];
-        CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ATTACK_LANDMARK);
+        //List<BaseLandmark> playerLandmarks = PlayerManager.Instance.player.demonicPortal.tileLocation.areaOfTile.landmarks;
+        //BaseLandmark playerLandmarkToAttack = playerLandmarks[UnityEngine.Random.Range(0, playerLandmarks.Count)];
+        //CharacterAction characterAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ATTACK_LANDMARK);
         //investigatorMinion.character.currentParty.iactionData.AssignAction(characterAction, playerLandmarkToAttack.landmarkObj);
     }
     private void ArmyRecruitedRewardEffect(InteractionState state) {
-        Minion newMinion = PlayerManager.Instance.player.CreateNewMinion("Earthbinders", RACE.FAERY, false);
+        Minion newMinion = PlayerManager.Instance.player.CreateNewMinion("Earthbinders", RACE.FAERY);
         newMinion.character.SetLevel(5);
         PlayerManager.Instance.player.AddMinion(newMinion);
         investigatorCharacter.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));

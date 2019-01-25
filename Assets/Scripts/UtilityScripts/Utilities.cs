@@ -21,14 +21,12 @@ public class Utilities : MonoBehaviour {
     public static int lastLandmarkID = 0;
     public static int lastFactionID = 0;
     public static int lastCharacterID = 0;
-    public static int lastQuestID = 0;
     public static int lastItemID = 0;
     public static int lastAreaID = 0;
     public static int lastMonsterID = 0;
     public static int lastPartyID = 0;
     public static int lastSquadID = 0;
     public static int lastCharacterSimID = 0;
-    public static int lastGameEventID = 0;
     public static int lastInteractionID = 0;
 
     public static float defenseBuff = 1.20f;
@@ -81,18 +79,12 @@ public class Utilities : MonoBehaviour {
         } else if (obj is Party) {
             lastPartyID += 1;
             return lastPartyID;
-        } else if (obj is Quest) {
-            lastQuestID += 1;
-            return lastQuestID;
         } else if (obj is Squad) {
             lastSquadID += 1;
             return lastSquadID;
         } else if (obj is CharacterSim) {
             lastCharacterSimID += 1;
             return lastCharacterSimID;
-        } else if (obj is GameEvent) {
-            lastGameEventID += 1;
-            return lastGameEventID;
         } else if (obj is Interaction) {
             lastInteractionID += 1;
             return lastInteractionID;
@@ -118,14 +110,10 @@ public class Utilities : MonoBehaviour {
             lastAreaID = idToUse;
         } else if (obj is Party) {
             lastPartyID = idToUse;
-        } else if (obj is Quest) {
-            lastQuestID = idToUse;
         } else if (obj is Squad) {
             lastSquadID = idToUse;
         } else if (obj is CharacterSim) {
             lastCharacterSimID = idToUse;
-        } else if (obj is GameEvent) {
-            lastGameEventID = idToUse;
         } else if (obj is Interaction) {
             lastInteractionID = idToUse;
         }

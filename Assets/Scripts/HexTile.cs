@@ -333,9 +333,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         _region.AddLandmarkToRegion(_landmarkOnTile);
         if (_landmarkOnTile != null) {
             SetPassableState(true);
-//#if !WORLD_CREATION_TOOL
-//            _landmarkOnTile.SetObject(ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.STRUCTURE, Utilities.NormalizeStringUpperCaseFirstLetters(landmarkType.ToString())) as StructureObj);
-//#endif
         }
         Biomes.Instance.UpdateTileVisuals(this);
         return _landmarkOnTile;
@@ -367,9 +364,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         _region.AddLandmarkToRegion(_landmarkOnTile);
         if (_landmarkOnTile != null) {
             SetPassableState(true);
-//#if !WORLD_CREATION_TOOL
-//            _landmarkOnTile.SetObject(ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.STRUCTURE, Utilities.NormalizeStringUpperCaseFirstLetters(_landmarkOnTile.specificLandmarkType.ToString())) as StructureObj);
-//#endif
         }
         return _landmarkOnTile;
     }
@@ -1294,7 +1288,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 	public void AddCharacterToLocation(Party iparty) {
 		if (!_charactersAtLocation.Contains(iparty)) {
 			_charactersAtLocation.Add(iparty);
-            iparty.SetSpecificLocation(this);
+            iparty.SetSpecificLocation(this.areaOfTile);
             //if (character.icharacterType == ICHARACTER_TYPE.CHARACTER){
             //  Character currChar = character as Character;
             //  currChar.SetSpecificLocation(this);
@@ -1326,7 +1320,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             int indexOfCharacterToReplace = _charactersAtLocation.IndexOf(ipartyToReplace);
             _charactersAtLocation.Insert(indexOfCharacterToReplace, ipartyToAdd);
             _charactersAtLocation.Remove(ipartyToReplace);
-            ipartyToAdd.SetSpecificLocation(this);
+            ipartyToAdd.SetSpecificLocation(this.areaOfTile);
             //if (characterToAdd.icharacterType == ICHARACTER_TYPE.CHARACTER) {
             //    Character currChar = characterToAdd as Character;
             //    currChar.SetSpecificLocation(this);
@@ -1589,25 +1583,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
                 //    createMonsterSettings.AddMenuItem(spawnMonsterItem);
                 //}
                 ////end monster spawning
-
-                //Monster despawning
-                if (MonsterManager.Instance.HasMonsterOnLandmark(this.landmarkOnTile)) {
-                    ContextMenuItemSettings despawnMonster = new ContextMenuItemSettings("Despawn Monster");
-                    settings.AddMenuItem(despawnMonster);
-
-                    ContextMenuSettings despawnMonsterSettings = new ContextMenuSettings();
-                    despawnMonster.SetSubMenu(despawnMonsterSettings);
-
-                    for (int i = 0; i < this.landmarkOnTile.charactersAtLocation.Count; i++) {
-                        Party currParty = this.landmarkOnTile.charactersAtLocation[i];
-                        if (currParty is MonsterParty) {
-                            ContextMenuItemSettings despawnMonsterItem = new ContextMenuItemSettings(currParty.name);
-                            despawnMonsterItem.onClickAction = () => MonsterManager.Instance.DespawnMonsterPartyOnLandmark(landmarkOnTile, currParty as MonsterParty);
-                            despawnMonsterSettings.AddMenuItem(despawnMonsterItem);
-                        }
-                    }
-                }
-                //end monster despawning
             }
         }
         return settings;

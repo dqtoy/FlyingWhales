@@ -7,9 +7,7 @@ using UnityEngine;
 
 public class MonsterParty : Party {
     private string _name;
-    private MonsterObj _monsterObj;
     private string _setupName;
-    private MonsterActionData _actionData;
 
     #region getters/setters
     //public override string name {
@@ -18,32 +16,13 @@ public class MonsterParty : Party {
     public string setupName {
         get { return _setupName; }
     }
-    public MonsterObj monsterObj {
-        get { return _monsterObj; }
-    }
-    public MonsterActionData actionData {
-        get { return _actionData; }
-    }
     public override Character owner {
         get { return mainCharacter; }
-    }
-    public override CharacterAction currentAction {
-        get { return _actionData.currentAction; }
-    }
-    public override IActionData iactionData {
-        get { return _actionData; }
-    }
-    public override int currentDay {
-        get { return _actionData.currentDay; }
     }
     #endregion
 
     public MonsterParty() : base(null) {
 #if !WORLD_CREATION_TOOL
-        _monsterObj = ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.MONSTER, "MonsterObject") as MonsterObj;
-        _monsterObj.SetMonster(this);
-        _icharacterObject = _monsterObj;
-        _actionData = new MonsterActionData(this);
         MonsterManager.Instance.allMonsterParties.Add(this);
         Messenger.AddListener(Signals.DAY_ENDED, EverydayAction);
         //ConstructResourceInventory();
@@ -73,15 +52,9 @@ public class MonsterParty : Party {
         MonsterManager.Instance.allMonsterParties.Remove(this);
         Messenger.Broadcast(Signals.MONSTER_PARTY_DIED, this);
     }
-    public override void EndAction() {
-        _actionData.EndAction();
-    }
     public override void RemoveListeners() {
         base.RemoveListeners();
         Messenger.RemoveListener(Signals.DAY_ENDED, EverydayAction);
-    }
-    public override void DetachActionData() {
-        _actionData.DetachActionData();
     }
     #endregion
 

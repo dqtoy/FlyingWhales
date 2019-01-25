@@ -16,7 +16,7 @@ public class MoveToSave : Interaction {
         get { return _targetCharacter; }
     }
 
-    public MoveToSave(BaseLandmark interactable) 
+    public MoveToSave(Area interactable) 
         : base(interactable, INTERACTION_TYPE.MOVE_TO_SAVE, 0) {
         _name = "Move To Save";
         _jobFilter = new JOB[] { JOB.DEBILITATOR };
@@ -29,7 +29,7 @@ public class MoveToSave : Interaction {
         InteractionState saveProceeds = new InteractionState(Save_Proceeds, this);
         InteractionState normalSave = new InteractionState(Normal_Save, this);
 
-        targetLocation = _targetCharacter.specificLocation.tileLocation.areaOfTile;
+        targetLocation = _targetCharacter.specificLocation;
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
         startStateDescriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1);
@@ -128,11 +128,11 @@ public class MoveToSave : Interaction {
     #endregion
 
     private void GoToTargetLocation() {
-        _characterInvolved.ownParty.GoToLocation(targetLocation.coreTile.landmarkOnTile, PATHFINDING_MODE.NORMAL, () => CreateEvent());
+        _characterInvolved.ownParty.GoToLocation(targetLocation, PATHFINDING_MODE.NORMAL, () => CreateEvent());
     }
 
     private void CreateEvent() {
-        SaveAction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.SAVE_ACTION, _characterInvolved.specificLocation.tileLocation.landmarkOnTile) as SaveAction;
+        SaveAction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.SAVE_ACTION, _characterInvolved.specificLocation) as SaveAction;
         interaction.SetTargetCharacter(_targetCharacter);
         _characterInvolved.SetForcedInteraction(interaction);
     }

@@ -71,7 +71,7 @@ public class LandmarkVisual : MonoBehaviour {
         iconSprite.gameObject.SetActive(state);
     }
     public void UpdateProgressBar() {
-        hpProgressBar.value = (float) _landmark.landmarkObj.currentHP / (float) _landmark.landmarkObj.maxHP;
+        //hpProgressBar.value = (float) _landmark.landmarkObj.currentHP / (float) _landmark.landmarkObj.maxHP;
     }
     public void OnCharacterEnteredLandmark(Party iparty) {
         //add character portrait to grid

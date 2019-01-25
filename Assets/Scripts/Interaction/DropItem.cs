@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class DropItem : Interaction {
 
-    public DropItem(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.DROP_ITEM, 0) {
+    public DropItem(Area interactable) : base(interactable, INTERACTION_TYPE.DROP_ITEM, 0) {
         _name = "Drop Item";
     }
 
@@ -31,6 +31,6 @@ public class DropItem : Interaction {
             state.descriptionLog.AddToFillers(null, _characterInvolved.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1);
         }
         state.AddLogFiller(new LogFiller(null, _characterInvolved.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1));
-        _characterInvolved.DropToken(interactable);
+        _characterInvolved.DropToken(interactable, _characterInvolved.currentStructure);
     }
 }

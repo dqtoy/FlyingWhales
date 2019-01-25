@@ -4,7 +4,7 @@ using UnityEngine;
 
 
 public class UnexploredCave : Interaction {
-    public UnexploredCave(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.UNEXPLORED_CAVE, 70) {
+    public UnexploredCave(Area interactable) : base(interactable, INTERACTION_TYPE.UNEXPLORED_CAVE, 70) {
         _name = "Unexplored Cave";
     }
     #region Overrides
@@ -130,14 +130,14 @@ public class UnexploredCave : Interaction {
         DemonArmorUpgradeEffect(_states[effectName]);
     }
     private void UnleashedMonsterRewardState(InteractionState state, string effectName) {
-        if(_interactable is BaseLandmark) {
-            BaseLandmark landmark = _interactable;
-            if(landmark.charactersWithHomeOnLandmark.Count > 0) {
+        //if(_interactable is BaseLandmark) {
+        //    BaseLandmark landmark = _interactable;
+            //if(landmark.charactersWithHomeOnLandmark.Count > 0) {
                 //_states[effectName].SetDescription(explorerMinion.name + " has awakened a " + landmark.charactersWithHomeOnLandmark[0].name + ". It now defends the cave from intruders.");
                 SetCurrentState(_states[effectName]);
                 UnleashedMonsterEffect(_states[effectName]);
-            }
-        }
+            //}
+        //}
     }
     private void DemonWeaponUpgradeEffect(InteractionState state) {
         //investigatorMinion.character.UpgradeWeapon();
@@ -164,7 +164,7 @@ public class UnexploredCave : Interaction {
 
         if(chosenClass != string.Empty) {
             Character newDefender = CharacterManager.Instance.CreateNewCharacter(chosenClass, chosenRace, GENDER.MALE, null, _interactable);
-            BaseLandmark landmark = _interactable;
+            //BaseLandmark landmark = _interactable;
             //landmark.AddDefender(newDefender);
 
             if (state.descriptionLog != null) {

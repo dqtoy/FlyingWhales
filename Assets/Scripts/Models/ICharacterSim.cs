@@ -41,6 +41,6 @@ public interface ICharacterSim {
     void AdjustSP(int amount);
     void AdjustHP(int amount, Character killer = null);
     void EnableDisableSkills(CombatSim combatSim);
-    CharacterAttribute GetAttribute(string attribute);
+    //CharacterAttribute GetAttribute(string attribute);
     //int GetDef();
 }

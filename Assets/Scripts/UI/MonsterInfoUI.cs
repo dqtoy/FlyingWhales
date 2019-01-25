@@ -16,7 +16,6 @@ public class MonsterInfoUI : UIMenu {
     [SerializeField] private TextMeshProUGUI nameLbl;
     [SerializeField] private TextMeshProUGUI lvlClassLbl;
     [SerializeField] private FactionEmblem factionEmblem;
-    [SerializeField] private ActionIcon currentActionIcon;
     [SerializeField] private GameObject actionIconPrefab;
     [SerializeField] private string actionIconPrefabName;
 
@@ -89,7 +88,6 @@ public class MonsterInfoUI : UIMenu {
         Messenger.AddListener<object>(Signals.HISTORY_ADDED, UpdateHistory);
         Messenger.AddListener<Token>(Signals.TOKEN_ADDED, OnIntelAdded);
 
-        currentActionIcon.Initialize();
         InitializeLogsMenu();
         InitializeInventoryMenu();
         InitializeInfoMenu();
@@ -100,7 +98,6 @@ public class MonsterInfoUI : UIMenu {
         UpdatePortrait();
         UpdateMonsterInfo();
         //currentActionIcon.SetCharacter(_activeMonster);
-        currentActionIcon.SetAction(_activeMonster.currentParty.currentAction);
         //PlayerAbilitiesUI.Instance.ShowPlayerAbilitiesUI(_activeMonster);
         historyScrollView.verticalNormalizedPosition = 1;
     }
@@ -179,14 +176,12 @@ public class MonsterInfoUI : UIMenu {
         if (_activeMonster.isBeingInspected || GameManager.Instance.inspectAll) {
             UpdateStatsInfo();
             UpdateItemsInfo();
-            UpdateTagInfo(_activeMonster.attributes);
             if(_activeMonster.relationships != null) {
                 UpdateRelationshipInfo(_activeMonster.relationships.Values.ToList());
             }
         } else {
             UpdateStatsInfo(_activeMonster.uiData);
             UpdateItemsInfo(_activeMonster.uiData);
-            UpdateTagInfo(_activeMonster.uiData.attributes);
             UpdateRelationshipInfo(_activeMonster.uiData.relationships);
         }
         UpdateAllHistoryInfo();
@@ -378,68 +373,6 @@ public class MonsterInfoUI : UIMenu {
             return;
         }
         UpdateInfoMenu();
-    }
-    #endregion
-
-    #region Attributes
-    private List<CharacterAttributeIcon> shownAttributes = new List<CharacterAttributeIcon>();
-    private void UpdateTagInfo(List<CharacterAttribute> attributes) {
-        if(attributes == null) {
-            return;
-        }
-        List<CharacterAttribute> attributesToShow = new List<CharacterAttribute>(attributes);
-        //Utilities.DestroyChildren(tagsScrollView.content);
-        List<CharacterAttributeIcon> iconsToRemove = new List<CharacterAttributeIcon>();
-        for (int i = 0; i < shownAttributes.Count; i++) {
-            CharacterAttributeIcon shownIcon = shownAttributes[i];
-            if (attributesToShow.Contains(shownIcon.attribute)) {
-                //remove the tag from the attributes list so it doesn't get loaded again later
-                attributesToShow.Remove(shownIcon.attribute);
-            } else {
-                //destroy the tag
-                iconsToRemove.Add(shownIcon);
-            }
-        }
-
-        for (int i = 0; i < iconsToRemove.Count; i++) {
-            CharacterAttributeIcon icon = iconsToRemove[i];
-            RemoveIcon(icon);
-        }
-
-        for (int i = 0; i < attributesToShow.Count; i++) { //show the remaining attributes
-            CharacterAttribute currTag = attributesToShow[i];
-            AddTag(currTag);
-        }
-    }
-    private void AddTag(CharacterAttribute tag) {
-        GameObject tagGO = UIManager.Instance.InstantiateUIObject(characterTagPrefab.name, tagsScrollView.content);
-        CharacterAttributeIcon icon = tagGO.GetComponent<CharacterAttributeIcon>();
-        icon.SetTag(tag);
-        shownAttributes.Add(icon);
-    }
-    private void RemoveTag(CharacterAttribute tag) {
-        CharacterAttributeIcon[] icons = Utilities.GetComponentsInDirectChildren<CharacterAttributeIcon>(tagsScrollView.content.gameObject);
-        for (int i = 0; i < icons.Length; i++) {
-            CharacterAttributeIcon icon = icons[i];
-            if (icon.attribute == tag) {
-                RemoveIcon(icon);
-                break;
-            }
-        }
-    }
-    private void RemoveIcon(CharacterAttributeIcon icon) {
-        ObjectPoolManager.Instance.DestroyObject(icon.gameObject);
-        shownAttributes.Remove(icon);
-    }
-    private void OnCharacterAttributeAdded(Character affectedCharacter, CharacterAttribute tag) {
-        if (_activeMonster != null && _activeMonster.id == affectedCharacter.id && _activeMonster.isBeingInspected) {
-            AddTag(tag);
-        }
-    }
-    private void OnCharacterAttributeRemoved(Character affectedCharacter, CharacterAttribute tag) {
-        if (_activeMonster != null && _activeMonster.id == affectedCharacter.id && _activeMonster.isBeingInspected) {
-            RemoveTag(tag);
-        }
     }
     #endregion
 

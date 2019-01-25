@@ -17,19 +17,19 @@ public class Recruiter : Job {
     protected override bool IsTokenCompatibleWithJob(Token token) {
         if (token.tokenType == TOKEN_TYPE.CHARACTER) {
             CharacterToken characterToken = token as CharacterToken;
-            return characterToken.character.IsInOwnParty() && characterToken.character.doNotDisturb <= 0 && characterToken.character.specificLocation.tileLocation.areaOfTile.id == _character.specificLocation.tileLocation.areaOfTile.id && !characterToken.character.currentParty.icon.isTravelling;
+            return characterToken.character.IsInOwnParty() && characterToken.character.doNotDisturb <= 0 && characterToken.character.specificLocation.id == _character.specificLocation.id && !characterToken.character.currentParty.icon.isTravelling;
         }
         return base.IsTokenCompatibleWithJob(token);
     }
     public override void DoJobAction() {
         base.DoJobAction();
-        Area area = _character.specificLocation.tileLocation.areaOfTile;
+        Area area = _character.specificLocation;
         List<Character> areaResidents = area.areaResidents;
         Character chosenCharacter = null;
         int success = 0;
         for (int i = 0; i < areaResidents.Count; i++) {
             Character resident = areaResidents[i];
-            if(resident.IsInOwnParty() && resident.doNotDisturb <= 0 && resident.role.roleType != CHARACTER_ROLE.LEADER && !resident.isDefender && resident.specificLocation.tileLocation.areaOfTile.id == area.id && !resident.currentParty.icon.isTravelling) {
+            if(resident.IsInOwnParty() && resident.doNotDisturb <= 0 && resident.role.roleType != CHARACTER_ROLE.LEADER && !resident.isDefender && resident.specificLocation.id == area.id && !resident.currentParty.icon.isTravelling) {
                 if (resident.isFactionless) {
                     chosenCharacter = resident;
                     success = 30;
@@ -60,20 +60,20 @@ public class Recruiter : Job {
             string result = "Success"; // weights.PickRandomElementGivenWeights();
             Interaction interaction = null;
             if (result == "Success") {
-                interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_RECRUIT_CHARACTER, area.coreTile.landmarkOnTile);
+                interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_RECRUIT_CHARACTER, area);
                 interaction.AddEndInteractionAction(() => StartJobAction());
                 interaction.ScheduleSecondTimeOut();
                 chosenCharacter.AddInteraction(interaction);
             } else if (result == "Fail") {
-                interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_FAILED, area.coreTile.landmarkOnTile);
+                interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_FAILED, area);
                 interaction.AddEndInteractionAction(() => StartJobAction());
                 interaction.ScheduleSecondTimeOut();
-                _character.specificLocation.tileLocation.landmarkOnTile.AddInteraction(interaction);
+                _character.specificLocation.coreTile.landmarkOnTile.AddInteraction(interaction);
             } else if (result == "Crit Fail") {
-                interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_CRITICAL_FAIL, area.coreTile.landmarkOnTile);
+                interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_CRITICAL_FAIL, area);
                 interaction.AddEndInteractionAction(() => StartJobAction());
                 interaction.ScheduleSecondTimeOut();
-                _character.specificLocation.tileLocation.landmarkOnTile.AddInteraction(interaction);
+                _character.specificLocation.coreTile.landmarkOnTile.AddInteraction(interaction);
             }
             SetCreatedInteraction(interaction);
         } else {
@@ -88,7 +88,7 @@ public class Recruiter : Job {
     //    _actionDuration = 80 - (2 * multiplier);
     //}
     public override void CaptureRandomLandmarkEvent() {
-        Area area = _character.specificLocation.tileLocation.areaOfTile;
+        Area area = _character.specificLocation;
         if(area == null) {
             //Current location has no area
             return;
@@ -129,8 +129,8 @@ public class Recruiter : Job {
         if (result == "Success") {
             SetCreatedInteraction(choices[UnityEngine.Random.Range(0, choices.Count)]);
         } else if (result == "Crit Fail") {
-            Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_CRITICAL_FAIL, area.coreTile.landmarkOnTile);
-            _character.specificLocation.tileLocation.landmarkOnTile.AddInteraction(interaction);
+            Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_CRITICAL_FAIL, area);
+            _character.specificLocation.coreTile.landmarkOnTile.AddInteraction(interaction);
             SetCreatedInteraction(interaction);
         }
         _createdInteraction.AddEndInteractionAction(() => SetJobActionPauseState(false));

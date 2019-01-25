@@ -9,7 +9,7 @@ public class MinionPeaceNegotiation : Interaction {
     private const string Peace_Negotiations_Failed = "Peace Negotiations Failed";
     private const string Do_Nothing = "Do Nothing";
 
-    public MinionPeaceNegotiation(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.MINION_PEACE_NEGOTIATION, 0) {
+    public MinionPeaceNegotiation(Area interactable) : base(interactable, INTERACTION_TYPE.MINION_PEACE_NEGOTIATION, 0) {
         _name = "Minion Peace Negotiation";
         _jobFilter = new JOB[] { JOB.DIPLOMAT };
     }
@@ -22,7 +22,7 @@ public class MinionPeaceNegotiation : Interaction {
         InteractionState doNothingState = new InteractionState(Do_Nothing, this);
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
-        startStateDescriptionLog.AddToFillers(interactable.tileLocation.areaOfTile.owner.leader, interactable.tileLocation.areaOfTile.owner.leader.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        startStateDescriptionLog.AddToFillers(interactable.owner.leader, interactable.owner.leader.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 
         CreateActionOptions(startState);
@@ -82,18 +82,18 @@ public class MinionPeaceNegotiation : Interaction {
 
     #region State Effects
     private void PeaceNegotiationsSuccessEffect(InteractionState state) {
-        FactionManager.Instance.DeclarePeaceBetween(PlayerManager.Instance.player.playerFaction, interactable.tileLocation.areaOfTile.owner);
+        FactionManager.Instance.DeclarePeaceBetween(PlayerManager.Instance.player.playerFaction, interactable.owner);
         investigatorCharacter.LevelUp();
 
-        state.descriptionLog.AddToFillers(interactable.tileLocation.areaOfTile.owner.leader, interactable.tileLocation.areaOfTile.owner.leader.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.descriptionLog.AddToFillers(interactable.owner.leader, interactable.owner.leader.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
-        state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1));
+        state.AddLogFiller(new LogFiller(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_1));
     }
     private void PeaceNegotiationsFailEffect(InteractionState state) {
-        state.descriptionLog.AddToFillers(interactable.tileLocation.areaOfTile.owner.leader, interactable.tileLocation.areaOfTile.owner.leader.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.descriptionLog.AddToFillers(interactable.owner.leader, interactable.owner.leader.name, LOG_IDENTIFIER.TARGET_CHARACTER);
     }
     private void DoNothingEffect(InteractionState state) {
-        state.descriptionLog.AddToFillers(interactable.tileLocation.areaOfTile.owner.leader, interactable.tileLocation.areaOfTile.owner.leader.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.descriptionLog.AddToFillers(interactable.owner.leader, interactable.owner.leader.name, LOG_IDENTIFIER.TARGET_CHARACTER);
     }
     #endregion
 }

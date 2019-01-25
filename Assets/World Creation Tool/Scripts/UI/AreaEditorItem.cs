@@ -86,7 +86,7 @@ namespace worldcreator {
         }
         public void RemoveTilesFromArea() {
             List<HexTile> validSelectedTiles = new List<HexTile>(WorldCreatorManager.Instance.selectionComponent.selection
-                .Where(x => x.areaOfTile != null && x.areaOfTile.id == _area.id && _area.coreTile.id != x.id));
+                .Where(x => x.areaOfTile != null && x.areaOfTile.id == _area.id));
             _area.RemoveTile(validSelectedTiles);
             //UpdateInfo();
             WorldCreatorManager.Instance.selectionComponent.ClearSelectedTiles();

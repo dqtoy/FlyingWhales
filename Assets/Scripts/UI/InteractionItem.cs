@@ -95,7 +95,7 @@ public class InteractionItem : MonoBehaviour {
             characterInfoGO.SetActive(false);
             if (_interaction.characterInvolved != null) {
                 characterInvolvedPortrait.GeneratePortrait(_interaction.characterInvolved);
-                characterInvolvedLocationPortrait.SetLocation(_interaction.characterInvolved.specificLocation.tileLocation.areaOfTile);
+                characterInvolvedLocationPortrait.SetLocation(_interaction.characterInvolved.specificLocation);
                 characterInvolvedPortrait.gameObject.SetActive(true);
                 characterInvolvedLocationPortrait.gameObject.SetActive(true);
             } else {

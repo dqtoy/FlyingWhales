@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ArmyMobilization : Interaction {
 
-    public ArmyMobilization(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.ARMY_MOBILIZATION, 50) {
+    public ArmyMobilization(Area interactable) : base(interactable, INTERACTION_TYPE.ARMY_MOBILIZATION, 50) {
         _name = "Army Mobilization";
     }
 
@@ -126,7 +126,7 @@ public class ArmyMobilization : Interaction {
         ArmyMobilizedRewardEffect(state);
     }
     private void ArmyMobilizedRewardEffect(InteractionState state) {
-        _interactable.StartMobilization();
+        //_interactable.StartMobilization();
     }
     #endregion
 }

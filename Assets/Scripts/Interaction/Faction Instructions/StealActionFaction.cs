@@ -14,7 +14,7 @@ public class StealActionFaction : Interaction {
         get { return _targetCharacter; }
     }
 
-    public StealActionFaction(BaseLandmark interactable)
+    public StealActionFaction(Area interactable)
         : base(interactable, INTERACTION_TYPE.STEAL_ACTION_FACTION, 0) {
         _name = "Steal Action Faction";
         //_jobFilter = new JOB[] { JOB.INSTIGATOR, JOB.DIPLOMAT };
@@ -147,8 +147,8 @@ public class StealActionFaction : Interaction {
          an item that is not part of the character's faction. 
          */
         List<Character> choices = new List<Character>();
-        for (int i = 0; i < interactable.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
-            Character currCharacter = interactable.tileLocation.areaOfTile.charactersAtLocation[i];
+        for (int i = 0; i < interactable.charactersAtLocation.Count; i++) {
+            Character currCharacter = interactable.charactersAtLocation[i];
             if (currCharacter.tokenInInventory != null 
                 && currCharacter.id != characterInvolved.id
                 && !currCharacter.currentParty.icon.isTravelling

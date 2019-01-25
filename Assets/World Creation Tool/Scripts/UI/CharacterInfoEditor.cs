@@ -77,7 +77,6 @@ namespace worldcreator {
             LoadCharacters();
             //LoadEquipment();
             LoadInventory();
-            LoadAttributeSummary();
             LoadTemplateChoices();
             Messenger.AddListener<Item, Character>(Signals.ITEM_EQUIPPED, OnItemEquipped);
             Messenger.AddListener<Item, Character>(Signals.ITEM_UNEQUIPPED, OnItemUnequipped);
@@ -163,21 +162,16 @@ namespace worldcreator {
             factionField.value = Utilities.GetOptionIndex(factionField, factionName);
             levelField.text = _character.level.ToString();
             otherInfoLbl.text = string.Empty;
-            if (_character.homeLandmark == null) {
+            if (_character.homeArea == null) {
                 otherInfoLbl.text += "Home: NONE";
             } else {
-                otherInfoLbl.text += "Home: " + _character.homeLandmark.landmarkName.ToString();
+                otherInfoLbl.text += "Home: " + _character.homeArea.name;
                 //otherInfoLbl.text += "(" + _character.homeLandmark.landmarkName + ")";
             }
             if (_character.party.specificLocation == null) {
                 otherInfoLbl.text += "\nLocation: NONE";
             } else {
-                otherInfoLbl.text += "\nLocation: " + _character.party.specificLocation.ToString();
-                if (_character.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
-                    if (_character.IsDefending(_character.specificLocation as BaseLandmark)) {
-                        otherInfoLbl.text += " (Defending)";
-                    }
-                }
+                otherInfoLbl.text += "\nLocation: " + _character.party.specificLocation.name;
             }
         }
         public void SetName(string newName) {
@@ -186,7 +180,6 @@ namespace worldcreator {
         public void SetRace(int choice) {
             RACE newRace = (RACE)Enum.Parse(typeof(RACE), raceField.options[choice].text);
             _character.ChangeRace(newRace);
-            LoadAttributeSummary();
         }
         public void SetGender(int choice) {
             GENDER newGender = (GENDER)Enum.Parse(typeof(GENDER), genderField.options[choice].text);
@@ -367,28 +360,6 @@ namespace worldcreator {
                 }
             }
             return null;
-        }
-        #endregion
-
-        #region Attribute Info
-        private void LoadAttributeSummary() {
-            attributeSummary.text = string.Empty;
-            for (int i = 0; i < _character.attributes.Count; i++) {
-                CharacterAttribute currAttribute = _character.attributes[i];
-                attributeSummary.text += currAttribute.attribute.ToString() + "\n";
-            }
-        }
-        public void OnClickAddRemoveAttribute() {
-            int choice = attributeChoicesDropdown.value;
-            ATTRIBUTE attribute = (ATTRIBUTE)Enum.Parse(typeof(ATTRIBUTE), attributeChoicesDropdown.options[choice].text);
-            if (_character.GetAttribute(attribute) != null) {
-                //remove
-                _character.RemoveAttribute(attribute);
-            } else {
-                //add
-                _character.AddAttribute(attribute);
-            }
-            LoadAttributeSummary();
         }
         #endregion
     }

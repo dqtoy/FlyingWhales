@@ -15,7 +15,7 @@ public class MoveToRecruitFaction : Interaction {
         get { return _targetCharacter; }
     }
 
-    public MoveToRecruitFaction(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_RECRUIT_FACTION, 0) {
+    public MoveToRecruitFaction(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_RECRUIT_FACTION, 0) {
         _name = "Move To Recruit Faction";
         _jobFilter = new JOB[] { JOB.DEBILITATOR };
     }
@@ -33,7 +33,7 @@ public class MoveToRecruitFaction : Interaction {
         InteractionState doNothing = new InteractionState(Do_Nothing, this);
 
         if (_targetCharacter != null) {
-            targetLocation = _targetCharacter.specificLocation.tileLocation.areaOfTile;
+            targetLocation = _targetCharacter.specificLocation;
         } else {
             targetLocation = GetTargetLocation(_characterInvolved);
         }
@@ -132,10 +132,10 @@ public class MoveToRecruitFaction : Interaction {
     #endregion
 
     private void GoToTargetLocation() {
-        _characterInvolved.ownParty.GoToLocation(targetLocation.coreTile.landmarkOnTile, PATHFINDING_MODE.NORMAL, () => CreateRecruitEvent());
+        _characterInvolved.ownParty.GoToLocation(targetLocation, PATHFINDING_MODE.NORMAL, () => CreateRecruitEvent());
     }
     private void CreateRecruitEvent() {
-        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.RECRUIT_ACTION_FACTION, targetLocation.coreTile.landmarkOnTile);
+        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.RECRUIT_ACTION_FACTION, targetLocation);
         (interaction as RecruitActionFaction).SetTargetCharacter(_targetCharacter);
         //interaction.SetCanInteractionBeDoneAction(() => IsRecruitActionStillValid(interaction as RecruitAction));
         _characterInvolved.SetForcedInteraction(interaction);
@@ -146,7 +146,7 @@ public class MoveToRecruitFaction : Interaction {
     //     check if that character is still at that location
     //     */
     //    if (recruitAction.targetCharacter != null) {
-    //        return recruitAction.targetCharacter.specificLocation.tileLocation.areaOfTile.id == targetLocation.id;
+    //        return recruitAction.targetCharacter.specificLocation.id == targetLocation.id;
     //    }
     //    return true;
     //    /* It will no longer be valid if no recruitable character is available in the location. 

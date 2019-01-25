@@ -34,6 +34,10 @@ public static class Signals {
     public static string AREA_OWNER_CHANGED = "OnAreaOwnerChanged"; //Parameters (Area affectedArea)
     public static string AREA_RESIDENT_ADDED = "OnAreaResidentAdded"; //Parameters (Area affectedArea, Character newResident)
     public static string AREA_RESIDENT_REMOVED = "OnAreaResidentRemoved"; //Parameters (Area affectedArea, Character removedResident)
+    public static string CHARACTER_ENTERED_AREA = "OnCharacterEnteredArea"; //Parameters (Area affectedArea, Character character)
+    public static string CHARACTER_EXITED_AREA = "OnCharacterExitedArea"; //Parameters (Area affectedArea, Character character)
+    public static string ITEM_REMOVED_FROM_AREA = "OnItemRemovedFromArea"; //Parameters (Area affectedArea, SpecialToken token)
+    public static string ITEM_ADDED_TO_AREA = "OnItemAddedToArea"; //Parameters (Area affectedArea, SpecialToken token)
     #endregion
 
     #region Landmarks

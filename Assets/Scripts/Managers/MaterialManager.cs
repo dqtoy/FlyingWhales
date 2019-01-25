@@ -37,8 +37,9 @@ public class MaterialManager : MonoBehaviour {
 		}
 	}
     public Construction GetConstructionDataForMaterial(MATERIAL material) {
-        Materials materialData = GetMaterialData(material);
-        return ProductionManager.Instance.GetConstruction(materialData.structure.name);
+        //Materials materialData = GetMaterialData(material);
+        //return ProductionManager.Instance.GetConstruction(materialData.structure.name);
+        return null;
     }
     public Materials GetMaterialData(MATERIAL material) {
         return _materialsLookup[material];

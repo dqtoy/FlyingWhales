@@ -7,7 +7,7 @@ public class ArmyUnitTraining : Interaction {
 
     private string _chosenClassName;
 
-    public ArmyUnitTraining(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.ARMY_UNIT_TRAINING, 50) {
+    public ArmyUnitTraining(Area interactable) : base(interactable, INTERACTION_TYPE.ARMY_UNIT_TRAINING, 50) {
         _name = "Army Unit Training";
     }
 
@@ -138,7 +138,7 @@ public class ArmyUnitTraining : Interaction {
     #region State Effects
     private void CancelledTrainingRewardEffect(InteractionState state) {
         investigatorCharacter.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
-        state.AddLogFiller(new LogFiller(_interactable.faction, _interactable.faction.name, LOG_IDENTIFIER.FACTION_1));
+        state.AddLogFiller(new LogFiller(_interactable.owner, _interactable.owner.name, LOG_IDENTIFIER.FACTION_1));
         //if (state.minionLog != null) {
         //    state.minionLog.AddToFillers(_interactable.faction, _interactable.faction.name, LOG_IDENTIFIER.FACTION_1);
         //}
@@ -148,11 +148,11 @@ public class ArmyUnitTraining : Interaction {
         ArmyProducedRewardEffect(state);
 
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(_interactable.faction.raceType), LOG_IDENTIFIER.STRING_1);
+            state.descriptionLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(_interactable.owner.raceType), LOG_IDENTIFIER.STRING_1);
             state.descriptionLog.AddToFillers(null, _chosenClassName, LOG_IDENTIFIER.STRING_2);
         }
-        state.AddLogFiller(new LogFiller(_interactable.faction, _interactable.faction.name, LOG_IDENTIFIER.FACTION_1));
-        state.AddLogFiller(new LogFiller(null, Utilities.GetNormalizedSingularRace(_interactable.faction.raceType), LOG_IDENTIFIER.STRING_1));
+        state.AddLogFiller(new LogFiller(_interactable.owner, _interactable.owner.name, LOG_IDENTIFIER.FACTION_1));
+        state.AddLogFiller(new LogFiller(null, Utilities.GetNormalizedSingularRace(_interactable.owner.raceType), LOG_IDENTIFIER.STRING_1));
         state.AddLogFiller(new LogFiller(null, _chosenClassName, LOG_IDENTIFIER.STRING_2));
         //if (state.minionLog != null) {
         //    state.minionLog.AddToFillers(_interactable.faction, _interactable.faction.name, LOG_IDENTIFIER.FACTION_1);
@@ -161,13 +161,13 @@ public class ArmyUnitTraining : Interaction {
         //}
     }
     private void ArmyProducedRewardEffect(InteractionState state) {
-        CharacterManager.Instance.CreateNewCharacter(_chosenClassName, interactable.faction.raceType, GENDER.MALE, interactable.faction, interactable);
+        CharacterManager.Instance.CreateNewCharacter(_chosenClassName, interactable.owner.raceType, GENDER.MALE, interactable.owner, interactable);
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(_interactable.faction.raceType), LOG_IDENTIFIER.STRING_1);
+            state.descriptionLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(_interactable.owner.raceType), LOG_IDENTIFIER.STRING_1);
             state.descriptionLog.AddToFillers(null, _chosenClassName, LOG_IDENTIFIER.STRING_2);
         }
-        state.AddLogFiller(new LogFiller(_interactable.faction, _interactable.faction.name, LOG_IDENTIFIER.FACTION_1));
-        state.AddLogFiller(new LogFiller(null, Utilities.GetNormalizedSingularRace(_interactable.faction.raceType), LOG_IDENTIFIER.STRING_1));
+        state.AddLogFiller(new LogFiller(_interactable.owner, _interactable.owner.name, LOG_IDENTIFIER.FACTION_1));
+        state.AddLogFiller(new LogFiller(null, Utilities.GetNormalizedSingularRace(_interactable.owner.raceType), LOG_IDENTIFIER.STRING_1));
         state.AddLogFiller(new LogFiller(null, _chosenClassName, LOG_IDENTIFIER.STRING_2));
         //if (state.minionLog != null) {
         //    state.minionLog.AddToFillers(_interactable.faction, _interactable.faction.name, LOG_IDENTIFIER.FACTION_1);

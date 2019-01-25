@@ -11,7 +11,7 @@ public class MoveToImproveRelations : Interaction {
     public Area targetLocation { get; private set; }
     private Faction targetFaction;
 
-    public MoveToImproveRelations(BaseLandmark interactable) 
+    public MoveToImproveRelations(Area interactable) 
         : base(interactable, INTERACTION_TYPE.MOVE_TO_IMPROVE_RELATIONS, 0) {
         _name = "Move To Improve Relations";
         _jobFilter = new JOB[] { JOB.DEBILITATOR };
@@ -120,11 +120,11 @@ public class MoveToImproveRelations : Interaction {
     #endregion
 
     private void GoToTargetLocation() {
-        _characterInvolved.ownParty.GoToLocation(targetLocation.coreTile.landmarkOnTile, PATHFINDING_MODE.NORMAL, () => CreateImproveRelationsEvent());
+        _characterInvolved.ownParty.GoToLocation(targetLocation, PATHFINDING_MODE.NORMAL, () => CreateImproveRelationsEvent());
     }
 
     private void CreateImproveRelationsEvent() {
-        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.IMPROVE_RELATIONS_EVENT, _characterInvolved.specificLocation.tileLocation.landmarkOnTile);
+        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.IMPROVE_RELATIONS_EVENT, _characterInvolved.specificLocation);
         (interaction as ImproveRelationsEvent).SetTargetFaction(targetFaction);
         interaction.SetCanInteractionBeDoneAction(IsImproveRelationsValid);
         _characterInvolved.SetForcedInteraction(interaction);

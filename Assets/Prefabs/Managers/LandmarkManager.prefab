@@ -373,8 +373,8 @@ MonoBehaviour:
       tintSprite: {fileID: 21300000, guid: 2509d8d1c25f61343a7e20c936950617, type: 3}
       animation: {fileID: 0}
     elvenLandmarkTileSprites:
-    - mainSprite: {fileID: 21300000, guid: 3a45dae052a768e45b88c6a722e03f8d, type: 3}
-      tintSprite: {fileID: 21300000, guid: 9f89551edef6d6743a2486dea9f60a21, type: 3}
+    - mainSprite: {fileID: 21300000, guid: a35ec4294aacc5d45a5062db0a45d55d, type: 3}
+      tintSprite: {fileID: 21300000, guid: 2676d8f62a64675408e6e640dfdf1a5c, type: 3}
       animation: {fileID: 0}
     possibleSpawnPoints: 01000000020000000600000007000000
     isUnique: 0

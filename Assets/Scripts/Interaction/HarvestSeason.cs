@@ -16,14 +16,12 @@ public class HarvestSeason : Interaction {
     private const string Steal_Crops_Critical_Fail = "Steal Crops Critical Fail";
     private const string Do_Nothing = "Do nothing";
 
-    public HarvestSeason(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.HARVEST_SEASON, 70) {
+    public HarvestSeason(Area interactable) : base(interactable, INTERACTION_TYPE.HARVEST_SEASON, 70) {
         _name = "Harvest Season";
     }
 
     #region Overrides
     public override void CreateStates() {
-        farm = interactable;
-
         InteractionState startState = new InteractionState("Start", this);
         InteractionState burnFarmSuccess = new InteractionState(Burn_Farm_Success, this);
         InteractionState burnFarmFail = new InteractionState(Burn_Farm_Fail, this);

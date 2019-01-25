@@ -129,9 +129,9 @@ public class LandmarkManager : MonoBehaviour {
         if (landmarkOnTile == null) {
             return;
         }
-        while (landmarkOnTile.charactersAtLocation.Count != 0) {
-            landmarkOnTile.RemoveCharacterFromLocation(landmarkOnTile.charactersAtLocation[0]);
-        }
+        //while (landmarkOnTile.charactersAtLocation.Count != 0) {
+        //    landmarkOnTile.RemoveCharacterFromLocation(landmarkOnTile.charactersAtLocation[0]);
+        //}
         //while (landmarkOnTile.charactersWithHomeOnLandmark.Count != 0) {
         //    landmarkOnTile.charactersWithHomeOnLandmark[0].SetHome(null);
         //    landmarkOnTile.RemoveCharacterHomeOnLandmark(landmarkOnTile.charactersWithHomeOnLandmark[0]);
@@ -448,17 +448,6 @@ public class LandmarkManager : MonoBehaviour {
         }
         return null;
     }
-    public List<BaseLandmark> GetAllLandmarksWithQuestBoard() {
-        List<BaseLandmark> allLandmarks = GetAllLandmarks();
-        List<BaseLandmark> relevantLandmarks = new List<BaseLandmark>();
-        for (int i = 0; i < allLandmarks.Count; i++) {
-            BaseLandmark currLandmark = allLandmarks[i];
-            if (currLandmark.HasQuestBoard()) {
-                relevantLandmarks.Add(currLandmark);
-            }
-        }
-        return relevantLandmarks;
-    }
     #endregion
 
     #region Utilities
@@ -721,5 +710,23 @@ public class LandmarkManager : MonoBehaviour {
         defaultPos.y -= 1f;
         return defaultPos;
     }
-#endregion
+    #endregion
+
+    #region Location Structures
+    public LocationStructure CreateNewStructureAt(Area location, STRUCTURE_TYPE type, bool isInside = true) {
+        LocationStructure createdStructure = null;
+        switch (type) {
+            case STRUCTURE_TYPE.DWELLING:
+                createdStructure = new Dwelling(location, isInside);
+                break;
+            default:
+                createdStructure = new LocationStructure(type, location, isInside);
+                break;
+        }
+        if (createdStructure != null) {
+            location.AddStructure(createdStructure);
+        }
+        return createdStructure;
+    }
+    #endregion
 }

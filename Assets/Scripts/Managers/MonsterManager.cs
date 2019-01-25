@@ -145,88 +145,15 @@ public class MonsterManager : MonoBehaviour {
         monsterParty.CreateIcon();
         monsterParty.icon.SetPosition(landmark.tileLocation.transform.position);
 #endif
-        landmark.AddCharacterToLocation(monsterParty);
+        //landmark.AddCharacterToLocation(monsterParty);
         allMonsterParties.Add(monsterParty);
         return monsterParty;
     }
-    public void DespawnMonsterPartyOnLandmark(BaseLandmark landmark, MonsterParty monsterParty) {
-        landmark.RemoveCharacterFromLocation(monsterParty);
-        RemoveMonster(monsterParty);
-#if !WORLD_CREATION_TOOL
-        GameObject.Destroy(monsterParty.icon.gameObject);
-#endif
-    }
-    //public void DespawnMonsterOnLandmark(BaseLandmark landmark, Monster monster) {
-    //    landmark.RemoveCharacterFromLocation(monster.party);
-    //    //RemoveMonster(monster);
-    //}
     public void RemoveMonster(MonsterParty party) {
         allMonsterParties.Remove(party);
 #if !WORLD_CREATION_TOOL
         GameObject.Destroy(party.icon.gameObject);
 #endif
-    }
-    
-    public bool HasMonsterOnTile(HexTile tile) {
-        for (int i = 0; i < allMonsterParties.Count; i++) {
-            MonsterParty currMonsterParty = allMonsterParties[i];
-            if (currMonsterParty.specificLocation.locIdentifier == LOCATION_IDENTIFIER.HEXTILE && currMonsterParty.specificLocation.id == tile.id) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public bool HasMonsterOnLandmark(BaseLandmark landmark) {
-        for (int i = 0; i < landmark.charactersAtLocation.Count; i++) {
-            Party currParty = landmark.charactersAtLocation[i];
-            if (currParty is MonsterParty) {
-                return true;
-            }
-        }
-        return false;
-    }
-    
-    public List<MonsterParty> GetMonstersOnTile(HexTile tile) {
-        List<MonsterParty> monsterParties = new List<MonsterParty>();
-        for (int i = 0; i < allMonsterParties.Count; i++) {
-            MonsterParty currMonsterParty = allMonsterParties[i];
-            if (currMonsterParty.specificLocation.locIdentifier == LOCATION_IDENTIFIER.HEXTILE && currMonsterParty.specificLocation.id == tile.id) {
-                monsterParties.Add(currMonsterParty);
-            }
-        }
-        return monsterParties;
-    }
-    public void RemoveMonstersOnTile(HexTile tile) {
-        List<MonsterParty> monsterParties = GetMonstersOnTile(tile);
-        for (int i = 0; i < monsterParties.Count; i++) {
-            RemoveMonster(monsterParties[i]);
-        }
-    }
-
-    public void LoadMonsters(WorldSaveData data) {
-        if (data.monstersData != null) {
-            for (int i = 0; i < data.monstersData.Count; i++) {
-                MonsterSaveData monsterData = data.monstersData[i];
-                MonsterPartyComponent partyComp = GetMonsterPartySetup(monsterData.monsterName);
-                if (monsterData.locationType == LOCATION_IDENTIFIER.LANDMARK) {
-                    BaseLandmark landmark = LandmarkManager.Instance.GetLandmarkByID(monsterData.locationID);
-                    SpawnMonsterPartyOnLandmark(landmark, partyComp);
-                }
-
-//                if (monsterData.locationType == LOCATION_IDENTIFIER.HEXTILE) {
-//#if WORLD_CREATION_TOOL
-//                    HexTile tile = worldcreator.WorldCreatorManager.Instance.GetHexTile(monsterData.locationID);
-//#else
-//                    HexTile tile = GridMap.Instance.GetHexTile(monsterData.locationID);
-//#endif
-//                    SpawnMonsterOnTile(tile, monsterData);
-//                } else if (monsterData.locationType == LOCATION_IDENTIFIER.LANDMARK) {
-//                    BaseLandmark landmark = LandmarkManager.Instance.GetLandmarkByID(monsterData.locationID);
-//                    SpawnMonsterOnLandmark(landmark, monsterData);
-//                }
-            }
-        }
     }
     public Monster GetMonsterByID(int id) {
         for (int i = 0; i < allMonsters.Count; i++) {

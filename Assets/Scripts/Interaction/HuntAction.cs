@@ -30,7 +30,7 @@ public class HuntAction : Interaction {
         get { return _targetCharacter; }
     }
 
-    public HuntAction(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.HUNT_ACTION, 0) {
+    public HuntAction(Area interactable) : base(interactable, INTERACTION_TYPE.HUNT_ACTION, 0) {
         _name = "Hunt Action";
     }
 
@@ -501,8 +501,8 @@ public class HuntAction : Interaction {
     }
     public Character GetTargetCharacter(Character characterInvolved) {
         WeightedDictionary<Character> characterWeights = new WeightedDictionary<Character>();
-        for (int i = 0; i < interactable.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
-            Character currCharacter = interactable.tileLocation.areaOfTile.charactersAtLocation[i];
+        for (int i = 0; i < interactable.charactersAtLocation.Count; i++) {
+            Character currCharacter = interactable.charactersAtLocation[i];
             if (currCharacter.id != characterInvolved.id && !currCharacter.currentParty.icon.isTravelling && currCharacter.IsInOwnParty() && !currCharacter.isLeader && currCharacter.race != RACE.SKELETON) {
                 int weight = 0;
                 if (currCharacter.isFactionless) {

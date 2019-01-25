@@ -7,16 +7,6 @@ public class Civilian : CharacterRole {
 
     public Civilian(Character character) : base(character) {
         _roleType = CHARACTER_ROLE.CIVILIAN;
-
-        SetFullness(100);
-        SetEnergy(100);
-        SetFun(60);
-        //SetPrestige(40);
-        //SetSanity(100);
-        //UpdateSafety();
-        UpdateHappiness();
-
-        //_character.onDailyAction += StartDepletion;
     }
 
     //#region Overrides
@@ -40,11 +30,4 @@ public class Civilian : CharacterRole {
     //    }
     //}
 
-    private void StartDepletion() {
-        DepleteFullness();
-        DepleteEnergy();
-        DepleteFun();
-        //DepleteSanity();
-        //DepletePrestige();
-    }
 }

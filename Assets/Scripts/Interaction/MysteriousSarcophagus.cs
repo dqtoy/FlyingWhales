@@ -20,7 +20,7 @@ public class MysteriousSarcophagus : Interaction {
 
     private Character _undeadCharacter;
 
-    public MysteriousSarcophagus(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.MYSTERIOUS_SARCOPHAGUS, 110) {
+    public MysteriousSarcophagus(Area interactable) : base(interactable, INTERACTION_TYPE.MYSTERIOUS_SARCOPHAGUS, 110) {
         _name = "Mysterious Sarcophagus";
     }
 
@@ -224,7 +224,7 @@ public class MysteriousSarcophagus : Interaction {
         state.AddLogFiller(new LogFiller(null, _undeadCharacter.characterClass.className, LOG_IDENTIFIER.STRING_2));
     }
     private void UndeadKilledMinionEffect(InteractionState state) {
-        if(!interactable.tileLocation.areaOfTile.areaResidents.Contains(_undeadCharacter)) {
+        if(!interactable.areaResidents.Contains(_undeadCharacter)) {
             Log stateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), state.name.ToLower() + "-notresident" + "_description");
             stateDescriptionLog.AddToFillers(null, Utilities.NormalizeString(_undeadCharacter.race.ToString()), LOG_IDENTIFIER.STRING_1);
             stateDescriptionLog.AddToFillers(null, _undeadCharacter.characterClass.className, LOG_IDENTIFIER.STRING_2);
@@ -247,12 +247,12 @@ public class MysteriousSarcophagus : Interaction {
             log.AddToFillers(_characterInvolved, _characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(null, Utilities.NormalizeString(_undeadCharacter.race.ToString()), LOG_IDENTIFIER.STRING_1);
             log.AddToFillers(null, _undeadCharacter.characterClass.className, LOG_IDENTIFIER.STRING_2);
-            log.AddToFillers(interactable.tileLocation.areaOfTile, interactable.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
+            log.AddToFillers(interactable, interactable.name, LOG_IDENTIFIER.LANDMARK_1);
             state.AddLogToInvolvedObjects(log);
         }
     }
     private void MinionFleesSuccessEffect(InteractionState state) {
-        if (!interactable.tileLocation.areaOfTile.areaResidents.Contains(_undeadCharacter)) {
+        if (!interactable.areaResidents.Contains(_undeadCharacter)) {
             Log stateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), state.name.ToLower() + "-notresident" + "_description");
             stateDescriptionLog.AddToFillers(null, Utilities.NormalizeString(_undeadCharacter.race.ToString()), LOG_IDENTIFIER.STRING_1);
             stateDescriptionLog.AddToFillers(null, _undeadCharacter.characterClass.className, LOG_IDENTIFIER.STRING_2);
@@ -273,7 +273,7 @@ public class MysteriousSarcophagus : Interaction {
             log.AddToFillers(_characterInvolved, _characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(null, Utilities.NormalizeString(_undeadCharacter.race.ToString()), LOG_IDENTIFIER.STRING_1);
             log.AddToFillers(null, _undeadCharacter.characterClass.className, LOG_IDENTIFIER.STRING_2);
-            log.AddToFillers(interactable.tileLocation.areaOfTile, interactable.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
+            log.AddToFillers(interactable, interactable.name, LOG_IDENTIFIER.LANDMARK_1);
             state.AddLogToInvolvedObjects(log);
         }
     }
@@ -284,7 +284,7 @@ public class MysteriousSarcophagus : Interaction {
         state.AddLogFiller(new LogFiller(null, _undeadCharacter.characterClass.className, LOG_IDENTIFIER.STRING_2));
     }
     private void FleeingMinionKilledEffect(InteractionState state) {
-        if (!interactable.tileLocation.areaOfTile.areaResidents.Contains(_undeadCharacter)) {
+        if (!interactable.areaResidents.Contains(_undeadCharacter)) {
             Log stateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), state.name.ToLower() + "-notresident" + "_description");
             stateDescriptionLog.AddToFillers(null, Utilities.NormalizeString(_undeadCharacter.race.ToString()), LOG_IDENTIFIER.STRING_1);
             stateDescriptionLog.AddToFillers(null, _undeadCharacter.characterClass.className, LOG_IDENTIFIER.STRING_2);
@@ -307,7 +307,7 @@ public class MysteriousSarcophagus : Interaction {
             log.AddToFillers(_characterInvolved, _characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(null, Utilities.NormalizeString(_undeadCharacter.race.ToString()), LOG_IDENTIFIER.STRING_1);
             log.AddToFillers(null, _undeadCharacter.characterClass.className, LOG_IDENTIFIER.STRING_2);
-            log.AddToFillers(interactable.tileLocation.areaOfTile, interactable.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
+            log.AddToFillers(interactable, interactable.name, LOG_IDENTIFIER.LANDMARK_1);
             state.AddLogToInvolvedObjects(log);
         }
     }
@@ -316,16 +316,16 @@ public class MysteriousSarcophagus : Interaction {
     private void SpawnUndeadCharacter() {
         RACE race = RACE.FAERY;
         int levelModifier = 0;
-        if (interactable.tileLocation.areaOfTile.name == "Tessellated Triangle") {
+        if (interactable.name == "Tessellated Triangle") {
             race = RACE.FAERY;
             levelModifier = 6;
-        } else if (interactable.tileLocation.areaOfTile.name == "Gloomhollow Crypts") {
+        } else if (interactable.name == "Gloomhollow Crypts") {
             race = RACE.SKELETON;
             levelModifier = 3;
         }
         WeightedDictionary<AreaCharacterClass> classWeights = LandmarkManager.Instance.GetDefaultClassWeights(race);
         string className = classWeights.PickRandomElementGivenWeights().className;
-        _undeadCharacter = CharacterManager.Instance.CreateNewCharacter(className, race, Utilities.GetRandomGender(), interactable.tileLocation.areaOfTile.owner, interactable);
+        _undeadCharacter = CharacterManager.Instance.CreateNewCharacter(className, race, Utilities.GetRandomGender(), interactable.owner, interactable);
         _undeadCharacter.SetLevel(FactionManager.Instance.GetAverageFactionLevel() + levelModifier);
     }
 }

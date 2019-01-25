@@ -30,23 +30,23 @@ public class Instigator : Job {
     protected override bool IsTokenCompatibleWithJob(Token token) {
         if(token.tokenType == TOKEN_TYPE.CHARACTER) {
             CharacterToken characterToken = token as CharacterToken;
-            return characterToken.character.IsInOwnParty() && characterToken.character.doNotDisturb <= 0 && characterToken.character.specificLocation.tileLocation.areaOfTile.id == _character.specificLocation.tileLocation.areaOfTile.id && !characterToken.character.currentParty.icon.isTravelling;
+            return characterToken.character.IsInOwnParty() && characterToken.character.doNotDisturb <= 0 && characterToken.character.specificLocation.id == _character.specificLocation.id && !characterToken.character.currentParty.icon.isTravelling;
         } else if (token.tokenType == TOKEN_TYPE.LOCATION) {
             LocationToken locationToken = token as LocationToken;
             //If target area and current area have factions, and target area's faction is different from current area's faction, and target area is not the current area - return true
-            return locationToken.location.owner != null && _character.specificLocation.tileLocation.areaOfTile.owner != null
-                && locationToken.location.owner.id != _character.specificLocation.tileLocation.areaOfTile.owner.id
-                && locationToken.location.id != _character.specificLocation.tileLocation.areaOfTile.id;
+            return locationToken.location.owner != null && _character.specificLocation.owner != null
+                && locationToken.location.owner.id != _character.specificLocation.owner.id
+                && locationToken.location.id != _character.specificLocation.id;
         } else if (token.tokenType == TOKEN_TYPE.FACTION) {
             FactionToken factionToken = token as FactionToken;
             //If current area has owner and target faction is not the current area's owner - return true
-            return _character.specificLocation.tileLocation.areaOfTile.owner != null
-                && factionToken.faction.id != _character.specificLocation.tileLocation.areaOfTile.owner.id;
+            return _character.specificLocation.owner != null
+                && factionToken.faction.id != _character.specificLocation.owner.id;
         }
         return base.IsTokenCompatibleWithJob(token);
     }
     public override void CaptureRandomLandmarkEvent() {
-        Area area = _character.specificLocation.tileLocation.areaOfTile;
+        Area area = _character.specificLocation;
         if (area == null) {
             //Current location has no area
             return;
@@ -89,8 +89,8 @@ public class Instigator : Job {
         if (result == "Success") {
             SetCreatedInteraction(choices[UnityEngine.Random.Range(0, choices.Count)]);
         } else if (result == "Crit Fail") {
-            Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_CRITICAL_FAIL, area.coreTile.landmarkOnTile);
-            _character.specificLocation.tileLocation.landmarkOnTile.AddInteraction(interaction);
+            Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_CRITICAL_FAIL, area);
+            _character.specificLocation.coreTile.landmarkOnTile.AddInteraction(interaction);
             SetCreatedInteraction(interaction);
         }
         _createdInteraction.AddEndInteractionAction(() => SetJobActionPauseState(false));
@@ -119,12 +119,12 @@ public class Instigator : Job {
     }
     private Character GetTargetCharacter(INTERACTION_TYPE type) {
         if(type == INTERACTION_TYPE.INDUCE_GRUDGE) {
-            Area targetArea = character.specificLocation.tileLocation.areaOfTile;
+            Area targetArea = character.specificLocation;
             for (int i = 0; i < targetArea.areaResidents.Count; i++) {
                 Character resident = targetArea.areaResidents[i];
                 if (resident.forcedInteraction == null && resident.doNotDisturb <= 0 && !resident.currentParty.icon.isTravelling &&
                     !resident.alreadyTargetedByGrudge && !resident.isDefender && (resident.race == RACE.HUMANS || resident.race == RACE.ELVES || resident.race == RACE.GOBLIN) 
-                    && resident.specificLocation.tileLocation.areaOfTile.id == targetArea.id) {
+                    && resident.specificLocation.id == targetArea.id) {
                     resident.SetAlreadyTargetedByGrudge(true);
                     return resident;
                 }

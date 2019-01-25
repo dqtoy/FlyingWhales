@@ -6,7 +6,7 @@ public class CharacterFlees : Interaction {
 
     private Area targetArea;
 
-    public CharacterFlees(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.CHARACTER_FLEES, 0) {
+    public CharacterFlees(Area interactable) : base(interactable, INTERACTION_TYPE.CHARACTER_FLEES, 0) {
         _name = "Character Flees";
     }
 
@@ -32,7 +32,7 @@ public class CharacterFlees : Interaction {
 
     private Area GetTargetArea() {
         List<Area> choices = new List<Area>(LandmarkManager.Instance.allAreas);
-        choices.Remove(_characterInvolved.specificLocation.tileLocation.areaOfTile);
+        choices.Remove(_characterInvolved.specificLocation);
 
         if (choices.Count > 0) {
             return choices[Random.Range(0, choices.Count)];

@@ -32,35 +32,35 @@ public class StructureObject : PooledObject {
     }
     #endregion
 
-    public void Initialize(STRUCTURE_TYPE structureType, Color structureColor,  STRUCTURE_STATE structureState, HexTile hexTile) {
-        _hexTile = hexTile;
-        if(normalParents == null) {
-            normalParents = gameObject.GetComponentsInChildren<Transform>(true).Where(x => x.name == "Normal").Select(x => x.gameObject).ToArray();
-        }
-        if (ruinedParents == null) {
-            ruinedParents = gameObject.GetComponentsInChildren<Transform>(true).Where(x => x.name == "Ruined").Select(x => x.gameObject).ToArray();
-        }
-        //_structureType = structureType;
-        SetStructureState(structureState);
-        SetStructureColor(structureColor);
+    //public void Initialize(STRUCTURE_TYPE structureType, Color structureColor,  STRUCTURE_STATE structureState, HexTile hexTile) {
+    //    _hexTile = hexTile;
+    //    if(normalParents == null) {
+    //        normalParents = gameObject.GetComponentsInChildren<Transform>(true).Where(x => x.name == "Normal").Select(x => x.gameObject).ToArray();
+    //    }
+    //    if (ruinedParents == null) {
+    //        ruinedParents = gameObject.GetComponentsInChildren<Transform>(true).Where(x => x.name == "Ruined").Select(x => x.gameObject).ToArray();
+    //    }
+    //    //_structureType = structureType;
+    //    SetStructureState(structureState);
+    //    SetStructureColor(structureColor);
 
-        //if(_agentObj != null && GameManager.Instance.enableGameAgents) {
-        //    //Initialize Agent Object
-        //    CityAgent newCityAgent = new CityAgent(this);
-        //    AIBehaviour attackBehaviour = new AttackHostiles(newCityAgent);
-        //    newCityAgent.SetAttackBehaviour(attackBehaviour);
-        //    newCityAgent.SetAgentObj(_agentObj);
-        //    _agentObj.Initialize(newCityAgent, new int[] { 0 });
-        //    _agentObj.gameObject.SetActive(true);
-        //} else {
-        //    if(_agentObj != null) {
-        //        _agentObj.gameObject.SetActive(false);
-        //    }
+    //    //if(_agentObj != null && GameManager.Instance.enableGameAgents) {
+    //    //    //Initialize Agent Object
+    //    //    CityAgent newCityAgent = new CityAgent(this);
+    //    //    AIBehaviour attackBehaviour = new AttackHostiles(newCityAgent);
+    //    //    newCityAgent.SetAttackBehaviour(attackBehaviour);
+    //    //    newCityAgent.SetAgentObj(_agentObj);
+    //    //    _agentObj.Initialize(newCityAgent, new int[] { 0 });
+    //    //    _agentObj.gameObject.SetActive(true);
+    //    //} else {
+    //    //    if(_agentObj != null) {
+    //    //        _agentObj.gameObject.SetActive(false);
+    //    //    }
             
-        //}
+    //    //}
         
-        gameObject.SetActive(true);
-    }
+    //    gameObject.SetActive(true);
+    //}
 
     public void SetStructureState(STRUCTURE_STATE structureState) {
         _structureState = structureState;

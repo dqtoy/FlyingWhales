@@ -14,7 +14,7 @@ public class AssassinateActionFaction : Interaction {
         get { return _targetCharacter; }
     }
 
-    public AssassinateActionFaction(BaseLandmark interactable)
+    public AssassinateActionFaction(Area interactable)
         : base(interactable, INTERACTION_TYPE.ASSASSINATE_ACTION_FACTION, 0) {
         _name = "Assassinate Action Faction";
         _jobFilter = new JOB[] { JOB.INSTIGATOR, JOB.DIPLOMAT };
@@ -60,11 +60,11 @@ public class AssassinateActionFaction : Interaction {
         }
     }
     public override bool CanInteractionBeDoneBy(Character character) {
-        if (interactable.tileLocation.areaOfTile.IsResidentsFull()) {
+        if (interactable.IsResidentsFull()) {
             return false;
         }
         if (_targetCharacter != null) { //if there is a target character, he/she must still be in this location
-            return _targetCharacter.specificLocation.tileLocation.areaOfTile.id == interactable.tileLocation.areaOfTile.id;
+            return _targetCharacter.specificLocation.id == interactable.id;
         } else { //if there is no set target character
             if (GetTargetCharacter(character) == null) { //check if a target character can be found using the provided weights
                 return false;
@@ -132,7 +132,7 @@ public class AssassinateActionFaction : Interaction {
         /*
          Once the actual action is triggered, the character will find a random non-Warded character in the location that is a member of an Enemy or War faction.
          */
-        List<Character> choices = GetElligibleCharacters(interactable.tileLocation.areaOfTile);
+        List<Character> choices = GetElligibleCharacters(interactable);
         if (choices.Count > 0) {
             return choices[Random.Range(0, choices.Count)];
         }

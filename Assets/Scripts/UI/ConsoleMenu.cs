@@ -564,7 +564,7 @@ public class ConsoleMenu : UIMenu {
         string className = classDropdown.options[classDropdown.value].text;
         int level = int.Parse(levelInput.text);
         if(race != RACE.NONE && level > 0) {
-            Minion minion = PlayerManager.Instance.player.CreateNewMinion(className, race, false);
+            Minion minion = PlayerManager.Instance.player.CreateNewMinion(className, race);
             if(level > 1) {
                 minion.character.LevelUp(level - 1);
             }

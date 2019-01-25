@@ -59,12 +59,12 @@ public class Job {
     public virtual void CaptureRandomLandmarkEvent() {}
     public virtual void CheckTokenTriggeredEvent() {
         if (_attachedToken != null) {
-            //Area area = _character.specificLocation.tileLocation.areaOfTile;
+            //Area area = _character.specificLocation;
             //SetJobActionPauseState(true);
             //area.SetStopDefaultInteractionsState(true);
             Interaction interaction = null;
             if (_attachedToken.tokenType != TOKEN_TYPE.SPECIAL) {
-                interaction = InteractionManager.Instance.CreateNewInteraction(_tokenInteractionTypes[_attachedToken.tokenType], _character.specificLocation as BaseLandmark);
+                interaction = InteractionManager.Instance.CreateNewInteraction(_tokenInteractionTypes[_attachedToken.tokenType], _character.specificLocation);
                 //interaction.AddEndInteractionAction(() => SetJobActionPauseState(false));
                 //interaction.AddEndInteractionAction(() => ForceDefaultAllExistingInteractions());
 
@@ -72,7 +72,7 @@ public class Job {
                     CharacterToken characterToken = _attachedToken as CharacterToken;
                     characterToken.character.AddInteraction(interaction);
                 } else {
-                    _character.specificLocation.tileLocation.landmarkOnTile.AddInteraction(interaction);
+                    _character.specificLocation.coreTile.landmarkOnTile.AddInteraction(interaction);
                 }
             } else {
                 interaction = CreateSpecialTokenInteraction(_attachedToken as SpecialToken);
@@ -95,10 +95,10 @@ public class Job {
             SpecialToken specialToken = token as SpecialToken;
             if (specialToken.specialTokenType == SPECIAL_TOKEN.BOOK_OF_THE_DEAD) {
                 //location is Gloomhollow Crypts, location is not owned by any Faction
-                if (_character.specificLocation.tileLocation.areaOfTile.name == "Gloomhollow Crypts" && _character.specificLocation.tileLocation.areaOfTile.owner == null) {
-                    for (int i = 0; i < _character.specificLocation.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
+                if (_character.specificLocation.name == "Gloomhollow Crypts" && _character.specificLocation.owner == null) {
+                    for (int i = 0; i < _character.specificLocation.charactersAtLocation.Count; i++) {
                         //location has a male Human, Goblin or Elven character that is part of a Faction
-                        Character characterAtLocation = _character.specificLocation.tileLocation.areaOfTile.charactersAtLocation[i];
+                        Character characterAtLocation = _character.specificLocation.charactersAtLocation[i];
                         if (characterAtLocation.IsInOwnParty() && character.doNotDisturb <=0 && !characterAtLocation.currentParty.icon.isTravelling && characterAtLocation.faction != FactionManager.Instance.neutralFaction && !characterAtLocation.isLeader && characterAtLocation.gender == GENDER.MALE &&
                             (characterAtLocation.race == RACE.HUMANS || characterAtLocation.race == RACE.GOBLIN || characterAtLocation.race == RACE.ELVES)) {
                             return true;
@@ -111,10 +111,10 @@ public class Job {
     }
     public virtual Interaction CreateSpecialTokenInteraction(SpecialToken specialToken) {
         if(specialToken.specialTokenType == SPECIAL_TOKEN.BOOK_OF_THE_DEAD) {
-            Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.CREATE_NECROMANCER, _character.specificLocation as BaseLandmark);
-            for (int i = 0; i < _character.specificLocation.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
+            Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.CREATE_NECROMANCER, _character.specificLocation);
+            for (int i = 0; i < _character.specificLocation.charactersAtLocation.Count; i++) {
                 //location has a male Human, Goblin or Elven character that is part of a Faction
-                Character characterAtLocation = _character.specificLocation.tileLocation.areaOfTile.charactersAtLocation[i];
+                Character characterAtLocation = _character.specificLocation.charactersAtLocation[i];
                 if (characterAtLocation.IsInOwnParty() && character.doNotDisturb <= 0 && !characterAtLocation.currentParty.icon.isTravelling && characterAtLocation.faction != FactionManager.Instance.neutralFaction && !characterAtLocation.isLeader && characterAtLocation.gender == GENDER.MALE &&
                     (characterAtLocation.race == RACE.HUMANS || characterAtLocation.race == RACE.GOBLIN || characterAtLocation.race == RACE.ELVES)) {
                     characterAtLocation.AddInteraction(interaction);
@@ -158,8 +158,8 @@ public class Job {
             Messenger.AddListener(Signals.DAY_ENDED, CatchRandomEvent);
         }
         if (_useInteractionTimer) {
-            _character.specificLocation.tileLocation.areaOfTile.coreTile.landmarkOnTile.landmarkVisual.SetAndStartInteractionTimerJob(_actionDuration);
-            _character.specificLocation.tileLocation.areaOfTile.coreTile.landmarkOnTile.landmarkVisual.ShowInteractionTimerJob();
+            _character.specificLocation.coreTile.landmarkOnTile.landmarkVisual.SetAndStartInteractionTimerJob(_actionDuration);
+            _character.specificLocation.coreTile.landmarkOnTile.landmarkVisual.ShowInteractionTimerJob();
         }
     }
 
@@ -168,8 +168,8 @@ public class Job {
     public void StopJobAction() {
         _startedJobAction = false;
         if (_useInteractionTimer) {
-            _character.specificLocation.tileLocation.areaOfTile.coreTile.landmarkOnTile.landmarkVisual.StopInteractionTimerJob();
-            _character.specificLocation.tileLocation.areaOfTile.coreTile.landmarkOnTile.landmarkVisual.HideInteractionTimerJob();
+            _character.specificLocation.coreTile.landmarkOnTile.landmarkVisual.StopInteractionTimerJob();
+            _character.specificLocation.coreTile.landmarkOnTile.landmarkVisual.HideInteractionTimerJob();
         }
         //if (_actionDuration != -1) {
         //    Messenger.RemoveListener(Signals.DAY_STARTED, CheckJobAction);
@@ -181,8 +181,8 @@ public class Job {
     }
     public void StopCreatedInteraction() {
         if(_createdInteraction != null) {
-            _createdInteraction.interactable.landmarkVisual.StopInteractionTimer();
-            _createdInteraction.interactable.landmarkVisual.HideInteractionTimer();
+            //_createdInteraction.interactable.landmarkVisual.StopInteractionTimer();
+            //_createdInteraction.interactable.landmarkVisual.HideInteractionTimer();
             string summary = string.Empty;
             _createdInteraction.TimedOutRunDefault(ref summary);
         }
@@ -201,7 +201,7 @@ public class Job {
     protected void SetJobActionPauseState(bool state) {
         _isJobActionPaused = state;
         if (_useInteractionTimer) {
-            _character.specificLocation.tileLocation.areaOfTile.coreTile.landmarkOnTile.landmarkVisual.SetTimerPauseStateJob(_isJobActionPaused);
+            _character.specificLocation.coreTile.landmarkOnTile.landmarkVisual.SetTimerPauseStateJob(_isJobActionPaused);
         }
     }
     public void SetCreatedInteraction(Interaction interaction) {
@@ -221,26 +221,24 @@ public class Job {
         //if(_characterInteractions != null) {
         //    INTERACTION_TYPE type = _characterInteractions[UnityEngine.Random.Range(0, _characterInteractions.Length)];
         //    if (InteractionManager.Instance.CanCreateInteraction(type, character)) {
-        //        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(type, character.specificLocation as BaseLandmark);
+        //        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(type, character.specificLocation.coreTile.landmarkOnTile);
         //        character.AddInteraction(interaction);
         //    }
         //}
     //}
     public void ForceDefaultAllExistingInteractions() {
-        _character.specificLocation.tileLocation.areaOfTile.SetStopDefaultInteractionsState(false);
+        _character.specificLocation.SetStopDefaultInteractionsState(false);
         string summary = "";
-        InteractionManager.Instance.DefaultInteractionsInArea(_character.specificLocation.tileLocation.areaOfTile, ref summary);
-        //_character.specificLocation.tileLocation.areaOfTile.DefaultAllExistingInteractions();
+        InteractionManager.Instance.DefaultInteractionsInArea(_character.specificLocation, ref summary);
+        //_character.specificLocation.DefaultAllExistingInteractions();
     }
     public int GetSupplyObtained(Area targetArea) {
         //When a raid succeeds, the amount of Supply obtained is based on character level.
         //5% to 15% of location's supply 
         //+1% every other level starting at level 6
-        if (character.homeLandmark == null) {
+        if (character.homeArea == null) {
             throw new System.Exception(GameManager.Instance.TodayLogString() + character.name + " does not have a home, but GetSupplyObtained needs one to function.");
         }
-        Area characterHomeArea = character.homeLandmark.tileLocation.areaOfTile;
-        //Area targetArea = character.specificLocation.tileLocation.areaOfTile;
         int supplyObtainedPercent = Random.Range(5, 16);
         supplyObtainedPercent += (character.level - 5);
 
@@ -250,10 +248,10 @@ public class Job {
     public Interaction CreateExplorerEvent() {
         List<INTERACTION_TYPE> choices = GetValidExplorerEvents();
         if (choices.Count > 0) {
-            Area area = _character.specificLocation.tileLocation.areaOfTile;
+            Area area = _character.specificLocation;
             INTERACTION_TYPE chosenType = choices[Random.Range(0, choices.Count)];
             //Get Random Explorer Event
-            return InteractionManager.Instance.CreateNewInteraction(chosenType, area.coreTile.landmarkOnTile);
+            return InteractionManager.Instance.CreateNewInteraction(chosenType, area);
         }
         return null;
     }

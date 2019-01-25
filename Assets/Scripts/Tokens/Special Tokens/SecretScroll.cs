@@ -31,7 +31,7 @@ public class SecretScroll : SpecialToken {
     }
     public override bool CanBeUsedBy(Character sourceCharacter) {
         if (!sourceCharacter.isFactionless) {
-            Area areaLocation = sourceCharacter.specificLocation.tileLocation.areaOfTile;
+            Area areaLocation = sourceCharacter.specificLocation;
             if (areaLocation != null
                 && areaLocation.owner != null
                 && areaLocation.owner.id == sourceCharacter.faction.id

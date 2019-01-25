@@ -41,7 +41,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     protected SIDES _currentSide;
     protected Color _characterColor;
     protected CharacterBattleOnlyTracker _battleOnlyTracker;
-    protected BaseLandmark _homeLandmark;
+    protected Area _homeArea;
     protected RaceSetting _raceSetting;
     protected MonsterParty _ownParty;
     protected CharacterPortrait _characterPortrait;
@@ -49,7 +49,6 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     protected Minion _minion;
     //private Combat _currentCombat;
     //private List<BodyPart> _bodyParts;
-    protected List<CharacterAction> _miscActions;
     protected List<Skill> _skills;
     protected List<Interaction> _currentInteractions;
     protected Dictionary<ELEMENT, float> _elementalWeaknesses;
@@ -217,7 +216,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     public RACE race {
         get { return _raceSetting.race; }
     }
-    public ILocation specificLocation {
+    public Area specificLocation {
         get { return _currentParty.specificLocation; }
     }
     public CharacterBattleOnlyTracker battleOnlyTracker {
@@ -226,8 +225,8 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     public Faction faction {
         get { return null; }
     }
-    public BaseLandmark homeLandmark {
-        get { return _homeLandmark; }
+    public Area homeArea {
+        get { return _homeArea; }
     }
     //public Area home {
     //    get { return null; }
@@ -284,9 +283,9 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     public List<Item> inventory {
         get { return null; }
     }
-    public List<CharacterAttribute> attributes {
-        get { return null; }
-    }
+    //public List<CharacterAttribute> attributes {
+    //    get { return null; }
+    //}
     public List<Log> history {
         get { return null; }
     }
@@ -311,14 +310,8 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     public Party ownParty {
         get { return _ownParty; }
     }
-    public List<CharacterAction> miscActions {
-        get { return _miscActions; }
-    }
     public Party currentParty {
         get { return _currentParty; }
-    }
-    public CharacterActionQueue<ActionQueueItem> actionQueue {
-        get { return null; }
     }
     public Dictionary<STAT, float> buffs {
         get { return _buffs; }
@@ -467,7 +460,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     }
     public void Death() {
         _isDead = true;
-        Messenger.RemoveListener<BaseLandmark>(Signals.DESTROY_LANDMARK, OnDestroyLandmark);
+        //Messenger.RemoveListener<BaseLandmark>(Signals.DESTROY_LANDMARK, OnDestroyLandmark);
         Messenger.Broadcast(Signals.MONSTER_DEATH, this);
         if(_currentParty.id != _ownParty.id) {
             //_currentParty.RemoveCharacter(this);
@@ -537,12 +530,6 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     public void SetSleeping(bool state) {
         _isSleeping = state;
     }
-    public void TryToSleep() {
-        if (!_isSleeping && _currentParty.specificLocation.tileLocation.id == _homeLandmark.tileLocation.id) {
-            _currentParty.EndAction();
-            (_currentParty as MonsterParty).actionData.AssignAction(ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.HIBERNATE), _ownParty.icharacterObject);
-        }
-    }
     #endregion
 
     #region Interface
@@ -551,7 +538,6 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     }
     private void BaseInitialize() {
         _isDead = false;
-        _miscActions = new List<CharacterAction>();
         _raceSetting = RaceManager.Instance.racesDictionary[_type.ToString()].CreateNewCopy();
         _battleOnlyTracker = new CharacterBattleOnlyTracker();
         _currentInteractions = new List<Interaction>();
@@ -575,11 +561,10 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
         //portraitGO.SetActive(false);
 #endif
 
-        Messenger.AddListener<BaseLandmark>(Signals.DESTROY_LANDMARK, OnDestroyLandmark);
+        //Messenger.AddListener<BaseLandmark>(Signals.DESTROY_LANDMARK, OnDestroyLandmark);
     }
     private void BaseInitializeSim() {
         _isDead = false;
-        _miscActions = new List<CharacterAction>();
         _raceSetting = JsonUtility.FromJson<RaceSetting>(System.IO.File.ReadAllText(Utilities.dataPath + "RaceSettings/" + _type.ToString() +".json"));
         _battleOnlyTracker = new CharacterBattleOnlyTracker();
         _currentInteractions = new List<Interaction>();
@@ -662,8 +647,8 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     //public void EverydayAction() {
     //    //No daily/tick action
     //}
-    public void SetHomeLandmark(BaseLandmark newHomeLandmark, bool ignoreAreaResidentCapacity = false) {
-        this._homeLandmark = newHomeLandmark;
+    public void SetHome(Area newHome) {
+        this._homeArea = newHome;
     }
     public Party CreateOwnParty() {
         //if (_ownParty != null) {
@@ -678,10 +663,10 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     public void SetOwnedParty(Party party) {
         _ownParty = party as MonsterParty;
     }
-    public CharacterAttribute AddAttribute(ATTRIBUTE tag) {
-        //No tag assignment
-        return null;
-    }
+    //public CharacterAttribute AddAttribute(ATTRIBUTE tag) {
+    //    //No tag assignment
+    //    return null;
+    //}
     public void AddHistory(Log log) {
         //No history
         Messenger.Broadcast(Signals.HISTORY_ADDED, this as object);
@@ -741,10 +726,8 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
         //}
     }
     public void OnAddedToPlayer() {
-        if (ownParty.specificLocation is BaseLandmark) {
-            ownParty.specificLocation.RemoveCharacterFromLocation(ownParty);
-        }
-        PlayerManager.Instance.player.playerArea.coreTile.landmarkOnTile.AddCharacterToLocation(ownParty);
+        ownParty.specificLocation.RemoveCharacterFromLocation(ownParty);
+        PlayerManager.Instance.player.playerArea.AddCharacterToLocation(ownParty);
     }
     public bool InviteToParty(Character inviter) {
         return false;
@@ -758,9 +741,9 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     public bool IsInOwnParty() {
         return true;
     }
-    public CharacterAttribute GetAttribute(string attribute) {
-        return null;
-    }
+    //public CharacterAttribute GetAttribute(string attribute) {
+    //    return null;
+    //}
     public void Assassinate(Character assassin) {
         Debug.Log(assassin.name + " assassinated " + name);
         Death();
@@ -796,11 +779,6 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
 
     #endregion
 
-    #region Action Queue
-    public void AddActionToQueue(CharacterAction action, IObject targetObject, Quest associatedQuest = null, int position = -1) {  }
-    public void RemoveActionFromQueue(ActionQueueItem item) {    }
-    #endregion
-
     #region Item Drops
     public List<string> GetRandomDroppedItems() {
         List<string> drops = new List<string>();
@@ -810,59 +788,6 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
             }
         }
         return drops;
-    }
-    #endregion
-
-    #region Landmark
-    private void OnDestroyLandmark(BaseLandmark landmark) {
-        if (specificLocation.tileLocation.landmarkOnTile != null && specificLocation.tileLocation.landmarkOnTile.id == landmark.id) {
-            if (!_isDead && _currentParty.icon.isTravelling) {
-                return;
-            }
-            Death();
-        }
-    }
-    #endregion
-
-    #region Action
-    private void ConstructMiscActions() {
-        CharacterAction hibernate = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.HIBERNATE);
-        CharacterAction attackLandmark = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ATTACK_LANDMARK);
-        CharacterAction attack = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ATTACK);
-        CharacterAction idle = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.IDLE);
-
-        hibernate.SetActionCategory(ACTION_CATEGORY.MISC);
-        attackLandmark.SetActionCategory(ACTION_CATEGORY.MISC);
-        attack.SetActionCategory(ACTION_CATEGORY.MISC);
-        idle.SetActionCategory(ACTION_CATEGORY.MISC);
-
-        AddMiscAction(hibernate);
-        AddMiscAction(attackLandmark);
-        AddMiscAction(attack);
-        AddMiscAction(idle);
-    }
-    public CharacterAction GetRandomMiscAction(ref IObject targetObject) {
-        return _miscActions[Utilities.rng.Next(0, _miscActions.Count)];
-    }
-    public CharacterAction GetMiscAction(ACTION_TYPE type) {
-        for (int i = 0; i < _miscActions.Count; i++) {
-            if (_miscActions[i].actionData.actionType == type) {
-                return _miscActions[i];
-            }
-        }
-        return null;
-    }
-    public void AddMiscAction(CharacterAction characterAction) {
-        CharacterAction sameAction = GetMiscAction(characterAction.actionType);
-        if (sameAction == null) {
-            _miscActions.Add(characterAction);
-        }
-    }
-    public void RemoveMiscAction(ACTION_TYPE actionType) {
-        CharacterAction sameAction = GetMiscAction(actionType);
-        if (sameAction != null) {
-            _miscActions.Remove(sameAction);
-        }
     }
     #endregion
 
@@ -946,9 +871,9 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
             if (validInteractions.GetTotalOfWeights() > 0) {
                 INTERACTION_TYPE chosenInteraction = validInteractions.PickRandomElementGivenWeights();
                 //create interaction of type
-                Interaction createdInteraction = InteractionManager.Instance.CreateNewInteraction(chosenInteraction, this.specificLocation.tileLocation.landmarkOnTile);
+                Interaction createdInteraction = InteractionManager.Instance.CreateNewInteraction(chosenInteraction, this.specificLocation);
                 if (createdInteraction != null) {
-                    (this.specificLocation as BaseLandmark).AddInteraction(createdInteraction);
+                    (this.specificLocation.coreTile.landmarkOnTile).AddInteraction(createdInteraction);
                 }
             }
         }

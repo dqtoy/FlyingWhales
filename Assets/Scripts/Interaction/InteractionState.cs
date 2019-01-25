@@ -179,7 +179,7 @@ public class InteractionState {
                 _descriptionLog.AddToFillers(interaction.characterInvolved, interaction.characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             }
             if (!_descriptionLog.HasFillerForIdentifier(LOG_IDENTIFIER.LANDMARK_1)) {
-                _descriptionLog.AddToFillers(_interaction.interactable.tileLocation.areaOfTile, _interaction.interactable.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
+                _descriptionLog.AddToFillers(_interaction.interactable, _interaction.interactable.name, LOG_IDENTIFIER.LANDMARK_1);
             }
             _description = Utilities.LogReplacer(descriptionLog);
             //InteractionUI.Instance.interactionItem.SetDescription(_description, descriptionLog);
@@ -212,7 +212,7 @@ public class InteractionState {
                 logFillers.Add(new LogFiller(interaction.characterInvolved, interaction.characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
             }
             if (!AlreadyHasLogFiller(LOG_IDENTIFIER.LANDMARK_1)) {
-                logFillers.Add(new LogFiller(interaction.interactable.tileLocation.areaOfTile, interaction.interactable.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1));
+                logFillers.Add(new LogFiller(interaction.interactable, interaction.interactable.name, LOG_IDENTIFIER.LANDMARK_1));
             }
             for (int i = 0; i < otherLogs.Count; i++) {
                 Log currLog = otherLogs[i];
@@ -222,7 +222,7 @@ public class InteractionState {
         }
     }
     public void AddLogToInvolvedObjects(Log log) {
-        _interaction.interactable.specificLocation.tileLocation.areaOfTile.AddHistory(log);
+        _interaction.interactable.AddHistory(log);
         //if (_interaction.explorerMinion != null) {
         //    _interaction.explorerMinion.character.AddHistory(log);
         //}
@@ -252,15 +252,6 @@ public class InteractionState {
     public void EndResult() {
         //AssignedMinionGoesBack();
         interaction.EndInteraction();
-    }
-    public void AssignedMinionGoesBack() {
-        if (_assignedPlayerCharacter != null && _assignedPlayerCharacter.minion != null) {
-            if (_assignedPlayerCharacter.currentParty.currentAction == null || _assignedPlayerCharacter.currentParty.iactionData.isDoneAction) {
-                _assignedPlayerCharacter.minion.GoBackFromAssignment();
-            } else {
-                _assignedPlayerCharacter.currentParty.currentAction.SetOnEndAction(() => _assignedPlayerCharacter.minion.GoBackFromAssignment());
-            }
-        }
     }
     public void ActivateDefault() {
         if(_interaction.currentState == this && !_interaction.isActivated) {

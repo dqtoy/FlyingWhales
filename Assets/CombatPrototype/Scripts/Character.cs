@@ -5,7 +5,7 @@ using System.Linq;
 using System.IO;
 using System;
 
-public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
+public class Character : ICharacter, ILeader, IInteractable {
     public delegate void OnCharacterDeath();
     public OnCharacterDeath onCharacterDeath;
 
@@ -36,8 +36,6 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     protected Faction _faction;
     protected CharacterParty _ownParty;
     protected CharacterParty _currentParty;
-    protected BaseLandmark _homeLandmark;
-    protected BaseLandmark _workplace;
     protected Region _currentRegion;
     protected Weapon _equippedWeapon;
     protected Armor _equippedArmor;
@@ -47,21 +45,15 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     protected CharacterBattleOnlyTracker _battleOnlyTracker;
     protected PortraitSettings _portraitSettings;
     protected Color _characterColor;
-    protected CharacterAction _genericWorkAction;
     protected Minion _minion;
     protected Interaction _forcedInteraction;
     protected CombatCharacter _currentCombatCharacter;
     protected PairCombatStats[] _pairCombatStats;
     protected List<Item> _inventory;
     protected List<Skill> _skills;
-    protected List<CharacterAttribute> _attributes;
     protected List<Log> _history;
-    protected List<BaseLandmark> _exploredLandmarks; //Currently only storing explored landmarks that were explored for the last 6 months
     protected List<Trait> _traits;
-    protected CharacterActionQueue<ActionQueueItem> _actionQueue;
-    protected List<CharacterAction> _miscActions;
     protected List<Interaction> _currentInteractions;
-    //protected Dictionary<Character, Relationship> _relationships;
     protected Dictionary<ELEMENT, float> _elementalWeaknesses;
     protected Dictionary<ELEMENT, float> _elementalResistances;
     protected Dictionary<Character, List<string>> _traceInfo;
@@ -91,7 +83,9 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     protected int _combatPowerFlat;
     protected int _combatPowerMultiplier;
 
-    public CharacterUIData uiData { get; private set; }
+    public Area homeArea { get; protected set; }
+    public Dwelling homeStructure { get; protected set; }
+    public LocationStructure currentStructure { get; private set; } //what structure is this character currently in.
     public Area defendingArea { get; private set; }
     public MORALITY morality { get; private set; }
     public CharacterToken characterToken { get; private set; }
@@ -146,12 +140,6 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     public RACE race {
         get { return _raceSetting.race; }
     }
-    public List<CharacterAttribute> attributes {
-        get { return _attributes; }
-    }
-    //public Dictionary<Character, Relationship> relationships {
-    //    get { return _relationships; }
-    //}
     public CharacterClass characterClass {
         get { return this._characterClass; }
     }
@@ -176,21 +164,12 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     public virtual Party currentParty {
         get { return _currentParty; }
     }
-    public CharacterAction genericWorkAction {
-        get { return _genericWorkAction; }
-    }
     public HexTile currLocation {
-        get { return (_currentParty.specificLocation != null ? _currentParty.specificLocation.tileLocation : null); }
+        get { return (_currentParty.specificLocation != null ? _currentParty.specificLocation.coreTile : null); }
     }
-    public ILocation specificLocation {
+    public Area specificLocation {
         get { return _currentParty.specificLocation; }
     }
-    //public List<BodyPart> bodyParts {
-    //    get { return this._bodyParts; }
-    //}
-    //public List<Item> equippedItems {
-    //    get { return this._equippedItems; }
-    //}
     public List<Item> inventory {
         get { return this._inventory; }
     }
@@ -215,28 +194,11 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     public string characterColorCode {
         get { return _characterColorCode; }
     }
-    public BaseLandmark homeLandmark {
-        get { return _homeLandmark; }
-    }
-    public Area homeArea {
-        get {
-            if (_homeLandmark == null) {
-                return null;
-            }
-            return _homeLandmark.tileLocation.areaOfTile;
-        }
-    }
-    public BaseLandmark workplace {
-        get { return _workplace; }
-    }
     public List<Log> history {
         get { return this._history; }
     }
     public int gold {
         get { return _gold; }
-    }
-    public List<BaseLandmark> exploredLandmarks {
-        get { return _exploredLandmarks; }
     }
     public bool isInCombat {
         get {
@@ -392,14 +354,8 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     public ICHARACTER_TYPE icharacterType {
         get { return ICHARACTER_TYPE.CHARACTER; }
     }
-    public List<CharacterAction> miscActions {
-        get { return _miscActions; }
-    }
     public Minion minion {
         get { return _minion; }
-    }
-    public CharacterActionQueue<ActionQueueItem> actionQueue {
-        get { return _actionQueue; }
     }
     public int doNotDisturb {
         get { return _doNotDisturb; }
@@ -415,9 +371,6 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     }
     public bool isLeader {
         get { return job.jobType == JOB.LEADER; }
-    }
-    public IObject questGiverObj {
-        get { return currentParty.icharacterObject; }
     }
     public QUEST_GIVER_TYPE questGiverType {
         get { return QUEST_GIVER_TYPE.CHARACTER; }
@@ -509,9 +462,6 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         //_skills = new List<Skill>();
         //_skills.Add(_characterClass.skill);
         //_skills.AddRange (GetBodyPartSkills ());
-        if (data.attributes != null) {
-            AddAttributes(data.attributes);
-        }
         //GenerateSetupTags(baseSetup);
 
         //AllocateStatPoints(10);
@@ -530,22 +480,13 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         //DetermineAllowedMiscActions();
     }
     public Character() {
-        _attributes = new List<CharacterAttribute>();
-        _exploredLandmarks = new List<BaseLandmark>();
         SetIsDead(false);
         _isFainted = false;
         //_isDefeated = false;
         //_isIdle = false;
         _traceInfo = new Dictionary<Character, List<string>>();
         _history = new List<Log>();
-        //_questData = new List<CharacterQuestData>();
-        _actionQueue = new CharacterActionQueue<ActionQueueItem>(this);
-        //previousActions = new Dictionary<CharacterTask, string>();
-        //_relationships = new Dictionary<Character, Relationship>();
-        _genericWorkAction = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.WORKING);
         _traits = new List<Trait>();
-
-        //_actionData = new ActionData(this);
 
 
         //RPG
@@ -559,7 +500,6 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         _inventory = new List<Item>();
         combatHistory = new Dictionary<int, Combat>();
         _currentInteractions = new List<Interaction>();
-        uiData = new CharacterUIData();
         characterToken = new CharacterToken(this);
         tokenInInventory = null;
         interactionWeights = new WeightedDictionary<INTERACTION_TYPE>();
@@ -572,7 +512,6 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         hairColor = Color.HSVToRGB(UnityEngine.Random.Range(0f, 360f)/360f, 25f/100f, 90f/100f);
 
         GetRandomCharacterColor();
-        ConstructDefaultMiscActions();
         //_combatHistoryID = 0;
 #if !WORLD_CREATION_TOOL
         SetDailyInteractionGenerationTick(GetMonthInteractionTick());
@@ -589,7 +528,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         //Messenger.AddListener<StructureObj, int>("CiviliansDeath", CiviliansDiedReduceSanity);
         //Messenger.AddListener<Character>(Signals.CHARACTER_REMOVED, RemoveRelationshipWith);
         //Messenger.AddListener<Area>(Signals.AREA_DELETED, OnAreaDeleted);
-        Messenger.AddListener<BaseLandmark>(Signals.DESTROY_LANDMARK, OnDestroyLandmark);
+        //Messenger.AddListener<BaseLandmark>(Signals.DESTROY_LANDMARK, OnDestroyLandmark);
         Messenger.AddListener(Signals.DAY_STARTED, DailyInteractionGeneration);
         //Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, RemoveRelationshipWith);
     }
@@ -600,7 +539,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         //Messenger.RemoveListener<StructureObj, int>("CiviliansDeath", CiviliansDiedReduceSanity);
         //Messenger.RemoveListener<Character>(Signals.CHARACTER_REMOVED, RemoveRelationshipWith);
         //Messenger.RemoveListener<Area>(Signals.AREA_DELETED, OnAreaDeleted);
-        Messenger.RemoveListener<BaseLandmark>(Signals.DESTROY_LANDMARK, OnDestroyLandmark);
+        //Messenger.RemoveListener<BaseLandmark>(Signals.DESTROY_LANDMARK, OnDestroyLandmark);
         Messenger.RemoveListener(Signals.DAY_STARTED, DailyInteractionGeneration);
         //Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, RemoveRelationshipWith);
         if (Messenger.eventTable.ContainsKey(Signals.DAY_ENDED)) {
@@ -774,18 +713,6 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
             SetHP(1);
         }
     }
-    public void Imprison() {
-        //if(_ownParty.icharacters.Count > 1) {
-        //    CreateOwnParty();
-        //}
-        if (_ownParty.characterObject.currentState.stateName != "Imprisoned") {
-            ObjectState imprisonedState = _ownParty.characterObject.GetState("Imprisoned");
-            _ownParty.characterObject.ChangeState(imprisonedState);
-
-            _ownParty.SetIsIdle(true); //this makes the character not do any action, and needs are halted
-            //Do other things when imprisoned
-        }
-    }
     //Character's death
     public void SetIsDead(bool isDead) {
         _isDead = isDead;
@@ -812,7 +739,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
             //    Log deathLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "death");
             //    deathLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             //    AddHistory(deathLog);
-            //    (currentParty.specificLocation as BaseLandmark).AddHistory(deathLog);
+            //    (currentParty.specificLocation.coreTile.landmarkOnTile).AddHistory(deathLog);
             //}
 
             //Drop all Items
@@ -822,12 +749,12 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
             while (_inventory.Count > 0) {
                 ThrowItem(_inventory[0]);
             }
-            if (ownParty.specificLocation is BaseLandmark && tokenInInventory != null) {
+            if (ownParty.specificLocation != null && tokenInInventory != null) {
                 tokenInInventory.SetOwner(null);
-                DropToken(ownParty.specificLocation as BaseLandmark);
+                DropToken(ownParty.specificLocation, currentStructure);
             }
             if (this.race != RACE.SKELETON && this.race != RACE.BEAST) {
-                ownParty.specificLocation.tileLocation.areaOfTile.AddCorpse(this);
+                ownParty.specificLocation.AddCorpse(this);
             }
             if (!IsInOwnParty()) {
                 _currentParty.RemoveCharacter(this);
@@ -864,8 +791,10 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
             if (_role != null) {
                 _role.DeathRole();
             }
-            if (_homeLandmark != null) {
-                _homeLandmark.RemoveCharacterHomeOnLandmark(this);
+            if (homeArea != null) {
+                Area home = homeArea;
+                homeArea.RemoveResident(this);
+                SetHome(home); //keep this data with character to prevent errors
             }
             //while(_tags.Count > 0){
             //	RemoveCharacterAttribute (_tags [0]);
@@ -898,7 +827,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
             Debug.Log(this.name + " died!");
             Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "death");
             log.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            //log.AddToFillers(specificLocation.tileLocation.areaOfTile, specificLocation.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
+            //log.AddToFillers(specificLocation, specificLocation.name, LOG_IDENTIFIER.LANDMARK_1);
             AddHistory(log);
         }
     }
@@ -930,9 +859,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         obtainLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         obtainLog.AddToFillers(null, item.itemName, LOG_IDENTIFIER.ITEM_1);
         AddHistory(obtainLog);
-        if (_ownParty.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
-            _ownParty.specificLocation.tileLocation.areaOfTile.AddHistory(obtainLog);
-        }
+        _ownParty.specificLocation.AddHistory(obtainLog);
 #endif
         if (broadcast) {
             Messenger.Broadcast(Signals.ITEM_OBTAINED, newItem, this);
@@ -946,13 +873,13 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         //item.SetPossessor (null);
         this._inventory.Remove(item);
         //item.exploreWeight = 15;
-        if (addInLandmark) {
-            ILocation location = _ownParty.specificLocation;
-            if (location != null && location.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
-                BaseLandmark landmark = location as BaseLandmark;
-                landmark.AddItem(item);
-            }
-        }
+        //if (addInLandmark) {
+        //    Area location = _ownParty.specificLocation;
+        //    if (location != null && location.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
+        //        BaseLandmark landmark = location as BaseLandmark;
+        //        landmark.AddItem(item);
+        //    }
+        //}
         Messenger.Broadcast(Signals.ITEM_THROWN, item, this);
     }
     internal void ThrowItem(string itemName, int quantity, bool addInLandmark = true) {
@@ -964,41 +891,17 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     }
     internal void DropItem(Item item) {
         ThrowItem(item);
-        ILocation location = _ownParty.specificLocation;
-        if (location != null && location.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
+        Area location = _ownParty.specificLocation;
+        if (location != null) {
             //BaseLandmark landmark = location as BaseLandmark;
             Log dropLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "drop_item");
             dropLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             dropLog.AddToFillers(null, item.itemName, LOG_IDENTIFIER.ITEM_1);
-            dropLog.AddToFillers(location.tileLocation.areaOfTile, location.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
+            dropLog.AddToFillers(location, location.name, LOG_IDENTIFIER.LANDMARK_1);
             AddHistory(dropLog);
-            location.tileLocation.areaOfTile.AddHistory(dropLog);
+            location.AddHistory(dropLog);
         }
 
-    }
-    internal void CheckForItemDrop() {
-        ILocation location = _ownParty.specificLocation;
-        if (location != null && location.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
-            if (UnityEngine.Random.Range(0, 100) < 3) {
-                Dictionary<Item, Character> itemPool = new Dictionary<Item, Character>();
-                List<Character> charactersToCheck = new List<Character>();
-                charactersToCheck.Add(this);
-
-                for (int i = 0; i < charactersToCheck.Count; i++) {
-                    Character currCharacter = charactersToCheck[i];
-                    for (int j = 0; j < currCharacter.inventory.Count; j++) {
-                        itemPool.Add(currCharacter.inventory[j], currCharacter);
-                    }
-                }
-
-                //Drop a random item from the pool
-                if (itemPool.Count > 0) {
-                    Item chosenItem = itemPool.Keys.ElementAt(UnityEngine.Random.Range(0, itemPool.Count));
-                    Character owner = itemPool[chosenItem];
-                    owner.DropItem(chosenItem);
-                }
-            }
-        }
     }
     public void EquipItem(string itemName) {
         Item item = ItemManager.Instance.CreateNewItemInstance(itemName);
@@ -1483,258 +1386,6 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     }
     #endregion
 
-    #region Character Tags
-    //public void AssignInitialAttributes() {
-    //    int tagChance = UnityEngine.Random.Range(0, 100);
-    //    ATTRIBUTE[] initialTags = (ATTRIBUTE[])System.Enum.GetValues(typeof(ATTRIBUTE));
-    //    for (int j = 0; j < initialTags.Length; j++) {
-    //        ATTRIBUTE tag = initialTags[j];
-    //        if (tagChance < Utilities.GetTagWorldGenChance(tag)) {
-    //            AddAttribute(tag);
-    //        }
-    //    }
-    //}
-    //      public CharacterAttribute AddAttribute(ATTRIBUTE tag) {
-    //	if(HasAttribute(tag)){
-    //		return null;
-    //	}
-    //	CharacterAttribute charTag = null;
-    //	switch (tag) {
-    //          case ATTRIBUTE.HUNGRY:
-    //              charTag = new Hungry(this);
-    //              break;
-    //          case ATTRIBUTE.FAMISHED:
-    //              charTag = new Famished(this);
-    //              break;
-    //          case ATTRIBUTE.TIRED:
-    //              charTag = new Tired(this);
-    //              break;
-    //          case ATTRIBUTE.EXHAUSTED:
-    //              charTag = new Exhausted(this);
-    //              break;
-    //          case ATTRIBUTE.SAD:
-    //              charTag = new Sad(this);
-    //              break;
-    //          case ATTRIBUTE.DEPRESSED:
-    //              charTag = new Depressed(this);
-    //              break;
-    //          case ATTRIBUTE.ANXIOUS:
-    //              charTag = new Anxious(this);
-    //              break;
-    //          case ATTRIBUTE.INSECURE:
-    //              charTag = new Insecure(this);
-    //              break;
-    //          case ATTRIBUTE.DRUNK:
-    //              charTag = new Drunk(this);
-    //              break;
-    //          case ATTRIBUTE.DISTURBED:
-    //              charTag = new Disturbed(this);
-    //              break;
-    //          case ATTRIBUTE.CRAZED:
-    //              charTag = new Crazed(this);
-    //              break;
-    //          case ATTRIBUTE.DEMORALIZED:
-    //              charTag = new Demoralized(this);
-    //              break;
-    //          case ATTRIBUTE.STARVING:
-    //              charTag = new Starving(this);
-    //              break;
-    //          case ATTRIBUTE.WOUNDED:
-    //              charTag = new Wounded(this);
-    //              break;
-    //          case ATTRIBUTE.WRECKED:
-    //              charTag = new Wrecked(this);
-    //              break;
-    //          case ATTRIBUTE.IMPULSIVE:
-    //              charTag = new Impulsive(this);
-    //              break;
-    //          case ATTRIBUTE.BETRAYED:
-    //              charTag = new Betrayed(this);
-    //              break;
-    //          case ATTRIBUTE.HEARTBROKEN:
-    //              charTag = new Heartbroken(this);
-    //              break;
-    //          }
-    //	if(charTag != null){
-    //		AddCharacterAttribute (charTag);
-    //	}
-    //          return charTag;
-    //}
-    public CharacterAttribute CreateAttribute(ATTRIBUTE type) {
-        switch (type) {
-            case ATTRIBUTE.GREGARIOUS:
-            return new Gregarious();
-            case ATTRIBUTE.BOOKWORM:
-            return new Bookworm();
-            case ATTRIBUTE.SINGER:
-            return new Singer();
-            case ATTRIBUTE.DAYDREAMER:
-            return new Daydreamer();
-            case ATTRIBUTE.MEDITATOR:
-            return new Meditator();
-            case ATTRIBUTE.CLEANER:
-            return new Cleaner();
-            case ATTRIBUTE.INTROVERT:
-            return new Introvert();
-            case ATTRIBUTE.EXTROVERT:
-            return new Extrovert();
-            case ATTRIBUTE.BELLIGERENT:
-            return new Belligerent();
-            case ATTRIBUTE.LIBERATED:
-            return new Liberated();
-            case ATTRIBUTE.UNFAITHFUL:
-            return new Unfaithful();
-            case ATTRIBUTE.DEAFENED:
-            return new Deafened();
-            case ATTRIBUTE.MUTE:
-            return new Mute();
-            case ATTRIBUTE.ROYALTY:
-            return new Royalty();
-            case ATTRIBUTE.STALKER:
-            return new Stalker();
-            case ATTRIBUTE.SPOOKED:
-            return new Spooked();
-            case ATTRIBUTE.HUMAN:
-            return new Human();
-            case ATTRIBUTE.HUNGRY:
-            return new Hungry();
-            case ATTRIBUTE.FAMISHED:
-            return new Famished();
-            case ATTRIBUTE.TIRED:
-            return new Tired();
-            case ATTRIBUTE.EXHAUSTED:
-            return new Exhausted();
-            case ATTRIBUTE.SAD:
-            return new Sad();
-            case ATTRIBUTE.DEPRESSED:
-            return new Depressed();
-            case ATTRIBUTE.ANXIOUS:
-            return new Anxious();
-            case ATTRIBUTE.INSECURE:
-            return new Insecure();
-            case ATTRIBUTE.DRUNK:
-            return new Drunk();
-            case ATTRIBUTE.DISTURBED:
-            return new Disturbed();
-            case ATTRIBUTE.CRAZED:
-            return new Crazed();
-            case ATTRIBUTE.DEMORALIZED:
-            return new Demoralized();
-            case ATTRIBUTE.STARVING:
-            return new Starving();
-            case ATTRIBUTE.WOUNDED:
-            return new Wounded();
-            case ATTRIBUTE.WRECKED:
-            return new Wrecked();
-            case ATTRIBUTE.IMPULSIVE:
-            return new Impulsive();
-            case ATTRIBUTE.BETRAYED:
-            return new Betrayed();
-            case ATTRIBUTE.HEARTBROKEN:
-            return new Heartbroken();
-            case ATTRIBUTE.MARKED:
-            return new Marked();
-        }
-        return null;
-    }
-    private void GenerateSetupAttributes(CharacterSetup setup) {
-        for (int i = 0; i < setup.tags.Count; i++) {
-            AddAttribute(setup.tags[i]);
-        }
-    }
-    public bool HasAttributes(ATTRIBUTE[] tagsToHave, bool mustHaveAll = false) {
-        return DoesHaveAttributes(this, tagsToHave, mustHaveAll);
-    }
-    private bool DoesHaveAttributes(Character currCharacter, ATTRIBUTE[] tagsToHave, bool mustHaveAll = false) {
-        if (mustHaveAll) {
-            int tagsCount = 0;
-            for (int i = 0; i < currCharacter.attributes.Count; i++) {
-                for (int j = 0; j < tagsToHave.Length; j++) {
-                    if (tagsToHave[j] == currCharacter.attributes[i].attribute) {
-                        tagsCount++;
-                        break;
-                    }
-                }
-                if (tagsCount >= tagsToHave.Length) {
-                    return true;
-                }
-            }
-        } else {
-            for (int i = 0; i < currCharacter.attributes.Count; i++) {
-                for (int j = 0; j < tagsToHave.Length; j++) {
-                    if (tagsToHave[j] == currCharacter.attributes[i].attribute) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-    public CharacterAttribute GetAttribute(ATTRIBUTE attribute) {
-        for (int i = 0; i < _attributes.Count; i++) {
-            if (_attributes[i].attribute == attribute) {
-                return _attributes[i];
-            }
-        }
-        return null;
-    }
-    public CharacterAttribute GetAttribute(string attribute) {
-        for (int i = 0; i < _attributes.Count; i++) {
-            if (_attributes[i].name.ToLower() == attribute.ToLower()) {
-                return _attributes[i];
-            }
-        }
-        return null;
-    }
-    public CharacterAttribute AddAttribute(ATTRIBUTE attribute) {
-        if (GetAttribute(attribute) == null) {
-            CharacterAttribute newAttribute = CreateAttribute(attribute);
-            _attributes.Add(newAttribute);
-#if !WORLD_CREATION_TOOL
-            newAttribute.OnAddAttribute(this);
-#endif
-            Messenger.Broadcast<Character, CharacterAttribute>(Signals.ATTRIBUTE_ADDED, this, newAttribute);
-            return newAttribute;
-        }
-        return null;
-    }
-    public void AddAttributes(List<ATTRIBUTE> attributes) {
-        for (int i = 0; i < attributes.Count; i++) {
-            AddAttribute(attributes[i]);
-        }
-    }
-    public void RemoveAttributes(List<ATTRIBUTE> attributes) {
-        for (int i = 0; i < attributes.Count; i++) {
-            RemoveAttribute(attributes[i]);
-        }
-    }
-    public bool RemoveAttribute(ATTRIBUTE attribute) {
-        for (int i = 0; i < _attributes.Count; i++) {
-            if (_attributes[i].attribute == attribute) {
-                CharacterAttribute removedAttribute = _attributes[i];
-#if !WORLD_CREATION_TOOL
-                removedAttribute.OnRemoveAttribute();
-#endif
-                _attributes.RemoveAt(i);
-                Messenger.Broadcast<Character, CharacterAttribute>(Signals.ATTRIBUTE_REMOVED, this, removedAttribute);
-                return true;
-            }
-        }
-        return false;
-    }
-    public bool RemoveAttribute(CharacterAttribute attribute) {
-        CharacterAttribute attributeToBeRemoved = attribute;
-        if (_attributes.Remove(attribute)) {
-#if !WORLD_CREATION_TOOL
-            attributeToBeRemoved.OnRemoveAttribute();
-#endif
-            Messenger.Broadcast<Character, CharacterAttribute>(Signals.ATTRIBUTE_REMOVED, this, attributeToBeRemoved);
-            return true;
-        }
-        return false;
-    }
-    #endregion
-
     #region Faction
     public void SetFaction(Faction newFaction) {
         if (_faction != null 
@@ -1764,14 +1415,14 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
             RemoveTrait(criminal, false);
         }
     }
-    public void FoundFaction(string factionName, BaseLandmark location) {
+    public void FoundFaction(string factionName, Area location) {
         SetForcedInteraction(null);
-        MigrateTo(location);
+        MigrateHomeTo(location);
         Faction newFaction = FactionManager.Instance.GetFactionBasedOnName(factionName);
         newFaction.SetLeader(this);
         ChangeFactionTo(newFaction);
-        FactionManager.Instance.neutralFaction.RemoveFromOwnedAreas(location.tileLocation.areaOfTile);
-        LandmarkManager.Instance.OwnArea(newFaction, race, location.tileLocation.areaOfTile);
+        FactionManager.Instance.neutralFaction.RemoveFromOwnedAreas(location);
+        LandmarkManager.Instance.OwnArea(newFaction, race, location);
         newFaction.SetFactionActiveState(true);
     }
     #endregion
@@ -1809,21 +1460,20 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     }
     public void OnAddedToParty() {
         if (currentParty.id != ownParty.id) {
-            if (ownParty.specificLocation is BaseLandmark) {
-                ownParty.specificLocation.RemoveCharacterFromLocation(ownParty);
-            }
+            ownParty.specificLocation.RemoveCharacterFromLocation(ownParty);
             //ownParty.icon.SetVisualState(false);
         }
     }
     public void OnAddedToPlayer() {
-        if (ownParty.specificLocation is BaseLandmark) {
-            ownParty.specificLocation.RemoveCharacterFromLocation(ownParty);
-        }
-        PlayerManager.Instance.player.playerArea.coreTile.landmarkOnTile.AddCharacterToLocation(ownParty);
-        if (this.homeLandmark != null) {
-            this.homeLandmark.RemoveCharacterHomeOnLandmark(this);
-        }
-        PlayerManager.Instance.player.playerArea.coreTile.landmarkOnTile.AddCharacterHomeOnLandmark(this);
+        //if (ownParty.specificLocation is BaseLandmark) {
+        //    ownParty.specificLocation.RemoveCharacterFromLocation(ownParty);
+        //}
+        PlayerManager.Instance.player.playerArea.AddCharacterToLocation(ownParty);
+        //if (this.homeArea != null) {
+        //    this.homeArea.RemoveResident(this);
+        //}
+        //PlayerManager.Instance.player.playerArea.AddResident(this);
+        MigrateHomeTo(PlayerManager.Instance.player.playerArea);
     }
     public bool IsInParty() {
         if (currentParty.characters.Count > 1) {
@@ -1847,6 +1497,9 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
             }
         }
         return false;
+    }
+    public void SetCurrentStructureLocation(LocationStructure currentStructure) {
+        this.currentStructure = currentStructure;
     }
     #endregion
 
@@ -1896,7 +1549,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     //}
     public void CenterOnCharacter() {
         if (!this.isDead) {
-            CameraMove.Instance.CenterCameraOn(currentParty.specificLocation.tileLocation.gameObject);
+            CameraMove.Instance.CenterCameraOn(currentParty.specificLocation.coreTile.gameObject);
         }
     }
     private void GetRandomCharacterColor() {
@@ -1994,46 +1647,46 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         _alreadyTargetedByGrudge = state;
     }
     public void AttackAnArea(Area target) {
-        Interaction attackInteraction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.ATTACK, target.coreTile.landmarkOnTile);
+        Interaction attackInteraction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.ATTACK, target);
         attackInteraction.AddEndInteractionAction(() => _ownParty.GoHomeAndDisband());
         attackInteraction.SetCanInteractionBeDoneAction(() => IsTargetStillViable(target));
-        _ownParty.GoToLocation(target.coreTile.landmarkOnTile, PATHFINDING_MODE.NORMAL, () => SetForcedInteraction(attackInteraction));
+        _ownParty.GoToLocation(target, PATHFINDING_MODE.NORMAL, () => SetForcedInteraction(attackInteraction));
     }
     public void GoToAreaToMakePeaceWithFaction(Area target) {
-        Interaction peaceInteraction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.CHARACTER_PEACE_NEGOTIATION, target.coreTile.landmarkOnTile);
+        Interaction peaceInteraction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.CHARACTER_PEACE_NEGOTIATION, target);
         peaceInteraction.AddEndInteractionAction(() => _ownParty.GoHome());
-        _ownParty.GoToLocation(target.coreTile.landmarkOnTile, PATHFINDING_MODE.NORMAL, () => SetForcedInteraction(peaceInteraction));
+        _ownParty.GoToLocation(target, PATHFINDING_MODE.NORMAL, () => SetForcedInteraction(peaceInteraction));
     }
     private bool IsTargetStillViable(Area target) {
         return target.owner != null;
     }
-    public void ReturnToOriginalHomeAndFaction(BaseLandmark ogHome, Faction ogFaction) { 
+    public void ReturnToOriginalHomeAndFaction(Area ogHome, Faction ogFaction) { 
         //first, check if the character's original faction is still alive
         if (!ogFaction.isDestroyed) { //if it is, 
             this.ChangeFactionTo(ogFaction);  //transfer the character to his original faction
             if (ogFaction.id == FactionManager.Instance.neutralFaction.id) { //if the character's original faction is the neutral faction
-                if (ogHome.tileLocation.areaOfTile.owner == null && !ogHome.tileLocation.areaOfTile.IsResidentsFull()) { //check if his original home is still unowned
+                if (ogHome.owner == null && !ogHome.IsResidentsFull()) { //check if his original home is still unowned
                     //if it is and it has not reached it's resident capacity, return him to his original home
-                    MigrateTo(ogHome);
+                    MigrateHomeTo(ogHome);
                 } else { //if it does not meet those requirements
                     //check if the neutral faction still has any available areas that have not reached capacity yet
                     List<Area> validNeutralAreas = FactionManager.Instance.neutralFaction.ownedAreas.Where(x => !x.IsResidentsFull()).ToList();
                     if (validNeutralAreas.Count > 0) {
                         //if it does, pick randomly from those
                         Area chosenArea = validNeutralAreas[UnityEngine.Random.Range(0, validNeutralAreas.Count)];
-                        MigrateTo(chosenArea);
+                        MigrateHomeTo(chosenArea);
                     }
                     //if not, keep the characters current home
                 }
             } else { //if it is not, check if his original home is still owned by that faction and it has not yet reached it's resident capacity
-                if (ogHome.tileLocation.areaOfTile.owner == ogFaction && !ogHome.tileLocation.areaOfTile.IsResidentsFull()) {
+                if (ogHome.owner == ogFaction && !ogHome.IsResidentsFull()) {
                     //if it meets those requirements, return the character's home to that location
-                    MigrateTo(ogHome);
+                    MigrateHomeTo(ogHome);
                 } else { //if not, get another area owned by his faction that has not yet reached capacity
                     List<Area> validAreas = ogFaction.ownedAreas.Where(x => !x.IsResidentsFull()).ToList();
                     if (validAreas.Count > 0) {
                         Area chosenArea = validAreas[UnityEngine.Random.Range(0, validAreas.Count)];
-                        MigrateTo(chosenArea);
+                        MigrateHomeTo(chosenArea);
                     }
                     //if there are still no areas that can be his home, keep his current one.
                 }
@@ -2045,7 +1698,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
             if (validNeutralAreas.Count > 0) {  //then check if the neutral faction has any owned areas that have not yet reached area capacity
                 //if it does, pick from any of those, then set it as the characters new home
                 Area chosenArea = validNeutralAreas[UnityEngine.Random.Range(0, validNeutralAreas.Count)];
-                MigrateTo(chosenArea);
+                MigrateHomeTo(chosenArea);
             }
             //if it does not, keep the characters current home
         }
@@ -2188,111 +1841,6 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         _currentCombatCharacter = combatCharacter;
     }
     #endregion
-
-    #region Landmarks
-    public void AddExploredLandmark(BaseLandmark landmark) {
-        _exploredLandmarks.Add(landmark); //did not add checking if landmark is already in list, since I want to allow duplicates
-        //schedule removal of landmark after 6 months
-        GameDate expiration = GameManager.Instance.Today();
-        expiration.AddMonths(6);
-        SchedulingManager.Instance.AddEntry(expiration, () => RemoveLandmarkAsExplored(landmark));
-    }
-    private void RemoveLandmarkAsExplored(BaseLandmark landmark) {
-        _exploredLandmarks.Remove(landmark);
-    }
-    private void OnDestroyLandmark(BaseLandmark landmark) {
-        if (specificLocation.tileLocation.landmarkOnTile != null && specificLocation.tileLocation.landmarkOnTile.id == landmark.id) {
-            if (!_isDead && _currentParty.icon.isTravelling) {
-                return;
-            }
-            Death();
-        }
-    }
-    #endregion
-
-    #region Traces
-    public void LeaveTraceOnLandmark() {
-        ILocation location = _ownParty.specificLocation;
-        if (location != null && location.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
-            BaseLandmark landmark = location as BaseLandmark;
-            int chance = UnityEngine.Random.Range(0, 100);
-            int value = GetLeaveTraceChance();
-            if (chance < value) {
-                landmark.AddTrace(this);
-            }
-        }
-    }
-    private int GetLeaveTraceChance() {
-        STANCE stance = GetCurrentStance();
-        switch (stance) {
-            case STANCE.COMBAT:
-            return 100;
-            case STANCE.NEUTRAL:
-            return 50;
-            case STANCE.STEALTHY:
-            return 25;
-        }
-        return 0;
-    }
-    public void AddTraceInfo(Character character, string identifier, bool isUnique) {
-        if (isUnique) {
-            Character previousTrace = GetCharacterFromTraceInfo(identifier);
-            if (previousTrace != null) { //If there is an existing trace of the item, replace it with this new trace
-                if (previousTrace.id != character.id) {
-                    _traceInfo[previousTrace].Remove(identifier);
-                    if (_traceInfo[previousTrace].Count <= 0) {
-                        _traceInfo.Remove(previousTrace);
-                    }
-                    Debug.Log(this.name + " REMOVED TRACE INFO OF " + previousTrace.name + " FOR " + identifier);
-                } else {
-                    return;
-                }
-            }
-        }
-        if (_traceInfo.ContainsKey(character)) {
-            if (!_traceInfo[character].Contains(identifier)) {
-                _traceInfo[character].Add(identifier);
-                Debug.Log(this.name + " ADDED TRACE INFO OF " + character.name + " FOR " + identifier);
-            }
-        } else {
-            _traceInfo.Add(character, new List<string>() { identifier });
-            Debug.Log(this.name + " ADDED TRACE INFO OF " + character.name + " FOR " + identifier);
-        }
-    }
-    public Character GetCharacterFromTraceInfo(string info) {
-        foreach (Character character in _traceInfo.Keys) {
-            if (_traceInfo[character].Contains(info)) {
-                return character;
-            }
-        }
-        return null;
-    }
-    #endregion
-
-    #region Action Queue
-    public bool DoesSatisfiesPrerequisite(IPrerequisite prerequisite) {
-        if (prerequisite.prerequisiteType == PREREQUISITE.RESOURCE) {
-            ResourcePrerequisite resourcePrerequisite = prerequisite as ResourcePrerequisite;
-            if (resourcePrerequisite.resourceType != RESOURCE.NONE && _ownParty.characterObject.resourceInventory[resourcePrerequisite.resourceType] >= resourcePrerequisite.amount) {
-                return true;
-            }
-        }
-        return false;
-    }
-    #endregion
-
-    //#region Needs
-    //private void CiviliansDiedReduceSanity(StructureObj whereCiviliansDied, int amount) {
-    //    if(_currentRegion.id == whereCiviliansDied.objectLocation.tileLocation.region.id) {
-    //        ILocation location = _ownParty.specificLocation;
-    //        if (location.tileLocation.id == whereCiviliansDied.objectLocation.tileLocation.id || whereCiviliansDied.objectLocation.tileLocation.neighbourDirections.ContainsValue(location.tileLocation)){
-    //            int sanityToReduce = amount * 5;
-    //            //this.role.AdjustSanity(-sanityToReduce);
-    //            Debug.Log(this.name + " has reduced its sanity by " + sanityToReduce + " because " + amount + " civilians died in " + whereCiviliansDied.objectLocation.tileLocation.tileName + " (" + whereCiviliansDied.objectLocation.tileLocation.coordinates + ")");
-    //        }
-    //    }
-    //}
-    //#endregion
 
     #region Portrait Settings
     public void SetPortraitSettings(PortraitSettings settings) {
@@ -2521,240 +2069,12 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     }
     #endregion
 
-    #region Player/Character Actions
-    private void ConstructDefaultMiscActions() {
-        _miscActions = new List<CharacterAction>();
-        CharacterAction read = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.READ);
-        CharacterAction foolingAround = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.FOOLING_AROUND);
-        CharacterAction argue = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.ARGUE);
-        CharacterAction chat = ObjectManager.Instance.CreateNewCharacterAction(ACTION_TYPE.CHAT);
-
-        read.SetActionCategory(ACTION_CATEGORY.MISC);
-        foolingAround.SetActionCategory(ACTION_CATEGORY.MISC);
-        chat.SetActionCategory(ACTION_CATEGORY.MISC);
-        argue.SetActionCategory(ACTION_CATEGORY.MISC);
-
-        AddMiscAction(read);
-        AddMiscAction(foolingAround);
-        AddMiscAction(chat);
-        AddMiscAction(argue);
-        //_miscActions.Add(read);
-        //_miscActions.Add(foolingAround);
-        //_idleActions.Add(chat);
-    }
-    public CharacterAction GetRandomMiscAction(ref IObject targetObject) {
-        targetObject = _ownParty.characterObject;
-        CharacterAction chosenAction = _miscActions[UnityEngine.Random.Range(0, _miscActions.Count)];
-        if (chosenAction is ChatAction) {
-            List<CharacterParty> partyPool = new List<CharacterParty>();
-            CharacterParty chosenParty = GetPriority1TargetChatAction(partyPool);
-            if (chosenParty == null) {
-                chosenParty = GetPriority2TargetChatAction(partyPool);
-                if (chosenParty == null) {
-                    chosenParty = GetPriority3TargetChatAction(partyPool);
-                    if (chosenParty == null) {
-                        chosenParty = GetPriority4TargetChatAction(partyPool);
-                    }
-                }
-            }
-            if (chosenParty == null) {
-                _miscActions.Remove(chosenAction);
-                CharacterAction newChosenAction = _miscActions[Utilities.rng.Next(0, _miscActions.Count)];
-                _miscActions.Add(chosenAction);
-                return newChosenAction;
-            } else {
-                targetObject = chosenParty.icharacterObject;
-            }
-        }
-        return chosenAction;
-    }
-    public CharacterAction GetWeightedMiscAction(ref IObject targetObject, ref string actionLog) {
-        WeightedDictionary<ActionAndTarget> miscActionOptions = new WeightedDictionary<ActionAndTarget>();
-        for (int i = 0; i < _miscActions.Count; i++) {
-            CharacterAction currentAction = _miscActions[i];
-            if (currentAction.disableCounter <= 0 && currentAction.enableCounter > 0) {
-                IObject currentTarget = currentAction.GetTargetObject(_ownParty);
-                if (currentTarget != null) {
-                    ActionAndTarget actionAndTarget = new ActionAndTarget() {
-                        action = currentAction,
-                        target = currentTarget
-                    };
-                    miscActionOptions.AddElement(actionAndTarget, currentAction.weight);
-                }
-            }
-        }
-        actionLog += "\n" + miscActionOptions.GetWeightsSummary("Misc Action Weights: ");
-        ActionAndTarget chosen = miscActionOptions.PickRandomElementGivenWeights();
-        targetObject = chosen.target;
-        return chosen.action;
-    }
-    public CharacterAction GetMiscAction(ACTION_TYPE type) {
-        for (int i = 0; i < _miscActions.Count; i++) {
-            if (_miscActions[i].actionData.actionType == type) {
-                return _miscActions[i];
-            }
-        }
-        return null;
-    }
-    public void AddMiscAction(CharacterAction characterAction) {
-        CharacterAction sameAction = GetMiscAction(characterAction.actionType);
-        if (sameAction == null) {
-            _miscActions.Add(characterAction);
-            characterAction.AdjustEnableCounter(1);
-            characterAction.OnAddActionToCharacter(this);
-        } else {
-            sameAction.AdjustEnableCounter(1);
-        }
-    }
-
-    public void RemoveMiscAction(ACTION_TYPE actionType) {
-        CharacterAction sameAction = GetMiscAction(actionType);
-        if (sameAction != null) {
-            if (sameAction.enableCounter > 1) {
-                sameAction.AdjustEnableCounter(-1);
-            } else {
-                if (_miscActions.Remove(sameAction)) {
-                    sameAction.OnRemoveActionFromCharacter(this);
-                }
-            }
-        }
-    }
-    private CharacterParty GetPriority1TargetChatAction(List<CharacterParty> partyPool) {
-        //random parties within same faction within settlements
-        partyPool.Clear();
-        for (int i = 0; i < faction.characters.Count; i++) {
-            CharacterParty party = faction.characters[i].party;
-            if (party.id != this._ownParty.id && party.characterObject.currentState.stateName == "Alive" && party.landmarkLocation != null && faction.ownedAreas.Contains(party.specificLocation.tileLocation.areaOfTile) && !partyPool.Contains(party)) {
-                partyPool.Add(party);
-            }
-        }
-        if (partyPool.Count > 0) {
-            return partyPool[Utilities.rng.Next(0, partyPool.Count)];
-        }
-        return null;
-    }
-    private CharacterParty GetPriority2TargetChatAction(List<CharacterParty> partyPool) {
-        //random parties within non-hostile factions within settlements
-        partyPool.Clear();
-        List<Faction> nonHostileFactions = FactionManager.Instance.GetFactionsWithByStatus(faction, FACTION_RELATIONSHIP_STATUS.ALLY);
-        for (int i = 0; i < nonHostileFactions.Count; i++) {
-            Faction nonHostileFaction = nonHostileFactions[i];
-            for (int k = 0; k < nonHostileFaction.characters.Count; k++) {
-                CharacterParty party = nonHostileFaction.characters[k].party;
-                if (party.id != this._ownParty.id && party.characterObject.currentState.stateName == "Alive" && party.landmarkLocation != null && faction.ownedAreas.Contains(party.landmarkLocation.tileLocation.areaOfTile) && !partyPool.Contains(party)) {
-                    partyPool.Add(party);
-                }
-            }
-        }
-        if (partyPool.Count > 0) {
-            return partyPool[Utilities.rng.Next(0, partyPool.Count)];
-        }
-        return null;
-    }
-    private CharacterParty GetPriority3TargetChatAction(List<CharacterParty> partyPool) {
-        //random parties within same faction outside settlements currently performing an Idle Action
-        partyPool.Clear();
-        for (int i = 0; i < faction.characters.Count; i++) {
-            CharacterParty party = faction.characters[i].party;
-            if (party.id != this._ownParty.id && party.characterObject.currentState.stateName == "Alive" && party.landmarkLocation != null
-                && !faction.ownedAreas.Contains(party.landmarkLocation.tileLocation.areaOfTile) && !partyPool.Contains(party)
-                && party.actionData.currentAction != null && party.actionData.currentAction.actionData.actionCategory == ACTION_CATEGORY.MISC) {
-                partyPool.Add(party);
-            }
-        }
-        if (partyPool.Count > 0) {
-            return partyPool[Utilities.rng.Next(0, partyPool.Count)];
-        }
-        return null;
-    }
-    private CharacterParty GetPriority4TargetChatAction(List<CharacterParty> partyPool) {
-        //random parties within non-hostile faction outside settlements currently performing an Idle Action
-        partyPool.Clear();
-        List<Faction> nonHostileFactions = FactionManager.Instance.GetFactionsWithByStatus(faction, FACTION_RELATIONSHIP_STATUS.ALLY);
-        for (int i = 0; i < nonHostileFactions.Count; i++) {
-            Faction nonHostileFaction = nonHostileFactions[i];
-            for (int k = 0; k < nonHostileFaction.characters.Count; k++) {
-                CharacterParty party = nonHostileFaction.characters[k].party;
-                if (party.id != this._ownParty.id && party.characterObject.currentState.stateName == "Alive" && party.landmarkLocation != null
-                    && !faction.ownedAreas.Contains(party.landmarkLocation.tileLocation.areaOfTile) && !partyPool.Contains(party)
-                    && party.actionData.currentAction != null && party.actionData.currentAction.actionData.actionCategory == ACTION_CATEGORY.MISC) {
-                    partyPool.Add(party);
-                }
-            }
-        }
-        if (partyPool.Count > 0) {
-            return partyPool[Utilities.rng.Next(0, partyPool.Count)];
-        }
-        return null;
-    }
-    #endregion
-
     #region Home
-    //public void LookForNewHome() {
-    //    //Try to get a new home structure from this character's area
-    //    BaseLandmark landmark = GetNewHomeFromArea(_homeLandmark.tileLocation.areaOfTile);
-    //    if (landmark != null) {
-    //        MigrateTo(landmark);
-    //    } else {
-    //        //If there is no available structure, look for it in other areas of the faction and migrate there
-    //        landmark = GetNewHomeFromFaction();
-    //        if (landmark != null) {
-    //            //SetHome(landmark.tileLocation.areaOfTile);
-    //            MigrateTo(landmark);
-    //        } else {
-    //            //TODO: For future update, migrate to another friendly faction's structure
-    //        }
-    //    }
-    //}
-    //private BaseLandmark GetNewHomeFromArea(Area area) {
-    //    BaseLandmark chosenLandmark = null;
-    //    for (int i = 0; i < area.landmarks.Count; i++) {
-    //        BaseLandmark landmark = area.landmarks[i];
-    //        if (landmark != _homeLandmark && landmark.landmarkObj.specificObjectType == _homeLandmark.landmarkObj.specificObjectType) {
-    //            if (chosenLandmark == null) {
-    //                chosenLandmark = landmark;
-    //            } else {
-    //                if (landmark.charactersWithHomeOnLandmark.Count < chosenLandmark.charactersWithHomeOnLandmark.Count) {
-    //                    chosenLandmark = landmark;
-    //                }
-    //            }
-    //        }
-    //    }
-    //    return chosenLandmark;
-    //}
-    //private BaseLandmark GetNewHomeFromFaction() {
-    //    BaseLandmark chosenLandmark = null;
-    //    if (_faction != null) {
-    //        for (int i = 0; i < _faction.ownedAreas.Count; i++) {
-    //            Area area = _faction.ownedAreas[i];
-    //            if (area.id != _homeLandmark.tileLocation.areaOfTile.id) {
-    //                chosenLandmark = GetNewHomeFromArea(area);
-    //                if (chosenLandmark != null) {
-    //                    break;
-    //                }
-    //            }
-    //        }
-    //    }
-    //    return chosenLandmark;
-    //}
-    public void SetHomeLandmark(BaseLandmark newHomeLandmark, bool ignoreAreaResidentCapacity = false) {
-        BaseLandmark previousHome = _homeLandmark;
-        this._homeLandmark = newHomeLandmark;
-        if (!(this is CharacterArmyUnit)) {
-            if (previousHome != null) {
-                previousHome.tileLocation.areaOfTile.RemoveResident(this);
-                if (_homeLandmark != null) {
-                    _homeLandmark.tileLocation.areaOfTile.AddResident(this, ignoreAreaResidentCapacity);
-                }
-
-            } else {
-                if (_homeLandmark != null) {
-                    if (_homeLandmark.tileLocation.areaOfTile != null) {
-                        _homeLandmark.tileLocation.areaOfTile.AddResident(this);
-                    }
-                }
-            }
-        }
+    public void SetHome(Area newHome) {
+        this.homeArea = newHome;
+    }
+    public void SetHomeStructure(Dwelling homeStructure) {
+        this.homeStructure = homeStructure;
     }
     #endregion
 
@@ -2782,50 +2102,32 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     //    }
     //    return false;
     //}
-    public void MigrateTo(BaseLandmark newHomeLandmark) {
+    //public void MigrateTo(BaseLandmark newHomeLandmark) {
+    //    Area previousHome = null;
+    //    if(homeArea != null) {
+    //        previousHome = homeArea.tileLocation.areaOfTile;
+    //        homeArea.RemoveCharacterHomeOnLandmark(this);
+    //    }
+    //    newHomeLandmark.AddCharacterHomeOnLandmark(this);
+    //    Messenger.Broadcast(Signals.CHARACTER_MIGRATED_HOME, this, previousHome, newHomeLandmark.tileLocation.areaOfTile);
+    //}
+    public void MigrateHomeTo(Area newHomeArea, bool broadcast = true) {
         Area previousHome = null;
-        if(_homeLandmark != null) {
-            previousHome = _homeLandmark.tileLocation.areaOfTile;
-            _homeLandmark.RemoveCharacterHomeOnLandmark(this);
+        if (homeArea != null) {
+            previousHome = homeArea;
+            homeArea.RemoveResident(this);
         }
-        newHomeLandmark.AddCharacterHomeOnLandmark(this);
-        Messenger.Broadcast(Signals.CHARACTER_MIGRATED_HOME, this, previousHome, newHomeLandmark.tileLocation.areaOfTile);
-    }
-    public void MigrateTo(Area newHomeArea) {
-        MigrateTo(newHomeArea.coreTile.landmarkOnTile);
-    }
-    #endregion
-
-    #region Action Queue
-    public void AddActionToQueue(CharacterAction action, IObject targetObject, Quest associatedQuest = null, int position = -1) {
-        if (position == -1) {
-            //add action to end
-            _actionQueue.Enqueue(new ActionQueueItem(action, targetObject, associatedQuest));
-        } else {
-            //Insert action to specified position
-            _actionQueue.Enqueue(new ActionQueueItem(action, targetObject, associatedQuest), position);
+        newHomeArea.AddResident(this);
+        if (broadcast) {
+            Messenger.Broadcast(Signals.CHARACTER_MIGRATED_HOME, this, previousHome, newHomeArea);
         }
     }
-    public void AddActionToQueue(EventAction eventAction, GameEvent associatedEvent, int position = -1) {
-        if (position == -1) {
-            //add action to end
-            _actionQueue.Enqueue(new ActionQueueItem(eventAction.action, eventAction.targetObject, null, associatedEvent));
-        } else {
-            //Insert action to specified position
-            _actionQueue.Enqueue(new ActionQueueItem(eventAction.action, eventAction.targetObject, null, associatedEvent), position);
+    public void MigrateHomeStructureTo(Dwelling dwelling) {
+        if (this.homeStructure != null) {
+            //remove character from his/her old home
+            this.homeStructure.RemoveResident(this);
         }
-    }
-    public void RemoveActionFromQueue(ActionQueueItem item) {
-        _actionQueue.Remove(item);
-    }
-    public void RemoveActionFromQueue(CharacterAction action) {
-        for (int i = 0; i < _actionQueue.Count; i++) {
-            ActionQueueItem queueItem = _actionQueue.GetBasedOnIndex(i);
-            if (queueItem.action == action) {
-                _actionQueue.RemoveAt(i);
-                break;
-            }
-        }
+        dwelling.AddResident(this);
     }
     #endregion
 
@@ -2835,15 +2137,15 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         if (_currentParty.icon != null) {
             _currentParty.icon.UpdateVisualState();
         }
-        //if (_currentParty.specificLocation != null && _currentParty.specificLocation.tileLocation.landmarkOnTile != null) {
-        //    _currentParty.specificLocation.tileLocation.landmarkOnTile.landmarkVisual.ToggleCharactersVisibility();
+        //if (_currentParty.specificLocation != null && _currentParty.specificLocation.coreTile.landmarkOnTile != null) {
+        //    _currentParty.specificLocation.coreTile.landmarkOnTile.landmarkVisual.ToggleCharactersVisibility();
         //}
     }
     public void SetHasBeenInspected(bool state) {
         _hasBeenInspected = state;
     }
     public void EndedInspection() {
-        uiData.UpdateData(this);
+        
     }
     public void AddInteraction(Interaction interaction) {
         //_currentInteractions.Add(interaction);
@@ -3088,6 +2390,18 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         }
         return null;
     }
+    public RelationshipTrait GetRelationshipTraitWith(Character character, RELATIONSHIP_TRAIT type) {
+        for (int i = 0; i < traits.Count; i++) {
+            Trait currTrait = traits[i];
+            if (currTrait is RelationshipTrait) {
+                RelationshipTrait relTrait = currTrait as RelationshipTrait;
+                if (relTrait.relType == type && relTrait.targetCharacter.id == character.id) {
+                    return relTrait;
+                }
+            }
+        }
+        return null;
+    }
     public void GenerateRandomTraits() {
         //All characters have a 1 in 8 chance of having Crooked trait when spawned
         if (UnityEngine.Random.Range(0, 8) < 1) {
@@ -3100,10 +2414,10 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         if (trait != null) {
             Abducted abductedTrait = trait as Abducted;
             RemoveTrait(abductedTrait);
-            ReturnToOriginalHomeAndFaction(abductedTrait.originalHomeLandmark, this.faction);
+            ReturnToOriginalHomeAndFaction(abductedTrait.originalHome, this.faction);
             //MigrateTo(abductedTrait.originalHomeLandmark);
 
-            Interaction interactionAbducted = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, specificLocation as BaseLandmark);
+            Interaction interactionAbducted = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, specificLocation);
             SetForcedInteraction(interactionAbducted);
             SetDailyInteractionGenerationTick(GameManager.Instance.continuousDays + 1);
             return true;
@@ -3127,10 +2441,10 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         if (!IsInOwnParty()) {
             _currentParty.RemoveCharacter(this);
         }
-        MigrateTo(PlayerManager.Instance.player.demonicPortal);
+        MigrateHomeTo(PlayerManager.Instance.player.playerArea);
 
         specificLocation.RemoveCharacterFromLocation(this.currentParty);
-        PlayerManager.Instance.player.demonicPortal.AddCharacterToLocation(this.currentParty);
+        //PlayerManager.Instance.player.demonicPortal.AddCharacterToLocation(this.currentParty);
 
         ChangeFactionTo(PlayerManager.Instance.player.playerFaction);
 
@@ -3186,7 +2500,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
         interactionWeights.RemoveElement(type);
     }
     public void SetDailyInteractionGenerationTick() {
-        if(specificLocation == null || specificLocation.tileLocation.areaOfTile.id == homeLandmark.tileLocation.areaOfTile.id) {
+        if(specificLocation == null || specificLocation.id == homeArea.id) {
             _currentInteractionTick = GetMonthInteractionTick();
         } else {
             int remainingDaysInWeek = GameManager.Instance.continuousDays % 7;
@@ -3224,13 +2538,13 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
             //if(_forcedInteraction.CanInteractionBeDoneBy(this)) {
             //      AddInteraction(_forcedInteraction);
             //} else {
-            //    Interaction unable = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.UNABLE_TO_PERFORM, this.specificLocation.tileLocation.landmarkOnTile);
+            //    Interaction unable = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.UNABLE_TO_PERFORM, this.specificLocation.coreTile.landmarkOnTile);
             //    AddInteraction(unable);
             //    interactionLog += "\nCan't do forced interaction: " + _forcedInteraction.type.ToString();
             //}
             _forcedInteraction = null;
         } else {
-            if(specificLocation.tileLocation.areaOfTile.id != homeLandmark.tileLocation.areaOfTile.id) {
+            if(specificLocation.id != homeArea.id) {
                 //Character actions away from home
                 WeightedDictionary<string> awayFromHomeInteractionWeights = new WeightedDictionary<string>();
                 awayFromHomeInteractionWeights.AddElement("DoNothing", 50);
@@ -3248,7 +2562,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
                 string result = awayFromHomeInteractionWeights.PickRandomElementGivenWeights();
                 if(result == "DoNothing") {
                 }else if (tokenInInventory != null && result == tokenInInventory.tokenName) {
-                    Interaction interaction = InteractionManager.Instance.CreateNewInteraction(tokenInInventory.npcAssociatedInteractionType, specificLocation as BaseLandmark);
+                    Interaction interaction = InteractionManager.Instance.CreateNewInteraction(tokenInInventory.npcAssociatedInteractionType, specificLocation);
                     if (interaction.type == INTERACTION_TYPE.USE_ITEM_ON_CHARACTER) {
                         (interaction as UseItemOnCharacter).SetItemToken(tokenInInventory);
                     } else if (interaction.type == INTERACTION_TYPE.USE_ITEM_ON_SELF) {
@@ -3259,7 +2573,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
                     AddInteraction(interaction);
                 } else {
                     INTERACTION_TYPE interactionType = (INTERACTION_TYPE) Enum.Parse(typeof(INTERACTION_TYPE), result);
-                    Interaction interaction = InteractionManager.Instance.CreateNewInteraction(interactionType, specificLocation as BaseLandmark);
+                    Interaction interaction = InteractionManager.Instance.CreateNewInteraction(interactionType, specificLocation);
                     AddInteraction(interaction);
                 }
             } else {
@@ -3278,8 +2592,8 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
                         atHomeInteractionWeights.AddElement("ItemNotUsable", 70);
                     }
                 } else {
-                    for (int i = 0; i < specificLocation.tileLocation.areaOfTile.possibleSpecialTokenSpawns.Count; i++) {
-                        if(specificLocation.tileLocation.areaOfTile.possibleSpecialTokenSpawns[i].owner == this.faction) {
+                    for (int i = 0; i < specificLocation.possibleSpecialTokenSpawns.Count; i++) {
+                        if(specificLocation.possibleSpecialTokenSpawns[i].owner == this.faction) {
                             atHomeInteractionWeights.AddElement("PickUp", 70);
                             break;
                         }
@@ -3289,13 +2603,13 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
 
                 if (result == "DoNothing") {
                 }   else if (result == "ItemNotUsable") {
-                    Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.DROP_ITEM, specificLocation as BaseLandmark);
+                    Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.DROP_ITEM, specificLocation);
                     AddInteraction(interaction);
                 } else if (result == "PickUp") {
-                    Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.PICK_ITEM, specificLocation as BaseLandmark);
+                    Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.PICK_ITEM, specificLocation);
                     AddInteraction(interaction);
                 } else if (tokenInInventory != null && result == tokenInInventory.tokenName) {
-                    Interaction interaction = InteractionManager.Instance.CreateNewInteraction(tokenInInventory.npcAssociatedInteractionType, specificLocation as BaseLandmark);
+                    Interaction interaction = InteractionManager.Instance.CreateNewInteraction(tokenInInventory.npcAssociatedInteractionType, specificLocation);
                     if (interaction.type == INTERACTION_TYPE.USE_ITEM_ON_CHARACTER) {
                         (interaction as UseItemOnCharacter).SetItemToken(tokenInInventory);
                     } else if (interaction.type == INTERACTION_TYPE.USE_ITEM_ON_SELF) {
@@ -3306,7 +2620,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
                     AddInteraction(interaction);
                 } else {
                     INTERACTION_TYPE interactionType = (INTERACTION_TYPE) Enum.Parse(typeof(INTERACTION_TYPE), result);
-                    Interaction interaction = InteractionManager.Instance.CreateNewInteraction(interactionType, specificLocation as BaseLandmark);
+                    Interaction interaction = InteractionManager.Instance.CreateNewInteraction(interactionType, specificLocation);
                     AddInteraction(interaction);
                 }
             }
@@ -3324,11 +2638,11 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
             //        interactionLog += "\n" + validInteractions.GetWeightsSummary("Generating interaction:");
             //        INTERACTION_TYPE chosenInteraction = validInteractions.PickRandomElementGivenWeights();
             //        //create interaction of type
-            //        BaseLandmark interactable = specificLocation as BaseLandmark;
+            //        BaseLandmark interactable = specificLocation.coreTile.landmarkOnTile;
             //        if (interactable == null) {
             //            throw new Exception(GameManager.Instance.TodayLogString() + this.name + "'s specific location (" + specificLocation.locationName + ") is not a landmark!");
             //        }
-            //        Interaction createdInteraction = InteractionManager.Instance.CreateNewInteraction(chosenInteraction, specificLocation as BaseLandmark);
+            //        Interaction createdInteraction = InteractionManager.Instance.CreateNewInteraction(chosenInteraction, specificLocation.coreTile.landmarkOnTile);
 
             //        if (job.jobType == JOB.LEADER) {
             //            //For Faction Upgrade Interaction Only
@@ -3404,7 +2718,7 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
             if(minion != null) {
                 PlayerManager.Instance.player.AdjustCurrency(CURRENCY.SUPPLY, reward.amount);
             } else {
-                homeLandmark.tileLocation.areaOfTile.AdjustSuppliesInBank(reward.amount);
+                homeArea.AdjustSuppliesInBank(reward.amount);
             }
             break;
             default:
@@ -3425,23 +2739,23 @@ public class Character : ICharacter, ILeader, IInteractable, IQuestGiver {
     public void ConsumeToken() {
         tokenInInventory = null;
     }
-    public void DropToken(BaseLandmark location) {
+    public void DropToken(Area location, LocationStructure structure) {
         if (tokenInInventory != null) {
-            location.tileLocation.areaOfTile.AddSpecialTokenToLocation(tokenInInventory);
+            location.AddSpecialTokenToLocation(tokenInInventory, structure);
             tokenInInventory = null;
         }
     }
-    public void PickUpToken(SpecialToken token, BaseLandmark location) {
+    public void PickUpToken(SpecialToken token, Area location) {
         if (tokenInInventory == null) {
             tokenInInventory = token;
-            location.tileLocation.areaOfTile.RemoveSpecialTokenFromLocation(token);
+            location.RemoveSpecialTokenFromLocation(token);
         }
     }
-    public void PickUpRandomToken(BaseLandmark location) {
+    public void PickUpRandomToken(Area location) {
         if (tokenInInventory == null) {
             WeightedDictionary<SpecialToken> pickWeights = new WeightedDictionary<SpecialToken>();
-            for (int i = 0; i < location.tileLocation.areaOfTile.possibleSpecialTokenSpawns.Count; i++) {
-                SpecialToken token = location.tileLocation.areaOfTile.possibleSpecialTokenSpawns[i];
+            for (int i = 0; i < location.possibleSpecialTokenSpawns.Count; i++) {
+                SpecialToken token = location.possibleSpecialTokenSpawns[i];
                 if(token.npcAssociatedInteractionType != INTERACTION_TYPE.USE_ITEM_ON_SELF) {
                     pickWeights.AddElement(token, 60);
                 } else if(token.CanBeUsedBy(this)) {

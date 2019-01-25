@@ -16,7 +16,7 @@ public class ImproveRelationsEvent : Interaction {
     private const string Normal_Improve_Relations_Fail = "Normal Improve Relations Fail";
     private const string Normal_Improve_Relations_Critically_Fail = "Normal Improve Relations Critically Fail";
 
-    public ImproveRelationsEvent(BaseLandmark interactable) 
+    public ImproveRelationsEvent(Area interactable) 
         : base(interactable, INTERACTION_TYPE.IMPROVE_RELATIONS_EVENT, 0) {
         _name = "Improve Relations Event";
     }

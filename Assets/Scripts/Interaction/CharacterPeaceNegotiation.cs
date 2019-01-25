@@ -12,7 +12,7 @@ public class CharacterPeaceNegotiation : Interaction {
     private const string Normal_Negotiations_Success = "Normal Negotiations Success";
     private const string Normal_Negotiations_Fail = "Normal Negotiations Fail";
 
-    public CharacterPeaceNegotiation(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_PEACE_NEGOTIATION, 0) {
+    public CharacterPeaceNegotiation(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_PEACE_NEGOTIATION, 0) {
         _name = "Character Peace Negotiation";
         _jobFilter = new JOB[] { JOB.INSTIGATOR, JOB.DIPLOMAT };
     }
@@ -134,58 +134,58 @@ public class CharacterPeaceNegotiation : Interaction {
 
     #region State Effects
     private void NegotiationsNotDisruptedEffect(InteractionState state) {
-        FactionManager.Instance.DeclarePeaceBetween(characterInvolved.faction, interactable.tileLocation.areaOfTile.owner);
+        FactionManager.Instance.DeclarePeaceBetween(characterInvolved.faction, interactable.owner);
         characterInvolved.LevelUp();
 
         state.descriptionLog.AddToFillers(characterInvolved.faction, characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
-        state.descriptionLog.AddToFillers(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_2);
+        state.descriptionLog.AddToFillers(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_2);
 
         state.AddLogFiller(new LogFiller(characterInvolved.faction, characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1));
-        state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_2));
+        state.AddLogFiller(new LogFiller(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_2));
     }
     private void NegotiationsDisruptedEffect(InteractionState state) {
         investigatorCharacter.LevelUp();
 
         state.descriptionLog.AddToFillers(characterInvolved.faction, characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
-        state.descriptionLog.AddToFillers(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_2);
+        state.descriptionLog.AddToFillers(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_2);
 
         state.AddLogFiller(new LogFiller(characterInvolved.faction, characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1));
-        state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_2));
+        state.AddLogFiller(new LogFiller(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_2));
     }
     private void NegotiationsImprovedEffect(InteractionState state) {
-        FactionManager.Instance.DeclarePeaceBetween(characterInvolved.faction, interactable.tileLocation.areaOfTile.owner);
+        FactionManager.Instance.DeclarePeaceBetween(characterInvolved.faction, interactable.owner);
         investigatorCharacter.LevelUp();
         characterInvolved.LevelUp();
 
         state.descriptionLog.AddToFillers(characterInvolved.faction, characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
-        state.descriptionLog.AddToFillers(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_2);
+        state.descriptionLog.AddToFillers(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_2);
 
         state.AddLogFiller(new LogFiller(characterInvolved.faction, characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1));
-        state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_2));
+        state.AddLogFiller(new LogFiller(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_2));
     }
     private void NegotiationsNotImprovedEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(characterInvolved.faction, characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
-        state.descriptionLog.AddToFillers(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_2);
+        state.descriptionLog.AddToFillers(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_2);
 
         state.AddLogFiller(new LogFiller(characterInvolved.faction, characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1));
-        state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_2));
+        state.AddLogFiller(new LogFiller(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_2));
     }
     private void NormalNegotiationsSuccessEffect(InteractionState state) {
-        FactionManager.Instance.DeclarePeaceBetween(characterInvolved.faction, interactable.tileLocation.areaOfTile.owner);
+        FactionManager.Instance.DeclarePeaceBetween(characterInvolved.faction, interactable.owner);
         characterInvolved.LevelUp();
 
         state.descriptionLog.AddToFillers(characterInvolved.faction, characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
-        state.descriptionLog.AddToFillers(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_2);
+        state.descriptionLog.AddToFillers(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_2);
 
         state.AddLogFiller(new LogFiller(characterInvolved.faction, characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1));
-        state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_2));
+        state.AddLogFiller(new LogFiller(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_2));
     }
     private void NormalNegotiationsFailEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(characterInvolved.faction, characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
-        state.descriptionLog.AddToFillers(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_2);
+        state.descriptionLog.AddToFillers(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_2);
 
         state.AddLogFiller(new LogFiller(characterInvolved.faction, characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1));
-        state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_2));
+        state.AddLogFiller(new LogFiller(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_2));
     }
     #endregion
 }

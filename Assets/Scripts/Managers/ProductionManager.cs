@@ -63,9 +63,9 @@ public class ProductionManager : MonoBehaviour {
 		}
 
 		Construction[] arrConstruction = constructionGO.GetComponents<Construction> ();
-		for (int i = 0; i < arrConstruction.Length; i++) {
-			_constructionsLookup.Add (arrConstruction [i].structure.name, arrConstruction [i]);
-		}
+		//for (int i = 0; i < arrConstruction.Length; i++) {
+		//	_constructionsLookup.Add (arrConstruction [i].structure.name, arrConstruction [i]);
+		//}
 
 		TrainingRole[] arrTrainingRole = trainingRoleGO.GetComponents<TrainingRole> ();
 		for (int i = 0; i < arrTrainingRole.Length; i++) {

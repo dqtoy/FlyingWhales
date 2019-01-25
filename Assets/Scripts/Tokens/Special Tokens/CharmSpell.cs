@@ -26,7 +26,7 @@ public class CharmSpell : SpecialToken {
     }
     public override Character GetTargetCharacterFor(Character sourceCharacter) {
         if (!sourceCharacter.isFactionless) {
-            Area location = sourceCharacter.ownParty.specificLocation.tileLocation.areaOfTile;
+            Area location = sourceCharacter.ownParty.specificLocation;
             List<Character> choices = new List<Character>();
             for (int i = 0; i < location.charactersAtLocation.Count; i++) {
                 Character currCharacter = location.charactersAtLocation[i];
@@ -44,10 +44,10 @@ public class CharmSpell : SpecialToken {
     }
     public override bool CanBeUsedBy(Character sourceCharacter) {
         if (!sourceCharacter.isFactionless) {
-            if (sourceCharacter.homeLandmark.tileLocation.areaOfTile.IsResidentsFull()) {
+            if (sourceCharacter.homeArea.IsResidentsFull()) {
                 return false; //resident capacity is already full, do not use charm spell
             }
-            Area location = sourceCharacter.ownParty.specificLocation.tileLocation.areaOfTile;
+            Area location = sourceCharacter.ownParty.specificLocation;
             for (int i = 0; i < location.charactersAtLocation.Count; i++) {
                 Character currCharacter = location.charactersAtLocation[i];
                 if (currCharacter.id != sourceCharacter.id 
@@ -69,10 +69,10 @@ public class CharmSpell : SpecialToken {
         if (state.target is Character) {
             Character target = state.target as Character;
             if (target.GetTrait("Charmed") == null) {
-                Charmed charmedTrait = new Charmed(target.faction, target.homeLandmark);
+                Charmed charmedTrait = new Charmed(target.faction, target.homeArea);
                 target.AddTrait(charmedTrait);
             }
-            FactionManager.Instance.TransferCharacter(target, state.tokenUser.faction, state.tokenUser.homeLandmark);
+            FactionManager.Instance.TransferCharacter(target, state.tokenUser.faction, state.tokenUser.homeArea);
         }
 
         state.descriptionLog.AddToFillers(state.tokenUser.faction, state.tokenUser.faction.name, LOG_IDENTIFIER.FACTION_1);
@@ -86,10 +86,10 @@ public class CharmSpell : SpecialToken {
         if (state.target is Character) {
             Character target = state.target as Character;
             if (target.GetTrait("Charmed") == null) {
-                Charmed charmedTrait = new Charmed(target.faction, target.homeLandmark);
+                Charmed charmedTrait = new Charmed(target.faction, target.homeArea);
                 target.AddTrait(charmedTrait);
             }
-            FactionManager.Instance.TransferCharacter(target, state.tokenUser.faction, state.tokenUser.homeLandmark);
+            FactionManager.Instance.TransferCharacter(target, state.tokenUser.faction, state.tokenUser.homeArea);
         }
 
         state.descriptionLog.AddToFillers(state.tokenUser.faction, state.tokenUser.faction.name, LOG_IDENTIFIER.FACTION_1);

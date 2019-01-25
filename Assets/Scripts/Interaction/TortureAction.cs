@@ -25,7 +25,7 @@ public class TortureAction : Interaction {
         get { return _targetCharacter; }
     }
 
-    public TortureAction(BaseLandmark interactable): base(interactable, INTERACTION_TYPE.TORTURE_ACTION, 0) {
+    public TortureAction(Area interactable): base(interactable, INTERACTION_TYPE.TORTURE_ACTION, 0) {
         _name = "Torture Action";
         _jobFilter = new JOB[] { JOB.DIPLOMAT, JOB.DEBILITATOR };
     }
@@ -295,8 +295,8 @@ public class TortureAction : Interaction {
     }
     public Character GetTargetCharacter(Character characterInvolved) {
         WeightedDictionary<Character> characterWeights = new WeightedDictionary<Character>();
-        for (int i = 0; i < interactable.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
-            Character currCharacter = interactable.tileLocation.areaOfTile.charactersAtLocation[i];
+        for (int i = 0; i < interactable.charactersAtLocation.Count; i++) {
+            Character currCharacter = interactable.charactersAtLocation[i];
             if (currCharacter.id != characterInvolved.id && !currCharacter.currentParty.icon.isTravelling && currCharacter.IsInOwnParty() && currCharacter.GetTrait("Abducted") != null) {
                 return currCharacter;
             }

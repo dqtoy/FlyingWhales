@@ -22,7 +22,7 @@ public class StealAction : Interaction {
         get { return _targetCharacter; }
     }
 
-    public StealAction(BaseLandmark interactable)
+    public StealAction(Area interactable)
         : base(interactable, INTERACTION_TYPE.STEAL_ACTION, 0) {
         _name = "Steal Action";
         _jobFilter = new JOB[] { JOB.INSTIGATOR, JOB.DIPLOMAT };
@@ -350,8 +350,8 @@ public class StealAction : Interaction {
          If the character has Crooked trait, this will include characters from his own faction.
          */
         List<Character> choices = new List<Character>();
-        for (int i = 0; i < interactable.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
-            Character currCharacter = interactable.tileLocation.areaOfTile.charactersAtLocation[i];
+        for (int i = 0; i < interactable.charactersAtLocation.Count; i++) {
+            Character currCharacter = interactable.charactersAtLocation[i];
             if (currCharacter.tokenInInventory != null 
                 && currCharacter.id != characterInvolved.id
                 && !currCharacter.currentParty.icon.isTravelling

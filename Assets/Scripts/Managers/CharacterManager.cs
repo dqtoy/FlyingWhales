@@ -24,9 +24,6 @@ public class CharacterManager : MonoBehaviour {
 	public Sprite banditSprite;
 	public Sprite chieftainSprite;
 
-    [Header("Character Tag Icons")]
-    [SerializeField] private List<CharacterAttributeIconSetting> characterTagIcons;
-
     [Header("Squad Emblems")]
     [SerializeField] private List<EmblemBG> _emblemBGs;
     [SerializeField] private List<Sprite> _emblemSymbols;
@@ -157,7 +154,7 @@ public class CharacterManager : MonoBehaviour {
     /*
      Create a new character, given a role, class and race.
          */
-    public Character CreateNewCharacter(string className, RACE race, GENDER gender, Faction faction = null, ILocation homeLocation = null, bool generateTraits = true) {
+    public Character CreateNewCharacter(string className, RACE race, GENDER gender, Faction faction = null, Area homeLocation = null, bool generateTraits = true) {
 		if(className == "None"){
             className = "Classless";
 		}
@@ -171,13 +168,9 @@ public class CharacterManager : MonoBehaviour {
 #if !WORLD_CREATION_TOOL
         party.CreateIcon();
         if(homeLocation != null) {
-            party.icon.SetPosition(homeLocation.tileLocation.transform.position);
-            if (homeLocation is BaseLandmark) {
-                BaseLandmark homeLandmark = homeLocation as BaseLandmark;
-                homeLandmark.AddCharacterToLocation(party);
-                newCharacter.MigrateTo(homeLandmark);
-                //homeLandmark.AddCharacterHomeOnLandmark(newCharacter);
-            }
+            party.icon.SetPosition(homeLocation.coreTile.transform.position);
+            newCharacter.MigrateHomeTo(homeLocation, false);
+            homeLocation.AddCharacterToLocation(party);
         }
 #endif
         if (generateTraits) {
@@ -193,27 +186,22 @@ public class CharacterManager : MonoBehaviour {
         Character newCharacter = new Character(data);
         allCharacterLogs.Add(newCharacter, new List<string>());
 
-        if (data.homeLandmarkID != -1) {
-            BaseLandmark homeLandmark = LandmarkManager.Instance.GetLandmarkByID(data.homeLandmarkID);
-            if (homeLandmark != null) {
-                homeLandmark.AddCharacterHomeOnLandmark(newCharacter, true);
+        if (data.homeAreaID != -1) {
+            Area homeArea = LandmarkManager.Instance.GetAreaByID(data.homeAreaID);
+            if (homeArea != null) {
+                homeArea.AddResident(newCharacter, true);
             }
         }
         Party party = newCharacter.CreateOwnParty();
         if (data.locationID != -1) {
-            ILocation currentLocation = LandmarkManager.Instance.GetLocationBasedOnID(data.locationType, data.locationID);
+            Area currentLocation = LandmarkManager.Instance.GetAreaByID(data.locationID);
+            if (currentLocation != null) {
 #if !WORLD_CREATION_TOOL
-            party.CreateIcon();
-            party.icon.SetPosition(currentLocation.tileLocation.transform.position);            
+                party.CreateIcon();
+                party.icon.SetPosition(currentLocation.coreTile.transform.position);            
 #endif
-            if (currentLocation is BaseLandmark) {
                 currentLocation.AddCharacterToLocation(party);
             }
-#if WORLD_CREATION_TOOL
-            else{
-                party.SetSpecificLocation(currentLocation);
-            }
-#endif
         }
 
         if (data.equipmentData != null) {
@@ -379,6 +367,29 @@ public class CharacterManager : MonoBehaviour {
             }
         }
     }
+    public Trait CreateRelationship(RELATIONSHIP_TRAIT type, Character targetCharacter) {
+        switch (type) {
+            case RELATIONSHIP_TRAIT.ENEMY:
+                return new Enemy(targetCharacter);
+            case RELATIONSHIP_TRAIT.FRIEND:
+                return new Friend(targetCharacter);
+            case RELATIONSHIP_TRAIT.RELATIVE:
+                return new Relative(targetCharacter);
+            case RELATIONSHIP_TRAIT.LOVER:
+                return new Lover(targetCharacter);
+            case RELATIONSHIP_TRAIT.PARAMOUR:
+                return new Paramour(targetCharacter);
+            case RELATIONSHIP_TRAIT.MASTER:
+                return new Master(targetCharacter);
+            case RELATIONSHIP_TRAIT.SERVANT:
+                return new Servant(targetCharacter);
+            case RELATIONSHIP_TRAIT.MENTOR:
+                return new Mentor(targetCharacter);
+            case RELATIONSHIP_TRAIT.STUDENT:
+                return new Student(targetCharacter);
+        }
+        return null;
+    }
     #endregion
 
     #region Utilities
@@ -450,15 +461,6 @@ public class CharacterManager : MonoBehaviour {
                 return currCharacter.ownParty;
             } else if (currCharacter.currentParty.id == id) {
                 return currCharacter.currentParty;
-            }
-        }
-        return null;
-    }
-    public Sprite GetCharacterAttributeSprite(ATTRIBUTE tag) {
-        for (int i = 0; i < characterTagIcons.Count; i++) {
-            CharacterAttributeIconSetting currSettings = characterTagIcons[i];
-            if (currSettings.tag == tag) {
-                return currSettings.icon;
             }
         }
         return null;
@@ -631,43 +633,6 @@ public class CharacterManager : MonoBehaviour {
     }
     #endregion
 
-    //#region Squads
-    //public Squad CreateNewSquad() {
-    //    Squad newSquad = new Squad();
-    //    AddSquad(newSquad);
-    //    Messenger.Broadcast(Signals.SQUAD_CREATED, newSquad);
-    //    return newSquad;
-    //}
-    //public void CreateNewSquad(SquadSaveData data) {
-    //    Squad newSquad = new Squad(data);
-    //    AddSquad(newSquad);
-    //    Messenger.Broadcast(Signals.SQUAD_CREATED, newSquad);
-    //    foreach (KeyValuePair<int, ICHARACTER_TYPE> kvp in data.memberIDs) {
-    //        if (kvp.Value == ICHARACTER_TYPE.CHARACTER) {
-    //            Character character = GetCharacterByID(kvp.Key);
-    //            if (kvp.Key == data.leaderID) {
-    //                newSquad.SetLeader(character);
-    //            } else {
-    //                newSquad.AddMember(character);
-    //            }
-    //        }
-    //    }
-    //}
-    //public void DeleteSquad(Squad squad) {
-    //    squad.Disband();
-    //    RemoveSquad(squad);
-    //    Messenger.Broadcast(Signals.SQUAD_DELETED, squad);
-    //}
-    //public void AddSquad(Squad squad) {
-    //    if (!allSquads.Contains(squad)) {
-    //        allSquads.Add(squad);
-    //    }
-    //}
-    //public void RemoveSquad(Squad squad) {
-    //    allSquads.Remove(squad);
-    //}
-    //#endregion
-
     #region Animator
     public RuntimeAnimatorController GetAnimatorByRole(CHARACTER_ROLE role) {
         for (int i = 0; i < characterAnimators.Length; i++) {
@@ -703,35 +668,6 @@ public class CharacterManager : MonoBehaviour {
             }
         }
         return -1;
-    }
-    #endregion
-
-    #region Armies
-    public CharacterArmyUnit CreateCharacterArmyUnit(string className, RACE race, Faction faction = null, ILocation homeLocation = null) {
-        CharacterArmyUnit armyUnit = new CharacterArmyUnit(className, race);
-
-        Party party = armyUnit.CreateOwnParty();
-        if (faction != null) {
-            faction.AddNewCharacter(armyUnit);
-        }
-#if !WORLD_CREATION_TOOL
-        party.CreateIcon();
-        if (homeLocation != null) {
-            party.icon.SetPosition(homeLocation.tileLocation.transform.position);
-
-            if (homeLocation is BaseLandmark) {
-                BaseLandmark landmark = homeLocation as BaseLandmark;
-                landmark.AddCharacterToLocation(party);
-                landmark.AddCharacterHomeOnLandmark(armyUnit, false, false);
-            }
-        }
-#endif
-        //_allCharacters.Add(armyUnit);
-        //Messenger.Broadcast(Signals.CHARACTER_CREATED, armyUnit);
-        return armyUnit;
-    }
-    public CharacterArmyUnit CreateCharacterArmyUnit(RACE race, DefenderSetting defender, Faction faction = null, ILocation initialLocation = null) {
-        return CreateCharacterArmyUnit(defender.className, race, faction, initialLocation);
     }
     #endregion
 }

@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-[CustomPropertyDrawer(typeof(ScheduleTemplateDictionary))]
-public class ScheduleTemplateDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(PhaseItemDictionary))]
 public class PhaseItemDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(StringIntDictionary))]

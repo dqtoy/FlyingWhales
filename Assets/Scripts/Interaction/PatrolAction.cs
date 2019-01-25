@@ -26,7 +26,7 @@ public class PatrolAction : Interaction {
         get { return _targetCharacter; }
     }
 
-    public PatrolAction(BaseLandmark interactable) 
+    public PatrolAction(Area interactable) 
         : base(interactable, INTERACTION_TYPE.PATROL_ACTION, 0) {
         _name = "Patrol Action";
         _jobFilter = new JOB[] { JOB.INSTIGATOR, JOB.DEBILITATOR };
@@ -102,7 +102,7 @@ public class PatrolAction : Interaction {
                 neededObjects = new List<System.Type>() { typeof(CharacterToken) },
                 neededObjectsChecker = new List<ActionOptionNeededObjectChecker>() {
                     new ActionOptionLocationRequirement {
-                        requiredLocation = interactable.tileLocation.areaOfTile,
+                        requiredLocation = interactable,
                     },
                     new ActionOptionFactionRelationshipRequirement {
                         requiredStatus = new List<FACTION_RELATIONSHIP_STATUS>(){ FACTION_RELATIONSHIP_STATUS.DISLIKED, FACTION_RELATIONSHIP_STATUS.ENEMY },
@@ -392,8 +392,8 @@ public class PatrolAction : Interaction {
     //}
     private Character GetTargetCharacter() {
         List<Character> choices = new List<Character>();
-        for (int i = 0; i < interactable.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
-            Character character = interactable.tileLocation.areaOfTile.charactersAtLocation[i];
+        for (int i = 0; i < interactable.charactersAtLocation.Count; i++) {
+            Character character = interactable.charactersAtLocation[i];
             if (character.id == _characterInvolved.id || character.currentParty.icon.isTravelling) {
                 continue; //skip
             }
@@ -411,7 +411,7 @@ public class PatrolAction : Interaction {
             return choices[Random.Range(0, choices.Count)];
         }
         return null;
-        //throw new System.Exception("Could not find target character for Patrol Action at " + interactable.tileLocation.areaOfTile.name);
+        //throw new System.Exception("Could not find target character for Patrol Action at " + interactable.name);
     }
 
     private void SetTargetCharacter(Character character) {

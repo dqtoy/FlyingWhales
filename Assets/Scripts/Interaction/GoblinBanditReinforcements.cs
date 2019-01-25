@@ -9,46 +9,43 @@ public class GoblinBanditReinforcements : Interaction {
 
     private WeightedDictionary<DefenderSetting> assaultSpawnWeights;
 
-    public GoblinBanditReinforcements(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.GOBLIN_BANDIT_REINFORCEMENTS, 50) {
+    public GoblinBanditReinforcements(Area interactable) : base(interactable, INTERACTION_TYPE.GOBLIN_BANDIT_REINFORCEMENTS, 50) {
         _name = "Goblin Bandit Reinforcements";
     }
 
     #region Overrides
     public override void CreateStates() {
-        if (_interactable is BaseLandmark) {
-            //CreateExploreStates();
-            //CreateWhatToDoNextState("What do you want %minion% to do next?");
-            landmark = _interactable;
-            ConstructDefenseSpawnWeights();
+        //CreateExploreStates();
+        //CreateWhatToDoNextState("What do you want %minion% to do next?");
+        ConstructDefenseSpawnWeights();
 
-            InteractionState startState = new InteractionState("Start", this);
-            //string startStateDesc = "The bandits are increasing their defensive army.";
-            //startState.SetDescription(startStateDesc);
+        InteractionState startState = new InteractionState("Start", this);
+        //string startStateDesc = "The bandits are increasing their defensive army.";
+        //startState.SetDescription(startStateDesc);
             
-            //action option states
-            InteractionState successCancelState = new InteractionState("Successfully Cancelled Reinforcement", this);
-            InteractionState failedCancelState = new InteractionState("Failed to Cancel Reinforcement", this);
-            InteractionState unitStolenState = new InteractionState("Unit Stolen", this);
-            InteractionState doNothingState = new InteractionState("Do nothing", this);
+        //action option states
+        InteractionState successCancelState = new InteractionState("Successfully Cancelled Reinforcement", this);
+        InteractionState failedCancelState = new InteractionState("Failed to Cancel Reinforcement", this);
+        InteractionState unitStolenState = new InteractionState("Unit Stolen", this);
+        InteractionState doNothingState = new InteractionState("Do nothing", this);
 
-            CreateActionOptions(startState);
-            //CreateActionOptions(successCancelState);
-            //CreateActionOptions(failedCancelState);
-            //CreateActionOptions(giftRejectedState);
+        CreateActionOptions(startState);
+        //CreateActionOptions(successCancelState);
+        //CreateActionOptions(failedCancelState);
+        //CreateActionOptions(giftRejectedState);
 
-            successCancelState.SetEffect(() => SuccessfullyCalledReinforcementRewardEffect(successCancelState));
-            failedCancelState.SetEffect(() => FailedToCancelReinforcementRewardEffect(failedCancelState));
-            unitStolenState.SetEffect(() => UnitStolenRewardEffect(unitStolenState));
-            doNothingState.SetEffect(() => DoNothingRewardEffect(doNothingState));
+        successCancelState.SetEffect(() => SuccessfullyCalledReinforcementRewardEffect(successCancelState));
+        failedCancelState.SetEffect(() => FailedToCancelReinforcementRewardEffect(failedCancelState));
+        unitStolenState.SetEffect(() => UnitStolenRewardEffect(unitStolenState));
+        doNothingState.SetEffect(() => DoNothingRewardEffect(doNothingState));
 
-            _states.Add(startState.name, startState);
-            _states.Add(successCancelState.name, successCancelState);
-            _states.Add(failedCancelState.name, failedCancelState);
-            _states.Add(unitStolenState.name, unitStolenState);
-            _states.Add(doNothingState.name, doNothingState);
+        _states.Add(startState.name, startState);
+        _states.Add(successCancelState.name, successCancelState);
+        _states.Add(failedCancelState.name, failedCancelState);
+        _states.Add(unitStolenState.name, unitStolenState);
+        _states.Add(doNothingState.name, doNothingState);
 
-            SetCurrentState(startState);
-        }
+        SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {
@@ -97,15 +94,15 @@ public class GoblinBanditReinforcements : Interaction {
     }
     private CharacterParty CreateAssaultArmy(int unitCount) {
         CharacterParty army = null;
-        for (int i = 0; i < unitCount; i++) {
-            DefenderSetting chosenDefender = assaultSpawnWeights.PickRandomElementGivenWeights();
-            Character armyUnit = CharacterManager.Instance.CreateNewCharacter(chosenDefender.className, landmark.owner.raceType, GENDER.MALE, landmark.owner, landmark);
-            if (army == null) {
-                army = armyUnit.party;
-            } else {
-                army.AddCharacter(armyUnit);
-            }
-        }
+        //for (int i = 0; i < unitCount; i++) {
+        //    DefenderSetting chosenDefender = assaultSpawnWeights.PickRandomElementGivenWeights();
+        //    Character armyUnit = CharacterManager.Instance.CreateNewCharacter(chosenDefender.className, landmark.owner.raceType, GENDER.MALE, landmark.owner, landmark);
+        //    if (army == null) {
+        //        army = armyUnit.party;
+        //    } else {
+        //        army.AddCharacter(armyUnit);
+        //    }
+        //}
         return army;
     }
 

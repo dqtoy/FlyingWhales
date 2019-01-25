@@ -54,15 +54,16 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     }
     #endregion
 
-    void Awake() {
-        //if (skin != null) {
-        //    Material mat = Instantiate(CharacterManager.Instance.hsvMaterial);
-        //    skin.material = mat;
-        //}
-        //if (hair != null) {
-        //    Material mat = Instantiate(CharacterManager.Instance.hsvMaterial);
-        //    hair.material = mat;
-        //}
+    void Start() {
+        if (skin != null) {
+            Material mat = Instantiate(CharacterManager.Instance.hsvMaterial);
+            skin.material = mat;
+            //top.material = mat;
+        }
+        if (hair != null) {
+            Material mat = Instantiate(CharacterManager.Instance.hsvMaterial);
+            hair.material = mat;
+        }
     }
 
     private void OnEnable() {
@@ -117,12 +118,12 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         //RectTransform faceRT = faceParentGO.GetComponent<RectTransform>();
 
         
-        hair.color = character.hairColor;
-        if (character.race == RACE.GOBLIN) {
-            skin.color = Color.white;
-        } else {
-            skin.color = character.skinColor;
-        }
+        //hair.color = character.hairColor;
+        //if (character.race == RACE.GOBLIN) {
+        //    skin.color = Color.white;
+        //} else {
+        //    skin.color = character.skinColor;
+        //}
     }
     public void GeneratePortrait(PortraitSettings portraitSettings) {
         _portraitSettings = portraitSettings;

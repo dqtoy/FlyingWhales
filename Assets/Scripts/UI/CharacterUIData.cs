@@ -13,7 +13,6 @@ public class CharacterUIData {
     public float manaValue { get; private set; }
     public float attackPower { get; private set; }
     public float speed { get; private set; }
-    public List<CharacterAttribute> attributes { get; private set; }
     public List<Trait> combatAttributes { get; private set; }
     public Weapon equippedWeapon { get; private set; }
     public Armor equippedArmor { get; private set; }
@@ -24,7 +23,6 @@ public class CharacterUIData {
     public Faction faction;
 
     public CharacterUIData() {
-        attributes = new List<CharacterAttribute>();
         combatAttributes = new List<Trait>();
         inventory = new List<Item>();
         relationships = new List<Relationship>();
@@ -40,11 +38,6 @@ public class CharacterUIData {
         attackPower = character.attackPower;
         speed = character.speed;
         maxHP = character.maxHP;
-
-        attributes.Clear();
-        if (character.attributes != null) {
-            attributes.AddRange(character.attributes);
-        }
 
         combatAttributes.Clear();
         if (character.traits != null) {

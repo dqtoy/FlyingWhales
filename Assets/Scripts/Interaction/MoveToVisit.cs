@@ -10,7 +10,7 @@ public class MoveToVisit : Interaction {
 
     private Area _targetArea;
 
-    public MoveToVisit(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_VISIT, 0) {
+    public MoveToVisit(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_VISIT, 0) {
         _name = "Move To Visit";
         _jobFilter = new JOB[] { JOB.DEBILITATOR };
     }
@@ -111,13 +111,16 @@ public class MoveToVisit : Interaction {
     #endregion
     private void StartMove() {
         AddToDebugLog(_characterInvolved.name + " starts moving towards " + _targetArea.name + "(" + _targetArea.coreTile.landmarkOnTile.name + ") to visit!");
-        _characterInvolved.currentParty.GoToLocation(_targetArea.coreTile.landmarkOnTile, PATHFINDING_MODE.NORMAL);
+        _characterInvolved.currentParty.GoToLocation(_targetArea, PATHFINDING_MODE.NORMAL);
     }
 
     private Area GetTargetLocation(Character characterInvolved) {
         WeightedDictionary<Area> locationWeights = new WeightedDictionary<Area>();
         for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
             Area currArea = LandmarkManager.Instance.allAreas[i];
+            if (currArea.id == PlayerManager.Instance.player.playerArea.id) {
+                continue; //skip
+            }
             int weight = 0;
             if(currArea.owner == null) {
                 if (Utilities.specialClasses.Contains(characterInvolved.characterClass.className)) {

@@ -15,7 +15,7 @@ public class FoundMagus : Interaction {
     private const string Dissuade_Fail = "Dissuade Fail";
     private const string Magus_Founded = "Magus Founded";
 
-    public FoundMagus(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.FOUND_MAGUS, 0) {
+    public FoundMagus(Area interactable) : base(interactable, INTERACTION_TYPE.FOUND_MAGUS, 0) {
         _name = "Found Magus";
         _jobFilter = new JOB[] { JOB.DEBILITATOR, JOB.DIPLOMAT, JOB.INSTIGATOR };
     }

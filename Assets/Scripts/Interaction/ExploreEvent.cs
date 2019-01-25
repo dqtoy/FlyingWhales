@@ -17,7 +17,7 @@ public class ExploreEvent : Interaction {
     private const string Normal_Explore_Fail = "Normal Explore Fail";
     private const string Normal_Explore_Critical_Fail = "Normal Explore Critical Fail";
 
-    public ExploreEvent(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.EXPLORE_EVENT, 0) {
+    public ExploreEvent(Area interactable) : base(interactable, INTERACTION_TYPE.EXPLORE_EVENT, 0) {
         _name = "Explore Event";
         _jobFilter = new JOB[] { JOB.INSTIGATOR, JOB.DIPLOMAT };
     }
@@ -124,7 +124,7 @@ public class ExploreEvent : Interaction {
         string nextState = string.Empty;
         switch (resultWeights.PickRandomElementGivenWeights()) {
             case RESULT.SUCCESS:
-                if (interactable.tileLocation.areaOfTile.GetElligibleTokensForCharacter(_characterInvolved).Count > 0) {
+                if (interactable.GetElligibleTokensForCharacter(_characterInvolved).Count > 0) {
                     nextState = Trapped_Explore_Success_Obtain_Item;
                 } else {
                     nextState = Trapped_Explore_Success_No_Item;
@@ -154,7 +154,7 @@ public class ExploreEvent : Interaction {
         string nextState = string.Empty;
         switch (resultWeights.PickRandomElementGivenWeights()) {
             case RESULT.SUCCESS:
-                if (interactable.tileLocation.areaOfTile.GetElligibleTokensForCharacter(_characterInvolved).Count > 0) {
+                if (interactable.GetElligibleTokensForCharacter(_characterInvolved).Count > 0) {
                     nextState = Assisted_Explore_Success_Obtain_Item;
                 } else {
                     nextState = Assisted_Explore_Success_No_Item;
@@ -184,7 +184,7 @@ public class ExploreEvent : Interaction {
         string nextState = string.Empty;
         switch (resultWeights.PickRandomElementGivenWeights()) {
             case RESULT.SUCCESS:
-                if (interactable.tileLocation.areaOfTile.GetElligibleTokensForCharacter(_characterInvolved).Count > 0) {
+                if (interactable.GetElligibleTokensForCharacter(_characterInvolved).Count > 0) {
                     nextState = Normal_Explore_Success_Obtain_Item;
                 } else {
                     nextState = Normal_Explore_Success_No_Item;
@@ -220,9 +220,9 @@ public class ExploreEvent : Interaction {
         }
     }
     private void ExploreCriticalFailRewardEffect(InteractionState state) {
-        if (interactable.tileLocation.areaOfTile.owner != null 
-            && interactable.tileLocation.areaOfTile.owner.id != _characterInvolved.faction.id) {
-            AdjustFactionsRelationship(interactable.tileLocation.areaOfTile.owner, _characterInvolved.faction, -1, state);
+        if (interactable.owner != null 
+            && interactable.owner.id != _characterInvolved.faction.id) {
+            AdjustFactionsRelationship(interactable.owner, _characterInvolved.faction, -1, state);
         }
         //**Mechanic**: Character dies.
         _characterInvolved.Death();
@@ -232,15 +232,15 @@ public class ExploreEvent : Interaction {
     }
 
     private SpecialToken GiveSpecialTokenToCharacter() {
-        List<SpecialToken> choices = interactable.tileLocation.areaOfTile.GetElligibleTokensForCharacter(_characterInvolved);
+        List<SpecialToken> choices = interactable.GetElligibleTokensForCharacter(_characterInvolved);
         //WeightedDictionary<SpecialToken> tokenWeights = new WeightedDictionary<SpecialToken>();
         //for (int i = 0; i < choices.Count; i++) {
         //    tokenWeights.AddElement(choices[i], choices[i].weight);
         //}
         SpecialToken token = choices[Random.Range(0, choices.Count)];
         _characterInvolved.ObtainToken(token);
-        interactable.tileLocation.areaOfTile.RemoveSpecialTokenFromLocation(token);
-        Debug.LogWarning("[Day " + GameManager.Instance.continuousDays + "] " + _characterInvolved.name + " obtained " + token.tokenName + " at " + interactable.tileLocation.areaOfTile.name);
+        interactable.RemoveSpecialTokenFromLocation(token);
+        Debug.LogWarning("[Day " + GameManager.Instance.continuousDays + "] " + _characterInvolved.name + " obtained " + token.tokenName + " at " + interactable.name);
         return token;
     }
 }

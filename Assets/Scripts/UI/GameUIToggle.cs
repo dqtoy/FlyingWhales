@@ -14,7 +14,7 @@ public class GameUIToggle : Toggle {
 
     [SerializeField] private TextMeshProUGUI targetText;
 
-    public ActionEvent onClickAction;
+    //public ActionEvent onClickAction;
 
     private Color onColor;
     private Color offColor;

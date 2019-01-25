@@ -11,7 +11,7 @@ public class FactionUpgrade : Interaction {
     private const string Assisted_Faction_Upgrade  = "Assisted Faction Upgrade";
     private const string Normal_Faction_Upgrade = "Normal Faction Upgrade";
 
-    public FactionUpgrade(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.FACTION_UPGRADE, 0) {
+    public FactionUpgrade(Area interactable) : base(interactable, INTERACTION_TYPE.FACTION_UPGRADE, 0) {
         _name = "Faction Upgrade";
         _jobFilter = new JOB[] { JOB.DEBILITATOR, JOB.DEBILITATOR, JOB.DIPLOMAT };
     }
@@ -27,7 +27,7 @@ public class FactionUpgrade : Interaction {
         InteractionState normalFactionUpgradeState = new InteractionState(Normal_Faction_Upgrade, this);
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
-        startStateDescriptionLog.AddToFillers(interactable.tileLocation.areaOfTile.owner.leader, interactable.tileLocation.areaOfTile.owner.leader.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        startStateDescriptionLog.AddToFillers(interactable.owner.leader, interactable.owner.leader.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 
         CreateActionOptions(startState);
@@ -129,58 +129,58 @@ public class FactionUpgrade : Interaction {
         investigatorCharacter.LevelUp();
         MinionSuccess();
 
-        state.descriptionLog.AddToFillers(interactable.tileLocation.areaOfTile.owner.leader, interactable.tileLocation.areaOfTile.owner.leader.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.descriptionLog.AddToFillers(interactable.owner.leader, interactable.owner.leader.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
-        state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1));
+        state.AddLogFiller(new LogFiller(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_1));
     }
     private void StopFactionUpgradeFailEffect(InteractionState state) {
-        interactable.tileLocation.areaOfTile.owner.LevelUp();
-        interactable.tileLocation.areaOfTile.owner.leader.LevelUp();
+        interactable.owner.LevelUp();
+        interactable.owner.leader.LevelUp();
 
-        state.descriptionLog.AddToFillers(interactable.tileLocation.areaOfTile.owner.leader, interactable.tileLocation.areaOfTile.owner.leader.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.descriptionLog.AddToFillers(interactable.owner.leader, interactable.owner.leader.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
-        state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1));
-        state.AddLogFiller(new LogFiller(null, interactable.tileLocation.areaOfTile.owner.level.ToString(), LOG_IDENTIFIER.STRING_1));
+        state.AddLogFiller(new LogFiller(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_1));
+        state.AddLogFiller(new LogFiller(null, interactable.owner.level.ToString(), LOG_IDENTIFIER.STRING_1));
     }
     private void DisruptFactionUpgradeSuccessEffect(InteractionState state) {
         investigatorCharacter.LevelUp();
-        interactable.tileLocation.areaOfTile.owner.LevelUp(-1);
-        interactable.tileLocation.areaOfTile.owner.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, -2);
+        interactable.owner.LevelUp(-1);
+        interactable.owner.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, -2);
 
-        state.descriptionLog.AddToFillers(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
+        state.descriptionLog.AddToFillers(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_1);
 
-        state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1));
-        state.AddLogFiller(new LogFiller(null, interactable.tileLocation.areaOfTile.owner.level.ToString(), LOG_IDENTIFIER.STRING_1));
+        state.AddLogFiller(new LogFiller(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_1));
+        state.AddLogFiller(new LogFiller(null, interactable.owner.level.ToString(), LOG_IDENTIFIER.STRING_1));
     }
     private void DisruptFactionUpgradeFailEffect(InteractionState state) {
-        interactable.tileLocation.areaOfTile.owner.leader.LevelUp();
-        interactable.tileLocation.areaOfTile.owner.LevelUp();
-        interactable.tileLocation.areaOfTile.owner.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, -1);
+        interactable.owner.leader.LevelUp();
+        interactable.owner.LevelUp();
+        interactable.owner.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, -1);
 
-        state.descriptionLog.AddToFillers(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1);
+        state.descriptionLog.AddToFillers(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_1);
 
-        state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1));
-        state.AddLogFiller(new LogFiller(null, interactable.tileLocation.areaOfTile.owner.level.ToString(), LOG_IDENTIFIER.STRING_1));
+        state.AddLogFiller(new LogFiller(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_1));
+        state.AddLogFiller(new LogFiller(null, interactable.owner.level.ToString(), LOG_IDENTIFIER.STRING_1));
     }
     private void AssistedFactionUpgradeEffect(InteractionState state) {
         investigatorCharacter.LevelUp();
-        interactable.tileLocation.areaOfTile.owner.leader.LevelUp();
-        interactable.tileLocation.areaOfTile.owner.LevelUp(2);
-        interactable.tileLocation.areaOfTile.owner.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, 2);
+        interactable.owner.leader.LevelUp();
+        interactable.owner.LevelUp(2);
+        interactable.owner.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, 2);
 
-        state.descriptionLog.AddToFillers(interactable.tileLocation.areaOfTile.owner.leader, interactable.tileLocation.areaOfTile.owner.leader.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.descriptionLog.AddToFillers(interactable.owner.leader, interactable.owner.leader.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
-        state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1));
-        state.AddLogFiller(new LogFiller(null, interactable.tileLocation.areaOfTile.owner.level.ToString(), LOG_IDENTIFIER.STRING_1));
+        state.AddLogFiller(new LogFiller(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_1));
+        state.AddLogFiller(new LogFiller(null, interactable.owner.level.ToString(), LOG_IDENTIFIER.STRING_1));
     }
     private void NormalFactionUpgradeEffect(InteractionState state) {
-        interactable.tileLocation.areaOfTile.owner.leader.LevelUp();
-        interactable.tileLocation.areaOfTile.owner.LevelUp();
+        interactable.owner.leader.LevelUp();
+        interactable.owner.LevelUp();
 
-        state.descriptionLog.AddToFillers(interactable.tileLocation.areaOfTile.owner.leader, interactable.tileLocation.areaOfTile.owner.leader.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.descriptionLog.AddToFillers(interactable.owner.leader, interactable.owner.leader.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
-        state.AddLogFiller(new LogFiller(interactable.tileLocation.areaOfTile.owner, interactable.tileLocation.areaOfTile.owner.name, LOG_IDENTIFIER.FACTION_1));
-        state.AddLogFiller(new LogFiller(null, interactable.tileLocation.areaOfTile.owner.level.ToString(), LOG_IDENTIFIER.STRING_1));
+        state.AddLogFiller(new LogFiller(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_1));
+        state.AddLogFiller(new LogFiller(null, interactable.owner.level.ToString(), LOG_IDENTIFIER.STRING_1));
     }
     #endregion
 }

@@ -11,7 +11,7 @@ public class InduceWar : Interaction {
     private const string Induce_War_Fail = "Induce War Fail";
     private const string Do_Nothing = "Do nothing";
 
-    public InduceWar(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.INDUCE_WAR, 0) {
+    public InduceWar(Area interactable) : base(interactable, INTERACTION_TYPE.INDUCE_WAR, 0) {
         _name = "Induce War";
         _jobFilter = new JOB[] { JOB.INSTIGATOR };
     }

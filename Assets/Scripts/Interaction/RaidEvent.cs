@@ -14,7 +14,7 @@ public class RaidEvent : Interaction {
     private const string Normal_Raid_Fail = "Normal Raid Fail";
     private const string Normal_Raid_Critical_Fail = "Normal Raid Critically Fail";
 
-    public RaidEvent(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.RAID_EVENT, 0) {
+    public RaidEvent(Area interactable) : base(interactable, INTERACTION_TYPE.RAID_EVENT, 0) {
         _name = "Raid Event";
         _jobFilter = new JOB[] { JOB.INSTIGATOR, JOB.DIPLOMAT };
     }
@@ -61,7 +61,7 @@ public class RaidEvent : Interaction {
             ActionOption alert = new ActionOption {
                 interactionState = state,
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
-                name = "Alert " + interactable.tileLocation.areaOfTile.name + ".",
+                name = "Alert " + interactable.name + ".",
                 duration = 0,
                 effect = () => AlertOptionEffect(state),
                 jobNeeded = JOB.DIPLOMAT,
@@ -90,15 +90,15 @@ public class RaidEvent : Interaction {
         }
     }
     public override bool CanInteractionBeDoneBy(Character character) {
-        if (interactable.tileLocation.areaOfTile.owner == null
-            || interactable.tileLocation.areaOfTile.owner.id == character.faction.id) {
+        if (interactable.owner == null
+            || interactable.owner.id == character.faction.id) {
             return false;
         }
         return base.CanInteractionBeDoneBy(character);
     }
     //public override bool CanStillDoInteraction() {
-    //    if (interactable.tileLocation.areaOfTile.owner == null 
-    //        || interactable.tileLocation.areaOfTile.owner.id == _characterInvolved.faction.id) {
+    //    if (interactable.owner == null 
+    //        || interactable.owner.id == _characterInvolved.faction.id) {
     //        return false;
     //    }
     //    return base.CanStillDoInteraction();
@@ -165,12 +165,12 @@ public class RaidEvent : Interaction {
 
     private void AlertedRaidSuccessRewardEffect(InteractionState state) {
         //**Mechanics**: Compute Supply obtained by raider and transfer it to his home area. Raider Faction and Raided Faction -1 Relationship.
-        AdjustFactionsRelationship(_characterInvolved.faction, interactable.tileLocation.areaOfTile.owner, -1, state);
+        AdjustFactionsRelationship(_characterInvolved.faction, interactable.owner, -1, state);
         //**Level Up**: Raider Character +1
         _characterInvolved.LevelUp(); //Raider Character
-        int obtainedSupply = _characterInvolved.job.GetSupplyObtained(interactable.tileLocation.areaOfTile);
-        TransferSupplies(obtainedSupply, _characterInvolved.homeLandmark.tileLocation.areaOfTile,
-            interactable.tileLocation.areaOfTile);
+        int obtainedSupply = _characterInvolved.job.GetSupplyObtained(interactable);
+        TransferSupplies(obtainedSupply, _characterInvolved.homeArea,
+            interactable);
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(null, obtainedSupply.ToString(), LOG_IDENTIFIER.STRING_1);
         }
@@ -200,13 +200,13 @@ public class RaidEvent : Interaction {
         investigatorCharacter.LevelUp();
         _characterInvolved.LevelUp();
 
-        int obtainedSupply = _characterInvolved.job.GetSupplyObtained(interactable.tileLocation.areaOfTile);
-        TransferSupplies(obtainedSupply, _characterInvolved.homeLandmark.tileLocation.areaOfTile,
-            interactable.tileLocation.areaOfTile);
+        int obtainedSupply = _characterInvolved.job.GetSupplyObtained(interactable);
+        TransferSupplies(obtainedSupply, _characterInvolved.homeArea,
+            interactable);
         _characterInvolved.faction.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, 1);
         
         //Raider Faction and Raided Faction -1 Relationship.
-        AdjustFactionsRelationship(_characterInvolved.faction, interactable.tileLocation.areaOfTile.owner, -1, state);
+        AdjustFactionsRelationship(_characterInvolved.faction, interactable.owner, -1, state);
 
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(null, obtainedSupply.ToString(), LOG_IDENTIFIER.STRING_1);
@@ -233,12 +233,12 @@ public class RaidEvent : Interaction {
         _characterInvolved.LevelUp();
 
         //**Mechanics**: Compute Supply obtained by Raider and transfer it to his home area. Raider also travels back to his home area.
-        int obtainedSupply = _characterInvolved.job.GetSupplyObtained(interactable.tileLocation.areaOfTile);
-        TransferSupplies(obtainedSupply, _characterInvolved.homeLandmark.tileLocation.areaOfTile,
-            interactable.tileLocation.areaOfTile);
+        int obtainedSupply = _characterInvolved.job.GetSupplyObtained(interactable);
+        TransferSupplies(obtainedSupply, _characterInvolved.homeArea,
+            interactable);
 
         //Raider Faction and Raided Faction -1 Relationship.
-        AdjustFactionsRelationship(_characterInvolved.faction, interactable.tileLocation.areaOfTile.owner, -1, state);
+        AdjustFactionsRelationship(_characterInvolved.faction, interactable.owner, -1, state);
 
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(null, obtainedSupply.ToString(), LOG_IDENTIFIER.STRING_1);

@@ -15,7 +15,7 @@ public class FoundZiranna : Interaction {
     private const string Dissuade_Fail = "Dissuade Fail";
     private const string Ziranna_Founded = "Ziranna Founded";
 
-    public FoundZiranna(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.FOUND_ZIRANNA, 0) {
+    public FoundZiranna(Area interactable) : base(interactable, INTERACTION_TYPE.FOUND_ZIRANNA, 0) {
         _name = "Found Ziranna";
         _jobFilter = new JOB[] { JOB.DEBILITATOR, JOB.DIPLOMAT, JOB.INSTIGATOR };
     }
@@ -142,7 +142,7 @@ public class FoundZiranna : Interaction {
         //Remove character from her current Faction and turn her into the Faction Leader of a new Ziranna faction. Current area becomes owned by Ziranna faction, set its race to Skeleton.
         Faction oldFaction = _characterInvolved.faction;
         _characterInvolved.FoundFaction("Ziranna", interactable);
-        interactable.tileLocation.areaOfTile.SetRaceType(RACE.SKELETON);
+        interactable.SetRaceType(RACE.SKELETON);
 
         //Set Magus faction to Enemy of character's original faction
         _characterInvolved.faction.GetRelationshipWith(oldFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.ENEMY);
@@ -160,7 +160,7 @@ public class FoundZiranna : Interaction {
         //Remove character from her current Faction and turn her into the Faction Leader of a new Ziranna faction. Current area becomes owned by Ziranna faction, set its race to Skeleton.
         Faction oldFaction = _characterInvolved.faction;
         _characterInvolved.FoundFaction("Ziranna", interactable);
-        interactable.tileLocation.areaOfTile.SetRaceType(RACE.SKELETON);
+        interactable.SetRaceType(RACE.SKELETON);
 
         //Spawn 6 new characters in the location or until the resident capacity has been reached. Race is the same as the character's.
         interactable.SpawnRandomCharacters(6);
@@ -175,7 +175,7 @@ public class FoundZiranna : Interaction {
         //Remove character from her current Faction and turn her into the Faction Leader of a new Ziranna faction. Current area becomes owned by Ziranna faction, set its race to Skeleton.
         Faction oldFaction = _characterInvolved.faction;
         _characterInvolved.FoundFaction("Ziranna", interactable);
-        interactable.tileLocation.areaOfTile.SetRaceType(RACE.SKELETON);
+        interactable.SetRaceType(RACE.SKELETON);
 
         //Set Magus faction to Friend of character's original faction
         _characterInvolved.faction.GetRelationshipWith(oldFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.FRIEND);
@@ -194,7 +194,7 @@ public class FoundZiranna : Interaction {
 
         //Remove character from her current Faction and turn her into the Faction Leader of a new Ziranna faction. Current area becomes owned by Ziranna faction, set its race to Skeleton.
         _characterInvolved.FoundFaction("Ziranna", interactable);
-        interactable.tileLocation.areaOfTile.SetRaceType(RACE.SKELETON);
+        interactable.SetRaceType(RACE.SKELETON);
 
         //Set Magus faction to Ally of player faction.
         _characterInvolved.faction.GetRelationshipWith(PlayerManager.Instance.player.playerFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.ALLY);
@@ -205,7 +205,7 @@ public class FoundZiranna : Interaction {
     private void AllianceFailEffect(InteractionState state) {
         //Remove character from her current Faction and turn her into the Faction Leader of a new Ziranna faction. Current area becomes owned by Ziranna faction, set its race to Skeleton.
         _characterInvolved.FoundFaction("Ziranna", interactable);
-        interactable.tileLocation.areaOfTile.SetRaceType(RACE.SKELETON);
+        interactable.SetRaceType(RACE.SKELETON);
 
         //Spawn 6 new characters in the location or until the resident capacity has been reached. Race is the same as the character's.
         interactable.SpawnRandomCharacters(6);
@@ -213,7 +213,7 @@ public class FoundZiranna : Interaction {
     private void AllianceCritFailEffect(InteractionState state) {
         //Remove character from her current Faction and turn her into the Faction Leader of a new Ziranna faction. Current area becomes owned by Ziranna faction, set its race to Skeleton.
         _characterInvolved.FoundFaction("Ziranna", interactable);
-        interactable.tileLocation.areaOfTile.SetRaceType(RACE.SKELETON);
+        interactable.SetRaceType(RACE.SKELETON);
 
         //Set Magus faction to Disliked of player faction.
         _characterInvolved.faction.GetRelationshipWith(PlayerManager.Instance.player.playerFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.DISLIKED);
@@ -227,7 +227,7 @@ public class FoundZiranna : Interaction {
     private void DissuadeFailEffect(InteractionState state) {
         //Remove character from her current Faction and turn her into the Faction Leader of a new Ziranna faction. Current area becomes owned by Ziranna faction, set its race to Skeleton.
         _characterInvolved.FoundFaction("Ziranna", interactable);
-        interactable.tileLocation.areaOfTile.SetRaceType(RACE.SKELETON);
+        interactable.SetRaceType(RACE.SKELETON);
 
         //Spawn 6 new characters in the location or until the resident capacity has been reached. Race is the same as the character's.
         interactable.SpawnRandomCharacters(6);
@@ -235,7 +235,7 @@ public class FoundZiranna : Interaction {
     private void ZirannaFoundEffect(InteractionState state) {
         //Remove character from her current Faction and turn her into the Faction Leader of a new Ziranna faction. Current area becomes owned by Ziranna faction, set its race to Skeleton.
         _characterInvolved.FoundFaction("Ziranna", interactable);
-        interactable.tileLocation.areaOfTile.SetRaceType(RACE.SKELETON);
+        interactable.SetRaceType(RACE.SKELETON);
 
         //Spawn 6 new characters in the location or until the resident capacity has been reached. Race is the same as the character's.
         interactable.SpawnRandomCharacters(6);

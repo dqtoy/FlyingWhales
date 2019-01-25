@@ -1,56 +1,115 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
-using ECS;
+using UnityEngine;
 
-public class QuestManager : MonoBehaviour, TaskCreator {
+public class QuestManager : MonoBehaviour {
 
     public static QuestManager Instance = null;
 
-    public List<Quest> availableQuests = new List<Quest>();
+    //public Dictionary<QUEST_TYPE, List<Quest>> availableQuests;
 
     private void Awake() {
         Instance = this;
     }
 
-	#region getters/setters
-	//public List<OldQuest.Quest> activeQuests { 
-	//	get { return null; } //TODO: To be removed eventually
-	//}
-	#endregion
+    public void Initialize() {
+        //ConstructQuests();
+    }
 
-    #region Quest Management
-    public void AddQuestToAvailableQuests(Quest quest) {
-        if (!availableQuests.Contains(quest)) {
-            availableQuests.Add(quest);
+    public void RemoveQuestFromBoards(Quest quest) {
+        List<BaseLandmark> landmarks = LandmarkManager.Instance.GetAllLandmarksWithQuestBoard();
+        for (int i = 0; i < landmarks.Count; i++) {
+            landmarks[i].questBoard.RemoveQuest(quest);
         }
     }
-    public void RemoveQuestFromAvailableQuests(Quest quest) {
-        availableQuests.Remove(quest);
-    }
-    public List<Quest> GetAvailableQuestsForCharacter(Character character) {
-        List<Quest> questsForCharacter = new List<Quest>();
-        for (int i = 0; i < availableQuests.Count; i++) {
-            Quest currAvailableQuest = availableQuests[i];
-            if (currAvailableQuest.CanAcceptQuest(character)) {
-                questsForCharacter.Add(currAvailableQuest);
-            }
-        }
-        return questsForCharacter;
-    }
 
-	//public void AddNewQuest(OldQuest.Quest quest){}
-	//public void RemoveQuest(OldQuest.Quest quest){}
-    #endregion
+    //private void ConstructQuests() {
+    //    availableQuests = new Dictionary<QUEST_TYPE, List<Quest>>();
+    //    QUEST_TYPE[] questTypes = Utilities.GetEnumValues<QUEST_TYPE>();
+    //    for (int i = 0; i < questTypes.Length; i++) {
+    //        QUEST_TYPE type = questTypes[i];
+    //        availableQuests.Add(type, new List<Quest>());
+    //    }
+    //}
 
-	#region Hunt Quest
-	public void CreateHuntQuest(Character target){
-		CharacterTag hunted = target.AssignTag (CHARACTER_TAG.HUNTED);
-		if(hunted != null){
-			Hunt huntQuest = new Hunt (this, target);
-			AddQuestToAvailableQuests(huntQuest);
-		}
-	}
-	#endregion
+    //public void CreateQuest(QUEST_TYPE questType, object data) {
+    //    Quest createdQuest = null;
+    //    switch (questType) {
+    //        case QUEST_TYPE.RELEASE_CHARACTER:
+    //            createdQuest = new ReleaseCharacterQuest(data as Character);
+    //            break;
+    //        case QUEST_TYPE.BUILD_STRUCTURE:
+    //            createdQuest = new BuildStructureQuest()
+    //            break;
+    //        default:
+    //            break;
+    //    }
+    //    if (createdQuest != null) {
+    //        AddAvailableQuest(createdQuest);
+    //    }
+    //}
+    //public void OnQuestDone(Quest doneQuest) {
+        //RemoveAvailableQuest(doneQuest);
+        //Messenger.Broadcast(Signals.QUEST_DONE, doneQuest);
+    //}
+
+    //public void AddAvailableQuest(Quest quest) {
+    //    availableQuests[quest.questType].Add(quest);
+    //}
+    //private void RemoveAvailableQuest(Quest quest) {
+    //    availableQuests[quest.questType].Remove(quest);
+    //}
+    
+    //public void TakeQuest(QUEST_TYPE type, Character questTaker, object data = null) {
+    //    //CharacterQuestData questData = ConstructQuestData(type, questTaker, data);
+    //    //questTaker.AddQuestData(questData);
+    //    //questTaker.OnTakeQuest(questData.parentQuest);
+    //}
+    //public void TakeQuest(Quest quest, Character questTaker, object data = null) {
+    //    //CharacterQuestData questData = ConstructQuestData(quest, questTaker, data);
+    //    //questTaker.AddQuestData(questData);
+    //    questTaker.OnTakeQuest(quest);
+    //}
+
+    //private CharacterQuestData ConstructQuestData(QUEST_TYPE type, Character questTaker, object data) {
+    //    Quest quest = (GetQuest(type, data));
+    //    return ConstructQuestData(quest, questTaker, data);
+    //}
+    //private CharacterQuestData ConstructQuestData(Quest quest, Character questTaker, object data) {
+    //    if (quest != null) {
+    //        switch (quest.questType) {
+    //            //case QUEST_TYPE.RELEASE_CHARACTER:
+    //            //    return new ReleaseCharacterQuestData(quest, questTaker, data as Character);
+    //            //case QUEST_TYPE.BUILD_STRUCTURE:
+    //            //    return new BuildStructureQuestData(quest, questTaker);
+    //            default:
+    //                break;
+    //        }
+    //    }
+    //    return null;
+    //}
+
+    //public Quest GetQuest(QUEST_TYPE questType, object data) {
+    //    if (availableQuests.ContainsKey(questType)) {
+    //        List<Quest> quests = availableQuests[questType];
+    //        for (int i = 0; i < quests.Count; i++) {
+    //            Quest currentQuest = quests[i];
+    //            if (currentQuest.Equals(data)) {
+    //                return currentQuest;
+    //            }
+    //        }
+    //    }
+    //    return null;
+    //}
+
+    //public CharacterAction GetNextQuestAction(QUEST_TYPE type, Character character, CharacterQuestData data) {
+    //    if (availableQuests.ContainsKey(type)) {
+    //        Quest quest = availableQuests[type];
+    //        return quest.GetQuestAction(character, data);
+    //    } else {
+    //        throw new System.Exception("There is no available quest of type " + type.ToString());
+    //    }
+    //}
+
 
 }

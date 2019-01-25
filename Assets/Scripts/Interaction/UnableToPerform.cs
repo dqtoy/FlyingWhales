@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class UnableToPerform : Interaction {
 
-    public UnableToPerform(BaseLandmark interactable) 
+    public UnableToPerform(Area interactable) 
         : base(interactable, INTERACTION_TYPE.UNABLE_TO_PERFORM, 0) {
         _name = "Unable To Perform";
     }

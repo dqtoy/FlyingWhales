@@ -28,7 +28,7 @@ public class ScenarioWeightItem : MonoBehaviour {
         }
         INTERACTION_TYPE newType = (INTERACTION_TYPE)System.Enum.Parse(typeof(INTERACTION_TYPE), interactionTypeDropdown.options[choice].text);
         if (IsValid(newType)) {
-            owner.scenarios.ReplaceElement(this.interactionType, newType);
+            //owner.scenarios.ReplaceElement(this.interactionType, newType);
             SetInteractionType(newType);
         }
     }
@@ -40,7 +40,7 @@ public class ScenarioWeightItem : MonoBehaviour {
         SetWeight(weight);
     }
     public void DeleteItem() {
-        owner.scenarios.RemoveElement(interactionType);
+        //owner.scenarios.RemoveElement(interactionType);
         GameObject.Destroy(this.gameObject);
     }
 
@@ -49,7 +49,7 @@ public class ScenarioWeightItem : MonoBehaviour {
         this.weight = weight;
         weightField.text = weight.ToString();
         if (this.owner != null) {
-            owner.scenarios.ChangeElementWeight(interactionType, weight);
+            //owner.scenarios.ChangeElementWeight(interactionType, weight);
         }
     }
 
@@ -58,6 +58,7 @@ public class ScenarioWeightItem : MonoBehaviour {
         interactionTypeDropdown.value = Utilities.GetOptionIndex(interactionTypeDropdown, newType.ToString());
     }
     private bool IsValid(INTERACTION_TYPE newType) {
-        return !owner.scenarios.dictionary.ContainsKey(newType); //new type is valid if scenarios dictionary does not yet have that interaction type
+        //return !owner.scenarios.dictionary.ContainsKey(newType); //new type is valid if scenarios dictionary does not yet have that interaction type
+        return false;
     }
 }

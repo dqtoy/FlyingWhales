@@ -19,7 +19,7 @@ public class EatAbducted : Interaction {
         get { return _targetCharacter; }
     }
 
-    public EatAbducted(BaseLandmark interactable): base(interactable, INTERACTION_TYPE.EAT_ABDUCTED, 0) {
+    public EatAbducted(Area interactable): base(interactable, INTERACTION_TYPE.EAT_ABDUCTED, 0) {
         _name = "Eat Abducted";
         _jobFilter = new JOB[] { JOB.DIPLOMAT, JOB.DEBILITATOR };
     }
@@ -221,8 +221,8 @@ public class EatAbducted : Interaction {
     }
     public Character GetTargetCharacter(Character characterInvolved) {
         WeightedDictionary<Character> characterWeights = new WeightedDictionary<Character>();
-        for (int i = 0; i < interactable.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
-            Character currCharacter = interactable.tileLocation.areaOfTile.charactersAtLocation[i];
+        for (int i = 0; i < interactable.charactersAtLocation.Count; i++) {
+            Character currCharacter = interactable.charactersAtLocation[i];
             if (currCharacter.id != characterInvolved.id && !currCharacter.currentParty.icon.isTravelling && currCharacter.IsInOwnParty() && currCharacter.GetTrait("Abducted") != null) {
                 return currCharacter;
             }

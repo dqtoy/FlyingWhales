@@ -15,7 +15,7 @@ public class FoundLucareth : Interaction {
     private const string Dissuade_Fail = "Dissuade Fail";
     private const string Lucareth_Founded = "Lucareth Founded";
 
-    public FoundLucareth(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.FOUND_LUCARETH, 0) {
+    public FoundLucareth(Area interactable) : base(interactable, INTERACTION_TYPE.FOUND_LUCARETH, 0) {
         _name = "Found Lucareth";
         _jobFilter = new JOB[] { JOB.DEBILITATOR, JOB.DIPLOMAT, JOB.INSTIGATOR };
     }

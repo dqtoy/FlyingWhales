@@ -99,8 +99,8 @@ public class LandmarkInfoUI : UIMenu {
         Messenger.AddListener<object>(Signals.HISTORY_ADDED, UpdateHistory);
         //Messenger.AddListener<BaseLandmark>(Signals.LANDMARK_INSPECTED, OnLandmarkInspected);
         Messenger.AddListener(Signals.INSPECT_ALL, OnInspectAll);
-        Messenger.AddListener<Party, BaseLandmark>(Signals.PARTY_ENTERED_LANDMARK, OnPartyEnteredLandmark);
-        Messenger.AddListener<Party, BaseLandmark>(Signals.PARTY_EXITED_LANDMARK, OnPartyExitedLandmark);
+        //Messenger.AddListener<Party, BaseLandmark>(Signals.PARTY_ENTERED_LANDMARK, OnPartyEnteredLandmark);
+        //Messenger.AddListener<Party, BaseLandmark>(Signals.PARTY_EXITED_LANDMARK, OnPartyExitedLandmark);
         //Messenger.AddListener<BaseLandmark, ICharacter>(Signals.LANDMARK_RESIDENT_ADDED, OnResidentAddedToLandmark);
         //Messenger.AddListener<BaseLandmark, ICharacter>(Signals.LANDMARK_RESIDENT_REMOVED, OnResidentRemovedFromLandmark);
         Messenger.AddListener<Token>(Signals.TOKEN_ADDED, OnIntelAdded);
@@ -231,7 +231,7 @@ public class LandmarkInfoUI : UIMenu {
         UpdateHP();
     }
     private void UpdateHP() {
-        healthProgressBar.fillAmount = _activeLandmark.currDurability / (float)_activeLandmark.totalDurability;
+        //healthProgressBar.fillAmount = _activeLandmark.currDurability / (float)_activeLandmark.totalDurability;
     }
     #endregion
 
@@ -296,12 +296,12 @@ public class LandmarkInfoUI : UIMenu {
         CheckScrollers();
 
         //if (_activeLandmark.isBeingInspected || GameManager.Instance.inspectAll) {
-            for (int i = 0; i < _activeLandmark.charactersAtLocation.Count; i++) {
+            //for (int i = 0; i < _activeLandmark.charactersAtLocation.Count; i++) {
                 //Party currParty = _activeLandmark.charactersWithHomeOnLandmark[i].ownParty;
                 //if (!_activeLandmark.IsDefenderOfLandmark(_activeLandmark.charactersAtLocation[i])) {
-                    CreateNewCharacterItem(_activeLandmark.charactersAtLocation[i].owner);
+                    //CreateNewCharacterItem(_activeLandmark.charactersAtLocation[i].owner);
                 //}
-            }
+            //}
         //}
         //else {
         //    for (int i = 0; i < _activeLandmark.lastInspectedOfCharactersAtLocation.Count; i++) {
@@ -341,11 +341,6 @@ public class LandmarkInfoUI : UIMenu {
         characterItems.Add(item);
         CheckScrollers();
         return item;
-    }
-    private void CreateNewCharacterItem(LandmarkPartyData partyData) {
-        GameObject characterGO = UIManager.Instance.InstantiateUIObject(landmarkCharacterPrefab.name, charactersScrollView.content);
-        LandmarkCharacterItem item = characterGO.GetComponent<LandmarkCharacterItem>();
-        item.SetCharacter(partyData.partyMembers[0], this);
     }
     private void OnPartyEnteredLandmark(Party party, BaseLandmark landmark) {
         if (isShowing && _activeLandmark != null && _activeLandmark.id == landmark.id) { //&& (_activeLandmark.isBeingInspected || GameManager.Instance.inspectAll)

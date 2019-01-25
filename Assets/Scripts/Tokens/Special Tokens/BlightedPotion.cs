@@ -28,7 +28,7 @@ public class BlightedPotion : SpecialToken {
     public override Character GetTargetCharacterFor(Character sourceCharacter) {
         //NPC Usage Requirement: Character must be part of a Disliked or Enemy Faction
         if (!sourceCharacter.isFactionless) {
-            Area location = sourceCharacter.ownParty.specificLocation.tileLocation.areaOfTile;
+            Area location = sourceCharacter.ownParty.specificLocation;
             List<Character> choices = new List<Character>();
             for (int i = 0; i < location.charactersAtLocation.Count; i++) {
                 Character currCharacter = location.charactersAtLocation[i];
@@ -47,7 +47,7 @@ public class BlightedPotion : SpecialToken {
     }
     public override bool CanBeUsedBy(Character sourceCharacter) {
         if (!sourceCharacter.isFactionless) {
-            Area location = sourceCharacter.ownParty.specificLocation.tileLocation.areaOfTile;
+            Area location = sourceCharacter.ownParty.specificLocation;
             List<Character> choices = new List<Character>();
             for (int i = 0; i < location.charactersAtLocation.Count; i++) {
                 Character currCharacter = location.charactersAtLocation[i];

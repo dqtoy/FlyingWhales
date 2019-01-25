@@ -13,7 +13,7 @@ public class SpySpawnInteraction1 : Interaction {
     private Character _character1;
     private Character _character2;
 
-    public SpySpawnInteraction1(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.SPY_SPAWN_INTERACTION_1, 0) {
+    public SpySpawnInteraction1(Area interactable) : base(interactable, INTERACTION_TYPE.SPY_SPAWN_INTERACTION_1, 0) {
         _name = "Spy Spawn Interaction 1";
         _jobFilter = new JOB[] { JOB.SPY };
     }
@@ -67,7 +67,7 @@ public class SpySpawnInteraction1 : Interaction {
             ActionOption locationTokenOption = new ActionOption {
                 interactionState = state,
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
-                name = "Get Location Token: " + interactable.tileLocation.areaOfTile.locationToken.nameInBold,
+                name = "Get Location Token: " + interactable.locationToken.nameInBold,
                 duration = 0,
                 canBeDoneAction = () => CanGetLocationToken(),
                 effect = () => LocationTokenOption(),
@@ -123,7 +123,7 @@ public class SpySpawnInteraction1 : Interaction {
         return PlayerManager.Instance.player.GetToken(character.characterToken) == null;
     }
     private bool CanGetLocationToken() {
-        return PlayerManager.Instance.player.GetToken(interactable.tileLocation.areaOfTile.locationToken) == null;
+        return PlayerManager.Instance.player.GetToken(interactable.locationToken) == null;
     }
     #endregion
 
@@ -149,11 +149,11 @@ public class SpySpawnInteraction1 : Interaction {
     private void CurrentLocationTokenObtainedEffect(InteractionState state) {
         state.SetUseTokeneerMinionOnly(true);
 
-        PlayerManager.Instance.player.AddToken(interactable.tileLocation.areaOfTile.locationToken);
+        PlayerManager.Instance.player.AddToken(interactable.locationToken);
 
-        state.descriptionLog.AddToFillers(null, interactable.tileLocation.areaOfTile.locationToken.tokenName, LOG_IDENTIFIER.STRING_1);
+        state.descriptionLog.AddToFillers(null, interactable.locationToken.tokenName, LOG_IDENTIFIER.STRING_1);
 
-        state.AddLogFiller(new LogFiller(null, interactable.tileLocation.areaOfTile.locationToken.tokenName, LOG_IDENTIFIER.STRING_1));
+        state.AddLogFiller(new LogFiller(null, interactable.locationToken.tokenName, LOG_IDENTIFIER.STRING_1));
     }
     private void DoNothingEffect(InteractionState state) {
         state.SetUseTokeneerMinionOnly(true);
@@ -162,8 +162,8 @@ public class SpySpawnInteraction1 : Interaction {
 
     private void SetCharacters1And2() {
         List<Character> characters = new List<Character>();
-        for (int i = 0; i < interactable.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
-            Character character = interactable.tileLocation.areaOfTile.charactersAtLocation[i];
+        for (int i = 0; i < interactable.charactersAtLocation.Count; i++) {
+            Character character = interactable.charactersAtLocation[i];
             if (character.faction.id != PlayerManager.Instance.player.playerFaction.id) {
                 characters.Add(character);
             }

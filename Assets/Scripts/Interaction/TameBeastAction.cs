@@ -10,7 +10,7 @@ public class TameBeastAction : Interaction {
 
     private Character _targetBeast;
 
-    public TameBeastAction(BaseLandmark interactable): base(interactable, INTERACTION_TYPE.TAME_BEAST_ACTION, 0) {
+    public TameBeastAction(Area interactable): base(interactable, INTERACTION_TYPE.TAME_BEAST_ACTION, 0) {
         _name = "Tame Beast Action";
         _category = INTERACTION_CATEGORY.RECRUITMENT;
         _alignment = INTERACTION_ALIGNMENT.NEUTRAL;
@@ -59,7 +59,7 @@ public class TameBeastAction : Interaction {
     }
     public override bool CanInteractionBeDoneBy(Character character) {
         _targetBeast = GetTargetCharacter(character);
-        if(_targetBeast == null || character.homeLandmark.tileLocation.areaOfTile.IsResidentsFull()) {
+        if(_targetBeast == null || character.homeArea.IsResidentsFull()) {
             return false;
         }
         return base.CanInteractionBeDoneBy(character);
@@ -83,7 +83,7 @@ public class TameBeastAction : Interaction {
         _characterInvolved.LevelUp();
 
         _targetBeast.ChangeFactionTo(_characterInvolved.faction);
-        _targetBeast.MigrateTo(_characterInvolved.homeLandmark);
+        _targetBeast.MigrateHomeTo(_characterInvolved.homeArea);
         Interaction returnHome = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, interactable);
         _targetBeast.SetForcedInteraction(returnHome);
         _targetBeast.SetDailyInteractionGenerationTick(GameManager.Instance.continuousDays + 1);
@@ -112,10 +112,10 @@ public class TameBeastAction : Interaction {
     private Character GetTargetCharacter(Character characterInvolved) {
         WeightedDictionary<Character> characterWeights = new WeightedDictionary<Character>();
         //Check residents or characters at location for unaligned beast character to tame?
-        for (int j = 0; j < interactable.tileLocation.areaOfTile.areaResidents.Count; j++) {
-            Character resident = interactable.tileLocation.areaOfTile.areaResidents[j];
+        for (int j = 0; j < interactable.areaResidents.Count; j++) {
+            Character resident = interactable.areaResidents[j];
             if (!resident.currentParty.icon.isTravelling && resident.doNotDisturb <= 0 && resident.IsInOwnParty() 
-                && resident.specificLocation.tileLocation.areaOfTile.id == interactable.tileLocation.areaOfTile.id && resident.faction == FactionManager.Instance.neutralFaction
+                && resident.specificLocation.id == interactable.id && resident.faction == FactionManager.Instance.neutralFaction
                 && resident.role.roleType == CHARACTER_ROLE.BEAST) {
                 int weight = 0;
                 if(resident.level < characterInvolved.level) {

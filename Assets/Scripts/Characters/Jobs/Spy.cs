@@ -27,7 +27,7 @@ public class Spy : Job {
         string jobSummary = GameManager.Instance.TodayLogString() + " " + _character.name + " job summary: ";
         //Once the duration expires, check first if there are any new intel that can still be unlocked. Order of priority below:
         List<Token> tokenChoices = new List<Token>();
-        Area area = _character.specificLocation.tileLocation.areaOfTile;
+        Area area = _character.specificLocation;
         if (!area.locationToken.isObtainedByPlayer) {
             tokenChoices.Add(area.locationToken);
         } else if (area.owner != null && !area.owner.factionToken.isObtainedByPlayer) {
@@ -71,31 +71,31 @@ public class Spy : Job {
                         Success(chosenToken);
                         break;
                     case RESULT.FAIL:
-                        interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_FAILED, character.specificLocation.tileLocation.landmarkOnTile);
+                        interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_FAILED, character.specificLocation);
                         //raidSuccess.SetEndInteractionAction(() => GoBackHome());
                         interaction.AddEndInteractionAction(() => StartJobAction());
                         interaction.ScheduleSecondTimeOut();
-                        character.specificLocation.tileLocation.areaOfTile.coreTile.landmarkOnTile.AddInteraction(interaction);
+                        character.specificLocation.coreTile.landmarkOnTile.AddInteraction(interaction);
                         SetCreatedInteraction(interaction);
-                        //Interaction minionFailed = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_FAILED, character.specificLocation.tileLocation.landmarkOnTile);
+                        //Interaction minionFailed = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_FAILED, character.specificLocation.coreTile.landmarkOnTile);
                         //minionFailed.SetEndInteractionAction(() => StartJobAction());
                         //minionFailed.ScheduleSecondTimeOut();
-                        //character.specificLocation.tileLocation.areaOfTile.areaInvestigation.SetCurrentInteraction(minionFailed);
+                        //character.specificLocation.areaInvestigation.SetCurrentInteraction(minionFailed);
                         //StartJobAction();
                         break;
                     case RESULT.CRITICAL_FAIL:
-                        interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_CRITICAL_FAIL, character.specificLocation.tileLocation.landmarkOnTile);
+                        interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_CRITICAL_FAIL, character.specificLocation);
                         //raidSuccess.SetEndInteractionAction(() => GoBackHome());
                         interaction.AddEndInteractionAction(() => StartJobAction());
                         interaction.ScheduleSecondTimeOut();
-                        character.specificLocation.tileLocation.areaOfTile.coreTile.landmarkOnTile.AddInteraction(interaction);
+                        character.specificLocation.coreTile.landmarkOnTile.AddInteraction(interaction);
                         SetCreatedInteraction(interaction);
 
-                        //Interaction minionCriticalFail = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_CRITICAL_FAIL, character.specificLocation.tileLocation.landmarkOnTile);
+                        //Interaction minionCriticalFail = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINION_CRITICAL_FAIL, character.specificLocation.coreTile.landmarkOnTile);
                         //minionCriticalFail.SetEndInteractionAction(() => StartJobAction());
                         //minionCriticalFail.ScheduleSecondTimeOut();
-                        //character.specificLocation.tileLocation.areaOfTile.coreTile.landmarkOnTile.AddInteraction(minionCriticalFail);
-                        //character.specificLocation.tileLocation.areaOfTile.areaInvestigation.SetCurrentInteraction(minionCriticalFail);
+                        //character.specificLocation.coreTile.landmarkOnTile.AddInteraction(minionCriticalFail);
+                        //character.specificLocation.areaInvestigation.SetCurrentInteraction(minionCriticalFail);
                         //StartJobAction();
                         break;
                     default:
@@ -145,14 +145,14 @@ public class Spy : Job {
     private void GenerateSpawnedInteraction() {
         List<INTERACTION_TYPE> choices = GetValidSpySpawnEvents();
         if(choices.Count > 0) {
-            Area area = _character.specificLocation.tileLocation.areaOfTile;
+            Area area = _character.specificLocation;
             area.SetStopDefaultInteractionsState(true);
             SetJobActionPauseState(true);
             INTERACTION_TYPE chosenInteractionType = choices[UnityEngine.Random.Range(0, choices.Count)];
-            Interaction interaction = InteractionManager.Instance.CreateNewInteraction(chosenInteractionType, _character.specificLocation as BaseLandmark);
+            Interaction interaction = InteractionManager.Instance.CreateNewInteraction(chosenInteractionType, _character.specificLocation);
             interaction.AddEndInteractionAction(() => SetJobActionPauseState(false));
             interaction.AddEndInteractionAction(() => ForceDefaultAllExistingInteractions());
-            _character.specificLocation.tileLocation.landmarkOnTile.AddInteraction(interaction);
+            _character.specificLocation.coreTile.landmarkOnTile.AddInteraction(interaction);
             SetCreatedInteraction(interaction);
             InteractionUI.Instance.OpenInteractionUI(_createdInteraction);
         }
@@ -161,7 +161,7 @@ public class Spy : Job {
         List<INTERACTION_TYPE> validTypes = new List<INTERACTION_TYPE>();
         for (int i = 0; i < spySpawnEvents.Length; i++) {
             INTERACTION_TYPE type = spySpawnEvents[i];
-            if (InteractionManager.Instance.CanCreateInteraction(type, _character.specificLocation as BaseLandmark)) {
+            if (InteractionManager.Instance.CanCreateInteraction(type, _character.specificLocation)) {
                 validTypes.Add(type);
             }
         }
@@ -170,13 +170,13 @@ public class Spy : Job {
     private void Success(Token chosenToken) {
         Interaction interaction = null;
         if (chosenToken is FactionToken) {
-            interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.FACTION_DISCOVERED, character.specificLocation.tileLocation.landmarkOnTile);
+            interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.FACTION_DISCOVERED, character.specificLocation);
         } else if (chosenToken is LocationToken) {
-            interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.LOCATION_OBSERVED, character.specificLocation.tileLocation.landmarkOnTile);
+            interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.LOCATION_OBSERVED, character.specificLocation);
         } else if (chosenToken is CharacterToken) {
-            interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.CHARACTER_ENCOUNTERED, character.specificLocation.tileLocation.landmarkOnTile);
+            interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.CHARACTER_ENCOUNTERED, character.specificLocation);
         } else if (chosenToken is DefenderToken) {
-            interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.DEFENDERS_REVEALED, character.specificLocation.tileLocation.landmarkOnTile);
+            interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.DEFENDERS_REVEALED, character.specificLocation);
             //_createdInteraction.SetOtherData(new object[] { chosenToken });
         }
         if (interaction != null) {
@@ -187,11 +187,11 @@ public class Spy : Job {
             } else if (interaction.type == INTERACTION_TYPE.LOCATION_OBSERVED
                 || interaction.type == INTERACTION_TYPE.DEFENDERS_REVEALED
                 || interaction.type == INTERACTION_TYPE.FACTION_DISCOVERED) {
-                character.specificLocation.tileLocation.areaOfTile.coreTile.landmarkOnTile.AddInteraction(interaction);
+                character.specificLocation.coreTile.landmarkOnTile.AddInteraction(interaction);
                 //(chosenToken as LocationToken).location.coreTile.landmarkOnTile.AddInteraction(_createdInteraction);
             }
             SetCreatedInteraction(interaction);
-            //character.specificLocation.tileLocation.areaOfTile.areaInvestigation.SetCurrentInteraction(interaction);
+            //character.specificLocation.areaInvestigation.SetCurrentInteraction(interaction);
         }
         
     }
@@ -210,7 +210,7 @@ public class Spy : Job {
     //public Interaction CreateExplorerEvent() {
     //    List<INTERACTION_TYPE> choices = GetValidExplorerEvents();
     //    if (choices.Count > 0) {
-    //        Area area = _character.specificLocation.tileLocation.areaOfTile;
+    //        Area area = _character.specificLocation;
     //        INTERACTION_TYPE chosenType = choices[Random.Range(0, choices.Count)];
     //        //Get Random Explorer Event
     //        return InteractionManager.Instance.CreateNewInteraction(chosenType, area.coreTile.landmarkOnTile);

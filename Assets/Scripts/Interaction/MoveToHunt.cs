@@ -10,7 +10,7 @@ public class MoveToHunt : Interaction {
 
     private Area _targetArea;
 
-    public MoveToHunt(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_HUNT, 0) {
+    public MoveToHunt(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_HUNT, 0) {
         _name = "Move To Hunt";
         _jobFilter = new JOB[] { JOB.DEBILITATOR };
     }
@@ -102,11 +102,11 @@ public class MoveToHunt : Interaction {
     #endregion
     private void StartMove() {
         AddToDebugLog(_characterInvolved.name + " starts moving towards " + _targetArea.name + "(" + _targetArea.coreTile.landmarkOnTile.name + ") to hunt!");
-        _characterInvolved.currentParty.GoToLocation(_targetArea.coreTile.landmarkOnTile, PATHFINDING_MODE.NORMAL, () => CreateHuntAction());
+        _characterInvolved.currentParty.GoToLocation(_targetArea, PATHFINDING_MODE.NORMAL, () => CreateHuntAction());
     }
     private void CreateHuntAction() {
         AddToDebugLog(_characterInvolved.name + " will now create hunt action");
-        Interaction hunt = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.HUNT_ACTION, _characterInvolved.specificLocation.tileLocation.landmarkOnTile);
+        Interaction hunt = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.HUNT_ACTION, _characterInvolved.specificLocation);
         hunt.SetCanInteractionBeDoneAction(IsHuntStillValid);
         _characterInvolved.SetForcedInteraction(hunt);
     }

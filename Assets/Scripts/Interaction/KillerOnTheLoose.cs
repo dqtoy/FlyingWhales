@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class KillerOnTheLoose : Interaction {
 
-    public KillerOnTheLoose(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.KILLER_ON_THE_LOOSE, 70) {
+    public KillerOnTheLoose(Area interactable) : base(interactable, INTERACTION_TYPE.KILLER_ON_THE_LOOSE, 70) {
         _name = "Killer On The Loose";
     }
     #region Overrides
@@ -116,13 +116,13 @@ public class KillerOnTheLoose : Interaction {
 
     #region State Effects
     private void ConvertToDemonRewardEffect(InteractionState state) {
-        Minion createdMinion = PlayerManager.Instance.player.CreateNewMinion("Envy", RACE.DEMON, false);
+        Minion createdMinion = PlayerManager.Instance.player.CreateNewMinion("Envy", RACE.DEMON);
         PlayerManager.Instance.player.AddMinion(createdMinion);
         state.AddLogFiller(new LogFiller(createdMinion, createdMinion.name, LOG_IDENTIFIER.STRING_1));
     }
     private void GainSupplyRewardEffect(InteractionState state) {
         investigatorCharacter.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
-        _interactable.tileLocation.areaOfTile.AdjustSuppliesInBank(50);
+        _interactable.AdjustSuppliesInBank(50);
         state.AddLogFiller(new LogFiller(_interactable.owner, _interactable.owner.name, LOG_IDENTIFIER.FACTION_1));
     }
     private void NothingHappensRewardEffect(InteractionState state) {

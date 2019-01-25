@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class RaidSuccess : Interaction {
 
-    public RaidSuccess(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.RAID_SUCCESS, 0) {
+    public RaidSuccess(Area interactable) : base(interactable, INTERACTION_TYPE.RAID_SUCCESS, 0) {
         _name = "Raid Success";
     }
 
@@ -32,8 +32,8 @@ public class RaidSuccess : Interaction {
          * This action is called Scavenge and behaves similarly with Raid except 
          * that it does not have any Favor Count effects.
          */
-        if (interactable.faction != null) {
-            interactable.faction.AdjustRelationshipFor(_characterInvolved.faction, -2);
+        if (interactable.owner != null) {
+            interactable.owner.AdjustRelationshipFor(_characterInvolved.faction, -2);
         }
         _characterInvolved.LevelUp();
     }

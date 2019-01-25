@@ -7,7 +7,7 @@ public interface IInteractable {
     bool isBeingInspected { get; }
     bool hasBeenInspected { get; }
     Faction faction { get; }
-    ILocation specificLocation { get; }
+    Area specificLocation { get; }
     List<Interaction> currentInteractions { get; }
 
     void SetIsBeingInspected(bool state);

@@ -11,7 +11,7 @@ public class InstigatorCharacterEncounter : Interaction {
     private const string Character_Injured_Minion = "Character Injured Minion";
     private const string Do_Nothing = "Do Nothing";
 
-    public InstigatorCharacterEncounter(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.INSTIGATOR_CHARACTER_ENCOUNTER, 0) {
+    public InstigatorCharacterEncounter(Area interactable) : base(interactable, INTERACTION_TYPE.INSTIGATOR_CHARACTER_ENCOUNTER, 0) {
         _name = "Instigator Character Encounter";
         _jobFilter = new JOB[] { JOB.INSTIGATOR};
     }

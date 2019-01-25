@@ -17,7 +17,7 @@ public class RecruitAction : Interaction {
         get { return _targetCharacter; }
     }
 
-    public RecruitAction(BaseLandmark interactable) 
+    public RecruitAction(Area interactable) 
         : base(interactable, INTERACTION_TYPE.RECRUIT_ACTION, 0) {
         _name = "Recruit Action";
         _jobFilter = new JOB[] { JOB.INSTIGATOR, JOB.DIPLOMAT };
@@ -91,11 +91,11 @@ public class RecruitAction : Interaction {
         }
     }
     public override bool CanInteractionBeDoneBy(Character character) {
-        if (interactable.tileLocation.areaOfTile.IsResidentsFull()) {
+        if (interactable.IsResidentsFull()) {
             return false;
         }
         if (_targetCharacter != null) { //if there is a target character, he/she must still be in this location
-            return _targetCharacter.specificLocation.tileLocation.areaOfTile.id == interactable.tileLocation.areaOfTile.id;
+            return _targetCharacter.specificLocation.id == interactable.id;
         } else { //if there is no set target character
             if (GetTargetCharacter(character) == null) { //check if a target character can be found using the provided weights
                 return false;
@@ -233,10 +233,10 @@ public class RecruitAction : Interaction {
     private void TransferCharacter(Character character, Faction faction) {
         character.faction.RemoveCharacter(character);
         faction.AddNewCharacter(character);
-        character.MigrateTo(_characterInvolved.homeArea);
+        character.MigrateHomeTo(_characterInvolved.homeArea);
         //character.homeLandmark.RemoveCharacterHomeOnLandmark(character);
         //_characterInvolved.homeLandmark.AddCharacterHomeOnLandmark(character);
-        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, character.specificLocation.tileLocation.landmarkOnTile);
+        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, character.specificLocation);
         character.SetForcedInteraction(interaction);
     }
 
@@ -246,8 +246,8 @@ public class RecruitAction : Interaction {
     }
     public Character GetTargetCharacter(Character characterInvolved) {
         WeightedDictionary<Character> characterWeights = new WeightedDictionary<Character>();
-        for (int i = 0; i < interactable.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
-            Character currCharacter = interactable.tileLocation.areaOfTile.charactersAtLocation[i];
+        for (int i = 0; i < interactable.charactersAtLocation.Count; i++) {
+            Character currCharacter = interactable.charactersAtLocation[i];
             if (currCharacter.id != characterInvolved.id 
                 && !currCharacter.isLeader 
                 && !currCharacter.isDefender 

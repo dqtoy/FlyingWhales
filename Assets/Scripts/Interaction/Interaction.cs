@@ -12,7 +12,7 @@ public class Interaction {
     protected INTERACTION_TYPE _type;
     protected INTERACTION_CATEGORY _category;
     protected INTERACTION_ALIGNMENT _alignment;
-    protected BaseLandmark _interactable;
+    protected Area _interactable;
     protected Dictionary<string, InteractionState> _states;
     //protected InteractionItem _interactionItem;
     protected bool _isActivated;
@@ -63,8 +63,8 @@ public class Interaction {
     }
     public Character investigatorCharacter {
         get {
-            //if(_interactable.tileLocation.areaOfTile.areaInvestigation.assignedMinion != null && _interactable.tileLocation.areaOfTile == _interactable.tileLocation.areaOfTile.areaInvestigation.assignedMinion.character.specificLocation.tileLocation.areaOfTile) {
-            //    return _interactable.tileLocation.areaOfTile.areaInvestigation.assignedMinion;
+            //if(_interactable.areaInvestigation.assignedMinion != null && _interactable == _interactable.areaInvestigation.assignedMinion.character.specificLocation) {
+            //    return _interactable.areaInvestigation.assignedMinion;
             //}
             //Only used for Minion Critical Fail Event since assignedMinion will be null, interaction must still have reference of the dead minion
             if (currentState != null && currentState.assignedPlayerCharacter != null) {
@@ -78,8 +78,8 @@ public class Interaction {
     }
     public Minion tokeneerMinion {
         get {
-            if (_interactable.tileLocation.areaOfTile.areaInvestigation.tokenCollector != null && _interactable.tileLocation.areaOfTile == _interactable.tileLocation.areaOfTile.areaInvestigation.tokenCollector.character.specificLocation.tileLocation.areaOfTile) {
-                return _interactable.tileLocation.areaOfTile.areaInvestigation.tokenCollector;
+            if (_interactable.areaInvestigation.tokenCollector != null && _interactable == _interactable.areaInvestigation.tokenCollector.character.specificLocation) {
+                return _interactable.areaInvestigation.tokenCollector;
             }
             return null;
         }
@@ -90,7 +90,7 @@ public class Interaction {
     //public InteractionItem interactionItem {
     //    get { return _interactionItem; }
     //}
-    public BaseLandmark interactable {
+    public Area interactable {
         get { return _interactable; }
     }
     public Token tokenTrigger {
@@ -116,7 +116,7 @@ public class Interaction {
     }
     #endregion
 
-    public Interaction(BaseLandmark interactable, INTERACTION_TYPE type, int timeOutTicks) {
+    public Interaction(Area interactable, INTERACTION_TYPE type, int timeOutTicks) {
         _id = Utilities.SetID(this);
         _type = type;
         _interactable = interactable;
@@ -129,7 +129,7 @@ public class Interaction {
         _endInteractionActions = new List<Action>();
         //_jobFilter = new JOB[] { JOB.NONE };
         //Debug.Log("Created new interaction " + type.ToString() + " at " + interactable.name);
-        interactionDebugLog = type.ToString() + " Event at " + interactable.tileLocation.areaOfTile.name + "(" + interactable.name + ") Summary: \n" +
+        interactionDebugLog = type.ToString() + " Event at " + interactable.name + "(" + interactable.name + ") Summary: \n" +
             GameManager.Instance.TodayLogString() + " Event Created.";
     }
 
@@ -169,8 +169,8 @@ public class Interaction {
     }
     public virtual void OnInteractionActive() {
         _isChosen = true;
-        interactable.landmarkVisual.StopInteractionTimer();
-        interactable.landmarkVisual.HideInteractionTimer();
+        //interactable.landmarkVisual.StopInteractionTimer();
+        //interactable.landmarkVisual.HideInteractionTimer();
         _currentState.CreateLogs();
         _currentState.SetDescription();
         Messenger.Broadcast(Signals.UPDATED_INTERACTION_STATE, this);
@@ -229,9 +229,9 @@ public class Interaction {
         _timeDate = timeOutDate;
         SchedulingManager.Instance.AddEntry(_timeDate, () => SecondTimeOut());
 
-        interactable.landmarkVisual.SetAndStartInteractionTimer(secondTimeOutTicks);
-        //interactable.landmarkVisual.ShowInteractionForeground();
-        interactable.landmarkVisual.ShowInteractionTimer(this);
+        //interactable.landmarkVisual.SetAndStartInteractionTimer(secondTimeOutTicks);
+        ////interactable.landmarkVisual.ShowInteractionForeground();
+        //interactable.landmarkVisual.ShowInteractionTimer(this);
     }
     public void SetActivatedTimeOutState(bool state) {
         _hasActivatedTimeOut = state;
@@ -260,11 +260,11 @@ public class Interaction {
     //}
     public void SecondTimeOut() {
         if (!_isSecondTimeOutCancelled) {
-            interactable.landmarkVisual.StopInteractionTimer();
-            interactable.landmarkVisual.HideInteractionTimer();
+            //interactable.landmarkVisual.StopInteractionTimer();
+            //interactable.landmarkVisual.HideInteractionTimer();
             SetActivatedTimeOutState(false);
             //TimedOutRunDefault();
-            //_interactable.tileLocation.areaOfTile.areaInvestigation.ExploreArea();
+            //_interactable.areaInvestigation.ExploreArea();
         }
     }
     public void TimedOutRunDefault(ref string summary) {
@@ -277,7 +277,7 @@ public class Interaction {
             Initialize();
         }
         if (_currentState == null) {
-            throw new Exception(this.GetType().ToString() + " interaction at " + interactable.tileLocation.areaOfTile.name + " has a current state of null at second time out!");
+            throw new Exception(this.GetType().ToString() + " interaction at " + interactable.name + " has a current state of null at second time out!");
         }
         if(!_currentState.isEnd && _currentState.defaultOption == null) {
             return;
@@ -387,7 +387,7 @@ public class Interaction {
         if (investigatorCharacter != null) {
             factionRelationshipLog.AddToFillers(new LogFiller(investigatorCharacter, investigatorCharacter.name, LOG_IDENTIFIER.MINION_1));
         }
-        factionRelationshipLog.AddToFillers(new LogFiller(interactable.tileLocation.areaOfTile, interactable.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1));
+        factionRelationshipLog.AddToFillers(new LogFiller(interactable, interactable.name, LOG_IDENTIFIER.LANDMARK_1));
         factionRelationshipLog.SetFillerLockedState(true);
         //state.AddOtherLog(factionRelationshipLog);
         factionRelationshipLog.AddLogToInvolvedObjects();
@@ -483,8 +483,8 @@ public class Interaction {
         SetCurrentState(_states[stateName]);
     }
     protected void ExploreContinuesRewardEffect(InteractionState state) {
-        BaseLandmark landmark = _interactable;
-        landmark.tileLocation.areaOfTile.areaInvestigation.ExploreArea();
+        //BaseLandmark landmark = _interactable;
+        //landmark.tileLocation.areaOfTile.areaInvestigation.ExploreArea();
     }
     protected void ExploreEndsRewardState(InteractionState state, string stateName) {
         if (investigatorCharacter != null) {

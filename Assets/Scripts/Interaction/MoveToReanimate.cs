@@ -10,7 +10,7 @@ public class MoveToReanimate : Interaction {
 
     public Area targetLocation { get; private set; }
 
-    public MoveToReanimate(BaseLandmark interactable) 
+    public MoveToReanimate(Area interactable) 
         : base(interactable, INTERACTION_TYPE.MOVE_TO_REANIMATE, 0) {
         _name = "Move To Reanimate";
         _jobFilter = new JOB[] { JOB.DEBILITATOR };
@@ -121,11 +121,11 @@ public class MoveToReanimate : Interaction {
     #endregion
 
     private void GoToTargetLocation() {
-        _characterInvolved.ownParty.GoToLocation(targetLocation.coreTile.landmarkOnTile, PATHFINDING_MODE.NORMAL, () => CreateEvent());
+        _characterInvolved.ownParty.GoToLocation(targetLocation, PATHFINDING_MODE.NORMAL, () => CreateEvent());
     }
 
     private void CreateEvent() {
-        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.REANIMATE_ACTION, targetLocation.coreTile.landmarkOnTile);
+        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.REANIMATE_ACTION, targetLocation);
         _characterInvolved.SetForcedInteraction(interaction);
     }
 
@@ -133,7 +133,7 @@ public class MoveToReanimate : Interaction {
         WeightedDictionary<Area> choices = new WeightedDictionary<Area>();
         for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
             Area currArea = LandmarkManager.Instance.allAreas[i];
-            if (currArea.id == character.specificLocation.tileLocation.areaOfTile.id || currArea.corpsesInArea.Count == 0) {
+            if (currArea.id == character.specificLocation.id || currArea.corpsesInArea.Count == 0) {
                 continue; //skip
             }
             int weight = 0;

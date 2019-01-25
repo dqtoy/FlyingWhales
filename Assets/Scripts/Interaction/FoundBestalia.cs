@@ -15,7 +15,7 @@ public class FoundBestalia : Interaction {
     private const string Dissuade_Fail = "Dissuade Fail";
     private const string Bestalia_Founded = "Bestalia Founded";
 
-    public FoundBestalia(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.FOUND_BESTALIA, 0) {
+    public FoundBestalia(Area interactable) : base(interactable, INTERACTION_TYPE.FOUND_BESTALIA, 0) {
         _name = "Found Bestalia";
         _jobFilter = new JOB[] { JOB.DEBILITATOR, JOB.DIPLOMAT, JOB.INSTIGATOR };
     }
@@ -147,16 +147,16 @@ public class FoundBestalia : Interaction {
         _characterInvolved.faction.GetRelationshipWith(oldFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.ENEMY);
 
         //All beasts in the location will change faction and home to the current location. Spawn 2 new characters in the location or until the resident capacity has been reached. Race is the same as the character's. 
-        for (int i = 0; i < interactable.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
-            if (interactable.tileLocation.areaOfTile.IsResidentsFull()) {
+        for (int i = 0; i < interactable.charactersAtLocation.Count; i++) {
+            if (interactable.IsResidentsFull()) {
                 break;
             }
-            Character character = interactable.tileLocation.areaOfTile.charactersAtLocation[i];
+            Character character = interactable.charactersAtLocation[i];
             if (character.role.roleType == CHARACTER_ROLE.BEAST && !character.currentParty.icon.isTravelling) {
                 if (!character.IsInOwnParty()) {
                     character.currentParty.RemoveCharacter(character);
                 }
-                character.MigrateTo(character.specificLocation as BaseLandmark);
+                character.MigrateHomeTo((character.specificLocation.coreTile.landmarkOnTile).tileLocation.areaOfTile);
                 character.ChangeFactionTo(_characterInvolved.faction);
                 character.SetForcedInteraction(null);
             }
@@ -175,16 +175,16 @@ public class FoundBestalia : Interaction {
         _characterInvolved.FoundFaction("Bestalia", interactable);
 
         //All beasts in the location will change faction and home to the current location. Spawn 2 new characters in the location or until the resident capacity has been reached. Race is the same as the character's. 
-        for (int i = 0; i < interactable.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
-            if (interactable.tileLocation.areaOfTile.IsResidentsFull()) {
+        for (int i = 0; i < interactable.charactersAtLocation.Count; i++) {
+            if (interactable.IsResidentsFull()) {
                 break;
             }
-            Character character = interactable.tileLocation.areaOfTile.charactersAtLocation[i];
+            Character character = interactable.charactersAtLocation[i];
             if (character.role.roleType == CHARACTER_ROLE.BEAST && !character.currentParty.icon.isTravelling) {
                 if (!character.IsInOwnParty()) {
                     character.currentParty.RemoveCharacter(character);
                 }
-                character.MigrateTo(character.specificLocation as BaseLandmark);
+                character.MigrateHomeTo((character.specificLocation.coreTile.landmarkOnTile).tileLocation.areaOfTile);
                 character.ChangeFactionTo(_characterInvolved.faction);
                 character.SetForcedInteraction(null);
             }
@@ -206,16 +206,16 @@ public class FoundBestalia : Interaction {
         _characterInvolved.faction.GetRelationshipWith(oldFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.FRIEND);
 
         //All beasts in the location will change faction and home to the current location. Spawn 2 new characters in the location or until the resident capacity has been reached. Race is the same as the character's. 
-        for (int i = 0; i < interactable.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
-            if (interactable.tileLocation.areaOfTile.IsResidentsFull()) {
+        for (int i = 0; i < interactable.charactersAtLocation.Count; i++) {
+            if (interactable.IsResidentsFull()) {
                 break;
             }
-            Character character = interactable.tileLocation.areaOfTile.charactersAtLocation[i];
+            Character character = interactable.charactersAtLocation[i];
             if (character.role.roleType == CHARACTER_ROLE.BEAST && !character.currentParty.icon.isTravelling) {
                 if (!character.IsInOwnParty()) {
                     character.currentParty.RemoveCharacter(character);
                 }
-                character.MigrateTo(character.specificLocation as BaseLandmark);
+                character.MigrateHomeTo((character.specificLocation.coreTile.landmarkOnTile).tileLocation.areaOfTile);
                 character.ChangeFactionTo(_characterInvolved.faction);
                 character.SetForcedInteraction(null);
             }
@@ -238,16 +238,16 @@ public class FoundBestalia : Interaction {
         _characterInvolved.faction.GetRelationshipWith(PlayerManager.Instance.player.playerFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.ALLY);
 
         //All beasts in the location will change faction and home to the current location. Spawn 2 new characters in the location or until the resident capacity has been reached. Race is the same as the character's. 
-        for (int i = 0; i < interactable.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
-            if (interactable.tileLocation.areaOfTile.IsResidentsFull()) {
+        for (int i = 0; i < interactable.charactersAtLocation.Count; i++) {
+            if (interactable.IsResidentsFull()) {
                 break;
             }
-            Character character = interactable.tileLocation.areaOfTile.charactersAtLocation[i];
+            Character character = interactable.charactersAtLocation[i];
             if (character.role.roleType == CHARACTER_ROLE.BEAST && !character.currentParty.icon.isTravelling) {
                 if (!character.IsInOwnParty()) {
                     character.currentParty.RemoveCharacter(character);
                 }
-                character.MigrateTo(character.specificLocation as BaseLandmark);
+                character.MigrateHomeTo((character.specificLocation.coreTile.landmarkOnTile).tileLocation.areaOfTile);
                 character.ChangeFactionTo(_characterInvolved.faction);
                 character.SetForcedInteraction(null);
             }
@@ -259,16 +259,16 @@ public class FoundBestalia : Interaction {
         _characterInvolved.FoundFaction("Bestalia", interactable);
 
         //All beasts in the location will change faction and home to the current location. Spawn 2 new characters in the location or until the resident capacity has been reached. Race is the same as the character's. 
-        for (int i = 0; i < interactable.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
-            if (interactable.tileLocation.areaOfTile.IsResidentsFull()) {
+        for (int i = 0; i < interactable.charactersAtLocation.Count; i++) {
+            if (interactable.IsResidentsFull()) {
                 break;
             }
-            Character character = interactable.tileLocation.areaOfTile.charactersAtLocation[i];
+            Character character = interactable.charactersAtLocation[i];
             if (character.role.roleType == CHARACTER_ROLE.BEAST && !character.currentParty.icon.isTravelling) {
                 if (!character.IsInOwnParty()) {
                     character.currentParty.RemoveCharacter(character);
                 }
-                character.MigrateTo(character.specificLocation as BaseLandmark);
+                character.MigrateHomeTo((character.specificLocation.coreTile.landmarkOnTile).tileLocation.areaOfTile);
                 character.ChangeFactionTo(_characterInvolved.faction);
                 character.SetForcedInteraction(null);
             }
@@ -283,16 +283,16 @@ public class FoundBestalia : Interaction {
         _characterInvolved.faction.GetRelationshipWith(PlayerManager.Instance.player.playerFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.DISLIKED);
 
         //All beasts in the location will change faction and home to the current location. Spawn 2 new characters in the location or until the resident capacity has been reached. Race is the same as the character's. 
-        for (int i = 0; i < interactable.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
-            if (interactable.tileLocation.areaOfTile.IsResidentsFull()) {
+        for (int i = 0; i < interactable.charactersAtLocation.Count; i++) {
+            if (interactable.IsResidentsFull()) {
                 break;
             }
-            Character character = interactable.tileLocation.areaOfTile.charactersAtLocation[i];
+            Character character = interactable.charactersAtLocation[i];
             if (character.role.roleType == CHARACTER_ROLE.BEAST && !character.currentParty.icon.isTravelling) {
                 if (!character.IsInOwnParty()) {
                     character.currentParty.RemoveCharacter(character);
                 }
-                character.MigrateTo(character.specificLocation as BaseLandmark);
+                character.MigrateHomeTo((character.specificLocation.coreTile.landmarkOnTile).tileLocation.areaOfTile);
                 character.ChangeFactionTo(_characterInvolved.faction);
                 character.SetForcedInteraction(null);
             }
@@ -307,16 +307,16 @@ public class FoundBestalia : Interaction {
         _characterInvolved.FoundFaction("Bestalia", interactable);
 
         //All beasts in the location will change faction and home to the current location. Spawn 2 new characters in the location or until the resident capacity has been reached. Race is the same as the character's. 
-        for (int i = 0; i < interactable.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
-            if (interactable.tileLocation.areaOfTile.IsResidentsFull()) {
+        for (int i = 0; i < interactable.charactersAtLocation.Count; i++) {
+            if (interactable.IsResidentsFull()) {
                 break;
             }
-            Character character = interactable.tileLocation.areaOfTile.charactersAtLocation[i];
+            Character character = interactable.charactersAtLocation[i];
             if (character.role.roleType == CHARACTER_ROLE.BEAST && !character.currentParty.icon.isTravelling) {
                 if (!character.IsInOwnParty()) {
                     character.currentParty.RemoveCharacter(character);
                 }
-                character.MigrateTo(character.specificLocation as BaseLandmark);
+                character.MigrateHomeTo((character.specificLocation.coreTile.landmarkOnTile).tileLocation.areaOfTile);
                 character.ChangeFactionTo(_characterInvolved.faction);
                 character.SetForcedInteraction(null);
             }
@@ -328,16 +328,16 @@ public class FoundBestalia : Interaction {
         _characterInvolved.FoundFaction("Bestalia", interactable);
 
         //All beasts in the location will change faction and home to the current location. Spawn 2 new characters in the location or until the resident capacity has been reached. Race is the same as the character's. 
-        for (int i = 0; i < interactable.tileLocation.areaOfTile.charactersAtLocation.Count; i++) {
-            if (interactable.tileLocation.areaOfTile.IsResidentsFull()) {
+        for (int i = 0; i < interactable.charactersAtLocation.Count; i++) {
+            if (interactable.IsResidentsFull()) {
                 break;
             }
-            Character character = interactable.tileLocation.areaOfTile.charactersAtLocation[i];
+            Character character = interactable.charactersAtLocation[i];
             if (character.role.roleType == CHARACTER_ROLE.BEAST && !character.currentParty.icon.isTravelling) {
                 if (!character.IsInOwnParty()) {
                     character.currentParty.RemoveCharacter(character);
                 }
-                character.MigrateTo(character.specificLocation as BaseLandmark);
+                character.MigrateHomeTo((character.specificLocation.coreTile.landmarkOnTile).tileLocation.areaOfTile);
                 character.ChangeFactionTo(_characterInvolved.faction);
                 character.SetForcedInteraction(null);
             }

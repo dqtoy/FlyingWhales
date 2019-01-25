@@ -10,7 +10,7 @@ public class MoveToAbduct : Interaction {
 
     private Area _targetArea;
 
-    public MoveToAbduct(BaseLandmark interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_ABDUCT, 0) {
+    public MoveToAbduct(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_ABDUCT, 0) {
         _name = "Move To Abduct";
         _jobFilter = new JOB[] { JOB.DEBILITATOR };
     }
@@ -111,16 +111,16 @@ public class MoveToAbduct : Interaction {
     #endregion
     private void StartMove() {
         AddToDebugLog(_characterInvolved.name + " starts moving towards " + _targetArea.name + "(" + _targetArea.coreTile.landmarkOnTile.name + ") to abduct!");
-        _characterInvolved.currentParty.GoToLocation(_targetArea.coreTile.landmarkOnTile, PATHFINDING_MODE.NORMAL, () => CreateAbductAction());
+        _characterInvolved.currentParty.GoToLocation(_targetArea, PATHFINDING_MODE.NORMAL, () => CreateAbductAction());
     }
     private void CreateAbductAction() {
         AddToDebugLog(_characterInvolved.name + " will now create abduct action");
-        Interaction abduct = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.ABDUCT_ACTION, _characterInvolved.specificLocation.tileLocation.landmarkOnTile);
+        Interaction abduct = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.ABDUCT_ACTION, _characterInvolved.specificLocation);
         //abduct.SetCanInteractionBeDoneAction(IsAbductStillValid);
         _characterInvolved.SetForcedInteraction(abduct);
     }
     private bool IsAbductStillValid() {
-        if (!_characterInvolved.homeLandmark.tileLocation.areaOfTile.IsResidentsFull()) {
+        if (!_characterInvolved.homeArea.IsResidentsFull()) {
             for (int i = 0; i < _targetArea.charactersAtLocation.Count; i++) {
                 Character currCharacter = _targetArea.charactersAtLocation[i];
                 if (currCharacter.id != _characterInvolved.id && !currCharacter.currentParty.icon.isTravelling && currCharacter.IsInOwnParty()) {

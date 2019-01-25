@@ -20,8 +20,7 @@ public class Party {
     protected CharacterAvatar _icon;
     protected Faction _attackedByFaction;
     protected Combat _currentCombat;
-    protected ILocation _specificLocation;
-    protected ICharacterObject _icharacterObject;
+    protected Area _specificLocation;
     protected Character _owner;
     protected List<Buff> _partyBuffs;
     protected int _maxCharacters;
@@ -102,24 +101,10 @@ public class Party {
         get { return _currentCombat; }
         set { _currentCombat = value; }
     }
-    public BaseLandmark landmarkLocation {
-        get {
-            if(_specificLocation != null && _specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
-                return _specificLocation as BaseLandmark;
-            }
-            return null;
-        }
-    }
-    public BaseLandmark homeLandmark {
-        get { return mainCharacter.homeLandmark; }
-    }
     public Character mainCharacter {
         get { return _characters[0]; }
     }
-    public ICharacterObject icharacterObject {
-        get { return _icharacterObject; }
-    }
-    public ILocation specificLocation {
+    public Area specificLocation {
         get { return _specificLocation; }
     }
     //public List<CharacterQuestData> questData {
@@ -128,14 +113,8 @@ public class Party {
     public virtual Character owner {
         get { return _owner; }
     }
-    public virtual CharacterAction currentAction {
-        get { return null; }
-    }
     public virtual int currentDay {
         get { return 0; }
-    }
-    public virtual IActionData iactionData {
-        get { return null; }
     }
     public COMBATANT_TYPE combatantType {
         get {
@@ -206,11 +185,11 @@ public class Party {
             }
         }
 
-        ILocation deathLocation = this.specificLocation;
+        Area deathLocation = this.specificLocation;
         this.specificLocation.RemoveCharacterFromLocation(this);
         SetSpecificLocation(deathLocation); //set the specific location of this party, to the location it died at
         RemoveListeners();
-        DetachActionData();
+        //DetachActionData();
         //ObjectState deadState = _icharacterObject.GetState("Dead");
         //_icharacterObject.ChangeState(deadState);
         GameObject.Destroy(_icon.gameObject);
@@ -218,7 +197,7 @@ public class Party {
 
         _currentCombat = null;
 
-        _owner.homeLandmark.RemoveAssaultArmyParty(this);
+        //_owner.homeLandmark.RemoveAssaultArmyParty(this);
         Messenger.Broadcast<Party>(Signals.PARTY_DIED, this);
     }
     public void DisbandParty() {
@@ -235,12 +214,10 @@ public class Party {
         //Messenger.RemoveListener<ActionThread>(Signals.LOOK_FOR_ACTION, AdvertiseSelf);
         //Messenger.RemoveListener<BuildStructureQuestData>(Signals.BUILD_STRUCTURE_LOOK_ACTION, BuildStructureLookingForAction);
     }
-    public virtual void EndAction() { }
-    public virtual void DetachActionData() { }
     #endregion
 
     #region Interface
-    public void SetSpecificLocation(ILocation location) {
+    public void SetSpecificLocation(Area location) {
         _specificLocation = location;
         specificLocationHistory.Add("Set specific location to " + _specificLocation.ToString() 
             + " ST: " + StackTraceUtility.ExtractStackTrace());
@@ -248,7 +225,7 @@ public class Party {
             specificLocationHistory.RemoveAt(0);
         }
         if (_specificLocation != null) {
-            _currentRegion = _specificLocation.tileLocation.region;
+            _currentRegion = _specificLocation.coreTile.region;
         }
     }
     public bool AddCharacter(Character character) {
@@ -269,12 +246,12 @@ public class Party {
         if (_characters.Remove(character)) {
             character.OnRemovedFromParty();
             RemoveCurrentBuffsFromCharacter(character);
-            character.ownParty.icon.transform.position = this.specificLocation.tileLocation.transform.position;
-            if (this.specificLocation is BaseLandmark) {
-                this.specificLocation.AddCharacterToLocation(character.ownParty);
-            } else {
-                character.ownParty.SetSpecificLocation(this.specificLocation);
-            }
+            character.ownParty.icon.transform.position = this.specificLocation.coreTile.transform.position;
+            //if (this.specificLocation is BaseLandmark) {
+            this.specificLocation.AddCharacterToLocation(character.ownParty);
+            //} else {
+            //    character.ownParty.SetSpecificLocation(this.specificLocation);
+            //}
             Messenger.Broadcast(Signals.CHARACTER_LEFT_PARTY, character, this);
 
             ////Check if there are still characters in this party, if not, change to dead state
@@ -285,11 +262,11 @@ public class Party {
     }
     public void GoHome(Action doneAction = null, Action actionOnStartOfMovement = null) {
         if (_isDead) { return; }
-        GoToLocation(mainCharacter.homeLandmark, PATHFINDING_MODE.PASSABLE, doneAction, null, actionOnStartOfMovement);
+        GoToLocation(mainCharacter.homeArea, PATHFINDING_MODE.PASSABLE, doneAction, null, actionOnStartOfMovement);
     }
     public void GoHomeAndDisband(Action actionOnStartOfMovement = null) {
         if(_isDead) { return; }
-        GoToLocation(mainCharacter.homeLandmark, PATHFINDING_MODE.PASSABLE, () => DisbandParty(), null, actionOnStartOfMovement);
+        GoToLocation(mainCharacter.homeArea, PATHFINDING_MODE.PASSABLE, () => DisbandParty(), null, actionOnStartOfMovement);
     }
     #endregion
 
@@ -311,7 +288,7 @@ public class Party {
         this.emblem = emblem;
         this.partyColor = partyColor;
     }
-    public void GoToLocation(ILocation targetLocation, PATHFINDING_MODE pathfindingMode, Action doneAction = null, Character trackTarget = null, Action actionOnStartOfMovement = null) {
+    public void GoToLocation(Area targetLocation, PATHFINDING_MODE pathfindingMode, Action doneAction = null, Character trackTarget = null, Action actionOnStartOfMovement = null) {
         //if (_icon.isMovingToHex) {
         //    _icon.SetQueuedAction(() => GoToLocation(targetLocation, pathfindingMode, doneAction, trackTarget, actionOnStartOfMovement));
         //    return;
@@ -362,12 +339,6 @@ public class Party {
     #endregion
 
     #region Berserk
-    public void BerserkModeOn() {
-        Messenger.AddListener<Party, BaseLandmark>(Signals.PARTY_ENTERED_LANDMARK, FindCombat);
-    }
-    public void BerserkModeOff() {
-        Messenger.RemoveListener<Party, BaseLandmark>(Signals.PARTY_ENTERED_LANDMARK, FindCombat);
-    }
     private void FindCombat(Party partyThatEntered, BaseLandmark landmark) {
         //if(partyThatEntered._specificLocation != null && this._specificLocation != null && this._specificLocation == partyThatEntered._specificLocation && partyThatEntered.id != this.id && this._currentCombat == null) {
         //    StartCombatWith(partyThatEntered);
@@ -377,7 +348,7 @@ public class Party {
 
     #region Combat
     public Combat CreateCombatWith(Party enemy) {
-        Combat combat = new Combat(this, enemy, _specificLocation as BaseLandmark);
+        Combat combat = new Combat(this, enemy, _specificLocation);
         Debug.Log("Starting combat between " + enemy.name + " and  " + this.name);
 
         Log combatLog = new Log(GameManager.Instance.Today(), "General", "Combat", "start_combat");
