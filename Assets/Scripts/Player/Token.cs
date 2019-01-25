@@ -116,7 +116,6 @@ public class CharacterToken : Token {
     }
 }
 
-[System.Serializable]
 public class SpecialToken : Token {
     public SPECIAL_TOKEN specialTokenType;
     public INTERACTION_TYPE npcAssociatedInteractionType;
@@ -124,6 +123,7 @@ public class SpecialToken : Token {
     //public int quantity;
     public int weight;
     public Faction owner;
+    public LocationStructure structureLocation { get; private set; }
 
     #region getters/setters
     public override string tokenName {
@@ -162,6 +162,9 @@ public class SpecialToken : Token {
     }
     public void SetOwner(Faction owner) {
         this.owner = owner;
+    }
+    public void SetStructureLocation(LocationStructure structureLocation) {
+        this.structureLocation = structureLocation;
     }
     public override string ToString() {
         return name;

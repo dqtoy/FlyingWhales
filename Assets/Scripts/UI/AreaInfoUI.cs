@@ -73,6 +73,8 @@ public class AreaInfoUI : UIMenu {
         //Messenger.AddListener<Area, Character>(Signals.AREA_RESIDENT_REMOVED, OnAreaResidentRemoved);
         Messenger.AddListener<Character>(Signals.CHARACTER_LEVEL_CHANGED, OnCharacterLevelChanged);
         Messenger.AddListener<Character, Area, Area>(Signals.CHARACTER_MIGRATED_HOME, OnCharacterMigratedHome);
+        Messenger.AddListener<Area, SpecialToken>(Signals.ITEM_ADDED_TO_AREA, OnItemAddedToArea);
+        Messenger.AddListener<Area, SpecialToken>(Signals.ITEM_REMOVED_FROM_AREA, OnItemRemovedFromArea);
     }
 
     public override void OpenMenu() {
@@ -378,6 +380,16 @@ public class AreaInfoUI : UIMenu {
     #endregion
 
     #region Items
+    private void OnItemAddedToArea(Area area, SpecialToken token) {
+        if (this.isShowing && activeArea.id == area.id) {
+            UpdateItems();
+        }
+    }
+    private void OnItemRemovedFromArea(Area area, SpecialToken token) {
+        if (this.isShowing && activeArea.id == area.id) {
+            UpdateItems();
+        }
+    }
     private void UpdateItems() {
         for (int i = 0; i < itemContainers.Length; i++) {
             ItemContainer currContainer = itemContainers[i];
@@ -417,6 +429,15 @@ public class AreaInfoUI : UIMenu {
         } else {
             summary += "None";
         }
+        summary += "\nStructures at " + activeArea.name + ": ";
+        if (activeArea.structures.Count > 0) {
+            foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp in activeArea.structures) {
+                summary += "\n" + kvp.Value.Count.ToString() + " " + kvp.Key.ToString();
+            }
+        } else {
+            summary += "None";
+        }
+
         UIManager.Instance.ShowSmallInfo(summary);
     }
     public void HideLocationInfo() {

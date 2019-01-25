@@ -169,8 +169,8 @@ public class CharacterManager : MonoBehaviour {
         party.CreateIcon();
         if(homeLocation != null) {
             party.icon.SetPosition(homeLocation.coreTile.transform.position);
+            newCharacter.MigrateHomeTo(homeLocation, false);
             homeLocation.AddCharacterToLocation(party);
-            newCharacter.MigrateHomeTo(homeLocation);
         }
 #endif
         if (generateTraits) {

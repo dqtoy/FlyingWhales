@@ -262,6 +262,9 @@ public class Area {
             tiles.Add(tile);
             tile.SetArea(this);
             tile.SetMinimapTileColor(areaColor);
+            if (this.coreTile == null) {
+                SetCoreTile(tile);
+            }
 #if !WORLD_CREATION_TOOL
             DetermineIfTileIsExposed(tile);
             if (determineOuterTiles) {
@@ -288,7 +291,11 @@ public class Area {
     public void RemoveTile(HexTile tile, bool determineExposedTiles = true, bool determineOuterTiles = true) {
         if (tiles.Remove(tile)) {
             tile.SetArea(null);
+            if (coreTile == tile) {
+                SetCoreTile(null);
+            }
             OnTileRemovedFromArea(tile);
+
 #if !WORLD_CREATION_TOOL
             if(tile.landmarkOnTile != null) {
                 if (!exposedTiles.Remove(tile.landmarkOnTile)) {
@@ -532,15 +539,12 @@ public class Area {
         previousOwner = this.owner;
         this.owner = owner;
         UpdateBorderColors();
-        //if (owner != null) {
-        //    for (int i = 0; i < landmarks.Count; i++) {
-        //        landmarks[i].OccupyLandmark(owner);
-        //    }
-        //} else {
-        //    for (int i = 0; i < landmarks.Count; i++) {
-        //        landmarks[i].UnoccupyLandmark();
-        //    }
-        //}
+        /*Whenever a location is occupied, 
+         all items in structures Inside Settlement will be owned by the occupying faction.*/
+        List<LocationStructure> insideStructures = GetStructuresAtLocation(true);
+        for (int i = 0; i < insideStructures.Count; i++) {
+            insideStructures[i].OwnItemsInLocation(owner);
+        }
         Messenger.Broadcast(Signals.AREA_OWNER_CHANGED, this);
     }
     public void SetRaceType(RACE raceType) {
@@ -1066,12 +1070,33 @@ public class Area {
             }
             character.SetHome(this);
             areaResidents.Add(character);
+            if (PlayerManager.Instance.player == null || PlayerManager.Instance.player.playerArea.id != this.id) {
+                AssignCharacterToDwellingInArea(character);
+            }
             //Messenger.Broadcast(Signals.AREA_RESIDENT_ADDED, this, character);
+        }
+    }
+    private void AssignCharacterToDwellingInArea(Character character) {
+        if (!structures.ContainsKey(STRUCTURE_TYPE.DWELLING)) {
+            Debug.LogWarning(this.name + " doesn't have any dwellings for " + character.name);
+            return;
+        }
+        for (int i = 0; i < structures[STRUCTURE_TYPE.DWELLING].Count; i++) {
+            Dwelling currDwelling = structures[STRUCTURE_TYPE.DWELLING][i] as Dwelling;
+            if (currDwelling.CanBeResidentHere(character)) {
+                character.MigrateHomeStructureTo(currDwelling);
+                break;
+            }
+        }
+        if (character.homeStructure == null) {
+            //if the code reaches here, it means that the area could not find a dwelling for the character
+            Debug.LogWarning(GameManager.Instance.TodayLogString() + "Could not find a dwelling for " + character.name + " at " + this.name);
         }
     }
     public void RemoveResident(Character character) {
         if (areaResidents.Remove(character)) {
             character.SetHome(null);
+            character.homeStructure.RemoveResident(character);
             //Messenger.Broadcast(Signals.AREA_RESIDENT_REMOVED, this, character);
         }
     }
@@ -1080,6 +1105,9 @@ public class Area {
             charactersAtLocation.Add(character);
             character.ownParty.SetSpecificLocation(this);
             AddCharacterAtLocationHistory("Added " + character.name + "ST: " + StackTraceUtility.ExtractStackTrace());
+            if (PlayerManager.Instance.player == null || PlayerManager.Instance.player.playerArea.id != this.id) {
+                AddCharacterToAppropriateStructure(character);
+            }
             Messenger.Broadcast(Signals.CHARACTER_ENTERED_AREA, this, character);
         }
     }
@@ -1091,6 +1119,10 @@ public class Area {
     public void RemoveCharacterFromLocation(Character character) {
         if (charactersAtLocation.Remove(character)) {
             //character.ownParty.SetSpecificLocation(null);
+            if (character.currentStructure == null) {
+                throw new Exception(character.name + " doesn't have a current structure at " + this.name);
+            }
+            character.currentStructure.RemoveCharacterAtLocation(character);
             AddCharacterAtLocationHistory("Removed " + character.name + "ST: " + StackTraceUtility.ExtractStackTrace());
             Messenger.Broadcast(Signals.CHARACTER_EXITED_AREA, this, character);
         }
@@ -1099,6 +1131,54 @@ public class Area {
     public void RemoveCharacterFromLocation(Party party) {
         for (int i = 0; i < party.characters.Count; i++) {
             RemoveCharacterFromLocation(party.characters[i]);
+        }
+    }
+    public void AddCharacterToAppropriateStructure(Character character) {
+        if (character.homeArea.id == this.id) {
+            //If this is his home, the character will be placed in his Dwelling.
+            character.homeStructure.AddCharacterAtLocation(character);
+        } else {
+            // Otherwise:
+            if (Utilities.IsRaceBeast(character.race)) {
+                //- Beasts will be placed at a random Wilderness.
+                GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS).AddCharacterAtLocation(character);
+            } else if (this.owner != null) {
+                FACTION_RELATIONSHIP_STATUS relStat;
+                if (character.faction.id == this.owner.id) { //character is part of the same faction as the owner of this area
+                    relStat = FACTION_RELATIONSHIP_STATUS.ALLY;
+                } else {
+                    relStat = character.faction.GetRelationshipWith(this.owner).relationshipStatus; 
+                }
+                switch (relStat) {
+                    case FACTION_RELATIONSHIP_STATUS.AT_WAR:
+                    case FACTION_RELATIONSHIP_STATUS.ENEMY:
+                        //- If location is occupied, non-beasts whose faction relationship is Enemy or worse will be placed in a random structure Outside Settlement.
+                        List<LocationStructure> choices = GetStructuresAtLocation(false);
+                        choices[UnityEngine.Random.Range(0, choices.Count)].AddCharacterAtLocation(character);
+                        break;
+                    case FACTION_RELATIONSHIP_STATUS.DISLIKED:
+                    case FACTION_RELATIONSHIP_STATUS.NEUTRAL:
+                    case FACTION_RELATIONSHIP_STATUS.FRIEND:
+                    case FACTION_RELATIONSHIP_STATUS.ALLY:
+                        LocationStructure inn = GetRandomStructureOfType(STRUCTURE_TYPE.INN);
+                        if (inn != null) {
+                            //- If location is occupied, non-beasts whose faction relationship is Disliked or better will be placed at the Inn. 
+                            inn.AddCharacterAtLocation(character);
+                        } else {
+                            //If no Inn in the Location, he will be placed in a random Wilderness.
+                            LocationStructure wilderness = GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+                            wilderness.AddCharacterAtLocation(character);
+                        }
+                        break;
+                }
+            } else {
+                //- If location is unoccupied, non-beasts will be placed at a random Wilderness.
+                GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS).AddCharacterAtLocation(character);
+            }
+        }
+
+        if (character.currentStructure == null) {
+            Debug.LogWarning(GameManager.Instance.TodayLogString() + "Could not find structure for " + character.name + " at " + this.name);
         }
     }
     private void AddCharacterAtLocationHistory(string str) {
@@ -1127,7 +1207,7 @@ public class Area {
         return characters;
     }
     public bool IsResidentsFull() {
-        return areaResidents.Count >= residentCapacity;
+        return structures[STRUCTURE_TYPE.DWELLING].Where(x => !x.IsOccupied()).Count() == 0; //check if there are still unoccupied dwellings
     }
     public void GenerateNeutralCharacters() {
         if (defaultRace.race == RACE.NONE) {
@@ -1302,21 +1382,55 @@ public class Area {
     //        }
     //    }
     //}
-    public void AddSpecialTokenToLocation(SpecialToken token) {
+    public void AddSpecialTokenToLocation(SpecialToken token, LocationStructure structure = null) {
         if (!possibleSpecialTokenSpawns.Contains(token)) {
             possibleSpecialTokenSpawns.Add(token);
             Debug.Log(GameManager.Instance.TodayLogString() + "Added " + token.name + " at " + name);
+            if (structure != null) {
+                structure.AddItem(token);
+                if (structure.isInside) {
+                    token.SetOwner(this.owner);
+                }
+            } else {
+                //get structure for token
+                LocationStructure chosen = GetRandomStructureToPlaceItem(token);
+                chosen.AddItem(token);
+                if (chosen.isInside) {
+                    token.SetOwner(this.owner);
+                }
+            }
+            Messenger.Broadcast(Signals.ITEM_ADDED_TO_AREA, this, token);
         }
     }
     public void RemoveSpecialTokenFromLocation(SpecialToken token) {
-        possibleSpecialTokenSpawns.Remove(token);
-        Debug.Log(GameManager.Instance.TodayLogString() + "Removed " + token.name + " from " + name);
+        if (possibleSpecialTokenSpawns.Remove(token)) {
+            token.structureLocation.RemoveItem(token);
+            Debug.Log(GameManager.Instance.TodayLogString() + "Removed " + token.name + " from " + name);
+            Messenger.Broadcast(Signals.ITEM_REMOVED_FROM_AREA, this, token);
+        }
+        
     }
     public List<SpecialToken> GetElligibleTokensForCharacter(Character character) {
         List<SpecialToken> choices = new List<SpecialToken>(possibleSpecialTokenSpawns);
         choices.Remove(character.tokenInInventory);
         //Utilities.ListRemoveRange(choices, character.tokenInInventory);
         return choices;
+    }
+    private LocationStructure GetRandomStructureToPlaceItem(SpecialToken token) {
+        /*
+         Items are now placed specifically in a structure when spawning at world creation. 
+         Randomly place it at any non-Dwelling structure in the location.
+         */
+        List<LocationStructure> choices = new List<LocationStructure>();
+        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp in structures) {
+            if (kvp.Key != STRUCTURE_TYPE.DWELLING) {
+                choices.AddRange(kvp.Value);
+            }
+        }
+        if (choices.Count > 0) {
+            return choices[UnityEngine.Random.Range(0, choices.Count)];
+        }
+        return null;
     }
     #endregion
 
@@ -1368,7 +1482,7 @@ public class Area {
         foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp in data.structures) {
             for (int i = 0; i < kvp.Value.Count; i++) {
                 LocationStructure currStructure = kvp.Value[i];
-                AddStructure(new LocationStructure(currStructure.structureType, this, currStructure.isInside));
+                LandmarkManager.Instance.CreateNewStructureAt(this, currStructure.structureType, currStructure.isInside);
             }
         }
     }
@@ -1390,6 +1504,51 @@ public class Area {
                 }
             }
         }
+    }
+    /*
+     NOTE: Location Status Legend:
+     0 = outside,
+     1 = inside,
+     2 = any
+         */
+    public LocationStructure GetRandomStructureOfType(STRUCTURE_TYPE type, int locationStatus = 2) { 
+        if (structures.ContainsKey(type)) { //any
+            if (locationStatus == 2) {
+                return structures[type][UnityEngine.Random.Range(0, structures[type].Count)];
+            } else if (locationStatus == 0) { //outside only
+                List<LocationStructure> choices = new List<LocationStructure>();
+                for (int i = 0; i < structures[type].Count; i++) {
+                    LocationStructure currStructure = structures[type][i];
+                    if (!currStructure.isInside) {
+                        choices.Add(currStructure);
+                    }
+                }
+                return choices[UnityEngine.Random.Range(0, choices.Count)];
+            } else if (locationStatus == 1) { //inside only
+                List<LocationStructure> choices = new List<LocationStructure>();
+                for (int i = 0; i < structures[type].Count; i++) {
+                    LocationStructure currStructure = structures[type][i];
+                    if (currStructure.isInside) {
+                        choices.Add(currStructure);
+                    }
+                }
+                return choices[UnityEngine.Random.Range(0, choices.Count)];
+            }
+            
+        }
+        return null;
+    }
+    private List<LocationStructure> GetStructuresAtLocation(bool inside) {
+        List<LocationStructure> structures = new List<LocationStructure>();
+        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp in this.structures) {
+            for (int i = 0; i < kvp.Value.Count; i++) {
+                LocationStructure currStructure = kvp.Value[i];
+                if (currStructure.isInside == inside) {
+                    structures.Add(currStructure);
+                }
+            }
+        }
+        return structures;
     }
     #endregion
 }

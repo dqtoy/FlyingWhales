@@ -83,6 +83,8 @@ public class Character : ICharacter, ILeader, IInteractable {
     protected int _combatPowerMultiplier;
 
     public Area homeArea { get; protected set; }
+    public Dwelling homeStructure { get; protected set; }
+    public LocationStructure currentStructure { get; private set; } //what structure is this character currently in.
     public Area defendingArea { get; private set; }
     public MORALITY morality { get; private set; }
     public CharacterToken characterToken { get; private set; }
@@ -745,7 +747,7 @@ public class Character : ICharacter, ILeader, IInteractable {
             }
             if (ownParty.specificLocation != null && tokenInInventory != null) {
                 tokenInInventory.SetOwner(null);
-                DropToken(ownParty.specificLocation);
+                DropToken(ownParty.specificLocation, currentStructure);
             }
             if (this.race != RACE.SKELETON && this.race != RACE.BEAST) {
                 ownParty.specificLocation.AddCorpse(this);
@@ -1452,9 +1454,7 @@ public class Character : ICharacter, ILeader, IInteractable {
     }
     public void OnAddedToParty() {
         if (currentParty.id != ownParty.id) {
-            if (ownParty.specificLocation is BaseLandmark) {
-                ownParty.specificLocation.RemoveCharacterFromLocation(ownParty);
-            }
+            ownParty.specificLocation.RemoveCharacterFromLocation(ownParty);
             //ownParty.icon.SetVisualState(false);
         }
     }
@@ -1491,6 +1491,9 @@ public class Character : ICharacter, ILeader, IInteractable {
             }
         }
         return false;
+    }
+    public void SetCurrentStructureLocation(LocationStructure currentStructure) {
+        this.currentStructure = currentStructure;
     }
     #endregion
 
@@ -2059,23 +2062,10 @@ public class Character : ICharacter, ILeader, IInteractable {
 
     #region Home
     public void SetHome(Area newHome) {
-        //Area previousHome = homeArea;
         this.homeArea = newHome;
-        //if (!(this is CharacterArmyUnit)) {
-        //    if (previousHome != null) {
-        //        previousHome.tileLocation.areaOfTile.RemoveResident(this);
-        //        if (homeArea != null) {
-        //            homeArea.tileLocation.areaOfTile.AddResident(this, ignoreAreaResidentCapacity);
-        //        }
-
-        //    } else {
-        //        if (homeArea != null) {
-        //            if (homeArea.tileLocation.areaOfTile != null) {
-        //                homeArea.tileLocation.areaOfTile.AddResident(this);
-        //            }
-        //        }
-        //    }
-        //}
+    }
+    public void SetHomeStructure(Dwelling homeStructure) {
+        this.homeStructure = homeStructure;
     }
     #endregion
 
@@ -2112,14 +2102,23 @@ public class Character : ICharacter, ILeader, IInteractable {
     //    newHomeLandmark.AddCharacterHomeOnLandmark(this);
     //    Messenger.Broadcast(Signals.CHARACTER_MIGRATED_HOME, this, previousHome, newHomeLandmark.tileLocation.areaOfTile);
     //}
-    public void MigrateHomeTo(Area newHomeArea) {
+    public void MigrateHomeTo(Area newHomeArea, bool broadcast = true) {
         Area previousHome = null;
         if (homeArea != null) {
             previousHome = homeArea;
             homeArea.RemoveResident(this);
         }
         newHomeArea.AddResident(this);
-        Messenger.Broadcast(Signals.CHARACTER_MIGRATED_HOME, this, previousHome, newHomeArea);
+        if (broadcast) {
+            Messenger.Broadcast(Signals.CHARACTER_MIGRATED_HOME, this, previousHome, newHomeArea);
+        }
+    }
+    public void MigrateHomeStructureTo(Dwelling dwelling) {
+        if (this.homeStructure != null) {
+            //remove character from his/her old home
+            this.homeStructure.RemoveResident(this);
+        }
+        dwelling.AddResident(this);
     }
     #endregion
 
@@ -2698,9 +2697,9 @@ public class Character : ICharacter, ILeader, IInteractable {
     public void ConsumeToken() {
         tokenInInventory = null;
     }
-    public void DropToken(Area location) {
+    public void DropToken(Area location, LocationStructure structure) {
         if (tokenInInventory != null) {
-            location.AddSpecialTokenToLocation(tokenInInventory);
+            location.AddSpecialTokenToLocation(tokenInInventory, structure);
             tokenInInventory = null;
         }
     }

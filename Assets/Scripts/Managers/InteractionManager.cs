@@ -377,7 +377,7 @@ public class InteractionManager : MonoBehaviour {
         switch (interactionType) {
             case INTERACTION_TYPE.SPAWN_CHARACTER:
             case INTERACTION_TYPE.SPAWN_NEUTRAL_CHARACTER:
-                return location.areaResidents.Count < location.residentCapacity && location.raceType != RACE.NONE;
+                return !location.IsResidentsFull() && location.raceType != RACE.NONE;
             //case INTERACTION_TYPE.BANDIT_RAID:
             //    //Random event that occurs on Bandit Camps. Requires at least 3 characters or army units in the Bandit Camp 
             //    //character list owned by the Faction owner.
@@ -840,7 +840,8 @@ public class InteractionManager : MonoBehaviour {
             //Neutral Area will act as if its at war with all areas, meaning all other areas can be a target
             for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
                 Area area = LandmarkManager.Instance.allAreas[i];
-                if(area.id != areaToAttack.id) {
+                if(area.id != areaToAttack.id 
+                    && PlayerManager.Instance.player.playerArea.id != area.id) {
                     enemyAreas.Add(area);
                 }
             }

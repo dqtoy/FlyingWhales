@@ -118,6 +118,9 @@ public class MoveToVisit : Interaction {
         WeightedDictionary<Area> locationWeights = new WeightedDictionary<Area>();
         for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
             Area currArea = LandmarkManager.Instance.allAreas[i];
+            if (currArea.id == PlayerManager.Instance.player.playerArea.id) {
+                continue; //skip
+            }
             int weight = 0;
             if(currArea.owner == null) {
                 if (Utilities.specialClasses.Contains(characterInvolved.characterClass.className)) {

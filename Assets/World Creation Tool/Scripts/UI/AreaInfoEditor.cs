@@ -182,7 +182,7 @@ public class AreaInfoEditor : MonoBehaviour {
     }
     public void AddNewStructure() {
         STRUCTURE_TYPE chosenType = (STRUCTURE_TYPE)Enum.Parse(typeof(STRUCTURE_TYPE), structureItemsDropdown.options[structureItemsDropdown.value].text);
-        currentArea.AddStructure(new LocationStructure(chosenType, currentArea));
+        LandmarkManager.Instance.CreateNewStructureAt(currentArea, chosenType);
         UpdateStructures();
     }
     #endregion

@@ -710,5 +710,23 @@ public class LandmarkManager : MonoBehaviour {
         defaultPos.y -= 1f;
         return defaultPos;
     }
-#endregion
+    #endregion
+
+    #region Location Structures
+    public LocationStructure CreateNewStructureAt(Area location, STRUCTURE_TYPE type, bool isInside = true) {
+        LocationStructure createdStructure = null;
+        switch (type) {
+            case STRUCTURE_TYPE.DWELLING:
+                createdStructure = new Dwelling(location, isInside);
+                break;
+            default:
+                createdStructure = new LocationStructure(type, location, isInside);
+                break;
+        }
+        if (createdStructure != null) {
+            location.AddStructure(createdStructure);
+        }
+        return createdStructure;
+    }
+    #endregion
 }

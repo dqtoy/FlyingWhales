@@ -874,4 +874,14 @@ public class CharacterInfoUI : UIMenu {
         //    }
         //}
     }
+
+    public void ShowCharacterTestingInfo() {
+        string summary = "Home structure: " + activeCharacter.homeStructure?.ToString() ?? "None";
+        summary += "\nCurrent structure: " + activeCharacter.currentStructure?.ToString() ?? "None";
+        UIManager.Instance.ShowSmallInfo(summary);
+    }
+
+    public void HideCharacterTestingInfo() {
+        UIManager.Instance.HideSmallInfo();
+    }
 }
