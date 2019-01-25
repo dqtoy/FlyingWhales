@@ -10,12 +10,14 @@ public class NewCombat : MonoBehaviour {
 
     private List<Character> _deadCharacters;
     private List<CombatCharacter> _combatOrder;
+    private List<CombatCharacter> _leftSideCombatOrder;
+    private List<CombatCharacter> _rightSideCombatOrder;
     private List<Action> _endCombatActions;
 
     public SIDES winningSide { get; private set; }
     public bool isSelectingTarget { get; private set; }
     public CombatCharacter currentAttacker { get; private set; }
-    public List<Character> selectedTargetCharacters { get; private set; }
+    public List<CombatCharacter> selectedTargetCharacters { get; private set; }
 
     private bool _isPaused;
 
@@ -28,6 +30,8 @@ public class NewCombat : MonoBehaviour {
     public void Initialize() {
         _deadCharacters = new List<Character>();
         _combatOrder = new List<CombatCharacter>();
+        _leftSideCombatOrder = new List<CombatCharacter>();
+        _rightSideCombatOrder = new List<CombatCharacter>();
         _endCombatActions = new List<Action>();
         leftSide = new CombatGrid();
         rightSide = new CombatGrid();
@@ -69,9 +73,7 @@ public class NewCombat : MonoBehaviour {
     }
     private void ReorderCombat() {
         for (int i = 0; i < _combatOrder.Count; i++) {
-            CombatCharacter combatChar = _combatOrder[i];
-            combatChar.speed = combatChar.character.speed;
-            _combatOrder[i] = combatChar;
+            _combatOrder[i].UpdateSpeed();
             for (int j = 0; j < i; j++) {
                 if(_combatOrder[i].speed > _combatOrder[j].speed) {
                     CombatCharacter combatCharacter = _combatOrder[i];
@@ -97,26 +99,21 @@ public class NewCombat : MonoBehaviour {
     private void TransferSlotsToOrder() {
         for (int i = 0; i < leftSide.slots.Length; i++) {
             if (leftSide.slots[i].isOccupied && !IsInCombatOrder(leftSide.slots[i].character)) {
-                _combatOrder.Add(
-                    new CombatCharacter() {
-                        character = leftSide.slots[i].character,
-                        side = SIDES.A,
-                        speed = 0,
-                    }
-                );
+                CombatCharacter combatCharacter = new CombatCharacter(leftSide.slots[i].character, leftSide.slots[i].gridNumber, SIDES.A);
+                _combatOrder.Add(combatCharacter);
+                _leftSideCombatOrder.Add(combatCharacter);
+                leftSide.slots[i].character.SetCombatCharacter(combatCharacter);
                 leftSide.slots[i].character.AdjustDoNotDisturb(1);
             }
             if (rightSide.slots[i].isOccupied && !IsInCombatOrder(rightSide.slots[i].character)) {
-                _combatOrder.Add(
-                    new CombatCharacter() {
-                        character = rightSide.slots[i].character,
-                        side = SIDES.B,
-                        speed = 0,
-                    }
-                );
+                CombatCharacter combatCharacter = new CombatCharacter(rightSide.slots[i].character, rightSide.slots[i].gridNumber, SIDES.B);
+                _combatOrder.Add(combatCharacter);
+                _rightSideCombatOrder.Add(combatCharacter);
+                rightSide.slots[i].character.SetCombatCharacter(combatCharacter);
                 rightSide.slots[i].character.AdjustDoNotDisturb(1);
             }
         }
+        ApplyStartCombatTraits();
     }
     private bool IsInCombatOrder(Character character) {
         for (int i = 0; i < _combatOrder.Count; i++) {
@@ -127,18 +124,20 @@ public class NewCombat : MonoBehaviour {
         return false;
     }
     public void SetPausedState(bool state) {
-        _isPaused = state;
+        if(_isPaused != state) {
+            _isPaused = state;
+        }
     }
     public void Fight() {
         StartCoroutine(StartCombatCoroutine());
     }
     private IEnumerator StartCombatCoroutine() {
         TransferSlotsToOrder();
-        CombatCharacter previousCombatCharacter = new CombatCharacter();
+        CombatCharacter previousCombatCharacter = null;
         while (!isCombatEnd) {
             ReorderCombat();
             for (int i = 0; i < _combatOrder.Count; i++) {
-                if (previousCombatCharacter.character != null) {
+                if (previousCombatCharacter != null) {
                     UIManager.Instance.combatUI.UnhighlightAttacker(previousCombatCharacter.character, previousCombatCharacter.side);
                 }
                 CombatCharacter sourceCombatCharacter = _combatOrder[i];
@@ -148,54 +147,50 @@ public class NewCombat : MonoBehaviour {
                 UIManager.Instance.combatUI.AddCombatLogs(sourceCombatCharacter.character.name + " will now attack!", sourceCombatCharacter.side);
                 //Messenger.Broadcast(Signals.ADD_TO_COMBAT_LOGS, sourceCombatCharacter.character.name + " will now attack!");
 
-                //if (sourceCombatCharacter.character.currentHP <= 0) {
-                //    _combatOrder.RemoveAt(i);
-                //    i--;
-                //    continue;
-                //}
                 //Get and Hit Targets
-                List<Character> targetCharacters = null;
-                if (sourceCombatCharacter.character.minion != null) {
-                    SelectTarget(sourceCombatCharacter);
-                    yield return new WaitWhile(() => _isPaused == true);
-                    targetCharacters = selectedTargetCharacters;
-                } else {
-                    targetCharacters = GetTargetCharacters(sourceCombatCharacter);
-                }
+                //List<CombatCharacter> targetCharacters = null;
+                //if (sourceCombatCharacter.character.minion != null) {
+                //    SelectTarget(sourceCombatCharacter);
+                //    yield return new WaitWhile(() => _isPaused == true);
+                //    targetCharacters = selectedTargetCharacters;
+                //} else {
+                //    targetCharacters = GetTargetCharacters(sourceCombatCharacter);
+                //}
+                List<CombatCharacter> targetCharacters = GetTargetCharacters(sourceCombatCharacter);
                 string attackLog = string.Empty;
                 if (targetCharacters != null && targetCharacters.Count > 0) {
                     attackLog = sourceCombatCharacter.character.name + " attacks ";
-                    int sourceAttack = sourceCombatCharacter.character.attackPower;
                     for (int j = 0; j < targetCharacters.Count; j++) {
-                        Character target = targetCharacters[j];
+                        CombatCharacter target = targetCharacters[j];
                         if (j == 0) {
-                            attackLog += target.name;
+                            attackLog += target.character.name;
                         } else {
-                            attackLog += ", " + target.name;
+                            attackLog += ", " + target.character.name;
                         }
-                        target.AdjustHP(-sourceAttack);
-                        if (target.currentHP <= 0) {
-                            int removedIndex = RemoveFromCombatOrder(target);
+                        int finalAttack = GetFinalAttack(sourceCombatCharacter, target, targetCharacters);
+                        target.character.AdjustHP(-finalAttack);
+                        if (target.character.currentHP <= 0) {
+                            int removedIndex = RemoveFromCombatOrder(target.character);
                             if(removedIndex != -1) {
-                                AddToDeadCharacters(target);
+                                AddToDeadCharacters(target.character);
                                 if (removedIndex < i) {
                                     i--;
                                 }
                             }
-
                         }
+                        attackLog += " for " + finalAttack.ToString();
                     }
-                    attackLog += " for " + sourceAttack.ToString() + ".";
+                    attackLog += ".";
                     UIManager.Instance.combatUI.AddCombatLogs(attackLog, sourceCombatCharacter.side);
                     //Messenger.Broadcast(Signals.ADD_TO_COMBAT_LOGS, attackLog);
 
                     string deathLog = string.Empty;
                     for (int j = 0; j < targetCharacters.Count; j++) {
-                        if (targetCharacters[j].currentHP <= 0) {
+                        if (targetCharacters[j].character.currentHP <= 0) {
                             if (deathLog == string.Empty) {
-                                deathLog += targetCharacters[j].name;
+                                deathLog += targetCharacters[j].character.name;
                             } else {
-                                deathLog += ", " + targetCharacters[j].name;
+                                deathLog += ", " + targetCharacters[j].character.name;
                             }
                         }
                     }
@@ -214,7 +209,7 @@ public class NewCombat : MonoBehaviour {
                 UIManager.Instance.combatUI.UpdateCombatSlotItems();
                 //Messenger.Broadcast(Signals.UPDATE_COMBAT_GRIDS);
                 yield return new WaitWhile(() => _isPaused == true);
-                yield return new WaitForSeconds(2f);
+                yield return new WaitForSeconds(0.75f);
                 if (isCombatEnd) {
                     break;
                 }
@@ -260,6 +255,8 @@ public class NewCombat : MonoBehaviour {
             if(_combatOrder[i].character == character) {
                 int index = i;
                 RemoveFromCombatGrid(_combatOrder[i]);
+                _leftSideCombatOrder.Remove(_combatOrder[i]);
+                _rightSideCombatOrder.Remove(_combatOrder[i]);
                 _combatOrder.RemoveAt(i);
                 return index;
             }
@@ -273,13 +270,9 @@ public class NewCombat : MonoBehaviour {
         }
         grid.RemoveCharacterFromGrid(combatCharacter.character);
     }
-
-    private void HitTargetCharacters(CombatCharacter sourceCombatCharacter) {
-        
-    }
-    private List<Character> GetTargetCharacters(CombatCharacter sourceCombatCharacter) {
+    private List<CombatCharacter> GetTargetCharacters(CombatCharacter sourceCombatCharacter) {
         List<int[]> targetIndexes = GetGridIndexesByCombatTargetType(sourceCombatCharacter.character.characterClass.combatTarget);
-        List<Character> targets = new List<Character>();
+        List<CombatCharacter> targets = new List<CombatCharacter>();
         CombatGrid gridToBeChecked = leftSide;
         if (sourceCombatCharacter.side == SIDES.A) {
             gridToBeChecked = rightSide;
@@ -302,8 +295,11 @@ public class NewCombat : MonoBehaviour {
             int chosenIndex = UnityEngine.Random.Range(0, targetIndexes.Count);
             for (int j = 0; j < targetIndexes[chosenIndex].Length; j++) {
                 Character targetCharacter = gridToBeChecked.slots[targetIndexes[chosenIndex][j]].character;
-                if (targetCharacter != null && !_deadCharacters.Contains(targetCharacter) && !targets.Contains(targetCharacter)) {
-                    targets.Add(targetCharacter);
+                if (targetCharacter != null && !_deadCharacters.Contains(targetCharacter)) {
+                    CombatCharacter targetCombatCharacter = targetCharacter.currentCombatCharacter;
+                    if (!targets.Contains(targetCombatCharacter)) {
+                        targets.Add(targetCombatCharacter);
+                    }
                 }
             }
         }
@@ -391,7 +387,7 @@ public class NewCombat : MonoBehaviour {
         isSelectingTarget = true;
         UIManager.Instance.combatUI.selectTargetIndicatorGO.SetActive(true);
     }
-    public void OnSelectTargets(List<Character> targets) {
+    public void OnSelectTargets(List<CombatCharacter> targets) {
         if(targets != null && targets.Count > 0) {
             selectedTargetCharacters = targets;
         } else {
@@ -401,14 +397,460 @@ public class NewCombat : MonoBehaviour {
         UIManager.Instance.combatUI.selectTargetIndicatorGO.SetActive(false);
         SetPausedState(false);
     }
+
+    #region Trait Effects
+    private void ApplyStartCombatTraits() {
+        for (int i = 0; i < _combatOrder.Count; i++) {
+            CombatCharacter combatCharacter = _combatOrder[i];
+            for (int j = 0; j < combatCharacter.character.traits.Count; j++) {
+                if(combatCharacter.character.traits[j].trigger == TRAIT_TRIGGER.START_OF_COMBAT) {
+                    for (int k = 0; k < combatCharacter.character.traits[j].effects.Count; k++) {
+                        TraitEffect traitEffect = combatCharacter.character.traits[j].effects[k];
+                        if (combatCharacter.side == SIDES.A) {
+                            ApplyTraitEffectsOfStartCombat(combatCharacter, _leftSideCombatOrder, _rightSideCombatOrder, traitEffect);
+                        } else {
+                            ApplyTraitEffectsOfStartCombat(combatCharacter, _rightSideCombatOrder, _leftSideCombatOrder, traitEffect);
+                        }
+                    }
+                }
+            }
+        }
+        for (int i = 0; i < _combatOrder.Count; i++) {
+            _combatOrder[i].UpdateStats();
+        }
+    }
+    private void ApplyTraitEffectsOfStartCombat(CombatCharacter sourceCombatCharacter, List<CombatCharacter> allies, List<CombatCharacter> enemies, TraitEffect traitEffect) {
+        if (traitEffect.target == TRAIT_REQUIREMENT_TARGET.SELF) {
+            if (traitEffect.hasRequirement) {
+                List<CombatCharacter> checkerCharacters = GetCharactersToBeChecked(traitEffect.checker, sourceCombatCharacter, allies, enemies);
+                for (int i = 0; i < checkerCharacters.Count; i++) {
+                    if (CharacterFitsTraitCriteria(checkerCharacters[i], sourceCombatCharacter, traitEffect)) {
+                        ModifyStat(sourceCombatCharacter, traitEffect);
+                    }
+                }
+            } else {
+                ModifyStat(sourceCombatCharacter, traitEffect);
+            }
+        } else if (traitEffect.target == TRAIT_REQUIREMENT_TARGET.ENEMY) {
+            //Do nothing, must never have target at the start of combat
+        } else if (traitEffect.target == TRAIT_REQUIREMENT_TARGET.ALL_ENEMIES) {
+            if (traitEffect.hasRequirement) {
+                List<CombatCharacter> checkerCharacters = GetCharactersToBeChecked(traitEffect.checker, sourceCombatCharacter, allies, enemies);
+                for (int i = 0; i < checkerCharacters.Count; i++) {
+                    if(CharacterFitsTraitCriteria(checkerCharacters[i], sourceCombatCharacter, traitEffect)) {
+                        for (int j = 0; j < enemies.Count; j++) {
+                            ModifyStat(enemies[j], traitEffect);
+                        }
+                    }
+                }
+            } else {
+                for (int i = 0; i < enemies.Count; i++) {
+                    ModifyStat(enemies[i], traitEffect);
+                }
+            }
+        } else if (traitEffect.target == TRAIT_REQUIREMENT_TARGET.ALL_IN_COMBAT) {
+            if (traitEffect.hasRequirement) {
+                List<CombatCharacter> checkerCharacters = GetCharactersToBeChecked(traitEffect.checker, sourceCombatCharacter, allies, enemies);
+                for (int i = 0; i < checkerCharacters.Count; i++) {
+                    if (CharacterFitsTraitCriteria(checkerCharacters[i], sourceCombatCharacter, traitEffect)) {
+                        for (int j = 0; j < enemies.Count; j++) {
+                            ModifyStat(enemies[j], traitEffect);
+                        }
+                        for (int j = 0; j < allies.Count; j++) {
+                            ModifyStat(allies[j], traitEffect);
+                        }
+                    }
+                }
+            } else {
+                for (int i = 0; i < enemies.Count; i++) {
+                    ModifyStat(enemies[i], traitEffect);
+                }
+                for (int i = 0; i < allies.Count; i++) {
+                    ModifyStat(allies[i], traitEffect);
+                }
+            }
+        } else if (traitEffect.target == TRAIT_REQUIREMENT_TARGET.ALL_PARTY_MEMBERS) {
+            if (traitEffect.hasRequirement) {
+                List<CombatCharacter> checkerCharacters = GetCharactersToBeChecked(traitEffect.checker, sourceCombatCharacter, allies, enemies);
+                for (int i = 0; i < checkerCharacters.Count; i++) {
+                    if (CharacterFitsTraitCriteria(checkerCharacters[i], sourceCombatCharacter, traitEffect)) {
+                        for (int j = 0; j < allies.Count; j++) {
+                            ModifyStat(allies[j], traitEffect);
+                        }
+                    }
+                }
+            } else {
+                for (int i = 0; i < allies.Count; i++) {
+                    ModifyStat(allies[i], traitEffect);
+                }
+            }
+        } else if (traitEffect.target == TRAIT_REQUIREMENT_TARGET.OTHER_PARTY_MEMBERS) {
+            if (traitEffect.hasRequirement) {
+                List<CombatCharacter> checkerCharacters = GetCharactersToBeChecked(traitEffect.checker, sourceCombatCharacter, allies, enemies);
+                for (int i = 0; i < checkerCharacters.Count; i++) {
+                    if (CharacterFitsTraitCriteria(checkerCharacters[i], sourceCombatCharacter, traitEffect)) {
+                        for (int j = 0; j < allies.Count; j++) {
+                            if (allies[j] != sourceCombatCharacter) {
+                                ModifyStat(allies[j], traitEffect);
+                            }
+                        }
+                    }
+                }
+            } else {
+                for (int i = 0; i < allies.Count; i++) {
+                    if (allies[i] != sourceCombatCharacter) {
+                        ModifyStat(allies[i], traitEffect);
+                    }
+                }
+            }
+        }
+    }
+    private void ModifyStat(CombatCharacter sourceCombatCharacter, TraitEffect traitEffect) {
+        if (traitEffect.isPercentage) {
+            if (traitEffect.stat == STAT.ATTACK) {
+                sourceCombatCharacter.AdjustMultiplierAttack((int) traitEffect.amount);
+            } else if (traitEffect.stat == STAT.SPEED) {
+                sourceCombatCharacter.AdjustMultiplierSpeed((int) traitEffect.amount);
+            } else if (traitEffect.stat == STAT.HP) {
+                sourceCombatCharacter.AdjustMultiplierHP((int) traitEffect.amount);
+            } else if (traitEffect.stat == STAT.ALL) {
+                sourceCombatCharacter.AdjustMultiplierAttack((int) traitEffect.amount);
+                sourceCombatCharacter.AdjustMultiplierSpeed((int) traitEffect.amount);
+                sourceCombatCharacter.AdjustMultiplierHP((int) traitEffect.amount);
+            }
+        } else {
+            if (traitEffect.stat == STAT.ATTACK) {
+                sourceCombatCharacter.AdjustFlatAttack((int) traitEffect.amount);
+            } else if (traitEffect.stat == STAT.SPEED) {
+                sourceCombatCharacter.AdjustFlatSpeed((int) traitEffect.amount);
+            } else if (traitEffect.stat == STAT.HP) {
+                sourceCombatCharacter.AdjustFlatHP((int) traitEffect.amount);
+            } else if (traitEffect.stat == STAT.ALL) {
+                sourceCombatCharacter.AdjustFlatAttack((int) traitEffect.amount);
+                sourceCombatCharacter.AdjustFlatSpeed((int) traitEffect.amount);
+                sourceCombatCharacter.AdjustFlatHP((int) traitEffect.amount);
+            }
+        }
+    }
+    private List<CombatCharacter> GetCharactersToBeChecked(TRAIT_REQUIREMENT_CHECKER checker, CombatCharacter sourceCombatCharacter,
+        List<CombatCharacter> allies, List<CombatCharacter> enemies, List<CombatCharacter> targets = null) {
+
+        List<CombatCharacter> checkerCharacters = new List<CombatCharacter>();
+        if(checker == TRAIT_REQUIREMENT_CHECKER.SELF) {
+            checkerCharacters.Add(sourceCombatCharacter);
+        } else if (checker == TRAIT_REQUIREMENT_CHECKER.ENEMY) {
+            checkerCharacters.AddRange(targets);
+        } else if (checker == TRAIT_REQUIREMENT_CHECKER.OTHER_PARTY_MEMBERS) {
+            checkerCharacters = allies.Where(x => x != sourceCombatCharacter).ToList();
+        } else if (checker == TRAIT_REQUIREMENT_CHECKER.ALL_PARTY_MEMBERS) {
+            checkerCharacters.AddRange(allies);
+        } else if (checker == TRAIT_REQUIREMENT_CHECKER.ALL_IN_COMBAT) {
+            checkerCharacters.AddRange(allies);
+            checkerCharacters.AddRange(enemies);
+        } else if (checker == TRAIT_REQUIREMENT_CHECKER.ALL_ENEMIES) {
+            checkerCharacters.AddRange(enemies);
+        }
+        return checkerCharacters;
+    }
+    private bool CharacterFitsTraitCriteria(CombatCharacter checkedCharacter, CombatCharacter traitOwner, TraitEffect traitEffect, List<CombatCharacter> targets = null) {
+        if (traitEffect.requirementType == TRAIT_REQUIREMENT.TRAIT) {
+            if (traitEffect.requirementSeparator == TRAIT_REQUIREMENT_SEPARATOR.AND) {
+                //if there is one mismatch, return false already because the separator is AND, otherwise, return true
+                if (traitEffect.isNot) {
+                    for (int i = 0; i < traitEffect.requirements.Count; i++) {
+                        if (checkedCharacter.character.GetTrait(traitEffect.requirements[i]) != null) {
+                            return false;
+                        }
+                    }
+                    return true;
+                } else {
+                    for (int i = 0; i < traitEffect.requirements.Count; i++) {
+                        if (checkedCharacter.character.GetTrait(traitEffect.requirements[i]) == null) {
+                            return false;
+                        }
+                    }
+                    return true;
+                }
+            } else if (traitEffect.requirementSeparator == TRAIT_REQUIREMENT_SEPARATOR.OR) {
+                //if there is one match, return true already because the separator is OR, otherwise, return false   
+                if (traitEffect.isNot) {
+                    for (int i = 0; i < traitEffect.requirements.Count; i++) {
+                        if (checkedCharacter.character.GetTrait(traitEffect.requirements[i]) == null) {
+                            return true;
+                        }
+                    }
+                    return false;
+                } else {
+                    for (int i = 0; i < traitEffect.requirements.Count; i++) {
+                        if (checkedCharacter.character.GetTrait(traitEffect.requirements[i]) != null) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+            }
+        } else if (traitEffect.requirementType == TRAIT_REQUIREMENT.RACE) {
+            if (traitEffect.requirementSeparator == TRAIT_REQUIREMENT_SEPARATOR.AND) {
+                //if there is one mismatch, return false already because the separator is AND, otherwise, return true
+                if (traitEffect.isNot) {
+                    for (int i = 0; i < traitEffect.requirements.Count; i++) {
+                        if (traitEffect.requirements[i].ToLower() == checkedCharacter.character.race.ToString().ToLower()) {
+                            return false;
+                        }
+                    }
+                    return true;
+                } else {
+                    for (int i = 0; i < traitEffect.requirements.Count; i++) {
+                        if (traitEffect.requirements[i].ToLower() != checkedCharacter.character.race.ToString().ToLower()) {
+                            return false;
+                        }
+                    }
+                    return true;
+                }
+            } else if (traitEffect.requirementSeparator == TRAIT_REQUIREMENT_SEPARATOR.OR) {
+                //if there is one match, return true already because the separator is OR, otherwise, return false   
+                if (traitEffect.isNot) {
+                    for (int i = 0; i < traitEffect.requirements.Count; i++) {
+                        if (traitEffect.requirements[i].ToLower() != checkedCharacter.character.race.ToString().ToLower()) {
+                            return true;
+                        }
+                    }
+                    return false;
+                } else {
+                    for (int i = 0; i < traitEffect.requirements.Count; i++) {
+                        if (traitEffect.requirements[i].ToLower() == checkedCharacter.character.race.ToString().ToLower()) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+            }
+        } else if (traitEffect.requirementType == TRAIT_REQUIREMENT.FRONTLINE) {
+            if (traitEffect.isNot) {
+                if (leftSide.slots[2].isOccupied && leftSide.slots[2].character == checkedCharacter.character) {
+                    return true;
+                } else if (leftSide.slots[3].isOccupied && leftSide.slots[3].character == checkedCharacter.character) {
+                    return true;
+                } else if (rightSide.slots[2].isOccupied && rightSide.slots[2].character == checkedCharacter.character) {
+                    return true;
+                } else if (rightSide.slots[3].isOccupied && rightSide.slots[3].character == checkedCharacter.character) {
+                    return true;
+                }
+                return false;
+            } else {
+                if (leftSide.slots[0].isOccupied && leftSide.slots[0].character == checkedCharacter.character) {
+                    return true;
+                }else if (leftSide.slots[1].isOccupied && leftSide.slots[1].character == checkedCharacter.character) {
+                    return true;
+                }else if (rightSide.slots[0].isOccupied && rightSide.slots[0].character == checkedCharacter.character) {
+                    return true;
+                }else if (rightSide.slots[1].isOccupied && rightSide.slots[1].character == checkedCharacter.character) {
+                    return true;
+                }
+                return false;
+            }
+        } else if (traitEffect.requirementType == TRAIT_REQUIREMENT.ADJACENT_ALLIES) {
+            if (traitEffect.isNot) {
+                CombatGrid side = leftSide;
+                if(checkedCharacter.side == SIDES.B) {
+                    side = rightSide;
+                }
+                int adjacent = CombatManager.Instance.GetAdjacentIndexGrid(checkedCharacter.gridNumber);
+                if (!side.slots[adjacent].isOccupied || side.slots[adjacent].character == checkedCharacter.character) {
+                    return true;
+                }
+                return false;
+            } else {
+                CombatGrid side = leftSide;
+                if (checkedCharacter.side == SIDES.B) {
+                    side = rightSide;
+                }
+                int adjacent = CombatManager.Instance.GetAdjacentIndexGrid(checkedCharacter.gridNumber);
+                if (side.slots[adjacent].isOccupied && side.slots[adjacent].character != checkedCharacter.character) {
+                    return true;
+                }
+                return false;
+            }
+        } else if (traitEffect.requirementType == TRAIT_REQUIREMENT.ONLY_1_TARGET) {
+            if (traitEffect.isNot) {
+                if(targets.Count > 1) {
+                    return true;
+                }
+                return false;
+            } else {
+                if (targets.Count == 1) {
+                    return true;
+                }
+                return false;
+            }
+        } else if (traitEffect.requirementType == TRAIT_REQUIREMENT.EVERY_MISSING_HP_25PCT) {
+            if (traitEffect.isNot) {
+                float percent = checkedCharacter.maxHP * 0.25f;
+                if (checkedCharacter.missingHP < percent) {
+                    return true;
+                }
+                return false;
+            } else {
+                float percent = checkedCharacter.maxHP * 0.25f;
+                if (checkedCharacter.missingHP >= percent) {
+                    return true;
+                }
+                return false;
+            }
+        } else if (traitEffect.requirementType == TRAIT_REQUIREMENT.MELEE) {
+            if (traitEffect.isNot) {
+                if (checkedCharacter.character.characterClass.rangeType != RANGE_TYPE.MELEE) {
+                    return true;
+                }
+                return false;
+            } else {
+                if (checkedCharacter.character.characterClass.rangeType == RANGE_TYPE.MELEE) {
+                    return true;
+                }
+                return false;
+            }
+        } else if (traitEffect.requirementType == TRAIT_REQUIREMENT.RANGED) {
+            if (traitEffect.isNot) {
+                if (checkedCharacter.character.characterClass.rangeType != RANGE_TYPE.RANGED) {
+                    return true;
+                }
+                return false;
+            } else {
+                if (checkedCharacter.character.characterClass.rangeType == RANGE_TYPE.RANGED) {
+                    return true;
+                }
+                return false;
+            }
+        } else if (traitEffect.requirementType == TRAIT_REQUIREMENT.OPPOSITE_SEX) {
+            if (traitEffect.isNot) {
+                if (traitOwner.character.gender == checkedCharacter.character.gender) {
+                    return true;
+                }
+                return false;
+            } else {
+                if (traitOwner.character.gender != checkedCharacter.character.gender) {
+                    return true;
+                }
+                return false;
+            }
+        }
+        return false;
+    }
+    private int GetFinalAttack(CombatCharacter sourceCombatCharacter, CombatCharacter specificTarget, List<CombatCharacter> targets) {
+        //Currently, only percentage amounts are implemented, if there will flat amounts in the future, add it here
+        int finalAttack = sourceCombatCharacter.attack;
+        float damageIncreasePercentage = 0f;
+        for (int i = 0; i < sourceCombatCharacter.character.traits.Count; i++) {
+            Trait trait = sourceCombatCharacter.character.traits[i];
+            if(trait.trigger == TRAIT_TRIGGER.DURING_COMBAT) {
+                for (int j = 0; j < trait.effects.Count; j++) {
+                    TraitEffect traitEffect = trait.effects[j];
+                    if (traitEffect.target == TRAIT_REQUIREMENT_TARGET.SELF && traitEffect.stat == STAT.ATTACK && traitEffect.damageIdentifier == DAMAGE_IDENTIFIER.DEALT
+                        && WillTraitApplyDuringCombat(traitEffect, sourceCombatCharacter, sourceCombatCharacter, specificTarget, targets)) {
+                        if(traitEffect.requirementType == TRAIT_REQUIREMENT.EVERY_MISSING_HP_25PCT) {
+                            int percent = (int)(sourceCombatCharacter.maxHP * 0.25f);
+                            int multiplier = sourceCombatCharacter.missingHP / percent;
+                            damageIncreasePercentage += (traitEffect.amount * multiplier);
+                        } else {
+                            damageIncreasePercentage += traitEffect.amount;
+                        }
+                    }
+                }
+            }
+        }
+        for (int i = 0; i < specificTarget.character.traits.Count; i++) {
+            Trait trait = specificTarget.character.traits[i];
+            if (trait.trigger == TRAIT_TRIGGER.DURING_COMBAT) {
+                for (int j = 0; j < trait.effects.Count; j++) {
+                    TraitEffect traitEffect = trait.effects[j];
+                    if (traitEffect.target == TRAIT_REQUIREMENT_TARGET.SELF && traitEffect.stat == STAT.ATTACK && traitEffect.damageIdentifier == DAMAGE_IDENTIFIER.RECEIVED
+                        && WillTraitApplyDuringCombat(traitEffect, specificTarget, specificTarget, sourceCombatCharacter, targets)) {
+                        if (traitEffect.requirementType == TRAIT_REQUIREMENT.EVERY_MISSING_HP_25PCT) {
+                            int percent = (int) (specificTarget.maxHP * 0.25f);
+                            int multiplier = specificTarget.missingHP / percent;
+                            damageIncreasePercentage += (traitEffect.amount * multiplier);
+                        } else {
+                            damageIncreasePercentage += traitEffect.amount;
+                        }
+                    }
+                }
+            }
+        }
+
+        finalAttack = (int)(finalAttack * (1f + (damageIncreasePercentage / 100f)));
+        return finalAttack;
+    }
+    private bool WillTraitApplyDuringCombat(TraitEffect traitEffect, CombatCharacter traitOwner, CombatCharacter sourceCombatCharacter, CombatCharacter specificTarget, List<CombatCharacter> targets) {
+        if (traitEffect.checker == TRAIT_REQUIREMENT_CHECKER.SELF && CharacterFitsTraitCriteria(sourceCombatCharacter, traitOwner, traitEffect, targets)) {
+            return true;
+        }else if (traitEffect.checker == TRAIT_REQUIREMENT_CHECKER.ENEMY && CharacterFitsTraitCriteria(specificTarget, traitOwner, traitEffect, targets)) {
+            return true;
+        }
+        return false;
+    }
+    #endregion
 }
 
-public struct CombatCharacter {
-    public Character character;
-    public SIDES side;
-    public int speed;
+public class CombatCharacter {
+    public Character character { get; private set; }
+    public SIDES side { get; private set; }
+    public int gridNumber { get; private set; }
+    public int attack { get; private set; }
+    public int maxHP { get; private set; }
+    public int speed { get; private set; }
 
-    public void ReEvaluateSpeed() {
-        speed = character.speed;
+    private int flatAttack;
+    private int flatHP;
+    private int flatSpeed;
+    private int multiplierAttack;
+    private int multiplierHP;
+    private int multiplierSpeed;
+
+    #region getters/setters
+    public int missingHP {
+        get { return maxHP - character.currentHP; }
+    }
+    #endregion
+
+    public CombatCharacter(Character character, int gridNumber, SIDES side) {
+        this.character = character;
+        this.side = side;
+        this.gridNumber = gridNumber;
+    }
+    public void AdjustFlatAttack(int amount) {
+        flatAttack += amount;
+    }
+    public void AdjustFlatHP(int amount) {
+        flatHP += amount;
+    }
+    public void AdjustFlatSpeed(int amount) {
+        flatSpeed += amount;
+    }
+    public void AdjustMultiplierAttack(int amount) {
+        multiplierAttack += amount;
+    }
+    public void AdjustMultiplierHP(int amount) {
+        multiplierHP += amount;
+    }
+    public void AdjustMultiplierSpeed(int amount) {
+        multiplierSpeed += amount;
+    }
+    public void UpdateStats() {
+        UpdateAttack();
+        UpdateHP();
+        UpdateSpeed();
+    }
+    public void UpdateSpeed() {
+        int totalFlatSpeed = character.speed + flatSpeed;
+        speed = totalFlatSpeed + (int)(totalFlatSpeed * (multiplierSpeed / 100f));
+    }
+    public void UpdateAttack() {
+        int totalFlatAttack = character.attackPower + flatAttack;
+        attack = totalFlatAttack + (int) (totalFlatAttack * (multiplierAttack / 100f));
+    }
+    public void UpdateHP() {
+        int totalFlatHP = character.maxHP + flatHP;
+        maxHP = totalFlatHP + (int) (totalFlatHP * (multiplierHP / 100f));
+        character.SetHP(maxHP);
     }
 }

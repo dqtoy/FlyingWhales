@@ -87,6 +87,12 @@ public class CombatGrid {
             if (overwrite) {
                 for (int i = 0; i < _columnReference.GetLength(0); i++) {
                     if (_slots[_columnReference[i, 0]].gridNumber == slotIndex || _slots[_columnReference[i, 1]].gridNumber == slotIndex) {
+                        if(_slots[_columnReference[i, 0]].isOccupied) {
+                            RemoveCharacterFromGrid(_slots[_columnReference[i, 0]].character);
+                        }
+                        if (_slots[_columnReference[i, 1]].isOccupied) {
+                            RemoveCharacterFromGrid(_slots[_columnReference[i, 1]].character);
+                        }
                         _slots[_columnReference[i, 0]].OccupySlot(character);
                         _slots[_columnReference[i, 1]].OccupySlot(character);
                         return true;
@@ -108,6 +114,12 @@ public class CombatGrid {
             if (overwrite) {
                 for (int i = 0; i < _rowReference.GetLength(0); i++) {
                     if (_slots[_rowReference[i, 0]].gridNumber == slotIndex || _slots[_rowReference[i, 1]].gridNumber == slotIndex) {
+                        if (_slots[_rowReference[i, 0]].isOccupied) {
+                            RemoveCharacterFromGrid(_slots[_rowReference[i, 0]].character);
+                        }
+                        if (_slots[_rowReference[i, 1]].isOccupied) {
+                            RemoveCharacterFromGrid(_slots[_rowReference[i, 1]].character);
+                        }
                         _slots[_rowReference[i, 0]].OccupySlot(character);
                         _slots[_rowReference[i, 1]].OccupySlot(character);
                         return true;
@@ -127,6 +139,9 @@ public class CombatGrid {
             return false;
         } else if (character.characterClass.occupiedTileType == COMBAT_OCCUPIED_TILE.SINGLE) {
             if (overwrite) {
+                if (_slots[slotIndex].isOccupied) {
+                    RemoveCharacterFromGrid(_slots[slotIndex].character);
+                }
                 _slots[slotIndex].OccupySlot(character);
             } else {
                 if (!_slots[slotIndex].isOccupied) {

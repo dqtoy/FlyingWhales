@@ -130,7 +130,7 @@ public class CombatManager : MonoBehaviour {
             Character icharacter = icharacters1[i];
 
             ApplyBaseStats(icharacter);
-            ApplyWinWeightOfCharacter(icharacter, icharacters1, icharacters2);
+            //ApplyWinWeightOfCharacter(icharacter, icharacters1, icharacters2);
 
             //Calculate total power per pair
             for (int j = 0; j < icharacter.pairCombatStats.Length; j++) {
@@ -176,73 +176,30 @@ public class CombatManager : MonoBehaviour {
         character.combatBaseHP = character.maxHP;
     }
 
-    private void ApplyTraitEffectPrePairing(Character icharacter, List<Character> allies, List<Character> enemies, TraitEffect traitEffect) {
+    private void ApplyTraitEffectPrePairing(Character sourceCharacter, List<Character> allies, List<Character> enemies, TraitEffect traitEffect) {
         //List<ICharacter> enemies = GetEnemyCharacters(icharacter.currentSide);
         //List<ICharacter> allies = GetAllyCharacters(icharacter.currentSide);
-
-        if (traitEffect.target == TRAIT_REQUIREMENT_TARGET.SELF_ALL_ENEMIES) {
+        if (traitEffect.target == TRAIT_REQUIREMENT_TARGET.SELF) {
             if (traitEffect.hasRequirement) {
-                for (int i = 0; i < enemies.Count; i++) {
-                    if (CharacterFitsTraitCriteria(enemies[i], traitEffect)) {
-                        ModifyStat(icharacter, traitEffect);
+                List<Character> checkerCharacters = GetCharactersToBeChecked(traitEffect.checker, sourceCharacter, allies, enemies);
+                for (int i = 0; i < checkerCharacters.Count; i++) {
+                    if (CharacterFitsTraitCriteria(checkerCharacters[i], traitEffect)) {
+                        ModifyStat(sourceCharacter, traitEffect);
                     }
                 }
             } else {
-                for (int i = 0; i < enemies.Count; i++) {
-                    ModifyStat(icharacter, traitEffect);
-                }
+                ModifyStat(sourceCharacter, traitEffect);
             }
-        } else if (traitEffect.target == TRAIT_REQUIREMENT_TARGET.SELF_ALL_IN_COMBAT) {
-            if (traitEffect.hasRequirement) {
-                for (int i = 0; i < enemies.Count; i++) {
-                    if (CharacterFitsTraitCriteria(enemies[i], traitEffect)) {
-                        ModifyStat(icharacter, traitEffect);
-                    }
-                }
-                for (int i = 0; i < allies.Count; i++) {
-                    if (CharacterFitsTraitCriteria(allies[i], traitEffect)) {
-                        ModifyStat(icharacter, traitEffect);
-                    }
-                }
-            } else {
-                for (int i = 0; i < enemies.Count; i++) {
-                    ModifyStat(icharacter, traitEffect);
-                }
-                for (int i = 0; i < allies.Count; i++) {
-                    ModifyStat(icharacter, traitEffect);
-                }
-            }
-        } else if (traitEffect.target == TRAIT_REQUIREMENT_TARGET.SELF_ALL_PARTY_MEMBERS) {
-            if (traitEffect.hasRequirement) {
-                for (int i = 0; i < allies.Count; i++) {
-                    if (CharacterFitsTraitCriteria(allies[i], traitEffect)) {
-                        ModifyStat(icharacter, traitEffect);
-                    }
-                }
-            } else {
-                for (int i = 0; i < allies.Count; i++) {
-                    ModifyStat(icharacter, traitEffect);
-                }
-            }
-        } else if (traitEffect.target == TRAIT_REQUIREMENT_TARGET.SELF_OTHER_PARTY_MEMBERS) {
-            if (traitEffect.hasRequirement) {
-                for (int i = 0; i < allies.Count; i++) {
-                    if (allies[i] != icharacter && CharacterFitsTraitCriteria(allies[i], traitEffect)) {
-                        ModifyStat(icharacter, traitEffect);
-                    }
-                }
-            } else {
-                for (int i = 0; i < allies.Count; i++) {
-                    if (allies[i] != icharacter) {
-                        ModifyStat(icharacter, traitEffect);
-                    }
-                }
-            }
+        } else if (traitEffect.target == TRAIT_REQUIREMENT_TARGET.ENEMY) {
+            //Do nothing, must never have target at the start of combat
         } else if (traitEffect.target == TRAIT_REQUIREMENT_TARGET.ALL_ENEMIES) {
             if (traitEffect.hasRequirement) {
-                for (int i = 0; i < enemies.Count; i++) {
-                    if (CharacterFitsTraitCriteria(enemies[i], traitEffect)) {
-                        ModifyStat(enemies[i], traitEffect);
+                List<Character> checkerCharacters = GetCharactersToBeChecked(traitEffect.checker, sourceCharacter, allies, enemies);
+                for (int i = 0; i < checkerCharacters.Count; i++) {
+                    if (CharacterFitsTraitCriteria(checkerCharacters[i], traitEffect)) {
+                        for (int j = 0; j < enemies.Count; j++) {
+                            ModifyStat(enemies[j], traitEffect);
+                        }
                     }
                 }
             } else {
@@ -252,14 +209,15 @@ public class CombatManager : MonoBehaviour {
             }
         } else if (traitEffect.target == TRAIT_REQUIREMENT_TARGET.ALL_IN_COMBAT) {
             if (traitEffect.hasRequirement) {
-                for (int i = 0; i < enemies.Count; i++) {
-                    if (CharacterFitsTraitCriteria(enemies[i], traitEffect)) {
-                        ModifyStat(enemies[i], traitEffect);
-                    }
-                }
-                for (int i = 0; i < allies.Count; i++) {
-                    if (CharacterFitsTraitCriteria(allies[i], traitEffect)) {
-                        ModifyStat(allies[i], traitEffect);
+                List<Character> checkerCharacters = GetCharactersToBeChecked(traitEffect.checker, sourceCharacter, allies, enemies);
+                for (int i = 0; i < checkerCharacters.Count; i++) {
+                    if (CharacterFitsTraitCriteria(checkerCharacters[i], traitEffect)) {
+                        for (int j = 0; j < enemies.Count; j++) {
+                            ModifyStat(enemies[j], traitEffect);
+                        }
+                        for (int j = 0; j < allies.Count; j++) {
+                            ModifyStat(allies[j], traitEffect);
+                        }
                     }
                 }
             } else {
@@ -272,9 +230,12 @@ public class CombatManager : MonoBehaviour {
             }
         } else if (traitEffect.target == TRAIT_REQUIREMENT_TARGET.ALL_PARTY_MEMBERS) {
             if (traitEffect.hasRequirement) {
-                for (int i = 0; i < allies.Count; i++) {
-                    if (CharacterFitsTraitCriteria(allies[i], traitEffect)) {
-                        ModifyStat(allies[i], traitEffect);
+                List<Character> checkerCharacters = GetCharactersToBeChecked(traitEffect.checker, sourceCharacter, allies, enemies);
+                for (int i = 0; i < checkerCharacters.Count; i++) {
+                    if (CharacterFitsTraitCriteria(checkerCharacters[i], traitEffect)) {
+                        for (int j = 0; j < allies.Count; j++) {
+                            ModifyStat(allies[j], traitEffect);
+                        }
                     }
                 }
             } else {
@@ -284,14 +245,19 @@ public class CombatManager : MonoBehaviour {
             }
         } else if (traitEffect.target == TRAIT_REQUIREMENT_TARGET.OTHER_PARTY_MEMBERS) {
             if (traitEffect.hasRequirement) {
-                for (int i = 0; i < allies.Count; i++) {
-                    if (allies[i] != icharacter && CharacterFitsTraitCriteria(allies[i], traitEffect)) {
-                        ModifyStat(allies[i], traitEffect);
+                List<Character> checkerCharacters = GetCharactersToBeChecked(traitEffect.checker, sourceCharacter, allies, enemies);
+                for (int i = 0; i < checkerCharacters.Count; i++) {
+                    if (CharacterFitsTraitCriteria(checkerCharacters[i], traitEffect)) {
+                        for (int j = 0; j < allies.Count; j++) {
+                            if (allies[j] != sourceCharacter) {
+                                ModifyStat(allies[j], traitEffect);
+                            }
+                        }
                     }
                 }
             } else {
                 for (int i = 0; i < allies.Count; i++) {
-                    if (allies[i] != icharacter) {
+                    if (allies[i] != sourceCharacter) {
                         ModifyStat(allies[i], traitEffect);
                     }
                 }
@@ -383,8 +349,28 @@ public class CombatManager : MonoBehaviour {
         }
 
     }
+    private List<Character> GetCharactersToBeChecked(TRAIT_REQUIREMENT_CHECKER checker, Character sourceCharacter,
+       List<Character> allies, List<Character> enemies, List<Character> targets = null) {
+
+        List<Character> checkerCharacters = new List<Character>();
+        if (checker == TRAIT_REQUIREMENT_CHECKER.SELF) {
+            checkerCharacters.Add(sourceCharacter);
+        } else if (checker == TRAIT_REQUIREMENT_CHECKER.ENEMY) {
+            checkerCharacters.AddRange(targets);
+        } else if (checker == TRAIT_REQUIREMENT_CHECKER.OTHER_PARTY_MEMBERS) {
+            checkerCharacters = allies.Where(x => x != sourceCharacter).ToList();
+        } else if (checker == TRAIT_REQUIREMENT_CHECKER.ALL_PARTY_MEMBERS) {
+            checkerCharacters.AddRange(allies);
+        } else if (checker == TRAIT_REQUIREMENT_CHECKER.ALL_IN_COMBAT) {
+            checkerCharacters.AddRange(allies);
+            checkerCharacters.AddRange(enemies);
+        } else if (checker == TRAIT_REQUIREMENT_CHECKER.ALL_ENEMIES) {
+            checkerCharacters.AddRange(enemies);
+        }
+        return checkerCharacters;
+    }
     private bool CharacterFitsTraitCriteria(Character icharacter, TraitEffect traitEffect) {
-        if (traitEffect.requirementType == TRAIT_REQUIREMENT.RACE) {
+        if (traitEffect.requirementType == TRAIT_REQUIREMENT.TRAIT) {
             if (traitEffect.requirementSeparator == TRAIT_REQUIREMENT_SEPARATOR.AND) {
                 //if there is one mismatch, return false already because the separator is AND, otherwise, return true
                 if (traitEffect.isNot) {
@@ -420,7 +406,7 @@ public class CombatManager : MonoBehaviour {
                     return false;
                 }
             }
-        } else if (traitEffect.requirementType == TRAIT_REQUIREMENT.TRAIT) {
+        } else if (traitEffect.requirementType == TRAIT_REQUIREMENT.RACE) {
             if (traitEffect.requirementSeparator == TRAIT_REQUIREMENT_SEPARATOR.AND) {
                 //if there is one mismatch, return false already because the separator is AND, otherwise, return true
                 if (traitEffect.isNot) {
@@ -458,6 +444,18 @@ public class CombatManager : MonoBehaviour {
             }
         }
         return false;
+    }
+    public int GetAdjacentIndexGrid(int index) {
+        if(index == 0) {
+            return 1;
+        }else if (index == 1) {
+            return 0;
+        }else if (index == 2) {
+            return 3;
+        }else if (index == 3) {
+            return 2;
+        }
+        return index;
     }
     #endregion
 
