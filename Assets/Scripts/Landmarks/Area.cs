@@ -1538,6 +1538,17 @@ public class Area {
         }
         return null;
     }
+    public LocationStructure GetRandomStructure() {
+        int dictIndex = UnityEngine.Random.Range(0, structures.Count);
+        int count = 0;
+        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp in structures) {
+            if(count == dictIndex) {
+                return kvp.Value[UnityEngine.Random.Range(0, kvp.Value.Count)];
+            }
+            count++;
+        }
+        return null;
+    }
     private List<LocationStructure> GetStructuresAtLocation(bool inside) {
         List<LocationStructure> structures = new List<LocationStructure>();
         foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp in this.structures) {

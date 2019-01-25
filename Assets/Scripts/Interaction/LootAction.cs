@@ -4,9 +4,8 @@ using UnityEngine;
 
 public class LootAction : Interaction {
     private const string Start = "Start";
-    private const string Normal_Loot_Success = "Normal Loot Success";
-    private const string Normal_Loot_Fail = "Normal Loot Fail";
-    private const string Normal_Loot_Critical_Fail = "Normal Loot Critical Fail";
+    private const string Loot_Found = "Loot Found";
+    private const string No_Loot_Found = "No Loot Found";
 
     public LootAction(Area interactable): base(interactable, INTERACTION_TYPE.LOOT_ACTION, 0) {
         _name = "Loot Action";
@@ -17,21 +16,18 @@ public class LootAction : Interaction {
     #region Override
     public override void CreateStates() {
         InteractionState startState = new InteractionState(Start, this);
-        InteractionState normalLootSuccess = new InteractionState(Normal_Loot_Success, this);
-        InteractionState normalLootFail = new InteractionState(Normal_Loot_Fail, this);
-        InteractionState normalLootCriticalFail = new InteractionState(Normal_Loot_Critical_Fail, this);
+        InteractionState lootFound = new InteractionState(Loot_Found, this);
+        InteractionState noLootFound = new InteractionState(No_Loot_Found, this);
 
         CreateActionOptions(startState);
 
-        normalLootSuccess.SetEffect(() => NormalLootSuccessEffect(normalLootSuccess));
-        normalLootFail.SetEffect(() => NormalLootFailEffect(normalLootFail));
-        normalLootCriticalFail.SetEffect(() => NormalLootCriticalFailEffect(normalLootCriticalFail));
+        startState.SetEffect(() => StartEffect(startState), false);
+        lootFound.SetEffect(() => LootFoundEffect(lootFound));
+        noLootFound.SetEffect(() => NoLootFoundEffect(noLootFound));
 
         _states.Add(startState.name, startState);
-        _states.Add(normalLootSuccess.name, normalLootSuccess);
-        _states.Add(normalLootFail.name, normalLootFail);
-        _states.Add(normalLootCriticalFail.name, normalLootCriticalFail);
-
+        _states.Add(lootFound.name, lootFound);
+        _states.Add(noLootFound.name, noLootFound);
 
         SetCurrentState(startState);
     }
@@ -57,36 +53,30 @@ public class LootAction : Interaction {
 
     #region Option Effect
     private void DoNothingOptionEffect(InteractionState state) {
-        WeightedDictionary<string> effectWeights = new WeightedDictionary<string>();
-        effectWeights.AddElement(Normal_Loot_Success, _characterInvolved.job.GetSuccessRate());
-        effectWeights.AddElement(Normal_Loot_Fail, _characterInvolved.job.GetFailRate());
-        effectWeights.AddElement(Normal_Loot_Critical_Fail, _characterInvolved.job.GetCritFailRate());
-
-        string chosenEffect = effectWeights.PickRandomElementGivenWeights();
-        SetCurrentState(_states[chosenEffect]);
+        if(_characterInvolved.currentStructure.itemsInStructure.Count > 0) {
+            SetCurrentState(_states[Loot_Found]);
+        } else {
+            SetCurrentState(_states[No_Loot_Found]);
+        }
     }
     #endregion
 
     #region State Effect
-    private void NormalLootSuccessEffect(InteractionState state) {
+    private void StartEffect(InteractionState state) {
+        _characterInvolved.MoveToRandomStructureInArea();
+    }
+    private void LootFoundEffect(InteractionState state) {
         _characterInvolved.LevelUp();
 
-        SpecialToken lootedItem = interactable.possibleSpecialTokenSpawns[UnityEngine.Random.Range(0, interactable.possibleSpecialTokenSpawns.Count)];
+        SpecialToken lootedItem = _characterInvolved.currentStructure.itemsInStructure[UnityEngine.Random.Range(0, _characterInvolved.currentStructure.itemsInStructure.Count)];
         _characterInvolved.ObtainToken(lootedItem);
-        interactable.RemoveSpecialTokenFromLocation(lootedItem);
+        _characterInvolved.currentStructure.RemoveItem(lootedItem);
 
         state.descriptionLog.AddToFillers(lootedItem, lootedItem.name, LOG_IDENTIFIER.ITEM_1);
 
         state.AddLogFiller(new LogFiller(lootedItem, lootedItem.name, LOG_IDENTIFIER.ITEM_1));
     }
-    private void NormalLootFailEffect(InteractionState state) {
-    }
-    private void NormalLootCriticalFailEffect(InteractionState state) {
-        //state.descriptionLog.AddToFillers(_characterInvolved, _characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-
-        //state.AddLogFiller(new LogFiller(_characterInvolved, _characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
-
-        _characterInvolved.Death();
+    private void NoLootFoundEffect(InteractionState state) {
     }
     #endregion
 }

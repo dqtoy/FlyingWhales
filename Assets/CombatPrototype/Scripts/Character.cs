@@ -1501,6 +1501,16 @@ public class Character : ICharacter, ILeader, IInteractable {
     public void SetCurrentStructureLocation(LocationStructure currentStructure) {
         this.currentStructure = currentStructure;
     }
+    public void MoveToRandomStructureInArea() {
+        LocationStructure locationStructure = specificLocation.GetRandomStructure();
+        MoveToAnotherStructure(locationStructure);
+    }
+    public void MoveToAnotherStructure(LocationStructure newStructure) {
+        if(currentStructure != null) {
+            currentStructure.RemoveCharacterAtLocation(this);
+        }
+        newStructure.AddCharacterAtLocation(this);
+    }
     #endregion
 
     #region Utilities
