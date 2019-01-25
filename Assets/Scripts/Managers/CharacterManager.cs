@@ -366,6 +366,29 @@ public class CharacterManager : MonoBehaviour {
             }
         }
     }
+    public Trait CreateRelationship(RELATIONSHIP_TRAIT type, Character targetCharacter) {
+        switch (type) {
+            case RELATIONSHIP_TRAIT.ENEMY:
+                return new Enemy(targetCharacter);
+            case RELATIONSHIP_TRAIT.FRIEND:
+                return new Friend(targetCharacter);
+            case RELATIONSHIP_TRAIT.RELATIVE:
+                return new Relative(targetCharacter);
+            case RELATIONSHIP_TRAIT.LOVER:
+                return new Lover(targetCharacter);
+            case RELATIONSHIP_TRAIT.PARAMOUR:
+                return new Paramour(targetCharacter);
+            case RELATIONSHIP_TRAIT.MASTER:
+                return new Master(targetCharacter);
+            case RELATIONSHIP_TRAIT.SERVANT:
+                return new Servant(targetCharacter);
+            case RELATIONSHIP_TRAIT.MENTOR:
+                return new Mentor(targetCharacter);
+            case RELATIONSHIP_TRAIT.STUDENT:
+                return new Student(targetCharacter);
+        }
+        return null;
+    }
     #endregion
 
     #region Utilities
@@ -608,43 +631,6 @@ public class CharacterManager : MonoBehaviour {
         };
     }
     #endregion
-
-    //#region Squads
-    //public Squad CreateNewSquad() {
-    //    Squad newSquad = new Squad();
-    //    AddSquad(newSquad);
-    //    Messenger.Broadcast(Signals.SQUAD_CREATED, newSquad);
-    //    return newSquad;
-    //}
-    //public void CreateNewSquad(SquadSaveData data) {
-    //    Squad newSquad = new Squad(data);
-    //    AddSquad(newSquad);
-    //    Messenger.Broadcast(Signals.SQUAD_CREATED, newSquad);
-    //    foreach (KeyValuePair<int, ICHARACTER_TYPE> kvp in data.memberIDs) {
-    //        if (kvp.Value == ICHARACTER_TYPE.CHARACTER) {
-    //            Character character = GetCharacterByID(kvp.Key);
-    //            if (kvp.Key == data.leaderID) {
-    //                newSquad.SetLeader(character);
-    //            } else {
-    //                newSquad.AddMember(character);
-    //            }
-    //        }
-    //    }
-    //}
-    //public void DeleteSquad(Squad squad) {
-    //    squad.Disband();
-    //    RemoveSquad(squad);
-    //    Messenger.Broadcast(Signals.SQUAD_DELETED, squad);
-    //}
-    //public void AddSquad(Squad squad) {
-    //    if (!allSquads.Contains(squad)) {
-    //        allSquads.Add(squad);
-    //    }
-    //}
-    //public void RemoveSquad(Squad squad) {
-    //    allSquads.Remove(squad);
-    //}
-    //#endregion
 
     #region Animator
     public RuntimeAnimatorController GetAnimatorByRole(CHARACTER_ROLE role) {

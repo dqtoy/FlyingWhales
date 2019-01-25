@@ -2,17 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy : Trait {
-    public Character targetCharacter;
-
+public class Enemy : RelationshipTrait {
     public override string nameInUI {
         get { return "Enemy: " + targetCharacter.name; }
     }
 
-    public Enemy(Character target) {
-        targetCharacter = target;
+    public Enemy(Character target) : base (target){
         name = "Enemy";
         description = "This character is an enemy of " + targetCharacter.name;
+        relType = RELATIONSHIP_TRAIT.ENEMY;
         type = TRAIT_TYPE.STATUS;
         effect = TRAIT_EFFECT.NEGATIVE;
         daysDuration = 0;

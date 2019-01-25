@@ -2,17 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Friend : Trait {
-    public Character targetCharacter { get; private set; }
-
+public class Friend : RelationshipTrait {
     public override string nameInUI {
         get { return "Friend: " + targetCharacter.name;}
     }
 
-    public Friend(Character target) {
-        targetCharacter = target;
+    public Friend(Character target): base (target) {
         name = "Friend";
         description = "This character is a friend of " + targetCharacter.name;
+        relType = RELATIONSHIP_TRAIT.FRIEND;
         type = TRAIT_TYPE.STATUS;
         effect = TRAIT_EFFECT.POSITIVE;
         daysDuration = 0;

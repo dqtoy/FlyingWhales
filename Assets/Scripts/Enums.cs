@@ -1171,3 +1171,14 @@ public enum STRUCTURE_TYPE {
     WAREHOUSE,
     WORK_AREA,
 }
+public enum RELATIONSHIP_TRAIT {
+    ENEMY,
+    FRIEND,
+    RELATIVE,
+    LOVER,
+    PARAMOUR,
+    MASTER,
+    SERVANT,
+    MENTOR,
+    STUDENT,
+}
