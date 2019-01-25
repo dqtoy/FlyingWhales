@@ -1061,6 +1061,28 @@ public class Area {
     #endregion
 
     #region Characters
+    /*
+     Check if any of the characters provided is a resident in this area.
+         */
+    private bool HasResidentFromChoices(List<Character> choices) {
+        for (int i = 0; i < areaResidents.Count; i++) {
+            Character currResident = areaResidents[i];
+            if (choices.Contains(currResident)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    private List<Character> GetResidentsFromChoices(List<Character> choices) {
+        List<Character> residents = new List<Character>();
+        for (int i = 0; i < areaResidents.Count; i++) {
+            Character currResident = areaResidents[i];
+            if (choices.Contains(currResident)) {
+                residents.Add(currResident);
+            }
+        }
+        return residents;
+    }
     public void AddResident(Character character, bool ignoreCapacity = true) {
         if (!areaResidents.Contains(character)) {
             if (!ignoreCapacity) {
@@ -1081,16 +1103,45 @@ public class Area {
             Debug.LogWarning(this.name + " doesn't have any dwellings for " + character.name);
             return;
         }
-        for (int i = 0; i < structures[STRUCTURE_TYPE.DWELLING].Count; i++) {
-            Dwelling currDwelling = structures[STRUCTURE_TYPE.DWELLING][i] as Dwelling;
-            if (currDwelling.CanBeResidentHere(character)) {
-                character.MigrateHomeStructureTo(currDwelling);
-                break;
+        
+        Dwelling chosenDwelling = null;
+        Character lover = character.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.LOVER);
+        if (lover != null && areaResidents.Contains(lover)) { //check if the character has a lover that lives in the area
+            chosenDwelling = lover.homeStructure;
+        } else {
+            //if none, check if they have a master/servant in the area
+            Character master = character.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.MASTER);
+            if (master != null && areaResidents.Contains(master)) { //if this character is the servant
+                chosenDwelling = master.homeStructure; //Move to his master's home, since this character doesn't have a lover (from the first checking) 
+            } else { //if this character is a master
+                List<Character> servants = GetResidentsFromChoices(character.GetCharactersWithRelationship(RELATIONSHIP_TRAIT.SERVANT));
+                if (servants.Count > 0) { //check if he has any servant in this location that does not have a lover living with him
+                    for (int i = 0; i < servants.Count; i++) {
+                        Character currServant = servants[i];
+                        if (!currServant.IsLivingWith(RELATIONSHIP_TRAIT.LOVER)) {
+                            chosenDwelling = currServant.homeStructure; //if there is a valid servant, live with the valid servant
+                            break;
+                        }
+                    }
+                }
             }
         }
-        if (character.homeStructure == null) {
+
+        if (chosenDwelling == null) { //else, find an unoccupied dwelling
+            for (int i = 0; i < structures[STRUCTURE_TYPE.DWELLING].Count; i++) {
+                Dwelling currDwelling = structures[STRUCTURE_TYPE.DWELLING][i] as Dwelling;
+                if (currDwelling.CanBeResidentHere(character)) {
+                    chosenDwelling = currDwelling;
+                    break;
+                }
+            }
+        }
+        
+        if (chosenDwelling == null) {
             //if the code reaches here, it means that the area could not find a dwelling for the character
             Debug.LogWarning(GameManager.Instance.TodayLogString() + "Could not find a dwelling for " + character.name + " at " + this.name);
+        } else {
+            character.MigrateHomeStructureTo(chosenDwelling);
         }
     }
     public void RemoveResident(Character character) {

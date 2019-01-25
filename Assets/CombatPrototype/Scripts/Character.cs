@@ -1599,14 +1599,18 @@ public class Character : ICharacter, ILeader, IInteractable {
     }
     private void OnOtherCharacterDied(Character characterThatDied) {
         if (characterThatDied.id != this.id) {
-            Friend friend = this.GetFriendTraitWith(characterThatDied);
-            if (friend != null) {
-                RemoveTrait(friend);
-            }
+            //Friend friend = this.GetFriendTraitWith(characterThatDied);
+            //if (friend != null) {
+            //    RemoveTrait(friend);
+            //}
 
-            Enemy enemy = this.GetEnemyTraitWith(characterThatDied);
-            if (enemy != null) {
-                RemoveTrait(enemy);
+            //Enemy enemy = this.GetEnemyTraitWith(characterThatDied);
+            //if (enemy != null) {
+            //    RemoveTrait(enemy);
+            //}
+            List<RelationshipTrait> rels = GetAllRelationshipTraitWith(characterThatDied);
+            for (int i = 0; i < rels.Count; i++) {
+                RemoveTrait(rels[i]);
             }
         }
     }
@@ -2069,6 +2073,15 @@ public class Character : ICharacter, ILeader, IInteractable {
     public void SetHomeStructure(Dwelling homeStructure) {
         this.homeStructure = homeStructure;
     }
+    public bool IsLivingWith(RELATIONSHIP_TRAIT type) {
+        if (homeStructure.residents.Count > 1) {
+            Character relTarget = GetCharacterWithRelationship(type);
+            if (homeStructure.residents.Contains(relTarget)) {
+                return true;
+            }
+        }
+        return false;
+    }
     #endregion
 
     #region Work
@@ -2117,6 +2130,9 @@ public class Character : ICharacter, ILeader, IInteractable {
     }
     public void MigrateHomeStructureTo(Dwelling dwelling) {
         if (this.homeStructure != null) {
+            if (this.homeStructure == dwelling) {
+                return; //ignore change
+            }
             //remove character from his/her old home
             this.homeStructure.RemoveResident(this);
         }
@@ -2369,6 +2385,44 @@ public class Character : ICharacter, ILeader, IInteractable {
                 RelationshipTrait relTrait = currTrait as RelationshipTrait;
                 if (relTrait.relType == type && relTrait.targetCharacter.id == character.id) {
                     return relTrait;
+                }
+            }
+        }
+        return null;
+    }
+    public List<RelationshipTrait> GetAllRelationshipTraitWith(Character character) {
+        List<RelationshipTrait> rels = new List<RelationshipTrait>();
+        for (int i = 0; i < traits.Count; i++) {
+            Trait currTrait = traits[i];
+            if (currTrait is RelationshipTrait) {
+                RelationshipTrait relTrait = currTrait as RelationshipTrait;
+                if (relTrait.targetCharacter.id == character.id) {
+                    rels.Add(relTrait);
+                }
+            }
+        }
+        return rels;
+    }
+    public List<Character> GetCharactersWithRelationship(RELATIONSHIP_TRAIT type) {
+        List<Character> characters = new List<Character>();
+        for (int i = 0; i < traits.Count; i++) {
+            Trait currTrait = traits[i];
+            if (currTrait is RelationshipTrait) {
+                RelationshipTrait relTrait = currTrait as RelationshipTrait;
+                if (relTrait.relType == type) {
+                    characters.Add(relTrait.targetCharacter);
+                }
+            }
+        }
+        return characters;
+    }
+    public Character GetCharacterWithRelationship(RELATIONSHIP_TRAIT type) {
+        for (int i = 0; i < traits.Count; i++) {
+            Trait currTrait = traits[i];
+            if (currTrait is RelationshipTrait) {
+                RelationshipTrait relTrait = currTrait as RelationshipTrait;
+                if (relTrait.relType == type) {
+                    return relTrait.targetCharacter;
                 }
             }
         }

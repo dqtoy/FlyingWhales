@@ -254,6 +254,7 @@ public class GridMap : MonoBehaviour {
                 currHex.data = data.GetOuterTileData(id);
                 currHex.data.xCoordinate = x - _borderThickness;
                 currHex.data.yCoordinate = y - _borderThickness;
+                currHex.name = currHex.data.xCoordinate + "," + currHex.data.yCoordinate;
 
                 outerGridList.Add(currHex);
                 id++;

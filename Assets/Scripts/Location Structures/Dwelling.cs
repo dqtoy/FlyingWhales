@@ -28,7 +28,6 @@ public class Dwelling : LocationStructure {
     }
 
     public bool CanBeResidentHere(Character character) {
-        //TODO: Add all relationship checking here
         if (residents.Count == 0) {
             return true;
         }
