@@ -70,7 +70,7 @@ public class LootAction : Interaction {
 
         SpecialToken lootedItem = _characterInvolved.currentStructure.itemsInStructure[UnityEngine.Random.Range(0, _characterInvolved.currentStructure.itemsInStructure.Count)];
         _characterInvolved.ObtainToken(lootedItem);
-        _characterInvolved.currentStructure.RemoveItem(lootedItem);
+        _characterInvolved.currentStructure.location.RemoveSpecialTokenFromLocation(lootedItem);
 
         state.descriptionLog.AddToFillers(lootedItem, lootedItem.name, LOG_IDENTIFIER.ITEM_1);
 

@@ -146,6 +146,13 @@ public class ConsoleMenu : UIMenu {
                     UIManager.Instance.Pause();
                 }
             }
+            for (int j = 0; j < currArea.possibleSpecialTokenSpawns.Count; j++) {
+                SpecialToken token = currArea.possibleSpecialTokenSpawns[j];
+                if (token.structureLocation == null) {
+                    Debug.LogWarning("There is token at " + currArea.name + " that doesn't have a structure location : " + token.name);
+                    UIManager.Instance.Pause();
+                }
+            }
         }
         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
             Character currCharacter = CharacterManager.Instance.allCharacters[i];

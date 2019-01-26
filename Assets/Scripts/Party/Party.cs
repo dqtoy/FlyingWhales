@@ -168,7 +168,7 @@ public class Party {
         _isDead = false;
 
         CreateIcon();
-        this.specificLocation.AddCharacterToLocation(this);
+        //this.specificLocation.AddCharacterToLocation(this);
     }
     public virtual void PartyDeath() {
         if (_isDead) {

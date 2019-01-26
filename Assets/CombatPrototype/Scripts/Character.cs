@@ -2235,6 +2235,13 @@ public class Character : ICharacter, ILeader, IInteractable {
         if (trait.IsUnique() && GetTrait(trait.name) != null) {
             return;
         }
+        if (trait is RelationshipTrait) {
+            RelationshipTrait rt = trait as RelationshipTrait;
+            if (!CanHaveRelationshipWith(rt.relType, rt.targetCharacter)) {
+                Debug.LogWarning("Cannot have " + rt.relType.ToString() + " relationship with " + rt.targetCharacter.name + ". Ignoring adding it");
+                return;
+            }
+        }
         _traits.Add(trait);
         ApplyFlatTraitEffects(trait);
         if (trait.daysDuration > 0) {
@@ -2292,7 +2299,6 @@ public class Character : ICharacter, ILeader, IInteractable {
         }
         return removedTraits;
     }
-    
     public Trait GetRandomNegativeTrait() {
         List<Trait> negativeTraits = new List<Trait>();
         for (int i = 0; i < _traits.Count; i++) {
@@ -2487,6 +2493,47 @@ public class Character : ICharacter, ILeader, IInteractable {
             return true;
         }
         return false;
+    }
+    public bool CanHaveRelationshipWith(RELATIONSHIP_TRAIT type, Character target) {
+        switch (type) {
+            case RELATIONSHIP_TRAIT.LOVER:
+                //- **Lover:** Positive, Permanent (Can only have 1)
+                if (GetCharacterWithRelationship(RELATIONSHIP_TRAIT.LOVER) == null && target.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.LOVER) == null) {
+                    return true;
+                }
+                return false;
+            case RELATIONSHIP_TRAIT.PARAMOUR:
+                //- **Paramour:** Positive, Transient (Can only have 1)
+                if (GetCharacterWithRelationship(RELATIONSHIP_TRAIT.PARAMOUR) == null && target.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.PARAMOUR) == null) {
+                    return true;
+                }
+                return false;
+            case RELATIONSHIP_TRAIT.MASTER:
+                //check if this character doesn't already have a master, and is not a master himself (doesnt have any servants)
+                if (GetCharacterWithRelationship(RELATIONSHIP_TRAIT.MASTER) == null && GetCharacterWithRelationship(RELATIONSHIP_TRAIT.SERVANT) == null) { 
+                    return true;
+                }
+                return false;
+            case RELATIONSHIP_TRAIT.SERVANT:
+                //check if this character is not a master (doesnt have any servants)
+                if (GetCharacterWithRelationship(RELATIONSHIP_TRAIT.SERVANT) == null) {
+                    return true;
+                }
+                return false;
+            case RELATIONSHIP_TRAIT.MENTOR:
+                //check if this character doesn't already have a mentor, and is not a mentor himself (doesnt have any students)
+                if (GetCharacterWithRelationship(RELATIONSHIP_TRAIT.MENTOR) == null && GetCharacterWithRelationship(RELATIONSHIP_TRAIT.STUDENT) == null) {
+                    return true;
+                }
+                return false;
+            case RELATIONSHIP_TRAIT.STUDENT:
+                //check if this character is not a mentor (doesnt have any students)
+                if (GetCharacterWithRelationship(RELATIONSHIP_TRAIT.STUDENT) == null) {
+                    return true;
+                }
+                return false;
+        }
+        return true;
     }
     #endregion
 
