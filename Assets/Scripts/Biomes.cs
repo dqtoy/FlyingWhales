@@ -121,7 +121,7 @@ public class Biomes : MonoBehaviour {
         int mapHeight = (int)worldcreator.WorldCreatorManager.Instance.height - 1;
         int yCoordinate = currentHexTile.yCoordinate - 2;
         if (worldcreator.WorldCreatorManager.Instance.outerGridList.Contains(currentHexTile)) {
-            mapHeight += worldcreator.WorldCreatorManager.Instance._borderThickness * 2;
+            mapHeight -= worldcreator.WorldCreatorManager.Instance._borderThickness * 2;
         }
         sortingOrder = (mapHeight -  yCoordinate) * 10;
 #else
@@ -129,7 +129,7 @@ public class Biomes : MonoBehaviour {
         int mapHeight = (int)GridMap.Instance.height - 1;
         int yCoordinate = currentHexTile.yCoordinate - 2;
         if (GridMap.Instance.outerGridList.Contains(currentHexTile)) {
-            mapHeight += GridMap.Instance._borderThickness * 2;
+            mapHeight -= GridMap.Instance._borderThickness * 2;
         }
         sortingOrder = (mapHeight -  yCoordinate) * 10; //10 is the number of sorting order between rows
 
@@ -341,10 +341,10 @@ public class Biomes : MonoBehaviour {
     }
     private void LoadWaterTileVisuals(HexTile tile, int sortingOrder) {
         Sprite waterSpriteToUse = waterTiles[UnityEngine.Random.Range(0, waterTiles.Length)];
-        tile.spriteRenderer.sortingLayerName = "Water";
+        //tile.spriteRenderer.sortingLayerName = "Water";
         tile.spriteRenderer.sprite = waterSpriteToUse;
         tile.DeactivateCenterPiece();
-        return;
+        tile.SetSortingOrder(sortingOrder);
     }
     private void LoadBeachVisuals(HexTile tile) {
         tile.LoadBeaches();
