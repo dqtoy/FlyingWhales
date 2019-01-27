@@ -33,6 +33,7 @@ public class TameBeastAction : Interaction {
 
         CreateActionOptions(startState);
 
+        startState.SetEffect(() => StartStateEffect(startState), false);
         normalTameSuccess.SetEffect(() => NormalTameSuccessEffect(normalTameSuccess));
         normalTameFail.SetEffect(() => NormalTameFailEffect(normalTameFail));
         normalTameCriticalFail.SetEffect(() => NormalTameCriticalFailEffect(normalTameCriticalFail));
@@ -79,6 +80,9 @@ public class TameBeastAction : Interaction {
     #endregion
 
     #region State Effect
+    private void StartStateEffect(InteractionState state) {
+        _characterInvolved.MoveToAnotherStructure(_targetBeast.currentStructure);
+    }
     private void NormalTameSuccessEffect(InteractionState state) {
         _characterInvolved.LevelUp();
 
