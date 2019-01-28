@@ -8,7 +8,11 @@ public class MoveToExploreFaction : Interaction {
     private const string Character_Explore_Continues = "Character Explore Continues";
     private const string Do_Nothing = "Do nothing";
 
-    private Area targetLocation;
+    private Area _targetArea;
+
+    public override Area targetArea {
+        get { return _targetArea; }
+    }
 
     public MoveToExploreFaction(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_EXPLORE, 0) {
         _name = "Move to Explore Faction";
@@ -24,12 +28,12 @@ public class MoveToExploreFaction : Interaction {
         InteractionState characterExploreContinues = new InteractionState(Character_Explore_Continues, this);
         InteractionState doNothing = new InteractionState(Do_Nothing, this);
 
-        targetLocation = GetTargetLocation(_characterInvolved);
-        AddToDebugLog(_characterInvolved.name + " chose to explore " + targetLocation.name);
+        _targetArea = GetTargetLocation(_characterInvolved);
+        AddToDebugLog(_characterInvolved.name + " chose to explore " + _targetArea.name);
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
         startStateDescriptionLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(_characterInvolved.race), LOG_IDENTIFIER.STRING_1);
-        startStateDescriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2);
+        startStateDescriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2);
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 
         CreateActionOptions(startState);
@@ -73,6 +77,9 @@ public class MoveToExploreFaction : Interaction {
         }
         return base.CanInteractionBeDoneBy(character);
     }
+    public override void DoActionUponMoveToArrival() {
+        CreateEvent();
+    }
     #endregion
 
     #region Option Effects
@@ -104,25 +111,20 @@ public class MoveToExploreFaction : Interaction {
     }
     private void CharacterExploreContinuesRewardEffect(InteractionState state) {
         //**Mechanics**: Character will start its travel to selected location to start an Explore event.
-        GoToTargetLocation();
+        StartMoveToAction();
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2);
+            state.descriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2);
         }
-        state.AddLogFiller(new LogFiller(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2));
+        state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2));
     }
     private void DoNothingRewardEffect(InteractionState state) {
         //**Mechanics**: Character will start its travel to selected location to start an Explore event.
-        GoToTargetLocation();
-        state.AddLogFiller(new LogFiller(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2));
+        StartMoveToAction();
+        state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2));
     }
     #endregion
 
-    private void GoToTargetLocation() {
-        AddToDebugLog(_characterInvolved.name + " will  no go to " + targetLocation.name + " to explore");
-        _characterInvolved.ownParty.GoToLocation(targetLocation, PATHFINDING_MODE.NORMAL, null, () => CreateExploreEvent());
-    }
-
-    private void CreateExploreEvent() {
+    private void CreateEvent() {
         Interaction exploreEvent = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.EXPLORE_EVENT_FACTION, _characterInvolved.specificLocation);
         if (exploreEvent != null) {
             _characterInvolved.SetForcedInteraction(exploreEvent);

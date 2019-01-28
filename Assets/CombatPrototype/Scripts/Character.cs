@@ -1670,11 +1670,6 @@ public class Character : ICharacter, ILeader, IInteractable {
         attackInteraction.SetCanInteractionBeDoneAction(() => IsTargetStillViable(target));
         _ownParty.GoToLocation(target, PATHFINDING_MODE.NORMAL, null, () => SetForcedInteraction(attackInteraction));
     }
-    public void GoToAreaToMakePeaceWithFaction(Area target) {
-        Interaction peaceInteraction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.CHARACTER_PEACE_NEGOTIATION, target);
-        peaceInteraction.AddEndInteractionAction(() => _ownParty.GoHome());
-        _ownParty.GoToLocation(target, PATHFINDING_MODE.NORMAL, null, () => SetForcedInteraction(peaceInteraction));
-    }
     private bool IsTargetStillViable(Area target) {
         return target.owner != null;
     }

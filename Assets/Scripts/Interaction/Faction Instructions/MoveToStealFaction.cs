@@ -8,7 +8,11 @@ public class MoveToStealFaction : Interaction {
     private const string Steal_Proceeds = "Steal Proceeds";
     private const string Normal_Steal = "Normal Steal";
 
-    public Area targetLocation { get; private set; }
+    private Area _targetArea;
+
+    public override Area targetArea {
+        get { return _targetArea; }
+    }
 
     public MoveToStealFaction(Area interactable)
         : base(interactable, INTERACTION_TYPE.MOVE_TO_STEAL_FACTION, 0) {
@@ -23,10 +27,10 @@ public class MoveToStealFaction : Interaction {
         InteractionState stealProceeds = new InteractionState(Steal_Proceeds, this);
         InteractionState normalSteal = new InteractionState(Normal_Steal, this);
 
-        targetLocation = GetTargetLocation(_characterInvolved);
+        _targetArea = GetTargetLocation(_characterInvolved);
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
-        startStateDescriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1);
+        startStateDescriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_1);
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 
         CreateActionOptions(startState);
@@ -70,6 +74,9 @@ public class MoveToStealFaction : Interaction {
         }
         return base.CanInteractionBeDoneBy(character);
     }
+    public override void DoActionUponMoveToArrival() {
+        CreateEvent();
+    }
     #endregion
 
     #region Option Effects
@@ -101,24 +108,20 @@ public class MoveToStealFaction : Interaction {
         MinionSuccess();
     }
     private void ProceedsRewardEffect(InteractionState state) {
-        GoToTargetLocation();
+        StartMoveToAction();
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1);
+            state.descriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_1);
         }
-        state.AddLogFiller(new LogFiller(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1));
+        state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_1));
     }
     private void NormalRewardEffect(InteractionState state) {
-        GoToTargetLocation();
+        StartMoveToAction();
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1);
+            state.descriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_1);
         }
-        state.AddLogFiller(new LogFiller(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1));
+        state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_1));
     }
     #endregion
-
-    private void GoToTargetLocation() {
-        _characterInvolved.ownParty.GoToLocation(targetLocation, PATHFINDING_MODE.NORMAL, null, () => CreateEvent());
-    }
 
     private void CreateEvent() {
         Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.STEAL_ACTION_FACTION, _characterInvolved.specificLocation);

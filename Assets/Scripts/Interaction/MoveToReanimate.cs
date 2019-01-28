@@ -8,7 +8,11 @@ public class MoveToReanimate : Interaction {
     private const string Undeath_Proceeds = "Undeath Proceeds";
     private const string Normal_Undeath = "Normal Undeath";
 
-    public Area targetLocation { get; private set; }
+    private Area _targetArea;
+
+    public override Area targetArea {
+        get { return _targetArea; }
+    }
 
     public MoveToReanimate(Area interactable) 
         : base(interactable, INTERACTION_TYPE.MOVE_TO_REANIMATE, 0) {
@@ -23,10 +27,10 @@ public class MoveToReanimate : Interaction {
         InteractionState undeathProceeds = new InteractionState(Undeath_Proceeds, this);
         InteractionState normalUndeath = new InteractionState(Normal_Undeath, this);
 
-        targetLocation = GetTargetLocation(_characterInvolved);
+        _targetArea = GetTargetLocation(_characterInvolved);
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
-        startStateDescriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1);
+        startStateDescriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_1);
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 
         CreateActionOptions(startState);
@@ -70,6 +74,9 @@ public class MoveToReanimate : Interaction {
         }
         return base.CanInteractionBeDoneBy(character);
     }
+    public override void DoActionUponMoveToArrival() {
+        CreateEvent();
+    }
     #endregion
 
     #region Option Effects
@@ -105,27 +112,23 @@ public class MoveToReanimate : Interaction {
         //state.AddLogFiller(new LogFiller(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1));
     }
     private void UndeathProceedsRewardEffect(InteractionState state) {
-        GoToTargetLocation();
+        StartMoveToAction();
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2);
+            state.descriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2);
         }
-        state.AddLogFiller(new LogFiller(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2));
+        state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2));
     }
     private void NormalUndeathRewardEffect(InteractionState state) {
-        GoToTargetLocation();
+        StartMoveToAction();
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2);
+            state.descriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2);
         }
-        state.AddLogFiller(new LogFiller(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2));
+        state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2));
     }
     #endregion
 
-    private void GoToTargetLocation() {
-        _characterInvolved.ownParty.GoToLocation(targetLocation, PATHFINDING_MODE.NORMAL, null, () => CreateEvent());
-    }
-
     private void CreateEvent() {
-        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.REANIMATE_ACTION, targetLocation);
+        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.REANIMATE_ACTION, _targetArea);
         _characterInvolved.SetForcedInteraction(interaction);
     }
 

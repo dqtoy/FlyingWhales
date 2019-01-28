@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MoveToScavenge : Interaction {
+public class MoveToScavengeFaction : Interaction {
 
     private const string Scavenge_Cancelled = "Scavenge Cancelled";
     private const string Scavenge_Proceeds = "Scavenge Proceeds";
@@ -14,8 +14,8 @@ public class MoveToScavenge : Interaction {
         get { return _targetArea; }
     }
 
-    public MoveToScavenge(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_SCAVENGE, 70) {
-        _name = "Move To Scavenge";
+    public MoveToScavengeFaction(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_SCAVENGE_FACTION, 0) {
+        _name = "Move To Scavenge Faction";
         _jobFilter = new JOB[] { JOB.DEBILITATOR };
     }
 

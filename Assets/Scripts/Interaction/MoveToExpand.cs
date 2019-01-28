@@ -9,7 +9,11 @@ public class MoveToExpand : Interaction {
     private const string Character_Expand_Continues = "Character Expand Continues";
     private const string Character_Normal_Expand = "Character Normal Expand";
 
-    public Area targetLocation { get; private set; }
+    private Area _targetArea;
+
+    public override Area targetArea {
+        get { return _targetArea; }
+    }
 
     public MoveToExpand(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_EXPAND, 0) {
         _name = "Move to Expand";
@@ -17,7 +21,7 @@ public class MoveToExpand : Interaction {
     }
 
     public void SetTargetLocation(Area area) {
-        targetLocation = area;
+        _targetArea = area;
     }
 
     #region Overrides
@@ -27,14 +31,14 @@ public class MoveToExpand : Interaction {
         InteractionState characterExpandContinues = new InteractionState(Character_Expand_Continues, this);
         InteractionState characterNormalExpand = new InteractionState(Character_Normal_Expand, this);
 
-        if(targetLocation == null) {
-            targetLocation = GetTargetLocation();
+        if(_targetArea == null) {
+            _targetArea = GetTargetLocation();
         }
-        targetLocation.AddEventTargettingThis(this);
+        _targetArea.AddEventTargettingThis(this);
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
         startStateDescriptionLog.AddToFillers(null, Utilities.NormalizeString(_characterInvolved.race.ToString()), LOG_IDENTIFIER.STRING_1);
-        startStateDescriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2);
+        startStateDescriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2);
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 
         CreateActionOptions(startState);
@@ -72,6 +76,9 @@ public class MoveToExpand : Interaction {
             state.SetDefaultOption(doNothing);
         }
     }
+    public override void DoActionUponMoveToArrival() {
+        CreateEvent();
+    }
     #endregion
 
     #region Option Effects
@@ -104,31 +111,27 @@ public class MoveToExpand : Interaction {
     }
     private void CharacterExpandContinuesRewardEffect(InteractionState state) {
         //**Mechanics**: Character travels to the Location to start an Expansion event.
-        GoToTargetLocation();
+        StartMoveToAction();
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1);
+            state.descriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_1);
         }
-        state.AddLogFiller(new LogFiller(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1));
+        state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_1));
     }
     private void CharacterNormalExpandRewardEffect(InteractionState state) {
         //**Mechanics**: Character travels to the Location to start an Expansion event.
-        GoToTargetLocation();
+        StartMoveToAction();
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1);
+            state.descriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_1);
         }
-        state.AddLogFiller(new LogFiller(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1));
+        state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_1));
     }
     #endregion
 
-    private void GoToTargetLocation() {
-        _characterInvolved.ownParty.GoToLocation(targetLocation, PATHFINDING_MODE.NORMAL, null, () => CreateExpansionEvent());
-    }
-
-    private void CreateExpansionEvent() {
+    private void CreateEvent() {
         Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.EXPANSION_EVENT, _characterInvolved.specificLocation);
         _characterInvolved.SetForcedInteraction(interaction);
         interaction.SetCanInteractionBeDoneAction(IsExpansionStillValid);
-        targetLocation.RemoveEventTargettingThis(this);
+        _targetArea.RemoveEventTargettingThis(this);
     }
 
     private bool IsExpansionStillValid() {

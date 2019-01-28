@@ -8,7 +8,11 @@ public class MoveToRaid : Interaction {
     private const string Raid_Proceeds = "Raid Proceeds";
     private const string Normal_Raid = "Normal Raid";
 
-    private Area targetArea;
+    private Area _targetArea;
+
+    public override Area targetArea {
+        get { return _targetArea; }
+    }
     private Faction targetFaction;
 
     public MoveToRaid(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_RAID, 0) {
@@ -17,7 +21,7 @@ public class MoveToRaid : Interaction {
     }
 
     public void SetTargetArea(Area target) {
-        targetArea = target;
+        _targetArea = target;
     }
 
     #region Overrides
@@ -27,14 +31,14 @@ public class MoveToRaid : Interaction {
         InteractionState raidProceeds = new InteractionState(Raid_Proceeds, this);
         InteractionState normalRaid = new InteractionState(Normal_Raid, this);
 
-        if(targetArea == null) {
-            targetArea = GetTargetArea(_characterInvolved);
+        if(_targetArea == null) {
+            _targetArea = GetTargetArea(_characterInvolved);
         }
-        targetFaction = targetArea.owner;
-        AddToDebugLog("Set target area to " + targetArea.name);
+        targetFaction = _targetArea.owner;
+        AddToDebugLog("Set target area to " + _targetArea.name);
         //**Text Description**: [Character Name] is about to leave for [Location Name 1] to scavenge for supplies.
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
-        startStateDescriptionLog.AddToFillers(targetArea, targetArea.name, LOG_IDENTIFIER.LANDMARK_1);
+        startStateDescriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_1);
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 
         CreateActionOptions(startState);
@@ -77,6 +81,9 @@ public class MoveToRaid : Interaction {
         }
         return base.CanInteractionBeDoneBy(character);
     }
+    public override void DoActionUponMoveToArrival() {
+        CreateEvent();
+    }
     #endregion
 
     #region Action Option Effects
@@ -109,37 +116,33 @@ public class MoveToRaid : Interaction {
     }
     private void RaidProceedsRewardEffect(InteractionState state) {
         //Selected character will travel to Location 1 to start a Raid Event.
-        StartMove();
+        StartMoveToAction();
         //**Text Description**: [Demon Name] failed to convince [Character Name] to cancel [his/her] plan to raid [Location Name].
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(targetArea, targetArea.name, LOG_IDENTIFIER.LANDMARK_1);
+            state.descriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_1);
         }
         //**Log**: [Demon Name] failed to persuade [Character Name] to stop [his/her] plans to raid [Location Name].
         //**Log**: [Character Name] left to raid [Location Name].
-        state.AddLogFiller(new LogFiller(targetArea, targetArea.name, LOG_IDENTIFIER.LANDMARK_1));
+        state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_1));
     }
     private void NormalRaidRewardEffect(InteractionState state) {
         //Selected character will travel to Location 1 to start a Raid Event.
-        StartMove();
+        StartMoveToAction();
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(targetArea, targetArea.name, LOG_IDENTIFIER.LANDMARK_1);
+            state.descriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_1);
         }
         //**Log**: [Character Name] left to raid [Location Name].
-        state.AddLogFiller(new LogFiller(targetArea, targetArea.name, LOG_IDENTIFIER.LANDMARK_1));
+        state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_1));
     }
 
-    private void StartMove() {
-        AddToDebugLog(_characterInvolved.name + " starts moving towards " + targetArea.name + "(" + targetArea.coreTile.landmarkOnTile.name + ")");
-        _characterInvolved.ownParty.GoToLocation(targetArea, PATHFINDING_MODE.NORMAL, null, () => CreateRaidEvent());
-    }
-    private void CreateRaidEvent() {
+    private void CreateEvent() {
         AddToDebugLog(_characterInvolved.name + " will now create raid event");
         Interaction raid = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.RAID_EVENT, _characterInvolved.specificLocation);
         raid.SetCanInteractionBeDoneAction(IsRaidStillValid);
         _characterInvolved.SetForcedInteraction(raid);
     }
     private bool IsRaidStillValid() {
-        return targetArea.owner != null && targetArea.owner.id == targetFaction.id; //check if the faction owner of the target area has not changed
+        return _targetArea.owner != null && _targetArea.owner.id == targetFaction.id; //check if the faction owner of the target area has not changed
     }
 
     private Area GetTargetArea(Character character) {

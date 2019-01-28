@@ -10,6 +10,10 @@ public class MoveToVisit : Interaction {
 
     private Area _targetArea;
 
+    public override Area targetArea {
+        get { return _targetArea; }
+    }
+
     public MoveToVisit(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_VISIT, 0) {
         _name = "Move To Visit";
         _jobFilter = new JOB[] { JOB.DEBILITATOR };
@@ -99,20 +103,16 @@ public class MoveToVisit : Interaction {
 
         state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2));
 
-        StartMove();
+        StartMoveToAction();
     }
     private void NormalVisitEffect(InteractionState state) {
         //state.descriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2);
 
         state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2));
 
-        StartMove();
+        StartMoveToAction();
     }
     #endregion
-    private void StartMove() {
-        AddToDebugLog(_characterInvolved.name + " starts moving towards " + _targetArea.name + "(" + _targetArea.coreTile.landmarkOnTile.name + ") to visit!");
-        _characterInvolved.currentParty.GoToLocation(_targetArea, PATHFINDING_MODE.NORMAL);
-    }
 
     private Area GetTargetLocation(Character characterInvolved) {
         WeightedDictionary<Area> locationWeights = new WeightedDictionary<Area>();
