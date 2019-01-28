@@ -531,6 +531,7 @@ public class Character : ICharacter, ILeader, IInteractable {
         //Messenger.AddListener<BaseLandmark>(Signals.DESTROY_LANDMARK, OnDestroyLandmark);
         Messenger.AddListener(Signals.DAY_STARTED, DailyInteractionGeneration);
         //Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, RemoveRelationshipWith);
+        Messenger.AddListener<Character, Area, Area>(Signals.CHARACTER_MIGRATED_HOME, OnCharacterMigratedHome);
     }
     public void UnsubscribeSignals() {
         //Messenger.RemoveListener<Character>(Signals.CHARACTER_SNATCHED, OnCharacterSnatched);
@@ -542,8 +543,7 @@ public class Character : ICharacter, ILeader, IInteractable {
         //Messenger.RemoveListener<BaseLandmark>(Signals.DESTROY_LANDMARK, OnDestroyLandmark);
         Messenger.RemoveListener(Signals.DAY_STARTED, DailyInteractionGeneration);
         //Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, RemoveRelationshipWith);
-        if (Messenger.eventTable.ContainsKey(Signals.DAY_ENDED)) {
-        }
+        Messenger.RemoveListener<Character, Area, Area>(Signals.CHARACTER_MIGRATED_HOME, OnCharacterMigratedHome);
     }
     #endregion
 
@@ -2155,6 +2155,13 @@ public class Character : ICharacter, ILeader, IInteractable {
         }
         dwelling.AddResident(this);
     }
+    private void OnCharacterMigratedHome(Character character, Area previousHome, Area homeArea) {
+        if (character.id != this.id && this.homeArea.id == homeArea.id) {
+            if (GetAllRelationshipTraitWith(character).Count > 0) {
+                this.homeArea.AssignCharacterToDwellingInArea(this); //redetermine home, in case new character with relationship has moved area to same area as this character
+            }
+        }
+    }
     #endregion
 
     #region IInteractable
@@ -2235,13 +2242,13 @@ public class Character : ICharacter, ILeader, IInteractable {
         if (trait.IsUnique() && GetTrait(trait.name) != null) {
             return;
         }
-        if (trait is RelationshipTrait) {
-            RelationshipTrait rt = trait as RelationshipTrait;
-            if (!CanHaveRelationshipWith(rt.relType, rt.targetCharacter)) {
-                Debug.LogWarning("Cannot have " + rt.relType.ToString() + " relationship with " + rt.targetCharacter.name + ". Ignoring adding it");
-                return;
-            }
-        }
+        //if (trait is RelationshipTrait) {
+        //    RelationshipTrait rt = trait as RelationshipTrait;
+        //    if (!CanHaveRelationshipWith(rt.relType, rt.targetCharacter)) {
+        //        Debug.LogWarning("Cannot have " + rt.relType.ToString() + " relationship with " + rt.targetCharacter.name + ". Ignoring adding it");
+        //        return;
+        //    }
+        //}
         _traits.Add(trait);
         ApplyFlatTraitEffects(trait);
         if (trait.daysDuration > 0) {
@@ -2251,6 +2258,9 @@ public class Character : ICharacter, ILeader, IInteractable {
         }
         trait.OnAddTrait(this);
         Messenger.Broadcast(Signals.TRAIT_ADDED, this);
+        if (trait is RelationshipTrait) {
+            OnRelationshipWithCharacterAdded((trait as RelationshipTrait).targetCharacter);
+        }
     }
     public bool RemoveTrait(Trait trait, bool triggerOnRemove = true) {
         if (_traits.Remove(trait)) {
@@ -2497,43 +2507,41 @@ public class Character : ICharacter, ILeader, IInteractable {
     public bool CanHaveRelationshipWith(RELATIONSHIP_TRAIT type, Character target) {
         switch (type) {
             case RELATIONSHIP_TRAIT.LOVER:
-                //- **Lover:** Positive, Permanent (Can only have 1)
-                if (GetCharacterWithRelationship(RELATIONSHIP_TRAIT.LOVER) == null && target.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.LOVER) == null) {
-                    return true;
-                }
-                return false;
             case RELATIONSHIP_TRAIT.PARAMOUR:
+                //- **Lover:** Positive, Permanent (Can only have 1)
                 //- **Paramour:** Positive, Transient (Can only have 1)
-                if (GetCharacterWithRelationship(RELATIONSHIP_TRAIT.PARAMOUR) == null && target.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.PARAMOUR) == null) {
-                    return true;
+                if (GetCharacterWithRelationship(type) == null) {
+                    Character rel = target.GetCharacterWithRelationship(type);
+                    if (rel == null || rel.id == this.id) {
+                        return true;
+                    }
                 }
                 return false;
             case RELATIONSHIP_TRAIT.MASTER:
-                //check if this character doesn't already have a master, and is not a master himself (doesnt have any servants)
-                if (GetCharacterWithRelationship(RELATIONSHIP_TRAIT.MASTER) == null && GetCharacterWithRelationship(RELATIONSHIP_TRAIT.SERVANT) == null) { 
-                    return true;
-                }
-                return false;
             case RELATIONSHIP_TRAIT.SERVANT:
-                //check if this character is not a master (doesnt have any servants)
-                if (GetCharacterWithRelationship(RELATIONSHIP_TRAIT.SERVANT) == null) {
+                //check if this character is not already a master or a servant and if the target character is also not already a master or a servant
+                if (GetCharacterWithRelationship(RELATIONSHIP_TRAIT.MASTER) == null && GetCharacterWithRelationship(RELATIONSHIP_TRAIT.SERVANT) == null
+                    && target.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.MASTER) == null && target.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.SERVANT) == null) { 
                     return true;
                 }
                 return false;
             case RELATIONSHIP_TRAIT.MENTOR:
-                //check if this character doesn't already have a mentor, and is not a mentor himself (doesnt have any students)
-                if (GetCharacterWithRelationship(RELATIONSHIP_TRAIT.MENTOR) == null && GetCharacterWithRelationship(RELATIONSHIP_TRAIT.STUDENT) == null) {
-                    return true;
-                }
-                return false;
             case RELATIONSHIP_TRAIT.STUDENT:
-                //check if this character is not a mentor (doesnt have any students)
-                if (GetCharacterWithRelationship(RELATIONSHIP_TRAIT.STUDENT) == null) {
+                //check if this character is not already a mentor or a student
+                if (GetCharacterWithRelationship(RELATIONSHIP_TRAIT.MENTOR) == null && GetCharacterWithRelationship(RELATIONSHIP_TRAIT.STUDENT) == null
+                    && target.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.MENTOR) == null && target.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.STUDENT) == null) {
                     return true;
                 }
                 return false;
         }
         return true;
+    }
+    private void OnRelationshipWithCharacterAdded(Character targetCharacter) {
+        //check if they share the same home, then migrate them accordingly
+        if (this.homeArea.id == targetCharacter.homeArea.id) {
+            homeArea.AssignCharacterToDwellingInArea(this);
+            homeArea.AssignCharacterToDwellingInArea(targetCharacter);
+        }
     }
     #endregion
 

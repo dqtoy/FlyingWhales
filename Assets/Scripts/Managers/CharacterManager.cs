@@ -367,7 +367,7 @@ public class CharacterManager : MonoBehaviour {
             }
         }
     }
-    public Trait CreateRelationship(RELATIONSHIP_TRAIT type, Character targetCharacter) {
+    public Trait CreateRelationshipTrait(RELATIONSHIP_TRAIT type, Character targetCharacter) {
         switch (type) {
             case RELATIONSHIP_TRAIT.ENEMY:
                 return new Enemy(targetCharacter);
@@ -668,6 +668,50 @@ public class CharacterManager : MonoBehaviour {
             }
         }
         return -1;
+    }
+    #endregion
+
+    #region For Testing
+    public void GenerateRelationshipsForTesting() {
+        for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
+            Faction currFaction = FactionManager.Instance.allFactions[i];
+            if (currFaction.isActive) {
+                for (int j = 0; j < currFaction.characters.Count; j++) {
+                    Character currCharacter = currFaction.characters[j];
+                    Character targetCharacter = GetRandomCharacter(currFaction.characters.Where(x => x.id != currCharacter.id).ToList());
+                    RELATIONSHIP_TRAIT rel = GetRandomRelationship();
+                    if (currCharacter.CanHaveRelationshipWith(rel, targetCharacter)) {
+                        currCharacter.AddTrait(CreateRelationshipTrait(rel, targetCharacter));
+                        switch (rel) {
+                            case RELATIONSHIP_TRAIT.MASTER:
+                                targetCharacter.AddTrait(CreateRelationshipTrait(RELATIONSHIP_TRAIT.SERVANT, currCharacter));
+                                break;
+                            case RELATIONSHIP_TRAIT.SERVANT:
+                                targetCharacter.AddTrait(CreateRelationshipTrait(RELATIONSHIP_TRAIT.MASTER, currCharacter));
+                                break;
+                            case RELATIONSHIP_TRAIT.MENTOR:
+                                targetCharacter.AddTrait(CreateRelationshipTrait(RELATIONSHIP_TRAIT.STUDENT, currCharacter));
+                                break;
+                            case RELATIONSHIP_TRAIT.STUDENT:
+                                targetCharacter.AddTrait(CreateRelationshipTrait(RELATIONSHIP_TRAIT.MENTOR, currCharacter));
+                                break;
+                            case RELATIONSHIP_TRAIT.LOVER:
+                            case RELATIONSHIP_TRAIT.RELATIVE:
+                            case RELATIONSHIP_TRAIT.PARAMOUR:
+                                targetCharacter.AddTrait(CreateRelationshipTrait(rel, currCharacter));
+                                break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    private Character GetRandomCharacter(List<Character> characters) {
+        return characters[Random.Range(0, characters.Count)];
+    }
+    private RELATIONSHIP_TRAIT GetRandomRelationship() {
+        RELATIONSHIP_TRAIT[] choices = Utilities.GetEnumValues<RELATIONSHIP_TRAIT>();
+        return choices[Random.Range(2, choices.Length)]; //started at 2 to exclude enemy and friend
     }
     #endregion
 }

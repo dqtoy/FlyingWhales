@@ -433,6 +433,17 @@ public class AreaInfoUI : UIMenu {
         if (activeArea.structures.Count > 0) {
             foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp in activeArea.structures) {
                 summary += "\n" + kvp.Value.Count.ToString() + " " + kvp.Key.ToString();
+                for (int i = 0; i < kvp.Value.Count; i++) {
+                    LocationStructure currStructure = kvp.Value[i];
+                    summary += "    \n" + kvp.Key.ToString() + " " + i.ToString() + " residents: ";
+                    if (currStructure is Dwelling) {
+                        Dwelling dwelling = currStructure as Dwelling;
+                        for (int j = 0; j < dwelling.residents.Count; j++) {
+                            Character resident = dwelling.residents[j];
+                            summary += "        \n" + resident.name;
+                        }
+                    }
+                }
             }
         } else {
             summary += "None";
