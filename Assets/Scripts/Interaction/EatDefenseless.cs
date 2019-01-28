@@ -142,11 +142,13 @@ public class EatDefenseless : Interaction {
                     }
                 }
                 List<RelationshipTrait> relationships = characterInvolved.GetAllRelationshipTraitWith(currCharacter);
-                for (int j = 0; j < relationships.Count; j++) {
-                    if(relationships[j].effect == TRAIT_EFFECT.POSITIVE) {
-                        weight -= 70;
-                    } else {
-                        weight += 30;
+                if (relationships != null && relationships.Count > 0) {
+                    for (int j = 0; j < relationships.Count; j++) {
+                        if (relationships[j].effect == TRAIT_EFFECT.POSITIVE) {
+                            weight -= 70;
+                        } else if (relationships[j].effect == TRAIT_EFFECT.NEGATIVE) {
+                            weight += 30;
+                        }
                     }
                 }
                 if(weight > 0) {

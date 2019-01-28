@@ -16,7 +16,7 @@ public class ArgueAction : Interaction {
     }
 
     public ArgueAction(Area interactable): base(interactable, INTERACTION_TYPE.ARGUE_ACTION, 0) {
-        _name = "Torture Action";
+        _name = "Argue Action";
         //_categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.PERSONAL, INTERACTION_CATEGORY.SOCIAL };
         //_alignment = INTERACTION_ALIGNMENT.NEUTRAL;
     }
