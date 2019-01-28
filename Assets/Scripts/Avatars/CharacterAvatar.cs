@@ -130,7 +130,7 @@ public class CharacterAvatar : MonoBehaviour{
         targetLocation = target;
         targetStructure = structure;
     }
-    public void StartPath(PATHFINDING_MODE pathFindingMode, Action actionOnPathFinished = null, Character trackTarget = null, Action actionOnPathReceived = null) {
+    public void StartPath(PATHFINDING_MODE pathFindingMode, Action actionOnPathFinished = null, Action actionOnPathReceived = null) {
         //if (smoothMovement.isMoving) {
         //    smoothMovement.ForceStopMovement();
         //}

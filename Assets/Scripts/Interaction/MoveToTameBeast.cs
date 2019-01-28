@@ -10,6 +10,10 @@ public class MoveToTameBeast : Interaction {
 
     private Area _targetArea;
 
+    public override Area targetArea {
+        get { return _targetArea; }
+    }
+
     public MoveToTameBeast(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_TAME_BEAST, 0) {
         _name = "Move To Tame Beast";
         _categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT };
@@ -75,6 +79,9 @@ public class MoveToTameBeast : Interaction {
         }
         return base.CanInteractionBeDoneBy(character);
     }
+    public override void DoActionUponMoveToArrival() {
+        CreateTameAction();
+    }
     #endregion
 
     #region Action Options
@@ -99,21 +106,17 @@ public class MoveToTameBeast : Interaction {
 
         state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2));
 
-        StartMove();
+        StartMoveToAction(_targetArea);
     }
     private void NormalTameEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2);
 
         state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2));
 
-        StartMove();
+        StartMoveToAction(_targetArea);
     }
     #endregion
 
-    private void StartMove() {
-        AddToDebugLog(_characterInvolved.name + " starts moving towards " + _targetArea.name + "(" + _targetArea.coreTile.landmarkOnTile.name + ") to tame!");
-        _characterInvolved.currentParty.GoToLocation(_targetArea, PATHFINDING_MODE.NORMAL, null, () => CreateTameAction());
-    }
     private void CreateTameAction() {
         AddToDebugLog(_characterInvolved.name + " will now create tame action");
         Interaction tame = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.TAME_BEAST_ACTION, _characterInvolved.specificLocation);

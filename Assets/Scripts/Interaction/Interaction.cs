@@ -114,6 +114,9 @@ public class Interaction {
     public virtual Character targetCharacter {
         get { return null; }
     }
+    public virtual Area targetArea {
+        get { return null; }
+    }
     #endregion
 
     public Interaction(Area interactable, INTERACTION_TYPE type, int timeOutTicks) {
@@ -181,24 +184,32 @@ public class Interaction {
         }
         return true;
     }
+    public virtual void DoActionUponMoveToArrival() {
+
+    }
     //public virtual bool CanStillDoInteraction() { return true; }
     #endregion
 
     #region Utilities
     public void SetCurrentState(InteractionState state) {
-        _previousState = _currentState;
-        //if(_currentState != null && _currentState.chosenOption != null) {
-        if (_currentState != null) {
-            //state.SetAssignedObjects(_currentState.assignedObjects);
-            //if (_currentState.chosenOption != null) {
-            state.SetAssignedPlayerCharacter(_currentState.assignedPlayerCharacter);
-            _currentState.OnEndState();
-            //}
+        if (state.name == "Start" && _name.Contains("Move To") && targetArea != null && targetArea == _characterInvolved.specificLocation) {
+            DoActionUponMoveToArrival();
+            EndInteraction();
+        } else {
+            _previousState = _currentState;
+            //if(_currentState != null && _currentState.chosenOption != null) {
+            if (_currentState != null) {
+                //state.SetAssignedObjects(_currentState.assignedObjects);
+                //if (_currentState.chosenOption != null) {
+                state.SetAssignedPlayerCharacter(_currentState.assignedPlayerCharacter);
+                _currentState.OnEndState();
+                //}
+            }
+            _currentState = state;
+            AddToDebugLog("Set current state to " + _currentState.name);
+            _currentState.OnStartState();
+            Messenger.Broadcast(Signals.UPDATED_INTERACTION_STATE, this);
         }
-        _currentState = state;
-        AddToDebugLog("Set current state to " + _currentState.name);
-        _currentState.OnStartState();
-        Messenger.Broadcast(Signals.UPDATED_INTERACTION_STATE, this);
     }
     public void AddState(InteractionState state) {
         _states.Add(state.name, state);
@@ -275,6 +286,9 @@ public class Interaction {
         }
         if (!_hasInitialized) {
             Initialize();
+        }
+        if (_isDone) {
+            return;
         }
         if (_currentState == null) {
             throw new Exception(this.GetType().ToString() + " interaction at " + interactable.name + " has a current state of null at second time out!");
@@ -391,6 +405,10 @@ public class Interaction {
         factionRelationshipLog.SetFillerLockedState(true);
         //state.AddOtherLog(factionRelationshipLog);
         factionRelationshipLog.AddLogToInvolvedObjects();
+    }
+    protected void StartMoveToAction(Area target) {
+        AddToDebugLog(_characterInvolved.name + " starts moving towards " + target.name + "!(" + _type.ToString() + ")");
+        _characterInvolved.currentParty.GoToLocation(target, PATHFINDING_MODE.NORMAL, null, () => DoActionUponMoveToArrival());
     }
     #endregion
 

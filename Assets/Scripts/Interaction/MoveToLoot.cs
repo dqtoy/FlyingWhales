@@ -10,6 +10,10 @@ public class MoveToLoot : Interaction {
 
     private Area _targetArea;
 
+    public override Area targetArea {
+        get { return _targetArea; }
+    }
+
     public MoveToLoot(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_LOOT, 0) {
         _name = "Move To Loot";
         _categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.INVENTORY };
@@ -75,6 +79,9 @@ public class MoveToLoot : Interaction {
         }
         return base.CanInteractionBeDoneBy(character);
     }
+    public override void DoActionUponMoveToArrival() {
+        CreateLootAction();
+    }
     #endregion
 
     #region Action Options
@@ -99,21 +106,17 @@ public class MoveToLoot : Interaction {
 
         state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2));
 
-        StartMove();
+        StartMoveToAction(_targetArea);
     }
     private void NormalLootEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2);
 
         state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2));
 
-        StartMove();
+        StartMoveToAction(_targetArea);
     }
     #endregion
 
-    private void StartMove() {
-        AddToDebugLog(_characterInvolved.name + " starts moving towards " + _targetArea.name + "(" + _targetArea.coreTile.landmarkOnTile.name + ") to loot!");
-        _characterInvolved.currentParty.GoToLocation(_targetArea, PATHFINDING_MODE.NORMAL, null, () => CreateLootAction());
-    }
     private void CreateLootAction() {
         AddToDebugLog(_characterInvolved.name + " will now create loot action");
         Interaction loot = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.LOOT_ACTION, _characterInvolved.specificLocation);

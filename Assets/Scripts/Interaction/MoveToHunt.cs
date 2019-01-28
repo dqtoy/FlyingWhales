@@ -10,6 +10,10 @@ public class MoveToHunt : Interaction {
 
     private Area _targetArea;
 
+    public override Area targetArea {
+        get { return _targetArea; }
+    }
+
     public MoveToHunt(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_HUNT, 0) {
         _name = "Move To Hunt";
         _categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.PERSONAL, INTERACTION_CATEGORY.OFFENSE };
@@ -76,6 +80,9 @@ public class MoveToHunt : Interaction {
         }
         return base.CanInteractionBeDoneBy(character);
     }
+    public override void DoActionUponMoveToArrival() {
+        CreateHuntAction();
+    }
     #endregion
 
     #region Action Options
@@ -100,24 +107,20 @@ public class MoveToHunt : Interaction {
 
         state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2));
 
-        StartMove();
+        StartMoveToAction(_targetArea);
     }
     private void NormalHuntEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2);
 
         state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2));
 
-        StartMove();
+        StartMoveToAction(_targetArea);
     }
     #endregion
-    private void StartMove() {
-        AddToDebugLog(_characterInvolved.name + " starts moving towards " + _targetArea.name + "(" + _targetArea.coreTile.landmarkOnTile.name + ") to hunt!");
-        _characterInvolved.currentParty.GoToLocation(_targetArea, PATHFINDING_MODE.NORMAL, null, () => CreateHuntAction());
-    }
     private void CreateHuntAction() {
         AddToDebugLog(_characterInvolved.name + " will now create hunt action");
         Interaction hunt = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.HUNT_ACTION, _characterInvolved.specificLocation);
-        hunt.SetCanInteractionBeDoneAction(IsHuntStillValid);
+        //hunt.SetCanInteractionBeDoneAction(IsHuntStillValid);
         _characterInvolved.SetForcedInteraction(hunt);
     }
     private bool IsHuntStillValid() {
