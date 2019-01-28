@@ -762,6 +762,7 @@ public class Area {
             {INTERACTION_TYPE.MOVE_TO_VISIT, 50},
             {INTERACTION_TYPE.MOVE_TO_LOOT, 50},
             {INTERACTION_TYPE.MOVE_TO_TAME_BEAST, 50},
+            {INTERACTION_TYPE.MOVE_TO_HANG_OUT, 50000},
             //{INTERACTION_TYPE.MOVE_TO_ASSASSINATE_FACTION, 5000},
             //{INTERACTION_TYPE.MOVE_TO_RECRUIT_FACTION, 5000},
             //{INTERACTION_TYPE.MOVE_TO_STEAL_FACTION, 5000},
@@ -1147,6 +1148,11 @@ public class Area {
             //Debug.LogWarning(GameManager.Instance.TodayLogString() + "Could not find a dwelling for " + character.name + " at " + this.name);
         } else {
             character.MigrateHomeStructureTo(chosenDwelling);
+            if (character.specificLocation != null 
+                && character.specificLocation.id == this.id) { //if the character is currently at his home area, and his home was changed, relocate him
+                character.currentStructure.RemoveCharacterAtLocation(character); 
+                AddCharacterToAppropriateStructure(character);
+            }
         }
     }
     public void RemoveResident(Character character) {
@@ -1156,20 +1162,25 @@ public class Area {
             //Messenger.Broadcast(Signals.AREA_RESIDENT_REMOVED, this, character);
         }
     }
-    public void AddCharacterToLocation(Character character) {
+    public void AddCharacterToLocation(Character character, LocationStructure structureOverride = null) {
         if (!charactersAtLocation.Contains(character)) {
             charactersAtLocation.Add(character);
             character.ownParty.SetSpecificLocation(this);
             AddCharacterAtLocationHistory("Added " + character.name + "ST: " + StackTraceUtility.ExtractStackTrace());
             if (PlayerManager.Instance.player == null || PlayerManager.Instance.player.playerArea.id != this.id) {
-                AddCharacterToAppropriateStructure(character);
+                if (structureOverride != null) {
+                    structureOverride.AddCharacterAtLocation(character);
+                } else {
+                    AddCharacterToAppropriateStructure(character);
+                }
             }
+                
             Messenger.Broadcast(Signals.CHARACTER_ENTERED_AREA, this, character);
         }
     }
-    public void AddCharacterToLocation(Party party) {
+    public void AddCharacterToLocation(Party party, LocationStructure structureOverride = null) {
         for (int i = 0; i < party.characters.Count; i++) {
-            AddCharacterToLocation(party.characters[i]);
+            AddCharacterToLocation(party.characters[i], structureOverride);
         }
     }
     public void RemoveCharacterFromLocation(Character character) {

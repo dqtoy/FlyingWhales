@@ -24,6 +24,7 @@ public class CharacterAvatar : MonoBehaviour{
     protected Party _party;
 
     public Area targetLocation { get; protected set; }
+    public LocationStructure targetStructure { get; protected set; }
 
     [SerializeField] protected List<HexTile> path;
 
@@ -125,8 +126,9 @@ public class CharacterAvatar : MonoBehaviour{
     #endregion
 
     #region Pathfinding
-    public void SetTarget(Area target) {
+    public void SetTarget(Area target, LocationStructure structure) {
         targetLocation = target;
+        targetStructure = structure;
     }
     public void StartPath(PATHFINDING_MODE pathFindingMode, Action actionOnPathFinished = null, Character trackTarget = null, Action actionOnPathReceived = null) {
         //if (smoothMovement.isMoving) {
@@ -205,7 +207,7 @@ public class CharacterAvatar : MonoBehaviour{
         _travelLine = null;
         SetHasArrivedState(true);
         _party.specificLocation.RemoveCharacterFromLocation(_party);
-        targetLocation.AddCharacterToLocation(_party);
+        targetLocation.AddCharacterToLocation(_party, targetStructure);
         Debug.Log(GameManager.Instance.TodayLogString() + _party.name + " has arrived at " + targetLocation.name + " on " + GameManager.Instance.continuousDays);
         if(_party.characters.Count > 0) {
             Log arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "arrive_location");

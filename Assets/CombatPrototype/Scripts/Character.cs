@@ -91,6 +91,7 @@ public class Character : ICharacter, ILeader, IInteractable {
     public CharacterToken characterToken { get; private set; }
     public WeightedDictionary<INTERACTION_TYPE> interactionWeights { get; private set; }
     public SpecialToken tokenInInventory { get; private set; }
+    public Dictionary<Character, List<RelationshipTrait>> relationships { get; private set; }
 
     private Dictionary<STAT, float> _buffs;
 
@@ -503,6 +504,7 @@ public class Character : ICharacter, ILeader, IInteractable {
         characterToken = new CharacterToken(this);
         tokenInInventory = null;
         interactionWeights = new WeightedDictionary<INTERACTION_TYPE>();
+        relationships = new Dictionary<Character, List<RelationshipTrait>>();
 
         //AllocateStats();
         //EquipItemsByClass();
@@ -1623,8 +1625,10 @@ public class Character : ICharacter, ILeader, IInteractable {
             //    RemoveTrait(enemy);
             //}
             List<RelationshipTrait> rels = GetAllRelationshipTraitWith(characterThatDied);
-            for (int i = 0; i < rels.Count; i++) {
-                RemoveTrait(rels[i]);
+            if (rels != null) {
+                for (int i = 0; i < rels.Count; i++) {
+                    RemoveTrait(rels[i]);
+                }
             }
         }
     }
@@ -1664,12 +1668,12 @@ public class Character : ICharacter, ILeader, IInteractable {
         Interaction attackInteraction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.ATTACK, target);
         attackInteraction.AddEndInteractionAction(() => _ownParty.GoHomeAndDisband());
         attackInteraction.SetCanInteractionBeDoneAction(() => IsTargetStillViable(target));
-        _ownParty.GoToLocation(target, PATHFINDING_MODE.NORMAL, () => SetForcedInteraction(attackInteraction));
+        _ownParty.GoToLocation(target, PATHFINDING_MODE.NORMAL, null, () => SetForcedInteraction(attackInteraction));
     }
     public void GoToAreaToMakePeaceWithFaction(Area target) {
         Interaction peaceInteraction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.CHARACTER_PEACE_NEGOTIATION, target);
         peaceInteraction.AddEndInteractionAction(() => _ownParty.GoHome());
-        _ownParty.GoToLocation(target, PATHFINDING_MODE.NORMAL, () => SetForcedInteraction(peaceInteraction));
+        _ownParty.GoToLocation(target, PATHFINDING_MODE.NORMAL, null, () => SetForcedInteraction(peaceInteraction));
     }
     private bool IsTargetStillViable(Area target) {
         return target.owner != null;
@@ -1720,80 +1724,147 @@ public class Character : ICharacter, ILeader, IInteractable {
     #endregion
 
     #region Relationships
-    //public void AddNewRelationship(Character relWith, Relationship relationship) {
-    //    if (!_relationships.ContainsKey(relWith)) {
-    //        _relationships.Add(relWith, relationship);
-    //        Messenger.Broadcast<Relationship>(Signals.RELATIONSHIP_CREATED, relationship);
-    //    } else {
-    //        throw new Exception(this.name + " already has a relationship with " + relWith.name + ", but something is trying to create a new one!");
-    //    }
-    //}
-    //public void RemoveRelationshipWith(Character relWith) {
-    //    if (_relationships.ContainsKey(relWith)) {
-    //        Relationship rel = _relationships[relWith];
-    //        _relationships.Remove(relWith);
-    //        Messenger.Broadcast<Relationship>(Signals.RELATIONSHIP_REMOVED, rel);
-    //    }
-    //}
-    //public Relationship GetRelationshipWith(Character character) {
-    //    if (_relationships.ContainsKey(character)) {
-    //        return _relationships[character];
-    //    }
-    //    return null;
-    //}
-    //public bool AlreadyHasRelationshipStatus(CHARACTER_RELATIONSHIP relStat) {
-    //    foreach (KeyValuePair<Character, Relationship> kvp in relationships) {
-    //        if (kvp.Value.HasStatus(relStat)) {
-    //            return true;
-    //        }
-    //    }
-    //    return false;
-    //}
-    //public Character GetCharacterWithRelationshipStatus(CHARACTER_RELATIONSHIP relStat) {
-    //    foreach (KeyValuePair<Character, Relationship> kvp in relationships) {
-    //        if (kvp.Value.HasStatus(relStat)) {
-    //            return kvp.Key;
-    //        }
-    //    }
-    //    return null;
-    //}
-    //public List<Character> GetCharactersWithRelationshipStatus(CHARACTER_RELATIONSHIP relStat) {
-    //    List<Character> characters = new List<Character>();
-    //    foreach (KeyValuePair<Character, Relationship> kvp in relationships) {
-    //        if (kvp.Value.HasStatus(relStat) && characters.Contains(kvp.Key)) {
-    //            characters.Add(kvp.Key);
-    //        }
-    //    }
-    //    return characters;
-    //}
-    //public void LoadRelationships(List<RelationshipSaveData> data) {
-    //    _relationships = new Dictionary<Character, Relationship>();
-    //    for (int i = 0; i < data.Count; i++) {
-    //        RelationshipSaveData currData = data[i];
-    //        Character otherCharacter = CharacterManager.Instance.GetCharacterByID(currData.targetCharacterID);
-    //        Relationship rel = new Relationship(this, otherCharacter);
-    //        rel.AddRelationshipStatus(currData.relationshipStatuses);
-    //        _relationships.Add(otherCharacter, rel);
+    private void AddRelationship(Character character, RelationshipTrait newRel) {
+        if (!relationships.ContainsKey(character)) {
+            relationships.Add(character, new List<RelationshipTrait>());
+        }
+        relationships[character].Add(newRel);
+        OnRelationshipWithCharacterAdded(character);
+    }
+    private void RemoveRelationship(Character character) {
+        if (relationships.ContainsKey(character)) {
+            relationships.Remove(character);
+        }
+    }
+    private void RemoveRelationship(Character character, RelationshipTrait rel) {
+        if (relationships.ContainsKey(character)) {
+            relationships[character].Remove(rel);
 
-    //    }
-    //}
-    //public Character GetPartner() {
-    //    foreach (KeyValuePair<Character, Relationship> kvp in _relationships) {
-    //        for (int i = 0; i < kvp.Value.relationshipStatuses.Count; i++) {
-    //            CHARACTER_RELATIONSHIP status = kvp.Value.relationshipStatuses[i];
-    //            if (status == CHARACTER_RELATIONSHIP.HUSBAND || status == CHARACTER_RELATIONSHIP.WIFE) {
-    //                return kvp.Key;
-    //            }
-    //        }
-    //    }
-    //    return null;
-    //}
-    //public bool HasRelationshipWith(Character otherCharacter) {
-    //    return _relationships.ContainsKey(otherCharacter);
-    //}
-    //public bool HasRelationshipStatusWith(Character otherCharacter, CHARACTER_RELATIONSHIP relStat) {
-    //    return _relationships[otherCharacter].HasStatus(relStat);
-    //}
+            if (relationships[character].Count == 0) {
+                RemoveRelationship(character);
+            }
+        }
+    }
+    public RelationshipTrait GetRelationshipTraitWith(Character character, RELATIONSHIP_TRAIT type) {
+        if (relationships.ContainsKey(character)) {
+            for (int i = 0; i < relationships[character].Count; i++) {
+                RelationshipTrait relTrait = relationships[character][i];
+                if (relTrait.relType == type) {
+                    return relTrait;
+                }
+            }
+        }
+        return null;
+    }
+    public List<RelationshipTrait> GetAllRelationshipTraitWith(Character character) {
+        if (relationships.ContainsKey(character)) {
+            return relationships[character];
+        }
+        return null;
+    }
+    public List<Character> GetCharactersWithRelationship(RELATIONSHIP_TRAIT type) {
+        List<Character> characters = new List<Character>();
+        foreach (KeyValuePair<Character, List<RelationshipTrait>> kvp in relationships) {
+            for (int i = 0; i < kvp.Value.Count; i++) {
+                if (kvp.Value[i].relType == type) {
+                    characters.Add(kvp.Key);
+                    break;
+                }
+            }
+        }
+        return characters;
+    }
+    public Character GetCharacterWithRelationship(RELATIONSHIP_TRAIT type) {
+        foreach (KeyValuePair<Character, List<RelationshipTrait>> kvp in relationships) {
+            for (int i = 0; i < kvp.Value.Count; i++) {
+                if (kvp.Value[i].relType == type) {
+                    return kvp.Key;
+                }
+            }
+        }
+        return null;
+    }
+    public bool CanHaveRelationshipWith(RELATIONSHIP_TRAIT type, Character target) {
+        switch (type) {
+            case RELATIONSHIP_TRAIT.LOVER:
+            case RELATIONSHIP_TRAIT.PARAMOUR:
+                //- **Lover:** Positive, Permanent (Can only have 1)
+                //- **Paramour:** Positive, Transient (Can only have 1)
+                if (GetCharacterWithRelationship(type) == null) {
+                    Character rel = target.GetCharacterWithRelationship(type);
+                    if (rel == null || rel.id == this.id) {
+                        return true;
+                    }
+                }
+                return false;
+            case RELATIONSHIP_TRAIT.MASTER:
+            case RELATIONSHIP_TRAIT.SERVANT:
+                //check if this character is not already a master or a servant and if the target character is also not already a master or a servant
+                if (GetCharacterWithRelationship(RELATIONSHIP_TRAIT.MASTER) == null && GetCharacterWithRelationship(RELATIONSHIP_TRAIT.SERVANT) == null
+                    && target.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.MASTER) == null && target.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.SERVANT) == null) {
+                    return true;
+                }
+                return false;
+            case RELATIONSHIP_TRAIT.MENTOR:
+            case RELATIONSHIP_TRAIT.STUDENT:
+                //check if this character is not already a mentor or a student
+                if (GetCharacterWithRelationship(RELATIONSHIP_TRAIT.MENTOR) == null && GetCharacterWithRelationship(RELATIONSHIP_TRAIT.STUDENT) == null
+                    && target.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.MENTOR) == null && target.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.STUDENT) == null) {
+                    return true;
+                }
+                return false;
+        }
+        return true;
+    }
+    private void OnRelationshipWithCharacterAdded(Character targetCharacter) {
+        //check if they share the same home, then migrate them accordingly
+        if (this.homeArea.id == targetCharacter.homeArea.id) {
+            homeArea.AssignCharacterToDwellingInArea(this);
+            homeArea.AssignCharacterToDwellingInArea(targetCharacter);
+        }
+    }
+    public bool HasRelationshipOfEffectWith(Character character, TRAIT_EFFECT effect) {
+        if (relationships.ContainsKey(character)) {
+            for (int i = 0; i < relationships[character].Count; i++) {
+                RelationshipTrait currTrait = relationships[character][i];
+                if (currTrait.effect == effect) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    public bool HasRelationshipOfEffectWith(Character character, List<TRAIT_EFFECT> effect) {
+        if (relationships.ContainsKey(character)) {
+            for (int i = 0; i < relationships[character].Count; i++) {
+                RelationshipTrait currTrait = relationships[character][i];
+                if (effect.Contains(currTrait.effect)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    public bool HasRelationshipOfEffect(TRAIT_EFFECT effect) {
+        foreach (KeyValuePair<Character, List<RelationshipTrait>> kvp in relationships) {
+            for (int i = 0; i < kvp.Value.Count; i++) {
+                if (effect == kvp.Value[i].effect) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    public bool HasRelationshipOfEffect(List<TRAIT_EFFECT> effect) {
+        foreach (KeyValuePair<Character, List<RelationshipTrait>> kvp in relationships) {
+            for (int i = 0; i < kvp.Value.Count; i++) {
+                if (effect.Contains(kvp.Value[i].effect)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     #endregion
 
     #region History
@@ -2157,7 +2228,7 @@ public class Character : ICharacter, ILeader, IInteractable {
     }
     private void OnCharacterMigratedHome(Character character, Area previousHome, Area homeArea) {
         if (character.id != this.id && this.homeArea.id == homeArea.id) {
-            if (GetAllRelationshipTraitWith(character).Count > 0) {
+            if (GetAllRelationshipTraitWith(character) != null) {
                 this.homeArea.AssignCharacterToDwellingInArea(this); //redetermine home, in case new character with relationship has moved area to same area as this character
             }
         }
@@ -2259,7 +2330,8 @@ public class Character : ICharacter, ILeader, IInteractable {
         trait.OnAddTrait(this);
         Messenger.Broadcast(Signals.TRAIT_ADDED, this);
         if (trait is RelationshipTrait) {
-            OnRelationshipWithCharacterAdded((trait as RelationshipTrait).targetCharacter);
+            RelationshipTrait rel = trait as RelationshipTrait;
+            AddRelationship(rel.targetCharacter, rel);
         }
     }
     public bool RemoveTrait(Trait trait, bool triggerOnRemove = true) {
@@ -2269,6 +2341,10 @@ public class Character : ICharacter, ILeader, IInteractable {
                 trait.OnRemoveTrait(this);
             }
             Messenger.Broadcast(Signals.TRAIT_REMOVED, this);
+            if (trait is RelationshipTrait) {
+                RelationshipTrait rel = trait as RelationshipTrait;
+                RemoveRelationship(rel.targetCharacter, rel);
+            }
             return true;
         }
         return false;
@@ -2440,56 +2516,6 @@ public class Character : ICharacter, ILeader, IInteractable {
         }
         return null;
     }
-    public RelationshipTrait GetRelationshipTraitWith(Character character, RELATIONSHIP_TRAIT type) {
-        for (int i = 0; i < traits.Count; i++) {
-            Trait currTrait = traits[i];
-            if (currTrait is RelationshipTrait) {
-                RelationshipTrait relTrait = currTrait as RelationshipTrait;
-                if (relTrait.relType == type && relTrait.targetCharacter.id == character.id) {
-                    return relTrait;
-                }
-            }
-        }
-        return null;
-    }
-    public List<RelationshipTrait> GetAllRelationshipTraitWith(Character character) {
-        List<RelationshipTrait> rels = new List<RelationshipTrait>();
-        for (int i = 0; i < traits.Count; i++) {
-            Trait currTrait = traits[i];
-            if (currTrait is RelationshipTrait) {
-                RelationshipTrait relTrait = currTrait as RelationshipTrait;
-                if (relTrait.targetCharacter.id == character.id) {
-                    rels.Add(relTrait);
-                }
-            }
-        }
-        return rels;
-    }
-    public List<Character> GetCharactersWithRelationship(RELATIONSHIP_TRAIT type) {
-        List<Character> characters = new List<Character>();
-        for (int i = 0; i < traits.Count; i++) {
-            Trait currTrait = traits[i];
-            if (currTrait is RelationshipTrait) {
-                RelationshipTrait relTrait = currTrait as RelationshipTrait;
-                if (relTrait.relType == type) {
-                    characters.Add(relTrait.targetCharacter);
-                }
-            }
-        }
-        return characters;
-    }
-    public Character GetCharacterWithRelationship(RELATIONSHIP_TRAIT type) {
-        for (int i = 0; i < traits.Count; i++) {
-            Trait currTrait = traits[i];
-            if (currTrait is RelationshipTrait) {
-                RelationshipTrait relTrait = currTrait as RelationshipTrait;
-                if (relTrait.relType == type) {
-                    return relTrait.targetCharacter;
-                }
-            }
-        }
-        return null;
-    }
     public void GenerateRandomTraits() {
         //All characters have a 1 in 8 chance of having Crooked trait when spawned
         if (UnityEngine.Random.Range(0, 8) < 1) {
@@ -2511,45 +2537,6 @@ public class Character : ICharacter, ILeader, IInteractable {
             return true;
         }
         return false;
-    }
-    public bool CanHaveRelationshipWith(RELATIONSHIP_TRAIT type, Character target) {
-        switch (type) {
-            case RELATIONSHIP_TRAIT.LOVER:
-            case RELATIONSHIP_TRAIT.PARAMOUR:
-                //- **Lover:** Positive, Permanent (Can only have 1)
-                //- **Paramour:** Positive, Transient (Can only have 1)
-                if (GetCharacterWithRelationship(type) == null) {
-                    Character rel = target.GetCharacterWithRelationship(type);
-                    if (rel == null || rel.id == this.id) {
-                        return true;
-                    }
-                }
-                return false;
-            case RELATIONSHIP_TRAIT.MASTER:
-            case RELATIONSHIP_TRAIT.SERVANT:
-                //check if this character is not already a master or a servant and if the target character is also not already a master or a servant
-                if (GetCharacterWithRelationship(RELATIONSHIP_TRAIT.MASTER) == null && GetCharacterWithRelationship(RELATIONSHIP_TRAIT.SERVANT) == null
-                    && target.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.MASTER) == null && target.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.SERVANT) == null) { 
-                    return true;
-                }
-                return false;
-            case RELATIONSHIP_TRAIT.MENTOR:
-            case RELATIONSHIP_TRAIT.STUDENT:
-                //check if this character is not already a mentor or a student
-                if (GetCharacterWithRelationship(RELATIONSHIP_TRAIT.MENTOR) == null && GetCharacterWithRelationship(RELATIONSHIP_TRAIT.STUDENT) == null
-                    && target.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.MENTOR) == null && target.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.STUDENT) == null) {
-                    return true;
-                }
-                return false;
-        }
-        return true;
-    }
-    private void OnRelationshipWithCharacterAdded(Character targetCharacter) {
-        //check if they share the same home, then migrate them accordingly
-        if (this.homeArea.id == targetCharacter.homeArea.id) {
-            homeArea.AssignCharacterToDwellingInArea(this);
-            homeArea.AssignCharacterToDwellingInArea(targetCharacter);
-        }
     }
     #endregion
 

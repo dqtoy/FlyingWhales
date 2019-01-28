@@ -262,11 +262,11 @@ public class Party {
     }
     public void GoHome(Action doneAction = null, Action actionOnStartOfMovement = null) {
         if (_isDead) { return; }
-        GoToLocation(mainCharacter.homeArea, PATHFINDING_MODE.PASSABLE, doneAction, null, actionOnStartOfMovement);
+        GoToLocation(mainCharacter.homeArea, PATHFINDING_MODE.PASSABLE, mainCharacter.homeStructure, doneAction, null, actionOnStartOfMovement);
     }
     public void GoHomeAndDisband(Action actionOnStartOfMovement = null) {
         if(_isDead) { return; }
-        GoToLocation(mainCharacter.homeArea, PATHFINDING_MODE.PASSABLE, () => DisbandParty(), null, actionOnStartOfMovement);
+        GoToLocation(mainCharacter.homeArea, PATHFINDING_MODE.PASSABLE, mainCharacter.homeStructure, () => DisbandParty(), null, actionOnStartOfMovement);
     }
     #endregion
 
@@ -288,7 +288,7 @@ public class Party {
         this.emblem = emblem;
         this.partyColor = partyColor;
     }
-    public void GoToLocation(Area targetLocation, PATHFINDING_MODE pathfindingMode, Action doneAction = null, Character trackTarget = null, Action actionOnStartOfMovement = null) {
+    public void GoToLocation(Area targetLocation, PATHFINDING_MODE pathfindingMode, LocationStructure targetStructure = null, Action doneAction = null, Character trackTarget = null, Action actionOnStartOfMovement = null) {
         //if (_icon.isMovingToHex) {
         //    _icon.SetQueuedAction(() => GoToLocation(targetLocation, pathfindingMode, doneAction, trackTarget, actionOnStartOfMovement));
         //    return;
@@ -303,7 +303,7 @@ public class Party {
             }
         } else {
             //_icon.SetActionOnTargetReached(doneAction);
-            _icon.SetTarget(targetLocation);
+            _icon.SetTarget(targetLocation, targetStructure);
             _icon.StartPath(PATHFINDING_MODE.PASSABLE, doneAction, trackTarget, actionOnStartOfMovement);
         }
     }

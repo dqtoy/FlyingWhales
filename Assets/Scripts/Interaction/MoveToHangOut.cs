@@ -9,6 +9,7 @@ public class MoveToHangOut : Interaction {
     private const string Do_Nothing = "Do Nothing";
 
     public Area targetLocation { get; private set; }
+    public Character targetCharacter { get; private set; }
 
     public MoveToHangOut(Area interactable) 
         : base(interactable, INTERACTION_TYPE.MOVE_TO_HANG_OUT, 0) {
@@ -23,10 +24,12 @@ public class MoveToHangOut : Interaction {
         InteractionState hangOutContinues = new InteractionState(Hang_Out_Continues, this);
         InteractionState doNothing = new InteractionState(Do_Nothing, this);
 
-        targetLocation = GetTargetLocation(_characterInvolved);
+        targetCharacter = GetTargetCharacter(_characterInvolved);
+        targetLocation = targetCharacter.specificLocation;
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
         startStateDescriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1);
+        startStateDescriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 
         CreateActionOptions(startState);
@@ -65,7 +68,7 @@ public class MoveToHangOut : Interaction {
         }
     }
     public override bool CanInteractionBeDoneBy(Character character) {
-        if (GetTargetLocation(character) == null) {
+        if (GetTargetCharacter(character) == null) {
             return false;
         }
         return base.CanInteractionBeDoneBy(character);
@@ -99,69 +102,64 @@ public class MoveToHangOut : Interaction {
         //**Level Up**: Dissuader Minion +1
         investigatorCharacter.LevelUp();
         MinionSuccess();
-        if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1);
-        }
-        state.AddLogFiller(new LogFiller(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1));
     }
     private void HangOutContinuesRewardEffect(InteractionState state) {
         GoToTargetLocation();
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1);
+            state.descriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2);
+            state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         }
-        state.AddLogFiller(new LogFiller(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1));
+        state.AddLogFiller(new LogFiller(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2));
+        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     private void DoNothingRewardEffect(InteractionState state) {
         GoToTargetLocation();
-        state.AddLogFiller(new LogFiller(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1));
+        if (state.descriptionLog != null) {
+            state.descriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2);
+            state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        }
+        state.AddLogFiller(new LogFiller(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2));
+        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     #endregion
 
     private void GoToTargetLocation() {
-        _characterInvolved.ownParty.GoToLocation(targetLocation, PATHFINDING_MODE.NORMAL, () => CreateCharmEvent());
+        _characterInvolved.ownParty.GoToLocation(targetLocation, PATHFINDING_MODE.NORMAL, targetCharacter.currentStructure, () => CreateEvent());
     }
 
-    private void CreateCharmEvent() {
-        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.CHARM_ACTION, _characterInvolved.specificLocation);
-        //(interaction as ImproveRelationsEvent).SetTargetFaction(targetFaction);
-        //interaction.SetCanInteractionBeDoneAction(IsImproveRelationsValid);
+    private void CreateEvent() {
+        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.HANG_OUT_ACTION, targetLocation);
+        (interaction as HangOutAction).SetTargetCharacter(targetCharacter);
         _characterInvolved.SetForcedInteraction(interaction);
     }
-    private Area GetTargetLocation(Character character) {
-        /* A character decides to hang out with another character that he has a Positive or Neutral relationship with. Select by weights:
-            - for each positive relationship with the character: +50 weight
-            - for each neutral relationship with the character: +25 weight
-            - for each negative relationship with the character: -25 weight */
-        WeightedDictionary<Character> choices = new WeightedDictionary<Character>();
-        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
-            Character currArea = CharacterManager.Instance.allCharacters[i];
+    private Character GetTargetCharacter(Character character) {
+        WeightedDictionary<Character> weights = new WeightedDictionary<Character>();
+        foreach (KeyValuePair<Character, List<RelationshipTrait>> kvp in character.relationships) {
             int weight = 0;
-            if (currArea.id == PlayerManager.Instance.player.playerArea.id) {
-                continue; //skip
+            for (int i = 0; i < kvp.Value.Count; i++) {
+                RelationshipTrait currRel = kvp.Value[i];
+                switch (currRel.effect) {
+                    case TRAIT_EFFECT.NEUTRAL:
+                        weight += 25; //- for each neutral relationship with the character: +25 weight
+                        break;
+                    case TRAIT_EFFECT.POSITIVE:
+                        weight += 50; //- for each positive relationship with the character: +50 weight
+                        break;
+                    case TRAIT_EFFECT.NEGATIVE:
+                        weight -= 25; //- for each negative relationship with the character: -25 weight
+                        break;
+                    default:
+                        break;
+                }
             }
-            //if (currArea.owner == null) {
-            //    weight += 10;
-            //} else if (currArea.owner.id != character.faction.id) {
-            //    FactionRelationship rel = currArea.owner.GetRelationshipWith(character.faction);
-            //    switch (rel.relationshipStatus) {
-            //        case FACTION_RELATIONSHIP_STATUS.DISLIKED:
-            //        case FACTION_RELATIONSHIP_STATUS.NEUTRAL:
-            //        case FACTION_RELATIONSHIP_STATUS.FRIEND:
-            //            weight += 25;
-            //            break;
-            //        default:
-            //            break;
-            //    }
-            //}
             if (weight > 0) {
-                choices.AddElement(currArea, weight);
+                weights.AddElement(kvp.Key, weight);
             }
         }
 
-        if (choices.GetTotalOfWeights() > 0) {
-            //return choices.PickRandomElementGivenWeights();
+        if (weights.GetTotalOfWeights() > 0) {
+            return weights.PickRandomElementGivenWeights();
         }
         return null;
-        //throw new System.Exception("Could not find target location for move to charm of " + _characterInvolved.faction.name);
     }
 }

@@ -121,7 +121,7 @@ public class MoveToExpand : Interaction {
     #endregion
 
     private void GoToTargetLocation() {
-        _characterInvolved.ownParty.GoToLocation(targetLocation, PATHFINDING_MODE.NORMAL, () => CreateExpansionEvent());
+        _characterInvolved.ownParty.GoToLocation(targetLocation, PATHFINDING_MODE.NORMAL, null, () => CreateExpansionEvent());
     }
 
     private void CreateExpansionEvent() {

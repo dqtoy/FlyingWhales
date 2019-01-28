@@ -195,12 +195,15 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         OnPointerClick(eventData as PointerEventData);
     }
     public void OnRightClick() {
-        if (_character != null) {
-            UIManager.Instance.ShowCharacterInfo(_character);
-        }
+        ShowCharacterMenu();
     }
     public void SetHoverHighlightState(bool state) {
         hoverObj.SetActive(state);
+    }
+    public void ShowCharacterMenu() {
+        if (_character != null) {
+            UIManager.Instance.ShowCharacterInfo(_character);
+        }
     }
     #endregion
 

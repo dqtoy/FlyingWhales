@@ -177,6 +177,8 @@ public class RandomNameGenerator : MonoBehaviour {
     private List<string> regionNames;
     private List<string> availableMinionNames;
     private List<string> availableSpiderNames;
+    private List<string> availableHumanMaleNames;
+    private List<string> availableHumanFemaleNames;
 
     void Awake(){
 		Instance = this;
@@ -265,6 +267,8 @@ public class RandomNameGenerator : MonoBehaviour {
 
         availableMinionNames = new List<string>(minionNames);
         availableSpiderNames = new List<string>(spiderNames);
+        availableHumanFemaleNames = new List<string>(humanFemaleFirstNames);
+        availableHumanMaleNames = new List<string>(humanMaleFirstNames);
 
         //generatedHumanSurnames = new MarkovNameGenerator(baseHumanSurnames, 3, 5);
         //      generatedHumanKingdomNames = new MarkovNameGenerator(baseHumanKingdomNames, 3, 5);
@@ -395,10 +399,20 @@ public class RandomNameGenerator : MonoBehaviour {
 
 	public string GetHumanFirstName(GENDER gender){
 		if (gender == GENDER.MALE) {
-			return humanMaleFirstNames [Random.Range (0, humanMaleFirstNames.Length)];
+            string chosenName = availableHumanMaleNames[Random.Range(0, availableHumanMaleNames.Count)];
+            availableHumanMaleNames.Remove(chosenName);
+            if (availableHumanMaleNames.Count == 0) {
+                availableHumanMaleNames = new List<string>(humanMaleFirstNames);
+            }
+            return chosenName;
 		} else {
-			return humanFemaleFirstNames [Random.Range (0, humanFemaleFirstNames.Length)];
-		}
+            string chosenName = availableHumanFemaleNames[Random.Range(0, availableHumanFemaleNames.Count)];
+            availableHumanFemaleNames.Remove(chosenName);
+            if (availableHumanFemaleNames.Count == 0) {
+                availableHumanFemaleNames = new List<string>(humanFemaleFirstNames);
+            }
+            return chosenName;
+        }
 //		return "";
 	}
 
