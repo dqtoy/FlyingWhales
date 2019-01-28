@@ -61,45 +61,6 @@ MonoBehaviour:
   beastSprite: {fileID: 21300068, guid: be352ea3d46036640bb6df35b7b4dc2b, type: 3}
   banditSprite: {fileID: 21300036, guid: be352ea3d46036640bb6df35b7b4dc2b, type: 3}
   chieftainSprite: {fileID: 21300044, guid: be352ea3d46036640bb6df35b7b4dc2b, type: 3}
-  characterTagIcons:
-  - tag: 0
-    icon: {fileID: 21300000, guid: 9496094b706324a4f923b10d2a96aab6, type: 3}
-  - tag: 1
-    icon: {fileID: 21300000, guid: 9496094b706324a4f923b10d2a96aab6, type: 3}
-  - tag: 2
-    icon: {fileID: 21300000, guid: 9496094b706324a4f923b10d2a96aab6, type: 3}
-  - tag: 3
-    icon: {fileID: 21300000, guid: 9496094b706324a4f923b10d2a96aab6, type: 3}
-  - tag: 4
-    icon: {fileID: 21300000, guid: 9496094b706324a4f923b10d2a96aab6, type: 3}
-  - tag: 5
-    icon: {fileID: 21300000, guid: 9496094b706324a4f923b10d2a96aab6, type: 3}
-  - tag: 6
-    icon: {fileID: 21300000, guid: 9496094b706324a4f923b10d2a96aab6, type: 3}
-  - tag: 7
-    icon: {fileID: 21300000, guid: 9496094b706324a4f923b10d2a96aab6, type: 3}
-  - tag: 8
-    icon: {fileID: 21300000, guid: 9496094b706324a4f923b10d2a96aab6, type: 3}
-  - tag: 9
-    icon: {fileID: 21300000, guid: 9496094b706324a4f923b10d2a96aab6, type: 3}
-  - tag: 10
-    icon: {fileID: 21300000, guid: 9496094b706324a4f923b10d2a96aab6, type: 3}
-  - tag: 11
-    icon: {fileID: 21300000, guid: 9496094b706324a4f923b10d2a96aab6, type: 3}
-  - tag: 12
-    icon: {fileID: 21300000, guid: 9496094b706324a4f923b10d2a96aab6, type: 3}
-  - tag: 13
-    icon: {fileID: 21300000, guid: 9496094b706324a4f923b10d2a96aab6, type: 3}
-  - tag: 14
-    icon: {fileID: 21300000, guid: 9496094b706324a4f923b10d2a96aab6, type: 3}
-  - tag: 15
-    icon: {fileID: 21300000, guid: 9496094b706324a4f923b10d2a96aab6, type: 3}
-  - tag: 16
-    icon: {fileID: 21300000, guid: 9496094b706324a4f923b10d2a96aab6, type: 3}
-  - tag: 17
-    icon: {fileID: 21300000, guid: 9496094b706324a4f923b10d2a96aab6, type: 3}
-  - tag: 18
-    icon: {fileID: 21300000, guid: 9496094b706324a4f923b10d2a96aab6, type: 3}
   _emblemBGs:
   - frame: {fileID: 21300000, guid: 16fe8168036d48c46a8e8c246960dab0, type: 3}
     tint: {fileID: 21300000, guid: b801005bb2163be4a97e39745c0198b0, type: 3}
@@ -225,6 +186,29 @@ MonoBehaviour:
       underAssets: []
       topAssets:
       - {fileID: 21300000, guid: 5f3b0c65fd6d5bf4ab76f1012baef0e8, type: 3}
+  - race: 15
+    maleAssets:
+      gender: 0
+      bodyAssets: []
+      hairAssets:
+      - {fileID: 21300000, guid: 382134c432ef5ae45a265bbd8a818ef3, type: 3}
+      skinAssets:
+      - {fileID: 21300000, guid: 4fbd2f0cc3349e64ca10b2c62b31d436, type: 3}
+      underAssets:
+      - {fileID: 21300000, guid: 0c69a25b637ec0a478a3fc68cee46fa7, type: 3}
+      topAssets:
+      - {fileID: 21300000, guid: ca4d78f2ae86a0e4e9545933e3ff88c5, type: 3}
+    femaleAssets:
+      gender: 1
+      bodyAssets: []
+      hairAssets:
+      - {fileID: 21300000, guid: af4fe0ac9d46a004c8652e9dafb244e0, type: 3}
+      skinAssets:
+      - {fileID: 21300000, guid: 93c5032635a4d894997378e7b1d83ab1, type: 3}
+      underAssets:
+      - {fileID: 21300000, guid: f173f5070bd6ee64880f7aa5aacb4b4a, type: 3}
+      topAssets:
+      - {fileID: 21300000, guid: 8f1ce2d7b00514c42be05b98a6a81338, type: 3}
   hairColors:
   - {r: 0, g: 0, b: 0, a: 1}
   - {r: 0.8396226, g: 0.32872015, b: 0.32872015, a: 1}

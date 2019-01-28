@@ -55,15 +55,15 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     #endregion
 
     void Start() {
-        if (skin != null) {
-            Material mat = Instantiate(CharacterManager.Instance.hsvMaterial);
-            skin.material = mat;
-            //top.material = mat;
-        }
-        if (hair != null) {
-            Material mat = Instantiate(CharacterManager.Instance.hsvMaterial);
-            hair.material = mat;
-        }
+        //if (skin != null) {
+        //    Material mat = Instantiate(CharacterManager.Instance.hsvMaterial);
+        //    skin.material = mat;
+        //    //top.material = mat;
+        //}
+        //if (hair != null) {
+        //    Material mat = Instantiate(CharacterManager.Instance.hsvMaterial);
+        //    hair.material = mat;
+        //}
     }
 
     private void OnEnable() {
