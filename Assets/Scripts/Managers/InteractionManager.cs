@@ -368,6 +368,12 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.TAME_BEAST_ACTION:
                 createdInteraction = new TameBeastAction(interactable);
                 break;
+            case INTERACTION_TYPE.MOVE_TO_HANG_OUT:
+                createdInteraction = new MoveToHangOut(interactable);
+                break;
+            case INTERACTION_TYPE.HANG_OUT_ACTION:
+                createdInteraction = new HangOutAction(interactable);
+                break;
         }
         return createdInteraction;
     }
@@ -822,6 +828,8 @@ public class InteractionManager : MonoBehaviour {
                     }
                 }
                 return false;
+            case INTERACTION_TYPE.MOVE_TO_HANG_OUT:
+                return character.HasRelationshipOfEffect(new List<TRAIT_EFFECT>() { TRAIT_EFFECT.NEUTRAL, TRAIT_EFFECT.POSITIVE });
             default:
                 return true;
         }

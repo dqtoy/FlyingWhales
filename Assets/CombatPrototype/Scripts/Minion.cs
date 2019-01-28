@@ -184,14 +184,14 @@ public class Minion {
     //    PlayerManager.Instance.player.demonicPortal.AddCharacterToLocation(character.currentParty);
     //}
     public void TravelToAssignment(BaseLandmark target, Action action) {
-        _character.currentParty.GoToLocation(target.tileLocation.areaOfTile, PATHFINDING_MODE.PASSABLE, () => action());
+        _character.currentParty.GoToLocation(target.tileLocation.areaOfTile, PATHFINDING_MODE.PASSABLE, null, () => action());
     }
     public void TravelBackFromAssignment(Action action = null) {
         _travelBackAction = action;
         if (_character.currentParty.icon.isTravelling) {
             _character.currentParty.CancelTravel(() => TravelBackFromAssignmentComplete());
         } else {
-            _character.currentParty.GoToLocation(PlayerManager.Instance.player.playerArea, PATHFINDING_MODE.PASSABLE, () => TravelBackFromAssignmentComplete());
+            _character.currentParty.GoToLocation(PlayerManager.Instance.player.playerArea, PATHFINDING_MODE.PASSABLE, null, () => TravelBackFromAssignmentComplete());
         }
     }
     private void TravelBackFromAssignmentComplete() {

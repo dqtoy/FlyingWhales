@@ -707,7 +707,7 @@ public class LandmarkManager : MonoBehaviour {
         //        break;
         //}
         Vector2 defaultPos = area.coreTile.transform.position;
-        defaultPos.y -= 1f;
+        defaultPos.y -= 1.25f;
         return defaultPos;
     }
     #endregion

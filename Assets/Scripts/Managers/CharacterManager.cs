@@ -170,7 +170,7 @@ public class CharacterManager : MonoBehaviour {
         if(homeLocation != null) {
             party.icon.SetPosition(homeLocation.coreTile.transform.position);
             newCharacter.MigrateHomeTo(homeLocation, false);
-            homeLocation.AddCharacterToLocation(party);
+            homeLocation.AddCharacterToLocation(party, newCharacter.homeStructure);
         }
 #endif
         if (generateTraits) {

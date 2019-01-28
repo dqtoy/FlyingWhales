@@ -111,7 +111,7 @@ public class MoveToAbduct : Interaction {
     #endregion
     private void StartMove() {
         AddToDebugLog(_characterInvolved.name + " starts moving towards " + _targetArea.name + "(" + _targetArea.coreTile.landmarkOnTile.name + ") to abduct!");
-        _characterInvolved.currentParty.GoToLocation(_targetArea, PATHFINDING_MODE.NORMAL, () => CreateAbductAction());
+        _characterInvolved.currentParty.GoToLocation(_targetArea, PATHFINDING_MODE.NORMAL, null, () => CreateAbductAction());
     }
     private void CreateAbductAction() {
         AddToDebugLog(_characterInvolved.name + " will now create abduct action");

@@ -102,7 +102,7 @@ public class MoveToHunt : Interaction {
     #endregion
     private void StartMove() {
         AddToDebugLog(_characterInvolved.name + " starts moving towards " + _targetArea.name + "(" + _targetArea.coreTile.landmarkOnTile.name + ") to hunt!");
-        _characterInvolved.currentParty.GoToLocation(_targetArea, PATHFINDING_MODE.NORMAL, () => CreateHuntAction());
+        _characterInvolved.currentParty.GoToLocation(_targetArea, PATHFINDING_MODE.NORMAL, null, () => CreateHuntAction());
     }
     private void CreateHuntAction() {
         AddToDebugLog(_characterInvolved.name + " will now create hunt action");

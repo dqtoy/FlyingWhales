@@ -120,7 +120,7 @@ public class MoveToImproveRelations : Interaction {
     #endregion
 
     private void GoToTargetLocation() {
-        _characterInvolved.ownParty.GoToLocation(targetLocation, PATHFINDING_MODE.NORMAL, () => CreateImproveRelationsEvent());
+        _characterInvolved.ownParty.GoToLocation(targetLocation, PATHFINDING_MODE.NORMAL, null, () => CreateImproveRelationsEvent());
     }
 
     private void CreateImproveRelationsEvent() {

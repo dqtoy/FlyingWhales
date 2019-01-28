@@ -117,7 +117,7 @@ public class MoveToExplore : Interaction {
 
     private void GoToTargetLocation() {
         AddToDebugLog(_characterInvolved.name + " will  no go to " + targetLocation.name + " to explore");
-        _characterInvolved.ownParty.GoToLocation(targetLocation, PATHFINDING_MODE.NORMAL, () => CreateExploreEvent());
+        _characterInvolved.ownParty.GoToLocation(targetLocation, PATHFINDING_MODE.NORMAL, null, () => CreateExploreEvent());
     }
 
     private void CreateExploreEvent() {

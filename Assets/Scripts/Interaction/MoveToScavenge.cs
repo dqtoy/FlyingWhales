@@ -124,7 +124,7 @@ public class MoveToScavenge : Interaction {
 
     private void StartMove() {
         AddToDebugLog(_characterInvolved.name + " starts moving towards " + targetArea.name + "(" + targetArea.coreTile.landmarkOnTile.name + ")");
-        _characterInvolved.ownParty.GoToLocation(targetArea, PATHFINDING_MODE.NORMAL, () => CreateScavengeEvent());
+        _characterInvolved.ownParty.GoToLocation(targetArea, PATHFINDING_MODE.NORMAL, null, () => CreateScavengeEvent());
     }
     private void CreateScavengeEvent() {
         AddToDebugLog(_characterInvolved.name + " will now create scavenge event");

@@ -130,7 +130,7 @@ public class MoveToRaid : Interaction {
 
     private void StartMove() {
         AddToDebugLog(_characterInvolved.name + " starts moving towards " + targetArea.name + "(" + targetArea.coreTile.landmarkOnTile.name + ")");
-        _characterInvolved.ownParty.GoToLocation(targetArea, PATHFINDING_MODE.NORMAL, () => CreateRaidEvent());
+        _characterInvolved.ownParty.GoToLocation(targetArea, PATHFINDING_MODE.NORMAL, null, () => CreateRaidEvent());
     }
     private void CreateRaidEvent() {
         AddToDebugLog(_characterInvolved.name + " will now create raid event");
