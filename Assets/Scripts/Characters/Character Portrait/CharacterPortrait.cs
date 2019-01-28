@@ -41,6 +41,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     [Header("Other")]
     [SerializeField] private Image wholeImage;
     [SerializeField] private FactionEmblem factionEmblem;
+    [SerializeField] private GameObject hoverObj;
 
     private Vector2 defaultPos = new Vector2(11.7f, -3f);
     private Vector2 defaultSize = new Vector2(97f, 97f);
@@ -197,6 +198,9 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         if (_character != null) {
             UIManager.Instance.ShowCharacterInfo(_character);
         }
+    }
+    public void SetHoverHighlightState(bool state) {
+        hoverObj.SetActive(state);
     }
     #endregion
 

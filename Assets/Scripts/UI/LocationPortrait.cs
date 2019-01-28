@@ -9,6 +9,7 @@ public class LocationPortrait : MonoBehaviour, IPointerClickHandler {
     public Area area { get; private set; }
 
     [SerializeField] private Image portrait;
+    [SerializeField] private GameObject hoverObj;
 
     public void OnPointerClick(PointerEventData eventData) {
         if (area != null) {
@@ -19,6 +20,10 @@ public class LocationPortrait : MonoBehaviour, IPointerClickHandler {
     public void SetLocation(Area area) {
         this.area = area;
         portrait.sprite = LandmarkManager.Instance.locationPortraits[area.name];
+    }
+
+    public void SetHoverHighlightState(bool state) {
+        hoverObj.SetActive(state);
     }
 
     public void ShowLocationInfo() {
