@@ -762,7 +762,8 @@ public class Area {
             {INTERACTION_TYPE.MOVE_TO_VISIT, 50},
             {INTERACTION_TYPE.MOVE_TO_LOOT, 50},
             {INTERACTION_TYPE.MOVE_TO_TAME_BEAST, 50},
-            {INTERACTION_TYPE.MOVE_TO_HANG_OUT, 50000},
+            {INTERACTION_TYPE.MOVE_TO_HANG_OUT, 50},
+            //{INTERACTION_TYPE.MOVE_TO_CHARM_FACTION, 5000},
             //{INTERACTION_TYPE.MOVE_TO_ASSASSINATE_FACTION, 5000},
             //{INTERACTION_TYPE.MOVE_TO_RECRUIT_FACTION, 5000},
             //{INTERACTION_TYPE.MOVE_TO_STEAL_FACTION, 5000},
@@ -1633,6 +1634,9 @@ public class Area {
             }
         }
         return structures;
+    }
+    public bool HasStructure(STRUCTURE_TYPE type) {
+        return structures.ContainsKey(type);
     }
     #endregion
 }
