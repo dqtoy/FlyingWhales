@@ -299,8 +299,8 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.USE_ITEM_ON_LOCATION:
                 createdInteraction = new UseItemOnLocation(interactable);
                 break;
-            case INTERACTION_TYPE.EAT_ABDUCTED:
-                createdInteraction = new EatAbducted(interactable);
+            case INTERACTION_TYPE.EAT_DEFENSELESS:
+                createdInteraction = new EatDefenseless(interactable);
                 break;
             case INTERACTION_TYPE.TORTURE_ACTION:
                 createdInteraction = new TortureAction(interactable);
@@ -712,15 +712,16 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.FOUND_ZIRANNA:
                 return character.characterClass.className == "Necromancer" && character.specificLocation.owner == null
                     && character.specificLocation.possibleOccupants.Contains(character.race) && !FactionManager.Instance.GetFactionBasedOnName("Ziranna").isActive;
-            case INTERACTION_TYPE.EAT_ABDUCTED:
-                if (character.race == RACE.GOBLIN || character.race == RACE.SPIDER || character.race == RACE.WOLF) {
+            case INTERACTION_TYPE.EAT_DEFENSELESS:
+                //if (character.race == RACE.GOBLIN || character.race == RACE.SPIDER || character.race == RACE.WOLF) { //Delete this checker?
                     for (int i = 0; i < character.specificLocation.charactersAtLocation.Count; i++) {
                         Character characterAtLocation = character.specificLocation.charactersAtLocation[i];
-                        if (characterAtLocation.id != character.id && !characterAtLocation.currentParty.icon.isTravelling && characterAtLocation.IsInOwnParty() && characterAtLocation.GetTrait("Abducted") != null) {
+                        if (characterAtLocation.id != character.id && !characterAtLocation.currentParty.icon.isTravelling && characterAtLocation.IsInOwnParty() 
+                        && characterAtLocation.GetTraitOr("Abducted", "Hibernating") != null ) {
                             return true;
                         }
                     }
-                }
+                //}
                 return false;
             case INTERACTION_TYPE.TORTURE_ACTION:
                 if (character.race == RACE.GOBLIN || character.race == RACE.HUMANS || character.race == RACE.SKELETON) {

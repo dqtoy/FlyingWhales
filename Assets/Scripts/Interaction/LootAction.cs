@@ -9,7 +9,7 @@ public class LootAction : Interaction {
 
     public LootAction(Area interactable): base(interactable, INTERACTION_TYPE.LOOT_ACTION, 0) {
         _name = "Loot Action";
-        _category = INTERACTION_CATEGORY.INVENTORY;
+        _categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.INVENTORY };
         _alignment = INTERACTION_ALIGNMENT.EVIL;
     }
 

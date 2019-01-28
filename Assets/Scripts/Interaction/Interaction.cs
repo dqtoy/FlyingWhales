@@ -10,7 +10,7 @@ public class Interaction {
     protected int _timeOutTicks;
     protected GameDate _timeDate;
     protected INTERACTION_TYPE _type;
-    protected INTERACTION_CATEGORY _category;
+    protected INTERACTION_CATEGORY[] _categories;
     protected INTERACTION_ALIGNMENT _alignment;
     protected Area _interactable;
     protected Dictionary<string, InteractionState> _states;
@@ -43,8 +43,8 @@ public class Interaction {
     public INTERACTION_TYPE type {
         get { return _type; }
     }
-    public INTERACTION_CATEGORY category {
-        get { return _category; }
+    public INTERACTION_CATEGORY[] categories {
+        get { return _categories; }
     }
     public INTERACTION_ALIGNMENT alignment {
         get { return _alignment; }
