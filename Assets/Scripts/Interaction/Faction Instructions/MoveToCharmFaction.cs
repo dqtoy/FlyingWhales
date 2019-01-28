@@ -8,7 +8,11 @@ public class MoveToCharmFaction : Interaction {
     private const string Character_Charm_Continues = "Character Charm Continues";
     private const string Do_Nothing = "Do Nothing";
 
-    public Area targetLocation { get; private set; }
+    private Area _targetArea;
+
+    public override Area targetArea {
+        get { return _targetArea; }
+    }
 
     public MoveToCharmFaction(Area interactable) 
         : base(interactable, INTERACTION_TYPE.MOVE_TO_CHARM_FACTION, 0) {
@@ -25,10 +29,10 @@ public class MoveToCharmFaction : Interaction {
         InteractionState characterCharmContinues = new InteractionState(Character_Charm_Continues, this);
         InteractionState doNothing = new InteractionState(Do_Nothing, this);
 
-        targetLocation = GetTargetLocation(_characterInvolved);
+        _targetArea = GetTargetLocation(_characterInvolved);
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
-        startStateDescriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1);
+        startStateDescriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_1);
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 
         CreateActionOptions(startState);
@@ -72,6 +76,9 @@ public class MoveToCharmFaction : Interaction {
         }
         return base.CanInteractionBeDoneBy(character);
     }
+    public override void DoActionUponMoveToArrival() {
+        CreateEvent();
+    }
     #endregion
 
     #region Option Effects
@@ -102,28 +109,24 @@ public class MoveToCharmFaction : Interaction {
         investigatorCharacter.LevelUp();
         MinionSuccess();
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2);
+            state.descriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2);
         }
-        state.AddLogFiller(new LogFiller(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2));
+        state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2));
     }
     private void CharacterCharmContinuesRewardEffect(InteractionState state) {
-        GoToTargetLocation();
+        StartMoveToAction();
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2);
+            state.descriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2);
         }
-        state.AddLogFiller(new LogFiller(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2));
+        state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2));
     }
     private void DoNothingRewardEffect(InteractionState state) {
-        GoToTargetLocation();
-        state.AddLogFiller(new LogFiller(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2));
+        StartMoveToAction();
+        state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2));
     }
     #endregion
 
-    private void GoToTargetLocation() {
-        _characterInvolved.ownParty.GoToLocation(targetLocation, PATHFINDING_MODE.NORMAL, null, () => CreateCharmEvent());
-    }
-
-    private void CreateCharmEvent() {
+    private void CreateEvent() {
         Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.CHARM_ACTION_FACTION, _characterInvolved.specificLocation);
         _characterInvolved.SetForcedInteraction(interaction);
     }

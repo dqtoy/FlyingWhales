@@ -5,7 +5,11 @@ using UnityEngine;
 public class MoveToRecruitFaction : Interaction {
 
     private Character _targetCharacter;
-    private Area targetLocation;
+    private Area _targetArea;
+
+    public override Area targetArea {
+        get { return _targetArea; }
+    }
 
     private const string Character_Recruit_Cancelled = "Character Recruit Cancelled";
     private const string Character_Recruit_Continues = "Character Recruit Continues";
@@ -33,9 +37,9 @@ public class MoveToRecruitFaction : Interaction {
         InteractionState doNothing = new InteractionState(Do_Nothing, this);
 
         if (_targetCharacter != null) {
-            targetLocation = _targetCharacter.specificLocation;
+            _targetArea = _targetCharacter.specificLocation;
         } else {
-            targetLocation = GetTargetLocation(_characterInvolved);
+            _targetArea = GetTargetLocation(_characterInvolved);
         }
         //if (targetCharacter == null) {
         //    targetCharacter = GetTargetCharacter(_characterInvolved);
@@ -44,7 +48,7 @@ public class MoveToRecruitFaction : Interaction {
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
         startStateDescriptionLog.AddToFillers(targetCharacter.faction, targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_1);
-        startStateDescriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1);
+        startStateDescriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_1);
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 
         CreateActionOptions(startState);
@@ -88,6 +92,9 @@ public class MoveToRecruitFaction : Interaction {
         }
         return base.CanInteractionBeDoneBy(character);
     }
+    public override void DoActionUponMoveToArrival() {
+        CreateEvent();
+    }
     #endregion
 
     #region Action Option Effects
@@ -119,23 +126,20 @@ public class MoveToRecruitFaction : Interaction {
         MinionSuccess();
     }
     private void CharacterRecruitContinuesRewardEffect(InteractionState state) {
-        GoToTargetLocation();
+        StartMoveToAction();
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2);
+            state.descriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2);
         }
-        state.AddLogFiller(new LogFiller(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2));
+        state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2));
     }
     private void DoNothingExpandRewardEffect(InteractionState state) {
-        GoToTargetLocation();
-        state.AddLogFiller(new LogFiller(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2));
+        StartMoveToAction();
+        state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2));
     }
     #endregion
 
-    private void GoToTargetLocation() {
-        _characterInvolved.ownParty.GoToLocation(targetLocation, PATHFINDING_MODE.NORMAL, null, () => CreateRecruitEvent());
-    }
-    private void CreateRecruitEvent() {
-        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.RECRUIT_ACTION_FACTION, targetLocation);
+    private void CreateEvent() {
+        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.RECRUIT_ACTION_FACTION, _targetArea);
         (interaction as RecruitActionFaction).SetTargetCharacter(_targetCharacter);
         //interaction.SetCanInteractionBeDoneAction(() => IsRecruitActionStillValid(interaction as RecruitAction));
         _characterInvolved.SetForcedInteraction(interaction);

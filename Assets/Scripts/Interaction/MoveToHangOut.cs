@@ -8,7 +8,12 @@ public class MoveToHangOut : Interaction {
     private const string Hang_Out_Continues = "Hang Out Continues";
     private const string Do_Nothing = "Do Nothing";
 
-    public Area targetLocation { get; private set; }
+    private Area _targetArea;
+
+    public override Area targetArea {
+        get { return _targetArea; }
+    }
+
     public Character targetCharacter { get; private set; }
 
     public MoveToHangOut(Area interactable) 
@@ -25,10 +30,10 @@ public class MoveToHangOut : Interaction {
         InteractionState doNothing = new InteractionState(Do_Nothing, this);
 
         targetCharacter = GetTargetCharacter(_characterInvolved);
-        targetLocation = targetCharacter.specificLocation;
+        _targetArea = targetCharacter.specificLocation;
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
-        startStateDescriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1);
+        startStateDescriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_1);
         startStateDescriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 
@@ -73,6 +78,9 @@ public class MoveToHangOut : Interaction {
         }
         return base.CanInteractionBeDoneBy(character);
     }
+    public override void DoActionUponMoveToArrival() {
+        CreateEvent();
+    }
     #endregion
 
     #region Option Effects
@@ -104,31 +112,27 @@ public class MoveToHangOut : Interaction {
         MinionSuccess();
     }
     private void HangOutContinuesRewardEffect(InteractionState state) {
-        GoToTargetLocation();
+        StartMoveToAction();
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2);
+            state.descriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2);
             state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         }
-        state.AddLogFiller(new LogFiller(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2));
+        state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2));
         state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     private void DoNothingRewardEffect(InteractionState state) {
-        GoToTargetLocation();
+        StartMoveToAction();
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2);
+            state.descriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2);
             state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         }
-        state.AddLogFiller(new LogFiller(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2));
+        state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2));
         state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     #endregion
 
-    private void GoToTargetLocation() {
-        _characterInvolved.ownParty.GoToLocation(targetLocation, PATHFINDING_MODE.NORMAL, targetCharacter.currentStructure, () => CreateEvent());
-    }
-
     private void CreateEvent() {
-        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.HANG_OUT_ACTION, targetLocation);
+        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.HANG_OUT_ACTION, _targetArea);
         (interaction as HangOutAction).SetTargetCharacter(targetCharacter);
         _characterInvolved.SetForcedInteraction(interaction);
     }

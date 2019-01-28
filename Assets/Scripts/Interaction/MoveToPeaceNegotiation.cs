@@ -6,7 +6,11 @@ public class MoveToPeaceNegotiation : Interaction {
 
     private Faction sourceFaction;
     private Faction targetFaction;
-    private Area targetLocation;
+    private Area _targetArea;
+
+    public override Area targetArea {
+        get { return _targetArea; }
+    }
 
     private const string Diplomat_Killed_No_Witness = "Diplomat Killed No Witness";
     private const string Diplomat_Killed_Witnessed = "Diplomat Killed Witnessed";
@@ -34,7 +38,7 @@ public class MoveToPeaceNegotiation : Interaction {
 
         sourceFaction = _characterInvolved.faction;
         targetFaction = GetTargetFaction();
-        targetLocation = targetFaction.ownedAreas[Random.Range(0, targetFaction.ownedAreas.Count)];
+        _targetArea = targetFaction.ownedAreas[Random.Range(0, targetFaction.ownedAreas.Count)];
         //**Text Description**: [Character Name] is about to leave for [Location Name 1] to scavenge for supplies.
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
         startStateDescriptionLog.AddToFillers(targetFaction, targetFaction.name, LOG_IDENTIFIER.FACTION_1);
@@ -92,6 +96,9 @@ public class MoveToPeaceNegotiation : Interaction {
             state.AddActionOption(doNothing);
             state.SetDefaultOption(doNothing);
         }
+    }
+    public override void DoActionUponMoveToArrival() {
+        CreateEvent();
     }
     #endregion
 
@@ -161,18 +168,18 @@ public class MoveToPeaceNegotiation : Interaction {
     }
     private void DiplomatSurvivesMinionFleesRewardEffect(InteractionState state) {
         //**Mechanic**: Diplomat travels to [Location] for Peace Negotiation, Player Favor Count -2 on Diplomat's Faction
-        GoToTargetAndStartPeaceNegotiation();
+        StartMoveToAction();
         _characterInvolved.faction.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, -2);
 
-        state.AddLogFiller(new LogFiller(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2));
+        state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2));
         state.AddLogFiller(new LogFiller(targetFaction, targetFaction.name, LOG_IDENTIFIER.FACTION_2));
     }
     private void DiplomatSurvivesMinionDiesRewardEffect(InteractionState state) {
         //**Mechanic**: Diplomat travels to [Location] for Peace Negotiation, Player Favor Count -2 on Diplomat's Faction
-        GoToTargetAndStartPeaceNegotiation();
+        StartMoveToAction();
         _characterInvolved.faction.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, -2);
 
-        state.AddLogFiller(new LogFiller(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2));
+        state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2));
         state.AddLogFiller(new LogFiller(targetFaction, targetFaction.name, LOG_IDENTIFIER.FACTION_2));
     }
     private void FactionLeaderPursuadedRewardEffect(InteractionState state) {
@@ -181,22 +188,23 @@ public class MoveToPeaceNegotiation : Interaction {
     }
     private void FactionLeaderRejectedRewardEffect(InteractionState state) {
         //**Mechanic**: Diplomat travels to [Location] for Peace Negotiation
-        GoToTargetAndStartPeaceNegotiation();
+        StartMoveToAction();
 
-        state.AddLogFiller(new LogFiller(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2));
+        state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2));
         state.AddLogFiller(new LogFiller(targetFaction, targetFaction.name, LOG_IDENTIFIER.FACTION_2));
     }
     private void DoNothingRewardEffect(InteractionState state) {
         //**Mechanic**: Diplomat travels to [Location] for Peace Negotiation
-        GoToTargetAndStartPeaceNegotiation();
+        StartMoveToAction();
 
-        state.AddLogFiller(new LogFiller(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2));
+        state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2));
         state.AddLogFiller(new LogFiller(targetFaction, targetFaction.name, LOG_IDENTIFIER.FACTION_2));
     }
     #endregion
 
-    private void GoToTargetAndStartPeaceNegotiation() {
-        _characterInvolved.GoToAreaToMakePeaceWithFaction(targetLocation);
+    private void CreateEvent() {
+        Interaction peaceInteraction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.CHARACTER_PEACE_NEGOTIATION, targetArea);
+        _characterInvolved.SetForcedInteraction(peaceInteraction);
     }
 
     private Faction GetTargetFaction() {

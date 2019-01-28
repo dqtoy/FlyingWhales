@@ -8,7 +8,11 @@ public class MoveToImproveRelations : Interaction {
     private const string Improve_Relations_Proceeds = "Improve Relations Proceeds";
     private const string Normal_Improve_Relations = "Normal Improve Relations";
 
-    public Area targetLocation { get; private set; }
+    private Area _targetArea;
+
+    public override Area targetArea {
+        get { return _targetArea; }
+    }
     private Faction targetFaction;
 
     public MoveToImproveRelations(Area interactable) 
@@ -24,12 +28,12 @@ public class MoveToImproveRelations : Interaction {
         InteractionState improveRelationsProceeds = new InteractionState(Improve_Relations_Proceeds, this);
         InteractionState normalImproveRelations = new InteractionState(Normal_Improve_Relations, this);
 
-        targetLocation = GetTargetLocation();
-        targetFaction = targetLocation.owner;
+        _targetArea = GetTargetLocation();
+        targetFaction = _targetArea.owner;
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
-        startStateDescriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1);
-        startStateDescriptionLog.AddToFillers(targetLocation.owner, targetLocation.owner.name, LOG_IDENTIFIER.FACTION_1);
+        startStateDescriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_1);
+        startStateDescriptionLog.AddToFillers(_targetArea.owner, _targetArea.owner.name, LOG_IDENTIFIER.FACTION_1);
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 
         CreateActionOptions(startState);
@@ -67,6 +71,9 @@ public class MoveToImproveRelations : Interaction {
             state.SetDefaultOption(doNothing);
         }
     }
+    public override void DoActionUponMoveToArrival() {
+        CreateEvent();
+    }
     #endregion
 
     #region Option Effects
@@ -99,38 +106,34 @@ public class MoveToImproveRelations : Interaction {
     }
     private void ImproveRelationsProceedsRewardEffect(InteractionState state) {
         //**Mechanics**: Character travels to the Location to start an Expansion event.
-        GoToTargetLocation();
+        StartMoveToAction();
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1);
-            state.descriptionLog.AddToFillers(targetLocation.owner, targetLocation.owner.name, LOG_IDENTIFIER.FACTION_1);
+            state.descriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_1);
+            state.descriptionLog.AddToFillers(_targetArea.owner, _targetArea.owner.name, LOG_IDENTIFIER.FACTION_1);
         }
-        state.AddLogFiller(new LogFiller(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1));
-        state.AddLogFiller(new LogFiller(targetLocation.owner, targetLocation.owner.name, LOG_IDENTIFIER.FACTION_1));
+        state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_1));
+        state.AddLogFiller(new LogFiller(_targetArea.owner, _targetArea.owner.name, LOG_IDENTIFIER.FACTION_1));
     }
     private void NormalImproveRelationsRewardEffect(InteractionState state) {
         //**Mechanics**: Character travels to the Location to start an Expansion event.
-        GoToTargetLocation();
+        StartMoveToAction();
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1);
-            state.descriptionLog.AddToFillers(targetLocation.owner, targetLocation.owner.name, LOG_IDENTIFIER.FACTION_1);
+            state.descriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_1);
+            state.descriptionLog.AddToFillers(_targetArea.owner, _targetArea.owner.name, LOG_IDENTIFIER.FACTION_1);
         }
-        state.AddLogFiller(new LogFiller(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1));
-        state.AddLogFiller(new LogFiller(targetLocation.owner, targetLocation.owner.name, LOG_IDENTIFIER.FACTION_1));
+        state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_1));
+        state.AddLogFiller(new LogFiller(_targetArea.owner, _targetArea.owner.name, LOG_IDENTIFIER.FACTION_1));
     }
     #endregion
 
-    private void GoToTargetLocation() {
-        _characterInvolved.ownParty.GoToLocation(targetLocation, PATHFINDING_MODE.NORMAL, null, () => CreateImproveRelationsEvent());
-    }
-
-    private void CreateImproveRelationsEvent() {
+    private void CreateEvent() {
         Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.IMPROVE_RELATIONS_EVENT, _characterInvolved.specificLocation);
         (interaction as ImproveRelationsEvent).SetTargetFaction(targetFaction);
         interaction.SetCanInteractionBeDoneAction(IsImproveRelationsValid);
         _characterInvolved.SetForcedInteraction(interaction);
     }
     private bool IsImproveRelationsValid() {
-        return targetLocation.owner != null && targetLocation.owner.id == targetFaction.id;
+        return _targetArea.owner != null && _targetArea.owner.id == targetFaction.id;
     }
 
     private Area GetTargetLocation() {

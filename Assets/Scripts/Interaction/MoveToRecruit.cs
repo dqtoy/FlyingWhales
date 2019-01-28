@@ -5,7 +5,11 @@ using UnityEngine;
 public class MoveToRecruit : Interaction {
 
     private Character _targetCharacter;
-    private Area targetLocation;
+    private Area _targetArea;
+
+    public override Area targetArea {
+        get { return _targetArea; }
+    }
 
     private const string Character_Recruit_Cancelled = "Character Recruit Cancelled";
     private const string Character_Recruit_Continues = "Character Recruit Continues";
@@ -33,9 +37,9 @@ public class MoveToRecruit : Interaction {
         InteractionState doNothing = new InteractionState(Do_Nothing, this);
 
         if (_targetCharacter != null) {
-            targetLocation = _targetCharacter.specificLocation;
+            _targetArea = _targetCharacter.specificLocation;
         } else {
-            targetLocation = GetTargetLocation(_characterInvolved);
+            _targetArea = GetTargetLocation(_characterInvolved);
         }
         //if (targetCharacter == null) {
         //    targetCharacter = GetTargetCharacter(_characterInvolved);
@@ -44,7 +48,7 @@ public class MoveToRecruit : Interaction {
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
         //startStateDescriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        startStateDescriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1);
+        startStateDescriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_1);
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 
         CreateActionOptions(startState);
@@ -88,6 +92,9 @@ public class MoveToRecruit : Interaction {
         }
         return base.CanInteractionBeDoneBy(character);
     }
+    public override void DoActionUponMoveToArrival() {
+        CreateEvent();
+    }
     #endregion
 
     #region Action Option Effects
@@ -118,45 +125,28 @@ public class MoveToRecruit : Interaction {
         investigatorCharacter.LevelUp();
         MinionSuccess();
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1);
+            state.descriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_1);
         }
     }
     private void CharacterRecruitContinuesRewardEffect(InteractionState state) {
-        GoToTargetLocation();
+        StartMoveToAction();
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1);
+            state.descriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_1);
         }
-        state.AddLogFiller(new LogFiller(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1));
+        state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_1));
     }
     private void DoNothingExpandRewardEffect(InteractionState state) {
-        GoToTargetLocation();
-        state.AddLogFiller(new LogFiller(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1));
+        StartMoveToAction();
+        state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_1));
     }
     #endregion
 
-    private void GoToTargetLocation() {
-        _characterInvolved.ownParty.GoToLocation(targetLocation, PATHFINDING_MODE.NORMAL, null, () => CreateRecruitEvent());
-    }
-    private void CreateRecruitEvent() {
-        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.RECRUIT_ACTION, targetLocation);
+    private void CreateEvent() {
+        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.RECRUIT_ACTION, _targetArea);
         (interaction as RecruitAction).SetTargetCharacter(_targetCharacter);
         //interaction.SetCanInteractionBeDoneAction(() => IsRecruitActionStillValid(interaction as RecruitAction));
         _characterInvolved.SetForcedInteraction(interaction);
     }
-    //private bool IsRecruitActionStillValid(RecruitAction recruitAction) {
-    //    /*
-    //     If the recruit was induced, the action should already have a target character,
-    //     check if that character is still at that location
-    //     */
-    //    if (recruitAction.targetCharacter != null) {
-    //        return recruitAction.targetCharacter.specificLocation.id == targetLocation.id;
-    //    }
-    //    return true;
-    //    /* It will no longer be valid if no recruitable character is available in the location. 
-    //     * It will also no longer be valid if the recruiter's home area's Residents Capacity is already full.
-    //     */
-    //    //return !_characterInvolved.homeLandmark.tileLocation.areaOfTile.IsResidentsFull() && recruitAction.GetTargetCharacter(_characterInvolved) != null;
-    //}
 
     private Area GetTargetLocation(Character characterInvolved) {
         /*
