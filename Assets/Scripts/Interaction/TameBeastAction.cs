@@ -62,8 +62,10 @@ public class TameBeastAction : Interaction {
         }
     }
     public override bool CanInteractionBeDoneBy(Character character) {
-        _targetBeast = GetTargetCharacter(character);
-        if(_targetBeast == null || character.homeArea.IsResidentsFull()) {
+        if(_targetBeast == null) {
+            _targetBeast = GetTargetCharacter(character);
+        }
+        if (_targetBeast == null || character.homeArea.IsResidentsFull()) {
             return false;
         }
         return base.CanInteractionBeDoneBy(character);

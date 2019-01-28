@@ -73,8 +73,10 @@ SpriteAtlas:
   - {fileID: 21300000, guid: d1f9f7e38553ec540a9f3764ee2a7f48, type: 3}
   - {fileID: 21300000, guid: 76281f5e595b10341a1cfcf28ada49f0, type: 3}
   - {fileID: 21300000, guid: ee7d36392ffa72e4a80cbac7eeae27c9, type: 3}
+  - {fileID: 21300000, guid: c665530a423cc56469b24f87caf088c4, type: 3}
   - {fileID: 21300000, guid: 070b902b466eacd4a873738cd3ee49c5, type: 3}
   - {fileID: 21300000, guid: 5a073390453fa67419b175a6bf687faf, type: 3}
+  - {fileID: 21300000, guid: 499d9af538f3d184083e7af3b8e7c5d8, type: 3}
   - {fileID: 21300000, guid: fea919a7ae8173840b98caae1ebd236e, type: 3}
   - {fileID: 21300000, guid: cd165ebab941dbe43a6cf5f753ca8fd0, type: 3}
   - {fileID: 21300000, guid: d0bab72205ba05c46a58108cb567e4ed, type: 3}
@@ -84,13 +86,16 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 76777303e5e4de04ca96fb3200b75bf9, type: 3}
   - {fileID: 21300000, guid: 5f3b0c65fd6d5bf4ab76f1012baef0e8, type: 3}
   - {fileID: 21300000, guid: 12f193c25cad8824a978c1a8d9d8377f, type: 3}
+  - {fileID: 21300000, guid: 1fe3bc213bd83ec4f8b6de358b5587e2, type: 3}
   - {fileID: 21300000, guid: 9edaa4d18883c494f810aad0f7abdc18, type: 3}
   - {fileID: 21300000, guid: 8f1ce2d7b00514c42be05b98a6a81338, type: 3}
+  - {fileID: 21300000, guid: 4438a6a8fbc31674c88a1c654d66077b, type: 3}
   - {fileID: 21300000, guid: d1e293e4ab9575f45bfc675399f0f8ca, type: 3}
   - {fileID: 21300000, guid: b76a9ce8dfe1a854a8a16b119d7ff9bd, type: 3}
   - {fileID: 21300000, guid: ca4d78f2ae86a0e4e9545933e3ff88c5, type: 3}
   - {fileID: 21300000, guid: 65a2870c390ea9940b1625a498e9a58f, type: 3}
   - {fileID: 21300000, guid: 04ef7d1d8eae8034ea5fca1b1cfaf3ea, type: 3}
+  - {fileID: 21300000, guid: b4d38c4e7b7e85643ac80ee9a383f551, type: 3}
   - {fileID: 21300000, guid: 070434e37543e004d98c623ba8080920, type: 3}
   - {fileID: 21300000, guid: 94079e3476351c243b5ce1bc5dfdd56c, type: 3}
   - {fileID: 21300000, guid: 1dd0dcfe5d71bd646928f15ca52f2808, type: 3}
@@ -107,15 +112,19 @@ SpriteAtlas:
   - {fileID: 21300000, guid: c18f5d6f944cfbc48819debe987cdaba, type: 3}
   - {fileID: 21300000, guid: 8f57444b93359594096b1dd546244094, type: 3}
   - {fileID: 21300000, guid: f261d9fe21365c246a0f3849c9c58ca8, type: 3}
+  - {fileID: 21300000, guid: 663c69594f41ec347b80051931b71bab, type: 3}
   - {fileID: 21300000, guid: e21d66cd6130a3644bd64ed60f0b6485, type: 3}
   - {fileID: 21300000, guid: b1facc086f831d64990f9d4056411274, type: 3}
   - {fileID: 21300000, guid: 874a241692c0c6248bc7c9896a470fcf, type: 3}
   - {fileID: 21300000, guid: 383ae1de09e8119428f08e6cb2fb1bc5, type: 3}
   - {fileID: 21300000, guid: 6f75ba663ebe87c429d4a71a991f723b, type: 3}
+  - {fileID: 21300000, guid: e22a1e1690c24d047a90b7507fd7a924, type: 3}
   - {fileID: 21300000, guid: 382134c432ef5ae45a265bbd8a818ef3, type: 3}
   - {fileID: 21300000, guid: 1e71f2f70fb3f1b479d510c9b85270f6, type: 3}
+  - {fileID: 21300000, guid: a4dea95433e4f244cb404789befbfb34, type: 3}
   - {fileID: 21300000, guid: af4fe0ac9d46a004c8652e9dafb244e0, type: 3}
   - {fileID: 21300000, guid: 7258784b1956cd94e8f33a62a2f4f135, type: 3}
+  - {fileID: 21300000, guid: 784360b86d0c0dd44a67c481c86c3a14, type: 3}
   - {fileID: 21300000, guid: 3ea140c9cdcc60b46a257c943a010d0c, type: 3}
   - {fileID: 21300000, guid: a7831b868d3b7c14b85f09a75e1b43f0, type: 3}
   - {fileID: 21300000, guid: 817355204bfba5f42a48d97c6b159ccf, type: 3}
@@ -455,8 +464,10 @@ SpriteAtlas:
   - goblin_m_skin
   - portrait_container_pink_default
   - elf_f_hair
+  - skeleton
   - goblin_f_skin
   - goblin_m_top
+  - spider_top
   - elf_m_skin
   - elf_m_skin
   - demon_sloth_portrait
@@ -466,13 +477,16 @@ SpriteAtlas:
   - portrait_container_yellow_default
   - goblin_f_top
   - demon_envy_portrait
+  - dragon_top
   - king
   - faery_f_top
+  - wolf_top
   - elf_m_clothes
   - elf_m_clothes
   - faery_m_top
   - elf_f_under
   - demon_pride_portrait
+  - wolf_skin
   - location_redheart_portrait
   - portrait_container_purple_default
   - goblin_m_hair
@@ -489,15 +503,19 @@ SpriteAtlas:
   - portrait_container_gray_locked
   - location_cardell_portrait
   - demon_greed_portrait
+  - dragon_skin
   - human_f_skin
   - portrait_container_blue_default
   - goblin_f_hair
   - location_blisteringhollow_portrait
   - location_pitthize_portrait
+  - spider_skin
   - faery_m_hair
   - necromancer
+  - wolf_under
   - faery_f_hair
   - elf_f_top
+  - witch
   - location_gloomhollow_portrait
   - elf_f_clothes
   - elf_m_top

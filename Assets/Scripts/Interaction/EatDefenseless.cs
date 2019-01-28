@@ -72,7 +72,9 @@ public class EatDefenseless : Interaction {
         }
     }
     public override bool CanInteractionBeDoneBy(Character character) {
-        SetTargetCharacter(GetTargetCharacter(character));
+        if(_targetCharacter == null) {
+            SetTargetCharacter(GetTargetCharacter(character));
+        }
         if (_targetCharacter == null) {
             return false;
         }

@@ -64,7 +64,9 @@ public class AbductAction : Interaction {
         }
     }
     public override bool CanInteractionBeDoneBy(Character character) {
-        SetTargetCharacter(GetTargetCharacter(character));
+        if(targetCharacter == null) {
+            SetTargetCharacter(GetTargetCharacter(character));
+        }
         if (targetCharacter == null || character.homeArea.IsResidentsFull()) {
             return false;
         }
