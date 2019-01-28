@@ -125,7 +125,7 @@ public class Character : ICharacter, ILeader, IInteractable {
             if (Utilities.IsRaceBeast(race)) {
                 return Utilities.NormalizeString(race.ToString());
             }
-            return Utilities.NormalizeString(race.ToString()) + " " + characterClass.className;
+            return Utilities.GetNormalizedRaceAdjective(race) + " " + characterClass.className;
         }
     }
     public int id {
