@@ -17,6 +17,8 @@ public class HuntAction : Interaction {
 
     public HuntAction(Area interactable) : base(interactable, INTERACTION_TYPE.HUNT_ACTION, 0) {
         _name = "Hunt Action";
+        //_categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.PERSONAL, INTERACTION_CATEGORY.OFFENSE };
+        //_alignment = INTERACTION_ALIGNMENT.NEUTRAL;
     }
 
     #region Override

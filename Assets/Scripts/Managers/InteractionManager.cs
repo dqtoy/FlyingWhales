@@ -643,30 +643,30 @@ public class InteractionManager : MonoBehaviour {
                 }
                 return false;
             case INTERACTION_TYPE.MOVE_TO_ABDUCT:
-                if (character.race == RACE.GOBLIN || character.race == RACE.SPIDER) {
+                //if (character.race == RACE.GOBLIN || character.race == RACE.SPIDER) {
                     if (!character.homeArea.IsResidentsFull()) {
-                        for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
-                            Area currArea = LandmarkManager.Instance.allAreas[i];
-                            if (currArea.owner == null || currArea.owner.id != PlayerManager.Instance.player.playerFaction.id && currArea.owner.id != character.faction.id) {
-                                for (int j = 0; j < currArea.charactersAtLocation.Count; j++) {
-                                    Character characterAtLocation = currArea.charactersAtLocation[j];
-                                    if (characterAtLocation.id != character.id && characterAtLocation.IsInOwnParty() && !characterAtLocation.currentParty.icon.isTravelling
-                                        && (characterAtLocation.isFactionless || characterAtLocation.faction.id != character.faction.id)) {
-                                        return true;
+                            for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
+                                Area currArea = LandmarkManager.Instance.allAreas[i];
+                                if (currArea.owner == null || currArea.owner.id != PlayerManager.Instance.player.playerFaction.id && currArea.owner.id != character.faction.id) {
+                                    for (int j = 0; j < currArea.charactersAtLocation.Count; j++) {
+                                        Character characterAtLocation = currArea.charactersAtLocation[j];
+                                        if (characterAtLocation.id != character.id && characterAtLocation.IsInOwnParty() && !characterAtLocation.currentParty.icon.isTravelling
+                                            && (characterAtLocation.isFactionless || characterAtLocation.faction.id != character.faction.id)) {
+                                            return true;
+                                        }
                                     }
                                 }
                             }
+                            //for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+                            //    Character currCharacter = CharacterManager.Instance.allCharacters[i];
+                            //    if (currCharacter.id != character.id && !currCharacter.isDead && !currCharacter.currentParty.icon.isTravelling && currCharacter.IsInOwnParty()) {
+                            //        if (currCharacter.isFactionless || currCharacter.faction.id != character.faction.id) {
+                            //            return true;
+                            //        }
+                            //    }
+                            //}
                         }
-                        //for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
-                        //    Character currCharacter = CharacterManager.Instance.allCharacters[i];
-                        //    if (currCharacter.id != character.id && !currCharacter.isDead && !currCharacter.currentParty.icon.isTravelling && currCharacter.IsInOwnParty()) {
-                        //        if (currCharacter.isFactionless || currCharacter.faction.id != character.faction.id) {
-                        //            return true;
-                        //        }
-                        //    }
-                        //}
-                    }
-                }
+                //}
                 return false;
             case INTERACTION_TYPE.MOVE_TO_STEAL:
                 if (character.race == RACE.GOBLIN || character.race == RACE.SKELETON || character.race == RACE.FAERY || character.race == RACE.DRAGON) {
@@ -695,14 +695,14 @@ public class InteractionManager : MonoBehaviour {
                 }
                 return false;
             case INTERACTION_TYPE.MOVE_TO_HUNT:
-                if(character.race == RACE.WOLF || character.race == RACE.SPIDER || character.race == RACE.DRAGON) {
+                //if(character.race == RACE.WOLF || character.race == RACE.SPIDER || character.race == RACE.DRAGON) {
                     for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
                         area = LandmarkManager.Instance.allAreas[i];
                         if (area.id != character.specificLocation.id && (area.owner == null || (area.owner != null && area.owner.id != character.faction.id && area.owner.id != PlayerManager.Instance.player.playerFaction.id))) {
                             return true;
                         }
                     }
-                }
+                //}
                 return false;
             case INTERACTION_TYPE.MOVE_TO_SAVE:
                 return CanCreateMoveToSave(character);
@@ -719,7 +719,7 @@ public class InteractionManager : MonoBehaviour {
                 return character.characterClass.className == "Necromancer" && character.specificLocation.owner == null
                     && character.specificLocation.possibleOccupants.Contains(character.race) && !FactionManager.Instance.GetFactionBasedOnName("Ziranna").isActive;
             case INTERACTION_TYPE.EAT_DEFENSELESS:
-                //if (character.race == RACE.GOBLIN || character.race == RACE.SPIDER || character.race == RACE.WOLF) { //Delete this checker?
+                //if (character.race == RACE.GOBLIN || character.race == RACE.SPIDER || character.race == RACE.WOLF) {
                     for (int i = 0; i < character.specificLocation.charactersAtLocation.Count; i++) {
                         Character characterAtLocation = character.specificLocation.charactersAtLocation[i];
                         if (characterAtLocation.id != character.id && !characterAtLocation.currentParty.icon.isTravelling && characterAtLocation.IsInOwnParty() 

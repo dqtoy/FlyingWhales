@@ -1075,6 +1075,7 @@ public enum INTERACTION_CATEGORY {
     PERSONAL,
     OFFENSE,
     SOCIAL,
+    SUBTERFUGE,
 }
 public enum REWARD {
     SUPPLY,

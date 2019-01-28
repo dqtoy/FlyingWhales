@@ -15,8 +15,8 @@ public class TameBeastAction : Interaction {
     }
     public TameBeastAction(Area interactable): base(interactable, INTERACTION_TYPE.TAME_BEAST_ACTION, 0) {
         _name = "Tame Beast Action";
-        _categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT };
-        _alignment = INTERACTION_ALIGNMENT.NEUTRAL;
+        //_categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT };
+        //_alignment = INTERACTION_ALIGNMENT.NEUTRAL;
     }
 
     #region Override

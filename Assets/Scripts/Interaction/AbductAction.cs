@@ -7,15 +7,9 @@ public class AbductAction : Interaction {
     private Character _targetCharacter;
 
     private const string Start = "Start";
-    private const string Assisted_Abduction_Success = "Assisted Abduction Success";
-    private const string Assisted_Abduction_Fail = "Assisted Abduction Fail";
-    private const string Assisted_Abduction_Critical_Fail = "Assisted Abduction Critical Fail";
-    private const string Thwarted_Abduction_Success = "Thwarted Abduction Success";
-    private const string Thwarted_Abduction_Fail = "Thwarted Abduction Fail";
-    private const string Thwarted_Abduction_Critical_Fail = "Thwarted Abduction Critical Fail";
-    private const string Normal_Abduction_Success = "Normal Abduction Success";
-    private const string Normal_Abduction_Fail = "Normal Abduction Fail";
-    private const string Normal_Abduction_Critical_Fail = "Normal Abduction Critical Fail";
+    private const string Abduction_Success = "Abduction Success";
+    private const string Abductor_Injured = "Abductor Injured";
+    private const string Abductor_Knocked_Out = "Abductor Knocked Out";
 
     public override Character targetCharacter {
         get { return _targetCharacter; }
@@ -23,7 +17,8 @@ public class AbductAction : Interaction {
 
     public AbductAction(Area interactable): base(interactable, INTERACTION_TYPE.ABDUCT_ACTION, 0) {
         _name = "Abduct Action";
-        _jobFilter = new JOB[] { JOB.INSTIGATOR, JOB.DIPLOMAT };
+        //_categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT, INTERACTION_CATEGORY.SUBTERFUGE };
+        //_alignment = INTERACTION_ALIGNMENT.EVIL;
     }
 
     #region Override
@@ -33,15 +28,9 @@ public class AbductAction : Interaction {
         }
 
         InteractionState startState = new InteractionState(Start, this);
-        InteractionState assistedAbductionSuccess = new InteractionState(Assisted_Abduction_Success, this);
-        InteractionState assistedAbductionFail = new InteractionState(Assisted_Abduction_Fail, this);
-        InteractionState assistedAbductionCriticalFail = new InteractionState(Assisted_Abduction_Critical_Fail, this);
-        InteractionState thwartedAbductionSuccess = new InteractionState(Thwarted_Abduction_Success, this);
-        InteractionState thwartedAbductionFail = new InteractionState(Thwarted_Abduction_Fail, this);
-        InteractionState thwartedAbductionCriticalFail = new InteractionState(Thwarted_Abduction_Critical_Fail, this);
-        InteractionState normalAbductionSuccess = new InteractionState(Normal_Abduction_Success, this);
-        InteractionState normalAbductionFail = new InteractionState(Normal_Abduction_Fail, this);
-        InteractionState normalAbductionCriticalFail = new InteractionState(Normal_Abduction_Critical_Fail, this);
+        InteractionState abductionSuccess = new InteractionState(Abduction_Success, this);
+        InteractionState abductorInjured = new InteractionState(Abductor_Injured, this);
+        InteractionState abductorKnockedOut = new InteractionState(Abductor_Knocked_Out, this);
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
         startStateDescriptionLog.AddToFillers(_characterInvolved.homeArea, _characterInvolved.homeArea.name, LOG_IDENTIFIER.LANDMARK_2);
@@ -50,66 +39,33 @@ public class AbductAction : Interaction {
 
         CreateActionOptions(startState);
 
-        assistedAbductionSuccess.SetEffect(() => AssistedAbductionSuccessRewardEffect(assistedAbductionSuccess));
-        assistedAbductionFail.SetEffect(() => AssistedAbductionFailRewardEffect(assistedAbductionFail));
-        assistedAbductionCriticalFail.SetEffect(() => AssistedAbductionCriticalFailRewardEffect(assistedAbductionCriticalFail));
-
-        thwartedAbductionSuccess.SetEffect(() => ThwartedAbductionSuccessRewardEffect(thwartedAbductionSuccess));
-        thwartedAbductionFail.SetEffect(() => ThwartedAbductionFailRewardEffect(thwartedAbductionFail));
-        thwartedAbductionCriticalFail.SetEffect(() => ThwartedAbductionCriticalFailRewardEffect(thwartedAbductionCriticalFail));
-
-        normalAbductionSuccess.SetEffect(() => NormalAbductionSuccessRewardEffect(normalAbductionSuccess));
-        normalAbductionFail.SetEffect(() => NormalAbductionFailRewardEffect(normalAbductionFail));
-        normalAbductionCriticalFail.SetEffect(() => NormalAbductionCriticalFailRewardEffect(normalAbductionCriticalFail));
+        startState.SetEffect(() => StartEffect(startState));
+        abductionSuccess.SetEffect(() => AbductionSuccessEffect(abductionSuccess));
+        abductorInjured.SetEffect(() => AbductorInjuredEffect(abductorInjured));
+        abductorKnockedOut.SetEffect(() => AbductorKnockedOutEffect(abductorKnockedOut));
 
         _states.Add(startState.name, startState);
-        _states.Add(thwartedAbductionSuccess.name, thwartedAbductionSuccess);
-        _states.Add(thwartedAbductionFail.name, thwartedAbductionFail);
-        _states.Add(thwartedAbductionCriticalFail.name, thwartedAbductionCriticalFail);
-
-        _states.Add(assistedAbductionSuccess.name, assistedAbductionSuccess);
-        _states.Add(assistedAbductionFail.name, assistedAbductionFail);
-        _states.Add(assistedAbductionCriticalFail.name, assistedAbductionCriticalFail);
-
-        _states.Add(normalAbductionSuccess.name, normalAbductionSuccess);
-        _states.Add(normalAbductionFail.name, normalAbductionFail);
-        _states.Add(normalAbductionCriticalFail.name, normalAbductionCriticalFail);
+        _states.Add(abductionSuccess.name, abductionSuccess);
+        _states.Add(abductorInjured.name, abductorInjured);
+        _states.Add(abductorKnockedOut.name, abductorKnockedOut);
 
         SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {
-            ActionOption assist = new ActionOption {
-                interactionState = state,
-                cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
-                name = "Assist with the abduction.",
-                effect = () => AssistOptionEffect(state),
-                jobNeeded = JOB.INSTIGATOR,
-                disabledTooltipText = "Minion must be an Instigator",
-            };
-            ActionOption thwart = new ActionOption {
-                interactionState = state,
-                cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
-                name = "Thwart the abduction.",
-                effect = () => ThwartOptionEffect(state),
-                jobNeeded = JOB.DIPLOMAT,
-                disabledTooltipText = "Minion must be a Diplomat",
-            };
             ActionOption doNothing = new ActionOption {
                 interactionState = state,
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Do nothing.",
-                effect = () => DoNothingOptionEffect(state),
+                effect = () => DoNothingOptionEffect(),
             };
-            state.AddActionOption(assist);
-            state.AddActionOption(thwart);
             state.AddActionOption(doNothing);
             state.SetDefaultOption(doNothing);
         }
     }
     public override bool CanInteractionBeDoneBy(Character character) {
         SetTargetCharacter(GetTargetCharacter(character));
-        if (targetCharacter == null) {
+        if (targetCharacter == null || character.homeArea.IsResidentsFull()) {
             return false;
         }
         return base.CanInteractionBeDoneBy(character);
@@ -117,94 +73,40 @@ public class AbductAction : Interaction {
     #endregion
 
     #region Option Effect
-    private void AssistOptionEffect(InteractionState state) {
-        WeightedDictionary<RESULT> resultWeights = _characterInvolved.job.GetJobRateWeights();
-        resultWeights.AddWeightToElement(RESULT.SUCCESS, 30);
+    private void DoNothingOptionEffect() {
+        List<Character> attackers = new List<Character>();
+        attackers.Add(_characterInvolved);
+
+        List<Character> defenders = new List<Character>();
+        defenders.Add(_targetCharacter);
+
+        float attackersChance = 0f;
+        float defendersChance = 0f;
+
+        CombatManager.Instance.GetCombatChanceOfTwoLists(attackers, defenders, out attackersChance, out defendersChance);
 
         string nextState = string.Empty;
-        switch (resultWeights.PickRandomElementGivenWeights()) {
-            case RESULT.SUCCESS:
-            nextState = Assisted_Abduction_Success;
-            break;
-            case RESULT.FAIL:
-            nextState = Assisted_Abduction_Fail;
-            break;
-            case RESULT.CRITICAL_FAIL:
-            nextState = Assisted_Abduction_Critical_Fail;
-            break;
+        int chance = UnityEngine.Random.Range(0, 100);
+        if (chance < attackersChance) {
+            //Abductor Win
+            nextState = Abduction_Success;
+        } else {
+            //Target Win
+            WeightedDictionary<string> resultWeights = new WeightedDictionary<string>();
+            resultWeights.AddElement(Abductor_Injured, 20);
+            resultWeights.AddElement(Abductor_Knocked_Out, 20);
+            nextState = resultWeights.PickRandomElementGivenWeights();
         }
-        SetCurrentState(_states[nextState]);
-    }
-    private void ThwartOptionEffect(InteractionState state) {
-        WeightedDictionary<RESULT> resultWeights = _characterInvolved.job.GetJobRateWeights();
-        resultWeights.AddWeightToElement(RESULT.FAIL, 30);
-        resultWeights.AddWeightToElement(RESULT.CRITICAL_FAIL, 20);
 
-        string nextState = string.Empty;
-        switch (resultWeights.PickRandomElementGivenWeights()) {
-            case RESULT.SUCCESS:
-            nextState = Thwarted_Abduction_Success;
-            break;
-            case RESULT.FAIL:
-            nextState = Thwarted_Abduction_Fail;
-            break;
-            case RESULT.CRITICAL_FAIL:
-            nextState = Thwarted_Abduction_Critical_Fail;
-            break;
-        }
-        SetCurrentState(_states[nextState]);
-    }
-    private void DoNothingOptionEffect(InteractionState state) {
-        WeightedDictionary<RESULT> resultWeights = _characterInvolved.job.GetJobRateWeights();
-
-        string nextState = string.Empty;
-        switch (resultWeights.PickRandomElementGivenWeights()) {
-            case RESULT.SUCCESS:
-            nextState = Normal_Abduction_Success;
-            break;
-            case RESULT.FAIL:
-            nextState = Normal_Abduction_Fail;
-            break;
-            case RESULT.CRITICAL_FAIL:
-            nextState = Normal_Abduction_Critical_Fail;
-            break;
-        }
         SetCurrentState(_states[nextState]);
     }
     #endregion
 
     #region State Effect
-    private void AssistedAbductionSuccessRewardEffect(InteractionState state) {
-        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        state.descriptionLog.AddToFillers(targetCharacter.faction, targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_1);
-
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
-        state.AddLogFiller(new LogFiller(targetCharacter.faction, targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_1));
-
-        /* Mechanics**: Abduct Character 2. 
-         * Change its home to be the same as Character 1's home Area. 
-         * Override his next action as https://trello.com/c/PTkSE6DZ/439-character-move-to-return-home
-         */
-        AbductCharacter(targetCharacter);
-        //**Level Up**: Abductioner Character +1, Instigator Minion +1
-        _characterInvolved.LevelUp();
-        investigatorCharacter.LevelUp();
-        //**Mechanics**: Relationship between the two factions -1
-        AdjustFactionsRelationship(targetCharacter.faction, _characterInvolved.faction, -1, state);
+    private void StartEffect(InteractionState state) {
+        _characterInvolved.MoveToAnotherStructure(_targetCharacter.currentStructure);
     }
-    private void AssistedAbductionFailRewardEffect(InteractionState state) {
-        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
-    }
-    private void AssistedAbductionCriticalFailRewardEffect(InteractionState state) {
-        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
-        //**Mechanics**: Character Name 1 dies.
-        _characterInvolved.Death();
-    }
-    private void ThwartedAbductionSuccessRewardEffect(InteractionState state) {
+    private void AbductionSuccessEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         state.descriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
         state.descriptionLog.AddToFillers(targetCharacter.faction, targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_2);
@@ -221,66 +123,19 @@ public class AbductAction : Interaction {
         //**Level Up**: Abductioner Character +1
         _characterInvolved.LevelUp();
     }
-    private void ThwartedAbductionFailRewardEffect(InteractionState state) {
-        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        state.descriptionLog.AddToFillers(targetCharacter.faction, targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_2);
-
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
-        state.AddLogFiller(new LogFiller(targetCharacter.faction, targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_2));
-
-        //**Level Up**: Diplomat Minion +1
-        investigatorCharacter.LevelUp();
-        //**Mechanics**: Player relationship with abductee's faction +1
-        AdjustFactionsRelationship(PlayerManager.Instance.player.playerFaction, targetCharacter.faction, 1, state);
-    }
-    private void ThwartedAbductionCriticalFailRewardEffect(InteractionState state) {
-        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        state.descriptionLog.AddToFillers(targetCharacter.faction, targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_2);
-
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
-        state.AddLogFiller(new LogFiller(targetCharacter.faction, targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_2));
-
-        //**Mechanics**: Player relationship with abductee's faction +1 Relationship between the two factions -1
-        AdjustFactionsRelationship(PlayerManager.Instance.player.playerFaction, targetCharacter.faction, 1, state);
-        AdjustFactionsRelationship(_characterInvolved.faction, targetCharacter.faction, -1, state);
-
-        //**Level Up**: Diplomat Minion +1
-        investigatorCharacter.LevelUp();
-
-        //**Mechanics**: Character Name 1 dies.
-        _characterInvolved.Death();
-    }
-    private void NormalAbductionSuccessRewardEffect(InteractionState state) {
-        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        state.descriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
-        state.descriptionLog.AddToFillers(targetCharacter.faction, targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_2);
-
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
-        state.AddLogFiller(new LogFiller(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1));
-        state.AddLogFiller(new LogFiller(targetCharacter.faction, targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_2));
-
-        /* Mechanics**: Transfer Character 2 to Character 1's Faction. 
-         * Change its home to be the same as Character 1's home Area. 
-         * Override his next action as https://trello.com/c/PTkSE6DZ/439-character-move-to-return-home
-         */
-        AbductCharacter(targetCharacter);
-        //**Level Up**: Abductioner Character +1
-        _characterInvolved.LevelUp();
-    }
-    private void NormalAbductionFailRewardEffect(InteractionState state) {
+    private void AbductorInjuredEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
  
         state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+
+        _characterInvolved.AddTrait(AttributeManager.Instance.allTraits["Injured"]);
     }
-    private void NormalAbductionCriticalFailRewardEffect(InteractionState state) {
+    private void AbductorKnockedOutEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
         state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
-        //**Mechanics**: Character Name 1 dies. Relationship between the two factions -1
-        AdjustFactionsRelationship(targetCharacter.faction, _characterInvolved.faction, -1, state);
-
-        _characterInvolved.Death();
+        _characterInvolved.AddTrait(AttributeManager.Instance.allTraits["Unconscious"]);
     }
     #endregion
 
