@@ -2357,6 +2357,14 @@ public class Character : ICharacter, ILeader, IInteractable {
         }
         return null;
     }
+    public Trait GetTraitOr(string traitName1, string traitName2) {
+        for (int i = 0; i < _traits.Count; i++) {
+            if (_traits[i].name == traitName1 || _traits[i].name == traitName2) {
+                return _traits[i];
+            }
+        }
+        return null;
+    }
     public bool HasTraitOf(TRAIT_TYPE traitType) {
         for (int i = 0; i < _traits.Count; i++) {
             if (_traits[i].type == traitType) {
