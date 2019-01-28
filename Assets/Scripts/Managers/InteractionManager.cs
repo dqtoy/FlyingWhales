@@ -386,6 +386,12 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.ARGUE_ACTION:
                 createdInteraction = new ArgueAction(interactable);
                 break;
+            case INTERACTION_TYPE.MOVE_TO_CURSE:
+                createdInteraction = new MoveToCurse(interactable);
+                break;
+            case INTERACTION_TYPE.CURSE_ACTION:
+                createdInteraction = new CurseAction(interactable);
+                break;
         }
         return createdInteraction;
     }
