@@ -83,8 +83,10 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
             return;
         }
         _portraitSettings = character.portraitSettings;
-        if (character.race == RACE.DEMON) {
-            SetWholeImageSprite(CharacterManager.Instance.GetDemonPortraitSprite(character.characterClass.className));
+
+        Sprite classPortrait = CharacterManager.Instance.GetClassPortraitSprite(character.characterClass.className);
+        if (classPortrait != null) {
+            SetWholeImageSprite(classPortrait);
         } else {
             SetBody(character.portraitSettings.bodyIndex);
             SetSkin(character.portraitSettings.skinIndex);
