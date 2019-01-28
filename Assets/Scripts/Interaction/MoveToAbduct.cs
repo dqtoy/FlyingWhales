@@ -107,14 +107,14 @@ public class MoveToAbduct : Interaction {
 
         state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2));
 
-        StartMoveToAction(_targetArea);
+        StartMoveToAction();
     }
     private void NormalAbductEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2);
 
         state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2));
 
-        StartMoveToAction(_targetArea);
+        StartMoveToAction();
     }
     #endregion
 

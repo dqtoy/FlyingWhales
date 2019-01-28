@@ -406,9 +406,9 @@ public class Interaction {
         //state.AddOtherLog(factionRelationshipLog);
         factionRelationshipLog.AddLogToInvolvedObjects();
     }
-    protected void StartMoveToAction(Area target) {
-        AddToDebugLog(_characterInvolved.name + " starts moving towards " + target.name + "!(" + _type.ToString() + ")");
-        _characterInvolved.currentParty.GoToLocation(target, PATHFINDING_MODE.NORMAL, null, () => DoActionUponMoveToArrival());
+    protected void StartMoveToAction() {
+        AddToDebugLog(_characterInvolved.name + " starts moving towards " + targetArea.name + "!(" + _type.ToString() + ")");
+        _characterInvolved.currentParty.GoToLocation(targetArea, PATHFINDING_MODE.NORMAL, null, () => DoActionUponMoveToArrival());
     }
     #endregion
 
