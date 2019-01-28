@@ -209,6 +209,82 @@ MonoBehaviour:
       - {fileID: 21300000, guid: f173f5070bd6ee64880f7aa5aacb4b4a, type: 3}
       topAssets:
       - {fileID: 21300000, guid: 8f1ce2d7b00514c42be05b98a6a81338, type: 3}
+  - race: 8
+    maleAssets:
+      gender: 0
+      bodyAssets: []
+      hairAssets: []
+      skinAssets:
+      - {fileID: 21300000, guid: 663c69594f41ec347b80051931b71bab, type: 3}
+      underAssets: []
+      topAssets:
+      - {fileID: 21300000, guid: 1fe3bc213bd83ec4f8b6de358b5587e2, type: 3}
+    femaleAssets:
+      gender: 1
+      bodyAssets: []
+      hairAssets: []
+      skinAssets:
+      - {fileID: 21300000, guid: 663c69594f41ec347b80051931b71bab, type: 3}
+      underAssets: []
+      topAssets:
+      - {fileID: 21300000, guid: 1fe3bc213bd83ec4f8b6de358b5587e2, type: 3}
+  - race: 13
+    maleAssets:
+      gender: 0
+      bodyAssets: []
+      hairAssets: []
+      skinAssets:
+      - {fileID: 21300000, guid: c665530a423cc56469b24f87caf088c4, type: 3}
+      underAssets: []
+      topAssets: []
+    femaleAssets:
+      gender: 1
+      bodyAssets: []
+      hairAssets: []
+      skinAssets:
+      - {fileID: 21300000, guid: c665530a423cc56469b24f87caf088c4, type: 3}
+      underAssets: []
+      topAssets: []
+  - race: 17
+    maleAssets:
+      gender: 0
+      bodyAssets: []
+      hairAssets: []
+      skinAssets:
+      - {fileID: 21300000, guid: e22a1e1690c24d047a90b7507fd7a924, type: 3}
+      underAssets: []
+      topAssets:
+      - {fileID: 21300000, guid: 499d9af538f3d184083e7af3b8e7c5d8, type: 3}
+    femaleAssets:
+      gender: 1
+      bodyAssets: []
+      hairAssets: []
+      skinAssets:
+      - {fileID: 21300000, guid: e22a1e1690c24d047a90b7507fd7a924, type: 3}
+      underAssets: []
+      topAssets:
+      - {fileID: 21300000, guid: 499d9af538f3d184083e7af3b8e7c5d8, type: 3}
+  - race: 10
+    maleAssets:
+      gender: 0
+      bodyAssets: []
+      hairAssets: []
+      skinAssets:
+      - {fileID: 21300000, guid: b4d38c4e7b7e85643ac80ee9a383f551, type: 3}
+      underAssets:
+      - {fileID: 21300000, guid: a4dea95433e4f244cb404789befbfb34, type: 3}
+      topAssets:
+      - {fileID: 21300000, guid: 4438a6a8fbc31674c88a1c654d66077b, type: 3}
+    femaleAssets:
+      gender: 1
+      bodyAssets: []
+      hairAssets: []
+      skinAssets:
+      - {fileID: 21300000, guid: b4d38c4e7b7e85643ac80ee9a383f551, type: 3}
+      underAssets:
+      - {fileID: 21300000, guid: a4dea95433e4f244cb404789befbfb34, type: 3}
+      topAssets:
+      - {fileID: 21300000, guid: 4438a6a8fbc31674c88a1c654d66077b, type: 3}
   hairColors:
   - {r: 0, g: 0, b: 0, a: 1}
   - {r: 0.8396226, g: 0.32872015, b: 0.32872015, a: 1}
@@ -247,6 +323,7 @@ MonoBehaviour:
     - King
     - Necromancer
     - Queen
+    - Witch
     m_values:
     - {fileID: 21300000, guid: 12f193c25cad8824a978c1a8d9d8377f, type: 3}
     - {fileID: 21300000, guid: f261d9fe21365c246a0f3849c9c58ca8, type: 3}
@@ -259,6 +336,7 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 9edaa4d18883c494f810aad0f7abdc18, type: 3}
     - {fileID: 21300000, guid: 1e71f2f70fb3f1b479d510c9b85270f6, type: 3}
     - {fileID: 21300000, guid: 84119fd227e7e5d4c890351749d7f76d, type: 3}
+    - {fileID: 21300000, guid: 784360b86d0c0dd44a67c481c86c3a14, type: 3}
   characterAnimators:
   - {fileID: 9100000, guid: 99c541d13ccccd24e8bade5dc18cd996, type: 2}
   - {fileID: 9100000, guid: 52ac513067146394f9dfb6caf8fa93b3, type: 2}

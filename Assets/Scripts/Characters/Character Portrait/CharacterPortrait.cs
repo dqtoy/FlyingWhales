@@ -213,7 +213,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         //Sprite hairSprite = CharacterManager.Instance.GetHairSprite(index, _imgSize, _character.);
         hair.sprite = chosenHairSettings;
 
-        hair.gameObject.SetActive(true);
+        hair.gameObject.SetActive(chosenHairSettings != null);
     }
     public void SetSkin(int index) {
         Sprite headSprite = CharacterManager.Instance.GetSkinSprite(index, _portraitSettings.race, _portraitSettings.gender);

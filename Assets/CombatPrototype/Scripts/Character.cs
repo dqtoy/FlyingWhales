@@ -1721,6 +1721,12 @@ public class Character : ICharacter, ILeader, IInteractable {
             //if it does not, keep the characters current home
         }
     }
+    public void MoveToStructure(LocationStructure structure) {
+        if (this.currentStructure != null) {
+            this.currentStructure.RemoveCharacterAtLocation(this);
+        }
+        structure.AddCharacterAtLocation(this);
+    }
     #endregion
 
     #region Relationships

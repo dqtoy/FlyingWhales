@@ -374,6 +374,12 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.HANG_OUT_ACTION:
                 createdInteraction = new HangOutAction(interactable);
                 break;
+            case INTERACTION_TYPE.MOVE_TO_CHARM_FACTION:
+                createdInteraction = new MoveToCharmFaction(interactable);
+                break;
+            case INTERACTION_TYPE.CHARM_ACTION_FACTION:
+                createdInteraction = new CharmActionFaction(interactable);
+                break;
         }
         return createdInteraction;
     }
