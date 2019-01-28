@@ -39,7 +39,7 @@ public class AbductAction : Interaction {
 
         CreateActionOptions(startState);
 
-        startState.SetEffect(() => StartEffect(startState));
+        startState.SetEffect(() => StartEffect(startState), false);
         abductionSuccess.SetEffect(() => AbductionSuccessEffect(abductionSuccess));
         abductorInjured.SetEffect(() => AbductorInjuredEffect(abductorInjured));
         abductorKnockedOut.SetEffect(() => AbductorKnockedOutEffect(abductorKnockedOut));

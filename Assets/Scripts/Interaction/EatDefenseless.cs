@@ -38,7 +38,7 @@ public class EatDefenseless : Interaction {
 
         CreateActionOptions(startState);
 
-        startState.SetEffect(() => StartEffect(startState));
+        startState.SetEffect(() => StartEffect(startState), false);
         eatCancelled.SetEffect(() => EatCancelledEffect(eatCancelled));
         eatContinues.SetEffect(() => EatContinuesEffect(eatContinues));
         characterEaten.SetEffect(() => CharacterEatenEffect(characterEaten));

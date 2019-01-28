@@ -39,6 +39,7 @@ public class HuntAction : Interaction {
 
         CreateActionOptions(startState);
 
+        startState.SetEffect(() => StartEffect(startState), false);
         hunterKilledCharacter.SetEffect(() => HunterKilledCharacterEffect(hunterKilledCharacter));
         hunterInjuredCharacter.SetEffect(() => HunterInjuredCharacterEffect(hunterInjuredCharacter));
         characterKilledHunter.SetEffect(() => CharacterKilledHunterEffect(characterKilledHunter));
@@ -104,6 +105,9 @@ public class HuntAction : Interaction {
     #endregion
 
     #region Reward Effect
+    private void StartEffect(InteractionState state) {
+        _characterInvolved.MoveToAnotherStructure(_targetCharacter.currentStructure);
+    }
     private void HunterKilledCharacterEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
