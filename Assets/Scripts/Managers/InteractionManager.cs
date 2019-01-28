@@ -736,14 +736,14 @@ public class InteractionManager : MonoBehaviour {
                 //}
                 return false;
             case INTERACTION_TYPE.TORTURE_ACTION:
-                if (character.race == RACE.GOBLIN || character.race == RACE.HUMANS || character.race == RACE.SKELETON) {
+                //if (character.race == RACE.GOBLIN || character.race == RACE.HUMANS || character.race == RACE.SKELETON) {
                     for (int i = 0; i < character.specificLocation.charactersAtLocation.Count; i++) {
                         Character characterAtLocation = character.specificLocation.charactersAtLocation[i];
                         if (characterAtLocation.id != character.id && !characterAtLocation.currentParty.icon.isTravelling && characterAtLocation.IsInOwnParty() && characterAtLocation.GetTrait("Abducted") != null) {
                             return true;
                         }
                     }
-                }
+                //}
                 return false;
             case INTERACTION_TYPE.MOVE_TO_REANIMATE:
                 if (character.race == RACE.SKELETON && !character.homeArea.IsResidentsFull()) {
