@@ -723,7 +723,7 @@ public class InteractionManager : MonoBehaviour {
                     for (int i = 0; i < character.specificLocation.charactersAtLocation.Count; i++) {
                         Character characterAtLocation = character.specificLocation.charactersAtLocation[i];
                         if (characterAtLocation.id != character.id && !characterAtLocation.currentParty.icon.isTravelling && characterAtLocation.IsInOwnParty() 
-                        && characterAtLocation.GetTraitOr("Abducted", "Hibernating") != null ) {
+                        && characterAtLocation.GetTraitOr("Abducted", "Unconscious") != null ) {
                             return true;
                         }
                     }

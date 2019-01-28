@@ -77,6 +77,10 @@ SpriteAtlas:
   - {fileID: 21300000, guid: c20949385ad8bc74e9db9cb78773aa19, type: 3}
   - {fileID: 21300000, guid: c1a6e50d0ccdd2043bbe00862f05a7c2, type: 3}
   - {fileID: 21300000, guid: 78b42a89f6925ca4caae504b7c91e78c, type: 3}
+  - {fileID: 21300000, guid: 81ff0670c11f02d498cd9e0741890861, type: 3}
+  - {fileID: 21300000, guid: a99c5a6475f7f4f4fb2ad93cb5104939, type: 3}
+  - {fileID: 21300000, guid: 26889f1a9790fd14086fab37318f30b9, type: 3}
+  - {fileID: 21300000, guid: 94207429c593c6c408e18603f2498ffc, type: 3}
   - {fileID: 21300000, guid: 53bcd126dfa3b3c4fbfa9c7712b7ff51, type: 3}
   - {fileID: 21300000, guid: 46983d8f82e9dae40b91ad284015968c, type: 3}
   - {fileID: 21300000, guid: d023f0d3d22c1ec49ac2ffd08e0b6b77, type: 3}
@@ -86,10 +90,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 5cc90bcf42fd4974abaae59743b659cd, type: 3}
   - {fileID: 21300000, guid: 63d54631d5396824a803db830e0e7b02, type: 3}
   - {fileID: 21300000, guid: e1ddc440b90944a48a3228c70448fd39, type: 3}
-  - {fileID: 21300000, guid: 81ff0670c11f02d498cd9e0741890861, type: 3}
-  - {fileID: 21300000, guid: 24b16c3c682dc6549bfd830b51991816, type: 3}
-  - {fileID: 21300000, guid: 26889f1a9790fd14086fab37318f30b9, type: 3}
-  - {fileID: 21300000, guid: 94207429c593c6c408e18603f2498ffc, type: 3}
   - {fileID: 21300000, guid: 9b17d5e362923be46a2f8c739750ff6e, type: 3}
   - {fileID: 21300000, guid: fc463ec1c15ee8e42b33c5680ace6a82, type: 3}
   - {fileID: 21300000, guid: 91c6624050669a641aeff522c8a15382, type: 3}
@@ -141,6 +141,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 7d4e0c84121d9bb48af8acbf0ff807a4, type: 3}
   - {fileID: 21300000, guid: 972a4b37fbdfc504a80be01b47467e96, type: 3}
   - {fileID: 21300000, guid: 0740052277773e24d896e5929351d05a, type: 3}
+  - {fileID: 21300000, guid: 49b5bd03e6cefb84cae8ad022541cb3d, type: 3}
   - {fileID: 21300000, guid: 2893f0ba151f16840aaf43bc571100b7, type: 3}
   - {fileID: 21300000, guid: 5982206c24543a34eb45b8b331a6b4b7, type: 3}
   - {fileID: 21300000, guid: 4e58d580888ba764c8cd48d2b592b223, type: 3}
@@ -344,6 +345,10 @@ SpriteAtlas:
   - character_ui_location_container
   - WhiteCircle
   - nameplate_container
+  - faction_ui_resident_default
+  - faction_ui_resident_hover
+  - faction_ui_resident_clicked
+  - faction_ui_resident_disabled
   - character_ui_stats_container
   - minion_widget_empty
   - minion_widget
@@ -353,10 +358,6 @@ SpriteAtlas:
   - widget_day_counter
   - bottom_right_right_cap
   - widget_system
-  - faction_ui_resident_default
-  - faction_ui_resident_hover
-  - faction_ui_resident_clicked
-  - faction_ui_resident_disabled
   - main_menu_loadgame_btn_hover
   - main_menu_loadgame_btn_default
   - main_menu_loadgame_btn_pressed
@@ -408,6 +409,7 @@ SpriteAtlas:
   - main_menu_settings_btn_default
   - main_menu_settings_btn_hover
   - bottom_right_center_tile
+  - portrait_border_highlight
   - portrait_container_locked
   - faction_relationship_container
   - main_menu_credits_btn_hover

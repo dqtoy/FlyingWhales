@@ -1088,6 +1088,7 @@ public enum TRAIT_TYPE {
     STATUS,
     COMBAT_POSITION,
     ENCHANTMENT,
+    DISABLER,
 }
 public enum TRAIT_EFFECT {
     NEUTRAL,
