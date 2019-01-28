@@ -10,6 +10,9 @@ public class TameBeastAction : Interaction {
 
     private Character _targetBeast;
 
+    public override Character targetCharacter {
+        get { return _targetBeast; }
+    }
     public TameBeastAction(Area interactable): base(interactable, INTERACTION_TYPE.TAME_BEAST_ACTION, 0) {
         _name = "Tame Beast Action";
         _categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT };
