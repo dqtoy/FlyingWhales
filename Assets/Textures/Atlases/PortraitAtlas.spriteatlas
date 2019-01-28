@@ -65,6 +65,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 9930f8ed4460676498f2f0f6df8950b6, type: 3}
   - {fileID: 21300000, guid: ad1260b7d58e7024ab2f91db0ea3f878, type: 3}
   - {fileID: 21300000, guid: d85aec5f060f8bc4da5774b24ee10a7c, type: 3}
+  - {fileID: 21300000, guid: f173f5070bd6ee64880f7aa5aacb4b4a, type: 3}
   - {fileID: 21300000, guid: a34aeae4a70d5274db9c2f551390673f, type: 3}
   - {fileID: 21300000, guid: cb84bbe08448c7241894d4524f80afd8, type: 3}
   - {fileID: 21300000, guid: e765731094e366b4e994b986d8936893, type: 3}
@@ -77,12 +78,17 @@ SpriteAtlas:
   - {fileID: 21300000, guid: fea919a7ae8173840b98caae1ebd236e, type: 3}
   - {fileID: 21300000, guid: cd165ebab941dbe43a6cf5f753ca8fd0, type: 3}
   - {fileID: 21300000, guid: d0bab72205ba05c46a58108cb567e4ed, type: 3}
+  - {fileID: 21300000, guid: 4fbd2f0cc3349e64ca10b2c62b31d436, type: 3}
   - {fileID: 21300000, guid: 7892274fdaaa3dc46b7c0bb8c528052d, type: 3}
+  - {fileID: 21300000, guid: 93c5032635a4d894997378e7b1d83ab1, type: 3}
   - {fileID: 21300000, guid: 76777303e5e4de04ca96fb3200b75bf9, type: 3}
   - {fileID: 21300000, guid: 5f3b0c65fd6d5bf4ab76f1012baef0e8, type: 3}
   - {fileID: 21300000, guid: 12f193c25cad8824a978c1a8d9d8377f, type: 3}
+  - {fileID: 21300000, guid: 9edaa4d18883c494f810aad0f7abdc18, type: 3}
+  - {fileID: 21300000, guid: 8f1ce2d7b00514c42be05b98a6a81338, type: 3}
   - {fileID: 21300000, guid: d1e293e4ab9575f45bfc675399f0f8ca, type: 3}
   - {fileID: 21300000, guid: b76a9ce8dfe1a854a8a16b119d7ff9bd, type: 3}
+  - {fileID: 21300000, guid: ca4d78f2ae86a0e4e9545933e3ff88c5, type: 3}
   - {fileID: 21300000, guid: 65a2870c390ea9940b1625a498e9a58f, type: 3}
   - {fileID: 21300000, guid: 04ef7d1d8eae8034ea5fca1b1cfaf3ea, type: 3}
   - {fileID: 21300000, guid: 070434e37543e004d98c623ba8080920, type: 3}
@@ -91,8 +97,11 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 1a3fc1ca90050a74aa21609e4eeb7ebc, type: 3}
   - {fileID: 21300000, guid: 7610ac2719b4c7642b4e010c714cfe7e, type: 3}
   - {fileID: 21300000, guid: 4f117727fece67040a6c3082f72b0111, type: 3}
+  - {fileID: 21300000, guid: 0c69a25b637ec0a478a3fc68cee46fa7, type: 3}
+  - {fileID: 21300000, guid: 8f02ae220845dc24cb1bfa2e172b2ca6, type: 3}
   - {fileID: 21300000, guid: fd831390331f6a9438bcbbdbc410df2b, type: 3}
   - {fileID: 21300000, guid: de2218b3503e67748a7bb0a94e722a5b, type: 3}
+  - {fileID: 21300000, guid: 84119fd227e7e5d4c890351749d7f76d, type: 3}
   - {fileID: 21300000, guid: 4ceb2b47beb2817498a263252bf1e68f, type: 3}
   - {fileID: 21300000, guid: 1a45ea94f7edbfe4c88c1db67f2fdb52, type: 3}
   - {fileID: 21300000, guid: c18f5d6f944cfbc48819debe987cdaba, type: 3}
@@ -103,6 +112,9 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 874a241692c0c6248bc7c9896a470fcf, type: 3}
   - {fileID: 21300000, guid: 383ae1de09e8119428f08e6cb2fb1bc5, type: 3}
   - {fileID: 21300000, guid: 6f75ba663ebe87c429d4a71a991f723b, type: 3}
+  - {fileID: 21300000, guid: 382134c432ef5ae45a265bbd8a818ef3, type: 3}
+  - {fileID: 21300000, guid: 1e71f2f70fb3f1b479d510c9b85270f6, type: 3}
+  - {fileID: 21300000, guid: af4fe0ac9d46a004c8652e9dafb244e0, type: 3}
   - {fileID: 21300000, guid: 7258784b1956cd94e8f33a62a2f4f135, type: 3}
   - {fileID: 21300000, guid: 3ea140c9cdcc60b46a257c943a010d0c, type: 3}
   - {fileID: 21300000, guid: a7831b868d3b7c14b85f09a75e1b43f0, type: 3}
@@ -435,6 +447,7 @@ SpriteAtlas:
   - human_m_under
   - human_f_under
   - human_m_skin
+  - faery_f_under
   - demon_lust_portrait
   - human_m_clothes
   - human_f_top
@@ -447,12 +460,17 @@ SpriteAtlas:
   - elf_m_skin
   - elf_m_skin
   - demon_sloth_portrait
+  - fairy_m_skin
   - elf_f_skin
+  - fairy_f_skin
   - portrait_container_yellow_default
   - goblin_f_top
   - demon_envy_portrait
+  - king
+  - faery_f_top
   - elf_m_clothes
   - elf_m_clothes
+  - faery_m_top
   - elf_f_under
   - demon_pride_portrait
   - location_redheart_portrait
@@ -461,8 +479,11 @@ SpriteAtlas:
   - portrait_container_red_default
   - human_f_hair
   - location_portal_portrait
+  - faery_m_under
+  - archmage
   - portrait_container_brown_default
   - location_odiouslair_portrait
+  - queen
   - location_triangle_portrait
   - human_m_hair
   - portrait_container_gray_locked
@@ -473,6 +494,9 @@ SpriteAtlas:
   - goblin_f_hair
   - location_blisteringhollow_portrait
   - location_pitthize_portrait
+  - faery_m_hair
+  - necromancer
+  - faery_f_hair
   - elf_f_top
   - location_gloomhollow_portrait
   - elf_f_clothes

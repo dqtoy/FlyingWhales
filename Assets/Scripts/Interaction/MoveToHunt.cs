@@ -12,13 +12,16 @@ public class MoveToHunt : Interaction {
 
     public MoveToHunt(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_HUNT, 0) {
         _name = "Move To Hunt";
-        _jobFilter = new JOB[] { JOB.DEBILITATOR };
+        _categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.PERSONAL, INTERACTION_CATEGORY.OFFENSE };
+        _alignment = INTERACTION_ALIGNMENT.NEUTRAL;
     }
 
 
     #region Overrides
     public override void CreateStates() {
-        _targetArea = GetTargetLocation(_characterInvolved);
+        if(_targetArea == null) {
+            _targetArea = GetTargetLocation(_characterInvolved);
+        }
 
         InteractionState startState = new InteractionState(Start, this);
         InteractionState huntCancelledState = new InteractionState(Hunt_Cancelled, this);
@@ -47,7 +50,7 @@ public class MoveToHunt : Interaction {
             ActionOption preventOption = new ActionOption {
                 interactionState = state,
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
-                name = "Prevent " + Utilities.GetPronounString(_characterInvolved.gender, PRONOUN_TYPE.OBJECTIVE, false) + ".",
+                name = "Prevent " + Utilities.GetPronounString(_characterInvolved.gender, PRONOUN_TYPE.OBJECTIVE, false) + " from leaving.",
                 duration = 0,
                 jobNeeded = JOB.DEBILITATOR,
                 disabledTooltipText = "Must be a Dissuader.",
@@ -65,6 +68,13 @@ public class MoveToHunt : Interaction {
             state.AddActionOption(doNothingOption);
             state.SetDefaultOption(doNothingOption);
         }
+    }
+    public override bool CanInteractionBeDoneBy(Character character) {
+        _targetArea = GetTargetLocation(character);
+        if (_targetArea == null) {
+            return false;
+        }
+        return base.CanInteractionBeDoneBy(character);
     }
     #endregion
 

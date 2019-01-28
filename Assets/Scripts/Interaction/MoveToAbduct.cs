@@ -12,7 +12,8 @@ public class MoveToAbduct : Interaction {
 
     public MoveToAbduct(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_ABDUCT, 0) {
         _name = "Move To Abduct";
-        _jobFilter = new JOB[] { JOB.DEBILITATOR };
+        _categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT, INTERACTION_CATEGORY.SUBTERFUGE };
+        _alignment = INTERACTION_ALIGNMENT.EVIL;
     }
 
 
@@ -49,7 +50,7 @@ public class MoveToAbduct : Interaction {
             ActionOption preventOption = new ActionOption {
                 interactionState = state,
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
-                name = "Prevent " + Utilities.GetPronounString(_characterInvolved.gender, PRONOUN_TYPE.OBJECTIVE, false) + ".",
+                name = "Prevent " + Utilities.GetPronounString(_characterInvolved.gender, PRONOUN_TYPE.OBJECTIVE, false) + " from leaving.",
                 duration = 0,
                 jobNeeded = JOB.DEBILITATOR,
                 disabledTooltipText = "Must be a Dissuader.",

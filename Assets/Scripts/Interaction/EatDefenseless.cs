@@ -128,7 +128,7 @@ public class EatDefenseless : Interaction {
         WeightedDictionary<Character> characterWeights = new WeightedDictionary<Character>();
         for (int i = 0; i < interactable.charactersAtLocation.Count; i++) {
             Character currCharacter = interactable.charactersAtLocation[i];
-            if (currCharacter.id != characterInvolved.id && !currCharacter.currentParty.icon.isTravelling && currCharacter.IsInOwnParty() && currCharacter.GetTraitOr("Abducted", "Hibernating") != null) {
+            if (currCharacter.id != characterInvolved.id && !currCharacter.currentParty.icon.isTravelling && currCharacter.IsInOwnParty() && currCharacter.GetTraitOr("Abducted", "Unconscious") != null) {
                 int weight = 0;
                 if (currCharacter.faction == FactionManager.Instance.neutralFaction) {
                     weight += 80;

@@ -2295,7 +2295,29 @@ public class Character : ICharacter, ILeader, IInteractable {
 
     #region Traits
     public void CreateInitialTraitsByClass() {
-        if(characterClass.className == "Knight" || characterClass.className == "Marauder" || characterClass.className == "Barbarian") {
+        //Attack Type
+        if (characterClass.attackType == ATTACK_TYPE.PHYSICAL) {
+            AddTrait(AttributeManager.Instance.allTraits["Physical Attacker"]);
+        } else if (characterClass.attackType == ATTACK_TYPE.MAGICAL) {
+            AddTrait(AttributeManager.Instance.allTraits["Magic User"]);
+        }
+
+        //Range Type
+        if (characterClass.rangeType == RANGE_TYPE.MELEE) {
+            AddTrait(AttributeManager.Instance.allTraits["Melee Attack"]);
+        } else if (characterClass.rangeType == RANGE_TYPE.RANGED) {
+            AddTrait(AttributeManager.Instance.allTraits["Ranged Attack"]);
+        }
+
+        //Combat Position
+        if (characterClass.combatPosition == COMBAT_POSITION.FRONTLINE) {
+            AddTrait(AttributeManager.Instance.allTraits["Frontline Combatant"]);
+        } else if (characterClass.combatPosition == COMBAT_POSITION.BACKLINE) {
+            AddTrait(AttributeManager.Instance.allTraits["Backline Combatant"]);
+        }
+
+        //Class Name
+        if (characterClass.className == "Knight" || characterClass.className == "Marauder" || characterClass.className == "Barbarian") {
             AddTrait(AttributeManager.Instance.allTraits["Melee Trait"]);
         } else if (characterClass.className == "Stalker" || characterClass.className == "Archer" || characterClass.className == "Hunter") {
             AddTrait(AttributeManager.Instance.allTraits["Ranged Trait"]);
@@ -2314,6 +2336,8 @@ public class Character : ICharacter, ILeader, IInteractable {
         } else if (characterClass.className == "Envy") {
             AddTrait(AttributeManager.Instance.allTraits["Envy Trait"]);
         }
+
+        
     }
     public void AddTrait(Trait trait) {
         if (trait.IsUnique() && GetTrait(trait.name) != null) {
@@ -2412,7 +2436,7 @@ public class Character : ICharacter, ILeader, IInteractable {
         return null;
     }
     private void ApplyFlatTraitEffects(Trait trait) {
-        if(trait.name == "Abducted" || trait.name == "Hibernating") {
+        if(trait.type == TRAIT_TYPE.DISABLER) {
             AdjustDoNotDisturb(1);
         }
         for (int i = 0; i < trait.effects.Count; i++) {
