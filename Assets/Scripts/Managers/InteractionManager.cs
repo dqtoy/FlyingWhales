@@ -380,6 +380,12 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.CHARM_ACTION_FACTION:
                 createdInteraction = new CharmActionFaction(interactable);
                 break;
+            case INTERACTION_TYPE.MOVE_TO_ARGUE:
+                createdInteraction = new MoveToArgue(interactable);
+                break;
+            case INTERACTION_TYPE.ARGUE_ACTION:
+                createdInteraction = new ArgueAction(interactable);
+                break;
         }
         return createdInteraction;
     }
