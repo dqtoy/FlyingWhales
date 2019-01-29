@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class LocationSmallInfo : MonoBehaviour {
 
-    private Area area;
+    public Area area { get; private set; }
 
     [SerializeField] private LocationPortrait portrait;
     [SerializeField] private TextMeshProUGUI nameLbl;

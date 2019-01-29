@@ -29,7 +29,7 @@ public class MapGenerator : MonoBehaviour {
         CameraMove.Instance.Initialize();
         CameraMove.Instance.CalculateCameraBounds();
         ObjectPoolManager.Instance.InitializeObjectPools();
-        CameraMove.Instance.SetWholemapCameraValues();
+        //CameraMove.Instance.SetWholemapCameraValues();
         //Minimap.Instance.Initialize();  //TODO: Uncomment when minimap is put back
         EquatorGenerator.Instance.GenerateEquator((int)GridMap.Instance.width, (int)GridMap.Instance.height, GridMap.Instance.hexTiles);
         Biomes.Instance.GenerateElevation(GridMap.Instance.hexTiles, (int)GridMap.Instance.width, (int)GridMap.Instance.height);
@@ -80,7 +80,7 @@ public class MapGenerator : MonoBehaviour {
 
         LandmarkManager.Instance.InitializeLandmarks();
         //CharacterManager.Instance.GenerateCharactersForTesting(8);
-        CameraMove.Instance.UpdateMinimapTexture();
+        //CameraMove.Instance.UpdateMinimapTexture();
         //QuestManager.Instance.Initialize();
         //EventManager.Instance.Initialize();
         CharacterManager.Instance.LoadCharactersInfo();
@@ -108,7 +108,7 @@ public class MapGenerator : MonoBehaviour {
         GridMap.Instance.GenerateGrid(data);
         CameraMove.Instance.Initialize();
         ObjectPoolManager.Instance.InitializeObjectPools();
-        CameraMove.Instance.SetWholemapCameraValues();
+        //CameraMove.Instance.SetWholemapCameraValues();
         //Minimap.Instance.Initialize(); TODO: Uncomment When minimap is put back
         //EquatorGenerator.Instance.GenerateEquator((int)GridMap.Instance.width, (int)GridMap.Instance.height, GridMap.Instance.hexTiles);
         //Biomes.Instance.GenerateElevation(GridMap.Instance.hexTiles, (int)GridMap.Instance.width, (int)GridMap.Instance.height);
@@ -176,7 +176,7 @@ public class MapGenerator : MonoBehaviour {
         //CharacterManager.Instance.LoadSquads(data);
         //LandmarkManager.Instance.LoadDefenders(data);
 
-        CameraMove.Instance.UpdateMinimapTexture();
+        //CameraMove.Instance.UpdateMinimapTexture();
         //QuestManager.Instance.Initialize();
         //EventManager.Instance.Initialize();
         //CharacterManager.Instance.LoadCharactersInfo(data);

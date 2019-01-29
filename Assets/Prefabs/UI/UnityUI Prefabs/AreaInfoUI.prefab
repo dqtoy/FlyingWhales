@@ -6276,6 +6276,8 @@ GameObject:
   - component: {fileID: 224519580947173752}
   - component: {fileID: 222989399491522684}
   - component: {fileID: 114679814638103120}
+  - component: {fileID: 223025774891928770}
+  - component: {fileID: 114528245589810854}
   m_Layer: 5
   m_Name: AreaInfoUI
   m_TagString: Untagged
@@ -8105,11 +8107,11 @@ MonoBehaviour:
     lineCount: 1
     pageCount: 1
     materialCount: 1
-  m_havePropertiesChanged: 1
+  m_havePropertiesChanged: 0
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
-  m_isInputParsingRequired: 1
+  m_isInputParsingRequired: 0
   m_inputSource: 0
   m_hasFontAssetChanged: 0
   m_subTextObjects:
@@ -9462,11 +9464,11 @@ MonoBehaviour:
     lineCount: 1
     pageCount: 1
     materialCount: 1
-  m_havePropertiesChanged: 1
+  m_havePropertiesChanged: 0
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
-  m_isInputParsingRequired: 1
+  m_isInputParsingRequired: 0
   m_inputSource: 0
   m_hasFontAssetChanged: 0
   m_subTextObjects:
@@ -10847,6 +10849,7 @@ MonoBehaviour:
   under: {fileID: 0}
   wholeImage: {fileID: 114537862685649662}
   factionEmblem: {fileID: 0}
+  hoverObj: {fileID: 0}
 --- !u!114 &114201666785098654
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -11308,7 +11311,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 114167616399529724}
   m_HandleRect: {fileID: 224413238123295374}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 0.9999999
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -11556,6 +11559,7 @@ MonoBehaviour:
   under: {fileID: 0}
   wholeImage: {fileID: 114329102087572914}
   factionEmblem: {fileID: 0}
+  hoverObj: {fileID: 0}
 --- !u!114 &114231951934313354
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -12467,6 +12471,7 @@ MonoBehaviour:
   under: {fileID: 0}
   wholeImage: {fileID: 114086233551146816}
   factionEmblem: {fileID: 0}
+  hoverObj: {fileID: 0}
 --- !u!114 &114280929784370322
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -13780,11 +13785,11 @@ MonoBehaviour:
     lineCount: 1
     pageCount: 1
     materialCount: 1
-  m_havePropertiesChanged: 1
+  m_havePropertiesChanged: 0
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
-  m_isInputParsingRequired: 1
+  m_isInputParsingRequired: 0
   m_inputSource: 0
   m_hasFontAssetChanged: 0
   m_subTextObjects:
@@ -14179,6 +14184,7 @@ MonoBehaviour:
   under: {fileID: 0}
   wholeImage: {fileID: 114748694200658604}
   factionEmblem: {fileID: 0}
+  hoverObj: {fileID: 0}
 --- !u!114 &114368684592800152
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -15557,6 +15563,7 @@ MonoBehaviour:
   under: {fileID: 0}
   wholeImage: {fileID: 114620299697746060}
   factionEmblem: {fileID: 0}
+  hoverObj: {fileID: 0}
 --- !u!114 &114436637906951340
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -15569,6 +15576,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   portrait: {fileID: 114113908347771218}
+  hoverObj: {fileID: 0}
 --- !u!114 &114438497242314908
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -16877,6 +16885,7 @@ MonoBehaviour:
   under: {fileID: 0}
   wholeImage: {fileID: 114167310123868354}
   factionEmblem: {fileID: 0}
+  hoverObj: {fileID: 0}
 --- !u!114 &114494934993596838
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -17245,6 +17254,7 @@ MonoBehaviour:
   under: {fileID: 0}
   wholeImage: {fileID: 114772968850684244}
   factionEmblem: {fileID: 0}
+  hoverObj: {fileID: 0}
 --- !u!114 &114514125452480014
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -17534,6 +17544,22 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!114 &114528245589810854
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1887536254507722}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1301386320, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreReversedGraphics: 0
+  m_BlockingObjects: 0
+  m_BlockingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!114 &114529188103231682
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -18677,6 +18703,7 @@ MonoBehaviour:
   under: {fileID: 0}
   wholeImage: {fileID: 114174847005703952}
   factionEmblem: {fileID: 0}
+  hoverObj: {fileID: 0}
 --- !u!114 &114610114461234228
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -22302,6 +22329,7 @@ MonoBehaviour:
   under: {fileID: 0}
   wholeImage: {fileID: 114470536900551604}
   factionEmblem: {fileID: 0}
+  hoverObj: {fileID: 0}
 --- !u!114 &114783716585738168
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -25460,6 +25488,7 @@ MonoBehaviour:
   under: {fileID: 0}
   wholeImage: {fileID: 114339320655292232}
   factionEmblem: {fileID: 0}
+  hoverObj: {fileID: 0}
 --- !u!114 &114939684353365440
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -25969,6 +25998,7 @@ MonoBehaviour:
   under: {fileID: 0}
   wholeImage: {fileID: 114344969477963976}
   factionEmblem: {fileID: 0}
+  hoverObj: {fileID: 0}
 --- !u!114 &114959412449619192
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -28714,6 +28744,26 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1018605414257240}
+--- !u!223 &223025774891928770
+Canvas:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1887536254507722}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 2
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 0
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_AdditionalShaderChannelsFlag: 25
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+  m_TargetDisplay: 0
 --- !u!224 &224001131221931622
 RectTransform:
   m_ObjectHideFlags: 1
@@ -31300,7 +31350,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 38.58, y: 0.000030517578}
+  m_AnchoredPosition: {x: 38.58, y: -0.000030517578}
   m_SizeDelta: {x: -412.58, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!224 &224344925418710142
@@ -31845,7 +31895,7 @@ RectTransform:
   m_Father: {fileID: 224720242191408414}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 0.00000011920929}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0.0000023841858, y: -0.4500122}
   m_SizeDelta: {x: 13.41, y: 18.61}

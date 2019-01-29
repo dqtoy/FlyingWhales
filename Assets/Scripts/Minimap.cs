@@ -38,7 +38,7 @@ public class Minimap : MonoBehaviour {
         xMagicNum = minimapMaxXBounds / topRightHexTile.transform.position.x;
         yMagicNum = minimapMaxYBounds / topRightHexTile.transform.position.y;
 
-        minimapTexture.texture = CameraMove.Instance.minimapTexture;
+        //minimapTexture.texture = CameraMove.Instance.minimapTexture;
         //minimapTexture.SetNativeSize();
     }
 

@@ -1268,7 +1268,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     }
     [ContextMenu("Log Screen Position")]
     public void LogScreenPosition() {
-        Debug.Log(CameraMove.Instance.wholeMapCamera.WorldToScreenPoint(this.transform.position));
+        //Debug.Log(CameraMove.Instance.wholeMapCamera.WorldToScreenPoint(this.transform.position));
     }
     private void HideSmallInfoWindow() {
         UIManager.Instance.HideSmallInfo();

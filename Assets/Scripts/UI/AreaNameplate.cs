@@ -39,7 +39,7 @@ public class AreaNameplate : MonoBehaviour {
         this.transform.position = ScreenPosition;
     }
 
-    public void Update() {
+    public void LateUpdate() {
         UpdatePosition();
     }
 

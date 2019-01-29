@@ -70,6 +70,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     private void OnEnable() {
         Messenger.AddListener<Character>(Signals.CHARACTER_LEVEL_CHANGED, OnCharacterLevelChanged);
         Messenger.AddListener<Character>(Signals.FACTION_SET, OnFactionSet);
+        Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_RACE, OnCharacterChangedRace);
     }
     private void OnDisable() {
         RemoveListeners();
@@ -255,6 +256,9 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         if (Messenger.eventTable.ContainsKey(Signals.FACTION_SET)) {
             Messenger.RemoveListener<Character>(Signals.FACTION_SET, OnFactionSet);
         }
+        if (Messenger.eventTable.ContainsKey(Signals.CHARACTER_CHANGED_RACE)) {
+            Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_RACE, OnCharacterChangedRace);
+        }
     }
     #endregion
 
@@ -277,6 +281,12 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         factionEmblem.SetFaction(_character.faction);
     }
     #endregion
+
+    public void OnCharacterChangedRace(Character character) {
+        if (_character != null && _character.id == character.id) {
+            GeneratePortrait(character);
+        }
+    }
 
     public void RandomizeHSV() {
         //Color origRGBCcolor = wholeImage.color;

@@ -79,13 +79,19 @@ public class LandmarkCharacterItem : PooledObject {
     public void ShowTravellingTooltip() {
         //UIManager.Instance.ShowSmallInfo("Travelling to " + character.currentParty.icon.targetLocation.tileLocation.areaOfTile.name);
         //UIManager.Instance.ShowSmallLocationInfo(character.currentParty.icon.targetLocation.tileLocation.areaOfTile, thisTrans, new Vector3(434f, 0f, 0f), "Travelling to:");
-        float x = thisTrans.position.x + thisTrans.sizeDelta.x + 50f;
-        UIManager.Instance.ShowSmallLocationInfo(character.currentParty.icon.targetLocation, new Vector3(x, thisTrans.position.y - 15f, 0f), "Travelling to:");
+        Area showingArea = UIManager.Instance.GetCurrentlyShowingSmallInfoLocation();
+        if (showingArea == null || showingArea.id != character.currentParty.icon.targetLocation.id) {
+            float x = thisTrans.position.x + thisTrans.sizeDelta.x + 50f;
+            UIManager.Instance.ShowSmallLocationInfo(character.currentParty.icon.targetLocation, new Vector3(x, thisTrans.position.y - 15f, 0f), "Travelling to:");
+        }
     }
     public void ShowArrivedTooltip() {
         //UIManager.Instance.ShowSmallInfo("Arrived at " + character.currentParty.specificLocation.name);
-        float x = thisTrans.position.x + thisTrans.sizeDelta.x + 50f;
-        UIManager.Instance.ShowSmallLocationInfo(character.currentParty.icon.targetLocation, new Vector3(x, thisTrans.position.y - 15f, 0f), "Arrived at:");
+        Area showingArea = UIManager.Instance.GetCurrentlyShowingSmallInfoLocation();
+        if (showingArea == null || showingArea.id != character.currentParty.icon.targetLocation.id) {
+            float x = thisTrans.position.x + thisTrans.sizeDelta.x + 50f;
+            UIManager.Instance.ShowSmallLocationInfo(character.currentParty.icon.targetLocation, new Vector3(x, thisTrans.position.y - 15f, 0f), "Arrived at:");
+        }
     }
     public void HideToolTip() {
         UIManager.Instance.HideSmallLocationInfo();

@@ -722,7 +722,7 @@ public class Character : ICharacter, ILeader, IInteractable {
     public void ReturnToLife() {
         if (_isDead) {
             SetIsDead(false);
-            UnsubscribeSignals();
+            SubscribeToSignals();
             _ownParty.ReturnToLife();
         }
     }
@@ -1526,6 +1526,9 @@ public class Character : ICharacter, ILeader, IInteractable {
         }
         RaceSetting raceSetting = RaceManager.Instance.racesDictionary[race.ToString()];
         _raceSetting = raceSetting.CreateNewCopy();
+        //Update Portrait to use new race
+        _portraitSettings = CharacterManager.Instance.GenerateRandomPortrait(race, gender);
+        Messenger.Broadcast(Signals.CHARACTER_CHANGED_RACE, this);
     }
     public void ChangeClass(string className) {
         //TODO: Change data as needed
