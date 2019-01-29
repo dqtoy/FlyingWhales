@@ -22,8 +22,8 @@ public class TortureAction : Interaction {
 
     public TortureAction(Area interactable): base(interactable, INTERACTION_TYPE.TORTURE_ACTION, 0) {
         _name = "Torture Action";
-        _categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT };
-        _alignment = INTERACTION_ALIGNMENT.EVIL;
+        //_categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT };
+        //_alignment = INTERACTION_ALIGNMENT.EVIL;
     }
 
     #region Override

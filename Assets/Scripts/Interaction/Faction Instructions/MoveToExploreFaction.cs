@@ -17,8 +17,8 @@ public class MoveToExploreFaction : Interaction {
     public MoveToExploreFaction(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_EXPLORE, 0) {
         _name = "Move to Explore Faction";
         _jobFilter = new JOB[] { JOB.DEBILITATOR };
-        _categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.INVENTORY };
-        _alignment = INTERACTION_ALIGNMENT.NEUTRAL;
+        //_categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.INVENTORY };
+        //_alignment = INTERACTION_ALIGNMENT.NEUTRAL;
     }
 
     #region Overrides

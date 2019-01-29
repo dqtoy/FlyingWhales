@@ -803,7 +803,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     }
     public void AddInteraction(Interaction interaction) {
         _currentInteractions.Add(interaction);
-        interaction.Initialize();
+        //interaction.Initialize();
         //Messenger.Broadcast(Signals.ADDED_INTERACTION, this as IInteractable, interaction);
     }
     public void RemoveInteraction(Interaction interaction) {

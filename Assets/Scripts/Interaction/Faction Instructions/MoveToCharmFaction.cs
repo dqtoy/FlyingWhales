@@ -18,8 +18,8 @@ public class MoveToCharmFaction : Interaction {
         : base(interactable, INTERACTION_TYPE.MOVE_TO_CHARM_FACTION, 0) {
         _name = "Move To Charm Faction";
         _jobFilter = new JOB[] { JOB.DEBILITATOR };
-        _categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT };
-        _alignment = INTERACTION_ALIGNMENT.NEUTRAL;
+        //_categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT };
+        //_alignment = INTERACTION_ALIGNMENT.NEUTRAL;
     }
 
     #region Overrides

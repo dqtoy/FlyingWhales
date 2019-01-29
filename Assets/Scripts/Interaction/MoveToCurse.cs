@@ -16,8 +16,8 @@ public class MoveToCurse : Interaction {
 
     public MoveToCurse(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_CURSE, 0) {
         _name = "Move To Curse";
-        _categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.PERSONAL, INTERACTION_CATEGORY.OFFENSE };
-        _alignment = INTERACTION_ALIGNMENT.EVIL;
+        //_categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.PERSONAL, INTERACTION_CATEGORY.OFFENSE };
+        //_alignment = INTERACTION_ALIGNMENT.EVIL;
     }
 
     #region Overrides

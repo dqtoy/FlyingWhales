@@ -16,8 +16,8 @@ public class MoveToAbduct : Interaction {
 
     public MoveToAbduct(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_ABDUCT, 0) {
         _name = "Move To Abduct";
-        _categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT, INTERACTION_CATEGORY.SUBTERFUGE };
-        _alignment = INTERACTION_ALIGNMENT.EVIL;
+        //_categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT, INTERACTION_CATEGORY.SUBTERFUGE };
+        //_alignment = INTERACTION_ALIGNMENT.EVIL;
     }
 
 
