@@ -60,7 +60,7 @@ public class ArgueAction : Interaction {
         }
     }
     public override bool CanInteractionBeDoneBy(Character character) {
-        if (_targetCharacter == null || _targetCharacter.isDead || _targetCharacter.specificLocation != character.specificLocation || _targetCharacter.currentStructure != _targetCharacter.homeStructure) {
+        if (_targetCharacter == null || _targetCharacter.currentParty.icon.isTravelling || _targetCharacter.isDead || _targetCharacter.specificLocation != character.specificLocation || _targetCharacter.currentStructure != _targetCharacter.homeStructure) {
             return false;
         }
         return base.CanInteractionBeDoneBy(character);
