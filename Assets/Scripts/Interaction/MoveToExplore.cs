@@ -15,7 +15,7 @@ public class MoveToExplore : Interaction {
     }
 
     public MoveToExplore(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_EXPLORE, 0) {
-        _name = "Move to Explore";
+        _name = "Move To Explore";
         _jobFilter = new JOB[] { JOB.DEBILITATOR };
     }
 

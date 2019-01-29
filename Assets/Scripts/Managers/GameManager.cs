@@ -45,6 +45,7 @@ public class GameManager : MonoBehaviour {
 
     [SerializeField] private Texture2D defaultCursorTexture;
     [SerializeField] private Texture2D targetCursorTexture;
+    [SerializeField] private Texture2D dragWorldCursorTexture;
     [SerializeField] private CursorMode cursorMode = CursorMode.Auto;
     [SerializeField] private Vector2 hotSpot = Vector2.zero;
 
@@ -246,6 +247,9 @@ public class GameManager : MonoBehaviour {
     }
     public void SetCursorToTarget() {
         Cursor.SetCursor(targetCursorTexture, hotSpot, cursorMode);
+    }
+    public void SetCursorToDrag() {
+        Cursor.SetCursor(dragWorldCursorTexture, hotSpot, cursorMode);
     }
     #endregion
 

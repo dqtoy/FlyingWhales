@@ -11,23 +11,14 @@ public class CameraMove : MonoBehaviour {
 	[SerializeField] private float sensitivity;
     [SerializeField] private float _zoomSpeed = 5f;
     [SerializeField] private Camera nameplateCamera;
-    [SerializeField] private Camera _wholeMapCamera;
     [SerializeField] private Camera _uiCamera;
 
     private float dampTime = 0.2f;
 	private Vector3 velocity = Vector3.zero;
 	[SerializeField] private Transform target;
 
-    public RenderTexture minimapTexture;
-
 	const float MIN_Z = -10f;
 	const float MAX_Z = -10f;
-
-    private float minX;
-    private float maxX;
-    private float minY;
-    private float maxY;
-
     [SerializeField] internal float MIN_X;
     [SerializeField] internal float MAX_X;
     [SerializeField] internal float MIN_Y;
@@ -37,15 +28,16 @@ public class CameraMove : MonoBehaviour {
 
     [SerializeField] private bool allowZoom = true;
 
+    [Header("Dragging")]
+    private float dragSpeed = 2f;
+    private float dragThreshold = 0.15f;
+    private float currDragTime;
+    private Vector3 dragOrigin;
+    private bool isDragging = false;
+
     private float previousCameraFOV;
 
     #region getters/setters
-//public MinimapCamera minimap {
-//    get { return _minimap; }
-//}
-    public Camera wholeMapCamera {
-        get { return _wholeMapCamera; }
-    }
     public Camera uiCamera {
         get { return _uiCamera; }
     }
@@ -60,89 +52,16 @@ public class CameraMove : MonoBehaviour {
     private void Awake(){
 		Instance = this;
 	}
-    private void Update() {
-        float xAxisValue = Input.GetAxis("Horizontal");
-        float zAxisValue = Input.GetAxis("Vertical");
-#if WORLD_CREATION_TOOL
-        if (!worldcreator.WorldCreatorUI.Instance.IsUserOnUI()) {
-            if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow) ||Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S)) {
-                iTween.MoveUpdate(Camera.main.gameObject, iTween.Hash("y", Camera.main.transform.position.y + zAxisValue, "time", 0.1f));
-            }
-            if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D)) {
-                iTween.MoveUpdate(Camera.main.gameObject, iTween.Hash("x", Camera.main.transform.position.x + xAxisValue, "time", 0.1f));
-            }
-        }
-#else
-        if (!UIManager.Instance.IsConsoleShowing() && !UIManager.Instance.IsMouseOnInput()) {
-            if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow) ||Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S)) {
-                iTween.MoveUpdate(Camera.main.gameObject, iTween.Hash("y", Camera.main.transform.position.y + zAxisValue, "time", 0.1f));
-            }
-            if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D)) {
-                iTween.MoveUpdate(Camera.main.gameObject, iTween.Hash("x", Camera.main.transform.position.x + xAxisValue, "time", 0.1f));
-            }
-        }
-#endif
-
-        Rect screenRect = new Rect(0, 0, Screen.width, Screen.height);
-#if WORLD_CREATION_TOOL
-        if (worldcreator.WorldCreatorManager.Instance.isDoneLoadingWorld 
-            && !worldcreator.WorldCreatorUI.Instance.IsMouseOnUI() 
-            && !worldcreator.WorldCreatorUI.Instance.IsUserOnUI() 
-            && screenRect.Contains(Input.mousePosition)) {
-#else
-        if (allowZoom && !UIManager.Instance.IsMouseOnUI() && screenRect.Contains(Input.mousePosition)) {
-#endif
-            //camera scrolling code
-            float fov = Camera.main.orthographicSize;
-            float adjustment = Input.GetAxis("Mouse ScrollWheel") * (sensitivity);
-
-
-            //Debug.Log(adjustment);
-            fov -= adjustment;
-            //fov = Mathf.Round(fov * 100f) / 100f;
-            fov = Mathf.Clamp(fov, _minFov, _maxFov);
-
-            if (!Mathf.Approximately(previousCameraFOV, fov)) {
-                previousCameraFOV = fov;
-                Camera.main.orthographicSize = Mathf.Lerp(Camera.main.orthographicSize, fov, Time.deltaTime * _zoomSpeed);
-                nameplateCamera.orthographicSize = Mathf.Lerp(nameplateCamera.orthographicSize, fov, Time.deltaTime * _zoomSpeed);
-#if WORLD_CREATION_TOOL
-                _uiCamera.orthographicSize = fov;
-#endif
-            } else {
-                Camera.main.orthographicSize = fov;
-                nameplateCamera.orthographicSize = fov;
-            }
-            CalculateCameraBounds();
-        }
-
-#if WORLD_CREATION_TOOL
-        if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow) ||
-            Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.D)) {
-#else
-        if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow) ||
-            Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.D) 
-            || (Minimap.Instance != null && Minimap.Instance.isDragging)) {
-#endif
-            //reset target when player pushes a button to pan the camera
-            target = null;
-        }
-
-        if (target) { //smooth camera center
-            Vector3 point = Camera.main.WorldToViewportPoint(target.position);
-            Vector3 delta = target.position - Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, point.z)); //(new Vector3(0.5, 0.5, point.z));
-            Vector3 destination = transform.position + delta;
-            transform.position = Vector3.SmoothDamp(transform.position, destination, ref velocity, dampTime);
-            if (HasReachedBounds() || (Mathf.Approximately(transform.position.x, destination.x) && Mathf.Approximately(transform.position.y, destination.y))) {
-                target = null;
-            }
-        }
+    private void LateUpdate() {
+        ArrowKeysMovement();
+        Dragging();
+        Zooming();
+        Targetting();
         ConstrainCameraBounds();
     }
 
     public void Initialize() {
         Messenger.AddListener(Signals.GAME_LOADED, SetInitialCameraPosition);
-        Messenger.AddListener<Area, HexTile>(Signals.AREA_TILE_ADDED, UpdateMinimapTexture);
         Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
     }
@@ -191,6 +110,144 @@ public class CameraMove : MonoBehaviour {
             target = GO.transform;
         }
     }
+    private void ArrowKeysMovement() {
+#if WORLD_CREATION_TOOL
+        if (!worldcreator.WorldCreatorUI.Instance.IsUserOnUI()) {
+            if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow) ||Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S)) {
+                float zAxisValue = Input.GetAxis("Vertical");
+                iTween.MoveUpdate(Camera.main.gameObject, iTween.Hash("y", Camera.main.transform.position.y + zAxisValue, "time", 0.1f));
+            }
+            if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D)) {
+                float xAxisValue = Input.GetAxis("Horizontal");
+                iTween.MoveUpdate(Camera.main.gameObject, iTween.Hash("x", Camera.main.transform.position.x + xAxisValue, "time", 0.1f));
+            }
+        }
+#else
+        if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow) ||Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S)) {
+            if (!UIManager.Instance.IsConsoleShowing() && !UIManager.Instance.IsMouseOnInput()) {
+                float zAxisValue = Input.GetAxis("Vertical");
+                iTween.MoveUpdate(Camera.main.gameObject, iTween.Hash("y", Camera.main.transform.position.y + zAxisValue, "time", 0.1f));
+            }
+        }
+
+        if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D)) {
+            if (!UIManager.Instance.IsConsoleShowing() && !UIManager.Instance.IsMouseOnInput()) {
+                float xAxisValue = Input.GetAxis("Horizontal");
+                iTween.MoveUpdate(Camera.main.gameObject, iTween.Hash("x", Camera.main.transform.position.x + xAxisValue, "time", 0.1f));
+            }
+        }
+#endif
+    }
+    private void Zooming() {
+        Rect screenRect = new Rect(0, 0, Screen.width, Screen.height);
+#if WORLD_CREATION_TOOL
+        if (worldcreator.WorldCreatorManager.Instance.isDoneLoadingWorld 
+            && !worldcreator.WorldCreatorUI.Instance.IsMouseOnUI() 
+            && !worldcreator.WorldCreatorUI.Instance.IsUserOnUI() 
+            && screenRect.Contains(Input.mousePosition)) {
+#else
+        if (allowZoom && screenRect.Contains(Input.mousePosition)) {
+#endif
+            //camera scrolling code
+            float fov = Camera.main.orthographicSize;
+            float adjustment = Input.GetAxis("Mouse ScrollWheel") * (sensitivity);
+            if (adjustment != 0f && !UIManager.Instance.IsMouseOnUI()) {
+                //Debug.Log(adjustment);
+                fov -= adjustment;
+                //fov = Mathf.Round(fov * 100f) / 100f;
+                fov = Mathf.Clamp(fov, _minFov, _maxFov);
+
+                if (!Mathf.Approximately(previousCameraFOV, fov)) {
+                    previousCameraFOV = fov;
+                    Camera.main.orthographicSize = Mathf.Lerp(Camera.main.orthographicSize, fov, Time.deltaTime * _zoomSpeed);
+                    nameplateCamera.orthographicSize = Mathf.Lerp(nameplateCamera.orthographicSize, fov, Time.deltaTime * _zoomSpeed);
+#if WORLD_CREATION_TOOL
+                _uiCamera.orthographicSize = fov;
+#endif
+                } else {
+                    Camera.main.orthographicSize = fov;
+                    nameplateCamera.orthographicSize = fov;
+                }
+                CalculateCameraBounds();
+            }
+        }
+    }
+    private void Targetting() {
+#if WORLD_CREATION_TOOL
+        if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow) ||
+            Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.D)) {
+#else
+        if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow) ||
+            Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.D)
+            || (Minimap.Instance != null && Minimap.Instance.isDragging) || isDragging) {
+#endif
+            //reset target when player pushes a button to pan the camera
+            target = null;
+        }
+
+        if (target) { //smooth camera center
+            Vector3 point = Camera.main.WorldToViewportPoint(target.position);
+            Vector3 delta = target.position - Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, point.z)); //(new Vector3(0.5, 0.5, point.z));
+            Vector3 destination = transform.position + delta;
+            transform.position = Vector3.SmoothDamp(transform.position, destination, ref velocity, dampTime);
+            if (HasReachedBounds() || (Mathf.Approximately(transform.position.x, destination.x) && Mathf.Approximately(transform.position.y, destination.y))) {
+                target = null;
+            }
+        }
+    }
+    private bool startedOnUI = false;
+    private bool hasReachedThreshold = false;
+    private Vector3 originMousePos;
+    private void Dragging() {
+        if (startedOnUI) {
+            if (!Input.GetMouseButton(0)) {
+                ResetDragValues();
+            }
+            return;
+        }
+        if (!isDragging) {
+            if (Input.GetMouseButtonDown(0)) {
+                if (UIManager.Instance.IsMouseOnUI()) {
+                    startedOnUI = true;
+                    return;
+                }
+                //dragOrigin = Input.mousePosition; //on first press of mouse
+            } else if (Input.GetMouseButton(0)) {
+                currDragTime += Time.deltaTime; //while the left mouse button is pressed
+                if (currDragTime >= dragThreshold) {
+                    if (!hasReachedThreshold) {
+                        dragOrigin = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                        originMousePos = Input.mousePosition;
+                        hasReachedThreshold = true;
+                    }
+                    if (originMousePos !=  Input.mousePosition) { //check if the mouse has moved position from the origin, only then will it be considered dragging
+                        GameManager.Instance.SetCursorToDrag();
+                        isDragging = true;
+                    }
+                }
+            }
+            
+        }
+
+        if (!Input.GetMouseButton(0)) {
+            ResetDragValues();
+        }
+
+        if (isDragging) {
+            //Vector3 pos = Camera.main.ScreenToViewportPoint(Input.mousePosition - dragOrigin);
+            //Vector3 move = new Vector3(pos.x * dragSpeed, pos.y * dragSpeed, 0f);
+            //transform.Translate(move, Space.World);
+            Vector3 difference = (Camera.main.ScreenToWorldPoint(Input.mousePosition))- Camera.main.transform.position;
+            Camera.main.transform.position = dragOrigin-difference;
+        }
+    }
+    private void ResetDragValues() {
+        GameManager.Instance.SetCursorToDefault();
+        currDragTime = 0f;
+        isDragging = false;
+        startedOnUI = false;
+        hasReachedThreshold = false;
+    }
     #endregion
 
     #region Bounds
@@ -224,7 +281,7 @@ public class CameraMove : MonoBehaviour {
 #if WORLD_CREATION_TOOL
         newBounds.extents = new Vector3(Mathf.Abs(rightMostTile.transform.position.x) + (1.28f * (float)(worldcreator.WorldCreatorManager.Instance._borderThickness + 2f)), Mathf.Abs(topMostTile.transform.position.y) + (1.28f * 4f), 0f);
 #else
-        newBounds.extents = new Vector3(Mathf.Abs(rightMostTile.transform.position.x) + (1.28f * (float)(GridMap.Instance._borderThickness)), Mathf.Abs(topMostTile.transform.position.y) + (1.28f * 4f), 0f);
+        newBounds.extents = new Vector3(Mathf.Abs(rightMostTile.transform.position.x), Mathf.Abs(topMostTile.transform.position.y), 0f);
 #endif
         SetCameraBounds(newBounds, horzExtent, vertExtent);
 
@@ -273,18 +330,6 @@ public class CameraMove : MonoBehaviour {
             yCoord,
             zCoord);
     }
-    //private Vector3 ConstrainPosition(Vector3 pos) {
-    //    float xCoord = Mathf.Clamp(pos.x, MIN_X, MAX_X);
-    //    float yCoord = Mathf.Clamp(pos.y, MIN_Y, MAX_Y);
-    //    float zCoord = Mathf.Clamp(pos.z, MIN_Z, MAX_Z);
-    //    //if (!allowHorizontalMovement) {
-    //    //    xCoord = pos.x;
-    //    //}
-    //    //if (!allowVerticalMovement) {
-    //    //    yCoord = pos.y;
-    //    //}
-    //    return new Vector3(xCoord, yCoord, zCoord);
-    //}
     private bool HasReachedBounds() {
         if ((Mathf.Approximately(transform.position.x, MAX_X) || Mathf.Approximately(transform.position.x, MIN_X)) &&
                 (Mathf.Approximately(transform.position.y, MAX_Y) || Mathf.Approximately(transform.position.y, MIN_Y))) {
@@ -333,33 +378,6 @@ public class CameraMove : MonoBehaviour {
         corners[3] = lowerLeft;
 
         return corners;
-    }
-    #endregion
-
-    #region Minimap
-    public void SetWholemapCameraValues() {
-        HexTile topTile = GridMap.Instance.map[0, (int)GridMap.Instance.height - 1];
-        float newSize = topTile.transform.position.y + 3;
-        wholeMapCamera.orthographicSize = newSize;
-
-        HexTile topCornerHexTile = GridMap.Instance.map[(int)GridMap.Instance.width - 1, (int)GridMap.Instance.height - 1];
-        float xSize = Mathf.FloorToInt(topCornerHexTile.transform.localPosition.x + 4f) * 3;
-        float zSize = Mathf.FloorToInt(topCornerHexTile.transform.localPosition.y + 4f) * 3;
-
-        if (Minimap.Instance != null) {
-            int width = (int)Mathf.Min(xSize, Minimap.Instance.maxWidth);
-            int height = (int)Mathf.Min(zSize, Minimap.Instance.maxHeight);
-
-            minimapTexture = new RenderTexture(width, height, 16, RenderTextureFormat.ARGB32);
-            minimapTexture.Create();
-            wholeMapCamera.targetTexture = minimapTexture;
-        }
-    }
-    public void UpdateMinimapTexture() {
-        wholeMapCamera.Render();
-    }
-    public void UpdateMinimapTexture(Area affectedArea, HexTile tile) {
-        wholeMapCamera.Render();
     }
     #endregion
 

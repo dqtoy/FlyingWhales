@@ -393,7 +393,7 @@ public class UIManager : MonoBehaviour {
 
     #region Minimap
     internal void UpdateMinimapInfo() {
-        CameraMove.Instance.UpdateMinimapTexture();
+        //CameraMove.Instance.UpdateMinimapTexture();
     }
     #endregion
 
@@ -569,6 +569,15 @@ public class UIManager : MonoBehaviour {
     }
     public void HideSmallLocationInfo() {
         locationSmallInfo.Hide();
+    }
+    public bool IsSmallLocationInfoShowing() {
+        return locationSmallInfoRT.gameObject.activeSelf;
+    }
+    public Area GetCurrentlyShowingSmallInfoLocation() {
+        if (IsSmallLocationInfoShowing()) {
+            return locationSmallInfo.area;
+        }
+        return null;
     }
     #endregion
 
