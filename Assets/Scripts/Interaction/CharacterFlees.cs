@@ -4,7 +4,11 @@ using UnityEngine;
 
 public class CharacterFlees : Interaction {
 
-    private Area targetArea;
+    private Area _targetArea;
+
+    public Area targetArea {
+        get { return _targetArea; }
+    }
 
     public CharacterFlees(Area interactable) : base(interactable, INTERACTION_TYPE.CHARACTER_FLEES, 0) {
         _name = "Character Flees";
@@ -15,7 +19,7 @@ public class CharacterFlees : Interaction {
         InteractionState startState = new InteractionState("Start", this);
         startState.SetEffect(() => StartStateRewardEffect(startState));
 
-        targetArea = GetTargetArea();
+        _targetArea = GetTargetArea();
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
         startStateDescriptionLog.AddToFillers(targetArea, targetArea.name, LOG_IDENTIFIER.LANDMARK_1);
@@ -28,6 +32,7 @@ public class CharacterFlees : Interaction {
 
     private void StartStateRewardEffect(InteractionState state) {
         state.AddLogFiller(new LogFiller(targetArea, targetArea.name, LOG_IDENTIFIER.LANDMARK_1));
+        StartMoveToAction();
     }
 
     private Area GetTargetArea() {
