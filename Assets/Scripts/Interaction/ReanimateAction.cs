@@ -301,6 +301,7 @@ public class ReanimateAction : Interaction {
         faction.AddNewCharacter(character);
         character.MigrateHomeTo(_characterInvolved.homeArea);
         interactable.AddCharacterToLocation(character);
+        character.SetDailyInteractionGenerationTick();
         Reanimated trait = new Reanimated();
         character.AddTrait(trait);
         Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, character.specificLocation);

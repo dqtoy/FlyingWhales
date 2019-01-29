@@ -257,7 +257,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
             Messenger.RemoveListener<Character>(Signals.FACTION_SET, OnFactionSet);
         }
         if (Messenger.eventTable.ContainsKey(Signals.CHARACTER_CHANGED_RACE)) {
-            Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_RACE, OnCharacterChangedRace);
+            Messenger.RemoveListener<Character>(Signals.CHARACTER_CHANGED_RACE, OnCharacterChangedRace);
         }
     }
     #endregion
