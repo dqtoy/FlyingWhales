@@ -622,15 +622,15 @@ public class Faction {
         
     }
     private void InitializeInteractions() {
-        //_nonNeutralInteractionTypes = new Dictionary<INTERACTION_TYPE, int> {
-        //    { INTERACTION_TYPE.SPAWN_CHARACTER, 50 },
-        //    { INTERACTION_TYPE.MOVE_TO_ATTACK, 50 },
-        //    //INTERACTION_TYPE.DEFENSE_MOBILIZATION,
-        //    //INTERACTION_TYPE.DEFENSE_UPGRADE,
-        //};
-        //_neutralInteractionTypes = new Dictionary<INTERACTION_TYPE, int> {
-        //    { INTERACTION_TYPE.SPAWN_NEUTRAL_CHARACTER, 50 }
-        //};
+        _nonNeutralInteractionTypes = new Dictionary<INTERACTION_TYPE, int> {
+            { INTERACTION_TYPE.SPAWN_CHARACTER, 50 },
+            { INTERACTION_TYPE.MOVE_TO_ATTACK, 50 },
+            //INTERACTION_TYPE.DEFENSE_MOBILIZATION,
+            //INTERACTION_TYPE.DEFENSE_UPGRADE,
+        };
+        _neutralInteractionTypes = new Dictionary<INTERACTION_TYPE, int> {
+            { INTERACTION_TYPE.SPAWN_NEUTRAL_CHARACTER, 50 }
+        };
     }
     private void SetDailyInteractionGenerationTick() {
         //_currentInteractionTick = UnityEngine.Random.Range(1, GameManager.hoursPerDay + 1);
