@@ -795,7 +795,7 @@ public class Area {
         if (interaction.characterInvolved != null) {
             interaction.characterInvolved.currentInteractions.Add(interaction);
         }
-        interaction.interactable.currentInteractions.Add(interaction);
+        //interaction.interactable.currentInteractions.Add(interaction);
         //interaction.Initialize();
         //Messenger.Broadcast(Signals.ADDED_INTERACTION, this as IInteractable, interaction);
     }

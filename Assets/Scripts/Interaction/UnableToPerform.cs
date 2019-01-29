@@ -4,9 +4,12 @@ using UnityEngine;
 
 public class UnableToPerform : Interaction {
 
+    private string _unableToPerformActionName; 
+
     public UnableToPerform(Area interactable) 
         : base(interactable, INTERACTION_TYPE.UNABLE_TO_PERFORM, 0) {
         _name = "Unable To Perform";
+        _unableToPerformActionName = string.Empty;
     }
 
     #region Overrides
@@ -22,6 +25,10 @@ public class UnableToPerform : Interaction {
     #endregion
 
     private void StartStateRewardEffect(InteractionState state) {
+        state.AddLogFiller(new LogFiller(null, _unableToPerformActionName, LOG_IDENTIFIER.STRING_1));
+    }
 
+    public void SetActionNameThatCannotBePerformed(string interactionName) {
+        _unableToPerformActionName = interactionName;
     }
 }

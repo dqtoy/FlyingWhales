@@ -1080,7 +1080,8 @@ public class InteractionManager : MonoBehaviour {
                     currInteraction.EndInteraction();
                     log += "\n" + character.name + " is unable to perform " + currInteraction.name + "!";
                     //Unable to perform
-                    Interaction unable = CreateNewInteraction(INTERACTION_TYPE.UNABLE_TO_PERFORM, area);
+                    UnableToPerform unable = CreateNewInteraction(INTERACTION_TYPE.UNABLE_TO_PERFORM, area) as UnableToPerform;
+                    unable.SetActionNameThatCannotBePerformed(currInteraction.name);
                     character.AddInteraction(unable);
                     unable.TimedOutRunDefault(ref log);
                     log += "\n";

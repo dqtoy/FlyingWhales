@@ -115,8 +115,32 @@ public class RandomNameGenerator : MonoBehaviour {
         "Anastera", "Krigon", "Seti", "Meleth", "Feriave", "Elifif", "Arkaitz", "Adiyis", "Shelob", "Xennowua", "Aine", "Gigit",
     };
 
-	#region Alliance
-	private string[] allianceType = new string[]{
+    private string[] faeryFemaleNames = new string[] {
+        "Lorelie", "Nixie", "Sereia", "Tiana", "Naida", "Melia", "Delphine", "Celeste", "Avery", "Asherah", "Ailsa",
+        "Diana", "Cyrena", "Fiona", "Spectra", "Siofra", "Zanna", "Sebille", "Radella", "Oona", "Marigold", "Fayette", "Dariyah",
+        "Asteria", "Kaia", "Aurora",
+    };
+
+    private string[] faeryMaleNames = new string[] {
+        "Caspian", "Arion", "Jareth", "Oberon", "Triton", "Zephyr", "Cosmo", "Aelfdene", "Nyx", "Xantho", "Gullveig",
+        "Flynn", "Helio", "Flix", "Cleon", "Lazuli", "Trevan", "Aphid", "Tarragon", "Caraway", "Carpus", "Skylark", "Cirro",
+        "Alaneo", "Ginko", "Oleander",
+    };
+
+    private string[] goblinFemaleNames = new string[] {
+        "Shanxee", "Fegrahx", "Stebdois", "Trahxi", "Shalx", "Cholme", "Gnokesh", "Deevons", "Blahossa", "Voplehx", "Dofil",
+        "Iofz", "Mikild", "Trohee", "Onxe", "Wraalta", "Retzaga", "Fegsi", "Thriz", "Dyq", "Oinun", "Gyflult", "Klaasai",
+        "Barleeth", "Dyteess",
+    };
+
+    private string[] goblinMaleNames = new string[] {
+        "Kreelk", "Kohdibs", "Lasdoir", "Ukoc", "Sloikz", "Vreg", "Shapvith", "Voss", "Uvrefz", "Yzenk", "Brirx",
+        "Sruiz", "Kegdiart", "Taarsots", "Srurmaar", "Jignierk", "Crezlezz", "Fraatukt", "Zolruirm", "Canralk", "Prevrax", "Hioq", "Zees",
+        "Hobigs", "Fizigs",
+    };
+
+    #region Alliance
+    private string[] allianceType = new string[]{
 		"Alliance", "League", "Coalition", "Axis", "Union", "Entente", "Accord"
 	};
 	private string[] allianceNoun = new string[]{
@@ -179,6 +203,10 @@ public class RandomNameGenerator : MonoBehaviour {
     private List<string> availableSpiderNames;
     private List<string> availableHumanMaleNames;
     private List<string> availableHumanFemaleNames;
+    private List<string> availableFaeryFemaleNames;
+    private List<string> availableFaeryMaleNames;
+    private List<string> availableGoblinFemaleNames;
+    private List<string> availableGoblinMaleNames;
 
     void Awake(){
 		Instance = this;
@@ -269,6 +297,10 @@ public class RandomNameGenerator : MonoBehaviour {
         availableSpiderNames = new List<string>(spiderNames);
         availableHumanFemaleNames = new List<string>(humanFemaleFirstNames);
         availableHumanMaleNames = new List<string>(humanMaleFirstNames);
+        availableFaeryFemaleNames = new List<string>(faeryFemaleNames);
+        availableFaeryMaleNames = new List<string>(faeryMaleNames);
+        availableGoblinFemaleNames = new List<string>(goblinFemaleNames);
+        availableGoblinMaleNames = new List<string>(goblinMaleNames);
 
         //generatedHumanSurnames = new MarkovNameGenerator(baseHumanSurnames, 3, 5);
         //      generatedHumanKingdomNames = new MarkovNameGenerator(baseHumanKingdomNames, 3, 5);
@@ -296,6 +328,45 @@ public class RandomNameGenerator : MonoBehaviour {
         //}
         return chosenName;
     }
+    public string GenerateFaeryName(GENDER gender) {
+        string chosenName = string.Empty;
+        if(gender == GENDER.MALE) {
+            if (availableFaeryMaleNames.Count <= 0) {
+                availableFaeryMaleNames.AddRange(faeryMaleNames);
+            }
+            int index = UnityEngine.Random.Range(0, availableFaeryMaleNames.Count);
+            chosenName = availableFaeryMaleNames[index];
+            availableFaeryMaleNames.RemoveAt(index);
+        } else {
+            if (availableFaeryFemaleNames.Count <= 0) {
+                availableFaeryFemaleNames.AddRange(faeryFemaleNames);
+            }
+            int index = UnityEngine.Random.Range(0, availableFaeryFemaleNames.Count);
+            chosenName = availableFaeryFemaleNames[index];
+            availableFaeryFemaleNames.RemoveAt(index);
+        }
+        return chosenName;
+    }
+
+    public string GenerateGoblinName(GENDER gender) {
+        string chosenName = string.Empty;
+        if (gender == GENDER.MALE) {
+            if (availableGoblinMaleNames.Count <= 0) {
+                availableGoblinMaleNames.AddRange(goblinMaleNames);
+            }
+            int index = UnityEngine.Random.Range(0, availableGoblinMaleNames.Count);
+            chosenName = availableGoblinMaleNames[index];
+            availableGoblinMaleNames.RemoveAt(index);
+        } else {
+            if (availableGoblinFemaleNames.Count <= 0) {
+                availableGoblinFemaleNames.AddRange(goblinFemaleNames);
+            }
+            int index = UnityEngine.Random.Range(0, availableGoblinFemaleNames.Count);
+            chosenName = availableGoblinFemaleNames[index];
+            availableGoblinFemaleNames.RemoveAt(index);
+        }
+        return chosenName;
+    }
 
     private void OnCharacterDied(Character characterThatDied) {
         if (characterThatDied.minion != null) {
@@ -313,6 +384,10 @@ public class RandomNameGenerator : MonoBehaviour {
 			return GenerateElvenName(gender);
         } else if (race == RACE.SPIDER) {
             return GenerateSpiderName();
+        } else if (race == RACE.FAERY) {
+            return GenerateFaeryName(gender);
+        } else if (race == RACE.GOBLIN) {
+            return GenerateGoblinName(gender);
         }
         return GenerateElvenName(gender);
 	}
