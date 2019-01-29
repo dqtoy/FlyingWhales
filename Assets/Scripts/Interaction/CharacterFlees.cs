@@ -6,7 +6,7 @@ public class CharacterFlees : Interaction {
 
     private Area _targetArea;
 
-    public Area targetArea {
+    public override Area targetArea {
         get { return _targetArea; }
     }
 
