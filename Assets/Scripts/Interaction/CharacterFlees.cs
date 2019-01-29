@@ -38,6 +38,7 @@ public class CharacterFlees : Interaction {
     private Area GetTargetArea() {
         List<Area> choices = new List<Area>(LandmarkManager.Instance.allAreas);
         choices.Remove(_characterInvolved.specificLocation);
+        choices.Remove(PlayerManager.Instance.player.playerArea);
 
         if (choices.Count > 0) {
             return choices[Random.Range(0, choices.Count)];

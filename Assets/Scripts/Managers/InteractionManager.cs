@@ -808,6 +808,7 @@ public class InteractionManager : MonoBehaviour {
                 }
                 return false;
             case INTERACTION_TYPE.MOVE_TO_RECRUIT_FACTION:
+            case INTERACTION_TYPE.MOVE_TO_CHARM_FACTION:
                 if (character.homeArea.IsResidentsFull()) { //check if resident capacity is full
                     return false;
                 }

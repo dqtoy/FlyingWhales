@@ -618,7 +618,7 @@ public class CharacterManager : MonoBehaviour {
         awayFromHomeInteractionWeights = new Dictionary<INTERACTION_TYPE, int> {
             { INTERACTION_TYPE.MOVE_TO_RETURN_HOME, 100 },
             { INTERACTION_TYPE.FOUND_LUCARETH, 50 },
-            { INTERACTION_TYPE.FOUND_BESTALIA, 50 },
+            //{ INTERACTION_TYPE.FOUND_BESTALIA, 50 },
             { INTERACTION_TYPE.FOUND_MAGUS, 50 },
             { INTERACTION_TYPE.FOUND_ZIRANNA, 50 },
             //{ INTERACTION_TYPE.CHANCE_ENCOUNTER, 2 },

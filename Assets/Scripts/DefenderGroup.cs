@@ -18,7 +18,7 @@ public class DefenderGroup {
     public void AddCharacterToGroup(Character character) {
         if (party == null) {
             party = character.ownParty;
-            party.specificLocation.RemoveCharacterFromLocation(party);
+            //party.specificLocation.RemoveCharacterFromLocation(party);
         } else {
             party.AddCharacter(character);
         }

@@ -230,7 +230,10 @@ public class Party {
         if (!isFull && !_characters.Contains(character)) {
             _characters.Add(character);
             character.SetCurrentParty(this);
-            character.OnAddedToParty();
+            character.OnAddedToParty(); //this will remove character from his/her location
+            if (owner.currentStructure != null) {
+                owner.currentStructure.AddCharacterAtLocation(character);
+            }
             ApplyCurrentBuffsToCharacter(character);
             Messenger.Broadcast(Signals.CHARACTER_JOINED_PARTY, character, this);
             return true;
@@ -260,11 +263,11 @@ public class Party {
     }
     public void GoHome(Action doneAction = null, Action actionOnStartOfMovement = null) {
         if (_isDead) { return; }
-        GoToLocation(mainCharacter.homeArea, PATHFINDING_MODE.PASSABLE, mainCharacter.homeStructure, doneAction, actionOnStartOfMovement);
+        GoToLocation(owner.homeArea, PATHFINDING_MODE.PASSABLE, mainCharacter.homeStructure, doneAction, actionOnStartOfMovement);
     }
     public void GoHomeAndDisband(Action actionOnStartOfMovement = null) {
         if(_isDead) { return; }
-        GoToLocation(mainCharacter.homeArea, PATHFINDING_MODE.PASSABLE, mainCharacter.homeStructure, () => DisbandParty(), actionOnStartOfMovement);
+        GoToLocation(owner.homeArea, PATHFINDING_MODE.PASSABLE, null, () => DisbandParty(), actionOnStartOfMovement);
     }
     #endregion
 

@@ -24,13 +24,16 @@ public class LandmarkCharacterItem : PooledObject {
     public void SetCharacter(Character character, UIMenu parentMenu) {
         this.character = character;
         this.parentMenu = parentMenu;
-        portrait.GeneratePortrait(character);
-        nameLbl.text = character.name;
-        subLbl.text = character.raceClassName;
+        UpdateInfo();
         UpdateLocationIcons();
     }
     public void ShowCharacterInfo() {
         UIManager.Instance.ShowCharacterInfo(character);
+    }
+    private void UpdateInfo() {
+        portrait.GeneratePortrait(character);
+        nameLbl.text = character.name;
+        subLbl.text = character.raceClassName;
     }
 
     public void ShowItemInfo() {
@@ -81,6 +84,9 @@ public class LandmarkCharacterItem : PooledObject {
         //UIManager.Instance.ShowSmallLocationInfo(character.currentParty.icon.targetLocation.tileLocation.areaOfTile, thisTrans, new Vector3(434f, 0f, 0f), "Travelling to:");
         Area showingArea = UIManager.Instance.GetCurrentlyShowingSmallInfoLocation();
         if (showingArea == null || showingArea.id != character.currentParty.icon.targetLocation.id) {
+            if (character.currentParty.icon.targetLocation == null) {
+                return;
+            }
             float x = thisTrans.position.x + thisTrans.sizeDelta.x + 50f;
             UIManager.Instance.ShowSmallLocationInfo(character.currentParty.icon.targetLocation, new Vector3(x, thisTrans.position.y - 15f, 0f), "Travelling to:");
         }
@@ -89,6 +95,9 @@ public class LandmarkCharacterItem : PooledObject {
         //UIManager.Instance.ShowSmallInfo("Arrived at " + character.currentParty.specificLocation.name);
         Area showingArea = UIManager.Instance.GetCurrentlyShowingSmallInfoLocation();
         if (showingArea == null || showingArea.id != character.currentParty.icon.targetLocation.id) {
+            if (character.currentParty.icon.targetLocation == null) {
+                return;
+            }
             float x = thisTrans.position.x + thisTrans.sizeDelta.x + 50f;
             UIManager.Instance.ShowSmallLocationInfo(character.currentParty.icon.targetLocation, new Vector3(x, thisTrans.position.y - 15f, 0f), "Arrived at:");
         }
@@ -108,6 +117,11 @@ public class LandmarkCharacterItem : PooledObject {
             UpdateLocationIcons();
         }
     }
+    private void OnCharacterChangedRace(Character character) {
+        if (character.id == this.character.id) {
+            UpdateInfo();
+        }
+    }
     #endregion
 
 
@@ -120,6 +134,7 @@ public class LandmarkCharacterItem : PooledObject {
     private void OnEnable() {
         Messenger.AddListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnPartyStartedTravelling);
         Messenger.AddListener<Party>(Signals.PARTY_DONE_TRAVELLING, OnPartyDoneTravelling);
+        Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_RACE, OnCharacterChangedRace);
     }
 
     private void OnDisable() {
@@ -128,6 +143,9 @@ public class LandmarkCharacterItem : PooledObject {
         }
         if (Messenger.eventTable.ContainsKey(Signals.PARTY_DONE_TRAVELLING)) {
             Messenger.RemoveListener<Party>(Signals.PARTY_DONE_TRAVELLING, OnPartyDoneTravelling);
+        }
+        if (Messenger.eventTable.ContainsKey(Signals.CHARACTER_CHANGED_RACE)) {
+            Messenger.RemoveListener<Character>(Signals.CHARACTER_CHANGED_RACE, OnCharacterChangedRace);
         }
     }
 }

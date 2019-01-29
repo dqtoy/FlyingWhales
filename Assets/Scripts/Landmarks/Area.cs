@@ -748,8 +748,8 @@ public class Area {
             {INTERACTION_TYPE.MOVE_TO_EXPAND, 15},
             {INTERACTION_TYPE.MOVE_TO_SCAVENGE, 60},
             {INTERACTION_TYPE.MOVE_TO_RAID, 40},
-            {INTERACTION_TYPE.MOVE_TO_CHARM, 35},
-            {INTERACTION_TYPE.MOVE_TO_RECRUIT, 35},
+            //{INTERACTION_TYPE.MOVE_TO_CHARM, 35},
+            //{INTERACTION_TYPE.MOVE_TO_RECRUIT, 35},
             {INTERACTION_TYPE.MOVE_TO_ABDUCT, 25},
             {INTERACTION_TYPE.MOVE_TO_STEAL, 20},
             {INTERACTION_TYPE.MOVE_TO_HUNT, 20},
@@ -757,7 +757,7 @@ public class Area {
             {INTERACTION_TYPE.PATROL_ACTION, 50},
             {INTERACTION_TYPE.EAT_DEFENSELESS, 20},
             {INTERACTION_TYPE.TORTURE_ACTION, 25},
-            {INTERACTION_TYPE.MOVE_TO_REANIMATE, 20},
+            {INTERACTION_TYPE.MOVE_TO_REANIMATE, 50},
             {INTERACTION_TYPE.MOVE_TO_SAVE, 30},
             {INTERACTION_TYPE.MOVE_TO_VISIT, 50},
             {INTERACTION_TYPE.MOVE_TO_LOOT, 50},
@@ -765,10 +765,9 @@ public class Area {
             {INTERACTION_TYPE.MOVE_TO_HANG_OUT, 50},
             {INTERACTION_TYPE.MOVE_TO_ARGUE, 50},
             {INTERACTION_TYPE.MOVE_TO_CURSE, 50},
-
-            //{INTERACTION_TYPE.MOVE_TO_CHARM_FACTION, 5000},
+            {INTERACTION_TYPE.MOVE_TO_RECRUIT_FACTION, 50},
+            {INTERACTION_TYPE.MOVE_TO_CHARM_FACTION, 5000},
             //{INTERACTION_TYPE.MOVE_TO_ASSASSINATE_FACTION, 5000},
-            //{INTERACTION_TYPE.MOVE_TO_RECRUIT_FACTION, 5000},
             //{INTERACTION_TYPE.MOVE_TO_STEAL_FACTION, 5000},
         };
     }
@@ -1171,13 +1170,13 @@ public class Area {
             charactersAtLocation.Add(character);
             character.ownParty.SetSpecificLocation(this);
             AddCharacterAtLocationHistory("Added " + character.name + "ST: " + StackTraceUtility.ExtractStackTrace());
-            if (PlayerManager.Instance.player == null || PlayerManager.Instance.player.playerArea.id != this.id) {
-                if (structureOverride != null) {
-                    structureOverride.AddCharacterAtLocation(character);
-                } else {
-                    AddCharacterToAppropriateStructure(character);
-                }
+            //if (PlayerManager.Instance.player == null || PlayerManager.Instance.player.playerArea.id != this.id) {
+            if (structureOverride != null) {
+                structureOverride.AddCharacterAtLocation(character);
+            } else {
+                AddCharacterToAppropriateStructure(character);
             }
+            //}
                 
             Messenger.Broadcast(Signals.CHARACTER_ENTERED_AREA, this, character);
         }

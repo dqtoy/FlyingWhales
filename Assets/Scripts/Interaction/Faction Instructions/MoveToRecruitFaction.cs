@@ -144,20 +144,6 @@ public class MoveToRecruitFaction : Interaction {
         //interaction.SetCanInteractionBeDoneAction(() => IsRecruitActionStillValid(interaction as RecruitAction));
         _characterInvolved.SetForcedInteraction(interaction);
     }
-    //private bool IsRecruitActionStillValid(RecruitAction recruitAction) {
-    //    /*
-    //     If the recruit was induced, the action should already have a target character,
-    //     check if that character is still at that location
-    //     */
-    //    if (recruitAction.targetCharacter != null) {
-    //        return recruitAction.targetCharacter.specificLocation.id == targetLocation.id;
-    //    }
-    //    return true;
-    //    /* It will no longer be valid if no recruitable character is available in the location. 
-    //     * It will also no longer be valid if the recruiter's home area's Residents Capacity is already full.
-    //     */
-    //    //return !_characterInvolved.homeLandmark.tileLocation.areaOfTile.IsResidentsFull() && recruitAction.GetTargetCharacter(_characterInvolved) != null;
-    //}
 
     private Area GetTargetLocation(Character characterInvolved) {
         /*
