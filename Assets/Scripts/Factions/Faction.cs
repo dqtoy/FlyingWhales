@@ -16,6 +16,7 @@ public class Faction {
     protected int _level;
     protected int _currentInteractionTick;
     protected int _usedMonthForInteraction;
+    protected int _inventoryTaskWeight;
     protected bool _isPlayerFaction;
     protected GENDER _initialLeaderGender;
     protected RACE _initialLeaderRace;
@@ -33,9 +34,11 @@ public class Faction {
     protected Dictionary<Faction, FactionRelationship> _relationships;
     protected Dictionary<INTERACTION_TYPE, int> _nonNeutralInteractionTypes;
     protected Dictionary<INTERACTION_TYPE, int> _neutralInteractionTypes;
+    protected Dictionary<INTERACTION_CATEGORY, int> _factionTasksWeights;
 
     public MORALITY morality { get; private set; }
     public FACTION_SIZE size { get; private set; }
+    public FACTION_TYPE factionType { get; private set; }
     public FactionToken factionToken { get; private set; }
     public WeightedDictionary<AreaCharacterClass> additionalClassWeights { get; private set; }
     public bool isActive { get; private set; }
@@ -127,6 +130,8 @@ public class Faction {
         SetSize(FACTION_SIZE.MAJOR);
         SetFactionActiveState(true);
         _level = 1;
+        _inventoryTaskWeight = FactionManager.Instance.GetRandomInventoryTaskWeight();
+        factionType = Utilities.GetRandomEnumValue<FACTION_TYPE>();
         _characters = new List<Character>();
         _ownedLandmarks = new List<BaseLandmark>();
         _ownedRegions = new List<Region>();
@@ -141,6 +146,7 @@ public class Faction {
         //defenderWeights = new WeightedDictionary<AreaCharacterClass>();
         additionalClassWeights = new WeightedDictionary<AreaCharacterClass>();
         InitializeInteractions();
+        //ConstructFactionTasksWeights();
 #if !WORLD_CREATION_TOOL
         SetDailyInteractionGenerationTick();
         AddListeners();
@@ -163,6 +169,8 @@ public class Faction {
         _recruitableRaces = data.recruitableRaces;
         _startingFollowers = data.startingFollowers;
 
+        _inventoryTaskWeight = FactionManager.Instance.GetRandomInventoryTaskWeight();
+        factionType = Utilities.GetRandomEnumValue<FACTION_TYPE>();
         _characters = new List<Character>();
         _ownedLandmarks = new List<BaseLandmark>();
         _ownedRegions = new List<Region>();
@@ -185,6 +193,7 @@ public class Faction {
         //}
         additionalClassWeights = new WeightedDictionary<AreaCharacterClass>();
         InitializeInteractions();
+        //ConstructFactionTasksWeights();
 #if !WORLD_CREATION_TOOL
         SetDailyInteractionGenerationTick();
         AddListeners();
@@ -516,16 +525,112 @@ public class Faction {
     #endregion
 
     #region Interaction
+    private void ConstructFactionTasksWeights() {
+        _factionTasksWeights = new Dictionary<INTERACTION_CATEGORY, int>() {
+            { INTERACTION_CATEGORY.RECRUITMENT, 0 },
+            { INTERACTION_CATEGORY.SUPPLY, 0 },
+            { INTERACTION_CATEGORY.DIPLOMACY, 0 },
+            { INTERACTION_CATEGORY.INVENTORY, 0 },
+            { INTERACTION_CATEGORY.SUBTERFUGE, 0 },
+            { INTERACTION_CATEGORY.OFFENSE, 0 },
+            { INTERACTION_CATEGORY.DEFENSE, 0 },
+            { INTERACTION_CATEGORY.EXPANSION, 0 },
+        };
+    }
+
+    //This updates faction weights before doing the update per area, meaning this is constant to all areas. This is done to prevent from recomputing everytime in the area loop
+    private void UpdateInitialFactionTasksWeights() {
+        foreach (INTERACTION_CATEGORY category in _factionTasksWeights.Keys) {
+            _factionTasksWeights[category] = GetInitialFactionTaskWeight(category);
+        }
+    }
+    private int GetInitialFactionTaskWeight(INTERACTION_CATEGORY category) {
+        int weight = 0;
+        if (category == INTERACTION_CATEGORY.RECRUITMENT) {
+            if (morality == MORALITY.GOOD && size == FACTION_SIZE.MAJOR) {
+                weight += 100;
+                foreach (FactionRelationship relationship in relationships.Values) {
+                    if(relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.ENEMY) {
+                        weight += 10;
+                    }else if (relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.AT_WAR) {
+                        weight += 20;
+                    }
+                }
+            }else if (morality == MORALITY.EVIL && size == FACTION_SIZE.MAJOR) {
+                weight += 120;
+                foreach (FactionRelationship relationship in relationships.Values) {
+                    if (relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.ENEMY) {
+                        weight += 15;
+                    } else if (relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.AT_WAR) {
+                        weight += 30;
+                    }
+                }
+            } else if (size == FACTION_SIZE.MINOR) {
+                weight += 80;
+                foreach (FactionRelationship relationship in relationships.Values) {
+                    if (relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.ENEMY) {
+                        weight += 5;
+                    } else if (relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.AT_WAR) {
+                        weight += 10;
+                    }
+                }
+            }
+        }else if(category == INTERACTION_CATEGORY.DIPLOMACY) {
+            int allyStrength = _characters.Sum(x => x.level);
+            int enemyStrength = 0;
+            foreach (KeyValuePair<Faction, FactionRelationship> kvp in relationships) {
+                if (kvp.Value.relationshipStatus == FACTION_RELATIONSHIP_STATUS.ALLY) {
+                    allyStrength += kvp.Key.characters.Sum(x => x.level);
+                } else if (kvp.Value.relationshipStatus == FACTION_RELATIONSHIP_STATUS.ENEMY || kvp.Value.relationshipStatus == FACTION_RELATIONSHIP_STATUS.AT_WAR) {
+                    enemyStrength += kvp.Key.characters.Sum(x => x.level);
+                }
+            }
+            if(allyStrength < enemyStrength) {
+                int diff = enemyStrength - allyStrength;
+                if (morality == MORALITY.GOOD && size == FACTION_SIZE.MAJOR) {
+                    weight += (25 * diff);
+                } else if (morality == MORALITY.EVIL && size == FACTION_SIZE.MAJOR) {
+                    weight += (50 * diff);
+                } else if (size == FACTION_SIZE.MINOR) {
+                    weight += (75 * diff);
+                }
+            }
+        } else if (category == INTERACTION_CATEGORY.SUBTERFUGE) {
+            foreach (FactionRelationship relationship in relationships.Values) {
+                if (relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.DISLIKED || relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.ENEMY
+                    || relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.AT_WAR) {
+                    if (morality == MORALITY.NEUTRAL) {
+                        weight += 100;
+                    } else if (morality == MORALITY.EVIL) {
+                        weight += 250;
+                    }
+                    break;
+                }
+            }
+        } else if (category == INTERACTION_CATEGORY.DEFENSE) {
+            if(factionType == FACTION_TYPE.HOSTILE) {
+                weight += 100;
+            } else if (factionType == FACTION_TYPE.BALANCED) {
+                weight += 200;
+            } else if (factionType == FACTION_TYPE.DEFENSIVE) {
+                weight += 400;
+            }
+        }
+        return weight;
+    }
+    private void GetRecruitmentWeight(Area area) {
+        
+    }
     private void InitializeInteractions() {
-        _nonNeutralInteractionTypes = new Dictionary<INTERACTION_TYPE, int> {
-            { INTERACTION_TYPE.SPAWN_CHARACTER, 50 },
-            { INTERACTION_TYPE.MOVE_TO_ATTACK, 50 },
-            //INTERACTION_TYPE.DEFENSE_MOBILIZATION,
-            //INTERACTION_TYPE.DEFENSE_UPGRADE,
-        };
-        _neutralInteractionTypes = new Dictionary<INTERACTION_TYPE, int> {
-            { INTERACTION_TYPE.SPAWN_NEUTRAL_CHARACTER, 50 }
-        };
+        //_nonNeutralInteractionTypes = new Dictionary<INTERACTION_TYPE, int> {
+        //    { INTERACTION_TYPE.SPAWN_CHARACTER, 50 },
+        //    { INTERACTION_TYPE.MOVE_TO_ATTACK, 50 },
+        //    //INTERACTION_TYPE.DEFENSE_MOBILIZATION,
+        //    //INTERACTION_TYPE.DEFENSE_UPGRADE,
+        //};
+        //_neutralInteractionTypes = new Dictionary<INTERACTION_TYPE, int> {
+        //    { INTERACTION_TYPE.SPAWN_NEUTRAL_CHARACTER, 50 }
+        //};
     }
     private void SetDailyInteractionGenerationTick() {
         //_currentInteractionTick = UnityEngine.Random.Range(1, GameManager.hoursPerDay + 1);
@@ -557,6 +662,10 @@ public class Faction {
             GenerateAreaInteraction(_ownedAreas[i]);
             _ownedAreas[i].AreaTasksAssignments();
         }
+    }
+    private void GenerateAreaInteractionNew(Area area) {
+        string interactionLog = GameManager.Instance.TodayLogString() + "Generating faction area interactions for " + this.name;
+
     }
     private void GenerateAreaInteraction(Area area) {
         string interactionLog = GameManager.Instance.TodayLogString() + "Generating faction area interaction for " + this.name;
@@ -594,81 +703,6 @@ public class Faction {
                 }
             } else {
                 interactionLog += "\nCannot create interaction because supply is leass than 100";
-                Debug.Log(interactionLog);
-            }
-        }
-    }
-    private void GenerateNonNeutralInteraction() {
-        string interactionLog = GameManager.Instance.TodayLogString() + "Generating non neutral interaction for " + this.name;
-        WeightedDictionary<string> generateWeights = new WeightedDictionary<string>();
-        generateWeights.AddElement("Generate", 50);
-        generateWeights.AddElement("Dont Generate", 300);
-
-        string generateResult = generateWeights.PickRandomElementGivenWeights();
-        if(generateResult == "Generate") {
-            WeightedDictionary<InteractionAndInteractable> interactionCandidates = new WeightedDictionary<InteractionAndInteractable>();
-            for (int i = 0; i < _ownedAreas.Count; i++) {
-                Area area = _ownedAreas[i];
-                if (area.suppliesInBank >= 100) {
-                    foreach(KeyValuePair<INTERACTION_TYPE, int> kvp in _nonNeutralInteractionTypes) {
-                        INTERACTION_TYPE type = kvp.Key;
-                        int weight = kvp.Value;
-                        if (InteractionManager.Instance.CanCreateInteraction(type, area)) {
-                            InteractionAndInteractable candidate = new InteractionAndInteractable {
-                                interactionType = type,
-                                landmark = area.coreTile.landmarkOnTile,
-                            };
-                            interactionCandidates.AddElement(candidate, weight);
-                        }
-                    }
-                }
-            }
-            if (interactionCandidates.Count > 0) {
-                InteractionAndInteractable chosenInteraction = interactionCandidates.PickRandomElementGivenWeights();
-                Area area = chosenInteraction.landmark.tileLocation.areaOfTile;
-                area.AdjustSuppliesInBank(-100);
-                Interaction createdInteraction = InteractionManager.Instance.CreateNewInteraction(chosenInteraction.interactionType, area);
-                createdInteraction.SetMinionSuccessAction(() => area.AdjustSuppliesInBank(100));
-                chosenInteraction.landmark.AddInteraction(createdInteraction);
-                interactionLog += "\nCreated " + createdInteraction.type.ToString() + " on " + createdInteraction.interactable.name;
-                Debug.Log(interactionLog);
-            } else {
-                interactionLog += "\nCannot create interaction because all interactions do not meet the requirements";
-                Debug.Log(interactionLog);
-            }
-        }
-    }
-    private void GenerateNeutralInteraction() {
-        string interactionLog = GameManager.Instance.TodayLogString() + "Generating neutral interaction for " + this.name;
-        WeightedDictionary<string> generateWeights = new WeightedDictionary<string>();
-        generateWeights.AddElement("Generate", 50);
-        generateWeights.AddElement("Dont Generate", 300);
-
-        string generateResult = generateWeights.PickRandomElementGivenWeights();
-        if (generateResult == "Generate") {
-            WeightedDictionary<InteractionAndInteractable> interactionCandidates = new WeightedDictionary<InteractionAndInteractable>();
-            for (int i = 0; i < _ownedAreas.Count; i++) {
-                Area area = _ownedAreas[i];
-                foreach (KeyValuePair<INTERACTION_TYPE, int> kvp in _neutralInteractionTypes) {
-                    INTERACTION_TYPE type = kvp.Key;
-                    int weight = kvp.Value;
-                    if (InteractionManager.Instance.CanCreateInteraction(type, area)) {
-                        InteractionAndInteractable candidate = new InteractionAndInteractable {
-                            interactionType = type,
-                            landmark = area.coreTile.landmarkOnTile,
-                        };
-                        interactionCandidates.AddElement(candidate, weight);
-                    }
-                }
-            }
-            if (interactionCandidates.Count > 0) {
-                InteractionAndInteractable chosenInteraction = interactionCandidates.PickRandomElementGivenWeights();
-                Interaction createdInteraction = InteractionManager.Instance.CreateNewInteraction(chosenInteraction.interactionType, chosenInteraction.landmark.tileLocation.areaOfTile);
-                chosenInteraction.landmark.AddInteraction(createdInteraction);
-                interactionLog += "\nCreated " + createdInteraction.type.ToString() + " on " + createdInteraction.interactable.name;
-                Debug.Log(interactionLog);
-            } else {
-                interactionLog += "\nCannot create interaction because all interactions do not meet the requirements";
                 Debug.Log(interactionLog);
             }
         }

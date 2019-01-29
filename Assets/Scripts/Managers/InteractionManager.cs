@@ -20,6 +20,8 @@ public class InteractionManager : MonoBehaviour {
 
     private string dailyInteractionSummary;
 
+    private Dictionary<INTERACTION_TYPE, InteractionCategoryAndAlignment> _interactionCategoryAndAlignment;
+
     public Dictionary<string, RewardConfig> rewardConfig = new Dictionary<string, RewardConfig>(){
         { Supply_Cache_Reward_1, new RewardConfig(){ rewardType = REWARD.SUPPLY, lowerRange = 50, higherRange = 250 } },
         { Mana_Cache_Reward_1, new RewardConfig(){ rewardType = REWARD.MANA, lowerRange = 5, higherRange = 30 } },
@@ -37,7 +39,62 @@ public class InteractionManager : MonoBehaviour {
     }
     public void Initialize() {
         Messenger.AddListener(Signals.DAY_ENDED_2, TryExecuteInteractionsDefault);
+        ConstructInteractionCategoryAndAlignment();
     }
+
+    #region Interaction Category And Alignment
+    private void ConstructInteractionCategoryAndAlignment() {
+        _interactionCategoryAndAlignment = new Dictionary<INTERACTION_TYPE, InteractionCategoryAndAlignment>() {
+            { INTERACTION_TYPE.EAT_DEFENSELESS, new InteractionCategoryAndAlignment(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.PERSONAL, INTERACTION_CATEGORY.OFFENSE },
+                alignment = INTERACTION_ALIGNMENT.EVIL,
+            } },
+            { INTERACTION_TYPE.MOVE_TO_CHARM_FACTION, new InteractionCategoryAndAlignment(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT },
+                alignment = INTERACTION_ALIGNMENT.NEUTRAL,
+            } },
+            { INTERACTION_TYPE.MOVE_TO_EXPLORE_FACTION, new InteractionCategoryAndAlignment(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.INVENTORY },
+                alignment = INTERACTION_ALIGNMENT.NEUTRAL,
+            } },
+            { INTERACTION_TYPE.MOVE_TO_ABDUCT, new InteractionCategoryAndAlignment(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT, INTERACTION_CATEGORY.SUBTERFUGE },
+                alignment = INTERACTION_ALIGNMENT.EVIL,
+            } },
+            { INTERACTION_TYPE.MOVE_TO_ARGUE, new InteractionCategoryAndAlignment(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.PERSONAL, INTERACTION_CATEGORY.SOCIAL },
+                alignment = INTERACTION_ALIGNMENT.NEUTRAL,
+            } },
+            { INTERACTION_TYPE.MOVE_TO_CURSE, new InteractionCategoryAndAlignment(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.PERSONAL, INTERACTION_CATEGORY.OFFENSE },
+                alignment = INTERACTION_ALIGNMENT.EVIL,
+            } },
+            { INTERACTION_TYPE.MOVE_TO_HUNT, new InteractionCategoryAndAlignment(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.PERSONAL, INTERACTION_CATEGORY.OFFENSE },
+                alignment = INTERACTION_ALIGNMENT.NEUTRAL,
+            } },
+            { INTERACTION_TYPE.MOVE_TO_LOOT, new InteractionCategoryAndAlignment(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.INVENTORY },
+                alignment = INTERACTION_ALIGNMENT.EVIL,
+            } },
+            { INTERACTION_TYPE.MOVE_TO_TAME_BEAST, new InteractionCategoryAndAlignment(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT },
+                alignment = INTERACTION_ALIGNMENT.NEUTRAL,
+            } },
+            { INTERACTION_TYPE.TORTURE_ACTION, new InteractionCategoryAndAlignment(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT },
+                alignment = INTERACTION_ALIGNMENT.EVIL,
+            } },
+        };
+    }
+    public InteractionCategoryAndAlignment GetCategoryAndAlignment (INTERACTION_TYPE type) {
+        if (_interactionCategoryAndAlignment.ContainsKey(type)) {
+            return _interactionCategoryAndAlignment[type];
+        }
+        throw new System.Exception("No category and alignment for " + type.ToString());
+    }
+    #endregion
+
     public Interaction CreateNewInteraction(INTERACTION_TYPE interactionType, Area interactable) {
         Interaction createdInteraction = null;
         switch (interactionType) {
@@ -1215,4 +1272,9 @@ public struct Reward {
 public struct CharacterInteractionWeight {
     public INTERACTION_TYPE interactionType;
     public int weight;
+}
+
+public struct InteractionCategoryAndAlignment {
+    public INTERACTION_CATEGORY[] categories;
+    public INTERACTION_ALIGNMENT alignment;
 }

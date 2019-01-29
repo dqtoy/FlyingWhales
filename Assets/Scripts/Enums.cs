@@ -945,6 +945,11 @@ public enum FACTION_SIZE {
     MAJOR,
     MINOR
 }
+public enum FACTION_TYPE {
+    HOSTILE,
+    BALANCED,
+    DEFENSIVE,
+}
 public enum MINIONS_SORT_TYPE {
     DEFAULT,
     LEVEL,
@@ -1084,8 +1089,12 @@ public enum INTERACTION_CATEGORY {
     RECRUITMENT,
     PERSONAL,
     OFFENSE,
+    DEFENSE,
     SOCIAL,
     SUBTERFUGE,
+    SUPPLY,
+    DIPLOMACY,
+    EXPANSION,
 }
 public enum REWARD {
     SUPPLY,

@@ -19,6 +19,8 @@ public class FactionManager : MonoBehaviour {
     [SerializeField] private List<Sprite> _emblemSymbols;
     //[SerializeField] private List<Sprite> usedEmblems = new List<Sprite>();
 
+    private int[] _inventoryTaskWeights = new int[] { 100, 250, 500 };
+
     #region getters
     public List<EmblemBG> emblemBGs {
         get { return _emblemBGs; }
@@ -352,6 +354,9 @@ public class FactionManager : MonoBehaviour {
         //newHome.AddCharacterHomeOnLandmark(character);
         //Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, _characterInvolved.specificLocation.coreTile.landmarkOnTile);
         //character.SetForcedInteraction(interaction);
+    }
+    public int GetRandomInventoryTaskWeight() {
+        return _inventoryTaskWeights[UnityEngine.Random.Range(0, _inventoryTaskWeights.Length)];
     }
     #endregion
 

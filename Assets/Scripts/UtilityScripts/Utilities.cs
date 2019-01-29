@@ -1997,4 +1997,9 @@ public class Utilities : MonoBehaviour {
         }
         return false;
     }
+    public static T GetRandomEnumValue<T>() {
+        var values = Enum.GetValues(typeof(T));
+        int random = UnityEngine.Random.Range(0, values.Length);
+        return (T) values.GetValue(random);
+    }
 }

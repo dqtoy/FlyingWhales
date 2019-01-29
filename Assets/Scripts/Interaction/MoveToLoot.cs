@@ -16,8 +16,8 @@ public class MoveToLoot : Interaction {
 
     public MoveToLoot(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_LOOT, 0) {
         _name = "Move To Loot";
-        _categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.INVENTORY };
-        _alignment = INTERACTION_ALIGNMENT.EVIL;
+        //_categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.INVENTORY };
+        //_alignment = INTERACTION_ALIGNMENT.EVIL;
     }
 
     #region Overrides

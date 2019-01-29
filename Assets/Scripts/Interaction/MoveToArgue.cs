@@ -16,8 +16,8 @@ public class MoveToArgue : Interaction {
 
     public MoveToArgue(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_ARGUE, 0) {
         _name = "Move To Argue";
-        _categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.PERSONAL, INTERACTION_CATEGORY.SOCIAL };
-        _alignment = INTERACTION_ALIGNMENT.NEUTRAL;
+        //_categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.PERSONAL, INTERACTION_CATEGORY.SOCIAL };
+        //_alignment = INTERACTION_ALIGNMENT.NEUTRAL;
     }
 
     #region Overrides
