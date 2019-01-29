@@ -764,6 +764,7 @@ public class Area {
             {INTERACTION_TYPE.MOVE_TO_TAME_BEAST, 50},
             {INTERACTION_TYPE.MOVE_TO_HANG_OUT, 50},
             {INTERACTION_TYPE.MOVE_TO_ARGUE, 50},
+            {INTERACTION_TYPE.MOVE_TO_CURSE, 50},
 
             //{INTERACTION_TYPE.MOVE_TO_CHARM_FACTION, 5000},
             //{INTERACTION_TYPE.MOVE_TO_ASSASSINATE_FACTION, 5000},
@@ -794,7 +795,7 @@ public class Area {
         if (interaction.characterInvolved != null) {
             interaction.characterInvolved.currentInteractions.Add(interaction);
         }
-        interaction.interactable.currentInteractions.Add(interaction);
+        //interaction.interactable.currentInteractions.Add(interaction);
         //interaction.Initialize();
         //Messenger.Broadcast(Signals.ADDED_INTERACTION, this as IInteractable, interaction);
     }

@@ -2451,7 +2451,7 @@ public class Character : ICharacter, ILeader, IInteractable {
         }
     }
     private void UnapplyFlatTraitEffects(Trait trait) {
-        if (trait.name == "Abducted" || trait.name == "Hibernating") {
+        if (trait.type == TRAIT_TYPE.DISABLER) {
             AdjustDoNotDisturb(-1);
         }
         for (int i = 0; i < trait.effects.Count; i++) {

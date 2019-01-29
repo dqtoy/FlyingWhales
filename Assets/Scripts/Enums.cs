@@ -951,6 +951,7 @@ public enum MINIONS_SORT_TYPE {
     TYPE,
 }
 public enum INTERACTION_TYPE {
+    NONE,
     BANDIT_RAID,
     INVESTIGATE,
     ABANDONED_HOUSE,
