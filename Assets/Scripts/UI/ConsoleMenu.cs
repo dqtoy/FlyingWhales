@@ -167,7 +167,7 @@ public class ConsoleMenu : UIMenu {
                 }
                 if (currCharacter.currentStructure == null) {
                     Debug.LogWarning("There is an alive character with a null current structure! " + currCharacter.name);
-                    UIManager.Instance.Pause();
+                    //UIManager.Instance.Pause();
                 }
             }
         }
