@@ -100,6 +100,9 @@ public class Character : ICharacter, ILeader, IInteractable {
     public Color skinColor { get; private set; }
     public Color hairColor { get; private set; }
 
+    public float hSkinColor { get; private set; }
+    public float hHairColor { get; private set; }
+
     #region getters / setters
     public string firstName {
         get { return _firstName; }
@@ -512,6 +515,9 @@ public class Character : ICharacter, ILeader, IInteractable {
 
         skinColor = Color.HSVToRGB(UnityEngine.Random.Range(1, 80f)/360f, 15f/100f, 100f/100f);
         hairColor = Color.HSVToRGB(UnityEngine.Random.Range(0f, 360f)/360f, 25f/100f, 90f/100f);
+
+        hSkinColor = UnityEngine.Random.Range(-360f, 360f);
+        hHairColor = UnityEngine.Random.Range(-360f, 360f);
 
         GetRandomCharacterColor();
         //_combatHistoryID = 0;

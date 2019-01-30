@@ -106,28 +106,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         body.rectTransform.SetSiblingIndex(2);
         hair.rectTransform.SetSiblingIndex(3);
         top.rectTransform.SetSiblingIndex(4);
-        //float skinH;
-        //float skinS;
-        //float skinV;
-        //Color.RGBToHSV(character.skinColor, out skinH, out skinS, out skinV);
-
-        //float hairH;
-        //float hairS;
-        //float hairV;
-        //Color.RGBToHSV(character.hairColor, out hairH, out hairS, out hairV);
-
-        //skin.material.SetVector("_HSVAAdjust", new Vector4(skinH, skinS, skinV, 0f));
-        //hair.material.SetVector("_HSVAAdjust", new Vector4(hairH, hairS, hairV, 0f));
-
-        //RectTransform faceRT = faceParentGO.GetComponent<RectTransform>();
-
-        
-        //hair.color = character.hairColor;
-        //if (character.race == RACE.GOBLIN) {
-        //    skin.color = Color.white;
-        //} else {
-        //    skin.color = character.skinColor;
-        //}
+        UpdateShader();
     }
     public void GeneratePortrait(PortraitSettings portraitSettings) {
         _portraitSettings = portraitSettings;
@@ -282,12 +261,55 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     }
     #endregion
 
-    public void OnCharacterChangedRace(Character character) {
-        if (_character != null && _character.id == character.id) {
-            GeneratePortrait(character);
+    #region Shader
+    private void UpdateShader() {
+        /*
+         Elves: Skin Color can change
+        Humans: Hair Color can change
+        Faeries: Skin Color and Hair Color can change
+        Goblins: Skin Color and Hair Color can change
+        Wolves: Skin Color can change
+        Dragons: Skin Color can change
+         */
+        switch (_character.race) {
+            case RACE.HUMANS:
+                skin.material = null;
+                hair.material = Instantiate(CharacterManager.Instance.hsvMaterial);
+                hair.material.SetVector("_HSVAAdjust", new Vector4(_character.hHairColor/360f, 0f, 0f, 0f));
+                break;
+            case RACE.ELVES:
+                skin.material = Instantiate(CharacterManager.Instance.hsvMaterial);
+                hair.material = null;
+                skin.material.SetVector("_HSVAAdjust", new Vector4(_character.hSkinColor/360f, 0f, 0f, 0f));
+                break;
+            case RACE.GOBLIN:
+                skin.material = Instantiate(CharacterManager.Instance.hsvMaterial);
+                hair.material = Instantiate(CharacterManager.Instance.hsvMaterial);
+                skin.material.SetVector("_HSVAAdjust", new Vector4(_character.hSkinColor/360f, 0f, 0f, 0f));
+                hair.material.SetVector("_HSVAAdjust", new Vector4(_character.hHairColor/360f, 0f, 0f, 0f));
+                break;
+            case RACE.DRAGON:
+                skin.material = Instantiate(CharacterManager.Instance.hsvMaterial);
+                hair.material = null;
+                skin.material.SetVector("_HSVAAdjust", new Vector4(_character.hSkinColor/360f, 0f, 0f, 0f));
+                break;
+            case RACE.WOLF:
+                skin.material = Instantiate(CharacterManager.Instance.hsvMaterial);
+                hair.material = null;
+                skin.material.SetVector("_HSVAAdjust", new Vector4(_character.hSkinColor/360f, 0f, 0f, 0f));
+                break;
+            case RACE.FAERY:
+                skin.material = Instantiate(CharacterManager.Instance.hsvMaterial);
+                hair.material = Instantiate(CharacterManager.Instance.hsvMaterial);
+                skin.material.SetVector("_HSVAAdjust", new Vector4(_character.hSkinColor/360f, 0f, 0f, 0f));
+                hair.material.SetVector("_HSVAAdjust", new Vector4(_character.hHairColor/360f, 0f, 0f, 0f));
+                break;
+            default:
+                skin.material = null;
+                hair.material = null;
+                break;
         }
     }
-
     public void RandomizeHSV() {
         //Color origRGBCcolor = wholeImage.color;
         //float H, S, V;
@@ -300,4 +322,13 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         wholeImage.material.SetVector("_HSVAAdjust", new Vector4(Random.Range(-0.4f, 0.4f), 0f, 0f, 0f));
 
     }
+    #endregion
+
+    public void OnCharacterChangedRace(Character character) {
+        if (_character != null && _character.id == character.id) {
+            GeneratePortrait(character);
+        }
+    }
+
+    
 }
