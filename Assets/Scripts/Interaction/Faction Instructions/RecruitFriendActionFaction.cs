@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RecruitActionFaction : Interaction {
+public class RecruitFriendActionFaction : Interaction {
 
     private Character _targetCharacter;
 
@@ -13,9 +13,9 @@ public class RecruitActionFaction : Interaction {
         get { return _targetCharacter; }
     }
 
-    public RecruitActionFaction(Area interactable) 
-        : base(interactable, INTERACTION_TYPE.RECRUIT_ACTION_FACTION, 0) {
-        _name = "Recruit Action Faction";
+    public RecruitFriendActionFaction(Area interactable) 
+        : base(interactable, INTERACTION_TYPE.RECRUIT_FRIEND_ACTION_FACTION, 0) {
+        _name = "Recruit Friend Action";
         _jobFilter = new JOB[] { JOB.INSTIGATOR, JOB.DIPLOMAT };
     }
 
@@ -59,12 +59,8 @@ public class RecruitActionFaction : Interaction {
         if (interactable.IsResidentsFull()) {
             return false;
         }
-        if (_targetCharacter != null) { //if there is a target character, he/she must still be in this location
-            return _targetCharacter.specificLocation.id == interactable.id;
-        } else { //if there is no set target character
-            if (GetTargetCharacter(character) == null) { //check if a target character can be found using the provided weights
-                return false;
-            }
+        if (GetTargetCharacter(character) == null) { //check if a target character can be found using the provided weights
+            return false;
         }
         return base.CanInteractionBeDoneBy(character);
     }
@@ -117,8 +113,6 @@ public class RecruitActionFaction : Interaction {
         character.faction.RemoveCharacter(character);
         faction.AddNewCharacter(character);
         character.MigrateHomeTo(_characterInvolved.homeArea);
-        //character.homeLandmark.RemoveCharacterHomeOnLandmark(character);
-        //_characterInvolved.homeLandmark.AddCharacterHomeOnLandmark(character);
         Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, character.specificLocation);
         character.SetForcedInteraction(interaction);
     }
@@ -128,19 +122,14 @@ public class RecruitActionFaction : Interaction {
         AddToDebugLog("Set target character to " + targetCharacter.name);
     }
     public Character GetTargetCharacter(Character characterInvolved) {
-        /*
-         Once the actual action is triggered, the character will randomly select from all characters that satisfied the following conditions:
-            - personal friend of the character
-            - unaligned or from a different faction
-            - not a Beast and not a Skeleton
-         */
         List<Character> choices = new List<Character>();
         for (int i = 0; i < interactable.charactersAtLocation.Count; i++) {
             Character currCharacter = interactable.charactersAtLocation[i];
-            if (characterInvolved.GetFriendTraitWith(currCharacter) != null
-                && (currCharacter.isFactionless || currCharacter.faction.id != characterInvolved.faction.id) 
-                && !Utilities.IsRaceBeast(currCharacter.race)
-                && currCharacter.race != RACE.SKELETON) {
+            if (characterInvolved.GetFriendTraitWith(currCharacter) != null //- personal friend of the character
+                && (currCharacter.isFactionless || currCharacter.faction.id != characterInvolved.faction.id)  //- unaligned or from a different faction
+                && currCharacter.role.roleType != CHARACTER_ROLE.BEAST //- not a Beast and not a Skeleton
+                && currCharacter.race != RACE.SKELETON
+                && currCharacter.GetTrait("Disabler") == null) { //- must not have a Disabler trait
                 choices.Add(currCharacter);
             }
         }

@@ -371,6 +371,7 @@ public class Attack : Interaction {
             state.descriptionLog.AddToFillers(_combat.charactersSideB[i], _combat.charactersSideB[i].name, LOG_IDENTIFIER.CHARACTER_LIST_2, false);
             state.AddLogFiller(new LogFiller(_combat.charactersSideB[i], _combat.charactersSideB[i].name, LOG_IDENTIFIER.CHARACTER_LIST_2), false);
         }
+        _defenderGroup.DisbandGroup(); //disband defender group so that the members of the defender group can be placed back to the location
     }
     private void NormalAttackersNoDefenseEffect(InteractionState state) {
         if (interactable.owner == null) {

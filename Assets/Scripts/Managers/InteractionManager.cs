@@ -401,11 +401,11 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.STEAL_ACTION_FACTION:
                 createdInteraction = new StealActionFaction(interactable);
                 break;
-            case INTERACTION_TYPE.MOVE_TO_RECRUIT_FACTION:
-                createdInteraction = new MoveToRecruitFaction(interactable);
+            case INTERACTION_TYPE.MOVE_TO_RECRUIT_FRIEND_FACTION:
+                createdInteraction = new MoveToRecruitFriendFaction(interactable);
                 break;
-            case INTERACTION_TYPE.RECRUIT_ACTION_FACTION:
-                createdInteraction = new RecruitActionFaction(interactable);
+            case INTERACTION_TYPE.RECRUIT_FRIEND_ACTION_FACTION:
+                createdInteraction = new RecruitFriendActionFaction(interactable);
                 break;
             case INTERACTION_TYPE.MOVE_TO_ASSASSINATE_FACTION:
                 createdInteraction = new MoveToAssassinateFaction(interactable);
@@ -864,7 +864,7 @@ public class InteractionManager : MonoBehaviour {
                     }
                 }
                 return false;
-            case INTERACTION_TYPE.MOVE_TO_RECRUIT_FACTION:
+            case INTERACTION_TYPE.MOVE_TO_RECRUIT_FRIEND_FACTION:
             case INTERACTION_TYPE.MOVE_TO_CHARM_FACTION:
                 if (character.homeArea.IsResidentsFull()) { //check if resident capacity is full
                     return false;

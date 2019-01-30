@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MoveToRecruitFaction : Interaction {
+public class MoveToRecruitFriendFaction : Interaction {
 
-    private Character _targetCharacter;
     private Area _targetArea;
 
     public override Area targetArea {
@@ -15,18 +14,9 @@ public class MoveToRecruitFaction : Interaction {
     private const string Character_Recruit_Continues = "Character Recruit Continues";
     private const string Do_Nothing = "Do nothing";
 
-    public override Character targetCharacter {
-        get { return _targetCharacter; }
-    }
-
-    public MoveToRecruitFaction(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_RECRUIT_FACTION, 0) {
-        _name = "Move To Recruit Faction";
+    public MoveToRecruitFriendFaction(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_RECRUIT_FRIEND_FACTION, 0) {
+        _name = "Move To Recruit Friend";
         _jobFilter = new JOB[] { JOB.DEBILITATOR };
-    }
-
-    public void SetCharacterToBeRecruited(Character character) {
-        _targetCharacter = character;
-        AddToDebugLog("Set target character to " + _targetCharacter.name);
     }
 
     #region Overrides
@@ -36,18 +26,9 @@ public class MoveToRecruitFaction : Interaction {
         InteractionState characterRecruitContinues = new InteractionState(Character_Recruit_Continues, this);
         InteractionState doNothing = new InteractionState(Do_Nothing, this);
 
-        if (_targetCharacter != null) {
-            _targetArea = _targetCharacter.specificLocation;
-        } else {
-            _targetArea = GetTargetLocation(_characterInvolved);
-        }
-        //if (targetCharacter == null) {
-        //    targetCharacter = GetTargetCharacter(_characterInvolved);
-        //}
+        _targetArea = GetTargetLocation(_characterInvolved);
         
-
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
-        startStateDescriptionLog.AddToFillers(targetCharacter.faction, targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_1);
         startStateDescriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_1);
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 
@@ -139,9 +120,7 @@ public class MoveToRecruitFaction : Interaction {
     #endregion
 
     private void CreateEvent() {
-        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.RECRUIT_ACTION_FACTION, _targetArea);
-        (interaction as RecruitActionFaction).SetTargetCharacter(_targetCharacter);
-        //interaction.SetCanInteractionBeDoneAction(() => IsRecruitActionStillValid(interaction as RecruitAction));
+        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.RECRUIT_FRIEND_ACTION_FACTION, _targetArea);
         _characterInvolved.SetForcedInteraction(interaction);
     }
 
@@ -153,9 +132,15 @@ public class MoveToRecruitFaction : Interaction {
         WeightedDictionary<Area> locationWeights = new WeightedDictionary<Area>();
         for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
             Area currArea = LandmarkManager.Instance.allAreas[i];
+            if (currArea.id == PlayerManager.Instance.player.playerArea.id) {
+                continue; //skip
+            }
             int weight = 0;
             if (AreaHasNonFactionFriendResident(currArea, characterInvolved)) {
                 weight += 15;
+            }
+            if (weight > 0) {
+                locationWeights.AddElement(currArea, weight);
             }
         }
         if (locationWeights.GetTotalOfWeights() > 0) {
@@ -169,6 +154,8 @@ public class MoveToRecruitFaction : Interaction {
             Character character = area.areaResidents[i];
             if (!character.isFactionless 
                 && character.faction.id != characterInvolved.faction.id
+                && character.id != characterInvolved.id
+                && !character.isLeader
                 && character.GetFriendTraitWith(characterInvolved) != null
                 && !Utilities.IsRaceBeast(character.race)
                 && character.race != RACE.SKELETON) {
@@ -176,48 +163,5 @@ public class MoveToRecruitFaction : Interaction {
             }
         }
         return false;
-    }
-
-
-    /*
-     NOTE: This is for induce only!
-         */
-    public Character GetTargetCharacter(Character characterInvolved) {
-        WeightedDictionary<Character> characterWeights = new WeightedDictionary<Character>();
-        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
-            Character currCharacter = CharacterManager.Instance.allCharacters[i];
-            if (currCharacter.id != characterInvolved.id 
-                && !currCharacter.isDead 
-                && !currCharacter.isLeader 
-                && !currCharacter.isDefender
-                && !currCharacter.currentParty.icon.isTravelling
-                && currCharacter.minion == null) { //- character must not be in Defender Tile.
-                int weight = 0;
-                if (currCharacter.isFactionless) {
-                    weight += 35; //- character is not part of any Faction: Weight +35
-                } else if (currCharacter.faction.id != characterInvolved.faction.id) { //exclude characters with same faction
-                    FactionRelationship rel = currCharacter.faction.GetRelationshipWith(characterInvolved.faction);
-                    //- character is part of a Faction with Neutral relationship with recruiter's Faction: Weight +15
-                    if (rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.NEUTRAL) {
-                        weight += 15;
-                    } else if (rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.FRIEND) {
-                        weight += 25;
-                    }
-                }
-
-                if (currCharacter.level > characterInvolved.level) {
-                    weight -= 30; //- character is higher level than Recruiter: Weight -30
-                } else if (currCharacter.level < characterInvolved.level) { //- character is same level as Recruiter: Weight +0
-                    weight += 10; //- character is lower level than Recruiter: Weight +10
-                }
-
-                weight = Mathf.Max(0, weight);
-                characterWeights.AddElement(currCharacter, weight);
-            }
-        }
-        if (characterWeights.GetTotalOfWeights() > 0) {
-            return characterWeights.PickRandomElementGivenWeights();
-        }
-        throw new System.Exception("Could not find any character to recruit!");
     }
 }
