@@ -122,16 +122,36 @@ public class Biomes : MonoBehaviour {
         int yCoordinate = currentHexTile.yCoordinate - 2;
         if (worldcreator.WorldCreatorManager.Instance.outerGridList.Contains(currentHexTile)) {
             mapHeight -= worldcreator.WorldCreatorManager.Instance._borderThickness * 2;
+            if (currentHexTile.yCoordinate < (int)worldcreator.WorldCreatorManager.Instance.height && currentHexTile.yCoordinate >= 0) {
+                sortingOrder = worldcreator.WorldCreatorManager.Instance.map[0, currentHexTile.yCoordinate].spriteRenderer.sortingOrder;
+            } else if (currentHexTile.yCoordinate < 0) {
+                int originSortingOrder = worldcreator.WorldCreatorManager.Instance.map[0, 0].spriteRenderer.sortingOrder;
+                int differenceFromOrigin = Mathf.Abs(currentHexTile.yCoordinate);
+                sortingOrder = originSortingOrder + (differenceFromOrigin * 10);
+            } else {
+                sortingOrder = (mapHeight -  yCoordinate) * 10;
+            }
+        } else {
+            sortingOrder = (mapHeight -  yCoordinate) * 10;
         }
-        sortingOrder = (mapHeight -  yCoordinate) * 10;
 #else
         int sortingOrder = 0;
         int mapHeight = (int)GridMap.Instance.height - 1;
         int yCoordinate = currentHexTile.yCoordinate - 2;
         if (GridMap.Instance.outerGridList.Contains(currentHexTile)) {
             mapHeight -= GridMap.Instance._borderThickness * 2;
+            if (currentHexTile.yCoordinate < GridMap.Instance.height && currentHexTile.yCoordinate >= 0) {
+                sortingOrder = GridMap.Instance.map[0, currentHexTile.yCoordinate].spriteRenderer.sortingOrder;
+            } else if (currentHexTile.yCoordinate < 0) {
+                int originSortingOrder = GridMap.Instance.map[0, 0].spriteRenderer.sortingOrder;
+                int differenceFromOrigin = Mathf.Abs(currentHexTile.yCoordinate);
+                sortingOrder = originSortingOrder + (differenceFromOrigin * 10);
+            } else {
+                sortingOrder = (mapHeight -  yCoordinate) * 10;
+            }
+        } else {
+            sortingOrder = (mapHeight -  yCoordinate) * 10; //10 is the number of sorting order between rows
         }
-        sortingOrder = (mapHeight -  yCoordinate) * 10; //10 is the number of sorting order between rows
 
         if (PlayerManager.Instance.player != null &&  PlayerManager.Instance.player.playerArea != null 
             && PlayerManager.Instance.player.playerArea.tiles.Contains(currentHexTile)) {

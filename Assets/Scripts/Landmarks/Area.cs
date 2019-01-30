@@ -1091,6 +1091,7 @@ public class Area {
         if (!areaResidents.Contains(character)) {
             if (!ignoreCapacity) {
                 if (IsResidentsFull()) {
+                    Debug.LogWarning(GameManager.Instance.TodayLogString() + "Cannot add " + character.name + " as resident of " + this.name + " because residency is already full!"); 
                     return; //area is at capacity
                 }
             }

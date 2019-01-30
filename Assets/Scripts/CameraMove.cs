@@ -54,7 +54,9 @@ public class CameraMove : MonoBehaviour {
 	}
     private void LateUpdate() {
         ArrowKeysMovement();
+#if !WORLD_CREATION_TOOL
         Dragging();
+#endif
         Zooming();
         Targetting();
         ConstrainCameraBounds();
@@ -142,8 +144,6 @@ public class CameraMove : MonoBehaviour {
         Rect screenRect = new Rect(0, 0, Screen.width, Screen.height);
 #if WORLD_CREATION_TOOL
         if (worldcreator.WorldCreatorManager.Instance.isDoneLoadingWorld 
-            && !worldcreator.WorldCreatorUI.Instance.IsMouseOnUI() 
-            && !worldcreator.WorldCreatorUI.Instance.IsUserOnUI() 
             && screenRect.Contains(Input.mousePosition)) {
 #else
         if (allowZoom && screenRect.Contains(Input.mousePosition)) {
@@ -151,7 +151,12 @@ public class CameraMove : MonoBehaviour {
             //camera scrolling code
             float fov = Camera.main.orthographicSize;
             float adjustment = Input.GetAxis("Mouse ScrollWheel") * (sensitivity);
+#if WORLD_CREATION_TOOL
+            if (adjustment != 0f && !worldcreator.WorldCreatorUI.Instance.IsMouseOnUI()
+            && !worldcreator.WorldCreatorUI.Instance.IsUserOnUI()) {
+#else
             if (adjustment != 0f && !UIManager.Instance.IsMouseOnUI()) {
+#endif
                 //Debug.Log(adjustment);
                 fov -= adjustment;
                 //fov = Mathf.Round(fov * 100f) / 100f;

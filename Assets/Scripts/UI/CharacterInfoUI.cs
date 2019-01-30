@@ -427,7 +427,7 @@ public class CharacterInfoUI : UIMenu {
         UpdateCombatAttributes();
     }
     private void UpdateCombatAttributes() {
-        combatAttributeContentTransform.DestroyChildren();
+        Utilities.DestroyChildren(combatAttributeContentTransform);
         for (int i = 0; i < _activeCharacter.traits.Count; i++) {
             CreateCombatAttributeGO(_activeCharacter.traits[i]);
         }

@@ -231,8 +231,8 @@ public class Party {
             _characters.Add(character);
             character.SetCurrentParty(this);
             character.OnAddedToParty(); //this will remove character from his/her location
-            if (owner.currentStructure != null) {
-                owner.currentStructure.AddCharacterAtLocation(character);
+            if (owner.specificLocation != null) {
+                owner.specificLocation.AddCharacterToLocation(character, owner.currentStructure);
             }
             ApplyCurrentBuffsToCharacter(character);
             Messenger.Broadcast(Signals.CHARACTER_JOINED_PARTY, character, this);

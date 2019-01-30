@@ -3494,7 +3494,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -3738,7 +3738,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -3960,6 +3960,7 @@ MonoBehaviour:
   under: {fileID: 114844590651855524}
   wholeImage: {fileID: 114197946344886324}
   factionEmblem: {fileID: 114715638561681224}
+  hoverObj: {fileID: 0}
 --- !u!114 &114109366411881662
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4261,7 +4262,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -5101,6 +5102,7 @@ MonoBehaviour:
   under: {fileID: 114945241995519668}
   wholeImage: {fileID: 114804389292841842}
   factionEmblem: {fileID: 114086360436703936}
+  hoverObj: {fileID: 0}
 --- !u!114 &114273927610650886
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5917,7 +5919,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -7244,6 +7246,7 @@ MonoBehaviour:
   under: {fileID: 114778004845325002}
   wholeImage: {fileID: 114219834070454172}
   factionEmblem: {fileID: 114603296137757286}
+  hoverObj: {fileID: 0}
 --- !u!114 &114487559700162038
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7506,6 +7509,7 @@ MonoBehaviour:
   under: {fileID: 114762447892324768}
   wholeImage: {fileID: 114990225398095354}
   factionEmblem: {fileID: 114209248945919760}
+  hoverObj: {fileID: 0}
 --- !u!114 &114529063330505066
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7758,7 +7762,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -8138,6 +8142,7 @@ MonoBehaviour:
   under: {fileID: 114283630296134106}
   wholeImage: {fileID: 114418442309753684}
   factionEmblem: {fileID: 114852923221342170}
+  hoverObj: {fileID: 0}
 --- !u!114 &114601066223252732
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -9547,7 +9552,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -9835,7 +9840,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -10564,7 +10569,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -10970,7 +10975,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -11022,7 +11027,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -11201,7 +11206,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -11440,7 +11445,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -11505,6 +11510,7 @@ MonoBehaviour:
   under: {fileID: 114342309098189202}
   wholeImage: {fileID: 114277199152351378}
   factionEmblem: {fileID: 114934787586915174}
+  hoverObj: {fileID: 0}
 --- !u!114 &114865051433263956
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -11657,7 +11663,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -11928,7 +11934,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -12393,6 +12399,7 @@ MonoBehaviour:
   under: {fileID: 114461324314439662}
   wholeImage: {fileID: 114248526474747890}
   factionEmblem: {fileID: 114810336347861420}
+  hoverObj: {fileID: 0}
 --- !u!114 &114963261823639214
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -12418,6 +12425,7 @@ MonoBehaviour:
   under: {fileID: 114307460916800970}
   wholeImage: {fileID: 114021102273600526}
   factionEmblem: {fileID: 114863455530204162}
+  hoverObj: {fileID: 0}
 --- !u!114 &114965925795428066
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -12652,7 +12660,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -12830,7 +12838,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -12909,7 +12917,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}

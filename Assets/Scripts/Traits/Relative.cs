@@ -16,4 +16,10 @@ public class Relative : RelationshipTrait {
         daysDuration = 0;
         effects = new List<TraitEffect>();
     }
+
+    #region overrides
+    public override bool IsUnique() {
+        return false;
+    }
+    #endregion
 }

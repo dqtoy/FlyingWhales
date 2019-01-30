@@ -1270,6 +1270,10 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public void LogScreenPosition() {
         //Debug.Log(CameraMove.Instance.wholeMapCamera.WorldToScreenPoint(this.transform.position));
     }
+    [ContextMenu("Force Update Tile Visuals")]
+    public void ForceUpdateTileVisuals() {
+        Biomes.Instance.UpdateTileVisuals(this);
+    }
     private void HideSmallInfoWindow() {
         UIManager.Instance.HideSmallInfo();
     }
