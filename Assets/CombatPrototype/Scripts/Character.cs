@@ -1522,6 +1522,17 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         newStructure.AddCharacterAtLocation(this);
     }
+    public void MoveToAnotherStructure(STRUCTURE_TYPE structureType) {
+        if (currentStructure != null) {
+            currentStructure.RemoveCharacterAtLocation(this);
+        }
+        if (specificLocation.HasStructure(structureType)) {
+            LocationStructure newStructure = specificLocation.GetRandomStructureOfType(structureType);
+            newStructure.AddCharacterAtLocation(this);
+        } else {
+            throw new Exception("Can't move " + name + " to a " + structureType.ToString() + " because " + specificLocation.name + " does not have that structure!");
+        }
+    }
     #endregion
 
     #region Utilities
@@ -1728,12 +1739,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             //if it does not, keep the characters current home
         }
     }
-    public void MoveToStructure(LocationStructure structure) {
-        if (this.currentStructure != null) {
-            this.currentStructure.RemoveCharacterAtLocation(this);
-        }
-        structure.AddCharacterAtLocation(this);
-    }
+    //public void MoveToStructure(LocationStructure structure) {
+    //    if (this.currentStructure != null) {
+    //        this.currentStructure.RemoveCharacterAtLocation(this);
+    //    }
+    //    structure.AddCharacterAtLocation(this);
+    //}
     public override string ToString() {
         return name;
     }
@@ -2577,6 +2588,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             return true;
         }
         return false;
+    }
+    public SpecialToken CraftAnItem() {
+        //TODO
+        return null;
     }
     #endregion
 

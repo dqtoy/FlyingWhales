@@ -29,7 +29,7 @@ public class CharmActionFaction : Interaction {
 
         SetTargetCharacter(GetTargetCharacter(_characterInvolved));
 
-        _characterInvolved.MoveToStructure(targetCharacter.currentStructure);
+        _characterInvolved.MoveToAnotherStructure(targetCharacter.currentStructure);
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
         startStateDescriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);

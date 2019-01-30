@@ -85,6 +85,10 @@ public class InteractionManager : MonoBehaviour {
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT },
                 alignment = INTERACTION_ALIGNMENT.EVIL,
             } },
+            { INTERACTION_TYPE.CRAFT_ITEM, new InteractionCategoryAndAlignment(){
+            categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.INVENTORY },
+            alignment = INTERACTION_ALIGNMENT.NEUTRAL,
+            } },
         };
     }
     public InteractionCategoryAndAlignment GetCategoryAndAlignment (INTERACTION_TYPE type) {
@@ -454,6 +458,9 @@ public class InteractionManager : MonoBehaviour {
                 break;
             case INTERACTION_TYPE.SCAVENGE_EVENT_FACTION:
                 createdInteraction = new ScavengeEventFaction(interactable);
+                break;
+            case INTERACTION_TYPE.CRAFT_ITEM:
+                createdInteraction = new CraftItem(interactable);
                 break;
         }
         return createdInteraction;
@@ -916,6 +923,8 @@ public class InteractionManager : MonoBehaviour {
                     }
                 }
                 return false;
+            case INTERACTION_TYPE.CRAFT_ITEM:
+                return character.GetTrait("Craftsman") != null && character.specificLocation.HasStructure(STRUCTURE_TYPE.WORK_AREA);
             default:
                 return true;
         }
