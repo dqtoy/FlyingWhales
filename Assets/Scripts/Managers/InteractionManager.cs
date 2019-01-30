@@ -449,6 +449,12 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.CURSE_ACTION:
                 createdInteraction = new CurseAction(interactable);
                 break;
+            case INTERACTION_TYPE.MOVE_TO_SCAVENGE_FACTION:
+                createdInteraction = new MoveToScavengeFaction(interactable);
+                break;
+            case INTERACTION_TYPE.SCAVENGE_EVENT_FACTION:
+                createdInteraction = new ScavengeEventFaction(interactable);
+                break;
         }
         return createdInteraction;
     }
@@ -897,6 +903,19 @@ public class InteractionManager : MonoBehaviour {
                 return false;
             case INTERACTION_TYPE.MOVE_TO_HANG_OUT:
                 return character.HasRelationshipOfEffect(new List<TRAIT_EFFECT>() { TRAIT_EFFECT.NEUTRAL, TRAIT_EFFECT.POSITIVE });
+            case INTERACTION_TYPE.MOVE_TO_SCAVENGE_FACTION:
+                //**Trigger Criteria 1**: There must be at least one unoccupied location with a dungeon or a warehouse
+                for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
+                    Area currArea = LandmarkManager.Instance.allAreas[i];
+                    if (currArea.id == PlayerManager.Instance.player.playerArea.id || currArea.owner != null) {
+                        continue;
+                    }
+                    if (currArea.HasStructure(STRUCTURE_TYPE.DUNGEON) 
+                        || currArea.HasStructure(STRUCTURE_TYPE.WAREHOUSE)) {
+                        return true;
+                    }
+                }
+                return false;
             default:
                 return true;
         }

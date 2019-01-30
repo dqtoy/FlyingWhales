@@ -29,6 +29,10 @@ public class LocationStructure {
         charactersHere = new List<Character>();
         _itemsHere = new List<SpecialToken>();
         pointsOfInterest = new List<IPointOfInterest>();
+
+        if (structureType == STRUCTURE_TYPE.DUNGEON) {
+            AddPOI(new SupplyPile(this));
+        }
     }
 
     #region Utilities
@@ -91,6 +95,14 @@ public class LocationStructure {
     }
     public void RemovePOI(IPointOfInterest poi) {
         pointsOfInterest.Remove(poi);
+    }
+    public bool HasPOIOfType(POINT_OF_INTEREST_TYPE type) {
+        for (int i = 0; i < pointsOfInterest.Count; i++) {
+            if (pointsOfInterest[i].poiType == type) {
+                return true;
+            }
+        }
+        return false;
     }
     #endregion
 

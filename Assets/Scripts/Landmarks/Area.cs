@@ -750,7 +750,7 @@ public class Area {
         areaTasksInteractionWeights = new Dictionary<INTERACTION_TYPE, int>() {
             {INTERACTION_TYPE.MOVE_TO_EXPLORE, 100},
             {INTERACTION_TYPE.MOVE_TO_EXPAND, 15},
-            {INTERACTION_TYPE.MOVE_TO_SCAVENGE, 60},
+            //{INTERACTION_TYPE.MOVE_TO_SCAVENGE, 60},
             {INTERACTION_TYPE.MOVE_TO_RAID, 40},
             //{INTERACTION_TYPE.MOVE_TO_CHARM, 35},
             //{INTERACTION_TYPE.MOVE_TO_RECRUIT, 35},
@@ -773,6 +773,7 @@ public class Area {
             {INTERACTION_TYPE.MOVE_TO_CHARM_FACTION, 50},
             {INTERACTION_TYPE.MOVE_TO_ASSASSINATE_FACTION, 50},
             {INTERACTION_TYPE.MOVE_TO_STEAL_FACTION, 50},
+            {INTERACTION_TYPE.MOVE_TO_SCAVENGE_FACTION, 50},
         };
     }
     public void AddInteraction(Interaction interaction) {
