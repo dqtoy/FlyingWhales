@@ -5,7 +5,7 @@ using System.Linq;
 using System.IO;
 using System;
 
-public class Character : ICharacter, ILeader, IInteractable {
+public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public delegate void OnCharacterDeath();
     public OnCharacterDeath onCharacterDeath;
 
@@ -405,6 +405,9 @@ public class Character : ICharacter, ILeader, IInteractable {
     }
     public CombatCharacter currentCombatCharacter {
         get { return _currentCombatCharacter; }
+    }
+    public POINT_OF_INTEREST_TYPE poiType {
+        get { return POINT_OF_INTEREST_TYPE.CHARACTER; }
     }
     #endregion
 

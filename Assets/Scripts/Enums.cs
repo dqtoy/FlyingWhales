@@ -1225,3 +1225,10 @@ public enum RELATIONSHIP_TRAIT {
     MENTOR,
     STUDENT,
 }
+
+public enum POINT_OF_INTEREST_TYPE {
+    ITEM,
+    LANDMARK,
+    CHARACTER,
+    SUPLY_PILE,
+}

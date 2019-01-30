@@ -24,6 +24,8 @@ public class AreaSaveData {
     //public List<string> possibleSpecialTokenSpawns;
     public int initialResidents;
     public Dictionary<STRUCTURE_TYPE, List<LocationStructure>> structures;
+    public int dungeonSupplyRangeMin;
+    public int dungeonSupplyRangeMax;
 
     public AreaSaveData(Area area) {
         areaID = area.id;
@@ -52,6 +54,8 @@ public class AreaSaveData {
         initialResidents = area.initialResidents;
         monthlyActions = area.monthlyActions;
         structures = area.structures;
+        dungeonSupplyRangeMin = area.dungeonSupplyRangeMin;
+        dungeonSupplyRangeMax = area.dungeonSupplyRangeMax;
         //possibleSpecialTokenSpawns = new List<string>();
         //for (int i = 0; i < area.possibleSpecialTokenSpawns.Count; i++) {
         //    SpecialToken currToken = area.possibleSpecialTokenSpawns[i];

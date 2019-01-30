@@ -8,8 +8,10 @@ public class LocationStructure {
     public STRUCTURE_TYPE structureType { get; private set; }
     public bool isInside { get; private set; }
     public List<Character> charactersHere { get; private set; }
-    [System.NonSerialized] private Area _location;
-    [System.NonSerialized] private List<SpecialToken> _itemsHere;
+    [System.NonSerialized]
+    private Area _location;
+    private List<SpecialToken> _itemsHere;
+    public List<IPointOfInterest> pointsOfInterest { get; private set; }
 
     #region getters
     public Area location {
@@ -26,6 +28,7 @@ public class LocationStructure {
         _location = location;
         charactersHere = new List<Character>();
         _itemsHere = new List<SpecialToken>();
+        pointsOfInterest = new List<IPointOfInterest>();
     }
 
     #region Utilities
@@ -48,11 +51,13 @@ public class LocationStructure {
         if (!charactersHere.Contains(character)) {
             charactersHere.Add(character);
             character.SetCurrentStructureLocation(this);
+            AddPOI(character);
         }
     }
     public void RemoveCharacterAtLocation(Character character) {
         if (charactersHere.Remove(character)) {
             character.SetCurrentStructureLocation(null);
+            RemovePOI(character);
         }
     }
     #endregion
@@ -62,17 +67,30 @@ public class LocationStructure {
         if (!_itemsHere.Contains(token)) {
             _itemsHere.Add(token);
             token.SetStructureLocation(this);
+            AddPOI(token);
         }
     }
     public void RemoveItem(SpecialToken token) {
         if (_itemsHere.Remove(token)) {
             token.SetStructureLocation(null);
+            RemovePOI(token);
         }
     }
     public void OwnItemsInLocation(Faction owner) {
         for (int i = 0; i < _itemsHere.Count; i++) {
             _itemsHere[i].SetOwner(owner);
         }
+    }
+    #endregion
+
+    #region Points Of Interest
+    public void AddPOI(IPointOfInterest poi) {
+        if (!pointsOfInterest.Contains(poi)) {
+            pointsOfInterest.Add(poi);
+        }
+    }
+    public void RemovePOI(IPointOfInterest poi) {
+        pointsOfInterest.Remove(poi);
     }
     #endregion
 

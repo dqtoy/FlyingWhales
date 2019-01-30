@@ -54,6 +54,8 @@ public class Area {
 
     //structures
     public Dictionary<STRUCTURE_TYPE, List<LocationStructure>> structures { get; private set; }
+    public int dungeonSupplyRangeMin { get; private set; }
+    public int dungeonSupplyRangeMax { get; private set; }
 
     //misc
     public Sprite locationPortrait { get; private set; }
@@ -102,6 +104,7 @@ public class Area {
         charactersAtLocationHistory = new List<string>();
         corpsesInArea = new List<Corpse>();
         structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
+        SetDungeonSupplyRange(0,0);
         SetMonthlyActions(2);
         SetAreaType(areaType);
         SetCoreTile(coreTile);
@@ -145,6 +148,7 @@ public class Area {
         } else {
             initialSpawnSetup = new List<InitialRaceSetup>();
         }
+        SetDungeonSupplyRange(data.dungeonSupplyRangeMin, data.dungeonSupplyRangeMax);
         SetMaxDefenderGroups(data.maxDefenderGroups);
         SetInitialDefenderGroups(data.initialDefenderGroups);
         SetResidentCapacity(data.residentCapacity);
@@ -1641,6 +1645,16 @@ public class Area {
     public bool HasStructure(STRUCTURE_TYPE type) {
         return structures.ContainsKey(type);
     }
+    public void SetDungeonSupplyRange(int min, int max) {
+        SetDungeonSupplyMinRange(min);
+        SetDungeonSupplyMaxRange(max);
+    }
+    public void SetDungeonSupplyMinRange(int min) {
+        dungeonSupplyRangeMin = min;
+    }
+    public void SetDungeonSupplyMaxRange(int max) {
+        dungeonSupplyRangeMax = max;
+    }
     #endregion
 }
 
@@ -1652,6 +1666,13 @@ public struct IntRange {
     public IntRange(int low, int high) {
         lowerBound = low;
         upperBound = high;
+    }
+
+    public void SetLower(int lower) {
+        lowerBound = lower;
+    }
+    public void SetUpper(int upper) {
+        upperBound = upper;
     }
 }
 [System.Serializable]
