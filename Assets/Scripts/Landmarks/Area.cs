@@ -751,7 +751,7 @@ public class Area {
             //{INTERACTION_TYPE.MOVE_TO_CHARM, 35},
             //{INTERACTION_TYPE.MOVE_TO_RECRUIT, 35},
             {INTERACTION_TYPE.MOVE_TO_ABDUCT, 25},
-            {INTERACTION_TYPE.MOVE_TO_STEAL, 20},
+            //{INTERACTION_TYPE.MOVE_TO_STEAL, 20},
             {INTERACTION_TYPE.MOVE_TO_HUNT, 20},
             {INTERACTION_TYPE.MOVE_TO_IMPROVE_RELATIONS, 40},
             {INTERACTION_TYPE.PATROL_ACTION, 50},
@@ -768,7 +768,7 @@ public class Area {
             {INTERACTION_TYPE.MOVE_TO_RECRUIT_FRIEND_FACTION, 50},
             {INTERACTION_TYPE.MOVE_TO_CHARM_FACTION, 50},
             {INTERACTION_TYPE.MOVE_TO_ASSASSINATE_FACTION, 50},
-            //{INTERACTION_TYPE.MOVE_TO_STEAL_FACTION, 5000},
+            {INTERACTION_TYPE.MOVE_TO_STEAL_FACTION, 50},
         };
     }
     public void AddInteraction(Interaction interaction) {

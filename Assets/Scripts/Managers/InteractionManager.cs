@@ -758,17 +758,8 @@ public class InteractionManager : MonoBehaviour {
                 //}
                 return false;
             case INTERACTION_TYPE.MOVE_TO_STEAL_FACTION:
-                if (character.tokenInInventory == null) {
-                    for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
-                        Character currCharacter = CharacterManager.Instance.allCharacters[i];
-                        if (currCharacter.id != character.id && !currCharacter.isDead && currCharacter.tokenInInventory != null) {
-                            if (currCharacter.isFactionless || currCharacter.faction.id != character.faction.id) {
-                                return true;
-                            }
-                        }
-                    }
-                }
-                return false;
+                //**Trigger Criteria 1**: This character must not have an item
+                return character.tokenInInventory == null;
             case INTERACTION_TYPE.MOVE_TO_HUNT:
                 //if(character.race == RACE.WOLF || character.race == RACE.SPIDER || character.race == RACE.DRAGON) {
                     for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
