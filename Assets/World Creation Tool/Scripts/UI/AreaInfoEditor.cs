@@ -19,6 +19,8 @@ public class AreaInfoEditor : MonoBehaviour {
     [SerializeField] private InputField initialResidentsField;
     [SerializeField] private Dropdown possibleOccupantsRaceDropdown;
     [SerializeField] private Text occupantsSummary;
+    [SerializeField] private InputField minDungeonSupplyField;
+    [SerializeField] private InputField maxDungeonSupplyField;
 
     [Header("Race Spawns")]
     [SerializeField] private GameObject raceSpawnPrefab;
@@ -63,6 +65,8 @@ public class AreaInfoEditor : MonoBehaviour {
         monthlySupplyField.text = currentArea.monthlySupply.ToString();
         monthlyActionsField.text = currentArea.monthlyActions.ToString();
         initialResidentsField.text = currentArea.initialResidents.ToString();
+        minDungeonSupplyField.text = currentArea.dungeonSupplyRangeMin.ToString();
+        maxDungeonSupplyField.text = currentArea.dungeonSupplyRangeMax.ToString();
         //defaultRaceDropdown.value = Utilities.GetOptionIndex(defaultRaceDropdown, currentArea.defaultRace.ToString());
         occupantsSummary.text = string.Empty;
         for (int i = 0; i < currentArea.possibleOccupants.Count; i++) {
@@ -184,6 +188,18 @@ public class AreaInfoEditor : MonoBehaviour {
         STRUCTURE_TYPE chosenType = (STRUCTURE_TYPE)Enum.Parse(typeof(STRUCTURE_TYPE), structureItemsDropdown.options[structureItemsDropdown.value].text);
         LandmarkManager.Instance.CreateNewStructureAt(currentArea, chosenType);
         UpdateStructures();
+    }
+    public void SetMinDungeonSupplyRange(string text) {
+        if (string.IsNullOrEmpty(text)) {
+            return;
+        }
+        currentArea.SetDungeonSupplyMinRange(Int32.Parse(text));
+    }
+    public void SetMaxDungeonSupplyRange(string text) {
+        if (string.IsNullOrEmpty(text)) {
+            return;
+        }
+        currentArea.SetDungeonSupplyMaxRange(Int32.Parse(text));
     }
     #endregion
 

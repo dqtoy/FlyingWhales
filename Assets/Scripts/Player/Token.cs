@@ -116,7 +116,7 @@ public class CharacterToken : Token {
     }
 }
 
-public class SpecialToken : Token {
+public class SpecialToken : Token, IPointOfInterest {
     public SPECIAL_TOKEN specialTokenType;
     public INTERACTION_TYPE npcAssociatedInteractionType;
     public string name;
@@ -143,6 +143,9 @@ public class SpecialToken : Token {
                 return owner.name;
             }
         }
+    }
+    public POINT_OF_INTEREST_TYPE poiType {
+        get { return POINT_OF_INTEREST_TYPE.ITEM; }
     }
     #endregion
 

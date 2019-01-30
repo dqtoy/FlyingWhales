@@ -110,23 +110,21 @@ public class MoveToStealFaction : Interaction {
     private void ProceedsRewardEffect(InteractionState state) {
         StartMoveToAction();
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_1);
+            state.descriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2);
         }
-        state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_1));
+        state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2));
     }
     private void NormalRewardEffect(InteractionState state) {
         StartMoveToAction();
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_1);
+            state.descriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2);
         }
-        state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_1));
+        state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2));
     }
     #endregion
 
     private void CreateEvent() {
         Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.STEAL_ACTION_FACTION, _characterInvolved.specificLocation);
-        //(interaction as ImproveRelationsEvent).SetTargetFaction(targetFaction);
-        //interaction.SetCanInteractionBeDoneAction(IsImproveRelationsValid);
         _characterInvolved.SetForcedInteraction(interaction);
     }
 

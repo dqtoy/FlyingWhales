@@ -401,11 +401,11 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.STEAL_ACTION_FACTION:
                 createdInteraction = new StealActionFaction(interactable);
                 break;
-            case INTERACTION_TYPE.MOVE_TO_RECRUIT_FACTION:
-                createdInteraction = new MoveToRecruitFaction(interactable);
+            case INTERACTION_TYPE.MOVE_TO_RECRUIT_FRIEND_FACTION:
+                createdInteraction = new MoveToRecruitFriendFaction(interactable);
                 break;
-            case INTERACTION_TYPE.RECRUIT_ACTION_FACTION:
-                createdInteraction = new RecruitActionFaction(interactable);
+            case INTERACTION_TYPE.RECRUIT_FRIEND_ACTION_FACTION:
+                createdInteraction = new RecruitFriendActionFaction(interactable);
                 break;
             case INTERACTION_TYPE.MOVE_TO_ASSASSINATE_FACTION:
                 createdInteraction = new MoveToAssassinateFaction(interactable);
@@ -448,6 +448,12 @@ public class InteractionManager : MonoBehaviour {
                 break;
             case INTERACTION_TYPE.CURSE_ACTION:
                 createdInteraction = new CurseAction(interactable);
+                break;
+            case INTERACTION_TYPE.MOVE_TO_SCAVENGE_FACTION:
+                createdInteraction = new MoveToScavengeFaction(interactable);
+                break;
+            case INTERACTION_TYPE.SCAVENGE_EVENT_FACTION:
+                createdInteraction = new ScavengeEventFaction(interactable);
                 break;
         }
         return createdInteraction;
@@ -758,17 +764,8 @@ public class InteractionManager : MonoBehaviour {
                 //}
                 return false;
             case INTERACTION_TYPE.MOVE_TO_STEAL_FACTION:
-                if (character.tokenInInventory == null) {
-                    for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
-                        Character currCharacter = CharacterManager.Instance.allCharacters[i];
-                        if (currCharacter.id != character.id && !currCharacter.isDead && currCharacter.tokenInInventory != null) {
-                            if (currCharacter.isFactionless || currCharacter.faction.id != character.faction.id) {
-                                return true;
-                            }
-                        }
-                    }
-                }
-                return false;
+                //**Trigger Criteria 1**: This character must not have an item
+                return character.tokenInInventory == null;
             case INTERACTION_TYPE.MOVE_TO_HUNT:
                 //if(character.race == RACE.WOLF || character.race == RACE.SPIDER || character.race == RACE.DRAGON) {
                     for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
@@ -864,7 +861,7 @@ public class InteractionManager : MonoBehaviour {
                     }
                 }
                 return false;
-            case INTERACTION_TYPE.MOVE_TO_RECRUIT_FACTION:
+            case INTERACTION_TYPE.MOVE_TO_RECRUIT_FRIEND_FACTION:
             case INTERACTION_TYPE.MOVE_TO_CHARM_FACTION:
                 if (character.homeArea.IsResidentsFull()) { //check if resident capacity is full
                     return false;
@@ -906,6 +903,19 @@ public class InteractionManager : MonoBehaviour {
                 return false;
             case INTERACTION_TYPE.MOVE_TO_HANG_OUT:
                 return character.HasRelationshipOfEffect(new List<TRAIT_EFFECT>() { TRAIT_EFFECT.NEUTRAL, TRAIT_EFFECT.POSITIVE });
+            case INTERACTION_TYPE.MOVE_TO_SCAVENGE_FACTION:
+                //**Trigger Criteria 1**: There must be at least one unoccupied location with a dungeon or a warehouse
+                for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
+                    Area currArea = LandmarkManager.Instance.allAreas[i];
+                    if (currArea.id == PlayerManager.Instance.player.playerArea.id || currArea.owner != null) {
+                        continue;
+                    }
+                    if (currArea.HasStructure(STRUCTURE_TYPE.DUNGEON) 
+                        || currArea.HasStructure(STRUCTURE_TYPE.WAREHOUSE)) {
+                        return true;
+                    }
+                }
+                return false;
             default:
                 return true;
         }

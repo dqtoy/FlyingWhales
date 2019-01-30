@@ -435,13 +435,21 @@ public class AreaInfoUI : UIMenu {
                 summary += "\n" + kvp.Value.Count.ToString() + " " + kvp.Key.ToString();
                 for (int i = 0; i < kvp.Value.Count; i++) {
                     LocationStructure currStructure = kvp.Value[i];
-                    summary += "    \n" + kvp.Key.ToString() + " " + i.ToString() + " residents: ";
-                    if (currStructure is Dwelling) {
-                        Dwelling dwelling = currStructure as Dwelling;
-                        for (int j = 0; j < dwelling.residents.Count; j++) {
-                            Character resident = dwelling.residents[j];
-                            summary += "        \n" + resident.name;
+                    //if (currStructure is Dwelling) {
+                    //    summary += "\n" + kvp.Key.ToString() + " " + i.ToString() + " residents: ";
+                    //    Dwelling dwelling = currStructure as Dwelling;
+                    //    for (int j = 0; j < dwelling.residents.Count; j++) {
+                    //        Character resident = dwelling.residents[j];
+                    //        summary += "\n-" + resident.name;
+                    //    }
+                    //}
+                    summary += "\n" + kvp.Key.ToString() + " " + i.ToString() + " Points of interest: ";
+                    if (currStructure.pointsOfInterest.Count > 0) {
+                        for (int j = 0; j < currStructure.pointsOfInterest.Count; j++) {
+                            summary += "\n-" + currStructure.pointsOfInterest[j].ToString();
                         }
+                    } else {
+                        summary += " None";
                     }
                 }
             }

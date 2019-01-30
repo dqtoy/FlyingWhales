@@ -19,10 +19,6 @@ public class MoveToScavengeFaction : Interaction {
         _jobFilter = new JOB[] { JOB.DEBILITATOR };
     }
 
-    public void SetTargetArea(Area target) {
-        _targetArea = target;
-    }
-
     #region Overrides
     public override void CreateStates() {
         InteractionState startState = new InteractionState("Start", this);
@@ -30,13 +26,10 @@ public class MoveToScavengeFaction : Interaction {
         InteractionState scavengeProceeds = new InteractionState(Scavenge_Proceeds, this);
         InteractionState normalScavenge = new InteractionState(Normal_Scavenge, this);
 
-        if (_targetArea == null) {
-            _targetArea = GetTargetArea();
-        }
+        _targetArea = GetTargetArea();
         AddToDebugLog("Set target area to " + _targetArea.name);
-        //**Text Description**: [Character Name] is about to leave for [Location Name 1] to scavenge for supplies.
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
-        startStateDescriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_1);
+        startStateDescriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2);
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 
         CreateActionOptions(startState);
@@ -116,42 +109,40 @@ public class MoveToScavengeFaction : Interaction {
         //Selected character will travel to Location 1 to start a Scavenge Event.
         StartMoveToAction();
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_1);
+            state.descriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2);
         }
-        state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_1));
+        state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2));
     }
     private void NormalScavengeRewardEffect(InteractionState state) {
         //Selected character will travel to Location 1 to start a Scavenge Event.
         StartMoveToAction();
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_1);
+            state.descriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2);
         }
-        state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_1));
+        state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2));
     }
 
     private void CreateEvent() {
         AddToDebugLog(_characterInvolved.name + " will now create scavenge event");
-        Interaction scavenge = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.SCAVENGE_EVENT, _characterInvolved.specificLocation);
-        scavenge.SetCanInteractionBeDoneAction(IsScavengeStillValid);
+        Interaction scavenge = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.SCAVENGE_EVENT_FACTION, _characterInvolved.specificLocation);
         _characterInvolved.SetForcedInteraction(scavenge);
-    }
-
-    private bool IsScavengeStillValid() {
-        return _characterInvolved.specificLocation != null && _characterInvolved.specificLocation.owner == null;
     }
 
     private Area GetTargetArea() {
         List<Area> choices = new List<Area>();
-        //Select another tile with no owner as the Scavenge target.
         for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
             Area currArea = LandmarkManager.Instance.allAreas[i];
-            if (currArea.owner == null) {
-                choices.Add(currArea);
+            if (currArea.id == PlayerManager.Instance.player.playerArea.id || currArea.owner != null) {
+                continue;
+            }
+            if (currArea.HasStructure(STRUCTURE_TYPE.DUNGEON)
+                || currArea.HasStructure(STRUCTURE_TYPE.WAREHOUSE)) {
+                choices.Add( currArea);
             }
         }
         if (choices.Count > 0) {
             return choices[Random.Range(0, choices.Count)];
         }
-        throw new System.Exception("Cannot find target area for move to scavenge event at " + interactable.name);
+        return null;
     }
 }

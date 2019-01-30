@@ -55,6 +55,8 @@ public class Area {
 
     //structures
     public Dictionary<STRUCTURE_TYPE, List<LocationStructure>> structures { get; private set; }
+    public int dungeonSupplyRangeMin { get; private set; }
+    public int dungeonSupplyRangeMax { get; private set; }
 
     //misc
     public Sprite locationPortrait { get; private set; }
@@ -108,6 +110,7 @@ public class Area {
         charactersAtLocationHistory = new List<string>();
         corpsesInArea = new List<Corpse>();
         structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
+        SetDungeonSupplyRange(0,0);
         SetMonthlyActions(2);
         SetAreaType(areaType);
         SetCoreTile(coreTile);
@@ -151,6 +154,7 @@ public class Area {
         } else {
             initialSpawnSetup = new List<InitialRaceSetup>();
         }
+        SetDungeonSupplyRange(data.dungeonSupplyRangeMin, data.dungeonSupplyRangeMax);
         SetMaxDefenderGroups(data.maxDefenderGroups);
         SetInitialDefenderGroups(data.initialDefenderGroups);
         SetResidentCapacity(data.residentCapacity);
@@ -752,12 +756,12 @@ public class Area {
         areaTasksInteractionWeights = new Dictionary<INTERACTION_TYPE, int>() {
             {INTERACTION_TYPE.MOVE_TO_EXPLORE, 100},
             {INTERACTION_TYPE.MOVE_TO_EXPAND, 15},
-            {INTERACTION_TYPE.MOVE_TO_SCAVENGE, 60},
+            //{INTERACTION_TYPE.MOVE_TO_SCAVENGE, 60},
             {INTERACTION_TYPE.MOVE_TO_RAID, 40},
             //{INTERACTION_TYPE.MOVE_TO_CHARM, 35},
             //{INTERACTION_TYPE.MOVE_TO_RECRUIT, 35},
             {INTERACTION_TYPE.MOVE_TO_ABDUCT, 25},
-            {INTERACTION_TYPE.MOVE_TO_STEAL, 20},
+            //{INTERACTION_TYPE.MOVE_TO_STEAL, 20},
             {INTERACTION_TYPE.MOVE_TO_HUNT, 20},
             {INTERACTION_TYPE.MOVE_TO_IMPROVE_RELATIONS, 40},
             {INTERACTION_TYPE.PATROL_ACTION, 50},
@@ -771,10 +775,11 @@ public class Area {
             {INTERACTION_TYPE.MOVE_TO_HANG_OUT, 50},
             {INTERACTION_TYPE.MOVE_TO_ARGUE, 50},
             {INTERACTION_TYPE.MOVE_TO_CURSE, 50},
-            {INTERACTION_TYPE.MOVE_TO_RECRUIT_FACTION, 50},
+            {INTERACTION_TYPE.MOVE_TO_RECRUIT_FRIEND_FACTION, 50},
             {INTERACTION_TYPE.MOVE_TO_CHARM_FACTION, 50},
-            {INTERACTION_TYPE.MOVE_TO_ASSASSINATE_FACTION, 5000},
-            //{INTERACTION_TYPE.MOVE_TO_STEAL_FACTION, 5000},
+            {INTERACTION_TYPE.MOVE_TO_ASSASSINATE_FACTION, 50},
+            {INTERACTION_TYPE.MOVE_TO_STEAL_FACTION, 50},
+            {INTERACTION_TYPE.MOVE_TO_SCAVENGE_FACTION, 50},
         };
     }
     public void AddInteraction(Interaction interaction) {
@@ -1684,6 +1689,16 @@ public class Area {
     public bool HasStructure(STRUCTURE_TYPE type) {
         return structures.ContainsKey(type);
     }
+    public void SetDungeonSupplyRange(int min, int max) {
+        SetDungeonSupplyMinRange(min);
+        SetDungeonSupplyMaxRange(max);
+    }
+    public void SetDungeonSupplyMinRange(int min) {
+        dungeonSupplyRangeMin = min;
+    }
+    public void SetDungeonSupplyMaxRange(int max) {
+        dungeonSupplyRangeMax = max;
+    }
     #endregion
 }
 
@@ -1695,6 +1710,13 @@ public struct IntRange {
     public IntRange(int low, int high) {
         lowerBound = low;
         upperBound = high;
+    }
+
+    public void SetLower(int lower) {
+        lowerBound = lower;
+    }
+    public void SetUpper(int upper) {
+        upperBound = upper;
     }
 }
 [System.Serializable]

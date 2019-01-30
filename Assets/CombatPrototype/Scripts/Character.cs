@@ -5,7 +5,7 @@ using System.Linq;
 using System.IO;
 using System;
 
-public class Character : ICharacter, ILeader, IInteractable {
+public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public delegate void OnCharacterDeath();
     public OnCharacterDeath onCharacterDeath;
 
@@ -99,6 +99,9 @@ public class Character : ICharacter, ILeader, IInteractable {
 
     public Color skinColor { get; private set; }
     public Color hairColor { get; private set; }
+
+    public float hSkinColor { get; private set; }
+    public float hHairColor { get; private set; }
 
     #region getters / setters
     public string firstName {
@@ -403,6 +406,9 @@ public class Character : ICharacter, ILeader, IInteractable {
     public CombatCharacter currentCombatCharacter {
         get { return _currentCombatCharacter; }
     }
+    public POINT_OF_INTEREST_TYPE poiType {
+        get { return POINT_OF_INTEREST_TYPE.CHARACTER; }
+    }
     #endregion
 
     public Character(string className, RACE race, GENDER gender) : this() {
@@ -512,6 +518,9 @@ public class Character : ICharacter, ILeader, IInteractable {
 
         skinColor = Color.HSVToRGB(UnityEngine.Random.Range(1, 80f)/360f, 15f/100f, 100f/100f);
         hairColor = Color.HSVToRGB(UnityEngine.Random.Range(0f, 360f)/360f, 25f/100f, 90f/100f);
+
+        hSkinColor = UnityEngine.Random.Range(-360f, 360f);
+        hHairColor = UnityEngine.Random.Range(-360f, 360f);
 
         GetRandomCharacterColor();
         //_combatHistoryID = 0;
@@ -1724,6 +1733,9 @@ public class Character : ICharacter, ILeader, IInteractable {
             this.currentStructure.RemoveCharacterAtLocation(this);
         }
         structure.AddCharacterAtLocation(this);
+    }
+    public override string ToString() {
+        return name;
     }
     #endregion
 
