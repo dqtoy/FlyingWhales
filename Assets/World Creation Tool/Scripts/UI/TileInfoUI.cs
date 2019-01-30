@@ -39,6 +39,7 @@ public class TileInfoUI : MonoBehaviour {
         info += "\nMana: " + tile.data.manaOnTile.ToString();
         info += "\nBiome: " + tile.biomeType.ToString();
         info += "\nElevation Type: " + tile.elevationType.ToString();
+        info += "\nSorting Order: " + tile.spriteRenderer.sortingOrder.ToString();
         return info;
     }
 

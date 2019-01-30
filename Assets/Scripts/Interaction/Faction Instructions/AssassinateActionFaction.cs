@@ -23,9 +23,9 @@ public class AssassinateActionFaction : Interaction {
     #region Override
     public override void CreateStates() {
         InteractionState startState = new InteractionState("Start", this);
-        InteractionState normalRecruitmenSuccess = new InteractionState(Normal_Assassination_Success, this);
-        InteractionState normalRecruitmentFail = new InteractionState(Normal_Assassination_Fail, this);
-        InteractionState normalRecruitmentCriticalFail = new InteractionState(Normal_Assassination_Critical_Fail, this);
+        InteractionState normalAssassinationSuccess = new InteractionState(Normal_Assassination_Success, this);
+        InteractionState normalAssassinationFail = new InteractionState(Normal_Assassination_Fail, this);
+        InteractionState normalAssassinationCriticalFail = new InteractionState(Normal_Assassination_Critical_Fail, this);
 
         if (_targetCharacter == null) {
             SetTargetCharacter(GetTargetCharacter(_characterInvolved));
@@ -36,14 +36,14 @@ public class AssassinateActionFaction : Interaction {
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 
         CreateActionOptions(startState);
-        normalRecruitmenSuccess.SetEffect(() => NormalAssassinationSuccessRewardEffect(normalRecruitmenSuccess));
-        normalRecruitmentFail.SetEffect(() => NormalAssassinationFailRewardEffect(normalRecruitmentFail));
-        normalRecruitmentCriticalFail.SetEffect(() => NormalAssassinationCriticalFailRewardEffect(normalRecruitmentCriticalFail));
+        normalAssassinationSuccess.SetEffect(() => NormalAssassinationSuccessRewardEffect(normalAssassinationSuccess));
+        normalAssassinationFail.SetEffect(() => NormalAssassinationFailRewardEffect(normalAssassinationFail));
+        normalAssassinationCriticalFail.SetEffect(() => NormalAssassinationCriticalFailRewardEffect(normalAssassinationCriticalFail));
 
         _states.Add(startState.name, startState);
-        _states.Add(normalRecruitmenSuccess.name, normalRecruitmenSuccess);
-        _states.Add(normalRecruitmentFail.name, normalRecruitmentFail);
-        _states.Add(normalRecruitmentCriticalFail.name, normalRecruitmentCriticalFail);
+        _states.Add(normalAssassinationSuccess.name, normalAssassinationSuccess);
+        _states.Add(normalAssassinationFail.name, normalAssassinationFail);
+        _states.Add(normalAssassinationCriticalFail.name, normalAssassinationCriticalFail);
 
         SetCurrentState(startState);
     }
@@ -60,15 +60,8 @@ public class AssassinateActionFaction : Interaction {
         }
     }
     public override bool CanInteractionBeDoneBy(Character character) {
-        if (interactable.IsResidentsFull()) {
+        if (GetTargetCharacter(character) == null) { //check if a target character can be found using the provided weights
             return false;
-        }
-        if (_targetCharacter != null) { //if there is a target character, he/she must still be in this location
-            return _targetCharacter.specificLocation.id == interactable.id;
-        } else { //if there is no set target character
-            if (GetTargetCharacter(character) == null) { //check if a target character can be found using the provided weights
-                return false;
-            }
         }
         return base.CanInteractionBeDoneBy(character);
     }

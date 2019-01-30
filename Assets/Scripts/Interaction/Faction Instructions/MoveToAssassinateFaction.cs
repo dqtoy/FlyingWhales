@@ -74,6 +74,9 @@ public class MoveToAssassinateFaction : Interaction {
         }
         return base.CanInteractionBeDoneBy(character);
     }
+    public override void DoActionUponMoveToArrival() {
+        CreateEvent();
+    }
     #endregion
 
     #region Option Effects
@@ -94,9 +97,6 @@ public class MoveToAssassinateFaction : Interaction {
     }
     private void DoNothingEffect(InteractionState state) {
         SetCurrentState(_states[Normal_Assassination]);
-    }
-    public override void DoActionUponMoveToArrival() {
-        CreateEvent();
     }
     #endregion
 
