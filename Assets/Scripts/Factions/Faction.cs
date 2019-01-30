@@ -9,7 +9,7 @@ using System;
 
 
 public class Faction {
-	protected int _id;
+    protected int _id;
     protected string _name;
     protected string _description;
     protected string _initialLeaderClass;
@@ -17,6 +17,8 @@ public class Faction {
     protected int _currentInteractionTick;
     protected int _usedMonthForInteraction;
     protected int _inventoryTaskWeight;
+    protected int _offenseTaskNumOfReserved;
+    protected int _supplyTaskNumOfReserved;
     protected bool _isPlayerFaction;
     protected GENDER _initialLeaderGender;
     protected RACE _initialLeaderRace;
@@ -34,7 +36,7 @@ public class Faction {
     protected Dictionary<Faction, FactionRelationship> _relationships;
     protected Dictionary<INTERACTION_TYPE, int> _nonNeutralInteractionTypes;
     protected Dictionary<INTERACTION_TYPE, int> _neutralInteractionTypes;
-    protected Dictionary<INTERACTION_CATEGORY, int> _factionTasksWeights;
+    protected Dictionary<INTERACTION_CATEGORY, FactionTaskWeight> _factionTasksWeights;
 
     public MORALITY morality { get; private set; }
     public FACTION_SIZE size { get; private set; }
@@ -46,13 +48,13 @@ public class Faction {
 
     #region getters/setters
     public int id {
-		get { return _id; }
-	}
+        get { return _id; }
+    }
     public int level {
         get { return _level; }
     }
     public string name {
-		get { return _name; }
+        get { return _name; }
     }
     public string urlName {
         get { return "<link=" + '"' + this._id.ToString() + "_faction" + '"' + ">" + this._name + "</link>"; }
@@ -121,10 +123,10 @@ public class Faction {
 
     public Faction(bool isPlayerFaction = false) {
         _isPlayerFaction = isPlayerFaction;
-		this._id = Utilities.SetID<Faction>(this);
+        this._id = Utilities.SetID<Faction>(this);
         SetName(RandomNameGenerator.Instance.GenerateKingdomName());
         SetEmblem(FactionManager.Instance.GenerateFactionEmblem(this));
-        SetFactionColor (Utilities.GetColorForFaction());
+        SetFactionColor(Utilities.GetColorForFaction());
         SetRace(new Race(RACE.HUMANS, RACE_SUB_TYPE.NORMAL));
         SetMorality(MORALITY.GOOD);
         SetSize(FACTION_SIZE.MAJOR);
@@ -145,8 +147,8 @@ public class Faction {
         //favor = new Dictionary<Faction, int>();
         //defenderWeights = new WeightedDictionary<AreaCharacterClass>();
         additionalClassWeights = new WeightedDictionary<AreaCharacterClass>();
-        InitializeInteractions();
-        //ConstructFactionTasksWeights();
+        //InitializeInteractions();
+        ConstructFactionTasksWeights();
 #if !WORLD_CREATION_TOOL
         SetDailyInteractionGenerationTick();
         AddListeners();
@@ -177,7 +179,7 @@ public class Faction {
         _relationships = new Dictionary<Faction, FactionRelationship>();
         _landmarkInfo = new List<BaseLandmark>();
         _ownedAreas = new List<Area>();
-        if(_recruitableRaces == null) {
+        if (_recruitableRaces == null) {
             _recruitableRaces = new List<RACE>();
         }
         if (_startingFollowers == null) {
@@ -192,8 +194,8 @@ public class Faction {
         //    defenderWeights = new WeightedDictionary<AreaCharacterClass>();
         //}
         additionalClassWeights = new WeightedDictionary<AreaCharacterClass>();
-        InitializeInteractions();
-        //ConstructFactionTasksWeights();
+        //InitializeInteractions();
+        ConstructFactionTasksWeights();
 #if !WORLD_CREATION_TOOL
         SetDailyInteractionGenerationTick();
         AddListeners();
@@ -213,7 +215,7 @@ public class Faction {
         _leader = leader;
         if (_leader != null && _leader is Character) {
             Character character = _leader as Character;
-            if(character.job.jobType != JOB.LEADER) {
+            if (character.job.jobType != JOB.LEADER) {
                 character.AssignJob(JOB.LEADER);
             }
         }
@@ -263,7 +265,7 @@ public class Faction {
         List<Character> chars = new List<Character>();
         for (int i = 0; i < _characters.Count; i++) {
             Character currCharacter = _characters[i];
-            if(currCharacter.role.roleType == role) {
+            if (currCharacter.role.roleType == role) {
                 chars.Add(currCharacter);
             }
         }
@@ -325,7 +327,7 @@ public class Faction {
         return null;
     }
     public bool IsHostileWith(Faction faction) {
-        if(faction.id == this.id) {
+        if (faction.id == this.id) {
             return false;
         }
         FactionRelationship rel = GetRelationshipWith(faction);
@@ -387,7 +389,7 @@ public class Faction {
         _level = amount;
     }
     public void LevelUp() {
-        _level ++;
+        _level++;
     }
     public void LevelUp(int amount) {
         _level += amount;
@@ -526,37 +528,61 @@ public class Faction {
 
     #region Interaction
     private void ConstructFactionTasksWeights() {
-        _factionTasksWeights = new Dictionary<INTERACTION_CATEGORY, int>() {
-            { INTERACTION_CATEGORY.RECRUITMENT, 0 },
-            { INTERACTION_CATEGORY.SUPPLY, 0 },
-            { INTERACTION_CATEGORY.DIPLOMACY, 0 },
-            { INTERACTION_CATEGORY.INVENTORY, 0 },
-            { INTERACTION_CATEGORY.SUBTERFUGE, 0 },
-            { INTERACTION_CATEGORY.OFFENSE, 0 },
-            { INTERACTION_CATEGORY.DEFENSE, 0 },
-            { INTERACTION_CATEGORY.EXPANSION, 0 },
+        _factionTasksWeights = new Dictionary<INTERACTION_CATEGORY, FactionTaskWeight>() {
+            { INTERACTION_CATEGORY.RECRUITMENT, new FactionTaskWeight() },
+            { INTERACTION_CATEGORY.SUPPLY, new FactionTaskWeight() },
+            { INTERACTION_CATEGORY.DIPLOMACY, new FactionTaskWeight() },
+            { INTERACTION_CATEGORY.INVENTORY, new FactionTaskWeight() },
+            { INTERACTION_CATEGORY.SUBTERFUGE, new FactionTaskWeight() { baseWeight = 0, areaWeight = 0, supplyCost = 100 } },
+            { INTERACTION_CATEGORY.OFFENSE, new FactionTaskWeight() { baseWeight = 0, areaWeight = 0, supplyCost = 100 } },
+            { INTERACTION_CATEGORY.DEFENSE, new FactionTaskWeight() },
+            { INTERACTION_CATEGORY.EXPANSION, new FactionTaskWeight() { baseWeight = 0, areaWeight = 0, supplyCost = 100 } },
         };
     }
 
     //This updates faction weights before doing the update per area, meaning this is constant to all areas. This is done to prevent from recomputing everytime in the area loop
     private void UpdateInitialFactionTasksWeights() {
-        foreach (INTERACTION_CATEGORY category in _factionTasksWeights.Keys) {
-            _factionTasksWeights[category] = GetInitialFactionTaskWeight(category);
+        List<INTERACTION_CATEGORY> categories = _factionTasksWeights.Keys.ToList();
+        for (int i = 0; i < categories.Count; i++) {
+            INTERACTION_CATEGORY category = categories[i];
+            FactionTaskWeight taskWeight = _factionTasksWeights[category];
+            taskWeight.factionCannotDoTask = false;
+            taskWeight.baseWeight = GetInitialFactionTaskWeight(category);
+            _factionTasksWeights[category] = taskWeight;
         }
     }
+
+    //This is the update of faction weights per area
+    private void UpdateFactionTasksWeightsPerArea(Area area) {
+        int supplySpentForInteraction = 0;
+        List<INTERACTION_CATEGORY> categories = _factionTasksWeights.Keys.ToList();
+        for (int i = 0; i < categories.Count; i++) {
+            INTERACTION_CATEGORY category = categories[i];
+            FactionTaskWeight taskWeight = _factionTasksWeights[category];
+            supplySpentForInteraction += taskWeight.supplyCost;
+            if (supplySpentForInteraction <= area.suppliesInBank) {
+                taskWeight.areaCannotDoTask = false;
+                taskWeight.areaWeight = GetFactionTaskWeightPerArea(category, area);
+            } else {
+                taskWeight.areaCannotDoTask = true;
+            }
+            _factionTasksWeights[category] = taskWeight;
+        }
+    }
+
     private int GetInitialFactionTaskWeight(INTERACTION_CATEGORY category) {
         int weight = 0;
         if (category == INTERACTION_CATEGORY.RECRUITMENT) {
             if (morality == MORALITY.GOOD && size == FACTION_SIZE.MAJOR) {
                 weight += 100;
                 foreach (FactionRelationship relationship in relationships.Values) {
-                    if(relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.ENEMY) {
+                    if (relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.ENEMY) {
                         weight += 10;
-                    }else if (relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.AT_WAR) {
+                    } else if (relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.AT_WAR) {
                         weight += 20;
                     }
                 }
-            }else if (morality == MORALITY.EVIL && size == FACTION_SIZE.MAJOR) {
+            } else if (morality == MORALITY.EVIL && size == FACTION_SIZE.MAJOR) {
                 weight += 120;
                 foreach (FactionRelationship relationship in relationships.Values) {
                     if (relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.ENEMY) {
@@ -575,7 +601,15 @@ public class Faction {
                     }
                 }
             }
-        }else if(category == INTERACTION_CATEGORY.DIPLOMACY) {
+        } else if (category == INTERACTION_CATEGORY.SUPPLY) {
+            if (morality == MORALITY.GOOD && size == FACTION_SIZE.MAJOR) {
+                _supplyTaskNumOfReserved = 500;
+            } else if (morality == MORALITY.EVIL && size == FACTION_SIZE.MAJOR) {
+                _supplyTaskNumOfReserved = 400;
+            } else if (size == FACTION_SIZE.MINOR) {
+                _supplyTaskNumOfReserved = 300;
+            }
+        } else if (category == INTERACTION_CATEGORY.DIPLOMACY) {
             int allyStrength = _characters.Sum(x => x.level);
             int enemyStrength = 0;
             foreach (KeyValuePair<Faction, FactionRelationship> kvp in relationships) {
@@ -585,7 +619,7 @@ public class Faction {
                     enemyStrength += kvp.Key.characters.Sum(x => x.level);
                 }
             }
-            if(allyStrength < enemyStrength) {
+            if (allyStrength < enemyStrength) {
                 int diff = enemyStrength - allyStrength;
                 if (morality == MORALITY.GOOD && size == FACTION_SIZE.MAJOR) {
                     weight += (25 * diff);
@@ -595,6 +629,8 @@ public class Faction {
                     weight += (75 * diff);
                 }
             }
+        } else if (category == INTERACTION_CATEGORY.INVENTORY) {
+            //will not set base weight for inventory type interactions
         } else if (category == INTERACTION_CATEGORY.SUBTERFUGE) {
             foreach (FactionRelationship relationship in relationships.Values) {
                 if (relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.DISLIKED || relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.ENEMY
@@ -608,18 +644,75 @@ public class Faction {
                 }
             }
         } else if (category == INTERACTION_CATEGORY.DEFENSE) {
-            if(factionType == FACTION_TYPE.HOSTILE) {
+            if (factionType == FACTION_TYPE.HOSTILE) {
                 weight += 100;
             } else if (factionType == FACTION_TYPE.BALANCED) {
                 weight += 200;
             } else if (factionType == FACTION_TYPE.DEFENSIVE) {
                 weight += 400;
             }
+        } else if (category == INTERACTION_CATEGORY.OFFENSE) {
+            if (factionType == FACTION_TYPE.HOSTILE) {
+                _offenseTaskNumOfReserved = 4;
+            } else if (factionType == FACTION_TYPE.BALANCED) {
+                _offenseTaskNumOfReserved = 6;
+            } else if (factionType == FACTION_TYPE.DEFENSIVE) {
+                _offenseTaskNumOfReserved = 8;
+            }
+        } else if (category == INTERACTION_CATEGORY.EXPANSION) {
+            weight = 100;
         }
         return weight;
     }
-    private void GetRecruitmentWeight(Area area) {
-        
+    private int GetFactionTaskWeightPerArea(INTERACTION_CATEGORY category, Area area) {
+        int weight = 0;
+        if (category == INTERACTION_CATEGORY.RECRUITMENT) {
+            //Minus 1 because the computation is baseWeight + areaWeight, if there is no minus 1, the total weight will be 1 base weight higher than the correct weight
+            weight = _factionTasksWeights[category].baseWeight * (area.GetNumberOfUnoccupiedStructure(STRUCTURE_TYPE.DWELLING) - 1);
+        } else if (category == INTERACTION_CATEGORY.SUPPLY) {
+            if(area.suppliesInBank < _supplyTaskNumOfReserved) {
+                int missingSupplies = _supplyTaskNumOfReserved - area.suppliesInBank;
+                weight = missingSupplies * 4;
+            }
+        } else if (category == INTERACTION_CATEGORY.DIPLOMACY) {
+            //No diplomacy modifier per area
+        } else if (category == INTERACTION_CATEGORY.INVENTORY) {
+            if (!area.IsItemInventoryFull()) {
+                weight = _inventoryTaskWeight;
+            }
+        } else if (category == INTERACTION_CATEGORY.SUBTERFUGE) {
+            //See supply checker above
+        } else if (category == INTERACTION_CATEGORY.DEFENSE) {
+            //No defense modifier per area
+        } else if (category == INTERACTION_CATEGORY.OFFENSE) {
+            int half = _offenseTaskNumOfReserved / 2;
+            int frontlineCharacters = 0;
+            int backlineCharacters = 0;
+            for (int i = 0; i < area.areaResidents.Count; i++) {
+                Character resident = area.areaResidents[i];
+                if (resident.forcedInteraction == null && resident.doNotDisturb <= 0 && resident.IsInOwnParty() && !resident.isLeader
+                    && resident.role.roleType != CHARACTER_ROLE.CIVILIAN && !resident.currentParty.icon.isTravelling
+                    && !resident.isDefender && resident.specificLocation.id == id && resident.currentStructure.isInside) {
+                    if ((area.owner != null && resident.faction == area.owner) || (area.owner == null && resident.faction == FactionManager.Instance.neutralFaction)) {
+                        if(resident.characterClass.combatPosition == COMBAT_POSITION.FRONTLINE) {
+                            frontlineCharacters++;
+                        } else {
+                            backlineCharacters++;
+                        }
+                    }
+                }
+            }
+            if (frontlineCharacters >= half && backlineCharacters >= half) {
+                weight = 200 + (100 * area.offenseTaskWeightMultiplier);
+            }
+        } else if (category == INTERACTION_CATEGORY.EXPANSION) {
+            if (morality == MORALITY.GOOD && size == FACTION_SIZE.MAJOR) {
+                weight = (-25 * area.GetNumberOfUnoccupiedStructure(STRUCTURE_TYPE.DWELLING));
+            } else if (morality == MORALITY.EVIL && size == FACTION_SIZE.MAJOR) {
+                weight = (-20 * area.GetNumberOfUnoccupiedStructure(STRUCTURE_TYPE.DWELLING));
+            }
+        }
+        return weight;
     }
     private void InitializeInteractions() {
         _nonNeutralInteractionTypes = new Dictionary<INTERACTION_TYPE, int> {
@@ -650,12 +743,8 @@ public class Faction {
         }
     }
     private void GenerateDailyInteraction() {
-        //if(this == FactionManager.Instance.neutralFaction) {
-        //    GenerateNeutralInteraction();
-        //} else {
-        //    GenerateNonNeutralInteraction();
-        //}
-        GenerateFactionInteraction();
+        //GenerateFactionInteraction();
+        GenerateFactionTasks();
     }
     private void GenerateFactionInteraction() {
         for (int i = 0; i < _ownedAreas.Count; i++) {
@@ -663,9 +752,82 @@ public class Faction {
             _ownedAreas[i].AreaTasksAssignments();
         }
     }
+    private void GenerateFactionTasks() {
+        UpdateInitialFactionTasksWeights();
+        for (int i = 0; i < _ownedAreas.Count; i++) {
+            GenerateAreaInteractionNew(_ownedAreas[i]);
+        }
+    }
     private void GenerateAreaInteractionNew(Area area) {
-        string interactionLog = GameManager.Instance.TodayLogString() + "Generating faction area interactions for " + this.name;
+        string interactionLog = GameManager.Instance.TodayLogString() + "GENERATING FACTION TASKS FOR " + this.name + " in " + area.name;
+        interactionLog += "\nAREA MONTHLY ACTIONS: " + area.monthlyActions.ToString();
 
+        UpdateFactionTasksWeightsPerArea(area);
+        WeightedDictionary<INTERACTION_CATEGORY> tasksWeights = new WeightedDictionary<INTERACTION_CATEGORY>();
+        foreach (KeyValuePair<INTERACTION_CATEGORY, FactionTaskWeight> kvp in _factionTasksWeights) {
+            if (!kvp.Value.areaCannotDoTask && !kvp.Value.factionCannotDoTask) {
+                int totalWeight = kvp.Value.baseWeight + kvp.Value.areaWeight;
+                tasksWeights.AddElement(kvp.Key, totalWeight);
+                interactionLog += "\n" + kvp.Key.ToString() + ": " + totalWeight.ToString();
+            } else {
+                if (kvp.Value.areaCannotDoTask) {
+                    interactionLog += "\nCAN'T DO " + kvp.Key.ToString() + " ACTION BECAUSE AREA CANNOT ACCOMODATE SUPPLY!";
+                }
+            }
+        }
+        int actionsCount = 0;
+        while (actionsCount < area.monthlyActions && tasksWeights.GetTotalOfWeights() > 0) {
+            INTERACTION_CATEGORY chosenCategory = tasksWeights.PickRandomElementGivenWeights();
+            interactionLog += "\n--------------------------------------------------------";
+            interactionLog += "\nCHOSEN INTERACTION TYPE: " + chosenCategory.ToString();
+            //CGet all residents of area that can do the interaction category;
+            Dictionary<Character, List<INTERACTION_TYPE>> residentInteractions = area.GetResidentAndInteractionsTheyCanDoByCategory(chosenCategory);
+            if (residentInteractions.Count > 0) {
+                //For testing only
+                interactionLog += "\nALL CHARACTERS AND INTERACTIONS THEY CAN DO";
+                foreach (KeyValuePair<Character, List<INTERACTION_TYPE>> kvp in residentInteractions) {
+                    interactionLog += "\n" + kvp.Key.name.ToString() + ": ";
+                    for (int i = 0; i < kvp.Value.Count; i++) {
+                        if (i > 0) {
+                            interactionLog += ", ";
+                        }
+                        interactionLog += kvp.Value[i].ToString();
+                    }
+                }
+                actionsCount++;
+                Character chosenCharacter = residentInteractions.ElementAt(UnityEngine.Random.Range(0, residentInteractions.Count)).Key;
+                INTERACTION_TYPE chosenInteraction = residentInteractions[chosenCharacter][UnityEngine.Random.Range(0, residentInteractions[chosenCharacter].Count)];
+                interactionLog += "\nCHOSEN CHARACTER AND INTERACTION: " + chosenCharacter.name + " - " + chosenInteraction.ToString();
+                interactionLog += "\n--------------------------------------------------------";
+                Interaction interaction = InteractionManager.Instance.CreateNewInteraction(chosenInteraction, chosenCharacter.specificLocation);
+                if (_factionTasksWeights[chosenCategory].supplyCost > 0) {
+                    interaction.SetCanInteractionBeDoneAction(() => area.CanDoAreaTaskInteraction(interaction.type, chosenCharacter, _factionTasksWeights[chosenCategory].supplyCost));
+                    interaction.SetInitializeAction(() => area.AdjustSuppliesInBank(-_factionTasksWeights[chosenCategory].supplyCost));
+                    interaction.SetMinionSuccessAction(() => area.AdjustSuppliesInBank(_factionTasksWeights[chosenCategory].supplyCost));
+                }
+                chosenCharacter.SetForcedInteraction(interaction);
+
+                if (chosenCategory == INTERACTION_CATEGORY.DIPLOMACY) {
+                    //may only trigger once per Month tick per faction
+                    FactionTaskWeight taskWeight = _factionTasksWeights[chosenCategory];
+                    taskWeight.factionCannotDoTask = true;
+                    _factionTasksWeights[chosenCategory] = taskWeight;
+                } else if (chosenCategory == INTERACTION_CATEGORY.OFFENSE) {
+                    //may only trigger once per Month tick per location
+                    tasksWeights.RemoveElement(chosenCategory);
+                }
+            } else {
+                interactionLog += "\nNO RESIDENT CAN DO " + chosenCategory.ToString() + " TYPE ACTION! Setting weight to zero and randomizing again... ";
+                tasksWeights.RemoveElement(chosenCategory);
+            }
+        }
+        if (actionsCount >= area.monthlyActions) {
+            interactionLog += "\nMONTHLY ACTIONS REACHED! Faction tasks assignment ends.";
+        }
+        if (tasksWeights.Count < 0) {
+            interactionLog += "\nNO MORE TASKS THAT CAN BE DONE! Faction tasks assignment ends.";
+        }
+        Debug.Log(interactionLog);
     }
     private void GenerateAreaInteraction(Area area) {
         string interactionLog = GameManager.Instance.TodayLogString() + "Generating faction area interaction for " + this.name;
@@ -680,7 +842,7 @@ public class Faction {
                 foreach (KeyValuePair<INTERACTION_TYPE, int> kvp in _nonNeutralInteractionTypes) {
                     INTERACTION_TYPE type = kvp.Key;
                     int weight = kvp.Value;
-                    if(type == INTERACTION_TYPE.SPAWN_CHARACTER && this == FactionManager.Instance.neutralFaction) {
+                    if (type == INTERACTION_TYPE.SPAWN_CHARACTER && this == FactionManager.Instance.neutralFaction) {
                         type = INTERACTION_TYPE.SPAWN_NEUTRAL_CHARACTER;
                         weight = 25;
                     }
@@ -726,4 +888,11 @@ public class Faction {
         }
     }
     #endregion
+}
+public struct FactionTaskWeight {
+    public int baseWeight; //Must not be changed by area
+    public int areaWeight;
+    public int supplyCost;
+    public bool areaCannotDoTask;
+    public bool factionCannotDoTask;
 }

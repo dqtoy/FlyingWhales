@@ -51,6 +51,7 @@ public class Area {
 
     //special tokens
     public List<SpecialToken> possibleSpecialTokenSpawns { get; private set; }
+    public const int MAX_ITEM_CAPACITY = 15;
 
     //structures
     public Dictionary<STRUCTURE_TYPE, List<LocationStructure>> structures { get; private set; }
@@ -68,6 +69,7 @@ public class Area {
     private RACE _raceType;
     private List<HexTile> outerTiles;
     private List<SpriteRenderer> outline;
+    private int _offenseTaskWeightMultiplier;
 
     #region getters
     public RACE raceType {
@@ -75,6 +77,10 @@ public class Area {
     }
     public List<Character> visitors {
         get { return charactersAtLocation.Where(x => !areaResidents.Contains(x)).ToList(); }
+    }
+    public int offenseTaskWeightMultiplier {
+        get { return _offenseTaskWeightMultiplier; }
+        set { _offenseTaskWeightMultiplier = value; }
     }
     #endregion
 
@@ -870,7 +876,7 @@ public class Area {
                     if (supplySpent <= suppliesInBank) {
                         testLog += "\nChosen Interaction: " + interactionType.ToString();
                         interaction = InteractionManager.Instance.CreateNewInteraction(interactionType, chosenCandidate.specificLocation);
-                        interaction.SetCanInteractionBeDoneAction(() => CanDoAreaTaskInteraction(interaction.type, chosenCandidate));
+                        interaction.SetCanInteractionBeDoneAction(() => CanDoAreaTaskInteraction(interaction.type, chosenCandidate, 100));
                         interaction.SetInitializeAction(() => AdjustSuppliesInBank(-100));
                         interaction.SetMinionSuccessAction(() => AdjustSuppliesInBank(100));
                         chosenCandidate.SetForcedInteraction(interaction);
@@ -905,8 +911,34 @@ public class Area {
         testLog = log;
         return interactionWeights.PickRandomElementGivenWeights();
     }
-    private bool CanDoAreaTaskInteraction(INTERACTION_TYPE interactionType, Character character) {
-        return suppliesInBank >= 100 && InteractionManager.Instance.CanCreateInteraction(interactionType, character);
+    public bool CanDoAreaTaskInteraction(INTERACTION_TYPE interactionType, Character character , int supplyCost) {
+        return suppliesInBank >= supplyCost; //&& InteractionManager.Instance.CanCreateInteraction(interactionType, character);
+    }
+    public Dictionary<Character, List<INTERACTION_TYPE>> GetResidentAndInteractionsTheyCanDoByCategory(INTERACTION_CATEGORY category) {
+        Dictionary<Character, List<INTERACTION_TYPE>> residentInteractions = new Dictionary<Character, List<INTERACTION_TYPE>>();
+        for (int i = 0; i < areaResidents.Count; i++) {
+            Character resident = areaResidents[i];
+            if (resident.doNotDisturb <= 0 && !resident.isDefender && !resident.currentParty.icon.isTravelling && resident.specificLocation.id == id) {
+                if (attackCharacters != null && attackCharacters.Contains(resident)) {
+                    continue;
+                }
+                if ((owner == null && resident.faction == FactionManager.Instance.neutralFaction) || resident.faction == owner) {
+                    List<INTERACTION_TYPE> interactionTypes = RaceManager.Instance.GetInteractionsOfRace(resident.race, category);
+                    if(interactionTypes != null) {
+                        for (int j = 0; j < interactionTypes.Count; j++) {
+                            if(!InteractionManager.Instance.CanCreateInteraction(interactionTypes[j], resident)) {
+                                interactionTypes.RemoveAt(j);
+                                j--;
+                            }
+                        }
+                        if(interactionTypes.Count > 0) {
+                            residentInteractions.Add(resident, interactionTypes);
+                        }
+                    }
+                }
+            }
+        }
+        return residentInteractions;
     }
     #endregion
 
@@ -1286,6 +1318,12 @@ public class Area {
         }
         return structures[STRUCTURE_TYPE.DWELLING].Where(x => !x.IsOccupied()).Count() == 0; //check if there are still unoccupied dwellings
     }
+    public int GetNumberOfUnoccupiedStructure(STRUCTURE_TYPE structureType) {
+        if (PlayerManager.Instance.player != null && PlayerManager.Instance.player.playerArea.id == this.id) {
+            return 0;
+        }
+        return structures[structureType].Where(x => !x.IsOccupied()).Count();
+    }
     public void GenerateNeutralCharacters() {
         if (defaultRace.race == RACE.NONE) {
             return; //no default race was generated
@@ -1459,8 +1497,8 @@ public class Area {
     //        }
     //    }
     //}
-    public void AddSpecialTokenToLocation(SpecialToken token, LocationStructure structure = null) {
-        if (!possibleSpecialTokenSpawns.Contains(token)) {
+    public bool AddSpecialTokenToLocation(SpecialToken token, LocationStructure structure = null) {
+        if (!IsItemInventoryFull() && !possibleSpecialTokenSpawns.Contains(token)) {
             possibleSpecialTokenSpawns.Add(token);
             Debug.Log(GameManager.Instance.TodayLogString() + "Added " + token.name + " at " + name);
             if (structure != null) {
@@ -1477,7 +1515,9 @@ public class Area {
                 }
             }
             Messenger.Broadcast(Signals.ITEM_ADDED_TO_AREA, this, token);
+            return true;
         }
+        return false;
     }
     public void RemoveSpecialTokenFromLocation(SpecialToken token) {
         if (possibleSpecialTokenSpawns.Remove(token)) {
@@ -1486,6 +1526,9 @@ public class Area {
             Messenger.Broadcast(Signals.ITEM_REMOVED_FROM_AREA, this, token);
         }
         
+    }
+    public bool IsItemInventoryFull() {
+        return possibleSpecialTokenSpawns.Count >= MAX_ITEM_CAPACITY;
     }
     public List<SpecialToken> GetElligibleTokensForCharacter(Character character) {
         List<SpecialToken> choices = new List<SpecialToken>(possibleSpecialTokenSpawns);
