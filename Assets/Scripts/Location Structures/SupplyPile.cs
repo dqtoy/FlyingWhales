@@ -17,6 +17,15 @@ public class SupplyPile : IPointOfInterest {
     }
 
     public int GetSuppliesObtained() {
-        return Random.Range(location.location.dungeonSupplyRangeMin, location.location.dungeonSupplyRangeMax + 1);
+        if (location.structureType == STRUCTURE_TYPE.DUNGEON) {
+            return Random.Range(location.location.dungeonSupplyRangeMin, location.location.dungeonSupplyRangeMax + 1);
+        } else {
+            return Random.Range(1, location.location.suppliesInBank);
+        }
+        
+    }
+
+    public override string ToString() {
+        return "Supply Pile";
     }
 }

@@ -1734,6 +1734,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         structure.AddCharacterAtLocation(this);
     }
+    public override string ToString() {
+        return name;
+    }
     #endregion
 
     #region Relationships

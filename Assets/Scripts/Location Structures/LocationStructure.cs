@@ -30,7 +30,7 @@ public class LocationStructure {
         _itemsHere = new List<SpecialToken>();
         pointsOfInterest = new List<IPointOfInterest>();
 
-        if (structureType == STRUCTURE_TYPE.DUNGEON) {
+        if (structureType == STRUCTURE_TYPE.DUNGEON || structureType == STRUCTURE_TYPE.WAREHOUSE) {
             AddPOI(new SupplyPile(this));
         }
     }
