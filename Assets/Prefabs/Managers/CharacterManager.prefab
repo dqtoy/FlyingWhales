@@ -117,124 +117,117 @@ MonoBehaviour:
   - race: 2
     maleAssets:
       gender: 0
-      bodyAssets:
-      - {fileID: 21300000, guid: d1e293e4ab9575f45bfc675399f0f8ca, type: 3}
-      hairAssets:
-      - {fileID: 21300000, guid: 1b91b08cb71bcbb43ba36bfe6018df78, type: 3}
+      bodyAssets: []
+      hairAssets: []
       skinAssets:
-      - {fileID: 21300000, guid: cd165ebab941dbe43a6cf5f753ca8fd0, type: 3}
-      underAssets: []
+      - {fileID: 21300000, guid: f4754a63c37f44e49a698618f3e720dc, type: 3}
+      underAssets:
+      - {fileID: 21300000, guid: cbe678b350bf227499db6c595a4b4351, type: 3}
       topAssets:
-      - {fileID: 21300000, guid: 817355204bfba5f42a48d97c6b159ccf, type: 3}
+      - {fileID: 21300000, guid: 1d37b84fd68656a419ee4584a44e02df, type: 3}
     femaleAssets:
       gender: 1
-      bodyAssets:
-      - {fileID: 21300000, guid: a7831b868d3b7c14b85f09a75e1b43f0, type: 3}
-      hairAssets:
-      - {fileID: 21300000, guid: ee7d36392ffa72e4a80cbac7eeae27c9, type: 3}
+      bodyAssets: []
+      hairAssets: []
       skinAssets:
-      - {fileID: 21300000, guid: 7892274fdaaa3dc46b7c0bb8c528052d, type: 3}
+      - {fileID: 21300000, guid: 4405a52f243e26047a4e2d27902611c9, type: 3}
       underAssets:
-      - {fileID: 21300000, guid: 65a2870c390ea9940b1625a498e9a58f, type: 3}
+      - {fileID: 21300000, guid: b39ed74e492431848ba13bc7524eca59, type: 3}
       topAssets:
-      - {fileID: 21300000, guid: 7258784b1956cd94e8f33a62a2f4f135, type: 3}
+      - {fileID: 21300000, guid: 9a9cfbb763b6b7143acf3b6e466ed907, type: 3}
   - race: 1
     maleAssets:
       gender: 0
-      bodyAssets:
-      - {fileID: 21300000, guid: cb84bbe08448c7241894d4524f80afd8, type: 3}
+      bodyAssets: []
       hairAssets:
-      - {fileID: 21300000, guid: 1a45ea94f7edbfe4c88c1db67f2fdb52, type: 3}
+      - {fileID: 21300000, guid: a90307f51daf38f4f9c9cd473a2abdcd, type: 3}
       skinAssets:
-      - {fileID: 21300000, guid: d85aec5f060f8bc4da5774b24ee10a7c, type: 3}
-      underAssets:
-      - {fileID: 21300000, guid: 9930f8ed4460676498f2f0f6df8950b6, type: 3}
+      - {fileID: 21300000, guid: 7191cce2c8955c8479b66cb13266c352, type: 3}
+      underAssets: []
       topAssets:
-      - {fileID: 21300000, guid: 2fa16072e345a2443bd576f71f493d25, type: 3}
+      - {fileID: 21300000, guid: 04b8fbe0b9631dd409a120d55171a9fc, type: 3}
     femaleAssets:
       gender: 1
-      bodyAssets:
-      - {fileID: 21300000, guid: 23ab76e4a1ebd16469fa06b56fd308fa, type: 3}
+      bodyAssets: []
       hairAssets:
-      - {fileID: 21300000, guid: 7610ac2719b4c7642b4e010c714cfe7e, type: 3}
+      - {fileID: 21300000, guid: 9eb793e8d91d1704693aae1cad094fd4, type: 3}
       skinAssets:
-      - {fileID: 21300000, guid: e21d66cd6130a3644bd64ed60f0b6485, type: 3}
-      underAssets:
-      - {fileID: 21300000, guid: ad1260b7d58e7024ab2f91db0ea3f878, type: 3}
+      - {fileID: 21300000, guid: d0779f83dcfd9e149a7736b272b9e552, type: 3}
+      underAssets: []
       topAssets:
-      - {fileID: 21300000, guid: e765731094e366b4e994b986d8936893, type: 3}
+      - {fileID: 21300000, guid: 3a6d01ffb86405340ba5ded42d392506, type: 3}
   - race: 6
     maleAssets:
       gender: 0
-      bodyAssets:
-      - {fileID: 21300000, guid: eff8e75c95241b647a9c6262bd0e7677, type: 3}
+      bodyAssets: []
       hairAssets:
-      - {fileID: 21300000, guid: 1dd0dcfe5d71bd646928f15ca52f2808, type: 3}
+      - {fileID: 21300000, guid: d21ec97cd0517b84495ddf3310830a23, type: 3}
       skinAssets:
-      - {fileID: 21300000, guid: d1f9f7e38553ec540a9f3764ee2a7f48, type: 3}
-      underAssets: []
+      - {fileID: 21300000, guid: de6de7d732a47da468c0414c1c057cb1, type: 3}
+      underAssets:
+      - {fileID: 21300000, guid: 6d15a846b1a1a594cb4561516a342002, type: 3}
       topAssets:
-      - {fileID: 21300000, guid: 5a073390453fa67419b175a6bf687faf, type: 3}
+      - {fileID: 21300000, guid: 86d8d4b094c10b3429e0cd9d1f5b2784, type: 3}
     femaleAssets:
       gender: 1
-      bodyAssets:
-      - {fileID: 21300000, guid: e72bed9a548399643ab13b657422f96a, type: 3}
+      bodyAssets: []
       hairAssets:
-      - {fileID: 21300000, guid: 874a241692c0c6248bc7c9896a470fcf, type: 3}
+      - {fileID: 21300000, guid: 4b70e74f591a1514d97f4ccb8d05205a, type: 3}
       skinAssets:
-      - {fileID: 21300000, guid: 070b902b466eacd4a873738cd3ee49c5, type: 3}
-      underAssets: []
+      - {fileID: 21300000, guid: ee4d2847ef655ff43b9e7ce2acbec54b, type: 3}
+      underAssets:
+      - {fileID: 21300000, guid: fc804e9abe46a3f48aa7e8db903359c6, type: 3}
       topAssets:
-      - {fileID: 21300000, guid: 5f3b0c65fd6d5bf4ab76f1012baef0e8, type: 3}
+      - {fileID: 21300000, guid: 7ee2114ba8d1b7d4cb1fc4c5b013ac4e, type: 3}
   - race: 15
     maleAssets:
       gender: 0
       bodyAssets: []
       hairAssets:
-      - {fileID: 21300000, guid: 382134c432ef5ae45a265bbd8a818ef3, type: 3}
+      - {fileID: 21300000, guid: 10fdc9c506ae320449fc3ff733bda5de, type: 3}
       skinAssets:
-      - {fileID: 21300000, guid: 4fbd2f0cc3349e64ca10b2c62b31d436, type: 3}
+      - {fileID: 21300000, guid: 48d98fca18d7e80469d81b1f676e3a20, type: 3}
       underAssets:
-      - {fileID: 21300000, guid: 0c69a25b637ec0a478a3fc68cee46fa7, type: 3}
+      - {fileID: 21300000, guid: e834bfb918d096e4081fd00ea98b13a0, type: 3}
       topAssets:
-      - {fileID: 21300000, guid: ca4d78f2ae86a0e4e9545933e3ff88c5, type: 3}
+      - {fileID: 21300000, guid: 73144115e421fc448ac9e14c91a43fc7, type: 3}
     femaleAssets:
       gender: 1
       bodyAssets: []
       hairAssets:
-      - {fileID: 21300000, guid: af4fe0ac9d46a004c8652e9dafb244e0, type: 3}
+      - {fileID: 21300000, guid: 7e86bd3e16c5fc24d9633871f6c536d0, type: 3}
       skinAssets:
-      - {fileID: 21300000, guid: 93c5032635a4d894997378e7b1d83ab1, type: 3}
+      - {fileID: 21300000, guid: ef452adf7fe234b44b82bf4dfe2d25a4, type: 3}
       underAssets:
-      - {fileID: 21300000, guid: f173f5070bd6ee64880f7aa5aacb4b4a, type: 3}
+      - {fileID: 21300000, guid: 88e598d3ae51a734199c8263170bc428, type: 3}
       topAssets:
-      - {fileID: 21300000, guid: 8f1ce2d7b00514c42be05b98a6a81338, type: 3}
+      - {fileID: 21300000, guid: 70aad954371057a43b4ec4ea68784e39, type: 3}
   - race: 8
     maleAssets:
       gender: 0
       bodyAssets: []
       hairAssets: []
       skinAssets:
-      - {fileID: 21300000, guid: 663c69594f41ec347b80051931b71bab, type: 3}
+      - {fileID: 21300000, guid: 1dad1c6224e700340a8109a6c03c38ef, type: 3}
       underAssets: []
       topAssets:
-      - {fileID: 21300000, guid: 1fe3bc213bd83ec4f8b6de358b5587e2, type: 3}
+      - {fileID: 21300000, guid: 150d2d35b42fda1439c11d025ee1a74f, type: 3}
     femaleAssets:
       gender: 1
       bodyAssets: []
       hairAssets: []
       skinAssets:
-      - {fileID: 21300000, guid: 663c69594f41ec347b80051931b71bab, type: 3}
+      - {fileID: 21300000, guid: 1dad1c6224e700340a8109a6c03c38ef, type: 3}
       underAssets: []
       topAssets:
-      - {fileID: 21300000, guid: 1fe3bc213bd83ec4f8b6de358b5587e2, type: 3}
+      - {fileID: 21300000, guid: 150d2d35b42fda1439c11d025ee1a74f, type: 3}
   - race: 13
     maleAssets:
       gender: 0
       bodyAssets: []
       hairAssets: []
       skinAssets:
-      - {fileID: 21300000, guid: c665530a423cc56469b24f87caf088c4, type: 3}
+      - {fileID: 21300000, guid: 0ab8f480f0d29324d99829b078321e5b, type: 3}
       underAssets: []
       topAssets: []
     femaleAssets:
@@ -242,7 +235,7 @@ MonoBehaviour:
       bodyAssets: []
       hairAssets: []
       skinAssets:
-      - {fileID: 21300000, guid: c665530a423cc56469b24f87caf088c4, type: 3}
+      - {fileID: 21300000, guid: 0ab8f480f0d29324d99829b078321e5b, type: 3}
       underAssets: []
       topAssets: []
   - race: 17
@@ -251,40 +244,40 @@ MonoBehaviour:
       bodyAssets: []
       hairAssets: []
       skinAssets:
-      - {fileID: 21300000, guid: e22a1e1690c24d047a90b7507fd7a924, type: 3}
+      - {fileID: 21300000, guid: a2aba4e6dc53e5a41abe86cd0d1b21b1, type: 3}
       underAssets: []
       topAssets:
-      - {fileID: 21300000, guid: 499d9af538f3d184083e7af3b8e7c5d8, type: 3}
+      - {fileID: 21300000, guid: 53892ef37f59eb844a9cebd8ddf42581, type: 3}
     femaleAssets:
       gender: 1
       bodyAssets: []
       hairAssets: []
       skinAssets:
-      - {fileID: 21300000, guid: e22a1e1690c24d047a90b7507fd7a924, type: 3}
+      - {fileID: 21300000, guid: a2aba4e6dc53e5a41abe86cd0d1b21b1, type: 3}
       underAssets: []
       topAssets:
-      - {fileID: 21300000, guid: 499d9af538f3d184083e7af3b8e7c5d8, type: 3}
+      - {fileID: 21300000, guid: 53892ef37f59eb844a9cebd8ddf42581, type: 3}
   - race: 10
     maleAssets:
       gender: 0
       bodyAssets: []
       hairAssets: []
       skinAssets:
-      - {fileID: 21300000, guid: b4d38c4e7b7e85643ac80ee9a383f551, type: 3}
+      - {fileID: 21300000, guid: 09f2377c0c409304cb48ab46e4145351, type: 3}
       underAssets:
-      - {fileID: 21300000, guid: a4dea95433e4f244cb404789befbfb34, type: 3}
+      - {fileID: 21300000, guid: d2b917c8cdfc12841a95783692927377, type: 3}
       topAssets:
-      - {fileID: 21300000, guid: 4438a6a8fbc31674c88a1c654d66077b, type: 3}
+      - {fileID: 21300000, guid: e58358365063d3f46b6441878edcf958, type: 3}
     femaleAssets:
       gender: 1
       bodyAssets: []
       hairAssets: []
       skinAssets:
-      - {fileID: 21300000, guid: b4d38c4e7b7e85643ac80ee9a383f551, type: 3}
+      - {fileID: 21300000, guid: 09f2377c0c409304cb48ab46e4145351, type: 3}
       underAssets:
-      - {fileID: 21300000, guid: a4dea95433e4f244cb404789befbfb34, type: 3}
+      - {fileID: 21300000, guid: d2b917c8cdfc12841a95783692927377, type: 3}
       topAssets:
-      - {fileID: 21300000, guid: 4438a6a8fbc31674c88a1c654d66077b, type: 3}
+      - {fileID: 21300000, guid: e58358365063d3f46b6441878edcf958, type: 3}
   hairColors:
   - {r: 0, g: 0, b: 0, a: 1}
   - {r: 0.8396226, g: 0.32872015, b: 0.32872015, a: 1}
@@ -327,16 +320,16 @@ MonoBehaviour:
     m_values:
     - {fileID: 21300000, guid: 12f193c25cad8824a978c1a8d9d8377f, type: 3}
     - {fileID: 21300000, guid: f261d9fe21365c246a0f3849c9c58ca8, type: 3}
-    - {fileID: 21300000, guid: a34aeae4a70d5274db9c2f551390673f, type: 3}
+    - {fileID: 21300000, guid: a2a9035f5a469f34299c98fa2ab01083, type: 3}
     - {fileID: 21300000, guid: 04ef7d1d8eae8034ea5fca1b1cfaf3ea, type: 3}
     - {fileID: 21300000, guid: d0bab72205ba05c46a58108cb567e4ed, type: 3}
     - {fileID: 21300000, guid: a34aeae4a70d5274db9c2f551390673f, type: 3}
     - {fileID: 21300000, guid: d0bab72205ba05c46a58108cb567e4ed, type: 3}
-    - {fileID: 21300000, guid: 8f02ae220845dc24cb1bfa2e172b2ca6, type: 3}
-    - {fileID: 21300000, guid: 9edaa4d18883c494f810aad0f7abdc18, type: 3}
-    - {fileID: 21300000, guid: 1e71f2f70fb3f1b479d510c9b85270f6, type: 3}
-    - {fileID: 21300000, guid: 84119fd227e7e5d4c890351749d7f76d, type: 3}
-    - {fileID: 21300000, guid: 784360b86d0c0dd44a67c481c86c3a14, type: 3}
+    - {fileID: 21300000, guid: 0cb595964c09773418771050839e6f06, type: 3}
+    - {fileID: 21300000, guid: aed80cb2f9f2f8d4fbff72fff6c6a95e, type: 3}
+    - {fileID: 21300000, guid: c13636746116b374bab64e03d481aaa5, type: 3}
+    - {fileID: 21300000, guid: adb86d074f2cc8e4c9f28133c8903b62, type: 3}
+    - {fileID: 21300000, guid: 87a778188658a9845a02219ebd9be40f, type: 3}
   characterAnimators:
   - {fileID: 9100000, guid: 99c541d13ccccd24e8bade5dc18cd996, type: 2}
   - {fileID: 9100000, guid: 52ac513067146394f9dfb6caf8fa93b3, type: 2}

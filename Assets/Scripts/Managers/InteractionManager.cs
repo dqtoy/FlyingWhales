@@ -109,14 +109,10 @@ public class InteractionManager : MonoBehaviour {
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT },
                 alignment = INTERACTION_ALIGNMENT.EVIL,
             } },
-            //{ INTERACTION_TYPE.MOVE_TO_SCAVENGE_FACTION, new InteractionCategoryAndAlignment(){
-            //    categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.SUPPLY },
-            //    alignment = INTERACTION_ALIGNMENT.NEUTRAL,
-            //} },
-            //{ INTERACTION_TYPE.MOVE_TO_RAID_FACTION, new InteractionCategoryAndAlignment(){
-            //    categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.SUPPLY },
-            //    alignment = INTERACTION_ALIGNMENT.EVIL,
-            //} },
+            { INTERACTION_TYPE.MOVE_TO_SCAVENGE_FACTION, new InteractionCategoryAndAlignment(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.SUPPLY },
+                alignment = INTERACTION_ALIGNMENT.NEUTRAL,
+            } },
         };
     }
     public InteractionCategoryAndAlignment GetCategoryAndAlignment (INTERACTION_TYPE type) {
@@ -1183,7 +1179,7 @@ public class InteractionManager : MonoBehaviour {
         Debug.Log(dailyInteractionSummary);
     }
     public void DefaultInteractionsInArea(Area area, ref string log) {
-        log += "\n==========Executing " + area.name + "'s interactions==========";
+        log += "\n==========Executing <b>" + area.name + "'s</b> interactions==========";
         if (area.stopDefaultAllExistingInteractions) {
             log += "\nCannot run areas default interactions because area interactions have been disabled";
             return; //skip
@@ -1197,18 +1193,26 @@ public class InteractionManager : MonoBehaviour {
         for (int j = 0; j < interactionsInArea.Count; j++) {
             Interaction currInteraction = interactionsInArea[j];
             Character character = currInteraction.characterInvolved;
+            if (character != null) {
+                log += "\n<b><color=green>" + character.name + "</color></b> triggered his/her day tick to perform <b>" + currInteraction.name + "</b>";
+            }
+        }
+
+        for (int j = 0; j < interactionsInArea.Count; j++) {
+            Interaction currInteraction = interactionsInArea[j];
+            Character character = currInteraction.characterInvolved;
             if (!currInteraction.hasActivatedTimeOut) {
                 if (character == null || (!character.isDead && currInteraction.CanInteractionBeDoneBy(character))) {
                     log += "\nRunning interaction default " + currInteraction.type.ToString();
                     if (character != null) {
-                        log += " Involving " + character.name;
+                        log += " Involving <b><color=green>" + character.name + "</color></b>";
                     }
                     currInteraction.TimedOutRunDefault(ref log);
                     log += "\n";
                 } else {
                     //area.RemoveInteraction(currInteraction);
                     currInteraction.EndInteraction();
-                    log += "\n" + character.name + " is unable to perform " + currInteraction.name + "!";
+                    log += "\n<color=red>" + character.name + " is unable to perform " + currInteraction.name + "!</color>";
                     //Unable to perform
                     UnableToPerform unable = CreateNewInteraction(INTERACTION_TYPE.UNABLE_TO_PERFORM, area) as UnableToPerform;
                     unable.SetActionNameThatCannotBePerformed(currInteraction.name);

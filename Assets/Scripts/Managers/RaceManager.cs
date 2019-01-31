@@ -50,6 +50,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.MOVE_TO_RECRUIT_FRIEND_FACTION,
                 INTERACTION_TYPE.MOVE_TO_ASSASSINATE_FACTION,
                 INTERACTION_TYPE.MOVE_TO_REANIMATE,
+                INTERACTION_TYPE.MOVE_TO_SCAVENGE_FACTION,
+                INTERACTION_TYPE.MOVE_TO_RAID_FACTION,
             } },
             { RACE.ELVES, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_LOOT,
@@ -65,6 +67,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.MOVE_TO_RECRUIT_FRIEND_FACTION,
                 INTERACTION_TYPE.MOVE_TO_ASSASSINATE_FACTION,
                 INTERACTION_TYPE.MOVE_TO_REANIMATE,
+                INTERACTION_TYPE.MOVE_TO_SCAVENGE_FACTION,
+                INTERACTION_TYPE.MOVE_TO_RAID_FACTION,
             } },
             { RACE.GOBLIN, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_LOOT,
@@ -80,6 +84,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.MOVE_TO_RECRUIT_FRIEND_FACTION,
                 INTERACTION_TYPE.MOVE_TO_ASSASSINATE_FACTION,
                 INTERACTION_TYPE.MOVE_TO_REANIMATE,
+                INTERACTION_TYPE.MOVE_TO_SCAVENGE_FACTION,
+                INTERACTION_TYPE.MOVE_TO_RAID_FACTION,
             } },
             { RACE.FAERY, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_LOOT,
@@ -95,6 +101,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.MOVE_TO_RECRUIT_FRIEND_FACTION,
                 INTERACTION_TYPE.MOVE_TO_ASSASSINATE_FACTION,
                 INTERACTION_TYPE.MOVE_TO_REANIMATE,
+                INTERACTION_TYPE.MOVE_TO_SCAVENGE_FACTION,
+                INTERACTION_TYPE.MOVE_TO_RAID_FACTION,
             } },
             { RACE.SKELETON, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_LOOT,
@@ -110,6 +118,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.MOVE_TO_RECRUIT_FRIEND_FACTION,
                 INTERACTION_TYPE.MOVE_TO_ASSASSINATE_FACTION,
                 INTERACTION_TYPE.MOVE_TO_REANIMATE,
+                INTERACTION_TYPE.MOVE_TO_SCAVENGE_FACTION,
+                INTERACTION_TYPE.MOVE_TO_RAID_FACTION,
             } },
             { RACE.SPIDER, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_LOOT,
@@ -125,6 +135,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.MOVE_TO_RECRUIT_FRIEND_FACTION,
                 INTERACTION_TYPE.MOVE_TO_ASSASSINATE_FACTION,
                 INTERACTION_TYPE.MOVE_TO_REANIMATE,
+                INTERACTION_TYPE.MOVE_TO_SCAVENGE_FACTION,
+                INTERACTION_TYPE.MOVE_TO_RAID_FACTION,
             } },
             { RACE.WOLF, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_LOOT,
@@ -140,6 +152,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.MOVE_TO_RECRUIT_FRIEND_FACTION,
                 INTERACTION_TYPE.MOVE_TO_ASSASSINATE_FACTION,
                 INTERACTION_TYPE.MOVE_TO_REANIMATE,
+                INTERACTION_TYPE.MOVE_TO_SCAVENGE_FACTION,
+                INTERACTION_TYPE.MOVE_TO_RAID_FACTION,
             } },
             { RACE.DRAGON, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_LOOT,
@@ -155,6 +169,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.MOVE_TO_RECRUIT_FRIEND_FACTION,
                 INTERACTION_TYPE.MOVE_TO_ASSASSINATE_FACTION,
                 INTERACTION_TYPE.MOVE_TO_REANIMATE,
+                INTERACTION_TYPE.MOVE_TO_SCAVENGE_FACTION,
+                INTERACTION_TYPE.MOVE_TO_RAID_FACTION,
             } },
         };
     }

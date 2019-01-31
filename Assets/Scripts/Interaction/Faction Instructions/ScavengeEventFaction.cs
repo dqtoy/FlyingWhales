@@ -22,10 +22,16 @@ public class ScavengeEventFaction : Interaction {
 
         //**Structure**: Move the character to a random Warehouse or Dungeon Structure
         List<LocationStructure> choices = new List<LocationStructure>();
-        choices.AddRange(interactable.structures[STRUCTURE_TYPE.WAREHOUSE]);
-        choices.AddRange(interactable.structures[STRUCTURE_TYPE.DUNGEON]);
+        if (interactable.HasStructure(STRUCTURE_TYPE.WAREHOUSE)) {
+            choices.AddRange(interactable.structures[STRUCTURE_TYPE.WAREHOUSE]);
+        }
+        if (interactable.HasStructure(STRUCTURE_TYPE.DUNGEON)) {
+            choices.AddRange(interactable.structures[STRUCTURE_TYPE.DUNGEON]);
+        }
         structure = choices[Random.Range(0, choices.Count)];
         _characterInvolved.MoveToAnotherStructure(structure);
+
+        AddToDebugLog(_characterInvolved.name + " will scavenge " + structure.ToString());
 
         CreateActionOptions(startState);
         normalScavengeSuccess.SetEffect(() => SupplyScavengedSuccessRewardEffect(normalScavengeSuccess));
@@ -76,7 +82,12 @@ public class ScavengeEventFaction : Interaction {
         //**Mechanics**: If the Structure is a Dungeon, randomize from the Dungeon's Supply Pile range.
         SupplyPile pile = structure.GetSupplyPile();
         int obtainedSupply = pile.GetSuppliesObtained();
-        _characterInvolved.homeArea.AdjustSuppliesInBank(obtainedSupply);
+        //if (structure.structureType == STRUCTURE_TYPE.WAREHOUSE) {
+        //    _characterInvolved.homeArea.GetSuppliesFrom(interactable, obtainedSupply);
+        //} else {
+        //    _characterInvolved.homeArea.AdjustSuppliesInBank(obtainedSupply);
+        //}
+        pile.TransferSuppliesTo(_characterInvolved.homeArea, obtainedSupply);
 
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(null, obtainedSupply.ToString(), LOG_IDENTIFIER.STRING_1);
