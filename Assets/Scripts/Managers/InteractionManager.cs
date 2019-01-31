@@ -125,6 +125,10 @@ public class InteractionManager : MonoBehaviour {
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.SUPPLY },
                 alignment = INTERACTION_ALIGNMENT.GOOD,
             } },
+            { INTERACTION_TYPE.SCRAP_ITEM, new InteractionCategoryAndAlignment(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.SUPPLY },
+                alignment = INTERACTION_ALIGNMENT.NEUTRAL,
+            } },
         };
     }
     public InteractionCategoryAndAlignment GetCategoryAndAlignment (INTERACTION_TYPE type) {
@@ -518,6 +522,9 @@ public class InteractionManager : MonoBehaviour {
                 break;
             case INTERACTION_TYPE.HARVEST_ACTION:
                 createdInteraction = new HarvestAction(interactable);
+                break;
+            case INTERACTION_TYPE.SCRAP_ITEM:
+                createdInteraction = new ScrapItem(interactable);
                 break;
         }
         return createdInteraction;
@@ -982,6 +989,8 @@ public class InteractionManager : MonoBehaviour {
                 return false;
             case INTERACTION_TYPE.CRAFT_ITEM:
                 return character.GetTrait("Craftsman") != null && character.specificLocation.HasStructure(STRUCTURE_TYPE.WORK_AREA);
+            case INTERACTION_TYPE.SCRAP_ITEM:
+                return character.specificLocation.possibleSpecialTokenSpawns.Count > 0;
             case INTERACTION_TYPE.MOVE_TO_RAID_FACTION:
                 /***Trigger Criteria 1**: There must be at least one other location that is occupied 
                  * but not owned by the character's Faction and not owned by an Ally or a Friend faction*/
