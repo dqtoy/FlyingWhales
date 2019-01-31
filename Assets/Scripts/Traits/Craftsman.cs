@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class Craftsman : Trait {
 
-	public string craftedItemName { get; private set; }
+	public SPECIAL_TOKEN craftedItemName { get; private set; }
 
     public Craftsman() {
         name = "Craftsman";
-        craftedItemName = string.Empty;
+        craftedItemName = SPECIAL_TOKEN.JUNK;
         description = "This character can create items.";
         type = TRAIT_TYPE.ABILITY;
         effect = TRAIT_EFFECT.POSITIVE;
@@ -19,13 +19,13 @@ public class Craftsman : Trait {
     #region Overrides
     public override void OnAddTrait(Character sourceCharacter) {
         if(sourceCharacter.race == RACE.HUMANS) {
-            craftedItemName = "Healing Potion";
+            craftedItemName = SPECIAL_TOKEN.HEALING_POTION;
         }else if (sourceCharacter.race == RACE.ELVES) {
-            craftedItemName = "Golden Nectar";
+            craftedItemName = SPECIAL_TOKEN.GOLDEN_NECTAR;
         }else if (sourceCharacter.race == RACE.FAERY) {
-            craftedItemName = "Enchanted Amulet";
+            craftedItemName = SPECIAL_TOKEN.ENCHANTED_AMULET;
         }else if (sourceCharacter.race == RACE.GOBLIN) {
-            craftedItemName = "Junk";
+            craftedItemName = SPECIAL_TOKEN.JUNK;
         }
     }
     #endregion

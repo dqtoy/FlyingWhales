@@ -86,8 +86,8 @@ public class InteractionManager : MonoBehaviour {
                 alignment = INTERACTION_ALIGNMENT.EVIL,
             } },
             { INTERACTION_TYPE.CRAFT_ITEM, new InteractionCategoryAndAlignment(){
-            categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.INVENTORY },
-            alignment = INTERACTION_ALIGNMENT.NEUTRAL,
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.INVENTORY },
+                alignment = INTERACTION_ALIGNMENT.NEUTRAL,
             } },
         };
     }

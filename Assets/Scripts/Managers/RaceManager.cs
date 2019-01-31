@@ -45,6 +45,7 @@ public class RaceManager : MonoBehaviour {
                 //INTERACTION_TYPE.MOVE_TO_CURSE,
                 INTERACTION_TYPE.TORTURE_ACTION,
                 //INTERACTION_TYPE.EAT_DEFENSELESS,
+                INTERACTION_TYPE.CRAFT_ITEM,
             } },
             { RACE.ELVES, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_LOOT,
@@ -55,6 +56,7 @@ public class RaceManager : MonoBehaviour {
                 //INTERACTION_TYPE.MOVE_TO_CURSE,
                 INTERACTION_TYPE.TORTURE_ACTION,
                 //INTERACTION_TYPE.EAT_DEFENSELESS,
+                INTERACTION_TYPE.CRAFT_ITEM,
             } },
             { RACE.GOBLIN, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_LOOT,
@@ -65,6 +67,7 @@ public class RaceManager : MonoBehaviour {
                 //INTERACTION_TYPE.MOVE_TO_CURSE,
                 INTERACTION_TYPE.TORTURE_ACTION,
                 //INTERACTION_TYPE.EAT_DEFENSELESS,
+                INTERACTION_TYPE.CRAFT_ITEM,
             } },
             { RACE.FAERY, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_LOOT,
@@ -75,6 +78,7 @@ public class RaceManager : MonoBehaviour {
                 //INTERACTION_TYPE.MOVE_TO_CURSE,
                 INTERACTION_TYPE.TORTURE_ACTION,
                 //INTERACTION_TYPE.EAT_DEFENSELESS,
+                INTERACTION_TYPE.CRAFT_ITEM,
             } },
             { RACE.SKELETON, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_LOOT,
@@ -85,6 +89,7 @@ public class RaceManager : MonoBehaviour {
                 //INTERACTION_TYPE.MOVE_TO_CURSE,
                 INTERACTION_TYPE.TORTURE_ACTION,
                 //INTERACTION_TYPE.EAT_DEFENSELESS,
+                INTERACTION_TYPE.CRAFT_ITEM,
             } },
             { RACE.SPIDER, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_LOOT,
@@ -95,6 +100,7 @@ public class RaceManager : MonoBehaviour {
                 //INTERACTION_TYPE.MOVE_TO_CURSE,
                 INTERACTION_TYPE.TORTURE_ACTION,
                 //INTERACTION_TYPE.EAT_DEFENSELESS,
+                INTERACTION_TYPE.CRAFT_ITEM,
             } },
             { RACE.WOLF, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_LOOT,
@@ -105,6 +111,7 @@ public class RaceManager : MonoBehaviour {
                 //INTERACTION_TYPE.MOVE_TO_CURSE,
                 INTERACTION_TYPE.TORTURE_ACTION,
                 //INTERACTION_TYPE.EAT_DEFENSELESS,
+                INTERACTION_TYPE.CRAFT_ITEM,
             } },
             { RACE.DRAGON, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_LOOT,
@@ -115,6 +122,7 @@ public class RaceManager : MonoBehaviour {
                 //INTERACTION_TYPE.MOVE_TO_CURSE,
                 INTERACTION_TYPE.TORTURE_ACTION,
                 //INTERACTION_TYPE.EAT_DEFENSELESS,
+                INTERACTION_TYPE.CRAFT_ITEM,
             } },
         };
     }

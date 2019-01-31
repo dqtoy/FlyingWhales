@@ -68163,6 +68163,30 @@ MonoBehaviour:
     - Gloomhollow
     - Tribu
     - Pitthize
+  - tokenName: Healing Potion
+    tokenType: 12
+    quantity: 3
+    appearanceWeight: 100
+    areaLocations:
+    - Cardell
+    - Narris
+    - Cindermaul
+    - Denrio
+  - tokenName: Enchanted Amulet
+    tokenType: 13
+    quantity: 2
+    appearanceWeight: 100
+    areaLocations:
+    - Cardell
+    - Narris
+    - Cindermaul
+    - Denrio
+    - Radisle
+    - Visteri
+    - Odious
+    - Gloomhollow
+    - Tribu
+    - Pitthize
 --- !u!1 &1695113739
 GameObject:
   m_ObjectHideFlags: 0

@@ -45,45 +45,7 @@ public class TokenManager : MonoBehaviour {
             for (int j = 0; j < currSetting.quantity; j++) {
                 if (Random.Range(0, 100) < currSetting.appearanceWeight) {
                     Area chosenArea = areas[Random.Range(0, areas.Count)];
-                    SpecialToken createdToken = null;
-                    switch (currSetting.tokenType) {
-                        case SPECIAL_TOKEN.BLIGHTED_POTION:
-                            createdToken = new BlightedPotion();
-                            break;
-                        case SPECIAL_TOKEN.BOOK_OF_THE_DEAD:
-                            createdToken = new BookOfTheDead();
-                            break;
-                        case SPECIAL_TOKEN.CHARM_SPELL:
-                            createdToken = new CharmSpell();
-                            break;
-                        case SPECIAL_TOKEN.FEAR_SPELL:
-                            createdToken = new FearSpell();
-                            break;
-                        case SPECIAL_TOKEN.MARK_OF_THE_WITCH:
-                            createdToken = new MarkOfTheWitch();
-                            break;
-                        case SPECIAL_TOKEN.BRAND_OF_THE_BEASTMASTER:
-                            createdToken = new BrandOfTheBeastmaster();
-                            break;
-                        case SPECIAL_TOKEN.BOOK_OF_WIZARDRY:
-                            createdToken = new BookOfWizardry();
-                            break;
-                        case SPECIAL_TOKEN.SECRET_SCROLL:
-                            createdToken = new SecretScroll();
-                            break;
-                        case SPECIAL_TOKEN.MUTAGENIC_GOO:
-                            createdToken = new MutagenicGoo();
-                            break;
-                        case SPECIAL_TOKEN.DISPEL_SCROLL:
-                            createdToken = new DispelScroll();
-                            break;
-                        case SPECIAL_TOKEN.PANACEA:
-                            createdToken = new Panacea();
-                            break;
-                        default:
-                            createdToken = new SpecialToken(currSetting.tokenType, currSetting.appearanceWeight);
-                            break;
-                    }
+                    SpecialToken createdToken = CreateSpecialToken(currSetting.tokenType, currSetting.appearanceWeight);
                     if (createdToken != null) {
                         chosenArea.AddSpecialTokenToLocation(createdToken);
                         createdToken.SetOwner(chosenArea.owner);
@@ -92,31 +54,47 @@ public class TokenManager : MonoBehaviour {
                 }
             }
         }
-        //foreach (KeyValuePair<string, SpecialToken> item in specialTokens) {
-        //    Messenger.Broadcast(Signals.SPECIAL_TOKEN_CREATED, item.Value);
-        //}
-
-        //specialTokens = new Dictionary<string, SpecialToken>();
-        //string path = Utilities.dataPath + "Tokens/";
-        //string[] tokens = System.IO.Directory.GetFiles(path, "*.json");
-        //for (int i = 0; i < tokens.Length; i++) {
-        //    //JsonUtility.FromJsonOverwrite(System.IO.File.ReadAllText(classes[i]), monsterComponent);
-        //    SpecialToken token = JsonUtility.FromJson<SpecialToken>(System.IO.File.ReadAllText(tokens[i]));
-        //    switch (token.specialTokenType) {
-        //        case SPECIAL_TOKEN.BLIGHTED_POTION:
-        //            token = new BlightedPotion();
-        //            break;
-        //        case SPECIAL_TOKEN.BOOK_OF_THE_DEAD:
-        //            token = new BookOfTheDead();
-        //            break;
-        //        default:
-        //            break;
-        //    }
-        //    specialTokens.Add(token.name, token);
-        //    Messenger.Broadcast(Signals.SPECIAL_TOKEN_CREATED, token);
-        //}
     }
-
+    public SpecialToken CreateSpecialToken(SPECIAL_TOKEN tokenType, int appearanceWeight = 0) {
+        switch (tokenType) {
+            case SPECIAL_TOKEN.BLIGHTED_POTION:
+                return new BlightedPotion();
+            case SPECIAL_TOKEN.BOOK_OF_THE_DEAD:
+                return new BookOfTheDead();
+            case SPECIAL_TOKEN.CHARM_SPELL:
+                return new CharmSpell();
+            case SPECIAL_TOKEN.FEAR_SPELL:
+                return new FearSpell();
+            case SPECIAL_TOKEN.MARK_OF_THE_WITCH:
+                return new MarkOfTheWitch();
+            case SPECIAL_TOKEN.BRAND_OF_THE_BEASTMASTER:
+                return new BrandOfTheBeastmaster();
+            case SPECIAL_TOKEN.BOOK_OF_WIZARDRY:
+                return new BookOfWizardry();
+            case SPECIAL_TOKEN.SECRET_SCROLL:
+                return new SecretScroll();
+            case SPECIAL_TOKEN.MUTAGENIC_GOO:
+                return new MutagenicGoo();
+            case SPECIAL_TOKEN.DISPEL_SCROLL:
+                return new DispelScroll();
+            case SPECIAL_TOKEN.PANACEA:
+                return new Panacea();
+            case SPECIAL_TOKEN.ENCHANTED_AMULET:
+                return new EnchantedAmulet();
+            case SPECIAL_TOKEN.GOLDEN_NECTAR:
+                return new GoldenNectar();
+            default:
+                return new SpecialToken(tokenType, appearanceWeight);
+        }
+    }
+    public SpecialTokenSettings GetTokenSettings(SPECIAL_TOKEN tokenType) {
+        for (int i = 0; i < specialTokenSettings.Count; i++) {
+            if(specialTokenSettings[i].tokenType == tokenType) {
+                return specialTokenSettings[i];
+            }
+        }
+        return null;
+    }
     public List<Area> GetPossibleAreaSpawns(SpecialTokenSettings setting) {
         List<Area> areas = new List<Area>();
         for (int i = 0; i < setting.areaLocations.Count; i++) {
@@ -131,9 +109,9 @@ public class TokenManager : MonoBehaviour {
         return areas;
     }
 
-    public SpecialToken GetSpecialToken(string name) {
-        return null;
-    }
+    //public SpecialToken GetSpecialToken(string name) {
+    //    return null;
+    //}
 
     //public Intel GetIntel(int id) {
     //    return _intelLookup[id];

@@ -71,6 +71,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     protected int _attackPowerMod;
     protected int _speedMod;
     protected int _maxHPMod;
+    protected int _attackPowerPercentMod;
+    protected int _speedPercentMod;
+    protected int _maxHPPercentMod;
     protected int _combatBaseAttack;
     protected int _combatBaseSpeed;
     protected int _combatBaseHP;
@@ -245,7 +248,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public int speed {
         get {
-            int total = (int) ((_characterClass.baseSpeed + _speedMod) * (1f + (_raceSetting.speedModifier / 100f)));
+            int total = (int) ((_characterClass.baseSpeed + _speedMod) * (1f + ((_raceSetting.speedModifier + _speedPercentMod) / 100f)));
             if (total < 0) {
                 return 1;
             }
@@ -254,7 +257,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public int attackPower {
         get {
-            int total = (int) ((_characterClass.baseAttackPower + _attackPowerMod) * (1f + (_raceSetting.attackPowerModifier / 100f)));
+            int total = (int) ((_characterClass.baseAttackPower + _attackPowerMod) * (1f + ((_raceSetting.attackPowerModifier + _attackPowerPercentMod) / 100f)));
             if (total < 0) {
                 return 1;
             }
@@ -262,11 +265,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
     }
     public int maxHP {
-        get { return GetModifiedHP(); }
-    }
-    public int hp {
         get {
-            int total = (int) ((_characterClass.baseHP + _maxHPMod) * (1f + (_raceSetting.hpModifier / 100f)));
+            int total = (int) ((_characterClass.baseHP + _maxHPMod) * (1f + ((_raceSetting.hpModifier + _maxHPPercentMod) / 100f)));
             if (total < 0) {
                 return 1;
             }
@@ -1972,8 +1972,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             _level += 1;
             //Add stats per level from class
             if (_characterClass.attackType == ATTACK_TYPE.PHYSICAL && _characterClass.rangeType == RANGE_TYPE.MELEE) {
-                _attackPowerMod += _characterClass.attackPowerPerLevel;
-                _speedMod += _characterClass.speedPerLevel;
+                AdjustAttackMod(_characterClass.attackPowerPerLevel);
+                AdjustSpeedMod(_characterClass.speedPerLevel);
                 AdjustMaxHPMod(_characterClass.hpPerLevel);
             } else if (_characterClass.attackType == ATTACK_TYPE.PHYSICAL && _characterClass.rangeType == RANGE_TYPE.RANGED) {
                 if (_level % 2 == 0) {
@@ -1981,19 +1981,19 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     AdjustMaxHPMod(_characterClass.hpPerLevel);
                 } else {
                     //odd
-                    _attackPowerMod += _characterClass.attackPowerPerLevel;
+                    AdjustAttackMod(_characterClass.attackPowerPerLevel);
                 }
-                _speedMod += _characterClass.speedPerLevel;
+                AdjustSpeedMod(_characterClass.speedPerLevel);
             } else if (_characterClass.attackType == ATTACK_TYPE.MAGICAL && _characterClass.rangeType == RANGE_TYPE.RANGED) {
                 if (!hpMagicRangedStatMod) {
-                    _attackPowerMod += _characterClass.attackPowerPerLevel;
+                    AdjustAttackMod(_characterClass.attackPowerPerLevel);
                 } else {
                     AdjustMaxHPMod(_characterClass.hpPerLevel);
                 }
                 if ((_level - 1) % 2 == 0) {
                     hpMagicRangedStatMod = !hpMagicRangedStatMod;
                 }
-                _speedMod += _characterClass.speedPerLevel;
+                AdjustSpeedMod(_characterClass.speedPerLevel);
             }
 
             //Reset to full health and sp
@@ -2019,8 +2019,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         //Add stats per level from class
         if (_characterClass.attackType == ATTACK_TYPE.PHYSICAL && _characterClass.rangeType == RANGE_TYPE.MELEE) {
-            _attackPowerMod += _characterClass.attackPowerPerLevel * amount;
-            _speedMod += _characterClass.speedPerLevel * amount;
+            AdjustAttackMod(_characterClass.attackPowerPerLevel * amount);
+            AdjustSpeedMod(_characterClass.speedPerLevel * amount);
             AdjustMaxHPMod(_characterClass.hpPerLevel * amount);
         } else if (_characterClass.attackType == ATTACK_TYPE.PHYSICAL && _characterClass.rangeType == RANGE_TYPE.RANGED) {
             int multiplier = (amount < 0 ? -1 : 1);
@@ -2031,16 +2031,16 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     AdjustMaxHPMod(_characterClass.hpPerLevel * multiplier);
                 } else {
                     //odd
-                    _attackPowerMod += (_characterClass.attackPowerPerLevel * multiplier);
+                    AdjustAttackMod(_characterClass.attackPowerPerLevel * multiplier);
                 }
             }
-            _speedMod += _characterClass.speedPerLevel * amount;
+            AdjustSpeedMod(_characterClass.speedPerLevel * amount);
         } else if (_characterClass.attackType == ATTACK_TYPE.MAGICAL && _characterClass.rangeType == RANGE_TYPE.RANGED) {
             int multiplier = (amount < 0 ? -1 : 1);
             int range = amount * multiplier;
             for (int i = _level; i <= _level + range; i++) {
                 if (!hpMagicRangedStatMod) {
-                    _attackPowerMod += _characterClass.attackPowerPerLevel * multiplier;
+                    AdjustAttackMod(_characterClass.attackPowerPerLevel * multiplier);
                 } else {
                     AdjustMaxHPMod(_characterClass.hpPerLevel * multiplier);
                 }
@@ -2048,7 +2048,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     hpMagicRangedStatMod = !hpMagicRangedStatMod;
                 }
             }
-            _speedMod += _characterClass.speedPerLevel * amount;
+            AdjustSpeedMod(_characterClass.speedPerLevel * amount);
         }
         _level += amount;
 
@@ -2072,8 +2072,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //Add stats per level from class
         int difference = _level - previousLevel;
         if (_characterClass.attackType == ATTACK_TYPE.PHYSICAL && _characterClass.rangeType == RANGE_TYPE.MELEE) {
-            _attackPowerMod += _characterClass.attackPowerPerLevel * difference;
-            _speedMod += _characterClass.speedPerLevel * difference;
+            AdjustAttackMod(_characterClass.attackPowerPerLevel * difference);
+            AdjustSpeedMod(_characterClass.speedPerLevel * difference);
             AdjustMaxHPMod(_characterClass.hpPerLevel * difference);
         } else if (_characterClass.attackType == ATTACK_TYPE.PHYSICAL && _characterClass.rangeType == RANGE_TYPE.RANGED) {
             int multiplier = (difference < 0 ? -1 : 1);
@@ -2084,16 +2084,16 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     AdjustMaxHPMod(_characterClass.hpPerLevel * multiplier);
                 } else {
                     //odd
-                    _attackPowerMod += (_characterClass.attackPowerPerLevel * multiplier);
+                    AdjustAttackMod(_characterClass.attackPowerPerLevel * multiplier);
                 }
             }
-            _speedMod += _characterClass.speedPerLevel * difference;
+            AdjustSpeedMod(_characterClass.speedPerLevel * difference);
         } else if (_characterClass.attackType == ATTACK_TYPE.MAGICAL && _characterClass.rangeType == RANGE_TYPE.RANGED) {
             int multiplier = (difference < 0 ? -1 : 1);
             int range = difference * multiplier;
             for (int i = _level; i <= _level + range; i++) {
                 if (!hpMagicRangedStatMod) {
-                    _attackPowerMod += _characterClass.attackPowerPerLevel * multiplier;
+                    AdjustAttackMod(_characterClass.attackPowerPerLevel * multiplier);
                 } else {
                     AdjustMaxHPMod(_characterClass.hpPerLevel * multiplier);
                 }
@@ -2101,7 +2101,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     hpMagicRangedStatMod = !hpMagicRangedStatMod;
                 }
             }
-            _speedMod += _characterClass.speedPerLevel * difference;
+            AdjustSpeedMod(_characterClass.speedPerLevel * difference);
         }
 
         //Reset to full health and sp
@@ -2161,20 +2161,40 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         this._currentHP = amount;
     }
     public void SetMaxHPMod(int amount) {
-        int previousMaxHP = hp;
+        int previousMaxHP = maxHP;
         _maxHPMod = amount;
-        int currentMaxHP = hp;
+        int currentMaxHP = maxHP;
         if (_currentHP > currentMaxHP || _currentHP == previousMaxHP) {
             _currentHP = currentMaxHP;
         }
     }
+    public void AdjustAttackMod(int amount) {
+        _attackPowerMod += amount;
+    }
+    public void AdjustAttackPercentMod(int amount) {
+        _attackPowerPercentMod += amount;
+    }
     public void AdjustMaxHPMod(int amount) {
-        int previousMaxHP = hp;
+        int previousMaxHP = maxHP;
         _maxHPMod += amount;
-        int currentMaxHP = hp;
+        int currentMaxHP = maxHP;
         if (_currentHP > currentMaxHP || _currentHP == previousMaxHP) {
             _currentHP = currentMaxHP;
         }
+    }
+    public void AdjustMaxHPPercentMod(int amount) {
+        int previousMaxHP = maxHP;
+        _maxHPPercentMod += amount;
+        int currentMaxHP = maxHP;
+        if (_currentHP > currentMaxHP || _currentHP == previousMaxHP) {
+            _currentHP = currentMaxHP;
+        }
+    }
+    public void AdjustSpeedMod(int amount) {
+        _speedMod += amount;
+    }
+    public void AdjustSpeedPercentMod(int amount) {
+        _speedPercentMod += amount;
     }
     public bool IsHealthFull() {
         return _currentHP >= maxHP;
@@ -2358,7 +2378,11 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             AddTrait(AttributeManager.Instance.allTraits["Envy Trait"]);
         }
 
-        
+        //Random Traits
+        int chance = UnityEngine.Random.Range(0, 100);
+        if(chance < 10) {
+            AddTrait(new Craftsman());
+        }
     }
     public void AddTrait(Trait trait) {
         if (trait.IsUnique() && GetTrait(trait.name) != null) {
@@ -2372,7 +2396,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //    }
         //}
         _traits.Add(trait);
-        ApplyFlatTraitEffects(trait);
+        ApplyTraitEffects(trait);
         if (trait.daysDuration > 0) {
             GameDate removeDate = GameManager.Instance.Today();
             removeDate.AddDays(trait.daysDuration);
@@ -2387,7 +2411,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public bool RemoveTrait(Trait trait, bool triggerOnRemove = true) {
         if (_traits.Remove(trait)) {
-            UnapplyFlatTraitEffects(trait);
+            UnapplyTraitEffects(trait);
             if (triggerOnRemove) {
                 trait.OnRemoveTrait(this);
             }
@@ -2456,78 +2480,59 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return null;
     }
-    private void ApplyFlatTraitEffects(Trait trait) {
+    private void ApplyTraitEffects(Trait trait) {
         if(trait.type == TRAIT_TYPE.DISABLER) {
             AdjustDoNotDisturb(1);
         }
         for (int i = 0; i < trait.effects.Count; i++) {
             TraitEffect traitEffect = trait.effects[i];
-            if (!traitEffect.hasRequirement && !traitEffect.isPercentage && traitEffect.target == TRAIT_REQUIREMENT_TARGET.SELF) {
-                if (traitEffect.stat == STAT.ATTACK) {
-                    _attackPowerMod += (int) traitEffect.amount;
-                } else if (traitEffect.stat == STAT.HP) {
-                    AdjustMaxHPMod((int) traitEffect.amount);
-                } else if (traitEffect.stat == STAT.SPEED) {
-                    _speedMod += (int) traitEffect.amount;
+            if (!traitEffect.hasRequirement && traitEffect.target == TRAIT_REQUIREMENT_TARGET.SELF) {
+                if (traitEffect.isPercentage) {
+                    if (traitEffect.stat == STAT.ATTACK) {
+                        AdjustAttackPercentMod((int) traitEffect.amount);
+                    } else if (traitEffect.stat == STAT.HP) {
+                        AdjustMaxHPPercentMod((int) traitEffect.amount);
+                    } else if (traitEffect.stat == STAT.SPEED) {
+                        AdjustSpeedPercentMod((int) traitEffect.amount);
+                    }
+                } else {
+                    if (traitEffect.stat == STAT.ATTACK) {
+                        AdjustAttackMod((int) traitEffect.amount);
+                    } else if (traitEffect.stat == STAT.HP) {
+                        AdjustMaxHPMod((int) traitEffect.amount);
+                    } else if (traitEffect.stat == STAT.SPEED) {
+                        AdjustSpeedMod((int) traitEffect.amount);
+                    }
                 }
             }
         }
     }
-    private void UnapplyFlatTraitEffects(Trait trait) {
+    private void UnapplyTraitEffects(Trait trait) {
         if (trait.type == TRAIT_TYPE.DISABLER) {
             AdjustDoNotDisturb(-1);
         }
         for (int i = 0; i < trait.effects.Count; i++) {
             TraitEffect traitEffect = trait.effects[i];
-            if (!traitEffect.hasRequirement && !traitEffect.isPercentage && traitEffect.target == TRAIT_REQUIREMENT_TARGET.SELF) {
-                if (traitEffect.stat == STAT.ATTACK) {
-                    _attackPowerMod -= (int) traitEffect.amount;
-                } else if (traitEffect.stat == STAT.HP) {
-                    AdjustMaxHPMod(-(int) traitEffect.amount);
-                } else if (traitEffect.stat == STAT.SPEED) {
-                    _speedMod -= (int) traitEffect.amount;
+            if (!traitEffect.hasRequirement && traitEffect.target == TRAIT_REQUIREMENT_TARGET.SELF) {
+                if (traitEffect.isPercentage) {
+                    if (traitEffect.stat == STAT.ATTACK) {
+                        AdjustAttackPercentMod(-(int) traitEffect.amount);
+                    } else if (traitEffect.stat == STAT.HP) {
+                        AdjustMaxHPPercentMod(-(int) traitEffect.amount);
+                    } else if (traitEffect.stat == STAT.SPEED) {
+                        AdjustSpeedPercentMod(-(int) traitEffect.amount);
+                    }
+                } else {
+                    if (traitEffect.stat == STAT.ATTACK) {
+                        AdjustAttackMod(-(int) traitEffect.amount);
+                    } else if (traitEffect.stat == STAT.HP) {
+                        AdjustMaxHPMod(-(int) traitEffect.amount);
+                    } else if (traitEffect.stat == STAT.SPEED) {
+                        AdjustSpeedMod(-(int) traitEffect.amount);
+                    }
                 }
             }
         }
-    }
-    private int GetModifiedAttack() {
-        float modifier = 0f;
-        for (int i = 0; i < _traits.Count; i++) {
-            for (int j = 0; j < _traits[i].effects.Count; j++) {
-                TraitEffect traitEffect = _traits[i].effects[j];
-                if (traitEffect.stat == STAT.ATTACK && !traitEffect.hasRequirement && traitEffect.isPercentage && traitEffect.target == TRAIT_REQUIREMENT_TARGET.SELF) {
-                    modifier += traitEffect.amount;
-                }
-            }
-        }
-        int atk = attackPower;
-        return (int) (atk + (atk * (modifier / 100f)));
-    }
-    private int GetModifiedSpeed() {
-        float modifier = 0f;
-        for (int i = 0; i < _traits.Count; i++) {
-            for (int j = 0; j < _traits[i].effects.Count; j++) {
-                TraitEffect traitEffect = _traits[i].effects[j];
-                if (traitEffect.stat == STAT.SPEED && !traitEffect.hasRequirement && traitEffect.isPercentage && traitEffect.target == TRAIT_REQUIREMENT_TARGET.SELF) {
-                    modifier += traitEffect.amount;
-                }
-            }
-        }
-        int spd = speed;
-        return (int) (spd + (spd * (modifier / 100f)));
-    }
-    private int GetModifiedHP() {
-        float modifier = 0f;
-        for (int i = 0; i < _traits.Count; i++) {
-            for (int j = 0; j < _traits[i].effects.Count; j++) {
-                TraitEffect traitEffect = _traits[i].effects[j];
-                if (traitEffect.stat == STAT.HP && !traitEffect.hasRequirement && traitEffect.isPercentage && traitEffect.target == TRAIT_REQUIREMENT_TARGET.SELF) {
-                    modifier += traitEffect.amount;
-                }
-            }
-        }
-        int hp = this.hp;
-        return (int) (hp + (hp * (modifier / 100f)));
     }
     private void SetTraitsFromClass() {
         if (_characterClass.traitNames != null) {
@@ -2583,14 +2588,17 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             //MigrateTo(abductedTrait.originalHomeLandmark);
 
             Interaction interactionAbducted = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, specificLocation);
-            SetForcedInteraction(interactionAbducted);
-            SetDailyInteractionGenerationTick(GameManager.Instance.continuousDays + 1);
+            InduceInteraction(interactionAbducted);
             return true;
         }
         return false;
     }
     public SpecialToken CraftAnItem() {
-        //TODO
+        Craftsman craftsmanTrait = GetTrait("Craftsman") as Craftsman;
+        if(craftsmanTrait != null) {
+            //SpecialTokenSettings settings = TokenManager.Instance.GetTokenSettings(craftsmanTrait.craftedItemName);
+            return TokenManager.Instance.CreateSpecialToken(craftsmanTrait.craftedItemName); //, settings.appearanceWeight
+        }
         return null;
     }
     #endregion
@@ -2718,7 +2726,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 WeightedDictionary<string> awayFromHomeInteractionWeights = new WeightedDictionary<string>();
                 awayFromHomeInteractionWeights.AddElement("DoNothing", 50);
 
-                if (tokenInInventory != null && tokenInInventory.CanBeUsedBy(this) && InteractionManager.Instance.CanCreateInteraction(tokenInInventory.npcAssociatedInteractionType, this)) {
+                if (tokenInInventory != null && tokenInInventory.npcAssociatedInteractionType != INTERACTION_TYPE.NONE && tokenInInventory.CanBeUsedBy(this) && InteractionManager.Instance.CanCreateInteraction(tokenInInventory.npcAssociatedInteractionType, this)) {
                     awayFromHomeInteractionWeights.AddElement(tokenInInventory.tokenName, 70);
                 }
 
@@ -2755,7 +2763,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     }
                 }
                 if (tokenInInventory != null) {
-                    if (tokenInInventory.CanBeUsedBy(this) && InteractionManager.Instance.CanCreateInteraction(tokenInInventory.npcAssociatedInteractionType, this)) {
+                    if (tokenInInventory.npcAssociatedInteractionType != INTERACTION_TYPE.NONE && tokenInInventory.CanBeUsedBy(this) && InteractionManager.Instance.CanCreateInteraction(tokenInInventory.npcAssociatedInteractionType, this)) {
                         atHomeInteractionWeights.AddElement(tokenInInventory.tokenName, 70);
                     } else if(tokenInInventory.npcAssociatedInteractionType == INTERACTION_TYPE.USE_ITEM_ON_SELF) {
                         atHomeInteractionWeights.AddElement("ItemNotUsable", 70);
@@ -2900,24 +2908,30 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public void ObtainToken(SpecialToken token) {
         SetToken(token);
         token.SetOwner(this.faction);
+        token.OnObtainToken(this);
         //token.AdjustQuantity(-1);
     }
-    public void SetToken(SpecialToken token) {
-        tokenInInventory = token;
+    public void UnobtainToken() {
+        tokenInInventory.OnUnobtainToken(this);
+        SetToken(null);
     }
     public void ConsumeToken() {
-        tokenInInventory = null;
+        tokenInInventory.OnConsumeToken(this);
+        SetToken(null);
+    }
+    private void SetToken(SpecialToken token) {
+        tokenInInventory = token;
     }
     public void DropToken(Area location, LocationStructure structure) {
         if (tokenInInventory != null) {
             location.AddSpecialTokenToLocation(tokenInInventory, structure);
-            tokenInInventory = null;
+            UnobtainToken();
         }
     }
     public void PickUpToken(SpecialToken token, Area location) {
         if (tokenInInventory == null) {
-            tokenInInventory = token;
             location.RemoveSpecialTokenFromLocation(token);
+            ObtainToken(token);
         }
     }
     public void PickUpRandomToken(Area location) {
