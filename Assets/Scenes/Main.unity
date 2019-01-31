@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.22380279, g: 0.24376711, b: 0.26534963, a: 1}
+  m_IndirectSpecularColor: {r: 0.1273174, g: 0.13414761, b: 0.12107885, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -68027,7 +68027,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   specialTokenSettings:
   - tokenName: Mark of the Witch
-    tokenType: 0
+    tokenType: 4
     quantity: 2
     appearanceWeight: 40
     areaLocations:
@@ -68035,7 +68035,7 @@ MonoBehaviour:
     - Narris
     - Gloomhollow
   - tokenName: Brand of the Beastmaster
-    tokenType: 0
+    tokenType: 5
     quantity: 2
     appearanceWeight: 40
     areaLocations:
@@ -68043,7 +68043,7 @@ MonoBehaviour:
     - Pitthize
     - Visteri
   - tokenName: Book of Wizardry
-    tokenType: 0
+    tokenType: 6
     quantity: 2
     appearanceWeight: 40
     areaLocations:
@@ -68066,7 +68066,7 @@ MonoBehaviour:
     - Denrio
     - Cindermaul
   - tokenName: Fear Spell
-    tokenType: 0
+    tokenType: 3
     quantity: 4
     appearanceWeight: 100
     areaLocations:
@@ -68081,7 +68081,7 @@ MonoBehaviour:
     - Denrio
     - Cindermaul
   - tokenName: Charm Spell
-    tokenType: 0
+    tokenType: 2
     quantity: 4
     appearanceWeight: 100
     areaLocations:
@@ -68096,13 +68096,13 @@ MonoBehaviour:
     - Denrio
     - Cindermaul
   - tokenName: Book of the Dead
-    tokenType: 0
+    tokenType: 1
     quantity: 1
     appearanceWeight: 100
     areaLocations:
     - Tribu
   - tokenName: Secret Scroll
-    tokenType: 0
+    tokenType: 7
     quantity: 6
     appearanceWeight: 40
     areaLocations:
@@ -68111,7 +68111,7 @@ MonoBehaviour:
     - Pitthize
     - Visteri
   - tokenName: Mutagenic Goo
-    tokenType: 0
+    tokenType: 8
     quantity: 2
     appearanceWeight: 80
     areaLocations:
@@ -68119,7 +68119,7 @@ MonoBehaviour:
     - Cindermaul
     - Pitthize
   - tokenName: Dispel Scroll
-    tokenType: 0
+    tokenType: 9
     quantity: 4
     appearanceWeight: 100
     areaLocations:
@@ -68134,7 +68134,7 @@ MonoBehaviour:
     - Tribu
     - Pitthize
   - tokenName: Panacea
-    tokenType: 0
+    tokenType: 10
     quantity: 4
     appearanceWeight: 100
     areaLocations:
