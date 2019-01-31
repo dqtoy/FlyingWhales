@@ -93,6 +93,26 @@ public class InteractionManager : MonoBehaviour {
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.SUPPLY },
                 alignment = INTERACTION_ALIGNMENT.EVIL,
             } },
+            { INTERACTION_TYPE.MOVE_TO_CHARM_FACTION, new InteractionCategoryAndAlignment(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT },
+                alignment = INTERACTION_ALIGNMENT.NEUTRAL,
+            } },
+            { INTERACTION_TYPE.MOVE_TO_STEAL_FACTION, new InteractionCategoryAndAlignment(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.INVENTORY },
+                alignment = INTERACTION_ALIGNMENT.EVIL,
+            } },
+            { INTERACTION_TYPE.MOVE_TO_RECRUIT_FRIEND_FACTION, new InteractionCategoryAndAlignment(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT },
+                alignment = INTERACTION_ALIGNMENT.GOOD,
+            } },
+            { INTERACTION_TYPE.MOVE_TO_ASSASSINATE_FACTION, new InteractionCategoryAndAlignment(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.SUBTERFUGE },
+                alignment = INTERACTION_ALIGNMENT.NEUTRAL,
+            } },
+            { INTERACTION_TYPE.MOVE_TO_REANIMATE, new InteractionCategoryAndAlignment(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT },
+                alignment = INTERACTION_ALIGNMENT.EVIL,
+            } },
         };
     }
     public InteractionCategoryAndAlignment GetCategoryAndAlignment (INTERACTION_TYPE type) {
