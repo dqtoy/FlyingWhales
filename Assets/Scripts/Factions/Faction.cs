@@ -472,6 +472,14 @@ public class Faction {
             Debug.LogWarning("There is no key for " + otherFaction.name + " in " + this.name + "'s relationship dictionary");
         }
     }
+    public bool IsAtWar() {
+        foreach (KeyValuePair<Faction, FactionRelationship> kvp in relationships) {
+            if (kvp.Key.isActive && kvp.Value.relationshipStatus == FACTION_RELATIONSHIP_STATUS.AT_WAR) {
+                return true;
+            }
+        }
+        return false;
+    }
     #endregion
 
     #region Death
@@ -686,25 +694,27 @@ public class Faction {
         } else if (category == INTERACTION_CATEGORY.DEFENSE) {
             //No defense modifier per area
         } else if (category == INTERACTION_CATEGORY.OFFENSE) {
-            int half = _offenseTaskNumOfReserved / 2;
-            int frontlineCharacters = 0;
-            int backlineCharacters = 0;
-            for (int i = 0; i < area.areaResidents.Count; i++) {
-                Character resident = area.areaResidents[i];
-                if (resident.forcedInteraction == null && resident.doNotDisturb <= 0 && resident.IsInOwnParty() && !resident.isLeader
-                    && resident.role.roleType != CHARACTER_ROLE.CIVILIAN && !resident.currentParty.icon.isTravelling
-                    && !resident.isDefender && resident.specificLocation.id == id && resident.currentStructure.isInside) {
-                    if ((area.owner != null && resident.faction == area.owner) || (area.owner == null && resident.faction == FactionManager.Instance.neutralFaction)) {
-                        if(resident.characterClass.combatPosition == COMBAT_POSITION.FRONTLINE) {
-                            frontlineCharacters++;
-                        } else {
-                            backlineCharacters++;
+            if (IsAtWar()) {
+                int half = _offenseTaskNumOfReserved / 2;
+                int frontlineCharacters = 0;
+                int backlineCharacters = 0;
+                for (int i = 0; i < area.areaResidents.Count; i++) {
+                    Character resident = area.areaResidents[i];
+                    if (resident.forcedInteraction == null && resident.doNotDisturb <= 0 && resident.IsInOwnParty() && !resident.isLeader
+                        && resident.role.roleType != CHARACTER_ROLE.CIVILIAN && !resident.currentParty.icon.isTravelling
+                        && !resident.isDefender && resident.specificLocation.id == id && resident.currentStructure.isInside) {
+                        if ((area.owner != null && resident.faction == area.owner) || (area.owner == null && resident.faction == FactionManager.Instance.neutralFaction)) {
+                            if (resident.characterClass.combatPosition == COMBAT_POSITION.FRONTLINE) {
+                                frontlineCharacters++;
+                            } else {
+                                backlineCharacters++;
+                            }
                         }
                     }
                 }
-            }
-            if (frontlineCharacters >= half && backlineCharacters >= half) {
-                weight = 200 + (100 * area.offenseTaskWeightMultiplier);
+                if (frontlineCharacters >= half && backlineCharacters >= half) {
+                    weight = 200 + (100 * area.offenseTaskWeightMultiplier);
+                }
             }
         } else if (category == INTERACTION_CATEGORY.EXPANSION) {
             if (morality == MORALITY.GOOD && size == FACTION_SIZE.MAJOR) {
