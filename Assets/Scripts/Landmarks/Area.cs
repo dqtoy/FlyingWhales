@@ -7,7 +7,6 @@ using UnityEngine;
 public class Area {
 
     public int id { get; private set; }
-    public int suppliesInBank { get; private set; }
     public int supplyCapacity { get; private set; }
     public string name { get; private set; }
     public bool isHighlighted { get; private set; }
@@ -84,6 +83,24 @@ public class Area {
         get { return _offenseTaskWeightMultiplier; }
         set { _offenseTaskWeightMultiplier = value; }
     }
+    public int suppliesInBank {
+        get {
+            LocationStructure warehouse = GetRandomStructureOfType(STRUCTURE_TYPE.WAREHOUSE, 1);
+            if (warehouse == null) {
+                return 0;
+            }
+            return warehouse.GetSupplyPile().suppliesInPile;
+        }
+    }
+    public SupplyPile supplyPile {
+        get {
+            LocationStructure warehouse = GetRandomStructureOfType(STRUCTURE_TYPE.WAREHOUSE, 1);
+            if (warehouse == null) {
+                return null;
+            }
+            return warehouse.GetSupplyPile();
+        }
+    }
     #endregion
 
     public Area(HexTile coreTile, AREA_TYPE areaType) {
@@ -122,7 +139,7 @@ public class Area {
         //}
 #if !WORLD_CREATION_TOOL
         ConstructAreaTasksInteractionWeights();
-        StartSupplyLine();
+        //StartSupplyLine();
 #endif
         nameplatePos = LandmarkManager.Instance.GetAreaNameplatePosition(this);
         possibleOccupants = new List<RACE>();
@@ -161,20 +178,21 @@ public class Area {
         SetMonthlySupply(data.monthlySupply);
         SetInitialResidents(data.initialResidents);
         SetMonthlyActions(data.monthlyActions);
+        LoadStructures(data);
 #if WORLD_CREATION_TOOL
         SetCoreTile(worldcreator.WorldCreatorManager.Instance.GetHexTile(data.coreTileID));
 #else
         SetSuppliesInBank(data.monthlySupply);
         SetCoreTile(GridMap.Instance.GetHexTile(data.coreTileID));
         ConstructAreaTasksInteractionWeights();
-        StartSupplyLine();
+        //StartSupplyLine();
 #endif
 
         possibleOccupants = new List<RACE>();
         if (data.possibleOccupants != null) {
             possibleOccupants.AddRange(data.possibleOccupants);
         }
-        LoadStructures(data);
+        
         
         //LoadSpecialTokens(data);
         AddTile(Utilities.GetTilesFromIDs(data.tileData)); //exposed tiles will be determined after loading landmarks at MapGeneration
@@ -663,17 +681,20 @@ public class Area {
     #endregion
 
     #region Supplies
-    private void StartSupplyLine() {
-        //AdjustSuppliesInBank(100);
-        Messenger.AddListener(Signals.MONTH_START, StartMonthActions);
-    }
-    public void StopSupplyLine() {
-        Messenger.RemoveListener(Signals.MONTH_START, StartMonthActions);
-    }
-    private void StartMonthActions() {
-        CollectMonthlySupplies();
-        //AreaTasksAssignments();
-    }
+    //private void StartSupplyLine() {
+    //    //AdjustSuppliesInBank(100);
+    //    Messenger.AddListener(Signals.MONTH_START, StartMonthActions);
+    //}
+    //public void StopSupplyLine() {
+    //    Messenger.RemoveListener(Signals.MONTH_START, StartMonthActions);
+    //}
+    //private void StartMonthActions() {
+    //    if (areaInvestigation.assignedMinion != null) {
+    //        areaInvestigation.assignedMinion.character.job.DoPassiveEffect(this);
+    //    }
+    //    //CollectMonthlySupplies();
+    //    //AreaTasksAssignments();
+    //}
     public void AreaTasksAssignments() {
         //List<Character> defenderCandidates = new List<Character>();
         List<Character> interactionCandidates = new List<Character>();
@@ -697,29 +718,19 @@ public class Area {
         //AssignMonthlyDefenders(defenderCandidates, interactionCandidates);
         AssignInteractionsToResidents(interactionCandidates);
     }
-    private void CollectMonthlySupplies() {
-        SetSuppliesInBank(monthlySupply);
-        if(areaInvestigation.assignedMinion != null) {
-            areaInvestigation.assignedMinion.character.job.DoPassiveEffect(this);
-        }
-    }
     public void SetSuppliesInBank(int amount) {
-        suppliesInBank = amount;
-        suppliesInBank = Mathf.Clamp(suppliesInBank, 0, monthlySupply);
-#if !WORLD_CREATION_TOOL
-        Debug.Log(GameManager.Instance.TodayLogString() + "Set " + this.name + " supplies to " + suppliesInBank.ToString());
-#endif
+        if (supplyPile == null) {
+            return;
+        }
+        supplyPile.SetSuppliesInPile(amount);
         Messenger.Broadcast(Signals.AREA_SUPPLIES_CHANGED, this);
         //suppliesInBank = Mathf.Clamp(suppliesInBank, 0, supplyCapacity);
     }
     public void AdjustSuppliesInBank(int amount) {
-        suppliesInBank += amount;
-        suppliesInBank = Mathf.Clamp(suppliesInBank, 0, monthlySupply);
-        supplyLog.Add(GameManager.Instance.TodayLogString() + "Adjusted supplies in bank by " + amount.ToString() +
-            " ST: " + StackTraceUtility.ExtractStackTrace());
-        if (supplyLog.Count > 100) {
-            supplyLog.RemoveAt(0);
+        if (supplyPile == null) {
+            return;
         }
+        supplyPile.AdjustSuppliesInPile(amount);
         Messenger.Broadcast(Signals.AREA_SUPPLIES_CHANGED, this);
         //suppliesInBank = Mathf.Clamp(suppliesInBank, 0, supplyCapacity);
     }
@@ -731,6 +742,9 @@ public class Area {
             AdjustSuppliesInBank(-reward.amount);
         }
     }
+    //public void GetSuppliesFrom(Area targetArea, int amount) {
+       
+    //}
     #endregion
 
     #region Rewards

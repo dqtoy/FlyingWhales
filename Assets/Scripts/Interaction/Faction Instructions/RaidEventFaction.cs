@@ -23,6 +23,8 @@ public class RaidEventFaction : Interaction {
         structure = interactable.GetRandomStructureOfType(STRUCTURE_TYPE.WAREHOUSE);
         _characterInvolved.MoveToAnotherStructure(structure);
 
+        AddToDebugLog(_characterInvolved.name + " will scavenge " + structure.ToString());
+
         CreateActionOptions(startState);
         normalRaidSuccess.SetEffect(() => NormalRaidSuccessRewardEffect(normalRaidSuccess));
         normalRaidFail.SetEffect(() => NormalRaidFailRewardEffect(normalRaidFail));
@@ -71,7 +73,8 @@ public class RaidEventFaction : Interaction {
     private void NormalRaidSuccessRewardEffect(InteractionState state) {
         SupplyPile pile = structure.GetSupplyPile();
         int obtainedSupply = pile.GetSuppliesObtained();
-        _characterInvolved.homeArea.AdjustSuppliesInBank(obtainedSupply);
+        //_characterInvolved.homeArea.GetSuppliesFrom(interactable, obtainedSupply);
+        pile.TransferSuppliesTo(_characterInvolved.homeArea, obtainedSupply);
 
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(null, obtainedSupply.ToString(), LOG_IDENTIFIER.STRING_1);
