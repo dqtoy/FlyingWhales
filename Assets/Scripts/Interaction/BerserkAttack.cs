@@ -160,7 +160,7 @@ public class BerserkAttack : Interaction {
     }
     private void BerserkAttackItemEffect(InteractionState state) {
         SpecialToken chosenToken = _characterInvolved.currentStructure.itemsInStructure[UnityEngine.Random.Range(0, _characterInvolved.currentStructure.itemsInStructure.Count)];
-        _characterInvolved.currentStructure.RemoveItem(chosenToken);
+        _characterInvolved.specificLocation.RemoveSpecialTokenFromLocation(chosenToken);
 
         state.descriptionLog.AddToFillers(chosenToken, chosenToken.name, LOG_IDENTIFIER.ITEM_1);
 

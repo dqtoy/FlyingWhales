@@ -114,11 +114,23 @@ public class InteractionManager : MonoBehaviour {
                 alignment = INTERACTION_ALIGNMENT.NEUTRAL,
             } },
             { INTERACTION_TYPE.BERSERK_ATTACK, new InteractionCategoryAndAlignment(){
-                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.PERSONAL, INTERACTION_CATEGORY.OFFENSE},
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.PERSONAL, INTERACTION_CATEGORY.OFFENSE },
                 alignment = INTERACTION_ALIGNMENT.EVIL,
             } },
             { INTERACTION_TYPE.MOVE_TO_OCCUPY_FACTION, new InteractionCategoryAndAlignment(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.EXPANSION },
+                alignment = INTERACTION_ALIGNMENT.NEUTRAL,
+            } },
+             { INTERACTION_TYPE.MOVE_TO_MINE, new InteractionCategoryAndAlignment(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.SUPPLY },
+                alignment = INTERACTION_ALIGNMENT.GOOD,
+            } },
+            { INTERACTION_TYPE.MOVE_TO_HARVEST, new InteractionCategoryAndAlignment(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.SUPPLY },
+                alignment = INTERACTION_ALIGNMENT.GOOD,
+            } },
+            { INTERACTION_TYPE.SCRAP_ITEM, new InteractionCategoryAndAlignment(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.SUPPLY },
                 alignment = INTERACTION_ALIGNMENT.NEUTRAL,
             } },
         };
@@ -508,6 +520,21 @@ public class InteractionManager : MonoBehaviour {
                 break;
             case INTERACTION_TYPE.OCCUPY_ACTION_FACTION:
                 createdInteraction = new OccupyActionFaction(interactable);
+                break;
+            case INTERACTION_TYPE.MOVE_TO_MINE:
+                createdInteraction = new MoveToMine(interactable);
+                break;
+            case INTERACTION_TYPE.MINE_ACTION:
+                createdInteraction = new MineAction(interactable);
+                break;
+            case INTERACTION_TYPE.MOVE_TO_HARVEST:
+                createdInteraction = new MoveToHarvest(interactable);
+                break;
+            case INTERACTION_TYPE.HARVEST_ACTION:
+                createdInteraction = new HarvestAction(interactable);
+                break;
+            case INTERACTION_TYPE.SCRAP_ITEM:
+                createdInteraction = new ScrapItem(interactable);
                 break;
         }
         return createdInteraction;
@@ -972,6 +999,8 @@ public class InteractionManager : MonoBehaviour {
                 return false;
             case INTERACTION_TYPE.CRAFT_ITEM:
                 return character.GetTrait("Craftsman") != null && character.specificLocation.HasStructure(STRUCTURE_TYPE.WORK_AREA);
+            case INTERACTION_TYPE.SCRAP_ITEM:
+                return character.specificLocation.possibleSpecialTokenSpawns.Count > 0;
             case INTERACTION_TYPE.MOVE_TO_RAID_FACTION:
                 /***Trigger Criteria 1**: There must be at least one other location that is occupied 
                  * but not owned by the character's Faction and not owned by an Ally or a Friend faction*/
@@ -988,6 +1017,22 @@ public class InteractionManager : MonoBehaviour {
                             case FACTION_RELATIONSHIP_STATUS.NEUTRAL:
                                 return true;
                         }
+                    }
+                }
+                return false;
+            case INTERACTION_TYPE.MOVE_TO_MINE:
+                for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
+                    Area currArea = LandmarkManager.Instance.allAreas[i];
+                    if (currArea.id != PlayerManager.Instance.player.playerArea.id && currArea.coreTile.landmarkOnTile.specificLandmarkType.ToString().Contains("MINE")) {
+                        return true;
+                    }
+                }
+                return false;
+            case INTERACTION_TYPE.MOVE_TO_HARVEST:
+                for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
+                    Area currArea = LandmarkManager.Instance.allAreas[i];
+                    if (currArea.id != PlayerManager.Instance.player.playerArea.id && currArea.coreTile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.FARM) {
+                        return true;
                     }
                 }
                 return false;

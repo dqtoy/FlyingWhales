@@ -54,6 +54,9 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.MOVE_TO_SCAVENGE_FACTION,
                 INTERACTION_TYPE.MOVE_TO_RAID_FACTION,
                 INTERACTION_TYPE.MOVE_TO_OCCUPY_FACTION,
+                INTERACTION_TYPE.MOVE_TO_MINE,
+                INTERACTION_TYPE.MOVE_TO_HARVEST,
+                INTERACTION_TYPE.SCRAP_ITEM,
             } },
             { RACE.ELVES, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_LOOT,
@@ -73,6 +76,9 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.MOVE_TO_SCAVENGE_FACTION,
                 INTERACTION_TYPE.MOVE_TO_RAID_FACTION,
                 INTERACTION_TYPE.MOVE_TO_OCCUPY_FACTION,
+                INTERACTION_TYPE.MOVE_TO_MINE,
+                INTERACTION_TYPE.MOVE_TO_HARVEST,
+                INTERACTION_TYPE.SCRAP_ITEM,
             } },
             { RACE.GOBLIN, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_LOOT,
@@ -92,6 +98,9 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.MOVE_TO_SCAVENGE_FACTION,
                 INTERACTION_TYPE.MOVE_TO_RAID_FACTION,
                 INTERACTION_TYPE.MOVE_TO_OCCUPY_FACTION,
+                INTERACTION_TYPE.MOVE_TO_MINE,
+                INTERACTION_TYPE.MOVE_TO_HARVEST,
+                INTERACTION_TYPE.SCRAP_ITEM,
             } },
             { RACE.FAERY, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_LOOT,
@@ -111,6 +120,9 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.MOVE_TO_SCAVENGE_FACTION,
                 INTERACTION_TYPE.MOVE_TO_RAID_FACTION,
                 INTERACTION_TYPE.MOVE_TO_OCCUPY_FACTION,
+                INTERACTION_TYPE.MOVE_TO_MINE,
+                INTERACTION_TYPE.MOVE_TO_HARVEST,
+                INTERACTION_TYPE.SCRAP_ITEM,
             } },
             { RACE.SKELETON, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_LOOT,
@@ -130,6 +142,9 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.MOVE_TO_SCAVENGE_FACTION,
                 INTERACTION_TYPE.MOVE_TO_RAID_FACTION,
                 INTERACTION_TYPE.MOVE_TO_OCCUPY_FACTION,
+                INTERACTION_TYPE.MOVE_TO_MINE,
+                INTERACTION_TYPE.MOVE_TO_HARVEST,
+                INTERACTION_TYPE.SCRAP_ITEM,
             } },
             { RACE.SPIDER, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_LOOT,
@@ -149,6 +164,9 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.MOVE_TO_SCAVENGE_FACTION,
                 INTERACTION_TYPE.MOVE_TO_RAID_FACTION,
                 INTERACTION_TYPE.MOVE_TO_OCCUPY_FACTION,
+                INTERACTION_TYPE.MOVE_TO_MINE,
+                INTERACTION_TYPE.MOVE_TO_HARVEST,
+                INTERACTION_TYPE.SCRAP_ITEM,
             } },
             { RACE.WOLF, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_LOOT,
@@ -168,6 +186,9 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.MOVE_TO_SCAVENGE_FACTION,
                 INTERACTION_TYPE.MOVE_TO_RAID_FACTION,
                 INTERACTION_TYPE.MOVE_TO_OCCUPY_FACTION,
+                INTERACTION_TYPE.MOVE_TO_MINE,
+                INTERACTION_TYPE.MOVE_TO_HARVEST,
+                INTERACTION_TYPE.SCRAP_ITEM,
             } },
             { RACE.DRAGON, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_LOOT,
@@ -187,6 +208,9 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.MOVE_TO_SCAVENGE_FACTION,
                 INTERACTION_TYPE.MOVE_TO_RAID_FACTION,
                 INTERACTION_TYPE.MOVE_TO_OCCUPY_FACTION,
+                INTERACTION_TYPE.MOVE_TO_MINE,
+                INTERACTION_TYPE.MOVE_TO_HARVEST,
+                INTERACTION_TYPE.SCRAP_ITEM,
             } },
         };
     }
