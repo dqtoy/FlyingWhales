@@ -105,6 +105,9 @@ public class CraftItem : Interaction {
     private void CraftingSuccessfulEffect(InteractionState state) {
         SpecialToken craftedItem = _characterInvolved.CraftAnItem();
         LocationStructure warehouse = _characterInvolved.specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.WAREHOUSE);
+        if(warehouse == null) {
+            warehouse = _characterInvolved.currentStructure;
+        }
         _characterInvolved.specificLocation.AddSpecialTokenToLocation(craftedItem, warehouse);
 
         state.descriptionLog.AddToFillers(craftedItem, craftedItem.name, LOG_IDENTIFIER.ITEM_1);
@@ -116,6 +119,9 @@ public class CraftItem : Interaction {
     private void NormalCraftingSuccessfulEffect(InteractionState state) {
         SpecialToken craftedItem = _characterInvolved.CraftAnItem();
         LocationStructure warehouse = _characterInvolved.specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.WAREHOUSE);
+        if (warehouse == null) {
+            warehouse = _characterInvolved.currentStructure;
+        }
         _characterInvolved.specificLocation.AddSpecialTokenToLocation(craftedItem, warehouse);
 
         state.descriptionLog.AddToFillers(craftedItem, craftedItem.name, LOG_IDENTIFIER.ITEM_1);
