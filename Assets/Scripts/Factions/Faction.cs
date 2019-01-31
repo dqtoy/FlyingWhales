@@ -162,6 +162,7 @@ public class Faction {
         SetFactionColor(data.factionColor);
         SetEmblem(FactionManager.Instance.GetFactionEmblem(data.emblemIndex));
         SetMorality(data.morality);
+        SetSize(data.size);
         SetRace(data.race);
         SetLevel(data.level);
         SetFactionActiveState(data.isActive);

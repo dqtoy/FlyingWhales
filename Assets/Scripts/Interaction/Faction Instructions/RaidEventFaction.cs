@@ -2,38 +2,34 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ScavengeEventFaction : Interaction {
+public class RaidEventFaction : Interaction {
 
-    private const string Supply_Scavenged = "Supply Scavenged";
+    private const string Supply_Raided = "Supply Raided";
     private const string No_Supply = "No Supply";
 
     private LocationStructure structure;
 
-    public ScavengeEventFaction(Area interactable) : base(interactable, INTERACTION_TYPE.SCAVENGE_EVENT_FACTION, 0) {
-        _name = "Scavenge Event Faction";
+    public RaidEventFaction(Area interactable) : base(interactable, INTERACTION_TYPE.RAID_EVENT_FACTION, 0) {
+        _name = "Raid Event";
         _jobFilter = new JOB[] { JOB.INSTIGATOR, JOB.DIPLOMAT };
     }
 
     #region Overrides
     public override void CreateStates() {
         InteractionState startState = new InteractionState("Start", this);
-        InteractionState normalScavengeSuccess = new InteractionState(Supply_Scavenged, this);
-        InteractionState normalScavengeFail = new InteractionState(No_Supply, this);
+        InteractionState normalRaidSuccess = new InteractionState(Supply_Raided, this);
+        InteractionState normalRaidFail = new InteractionState(No_Supply, this);
 
-        //**Structure**: Move the character to a random Warehouse or Dungeon Structure
-        List<LocationStructure> choices = new List<LocationStructure>();
-        choices.AddRange(interactable.structures[STRUCTURE_TYPE.WAREHOUSE]);
-        choices.AddRange(interactable.structures[STRUCTURE_TYPE.DUNGEON]);
-        structure = choices[Random.Range(0, choices.Count)];
+        structure = interactable.GetRandomStructureOfType(STRUCTURE_TYPE.WAREHOUSE);
         _characterInvolved.MoveToAnotherStructure(structure);
 
         CreateActionOptions(startState);
-        normalScavengeSuccess.SetEffect(() => SupplyScavengedSuccessRewardEffect(normalScavengeSuccess));
-        normalScavengeFail.SetEffect(() => NoSupplyRewardEffect(normalScavengeFail));
+        normalRaidSuccess.SetEffect(() => NormalRaidSuccessRewardEffect(normalRaidSuccess));
+        normalRaidFail.SetEffect(() => NormalRaidFailRewardEffect(normalRaidFail));
 
         _states.Add(startState.name, startState);
-        _states.Add(normalScavengeSuccess.name, normalScavengeSuccess);
-        _states.Add(normalScavengeFail.name, normalScavengeFail);
+        _states.Add(normalRaidSuccess.name, normalRaidSuccess);
+        _states.Add(normalRaidFail.name, normalRaidFail);
 
         SetCurrentState(startState);
     }
@@ -51,8 +47,8 @@ public class ScavengeEventFaction : Interaction {
         }
     }
     public override bool CanInteractionBeDoneBy(Character character) {
-        //This action will no longer applicable if the Location has become occupied by a faction.
-        if (interactable.owner != null) {
+        if (interactable.owner == null
+            || interactable.owner.id == character.faction.id) {
             return false;
         }
         return base.CanInteractionBeDoneBy(character);
@@ -64,7 +60,7 @@ public class ScavengeEventFaction : Interaction {
         string nextState = string.Empty;
         SupplyPile pile = structure.GetSupplyPile();
         if (pile != null && pile.HasSupply()) {
-            nextState = Supply_Scavenged;
+            nextState = Supply_Raided;
         } else {
             nextState = No_Supply;
         }
@@ -72,8 +68,7 @@ public class ScavengeEventFaction : Interaction {
     }
     #endregion
 
-    private void SupplyScavengedSuccessRewardEffect(InteractionState state) {
-        //**Mechanics**: If the Structure is a Dungeon, randomize from the Dungeon's Supply Pile range.
+    private void NormalRaidSuccessRewardEffect(InteractionState state) {
         SupplyPile pile = structure.GetSupplyPile();
         int obtainedSupply = pile.GetSuppliesObtained();
         _characterInvolved.homeArea.AdjustSuppliesInBank(obtainedSupply);
@@ -83,8 +78,12 @@ public class ScavengeEventFaction : Interaction {
         }
         state.AddLogFiller(new LogFiller(null, obtainedSupply.ToString(), LOG_IDENTIFIER.STRING_1));
     }
-    private void NoSupplyRewardEffect(InteractionState state) {
+    private void NormalRaidFailRewardEffect(InteractionState state) {
         
     }
-    
+
+    //private void TransferSupplies(int amount, Area recieving, Area source) {
+    //    recieving.AdjustSuppliesInBank(amount);
+    //    source.AdjustSuppliesInBank(-amount);
+    //}
 }

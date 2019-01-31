@@ -1342,8 +1342,8 @@ public class Area {
                 Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(chosenClass.className, defaultRace.race, Utilities.GetRandomGender(), 
                     FactionManager.Instance.neutralFaction, this);
                 createdCharacter.SetLevel(UnityEngine.Random.Range(setup.levelRange.lowerBound, setup.levelRange.upperBound + 1));
-                Debug.Log(GameManager.Instance.TodayLogString() + "Generated Lvl. " + createdCharacter.level.ToString() + 
-                    " neutral character " + createdCharacter.characterClass.className + " " + createdCharacter.name + " at " + this.name);
+                //Debug.Log(GameManager.Instance.TodayLogString() + "Generated Lvl. " + createdCharacter.level.ToString() + 
+                //    " neutral character " + createdCharacter.characterClass.className + " " + createdCharacter.name + " at " + this.name);
             }
         }
         
@@ -1362,8 +1362,8 @@ public class Area {
             Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(chosenClass.className, this.raceType, Utilities.GetRandomGender(),
                 owner, this);
             createdCharacter.SetLevel(owner.level);
-            Debug.Log(GameManager.Instance.TodayLogString() + "Generated Lvl. " + createdCharacter.level.ToString() +
-                    " character " + createdCharacter.characterClass.className + " " + createdCharacter.name + " at " + this.name + " for faction " + this.owner.name);
+            //Debug.Log(GameManager.Instance.TodayLogString() + "Generated Lvl. " + createdCharacter.level.ToString() +
+            //        " character " + createdCharacter.characterClass.className + " " + createdCharacter.name + " at " + this.name + " for faction " + this.owner.name);
         }
     }
     public void GenerateStartingFollowers(int followersLevel) {
@@ -1374,8 +1374,8 @@ public class Area {
                 Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(chosenClass.className, owner.startingFollowers[i], Utilities.GetRandomGender(),
                     owner, this);
                 createdCharacter.LevelUp(followersLevel - 1);
-                Debug.Log(GameManager.Instance.TodayLogString() + "Generated Lvl. " + createdCharacter.level.ToString() +
-                        " character " + createdCharacter.characterClass.className + " " + createdCharacter.name + " at " + this.name + " for faction " + this.owner.name);
+                //Debug.Log(GameManager.Instance.TodayLogString() + "Generated Lvl. " + createdCharacter.level.ToString() +
+                //        " character " + createdCharacter.characterClass.className + " " + createdCharacter.name + " at " + this.name + " for faction " + this.owner.name);
             }
         }
     }

@@ -104,6 +104,15 @@ public class LocationStructure {
         }
         return false;
     }
+    public SupplyPile GetSupplyPile() {
+        for (int i = 0; i < pointsOfInterest.Count; i++) {
+            IPointOfInterest poi = pointsOfInterest[i];
+            if (poi.poiType == POINT_OF_INTEREST_TYPE.SUPLY_PILE) {
+                return poi as SupplyPile;
+            }
+        }
+        return null;
+    }
     #endregion
 
     public override string ToString() {

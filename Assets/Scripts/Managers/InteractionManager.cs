@@ -86,8 +86,12 @@ public class InteractionManager : MonoBehaviour {
                 alignment = INTERACTION_ALIGNMENT.EVIL,
             } },
             { INTERACTION_TYPE.CRAFT_ITEM, new InteractionCategoryAndAlignment(){
-            categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.INVENTORY },
-            alignment = INTERACTION_ALIGNMENT.NEUTRAL,
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.INVENTORY },
+                alignment = INTERACTION_ALIGNMENT.NEUTRAL,
+            } },
+            { INTERACTION_TYPE.MOVE_TO_RAID_FACTION, new InteractionCategoryAndAlignment(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.SUPPLY },
+                alignment = INTERACTION_ALIGNMENT.EVIL,
             } },
         };
     }
@@ -461,6 +465,12 @@ public class InteractionManager : MonoBehaviour {
                 break;
             case INTERACTION_TYPE.CRAFT_ITEM:
                 createdInteraction = new CraftItem(interactable);
+                break;
+            case INTERACTION_TYPE.MOVE_TO_RAID_FACTION:
+                createdInteraction = new MoveToRaidFaction(interactable);
+                break;
+            case INTERACTION_TYPE.RAID_EVENT_FACTION:
+                createdInteraction = new RaidEventFaction(interactable);
                 break;
         }
         return createdInteraction;
@@ -925,6 +935,25 @@ public class InteractionManager : MonoBehaviour {
                 return false;
             case INTERACTION_TYPE.CRAFT_ITEM:
                 return character.GetTrait("Craftsman") != null && character.specificLocation.HasStructure(STRUCTURE_TYPE.WORK_AREA);
+            case INTERACTION_TYPE.MOVE_TO_RAID_FACTION:
+                /***Trigger Criteria 1**: There must be at least one other location that is occupied 
+                 * but not owned by the character's Faction and not owned by an Ally or a Friend faction*/
+                for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
+                    Area currArea = LandmarkManager.Instance.allAreas[i];
+                    if (currArea.id == PlayerManager.Instance.player.playerArea.id || currArea.owner == null || !currArea.HasStructure(STRUCTURE_TYPE.WAREHOUSE)) {
+                        continue;
+                    }
+                    if (currArea.owner.id != character.faction.id) {
+                        switch (currArea.owner.GetRelationshipWith(character.faction).relationshipStatus) {
+                            case FACTION_RELATIONSHIP_STATUS.AT_WAR:
+                            case FACTION_RELATIONSHIP_STATUS.ENEMY:
+                            case FACTION_RELATIONSHIP_STATUS.DISLIKED:
+                            case FACTION_RELATIONSHIP_STATUS.NEUTRAL:
+                                return true;
+                        }
+                    }
+                }
+                return false;
             default:
                 return true;
         }
