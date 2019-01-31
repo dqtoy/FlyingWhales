@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Panacea : SpecialToken {
 
-    public Panacea() : base(SPECIAL_TOKEN.PANACEA) {
+    public Panacea() : base(SPECIAL_TOKEN.PANACEA, 100) {
         npcAssociatedInteractionType = INTERACTION_TYPE.USE_ITEM_ON_SELF;
     }
 

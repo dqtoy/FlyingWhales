@@ -4,9 +4,8 @@ using UnityEngine;
 
 public class BookOfWizardry : SpecialToken {
 
-    public BookOfWizardry() : base(SPECIAL_TOKEN.BOOK_OF_WIZARDRY) {
+    public BookOfWizardry() : base(SPECIAL_TOKEN.BOOK_OF_WIZARDRY, 20) {
         //quantity = 1;
-        weight = 20;
         npcAssociatedInteractionType = INTERACTION_TYPE.USE_ITEM_ON_SELF;
     }
     #region Overrides

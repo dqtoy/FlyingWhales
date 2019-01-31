@@ -4,9 +4,8 @@ using UnityEngine;
 
 public class FearSpell : SpecialToken {
 
-    public FearSpell() : base(SPECIAL_TOKEN.FEAR_SPELL) {
+    public FearSpell() : base(SPECIAL_TOKEN.FEAR_SPELL, 100) {
         //quantity = 6;
-        weight = 100;
         npcAssociatedInteractionType = INTERACTION_TYPE.USE_ITEM_ON_CHARACTER;
     }
 

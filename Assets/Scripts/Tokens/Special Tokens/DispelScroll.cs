@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class DispelScroll : SpecialToken {
 
-    public DispelScroll() : base(SPECIAL_TOKEN.DISPEL_SCROLL) {
-        weight = 30;
+    public DispelScroll() : base(SPECIAL_TOKEN.DISPEL_SCROLL, 30) {
         npcAssociatedInteractionType = INTERACTION_TYPE.USE_ITEM_ON_CHARACTER;
     }
 
