@@ -121,6 +121,10 @@ public class InteractionManager : MonoBehaviour {
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.SUPPLY },
                 alignment = INTERACTION_ALIGNMENT.GOOD,
             } },
+            { INTERACTION_TYPE.MOVE_TO_HARVEST, new InteractionCategoryAndAlignment(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.SUPPLY },
+                alignment = INTERACTION_ALIGNMENT.GOOD,
+            } },
         };
     }
     public InteractionCategoryAndAlignment GetCategoryAndAlignment (INTERACTION_TYPE type) {
@@ -508,6 +512,12 @@ public class InteractionManager : MonoBehaviour {
                 break;
             case INTERACTION_TYPE.MINE_ACTION:
                 createdInteraction = new MineAction(interactable);
+                break;
+            case INTERACTION_TYPE.MOVE_TO_HARVEST:
+                createdInteraction = new MoveToHarvest(interactable);
+                break;
+            case INTERACTION_TYPE.HARVEST_ACTION:
+                createdInteraction = new HarvestAction(interactable);
                 break;
         }
         return createdInteraction;
@@ -995,6 +1005,14 @@ public class InteractionManager : MonoBehaviour {
                 for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
                     Area currArea = LandmarkManager.Instance.allAreas[i];
                     if (currArea.id != PlayerManager.Instance.player.playerArea.id && currArea.coreTile.landmarkOnTile.specificLandmarkType.ToString().Contains("MINE")) {
+                        return true;
+                    }
+                }
+                return false;
+            case INTERACTION_TYPE.MOVE_TO_HARVEST:
+                for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
+                    Area currArea = LandmarkManager.Instance.allAreas[i];
+                    if (currArea.id != PlayerManager.Instance.player.playerArea.id && currArea.coreTile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.FARM) {
                         return true;
                     }
                 }
