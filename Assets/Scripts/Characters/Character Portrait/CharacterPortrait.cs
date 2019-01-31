@@ -304,6 +304,11 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
                 skin.material.SetVector("_HSVAAdjust", new Vector4(_character.hSkinColor/360f, 0f, 0f, 0f));
                 hair.material.SetVector("_HSVAAdjust", new Vector4(_character.hHairColor/360f, 0f, 0f, 0f));
                 break;
+            case RACE.SPIDER:
+                skin.material = Instantiate(CharacterManager.Instance.hsvMaterial);
+                hair.material = null;
+                skin.material.SetVector("_HSVAAdjust", new Vector4(_character.hSkinColor/360f, 0f, 0f, 0f));
+                break;
             default:
                 skin.material = null;
                 hair.material = null;
