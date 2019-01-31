@@ -154,6 +154,7 @@ public class SpecialToken : Token, IPointOfInterest {
         this.specialTokenType = specialTokenType;
         this.name = Utilities.NormalizeStringUpperCaseFirstLetters(this.specialTokenType.ToString());
         weight = appearanceRate;
+        npcAssociatedInteractionType = INTERACTION_TYPE.NONE;
     }
     //public void AdjustQuantity(int amount) {
     //    quantity += amount;
@@ -161,9 +162,15 @@ public class SpecialToken : Token, IPointOfInterest {
     //        Messenger.Broadcast(Signals.SPECIAL_TOKEN_RAN_OUT, this);
     //    }
     //}
+
+    #region Virtuals
     public virtual Character GetTargetCharacterFor(Character sourceCharacter) {
         return null;
     }
+    public virtual void OnObtainToken(Character character) { }
+    public virtual void OnUnobtainToken(Character character) { }
+    public virtual void OnConsumeToken(Character character) { }
+    #endregion
     public void SetOwner(Faction owner) {
         this.owner = owner;
     }

@@ -149,8 +149,7 @@ public class AbductAction : Interaction {
         _characterInvolved.ownParty.AddCharacter(character);
         _characterInvolved.currentStructure.AddCharacterAtLocation(character);
         Interaction interactionAbductor = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, interactable);
-        _characterInvolved.SetForcedInteraction(interactionAbductor);
-        _characterInvolved.SetDailyInteractionGenerationTick(GameManager.Instance.continuousDays + 1);
+        _characterInvolved.InduceInteraction(interactionAbductor);
     }
 
     public void SetTargetCharacter(Character targetCharacter) {

@@ -337,7 +337,7 @@ public class StealAction : Interaction {
 
     private void TransferItem(Character sourceCharacter, Character thief) {
         thief.ObtainToken(sourceCharacter.tokenInInventory);
-        sourceCharacter.SetToken(null);
+        sourceCharacter.UnobtainToken();
     }
 
     public void SetTargetCharacter(Character targetCharacter) {

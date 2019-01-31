@@ -94,8 +94,7 @@ public class TameBeastAction : Interaction {
         _targetBeast.ChangeFactionTo(_characterInvolved.faction);
         _targetBeast.MigrateHomeTo(_characterInvolved.homeArea);
         Interaction returnHome = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, interactable);
-        _targetBeast.SetForcedInteraction(returnHome);
-        _targetBeast.SetDailyInteractionGenerationTick(GameManager.Instance.continuousDays + 1);
+        _targetBeast.InduceInteraction(returnHome);
 
         state.descriptionLog.AddToFillers(_targetBeast, _targetBeast.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
