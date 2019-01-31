@@ -402,11 +402,12 @@ public class Player : ILeader {
         Messenger.AddListener<Faction>(Signals.FACTION_LEADER_DIED, OnFactionLeaderDied);
     }
     private void OnFactionLeaderDied(Faction faction) {
-        Faction fyn = FactionManager.Instance.GetFactionBasedOnName("Fyn");
-        Faction orelia = FactionManager.Instance.GetFactionBasedOnName("Orelia");
-        if (fyn.isDestroyed && orelia.isDestroyed) {
-            Debug.LogError("Fyn and Orelia factions are destroyed! Player won!");
+        List<Faction> allUndestroyedFactions = FactionManager.Instance.allFactions.Where(x => x.name != "Neutral" && x.name != "Player Area" && !x.isDestroyed).ToList();
+        if (allUndestroyedFactions.Count == 0) {
+            Debug.LogError("All factions are destroyed! Player won!");
         }
+        
+        
     }
     public void OnPlayerLandmarkRuined(BaseLandmark landmark) {
         switch (landmark.specificLandmarkType) {

@@ -2576,7 +2576,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //All characters have a 1 in 8 chance of having Crooked trait when spawned
         if (UnityEngine.Random.Range(0, 8) < 1) {
             AddTrait(AttributeManager.Instance.allTraits["Crooked"]);
-            Debug.Log(this.name + " is set to be Crooked");
+            //Debug.Log(this.name + " is set to be Crooked");
         }
     }
     public bool ReleaseFromAbduction() {

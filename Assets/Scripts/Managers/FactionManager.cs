@@ -88,39 +88,89 @@ public class FactionManager : MonoBehaviour {
         }
     }
     public void RandomizeStartingFactions(WorldSaveData data) {
-        List<Faction> factions = allFactions.Where(x => x.name != "Neutral").ToList();
-        string[] startFactions = new string[] { "Fyn", "Orelia" };
-        for (int i = 0; i < startFactions.Length; i++) {
-            Faction faction = GetFactionBasedOnName(startFactions[i]);
+        string log = "Starting Factions are: ";
+        /*
+         Upon startup:
+        1 Good Major Faction
+        1 Evil Major Faction
+        2 Minor Factions
+         */
+        
+        List<Faction> goodMajorChoices = GetFactionsOfMoralityAndSize(MORALITY.GOOD, FACTION_SIZE.MAJOR);
+        List<Faction> evilMajorChoices = GetFactionsOfMoralityAndSize(MORALITY.EVIL, FACTION_SIZE.MAJOR);
+        List<Faction> minorChoices = GetFactionsOfSize(FACTION_SIZE.MINOR);
+
+        Faction goodMajor = goodMajorChoices[Random.Range(0, goodMajorChoices.Count)];
+        Faction evilMajor = evilMajorChoices[Random.Range(0, evilMajorChoices.Count)];
+        List<Faction> startFactions = new List<Faction>() { goodMajor, evilMajor };
+
+        log += "\nGood Major: " + goodMajor.name;
+        log += "\nEvil Major: " + evilMajor.name;
+
+        for (int i = 0; i < 2; i++) {
+            Faction chosenMinorFaction = minorChoices[Random.Range(0, minorChoices.Count)];
+            minorChoices.Remove(chosenMinorFaction);
+            startFactions.Add(chosenMinorFaction);
+            log += "\nMinor Faction: " + chosenMinorFaction.name;
+        }
+
+        for (int i = 0; i < startFactions.Count; i++) {
+            Faction faction = startFactions[i];
             if (!faction.isActive) {
                 OwnInitialAreasOfFaction(data.areaData, faction);
                 faction.GenerateStartingLeader(9);
                 faction.ownedAreas[0].GenerateStartingFollowers(7);
                 faction.SetFactionActiveState(true);
-                factions.Remove(faction);
             }
         }
 
-        //First random faction
-        int index1 = UnityEngine.Random.Range(0, factions.Count);
-        Faction firstRandomFaction = factions[index1];
-        if (!firstRandomFaction.isActive) {
-            OwnInitialAreasOfFaction(data.areaData, firstRandomFaction);
-            firstRandomFaction.GenerateStartingLeader(6);
-            firstRandomFaction.ownedAreas[0].GenerateStartingFollowers(4);
-            firstRandomFaction.SetFactionActiveState(true);
-            factions.RemoveAt(index1);
-        }
+        Debug.Log(log);
 
-        //Second random faction
-        int index2 = UnityEngine.Random.Range(0, factions.Count);
-        Faction secondRandomFaction = factions[index2];
-        if (!secondRandomFaction.isActive) {
-            OwnInitialAreasOfFaction(data.areaData, secondRandomFaction);
-            secondRandomFaction.GenerateStartingLeader(5);
-            secondRandomFaction.ownedAreas[0].GenerateStartingFollowers(3);
-            secondRandomFaction.SetFactionActiveState(true);
+        ////First random faction
+        //int index1 = UnityEngine.Random.Range(0, factions.Count);
+        //Faction firstRandomFaction = factions[index1];
+        //if (!firstRandomFaction.isActive) {
+        //    OwnInitialAreasOfFaction(data.areaData, firstRandomFaction);
+        //    firstRandomFaction.GenerateStartingLeader(6);
+        //    firstRandomFaction.ownedAreas[0].GenerateStartingFollowers(4);
+        //    firstRandomFaction.SetFactionActiveState(true);
+        //    factions.RemoveAt(index1);
+        //}
+
+        ////Second random faction
+        //int index2 = UnityEngine.Random.Range(0, factions.Count);
+        //Faction secondRandomFaction = factions[index2];
+        //if (!secondRandomFaction.isActive) {
+        //    OwnInitialAreasOfFaction(data.areaData, secondRandomFaction);
+        //    secondRandomFaction.GenerateStartingLeader(5);
+        //    secondRandomFaction.ownedAreas[0].GenerateStartingFollowers(3);
+        //    secondRandomFaction.SetFactionActiveState(true);
+        //}
+    }
+    private List<Faction> GetFactionsOfMoralityAndSize(MORALITY morality, FACTION_SIZE size) {
+        List<Faction> factions = new List<Faction>();
+        for (int i = 0; i < allFactions.Count; i++) {
+            Faction currFaction = allFactions[i];
+            if (currFaction.name != "Neutral") {
+                if (currFaction.morality == morality 
+                    && currFaction.size == size) {
+                    factions.Add(currFaction);
+                }
+            }
         }
+        return factions;
+    }
+    private List<Faction> GetFactionsOfSize(FACTION_SIZE size) {
+        List<Faction> factions = new List<Faction>();
+        for (int i = 0; i < allFactions.Count; i++) {
+            Faction currFaction = allFactions[i];
+            if (currFaction.name != "Neutral") {
+                if (currFaction.size == size) {
+                    factions.Add(currFaction);
+                }
+            }
+        }
+        return factions;
     }
     private void OwnInitialAreasOfFaction(List<AreaSaveData> areaSaveData, Faction faction) {
         if (areaSaveData != null) {

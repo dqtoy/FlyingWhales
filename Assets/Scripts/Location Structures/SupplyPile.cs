@@ -25,6 +25,13 @@ public class SupplyPile : IPointOfInterest {
         
     }
 
+    public bool HasSupply() {
+        if (location.structureType == STRUCTURE_TYPE.WAREHOUSE) {
+            return location.location.suppliesInBank > 0;
+        }
+        return true;
+    }
+
     public override string ToString() {
         return "Supply Pile";
     }
