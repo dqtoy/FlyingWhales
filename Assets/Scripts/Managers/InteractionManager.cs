@@ -113,6 +113,10 @@ public class InteractionManager : MonoBehaviour {
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.SUPPLY },
                 alignment = INTERACTION_ALIGNMENT.NEUTRAL,
             } },
+            { INTERACTION_TYPE.BERSERK_ATTACK, new InteractionCategoryAndAlignment(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.PERSONAL, INTERACTION_CATEGORY.OFFENSE},
+                alignment = INTERACTION_ALIGNMENT.EVIL,
+            } },
         };
     }
     public InteractionCategoryAndAlignment GetCategoryAndAlignment (INTERACTION_TYPE type) {
@@ -491,6 +495,9 @@ public class InteractionManager : MonoBehaviour {
                 break;
             case INTERACTION_TYPE.RAID_EVENT_FACTION:
                 createdInteraction = new RaidEventFaction(interactable);
+                break;
+            case INTERACTION_TYPE.BERSERK_ATTACK:
+                createdInteraction = new BerserkAttack(interactable);
                 break;
         }
         return createdInteraction;

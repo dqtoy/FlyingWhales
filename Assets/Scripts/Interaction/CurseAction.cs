@@ -117,7 +117,7 @@ public class CurseAction : Interaction {
     }
     #endregion
 
-    #region Reward Effect
+    #region State Effect
     private void StartEffect(InteractionState state) {
         _characterInvolved.MoveToAnotherStructure(_targetCharacter.currentStructure);
     }
