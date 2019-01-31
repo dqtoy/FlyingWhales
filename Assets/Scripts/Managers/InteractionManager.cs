@@ -114,8 +114,12 @@ public class InteractionManager : MonoBehaviour {
                 alignment = INTERACTION_ALIGNMENT.NEUTRAL,
             } },
             { INTERACTION_TYPE.BERSERK_ATTACK, new InteractionCategoryAndAlignment(){
-                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.PERSONAL, INTERACTION_CATEGORY.OFFENSE},
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.PERSONAL, INTERACTION_CATEGORY.OFFENSE },
                 alignment = INTERACTION_ALIGNMENT.EVIL,
+            } },
+            { INTERACTION_TYPE.MOVE_TO_MINE, new InteractionCategoryAndAlignment(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.SUPPLY },
+                alignment = INTERACTION_ALIGNMENT.GOOD,
             } },
         };
     }
@@ -498,6 +502,12 @@ public class InteractionManager : MonoBehaviour {
                 break;
             case INTERACTION_TYPE.BERSERK_ATTACK:
                 createdInteraction = new BerserkAttack(interactable);
+                break;
+            case INTERACTION_TYPE.MOVE_TO_MINE:
+                createdInteraction = new MoveToMine(interactable);
+                break;
+            case INTERACTION_TYPE.MINE_ACTION:
+                createdInteraction = new MineAction(interactable);
                 break;
         }
         return createdInteraction;
@@ -978,6 +988,14 @@ public class InteractionManager : MonoBehaviour {
                             case FACTION_RELATIONSHIP_STATUS.NEUTRAL:
                                 return true;
                         }
+                    }
+                }
+                return false;
+            case INTERACTION_TYPE.MOVE_TO_MINE:
+                for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
+                    Area currArea = LandmarkManager.Instance.allAreas[i];
+                    if (currArea.id != PlayerManager.Instance.player.playerArea.id && currArea.coreTile.landmarkOnTile.specificLandmarkType.ToString().Contains("MINE")) {
+                        return true;
                     }
                 }
                 return false;

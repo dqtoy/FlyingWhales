@@ -520,6 +520,11 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         }
         return -1;
     }
+    public int GetTileDistanceTo(HexTile target) {
+        float distance = Vector3.Distance(this.transform.position, target.transform.position);
+        int distanceAsTiles = Mathf.CeilToInt(distance / 2.315188f);
+        return distanceAsTiles;
+    }
     public bool CanBuildLandmarkHere(LANDMARK_TYPE landmarkToBuild, LandmarkData data, Dictionary<HexTile, LANDMARK_TYPE> landmarksToBeCreated) {
         if (this.hasLandmark || !this.isPassable || landmarksToBeCreated.ContainsKey(this)) {
             return false; //this tile is not passable or already has a landmark

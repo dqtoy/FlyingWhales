@@ -138,7 +138,8 @@ public class GameManager : MonoBehaviour {
     [ContextMenu("Get Distance")]
     public void GetDistance() {
         float distance = Vector3.Distance(tile1.transform.position, tile2.transform.position);
-        Debug.LogWarning("Distance: " + distance);
+        int distanceAsTiles = Mathf.CeilToInt(distance / 2.315188f);
+        Debug.LogWarning("Distance: " + distanceAsTiles);
     }
 
     private float AngleBetweenVector2(Vector2 vec1, Vector2 vec2) {
