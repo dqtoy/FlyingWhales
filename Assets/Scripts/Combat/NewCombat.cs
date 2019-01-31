@@ -156,6 +156,10 @@ public class NewCombat : MonoBehaviour {
                 //} else {
                 //    targetCharacters = GetTargetCharacters(sourceCombatCharacter);
                 //}
+
+                //Use Items, if any
+                UseItem(sourceCombatCharacter);
+
                 List<CombatCharacter> targetCharacters = GetTargetCharacters(sourceCombatCharacter);
                 string attackLog = string.Empty;
                 if (targetCharacters != null && targetCharacters.Count > 0) {
@@ -789,6 +793,20 @@ public class NewCombat : MonoBehaviour {
         return false;
     }
     #endregion
+
+    #region Items
+    private void UseItem(CombatCharacter combatCharacter) {
+        if(combatCharacter.character.tokenInInventory != null) {
+            if(combatCharacter.character.tokenInInventory.specialTokenType == SPECIAL_TOKEN.HEALING_POTION) {
+                if (combatCharacter.character.currentHP < (combatCharacter.maxHP / 2)) {
+                    combatCharacter.RestoreToFullHP();
+                    UIManager.Instance.combatUI.AddCombatLogs(combatCharacter.character.name + " used " + combatCharacter.character.tokenInInventory.tokenName, combatCharacter.side);
+                    combatCharacter.character.ConsumeToken();
+                }
+            }
+        }
+    }
+    #endregion
 }
 
 public class CombatCharacter {
@@ -851,6 +869,9 @@ public class CombatCharacter {
     public void UpdateHP() {
         int totalFlatHP = character.maxHP + flatHP;
         maxHP = totalFlatHP + (int) (totalFlatHP * (multiplierHP / 100f));
+        character.SetHP(maxHP);
+    }
+    public void RestoreToFullHP() {
         character.SetHP(maxHP);
     }
 }
