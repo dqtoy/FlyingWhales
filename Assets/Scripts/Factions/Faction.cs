@@ -760,7 +760,7 @@ public class Faction {
     }
     private void GenerateAreaInteractionNew(Area area) {
         string interactionLog = GameManager.Instance.TodayLogString() + "GENERATING FACTION TASKS FOR " + this.name + " in " + area.name;
-        interactionLog += "\nAREA MONTHLY ACTIONS: " + area.monthlyActions.ToString();
+        interactionLog += "\nAREA MONTHLY ACTIONS: " + area.monthlyActions.ToString() + ", FACTION MORALITY: " + morality.ToString() + " " + size.ToString() + ", FACTION TYPE: " + factionType.ToString();
 
         UpdateFactionTasksWeightsPerArea(area);
         WeightedDictionary<INTERACTION_CATEGORY> tasksWeights = new WeightedDictionary<INTERACTION_CATEGORY>();
@@ -781,7 +781,7 @@ public class Faction {
             interactionLog += "\n--------------------------------------------------------";
             interactionLog += "\nCHOSEN INTERACTION TYPE: " + chosenCategory.ToString();
             //CGet all residents of area that can do the interaction category;
-            Dictionary<Character, List<INTERACTION_TYPE>> residentInteractions = area.GetResidentAndInteractionsTheyCanDoByCategory(chosenCategory);
+            Dictionary<Character, List<INTERACTION_TYPE>> residentInteractions = area.GetResidentAndInteractionsTheyCanDoByCategoryAndAlignment(chosenCategory, morality);
             if (residentInteractions.Count > 0) {
                 //For testing only
                 interactionLog += "\nALL CHARACTERS AND INTERACTIONS THEY CAN DO";

@@ -149,10 +149,11 @@ public class SpecialToken : Token, IPointOfInterest {
     }
     #endregion
 
-    public SpecialToken(SPECIAL_TOKEN specialTokenType) : base() {
+    public SpecialToken(SPECIAL_TOKEN specialTokenType, int appearanceRate) : base() {
         _tokenType = TOKEN_TYPE.SPECIAL;
         this.specialTokenType = specialTokenType;
         this.name = Utilities.NormalizeStringUpperCaseFirstLetters(this.specialTokenType.ToString());
+        weight = appearanceRate;
     }
     //public void AdjustQuantity(int amount) {
     //    quantity += amount;

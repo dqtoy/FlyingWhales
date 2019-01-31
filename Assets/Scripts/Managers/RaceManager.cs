@@ -40,81 +40,81 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.MOVE_TO_LOOT,
                 INTERACTION_TYPE.MOVE_TO_TAME_BEAST,
                 INTERACTION_TYPE.MOVE_TO_ABDUCT,
-                INTERACTION_TYPE.MOVE_TO_HUNT,
-                INTERACTION_TYPE.MOVE_TO_ARGUE,
-                INTERACTION_TYPE.MOVE_TO_CURSE,
+                //INTERACTION_TYPE.MOVE_TO_HUNT,
+                //INTERACTION_TYPE.MOVE_TO_ARGUE,
+                //INTERACTION_TYPE.MOVE_TO_CURSE,
                 INTERACTION_TYPE.TORTURE_ACTION,
-                INTERACTION_TYPE.EAT_DEFENSELESS,
+                //INTERACTION_TYPE.EAT_DEFENSELESS,
             } },
             { RACE.ELVES, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_LOOT,
                 INTERACTION_TYPE.MOVE_TO_TAME_BEAST,
                 INTERACTION_TYPE.MOVE_TO_ABDUCT,
-                INTERACTION_TYPE.MOVE_TO_HUNT,
-                INTERACTION_TYPE.MOVE_TO_ARGUE,
-                INTERACTION_TYPE.MOVE_TO_CURSE,
+                //INTERACTION_TYPE.MOVE_TO_HUNT,
+                //INTERACTION_TYPE.MOVE_TO_ARGUE,
+                //INTERACTION_TYPE.MOVE_TO_CURSE,
                 INTERACTION_TYPE.TORTURE_ACTION,
-                INTERACTION_TYPE.EAT_DEFENSELESS,
+                //INTERACTION_TYPE.EAT_DEFENSELESS,
             } },
             { RACE.GOBLIN, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_LOOT,
                 INTERACTION_TYPE.MOVE_TO_TAME_BEAST,
                 INTERACTION_TYPE.MOVE_TO_ABDUCT,
-                INTERACTION_TYPE.MOVE_TO_HUNT,
-                INTERACTION_TYPE.MOVE_TO_ARGUE,
-                INTERACTION_TYPE.MOVE_TO_CURSE,
+                //INTERACTION_TYPE.MOVE_TO_HUNT,
+                //INTERACTION_TYPE.MOVE_TO_ARGUE,
+                //INTERACTION_TYPE.MOVE_TO_CURSE,
                 INTERACTION_TYPE.TORTURE_ACTION,
-                INTERACTION_TYPE.EAT_DEFENSELESS,
+                //INTERACTION_TYPE.EAT_DEFENSELESS,
             } },
             { RACE.FAERY, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_LOOT,
                 INTERACTION_TYPE.MOVE_TO_TAME_BEAST,
                 INTERACTION_TYPE.MOVE_TO_ABDUCT,
-                INTERACTION_TYPE.MOVE_TO_HUNT,
-                INTERACTION_TYPE.MOVE_TO_ARGUE,
-                INTERACTION_TYPE.MOVE_TO_CURSE,
+                //INTERACTION_TYPE.MOVE_TO_HUNT,
+                //INTERACTION_TYPE.MOVE_TO_ARGUE,
+                //INTERACTION_TYPE.MOVE_TO_CURSE,
                 INTERACTION_TYPE.TORTURE_ACTION,
-                INTERACTION_TYPE.EAT_DEFENSELESS,
+                //INTERACTION_TYPE.EAT_DEFENSELESS,
             } },
             { RACE.SKELETON, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_LOOT,
                 INTERACTION_TYPE.MOVE_TO_TAME_BEAST,
                 INTERACTION_TYPE.MOVE_TO_ABDUCT,
-                INTERACTION_TYPE.MOVE_TO_HUNT,
-                INTERACTION_TYPE.MOVE_TO_ARGUE,
-                INTERACTION_TYPE.MOVE_TO_CURSE,
+                //INTERACTION_TYPE.MOVE_TO_HUNT,
+                //INTERACTION_TYPE.MOVE_TO_ARGUE,
+                //INTERACTION_TYPE.MOVE_TO_CURSE,
                 INTERACTION_TYPE.TORTURE_ACTION,
-                INTERACTION_TYPE.EAT_DEFENSELESS,
+                //INTERACTION_TYPE.EAT_DEFENSELESS,
             } },
             { RACE.SPIDER, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_LOOT,
                 INTERACTION_TYPE.MOVE_TO_TAME_BEAST,
                 INTERACTION_TYPE.MOVE_TO_ABDUCT,
-                INTERACTION_TYPE.MOVE_TO_HUNT,
-                INTERACTION_TYPE.MOVE_TO_ARGUE,
-                INTERACTION_TYPE.MOVE_TO_CURSE,
+                //INTERACTION_TYPE.MOVE_TO_HUNT,
+                //INTERACTION_TYPE.MOVE_TO_ARGUE,
+                //INTERACTION_TYPE.MOVE_TO_CURSE,
                 INTERACTION_TYPE.TORTURE_ACTION,
-                INTERACTION_TYPE.EAT_DEFENSELESS,
+                //INTERACTION_TYPE.EAT_DEFENSELESS,
             } },
             { RACE.WOLF, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_LOOT,
                 INTERACTION_TYPE.MOVE_TO_TAME_BEAST,
                 INTERACTION_TYPE.MOVE_TO_ABDUCT,
-                INTERACTION_TYPE.MOVE_TO_HUNT,
-                INTERACTION_TYPE.MOVE_TO_ARGUE,
-                INTERACTION_TYPE.MOVE_TO_CURSE,
+                //INTERACTION_TYPE.MOVE_TO_HUNT,
+                //INTERACTION_TYPE.MOVE_TO_ARGUE,
+                //INTERACTION_TYPE.MOVE_TO_CURSE,
                 INTERACTION_TYPE.TORTURE_ACTION,
-                INTERACTION_TYPE.EAT_DEFENSELESS,
+                //INTERACTION_TYPE.EAT_DEFENSELESS,
             } },
             { RACE.DRAGON, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_LOOT,
                 INTERACTION_TYPE.MOVE_TO_TAME_BEAST,
                 INTERACTION_TYPE.MOVE_TO_ABDUCT,
-                INTERACTION_TYPE.MOVE_TO_HUNT,
-                INTERACTION_TYPE.MOVE_TO_ARGUE,
-                INTERACTION_TYPE.MOVE_TO_CURSE,
+                //INTERACTION_TYPE.MOVE_TO_HUNT,
+                //INTERACTION_TYPE.MOVE_TO_ARGUE,
+                //INTERACTION_TYPE.MOVE_TO_CURSE,
                 INTERACTION_TYPE.TORTURE_ACTION,
-                INTERACTION_TYPE.EAT_DEFENSELESS,
+                //INTERACTION_TYPE.EAT_DEFENSELESS,
             } },
         };
     }
@@ -167,6 +167,30 @@ public class RaceManager : MonoBehaviour {
                             interactions.Add(interactionArray[i]);
                             break;
                         }
+                    }
+                }
+            }
+            return interactions;
+        }
+        return null;
+    }
+    public List<INTERACTION_TYPE> GetInteractionsOfRace(RACE race, INTERACTION_CATEGORY category, MORALITY factionMorality) {
+        if (_racesInteractions.ContainsKey(race)) {
+            List<INTERACTION_TYPE> interactions = new List<INTERACTION_TYPE>();
+            INTERACTION_TYPE[] interactionArray = _racesInteractions[race];
+            for (int i = 0; i < interactionArray.Length; i++) {
+                InteractionCategoryAndAlignment interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(interactionArray[i]);
+                if (factionMorality == MORALITY.GOOD && interactionCategoryAndAlignment.alignment == INTERACTION_ALIGNMENT.EVIL) {
+                    //Alignment must be good or neutral, so if it is evil, skip it
+                    continue;
+                }else if (factionMorality == MORALITY.EVIL && interactionCategoryAndAlignment.alignment == INTERACTION_ALIGNMENT.GOOD) {
+                    //Alignment must be evil or neutral, so if it is good, skip it
+                    continue;
+                }
+                for (int j = 0; j < interactionCategoryAndAlignment.categories.Length; j++) {
+                    if (interactionCategoryAndAlignment.categories[j] == category) {
+                        interactions.Add(interactionArray[i]);
+                        break;
                     }
                 }
             }

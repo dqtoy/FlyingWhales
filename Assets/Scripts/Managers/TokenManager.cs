@@ -81,7 +81,7 @@ public class TokenManager : MonoBehaviour {
                             createdToken = new Panacea();
                             break;
                         default:
-                            createdToken = new SpecialToken(currSetting.tokenType);
+                            createdToken = new SpecialToken(currSetting.tokenType, currSetting.appearanceWeight);
                             break;
                     }
                     if (createdToken != null) {

@@ -8,9 +8,8 @@ public class SecretScroll : SpecialToken {
 
     private string[] classes = new string[] { "Knight", "Marauder", "Barbarian", "Stalker", "Archer", "Hunter", "Druid", "Mage", "Shaman" };
 
-    public SecretScroll() : base(SPECIAL_TOKEN.SECRET_SCROLL) {
+    public SecretScroll() : base(SPECIAL_TOKEN.SECRET_SCROLL, 100) {
         //quantity = 6;
-        weight = 100;
         npcAssociatedInteractionType = INTERACTION_TYPE.USE_ITEM_ON_LOCATION;
         //grantedClass = "Knight";
         grantedClass = classes[Random.Range(0, classes.Length)];

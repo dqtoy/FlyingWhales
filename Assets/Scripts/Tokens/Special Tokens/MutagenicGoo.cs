@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class MutagenicGoo : SpecialToken {
 
-    public MutagenicGoo() : base(SPECIAL_TOKEN.MUTAGENIC_GOO) {
-        weight = 80;
+    public MutagenicGoo() : base(SPECIAL_TOKEN.MUTAGENIC_GOO, 80) {
         npcAssociatedInteractionType = INTERACTION_TYPE.USE_ITEM_ON_SELF;
     }
 
