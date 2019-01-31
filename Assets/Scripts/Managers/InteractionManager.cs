@@ -93,10 +93,6 @@ public class InteractionManager : MonoBehaviour {
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.SUPPLY },
                 alignment = INTERACTION_ALIGNMENT.EVIL,
             } },
-            { INTERACTION_TYPE.MOVE_TO_CHARM_FACTION, new InteractionCategoryAndAlignment(){
-                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT },
-                alignment = INTERACTION_ALIGNMENT.NEUTRAL,
-            } },
             { INTERACTION_TYPE.MOVE_TO_STEAL_FACTION, new InteractionCategoryAndAlignment(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.INVENTORY },
                 alignment = INTERACTION_ALIGNMENT.EVIL,
@@ -113,6 +109,14 @@ public class InteractionManager : MonoBehaviour {
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT },
                 alignment = INTERACTION_ALIGNMENT.EVIL,
             } },
+            //{ INTERACTION_TYPE.MOVE_TO_SCAVENGE_FACTION, new InteractionCategoryAndAlignment(){
+            //    categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.SUPPLY },
+            //    alignment = INTERACTION_ALIGNMENT.NEUTRAL,
+            //} },
+            //{ INTERACTION_TYPE.MOVE_TO_RAID_FACTION, new InteractionCategoryAndAlignment(){
+            //    categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.SUPPLY },
+            //    alignment = INTERACTION_ALIGNMENT.EVIL,
+            //} },
         };
     }
     public InteractionCategoryAndAlignment GetCategoryAndAlignment (INTERACTION_TYPE type) {
