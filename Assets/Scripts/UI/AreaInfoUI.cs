@@ -424,7 +424,7 @@ public class AreaInfoUI : UIMenu {
         if (activeArea.corpsesInArea.Count > 0) {
             for (int i = 0; i < activeArea.corpsesInArea.Count; i++) {
                 Corpse currCorpse = activeArea.corpsesInArea[i];
-                summary += "\n" + currCorpse.character.name;
+                summary += currCorpse.character.name + ", ";
             }
         } else {
             summary += "None";
@@ -446,7 +446,7 @@ public class AreaInfoUI : UIMenu {
                     summary += "\n" + kvp.Key.ToString() + " " + i.ToString() + " Points of interest: ";
                     if (currStructure.pointsOfInterest.Count > 0) {
                         for (int j = 0; j < currStructure.pointsOfInterest.Count; j++) {
-                            summary += "\n-" + currStructure.pointsOfInterest[j].ToString();
+                            summary += currStructure.pointsOfInterest[j].ToString() + ", ";
                         }
                     } else {
                         summary += " None";

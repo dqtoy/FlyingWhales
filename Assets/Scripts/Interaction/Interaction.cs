@@ -146,6 +146,7 @@ public class Interaction {
         CreateStates();
         //SetExplorerMinion(explorerMinion);
         //ScheduleFirstTimeOut();
+        Messenger.Broadcast(Signals.INTERACTION_INITIALIZED, this);
     }
     public virtual void CreateStates() {
     }

@@ -117,6 +117,10 @@ public class InteractionManager : MonoBehaviour {
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.PERSONAL, INTERACTION_CATEGORY.OFFENSE},
                 alignment = INTERACTION_ALIGNMENT.EVIL,
             } },
+            { INTERACTION_TYPE.MOVE_TO_OCCUPY_FACTION, new InteractionCategoryAndAlignment(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.EXPANSION },
+                alignment = INTERACTION_ALIGNMENT.NEUTRAL,
+            } },
         };
     }
     public InteractionCategoryAndAlignment GetCategoryAndAlignment (INTERACTION_TYPE type) {
@@ -498,6 +502,12 @@ public class InteractionManager : MonoBehaviour {
                 break;
             case INTERACTION_TYPE.BERSERK_ATTACK:
                 createdInteraction = new BerserkAttack(interactable);
+                break;
+            case INTERACTION_TYPE.MOVE_TO_OCCUPY_FACTION:
+                createdInteraction = new MoveToOccupyFaction(interactable);
+                break;
+            case INTERACTION_TYPE.OCCUPY_ACTION_FACTION:
+                createdInteraction = new OccupyActionFaction(interactable);
                 break;
         }
         return createdInteraction;
@@ -978,6 +988,18 @@ public class InteractionManager : MonoBehaviour {
                             case FACTION_RELATIONSHIP_STATUS.NEUTRAL:
                                 return true;
                         }
+                    }
+                }
+                return false;
+            case INTERACTION_TYPE.MOVE_TO_OCCUPY_FACTION:
+                //**Trigger Criteria 1**: There must be at least one other unoccupied location that is a valid expansion target for the character's race.
+                for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
+                    area = LandmarkManager.Instance.allAreas[i];
+                    if (area.id != character.specificLocation.id 
+                        && area.id != PlayerManager.Instance.player.playerArea.id
+                        && area.owner == null 
+                        && area.possibleOccupants.Contains(character.race)) {
+                        return true;
                     }
                 }
                 return false;

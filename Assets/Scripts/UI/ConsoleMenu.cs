@@ -7,6 +7,7 @@ using TMPro;
 using UnityEngine.UI;
 using System.Text.RegularExpressions;
 using System.IO;
+using UnityEngine.Events;
 
 public class ConsoleMenu : UIMenu {
 
@@ -39,13 +40,14 @@ public class ConsoleMenu : UIMenu {
             {"/log_supply_history", LogSupplyHistory  },
             {"/log_area_characters_history", LogAreaCharactersHistory  },
             {"/get_characters_with_item", GetCharactersWithItem },
-            {"/subscribe_to_interaction", SubscribeToInteraction },
+            {"/i_toggle_sub", ToggleSubscriptionToInteraction },
             {"/add_trait_character", AddTraitToCharacter },
             {"/transfer_character_faction", TransferCharacterToFaction },
         };
 
 #if UNITY_EDITOR
         Messenger.AddListener(Signals.DAY_ENDED, CheckForWrongCharacterData);
+        Messenger.AddListener<Interaction>(Signals.INTERACTION_INITIALIZED, ListenForInteraction);
 #endif
         InitializeMinion();
     }
@@ -549,8 +551,44 @@ public class ConsoleMenu : UIMenu {
     #endregion
 
     #region Interactions
-    private void SubscribeToInteraction(string[] parameters) {
+    private List<INTERACTION_TYPE> typesSubscribedTo = new List<INTERACTION_TYPE>();
+    private void ToggleSubscriptionToInteraction(string[] parameters) {
+        if (parameters.Length != 1) {
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of SubscribeToInteraction");
+            return;
+        }
 
+        string typeParameterString = parameters[0];
+        INTERACTION_TYPE type;
+        if (typeParameterString.Equals("All")) {
+            if (typesSubscribedTo.Count > 0) {
+                typesSubscribedTo.Clear();
+                AddSuccessMessage("Unsubscribed from ALL interactions");
+            } else {
+                typesSubscribedTo.AddRange(Utilities.GetEnumValues<INTERACTION_TYPE>());
+                AddSuccessMessage("Subscribed to ALL interactions");
+            }
+        } else if (Enum.TryParse<INTERACTION_TYPE>(typeParameterString, out type)) {
+            if (typesSubscribedTo.Contains(type)) {
+                typesSubscribedTo.Remove(type);
+                AddSuccessMessage("Unsubscribed from " + type + " interactions");
+            } else {
+                typesSubscribedTo.Add(type);
+                AddSuccessMessage("Subscribed to " + type + " interactions");
+            }
+        } else {
+            AddErrorMessage("There is no interaction of type " + typeParameterString);
+        }
+    }
+    private void ListenForInteraction(Interaction interaction) {
+        if (typesSubscribedTo.Contains(interaction.type)) {
+            Messenger.Broadcast<string, int, UnityAction>(Signals.SHOW_NOTIFICATION,
+                "<b>" + interaction.name + "</b> event happened at <b>" + interaction.interactable.name + "</b>.",
+                10,
+                () => UIManager.Instance.ShowAreaInfo(interaction.interactable));
+            UIManager.Instance.Pause();
+        }
     }
     #endregion
 
