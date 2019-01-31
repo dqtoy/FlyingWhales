@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.12731749, g: 0.13414757, b: 0.1210787, a: 1}
+  m_IndirectSpecularColor: {r: 0.1273174, g: 0.13414761, b: 0.12107885, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -68027,6 +68027,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   specialTokenSettings:
   - tokenName: Mark of the Witch
+    tokenType: 4
     quantity: 2
     appearanceWeight: 40
     areaLocations:
@@ -68034,6 +68035,7 @@ MonoBehaviour:
     - Narris
     - Gloomhollow
   - tokenName: Brand of the Beastmaster
+    tokenType: 5
     quantity: 2
     appearanceWeight: 40
     areaLocations:
@@ -68041,6 +68043,7 @@ MonoBehaviour:
     - Pitthize
     - Visteri
   - tokenName: Book of Wizardry
+    tokenType: 6
     quantity: 2
     appearanceWeight: 40
     areaLocations:
@@ -68048,6 +68051,7 @@ MonoBehaviour:
     - Denrio
     - Gloomhollow
   - tokenName: Blighted Potion
+    tokenType: 0
     quantity: 4
     appearanceWeight: 100
     areaLocations:
@@ -68062,6 +68066,7 @@ MonoBehaviour:
     - Denrio
     - Cindermaul
   - tokenName: Fear Spell
+    tokenType: 3
     quantity: 4
     appearanceWeight: 100
     areaLocations:
@@ -68076,6 +68081,7 @@ MonoBehaviour:
     - Denrio
     - Cindermaul
   - tokenName: Charm Spell
+    tokenType: 2
     quantity: 4
     appearanceWeight: 100
     areaLocations:
@@ -68089,16 +68095,14 @@ MonoBehaviour:
     - Cardell
     - Denrio
     - Cindermaul
-  - tokenName: Scroll of Power
-    quantity: 3
-    appearanceWeight: 50
-    areaLocations: []
   - tokenName: Book of the Dead
+    tokenType: 1
     quantity: 1
     appearanceWeight: 100
     areaLocations:
     - Tribu
   - tokenName: Secret Scroll
+    tokenType: 7
     quantity: 6
     appearanceWeight: 40
     areaLocations:
@@ -68107,6 +68111,7 @@ MonoBehaviour:
     - Pitthize
     - Visteri
   - tokenName: Mutagenic Goo
+    tokenType: 8
     quantity: 2
     appearanceWeight: 80
     areaLocations:
@@ -68114,6 +68119,7 @@ MonoBehaviour:
     - Cindermaul
     - Pitthize
   - tokenName: Dispel Scroll
+    tokenType: 9
     quantity: 4
     appearanceWeight: 100
     areaLocations:
@@ -68128,6 +68134,7 @@ MonoBehaviour:
     - Tribu
     - Pitthize
   - tokenName: Panacea
+    tokenType: 10
     quantity: 4
     appearanceWeight: 100
     areaLocations:

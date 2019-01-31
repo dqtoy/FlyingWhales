@@ -46,39 +46,42 @@ public class TokenManager : MonoBehaviour {
                 if (Random.Range(0, 100) < currSetting.appearanceWeight) {
                     Area chosenArea = areas[Random.Range(0, areas.Count)];
                     SpecialToken createdToken = null;
-                    switch (currSetting.tokenName) {
-                        case "Mark of the Witch":
-                            createdToken = new MarkOfTheWitch();
-                            break;
-                        case "Brand of the Beastmaster":
-                            createdToken = new BrandOfTheBeastmaster();
-                            break;
-                        case "Book of Wizardry":
-                            createdToken = new BookOfWizardry();
-                            break;
-                        case "Blighted Potion":
+                    switch (currSetting.tokenType) {
+                        case SPECIAL_TOKEN.BLIGHTED_POTION:
                             createdToken = new BlightedPotion();
                             break;
-                        case "Fear Spell":
-                            createdToken = new FearSpell();
-                            break;
-                        case "Charm Spell":
-                            createdToken = new CharmSpell();
-                            break;
-                        //case "Scroll of Power":
-                        //    chosenArea.AddSpecialTokenToLocation(new ScrollOf());
-                        //    break;
-                        case "Book of the Dead":
+                        case SPECIAL_TOKEN.BOOK_OF_THE_DEAD:
                             createdToken = new BookOfTheDead();
                             break;
-                        case "Secret Scroll":
+                        case SPECIAL_TOKEN.CHARM_SPELL:
+                            createdToken = new CharmSpell();
+                            break;
+                        case SPECIAL_TOKEN.FEAR_SPELL:
+                            createdToken = new FearSpell();
+                            break;
+                        case SPECIAL_TOKEN.MARK_OF_THE_WITCH:
+                            createdToken = new MarkOfTheWitch();
+                            break;
+                        case SPECIAL_TOKEN.BRAND_OF_THE_BEASTMASTER:
+                            createdToken = new BrandOfTheBeastmaster();
+                            break;
+                        case SPECIAL_TOKEN.BOOK_OF_WIZARDRY:
+                            createdToken = new BookOfWizardry();
+                            break;
+                        case SPECIAL_TOKEN.SECRET_SCROLL:
                             createdToken = new SecretScroll();
                             break;
-                        case "Mutagenic Goo":
+                        case SPECIAL_TOKEN.MUTAGENIC_GOO:
                             createdToken = new MutagenicGoo();
                             break;
-                        case "Dispel Scroll":
+                        case SPECIAL_TOKEN.DISPEL_SCROLL:
                             createdToken = new DispelScroll();
+                            break;
+                        case SPECIAL_TOKEN.PANACEA:
+                            createdToken = new Panacea();
+                            break;
+                        default:
+                            createdToken = new SpecialToken(currSetting.tokenType);
                             break;
                     }
                     if (createdToken != null) {
@@ -189,6 +192,7 @@ public class TokenManager : MonoBehaviour {
 [System.Serializable]
 public class SpecialTokenSettings {
     public string tokenName;
+    public SPECIAL_TOKEN tokenType;
     public int quantity;
     public int appearanceWeight;
     public List<string> areaLocations;
