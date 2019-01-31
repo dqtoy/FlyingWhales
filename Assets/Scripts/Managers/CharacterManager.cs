@@ -680,39 +680,42 @@ public class CharacterManager : MonoBehaviour {
                     Character currCharacter = currFaction.characters[j];
                     Character targetCharacter = GetRandomCharacter(currFaction.characters.Where(x => x.id != currCharacter.id).ToList());
                     RELATIONSHIP_TRAIT rel = GetRandomRelationship();
-                    if (currCharacter.CanHaveRelationshipWith(rel, targetCharacter)) {
-                        currCharacter.AddTrait(CreateRelationshipTrait(rel, targetCharacter));
-                        RELATIONSHIP_TRAIT targetRel = RELATIONSHIP_TRAIT.ENEMY;
-                        switch (rel) {
-                            case RELATIONSHIP_TRAIT.MASTER:
-                                targetRel = RELATIONSHIP_TRAIT.SERVANT;
-                                targetCharacter.AddTrait(CreateRelationshipTrait(RELATIONSHIP_TRAIT.SERVANT, currCharacter));
-                                break;
-                            case RELATIONSHIP_TRAIT.SERVANT:
-                                targetRel = RELATIONSHIP_TRAIT.MASTER;
-                                targetCharacter.AddTrait(CreateRelationshipTrait(RELATIONSHIP_TRAIT.MASTER, currCharacter));
-                                break;
-                            case RELATIONSHIP_TRAIT.MENTOR:
-                                targetRel = RELATIONSHIP_TRAIT.STUDENT;
-                                targetCharacter.AddTrait(CreateRelationshipTrait(RELATIONSHIP_TRAIT.STUDENT, currCharacter));
-                                break;
-                            case RELATIONSHIP_TRAIT.STUDENT:
-                                targetRel = RELATIONSHIP_TRAIT.MENTOR;
-                                targetCharacter.AddTrait(CreateRelationshipTrait(RELATIONSHIP_TRAIT.MENTOR, currCharacter));
-                                break;
-                            case RELATIONSHIP_TRAIT.LOVER:
-                            case RELATIONSHIP_TRAIT.RELATIVE:
-                            case RELATIONSHIP_TRAIT.PARAMOUR:
-                                targetRel = rel;
-                                targetCharacter.AddTrait(CreateRelationshipTrait(rel, currCharacter));
-                                break;
-                        }
-                        if (currCharacter.GetRelationshipTraitWith(targetCharacter, rel) == null 
-                            || targetCharacter.GetRelationshipTraitWith(currCharacter, targetRel) == null) {
-                            throw new System.Exception("Relationship inconsistency between " + targetCharacter.name + " and " + currCharacter.name);
-                        }
-                    }
+                    CreateNewRelationshipBetween(currCharacter, targetCharacter, rel);
                 }
+            }
+        }
+    }
+    public void CreateNewRelationshipBetween(Character currCharacter, Character targetCharacter, RELATIONSHIP_TRAIT rel) {
+        if (currCharacter.CanHaveRelationshipWith(rel, targetCharacter)) {
+            currCharacter.AddTrait(CreateRelationshipTrait(rel, targetCharacter));
+            RELATIONSHIP_TRAIT targetRel = RELATIONSHIP_TRAIT.ENEMY;
+            switch (rel) {
+                case RELATIONSHIP_TRAIT.MASTER:
+                    targetRel = RELATIONSHIP_TRAIT.SERVANT;
+                    targetCharacter.AddTrait(CreateRelationshipTrait(RELATIONSHIP_TRAIT.SERVANT, currCharacter));
+                    break;
+                case RELATIONSHIP_TRAIT.SERVANT:
+                    targetRel = RELATIONSHIP_TRAIT.MASTER;
+                    targetCharacter.AddTrait(CreateRelationshipTrait(RELATIONSHIP_TRAIT.MASTER, currCharacter));
+                    break;
+                case RELATIONSHIP_TRAIT.MENTOR:
+                    targetRel = RELATIONSHIP_TRAIT.STUDENT;
+                    targetCharacter.AddTrait(CreateRelationshipTrait(RELATIONSHIP_TRAIT.STUDENT, currCharacter));
+                    break;
+                case RELATIONSHIP_TRAIT.STUDENT:
+                    targetRel = RELATIONSHIP_TRAIT.MENTOR;
+                    targetCharacter.AddTrait(CreateRelationshipTrait(RELATIONSHIP_TRAIT.MENTOR, currCharacter));
+                    break;
+                case RELATIONSHIP_TRAIT.LOVER:
+                case RELATIONSHIP_TRAIT.RELATIVE:
+                case RELATIONSHIP_TRAIT.PARAMOUR:
+                    targetRel = rel;
+                    targetCharacter.AddTrait(CreateRelationshipTrait(rel, currCharacter));
+                    break;
+            }
+            if (currCharacter.GetRelationshipTraitWith(targetCharacter, rel) == null
+                || targetCharacter.GetRelationshipTraitWith(currCharacter, targetRel) == null) {
+                throw new System.Exception("Relationship inconsistency between " + targetCharacter.name + " and " + currCharacter.name);
             }
         }
     }
