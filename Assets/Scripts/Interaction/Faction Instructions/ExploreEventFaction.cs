@@ -94,7 +94,7 @@ public class ExploreEventFaction : Interaction {
     private void ExploreItemRewardEffect(InteractionState state) {
         SpecialToken item = poi as SpecialToken;
         //**Mechanics**: Give the selected Item to the character
-        _characterInvolved.ObtainToken(item);
+        _characterInvolved.PickUpToken(item, interactable);
 
         state.descriptionLog.AddToFillers(null, item.nameInBold, LOG_IDENTIFIER.STRING_1);
         state.AddLogFiller(new LogFiller(null, item.nameInBold, LOG_IDENTIFIER.STRING_1));
