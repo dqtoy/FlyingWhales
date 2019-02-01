@@ -1,21 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class ExploreEventFaction : Interaction {
 
-    private const string Trapped_Explore_Success_Obtain_Item = "Trapped Explore Success - Obtain Item";
-    private const string Trapped_Explore_Success_No_Item = "Trapped Explore Success - No Item";
-    private const string Trapped_Explore_Fail = "Trapped Explore Fail";
-    private const string Trapped_Explore_Critical_Fail = "Trapped Explore Critical Fail";
-    private const string Assisted_Explore_Success_Obtain_Item = "Assisted Explore Success - Obtain Item";
-    private const string Assisted_Explore_Success_No_Item = "Assisted Explore Success - No Item";
-    private const string Assisted_Explore_Fail = "Assisted Explore Fail";
-    private const string Assisted_Explore_Critical_Fail = "Assisted Explore Critical Fail";
-    private const string Normal_Explore_Success_Obtain_Item = "Normal Explore Success - Obtain Item";
-    private const string Normal_Explore_Success_No_Item = "Normal Explore Success - No Item";
-    private const string Normal_Explore_Fail = "Normal Explore Fail";
-    private const string Normal_Explore_Critical_Fail = "Normal Explore Critical Fail";
+    private const string Explore_Item_Found = "Explore Item Found";
+    private const string Explore_Character_Encountered = "Explore Character Encountered";
+    private const string Explore_Landmark_Found = "Explore Landmark Found";
+    private const string Explore_Supply_Pile_Found = "Explore Supply Pile Found";
+    private const string Explore_Nothing_Found = "Explore Nothing Found";
+
+    private LocationStructure structure;
+    private IPointOfInterest poi;
 
     public ExploreEventFaction(Area interactable) : base(interactable, INTERACTION_TYPE.EXPLORE_EVENT_FACTION, 0) {
         _name = "Explore Event Faction";
@@ -25,76 +22,32 @@ public class ExploreEventFaction : Interaction {
     #region Overrides
     public override void CreateStates() {
         InteractionState startState = new InteractionState("Start", this);
-        InteractionState trappedExploreSuccessObtainItem = new InteractionState(Trapped_Explore_Success_Obtain_Item, this);
-        InteractionState trappedExploreSuccessNoItem = new InteractionState(Trapped_Explore_Success_No_Item, this);
-        InteractionState trappedExploreFail = new InteractionState(Trapped_Explore_Fail, this);
-        InteractionState trappedExploreCriticalFail = new InteractionState(Trapped_Explore_Critical_Fail, this);
+        InteractionState exploreItemFound = new InteractionState(Explore_Item_Found, this);
+        InteractionState exploreCharacter = new InteractionState(Explore_Character_Encountered, this);
+        InteractionState exploreLandmark = new InteractionState(Explore_Landmark_Found, this);
+        InteractionState exploreSupply = new InteractionState(Explore_Supply_Pile_Found, this);
+        InteractionState exploreNothing = new InteractionState(Explore_Nothing_Found, this);
 
-        InteractionState assistedExploreSuccessObtainItem = new InteractionState(Assisted_Explore_Success_Obtain_Item, this);
-        InteractionState assistedExploreSuccessNoItem = new InteractionState(Assisted_Explore_Success_No_Item, this);
-        InteractionState assistedExploreFail = new InteractionState(Assisted_Explore_Fail, this);
-        InteractionState assistedExploreCriticalFail = new InteractionState(Assisted_Explore_Critical_Fail, this);
-
-        InteractionState normalExploreSuccessObtainItem = new InteractionState(Normal_Explore_Success_Obtain_Item, this);
-        InteractionState normalExploreSuccessNoItem = new InteractionState(Normal_Explore_Success_No_Item, this);
-        InteractionState normalExploreFail = new InteractionState(Normal_Explore_Fail, this);
-        InteractionState normalExploreCriticalFail = new InteractionState(Normal_Explore_Critical_Fail, this);
+        structure = interactable.GetRandomStructureOfType(STRUCTURE_TYPE.DUNGEON);
 
         CreateActionOptions(startState);
-        trappedExploreSuccessObtainItem.SetEffect(() => ExploreSuccessObtainItemRewardEffect(trappedExploreSuccessObtainItem));
-        assistedExploreSuccessObtainItem.SetEffect(() => ExploreSuccessObtainItemRewardEffect(assistedExploreSuccessObtainItem));
-        normalExploreSuccessObtainItem.SetEffect(() => ExploreSuccessObtainItemRewardEffect(normalExploreSuccessObtainItem));
-
-        trappedExploreSuccessNoItem.SetEffect(() => ExploreSuccessNoItemRewardEffect(trappedExploreSuccessNoItem));
-        assistedExploreSuccessNoItem.SetEffect(() => ExploreSuccessNoItemRewardEffect(assistedExploreSuccessNoItem));
-        normalExploreSuccessNoItem.SetEffect(() => ExploreSuccessNoItemRewardEffect(normalExploreSuccessNoItem));
-
-        trappedExploreFail.SetEffect(() => ExploreFailRewardEffect(trappedExploreFail));
-        assistedExploreFail.SetEffect(() => ExploreFailRewardEffect(assistedExploreFail));
-        normalExploreFail.SetEffect(() => ExploreFailRewardEffect(normalExploreFail));
-
-        trappedExploreCriticalFail.SetEffect(() => ExploreCriticalFailRewardEffect(trappedExploreCriticalFail));
-        assistedExploreCriticalFail.SetEffect(() => ExploreCriticalFailRewardEffect(assistedExploreCriticalFail));
-        normalExploreCriticalFail.SetEffect(() => ExploreCriticalFailRewardEffect(normalExploreCriticalFail));
+        exploreItemFound.SetEffect(() => ExploreItemRewardEffect(exploreItemFound));
+        exploreCharacter.SetEffect(() => ExploreCharacterRewardEffect(exploreCharacter));
+        exploreLandmark.SetEffect(() => ExploreLandmarkRewardEffect(exploreLandmark));
+        exploreSupply.SetEffect(() => ExploreSupplyRewardEffect(exploreSupply));
+        exploreNothing.SetEffect(() => ExploreNothingRewardEffect(exploreNothing));
 
         _states.Add(startState.name, startState);
-        _states.Add(trappedExploreSuccessObtainItem.name, trappedExploreSuccessObtainItem);
-        _states.Add(trappedExploreSuccessNoItem.name, trappedExploreSuccessNoItem);
-        _states.Add(trappedExploreFail.name, trappedExploreFail);
-        _states.Add(trappedExploreCriticalFail.name, trappedExploreCriticalFail);
-
-        _states.Add(assistedExploreSuccessObtainItem.name, assistedExploreSuccessObtainItem);
-        _states.Add(assistedExploreSuccessNoItem.name, assistedExploreSuccessNoItem);
-        _states.Add(assistedExploreFail.name, assistedExploreFail);
-        _states.Add(assistedExploreCriticalFail.name, assistedExploreCriticalFail);
-
-        _states.Add(normalExploreSuccessObtainItem.name, normalExploreSuccessObtainItem);
-        _states.Add(normalExploreSuccessNoItem.name, normalExploreSuccessNoItem);
-        _states.Add(normalExploreFail.name, normalExploreFail);
-        _states.Add(normalExploreCriticalFail.name, normalExploreCriticalFail);
+        _states.Add(exploreItemFound.name, exploreItemFound);
+        _states.Add(exploreCharacter.name, exploreCharacter);
+        _states.Add(exploreLandmark.name, exploreLandmark);
+        _states.Add(exploreSupply.name, exploreSupply);
+        _states.Add(exploreNothing.name, exploreNothing);
 
         SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {
-            ActionOption traps = new ActionOption {
-                interactionState = state,
-                cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
-                name = "Lay some traps.",
-                duration = 0,
-                effect = () => TrapsOptionEffect(state),
-                jobNeeded = JOB.INSTIGATOR,
-                doesNotMeetRequirementsStr = "Must have instigator minion.",
-            };
-            ActionOption assist = new ActionOption {
-                interactionState = state,
-                cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
-                name = "Assist with the exploration.",
-                duration = 0,
-                jobNeeded = JOB.DIPLOMAT,
-                doesNotMeetRequirementsStr = "Must have diplomat minion.",
-                effect = () => AssistOptionEffect(state),
-            };
             ActionOption doNothing = new ActionOption {
                 interactionState = state,
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
@@ -102,8 +55,6 @@ public class ExploreEventFaction : Interaction {
                 duration = 0,
                 effect = () => DoNothingOptionEffect(state),
             };
-            state.AddActionOption(traps);
-            state.AddActionOption(assist);
             state.AddActionOption(doNothing);
             state.SetDefaultOption(doNothing);
         }
@@ -111,136 +62,62 @@ public class ExploreEventFaction : Interaction {
     #endregion
 
     #region Action Option Effects
-    private void TrapsOptionEffect(InteractionState state) {
-        WeightedDictionary<RESULT> resultWeights = _characterInvolved.job.GetJobRateWeights();
-        WeightedDictionary<RESULT> minionInstigatorWeights = investigatorCharacter.job.GetJobRateWeights();
-        switch (minionInstigatorWeights.PickRandomElementGivenWeights()) {
-            case RESULT.SUCCESS:
-                resultWeights.AddWeightToElement(RESULT.FAIL, 30);
-                resultWeights.AddWeightToElement(RESULT.CRITICAL_FAIL, 20);
-                break;
-        }
-
-        string nextState = string.Empty;
-        switch (resultWeights.PickRandomElementGivenWeights()) {
-            case RESULT.SUCCESS:
-                if (interactable.GetElligibleTokensForCharacter(_characterInvolved).Count > 0) {
-                    nextState = Trapped_Explore_Success_Obtain_Item;
-                } else {
-                    nextState = Trapped_Explore_Success_No_Item;
-                }
-                break;
-            case RESULT.FAIL:
-                nextState = Trapped_Explore_Fail;
-                break;
-            case RESULT.CRITICAL_FAIL:
-                nextState = Trapped_Explore_Critical_Fail;
-                break;
-            default:
-                break;
-        }
-        SetCurrentState(_states[nextState]);
-    }
-    private void AssistOptionEffect(InteractionState state) {
-        WeightedDictionary<RESULT> resultWeights = _characterInvolved.job.GetJobRateWeights();
-        WeightedDictionary<RESULT> minionInstigatorWeights = investigatorCharacter.job.GetJobRateWeights();
-        switch (minionInstigatorWeights.PickRandomElementGivenWeights()) {
-            case RESULT.SUCCESS:
-                resultWeights.AddWeightToElement(RESULT.FAIL, 30);
-                resultWeights.AddWeightToElement(RESULT.CRITICAL_FAIL, 20);
-                break;
-        }
-
-        string nextState = string.Empty;
-        switch (resultWeights.PickRandomElementGivenWeights()) {
-            case RESULT.SUCCESS:
-                if (interactable.GetElligibleTokensForCharacter(_characterInvolved).Count > 0) {
-                    nextState = Assisted_Explore_Success_Obtain_Item;
-                } else {
-                    nextState = Assisted_Explore_Success_No_Item;
-                }
-                break;
-            case RESULT.FAIL:
-                nextState = Assisted_Explore_Fail;
-                break;
-            case RESULT.CRITICAL_FAIL:
-                nextState = Assisted_Explore_Critical_Fail;
-                break;
-            default:
-                break;
-        }
-        SetCurrentState(_states[nextState]);
-    }
     private void DoNothingOptionEffect(InteractionState state) {
-        WeightedDictionary<RESULT> resultWeights = _characterInvolved.job.GetJobRateWeights();
-        //WeightedDictionary<RESULT> minionInstigatorWeights = investigatorMinion.character.job.GetJobRateWeights();
-        //switch (minionInstigatorWeights.PickRandomElementGivenWeights()) {
-        //    case RESULT.SUCCESS:
-        //        resultWeights.AddWeightToElement(RESULT.FAIL, 30);
-        //        resultWeights.AddWeightToElement(RESULT.CRITICAL_FAIL, 20);
-        //        break;
-        //}
-
+        //poi = structure.GetRandomPOI();
+        List<IPointOfInterest> choices = new List<IPointOfInterest>(
+            structure.pointsOfInterest.Where(x => x.poiType != POINT_OF_INTEREST_TYPE.CHARACTER && x.poiType != POINT_OF_INTEREST_TYPE.LANDMARK)
+        );
+        poi =  choices[Random.Range(0, choices.Count)];
         string nextState = string.Empty;
-        switch (resultWeights.PickRandomElementGivenWeights()) {
-            case RESULT.SUCCESS:
-                if (interactable.GetElligibleTokensForCharacter(_characterInvolved).Count > 0) {
-                    nextState = Normal_Explore_Success_Obtain_Item;
-                } else {
-                    nextState = Normal_Explore_Success_No_Item;
-                }
-                break;
-            case RESULT.FAIL:
-                nextState = Normal_Explore_Fail;
-                break;
-            case RESULT.CRITICAL_FAIL:
-                nextState = Normal_Explore_Critical_Fail;
-                break;
-            default:
-                break;
+        if (poi != null) {
+            switch (poi.poiType) {
+                case POINT_OF_INTEREST_TYPE.ITEM:
+                    nextState = Explore_Item_Found;
+                    break;
+                case POINT_OF_INTEREST_TYPE.LANDMARK:
+                    nextState = Explore_Landmark_Found;
+                    break;
+                case POINT_OF_INTEREST_TYPE.CHARACTER:
+                    nextState = Explore_Character_Encountered;
+                    break;
+                case POINT_OF_INTEREST_TYPE.SUPLY_PILE:
+                    nextState = Explore_Supply_Pile_Found;
+                    break;
+            }
+        } else {
+            nextState = Explore_Nothing_Found;
         }
         SetCurrentState(_states[nextState]);
     }
     #endregion
 
-    private void ExploreSuccessObtainItemRewardEffect(InteractionState state) {
-        //**Mechanics**: Give an Item Token to the character, select from Location pool
-        SpecialToken gainedToken = GiveSpecialTokenToCharacter();
+    private void ExploreItemRewardEffect(InteractionState state) {
+        SpecialToken item = poi as SpecialToken;
+        //**Mechanics**: Give the selected Item to the character
+        _characterInvolved.ObtainToken(item);
 
-        state.descriptionLog.AddToFillers(null, gainedToken.nameInBold, LOG_IDENTIFIER.STRING_1);
-        state.AddLogFiller(new LogFiller(null, gainedToken.nameInBold, LOG_IDENTIFIER.STRING_1));
+        state.descriptionLog.AddToFillers(null, item.nameInBold, LOG_IDENTIFIER.STRING_1);
+        state.AddLogFiller(new LogFiller(null, item.nameInBold, LOG_IDENTIFIER.STRING_1));
     }
+    private void ExploreCharacterRewardEffect(InteractionState state) {
+        Character encounteredCharacter = poi as Character;
+        //**Mechanics**: Trigger Character Encounter Handling passing Character Name 1 and Character Name 2 as parameters
 
-    private void ExploreSuccessNoItemRewardEffect(InteractionState state) {
-        
+        state.descriptionLog.AddToFillers(encounteredCharacter, encounteredCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.AddLogFiller(new LogFiller(encounteredCharacter, encounteredCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
-    private void ExploreFailRewardEffect(InteractionState state) {
-        if (investigatorCharacter != null) {
-            investigatorCharacter.LevelUp();
-        }
+    private void ExploreLandmarkRewardEffect(InteractionState state) {
+        //**Mechanics**: Activate Landmark effect (pass the character as a parameter).
     }
-    private void ExploreCriticalFailRewardEffect(InteractionState state) {
-        if (interactable.owner != null 
-            && interactable.owner.id != _characterInvolved.faction.id) {
-            AdjustFactionsRelationship(interactable.owner, _characterInvolved.faction, -1, state);
-        }
-        //**Mechanic**: Character dies.
-        _characterInvolved.Death();
-        if (investigatorCharacter != null) {
-            investigatorCharacter.LevelUp();
-        }
+    private void ExploreSupplyRewardEffect(InteractionState state) {
+        SupplyPile supplyPile = poi as SupplyPile;
+        //**Mechanics**: Obtain amount based on the location's range.
+        int obtainedSupply = supplyPile.GetAndReduceSuppliesObtained(_characterInvolved.homeArea);
+        state.descriptionLog.AddToFillers(null, obtainedSupply.ToString(), LOG_IDENTIFIER.STRING_1);
+        state.AddLogFiller(new LogFiller(null, obtainedSupply.ToString(), LOG_IDENTIFIER.STRING_1));
     }
+    
+    private void ExploreNothingRewardEffect(InteractionState state) {
 
-    private SpecialToken GiveSpecialTokenToCharacter() {
-        List<SpecialToken> choices = interactable.GetElligibleTokensForCharacter(_characterInvolved);
-        //WeightedDictionary<SpecialToken> tokenWeights = new WeightedDictionary<SpecialToken>();
-        //for (int i = 0; i < choices.Count; i++) {
-        //    tokenWeights.AddElement(choices[i], choices[i].weight);
-        //}
-        SpecialToken token = choices[Random.Range(0, choices.Count)];
-        _characterInvolved.ObtainToken(token);
-        interactable.RemoveSpecialTokenFromLocation(token);
-        Debug.LogWarning("[Day " + GameManager.Instance.continuousDays + "] " + _characterInvolved.name + " obtained " + token.tokenName + " at " + interactable.name);
-        return token;
     }
 }

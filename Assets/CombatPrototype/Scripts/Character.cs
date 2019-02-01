@@ -1784,10 +1784,18 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         return null;
     }
     public List<RelationshipTrait> GetAllRelationshipTraitWith(Character character) {
+        List<RelationshipTrait> rels = new List<RelationshipTrait>();
         if (relationships.ContainsKey(character)) {
-            return relationships[character];
+            rels.AddRange(relationships[character]);
         }
-        return null;
+        return rels;
+    }
+    public List<RELATIONSHIP_TRAIT> GetAllRelationshipTraitTypesWith(Character character) {
+        List<RELATIONSHIP_TRAIT> rels = new List<RELATIONSHIP_TRAIT>();
+        if (relationships.ContainsKey(character)) {
+            rels.AddRange(relationships[character].Select(x => x.relType));
+        }
+        return rels;
     }
     public List<Character> GetCharactersWithRelationship(RELATIONSHIP_TRAIT type) {
         List<Character> characters = new List<Character>();
@@ -1812,31 +1820,52 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         return null;
     }
     public bool CanHaveRelationshipWith(RELATIONSHIP_TRAIT type, Character target) {
+        //NOTE: This is only one way checking. This character will only check itself, if he/she meets the requirements of a given relationship
+        List<RELATIONSHIP_TRAIT> relationshipsWithTarget = GetAllRelationshipTraitTypesWith(target);
         switch (type) {
             case RELATIONSHIP_TRAIT.LOVER:
-            case RELATIONSHIP_TRAIT.PARAMOUR:
                 //- **Lover:** Positive, Permanent (Can only have 1)
-                //- **Paramour:** Positive, Transient (Can only have 1)
-                if (GetCharacterWithRelationship(type) == null) {
-                    Character rel = target.GetCharacterWithRelationship(type);
-                    if (rel == null || rel.id == this.id) {
-                        return true;
-                    }
+                //check if this character already has a lover and that the target character is not his/her paramour
+                if (GetCharacterWithRelationship(type) == null
+                    && !relationshipsWithTarget.Contains(RELATIONSHIP_TRAIT.PARAMOUR)) {
+                    return true;
                 }
                 return false;
-            case RELATIONSHIP_TRAIT.MASTER:
+            case RELATIONSHIP_TRAIT.PARAMOUR:
+                //- **Paramour:** Positive, Transient (Can only have 1)
+                //check if this character already has a paramour and that the target character is not his/her lover
+                if (GetCharacterWithRelationship(type) == null 
+                    && !relationshipsWithTarget.Contains(RELATIONSHIP_TRAIT.LOVER)) { 
+                    return true;
+                }
+                return false;
+            case RELATIONSHIP_TRAIT.MASTER: 
+                //this means that the target character will be this characters master, therefore making this character his/her servant
+                //so check if this character isn't already serving a master, or that this character is not a master himself
+                if (GetCharacterWithRelationship(RELATIONSHIP_TRAIT.MASTER) == null 
+                    && GetCharacterWithRelationship(RELATIONSHIP_TRAIT.SERVANT) == null) {
+                    return true;
+                }
+                return false;
             case RELATIONSHIP_TRAIT.SERVANT:
-                //check if this character is not already a master or a servant and if the target character is also not already a master or a servant
-                if (GetCharacterWithRelationship(RELATIONSHIP_TRAIT.MASTER) == null && GetCharacterWithRelationship(RELATIONSHIP_TRAIT.SERVANT) == null
-                    && target.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.MASTER) == null && target.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.SERVANT) == null) {
+                //this means that the target character will be this characters servant, therefore making this character his/her master
+                //so check that this character is not a servant
+                if (GetCharacterWithRelationship(RELATIONSHIP_TRAIT.MASTER) == null) {
                     return true;
                 }
                 return false;
             case RELATIONSHIP_TRAIT.MENTOR:
+                //this means that the target character will be this characters mentor, therefore making this character his/her student
+                //so check if this character isn't already a student, or that this character is not a mentor himself
+                if (GetCharacterWithRelationship(RELATIONSHIP_TRAIT.MENTOR) == null
+                    && GetCharacterWithRelationship(RELATIONSHIP_TRAIT.STUDENT) == null) {
+                    return true;
+                }
+                return false;
             case RELATIONSHIP_TRAIT.STUDENT:
-                //check if this character is not already a mentor or a student
-                if (GetCharacterWithRelationship(RELATIONSHIP_TRAIT.MENTOR) == null && GetCharacterWithRelationship(RELATIONSHIP_TRAIT.STUDENT) == null
-                    && target.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.MENTOR) == null && target.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.STUDENT) == null) {
+                //this means that the target character will be this characters student, therefore making this character his/her mentor
+                //so check that this character is not a student
+                if (GetCharacterWithRelationship(RELATIONSHIP_TRAIT.MENTOR) == null) {
                     return true;
                 }
                 return false;
@@ -2383,6 +2412,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if(chance < 10) {
             AddTrait(new Craftsman());
         }
+    }
+    public void AddTrait(string traitName) {
+        AddTrait(AttributeManager.Instance.allTraits[traitName]);
     }
     public void AddTrait(Trait trait) {
         if (trait.IsUnique() && GetTrait(trait.name) != null) {

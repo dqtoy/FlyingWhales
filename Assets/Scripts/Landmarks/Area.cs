@@ -1337,6 +1337,18 @@ public class Area {
         }
         return structures[STRUCTURE_TYPE.DWELLING].Where(x => !x.IsOccupied()).Count() == 0; //check if there are still unoccupied dwellings
     }
+    public bool IsResidentsFull(Character character) {
+        if (PlayerManager.Instance.player != null && PlayerManager.Instance.player.playerArea.id == this.id) {
+            return false; //resident capacity is never full for player area
+        }
+        for (int i = 0; i < structures[STRUCTURE_TYPE.DWELLING].Count; i++) {
+            Dwelling dwelling = structures[STRUCTURE_TYPE.DWELLING][i] as Dwelling;
+            if (dwelling.CanBeResidentHere(character)) {
+                return false;
+            }
+        }
+        return true;
+    }
     public int GetNumberOfUnoccupiedStructure(STRUCTURE_TYPE structureType) {
         if (PlayerManager.Instance.player != null && PlayerManager.Instance.player.playerArea.id == this.id) {
             return 0;

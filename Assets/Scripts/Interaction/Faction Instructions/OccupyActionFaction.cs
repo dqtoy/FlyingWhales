@@ -42,7 +42,8 @@ public class OccupyActionFaction : Interaction {
         }
     }
     public override bool CanInteractionBeDoneBy(Character character) {
-        if (interactable.owner != null) {
+        if (interactable.owner != null 
+            && interactable.IsResidentsFull(character)) {
             return false;
         }
         return base.CanInteractionBeDoneBy(character);
@@ -59,6 +60,8 @@ public class OccupyActionFaction : Interaction {
     private void NormalExpansionSuccessRewardEffect(InteractionState state) {
         //**Mechanic**: Location becomes part of Character's faction and its Race will be set as Character's Race
         OwnArea(_characterInvolved);
+        //**Mechanic**: Character home will be transferred to this location and his current structure will be his new home.
+        _characterInvolved.MigrateHomeTo(interactable);
     }
     #endregion
 
