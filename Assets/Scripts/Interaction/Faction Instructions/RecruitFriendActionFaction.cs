@@ -129,7 +129,7 @@ public class RecruitFriendActionFaction : Interaction {
                 && (currCharacter.isFactionless || currCharacter.faction.id != characterInvolved.faction.id)  //- unaligned or from a different faction
                 && currCharacter.role.roleType != CHARACTER_ROLE.BEAST //- not a Beast and not a Skeleton
                 && currCharacter.race != RACE.SKELETON
-                && currCharacter.GetTrait("Disabler") == null) { //- must not have a Disabler trait
+                && !currCharacter.HasTraitOf(TRAIT_TYPE.DISABLER)) { //- must not have a Disabler trait
                 choices.Add(currCharacter);
             }
         }
