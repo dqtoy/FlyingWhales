@@ -8,6 +8,9 @@ public class Trait {
     public virtual string nameInUI {
         get { return name; }
     }
+    public virtual Character responsibleCharacter {
+        get { return null; }
+    }
     public string name;
     public string description;
     public TRAIT_TYPE type;
@@ -19,6 +22,8 @@ public class Trait {
     #region Virtuals
     public virtual void OnAddTrait(Character sourceCharacter) { }
     public virtual void OnRemoveTrait(Character sourceCharacter) { }
+    public virtual void SetCharacterResponsibleForTrait(Character character) { }
+    public virtual string GetToolTipText() { return string.Empty; }
     public virtual bool IsUnique() { return true; }
     #endregion
 }

@@ -66,7 +66,7 @@ public class InteractionManager : MonoBehaviour {
                 alignment = INTERACTION_ALIGNMENT.NEUTRAL,
             } },
             { INTERACTION_TYPE.MOVE_TO_CURSE, new InteractionCategoryAndAlignment(){
-                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.PERSONAL, INTERACTION_CATEGORY.OFFENSE },
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.PERSONAL, INTERACTION_CATEGORY.SUBTERFUGE },
                 alignment = INTERACTION_ALIGNMENT.EVIL,
             } },
             { INTERACTION_TYPE.MOVE_TO_HUNT, new InteractionCategoryAndAlignment(){
@@ -136,6 +136,10 @@ public class InteractionManager : MonoBehaviour {
             { INTERACTION_TYPE.PATROL_ACTION_FACTION, new InteractionCategoryAndAlignment(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.DEFENSE },
                 alignment = INTERACTION_ALIGNMENT.NEUTRAL,
+            } },
+            { INTERACTION_TYPE.CONSUME_LIFE, new InteractionCategoryAndAlignment(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.SUPPLY },
+                alignment = INTERACTION_ALIGNMENT.EVIL,
             } },
         };
     }
@@ -539,6 +543,9 @@ public class InteractionManager : MonoBehaviour {
                 break;
             case INTERACTION_TYPE.SCRAP_ITEM:
                 createdInteraction = new ScrapItem(interactable);
+                break;
+            case INTERACTION_TYPE.CONSUME_LIFE:
+                createdInteraction = new ConsumeLife(interactable);
                 break;
             case INTERACTION_TYPE.PATROL_ACTION_FACTION:
                 createdInteraction = new PatrolActionFaction(interactable);
@@ -1058,6 +1065,19 @@ public class InteractionManager : MonoBehaviour {
                         && area.owner == null 
                         && area.possibleOccupants.Contains(character.race)) {
                         return true;
+                    }
+                }
+                return false;
+            case INTERACTION_TYPE.MOVE_TO_CURSE:
+                return character.HasRelationshipTraitOf(RELATIONSHIP_TRAIT.ENEMY);
+            case INTERACTION_TYPE.CONSUME_LIFE:
+                List<LocationStructure> insideStructures = character.specificLocation.GetStructuresAtLocation(true);
+                for (int i = 0; i < insideStructures.Count; i++) {
+                    for (int j = 0; j < insideStructures[i].charactersHere.Count; j++) {
+                        Character characterAtLocation = insideStructures[i].charactersHere[j];
+                        if(character.id != characterAtLocation.id && characterAtLocation.GetTraitOr("Restrained", "Abducted") != null) {
+                            return true;
+                        }
                     }
                 }
                 return false;

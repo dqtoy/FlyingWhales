@@ -6,6 +6,14 @@ public class Charmed : Trait {
     public Faction originalFaction { get; private set; }
     public Area originalHome { get; private set; }
 
+    private Character _responsibleCharacter;
+
+    #region getters/setters
+    public override Character responsibleCharacter {
+        get { return _responsibleCharacter; }
+    }
+    #endregion
+
     public Charmed(Faction originalFaction, Area originalHome) {
         name = "Charmed";
         this.originalFaction = originalFaction;
@@ -22,6 +30,12 @@ public class Charmed : Trait {
     public override void OnRemoveTrait(Character sourceCharacter) {
         base.OnRemoveTrait(sourceCharacter);
         sourceCharacter.ReturnToOriginalHomeAndFaction(originalHome, originalFaction);
+    }
+    public override void SetCharacterResponsibleForTrait(Character character) {
+        _responsibleCharacter = character;
+    }
+    public override string GetToolTipText() {
+        return "This character has been charmed by " + _responsibleCharacter.name;
     }
     #endregion
 }

@@ -1700,7 +1700,7 @@ public class Area {
         }
         return null;
     }
-    private List<LocationStructure> GetStructuresAtLocation(bool inside) {
+    public List<LocationStructure> GetStructuresAtLocation(bool inside) {
         List<LocationStructure> structures = new List<LocationStructure>();
         foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp in this.structures) {
             for (int i = 0; i < kvp.Value.Count; i++) {
