@@ -300,7 +300,7 @@ public class CharmAction : Interaction {
         //}
         //only add charmed trait to characters that have not been charmed yet, this is to retain it's original faction
         Charmed charmedTrait = new Charmed(character.faction, character.homeArea);
-        character.AddTrait(charmedTrait);
+        character.AddTrait(charmedTrait, _characterInvolved);
         character.faction.RemoveCharacter(character);
         faction.AddNewCharacter(character);
         AddToDebugLog("Successfully transferred " + character.name + " to " + character.faction.name);

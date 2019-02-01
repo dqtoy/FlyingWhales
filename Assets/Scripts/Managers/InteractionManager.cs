@@ -66,7 +66,7 @@ public class InteractionManager : MonoBehaviour {
                 alignment = INTERACTION_ALIGNMENT.NEUTRAL,
             } },
             { INTERACTION_TYPE.MOVE_TO_CURSE, new InteractionCategoryAndAlignment(){
-                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.PERSONAL, INTERACTION_CATEGORY.OFFENSE },
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.PERSONAL, INTERACTION_CATEGORY.SUBTERFUGE },
                 alignment = INTERACTION_ALIGNMENT.EVIL,
             } },
             { INTERACTION_TYPE.MOVE_TO_HUNT, new InteractionCategoryAndAlignment(){

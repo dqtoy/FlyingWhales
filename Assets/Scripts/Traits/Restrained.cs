@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Abducted : Trait {
-    public Area originalHome { get; private set; }
-
+public class Restrained : Trait {
     private Character _responsibleCharacter;
 
     #region getters/setters
@@ -13,11 +11,9 @@ public class Abducted : Trait {
     }
     #endregion
 
-    public Abducted(Area originalHome) {
-        name = "Abducted";
-        this.originalHome = originalHome;
-        //name = "Charmed from " + originalFaction.name;
-        description = "This character has been abducted!";
+    public Restrained() {
+        name = "Restrained";
+        description = "This character is restrained!";
         type = TRAIT_TYPE.DISABLER;
         effect = TRAIT_EFFECT.NEGATIVE;
         daysDuration = 0;
@@ -29,7 +25,7 @@ public class Abducted : Trait {
         _responsibleCharacter = character;
     }
     public override string GetToolTipText() {
-        return "This character has been abducted by " + _responsibleCharacter.name;
+        return "This character is restrained by " + _responsibleCharacter.name;
     }
     #endregion
 }

@@ -153,8 +153,8 @@ public class CharacterInfoUI : UIMenu {
         //Messenger.AddListener(Signals.UPDATE_UI, UpdateCharacterInfo);
         Messenger.AddListener<object>(Signals.HISTORY_ADDED, UpdateHistory);
         Messenger.AddListener<BaseLandmark>(Signals.PLAYER_LANDMARK_CREATED, OnPlayerLandmarkCreated);
-        Messenger.AddListener<Character>(Signals.TRAIT_ADDED, UpdateTraitsFromSignal);
-        Messenger.AddListener<Character>(Signals.TRAIT_REMOVED, UpdateTraitsFromSignal);
+        Messenger.AddListener<Character, Trait>(Signals.TRAIT_ADDED, UpdateTraitsFromSignal);
+        Messenger.AddListener<Character, Trait>(Signals.TRAIT_REMOVED, UpdateTraitsFromSignal);
 
         //Messenger.AddListener<ActionQueueItem, Character>(Signals.ACTION_ADDED_TO_QUEUE, OnActionAddedToQueue);
         //Messenger.AddListener<ActionQueueItem, Character>(Signals.ACTION_REMOVED_FROM_QUEUE, OnActionRemovedFromQueue);
@@ -420,7 +420,7 @@ public class CharacterInfoUI : UIMenu {
     #endregion
 
     #region Combat Attributes
-    private void UpdateTraitsFromSignal(Character character) {
+    private void UpdateTraitsFromSignal(Character character, Trait trait) {
         if(_activeCharacter == null || _activeCharacter != character) {
             return;
         }

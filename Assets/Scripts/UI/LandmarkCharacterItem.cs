@@ -19,6 +19,8 @@ public class LandmarkCharacterItem : PooledObject {
     [SerializeField] private TextMeshProUGUI subLbl;
     [SerializeField] private GameObject travellingIcon;
     [SerializeField] private GameObject arrivedIcon;
+    [SerializeField] private GameObject unrestrainedGO;
+    [SerializeField] private GameObject restrainedIcon;
     [SerializeField] private GameObject coverGO;
 
     public void SetCharacter(Character character, UIMenu parentMenu) {
@@ -102,6 +104,23 @@ public class LandmarkCharacterItem : PooledObject {
             UIManager.Instance.ShowSmallLocationInfo(character.currentParty.icon.targetLocation, new Vector3(x, thisTrans.position.y - 15f, 0f), "Arrived at:");
         }
     }
+    public void ShowRestrainedTooltip() {
+        string info = string.Empty;
+        Trait abductedTrait = character.GetTrait("Abducted");
+        Trait restrainedTrait = character.GetTrait("Restrained");
+        if (abductedTrait != null) {
+            info += abductedTrait.GetToolTipText();
+        }
+        if (restrainedTrait != null) {
+            if(info != string.Empty) {
+                info += "\n";
+            }
+            info += restrainedTrait.GetToolTipText();
+        }
+        if(info != string.Empty) {
+            UIManager.Instance.ShowSmallInfo(info);
+        }
+    }
     public void HideToolTip() {
         UIManager.Instance.HideSmallLocationInfo();
     }
@@ -122,6 +141,24 @@ public class LandmarkCharacterItem : PooledObject {
             UpdateInfo();
         }
     }
+    private void OnTraitAdded(Character character, Trait trait) {
+        if(character.id == this.character.id) {
+            if(trait.name == "Abducted" || trait.name == "Restrained") {
+                restrainedIcon.SetActive(true);
+                unrestrainedGO.SetActive(false);
+            }
+        }
+    }
+    private void OnTraitRemoved(Character character, Trait trait) {
+        if (character.id == this.character.id) {
+            if (trait.name == "Abducted" || trait.name == "Restrained") {
+                if(character.GetTraitOr("Abducted", "Restrained") == null) {
+                    restrainedIcon.SetActive(false);
+                    unrestrainedGO.SetActive(true);
+                }
+            }
+        }
+    }
     #endregion
 
 
@@ -135,6 +172,8 @@ public class LandmarkCharacterItem : PooledObject {
         Messenger.AddListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnPartyStartedTravelling);
         Messenger.AddListener<Party>(Signals.PARTY_DONE_TRAVELLING, OnPartyDoneTravelling);
         Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_RACE, OnCharacterChangedRace);
+        Messenger.AddListener<Character, Trait>(Signals.TRAIT_ADDED, OnTraitAdded);
+        Messenger.AddListener<Character, Trait>(Signals.TRAIT_REMOVED, OnTraitRemoved);
     }
 
     private void OnDisable() {
@@ -147,5 +186,7 @@ public class LandmarkCharacterItem : PooledObject {
         if (Messenger.eventTable.ContainsKey(Signals.CHARACTER_CHANGED_RACE)) {
             Messenger.RemoveListener<Character>(Signals.CHARACTER_CHANGED_RACE, OnCharacterChangedRace);
         }
+        Messenger.RemoveListener<Character, Trait>(Signals.TRAIT_ADDED, OnTraitAdded);
+        Messenger.RemoveListener<Character, Trait>(Signals.TRAIT_REMOVED, OnTraitRemoved);
     }
 }

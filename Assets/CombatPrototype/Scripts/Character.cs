@@ -2384,8 +2384,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             AddTrait(new Craftsman());
         }
     }
-    public void AddTrait(Trait trait) {
+    public void AddTrait(Trait trait, Character characterResponsible = null) {
         if (trait.IsUnique() && GetTrait(trait.name) != null) {
+            trait.SetCharacterResponsibleForTrait(characterResponsible);
             return;
         }
         //if (trait is RelationshipTrait) {
@@ -2396,6 +2397,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //    }
         //}
         _traits.Add(trait);
+        trait.SetCharacterResponsibleForTrait(characterResponsible);
         ApplyTraitEffects(trait);
         if (trait.daysDuration > 0) {
             GameDate removeDate = GameManager.Instance.Today();
@@ -2403,7 +2405,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             SchedulingManager.Instance.AddEntry(removeDate, () => RemoveTrait(trait));
         }
         trait.OnAddTrait(this);
-        Messenger.Broadcast(Signals.TRAIT_ADDED, this);
+        Messenger.Broadcast(Signals.TRAIT_ADDED, this, trait);
         if (trait is RelationshipTrait) {
             RelationshipTrait rel = trait as RelationshipTrait;
             AddRelationship(rel.targetCharacter, rel);
@@ -2415,7 +2417,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             if (triggerOnRemove) {
                 trait.OnRemoveTrait(this);
             }
-            Messenger.Broadcast(Signals.TRAIT_REMOVED, this);
+            Messenger.Broadcast(Signals.TRAIT_REMOVED, this, trait);
             if (trait is RelationshipTrait) {
                 RelationshipTrait rel = trait as RelationshipTrait;
                 RemoveRelationship(rel.targetCharacter, rel);
