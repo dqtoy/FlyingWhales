@@ -1823,6 +1823,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //NOTE: This is only one way checking. This character will only check itself, if he/she meets the requirements of a given relationship
         List<RELATIONSHIP_TRAIT> relationshipsWithTarget = GetAllRelationshipTraitTypesWith(target);
         switch (type) {
+            case RELATIONSHIP_TRAIT.ENEMY:
+                return !relationshipsWithTarget.Contains(RELATIONSHIP_TRAIT.ENEMY); //check that the target character is not already this characters enemy
+            case RELATIONSHIP_TRAIT.FRIEND:
+                return !relationshipsWithTarget.Contains(RELATIONSHIP_TRAIT.FRIEND); //check that the target character is not already this characters friend
             case RELATIONSHIP_TRAIT.LOVER:
                 //- **Lover:** Positive, Permanent (Can only have 1)
                 //check if this character already has a lover and that the target character is not his/her paramour

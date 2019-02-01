@@ -724,7 +724,7 @@ public class CharacterManager : MonoBehaviour {
     }
     private RELATIONSHIP_TRAIT GetRandomRelationship() {
         RELATIONSHIP_TRAIT[] choices = Utilities.GetEnumValues<RELATIONSHIP_TRAIT>();
-        return choices[Random.Range(2, choices.Length)]; //started at 2 to exclude enemy and friend
+        return choices[Random.Range(1, choices.Length)];
     }
     #endregion
 }
