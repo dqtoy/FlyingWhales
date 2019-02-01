@@ -756,6 +756,9 @@ public class Faction {
     }
     private void GenerateDailyInteraction() {
         //GenerateFactionInteraction();
+        if(this == FactionManager.Instance.neutralFaction) {
+            return;
+        }
         GenerateFactionTasks();
     }
     private void GenerateFactionInteraction() {
