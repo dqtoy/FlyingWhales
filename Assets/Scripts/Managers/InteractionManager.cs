@@ -1048,6 +1048,8 @@ public class InteractionManager : MonoBehaviour {
                     }
                 }
                 return false;
+            case INTERACTION_TYPE.MOVE_TO_CURSE:
+                return character.HasRelationshipTraitOf(RELATIONSHIP_TRAIT.ENEMY);
             default:
                 return true;
         }

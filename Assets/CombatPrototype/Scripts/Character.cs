@@ -2572,6 +2572,17 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return null;
     }
+    public bool HasRelationshipTraitOf(RELATIONSHIP_TRAIT relType) {
+        for (int i = 0; i < _traits.Count; i++) {
+            if (_traits[i] is RelationshipTrait) {
+                RelationshipTrait currTrait = _traits[i] as RelationshipTrait;
+                if (currTrait.relType == relType) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     public void GenerateRandomTraits() {
         //All characters have a 1 in 8 chance of having Crooked trait when spawned
         if (UnityEngine.Random.Range(0, 8) < 1) {
