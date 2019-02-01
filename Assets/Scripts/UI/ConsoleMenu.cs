@@ -152,7 +152,7 @@ public class ConsoleMenu : UIMenu {
                 SpecialToken token = currArea.possibleSpecialTokenSpawns[j];
                 if (token.structureLocation == null) {
                     Debug.LogWarning("There is token at " + currArea.name + " that doesn't have a structure location : " + token.name);
-                    UIManager.Instance.Pause();
+                    //UIManager.Instance.Pause();
                 }
             }
         }

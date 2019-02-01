@@ -703,8 +703,8 @@ public class Faction {
                 int backlineCharacters = 0;
                 for (int i = 0; i < area.areaResidents.Count; i++) {
                     Character resident = area.areaResidents[i];
-                    if (resident.forcedInteraction == null && resident.doNotDisturb <= 0 && resident.IsInOwnParty() && !resident.isLeader
-                        && resident.role.roleType != CHARACTER_ROLE.CIVILIAN && !resident.currentParty.icon.isTravelling
+                    if (resident.isIdle && !resident.isLeader
+                        && resident.role.roleType != CHARACTER_ROLE.CIVILIAN
                         && !resident.isDefender && resident.specificLocation.id == id && resident.currentStructure.isInside) {
                         if ((area.owner != null && resident.faction == area.owner) || (area.owner == null && resident.faction == FactionManager.Instance.neutralFaction)) {
                             if (resident.characterClass.combatPosition == COMBAT_POSITION.FRONTLINE) {

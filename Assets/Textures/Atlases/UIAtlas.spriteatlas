@@ -260,6 +260,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: b931dd379df6ed74e9c970349deb8392, type: 3}
   - {fileID: 21300000, guid: 93b34ec21c0450c49b3150771af2a182, type: 3}
   - {fileID: 21300000, guid: f1e35c7ac3c7a2d4899058043305e0e3, type: 3}
+  - {fileID: 21300000, guid: b4bb50e205556bc449958a52cd6caabe, type: 3}
   - {fileID: 21300000, guid: c10d17c0ce04cac41a5743f733413e44, type: 3}
   - {fileID: 21300000, guid: 0ce3a47e10b8335448b1cf88d71e1732, type: 3}
   - {fileID: 21300000, guid: c9308036dbc926241861e76bf65adc5b, type: 3}
@@ -286,7 +287,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 00217fe9096ed3d45b81d2d815267235, type: 3}
   - {fileID: 21300000, guid: c11cdd95d9cf04c44b9712b03115fac9, type: 3}
   - {fileID: 21300000, guid: e73b98880b3bac5428be2c89e7e93810, type: 3}
-  - {fileID: 21300000, guid: b4bb50e205556bc449958a52cd6caabe, type: 3}
   - {fileID: 21300000, guid: 31d9b739849770f43ab4f323b40635cf, type: 3}
   - {fileID: 21300000, guid: 4dbbfc779d936194c8c446b77c24a99e, type: 3}
   - {fileID: 21300000, guid: 1f589b68222dcea4fa1e1d129cd7cbf5, type: 3}
@@ -529,6 +529,7 @@ SpriteAtlas:
   - button_speed2_off
   - button_speed1_off
   - button_speed2_on
+  - abducted_restrained_icon
   - button_speed1_on
   - interaction_tab_selected_done
   - interaction_tab_invalid
@@ -555,7 +556,6 @@ SpriteAtlas:
   - minion_icon_recruiter
   - minion_icon_attacker
   - defense_icon
-  - abducted_restrained_icon
   - travelled_icon
   - supply_icon
   - text_scroll_thumb
