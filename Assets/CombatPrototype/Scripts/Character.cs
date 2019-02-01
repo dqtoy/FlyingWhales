@@ -225,6 +225,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         }
     }
+    public bool isIdle {
+        get { return _forcedInteraction == null && _doNotDisturb <= 0 && IsInOwnParty() && !currentParty.icon.isTravelling; }
+    }
     public Dictionary<Character, List<string>> traceInfo {
         get { return _traceInfo; }
     }

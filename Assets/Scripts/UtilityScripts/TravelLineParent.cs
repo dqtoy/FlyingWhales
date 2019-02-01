@@ -68,11 +68,11 @@ public class TravelLineParent : MonoBehaviour {
     }
     public void SetActiveBG(bool state) {
         if (state) {
-            bgImage.color = new Color(bgImage.color.r, bgImage.color.g, bgImage.color.b, 1);
+            bgImage.color = new Color(bgImage.color.r, bgImage.color.g, bgImage.color.b, 0);
         } else {
             for (int i = 0; i < _children.Count; i++) {
                 if (_children[i].holder.activeSelf) {
-                    bgImage.color = new Color(bgImage.color.r, bgImage.color.g, bgImage.color.b, 1);
+                    bgImage.color = new Color(bgImage.color.r, bgImage.color.g, bgImage.color.b, 0);
                     return;
                 }
             }
