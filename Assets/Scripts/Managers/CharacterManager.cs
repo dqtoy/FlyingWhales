@@ -686,37 +686,37 @@ public class CharacterManager : MonoBehaviour {
         }
     }
     public void CreateNewRelationshipBetween(Character currCharacter, Character targetCharacter, RELATIONSHIP_TRAIT rel) {
-        if (currCharacter.CanHaveRelationshipWith(rel, targetCharacter)) {
+        RELATIONSHIP_TRAIT pair = GetPairedRelationship(rel);
+        if (currCharacter.CanHaveRelationshipWith(rel, targetCharacter) 
+            && targetCharacter.CanHaveRelationshipWith(pair, currCharacter)) {
             currCharacter.AddTrait(CreateRelationshipTrait(rel, targetCharacter));
-            RELATIONSHIP_TRAIT targetRel = RELATIONSHIP_TRAIT.ENEMY;
-            switch (rel) {
-                case RELATIONSHIP_TRAIT.MASTER:
-                    targetRel = RELATIONSHIP_TRAIT.SERVANT;
-                    targetCharacter.AddTrait(CreateRelationshipTrait(RELATIONSHIP_TRAIT.SERVANT, currCharacter));
-                    break;
-                case RELATIONSHIP_TRAIT.SERVANT:
-                    targetRel = RELATIONSHIP_TRAIT.MASTER;
-                    targetCharacter.AddTrait(CreateRelationshipTrait(RELATIONSHIP_TRAIT.MASTER, currCharacter));
-                    break;
-                case RELATIONSHIP_TRAIT.MENTOR:
-                    targetRel = RELATIONSHIP_TRAIT.STUDENT;
-                    targetCharacter.AddTrait(CreateRelationshipTrait(RELATIONSHIP_TRAIT.STUDENT, currCharacter));
-                    break;
-                case RELATIONSHIP_TRAIT.STUDENT:
-                    targetRel = RELATIONSHIP_TRAIT.MENTOR;
-                    targetCharacter.AddTrait(CreateRelationshipTrait(RELATIONSHIP_TRAIT.MENTOR, currCharacter));
-                    break;
-                case RELATIONSHIP_TRAIT.LOVER:
-                case RELATIONSHIP_TRAIT.RELATIVE:
-                case RELATIONSHIP_TRAIT.PARAMOUR:
-                    targetRel = rel;
-                    targetCharacter.AddTrait(CreateRelationshipTrait(rel, currCharacter));
-                    break;
-            }
-            if (currCharacter.GetRelationshipTraitWith(targetCharacter, rel) == null
-                || targetCharacter.GetRelationshipTraitWith(currCharacter, targetRel) == null) {
-                throw new System.Exception("Relationship inconsistency between " + targetCharacter.name + " and " + currCharacter.name);
-            }
+            targetCharacter.AddTrait(CreateRelationshipTrait(pair, currCharacter));
+        } else {
+            Debug.LogWarning(currCharacter.name + " and " + targetCharacter.name + " cannot have relationship " + rel.ToString() + " - " + pair.ToString());
+        }
+    }
+    private RELATIONSHIP_TRAIT GetPairedRelationship(RELATIONSHIP_TRAIT rel) {
+        switch (rel) {
+            case RELATIONSHIP_TRAIT.ENEMY:
+                return RELATIONSHIP_TRAIT.ENEMY;
+            case RELATIONSHIP_TRAIT.FRIEND:
+                return RELATIONSHIP_TRAIT.FRIEND;
+            case RELATIONSHIP_TRAIT.RELATIVE:
+                return RELATIONSHIP_TRAIT.RELATIVE;
+            case RELATIONSHIP_TRAIT.LOVER:
+                return RELATIONSHIP_TRAIT.LOVER;
+            case RELATIONSHIP_TRAIT.PARAMOUR:
+                return RELATIONSHIP_TRAIT.PARAMOUR;
+            case RELATIONSHIP_TRAIT.MASTER:
+                return RELATIONSHIP_TRAIT.SERVANT;
+            case RELATIONSHIP_TRAIT.SERVANT:
+                return RELATIONSHIP_TRAIT.MASTER;
+            case RELATIONSHIP_TRAIT.MENTOR:
+                return RELATIONSHIP_TRAIT.STUDENT;
+            case RELATIONSHIP_TRAIT.STUDENT:
+                return RELATIONSHIP_TRAIT.MENTOR;
+            default:
+                return RELATIONSHIP_TRAIT.NONE;
         }
     }
     private Character GetRandomCharacter(List<Character> characters) {
@@ -724,7 +724,7 @@ public class CharacterManager : MonoBehaviour {
     }
     private RELATIONSHIP_TRAIT GetRandomRelationship() {
         RELATIONSHIP_TRAIT[] choices = Utilities.GetEnumValues<RELATIONSHIP_TRAIT>();
-        return choices[Random.Range(2, choices.Length)]; //started at 2 to exclude enemy and friend
+        return choices[Random.Range(1, choices.Length)];
     }
     #endregion
 }

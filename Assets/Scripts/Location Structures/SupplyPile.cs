@@ -24,7 +24,12 @@ public class SupplyPile : IPointOfInterest {
         } else {
             return Random.Range(1, suppliesInPile);
         }
-        
+    }
+
+    public int GetAndReduceSuppliesObtained(Area reciever) {
+        int suppliesObtained = GetSuppliesObtained();
+        TransferSuppliesTo(reciever, suppliesObtained);
+        return suppliesObtained;
     }
 
     public void SetSuppliesInPile(int amount) {

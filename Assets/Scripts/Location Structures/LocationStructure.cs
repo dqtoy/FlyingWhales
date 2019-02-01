@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [System.Serializable]
@@ -112,6 +113,12 @@ public class LocationStructure {
             }
         }
         return null;
+    }
+    public IPointOfInterest GetRandomPOI() {
+        if (pointsOfInterest.Count <= 0) {
+            return null;
+        }
+        return pointsOfInterest[Random.Range(0, pointsOfInterest.Count)];
     }
     #endregion
 

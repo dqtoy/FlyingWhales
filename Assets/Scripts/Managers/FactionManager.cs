@@ -95,7 +95,6 @@ public class FactionManager : MonoBehaviour {
         1 Evil Major Faction
         2 Minor Factions
          */
-        
         List<Faction> goodMajorChoices = GetFactionsOfMoralityAndSize(MORALITY.GOOD, FACTION_SIZE.MAJOR);
         List<Faction> evilMajorChoices = GetFactionsOfMoralityAndSize(MORALITY.EVIL, FACTION_SIZE.MAJOR);
         List<Faction> minorChoices = GetFactionsOfSize(FACTION_SIZE.MINOR);
@@ -125,6 +124,31 @@ public class FactionManager : MonoBehaviour {
         }
 
         Debug.Log(log);
+
+        /*
+         If both Factions are opposing alignment, -1 to relationship.
+         If both Factions have shared alignment, +1 to relationship.
+         If both Faction's faction leaders have same race, +1 to relationship.
+         */
+        //Generate Faction Relationships
+        for (int i = 0; i < startFactions.Count; i++) {
+            Faction currFaction = startFactions[i];
+            for (int j = i; j < startFactions.Count; j++) {
+                Faction otherFaction = startFactions[j];
+                if (currFaction.id != otherFaction.id) {
+                    FactionRelationship rel = currFaction.GetRelationshipWith(otherFaction);
+                    if (currFaction.morality == otherFaction.morality) {
+                        rel.AdjustRelationshipStatus(1);
+                    } else if (currFaction.morality != MORALITY.NEUTRAL 
+                        && otherFaction.morality != MORALITY.NEUTRAL) {
+                        rel.AdjustRelationshipStatus(-1);
+                    }
+                    if (currFaction.leader.race == otherFaction.leader.race) {
+                        rel.AdjustRelationshipStatus(1);
+                    }
+                }
+            }
+        }
 
         ////First random faction
         //int index1 = UnityEngine.Random.Range(0, factions.Count);

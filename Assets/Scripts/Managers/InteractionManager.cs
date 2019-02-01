@@ -133,6 +133,10 @@ public class InteractionManager : MonoBehaviour {
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.SUPPLY },
                 alignment = INTERACTION_ALIGNMENT.NEUTRAL,
             } },
+            { INTERACTION_TYPE.PATROL_ACTION_FACTION, new InteractionCategoryAndAlignment(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.DEFENSE },
+                alignment = INTERACTION_ALIGNMENT.NEUTRAL,
+            } },
             { INTERACTION_TYPE.CONSUME_LIFE, new InteractionCategoryAndAlignment(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.SUPPLY },
                 alignment = INTERACTION_ALIGNMENT.EVIL,
@@ -542,6 +546,15 @@ public class InteractionManager : MonoBehaviour {
                 break;
             case INTERACTION_TYPE.CONSUME_LIFE:
                 createdInteraction = new ConsumeLife(interactable);
+                break;
+            case INTERACTION_TYPE.PATROL_ACTION_FACTION:
+                createdInteraction = new PatrolActionFaction(interactable);
+                break;
+            case INTERACTION_TYPE.MOVE_TO_EXPLORE_FACTION:
+                createdInteraction = new MoveToExploreFaction(interactable);
+                break;
+            case INTERACTION_TYPE.EXPLORE_EVENT_FACTION:
+                createdInteraction = new ExploreEventFaction(interactable);
                 break;
         }
         return createdInteraction;
@@ -1068,6 +1081,9 @@ public class InteractionManager : MonoBehaviour {
                     }
                 }
                 return false;
+            case INTERACTION_TYPE.MOVE_TO_EXPLORE_FACTION:
+                //**Trigger Criteria 1**: The character must not be holding an item
+                return character.tokenInInventory == null;
             default:
                 return true;
         }

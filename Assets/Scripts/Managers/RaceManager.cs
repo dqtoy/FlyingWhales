@@ -58,6 +58,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.MOVE_TO_HARVEST,
                 INTERACTION_TYPE.SCRAP_ITEM,
                 INTERACTION_TYPE.CONSUME_LIFE,
+                INTERACTION_TYPE.PATROL_ACTION_FACTION,
+                INTERACTION_TYPE.MOVE_TO_EXPLORE_FACTION,
             } },
             { RACE.ELVES, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_LOOT,
@@ -81,6 +83,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.MOVE_TO_HARVEST,
                 INTERACTION_TYPE.SCRAP_ITEM,
                 INTERACTION_TYPE.CONSUME_LIFE,
+                INTERACTION_TYPE.PATROL_ACTION_FACTION,
+                INTERACTION_TYPE.MOVE_TO_EXPLORE_FACTION,
             } },
             { RACE.GOBLIN, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_LOOT,
@@ -104,6 +108,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.MOVE_TO_HARVEST,
                 INTERACTION_TYPE.SCRAP_ITEM,
                 INTERACTION_TYPE.CONSUME_LIFE,
+                INTERACTION_TYPE.PATROL_ACTION_FACTION,
+                INTERACTION_TYPE.MOVE_TO_EXPLORE_FACTION,
             } },
             { RACE.FAERY, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_LOOT,
@@ -127,6 +133,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.MOVE_TO_HARVEST,
                 INTERACTION_TYPE.SCRAP_ITEM,
                 INTERACTION_TYPE.CONSUME_LIFE,
+                INTERACTION_TYPE.PATROL_ACTION_FACTION,
+                INTERACTION_TYPE.MOVE_TO_EXPLORE_FACTION,
             } },
             { RACE.SKELETON, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_LOOT,
@@ -150,6 +158,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.MOVE_TO_HARVEST,
                 INTERACTION_TYPE.SCRAP_ITEM,
                 INTERACTION_TYPE.CONSUME_LIFE,
+                INTERACTION_TYPE.PATROL_ACTION_FACTION,
+                INTERACTION_TYPE.MOVE_TO_EXPLORE_FACTION,
             } },
             { RACE.SPIDER, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_LOOT,
@@ -173,6 +183,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.MOVE_TO_HARVEST,
                 INTERACTION_TYPE.SCRAP_ITEM,
                 INTERACTION_TYPE.CONSUME_LIFE,
+                INTERACTION_TYPE.PATROL_ACTION_FACTION,
+                INTERACTION_TYPE.MOVE_TO_EXPLORE_FACTION,
             } },
             { RACE.WOLF, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_LOOT,
@@ -196,6 +208,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.MOVE_TO_HARVEST,
                 INTERACTION_TYPE.SCRAP_ITEM,
                 INTERACTION_TYPE.CONSUME_LIFE,
+                INTERACTION_TYPE.PATROL_ACTION_FACTION,
+                INTERACTION_TYPE.MOVE_TO_EXPLORE_FACTION,
             } },
             { RACE.DRAGON, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_LOOT,
@@ -219,6 +233,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.MOVE_TO_HARVEST,
                 INTERACTION_TYPE.SCRAP_ITEM,
                 INTERACTION_TYPE.CONSUME_LIFE,
+                INTERACTION_TYPE.PATROL_ACTION_FACTION,
+                INTERACTION_TYPE.MOVE_TO_EXPLORE_FACTION,
             } },
         };
     }
