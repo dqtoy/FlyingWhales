@@ -83,6 +83,8 @@ public class TokenManager : MonoBehaviour {
                 return new EnchantedAmulet();
             case SPECIAL_TOKEN.GOLDEN_NECTAR:
                 return new GoldenNectar();
+            case SPECIAL_TOKEN.SCROLL_OF_POWER:
+                return new ScrollOfPower();
             default:
                 return new SpecialToken(tokenType, appearanceWeight);
         }

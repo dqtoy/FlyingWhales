@@ -30,7 +30,7 @@ public class ScrollOfPower : SpecialToken {
     }
     public override bool CanBeUsedBy(Character sourceCharacter) {
         //Requirement: Character is not max level.
-        return true;
+        return sourceCharacter.level < CharacterManager.Instance.maxLevel;
     }
     #endregion
 

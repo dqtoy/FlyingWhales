@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.22380279, g: 0.24376711, b: 0.26534963, a: 1}
+  m_IndirectSpecularColor: {r: 0.1273174, g: 0.13414761, b: 0.12107885, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -68321,6 +68321,8 @@ MonoBehaviour:
     - Cardell
     - Denrio
     - Cindermaul
+    - Moringa
+    - Lamina
   - tokenName: Fear Spell
     tokenType: 3
     quantity: 4
@@ -68336,6 +68338,8 @@ MonoBehaviour:
     - Cardell
     - Denrio
     - Cindermaul
+    - Moringa
+    - Lamina
   - tokenName: Charm Spell
     tokenType: 2
     quantity: 4
@@ -68351,6 +68355,8 @@ MonoBehaviour:
     - Cardell
     - Denrio
     - Cindermaul
+    - Moringa
+    - Lamina
   - tokenName: Book of the Dead
     tokenType: 1
     quantity: 1
@@ -68389,6 +68395,8 @@ MonoBehaviour:
     - Gloomhollow
     - Tribu
     - Pitthize
+    - Moringa
+    - Lamina
   - tokenName: Panacea
     tokenType: 10
     quantity: 4
@@ -68404,6 +68412,8 @@ MonoBehaviour:
     - Gloomhollow
     - Tribu
     - Pitthize
+    - Moringa
+    - Lamina
   - tokenName: Junk
     tokenType: 11
     quantity: 3
@@ -68419,6 +68429,8 @@ MonoBehaviour:
     - Gloomhollow
     - Tribu
     - Pitthize
+    - Moringa
+    - Lamina
   - tokenName: Healing Potion
     tokenType: 12
     quantity: 3
@@ -68443,6 +68455,25 @@ MonoBehaviour:
     - Gloomhollow
     - Tribu
     - Pitthize
+    - Moringa
+    - Lamina
+  - tokenName: Scroll of Power
+    tokenType: 15
+    quantity: 3
+    appearanceWeight: 50
+    areaLocations:
+    - Cardell
+    - Narris
+    - Cindermaul
+    - Denrio
+    - Radisle
+    - Visteri
+    - Odious
+    - Gloomhollow
+    - Tribu
+    - Pitthize
+    - Moringa
+    - Lamina
 --- !u!1 &1695113739
 GameObject:
   m_ObjectHideFlags: 0
@@ -73537,7 +73568,7 @@ Prefab:
     - target: {fileID: 224197028340486728, guid: b2755c072ea3a4849b851e62bdc86755,
         type: 2}
       propertyPath: m_RootOrder
-      value: 23
+      value: 22
       objectReference: {fileID: 0}
     - target: {fileID: 224197028340486728, guid: b2755c072ea3a4849b851e62bdc86755,
         type: 2}
