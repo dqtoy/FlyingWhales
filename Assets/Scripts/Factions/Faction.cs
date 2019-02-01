@@ -203,7 +203,7 @@ public class Faction {
 #endif
     }
 
-    #region virtuals
+    #region Virtuals
     /*
      Set the leader of this faction, change this per faction type if needed.
      This creates relationships between the leader and it's village heads by default.
@@ -550,7 +550,7 @@ public class Faction {
     }
 
     //This updates faction weights before doing the update per area, meaning this is constant to all areas. This is done to prevent from recomputing everytime in the area loop
-    private void UpdateInitialFactionTasksWeights() {
+    private void UpdateBaseFactionTasksWeights() {
         List<INTERACTION_CATEGORY> categories = _factionTasksWeights.Keys.ToList();
         for (int i = 0; i < categories.Count; i++) {
             INTERACTION_CATEGORY category = categories[i];
@@ -562,19 +562,20 @@ public class Faction {
     }
 
     //This is the update of faction weights per area
-    private void UpdateFactionTasksWeightsPerArea(Area area) {
-        int supplySpentForInteraction = 0;
+    private void UpdateAreaFactionTasksWeights(Area area) {
+        //int supplySpentForInteraction = 0;
         List<INTERACTION_CATEGORY> categories = _factionTasksWeights.Keys.ToList();
         for (int i = 0; i < categories.Count; i++) {
             INTERACTION_CATEGORY category = categories[i];
             FactionTaskWeight taskWeight = _factionTasksWeights[category];
-            supplySpentForInteraction += taskWeight.supplyCost;
-            if (supplySpentForInteraction <= area.suppliesInBank) {
-                taskWeight.areaCannotDoTask = false;
-                taskWeight.areaWeight = GetFactionTaskWeightPerArea(category, area);
-            } else {
-                taskWeight.areaCannotDoTask = true;
-            }
+            taskWeight.areaWeight = GetFactionTaskWeightPerArea(category, area);
+            //supplySpentForInteraction += taskWeight.supplyCost;
+            //if (supplySpentForInteraction <= area.suppliesInBank) {
+            //    taskWeight.areaCannotDoTask = false;
+            //    taskWeight.areaWeight = GetFactionTaskWeightPerArea(category, area);
+            //} else {
+            //    taskWeight.areaCannotDoTask = true;
+            //}
             _factionTasksWeights[category] = taskWeight;
         }
     }
@@ -764,7 +765,7 @@ public class Faction {
         }
     }
     private void GenerateFactionTasks() {
-        UpdateInitialFactionTasksWeights();
+        UpdateBaseFactionTasksWeights();
         for (int i = 0; i < _ownedAreas.Count; i++) {
             GenerateAreaInteractionNew(_ownedAreas[i]);
         }
@@ -773,24 +774,30 @@ public class Faction {
         string interactionLog = GameManager.Instance.TodayLogString() + "GENERATING FACTION TASKS FOR " + this.name + " in " + area.name;
         interactionLog += "\nAREA MONTHLY ACTIONS: " + area.monthlyActions.ToString() + ", FACTION MORALITY: " + morality.ToString() + " " + size.ToString() + ", FACTION TYPE: " + factionType.ToString();
 
-        UpdateFactionTasksWeightsPerArea(area);
+        UpdateAreaFactionTasksWeights(area);
         WeightedDictionary<INTERACTION_CATEGORY> tasksWeights = new WeightedDictionary<INTERACTION_CATEGORY>();
         foreach (KeyValuePair<INTERACTION_CATEGORY, FactionTaskWeight> kvp in _factionTasksWeights) {
-            if (!kvp.Value.areaCannotDoTask && !kvp.Value.factionCannotDoTask) {
+            if (!kvp.Value.factionCannotDoTask) {
                 int totalWeight = kvp.Value.baseWeight + kvp.Value.areaWeight;
                 tasksWeights.AddElement(kvp.Key, totalWeight);
                 interactionLog += "\n" + kvp.Key.ToString() + ": " + totalWeight.ToString();
             } else {
-                if (kvp.Value.areaCannotDoTask) {
-                    interactionLog += "\nCAN'T DO " + kvp.Key.ToString() + " ACTION BECAUSE AREA CANNOT ACCOMODATE SUPPLY!";
-                }
+                interactionLog += "\nCAN'T PUT " + kvp.Key.ToString() + " IN WEIGHTS BECAUSE IT MAY ONLY BE TRIGGERED ONCE PER FACTION!";
             }
         }
         int actionsCount = 0;
+        int supplySpentOnInteraction = 0;
         while (actionsCount < area.monthlyActions && tasksWeights.GetTotalOfWeights() > 0) {
             INTERACTION_CATEGORY chosenCategory = tasksWeights.PickRandomElementGivenWeights();
             interactionLog += "\n--------------------------------------------------------";
-            interactionLog += "\nCHOSEN INTERACTION TYPE: " + chosenCategory.ToString();
+            if(supplySpentOnInteraction + _factionTasksWeights[chosenCategory].supplyCost <= area.suppliesInBank) {
+                interactionLog += "\nCHOSEN INTERACTION TYPE: " + chosenCategory.ToString();
+            } else {
+                interactionLog += "\nCAN'T DO " + chosenCategory.ToString() + " TYPE BECAUSE AREA CANNOT ACCOMODATE SUPPLY COST: " + _factionTasksWeights[chosenCategory].supplyCost
+                    + ". Setting weight to 0 and randomizing again...";
+                tasksWeights.RemoveElement(chosenCategory);
+                continue;
+            }
             //CGet all residents of area that can do the interaction category;
             Dictionary<Character, List<INTERACTION_TYPE>> residentInteractions = area.GetResidentAndInteractionsTheyCanDoByCategoryAndAlignment(chosenCategory, morality);
             if (residentInteractions.Count > 0) {
@@ -812,6 +819,7 @@ public class Faction {
                 interactionLog += "\n--------------------------------------------------------";
                 Interaction interaction = InteractionManager.Instance.CreateNewInteraction(chosenInteraction, chosenCharacter.specificLocation);
                 if (_factionTasksWeights[chosenCategory].supplyCost > 0) {
+                    supplySpentOnInteraction += _factionTasksWeights[chosenCategory].supplyCost;
                     interaction.SetCanInteractionBeDoneAction(() => area.CanDoAreaTaskInteraction(interaction.type, chosenCharacter, _factionTasksWeights[chosenCategory].supplyCost));
                     interaction.SetInitializeAction(() => area.AdjustSuppliesInBank(-_factionTasksWeights[chosenCategory].supplyCost));
                     interaction.SetMinionSuccessAction(() => area.AdjustSuppliesInBank(_factionTasksWeights[chosenCategory].supplyCost));
