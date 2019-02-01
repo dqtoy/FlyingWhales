@@ -15,6 +15,8 @@ public class TravelLine : MonoBehaviour {
     private int _currentTick;
     private bool _isDone;
 
+    private Character _character;
+
     #region getters/setters
     public bool isDone {
         get { return _isDone; }
@@ -27,9 +29,28 @@ public class TravelLine : MonoBehaviour {
     public void Initialize() {
         _currentTick = 0;
     }
+    public void SetCharacter(Character character) {
+        _character = character;
+    }
+    public void OnHoverTravelLine() {
+        if(_character != null) {
+            UIManager.Instance.ShowCharacterPortraitHoverInfo(_character);
+        }
+    }
+    public void OnHoverOutTravelLine() {
+        UIManager.Instance.HideCharacteRPortraitHoverInfo();
+    }
+    public void OnClickTravelLine() {
+        if (_character != null) {
+            if(UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.id == _character.id) {
+                return;
+            }
+            UIManager.Instance.ShowCharacterInfo(_character);
+        }
+    }
     public void SetColor(Color color) {
-        fillImg.color = color;
-        iconImg.color = color;
+        fillImg.color = new Color(color.r, color.g, color.b, 0);
+        iconImg.color = new Color(color.r, color.g, color.b, 1);
     }
 
     public void SetLineParent(TravelLineParent lineParent) {

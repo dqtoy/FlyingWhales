@@ -162,7 +162,7 @@ public class CharacterAvatar : MonoBehaviour{
         _isTravelling = true;
         float distance = Vector3.Distance(_party.specificLocation.coreTile.transform.position, targetLocation.coreTile.transform.position);
         _distanceToTarget = (Mathf.CeilToInt(distance / 2.315188f)) * 2; //6
-        _travelLine = _party.specificLocation.coreTile.CreateTravelLine(targetLocation.coreTile, _distanceToTarget);
+        _travelLine = _party.specificLocation.coreTile.CreateTravelLine(targetLocation.coreTile, _distanceToTarget, _party.owner);
         _travelLine.SetActiveMeter(isVisualShowing);
         Messenger.AddListener(Signals.DAY_STARTED, TraverseCurveLine);
         Messenger.Broadcast(Signals.PARTY_STARTED_TRAVELLING, this.party);

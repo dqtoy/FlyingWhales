@@ -232,6 +232,7 @@ GameObject:
   - component: {fileID: 224021626984915622}
   - component: {fileID: 223441396102359940}
   - component: {fileID: 114624714865392280}
+  - component: {fileID: 114301298564578434}
   m_Layer: 8
   m_Name: UIParent
   m_TagString: Untagged
@@ -1984,6 +1985,22 @@ MonoBehaviour:
   alphaThreshold: 0.01
   drawOutside: 0
   enableInstancing: 0
+--- !u!114 &114301298564578434
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000011184858964}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1301386320, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreReversedGraphics: 1
+  m_BlockingObjects: 0
+  m_BlockingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!114 &114489516184594406
 MonoBehaviour:
   m_ObjectHideFlags: 1

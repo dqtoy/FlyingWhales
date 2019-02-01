@@ -43,6 +43,9 @@ public class UIManager : MonoBehaviour {
     public EnvelopContentUnityUI smallInfoEnvelopContent;
     public LocationSmallInfo locationSmallInfo;
     public RectTransform locationSmallInfoRT;
+    public GameObject characterPortraitHoverInfoGO;
+    public CharacterPortrait characterPortraitHoverInfo;
+    public RectTransform characterPortraitHoverInfoRT;
 
     [Space(10)]
     [Header("Detailed Info")]
@@ -460,6 +463,16 @@ public class UIManager : MonoBehaviour {
     public void HideSmallInfo() {
         smallInfoGO.SetActive(false);
         //smallInfoGO.transform.parent = this.transform;
+    }
+    public void ShowCharacterPortraitHoverInfo(Character character) {
+        characterPortraitHoverInfo.GeneratePortrait(character);
+        characterPortraitHoverInfoGO.SetActive(true);
+
+        characterPortraitHoverInfoRT.SetParent(this.transform);
+        PositionTooltip(characterPortraitHoverInfoRT);
+    }
+    public void HideCharacteRPortraitHoverInfo() {
+        characterPortraitHoverInfoGO.SetActive(false);
     }
     public void ShowDetailedInfo(Party party) {
         detailedInfoGO.SetActive(true);

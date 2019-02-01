@@ -1714,7 +1714,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 
         return curve;
     }
-    public TravelLine CreateTravelLine(HexTile target, int numOfTicks) {
+    public TravelLine CreateTravelLine(HexTile target, int numOfTicks, Character character) {
         TravelLineParent lineParent = BezierCurveManager.Instance.GetTravelLineParent(this, target);
         if (lineParent == null) {
             GameObject goParent = GameObject.Instantiate(GameManager.Instance.travelLineParentPrefab);
@@ -1724,6 +1724,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         GameObject go = GameObject.Instantiate(GameManager.Instance.travelLinePrefab, lineParent.transform);
         go.transform.SetParent(lineParent.transform);
         TravelLine travelLine = go.GetComponent<TravelLine>();
+        travelLine.SetCharacter(character);
         lineParent.AddChild(travelLine);
 
         TravelLineParent targetLineParent = BezierCurveManager.Instance.GetTravelLineParent(target, this);

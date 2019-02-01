@@ -670,7 +670,9 @@ public class Faction {
                 _offenseTaskNumOfReserved = 8;
             }
         } else if (category == INTERACTION_CATEGORY.EXPANSION) {
-            weight = 100;
+            if(size != FACTION_SIZE.MINOR) {
+                weight = 100;
+            }
         }
         return weight;
     }
