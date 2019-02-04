@@ -1249,6 +1249,7 @@ public enum RELATIONSHIP_TRAIT {
     SERVANT,
     MENTOR,
     STUDENT,
+    SAVE_TARGET,
 }
 
 public enum POINT_OF_INTEREST_TYPE {

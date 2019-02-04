@@ -34,7 +34,7 @@ public class Dwelling : LocationStructure {
             for (int i = 0; i < residents.Count; i++) {
                 Character currResident = residents[i];
                 List<RELATIONSHIP_TRAIT> rels = currResident.GetAllRelationshipTraitTypesWith(character);
-                if (rels.Contains(RELATIONSHIP_TRAIT.LOVER) || rels.Contains(RELATIONSHIP_TRAIT.SERVANT)) {
+                if (rels != null && (rels.Contains(RELATIONSHIP_TRAIT.LOVER) || rels.Contains(RELATIONSHIP_TRAIT.SERVANT))) {
                     return true;
                 }
             }

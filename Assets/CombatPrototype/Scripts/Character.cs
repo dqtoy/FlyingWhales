@@ -1595,47 +1595,35 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public RelationshipTrait GetRelationshipTraitWith(Character character, RELATIONSHIP_TRAIT type) {
         if (relationships.ContainsKey(character)) {
-            for (int i = 0; i < relationships[character].rels.Count; i++) {
-                RelationshipTrait relTrait = relationships[character].rels[i];
-                if (relTrait.relType == type) {
-                    return relTrait;
-                }
-            }
+            return relationships[character].GetRelationshipTrait(type);
         }
         return null;
     }
     public List<RelationshipTrait> GetAllRelationshipTraitWith(Character character) {
-        List<RelationshipTrait> rels = new List<RelationshipTrait>();
         if (relationships.ContainsKey(character)) {
-            rels.AddRange(relationships[character].rels);
+            return new List<RelationshipTrait>(relationships[character].rels);
         }
-        return rels;
+        return null;
     }
     public List<RELATIONSHIP_TRAIT> GetAllRelationshipTraitTypesWith(Character character) {
-        List<RELATIONSHIP_TRAIT> rels = new List<RELATIONSHIP_TRAIT>();
         if (relationships.ContainsKey(character)) {
-            rels.AddRange(relationships[character].rels.Select(x => x.relType));
+            return new List<RELATIONSHIP_TRAIT>(relationships[character].rels.Select(x => x.relType));
         }
-        return rels;
+        return null;
     }
     public List<Character> GetCharactersWithRelationship(RELATIONSHIP_TRAIT type) {
         List<Character> characters = new List<Character>();
         foreach (KeyValuePair<Character, CharacterRelationshipData> kvp in relationships) {
-            for (int i = 0; i < kvp.Value.rels.Count; i++) {
-                if (kvp.Value.rels[i].relType == type) {
-                    characters.Add(kvp.Key);
-                    break;
-                }
+            if (kvp.Value.HasRelationshipTrait(type)) {
+                characters.Add(kvp.Key);
             }
         }
         return characters;
     }
     public Character GetCharacterWithRelationship(RELATIONSHIP_TRAIT type) {
         foreach (KeyValuePair<Character, CharacterRelationshipData> kvp in relationships) {
-            for (int i = 0; i < kvp.Value.rels.Count; i++) {
-                if (kvp.Value.rels[i].relType == type) {
-                    return kvp.Key;
-                }
+            if (kvp.Value.HasRelationshipTrait(type)) {
+                return kvp.Key;
             }
         }
         return null;
@@ -1643,6 +1631,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public bool CanHaveRelationshipWith(RELATIONSHIP_TRAIT type, Character target) {
         //NOTE: This is only one way checking. This character will only check itself, if he/she meets the requirements of a given relationship
         List<RELATIONSHIP_TRAIT> relationshipsWithTarget = GetAllRelationshipTraitTypesWith(target);
+        if(relationshipsWithTarget == null) { return true; }
         switch (type) {
             case RELATIONSHIP_TRAIT.ENEMY:
                 return !relationshipsWithTarget.Contains(RELATIONSHIP_TRAIT.ENEMY); //check that the target character is not already this characters enemy
@@ -2683,7 +2672,20 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 
         //**D. if character is non-Beast, non-Skeleton and not Charmed, loop through relationships and decide what action to do per character then determine weights**
         if(role.roleType != CHARACTER_ROLE.BEAST && race != RACE.SKELETON && !isStarving && !isExhausted && GetTrait("Charmed") == null) {
-
+            WeightedDictionary<Character> characterWeights = new WeightedDictionary<Character>();
+            foreach (KeyValuePair<Character, CharacterRelationshipData> kvp in relationships) {
+                int weight = kvp.Value.GetTotalRelationshipWeight();
+                if(kvp.Value.isCharacterMissing && !kvp.Value.HasRelationshipTrait(RELATIONSHIP_TRAIT.ENEMY)) {
+                    weight += 25;
+                }
+                if(kvp.Value.encounterMultiplier > 0f) {
+                    weight = (int)(weight * kvp.Value.encounterMultiplier);
+                }
+            }
+            if(characterWeights.GetTotalOfWeights() > 0) {
+                Character chosenCharacter = characterWeights.PickRandomElementGivenWeights();
+                //TODO: CHARACTER NPC ACTION TYPES
+            }
         }
 
         //**E. loop through relevant traits then add relevant weights per associated action**

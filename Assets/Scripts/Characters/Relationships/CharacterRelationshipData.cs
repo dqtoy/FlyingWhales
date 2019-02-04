@@ -34,6 +34,47 @@ public class CharacterRelationshipData {
     public void RemoveRelationship(RelationshipTrait newRel) {
         rels.Remove(newRel);
     }
+    public bool HasRelationshipTrait(RELATIONSHIP_TRAIT relType) {
+        for (int i = 0; i < rels.Count; i++) {
+            if(rels[i].relType == relType) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public RelationshipTrait GetRelationshipTrait(RELATIONSHIP_TRAIT relType) {
+        for (int i = 0; i < rels.Count; i++) {
+            if (rels[i].relType == relType) {
+                return rels[i];
+            }
+        }
+        return null;
+    }
+    public int GetTotalRelationshipWeight() {
+        int weight = 0;
+        for (int i = 0; i < rels.Count; i++) {
+            weight += GetRelationshipWeight(rels[i].relType);
+        }
+        return weight;
+    }
+    public int GetRelationshipWeight(RELATIONSHIP_TRAIT relType) {
+        if(relType == RELATIONSHIP_TRAIT.FRIEND) {
+            return 15;
+        } else if (relType == RELATIONSHIP_TRAIT.RELATIVE) {
+            return 10;
+        } else if (relType == RELATIONSHIP_TRAIT.LOVER) {
+            return 15;
+        } else if (relType == RELATIONSHIP_TRAIT.PARAMOUR) {
+            return 20;
+        } else if (relType == RELATIONSHIP_TRAIT.MASTER) {
+            return 5;
+        } else if (relType == RELATIONSHIP_TRAIT.ENEMY) {
+            return 10;
+        } else if (relType == RELATIONSHIP_TRAIT.SAVE_TARGET) {
+            return 15;
+        }
+        return 0;
+    }
     #endregion
 
     #region Encounter Multiplier
