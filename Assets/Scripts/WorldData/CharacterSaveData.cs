@@ -61,11 +61,11 @@ public class CharacterSaveData {
         //    equipmentData.Add(item.itemName);
         //}
 
-        inventoryData = new List<string>();
-        for (int i = 0; i < character.inventory.Count; i++) {
-            Item item = character.inventory[i];
-            inventoryData.Add(item.itemName);
-        }
+        //inventoryData = new List<string>();
+        //for (int i = 0; i < character.inventory.Count; i++) {
+        //    Item item = character.inventory[i];
+        //    inventoryData.Add(item.itemName);
+        //}
 
         //relationshipsData = new List<RelationshipSaveData>();
         //foreach (KeyValuePair<Character, Relationship> kvp in character.relationships) {

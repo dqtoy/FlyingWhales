@@ -234,6 +234,9 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 7d3e761fdcebbf246a777087be0c855c, type: 3}
   - {fileID: 21300000, guid: 9f21cc01082fd2945a062145a41b94f5, type: 3}
   - {fileID: 21300000, guid: 4732e2d6081d3f5438cfd307a7b3c3a3, type: 3}
+  - {fileID: 21300000, guid: 9e6ac31dc22c6c74c87fa0351f9a63c3, type: 3}
+  - {fileID: 21300000, guid: 78db681f8586d404db68e5023e213627, type: 3}
+  - {fileID: 21300000, guid: 1a05b6915f3a9214694630a4e097233b, type: 3}
   - {fileID: 21300000, guid: cf4a07fe10de7fe4f9c10d5431585e6c, type: 3}
   - {fileID: 21300000, guid: eb7f9b088605da7409706c272a845a87, type: 3}
   - {fileID: 21300000, guid: 32f5284e780ab35459035b92f39b3f9e, type: 3}
@@ -503,6 +506,9 @@ SpriteAtlas:
   - experience_bar_on
   - experience_bar_off
   - decor_bar1
+  - traveller_clicked
+  - traveller_hover
+  - traveller_default
   - nameplate_residents
   - nameplate_visitors
   - hourglass

@@ -18,13 +18,13 @@ public class CharacterUIData {
     public Armor equippedArmor { get; private set; }
     public Item equippedAccessory { get; private set; }
     public Item equippedConsumable { get; private set; }
-    public List<Item> inventory { get; private set; }
+    //public List<Item> inventory { get; private set; }
     public List<Relationship> relationships { get; private set; }
     public Faction faction;
 
     public CharacterUIData() {
         combatAttributes = new List<Trait>();
-        inventory = new List<Item>();
+        //inventory = new List<Item>();
         relationships = new List<Relationship>();
     }
 
@@ -49,10 +49,10 @@ public class CharacterUIData {
         equippedAccessory = character.equippedAccessory;
         equippedConsumable = character.equippedConsumable;
 
-        inventory.Clear();
-        if (character.inventory != null) {
-            inventory.AddRange(character.inventory);
-        }
+        //inventory.Clear();
+        //if (character.inventory != null) {
+        //    inventory.AddRange(character.inventory);
+        //}
 
         relationships.Clear();
         //if(character.relationships != null) {

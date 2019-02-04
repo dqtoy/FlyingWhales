@@ -331,22 +331,22 @@ namespace worldcreator {
             inventoryChoicesDropdown.AddOptions(choices);
         }
         private void LoadInventory() {
-            Utilities.DestroyChildren(inventoryScrollView.content);
-            for (int i = 0; i < _character.inventory.Count; i++) {
-                Item currItem = _character.inventory[i];
-                OnItemObtained(currItem, _character);
-            }
+            //Utilities.DestroyChildren(inventoryScrollView.content);
+            //for (int i = 0; i < _character.inventory.Count; i++) {
+            //    Item currItem = _character.inventory[i];
+            //    OnItemObtained(currItem, _character);
+            //}
         }
         public void AddInventory() {
-            string chosenItem = inventoryChoicesDropdown.options[inventoryChoicesDropdown.value].text;
-            Item item = ItemManager.Instance.allItems[chosenItem].CreateNewCopy();
-            _character.PickupItem(item);
+            //string chosenItem = inventoryChoicesDropdown.options[inventoryChoicesDropdown.value].text;
+            //Item item = ItemManager.Instance.allItems[chosenItem].CreateNewCopy();
+            //_character.PickupItem(item);
         }
         private void OnItemObtained(Item item, Character character) {
-            GameObject itemGO = GameObject.Instantiate(itemEditorPrefab, inventoryScrollView.content);
-            ItemEditorItem itemComp = itemGO.GetComponent<ItemEditorItem>();
-            itemComp.SetItem(item, character);
-            itemComp.SetDeleteItemAction(() => _character.ThrowItem(item));
+            //GameObject itemGO = GameObject.Instantiate(itemEditorPrefab, inventoryScrollView.content);
+            //ItemEditorItem itemComp = itemGO.GetComponent<ItemEditorItem>();
+            //itemComp.SetItem(item, character);
+            //itemComp.SetDeleteItemAction(() => _character.ThrowItem(item));
         }
         private void OnItemThrown(Item item, Character character) {
             GameObject.Destroy(GetInventoryEditorItem(item).gameObject);

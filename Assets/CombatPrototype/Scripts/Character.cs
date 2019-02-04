@@ -18,7 +18,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     protected int _id;
     protected int _gold;
     protected int _currentInteractionTick;
-    protected int _lastLevelUpDay;
     protected int _doNotDisturb;
     protected float _actRate;
     protected bool _isDead;
@@ -41,22 +40,18 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     protected Armor _equippedArmor;
     protected Item _equippedAccessory;
     protected Item _equippedConsumable;
-    protected CharacterBattleTracker _battleTracker;
-    protected CharacterBattleOnlyTracker _battleOnlyTracker;
     protected PortraitSettings _portraitSettings;
     protected Color _characterColor;
     protected Minion _minion;
     protected Interaction _forcedInteraction;
     protected CombatCharacter _currentCombatCharacter;
     protected PairCombatStats[] _pairCombatStats;
-    protected List<Item> _inventory;
     protected List<Skill> _skills;
     protected List<Log> _history;
     protected List<Trait> _traits;
     protected List<Interaction> _currentInteractions;
     protected Dictionary<ELEMENT, float> _elementalWeaknesses;
     protected Dictionary<ELEMENT, float> _elementalResistances;
-    protected Dictionary<Character, List<string>> _traceInfo;
     protected PlayerCharacterItem _playerCharacterItem;
 
     //Stats
@@ -177,9 +172,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public Area specificLocation {
         get { return _currentParty.specificLocation; }
     }
-    public List<Item> inventory {
-        get { return this._inventory; }
-    }
     public List<Skill> skills {
         get { return this._skills; }
     }
@@ -227,9 +219,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public bool isIdle {
         get { return _forcedInteraction == null && _doNotDisturb <= 0 && IsInOwnParty() && !currentParty.icon.isTravelling; }
-    }
-    public Dictionary<Character, List<string>> traceInfo {
-        get { return _traceInfo; }
     }
     public PortraitSettings portraitSettings {
         get { return _portraitSettings; }
@@ -349,12 +338,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public Item equippedConsumable {
         get { return _equippedConsumable; }
     }
-    public CharacterBattleTracker battleTracker {
-        get { return _battleTracker; }
-    }
-    public CharacterBattleOnlyTracker battleOnlyTracker {
-        get { return _battleOnlyTracker; }
-    }
     public float computedPower {
         get { return GetComputedPower(); }
     }
@@ -465,36 +448,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         AssignRandomJob();
         SetMorality(data.morality);
-
-        //_bodyParts = new List<BodyPart>(_raceSetting.bodyParts);
-        //ConstructBodyPartDict(_raceSetting.bodyParts);
-        //_skills = GetGeneralSkills();
-        //_skills = new List<Skill>();
-        //_skills.Add(_characterClass.skill);
-        //_skills.AddRange (GetBodyPartSkills ());
-        //GenerateSetupTags(baseSetup);
-
-        //AllocateStatPoints(10);
-        //EquipItemsByClass();
-        //SetTraitsFromClass();
         SetTraitsFromRace();
-        //EquipPreEquippedItems(baseSetup);
-        //CharacterSetup setup = CombatManager.Instance.GetBaseCharacterSetup(data.className);
-        //if (setup != null) {
-        //    GenerateSetupAttributes(setup);
-        //    //if (setup.optionalRole != CHARACTER_ROLE.NONE) {
-        //    //    AssignRole(setup.optionalRole);
-        //    //}
-        //}
         ResetToFullHP();
-        //DetermineAllowedMiscActions();
     }
     public Character() {
         SetIsDead(false);
         _isFainted = false;
         //_isDefeated = false;
         //_isIdle = false;
-        _traceInfo = new Dictionary<Character, List<string>>();
         _history = new List<Log>();
         _traits = new List<Trait>();
 
@@ -504,20 +465,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         _experience = 0;
         _elementalWeaknesses = new Dictionary<ELEMENT, float>(CharacterManager.Instance.elementsChanceDictionary);
         _elementalResistances = new Dictionary<ELEMENT, float>(CharacterManager.Instance.elementsChanceDictionary);
-        _battleTracker = new CharacterBattleTracker();
-        _battleOnlyTracker = new CharacterBattleOnlyTracker();
         //_equippedItems = new List<Item>();
-        _inventory = new List<Item>();
         combatHistory = new Dictionary<int, Combat>();
         _currentInteractions = new List<Interaction>();
         characterToken = new CharacterToken(this);
         tokenInInventory = null;
         interactionWeights = new WeightedDictionary<INTERACTION_TYPE>();
         relationships = new Dictionary<Character, List<RelationshipTrait>>();
-
-        //AllocateStats();
-        //EquipItemsByClass();
-        //ConstructBuffs();
 
         skinColor = Color.HSVToRGB(UnityEngine.Random.Range(1, 80f)/360f, 15f/100f, 100f/100f);
         hairColor = Color.HSVToRGB(UnityEngine.Random.Range(0f, 360f)/360f, 25f/100f, 90f/100f);
@@ -760,9 +714,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             //            while (_equippedItems.Count > 0) {
             //	ThrowItem (_equippedItems [0]);
             //}
-            while (_inventory.Count > 0) {
-                ThrowItem(_inventory[0]);
-            }
             if (ownParty.specificLocation != null && tokenInInventory != null) {
                 tokenInInventory.SetOwner(null);
                 DropToken(ownParty.specificLocation, currentStructure);
@@ -857,66 +808,56 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
 
     #region Items
-    //If a character picks up an item, it is automatically added to his/her inventory
-    internal void PickupItem(Item item, bool broadcast = true) {
-        Item newItem = item;
-        if (_inventory.Contains(newItem)) {
-            throw new Exception(this.name + " already has an instance of " + newItem.itemName);
-        }
-        this._inventory.Add(newItem);
-        //newItem.SetPossessor (this);
-        if (newItem.owner == null) {
-            OwnItem(newItem);
-        }
-#if !WORLD_CREATION_TOOL
-        Log obtainLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "obtain_item");
-        obtainLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        obtainLog.AddToFillers(null, item.itemName, LOG_IDENTIFIER.ITEM_1);
-        AddHistory(obtainLog);
-        _ownParty.specificLocation.AddHistory(obtainLog);
-#endif
-        if (broadcast) {
-            Messenger.Broadcast(Signals.ITEM_OBTAINED, newItem, this);
-        }
-        newItem.OnItemPutInInventory(this);
-    }
-    internal void ThrowItem(Item item, bool addInLandmark = true) {
-        if (item.isEquipped) {
-            UnequipItem(item);
-        }
-        //item.SetPossessor (null);
-        this._inventory.Remove(item);
-        //item.exploreWeight = 15;
-        //if (addInLandmark) {
-        //    Area location = _ownParty.specificLocation;
-        //    if (location != null && location.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
-        //        BaseLandmark landmark = location as BaseLandmark;
-        //        landmark.AddItem(item);
-        //    }
-        //}
-        Messenger.Broadcast(Signals.ITEM_THROWN, item, this);
-    }
-    internal void ThrowItem(string itemName, int quantity, bool addInLandmark = true) {
-        for (int i = 0; i < quantity; i++) {
-            if (HasItem(itemName)) {
-                ThrowItem(GetItemInInventory(itemName), addInLandmark);
-            }
-        }
-    }
-    internal void DropItem(Item item) {
-        ThrowItem(item);
-        Area location = _ownParty.specificLocation;
-        if (location != null) {
-            //BaseLandmark landmark = location as BaseLandmark;
-            Log dropLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "drop_item");
-            dropLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            dropLog.AddToFillers(null, item.itemName, LOG_IDENTIFIER.ITEM_1);
-            dropLog.AddToFillers(location, location.name, LOG_IDENTIFIER.LANDMARK_1);
-            AddHistory(dropLog);
-            location.AddHistory(dropLog);
-        }
+//    //If a character picks up an item, it is automatically added to his/her inventory
+//    internal void PickupItem(Item item, bool broadcast = true) {
+//        Item newItem = item;
+//        if (_inventory.Contains(newItem)) {
+//            throw new Exception(this.name + " already has an instance of " + newItem.itemName);
+//        }
+//        this._inventory.Add(newItem);
+//        if (newItem.owner == null) {
+//            OwnItem(newItem);
+//        }
+//#if !WORLD_CREATION_TOOL
+//        Log obtainLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "obtain_item");
+//        obtainLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+//        obtainLog.AddToFillers(null, item.itemName, LOG_IDENTIFIER.ITEM_1);
+//        AddHistory(obtainLog);
+//        _ownParty.specificLocation.AddHistory(obtainLog);
+//#endif
+//        if (broadcast) {
+//            Messenger.Broadcast(Signals.ITEM_OBTAINED, newItem, this);
+//        }
+//        newItem.OnItemPutInInventory(this);
+//    }
+//    internal void ThrowItem(Item item, bool addInLandmark = true) {
+//        if (item.isEquipped) {
+//            UnequipItem(item);
+//        }
+//        this._inventory.Remove(item);
+//        Messenger.Broadcast(Signals.ITEM_THROWN, item, this);
+//    }
+    //internal void ThrowItem(string itemName, int quantity, bool addInLandmark = true) {
+    //    for (int i = 0; i < quantity; i++) {
+    //        if (HasItem(itemName)) {
+    //            ThrowItem(GetItemInInventory(itemName), addInLandmark);
+    //        }
+    //    }
+    //}
+    //internal void DropItem(Item item) {
+    //    ThrowItem(item);
+    //    Area location = _ownParty.specificLocation;
+    //    if (location != null) {
+    //        //BaseLandmark landmark = location as BaseLandmark;
+    //        Log dropLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "drop_item");
+    //        dropLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+    //        dropLog.AddToFillers(null, item.itemName, LOG_IDENTIFIER.ITEM_1);
+    //        dropLog.AddToFillers(location, location.name, LOG_IDENTIFIER.LANDMARK_1);
+    //        AddHistory(dropLog);
+    //        location.AddHistory(dropLog);
+    //    }
 
-    }
+    //}
     public void EquipItem(string itemName) {
         Item item = ItemManager.Instance.CreateNewItemInstance(itemName);
         if (item != null) {
@@ -1043,12 +984,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         } else if (_equippedConsumable != null && _equippedConsumable.itemName == itemName) {
             return true;
         }
-        for (int i = 0; i < _inventory.Count; i++) {
-            Item currItem = _inventory[i];
-            if (currItem.itemName.Equals(itemName)) {
-                return true;
-            }
-        }
         return false;
     }
     internal bool HasItem(Item item) {
@@ -1059,9 +994,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         } else if (_equippedAccessory != null && _equippedAccessory.itemName == item.itemName) {
             return true;
         } else if (_equippedConsumable != null && _equippedConsumable.itemName == item.itemName) {
-            return true;
-        }
-        if (inventory.Contains(item)) {
             return true;
         }
         return false;
@@ -1082,12 +1014,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         } else if (_equippedConsumable != null && _equippedConsumable.itemName == itemName) {
             counter++;
         }
-        for (int i = 0; i < _inventory.Count; i++) {
-            Item currItem = _inventory[i];
-            if (currItem.itemName.Contains(itemName)) {
-                counter++;
-            }
-        }
         if (counter >= quantity) {
             return true;
         } else {
@@ -1105,127 +1031,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         } else if (_equippedConsumable != null && _equippedConsumable.itemName == itemName) {
             items.Add(_equippedConsumable);
         }
-        for (int i = 0; i < _inventory.Count; i++) {
-            Item currItem = _inventory[i];
-            if (currItem.itemName.Contains(itemName)) {
-                items.Add(currItem);
-            }
-        }
         return items;
     }
-    internal Item GetItemInInventory(string itemName) {
-        for (int i = 0; i < _inventory.Count; i++) {
-            Item currItem = _inventory[i];
-            if (currItem.itemName.Equals(itemName)) {
-                return currItem;
-            }
-        }
-        return null;
-    }
-    public void GiveItemsTo(List<Item> items, Character otherCharacter) {
-        for (int i = 0; i < items.Count; i++) {
-            Item currItem = items[i];
-            if (this.HasItem(currItem)) { //check if the character still has the item that he wants to give
-                this.ThrowItem(currItem, false);
-                otherCharacter.PickupItem(currItem);
-                Debug.Log(this.name + " gave item " + currItem.itemName + " to " + otherCharacter.name);
-            }
-        }
-    }
-    //private void EquipItemsByClass() {
-    //    if (_characterClass != null) {
-    //        if (_characterClass.weaponTierNames != null && _characterClass.weaponTierNames.Count > 0) {
-    //            EquipItem(_characterClass.weaponTierNames[0]);
-    //        }
-    //        if (_characterClass.armorTierNames != null && _characterClass.armorTierNames.Count > 0) {
-    //            EquipItem(_characterClass.armorTierNames[0]);
-    //        }
-    //        if (_characterClass.accessoryTierNames != null && _characterClass.accessoryTierNames.Count > 0) {
-    //            EquipItem(_characterClass.accessoryTierNames[0]);
-    //        }
-    //    }
-    //}
-    public void UpgradeWeapon() {
-        //if (_characterClass != null && _equippedWeapon != null) {
-        //    if (_characterClass.weaponTierNames != null && _characterClass.weaponTierNames.Count > 0) {
-        //        bool foundEquipped = false;
-        //        for (int i = 0; i < _characterClass.weaponTierNames.Count; i++) {
-        //            if (foundEquipped) {
-        //                //Found equipped item, now equip next on the list for upgrade
-        //                EquipItem(_characterClass.weaponTierNames[i]);
-        //                break;
-        //            } else {
-        //                if (_equippedWeapon.itemName == _characterClass.weaponTierNames[i]) {
-        //                    foundEquipped = true;
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
-    }
-    public void UpgradeArmor() {
-        //if (_characterClass != null && _equippedArmor != null) {
-        //    if (_characterClass.armorTierNames != null && _characterClass.armorTierNames.Count > 0) {
-        //        bool foundEquipped = false;
-        //        for (int i = 0; i < _characterClass.armorTierNames.Count; i++) {
-        //            if (foundEquipped) {
-        //                //Found equipped item, now equip next on the list for upgrade
-        //                EquipItem(_characterClass.armorTierNames[i]);
-        //                break;
-        //            } else {
-        //                if (_equippedArmor.itemName == _characterClass.armorTierNames[i]) {
-        //                    foundEquipped = true;
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
-    }
-    public void UpgradeAccessory() {
-        //if (_characterClass != null && _equippedAccessory != null) {
-        //    if (_characterClass.accessoryTierNames != null && _characterClass.accessoryTierNames.Count > 0) {
-        //        bool foundEquipped = false;
-        //        for (int i = 0; i < _characterClass.accessoryTierNames.Count; i++) {
-        //            if (foundEquipped) {
-        //                //Found equipped weapon, now equip next on the list for upgrade
-        //                EquipItem(_characterClass.accessoryTierNames[i]);
-        //                break;
-        //            } else {
-        //                if (_equippedAccessory.itemName == _characterClass.accessoryTierNames[i]) {
-        //                    foundEquipped = true;
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
-    }
     #endregion
-
-    //#region Status Effects
-    //internal void AddStatusEffect(STATUS_EFFECT statusEffect) {
-    //    this._statusEffects.Add(statusEffect);
-    //}
-    //internal void RemoveStatusEffect(STATUS_EFFECT statusEffect) {
-    //    this._statusEffects.Remove(statusEffect);
-    //}
-    //internal void CureStatusEffects() {
-    //    for (int i = 0; i < _statusEffects.Count; i++) {
-    //        STATUS_EFFECT statusEffect = _statusEffects[i];
-    //        int chance = Utilities.rng.Next(0, 100);
-    //        if (chance < 15) {
-    //            _ownParty.currentCombat.AddCombatLog(this.name + " is cured from " + statusEffect.ToString().ToLower() + ".", this.currentSide);
-    //            RemoveStatusEffect(statusEffect);
-    //            i--;
-    //        }
-    //    }
-    //}
-    //internal bool HasStatusEffect(STATUS_EFFECT statusEffect) {
-    //    if (_statusEffects.Contains(statusEffect)) {
-    //        return true;
-    //    }
-    //    return false;
-    //}
-    //#endregion
 
     #region Skills
     //private List<Skill> GetGeneralSkills(){
@@ -1587,7 +1395,11 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     //}
     public void CenterOnCharacter() {
         if (!this.isDead) {
-            CameraMove.Instance.CenterCameraOn(currentParty.specificLocation.coreTile.gameObject);
+            if (currentParty.icon.isTravelling) {
+                CameraMove.Instance.CenterCameraOn(currentParty.icon.travelLine.iconImg.gameObject);
+            } else {
+                CameraMove.Instance.CenterCameraOn(currentParty.specificLocation.coreTile.gameObject);
+            }
         }
     }
     private void GetRandomCharacterColor() {
@@ -2742,15 +2554,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public void DailyInteractionGeneration() {
         if (_currentInteractionTick == GameManager.Instance.continuousDays) {
-            //if(job.jobType != JOB.NONE) {
-            //    job.CreateRandomInteractionForNonMinionCharacters();
-            //}
             GenerateDailyInteraction();
             SetDailyInteractionGenerationTick();
         } 
-        //else if (_currentInteractionTick > GameManager.Instance.continuousDays) {
-        //    SetDailyInteractionGenerationTick();
-        //}
     }
     public void GenerateDailyInteraction() {
         if (!IsInOwnParty() || isDefender || ownParty.icon.isTravelling || _doNotDisturb > 0 || _job == null) {
@@ -2758,19 +2564,11 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         if (job.jobType == JOB.NONE) {
             return;
-            //_job.CreateRandomInteractionForNonMinionCharacters();
         }
         string interactionLog = GameManager.Instance.TodayLogString() + "Generating daily interaction for " + this.name;
         if (_forcedInteraction != null) {
             interactionLog += "\nUsing forced interaction: " + _forcedInteraction.type.ToString();
             AddInteraction(_forcedInteraction);
-            //if(_forcedInteraction.CanInteractionBeDoneBy(this)) {
-            //      AddInteraction(_forcedInteraction);
-            //} else {
-            //    Interaction unable = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.UNABLE_TO_PERFORM, this.specificLocation.coreTile.landmarkOnTile);
-            //    AddInteraction(unable);
-            //    interactionLog += "\nCan't do forced interaction: " + _forcedInteraction.type.ToString();
-            //}
             _forcedInteraction = null;
         } else {
             if(specificLocation.id != homeArea.id) {
@@ -2853,42 +2651,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     AddInteraction(interaction);
                 }
             }
-
-
-
-            //int chance = UnityEngine.Random.Range(0, 100);
-            //if(chance >= 15) {
-            //    //Character will not perform
-            //    return;
-            //}
-            //WeightedDictionary<INTERACTION_TYPE> validInteractions = GetValidInteractionWeights();
-            //if (validInteractions != null) {
-            //    if (validInteractions.GetTotalOfWeights() > 0) {
-            //        interactionLog += "\n" + validInteractions.GetWeightsSummary("Generating interaction:");
-            //        INTERACTION_TYPE chosenInteraction = validInteractions.PickRandomElementGivenWeights();
-            //        //create interaction of type
-            //        BaseLandmark interactable = specificLocation.coreTile.landmarkOnTile;
-            //        if (interactable == null) {
-            //            throw new Exception(GameManager.Instance.TodayLogString() + this.name + "'s specific location (" + specificLocation.locationName + ") is not a landmark!");
-            //        }
-            //        Interaction createdInteraction = InteractionManager.Instance.CreateNewInteraction(chosenInteraction, specificLocation.coreTile.landmarkOnTile);
-
-            //        if (job.jobType == JOB.LEADER) {
-            //            //For Faction Upgrade Interaction Only
-            //            Area area = _homeLandmark.tileLocation.areaOfTile;
-            //            area.AdjustSuppliesInBank(-100);
-            //            createdInteraction.SetMinionSuccessAction(() => area.AdjustSuppliesInBank(100));
-            //        }
-
-            //        AddInteraction(createdInteraction);
-            //    } else {
-            //        interactionLog += "\nCannot generate interaction because weights are not greater than zero";
-            //    }
-            //} else {
-            //    interactionLog += "\nCannot generate interaction because there are no interactions for job: " + job.jobType.ToString();
-            //}
         }
-        //Debug.Log(interactionLog);
     }
     public void SetForcedInteraction(Interaction interaction) {
         _forcedInteraction = interaction;
@@ -2897,14 +2660,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         SetForcedInteraction(interaction);
         SetDailyInteractionGenerationTick(GameManager.Instance.continuousDays + 1);
     }
-    //private void DefaultAllExistingInteractions() {
-    //    for (int i = 0; i < _currentInteractions.Count; i++) {
-    //        if (!_currentInteractions[i].hasActivatedTimeOut) {
-    //            _currentInteractions[i].TimedOutRunDefault();
-    //            i--;
-    //        }
-    //    }
-    //}
+    private void CharacterPersonalActions() {
+        //Checker of Disabler trait is on GenerateDailyInteraction()
+        WeightedDictionary<INTERACTION_TYPE> personalActionWeights = new WeightedDictionary<INTERACTION_TYPE>();
+        if(GetTraitOr("Hungry", "Starving") != null) {
+            List<INTERACTION_TYPE> fullnessRecoveryInteractions = RaceManager.Instance.GetNPCInteractionsOfRace(race, INTERACTION_CATEGORY.FULLNESS_RECOVERY, this);
+        }
+    }
     public Interaction GetInteractionOfType(INTERACTION_TYPE type) {
         for (int i = 0; i < _currentInteractions.Count; i++) {
             Interaction currInteraction = _currentInteractions[i];

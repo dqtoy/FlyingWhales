@@ -10,6 +10,7 @@ public class TravelLine : MonoBehaviour {
 
     public Slider progressMeter;
     public Image fillImg, iconImg;
+    public Sprite defaultSprite, hoverSprite, clickedSprite;
 
     private TravelLineParent _travelLineParent;
     private int _currentTick;
@@ -28,6 +29,12 @@ public class TravelLine : MonoBehaviour {
 
     public void Initialize() {
         _currentTick = 0;
+        Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
+        Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
+    }
+    private void OnDestroy() {
+        Messenger.RemoveListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
+        Messenger.RemoveListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
     }
     public void SetCharacter(Character character) {
         _character = character;
@@ -35,10 +42,16 @@ public class TravelLine : MonoBehaviour {
     public void OnHoverTravelLine() {
         if(_character != null) {
             UIManager.Instance.ShowCharacterPortraitHoverInfo(_character);
+            iconImg.sprite = hoverSprite;
         }
     }
     public void OnHoverOutTravelLine() {
         UIManager.Instance.HideCharacteRPortraitHoverInfo();
+        if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.id == _character.id) {
+            iconImg.sprite = clickedSprite;
+        } else {
+            iconImg.sprite = defaultSprite;
+        }
     }
     public void OnClickTravelLine() {
         if (_character != null) {
@@ -49,8 +62,8 @@ public class TravelLine : MonoBehaviour {
         }
     }
     public void SetColor(Color color) {
-        fillImg.color = new Color(color.r, color.g, color.b, 0);
-        iconImg.color = new Color(color.r, color.g, color.b, 1);
+        //fillImg.color = new Color(color.r, color.g, color.b, 0);
+        //iconImg.color = new Color(color.r, color.g, color.b, 1);
     }
 
     public void SetLineParent(TravelLineParent lineParent) {
@@ -79,4 +92,17 @@ public class TravelLine : MonoBehaviour {
     private void TraverseLine(float val) {
         progressMeter.value = val / _travelLineParent.numOfTicks;
     }
+
+    #region Listeners
+    private void OnMenuOpened(UIMenu menu) {
+        if(menu is CharacterInfoUI && UIManager.Instance.characterInfoUI.activeCharacter.id == _character.id) {
+            iconImg.sprite = clickedSprite;
+        }
+    }
+    private void OnMenuClosed(UIMenu menu) {
+        if (menu is CharacterInfoUI && UIManager.Instance.characterInfoUI.activeCharacter.id == _character.id) {
+            iconImg.sprite = defaultSprite;
+        }
+    }
+    #endregion
 }

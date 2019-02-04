@@ -942,7 +942,7 @@ public class Area {
                     continue;
                 }
                 if ((owner == null && resident.faction == FactionManager.Instance.neutralFaction) || resident.faction == owner) {
-                    List<INTERACTION_TYPE> interactionTypes = RaceManager.Instance.GetInteractionsOfRace(resident.race, category, factionMorality);
+                    List<INTERACTION_TYPE> interactionTypes = RaceManager.Instance.GetFactionInteractionsOfRace(resident.race, category, factionMorality);
                     if(interactionTypes != null) {
                         for (int j = 0; j < interactionTypes.Count; j++) {
                             if(!InteractionManager.Instance.CanCreateInteraction(interactionTypes[j], resident)) {

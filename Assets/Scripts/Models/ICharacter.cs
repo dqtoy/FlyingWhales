@@ -41,7 +41,6 @@ public interface ICharacter {
     MODE currentMode { get; }
     RACE race { get; }
     Area specificLocation { get; }
-    CharacterBattleOnlyTracker battleOnlyTracker { get; }
     Faction faction { get; }
     Area homeArea { get; }
     CharacterRole role { get; } //Character only
@@ -56,7 +55,6 @@ public interface ICharacter {
     Dictionary<ELEMENT, float> elementalWeaknesses { get; }
     Dictionary<ELEMENT, float> elementalResistances { get; }
     List<Skill> skills { get; }
-    List<Item> inventory { get; }
     List<Log> history { get; }
     List<Trait> traits { get; }
     PortraitSettings portraitSettings { get; }
@@ -73,9 +71,6 @@ public interface ICharacter {
     //void ResetToFullSP();
     void Initialize();
     void Death();
-    void UpgradeWeapon();
-    void UpgradeArmor();
-    void UpgradeAccessory();
     void LevelUp();
     void OnRemovedFromParty();
     void OnAddedToParty();

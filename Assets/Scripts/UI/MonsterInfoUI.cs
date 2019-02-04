@@ -292,7 +292,7 @@ public class MonsterInfoUI : UIMenu {
     }
     private void UpdateItemsInfo(CharacterUIData uiData) {
         //UpdateEquipmentInfo(uiData.equippedItems);
-        UpdateInventoryInfo(uiData.inventory);
+        //UpdateInventoryInfo(uiData.inventory);
     }
     private void UpdateEquipmentInfo(List<Item> equipment) {
         headArmorContainer.SetItem(null);

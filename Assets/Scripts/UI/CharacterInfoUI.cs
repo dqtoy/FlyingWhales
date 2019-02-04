@@ -320,24 +320,7 @@ public class CharacterInfoUI : UIMenu {
     }
     private void UpdateBasicInfo() {
         nameLbl.text = _activeCharacter.name;
-//#if UNITY_EDITOR
-//        nameLbl.text += " (" + _activeCharacter.currentInteractionTick.ToString() + ")";
-//#endif
         lvlClassLbl.text = _activeCharacter.raceClassName;
-
-        //if (_activeCharacter.schedule != null) {
-        //    phaseLbl.text = _activeCharacter.schedule.currentPhase.ToString();
-        //    phaseLbl.gameObject.SetActive(true);
-        //} else {
-        //    phaseLbl.gameObject.SetActive(false);
-        //}
-        //if (_activeCharacter.IsInParty()) { //if was added to prevent showing the emblem if the character is only in a party with 1 character
-        //    partyEmblem.SetParty(_activeCharacter.currentParty);
-        //} else {
-        //    partyEmblem.SetParty(null);
-        //}
-                //factionEmblem.SetFaction(_activeCharacter.faction);
-        //affiliations.SetCharacter(_activeCharacter);
     }
 
     #region Stats
@@ -460,87 +443,6 @@ public class CharacterInfoUI : UIMenu {
         //UpdateInventoryInfo(_activeCharacter.inventory);
         itemContainer.SetItem(_activeCharacter.tokenInInventory);
     }
-    private void UpdateItemsInfo(CharacterUIData uiData) {
-        //UpdateEquipmentInfo(uiData.equippedItems);
-        UpdateInventoryInfo(uiData.inventory);
-    }
-    //private void UpdateEquipmentInfo(List<Item> equipment) {
-    //    headArmorContainer.SetItem(null);
-    //    chestArmorContainer.SetItem(null);
-    //    legArmorContainer.SetItem(null);
-    //    leftFootArmorContainer.SetItem(null);
-    //    rightFootArmorContainer.SetItem(null);
-        ////Equipment
-        //IBodyPart head = _activeCharacter.GetBodyPart("Head");
-        //if (head != null) {
-        //    Item headArmor = head.GetArmor();
-        //    if (headArmor != null) {
-        //        headArmorContainer.SetItem(headArmor);
-        //    } else {
-        //        headArmorContainer.SetItem(null);
-        //    }
-        //}
-
-        //IBodyPart torso = _activeCharacter.GetBodyPart("Torso");
-        //if (torso != null) {
-        //    Item torsoArmor = torso.GetArmor();
-        //    if (torsoArmor != null) {
-        //        chestArmorContainer.SetItem(torsoArmor);
-        //    } else {
-        //        chestArmorContainer.SetItem(null);
-        //    }
-        //}
-
-        //IBodyPart leftHand = _activeCharacter.GetBodyPart("Left Hand");
-        //if (leftHand != null) {
-        //    Item leftHandWeapon = leftHand.GetWeapon();
-        //    if (leftHandWeapon != null) {
-        //        leftHandContainer.SetItem(leftHandWeapon);
-        //    } else {
-        //        leftHandContainer.SetItem(null);
-        //    }
-        //}
-
-        //IBodyPart rightHand = _activeCharacter.GetBodyPart("Right Hand");
-        //if (rightHand != null) {
-        //    Item rightHandWeapon = rightHand.GetWeapon();
-        //    if (rightHandWeapon != null) {
-        //        rightHandContainer.SetItem(rightHandWeapon);
-        //    } else {
-        //        rightHandContainer.SetItem(null);
-        //    }
-        //}
-
-        //IBodyPart hips = _activeCharacter.GetBodyPart("Hip");
-        //if (hips != null) {
-        //    Item hipArmor = hips.GetArmor();
-        //    if (hipArmor != null) {
-        //        legArmorContainer.SetItem(hipArmor);
-        //    } else {
-        //        legArmorContainer.SetItem(null);
-        //    }
-        //}
-
-        //IBodyPart leftFoot = _activeCharacter.GetBodyPart("Left Foot");
-        //if (leftFoot != null) {
-        //    Item footArmor = leftFoot.GetArmor();
-        //    if (footArmor != null) {
-        //        leftFootArmorContainer.SetItem(footArmor);
-        //    } else {
-        //        leftFootArmorContainer.SetItem(null);
-        //    }
-        //}
-
-        //IBodyPart rightFoot = _activeCharacter.GetBodyPart("Right Foot");
-        //if (leftFoot != null) {
-        //    Item footArmor = rightFoot.GetArmor();
-        //    if (footArmor != null) {
-        //        rightFootArmorContainer.SetItem(footArmor);
-        //    } else {
-        //        rightFootArmorContainer.SetItem(null);
-        //    }
-        //}
-    //}
     private void UpdateInventoryInfo(List<Item> inventory) {
         for (int i = 0; i < inventoryItemContainers.Length; i++) {
             ItemContainer currContainer = inventoryItemContainers[i];
@@ -549,57 +451,6 @@ public class CharacterInfoUI : UIMenu {
         }
     }
     #endregion
-
-    //private void UpdateMoodInfo() {
-    //    overallProgressBar.value = _activeCharacter.role.happiness;
-    //    energyProgressBar.value = _activeCharacter.role.energy;
-    //    fullnessProgressBar.value = _activeCharacter.role.fullness;
-    //    funProgressBar.value = _activeCharacter.role.fun;
-    //    //prestigeProgressBar.value = _activeCharacter.role.prestige;
-    //    //sanityProgressBar.value = _activeCharacter.role.sanity;
-    //}
-
-    //private void UpdateEquipmentInfo() {
-    //    string text = string.Empty;
-    //    if (_activeCharacter.equippedItems.Count > 0) {
-    //        for (int i = 0; i < _activeCharacter.equippedItems.Count; i++) {
-    //            Item item = _activeCharacter.equippedItems[i];
-    //            if (i > 0) {
-    //                text += "\n";
-    //            }
-    //            text += item.itemName;
-    //            if (item is Weapon) {
-    //                Weapon weapon = (Weapon)item;
-    //                if (weapon.bodyPartsAttached.Count > 0) {
-    //                    text += " (";
-    //                    for (int j = 0; j < weapon.bodyPartsAttached.Count; j++) {
-    //                        if (j > 0) {
-    //                            text += ", ";
-    //                        }
-    //                        text += weapon.bodyPartsAttached[j].name;
-    //                    }
-    //                    text += ")";
-    //                }
-    //            } else if (item is Armor) {
-    //                Armor armor = (Armor)item;
-    //                text += " (" + armor.bodyPartAttached.name + ")";
-    //            }
-    //        }
-    //    } else {
-    //        text += "NONE";
-    //    }
-    //    equipmentInfoLbl.text = text;
-    //}
-
-    //private void UpdateInventoryInfo() {
-    //    string text = string.Empty;
-    //    CharacterObj obj = _activeCharacter.party.characterObject as CharacterObj;
-    //    foreach (RESOURCE resource in obj.resourceInventory.Keys) {
-    //        text += resource.ToString() + ": " + obj.resourceInventory[resource];
-    //        text += "\n";
-    //    }
-    //    inventoryInfoLbl.text = text;
-    //}
 
     #region Relationships
     List<CharacterRelationshipItem> shownRelationships = new List<CharacterRelationshipItem>();

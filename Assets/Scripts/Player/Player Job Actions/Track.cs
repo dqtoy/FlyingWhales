@@ -26,15 +26,16 @@ public class Track : PlayerJobAction {
         base.ActivateAction(assignedCharacter, targetCharacter);
         currentTargetType = JOB_ACTION_TARGET.CHARACTER;
         target = targetCharacter;
-        targetCharacter.ownParty.icon.SetVisualState(true);
+        //targetCharacter.ownParty.icon.SetVisualState(true);
         Debug.Log(GameManager.Instance.TodayLogString() + assignedCharacter.name + " is now tracking " + targetCharacter.name);
         SetSubText("Currently tracking " + targetCharacter.name);
     }
     public override void DeactivateAction() {
         base.DeactivateAction();
-        if (target is Character) {
-            (target as Character).ownParty.icon.SetVisualState(false);
-        } else if (target is Area) {
+        //if (target is Character) {
+        //    (target as Character).ownParty.icon.SetVisualState(false);
+        //} else 
+        if (target is Area) {
             (target as Area).SetTrackedState(false);
         }
         currentTargetType = JOB_ACTION_TARGET.NONE;

@@ -76,6 +76,9 @@ public class CharacterAvatar : MonoBehaviour{
     public GameObject avatarVisual {
         get { return _avatarVisual; }
     }
+    public TravelLine travelLine {
+        get { return _travelLine; }
+    }
     #endregion
 
     public virtual void Init(Party party) {
@@ -85,7 +88,7 @@ public class CharacterAvatar : MonoBehaviour{
         this.smoothMovement.onMoveFinished += OnMoveFinished;
         _isInitialized = true;
         _hasArrived = true;
-        SetVisualState(false);
+        SetVisualState(true);
         if (_party.mainCharacter is CharacterArmyUnit) {
             _avatarSpriteRenderer.sprite = CharacterManager.Instance.villainSprite;
         } else {
@@ -105,16 +108,16 @@ public class CharacterAvatar : MonoBehaviour{
         CharacterManager.Instance.AddCharacterAvatar(this);
 #endif
         //Messenger.AddListener(Signals.TOGGLE_CHARACTERS_VISIBILITY, OnToggleCharactersVisibility);
-        Messenger.AddListener(Signals.INSPECT_ALL, OnInspectAll);
-        Messenger.AddListener<CharacterToken>(Signals.CHARACTER_TOKEN_ADDED, OnCharacterTokenObtained);
+        //Messenger.AddListener(Signals.INSPECT_ALL, OnInspectAll);
+        //Messenger.AddListener<CharacterToken>(Signals.CHARACTER_TOKEN_ADDED, OnCharacterTokenObtained);
     }
 
     #region Monobehaviour
     private void OnDestroy() {
-        Messenger.RemoveListener(Signals.INSPECT_ALL, OnInspectAll);
-        if (Messenger.eventTable.ContainsKey(Signals.CHARACTER_TOKEN_ADDED)) {
-            Messenger.RemoveListener<CharacterToken>(Signals.CHARACTER_TOKEN_ADDED, OnCharacterTokenObtained);
-        }
+        //Messenger.RemoveListener(Signals.INSPECT_ALL, OnInspectAll);
+        //if (Messenger.eventTable.ContainsKey(Signals.CHARACTER_TOKEN_ADDED)) {
+            //Messenger.RemoveListener<CharacterToken>(Signals.CHARACTER_TOKEN_ADDED, OnCharacterTokenObtained);
+        //}
         //Messenger.RemoveListener(Signals.TOGGLE_CHARACTERS_VISIBILITY, OnToggleCharactersVisibility);
         if (_isTravelling) {
             CancelledDeparture();

@@ -214,15 +214,15 @@ public class CharacterManager : MonoBehaviour {
             }
         }
 
-        if (data.inventoryData != null) {
-            for (int i = 0; i < data.inventoryData.Count; i++) {
-                string itemName = data.inventoryData[i];
-                Item currItem = ItemManager.Instance.CreateNewItemInstance(itemName);
-                if (currItem != null) {
-                    newCharacter.PickupItem(currItem);
-                }
-            }
-        }
+        //if (data.inventoryData != null) {
+        //    for (int i = 0; i < data.inventoryData.Count; i++) {
+        //        string itemName = data.inventoryData[i];
+        //        Item currItem = ItemManager.Instance.CreateNewItemInstance(itemName);
+        //        if (currItem != null) {
+        //            newCharacter.PickupItem(currItem);
+        //        }
+        //    }
+        //}
 
         if (data.level != 0) {
             newCharacter.SetLevel(data.level);

@@ -115,7 +115,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 21300000, guid: 1a05b6915f3a9214694630a4e097233b, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -139,6 +139,9 @@ MonoBehaviour:
   progressMeter: {fileID: 114396721454971286}
   fillImg: {fileID: 114150418722273778}
   iconImg: {fileID: 114010488632276708}
+  defaultSprite: {fileID: 21300000, guid: 1a05b6915f3a9214694630a4e097233b, type: 3}
+  hoverSprite: {fileID: 21300000, guid: 78db681f8586d404db68e5023e213627, type: 3}
+  clickedSprite: {fileID: 21300000, guid: 9e6ac31dc22c6c74c87fa0351f9a63c3, type: 3}
 --- !u!114 &114150418722273778
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -319,17 +322,17 @@ RectTransform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1453000800451102}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: -0.7071068, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.02, y: 0.02, z: 1}
   m_Children: []
   m_Father: {fileID: 224563588673504190}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -90}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0.4, y: 0.099999994}
+  m_SizeDelta: {x: 49, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224525600596461000
 RectTransform:
