@@ -138,13 +138,16 @@ public class CharacterInfoUI : UIMenu {
     private ItemContainer[] inventoryItemContainers;
 
     private Character _activeCharacter;
+    private Character _previousCharacter;
 
-    internal Character currentlyShowingCharacter {
-        get { return _data as Character; }
-    }
-
-    internal Character activeCharacter {
+    //public Character currentlyShowingCharacter {
+    //    get { return _data as Character; }
+    //}
+    public Character activeCharacter {
         get { return _activeCharacter; }
+    }
+    public Character previousCharacter {
+        get { return _previousCharacter; }
     }
 
     internal override void Initialize() {
@@ -198,6 +201,7 @@ public class CharacterInfoUI : UIMenu {
         //InteractionUI.Instance.HideInteractionUI();
     }
     public override void OpenMenu() {
+        _previousCharacter = _activeCharacter;
         _activeCharacter = _data as Character;
         base.OpenMenu();
         UpdateCharacterInfo();

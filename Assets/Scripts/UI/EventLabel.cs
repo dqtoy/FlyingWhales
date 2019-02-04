@@ -34,7 +34,7 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler{
                 string id = linkText.Substring(0, linkText.IndexOf('_'));
                 int idToUse = int.Parse(id);
                 if (linkText.Contains("_faction")) {
-                    Faction faction = UIManager.Instance.characterInfoUI.currentlyShowingCharacter.faction;
+                    Faction faction = UIManager.Instance.characterInfoUI.activeCharacter.faction;
                     if (faction != null) {
                         UIManager.Instance.ShowFactionInfo(faction);
                     }
@@ -52,9 +52,9 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler{
                         UIManager.Instance.ShowCharacterInfo(character);
                     }
                 } else if (linkText.Contains("_combat")) {
-                    if (UIManager.Instance.characterInfoUI.currentlyShowingCharacter != null) {
-                        if (UIManager.Instance.characterInfoUI.currentlyShowingCharacter.combatHistory.ContainsKey(idToUse)) {
-                            UIManager.Instance.ShowCombatLog(UIManager.Instance.characterInfoUI.currentlyShowingCharacter.combatHistory[idToUse]);
+                    if (UIManager.Instance.characterInfoUI.activeCharacter != null) {
+                        if (UIManager.Instance.characterInfoUI.activeCharacter.combatHistory.ContainsKey(idToUse)) {
+                            UIManager.Instance.ShowCombatLog(UIManager.Instance.characterInfoUI.activeCharacter.combatHistory[idToUse]);
                         }
                     }
                 } else if (linkText.Contains("_monster")) {
@@ -112,7 +112,7 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler{
                 string id = linkText.Substring(0, linkText.IndexOf('_'));
                 int idToUse = int.Parse(id);
                 if (linkText.Contains("_faction")) {
-                    obj = UIManager.Instance.characterInfoUI.currentlyShowingCharacter.faction;
+                    obj = UIManager.Instance.characterInfoUI.activeCharacter.faction;
                 } else if (linkText.Contains("_landmark")) {
                     obj = LandmarkManager.Instance.GetLandmarkByID(idToUse);
                 } else if (linkText.Contains("_character")) {
