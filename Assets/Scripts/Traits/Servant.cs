@@ -14,6 +14,7 @@ public class Servant : RelationshipTrait {
         relType = RELATIONSHIP_TRAIT.SERVANT;
         type = TRAIT_TYPE.STATUS;
         effect = TRAIT_EFFECT.NEUTRAL;
+        associatedInteraction = INTERACTION_TYPE.NONE;
         daysDuration = 0;
         effects = new List<TraitEffect>();
     }

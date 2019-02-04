@@ -12,6 +12,7 @@ public class Craftsman : Trait {
         description = "This character can create items.";
         type = TRAIT_TYPE.ABILITY;
         effect = TRAIT_EFFECT.POSITIVE;
+        associatedInteraction = INTERACTION_TYPE.NONE;
         daysDuration = 0;
         effects = new List<TraitEffect>();
     }

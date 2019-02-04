@@ -20,6 +20,7 @@ public class CombatAttributePanelUI : MonoBehaviour {
     public Dropdown traitTypeOptions;
     public Dropdown traitEffectOptions;
     public Dropdown traitTriggerOptions;
+    public Dropdown associatedInteractionOptions;
 
     //Effects
     public InputField amountInput;
@@ -74,6 +75,7 @@ public class CombatAttributePanelUI : MonoBehaviour {
         traitTypeOptions.ClearOptions();
         traitEffectOptions.ClearOptions();
         traitTriggerOptions.ClearOptions();
+        associatedInteractionOptions.ClearOptions();
         requirementTypeOptions.ClearOptions();
         requirementOptions.ClearOptions();
         requirementTargetOptions.ClearOptions();
@@ -85,6 +87,7 @@ public class CombatAttributePanelUI : MonoBehaviour {
         string[] traitTypes = System.Enum.GetNames(typeof(TRAIT_TYPE));
         string[] traitEffects = System.Enum.GetNames(typeof(TRAIT_EFFECT));
         string[] traitTriggers = System.Enum.GetNames(typeof(TRAIT_TRIGGER));
+        string[] associatedInteractions = System.Enum.GetNames(typeof(INTERACTION_TYPE));
         string[] requirementTypes = System.Enum.GetNames(typeof(TRAIT_REQUIREMENT));
         string[] requirementTargets = System.Enum.GetNames(typeof(TRAIT_REQUIREMENT_TARGET));
         string[] requirementCheckers = System.Enum.GetNames(typeof(TRAIT_REQUIREMENT_CHECKER));
@@ -95,6 +98,7 @@ public class CombatAttributePanelUI : MonoBehaviour {
         traitTypeOptions.AddOptions(traitTypes.ToList());
         traitEffectOptions.AddOptions(traitEffects.ToList());
         traitTriggerOptions.AddOptions(traitTriggers.ToList());
+        associatedInteractionOptions.AddOptions(associatedInteractions.ToList());
         requirementTypeOptions.AddOptions(requirementTypes.ToList());
         requirementTargetOptions.AddOptions(requirementTargets.ToList());
         requirementCheckerOptions.AddOptions(requirementCheckers.ToList());
@@ -114,6 +118,7 @@ public class CombatAttributePanelUI : MonoBehaviour {
         traitTypeOptions.value = 0;
         traitEffectOptions.value = 0;
         traitTriggerOptions.value = 0;
+        associatedInteractionOptions.value = 0;
         requirementTypeOptions.value = 0;
         requirementOptions.value = 0;
         requirementTargetOptions.value = 0;
@@ -166,6 +171,7 @@ public class CombatAttributePanelUI : MonoBehaviour {
             type = (TRAIT_TYPE) System.Enum.Parse(typeof(TRAIT_TYPE), traitTypeOptions.options[traitTypeOptions.value].text),
             effect = (TRAIT_EFFECT) System.Enum.Parse(typeof(TRAIT_EFFECT), traitEffectOptions.options[traitEffectOptions.value].text),
             trigger = (TRAIT_TRIGGER) System.Enum.Parse(typeof(TRAIT_TRIGGER), traitTriggerOptions.options[traitTriggerOptions.value].text),
+            associatedInteraction = (INTERACTION_TYPE) System.Enum.Parse(typeof(INTERACTION_TYPE), associatedInteractionOptions.options[associatedInteractionOptions.value].text),
             daysDuration = int.Parse(durationInput.text),
             effects = _effects
         };
@@ -201,6 +207,7 @@ public class CombatAttributePanelUI : MonoBehaviour {
         traitTypeOptions.value = GetOptionIndex(trait.type.ToString(), traitTypeOptions);
         traitEffectOptions.value = GetOptionIndex(trait.effect.ToString(), traitEffectOptions);
         traitTriggerOptions.value = GetOptionIndex(trait.trigger.ToString(), traitTriggerOptions);
+        associatedInteractionOptions.value = GetOptionIndex(trait.associatedInteraction.ToString(), associatedInteractionOptions);
         durationInput.text = trait.daysDuration.ToString();
 
         for (int i = 0; i < trait.effects.Count; i++) {

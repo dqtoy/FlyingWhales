@@ -63,26 +63,28 @@ public class BlightedPotion : SpecialToken {
     #endregion
 
     private void ItemUsedEffect(TokenInteractionState state) {
-        string chosenIllnessName = AttributeManager.Instance.GetRandomIllness();
-        (state.target as Character).AddTrait(AttributeManager.Instance.allIllnesses[chosenIllnessName]);
+        //string chosenIllnessName = AttributeManager.Instance.GetRandomIllness();
+        Trait sickTrait = AttributeManager.Instance.allTraits["Sick"];
+        (state.target as Character).AddTrait(sickTrait);
         state.tokenUser.LevelUp();
         state.tokenUser.ConsumeToken();
 
-        state.descriptionLog.AddToFillers(null, chosenIllnessName, LOG_IDENTIFIER.STRING_1);
-        state.AddLogFiller(new LogFiller(null, chosenIllnessName, LOG_IDENTIFIER.STRING_1));
+        state.descriptionLog.AddToFillers(null, sickTrait.name, LOG_IDENTIFIER.STRING_1);
+        state.AddLogFiller(new LogFiller(null, sickTrait.name, LOG_IDENTIFIER.STRING_1));
     }
     private void StopFailEffect(TokenInteractionState state) {
-        string chosenIllnessName = AttributeManager.Instance.GetRandomIllness();
-        (state.target as Character).AddTrait(AttributeManager.Instance.allIllnesses[chosenIllnessName]);
+        //string chosenIllnessName = AttributeManager.Instance.GetRandomIllness();
+        Trait sickTrait = AttributeManager.Instance.allTraits["Sick"];
+        (state.target as Character).AddTrait(sickTrait);
         state.tokenUser.LevelUp();
         state.tokenUser.ConsumeToken();
 
         state.descriptionLog.AddToFillers(state.interaction.investigatorCharacter, state.interaction.investigatorCharacter.name, LOG_IDENTIFIER.MINION_1);
-        state.descriptionLog.AddToFillers(null, chosenIllnessName, LOG_IDENTIFIER.STRING_1);
+        state.descriptionLog.AddToFillers(null, sickTrait.name, LOG_IDENTIFIER.STRING_1);
         state.descriptionLog.AddToFillers(null, this.name, LOG_IDENTIFIER.ITEM_1);
 
         state.AddLogFiller(new LogFiller(state.interaction.investigatorCharacter, state.interaction.investigatorCharacter.name, LOG_IDENTIFIER.MINION_1));
-        state.AddLogFiller(new LogFiller(null, chosenIllnessName, LOG_IDENTIFIER.STRING_1));
+        state.AddLogFiller(new LogFiller(null, sickTrait.name, LOG_IDENTIFIER.STRING_1));
         state.AddLogFiller(new LogFiller(null, this.name, LOG_IDENTIFIER.ITEM_1));
     }
 }

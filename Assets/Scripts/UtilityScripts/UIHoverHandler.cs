@@ -27,6 +27,9 @@ public class UIHoverHandler : MonoBehaviour, IPointerEnterHandler, IPointerExitH
             onHoverExitAction.Invoke();
         }
     }
+    private void OnDestroy() {
+        isHovering = false;
+    }
 
     public virtual void OnPointerEnter(PointerEventData eventData) {
         if (selectable != null) {

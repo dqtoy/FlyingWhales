@@ -42,15 +42,19 @@ public class TravelLine : MonoBehaviour {
     public void OnHoverTravelLine() {
         if(_character != null) {
             UIManager.Instance.ShowCharacterPortraitHoverInfo(_character);
-            iconImg.sprite = hoverSprite;
+            if(iconImg.sprite == defaultSprite) {
+                iconImg.sprite = hoverSprite;
+            }
         }
     }
     public void OnHoverOutTravelLine() {
-        UIManager.Instance.HideCharacteRPortraitHoverInfo();
-        if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.id == _character.id) {
-            iconImg.sprite = clickedSprite;
-        } else {
-            iconImg.sprite = defaultSprite;
+        if(UIManager.Instance != null) {
+            UIManager.Instance.HideCharacterPortraitHoverInfo();
+            if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.id == _character.id) {
+                iconImg.sprite = clickedSprite;
+            } else {
+                iconImg.sprite = defaultSprite;
+            }
         }
     }
     public void OnClickTravelLine() {
@@ -97,6 +101,9 @@ public class TravelLine : MonoBehaviour {
     private void OnMenuOpened(UIMenu menu) {
         if(menu is CharacterInfoUI && UIManager.Instance.characterInfoUI.activeCharacter.id == _character.id) {
             iconImg.sprite = clickedSprite;
+            if(UIManager.Instance.characterInfoUI.previousCharacter != null && UIManager.Instance.characterInfoUI.previousCharacter.currentParty.icon.isTravelling) {
+                UIManager.Instance.characterInfoUI.previousCharacter.currentParty.icon.travelLine.iconImg.sprite = UIManager.Instance.characterInfoUI.previousCharacter.currentParty.icon.travelLine.defaultSprite;
+            }
         }
     }
     private void OnMenuClosed(UIMenu menu) {

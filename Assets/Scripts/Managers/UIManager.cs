@@ -471,7 +471,7 @@ public class UIManager : MonoBehaviour {
         characterPortraitHoverInfoRT.SetParent(this.transform);
         PositionTooltip(characterPortraitHoverInfoRT);
     }
-    public void HideCharacteRPortraitHoverInfo() {
+    public void HideCharacterPortraitHoverInfo() {
         characterPortraitHoverInfoGO.SetActive(false);
     }
     public void ShowDetailedInfo(Party party) {
