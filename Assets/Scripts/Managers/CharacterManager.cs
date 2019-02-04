@@ -724,7 +724,7 @@ public class CharacterManager : MonoBehaviour {
     }
     private RELATIONSHIP_TRAIT GetRandomRelationship() {
         RELATIONSHIP_TRAIT[] choices = Utilities.GetEnumValues<RELATIONSHIP_TRAIT>();
-        return choices[Random.Range(1, choices.Length)];
+        return choices[Random.Range(1, choices.Length - 1)];
     }
     #endregion
 }
