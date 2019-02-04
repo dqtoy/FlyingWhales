@@ -729,6 +729,7 @@ public class CharacterInfoUI : UIMenu {
     public void ShowCharacterTestingInfo() {
         string summary = "Home structure: " + activeCharacter.homeStructure?.ToString() ?? "None";
         summary += "\nCurrent structure: " + activeCharacter.currentStructure?.ToString() ?? "None";
+        summary += "\n" + activeCharacter.GetNeedsSummary();
         UIManager.Instance.ShowSmallInfo(summary);
     }
 

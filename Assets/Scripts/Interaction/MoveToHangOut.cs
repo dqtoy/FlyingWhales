@@ -138,10 +138,10 @@ public class MoveToHangOut : Interaction {
     }
     private Character GetTargetCharacter(Character character) {
         WeightedDictionary<Character> weights = new WeightedDictionary<Character>();
-        foreach (KeyValuePair<Character, List<RelationshipTrait>> kvp in character.relationships) {
+        foreach (KeyValuePair<Character, CharacterRelationshipData> kvp in character.relationships) {
             int weight = 0;
-            for (int i = 0; i < kvp.Value.Count; i++) {
-                RelationshipTrait currRel = kvp.Value[i];
+            for (int i = 0; i < kvp.Value.rels.Count; i++) {
+                RelationshipTrait currRel = kvp.Value.rels[i];
                 switch (currRel.effect) {
                     case TRAIT_EFFECT.NEUTRAL:
                         weight += 25; //- for each neutral relationship with the character: +25 weight
