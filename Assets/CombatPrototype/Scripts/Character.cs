@@ -1571,7 +1571,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     private void RemoveRelationship(Character character) {
         if (relationships.ContainsKey(character)) {
             List<Trait> traits = relationships[character].rels.Select(x => x as Trait).ToList();
-            relationships[character].RemoveListeners();
+            //relationships[character].RemoveListeners();
             relationships.Remove(character);
             RemoveTrait(traits);
         }
