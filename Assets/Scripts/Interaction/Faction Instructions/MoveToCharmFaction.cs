@@ -77,7 +77,7 @@ public class MoveToCharmFaction : Interaction {
         return base.CanInteractionBeDoneBy(character);
     }
     public override void DoActionUponMoveToArrival() {
-        CreateEvent();
+        CreateConnectedEvent(INTERACTION_TYPE.CHARM_ACTION_FACTION, _characterInvolved.specificLocation);
     }
     #endregion
 

@@ -30,6 +30,7 @@ public class GameManager : MonoBehaviour {
     public bool allCharactersAreVisible = true;
     public bool inspectAll = false;
     public bool ignoreEventTriggerWeights = false;
+    public bool showFullDebug = false;
 
     public GameObject travelLineParentPrefab;
     public GameObject travelLinePrefab;

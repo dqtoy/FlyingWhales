@@ -79,7 +79,8 @@ public class MoveToHangOut : Interaction {
         return base.CanInteractionBeDoneBy(character);
     }
     public override void DoActionUponMoveToArrival() {
-        CreateEvent();
+        Interaction interaction = CreateConnectedEvent(INTERACTION_TYPE.HANG_OUT_ACTION, _targetArea);
+        (interaction as HangOutAction).SetTargetCharacter(targetCharacter);
     }
     #endregion
 
@@ -131,11 +132,11 @@ public class MoveToHangOut : Interaction {
     }
     #endregion
 
-    private void CreateEvent() {
-        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.HANG_OUT_ACTION, _targetArea);
-        (interaction as HangOutAction).SetTargetCharacter(targetCharacter);
-        _characterInvolved.SetForcedInteraction(interaction);
-    }
+    //private void CreateEvent() {
+    //    Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.HANG_OUT_ACTION, _targetArea);
+    //    (interaction as HangOutAction).SetTargetCharacter(targetCharacter);
+    //    _characterInvolved.SetForcedInteraction(interaction);
+    //}
     private Character GetTargetCharacter(Character character) {
         WeightedDictionary<Character> weights = new WeightedDictionary<Character>();
         foreach (KeyValuePair<Character, CharacterRelationshipData> kvp in character.relationships) {

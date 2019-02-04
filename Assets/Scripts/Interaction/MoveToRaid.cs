@@ -82,7 +82,9 @@ public class MoveToRaid : Interaction {
         return base.CanInteractionBeDoneBy(character);
     }
     public override void DoActionUponMoveToArrival() {
-        CreateEvent();
+        Interaction raid = CreateConnectedEvent(INTERACTION_TYPE.RAID_EVENT, _characterInvolved.specificLocation);
+        AddToDebugLog(_characterInvolved.name + " will now create raid event");
+        raid.SetCanInteractionBeDoneAction(IsRaidStillValid);
     }
     #endregion
 
@@ -135,12 +137,12 @@ public class MoveToRaid : Interaction {
         state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_1));
     }
 
-    private void CreateEvent() {
-        AddToDebugLog(_characterInvolved.name + " will now create raid event");
-        Interaction raid = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.RAID_EVENT, _characterInvolved.specificLocation);
-        raid.SetCanInteractionBeDoneAction(IsRaidStillValid);
-        _characterInvolved.SetForcedInteraction(raid);
-    }
+    //private void CreateEvent() {
+    //    AddToDebugLog(_characterInvolved.name + " will now create raid event");
+    //    Interaction raid = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.RAID_EVENT, _characterInvolved.specificLocation);
+    //    raid.SetCanInteractionBeDoneAction(IsRaidStillValid);
+    //    _characterInvolved.SetForcedInteraction(raid);
+    //}
     private bool IsRaidStillValid() {
         return _targetArea.owner != null && _targetArea.owner.id == targetFaction.id; //check if the faction owner of the target area has not changed
     }

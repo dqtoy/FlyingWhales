@@ -75,7 +75,7 @@ public class MoveToCharm : Interaction {
         return base.CanInteractionBeDoneBy(character);
     }
     public override void DoActionUponMoveToArrival() {
-        CreateEvent();
+        CreateConnectedEvent(INTERACTION_TYPE.CHARM_ACTION, _characterInvolved.specificLocation);
     }
     #endregion
 
@@ -124,12 +124,12 @@ public class MoveToCharm : Interaction {
     }
     #endregion
 
-    private void CreateEvent() {
-        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.CHARM_ACTION, _characterInvolved.specificLocation);
-        //(interaction as ImproveRelationsEvent).SetTargetFaction(targetFaction);
-        //interaction.SetCanInteractionBeDoneAction(IsImproveRelationsValid);
-        _characterInvolved.SetForcedInteraction(interaction);
-    }
+    //private void CreateEvent() {
+    //    Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.CHARM_ACTION, _characterInvolved.specificLocation);
+    //    //(interaction as ImproveRelationsEvent).SetTargetFaction(targetFaction);
+    //    //interaction.SetCanInteractionBeDoneAction(IsImproveRelationsValid);
+    //    _characterInvolved.SetForcedInteraction(interaction);
+    //}
     //private bool IsImproveRelationsValid() {
     //    return targetLocation.owner != null && targetLocation.owner.id == targetFaction.id;
     //}

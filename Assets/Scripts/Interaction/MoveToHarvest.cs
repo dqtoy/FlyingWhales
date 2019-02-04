@@ -78,7 +78,8 @@ public class MoveToHarvest : Interaction {
         return base.CanInteractionBeDoneBy(character);
     }
     public override void DoActionUponMoveToArrival() {
-        CreateHarvestAction();
+        AddToDebugLog(_characterInvolved.name + " will now create harvest action");
+        CreateConnectedEvent(INTERACTION_TYPE.HARVEST_ACTION, _characterInvolved.specificLocation);
     }
     #endregion
 
@@ -115,11 +116,11 @@ public class MoveToHarvest : Interaction {
     }
     #endregion
 
-    private void CreateHarvestAction() {
-        AddToDebugLog(_characterInvolved.name + " will now create harvest action");
-        Interaction harvest = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.HARVEST_ACTION, _characterInvolved.specificLocation);
-        _characterInvolved.SetForcedInteraction(harvest);
-    }
+    //private void CreateHarvestAction() {
+    //    AddToDebugLog(_characterInvolved.name + " will now create harvest action");
+    //    Interaction harvest = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.HARVEST_ACTION, _characterInvolved.specificLocation);
+    //    _characterInvolved.SetForcedInteraction(harvest);
+    //}
     private Area GetTargetLocation(Character characterInvolved) {
         WeightedDictionary<Area> locationWeights = new WeightedDictionary<Area>();
         for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {

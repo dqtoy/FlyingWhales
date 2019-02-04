@@ -82,7 +82,8 @@ public class MoveToSave : Interaction {
         return base.CanInteractionBeDoneBy(character);
     }
     public override void DoActionUponMoveToArrival() {
-        CreateEvent();
+        Interaction interaction = CreateConnectedEvent(INTERACTION_TYPE.SAVE_ACTION, _characterInvolved.specificLocation);
+        (interaction as SaveAction).SetTargetCharacter(_targetCharacter);
     }
     #endregion
 
@@ -134,11 +135,11 @@ public class MoveToSave : Interaction {
     }
     #endregion
 
-    private void CreateEvent() {
-        SaveAction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.SAVE_ACTION, _characterInvolved.specificLocation) as SaveAction;
-        interaction.SetTargetCharacter(_targetCharacter);
-        _characterInvolved.SetForcedInteraction(interaction);
-    }
+    //private void CreateEvent() {
+    //    SaveAction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.SAVE_ACTION, _characterInvolved.specificLocation) as SaveAction;
+    //    interaction.SetTargetCharacter(_targetCharacter);
+    //    _characterInvolved.SetForcedInteraction(interaction);
+    //}
 
     private Character GetTargetCharacter(Character character) {
         /*

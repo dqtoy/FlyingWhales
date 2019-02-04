@@ -93,7 +93,8 @@ public class MoveToRecruit : Interaction {
         return base.CanInteractionBeDoneBy(character);
     }
     public override void DoActionUponMoveToArrival() {
-        CreateEvent();
+        Interaction interaction = CreateConnectedEvent(INTERACTION_TYPE.RECRUIT_ACTION, _targetArea);
+        (interaction as RecruitAction).SetTargetCharacter(_targetCharacter);
     }
     #endregion
 
@@ -141,12 +142,12 @@ public class MoveToRecruit : Interaction {
     }
     #endregion
 
-    private void CreateEvent() {
-        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.RECRUIT_ACTION, _targetArea);
-        (interaction as RecruitAction).SetTargetCharacter(_targetCharacter);
-        //interaction.SetCanInteractionBeDoneAction(() => IsRecruitActionStillValid(interaction as RecruitAction));
-        _characterInvolved.SetForcedInteraction(interaction);
-    }
+    //private void CreateEvent() {
+    //    Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.RECRUIT_ACTION, _targetArea);
+    //    (interaction as RecruitAction).SetTargetCharacter(_targetCharacter);
+    //    //interaction.SetCanInteractionBeDoneAction(() => IsRecruitActionStillValid(interaction as RecruitAction));
+    //    _characterInvolved.SetForcedInteraction(interaction);
+    //}
 
     private Area GetTargetLocation(Character characterInvolved) {
         /*

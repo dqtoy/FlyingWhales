@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Linq;
 
 public struct GameDate {
 	public int month;
@@ -193,7 +194,7 @@ public struct GameDate {
         int totalDays = 0;
         if (year > GameManager.Instance.startYear) {
             int difference = year - GameManager.Instance.startYear;
-            totalDays += 360 * difference;
+            totalDays += GameManager.daysInMonth.Sum() * difference;
         }
         for (int i = 1; i < month; i++) {
             totalDays += GameManager.daysInMonth[i];

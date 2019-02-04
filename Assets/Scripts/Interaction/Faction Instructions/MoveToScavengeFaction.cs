@@ -71,7 +71,8 @@ public class MoveToScavengeFaction : Interaction {
         //TODO: _characterInvolved.SetForce
     }
     public override void DoActionUponMoveToArrival() {
-        CreateEvent();
+        AddToDebugLog(_characterInvolved.name + " will now create scavenge event");
+        CreateConnectedEvent(INTERACTION_TYPE.SCAVENGE_EVENT_FACTION, _characterInvolved.specificLocation);
     }
     #endregion
 
@@ -122,11 +123,11 @@ public class MoveToScavengeFaction : Interaction {
         state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2));
     }
 
-    private void CreateEvent() {
-        AddToDebugLog(_characterInvolved.name + " will now create scavenge event");
-        Interaction scavenge = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.SCAVENGE_EVENT_FACTION, _characterInvolved.specificLocation);
-        _characterInvolved.SetForcedInteraction(scavenge);
-    }
+    //private void CreateEvent() {
+    //    AddToDebugLog(_characterInvolved.name + " will now create scavenge event");
+    //    Interaction scavenge = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.SCAVENGE_EVENT_FACTION, _characterInvolved.specificLocation);
+    //    _characterInvolved.SetForcedInteraction(scavenge);
+    //}
 
     private Area GetTargetArea() {
         List<Area> choices = new List<Area>();

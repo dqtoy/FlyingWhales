@@ -78,7 +78,7 @@ public class MoveToExploreFaction : Interaction {
         return base.CanInteractionBeDoneBy(character);
     }
     public override void DoActionUponMoveToArrival() {
-        CreateEvent();
+        CreateConnectedEvent(INTERACTION_TYPE.EXPLORE_EVENT_FACTION, _characterInvolved.specificLocation);
     }
     #endregion
 
@@ -124,12 +124,12 @@ public class MoveToExploreFaction : Interaction {
     }
     #endregion
 
-    private void CreateEvent() {
-        Interaction exploreEvent = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.EXPLORE_EVENT_FACTION, _characterInvolved.specificLocation);
-        if (exploreEvent != null) {
-            _characterInvolved.SetForcedInteraction(exploreEvent);
-        }
-    }
+    //private void CreateEvent() {
+    //    Interaction exploreEvent = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.EXPLORE_EVENT_FACTION, _characterInvolved.specificLocation);
+    //    if (exploreEvent != null) {
+    //        _characterInvolved.SetForcedInteraction(exploreEvent);
+    //    }
+    //}
 
     private Area GetTargetLocation(Character character) {
         /*

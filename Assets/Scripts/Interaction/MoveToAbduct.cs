@@ -81,7 +81,8 @@ public class MoveToAbduct : Interaction {
         return base.CanInteractionBeDoneBy(character);
     }
     public override void DoActionUponMoveToArrival() {
-        CreateAbductAction();
+        AddToDebugLog(_characterInvolved.name + " will now create abduct action");
+        CreateConnectedEvent(INTERACTION_TYPE.ABDUCT_ACTION, _characterInvolved.specificLocation);
     }
     #endregion
 
@@ -118,12 +119,12 @@ public class MoveToAbduct : Interaction {
     }
     #endregion
 
-    private void CreateAbductAction() {
-        AddToDebugLog(_characterInvolved.name + " will now create abduct action");
-        Interaction abduct = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.ABDUCT_ACTION, _characterInvolved.specificLocation);
-        //abduct.SetCanInteractionBeDoneAction(IsAbductStillValid);
-        _characterInvolved.SetForcedInteraction(abduct);
-    }
+    //private void CreateAbductAction() {
+    //    AddToDebugLog(_characterInvolved.name + " will now create abduct action");
+    //    Interaction abduct = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.ABDUCT_ACTION, _characterInvolved.specificLocation);
+    //    //abduct.SetCanInteractionBeDoneAction(IsAbductStillValid);
+    //    _characterInvolved.SetForcedInteraction(abduct);
+    //}
     private bool IsAbductStillValid() {
         if (!_characterInvolved.homeArea.IsResidentsFull()) {
             for (int i = 0; i < _targetArea.charactersAtLocation.Count; i++) {

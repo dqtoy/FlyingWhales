@@ -15,6 +15,7 @@ TagManager:
   - MinorRoad
   - Landmark
   - Character
+  - CharacterInfoUI
   layers:
   - Default
   - TransparentFX

@@ -75,7 +75,7 @@ public class MoveToAssassinateFaction : Interaction {
         return base.CanInteractionBeDoneBy(character);
     }
     public override void DoActionUponMoveToArrival() {
-        CreateEvent();
+        CreateConnectedEvent(INTERACTION_TYPE.ASSASSINATE_ACTION_FACTION, _characterInvolved.specificLocation);
     }
     #endregion
 

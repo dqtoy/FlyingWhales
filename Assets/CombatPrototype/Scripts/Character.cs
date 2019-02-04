@@ -1328,6 +1328,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public void SetCurrentStructureLocation(LocationStructure currentStructure) {
         this.currentStructure = currentStructure;
+        if (currentStructure != null) {
+            Messenger.Broadcast(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, this, currentStructure);
+        }
     }
     public void MoveToRandomStructureInArea() {
         LocationStructure locationStructure = specificLocation.GetRandomStructure();
@@ -1459,21 +1462,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     private void OnOtherCharacterDied(Character characterThatDied) {
         if (characterThatDied.id != this.id) {
-            //Friend friend = this.GetFriendTraitWith(characterThatDied);
-            //if (friend != null) {
-            //    RemoveTrait(friend);
-            //}
-
-            //Enemy enemy = this.GetEnemyTraitWith(characterThatDied);
-            //if (enemy != null) {
-            //    RemoveTrait(enemy);
-            //}
-            List<RelationshipTrait> rels = GetAllRelationshipTraitWith(characterThatDied);
-            if (rels != null) {
-                for (int i = 0; i < rels.Count; i++) {
-                    RemoveTrait(rels[i]);
-                }
-            }
+            RemoveRelationship(characterThatDied);
         }
     }
     //public bool IsCharacterLovedOne(Character otherCharacter) {
@@ -1574,14 +1563,17 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     #region Relationships
     private void AddRelationship(Character character, RelationshipTrait newRel) {
         if (!relationships.ContainsKey(character)) {
-            relationships.Add(character, new CharacterRelationshipData(character));
+            relationships.Add(character, new CharacterRelationshipData(this, character));
         }
         relationships[character].AddRelationship(newRel);
         OnRelationshipWithCharacterAdded(character);
     }
     private void RemoveRelationship(Character character) {
         if (relationships.ContainsKey(character)) {
+            List<Trait> traits = relationships[character].rels.Select(x => x as Trait).ToList();
+            relationships[character].RemoveListeners();
             relationships.Remove(character);
+            RemoveTrait(traits);
         }
     }
     private void RemoveRelationship(Character character, RelationshipTrait rel) {
@@ -2254,6 +2246,11 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             return RemoveTrait(trait, triggerOnRemove);
         }
         return false;
+    }
+    public void RemoveTrait(List<Trait> traits) {
+        for (int i = 0; i < traits.Count; i++) {
+            RemoveTrait(traits[i]);
+        }
     }
     public Trait GetTrait(string traitName) {
         for (int i = 0; i < _traits.Count; i++) {

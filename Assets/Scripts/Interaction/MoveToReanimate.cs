@@ -75,7 +75,7 @@ public class MoveToReanimate : Interaction {
         return base.CanInteractionBeDoneBy(character);
     }
     public override void DoActionUponMoveToArrival() {
-        CreateEvent();
+        CreateConnectedEvent(INTERACTION_TYPE.REANIMATE_ACTION, _targetArea);
     }
     #endregion
 
@@ -127,10 +127,10 @@ public class MoveToReanimate : Interaction {
     }
     #endregion
 
-    private void CreateEvent() {
-        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.REANIMATE_ACTION, _targetArea);
-        _characterInvolved.SetForcedInteraction(interaction);
-    }
+    //private void CreateEvent() {
+    //    Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.REANIMATE_ACTION, _targetArea);
+    //    _characterInvolved.SetForcedInteraction(interaction);
+    //}
 
     private Area GetTargetLocation(Character character) {
         WeightedDictionary<Area> choices = new WeightedDictionary<Area>();

@@ -43,6 +43,7 @@ public class ConsoleMenu : UIMenu {
             {"/i_toggle_sub", ToggleSubscriptionToInteraction },
             {"/add_trait_character", AddTraitToCharacter },
             {"/transfer_character_faction", TransferCharacterToFaction },
+            {"/show_full_debug", ShowFullDebug },
         };
 
 #if UNITY_EDITOR
@@ -183,6 +184,10 @@ public class ConsoleMenu : UIMenu {
     }
     public void AddText(string text) {
         consoleInputField.text += " " + text;
+    }
+    public void ShowFullDebug(string[] parameters) {
+        GameManager.Instance.showFullDebug = !GameManager.Instance.showFullDebug;
+        AddSuccessMessage("Show Full Debug Info Set to " + GameManager.Instance.showFullDebug.ToString());
     }
     #endregion
 

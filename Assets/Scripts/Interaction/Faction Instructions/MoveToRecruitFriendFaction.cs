@@ -74,7 +74,7 @@ public class MoveToRecruitFriendFaction : Interaction {
         return base.CanInteractionBeDoneBy(character);
     }
     public override void DoActionUponMoveToArrival() {
-        CreateEvent();
+        CreateConnectedEvent(INTERACTION_TYPE.RECRUIT_FRIEND_ACTION_FACTION, _targetArea);
     }
     #endregion
 
@@ -119,10 +119,10 @@ public class MoveToRecruitFriendFaction : Interaction {
     }
     #endregion
 
-    private void CreateEvent() {
-        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.RECRUIT_FRIEND_ACTION_FACTION, _targetArea);
-        _characterInvolved.SetForcedInteraction(interaction);
-    }
+    //private void CreateEvent() {
+    //    Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.RECRUIT_FRIEND_ACTION_FACTION, _targetArea);
+    //    _characterInvolved.SetForcedInteraction(interaction);
+    //}
 
     private Area GetTargetLocation(Character characterInvolved) {
         /*

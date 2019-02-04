@@ -98,7 +98,7 @@ public class MoveToPeaceNegotiation : Interaction {
         }
     }
     public override void DoActionUponMoveToArrival() {
-        CreateEvent();
+        CreateConnectedEvent(INTERACTION_TYPE.CHARACTER_PEACE_NEGOTIATION, targetArea);
     }
     #endregion
 
@@ -202,10 +202,10 @@ public class MoveToPeaceNegotiation : Interaction {
     }
     #endregion
 
-    private void CreateEvent() {
-        Interaction peaceInteraction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.CHARACTER_PEACE_NEGOTIATION, targetArea);
-        _characterInvolved.SetForcedInteraction(peaceInteraction);
-    }
+    //private void CreateEvent() {
+    //    Interaction peaceInteraction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.CHARACTER_PEACE_NEGOTIATION, targetArea);
+    //    _characterInvolved.SetForcedInteraction(peaceInteraction);
+    //}
 
     private Faction GetTargetFaction() {
         List<Faction> choices = new List<Faction>();

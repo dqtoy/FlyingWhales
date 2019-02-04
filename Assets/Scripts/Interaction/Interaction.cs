@@ -33,6 +33,7 @@ public class Interaction {
     protected Job _jobAssociated;
     protected JOB[] _jobFilter;
     protected object[] otherData;
+    protected InteractionIntel intel;
     private string interactionDebugLog;
 
     private bool _hasUsedBaseCreateStates;
@@ -108,6 +109,9 @@ public class Interaction {
     public bool hasInitialized {
         get { return _hasInitialized; }
     }
+    public bool isDone {
+        get { return _isDone; }
+    }
     public JOB[] jobFilter {
         get { return _jobFilter; }
     }
@@ -130,6 +134,7 @@ public class Interaction {
         _hasUsedBaseCreateStates = false;
         _states = new Dictionary<string, InteractionState>();
         _endInteractionActions = new List<Action>();
+        SetInteractionIntel(new InteractionIntel(this));
         //_jobFilter = new JOB[] { JOB.NONE };
         //Debug.Log("Created new interaction " + type.ToString() + " at " + interactable.name);
         interactionDebugLog = type.ToString() + " Event at " + interactable.name + "(" + interactable.name + ") Summary: \n" +
@@ -189,6 +194,12 @@ public class Interaction {
 
     }
     //public virtual bool CanStillDoInteraction() { return true; }
+    public virtual Interaction CreateConnectedEvent(INTERACTION_TYPE connectedType, Area interactable) {
+        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(connectedType, interactable);
+        _characterInvolved.SetForcedInteraction(interaction);
+        interaction.SetInteractionIntel(this.intel);
+        return interaction;
+    }
     #endregion
 
     #region Utilities
@@ -413,6 +424,19 @@ public class Interaction {
         }
         AddToDebugLog(_characterInvolved.name + " starts moving towards " + targetArea.name + "!(" + _type.ToString() + ")");
         _characterInvolved.currentParty.GoToLocation(targetArea, PATHFINDING_MODE.NORMAL, null, () => DoActionUponMoveToArrival());
+    }
+    #endregion
+
+    #region Intel
+    public void SetInteractionIntel(InteractionIntel intel) {
+        this.intel = intel;
+        intel.SetConnectedInteraction(this);
+    }
+    public object GetTarget() {
+        if (targetCharacter != null) {
+            return targetCharacter;
+        }
+        return targetArea;
     }
     #endregion
 

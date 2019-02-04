@@ -78,7 +78,9 @@ public class MoveToScavenge : Interaction {
         //TODO: _characterInvolved.SetForce
     }
     public override void DoActionUponMoveToArrival() {
-        CreateEvent();
+        AddToDebugLog(_characterInvolved.name + " will now create scavenge event");
+        Interaction interaction = CreateConnectedEvent(INTERACTION_TYPE.SCAVENGE_EVENT, _characterInvolved.specificLocation);
+        interaction.SetCanInteractionBeDoneAction(IsScavengeStillValid);
     }
     #endregion
 
@@ -129,12 +131,11 @@ public class MoveToScavenge : Interaction {
         state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_1));
     }
 
-    private void CreateEvent() {
-        AddToDebugLog(_characterInvolved.name + " will now create scavenge event");
-        Interaction scavenge = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.SCAVENGE_EVENT, _characterInvolved.specificLocation);
-        scavenge.SetCanInteractionBeDoneAction(IsScavengeStillValid);
-        _characterInvolved.SetForcedInteraction(scavenge);
-    }
+    //private void CreateEvent() {
+    //    Interaction scavenge = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.SCAVENGE_EVENT, _characterInvolved.specificLocation);
+    //    scavenge.SetCanInteractionBeDoneAction(IsScavengeStillValid);
+    //    _characterInvolved.SetForcedInteraction(scavenge);
+    //}
 
     private bool IsScavengeStillValid() {
         return _characterInvolved.specificLocation != null && _characterInvolved.specificLocation.owner == null;

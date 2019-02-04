@@ -72,7 +72,9 @@ public class MoveToImproveRelations : Interaction {
         }
     }
     public override void DoActionUponMoveToArrival() {
-        CreateEvent();
+        Interaction interaction = CreateConnectedEvent(INTERACTION_TYPE.IMPROVE_RELATIONS_EVENT, _characterInvolved.specificLocation);
+        (interaction as ImproveRelationsEvent).SetTargetFaction(targetFaction);
+        interaction.SetCanInteractionBeDoneAction(IsImproveRelationsValid);
     }
     #endregion
 
@@ -126,12 +128,12 @@ public class MoveToImproveRelations : Interaction {
     }
     #endregion
 
-    private void CreateEvent() {
-        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.IMPROVE_RELATIONS_EVENT, _characterInvolved.specificLocation);
-        (interaction as ImproveRelationsEvent).SetTargetFaction(targetFaction);
-        interaction.SetCanInteractionBeDoneAction(IsImproveRelationsValid);
-        _characterInvolved.SetForcedInteraction(interaction);
-    }
+    //private void CreateEvent() {
+    //    Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.IMPROVE_RELATIONS_EVENT, _characterInvolved.specificLocation);
+    //    (interaction as ImproveRelationsEvent).SetTargetFaction(targetFaction);
+    //    interaction.SetCanInteractionBeDoneAction(IsImproveRelationsValid);
+    //    _characterInvolved.SetForcedInteraction(interaction);
+    //}
     private bool IsImproveRelationsValid() {
         return _targetArea.owner != null && _targetArea.owner.id == targetFaction.id;
     }

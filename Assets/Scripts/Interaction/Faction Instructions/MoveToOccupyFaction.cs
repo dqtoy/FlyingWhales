@@ -79,7 +79,7 @@ public class MoveToOccupyFaction : Interaction {
         return base.CanInteractionBeDoneBy(character);
     }
     public override void DoActionUponMoveToArrival() {
-        CreateEvent();
+        CreateConnectedEvent(INTERACTION_TYPE.OCCUPY_ACTION_FACTION, _characterInvolved.specificLocation);
     }
     #endregion
 
@@ -128,10 +128,10 @@ public class MoveToOccupyFaction : Interaction {
         state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2));
     }
 
-    private void CreateEvent() {
-        Interaction newEvent = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.OCCUPY_ACTION_FACTION, _characterInvolved.specificLocation);
-        _characterInvolved.SetForcedInteraction(newEvent);
-    }
+    //private void CreateEvent() {
+    //    Interaction newEvent = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.OCCUPY_ACTION_FACTION, _characterInvolved.specificLocation);
+    //    _characterInvolved.SetForcedInteraction(newEvent);
+    //}
 
     private Area GetTargetArea(Character character) {
         List<Area> choices = new List<Area>();

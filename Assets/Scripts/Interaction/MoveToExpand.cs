@@ -77,7 +77,9 @@ public class MoveToExpand : Interaction {
         }
     }
     public override void DoActionUponMoveToArrival() {
-        CreateEvent();
+        Interaction interaction = CreateConnectedEvent(INTERACTION_TYPE.EXPANSION_EVENT, _characterInvolved.specificLocation);
+        interaction.SetCanInteractionBeDoneAction(IsExpansionStillValid);
+        _targetArea.RemoveEventTargettingThis(this);
     }
     #endregion
 
@@ -127,12 +129,12 @@ public class MoveToExpand : Interaction {
     }
     #endregion
 
-    private void CreateEvent() {
-        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.EXPANSION_EVENT, _characterInvolved.specificLocation);
-        _characterInvolved.SetForcedInteraction(interaction);
-        interaction.SetCanInteractionBeDoneAction(IsExpansionStillValid);
-        _targetArea.RemoveEventTargettingThis(this);
-    }
+    //private void CreateEvent() {
+    //    Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.EXPANSION_EVENT, _characterInvolved.specificLocation);
+    //    _characterInvolved.SetForcedInteraction(interaction);
+    //    interaction.SetCanInteractionBeDoneAction(IsExpansionStillValid);
+    //    _targetArea.RemoveEventTargettingThis(this);
+    //}
 
     private bool IsExpansionStillValid() {
         return _characterInvolved.specificLocation != null && _characterInvolved.specificLocation.owner == null;

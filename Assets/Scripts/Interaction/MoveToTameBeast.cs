@@ -80,7 +80,8 @@ public class MoveToTameBeast : Interaction {
         return base.CanInteractionBeDoneBy(character);
     }
     public override void DoActionUponMoveToArrival() {
-        CreateTameAction();
+        AddToDebugLog(_characterInvolved.name + " will now create tame action");
+        CreateConnectedEvent(INTERACTION_TYPE.TAME_BEAST_ACTION, _characterInvolved.specificLocation);
     }
     #endregion
 
@@ -117,12 +118,12 @@ public class MoveToTameBeast : Interaction {
     }
     #endregion
 
-    private void CreateTameAction() {
-        AddToDebugLog(_characterInvolved.name + " will now create tame action");
-        Interaction tame = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.TAME_BEAST_ACTION, _characterInvolved.specificLocation);
-        //tame.SetCanInteractionBeDoneAction(IsTameStillValid);
-        _characterInvolved.SetForcedInteraction(tame);
-    }
+    //private void CreateTameAction() {
+    //    AddToDebugLog(_characterInvolved.name + " will now create tame action");
+    //    Interaction tame = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.TAME_BEAST_ACTION, _characterInvolved.specificLocation);
+    //    //tame.SetCanInteractionBeDoneAction(IsTameStillValid);
+    //    _characterInvolved.SetForcedInteraction(tame);
+    //}
     private bool IsTameStillValid() {
         return !_characterInvolved.isHoldingItem && _targetArea.possibleSpecialTokenSpawns.Count > 0;
     }

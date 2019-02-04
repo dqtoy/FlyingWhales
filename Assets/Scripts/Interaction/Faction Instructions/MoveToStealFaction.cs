@@ -75,7 +75,7 @@ public class MoveToStealFaction : Interaction {
         return base.CanInteractionBeDoneBy(character);
     }
     public override void DoActionUponMoveToArrival() {
-        CreateEvent();
+        CreateConnectedEvent(INTERACTION_TYPE.STEAL_ACTION_FACTION, _characterInvolved.specificLocation);
     }
     #endregion
 
@@ -123,10 +123,10 @@ public class MoveToStealFaction : Interaction {
     }
     #endregion
 
-    private void CreateEvent() {
-        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.STEAL_ACTION_FACTION, _characterInvolved.specificLocation);
-        _characterInvolved.SetForcedInteraction(interaction);
-    }
+    //private void CreateEvent() {
+    //    Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.STEAL_ACTION_FACTION, _characterInvolved.specificLocation);
+    //    _characterInvolved.SetForcedInteraction(interaction);
+    //}
 
     private Area GetTargetLocation(Character character) {
         WeightedDictionary<Area> choices = new WeightedDictionary<Area>();

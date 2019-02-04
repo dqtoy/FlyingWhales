@@ -80,7 +80,8 @@ public class MoveToLoot : Interaction {
         return base.CanInteractionBeDoneBy(character);
     }
     public override void DoActionUponMoveToArrival() {
-        CreateLootAction();
+        AddToDebugLog(_characterInvolved.name + " will now create loot action");
+        CreateConnectedEvent(INTERACTION_TYPE.LOOT_ACTION, _characterInvolved.specificLocation);
     }
     #endregion
 
@@ -117,12 +118,12 @@ public class MoveToLoot : Interaction {
     }
     #endregion
 
-    private void CreateLootAction() {
-        AddToDebugLog(_characterInvolved.name + " will now create loot action");
-        Interaction loot = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.LOOT_ACTION, _characterInvolved.specificLocation);
-        //loot.SetCanInteractionBeDoneAction(IsLootStillValid);
-        _characterInvolved.SetForcedInteraction(loot);
-    }
+    //private void CreateLootAction() {
+    //    AddToDebugLog(_characterInvolved.name + " will now create loot action");
+    //    Interaction loot = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.LOOT_ACTION, _characterInvolved.specificLocation);
+    //    //loot.SetCanInteractionBeDoneAction(IsLootStillValid);
+    //    _characterInvolved.SetForcedInteraction(loot);
+    //}
     private bool IsLootStillValid() {
         return !_characterInvolved.isHoldingItem && _targetArea.possibleSpecialTokenSpawns.Count > 0;
     }

@@ -80,7 +80,8 @@ public class MoveToRaidFaction : Interaction {
         return base.CanInteractionBeDoneBy(character);
     }
     public override void DoActionUponMoveToArrival() {
-        CreateEvent();
+        AddToDebugLog(_characterInvolved.name + " will now create raid event");
+        CreateConnectedEvent(INTERACTION_TYPE.RAID_EVENT_FACTION, _characterInvolved.specificLocation);
     }
     #endregion
 
@@ -129,11 +130,11 @@ public class MoveToRaidFaction : Interaction {
         state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2));
     }
 
-    private void CreateEvent() {
-        AddToDebugLog(_characterInvolved.name + " will now create raid event");
-        Interaction raid = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.RAID_EVENT_FACTION, _characterInvolved.specificLocation);
-        _characterInvolved.SetForcedInteraction(raid);
-    }
+    //private void CreateEvent() {
+        
+    //    Interaction raid = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.RAID_EVENT_FACTION, _characterInvolved.specificLocation);
+    //    _characterInvolved.SetForcedInteraction(raid);
+    //}
 
     private Area GetTargetArea(Character character) {
         List<Area> choices = new List<Area>();

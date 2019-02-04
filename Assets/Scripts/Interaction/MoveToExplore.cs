@@ -76,7 +76,7 @@ public class MoveToExplore : Interaction {
         return base.CanInteractionBeDoneBy(character);
     }
     public override void DoActionUponMoveToArrival() {
-        CreateEvent();
+        CreateConnectedEvent(INTERACTION_TYPE.EXPLORE_EVENT, _characterInvolved.specificLocation);
     }
     #endregion
 
@@ -122,12 +122,12 @@ public class MoveToExplore : Interaction {
     }
     #endregion
 
-    private void CreateEvent() {
-        Interaction exploreEvent = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.EXPLORE_EVENT, _characterInvolved.specificLocation);
-        if (exploreEvent != null) {
-            _characterInvolved.SetForcedInteraction(exploreEvent);
-        }
-    }
+    //private void CreateEvent() {
+    //    Interaction exploreEvent = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.EXPLORE_EVENT, _characterInvolved.specificLocation);
+    //    if (exploreEvent != null) {
+    //        _characterInvolved.SetForcedInteraction(exploreEvent);
+    //    }
+    //}
 
     private Area GetTargetLocation(Character character) {
         WeightedDictionary<Area> choices = new WeightedDictionary<Area>();

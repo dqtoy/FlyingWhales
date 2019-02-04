@@ -78,7 +78,8 @@ public class MoveToMine : Interaction {
         return base.CanInteractionBeDoneBy(character);
     }
     public override void DoActionUponMoveToArrival() {
-        CreateMineAction();
+        AddToDebugLog(_characterInvolved.name + " will now create mine action");
+        CreateConnectedEvent(INTERACTION_TYPE.MINE_ACTION, _characterInvolved.specificLocation);
     }
     #endregion
 
@@ -115,11 +116,11 @@ public class MoveToMine : Interaction {
     }
     #endregion
 
-    private void CreateMineAction() {
-        AddToDebugLog(_characterInvolved.name + " will now create mine action");
-        Interaction mine = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINE_ACTION, _characterInvolved.specificLocation);
-        _characterInvolved.SetForcedInteraction(mine);
-    }
+    //private void CreateMineAction() {
+       
+    //    Interaction mine = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MINE_ACTION, _characterInvolved.specificLocation);
+    //    _characterInvolved.SetForcedInteraction(mine);
+    //}
     private Area GetTargetLocation(Character characterInvolved) {
         WeightedDictionary<Area> locationWeights = new WeightedDictionary<Area>();
         for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
