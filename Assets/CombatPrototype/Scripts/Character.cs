@@ -94,7 +94,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public CharacterToken characterToken { get; private set; }
     public WeightedDictionary<INTERACTION_TYPE> interactionWeights { get; private set; }
     public SpecialToken tokenInInventory { get; private set; }
-    public Dictionary<Character, List<RelationshipTrait>> relationships { get; private set; }
+    public Dictionary<Character, CharacterRelationshipData> relationships { get; private set; }
 
     private Dictionary<STAT, float> _buffs;
 
@@ -513,7 +513,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         characterToken = new CharacterToken(this);
         tokenInInventory = null;
         interactionWeights = new WeightedDictionary<INTERACTION_TYPE>();
-        relationships = new Dictionary<Character, List<RelationshipTrait>>();
+        relationships = new Dictionary<Character, CharacterRelationshipData>();
 
         //AllocateStats();
         //EquipItemsByClass();
@@ -1756,9 +1756,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     #region Relationships
     private void AddRelationship(Character character, RelationshipTrait newRel) {
         if (!relationships.ContainsKey(character)) {
-            relationships.Add(character, new List<RelationshipTrait>());
+            relationships.Add(character, new CharacterRelationshipData(character));
         }
-        relationships[character].Add(newRel);
+        relationships[character].AddRelationship(newRel);
         OnRelationshipWithCharacterAdded(character);
     }
     private void RemoveRelationship(Character character) {
@@ -1768,17 +1768,17 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     private void RemoveRelationship(Character character, RelationshipTrait rel) {
         if (relationships.ContainsKey(character)) {
-            relationships[character].Remove(rel);
+            relationships[character].RemoveRelationship(rel);
 
-            if (relationships[character].Count == 0) {
-                RemoveRelationship(character);
-            }
+            //if (relationships[character].Count == 0) {
+            //    RemoveRelationship(character);
+            //}
         }
     }
     public RelationshipTrait GetRelationshipTraitWith(Character character, RELATIONSHIP_TRAIT type) {
         if (relationships.ContainsKey(character)) {
-            for (int i = 0; i < relationships[character].Count; i++) {
-                RelationshipTrait relTrait = relationships[character][i];
+            for (int i = 0; i < relationships[character].rels.Count; i++) {
+                RelationshipTrait relTrait = relationships[character].rels[i];
                 if (relTrait.relType == type) {
                     return relTrait;
                 }
@@ -1789,22 +1789,22 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public List<RelationshipTrait> GetAllRelationshipTraitWith(Character character) {
         List<RelationshipTrait> rels = new List<RelationshipTrait>();
         if (relationships.ContainsKey(character)) {
-            rels.AddRange(relationships[character]);
+            rels.AddRange(relationships[character].rels);
         }
         return rels;
     }
     public List<RELATIONSHIP_TRAIT> GetAllRelationshipTraitTypesWith(Character character) {
         List<RELATIONSHIP_TRAIT> rels = new List<RELATIONSHIP_TRAIT>();
         if (relationships.ContainsKey(character)) {
-            rels.AddRange(relationships[character].Select(x => x.relType));
+            rels.AddRange(relationships[character].rels.Select(x => x.relType));
         }
         return rels;
     }
     public List<Character> GetCharactersWithRelationship(RELATIONSHIP_TRAIT type) {
         List<Character> characters = new List<Character>();
-        foreach (KeyValuePair<Character, List<RelationshipTrait>> kvp in relationships) {
-            for (int i = 0; i < kvp.Value.Count; i++) {
-                if (kvp.Value[i].relType == type) {
+        foreach (KeyValuePair<Character, CharacterRelationshipData> kvp in relationships) {
+            for (int i = 0; i < kvp.Value.rels.Count; i++) {
+                if (kvp.Value.rels[i].relType == type) {
                     characters.Add(kvp.Key);
                     break;
                 }
@@ -1813,9 +1813,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         return characters;
     }
     public Character GetCharacterWithRelationship(RELATIONSHIP_TRAIT type) {
-        foreach (KeyValuePair<Character, List<RelationshipTrait>> kvp in relationships) {
-            for (int i = 0; i < kvp.Value.Count; i++) {
-                if (kvp.Value[i].relType == type) {
+        foreach (KeyValuePair<Character, CharacterRelationshipData> kvp in relationships) {
+            for (int i = 0; i < kvp.Value.rels.Count; i++) {
+                if (kvp.Value.rels[i].relType == type) {
                     return kvp.Key;
                 }
             }
@@ -1888,8 +1888,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public bool HasRelationshipOfEffectWith(Character character, TRAIT_EFFECT effect) {
         if (relationships.ContainsKey(character)) {
-            for (int i = 0; i < relationships[character].Count; i++) {
-                RelationshipTrait currTrait = relationships[character][i];
+            for (int i = 0; i < relationships[character].rels.Count; i++) {
+                RelationshipTrait currTrait = relationships[character].rels[i];
                 if (currTrait.effect == effect) {
                     return true;
                 }
@@ -1899,8 +1899,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public bool HasRelationshipOfEffectWith(Character character, List<TRAIT_EFFECT> effect) {
         if (relationships.ContainsKey(character)) {
-            for (int i = 0; i < relationships[character].Count; i++) {
-                RelationshipTrait currTrait = relationships[character][i];
+            for (int i = 0; i < relationships[character].rels.Count; i++) {
+                RelationshipTrait currTrait = relationships[character].rels[i];
                 if (effect.Contains(currTrait.effect)) {
                     return true;
                 }
@@ -1909,9 +1909,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         return false;
     }
     public bool HasRelationshipOfEffect(TRAIT_EFFECT effect) {
-        foreach (KeyValuePair<Character, List<RelationshipTrait>> kvp in relationships) {
-            for (int i = 0; i < kvp.Value.Count; i++) {
-                if (effect == kvp.Value[i].effect) {
+        foreach (KeyValuePair<Character, CharacterRelationshipData> kvp in relationships) {
+            for (int i = 0; i < kvp.Value.rels.Count; i++) {
+                if (effect == kvp.Value.rels[i].effect) {
                     return true;
                 }
             }
@@ -1919,9 +1919,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         return false;
     }
     public bool HasRelationshipOfEffect(List<TRAIT_EFFECT> effect) {
-        foreach (KeyValuePair<Character, List<RelationshipTrait>> kvp in relationships) {
-            for (int i = 0; i < kvp.Value.Count; i++) {
-                if (effect.Contains(kvp.Value[i].effect)) {
+        foreach (KeyValuePair<Character, CharacterRelationshipData> kvp in relationships) {
+            for (int i = 0; i < kvp.Value.rels.Count; i++) {
+                if (effect.Contains(kvp.Value.rels[i].effect)) {
                     return true;
                 }
             }
