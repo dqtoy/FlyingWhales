@@ -1,1 +1,1 @@
-{"name":"Annoyed","description":"This character is annoyed.","type":3,"effect":1,"trigger":0,"daysDuration":5,"effects":[]}
+{"name":"Annoyed","description":"This character is annoyed.","type":3,"effect":1,"trigger":0,"associatedInteraction":0,"daysDuration":5,"effects":[]}

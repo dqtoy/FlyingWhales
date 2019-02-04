@@ -16,6 +16,7 @@ public class Restrained : Trait {
         description = "This character is restrained!";
         type = TRAIT_TYPE.DISABLER;
         effect = TRAIT_EFFECT.NEGATIVE;
+        associatedInteraction = INTERACTION_TYPE.NONE;
         daysDuration = 0;
         effects = new List<TraitEffect>();
     }

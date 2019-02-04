@@ -98,17 +98,18 @@ public class InflictIllness : Interaction {
     #region Reward Effects
     private void InduceIllnessSuccessRewardEffect(InteractionState state) {
         //**Mechanics**: Choose a random Illness Trait and add it to Character Intel
-        string chosenIllness = AttributeManager.Instance.GetRandomIllness();
+        //string chosenIllness = AttributeManager.Instance.GetRandomIllness();
+        Trait sickTrait = AttributeManager.Instance.allTraits["Sick"];
         //**Level Up**: Instigator Minion +1
         _characterInvolved.LevelUp();
         Character target = previousState.assignedCharacter.character;
-        target.AddTrait(AttributeManager.Instance.allIllnesses[chosenIllness]);
+        target.AddTrait(sickTrait);
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            state.descriptionLog.AddToFillers(null, chosenIllness, LOG_IDENTIFIER.STRING_1);
+            state.descriptionLog.AddToFillers(null, sickTrait.name, LOG_IDENTIFIER.STRING_1);
         }
         state.AddLogFiller(new LogFiller(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
-        state.AddLogFiller(new LogFiller(null, chosenIllness, LOG_IDENTIFIER.STRING_1));
+        state.AddLogFiller(new LogFiller(null, sickTrait.name, LOG_IDENTIFIER.STRING_1));
     }
     private void InduceIllnessFailRewardEffect(InteractionState state) {
         Character target = previousState.assignedCharacter.character;
@@ -119,13 +120,14 @@ public class InflictIllness : Interaction {
     }
     private void InduceIllnessCriticalFailRewardEffect(InteractionState state) {
         //**Mechanics**: Choose a random Illness Trait and add it to Instigator Minion
-        string chosenIllness = AttributeManager.Instance.GetRandomIllness();
-        _characterInvolved.AddTrait(AttributeManager.Instance.allIllnesses[chosenIllness]);
+        //string chosenIllness = AttributeManager.Instance.GetRandomIllness();
+        Trait sickTrait = AttributeManager.Instance.allTraits["Sick"];
+        _characterInvolved.AddTrait(sickTrait);
 
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(null, chosenIllness, LOG_IDENTIFIER.STRING_1);
+            state.descriptionLog.AddToFillers(null, sickTrait.name, LOG_IDENTIFIER.STRING_1);
         }
-        state.AddLogFiller(new LogFiller(null, chosenIllness, LOG_IDENTIFIER.STRING_1));
+        state.AddLogFiller(new LogFiller(null, sickTrait.name, LOG_IDENTIFIER.STRING_1));
     }
     private void DoNothingRewardEffect(InteractionState state) {
 

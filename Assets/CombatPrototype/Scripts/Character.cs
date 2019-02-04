@@ -2271,6 +2271,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return null;
     }
+    public Trait GetTraitOr(string traitName1, string traitName2, string traitName3) {
+        for (int i = 0; i < _traits.Count; i++) {
+            if (_traits[i].name == traitName1 || _traits[i].name == traitName2 || _traits[i].name == traitName3) {
+                return _traits[i];
+            }
+        }
+        return null;
+    }
     public bool HasTraitOf(TRAIT_TYPE traitType) {
         for (int i = 0; i < _traits.Count; i++) {
             if (_traits[i].type == traitType) {
@@ -2641,8 +2649,131 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     private void CharacterPersonalActions() {
         //Checker of Disabler trait is on GenerateDailyInteraction()
         WeightedDictionary<INTERACTION_TYPE> personalActionWeights = new WeightedDictionary<INTERACTION_TYPE>();
-        if(GetTraitOr("Hungry", "Starving") != null) {
+        bool isHungry = GetTrait("Hungry") != null;
+        bool isStarving = GetTrait("Starving") != null;
+        bool isTired = GetTrait("Tired") != null;
+        bool isExhausted = GetTrait("Exhausted") != null;
+
+
+        //**B. If the character is Hungry or Starving, Fullness Recovery-type weight is increased**
+        if (isHungry) {
             List<INTERACTION_TYPE> fullnessRecoveryInteractions = RaceManager.Instance.GetNPCInteractionsOfRace(race, INTERACTION_CATEGORY.FULLNESS_RECOVERY, this);
+            if(fullnessRecoveryInteractions.Count > 0) {
+                personalActionWeights.AddElement(fullnessRecoveryInteractions[UnityEngine.Random.Range(0, fullnessRecoveryInteractions.Count)], 50);
+            }
+        } else if (isStarving) {
+            List<INTERACTION_TYPE> fullnessRecoveryInteractions = RaceManager.Instance.GetNPCInteractionsOfRace(race, INTERACTION_CATEGORY.FULLNESS_RECOVERY, this);
+            if (fullnessRecoveryInteractions.Count > 0) {
+                personalActionWeights.AddElement(fullnessRecoveryInteractions[UnityEngine.Random.Range(0, fullnessRecoveryInteractions.Count)], 100);
+            }
+        }
+
+        //**C.If the character is Tired or Exhausted, Tiredness Recovery-type weight is increased**
+        if (isTired) {
+            List<INTERACTION_TYPE> tirednessRecoveryInteractions = RaceManager.Instance.GetNPCInteractionsOfRace(race, INTERACTION_CATEGORY.TIREDNESS_RECOVERY, this);
+            if (tirednessRecoveryInteractions.Count > 0) {
+                personalActionWeights.AddElement(tirednessRecoveryInteractions[UnityEngine.Random.Range(0, tirednessRecoveryInteractions.Count)], 50);
+            }
+        } else if (isExhausted) {
+            List<INTERACTION_TYPE> tirednessRecoveryInteractions = RaceManager.Instance.GetNPCInteractionsOfRace(race, INTERACTION_CATEGORY.TIREDNESS_RECOVERY, this);
+            if (tirednessRecoveryInteractions.Count > 0) {
+                personalActionWeights.AddElement(tirednessRecoveryInteractions[UnityEngine.Random.Range(0, tirednessRecoveryInteractions.Count)], 100);
+            }
+        }
+
+        //**D. if character is non-Beast, non-Skeleton and not Charmed, loop through relationships and decide what action to do per character then determine weights**
+        if(role.roleType != CHARACTER_ROLE.BEAST && race != RACE.SKELETON && !isStarving && !isExhausted && GetTrait("Charmed") == null) {
+
+        }
+
+        //**E. loop through relevant traits then add relevant weights per associated action**
+        for (int i = 0; i < _traits.Count; i++) {
+            Trait trait = _traits[i];
+            if(trait.associatedInteraction != INTERACTION_TYPE.NONE && InteractionManager.Instance.CanCreateInteraction(trait.associatedInteraction, this)) {
+                personalActionWeights.AddElement(trait.associatedInteraction, 100);
+            }
+        }
+
+        //**F. compute Item handling weight**
+        if(!isStarving && !isExhausted) {
+            if (tokenInInventory != null) {
+                if (tokenInInventory.npcAssociatedInteractionType != INTERACTION_TYPE.NONE && tokenInInventory.CanBeUsedBy(this)
+                    && InteractionManager.Instance.CanCreateInteraction(tokenInInventory.npcAssociatedInteractionType, this)) {
+                    if (tokenInInventory.npcAssociatedInteractionType == INTERACTION_TYPE.USE_ITEM_ON_SELF) {
+                        personalActionWeights.AddElement(tokenInInventory.npcAssociatedInteractionType, 70);
+                    } else if (tokenInInventory.npcAssociatedInteractionType == INTERACTION_TYPE.USE_ITEM_ON_CHARACTER) {
+                        personalActionWeights.AddElement(tokenInInventory.npcAssociatedInteractionType, 70);
+                    } else if (tokenInInventory.npcAssociatedInteractionType == INTERACTION_TYPE.USE_ITEM_ON_LOCATION) {
+                        personalActionWeights.AddElement(tokenInInventory.npcAssociatedInteractionType, 70);
+                    }
+                }
+                if (currentStructure == homeStructure) {
+                    personalActionWeights.AddElement(INTERACTION_TYPE.DROP_ITEM, 20);
+                }
+            } else {
+                if (specificLocation.owner != null && specificLocation.owner == faction && specificLocation.HasStructure(STRUCTURE_TYPE.WAREHOUSE)) {
+                    personalActionWeights.AddElement(INTERACTION_TYPE.PICK_ITEM, 40);
+                }
+            }
+        }
+
+        if(specificLocation.id != homeArea.id) {
+            //**G. if away from home, compute Return Home weight**
+            int returnHomeWeight = 50;
+            if (isHungry) {
+                returnHomeWeight += 100;
+            }
+            if (isTired) {
+                returnHomeWeight += 100;
+            }
+            personalActionWeights.AddElement(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, returnHomeWeight);
+
+            //**H. if away from home, Transfer Home weight**
+            if (specificLocation.owner != null && specificLocation.owner == faction) {
+                int transferHomeWeight = 0;
+
+                Character lover = GetCharacterWithRelationship(RELATIONSHIP_TRAIT.LOVER);
+                if (lover != null && lover.homeArea.id == specificLocation.id) {
+                    transferHomeWeight += 100;
+                }
+
+                int availableResidentCapacityDifference = specificLocation.GetNumberOfUnoccupiedStructure(STRUCTURE_TYPE.DWELLING) - homeArea.GetNumberOfUnoccupiedStructure(STRUCTURE_TYPE.DWELLING);
+                if (availableResidentCapacityDifference > 0) {
+                    transferHomeWeight += (availableResidentCapacityDifference * 20);
+                }
+                if(transferHomeWeight > 0) {
+                    personalActionWeights.AddElement(INTERACTION_TYPE.TRANSFER_HOME, transferHomeWeight);
+                }
+            }
+        } else {
+            //**J. if at home, compute weight to simply visit other locations**
+            if (!isStarving && !isExhausted) {
+                personalActionWeights.AddElement(INTERACTION_TYPE.MOVE_TO_VISIT, 50);
+            }
+        }
+
+        //**I. Servants will serve their masters**
+
+        //**K. compute Do Nothing weight**
+        if (!isStarving && !isExhausted) {
+            personalActionWeights.AddElement(INTERACTION_TYPE.NONE, 50);
+        }
+
+
+        //---------------------------------------------------------- PICK PERSONAL ACTION ---------------------------------------------------
+        if(personalActionWeights.Count > 0) {
+            INTERACTION_TYPE chosenPersonalAction = personalActionWeights.PickRandomElementGivenWeights();
+            if(chosenPersonalAction != INTERACTION_TYPE.NONE) {
+                Interaction interaction = InteractionManager.Instance.CreateNewInteraction(chosenPersonalAction, specificLocation);
+                if (interaction.type == INTERACTION_TYPE.USE_ITEM_ON_CHARACTER) {
+                    (interaction as UseItemOnCharacter).SetItemToken(tokenInInventory);
+                } else if (interaction.type == INTERACTION_TYPE.USE_ITEM_ON_SELF) {
+                    (interaction as UseItemOnSelf).SetItemToken(tokenInInventory);
+                } else if (interaction.type == INTERACTION_TYPE.USE_ITEM_ON_LOCATION) {
+                    (interaction as UseItemOnLocation).SetItemToken(tokenInInventory);
+                }
+                AddInteraction(interaction);
+            }
         }
     }
     public Interaction GetInteractionOfType(INTERACTION_TYPE type) {

@@ -13,6 +13,7 @@ public class Friend : RelationshipTrait {
         relType = RELATIONSHIP_TRAIT.FRIEND;
         type = TRAIT_TYPE.STATUS;
         effect = TRAIT_EFFECT.POSITIVE;
+        associatedInteraction = INTERACTION_TYPE.NONE;
         daysDuration = 0;
         effects = new List<TraitEffect>();
     }

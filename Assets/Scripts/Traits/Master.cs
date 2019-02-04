@@ -13,6 +13,7 @@ public class Master : RelationshipTrait {
         type = TRAIT_TYPE.STATUS;
         effect = TRAIT_EFFECT.NEUTRAL;
         relType = RELATIONSHIP_TRAIT.MASTER;
+        associatedInteraction = INTERACTION_TYPE.NONE;
         daysDuration = 0;
         effects = new List<TraitEffect>();
     }

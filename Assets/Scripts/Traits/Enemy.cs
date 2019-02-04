@@ -13,6 +13,7 @@ public class Enemy : RelationshipTrait {
         relType = RELATIONSHIP_TRAIT.ENEMY;
         type = TRAIT_TYPE.STATUS;
         effect = TRAIT_EFFECT.NEGATIVE;
+        associatedInteraction = INTERACTION_TYPE.NONE;
         daysDuration = 0;
         effects = new List<TraitEffect>();
     }

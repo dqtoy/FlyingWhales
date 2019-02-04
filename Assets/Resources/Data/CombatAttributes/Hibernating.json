@@ -1,1 +1,1 @@
-{"name":"Hibernating","description":"This character is asleep.","type":6,"effect":0,"trigger":0,"daysDuration":0,"effects":[]}
+{"name":"Hibernating","description":"This character is asleep.","type":6,"effect":0,"trigger":0,"associatedInteraction":0,"daysDuration":0,"effects":[]}

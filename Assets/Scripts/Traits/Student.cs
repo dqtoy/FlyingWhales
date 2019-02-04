@@ -14,6 +14,7 @@ public class Student : RelationshipTrait {
         type = TRAIT_TYPE.STATUS;
         effect = TRAIT_EFFECT.POSITIVE;
         relType = RELATIONSHIP_TRAIT.STUDENT;
+        associatedInteraction = INTERACTION_TYPE.NONE;
         daysDuration = 0;
         effects = new List<TraitEffect>();
     }
