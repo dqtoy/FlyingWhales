@@ -97,12 +97,15 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public Dictionary<Character, CharacterRelationshipData> relationships { get; private set; }
 
     private Dictionary<STAT, float> _buffs;
-
     public Dictionary<int, Combat> combatHistory;
 
-    public Color skinColor { get; private set; }
-    public Color hairColor { get; private set; }
+    //Needs
+    public int tiredness { get; private set; }
+    private const int TIREDNESS_DEFAULT = 380;
+    public int fullness { get; private set; }
+    private const int FULLNESS_DEFAULT = 240;
 
+    //portrait
     public float hSkinColor { get; private set; }
     public float hHairColor { get; private set; }
 
@@ -515,12 +518,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         interactionWeights = new WeightedDictionary<INTERACTION_TYPE>();
         relationships = new Dictionary<Character, CharacterRelationshipData>();
 
-        //AllocateStats();
-        //EquipItemsByClass();
-        //ConstructBuffs();
-
-        skinColor = Color.HSVToRGB(UnityEngine.Random.Range(1, 80f)/360f, 15f/100f, 100f/100f);
-        hairColor = Color.HSVToRGB(UnityEngine.Random.Range(0f, 360f)/360f, 25f/100f, 90f/100f);
+        tiredness = TIREDNESS_DEFAULT;
+        fullness = FULLNESS_DEFAULT;
 
         hSkinColor = UnityEngine.Random.Range(-360f, 360f);
         hHairColor = UnityEngine.Random.Range(-360f, 360f);
@@ -544,6 +543,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //Messenger.AddListener<Area>(Signals.AREA_DELETED, OnAreaDeleted);
         //Messenger.AddListener<BaseLandmark>(Signals.DESTROY_LANDMARK, OnDestroyLandmark);
         Messenger.AddListener(Signals.DAY_STARTED, DailyInteractionGeneration);
+        Messenger.AddListener(Signals.DAY_ENDED, DecreaseNeeds);
         //Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, RemoveRelationshipWith);
         Messenger.AddListener<Character, Area, Area>(Signals.CHARACTER_MIGRATED_HOME, OnCharacterMigratedHome);
     }
@@ -556,6 +556,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //Messenger.RemoveListener<Area>(Signals.AREA_DELETED, OnAreaDeleted);
         //Messenger.RemoveListener<BaseLandmark>(Signals.DESTROY_LANDMARK, OnDestroyLandmark);
         Messenger.RemoveListener(Signals.DAY_STARTED, DailyInteractionGeneration);
+        Messenger.RemoveListener(Signals.DAY_ENDED, DecreaseNeeds);
         //Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, RemoveRelationshipWith);
         Messenger.RemoveListener<Character, Area, Area>(Signals.CHARACTER_MIGRATED_HOME, OnCharacterMigratedHome);
     }
@@ -738,7 +739,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             _ownParty.ReturnToLife();
         }
     }
-    public void Death() {
+    public void Death(string cause = "normal") {
         if (!_isDead) {
             SetIsDead(true);
             UnsubscribeSignals();
@@ -839,7 +840,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             //_icon = null;
 
             Debug.Log(this.name + " died!");
-            Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "death");
+            Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "death_" + cause);
             log.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             //log.AddToFillers(specificLocation, specificLocation.name, LOG_IDENTIFIER.LANDMARK_1);
             AddHistory(log);
@@ -2253,41 +2254,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return false;
     }
-    #endregion
-
-    #region Work
-    //public bool LookForNewWorkplace() {
-    //    if (_characterClass.workActionType == ACTION_TYPE.WORKING) {
-    //        _workplace = _homeLandmark;
-    //        return true;
-    //    } else {
-    //        List<BaseLandmark> workplaceChoices = new List<BaseLandmark>();
-    //        for (int i = 0; i < _homeLandmark.tileLocation.areaOfTile.landmarks.Count; i++) {
-    //            StructureObj structure = _homeLandmark.tileLocation.areaOfTile.landmarks[i].landmarkObj;
-    //            for (int j = 0; j < structure.currentState.actions.Count; j++) {
-    //                if (structure.currentState.actions[j].actionType == _characterClass.workActionType) {
-    //                    workplaceChoices.Add(_homeLandmark.tileLocation.areaOfTile.landmarks[i]);
-    //                    break;
-    //                }
-    //            }
-    //        }
-    //        if (workplaceChoices.Count != 0) {
-    //            _workplace = workplaceChoices[UnityEngine.Random.Range(0, workplaceChoices.Count)];
-    //            return true;
-    //        }
-    //        //throw new Exception("Could not find workplace for " + this.name);
-    //    }
-    //    return false;
-    //}
-    //public void MigrateTo(BaseLandmark newHomeLandmark) {
-    //    Area previousHome = null;
-    //    if(homeArea != null) {
-    //        previousHome = homeArea.tileLocation.areaOfTile;
-    //        homeArea.RemoveCharacterHomeOnLandmark(this);
-    //    }
-    //    newHomeLandmark.AddCharacterHomeOnLandmark(this);
-    //    Messenger.Broadcast(Signals.CHARACTER_MIGRATED_HOME, this, previousHome, newHomeLandmark.tileLocation.areaOfTile);
-    //}
     public void MigrateHomeTo(Area newHomeArea, bool broadcast = true) {
         Area previousHome = null;
         if (homeArea != null) {
@@ -2462,6 +2428,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 RemoveRelationship(rel.targetCharacter, rel);
             }
             return true;
+        }
+        return false;
+    }
+    public bool RemoveTrait(string traitName, bool triggerOnRemove = true) {
+        Trait trait = GetTrait(traitName);
+        if (trait != null) {
+            return RemoveTrait(trait, triggerOnRemove);
         }
         return false;
     }
@@ -3006,6 +2979,100 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     private void UpdateTokenOwner() {
         if (tokenInInventory != null) {
             tokenInInventory.SetOwner(this.faction);
+        }
+    }
+    #endregion
+
+    #region Needs
+    private void DecreaseNeeds() {
+        //DecreaseFullnessMeter();
+        //DecreaseTirednessMeter();
+    }
+    public string GetNeedsSummary() {
+        string summary = "Fullness: " + fullness.ToString() + "/" + FULLNESS_DEFAULT.ToString();
+        summary += "\nTiredness: " + tiredness + "/" + TIREDNESS_DEFAULT.ToString();
+        return summary;
+    }
+    #endregion
+
+    #region Tiredness
+    public void ResetTirednessMeter() {
+        tiredness = TIREDNESS_DEFAULT;
+        RemoveTrait("Tired");
+        RemoveTrait("Exhausted");
+    }
+    public void AdjustTiredness(int adjustment) {
+        tiredness += adjustment;
+        tiredness = Mathf.Clamp(tiredness, 0, TIREDNESS_DEFAULT);
+        if (tiredness == 0) {
+            Death("starvation");
+        } else if (tiredness <= 260) {
+            Trait hungerTrait = GetTrait("Hungry");
+            Trait starvationTrait = GetTrait("Starving");
+            if (hungerTrait != null) {
+                RemoveTrait(hungerTrait);
+            }
+            if (starvationTrait == null) {
+                AddTrait("Starving");
+            }
+        } else if (tiredness <= 332) {
+            Trait hungerTrait = GetTrait("Hungry");
+            if (hungerTrait == null) {
+                AddTrait("Hungry");
+            }
+        }
+    }
+    public void DecreaseTirednessMeter() { //this is used for when tiredness is only decreased by 1 (I did this for optimization, so as not to check for traits everytime)
+        tiredness -= 1;
+        tiredness = Mathf.Clamp(tiredness, 0, TIREDNESS_DEFAULT);
+        if (tiredness == 332) {
+            AddTrait("Tired");
+        } else if (tiredness == 260) {
+            RemoveTrait("Tired");
+            AddTrait("Exhausted");
+        } else if (tiredness == 0) {
+            Death("exhaustion");
+        }
+    }
+    #endregion
+
+    #region Fullness
+    public void ResetFullnessMeter() {
+        fullness = FULLNESS_DEFAULT;
+        RemoveTrait("Hungry");
+        RemoveTrait("Starving");
+    }
+    public void AdjustFullness(int adjustment) {
+        fullness += adjustment;
+        fullness = Mathf.Clamp(fullness, 0, FULLNESS_DEFAULT);
+        if (fullness == 0) {
+            Death("starvation");
+        } else if (fullness <= 120) {
+            Trait hungerTrait = GetTrait("Hungry");
+            Trait starvationTrait = GetTrait("Starving");
+            if (hungerTrait != null) {
+                RemoveTrait(hungerTrait);
+            }
+            if (starvationTrait == null) {
+                AddTrait("Starving");
+            }
+        } else if (fullness <= 180) {
+            Trait hungerTrait = GetTrait("Hungry");
+            if (hungerTrait == null) {
+                AddTrait("Hungry");
+            }
+        }
+    }
+    public void DecreaseFullnessMeter() { //this is used for when fullness is only decreased by 1 (I did this for optimization, so as not to check for traits everytime)
+        fullness -= 1;
+        fullness = Mathf.Clamp(fullness, 0, FULLNESS_DEFAULT);
+        if (fullness == 180) {
+            AddTrait("Hungry");
+        } else if (fullness == 120) {
+            RemoveTrait("Hungry");
+            AddTrait("Starving");
+        } else if (fullness == 0) {
+            Death("starvation");
         }
     }
     #endregion

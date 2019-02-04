@@ -72,7 +72,7 @@ public interface ICharacter {
     //void ResetToFullHP();
     //void ResetToFullSP();
     void Initialize();
-    void Death();
+    void Death(string cause = "normal");
     void UpgradeWeapon();
     void UpgradeArmor();
     void UpgradeAccessory();
