@@ -148,9 +148,6 @@ public class MoveToArgue : Interaction {
                 if (currTrait.relType == RELATIONSHIP_TRAIT.SERVANT) {
                     weight += 20;
                 }
-                if (currTrait.relType == RELATIONSHIP_TRAIT.STUDENT) {
-                    weight += 20;
-                }
                 if (currTrait.relType == RELATIONSHIP_TRAIT.RELATIVE) {
                     weight += 30;
                 }

@@ -383,10 +383,10 @@ public class CharacterManager : MonoBehaviour {
                 return new Master(targetCharacter);
             case RELATIONSHIP_TRAIT.SERVANT:
                 return new Servant(targetCharacter);
-            case RELATIONSHIP_TRAIT.MENTOR:
-                return new Mentor(targetCharacter);
-            case RELATIONSHIP_TRAIT.STUDENT:
-                return new Student(targetCharacter);
+            case RELATIONSHIP_TRAIT.SAVER:
+                return new Saver(targetCharacter);
+            case RELATIONSHIP_TRAIT.SAVE_TARGET:
+                return new SaveTarget(targetCharacter);
         }
         return null;
     }
@@ -711,10 +711,10 @@ public class CharacterManager : MonoBehaviour {
                 return RELATIONSHIP_TRAIT.SERVANT;
             case RELATIONSHIP_TRAIT.SERVANT:
                 return RELATIONSHIP_TRAIT.MASTER;
-            case RELATIONSHIP_TRAIT.MENTOR:
-                return RELATIONSHIP_TRAIT.STUDENT;
-            case RELATIONSHIP_TRAIT.STUDENT:
-                return RELATIONSHIP_TRAIT.MENTOR;
+            case RELATIONSHIP_TRAIT.SAVER:
+                return RELATIONSHIP_TRAIT.SAVE_TARGET;
+            case RELATIONSHIP_TRAIT.SAVE_TARGET:
+                return RELATIONSHIP_TRAIT.SAVER;
             default:
                 return RELATIONSHIP_TRAIT.NONE;
         }
@@ -724,7 +724,7 @@ public class CharacterManager : MonoBehaviour {
     }
     private RELATIONSHIP_TRAIT GetRandomRelationship() {
         RELATIONSHIP_TRAIT[] choices = Utilities.GetEnumValues<RELATIONSHIP_TRAIT>();
-        return choices[Random.Range(1, choices.Length - 1)];
+        return choices[Random.Range(1, choices.Length - 2)];
     }
     #endregion
 }

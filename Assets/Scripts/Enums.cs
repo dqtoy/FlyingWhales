@@ -1247,8 +1247,7 @@ public enum RELATIONSHIP_TRAIT {
     PARAMOUR,
     MASTER,
     SERVANT,
-    MENTOR,
-    STUDENT,
+    SAVER,
     SAVE_TARGET,
 }
 

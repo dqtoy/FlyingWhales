@@ -1692,21 +1692,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     return true;
                 }
                 return false;
-            case RELATIONSHIP_TRAIT.MENTOR:
-                //this means that the target character will be this characters mentor, therefore making this character his/her student
-                //so check if this character isn't already a student, or that this character is not a mentor himself
-                if (GetCharacterWithRelationship(RELATIONSHIP_TRAIT.MENTOR) == null
-                    && GetCharacterWithRelationship(RELATIONSHIP_TRAIT.STUDENT) == null) {
-                    return true;
-                }
-                return false;
-            case RELATIONSHIP_TRAIT.STUDENT:
-                //this means that the target character will be this characters student, therefore making this character his/her mentor
-                //so check that this character is not a student
-                if (GetCharacterWithRelationship(RELATIONSHIP_TRAIT.MENTOR) == null) {
-                    return true;
-                }
-                return false;
         }
         return true;
     }

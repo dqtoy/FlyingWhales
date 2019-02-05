@@ -289,7 +289,8 @@ public class Party {
         this.emblem = emblem;
         this.partyColor = partyColor;
     }
-    public void GoToLocation(Area targetLocation, PATHFINDING_MODE pathfindingMode, LocationStructure targetStructure = null, Action doneAction = null, Action actionOnStartOfMovement = null) {
+    public void GoToLocation(Area targetLocation, PATHFINDING_MODE pathfindingMode, LocationStructure targetStructure = null,
+        Action doneAction = null, Action actionOnStartOfMovement = null, Interaction causeForTravel = null) {
         //if (_icon.isMovingToHex) {
         //    _icon.SetQueuedAction(() => GoToLocation(targetLocation, pathfindingMode, doneAction, trackTarget, actionOnStartOfMovement));
         //    return;
@@ -305,6 +306,7 @@ public class Party {
         } else {
             //_icon.SetActionOnTargetReached(doneAction);
             _icon.SetTarget(targetLocation, targetStructure);
+            _icon.SetCauseForTravel(causeForTravel);
             _icon.StartPath(PATHFINDING_MODE.PASSABLE, doneAction, actionOnStartOfMovement);
         }
     }
