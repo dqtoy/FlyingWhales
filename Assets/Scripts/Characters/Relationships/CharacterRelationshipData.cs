@@ -107,6 +107,14 @@ public class CharacterRelationshipData {
         }
         return false;
     }
+    public bool HasRelationshipTrait(RELATIONSHIP_TRAIT relType1, RELATIONSHIP_TRAIT relType2) {
+        for (int i = 0; i < rels.Count; i++) {
+            if (rels[i].relType == relType1 || rels[i].relType == relType2) {
+                return true;
+            }
+        }
+        return false;
+    }
     public RelationshipTrait GetRelationshipTrait(RELATIONSHIP_TRAIT relType) {
         for (int i = 0; i < rels.Count; i++) {
             if (rels[i].relType == relType) {

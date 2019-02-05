@@ -2645,11 +2645,19 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     private void CharacterPersonalActions() {
         //Checker of Disabler trait is on GenerateDailyInteraction()
         WeightedDictionary<INTERACTION_TYPE> personalActionWeights = new WeightedDictionary<INTERACTION_TYPE>();
-        bool isHungry = GetTrait("Hungry") != null;
-        bool isStarving = GetTrait("Starving") != null;
-        bool isTired = GetTrait("Tired") != null;
-        bool isExhausted = GetTrait("Exhausted") != null;
 
+        bool isHungry = false, isStarving = false, isTired = false, isExhausted = false;
+        for (int i = 0; i < _traits.Count; i++) {
+            if(_traits[i].name == "Hungry") {
+                isHungry = true;
+            }else if (_traits[i].name == "Starving") {
+                isStarving = true;
+            } else if (_traits[i].name == "Tired") {
+                isTired = true;
+            } else if (_traits[i].name == "Exhausted") {
+                isExhausted = true;
+            }
+        }
 
         //**B. If the character is Hungry or Starving, Fullness Recovery-type weight is increased**
         if (isHungry) {
@@ -2679,7 +2687,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 
         //**D. if character is non-Beast, non-Skeleton and not Charmed, loop through relationships and decide what action to do per character then determine weights**
         if(role.roleType != CHARACTER_ROLE.BEAST && race != RACE.SKELETON && !isStarving && !isExhausted && GetTrait("Charmed") == null) {
-            WeightedDictionary<Character> characterWeights = new WeightedDictionary<Character>();
+            WeightedDictionary<CharacterRelationshipData> characterWeights = new WeightedDictionary<CharacterRelationshipData>();
             foreach (KeyValuePair<Character, CharacterRelationshipData> kvp in relationships) {
                 int weight = kvp.Value.GetTotalRelationshipWeight();
                 if(kvp.Value.isCharacterMissing && !kvp.Value.HasRelationshipTrait(RELATIONSHIP_TRAIT.ENEMY)) {
@@ -2688,10 +2696,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 if(kvp.Value.encounterMultiplier > 0f) {
                     weight = (int)(weight * kvp.Value.encounterMultiplier);
                 }
+                characterWeights.AddElement(kvp.Value, weight);
             }
             if(characterWeights.GetTotalOfWeights() > 0) {
-                Character chosenCharacter = characterWeights.PickRandomElementGivenWeights();
-                //TODO: CHARACTER NPC ACTION TYPES
+                CharacterRelationshipData chosenData = characterWeights.PickRandomElementGivenWeights();
+                INTERACTION_TYPE chosenRelationshipInteraction = CharacterNPCActionTypes(chosenData);
+                if(chosenRelationshipInteraction != INTERACTION_TYPE.NONE) {
+                    personalActionWeights.AddElement(chosenRelationshipInteraction, 100);
+                }
             }
         }
 
@@ -2784,6 +2796,49 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 AddInteraction(interaction);
             }
         }
+    }
+    private INTERACTION_TYPE CharacterNPCActionTypes(CharacterRelationshipData relationshipData) {
+        WeightedDictionary<INTERACTION_CATEGORY> npcActionWeights = new WeightedDictionary<INTERACTION_CATEGORY>();
+
+        //Social
+        npcActionWeights.AddElement(INTERACTION_CATEGORY.SOCIAL, 100);
+
+        //Romantic
+        if(relationshipData.HasRelationshipTrait(RELATIONSHIP_TRAIT.LOVER)) {
+            npcActionWeights.AddElement(INTERACTION_CATEGORY.ROMANTIC, 50);
+        }else if (relationshipData.HasRelationshipTrait(RELATIONSHIP_TRAIT.PARAMOUR)) {
+            npcActionWeights.AddElement(INTERACTION_CATEGORY.ROMANTIC, 80);
+        }
+
+        //TODO: Save
+
+        if (relationshipData.HasRelationshipTrait(RELATIONSHIP_TRAIT.ENEMY)) {
+            //Offense
+            npcActionWeights.AddElement(INTERACTION_CATEGORY.OFFENSE, 100);
+
+            //Subterfuge
+            npcActionWeights.AddElement(INTERACTION_CATEGORY.SUBTERFUGE, 50);
+
+            //TODO: Sabotage
+        } else {
+            //TODO: Assistance
+
+        }
+
+        //TODO: Other
+        //npcActionWeights.AddElement(INTERACTION_CATEGORY.OTHER, 50);
+
+        INTERACTION_TYPE chosenType = INTERACTION_TYPE.NONE;
+        while(chosenType == INTERACTION_TYPE.NONE && npcActionWeights.Count > 0) {
+            INTERACTION_CATEGORY category = npcActionWeights.PickRandomElementGivenWeights();
+            List<INTERACTION_TYPE> allInteractionsThatCanBeDone = RaceManager.Instance.GetNPCInteractionsOfRace(race, category, this);
+            if(allInteractionsThatCanBeDone.Count > 0) {
+                chosenType = allInteractionsThatCanBeDone[UnityEngine.Random.Range(0, allInteractionsThatCanBeDone.Count)];
+            } else {
+                npcActionWeights.RemoveElement(category);
+            }
+        }
+        return chosenType;
     }
     public Interaction GetInteractionOfType(INTERACTION_TYPE type) {
         for (int i = 0; i < _currentInteractions.Count; i++) {

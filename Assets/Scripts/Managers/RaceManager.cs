@@ -79,7 +79,7 @@ public class RaceManager : MonoBehaviour {
         List<INTERACTION_TYPE> interactions = new List<INTERACTION_TYPE>(); //Get interactions of all races first
         INTERACTION_TYPE[] interactionArray = _factionRaceInteractions[RACE.NONE];
         for (int i = 0; i < interactionArray.Length; i++) {
-            InteractionCategoryAndAlignment interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(interactionArray[i]);
+            InteractionAttributes interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(interactionArray[i]);
             for (int j = 0; j < interactionCategoryAndAlignment.categories.Length; j++) {
                 if (interactionCategoryAndAlignment.categories[j] == category) {
                     interactions.Add(interactionArray[i]);
@@ -90,7 +90,7 @@ public class RaceManager : MonoBehaviour {
         if (_factionRaceInteractions.ContainsKey(race)) {
             interactionArray = _factionRaceInteractions[race];
             for (int i = 0; i < interactionArray.Length; i++) {
-                InteractionCategoryAndAlignment interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(interactionArray[i]);
+                InteractionAttributes interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(interactionArray[i]);
                 for (int j = 0; j < interactionCategoryAndAlignment.categories.Length; j++) {
                     if(interactionCategoryAndAlignment.categories[j] == category) {
                         interactions.Add(interactionArray[i]);
@@ -105,7 +105,7 @@ public class RaceManager : MonoBehaviour {
         List<INTERACTION_TYPE> interactions = new List<INTERACTION_TYPE>(); //Get interactions of all races first
         INTERACTION_TYPE[] interactionArray = _factionRaceInteractions[RACE.NONE];
         for (int i = 0; i < interactionArray.Length; i++) {
-            InteractionCategoryAndAlignment interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(interactionArray[i]);
+            InteractionAttributes interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(interactionArray[i]);
             if (interactionCategoryAndAlignment.alignment == alignment) {
                 interactions.Add(interactionArray[i]);
             }
@@ -113,7 +113,7 @@ public class RaceManager : MonoBehaviour {
         if (_factionRaceInteractions.ContainsKey(race)) {
             interactionArray = _factionRaceInteractions[race];
             for (int i = 0; i < interactionArray.Length; i++) {
-                InteractionCategoryAndAlignment interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(interactionArray[i]);
+                InteractionAttributes interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(interactionArray[i]);
                 if (interactionCategoryAndAlignment.alignment == alignment) {
                     interactions.Add(interactionArray[i]);
                 }
@@ -125,7 +125,7 @@ public class RaceManager : MonoBehaviour {
         List<INTERACTION_TYPE> interactions = new List<INTERACTION_TYPE>(); //Get interactions of all races first
         INTERACTION_TYPE[] interactionArray = _factionRaceInteractions[RACE.NONE];
         for (int i = 0; i < interactionArray.Length; i++) {
-            InteractionCategoryAndAlignment interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(interactionArray[i]);
+            InteractionAttributes interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(interactionArray[i]);
             if (interactionCategoryAndAlignment.alignment == alignment) {
                 for (int j = 0; j < interactionCategoryAndAlignment.categories.Length; j++) {
                     if (interactionCategoryAndAlignment.categories[j] == category) {
@@ -138,7 +138,7 @@ public class RaceManager : MonoBehaviour {
         if (_factionRaceInteractions.ContainsKey(race)) {
             interactionArray = _factionRaceInteractions[race];
             for (int i = 0; i < interactionArray.Length; i++) {
-                InteractionCategoryAndAlignment interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(interactionArray[i]);
+                InteractionAttributes interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(interactionArray[i]);
                 if (interactionCategoryAndAlignment.alignment == alignment) {
                     for (int j = 0; j < interactionCategoryAndAlignment.categories.Length; j++) {
                         if (interactionCategoryAndAlignment.categories[j] == category) {
@@ -155,7 +155,7 @@ public class RaceManager : MonoBehaviour {
         List<INTERACTION_TYPE> interactions = new List<INTERACTION_TYPE>(); //Get interactions of all races first
         INTERACTION_TYPE[] interactionArray = _factionRaceInteractions[RACE.NONE];
         for (int i = 0; i < interactionArray.Length; i++) {
-            InteractionCategoryAndAlignment interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(interactionArray[i]);
+            InteractionAttributes interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(interactionArray[i]);
             if (factionMorality == MORALITY.GOOD && interactionCategoryAndAlignment.alignment == INTERACTION_ALIGNMENT.EVIL) {
                 //Alignment must be good or neutral, so if it is evil, skip it
                 continue;
@@ -173,7 +173,7 @@ public class RaceManager : MonoBehaviour {
         if (_factionRaceInteractions.ContainsKey(race)) {
             interactionArray = _factionRaceInteractions[race];
             for (int i = 0; i < interactionArray.Length; i++) {
-                InteractionCategoryAndAlignment interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(interactionArray[i]);
+                InteractionAttributes interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(interactionArray[i]);
                 if (factionMorality == MORALITY.GOOD && interactionCategoryAndAlignment.alignment == INTERACTION_ALIGNMENT.EVIL) {
                     //Alignment must be good or neutral, so if it is evil, skip it
                     continue;
@@ -215,7 +215,7 @@ public class RaceManager : MonoBehaviour {
         List<INTERACTION_TYPE> interactions = new List<INTERACTION_TYPE>(); //Get interactions of all races first
         INTERACTION_TYPE[] interactionArray = _npcRaceInteractions[RACE.NONE];
         for (int i = 0; i < interactionArray.Length; i++) {
-            InteractionCategoryAndAlignment interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(interactionArray[i]);
+            InteractionAttributes interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(interactionArray[i]);
             for (int j = 0; j < interactionCategoryAndAlignment.categories.Length; j++) {
                 if (interactionCategoryAndAlignment.categories[j] == category) {
                     if(character != null && InteractionManager.Instance.CanCreateInteraction(interactionArray[i], character)) {
@@ -228,7 +228,7 @@ public class RaceManager : MonoBehaviour {
         if (_npcRaceInteractions.ContainsKey(race)) {
             interactionArray = _npcRaceInteractions[race];
             for (int i = 0; i < interactionArray.Length; i++) {
-                InteractionCategoryAndAlignment interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(interactionArray[i]);
+                InteractionAttributes interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(interactionArray[i]);
                 for (int j = 0; j < interactionCategoryAndAlignment.categories.Length; j++) {
                     if (interactionCategoryAndAlignment.categories[j] == category) {
                         if (character != null && InteractionManager.Instance.CanCreateInteraction(interactionArray[i], character)) {
@@ -245,7 +245,7 @@ public class RaceManager : MonoBehaviour {
         List<INTERACTION_TYPE> interactions = new List<INTERACTION_TYPE>(); //Get interactions of all races first
         INTERACTION_TYPE[] interactionArray = _npcRaceInteractions[RACE.NONE];
         for (int i = 0; i < interactionArray.Length; i++) {
-            InteractionCategoryAndAlignment interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(interactionArray[i]);
+            InteractionAttributes interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(interactionArray[i]);
             if (interactionCategoryAndAlignment.alignment == alignment) {
                 if (character != null && InteractionManager.Instance.CanCreateInteraction(interactionArray[i], character)) {
                     interactions.Add(interactionArray[i]);
@@ -255,7 +255,7 @@ public class RaceManager : MonoBehaviour {
         if (_npcRaceInteractions.ContainsKey(race)) {
             interactionArray = _npcRaceInteractions[race];
             for (int i = 0; i < interactionArray.Length; i++) {
-                InteractionCategoryAndAlignment interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(interactionArray[i]);
+                InteractionAttributes interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(interactionArray[i]);
                 if (interactionCategoryAndAlignment.alignment == alignment) {
                     if (character != null && InteractionManager.Instance.CanCreateInteraction(interactionArray[i], character)) {
                         interactions.Add(interactionArray[i]);
@@ -269,7 +269,7 @@ public class RaceManager : MonoBehaviour {
         List<INTERACTION_TYPE> interactions = new List<INTERACTION_TYPE>(); //Get interactions of all races first
         INTERACTION_TYPE[] interactionArray = _npcRaceInteractions[RACE.NONE];
         for (int i = 0; i < interactionArray.Length; i++) {
-            InteractionCategoryAndAlignment interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(interactionArray[i]);
+            InteractionAttributes interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(interactionArray[i]);
             if (interactionCategoryAndAlignment.alignment == alignment) {
                 for (int j = 0; j < interactionCategoryAndAlignment.categories.Length; j++) {
                     if (interactionCategoryAndAlignment.categories[j] == category) {
@@ -284,7 +284,7 @@ public class RaceManager : MonoBehaviour {
         if (_npcRaceInteractions.ContainsKey(race)) {
             interactionArray = _npcRaceInteractions[race];
             for (int i = 0; i < interactionArray.Length; i++) {
-                InteractionCategoryAndAlignment interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(interactionArray[i]);
+                InteractionAttributes interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(interactionArray[i]);
                 if (interactionCategoryAndAlignment.alignment == alignment) {
                     for (int j = 0; j < interactionCategoryAndAlignment.categories.Length; j++) {
                         if (interactionCategoryAndAlignment.categories[j] == category) {
