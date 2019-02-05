@@ -427,7 +427,7 @@ public class Interaction {
             throw new Exception(_characterInvolved.name + " cannot do " + _name + " because target location is null!");
         }
         AddToDebugLog(_characterInvolved.name + " starts moving towards " + targetArea.name + "!(" + _type.ToString() + ")");
-        _characterInvolved.currentParty.GoToLocation(targetArea, PATHFINDING_MODE.NORMAL, null, () => DoActionUponMoveToArrival());
+        _characterInvolved.currentParty.GoToLocation(targetArea, PATHFINDING_MODE.NORMAL, null, () => DoActionUponMoveToArrival(), null, this);
     }
     #endregion
 

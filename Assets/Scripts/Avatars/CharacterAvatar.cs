@@ -42,6 +42,7 @@ public class CharacterAvatar : MonoBehaviour{
     private Action queuedAction = null;
 
     public CharacterPortrait characterPortrait { get; private set; }
+    public Interaction causeForTravel { get; private set; }
 
     #region getters/setters
     public Party party {
@@ -133,6 +134,9 @@ public class CharacterAvatar : MonoBehaviour{
         targetLocation = target;
         targetStructure = structure;
     }
+    public void SetCauseForTravel(Interaction cause) {
+        causeForTravel = cause;
+    }
     public void StartPath(PATHFINDING_MODE pathFindingMode, Action actionOnPathFinished = null, Action actionOnPathReceived = null) {
         //if (smoothMovement.isMoving) {
         //    smoothMovement.ForceStopMovement();
@@ -213,7 +217,7 @@ public class CharacterAvatar : MonoBehaviour{
         targetLocation.AddCharacterToLocation(_party, targetStructure);
         Debug.Log(GameManager.Instance.TodayLogString() + _party.name + " has arrived at " + targetLocation.name + " on " + GameManager.Instance.continuousDays);
         if(_party.characters.Count > 0) {
-            Log arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "arrive_location");
+            Log arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "arrive_location", causeForTravel);
             for (int i = 0; i < _party.characters.Count; i++) {
                 Character character = party.characters[i];
                 character.SetDailyInteractionGenerationTick();
