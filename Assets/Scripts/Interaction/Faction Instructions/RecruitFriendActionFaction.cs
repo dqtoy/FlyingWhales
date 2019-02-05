@@ -64,6 +64,10 @@ public class RecruitFriendActionFaction : Interaction {
         }
         return base.CanInteractionBeDoneBy(character);
     }
+    public override void SetTargetCharacter(Character targetCharacter) {
+        this._targetCharacter = targetCharacter;
+        AddToDebugLog("Set target character to " + targetCharacter.name);
+    }
     #endregion
 
     #region Option Effect
@@ -115,11 +119,6 @@ public class RecruitFriendActionFaction : Interaction {
         character.MigrateHomeTo(_characterInvolved.homeArea);
         Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, character.specificLocation);
         character.SetForcedInteraction(interaction);
-    }
-
-    public void SetTargetCharacter(Character targetCharacter) {
-        this._targetCharacter = targetCharacter;
-        AddToDebugLog("Set target character to " + targetCharacter.name);
     }
     public Character GetTargetCharacter(Character characterInvolved) {
         List<Character> choices = new List<Character>();

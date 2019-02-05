@@ -104,6 +104,9 @@ public class TortureAction : Interaction {
         }
         return base.CanInteractionBeDoneBy(character);
     }
+    public override void SetTargetCharacter(Character targetCharacter) {
+        this._targetCharacter = targetCharacter;
+    }
     #endregion
 
     #region Option Effect
@@ -210,9 +213,6 @@ public class TortureAction : Interaction {
     }
     #endregion
 
-    public void SetTargetCharacter(Character targetCharacter) {
-        this._targetCharacter = targetCharacter;
-    }
     public Character GetTargetCharacter(Character characterInvolved) {
         WeightedDictionary<Character> characterWeights = new WeightedDictionary<Character>();
         for (int i = 0; i < interactable.charactersAtLocation.Count; i++) {

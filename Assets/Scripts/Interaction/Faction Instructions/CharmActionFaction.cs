@@ -68,6 +68,10 @@ public class CharmActionFaction : Interaction {
         }
         return base.CanInteractionBeDoneBy(character);
     }
+    public override void SetTargetCharacter(Character targetCharacter) {
+        this._targetCharacter = targetCharacter;
+        AddToDebugLog("Set " + targetCharacter.name + " as target");
+    }
     #endregion
 
     #region Option Effect
@@ -147,10 +151,6 @@ public class CharmActionFaction : Interaction {
         AddToDebugLog("Forced " + character.name + " to go home");
     }
 
-    public void SetTargetCharacter(Character targetCharacter) {
-        this._targetCharacter = targetCharacter;
-        AddToDebugLog("Set " + targetCharacter.name + " as target");
-    }
     public Character GetTargetCharacter(Character characterInvolved) {
         WeightedDictionary<Character> characterWeights = new WeightedDictionary<Character>();
         for (int i = 0; i < interactable.charactersAtLocation.Count; i++) {

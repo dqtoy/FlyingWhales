@@ -103,6 +103,10 @@ public class RecruitAction : Interaction {
         }
         return base.CanInteractionBeDoneBy(character);
     }
+    public override void SetTargetCharacter(Character targetCharacter) {
+        this._targetCharacter = targetCharacter;
+        AddToDebugLog("Set target character to " + targetCharacter.name);
+    }
     #endregion
 
     #region Option Effect
@@ -240,10 +244,6 @@ public class RecruitAction : Interaction {
         character.SetForcedInteraction(interaction);
     }
 
-    public void SetTargetCharacter(Character targetCharacter) {
-        this._targetCharacter = targetCharacter;
-        AddToDebugLog("Set target character to " + targetCharacter.name);
-    }
     public Character GetTargetCharacter(Character characterInvolved) {
         WeightedDictionary<Character> characterWeights = new WeightedDictionary<Character>();
         for (int i = 0; i < interactable.charactersAtLocation.Count; i++) {

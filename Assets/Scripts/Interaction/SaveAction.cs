@@ -117,6 +117,10 @@ public class SaveAction : Interaction {
         }
         return base.CanInteractionBeDoneBy(character);
     }
+    public override void SetTargetCharacter(Character targetCharacter) {
+        this._targetCharacter = targetCharacter;
+        AddToDebugLog("Set " + targetCharacter.name + " as target");
+    }
     #endregion
 
     #region Option Effect
@@ -293,9 +297,4 @@ public class SaveAction : Interaction {
         _characterInvolved.Death();
     }
     #endregion
-
-    public void SetTargetCharacter(Character targetCharacter) {
-        this._targetCharacter = targetCharacter;
-        AddToDebugLog("Set " + targetCharacter.name + " as target");
-    }
 }

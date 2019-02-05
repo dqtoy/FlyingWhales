@@ -69,6 +69,11 @@ public class HangOutAction : Interaction {
         }
         return base.CanInteractionBeDoneBy(character);
     }
+    public override void SetTargetCharacter(Character targetCharacter) {
+        _targetCharacter = targetCharacter;
+        targetStructure = targetCharacter.currentStructure;
+        AddToDebugLog("Set " + targetCharacter.name + " at " + targetStructure?.ToString() ?? "Nowhere" + " as target");
+    }
     #endregion
 
     #region Option Effect
@@ -112,11 +117,4 @@ public class HangOutAction : Interaction {
         _targetCharacter.AddTrait(AttributeManager.Instance.allTraits["Annoyed"]);
     }
     #endregion
-
-
-    public void SetTargetCharacter(Character targetCharacter) {
-        _targetCharacter = targetCharacter;
-        targetStructure = targetCharacter.currentStructure;
-        AddToDebugLog("Set " + targetCharacter.name + " at " + targetStructure?.ToString() ?? "Nowhere" + " as target");
-    }
 }

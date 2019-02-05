@@ -144,13 +144,16 @@ public class ChanceEncounter : Interaction {
         }
     }
     public override bool CanInteractionBeDoneBy(Character character) {
-        if(_targetCharacter == null) {
+        if (_targetCharacter == null) {
             SetTargetCharacter(GetTargetCharacter(character));
         }
         if (_targetCharacter == null) {
             return false;
         }
         return base.CanInteractionBeDoneBy(character);
+    }
+    public override void SetTargetCharacter(Character targetCharacter) {
+        this._targetCharacter = targetCharacter;
     }
     #endregion
 
@@ -256,10 +259,6 @@ public class ChanceEncounter : Interaction {
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     #endregion
-
-    public void SetTargetCharacter(Character targetCharacter) {
-        this._targetCharacter = targetCharacter;
-    }
     public Character GetTargetCharacter(Character characterInvolved) {
         List<Character> characterList = new List<Character>();
         for (int i = 0; i < interactable.charactersAtLocation.Count; i++) {

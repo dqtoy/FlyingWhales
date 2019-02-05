@@ -112,6 +112,9 @@ public class StealAction : Interaction {
         }
         return base.CanInteractionBeDoneBy(character);
     }
+    public override void SetTargetCharacter(Character targetCharacter) {
+        this._targetCharacter = targetCharacter;
+    }
     #endregion
 
     #region Option Effect
@@ -338,10 +341,6 @@ public class StealAction : Interaction {
     private void TransferItem(Character sourceCharacter, Character thief) {
         thief.ObtainToken(sourceCharacter.tokenInInventory);
         sourceCharacter.UnobtainToken();
-    }
-
-    public void SetTargetCharacter(Character targetCharacter) {
-        this._targetCharacter = targetCharacter;
     }
     public Character GetTargetCharacter(Character characterInvolved) {
         /*

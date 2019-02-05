@@ -65,6 +65,9 @@ public class ArgueAction : Interaction {
         }
         return base.CanInteractionBeDoneBy(character);
     }
+    public override void SetTargetCharacter(Character targetCharacter) {
+        this._targetCharacter = targetCharacter;
+    }
     #endregion
 
     #region Option Effect
@@ -108,8 +111,4 @@ public class ArgueAction : Interaction {
         _targetCharacter.AddTrait(AttributeManager.Instance.allTraits["Injured"]);
     }
     #endregion
-
-    public void SetTargetCharacter(Character targetCharacter) {
-        this._targetCharacter = targetCharacter;
-    }
 }

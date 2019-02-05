@@ -241,6 +241,61 @@ public class RaceManager : MonoBehaviour {
         }
         return interactions;
     }
+    public List<INTERACTION_TYPE> GetNPCInteractionsOfRace(RACE race, INTERACTION_CATEGORY category, InteractionTargetCharacterEffect interactionTargetCharacterEffect, Character character = null) {
+        //If there is a character passed as parameter, this means that the list will be filtered by what the character can do
+        List<INTERACTION_TYPE> interactions = new List<INTERACTION_TYPE>(); //Get interactions of all races first
+        INTERACTION_TYPE[] interactionArray = _npcRaceInteractions[RACE.NONE];
+        for (int i = 0; i < interactionArray.Length; i++) {
+            InteractionAttributes interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(interactionArray[i]);
+            for (int j = 0; j < interactionCategoryAndAlignment.categories.Length; j++) {
+                if (interactionCategoryAndAlignment.categories[j] == category) {
+                    bool canDoTargetCharacterEffect = false;
+                    for (int k = 0; k < interactionCategoryAndAlignment.targetCharacterEffect.Length; k++) {
+                        if(interactionCategoryAndAlignment.targetCharacterEffect[k].effect == interactionTargetCharacterEffect.effect) {
+                            for (int l = 0; l < interactionCategoryAndAlignment.targetCharacterEffect[k].effectString.Length; l++) {
+                                string effectString = interactionCategoryAndAlignment.targetCharacterEffect[k].effectString[l];
+                                if (interactionTargetCharacterEffect.effectString.Contains(effectString)) {
+                                    canDoTargetCharacterEffect = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    if (canDoTargetCharacterEffect && character != null && InteractionManager.Instance.CanCreateInteraction(interactionArray[i], character)) {
+                        interactions.Add(interactionArray[i]);
+                    }
+                    break;
+                }
+            }
+        }
+        if (_npcRaceInteractions.ContainsKey(race)) {
+            interactionArray = _npcRaceInteractions[race];
+            for (int i = 0; i < interactionArray.Length; i++) {
+                InteractionAttributes interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(interactionArray[i]);
+                for (int j = 0; j < interactionCategoryAndAlignment.categories.Length; j++) {
+                    if (interactionCategoryAndAlignment.categories[j] == category) {
+                        bool canDoTargetCharacterEffect = false;
+                        for (int k = 0; k < interactionCategoryAndAlignment.targetCharacterEffect.Length; k++) {
+                            if (interactionCategoryAndAlignment.targetCharacterEffect[k].effect == interactionTargetCharacterEffect.effect) {
+                                for (int l = 0; l < interactionCategoryAndAlignment.targetCharacterEffect[k].effectString.Length; l++) {
+                                    string effectString = interactionCategoryAndAlignment.targetCharacterEffect[k].effectString[l];
+                                    if (interactionTargetCharacterEffect.effectString.Contains(effectString)) {
+                                        canDoTargetCharacterEffect = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        if (canDoTargetCharacterEffect && character != null && InteractionManager.Instance.CanCreateInteraction(interactionArray[i], character)) {
+                            interactions.Add(interactionArray[i]);
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+        return interactions;
+    }
     public List<INTERACTION_TYPE> GetNPCInteractionsOfRace(RACE race, INTERACTION_ALIGNMENT alignment, Character character = null) {
         List<INTERACTION_TYPE> interactions = new List<INTERACTION_TYPE>(); //Get interactions of all races first
         INTERACTION_TYPE[] interactionArray = _npcRaceInteractions[RACE.NONE];

@@ -84,6 +84,9 @@ public class CurseAction : Interaction {
         }
         return base.CanInteractionBeDoneBy(character);
     }
+    public override void SetTargetCharacter(Character targetCharacter) {
+        this._targetCharacter = targetCharacter;
+    }
     #endregion
 
     #region Option Effect
@@ -151,8 +154,4 @@ public class CurseAction : Interaction {
         _characterInvolved.Death();
     }
     #endregion
-
-    public void SetTargetCharacter(Character targetCharacter) {
-        this._targetCharacter = targetCharacter;
-    }
 }

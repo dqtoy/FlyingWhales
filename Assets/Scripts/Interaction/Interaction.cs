@@ -204,6 +204,7 @@ public class Interaction {
         interaction.SetInteractionIntel(this.intel);
         return interaction;
     }
+    public virtual void SetTargetCharacter(Character character) { }
     #endregion
 
     #region Utilities

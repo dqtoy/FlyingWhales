@@ -2292,6 +2292,15 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return false;
     }
+    public bool HasTraitOf(TRAIT_EFFECT effect1, TRAIT_EFFECT effect2, TRAIT_TYPE type) {
+        for (int i = 0; i < traits.Count; i++) {
+            Trait currTrait = traits[i];
+            if ((currTrait.effect == effect1 || currTrait.effect == effect2) && currTrait.type == type) {
+                return true;
+            }
+        }
+        return false;
+    }
     public List<Trait> RemoveAllTraitsByType(TRAIT_TYPE traitType) {
         List<Trait> removedTraits = new List<Trait>();
         for (int i = 0; i < _traits.Count; i++) {
@@ -2645,7 +2654,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     private void CharacterPersonalActions() {
         //Checker of Disabler trait is on GenerateDailyInteraction()
         WeightedDictionary<INTERACTION_TYPE> personalActionWeights = new WeightedDictionary<INTERACTION_TYPE>();
-
+        Character targetCharacter = null;
         bool isHungry = false, isStarving = false, isTired = false, isExhausted = false;
         for (int i = 0; i < _traits.Count; i++) {
             if(_traits[i].name == "Hungry") {
@@ -2700,9 +2709,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
             if(characterWeights.GetTotalOfWeights() > 0) {
                 CharacterRelationshipData chosenData = characterWeights.PickRandomElementGivenWeights();
-                INTERACTION_TYPE chosenRelationshipInteraction = CharacterNPCActionTypes(chosenData);
+                int weight = 0;
+                targetCharacter = chosenData.targetCharacter;
+                INTERACTION_TYPE chosenRelationshipInteraction = CharacterNPCActionTypes(chosenData, ref weight, ref targetCharacter);
                 if(chosenRelationshipInteraction != INTERACTION_TYPE.NONE) {
-                    personalActionWeights.AddElement(chosenRelationshipInteraction, 100);
+                    if(weight <= 0) {
+                        weight = 100;
+                    }
+                    personalActionWeights.AddElement(chosenRelationshipInteraction, weight);
                 }
             }
         }
@@ -2793,24 +2807,15 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 } else if (interaction.type == INTERACTION_TYPE.USE_ITEM_ON_LOCATION) {
                     (interaction as UseItemOnLocation).SetItemToken(tokenInInventory);
                 }
+                if(targetCharacter != null) {
+                    interaction.SetTargetCharacter(targetCharacter);
+                }
                 AddInteraction(interaction);
             }
         }
     }
-    private INTERACTION_TYPE CharacterNPCActionTypes(CharacterRelationshipData relationshipData) {
+    private INTERACTION_TYPE CharacterNPCActionTypes(CharacterRelationshipData relationshipData, ref int weight, ref Character targetCharacter) {
         WeightedDictionary<INTERACTION_CATEGORY> npcActionWeights = new WeightedDictionary<INTERACTION_CATEGORY>();
-
-        //Social
-        npcActionWeights.AddElement(INTERACTION_CATEGORY.SOCIAL, 100);
-
-        //Romantic
-        if(relationshipData.HasRelationshipTrait(RELATIONSHIP_TRAIT.LOVER)) {
-            npcActionWeights.AddElement(INTERACTION_CATEGORY.ROMANTIC, 50);
-        }else if (relationshipData.HasRelationshipTrait(RELATIONSHIP_TRAIT.PARAMOUR)) {
-            npcActionWeights.AddElement(INTERACTION_CATEGORY.ROMANTIC, 80);
-        }
-
-        //TODO: Save
 
         if (relationshipData.HasRelationshipTrait(RELATIONSHIP_TRAIT.ENEMY)) {
             //Offense
@@ -2821,8 +2826,52 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 
             //TODO: Sabotage
         } else {
+            //TODO: Save
+            if(relationshipData.trouble != null && relationshipData.trouble.Count > 0) {
+                string[] allTroubleNames = relationshipData.trouble.Select(x => x.name).ToArray();
+                List<INTERACTION_TYPE> allSaveInteractionsThatCanBeDone = RaceManager.Instance.GetNPCInteractionsOfRace(race, INTERACTION_CATEGORY.SAVE
+                         , new InteractionTargetCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_REMOVE, effectString = allTroubleNames }, this);
+
+                if (allSaveInteractionsThatCanBeDone != null && allSaveInteractionsThatCanBeDone.Count > 0) {
+                    weight += 300;
+                    return allSaveInteractionsThatCanBeDone[UnityEngine.Random.Range(0, allSaveInteractionsThatCanBeDone.Count)];
+                } else {
+                    List<Character> characterChoices = new List<Character>();
+                    for (int i = 0; i < specificLocation.charactersAtLocation.Count; i++) {
+                        Character otherCharacter = specificLocation.charactersAtLocation[i];
+                        if(id != otherCharacter.id && faction.id != FactionManager.Instance.neutralFaction.id && otherCharacter.faction.id != FactionManager.Instance.neutralFaction.id) {
+                            if(!HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_EFFECT.NEUTRAL, TRAIT_TYPE.DISABLER) && !HasRelationshipTraitOf(RELATIONSHIP_TRAIT.ENEMY)) {
+                                FactionRelationship factionRel = faction.GetRelationshipWith(otherCharacter.faction);
+                                if(factionRel.relationshipStatus != FACTION_RELATIONSHIP_STATUS.ENEMY && factionRel.relationshipStatus != FACTION_RELATIONSHIP_STATUS.AT_WAR) {
+                                    allSaveInteractionsThatCanBeDone = RaceManager.Instance.GetNPCInteractionsOfRace(otherCharacter.race, INTERACTION_CATEGORY.SAVE
+                                        , new InteractionTargetCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_REMOVE, effectString = allTroubleNames }, otherCharacter);
+                                    if (allSaveInteractionsThatCanBeDone != null && allSaveInteractionsThatCanBeDone.Count > 0) {
+                                        characterChoices.Add(otherCharacter);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if(characterChoices.Count > 0) {
+                        weight += 200;
+                        targetCharacter = characterChoices[UnityEngine.Random.Range(0, characterChoices.Count)];
+                        return INTERACTION_TYPE.ASK_FOR_HELP;
+                    }
+                }
+            }
+
             //TODO: Assistance
 
+        }
+
+        //Social
+        npcActionWeights.AddElement(INTERACTION_CATEGORY.SOCIAL, 100);
+
+        //Romantic
+        if(relationshipData.HasRelationshipTrait(RELATIONSHIP_TRAIT.LOVER)) {
+            npcActionWeights.AddElement(INTERACTION_CATEGORY.ROMANTIC, 50);
+        }else if (relationshipData.HasRelationshipTrait(RELATIONSHIP_TRAIT.PARAMOUR)) {
+            npcActionWeights.AddElement(INTERACTION_CATEGORY.ROMANTIC, 80);
         }
 
         //TODO: Other
@@ -2840,6 +2889,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return chosenType;
     }
+
     public Interaction GetInteractionOfType(INTERACTION_TYPE type) {
         for (int i = 0; i < _currentInteractions.Count; i++) {
             Interaction currInteraction = _currentInteractions[i];

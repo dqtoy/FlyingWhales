@@ -132,6 +132,12 @@ public class PatrolAction : Interaction {
             state.SetDefaultOption(doNothing);
         }
     }
+    public override void SetTargetCharacter(Character character) {
+        _targetCharacter = character;
+        if (_targetCharacter != null) {
+            AddLogFillerToAllStates(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        }
+    }
     #endregion
 
     #region Option Effects
@@ -412,13 +418,6 @@ public class PatrolAction : Interaction {
         }
         return null;
         //throw new System.Exception("Could not find target character for Patrol Action at " + interactable.name);
-    }
-
-    private void SetTargetCharacter(Character character) {
-        _targetCharacter = character;
-        if (_targetCharacter != null) {
-            AddLogFillerToAllStates(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
-        }
     }
     #endregion
 

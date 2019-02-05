@@ -1542,9 +1542,9 @@ public struct InteractionAttributes {
 }
 public struct InteractionActorEffect {
     public INTERACTION_CHARACTER_EFFECT effect;
-    public string effectString;
+    public string[] effectString;
 }
 public struct InteractionTargetCharacterEffect {
     public INTERACTION_CHARACTER_EFFECT effect;
-    public string effectString;
+    public string[] effectString;
 }

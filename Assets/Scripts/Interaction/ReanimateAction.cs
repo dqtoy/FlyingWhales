@@ -112,6 +112,10 @@ public class ReanimateAction : Interaction {
         }
         return base.CanInteractionBeDoneBy(character);
     }
+
+    public override void SetTargetCharacter(Character targetCharacter) {
+        this._targetCharacter = targetCharacter;
+    }
     #endregion
 
     #region Option Effect
@@ -307,10 +311,6 @@ public class ReanimateAction : Interaction {
         Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, character.specificLocation);
         character.SetForcedInteraction(interaction);
         character.ChangeRace(RACE.SKELETON);
-    }
-
-    public void SetTargetCharacter(Character targetCharacter) {
-        this._targetCharacter = targetCharacter;
     }
     public Character GetTargetCharacter(Character characterInvolved) {
         if (interactable.corpsesInArea.Count > 0) {

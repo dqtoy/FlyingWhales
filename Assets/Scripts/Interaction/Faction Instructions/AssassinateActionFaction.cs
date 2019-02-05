@@ -65,6 +65,10 @@ public class AssassinateActionFaction : Interaction {
         }
         return base.CanInteractionBeDoneBy(character);
     }
+    public override void SetTargetCharacter(Character targetCharacter) {
+        this._targetCharacter = targetCharacter;
+        AddToDebugLog("Set target character to " + targetCharacter.name);
+    }
     #endregion
 
     #region Option Effect
@@ -117,10 +121,6 @@ public class AssassinateActionFaction : Interaction {
     }
     #endregion
 
-    public void SetTargetCharacter(Character targetCharacter) {
-        this._targetCharacter = targetCharacter;
-        AddToDebugLog("Set target character to " + targetCharacter.name);
-    }
     public Character GetTargetCharacter(Character characterInvolved) {
         /*
          Once the actual action is triggered, the character will find a random non-Warded character in the location that is a member of an Enemy or War faction.
