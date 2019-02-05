@@ -1537,14 +1537,14 @@ public struct CharacterInteractionWeight {
 public struct InteractionAttributes {
     public INTERACTION_CATEGORY[] categories;
     public INTERACTION_ALIGNMENT alignment;
-    public InteractionActorEffect actorEffect;
-    public InteractionTargetCharacterEffect targetCharacterEffect;
+    public InteractionActorEffect[] actorEffect;
+    public InteractionTargetCharacterEffect[] targetCharacterEffect;
 }
 public struct InteractionActorEffect {
     public INTERACTION_CHARACTER_EFFECT effect;
-    public object effectObject;
+    public string effectString;
 }
 public struct InteractionTargetCharacterEffect {
     public INTERACTION_CHARACTER_EFFECT effect;
-    public object effectObject;
+    public string effectString;
 }
