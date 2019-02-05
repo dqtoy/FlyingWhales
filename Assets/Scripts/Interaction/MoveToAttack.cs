@@ -27,7 +27,7 @@ public class MoveToAttack : Interaction {
         InteractionState stopFailState = new InteractionState("Stop Fail", this);
         InteractionState doNothingState = new InteractionState("Do Nothing", this);
 
-        Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
+        Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description", this);
         startStateDescriptionLog.AddToFillers(interactable.attackTarget, interactable.attackTarget.name, LOG_IDENTIFIER.LANDMARK_2);
         for (int i = 0; i < interactable.attackCharacters.Count; i++) {
             startStateDescriptionLog.AddToFillers(interactable.attackCharacters[i], interactable.attackCharacters[i].name, LOG_IDENTIFIER.CHARACTER_LIST_1, false);

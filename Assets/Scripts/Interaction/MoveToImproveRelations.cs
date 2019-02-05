@@ -31,7 +31,7 @@ public class MoveToImproveRelations : Interaction {
         _targetArea = GetTargetLocation();
         targetFaction = _targetArea.owner;
 
-        Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
+        Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description", this);
         startStateDescriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_1);
         startStateDescriptionLog.AddToFillers(_targetArea.owner, _targetArea.owner.name, LOG_IDENTIFIER.FACTION_1);
         startState.OverrideDescriptionLog(startStateDescriptionLog);

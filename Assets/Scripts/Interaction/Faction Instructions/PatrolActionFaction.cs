@@ -8,6 +8,7 @@ public class PatrolActionFaction : Interaction {
     private const string Patrol_Continues = "Patrol Continues";
     private const string Normal_Patrol = "Normal Patrol";
 
+    private LocationStructure structure;
 
     public PatrolActionFaction(Area interactable) 
         : base(interactable, INTERACTION_TYPE.PATROL_ACTION_FACTION, 0) {
@@ -23,7 +24,7 @@ public class PatrolActionFaction : Interaction {
         InteractionState normalPatrol = new InteractionState(Normal_Patrol, this);
 
         //**Structure**: Move the character to a random Wilderness
-        LocationStructure structure = interactable.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+        structure = interactable.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
         _characterInvolved.MoveToAnotherStructure(structure);
 
         CreateActionOptions(startState);
@@ -59,6 +60,9 @@ public class PatrolActionFaction : Interaction {
             state.AddActionOption(doNothing);
             state.SetDefaultOption(doNothing);
         }
+    }
+    public override object GetTarget() {
+        return structure;
     }
     #endregion
 

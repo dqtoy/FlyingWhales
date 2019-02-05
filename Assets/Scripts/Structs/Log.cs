@@ -21,7 +21,9 @@ public class Log {
 
     public string logCallStack;
 
-    public Log(int month, int day, int year, int hour, string category, string file, string key){
+    public Interaction fromInteraction { get; private set; }
+
+    public Log(int month, int day, int year, int hour, string category, string file, string key, Interaction fromInteraction = null){
         this.id = Utilities.SetID<Log>(this);
 		this.month = (MONTH)month;
 		this.day = day;
@@ -32,9 +34,10 @@ public class Log {
 		this.key = key;
 		this.fillers = new List<LogFiller>();
         this.lockFillers = false;
+        this.fromInteraction = fromInteraction;
         logCallStack = StackTraceUtility.ExtractStackTrace();
 	}
-    public Log(GameDate date, string category, string file, string key) {
+    public Log(GameDate date, string category, string file, string key, Interaction fromInteraction = null) {
         this.id = Utilities.SetID<Log>(this);
         this.month = (MONTH)date.month;
         this.day = date.day;
@@ -45,6 +48,7 @@ public class Log {
         this.key = key;
         this.fillers = new List<LogFiller>();
         this.lockFillers = false;
+        this.fromInteraction = fromInteraction;
         logCallStack = StackTraceUtility.ExtractStackTrace();
     }
 

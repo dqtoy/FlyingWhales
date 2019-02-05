@@ -18,7 +18,7 @@ public class CreateNecromancer : Interaction {
         InteractionState necromancerCreatedState = new InteractionState(Necromancer_Created, this);
         InteractionState doNothingState = new InteractionState(Do_Nothing, this);
 
-        Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
+        Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description", this);
         startStateDescriptionLog.AddToFillers(null, Utilities.NormalizeString(characterInvolved.race.ToString()), LOG_IDENTIFIER.STRING_1);
         startStateDescriptionLog.AddToFillers(characterInvolved.faction, characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
         startState.OverrideDescriptionLog(startStateDescriptionLog);

@@ -6,6 +6,10 @@ public class MoveToReturnHome : Interaction {
 
     private Area targetLocation;
 
+    public override Area targetArea {
+        get { return targetLocation; }
+    }
+
     public MoveToReturnHome(Area interactable) 
         : base(interactable, INTERACTION_TYPE.MOVE_TO_RETURN_HOME, 0) {
         _name = "Move To Return Home";
@@ -17,7 +21,7 @@ public class MoveToReturnHome : Interaction {
         targetLocation = _characterInvolved.homeArea;
 
         //**Text Description**: [Character Name] is about to leave for [Location Name 1] to scavenge for supplies.
-        Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
+        Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description", this);
         startStateDescriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2);
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 

@@ -31,7 +31,7 @@ public class MoveToTameBeast : Interaction {
         InteractionState tameProceedsState = new InteractionState(Tame_Proceeds, this);
         InteractionState normalTameState = new InteractionState(Normal_Tame, this);
 
-        Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
+        Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description", this);
         startStateDescriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2);
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 

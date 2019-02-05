@@ -37,7 +37,7 @@ public class Panacea : SpecialToken {
         targetCharacter.RemoveAllTraitsByType(TRAIT_TYPE.ILLNESS);
         state.tokenUser.ConsumeToken();
 
-        Log stateDescriptionLog = new Log(GameManager.Instance.Today(), "Tokens", this.GetType().ToString(), state.name.ToLower() + "-minion" + "_description");
+        Log stateDescriptionLog = new Log(GameManager.Instance.Today(), "Tokens", this.GetType().ToString(), state.name.ToLower() + "-minion" + "_description", state.interaction);
         stateDescriptionLog.AddToFillers(state.tokenUser, state.tokenUser.name, LOG_IDENTIFIER.MINION_1);
         stateDescriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         state.OverrideDescriptionLog(stateDescriptionLog);
@@ -51,7 +51,7 @@ public class Panacea : SpecialToken {
         state.tokenUser.RemoveAllTraitsByType(TRAIT_TYPE.ILLNESS);
         state.tokenUser.ConsumeToken();
 
-        Log stateDescriptionLog = new Log(GameManager.Instance.Today(), "Tokens", this.GetType().ToString(), state.name.ToLower() + "-npc" + "_description");
+        Log stateDescriptionLog = new Log(GameManager.Instance.Today(), "Tokens", this.GetType().ToString(), state.name.ToLower() + "-npc" + "_description", state.interaction);
         stateDescriptionLog.AddToFillers(state.tokenUser, state.tokenUser.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         state.OverrideDescriptionLog(stateDescriptionLog);
 

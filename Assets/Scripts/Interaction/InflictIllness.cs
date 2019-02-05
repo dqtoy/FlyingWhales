@@ -22,7 +22,7 @@ public class InflictIllness : Interaction {
         InteractionState doNothing = new InteractionState(Do_Nothing, this);
 
         ////**Text Description**: [Minion Name] successfully raided [Location Name 1]. [He/She] returns with [Amount] Supplies.
-        //Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
+        //Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description", this);
         //startStateDescriptionLog.AddToFillers(null, otherData[0].ToString(), LOG_IDENTIFIER.STRING_1);
         //startState.OverrideDescriptionLog(startStateDescriptionLog);
 

@@ -33,7 +33,7 @@ public class Interaction {
     protected Job _jobAssociated;
     protected JOB[] _jobFilter;
     protected object[] otherData;
-    protected InteractionIntel intel;
+    protected InteractionIntel _intel;
     private string interactionDebugLog;
 
     private bool _hasUsedBaseCreateStates;
@@ -121,6 +121,9 @@ public class Interaction {
     public virtual Area targetArea {
         get { return null; }
     }
+    public InteractionIntel intel {
+        get { return _intel; }
+    }
     #endregion
 
     public Interaction(Area interactable, INTERACTION_TYPE type, int timeOutTicks) {
@@ -197,6 +200,7 @@ public class Interaction {
     public virtual Interaction CreateConnectedEvent(INTERACTION_TYPE connectedType, Area interactable) {
         Interaction interaction = InteractionManager.Instance.CreateNewInteraction(connectedType, interactable);
         _characterInvolved.SetForcedInteraction(interaction);
+        interaction.SetCharacterInvolved(_characterInvolved, false);
         interaction.SetInteractionIntel(this.intel);
         return interaction;
     }
@@ -322,9 +326,9 @@ public class Interaction {
         //    _currentState.SetDescription();
         //}
     }
-    public void SetCharacterInvolved(Character character) {
+    public void SetCharacterInvolved(Character character, bool setDoNotDisturb = true) {
         _characterInvolved = character;
-        if(_characterInvolved != null) {
+        if(_characterInvolved != null && setDoNotDisturb) {
             AddToDebugLog("Set character involved to " + character.name);
             _characterInvolved.AdjustDoNotDisturb(1);
         }
@@ -402,7 +406,7 @@ public class Interaction {
             return;
         }
         faction1.AdjustRelationshipFor(faction2, adjustment);
-        Log factionRelationshipLog = new Log(GameManager.Instance.Today(), "Events", "Generic", "faction_relationship_changed");
+        Log factionRelationshipLog = new Log(GameManager.Instance.Today(), "Events", "Generic", "faction_relationship_changed", this);
         factionRelationshipLog.AddToFillers(new LogFiller(faction1, faction1.name, LOG_IDENTIFIER.FACTION_1));
         factionRelationshipLog.AddToFillers(new LogFiller(faction2, faction2.name, LOG_IDENTIFIER.FACTION_2));
         factionRelationshipLog.AddToFillers(new LogFiller(null,
@@ -429,10 +433,10 @@ public class Interaction {
 
     #region Intel
     public void SetInteractionIntel(InteractionIntel intel) {
-        this.intel = intel;
+        _intel = intel;
         intel.SetConnectedInteraction(this);
     }
-    public object GetTarget() {
+    public virtual object GetTarget() {
         if (targetCharacter != null) {
             return targetCharacter;
         }

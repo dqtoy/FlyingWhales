@@ -13,13 +13,13 @@ public class CharacterEncountered : Interaction {
 
         if (_characterInvolved.isFactionless) {
             //**Neutral Text Description**: [Minion Name] has encountered a [Race] named [Character Name]. [He/She] is an unaligned [Class].
-            Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "-factioned_description");
+            Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "-factioned_description", this);
             startStateDescriptionLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(_characterInvolved.race), LOG_IDENTIFIER.STRING_1);
             startStateDescriptionLog.AddToFillers(null, characterInvolved.characterClass.className, LOG_IDENTIFIER.STRING_2);
             startState.OverrideDescriptionLog(startStateDescriptionLog);
         } else {
             //**Factioned Text Description**: [Minion Name] has encountered a [Race] named [Character Name]. [He/She] is a [Class] belonging to [Faction Name].
-            Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "-neutral_description");
+            Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "-neutral_description", this);
             startStateDescriptionLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(_characterInvolved.race), LOG_IDENTIFIER.STRING_1);
             startStateDescriptionLog.AddToFillers(null, characterInvolved.characterClass.className, LOG_IDENTIFIER.STRING_2);
             startStateDescriptionLog.AddToFillers(characterInvolved.faction, characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);

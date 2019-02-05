@@ -8,8 +8,22 @@ public class InteractionIntel {
 
     public Character actor { get { return connectedInteraction.characterInvolved; } }
     public object target { get { return connectedInteraction.GetTarget(); } }
-    public INTERACTION_CATEGORY[] categories { get { return InteractionManager.Instance.GetCategoryAndAlignment(connectedInteraction.type).categories; } }
-    public INTERACTION_ALIGNMENT alignment { get { return InteractionManager.Instance.GetCategoryAndAlignment(connectedInteraction.type).alignment; } }
+    public INTERACTION_CATEGORY[] categories {
+        get {
+            if (!InteractionManager.Instance.interactionCategoryAndAlignment.ContainsKey(connectedInteraction.type)) {
+                return null;
+            }
+            return InteractionManager.Instance.GetCategoryAndAlignment(connectedInteraction.type).categories;
+        }
+    }
+    public INTERACTION_ALIGNMENT alignment {
+        get {
+            if (!InteractionManager.Instance.interactionCategoryAndAlignment.ContainsKey(connectedInteraction.type)) {
+                return INTERACTION_ALIGNMENT.NEUTRAL;
+            }
+            return InteractionManager.Instance.GetCategoryAndAlignment(connectedInteraction.type).alignment;
+        }
+    }
     public bool isCompleted { get { return connectedInteraction.isDone; } }
 
     public InteractionIntel(Interaction interaction) {

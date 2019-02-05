@@ -29,7 +29,7 @@ public class MoveToHarvest : Interaction {
         InteractionState harvestProceedsState = new InteractionState(Harvest_Proceeds, this);
         InteractionState normalHarvestState = new InteractionState(Normal_Harvest, this);
 
-        Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
+        Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description", this);
         startStateDescriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2);
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 

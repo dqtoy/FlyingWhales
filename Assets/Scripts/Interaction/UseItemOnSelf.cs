@@ -25,7 +25,7 @@ public class UseItemOnSelf : Interaction {
 
         //targetCharacter = _characterInvolved;
 
-        Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
+        Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description", this);
         startStateDescriptionLog.AddToFillers(null, _tokenToBeUsed.nameInBold, LOG_IDENTIFIER.STRING_1);
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 
@@ -58,6 +58,9 @@ public class UseItemOnSelf : Interaction {
             state.AddActionOption(doNothing);
             state.SetDefaultOption(doNothing);
         }
+    }
+    public override object GetTarget() {
+        return _characterInvolved;
     }
     #endregion
 

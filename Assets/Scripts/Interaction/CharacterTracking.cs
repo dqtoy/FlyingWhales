@@ -26,7 +26,7 @@ public class CharacterTracking : Interaction {
 
         InteractionState startState = new InteractionState("Start", this);
 
-        Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
+        Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description", this);
         startStateDescriptionLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(characterInvolved.race), LOG_IDENTIFIER.STRING_1);
         startStateDescriptionLog.AddToFillers(null, Utilities.NormalizeString(characterInvolved.role.roleType.ToString()), LOG_IDENTIFIER.STRING_2);
         //startStateDescriptionLog.AddToFillers(characterInvolved, characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

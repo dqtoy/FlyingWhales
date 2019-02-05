@@ -21,7 +21,7 @@ public class MinionPeaceNegotiation : Interaction {
         InteractionState peaceNegotiationsFailedState = new InteractionState(Peace_Negotiations_Failed, this);
         InteractionState doNothingState = new InteractionState(Do_Nothing, this);
 
-        Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
+        Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description", this);
         startStateDescriptionLog.AddToFillers(interactable.owner.leader, interactable.owner.leader.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 

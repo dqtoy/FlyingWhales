@@ -59,6 +59,9 @@ public class ExploreEventFaction : Interaction {
             state.SetDefaultOption(doNothing);
         }
     }
+    public override object GetTarget() {
+        return poi;
+    }
     #endregion
 
     #region Action Option Effects

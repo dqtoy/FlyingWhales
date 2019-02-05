@@ -25,7 +25,7 @@ public class InstigatorTargetLocation : Interaction {
         InteractionState induceAttackState = new InteractionState(Induce_Attack, this);
         InteractionState doNothingState = new InteractionState(Do_Nothing, this);
 
-        Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
+        Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description", this);
         startStateDescriptionLog.AddToFillers(_targetLocationToken.location, _targetLocationToken.location.name, LOG_IDENTIFIER.LANDMARK_2);
         startStateDescriptionLog.AddToFillers(null, _targetLocationToken.ToString(), LOG_IDENTIFIER.STRING_1);
         startState.OverrideDescriptionLog(startStateDescriptionLog);

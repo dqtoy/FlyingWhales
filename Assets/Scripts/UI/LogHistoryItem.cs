@@ -51,9 +51,24 @@ public class LogHistoryItem : LogItem {
     }
 
     public void ShowLogDebugInfo() {
-        string text = log.file;
-        text += "\n" + log.logCallStack;
-        UIManager.Instance.ShowSmallInfo(text);
+        if (log.fromInteraction != null) {
+            string text = log.fromInteraction.ToString() + " Intel Data: ";
+            text += "\n<b>Interaction:</b> " + log.fromInteraction.intel.connectedInteraction.ToString();
+            text += "\n<b>Actor:</b> " + log.fromInteraction.intel.actor.name;
+            text += "\n<b>Target:</b> " + log.fromInteraction.intel.target?.ToString() ?? "None";
+            text += "\n<b>Categories:</b> ";
+            if (log.fromInteraction.intel.categories == null) {
+                text += "None";
+            } else {
+                for (int i = 0; i < log.fromInteraction.intel.categories.Length; i++) {
+                    text += "|" + log.fromInteraction.intel.categories[i].ToString() + "|";
+                }
+            }
+            text += "\n<b>Alignment:</b> " + log.fromInteraction.intel.alignment.ToString();
+            text += "\n<b>isCompleted?:</b> " + log.fromInteraction.intel.isCompleted.ToString();
+            UIManager.Instance.ShowSmallInfo(text);
+        }
+        
     }
     public void HideLogDebugInfo() {
         UIManager.Instance.HideSmallInfo();

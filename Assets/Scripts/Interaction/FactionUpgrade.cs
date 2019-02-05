@@ -26,7 +26,7 @@ public class FactionUpgrade : Interaction {
         InteractionState assistedFactionUpgradeState = new InteractionState(Assisted_Faction_Upgrade, this);
         InteractionState normalFactionUpgradeState = new InteractionState(Normal_Faction_Upgrade, this);
 
-        Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
+        Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description", this);
         startStateDescriptionLog.AddToFillers(interactable.owner.leader, interactable.owner.leader.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 

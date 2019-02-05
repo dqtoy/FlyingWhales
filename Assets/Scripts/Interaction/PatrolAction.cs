@@ -51,7 +51,7 @@ public class PatrolAction : Interaction {
         InteractionState normalCharacterInjuredPatroller = new InteractionState(Normal_Character_Injured_Patroller, this);
         InteractionState normalPatrolFailed = new InteractionState(Normal_Patrol_Failed, this);
 
-        //Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
+        //Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description", this);
         //startStateDescriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
         //startState.OverrideDescriptionLog(startStateDescriptionLog);
 

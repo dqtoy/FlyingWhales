@@ -22,13 +22,13 @@ public class TokenInteractionState : InteractionState {
     #region Overrides
     public override void CreateLogs() {
         if (_descriptionLog == null) {
-            _descriptionLog = new Log(GameManager.Instance.Today(), "Tokens", _token.GetType().ToString(), _name.ToLower() + "_description");
+            _descriptionLog = new Log(GameManager.Instance.Today(), "Tokens", _token.GetType().ToString(), _name.ToLower() + "_description", this.interaction);
         }
         otherLogs = new List<Log>();
         List<string> keysForState = LocalizationManager.Instance.GetKeysLike("Tokens", _token.GetType().ToString(), _name.ToLower(), new string[] { "_description", "_special" });
         for (int i = 0; i < keysForState.Count; i++) {
             string currentKey = keysForState[i];
-            otherLogs.Add(new Log(GameManager.Instance.Today(), "Tokens", _token.GetType().ToString(), currentKey));
+            otherLogs.Add(new Log(GameManager.Instance.Today(), "Tokens", _token.GetType().ToString(), currentKey, this.interaction));
         }
     }
     public override void SetDescription() {

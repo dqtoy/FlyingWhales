@@ -17,7 +17,7 @@ public class FactionAttacks : Interaction {
     #region Overrides
     public override void CreateStates() {
         InteractionState startState = new InteractionState("Start", this);
-        Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
+        Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description", this);
         startStateDescriptionLog.AddToFillers(null, interactable.name, LOG_IDENTIFIER.STRING_1);
         startStateDescriptionLog.AddToFillers(null, _targetArea.name, LOG_IDENTIFIER.STRING_2);
         startState.OverrideDescriptionLog(startStateDescriptionLog);

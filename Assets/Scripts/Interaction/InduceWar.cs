@@ -30,7 +30,7 @@ public class InduceWar : Interaction {
         //**Text Description**: [Demon Name] has concocted a plan that will further enrage the people of [Faction Name 1] 
         //against [Faction Name 2]. On your signal, [he/she] will start setting it up. Tempers are already high between the two 
         //factions. Doing this will likely trigger a war between the two.
-        Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
+        Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description", this);
         startStateDescriptionLog.AddToFillers(sourceFaction, sourceFaction.name, LOG_IDENTIFIER.FACTION_1);
         startStateDescriptionLog.AddToFillers(targetFaction, targetFaction.name, LOG_IDENTIFIER.FACTION_2);
         startState.OverrideDescriptionLog(startStateDescriptionLog);

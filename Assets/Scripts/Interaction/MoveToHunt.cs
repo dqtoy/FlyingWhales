@@ -32,7 +32,7 @@ public class MoveToHunt : Interaction {
         InteractionState huntProceedsState = new InteractionState(Hunt_Proceeds, this);
         InteractionState normalHuntState = new InteractionState(Normal_Hunt, this);
 
-        Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
+        Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description", this);
         startStateDescriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2);
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 

@@ -41,7 +41,7 @@ public class SaveAction : Interaction {
         InteractionState normalReleaseFail = new InteractionState(Normal_Release_Fail, this);
         InteractionState normalReleaseCriticalFail = new InteractionState(Normal_Release_Critical_Fail, this);
 
-        Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
+        Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description", this);
         startStateDescriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 

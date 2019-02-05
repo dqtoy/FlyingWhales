@@ -30,7 +30,7 @@ public class TameBeastAction : Interaction {
         InteractionState normalTameFail = new InteractionState(Normal_Tame_Fail, this);
         InteractionState normalTameCriticalFail = new InteractionState(Normal_Tame_Critical_Fail, this);
 
-        Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
+        Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description", this);
         startStateDescriptionLog.AddToFillers(_targetBeast, _targetBeast.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 

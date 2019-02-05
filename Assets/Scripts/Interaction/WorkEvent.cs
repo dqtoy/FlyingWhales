@@ -25,7 +25,7 @@ public class WorkEvent : Interaction {
         InteractionState stealSupplyFail = new InteractionState(Steal_Supply_Fail, this);
         InteractionState normalWork = new InteractionState(Normal_Work, this);
 
-        Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
+        Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description", this);
         startStateDescriptionLog.AddToFillers(null, interactable.monthlySupply.ToString(), LOG_IDENTIFIER.STRING_1);
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 

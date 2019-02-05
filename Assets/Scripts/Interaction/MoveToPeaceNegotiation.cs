@@ -40,7 +40,7 @@ public class MoveToPeaceNegotiation : Interaction {
         targetFaction = GetTargetFaction();
         _targetArea = targetFaction.ownedAreas[Random.Range(0, targetFaction.ownedAreas.Count)];
         //**Text Description**: [Character Name] is about to leave for [Location Name 1] to scavenge for supplies.
-        Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
+        Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description", this);
         startStateDescriptionLog.AddToFillers(targetFaction, targetFaction.name, LOG_IDENTIFIER.FACTION_1);
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 

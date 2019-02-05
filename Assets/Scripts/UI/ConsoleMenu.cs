@@ -160,6 +160,7 @@ public class ConsoleMenu : UIMenu {
         //consoleInputField.foc = false;
         HideCommandHistory();
         ClearCommandHistory();
+        consoleInputField.DeactivateInputField();
     }
     private void ClearCommandField() {
         consoleLbl.text = string.Empty;

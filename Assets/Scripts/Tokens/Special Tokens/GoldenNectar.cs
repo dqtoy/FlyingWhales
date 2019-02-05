@@ -42,7 +42,7 @@ public class GoldenNectar : SpecialToken {
         }
         state.tokenUser.ConsumeToken();
 
-        Log stateDescriptionLog = new Log(GameManager.Instance.Today(), "Tokens", this.GetType().ToString(), state.name.ToLower() + "-minion" + "_description");
+        Log stateDescriptionLog = new Log(GameManager.Instance.Today(), "Tokens", this.GetType().ToString(), state.name.ToLower() + "-minion" + "_description", state.interaction);
         stateDescriptionLog.AddToFillers(state.tokenUser, state.tokenUser.name, LOG_IDENTIFIER.MINION_1);
         stateDescriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         stateDescriptionLog.AddToFillers(null, GetStringEquivalentOfStat(stat), LOG_IDENTIFIER.STRING_1);
@@ -65,7 +65,7 @@ public class GoldenNectar : SpecialToken {
         }
         state.tokenUser.ConsumeToken();
 
-        Log stateDescriptionLog = new Log(GameManager.Instance.Today(), "Tokens", this.GetType().ToString(), state.name.ToLower() + "-npc" + "_description");
+        Log stateDescriptionLog = new Log(GameManager.Instance.Today(), "Tokens", this.GetType().ToString(), state.name.ToLower() + "-npc" + "_description", state.interaction);
         stateDescriptionLog.AddToFillers(state.tokenUser, state.tokenUser.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         stateDescriptionLog.AddToFillers(null, GetStringEquivalentOfStat(stat), LOG_IDENTIFIER.STRING_1);
         state.OverrideDescriptionLog(stateDescriptionLog);

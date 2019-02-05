@@ -40,7 +40,7 @@ public class Attack : Interaction {
         InteractionState normalAttackersLostState = new InteractionState(Normal_Attackers_Lost, this);
         InteractionState normalAttackersNoDefState = new InteractionState(Normal_Attackers_No_Defense, this);
 
-        Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
+        Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description", this);
         startStateDescriptionLog.AddToFillers(_characterInvolved.homeArea, _characterInvolved.homeArea.name, LOG_IDENTIFIER.LANDMARK_2);
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 
@@ -281,7 +281,7 @@ public class Attack : Interaction {
         //DefenderGroup newDefenders = interactable.GetFirstDefenderGroup();
         //if (newDefenders == null) {
 
-        Log log = new Log(GameManager.Instance.Today(), "Events", GetType().ToString(), state.name.ToLower() + "_special");
+        Log log = new Log(GameManager.Instance.Today(), "Events", GetType().ToString(), state.name.ToLower() + "_special", this);
         log.AddToFillers(interactable, interactable.name, LOG_IDENTIFIER.LANDMARK_1);
         if (interactable.owner == null) {
             log.AddToFillers(null, FactionManager.Instance.neutralFaction.name, LOG_IDENTIFIER.FACTION_1);
@@ -350,7 +350,7 @@ public class Attack : Interaction {
         //DefenderGroup newDefenders = interactable.GetFirstDefenderGroup();
         //if (newDefenders == null) {
 
-        Log log = new Log(GameManager.Instance.Today(), "Events", GetType().ToString(), state.name.ToLower() + "_special");
+        Log log = new Log(GameManager.Instance.Today(), "Events", GetType().ToString(), state.name.ToLower() + "_special", this);
         log.AddToFillers(interactable, interactable.name, LOG_IDENTIFIER.LANDMARK_1);
         if (interactable.owner == null) {
             log.AddToFillers(null, FactionManager.Instance.neutralFaction.name, LOG_IDENTIFIER.FACTION_1);

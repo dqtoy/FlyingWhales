@@ -13,7 +13,7 @@ public class FactionDiscovered : Interaction {
         InteractionState startState = new InteractionState("Start", this);
 
         //**Text Description**: [Minion Name] has discovered a new faction called [Faction Name] which owns [Location Name].
-        Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
+        Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description", this);
         startStateDescriptionLog.AddToFillers(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_1);
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 

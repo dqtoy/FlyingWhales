@@ -24,7 +24,7 @@ public class ExpansionEvent : Interaction {
         InteractionState characterInjuredMinion = new InteractionState(Character_Injured_Minion, this);
         InteractionState normalExpansion = new InteractionState(Normal_Expansion, this);
 
-        Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
+        Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description", this);
         startStateDescriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 

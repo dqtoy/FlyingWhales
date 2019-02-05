@@ -23,7 +23,7 @@ public class InstigatorFactionFrameUp : Interaction {
         InteractionState inciteAngerState = new InteractionState(Incite_Anger, this);
         InteractionState doNothingState = new InteractionState(Do_Nothing, this);
 
-        Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
+        Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description", this);
         startStateDescriptionLog.AddToFillers(_targetFactionToken, _targetFactionToken.ToString(), LOG_IDENTIFIER.STRING_1);
         startStateDescriptionLog.AddToFillers(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_1);
         startStateDescriptionLog.AddToFillers(_targetFactionToken.faction, _targetFactionToken.faction.name , LOG_IDENTIFIER.FACTION_2);

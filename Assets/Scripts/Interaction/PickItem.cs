@@ -6,6 +6,8 @@ public class PickItem : Interaction {
 
     WeightedDictionary<SpecialToken> pickWeights = new WeightedDictionary<SpecialToken>();
 
+    private SpecialToken targetToken;
+
     public PickItem(Area interactable) : base(interactable, INTERACTION_TYPE.PICK_ITEM, 0) {
         _name = "Pick Item";
     }
@@ -15,6 +17,7 @@ public class PickItem : Interaction {
         InteractionState startState = new InteractionState("Start", this);
 
         startState.SetEffect(() => StartRewardEffect(startState));
+        targetToken = pickWeights.PickRandomElementGivenWeights();
 
         _states.Add(startState.name, startState);
         SetCurrentState(startState);
@@ -55,11 +58,14 @@ public class PickItem : Interaction {
     //    }
     //    return base.CanStillDoInteraction();
     //}
+    public override object GetTarget() {
+        return targetToken;
+    }
     #endregion
 
     private void StartRewardEffect(InteractionState state) {
-        SpecialToken chosenToken = pickWeights.PickRandomElementGivenWeights();
-        _characterInvolved.PickUpToken(chosenToken, interactable);
+        //SpecialToken chosenToken = pickWeights.PickRandomElementGivenWeights();
+        _characterInvolved.PickUpToken(targetToken, interactable);
 
         //**Mechanics**: Character drops the item it is holding and leaves it at the location.
         if (state.descriptionLog != null) {

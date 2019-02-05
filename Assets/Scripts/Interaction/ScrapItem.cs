@@ -25,7 +25,7 @@ public class ScrapItem : Interaction {
         InteractionState scrappingContinues = new InteractionState(Scrapping_Continues, this);
         InteractionState normalScrapping = new InteractionState(Normal_Scrapping, this);
 
-        Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
+        Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description", this);
         startStateDescriptionLog.AddToFillers(_targetItem, _targetItem.tokenName, LOG_IDENTIFIER.ITEM_1);
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 

@@ -39,7 +39,7 @@ public class TheNecromancer : Interaction {
         chosenMotivation = motivations[Random.Range(0, motivations.Length)];
         string motivationString = motivationStrings[chosenMotivation];
 
-        Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description");
+        Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description", this);
         startStateDescriptionLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         startStateDescriptionLog.AddToFillers(null, motivationString, LOG_IDENTIFIER.STRING_1);
         startState.OverrideDescriptionLog(startStateDescriptionLog);

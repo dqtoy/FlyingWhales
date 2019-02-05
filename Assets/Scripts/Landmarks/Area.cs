@@ -1726,6 +1726,10 @@ public class Area {
         dungeonSupplyRangeMax = max;
     }
     #endregion
+
+    public override string ToString() {
+        return name;
+    }
 }
 
 [System.Serializable]
