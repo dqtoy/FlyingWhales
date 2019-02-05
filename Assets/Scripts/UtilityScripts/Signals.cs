@@ -171,6 +171,8 @@ public static class Signals {
     public static string JOB_ACTION_COOLDOWN_DONE = "OnJobActionCooldownDone"; //Parameters (PlayerJobAction action);
     public static string JOB_ACTION_SUB_TEXT_CHANGED = "OnJobActionSubTextChanged"; //Parameters (PlayerJobAction action);
     public static string JOB_SLOT_LOCK_CHANGED = "OnJobSlotLockChanged"; //Parameters (JOB job, bool lockedState);
+    public static string PLAYER_OBTAINED_INTEL = "OnPlayerObtainedIntel"; //Parameters (InteractionIntel)
+    public static string PLAYER_REMOVED_INTEL = "OnPlayerRemovedIntel"; //Parameters (InteractionIntel)
     #endregion
 
     #region Interaction
