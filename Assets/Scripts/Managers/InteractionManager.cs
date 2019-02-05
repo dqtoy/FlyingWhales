@@ -20,7 +20,7 @@ public class InteractionManager : MonoBehaviour {
 
     private string dailyInteractionSummary;
 
-    public Dictionary<INTERACTION_TYPE, InteractionCategoryAndAlignment> interactionCategoryAndAlignment { get; private set; }
+    public Dictionary<INTERACTION_TYPE, InteractionAttributes> interactionCategoryAndAlignment { get; private set; }
 
     public Dictionary<string, RewardConfig> rewardConfig = new Dictionary<string, RewardConfig>(){
         { Supply_Cache_Reward_1, new RewardConfig(){ rewardType = REWARD.SUPPLY, lowerRange = 50, higherRange = 250 } },
@@ -44,178 +44,178 @@ public class InteractionManager : MonoBehaviour {
 
     #region Interaction Category And Alignment
     private void ConstructInteractionCategoryAndAlignment() {
-        interactionCategoryAndAlignment = new Dictionary<INTERACTION_TYPE, InteractionCategoryAndAlignment>() {
-            { INTERACTION_TYPE.EAT_DEFENSELESS, new InteractionCategoryAndAlignment(){
+        interactionCategoryAndAlignment = new Dictionary<INTERACTION_TYPE, InteractionAttributes>() {
+            { INTERACTION_TYPE.EAT_DEFENSELESS, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.PERSONAL, INTERACTION_CATEGORY.OFFENSE },
                 alignment = INTERACTION_ALIGNMENT.EVIL,
             } },
-            { INTERACTION_TYPE.MOVE_TO_CHARM_FACTION, new InteractionCategoryAndAlignment(){
+            { INTERACTION_TYPE.MOVE_TO_CHARM_FACTION, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT },
                 alignment = INTERACTION_ALIGNMENT.NEUTRAL,
             } },
-            { INTERACTION_TYPE.CHARM_ACTION_FACTION, new InteractionCategoryAndAlignment(){
+            { INTERACTION_TYPE.CHARM_ACTION_FACTION, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT },
                 alignment = INTERACTION_ALIGNMENT.NEUTRAL,
             } },
-            { INTERACTION_TYPE.MOVE_TO_EXPLORE_FACTION, new InteractionCategoryAndAlignment(){
+            { INTERACTION_TYPE.MOVE_TO_EXPLORE_FACTION, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.INVENTORY },
                 alignment = INTERACTION_ALIGNMENT.NEUTRAL,
             } },
-            { INTERACTION_TYPE.EXPLORE_EVENT_FACTION, new InteractionCategoryAndAlignment(){
+            { INTERACTION_TYPE.EXPLORE_EVENT_FACTION, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.INVENTORY },
                 alignment = INTERACTION_ALIGNMENT.NEUTRAL,
             } },
-            { INTERACTION_TYPE.MOVE_TO_ABDUCT, new InteractionCategoryAndAlignment(){
+            { INTERACTION_TYPE.MOVE_TO_ABDUCT, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT, INTERACTION_CATEGORY.SUBTERFUGE },
                 alignment = INTERACTION_ALIGNMENT.EVIL,
             } },
-            { INTERACTION_TYPE.ABDUCT_ACTION, new InteractionCategoryAndAlignment(){
+            { INTERACTION_TYPE.ABDUCT_ACTION, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT, INTERACTION_CATEGORY.SUBTERFUGE },
                 alignment = INTERACTION_ALIGNMENT.EVIL,
             } },
-            { INTERACTION_TYPE.MOVE_TO_ARGUE, new InteractionCategoryAndAlignment(){
+            { INTERACTION_TYPE.MOVE_TO_ARGUE, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.PERSONAL, INTERACTION_CATEGORY.SOCIAL },
                 alignment = INTERACTION_ALIGNMENT.NEUTRAL,
             } },
-            { INTERACTION_TYPE.ARGUE_ACTION, new InteractionCategoryAndAlignment(){
+            { INTERACTION_TYPE.ARGUE_ACTION, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.PERSONAL, INTERACTION_CATEGORY.SOCIAL },
                 alignment = INTERACTION_ALIGNMENT.NEUTRAL,
             } },
-            { INTERACTION_TYPE.MOVE_TO_CURSE, new InteractionCategoryAndAlignment(){
+            { INTERACTION_TYPE.MOVE_TO_CURSE, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.PERSONAL, INTERACTION_CATEGORY.SUBTERFUGE },
                 alignment = INTERACTION_ALIGNMENT.EVIL,
             } },
-            { INTERACTION_TYPE.CURSE_ACTION, new InteractionCategoryAndAlignment(){
+            { INTERACTION_TYPE.CURSE_ACTION, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.PERSONAL, INTERACTION_CATEGORY.SUBTERFUGE },
                 alignment = INTERACTION_ALIGNMENT.EVIL,
             } },
-            { INTERACTION_TYPE.MOVE_TO_HUNT, new InteractionCategoryAndAlignment(){
+            { INTERACTION_TYPE.MOVE_TO_HUNT, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.PERSONAL, INTERACTION_CATEGORY.OFFENSE },
                 alignment = INTERACTION_ALIGNMENT.NEUTRAL,
             } },
-            { INTERACTION_TYPE.HUNT_ACTION, new InteractionCategoryAndAlignment(){
+            { INTERACTION_TYPE.HUNT_ACTION, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.PERSONAL, INTERACTION_CATEGORY.OFFENSE },
                 alignment = INTERACTION_ALIGNMENT.NEUTRAL,
             } },
-            { INTERACTION_TYPE.MOVE_TO_LOOT, new InteractionCategoryAndAlignment(){
+            { INTERACTION_TYPE.MOVE_TO_LOOT, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.INVENTORY },
                 alignment = INTERACTION_ALIGNMENT.EVIL,
             } },
-            { INTERACTION_TYPE.LOOT_ACTION, new InteractionCategoryAndAlignment(){
+            { INTERACTION_TYPE.LOOT_ACTION, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.INVENTORY },
                 alignment = INTERACTION_ALIGNMENT.EVIL,
             } },
-            { INTERACTION_TYPE.MOVE_TO_TAME_BEAST, new InteractionCategoryAndAlignment(){
+            { INTERACTION_TYPE.MOVE_TO_TAME_BEAST, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT },
                 alignment = INTERACTION_ALIGNMENT.NEUTRAL,
             } },
-            { INTERACTION_TYPE.TAME_BEAST_ACTION, new InteractionCategoryAndAlignment(){
+            { INTERACTION_TYPE.TAME_BEAST_ACTION, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT },
                 alignment = INTERACTION_ALIGNMENT.NEUTRAL,
             } },
-            { INTERACTION_TYPE.TORTURE_ACTION, new InteractionCategoryAndAlignment(){
+            { INTERACTION_TYPE.TORTURE_ACTION, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT },
                 alignment = INTERACTION_ALIGNMENT.EVIL,
             } },
-            { INTERACTION_TYPE.CRAFT_ITEM, new InteractionCategoryAndAlignment(){
+            { INTERACTION_TYPE.CRAFT_ITEM, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.INVENTORY },
                 alignment = INTERACTION_ALIGNMENT.NEUTRAL,
             } },
-            { INTERACTION_TYPE.MOVE_TO_RAID_FACTION, new InteractionCategoryAndAlignment(){
+            { INTERACTION_TYPE.MOVE_TO_RAID_FACTION, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.SUPPLY },
                 alignment = INTERACTION_ALIGNMENT.EVIL,
             } },
-            { INTERACTION_TYPE.RAID_EVENT_FACTION, new InteractionCategoryAndAlignment(){
+            { INTERACTION_TYPE.RAID_EVENT_FACTION, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT },
                 alignment = INTERACTION_ALIGNMENT.NEUTRAL,
             } },
-            { INTERACTION_TYPE.MOVE_TO_STEAL_FACTION, new InteractionCategoryAndAlignment(){
+            { INTERACTION_TYPE.MOVE_TO_STEAL_FACTION, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.INVENTORY },
                 alignment = INTERACTION_ALIGNMENT.EVIL,
             } },
-            { INTERACTION_TYPE.STEAL_ACTION_FACTION, new InteractionCategoryAndAlignment(){
+            { INTERACTION_TYPE.STEAL_ACTION_FACTION, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT },
                 alignment = INTERACTION_ALIGNMENT.NEUTRAL,
             } },
-            { INTERACTION_TYPE.MOVE_TO_RECRUIT_FRIEND_FACTION, new InteractionCategoryAndAlignment(){
+            { INTERACTION_TYPE.MOVE_TO_RECRUIT_FRIEND_FACTION, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT },
                 alignment = INTERACTION_ALIGNMENT.GOOD,
             } },
-            { INTERACTION_TYPE.RECRUIT_FRIEND_ACTION_FACTION, new InteractionCategoryAndAlignment(){
+            { INTERACTION_TYPE.RECRUIT_FRIEND_ACTION_FACTION, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT },
                 alignment = INTERACTION_ALIGNMENT.NEUTRAL,
             } },
-            { INTERACTION_TYPE.MOVE_TO_ASSASSINATE_FACTION, new InteractionCategoryAndAlignment(){
+            { INTERACTION_TYPE.MOVE_TO_ASSASSINATE_FACTION, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.SUBTERFUGE },
                 alignment = INTERACTION_ALIGNMENT.NEUTRAL,
             } },
-            { INTERACTION_TYPE.ASSASSINATE_ACTION_FACTION, new InteractionCategoryAndAlignment(){
+            { INTERACTION_TYPE.ASSASSINATE_ACTION_FACTION, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT },
                 alignment = INTERACTION_ALIGNMENT.NEUTRAL,
             } },
-            { INTERACTION_TYPE.MOVE_TO_REANIMATE, new InteractionCategoryAndAlignment(){
+            { INTERACTION_TYPE.MOVE_TO_REANIMATE, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT },
                 alignment = INTERACTION_ALIGNMENT.EVIL,
             } },
-            { INTERACTION_TYPE.REANIMATE_ACTION, new InteractionCategoryAndAlignment(){
+            { INTERACTION_TYPE.REANIMATE_ACTION, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT },
                 alignment = INTERACTION_ALIGNMENT.NEUTRAL,
             } },
-            { INTERACTION_TYPE.MOVE_TO_SCAVENGE_FACTION, new InteractionCategoryAndAlignment(){
+            { INTERACTION_TYPE.MOVE_TO_SCAVENGE_FACTION, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.SUPPLY },
                 alignment = INTERACTION_ALIGNMENT.NEUTRAL,
             } },
-            { INTERACTION_TYPE.SCAVENGE_EVENT_FACTION, new InteractionCategoryAndAlignment(){
+            { INTERACTION_TYPE.SCAVENGE_EVENT_FACTION, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT },
                 alignment = INTERACTION_ALIGNMENT.NEUTRAL,
             } },
-            { INTERACTION_TYPE.BERSERK_ATTACK, new InteractionCategoryAndAlignment(){
+            { INTERACTION_TYPE.BERSERK_ATTACK, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.PERSONAL, INTERACTION_CATEGORY.OFFENSE },
                 alignment = INTERACTION_ALIGNMENT.EVIL,
             } },
-            { INTERACTION_TYPE.MOVE_TO_OCCUPY_FACTION, new InteractionCategoryAndAlignment(){
+            { INTERACTION_TYPE.MOVE_TO_OCCUPY_FACTION, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.EXPANSION },
                 alignment = INTERACTION_ALIGNMENT.NEUTRAL,
             } },
-            { INTERACTION_TYPE.OCCUPY_ACTION_FACTION, new InteractionCategoryAndAlignment(){
+            { INTERACTION_TYPE.OCCUPY_ACTION_FACTION, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT },
                 alignment = INTERACTION_ALIGNMENT.NEUTRAL,
             } },
-             { INTERACTION_TYPE.MOVE_TO_MINE, new InteractionCategoryAndAlignment(){
+             { INTERACTION_TYPE.MOVE_TO_MINE, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.SUPPLY },
                 alignment = INTERACTION_ALIGNMENT.GOOD,
             } },
-             { INTERACTION_TYPE.MINE_ACTION, new InteractionCategoryAndAlignment(){
+             { INTERACTION_TYPE.MINE_ACTION, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT },
                 alignment = INTERACTION_ALIGNMENT.NEUTRAL,
             } },
-            { INTERACTION_TYPE.MOVE_TO_HARVEST, new InteractionCategoryAndAlignment(){
+            { INTERACTION_TYPE.MOVE_TO_HARVEST, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.SUPPLY },
                 alignment = INTERACTION_ALIGNMENT.GOOD,
             } },
-            { INTERACTION_TYPE.HARVEST_ACTION, new InteractionCategoryAndAlignment(){
+            { INTERACTION_TYPE.HARVEST_ACTION, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT },
                 alignment = INTERACTION_ALIGNMENT.NEUTRAL,
             } },
-            { INTERACTION_TYPE.SCRAP_ITEM, new InteractionCategoryAndAlignment(){
+            { INTERACTION_TYPE.SCRAP_ITEM, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.SUPPLY },
                 alignment = INTERACTION_ALIGNMENT.NEUTRAL,
             } },
-            { INTERACTION_TYPE.PATROL_ACTION_FACTION, new InteractionCategoryAndAlignment(){
+            { INTERACTION_TYPE.PATROL_ACTION_FACTION, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.DEFENSE },
                 alignment = INTERACTION_ALIGNMENT.NEUTRAL,
             } },
-            { INTERACTION_TYPE.CONSUME_LIFE, new InteractionCategoryAndAlignment(){
+            { INTERACTION_TYPE.CONSUME_LIFE, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.SUPPLY },
                 alignment = INTERACTION_ALIGNMENT.EVIL,
             } },
-            { INTERACTION_TYPE.MOVE_TO_RETURN_HOME, new InteractionCategoryAndAlignment(){
+            { INTERACTION_TYPE.MOVE_TO_RETURN_HOME, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.PERSONAL },
                 alignment = INTERACTION_ALIGNMENT.NEUTRAL,
             } },
         };
     }
-    public InteractionCategoryAndAlignment GetCategoryAndAlignment (INTERACTION_TYPE type) {
+    public InteractionAttributes GetCategoryAndAlignment (INTERACTION_TYPE type) {
         if (interactionCategoryAndAlignment.ContainsKey(type)) {
             return interactionCategoryAndAlignment[type];
         }
@@ -1534,7 +1534,17 @@ public struct CharacterInteractionWeight {
     public int weight;
 }
 
-public struct InteractionCategoryAndAlignment {
+public struct InteractionAttributes {
     public INTERACTION_CATEGORY[] categories;
     public INTERACTION_ALIGNMENT alignment;
+    public InteractionActorEffect actorEffect;
+    public InteractionTargetCharacterEffect targetCharacterEffect;
+}
+public struct InteractionActorEffect {
+    public INTERACTION_CHARACTER_EFFECT effect;
+    public object effectObject;
+}
+public struct InteractionTargetCharacterEffect {
+    public INTERACTION_CHARACTER_EFFECT effect;
+    public object effectObject;
 }
