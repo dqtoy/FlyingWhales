@@ -16,6 +16,7 @@ public class ConsoleMenu : UIMenu {
     private List<string> commandHistory;
     private int currentHistoryIndex;
 
+    [SerializeField] private GameObject consoleGO;
     [SerializeField] private Text consoleLbl;
     [SerializeField] private InputField consoleInputField;
 
@@ -25,6 +26,10 @@ public class ConsoleMenu : UIMenu {
     [SerializeField] private Dropdown raceDropdown;
     [SerializeField] private Dropdown classDropdown;
     [SerializeField] private InputField levelInput;
+
+    [SerializeField] private GameObject fullDebugGO;
+    [SerializeField] private TextMeshProUGUI fullDebugLbl;
+    [SerializeField] private TextMeshProUGUI fullDebug2Lbl;
 
     internal override void Initialize() {
         commandHistory = new List<string>();
@@ -53,16 +58,105 @@ public class ConsoleMenu : UIMenu {
         InitializeMinion();
     }
 
+    private void Update() {
+        fullDebugLbl.text = string.Empty;
+        fullDebug2Lbl.text = string.Empty;
+        if (GameManager.Instance.showFullDebug) {
+            FullDebugInfo();
+        }
+        fullDebugGO.SetActive(!string.IsNullOrEmpty(fullDebugLbl.text) || !string.IsNullOrEmpty(fullDebug2Lbl.text));
+
+        if (isShowing && consoleInputField.text != "" && Input.GetKeyDown(KeyCode.Return)) {
+            SubmitCommand();
+        }
+        if (Input.GetKeyDown(KeyCode.UpArrow)) {
+            int newIndex = currentHistoryIndex - 1;
+            string command = commandHistory.ElementAtOrDefault(newIndex);
+            if (!string.IsNullOrEmpty(command)) {
+                consoleLbl.text = command;
+                currentHistoryIndex = newIndex;
+            }
+        }
+        if (Input.GetKeyDown(KeyCode.DownArrow)) {
+            int newIndex = currentHistoryIndex + 1;
+            string command = commandHistory.ElementAtOrDefault(newIndex);
+            if (!string.IsNullOrEmpty(command)) {
+                consoleLbl.text = command;
+                currentHistoryIndex = newIndex;
+            }
+        }
+    }
+
+    #region Full Debug
+    private void FullDebugInfo() {
+        fullDebugLbl.text = string.Empty;
+        fullDebug2Lbl.text = string.Empty;
+        if (UIManager.Instance != null && UIManager.Instance.characterInfoUI.isShowing) {
+            fullDebugLbl.text += GetMainCharacterInfo();
+            fullDebug2Lbl.text += GetSecondaryCharacterInfo();
+        }
+    }
+    private string GetMainCharacterInfo() {
+        Character character = UIManager.Instance.characterInfoUI.activeCharacter;
+        string text = character.name + "'s info:";
+        text += "\n<b>Gender:</b> " + character.gender.ToString();
+        text += "\n<b>Race:</b> " + character.race.ToString();
+        text += "\n<b>Class:</b> " + character.characterClass.className;
+        text += "\n<b>Is Dead?:</b> " + character.isDead.ToString();
+        text += "\n<b>Current Location:</b> " + character.currentStructure?.ToString() ?? "None";
+        text += "\n<b>Home Location:</b> " + character.homeStructure?.ToString() ?? "None";
+        text += "\n<b>Faction:</b> " + character.faction?.name ?? "None";
+        text += "\n<b>Next Tick:</b> " + character.currentInteractionTick.ToString();
+        text += "\n<b>Override:</b> " + character.forcedInteraction?.ToString() ?? "None";
+        text += "\n<b>Target Location:</b> " + character.currentParty.icon.targetLocation?.name ?? "None";
+        text += "\n<b>Target Structure:</b> " + character.currentParty.icon.targetStructure?.ToString() ?? "None";
+
+        
+        return text;
+    }
+    private string GetSecondaryCharacterInfo() {
+        Character character = UIManager.Instance.characterInfoUI.activeCharacter;
+        string text = character.name + "'s Relationships " + character.relationships.Count.ToString();
+        int counter = 0;
+        foreach (KeyValuePair<Character, CharacterRelationshipData> kvp in character.relationships) {
+            text += "\n\n" + counter.ToString() + " " + kvp.Key.name + " (" + kvp.Key.faction.name + "): ";
+            for (int i = 0; i < kvp.Value.rels.Count; i++) {
+                text += "|" + kvp.Value.rels[i].name + "|";
+            }
+            text += "\n\t<b>Last Encounter:</b> " + kvp.Value.lastEncounter.ToString() + " (" + kvp.Value.lastEncounterLog + ")";
+            text += "\n\t<b>Encounter Multiplier:</b> " + kvp.Value.encounterMultiplier.ToString();
+            text += "\n\t<b>Is Missing?:</b> " + kvp.Value.isCharacterMissing.ToString();
+            text += "\n\t<b>Is Located?:</b> " + kvp.Value.isCharacterLocated.ToString();
+            text += "\n\t<b>Known Structure:</b> " + kvp.Value.knownStructure.ToString();
+            text += "\n\t<b>Trouble:</b> ";
+            if (kvp.Value.trouble.Count > 0) {
+                for (int i = 0; i < kvp.Value.trouble.Count; i++) {
+                    text += "|" + kvp.Value.trouble[i].name + "|";
+                }
+            } else {
+                text += "None";
+            }
+            counter++;
+        }
+
+        text += "\n" + character.name + "'s Location History:";
+        for (int i = 0; i < character.locationHistory.Count; i++) {
+            text += "\n\t" + character.locationHistory[i];
+        }
+        return text;
+    }
+    #endregion
+
     public void ShowConsole() {
         isShowing = true;
-        this.gameObject.SetActive(true);
+        consoleGO.SetActive(true);
         ClearCommandField();
         consoleInputField.Select();
     }
 
     public void HideConsole() {
         isShowing = false;
-        this.gameObject.SetActive(false);
+        consoleGO.SetActive(false);
         //consoleInputField.foc = false;
         HideCommandHistory();
         ClearCommandHistory();
@@ -117,28 +211,6 @@ public class ConsoleMenu : UIMenu {
         ShowCommandHistory();
     }
 
-    private void Update() {
-        if (isShowing && consoleInputField.text != "" && Input.GetKeyDown(KeyCode.Return)) {
-            SubmitCommand();
-        }
-        if (Input.GetKeyDown(KeyCode.UpArrow)) {
-            int newIndex = currentHistoryIndex - 1;
-            string command = commandHistory.ElementAtOrDefault(newIndex);
-            if (!string.IsNullOrEmpty(command)) {
-                consoleLbl.text = command;
-                currentHistoryIndex = newIndex;
-            }
-        }
-        if (Input.GetKeyDown(KeyCode.DownArrow)) {
-            int newIndex = currentHistoryIndex + 1;
-            string command = commandHistory.ElementAtOrDefault(newIndex);
-            if (!string.IsNullOrEmpty(command)) {
-                consoleLbl.text = command;
-                currentHistoryIndex = newIndex;
-            }
-        }
-    }
-
     private void CheckForWrongCharacterData() {
         for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
             Area currArea = LandmarkManager.Instance.allAreas[i];
@@ -188,6 +260,12 @@ public class ConsoleMenu : UIMenu {
     public void ShowFullDebug(string[] parameters) {
         GameManager.Instance.showFullDebug = !GameManager.Instance.showFullDebug;
         AddSuccessMessage("Show Full Debug Info Set to " + GameManager.Instance.showFullDebug.ToString());
+    }
+    public void MoveNextPage(TextMeshProUGUI text) {
+        text.pageToDisplay += 1;
+    }
+    public void MovePreviousPage(TextMeshProUGUI text) {
+        text.pageToDisplay -= 1;
     }
     #endregion
 

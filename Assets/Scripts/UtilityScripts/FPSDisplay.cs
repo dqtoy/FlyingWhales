@@ -36,40 +36,7 @@ public class FPSDisplay : MonoBehaviour {
                 text += "\nSteam Name: " + name;
                 text += "\nCharacters Snatched: " + AchievementManager.Instance.charactersSnatched;
             }
-
-            if (GameManager.Instance.showFullDebug) {
-                text += FullDebugInfo();
-            }
             GUI.Label(rect, text, style);
         }
-    }
-
-    private string FullDebugInfo() {
-        string text = string.Empty;
-        if (UIManager.Instance != null && UIManager.Instance.characterInfoUI.isShowing) {
-            text += "\n" + GetCharacterInfo();
-        }
-
-        return text;
-    }
-
-    private string GetCharacterInfo() {
-        Character character = UIManager.Instance.characterInfoUI.activeCharacter;
-        string text = character.name + "'s info:";
-        text += "\nRelationships: ";
-        foreach (KeyValuePair<Character, CharacterRelationshipData> kvp in character.relationships) {
-            text += "\n" + kvp.Key.name + ": ";
-            for (int i = 0; i < kvp.Value.rels.Count; i++) {
-                text += "|" + kvp.Value.rels[i].name + "|";
-            }
-            text += "\nLast Encounter: " + kvp.Value.lastEncounter.ToString();
-            text += "\nEncounter Multiplier: " + kvp.Value.encounterMultiplier.ToString();
-            text += "\nIs Missing?: " + kvp.Value.isCharacterMissing.ToString();
-            text += "\nIs Located?: " + kvp.Value.isCharacterLocated.ToString();
-            text += "\nKnown Structure: " + kvp.Value.knownStructure.ToString();
-            text += "\nTrouble: " + kvp.Value.trouble?.ToString() ?? "None";
-        }
-        return text;
-        
     }
 }

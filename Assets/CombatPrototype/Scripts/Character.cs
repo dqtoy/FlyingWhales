@@ -104,6 +104,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public float hSkinColor { get; private set; }
     public float hHairColor { get; private set; }
 
+    //For Testing
+    public List<string> locationHistory { get; private set; }
+
     #region getters / setters
     public string firstName {
         get { return _firstName; }
@@ -483,6 +486,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         hSkinColor = UnityEngine.Random.Range(-360f, 360f);
         hHairColor = UnityEngine.Random.Range(-360f, 360f);
 
+        locationHistory = new List<string>();
+
         GetRandomCharacterColor();
         //_combatHistoryID = 0;
 #if !WORLD_CREATION_TOOL
@@ -776,6 +781,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             //				if(Messenger.eventTable.ContainsKey("CharacterDeath")){
             //					Messenger.Broadcast ("CharacterDeath", this);
             //				}
+
+            List<Character> characterRels = new List<Character>(this.relationships.Keys.ToList());
+            for (int i = 0; i < characterRels.Count; i++) {
+                RemoveRelationship(characterRels[i]);
+            }
+
             if (_minion != null) {
                 PlayerManager.Instance.player.RemoveMinion(_minion);
             }
@@ -1327,7 +1338,28 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         return false;
     }
     public void SetCurrentStructureLocation(LocationStructure currentStructure) {
+        if (currentStructure == this.currentStructure) {
+            return; //ignore change;
+        }
+        LocationStructure previousStructure = this.currentStructure;
         this.currentStructure = currentStructure;
+        string summary = string.Empty;
+        if (currentStructure != null) {
+            summary = GameManager.Instance.TodayLogString() + "Arrived at <color=\"green\">" + currentStructure.ToString() + "</color>";
+            if (forcedInteraction != null) {
+                summary += " to perform <b>" + forcedInteraction.name + "</b> scheduled at " + _currentInteractionTick.ToString();
+            }
+        } else {
+            summary = GameManager.Instance.TodayLogString() + "Left <color=\"red\">" + previousStructure.ToString() + "</color>";
+            if (forcedInteraction != null) {
+                summary += " to perform <b>" + forcedInteraction.name + "</b> at " + forcedInteraction.interactable.name;
+            }
+        }
+        locationHistory.Add(summary);
+        if (locationHistory.Count > 80) {
+            locationHistory.RemoveAt(0);
+        }
+
         if (currentStructure != null) {
             Messenger.Broadcast(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, this, currentStructure);
         }
@@ -1571,7 +1603,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     private void RemoveRelationship(Character character) {
         if (relationships.ContainsKey(character)) {
             List<Trait> traits = relationships[character].rels.Select(x => x as Trait).ToList();
-            //relationships[character].RemoveListeners();
+            relationships[character].RemoveListeners();
             relationships.Remove(character);
             RemoveTrait(traits);
         }
@@ -2192,13 +2224,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             trait.SetCharacterResponsibleForTrait(characterResponsible);
             return;
         }
-        //if (trait is RelationshipTrait) {
-        //    RelationshipTrait rt = trait as RelationshipTrait;
-        //    if (!CanHaveRelationshipWith(rt.relType, rt.targetCharacter)) {
-        //        Debug.LogWarning("Cannot have " + rt.relType.ToString() + " relationship with " + rt.targetCharacter.name + ". Ignoring adding it");
-        //        return;
-        //    }
-        //}
         _traits.Add(trait);
         trait.SetCharacterResponsibleForTrait(characterResponsible);
         ApplyTraitEffects(trait);

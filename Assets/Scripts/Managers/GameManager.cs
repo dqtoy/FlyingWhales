@@ -69,6 +69,11 @@ public class GameManager : MonoBehaviour {
 #endif
     }
     private void FixedUpdate() {
+        if (Input.GetKeyDown(KeyCode.BackQuote)) {
+            if (allowConsole) {
+                UIManager.Instance.ToggleConsole();
+            }
+        }
         if (_gameHasStarted && !isPaused) {
             if (this.timeElapsed == 0f) {
                 this.DayStarted();
@@ -77,11 +82,6 @@ public class GameManager : MonoBehaviour {
             if (this.timeElapsed >= this.progressionSpeed) {
                 this.timeElapsed = 0f;
                 StartCoroutine(this.DayEnded());
-            }
-        }
-        if (Input.GetKeyDown(KeyCode.BackQuote)) {
-            if (allowConsole) {
-                UIManager.Instance.ToggleConsole();
             }
         }
     }

@@ -571,7 +571,10 @@ public class Interaction {
     }
     #endregion
 
+    #region For Testing
     public override string ToString() {
-        return name;
+        return name + " at " + interactable.name;
     }
+    #endregion
+
 }

@@ -13,7 +13,9 @@ public class CharacterRelationshipData {
     public bool isCharacterMissing { get; private set; }
     public bool isCharacterLocated { get; private set; }
     public LocationStructure knownStructure { get; private set; }
-    public Trait trouble { get; private set; } //Set this to trait for now, but this could change in future iterations
+    public List<Trait> trouble { get; private set; } //Set this to trait for now, but this could change in future iterations
+
+    public string lastEncounterLog { get; private set; }
 
     public CharacterRelationshipData(Character owner, Character targetCharacter) {
         this.owner = owner;
@@ -24,19 +26,23 @@ public class CharacterRelationshipData {
         isCharacterMissing = false;
         isCharacterLocated = true;
         SetKnownStructure(targetCharacter.homeStructure);
-        trouble = null;
-        //AddListeners();
+        trouble = new List<Trait>();
+        AddListeners();
     }
 
     public void AddListeners() {
         Messenger.AddListener(Signals.DAY_STARTED, LastEncounterTick);
         Messenger.AddListener<Interaction>(Signals.INTERACTION_INITIALIZED, OnInteractionInitialized);
         Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+        Messenger.AddListener<Character, Trait>(Signals.TRAIT_ADDED, OnTraitAddedToCharacter);
+        Messenger.AddListener<Character, Trait>(Signals.TRAIT_REMOVED, OnTraitRemovedFromCharacter);
     }
     public void RemoveListeners() {
         Messenger.RemoveListener(Signals.DAY_STARTED, LastEncounterTick);
         Messenger.RemoveListener<Interaction>(Signals.INTERACTION_INITIALIZED, OnInteractionInitialized);
         Messenger.RemoveListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+        Messenger.RemoveListener<Character, Trait>(Signals.TRAIT_ADDED, OnTraitAddedToCharacter);
+        Messenger.RemoveListener<Character, Trait>(Signals.TRAIT_REMOVED, OnTraitRemovedFromCharacter);
     }
 
     private void OnInteractionInitialized(Interaction interaction) {
@@ -52,12 +58,34 @@ public class CharacterRelationshipData {
                 && owner.forcedInteraction.targetCharacter != null 
                 && owner.forcedInteraction.targetCharacter.id == targetCharacter.id) {
                 if (targetCharacter.currentStructure != structure) {
-                    SetIsCharacterLocated(false);
                     /*
                     - character located turns to False whenever the character visits the specific **known character location structure** 
                     with the intent to meet up with the target and not encounter the target there    
                      */
+                    SetIsCharacterLocated(false);
+
+                    /*
+                     character trouble is set to Null when the character visits the **known character location structure** with the intent to 
+                     meet up with the target and was unable to find the character there or was able to resolve the trouble
+                     */
+                    AddTrouble(null);
                 }
+            }
+        }
+    }
+    private void OnTraitAddedToCharacter(Character character, Trait trait) {
+        if (character.id == targetCharacter.id) {
+            if (trait.name.Equals("Charmed") || trait.name.Equals("Abducted") 
+                || trait.name.Equals("Unconscious") || trait.name.Equals("Injured") || trait.name.Equals("Cursed")) {
+                AddTrouble(trait);
+            }
+        }
+    }
+    private void OnTraitRemovedFromCharacter(Character character, Trait trait) {
+        if (character.id == targetCharacter.id) {
+            if (trait.name.Equals("Charmed") || trait.name.Equals("Abducted")
+                || trait.name.Equals("Unconscious") || trait.name.Equals("Injured") || trait.name.Equals("Cursed")) {
+                RemoveTrouble(trait);
             }
         }
     }
@@ -146,6 +174,7 @@ public class CharacterRelationshipData {
     public void ResetLastEncounter() {
         lastEncounter = 0;
         ResetCharacterMissing();
+        lastEncounterLog = "Last encountered at " + owner.currentStructure.ToString() + " on " + GameManager.Instance.TodayLogString();
     }
     #endregion
 
@@ -156,11 +185,16 @@ public class CharacterRelationshipData {
           - this turns to True when **countdown from last encounter** is 150 for relationships from the same faction and 300 for those outside
           - this turns back to False when **countdown from last encounter** has been reset
          */
-        if (lastEncounter >= 150 && targetCharacter.faction.id == owner.faction.id) {
-            SetIsCharacterMissing(true);
-        } else if (lastEncounter >= 300 && targetCharacter.faction.id != owner.faction.id) {
-            SetIsCharacterMissing(true);
+        try {
+            if (lastEncounter >= 150 && targetCharacter.faction.id == owner.faction.id) {
+                SetIsCharacterMissing(true);
+            } else if (lastEncounter >= 300 && targetCharacter.faction.id != owner.faction.id) {
+                SetIsCharacterMissing(true);
+            }
+        } catch (System.Exception e){
+            throw new System.Exception(e.Message);
         }
+        
     }
     private void ResetCharacterMissing() {
         SetIsCharacterMissing(false);
@@ -185,6 +219,17 @@ public class CharacterRelationshipData {
     #region Known Structure
     public void SetKnownStructure(LocationStructure structure) {
         knownStructure = structure;
+    }
+    #endregion
+
+    #region Trouble
+    public void AddTrouble(Trait trait) {
+        if (!trouble.Contains(trait)) {
+            trouble.Add(trait);
+        }
+    }
+    public void RemoveTrouble(Trait trait) {
+        trouble.Remove(trait);
     }
     #endregion
 }
