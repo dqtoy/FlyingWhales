@@ -2,6 +2,7 @@
 using System.Collections;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class LogHistoryItem : LogItem {
 
@@ -52,25 +53,28 @@ public class LogHistoryItem : LogItem {
 
     public void ShowLogDebugInfo() {
         if (log.fromInteraction != null) {
-            string text = log.fromInteraction.ToString() + " Intel Data: ";
-            text += "\n<b>Interaction:</b> " + log.fromInteraction.intel.connectedInteraction.ToString();
-            text += "\n<b>Actor:</b> " + log.fromInteraction.intel.actor.name;
-            text += "\n<b>Target:</b> " + log.fromInteraction.intel.target?.ToString() ?? "None";
-            text += "\n<b>Categories:</b> ";
-            if (log.fromInteraction.intel.categories == null) {
-                text += "None";
-            } else {
-                for (int i = 0; i < log.fromInteraction.intel.categories.Length; i++) {
-                    text += "|" + log.fromInteraction.intel.categories[i].ToString() + "|";
-                }
-            }
-            text += "\n<b>Alignment:</b> " + log.fromInteraction.intel.alignment.ToString();
-            text += "\n<b>isCompleted?:</b> " + log.fromInteraction.intel.isCompleted.ToString();
+            string text = log.GetLogDebugInfo();
+            text += "\n\n<i>(Double Click to Obatin intel)</i>";
             UIManager.Instance.ShowSmallInfo(text);
         }
-        
     }
     public void HideLogDebugInfo() {
         UIManager.Instance.HideSmallInfo();
+    }
+
+    public void CheckForObtain(BaseEventData baseData) {
+        PointerEventData pData = baseData as PointerEventData;
+        if (pData.clickCount == 2) { //double click
+            ObtainIntel();
+        }
+    }
+
+    public void ObtainIntel() {
+        if (log.fromInteraction != null) {
+            if (!PlayerManager.Instance.player.AlreadyHasIntel(log.fromInteraction.intel)) {
+                log.fromInteraction.intel.SetLog(log);
+                PlayerManager.Instance.player.AddIntel(log.fromInteraction.intel);
+            }
+        }
     }
 }

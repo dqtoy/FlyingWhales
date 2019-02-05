@@ -7,6 +7,7 @@ using System.Linq;
 public class Player : ILeader {
 
     private const int MAX_IMPS = 5;
+    private const int MAX_INTEL = 3;
 
     public Faction playerFaction { get; private set; }
     public Area playerArea { get; private set; }
@@ -23,6 +24,7 @@ public class Player : ILeader {
     public Dictionary<JOB, PlayerJobData> roleSlots { get; private set; }
     public CombatGrid attackGrid { get; private set; }
     public CombatGrid defenseGrid { get; private set; }
+    public List<InteractionIntel> allIntel { get; private set; }
 
     #region getters/setters
     public int id {
@@ -69,6 +71,7 @@ public class Player : ILeader {
         attackGrid.Initialize();
         defenseGrid.Initialize();
         maxImps = 5;
+        allIntel = new List<InteractionIntel>();
         SetCurrentLifestoneChance(25f);
         ConstructCurrencies();
         ConstructRoleSlots();
@@ -618,6 +621,26 @@ public class Player : ILeader {
             }
         }
         return characters;
+    }
+    #endregion
+
+    #region Intel
+    public void AddIntel(InteractionIntel newIntel) {
+        if (!allIntel.Contains(newIntel)) {
+            allIntel.Add(newIntel);
+            if (allIntel.Count > MAX_INTEL) {
+                RemoveIntel(allIntel[0]);
+            }
+            Messenger.Broadcast(Signals.PLAYER_OBTAINED_INTEL, newIntel);
+        }
+    }
+    public void RemoveIntel(InteractionIntel intel) {
+        if (allIntel.Remove(intel)) {
+            Messenger.Broadcast(Signals.PLAYER_REMOVED_INTEL, intel);
+        }
+    }
+    public bool AlreadyHasIntel(InteractionIntel intel) {
+        return allIntel.Contains(intel);
     }
     #endregion
 }

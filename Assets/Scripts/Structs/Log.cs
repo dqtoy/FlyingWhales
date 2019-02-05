@@ -23,6 +23,10 @@ public class Log {
 
     public Interaction fromInteraction { get; private set; }
 
+    public GameDate date {
+        get { return new GameDate((int)month, day, year, hour); }
+    }
+
     public Log(int month, int day, int year, int hour, string category, string file, string key, Interaction fromInteraction = null){
         this.id = Utilities.SetID<Log>(this);
 		this.month = (MONTH)month;
@@ -117,6 +121,12 @@ public class Log {
     #region Utilities
     public void SetFillerLockedState(bool state) {
         lockFillers = state;
+    }
+    public string GetLogDebugInfo() {
+        if (fromInteraction.intel != null) {
+            return fromInteraction.intel.GetDebugInfo();
+        }
+        return string.Empty;
     }
     #endregion
 }

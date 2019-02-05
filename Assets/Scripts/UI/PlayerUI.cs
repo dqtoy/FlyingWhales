@@ -48,6 +48,9 @@ public class PlayerUI : MonoBehaviour {
     public Toggle factionToggle;
     public ToggleGroup minionSortingToggleGroup;
 
+    [Header("Intel")]
+    [SerializeField] private InteractionIntelItem[] intelItems;
+
     [Header("Miscellaneous")]
     [SerializeField] private Vector3 openPosition;
     [SerializeField] private Vector3 closePosition;
@@ -107,6 +110,8 @@ public class PlayerUI : MonoBehaviour {
         Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
         Messenger.AddListener(Signals.UPDATED_CURRENCIES, UpdateUI);
+        Messenger.AddListener<InteractionIntel>(Signals.PLAYER_OBTAINED_INTEL, OnIntelObtained);
+        Messenger.AddListener<InteractionIntel>(Signals.PLAYER_REMOVED_INTEL, OnIntelRemoved);
     }
 
     #region Role Slots
@@ -454,4 +459,20 @@ public class PlayerUI : MonoBehaviour {
             }
         }
     }
+
+    #region Intel
+    private void OnIntelObtained(InteractionIntel intel) {
+        UpdateIntel();
+    }
+    private void OnIntelRemoved(InteractionIntel intel) {
+        UpdateIntel();
+    }
+    private void UpdateIntel() {
+        for (int i = 0; i < intelItems.Length; i++) {
+            InteractionIntelItem currItem = intelItems[i];
+            InteractionIntel intel = PlayerManager.Instance.player.allIntel.ElementAtOrDefault(i);
+            currItem.SetIntel(intel);
+        }
+    }
+    #endregion
 }
