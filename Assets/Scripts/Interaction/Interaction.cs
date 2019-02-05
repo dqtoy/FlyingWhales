@@ -205,6 +205,7 @@ public class Interaction {
         return interaction;
     }
     public virtual void SetTargetCharacter(Character character) { }
+    public virtual void SetOtherCharacter(Character character) { }
     #endregion
 
     #region Utilities

@@ -251,12 +251,15 @@ public class RaceManager : MonoBehaviour {
                 if (interactionCategoryAndAlignment.categories[j] == category) {
                     bool canDoTargetCharacterEffect = false;
                     for (int k = 0; k < interactionCategoryAndAlignment.targetCharacterEffect.Length; k++) {
-                        if(interactionCategoryAndAlignment.targetCharacterEffect[k].effect == interactionTargetCharacterEffect.effect) {
-                            for (int l = 0; l < interactionCategoryAndAlignment.targetCharacterEffect[k].effectString.Length; l++) {
-                                string effectString = interactionCategoryAndAlignment.targetCharacterEffect[k].effectString[l];
-                                if (interactionTargetCharacterEffect.effectString.Contains(effectString)) {
-                                    canDoTargetCharacterEffect = true;
-                                    break;
+                        if(interactionCategoryAndAlignment.targetCharacterEffect[k].effect != INTERACTION_CHARACTER_EFFECT.NONE && 
+                            interactionCategoryAndAlignment.targetCharacterEffect[k].effect == interactionTargetCharacterEffect.effect) {
+                            if(interactionCategoryAndAlignment.targetCharacterEffect[k].effectString != null) {
+                                for (int l = 0; l < interactionCategoryAndAlignment.targetCharacterEffect[k].effectString.Length; l++) {
+                                    string effectString = interactionCategoryAndAlignment.targetCharacterEffect[k].effectString[l];
+                                    if (interactionTargetCharacterEffect.effectString.Contains(effectString)) {
+                                        canDoTargetCharacterEffect = true;
+                                        break;
+                                    }
                                 }
                             }
                         }
@@ -276,7 +279,8 @@ public class RaceManager : MonoBehaviour {
                     if (interactionCategoryAndAlignment.categories[j] == category) {
                         bool canDoTargetCharacterEffect = false;
                         for (int k = 0; k < interactionCategoryAndAlignment.targetCharacterEffect.Length; k++) {
-                            if (interactionCategoryAndAlignment.targetCharacterEffect[k].effect == interactionTargetCharacterEffect.effect) {
+                            if (interactionCategoryAndAlignment.targetCharacterEffect[k].effect != INTERACTION_CHARACTER_EFFECT.NONE && 
+                                interactionCategoryAndAlignment.targetCharacterEffect[k].effect == interactionTargetCharacterEffect.effect) {
                                 for (int l = 0; l < interactionCategoryAndAlignment.targetCharacterEffect[k].effectString.Length; l++) {
                                     string effectString = interactionCategoryAndAlignment.targetCharacterEffect[k].effectString[l];
                                     if (interactionTargetCharacterEffect.effectString.Contains(effectString)) {

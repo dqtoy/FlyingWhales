@@ -629,6 +629,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.EXPLORE_EVENT_FACTION:
                 createdInteraction = new ExploreEventFaction(interactable);
                 break;
+            case INTERACTION_TYPE.ASK_FOR_HELP:
+                createdInteraction = new AskForHelp(interactable);
+                break;
         }
         return createdInteraction;
     }
