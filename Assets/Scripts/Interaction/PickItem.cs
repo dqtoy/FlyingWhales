@@ -64,6 +64,7 @@ public class PickItem : Interaction {
     #endregion
 
     private void StartRewardEffect(InteractionState state) {
+        _characterInvolved.MoveToAnotherStructure(targetToken.structureLocation);
         //SpecialToken chosenToken = pickWeights.PickRandomElementGivenWeights();
         _characterInvolved.PickUpToken(targetToken, interactable);
 
