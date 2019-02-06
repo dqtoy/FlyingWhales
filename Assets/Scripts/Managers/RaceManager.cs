@@ -24,6 +24,7 @@ public class RaceManager : MonoBehaviour {
     public void Initialize() {
         ConstructAllRaces();
         ConstructFactionRaceInteractions();
+        ConstructNPCRaceInteractions();
     }
 
     private void ConstructAllRaces() {
