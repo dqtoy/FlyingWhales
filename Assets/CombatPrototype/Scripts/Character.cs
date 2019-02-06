@@ -2311,6 +2311,15 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return false;
     }
+    public bool HasTraitOf(TRAIT_EFFECT effect) {
+        for (int i = 0; i < traits.Count; i++) {
+            Trait currTrait = traits[i];
+            if (currTrait.effect == effect) {
+                return true;
+            }
+        }
+        return false;
+    }
     public List<Trait> RemoveAllTraitsByType(TRAIT_TYPE traitType) {
         List<Trait> removedTraits = new List<Trait>();
         for (int i = 0; i < _traits.Count; i++) {
@@ -2322,10 +2331,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return removedTraits;
     }
-    public Trait GetRandomNegativeTrait() {
+    public Trait GetRandomTrait(TRAIT_EFFECT effect) {
         List<Trait> negativeTraits = new List<Trait>();
         for (int i = 0; i < _traits.Count; i++) {
-            if (_traits[i].effect == TRAIT_EFFECT.NEGATIVE) {
+            if (_traits[i].effect == effect) {
                 negativeTraits.Add(_traits[i]);
             }
         }
@@ -2670,6 +2679,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         Character targetCharacter = null;
         Character otherCharacter = null;
         INTERACTION_TYPE chosenRelationshipInteraction = INTERACTION_TYPE.NONE;
+        List<string> allNegativeTraitNames = new List<string>();
 
         bool isHungry = false, isStarving = false, isTired = false, isExhausted = false;
         for (int i = 0; i < _traits.Count; i++) {
@@ -2766,6 +2776,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 personalActionWeights.AddElement(trait.associatedInteraction, 100);
                 interactionLog += "\nTRAIT ACTION: " + trait.associatedInteraction.ToString() + " - 100";
             }
+            if(trait.effect == TRAIT_EFFECT.NEGATIVE) {
+                allNegativeTraitNames.Add(trait.name);
+            }
         }
 
         //**F. compute Item handling weight**
@@ -2840,6 +2853,20 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             personalActionWeights.AddElement(chosenType, 25);
             interactionLog += "\nPERSONAL EMPOWERMENT: " + chosenType.ToString() + " - 25";
         }
+
+        //**L.characters may also perform actions to save themselves**
+        if (allNegativeTraitNames.Count > 0) {
+            List<INTERACTION_TYPE> allSaveSelfInteractions = RaceManager.Instance.GetNPCInteractionsOfRaceActor(race,
+                new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_REMOVE, effectString = allNegativeTraitNames.ToArray() },
+                this);
+
+            if (allSaveSelfInteractions.Count > 0) {
+                INTERACTION_TYPE chosenType = allSaveSelfInteractions[UnityEngine.Random.Range(0, allSaveSelfInteractions.Count)];
+                personalActionWeights.AddElement(chosenType, 100);
+                interactionLog += "\nSAVE SELF: " + chosenType.ToString() + " - 100";
+            }
+        }
+
 
         //**M. compute Do Nothing weight**
         if (!isStarving && !isExhausted) {
