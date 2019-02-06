@@ -17,8 +17,6 @@ public class HuntAction : Interaction {
 
     public HuntAction(Area interactable) : base(interactable, INTERACTION_TYPE.HUNT_ACTION, 0) {
         _name = "Hunt Action";
-        //_categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.PERSONAL, INTERACTION_CATEGORY.OFFENSE };
-        //_alignment = INTERACTION_ALIGNMENT.NEUTRAL;
     }
 
     #region Override
@@ -158,33 +156,16 @@ public class HuntAction : Interaction {
     #endregion
 
     public Character GetTargetCharacter(Character characterInvolved) {
-        WeightedDictionary<Character> characterWeights = new WeightedDictionary<Character>();
-        for (int i = 0; i < interactable.charactersAtLocation.Count; i++) {
-            Character currCharacter = interactable.charactersAtLocation[i];
-            if (currCharacter.id != characterInvolved.id && !currCharacter.currentParty.icon.isTravelling && currCharacter.IsInOwnParty() && !currCharacter.isLeader && currCharacter.race != RACE.SKELETON) {
-                int weight = 0;
-                if (currCharacter.isFactionless) {
-                    weight += 25;
-                } else if (currCharacter.faction.id != characterInvolved.faction.id) {
-                    FactionRelationship relationship = currCharacter.faction.GetRelationshipWith(characterInvolved.faction);
-                    if (relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.ENEMY || relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.DISLIKED) {
-                        weight += 20;
-                    } else if (relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.ALLY || relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.FRIEND) {
-                        weight += 5;
-                    }
-                    if (currCharacter.level > characterInvolved.level) {
-                        weight -= 15;
-                    } else if (currCharacter.level < characterInvolved.level) {
-                        weight += 15;
-                    }
-                }
-                if (weight > 0) {
-                    characterWeights.AddElement(currCharacter, weight);
-                }
+        List<Character> characterChoices = new List<Character>();
+        for (int i = 0; i < characterInvolved.specificLocation.charactersAtLocation.Count; i++) {
+            Character currCharacter = characterInvolved.specificLocation.charactersAtLocation[i];
+            if (currCharacter.id != characterInvolved.id && !currCharacter.currentParty.icon.isTravelling && currCharacter.IsInOwnParty() && !currCharacter.isLeader
+                && currCharacter.role.roleType == CHARACTER_ROLE.BEAST && currCharacter.isFactionless) {
+                characterChoices.Add(currCharacter);
             }
         }
-        if (characterWeights.GetTotalOfWeights() > 0) {
-            return characterWeights.PickRandomElementGivenWeights();
+        if (characterChoices.Count > 0) {
+            return characterChoices[UnityEngine.Random.Range(0, characterChoices.Count)];
         }
         return null;
         //throw new System.Exception("Could not find any character to recruit!");

@@ -96,7 +96,7 @@ public class MoveToVisit : Interaction {
 
     #region State Effects
     private void VisitCancelledEffect(InteractionState state) {
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
     }
     private void VisitProceedsEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2);
@@ -123,19 +123,22 @@ public class MoveToVisit : Interaction {
             }
             int weight = 0;
             if(currArea.owner == null) {
-                if (Utilities.specialClasses.Contains(characterInvolved.characterClass.className)) {
-                    weight += 100;
-                } else {
-                    weight += 30;
-                }
+                weight += 30;
             } else {
                 if(currArea.owner.id == characterInvolved.faction.id) {
-                    weight += 50;
+                    weight += 100;
                 } else {
                     FactionRelationship rel = currArea.owner.GetRelationshipWith(characterInvolved.faction);
                     if (rel.relationshipStatus != FACTION_RELATIONSHIP_STATUS.ENEMY) {
                         weight += 30;
+                    }else if (rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.AT_WAR) {
+                        weight -= 50;
                     }
+                }
+            }
+            foreach (Character charactersWithRel in characterInvolved.relationships.Keys) {
+                if(charactersWithRel.homeArea.id == currArea.id) {
+                    weight += 50;
                 }
             }
             if (weight > 0) {

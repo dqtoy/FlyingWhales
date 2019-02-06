@@ -215,6 +215,30 @@ public class InteractionManager : MonoBehaviour {
                 actorEffect = null,
                 targetCharacterEffect = null,
             } },
+            { INTERACTION_TYPE.ASK_FOR_HELP, new InteractionAttributes(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.OTHER },
+                alignment = INTERACTION_ALIGNMENT.NEUTRAL,
+                actorEffect = null,
+                targetCharacterEffect = null,
+            } },
+            { INTERACTION_TYPE.MOVE_TO_VISIT, new InteractionAttributes(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.OTHER },
+                alignment = INTERACTION_ALIGNMENT.NEUTRAL,
+                actorEffect = null,
+                targetCharacterEffect = null,
+            } },
+            { INTERACTION_TYPE.TRANSFER_HOME, new InteractionAttributes(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.OTHER },
+                alignment = INTERACTION_ALIGNMENT.NEUTRAL,
+                actorEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.CHANGE_HOME } },
+                targetCharacterEffect = null,
+            } },
+            { INTERACTION_TYPE.TORTURE_ACTION_NPC, new InteractionAttributes(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.OFFENSE },
+                alignment = INTERACTION_ALIGNMENT.EVIL,
+                actorEffect = null,
+                targetCharacterEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_GAIN, effectString = new string[] { "Injured" } } },
+            } },
         };
     }
     public InteractionAttributes GetCategoryAndAlignment (INTERACTION_TYPE type) {
@@ -645,6 +669,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.ASK_FOR_HELP:
                 createdInteraction = new AskForHelp(interactable);
                 break;
+            case INTERACTION_TYPE.TORTURE_ACTION_NPC:
+                createdInteraction = new TortureActionNPC(interactable);
+                break;
         }
         return createdInteraction;
     }
@@ -733,7 +760,7 @@ public class InteractionManager : MonoBehaviour {
                 return true;
         }
     }
-    public bool CanCreateInteraction(INTERACTION_TYPE interactionType, Character character) {
+    public bool CanCreateInteraction(INTERACTION_TYPE interactionType, Character character, Character targetCharacter = null) {
         Area area = null;
         FactionRelationship relationship = null;
         switch (interactionType) {
@@ -913,32 +940,32 @@ public class InteractionManager : MonoBehaviour {
                     }
                 //}
                 return false;
-            case INTERACTION_TYPE.MOVE_TO_ABDUCT_ACTION:
-                //if (character.race == RACE.GOBLIN || character.race == RACE.SPIDER) {
-                    if (!character.homeArea.IsResidentsFull()) {
-                            for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
-                                Area currArea = LandmarkManager.Instance.allAreas[i];
-                                if (currArea.owner == null || currArea.owner.id != PlayerManager.Instance.player.playerFaction.id && currArea.owner.id != character.faction.id) {
-                                    for (int j = 0; j < currArea.charactersAtLocation.Count; j++) {
-                                        Character characterAtLocation = currArea.charactersAtLocation[j];
-                                        if (characterAtLocation.id != character.id && characterAtLocation.IsInOwnParty() && !characterAtLocation.currentParty.icon.isTravelling
-                                            && (characterAtLocation.isFactionless || characterAtLocation.faction.id != character.faction.id)) {
-                                            return true;
-                                        }
-                                    }
-                                }
-                            }
-                            //for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
-                            //    Character currCharacter = CharacterManager.Instance.allCharacters[i];
-                            //    if (currCharacter.id != character.id && !currCharacter.isDead && !currCharacter.currentParty.icon.isTravelling && currCharacter.IsInOwnParty()) {
-                            //        if (currCharacter.isFactionless || currCharacter.faction.id != character.faction.id) {
-                            //            return true;
-                            //        }
-                            //    }
-                            //}
-                        }
-                //}
-                return false;
+            //case INTERACTION_TYPE.MOVE_TO_ABDUCT_ACTION:
+            //    //if (character.race == RACE.GOBLIN || character.race == RACE.SPIDER) {
+            //        if (!character.homeArea.IsResidentsFull()) {
+            //                for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
+            //                    Area currArea = LandmarkManager.Instance.allAreas[i];
+            //                    if (currArea.owner == null || currArea.owner.id != PlayerManager.Instance.player.playerFaction.id && currArea.owner.id != character.faction.id) {
+            //                        for (int j = 0; j < currArea.charactersAtLocation.Count; j++) {
+            //                            Character characterAtLocation = currArea.charactersAtLocation[j];
+            //                            if (characterAtLocation.id != character.id && characterAtLocation.IsInOwnParty() && !characterAtLocation.currentParty.icon.isTravelling
+            //                                && (characterAtLocation.isFactionless || characterAtLocation.faction.id != character.faction.id)) {
+            //                                return true;
+            //                            }
+            //                        }
+            //                    }
+            //                }
+            //                //for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+            //                //    Character currCharacter = CharacterManager.Instance.allCharacters[i];
+            //                //    if (currCharacter.id != character.id && !currCharacter.isDead && !currCharacter.currentParty.icon.isTravelling && currCharacter.IsInOwnParty()) {
+            //                //        if (currCharacter.isFactionless || currCharacter.faction.id != character.faction.id) {
+            //                //            return true;
+            //                //        }
+            //                //    }
+            //                //}
+            //            }
+            //    //}
+            //    return false;
             case INTERACTION_TYPE.MOVE_TO_STEAL_ACTION:
                 //if (character.race == RACE.GOBLIN || character.race == RACE.SKELETON || character.race == RACE.FAERY || character.race == RACE.DRAGON) {
                     if (character.tokenInInventory == null) {
@@ -956,15 +983,14 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.MOVE_TO_STEAL_ACTION_FACTION:
                 //**Trigger Criteria 1**: This character must not have an item
                 return character.tokenInInventory == null;
-            case INTERACTION_TYPE.MOVE_TO_HUNT_ACTION:
-                //if(character.race == RACE.WOLF || character.race == RACE.SPIDER || character.race == RACE.DRAGON) {
-                    for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
-                        area = LandmarkManager.Instance.allAreas[i];
-                        if (area.id != character.specificLocation.id && (area.owner == null || (area.owner != null && area.owner.id != character.faction.id && area.owner.id != PlayerManager.Instance.player.playerFaction.id))) {
-                            return true;
-                        }
+            case INTERACTION_TYPE.HUNT_ACTION:
+                for (int i = 0; i < character.specificLocation.charactersAtLocation.Count; i++) {
+                    Character currCharacter = character.specificLocation.charactersAtLocation[i];
+                    if (currCharacter.id != character.id && !currCharacter.currentParty.icon.isTravelling && currCharacter.IsInOwnParty() && !currCharacter.isLeader
+                        && currCharacter.role.roleType == CHARACTER_ROLE.BEAST && currCharacter.isFactionless) {
+                        return true;
                     }
-                //}
+                }
                 return false;
             case INTERACTION_TYPE.MOVE_TO_SAVE_ACTION:
                 return CanCreateMoveToSave(character);
@@ -1044,11 +1070,7 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.TRANSFER_HOME:
                 if(character.specificLocation.id != character.homeArea.id
                     && character.specificLocation.owner == character.faction) {
-                    int targetRemainingResidentCap = character.specificLocation.residentCapacity - character.specificLocation.areaResidents.Count;
-                    int homeRemainingResidentCap = character.homeArea.residentCapacity - character.homeArea.areaResidents.Count;
-                    if(targetRemainingResidentCap - homeRemainingResidentCap >= 3) {
-                        return true;
-                    }
+                    return character.specificLocation.CanCharacterMigrateHere(character);
                 }
                 return false;
             case INTERACTION_TYPE.MOVE_TO_RECRUIT_FRIEND_ACTION_FACTION:
@@ -1157,8 +1179,8 @@ public class InteractionManager : MonoBehaviour {
                     }
                 }
                 return false;
-            case INTERACTION_TYPE.MOVE_TO_CURSE_ACTION:
-                return character.HasRelationshipTraitOf(RELATIONSHIP_TRAIT.ENEMY);
+            //case INTERACTION_TYPE.MOVE_TO_CURSE_ACTION:
+            //    return character.HasRelationshipTraitOf(RELATIONSHIP_TRAIT.ENEMY);
             case INTERACTION_TYPE.CONSUME_LIFE:
                 List<LocationStructure> insideStructures = character.specificLocation.GetStructuresAtLocation(true);
                 for (int i = 0; i < insideStructures.Count; i++) {
@@ -1173,6 +1195,11 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.MOVE_TO_EXPLORE_EVENT_FACTION:
                 //**Trigger Criteria 1**: The character must not be holding an item
                 return character.tokenInInventory == null;
+            case INTERACTION_TYPE.ASK_FOR_HELP:
+                //No checker for this because it is sure that the character has is the same location as the target, if there will be a checker, must add new parameter for targetCharacter
+                return true;
+            case INTERACTION_TYPE.TORTURE_ACTION_NPC:
+                return targetCharacter.GetTraitOr("Abducted", "Restrained") != null;
             default:
                 return true;
         }

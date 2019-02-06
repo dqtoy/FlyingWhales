@@ -17,8 +17,6 @@ public class EatDefenseless : Interaction {
 
     public EatDefenseless(Area interactable): base(interactable, INTERACTION_TYPE.EAT_DEFENSELESS, 0) {
         _name = "Eat Defenseless";
-        //_categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.PERSONAL, INTERACTION_CATEGORY.OFFENSE };
-        //_alignment = INTERACTION_ALIGNMENT.EVIL;
     }
 
     #region Override

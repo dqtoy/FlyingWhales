@@ -23,7 +23,6 @@ public class ArgueAction : Interaction {
 
     #region Override
     public override void CreateStates() {
-
         InteractionState startState = new InteractionState(Start, this);
         InteractionState bothGetsAnnoyed = new InteractionState(Both_Gets_Annoyed, this);
         InteractionState character1Injured = new InteractionState(Character_1_Injured, this);
@@ -60,7 +59,7 @@ public class ArgueAction : Interaction {
         }
     }
     public override bool CanInteractionBeDoneBy(Character character) {
-        if (_targetCharacter == null || _targetCharacter.currentParty.icon.isTravelling || _targetCharacter.isDead || _targetCharacter.specificLocation != character.specificLocation || _targetCharacter.currentStructure != _targetCharacter.homeStructure) {
+        if (_targetCharacter == null || _targetCharacter.currentParty.icon.isTravelling || _targetCharacter.isDead || _targetCharacter.specificLocation != character.specificLocation) {
             return false;
         }
         return base.CanInteractionBeDoneBy(character);
