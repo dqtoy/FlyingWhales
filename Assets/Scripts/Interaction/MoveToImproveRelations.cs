@@ -106,7 +106,7 @@ public class MoveToImproveRelations : Interaction {
     private void ImproveRelationsCancelledRewardEffect(InteractionState state) {
         //**Mechanics**: Character will no longer leave.
         //**Level Up**: Dissuader Minion +1
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
         MinionSuccess();
     }
     private void ImproveRelationsProceedsRewardEffect(InteractionState state) {

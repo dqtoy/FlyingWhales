@@ -126,7 +126,7 @@ public class AbductAction : Interaction {
          */
         AbductCharacter(targetCharacter);
         //**Level Up**: Abductioner Character +1
-        _characterInvolved.LevelUp();
+        //_characterInvolved.LevelUp();
     }
     private void AbductorInjuredEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);

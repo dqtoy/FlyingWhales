@@ -111,7 +111,7 @@ public class MoveToExpand : Interaction {
     private void CharacterExpandCancelledRewardEffect(InteractionState state) {
         //**Mechanics**: Character will no longer leave.
         //**Level Up**: Dissuader Minion +1
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
         MinionSuccess();
     }
     private void CharacterExpandContinuesRewardEffect(InteractionState state) {

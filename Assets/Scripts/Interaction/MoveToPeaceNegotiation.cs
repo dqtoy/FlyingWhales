@@ -152,7 +152,7 @@ public class MoveToPeaceNegotiation : Interaction {
         //**Mechanic**: Diplomat Dies, peace declaration cancelled.
         _characterInvolved.Death();
         //**Level Up**: Instigator Minion +1
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
 
         state.AddLogFiller(new LogFiller(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1));
         state.AddLogFiller(new LogFiller(targetFaction, targetFaction.name, LOG_IDENTIFIER.FACTION_2));
@@ -163,7 +163,7 @@ public class MoveToPeaceNegotiation : Interaction {
         _characterInvolved.faction.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, -2);
 
         //**Level Up**: Instigator Minion +1
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
         }
@@ -188,7 +188,7 @@ public class MoveToPeaceNegotiation : Interaction {
     }
     private void FactionLeaderPursuadedRewardEffect(InteractionState state) {
         //**Level Up**: Diplomat Minion +1
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
     }
     private void FactionLeaderRejectedRewardEffect(InteractionState state) {
         //**Mechanic**: Diplomat travels to [Location] for Peace Negotiation

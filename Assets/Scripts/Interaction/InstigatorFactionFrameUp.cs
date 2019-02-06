@@ -75,7 +75,7 @@ public class InstigatorFactionFrameUp : Interaction {
 
     #region State Effects
     private void InciteAngerEffect(InteractionState state) {
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
 
         FactionRelationship relationship = interactable.owner.GetRelationshipWith(_targetFactionToken.faction);
         relationship.AdjustRelationshipStatus(-1);

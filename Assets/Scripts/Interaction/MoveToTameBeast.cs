@@ -103,7 +103,7 @@ public class MoveToTameBeast : Interaction {
 
     #region State Effects
     private void TameCancelledEffect(InteractionState state) {
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
     }
     private void TameProceedsEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2);

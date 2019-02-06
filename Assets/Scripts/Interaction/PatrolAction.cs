@@ -164,7 +164,7 @@ public class PatrolAction : Interaction {
             default:
                 break;
         }
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
         SetCurrentState(_states[nextStateWeights.PickRandomElementGivenWeights()]);
     }
     private void PursuadeOptionEffect(InteractionState state) {
@@ -260,7 +260,7 @@ public class PatrolAction : Interaction {
         AdjustFactionsRelationship(_characterInvolved.faction, _targetCharacter.faction, -1, state);
         _targetCharacter.Death();
         //**Level Up**: Patroller +1
-        _characterInvolved.LevelUp();
+        //_characterInvolved.LevelUp();
 
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
@@ -270,7 +270,7 @@ public class PatrolAction : Interaction {
         _targetCharacter.AddTrait(AttributeManager.Instance.allTraits["Injured"]);
 
         //**Level Up**: Patroller +1
-        _characterInvolved.LevelUp();
+        //_characterInvolved.LevelUp();
 
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
@@ -281,7 +281,7 @@ public class PatrolAction : Interaction {
         _characterInvolved.Death();
 
         //**Level Up**: Character +1
-        _targetCharacter.LevelUp();
+        //_targetCharacter.LevelUp();
 
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
@@ -291,7 +291,7 @@ public class PatrolAction : Interaction {
         _characterInvolved.AddTrait(AttributeManager.Instance.allTraits["Injured"]);
 
         //**Level Up**: Character +1
-        _targetCharacter.LevelUp();
+        //_targetCharacter.LevelUp();
 
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
@@ -305,7 +305,7 @@ public class PatrolAction : Interaction {
         _targetCharacter.Death();
 
         //**Level Up**: Character +1
-        _characterInvolved.LevelUp();
+        //_characterInvolved.LevelUp();
 
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
@@ -315,7 +315,7 @@ public class PatrolAction : Interaction {
         _targetCharacter.AddTrait(AttributeManager.Instance.allTraits["Injured"]);
 
         //**Level Up**: Patroller +1
-        _characterInvolved.LevelUp();
+        //_characterInvolved.LevelUp();
 
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
@@ -326,14 +326,14 @@ public class PatrolAction : Interaction {
         _characterInvolved.Death();
 
         //**Level Up**: Character +1
-        _targetCharacter.LevelUp();
+        //_targetCharacter.LevelUp();
     }
     private void PursuadedCharacterInjuredPatroller(InteractionState state) {
         //**Mechanics**: Patroller gains Injured.
         _characterInvolved.AddTrait(AttributeManager.Instance.allTraits["Injured"]);
 
         //**Level Up**: Character +1
-        _targetCharacter.LevelUp();
+        //_targetCharacter.LevelUp();
 
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
@@ -347,7 +347,7 @@ public class PatrolAction : Interaction {
         _targetCharacter.Death();
 
         //**Level Up**: Patroller +1
-        _characterInvolved.LevelUp();
+        //_characterInvolved.LevelUp();
 
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
@@ -357,7 +357,7 @@ public class PatrolAction : Interaction {
         _targetCharacter.AddTrait(AttributeManager.Instance.allTraits["Injured"]);
 
         //**Level Up**: Patroller +1
-        _characterInvolved.LevelUp();
+        //_characterInvolved.LevelUp();
 
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
@@ -368,7 +368,7 @@ public class PatrolAction : Interaction {
         _characterInvolved.Death();
 
         //**Level Up**: Character +1
-        _targetCharacter.LevelUp();
+        //_targetCharacter.LevelUp();
 
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
@@ -378,7 +378,7 @@ public class PatrolAction : Interaction {
         _characterInvolved.AddTrait(AttributeManager.Instance.allTraits["Injured"]);
 
         //**Level Up**: Character +1
-        _targetCharacter.LevelUp();
+        //_targetCharacter.LevelUp();
 
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));

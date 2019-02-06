@@ -62,7 +62,7 @@ public class FearSpell : SpecialToken {
     #endregion
 
     private void ItemUsedEffect(TokenInteractionState state) {
-        state.tokenUser.LevelUp();
+        //state.tokenUser.LevelUp();
         state.tokenUser.ConsumeToken();
 
         //**Mechanics**: Target character will trigger https://trello.com/c/vDKl0cyy/859-character-flees on the next tick (overriding any other action).
@@ -73,7 +73,7 @@ public class FearSpell : SpecialToken {
         }
     }
     private void StopFailEffect(TokenInteractionState state) {
-        state.tokenUser.LevelUp();
+        //state.tokenUser.LevelUp();
         state.tokenUser.ConsumeToken();
 
         //**Mechanics**: Target character will trigger https://trello.com/c/vDKl0cyy/859-character-flees on the next tick (overriding any other action).

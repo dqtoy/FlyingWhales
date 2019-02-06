@@ -161,7 +161,7 @@ public class ScavengeEvent : Interaction {
     #endregion
 
     private void TrappedScavengeSuccessRewardEffect(InteractionState state) {
-        _characterInvolved.LevelUp();
+        //_characterInvolved.LevelUp();
         int obtainedSupply = _characterInvolved.job.GetSupplyObtained(interactable);
         _characterInvolved.homeArea.AdjustSuppliesInBank(obtainedSupply);
         interactable.AdjustSuppliesInBank(-obtainedSupply);
@@ -172,16 +172,16 @@ public class ScavengeEvent : Interaction {
         state.AddLogFiller(new LogFiller(null, obtainedSupply.ToString(), LOG_IDENTIFIER.STRING_1));
     }
     private void TrappedScavengeFailRewardEffect(InteractionState state) {
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
     }
     private void TrappedScavengeCriticalFailRewardEffect(InteractionState state) {
         //**Mechanics**: Scavenger dies.
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
         _characterInvolved.Death();
     }
     private void AssistedScavengeSuccessRewardEffect(InteractionState state) {
-        investigatorCharacter.LevelUp();
-        _characterInvolved.LevelUp();
+        //investigatorCharacter.LevelUp();
+        //_characterInvolved.LevelUp();
 
         int obtainedSupply = (_characterInvolved.job as Raider).GetSupplyObtained(interactable);
         _characterInvolved.homeArea.AdjustSuppliesInBank(obtainedSupply);
@@ -198,15 +198,15 @@ public class ScavengeEvent : Interaction {
             Utilities.NormalizeString(_characterInvolved.faction.GetRelationshipWith(PlayerManager.Instance.player.playerFaction).relationshipStatus.ToString()), LOG_IDENTIFIER.STRING_2));
     }
     private void AssistedScavengeFailRewardEffect(InteractionState state) {
-        _defaultInvestigatorCharacter.LevelUp();
+        //_defaultInvestigatorCharacter.LevelUp();
     }
     private void AssistedScavengeCriticallyFailRewardEffect(InteractionState state) {
         _characterInvolved.Death(); 
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
     }
     private void NormalScavengeSuccessRewardEffect(InteractionState state) {
         //**Mechanics**: Compute Supply obtained by scavenger and transfer it to his home area. Scavenger also travels back to his home area.
-        _characterInvolved.LevelUp();
+        //_characterInvolved.LevelUp();
 
         int obtainedSupply = _characterInvolved.job.GetSupplyObtained(interactable);
         _characterInvolved.homeArea.AdjustSuppliesInBank(obtainedSupply);

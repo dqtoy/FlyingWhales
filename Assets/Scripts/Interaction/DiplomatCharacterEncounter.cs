@@ -88,8 +88,8 @@ public class DiplomatCharacterEncounter : Interaction {
 
     #region State Effects
     private void TrainCharacterEffect(InteractionState state) {
-        investigatorCharacter.LevelUp();
-        characterInvolved.LevelUp();
+        //investigatorCharacter.LevelUp();
+        //characterInvolved.LevelUp();
     }
     private void DoNothingEffect(InteractionState state) {
     }

@@ -129,7 +129,7 @@ public class CurseAction : Interaction {
 
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
-        _characterInvolved.LevelUp();
+        //_characterInvolved.LevelUp();
         _targetCharacter.AddTrait(AttributeManager.Instance.allTraits["Cursed"]);
     }
     private void CurserUnconsciousEffect(InteractionState state) {

@@ -103,7 +103,7 @@ public class MoveToHunt : Interaction {
 
     #region State Effects
     private void HuntCancelledEffect(InteractionState state) {
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
     }
     private void HuntProceedsEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2);

@@ -116,7 +116,7 @@ public class HuntAction : Interaction {
 
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
-        _characterInvolved.LevelUp();
+        //_characterInvolved.LevelUp();
 
         if (!_targetCharacter.isFactionless && !_characterInvolved.isFactionless) {
             AdjustFactionsRelationship(_targetCharacter.faction, _characterInvolved.faction, -1, state);
@@ -129,7 +129,7 @@ public class HuntAction : Interaction {
 
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
-        _characterInvolved.LevelUp();
+        //_characterInvolved.LevelUp();
         _targetCharacter.AddTrait(AttributeManager.Instance.allTraits["Injured"]);
     }
     private void CharacterKilledHunterEffect(InteractionState state) {
@@ -137,7 +137,7 @@ public class HuntAction : Interaction {
 
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
-        _targetCharacter.LevelUp();
+        //_targetCharacter.LevelUp();
 
         if (!_targetCharacter.isFactionless && !_characterInvolved.isFactionless) {
             AdjustFactionsRelationship(_targetCharacter.faction, _characterInvolved.faction, -1, state);
@@ -150,7 +150,7 @@ public class HuntAction : Interaction {
 
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
-        _targetCharacter.LevelUp();
+        //_targetCharacter.LevelUp();
         _characterInvolved.AddTrait(AttributeManager.Instance.allTraits["Injured"]);
     }
     #endregion

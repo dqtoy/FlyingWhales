@@ -99,7 +99,7 @@ public class UseItemOnLocation : Interaction {
         state.AddLogFiller(new LogFiller(null, _tokenToBeUsed.nameInBold, LOG_IDENTIFIER.STRING_1));
 
         //**Level Up**: Dissuader Minion +1
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
     }
     private void DoNothingRewardEffect(InteractionState state) {
         //_tokenToBeUsed.CreateJointInteractionStates(this);

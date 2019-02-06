@@ -197,8 +197,8 @@ public class ReanimateAction : Interaction {
          */
         TransferCharacter(_targetCharacter, _characterInvolved.faction);
         //**Level Up**: Converter Character +1, Instigator Minion +1
-        _characterInvolved.LevelUp();
-        investigatorCharacter.LevelUp();
+        //_characterInvolved.LevelUp();
+        //investigatorCharacter.LevelUp();
     }
     private void AssistedConversionFailRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
@@ -228,7 +228,7 @@ public class ReanimateAction : Interaction {
          */
         TransferCharacter(_targetCharacter, _characterInvolved.faction);
         //**Level Up**: Converter Character +1
-        _characterInvolved.LevelUp();
+        //_characterInvolved.LevelUp();
     }
     private void ThwartedConversionFailRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
@@ -239,7 +239,7 @@ public class ReanimateAction : Interaction {
         state.AddLogFiller(new LogFiller(_targetCharacter.faction, _targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_2));
 
         //**Level Up**: Diplomat Minion +1
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
         //**Mechanics**: Player relationship with abductee's faction +1
         AdjustFactionsRelationship(PlayerManager.Instance.player.playerFaction, _targetCharacter.faction, 1, state);
     }
@@ -258,7 +258,7 @@ public class ReanimateAction : Interaction {
         _characterInvolved.Death();
 
         //**Level Up**: Diplomat Minion +1
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
     }
     private void NormalConversionSuccessRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
@@ -277,7 +277,7 @@ public class ReanimateAction : Interaction {
          */
         TransferCharacter(_targetCharacter, _characterInvolved.faction);
         //**Level Up**: Charmer Character +1
-        _characterInvolved.LevelUp();
+        //_characterInvolved.LevelUp();
     }
     private void NormalConversionFailRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {

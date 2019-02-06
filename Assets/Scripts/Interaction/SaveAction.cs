@@ -199,8 +199,8 @@ public class SaveAction : Interaction {
         AdjustFactionsRelationship(_characterInvolved.faction, interactable.owner, -1, state);
 
         //**Level Up**: Releaser Character +1, Instigator Minion +1
-        _characterInvolved.LevelUp();
-        investigatorCharacter.LevelUp();
+        //_characterInvolved.LevelUp();
+        //investigatorCharacter.LevelUp();
     }
     private void AssistedReleaseFailRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
@@ -234,7 +234,7 @@ public class SaveAction : Interaction {
         CharacterManager.Instance.ChangePersonalRelationshipBetweenTwoCharacters(_targetCharacter, _characterInvolved, 1);
 
         //**Level Up**: Releaseer Character +1
-        _characterInvolved.LevelUp();
+        //_characterInvolved.LevelUp();
     }
     private void ThwartedReleaseFailRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
@@ -245,7 +245,7 @@ public class SaveAction : Interaction {
         state.AddLogFiller(new LogFiller(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_2));
 
         //**Level Up**: Diplomat Minion +1
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
         //**Mechanics**: Relationship between the player faction and Faction 2 +1
         AdjustFactionsRelationship(PlayerManager.Instance.player.playerFaction, interactable.owner, 1, state);
     }
@@ -264,7 +264,7 @@ public class SaveAction : Interaction {
         _characterInvolved.Death();
 
         //**Level Up**: Diplomat Minion +1
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
     }
     private void NormalReleaseSuccessRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
@@ -279,7 +279,7 @@ public class SaveAction : Interaction {
         CharacterManager.Instance.ChangePersonalRelationshipBetweenTwoCharacters(_targetCharacter, _characterInvolved, 1);
 
         //**Level Up**: Releaseer Character +1
-        _characterInvolved.LevelUp();
+        //_characterInvolved.LevelUp();
     }
     private void NormalReleaseFailRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {

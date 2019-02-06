@@ -101,7 +101,7 @@ public class InflictIllness : Interaction {
         //string chosenIllness = AttributeManager.Instance.GetRandomIllness();
         Trait sickTrait = AttributeManager.Instance.allTraits["Sick"];
         //**Level Up**: Instigator Minion +1
-        _characterInvolved.LevelUp();
+        //_characterInvolved.LevelUp();
         Character target = previousState.assignedCharacter.character;
         target.AddTrait(sickTrait);
         if (state.descriptionLog != null) {

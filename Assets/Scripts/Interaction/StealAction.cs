@@ -202,8 +202,8 @@ public class StealAction : Interaction {
 
 
         //**Level Up**: Thief Character +1, Instigator +1
-        _characterInvolved.LevelUp();
-        investigatorCharacter.LevelUp();
+        //_characterInvolved.LevelUp();
+        //investigatorCharacter.LevelUp();
     }
     private void AssistedTheftFailRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
@@ -259,7 +259,7 @@ public class StealAction : Interaction {
         }
 
         //**Level Up**: Thief Character +1
-        _characterInvolved.LevelUp();
+        //_characterInvolved.LevelUp();
     }
     private void ThwartedTheftFailRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
@@ -272,7 +272,7 @@ public class StealAction : Interaction {
         state.AddLogFiller(new LogFiller(_targetCharacter.faction, _targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_2));
 
         //**Level Up**: Diplomat Minion +1
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
         //**Mechanics**: Relationship between the player factions and Faction 2 +1
         AdjustFactionsRelationship(PlayerManager.Instance.player.playerFaction, _targetCharacter.faction, 1, state);
     }
@@ -290,7 +290,7 @@ public class StealAction : Interaction {
         _characterInvolved.Death();
 
         //**Level Up**: Diplomat Minion +1
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
 
         //**Mechanics**: Relationship between the player factions and Faction 2 +1
         AdjustFactionsRelationship(PlayerManager.Instance.player.playerFaction, _targetCharacter.faction, 1, state);
@@ -315,7 +315,7 @@ public class StealAction : Interaction {
     }
 
     //**Level Up**: Thief Character +1
-    _characterInvolved.LevelUp();
+    //_characterInvolved.LevelUp();
     }
     private void NormalTheftFailRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {

@@ -103,7 +103,7 @@ public class MoveToAttack : Interaction {
 
     #region State Effects
     private void StopSuccessfulEffect(InteractionState state) {
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
         MinionSuccess();
 
         if (interactable.owner == null) {

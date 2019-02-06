@@ -105,7 +105,7 @@ public class MoveToCurse : Interaction {
 
     #region State Effects
     private void CurseCancelledEffect(InteractionState state) {
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
     }
     private void CurseProceedsEffect(InteractionState state) {
         //state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);

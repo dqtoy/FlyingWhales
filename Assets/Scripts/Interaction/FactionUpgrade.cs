@@ -126,7 +126,7 @@ public class FactionUpgrade : Interaction {
 
     #region State Effects
     private void StopFactionUpgradeSuccessEffect(InteractionState state) {
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
         MinionSuccess();
 
         state.descriptionLog.AddToFillers(interactable.owner.leader, interactable.owner.leader.name, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -135,7 +135,7 @@ public class FactionUpgrade : Interaction {
     }
     private void StopFactionUpgradeFailEffect(InteractionState state) {
         interactable.owner.LevelUp();
-        interactable.owner.leader.LevelUp();
+        //interactable.owner.leader.LevelUp();
 
         state.descriptionLog.AddToFillers(interactable.owner.leader, interactable.owner.leader.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
@@ -143,7 +143,7 @@ public class FactionUpgrade : Interaction {
         state.AddLogFiller(new LogFiller(null, interactable.owner.level.ToString(), LOG_IDENTIFIER.STRING_1));
     }
     private void DisruptFactionUpgradeSuccessEffect(InteractionState state) {
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
         interactable.owner.LevelUp(-1);
         interactable.owner.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, -2);
 
@@ -153,7 +153,7 @@ public class FactionUpgrade : Interaction {
         state.AddLogFiller(new LogFiller(null, interactable.owner.level.ToString(), LOG_IDENTIFIER.STRING_1));
     }
     private void DisruptFactionUpgradeFailEffect(InteractionState state) {
-        interactable.owner.leader.LevelUp();
+        //interactable.owner.leader.LevelUp();
         interactable.owner.LevelUp();
         interactable.owner.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, -1);
 
@@ -163,8 +163,8 @@ public class FactionUpgrade : Interaction {
         state.AddLogFiller(new LogFiller(null, interactable.owner.level.ToString(), LOG_IDENTIFIER.STRING_1));
     }
     private void AssistedFactionUpgradeEffect(InteractionState state) {
-        investigatorCharacter.LevelUp();
-        interactable.owner.leader.LevelUp();
+        //investigatorCharacter.LevelUp();
+        //interactable.owner.leader.LevelUp();
         interactable.owner.LevelUp(2);
         interactable.owner.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, 2);
 
@@ -174,7 +174,7 @@ public class FactionUpgrade : Interaction {
         state.AddLogFiller(new LogFiller(null, interactable.owner.level.ToString(), LOG_IDENTIFIER.STRING_1));
     }
     private void NormalFactionUpgradeEffect(InteractionState state) {
-        interactable.owner.leader.LevelUp();
+        //interactable.owner.leader.LevelUp();
         interactable.owner.LevelUp();
 
         state.descriptionLog.AddToFillers(interactable.owner.leader, interactable.owner.leader.name, LOG_IDENTIFIER.TARGET_CHARACTER);

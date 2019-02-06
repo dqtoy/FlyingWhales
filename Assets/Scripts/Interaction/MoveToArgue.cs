@@ -105,7 +105,7 @@ public class MoveToArgue : Interaction {
 
     #region State Effects
     private void ArgueCancelledEffect(InteractionState state) {
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
     }
     private void ArgueProceedsEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);

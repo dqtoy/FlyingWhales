@@ -167,7 +167,7 @@ public class RecruitAction : Interaction {
          */
         TransferCharacter(_targetCharacter, _characterInvolved.faction);
         //**Level Up**: Recruiting Character +1
-        _characterInvolved.LevelUp();
+        //_characterInvolved.LevelUp();
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             state.descriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
@@ -177,7 +177,7 @@ public class RecruitAction : Interaction {
     }
     private void DisruptedRecruitmentFailRewardEffect(InteractionState state) {
         //**Level Up**: Instigator Minion +1
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             state.descriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
@@ -192,8 +192,8 @@ public class RecruitAction : Interaction {
          */
         TransferCharacter(_targetCharacter, _characterInvolved.faction);
         //**Level Up**: Diplomat +1, Recruiting Character +1
-        _characterInvolved.LevelUp();
-        investigatorCharacter.LevelUp();
+        //_characterInvolved.LevelUp();
+        //investigatorCharacter.LevelUp();
 
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -217,7 +217,7 @@ public class RecruitAction : Interaction {
          */
         TransferCharacter(_targetCharacter, _characterInvolved.faction);
         //**Level Up**: Recruiting Character +1
-        _characterInvolved.LevelUp();
+        //_characterInvolved.LevelUp();
 
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);

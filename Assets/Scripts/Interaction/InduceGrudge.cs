@@ -91,7 +91,7 @@ public class InduceGrudge : Interaction {
         Character targetCharacter = _previousState.assignedCharacter.character;
         Grudge newGrudge = new Grudge(targetCharacter);
         _characterInvolved.AddTrait(newGrudge);
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
 
         state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 

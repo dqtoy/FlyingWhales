@@ -122,7 +122,7 @@ public class UseItemOnCharacter : Interaction {
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
         //**Level Up**: Dissuader Minion +1
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
     }
     private void StopFailRewardEffect(InteractionState state) {        
         //if (state.descriptionLog != null) {

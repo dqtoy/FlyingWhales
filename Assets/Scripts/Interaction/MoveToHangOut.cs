@@ -111,7 +111,7 @@ public class MoveToHangOut : Interaction {
     private void HangOutCancelledRewardEffect(InteractionState state) {
         //**Mechanics**: Character will no longer leave.
         //**Level Up**: Dissuader Minion +1
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
         MinionSuccess();
     }
     private void HangOutContinuesRewardEffect(InteractionState state) {

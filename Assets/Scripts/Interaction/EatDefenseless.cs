@@ -106,7 +106,7 @@ public class EatDefenseless : Interaction {
 
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
     }
     private void EatContinuesEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
