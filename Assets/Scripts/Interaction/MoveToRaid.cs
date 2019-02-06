@@ -15,7 +15,7 @@ public class MoveToRaid : Interaction {
     }
     private Faction targetFaction;
 
-    public MoveToRaid(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_RAID, 0) {
+    public MoveToRaid(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_RAID_EVENT, 0) {
         _name = "Move To Raid";
         _jobFilter = new JOB[] { JOB.DEBILITATOR };
     }

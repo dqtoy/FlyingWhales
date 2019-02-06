@@ -14,7 +14,7 @@ public class MoveToArgue : Interaction {
         get { return _targetCharacter.homeArea; }
     }
 
-    public MoveToArgue(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_ARGUE, 0) {
+    public MoveToArgue(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_ARGUE_ACTION, 0) {
         _name = "Move To Argue";
         //_categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.PERSONAL, INTERACTION_CATEGORY.SOCIAL };
         //_alignment = INTERACTION_ALIGNMENT.NEUTRAL;

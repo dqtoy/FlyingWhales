@@ -14,7 +14,7 @@ public class MoveToMine : Interaction {
         get { return _targetArea; }
     }
 
-    public MoveToMine(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_MINE, 0) {
+    public MoveToMine(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_MINE_ACTION, 0) {
         _name = "Move To Mine";
     }
 

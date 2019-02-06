@@ -15,7 +15,7 @@ public class MoveToSteal : Interaction {
     }
 
     public MoveToSteal(Area interactable)
-        : base(interactable, INTERACTION_TYPE.MOVE_TO_STEAL, 0) {
+        : base(interactable, INTERACTION_TYPE.MOVE_TO_STEAL_ACTION, 0) {
         _name = "Move To Steal";
         _jobFilter = new JOB[] { JOB.DEBILITATOR };
     }

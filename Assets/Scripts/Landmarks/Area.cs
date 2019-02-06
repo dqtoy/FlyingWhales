@@ -661,7 +661,7 @@ public class Area {
                 && currArea.owner == null
                 && currArea.possibleOccupants.Contains(expander.race)
                 && currArea.id != this.id
-                && currArea.GetEventsOfTypeTargettingThis(INTERACTION_TYPE.MOVE_TO_EXPAND).Count == 0) {
+                && currArea.GetEventsOfTypeTargettingThis(INTERACTION_TYPE.MOVE_TO_EXPANSION_EVENT).Count == 0) {
                 targets.Add(currArea);
             }
         }
@@ -768,32 +768,32 @@ public class Area {
     #region Interactions
     private void ConstructAreaTasksInteractionWeights() {
         areaTasksInteractionWeights = new Dictionary<INTERACTION_TYPE, int>() {
-            {INTERACTION_TYPE.MOVE_TO_EXPLORE, 100},
-            {INTERACTION_TYPE.MOVE_TO_EXPAND, 15},
+            {INTERACTION_TYPE.MOVE_TO_EXPLORE_EVENT, 100},
+            {INTERACTION_TYPE.MOVE_TO_EXPANSION_EVENT, 15},
             //{INTERACTION_TYPE.MOVE_TO_SCAVENGE, 60},
-            {INTERACTION_TYPE.MOVE_TO_RAID, 40},
+            {INTERACTION_TYPE.MOVE_TO_RAID_EVENT, 40},
             //{INTERACTION_TYPE.MOVE_TO_CHARM, 35},
             //{INTERACTION_TYPE.MOVE_TO_RECRUIT, 35},
-            {INTERACTION_TYPE.MOVE_TO_ABDUCT, 25},
+            {INTERACTION_TYPE.MOVE_TO_ABDUCT_ACTION, 25},
             //{INTERACTION_TYPE.MOVE_TO_STEAL, 20},
-            {INTERACTION_TYPE.MOVE_TO_HUNT, 20},
-            {INTERACTION_TYPE.MOVE_TO_IMPROVE_RELATIONS, 40},
+            {INTERACTION_TYPE.MOVE_TO_HUNT_ACTION, 20},
+            {INTERACTION_TYPE.MOVE_TO_IMPROVE_RELATIONS_EVENT, 40},
             {INTERACTION_TYPE.PATROL_ACTION, 50},
             {INTERACTION_TYPE.EAT_DEFENSELESS, 20},
             {INTERACTION_TYPE.TORTURE_ACTION, 25},
-            {INTERACTION_TYPE.MOVE_TO_REANIMATE, 50},
-            {INTERACTION_TYPE.MOVE_TO_SAVE, 30},
+            {INTERACTION_TYPE.MOVE_TO_REANIMATE_ACTION, 50},
+            {INTERACTION_TYPE.MOVE_TO_SAVE_ACTION, 30},
             {INTERACTION_TYPE.MOVE_TO_VISIT, 50},
-            {INTERACTION_TYPE.MOVE_TO_LOOT, 50},
-            {INTERACTION_TYPE.MOVE_TO_TAME_BEAST, 50},
-            {INTERACTION_TYPE.MOVE_TO_HANG_OUT, 50},
-            {INTERACTION_TYPE.MOVE_TO_ARGUE, 50},
-            {INTERACTION_TYPE.MOVE_TO_CURSE, 50},
-            {INTERACTION_TYPE.MOVE_TO_RECRUIT_FRIEND_FACTION, 50},
-            {INTERACTION_TYPE.MOVE_TO_CHARM_FACTION, 50},
-            {INTERACTION_TYPE.MOVE_TO_ASSASSINATE_FACTION, 50},
-            {INTERACTION_TYPE.MOVE_TO_STEAL_FACTION, 50},
-            {INTERACTION_TYPE.MOVE_TO_SCAVENGE_FACTION, 50},
+            {INTERACTION_TYPE.MOVE_TO_LOOT_ACTION, 50},
+            {INTERACTION_TYPE.MOVE_TO_TAME_BEAST_ACTION, 50},
+            {INTERACTION_TYPE.MOVE_TO_HANG_OUT_ACTION, 50},
+            {INTERACTION_TYPE.MOVE_TO_ARGUE_ACTION, 50},
+            {INTERACTION_TYPE.MOVE_TO_CURSE_ACTION, 50},
+            {INTERACTION_TYPE.MOVE_TO_RECRUIT_FRIEND_ACTION_FACTION, 50},
+            {INTERACTION_TYPE.MOVE_TO_CHARM_ACTION_FACTION, 50},
+            {INTERACTION_TYPE.MOVE_TO_ASSASSINATE_ACTION_FACTION, 50},
+            {INTERACTION_TYPE.MOVE_TO_STEAL_ACTION_FACTION, 50},
+            {INTERACTION_TYPE.MOVE_TO_SCAVENGE_EVENT_FACTION, 50},
         };
     }
     public void AddInteraction(Interaction interaction) {
@@ -890,7 +890,7 @@ public class Area {
                 INTERACTION_TYPE interactionType = GetInteractionTypeForResidentCharacter(chosenCandidate, out validInteractionsLog);
                 testLog += validInteractionsLog;
                 Interaction interaction = null;
-                if (interactionType != INTERACTION_TYPE.MOVE_TO_RAID && interactionType != INTERACTION_TYPE.MOVE_TO_SCAVENGE) {
+                if (interactionType != INTERACTION_TYPE.MOVE_TO_RAID_EVENT && interactionType != INTERACTION_TYPE.MOVE_TO_SCAVENGE_EVENT) {
                     supplySpent += 100;
                     if (supplySpent <= suppliesInBank) {
                         testLog += "\nChosen Interaction: " + interactionType.ToString();

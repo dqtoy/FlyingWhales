@@ -15,7 +15,7 @@ public class MoveToOccupyFaction : Interaction {
     }
     private Faction targetFaction;
 
-    public MoveToOccupyFaction(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_OCCUPY_FACTION, 0) {
+    public MoveToOccupyFaction(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_OCCUPY_ACTION_FACTION, 0) {
         _name = "Move To Occupy";
         _jobFilter = new JOB[] { JOB.DEBILITATOR };
     }

@@ -15,7 +15,7 @@ public class MoveToReanimate : Interaction {
     }
 
     public MoveToReanimate(Area interactable) 
-        : base(interactable, INTERACTION_TYPE.MOVE_TO_REANIMATE, 0) {
+        : base(interactable, INTERACTION_TYPE.MOVE_TO_REANIMATE_ACTION, 0) {
         _name = "Move To Reanimate";
         _jobFilter = new JOB[] { JOB.DEBILITATOR };
     }

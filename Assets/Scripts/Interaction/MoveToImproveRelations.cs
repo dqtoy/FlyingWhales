@@ -16,7 +16,7 @@ public class MoveToImproveRelations : Interaction {
     private Faction targetFaction;
 
     public MoveToImproveRelations(Area interactable) 
-        : base(interactable, INTERACTION_TYPE.MOVE_TO_IMPROVE_RELATIONS, 0) {
+        : base(interactable, INTERACTION_TYPE.MOVE_TO_IMPROVE_RELATIONS_EVENT, 0) {
         _name = "Move To Improve Relations";
         _jobFilter = new JOB[] { JOB.DEBILITATOR };
     }

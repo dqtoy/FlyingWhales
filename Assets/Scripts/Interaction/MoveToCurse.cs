@@ -14,7 +14,7 @@ public class MoveToCurse : Interaction {
         get { return _targetCharacter.homeArea; }
     }
 
-    public MoveToCurse(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_CURSE, 0) {
+    public MoveToCurse(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_CURSE_ACTION, 0) {
         _name = "Move To Curse";
         //_categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.PERSONAL, INTERACTION_CATEGORY.OFFENSE };
         //_alignment = INTERACTION_ALIGNMENT.EVIL;

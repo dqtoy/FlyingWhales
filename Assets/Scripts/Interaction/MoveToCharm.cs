@@ -15,7 +15,7 @@ public class MoveToCharm : Interaction {
     }
 
     public MoveToCharm(Area interactable) 
-        : base(interactable, INTERACTION_TYPE.MOVE_TO_CHARM, 0) {
+        : base(interactable, INTERACTION_TYPE.MOVE_TO_CHARM_ACTION, 0) {
         _name = "Move To Charm";
         _jobFilter = new JOB[] { JOB.DEBILITATOR };
     }

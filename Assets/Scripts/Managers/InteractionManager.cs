@@ -45,187 +45,192 @@ public class InteractionManager : MonoBehaviour {
     #region Interaction Category And Alignment
     private void ConstructInteractionCategoryAndAlignment() {
         interactionCategoryAndAlignment = new Dictionary<INTERACTION_TYPE, InteractionAttributes>() {
-            { INTERACTION_TYPE.EAT_DEFENSELESS, new InteractionAttributes(){
-                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.PERSONAL, INTERACTION_CATEGORY.OFFENSE },
-                alignment = INTERACTION_ALIGNMENT.EVIL,
-            } },
-            { INTERACTION_TYPE.MOVE_TO_CHARM_FACTION, new InteractionAttributes(){
-                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT },
-                alignment = INTERACTION_ALIGNMENT.NEUTRAL,
-            } },
             { INTERACTION_TYPE.CHARM_ACTION_FACTION, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT },
                 alignment = INTERACTION_ALIGNMENT.NEUTRAL,
-            } },
-            { INTERACTION_TYPE.MOVE_TO_EXPLORE_FACTION, new InteractionAttributes(){
-                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.INVENTORY },
-                alignment = INTERACTION_ALIGNMENT.NEUTRAL,
+                actorEffect = null,
+                targetCharacterEffect = new InteractionCharacterEffect[]{
+                    new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_GAIN, effectString = new string[] { "Cursed" } },
+                    new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.CHANGE_FACTION, effectString = new string[] { "Actor" } },
+                },
             } },
             { INTERACTION_TYPE.EXPLORE_EVENT_FACTION, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.INVENTORY },
                 alignment = INTERACTION_ALIGNMENT.NEUTRAL,
+                actorEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.OBTAIN_ITEM } },
+                targetCharacterEffect = null,
             } },
-            { INTERACTION_TYPE.MOVE_TO_ABDUCT, new InteractionAttributes(){
-                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT, INTERACTION_CATEGORY.SUBTERFUGE },
+            { INTERACTION_TYPE.TORTURE_ACTION, new InteractionAttributes(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.OFFENSE },
                 alignment = INTERACTION_ALIGNMENT.EVIL,
-            } },
-            { INTERACTION_TYPE.ABDUCT_ACTION, new InteractionAttributes(){
-                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT, INTERACTION_CATEGORY.SUBTERFUGE },
-                alignment = INTERACTION_ALIGNMENT.EVIL,
-            } },
-            { INTERACTION_TYPE.MOVE_TO_ARGUE, new InteractionAttributes(){
-                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.PERSONAL, INTERACTION_CATEGORY.SOCIAL },
-                alignment = INTERACTION_ALIGNMENT.NEUTRAL,
-            } },
-            { INTERACTION_TYPE.ARGUE_ACTION, new InteractionAttributes(){
-                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.PERSONAL, INTERACTION_CATEGORY.SOCIAL },
-                alignment = INTERACTION_ALIGNMENT.NEUTRAL,
-            } },
-            { INTERACTION_TYPE.MOVE_TO_CURSE, new InteractionAttributes(){
-                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.PERSONAL, INTERACTION_CATEGORY.SUBTERFUGE },
-                alignment = INTERACTION_ALIGNMENT.EVIL,
-            } },
-            { INTERACTION_TYPE.CURSE_ACTION, new InteractionAttributes(){
-                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.PERSONAL, INTERACTION_CATEGORY.SUBTERFUGE },
-                alignment = INTERACTION_ALIGNMENT.EVIL,
-            } },
-            { INTERACTION_TYPE.MOVE_TO_HUNT, new InteractionAttributes(){
-                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.PERSONAL, INTERACTION_CATEGORY.OFFENSE },
-                alignment = INTERACTION_ALIGNMENT.NEUTRAL,
-            } },
-            { INTERACTION_TYPE.HUNT_ACTION, new InteractionAttributes(){
-                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.PERSONAL, INTERACTION_CATEGORY.OFFENSE },
-                alignment = INTERACTION_ALIGNMENT.NEUTRAL,
-            } },
-            { INTERACTION_TYPE.MOVE_TO_LOOT, new InteractionAttributes(){
-                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.INVENTORY },
-                alignment = INTERACTION_ALIGNMENT.EVIL,
+                actorEffect = null,
+                targetCharacterEffect = new InteractionCharacterEffect[]{
+                    new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_GAIN, effectString = new string[] { "Injured" } },
+                    new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.CHANGE_FACTION, effectString = new string[] { "Actor" } },
+                },
             } },
             { INTERACTION_TYPE.LOOT_ACTION, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.INVENTORY },
                 alignment = INTERACTION_ALIGNMENT.EVIL,
-            } },
-            { INTERACTION_TYPE.MOVE_TO_TAME_BEAST, new InteractionAttributes(){
-                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT },
-                alignment = INTERACTION_ALIGNMENT.NEUTRAL,
+                actorEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.OBTAIN_ITEM } },
+                targetCharacterEffect = null,
             } },
             { INTERACTION_TYPE.TAME_BEAST_ACTION, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT },
                 alignment = INTERACTION_ALIGNMENT.NEUTRAL,
-            } },
-            { INTERACTION_TYPE.TORTURE_ACTION, new InteractionAttributes(){
-                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT },
-                alignment = INTERACTION_ALIGNMENT.EVIL,
+                actorEffect = null,
+                targetCharacterEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.CHANGE_FACTION, effectString = new string[] { "Actor" } } },
             } },
             { INTERACTION_TYPE.CRAFT_ITEM, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.INVENTORY },
                 alignment = INTERACTION_ALIGNMENT.NEUTRAL,
-            } },
-            { INTERACTION_TYPE.MOVE_TO_RAID_FACTION, new InteractionAttributes(){
-                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.SUPPLY },
-                alignment = INTERACTION_ALIGNMENT.EVIL,
+                actorEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.OBTAIN_ITEM } },
+                targetCharacterEffect = null,
             } },
             { INTERACTION_TYPE.RAID_EVENT_FACTION, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT },
                 alignment = INTERACTION_ALIGNMENT.NEUTRAL,
-            } },
-            { INTERACTION_TYPE.MOVE_TO_STEAL_FACTION, new InteractionAttributes(){
-                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.INVENTORY },
-                alignment = INTERACTION_ALIGNMENT.EVIL,
+                actorEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.OBTAIN_SUPPLY } },
+                targetCharacterEffect = null,
             } },
             { INTERACTION_TYPE.STEAL_ACTION_FACTION, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT },
                 alignment = INTERACTION_ALIGNMENT.NEUTRAL,
-            } },
-            { INTERACTION_TYPE.MOVE_TO_RECRUIT_FRIEND_FACTION, new InteractionAttributes(){
-                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT },
-                alignment = INTERACTION_ALIGNMENT.GOOD,
+                actorEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.OBTAIN_ITEM } },
+                targetCharacterEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.LOSE_ITEM } },
             } },
             { INTERACTION_TYPE.RECRUIT_FRIEND_ACTION_FACTION, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT },
-                alignment = INTERACTION_ALIGNMENT.NEUTRAL,
-            } },
-            { INTERACTION_TYPE.MOVE_TO_ASSASSINATE_FACTION, new InteractionAttributes(){
-                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.SUBTERFUGE },
-                alignment = INTERACTION_ALIGNMENT.NEUTRAL,
+                alignment = INTERACTION_ALIGNMENT.GOOD,
+                actorEffect = null,
+                targetCharacterEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.CHANGE_FACTION, effectString = new string[] { "Actor" } } },
             } },
             { INTERACTION_TYPE.ASSASSINATE_ACTION_FACTION, new InteractionAttributes(){
-                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT },
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.SUBTERFUGE },
                 alignment = INTERACTION_ALIGNMENT.NEUTRAL,
-            } },
-            { INTERACTION_TYPE.MOVE_TO_REANIMATE, new InteractionAttributes(){
-                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT },
-                alignment = INTERACTION_ALIGNMENT.EVIL,
+                actorEffect = null,
+                targetCharacterEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.DEATH } },
             } },
             { INTERACTION_TYPE.REANIMATE_ACTION, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT },
-                alignment = INTERACTION_ALIGNMENT.NEUTRAL,
-            } },
-            { INTERACTION_TYPE.MOVE_TO_SCAVENGE_FACTION, new InteractionAttributes(){
-                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.SUPPLY },
-                alignment = INTERACTION_ALIGNMENT.NEUTRAL,
+                alignment = INTERACTION_ALIGNMENT.EVIL,
+                targetCharacterEffect = new InteractionCharacterEffect[]{
+                    new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_GAIN, effectString = new string[] { "Reanimated" } },
+                    new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.CHANGE_FACTION, effectString = new string[] { "Actor" } },
+                },
             } },
             { INTERACTION_TYPE.SCAVENGE_EVENT_FACTION, new InteractionAttributes(){
-                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT },
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.SUPPLY },
                 alignment = INTERACTION_ALIGNMENT.NEUTRAL,
-            } },
-            { INTERACTION_TYPE.BERSERK_ATTACK, new InteractionAttributes(){
-                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.PERSONAL, INTERACTION_CATEGORY.OFFENSE },
-                alignment = INTERACTION_ALIGNMENT.EVIL,
-            } },
-            { INTERACTION_TYPE.MOVE_TO_OCCUPY_FACTION, new InteractionAttributes(){
-                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.EXPANSION },
-                alignment = INTERACTION_ALIGNMENT.NEUTRAL,
+                actorEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.OBTAIN_SUPPLY } },
+                targetCharacterEffect = null,
             } },
             { INTERACTION_TYPE.OCCUPY_ACTION_FACTION, new InteractionAttributes(){
-                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT },
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.EXPANSION },
                 alignment = INTERACTION_ALIGNMENT.NEUTRAL,
+                actorEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.CHANGE_HOME } },
+                targetCharacterEffect = null,
             } },
-             { INTERACTION_TYPE.MOVE_TO_MINE, new InteractionAttributes(){
+            { INTERACTION_TYPE.MINE_ACTION, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.SUPPLY },
                 alignment = INTERACTION_ALIGNMENT.GOOD,
-            } },
-             { INTERACTION_TYPE.MINE_ACTION, new InteractionAttributes(){
-                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT },
-                alignment = INTERACTION_ALIGNMENT.NEUTRAL,
-            } },
-            { INTERACTION_TYPE.MOVE_TO_HARVEST, new InteractionAttributes(){
-                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.SUPPLY },
-                alignment = INTERACTION_ALIGNMENT.GOOD,
+                actorEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.OBTAIN_SUPPLY } },
+                targetCharacterEffect = null,
             } },
             { INTERACTION_TYPE.HARVEST_ACTION, new InteractionAttributes(){
-                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT },
-                alignment = INTERACTION_ALIGNMENT.NEUTRAL,
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.SUPPLY },
+                alignment = INTERACTION_ALIGNMENT.GOOD,
+                actorEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.OBTAIN_SUPPLY } },
+                targetCharacterEffect = null,
             } },
             { INTERACTION_TYPE.SCRAP_ITEM, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.SUPPLY },
                 alignment = INTERACTION_ALIGNMENT.NEUTRAL,
+                actorEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.OBTAIN_SUPPLY } },
+                targetCharacterEffect = null,
             } },
             { INTERACTION_TYPE.PATROL_ACTION_FACTION, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.DEFENSE },
                 alignment = INTERACTION_ALIGNMENT.NEUTRAL,
+                actorEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_GAIN, effectString = new string[] { "Patrolling" } } },
+                targetCharacterEffect = null,
             } },
             { INTERACTION_TYPE.CONSUME_LIFE, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.SUPPLY },
                 alignment = INTERACTION_ALIGNMENT.EVIL,
+                actorEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.OBTAIN_SUPPLY } },
+                targetCharacterEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.DEATH } },
             } },
             { INTERACTION_TYPE.MOVE_TO_RETURN_HOME, new InteractionAttributes(){
-                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.PERSONAL },
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.OTHER },
                 alignment = INTERACTION_ALIGNMENT.NEUTRAL,
+                actorEffect = null,
+                targetCharacterEffect = null,
             } },
             { INTERACTION_TYPE.PICK_ITEM, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.OTHER },
                 alignment = INTERACTION_ALIGNMENT.NEUTRAL,
+                actorEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.OBTAIN_ITEM } },
+                targetCharacterEffect = null,
             } },
             { INTERACTION_TYPE.DROP_ITEM, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.OTHER },
                 alignment = INTERACTION_ALIGNMENT.NEUTRAL,
+                actorEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.LOSE_ITEM } },
+                targetCharacterEffect = null,
+            } },
+            { INTERACTION_TYPE.EAT_DEFENSELESS, new InteractionAttributes(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.FULLNESS_RECOVERY, INTERACTION_CATEGORY.OFFENSE },
+                alignment = INTERACTION_ALIGNMENT.EVIL,
+                actorEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.FULLNESS_RECOVERY } },
+                targetCharacterEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.DEATH } },
+            } },
+            { INTERACTION_TYPE.ABDUCT_ACTION, new InteractionAttributes(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT, INTERACTION_CATEGORY.SUBTERFUGE },
+                alignment = INTERACTION_ALIGNMENT.EVIL,
+                actorEffect = null,
+                targetCharacterEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_GAIN, effectString = new string[] { "Abducted" } } },
+            } },
+            { INTERACTION_TYPE.ARGUE_ACTION, new InteractionAttributes(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.PERSONAL, INTERACTION_CATEGORY.SOCIAL },
+                alignment = INTERACTION_ALIGNMENT.NEUTRAL,
+                actorEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_GAIN, effectString = new string[] { "Annoyed" } } },
+                targetCharacterEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_GAIN, effectString = new string[] { "Annoyed" } } },
+            } },
+            { INTERACTION_TYPE.CURSE_ACTION, new InteractionAttributes(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.SUBTERFUGE },
+                alignment = INTERACTION_ALIGNMENT.EVIL,
+                actorEffect = null,
+                targetCharacterEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_GAIN, effectString = new string[] { "Cursed" } } },
+            } },
+            { INTERACTION_TYPE.HUNT_ACTION, new InteractionAttributes(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.FULLNESS_RECOVERY },
+                alignment = INTERACTION_ALIGNMENT.NEUTRAL,
+                actorEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.FULLNESS_RECOVERY } },
+                targetCharacterEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.DEATH } },
+            } },
+            { INTERACTION_TYPE.BERSERK_ATTACK, new InteractionAttributes(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.OTHER },
+                alignment = INTERACTION_ALIGNMENT.EVIL,
+                actorEffect = null,
+                targetCharacterEffect = null,
             } },
         };
     }
     public InteractionAttributes GetCategoryAndAlignment (INTERACTION_TYPE type) {
-        if (interactionCategoryAndAlignment.ContainsKey(type)) {
-            return interactionCategoryAndAlignment[type];
+        string typeString = type.ToString();
+        if (typeString.Contains("MOVE_TO") && !interactionCategoryAndAlignment.ContainsKey(type)) {
+            string actualInteractionString = typeString.Remove(0, 8);
+            INTERACTION_TYPE actionInteractionType = INTERACTION_TYPE.NONE;
+            if(System.Enum.TryParse(actualInteractionString, out actionInteractionType)) {
+                if (interactionCategoryAndAlignment.ContainsKey(actionInteractionType)) {
+                    return interactionCategoryAndAlignment[actionInteractionType];
+                }
+            }
+        } else {
+            if (interactionCategoryAndAlignment.ContainsKey(type)) {
+                return interactionCategoryAndAlignment[type];
+            }
         }
         throw new System.Exception("No category and alignment for " + type.ToString());
         //return null;
@@ -325,13 +330,13 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.SPAWN_NEUTRAL_CHARACTER:
                 createdInteraction = new SpawnNeutralCharacter(interactable);
                 break;
-            case INTERACTION_TYPE.MOVE_TO_SCAVENGE:
+            case INTERACTION_TYPE.MOVE_TO_SCAVENGE_EVENT:
                 createdInteraction = new MoveToScavenge(interactable);
                 break;
             case INTERACTION_TYPE.SCAVENGE_EVENT:
                 createdInteraction = new ScavengeEvent(interactable);
                 break;
-            case INTERACTION_TYPE.MOVE_TO_RAID:
+            case INTERACTION_TYPE.MOVE_TO_RAID_EVENT:
                 createdInteraction = new MoveToRaid(interactable);
                 break;
             case INTERACTION_TYPE.RAID_EVENT:
@@ -352,7 +357,7 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.CHARACTER_PEACE_NEGOTIATION:
                 createdInteraction = new CharacterPeaceNegotiation(interactable);
                 break;
-            case INTERACTION_TYPE.MOVE_TO_EXPLORE:
+            case INTERACTION_TYPE.MOVE_TO_EXPLORE_EVENT:
                 createdInteraction = new MoveToExplore(interactable);
                 break;
             case INTERACTION_TYPE.MINION_PEACE_NEGOTIATION:
@@ -361,7 +366,7 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.DEFENSE_UPGRADE:
                 createdInteraction = new DefenseUpgrade(interactable);
                 break;
-            case INTERACTION_TYPE.MOVE_TO_EXPAND:
+            case INTERACTION_TYPE.MOVE_TO_EXPANSION_EVENT:
                 createdInteraction = new MoveToExpand(interactable);
                 break;
             case INTERACTION_TYPE.FACTION_UPGRADE:
@@ -421,7 +426,7 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.RAIDER_TARGET_LOCATION:
                 createdInteraction = new RaiderTargetLocation(interactable);
                 break;
-            case INTERACTION_TYPE.MOVE_TO_RECRUIT:
+            case INTERACTION_TYPE.MOVE_TO_RECRUIT_ACTION:
                 createdInteraction = new MoveToRecruit(interactable);
                 break;
             case INTERACTION_TYPE.RECRUIT_ACTION:
@@ -436,7 +441,7 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.DIPLOMAT_FACTION_MEDIATION:
                 createdInteraction = new DiplomatFactionMediation(interactable);
                 break;
-            case INTERACTION_TYPE.MOVE_TO_IMPROVE_RELATIONS:
+            case INTERACTION_TYPE.MOVE_TO_IMPROVE_RELATIONS_EVENT:
                 createdInteraction = new MoveToImproveRelations(interactable);
                 break;
             case INTERACTION_TYPE.IMPROVE_RELATIONS_EVENT:
@@ -466,25 +471,25 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.PICK_ITEM:
                 createdInteraction = new PickItem(interactable);
                 break;
-            case INTERACTION_TYPE.MOVE_TO_CHARM:
+            case INTERACTION_TYPE.MOVE_TO_CHARM_ACTION:
                 createdInteraction = new MoveToCharm(interactable);
                 break;
             case INTERACTION_TYPE.CHARM_ACTION:
                 createdInteraction = new CharmAction(interactable);
                 break;
-            case INTERACTION_TYPE.MOVE_TO_STEAL:
+            case INTERACTION_TYPE.MOVE_TO_STEAL_ACTION:
                 createdInteraction = new MoveToSteal(interactable);
                 break;
             case INTERACTION_TYPE.STEAL_ACTION:
                 createdInteraction = new StealAction(interactable);
                 break;
-            case INTERACTION_TYPE.MOVE_TO_ABDUCT:
+            case INTERACTION_TYPE.MOVE_TO_ABDUCT_ACTION:
                 createdInteraction = new MoveToAbduct(interactable);
                 break;
             case INTERACTION_TYPE.ABDUCT_ACTION:
                 createdInteraction = new AbductAction(interactable);
                 break;
-            case INTERACTION_TYPE.MOVE_TO_HUNT:
+            case INTERACTION_TYPE.MOVE_TO_HUNT_ACTION:
                 createdInteraction = new MoveToHunt(interactable);
                 break;
             case INTERACTION_TYPE.HUNT_ACTION:
@@ -499,7 +504,7 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.TORTURE_ACTION:
                 createdInteraction = new TortureAction(interactable);
                 break;
-            case INTERACTION_TYPE.MOVE_TO_REANIMATE:
+            case INTERACTION_TYPE.MOVE_TO_REANIMATE_ACTION:
                 createdInteraction = new MoveToReanimate(interactable);
                 break;
             case INTERACTION_TYPE.REANIMATE_ACTION:
@@ -520,7 +525,7 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.FOUND_ZIRANNA:
                 createdInteraction = new FoundZiranna(interactable);
                 break;
-            case INTERACTION_TYPE.MOVE_TO_SAVE:
+            case INTERACTION_TYPE.MOVE_TO_SAVE_ACTION:
                 createdInteraction = new MoveToSave(interactable);
                 break;
             case INTERACTION_TYPE.SAVE_ACTION:
@@ -532,61 +537,61 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.TRANSFER_HOME:
                 createdInteraction = new TransferHome(interactable);
                 break;
-            case INTERACTION_TYPE.MOVE_TO_STEAL_FACTION:
+            case INTERACTION_TYPE.MOVE_TO_STEAL_ACTION_FACTION:
                 createdInteraction = new MoveToStealFaction(interactable);
                 break;
             case INTERACTION_TYPE.STEAL_ACTION_FACTION:
                 createdInteraction = new StealActionFaction(interactable);
                 break;
-            case INTERACTION_TYPE.MOVE_TO_RECRUIT_FRIEND_FACTION:
+            case INTERACTION_TYPE.MOVE_TO_RECRUIT_FRIEND_ACTION_FACTION:
                 createdInteraction = new MoveToRecruitFriendFaction(interactable);
                 break;
             case INTERACTION_TYPE.RECRUIT_FRIEND_ACTION_FACTION:
                 createdInteraction = new RecruitFriendActionFaction(interactable);
                 break;
-            case INTERACTION_TYPE.MOVE_TO_ASSASSINATE_FACTION:
+            case INTERACTION_TYPE.MOVE_TO_ASSASSINATE_ACTION_FACTION:
                 createdInteraction = new MoveToAssassinateFaction(interactable);
                 break;
             case INTERACTION_TYPE.ASSASSINATE_ACTION_FACTION:
                 createdInteraction = new AssassinateActionFaction(interactable);
                 break;
-            case INTERACTION_TYPE.MOVE_TO_LOOT:
+            case INTERACTION_TYPE.MOVE_TO_LOOT_ACTION:
                 createdInteraction = new MoveToLoot(interactable);
                 break;
             case INTERACTION_TYPE.LOOT_ACTION:
                 createdInteraction = new LootAction(interactable);
                 break;
-            case INTERACTION_TYPE.MOVE_TO_TAME_BEAST:
+            case INTERACTION_TYPE.MOVE_TO_TAME_BEAST_ACTION:
                 createdInteraction = new MoveToTameBeast(interactable);
                 break;
             case INTERACTION_TYPE.TAME_BEAST_ACTION:
                 createdInteraction = new TameBeastAction(interactable);
                 break;
-            case INTERACTION_TYPE.MOVE_TO_HANG_OUT:
+            case INTERACTION_TYPE.MOVE_TO_HANG_OUT_ACTION:
                 createdInteraction = new MoveToHangOut(interactable);
                 break;
             case INTERACTION_TYPE.HANG_OUT_ACTION:
                 createdInteraction = new HangOutAction(interactable);
                 break;
-            case INTERACTION_TYPE.MOVE_TO_CHARM_FACTION:
+            case INTERACTION_TYPE.MOVE_TO_CHARM_ACTION_FACTION:
                 createdInteraction = new MoveToCharmFaction(interactable);
                 break;
             case INTERACTION_TYPE.CHARM_ACTION_FACTION:
                 createdInteraction = new CharmActionFaction(interactable);
                 break;
-            case INTERACTION_TYPE.MOVE_TO_ARGUE:
+            case INTERACTION_TYPE.MOVE_TO_ARGUE_ACTION:
                 createdInteraction = new MoveToArgue(interactable);
                 break;
             case INTERACTION_TYPE.ARGUE_ACTION:
                 createdInteraction = new ArgueAction(interactable);
                 break;
-            case INTERACTION_TYPE.MOVE_TO_CURSE:
+            case INTERACTION_TYPE.MOVE_TO_CURSE_ACTION:
                 createdInteraction = new MoveToCurse(interactable);
                 break;
             case INTERACTION_TYPE.CURSE_ACTION:
                 createdInteraction = new CurseAction(interactable);
                 break;
-            case INTERACTION_TYPE.MOVE_TO_SCAVENGE_FACTION:
+            case INTERACTION_TYPE.MOVE_TO_SCAVENGE_EVENT_FACTION:
                 createdInteraction = new MoveToScavengeFaction(interactable);
                 break;
             case INTERACTION_TYPE.SCAVENGE_EVENT_FACTION:
@@ -595,7 +600,7 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.CRAFT_ITEM:
                 createdInteraction = new CraftItem(interactable);
                 break;
-            case INTERACTION_TYPE.MOVE_TO_RAID_FACTION:
+            case INTERACTION_TYPE.MOVE_TO_RAID_EVENT_FACTION:
                 createdInteraction = new MoveToRaidFaction(interactable);
                 break;
             case INTERACTION_TYPE.RAID_EVENT_FACTION:
@@ -604,19 +609,19 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.BERSERK_ATTACK:
                 createdInteraction = new BerserkAttack(interactable);
                 break;
-            case INTERACTION_TYPE.MOVE_TO_OCCUPY_FACTION:
+            case INTERACTION_TYPE.MOVE_TO_OCCUPY_ACTION_FACTION:
                 createdInteraction = new MoveToOccupyFaction(interactable);
                 break;
             case INTERACTION_TYPE.OCCUPY_ACTION_FACTION:
                 createdInteraction = new OccupyActionFaction(interactable);
                 break;
-            case INTERACTION_TYPE.MOVE_TO_MINE:
+            case INTERACTION_TYPE.MOVE_TO_MINE_ACTION:
                 createdInteraction = new MoveToMine(interactable);
                 break;
             case INTERACTION_TYPE.MINE_ACTION:
                 createdInteraction = new MineAction(interactable);
                 break;
-            case INTERACTION_TYPE.MOVE_TO_HARVEST:
+            case INTERACTION_TYPE.MOVE_TO_HARVEST_ACTION:
                 createdInteraction = new MoveToHarvest(interactable);
                 break;
             case INTERACTION_TYPE.HARVEST_ACTION:
@@ -631,7 +636,7 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.PATROL_ACTION_FACTION:
                 createdInteraction = new PatrolActionFaction(interactable);
                 break;
-            case INTERACTION_TYPE.MOVE_TO_EXPLORE_FACTION:
+            case INTERACTION_TYPE.MOVE_TO_EXPLORE_EVENT_FACTION:
                 createdInteraction = new MoveToExploreFaction(interactable);
                 break;
             case INTERACTION_TYPE.EXPLORE_EVENT_FACTION:
@@ -773,7 +778,7 @@ public class InteractionManager : MonoBehaviour {
                     }
                 }
                 return false;
-            case INTERACTION_TYPE.MOVE_TO_SCAVENGE:
+            case INTERACTION_TYPE.MOVE_TO_SCAVENGE_EVENT:
                 //check if there are any unowned areas
                 //if (character.race == RACE.FAERY || character.race == RACE.HUMANS || character.race == RACE.ELVES || character.race == RACE.GOBLIN) {
                     for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
@@ -784,7 +789,7 @@ public class InteractionManager : MonoBehaviour {
                     }
                 //}
                 return false;
-            case INTERACTION_TYPE.MOVE_TO_RAID:
+            case INTERACTION_TYPE.MOVE_TO_RAID_EVENT:
                 //There must be at least one other location that is occupied but not owned by the character's Faction and not owned by an Ally or a Friend faction
                 //if (character.race == RACE.GOBLIN || character.race == RACE.SKELETON || character.race == RACE.HUMANS) {
                     for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
@@ -809,7 +814,7 @@ public class InteractionManager : MonoBehaviour {
                     }
                 }
                 return false;
-            case INTERACTION_TYPE.MOVE_TO_EXPAND:
+            case INTERACTION_TYPE.MOVE_TO_EXPANSION_EVENT:
                 for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
                     area = LandmarkManager.Instance.allAreas[i];
                     if (area.id != character.specificLocation.id && area.owner == null && area.possibleOccupants.Contains(character.race)) {
@@ -817,7 +822,7 @@ public class InteractionManager : MonoBehaviour {
                     }
                 }
                 return false;
-            case INTERACTION_TYPE.MOVE_TO_IMPROVE_RELATIONS:
+            case INTERACTION_TYPE.MOVE_TO_IMPROVE_RELATIONS_EVENT:
                     //check if there are any areas owned by factions other than your own
                     //if(character.race == RACE.ELVES || character.race == RACE.HUMANS) {
                         for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
@@ -835,7 +840,7 @@ public class InteractionManager : MonoBehaviour {
                         }
                     //}
                     return false;
-            case INTERACTION_TYPE.MOVE_TO_RECRUIT:
+            case INTERACTION_TYPE.MOVE_TO_RECRUIT_ACTION:
                 //if (character.race == RACE.ELVES || character.race == RACE.HUMANS) {
                     if (character.homeArea.IsResidentsFull()) { //check if resident capacity is full
                         return false;
@@ -876,7 +881,7 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.MOVE_TO_RETURN_HOME:
                 //if character is NOT at home, allow
                 return character.specificLocation.id != character.homeArea.id;
-            case INTERACTION_TYPE.MOVE_TO_EXPLORE:
+            case INTERACTION_TYPE.MOVE_TO_EXPLORE_EVENT:
                 if(character.tokenInInventory == null) {
                     for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
                         area = LandmarkManager.Instance.allAreas[i];
@@ -886,7 +891,7 @@ public class InteractionManager : MonoBehaviour {
                     }
                 }
                 return false;
-            case INTERACTION_TYPE.MOVE_TO_CHARM:
+            case INTERACTION_TYPE.MOVE_TO_CHARM_ACTION:
                 //if (character.race == RACE.FAERY) {
                     if (!character.homeArea.IsResidentsFull()) {
                         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
@@ -908,7 +913,7 @@ public class InteractionManager : MonoBehaviour {
                     }
                 //}
                 return false;
-            case INTERACTION_TYPE.MOVE_TO_ABDUCT:
+            case INTERACTION_TYPE.MOVE_TO_ABDUCT_ACTION:
                 //if (character.race == RACE.GOBLIN || character.race == RACE.SPIDER) {
                     if (!character.homeArea.IsResidentsFull()) {
                             for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
@@ -934,7 +939,7 @@ public class InteractionManager : MonoBehaviour {
                         }
                 //}
                 return false;
-            case INTERACTION_TYPE.MOVE_TO_STEAL:
+            case INTERACTION_TYPE.MOVE_TO_STEAL_ACTION:
                 //if (character.race == RACE.GOBLIN || character.race == RACE.SKELETON || character.race == RACE.FAERY || character.race == RACE.DRAGON) {
                     if (character.tokenInInventory == null) {
                         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
@@ -948,10 +953,10 @@ public class InteractionManager : MonoBehaviour {
                     }
                 //}
                 return false;
-            case INTERACTION_TYPE.MOVE_TO_STEAL_FACTION:
+            case INTERACTION_TYPE.MOVE_TO_STEAL_ACTION_FACTION:
                 //**Trigger Criteria 1**: This character must not have an item
                 return character.tokenInInventory == null;
-            case INTERACTION_TYPE.MOVE_TO_HUNT:
+            case INTERACTION_TYPE.MOVE_TO_HUNT_ACTION:
                 //if(character.race == RACE.WOLF || character.race == RACE.SPIDER || character.race == RACE.DRAGON) {
                     for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
                         area = LandmarkManager.Instance.allAreas[i];
@@ -961,7 +966,7 @@ public class InteractionManager : MonoBehaviour {
                     }
                 //}
                 return false;
-            case INTERACTION_TYPE.MOVE_TO_SAVE:
+            case INTERACTION_TYPE.MOVE_TO_SAVE_ACTION:
                 return CanCreateMoveToSave(character);
             case INTERACTION_TYPE.FOUND_LUCARETH:
                 return character.characterClass.className == "Witch" && character.specificLocation.owner == null 
@@ -996,7 +1001,7 @@ public class InteractionManager : MonoBehaviour {
                     }
                 //}
                 return false;
-            case INTERACTION_TYPE.MOVE_TO_REANIMATE:
+            case INTERACTION_TYPE.MOVE_TO_REANIMATE_ACTION:
                 if (!character.homeArea.IsResidentsFull()) { //character.race == RACE.SKELETON && 
                     //**Trigger Criteria 1**: There must be at least one dead corpse in any area
                     for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
@@ -1046,13 +1051,13 @@ public class InteractionManager : MonoBehaviour {
                     }
                 }
                 return false;
-            case INTERACTION_TYPE.MOVE_TO_RECRUIT_FRIEND_FACTION:
-            case INTERACTION_TYPE.MOVE_TO_CHARM_FACTION:
+            case INTERACTION_TYPE.MOVE_TO_RECRUIT_FRIEND_ACTION_FACTION:
+            case INTERACTION_TYPE.MOVE_TO_CHARM_ACTION_FACTION:
                 if (character.homeArea.IsResidentsFull()) { //check if resident capacity is full
                     return false;
                 }
                 return true;
-            case INTERACTION_TYPE.MOVE_TO_ASSASSINATE_FACTION:
+            case INTERACTION_TYPE.MOVE_TO_ASSASSINATE_ACTION_FACTION:
                 //**Trigger Criteria 1**: There must be at least one non-Warded character belonging to an Enemy or War faction.
                 for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
                     Area currArea = LandmarkManager.Instance.allAreas[i];
@@ -1074,9 +1079,9 @@ public class InteractionManager : MonoBehaviour {
                     }
                 }
                 return false;
-            case INTERACTION_TYPE.MOVE_TO_LOOT:
+            case INTERACTION_TYPE.MOVE_TO_LOOT_ACTION:
                 return !character.isHoldingItem;
-            case INTERACTION_TYPE.MOVE_TO_TAME_BEAST:
+            case INTERACTION_TYPE.MOVE_TO_TAME_BEAST_ACTION:
                 if (!character.homeArea.IsResidentsFull()) {
                     for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
                         Character currCharacter = CharacterManager.Instance.allCharacters[i];
@@ -1086,9 +1091,9 @@ public class InteractionManager : MonoBehaviour {
                     }
                 }
                 return false;
-            case INTERACTION_TYPE.MOVE_TO_HANG_OUT:
+            case INTERACTION_TYPE.MOVE_TO_HANG_OUT_ACTION:
                 return character.HasRelationshipOfEffect(new List<TRAIT_EFFECT>() { TRAIT_EFFECT.NEUTRAL, TRAIT_EFFECT.POSITIVE });
-            case INTERACTION_TYPE.MOVE_TO_SCAVENGE_FACTION:
+            case INTERACTION_TYPE.MOVE_TO_SCAVENGE_EVENT_FACTION:
                 //**Trigger Criteria 1**: There must be at least one unoccupied location with a dungeon or a warehouse
                 for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
                     Area currArea = LandmarkManager.Instance.allAreas[i];
@@ -1105,7 +1110,7 @@ public class InteractionManager : MonoBehaviour {
                 return character.GetTrait("Craftsman") != null && character.specificLocation.HasStructure(STRUCTURE_TYPE.WORK_AREA);
             case INTERACTION_TYPE.SCRAP_ITEM:
                 return character.specificLocation.possibleSpecialTokenSpawns.Count > 0;
-            case INTERACTION_TYPE.MOVE_TO_RAID_FACTION:
+            case INTERACTION_TYPE.MOVE_TO_RAID_EVENT_FACTION:
                 /***Trigger Criteria 1**: There must be at least one other location that is occupied 
                  * but not owned by the character's Faction and not owned by an Ally or a Friend faction*/
                 for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
@@ -1124,7 +1129,7 @@ public class InteractionManager : MonoBehaviour {
                     }
                 }
                 return false;
-            case INTERACTION_TYPE.MOVE_TO_MINE:
+            case INTERACTION_TYPE.MOVE_TO_MINE_ACTION:
                 for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
                     Area currArea = LandmarkManager.Instance.allAreas[i];
                     if (currArea.id != PlayerManager.Instance.player.playerArea.id && currArea.coreTile.landmarkOnTile.specificLandmarkType.ToString().Contains("MINE")) {
@@ -1132,7 +1137,7 @@ public class InteractionManager : MonoBehaviour {
                     }
                 }
                 return false;
-            case INTERACTION_TYPE.MOVE_TO_HARVEST:
+            case INTERACTION_TYPE.MOVE_TO_HARVEST_ACTION:
                 for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
                     Area currArea = LandmarkManager.Instance.allAreas[i];
                     if (currArea.id != PlayerManager.Instance.player.playerArea.id && currArea.coreTile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.FARM) {
@@ -1140,7 +1145,7 @@ public class InteractionManager : MonoBehaviour {
                     }
                 }
                 return false;
-            case INTERACTION_TYPE.MOVE_TO_OCCUPY_FACTION:
+            case INTERACTION_TYPE.MOVE_TO_OCCUPY_ACTION_FACTION:
                 //**Trigger Criteria 1**: There must be at least one other unoccupied location that is a valid expansion target for the character's race.
                 for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
                     area = LandmarkManager.Instance.allAreas[i];
@@ -1152,7 +1157,7 @@ public class InteractionManager : MonoBehaviour {
                     }
                 }
                 return false;
-            case INTERACTION_TYPE.MOVE_TO_CURSE:
+            case INTERACTION_TYPE.MOVE_TO_CURSE_ACTION:
                 return character.HasRelationshipTraitOf(RELATIONSHIP_TRAIT.ENEMY);
             case INTERACTION_TYPE.CONSUME_LIFE:
                 List<LocationStructure> insideStructures = character.specificLocation.GetStructuresAtLocation(true);
@@ -1165,7 +1170,7 @@ public class InteractionManager : MonoBehaviour {
                     }
                 }
                 return false;
-            case INTERACTION_TYPE.MOVE_TO_EXPLORE_FACTION:
+            case INTERACTION_TYPE.MOVE_TO_EXPLORE_EVENT_FACTION:
                 //**Trigger Criteria 1**: The character must not be holding an item
                 return character.tokenInInventory == null;
             default:
@@ -1548,14 +1553,10 @@ public struct CharacterInteractionWeight {
 public struct InteractionAttributes {
     public INTERACTION_CATEGORY[] categories;
     public INTERACTION_ALIGNMENT alignment;
-    public InteractionActorEffect[] actorEffect;
-    public InteractionTargetCharacterEffect[] targetCharacterEffect;
+    public InteractionCharacterEffect[] actorEffect;
+    public InteractionCharacterEffect[] targetCharacterEffect;
 }
-public struct InteractionActorEffect {
-    public INTERACTION_CHARACTER_EFFECT effect;
-    public string[] effectString;
-}
-public struct InteractionTargetCharacterEffect {
+public struct InteractionCharacterEffect {
     public INTERACTION_CHARACTER_EFFECT effect;
     public string[] effectString;
 }

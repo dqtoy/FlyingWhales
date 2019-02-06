@@ -15,7 +15,7 @@ public class MoveToStealFaction : Interaction {
     }
 
     public MoveToStealFaction(Area interactable)
-        : base(interactable, INTERACTION_TYPE.MOVE_TO_STEAL_FACTION, 0) {
+        : base(interactable, INTERACTION_TYPE.MOVE_TO_STEAL_ACTION_FACTION, 0) {
         _name = "Move To Steal Faction";
         _jobFilter = new JOB[] { JOB.DEBILITATOR };
     }

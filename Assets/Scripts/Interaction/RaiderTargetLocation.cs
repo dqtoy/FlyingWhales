@@ -116,7 +116,7 @@ public class RaiderTargetLocation : Interaction {
     private void InduceRaidEffect(InteractionState state) {
         investigatorCharacter.LevelUp();
 
-        MoveToRaid moveToRaid = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RAID, interactable) as MoveToRaid;
+        MoveToRaid moveToRaid = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RAID_EVENT, interactable) as MoveToRaid;
         moveToRaid.SetTargetArea(_targetLocationToken.location);
         _raiderOrScavenger.InduceInteraction(moveToRaid);
 
@@ -129,7 +129,7 @@ public class RaiderTargetLocation : Interaction {
     private void InduceScavengeEffect(InteractionState state) {
         investigatorCharacter.LevelUp();
 
-        MoveToScavenge moveToScavenge = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_SCAVENGE, interactable) as MoveToScavenge;
+        MoveToScavenge moveToScavenge = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_SCAVENGE_EVENT, interactable) as MoveToScavenge;
         moveToScavenge.SetTargetArea(_targetLocationToken.location);
         _raiderOrScavenger.InduceInteraction(moveToScavenge);
 

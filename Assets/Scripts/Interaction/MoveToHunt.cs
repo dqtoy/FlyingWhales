@@ -14,7 +14,7 @@ public class MoveToHunt : Interaction {
         get { return _targetArea; }
     }
 
-    public MoveToHunt(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_HUNT, 0) {
+    public MoveToHunt(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_HUNT_ACTION, 0) {
         _name = "Move To Hunt";
         //_categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.PERSONAL, INTERACTION_CATEGORY.OFFENSE };
         //_alignment = INTERACTION_ALIGNMENT.NEUTRAL;

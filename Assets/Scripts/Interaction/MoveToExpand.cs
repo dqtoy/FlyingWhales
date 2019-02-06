@@ -15,7 +15,7 @@ public class MoveToExpand : Interaction {
         get { return _targetArea; }
     }
 
-    public MoveToExpand(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_EXPAND, 0) {
+    public MoveToExpand(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_EXPANSION_EVENT, 0) {
         _name = "Move to Expand";
         _jobFilter = new JOB[] { JOB.DEBILITATOR };
     }

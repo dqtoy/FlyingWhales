@@ -2734,16 +2734,16 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //**F. compute Item handling weight**
         if(!isStarving && !isExhausted) {
             if (tokenInInventory != null) {
-                if (tokenInInventory.npcAssociatedInteractionType != INTERACTION_TYPE.NONE && tokenInInventory.CanBeUsedBy(this)
-                    && InteractionManager.Instance.CanCreateInteraction(tokenInInventory.npcAssociatedInteractionType, this)) {
-                    if (tokenInInventory.npcAssociatedInteractionType == INTERACTION_TYPE.USE_ITEM_ON_SELF) {
-                        personalActionWeights.AddElement(tokenInInventory.npcAssociatedInteractionType, 70);
-                    } else if (tokenInInventory.npcAssociatedInteractionType == INTERACTION_TYPE.USE_ITEM_ON_CHARACTER) {
-                        personalActionWeights.AddElement(tokenInInventory.npcAssociatedInteractionType, 70);
-                    } else if (tokenInInventory.npcAssociatedInteractionType == INTERACTION_TYPE.USE_ITEM_ON_LOCATION) {
-                        personalActionWeights.AddElement(tokenInInventory.npcAssociatedInteractionType, 70);
-                    }
-                }
+                //if (tokenInInventory.npcAssociatedInteractionType != INTERACTION_TYPE.NONE && tokenInInventory.CanBeUsedBy(this)
+                //    && InteractionManager.Instance.CanCreateInteraction(tokenInInventory.npcAssociatedInteractionType, this)) {
+                //    if (tokenInInventory.npcAssociatedInteractionType == INTERACTION_TYPE.USE_ITEM_ON_SELF) {
+                //        personalActionWeights.AddElement(tokenInInventory.npcAssociatedInteractionType, 70);
+                //    } else if (tokenInInventory.npcAssociatedInteractionType == INTERACTION_TYPE.USE_ITEM_ON_CHARACTER) {
+                //        personalActionWeights.AddElement(tokenInInventory.npcAssociatedInteractionType, 70);
+                //    } else if (tokenInInventory.npcAssociatedInteractionType == INTERACTION_TYPE.USE_ITEM_ON_LOCATION) {
+                //        personalActionWeights.AddElement(tokenInInventory.npcAssociatedInteractionType, 70);
+                //    }
+                //}
                 if (currentStructure == homeStructure) {
                     personalActionWeights.AddElement(INTERACTION_TYPE.DROP_ITEM, 20);
                 }
@@ -2834,8 +2834,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             //TODO: Save
             if(relationshipData.trouble != null && relationshipData.trouble.Count > 0) {
                 string[] allTroubleNames = relationshipData.trouble.Select(x => x.name).ToArray();
-                List<INTERACTION_TYPE> allSaveInteractionsThatCanBeDone = RaceManager.Instance.GetNPCInteractionsOfRace(race, INTERACTION_CATEGORY.SAVE
-                         , new InteractionTargetCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_REMOVE, effectString = allTroubleNames }, this);
+                List<INTERACTION_TYPE> allSaveInteractionsThatCanBeDone = RaceManager.Instance.GetNPCInteractionsOfRaceTarget(race, INTERACTION_CATEGORY.SAVE
+                         , new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_REMOVE, effectString = allTroubleNames }, this);
 
                 if (allSaveInteractionsThatCanBeDone != null && allSaveInteractionsThatCanBeDone.Count > 0) {
                     weight += 300;
@@ -2848,8 +2848,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                             if(!HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_EFFECT.NEUTRAL, TRAIT_TYPE.DISABLER) && GetRelationshipTraitWith(characterAtLocation, RELATIONSHIP_TRAIT.ENEMY) == null) {
                                 FactionRelationship factionRel = faction.GetRelationshipWith(characterAtLocation.faction);
                                 if(factionRel != null && factionRel.relationshipStatus != FACTION_RELATIONSHIP_STATUS.ENEMY && factionRel.relationshipStatus != FACTION_RELATIONSHIP_STATUS.AT_WAR) {
-                                    allSaveInteractionsThatCanBeDone = RaceManager.Instance.GetNPCInteractionsOfRace(characterAtLocation.race, INTERACTION_CATEGORY.SAVE
-                                        , new InteractionTargetCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_REMOVE, effectString = allTroubleNames }, characterAtLocation);
+                                    allSaveInteractionsThatCanBeDone = RaceManager.Instance.GetNPCInteractionsOfRaceTarget(characterAtLocation.race, INTERACTION_CATEGORY.SAVE
+                                        , new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_REMOVE, effectString = allTroubleNames }, characterAtLocation);
                                     if (allSaveInteractionsThatCanBeDone != null && allSaveInteractionsThatCanBeDone.Count > 0) {
                                         characterChoices.Add(characterAtLocation);
                                     }

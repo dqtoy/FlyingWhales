@@ -14,7 +14,7 @@ public class MoveToHarvest : Interaction {
         get { return _targetArea; }
     }
 
-    public MoveToHarvest(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_HARVEST, 0) {
+    public MoveToHarvest(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_HARVEST_ACTION, 0) {
         _name = "Move To Harvest";
     }
 

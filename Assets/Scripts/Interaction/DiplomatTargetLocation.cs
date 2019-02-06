@@ -85,7 +85,7 @@ public class DiplomatTargetLocation : Interaction {
     private void InduceExpansionEffect(InteractionState state) {
         investigatorCharacter.LevelUp();
 
-        MoveToExpand moveToExpand = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_EXPAND, interactable) as MoveToExpand;
+        MoveToExpand moveToExpand = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_EXPANSION_EVENT, interactable) as MoveToExpand;
         moveToExpand.SetTargetLocation(_targetLocationToken.location);
         _expander.InduceInteraction(moveToExpand);
 

@@ -19,7 +19,7 @@ public class MoveToRecruit : Interaction {
         get { return _targetCharacter; }
     }
 
-    public MoveToRecruit(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_RECRUIT, 0) {
+    public MoveToRecruit(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_RECRUIT_ACTION, 0) {
         _name = "Move To Recruit";
         _jobFilter = new JOB[] { JOB.DEBILITATOR };
     }

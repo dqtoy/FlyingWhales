@@ -14,7 +14,7 @@ public class MoveToRecruitFriendFaction : Interaction {
     private const string Character_Recruit_Continues = "Character Recruit Continues";
     private const string Do_Nothing = "Do nothing";
 
-    public MoveToRecruitFriendFaction(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_RECRUIT_FRIEND_FACTION, 0) {
+    public MoveToRecruitFriendFaction(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_RECRUIT_FRIEND_ACTION_FACTION, 0) {
         _name = "Move To Recruit Friend";
         _jobFilter = new JOB[] { JOB.DEBILITATOR };
     }

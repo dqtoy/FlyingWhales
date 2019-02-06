@@ -14,7 +14,7 @@ public class MoveToTameBeast : Interaction {
         get { return _targetArea; }
     }
 
-    public MoveToTameBeast(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_TAME_BEAST, 0) {
+    public MoveToTameBeast(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_TAME_BEAST_ACTION, 0) {
         _name = "Move To Tame Beast";
         //_categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT };
         //_alignment = INTERACTION_ALIGNMENT.NEUTRAL;

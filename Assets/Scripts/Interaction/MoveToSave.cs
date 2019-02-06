@@ -21,7 +21,7 @@ public class MoveToSave : Interaction {
     }
 
     public MoveToSave(Area interactable) 
-        : base(interactable, INTERACTION_TYPE.MOVE_TO_SAVE, 0) {
+        : base(interactable, INTERACTION_TYPE.MOVE_TO_SAVE_ACTION, 0) {
         _name = "Move To Save";
         _jobFilter = new JOB[] { JOB.DEBILITATOR };
     }

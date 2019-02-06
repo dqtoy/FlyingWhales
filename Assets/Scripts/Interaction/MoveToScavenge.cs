@@ -14,7 +14,7 @@ public class MoveToScavenge : Interaction {
         get { return _targetArea; }
     }
 
-    public MoveToScavenge(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_SCAVENGE, 70) {
+    public MoveToScavenge(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_SCAVENGE_EVENT, 70) {
         _name = "Move To Scavenge";
         _jobFilter = new JOB[] { JOB.DEBILITATOR };
     }

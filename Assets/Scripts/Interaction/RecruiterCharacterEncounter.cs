@@ -98,7 +98,7 @@ public class RecruiterCharacterEncounter : Interaction {
     private void InduceRecruitEffect(InteractionState state) {
         investigatorCharacter.LevelUp();
 
-        MoveToRecruit moveToRecruit = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RECRUIT, interactable) as MoveToRecruit;
+        MoveToRecruit moveToRecruit = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RECRUIT_ACTION, interactable) as MoveToRecruit;
         Character characterToBeRecruited = moveToRecruit.GetTargetCharacter(_characterInvolved);
         moveToRecruit.SetCharacterToBeRecruited(characterToBeRecruited);
         _characterInvolved.InduceInteraction(moveToRecruit);

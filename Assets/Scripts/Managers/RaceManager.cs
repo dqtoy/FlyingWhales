@@ -40,29 +40,29 @@ public class RaceManager : MonoBehaviour {
     private void ConstructFactionRaceInteractions() {
         _factionRaceInteractions = new Dictionary<RACE, INTERACTION_TYPE[]>() {
             { RACE.NONE, new INTERACTION_TYPE[] { //All races
-                INTERACTION_TYPE.MOVE_TO_LOOT,
-                INTERACTION_TYPE.MOVE_TO_TAME_BEAST,
-                INTERACTION_TYPE.MOVE_TO_ABDUCT,
+                INTERACTION_TYPE.MOVE_TO_LOOT_ACTION,
+                INTERACTION_TYPE.MOVE_TO_TAME_BEAST_ACTION,
+                INTERACTION_TYPE.MOVE_TO_ABDUCT_ACTION,
                 //INTERACTION_TYPE.MOVE_TO_HUNT,
                 //INTERACTION_TYPE.MOVE_TO_ARGUE,
                 //INTERACTION_TYPE.MOVE_TO_CURSE,
                 INTERACTION_TYPE.TORTURE_ACTION,
                 //INTERACTION_TYPE.EAT_DEFENSELESS,
                 INTERACTION_TYPE.CRAFT_ITEM,
-                INTERACTION_TYPE.MOVE_TO_CHARM_FACTION,
-                INTERACTION_TYPE.MOVE_TO_STEAL_FACTION,
-                INTERACTION_TYPE.MOVE_TO_RECRUIT_FRIEND_FACTION,
-                INTERACTION_TYPE.MOVE_TO_ASSASSINATE_FACTION,
-                INTERACTION_TYPE.MOVE_TO_REANIMATE,
-                INTERACTION_TYPE.MOVE_TO_SCAVENGE_FACTION,
-                INTERACTION_TYPE.MOVE_TO_RAID_FACTION,
-                INTERACTION_TYPE.MOVE_TO_OCCUPY_FACTION,
-                INTERACTION_TYPE.MOVE_TO_MINE,
-                INTERACTION_TYPE.MOVE_TO_HARVEST,
+                INTERACTION_TYPE.MOVE_TO_CHARM_ACTION_FACTION,
+                INTERACTION_TYPE.MOVE_TO_STEAL_ACTION_FACTION,
+                INTERACTION_TYPE.MOVE_TO_RECRUIT_FRIEND_ACTION_FACTION,
+                INTERACTION_TYPE.MOVE_TO_ASSASSINATE_ACTION_FACTION,
+                INTERACTION_TYPE.MOVE_TO_REANIMATE_ACTION,
+                INTERACTION_TYPE.MOVE_TO_SCAVENGE_EVENT_FACTION,
+                INTERACTION_TYPE.MOVE_TO_RAID_EVENT_FACTION,
+                INTERACTION_TYPE.MOVE_TO_OCCUPY_ACTION_FACTION,
+                INTERACTION_TYPE.MOVE_TO_MINE_ACTION,
+                INTERACTION_TYPE.MOVE_TO_HARVEST_ACTION,
                 INTERACTION_TYPE.SCRAP_ITEM,
                 INTERACTION_TYPE.CONSUME_LIFE,
                 INTERACTION_TYPE.PATROL_ACTION_FACTION,
-                INTERACTION_TYPE.MOVE_TO_EXPLORE_FACTION,
+                INTERACTION_TYPE.MOVE_TO_EXPLORE_EVENT_FACTION,
             } },
         };
     }
@@ -241,7 +241,7 @@ public class RaceManager : MonoBehaviour {
         }
         return interactions;
     }
-    public List<INTERACTION_TYPE> GetNPCInteractionsOfRace(RACE race, INTERACTION_CATEGORY category, InteractionTargetCharacterEffect interactionTargetCharacterEffect, Character character = null) {
+    public List<INTERACTION_TYPE> GetNPCInteractionsOfRaceTarget(RACE race, INTERACTION_CATEGORY category, InteractionCharacterEffect interactionTargetCharacterEffect, Character character = null) {
         //If there is a character passed as parameter, this means that the list will be filtered by what the character can do
         List<INTERACTION_TYPE> interactions = new List<INTERACTION_TYPE>(); //Get interactions of all races first
         INTERACTION_TYPE[] interactionArray = _npcRaceInteractions[RACE.NONE];
@@ -250,16 +250,26 @@ public class RaceManager : MonoBehaviour {
             for (int j = 0; j < interactionCategoryAndAlignment.categories.Length; j++) {
                 if (interactionCategoryAndAlignment.categories[j] == category) {
                     bool canDoTargetCharacterEffect = false;
-                    for (int k = 0; k < interactionCategoryAndAlignment.targetCharacterEffect.Length; k++) {
-                        if(interactionCategoryAndAlignment.targetCharacterEffect[k].effect != INTERACTION_CHARACTER_EFFECT.NONE && 
-                            interactionCategoryAndAlignment.targetCharacterEffect[k].effect == interactionTargetCharacterEffect.effect) {
-                            if(interactionCategoryAndAlignment.targetCharacterEffect[k].effectString != null) {
-                                for (int l = 0; l < interactionCategoryAndAlignment.targetCharacterEffect[k].effectString.Length; l++) {
-                                    string effectString = interactionCategoryAndAlignment.targetCharacterEffect[k].effectString[l];
-                                    if (interactionTargetCharacterEffect.effectString.Contains(effectString)) {
+                    if(interactionCategoryAndAlignment.targetCharacterEffect != null) {
+                        for (int k = 0; k < interactionCategoryAndAlignment.targetCharacterEffect.Length; k++) {
+                            if (interactionCategoryAndAlignment.targetCharacterEffect[k].effect != INTERACTION_CHARACTER_EFFECT.NONE &&
+                                interactionCategoryAndAlignment.targetCharacterEffect[k].effect == interactionTargetCharacterEffect.effect) {
+                                if (interactionCategoryAndAlignment.targetCharacterEffect[k].effectString != null && interactionTargetCharacterEffect.effectString != null) {
+                                    bool canDoEffectString = false;
+                                    for (int l = 0; l < interactionCategoryAndAlignment.targetCharacterEffect[k].effectString.Length; l++) {
+                                        string effectString = interactionCategoryAndAlignment.targetCharacterEffect[k].effectString[l];
+                                        if (interactionTargetCharacterEffect.effectString.Contains(effectString)) {
+                                            canDoEffectString = true;
+                                            break;
+                                        }
+                                    }
+                                    if (canDoEffectString) {
                                         canDoTargetCharacterEffect = true;
                                         break;
                                     }
+                                } else {
+                                    canDoTargetCharacterEffect = true;
+                                    break;
                                 }
                             }
                         }
@@ -278,12 +288,24 @@ public class RaceManager : MonoBehaviour {
                 for (int j = 0; j < interactionCategoryAndAlignment.categories.Length; j++) {
                     if (interactionCategoryAndAlignment.categories[j] == category) {
                         bool canDoTargetCharacterEffect = false;
-                        for (int k = 0; k < interactionCategoryAndAlignment.targetCharacterEffect.Length; k++) {
-                            if (interactionCategoryAndAlignment.targetCharacterEffect[k].effect != INTERACTION_CHARACTER_EFFECT.NONE && 
-                                interactionCategoryAndAlignment.targetCharacterEffect[k].effect == interactionTargetCharacterEffect.effect) {
-                                for (int l = 0; l < interactionCategoryAndAlignment.targetCharacterEffect[k].effectString.Length; l++) {
-                                    string effectString = interactionCategoryAndAlignment.targetCharacterEffect[k].effectString[l];
-                                    if (interactionTargetCharacterEffect.effectString.Contains(effectString)) {
+                        if (interactionCategoryAndAlignment.targetCharacterEffect != null) {
+                            for (int k = 0; k < interactionCategoryAndAlignment.targetCharacterEffect.Length; k++) {
+                                if (interactionCategoryAndAlignment.targetCharacterEffect[k].effect != INTERACTION_CHARACTER_EFFECT.NONE &&
+                                    interactionCategoryAndAlignment.targetCharacterEffect[k].effect == interactionTargetCharacterEffect.effect) {
+                                    if (interactionCategoryAndAlignment.targetCharacterEffect[k].effectString != null && interactionTargetCharacterEffect.effectString != null) {
+                                        bool canDoEffectString = false;
+                                        for (int l = 0; l < interactionCategoryAndAlignment.targetCharacterEffect[k].effectString.Length; l++) {
+                                            string effectString = interactionCategoryAndAlignment.targetCharacterEffect[k].effectString[l];
+                                            if (interactionTargetCharacterEffect.effectString.Contains(effectString)) {
+                                                canDoEffectString = true;
+                                                break;
+                                            }
+                                        }
+                                        if (canDoEffectString) {
+                                            canDoTargetCharacterEffect = true;
+                                            break;
+                                        }
+                                    } else {
                                         canDoTargetCharacterEffect = true;
                                         break;
                                     }
@@ -291,6 +313,87 @@ public class RaceManager : MonoBehaviour {
                             }
                         }
                         if (canDoTargetCharacterEffect && character != null && InteractionManager.Instance.CanCreateInteraction(interactionArray[i], character)) {
+                            interactions.Add(interactionArray[i]);
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+        return interactions;
+    }
+    public List<INTERACTION_TYPE> GetNPCInteractionsOfRaceActor(RACE race, INTERACTION_CATEGORY category, InteractionCharacterEffect interactionActorCharacterEffect, Character character = null) {
+        //If there is a character passed as parameter, this means that the list will be filtered by what the character can do
+        List<INTERACTION_TYPE> interactions = new List<INTERACTION_TYPE>(); //Get interactions of all races first
+        INTERACTION_TYPE[] interactionArray = _npcRaceInteractions[RACE.NONE];
+        for (int i = 0; i < interactionArray.Length; i++) {
+            InteractionAttributes interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(interactionArray[i]);
+            for (int j = 0; j < interactionCategoryAndAlignment.categories.Length; j++) {
+                if (interactionCategoryAndAlignment.categories[j] == category) {
+                    bool canDoActorEffect = false;
+                    if (interactionCategoryAndAlignment.actorEffect != null) {
+                        for (int k = 0; k < interactionCategoryAndAlignment.actorEffect.Length; k++) {
+                            if (interactionCategoryAndAlignment.actorEffect[k].effect != INTERACTION_CHARACTER_EFFECT.NONE &&
+                                interactionCategoryAndAlignment.actorEffect[k].effect == interactionActorCharacterEffect.effect) {
+                                if (interactionCategoryAndAlignment.actorEffect[k].effectString != null && interactionActorCharacterEffect.effectString != null) {
+                                    bool canDoEffectString = false;
+                                    for (int l = 0; l < interactionCategoryAndAlignment.actorEffect[k].effectString.Length; l++) {
+                                        string effectString = interactionCategoryAndAlignment.actorEffect[k].effectString[l];
+                                        if (interactionActorCharacterEffect.effectString.Contains(effectString)) {
+                                            canDoEffectString = true;
+                                            break;
+                                        }
+                                    }
+                                    if (canDoEffectString) {
+                                        canDoActorEffect = true;
+                                        break;
+                                    }
+                                } else {
+                                    canDoActorEffect = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    if (canDoActorEffect && character != null && InteractionManager.Instance.CanCreateInteraction(interactionArray[i], character)) {
+                        interactions.Add(interactionArray[i]);
+                    }
+                    break;
+                }
+            }
+        }
+        if (_npcRaceInteractions.ContainsKey(race)) {
+            interactionArray = _npcRaceInteractions[race];
+            for (int i = 0; i < interactionArray.Length; i++) {
+                InteractionAttributes interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(interactionArray[i]);
+                for (int j = 0; j < interactionCategoryAndAlignment.categories.Length; j++) {
+                    if (interactionCategoryAndAlignment.categories[j] == category) {
+                        bool canDoactorEffect = false;
+                        if (interactionCategoryAndAlignment.actorEffect != null) {
+                            for (int k = 0; k < interactionCategoryAndAlignment.actorEffect.Length; k++) {
+                                if (interactionCategoryAndAlignment.actorEffect[k].effect != INTERACTION_CHARACTER_EFFECT.NONE &&
+                                    interactionCategoryAndAlignment.actorEffect[k].effect == interactionActorCharacterEffect.effect) {
+                                    if (interactionCategoryAndAlignment.actorEffect[k].effectString != null && interactionActorCharacterEffect.effectString != null) {
+                                        bool canDoEffectString = false;
+                                        for (int l = 0; l < interactionCategoryAndAlignment.actorEffect[k].effectString.Length; l++) {
+                                            string effectString = interactionCategoryAndAlignment.actorEffect[k].effectString[l];
+                                            if (interactionActorCharacterEffect.effectString.Contains(effectString)) {
+                                                canDoEffectString = true;
+                                                break;
+                                            }
+                                        }
+                                        if (canDoEffectString) {
+                                            canDoactorEffect = true;
+                                            break;
+                                        }
+                                    } else {
+                                        canDoactorEffect = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        if (canDoactorEffect && character != null && InteractionManager.Instance.CanCreateInteraction(interactionArray[i], character)) {
                             interactions.Add(interactionArray[i]);
                         }
                         break;

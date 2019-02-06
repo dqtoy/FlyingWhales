@@ -17,7 +17,7 @@ public class MoveToHangOut : Interaction {
     public Character targetCharacter { get; private set; }
 
     public MoveToHangOut(Area interactable) 
-        : base(interactable, INTERACTION_TYPE.MOVE_TO_HANG_OUT, 0) {
+        : base(interactable, INTERACTION_TYPE.MOVE_TO_HANG_OUT_ACTION, 0) {
         _name = "Move To Hang Out";
         _jobFilter = new JOB[] { JOB.DEBILITATOR };
     }

@@ -15,7 +15,7 @@ public class MoveToAssassinateFaction : Interaction {
     }
 
     public MoveToAssassinateFaction(Area interactable)
-        : base(interactable, INTERACTION_TYPE.MOVE_TO_ASSASSINATE_FACTION, 0) {
+        : base(interactable, INTERACTION_TYPE.MOVE_TO_ASSASSINATE_ACTION_FACTION, 0) {
         _name = "Move To Assassinate Faction";
         _jobFilter = new JOB[] { JOB.DEBILITATOR };
     }

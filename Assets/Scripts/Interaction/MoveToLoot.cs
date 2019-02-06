@@ -14,7 +14,7 @@ public class MoveToLoot : Interaction {
         get { return _targetArea; }
     }
 
-    public MoveToLoot(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_LOOT, 0) {
+    public MoveToLoot(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_LOOT_ACTION, 0) {
         _name = "Move To Loot";
         //_categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.INVENTORY };
         //_alignment = INTERACTION_ALIGNMENT.EVIL;
