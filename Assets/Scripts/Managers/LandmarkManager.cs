@@ -710,6 +710,19 @@ public class LandmarkManager : MonoBehaviour {
         defaultPos.y -= 1.25f;
         return defaultPos;
     }
+    public Area GetRandomUnownedAreaWithAvailableStructure(STRUCTURE_TYPE structureType) {
+        List<Area> areaChoices = new List<Area>();
+        for (int i = 0; i < allAreas.Count; i++) {
+            Area currArea = allAreas[i];
+            if(allAreas[i].owner == null && allAreas[i].GetNumberOfUnoccupiedStructure(structureType) > 0) {
+                areaChoices.Add(currArea);
+            }
+        }
+        if(areaChoices.Count > 0) {
+            return areaChoices[UnityEngine.Random.Range(0, areaChoices.Count)];
+        }
+        return null;
+    }
     #endregion
 
     #region Location Structures

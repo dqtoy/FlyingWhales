@@ -64,7 +64,7 @@ public class CurseAction : Interaction {
         }
     }
     public override bool CanInteractionBeDoneBy(Character character) {
-        if (_targetCharacter == null || _targetCharacter.currentParty.icon.isTravelling || _targetCharacter.isDead || _targetCharacter.specificLocation != character.specificLocation || _targetCharacter.currentStructure != _targetCharacter.homeStructure) {
+        if (_targetCharacter == null || _targetCharacter.currentParty.icon.isTravelling || _targetCharacter.isDead || _targetCharacter.specificLocation != character.specificLocation) {
             return false;
         }
         List<RelationshipTrait> relationships = character.GetAllRelationshipTraitWith(_targetCharacter);

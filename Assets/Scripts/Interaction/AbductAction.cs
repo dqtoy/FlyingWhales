@@ -148,7 +148,7 @@ public class AbductAction : Interaction {
         //only add abducted trait to characters that have not been abducted yet, this is to retain it's original faction
         Abducted abductedTrait = new Abducted(character.homeArea);
         character.AddTrait(abductedTrait, _characterInvolved);
-        character.MigrateHomeTo(_characterInvolved.homeArea);
+        //character.MigrateHomeTo(_characterInvolved.homeArea);
         _characterInvolved.ownParty.AddCharacter(character);
         _characterInvolved.currentStructure.AddCharacterAtLocation(character);
         Interaction interactionAbductor = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, interactable);

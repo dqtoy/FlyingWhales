@@ -1210,6 +1210,34 @@ public class Area {
             }
         }
     }
+    public bool CanCharacterMigrateHere(Character character) {
+        Character lover = character.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.LOVER);
+        if (lover != null && areaResidents.Contains(lover)) {
+            return true;
+        } else {
+            //if none, check if they have a master/servant in the area
+            Character master = character.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.MASTER);
+            if (master != null && areaResidents.Contains(master)) { //if this character is the servant
+                return true;
+            } else { //if this character is a master
+                List<Character> servants = GetResidentsFromChoices(character.GetCharactersWithRelationship(RELATIONSHIP_TRAIT.SERVANT));
+                if (servants.Count > 0) { //check if he has any servant in this location that does not have a lover living with him
+                    for (int i = 0; i < servants.Count; i++) {
+                        Character currServant = servants[i];
+                        if (!currServant.IsLivingWith(RELATIONSHIP_TRAIT.LOVER)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+
+        //If character has no relationship whatsoever with residents here, check if there is an empty dwelling to reside in
+        if(GetNumberOfUnoccupiedStructure(STRUCTURE_TYPE.DWELLING) > 0) {
+            return true;
+        }
+        return false;
+    }
     public void RemoveResident(Character character) {
         if (areaResidents.Remove(character)) {
             character.SetHome(null);
