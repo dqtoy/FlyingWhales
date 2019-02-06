@@ -13,9 +13,12 @@ public class MoveToExploreFaction : Interaction {
     public override Area targetArea {
         get { return _targetArea; }
     }
+    public override INTERACTION_TYPE pairedInteractionType {
+        get { return INTERACTION_TYPE.EXPLORE_EVENT_FACTION; }
+    }
 
     public MoveToExploreFaction(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_EXPLORE_EVENT_FACTION, 0) {
-        _name = "Move to Explore Faction";
+        _name = "Move To Explore Faction";
         _jobFilter = new JOB[] { JOB.DEBILITATOR };
         //_categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.INVENTORY };
         //_alignment = INTERACTION_ALIGNMENT.NEUTRAL;

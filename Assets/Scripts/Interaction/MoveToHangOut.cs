@@ -13,7 +13,9 @@ public class MoveToHangOut : Interaction {
     public override Area targetArea {
         get { return _targetArea; }
     }
-
+    public override INTERACTION_TYPE pairedInteractionType {
+        get { return INTERACTION_TYPE.HANG_OUT_ACTION; }
+    }
     public Character targetCharacter { get; private set; }
 
     public MoveToHangOut(Area interactable) 

@@ -13,6 +13,9 @@ public class MoveToAbduct : Interaction {
     public override Area targetArea {
         get { return _targetArea; }
     }
+    public override INTERACTION_TYPE pairedInteractionType {
+        get { return INTERACTION_TYPE.ABDUCT_ACTION; }
+    }
 
     public MoveToAbduct(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_ABDUCT_ACTION, 0) {
         _name = "Move To Abduct";

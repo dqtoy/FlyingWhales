@@ -13,6 +13,10 @@ public class MoveToOccupyFaction : Interaction {
     public override Area targetArea {
         get { return _targetArea; }
     }
+    public override INTERACTION_TYPE pairedInteractionType {
+        get { return INTERACTION_TYPE.OCCUPY_ACTION_FACTION; }
+    }
+
     private Faction targetFaction;
 
     public MoveToOccupyFaction(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_OCCUPY_ACTION_FACTION, 0) {

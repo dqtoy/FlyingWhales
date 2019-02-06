@@ -14,6 +14,9 @@ public class MoveToExpand : Interaction {
     public override Area targetArea {
         get { return _targetArea; }
     }
+    public override INTERACTION_TYPE pairedInteractionType {
+        get { return INTERACTION_TYPE.EXPANSION_EVENT; }
+    }
 
     public MoveToExpand(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_EXPANSION_EVENT, 0) {
         _name = "Move to Expand";

@@ -13,6 +13,9 @@ public class MoveToExplore : Interaction {
     public override Area targetArea {
         get { return _targetArea; }
     }
+    public override INTERACTION_TYPE pairedInteractionType {
+        get { return INTERACTION_TYPE.EXPLORE_EVENT; }
+    }
 
     public MoveToExplore(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_EXPLORE_EVENT, 0) {
         _name = "Move To Explore";

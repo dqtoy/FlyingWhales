@@ -14,6 +14,7 @@ public class CharacterRelationshipData {
     public bool isCharacterLocated { get; private set; }
     public LocationStructure knownStructure { get; private set; }
     public List<Trait> trouble { get; private set; } //Set this to trait for now, but this could change in future iterations
+    public InteractionIntel plannedActionIntel { get; private set; } //this is only occupied if the player gives the character an intel to the owner, regarding this character
 
     public string lastEncounterLog { get; private set; }
 
@@ -34,14 +35,14 @@ public class CharacterRelationshipData {
         Messenger.AddListener(Signals.DAY_STARTED, LastEncounterTick);
         Messenger.AddListener<Interaction>(Signals.INTERACTION_INITIALIZED, OnInteractionInitialized);
         Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
-        Messenger.AddListener<Character, Trait>(Signals.TRAIT_ADDED, OnTraitAddedToCharacter);
+        //Messenger.AddListener<Character, Trait>(Signals.TRAIT_ADDED, OnTraitAddedToCharacter);
         Messenger.AddListener<Character, Trait>(Signals.TRAIT_REMOVED, OnTraitRemovedFromCharacter);
     }
     public void RemoveListeners() {
         Messenger.RemoveListener(Signals.DAY_STARTED, LastEncounterTick);
         Messenger.RemoveListener<Interaction>(Signals.INTERACTION_INITIALIZED, OnInteractionInitialized);
         Messenger.RemoveListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
-        Messenger.RemoveListener<Character, Trait>(Signals.TRAIT_ADDED, OnTraitAddedToCharacter);
+        //Messenger.RemoveListener<Character, Trait>(Signals.TRAIT_ADDED, OnTraitAddedToCharacter);
         Messenger.RemoveListener<Character, Trait>(Signals.TRAIT_REMOVED, OnTraitRemovedFromCharacter);
     }
 
@@ -68,19 +69,19 @@ public class CharacterRelationshipData {
                      character trouble is set to Null when the character visits the **known character location structure** with the intent to 
                      meet up with the target and was unable to find the character there or was able to resolve the trouble
                      */
-                    AddTrouble(null);
+                    ClearTrouble();
                 }
             }
         }
     }
-    private void OnTraitAddedToCharacter(Character character, Trait trait) {
-        if (character.id == targetCharacter.id) {
-            if (trait.name.Equals("Charmed") || trait.name.Equals("Abducted") 
-                || trait.name.Equals("Unconscious") || trait.name.Equals("Injured") || trait.name.Equals("Cursed")) {
-                AddTrouble(trait);
-            }
-        }
-    }
+    //private void OnTraitAddedToCharacter(Character character, Trait trait) {
+    //    if (character.id == targetCharacter.id) {
+    //        if (trait.name.Equals("Charmed") || trait.name.Equals("Abducted") 
+    //            || trait.name.Equals("Unconscious") || trait.name.Equals("Injured") || trait.name.Equals("Cursed")) {
+    //            AddTrouble(trait);
+    //        }
+    //    }
+    //}
     private void OnTraitRemovedFromCharacter(Character character, Trait trait) {
         if (character.id == targetCharacter.id) {
             if (trait.name.Equals("Charmed") || trait.name.Equals("Abducted")
@@ -231,6 +232,9 @@ public class CharacterRelationshipData {
     #endregion
 
     #region Trouble
+    public void ClearTrouble() {
+        trouble.Clear();
+    }
     public void AddTrouble(Trait trait) {
         if (!trouble.Contains(trait)) {
             trouble.Add(trait);
@@ -238,6 +242,25 @@ public class CharacterRelationshipData {
     }
     public void RemoveTrouble(Trait trait) {
         trouble.Remove(trait);
+    }
+    #endregion
+
+    #region Action Intel
+    public void SetPlannedActionIntel(InteractionIntel intel) {
+        plannedActionIntel = intel;
+        if (plannedActionIntel != null) {
+            Debug.Log(owner.name + " was informed that " + targetCharacter.name + " has plans to:\n" + intel.GetDebugInfo());
+            Messenger.AddListener<Interaction>(Signals.INTERACTION_ENDED, CheckIfPlannedInteractionDone);
+        } else {
+            Messenger.RemoveListener<Interaction>(Signals.INTERACTION_ENDED, CheckIfPlannedInteractionDone);
+        }
+    }
+    private void CheckIfPlannedInteractionDone(Interaction interaction) {
+        if (plannedActionIntel != null) {
+            if (plannedActionIntel.connectedInteraction == interaction) {
+                SetPlannedActionIntel(null);
+            }
+        }
     }
     #endregion
 }

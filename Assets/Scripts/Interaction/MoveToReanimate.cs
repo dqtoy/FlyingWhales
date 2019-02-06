@@ -13,6 +13,9 @@ public class MoveToReanimate : Interaction {
     public override Area targetArea {
         get { return _targetArea; }
     }
+    public override INTERACTION_TYPE pairedInteractionType {
+        get { return INTERACTION_TYPE.REANIMATE_ACTION; }
+    }
 
     public MoveToReanimate(Area interactable) 
         : base(interactable, INTERACTION_TYPE.MOVE_TO_REANIMATE_ACTION, 0) {

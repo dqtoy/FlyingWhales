@@ -19,6 +19,9 @@ public class MoveToSave : Interaction {
     public override Character targetCharacter {
         get { return _targetCharacter; }
     }
+    public override INTERACTION_TYPE pairedInteractionType {
+        get { return INTERACTION_TYPE.SAVE_ACTION; }
+    }
 
     public MoveToSave(Area interactable) 
         : base(interactable, INTERACTION_TYPE.MOVE_TO_SAVE_ACTION, 0) {

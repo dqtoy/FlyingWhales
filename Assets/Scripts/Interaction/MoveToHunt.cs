@@ -13,6 +13,9 @@ public class MoveToHunt : Interaction {
     public override Area targetArea {
         get { return _targetArea; }
     }
+    public override INTERACTION_TYPE pairedInteractionType {
+        get { return INTERACTION_TYPE.HUNT_ACTION; }
+    }
 
     public MoveToHunt(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_HUNT_ACTION, 0) {
         _name = "Move To Hunt";

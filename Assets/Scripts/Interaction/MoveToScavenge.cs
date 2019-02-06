@@ -13,6 +13,9 @@ public class MoveToScavenge : Interaction {
     public override Area targetArea {
         get { return _targetArea; }
     }
+    public override INTERACTION_TYPE pairedInteractionType {
+        get { return INTERACTION_TYPE.SCAVENGE_EVENT; }
+    }
 
     public MoveToScavenge(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_SCAVENGE_EVENT, 70) {
         _name = "Move To Scavenge";

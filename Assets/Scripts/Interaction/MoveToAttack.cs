@@ -7,6 +7,10 @@ public class MoveToAttack : Interaction {
     private Area _target;
     private List<Character> _attackers;
 
+    public override INTERACTION_TYPE pairedInteractionType {
+        get { return INTERACTION_TYPE.ATTACK; }
+    }
+
     public MoveToAttack(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_ATTACK, 0) {
         _name = "Move To Attack";
         _jobFilter = new JOB[] { JOB.DEBILITATOR };

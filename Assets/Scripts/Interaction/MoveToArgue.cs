@@ -13,6 +13,9 @@ public class MoveToArgue : Interaction {
     public override Area targetArea {
         get { return _targetCharacter.homeArea; }
     }
+    public override INTERACTION_TYPE pairedInteractionType {
+        get { return INTERACTION_TYPE.ARGUE_ACTION; }
+    }
 
     public MoveToArgue(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_ARGUE_ACTION, 0) {
         _name = "Move To Argue";

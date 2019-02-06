@@ -12,7 +12,6 @@ public class HangOutAction : Interaction {
     public override Character targetCharacter {
         get { return _targetCharacter; }
     }
-
     private LocationStructure targetStructure;
 
     public HangOutAction(Area interactable)

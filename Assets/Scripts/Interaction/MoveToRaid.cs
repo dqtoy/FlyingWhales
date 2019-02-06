@@ -13,6 +13,9 @@ public class MoveToRaid : Interaction {
     public override Area targetArea {
         get { return _targetArea; }
     }
+    public override INTERACTION_TYPE pairedInteractionType {
+        get { return INTERACTION_TYPE.RAID_EVENT; }
+    }
     private Faction targetFaction;
 
     public MoveToRaid(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_RAID_EVENT, 0) {

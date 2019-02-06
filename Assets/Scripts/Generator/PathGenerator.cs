@@ -128,13 +128,6 @@ public class PathGenerator : MonoBehaviour {
 		}
 		return null;
 	}
-    public int GetTravelTimeInTicks(ILocation startingTile, ILocation destinationTile, PATHFINDING_MODE pathfindingMode, object data = null) {
-        List<HexTile> path = GetPath(startingTile, destinationTile, pathfindingMode, data);
-        if (path != null) {
-            return path.Count * 3; //because it takes 3 ticks to reach the center of a tile from the center of another tile.
-        }
-        return -1;
-    }
     public PathFindingThread CreatePath(CharacterAvatar characterAvatar, HexTile startingTile, HexTile destinationTile, PATHFINDING_MODE pathfindingMode, object data = null) {
         if (startingTile == null || destinationTile == null) {
             return null;
@@ -326,5 +319,11 @@ public class PathGenerator : MonoBehaviour {
 
         // Mark the current node
         isVisited[u] = false;
+    }
+
+
+    public int GetTravelTime(HexTile from, HexTile to) {
+        float distance = Vector3.Distance(from.transform.position, to.transform.position);
+        return (Mathf.CeilToInt(distance / 2.315188f)) * 2;
     }
 }

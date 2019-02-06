@@ -13,6 +13,9 @@ public class MoveToLoot : Interaction {
     public override Area targetArea {
         get { return _targetArea; }
     }
+    public override INTERACTION_TYPE pairedInteractionType {
+        get { return INTERACTION_TYPE.LOOT_ACTION; }
+    }
 
     public MoveToLoot(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_LOOT_ACTION, 0) {
         _name = "Move To Loot";

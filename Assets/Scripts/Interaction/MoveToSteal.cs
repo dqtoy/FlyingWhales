@@ -13,6 +13,9 @@ public class MoveToSteal : Interaction {
     public override Area targetArea {
         get { return _targetArea; }
     }
+    public override INTERACTION_TYPE pairedInteractionType {
+        get { return INTERACTION_TYPE.STEAL_ACTION; }
+    }
 
     public MoveToSteal(Area interactable)
         : base(interactable, INTERACTION_TYPE.MOVE_TO_STEAL_ACTION, 0) {

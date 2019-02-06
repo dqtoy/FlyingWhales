@@ -20,6 +20,10 @@ public class MoveToPeaceNegotiation : Interaction {
     private const string Faction_Leader_Rejected = "Faction Leader Rejected";
     private const string Do_Nothing = "Do nothing";
 
+    public override INTERACTION_TYPE pairedInteractionType {
+        get { return INTERACTION_TYPE.CHARACTER_PEACE_NEGOTIATION; }
+    }
+
     public MoveToPeaceNegotiation(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_PEACE_NEGOTIATION, 0) {
         _name = "Move to Peace Negotiation";
         _jobFilter = new JOB[] { JOB.INSTIGATOR, JOB.DIPLOMAT };

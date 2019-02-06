@@ -136,6 +136,12 @@ public class ConsoleMenu : UIMenu {
             } else {
                 text += "None";
             }
+            text += "\n\t<b>Planned Action Intel:</b> ";
+            if (kvp.Value.plannedActionIntel != null) {
+                text += "\n" + kvp.Value.plannedActionIntel.GetDebugInfo();
+            } else {
+                text += "None";
+            }
             counter++;
         }
 

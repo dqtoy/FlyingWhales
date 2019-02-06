@@ -43,13 +43,14 @@ public class PlayerUI : MonoBehaviour {
 
     [Header("Bottom Menu")]
     public Toggle goalsToggle;
-    public Toggle intelToggle;
+    //public Toggle intelToggle;
     public Toggle inventoryToggle;
     public Toggle factionToggle;
     public ToggleGroup minionSortingToggleGroup;
 
     [Header("Intel")]
     [SerializeField] private InteractionIntelItem[] intelItems;
+    [SerializeField] private Toggle intelToggle;
 
     [Header("Miscellaneous")]
     [SerializeField] private Vector3 openPosition;
@@ -472,6 +473,33 @@ public class PlayerUI : MonoBehaviour {
             InteractionIntelItem currItem = intelItems[i];
             InteractionIntel intel = PlayerManager.Instance.player.allIntel.ElementAtOrDefault(i);
             currItem.SetIntel(intel);
+        }
+    }
+    public void SetIntelMenuState(bool state) {
+        if (intelToggle.isOn == state) {
+            return; //ignore change
+        }
+        intelToggle.isOn = state;
+        if (!intelToggle.isOn) {
+            OnCloseIntelMenu();
+        }
+    }
+    private void OnCloseIntelMenu() {
+        for (int i = 0; i < intelItems.Length; i++) {
+            InteractionIntelItem currItem = intelItems[i];
+            currItem.ClearClickActions();
+        }
+    }
+    public void SetIntelItemClickActions(InteractionIntelItem.OnClickAction clickAction) {
+        for (int i = 0; i < intelItems.Length; i++) {
+            InteractionIntelItem currItem = intelItems[i];
+            currItem.SetClickAction(clickAction);
+        }
+    }
+    public void AddIntelItemOtherClickActions(System.Action clickAction) {
+        for (int i = 0; i < intelItems.Length; i++) {
+            InteractionIntelItem currItem = intelItems[i];
+            currItem.AddOtherClickAction(clickAction);
         }
     }
     #endregion

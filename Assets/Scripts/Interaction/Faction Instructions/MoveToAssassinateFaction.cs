@@ -13,6 +13,9 @@ public class MoveToAssassinateFaction : Interaction {
     public override Area targetArea {
         get { return _targetArea; }
     }
+    public override INTERACTION_TYPE pairedInteractionType {
+        get { return INTERACTION_TYPE.ASSASSINATE_ACTION_FACTION; }
+    }
 
     public MoveToAssassinateFaction(Area interactable)
         : base(interactable, INTERACTION_TYPE.MOVE_TO_ASSASSINATE_ACTION_FACTION, 0) {

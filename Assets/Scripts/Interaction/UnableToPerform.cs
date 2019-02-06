@@ -10,15 +10,16 @@ public class UnableToPerform : Interaction {
         : base(interactable, INTERACTION_TYPE.UNABLE_TO_PERFORM, 0) {
         _name = "Unable To Perform";
         _unableToPerformActionName = string.Empty;
+        
     }
 
     #region Overrides
     public override void CreateStates() {
         InteractionState startState = new InteractionState("Start", this);
-
         startState.SetEffect(() => StartStateRewardEffect(startState));
-
         _states.Add(startState.name, startState);
+
+        SetInteractionIntel(null);
 
         SetCurrentState(startState);
     }

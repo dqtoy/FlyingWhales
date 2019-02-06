@@ -36,6 +36,11 @@ public class Interaction {
     protected InteractionIntel _intel;
     private string interactionDebugLog;
 
+    public int dayStarted { get; protected set; }
+    public int dayCompleted { get; protected set; }
+    public List<InteractionCharacterEffect> actualEffectsOnActor { get; protected set; } //what actually happened to the actor
+    public List<InteractionCharacterEffect> actualEffectsOnTarget { get; protected set; } //what actually happened to the target
+
     private bool _hasUsedBaseCreateStates;
 
     public const int secondTimeOutTicks = 30;
@@ -124,6 +129,9 @@ public class Interaction {
     public InteractionIntel intel {
         get { return _intel; }
     }
+    public virtual INTERACTION_TYPE pairedInteractionType {
+        get { return INTERACTION_TYPE.NONE; }
+    }
     #endregion
 
     public Interaction(Area interactable, INTERACTION_TYPE type, int timeOutTicks) {
@@ -137,9 +145,10 @@ public class Interaction {
         _hasUsedBaseCreateStates = false;
         _states = new Dictionary<string, InteractionState>();
         _endInteractionActions = new List<Action>();
+        actualEffectsOnActor = new List<InteractionCharacterEffect>();
+        actualEffectsOnTarget = new List<InteractionCharacterEffect>();
         SetInteractionIntel(new InteractionIntel(this));
         //_jobFilter = new JOB[] { JOB.NONE };
-        //Debug.Log("Created new interaction " + type.ToString() + " at " + interactable.name);
         interactionDebugLog = type.ToString() + " Event at " + interactable.name + "(" + interactable.name + ") Summary: \n" +
             GameManager.Instance.TodayLogString() + " Event Created.";
     }
@@ -151,6 +160,7 @@ public class Interaction {
             _initializeAction();
         }
         //SetCharacterInvolved(characterInvolved);
+        dayStarted = GameManager.Instance.continuousDays;
         CreateStates();
         //SetExplorerMinion(explorerMinion);
         //ScheduleFirstTimeOut();
@@ -173,6 +183,7 @@ public class Interaction {
             _endInteractionActions[i]();
         }
         _endInteractionActions.Clear();
+        dayCompleted = GameManager.Instance.continuousDays;
         Debug.Log(interactionDebugLog);
         if(InteractionUI.Instance.interaction == this) {
             InteractionUI.Instance.HideInteractionUI();
@@ -436,7 +447,9 @@ public class Interaction {
     #region Intel
     public void SetInteractionIntel(InteractionIntel intel) {
         _intel = intel;
-        intel.SetConnectedInteraction(this);
+        if (intel != null) {
+            intel.SetConnectedInteraction(this);
+        }
     }
     public virtual object GetTarget() {
         if (targetCharacter != null) {

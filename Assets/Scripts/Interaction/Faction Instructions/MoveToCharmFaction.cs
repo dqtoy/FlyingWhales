@@ -13,6 +13,9 @@ public class MoveToCharmFaction : Interaction {
     public override Area targetArea {
         get { return _targetArea; }
     }
+    public override INTERACTION_TYPE pairedInteractionType {
+        get { return INTERACTION_TYPE.CHARM_ACTION_FACTION; }
+    }
 
     public MoveToCharmFaction(Area interactable) 
         : base(interactable, INTERACTION_TYPE.MOVE_TO_CHARM_ACTION_FACTION, 0) {

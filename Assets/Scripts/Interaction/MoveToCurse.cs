@@ -13,6 +13,9 @@ public class MoveToCurse : Interaction {
     public override Area targetArea {
         get { return _targetCharacter.homeArea; }
     }
+    public override INTERACTION_TYPE pairedInteractionType {
+        get { return INTERACTION_TYPE.CURSE_ACTION; }
+    }
 
     public MoveToCurse(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_CURSE_ACTION, 0) {
         _name = "Move To Curse";

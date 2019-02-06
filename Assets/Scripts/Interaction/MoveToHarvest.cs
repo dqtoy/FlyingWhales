@@ -13,6 +13,9 @@ public class MoveToHarvest : Interaction {
     public override Area targetArea {
         get { return _targetArea; }
     }
+    public override INTERACTION_TYPE pairedInteractionType {
+        get { return INTERACTION_TYPE.HARVEST_ACTION; }
+    }
 
     public MoveToHarvest(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_HARVEST_ACTION, 0) {
         _name = "Move To Harvest";

@@ -9,6 +9,9 @@ public class MoveToRecruitFriendFaction : Interaction {
     public override Area targetArea {
         get { return _targetArea; }
     }
+    public override INTERACTION_TYPE pairedInteractionType {
+        get { return INTERACTION_TYPE.RECRUIT_FRIEND_ACTION_FACTION; }
+    }
 
     private const string Character_Recruit_Cancelled = "Character Recruit Cancelled";
     private const string Character_Recruit_Continues = "Character Recruit Continues";

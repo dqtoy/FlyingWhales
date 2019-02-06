@@ -13,6 +13,9 @@ public class MoveToGiftBeast : Interaction {
     public override Area targetArea {
         get { return _targetArea; }
     }
+    public override INTERACTION_TYPE pairedInteractionType {
+        get { return INTERACTION_TYPE.GIFT_BEAST; }
+    }
 
     public MoveToGiftBeast(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_GIFT_BEAST, 0) {
         _name = "Move To Gift Beast";

@@ -13,6 +13,9 @@ public class MoveToImproveRelations : Interaction {
     public override Area targetArea {
         get { return _targetArea; }
     }
+    public override INTERACTION_TYPE pairedInteractionType {
+        get { return INTERACTION_TYPE.IMPROVE_RELATIONS_EVENT; }
+    }
     private Faction targetFaction;
 
     public MoveToImproveRelations(Area interactable) 
