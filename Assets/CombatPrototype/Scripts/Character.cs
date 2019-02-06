@@ -103,6 +103,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     //portrait
     public float hSkinColor { get; private set; }
     public float hHairColor { get; private set; }
+    public float demonColor { get; private set; }
 
     //For Testing
     public List<string> locationHistory { get; private set; }
@@ -485,6 +486,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 
         hSkinColor = UnityEngine.Random.Range(-360f, 360f);
         hHairColor = UnityEngine.Random.Range(-360f, 360f);
+        demonColor = UnityEngine.Random.Range(-144f, 144f);
 
         locationHistory = new List<string>();
 

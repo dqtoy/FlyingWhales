@@ -275,43 +275,55 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
             case RACE.HUMANS:
                 skin.material = null;
                 hair.material = Instantiate(CharacterManager.Instance.hsvMaterial);
+                wholeImage.material = null;
                 hair.material.SetVector("_HSVAAdjust", new Vector4(_character.hHairColor/360f, 0f, 0f, 0f));
                 break;
             case RACE.ELVES:
                 skin.material = Instantiate(CharacterManager.Instance.hsvMaterial);
                 hair.material = null;
+                wholeImage.material = null;
                 skin.material.SetVector("_HSVAAdjust", new Vector4(_character.hSkinColor/360f, 0f, 0f, 0f));
                 break;
             case RACE.GOBLIN:
                 skin.material = Instantiate(CharacterManager.Instance.hsvMaterial);
                 hair.material = Instantiate(CharacterManager.Instance.hsvMaterial);
+                wholeImage.material = null;
                 skin.material.SetVector("_HSVAAdjust", new Vector4(_character.hSkinColor/360f, 0f, 0f, 0f));
                 hair.material.SetVector("_HSVAAdjust", new Vector4(_character.hHairColor/360f, 0f, 0f, 0f));
                 break;
             case RACE.DRAGON:
                 skin.material = Instantiate(CharacterManager.Instance.hsvMaterial);
                 hair.material = null;
+                wholeImage.material = null;
                 skin.material.SetVector("_HSVAAdjust", new Vector4(_character.hSkinColor/360f, 0f, 0f, 0f));
                 break;
             case RACE.WOLF:
                 skin.material = Instantiate(CharacterManager.Instance.hsvMaterial);
                 hair.material = null;
+                wholeImage.material = null;
                 skin.material.SetVector("_HSVAAdjust", new Vector4(_character.hSkinColor/360f, 0f, 0f, 0f));
                 break;
             case RACE.FAERY:
                 skin.material = Instantiate(CharacterManager.Instance.hsvMaterial);
                 hair.material = Instantiate(CharacterManager.Instance.hsvMaterial);
+                wholeImage.material = null;
                 skin.material.SetVector("_HSVAAdjust", new Vector4(_character.hSkinColor/360f, 0f, 0f, 0f));
                 hair.material.SetVector("_HSVAAdjust", new Vector4(_character.hHairColor/360f, 0f, 0f, 0f));
                 break;
             case RACE.SPIDER:
                 skin.material = Instantiate(CharacterManager.Instance.hsvMaterial);
                 hair.material = null;
+                wholeImage.material = null;
                 skin.material.SetVector("_HSVAAdjust", new Vector4(_character.hSkinColor/360f, 0f, 0f, 0f));
+                break;
+            case RACE.DEMON:
+                wholeImage.material = Instantiate(CharacterManager.Instance.hsvMaterial);
+                wholeImage.material.SetVector("_HSVAAdjust", new Vector4(_character.demonColor/360f, 0f, 0f, 0f));
                 break;
             default:
                 skin.material = null;
                 hair.material = null;
+                wholeImage.material = null;
                 break;
         }
     }
