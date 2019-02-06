@@ -113,7 +113,7 @@ public class CharmActionFaction : Interaction {
          */
         TransferCharacter(_targetCharacter, _characterInvolved.faction);
         //**Level Up**: Charmer Character +1
-        _characterInvolved.LevelUp();
+        //_characterInvolved.LevelUp();
     }
     private void NormalCharmFailRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {

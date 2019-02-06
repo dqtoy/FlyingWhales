@@ -86,7 +86,7 @@ public class DispelScroll : SpecialToken {
     #endregion
 
     private void ItemUsedEffect(TokenInteractionState state) {
-        state.tokenUser.LevelUp(); // **Level Up**: User +1 
+        //state.tokenUser.LevelUp(); // **Level Up**: User +1 
         state.tokenUser.ConsumeToken();
         Character targetCharacter = state.target as Character;
         if (targetCharacter == null) {
@@ -96,7 +96,7 @@ public class DispelScroll : SpecialToken {
         RemoveAllEnchantments(state.tokenUser, targetCharacter);
     }
     private void StopFailEffect(TokenInteractionState state) {
-        state.tokenUser.LevelUp(); // **Level Up**: User +1 
+        //state.tokenUser.LevelUp(); // **Level Up**: User +1 
         state.tokenUser.ConsumeToken();
         Character targetCharacter = state.target as Character;
         if (targetCharacter == null) {

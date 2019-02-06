@@ -104,7 +104,7 @@ public class MoveToAbduct : Interaction {
 
     #region State Effects
     private void AbductCancelledEffect(InteractionState state) {
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
     }
     private void AbductProceedsEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2);

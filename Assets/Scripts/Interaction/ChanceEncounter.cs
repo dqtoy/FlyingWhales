@@ -212,7 +212,7 @@ public class ChanceEncounter : Interaction {
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     private void InstigatedEncounterNegativeEffect(InteractionState state) {
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
         CharacterManager.Instance.ChangePersonalRelationshipBetweenTwoCharacters(_characterInvolved, _targetCharacter, -1);
 
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -220,7 +220,7 @@ public class ChanceEncounter : Interaction {
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     private void AssistedEncounterPositiveEffect(InteractionState state) {
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
         CharacterManager.Instance.ChangePersonalRelationshipBetweenTwoCharacters(_characterInvolved, _targetCharacter, 1);
 
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);

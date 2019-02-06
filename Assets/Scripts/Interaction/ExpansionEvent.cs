@@ -113,13 +113,13 @@ public class ExpansionEvent : Interaction {
         //**Mechanic**: Character Dies, Expansion cancelled
         _characterInvolved.Death();
         //**Level Up**: Instigator Minion +1
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
     }
     private void MinionInjuredCharacterRewardEffect(InteractionState state) {
         //**Mechanic**: Character Injured, Expansion cancelled
         _characterInvolved.AddTrait(AttributeManager.Instance.allTraits["Injured"]);
         //**Level Up**: Instigator Minion +1
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
 
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(null, _characterInvolved.characterClass.className, LOG_IDENTIFIER.STRING_1);
@@ -133,7 +133,7 @@ public class ExpansionEvent : Interaction {
         //Migrate Character to the new settlement
         _characterInvolved.MigrateHomeTo(interactable);
         //**Level Up**: Expanding Character +1
-        _characterInvolved.LevelUp();
+        //_characterInvolved.LevelUp();
     }
     private void CharacterInjuredMinionRewardEffect(InteractionState state) {
         //**Mechanic**: Minion Injured, Location becomes part of Character's faction and its Race will be set as Character's Race
@@ -142,7 +142,7 @@ public class ExpansionEvent : Interaction {
         //Migrate Character to the new settlement
         _characterInvolved.MigrateHomeTo(interactable);
         //**Level Up**: Expanding Character +1
-        _characterInvolved.LevelUp();
+        //_characterInvolved.LevelUp();
     }
     private void NormalExpansionRewardEffect(InteractionState state) {
         //**Mechanic**: Location becomes part of Character's faction and its Race will be set as Character's Race
@@ -150,7 +150,7 @@ public class ExpansionEvent : Interaction {
         //Migrate Character to the new settlement
         _characterInvolved.MigrateHomeTo(interactable);
         //**Level Up**: Expanding Character +1
-        _characterInvolved.LevelUp();
+        //_characterInvolved.LevelUp();
     }
     #endregion
 

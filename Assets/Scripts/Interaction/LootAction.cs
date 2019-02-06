@@ -66,7 +66,7 @@ public class LootAction : Interaction {
         _characterInvolved.MoveToRandomStructureInArea();
     }
     private void LootFoundEffect(InteractionState state) {
-        _characterInvolved.LevelUp();
+        //_characterInvolved.LevelUp();
 
         SpecialToken lootedItem = _characterInvolved.currentStructure.itemsInStructure[UnityEngine.Random.Range(0, _characterInvolved.currentStructure.itemsInStructure.Count)];
         _characterInvolved.ObtainToken(lootedItem);

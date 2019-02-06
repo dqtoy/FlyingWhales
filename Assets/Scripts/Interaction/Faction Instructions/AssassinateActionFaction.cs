@@ -103,7 +103,7 @@ public class AssassinateActionFaction : Interaction {
         //**Mechanics**: Target character dies
         targetCharacter.Death();
         //**Level Up**: Assassin Character +1
-        _characterInvolved.LevelUp();
+        //_characterInvolved.LevelUp();
     }
     private void NormalAssassinationFailRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {

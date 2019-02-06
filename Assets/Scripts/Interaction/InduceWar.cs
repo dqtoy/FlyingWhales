@@ -102,7 +102,7 @@ public class InduceWar : Interaction {
         }
 
         //**Level Up**: Instigator Minion +1
-        _characterInvolved.LevelUp();
+        //_characterInvolved.LevelUp();
 
         state.AddLogFiller(new LogFiller(sourceFaction, sourceFaction.name, LOG_IDENTIFIER.FACTION_1));
         state.AddLogFiller(new LogFiller(targetFaction, targetFaction.name, LOG_IDENTIFIER.FACTION_2));

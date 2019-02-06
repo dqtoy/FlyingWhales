@@ -32,10 +32,13 @@ public class PickItem : Interaction {
         } else {
             for (int i = 0; i < interactable.possibleSpecialTokenSpawns.Count; i++) {
                 SpecialToken token = interactable.possibleSpecialTokenSpawns[i];
-                if (token.npcAssociatedInteractionType != INTERACTION_TYPE.USE_ITEM_ON_SELF) {
-                    pickWeights.AddElement(token, 60);
-                } else if (token.CanBeUsedBy(character)) {
-                    pickWeights.AddElement(token, 100);
+                if(token.structureLocation.structureType == STRUCTURE_TYPE.WAREHOUSE || 
+                    (character.isAtHomeStructure && token.structureLocation == character.homeStructure)) {
+                    if (token.npcAssociatedInteractionType != INTERACTION_TYPE.USE_ITEM_ON_SELF) {
+                        pickWeights.AddElement(token, 60);
+                    } else if (token.CanBeUsedBy(character)) {
+                        pickWeights.AddElement(token, 100);
+                    }
                 }
             }
             if (pickWeights.Count <= 0) {

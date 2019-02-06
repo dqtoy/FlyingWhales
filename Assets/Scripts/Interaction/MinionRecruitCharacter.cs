@@ -43,7 +43,7 @@ public class MinionRecruitCharacter : Interaction {
 
     #region State Effects
     private void RecruitSuccessEffect(InteractionState state) {
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
         _characterInvolved.RecruitAsMinion();
     }
     private void RecruitFailEffect(InteractionState state) {

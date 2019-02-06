@@ -61,7 +61,7 @@ public class CharmSpell : SpecialToken {
     #endregion
 
     private void ItemUsedEffect(TokenInteractionState state) {
-        state.tokenUser.LevelUp();
+        //state.tokenUser.LevelUp();
         state.tokenUser.ConsumeToken();
 
         //**Mechanics**: Target character will transfer to character or player's faction
@@ -78,7 +78,7 @@ public class CharmSpell : SpecialToken {
         state.AddLogFiller(new LogFiller(state.tokenUser.faction, state.tokenUser.faction.name, LOG_IDENTIFIER.FACTION_1));
     }
     private void StopFailEffect(TokenInteractionState state) {
-        state.tokenUser.LevelUp();
+        //state.tokenUser.LevelUp();
         state.tokenUser.ConsumeToken();
 
         //**Mechanics**: Target character will transfer to character or player's faction

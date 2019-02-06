@@ -167,8 +167,8 @@ public class ImproveRelationsEvent : Interaction {
         AdjustFactionsRelationship(_characterInvolved.faction, targetFaction, 1, state);
         //_characterInvolved.faction.AdjustRelationshipFor(targetFaction, 1);
         //**Level Up**: Diplomat Character +1, Diplomat Minion +1 (if assisted)
-        _characterInvolved.LevelUp();
-        investigatorCharacter.LevelUp();
+        //_characterInvolved.LevelUp();
+        //investigatorCharacter.LevelUp();
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
             state.descriptionLog.AddToFillers(targetFaction, targetFaction.name, LOG_IDENTIFIER.FACTION_2);
@@ -180,7 +180,7 @@ public class ImproveRelationsEvent : Interaction {
     }
     private void DisruptedImproveRelationsFailRewardEffect(InteractionState state) {
         //**Level Up**: Diplomat Minion +1
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
             state.descriptionLog.AddToFillers(targetFaction, targetFaction.name, LOG_IDENTIFIER.FACTION_2);
@@ -193,7 +193,7 @@ public class ImproveRelationsEvent : Interaction {
         AdjustFactionsRelationship(_characterInvolved.faction, targetFaction, -1, state);
         //_characterInvolved.faction.AdjustRelationshipFor(targetFaction, -1);
         //**Level Up**: Diplomat Minion +1
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
             state.descriptionLog.AddToFillers(targetFaction, targetFaction.name, LOG_IDENTIFIER.FACTION_2);
@@ -206,8 +206,8 @@ public class ImproveRelationsEvent : Interaction {
         AdjustFactionsRelationship(_characterInvolved.faction, targetFaction, 1, state);
         //_characterInvolved.faction.AdjustRelationshipFor(targetFaction, 1);
         //**Level Up**: Diplomat Character +1, Diplomat Minion +1 (if assisted)
-        _characterInvolved.LevelUp();
-        investigatorCharacter.LevelUp();
+        //_characterInvolved.LevelUp();
+        //investigatorCharacter.LevelUp();
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
             state.descriptionLog.AddToFillers(targetFaction, targetFaction.name, LOG_IDENTIFIER.FACTION_2);
@@ -241,7 +241,7 @@ public class ImproveRelationsEvent : Interaction {
         AdjustFactionsRelationship(_characterInvolved.faction, targetFaction, 1, state);
         //_characterInvolved.faction.AdjustRelationshipFor(targetFaction, 1);
         //**Level Up**: Diplomat Character +1
-        _characterInvolved.LevelUp();
+        //_characterInvolved.LevelUp();
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
             state.descriptionLog.AddToFillers(targetFaction, targetFaction.name, LOG_IDENTIFIER.FACTION_2);

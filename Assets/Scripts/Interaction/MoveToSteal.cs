@@ -107,7 +107,7 @@ public class MoveToSteal : Interaction {
     private void CancelledRewardEffect(InteractionState state) {
         //**Mechanics**: Character will no longer leave.
         //**Level Up**: Dissuader Minion +1
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
         MinionSuccess();
     }
     private void ProceedsRewardEffect(InteractionState state) {

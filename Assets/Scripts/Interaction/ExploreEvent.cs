@@ -216,7 +216,7 @@ public class ExploreEvent : Interaction {
     }
     private void ExploreFailRewardEffect(InteractionState state) {
         if (investigatorCharacter != null) {
-            investigatorCharacter.LevelUp();
+            //investigatorCharacter.LevelUp();
         }
     }
     private void ExploreCriticalFailRewardEffect(InteractionState state) {
@@ -227,7 +227,7 @@ public class ExploreEvent : Interaction {
         //**Mechanic**: Character dies.
         _characterInvolved.Death();
         if (investigatorCharacter != null) {
-            investigatorCharacter.LevelUp();
+            //investigatorCharacter.LevelUp();
         }
     }
 

@@ -116,7 +116,7 @@ public class MoveToRaid : Interaction {
     #endregion
 
     private void RaidCancelledRewardEffect(InteractionState state) {
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
         MinionSuccess();
     }
     private void RaidProceedsRewardEffect(InteractionState state) {

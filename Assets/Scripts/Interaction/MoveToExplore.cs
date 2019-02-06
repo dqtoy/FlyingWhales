@@ -108,7 +108,7 @@ public class MoveToExplore : Interaction {
     private void CharacterExploreCancelledRewardEffect(InteractionState state) {
         //**Mechanics**: Character will no longer leave.
         //**Level Up**: Dissuader Minion +1
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
     }
     private void CharacterExploreContinuesRewardEffect(InteractionState state) {
         //**Mechanics**: Character will start its travel to selected location to start an Explore event.

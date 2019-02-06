@@ -108,7 +108,7 @@ public class SpawnNeutralCharacter : Interaction {
         state.descriptionLog.AddToFillers(null, _classNameToBeSpawned, LOG_IDENTIFIER.STRING_2);
     }
     private void SuccessCancelEffect(InteractionState state) {
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
 
         state.descriptionLog.AddToFillers(null, Utilities.NormalizeString(interactable.raceType.ToString()), LOG_IDENTIFIER.STRING_1);
         state.descriptionLog.AddToFillers(null, _classNameToBeSpawned, LOG_IDENTIFIER.STRING_2);
@@ -129,7 +129,7 @@ public class SpawnNeutralCharacter : Interaction {
         state.AddLogFiller(new LogFiller(createdCharacter, createdCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     private void SuccessRecruitEffect(InteractionState state) {
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
 
         Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(_classNameToBeSpawned, interactable.raceType, Utilities.GetRandomGender(), FactionManager.Instance.neutralFaction, interactable);
         createdCharacter.SetLevel(createdCharacter.raceSetting.neutralSpawnLevel);

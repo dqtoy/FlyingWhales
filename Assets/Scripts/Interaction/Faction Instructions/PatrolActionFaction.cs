@@ -95,7 +95,7 @@ public class PatrolActionFaction : Interaction {
     #region Reward Effects
     private void PatrolCancelled(InteractionState state) {
         //**Level Up**: Dissuader Minion +1
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
 
     }
     private void PatrolContinues(InteractionState state) {

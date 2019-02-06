@@ -43,7 +43,7 @@ public class SecretScroll : SpecialToken {
     #endregion
 
     private void ItemUsedEffect(TokenInteractionState state) {
-        state.tokenUser.LevelUp();
+        //state.tokenUser.LevelUp();
         state.tokenUser.ConsumeToken();
 
         //**Mechanics**: Faction will now be able to train the scroll's class with a weight of 20.
@@ -56,7 +56,7 @@ public class SecretScroll : SpecialToken {
         state.AddLogFiller(new LogFiller(null, grantedClass, LOG_IDENTIFIER.STRING_1));
     }
     private void StopFailEffect(TokenInteractionState state) {
-        state.tokenUser.LevelUp();
+        //state.tokenUser.LevelUp();
         state.tokenUser.ConsumeToken();
 
         //**Mechanics**: Faction will now be able to train the scroll's class with a weight of 20.

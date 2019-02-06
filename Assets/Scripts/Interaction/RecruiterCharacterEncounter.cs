@@ -96,7 +96,7 @@ public class RecruiterCharacterEncounter : Interaction {
 
     #region State Effects
     private void InduceRecruitEffect(InteractionState state) {
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
 
         MoveToRecruit moveToRecruit = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RECRUIT_ACTION, interactable) as MoveToRecruit;
         Character characterToBeRecruited = moveToRecruit.GetTargetCharacter(_characterInvolved);
@@ -110,7 +110,7 @@ public class RecruiterCharacterEncounter : Interaction {
         state.AddLogFiller(new LogFiller(targetArea, targetArea.name, LOG_IDENTIFIER.LANDMARK_2));
     }
     private void RecruitmentSuccessEffect(InteractionState state) {
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
         characterInvolved.RecruitAsMinion();
     }
     private void RecruitmentFailEffect(InteractionState state) {

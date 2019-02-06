@@ -66,7 +66,7 @@ public class BlightedPotion : SpecialToken {
         //string chosenIllnessName = AttributeManager.Instance.GetRandomIllness();
         Trait sickTrait = AttributeManager.Instance.allTraits["Sick"];
         (state.target as Character).AddTrait(sickTrait);
-        state.tokenUser.LevelUp();
+        //state.tokenUser.LevelUp();
         state.tokenUser.ConsumeToken();
 
         state.descriptionLog.AddToFillers(null, sickTrait.name, LOG_IDENTIFIER.STRING_1);
@@ -76,7 +76,7 @@ public class BlightedPotion : SpecialToken {
         //string chosenIllnessName = AttributeManager.Instance.GetRandomIllness();
         Trait sickTrait = AttributeManager.Instance.allTraits["Sick"];
         (state.target as Character).AddTrait(sickTrait);
-        state.tokenUser.LevelUp();
+        //state.tokenUser.LevelUp();
         state.tokenUser.ConsumeToken();
 
         state.descriptionLog.AddToFillers(state.interaction.investigatorCharacter, state.interaction.investigatorCharacter.name, LOG_IDENTIFIER.MINION_1);

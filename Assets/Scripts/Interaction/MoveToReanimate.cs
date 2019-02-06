@@ -107,7 +107,7 @@ public class MoveToReanimate : Interaction {
     private void UndeathCancelledRewardEffect(InteractionState state) {
         //**Mechanics**: Character will no longer leave.
         //**Level Up**: Dissuader Minion +1
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
         MinionSuccess();
         //if (state.descriptionLog != null) {
         //    state.descriptionLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1);

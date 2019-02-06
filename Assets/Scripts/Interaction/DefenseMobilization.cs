@@ -79,7 +79,7 @@ public class DefenseMobilization : Interaction {
 
     #region State Effects
     private void StopMobilizationSuccessEffect(InteractionState state) {
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
     }
     private void StopMobilizationFailEffect(InteractionState state) {
         DefenderGroup newDefenderGroup = CreateNewDefenderGroupFromIdleCharactersInArea();

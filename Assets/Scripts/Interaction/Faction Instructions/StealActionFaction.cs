@@ -113,7 +113,7 @@ public class StealActionFaction : Interaction {
     }
 
     //**Level Up**: Thief Character +1
-    _characterInvolved.LevelUp();
+    //_characterInvolved.LevelUp();
     }
     private void NormalTheftFailRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {

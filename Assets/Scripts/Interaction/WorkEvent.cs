@@ -123,7 +123,7 @@ public class WorkEvent : Interaction {
     #region Reward Effects
     private void StopWorkSuccessfulRewardEffect(InteractionState state) {
         //**Level Up**: Dissuader Minion +1
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
 
         int obtainedSupplies = interactable.monthlySupply;
         state.AddLogFiller(new LogFiller(null, obtainedSupplies.ToString(), LOG_IDENTIFIER.STRING_1));
@@ -133,7 +133,7 @@ public class WorkEvent : Interaction {
         int obtainedSupplies = interactable.monthlySupply;
         interactable.AdjustSuppliesInBank(obtainedSupplies);
         //**Level Up**: Worker Character +1
-        _characterInvolved.LevelUp();
+        //_characterInvolved.LevelUp();
         state.AddLogFiller(new LogFiller(null, obtainedSupplies.ToString(), LOG_IDENTIFIER.STRING_1));
     }
     private void StealSupplySuccessRewardEffect(InteractionState state) {
@@ -141,7 +141,7 @@ public class WorkEvent : Interaction {
         int obtainedSupplies = interactable.monthlySupply;
         PlayerManager.Instance.player.AdjustCurrency(CURRENCY.SUPPLY, obtainedSupplies);
         //**Level Up**: Instigator Minion +1
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
         //**Mechanics**: Favor Count -2
         _characterInvolved.faction.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, -2);
 
@@ -155,7 +155,7 @@ public class WorkEvent : Interaction {
         int obtainedSupplies = interactable.monthlySupply;
         interactable.AdjustSuppliesInBank(obtainedSupplies);
         //**Level Up**: Worker Character +1
-        _characterInvolved.LevelUp();
+        //_characterInvolved.LevelUp();
         //**Mechanics**: Favor Count -1
         _characterInvolved.faction.AdjustRelationshipFor(PlayerManager.Instance.player.playerFaction, -1);
 
@@ -166,7 +166,7 @@ public class WorkEvent : Interaction {
         int obtainedSupplies = interactable.monthlySupply;
         interactable.AdjustSuppliesInBank(obtainedSupplies);
         //**Level Up**: Worker Character +1
-        _characterInvolved.LevelUp();
+        //_characterInvolved.LevelUp();
 
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(null, obtainedSupplies.ToString(), LOG_IDENTIFIER.STRING_1);

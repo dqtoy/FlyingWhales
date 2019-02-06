@@ -115,7 +115,7 @@ public class MoveToSave : Interaction {
     private void SaveCancelledRewardEffect(InteractionState state) {
         //**Mechanics**: Character will no longer leave.
         //**Level Up**: Dissuader Minion +1
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
         MinionSuccess();
     }
     private void SaveProceedsRewardEffect(InteractionState state) {

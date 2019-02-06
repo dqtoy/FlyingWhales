@@ -106,7 +106,7 @@ public class MoveToRecruitFriendFaction : Interaction {
     private void CharacterRecruitCancelledRewardEffect(InteractionState state) {
         //**Mechanics**: Character will no longer leave.
         //**Level Up**: Dissuader Minion +1
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
         MinionSuccess();
     }
     private void CharacterRecruitContinuesRewardEffect(InteractionState state) {

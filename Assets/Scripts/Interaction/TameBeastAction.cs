@@ -95,7 +95,7 @@ public class TameBeastAction : Interaction {
         _characterInvolved.MoveToAnotherStructure(_targetStructure);
     }
     private void NormalTameSuccessEffect(InteractionState state) {
-        _characterInvolved.LevelUp();
+        //_characterInvolved.LevelUp();
 
         _targetBeast.ChangeFactionTo(_characterInvolved.faction);
         _targetBeast.MigrateHomeTo(_characterInvolved.homeArea);

@@ -100,7 +100,7 @@ public class UseItemOnSelf : Interaction {
         state.AddLogFiller(new LogFiller(null, _tokenToBeUsed.nameInBold, LOG_IDENTIFIER.STRING_1));
 
         //**Level Up**: Dissuader Minion +1
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
     }
     #endregion
 }

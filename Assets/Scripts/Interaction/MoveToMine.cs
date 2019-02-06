@@ -101,7 +101,7 @@ public class MoveToMine : Interaction {
 
     #region State Effects
     private void MineCancelledEffect(InteractionState state) {
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
     }
     private void MineProceedsEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2);

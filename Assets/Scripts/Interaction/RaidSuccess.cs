@@ -35,6 +35,6 @@ public class RaidSuccess : Interaction {
         if (interactable.owner != null) {
             interactable.owner.AdjustRelationshipFor(_characterInvolved.faction, -2);
         }
-        _characterInvolved.LevelUp();
+        //_characterInvolved.LevelUp();
     }
 }

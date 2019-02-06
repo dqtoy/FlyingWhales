@@ -114,7 +114,7 @@ public class MoveToScavenge : Interaction {
 
     private void ScavengeCancelledRewardEffect(InteractionState state) {
         //**Level Up**: Dissuader Minion +1
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
         MinionSuccess();
     }
     private void ScavengeProceedsRewardEffect(InteractionState state) {

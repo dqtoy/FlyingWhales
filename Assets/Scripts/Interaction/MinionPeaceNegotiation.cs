@@ -83,7 +83,7 @@ public class MinionPeaceNegotiation : Interaction {
     #region State Effects
     private void PeaceNegotiationsSuccessEffect(InteractionState state) {
         FactionManager.Instance.DeclarePeaceBetween(PlayerManager.Instance.player.playerFaction, interactable.owner);
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
 
         state.descriptionLog.AddToFillers(interactable.owner.leader, interactable.owner.leader.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 

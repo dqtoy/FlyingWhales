@@ -79,7 +79,7 @@ public class DefenseUpgrade : Interaction {
 
     #region State Effects
     private void StopDefenseUpgradeSuccessEffect(InteractionState state) {
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
     }
     private void StopDefenseUpgradeFailEffect(InteractionState state) {
         interactable.UpgradeDefendersToMatchFactionLvl();

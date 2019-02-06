@@ -96,7 +96,7 @@ public class RecruitFriendActionFaction : Interaction {
          */
         TransferCharacter(_targetCharacter, _characterInvolved.faction);
         //**Level Up**: Recruiting Character +1
-        _characterInvolved.LevelUp();
+        //_characterInvolved.LevelUp();
 
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);

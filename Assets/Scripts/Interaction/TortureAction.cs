@@ -151,7 +151,7 @@ public class TortureAction : Interaction {
 
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
     }
     private void PersuadeCharacterDiedEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -172,7 +172,7 @@ public class TortureAction : Interaction {
 
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
-        _characterInvolved.LevelUp();
+        //_characterInvolved.LevelUp();
 
         Abducted abductedTrait = _targetCharacter.GetTrait("Abducted") as Abducted;
         _targetCharacter.RemoveTrait(abductedTrait);
@@ -205,7 +205,7 @@ public class TortureAction : Interaction {
         _targetCharacter.AddTrait(AttributeManager.Instance.allTraits["Injured"]);
     }
     private void CharacterRecruitedEffect(InteractionState state) {
-        _characterInvolved.LevelUp();
+        //_characterInvolved.LevelUp();
 
         Abducted abductedTrait = _targetCharacter.GetTrait("Abducted") as Abducted;
         _targetCharacter.RemoveTrait(abductedTrait);

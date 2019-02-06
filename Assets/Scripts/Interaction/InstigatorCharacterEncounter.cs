@@ -109,13 +109,13 @@ public class InstigatorCharacterEncounter : Interaction {
 
     #region State Effects
     private void MinionKilledCharacterEffect(InteractionState state) {
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
         characterInvolved.Death();
 
         state.descriptionLog.AddToFillers(null, characterInvolved.characterClass.className, LOG_IDENTIFIER.STRING_1);
     }
     private void MinionInjuredCharacterEffect(InteractionState state) {
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
         Trait injuredTrait = AttributeManager.Instance.allTraits["Injured"];
         characterInvolved.AddTrait(injuredTrait);
 
@@ -124,7 +124,7 @@ public class InstigatorCharacterEncounter : Interaction {
         state.AddLogFiller(new LogFiller(null, injuredTrait.name, LOG_IDENTIFIER.STRING_1));
     }
     private void CharacterKilledMinionEffect(InteractionState state) {
-        characterInvolved.LevelUp();
+        //characterInvolved.LevelUp();
 
         state.descriptionLog.AddToFillers(investigatorCharacter, investigatorCharacter.name, LOG_IDENTIFIER.MINION_1);
 
@@ -133,7 +133,7 @@ public class InstigatorCharacterEncounter : Interaction {
         investigatorCharacter.Death();
     }
     private void CharacterInjuredMinionEffect(InteractionState state) {
-        characterInvolved.LevelUp();
+        //characterInvolved.LevelUp();
         Trait injuredTrait = AttributeManager.Instance.allTraits["Injured"];
         investigatorCharacter.AddTrait(injuredTrait);
 

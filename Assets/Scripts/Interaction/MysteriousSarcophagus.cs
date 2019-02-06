@@ -178,7 +178,7 @@ public class MysteriousSarcophagus : Interaction {
     }
     private void GainSuppliesEffect(InteractionState state) {
         Reward reward = InteractionManager.Instance.GetReward(InteractionManager.Supply_Cache_Reward_1);
-        _characterInvolved.LevelUp();
+        //_characterInvolved.LevelUp();
         _characterInvolved.ClaimReward(reward);
 
         state.AddLogFiller(new LogFiller(null, reward.amount.ToString(), LOG_IDENTIFIER.STRING_1));
@@ -190,7 +190,7 @@ public class MysteriousSarcophagus : Interaction {
         state.descriptionLog.AddToFillers(null, _undeadCharacter.characterClass.className, LOG_IDENTIFIER.STRING_2);
     }
     private void RecruitUndeadCharacterEffect(InteractionState state) {
-        _characterInvolved.LevelUp();
+        //_characterInvolved.LevelUp();
         SpawnUndeadCharacter();
         _undeadCharacter.RecruitAsMinion();
 
@@ -201,7 +201,7 @@ public class MysteriousSarcophagus : Interaction {
         state.AddLogFiller(new LogFiller(null, _undeadCharacter.characterClass.className, LOG_IDENTIFIER.STRING_2));
     }
     private void GainPositiveTraitEffect(InteractionState state) {
-        _characterInvolved.LevelUp();
+        //_characterInvolved.LevelUp();
         //TODO: Positive Trait Reward 1
         WeightedDictionary<string> positiveTraitsWeights = new WeightedDictionary<string>();
         positiveTraitsWeights.AddElement("Spider Slayer", 35);

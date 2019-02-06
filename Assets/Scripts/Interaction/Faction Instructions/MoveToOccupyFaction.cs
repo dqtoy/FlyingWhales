@@ -112,7 +112,7 @@ public class MoveToOccupyFaction : Interaction {
     #endregion
 
     private void ExpandCancelledRewardEffect(InteractionState state) {
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
         MinionSuccess();
     }
     private void ExpandContinuesRewardEffect(InteractionState state) {

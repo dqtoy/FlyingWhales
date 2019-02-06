@@ -37,6 +37,6 @@ public class CharacterEncountered : Interaction {
         //**Mechanics**: Unlock Character Intel
         //**Log**: [Minion Name] obtained intel about [Character Name].
         //PlayerManager.Instance.player.AddIntel(_characterInvolved.characterIntel);
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
     }
 }

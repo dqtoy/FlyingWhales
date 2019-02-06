@@ -137,7 +137,7 @@ public class FoundMagus : Interaction {
 
     #region State Effects
     private void TurnSuccessEffect(InteractionState state) {
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
 
         //Remove character from her current Faction and turn her into the Faction Leader of a new Magus faction. Current area becomes owned by Magus faction, set its race to the character's race.
         Faction oldFaction = _characterInvolved.faction;
@@ -187,7 +187,7 @@ public class FoundMagus : Interaction {
         state.AddLogFiller(new LogFiller(oldFaction, oldFaction.name, LOG_IDENTIFIER.FACTION_2));
     }
     private void AllianceSuccessEffect(InteractionState state) {
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
 
         //Remove character from her current Faction and turn her into the Faction Leader of a new Magus faction. Current area becomes owned by Magus faction, set its race to the character's race.
         _characterInvolved.FoundFaction("Magus", interactable);
@@ -216,7 +216,7 @@ public class FoundMagus : Interaction {
         interactable.SpawnRandomCharacters(4);
     }
     private void DissuadeSuccessEffect(InteractionState state) {
-        investigatorCharacter.LevelUp();
+        //investigatorCharacter.LevelUp();
     }
     private void DissuadeFailEffect(InteractionState state) {
         //Remove character from her current Faction and turn her into the Faction Leader of a new Magus faction. Current area becomes owned by Magus faction, set its race to the character's race.
