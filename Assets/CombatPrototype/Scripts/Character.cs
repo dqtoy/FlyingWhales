@@ -2833,7 +2833,15 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 
         //**I. Servants will serve their masters**
 
-        //**K. compute Do Nothing weight**
+        //**K. characters may also perform actions to empower themselves**
+        List<INTERACTION_TYPE> personalEmpowermentInteractions = RaceManager.Instance.GetNPCInteractionsOfRace(race, INTERACTION_CATEGORY.PERSONAL_EMPOWERMENT, this, targetCharacter);
+        if (personalEmpowermentInteractions.Count > 0) {
+            INTERACTION_TYPE chosenType = personalEmpowermentInteractions[UnityEngine.Random.Range(0, personalEmpowermentInteractions.Count)];
+            personalActionWeights.AddElement(chosenType, 25);
+            interactionLog += "\nPERSONAL EMPOWERMENT: " + chosenType.ToString() + " - 25";
+        }
+
+        //**M. compute Do Nothing weight**
         if (!isStarving && !isExhausted) {
             personalActionWeights.AddElement(INTERACTION_TYPE.NONE, 50);
             interactionLog += "\nDO_NOTHING - 50";
