@@ -13,6 +13,11 @@ public class TameBeastAction : Interaction {
     public override Character targetCharacter {
         get { return _targetBeast; }
     }
+    private LocationStructure _targetStructure;
+    public override LocationStructure targetStructure {
+        get { return _targetStructure; }
+    }
+
     public TameBeastAction(Area interactable): base(interactable, INTERACTION_TYPE.TAME_BEAST_ACTION, 0) {
         _name = "Tame Beast Action";
         //_categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT };
@@ -86,7 +91,8 @@ public class TameBeastAction : Interaction {
 
     #region State Effect
     private void StartStateEffect(InteractionState state) {
-        _characterInvolved.MoveToAnotherStructure(_targetBeast.currentStructure);
+        _targetStructure = _targetBeast.currentStructure;
+        _characterInvolved.MoveToAnotherStructure(_targetStructure);
     }
     private void NormalTameSuccessEffect(InteractionState state) {
         _characterInvolved.LevelUp();

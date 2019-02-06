@@ -14,6 +14,10 @@ public class AbductAction : Interaction {
     public override Character targetCharacter {
         get { return _targetCharacter; }
     }
+    private LocationStructure _targetStructure;
+    public override LocationStructure targetStructure {
+        get { return _targetStructure; }
+    }
 
     public AbductAction(Area interactable): base(interactable, INTERACTION_TYPE.ABDUCT_ACTION, 0) {
         _name = "Abduct Action";
@@ -109,7 +113,8 @@ public class AbductAction : Interaction {
 
     #region State Effect
     private void StartEffect(InteractionState state) {
-        _characterInvolved.MoveToAnotherStructure(_targetCharacter.currentStructure);
+        _targetStructure = _targetCharacter.currentStructure;
+        _characterInvolved.MoveToAnotherStructure(_targetStructure);
     }
     private void AbductionSuccessEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);

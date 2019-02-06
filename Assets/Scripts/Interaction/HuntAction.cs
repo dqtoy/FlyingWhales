@@ -14,6 +14,10 @@ public class HuntAction : Interaction {
     public override Character targetCharacter {
         get { return _targetCharacter; }
     }
+    private LocationStructure _targetStructure;
+    public override LocationStructure targetStructure {
+        get { return _targetStructure; }
+    }
 
     public HuntAction(Area interactable) : base(interactable, INTERACTION_TYPE.HUNT_ACTION, 0) {
         _name = "Hunt Action";
@@ -109,7 +113,8 @@ public class HuntAction : Interaction {
 
     #region Reward Effect
     private void StartEffect(InteractionState state) {
-        _characterInvolved.MoveToAnotherStructure(_targetCharacter.currentStructure);
+        _targetStructure = _targetCharacter.currentStructure;
+        _characterInvolved.MoveToAnotherStructure(_targetStructure);
     }
     private void HunterKilledCharacterEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);

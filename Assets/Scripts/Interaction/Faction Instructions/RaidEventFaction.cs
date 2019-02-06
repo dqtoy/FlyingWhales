@@ -9,6 +9,10 @@ public class RaidEventFaction : Interaction {
 
     private LocationStructure structure;
 
+    public override LocationStructure targetStructure {
+        get { return structure; }
+    }
+
     public RaidEventFaction(Area interactable) : base(interactable, INTERACTION_TYPE.RAID_EVENT_FACTION, 0) {
         _name = "Raid Event";
         _jobFilter = new JOB[] { JOB.INSTIGATOR, JOB.DIPLOMAT };

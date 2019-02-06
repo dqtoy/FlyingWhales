@@ -132,6 +132,9 @@ public class Interaction {
     public virtual INTERACTION_TYPE pairedInteractionType {
         get { return INTERACTION_TYPE.NONE; }
     }
+    public virtual LocationStructure targetStructure {
+        get { return null; }
+    }
     #endregion
 
     public Interaction(Area interactable, INTERACTION_TYPE type, int timeOutTicks) {

@@ -14,6 +14,10 @@ public class EatDefenseless : Interaction {
     public override Character targetCharacter {
         get { return _targetCharacter; }
     }
+    private LocationStructure _targetStructure;
+    public override LocationStructure targetStructure {
+        get { return _targetStructure; }
+    }
 
     public EatDefenseless(Area interactable): base(interactable, INTERACTION_TYPE.EAT_DEFENSELESS, 0) {
         _name = "Eat Defenseless";
@@ -99,7 +103,8 @@ public class EatDefenseless : Interaction {
 
     #region Reward Effect
     private void StartEffect(InteractionState state) {
-        _characterInvolved.MoveToAnotherStructure(_targetCharacter.currentStructure);
+        _targetStructure = _targetCharacter.currentStructure;
+        _characterInvolved.MoveToAnotherStructure(_targetStructure);
     }
     private void EatCancelledEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);

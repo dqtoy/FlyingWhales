@@ -10,6 +10,10 @@ public class PatrolActionFaction : Interaction {
 
     private LocationStructure structure;
 
+    public override LocationStructure targetStructure {
+        get { return structure; }
+    }
+
     public PatrolActionFaction(Area interactable) 
         : base(interactable, INTERACTION_TYPE.PATROL_ACTION_FACTION, 0) {
         _name = "Patrol Action";

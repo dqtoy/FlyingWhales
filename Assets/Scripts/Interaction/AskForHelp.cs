@@ -13,6 +13,10 @@ public class AskForHelp : Interaction {
     public override Character targetCharacter {
         get { return _targetCharacter; }
     }
+    private LocationStructure _targetStructure;
+    public override LocationStructure targetStructure {
+        get { return _targetStructure; }
+    }
 
     public AskForHelp(Area interactable) : base(interactable, INTERACTION_TYPE.ASK_FOR_HELP, 0) {
         _name = "Ask For Help";
@@ -86,7 +90,8 @@ public class AskForHelp : Interaction {
 
     #region State Effects
     private void StartEffect(InteractionState state) {
-        _characterInvolved.MoveToAnotherStructure(_targetCharacter.currentStructure);
+        _targetStructure = _targetCharacter.currentStructure;
+        _characterInvolved.MoveToAnotherStructure(_targetStructure);
     }
     private void AskSuccessfulEffect(InteractionState state) {
         //Add relationship save target and saver

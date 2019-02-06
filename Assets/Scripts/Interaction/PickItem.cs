@@ -7,6 +7,10 @@ public class PickItem : Interaction {
     WeightedDictionary<SpecialToken> pickWeights = new WeightedDictionary<SpecialToken>();
 
     private SpecialToken targetToken;
+    private LocationStructure _targetStructure;
+    public override LocationStructure targetStructure {
+        get { return _targetStructure; }
+    }
 
     public PickItem(Area interactable) : base(interactable, INTERACTION_TYPE.PICK_ITEM, 0) {
         _name = "Pick Item";
@@ -64,7 +68,8 @@ public class PickItem : Interaction {
     #endregion
 
     private void StartRewardEffect(InteractionState state) {
-        _characterInvolved.MoveToAnotherStructure(targetToken.structureLocation);
+        _targetStructure = targetToken.structureLocation;
+        _characterInvolved.MoveToAnotherStructure(_targetStructure);
         //SpecialToken chosenToken = pickWeights.PickRandomElementGivenWeights();
         _characterInvolved.PickUpToken(targetToken, interactable);
 

@@ -13,6 +13,10 @@ public class CharmActionFaction : Interaction {
     public override Character targetCharacter {
         get { return _targetCharacter; }
     }
+    private LocationStructure _targetStructure;
+    public override LocationStructure targetStructure {
+        get { return _targetStructure; }
+    }
 
     public CharmActionFaction(Area interactable) 
         : base(interactable, INTERACTION_TYPE.CHARM_ACTION_FACTION, 0) {
@@ -28,8 +32,8 @@ public class CharmActionFaction : Interaction {
         InteractionState normalCharmCriticalFail = new InteractionState(Normal_Charm_Critical_Fail, this);
 
         SetTargetCharacter(GetTargetCharacter(_characterInvolved));
-
-        _characterInvolved.MoveToAnotherStructure(targetCharacter.currentStructure);
+        _targetStructure = targetCharacter.currentStructure;
+        _characterInvolved.MoveToAnotherStructure(targetStructure);
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description", this);
         startStateDescriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);

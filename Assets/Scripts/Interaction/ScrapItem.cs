@@ -9,7 +9,11 @@ public class ScrapItem : Interaction {
     private const string Normal_Scrapping = "Normal Scrapping";
 
     private SpecialToken _targetItem;
+    private LocationStructure _targetStructure;
 
+    public override LocationStructure targetStructure {
+        get { return _targetStructure; }
+    }
     public ScrapItem(Area interactable): base(interactable, INTERACTION_TYPE.SCRAP_ITEM, 0) {
         _name = "Scrap Item";
     }
@@ -89,7 +93,8 @@ public class ScrapItem : Interaction {
 
     #region State Effect
     private void StartEffect(InteractionState state) {
-        _characterInvolved.MoveToAnotherStructure(_targetItem.structureLocation);
+        _targetStructure = _targetItem.structureLocation;
+        _characterInvolved.MoveToAnotherStructure(_targetStructure);
     }
     private void ScrappingCancelledEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetItem, _targetItem.name, LOG_IDENTIFIER.ITEM_1);

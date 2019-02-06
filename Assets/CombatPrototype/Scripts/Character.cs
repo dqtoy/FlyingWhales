@@ -3103,31 +3103,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 relationships[intel.actor].SetPlannedActionIntel(intel);
                 PlayerManager.Instance.player.RemoveIntel(intel);
             } else {
-                //check if the action affected the actor in a negative way, and add that to the troubles data
-                if (intel.effectsOnActor != null) {
-                    for (int i = 0; i < intel.effectsOnActor.Length; i++) {
-                        InteractionCharacterEffect effect = intel.effectsOnActor[i];
-                        if (effect.effect == INTERACTION_CHARACTER_EFFECT.TRAIT_GAIN) {
-                            for (int j = 0; j < effect.effectString.Length; j++) {
-                                string gainedTrait = effect.effectString[j];
-                                switch (gainedTrait) {
-                                    case "Charmed":
-                                    case "Abducted":
-                                    case "Unconscious":
-                                    case "Injured":
-                                    case "Cursed":
-                                        Trait trouble = intel.actor.GetTrait(gainedTrait);
-                                        relationships[intel.actor].AddTrouble(trouble);
-                                        break;
-                                    default:
-                                        break;
-                                }
-                            }
-                        }
-                    }
-                }
                 Debug.Log(GameManager.Instance.TodayLogString() + "The intel given to " + this.name + " regarding " + intel.actor.name + " has already been completed, not setting planned action...");
             }
+            relationships[intel.actor].OnIntelGivenToCharacter(intel);
         } else {
             Debug.Log(GameManager.Instance.TodayLogString() + this.name + " does not have a relationship with " + intel.actor.name + ". He/she doesn't care about any intel you give that is about " + intel.actor.name);
         }
