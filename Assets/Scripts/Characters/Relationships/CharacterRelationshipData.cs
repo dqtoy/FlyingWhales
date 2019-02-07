@@ -265,9 +265,15 @@ public class CharacterRelationshipData {
     public void OnIntelGivenToCharacter(InteractionIntel intel) {
         if (intel.isCompleted) {
             //check if the action affected the actor (meaning the target character in this script) in a negative way, and add that to the troubles data
-            if (intel.effectsOnActor != null) {
-                for (int i = 0; i < intel.effectsOnActor.Length; i++) {
-                    InteractionCharacterEffect effect = intel.effectsOnActor[i];
+            InteractionCharacterEffect[] effectsOnCharacter = null;
+            if (intel.actor.id == targetCharacter.id) {
+                effectsOnCharacter = intel.effectsOnActor;
+            } else if (intel.target is Character && (intel.target as Character).id == targetCharacter.id) {
+                effectsOnCharacter = intel.effectsOnTarget;
+            }
+            if (effectsOnCharacter != null) {
+                for (int i = 0; i < effectsOnCharacter.Length; i++) {
+                    InteractionCharacterEffect effect = effectsOnCharacter[i];
                     if (effect.effect == INTERACTION_CHARACTER_EFFECT.TRAIT_GAIN) {
                         for (int j = 0; j < effect.effectString.Length; j++) {
                             string gainedTrait = effect.effectString[j];
@@ -277,7 +283,7 @@ public class CharacterRelationshipData {
                                 case "Unconscious":
                                 case "Injured":
                                 case "Cursed":
-                                    Trait trouble = intel.actor.GetTrait(gainedTrait);
+                                    Trait trouble = targetCharacter.GetTrait(gainedTrait);
                                     AddTrouble(trouble);
                                     break;
                                 default:
@@ -287,6 +293,7 @@ public class CharacterRelationshipData {
                     }
                 }
             }
+            
             if (intel.actionLocationStructure != null) {
                 SetIsCharacterLocated(true);
                 SetKnownStructure(intel.actionLocationStructure);
