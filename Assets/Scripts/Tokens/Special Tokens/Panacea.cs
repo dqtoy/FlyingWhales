@@ -6,6 +6,14 @@ public class Panacea : SpecialToken {
 
     public Panacea() : base(SPECIAL_TOKEN.PANACEA, 100) {
         npcAssociatedInteractionType = INTERACTION_TYPE.USE_ITEM_ON_SELF;
+        interactionAttributes = new InteractionAttributes() {
+            categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.SAVE },
+            alignment = INTERACTION_ALIGNMENT.NEUTRAL,
+            actorEffect = null,
+            targetCharacterEffect = new InteractionCharacterEffect[] {
+                new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_REMOVE, effectString = "Sick" }
+            },
+        };
     }
 
     #region Overrides

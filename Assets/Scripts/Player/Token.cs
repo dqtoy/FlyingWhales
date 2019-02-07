@@ -125,6 +125,8 @@ public class SpecialToken : Token, IPointOfInterest {
     public Faction owner;
     public LocationStructure structureLocation { get; private set; }
 
+    public InteractionAttributes interactionAttributes { get; protected set; }
+
     #region getters/setters
     public override string tokenName {
         get { return name; }
