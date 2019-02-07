@@ -273,7 +273,7 @@ public class InteractionManager : MonoBehaviour {
                 }
             }
         }
-        Debug.LogWarning("No category and alignment for " + type.ToString());
+        //Debug.LogWarning("No category and alignment for " + type.ToString());
         return null;
     }
     #endregion
