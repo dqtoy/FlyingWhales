@@ -288,10 +288,24 @@ public class NewCombat : MonoBehaviour {
                 if (targetCharacter != null && !_deadCharacters.Contains(targetCharacter)) { //&& !targets.Contains(targetCharacter)
                     canBeTargeted = true;
                     break;
+                } else {
+                    if(sourceCombatCharacter.character.characterClass.combatTarget == COMBAT_TARGET.SINGLE_FRONTROW) {
+                        if(targetIndexes[i][j] == 0) {
+                            targetIndexes[i][j] = 2;
+                            j--;
+                        }else if (targetIndexes[i][j] == 1) {
+                            targetIndexes[i][j] = 3;
+                            j--;
+                        }
+                    }
                 }
             }
             if (!canBeTargeted) {
-                targetIndexes.RemoveAt(i);
+                if (sourceCombatCharacter.character.characterClass.combatTarget == COMBAT_TARGET.FRONTROW && targetIndexes[i][0] == 0) {
+                    targetIndexes[i] = new int[] { 2, 3 };
+                } else {
+                    targetIndexes.RemoveAt(i);
+                }
                 i--;
             }
         }
