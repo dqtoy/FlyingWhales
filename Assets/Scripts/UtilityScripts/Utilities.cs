@@ -483,6 +483,10 @@ public class Utilities : MonoBehaviour {
             if (item.Value == identifier) {
                 string key = item.Key;
                 key = "%" + key;
+                if (identifier.ToString().Contains("PRONOUN")) {
+                    key += "b";
+                    return key;
+                }
                 switch (identifier) {
                     case LOG_IDENTIFIER.ACTIVE_CHARACTER:
                     case LOG_IDENTIFIER.FACTION_1:
