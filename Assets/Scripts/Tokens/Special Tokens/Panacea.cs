@@ -23,26 +23,32 @@ public class Panacea : SpecialToken {
         itemUsedState.SetTokenUserAndTarget(user, target);
         stopFailState.SetTokenUserAndTarget(user, target);
 
-        if (target != null) {
-            //This means that the interaction is not from Use Item On Self, rather, it is from an interaction which a minion triggered
-            itemUsedState.SetEffect(() => ItemUsedEffectMinion(itemUsedState));
-        } else {
-            itemUsedState.SetEffect(() => ItemUsedEffectNPC(itemUsedState));
-        }
+        //if (target != null) {
+        //    //This means that the interaction is not from Use Item On Self, rather, it is from an interaction which a minion triggered
+        //    itemUsedState.SetEffect(() => ItemUsedEffectMinion(itemUsedState));
+        //} else {
+        //    itemUsedState.SetEffect(() => ItemUsedEffectNPC(itemUsedState));
+        //}
+
+        //Since only USE_ITEM_ON_CHARACTER is being used, user and target will always have value
+        itemUsedState.SetEffect(() => ItemUsedEffectNPC(itemUsedState));
         stopFailState.SetEffect(() => StopFailEffect(stopFailState));
 
         interaction.AddState(itemUsedState);
         interaction.AddState(stopFailState);
     }
     public override bool CanBeUsedBy(Character sourceCharacter) {
-        //return true;
-        return sourceCharacter.HasTraitOf(TRAIT_TYPE.ILLNESS);
+        return true;
+        //return sourceCharacter.HasTraitOf(TRAIT_TYPE.ILLNESS);
+    }
+    public override bool CanBeUsedForTarget(Character sourceCharacter, Character targetCharacter) {
+        return sourceCharacter.specificLocation.id == targetCharacter.specificLocation.id;
     }
     #endregion
 
     private void ItemUsedEffectMinion(TokenInteractionState state) {
         Character targetCharacter = state.target as Character;
-        targetCharacter.RemoveAllTraitsByType(TRAIT_TYPE.ILLNESS);
+        targetCharacter.RemoveTrait("Sick");
         state.tokenUser.ConsumeToken();
 
         Log stateDescriptionLog = new Log(GameManager.Instance.Today(), "Tokens", this.GetType().ToString(), state.name.ToLower() + "-minion" + "_description", state.interaction);
@@ -56,19 +62,36 @@ public class Panacea : SpecialToken {
         state.AddLogToInvolvedObjects(log);
     }
     private void ItemUsedEffectNPC(TokenInteractionState state) {
-        state.tokenUser.RemoveAllTraitsByType(TRAIT_TYPE.ILLNESS);
+        Character targetCharacter = state.target as Character;
+        targetCharacter.RemoveTrait("Sick");
         state.tokenUser.ConsumeToken();
 
-        Log stateDescriptionLog = new Log(GameManager.Instance.Today(), "Tokens", this.GetType().ToString(), state.name.ToLower() + "-npc" + "_description", state.interaction);
-        stateDescriptionLog.AddToFillers(state.tokenUser, state.tokenUser.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        state.OverrideDescriptionLog(stateDescriptionLog);
+        if(state.tokenUser.id == targetCharacter.id) {
+            //Used item on self
+            Log stateDescriptionLog = new Log(GameManager.Instance.Today(), "Tokens", this.GetType().ToString(), state.name.ToLower() + "-npc" + "_description", state.interaction);
+            stateDescriptionLog.AddToFillers(state.tokenUser, state.tokenUser.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            state.OverrideDescriptionLog(stateDescriptionLog);
 
-        Log log = new Log(GameManager.Instance.Today(), "Tokens", GetType().ToString(), state.name.ToLower() + "_special2");
-        log.AddToFillers(state.tokenUser, state.tokenUser.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        state.AddLogToInvolvedObjects(log);
+            Log log = new Log(GameManager.Instance.Today(), "Tokens", GetType().ToString(), state.name.ToLower() + "_special2");
+            log.AddToFillers(state.tokenUser, state.tokenUser.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            state.AddLogToInvolvedObjects(log);
+        } else {
+            //Used item on other character
+            Log stateDescriptionLog = new Log(GameManager.Instance.Today(), "Tokens", this.GetType().ToString(), state.name.ToLower() + "-othernpc" + "_description", state.interaction);
+            stateDescriptionLog.AddToFillers(state.tokenUser, state.tokenUser.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            stateDescriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            state.OverrideDescriptionLog(stateDescriptionLog);
+
+            Log log = new Log(GameManager.Instance.Today(), "Tokens", GetType().ToString(), state.name.ToLower() + "_special3");
+            log.AddToFillers(state.tokenUser, state.tokenUser.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            state.AddLogToInvolvedObjects(log);
+        }
+        
     }
     private void StopFailEffect(TokenInteractionState state) {
-        state.tokenUser.RemoveAllTraitsByType(TRAIT_TYPE.ILLNESS);
+        Character targetCharacter = state.target as Character;
+        targetCharacter.RemoveTrait("Sick");
         state.tokenUser.ConsumeToken();
 
         state.descriptionLog.AddToFillers(state.interaction.investigatorCharacter, state.interaction.investigatorCharacter.name, LOG_IDENTIFIER.MINION_1);

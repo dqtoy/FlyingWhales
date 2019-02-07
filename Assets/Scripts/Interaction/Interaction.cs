@@ -423,6 +423,9 @@ public class Interaction {
             || faction2.id == FactionManager.Instance.neutralFaction.id) {
             return;
         }
+        if(faction1.id == faction2.id) {
+            throw new Exception(faction1.name + " DON'T HAVE RELATIONSHIP WITH " + faction2.name + "! CAN'T ADJUST RELATIONSHIP FROM " + type.ToString() + "(" + interactable.name + ")");
+        }
         faction1.AdjustRelationshipFor(faction2, adjustment);
         Log factionRelationshipLog = new Log(GameManager.Instance.Today(), "Events", "Generic", "faction_relationship_changed", this);
         factionRelationshipLog.AddToFillers(new LogFiller(faction1, faction1.name, LOG_IDENTIFIER.FACTION_1));

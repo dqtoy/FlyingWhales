@@ -288,10 +288,24 @@ public class NewCombat : MonoBehaviour {
                 if (targetCharacter != null && !_deadCharacters.Contains(targetCharacter)) { //&& !targets.Contains(targetCharacter)
                     canBeTargeted = true;
                     break;
+                } else {
+                    if(sourceCombatCharacter.character.characterClass.combatTarget == COMBAT_TARGET.SINGLE_FRONTROW) {
+                        if(targetIndexes[i][j] == 0) {
+                            targetIndexes[i][j] = 2;
+                            j--;
+                        }else if (targetIndexes[i][j] == 1) {
+                            targetIndexes[i][j] = 3;
+                            j--;
+                        }
+                    }
                 }
             }
             if (!canBeTargeted) {
-                targetIndexes.RemoveAt(i);
+                if (sourceCombatCharacter.character.characterClass.combatTarget == COMBAT_TARGET.FRONTROW && targetIndexes[i][0] == 0) {
+                    targetIndexes[i] = new int[] { 2, 3 };
+                } else {
+                    targetIndexes.RemoveAt(i);
+                }
                 i--;
             }
         }
@@ -360,29 +374,32 @@ public class NewCombat : MonoBehaviour {
             //    indexes[i] = referenceGrid.rowReference[0, i]; //front row = 0
             //}
             //targets.Add(indexes);
-        } else if (combatTargetType == COMBAT_TARGET.BACKROW) {
-            targets.Add(new int[] { 2, 3 });
-            //int length = referenceGrid.rowReference.GetLength(1);
-            //int[] indexes = new int[length];
-            //for (int i = 0; i < length; i++) {
-            //    indexes[i] = referenceGrid.rowReference[1, i]; //back row = 1
-            //}
-            //targets.Add(indexes);
-        } else if (combatTargetType == COMBAT_TARGET.SINGLE_FRONTROW) {
+        } 
+        //else if (combatTargetType == COMBAT_TARGET.BACKROW) {
+        //    targets.Add(new int[] { 2, 3 });
+        //    //int length = referenceGrid.rowReference.GetLength(1);
+        //    //int[] indexes = new int[length];
+        //    //for (int i = 0; i < length; i++) {
+        //    //    indexes[i] = referenceGrid.rowReference[1, i]; //back row = 1
+        //    //}
+        //    //targets.Add(indexes);
+        //} 
+        else if (combatTargetType == COMBAT_TARGET.SINGLE_FRONTROW) {
             targets.Add(new int[] { 0 });
             targets.Add(new int[] { 1 });
             //int length = referenceGrid.rowReference.GetLength(1);
             //for (int i = 0; i < length; i++) {
             //    targets.Add(new int[] { referenceGrid.rowReference[0, i] });
             //}
-        } else if (combatTargetType == COMBAT_TARGET.SINGLE_BACKROW) {
-            targets.Add(new int[] { 2 });
-            targets.Add(new int[] { 3 });
-            //int length = referenceGrid.rowReference.GetLength(1);
-            //for (int i = 0; i < length; i++) {
-            //    targets.Add(new int[] { referenceGrid.rowReference[1, i] });
-            //}
-        }
+        } 
+        //else if (combatTargetType == COMBAT_TARGET.SINGLE_BACKROW) {
+        //    targets.Add(new int[] { 2 });
+        //    targets.Add(new int[] { 3 });
+        //    //int length = referenceGrid.rowReference.GetLength(1);
+        //    //for (int i = 0; i < length; i++) {
+        //    //    targets.Add(new int[] { referenceGrid.rowReference[1, i] });
+        //    //}
+        //}
         return targets;
     }
     private void SelectTarget(CombatCharacter combatCharacter) {

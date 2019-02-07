@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PickItem : Interaction {
 
-    WeightedDictionary<SpecialToken> pickWeights = new WeightedDictionary<SpecialToken>();
+    List<SpecialToken> items = new List<SpecialToken>();
 
     private SpecialToken targetToken;
     private LocationStructure _targetStructure;
@@ -21,7 +21,7 @@ public class PickItem : Interaction {
         InteractionState startState = new InteractionState("Start", this);
 
         startState.SetEffect(() => StartRewardEffect(startState));
-        targetToken = pickWeights.PickRandomElementGivenWeights();
+        targetToken = items[UnityEngine.Random.Range(0, items.Count)];
 
         _states.Add(startState.name, startState);
         SetCurrentState(startState);
@@ -34,14 +34,15 @@ public class PickItem : Interaction {
                 SpecialToken token = interactable.possibleSpecialTokenSpawns[i];
                 if(token.structureLocation.structureType == STRUCTURE_TYPE.WAREHOUSE || 
                     (character.isAtHomeStructure && token.structureLocation == character.homeStructure)) {
-                    if (token.npcAssociatedInteractionType != INTERACTION_TYPE.USE_ITEM_ON_SELF) {
-                        pickWeights.AddElement(token, 60);
-                    } else if (token.CanBeUsedBy(character)) {
-                        pickWeights.AddElement(token, 100);
-                    }
+                    items.Add(token);
+                    //if (token.npcAssociatedInteractionType != INTERACTION_TYPE.USE_ITEM_ON_SELF) {
+                    //    pickWeights.AddElement(token, 60);
+                    //} else if (token.CanBeUsedBy(character)) {
+                    //    pickWeights.AddElement(token, 100);
+                    //}
                 }
             }
-            if (pickWeights.Count <= 0) {
+            if (items.Count <= 0) {
                 return false;
             }
         }

@@ -169,6 +169,7 @@ public class SpecialToken : Token, IPointOfInterest {
     public virtual Character GetTargetCharacterFor(Character sourceCharacter) {
         return null;
     }
+    public virtual bool CanBeUsedForTarget(Character sourceCharacter, Character targetCharacter) { return false; }
     public virtual void OnObtainToken(Character character) { }
     public virtual void OnUnobtainToken(Character character) { }
     public virtual void OnConsumeToken(Character character) { }

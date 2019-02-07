@@ -273,13 +273,13 @@ public class InteractionManager : MonoBehaviour {
             if (interactionCategoryAndAlignment.ContainsKey(type)) {
                 return interactionCategoryAndAlignment[type];
             } else {
-                if(type == INTERACTION_TYPE.USE_ITEM_ON_CHARACTER && actor != null && actor.tokenInInventory != null) {
+                if((type == INTERACTION_TYPE.USE_ITEM_ON_CHARACTER || type == INTERACTION_TYPE.USE_ITEM_ON_SELF) && actor != null && actor.tokenInInventory != null) {
                     InteractionAttributes attributes = actor.tokenInInventory.interactionAttributes;
                     return attributes;
                 }
             }
         }
-        Debug.LogWarning("No category and alignment for " + type.ToString());
+        //Debug.LogWarning("No category and alignment for " + type.ToString());
         return null;
     }
     #endregion
@@ -1081,8 +1081,10 @@ public class InteractionManager : MonoBehaviour {
                 }
                 return false;
             case INTERACTION_TYPE.USE_ITEM_ON_CHARACTER:
+            case INTERACTION_TYPE.USE_ITEM_ON_SELF:
                 if (character.tokenInInventory != null) {
-                    return character.tokenInInventory.GetTargetCharacterFor(character) != null;
+                    //return character.tokenInInventory.GetTargetCharacterFor(character) != null;
+                    return character.tokenInInventory.CanBeUsedForTarget(character, targetCharacter);
                 }
                 return false;
             case INTERACTION_TYPE.STEAL_ACTION:
@@ -1224,14 +1226,16 @@ public class InteractionManager : MonoBehaviour {
                     }
                 }
                 return false;
+            case INTERACTION_TYPE.PICK_ITEM:
             case INTERACTION_TYPE.MOVE_TO_EXPLORE_EVENT_FACTION:
                 //**Trigger Criteria 1**: The character must not be holding an item
                 return character.tokenInInventory == null;
-            case INTERACTION_TYPE.ASK_FOR_HELP:
-                //No checker for this because it is sure that the character has is the same location as the target, if there will be a checker, must add new parameter for targetCharacter
-                return true;
             case INTERACTION_TYPE.TORTURE_ACTION_NPC:
-                return targetCharacter.GetTraitOr("Abducted", "Restrained") != null;
+                return targetCharacter.GetTraitOr("Abducted", "Restrained") != null && character.specificLocation.id == targetCharacter.specificLocation.id;
+            case INTERACTION_TYPE.CURSE_ACTION:
+            case INTERACTION_TYPE.ARGUE_ACTION:
+            case INTERACTION_TYPE.ASK_FOR_HELP:
+                return character.specificLocation.id == targetCharacter.specificLocation.id;
             case INTERACTION_TYPE.REST_AT_HOME_ACTION:
             case INTERACTION_TYPE.EAT_HOME_MEAL_ACTION:
                 //**Trigger Criteria 1**: Character is in his Home location
