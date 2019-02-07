@@ -3212,6 +3212,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         } else {
             Debug.Log(GameManager.Instance.TodayLogString() + this.name + " does not have a relationship with " + intel.actor.name + ". He/she doesn't care about any intel you give that is about " + intel.actor.name);
         }
+        if (intel.target is Character) {
+            Character target = intel.target as Character;
+            if (relationships.ContainsKey(target)) {
+                relationships[target].OnIntelGivenToCharacter(intel);
+            }
+        }
     }
     #endregion
 }

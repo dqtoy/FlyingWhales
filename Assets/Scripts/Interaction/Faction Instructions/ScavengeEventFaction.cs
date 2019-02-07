@@ -8,7 +8,7 @@ public class ScavengeEventFaction : Interaction {
     private const string No_Supply = "No Supply";
 
     private LocationStructure structure;
-    public override LocationStructure targetStructure {
+    public override LocationStructure actionStructureLocation {
         get { return structure; }
     }
 

@@ -10,7 +10,7 @@ public class PatrolActionFaction : Interaction {
 
     private LocationStructure structure;
 
-    public override LocationStructure targetStructure {
+    public override LocationStructure actionStructureLocation {
         get { return structure; }
     }
 

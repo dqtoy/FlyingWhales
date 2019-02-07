@@ -287,9 +287,9 @@ public class CharacterRelationshipData {
                     }
                 }
             }
-            if (intel.connectedInteraction.targetStructure != null) {
+            if (intel.actionLocationStructure != null) {
                 SetIsCharacterLocated(true);
-                SetKnownStructure(intel.connectedInteraction.targetStructure);
+                SetKnownStructure(intel.actionLocationStructure);
             }
         }
         

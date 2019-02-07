@@ -84,6 +84,14 @@ public class InteractionIntel {
             return connectedInteraction.interactable;
         }
     }
+    public LocationStructure actionLocationStructure {
+        get {
+            if (connectedInteraction.name.Contains("Move To")) {
+                return null; //because move to usually doesn't know what target location
+            }
+            return connectedInteraction.actionStructureLocation;
+        }
+    }
 
     public Log obtainedFromLog { get; private set; }
 
@@ -115,6 +123,7 @@ public class InteractionIntel {
         text += "\n<b>isCompleted?:</b> " + isCompleted.ToString();
         text += "\n<b>Action Deadline:</b> " + actionDeadline.ToString();
         text += "\n<b>Action Location:</b> " + actionLocation.name;
+        text += "\n<b>Action Structure Location:</b> " + actionLocationStructure?.ToString() ?? "None";
         text += "\n<b>Effects on Actor:</b> ";
         if (effectsOnActor != null) {
             for (int i = 0; i < effectsOnActor.Length; i++) {

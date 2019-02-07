@@ -14,7 +14,7 @@ public class TameBeastAction : Interaction {
         get { return _targetBeast; }
     }
     private LocationStructure _targetStructure;
-    public override LocationStructure targetStructure {
+    public override LocationStructure actionStructureLocation {
         get { return _targetStructure; }
     }
 

@@ -14,7 +14,7 @@ public class AskForHelp : Interaction {
         get { return _targetCharacter; }
     }
     private LocationStructure _targetStructure;
-    public override LocationStructure targetStructure {
+    public override LocationStructure actionStructureLocation {
         get { return _targetStructure; }
     }
 

@@ -15,7 +15,7 @@ public class AbductAction : Interaction {
         get { return _targetCharacter; }
     }
     private LocationStructure _targetStructure;
-    public override LocationStructure targetStructure {
+    public override LocationStructure actionStructureLocation {
         get { return _targetStructure; }
     }
 
