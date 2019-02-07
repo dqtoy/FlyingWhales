@@ -313,12 +313,12 @@ public class NewCombat : MonoBehaviour {
             int chosenIndex = UnityEngine.Random.Range(0, targetIndexes.Count);
             for (int j = 0; j < targetIndexes[chosenIndex].Length; j++) {
                 Character targetCharacter = gridToBeChecked.slots[targetIndexes[chosenIndex][j]].character;
-                //if (targetCharacter != null && !_deadCharacters.Contains(targetCharacter)) {
-                CombatCharacter targetCombatCharacter = targetCharacter.currentCombatCharacter;
-                if (!targets.Contains(targetCombatCharacter)) {
-                    targets.Add(targetCombatCharacter);
+                if (targetCharacter != null && !_deadCharacters.Contains(targetCharacter)) {
+                    CombatCharacter targetCombatCharacter = targetCharacter.currentCombatCharacter;
+                    if (!targets.Contains(targetCombatCharacter)) {
+                        targets.Add(targetCombatCharacter);
+                    }
                 }
-                //}
             }
         }
         return targets;
