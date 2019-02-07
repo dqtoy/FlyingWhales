@@ -20,7 +20,7 @@ public class TortureActionNPC : Interaction {
     public override Character targetCharacter {
         get { return _targetCharacter; }
     }
-    public override LocationStructure targetStructure {
+    public override LocationStructure actionStructureLocation {
         get { return _targetStructure; }
     }
 

@@ -11,7 +11,7 @@ public class ScrapItem : Interaction {
     private SpecialToken _targetItem;
     private LocationStructure _targetStructure;
 
-    public override LocationStructure targetStructure {
+    public override LocationStructure actionStructureLocation {
         get { return _targetStructure; }
     }
     public ScrapItem(Area interactable): base(interactable, INTERACTION_TYPE.SCRAP_ITEM, 0) {

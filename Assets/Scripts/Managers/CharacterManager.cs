@@ -689,8 +689,10 @@ public class CharacterManager : MonoBehaviour {
         RELATIONSHIP_TRAIT pair = GetPairedRelationship(rel);
         if (currCharacter.CanHaveRelationshipWith(rel, targetCharacter) 
             && targetCharacter.CanHaveRelationshipWith(pair, currCharacter)) {
+
             currCharacter.AddTrait(CreateRelationshipTrait(rel, targetCharacter));
             targetCharacter.AddTrait(CreateRelationshipTrait(pair, currCharacter));
+            
         } else {
             Debug.LogWarning(currCharacter.name + " and " + targetCharacter.name + " cannot have relationship " + rel.ToString() + " - " + pair.ToString());
         }

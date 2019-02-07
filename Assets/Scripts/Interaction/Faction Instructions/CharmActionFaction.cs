@@ -14,7 +14,7 @@ public class CharmActionFaction : Interaction {
         get { return _targetCharacter; }
     }
     private LocationStructure _targetStructure;
-    public override LocationStructure targetStructure {
+    public override LocationStructure actionStructureLocation {
         get { return _targetStructure; }
     }
 
@@ -33,7 +33,7 @@ public class CharmActionFaction : Interaction {
 
         SetTargetCharacter(GetTargetCharacter(_characterInvolved));
         _targetStructure = targetCharacter.currentStructure;
-        _characterInvolved.MoveToAnotherStructure(targetStructure);
+        _characterInvolved.MoveToAnotherStructure(actionStructureLocation);
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description", this);
         startStateDescriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);

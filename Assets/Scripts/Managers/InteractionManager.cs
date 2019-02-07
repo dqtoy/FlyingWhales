@@ -50,7 +50,7 @@ public class InteractionManager : MonoBehaviour {
                 alignment = INTERACTION_ALIGNMENT.NEUTRAL,
                 actorEffect = null,
                 targetCharacterEffect = new InteractionCharacterEffect[]{
-                    new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_GAIN, effectString = "Cursed" },
+                    new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_GAIN, effectString = "Charmed" },
                     new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.CHANGE_FACTION, effectString = "Actor" },
                 },
             } },

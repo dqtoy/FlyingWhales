@@ -35,6 +35,7 @@ public class Interaction {
     protected object[] otherData;
     protected InteractionIntel _intel;
     private string interactionDebugLog;
+    protected LocationStructure _actionStructureLocation;
 
     public int dayStarted { get; protected set; }
     public int dayCompleted { get; protected set; }
@@ -132,8 +133,8 @@ public class Interaction {
     public virtual INTERACTION_TYPE pairedInteractionType {
         get { return INTERACTION_TYPE.NONE; }
     }
-    public virtual LocationStructure targetStructure {
-        get { return null; }
+    public virtual LocationStructure actionStructureLocation {
+        get { return _actionStructureLocation; }
     }
     #endregion
 
@@ -165,6 +166,7 @@ public class Interaction {
         //SetCharacterInvolved(characterInvolved);
         dayStarted = GameManager.Instance.continuousDays;
         CreateStates();
+        _actionStructureLocation = _characterInvolved.currentStructure;
         //SetExplorerMinion(explorerMinion);
         //ScheduleFirstTimeOut();
         Messenger.Broadcast(Signals.INTERACTION_INITIALIZED, this);
