@@ -1222,11 +1222,11 @@ public enum COMBAT_TARGET {
     SINGLE,
     ALL,
     FRONTROW,
-    BACKROW,
+    BACKROW, //N/A
     ROW,
     COLUMN,
     SINGLE_FRONTROW,
-    SINGLE_BACKROW,
+    SINGLE_BACKROW, //N/A
 }
 public enum COMBAT_OCCUPIED_TILE {
     SINGLE,
