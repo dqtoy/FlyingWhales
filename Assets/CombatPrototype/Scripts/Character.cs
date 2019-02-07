@@ -2697,14 +2697,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         interactionLog += "\n------------------ WEIGHTS ----------------";
         //**B. If the character is Hungry or Starving, Fullness Recovery-type weight is increased**
         if (isHungry) {
-            List<INTERACTION_TYPE> fullnessRecoveryInteractions = RaceManager.Instance.GetNPCInteractionsOfRace(race, INTERACTION_CATEGORY.FULLNESS_RECOVERY, this, targetCharacter);
+            List<INTERACTION_TYPE> fullnessRecoveryInteractions = RaceManager.Instance.GetNPCInteractionsOfRace(this, INTERACTION_CATEGORY.FULLNESS_RECOVERY, targetCharacter);
             if(fullnessRecoveryInteractions.Count > 0) {
                 INTERACTION_TYPE chosenType = fullnessRecoveryInteractions[UnityEngine.Random.Range(0, fullnessRecoveryInteractions.Count)];
                 personalActionWeights.AddElement(chosenType, 50);
                 interactionLog += "\nFULLNESS RECOVERY: " + chosenType.ToString() + " - 50";
             }
         } else if (isStarving) {
-            List<INTERACTION_TYPE> fullnessRecoveryInteractions = RaceManager.Instance.GetNPCInteractionsOfRace(race, INTERACTION_CATEGORY.FULLNESS_RECOVERY, this, targetCharacter);
+            List<INTERACTION_TYPE> fullnessRecoveryInteractions = RaceManager.Instance.GetNPCInteractionsOfRace(this, INTERACTION_CATEGORY.FULLNESS_RECOVERY, targetCharacter);
             if (fullnessRecoveryInteractions.Count > 0) {
                 INTERACTION_TYPE chosenType = fullnessRecoveryInteractions[UnityEngine.Random.Range(0, fullnessRecoveryInteractions.Count)];
                 personalActionWeights.AddElement(chosenType, 100);
@@ -2714,14 +2714,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 
         //**C.If the character is Tired or Exhausted, Tiredness Recovery-type weight is increased**
         if (isTired) {
-            List<INTERACTION_TYPE> tirednessRecoveryInteractions = RaceManager.Instance.GetNPCInteractionsOfRace(race, INTERACTION_CATEGORY.TIREDNESS_RECOVERY, this, targetCharacter);
+            List<INTERACTION_TYPE> tirednessRecoveryInteractions = RaceManager.Instance.GetNPCInteractionsOfRace(this, INTERACTION_CATEGORY.TIREDNESS_RECOVERY, targetCharacter);
             if (tirednessRecoveryInteractions.Count > 0) {
                 INTERACTION_TYPE chosenType = tirednessRecoveryInteractions[UnityEngine.Random.Range(0, tirednessRecoveryInteractions.Count)];
                 personalActionWeights.AddElement(chosenType, 50);
                 interactionLog += "\nTIREDNESS RECOVERY: " + chosenType.ToString() + " - 50";
             }
         } else if (isExhausted) {
-            List<INTERACTION_TYPE> tirednessRecoveryInteractions = RaceManager.Instance.GetNPCInteractionsOfRace(race, INTERACTION_CATEGORY.TIREDNESS_RECOVERY, this, targetCharacter);
+            List<INTERACTION_TYPE> tirednessRecoveryInteractions = RaceManager.Instance.GetNPCInteractionsOfRace(this, INTERACTION_CATEGORY.TIREDNESS_RECOVERY, targetCharacter);
             if (tirednessRecoveryInteractions.Count > 0) {
                 INTERACTION_TYPE chosenType = tirednessRecoveryInteractions[UnityEngine.Random.Range(0, tirednessRecoveryInteractions.Count)];
                 personalActionWeights.AddElement(chosenType, 100);
@@ -2735,20 +2735,22 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             interactionLog += "\n\n----CHARACTER NPC ACTION TYPES----";
             interactionLog += "\nPOSSIBLE TARGETS:\n";
             foreach (KeyValuePair<Character, CharacterRelationshipData> kvp in relationships) {
-                interactionLog += kvp.Value.targetCharacter.name + "(";
-                int weight = kvp.Value.GetTotalRelationshipWeight();
-                interactionLog += "weight: " + weight;
-                if (kvp.Value.isCharacterMissing && !kvp.Value.HasRelationshipTrait(RELATIONSHIP_TRAIT.ENEMY)) {
-                    weight += 25;
-                    interactionLog += "+25";
-                }
-                if(kvp.Value.encounterMultiplier > 0f) {
-                    weight = (int)(weight * kvp.Value.encounterMultiplier);
-                    interactionLog += "x"+ kvp.Value.encounterMultiplier.ToString();
-                }
-                interactionLog += "=" + weight + "), ";
-                if (weight > 0) {
-                    characterWeights.AddElement(kvp.Value, weight);
+                if(specificLocation == kvp.Key.specificLocation) {
+                    interactionLog += kvp.Value.targetCharacter.name + "(";
+                    int weight = kvp.Value.GetTotalRelationshipWeight();
+                    interactionLog += "weight: " + weight;
+                    if (kvp.Value.isCharacterMissing && !kvp.Value.HasRelationshipTrait(RELATIONSHIP_TRAIT.ENEMY)) {
+                        weight += 25;
+                        interactionLog += "+25";
+                    }
+                    if (kvp.Value.encounterMultiplier > 0f) {
+                        weight = (int) (weight * kvp.Value.encounterMultiplier);
+                        interactionLog += "x" + kvp.Value.encounterMultiplier.ToString();
+                    }
+                    interactionLog += "=" + weight + "), ";
+                    if (weight > 0) {
+                        characterWeights.AddElement(kvp.Value, weight);
+                    }
                 }
             }
             if(characterWeights.GetTotalOfWeights() > 0) {
@@ -2847,7 +2849,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //**I. Servants will serve their masters**
 
         //**K. characters may also perform actions to empower themselves**
-        List<INTERACTION_TYPE> personalEmpowermentInteractions = RaceManager.Instance.GetNPCInteractionsOfRace(race, INTERACTION_CATEGORY.PERSONAL_EMPOWERMENT, this, targetCharacter);
+        List<INTERACTION_TYPE> personalEmpowermentInteractions = RaceManager.Instance.GetNPCInteractionsOfRace(this, INTERACTION_CATEGORY.PERSONAL_EMPOWERMENT, targetCharacter);
         if (personalEmpowermentInteractions.Count > 0) {
             INTERACTION_TYPE chosenType = personalEmpowermentInteractions[UnityEngine.Random.Range(0, personalEmpowermentInteractions.Count)];
             personalActionWeights.AddElement(chosenType, 25);
@@ -2856,10 +2858,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 
         //**L.characters may also perform actions to save themselves**
         if (allNegativeTraitNames.Count > 0) {
-            List<INTERACTION_TYPE> allSaveSelfInteractions = RaceManager.Instance.GetNPCInteractionsOfRaceActor(race,
-                new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_REMOVE, effectString = allNegativeTraitNames.ToArray() },
-                this);
-
+            List<INTERACTION_TYPE> allSaveSelfInteractions = RaceManager.Instance.GetNPCInteractionsOfRace(this, INTERACTION_CHARACTER_EFFECT.TRAIT_REMOVE, allNegativeTraitNames.ToArray(), false);
             if (allSaveSelfInteractions.Count > 0) {
                 INTERACTION_TYPE chosenType = allSaveSelfInteractions[UnityEngine.Random.Range(0, allSaveSelfInteractions.Count)];
                 personalActionWeights.AddElement(chosenType, 100);
@@ -2932,9 +2931,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             //TODO: Save
             if(relationshipData.trouble != null && relationshipData.trouble.Count > 0) {
                 string[] allTroubleNames = relationshipData.trouble.Select(x => x.name).ToArray();
-                List<INTERACTION_TYPE> allSaveInteractionsThatCanBeDone = RaceManager.Instance.GetNPCInteractionsOfRaceTarget(race, INTERACTION_CATEGORY.SAVE
-                         , new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_REMOVE, effectString = allTroubleNames }, this, targetCharacter);
-
+                List<INTERACTION_TYPE> allSaveInteractionsThatCanBeDone = RaceManager.Instance.GetNPCInteractionsOfRace(this, INTERACTION_CATEGORY.SAVE, 
+                    INTERACTION_CHARACTER_EFFECT.TRAIT_REMOVE, allTroubleNames, true, targetCharacter);
                 if (allSaveInteractionsThatCanBeDone != null && allSaveInteractionsThatCanBeDone.Count > 0) {
                     weight += 300;
                     interactionLog += "\nCAN DO SAVE ACTION, EXITING CHARACTER NPC ACTION TYPES";
@@ -2947,8 +2945,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                             if(!HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_EFFECT.NEUTRAL, TRAIT_TYPE.DISABLER) && GetRelationshipTraitWith(characterAtLocation, RELATIONSHIP_TRAIT.ENEMY) == null) {
                                 FactionRelationship factionRel = faction.GetRelationshipWith(characterAtLocation.faction);
                                 if(factionRel != null && factionRel.relationshipStatus != FACTION_RELATIONSHIP_STATUS.ENEMY && factionRel.relationshipStatus != FACTION_RELATIONSHIP_STATUS.AT_WAR) {
-                                    allSaveInteractionsThatCanBeDone = RaceManager.Instance.GetNPCInteractionsOfRaceTarget(characterAtLocation.race, INTERACTION_CATEGORY.SAVE
-                                        , new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_REMOVE, effectString = allTroubleNames }, characterAtLocation, targetCharacter);
+                                    allSaveInteractionsThatCanBeDone = RaceManager.Instance.GetNPCInteractionsOfRace(characterAtLocation, INTERACTION_CATEGORY.SAVE,
+                                        INTERACTION_CHARACTER_EFFECT.TRAIT_REMOVE, allTroubleNames, true, targetCharacter);
                                     if (allSaveInteractionsThatCanBeDone != null && allSaveInteractionsThatCanBeDone.Count > 0) {
                                         characterChoices.Add(characterAtLocation);
                                     }
@@ -2989,7 +2987,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         INTERACTION_TYPE chosenType = INTERACTION_TYPE.NONE;
         while(chosenType == INTERACTION_TYPE.NONE && npcActionWeights.Count > 0) {
             INTERACTION_CATEGORY category = npcActionWeights.PickRandomElementGivenWeights();
-            List<INTERACTION_TYPE> allInteractionsThatCanBeDone = RaceManager.Instance.GetNPCInteractionsOfRace(race, category, this, targetCharacter);
+            List<INTERACTION_TYPE> allInteractionsThatCanBeDone = RaceManager.Instance.GetNPCInteractionsOfRace(this, category, targetCharacter);
             if(allInteractionsThatCanBeDone.Count > 0) {
                 interactionLog += "\nCHOSEN CATEGORY: " + category.ToString();
                 chosenType = allInteractionsThatCanBeDone[UnityEngine.Random.Range(0, allInteractionsThatCanBeDone.Count)];

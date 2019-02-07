@@ -269,20 +269,18 @@ public class CharacterRelationshipData {
                 for (int i = 0; i < intel.effectsOnActor.Length; i++) {
                     InteractionCharacterEffect effect = intel.effectsOnActor[i];
                     if (effect.effect == INTERACTION_CHARACTER_EFFECT.TRAIT_GAIN) {
-                        for (int j = 0; j < effect.effectString.Length; j++) {
-                            string gainedTrait = effect.effectString[j];
-                            switch (gainedTrait) {
-                                case "Charmed":
-                                case "Abducted":
-                                case "Unconscious":
-                                case "Injured":
-                                case "Cursed":
-                                    Trait trouble = intel.actor.GetTrait(gainedTrait);
-                                    AddTrouble(trouble);
-                                    break;
-                                default:
-                                    break;
-                            }
+                        string gainedTrait = effect.effectString;
+                        switch (gainedTrait) {
+                            case "Charmed":
+                            case "Abducted":
+                            case "Unconscious":
+                            case "Injured":
+                            case "Cursed":
+                                Trait trouble = intel.actor.GetTrait(gainedTrait);
+                                AddTrouble(trouble);
+                                break;
+                            default:
+                                break;
                         }
                     }
                 }

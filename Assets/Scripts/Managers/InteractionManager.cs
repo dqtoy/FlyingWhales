@@ -50,8 +50,8 @@ public class InteractionManager : MonoBehaviour {
                 alignment = INTERACTION_ALIGNMENT.NEUTRAL,
                 actorEffect = null,
                 targetCharacterEffect = new InteractionCharacterEffect[]{
-                    new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_GAIN, effectString = new string[] { "Cursed" } },
-                    new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.CHANGE_FACTION, effectString = new string[] { "Actor" } },
+                    new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_GAIN, effectString = "Cursed" },
+                    new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.CHANGE_FACTION, effectString = "Actor" },
                 },
             } },
             { INTERACTION_TYPE.EXPLORE_EVENT_FACTION, new InteractionAttributes(){
@@ -65,8 +65,8 @@ public class InteractionManager : MonoBehaviour {
                 alignment = INTERACTION_ALIGNMENT.EVIL,
                 actorEffect = null,
                 targetCharacterEffect = new InteractionCharacterEffect[]{
-                    new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_GAIN, effectString = new string[] { "Injured" } },
-                    new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.CHANGE_FACTION, effectString = new string[] { "Actor" } },
+                    new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_GAIN, effectString = "Injured" },
+                    new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.CHANGE_FACTION, effectString = "Actor" },
                 },
             } },
             { INTERACTION_TYPE.LOOT_ACTION, new InteractionAttributes(){
@@ -79,7 +79,7 @@ public class InteractionManager : MonoBehaviour {
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT },
                 alignment = INTERACTION_ALIGNMENT.NEUTRAL,
                 actorEffect = null,
-                targetCharacterEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.CHANGE_FACTION, effectString = new string[] { "Actor" } } },
+                targetCharacterEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.CHANGE_FACTION, effectString = "Actor" } },
             } },
             { INTERACTION_TYPE.CRAFT_ITEM, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.INVENTORY },
@@ -103,7 +103,7 @@ public class InteractionManager : MonoBehaviour {
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT },
                 alignment = INTERACTION_ALIGNMENT.GOOD,
                 actorEffect = null,
-                targetCharacterEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.CHANGE_FACTION, effectString = new string[] { "Actor" } } },
+                targetCharacterEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.CHANGE_FACTION, effectString = "Actor" } },
             } },
             { INTERACTION_TYPE.ASSASSINATE_ACTION_FACTION, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.SUBTERFUGE },
@@ -115,8 +115,8 @@ public class InteractionManager : MonoBehaviour {
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT },
                 alignment = INTERACTION_ALIGNMENT.EVIL,
                 targetCharacterEffect = new InteractionCharacterEffect[]{
-                    new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_GAIN, effectString = new string[] { "Reanimated" } },
-                    new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.CHANGE_FACTION, effectString = new string[] { "Actor" } },
+                    new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_GAIN, effectString = "Reanimated" },
+                    new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.CHANGE_FACTION, effectString = "Actor" },
                 },
             } },
             { INTERACTION_TYPE.SCAVENGE_EVENT_FACTION, new InteractionAttributes(){
@@ -152,7 +152,7 @@ public class InteractionManager : MonoBehaviour {
             { INTERACTION_TYPE.PATROL_ACTION_FACTION, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.DEFENSE },
                 alignment = INTERACTION_ALIGNMENT.NEUTRAL,
-                actorEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_GAIN, effectString = new string[] { "Patrolling" } } },
+                actorEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_GAIN, effectString = "Patrolling" } },
                 targetCharacterEffect = null,
             } },
             { INTERACTION_TYPE.CONSUME_LIFE, new InteractionAttributes(){
@@ -189,19 +189,19 @@ public class InteractionManager : MonoBehaviour {
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT, INTERACTION_CATEGORY.SUBTERFUGE },
                 alignment = INTERACTION_ALIGNMENT.EVIL,
                 actorEffect = null,
-                targetCharacterEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_GAIN, effectString = new string[] { "Abducted" } } },
+                targetCharacterEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_GAIN, effectString = "Abducted" } },
             } },
             { INTERACTION_TYPE.ARGUE_ACTION, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.PERSONAL, INTERACTION_CATEGORY.SOCIAL },
                 alignment = INTERACTION_ALIGNMENT.NEUTRAL,
-                actorEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_GAIN, effectString = new string[] { "Annoyed" } } },
-                targetCharacterEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_GAIN, effectString = new string[] { "Annoyed" } } },
+                actorEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_GAIN, effectString = "Annoyed" } },
+                targetCharacterEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_GAIN, effectString = "Annoyed" } },
             } },
             { INTERACTION_TYPE.CURSE_ACTION, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.SUBTERFUGE },
                 alignment = INTERACTION_ALIGNMENT.EVIL,
                 actorEffect = null,
-                targetCharacterEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_GAIN, effectString = new string[] { "Cursed" } } },
+                targetCharacterEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_GAIN, effectString = "Cursed" } },
             } },
             { INTERACTION_TYPE.HUNT_ACTION, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.FULLNESS_RECOVERY },
@@ -237,11 +237,11 @@ public class InteractionManager : MonoBehaviour {
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.OFFENSE },
                 alignment = INTERACTION_ALIGNMENT.EVIL,
                 actorEffect = null,
-                targetCharacterEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_GAIN, effectString = new string[] { "Injured" } } },
+                targetCharacterEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_GAIN, effectString = "Injured" } },
             } },
         };
     }
-    public InteractionAttributes GetCategoryAndAlignment (INTERACTION_TYPE type) {
+    public InteractionAttributes GetCategoryAndAlignment (INTERACTION_TYPE type, Character actor) {
         string typeString = type.ToString();
         if (typeString.Contains("MOVE_TO") && !interactionCategoryAndAlignment.ContainsKey(type)) {
             string actualInteractionString = typeString.Remove(0, 8);
@@ -254,10 +254,15 @@ public class InteractionManager : MonoBehaviour {
         } else {
             if (interactionCategoryAndAlignment.ContainsKey(type)) {
                 return interactionCategoryAndAlignment[type];
+            } else {
+                if(type == INTERACTION_TYPE.USE_ITEM_ON_CHARACTER && actor != null && actor.tokenInInventory != null) {
+                    InteractionAttributes attributes = actor.tokenInInventory.interactionAttributes;
+                    return attributes;
+                }
             }
         }
-        throw new System.Exception("No category and alignment for " + type.ToString());
-        //return null;
+        Debug.LogWarning("No category and alignment for " + type.ToString());
+        return null;
     }
     #endregion
 
@@ -1577,7 +1582,7 @@ public struct CharacterInteractionWeight {
     public int weight;
 }
 
-public struct InteractionAttributes {
+public class InteractionAttributes {
     public INTERACTION_CATEGORY[] categories;
     public INTERACTION_ALIGNMENT alignment;
     public InteractionCharacterEffect[] actorEffect;
@@ -1585,5 +1590,5 @@ public struct InteractionAttributes {
 }
 public struct InteractionCharacterEffect {
     public INTERACTION_CHARACTER_EFFECT effect;
-    public string[] effectString;
+    public string effectString;
 }
