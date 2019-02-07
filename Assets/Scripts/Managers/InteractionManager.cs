@@ -251,6 +251,12 @@ public class InteractionManager : MonoBehaviour {
                 actorEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.FULLNESS_RECOVERY } },
                 targetCharacterEffect = null,
             } },
+            { INTERACTION_TYPE.POISON_HOUSE_FOOD, new InteractionAttributes(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.SUBTERFUGE },
+                alignment = INTERACTION_ALIGNMENT.EVIL,
+                actorEffect = null,
+                targetCharacterEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.DEATH } },
+            } },
         };
     }
     public InteractionAttributes GetCategoryAndAlignment (INTERACTION_TYPE type, Character actor) {
@@ -694,6 +700,9 @@ public class InteractionManager : MonoBehaviour {
                 break;
             case INTERACTION_TYPE.EAT_HOME_MEAL_ACTION:
                 createdInteraction = new EatHomeMealAction(interactable);
+                break;
+            case INTERACTION_TYPE.POISON_HOUSE_FOOD:
+                createdInteraction = new PoisonHouseFood(interactable);
                 break;
         }
         return createdInteraction;
@@ -1227,6 +1236,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.EAT_HOME_MEAL_ACTION:
                 //**Trigger Criteria 1**: Character is in his Home location
                 return character.specificLocation.id == character.homeArea.id;
+            case INTERACTION_TYPE.POISON_HOUSE_FOOD:
+                //**Trigger Criteria 1**: target's home Dwelling is in the current location
+                return character.specificLocation.id == targetCharacter.homeArea.id;
             default:
                 return true;
         }

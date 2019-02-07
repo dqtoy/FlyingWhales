@@ -92,22 +92,35 @@ public class EatHomeMealAction : Interaction {
                 nextState = Eat_Cancelled;
                 break;
             case RESULT.FAIL:
-                //TODO: structure does not have poisoned food
-                //TODO: structure has poisoned food
-                nextState = Clean_Eat_Continues;
+                if (_actionStructureLocation.GetTrait("Poisoned Food") == null) {
+                    nextState = Clean_Eat_Continues;
+                } else {
+                    WeightedDictionary<string> result = new WeightedDictionary<string>();
+                    result.AddElement(Eat_Continues_Killed, 30);
+                    result.AddElement(Eat_Continues_Sick, 20);
+                    nextState = result.PickRandomElementGivenWeights();
+                }
                 break;
         }
         SetCurrentState(_states[nextState]);
     }
     private void DoNothingOptionEffect(InteractionState state) {
-        //TODO: structure does not have poisoned food
-        //TODO: structure has poisoned food
-        SetCurrentState(_states[Character_Clean_Eats]);
+        string nextState = string.Empty;
+        if (_actionStructureLocation.GetTrait("Poisoned Food") == null) {
+            nextState = Character_Clean_Eats;
+        } else {
+            WeightedDictionary<string> result = new WeightedDictionary<string>();
+            result.AddElement(Character_Eats_Killed, 30);
+            result.AddElement(Character_Eats_Sick, 20);
+            nextState = result.PickRandomElementGivenWeights();
+        }
+        SetCurrentState(_states[nextState]);
     }
     #endregion
 
     #region Reward Effect
     private void StartRewardEffect(InteractionState state) {
+
         _characterInvolved.MoveToAnotherStructure(_characterInvolved.homeStructure);
     }
     private void EatCancelledRewardEffect(InteractionState state) {
@@ -120,10 +133,12 @@ public class EatHomeMealAction : Interaction {
     private void EatContinuesKilledRewardEffect(InteractionState state) {
         //**Mechanics**: Character dies. Remove https://trello.com/c/waFphC2I/1180-poisoned-food trait from the structure
         _characterInvolved.Death();
-        //TODO: Remove Poisoned Food
+        _actionStructureLocation.RemoveTrait("Poisoned Food");
     }
     private void EatContinuesSickRewardEffect(InteractionState state) {
-        //TODO: **Mechanics**: Character gains https://trello.com/c/SVR4fnx1/1177-sick trait. Remove https://trello.com/c/waFphC2I/1180-poisoned-food trait from the structure
+        //**Mechanics**: Character gains https://trello.com/c/SVR4fnx1/1177-sick trait. Remove https://trello.com/c/waFphC2I/1180-poisoned-food trait from the structure
+        _characterInvolved.AddTrait("Sick");
+        _actionStructureLocation.RemoveTrait("Poisoned Food");
     }
     private void CharacterCleanEatsRewardEffect(InteractionState state) {
         //**Mechanics**: Fully replenish character's Fullness meter.
@@ -132,11 +147,13 @@ public class EatHomeMealAction : Interaction {
     private void CharacterEatsKilledRewardEffect(InteractionState state) {
         //**Mechanics**: Character dies. Remove https://trello.com/c/waFphC2I/1180-poisoned-food trait from the structure
         _characterInvolved.Death();
-        //TODO: Remove Poisoned Food
+        _actionStructureLocation.RemoveTrait("Poisoned Food");
     }
     private void CharacterEatsSickRewardEffect(InteractionState state) {
-        //TODO: **Mechanics**: Fully replenish character's Fullness meter. Character gains https://trello.com/c/SVR4fnx1/1177-sick trait. Remove https://trello.com/c/waFphC2I/1180-poisoned-food trait from the structure
+        //**Mechanics**: Fully replenish character's Fullness meter. Character gains https://trello.com/c/SVR4fnx1/1177-sick trait. Remove https://trello.com/c/waFphC2I/1180-poisoned-food trait from the structure
         _characterInvolved.ResetFullnessMeter();
+        _characterInvolved.AddTrait("Sick");
+        _actionStructureLocation.RemoveTrait("Poisoned Food");
     }
     #endregion
 }
