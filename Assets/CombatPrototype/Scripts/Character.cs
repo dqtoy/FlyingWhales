@@ -816,6 +816,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             log.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             //log.AddToFillers(specificLocation, specificLocation.name, LOG_IDENTIFIER.LANDMARK_1);
             AddHistory(log);
+            specificLocation.AddHistory(log);
         }
     }
     public void Assassinate(Character assassin) {
