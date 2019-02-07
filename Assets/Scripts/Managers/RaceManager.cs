@@ -207,7 +207,7 @@ public class RaceManager : MonoBehaviour {
         _npcRaceInteractions = new Dictionary<RACE, INTERACTION_TYPE[]>() {
             { RACE.NONE, new INTERACTION_TYPE[] { //All races
                 INTERACTION_TYPE.MOVE_TO_VISIT,
-                INTERACTION_TYPE.ABDUCT_ACTION,
+                //INTERACTION_TYPE.ABDUCT_ACTION,
                 INTERACTION_TYPE.ARGUE_ACTION,
                 INTERACTION_TYPE.CURSE_ACTION,
                 INTERACTION_TYPE.HUNT_ACTION,
@@ -454,6 +454,35 @@ public class RaceManager : MonoBehaviour {
             }
         }
         return interactions;
+    }
+    public INTERACTION_TYPE CheckNPCInteractionOfRace(Character character, INTERACTION_TYPE interactionType, INTERACTION_CHARACTER_EFFECT characterEffect, string[] characterEffectStrings, bool checkTargetCharacterEffect, Character targetCharacter = null) {
+        InteractionAttributes interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(interactionType, character);
+        if (interactionCategoryAndAlignment == null) { return INTERACTION_TYPE.NONE; }
+        for (int j = 0; j < interactionCategoryAndAlignment.categories.Length; j++) {
+            bool canDoCharacterEffect = false;
+            InteractionCharacterEffect[] interactionCharacterEffect = interactionCategoryAndAlignment.targetCharacterEffect;
+            if (!checkTargetCharacterEffect) {
+                interactionCharacterEffect = interactionCategoryAndAlignment.actorEffect;
+            }
+            if (interactionCharacterEffect != null) {
+                for (int k = 0; k < interactionCharacterEffect.Length; k++) {
+                    if (interactionCharacterEffect[k].effect != INTERACTION_CHARACTER_EFFECT.NONE &&
+                        interactionCharacterEffect[k].effect == characterEffect) {
+                        if (interactionCharacterEffect[k].effectString != null && interactionCharacterEffect[k].effectString != string.Empty) {
+                            if (characterEffectStrings.Contains(interactionCharacterEffect[k].effectString)) {
+                                canDoCharacterEffect = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            if (canDoCharacterEffect && character != null && InteractionManager.Instance.CanCreateInteraction(interactionType, character, targetCharacter)) {
+                return interactionType;
+            }
+            break;
+        }
+        return INTERACTION_TYPE.NONE;
     }
     #endregion
 }

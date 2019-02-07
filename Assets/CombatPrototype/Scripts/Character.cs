@@ -2536,7 +2536,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 
     #region Interaction
     private int GetMonthInteractionTick() {
-        int daysInMonth = GameManager.daysInMonth[GameManager.Instance.month];
+        int daysInMonth = 15; //GameManager.daysInMonth[GameManager.Instance.month]
         int remainingDaysInMonth = GameManager.Instance.continuousDays % daysInMonth;
         int startDay = GameManager.Instance.continuousDays + remainingDaysInMonth + 1;
         return UnityEngine.Random.Range(startDay, startDay + daysInMonth);
@@ -2797,13 +2797,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 //    }
                 //}
                 if (isAtHomeStructure) {
-                    personalActionWeights.AddElement(INTERACTION_TYPE.DROP_ITEM, 20);
-                    interactionLog += "\nDROP_ITEM - 20";
+                    personalActionWeights.AddElement(INTERACTION_TYPE.DROP_ITEM, 10);
+                    interactionLog += "\nDROP_ITEM - 10";
                 }
             } else {
                 if (specificLocation.owner != null && specificLocation.owner == faction && (isAtHomeStructure || specificLocation.HasStructure(STRUCTURE_TYPE.WAREHOUSE))) {
-                    personalActionWeights.AddElement(INTERACTION_TYPE.PICK_ITEM, 40);
-                    interactionLog += "\nPICK_ITEM - 40";
+                    personalActionWeights.AddElement(INTERACTION_TYPE.PICK_ITEM, 20);
+                    interactionLog += "\nPICK_ITEM - 20";
                 }
             }
         }
@@ -2863,6 +2863,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 INTERACTION_TYPE chosenType = allSaveSelfInteractions[UnityEngine.Random.Range(0, allSaveSelfInteractions.Count)];
                 personalActionWeights.AddElement(chosenType, 100);
                 interactionLog += "\nSAVE SELF: " + chosenType.ToString() + " - 100";
+            } else {
+                INTERACTION_TYPE useItemOnCharacterType = RaceManager.Instance.CheckNPCInteractionOfRace(this, INTERACTION_TYPE.USE_ITEM_ON_SELF, INTERACTION_CHARACTER_EFFECT.TRAIT_REMOVE, allNegativeTraitNames.ToArray(), true, this);
+                if(useItemOnCharacterType != INTERACTION_TYPE.NONE) {
+                    personalActionWeights.AddElement(useItemOnCharacterType, 100);
+                    interactionLog += "\nSAVE SELF: USE_ITEM_ON_CHARACTER - 100";
+                }
             }
         }
 
@@ -2881,16 +2887,17 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             if(chosenPersonalAction == INTERACTION_TYPE.NONE) {
                 interactionLog += "DO_NOTHING";
             } else {
+                if (chosenPersonalAction == INTERACTION_TYPE.USE_ITEM_ON_SELF) {
+                    chosenPersonalAction = INTERACTION_TYPE.USE_ITEM_ON_CHARACTER;
+                    targetCharacter = this;
+                }
                 interactionLog += chosenPersonalAction.ToString();
             }
             if (chosenPersonalAction != INTERACTION_TYPE.NONE) {
                 Interaction interaction = InteractionManager.Instance.CreateNewInteraction(chosenPersonalAction, specificLocation);
                 if (interaction.type == INTERACTION_TYPE.USE_ITEM_ON_CHARACTER) {
                     (interaction as UseItemOnCharacter).SetItemToken(tokenInInventory);
-                } else if (interaction.type == INTERACTION_TYPE.USE_ITEM_ON_SELF) {
-                    (interaction as UseItemOnSelf).SetItemToken(tokenInInventory);
-                } else if (interaction.type == INTERACTION_TYPE.USE_ITEM_ON_LOCATION) {
-                    (interaction as UseItemOnLocation).SetItemToken(tokenInInventory);
+                    interactionLog += "\nITEM: " + tokenInInventory.name;
                 }
                 if (targetCharacter != null) {
                     if(chosenPersonalAction == chosenRelationshipInteraction) {
