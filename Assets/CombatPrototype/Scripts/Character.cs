@@ -811,11 +811,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             //GameObject.Destroy(_icon.gameObject);
             //_icon = null;
 
-            Debug.Log(this.name + " died!");
+            Debug.Log(GameManager.Instance.TodayLogString() + this.name + " died of " + cause);
             Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "death_" + cause);
             log.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             //log.AddToFillers(specificLocation, specificLocation.name, LOG_IDENTIFIER.LANDMARK_1);
             AddHistory(log);
+            specificLocation.AddHistory(log);
         }
     }
     public void Assassinate(Character assassin) {
@@ -3112,8 +3113,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 
     #region Needs
     private void DecreaseNeeds() {
-        //DecreaseFullnessMeter();
-        //DecreaseTirednessMeter();
+        DecreaseFullnessMeter();
+        DecreaseTirednessMeter();
     }
     public string GetNeedsSummary() {
         string summary = "Fullness: " + fullness.ToString() + "/" + FULLNESS_DEFAULT.ToString();

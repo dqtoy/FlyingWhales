@@ -158,6 +158,8 @@ public class AbductAction : Interaction {
         _characterInvolved.currentStructure.AddCharacterAtLocation(character);
         Interaction interactionAbductor = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, interactable);
         _characterInvolved.InduceInteraction(interactionAbductor);
+
+        _targetStructure = _characterInvolved.homeStructure; //This is so that the interaction intel knows where the abducted character was dropped
     }
     public Character GetTargetCharacter(Character characterInvolved) {
         WeightedDictionary<Character> characterWeights = new WeightedDictionary<Character>();

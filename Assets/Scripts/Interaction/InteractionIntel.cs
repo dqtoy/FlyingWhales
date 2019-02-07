@@ -154,14 +154,7 @@ public class InteractionIntel {
         if (effectsOnActor != null) {
             for (int i = 0; i < effectsOnActor.Length; i++) {
                 InteractionCharacterEffect currEffect = effectsOnActor[i];
-                text += "\n\t" + i.ToString() + ". " + currEffect.effect.ToString();
-                if (currEffect.effectString != null) {
-                    text += " - ";
-                    for (int j = 0; j < currEffect.effectString.Length; j++) {
-                        text += "|" + currEffect.effectString[j] + "|";
-                    }
-                }
-                
+                text += "\n\t" + i.ToString() + ". " + currEffect.effect.ToString() + " - |" + currEffect.effectString + "|";
             }
         } else {
             text += "None";
@@ -170,13 +163,7 @@ public class InteractionIntel {
         if (effectsOnTarget != null) {
             for (int i = 0; i < effectsOnTarget.Length; i++) {
                 InteractionCharacterEffect currEffect = effectsOnTarget[i];
-                text += "\n\t" + i.ToString() + ". " + currEffect.effect.ToString();
-                if (currEffect.effectString != null) {
-                    text += " - ";
-                    for (int j = 0; j < currEffect.effectString.Length; j++) {
-                        text += "|" + currEffect.effectString[j] + "|";
-                    }
-                }
+                text += "\n\t" + i.ToString() + ". " + currEffect.effect.ToString() + " - |" + currEffect.effectString + "|";
             }
         } else {
             text += "None";

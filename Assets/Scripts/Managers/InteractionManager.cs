@@ -239,6 +239,18 @@ public class InteractionManager : MonoBehaviour {
                 actorEffect = null,
                 targetCharacterEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_GAIN, effectString = "Injured" } },
             } },
+            { INTERACTION_TYPE.REST_AT_HOME_ACTION, new InteractionAttributes(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.TIREDNESS_RECOVERY },
+                alignment = INTERACTION_ALIGNMENT.NEUTRAL,
+                actorEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TIREDNESS_RECOVERY } },
+                targetCharacterEffect = null,
+            } },
+            { INTERACTION_TYPE.EAT_HOME_MEAL_ACTION, new InteractionAttributes(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.FULLNESS_RECOVERY },
+                alignment = INTERACTION_ALIGNMENT.NEUTRAL,
+                actorEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.FULLNESS_RECOVERY } },
+                targetCharacterEffect = null,
+            } },
         };
     }
     public InteractionAttributes GetCategoryAndAlignment (INTERACTION_TYPE type, Character actor) {
@@ -676,6 +688,12 @@ public class InteractionManager : MonoBehaviour {
                 break;
             case INTERACTION_TYPE.TORTURE_ACTION_NPC:
                 createdInteraction = new TortureActionNPC(interactable);
+                break;
+            case INTERACTION_TYPE.REST_AT_HOME_ACTION:
+                createdInteraction = new RestAtHomeAction(interactable);
+                break;
+            case INTERACTION_TYPE.EAT_HOME_MEAL_ACTION:
+                createdInteraction = new EatHomeMealAction(interactable);
                 break;
         }
         return createdInteraction;
@@ -1209,6 +1227,10 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.ARGUE_ACTION:
             case INTERACTION_TYPE.ASK_FOR_HELP:
                 return character.specificLocation.id == targetCharacter.specificLocation.id;
+            case INTERACTION_TYPE.REST_AT_HOME_ACTION:
+            case INTERACTION_TYPE.EAT_HOME_MEAL_ACTION:
+                //**Trigger Criteria 1**: Character is in his Home location
+                return character.specificLocation.id == character.homeArea.id;
             default:
                 return true;
         }

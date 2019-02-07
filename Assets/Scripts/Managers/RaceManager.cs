@@ -214,6 +214,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.TRANSFER_HOME,
                 INTERACTION_TYPE.TORTURE_ACTION_NPC,
                 INTERACTION_TYPE.USE_ITEM_ON_CHARACTER,
+                INTERACTION_TYPE.REST_AT_HOME_ACTION,
+                INTERACTION_TYPE.EAT_HOME_MEAL_ACTION,
             } },
         };
     }
