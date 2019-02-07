@@ -7,6 +7,14 @@ public class BlightedPotion : SpecialToken {
     public BlightedPotion() : base(SPECIAL_TOKEN.BLIGHTED_POTION, 100) {
         //quantity = 4;
         npcAssociatedInteractionType = INTERACTION_TYPE.USE_ITEM_ON_CHARACTER;
+        interactionAttributes = new InteractionAttributes() {
+            categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.SUBTERFUGE },
+            alignment = INTERACTION_ALIGNMENT.EVIL,
+            actorEffect = null,
+            targetCharacterEffect = new InteractionCharacterEffect[] {
+                new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_GAIN, effectString = "Sick" }
+            },
+        };
     }
 
     #region Overrides
@@ -60,17 +68,40 @@ public class BlightedPotion : SpecialToken {
         }
         return false;
     }
+    public override bool CanBeUsedForTarget(Character sourceCharacter, Character targetCharacter) {
+        return sourceCharacter.specificLocation.id == targetCharacter.specificLocation.id;
+    }
     #endregion
 
     private void ItemUsedEffect(TokenInteractionState state) {
         //string chosenIllnessName = AttributeManager.Instance.GetRandomIllness();
+        Character targetCharacter = state.target as Character;
         Trait sickTrait = AttributeManager.Instance.allTraits["Sick"];
-        (state.target as Character).AddTrait(sickTrait);
+        targetCharacter.AddTrait(sickTrait);
         //state.tokenUser.LevelUp();
         state.tokenUser.ConsumeToken();
 
-        state.descriptionLog.AddToFillers(null, sickTrait.name, LOG_IDENTIFIER.STRING_1);
-        state.AddLogFiller(new LogFiller(null, sickTrait.name, LOG_IDENTIFIER.STRING_1));
+        if (state.tokenUser.id == targetCharacter.id) {
+            //Used item on self
+            Log stateDescriptionLog = new Log(GameManager.Instance.Today(), "Tokens", this.GetType().ToString(), state.name.ToLower() + "-npc" + "_description", state.interaction);
+            stateDescriptionLog.AddToFillers(state.tokenUser, state.tokenUser.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            state.OverrideDescriptionLog(stateDescriptionLog);
+
+            Log log = new Log(GameManager.Instance.Today(), "Tokens", GetType().ToString(), state.name.ToLower() + "_special2");
+            log.AddToFillers(state.tokenUser, state.tokenUser.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            state.AddLogToInvolvedObjects(log);
+        } else {
+            //Used item on other character
+            Log stateDescriptionLog = new Log(GameManager.Instance.Today(), "Tokens", this.GetType().ToString(), state.name.ToLower() + "-othernpc" + "_description", state.interaction);
+            stateDescriptionLog.AddToFillers(state.tokenUser, state.tokenUser.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            stateDescriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            state.OverrideDescriptionLog(stateDescriptionLog);
+
+            Log log = new Log(GameManager.Instance.Today(), "Tokens", GetType().ToString(), state.name.ToLower() + "_special3");
+            log.AddToFillers(state.tokenUser, state.tokenUser.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            state.AddLogToInvolvedObjects(log);
+        }
     }
     private void StopFailEffect(TokenInteractionState state) {
         //string chosenIllnessName = AttributeManager.Instance.GetRandomIllness();
