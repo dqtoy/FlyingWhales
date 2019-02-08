@@ -80,7 +80,7 @@ public class UseItemOnCharacter : Interaction {
         }
     }
     public override bool CanInteractionBeDoneBy(Character character) {
-        if (character.tokenInInventory == null || character.tokenInInventory != _tokenToBeUsed) {
+        if (!character.isHoldingItem || character.tokenInInventory != _tokenToBeUsed) {
             return false;
         } else if(_targetCharacter == null && _tokenToBeUsed.GetTargetCharacterFor(character) == null) {
             return false;

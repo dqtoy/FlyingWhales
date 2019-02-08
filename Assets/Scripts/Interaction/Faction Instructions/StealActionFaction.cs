@@ -148,7 +148,7 @@ public class StealActionFaction : Interaction {
         List<Character> choices = new List<Character>();
         for (int i = 0; i < interactable.charactersAtLocation.Count; i++) {
             Character currCharacter = interactable.charactersAtLocation[i];
-            if (currCharacter.tokenInInventory != null 
+            if (currCharacter.isHoldingItem
                 && currCharacter.id != characterInvolved.id
                 && !currCharacter.currentParty.icon.isTravelling
                 && currCharacter.minion == null) {

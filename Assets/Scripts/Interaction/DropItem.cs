@@ -18,7 +18,7 @@ public class DropItem : Interaction {
         SetCurrentState(startState);
     }
     public override bool CanInteractionBeDoneBy(Character character) {
-        if (character.tokenInInventory == null) {
+        if (!character.isHoldingItem) {
             return false;
         }
         return base.CanInteractionBeDoneBy(character);
