@@ -1121,6 +1121,7 @@ public enum INTERACTION_CATEGORY {
     SABOTAGE,
     ASSISTANCE,
     PERSONAL_EMPOWERMENT,
+    WORK,
     OTHER,
 }
 public enum REWARD {
