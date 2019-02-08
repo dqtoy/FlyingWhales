@@ -266,6 +266,12 @@ public class InteractionManager : MonoBehaviour {
                     new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_REMOVE, effectString = "Starving" },
                 },
             } },
+            { INTERACTION_TYPE.BOOBY_TRAP_HOUSE, new InteractionAttributes(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.SUBTERFUGE },
+                alignment = INTERACTION_ALIGNMENT.EVIL,
+                actorEffect = null,
+                targetCharacterEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.DEATH } },
+            } },
         };
     }
     public InteractionAttributes GetCategoryAndAlignment (INTERACTION_TYPE type, Character actor) {
@@ -715,6 +721,9 @@ public class InteractionManager : MonoBehaviour {
                 break;
             case INTERACTION_TYPE.FEED_PRISONER_ACTION:
                 createdInteraction = new FeedPrisonerAction(interactable);
+                break;
+            case INTERACTION_TYPE.BOOBY_TRAP_HOUSE:
+                createdInteraction = new BoobyTrapHouse(interactable);
                 break;
         }
         return createdInteraction;
@@ -1253,6 +1262,7 @@ public class InteractionManager : MonoBehaviour {
                 //**Trigger Criteria 1**: Character is in his Home location
                 return character.specificLocation.id == character.homeArea.id;
             case INTERACTION_TYPE.POISON_HOUSE_FOOD:
+            case INTERACTION_TYPE.BOOBY_TRAP_HOUSE:
                 //**Trigger Criteria 1**: target's home Dwelling is in the current location
                 return character.specificLocation.id == targetCharacter.homeArea.id;
             case INTERACTION_TYPE.FEED_PRISONER_ACTION:

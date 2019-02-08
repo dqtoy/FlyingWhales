@@ -218,6 +218,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.EAT_HOME_MEAL_ACTION,
                 INTERACTION_TYPE.POISON_HOUSE_FOOD,
                 INTERACTION_TYPE.FEED_PRISONER_ACTION,
+                INTERACTION_TYPE.BOOBY_TRAP_HOUSE,
             } },
         };
     }

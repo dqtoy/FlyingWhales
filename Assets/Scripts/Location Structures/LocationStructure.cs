@@ -136,7 +136,10 @@ public class LocationStructure {
         StructureTrait createdTrait = null;
         switch (traitName) {
             case "Booby Trapped":
-                createdTrait = new StructureTrait(this);
+                createdTrait = new BoobyTrapped(this);
+                break;
+            case "Poisoned Food":
+                createdTrait = new PoisonedFood(this);
                 break;
             default:
                 break;
