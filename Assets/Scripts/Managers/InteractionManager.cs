@@ -257,6 +257,15 @@ public class InteractionManager : MonoBehaviour {
                 actorEffect = null,
                 targetCharacterEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.DEATH } },
             } },
+            { INTERACTION_TYPE.FEED_PRISONER_ACTION, new InteractionAttributes(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.WORK },
+                alignment = INTERACTION_ALIGNMENT.NEUTRAL,
+                actorEffect = null,
+                targetCharacterEffect = new InteractionCharacterEffect[]{
+                    new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_REMOVE, effectString = "Hungry" },
+                    new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_REMOVE, effectString = "Starving" },
+                },
+            } },
         };
     }
     public InteractionAttributes GetCategoryAndAlignment (INTERACTION_TYPE type, Character actor) {
@@ -703,6 +712,9 @@ public class InteractionManager : MonoBehaviour {
                 break;
             case INTERACTION_TYPE.POISON_HOUSE_FOOD:
                 createdInteraction = new PoisonHouseFood(interactable);
+                break;
+            case INTERACTION_TYPE.FEED_PRISONER_ACTION:
+                createdInteraction = new FeedPrisonerAction(interactable);
                 break;
         }
         return createdInteraction;
@@ -1243,6 +1255,20 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.POISON_HOUSE_FOOD:
                 //**Trigger Criteria 1**: target's home Dwelling is in the current location
                 return character.specificLocation.id == targetCharacter.homeArea.id;
+            case INTERACTION_TYPE.FEED_PRISONER_ACTION:
+                if (character.isAtHomeArea) {
+                    List<LocationStructure> structures = character.specificLocation.GetStructuresAtLocation(true);
+                    for (int i = 0; i < structures.Count; i++) {
+                        LocationStructure currStructure = structures[i];
+                        for (int j = 0; j < currStructure.charactersHere.Count; j++) {
+                            Character currCharacter = currStructure.charactersHere[j];
+                            if(currCharacter.GetTraitOr("Abducted", "Restrained") != null && currCharacter.GetTraitOr("Hungry", "Starving") != null) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+                return false;
             default:
                 return true;
         }

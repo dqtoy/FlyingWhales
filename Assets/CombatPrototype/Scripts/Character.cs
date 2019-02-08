@@ -399,6 +399,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public bool isAtHomeStructure {
         get { return currentStructure == homeStructure; }
     }
+    public bool isAtHomeArea {
+        get { return specificLocation.id == homeArea.id; }
+    }
     public CombatCharacter currentCombatCharacter {
         get { return _currentCombatCharacter; }
     }
