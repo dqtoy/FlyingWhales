@@ -15,6 +15,10 @@ public class CurseAction : Interaction {
     public override Character targetCharacter {
         get { return _targetCharacter; }
     }
+    private LocationStructure _targetStructure;
+    public override LocationStructure actionStructureLocation {
+        get { return _targetStructure; }
+    }
 
     public CurseAction(Area interactable): base(interactable, INTERACTION_TYPE.CURSE_ACTION, 0) {
         _name = "Curse Action";
@@ -122,7 +126,8 @@ public class CurseAction : Interaction {
 
     #region State Effect
     private void StartEffect(InteractionState state) {
-        _characterInvolved.MoveToAnotherStructure(_targetCharacter.currentStructure);
+        _targetStructure = _targetCharacter.currentStructure;
+        _characterInvolved.MoveToAnotherStructure(_targetStructure);
     }
     private void CurseSuccessfulEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);

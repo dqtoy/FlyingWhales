@@ -8,6 +8,9 @@ public class ScavengeEventFaction : Interaction {
     private const string No_Supply = "No Supply";
 
     private LocationStructure structure;
+    public override LocationStructure actionStructureLocation {
+        get { return structure; }
+    }
 
     public ScavengeEventFaction(Area interactable) : base(interactable, INTERACTION_TYPE.SCAVENGE_EVENT_FACTION, 0) {
         _name = "Scavenge Event Faction";

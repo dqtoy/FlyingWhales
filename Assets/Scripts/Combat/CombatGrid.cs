@@ -227,20 +227,23 @@ public class CombatGrid {
                 targetIndexes.Add(0);
                 targetIndexes.Add(1);
             }
-        } else if (combatTargetType == COMBAT_TARGET.BACKROW) {
-            if (index == 2 || index == 3) {
-                targetIndexes.Add(2);
-                targetIndexes.Add(3);
-            }
-        } else if (combatTargetType == COMBAT_TARGET.SINGLE_FRONTROW) {
+        } 
+        //else if (combatTargetType == COMBAT_TARGET.BACKROW) {
+        //    if (index == 2 || index == 3) {
+        //        targetIndexes.Add(2);
+        //        targetIndexes.Add(3);
+        //    }
+        //} 
+        else if (combatTargetType == COMBAT_TARGET.SINGLE_FRONTROW) {
             if (index == 0 || index == 1) {
                 targetIndexes.Add(index);
             }
-        } else if (combatTargetType == COMBAT_TARGET.SINGLE_BACKROW) {
-            if (index == 2 || index == 3) {
-                targetIndexes.Add(index);
-            }
-        }
+        } 
+        //else if (combatTargetType == COMBAT_TARGET.SINGLE_BACKROW) {
+        //    if (index == 2 || index == 3) {
+        //        targetIndexes.Add(index);
+        //    }
+        //}
         return targetIndexes;
     }
 }

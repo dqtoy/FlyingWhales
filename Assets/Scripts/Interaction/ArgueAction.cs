@@ -14,6 +14,10 @@ public class ArgueAction : Interaction {
     public override Character targetCharacter {
         get { return _targetCharacter; }
     }
+    private LocationStructure _targetStructure;
+    public override LocationStructure actionStructureLocation {
+        get { return _targetStructure; }
+    }
 
     public ArgueAction(Area interactable): base(interactable, INTERACTION_TYPE.ARGUE_ACTION, 0) {
         _name = "Argue Action";
@@ -59,7 +63,7 @@ public class ArgueAction : Interaction {
         }
     }
     public override bool CanInteractionBeDoneBy(Character character) {
-        if (_targetCharacter == null || _targetCharacter.currentParty.icon.isTravelling || _targetCharacter.isDead || _targetCharacter.specificLocation != character.specificLocation) {
+        if (_targetCharacter == null || _targetCharacter.currentParty.icon.isTravelling || _targetCharacter.isDead) { //|| _targetCharacter.specificLocation.id != character.specificLocation.id
             return false;
         }
         return base.CanInteractionBeDoneBy(character);
@@ -83,7 +87,8 @@ public class ArgueAction : Interaction {
 
     #region Reward Effect
     private void StartEffect(InteractionState state) {
-        _characterInvolved.MoveToAnotherStructure(_targetCharacter.currentStructure);
+        _targetStructure = _targetCharacter.currentStructure;
+        _characterInvolved.MoveToAnotherStructure(_targetStructure);
     }
     private void BothGetsAnnoyedEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);

@@ -10,20 +10,28 @@ public class InteractionIntel {
     public object target { get { return connectedInteraction.GetTarget(); } }
     public INTERACTION_CATEGORY[] categories {
         get {
-            if (InteractionManager.Instance.interactionCategoryAndAlignment.ContainsKey(connectedInteraction.type)) {
-                return InteractionManager.Instance.GetCategoryAndAlignment(connectedInteraction.type).categories;
-            } else if (InteractionManager.Instance.interactionCategoryAndAlignment.ContainsKey(connectedInteraction.pairedInteractionType)) {
-                return InteractionManager.Instance.GetCategoryAndAlignment(connectedInteraction.pairedInteractionType).categories;
+            InteractionAttributes interactionAttributes = InteractionManager.Instance.GetCategoryAndAlignment(connectedInteraction.type, actor);
+            if (interactionAttributes != null) {
+                return interactionAttributes.categories;
+            } else {
+                interactionAttributes = InteractionManager.Instance.GetCategoryAndAlignment(connectedInteraction.pairedInteractionType, actor);
+                if (interactionAttributes != null) {
+                    return interactionAttributes.categories;
+                }
             }
             return null;
         }
     }
     public INTERACTION_ALIGNMENT alignment {
         get {
-            if (InteractionManager.Instance.interactionCategoryAndAlignment.ContainsKey(connectedInteraction.type)) {
-                return InteractionManager.Instance.GetCategoryAndAlignment(connectedInteraction.type).alignment;
-            } else if (InteractionManager.Instance.interactionCategoryAndAlignment.ContainsKey(connectedInteraction.pairedInteractionType)) {
-                return InteractionManager.Instance.GetCategoryAndAlignment(connectedInteraction.pairedInteractionType).alignment;
+            InteractionAttributes interactionAttributes = InteractionManager.Instance.GetCategoryAndAlignment(connectedInteraction.type, actor);
+            if (interactionAttributes != null) {
+                return interactionAttributes.alignment;
+            } else {
+                interactionAttributes = InteractionManager.Instance.GetCategoryAndAlignment(connectedInteraction.pairedInteractionType, actor);
+                if (interactionAttributes != null) {
+                    return interactionAttributes.alignment;
+                }
             }
             return INTERACTION_ALIGNMENT.NEUTRAL;
         }
@@ -53,12 +61,21 @@ public class InteractionIntel {
             //if (isCompleted) {
             //    return connectedInteraction.actualEffectsOnActor.ToArray();
             //} else {
-                if (InteractionManager.Instance.interactionCategoryAndAlignment.ContainsKey(connectedInteraction.type)) {
-                    return InteractionManager.Instance.GetCategoryAndAlignment(connectedInteraction.type).actorEffect;
-                } else if (InteractionManager.Instance.interactionCategoryAndAlignment.ContainsKey(connectedInteraction.pairedInteractionType)) {
-                    return InteractionManager.Instance.GetCategoryAndAlignment(connectedInteraction.pairedInteractionType).actorEffect;
+            //if (InteractionManager.Instance.interactionCategoryAndAlignment.ContainsKey(connectedInteraction.type)) {
+            //    return InteractionManager.Instance.GetCategoryAndAlignment(connectedInteraction.type, actor).actorEffect;
+            //} else if (InteractionManager.Instance.interactionCategoryAndAlignment.ContainsKey(connectedInteraction.pairedInteractionType)) {
+            //    return InteractionManager.Instance.GetCategoryAndAlignment(connectedInteraction.pairedInteractionType, actor).actorEffect;
+            //}
+            InteractionAttributes interactionAttributes = InteractionManager.Instance.GetCategoryAndAlignment(connectedInteraction.type, actor);
+            if(interactionAttributes != null) {
+                return interactionAttributes.actorEffect;
+            } else {
+                interactionAttributes = InteractionManager.Instance.GetCategoryAndAlignment(connectedInteraction.pairedInteractionType, actor);
+                if (interactionAttributes != null) {
+                    return interactionAttributes.actorEffect;
                 }
-                return null;
+            }
+            return null;
             //}
         }
     }
@@ -67,12 +84,21 @@ public class InteractionIntel {
             //if (isCompleted) {
             //    return connectedInteraction.actualEffectsOnTarget.ToArray();
             //} else {
-                if (InteractionManager.Instance.interactionCategoryAndAlignment.ContainsKey(connectedInteraction.type)) {
-                    return InteractionManager.Instance.GetCategoryAndAlignment(connectedInteraction.type).targetCharacterEffect;
-                } else if (InteractionManager.Instance.interactionCategoryAndAlignment.ContainsKey(connectedInteraction.pairedInteractionType)) {
-                    return InteractionManager.Instance.GetCategoryAndAlignment(connectedInteraction.pairedInteractionType).targetCharacterEffect;
+            //if (InteractionManager.Instance.interactionCategoryAndAlignment.ContainsKey(connectedInteraction.type)) {
+            //    return InteractionManager.Instance.GetCategoryAndAlignment(connectedInteraction.type, actor).targetCharacterEffect;
+            //} else if (InteractionManager.Instance.interactionCategoryAndAlignment.ContainsKey(connectedInteraction.pairedInteractionType)) {
+            //    return InteractionManager.Instance.GetCategoryAndAlignment(connectedInteraction.pairedInteractionType, actor).targetCharacterEffect;
+            //}
+            InteractionAttributes interactionAttributes = InteractionManager.Instance.GetCategoryAndAlignment(connectedInteraction.type, actor);
+            if (interactionAttributes != null) {
+                return interactionAttributes.targetCharacterEffect;
+            } else {
+                interactionAttributes = InteractionManager.Instance.GetCategoryAndAlignment(connectedInteraction.pairedInteractionType, actor);
+                if (interactionAttributes != null) {
+                    return interactionAttributes.targetCharacterEffect;
                 }
-                return null;
+            }
+            return null;
             //}
         }
     }
@@ -82,6 +108,14 @@ public class InteractionIntel {
                 return connectedInteraction.targetArea;
             }
             return connectedInteraction.interactable;
+        }
+    }
+    public LocationStructure actionLocationStructure {
+        get {
+            if (connectedInteraction.name.Contains("Move To")) {
+                return null; //because move to usually doesn't know what target location
+            }
+            return connectedInteraction.actionStructureLocation;
         }
     }
 
@@ -115,18 +149,12 @@ public class InteractionIntel {
         text += "\n<b>isCompleted?:</b> " + isCompleted.ToString();
         text += "\n<b>Action Deadline:</b> " + actionDeadline.ToString();
         text += "\n<b>Action Location:</b> " + actionLocation.name;
+        text += "\n<b>Action Structure Location:</b> " + actionLocationStructure?.ToString() ?? "None";
         text += "\n<b>Effects on Actor:</b> ";
         if (effectsOnActor != null) {
             for (int i = 0; i < effectsOnActor.Length; i++) {
                 InteractionCharacterEffect currEffect = effectsOnActor[i];
-                text += "\n\t" + i.ToString() + ". " + currEffect.effect.ToString();
-                if (currEffect.effectString != null) {
-                    text += " - ";
-                    for (int j = 0; j < currEffect.effectString.Length; j++) {
-                        text += "|" + currEffect.effectString[j] + "|";
-                    }
-                }
-                
+                text += "\n\t" + i.ToString() + ". " + currEffect.effect.ToString() + " - |" + currEffect.effectString + "|";
             }
         } else {
             text += "None";
@@ -135,13 +163,7 @@ public class InteractionIntel {
         if (effectsOnTarget != null) {
             for (int i = 0; i < effectsOnTarget.Length; i++) {
                 InteractionCharacterEffect currEffect = effectsOnTarget[i];
-                text += "\n\t" + i.ToString() + ". " + currEffect.effect.ToString();
-                if (currEffect.effectString != null) {
-                    text += " - ";
-                    for (int j = 0; j < currEffect.effectString.Length; j++) {
-                        text += "|" + currEffect.effectString[j] + "|";
-                    }
-                }
+                text += "\n\t" + i.ToString() + ". " + currEffect.effect.ToString() + " - |" + currEffect.effectString + "|";
             }
         } else {
             text += "None";

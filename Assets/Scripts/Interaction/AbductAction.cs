@@ -14,6 +14,10 @@ public class AbductAction : Interaction {
     public override Character targetCharacter {
         get { return _targetCharacter; }
     }
+    private LocationStructure _targetStructure;
+    public override LocationStructure actionStructureLocation {
+        get { return _targetStructure; }
+    }
 
     public AbductAction(Area interactable): base(interactable, INTERACTION_TYPE.ABDUCT_ACTION, 0) {
         _name = "Abduct Action";
@@ -109,7 +113,8 @@ public class AbductAction : Interaction {
 
     #region State Effect
     private void StartEffect(InteractionState state) {
-        _characterInvolved.MoveToAnotherStructure(_targetCharacter.currentStructure);
+        _targetStructure = _targetCharacter.currentStructure;
+        _characterInvolved.MoveToAnotherStructure(_targetStructure);
     }
     private void AbductionSuccessEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -153,6 +158,8 @@ public class AbductAction : Interaction {
         _characterInvolved.currentStructure.AddCharacterAtLocation(character);
         Interaction interactionAbductor = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, interactable);
         _characterInvolved.InduceInteraction(interactionAbductor);
+
+        _targetStructure = _characterInvolved.homeStructure; //This is so that the interaction intel knows where the abducted character was dropped
     }
     public Character GetTargetCharacter(Character characterInvolved) {
         WeightedDictionary<Character> characterWeights = new WeightedDictionary<Character>();

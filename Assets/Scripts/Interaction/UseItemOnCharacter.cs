@@ -6,7 +6,7 @@ public class UseItemOnCharacter : Interaction {
 
     private SpecialToken _tokenToBeUsed;
 
-    private const string Stop_Successful = "Stop Successful";
+    //private const string Stop_Successful = "Stop Successful";
     //private const string Stop_Fail = "Stop Fail";
     private const string Do_Nothing = "Do nothing";
 
@@ -18,7 +18,6 @@ public class UseItemOnCharacter : Interaction {
 
     public UseItemOnCharacter(Area interactable) : base(interactable, INTERACTION_TYPE.USE_ITEM_ON_CHARACTER, 0) {
         _name = "Use Item On Character";
-        _jobFilter = new JOB[] { JOB.DEBILITATOR };
     }
 
     public void SetItemToken(SpecialToken specialToken) {
@@ -28,25 +27,32 @@ public class UseItemOnCharacter : Interaction {
     #region Overrides
     public override void CreateStates() {
         InteractionState startState = new InteractionState("Start", this);
-        InteractionState stopSuccessful = new InteractionState(Stop_Successful, this);
+        //InteractionState stopSuccessful = new InteractionState(Stop_Successful, this);
         //InteractionState stopFail = new InteractionState(Stop_Fail, this);
         InteractionState doNothing = new InteractionState(Do_Nothing, this);
 
-        _targetCharacter = _tokenToBeUsed.GetTargetCharacterFor(_characterInvolved);
+        if(_targetCharacter == null) {
+            _targetCharacter = _tokenToBeUsed.GetTargetCharacterFor(_characterInvolved);
+        }
 
-        Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description", this);
-        startStateDescriptionLog.AddToFillers(null, _tokenToBeUsed.nameInBold, LOG_IDENTIFIER.STRING_1);
-        startStateDescriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        startState.OverrideDescriptionLog(startStateDescriptionLog);
-
+        if(_characterInvolved.id == _targetCharacter.id) {
+            Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "-self_description", this);
+            startStateDescriptionLog.AddToFillers(null, _tokenToBeUsed.nameInBold, LOG_IDENTIFIER.STRING_1);
+            startState.OverrideDescriptionLog(startStateDescriptionLog);
+        } else {
+            Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "-other_description", this);
+            startStateDescriptionLog.AddToFillers(null, _tokenToBeUsed.nameInBold, LOG_IDENTIFIER.STRING_1);
+            startStateDescriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            startState.OverrideDescriptionLog(startStateDescriptionLog);
+        }
         CreateActionOptions(startState);
 
-        stopSuccessful.SetEffect(() => StopSuccessfulRewardEffect(stopSuccessful));
+        //stopSuccessful.SetEffect(() => StopSuccessfulRewardEffect(stopSuccessful));
         //stopFail.SetEffect(() => StopFailRewardEffect(stopFail));
         doNothing.SetEffect(() => DoNothingRewardEffect(doNothing));
 
         _states.Add(startState.name, startState);
-        _states.Add(stopSuccessful.name, stopSuccessful);
+        //_states.Add(stopSuccessful.name, stopSuccessful);
         //_states.Add(stopFail.name, stopFail);
         _states.Add(doNothing.name, doNothing);
 
@@ -54,54 +60,57 @@ public class UseItemOnCharacter : Interaction {
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {
-            ActionOption stop = new ActionOption {
-                interactionState = state,
-                cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
-                name = "Stop " + _characterInvolved.name + ".",
-                effect = () => StopOptionEffect(state),
-                jobNeeded = JOB.DEBILITATOR,
-                doesNotMeetRequirementsStr = "Must have dissuader minion."
-            };
+            //ActionOption stop = new ActionOption {
+            //    interactionState = state,
+            //    cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
+            //    name = "Stop " + _characterInvolved.name + ".",
+            //    effect = () => StopOptionEffect(state),
+            //    jobNeeded = JOB.DEBILITATOR,
+            //    doesNotMeetRequirementsStr = "Must have dissuader minion."
+            //};
             ActionOption doNothing = new ActionOption {
                 interactionState = state,
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Do nothing.",
                 effect = () => DoNothingOptionEffect(state),
             };
-            state.AddActionOption(stop);
+            //state.AddActionOption(stop);
             state.AddActionOption(doNothing);
             state.SetDefaultOption(doNothing);
         }
     }
     public override bool CanInteractionBeDoneBy(Character character) {
-        if (character.tokenInInventory == null 
-            || character.tokenInInventory != _tokenToBeUsed 
-            || _tokenToBeUsed.GetTargetCharacterFor(character) == null) {
+        if (character.tokenInInventory == null || character.tokenInInventory != _tokenToBeUsed) {
+            return false;
+        } else if(_targetCharacter == null && _tokenToBeUsed.GetTargetCharacterFor(character) == null) {
             return false;
         }
         return base.CanInteractionBeDoneBy(character);
     }
+    public override void SetTargetCharacter(Character character) {
+        _targetCharacter = character;
+    }
     #endregion
 
     #region Option Effects
-    private void StopOptionEffect(InteractionState state) {
-        WeightedDictionary<RESULT> resultWeights = investigatorCharacter.job.GetJobRateWeights();
-        resultWeights.RemoveElement(RESULT.CRITICAL_FAIL);
+    //private void StopOptionEffect(InteractionState state) {
+    //    WeightedDictionary<RESULT> resultWeights = investigatorCharacter.job.GetJobRateWeights();
+    //    resultWeights.RemoveElement(RESULT.CRITICAL_FAIL);
 
-        string nextState = string.Empty;
-        switch (resultWeights.PickRandomElementGivenWeights()) {
-            case RESULT.SUCCESS:
-                nextState = Stop_Successful;
-                break;
-            case RESULT.FAIL:
-                _tokenToBeUsed.CreateJointInteractionStates(this, _characterInvolved, _targetCharacter);
-                nextState = _tokenToBeUsed.Stop_Fail;
-                break;
-            default:
-                break;
-        }
-        SetCurrentState(_states[nextState]);
-    }
+    //    string nextState = string.Empty;
+    //    switch (resultWeights.PickRandomElementGivenWeights()) {
+    //        case RESULT.SUCCESS:
+    //            nextState = Stop_Successful;
+    //            break;
+    //        case RESULT.FAIL:
+    //            _tokenToBeUsed.CreateJointInteractionStates(this, _characterInvolved, _targetCharacter);
+    //            nextState = _tokenToBeUsed.Stop_Fail;
+    //            break;
+    //        default:
+    //            break;
+    //    }
+    //    SetCurrentState(_states[nextState]);
+    //}
     private void DoNothingOptionEffect(InteractionState state) {
         _tokenToBeUsed.CreateJointInteractionStates(this, _characterInvolved, _targetCharacter);
         if (!_states.ContainsKey(_tokenToBeUsed.Item_Used)) {

@@ -108,10 +108,10 @@ public class ConsoleMenu : UIMenu {
         text += "\n<b>Faction:</b> " + character.faction?.name ?? "None";
         text += "\n<b>Next Tick:</b> " + character.currentInteractionTick.ToString();
         text += "\n<b>Override:</b> " + character.forcedInteraction?.ToString() ?? "None";
-        text += "\n<b>Target Location:</b> " + character.currentParty.icon.targetLocation?.name ?? "None";
-        text += "\n<b>Target Structure:</b> " + character.currentParty.icon.targetStructure?.ToString() ?? "None";
-
-        
+        if (character.currentParty.icon != null) {
+            text += "\n<b>Target Location:</b> " + character.currentParty.icon.targetLocation?.name ?? "None";
+            text += "\n<b>Target Structure:</b> " + character.currentParty.icon.targetStructure?.ToString() ?? "None";
+        }
         return text;
     }
     private string GetSecondaryCharacterInfo() {

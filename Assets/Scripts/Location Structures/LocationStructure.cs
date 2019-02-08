@@ -13,6 +13,7 @@ public class LocationStructure {
     private Area _location;
     private List<SpecialToken> _itemsHere;
     public List<IPointOfInterest> pointsOfInterest { get; private set; }
+    public List<StructureTrait> traits { get; private set; }
 
     #region getters
     public Area location {
@@ -30,6 +31,7 @@ public class LocationStructure {
         charactersHere = new List<Character>();
         _itemsHere = new List<SpecialToken>();
         pointsOfInterest = new List<IPointOfInterest>();
+        traits = new List<StructureTrait>();
 
         if (structureType == STRUCTURE_TYPE.DUNGEON || structureType == STRUCTURE_TYPE.WAREHOUSE) {
             AddPOI(new SupplyPile(this));
@@ -57,12 +59,19 @@ public class LocationStructure {
             charactersHere.Add(character);
             character.SetCurrentStructureLocation(this);
             AddPOI(character);
+            OnCharacterAddedToLocation(character);
         }
     }
     public void RemoveCharacterAtLocation(Character character) {
         if (charactersHere.Remove(character)) {
             character.SetCurrentStructureLocation(null);
             RemovePOI(character);
+        }
+    }
+    private void OnCharacterAddedToLocation(Character character) {
+        for (int i = 0; i < traits.Count; i++) {
+            StructureTrait trait = traits[i];
+            trait.OnCharacterEnteredStructure(character);
         }
     }
     #endregion
@@ -119,6 +128,37 @@ public class LocationStructure {
             return null;
         }
         return pointsOfInterest[Random.Range(0, pointsOfInterest.Count)];
+    }
+    #endregion
+
+    #region Traits
+    public void AddTrait(string traitName) {
+        StructureTrait createdTrait = null;
+        switch (traitName) {
+            case "Booby Trapped":
+                createdTrait = new StructureTrait(this);
+                break;
+            default:
+                break;
+        }
+        if (createdTrait != null) {
+            traits.Add(createdTrait);
+        }
+    }
+    public void RemoveTrait(StructureTrait trait) {
+        traits.Remove(trait);
+    }
+    public void RemoveTrait(string traitName) {
+        RemoveTrait(GetTrait(traitName));
+    }
+    public StructureTrait GetTrait(string traitName) {
+        for (int i = 0; i < traits.Count; i++) {
+            StructureTrait currTrait = traits[i];
+            if (currTrait.name == traitName) {
+                return currTrait;
+            }
+        }
+        return null;
     }
     #endregion
 

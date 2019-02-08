@@ -35,6 +35,7 @@ public class Interaction {
     protected object[] otherData;
     protected InteractionIntel _intel;
     private string interactionDebugLog;
+    protected LocationStructure _actionStructureLocation;
 
     public int dayStarted { get; protected set; }
     public int dayCompleted { get; protected set; }
@@ -132,6 +133,9 @@ public class Interaction {
     public virtual INTERACTION_TYPE pairedInteractionType {
         get { return INTERACTION_TYPE.NONE; }
     }
+    public virtual LocationStructure actionStructureLocation {
+        get { return _actionStructureLocation; }
+    }
     #endregion
 
     public Interaction(Area interactable, INTERACTION_TYPE type, int timeOutTicks) {
@@ -162,6 +166,7 @@ public class Interaction {
         //SetCharacterInvolved(characterInvolved);
         dayStarted = GameManager.Instance.continuousDays;
         CreateStates();
+        _actionStructureLocation = _characterInvolved.currentStructure;
         //SetExplorerMinion(explorerMinion);
         //ScheduleFirstTimeOut();
         Messenger.Broadcast(Signals.INTERACTION_INITIALIZED, this);
@@ -417,6 +422,9 @@ public class Interaction {
         if (faction1 == null || faction2 == null || faction1.id == FactionManager.Instance.neutralFaction.id 
             || faction2.id == FactionManager.Instance.neutralFaction.id) {
             return;
+        }
+        if(faction1.id == faction2.id) {
+            throw new Exception(faction1.name + " DON'T HAVE RELATIONSHIP WITH " + faction2.name + "! CAN'T ADJUST RELATIONSHIP FROM " + type.ToString() + "(" + interactable.name + ")");
         }
         faction1.AdjustRelationshipFor(faction2, adjustment);
         Log factionRelationshipLog = new Log(GameManager.Instance.Today(), "Events", "Generic", "faction_relationship_changed", this);

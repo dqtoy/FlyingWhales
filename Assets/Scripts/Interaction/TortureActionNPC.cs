@@ -20,6 +20,11 @@ public class TortureActionNPC : Interaction {
     public override Character targetCharacter {
         get { return _targetCharacter; }
     }
+    public override LocationStructure actionStructureLocation {
+        get { return _targetStructure; }
+    }
+
+    private LocationStructure _targetStructure;
 
     public TortureActionNPC(Area interactable): base(interactable, INTERACTION_TYPE.TORTURE_ACTION_NPC, 0) {
         _name = "Torture Action NPC";
@@ -136,7 +141,8 @@ public class TortureActionNPC : Interaction {
 
     #region Reward Effect
     private void StartEffect(InteractionState state) {
-        _characterInvolved.MoveToAnotherStructure(_targetCharacter.currentStructure);
+        _targetStructure = _targetCharacter.currentStructure;
+        _characterInvolved.MoveToAnotherStructure(_targetStructure);
     }
     private void PersuadeSuccessEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
