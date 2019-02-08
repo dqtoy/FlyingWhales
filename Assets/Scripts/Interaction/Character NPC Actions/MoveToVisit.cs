@@ -136,9 +136,12 @@ public class MoveToVisit : Interaction {
                     }
                 }
             }
-            foreach (Character charactersWithRel in characterInvolved.relationships.Keys) {
-                if(charactersWithRel.homeArea.id == currArea.id) {
+            foreach (KeyValuePair<Character, CharacterRelationshipData> kvp in characterInvolved.relationships) {
+                if(kvp.Key.homeArea.id == currArea.id) {
                     weight += 50;
+                }
+                if(kvp.Value.trouble.Count > 0 && kvp.Value.knownStructure.location.id == currArea.id && !kvp.Value.HasRelationshipTrait(RELATIONSHIP_TRAIT.ENEMY)) {
+                    weight += 200;
                 }
             }
             if (weight > 0) {

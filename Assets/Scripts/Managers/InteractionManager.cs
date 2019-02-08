@@ -284,6 +284,12 @@ public class InteractionManager : MonoBehaviour {
                 actorEffect = null,
                 targetCharacterEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_GAIN, effectString = "Injured" } },
             } },
+            { INTERACTION_TYPE.FORAGE_ACTION, new InteractionAttributes(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.FULLNESS_RECOVERY },
+                alignment = INTERACTION_ALIGNMENT.NEUTRAL,
+                actorEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.FULLNESS_RECOVERY} },
+                targetCharacterEffect = null,
+            } },
         };
     }
     public InteractionAttributes GetCategoryAndAlignment (INTERACTION_TYPE type, Character actor) {
@@ -563,9 +569,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.ABDUCT_ACTION:
                 createdInteraction = new AbductAction(interactable);
                 break;
-            case INTERACTION_TYPE.MOVE_TO_HUNT_ACTION:
-                createdInteraction = new MoveToHunt(interactable);
-                break;
+            //case INTERACTION_TYPE.MOVE_TO_HUNT_ACTION:
+            //    createdInteraction = new MoveToHunt(interactable);
+                //break;
             case INTERACTION_TYPE.HUNT_ACTION:
                 createdInteraction = new HuntAction(interactable);
                 break;
@@ -653,15 +659,15 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.CHARM_ACTION_FACTION:
                 createdInteraction = new CharmActionFaction(interactable);
                 break;
-            case INTERACTION_TYPE.MOVE_TO_ARGUE_ACTION:
-                createdInteraction = new MoveToArgue(interactable);
-                break;
+            //case INTERACTION_TYPE.MOVE_TO_ARGUE_ACTION:
+            //    createdInteraction = new MoveToArgue(interactable);
+            //    break;
             case INTERACTION_TYPE.ARGUE_ACTION:
                 createdInteraction = new ArgueAction(interactable);
                 break;
-            case INTERACTION_TYPE.MOVE_TO_CURSE_ACTION:
-                createdInteraction = new MoveToCurse(interactable);
-                break;
+            //case INTERACTION_TYPE.MOVE_TO_CURSE_ACTION:
+            //    createdInteraction = new MoveToCurse(interactable);
+            //    break;
             case INTERACTION_TYPE.CURSE_ACTION:
                 createdInteraction = new CurseAction(interactable);
                 break;
@@ -742,6 +748,9 @@ public class InteractionManager : MonoBehaviour {
                 break;
             case INTERACTION_TYPE.ASSAULT_ACTION_NPC:
                 createdInteraction = new AssaultActionNPC(interactable);
+                break;
+            case INTERACTION_TYPE.FORAGE_ACTION:
+                createdInteraction = new ForageAction(interactable);
                 break;
         }
         return createdInteraction;
@@ -1271,8 +1280,15 @@ public class InteractionManager : MonoBehaviour {
                 return !character.isHoldingItem;
             case INTERACTION_TYPE.TORTURE_ACTION_NPC:
                 return targetCharacter.GetTraitOr("Abducted", "Restrained") != null && character.specificLocation.id == targetCharacter.specificLocation.id;
-            case INTERACTION_TYPE.CURSE_ACTION:
             case INTERACTION_TYPE.ARGUE_ACTION:
+                if(character.specificLocation.id == targetCharacter.specificLocation.id && targetCharacter.currentStructure.isInside) {
+                    CharacterRelationshipData characterRelationshipData = character.GetCharacterRelationshipData(targetCharacter);
+                    if(characterRelationshipData != null && characterRelationshipData.isCharacterMissing) {
+                        return true;
+                    }
+                }
+                return false;
+            case INTERACTION_TYPE.CURSE_ACTION:
             case INTERACTION_TYPE.ASK_FOR_HELP:
                 return character.specificLocation.id == targetCharacter.specificLocation.id;
             case INTERACTION_TYPE.REST_AT_HOME_ACTION:
@@ -1301,6 +1317,8 @@ public class InteractionManager : MonoBehaviour {
                 return targetCharacter.specificLocation.id == character.specificLocation.id && targetCharacter.isHoldingItem && !character.isHoldingItem;
             case INTERACTION_TYPE.ASSAULT_ACTION_NPC:
                 return targetCharacter.specificLocation.id == character.specificLocation.id && targetCharacter.IsInOwnParty();
+            case INTERACTION_TYPE.FORAGE_ACTION:
+                return !character.isAtHomeArea;
             default:
                 return true;
         }
