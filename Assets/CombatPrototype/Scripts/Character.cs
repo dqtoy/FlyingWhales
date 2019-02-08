@@ -1618,7 +1618,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             RemoveTrait(traits);
         }
     }
-    private void RemoveRelationship(Character character, RelationshipTrait rel) {
+    public void RemoveRelationship(Character character, RelationshipTrait rel) {
         if (relationships.ContainsKey(character)) {
             relationships[character].RemoveRelationship(rel);
             if (relationships[character].rels.Count == 0) {

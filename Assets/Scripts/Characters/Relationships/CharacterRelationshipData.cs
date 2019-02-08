@@ -30,6 +30,17 @@ public class CharacterRelationshipData {
         trouble = new List<Trait>();
         AddListeners();
     }
+    //public CharacterRelationshipData(Character owner, Character targetCharacter, CharacterRelationshipData data) {
+    //    this.owner = owner;
+    //    this.targetCharacter = targetCharacter;
+    //    rels = new List<RelationshipTrait>(data.rels);
+    //    lastEncounter = data.lastEncounter;
+    //    encounterMultiplier = data.encounterMultiplier;
+    //    isCharacterMissing = data.isCharacterMissing;
+    //    isCharacterLocated = data.isCharacterLocated;
+    //    SetKnownStructure(data.knownStructure);
+    //    trouble = new List<Trait>(data.trouble);
+    //}
 
     public void AddListeners() {
         Messenger.AddListener(Signals.DAY_STARTED, LastEncounterTick);
@@ -161,6 +172,13 @@ public class CharacterRelationshipData {
     #endregion
 
     #region Last Encounter
+    public void SetLastEncounterTick(int tick) {
+        lastEncounter = tick;
+        CheckForCharacterMissing();
+    }
+    public void SetLastEncounterLog(string log) {
+        lastEncounterLog = log;
+    }
     private void LastEncounterTick() {
         /*
          - countdown from last encounter
@@ -208,7 +226,7 @@ public class CharacterRelationshipData {
     private void ResetCharacterMissing() {
         SetIsCharacterMissing(false);
     }
-    private void SetIsCharacterMissing(bool state) {
+    public void SetIsCharacterMissing(bool state) {
         if (isCharacterMissing == state) {
             return; //ignore change
         }
@@ -236,12 +254,29 @@ public class CharacterRelationshipData {
         trouble.Clear();
     }
     public void AddTrouble(Trait trait) {
+        if (trait == null) {
+            return;
+        }
         if (!trouble.Contains(trait)) {
             trouble.Add(trait);
         }
     }
+    public void AddTrouble(List<Trait> traits) {
+        for (int i = 0; i < traits.Count; i++) {
+            AddTrouble(traits[i]);
+        }
+    }
     public void RemoveTrouble(Trait trait) {
-        trouble.Remove(trait);
+        if (trouble.Remove(trait)) {
+            SaverCheck();
+        }
+    }
+    private void SaverCheck() {
+        if (trouble == null || trouble.Count == 0) {
+            if (HasRelationshipTrait(RELATIONSHIP_TRAIT.SAVE_TARGET)) {
+                CharacterManager.Instance.RemoveRelationshipBetween(owner, targetCharacter, RELATIONSHIP_TRAIT.SAVE_TARGET);
+            }
+        }
     }
     #endregion
 
@@ -264,7 +299,6 @@ public class CharacterRelationshipData {
     }
     public void OnIntelGivenToCharacter(InteractionIntel intel) {
         if (intel.isCompleted) {
-            //check if the action affected the actor (meaning the target character in this script) in a negative way, and add that to the troubles data
             InteractionCharacterEffect[] effectsOnCharacter = null;
             if (intel.actor.id == targetCharacter.id) {
                 effectsOnCharacter = intel.effectsOnActor;
@@ -276,13 +310,18 @@ public class CharacterRelationshipData {
                     InteractionCharacterEffect effect = effectsOnCharacter[i];
                     if (effect.effect == INTERACTION_CHARACTER_EFFECT.TRAIT_GAIN) {
                         string gainedTrait = effect.effectString;
+                        Trait trouble;
                         switch (gainedTrait) {
                             case "Charmed":
                             case "Abducted":
                             case "Unconscious":
+                                trouble = targetCharacter.GetTrait(gainedTrait);
+                                AddTrouble(trouble);
+                                SetIsCharacterMissing(true);
+                                break;
                             case "Injured":
                             case "Cursed":
-                                Trait trouble = intel.actor.GetTrait(gainedTrait);
+                                trouble = targetCharacter.GetTrait(gainedTrait);
                                 AddTrouble(trouble);
                                 break;
                             default:
