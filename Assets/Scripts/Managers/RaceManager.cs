@@ -223,6 +223,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.ASSAULT_ACTION_NPC,
                 INTERACTION_TYPE.CAMP_OUT_ACTION,
                 INTERACTION_TYPE.FORAGE_ACTION,
+                INTERACTION_TYPE.HANG_OUT_ACTION,
             } },
         };
     }
