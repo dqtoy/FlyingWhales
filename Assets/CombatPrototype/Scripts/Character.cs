@@ -2715,7 +2715,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 
         //**C.If the character is Tired or Exhausted, Tiredness Recovery-type weight is increased**
         if (isTired) {
-            List<INTERACTION_TYPE> tirednessRecoveryInteractions = RaceManager.Instance.GetNPCInteractionsOfRace(this, INTERACTION_CATEGORY.TIREDNESS_RECOVERY,);
+            List<INTERACTION_TYPE> tirednessRecoveryInteractions = RaceManager.Instance.GetNPCInteractionsOfRace(this, INTERACTION_CATEGORY.TIREDNESS_RECOVERY);
             if (tirednessRecoveryInteractions.Count > 0) {
                 INTERACTION_TYPE chosenType = tirednessRecoveryInteractions[UnityEngine.Random.Range(0, tirednessRecoveryInteractions.Count)];
                 personalActionWeights.AddElement(chosenType, 50);
