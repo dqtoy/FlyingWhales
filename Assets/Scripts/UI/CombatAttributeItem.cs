@@ -19,7 +19,13 @@ public class CombatAttributeItem : MonoBehaviour {
 
     public void OnHover() {
         if(_combatAttribute != null) {
-            UIManager.Instance.ShowSmallInfo(_combatAttribute.nameInUI);
+            string summary = _combatAttribute.nameInUI;
+            if (_combatAttribute is RelationshipTrait) {
+                RelationshipTrait t = _combatAttribute as RelationshipTrait;
+                CharacterRelationshipData rel = UIManager.Instance.characterInfoUI.activeCharacter.GetCharacterRelationshipData(t.targetCharacter);
+                summary += "\n" + rel.GetSummary();
+            }
+            UIManager.Instance.ShowSmallInfo(summary);
         }
     }
     public void OnHoverOut() {

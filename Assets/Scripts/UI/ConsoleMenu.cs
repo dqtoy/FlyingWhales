@@ -124,29 +124,7 @@ public class ConsoleMenu : UIMenu {
         string text = character.name + "'s Relationships " + character.relationships.Count.ToString();
         int counter = 0;
         foreach (KeyValuePair<Character, CharacterRelationshipData> kvp in character.relationships) {
-            text += "\n\n" + counter.ToString() + " " + kvp.Key.name + " (" + kvp.Key.faction.name + "): ";
-            for (int i = 0; i < kvp.Value.rels.Count; i++) {
-                text += "|" + kvp.Value.rels[i].name + "|";
-            }
-            text += "\n\t<b>Last Encounter:</b> " + kvp.Value.lastEncounter.ToString() + " (" + kvp.Value.lastEncounterLog + ")";
-            text += "\n\t<b>Encounter Multiplier:</b> " + kvp.Value.encounterMultiplier.ToString();
-            text += "\n\t<b>Is Missing?:</b> " + kvp.Value.isCharacterMissing.ToString();
-            text += "\n\t<b>Is Located?:</b> " + kvp.Value.isCharacterLocated.ToString();
-            text += "\n\t<b>Known Structure:</b> " + kvp.Value.knownStructure.ToString();
-            text += "\n\t<b>Trouble:</b> ";
-            if (kvp.Value.trouble.Count > 0) {
-                for (int i = 0; i < kvp.Value.trouble.Count; i++) {
-                    text += "|" + kvp.Value.trouble[i].name + "|";
-                }
-            } else {
-                text += "None";
-            }
-            text += "\n\t<b>Planned Action Intel:</b> ";
-            if (kvp.Value.plannedActionIntel != null) {
-                text += "\n" + kvp.Value.plannedActionIntel.GetDebugInfo();
-            } else {
-                text += "None";
-            }
+            text += "\n\n" + counter.ToString() + kvp.Value.GetSummary();
             counter++;
         }
 

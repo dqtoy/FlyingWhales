@@ -296,7 +296,18 @@ public class InteractionManager : MonoBehaviour {
                 actorEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.FULLNESS_RECOVERY} },
                 targetCharacterEffect = null,
             } },
-
+            { INTERACTION_TYPE.HANG_OUT_ACTION, new InteractionAttributes(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.SOCIAL },
+                alignment = INTERACTION_ALIGNMENT.NEUTRAL,
+                actorEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_GAIN, effectString = "Cheery" } },
+                targetCharacterEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_GAIN, effectString = "Cheery" } },
+            } },
+            { INTERACTION_TYPE.MAKE_LOVE_ACTION, new InteractionAttributes(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.ROMANTIC },
+                alignment = INTERACTION_ALIGNMENT.NEUTRAL,
+                actorEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_GAIN, effectString = "Cheery" } },
+                targetCharacterEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_GAIN, effectString = "Cheery" } },
+            } },
         };
     }
     public InteractionAttributes GetCategoryAndAlignment (INTERACTION_TYPE type, Character actor) {
@@ -762,6 +773,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.FORAGE_ACTION:
                 createdInteraction = new ForageAction(interactable);
                 break;
+            case INTERACTION_TYPE.MAKE_LOVE_ACTION:
+                createdInteraction = new MakeLoveAction(interactable);
+                break;
         }
         return createdInteraction;
     }
@@ -1205,8 +1219,15 @@ public class InteractionManager : MonoBehaviour {
                     }
                 }
                 return false;
-            case INTERACTION_TYPE.MOVE_TO_HANG_OUT_ACTION:
-                return character.HasRelationshipOfEffect(new List<TRAIT_EFFECT>() { TRAIT_EFFECT.NEUTRAL, TRAIT_EFFECT.POSITIVE });
+            case INTERACTION_TYPE.HANG_OUT_ACTION:
+                //**Trigger Criteria 1**: the target must also be in the character's current location and is in a structure Inside Settlement
+                //**Trigger Criteria 2**: the target's **character missing** is False
+                if (targetCharacter.specificLocation.id == character.specificLocation.id 
+                    && targetCharacter.currentStructure.isInside
+                    && !character.GetCharacterRelationshipData(targetCharacter).isCharacterMissing) {
+                    return true;
+                }
+                return false;
             case INTERACTION_TYPE.MOVE_TO_SCAVENGE_EVENT_FACTION:
                 //**Trigger Criteria 1**: There must be at least one unoccupied location with a dungeon or a warehouse
                 for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
@@ -1341,6 +1362,22 @@ public class InteractionManager : MonoBehaviour {
                 return character.specificLocation.id != character.homeArea.id;
             case INTERACTION_TYPE.FORAGE_ACTION:
                 return !character.isAtHomeArea;
+            case INTERACTION_TYPE.MAKE_LOVE_ACTION:
+                //**Trigger Criteria 1**: the target must be in the character's current location and must also be in the target's home Dwelling
+                if (targetCharacter.specificLocation.id != character.specificLocation.id 
+                    || targetCharacter.currentStructure != targetCharacter.homeStructure) {
+                    return false;
+                }
+                //**Trigger Criteria 2**: the actor must not be https://trello.com/c/GzhGi1XZ/1135-starving nor https://trello.com/c/I3gnHfsZ/1185-exhausted
+                if (character.GetTrait("Starving") != null 
+                    || character.GetTrait("Exhausted") != null) {
+                    return false;
+                }
+                //**Trigger Criteria 3**: the target's **character missing** is False
+                if (character.GetCharacterRelationshipData(targetCharacter).isCharacterMissing) {
+                    return false;
+                }
+                return true;
             default:
                 return true;
         }

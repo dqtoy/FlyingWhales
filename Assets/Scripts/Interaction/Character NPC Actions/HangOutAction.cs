@@ -27,12 +27,11 @@ public class HangOutAction : Interaction {
         InteractionState bothBecomesAnnoyed = new InteractionState(Both_Becomes_Annoyed, this);
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description", this);
-        startStateDescriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
         startStateDescriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 
         CreateActionOptions(startState);
-
+        startState.SetEffect(() => StartRewardEffect(startState), false);
         bothBecomesCheery.SetEffect(() => BothBecomesCheeryRewardEffect(bothBecomesCheery));
         bothBecomesAnnoyed.SetEffect(() => BothBecomesAnnoyedRewardEffect(bothBecomesAnnoyed));
 
@@ -95,6 +94,10 @@ public class HangOutAction : Interaction {
     #endregion
 
     #region Reward Effect
+    private void StartRewardEffect(InteractionState state) {
+        //**Structure**: Move the character to the target's Structure
+        _characterInvolved.MoveToAnotherStructure(_targetCharacter.currentStructure);
+    }
     private void BothBecomesCheeryRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
