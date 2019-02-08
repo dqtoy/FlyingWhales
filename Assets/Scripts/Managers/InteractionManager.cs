@@ -284,6 +284,12 @@ public class InteractionManager : MonoBehaviour {
                 actorEffect = null,
                 targetCharacterEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_GAIN, effectString = "Injured" } },
             } },
+            { INTERACTION_TYPE.CAMP_OUT_ACTION, new InteractionAttributes(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.TIREDNESS_RECOVERY },
+                alignment = INTERACTION_ALIGNMENT.NEUTRAL,
+                actorEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TIREDNESS_RECOVERY } },
+                targetCharacterEffect = null,
+            } },
         };
     }
     public InteractionAttributes GetCategoryAndAlignment (INTERACTION_TYPE type, Character actor) {
@@ -742,6 +748,9 @@ public class InteractionManager : MonoBehaviour {
                 break;
             case INTERACTION_TYPE.ASSAULT_ACTION_NPC:
                 createdInteraction = new AssaultActionNPC(interactable);
+                break;
+            case INTERACTION_TYPE.CAMP_OUT_ACTION:
+                createdInteraction = new CampOutAction(interactable);
                 break;
         }
         return createdInteraction;
@@ -1301,6 +1310,9 @@ public class InteractionManager : MonoBehaviour {
                 return targetCharacter.specificLocation.id == character.specificLocation.id && targetCharacter.isHoldingItem && !character.isHoldingItem;
             case INTERACTION_TYPE.ASSAULT_ACTION_NPC:
                 return targetCharacter.specificLocation.id == character.specificLocation.id && targetCharacter.IsInOwnParty();
+            case INTERACTION_TYPE.CAMP_OUT_ACTION:
+                //**Trigger Criteria 1**: character is not in his Home location
+                return character.specificLocation.id != character.homeArea.id;
             default:
                 return true;
         }
