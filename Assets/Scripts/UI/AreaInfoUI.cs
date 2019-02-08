@@ -302,32 +302,24 @@ public class AreaInfoUI : UIMenu {
     public void OrderCharacterItems() {
         visitorsEmblem.SetParent(this.transform);
         residentsEmblem.SetParent(this.transform);
-        List<LandmarkCharacterItem> nonTravellingVisitors = new List<LandmarkCharacterItem>();
-        List<LandmarkCharacterItem> travellingVisitors = new List<LandmarkCharacterItem>();
+        List<LandmarkCharacterItem> visitors = new List<LandmarkCharacterItem>();
+        //List<LandmarkCharacterItem> travellingVisitors = new List<LandmarkCharacterItem>();
 
-        List<LandmarkCharacterItem> travellingResidents = new List<LandmarkCharacterItem>();
-        List<LandmarkCharacterItem> nonTravellingResidents = new List<LandmarkCharacterItem>();
+        List<LandmarkCharacterItem> residents = new List<LandmarkCharacterItem>();
+        //List<LandmarkCharacterItem> nonTravellingResidents = new List<LandmarkCharacterItem>();
         for (int i = 0; i < characterItems.Count; i++) {
             LandmarkCharacterItem currItem = characterItems[i];
             if (currItem.character.homeArea != null && activeArea.id == currItem.character.homeArea.id) {
-                if (currItem.character.currentParty.specificLocation.id != activeArea.id || currItem.character.currentParty.icon.isTravelling) { //character is away from home
-                    travellingResidents.Add(currItem);
-                } else {
-                    nonTravellingResidents.Add(currItem);
-                }
+                residents.Add(currItem);
             } else {
-                if (currItem.character.currentParty.icon.isTravelling) {
-                    travellingVisitors.Add(currItem);
-                } else {
-                    nonTravellingVisitors.Add(currItem);
-                }
+                visitors.Add(currItem);
             }
         }
 
-        List<LandmarkCharacterItem> orderedVisitors = new List<LandmarkCharacterItem>(nonTravellingVisitors.OrderByDescending(x => x.character.level));
-        orderedVisitors.AddRange(travellingVisitors.OrderByDescending(x => x.character.level));
-        List<LandmarkCharacterItem> orderedResidents = new List<LandmarkCharacterItem>(nonTravellingResidents.OrderByDescending(x => x.character.level));
-        orderedResidents.AddRange(travellingResidents.OrderByDescending(x => x.character.level));
+        List<LandmarkCharacterItem> orderedVisitors = new List<LandmarkCharacterItem>(visitors.OrderByDescending(x => x.character.level));
+        //orderedVisitors.AddRange(travellingVisitors.OrderByDescending(x => x.character.level));
+        List<LandmarkCharacterItem> orderedResidents = new List<LandmarkCharacterItem>(residents.OrderByDescending(x => x.character.level));
+        //orderedResidents.AddRange(residents.OrderByDescending(x => x.character.level));
 
         List<LandmarkCharacterItem> orderedItems = new List<LandmarkCharacterItem>();
         orderedItems.AddRange(orderedVisitors);

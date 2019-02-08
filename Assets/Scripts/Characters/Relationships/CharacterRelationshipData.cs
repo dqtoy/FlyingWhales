@@ -339,4 +339,33 @@ public class CharacterRelationshipData {
         
     }
     #endregion
+
+    #region For Testing
+    public string GetSummary() {
+        string text = targetCharacter.name + " (" + targetCharacter.faction.name + "): ";
+        for (int i = 0; i < rels.Count; i++) {
+            text += "|" + rels[i].name + "|";
+        }
+        text += "\n\t<b>Last Encounter:</b> " + lastEncounter.ToString() + " (" + lastEncounterLog + ")";
+        text += "\n\t<b>Encounter Multiplier:</b> " + encounterMultiplier.ToString();
+        text += "\n\t<b>Is Missing?:</b> " + isCharacterMissing.ToString();
+        text += "\n\t<b>Is Located?:</b> " + isCharacterLocated.ToString();
+        text += "\n\t<b>Known Structure:</b> " + knownStructure.ToString();
+        text += "\n\t<b>Trouble:</b> ";
+        if (trouble.Count > 0) {
+            for (int i = 0; i < trouble.Count; i++) {
+                text += "|" + trouble[i].name + "|";
+            }
+        } else {
+            text += "None";
+        }
+        text += "\n\t<b>Planned Action Intel:</b> ";
+        if (plannedActionIntel != null) {
+            text += "\n" + plannedActionIntel.GetDebugInfo();
+        } else {
+            text += "None";
+        }
+        return text;
+    }
+    #endregion
 }
