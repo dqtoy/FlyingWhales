@@ -1377,13 +1377,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         LocationStructure locationStructure = specificLocation.GetRandomStructure();
         MoveToAnotherStructure(locationStructure);
     }
-    public void MoveToAnotherStructure(LocationStructure newStructure) {
-        if(currentStructure != null) {
-            currentStructure.RemoveCharacterAtLocation(this);
-        }
-        newStructure.AddCharacterAtLocation(this);
-    }
-    public void MoveToAnotherStructure(STRUCTURE_TYPE structureType) {
+    public void MoveToRandomStructureInArea(STRUCTURE_TYPE structureType) {
         if (currentStructure != null) {
             currentStructure.RemoveCharacterAtLocation(this);
         }
@@ -1394,6 +1388,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             throw new Exception("Can't move " + name + " to a " + structureType.ToString() + " because " + specificLocation.name + " does not have that structure!");
         }
     }
+    public void MoveToAnotherStructure(LocationStructure newStructure) {
+        if(currentStructure != null) {
+            currentStructure.RemoveCharacterAtLocation(this);
+        }
+        newStructure.AddCharacterAtLocation(this);
+    }
+    
     #endregion
 
     #region Utilities

@@ -98,7 +98,7 @@ public class CraftItem : Interaction {
 
     #region State Effect
     private void StartEffect(InteractionState state) {
-        _characterInvolved.MoveToAnotherStructure(STRUCTURE_TYPE.WORK_AREA);
+        _characterInvolved.MoveToRandomStructureInArea(STRUCTURE_TYPE.WORK_AREA);
     }
     private void CraftingCancelledEffect(InteractionState state) {
     }

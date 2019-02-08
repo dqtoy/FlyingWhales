@@ -222,6 +222,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.STEAL_ACTION_NPC,
                 INTERACTION_TYPE.ASSAULT_ACTION_NPC,
                 INTERACTION_TYPE.CAMP_OUT_ACTION,
+                INTERACTION_TYPE.FORAGE_ACTION,
             } },
         };
     }
