@@ -2739,11 +2739,11 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             interactionLog += "\n\n----CHARACTER NPC ACTION TYPES----";
             interactionLog += "\nPOSSIBLE TARGETS:\n";
             foreach (KeyValuePair<Character, CharacterRelationshipData> kvp in relationships) {
-                if(specificLocation == kvp.Key.specificLocation && !kvp.Key.currentParty.icon.isTravelling && !kvp.Key.isDefender) {
+                if(specificLocation.id == kvp.Key.specificLocation.id && !kvp.Key.currentParty.icon.isTravelling && !kvp.Key.isDefender && kvp.Value.knownStructure.location.id == specificLocation.id) {
                     interactionLog += kvp.Value.targetCharacter.name + "(";
                     int weight = kvp.Value.GetTotalRelationshipWeight();
                     interactionLog += "weight: " + weight;
-                    if (kvp.Value.isCharacterMissing && !kvp.Value.HasRelationshipTrait(RELATIONSHIP_TRAIT.ENEMY)) {
+                    if (kvp.Value.isCharacterMissing && kvp.Value.isCharacterLocated && !kvp.Value.HasRelationshipTrait(RELATIONSHIP_TRAIT.ENEMY)) {
                         weight += 25;
                         interactionLog += "+25";
                     }
