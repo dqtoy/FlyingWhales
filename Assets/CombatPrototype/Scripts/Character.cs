@@ -2698,14 +2698,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         interactionLog += "\n------------------ WEIGHTS ----------------";
         //**B. If the character is Hungry or Starving, Fullness Recovery-type weight is increased**
         if (isHungry) {
-            List<INTERACTION_TYPE> fullnessRecoveryInteractions = RaceManager.Instance.GetNPCInteractionsOfRace(this, INTERACTION_CATEGORY.FULLNESS_RECOVERY, targetCharacter);
+            List<INTERACTION_TYPE> fullnessRecoveryInteractions = RaceManager.Instance.GetNPCInteractionsOfRace(this, INTERACTION_CATEGORY.FULLNESS_RECOVERY);
             if(fullnessRecoveryInteractions.Count > 0) {
                 INTERACTION_TYPE chosenType = fullnessRecoveryInteractions[UnityEngine.Random.Range(0, fullnessRecoveryInteractions.Count)];
                 personalActionWeights.AddElement(chosenType, 50);
                 interactionLog += "\nFULLNESS RECOVERY: " + chosenType.ToString() + " - 50";
             }
         } else if (isStarving) {
-            List<INTERACTION_TYPE> fullnessRecoveryInteractions = RaceManager.Instance.GetNPCInteractionsOfRace(this, INTERACTION_CATEGORY.FULLNESS_RECOVERY, targetCharacter);
+            List<INTERACTION_TYPE> fullnessRecoveryInteractions = RaceManager.Instance.GetNPCInteractionsOfRace(this, INTERACTION_CATEGORY.FULLNESS_RECOVERY);
             if (fullnessRecoveryInteractions.Count > 0) {
                 INTERACTION_TYPE chosenType = fullnessRecoveryInteractions[UnityEngine.Random.Range(0, fullnessRecoveryInteractions.Count)];
                 personalActionWeights.AddElement(chosenType, 100);
@@ -2715,14 +2715,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 
         //**C.If the character is Tired or Exhausted, Tiredness Recovery-type weight is increased**
         if (isTired) {
-            List<INTERACTION_TYPE> tirednessRecoveryInteractions = RaceManager.Instance.GetNPCInteractionsOfRace(this, INTERACTION_CATEGORY.TIREDNESS_RECOVERY, targetCharacter);
+            List<INTERACTION_TYPE> tirednessRecoveryInteractions = RaceManager.Instance.GetNPCInteractionsOfRace(this, INTERACTION_CATEGORY.TIREDNESS_RECOVERY);
             if (tirednessRecoveryInteractions.Count > 0) {
                 INTERACTION_TYPE chosenType = tirednessRecoveryInteractions[UnityEngine.Random.Range(0, tirednessRecoveryInteractions.Count)];
                 personalActionWeights.AddElement(chosenType, 50);
                 interactionLog += "\nTIREDNESS RECOVERY: " + chosenType.ToString() + " - 50";
             }
         } else if (isExhausted) {
-            List<INTERACTION_TYPE> tirednessRecoveryInteractions = RaceManager.Instance.GetNPCInteractionsOfRace(this, INTERACTION_CATEGORY.TIREDNESS_RECOVERY, targetCharacter);
+            List<INTERACTION_TYPE> tirednessRecoveryInteractions = RaceManager.Instance.GetNPCInteractionsOfRace(this, INTERACTION_CATEGORY.TIREDNESS_RECOVERY);
             if (tirednessRecoveryInteractions.Count > 0) {
                 INTERACTION_TYPE chosenType = tirednessRecoveryInteractions[UnityEngine.Random.Range(0, tirednessRecoveryInteractions.Count)];
                 personalActionWeights.AddElement(chosenType, 100);
@@ -2787,16 +2787,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //**F. compute Item handling weight**
         if (!isStarving && !isExhausted) {
             if (tokenInInventory != null) {
-                //if (tokenInInventory.npcAssociatedInteractionType != INTERACTION_TYPE.NONE && tokenInInventory.CanBeUsedBy(this)
-                //    && InteractionManager.Instance.CanCreateInteraction(tokenInInventory.npcAssociatedInteractionType, this)) {
-                //    if (tokenInInventory.npcAssociatedInteractionType == INTERACTION_TYPE.USE_ITEM_ON_SELF) {
-                //        personalActionWeights.AddElement(tokenInInventory.npcAssociatedInteractionType, 70);
-                //    } else if (tokenInInventory.npcAssociatedInteractionType == INTERACTION_TYPE.USE_ITEM_ON_CHARACTER) {
-                //        personalActionWeights.AddElement(tokenInInventory.npcAssociatedInteractionType, 70);
-                //    } else if (tokenInInventory.npcAssociatedInteractionType == INTERACTION_TYPE.USE_ITEM_ON_LOCATION) {
-                //        personalActionWeights.AddElement(tokenInInventory.npcAssociatedInteractionType, 70);
-                //    }
-                //}
                 if (isAtHomeStructure) {
                     personalActionWeights.AddElement(INTERACTION_TYPE.DROP_ITEM, 10);
                     interactionLog += "\nDROP_ITEM - 10";
@@ -2842,15 +2832,23 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         } else {
             //**J. if at home, compute weight to simply visit other locations**
             if (!isStarving && !isExhausted) {
-                personalActionWeights.AddElement(INTERACTION_TYPE.MOVE_TO_VISIT, 50);
-                interactionLog += "\nMOVE_TO_VISIT - 50";
+                personalActionWeights.AddElement(INTERACTION_TYPE.MOVE_TO_VISIT, 25);
+                interactionLog += "\nMOVE_TO_VISIT - 25";
             }
         }
 
-        //**I. Servants will serve their masters**
+        //**I. non-busy characters will work**
+        if (!isStarving && !isExhausted) {
+            List<INTERACTION_TYPE> workActions = RaceManager.Instance.GetNPCInteractionsOfRace(this, INTERACTION_CATEGORY.WORK);
+            if (workActions.Count > 0) {
+                INTERACTION_TYPE chosenType = workActions[UnityEngine.Random.Range(0, workActions.Count)];
+                personalActionWeights.AddElement(chosenType, 100);
+                interactionLog += "\nWORK: " + chosenType.ToString() + " - 100";
+            }
+        }
 
         //**K. characters may also perform actions to empower themselves**
-        List<INTERACTION_TYPE> personalEmpowermentInteractions = RaceManager.Instance.GetNPCInteractionsOfRace(this, INTERACTION_CATEGORY.PERSONAL_EMPOWERMENT, targetCharacter);
+        List<INTERACTION_TYPE> personalEmpowermentInteractions = RaceManager.Instance.GetNPCInteractionsOfRace(this, INTERACTION_CATEGORY.PERSONAL_EMPOWERMENT);
         if (personalEmpowermentInteractions.Count > 0) {
             INTERACTION_TYPE chosenType = personalEmpowermentInteractions[UnityEngine.Random.Range(0, personalEmpowermentInteractions.Count)];
             personalActionWeights.AddElement(chosenType, 25);
@@ -2876,8 +2874,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 
         //**M. compute Do Nothing weight**
         if (!isStarving && !isExhausted) {
-            personalActionWeights.AddElement(INTERACTION_TYPE.NONE, 50);
-            interactionLog += "\nDO_NOTHING - 50";
+            personalActionWeights.AddElement(INTERACTION_TYPE.NONE, 150);
+            interactionLog += "\nDO_NOTHING - 150";
         }
 
 
