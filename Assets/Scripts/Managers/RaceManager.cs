@@ -225,6 +225,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.FORAGE_ACTION,
                 INTERACTION_TYPE.HANG_OUT_ACTION,
                 INTERACTION_TYPE.MAKE_LOVE_ACTION,
+                INTERACTION_TYPE.REMOVE_CURSE_ACTION,
             } },
         };
     }

@@ -308,6 +308,12 @@ public class InteractionManager : MonoBehaviour {
                 actorEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_GAIN, effectString = "Cheery" } },
                 targetCharacterEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_GAIN, effectString = "Cheery" } },
             } },
+            { INTERACTION_TYPE.REMOVE_CURSE_ACTION, new InteractionAttributes(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.SAVE },
+                alignment = INTERACTION_ALIGNMENT.GOOD,
+                actorEffect = null,
+                targetCharacterEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_REMOVE, effectString = "Cursed" } },
+            } },
         };
     }
     public InteractionAttributes GetCategoryAndAlignment (INTERACTION_TYPE type, Character actor) {
@@ -775,6 +781,9 @@ public class InteractionManager : MonoBehaviour {
                 break;
             case INTERACTION_TYPE.MAKE_LOVE_ACTION:
                 createdInteraction = new MakeLoveAction(interactable);
+                break;
+            case INTERACTION_TYPE.REMOVE_CURSE_ACTION:
+                createdInteraction = new RemoveCurseAction(interactable);
                 break;
         }
         return createdInteraction;
@@ -1378,6 +1387,14 @@ public class InteractionManager : MonoBehaviour {
                     return false;
                 }
                 return true;
+            case INTERACTION_TYPE.REMOVE_CURSE_ACTION:
+                if(character.GetTrait("Magic User") != null && targetCharacter.GetTrait("Cursed") != null) {
+                    CharacterRelationshipData characterRelationshipData = character.GetCharacterRelationshipData(targetCharacter);
+                    if(characterRelationshipData != null && characterRelationshipData.knownStructure.location.id == character.specificLocation.id) {
+                        return true;
+                    }
+                }
+                return false;
             default:
                 return true;
         }
