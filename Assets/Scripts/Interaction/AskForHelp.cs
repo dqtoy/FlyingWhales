@@ -95,6 +95,22 @@ public class AskForHelp : Interaction {
     }
     private void AskSuccessfulEffect(InteractionState state) {
         //Add relationship save target and saver
+        bool targetAlreadyHasRelWithOther = _targetCharacter.relationships.ContainsKey(_otherCharacter);
+        CharacterManager.Instance.CreateNewRelationshipBetween(_targetCharacter, _otherCharacter, RELATIONSHIP_TRAIT.SAVE_TARGET);
+        CharacterRelationshipData otherData = _characterInvolved.relationships[_otherCharacter]; //relationship of character that asked for help with the character that has trouble
+        CharacterRelationshipData data = _targetCharacter.relationships[_otherCharacter]; //inform the character that will save the other character of that character's trouble
+        if (!targetAlreadyHasRelWithOther) {
+            data.SetLastEncounterTick(otherData.lastEncounter);
+            data.SetLastEncounterLog(otherData.lastEncounterLog + "(data given by " + _characterInvolved.name + ")");
+        }
+        data.SetIsCharacterMissing(true);
+        data.AddTrouble(otherData.trouble);
+        //data.SetKnownStructure(otherData.knownStructure);
+        string summary = _characterInvolved.name + " asked " + _targetCharacter.name + " for help regarding " + _otherCharacter.name + "'s troubles: ";
+        for (int i = 0; i < otherData.trouble.Count; i++) {
+            summary += "|" + otherData.trouble[i].name + "|";
+        }
+        AddToDebugLog(summary);
 
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         state.descriptionLog.AddToFillers(_otherCharacter, _otherCharacter.name, LOG_IDENTIFIER.CHARACTER_3);

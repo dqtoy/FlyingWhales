@@ -605,6 +605,7 @@ public class ConsoleMenu : UIMenu {
         string interactionTypeStr = parameters[0];
         string characterStr = parameters[1];
         string targetCharacterStr = parameters.ElementAtOrDefault(2);
+        string otherCharacterStr = parameters.ElementAtOrDefault(3);
 
         INTERACTION_TYPE interactionType;
         if (!System.Enum.TryParse<INTERACTION_TYPE>(interactionTypeStr, out interactionType)) {
@@ -617,9 +618,13 @@ public class ConsoleMenu : UIMenu {
             return;
         }
         Character targetCharacter = CharacterManager.Instance.GetCharacterByName(targetCharacterStr);
+        Character otherCharacter = CharacterManager.Instance.GetCharacterByName(otherCharacterStr);
         Interaction interaction = InteractionManager.Instance.CreateNewInteraction(interactionType, character.specificLocation);
         if (targetCharacter != null) {
             interaction.SetTargetCharacter(targetCharacter);
+        }
+        if (otherCharacter != null) {
+            interaction.SetOtherCharacter(otherCharacter);
         }
         character.SetForcedInteraction(interaction);
 
