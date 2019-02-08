@@ -49,6 +49,8 @@ public class ConsoleMenu : UIMenu {
             {"/add_trait_character", AddTraitToCharacter },
             {"/transfer_character_faction", TransferCharacterToFaction },
             {"/show_full_debug", ShowFullDebug },
+            {"/force_action", ForceCharacterInteraction },
+            {"/t_freeze_char", ToggleFreezeCharacter },
         };
 
 #if UNITY_EDITOR
@@ -94,6 +96,9 @@ public class ConsoleMenu : UIMenu {
         if (UIManager.Instance != null && UIManager.Instance.characterInfoUI.isShowing) {
             fullDebugLbl.text += GetMainCharacterInfo();
             fullDebug2Lbl.text += GetSecondaryCharacterInfo();
+        } else if (UIManager.Instance != null && UIManager.Instance.areaInfoUI.isShowing) {
+            fullDebugLbl.text += GetMainAreaInfo();
+            fullDebug2Lbl.text += GetSecondaryAreaInfo();
         }
     }
     private string GetMainCharacterInfo() {
@@ -149,6 +154,52 @@ public class ConsoleMenu : UIMenu {
         for (int i = 0; i < character.locationHistory.Count; i++) {
             text += "\n\t" + character.locationHistory[i];
         }
+        return text;
+    }
+
+    private string GetMainAreaInfo() {
+        Area area = UIManager.Instance.areaInfoUI.activeArea;
+        string text = area.name + "'s info:";
+        text += "\n<b>Owner:</b> " + area.owner?.name ?? "None";
+        text += "\n<b>Race:</b> " + area.raceType.ToString();
+        text += "\n<b>Residents:</b> " + area.areaResidents.Count + "/" + area.residentCapacity;
+        if (area.structures.ContainsKey(STRUCTURE_TYPE.DWELLING)) {
+            for (int i = 0; i < area.structures[STRUCTURE_TYPE.DWELLING].Count; i++) {
+                Dwelling dwelling = area.structures[STRUCTURE_TYPE.DWELLING][i] as Dwelling;
+                text += "\n\t" + dwelling.ToString() + " Residents";
+                for (int j = 0; j < dwelling.residents.Count; j++) {
+                    text += "\n\t\t- " + dwelling.residents[j].name;
+                }
+            }
+        }
+        text += "\n<b>Corpses:</b> ";
+        if (area.corpsesInArea.Count > 0) {
+            for (int i = 0; i < area.corpsesInArea.Count; i++) {
+                text += "\n\t" + area.corpsesInArea[i].character.name;
+            }
+        } else {
+            text += "None";
+        }
+        return text;
+    }
+    private string GetSecondaryAreaInfo() {
+        Area area = UIManager.Instance.areaInfoUI.activeArea;
+        string text = area.name + "'s Structures:";
+        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in area.structures) {
+            for (int i = 0; i < keyValuePair.Value.Count; i++) {
+                LocationStructure structure = keyValuePair.Value[i];
+                text += "\n<b>" + structure.ToString() + "</b>";
+                text += "\n\tPoints of interest: ";
+                for (int j = 0; j < structure.pointsOfInterest.Count; j++) {
+                    text += "\n\t\t-" + structure.pointsOfInterest[j].ToString();
+                }
+                text += "\n\tTraits: ";
+                for (int j = 0; j < structure.traits.Count; j++) {
+                    text += "\n\t\t-" + structure.traits[j].ToString();
+                }
+            }
+        }
+       
         return text;
     }
     #endregion
@@ -549,6 +600,51 @@ public class ConsoleMenu : UIMenu {
 
         character.ChangeFactionTo(faction);
         AddSuccessMessage("Transferred " + character.name + " to " + faction.name);
+    }
+    private void ForceCharacterInteraction(string[] parameters) {
+        string interactionTypeStr = parameters[0];
+        string characterStr = parameters[1];
+        string targetCharacterStr = parameters.ElementAtOrDefault(2);
+
+        INTERACTION_TYPE interactionType;
+        if (!System.Enum.TryParse<INTERACTION_TYPE>(interactionTypeStr, out interactionType)) {
+            AddErrorMessage("There is no interaction with type " + interactionTypeStr);
+            return;
+        }
+        Character character = CharacterManager.Instance.GetCharacterByName(characterStr);
+        if (character == null) {
+            AddErrorMessage("There is no character with name " + characterStr);
+            return;
+        }
+        Character targetCharacter = CharacterManager.Instance.GetCharacterByName(targetCharacterStr);
+        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(interactionType, character.specificLocation);
+        if (targetCharacter != null) {
+            interaction.SetTargetCharacter(targetCharacter);
+        }
+        character.SetForcedInteraction(interaction);
+
+        AddSuccessMessage("Set " + character.name + "'s override to " + interaction.name);
+    }
+    private void ToggleFreezeCharacter(string[] parameter) {
+        if (parameter.Length < 1) {
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of ToggleFreezeCharacter");
+            return;
+        }
+        string characterParameter = parameter[0];
+
+        Character character = CharacterManager.Instance.GetCharacterByName(characterParameter);
+        if (character == null) {
+            AddErrorMessage("There is no character with name " + characterParameter);
+            return;
+        }
+
+        if (character.doNotDisturb == 0) {
+            character.AdjustDoNotDisturb(1);
+        } else {
+            character.AdjustDoNotDisturb(-1);
+        }
+        AddSuccessMessage("Adjusted " + character.name + " do not disturb to " + character.doNotDisturb);
     }
     #endregion
 
