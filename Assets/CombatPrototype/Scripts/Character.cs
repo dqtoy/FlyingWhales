@@ -733,7 +733,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             //            while (_equippedItems.Count > 0) {
             //	ThrowItem (_equippedItems [0]);
             //}
-            if (ownParty.specificLocation != null && tokenInInventory != null) {
+            if (ownParty.specificLocation != null && isHoldingItem) {
                 tokenInInventory.SetOwner(null);
                 DropToken(ownParty.specificLocation, currentStructure);
             }
@@ -2739,7 +2739,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             interactionLog += "\n\n----CHARACTER NPC ACTION TYPES----";
             interactionLog += "\nPOSSIBLE TARGETS:\n";
             foreach (KeyValuePair<Character, CharacterRelationshipData> kvp in relationships) {
-                if(specificLocation == kvp.Key.specificLocation) {
+                if(specificLocation == kvp.Key.specificLocation && !kvp.Key.currentParty.icon.isTravelling && !kvp.Key.isDefender) {
                     interactionLog += kvp.Value.targetCharacter.name + "(";
                     int weight = kvp.Value.GetTotalRelationshipWeight();
                     interactionLog += "weight: " + weight;
@@ -2789,7 +2789,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 
         //**F. compute Item handling weight**
         if (!isStarving && !isExhausted) {
-            if (tokenInInventory != null) {
+            if (isHoldingItem) {
                 if (isAtHomeStructure) {
                     personalActionWeights.AddElement(INTERACTION_TYPE.DROP_ITEM, 10);
                     interactionLog += "\nDROP_ITEM - 10";
@@ -3077,19 +3077,19 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         tokenInInventory = token;
     }
     public void DropToken(Area location, LocationStructure structure) {
-        if (tokenInInventory != null) {
+        if (isHoldingItem) {
             location.AddSpecialTokenToLocation(tokenInInventory, structure);
             UnobtainToken();
         }
     }
     public void PickUpToken(SpecialToken token, Area location) {
-        if (tokenInInventory == null) {
+        if (!isHoldingItem) {
             location.RemoveSpecialTokenFromLocation(token);
             ObtainToken(token);
         }
     }
     public void PickUpRandomToken(Area location) {
-        if (tokenInInventory == null) {
+        if (!isHoldingItem) {
             WeightedDictionary<SpecialToken> pickWeights = new WeightedDictionary<SpecialToken>();
             for (int i = 0; i < location.possibleSpecialTokenSpawns.Count; i++) {
                 SpecialToken token = location.possibleSpecialTokenSpawns[i];
@@ -3106,7 +3106,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
     }
     private void UpdateTokenOwner() {
-        if (tokenInInventory != null) {
+        if (isHoldingItem) {
             tokenInInventory.SetOwner(this.faction);
         }
     }

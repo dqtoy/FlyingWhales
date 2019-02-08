@@ -813,7 +813,7 @@ public class NewCombat : MonoBehaviour {
 
     #region Items
     private void UseItem(CombatCharacter combatCharacter) {
-        if(combatCharacter.character.tokenInInventory != null) {
+        if(combatCharacter.character.isHoldingItem) {
             if(combatCharacter.character.tokenInInventory.specialTokenType == SPECIAL_TOKEN.HEALING_POTION) {
                 if (combatCharacter.character.currentHP < (combatCharacter.maxHP / 2)) {
                     combatCharacter.RestoreToFullHP();

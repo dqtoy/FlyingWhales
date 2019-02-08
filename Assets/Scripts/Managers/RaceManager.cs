@@ -219,6 +219,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.POISON_HOUSE_FOOD,
                 INTERACTION_TYPE.FEED_PRISONER_ACTION,
                 INTERACTION_TYPE.BOOBY_TRAP_HOUSE,
+                INTERACTION_TYPE.STEAL_ACTION_NPC,
+                INTERACTION_TYPE.ASSAULT_ACTION_NPC,
             } },
         };
     }
