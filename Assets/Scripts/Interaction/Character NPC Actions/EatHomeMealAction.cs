@@ -92,7 +92,7 @@ public class EatHomeMealAction : Interaction {
                 nextState = Eat_Cancelled;
                 break;
             case RESULT.FAIL:
-                if (_actionStructureLocation.GetTrait("Poisoned Food") == null) {
+                if (_characterInvolved.homeStructure.GetTrait("Poisoned Food") == null) {
                     nextState = Clean_Eat_Continues;
                 } else {
                     WeightedDictionary<string> result = new WeightedDictionary<string>();
@@ -106,7 +106,7 @@ public class EatHomeMealAction : Interaction {
     }
     private void DoNothingOptionEffect(InteractionState state) {
         string nextState = string.Empty;
-        if (_actionStructureLocation.GetTrait("Poisoned Food") == null) {
+        if (_characterInvolved.homeStructure.GetTrait("Poisoned Food") == null) {
             nextState = Character_Clean_Eats;
         } else {
             WeightedDictionary<string> result = new WeightedDictionary<string>();
@@ -133,12 +133,12 @@ public class EatHomeMealAction : Interaction {
     private void EatContinuesKilledRewardEffect(InteractionState state) {
         //**Mechanics**: Character dies. Remove https://trello.com/c/waFphC2I/1180-poisoned-food trait from the structure
         _characterInvolved.Death();
-        _actionStructureLocation.RemoveTrait("Poisoned Food");
+        _characterInvolved.homeStructure.RemoveTrait("Poisoned Food");
     }
     private void EatContinuesSickRewardEffect(InteractionState state) {
         //**Mechanics**: Character gains https://trello.com/c/SVR4fnx1/1177-sick trait. Remove https://trello.com/c/waFphC2I/1180-poisoned-food trait from the structure
         _characterInvolved.AddTrait("Sick");
-        _actionStructureLocation.RemoveTrait("Poisoned Food");
+        _characterInvolved.homeStructure.RemoveTrait("Poisoned Food");
     }
     private void CharacterCleanEatsRewardEffect(InteractionState state) {
         //**Mechanics**: Fully replenish character's Fullness meter.
@@ -147,13 +147,13 @@ public class EatHomeMealAction : Interaction {
     private void CharacterEatsKilledRewardEffect(InteractionState state) {
         //**Mechanics**: Character dies. Remove https://trello.com/c/waFphC2I/1180-poisoned-food trait from the structure
         _characterInvolved.Death();
-        _actionStructureLocation.RemoveTrait("Poisoned Food");
+        _characterInvolved.homeStructure.RemoveTrait("Poisoned Food");
     }
     private void CharacterEatsSickRewardEffect(InteractionState state) {
         //**Mechanics**: Fully replenish character's Fullness meter. Character gains https://trello.com/c/SVR4fnx1/1177-sick trait. Remove https://trello.com/c/waFphC2I/1180-poisoned-food trait from the structure
         _characterInvolved.ResetFullnessMeter();
         _characterInvolved.AddTrait("Sick");
-        _actionStructureLocation.RemoveTrait("Poisoned Food");
+        _characterInvolved.homeStructure.RemoveTrait("Poisoned Food");
     }
     #endregion
 }
