@@ -8,6 +8,7 @@ public class HangOutAction : Interaction {
 
     private const string Both_Becomes_Cheery = "Both becomes Cheery";
     private const string Both_Becomes_Annoyed = "Both becomes Annoyed";
+    private const string Target_Missing = "Target Missing";
 
     public override Character targetCharacter {
         get { return _targetCharacter; }
@@ -25,6 +26,7 @@ public class HangOutAction : Interaction {
         InteractionState startState = new InteractionState("Start", this);
         InteractionState bothBecomesCheery = new InteractionState(Both_Becomes_Cheery, this);
         InteractionState bothBecomesAnnoyed = new InteractionState(Both_Becomes_Annoyed, this);
+        InteractionState targetMissing = new InteractionState(Target_Missing, this);
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description", this);
         startStateDescriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -34,12 +36,14 @@ public class HangOutAction : Interaction {
         startState.SetEffect(() => StartRewardEffect(startState), false);
         bothBecomesCheery.SetEffect(() => BothBecomesCheeryRewardEffect(bothBecomesCheery));
         bothBecomesAnnoyed.SetEffect(() => BothBecomesAnnoyedRewardEffect(bothBecomesAnnoyed));
+        targetMissing.SetEffect(() => TargetMissingRewardEffect(targetMissing));
 
         _states.Add(startState.name, startState);
 
         _states.Add(bothBecomesCheery.name, bothBecomesCheery);
         _states.Add(bothBecomesAnnoyed.name, bothBecomesAnnoyed);
-        
+        _states.Add(targetMissing.name, targetMissing);
+
         SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
@@ -55,14 +59,8 @@ public class HangOutAction : Interaction {
         }
     }
     public override bool CanInteractionBeDoneBy(Character character) {
-        /*
-         Once the actual action is triggered, check if the target character is in the location 
-         and if they still have at least one Positive or Neutral relationship. If not, this will no longer be valid.
-         */
         if (targetCharacter == null 
-            || targetCharacter.isDead 
-            || targetCharacter.currentStructure != targetStructure 
-            || !characterInvolved.HasRelationshipOfEffectWith(targetCharacter, new List<TRAIT_EFFECT>(){ TRAIT_EFFECT.NEUTRAL, TRAIT_EFFECT.POSITIVE})) {
+            || targetCharacter.isDead) {
             return false;
         }
         return base.CanInteractionBeDoneBy(character);
@@ -76,18 +74,14 @@ public class HangOutAction : Interaction {
 
     #region Option Effect
     private void DoNothingOptionEffect(InteractionState state) {
-        WeightedDictionary<RESULT> resultWeights = new WeightedDictionary<RESULT>();
-        resultWeights.AddElement(RESULT.SUCCESS, 20);
-        resultWeights.AddElement(RESULT.FAIL, 5);
-
         string nextState = string.Empty;
-        switch (resultWeights.PickRandomElementGivenWeights()) {
-            case RESULT.SUCCESS:
-                nextState = Both_Becomes_Cheery;
-                break;
-            case RESULT.FAIL:
-                nextState = Both_Becomes_Annoyed;
-                break;
+        if (targetCharacter.currentStructure == targetStructure) {
+            WeightedDictionary<string> result = new WeightedDictionary<string>();
+            result.AddElement(Both_Becomes_Cheery, 20);
+            result.AddElement(Both_Becomes_Annoyed, 5);
+            nextState = result.PickRandomElementGivenWeights();
+        } else {
+            nextState = Target_Missing;
         }
         SetCurrentState(_states[nextState]);
     }
@@ -117,6 +111,12 @@ public class HangOutAction : Interaction {
         //**Mechanics**: Both characters will gain Annoyed Trait for 5 days.
         _characterInvolved.AddTrait(AttributeManager.Instance.allTraits["Annoyed"]);
         _targetCharacter.AddTrait(AttributeManager.Instance.allTraits["Annoyed"]);
+    }
+    private void TargetMissingRewardEffect(InteractionState state) {
+        if (state.descriptionLog != null) {
+            state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        }
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     #endregion
 }

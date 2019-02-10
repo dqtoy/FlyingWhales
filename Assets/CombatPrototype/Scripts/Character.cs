@@ -739,7 +739,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 tokenInInventory.SetOwner(null);
                 DropToken(ownParty.specificLocation, currentStructure);
             }
-            if (this.race != RACE.SKELETON && this.race != RACE.BEAST) {
+            if (this.race != RACE.SKELETON && this.role.roleType != CHARACTER_ROLE.BEAST) {
                 ownParty.specificLocation.AddCorpse(this);
             }
             if (!IsInOwnParty()) {
