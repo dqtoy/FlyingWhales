@@ -1327,6 +1327,7 @@ public class InteractionManager : MonoBehaviour {
                 return false;
             case INTERACTION_TYPE.MOVE_TO_EXPLORE_EVENT_FACTION:
                 //**Trigger Criteria 1**: The character must not be holding an item
+                return !character.isHoldingItem;
             case INTERACTION_TYPE.TORTURE_ACTION_NPC:
                 return targetCharacter.GetTraitOr("Abducted", "Restrained") != null && character.specificLocation.id == targetCharacter.specificLocation.id;
             case INTERACTION_TYPE.ARGUE_ACTION:
