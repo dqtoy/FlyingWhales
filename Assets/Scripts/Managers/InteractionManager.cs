@@ -314,6 +314,12 @@ public class InteractionManager : MonoBehaviour {
                 actorEffect = null,
                 targetCharacterEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_REMOVE, effectString = "Cursed" } },
             } },
+            { INTERACTION_TYPE.RESTRAIN_CRIMINAL_ACTION, new InteractionAttributes(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.WORK },
+                alignment = INTERACTION_ALIGNMENT.NEUTRAL,
+                actorEffect = null,
+                targetCharacterEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_GAIN, effectString = "Restrained" } },
+            } },
         };
     }
     public InteractionAttributes GetCategoryAndAlignment (INTERACTION_TYPE type, Character actor) {
@@ -784,6 +790,9 @@ public class InteractionManager : MonoBehaviour {
                 break;
             case INTERACTION_TYPE.REMOVE_CURSE_ACTION:
                 createdInteraction = new RemoveCurseAction(interactable);
+                break;
+            case INTERACTION_TYPE.RESTRAIN_CRIMINAL_ACTION:
+                createdInteraction = new RestrainCriminalAction(interactable);
                 break;
         }
         return createdInteraction;
@@ -1396,6 +1405,21 @@ public class InteractionManager : MonoBehaviour {
                     }
                 }
                 return false;
+            case INTERACTION_TYPE.RESTRAIN_CRIMINAL_ACTION:
+                if (character.isAtHomeArea) {
+                    List<LocationStructure> insideSettlements = character.specificLocation.GetStructuresAtLocation(true);
+                    for (int i = 0; i < insideSettlements.Count; i++) {
+                        LocationStructure currStructure = insideSettlements[i];
+                        for (int j = 0; j < currStructure.charactersHere.Count; j++) {
+                            Character currCharacter = currStructure.charactersHere[j];
+                            if(currCharacter.id != character.id && currCharacter.faction.id == character.faction.id 
+                                && currCharacter.GetTrait("Criminal") != null && currCharacter.GetTrait("Restrained") == null) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+                return false;
             default:
                 return true;
         }
@@ -1429,58 +1453,6 @@ public class InteractionManager : MonoBehaviour {
             } else {
                 return null;
             }
-
-            ////If at war with other factions
-            //List<Character> residentsAtArea = new List<Character>();
-            //for (int i = 0; i < areaToAttack.areaResidents.Count; i++) {
-            //    Character resident = areaToAttack.areaResidents[i];
-            //    if(resident.forcedInteraction == null && resident.doNotDisturb <= 0 && resident.IsInOwnParty() && !resident.isLeader 
-            //        && resident.role.roleType != CHARACTER_ROLE.CIVILIAN && !resident.currentParty.icon.isTravelling 
-            //        && !resident.isDefender && resident.specificLocation.id == areaToAttack.id
-            //        && resident.faction == areaToAttack.owner) {
-            //        residentsAtArea.Add(resident);
-            //    }
-            //}
-            //if(residentsAtArea.Count >= 3) {
-            //    //If has at least 3 residents in area
-            //    int numOfMembers = 3;
-            //    if(residentsAtArea.Count >= 4) {
-            //        numOfMembers = 4;
-            //    }
-            //    List<List<Character>> characterCombinations = Utilities.ItemCombinations(residentsAtArea, 5, numOfMembers, numOfMembers);
-            //    if(characterCombinations.Count > 0) {
-            //        List<Character> currentAttackCharacters = null;
-            //        Area currentTargetArea = null;
-            //        float highestWinChance = 0f;
-            //        for (int i = 0; i < characterCombinations.Count; i++) {
-            //            List<Character> attackCharacters = characterCombinations[i];
-            //            Area target = enemyAreas[UnityEngine.Random.Range(0, enemyAreas.Count)];
-            //            DefenderGroup defender = target.GetFirstDefenderGroup();
-            //            float winChance = 0f;
-            //            float loseChance = 0f;
-            //            if(defender != null && defender.party != null) {
-            //                CombatManager.Instance.GetCombatChanceOfTwoLists(attackCharacters, defender.party.characters, out winChance, out loseChance);
-            //            } else {
-            //                CombatManager.Instance.GetCombatChanceOfTwoLists(attackCharacters, null, out winChance, out loseChance);
-            //            }
-            //            if (winChance > 40f) {
-            //                if(currentTargetArea == null) {
-            //                    currentTargetArea = target;
-            //                    currentAttackCharacters = attackCharacters;
-            //                    highestWinChance = winChance;
-            //                } else {
-            //                    if(winChance > highestWinChance) {
-            //                        currentTargetArea = target;
-            //                        currentAttackCharacters = attackCharacters;
-            //                        highestWinChance = winChance;
-            //                    }
-            //                }
-            //            }
-            //        }
-            //        targetArea = currentTargetArea;
-            //        areaToAttack.SetAttackTargetAndCharacters(currentTargetArea, currentAttackCharacters);
-            //    }
-            //}
         }
         return targetArea;
     }
