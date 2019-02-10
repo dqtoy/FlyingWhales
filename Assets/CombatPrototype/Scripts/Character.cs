@@ -19,6 +19,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     protected int _gold;
     protected int _currentInteractionTick;
     protected int _doNotDisturb;
+    protected int _doNotGetHungry;
+    protected int _doNotGetTired;
     protected float _actRate;
     protected bool _isDead;
     protected bool _isFainted;
@@ -1532,9 +1534,15 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public void AdjustDoNotDisturb(int amount) {
         _doNotDisturb += amount;
-        if(_doNotDisturb < 0) {
-            _doNotDisturb = 0;
-        }
+        _doNotDisturb = Math.Max(_doNotDisturb, 0);
+    }
+    public void AdjustDoNotGetHungry(int amount) {
+        _doNotGetHungry += amount;
+        _doNotGetHungry = Math.Max(_doNotGetHungry, 0);
+    }
+    public void AdjustDoNotGetTired(int amount) {
+        _doNotGetTired += amount;
+        _doNotGetTired = Math.Max(_doNotGetTired, 0);
     }
     public void SetAlreadyTargetedByGrudge(bool state) {
         _alreadyTargetedByGrudge = state;
@@ -2290,6 +2298,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return null;
     }
+    public Trait GetTraitOr(string traitName1, string traitName2, string traitName3, string traitName4) {
+        for (int i = 0; i < _traits.Count; i++) {
+            if (_traits[i].name == traitName1 || _traits[i].name == traitName2 || _traits[i].name == traitName3 || _traits[i].name == traitName4) {
+                return _traits[i];
+            }
+        }
+        return null;
+    }
     public bool HasTraitOf(TRAIT_TYPE traitType) {
         for (int i = 0; i < _traits.Count; i++) {
             if (_traits[i].type == traitType) {
@@ -2352,6 +2368,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if(trait.type == TRAIT_TYPE.DISABLER) {
             AdjustDoNotDisturb(1);
         }
+        if(trait.name == "Abducted" || trait.name == "Restrained") {
+            AdjustDoNotGetTired(1);
+        }else if (trait.name == "Packaged" || trait.name == "Hibernating") {
+            AdjustDoNotGetTired(1);
+            AdjustDoNotGetHungry(1);
+        }
         for (int i = 0; i < trait.effects.Count; i++) {
             TraitEffect traitEffect = trait.effects[i];
             if (!traitEffect.hasRequirement && traitEffect.target == TRAIT_REQUIREMENT_TARGET.SELF) {
@@ -2378,6 +2400,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     private void UnapplyTraitEffects(Trait trait) {
         if (trait.type == TRAIT_TYPE.DISABLER) {
             AdjustDoNotDisturb(-1);
+        }
+        if (trait.name == "Abducted" || trait.name == "Restrained") {
+            AdjustDoNotGetTired(-1);
+        } else if (trait.name == "Packaged" || trait.name == "Hibernating") {
+            AdjustDoNotGetTired(-1);
+            AdjustDoNotGetHungry(-1);
         }
         for (int i = 0; i < trait.effects.Count; i++) {
             TraitEffect traitEffect = trait.effects[i];
@@ -3115,8 +3143,15 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 
     #region Needs
     private void DecreaseNeeds() {
-        DecreaseFullnessMeter();
-        DecreaseTirednessMeter();
+        if(race == RACE.SKELETON) {
+            return;
+        }
+        if(_doNotGetHungry <= 0) {
+            DecreaseFullnessMeter();
+        }
+        if(_doNotGetTired <= 0) {
+            DecreaseTirednessMeter();
+        }
     }
     public string GetNeedsSummary() {
         string summary = "Fullness: " + fullness.ToString() + "/" + FULLNESS_DEFAULT.ToString();
