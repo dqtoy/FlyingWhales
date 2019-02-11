@@ -2087,31 +2087,52 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             AddTrait(AttributeManager.Instance.allTraits["Backline Combatant"]);
         }
 
-        //Class Name
-        if (characterClass.className == "Knight" || characterClass.className == "Marauder" || characterClass.className == "Barbarian") {
-            AddTrait(AttributeManager.Instance.allTraits["Melee Trait"]);
-        } else if (characterClass.className == "Stalker" || characterClass.className == "Archer" || characterClass.className == "Hunter") {
-            AddTrait(AttributeManager.Instance.allTraits["Ranged Trait"]);
-        } else if (characterClass.className == "Druid" || characterClass.className == "Mage" || characterClass.className == "Shaman") {
-            AddTrait(AttributeManager.Instance.allTraits["Magic Trait"]);
-        } else if (characterClass.className == "Spinner" || characterClass.className == "Abomination") {
-            AddTrait(AttributeManager.Instance.allTraits["Melee Vulnerable"]);
-        } else if (characterClass.className == "Ravager") {
-            AddTrait(AttributeManager.Instance.allTraits["Ranged Vulnerable"]);
-        } else if (characterClass.className == "Dragon") {
-            AddTrait(AttributeManager.Instance.allTraits["Dragon Trait"]);
-        } else if (characterClass.className == "Greed") {
-            AddTrait(AttributeManager.Instance.allTraits["Greed Trait"]);
-        } else if (characterClass.className == "Lust") {
-            AddTrait(AttributeManager.Instance.allTraits["Lust Trait"]);
-        } else if (characterClass.className == "Envy") {
-            AddTrait(AttributeManager.Instance.allTraits["Envy Trait"]);
-        }
+        ////Class Name
+        //if (characterClass.className == "Knight" || characterClass.className == "Marauder" || characterClass.className == "Barbarian") {
+        //    AddTrait(AttributeManager.Instance.allTraits["Melee Trait"]);
+        //} else if (characterClass.className == "Stalker" || characterClass.className == "Archer" || characterClass.className == "Hunter") {
+        //    AddTrait(AttributeManager.Instance.allTraits["Ranged Trait"]);
+        //} else if (characterClass.className == "Druid" || characterClass.className == "Mage" || characterClass.className == "Shaman") {
+        //    AddTrait(AttributeManager.Instance.allTraits["Magic Trait"]);
+        //} else if (characterClass.className == "Spinner" || characterClass.className == "Abomination") {
+        //    AddTrait(AttributeManager.Instance.allTraits["Melee Vulnerable"]);
+        //} else if (characterClass.className == "Ravager") {
+        //    AddTrait(AttributeManager.Instance.allTraits["Ranged Vulnerable"]);
+        //} else if (characterClass.className == "Dragon") {
+        //    AddTrait(AttributeManager.Instance.allTraits["Dragon Trait"]);
+        //} else if (characterClass.className == "Greed") {
+        //    AddTrait(AttributeManager.Instance.allTraits["Greed Trait"]);
+        //} else if (characterClass.className == "Lust") {
+        //    AddTrait(AttributeManager.Instance.allTraits["Lust Trait"]);
+        //} else if (characterClass.className == "Envy") {
+        //    AddTrait(AttributeManager.Instance.allTraits["Envy Trait"]);
+        //}
 
         //Random Traits
         int chance = UnityEngine.Random.Range(0, 100);
-        if(chance < 10) {
+        if (chance < 10) {
             AddTrait(new Craftsman());
+        }
+    }
+    public void CreateInitialTraitsByRace() {
+        if (race == RACE.HUMANS) {
+            AddTrait(AttributeManager.Instance.allTraits["Beast Slayer"]);
+        } else if (race == RACE.ELVES) {
+            AddTrait(AttributeManager.Instance.allTraits["Anti Magic Aura"]);
+        } else if (race == RACE.GOBLIN) {
+            AddTrait(AttributeManager.Instance.allTraits["Soft Target"]);
+        } else if (race == RACE.FAERY) {
+            AddTrait(AttributeManager.Instance.allTraits["Melee Slayer"]);
+        } else if (race == RACE.SKELETON) {
+            AddTrait(AttributeManager.Instance.allTraits["Brittle Bones"]);
+        } else if (race == RACE.DRAGON) {
+            AddTrait(AttributeManager.Instance.allTraits["Steely Hide"]);
+        } else if (race == RACE.SPIDER) {
+            AddTrait(AttributeManager.Instance.allTraits["Faery Slayer"]);
+        } else if (race == RACE.WOLF) {
+            AddTrait(AttributeManager.Instance.allTraits["Goblin Slayer"]);
+        } else if (race == RACE.ABOMINATION) {
+            AddTrait(AttributeManager.Instance.allTraits["Elf Slayer"]);
         }
     }
     public void AddTrait(string traitName) {

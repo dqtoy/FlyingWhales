@@ -243,6 +243,8 @@ public class CombatAttributePanelUI : MonoBehaviour {
             return System.Enum.GetNames(typeof(RACE)).ToList();
         }else if (requirementType == TRAIT_REQUIREMENT.TRAIT) {
             return _allCombatAttributes;
+        } else if (requirementType == TRAIT_REQUIREMENT.ROLE) {
+            return System.Enum.GetNames(typeof(CHARACTER_ROLE)).ToList();
         }
         return null;
     }

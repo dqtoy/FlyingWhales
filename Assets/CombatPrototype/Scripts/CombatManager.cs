@@ -25,16 +25,10 @@ public class CombatManager : MonoBehaviour {
         Instance = this;
     }
 	internal void Initialize(){
-        //ConstructBaseCharacters();
         weaponTypeSkills = new Dictionary<WEAPON_TYPE, List<Skill>>();
         unusedColors = new List<Color>();
         usedColors = new List<Color>();
         newCombat.Initialize();
-        //ConstructCharacterColors ();
-        //			ConstructAttributeSkills ();
-        //NewCombat();
-        //_combatRooms = new Dictionary<Character, CombatRoom>();
-        //Messenger.AddListener<Character, Character>(Signals.COLLIDED_WITH_CHARACTER, CheckForCombat);
     }
     private void ConstructBaseCharacters() {
         string path = Utilities.dataPath + "CharacterSetups/";
@@ -168,9 +162,13 @@ public class CombatManager : MonoBehaviour {
                     if (characters2[0].race == RACE.GOBLIN) {
                         totalPower *= 1.25f;
                     }
-                } //TODO: Add Abomination
+                } else if (character.race == RACE.ABOMINATION) {
+                    if (characters2[0].race == RACE.ELVES) {
+                        totalPower *= 1.25f;
+                    }
+                }
 
-                if(character.characterClass.rangeType == RANGE_TYPE.MELEE && character.characterClass.attackType == ATTACK_TYPE.PHYSICAL) {
+                if (character.characterClass.rangeType == RANGE_TYPE.MELEE && character.characterClass.attackType == ATTACK_TYPE.PHYSICAL) {
                     if (characters2[0].characterClass.rangeType == RANGE_TYPE.RANGED && characters2[0].characterClass.attackType == ATTACK_TYPE.PHYSICAL) {
                         totalPower *= 1.25f;
                     }
