@@ -110,245 +110,184 @@ public class CombatManager : MonoBehaviour {
             enemyWeight = 0;
             return;
         }
-        int pairCombatCount = allies.Count;
-        if (enemies.Count > allies.Count) {
-            pairCombatCount = enemies.Count;
-        }
-        for (int i = 0; i < allies.Count; i++) {
-            allies[i].pairCombatStats = new PairCombatStats[pairCombatCount];
-        }
-        for (int i = 0; i < enemies.Count; i++) {
-            enemies[i].pairCombatStats = new PairCombatStats[pairCombatCount];
-        }
+        //int pairCombatCount = allies.Count;
+        //if (enemies.Count > allies.Count) {
+        //    pairCombatCount = enemies.Count;
+        //}
+        //for (int i = 0; i < allies.Count; i++) {
+        //    allies[i].pairCombatStats = new PairCombatStats[pairCombatCount];
+        //}
+        //for (int i = 0; i < enemies.Count; i++) {
+        //    enemies[i].pairCombatStats = new PairCombatStats[pairCombatCount];
+        //}
 
         allyWeight = GetTotalWinWeight(allies, enemies);
         enemyWeight = GetTotalWinWeight(enemies, allies);
     }
-    private int GetTotalWinWeight(List<Character> icharacters1, List<Character> icharacters2) {
+    private int GetTotalWinWeight(List<Character> characters1, List<Character> characters2) {
         int totalWeight = 0;
-        for (int i = 0; i < icharacters1.Count; i++) {
-            Character icharacter = icharacters1[i];
+        for (int i = 0; i < characters1.Count; i++) {
+            Character character = characters1[i];
 
-            ApplyBaseStats(icharacter);
-            //ApplyWinWeightOfCharacter(icharacter, icharacters1, icharacters2);
+            float speedFormula = 1f + (character.speed / 200f);
+            float totalPower = ((character.attackPower / 10f) * speedFormula) + ((character.maxHP / 30f) * speedFormula);
 
-            //Calculate total power per pair
-            for (int j = 0; j < icharacter.pairCombatStats.Length; j++) {
-                int totalFlatAttack = icharacter.combatBaseAttack + icharacter.combatAttackFlat + icharacter.pairCombatStats[j].attackFlat;
-                int totalFlatSpeed = icharacter.combatBaseSpeed + icharacter.combatSpeedFlat + icharacter.pairCombatStats[j].speedFlat;
-                int totalFlatHP = icharacter.combatBaseHP + icharacter.combatHPFlat + icharacter.pairCombatStats[j].hpFlat;
-                int totalFlatPower = icharacter.combatPowerFlat + icharacter.pairCombatStats[j].powerFlat;
+            if (characters2.Count == 1) {
+                if (character.race == RACE.DRAGON) {
+                    totalPower *= 1.25f;
+                }
+                if (character.isLeader) {
+                    totalPower *= 1.25f;
+                }
 
-                int totalMultiplierAttack = icharacter.combatAttackMultiplier + icharacter.pairCombatStats[j].attackMultiplier;
-                int totalMultiplierSpeed = icharacter.combatSpeedMultiplier + icharacter.pairCombatStats[j].speedMultiplier;
-                int totalMultiplierHP = icharacter.combatHPMultiplier + icharacter.pairCombatStats[j].hpMultiplier;
-                int totalMultiplierPower = icharacter.combatPowerMultiplier + icharacter.pairCombatStats[j].powerMultiplier;
+                if (character.race == RACE.HUMANS) {
+                    if(characters2[0].role.roleType == CHARACTER_ROLE.BEAST) {
+                        totalPower *= 1.25f;
+                    }
+                } else if (character.race == RACE.ELVES) {
+                    if (characters2[0].characterClass.attackType == ATTACK_TYPE.MAGICAL) {
+                        totalPower *= 1.25f;
+                    }
+                } else if (character.race == RACE.GOBLIN) {
+                    if (characters2[0].characterClass.attackType == ATTACK_TYPE.PHYSICAL) {
+                        totalPower *= 0.85f;
+                    }
+                } else if (character.race == RACE.FAERY) {
+                    if (characters2[0].characterClass.rangeType == RANGE_TYPE.MELEE) {
+                        totalPower *= 1.25f;
+                    }
+                } else if (character.race == RACE.SKELETON) {
+                    if (characters2[0].characterClass.rangeType == RANGE_TYPE.RANGED && characters2[0].characterClass.attackType == ATTACK_TYPE.PHYSICAL) {
+                        totalPower *= 0.75f;
+                    }
+                } else if (character.race == RACE.SPIDER) {
+                    if (characters2[0].race == RACE.FAERY) {
+                        totalPower *= 1.25f;
+                    }
+                } else if (character.race == RACE.WOLF) {
+                    if (characters2[0].race == RACE.GOBLIN) {
+                        totalPower *= 1.25f;
+                    }
+                } //TODO: Add Abomination
 
-                icharacter.pairCombatStats[j].totalPower =
-                    (int)
-                    //calculate total attack
-                    ((totalFlatAttack + (totalFlatAttack * (totalMultiplierAttack / 100f))) +
-                    //calculate total speed
-                    (totalFlatSpeed + (totalFlatSpeed * (totalMultiplierSpeed / 100f))) +
-                    //calculate total hp
-                    (totalFlatHP + (totalFlatHP * (totalMultiplierHP / 100f))));
-
-                //Modify power
-                icharacter.pairCombatStats[j].totalPower += totalFlatPower;
-                icharacter.pairCombatStats[j].totalPower += (int) (icharacter.pairCombatStats[j].totalPower * (totalMultiplierPower / 100f));
-                totalWeight += icharacter.pairCombatStats[j].totalPower;
+                if(character.characterClass.rangeType == RANGE_TYPE.MELEE && character.characterClass.attackType == ATTACK_TYPE.PHYSICAL) {
+                    if (characters2[0].characterClass.rangeType == RANGE_TYPE.RANGED && characters2[0].characterClass.attackType == ATTACK_TYPE.PHYSICAL) {
+                        totalPower *= 1.25f;
+                    }
+                } else if (character.characterClass.rangeType == RANGE_TYPE.RANGED && character.characterClass.attackType == ATTACK_TYPE.PHYSICAL) {
+                    if (characters2[0].characterClass.rangeType == RANGE_TYPE.RANGED && characters2[0].characterClass.attackType == ATTACK_TYPE.MAGICAL) {
+                        totalPower *= 1.25f;
+                    }
+                } else if (character.characterClass.rangeType == RANGE_TYPE.RANGED && character.characterClass.attackType == ATTACK_TYPE.MAGICAL) {
+                    if (characters2[0].characterClass.rangeType == RANGE_TYPE.MELEE && characters2[0].characterClass.attackType == ATTACK_TYPE.PHYSICAL) {
+                        totalPower *= 1.25f;
+                    }
+                }
             }
+
+            totalWeight += (int) totalPower;
         }
         return totalWeight;
     }
-    private void ApplyWinWeightOfCharacter(Character icharacter, List<Character> allies, List<Character> enemies) {
-        for (int j = 0; j < icharacter.traits.Count; j++) {
-            for (int k = 0; k < icharacter.traits[j].effects.Count; k++) {
-                TraitEffect traitEffect = icharacter.traits[j].effects[k];
-                ApplyTraitEffectPrePairing(icharacter, allies, enemies, traitEffect);
-                ApplyTraitEffectPairing(icharacter, enemies, traitEffect);
-            }
-        }
-    }
-    private void ApplyBaseStats(Character character) {
-        character.combatBaseAttack = character.attackPower;
-        character.combatBaseSpeed = character.speed;
-        character.combatBaseHP = character.maxHP;
-    }
+    //private void ApplyWinWeightOfCharacter(Character icharacter, List<Character> allies, List<Character> enemies) {
+    //    for (int j = 0; j < icharacter.traits.Count; j++) {
+    //        for (int k = 0; k < icharacter.traits[j].effects.Count; k++) {
+    //            TraitEffect traitEffect = icharacter.traits[j].effects[k];
+    //            ApplyTraitEffectPrePairing(icharacter, allies, enemies, traitEffect);
+    //            ApplyTraitEffectPairing(icharacter, enemies, traitEffect);
+    //        }
+    //    }
+    //}
+    //private void ApplyBaseStats(Character character) {
+    //    character.combatBaseAttack = character.attackPower;
+    //    character.combatBaseSpeed = character.speed;
+    //    character.combatBaseHP = character.maxHP;
+    //}
 
-    private void ApplyTraitEffectPrePairing(Character sourceCharacter, List<Character> allies, List<Character> enemies, TraitEffect traitEffect) {
-        //List<ICharacter> enemies = GetEnemyCharacters(icharacter.currentSide);
-        //List<ICharacter> allies = GetAllyCharacters(icharacter.currentSide);
-        if (traitEffect.target == TRAIT_REQUIREMENT_TARGET.SELF) {
-            if (traitEffect.hasRequirement) {
-                List<Character> checkerCharacters = GetCharactersToBeChecked(traitEffect.checker, sourceCharacter, allies, enemies);
-                for (int i = 0; i < checkerCharacters.Count; i++) {
-                    if (CharacterFitsTraitCriteria(checkerCharacters[i], traitEffect)) {
-                        ModifyStat(sourceCharacter, traitEffect);
-                    }
-                }
-            } else {
-                ModifyStat(sourceCharacter, traitEffect);
-            }
-        } else if (traitEffect.target == TRAIT_REQUIREMENT_TARGET.ENEMY) {
-            //Do nothing, must never have target at the start of combat
-        } else if (traitEffect.target == TRAIT_REQUIREMENT_TARGET.ALL_ENEMIES) {
-            if (traitEffect.hasRequirement) {
-                List<Character> checkerCharacters = GetCharactersToBeChecked(traitEffect.checker, sourceCharacter, allies, enemies);
-                for (int i = 0; i < checkerCharacters.Count; i++) {
-                    if (CharacterFitsTraitCriteria(checkerCharacters[i], traitEffect)) {
-                        for (int j = 0; j < enemies.Count; j++) {
-                            ModifyStat(enemies[j], traitEffect);
-                        }
-                    }
-                }
-            } else {
-                for (int i = 0; i < enemies.Count; i++) {
-                    ModifyStat(enemies[i], traitEffect);
-                }
-            }
-        } else if (traitEffect.target == TRAIT_REQUIREMENT_TARGET.ALL_IN_COMBAT) {
-            if (traitEffect.hasRequirement) {
-                List<Character> checkerCharacters = GetCharactersToBeChecked(traitEffect.checker, sourceCharacter, allies, enemies);
-                for (int i = 0; i < checkerCharacters.Count; i++) {
-                    if (CharacterFitsTraitCriteria(checkerCharacters[i], traitEffect)) {
-                        for (int j = 0; j < enemies.Count; j++) {
-                            ModifyStat(enemies[j], traitEffect);
-                        }
-                        for (int j = 0; j < allies.Count; j++) {
-                            ModifyStat(allies[j], traitEffect);
-                        }
-                    }
-                }
-            } else {
-                for (int i = 0; i < enemies.Count; i++) {
-                    ModifyStat(enemies[i], traitEffect);
-                }
-                for (int i = 0; i < allies.Count; i++) {
-                    ModifyStat(allies[i], traitEffect);
-                }
-            }
-        } else if (traitEffect.target == TRAIT_REQUIREMENT_TARGET.ALL_PARTY_MEMBERS) {
-            if (traitEffect.hasRequirement) {
-                List<Character> checkerCharacters = GetCharactersToBeChecked(traitEffect.checker, sourceCharacter, allies, enemies);
-                for (int i = 0; i < checkerCharacters.Count; i++) {
-                    if (CharacterFitsTraitCriteria(checkerCharacters[i], traitEffect)) {
-                        for (int j = 0; j < allies.Count; j++) {
-                            ModifyStat(allies[j], traitEffect);
-                        }
-                    }
-                }
-            } else {
-                for (int i = 0; i < allies.Count; i++) {
-                    ModifyStat(allies[i], traitEffect);
-                }
-            }
-        } else if (traitEffect.target == TRAIT_REQUIREMENT_TARGET.OTHER_PARTY_MEMBERS) {
-            if (traitEffect.hasRequirement) {
-                List<Character> checkerCharacters = GetCharactersToBeChecked(traitEffect.checker, sourceCharacter, allies, enemies);
-                for (int i = 0; i < checkerCharacters.Count; i++) {
-                    if (CharacterFitsTraitCriteria(checkerCharacters[i], traitEffect)) {
-                        for (int j = 0; j < allies.Count; j++) {
-                            if (allies[j] != sourceCharacter) {
-                                ModifyStat(allies[j], traitEffect);
-                            }
-                        }
-                    }
-                }
-            } else {
-                for (int i = 0; i < allies.Count; i++) {
-                    if (allies[i] != sourceCharacter) {
-                        ModifyStat(allies[i], traitEffect);
-                    }
-                }
-            }
-        }
-    }
-    private void ApplyTraitEffectPairing(Character icharacter, List<Character> enemies, TraitEffect traitEffect) {
+    //private void ApplyTraitEffectPairing(Character icharacter, List<Character> enemies, TraitEffect traitEffect) {
         //if there is no more enemy but there is still a pair slot, the values are zero
-        for (int i = 0; i < icharacter.pairCombatStats.Length; i++) {
-            if (i < enemies.Count) {
-                Character enemy = enemies[i];
-                if (traitEffect.target == TRAIT_REQUIREMENT_TARGET.SELF) {
-                    if (traitEffect.hasRequirement) {
-                        if (CharacterFitsTraitCriteria(enemy, traitEffect)) {
-                            if (traitEffect.isPercentage) {
-                                if (traitEffect.stat == STAT.ATTACK) {
-                                    icharacter.pairCombatStats[i].attackMultiplier += (int) traitEffect.amount;
-                                } else if (traitEffect.stat == STAT.SPEED) {
-                                    icharacter.pairCombatStats[i].speedMultiplier += (int) traitEffect.amount;
-                                } else if (traitEffect.stat == STAT.HP) {
-                                    icharacter.pairCombatStats[i].hpMultiplier += (int) traitEffect.amount;
-                                } else if (traitEffect.stat == STAT.POWER) {
-                                    icharacter.pairCombatStats[i].powerMultiplier += (int) traitEffect.amount;
-                                }
-                            } else {
-                                if (traitEffect.stat == STAT.ATTACK) {
-                                    icharacter.pairCombatStats[i].attackFlat += (int) traitEffect.amount;
-                                } else if (traitEffect.stat == STAT.SPEED) {
-                                    icharacter.pairCombatStats[i].speedFlat += (int) traitEffect.amount;
-                                } else if (traitEffect.stat == STAT.HP) {
-                                    icharacter.pairCombatStats[i].hpFlat += (int) traitEffect.amount;
-                                } else if (traitEffect.stat == STAT.POWER) {
-                                    icharacter.pairCombatStats[i].powerFlat += (int) traitEffect.amount;
-                                }
-                            }
-                        }
-                    } else if (traitEffect.target == TRAIT_REQUIREMENT_TARGET.ENEMY) {
-                        if (traitEffect.hasRequirement) {
-                            if (CharacterFitsTraitCriteria(enemy, traitEffect)) {
-                                if (traitEffect.isPercentage) {
-                                    if (traitEffect.stat == STAT.ATTACK) {
-                                        enemy.pairCombatStats[i].attackMultiplier += (int) traitEffect.amount;
-                                    } else if (traitEffect.stat == STAT.SPEED) {
-                                        enemy.pairCombatStats[i].speedMultiplier += (int) traitEffect.amount;
-                                    } else if (traitEffect.stat == STAT.HP) {
-                                        enemy.pairCombatStats[i].hpMultiplier += (int) traitEffect.amount;
-                                    } else if (traitEffect.stat == STAT.POWER) {
-                                        enemy.pairCombatStats[i].powerMultiplier += (int) traitEffect.amount;
-                                    }
-                                } else {
-                                    if (traitEffect.stat == STAT.ATTACK) {
-                                        enemy.pairCombatStats[i].attackFlat += (int) traitEffect.amount;
-                                    } else if (traitEffect.stat == STAT.SPEED) {
-                                        enemy.pairCombatStats[i].speedFlat += (int) traitEffect.amount;
-                                    } else if (traitEffect.stat == STAT.HP) {
-                                        enemy.pairCombatStats[i].hpFlat += (int) traitEffect.amount;
-                                    } else if (traitEffect.stat == STAT.POWER) {
-                                        enemy.pairCombatStats[i].powerFlat += (int) traitEffect.amount;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-    private void ModifyStat(Character icharacter, TraitEffect traitEffect) {
-        if (traitEffect.isPercentage) {
-            if (traitEffect.stat == STAT.ATTACK) {
-                icharacter.combatAttackMultiplier += (int) traitEffect.amount;
-            } else if (traitEffect.stat == STAT.SPEED) {
-                icharacter.combatSpeedMultiplier += (int) traitEffect.amount;
-            } else if (traitEffect.stat == STAT.HP) {
-                icharacter.combatHPMultiplier += (int) traitEffect.amount;
-            } else if (traitEffect.stat == STAT.POWER) {
-                icharacter.combatPowerMultiplier += (int) traitEffect.amount;
-            }
-        } else {
-            if (traitEffect.stat == STAT.ATTACK) {
-                icharacter.combatAttackFlat += (int) traitEffect.amount;
-            } else if (traitEffect.stat == STAT.SPEED) {
-                icharacter.combatSpeedFlat += (int) traitEffect.amount;
-            } else if (traitEffect.stat == STAT.HP) {
-                icharacter.combatHPFlat += (int) traitEffect.amount;
-            } else if (traitEffect.stat == STAT.POWER) {
-                icharacter.combatPowerFlat += (int) traitEffect.amount;
-            }
-        }
-
-    }
+        //for (int i = 0; i < icharacter.pairCombatStats.Length; i++) {
+        //    if (i < enemies.Count) {
+        //        Character enemy = enemies[i];
+        //        if (traitEffect.target == TRAIT_REQUIREMENT_TARGET.SELF) {
+        //            if (traitEffect.hasRequirement) {
+        //                if (CharacterFitsTraitCriteria(enemy, traitEffect)) {
+        //                    if (traitEffect.isPercentage) {
+        //                        if (traitEffect.stat == STAT.ATTACK) {
+        //                            icharacter.pairCombatStats[i].attackMultiplier += (int) traitEffect.amount;
+        //                        } else if (traitEffect.stat == STAT.SPEED) {
+        //                            icharacter.pairCombatStats[i].speedMultiplier += (int) traitEffect.amount;
+        //                        } else if (traitEffect.stat == STAT.HP) {
+        //                            icharacter.pairCombatStats[i].hpMultiplier += (int) traitEffect.amount;
+        //                        } else if (traitEffect.stat == STAT.POWER) {
+        //                            icharacter.pairCombatStats[i].powerMultiplier += (int) traitEffect.amount;
+        //                        }
+        //                    } else {
+        //                        if (traitEffect.stat == STAT.ATTACK) {
+        //                            icharacter.pairCombatStats[i].attackFlat += (int) traitEffect.amount;
+        //                        } else if (traitEffect.stat == STAT.SPEED) {
+        //                            icharacter.pairCombatStats[i].speedFlat += (int) traitEffect.amount;
+        //                        } else if (traitEffect.stat == STAT.HP) {
+        //                            icharacter.pairCombatStats[i].hpFlat += (int) traitEffect.amount;
+        //                        } else if (traitEffect.stat == STAT.POWER) {
+        //                            icharacter.pairCombatStats[i].powerFlat += (int) traitEffect.amount;
+        //                        }
+        //                    }
+        //                }
+        //            } else if (traitEffect.target == TRAIT_REQUIREMENT_TARGET.ENEMY) {
+        //                if (traitEffect.hasRequirement) {
+        //                    if (CharacterFitsTraitCriteria(enemy, traitEffect)) {
+        //                        if (traitEffect.isPercentage) {
+        //                            if (traitEffect.stat == STAT.ATTACK) {
+        //                                enemy.pairCombatStats[i].attackMultiplier += (int) traitEffect.amount;
+        //                            } else if (traitEffect.stat == STAT.SPEED) {
+        //                                enemy.pairCombatStats[i].speedMultiplier += (int) traitEffect.amount;
+        //                            } else if (traitEffect.stat == STAT.HP) {
+        //                                enemy.pairCombatStats[i].hpMultiplier += (int) traitEffect.amount;
+        //                            } else if (traitEffect.stat == STAT.POWER) {
+        //                                enemy.pairCombatStats[i].powerMultiplier += (int) traitEffect.amount;
+        //                            }
+        //                        } else {
+        //                            if (traitEffect.stat == STAT.ATTACK) {
+        //                                enemy.pairCombatStats[i].attackFlat += (int) traitEffect.amount;
+        //                            } else if (traitEffect.stat == STAT.SPEED) {
+        //                                enemy.pairCombatStats[i].speedFlat += (int) traitEffect.amount;
+        //                            } else if (traitEffect.stat == STAT.HP) {
+        //                                enemy.pairCombatStats[i].hpFlat += (int) traitEffect.amount;
+        //                            } else if (traitEffect.stat == STAT.POWER) {
+        //                                enemy.pairCombatStats[i].powerFlat += (int) traitEffect.amount;
+        //                            }
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
+    //}
+    //private void ModifyStat(Character icharacter, TraitEffect traitEffect) {
+    //    if (traitEffect.isPercentage) {
+    //        if (traitEffect.stat == STAT.ATTACK) {
+    //            icharacter.combatAttackMultiplier += (int) traitEffect.amount;
+    //        } else if (traitEffect.stat == STAT.SPEED) {
+    //            icharacter.combatSpeedMultiplier += (int) traitEffect.amount;
+    //        } else if (traitEffect.stat == STAT.HP) {
+    //            icharacter.combatHPMultiplier += (int) traitEffect.amount;
+    //        } else if (traitEffect.stat == STAT.POWER) {
+    //            icharacter.combatPowerMultiplier += (int) traitEffect.amount;
+    //        }
+    //    } else {
+    //        if (traitEffect.stat == STAT.ATTACK) {
+    //            icharacter.combatAttackFlat += (int) traitEffect.amount;
+    //        } else if (traitEffect.stat == STAT.SPEED) {
+    //            icharacter.combatSpeedFlat += (int) traitEffect.amount;
+    //        } else if (traitEffect.stat == STAT.HP) {
+    //            icharacter.combatHPFlat += (int) traitEffect.amount;
+    //        } else if (traitEffect.stat == STAT.POWER) {
+    //            icharacter.combatPowerFlat += (int) traitEffect.amount;
+    //        }
+    //    }
+    //}
     private List<Character> GetCharactersToBeChecked(TRAIT_REQUIREMENT_CHECKER checker, Character sourceCharacter,
        List<Character> allies, List<Character> enemies, List<Character> targets = null) {
 

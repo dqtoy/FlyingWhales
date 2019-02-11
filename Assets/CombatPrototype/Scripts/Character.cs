@@ -274,57 +274,57 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             return total;
         }
     }
-    public int combatBaseAttack {
-        get { return _combatBaseAttack; }
-        set { _combatBaseAttack = value; }
-    }
-    public int combatBaseSpeed {
-        get { return _combatBaseSpeed; }
-        set { _combatBaseSpeed = value; }
-    }
-    public int combatBaseHP {
-        get { return _combatBaseHP; }
-        set { _combatBaseHP = value; }
-    }
-    public int combatAttackFlat {
-        get { return _combatAttackFlat; }
-        set { _combatAttackFlat = value; }
-    }
-    public int combatAttackMultiplier {
-        get { return _combatAttackMultiplier; }
-        set { _combatAttackMultiplier = value; }
-    }
-    public int combatSpeedFlat {
-        get { return _combatSpeedFlat; }
-        set { _combatSpeedFlat = value; }
-    }
-    public int combatSpeedMultiplier {
-        get { return _combatSpeedMultiplier; }
-        set { _combatSpeedMultiplier = value; }
-    }
-    public int combatHPFlat {
-        get { return _combatHPFlat; }
-        set { _combatHPFlat = value; }
-    }
-    public int combatHPMultiplier {
-        get { return _combatHPMultiplier; }
-        set { _combatHPMultiplier = value; }
-    }
-    public int combatPowerFlat {
-        get { return _combatPowerFlat; }
-        set { _combatPowerFlat = value; }
-    }
-    public int combatPowerMultiplier {
-        get { return _combatPowerMultiplier; }
-        set { _combatPowerMultiplier = value; }
-    }
+    //public int combatBaseAttack {
+    //    get { return _combatBaseAttack; }
+    //    set { _combatBaseAttack = value; }
+    //}
+    //public int combatBaseSpeed {
+    //    get { return _combatBaseSpeed; }
+    //    set { _combatBaseSpeed = value; }
+    //}
+    //public int combatBaseHP {
+    //    get { return _combatBaseHP; }
+    //    set { _combatBaseHP = value; }
+    //}
+    //public int combatAttackFlat {
+    //    get { return _combatAttackFlat; }
+    //    set { _combatAttackFlat = value; }
+    //}
+    //public int combatAttackMultiplier {
+    //    get { return _combatAttackMultiplier; }
+    //    set { _combatAttackMultiplier = value; }
+    //}
+    //public int combatSpeedFlat {
+    //    get { return _combatSpeedFlat; }
+    //    set { _combatSpeedFlat = value; }
+    //}
+    //public int combatSpeedMultiplier {
+    //    get { return _combatSpeedMultiplier; }
+    //    set { _combatSpeedMultiplier = value; }
+    //}
+    //public int combatHPFlat {
+    //    get { return _combatHPFlat; }
+    //    set { _combatHPFlat = value; }
+    //}
+    //public int combatHPMultiplier {
+    //    get { return _combatHPMultiplier; }
+    //    set { _combatHPMultiplier = value; }
+    //}
+    //public int combatPowerFlat {
+    //    get { return _combatPowerFlat; }
+    //    set { _combatPowerFlat = value; }
+    //}
+    //public int combatPowerMultiplier {
+    //    get { return _combatPowerMultiplier; }
+    //    set { _combatPowerMultiplier = value; }
+    //}
     public int currentHP {
         get { return this._currentHP; }
     }
-    public PairCombatStats[] pairCombatStats {
-        get { return _pairCombatStats; }
-        set { _pairCombatStats = value; }
-    }
+    //public PairCombatStats[] pairCombatStats {
+    //    get { return _pairCombatStats; }
+    //    set { _pairCombatStats = value; }
+    //}
     public Dictionary<ELEMENT, float> elementalWeaknesses {
         get { return _elementalWeaknesses; }
     }
@@ -433,30 +433,15 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         AssignRandomJob();
         SetMorality(MORALITY.GOOD);
-        //_skills = GetGeneralSkills();
-
-        //_bodyParts = new List<BodyPart>(_raceSetting.bodyParts);
-        //ConstructBodyPartDict(_raceSetting.bodyParts);
-
-        //AllocateStatPoints(10);
         SetTraitsFromRace();
         ResetToFullHP();
-        //CharacterSetup setup = CombatManager.Instance.GetBaseCharacterSetup(className);
-        //if(setup != null) {
-        //    GenerateSetupAttributes(setup);
-        //    if(setup.optionalRole != CHARACTER_ROLE.NONE) {
-        //        AssignRole(setup.optionalRole);
-        //    }
-        //}
     }
     public Character(CharacterSaveData data) : this() {
         _id = Utilities.SetID(this, data.id);
-        //_characterClass = CharacterManager.Instance.classesDictionary[data.className].CreateNewCopy();
         _raceSetting = RaceManager.Instance.racesDictionary[data.race.ToString()].CreateNewCopy();
         AssignClass(CharacterManager.Instance.classesDictionary[data.className]);
         _gender = data.gender;
         SetName(data.name);
-        //LoadRelationships(data.relationshipsData);
         _portraitSettings = CharacterManager.Instance.GenerateRandomPortrait(race, gender);
         if (_characterClass.roleType != CHARACTER_ROLE.NONE) {
             AssignRole(_characterClass.roleType);
@@ -469,18 +454,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public Character() {
         SetIsDead(false);
         _isFainted = false;
-        //_isDefeated = false;
-        //_isIdle = false;
         _history = new List<Log>();
         _traits = new List<Trait>();
-
 
         //RPG
         _level = 1;
         _experience = 0;
         _elementalWeaknesses = new Dictionary<ELEMENT, float>(CharacterManager.Instance.elementsChanceDictionary);
         _elementalResistances = new Dictionary<ELEMENT, float>(CharacterManager.Instance.elementsChanceDictionary);
-        //_equippedItems = new List<Item>();
         combatHistory = new Dictionary<int, Combat>();
         _currentInteractions = new List<Interaction>();
         characterToken = new CharacterToken(this);
@@ -499,7 +480,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         locationHistory = new List<string>();
 
         GetRandomCharacterColor();
-        //_combatHistoryID = 0;
 #if !WORLD_CREATION_TOOL
         SetDailyInteractionGenerationTick(GetMonthInteractionTick());
 #endif
@@ -536,96 +516,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     #endregion
 
-    //      private void AllocateStatPoints(int statAllocation){
-    //          _baseStrength = 0;
-    //          _baseIntelligence = 0;
-    //          _baseAgility = 0;
-    //          _baseVitality = 0;
-
-    //	WeightedDictionary<string> statWeights = new WeightedDictionary<string> ();
-    //	statWeights.AddElement ("strength", (int) _characterClass.strWeightAllocation);
-    //	statWeights.AddElement ("intelligence", (int) _characterClass.intWeightAllocation);
-    //	statWeights.AddElement ("agility", (int) _characterClass.agiWeightAllocation);
-    //	statWeights.AddElement ("vitality", (int) _characterClass.vitWeightAllocation);
-
-    //	if(statWeights.GetTotalOfWeights() > 0){
-    //		string chosenStat = string.Empty;
-    //		for (int i = 0; i < statAllocation; i++) {
-    //			chosenStat = statWeights.PickRandomElementGivenWeights ();
-    //			if (chosenStat == "strength") {
-    //				_baseStrength += 1;
-    //			}else if (chosenStat == "intelligence") {
-    //				_baseIntelligence += 1;
-    //			}else if (chosenStat == "agility") {
-    //				_baseAgility += 1;
-    //			}else if (chosenStat == "vitality") {
-    //				_baseVitality += 1;
-    //			}
-    //		}
-    //	}
-    //}
-    //Enables or Disables skills based on skill requirements
-    public void EnableDisableSkills(Combat combat) {
-        //bool isAllAttacksInRange = true;
-        //bool isAttackInRange = false;
-
-        //Body part skills / general skills
-        for (int i = 0; i < this._skills.Count; i++) {
-            Skill skill = this._skills[i];
-            skill.isEnabled = true;
-
-            //            if (skill is AttackSkill){
-            //                AttackSkill attackSkill = skill as AttackSkill;
-            //                if(attackSkill.spCost > _sp) {
-            //                    skill.isEnabled = false;
-            //                    continue;
-            //                }
-            //} else 
-            if (skill is FleeSkill) {
-                skill.isEnabled = false;
-                //if (this.currentHP >= (this.maxHP / 2)) {
-                //    skill.isEnabled = false;
-                //    continue;
-                //}
-            }
-        }
-
-        //Character class skills
-        //if(_equippedWeapon != null) {
-        //    for (int i = 0; i < _level; i++) {
-        //        if(i < _characterClass.skillsPerLevel.Count) {
-        //            if (_characterClass.skillsPerLevel[i] != null) {
-        //                for (int j = 0; j < _characterClass.skillsPerLevel[i].Length; j++) {
-        //                    Skill skill = _characterClass.skillsPerLevel[i][j];
-        //                    skill.isEnabled = true;
-
-        //                    //Check for allowed weapon types
-        //                    if (skill.allowedWeaponTypes != null) {
-        //                        for (int k = 0; k < skill.allowedWeaponTypes.Length; k++) {
-        //                            if (!skill.allowedWeaponTypes.Contains(_equippedWeapon.weaponType)) {
-        //                                skill.isEnabled = false;
-        //                                continue;
-        //                            }
-        //                        }
-        //                    }
-
-        //                    if (skill is AttackSkill) {
-        //                        AttackSkill attackSkill = skill as AttackSkill;
-        //                        if (attackSkill.spCost > _sp) {
-        //                            skill.isEnabled = false;
-        //                            continue;
-        //                        }
-        //                    }
-        //                }
-        //            }
-        //        } else {
-        //            break;
-        //        }
-        //    }
-
-        //}
-
-    }
     //Changes row number of this character
     public void SetRowNumber(int rowNumber) {
         this._currentRow = rowNumber;
@@ -2778,18 +2668,18 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             interactionLog += "\nPOSSIBLE TARGETS:\n";
             foreach (KeyValuePair<Character, CharacterRelationshipData> kvp in relationships) {
                 if(specificLocation.id == kvp.Key.specificLocation.id && !kvp.Key.currentParty.icon.isTravelling && !kvp.Key.isDefender && kvp.Value.knownStructure.location.id == specificLocation.id) {
-                    interactionLog += kvp.Value.targetCharacter.name + "(";
                     int weight = kvp.Value.GetTotalRelationshipWeight();
-                    interactionLog += "weight: " + weight;
-                    if (kvp.Value.isCharacterMissing && kvp.Value.isCharacterLocated && !kvp.Value.HasRelationshipTrait(RELATIONSHIP_TRAIT.ENEMY)) {
-                        weight += 25;
-                        interactionLog += "+25";
+                    if (kvp.Value.isCharacterMissing && !kvp.Value.HasRelationshipTrait(RELATIONSHIP_TRAIT.ENEMY)) {
+                        if (kvp.Value.isCharacterLocated) {
+                            weight += 25;
+                        } else {
+                            weight = 0;
+                        }
                     }
-                    if (kvp.Value.encounterMultiplier > 0f) {
+                    if (kvp.Value.encounterMultiplier > 0f && weight > 0) {
                         weight = (int) (weight * kvp.Value.encounterMultiplier);
-                        interactionLog += "x" + kvp.Value.encounterMultiplier.ToString();
                     }
-                    interactionLog += "=" + weight + "), ";
+                    interactionLog += "(weight=" + weight + "), ";
                     if (weight > 0) {
                         characterWeights.AddElement(kvp.Value, weight);
                     }

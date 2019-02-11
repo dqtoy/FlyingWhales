@@ -1398,11 +1398,8 @@ public class InteractionManager : MonoBehaviour {
                 }
                 return true;
             case INTERACTION_TYPE.REMOVE_CURSE_ACTION:
-                if(character.GetTrait("Magic User") != null && targetCharacter.GetTrait("Cursed") != null) {
-                    CharacterRelationshipData characterRelationshipData = character.GetCharacterRelationshipData(targetCharacter);
-                    if(characterRelationshipData != null && characterRelationshipData.knownStructure.location.id == character.specificLocation.id) {
-                        return true;
-                    }
+                if(character.characterClass.attackType == ATTACK_TYPE.MAGICAL && targetCharacter.GetTrait("Cursed") != null) {
+                    return true;
                 }
                 return false;
             case INTERACTION_TYPE.RESTRAIN_CRIMINAL_ACTION:
