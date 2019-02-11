@@ -9,6 +9,7 @@ public class HangOutAction : Interaction {
     private const string Both_Becomes_Cheery = "Both becomes Cheery";
     private const string Both_Becomes_Annoyed = "Both becomes Annoyed";
     private const string Target_Missing = "Target Missing";
+    private const string Target_Unavailable = "Target Unavailable";
 
     public override Character targetCharacter {
         get { return _targetCharacter; }
@@ -27,6 +28,7 @@ public class HangOutAction : Interaction {
         InteractionState bothBecomesCheery = new InteractionState(Both_Becomes_Cheery, this);
         InteractionState bothBecomesAnnoyed = new InteractionState(Both_Becomes_Annoyed, this);
         InteractionState targetMissing = new InteractionState(Target_Missing, this);
+        InteractionState targetUnavailable = new InteractionState(Target_Unavailable, this);
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description", this);
         startStateDescriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -37,12 +39,13 @@ public class HangOutAction : Interaction {
         bothBecomesCheery.SetEffect(() => BothBecomesCheeryRewardEffect(bothBecomesCheery));
         bothBecomesAnnoyed.SetEffect(() => BothBecomesAnnoyedRewardEffect(bothBecomesAnnoyed));
         targetMissing.SetEffect(() => TargetMissingRewardEffect(targetMissing));
+        targetUnavailable.SetEffect(() => TargetUnavailableRewardEffect(targetUnavailable));
 
         _states.Add(startState.name, startState);
-
         _states.Add(bothBecomesCheery.name, bothBecomesCheery);
         _states.Add(bothBecomesAnnoyed.name, bothBecomesAnnoyed);
         _states.Add(targetMissing.name, targetMissing);
+        _states.Add(targetUnavailable.name, targetUnavailable);
 
         SetCurrentState(startState);
     }
@@ -76,10 +79,15 @@ public class HangOutAction : Interaction {
     private void DoNothingOptionEffect(InteractionState state) {
         string nextState = string.Empty;
         if (targetCharacter.currentStructure == targetStructure) {
-            WeightedDictionary<string> result = new WeightedDictionary<string>();
-            result.AddElement(Both_Becomes_Cheery, 20);
-            result.AddElement(Both_Becomes_Annoyed, 5);
-            nextState = result.PickRandomElementGivenWeights();
+            if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER) 
+                || targetCharacter.HasTraitOf(TRAIT_EFFECT.NEUTRAL, TRAIT_TYPE.DISABLER)) {
+                nextState = Target_Unavailable;
+            } else {
+                WeightedDictionary<string> result = new WeightedDictionary<string>();
+                result.AddElement(Both_Becomes_Cheery, 20);
+                result.AddElement(Both_Becomes_Annoyed, 5);
+                nextState = result.PickRandomElementGivenWeights();
+            }
         } else {
             nextState = Target_Missing;
         }
@@ -101,6 +109,15 @@ public class HangOutAction : Interaction {
         //**Mechanics**: Both characters will gain Cheery Trait for 5 days.
         _characterInvolved.AddTrait(AttributeManager.Instance.allTraits["Cheery"]);
         _targetCharacter.AddTrait(AttributeManager.Instance.allTraits["Cheery"]);
+        //**Mechanics**: If either character has a negative status-type Trait, add it to the other character's **character trouble** list for his relationship data
+        Trait targetNegative = targetCharacter.GetTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER);
+        Trait characterNegative = characterInvolved.GetTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER);
+        if (targetNegative != null) {
+            characterInvolved.GetCharacterRelationshipData(targetCharacter).AddTrouble(targetNegative);
+        }
+        if (characterNegative != null) {
+            targetCharacter.GetCharacterRelationshipData(characterInvolved).AddTrouble(characterNegative);
+        }
     }
     private void BothBecomesAnnoyedRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
@@ -111,8 +128,29 @@ public class HangOutAction : Interaction {
         //**Mechanics**: Both characters will gain Annoyed Trait for 5 days.
         _characterInvolved.AddTrait(AttributeManager.Instance.allTraits["Annoyed"]);
         _targetCharacter.AddTrait(AttributeManager.Instance.allTraits["Annoyed"]);
+
+        //**Mechanics**: If either character has a negative status-type Trait, add it to the other character's **character trouble** list for his relationship data
+        Trait targetNegative = targetCharacter.GetTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER);
+        Trait characterNegative = characterInvolved.GetTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER);
+        if (targetNegative != null) {
+            characterInvolved.GetCharacterRelationshipData(targetCharacter).AddTrouble(targetNegative);
+        }
+        if (characterNegative != null) {
+            targetCharacter.GetCharacterRelationshipData(characterInvolved).AddTrouble(characterNegative);
+        }
     }
     private void TargetMissingRewardEffect(InteractionState state) {
+        if (state.descriptionLog != null) {
+            state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        }
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+    }
+    private void TargetUnavailableRewardEffect(InteractionState state) {
+        //**Mechanics**: If the target has a negative Disabler-type Trait, add it to the other character's **character trouble** list for his relationship data
+        Trait negative = targetCharacter.GetTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER);
+        if (negative != null) {
+            characterInvolved.GetCharacterRelationshipData(targetCharacter).AddTrouble(negative);
+        }
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         }
