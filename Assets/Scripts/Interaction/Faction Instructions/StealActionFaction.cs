@@ -6,13 +6,17 @@ public class StealActionFaction : Interaction {
 
     private Character _targetCharacter;
     
-    private const string Normal_Theft_Success = "Normal Theft Success";
-    private const string Normal_Theft_Fail = "Normal Theft Fail";
-    private const string Normal_Theft_Critical_Fail = "Normal Theft Critical Fail";
+    private const string Theft_Success = "Theft Success";
+    private const string Theft_Failed = "Theft Failed";
+    private const string Thief_Caught = "Thief Caught";
+    private const string Target_Itemless = "Target Itemless";
+    private const string Target_Missing = "Target Missing";
 
     public override Character targetCharacter {
         get { return _targetCharacter; }
     }
+
+    private LocationStructure _targetStructure;
 
     public StealActionFaction(Area interactable)
         : base(interactable, INTERACTION_TYPE.STEAL_ACTION_FACTION, 0) {
@@ -23,28 +27,32 @@ public class StealActionFaction : Interaction {
     #region Override
     public override void CreateStates() {
         InteractionState startState = new InteractionState("Start", this);
-        InteractionState normalTheftSuccess = new InteractionState(Normal_Theft_Success, this);
-        InteractionState normalTheftFail = new InteractionState(Normal_Theft_Fail, this);
-        InteractionState normalTheftCriticalFail = new InteractionState(Normal_Theft_Critical_Fail, this);
+        InteractionState theftSuccess = new InteractionState(Theft_Success, this);
+        InteractionState theftFailed = new InteractionState(Theft_Failed, this);
+        InteractionState thiefCaught = new InteractionState(Thief_Caught, this);
+        InteractionState targetItemless = new InteractionState(Target_Itemless, this);
+        InteractionState targetMissing = new InteractionState(Target_Missing, this);
 
         SetTargetCharacter(GetTargetCharacter(_characterInvolved));
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description", this);
-        startStateDescriptionLog.AddToFillers(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1);
         startStateDescriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 
         CreateActionOptions(startState);
 
-        normalTheftSuccess.SetEffect(() => NormalTheftSuccessRewardEffect(normalTheftSuccess));
-        normalTheftFail.SetEffect(() => NormalTheftFailRewardEffect(normalTheftFail));
-        normalTheftCriticalFail.SetEffect(() => NormalTheftCriticalFailRewardEffect(normalTheftCriticalFail));
+        theftSuccess.SetEffect(() => TheftSuccessRewardEffect(theftSuccess));
+        theftFailed.SetEffect(() => TheftFailedRewardEffect(theftFailed));
+        thiefCaught.SetEffect(() => ThiefCaughtRewardEffect(thiefCaught));
+        targetItemless.SetEffect(() => TargetItemlessRewardEffect(targetItemless));
+        targetMissing.SetEffect(() => TargetMissingRewardEffect(targetMissing));
 
         _states.Add(startState.name, startState);
-
-        _states.Add(normalTheftSuccess.name, normalTheftSuccess);
-        _states.Add(normalTheftFail.name, normalTheftFail);
-        _states.Add(normalTheftCriticalFail.name, normalTheftCriticalFail);
+        _states.Add(theftSuccess.name, theftSuccess);
+        _states.Add(theftFailed.name, theftFailed);
+        _states.Add(thiefCaught.name, thiefCaught);
+        _states.Add(targetItemless.name, targetItemless);
+        _states.Add(targetMissing.name, targetMissing);
 
         SetCurrentState(startState);
     }
@@ -61,39 +69,44 @@ public class StealActionFaction : Interaction {
         }
     }
     public override bool CanInteractionBeDoneBy(Character character) {
-        if (GetTargetCharacter(character) == null) {
+        Character target = GetTargetCharacter(character);
+        if (character.isHoldingItem || target == null) {
             return false;
         }
+        SetTargetCharacter(target);
         return base.CanInteractionBeDoneBy(character);
     }
     public override void SetTargetCharacter(Character targetCharacter) {
-        this._targetCharacter = targetCharacter;
+        _targetCharacter = targetCharacter;
+        _targetStructure = _targetCharacter.currentStructure;
     }
     #endregion
 
     #region Option Effect
     private void DoNothingOptionEffect(InteractionState state) {
-        WeightedDictionary<RESULT> resultWeights = _characterInvolved.job.GetJobRateWeights();
-
         string nextState = string.Empty;
-        RESULT result = resultWeights.PickRandomElementGivenWeights();
-        switch (result) {
-            case RESULT.SUCCESS:
-                nextState = Normal_Theft_Success;
-                break;
-            case RESULT.FAIL:
-                nextState = Normal_Theft_Fail;
-                break;
-            case RESULT.CRITICAL_FAIL:
-                nextState = Normal_Theft_Critical_Fail;
-                break;
+        if (_targetCharacter.currentStructure == _targetStructure) {
+            if (_targetCharacter.isHoldingItem) {
+                WeightedDictionary<string> resultWeights = new WeightedDictionary<string>();
+                resultWeights.AddElement(Theft_Success, 50);
+                resultWeights.AddElement(Theft_Failed, 30);
+                resultWeights.AddElement(Thief_Caught, 15);
+                nextState = resultWeights.PickRandomElementGivenWeights();
+            } else {
+                nextState = Target_Itemless;
+            }
+        } else {
+            nextState = Target_Missing;
         }
         SetCurrentState(_states[nextState]);
     }
     #endregion
 
     #region Reward Effect
-    private void NormalTheftSuccessRewardEffect(InteractionState state) {
+    private void StartEffect(InteractionState state) {
+        _characterInvolved.MoveToAnotherStructure(_targetStructure);
+    }
+    private void TheftSuccessRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1);
             state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -103,19 +116,8 @@ public class StealActionFaction : Interaction {
 
         //**Mechanics**: Transfer item from target character to the thief.
         TransferItem(_targetCharacter, _characterInvolved);
-
-        //**Mechanics**: If same faction, 50% chance that personal relationship between the two characters -1 and Thief gains Criminal trait.
-        if (_targetCharacter.faction.id == _characterInvolved.faction.id) {
-            if (Random.Range(0, 100) < 50) {
-                CharacterManager.Instance.ChangePersonalRelationshipBetweenTwoCharacters(_targetCharacter, _characterInvolved, -1);
-                _characterInvolved.AddTrait(new Criminal());
-        }
     }
-
-    //**Level Up**: Thief Character +1
-    //_characterInvolved.LevelUp();
-    }
-    private void NormalTheftFailRewardEffect(InteractionState state) {
+    private void TheftFailedRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1);
             state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -123,7 +125,7 @@ public class StealActionFaction : Interaction {
         state.AddLogFiller(new LogFiller(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1));
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
-    private void NormalTheftCriticalFailRewardEffect(InteractionState state) {
+    private void ThiefCaughtRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1);
             state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -131,8 +133,17 @@ public class StealActionFaction : Interaction {
         state.AddLogFiller(new LogFiller(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1));
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
-        //**Mechanics**: Character Name 1 dies.
-        _characterInvolved.Death();
+        //**Mechanics**: Actor gains Restrained trait and is transferred to Work Area.
+        _characterInvolved.AddTrait("Restrained");
+        _characterInvolved.MoveToAnotherStructure(interactable.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA));
+    }
+    private void TargetItemlessRewardEffect(InteractionState state) {
+        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+    }
+    private void TargetMissingRewardEffect(InteractionState state) {
+        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     #endregion
 
@@ -148,10 +159,10 @@ public class StealActionFaction : Interaction {
         List<Character> choices = new List<Character>();
         for (int i = 0; i < interactable.charactersAtLocation.Count; i++) {
             Character currCharacter = interactable.charactersAtLocation[i];
-            if (currCharacter.isHoldingItem
-                && currCharacter.id != characterInvolved.id
+            if (currCharacter.id != characterInvolved.id
                 && !currCharacter.currentParty.icon.isTravelling
-                && currCharacter.minion == null) {
+                && currCharacter.minion == null
+                && currCharacter.currentStructure.isInside) {
                 choices.Add(currCharacter);
             }
         }

@@ -94,8 +94,8 @@ public class InteractionManager : MonoBehaviour {
                 targetCharacterEffect = null,
             } },
             { INTERACTION_TYPE.STEAL_ACTION_FACTION, new InteractionAttributes(){
-                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT },
-                alignment = INTERACTION_ALIGNMENT.NEUTRAL,
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.INVENTORY },
+                alignment = INTERACTION_ALIGNMENT.EVIL,
                 actorEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.OBTAIN_ITEM } },
                 targetCharacterEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.LOSE_ITEM } },
             } },
