@@ -2341,6 +2341,15 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return false;
     }
+    public Trait GetTraitOf(TRAIT_EFFECT effect, TRAIT_TYPE type) {
+        for (int i = 0; i < traits.Count; i++) {
+            Trait currTrait = traits[i];
+            if (currTrait.effect == effect && currTrait.type == type) {
+                return currTrait;
+            }
+        }
+        return null;
+    }
     public List<Trait> RemoveAllTraitsByType(TRAIT_TYPE traitType) {
         List<Trait> removedTraits = new List<Trait>();
         for (int i = 0; i < _traits.Count; i++) {
