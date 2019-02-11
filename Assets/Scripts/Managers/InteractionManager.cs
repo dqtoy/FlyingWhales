@@ -1398,7 +1398,7 @@ public class InteractionManager : MonoBehaviour {
                 }
                 return true;
             case INTERACTION_TYPE.REMOVE_CURSE_ACTION:
-                if(character.GetTrait("Magic User") != null && targetCharacter.GetTrait("Cursed") != null) {
+                if(character.characterClass.attackType == ATTACK_TYPE.MAGICAL && targetCharacter.GetTrait("Cursed") != null) {
                     return true;
                 }
                 return false;

@@ -17,17 +17,17 @@ public interface ICharacter {
     int maxHP { get; }
     int attackPower { get; }
     int speed { get; }
-    int combatBaseAttack { get; set; }
-    int combatBaseSpeed { get; set; }
-    int combatBaseHP { get; set; }
-    int combatAttackFlat { get; set; }
-    int combatAttackMultiplier { get; set; }
-    int combatSpeedFlat { get; set; }
-    int combatSpeedMultiplier { get; set; }
-    int combatHPFlat { get; set; }
-    int combatHPMultiplier { get; set; }
-    int combatPowerFlat { get; set; }
-    int combatPowerMultiplier { get; set; }
+    //int combatBaseAttack { get; set; }
+    //int combatBaseSpeed { get; set; }
+    //int combatBaseHP { get; set; }
+    //int combatAttackFlat { get; set; }
+    //int combatAttackMultiplier { get; set; }
+    //int combatSpeedFlat { get; set; }
+    //int combatSpeedMultiplier { get; set; }
+    //int combatHPFlat { get; set; }
+    //int combatHPMultiplier { get; set; }
+    //int combatPowerFlat { get; set; }
+    //int combatPowerMultiplier { get; set; }
     string coloredUrlName { get; }
     string urlName { get; }
     string name { get; }
@@ -51,7 +51,7 @@ public interface ICharacter {
     Item equippedAccessory { get; }
     Item equippedConsumable { get; }
     Minion minion { get; }
-    PairCombatStats[] pairCombatStats { get; set; }
+    //PairCombatStats[] pairCombatStats { get; set; }
     Dictionary<ELEMENT, float> elementalWeaknesses { get; }
     Dictionary<ELEMENT, float> elementalResistances { get; }
     List<Skill> skills { get; }
@@ -83,7 +83,7 @@ public interface ICharacter {
     void AdjustExperience(int amount);
     void LevelUp(int amount);
     void SetLevel(int amount);
-    void EnableDisableSkills(Combat combat);
+    //void EnableDisableSkills(Combat combat);
     void SetOwnedParty(Party party);
     void SetCurrentParty(Party party);
     void SetHome(Area newHome);
