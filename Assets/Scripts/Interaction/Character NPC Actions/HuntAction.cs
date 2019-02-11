@@ -124,6 +124,7 @@ public class HuntAction : Interaction {
         //_characterInvolved.LevelUp();
 
         if (!_targetCharacter.isFactionless && !_characterInvolved.isFactionless) {
+            Debug.LogError(_targetCharacter.name + " of " + _targetCharacter.faction.name + " will adjust faction relationship with " + _characterInvolved.name + " of " + _characterInvolved.faction.name);
             AdjustFactionsRelationship(_targetCharacter.faction, _characterInvolved.faction, -1, state);
         }
 
@@ -145,6 +146,7 @@ public class HuntAction : Interaction {
         //_targetCharacter.LevelUp();
 
         if (!_targetCharacter.isFactionless && !_characterInvolved.isFactionless) {
+            Debug.LogError(_targetCharacter.name + " of " + _targetCharacter.faction.name + " will adjust faction relationship with " + _characterInvolved.name + " of " + _characterInvolved.faction.name);
             AdjustFactionsRelationship(_targetCharacter.faction, _characterInvolved.faction, -1, state);
         }
 
