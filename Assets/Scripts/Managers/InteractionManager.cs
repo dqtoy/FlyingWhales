@@ -806,6 +806,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.RESTRAIN_CRIMINAL_ACTION:
                 createdInteraction = new RestrainCriminalAction(interactable);
                 break;
+            case INTERACTION_TYPE.USE_ITEM_ON_STRUCTURE:
+                createdInteraction = new UseItemOnStructure(interactable);
+                break;
         }
         return createdInteraction;
     }

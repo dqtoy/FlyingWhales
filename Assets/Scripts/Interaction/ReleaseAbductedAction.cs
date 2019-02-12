@@ -89,7 +89,18 @@ public class ReleaseAbductedAction : Interaction {
             if (_targetStructure.charactersHere.Count == 2) { //target and saver only
                 nextState = Release_Success;
             } else {
-                nextState = Release_Success;
+                WeightedDictionary<RESULT> result = _characterInvolved.job.GetJobRateWeights();
+                switch (result.PickRandomElementGivenWeights()) {
+                    case RESULT.SUCCESS:
+                        nextState = Release_Success;
+                        break;
+                    case RESULT.FAIL:
+                        nextState = Release_Fail;
+                        break;
+                    case RESULT.CRITICAL_FAIL:
+                        nextState = Release_Critical_Fail;
+                        break;
+                }
             }
         } else {
             nextState = Target_Missing;

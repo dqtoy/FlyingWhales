@@ -61,7 +61,7 @@ public class AreaInfoEditor : MonoBehaviour {
         initialDefenderGroupsField.text = currentArea.initialDefenderGroups.ToString();
         //supplyCapacityField.text = currentArea.supplyCapacity.ToString();
         //initialSupplyField.text = currentArea.initialSupply.ToString();
-        residentCapacityField.text = currentArea.residentCapacity.ToString();
+        //residentCapacityField.text = currentArea.residentCapacity.ToString();
         monthlySupplyField.text = currentArea.monthlySupply.ToString();
         monthlyActionsField.text = currentArea.monthlyActions.ToString();
         initialResidentsField.text = currentArea.initialResidents.ToString();
@@ -120,11 +120,11 @@ public class AreaInfoEditor : MonoBehaviour {
     //    }
 
     //}
-    public void SetResidentCapacity(string amountStr) {
-        if (!string.IsNullOrEmpty(amountStr)) {
-            currentArea.SetResidentCapacity(System.Int32.Parse(amountStr));
-        }
-    }
+    //public void SetResidentCapacity(string amountStr) {
+    //    if (!string.IsNullOrEmpty(amountStr)) {
+    //        currentArea.SetResidentCapacity(System.Int32.Parse(amountStr));
+    //    }
+    //}
     public void SetMonthlySupply(string amountStr) {
         if (!string.IsNullOrEmpty(amountStr)) {
             currentArea.SetMonthlySupply(System.Int32.Parse(amountStr));
