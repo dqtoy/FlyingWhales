@@ -14,6 +14,7 @@ public class LocationStructure {
     private List<SpecialToken> _itemsHere;
     public List<IPointOfInterest> pointsOfInterest { get; private set; }
     public List<StructureTrait> traits { get; private set; }
+    public List<Corpse> corpses { get; private set; }
 
     #region getters
     public Area location {
@@ -32,7 +33,7 @@ public class LocationStructure {
         _itemsHere = new List<SpecialToken>();
         pointsOfInterest = new List<IPointOfInterest>();
         traits = new List<StructureTrait>();
-
+        corpses = new List<Corpse>();
         if (structureType == STRUCTURE_TYPE.DUNGEON || structureType == STRUCTURE_TYPE.WAREHOUSE) {
             AddPOI(new SupplyPile(this));
         }
@@ -159,6 +160,35 @@ public class LocationStructure {
             StructureTrait currTrait = traits[i];
             if (currTrait.name == traitName) {
                 return currTrait;
+            }
+        }
+        return null;
+    }
+    #endregion
+
+    #region Corpses
+    public void AddCorpse(Character character) {
+        if (!HasCorpseOf(character)) {
+            corpses.Add(new Corpse(character, this));
+        }
+    }
+    public bool RemoveCorpse(Character character) {
+        return corpses.Remove(GetCorpseOf(character));
+    }
+    public bool HasCorpseOf(Character character) {
+        for (int i = 0; i < corpses.Count; i++) {
+            Corpse currCorpse = corpses[i];
+            if (currCorpse.character.id == character.id) {
+                return true;
+            }
+        }
+        return false;
+    }
+    private Corpse GetCorpseOf(Character character) {
+        for (int i = 0; i < corpses.Count; i++) {
+            Corpse currCorpse = corpses[i];
+            if (currCorpse.character.id == character.id) {
+                return currCorpse;
             }
         }
         return null;

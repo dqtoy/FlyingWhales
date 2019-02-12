@@ -407,7 +407,7 @@ public class Player : ILeader {
     private void OnFactionLeaderDied(Faction faction) {
         List<Faction> allUndestroyedFactions = FactionManager.Instance.allFactions.Where(
             x => x.name != "Neutral" 
-            && x.name != "Player Faction" 
+            && x.name != "Player faction" 
             && x.isActive && !x.isDestroyed).ToList();
         if (allUndestroyedFactions.Count == 0) {
             Debug.LogError("All factions are destroyed! Player won!");

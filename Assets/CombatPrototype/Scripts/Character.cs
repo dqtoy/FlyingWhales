@@ -630,7 +630,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 DropToken(ownParty.specificLocation, currentStructure);
             }
             if (this.race != RACE.SKELETON && this.role.roleType != CHARACTER_ROLE.BEAST) {
-                ownParty.specificLocation.AddCorpse(this);
+                ownParty.specificLocation.AddCorpse(this, currentStructure);
             }
             if (!IsInOwnParty()) {
                 _currentParty.RemoveCharacter(this);
@@ -2393,6 +2393,18 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             if (_traits[i] is RelationshipTrait) {
                 RelationshipTrait currTrait = _traits[i] as RelationshipTrait;
                 if (currTrait.relType == relType) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    public bool HasRelationshipTraitOf(RELATIONSHIP_TRAIT relType, Faction except) {
+        for (int i = 0; i < _traits.Count; i++) {
+            if (_traits[i] is RelationshipTrait) {
+                RelationshipTrait currTrait = _traits[i] as RelationshipTrait;
+                if (currTrait.relType == relType 
+                    && currTrait.targetCharacter.faction.id != except.id) {
                     return true;
                 }
             }
