@@ -320,6 +320,12 @@ public class InteractionManager : MonoBehaviour {
                 actorEffect = null,
                 targetCharacterEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_GAIN, effectString = "Restrained" } },
             } },
+            { INTERACTION_TYPE.MOVE_TO_RECRUIT_FRIEND_ACTION_FACTION, new InteractionAttributes(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT },
+                alignment = INTERACTION_ALIGNMENT.GOOD,
+                actorEffect = null,
+                targetCharacterEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.CHANGE_FACTION, effectString = "Actor" } },
+            } },
         };
     }
     public InteractionAttributes GetCategoryAndAlignment (INTERACTION_TYPE type, Character actor) {
@@ -1150,11 +1156,12 @@ public class InteractionManager : MonoBehaviour {
                 //}
                 return false;
             case INTERACTION_TYPE.MOVE_TO_REANIMATE_ACTION:
-                if (!character.homeArea.IsResidentsFull()) { //character.race == RACE.SKELETON && 
+                //Actor must be a Skeleton or must have Black Magic trait
+                if (character.race == RACE.SKELETON || character.GetTrait("Black Magic") != null) {
                     //**Trigger Criteria 1**: There must be at least one dead corpse in any area
                     for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
                         Area currArea = LandmarkManager.Instance.allAreas[i];
-                        if (currArea.id != character.specificLocation.id && currArea.corpsesInArea.Count > 1) { 
+                        if (currArea.id != character.specificLocation.id && currArea.corpsesInArea.Count > 1) {
                             return true;
                         }
                     }
@@ -1198,6 +1205,15 @@ public class InteractionManager : MonoBehaviour {
                 }
                 return false;
             case INTERACTION_TYPE.MOVE_TO_RECRUIT_FRIEND_ACTION_FACTION:
+                //**Trigger Criteria 1**: Home location resident capacity is not yet full
+                if (character.homeArea.IsResidentsFull()) { 
+                    return false;
+                }
+                //**Trigger Criteria 2**: Actor has at least one friend from a different faction or unaligned
+                if (!character.HasRelationshipTraitOf(RELATIONSHIP_TRAIT.FRIEND, character.faction)) {
+                    return false;
+                }
+                return true;
             case INTERACTION_TYPE.MOVE_TO_CHARM_ACTION_FACTION:
                 if (character.homeArea.IsResidentsFull()) { //check if resident capacity is full
                     return false;

@@ -34,7 +34,6 @@ public class Area {
     public List<Interaction> currentInteractions { get; private set; }
     public Dictionary<INTERACTION_TYPE, int> areaTasksInteractionWeights { get; private set; }
     public int initialResidents { get; private set; }
-    public List<Corpse> corpsesInArea { get; private set; }
     public int monthlyActions { get; private set; }
 
     //defenders
@@ -101,6 +100,11 @@ public class Area {
             return warehouse.GetSupplyPile();
         }
     }
+    public List<Corpse> corpsesInArea {
+        get {
+            return GetAllCorpses();
+        }
+    }
     #endregion
 
     public Area(HexTile coreTile, AREA_TYPE areaType) {
@@ -125,7 +129,6 @@ public class Area {
         defaultRace = new Race(RACE.HUMANS, RACE_SUB_TYPE.NORMAL);
         possibleSpecialTokenSpawns = new List<SpecialToken>();
         charactersAtLocationHistory = new List<string>();
-        corpsesInArea = new List<Corpse>();
         structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
         SetDungeonSupplyRange(0, 0);
         SetMonthlyActions(2);
@@ -165,7 +168,6 @@ public class Area {
         charactersAtLocationHistory = new List<string>();
         possibleSpecialTokenSpawns = new List<SpecialToken>();
         supplyLog = new List<string>();
-        corpsesInArea = new List<Corpse>();
         if (data.raceSetup != null) {
             initialSpawnSetup = new List<InitialRaceSetup>(data.raceSetup);
         } else {
@@ -1643,31 +1645,27 @@ public class Area {
     #endregion
 
     #region Corpses
-    public void AddCorpse(Character character) {
-        if (!HasCorpseOf(character)) {
-            corpsesInArea.Add(new Corpse(character));
-        }
+    public void AddCorpse(Character character, LocationStructure structure) {
+        structure.AddCorpse(character);
     }
     public void RemoveCorpse(Character character) {
-        corpsesInArea.Remove(GetCorpseOf(character));
-    }
-    private bool HasCorpseOf(Character character) {
-        for (int i = 0; i < corpsesInArea.Count; i++) {
-            Corpse currCorpse = corpsesInArea[i];
-            if (currCorpse.character.id == character.id) {
-                return true;
+        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp in structures) {
+            for (int i = 0; i < kvp.Value.Count; i++) {
+                LocationStructure currStructure = kvp.Value[i];
+                if (currStructure.RemoveCorpse(character)) {
+                    return;
+                }
             }
         }
-        return false;
     }
-    private Corpse GetCorpseOf(Character character) {
-        for (int i = 0; i < corpsesInArea.Count; i++) {
-            Corpse currCorpse = corpsesInArea[i];
-            if (currCorpse.character.id == character.id) {
-                return currCorpse;
+    public List<Corpse> GetAllCorpses() {
+        List<Corpse> all = new List<Corpse>();
+        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp in structures) {
+            for (int i = 0; i < kvp.Value.Count; i++) {
+                all.AddRange(kvp.Value[i].corpses);
             }
         }
-        return null;
+        return all;
     }
     #endregion
 
