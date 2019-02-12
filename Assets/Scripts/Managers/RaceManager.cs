@@ -280,7 +280,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.HANG_OUT_ACTION,
                 INTERACTION_TYPE.MAKE_LOVE_ACTION,
                 INTERACTION_TYPE.REMOVE_CURSE_ACTION,
-                INTERACTION_TYPE.RESTRAIN_CRIMINAL_ACTION
+                INTERACTION_TYPE.RESTRAIN_CRIMINAL_ACTION,
+                INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION,
             } },
         };
     }

@@ -326,6 +326,12 @@ public class InteractionManager : MonoBehaviour {
                 actorEffect = null,
                 targetCharacterEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.CHANGE_FACTION, effectString = "Actor" } },
             } },
+            { INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION, new InteractionAttributes(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.SAVE },
+                alignment = INTERACTION_ALIGNMENT.GOOD,
+                actorEffect = null,
+                targetCharacterEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_REMOVE, effectString = "Abducted" } },
+            } },
         };
     }
     public InteractionAttributes GetCategoryAndAlignment (INTERACTION_TYPE type, Character actor) {
@@ -644,8 +650,8 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.MOVE_TO_SAVE_ACTION:
                 createdInteraction = new MoveToSave(interactable);
                 break;
-            case INTERACTION_TYPE.SAVE_ACTION:
-                createdInteraction = new SaveAction(interactable);
+            case INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION:
+                createdInteraction = new ReleaseAbductedAction(interactable);
                 break;
             case INTERACTION_TYPE.MOVE_TO_VISIT:
                 createdInteraction = new MoveToVisit(interactable);
@@ -1433,6 +1439,9 @@ public class InteractionManager : MonoBehaviour {
                     }
                 }
                 return false;
+            case INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION:
+                return targetCharacter.GetTrait("Abducted") != null 
+                    && character.specificLocation.id == character.GetCharacterRelationshipData(targetCharacter).knownStructure.location.id;
             default:
                 return true;
         }

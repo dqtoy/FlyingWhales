@@ -207,7 +207,7 @@ public class Interaction {
         if (_canInteractionBeDone != null) {
             return _canInteractionBeDone();
         }
-        if(character.doNotDisturb > 0 || character.isDead || !character.IsInOwnParty()) {
+        if(character.doNotDisturb > 1 || character.isDead || !character.IsInOwnParty()) {
             return false;
         }
         return true;

@@ -20,7 +20,7 @@ public class MoveToSave : Interaction {
         get { return _targetCharacter; }
     }
     public override INTERACTION_TYPE pairedInteractionType {
-        get { return INTERACTION_TYPE.SAVE_ACTION; }
+        get { return INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION; }
     }
 
     public MoveToSave(Area interactable) 
@@ -85,8 +85,8 @@ public class MoveToSave : Interaction {
         return base.CanInteractionBeDoneBy(character);
     }
     public override void DoActionUponMoveToArrival() {
-        Interaction interaction = CreateConnectedEvent(INTERACTION_TYPE.SAVE_ACTION, _characterInvolved.specificLocation);
-        (interaction as SaveAction).SetTargetCharacter(_targetCharacter);
+        Interaction interaction = CreateConnectedEvent(INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION, _characterInvolved.specificLocation);
+        (interaction as ReleaseAbductedAction).SetTargetCharacter(_targetCharacter);
     }
     #endregion
 
