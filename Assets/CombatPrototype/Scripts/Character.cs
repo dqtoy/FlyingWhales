@@ -192,7 +192,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         get { return specificLocation.id == homeArea.id; }
     }
     public bool isTracked {
-        get { return _isTracked; }
+        get {
+            if (GameManager.Instance.inspectAll) {
+                return true;
+            }
+            return _isTracked;
+        }
     }
     public GENDER gender {
         get { return _gender; }
@@ -711,9 +716,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             //_icon = null;
 
             Debug.Log(GameManager.Instance.TodayLogString() + this.name + " died of " + cause);
-            Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "death_" + cause);
+            Log log = null;
+            if (isTracked) {
+                log = new Log(GameManager.Instance.Today(), "Character", "Generic", "death_" + cause);
+            } else {
+                log = new Log(GameManager.Instance.Today(), "Character", "Generic", "something_happened");
+            }
             log.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            //log.AddToFillers(specificLocation, specificLocation.name, LOG_IDENTIFIER.LANDMARK_1);
             AddHistory(log);
             specificLocation.AddHistory(log);
         }

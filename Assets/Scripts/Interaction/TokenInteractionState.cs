@@ -25,33 +25,39 @@ public class TokenInteractionState : InteractionState {
         if (_descriptionLog == null) {
             _descriptionLog = new Log(GameManager.Instance.Today(), "Tokens", _token.GetType().ToString(), _name.ToLower() + "_description", this.interaction);
         }
-        otherLogs = new List<Log>();
-        if (interaction.characterInvolved == null || interaction.characterInvolved.isTracked) {
-            List<string> keysForState = LocalizationManager.Instance.GetKeysLike("Tokens", _token.GetType().ToString(), _name.ToLower(), new string[] { "_description", "_special" });
-            for (int i = 0; i < keysForState.Count; i++) {
-                string currentKey = keysForState[i];
-                otherLogs.Add(new Log(GameManager.Instance.Today(), "Tokens", _token.GetType().ToString(), currentKey, this.interaction));
-            }
+
+        bool hasKeys = LocalizationManager.Instance.HasKeysLike("Tokens", _token.GetType().ToString(), _name.ToLower(), new string[] { "_description", "_special" });
+        if (!hasKeys) {
+            otherLogs = null;
         } else {
-            //If character involved is untracked
-            if (interaction.name.ToLower().Contains("move to")) {
-                //If move to, use vague left log
-                //TODO: left structure log
-                otherLogs.Add(new Log(GameManager.Instance.Today(), "Character", "Generic", "left_area", this.interaction));
+            otherLogs = new List<Log>();
+            if (interaction.characterInvolved == null || interaction.characterInvolved.isTracked) {
+                List<string> keysForState = LocalizationManager.Instance.GetKeysLike("Tokens", _token.GetType().ToString(), _name.ToLower(), new string[] { "_description", "_special" });
+                for (int i = 0; i < keysForState.Count; i++) {
+                    string currentKey = keysForState[i];
+                    otherLogs.Add(new Log(GameManager.Instance.Today(), "Tokens", _token.GetType().ToString(), currentKey, this.interaction));
+                }
             } else {
-                if (interaction.targetCharacter != null) {
-                    InteractionAttributes attributes = InteractionManager.Instance.GetCategoryAndAlignment(interaction.type, interaction.characterInvolved);
-                    if (attributes.categories.Contains(INTERACTION_CATEGORY.SOCIAL) || attributes.categories.Contains(INTERACTION_CATEGORY.ROMANTIC)) {
-                        //Log "did something with"
-                        otherLogs.Add(new Log(GameManager.Instance.Today(), "Character", "Generic", "did_with", this.interaction));
-                    } else {
-                        //Log "did something to"
-                        otherLogs.Add(new Log(GameManager.Instance.Today(), "Character", "Generic", "did_to", this.interaction));
-                    }
+                //If character involved is untracked
+                if (interaction.name.ToLower().Contains("move to")) {
+                    //If move to, use vague left log
+                    //TODO: left structure log
+                    otherLogs.Add(new Log(GameManager.Instance.Today(), "Character", "Generic", "left_area", this.interaction));
                 } else {
-                    //No target character log
-                    //TODO: Something happened to Character at Structure
-                    otherLogs.Add(new Log(GameManager.Instance.Today(), "Character", "Generic", "did_something", this.interaction));
+                    if (interaction.targetCharacter != null) {
+                        InteractionAttributes attributes = InteractionManager.Instance.GetCategoryAndAlignment(interaction.type, interaction.characterInvolved);
+                        if (attributes.categories.Contains(INTERACTION_CATEGORY.SOCIAL) || attributes.categories.Contains(INTERACTION_CATEGORY.ROMANTIC)) {
+                            //Log "did something with"
+                            otherLogs.Add(new Log(GameManager.Instance.Today(), "Character", "Generic", "did_with", this.interaction));
+                        } else {
+                            //Log "did something to"
+                            otherLogs.Add(new Log(GameManager.Instance.Today(), "Character", "Generic", "did_to", this.interaction));
+                        }
+                    } else {
+                        //No target character log
+                        //TODO: Something happened to Character at Structure
+                        otherLogs.Add(new Log(GameManager.Instance.Today(), "Character", "Generic", "did_something", this.interaction));
+                    }
                 }
             }
         }

@@ -77,7 +77,10 @@ public class HuntAction : Interaction {
         return base.CanInteractionBeDoneBy(character);
     }
     public override void SetTargetCharacter(Character targetCharacter) {
-        this._targetCharacter = targetCharacter;
+        _targetCharacter = targetCharacter;
+        if(_targetCharacter != null) {
+            Debug.LogWarning("CHOSEN TARGET CHARACTER FOR HUNT ACTION OF " + _characterInvolved.name + " IS " + _targetCharacter.name);
+        }
     }
     #endregion
 
