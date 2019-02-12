@@ -184,8 +184,10 @@ public class Party {
         }
 
         Area deathLocation = this.specificLocation;
+        LocationStructure deathStructure = owner.currentStructure;
         this.specificLocation.RemoveCharacterFromLocation(this);
         SetSpecificLocation(deathLocation); //set the specific location of this party, to the location it died at
+        owner.SetCurrentStructureLocation(deathStructure, false);
         RemoveListeners();
         //DetachActionData();
         //ObjectState deadState = _icharacterObject.GetState("Dead");
