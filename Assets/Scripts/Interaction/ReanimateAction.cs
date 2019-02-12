@@ -37,7 +37,7 @@ public class ReanimateAction : Interaction {
 
         CreateActionOptions(startState);
 
-        startState.SetEffect(() => StartEffect(startState));
+        startState.SetEffect(() => StartEffect(startState), false);
         reanimationSuccess.SetEffect(() => ReanimationSuccessRewardEffect(reanimationSuccess));
         reanimationFail.SetEffect(() => ReanimationFailRewardEffect(reanimationFail));
         corpseMissing.SetEffect(() => CorpseMissingRewardEffect(corpseMissing));
