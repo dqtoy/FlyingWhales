@@ -127,7 +127,37 @@ public class LocalizationManager : MonoBehaviour {
         }
         return keys;
     }
-	public string GetRandomLocalizedValue(string category, string file){
+    public bool HasKeysLike(string category, string file, string keyLike, string[] except = null) {
+        if (!this._localizedText.ContainsKey(category)) {
+            Debug.LogWarning("Localization error! " + category + "/");
+            //throw new System.Exception("Localization error! " + category + "/");
+        } else if (!this._localizedText[category].ContainsKey(file)) {
+            Debug.LogWarning("Localization error! " + category + "/" + file + "/");
+            //throw new System.Exception("Localization error! " + category + "/" + file + "/");
+        }
+        Dictionary<string, string> logs = this.localizedText[category][file];
+        foreach (KeyValuePair<string, string> kvp in logs) {
+            if (except != null) {
+                bool skipKey = false;
+                for (int i = 0; i < except.Length; i++) {
+                    string exceptStr = except[i];
+                    if (kvp.Key.Contains(exceptStr)) {
+                        skipKey = true;
+                        break; //skip
+                    }
+                }
+                if (skipKey) {
+                    continue; //proceed to next key
+                }
+            }
+            string key = kvp.Key.Substring(0, kvp.Key.IndexOf('_'));
+            if (key == keyLike) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public string GetRandomLocalizedValue(string category, string file){
 		string result = string.Empty;
 		int count = this._localizedText [category] [file].Keys.Count;
 		KeyValuePair<string, string> selected = this._localizedText [category] [file].ElementAtOrDefault(UnityEngine.Random.Range(0,this._localizedText [category] [file].Count));
