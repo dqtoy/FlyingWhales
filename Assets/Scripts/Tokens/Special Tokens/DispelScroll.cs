@@ -6,21 +6,31 @@ public class DispelScroll : SpecialToken {
 
     public DispelScroll() : base(SPECIAL_TOKEN.DISPEL_SCROLL, 30) {
         npcAssociatedInteractionType = INTERACTION_TYPE.USE_ITEM_ON_CHARACTER;
+        interactionAttributes = new InteractionAttributes() {
+            categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.SAVE },
+            alignment = INTERACTION_ALIGNMENT.NEUTRAL,
+            actorEffect = null,
+            targetCharacterEffect = new InteractionCharacterEffect[] {
+                new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_REMOVE, effectString = "Charmed" },
+                new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_REMOVE, effectString = "Reanimated" },
+                new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_REMOVE, effectString = "Cursed" },
+            },
+        };
     }
 
     #region Overrides
     public override void CreateJointInteractionStates(Interaction interaction, Character user, object target) {
         TokenInteractionState itemUsedState = new TokenInteractionState(Item_Used, interaction, this);
-        TokenInteractionState stopFailState = new TokenInteractionState(Stop_Fail, interaction, this);
+        //TokenInteractionState stopFailState = new TokenInteractionState(Stop_Fail, interaction, this);
         itemUsedState.SetTokenUserAndTarget(user, target);
-        stopFailState.SetTokenUserAndTarget(user, target);
+        //stopFailState.SetTokenUserAndTarget(user, target);
 
 
         itemUsedState.SetEffect(() => ItemUsedEffect(itemUsedState));
-        stopFailState.SetEffect(() => StopFailEffect(stopFailState));
+        //stopFailState.SetEffect(() => StopFailEffect(stopFailState));
 
         interaction.AddState(itemUsedState);
-        interaction.AddState(stopFailState);
+        //interaction.AddState(stopFailState);
 
         //interaction.SetCurrentState(inflictIllnessState);
     }
@@ -83,6 +93,9 @@ public class DispelScroll : SpecialToken {
         }
         return base.GetTargetCharacterFor(sourceCharacter);
     }
+    public override bool CanBeUsedForTarget(Character sourceCharacter, Character targetCharacter) {
+        return sourceCharacter.specificLocation.id == targetCharacter.specificLocation.id;
+    }
     #endregion
 
     private void ItemUsedEffect(TokenInteractionState state) {
@@ -94,20 +107,43 @@ public class DispelScroll : SpecialToken {
         }
         //**Mechanics**: Remove all Enchantment type traits on the target
         RemoveAllEnchantments(state.tokenUser, targetCharacter);
-    }
-    private void StopFailEffect(TokenInteractionState state) {
-        //state.tokenUser.LevelUp(); // **Level Up**: User +1 
-        state.tokenUser.ConsumeToken();
-        Character targetCharacter = state.target as Character;
-        if (targetCharacter == null) {
-            throw new System.Exception(GameManager.Instance.TodayLogString() + "Target character of use dispel scroll by " + state.tokenUser.name + " is either null or not a character");
-        }
-        //**Mechanics**: Remove all Enchantment type traits on the target
-        RemoveAllEnchantments(state.tokenUser, targetCharacter);
 
-        state.descriptionLog.AddToFillers(state.interaction.investigatorCharacter, state.interaction.investigatorCharacter.name, LOG_IDENTIFIER.MINION_1);
-        state.AddLogFiller(new LogFiller(state.interaction.investigatorCharacter, state.interaction.investigatorCharacter.name, LOG_IDENTIFIER.MINION_1));
+        state.tokenUser.MoveToAnotherStructure(targetCharacter.currentStructure);
+        if (state.tokenUser.id == targetCharacter.id) {
+            //Used item on self
+            Log stateDescriptionLog = new Log(GameManager.Instance.Today(), "Tokens", this.GetType().ToString(), state.name.ToLower() + "-npc" + "_description", state.interaction);
+            stateDescriptionLog.AddToFillers(state.tokenUser, state.tokenUser.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            state.OverrideDescriptionLog(stateDescriptionLog);
+
+            Log log = new Log(GameManager.Instance.Today(), "Tokens", GetType().ToString(), state.name.ToLower() + "_special2");
+            log.AddToFillers(state.tokenUser, state.tokenUser.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            state.AddLogToInvolvedObjects(log);
+        } else {
+            //Used item on other character
+            Log stateDescriptionLog = new Log(GameManager.Instance.Today(), "Tokens", this.GetType().ToString(), state.name.ToLower() + "-othernpc" + "_description", state.interaction);
+            stateDescriptionLog.AddToFillers(state.tokenUser, state.tokenUser.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            stateDescriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            state.OverrideDescriptionLog(stateDescriptionLog);
+
+            Log log = new Log(GameManager.Instance.Today(), "Tokens", GetType().ToString(), state.name.ToLower() + "_special3");
+            log.AddToFillers(state.tokenUser, state.tokenUser.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            state.AddLogToInvolvedObjects(log);
+        }
     }
+    //private void StopFailEffect(TokenInteractionState state) {
+    //    //state.tokenUser.LevelUp(); // **Level Up**: User +1 
+    //    state.tokenUser.ConsumeToken();
+    //    Character targetCharacter = state.target as Character;
+    //    if (targetCharacter == null) {
+    //        throw new System.Exception(GameManager.Instance.TodayLogString() + "Target character of use dispel scroll by " + state.tokenUser.name + " is either null or not a character");
+    //    }
+    //    //**Mechanics**: Remove all Enchantment type traits on the target
+    //    RemoveAllEnchantments(state.tokenUser, targetCharacter);
+
+    //    state.descriptionLog.AddToFillers(state.interaction.investigatorCharacter, state.interaction.investigatorCharacter.name, LOG_IDENTIFIER.MINION_1);
+    //    state.AddLogFiller(new LogFiller(state.interaction.investigatorCharacter, state.interaction.investigatorCharacter.name, LOG_IDENTIFIER.MINION_1));
+    //}
 
     //private void RemoveCharmFromTarget(Character target) {
     //    target.RemoveTrait(target.GetTrait("Charmed"));
@@ -115,25 +151,25 @@ public class DispelScroll : SpecialToken {
 
     private void RemoveAllEnchantments(Character user, Character target) {
         List<Trait> removedTraits = target.RemoveAllTraitsByType(TRAIT_TYPE.ENCHANTMENT);
-        bool removedPositiveTrait = false;
-        bool removedNegativeTrait = false;
-        for (int i = 0; i < removedTraits.Count; i++) {
-            Trait currTrait = removedTraits[i];
-            if (currTrait.effect == TRAIT_EFFECT.POSITIVE) {
-                removedPositiveTrait = true;
-            } else if (currTrait.effect == TRAIT_EFFECT.NEGATIVE) {
-                removedNegativeTrait = true;
-            }
-        }
+        //bool removedPositiveTrait = false;
+        //bool removedNegativeTrait = false;
+        //for (int i = 0; i < removedTraits.Count; i++) {
+        //    Trait currTrait = removedTraits[i];
+        //    if (currTrait.effect == TRAIT_EFFECT.POSITIVE) {
+        //        removedPositiveTrait = true;
+        //    } else if (currTrait.effect == TRAIT_EFFECT.NEGATIVE) {
+        //        removedNegativeTrait = true;
+        //    }
+        //}
 
-        if (removedNegativeTrait && removedPositiveTrait) {
-            Debug.LogWarning("Both negative and positive traits were removed from " + target.name + " by " + user.name + ". HELP!");
-        } else if (removedNegativeTrait) {
-            CharacterManager.Instance.ChangePersonalRelationshipBetweenTwoCharacters(user, target, 1);
-        } else if (removedPositiveTrait) {
-            CharacterManager.Instance.ChangePersonalRelationshipBetweenTwoCharacters(user, target, -1);
-        } else {
-            Debug.LogWarning("No negative or positive traits were removed from " + target.name + " by " + user.name + ". HELP!");
-        }
+        //if (removedNegativeTrait && removedPositiveTrait) {
+        //    Debug.LogWarning("Both negative and positive traits were removed from " + target.name + " by " + user.name + ". HELP!");
+        //} else if (removedNegativeTrait) {
+        //    CharacterManager.Instance.ChangePersonalRelationshipBetweenTwoCharacters(user, target, 1);
+        //} else if (removedPositiveTrait) {
+        //    CharacterManager.Instance.ChangePersonalRelationshipBetweenTwoCharacters(user, target, -1);
+        //} else {
+        //    Debug.LogWarning("No negative or positive traits were removed from " + target.name + " by " + user.name + ". HELP!");
+        //}
     }
 }

@@ -85,6 +85,8 @@ public class TokenManager : MonoBehaviour {
                 return new GoldenNectar();
             case SPECIAL_TOKEN.SCROLL_OF_POWER:
                 return new ScrollOfPower();
+            case SPECIAL_TOKEN.ACID_FLASK:
+                return new AcidFlask();
             default:
                 return new SpecialToken(tokenType, appearanceWeight);
         }

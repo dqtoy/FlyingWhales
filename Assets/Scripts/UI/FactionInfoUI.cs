@@ -96,7 +96,7 @@ public class FactionInfoUI : UIMenu {
     #region Basic Info
     private void UpdateBasicInfo() {
         factionNameLbl.text = activeFaction.name;
-        factionTypeLbl.text = Utilities.GetNormalizedSingularRace(activeFaction.raceType) + " Faction";
+        factionTypeLbl.text = Utilities.GetNormalizedRaceAdjective(activeFaction.raceType) + " Faction";
         emblem.SetFaction(activeFaction);
     }
     #endregion

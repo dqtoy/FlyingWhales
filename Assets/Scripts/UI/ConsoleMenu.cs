@@ -604,6 +604,9 @@ public class ConsoleMenu : UIMenu {
         if (otherCharacter != null) {
             interaction.SetOtherCharacter(otherCharacter);
         }
+        if (interaction.type == INTERACTION_TYPE.USE_ITEM_ON_CHARACTER) {
+            (interaction as UseItemOnCharacter).SetItemToken(character.tokenInInventory);
+        }
         character.SetForcedInteraction(interaction);
 
         AddSuccessMessage("Set " + character.name + "'s override to " + interaction.name);
