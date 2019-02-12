@@ -1357,38 +1357,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         _characterColor = color;
         _characterColorCode = ColorUtility.ToHtmlStringRGBA(_characterColor).Substring(0, 6);
     }
-    //public void EverydayAction() {
-    //    if (onDailyAction != null) {
-    //        onDailyAction();
-    //    }
-    //    CheckForPPDeath();
-    //}
-    //public void AdvertiseSelf(ActionThread actionThread) {
-    //    if(actionThread.character.id != this.id && _currentRegion.id == actionThread.character.party.currentRegion.id) {
-    //        actionThread.AddToChoices(_characterObject);
-    //    }
-    //}
-    //public bool CanObtainResource(List<RESOURCE> resources) {
-    //    if (this.role != null) {//characters without a role cannot get actions, and therefore cannot obtain resources
-    //        for (int i = 0; i < _ownParty.currentRegion.landmarks.Count; i++) {
-    //            BaseLandmark landmark = _ownParty.currentRegion.landmarks[i];
-    //            StructureObj iobject = landmark.landmarkObj;
-    //            if (iobject.currentState.actions != null && iobject.currentState.actions.Count > 0) {
-    //                for (int k = 0; k < iobject.currentState.actions.Count; k++) {
-    //                    CharacterAction action = iobject.currentState.actions[k];
-    //                    if (action.actionData.resourceGiven != RESOURCE.NONE && resources.Contains(action.actionData.resourceGiven)) { //does the action grant a resource, and is that a resource that is needed
-    //                        if (action.MeetsRequirements(_ownParty, landmark) && action.CanBeDone(iobject) && action.CanBeDoneBy(_ownParty, iobject)) { //Filter
-    //                            //if the character can do an action that yields a needed resource, return true
-    //                            return true;
-    //                        }
-    //                    }
-
-    //                }
-    //            }
-    //        }
-    //    }
-    //    return false;
-    //}
     public bool IsSpecialCivilian() {
         if (this.characterClass != null) {
             if (this.characterClass.className.Equals("Farmer") || this.characterClass.className.Equals("Miner") || this.characterClass.className.Equals("Retired Hero") ||
@@ -1403,26 +1371,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             RemoveRelationship(characterThatDied);
         }
     }
-    //public bool IsCharacterLovedOne(Character otherCharacter) {
-    //    Relationship rel = GetRelationshipWith(otherCharacter);
-    //    if (rel != null) {
-    //        CHARACTER_RELATIONSHIP[] lovedOneStatuses = new CHARACTER_RELATIONSHIP[] {
-    //            CHARACTER_RELATIONSHIP.FATHER,
-    //            CHARACTER_RELATIONSHIP.MOTHER,
-    //            CHARACTER_RELATIONSHIP.BROTHER,
-    //            CHARACTER_RELATIONSHIP.SISTER,
-    //            CHARACTER_RELATIONSHIP.SON,
-    //            CHARACTER_RELATIONSHIP.DAUGHTER,
-    //            CHARACTER_RELATIONSHIP.LOVER,
-    //            CHARACTER_RELATIONSHIP.HUSBAND,
-    //            CHARACTER_RELATIONSHIP.WIFE,
-    //        };
-    //        if (rel.HasAnyStatus(lovedOneStatuses)) {
-    //            return true;
-    //        }
-    //    }
-    //    return false;
-    //}
     public void SetMode(MODE mode) {
         _currentMode = mode;
     }
@@ -1493,14 +1441,11 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             //if it does not, keep the characters current home
         }
     }
-    //public void MoveToStructure(LocationStructure structure) {
-    //    if (this.currentStructure != null) {
-    //        this.currentStructure.RemoveCharacterAtLocation(this);
-    //    }
-    //    structure.AddCharacterAtLocation(this);
-    //}
     public override string ToString() {
         return name;
+    }
+    public void SetTracked(bool state) {
+        _isTracked = state;
     }
     #endregion
 
