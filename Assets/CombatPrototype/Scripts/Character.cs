@@ -93,6 +93,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public WeightedDictionary<INTERACTION_TYPE> interactionWeights { get; private set; }
     public SpecialToken tokenInInventory { get; private set; }
     public Dictionary<Character, CharacterRelationshipData> relationships { get; private set; }
+    public List<INTERACTION_TYPE> currentInteractionTypes { get; private set; }
 
     private Dictionary<STAT, float> _buffs;
     public Dictionary<int, Combat> combatHistory;
@@ -473,6 +474,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         _elementalResistances = new Dictionary<ELEMENT, float>(CharacterManager.Instance.elementsChanceDictionary);
         combatHistory = new Dictionary<int, Combat>();
         _currentInteractions = new List<Interaction>();
+        currentInteractionTypes = new List<INTERACTION_TYPE>();
         characterToken = new CharacterToken(this);
         tokenInInventory = null;
         interactionWeights = new WeightedDictionary<INTERACTION_TYPE>();
@@ -2458,6 +2460,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
 
     #region Interaction
+    public void AddInteractionType(INTERACTION_TYPE type) {
+        currentInteractionTypes.Add(type);
+    }
+    public void RemoveInteractionType(INTERACTION_TYPE type) {
+        currentInteractionTypes.Remove(type);
+    }
     private int GetMonthInteractionTick() {
         int daysInMonth = 15; //GameManager.daysInMonth[GameManager.Instance.month]
         int remainingDaysInMonth = GameManager.Instance.continuousDays % daysInMonth;
@@ -2505,87 +2513,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             _forcedInteraction = null;
         } else {
             CharacterPersonalActions();
-
-            //if(specificLocation.id != homeArea.id) {
-            //    //Character actions away from home
-            //    WeightedDictionary<string> awayFromHomeInteractionWeights = new WeightedDictionary<string>();
-            //    awayFromHomeInteractionWeights.AddElement("DoNothing", 50);
-
-            //    if (tokenInInventory != null && tokenInInventory.npcAssociatedInteractionType != INTERACTION_TYPE.NONE && tokenInInventory.CanBeUsedBy(this) && InteractionManager.Instance.CanCreateInteraction(tokenInInventory.npcAssociatedInteractionType, this)) {
-            //        awayFromHomeInteractionWeights.AddElement(tokenInInventory.tokenName, 70);
-            //    }
-
-            //    foreach (KeyValuePair<INTERACTION_TYPE, int> kvp in CharacterManager.Instance.awayFromHomeInteractionWeights) {
-            //        if (InteractionManager.Instance.CanCreateInteraction(kvp.Key, this)) {
-            //            awayFromHomeInteractionWeights.AddElement(kvp.Key.ToString(), kvp.Value); //15
-            //        }
-            //    }
-
-            //    string result = awayFromHomeInteractionWeights.PickRandomElementGivenWeights();
-            //    if(result == "DoNothing") {
-            //    }else if (tokenInInventory != null && result == tokenInInventory.tokenName) {
-            //        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(tokenInInventory.npcAssociatedInteractionType, specificLocation);
-            //        if (interaction.type == INTERACTION_TYPE.USE_ITEM_ON_CHARACTER) {
-            //            (interaction as UseItemOnCharacter).SetItemToken(tokenInInventory);
-            //        } else if (interaction.type == INTERACTION_TYPE.USE_ITEM_ON_SELF) {
-            //            (interaction as UseItemOnSelf).SetItemToken(tokenInInventory);
-            //        } else if (interaction.type == INTERACTION_TYPE.USE_ITEM_ON_LOCATION) {
-            //            (interaction as UseItemOnLocation).SetItemToken(tokenInInventory);
-            //        }
-            //        AddInteraction(interaction);
-            //    } else {
-            //        INTERACTION_TYPE interactionType = (INTERACTION_TYPE) Enum.Parse(typeof(INTERACTION_TYPE), result);
-            //        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(interactionType, specificLocation);
-            //        AddInteraction(interaction);
-            //    }
-            //} else {
-            //    //Character actions at home
-            //    WeightedDictionary<string> atHomeInteractionWeights = new WeightedDictionary<string>();
-            //    atHomeInteractionWeights.AddElement("DoNothing", 100);
-            //    foreach (KeyValuePair<INTERACTION_TYPE, int> kvp in CharacterManager.Instance.atHomeInteractionWeights) {
-            //        if (InteractionManager.Instance.CanCreateInteraction(kvp.Key, this)) {
-            //            atHomeInteractionWeights.AddElement(kvp.Key.ToString(), kvp.Value); //15
-            //        }
-            //    }
-            //    if (tokenInInventory != null) {
-            //        if (tokenInInventory.npcAssociatedInteractionType != INTERACTION_TYPE.NONE && tokenInInventory.CanBeUsedBy(this) && InteractionManager.Instance.CanCreateInteraction(tokenInInventory.npcAssociatedInteractionType, this)) {
-            //            atHomeInteractionWeights.AddElement(tokenInInventory.tokenName, 70);
-            //        } else if(tokenInInventory.npcAssociatedInteractionType == INTERACTION_TYPE.USE_ITEM_ON_SELF) {
-            //            atHomeInteractionWeights.AddElement("ItemNotUsable", 70);
-            //        }
-            //    } else {
-            //        for (int i = 0; i < specificLocation.possibleSpecialTokenSpawns.Count; i++) {
-            //            if(specificLocation.possibleSpecialTokenSpawns[i].owner == this.faction) {
-            //                atHomeInteractionWeights.AddElement("PickUp", 70);
-            //                break;
-            //            }
-            //        }
-            //    }
-            //    string result = atHomeInteractionWeights.PickRandomElementGivenWeights();
-
-            //    if (result == "DoNothing") {
-            //    }   else if (result == "ItemNotUsable") {
-            //        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.DROP_ITEM, specificLocation);
-            //        AddInteraction(interaction);
-            //    } else if (result == "PickUp") {
-            //        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.PICK_ITEM, specificLocation);
-            //        AddInteraction(interaction);
-            //    } else if (tokenInInventory != null && result == tokenInInventory.tokenName) {
-            //        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(tokenInInventory.npcAssociatedInteractionType, specificLocation);
-            //        if (interaction.type == INTERACTION_TYPE.USE_ITEM_ON_CHARACTER) {
-            //            (interaction as UseItemOnCharacter).SetItemToken(tokenInInventory);
-            //        } else if (interaction.type == INTERACTION_TYPE.USE_ITEM_ON_SELF) {
-            //            (interaction as UseItemOnSelf).SetItemToken(tokenInInventory);
-            //        } else if (interaction.type == INTERACTION_TYPE.USE_ITEM_ON_LOCATION) {
-            //            (interaction as UseItemOnLocation).SetItemToken(tokenInInventory);
-            //        }
-            //        AddInteraction(interaction);
-            //    } else {
-            //        INTERACTION_TYPE interactionType = (INTERACTION_TYPE) Enum.Parse(typeof(INTERACTION_TYPE), result);
-            //        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(interactionType, specificLocation);
-            //        AddInteraction(interaction);
-            //    }
-            //}
         }
     }
     public void SetForcedInteraction(Interaction interaction) {

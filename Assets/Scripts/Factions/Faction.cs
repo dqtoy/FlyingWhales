@@ -803,8 +803,8 @@ public class Faction {
                 tasksWeights.RemoveElement(chosenCategory);
                 continue;
             }
-            //CGet all residents of area that can do the interaction category;
-            Dictionary<Character, List<INTERACTION_TYPE>> residentInteractions = area.GetResidentAndInteractionsTheyCanDoByCategoryAndAlignment(chosenCategory, morality);
+            //Get all residents of area that can do the interaction category;
+            Dictionary<Character, List<INTERACTION_TYPE>> residentInteractions = area.GetResidentAndInteractionsTheyCanDoByCategoryAndAlignment(chosenCategory);
             if (residentInteractions.Count > 0) {
                 //For testing only
                 interactionLog += "\nALL CHARACTERS AND INTERACTIONS THEY CAN DO";

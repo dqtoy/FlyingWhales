@@ -107,63 +107,24 @@ public class RaceManager : MonoBehaviour {
         };
     }
     public List<INTERACTION_TYPE> GetFactionInteractionsOfRace(Character character) {
-        List<INTERACTION_TYPE> interactions = null;
-        if (_factionRaceInteractions.ContainsKey(RACE.NONE)) { //Get interactions of all races first
-            interactions = _factionRaceInteractions[RACE.NONE].ToList();
-        }
+        List<INTERACTION_TYPE> interactions = new List<INTERACTION_TYPE>();
         if (_factionRaceInteractions.ContainsKey(character.race)) {
-            if(interactions == null) {
-                interactions = new List<INTERACTION_TYPE>();
-            }
             for (int i = 0; i < _factionRaceInteractions[character.race].Length; i++) {
                 interactions.Add(_factionRaceInteractions[character.race][i]);
             }
         }
-        return interactions;
-    }
-    public List<INTERACTION_TYPE> GetFactionInteractionsOfRace(Character character, INTERACTION_CATEGORY category) {
-        List<INTERACTION_TYPE> interactions = new List<INTERACTION_TYPE>(); //Get interactions of all races first
-        if (_factionRaceInteractions.ContainsKey(RACE.NONE)) {
-            INTERACTION_TYPE[] interactionArray = _factionRaceInteractions[RACE.NONE];
-            for (int i = 0; i < interactionArray.Length; i++) {
-                InteractionAttributes interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(interactionArray[i], character);
-                if (interactionCategoryAndAlignment == null) { continue; }
-                for (int j = 0; j < interactionCategoryAndAlignment.categories.Length; j++) {
-                    if (interactionCategoryAndAlignment.categories[j] == category) {
-                        interactions.Add(interactionArray[i]);
-                        break;
-                    }
-                }
+        if (CharacterManager.Instance.characterRoleInteractions.ContainsKey(character.role.roleType)) {
+            for (int i = 0; i < CharacterManager.Instance.characterRoleInteractions[character.role.roleType].Length; i++) {
+                interactions.Add(CharacterManager.Instance.characterRoleInteractions[character.role.roleType][i]);
             }
         }
-        if (_factionRaceInteractions.ContainsKey(character.race)) {
-            INTERACTION_TYPE[] interactionArray = _factionRaceInteractions[character.race];
-            for (int i = 0; i < interactionArray.Length; i++) {
-                InteractionAttributes interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(interactionArray[i], character);
-                if (interactionCategoryAndAlignment == null) { continue; }
-                for (int j = 0; j < interactionCategoryAndAlignment.categories.Length; j++) {
-                    if(interactionCategoryAndAlignment.categories[j] == category) {
-                        interactions.Add(interactionArray[i]);
-                        break;
-                    }
-                }
-            }
+        for (int i = 0; i < character.currentInteractionTypes.Count; i++) {
+            interactions.Add(character.currentInteractionTypes[i]);
         }
         return interactions;
     }
     public List<INTERACTION_TYPE> GetFactionInteractionsOfRace(Character character, INTERACTION_ALIGNMENT alignment) {
         List<INTERACTION_TYPE> interactions = new List<INTERACTION_TYPE>(); //Get interactions of all races first
-        if (_factionRaceInteractions.ContainsKey(RACE.NONE)) {
-            INTERACTION_TYPE[] interactionArray = _factionRaceInteractions[RACE.NONE];
-            for (int i = 0; i < interactionArray.Length; i++) {
-                InteractionAttributes interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(interactionArray[i], character);
-                if (interactionCategoryAndAlignment == null) { continue; }
-                if (interactionCategoryAndAlignment.alignment == alignment) {
-                    interactions.Add(interactionArray[i]);
-                }
-            }
-        }
-
         if (_factionRaceInteractions.ContainsKey(character.race)) {
             INTERACTION_TYPE[] interactionArray = _factionRaceInteractions[character.race];
             for (int i = 0; i < interactionArray.Length; i++) {
@@ -172,14 +133,31 @@ public class RaceManager : MonoBehaviour {
                 if (interactionCategoryAndAlignment.alignment == alignment) {
                     interactions.Add(interactionArray[i]);
                 }
+            }
+        }
+        if (CharacterManager.Instance.characterRoleInteractions.ContainsKey(character.role.roleType)) {
+            INTERACTION_TYPE[] interactionArray = CharacterManager.Instance.characterRoleInteractions[character.role.roleType];
+            for (int i = 0; i < interactionArray.Length; i++) {
+                InteractionAttributes interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(interactionArray[i], character);
+                if (interactionCategoryAndAlignment == null) { continue; }
+                if (interactionCategoryAndAlignment.alignment == alignment) {
+                    interactions.Add(interactionArray[i]);
+                }
+            }
+        }
+        for (int i = 0; i < character.currentInteractionTypes.Count; i++) {
+            InteractionAttributes interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(character.currentInteractionTypes[i], character);
+            if (interactionCategoryAndAlignment == null) { continue; }
+            if (interactionCategoryAndAlignment.alignment == alignment) {
+                interactions.Add(character.currentInteractionTypes[i]);
             }
         }
         return interactions;
     }
     public List<INTERACTION_TYPE> GetFactionInteractionsOfRace(Character character, INTERACTION_CATEGORY category, INTERACTION_ALIGNMENT alignment) {
         List<INTERACTION_TYPE> interactions = new List<INTERACTION_TYPE>(); //Get interactions of all races first
-        if (_factionRaceInteractions.ContainsKey(RACE.NONE)) {
-            INTERACTION_TYPE[] interactionArray = _factionRaceInteractions[RACE.NONE];
+        if (_factionRaceInteractions.ContainsKey(character.race)) {
+            INTERACTION_TYPE[] interactionArray = _factionRaceInteractions[character.race];
             for (int i = 0; i < interactionArray.Length; i++) {
                 InteractionAttributes interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(interactionArray[i], character);
                 if (interactionCategoryAndAlignment == null) { continue; }
@@ -193,8 +171,8 @@ public class RaceManager : MonoBehaviour {
                 }
             }
         }
-        if (_factionRaceInteractions.ContainsKey(character.race)) {
-            INTERACTION_TYPE[] interactionArray = _factionRaceInteractions[character.race];
+        if (CharacterManager.Instance.characterRoleInteractions.ContainsKey(character.role.roleType)) {
+            INTERACTION_TYPE[] interactionArray = CharacterManager.Instance.characterRoleInteractions[character.role.roleType];
             for (int i = 0; i < interactionArray.Length; i++) {
                 InteractionAttributes interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(interactionArray[i], character);
                 if (interactionCategoryAndAlignment == null) { continue; }
@@ -204,23 +182,35 @@ public class RaceManager : MonoBehaviour {
                             interactions.Add(interactionArray[i]);
                             break;
                         }
+                    }
+                }
+            }
+        }
+        for (int i = 0; i < character.currentInteractionTypes.Count; i++) {
+            InteractionAttributes interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(character.currentInteractionTypes[i], character);
+            if (interactionCategoryAndAlignment == null) { continue; }
+            if (interactionCategoryAndAlignment.alignment == alignment) {
+                for (int j = 0; j < interactionCategoryAndAlignment.categories.Length; j++) {
+                    if (interactionCategoryAndAlignment.categories[j] == category) {
+                        interactions.Add(character.currentInteractionTypes[i]);
+                        break;
                     }
                 }
             }
         }
         return interactions;
     }
-    public List<INTERACTION_TYPE> GetFactionInteractionsOfRace(Character character, INTERACTION_CATEGORY category, MORALITY factionMorality) {
+    public List<INTERACTION_TYPE> GetFactionInteractionsOfRace(Character character, INTERACTION_CATEGORY category) {
         List<INTERACTION_TYPE> interactions = new List<INTERACTION_TYPE>(); //Get interactions of all races first
-        if (_factionRaceInteractions.ContainsKey(RACE.NONE)) {
-            INTERACTION_TYPE[] interactionArray = _factionRaceInteractions[RACE.NONE];
+        if (_factionRaceInteractions.ContainsKey(character.race)) {
+            INTERACTION_TYPE[] interactionArray = _factionRaceInteractions[character.race];
             for (int i = 0; i < interactionArray.Length; i++) {
                 InteractionAttributes interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(interactionArray[i], character);
                 if (interactionCategoryAndAlignment == null) { continue; }
-                if (factionMorality == MORALITY.GOOD && interactionCategoryAndAlignment.alignment == INTERACTION_ALIGNMENT.EVIL) {
+                if (character.faction.morality == MORALITY.GOOD && interactionCategoryAndAlignment.alignment == INTERACTION_ALIGNMENT.EVIL) {
                     //Alignment must be good or neutral, so if it is evil, skip it
                     continue;
-                } else if (factionMorality == MORALITY.EVIL && interactionCategoryAndAlignment.alignment == INTERACTION_ALIGNMENT.GOOD) {
+                }else if (character.faction.morality == MORALITY.EVIL && interactionCategoryAndAlignment.alignment == INTERACTION_ALIGNMENT.GOOD) {
                     //Alignment must be evil or neutral, so if it is good, skip it
                     continue;
                 }
@@ -232,15 +222,15 @@ public class RaceManager : MonoBehaviour {
                 }
             }
         }
-        if (_factionRaceInteractions.ContainsKey(character.race)) {
-            INTERACTION_TYPE[] interactionArray = _factionRaceInteractions[character.race];
+        if (CharacterManager.Instance.characterRoleInteractions.ContainsKey(character.role.roleType)) {
+            INTERACTION_TYPE[] interactionArray = CharacterManager.Instance.characterRoleInteractions[character.role.roleType];
             for (int i = 0; i < interactionArray.Length; i++) {
                 InteractionAttributes interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(interactionArray[i], character);
                 if (interactionCategoryAndAlignment == null) { continue; }
-                if (factionMorality == MORALITY.GOOD && interactionCategoryAndAlignment.alignment == INTERACTION_ALIGNMENT.EVIL) {
+                if (character.faction.morality == MORALITY.GOOD && interactionCategoryAndAlignment.alignment == INTERACTION_ALIGNMENT.EVIL) {
                     //Alignment must be good or neutral, so if it is evil, skip it
                     continue;
-                }else if (factionMorality == MORALITY.EVIL && interactionCategoryAndAlignment.alignment == INTERACTION_ALIGNMENT.GOOD) {
+                } else if (character.faction.morality == MORALITY.EVIL && interactionCategoryAndAlignment.alignment == INTERACTION_ALIGNMENT.GOOD) {
                     //Alignment must be evil or neutral, so if it is good, skip it
                     continue;
                 }
@@ -249,6 +239,23 @@ public class RaceManager : MonoBehaviour {
                         interactions.Add(interactionArray[i]);
                         break;
                     }
+                }
+            }
+        }
+        for (int i = 0; i < character.currentInteractionTypes.Count; i++) {
+            InteractionAttributes interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(character.currentInteractionTypes[i], character);
+            if (interactionCategoryAndAlignment == null) { continue; }
+            if (character.faction.morality == MORALITY.GOOD && interactionCategoryAndAlignment.alignment == INTERACTION_ALIGNMENT.EVIL) {
+                //Alignment must be good or neutral, so if it is evil, skip it
+                continue;
+            } else if (character.faction.morality == MORALITY.EVIL && interactionCategoryAndAlignment.alignment == INTERACTION_ALIGNMENT.GOOD) {
+                //Alignment must be evil or neutral, so if it is good, skip it
+                continue;
+            }
+            for (int j = 0; j < interactionCategoryAndAlignment.categories.Length; j++) {
+                if (interactionCategoryAndAlignment.categories[j] == category) {
+                    interactions.Add(character.currentInteractionTypes[i]);
+                    break;
                 }
             }
         }
@@ -259,9 +266,169 @@ public class RaceManager : MonoBehaviour {
     #region NPC Interaction
     private void ConstructNPCRaceInteractions() {
         _npcRaceInteractions = new Dictionary<RACE, INTERACTION_TYPE[]>() {
-            { RACE.NONE, new INTERACTION_TYPE[] { //All races
+             { RACE.HUMANS, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
-                //INTERACTION_TYPE.ABDUCT_ACTION,
+                INTERACTION_TYPE.ARGUE_ACTION,
+                INTERACTION_TYPE.CURSE_ACTION,
+                INTERACTION_TYPE.HUNT_ACTION,
+                INTERACTION_TYPE.TRANSFER_HOME,
+                INTERACTION_TYPE.TORTURE_ACTION_NPC,
+                INTERACTION_TYPE.USE_ITEM_ON_CHARACTER,
+                INTERACTION_TYPE.REST_AT_HOME_ACTION,
+                INTERACTION_TYPE.EAT_HOME_MEAL_ACTION,
+                INTERACTION_TYPE.POISON_HOUSE_FOOD,
+                INTERACTION_TYPE.FEED_PRISONER_ACTION,
+                INTERACTION_TYPE.BOOBY_TRAP_HOUSE,
+                INTERACTION_TYPE.STEAL_ACTION_NPC,
+                INTERACTION_TYPE.ASSAULT_ACTION_NPC,
+                INTERACTION_TYPE.CAMP_OUT_ACTION,
+                INTERACTION_TYPE.FORAGE_ACTION,
+                INTERACTION_TYPE.HANG_OUT_ACTION,
+                INTERACTION_TYPE.MAKE_LOVE_ACTION,
+                INTERACTION_TYPE.REMOVE_CURSE_ACTION,
+                INTERACTION_TYPE.RESTRAIN_CRIMINAL_ACTION,
+                INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION,
+            } },
+            { RACE.ELVES, new INTERACTION_TYPE[] {
+                INTERACTION_TYPE.MOVE_TO_VISIT,
+                INTERACTION_TYPE.ARGUE_ACTION,
+                INTERACTION_TYPE.CURSE_ACTION,
+                INTERACTION_TYPE.HUNT_ACTION,
+                INTERACTION_TYPE.TRANSFER_HOME,
+                INTERACTION_TYPE.TORTURE_ACTION_NPC,
+                INTERACTION_TYPE.USE_ITEM_ON_CHARACTER,
+                INTERACTION_TYPE.REST_AT_HOME_ACTION,
+                INTERACTION_TYPE.EAT_HOME_MEAL_ACTION,
+                INTERACTION_TYPE.POISON_HOUSE_FOOD,
+                INTERACTION_TYPE.FEED_PRISONER_ACTION,
+                INTERACTION_TYPE.BOOBY_TRAP_HOUSE,
+                INTERACTION_TYPE.STEAL_ACTION_NPC,
+                INTERACTION_TYPE.ASSAULT_ACTION_NPC,
+                INTERACTION_TYPE.CAMP_OUT_ACTION,
+                INTERACTION_TYPE.FORAGE_ACTION,
+                INTERACTION_TYPE.HANG_OUT_ACTION,
+                INTERACTION_TYPE.MAKE_LOVE_ACTION,
+                INTERACTION_TYPE.REMOVE_CURSE_ACTION,
+                INTERACTION_TYPE.RESTRAIN_CRIMINAL_ACTION,
+                INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION,
+            } },
+            { RACE.GOBLIN, new INTERACTION_TYPE[] {
+                INTERACTION_TYPE.MOVE_TO_VISIT,
+                INTERACTION_TYPE.ARGUE_ACTION,
+                INTERACTION_TYPE.CURSE_ACTION,
+                INTERACTION_TYPE.HUNT_ACTION,
+                INTERACTION_TYPE.TRANSFER_HOME,
+                INTERACTION_TYPE.TORTURE_ACTION_NPC,
+                INTERACTION_TYPE.USE_ITEM_ON_CHARACTER,
+                INTERACTION_TYPE.REST_AT_HOME_ACTION,
+                INTERACTION_TYPE.EAT_HOME_MEAL_ACTION,
+                INTERACTION_TYPE.POISON_HOUSE_FOOD,
+                INTERACTION_TYPE.FEED_PRISONER_ACTION,
+                INTERACTION_TYPE.BOOBY_TRAP_HOUSE,
+                INTERACTION_TYPE.STEAL_ACTION_NPC,
+                INTERACTION_TYPE.ASSAULT_ACTION_NPC,
+                INTERACTION_TYPE.CAMP_OUT_ACTION,
+                INTERACTION_TYPE.FORAGE_ACTION,
+                INTERACTION_TYPE.HANG_OUT_ACTION,
+                INTERACTION_TYPE.MAKE_LOVE_ACTION,
+                INTERACTION_TYPE.REMOVE_CURSE_ACTION,
+                INTERACTION_TYPE.RESTRAIN_CRIMINAL_ACTION,
+                INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION,
+            } },
+            { RACE.FAERY, new INTERACTION_TYPE[] {
+                INTERACTION_TYPE.MOVE_TO_VISIT,
+                INTERACTION_TYPE.ARGUE_ACTION,
+                INTERACTION_TYPE.CURSE_ACTION,
+                INTERACTION_TYPE.HUNT_ACTION,
+                INTERACTION_TYPE.TRANSFER_HOME,
+                INTERACTION_TYPE.TORTURE_ACTION_NPC,
+                INTERACTION_TYPE.USE_ITEM_ON_CHARACTER,
+                INTERACTION_TYPE.REST_AT_HOME_ACTION,
+                INTERACTION_TYPE.EAT_HOME_MEAL_ACTION,
+                INTERACTION_TYPE.POISON_HOUSE_FOOD,
+                INTERACTION_TYPE.FEED_PRISONER_ACTION,
+                INTERACTION_TYPE.BOOBY_TRAP_HOUSE,
+                INTERACTION_TYPE.STEAL_ACTION_NPC,
+                INTERACTION_TYPE.ASSAULT_ACTION_NPC,
+                INTERACTION_TYPE.CAMP_OUT_ACTION,
+                INTERACTION_TYPE.FORAGE_ACTION,
+                INTERACTION_TYPE.HANG_OUT_ACTION,
+                INTERACTION_TYPE.MAKE_LOVE_ACTION,
+                INTERACTION_TYPE.REMOVE_CURSE_ACTION,
+                INTERACTION_TYPE.RESTRAIN_CRIMINAL_ACTION,
+                INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION,
+            } },
+            { RACE.SKELETON, new INTERACTION_TYPE[] {
+                INTERACTION_TYPE.MOVE_TO_VISIT,
+                INTERACTION_TYPE.ARGUE_ACTION,
+                INTERACTION_TYPE.CURSE_ACTION,
+                INTERACTION_TYPE.HUNT_ACTION,
+                INTERACTION_TYPE.TRANSFER_HOME,
+                INTERACTION_TYPE.TORTURE_ACTION_NPC,
+                INTERACTION_TYPE.USE_ITEM_ON_CHARACTER,
+                INTERACTION_TYPE.REST_AT_HOME_ACTION,
+                INTERACTION_TYPE.EAT_HOME_MEAL_ACTION,
+                INTERACTION_TYPE.POISON_HOUSE_FOOD,
+                INTERACTION_TYPE.FEED_PRISONER_ACTION,
+                INTERACTION_TYPE.BOOBY_TRAP_HOUSE,
+                INTERACTION_TYPE.STEAL_ACTION_NPC,
+                INTERACTION_TYPE.ASSAULT_ACTION_NPC,
+                INTERACTION_TYPE.CAMP_OUT_ACTION,
+                INTERACTION_TYPE.FORAGE_ACTION,
+                INTERACTION_TYPE.HANG_OUT_ACTION,
+                INTERACTION_TYPE.MAKE_LOVE_ACTION,
+                INTERACTION_TYPE.REMOVE_CURSE_ACTION,
+                INTERACTION_TYPE.RESTRAIN_CRIMINAL_ACTION,
+                INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION,
+            } },
+            { RACE.SPIDER, new INTERACTION_TYPE[] {
+                INTERACTION_TYPE.MOVE_TO_VISIT,
+                INTERACTION_TYPE.ARGUE_ACTION,
+                INTERACTION_TYPE.CURSE_ACTION,
+                INTERACTION_TYPE.HUNT_ACTION,
+                INTERACTION_TYPE.TRANSFER_HOME,
+                INTERACTION_TYPE.TORTURE_ACTION_NPC,
+                INTERACTION_TYPE.USE_ITEM_ON_CHARACTER,
+                INTERACTION_TYPE.REST_AT_HOME_ACTION,
+                INTERACTION_TYPE.EAT_HOME_MEAL_ACTION,
+                INTERACTION_TYPE.POISON_HOUSE_FOOD,
+                INTERACTION_TYPE.FEED_PRISONER_ACTION,
+                INTERACTION_TYPE.BOOBY_TRAP_HOUSE,
+                INTERACTION_TYPE.STEAL_ACTION_NPC,
+                INTERACTION_TYPE.ASSAULT_ACTION_NPC,
+                INTERACTION_TYPE.CAMP_OUT_ACTION,
+                INTERACTION_TYPE.FORAGE_ACTION,
+                INTERACTION_TYPE.HANG_OUT_ACTION,
+                INTERACTION_TYPE.MAKE_LOVE_ACTION,
+                INTERACTION_TYPE.REMOVE_CURSE_ACTION,
+                INTERACTION_TYPE.RESTRAIN_CRIMINAL_ACTION,
+                INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION,
+            } },
+            { RACE.WOLF, new INTERACTION_TYPE[] {
+                INTERACTION_TYPE.MOVE_TO_VISIT,
+                INTERACTION_TYPE.ARGUE_ACTION,
+                INTERACTION_TYPE.CURSE_ACTION,
+                INTERACTION_TYPE.HUNT_ACTION,
+                INTERACTION_TYPE.TRANSFER_HOME,
+                INTERACTION_TYPE.TORTURE_ACTION_NPC,
+                INTERACTION_TYPE.USE_ITEM_ON_CHARACTER,
+                INTERACTION_TYPE.REST_AT_HOME_ACTION,
+                INTERACTION_TYPE.EAT_HOME_MEAL_ACTION,
+                INTERACTION_TYPE.POISON_HOUSE_FOOD,
+                INTERACTION_TYPE.FEED_PRISONER_ACTION,
+                INTERACTION_TYPE.BOOBY_TRAP_HOUSE,
+                INTERACTION_TYPE.STEAL_ACTION_NPC,
+                INTERACTION_TYPE.ASSAULT_ACTION_NPC,
+                INTERACTION_TYPE.CAMP_OUT_ACTION,
+                INTERACTION_TYPE.FORAGE_ACTION,
+                INTERACTION_TYPE.HANG_OUT_ACTION,
+                INTERACTION_TYPE.MAKE_LOVE_ACTION,
+                INTERACTION_TYPE.REMOVE_CURSE_ACTION,
+                INTERACTION_TYPE.RESTRAIN_CRIMINAL_ACTION,
+                INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION,
+            } },
+            { RACE.DRAGON, new INTERACTION_TYPE[] {
+                INTERACTION_TYPE.MOVE_TO_VISIT,
                 INTERACTION_TYPE.ARGUE_ACTION,
                 INTERACTION_TYPE.CURSE_ACTION,
                 INTERACTION_TYPE.HUNT_ACTION,
@@ -285,33 +452,28 @@ public class RaceManager : MonoBehaviour {
             } },
         };
     }
-    public List<INTERACTION_TYPE> GetNPCInteractionsOfRace(RACE race) {
-        List<INTERACTION_TYPE> interactions = _npcRaceInteractions[RACE.NONE].ToList(); //Get interactions of all races first
-        if (_npcRaceInteractions.ContainsKey(race)) {
-            for (int i = 0; i < _npcRaceInteractions[race].Length; i++) {
-                interactions.Add(_npcRaceInteractions[race][i]);
+    public List<INTERACTION_TYPE> GetNPCInteractionsOfRace(Character character) {
+        List<INTERACTION_TYPE> interactions = new List<INTERACTION_TYPE>(); //Get interactions of all races first
+        if (_npcRaceInteractions.ContainsKey(character.race)) {
+            for (int i = 0; i < _npcRaceInteractions[character.race].Length; i++) {
+                interactions.Add(_npcRaceInteractions[character.race][i]);
             }
+        }
+        if (CharacterManager.Instance.characterRoleInteractions.ContainsKey(character.role.roleType)) {
+            for (int i = 0; i < CharacterManager.Instance.characterRoleInteractions[character.role.roleType].Length; i++) {
+                interactions.Add(CharacterManager.Instance.characterRoleInteractions[character.role.roleType][i]);
+            }
+        }
+        for (int i = 0; i < character.currentInteractionTypes.Count; i++) {
+            interactions.Add(character.currentInteractionTypes[i]);
         }
         return interactions;
     }
     public List<INTERACTION_TYPE> GetNPCInteractionsOfRace(Character character, INTERACTION_CATEGORY category, Character targetCharacter = null) { 
         //If there is a character passed as parameter, this means that the list will be filtered by what the character can do
         List<INTERACTION_TYPE> interactions = new List<INTERACTION_TYPE>(); //Get interactions of all races first
-        INTERACTION_TYPE[] interactionArray = _npcRaceInteractions[RACE.NONE];
-        for (int i = 0; i < interactionArray.Length; i++) {
-            InteractionAttributes interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(interactionArray[i], character);
-            if (interactionCategoryAndAlignment == null) { continue; }
-            for (int j = 0; j < interactionCategoryAndAlignment.categories.Length; j++) {
-                if (interactionCategoryAndAlignment.categories[j] == category) {
-                    if(character != null && InteractionManager.Instance.CanCreateInteraction(interactionArray[i], character, targetCharacter)) {
-                        interactions.Add(interactionArray[i]);
-                    }
-                    break;
-                }
-            }
-        }
         if (_npcRaceInteractions.ContainsKey(character.race)) {
-            interactionArray = _npcRaceInteractions[character.race];
+            INTERACTION_TYPE[] interactionArray = _npcRaceInteractions[character.race];
             for (int i = 0; i < interactionArray.Length; i++) {
                 InteractionAttributes interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(interactionArray[i], character);
                 if (interactionCategoryAndAlignment == null) { continue; }
@@ -325,44 +487,40 @@ public class RaceManager : MonoBehaviour {
                 }
             }
         }
-        return interactions;
-    }
-    public List<INTERACTION_TYPE> GetNPCInteractionsOfRace(Character character, INTERACTION_CATEGORY category, INTERACTION_CHARACTER_EFFECT characterEffect, string[] characterEffectStrings, bool checkTargetCharacterEffect, Character targetCharacter = null) {
-        //If there is a character passed as parameter, this means that the list will be filtered by what the character can do
-        List<INTERACTION_TYPE> interactions = new List<INTERACTION_TYPE>(); //Get interactions of all races first
-        INTERACTION_TYPE[] interactionArray = _npcRaceInteractions[RACE.NONE];
-        for (int i = 0; i < interactionArray.Length; i++) {
-            InteractionAttributes interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(interactionArray[i], character);
+        if (CharacterManager.Instance.characterRoleInteractions.ContainsKey(character.role.roleType)) {
+            INTERACTION_TYPE[] interactionArray = CharacterManager.Instance.characterRoleInteractions[character.role.roleType];
+            for (int i = 0; i < interactionArray.Length; i++) {
+                InteractionAttributes interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(interactionArray[i], character);
+                if (interactionCategoryAndAlignment == null) { continue; }
+                for (int j = 0; j < interactionCategoryAndAlignment.categories.Length; j++) {
+                    if (interactionCategoryAndAlignment.categories[j] == category) {
+                        if (character != null && InteractionManager.Instance.CanCreateInteraction(interactionArray[i], character, targetCharacter)) {
+                            interactions.Add(interactionArray[i]);
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+        for (int i = 0; i < character.currentInteractionTypes.Count; i++) {
+            InteractionAttributes interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(character.currentInteractionTypes[i], character);
             if (interactionCategoryAndAlignment == null) { continue; }
             for (int j = 0; j < interactionCategoryAndAlignment.categories.Length; j++) {
                 if (interactionCategoryAndAlignment.categories[j] == category) {
-                    bool canDoCharacterEffect = false;
-                    InteractionCharacterEffect[] interactionCharacterEffect = interactionCategoryAndAlignment.targetCharacterEffect;
-                    if (!checkTargetCharacterEffect) {
-                        interactionCharacterEffect = interactionCategoryAndAlignment.actorEffect;
-                    }
-                    if (interactionCharacterEffect != null) {
-                        for (int k = 0; k < interactionCharacterEffect.Length; k++) {
-                            if (interactionCharacterEffect[k].effect != INTERACTION_CHARACTER_EFFECT.NONE &&
-                                interactionCharacterEffect[k].effect == characterEffect) {
-                                if (interactionCharacterEffect[k].effectString != null && interactionCharacterEffect[k].effectString != string.Empty) {
-                                    if (characterEffectStrings.Contains(interactionCharacterEffect[k].effectString)) {
-                                        canDoCharacterEffect = true;
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    if (canDoCharacterEffect && character != null && InteractionManager.Instance.CanCreateInteraction(interactionArray[i], character, targetCharacter)) {
-                        interactions.Add(interactionArray[i]);
+                    if (character != null && InteractionManager.Instance.CanCreateInteraction(character.currentInteractionTypes[i], character, targetCharacter)) {
+                        interactions.Add(character.currentInteractionTypes[i]);
                     }
                     break;
                 }
             }
         }
+        return interactions;
+    }
+    public List<INTERACTION_TYPE> GetNPCInteractionsOfRace(Character character, INTERACTION_CATEGORY category, INTERACTION_CHARACTER_EFFECT characterEffect, string[] characterEffectStrings, bool checkTargetCharacterEffect, Character targetCharacter = null) {
+        //If there is a character passed as parameter, this means that the list will be filtered by what the character can do
+        List<INTERACTION_TYPE> interactions = new List<INTERACTION_TYPE>(); //Get interactions of all races first
         if (_npcRaceInteractions.ContainsKey(character.race)) {
-            interactionArray = _npcRaceInteractions[character.race];
+            INTERACTION_TYPE[] interactionArray = _npcRaceInteractions[character.race];
             for (int i = 0; i < interactionArray.Length; i++) {
                 InteractionAttributes interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(interactionArray[i], character);
                 if (interactionCategoryAndAlignment == null) { continue; }
@@ -394,42 +552,76 @@ public class RaceManager : MonoBehaviour {
                 }
             }
         }
+        if (CharacterManager.Instance.characterRoleInteractions.ContainsKey(character.role.roleType)) {
+            INTERACTION_TYPE[] interactionArray = CharacterManager.Instance.characterRoleInteractions[character.role.roleType];
+            for (int i = 0; i < interactionArray.Length; i++) {
+                InteractionAttributes interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(interactionArray[i], character);
+                if (interactionCategoryAndAlignment == null) { continue; }
+                for (int j = 0; j < interactionCategoryAndAlignment.categories.Length; j++) {
+                    if (interactionCategoryAndAlignment.categories[j] == category) {
+                        bool canDoCharacterEffect = false;
+                        InteractionCharacterEffect[] interactionCharacterEffect = interactionCategoryAndAlignment.targetCharacterEffect;
+                        if (!checkTargetCharacterEffect) {
+                            interactionCharacterEffect = interactionCategoryAndAlignment.actorEffect;
+                        }
+                        if (interactionCharacterEffect != null) {
+                            for (int k = 0; k < interactionCharacterEffect.Length; k++) {
+                                if (interactionCharacterEffect[k].effect != INTERACTION_CHARACTER_EFFECT.NONE &&
+                                    interactionCharacterEffect[k].effect == characterEffect) {
+                                    if (interactionCharacterEffect[k].effectString != null && interactionCharacterEffect[k].effectString != string.Empty) {
+                                        if (characterEffectStrings.Contains(interactionCharacterEffect[k].effectString)) {
+                                            canDoCharacterEffect = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        if (canDoCharacterEffect && character != null && InteractionManager.Instance.CanCreateInteraction(interactionArray[i], character, targetCharacter)) {
+                            interactions.Add(interactionArray[i]);
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+        for (int i = 0; i < character.currentInteractionTypes.Count; i++) {
+            InteractionAttributes interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(character.currentInteractionTypes[i], character);
+            if (interactionCategoryAndAlignment == null) { continue; }
+            for (int j = 0; j < interactionCategoryAndAlignment.categories.Length; j++) {
+                if (interactionCategoryAndAlignment.categories[j] == category) {
+                    bool canDoCharacterEffect = false;
+                    InteractionCharacterEffect[] interactionCharacterEffect = interactionCategoryAndAlignment.targetCharacterEffect;
+                    if (!checkTargetCharacterEffect) {
+                        interactionCharacterEffect = interactionCategoryAndAlignment.actorEffect;
+                    }
+                    if (interactionCharacterEffect != null) {
+                        for (int k = 0; k < interactionCharacterEffect.Length; k++) {
+                            if (interactionCharacterEffect[k].effect != INTERACTION_CHARACTER_EFFECT.NONE &&
+                                interactionCharacterEffect[k].effect == characterEffect) {
+                                if (interactionCharacterEffect[k].effectString != null && interactionCharacterEffect[k].effectString != string.Empty) {
+                                    if (characterEffectStrings.Contains(interactionCharacterEffect[k].effectString)) {
+                                        canDoCharacterEffect = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (canDoCharacterEffect && character != null && InteractionManager.Instance.CanCreateInteraction(character.currentInteractionTypes[i], character, targetCharacter)) {
+                        interactions.Add(character.currentInteractionTypes[i]);
+                    }
+                    break;
+                }
+            }
+        }
         return interactions;
     }
     public List<INTERACTION_TYPE> GetNPCInteractionsOfRace(Character character, INTERACTION_CHARACTER_EFFECT characterEffect, string[] characterEffectStrings, bool checkTargetCharacterEffect, Character targetCharacter = null) {
         //If there is a character passed as parameter, this means that the list will be filtered by what the character can do
         List<INTERACTION_TYPE> interactions = new List<INTERACTION_TYPE>(); //Get interactions of all races first
-        INTERACTION_TYPE[] interactionArray = _npcRaceInteractions[RACE.NONE];
-        for (int i = 0; i < interactionArray.Length; i++) {
-            InteractionAttributes interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(interactionArray[i], character);
-            if (interactionCategoryAndAlignment == null) { continue; }
-            for (int j = 0; j < interactionCategoryAndAlignment.categories.Length; j++) {
-                bool canDoCharacterEffect = false;
-                InteractionCharacterEffect[] interactionCharacterEffect = interactionCategoryAndAlignment.targetCharacterEffect;
-                if (!checkTargetCharacterEffect) {
-                    interactionCharacterEffect = interactionCategoryAndAlignment.actorEffect;
-                }
-                if (interactionCharacterEffect != null) {
-                    for (int k = 0; k < interactionCharacterEffect.Length; k++) {
-                        if (interactionCharacterEffect[k].effect != INTERACTION_CHARACTER_EFFECT.NONE &&
-                            interactionCharacterEffect[k].effect == characterEffect) {
-                            if (interactionCharacterEffect[k].effectString != null && interactionCharacterEffect[k].effectString != string.Empty) {
-                                if (characterEffectStrings.Contains(interactionCharacterEffect[k].effectString)) {
-                                    canDoCharacterEffect = true;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-                if (canDoCharacterEffect && character != null && InteractionManager.Instance.CanCreateInteraction(interactionArray[i], character, targetCharacter)) {
-                    interactions.Add(interactionArray[i]);
-                }
-                break;
-            }
-        }
         if (_npcRaceInteractions.ContainsKey(character.race)) {
-            interactionArray = _npcRaceInteractions[character.race];
+            INTERACTION_TYPE[] interactionArray = _npcRaceInteractions[character.race];
             for (int i = 0; i < interactionArray.Length; i++) {
                 InteractionAttributes interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(interactionArray[i], character);
                 if (interactionCategoryAndAlignment == null) { continue; }
@@ -459,22 +651,71 @@ public class RaceManager : MonoBehaviour {
                 }
             }
         }
+        if (CharacterManager.Instance.characterRoleInteractions.ContainsKey(character.role.roleType)) {
+            INTERACTION_TYPE[] interactionArray = CharacterManager.Instance.characterRoleInteractions[character.role.roleType];
+            for (int i = 0; i < interactionArray.Length; i++) {
+                InteractionAttributes interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(interactionArray[i], character);
+                if (interactionCategoryAndAlignment == null) { continue; }
+                for (int j = 0; j < interactionCategoryAndAlignment.categories.Length; j++) {
+                    bool canDoCharacterEffect = false;
+                    InteractionCharacterEffect[] interactionCharacterEffect = interactionCategoryAndAlignment.targetCharacterEffect;
+                    if (!checkTargetCharacterEffect) {
+                        interactionCharacterEffect = interactionCategoryAndAlignment.actorEffect;
+                    }
+                    if (interactionCharacterEffect != null) {
+                        for (int k = 0; k < interactionCharacterEffect.Length; k++) {
+                            if (interactionCharacterEffect[k].effect != INTERACTION_CHARACTER_EFFECT.NONE &&
+                                interactionCharacterEffect[k].effect == characterEffect) {
+                                if (interactionCharacterEffect[k].effectString != null && interactionCharacterEffect[k].effectString != string.Empty) {
+                                    if (characterEffectStrings.Contains(interactionCharacterEffect[k].effectString)) {
+                                        canDoCharacterEffect = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (canDoCharacterEffect && character != null && InteractionManager.Instance.CanCreateInteraction(interactionArray[i], character, targetCharacter)) {
+                        interactions.Add(interactionArray[i]);
+                    }
+                    break;
+                }
+            }
+        }
+        for (int i = 0; i < character.currentInteractionTypes.Count; i++) {
+            InteractionAttributes interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(character.currentInteractionTypes[i], character);
+            if (interactionCategoryAndAlignment == null) { continue; }
+            for (int j = 0; j < interactionCategoryAndAlignment.categories.Length; j++) {
+                bool canDoCharacterEffect = false;
+                InteractionCharacterEffect[] interactionCharacterEffect = interactionCategoryAndAlignment.targetCharacterEffect;
+                if (!checkTargetCharacterEffect) {
+                    interactionCharacterEffect = interactionCategoryAndAlignment.actorEffect;
+                }
+                if (interactionCharacterEffect != null) {
+                    for (int k = 0; k < interactionCharacterEffect.Length; k++) {
+                        if (interactionCharacterEffect[k].effect != INTERACTION_CHARACTER_EFFECT.NONE &&
+                            interactionCharacterEffect[k].effect == characterEffect) {
+                            if (interactionCharacterEffect[k].effectString != null && interactionCharacterEffect[k].effectString != string.Empty) {
+                                if (characterEffectStrings.Contains(interactionCharacterEffect[k].effectString)) {
+                                    canDoCharacterEffect = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                if (canDoCharacterEffect && character != null && InteractionManager.Instance.CanCreateInteraction(character.currentInteractionTypes[i], character, targetCharacter)) {
+                    interactions.Add(character.currentInteractionTypes[i]);
+                }
+                break;
+            }
+        }
         return interactions;
     }
     public List<INTERACTION_TYPE> GetNPCInteractionsOfRace(Character character, INTERACTION_ALIGNMENT alignment, Character targetCharacter = null) {
         List<INTERACTION_TYPE> interactions = new List<INTERACTION_TYPE>(); //Get interactions of all races first
-        INTERACTION_TYPE[] interactionArray = _npcRaceInteractions[RACE.NONE];
-        for (int i = 0; i < interactionArray.Length; i++) {
-            InteractionAttributes interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(interactionArray[i], character);
-            if (interactionCategoryAndAlignment == null) { continue; }
-            if (interactionCategoryAndAlignment.alignment == alignment) {
-                if (character != null && InteractionManager.Instance.CanCreateInteraction(interactionArray[i], character, targetCharacter)) {
-                    interactions.Add(interactionArray[i]);
-                }
-            }
-        }
         if (_npcRaceInteractions.ContainsKey(character.race)) {
-            interactionArray = _npcRaceInteractions[character.race];
+            INTERACTION_TYPE[] interactionArray = _npcRaceInteractions[character.race];
             for (int i = 0; i < interactionArray.Length; i++) {
                 InteractionAttributes interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(interactionArray[i], character);
                 if (interactionCategoryAndAlignment == null) { continue; }
@@ -485,27 +726,33 @@ public class RaceManager : MonoBehaviour {
                 }
             }
         }
-        return interactions;
-    }
-    public List<INTERACTION_TYPE> GetNPCInteractionsOfRace(Character character, INTERACTION_CATEGORY category, INTERACTION_ALIGNMENT alignment, Character targetCharacter = null) {
-        List<INTERACTION_TYPE> interactions = new List<INTERACTION_TYPE>(); //Get interactions of all races first
-        INTERACTION_TYPE[] interactionArray = _npcRaceInteractions[RACE.NONE];
-        for (int i = 0; i < interactionArray.Length; i++) {
-            InteractionAttributes interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(interactionArray[i], character);
-            if (interactionCategoryAndAlignment == null) { continue; }
-            if (interactionCategoryAndAlignment.alignment == alignment) {
-                for (int j = 0; j < interactionCategoryAndAlignment.categories.Length; j++) {
-                    if (interactionCategoryAndAlignment.categories[j] == category) {
-                        if (character != null && InteractionManager.Instance.CanCreateInteraction(interactionArray[i], character, targetCharacter)) {
-                            interactions.Add(interactionArray[i]);
-                        }
-                        break;
+        if (CharacterManager.Instance.characterRoleInteractions.ContainsKey(character.role.roleType)) {
+            INTERACTION_TYPE[] interactionArray = CharacterManager.Instance.characterRoleInteractions[character.role.roleType];
+            for (int i = 0; i < interactionArray.Length; i++) {
+                InteractionAttributes interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(interactionArray[i], character);
+                if (interactionCategoryAndAlignment == null) { continue; }
+                if (interactionCategoryAndAlignment.alignment == alignment) {
+                    if (character != null && InteractionManager.Instance.CanCreateInteraction(interactionArray[i], character, targetCharacter)) {
+                        interactions.Add(interactionArray[i]);
                     }
                 }
             }
         }
+        for (int i = 0; i < character.currentInteractionTypes.Count; i++) {
+            InteractionAttributes interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(character.currentInteractionTypes[i], character);
+            if (interactionCategoryAndAlignment == null) { continue; }
+            if (interactionCategoryAndAlignment.alignment == alignment) {
+                if (character != null && InteractionManager.Instance.CanCreateInteraction(character.currentInteractionTypes[i], character, targetCharacter)) {
+                    interactions.Add(character.currentInteractionTypes[i]);
+                }
+            }
+        }
+        return interactions;
+    }
+    public List<INTERACTION_TYPE> GetNPCInteractionsOfRace(Character character, INTERACTION_CATEGORY category, INTERACTION_ALIGNMENT alignment, Character targetCharacter = null) {
+        List<INTERACTION_TYPE> interactions = new List<INTERACTION_TYPE>(); //Get interactions of all races first
         if (_npcRaceInteractions.ContainsKey(character.race)) {
-            interactionArray = _npcRaceInteractions[character.race];
+            INTERACTION_TYPE[] interactionArray = _npcRaceInteractions[character.race];
             for (int i = 0; i < interactionArray.Length; i++) {
                 InteractionAttributes interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(interactionArray[i], character);
                 if (interactionCategoryAndAlignment == null) { continue; }
@@ -517,6 +764,37 @@ public class RaceManager : MonoBehaviour {
                             }
                             break;
                         }
+                    }
+                }
+            }
+        }
+        if (CharacterManager.Instance.characterRoleInteractions.ContainsKey(character.role.roleType)) {
+            INTERACTION_TYPE[] interactionArray = CharacterManager.Instance.characterRoleInteractions[character.role.roleType];
+            for (int i = 0; i < interactionArray.Length; i++) {
+                InteractionAttributes interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(interactionArray[i], character);
+                if (interactionCategoryAndAlignment == null) { continue; }
+                if (interactionCategoryAndAlignment.alignment == alignment) {
+                    for (int j = 0; j < interactionCategoryAndAlignment.categories.Length; j++) {
+                        if (interactionCategoryAndAlignment.categories[j] == category) {
+                            if (character != null && InteractionManager.Instance.CanCreateInteraction(interactionArray[i], character, targetCharacter)) {
+                                interactions.Add(interactionArray[i]);
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        for (int i = 0; i < character.currentInteractionTypes.Count; i++) {
+            InteractionAttributes interactionCategoryAndAlignment = InteractionManager.Instance.GetCategoryAndAlignment(character.currentInteractionTypes[i], character);
+            if (interactionCategoryAndAlignment == null) { continue; }
+            if (interactionCategoryAndAlignment.alignment == alignment) {
+                for (int j = 0; j < interactionCategoryAndAlignment.categories.Length; j++) {
+                    if (interactionCategoryAndAlignment.categories[j] == category) {
+                        if (character != null && InteractionManager.Instance.CanCreateInteraction(character.currentInteractionTypes[i], character, targetCharacter)) {
+                            interactions.Add(character.currentInteractionTypes[i]);
+                        }
+                        break;
                     }
                 }
             }

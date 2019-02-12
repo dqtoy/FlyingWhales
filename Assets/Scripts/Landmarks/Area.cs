@@ -930,7 +930,7 @@ public class Area {
     public bool CanDoAreaTaskInteraction(INTERACTION_TYPE interactionType, Character character, int supplyCost) {
         return suppliesInBank >= supplyCost; //&& InteractionManager.Instance.CanCreateInteraction(interactionType, character);
     }
-    public Dictionary<Character, List<INTERACTION_TYPE>> GetResidentAndInteractionsTheyCanDoByCategoryAndAlignment(INTERACTION_CATEGORY category, MORALITY factionMorality) {
+    public Dictionary<Character, List<INTERACTION_TYPE>> GetResidentAndInteractionsTheyCanDoByCategoryAndAlignment(INTERACTION_CATEGORY category) {
         Dictionary<Character, List<INTERACTION_TYPE>> residentInteractions = new Dictionary<Character, List<INTERACTION_TYPE>>();
         for (int i = 0; i < areaResidents.Count; i++) {
             Character resident = areaResidents[i];
@@ -939,7 +939,7 @@ public class Area {
                     continue;
                 }
                 if ((owner == null && resident.faction == FactionManager.Instance.neutralFaction) || resident.faction == owner) {
-                    List<INTERACTION_TYPE> interactionTypes = RaceManager.Instance.GetFactionInteractionsOfRace(resident, category, factionMorality);
+                    List<INTERACTION_TYPE> interactionTypes = RaceManager.Instance.GetFactionInteractionsOfRace(resident, category);
                     if (interactionTypes != null) {
                         for (int j = 0; j < interactionTypes.Count; j++) {
                             if (!InteractionManager.Instance.CanCreateInteraction(interactionTypes[j], resident)) {

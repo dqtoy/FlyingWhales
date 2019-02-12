@@ -46,6 +46,8 @@ public class CharacterManager : MonoBehaviour {
     public Dictionary<Character, List<string>> allCharacterLogs { get; private set; }
     public Dictionary<INTERACTION_TYPE, int> awayFromHomeInteractionWeights { get; private set; }
     public Dictionary<INTERACTION_TYPE, int> atHomeInteractionWeights { get; private set; }
+    public Dictionary<CHARACTER_ROLE, INTERACTION_TYPE[]> characterRoleInteractions { get; private set; }
+
     private static readonly string[] _sevenDeadlySinsClassNames = { "Lust", "Gluttony", "Greed", "Sloth", "Wrath", "Envy", "Pride" };
     private List<string> deadlySinsRotation = new List<string>();
 
@@ -79,6 +81,7 @@ public class CharacterManager : MonoBehaviour {
         ConstructElementChanceDictionary();
         ConstructAwayFromHomeInteractionWeights();
         ConstructAtHomeInteractionWeights();
+        ConstructRoleInteractions();
         //ConstructPortraitDictionaries();
     }
 
@@ -615,6 +618,9 @@ public class CharacterManager : MonoBehaviour {
     #endregion
 
     #region Interaction
+    private void ConstructRoleInteractions() {
+        characterRoleInteractions = new Dictionary<CHARACTER_ROLE, INTERACTION_TYPE[]>();
+    }
     private void ConstructAwayFromHomeInteractionWeights() {
         awayFromHomeInteractionWeights = new Dictionary<INTERACTION_TYPE, int> {
             { INTERACTION_TYPE.MOVE_TO_RETURN_HOME, 100 },
