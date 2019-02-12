@@ -45,6 +45,7 @@ public enum RACE{
     FAERY,
     INSECT,
     SPIDER,
+    ABOMINATION,
 }
 public enum HEXTILE_DIRECTION {
     NORTH_WEST,
@@ -935,6 +936,7 @@ public enum TRAIT_REQUIREMENT {
     RANGED,
     OPPOSITE_SEX,
     ONLY_DEMON,
+    ROLE,
 }
 public enum MORALITY {
     GOOD,

@@ -10,7 +10,7 @@ public class Interaction {
     protected int _timeOutTicks;
     protected GameDate _timeDate;
     protected INTERACTION_TYPE _type;
-    //protected INTERACTION_CATEGORY[] _categories;
+    //protected INTERACTION_CATEGORY[] _categories;f
     //protected INTERACTION_ALIGNMENT _alignment;
     protected Area _interactable;
     protected Dictionary<string, InteractionState> _states;
@@ -206,6 +206,9 @@ public class Interaction {
     public virtual bool CanInteractionBeDoneBy(Character character) { //Converted this to virtual so each instance of interaction can also have trigger requirements other than CanCreateInteraction at InteractionManager
         if (_canInteractionBeDone != null) {
             return _canInteractionBeDone();
+        }
+        if(character.doNotDisturb > 0 || character.isDead || !character.IsInOwnParty()) {
+            return false;
         }
         return true;
     }
