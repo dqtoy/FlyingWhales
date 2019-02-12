@@ -43,7 +43,6 @@ public class Area {
     public List<RACE> possibleOccupants { get; private set; }
     public List<InitialRaceSetup> initialSpawnSetup { get; private set; } //only to be used when unoccupied
     public Dictionary<JOB, List<INTERACTION_TYPE>> jobInteractionTypes { get; private set; }
-    public int residentCapacity { get; private set; }
     public int monthlySupply { get; private set; }
     public List<Interaction> eventsTargettingThis { get; private set; }
 
@@ -103,6 +102,14 @@ public class Area {
     public List<Corpse> corpsesInArea {
         get {
             return GetAllCorpses();
+        }
+    }
+    public int residentCapacity {
+        get {
+            if (structures.ContainsKey(STRUCTURE_TYPE.DWELLING)) {
+                return structures[STRUCTURE_TYPE.DWELLING].Count;
+            }
+            return 0;
         }
     }
     #endregion
@@ -176,7 +183,7 @@ public class Area {
         SetDungeonSupplyRange(data.dungeonSupplyRangeMin, data.dungeonSupplyRangeMax);
         SetMaxDefenderGroups(data.maxDefenderGroups);
         SetInitialDefenderGroups(data.initialDefenderGroups);
-        SetResidentCapacity(data.residentCapacity);
+        //SetResidentCapacity(data.residentCapacity);
         SetMonthlySupply(data.monthlySupply);
         SetInitialResidents(data.initialResidents);
         SetMonthlyActions(data.monthlyActions);
@@ -253,9 +260,9 @@ public class Area {
     //public void SetInitialSupplies(int amount) {
     //    initialSupply = amount;
     //}
-    public void SetResidentCapacity(int amount) {
-        residentCapacity = amount;
-    }
+    //public void SetResidentCapacity(int amount) {
+    //    residentCapacity = amount;
+    //}
     public void SetMonthlySupply(int amount) {
         monthlySupply = amount;
     }
