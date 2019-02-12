@@ -229,7 +229,7 @@ public class Job {
     public void ForceDefaultAllExistingInteractions() {
         _character.specificLocation.SetStopDefaultInteractionsState(false);
         string summary = "";
-        InteractionManager.Instance.DefaultInteractionsInArea(_character.specificLocation, ref summary);
+        InteractionManager.Instance.ScheduleDefaultInteractionsInArea(_character.specificLocation, ref summary);
         //_character.specificLocation.DefaultAllExistingInteractions();
     }
     public int GetSupplyObtained(Area targetArea) {

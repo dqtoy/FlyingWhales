@@ -21,7 +21,7 @@ public class InteractionIntelItem : MonoBehaviour {
         otherClickActions = new List<System.Action>();
         ClearClickActions();
         if (intel != null) {
-            infoLbl.text = "On <b>Day " + intel.obtainedFromLog.date.ConvertToDays() + "</b>: " +  Utilities.LogReplacer(intel.obtainedFromLog);
+            infoLbl.text = "On <b>Day " + intel.obtainedFromLog.date.ConvertToContinuousDays() + "</b>: " +  Utilities.LogReplacer(intel.obtainedFromLog);
             mainBtn.interactable = true;
         } else {
             infoLbl.text = "Get some intel!";

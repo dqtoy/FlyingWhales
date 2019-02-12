@@ -179,7 +179,7 @@ public class Interaction {
         if(_characterInvolved != null) {
             _characterInvolved.AdjustDoNotDisturb(-1);
         }
-        _interactable.RemoveInteraction(this);
+        //_interactable.RemoveInteraction(this);
         if (_jobAssociated != null) {
             _jobAssociated.SetCreatedInteraction(null);
             SetJobAssociated(null);
@@ -317,10 +317,10 @@ public class Interaction {
     }
     public void TimedOutRunDefault(ref string summary) {
         //|| !CanStillDoInteraction()
-        if ((_characterInvolved != null && _characterInvolved.isDead)) {
-            EndInteraction();
-            return;
-        }
+        //if ((_characterInvolved != null && _characterInvolved.isDead)) {
+        //    EndInteraction();
+        //    return;
+        //}
         if (!_hasInitialized) {
             Initialize();
         }

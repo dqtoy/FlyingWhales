@@ -1588,37 +1588,51 @@ public class InteractionManager : MonoBehaviour {
 
     private void ExecuteInteractionsDefault() {
         GameManager.Instance.pauseDayEnded2 = false;
-        dailyInteractionSummary = GameManager.Instance.TodayLogString() + "Executing interactions";
+        dailyInteractionSummary = GameManager.Instance.TodayLogString() + "Scheduling interactions";
         for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
             Area currArea = LandmarkManager.Instance.allAreas[i];
-            DefaultInteractionsInArea(currArea, ref dailyInteractionSummary);
+            ScheduleDefaultInteractionsInArea(currArea, ref dailyInteractionSummary);
             //StartCoroutine(DefaultInteractionsInAreaCoroutine(currArea, AddToDailySummary));
         }
         dailyInteractionSummary += "\n==========Done==========";
         Debug.Log(dailyInteractionSummary);
     }
-    public void DefaultInteractionsInArea(Area area, ref string log) {
-        log += "\n==========Executing <b>" + area.name + "'s</b> interactions==========";
-        if (area.stopDefaultAllExistingInteractions) {
-            log += "\nCannot run areas default interactions because area interactions have been disabled";
-            return; //skip
-        }
-        List<Interaction> interactionsInArea = new List<Interaction>(area.currentInteractions);
-        if (interactionsInArea.Count == 0) {
-            log += "\nNo interactions in area";
+    public void ScheduleDefaultInteractionsInArea(Area area, ref string log) {
+        if (area.currentInteractions.Count <= 0) {
+            log += "\nNo interactions in " + area.name;
             return;
         }
-
+        GameDate scheduledDate = GameManager.Instance.Today();
+        scheduledDate.AddDays(5);
+        log += "\n==========Scheduling <b>" + area.name + "'s</b> interactions on " + scheduledDate.ConvertToContinuousDays()  + "==========";
+        List<Interaction> interactionsInArea = new List<Interaction>(area.currentInteractions);
         for (int j = 0; j < interactionsInArea.Count; j++) {
             Interaction currInteraction = interactionsInArea[j];
+            Character character = currInteraction.characterInvolved;
+            log += "\n" + currInteraction.name;
+            if (character != null) {
+                log += " for " + character.name;
+            }
+        }
+        SchedulingManager.Instance.AddEntry(scheduledDate, () => DefaultInteractionsInArea(interactionsInArea, area));
+        area.currentInteractions.Clear();
+    }
+    private void DefaultInteractionsInArea(List<Interaction> interactions, Area area) {
+        string log = "\n==========" + GameManager.Instance.TodayLogString() + "Executing Scheduled <b>" + area.name + "'s</b> interactions==========";
+        //if (area.stopDefaultAllExistingInteractions) {
+        //    log += "\nCannot run areas default interactions because area interactions have been disabled";
+        //    return; //skip
+        //}
+        for (int j = 0; j < interactions.Count; j++) {
+            Interaction currInteraction = interactions[j];
             Character character = currInteraction.characterInvolved;
             if (character != null) {
                 log += "\n<b><color=green>" + character.name + "</color></b> triggered his/her day tick to perform <b>" + currInteraction.name + "</b>";
             }
         }
 
-        for (int j = 0; j < interactionsInArea.Count; j++) {
-            Interaction currInteraction = interactionsInArea[j];
+        for (int j = 0; j < interactions.Count; j++) {
+            Interaction currInteraction = interactions[j];
             Character character = currInteraction.characterInvolved;
             if (!currInteraction.hasActivatedTimeOut) {
                 if (character == null || (!character.isDead && currInteraction.CanInteractionBeDoneBy(character))) {
@@ -1635,72 +1649,15 @@ public class InteractionManager : MonoBehaviour {
                     //Unable to perform
                     UnableToPerform unable = CreateNewInteraction(INTERACTION_TYPE.UNABLE_TO_PERFORM, area) as UnableToPerform;
                     unable.SetActionNameThatCannotBePerformed(currInteraction.name);
-                    character.AddInteraction(unable);
+                    unable.SetCharacterInvolved(character);
                     unable.TimedOutRunDefault(ref log);
                     log += "\n";
                 }
             }
         }
+        log += "\n==========Done==========";
+        Debug.Log(log);
     }
-
-    //private void AddToDailySummary(string log) {
-    //    dailyInteractionSummary += log;
-    //}
-    //public IEnumerator DefaultInteractionsInAreaCoroutine(Area area, System.Action<string> addToLog) {
-    //    string log = "\n==========Executing " + area.name + "'s interactions==========";
-    //    if (area.stopDefaultAllExistingInteractions) {
-    //        log += "\nCannot run areas default interactions because area interactions have been disabled";
-    //        addToLog(log);
-    //        yield return null; //skip
-    //    }
-    //    List<Interaction> interactionsInArea = new List<Interaction>(area.currentInteractions);
-    //    if (interactionsInArea.Count == 0) {
-    //        log += "\nNo interactions in area";
-    //        addToLog(log);
-    //        yield return null;
-    //    }
-
-    //    for (int j = 0; j < interactionsInArea.Count; j++) {
-    //        Interaction currInteraction = interactionsInArea[j];
-    //        Character character = currInteraction.characterInvolved;
-    //        if (!currInteraction.hasActivatedTimeOut) {
-    //            if (character == null || (!character.isDead && currInteraction.CanInteractionBeDoneBy(character))) {
-    //                log += "\nRunning interaction default " + currInteraction.type.ToString();
-    //                if (character != null) {
-    //                    log += " Involving " + character.name;
-    //                }
-    //                currInteraction.TimedOutRunDefault(ref log);
-    //                log += "\n";
-    //            } else {
-    //                //area.RemoveInteraction(currInteraction);
-    //                currInteraction.EndInteraction();
-    //                log += "\n" + character.name + " is unable to perform " + currInteraction.name + "!";
-    //                //Unable to perform
-    //                Interaction unable = CreateNewInteraction(INTERACTION_TYPE.UNABLE_TO_PERFORM, area.coreTile.landmarkOnTile);
-    //                character.AddInteraction(unable);
-    //                unable.TimedOutRunDefault(ref log);
-    //                log += "\n";
-    //            }
-    //        }
-    //    }
-    //    addToLog(log);
-    //    yield return null;
-    //}
-
-    //public List<T> GetAllCurrentInteractionsOfType<T>(INTERACTION_TYPE type) {
-    //    List<T> interactionsOfType = new List<T>();
-    //    for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
-    //        Area currArea = LandmarkManager.Instance.allAreas[i];
-    //        for (int j = 0; j < currArea.currentInteractions.Count; j++) {
-    //            Interaction currInteraction = currArea.currentInteractions[j];
-    //            if (currInteraction.type == type && currInteraction is T) {
-    //                interactionsOfType.Add((T)System.Convert.ChangeType(currInteraction, typeof(T)));
-    //            }
-    //        }
-    //    }
-    //    return interactionsOfType;
-    //}
-
     public void UnlockAllTokens() {
         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
             Character currCharacter = CharacterManager.Instance.allCharacters[i];
