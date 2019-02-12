@@ -1242,7 +1242,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return false;
     }
-    public void SetCurrentStructureLocation(LocationStructure currentStructure) {
+    public void SetCurrentStructureLocation(LocationStructure currentStructure, bool broadcast = true) {
         if (currentStructure == this.currentStructure) {
             return; //ignore change;
         }
@@ -1265,7 +1265,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             locationHistory.RemoveAt(0);
         }
 
-        if (currentStructure != null) {
+        if (currentStructure != null && broadcast) {
             Messenger.Broadcast(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, this, currentStructure);
         }
     }
