@@ -28,6 +28,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     protected bool _isBeingInspected;
     protected bool _hasBeenInspected;
     protected bool _alreadyTargetedByGrudge;
+    protected bool _isTracked;
     protected GENDER _gender;
     protected MODE _currentMode;
     protected CharacterClass _characterClass;
@@ -142,6 +143,57 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public int id {
         get { return _id; }
     }
+    public bool isDead {
+        get { return this._isDead; }
+    }
+    public bool isFainted {
+        get { return this._isFainted; }
+    }
+    public bool isInCombat {
+        get {
+            return _isInCombat;
+        }
+    }
+    public bool isFactionless { //is the character part of the neutral faction? or no faction?
+        get {
+            if (FactionManager.Instance.neutralFaction == null) {
+                return faction == null;
+            } else {
+                if (faction == null || FactionManager.Instance.neutralFaction.id == faction.id) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        }
+    }
+    public bool isIdle {
+        get { return _forcedInteraction == null && _doNotDisturb <= 0 && IsInOwnParty() && !currentParty.icon.isTravelling; }
+    }
+    public bool isBeingInspected {
+        get { return _isBeingInspected; }
+    }
+    public bool hasBeenInspected {
+        get { return _hasBeenInspected; }
+    }
+    public bool alreadyTargetedByGrudge {
+        get { return _alreadyTargetedByGrudge; }
+    }
+    public bool isLeader {
+        get { return job.jobType == JOB.LEADER; }
+    }
+    public bool isHoldingItem {
+        get { return tokenInInventory != null; }
+    }
+    public bool isAtHomeStructure {
+        get { return currentStructure == homeStructure; }
+    }
+    public bool isAtHomeArea {
+        get { return specificLocation.id == homeArea.id; }
+    }
+    public bool isTracked {
+        get { return _isTracked; }
+    }
     public GENDER gender {
         get { return _gender; }
     }
@@ -190,12 +242,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public SIDES currentSide {
         get { return this._currentSide; }
     }
-    public bool isDead {
-        get { return this._isDead; }
-    }
-    public bool isFainted {
-        get { return this._isFainted; }
-    }
     public Color characterColor {
         get { return _characterColor; }
     }
@@ -207,27 +253,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public int gold {
         get { return _gold; }
-    }
-    public bool isInCombat {
-        get {
-            return _isInCombat;
-        }
-    }
-    public bool isFactionless { //is the character part of the neutral faction? or no faction?
-        get {
-            if (FactionManager.Instance.neutralFaction == null) {
-                return faction == null;
-            } else {
-                if (faction == null || FactionManager.Instance.neutralFaction.id == faction.id) {
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        }
-    }
-    public bool isIdle {
-        get { return _forcedInteraction == null && _doNotDisturb <= 0 && IsInOwnParty() && !currentParty.icon.isTravelling; }
     }
     public PortraitSettings portraitSettings {
         get { return _portraitSettings; }
@@ -359,18 +384,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public int doNotDisturb {
         get { return _doNotDisturb; }
     }
-    public bool isBeingInspected {
-        get { return _isBeingInspected; }
-    }
-    public bool hasBeenInspected {
-        get { return _hasBeenInspected; }
-    }
-    public bool alreadyTargetedByGrudge {
-        get { return _alreadyTargetedByGrudge; }
-    }
-    public bool isLeader {
-        get { return job.jobType == JOB.LEADER; }
-    }
     public QUEST_GIVER_TYPE questGiverType {
         get { return QUEST_GIVER_TYPE.CHARACTER; }
     }
@@ -394,15 +407,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public int currentInteractionTick {
         get { return _currentInteractionTick; }
-    }
-    public bool isHoldingItem {
-        get { return tokenInInventory != null; }
-    }
-    public bool isAtHomeStructure {
-        get { return currentStructure == homeStructure; }
-    }
-    public bool isAtHomeArea {
-        get { return specificLocation.id == homeArea.id; }
     }
     public CombatCharacter currentCombatCharacter {
         get { return _currentCombatCharacter; }

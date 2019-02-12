@@ -818,21 +818,9 @@ public class Area {
         } else {
             currentInteractions.Add(interaction);
         }
-        //if (interaction.characterInvolved != null) {
-        //    interaction.characterInvolved.currentInteractions.Add(interaction);
-        //}
-        //interaction.interactable.currentInteractions.Add(interaction);
-        //interaction.Initialize();
-        //Messenger.Broadcast(Signals.ADDED_INTERACTION, this as IInteractable, interaction);
     }
     public void RemoveInteraction(Interaction interaction) {
-        if (currentInteractions.Remove(interaction)) {
-            //if (interaction.characterInvolved != null) {
-            //    interaction.characterInvolved.currentInteractions.Remove(interaction);
-            //}
-            //interaction.interactable.currentInteractions.Remove(interaction);
-            //Messenger.Broadcast(Signals.REMOVED_INTERACTION, this as IInteractable, interaction);
-        }
+        currentInteractions.Remove(interaction);
     }
     //public void DefaultAllExistingInteractions() { //NOTE: Only 
     //    if(stopDefaultAllExistingInteractions) { return; }
@@ -1305,52 +1293,55 @@ public class Area {
         }
     }
     public void AddCharacterToAppropriateStructure(Character character) {
-        if (character.homeArea.id == this.id) {
-            if (character.homeStructure == null) {
-                throw new Exception(character.name + "'s homeStructure is null!");
-            }
-            //If this is his home, the character will be placed in his Dwelling.
-            character.homeStructure.AddCharacterAtLocation(character);
+        if(character.GetTraitOr("Abducted", "Restained") != null) {
+            GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA).AddCharacterAtLocation(character);
         } else {
-            // Otherwise:
-            if (Utilities.IsRaceBeast(character.race)) {
-                //- Beasts will be placed at a random Wilderness.
-                GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS).AddCharacterAtLocation(character);
-            } else if (this.owner != null) {
-                FACTION_RELATIONSHIP_STATUS relStat;
-                if (character.faction.id == this.owner.id) { //character is part of the same faction as the owner of this area
-                    relStat = FACTION_RELATIONSHIP_STATUS.ALLY;
-                } else {
-                    relStat = character.faction.GetRelationshipWith(this.owner).relationshipStatus; 
+            if (character.homeArea.id == this.id) {
+                if (character.homeStructure == null) {
+                    throw new Exception(character.name + "'s homeStructure is null!");
                 }
-                switch (relStat) {
-                    case FACTION_RELATIONSHIP_STATUS.AT_WAR:
-                    case FACTION_RELATIONSHIP_STATUS.ENEMY:
-                        //- If location is occupied, non-beasts whose faction relationship is Enemy or worse will be placed in a random structure Outside Settlement.
-                        List<LocationStructure> choices = GetStructuresAtLocation(false);
-                        choices[UnityEngine.Random.Range(0, choices.Count)].AddCharacterAtLocation(character);
-                        break;
-                    case FACTION_RELATIONSHIP_STATUS.DISLIKED:
-                    case FACTION_RELATIONSHIP_STATUS.NEUTRAL:
-                    case FACTION_RELATIONSHIP_STATUS.FRIEND:
-                    case FACTION_RELATIONSHIP_STATUS.ALLY:
-                        LocationStructure inn = GetRandomStructureOfType(STRUCTURE_TYPE.INN);
-                        if (inn != null) {
-                            //- If location is occupied, non-beasts whose faction relationship is Disliked or better will be placed at the Inn. 
-                            inn.AddCharacterAtLocation(character);
-                        } else {
-                            //If no Inn in the Location, he will be placed in a random Wilderness.
-                            LocationStructure wilderness = GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
-                            wilderness.AddCharacterAtLocation(character);
-                        }
-                        break;
-                }
+                //If this is his home, the character will be placed in his Dwelling.
+                character.homeStructure.AddCharacterAtLocation(character);
             } else {
-                //- If location is unoccupied, non-beasts will be placed at a random Wilderness.
-                GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS).AddCharacterAtLocation(character);
+                // Otherwise:
+                if (Utilities.IsRaceBeast(character.race)) {
+                    //- Beasts will be placed at a random Wilderness.
+                    GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS).AddCharacterAtLocation(character);
+                } else if (this.owner != null) {
+                    FACTION_RELATIONSHIP_STATUS relStat;
+                    if (character.faction.id == this.owner.id) { //character is part of the same faction as the owner of this area
+                        relStat = FACTION_RELATIONSHIP_STATUS.ALLY;
+                    } else {
+                        relStat = character.faction.GetRelationshipWith(this.owner).relationshipStatus;
+                    }
+                    switch (relStat) {
+                        case FACTION_RELATIONSHIP_STATUS.AT_WAR:
+                        case FACTION_RELATIONSHIP_STATUS.ENEMY:
+                            //- If location is occupied, non-beasts whose faction relationship is Enemy or worse will be placed in a random structure Outside Settlement.
+                            List<LocationStructure> choices = GetStructuresAtLocation(false);
+                            choices[UnityEngine.Random.Range(0, choices.Count)].AddCharacterAtLocation(character);
+                            break;
+                        case FACTION_RELATIONSHIP_STATUS.DISLIKED:
+                        case FACTION_RELATIONSHIP_STATUS.NEUTRAL:
+                        case FACTION_RELATIONSHIP_STATUS.FRIEND:
+                        case FACTION_RELATIONSHIP_STATUS.ALLY:
+                            LocationStructure inn = GetRandomStructureOfType(STRUCTURE_TYPE.INN);
+                            if (inn != null) {
+                                //- If location is occupied, non-beasts whose faction relationship is Disliked or better will be placed at the Inn. 
+                                inn.AddCharacterAtLocation(character);
+                            } else {
+                                //If no Inn in the Location, he will be placed in a random Wilderness.
+                                LocationStructure wilderness = GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+                                wilderness.AddCharacterAtLocation(character);
+                            }
+                            break;
+                    }
+                } else {
+                    //- If location is unoccupied, non-beasts will be placed at a random Wilderness.
+                    GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS).AddCharacterAtLocation(character);
+                }
             }
         }
-
         if (character.currentStructure == null) {
             Debug.LogWarning(GameManager.Instance.TodayLogString() + "Could not find structure for " + character.name + " at " + this.name);
         }

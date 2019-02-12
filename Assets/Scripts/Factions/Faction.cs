@@ -851,7 +851,7 @@ public class Faction {
         if (tasksWeights.Count < 0) {
             interactionLog += "\nNO MORE TASKS THAT CAN BE DONE! Faction tasks assignment ends.";
         }
-        //Debug.Log(interactionLog);
+        Debug.Log(interactionLog);
     }
     private void GenerateAreaInteraction(Area area) {
         string interactionLog = GameManager.Instance.TodayLogString() + "Generating faction area interaction for " + this.name;

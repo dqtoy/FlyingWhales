@@ -1592,7 +1592,7 @@ public class InteractionManager : MonoBehaviour {
             //StartCoroutine(DefaultInteractionsInAreaCoroutine(currArea, AddToDailySummary));
         }
         dailyInteractionSummary += "\n==========Done==========";
-        Debug.Log(dailyInteractionSummary);
+        //Debug.Log(dailyInteractionSummary);
     }
     public void ScheduleDefaultInteractionsInArea(Area area, ref string log) {
         if (area.currentInteractions.Count <= 0) {
@@ -1653,7 +1653,7 @@ public class InteractionManager : MonoBehaviour {
             }
         }
         log += "\n==========Done==========";
-        Debug.Log(log);
+        //Debug.Log(log);
     }
     public void UnlockAllTokens() {
         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {

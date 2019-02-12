@@ -136,10 +136,14 @@ public class InteractionState {
             _descriptionLog = new Log(GameManager.Instance.Today(), "Events", _interaction.GetType().ToString(), _name.ToLower() + "_description", this.interaction);
         }
         otherLogs = new List<Log>();
-        List<string> keysForState = LocalizationManager.Instance.GetKeysLike("Events", _interaction.GetType().ToString(), _name.ToLower(), new string[] { "_description", "_special" });
-        for (int i = 0; i < keysForState.Count; i++) {
-            string currentKey = keysForState[i];
-            otherLogs.Add(new Log(GameManager.Instance.Today(), "Events", _interaction.GetType().ToString(), currentKey, this.interaction));
+        if(interaction.characterInvolved == null && interaction.targetCharacter == null) {
+            List<string> keysForState = LocalizationManager.Instance.GetKeysLike("Events", _interaction.GetType().ToString(), _name.ToLower(), new string[] { "_description", "_special" });
+            for (int i = 0; i < keysForState.Count; i++) {
+                string currentKey = keysForState[i];
+                otherLogs.Add(new Log(GameManager.Instance.Today(), "Events", _interaction.GetType().ToString(), currentKey, this.interaction));
+            }
+        } else {
+
         }
     }
     public void AddOtherLog(Log log) {
@@ -151,30 +155,32 @@ public class InteractionState {
     public virtual void SetDescription() {
         //TODO: make this more performant
         if(_descriptionLog != null) {
-            if (!_useInvestigatorMinionOnly && !_useTokeneerMinionOnly) {
-                if (_interaction.investigatorCharacter != null) {
-                    _descriptionLog.AddToFillers(_interaction.investigatorCharacter, _interaction.investigatorCharacter.name, LOG_IDENTIFIER.MINION_1);
-                }
-            } else if (_useInvestigatorMinionOnly && _useTokeneerMinionOnly) {
-                if (_interaction.investigatorCharacter != null) {
-                    _descriptionLog.AddToFillers(_interaction.investigatorCharacter, _interaction.investigatorCharacter.name, LOG_IDENTIFIER.MINION_1);
-                }
-                if (_interaction.tokeneerMinion != null) {
-                    _descriptionLog.AddToFillers(_interaction.tokeneerMinion.character, _interaction.tokeneerMinion.character.name, LOG_IDENTIFIER.MINION_2);
-                }
-            } else {
-                if (_useInvestigatorMinionOnly) {
-                    if (_interaction.investigatorCharacter != null) {
-                        _descriptionLog.AddToFillers(_interaction.investigatorCharacter, _interaction.investigatorCharacter.name, LOG_IDENTIFIER.MINION_1);
-                    }
-                }
-                if (_useTokeneerMinionOnly) {
-                    if (_interaction.tokeneerMinion != null) {
-                        _descriptionLog.AddToFillers(_interaction.tokeneerMinion.character, _interaction.tokeneerMinion.character.name, LOG_IDENTIFIER.MINION_1);
-                    }
-                }
+            //if (!_useInvestigatorMinionOnly && !_useTokeneerMinionOnly) {
+            //    if (_interaction.investigatorCharacter != null) {
+            //        _descriptionLog.AddToFillers(_interaction.investigatorCharacter, _interaction.investigatorCharacter.name, LOG_IDENTIFIER.MINION_1);
+            //    }
+            //} else if (_useInvestigatorMinionOnly && _useTokeneerMinionOnly) {
+            //    if (_interaction.investigatorCharacter != null) {
+            //        _descriptionLog.AddToFillers(_interaction.investigatorCharacter, _interaction.investigatorCharacter.name, LOG_IDENTIFIER.MINION_1);
+            //    }
+            //    if (_interaction.tokeneerMinion != null) {
+            //        _descriptionLog.AddToFillers(_interaction.tokeneerMinion.character, _interaction.tokeneerMinion.character.name, LOG_IDENTIFIER.MINION_2);
+            //    }
+            //} else {
+            //    if (_useInvestigatorMinionOnly) {
+            //        if (_interaction.investigatorCharacter != null) {
+            //            _descriptionLog.AddToFillers(_interaction.investigatorCharacter, _interaction.investigatorCharacter.name, LOG_IDENTIFIER.MINION_1);
+            //        }
+            //    }
+            //    if (_useTokeneerMinionOnly) {
+            //        if (_interaction.tokeneerMinion != null) {
+            //            _descriptionLog.AddToFillers(_interaction.tokeneerMinion.character, _interaction.tokeneerMinion.character.name, LOG_IDENTIFIER.MINION_1);
+            //        }
+            //    }
+            //}
+            if (_interaction.investigatorCharacter != null) {
+                _descriptionLog.AddToFillers(_interaction.investigatorCharacter, _interaction.investigatorCharacter.name, LOG_IDENTIFIER.MINION_1);
             }
-
             if (interaction.characterInvolved != null && !_descriptionLog.HasFillerForIdentifier(LOG_IDENTIFIER.ACTIVE_CHARACTER)) {
                 _descriptionLog.AddToFillers(interaction.characterInvolved, interaction.characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             }
@@ -184,29 +190,32 @@ public class InteractionState {
             _description = Utilities.LogReplacer(descriptionLog);
             //InteractionUI.Instance.interactionItem.SetDescription(_description, descriptionLog);
         }
-        if (otherLogs != null) {
-            if (!_useInvestigatorMinionOnly && !_useTokeneerMinionOnly) {
-                if (_interaction.investigatorCharacter != null) {
-                    logFillers.Add(new LogFiller(_interaction.investigatorCharacter, _interaction.investigatorCharacter.name, LOG_IDENTIFIER.MINION_1));
-                }
-            } else if (_useInvestigatorMinionOnly && _useTokeneerMinionOnly) {
-                if (_interaction.investigatorCharacter != null) {
-                    logFillers.Add(new LogFiller(_interaction.investigatorCharacter, _interaction.investigatorCharacter.name, LOG_IDENTIFIER.MINION_1));
-                }
-                if (_interaction.tokeneerMinion != null) {
-                    logFillers.Add(new LogFiller(_interaction.tokeneerMinion.character, _interaction.tokeneerMinion.character.name, LOG_IDENTIFIER.MINION_2));
-                }
-            } else {
-                if (_useInvestigatorMinionOnly) {
-                    if (_interaction.investigatorCharacter != null) {
-                        logFillers.Add(new LogFiller(_interaction.investigatorCharacter, _interaction.investigatorCharacter.name, LOG_IDENTIFIER.MINION_1));
-                    }
-                }
-                if (_useTokeneerMinionOnly) {
-                    if (_interaction.tokeneerMinion != null) {
-                        logFillers.Add(new LogFiller(_interaction.tokeneerMinion.character, _interaction.tokeneerMinion.character.name, LOG_IDENTIFIER.MINION_1));
-                    }
-                }
+        if (otherLogs != null && otherLogs.Count > 0) {
+            //if (!_useInvestigatorMinionOnly && !_useTokeneerMinionOnly) {
+            //    if (_interaction.investigatorCharacter != null) {
+            //        logFillers.Add(new LogFiller(_interaction.investigatorCharacter, _interaction.investigatorCharacter.name, LOG_IDENTIFIER.MINION_1));
+            //    }
+            //} else if (_useInvestigatorMinionOnly && _useTokeneerMinionOnly) {
+            //    if (_interaction.investigatorCharacter != null) {
+            //        logFillers.Add(new LogFiller(_interaction.investigatorCharacter, _interaction.investigatorCharacter.name, LOG_IDENTIFIER.MINION_1));
+            //    }
+            //    if (_interaction.tokeneerMinion != null) {
+            //        logFillers.Add(new LogFiller(_interaction.tokeneerMinion.character, _interaction.tokeneerMinion.character.name, LOG_IDENTIFIER.MINION_2));
+            //    }
+            //} else {
+            //    if (_useInvestigatorMinionOnly) {
+            //          if (_interaction.investigatorCharacter != null) {
+            //              logFillers.Add(new LogFiller(_interaction.investigatorCharacter, _interaction.investigatorCharacter.name, LOG_IDENTIFIER.MINION_1));
+            //          }
+            //    }
+            //    if (_useTokeneerMinionOnly) {
+            //        if (_interaction.tokeneerMinion != null) {
+            //            logFillers.Add(new LogFiller(_interaction.tokeneerMinion.character, _interaction.tokeneerMinion.character.name, LOG_IDENTIFIER.MINION_1));
+            //        }
+            //    }
+            //}
+            if (_interaction.investigatorCharacter != null) {
+                logFillers.Add(new LogFiller(_interaction.investigatorCharacter, _interaction.investigatorCharacter.name, LOG_IDENTIFIER.MINION_1));
             }
             if (interaction.characterInvolved != null) {
                 logFillers.Add(new LogFiller(interaction.characterInvolved, interaction.characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
