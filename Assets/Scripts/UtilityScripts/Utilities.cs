@@ -1134,7 +1134,7 @@ public class Utilities : MonoBehaviour {
             case RACE.HUMANS:
             return "Human";
             case RACE.ELVES:
-            return "Elven";
+            return "Elf";
             case RACE.MINGONS:
             return "Mingon";
             case RACE.CROMADS:

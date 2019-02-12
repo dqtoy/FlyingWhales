@@ -7,6 +7,15 @@ public class CharmSpell : SpecialToken {
     public CharmSpell() : base(SPECIAL_TOKEN.CHARM_SPELL, 50) {
         //quantity = 4;
         npcAssociatedInteractionType = INTERACTION_TYPE.USE_ITEM_ON_CHARACTER;
+        interactionAttributes = new InteractionAttributes() {
+            categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT },
+            alignment = INTERACTION_ALIGNMENT.EVIL,
+            actorEffect = null,
+            targetCharacterEffect = new InteractionCharacterEffect[] {
+                new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_GAIN, effectString = "Charmed" },
+                new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.CHANGE_FACTION, effectString = "Actor" }
+            },
+        };
     }
 
     #region Overrides
@@ -61,21 +70,24 @@ public class CharmSpell : SpecialToken {
     #endregion
 
     private void ItemUsedEffect(TokenInteractionState state) {
-        //state.tokenUser.LevelUp();
+        Character targetCharacter = state.target as Character;
+        //**Mechanics**: Add https://trello.com/c/4xVYdGAN/1004-charmed trait to the character.
+        targetCharacter.AddTrait("Charmed");
         state.tokenUser.ConsumeToken();
 
-        //**Mechanics**: Target character will transfer to character or player's faction
-        if (state.target is Character) {
-            Character target = state.target as Character;
-            if (target.GetTrait("Charmed") == null) {
-                Charmed charmedTrait = new Charmed(target.faction, target.homeArea);
-                target.AddTrait(charmedTrait);
-            }
-            FactionManager.Instance.TransferCharacter(target, state.tokenUser.faction, state.tokenUser.homeArea);
-        }
+        //Used item on other character
+        Log stateDescriptionLog = new Log(GameManager.Instance.Today(), "Tokens", this.GetType().ToString(), state.name.ToLower() + "_description", state.interaction);
+        stateDescriptionLog.AddToFillers(state.tokenUser, state.tokenUser.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        stateDescriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        stateDescriptionLog.AddToFillers(state.tokenUser.faction, state.tokenUser.faction.name, LOG_IDENTIFIER.FACTION_1);
+        state.OverrideDescriptionLog(stateDescriptionLog);
 
-        state.descriptionLog.AddToFillers(state.tokenUser.faction, state.tokenUser.faction.name, LOG_IDENTIFIER.FACTION_1);
+        state.AddLogFiller(new LogFiller(state.tokenUser, state.tokenUser.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
+        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
         state.AddLogFiller(new LogFiller(state.tokenUser.faction, state.tokenUser.faction.name, LOG_IDENTIFIER.FACTION_1));
+
+        FactionManager.Instance.TransferCharacter(targetCharacter, state.tokenUser.faction, state.tokenUser.homeArea);
+        
     }
     private void StopFailEffect(TokenInteractionState state) {
         //state.tokenUser.LevelUp();
