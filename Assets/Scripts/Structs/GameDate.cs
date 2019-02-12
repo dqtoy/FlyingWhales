@@ -33,7 +33,7 @@ public struct GameDate {
         if(count > 0) {
             AddMonths(count);
         }
-    } 
+    }
 	public void AddMonths(int amount){
 		this.month += amount;
 		while (this.month > 12) {
@@ -190,22 +190,18 @@ public struct GameDate {
 		return ((MONTH)this.month).ToString() + " " + this.day + ", " + this.year + " H: " + this.hour;
 	}
 
-    public int ConvertToDays() {
+    public int ConvertToContinuousDays() {
         int totalDays = 0;
         if (year > GameManager.Instance.startYear) {
             int difference = year - GameManager.Instance.startYear;
-            totalDays += GameManager.daysInMonth.Sum() * difference;
+            totalDays += ((difference * 12) * GameManager.hoursPerDay);
         }
-        for (int i = 1; i < month; i++) {
-            totalDays += GameManager.daysInMonth[i];
-        }
-        totalDays += day;
-
+        totalDays += (((month - 1) * GameManager.hoursPerDay) + day);
         return totalDays;
     }
 
     public string GetDayAndTicksString() {
-        return ConvertToDays().ToString();// + "." + hour.ToString();
+        return ConvertToContinuousDays().ToString();// + "." + hour.ToString();
     }
 
     public override bool Equals(object obj) {
