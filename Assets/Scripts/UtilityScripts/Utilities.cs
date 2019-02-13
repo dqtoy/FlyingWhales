@@ -1741,6 +1741,12 @@ public class Utilities : MonoBehaviour {
         }
         return false;
     }
+    public static bool IsInRange(int value, int lowerBound, int upperBound) {
+        if (value >= lowerBound && value < upperBound) {
+            return true;
+        }
+        return false;
+    }
     #endregion
 
     #region Character Relationship

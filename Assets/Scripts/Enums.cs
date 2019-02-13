@@ -1291,4 +1291,4 @@ public enum INTERACTION_CHARACTER_EFFECT {
     CHANGE_HOME,
     TIREDNESS_RECOVERY,
 }
-
+public enum TileNeighbourDirection { Top, Bottom, Left, Right, None}

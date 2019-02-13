@@ -1795,6 +1795,17 @@ public struct IntRange {
     public void SetUpper(int upper) {
         upperBound = upper;
     }
+
+    public int Random() {
+        return UnityEngine.Random.Range(lowerBound, upperBound + 1);
+    }
+
+    public bool IsInRange(int value) {
+        if (value >= lowerBound && value <= upperBound) {
+            return true;
+        }
+        return false;
+    }
 }
 [System.Serializable]
 public struct Race {

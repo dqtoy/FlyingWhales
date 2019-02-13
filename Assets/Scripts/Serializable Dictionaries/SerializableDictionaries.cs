@@ -34,6 +34,8 @@ public class StringSpriteDictionary : SerializableDictionary<string, Sprite> { }
 public class FactionEmblemDictionary : SerializableDictionary<int, Sprite> { }
 [System.Serializable]
 public class JobIconsDictionary : SerializableDictionary<JOB, Sprite> { }
+[System.Serializable]
+public class WallSpritesDictionary : SerializableDictionary<TwoTileDirections, Sprite> { }
 
 [System.Serializable]
 public class CharacterTagListStorage : SerializableDictionary.Storage<List<CharacterActionTagRequirement>> { }

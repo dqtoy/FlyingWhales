@@ -36,6 +36,8 @@ public class LocationPortraitDictionaryPropertyDrawer : SerializableDictionaryPr
 public class FactionEmblemDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(JobIconsDictionary))]
 public class JobIconsDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(WallSpritesDictionary))]
+public class WallSpritesDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 
 [CustomPropertyDrawer(typeof(CharacterTagListStorage))]
 public class CharacterTagListStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer { }
