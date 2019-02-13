@@ -332,6 +332,15 @@ public class InteractionManager : MonoBehaviour {
                 actorEffect = null,
                 targetCharacterEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_REMOVE, effectString = "Abducted" } },
             } },
+            { INTERACTION_TYPE.FIRST_AID_ACTION, new InteractionAttributes(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.SAVE },
+                alignment = INTERACTION_ALIGNMENT.GOOD,
+                actorEffect = null,
+                targetCharacterEffect = new InteractionCharacterEffect[]{
+                    new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_REMOVE, effectString = "Unconscious" },
+                    new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_REMOVE, effectString = "Sick" },
+                },
+            } },
         };
     }
     public InteractionAttributes GetCategoryAndAlignment (INTERACTION_TYPE type, Character actor) {
@@ -808,6 +817,9 @@ public class InteractionManager : MonoBehaviour {
                 break;
             case INTERACTION_TYPE.USE_ITEM_ON_STRUCTURE:
                 createdInteraction = new UseItemOnStructure(interactable);
+                break;
+            case INTERACTION_TYPE.FIRST_AID_ACTION:
+                createdInteraction = new FirstAidAction(interactable);
                 break;
         }
         return createdInteraction;
@@ -1445,6 +1457,8 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION:
                 return targetCharacter.GetTrait("Abducted") != null 
                     && character.specificLocation.id == character.GetCharacterRelationshipData(targetCharacter).knownStructure.location.id;
+            case INTERACTION_TYPE.FIRST_AID_ACTION:
+                return targetCharacter.GetTraitOr("Unconscious", "Sick") != null;
             default:
                 return true;
         }

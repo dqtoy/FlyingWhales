@@ -288,6 +288,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.REMOVE_CURSE_ACTION,
                 INTERACTION_TYPE.RESTRAIN_CRIMINAL_ACTION,
                 INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION,
+                INTERACTION_TYPE.FIRST_AID_ACTION,
             } },
             { RACE.ELVES, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -311,6 +312,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.REMOVE_CURSE_ACTION,
                 INTERACTION_TYPE.RESTRAIN_CRIMINAL_ACTION,
                 INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION,
+                INTERACTION_TYPE.FIRST_AID_ACTION,
             } },
             { RACE.GOBLIN, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -334,6 +336,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.REMOVE_CURSE_ACTION,
                 INTERACTION_TYPE.RESTRAIN_CRIMINAL_ACTION,
                 INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION,
+                INTERACTION_TYPE.FIRST_AID_ACTION,
             } },
             { RACE.FAERY, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -357,6 +360,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.REMOVE_CURSE_ACTION,
                 INTERACTION_TYPE.RESTRAIN_CRIMINAL_ACTION,
                 INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION,
+                INTERACTION_TYPE.FIRST_AID_ACTION,
             } },
             { RACE.SKELETON, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -380,6 +384,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.REMOVE_CURSE_ACTION,
                 INTERACTION_TYPE.RESTRAIN_CRIMINAL_ACTION,
                 INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION,
+                INTERACTION_TYPE.FIRST_AID_ACTION,
             } },
             { RACE.SPIDER, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -403,6 +408,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.REMOVE_CURSE_ACTION,
                 INTERACTION_TYPE.RESTRAIN_CRIMINAL_ACTION,
                 INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION,
+                INTERACTION_TYPE.FIRST_AID_ACTION,
             } },
             { RACE.WOLF, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -426,6 +432,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.REMOVE_CURSE_ACTION,
                 INTERACTION_TYPE.RESTRAIN_CRIMINAL_ACTION,
                 INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION,
+                INTERACTION_TYPE.FIRST_AID_ACTION,
             } },
             { RACE.DRAGON, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -449,6 +456,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.REMOVE_CURSE_ACTION,
                 INTERACTION_TYPE.RESTRAIN_CRIMINAL_ACTION,
                 INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION,
+                INTERACTION_TYPE.FIRST_AID_ACTION,
             } },
         };
     }
