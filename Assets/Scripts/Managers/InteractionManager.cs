@@ -180,7 +180,7 @@ public class InteractionManager : MonoBehaviour {
                 targetCharacterEffect = null,
             } },
             { INTERACTION_TYPE.EAT_DEFENSELESS, new InteractionAttributes(){
-                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.FULLNESS_RECOVERY, INTERACTION_CATEGORY.OFFENSE },
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.FULLNESS_RECOVERY, INTERACTION_CATEGORY.FULLNESS_RECOVERY },
                 alignment = INTERACTION_ALIGNMENT.EVIL,
                 actorEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.FULLNESS_RECOVERY } },
                 targetCharacterEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.DEATH } },
@@ -1160,7 +1160,7 @@ public class InteractionManager : MonoBehaviour {
                     for (int i = 0; i < character.specificLocation.charactersAtLocation.Count; i++) {
                         Character characterAtLocation = character.specificLocation.charactersAtLocation[i];
                         if (characterAtLocation.id != character.id && !characterAtLocation.currentParty.icon.isTravelling && characterAtLocation.IsInOwnParty() 
-                        && characterAtLocation.GetTraitOr("Abducted", "Unconscious") != null ) {
+                        && characterAtLocation.currentStructure.isInside && characterAtLocation.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_EFFECT.NEUTRAL, TRAIT_TYPE.DISABLER)) {
                             return true;
                         }
                     }

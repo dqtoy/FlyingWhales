@@ -289,6 +289,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.RESTRAIN_CRIMINAL_ACTION,
                 INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION,
                 INTERACTION_TYPE.FIRST_AID_ACTION,
+                INTERACTION_TYPE.EAT_DEFENSELESS,
             } },
             { RACE.ELVES, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -313,6 +314,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.RESTRAIN_CRIMINAL_ACTION,
                 INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION,
                 INTERACTION_TYPE.FIRST_AID_ACTION,
+                INTERACTION_TYPE.EAT_DEFENSELESS,
             } },
             { RACE.GOBLIN, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -337,6 +339,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.RESTRAIN_CRIMINAL_ACTION,
                 INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION,
                 INTERACTION_TYPE.FIRST_AID_ACTION,
+                INTERACTION_TYPE.EAT_DEFENSELESS,
             } },
             { RACE.FAERY, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -361,6 +364,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.RESTRAIN_CRIMINAL_ACTION,
                 INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION,
                 INTERACTION_TYPE.FIRST_AID_ACTION,
+                INTERACTION_TYPE.EAT_DEFENSELESS,
             } },
             { RACE.SKELETON, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -385,6 +389,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.RESTRAIN_CRIMINAL_ACTION,
                 INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION,
                 INTERACTION_TYPE.FIRST_AID_ACTION,
+                INTERACTION_TYPE.EAT_DEFENSELESS,
             } },
             { RACE.SPIDER, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -409,6 +414,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.RESTRAIN_CRIMINAL_ACTION,
                 INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION,
                 INTERACTION_TYPE.FIRST_AID_ACTION,
+                INTERACTION_TYPE.EAT_DEFENSELESS,
             } },
             { RACE.WOLF, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -433,6 +439,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.RESTRAIN_CRIMINAL_ACTION,
                 INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION,
                 INTERACTION_TYPE.FIRST_AID_ACTION,
+                INTERACTION_TYPE.EAT_DEFENSELESS,
             } },
             { RACE.DRAGON, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -457,6 +464,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.RESTRAIN_CRIMINAL_ACTION,
                 INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION,
                 INTERACTION_TYPE.FIRST_AID_ACTION,
+                INTERACTION_TYPE.EAT_DEFENSELESS,
             } },
         };
     }
