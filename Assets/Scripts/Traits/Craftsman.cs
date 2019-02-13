@@ -28,6 +28,10 @@ public class Craftsman : Trait {
         }else if (sourceCharacter.race == RACE.GOBLIN) {
             craftedItemName = SPECIAL_TOKEN.JUNK;
         }
+        sourceCharacter.AddInteractionType(INTERACTION_TYPE.CRAFT_ITEM);
+    }
+    public override void OnRemoveTrait(Character sourceCharacter) {
+        sourceCharacter.RemoveInteractionType(INTERACTION_TYPE.CRAFT_ITEM);
     }
     #endregion
 }

@@ -1297,7 +1297,7 @@ public class InteractionManager : MonoBehaviour {
                 }
                 return false;
             case INTERACTION_TYPE.CRAFT_ITEM:
-                return character.GetTrait("Craftsman") != null && character.specificLocation.HasStructure(STRUCTURE_TYPE.WORK_AREA);
+                return character.specificLocation.HasStructure(STRUCTURE_TYPE.WORK_AREA);
             case INTERACTION_TYPE.SCRAP_ITEM:
                 return character.specificLocation.possibleSpecialTokenSpawns.Count > 0;
             case INTERACTION_TYPE.MOVE_TO_RAID_EVENT_FACTION:
