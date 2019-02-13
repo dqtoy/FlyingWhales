@@ -94,8 +94,8 @@ public class InteractionManager : MonoBehaviour {
                 targetCharacterEffect = null,
             } },
             { INTERACTION_TYPE.STEAL_ACTION_FACTION, new InteractionAttributes(){
-                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT },
-                alignment = INTERACTION_ALIGNMENT.NEUTRAL,
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.INVENTORY },
+                alignment = INTERACTION_ALIGNMENT.EVIL,
                 actorEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.OBTAIN_ITEM } },
                 targetCharacterEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.LOSE_ITEM } },
             } },
@@ -319,6 +319,18 @@ public class InteractionManager : MonoBehaviour {
                 alignment = INTERACTION_ALIGNMENT.NEUTRAL,
                 actorEffect = null,
                 targetCharacterEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_GAIN, effectString = "Restrained" } },
+            } },
+            { INTERACTION_TYPE.MOVE_TO_RECRUIT_FRIEND_ACTION_FACTION, new InteractionAttributes(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT },
+                alignment = INTERACTION_ALIGNMENT.GOOD,
+                actorEffect = null,
+                targetCharacterEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.CHANGE_FACTION, effectString = "Actor" } },
+            } },
+            { INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION, new InteractionAttributes(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.SAVE },
+                alignment = INTERACTION_ALIGNMENT.GOOD,
+                actorEffect = null,
+                targetCharacterEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_REMOVE, effectString = "Abducted" } },
             } },
         };
     }
@@ -638,8 +650,8 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.MOVE_TO_SAVE_ACTION:
                 createdInteraction = new MoveToSave(interactable);
                 break;
-            case INTERACTION_TYPE.SAVE_ACTION:
-                createdInteraction = new SaveAction(interactable);
+            case INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION:
+                createdInteraction = new ReleaseAbductedAction(interactable);
                 break;
             case INTERACTION_TYPE.MOVE_TO_VISIT:
                 createdInteraction = new MoveToVisit(interactable);
@@ -793,6 +805,9 @@ public class InteractionManager : MonoBehaviour {
                 break;
             case INTERACTION_TYPE.RESTRAIN_CRIMINAL_ACTION:
                 createdInteraction = new RestrainCriminalAction(interactable);
+                break;
+            case INTERACTION_TYPE.USE_ITEM_ON_STRUCTURE:
+                createdInteraction = new UseItemOnStructure(interactable);
                 break;
         }
         return createdInteraction;
@@ -1150,11 +1165,12 @@ public class InteractionManager : MonoBehaviour {
                 //}
                 return false;
             case INTERACTION_TYPE.MOVE_TO_REANIMATE_ACTION:
-                if (!character.homeArea.IsResidentsFull()) { //character.race == RACE.SKELETON && 
+                //Actor must be a Skeleton or must have Black Magic trait
+                if (character.race == RACE.SKELETON || character.GetTrait("Black Magic") != null) {
                     //**Trigger Criteria 1**: There must be at least one dead corpse in any area
                     for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
                         Area currArea = LandmarkManager.Instance.allAreas[i];
-                        if (currArea.id != character.specificLocation.id && currArea.corpsesInArea.Count > 1) { 
+                        if (currArea.id != character.specificLocation.id && currArea.corpsesInArea.Count > 1) {
                             return true;
                         }
                     }
@@ -1198,6 +1214,15 @@ public class InteractionManager : MonoBehaviour {
                 }
                 return false;
             case INTERACTION_TYPE.MOVE_TO_RECRUIT_FRIEND_ACTION_FACTION:
+                //**Trigger Criteria 1**: Home location resident capacity is not yet full
+                if (character.homeArea.IsResidentsFull()) { 
+                    return false;
+                }
+                //**Trigger Criteria 2**: Actor has at least one friend from a different faction or unaligned
+                if (!character.HasRelationshipTraitOf(RELATIONSHIP_TRAIT.FRIEND, character.faction)) {
+                    return false;
+                }
+                return true;
             case INTERACTION_TYPE.MOVE_TO_CHARM_ACTION_FACTION:
                 if (character.homeArea.IsResidentsFull()) { //check if resident capacity is full
                     return false;
@@ -1398,11 +1423,8 @@ public class InteractionManager : MonoBehaviour {
                 }
                 return true;
             case INTERACTION_TYPE.REMOVE_CURSE_ACTION:
-                if(character.GetTrait("Magic User") != null && targetCharacter.GetTrait("Cursed") != null) {
-                    CharacterRelationshipData characterRelationshipData = character.GetCharacterRelationshipData(targetCharacter);
-                    if(characterRelationshipData != null && characterRelationshipData.knownStructure.location.id == character.specificLocation.id) {
-                        return true;
-                    }
+                if(character.characterClass.attackType == ATTACK_TYPE.MAGICAL && targetCharacter.GetTrait("Cursed") != null) {
+                    return true;
                 }
                 return false;
             case INTERACTION_TYPE.RESTRAIN_CRIMINAL_ACTION:
@@ -1420,6 +1442,9 @@ public class InteractionManager : MonoBehaviour {
                     }
                 }
                 return false;
+            case INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION:
+                return targetCharacter.GetTrait("Abducted") != null 
+                    && character.specificLocation.id == character.GetCharacterRelationshipData(targetCharacter).knownStructure.location.id;
             default:
                 return true;
         }
@@ -1563,37 +1588,51 @@ public class InteractionManager : MonoBehaviour {
 
     private void ExecuteInteractionsDefault() {
         GameManager.Instance.pauseDayEnded2 = false;
-        dailyInteractionSummary = GameManager.Instance.TodayLogString() + "Executing interactions";
+        dailyInteractionSummary = GameManager.Instance.TodayLogString() + "Scheduling interactions";
         for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
             Area currArea = LandmarkManager.Instance.allAreas[i];
-            DefaultInteractionsInArea(currArea, ref dailyInteractionSummary);
+            ScheduleDefaultInteractionsInArea(currArea, ref dailyInteractionSummary);
             //StartCoroutine(DefaultInteractionsInAreaCoroutine(currArea, AddToDailySummary));
         }
         dailyInteractionSummary += "\n==========Done==========";
-        Debug.Log(dailyInteractionSummary);
+        //Debug.Log(dailyInteractionSummary);
     }
-    public void DefaultInteractionsInArea(Area area, ref string log) {
-        log += "\n==========Executing <b>" + area.name + "'s</b> interactions==========";
-        if (area.stopDefaultAllExistingInteractions) {
-            log += "\nCannot run areas default interactions because area interactions have been disabled";
-            return; //skip
-        }
-        List<Interaction> interactionsInArea = new List<Interaction>(area.currentInteractions);
-        if (interactionsInArea.Count == 0) {
-            log += "\nNo interactions in area";
+    public void ScheduleDefaultInteractionsInArea(Area area, ref string log) {
+        if (area.currentInteractions.Count <= 0) {
+            log += "\nNo interactions in " + area.name;
             return;
         }
-
+        GameDate scheduledDate = GameManager.Instance.Today();
+        scheduledDate.AddDays(5);
+        log += "\n==========Scheduling <b>" + area.name + "'s</b> interactions on " + scheduledDate.ConvertToContinuousDays()  + "==========";
+        List<Interaction> interactionsInArea = new List<Interaction>(area.currentInteractions);
         for (int j = 0; j < interactionsInArea.Count; j++) {
             Interaction currInteraction = interactionsInArea[j];
+            Character character = currInteraction.characterInvolved;
+            log += "\n" + currInteraction.name;
+            if (character != null) {
+                log += " for " + character.name;
+            }
+        }
+        SchedulingManager.Instance.AddEntry(scheduledDate, () => DefaultInteractionsInArea(interactionsInArea, area));
+        area.currentInteractions.Clear();
+    }
+    private void DefaultInteractionsInArea(List<Interaction> interactions, Area area) {
+        string log = "\n==========" + GameManager.Instance.TodayLogString() + "Executing Scheduled <b>" + area.name + "'s</b> interactions==========";
+        //if (area.stopDefaultAllExistingInteractions) {
+        //    log += "\nCannot run areas default interactions because area interactions have been disabled";
+        //    return; //skip
+        //}
+        for (int j = 0; j < interactions.Count; j++) {
+            Interaction currInteraction = interactions[j];
             Character character = currInteraction.characterInvolved;
             if (character != null) {
                 log += "\n<b><color=green>" + character.name + "</color></b> triggered his/her day tick to perform <b>" + currInteraction.name + "</b>";
             }
         }
 
-        for (int j = 0; j < interactionsInArea.Count; j++) {
-            Interaction currInteraction = interactionsInArea[j];
+        for (int j = 0; j < interactions.Count; j++) {
+            Interaction currInteraction = interactions[j];
             Character character = currInteraction.characterInvolved;
             if (!currInteraction.hasActivatedTimeOut) {
                 if (character == null || (!character.isDead && currInteraction.CanInteractionBeDoneBy(character))) {
@@ -1610,72 +1649,15 @@ public class InteractionManager : MonoBehaviour {
                     //Unable to perform
                     UnableToPerform unable = CreateNewInteraction(INTERACTION_TYPE.UNABLE_TO_PERFORM, area) as UnableToPerform;
                     unable.SetActionNameThatCannotBePerformed(currInteraction.name);
-                    character.AddInteraction(unable);
+                    unable.SetCharacterInvolved(character);
                     unable.TimedOutRunDefault(ref log);
                     log += "\n";
                 }
             }
         }
+        log += "\n==========Done==========";
+        //Debug.Log(log);
     }
-
-    //private void AddToDailySummary(string log) {
-    //    dailyInteractionSummary += log;
-    //}
-    //public IEnumerator DefaultInteractionsInAreaCoroutine(Area area, System.Action<string> addToLog) {
-    //    string log = "\n==========Executing " + area.name + "'s interactions==========";
-    //    if (area.stopDefaultAllExistingInteractions) {
-    //        log += "\nCannot run areas default interactions because area interactions have been disabled";
-    //        addToLog(log);
-    //        yield return null; //skip
-    //    }
-    //    List<Interaction> interactionsInArea = new List<Interaction>(area.currentInteractions);
-    //    if (interactionsInArea.Count == 0) {
-    //        log += "\nNo interactions in area";
-    //        addToLog(log);
-    //        yield return null;
-    //    }
-
-    //    for (int j = 0; j < interactionsInArea.Count; j++) {
-    //        Interaction currInteraction = interactionsInArea[j];
-    //        Character character = currInteraction.characterInvolved;
-    //        if (!currInteraction.hasActivatedTimeOut) {
-    //            if (character == null || (!character.isDead && currInteraction.CanInteractionBeDoneBy(character))) {
-    //                log += "\nRunning interaction default " + currInteraction.type.ToString();
-    //                if (character != null) {
-    //                    log += " Involving " + character.name;
-    //                }
-    //                currInteraction.TimedOutRunDefault(ref log);
-    //                log += "\n";
-    //            } else {
-    //                //area.RemoveInteraction(currInteraction);
-    //                currInteraction.EndInteraction();
-    //                log += "\n" + character.name + " is unable to perform " + currInteraction.name + "!";
-    //                //Unable to perform
-    //                Interaction unable = CreateNewInteraction(INTERACTION_TYPE.UNABLE_TO_PERFORM, area.coreTile.landmarkOnTile);
-    //                character.AddInteraction(unable);
-    //                unable.TimedOutRunDefault(ref log);
-    //                log += "\n";
-    //            }
-    //        }
-    //    }
-    //    addToLog(log);
-    //    yield return null;
-    //}
-
-    //public List<T> GetAllCurrentInteractionsOfType<T>(INTERACTION_TYPE type) {
-    //    List<T> interactionsOfType = new List<T>();
-    //    for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
-    //        Area currArea = LandmarkManager.Instance.allAreas[i];
-    //        for (int j = 0; j < currArea.currentInteractions.Count; j++) {
-    //            Interaction currInteraction = currArea.currentInteractions[j];
-    //            if (currInteraction.type == type && currInteraction is T) {
-    //                interactionsOfType.Add((T)System.Convert.ChangeType(currInteraction, typeof(T)));
-    //            }
-    //        }
-    //    }
-    //    return interactionsOfType;
-    //}
-
     public void UnlockAllTokens() {
         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
             Character currCharacter = CharacterManager.Instance.allCharacters[i];

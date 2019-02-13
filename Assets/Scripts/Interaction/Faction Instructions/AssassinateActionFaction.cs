@@ -9,10 +9,13 @@ public class AssassinateActionFaction : Interaction {
     private const string Normal_Assassination_Success = "Normal Assassination Success";
     private const string Normal_Assassination_Fail = "Normal Assassination Fail";
     private const string Normal_Assassination_Critical_Fail = "Normal Assassination Critical Fail";
+    private const string Target_Missing = "Target Missing";
 
     public override Character targetCharacter {
         get { return _targetCharacter; }
     }
+
+    private LocationStructure _targetStructure;
 
     public AssassinateActionFaction(Area interactable)
         : base(interactable, INTERACTION_TYPE.ASSASSINATE_ACTION_FACTION, 0) {
@@ -26,6 +29,7 @@ public class AssassinateActionFaction : Interaction {
         InteractionState normalAssassinationSuccess = new InteractionState(Normal_Assassination_Success, this);
         InteractionState normalAssassinationFail = new InteractionState(Normal_Assassination_Fail, this);
         InteractionState normalAssassinationCriticalFail = new InteractionState(Normal_Assassination_Critical_Fail, this);
+        InteractionState targetMissing = new InteractionState(Target_Missing, this);
 
         if (_targetCharacter == null) {
             SetTargetCharacter(GetTargetCharacter(_characterInvolved));
@@ -36,14 +40,17 @@ public class AssassinateActionFaction : Interaction {
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 
         CreateActionOptions(startState);
+        startState.SetEffect(() => StartEffect(startState), false);
         normalAssassinationSuccess.SetEffect(() => NormalAssassinationSuccessRewardEffect(normalAssassinationSuccess));
         normalAssassinationFail.SetEffect(() => NormalAssassinationFailRewardEffect(normalAssassinationFail));
         normalAssassinationCriticalFail.SetEffect(() => NormalAssassinationCriticalFailRewardEffect(normalAssassinationCriticalFail));
+        targetMissing.SetEffect(() => TargetMissingRewardEffect(targetMissing));
 
         _states.Add(startState.name, startState);
         _states.Add(normalAssassinationSuccess.name, normalAssassinationSuccess);
         _states.Add(normalAssassinationFail.name, normalAssassinationFail);
         _states.Add(normalAssassinationCriticalFail.name, normalAssassinationCriticalFail);
+        _states.Add(targetMissing.name, targetMissing);
 
         SetCurrentState(startState);
     }
@@ -60,43 +67,51 @@ public class AssassinateActionFaction : Interaction {
         }
     }
     public override bool CanInteractionBeDoneBy(Character character) {
-        if (GetTargetCharacter(character) == null) { //check if a target character can be found using the provided weights
+        Character target = GetTargetCharacter(character);
+        if (target == null) { //check if a target character can be found using the provided weights
             return false;
         }
+        SetTargetCharacter(target);
         return base.CanInteractionBeDoneBy(character);
     }
     public override void SetTargetCharacter(Character targetCharacter) {
-        this._targetCharacter = targetCharacter;
+        _targetCharacter = targetCharacter;
+        _targetStructure = _targetCharacter.currentStructure;
         AddToDebugLog("Set target character to " + targetCharacter.name);
     }
     #endregion
 
     #region Option Effect
     private void DoNothingOptionEffect(InteractionState state) {
-        WeightedDictionary<RESULT> resultWeights = _characterInvolved.job.GetJobRateWeights();
-
         string nextState = string.Empty;
-        switch (resultWeights.PickRandomElementGivenWeights()) {
-            case RESULT.SUCCESS:
-                nextState = Normal_Assassination_Success;
-                break;
-            case RESULT.FAIL:
-                nextState = Normal_Assassination_Fail;
-                break;
-            case RESULT.CRITICAL_FAIL:
-                nextState = Normal_Assassination_Critical_Fail;
-                break;
+        if (targetCharacter.currentStructure != _targetStructure) {
+            nextState = Target_Missing;
+        } else {
+            WeightedDictionary<RESULT> resultWeights = _characterInvolved.job.GetJobRateWeights();
+            switch (resultWeights.PickRandomElementGivenWeights()) {
+                case RESULT.SUCCESS:
+                    nextState = Normal_Assassination_Success;
+                    break;
+                case RESULT.FAIL:
+                    nextState = Normal_Assassination_Fail;
+                    break;
+                case RESULT.CRITICAL_FAIL:
+                    nextState = Normal_Assassination_Critical_Fail;
+                    break;
+            }
         }
         SetCurrentState(_states[nextState]);
     }
     #endregion
 
     #region Reward Effect
+    private void StartEffect(InteractionState state) {
+        _characterInvolved.MoveToAnotherStructure(targetCharacter.currentStructure);
+    }
     private void NormalAssassinationSuccessRewardEffect(InteractionState state) {
-        if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-            state.descriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
-        }
+        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.descriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
+
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
         state.AddLogFiller(new LogFiller(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1));
 
@@ -106,18 +121,18 @@ public class AssassinateActionFaction : Interaction {
         //_characterInvolved.LevelUp();
     }
     private void NormalAssassinationFailRewardEffect(InteractionState state) {
-        if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        }
+        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     private void NormalAssassinationCriticalFailRewardEffect(InteractionState state) {
-        if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        }
+        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
         //**Mechanics**: Assassin character dies
         _characterInvolved.Death();
+    }
+    private void TargetMissingRewardEffect(InteractionState state) {
+        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     #endregion
 
@@ -138,7 +153,8 @@ public class AssassinateActionFaction : Interaction {
             Character currCharacter = area.charactersAtLocation[i];
             if (currCharacter.GetTrait("Warded") == null
                 && !currCharacter.currentParty.icon.isTravelling
-                && currCharacter.faction.id != characterInvolved.faction.id) {
+                && currCharacter.faction.id != characterInvolved.faction.id
+                && currCharacter.currentStructure.isInside) {
                 switch (currCharacter.faction.GetRelationshipWith(characterInvolved.faction).relationshipStatus) {
                     case FACTION_RELATIONSHIP_STATUS.AT_WAR:
                     case FACTION_RELATIONSHIP_STATUS.ENEMY:

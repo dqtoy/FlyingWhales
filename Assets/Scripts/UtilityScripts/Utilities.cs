@@ -412,6 +412,9 @@ public class Utilities : MonoBehaviour {
         {"02", LOG_IDENTIFIER.FACTION_LEADER_1},
         {"04", LOG_IDENTIFIER.LANDMARK_1},
         {"05", LOG_IDENTIFIER.PARTY_1},
+        {"06", LOG_IDENTIFIER.STRUCTURE_1},
+        {"07", LOG_IDENTIFIER.STRUCTURE_2},
+        {"08", LOG_IDENTIFIER.STRUCTURE_3},
 		//{"06", LOG_IDENTIFIER.RANDOM_CITY_1},
 		//{"07", LOG_IDENTIFIER.RANDOM_GOVERNOR_1},
 		{"10", LOG_IDENTIFIER.TARGET_CHARACTER},
@@ -448,7 +451,6 @@ public class Utilities : MonoBehaviour {
         {"96", LOG_IDENTIFIER.TARGET_CHARACTER_PRONOUN_O},
         {"97", LOG_IDENTIFIER.TARGET_CHARACTER_PRONOUN_P},
         {"98", LOG_IDENTIFIER.TARGET_CHARACTER_PRONOUN_R},
-
 		//{"99", LOG_IDENTIFIER.SECESSION_CITIES},
 		{"100", LOG_IDENTIFIER.TASK},
         {"101", LOG_IDENTIFIER.DATE},
@@ -475,7 +477,6 @@ public class Utilities : MonoBehaviour {
         {"122", LOG_IDENTIFIER.MINION_2_PRONOUN_R},
         {"123", LOG_IDENTIFIER.CHARACTER_LIST_1},
         {"124", LOG_IDENTIFIER.CHARACTER_LIST_2},
-
 		//{"111", LOG_IDENTIFIER.PARTY_NAME},
 	};
     public static string GetStringForIdentifier(LOG_IDENTIFIER identifier) {
@@ -1133,7 +1134,7 @@ public class Utilities : MonoBehaviour {
             case RACE.HUMANS:
             return "Human";
             case RACE.ELVES:
-            return "Elven";
+            return "Elf";
             case RACE.MINGONS:
             return "Mingon";
             case RACE.CROMADS:

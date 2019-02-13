@@ -5,7 +5,13 @@ using UnityEngine;
 public class MutagenicGoo : SpecialToken {
 
     public MutagenicGoo() : base(SPECIAL_TOKEN.MUTAGENIC_GOO, 80) {
-        npcAssociatedInteractionType = INTERACTION_TYPE.USE_ITEM_ON_SELF;
+        npcAssociatedInteractionType = INTERACTION_TYPE.USE_ITEM_ON_CHARACTER;
+        interactionAttributes = new InteractionAttributes() {
+            categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.OTHER },
+            alignment = INTERACTION_ALIGNMENT.NEUTRAL,
+            actorEffect = null,
+            targetCharacterEffect = null,
+        };
     }
 
     #region Overrides
@@ -15,12 +21,8 @@ public class MutagenicGoo : SpecialToken {
         itemUsedState.SetTokenUserAndTarget(user, target);
         stopFailState.SetTokenUserAndTarget(user, target);
 
-        if (target != null) {
-            //This means that the interaction is not from Use Item On Self, rather, it is from an interaction which a minion triggered
-            itemUsedState.SetEffect(() => ItemUsedEffectMinion(itemUsedState));
-        } else {
-            itemUsedState.SetEffect(() => ItemUsedEffectNPC(itemUsedState));
-        }
+
+        itemUsedState.SetEffect(() => ItemUsedEffectNPC(itemUsedState));
         stopFailState.SetEffect(() => StopFailEffect(stopFailState));
 
         interaction.AddState(itemUsedState);
@@ -34,30 +36,36 @@ public class MutagenicGoo : SpecialToken {
     #endregion
     
     private void ItemUsedEffectNPC(TokenInteractionState state) {
-        ChangeRaceRandomly(state.tokenUser);
+        Character targetCharacter = state.target as Character;
+        //**Mechanics**: Change target's race randomly (beast to beast only, non-beast to non-beast only). Make sure to change character class when changing from beast to beast
+        RACE race = ChangeRaceRandomly(targetCharacter);
         state.tokenUser.ConsumeToken();
-        Log stateDescriptionLog = new Log(GameManager.Instance.Today(), "Tokens", this.GetType().ToString(), state.name.ToLower() + "-npc" + "_description", state.interaction);
-        stateDescriptionLog.AddToFillers(state.tokenUser, state.tokenUser.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        stateDescriptionLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(state.tokenUser.race), LOG_IDENTIFIER.STRING_1);
-        state.OverrideDescriptionLog(stateDescriptionLog);
 
-        Log log = new Log(GameManager.Instance.Today(), "Tokens", GetType().ToString(), state.name.ToLower() + "_special2", state.interaction);
-        log.AddToFillers(state.tokenUser, state.tokenUser.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        log.AddToFillers(null, Utilities.GetNormalizedSingularRace(state.tokenUser.race), LOG_IDENTIFIER.STRING_1);
-        state.AddLogToInvolvedObjects(log);
-    }
-    private void ItemUsedEffectMinion(TokenInteractionState state) {
-        ChangeRaceRandomly(state.tokenUser);
-        state.tokenUser.ConsumeToken();
-        Log stateDescriptionLog = new Log(GameManager.Instance.Today(), "Tokens", this.GetType().ToString(), state.name.ToLower() + "-minion" + "_description", state.interaction);
-        stateDescriptionLog.AddToFillers(state.tokenUser, state.tokenUser.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        stateDescriptionLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(state.tokenUser.race), LOG_IDENTIFIER.STRING_1);
-        state.OverrideDescriptionLog(stateDescriptionLog);
+        if (state.tokenUser.id == targetCharacter.id) {
+            //Used item on self
+            Log stateDescriptionLog = new Log(GameManager.Instance.Today(), "Tokens", this.GetType().ToString(), state.name.ToLower() + "-npc" + "_description", state.interaction);
+            stateDescriptionLog.AddToFillers(state.tokenUser, state.tokenUser.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            stateDescriptionLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(race), LOG_IDENTIFIER.STRING_1);
+            state.OverrideDescriptionLog(stateDescriptionLog);
 
-        Log log = new Log(GameManager.Instance.Today(), "Tokens", GetType().ToString(), state.name.ToLower() + "_special1");
-        log.AddToFillers(state.tokenUser, state.tokenUser.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        log.AddToFillers(null, Utilities.GetNormalizedSingularRace(state.tokenUser.race), LOG_IDENTIFIER.STRING_1);
-        state.AddLogToInvolvedObjects(log);
+            Log log = new Log(GameManager.Instance.Today(), "Tokens", GetType().ToString(), state.name.ToLower() + "_special2");
+            log.AddToFillers(state.tokenUser, state.tokenUser.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            log.AddToFillers(null, Utilities.GetNormalizedSingularRace(race), LOG_IDENTIFIER.STRING_1);
+            state.AddLogToInvolvedObjects(log);
+        } else {
+            //Used item on other character
+            Log stateDescriptionLog = new Log(GameManager.Instance.Today(), "Tokens", this.GetType().ToString(), state.name.ToLower() + "-othernpc" + "_description", state.interaction);
+            stateDescriptionLog.AddToFillers(state.tokenUser, state.tokenUser.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            stateDescriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            stateDescriptionLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(race), LOG_IDENTIFIER.STRING_1);
+            state.OverrideDescriptionLog(stateDescriptionLog);
+
+            Log log = new Log(GameManager.Instance.Today(), "Tokens", GetType().ToString(), state.name.ToLower() + "_special3");
+            log.AddToFillers(state.tokenUser, state.tokenUser.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            log.AddToFillers(null, Utilities.GetNormalizedSingularRace(race), LOG_IDENTIFIER.STRING_1);
+            state.AddLogToInvolvedObjects(log);
+        }
     }
     private void StopFailEffect(TokenInteractionState state) {
         ChangeRaceRandomly(state.tokenUser);
@@ -70,7 +78,7 @@ public class MutagenicGoo : SpecialToken {
         state.AddLogFiller(new LogFiller(null, Utilities.GetNormalizedSingularRace(state.tokenUser.race), LOG_IDENTIFIER.STRING_1));
     }
 
-    private void ChangeRaceRandomly(Character character) {
+    private RACE ChangeRaceRandomly(Character character) {
         //**Mechanics**: Change character's race randomly (beast to beast only, non-beast to non-beast only)
         List<RACE> choices;
         bool isBeast = Utilities.IsRaceBeast(character.race);
@@ -86,5 +94,6 @@ public class MutagenicGoo : SpecialToken {
             WeightedDictionary<AreaCharacterClass> classWeights = LandmarkManager.Instance.GetDefaultClassWeights(chosenRace);
             character.ChangeClass(classWeights.PickRandomElementGivenWeights().className);
         }
+        return chosenRace;
     }
 }

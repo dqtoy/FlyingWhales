@@ -69372,6 +69372,23 @@ MonoBehaviour:
     - Pitthize
     - Moringa
     - Lamina
+  - tokenName: Acid Flask
+    tokenType: 16
+    quantity: 4
+    appearanceWeight: 80
+    areaLocations:
+    - Cardell
+    - Narris
+    - Cindermaul
+    - Denrio
+    - Radisle
+    - Visteri
+    - Odious
+    - Gloomhollow
+    - Tribu
+    - Pitthize
+    - Moringa
+    - Lamina
 --- !u!1 &1695113739
 GameObject:
   m_ObjectHideFlags: 0

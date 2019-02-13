@@ -34,7 +34,6 @@ public class Area {
     public List<Interaction> currentInteractions { get; private set; }
     public Dictionary<INTERACTION_TYPE, int> areaTasksInteractionWeights { get; private set; }
     public int initialResidents { get; private set; }
-    public List<Corpse> corpsesInArea { get; private set; }
     public int monthlyActions { get; private set; }
 
     //defenders
@@ -44,7 +43,6 @@ public class Area {
     public List<RACE> possibleOccupants { get; private set; }
     public List<InitialRaceSetup> initialSpawnSetup { get; private set; } //only to be used when unoccupied
     public Dictionary<JOB, List<INTERACTION_TYPE>> jobInteractionTypes { get; private set; }
-    public int residentCapacity { get; private set; }
     public int monthlySupply { get; private set; }
     public List<Interaction> eventsTargettingThis { get; private set; }
 
@@ -101,6 +99,19 @@ public class Area {
             return warehouse.GetSupplyPile();
         }
     }
+    public List<Corpse> corpsesInArea {
+        get {
+            return GetAllCorpses();
+        }
+    }
+    public int residentCapacity {
+        get {
+            if (structures.ContainsKey(STRUCTURE_TYPE.DWELLING)) {
+                return structures[STRUCTURE_TYPE.DWELLING].Count;
+            }
+            return 0;
+        }
+    }
     #endregion
 
     public Area(HexTile coreTile, AREA_TYPE areaType) {
@@ -125,7 +136,6 @@ public class Area {
         defaultRace = new Race(RACE.HUMANS, RACE_SUB_TYPE.NORMAL);
         possibleSpecialTokenSpawns = new List<SpecialToken>();
         charactersAtLocationHistory = new List<string>();
-        corpsesInArea = new List<Corpse>();
         structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
         SetDungeonSupplyRange(0, 0);
         SetMonthlyActions(2);
@@ -165,7 +175,6 @@ public class Area {
         charactersAtLocationHistory = new List<string>();
         possibleSpecialTokenSpawns = new List<SpecialToken>();
         supplyLog = new List<string>();
-        corpsesInArea = new List<Corpse>();
         if (data.raceSetup != null) {
             initialSpawnSetup = new List<InitialRaceSetup>(data.raceSetup);
         } else {
@@ -174,7 +183,7 @@ public class Area {
         SetDungeonSupplyRange(data.dungeonSupplyRangeMin, data.dungeonSupplyRangeMax);
         SetMaxDefenderGroups(data.maxDefenderGroups);
         SetInitialDefenderGroups(data.initialDefenderGroups);
-        SetResidentCapacity(data.residentCapacity);
+        //SetResidentCapacity(data.residentCapacity);
         SetMonthlySupply(data.monthlySupply);
         SetInitialResidents(data.initialResidents);
         SetMonthlyActions(data.monthlyActions);
@@ -251,9 +260,9 @@ public class Area {
     //public void SetInitialSupplies(int amount) {
     //    initialSupply = amount;
     //}
-    public void SetResidentCapacity(int amount) {
-        residentCapacity = amount;
-    }
+    //public void SetResidentCapacity(int amount) {
+    //    residentCapacity = amount;
+    //}
     public void SetMonthlySupply(int amount) {
         monthlySupply = amount;
     }
@@ -670,9 +679,9 @@ public class Area {
     public string GetAreaTypeString() {
         if (_raceType != RACE.NONE) {
             if (tiles.Count > 1) {
-                return Utilities.GetNormalizedSingularRace(_raceType) + " " + Utilities.NormalizeStringUpperCaseFirstLetters(GetBaseAreaType().ToString());
+                return Utilities.GetNormalizedRaceAdjective(_raceType) + " " + Utilities.NormalizeStringUpperCaseFirstLetters(GetBaseAreaType().ToString());
             } else {
-                return Utilities.GetNormalizedSingularRace(_raceType) + " " + Utilities.NormalizeStringUpperCaseFirstLetters(coreTile.landmarkOnTile.specificLandmarkType.ToString());
+                return Utilities.GetNormalizedRaceAdjective(_raceType) + " " + Utilities.NormalizeStringUpperCaseFirstLetters(coreTile.landmarkOnTile.specificLandmarkType.ToString());
             }
         } else {
             return Utilities.NormalizeStringUpperCaseFirstLetters(coreTile.landmarkOnTile.specificLandmarkType.ToString());
@@ -816,21 +825,9 @@ public class Area {
         } else {
             currentInteractions.Add(interaction);
         }
-        if (interaction.characterInvolved != null) {
-            interaction.characterInvolved.currentInteractions.Add(interaction);
-        }
-        //interaction.interactable.currentInteractions.Add(interaction);
-        //interaction.Initialize();
-        //Messenger.Broadcast(Signals.ADDED_INTERACTION, this as IInteractable, interaction);
     }
     public void RemoveInteraction(Interaction interaction) {
-        if (currentInteractions.Remove(interaction)) {
-            if (interaction.characterInvolved != null) {
-                interaction.characterInvolved.currentInteractions.Remove(interaction);
-            }
-            interaction.interactable.currentInteractions.Remove(interaction);
-            //Messenger.Broadcast(Signals.REMOVED_INTERACTION, this as IInteractable, interaction);
-        }
+        currentInteractions.Remove(interaction);
     }
     //public void DefaultAllExistingInteractions() { //NOTE: Only 
     //    if(stopDefaultAllExistingInteractions) { return; }
@@ -933,7 +930,7 @@ public class Area {
     public bool CanDoAreaTaskInteraction(INTERACTION_TYPE interactionType, Character character, int supplyCost) {
         return suppliesInBank >= supplyCost; //&& InteractionManager.Instance.CanCreateInteraction(interactionType, character);
     }
-    public Dictionary<Character, List<INTERACTION_TYPE>> GetResidentAndInteractionsTheyCanDoByCategoryAndAlignment(INTERACTION_CATEGORY category, MORALITY factionMorality) {
+    public Dictionary<Character, List<INTERACTION_TYPE>> GetResidentAndInteractionsTheyCanDoByCategoryAndAlignment(INTERACTION_CATEGORY category) {
         Dictionary<Character, List<INTERACTION_TYPE>> residentInteractions = new Dictionary<Character, List<INTERACTION_TYPE>>();
         for (int i = 0; i < areaResidents.Count; i++) {
             Character resident = areaResidents[i];
@@ -942,7 +939,7 @@ public class Area {
                     continue;
                 }
                 if ((owner == null && resident.faction == FactionManager.Instance.neutralFaction) || resident.faction == owner) {
-                    List<INTERACTION_TYPE> interactionTypes = RaceManager.Instance.GetFactionInteractionsOfRace(resident, category, factionMorality);
+                    List<INTERACTION_TYPE> interactionTypes = RaceManager.Instance.GetFactionInteractionsOfRace(resident, category);
                     if (interactionTypes != null) {
                         for (int j = 0; j < interactionTypes.Count; j++) {
                             if (!InteractionManager.Instance.CanCreateInteraction(interactionTypes[j], resident)) {
@@ -1303,52 +1300,55 @@ public class Area {
         }
     }
     public void AddCharacterToAppropriateStructure(Character character) {
-        if (character.homeArea.id == this.id) {
-            if (character.homeStructure == null) {
-                throw new Exception(character.name + "'s homeStructure is null!");
-            }
-            //If this is his home, the character will be placed in his Dwelling.
-            character.homeStructure.AddCharacterAtLocation(character);
+        if(character.GetTraitOr("Abducted", "Restained") != null) {
+            GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA).AddCharacterAtLocation(character);
         } else {
-            // Otherwise:
-            if (Utilities.IsRaceBeast(character.race)) {
-                //- Beasts will be placed at a random Wilderness.
-                GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS).AddCharacterAtLocation(character);
-            } else if (this.owner != null) {
-                FACTION_RELATIONSHIP_STATUS relStat;
-                if (character.faction.id == this.owner.id) { //character is part of the same faction as the owner of this area
-                    relStat = FACTION_RELATIONSHIP_STATUS.ALLY;
-                } else {
-                    relStat = character.faction.GetRelationshipWith(this.owner).relationshipStatus; 
+            if (character.homeArea.id == this.id) {
+                if (character.homeStructure == null) {
+                    throw new Exception(character.name + "'s homeStructure is null!");
                 }
-                switch (relStat) {
-                    case FACTION_RELATIONSHIP_STATUS.AT_WAR:
-                    case FACTION_RELATIONSHIP_STATUS.ENEMY:
-                        //- If location is occupied, non-beasts whose faction relationship is Enemy or worse will be placed in a random structure Outside Settlement.
-                        List<LocationStructure> choices = GetStructuresAtLocation(false);
-                        choices[UnityEngine.Random.Range(0, choices.Count)].AddCharacterAtLocation(character);
-                        break;
-                    case FACTION_RELATIONSHIP_STATUS.DISLIKED:
-                    case FACTION_RELATIONSHIP_STATUS.NEUTRAL:
-                    case FACTION_RELATIONSHIP_STATUS.FRIEND:
-                    case FACTION_RELATIONSHIP_STATUS.ALLY:
-                        LocationStructure inn = GetRandomStructureOfType(STRUCTURE_TYPE.INN);
-                        if (inn != null) {
-                            //- If location is occupied, non-beasts whose faction relationship is Disliked or better will be placed at the Inn. 
-                            inn.AddCharacterAtLocation(character);
-                        } else {
-                            //If no Inn in the Location, he will be placed in a random Wilderness.
-                            LocationStructure wilderness = GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
-                            wilderness.AddCharacterAtLocation(character);
-                        }
-                        break;
-                }
+                //If this is his home, the character will be placed in his Dwelling.
+                character.homeStructure.AddCharacterAtLocation(character);
             } else {
-                //- If location is unoccupied, non-beasts will be placed at a random Wilderness.
-                GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS).AddCharacterAtLocation(character);
+                // Otherwise:
+                if (Utilities.IsRaceBeast(character.race)) {
+                    //- Beasts will be placed at a random Wilderness.
+                    GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS).AddCharacterAtLocation(character);
+                } else if (this.owner != null) {
+                    FACTION_RELATIONSHIP_STATUS relStat;
+                    if (character.faction.id == this.owner.id) { //character is part of the same faction as the owner of this area
+                        relStat = FACTION_RELATIONSHIP_STATUS.ALLY;
+                    } else {
+                        relStat = character.faction.GetRelationshipWith(this.owner).relationshipStatus;
+                    }
+                    switch (relStat) {
+                        case FACTION_RELATIONSHIP_STATUS.AT_WAR:
+                        case FACTION_RELATIONSHIP_STATUS.ENEMY:
+                            //- If location is occupied, non-beasts whose faction relationship is Enemy or worse will be placed in a random structure Outside Settlement.
+                            List<LocationStructure> choices = GetStructuresAtLocation(false);
+                            choices[UnityEngine.Random.Range(0, choices.Count)].AddCharacterAtLocation(character);
+                            break;
+                        case FACTION_RELATIONSHIP_STATUS.DISLIKED:
+                        case FACTION_RELATIONSHIP_STATUS.NEUTRAL:
+                        case FACTION_RELATIONSHIP_STATUS.FRIEND:
+                        case FACTION_RELATIONSHIP_STATUS.ALLY:
+                            LocationStructure inn = GetRandomStructureOfType(STRUCTURE_TYPE.INN);
+                            if (inn != null) {
+                                //- If location is occupied, non-beasts whose faction relationship is Disliked or better will be placed at the Inn. 
+                                inn.AddCharacterAtLocation(character);
+                            } else {
+                                //If no Inn in the Location, he will be placed in a random Wilderness.
+                                LocationStructure wilderness = GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+                                wilderness.AddCharacterAtLocation(character);
+                            }
+                            break;
+                    }
+                } else {
+                    //- If location is unoccupied, non-beasts will be placed at a random Wilderness.
+                    GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS).AddCharacterAtLocation(character);
+                }
             }
         }
-
         if (character.currentStructure == null) {
             Debug.LogWarning(GameManager.Instance.TodayLogString() + "Could not find structure for " + character.name + " at " + this.name);
         }
@@ -1643,31 +1643,27 @@ public class Area {
     #endregion
 
     #region Corpses
-    public void AddCorpse(Character character) {
-        if (!HasCorpseOf(character)) {
-            corpsesInArea.Add(new Corpse(character));
-        }
+    public void AddCorpse(Character character, LocationStructure structure) {
+        structure.AddCorpse(character);
     }
     public void RemoveCorpse(Character character) {
-        corpsesInArea.Remove(GetCorpseOf(character));
-    }
-    private bool HasCorpseOf(Character character) {
-        for (int i = 0; i < corpsesInArea.Count; i++) {
-            Corpse currCorpse = corpsesInArea[i];
-            if (currCorpse.character.id == character.id) {
-                return true;
+        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp in structures) {
+            for (int i = 0; i < kvp.Value.Count; i++) {
+                LocationStructure currStructure = kvp.Value[i];
+                if (currStructure.RemoveCorpse(character)) {
+                    return;
+                }
             }
         }
-        return false;
     }
-    private Corpse GetCorpseOf(Character character) {
-        for (int i = 0; i < corpsesInArea.Count; i++) {
-            Corpse currCorpse = corpsesInArea[i];
-            if (currCorpse.character.id == character.id) {
-                return currCorpse;
+    public List<Corpse> GetAllCorpses() {
+        List<Corpse> all = new List<Corpse>();
+        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp in structures) {
+            for (int i = 0; i < kvp.Value.Count; i++) {
+                all.AddRange(kvp.Value[i].corpses);
             }
         }
-        return null;
+        return all;
     }
     #endregion
 

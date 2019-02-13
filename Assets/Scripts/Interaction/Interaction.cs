@@ -10,7 +10,7 @@ public class Interaction {
     protected int _timeOutTicks;
     protected GameDate _timeDate;
     protected INTERACTION_TYPE _type;
-    //protected INTERACTION_CATEGORY[] _categories;
+    //protected INTERACTION_CATEGORY[] _categories;f
     //protected INTERACTION_ALIGNMENT _alignment;
     protected Area _interactable;
     protected Dictionary<string, InteractionState> _states;
@@ -179,7 +179,7 @@ public class Interaction {
         if(_characterInvolved != null) {
             _characterInvolved.AdjustDoNotDisturb(-1);
         }
-        _interactable.RemoveInteraction(this);
+        //_interactable.RemoveInteraction(this);
         if (_jobAssociated != null) {
             _jobAssociated.SetCreatedInteraction(null);
             SetJobAssociated(null);
@@ -206,6 +206,9 @@ public class Interaction {
     public virtual bool CanInteractionBeDoneBy(Character character) { //Converted this to virtual so each instance of interaction can also have trigger requirements other than CanCreateInteraction at InteractionManager
         if (_canInteractionBeDone != null) {
             return _canInteractionBeDone();
+        }
+        if(character.doNotDisturb > 1 || character.isDead || !character.IsInOwnParty()) {
+            return false;
         }
         return true;
     }
@@ -314,10 +317,10 @@ public class Interaction {
     }
     public void TimedOutRunDefault(ref string summary) {
         //|| !CanStillDoInteraction()
-        if ((_characterInvolved != null && _characterInvolved.isDead)) {
-            EndInteraction();
-            return;
-        }
+        //if ((_characterInvolved != null && _characterInvolved.isDead)) {
+        //    EndInteraction();
+        //    return;
+        //}
         if (!_hasInitialized) {
             Initialize();
         }

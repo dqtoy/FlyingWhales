@@ -49,7 +49,7 @@ public class AreaSaveData {
         possibleOccupants = new List<RACE>(area.possibleOccupants);
         raceSetup = new List<InitialRaceSetup>(area.initialSpawnSetup);
         //initialSupply = area.initialSupply;
-        residentCapacity = area.residentCapacity;
+        //residentCapacity = area.residentCapacity;
         monthlySupply = area.monthlySupply;
         initialResidents = area.initialResidents;
         monthlyActions = area.monthlyActions;

@@ -646,6 +646,42 @@ public class NewCombat : MonoBehaviour {
                     return false;
                 }
             }
+        } else if (traitEffect.requirementType == TRAIT_REQUIREMENT.ROLE) {
+            if (traitEffect.requirementSeparator == TRAIT_REQUIREMENT_SEPARATOR.AND) {
+                //if there is one mismatch, return false already because the separator is AND, otherwise, return true
+                if (traitEffect.isNot) {
+                    for (int i = 0; i < traitEffect.requirements.Count; i++) {
+                        if (traitEffect.requirements[i].ToLower() == checkedCharacter.character.role.roleType.ToString().ToLower()) {
+                            return false;
+                        }
+                    }
+                    return true;
+                } else {
+                    for (int i = 0; i < traitEffect.requirements.Count; i++) {
+                        if (traitEffect.requirements[i].ToLower() != checkedCharacter.character.role.roleType.ToString().ToLower()) {
+                            return false;
+                        }
+                    }
+                    return true;
+                }
+            } else if (traitEffect.requirementSeparator == TRAIT_REQUIREMENT_SEPARATOR.OR) {
+                //if there is one match, return true already because the separator is OR, otherwise, return false   
+                if (traitEffect.isNot) {
+                    for (int i = 0; i < traitEffect.requirements.Count; i++) {
+                        if (traitEffect.requirements[i].ToLower() != checkedCharacter.character.role.roleType.ToString().ToLower()) {
+                            return true;
+                        }
+                    }
+                    return false;
+                } else {
+                    for (int i = 0; i < traitEffect.requirements.Count; i++) {
+                        if (traitEffect.requirements[i].ToLower() == checkedCharacter.character.role.roleType.ToString().ToLower()) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+            }
         } else if (traitEffect.requirementType == TRAIT_REQUIREMENT.FRONTLINE) {
             if (traitEffect.isNot) {
                 if (leftSide.slots[2].isOccupied && leftSide.slots[2].character == checkedCharacter.character) {
@@ -758,7 +794,7 @@ public class NewCombat : MonoBehaviour {
         return false;
     }
     private int GetFinalAttack(CombatCharacter sourceCombatCharacter, CombatCharacter specificTarget, List<CombatCharacter> targets) {
-        //Currently, only percentage amounts are implemented, if there will flat amounts in the future, add it here
+        //TODO: Currently, only percentage amounts are implemented, if there will flat amounts in the future, add it here
         int finalAttack = sourceCombatCharacter.attack;
         float damageIncreasePercentage = 0f;
         for (int i = 0; i < sourceCombatCharacter.character.traits.Count; i++) {
@@ -802,12 +838,15 @@ public class NewCombat : MonoBehaviour {
         return finalAttack;
     }
     private bool WillTraitApplyDuringCombat(TraitEffect traitEffect, CombatCharacter traitOwner, CombatCharacter sourceCombatCharacter, CombatCharacter specificTarget, List<CombatCharacter> targets) {
-        if (traitEffect.checker == TRAIT_REQUIREMENT_CHECKER.SELF && CharacterFitsTraitCriteria(sourceCombatCharacter, traitOwner, traitEffect, targets)) {
-            return true;
-        }else if (traitEffect.checker == TRAIT_REQUIREMENT_CHECKER.ENEMY && CharacterFitsTraitCriteria(specificTarget, traitOwner, traitEffect, targets)) {
-            return true;
+        if (traitEffect.hasRequirement) {
+            if (traitEffect.checker == TRAIT_REQUIREMENT_CHECKER.SELF && CharacterFitsTraitCriteria(sourceCombatCharacter, traitOwner, traitEffect, targets)) {
+                return true;
+            } else if (traitEffect.checker == TRAIT_REQUIREMENT_CHECKER.ENEMY && CharacterFitsTraitCriteria(specificTarget, traitOwner, traitEffect, targets)) {
+                return true;
+            }
+            return false;
         }
-        return false;
+        return true;
     }
     #endregion
 

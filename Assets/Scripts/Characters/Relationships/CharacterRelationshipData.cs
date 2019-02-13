@@ -233,6 +233,9 @@ public class CharacterRelationshipData {
         isCharacterMissing = state;
         if (!isCharacterMissing) {
             SetKnownStructure(targetCharacter.homeStructure);
+        } else {
+            //character located now turns to False when character missing is switched from False to True
+            SetIsCharacterLocated(false);
         }
     }
     #endregion

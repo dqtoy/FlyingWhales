@@ -121,6 +121,9 @@ public class EatHomeMealAction : Interaction {
     #region Reward Effect
     private void StartRewardEffect(InteractionState state) {
         _characterInvolved.MoveToAnotherStructure(_characterInvolved.homeStructure);
+        if (_characterInvolved.isDead) {
+            EndInteraction();
+        }
     }
     private void EatCancelledRewardEffect(InteractionState state) {
 

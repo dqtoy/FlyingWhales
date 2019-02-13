@@ -803,8 +803,8 @@ public class Faction {
                 tasksWeights.RemoveElement(chosenCategory);
                 continue;
             }
-            //CGet all residents of area that can do the interaction category;
-            Dictionary<Character, List<INTERACTION_TYPE>> residentInteractions = area.GetResidentAndInteractionsTheyCanDoByCategoryAndAlignment(chosenCategory, morality);
+            //Get all residents of area that can do the interaction category;
+            Dictionary<Character, List<INTERACTION_TYPE>> residentInteractions = area.GetResidentAndInteractionsTheyCanDoByCategoryAndAlignment(chosenCategory);
             if (residentInteractions.Count > 0) {
                 //For testing only
                 interactionLog += "\nALL CHARACTERS AND INTERACTIONS THEY CAN DO";
@@ -851,7 +851,7 @@ public class Faction {
         if (tasksWeights.Count < 0) {
             interactionLog += "\nNO MORE TASKS THAT CAN BE DONE! Faction tasks assignment ends.";
         }
-        //Debug.Log(interactionLog);
+        Debug.Log(interactionLog);
     }
     private void GenerateAreaInteraction(Area area) {
         string interactionLog = GameManager.Instance.TodayLogString() + "Generating faction area interaction for " + this.name;

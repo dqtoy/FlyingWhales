@@ -28,6 +28,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     protected bool _isBeingInspected;
     protected bool _hasBeenInspected;
     protected bool _alreadyTargetedByGrudge;
+    protected bool _isTracked;
     protected GENDER _gender;
     protected MODE _currentMode;
     protected CharacterClass _characterClass;
@@ -92,6 +93,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public WeightedDictionary<INTERACTION_TYPE> interactionWeights { get; private set; }
     public SpecialToken tokenInInventory { get; private set; }
     public Dictionary<Character, CharacterRelationshipData> relationships { get; private set; }
+    public List<INTERACTION_TYPE> currentInteractionTypes { get; private set; }
 
     private Dictionary<STAT, float> _buffs;
     public Dictionary<int, Combat> combatHistory;
@@ -142,6 +144,62 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public int id {
         get { return _id; }
     }
+    public bool isDead {
+        get { return this._isDead; }
+    }
+    public bool isFainted {
+        get { return this._isFainted; }
+    }
+    public bool isInCombat {
+        get {
+            return _isInCombat;
+        }
+    }
+    public bool isFactionless { //is the character part of the neutral faction? or no faction?
+        get {
+            if (FactionManager.Instance.neutralFaction == null) {
+                return faction == null;
+            } else {
+                if (faction == null || FactionManager.Instance.neutralFaction.id == faction.id) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        }
+    }
+    public bool isIdle {
+        get { return _forcedInteraction == null && _doNotDisturb <= 0 && IsInOwnParty() && !currentParty.icon.isTravelling; }
+    }
+    public bool isBeingInspected {
+        get { return _isBeingInspected; }
+    }
+    public bool hasBeenInspected {
+        get { return _hasBeenInspected; }
+    }
+    public bool alreadyTargetedByGrudge {
+        get { return _alreadyTargetedByGrudge; }
+    }
+    public bool isLeader {
+        get { return job.jobType == JOB.LEADER; }
+    }
+    public bool isHoldingItem {
+        get { return tokenInInventory != null; }
+    }
+    public bool isAtHomeStructure {
+        get { return currentStructure == homeStructure; }
+    }
+    public bool isAtHomeArea {
+        get { return specificLocation.id == homeArea.id; }
+    }
+    public bool isTracked {
+        get {
+            if (GameManager.Instance.inspectAll) {
+                return true;
+            }
+            return _isTracked;
+        }
+    }
     public GENDER gender {
         get { return _gender; }
     }
@@ -190,12 +248,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public SIDES currentSide {
         get { return this._currentSide; }
     }
-    public bool isDead {
-        get { return this._isDead; }
-    }
-    public bool isFainted {
-        get { return this._isFainted; }
-    }
     public Color characterColor {
         get { return _characterColor; }
     }
@@ -207,27 +259,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public int gold {
         get { return _gold; }
-    }
-    public bool isInCombat {
-        get {
-            return _isInCombat;
-        }
-    }
-    public bool isFactionless { //is the character part of the neutral faction? or no faction?
-        get {
-            if (FactionManager.Instance.neutralFaction == null) {
-                return faction == null;
-            } else {
-                if (faction == null || FactionManager.Instance.neutralFaction.id == faction.id) {
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        }
-    }
-    public bool isIdle {
-        get { return _forcedInteraction == null && _doNotDisturb <= 0 && IsInOwnParty() && !currentParty.icon.isTravelling; }
     }
     public PortraitSettings portraitSettings {
         get { return _portraitSettings; }
@@ -274,57 +305,57 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             return total;
         }
     }
-    public int combatBaseAttack {
-        get { return _combatBaseAttack; }
-        set { _combatBaseAttack = value; }
-    }
-    public int combatBaseSpeed {
-        get { return _combatBaseSpeed; }
-        set { _combatBaseSpeed = value; }
-    }
-    public int combatBaseHP {
-        get { return _combatBaseHP; }
-        set { _combatBaseHP = value; }
-    }
-    public int combatAttackFlat {
-        get { return _combatAttackFlat; }
-        set { _combatAttackFlat = value; }
-    }
-    public int combatAttackMultiplier {
-        get { return _combatAttackMultiplier; }
-        set { _combatAttackMultiplier = value; }
-    }
-    public int combatSpeedFlat {
-        get { return _combatSpeedFlat; }
-        set { _combatSpeedFlat = value; }
-    }
-    public int combatSpeedMultiplier {
-        get { return _combatSpeedMultiplier; }
-        set { _combatSpeedMultiplier = value; }
-    }
-    public int combatHPFlat {
-        get { return _combatHPFlat; }
-        set { _combatHPFlat = value; }
-    }
-    public int combatHPMultiplier {
-        get { return _combatHPMultiplier; }
-        set { _combatHPMultiplier = value; }
-    }
-    public int combatPowerFlat {
-        get { return _combatPowerFlat; }
-        set { _combatPowerFlat = value; }
-    }
-    public int combatPowerMultiplier {
-        get { return _combatPowerMultiplier; }
-        set { _combatPowerMultiplier = value; }
-    }
+    //public int combatBaseAttack {
+    //    get { return _combatBaseAttack; }
+    //    set { _combatBaseAttack = value; }
+    //}
+    //public int combatBaseSpeed {
+    //    get { return _combatBaseSpeed; }
+    //    set { _combatBaseSpeed = value; }
+    //}
+    //public int combatBaseHP {
+    //    get { return _combatBaseHP; }
+    //    set { _combatBaseHP = value; }
+    //}
+    //public int combatAttackFlat {
+    //    get { return _combatAttackFlat; }
+    //    set { _combatAttackFlat = value; }
+    //}
+    //public int combatAttackMultiplier {
+    //    get { return _combatAttackMultiplier; }
+    //    set { _combatAttackMultiplier = value; }
+    //}
+    //public int combatSpeedFlat {
+    //    get { return _combatSpeedFlat; }
+    //    set { _combatSpeedFlat = value; }
+    //}
+    //public int combatSpeedMultiplier {
+    //    get { return _combatSpeedMultiplier; }
+    //    set { _combatSpeedMultiplier = value; }
+    //}
+    //public int combatHPFlat {
+    //    get { return _combatHPFlat; }
+    //    set { _combatHPFlat = value; }
+    //}
+    //public int combatHPMultiplier {
+    //    get { return _combatHPMultiplier; }
+    //    set { _combatHPMultiplier = value; }
+    //}
+    //public int combatPowerFlat {
+    //    get { return _combatPowerFlat; }
+    //    set { _combatPowerFlat = value; }
+    //}
+    //public int combatPowerMultiplier {
+    //    get { return _combatPowerMultiplier; }
+    //    set { _combatPowerMultiplier = value; }
+    //}
     public int currentHP {
         get { return this._currentHP; }
     }
-    public PairCombatStats[] pairCombatStats {
-        get { return _pairCombatStats; }
-        set { _pairCombatStats = value; }
-    }
+    //public PairCombatStats[] pairCombatStats {
+    //    get { return _pairCombatStats; }
+    //    set { _pairCombatStats = value; }
+    //}
     public Dictionary<ELEMENT, float> elementalWeaknesses {
         get { return _elementalWeaknesses; }
     }
@@ -359,18 +390,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public int doNotDisturb {
         get { return _doNotDisturb; }
     }
-    public bool isBeingInspected {
-        get { return _isBeingInspected; }
-    }
-    public bool hasBeenInspected {
-        get { return _hasBeenInspected; }
-    }
-    public bool alreadyTargetedByGrudge {
-        get { return _alreadyTargetedByGrudge; }
-    }
-    public bool isLeader {
-        get { return job.jobType == JOB.LEADER; }
-    }
     public QUEST_GIVER_TYPE questGiverType {
         get { return QUEST_GIVER_TYPE.CHARACTER; }
     }
@@ -394,15 +413,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public int currentInteractionTick {
         get { return _currentInteractionTick; }
-    }
-    public bool isHoldingItem {
-        get { return tokenInInventory != null; }
-    }
-    public bool isAtHomeStructure {
-        get { return currentStructure == homeStructure; }
-    }
-    public bool isAtHomeArea {
-        get { return specificLocation.id == homeArea.id; }
     }
     public CombatCharacter currentCombatCharacter {
         get { return _currentCombatCharacter; }
@@ -433,30 +443,15 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         AssignRandomJob();
         SetMorality(MORALITY.GOOD);
-        //_skills = GetGeneralSkills();
-
-        //_bodyParts = new List<BodyPart>(_raceSetting.bodyParts);
-        //ConstructBodyPartDict(_raceSetting.bodyParts);
-
-        //AllocateStatPoints(10);
         SetTraitsFromRace();
         ResetToFullHP();
-        //CharacterSetup setup = CombatManager.Instance.GetBaseCharacterSetup(className);
-        //if(setup != null) {
-        //    GenerateSetupAttributes(setup);
-        //    if(setup.optionalRole != CHARACTER_ROLE.NONE) {
-        //        AssignRole(setup.optionalRole);
-        //    }
-        //}
     }
     public Character(CharacterSaveData data) : this() {
         _id = Utilities.SetID(this, data.id);
-        //_characterClass = CharacterManager.Instance.classesDictionary[data.className].CreateNewCopy();
         _raceSetting = RaceManager.Instance.racesDictionary[data.race.ToString()].CreateNewCopy();
         AssignClass(CharacterManager.Instance.classesDictionary[data.className]);
         _gender = data.gender;
         SetName(data.name);
-        //LoadRelationships(data.relationshipsData);
         _portraitSettings = CharacterManager.Instance.GenerateRandomPortrait(race, gender);
         if (_characterClass.roleType != CHARACTER_ROLE.NONE) {
             AssignRole(_characterClass.roleType);
@@ -469,20 +464,17 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public Character() {
         SetIsDead(false);
         _isFainted = false;
-        //_isDefeated = false;
-        //_isIdle = false;
         _history = new List<Log>();
         _traits = new List<Trait>();
-
 
         //RPG
         _level = 1;
         _experience = 0;
         _elementalWeaknesses = new Dictionary<ELEMENT, float>(CharacterManager.Instance.elementsChanceDictionary);
         _elementalResistances = new Dictionary<ELEMENT, float>(CharacterManager.Instance.elementsChanceDictionary);
-        //_equippedItems = new List<Item>();
         combatHistory = new Dictionary<int, Combat>();
         _currentInteractions = new List<Interaction>();
+        currentInteractionTypes = new List<INTERACTION_TYPE>();
         characterToken = new CharacterToken(this);
         tokenInInventory = null;
         interactionWeights = new WeightedDictionary<INTERACTION_TYPE>();
@@ -499,7 +491,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         locationHistory = new List<string>();
 
         GetRandomCharacterColor();
-        //_combatHistoryID = 0;
 #if !WORLD_CREATION_TOOL
         SetDailyInteractionGenerationTick(GetMonthInteractionTick());
 #endif
@@ -536,96 +527,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     #endregion
 
-    //      private void AllocateStatPoints(int statAllocation){
-    //          _baseStrength = 0;
-    //          _baseIntelligence = 0;
-    //          _baseAgility = 0;
-    //          _baseVitality = 0;
-
-    //	WeightedDictionary<string> statWeights = new WeightedDictionary<string> ();
-    //	statWeights.AddElement ("strength", (int) _characterClass.strWeightAllocation);
-    //	statWeights.AddElement ("intelligence", (int) _characterClass.intWeightAllocation);
-    //	statWeights.AddElement ("agility", (int) _characterClass.agiWeightAllocation);
-    //	statWeights.AddElement ("vitality", (int) _characterClass.vitWeightAllocation);
-
-    //	if(statWeights.GetTotalOfWeights() > 0){
-    //		string chosenStat = string.Empty;
-    //		for (int i = 0; i < statAllocation; i++) {
-    //			chosenStat = statWeights.PickRandomElementGivenWeights ();
-    //			if (chosenStat == "strength") {
-    //				_baseStrength += 1;
-    //			}else if (chosenStat == "intelligence") {
-    //				_baseIntelligence += 1;
-    //			}else if (chosenStat == "agility") {
-    //				_baseAgility += 1;
-    //			}else if (chosenStat == "vitality") {
-    //				_baseVitality += 1;
-    //			}
-    //		}
-    //	}
-    //}
-    //Enables or Disables skills based on skill requirements
-    public void EnableDisableSkills(Combat combat) {
-        //bool isAllAttacksInRange = true;
-        //bool isAttackInRange = false;
-
-        //Body part skills / general skills
-        for (int i = 0; i < this._skills.Count; i++) {
-            Skill skill = this._skills[i];
-            skill.isEnabled = true;
-
-            //            if (skill is AttackSkill){
-            //                AttackSkill attackSkill = skill as AttackSkill;
-            //                if(attackSkill.spCost > _sp) {
-            //                    skill.isEnabled = false;
-            //                    continue;
-            //                }
-            //} else 
-            if (skill is FleeSkill) {
-                skill.isEnabled = false;
-                //if (this.currentHP >= (this.maxHP / 2)) {
-                //    skill.isEnabled = false;
-                //    continue;
-                //}
-            }
-        }
-
-        //Character class skills
-        //if(_equippedWeapon != null) {
-        //    for (int i = 0; i < _level; i++) {
-        //        if(i < _characterClass.skillsPerLevel.Count) {
-        //            if (_characterClass.skillsPerLevel[i] != null) {
-        //                for (int j = 0; j < _characterClass.skillsPerLevel[i].Length; j++) {
-        //                    Skill skill = _characterClass.skillsPerLevel[i][j];
-        //                    skill.isEnabled = true;
-
-        //                    //Check for allowed weapon types
-        //                    if (skill.allowedWeaponTypes != null) {
-        //                        for (int k = 0; k < skill.allowedWeaponTypes.Length; k++) {
-        //                            if (!skill.allowedWeaponTypes.Contains(_equippedWeapon.weaponType)) {
-        //                                skill.isEnabled = false;
-        //                                continue;
-        //                            }
-        //                        }
-        //                    }
-
-        //                    if (skill is AttackSkill) {
-        //                        AttackSkill attackSkill = skill as AttackSkill;
-        //                        if (attackSkill.spCost > _sp) {
-        //                            skill.isEnabled = false;
-        //                            continue;
-        //                        }
-        //                    }
-        //                }
-        //            }
-        //        } else {
-        //            break;
-        //        }
-        //    }
-
-        //}
-
-    }
     //Changes row number of this character
     public void SetRowNumber(int rowNumber) {
         this._currentRow = rowNumber;
@@ -740,7 +641,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 DropToken(ownParty.specificLocation, currentStructure);
             }
             if (this.race != RACE.SKELETON && this.role.roleType != CHARACTER_ROLE.BEAST) {
-                ownParty.specificLocation.AddCorpse(this);
+                ownParty.specificLocation.AddCorpse(this, currentStructure);
             }
             if (!IsInOwnParty()) {
                 _currentParty.RemoveCharacter(this);
@@ -817,9 +718,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             //_icon = null;
 
             Debug.Log(GameManager.Instance.TodayLogString() + this.name + " died of " + cause);
-            Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "death_" + cause);
+            Log log = null;
+            if (isTracked) {
+                log = new Log(GameManager.Instance.Today(), "Character", "Generic", "death_" + cause);
+            } else {
+                log = new Log(GameManager.Instance.Today(), "Character", "Generic", "something_happened");
+            }
             log.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            //log.AddToFillers(specificLocation, specificLocation.name, LOG_IDENTIFIER.LANDMARK_1);
             AddHistory(log);
             specificLocation.AddHistory(log);
         }
@@ -1348,7 +1253,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return false;
     }
-    public void SetCurrentStructureLocation(LocationStructure currentStructure) {
+    public void SetCurrentStructureLocation(LocationStructure currentStructure, bool broadcast = true) {
         if (currentStructure == this.currentStructure) {
             return; //ignore change;
         }
@@ -1371,7 +1276,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             locationHistory.RemoveAt(0);
         }
 
-        if (currentStructure != null) {
+        if (currentStructure != null && broadcast) {
             Messenger.Broadcast(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, this, currentStructure);
         }
     }
@@ -1463,38 +1368,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         _characterColor = color;
         _characterColorCode = ColorUtility.ToHtmlStringRGBA(_characterColor).Substring(0, 6);
     }
-    //public void EverydayAction() {
-    //    if (onDailyAction != null) {
-    //        onDailyAction();
-    //    }
-    //    CheckForPPDeath();
-    //}
-    //public void AdvertiseSelf(ActionThread actionThread) {
-    //    if(actionThread.character.id != this.id && _currentRegion.id == actionThread.character.party.currentRegion.id) {
-    //        actionThread.AddToChoices(_characterObject);
-    //    }
-    //}
-    //public bool CanObtainResource(List<RESOURCE> resources) {
-    //    if (this.role != null) {//characters without a role cannot get actions, and therefore cannot obtain resources
-    //        for (int i = 0; i < _ownParty.currentRegion.landmarks.Count; i++) {
-    //            BaseLandmark landmark = _ownParty.currentRegion.landmarks[i];
-    //            StructureObj iobject = landmark.landmarkObj;
-    //            if (iobject.currentState.actions != null && iobject.currentState.actions.Count > 0) {
-    //                for (int k = 0; k < iobject.currentState.actions.Count; k++) {
-    //                    CharacterAction action = iobject.currentState.actions[k];
-    //                    if (action.actionData.resourceGiven != RESOURCE.NONE && resources.Contains(action.actionData.resourceGiven)) { //does the action grant a resource, and is that a resource that is needed
-    //                        if (action.MeetsRequirements(_ownParty, landmark) && action.CanBeDone(iobject) && action.CanBeDoneBy(_ownParty, iobject)) { //Filter
-    //                            //if the character can do an action that yields a needed resource, return true
-    //                            return true;
-    //                        }
-    //                    }
-
-    //                }
-    //            }
-    //        }
-    //    }
-    //    return false;
-    //}
     public bool IsSpecialCivilian() {
         if (this.characterClass != null) {
             if (this.characterClass.className.Equals("Farmer") || this.characterClass.className.Equals("Miner") || this.characterClass.className.Equals("Retired Hero") ||
@@ -1509,26 +1382,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             RemoveRelationship(characterThatDied);
         }
     }
-    //public bool IsCharacterLovedOne(Character otherCharacter) {
-    //    Relationship rel = GetRelationshipWith(otherCharacter);
-    //    if (rel != null) {
-    //        CHARACTER_RELATIONSHIP[] lovedOneStatuses = new CHARACTER_RELATIONSHIP[] {
-    //            CHARACTER_RELATIONSHIP.FATHER,
-    //            CHARACTER_RELATIONSHIP.MOTHER,
-    //            CHARACTER_RELATIONSHIP.BROTHER,
-    //            CHARACTER_RELATIONSHIP.SISTER,
-    //            CHARACTER_RELATIONSHIP.SON,
-    //            CHARACTER_RELATIONSHIP.DAUGHTER,
-    //            CHARACTER_RELATIONSHIP.LOVER,
-    //            CHARACTER_RELATIONSHIP.HUSBAND,
-    //            CHARACTER_RELATIONSHIP.WIFE,
-    //        };
-    //        if (rel.HasAnyStatus(lovedOneStatuses)) {
-    //            return true;
-    //        }
-    //    }
-    //    return false;
-    //}
     public void SetMode(MODE mode) {
         _currentMode = mode;
     }
@@ -1599,14 +1452,11 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             //if it does not, keep the characters current home
         }
     }
-    //public void MoveToStructure(LocationStructure structure) {
-    //    if (this.currentStructure != null) {
-    //        this.currentStructure.RemoveCharacterAtLocation(this);
-    //    }
-    //    structure.AddCharacterAtLocation(this);
-    //}
     public override string ToString() {
         return name;
+    }
+    public void SetTracked(bool state) {
+        _isTracked = state;
     }
     #endregion
 
@@ -2197,31 +2047,52 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             AddTrait(AttributeManager.Instance.allTraits["Backline Combatant"]);
         }
 
-        //Class Name
-        if (characterClass.className == "Knight" || characterClass.className == "Marauder" || characterClass.className == "Barbarian") {
-            AddTrait(AttributeManager.Instance.allTraits["Melee Trait"]);
-        } else if (characterClass.className == "Stalker" || characterClass.className == "Archer" || characterClass.className == "Hunter") {
-            AddTrait(AttributeManager.Instance.allTraits["Ranged Trait"]);
-        } else if (characterClass.className == "Druid" || characterClass.className == "Mage" || characterClass.className == "Shaman") {
-            AddTrait(AttributeManager.Instance.allTraits["Magic Trait"]);
-        } else if (characterClass.className == "Spinner" || characterClass.className == "Abomination") {
-            AddTrait(AttributeManager.Instance.allTraits["Melee Vulnerable"]);
-        } else if (characterClass.className == "Ravager") {
-            AddTrait(AttributeManager.Instance.allTraits["Ranged Vulnerable"]);
-        } else if (characterClass.className == "Dragon") {
-            AddTrait(AttributeManager.Instance.allTraits["Dragon Trait"]);
-        } else if (characterClass.className == "Greed") {
-            AddTrait(AttributeManager.Instance.allTraits["Greed Trait"]);
-        } else if (characterClass.className == "Lust") {
-            AddTrait(AttributeManager.Instance.allTraits["Lust Trait"]);
-        } else if (characterClass.className == "Envy") {
-            AddTrait(AttributeManager.Instance.allTraits["Envy Trait"]);
-        }
+        ////Class Name
+        //if (characterClass.className == "Knight" || characterClass.className == "Marauder" || characterClass.className == "Barbarian") {
+        //    AddTrait(AttributeManager.Instance.allTraits["Melee Trait"]);
+        //} else if (characterClass.className == "Stalker" || characterClass.className == "Archer" || characterClass.className == "Hunter") {
+        //    AddTrait(AttributeManager.Instance.allTraits["Ranged Trait"]);
+        //} else if (characterClass.className == "Druid" || characterClass.className == "Mage" || characterClass.className == "Shaman") {
+        //    AddTrait(AttributeManager.Instance.allTraits["Magic Trait"]);
+        //} else if (characterClass.className == "Spinner" || characterClass.className == "Abomination") {
+        //    AddTrait(AttributeManager.Instance.allTraits["Melee Vulnerable"]);
+        //} else if (characterClass.className == "Ravager") {
+        //    AddTrait(AttributeManager.Instance.allTraits["Ranged Vulnerable"]);
+        //} else if (characterClass.className == "Dragon") {
+        //    AddTrait(AttributeManager.Instance.allTraits["Dragon Trait"]);
+        //} else if (characterClass.className == "Greed") {
+        //    AddTrait(AttributeManager.Instance.allTraits["Greed Trait"]);
+        //} else if (characterClass.className == "Lust") {
+        //    AddTrait(AttributeManager.Instance.allTraits["Lust Trait"]);
+        //} else if (characterClass.className == "Envy") {
+        //    AddTrait(AttributeManager.Instance.allTraits["Envy Trait"]);
+        //}
 
         //Random Traits
         int chance = UnityEngine.Random.Range(0, 100);
-        if(chance < 10) {
+        if (chance < 10) {
             AddTrait(new Craftsman());
+        }
+    }
+    public void CreateInitialTraitsByRace() {
+        if (race == RACE.HUMANS) {
+            AddTrait(AttributeManager.Instance.allTraits["Beast Slayer"]);
+        } else if (race == RACE.ELVES) {
+            AddTrait(AttributeManager.Instance.allTraits["Anti Magic Aura"]);
+        } else if (race == RACE.GOBLIN) {
+            AddTrait(AttributeManager.Instance.allTraits["Soft Target"]);
+        } else if (race == RACE.FAERY) {
+            AddTrait(AttributeManager.Instance.allTraits["Melee Slayer"]);
+        } else if (race == RACE.SKELETON) {
+            AddTrait(AttributeManager.Instance.allTraits["Brittle Bones"]);
+        } else if (race == RACE.DRAGON) {
+            AddTrait(AttributeManager.Instance.allTraits["Steely Hide"]);
+        } else if (race == RACE.SPIDER) {
+            AddTrait(AttributeManager.Instance.allTraits["Faery Slayer"]);
+        } else if (race == RACE.WOLF) {
+            AddTrait(AttributeManager.Instance.allTraits["Goblin Slayer"]);
+        } else if (race == RACE.ABOMINATION) {
+            AddTrait(AttributeManager.Instance.allTraits["Elf Slayer"]);
         }
     }
     public void AddTrait(string traitName) {
@@ -2340,6 +2211,15 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         }
         return false;
+    }
+    public Trait GetTraitOf(TRAIT_EFFECT effect, TRAIT_TYPE type) {
+        for (int i = 0; i < traits.Count; i++) {
+            Trait currTrait = traits[i];
+            if (currTrait.effect == effect && currTrait.type == type) {
+                return currTrait;
+            }
+        }
+        return null;
     }
     public List<Trait> RemoveAllTraitsByType(TRAIT_TYPE traitType) {
         List<Trait> removedTraits = new List<Trait>();
@@ -2479,6 +2359,18 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return false;
     }
+    public bool HasRelationshipTraitOf(RELATIONSHIP_TRAIT relType, Faction except) {
+        for (int i = 0; i < _traits.Count; i++) {
+            if (_traits[i] is RelationshipTrait) {
+                RelationshipTrait currTrait = _traits[i] as RelationshipTrait;
+                if (currTrait.relType == relType 
+                    && currTrait.targetCharacter.faction.id != except.id) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     public void GenerateRandomTraits() {
         //All characters have a 1 in 8 chance of having Crooked trait when spawned
         if (UnityEngine.Random.Range(0, 8) < 1) {
@@ -2568,6 +2460,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
 
     #region Interaction
+    public void AddInteractionType(INTERACTION_TYPE type) {
+        currentInteractionTypes.Add(type);
+    }
+    public void RemoveInteractionType(INTERACTION_TYPE type) {
+        currentInteractionTypes.Remove(type);
+    }
     private int GetMonthInteractionTick() {
         int daysInMonth = 15; //GameManager.daysInMonth[GameManager.Instance.month]
         int remainingDaysInMonth = GameManager.Instance.continuousDays % daysInMonth;
@@ -2615,87 +2513,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             _forcedInteraction = null;
         } else {
             CharacterPersonalActions();
-
-            //if(specificLocation.id != homeArea.id) {
-            //    //Character actions away from home
-            //    WeightedDictionary<string> awayFromHomeInteractionWeights = new WeightedDictionary<string>();
-            //    awayFromHomeInteractionWeights.AddElement("DoNothing", 50);
-
-            //    if (tokenInInventory != null && tokenInInventory.npcAssociatedInteractionType != INTERACTION_TYPE.NONE && tokenInInventory.CanBeUsedBy(this) && InteractionManager.Instance.CanCreateInteraction(tokenInInventory.npcAssociatedInteractionType, this)) {
-            //        awayFromHomeInteractionWeights.AddElement(tokenInInventory.tokenName, 70);
-            //    }
-
-            //    foreach (KeyValuePair<INTERACTION_TYPE, int> kvp in CharacterManager.Instance.awayFromHomeInteractionWeights) {
-            //        if (InteractionManager.Instance.CanCreateInteraction(kvp.Key, this)) {
-            //            awayFromHomeInteractionWeights.AddElement(kvp.Key.ToString(), kvp.Value); //15
-            //        }
-            //    }
-
-            //    string result = awayFromHomeInteractionWeights.PickRandomElementGivenWeights();
-            //    if(result == "DoNothing") {
-            //    }else if (tokenInInventory != null && result == tokenInInventory.tokenName) {
-            //        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(tokenInInventory.npcAssociatedInteractionType, specificLocation);
-            //        if (interaction.type == INTERACTION_TYPE.USE_ITEM_ON_CHARACTER) {
-            //            (interaction as UseItemOnCharacter).SetItemToken(tokenInInventory);
-            //        } else if (interaction.type == INTERACTION_TYPE.USE_ITEM_ON_SELF) {
-            //            (interaction as UseItemOnSelf).SetItemToken(tokenInInventory);
-            //        } else if (interaction.type == INTERACTION_TYPE.USE_ITEM_ON_LOCATION) {
-            //            (interaction as UseItemOnLocation).SetItemToken(tokenInInventory);
-            //        }
-            //        AddInteraction(interaction);
-            //    } else {
-            //        INTERACTION_TYPE interactionType = (INTERACTION_TYPE) Enum.Parse(typeof(INTERACTION_TYPE), result);
-            //        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(interactionType, specificLocation);
-            //        AddInteraction(interaction);
-            //    }
-            //} else {
-            //    //Character actions at home
-            //    WeightedDictionary<string> atHomeInteractionWeights = new WeightedDictionary<string>();
-            //    atHomeInteractionWeights.AddElement("DoNothing", 100);
-            //    foreach (KeyValuePair<INTERACTION_TYPE, int> kvp in CharacterManager.Instance.atHomeInteractionWeights) {
-            //        if (InteractionManager.Instance.CanCreateInteraction(kvp.Key, this)) {
-            //            atHomeInteractionWeights.AddElement(kvp.Key.ToString(), kvp.Value); //15
-            //        }
-            //    }
-            //    if (tokenInInventory != null) {
-            //        if (tokenInInventory.npcAssociatedInteractionType != INTERACTION_TYPE.NONE && tokenInInventory.CanBeUsedBy(this) && InteractionManager.Instance.CanCreateInteraction(tokenInInventory.npcAssociatedInteractionType, this)) {
-            //            atHomeInteractionWeights.AddElement(tokenInInventory.tokenName, 70);
-            //        } else if(tokenInInventory.npcAssociatedInteractionType == INTERACTION_TYPE.USE_ITEM_ON_SELF) {
-            //            atHomeInteractionWeights.AddElement("ItemNotUsable", 70);
-            //        }
-            //    } else {
-            //        for (int i = 0; i < specificLocation.possibleSpecialTokenSpawns.Count; i++) {
-            //            if(specificLocation.possibleSpecialTokenSpawns[i].owner == this.faction) {
-            //                atHomeInteractionWeights.AddElement("PickUp", 70);
-            //                break;
-            //            }
-            //        }
-            //    }
-            //    string result = atHomeInteractionWeights.PickRandomElementGivenWeights();
-
-            //    if (result == "DoNothing") {
-            //    }   else if (result == "ItemNotUsable") {
-            //        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.DROP_ITEM, specificLocation);
-            //        AddInteraction(interaction);
-            //    } else if (result == "PickUp") {
-            //        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.PICK_ITEM, specificLocation);
-            //        AddInteraction(interaction);
-            //    } else if (tokenInInventory != null && result == tokenInInventory.tokenName) {
-            //        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(tokenInInventory.npcAssociatedInteractionType, specificLocation);
-            //        if (interaction.type == INTERACTION_TYPE.USE_ITEM_ON_CHARACTER) {
-            //            (interaction as UseItemOnCharacter).SetItemToken(tokenInInventory);
-            //        } else if (interaction.type == INTERACTION_TYPE.USE_ITEM_ON_SELF) {
-            //            (interaction as UseItemOnSelf).SetItemToken(tokenInInventory);
-            //        } else if (interaction.type == INTERACTION_TYPE.USE_ITEM_ON_LOCATION) {
-            //            (interaction as UseItemOnLocation).SetItemToken(tokenInInventory);
-            //        }
-            //        AddInteraction(interaction);
-            //    } else {
-            //        INTERACTION_TYPE interactionType = (INTERACTION_TYPE) Enum.Parse(typeof(INTERACTION_TYPE), result);
-            //        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(interactionType, specificLocation);
-            //        AddInteraction(interaction);
-            //    }
-            //}
         }
     }
     public void SetForcedInteraction(Interaction interaction) {
@@ -2769,18 +2586,18 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             interactionLog += "\nPOSSIBLE TARGETS:\n";
             foreach (KeyValuePair<Character, CharacterRelationshipData> kvp in relationships) {
                 if(specificLocation.id == kvp.Key.specificLocation.id && !kvp.Key.currentParty.icon.isTravelling && !kvp.Key.isDefender && kvp.Value.knownStructure.location.id == specificLocation.id) {
-                    interactionLog += kvp.Value.targetCharacter.name + "(";
                     int weight = kvp.Value.GetTotalRelationshipWeight();
-                    interactionLog += "weight: " + weight;
-                    if (kvp.Value.isCharacterMissing && kvp.Value.isCharacterLocated && !kvp.Value.HasRelationshipTrait(RELATIONSHIP_TRAIT.ENEMY)) {
-                        weight += 25;
-                        interactionLog += "+25";
+                    if (kvp.Value.isCharacterMissing && !kvp.Value.HasRelationshipTrait(RELATIONSHIP_TRAIT.ENEMY)) {
+                        if (kvp.Value.isCharacterLocated) {
+                            weight += 25;
+                        } else {
+                            weight = 0;
+                        }
                     }
-                    if (kvp.Value.encounterMultiplier > 0f) {
+                    if (kvp.Value.encounterMultiplier > 0f && weight > 0) {
                         weight = (int) (weight * kvp.Value.encounterMultiplier);
-                        interactionLog += "x" + kvp.Value.encounterMultiplier.ToString();
                     }
-                    interactionLog += "=" + weight + "), ";
+                    interactionLog += "(weight=" + weight + "), ";
                     if (weight > 0) {
                         characterWeights.AddElement(kvp.Value, weight);
                     }
