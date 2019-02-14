@@ -167,6 +167,12 @@ public class InteractionManager : MonoBehaviour {
                 actorEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.OBTAIN_SUPPLY } },
                 targetCharacterEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.DEATH } },
             } },
+            { INTERACTION_TYPE.COURTESY_CALL, new InteractionAttributes(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.DIPLOMACY },
+                alignment = INTERACTION_ALIGNMENT.NEUTRAL,
+                actorEffect = null,
+                targetCharacterEffect = null,
+            } },
             //CHARACTER NPC ACTIONS-----------------------------------------------------------------------------------------------------------------------------------------------------------------
             { INTERACTION_TYPE.MOVE_TO_RETURN_HOME, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.OTHER },
@@ -849,6 +855,12 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.CONSUME_PRISONER_ACTION:
                 createdInteraction = new ConsumePrisonerAction(interactable);
                 break;
+            case INTERACTION_TYPE.MOVE_TO_COURTESY_CALL:
+                createdInteraction = new MoveToCourtesyCall(interactable);
+                break;
+            case INTERACTION_TYPE.COURTESY_CALL:
+                createdInteraction = new CourtesyCall(interactable);
+                break;
         }
         return createdInteraction;
     }
@@ -1510,6 +1522,8 @@ public class InteractionManager : MonoBehaviour {
                     }
                 }
                 return false;
+            case INTERACTION_TYPE.MOVE_TO_COURTESY_CALL:
+                return character.faction.id != FactionManager.Instance.neutralFaction.id;
             default:
                 return true;
         }

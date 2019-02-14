@@ -48,6 +48,9 @@ public class Player : ILeader {
     public Area specificLocation {
         get { return playerArea; }
     }
+    public Area homeArea {
+        get { return playerArea; }
+    }
     public List<Token> tokens {
         get { return _tokens; }
     }

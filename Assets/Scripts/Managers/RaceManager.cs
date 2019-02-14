@@ -60,7 +60,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.MOVE_TO_HARVEST_ACTION,
                 INTERACTION_TYPE.PATROL_ACTION_FACTION,
                 INTERACTION_TYPE.MOVE_TO_EXPLORE_EVENT_FACTION,
-                //Add Courtesy Call Action
+                INTERACTION_TYPE.MOVE_TO_COURTESY_CALL,
             } },
             { RACE.GOBLIN, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_LOOT_ACTION,
