@@ -44,7 +44,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.MOVE_TO_RECRUIT_FRIEND_ACTION_FACTION,
                 INTERACTION_TYPE.MOVE_TO_SCAVENGE_EVENT_FACTION,
                 INTERACTION_TYPE.MOVE_TO_MINE_ACTION,
-                INTERACTION_TYPE.CRAFT_ITEM,
+                //INTERACTION_TYPE.CRAFT_ITEM,
                 INTERACTION_TYPE.MOVE_TO_OCCUPY_ACTION_FACTION,
                 INTERACTION_TYPE.PATROL_ACTION_FACTION,
                 INTERACTION_TYPE.MOVE_TO_EXPLORE_EVENT_FACTION,
@@ -52,7 +52,7 @@ public class RaceManager : MonoBehaviour {
             } },
             { RACE.ELVES, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_TAME_BEAST_ACTION,
-                INTERACTION_TYPE.CRAFT_ITEM,
+                //INTERACTION_TYPE.CRAFT_ITEM,
                 INTERACTION_TYPE.MOVE_TO_RECRUIT_FRIEND_ACTION_FACTION,
                 INTERACTION_TYPE.MOVE_TO_ASSASSINATE_ACTION_FACTION,
                 INTERACTION_TYPE.MOVE_TO_OCCUPY_ACTION_FACTION,
@@ -60,14 +60,14 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.MOVE_TO_HARVEST_ACTION,
                 INTERACTION_TYPE.PATROL_ACTION_FACTION,
                 INTERACTION_TYPE.MOVE_TO_EXPLORE_EVENT_FACTION,
-                //Add Courtesy Call Action
+                INTERACTION_TYPE.MOVE_TO_COURTESY_CALL,
             } },
             { RACE.GOBLIN, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_LOOT_ACTION,
                 INTERACTION_TYPE.MOVE_TO_TAME_BEAST_ACTION,
                 INTERACTION_TYPE.MOVE_TO_ABDUCT_ACTION,
                 INTERACTION_TYPE.TORTURE_ACTION,
-                INTERACTION_TYPE.CRAFT_ITEM,
+                //INTERACTION_TYPE.CRAFT_ITEM,
                 INTERACTION_TYPE.MOVE_TO_STEAL_ACTION_FACTION,
                 INTERACTION_TYPE.MOVE_TO_SCAVENGE_EVENT_FACTION,
                 INTERACTION_TYPE.MOVE_TO_RAID_EVENT_FACTION,
@@ -75,7 +75,7 @@ public class RaceManager : MonoBehaviour {
                 //Add Gift Beast Action
             } },
             { RACE.FAERY, new INTERACTION_TYPE[] {
-                INTERACTION_TYPE.CRAFT_ITEM,
+                //INTERACTION_TYPE.CRAFT_ITEM,
                 INTERACTION_TYPE.MOVE_TO_CHARM_ACTION_FACTION,
                 INTERACTION_TYPE.MOVE_TO_STEAL_ACTION_FACTION,
                 INTERACTION_TYPE.MOVE_TO_OCCUPY_ACTION_FACTION,
@@ -90,7 +90,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.MOVE_TO_SCAVENGE_EVENT_FACTION,
                 INTERACTION_TYPE.MOVE_TO_OCCUPY_ACTION_FACTION,
                 INTERACTION_TYPE.PATROL_ACTION_FACTION,
-                //Add Consume Prisoner Action
+                INTERACTION_TYPE.CONSUME_PRISONER_ACTION,
             } },
             { RACE.SPIDER, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_ABDUCT_ACTION,

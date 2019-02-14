@@ -7,14 +7,10 @@ public class TortureAction : Interaction {
     private Character _targetCharacter;
 
     private const string Start = "Start";
-    private const string Persuade_Success = "Persuade Success";
-    private const string Persuade_Character_Tortured_Died = "Persuade Character Tortured Died";
-    private const string Persuade_Character_Tortured_Injured = "Persuade Character Tortured Injured";
-    private const string Persuade_Character_Tortured_Recruited = "Persuade Character Tortured Recruited";
-    private const string Persuade_Critical_Fail = "Persuade Critical Fail";
-    private const string Character_Tortured_Died = "Character Tortured Died";
-    private const string Character_Tortured_Injured = "Character Tortured Injured";
-    private const string Character_Tortured_Recruited = "Character Tortured Recruited";
+    private const string Target_Tortured_Died = "Target Tortured Died";
+    private const string Target_Tortured_Injured = "Target Tortured Injured";
+    private const string Target_Tortured_Recruited = "Target Tortured Recruited";
+    private const string Target_Missing = "Target Missing";
 
     public override Character targetCharacter {
         get { return _targetCharacter; }
@@ -26,8 +22,6 @@ public class TortureAction : Interaction {
 
     public TortureAction(Area interactable): base(interactable, INTERACTION_TYPE.TORTURE_ACTION, 0) {
         _name = "Torture Action";
-        //_categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT };
-        //_alignment = INTERACTION_ALIGNMENT.EVIL;
     }
 
     #region Override
@@ -37,14 +31,10 @@ public class TortureAction : Interaction {
         }
 
         InteractionState startState = new InteractionState(Start, this);
-        InteractionState persuadeSuccess = new InteractionState(Persuade_Success, this);
-        InteractionState persuadeCharacterDied = new InteractionState(Persuade_Character_Tortured_Died, this);
-        InteractionState persuadeCharacterInjured = new InteractionState(Persuade_Character_Tortured_Injured, this);
-        InteractionState persuadeCharacterRecruited = new InteractionState(Persuade_Character_Tortured_Recruited, this);
-        InteractionState persuadeCriticalFail = new InteractionState(Persuade_Critical_Fail, this);
-        InteractionState characterDied = new InteractionState(Character_Tortured_Died, this);
-        InteractionState characterInjured = new InteractionState(Character_Tortured_Injured, this);
-        InteractionState characterRecruited = new InteractionState(Character_Tortured_Recruited, this);
+        InteractionState targetTorturedDied = new InteractionState(Target_Tortured_Died, this);
+        InteractionState targetTorturedInjured = new InteractionState(Target_Tortured_Injured, this);
+        InteractionState targetTorturedRecruited = new InteractionState(Target_Tortured_Recruited, this);
+        InteractionState targetMissing = new InteractionState(Target_Missing, this);
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description", this);
         startStateDescriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -53,48 +43,27 @@ public class TortureAction : Interaction {
         CreateActionOptions(startState);
 
         startState.SetEffect(() => StartEffect(startState), false);
-
-        persuadeSuccess.SetEffect(() => PersuadeSuccessEffect(persuadeSuccess));
-        persuadeCharacterDied.SetEffect(() => PersuadeCharacterDiedEffect(persuadeCharacterDied));
-        persuadeCharacterInjured.SetEffect(() => PersuadeCharacterInjuredEffect(persuadeCharacterInjured));
-        persuadeCharacterRecruited.SetEffect(() => PersuadeCharacterRecruitedEffect(persuadeCharacterRecruited));
-        persuadeCriticalFail.SetEffect(() => PersuadeCritFailEffect(persuadeCriticalFail));
-
-        characterDied.SetEffect(() => CharacterDiedEffect(characterDied));
-        characterInjured.SetEffect(() => CharacterInjuredEffect(characterInjured));
-        characterRecruited.SetEffect(() => CharacterRecruitedEffect(characterRecruited));
+        targetTorturedDied.SetEffect(() => TargetDiedEffect(targetTorturedDied));
+        targetTorturedInjured.SetEffect(() => TargetInjuredEffect(targetTorturedInjured));
+        targetTorturedRecruited.SetEffect(() => TargetRecruitedEffect(targetTorturedRecruited));
+        targetMissing.SetEffect(() => TargetMissingEffect(targetMissing));
 
         _states.Add(startState.name, startState);
-
-        _states.Add(persuadeSuccess.name, persuadeSuccess);
-        _states.Add(persuadeCharacterDied.name, persuadeCharacterDied);
-        _states.Add(persuadeCharacterInjured.name, persuadeCharacterInjured);
-        _states.Add(persuadeCharacterRecruited.name, persuadeCharacterRecruited);
-        _states.Add(persuadeCriticalFail.name, persuadeCriticalFail);
-
-        _states.Add(characterDied.name, characterDied);
-        _states.Add(characterInjured.name, characterInjured);
-        _states.Add(characterRecruited.name, characterRecruited);
+        _states.Add(targetTorturedDied.name, targetTorturedDied);
+        _states.Add(targetTorturedInjured.name, targetTorturedInjured);
+        _states.Add(targetTorturedRecruited.name, targetTorturedRecruited);
+        _states.Add(targetMissing.name, targetMissing);
 
         SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {
-            ActionOption persuade = new ActionOption {
-                interactionState = state,
-                cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
-                name = "Prevent " + Utilities.GetPronounString(_characterInvolved.gender, PRONOUN_TYPE.OBJECTIVE, false) + " from torturing " + _targetCharacter.name + ".",
-                effect = () => PersuadeOptionEffect(),
-                jobNeeded = JOB.DEBILITATOR,
-                disabledTooltipText = "Minion must be a Dissuader",
-            };
             ActionOption doNothing = new ActionOption {
                 interactionState = state,
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Do nothing.",
                 effect = () => DoNothingOptionEffect(),
             };
-            state.AddActionOption(persuade);
             state.AddActionOption(doNothing);
             state.SetDefaultOption(doNothing);
         }
@@ -114,30 +83,18 @@ public class TortureAction : Interaction {
     #endregion
 
     #region Option Effect
-    private void PersuadeOptionEffect() {
-        WeightedDictionary<string> effectWeights = new WeightedDictionary<string>();
-        effectWeights.AddElement(Persuade_Success, investigatorCharacter.job.GetSuccessRate());
-        effectWeights.AddElement("Fail", investigatorCharacter.job.GetFailRate());
-        effectWeights.AddElement(Persuade_Critical_Fail, investigatorCharacter.job.GetCritFailRate());
-
-        string result = effectWeights.PickRandomElementGivenWeights();
-        if (result == "Fail") {
-            effectWeights.Clear();
-            effectWeights.AddElement(Persuade_Character_Tortured_Died, 10);
-            effectWeights.AddElement(Persuade_Character_Tortured_Injured, 40);
-            effectWeights.AddElement(Persuade_Character_Tortured_Recruited, 20);
-            result = effectWeights.PickRandomElementGivenWeights();
-        }
-        SetCurrentState(_states[result]);
-    }
     private void DoNothingOptionEffect() {
-        WeightedDictionary<string> effectWeights = new WeightedDictionary<string>();
-        effectWeights.AddElement(Character_Tortured_Died, 10);
-        effectWeights.AddElement(Character_Tortured_Injured, 40);
-        effectWeights.AddElement(Character_Tortured_Recruited, 20);
+        if (_characterInvolved.currentStructure == _targetCharacter.currentStructure) {
+            WeightedDictionary<string> effectWeights = new WeightedDictionary<string>();
+            effectWeights.AddElement(Target_Tortured_Died, 10);
+            effectWeights.AddElement(Target_Tortured_Injured, 40);
+            effectWeights.AddElement(Target_Tortured_Recruited, 20);
 
-        string result = effectWeights.PickRandomElementGivenWeights();
-        SetCurrentState(_states[result]);
+            string result = effectWeights.PickRandomElementGivenWeights();
+            SetCurrentState(_states[result]);
+        } else {
+            SetCurrentState(_states[Target_Missing]);
+        }
     }
     #endregion
 
@@ -146,65 +103,21 @@ public class TortureAction : Interaction {
         _targetStructure = _targetCharacter.currentStructure;
         _characterInvolved.MoveToAnotherStructure(_targetStructure);
     }
-    private void PersuadeSuccessEffect(InteractionState state) {
-        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-
-        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
-
-        //investigatorCharacter.LevelUp();
-    }
-    private void PersuadeCharacterDiedEffect(InteractionState state) {
+    private void TargetDiedEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
         _targetCharacter.Death();
     }
-    private void PersuadeCharacterInjuredEffect(InteractionState state) {
+    private void TargetInjuredEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
         _targetCharacter.AddTrait(AttributeManager.Instance.allTraits["Injured"]);
     }
-    private void PersuadeCharacterRecruitedEffect(InteractionState state) {
-        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-
-        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
-
-        //_characterInvolved.LevelUp();
-
-        Abducted abductedTrait = _targetCharacter.GetTrait("Abducted") as Abducted;
-        _targetCharacter.RemoveTrait(abductedTrait);
-        _targetCharacter.ChangeFactionTo(_characterInvolved.faction);
-    }
-    private void PersuadeCritFailEffect(InteractionState state) {
-        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        state.descriptionLog.AddToFillers(investigatorCharacter, investigatorCharacter.name, LOG_IDENTIFIER.MINION_1);
-
-        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
-        state.AddLogFiller(new LogFiller(investigatorCharacter, investigatorCharacter.name, LOG_IDENTIFIER.MINION_1));
-
-        AdjustFactionsRelationship(PlayerManager.Instance.player.playerFaction, _characterInvolved.faction, -1, state);
-
-        _targetCharacter.Death();
-        investigatorCharacter.Death();
-    }
-    private void CharacterDiedEffect(InteractionState state) {
-        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-
-        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
-
-        _targetCharacter.Death();
-    }
-    private void CharacterInjuredEffect(InteractionState state) {
-        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-
-        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
-
-        _targetCharacter.AddTrait(AttributeManager.Instance.allTraits["Injured"]);
-    }
-    private void CharacterRecruitedEffect(InteractionState state) {
+    private void TargetRecruitedEffect(InteractionState state) {
         //_characterInvolved.LevelUp();
 
         Abducted abductedTrait = _targetCharacter.GetTrait("Abducted") as Abducted;
@@ -216,13 +129,19 @@ public class TortureAction : Interaction {
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
         state.AddLogFiller(new LogFiller(_targetCharacter.faction, _targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_1));
     }
+    private void TargetMissingEffect(InteractionState state) {
+        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+    }
     #endregion
 
     public Character GetTargetCharacter(Character characterInvolved) {
         WeightedDictionary<Character> characterWeights = new WeightedDictionary<Character>();
         for (int i = 0; i < interactable.charactersAtLocation.Count; i++) {
             Character currCharacter = interactable.charactersAtLocation[i];
-            if (currCharacter.id != characterInvolved.id && !currCharacter.currentParty.icon.isTravelling && currCharacter.IsInOwnParty() && currCharacter.GetTrait("Abducted") != null) {
+            if (currCharacter.id != characterInvolved.id && !currCharacter.currentParty.icon.isTravelling && currCharacter.IsInOwnParty()
+                && currCharacter.currentStructure.structureType == STRUCTURE_TYPE.WORK_AREA && currCharacter.GetTrait("Abducted") != null) {
                 int weight = 0;
                 if (currCharacter.faction == FactionManager.Instance.neutralFaction) {
                     weight += 80;

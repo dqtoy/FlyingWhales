@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FirstAidAction : Interaction {
+public class CourtesyCall : Interaction {
     private const string Start = "Start";
-    private const string First_Aid_Success = "First Aid Success";
-    private const string First_Aid_Fail = "First Aid Fail";
-    private const string First_Aid_Critical_Fail = "First Aid Critical Fail";
+    private const string Courtesy_Call_Success = "Courtesy Call Success";
+    private const string Courtesy_Call_Fail = "Courtesy Call Fail";
     private const string Target_Missing = "Target Missing";
 
     private Character _targetCharacter;
@@ -15,16 +14,15 @@ public class FirstAidAction : Interaction {
         get { return _targetCharacter; }
     }
 
-    public FirstAidAction(Area interactable): base(interactable, INTERACTION_TYPE.FIRST_AID_ACTION, 0) {
-        _name = "First Aid Action";
+    public CourtesyCall(Area interactable): base(interactable, INTERACTION_TYPE.COURTESY_CALL, 0) {
+        _name = "Courtesy Call";
     }
 
     #region Override
     public override void CreateStates() {
         InteractionState startState = new InteractionState(Start, this);
-        InteractionState firstAidSuccess = new InteractionState(First_Aid_Success, this);
-        InteractionState firstAidFail = new InteractionState(First_Aid_Fail, this);
-        InteractionState firstAidCritFail = new InteractionState(First_Aid_Critical_Fail, this);
+        InteractionState courtesyCallSuccess = new InteractionState(Courtesy_Call_Success, this);
+        InteractionState courtesyCallFail = new InteractionState(Courtesy_Call_Fail, this);
         InteractionState targetMissing = new InteractionState(Target_Missing, this);
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description", this);
@@ -34,15 +32,13 @@ public class FirstAidAction : Interaction {
         CreateActionOptions(startState);
 
         startState.SetEffect(() => StartEffect(startState), false);
-        firstAidSuccess.SetEffect(() => FirstAidSuccessEffect(firstAidSuccess));
-        firstAidFail.SetEffect(() => FirstAidFailEffect(firstAidFail));
-        firstAidCritFail.SetEffect(() => FirstAidCritFailEffect(firstAidCritFail));
+        courtesyCallSuccess.SetEffect(() => CourtesyCallSuccessEffect(courtesyCallSuccess));
+        courtesyCallFail.SetEffect(() => CourtesyCallFailEffect(courtesyCallFail));
         targetMissing.SetEffect(() => TargetMissingEffect(targetMissing));
 
         _states.Add(startState.name, startState);
-        _states.Add(firstAidSuccess.name, firstAidSuccess);
-        _states.Add(firstAidFail.name, firstAidFail);
-        _states.Add(firstAidCritFail.name, firstAidCritFail);
+        _states.Add(courtesyCallSuccess.name, courtesyCallSuccess);
+        _states.Add(courtesyCallFail.name, courtesyCallFail);
         _states.Add(targetMissing.name, targetMissing);
 
         SetCurrentState(startState);
@@ -74,9 +70,8 @@ public class FirstAidAction : Interaction {
     private void DoNothingOptionEffect() {
         if (_characterInvolved.currentStructure == _targetCharacter.currentStructure) {
             WeightedDictionary<string> resultWeights = new WeightedDictionary<string>();
-            resultWeights.AddElement(First_Aid_Success, 30);
-            resultWeights.AddElement(First_Aid_Fail, 10);
-            resultWeights.AddElement(First_Aid_Critical_Fail, 3);
+            resultWeights.AddElement(Courtesy_Call_Success, _characterInvolved.job.GetSuccessRate());
+            resultWeights.AddElement(Courtesy_Call_Fail, _characterInvolved.job.GetFailRate());
             string result = resultWeights.PickRandomElementGivenWeights();
             SetCurrentState(_states[result]);
         } else {
@@ -87,31 +82,23 @@ public class FirstAidAction : Interaction {
 
     #region State Effects
     private void StartEffect(InteractionState state) {
-        CharacterRelationshipData characterRelationshipData = _characterInvolved.GetCharacterRelationshipData(_targetCharacter);
-        if (characterRelationshipData != null) {
-            _characterInvolved.MoveToAnotherStructure(characterRelationshipData.knownStructure);
+        _characterInvolved.MoveToAnotherStructure(_targetCharacter.homeStructure);
+    }
+    private void CourtesyCallSuccessEffect(InteractionState state) {
+        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+
+        if(_characterInvolved.faction.id != _targetCharacter.faction.id && !_characterInvolved.isFactionless && !_targetCharacter.isFactionless) {
+            AdjustFactionsRelationship(_characterInvolved.faction, _targetCharacter.faction, 1, state);
+        } else {
+            throw new System.Exception("CAN'T DO COURTESY CALL: " + _characterInvolved.name + " of " + _characterInvolved.faction.name + " to " + _targetCharacter.name + " of " + _targetCharacter.faction.name);
         }
     }
-    private void FirstAidSuccessEffect(InteractionState state) {
+    private void CourtesyCallFailEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
-
-        if (!_targetCharacter.RemoveTrait("Unconscious")) {
-            _targetCharacter.RemoveTrait("Sick");
-        }
-    }
-    private void FirstAidFailEffect(InteractionState state) {
-        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-
-        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
-    }
-    private void FirstAidCritFailEffect(InteractionState state) {
-        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-
-        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
-
-        _targetCharacter.Death();
     }
     private void TargetMissingEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);

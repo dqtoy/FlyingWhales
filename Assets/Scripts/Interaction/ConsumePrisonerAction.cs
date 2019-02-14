@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FirstAidAction : Interaction {
+public class ConsumePrisonerAction : Interaction {
     private const string Start = "Start";
-    private const string First_Aid_Success = "First Aid Success";
-    private const string First_Aid_Fail = "First Aid Fail";
-    private const string First_Aid_Critical_Fail = "First Aid Critical Fail";
+    private const string Character_Consumed = "Character Consumed";
     private const string Target_Missing = "Target Missing";
 
     private Character _targetCharacter;
@@ -15,16 +13,18 @@ public class FirstAidAction : Interaction {
         get { return _targetCharacter; }
     }
 
-    public FirstAidAction(Area interactable): base(interactable, INTERACTION_TYPE.FIRST_AID_ACTION, 0) {
-        _name = "First Aid Action";
+    public ConsumePrisonerAction(Area interactable) : base(interactable, INTERACTION_TYPE.CONSUME_PRISONER_ACTION, 0) {
+        _name = "Consume Prisoner Action";
     }
 
     #region Override
     public override void CreateStates() {
+        if (_targetCharacter == null) {
+            SetTargetCharacter(GetTargetCharacter(_characterInvolved));
+        }
+
         InteractionState startState = new InteractionState(Start, this);
-        InteractionState firstAidSuccess = new InteractionState(First_Aid_Success, this);
-        InteractionState firstAidFail = new InteractionState(First_Aid_Fail, this);
-        InteractionState firstAidCritFail = new InteractionState(First_Aid_Critical_Fail, this);
+        InteractionState characterConsumed = new InteractionState(Character_Consumed, this);
         InteractionState targetMissing = new InteractionState(Target_Missing, this);
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description", this);
@@ -34,15 +34,11 @@ public class FirstAidAction : Interaction {
         CreateActionOptions(startState);
 
         startState.SetEffect(() => StartEffect(startState), false);
-        firstAidSuccess.SetEffect(() => FirstAidSuccessEffect(firstAidSuccess));
-        firstAidFail.SetEffect(() => FirstAidFailEffect(firstAidFail));
-        firstAidCritFail.SetEffect(() => FirstAidCritFailEffect(firstAidCritFail));
+        characterConsumed.SetEffect(() => CharacterConsumedEffect(characterConsumed));
         targetMissing.SetEffect(() => TargetMissingEffect(targetMissing));
 
         _states.Add(startState.name, startState);
-        _states.Add(firstAidSuccess.name, firstAidSuccess);
-        _states.Add(firstAidFail.name, firstAidFail);
-        _states.Add(firstAidCritFail.name, firstAidCritFail);
+        _states.Add(characterConsumed.name, characterConsumed);
         _states.Add(targetMissing.name, targetMissing);
 
         SetCurrentState(startState);
@@ -61,6 +57,9 @@ public class FirstAidAction : Interaction {
     }
     public override bool CanInteractionBeDoneBy(Character character) {
         if (_targetCharacter == null) {
+            SetTargetCharacter(GetTargetCharacter(character));
+        }
+        if (_targetCharacter == null) {
             return false;
         }
         return base.CanInteractionBeDoneBy(character);
@@ -73,12 +72,7 @@ public class FirstAidAction : Interaction {
     #region Option Effect
     private void DoNothingOptionEffect() {
         if (_characterInvolved.currentStructure == _targetCharacter.currentStructure) {
-            WeightedDictionary<string> resultWeights = new WeightedDictionary<string>();
-            resultWeights.AddElement(First_Aid_Success, 30);
-            resultWeights.AddElement(First_Aid_Fail, 10);
-            resultWeights.AddElement(First_Aid_Critical_Fail, 3);
-            string result = resultWeights.PickRandomElementGivenWeights();
-            SetCurrentState(_states[result]);
+            SetCurrentState(_states[Character_Consumed]);
         } else {
             SetCurrentState(_states[Target_Missing]);
         }
@@ -87,30 +81,18 @@ public class FirstAidAction : Interaction {
 
     #region State Effects
     private void StartEffect(InteractionState state) {
-        CharacterRelationshipData characterRelationshipData = _characterInvolved.GetCharacterRelationshipData(_targetCharacter);
-        if (characterRelationshipData != null) {
-            _characterInvolved.MoveToAnotherStructure(characterRelationshipData.knownStructure);
-        }
+        _characterInvolved.MoveToAnotherStructure(_targetCharacter.currentStructure);
     }
-    private void FirstAidSuccessEffect(InteractionState state) {
+    private void CharacterConsumedEffect(InteractionState state) {
+        int supplyObtained = UnityEngine.Random.Range(35, 76);
+
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.descriptionLog.AddToFillers(null, supplyObtained.ToString(), LOG_IDENTIFIER.STRING_1);
 
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(null, supplyObtained.ToString(), LOG_IDENTIFIER.STRING_1));
 
-        if (!_targetCharacter.RemoveTrait("Unconscious")) {
-            _targetCharacter.RemoveTrait("Sick");
-        }
-    }
-    private void FirstAidFailEffect(InteractionState state) {
-        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-
-        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
-    }
-    private void FirstAidCritFailEffect(InteractionState state) {
-        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-
-        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
-
+        _characterInvolved.homeArea.AdjustSuppliesInBank(supplyObtained);
         _targetCharacter.Death();
     }
     private void TargetMissingEffect(InteractionState state) {
@@ -119,4 +101,22 @@ public class FirstAidAction : Interaction {
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     #endregion
+
+    private Character GetTargetCharacter(Character characterInvolved) {
+        List<Character> characterChoices = new List<Character>();
+        List<LocationStructure> insideSettlements = characterInvolved.specificLocation.GetStructuresAtLocation(true);
+        for (int i = 0; i < insideSettlements.Count; i++) {
+            LocationStructure currStructure = insideSettlements[i];
+            for (int j = 0; j < currStructure.charactersHere.Count; j++) {
+                Character currCharacter = currStructure.charactersHere[j];
+                if (currCharacter.id != characterInvolved.id && currCharacter.GetTraitOr("Abducted", "Restrained") != null) {
+                    characterChoices.Add(currCharacter);
+                }
+            }
+        }
+        if (characterChoices.Count > 0) {
+            return characterChoices[UnityEngine.Random.Range(0, characterChoices.Count)];
+        }
+        return null;
+    }
 }
