@@ -376,7 +376,7 @@ public class Faction {
         //kill all characters in faction and un own all areas
         List<Character> remainingCharacters = new List<Character>(characters);
         for (int i = 0; i < remainingCharacters.Count; i++) {
-            remainingCharacters[i].Death();
+            remainingCharacters[i].ChangeFactionTo(FactionManager.Instance.neutralFaction);
         }
         List<Area> areasToUnown = new List<Area>(ownedAreas);
         for (int i = 0; i < areasToUnown.Count; i++) {
