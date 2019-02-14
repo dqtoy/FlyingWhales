@@ -61,7 +61,7 @@ public class InteractionManager : MonoBehaviour {
                 targetCharacterEffect = null,
             } },
             { INTERACTION_TYPE.TORTURE_ACTION, new InteractionAttributes(){
-                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.OFFENSE },
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.RECRUITMENT },
                 alignment = INTERACTION_ALIGNMENT.EVIL,
                 actorEffect = null,
                 targetCharacterEffect = new InteractionCharacterEffect[]{
@@ -1188,7 +1188,8 @@ public class InteractionManager : MonoBehaviour {
                 //if (character.race == RACE.GOBLIN || character.race == RACE.HUMANS || character.race == RACE.SKELETON) {
                     for (int i = 0; i < character.specificLocation.charactersAtLocation.Count; i++) {
                         Character characterAtLocation = character.specificLocation.charactersAtLocation[i];
-                        if (characterAtLocation.id != character.id && !characterAtLocation.currentParty.icon.isTravelling && characterAtLocation.IsInOwnParty() && characterAtLocation.GetTrait("Abducted") != null) {
+                        if (characterAtLocation.id != character.id && !characterAtLocation.currentParty.icon.isTravelling && characterAtLocation.IsInOwnParty() 
+                        && characterAtLocation.currentStructure.structureType == STRUCTURE_TYPE.WORK_AREA && characterAtLocation.GetTrait("Abducted") != null) {
                             return true;
                         }
                     }
