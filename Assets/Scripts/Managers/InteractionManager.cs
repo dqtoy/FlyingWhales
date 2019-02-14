@@ -341,6 +341,18 @@ public class InteractionManager : MonoBehaviour {
                     new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_REMOVE, effectString = "Sick" },
                 },
             } },
+            { INTERACTION_TYPE.PROTECT_ACTION, new InteractionAttributes(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.OTHER },
+                alignment = INTERACTION_ALIGNMENT.NEUTRAL,
+                actorEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_REMOVE, effectString = "Patrolling" } },
+                targetCharacterEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_REMOVE, effectString = "Protected" } },
+            } },
+            { INTERACTION_TYPE.LOCATE_MISSING, new InteractionAttributes(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.SOCIAL },
+                alignment = INTERACTION_ALIGNMENT.NEUTRAL,
+                actorEffect = null,
+                targetCharacterEffect = null,
+            } },
         };
     }
     public InteractionAttributes GetCategoryAndAlignment (INTERACTION_TYPE type, Character actor) {
@@ -820,6 +832,12 @@ public class InteractionManager : MonoBehaviour {
                 break;
             case INTERACTION_TYPE.FIRST_AID_ACTION:
                 createdInteraction = new FirstAidAction(interactable);
+                break;
+            case INTERACTION_TYPE.PROTECT_ACTION:
+                createdInteraction = new ProtectAction(interactable);
+                break;
+            case INTERACTION_TYPE.LOCATE_MISSING:
+                createdInteraction = new LocateMissing(interactable);
                 break;
         }
         return createdInteraction;
@@ -1459,6 +1477,16 @@ public class InteractionManager : MonoBehaviour {
                     && character.specificLocation.id == character.GetCharacterRelationshipData(targetCharacter).knownStructure.location.id;
             case INTERACTION_TYPE.FIRST_AID_ACTION:
                 return targetCharacter.GetTraitOr("Unconscious", "Sick") != null;
+            case INTERACTION_TYPE.PROTECT_ACTION:
+                if(targetCharacter.currentStructure.isInside && targetCharacter.GetTrait("Protected") != null) {
+                    if(character.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR, RELATIONSHIP_TRAIT.MASTER)) {
+                        return true;
+                    }
+                }
+                return false;
+            case INTERACTION_TYPE.LOCATE_MISSING:
+                CharacterRelationshipData relationshipData = character.GetCharacterRelationshipData(targetCharacter);
+                return relationshipData != null && relationshipData.isCharacterMissing && relationshipData.isCharacterLocated && !relationshipData.HasRelationshipTrait(RELATIONSHIP_TRAIT.ENEMY);
             default:
                 return true;
         }

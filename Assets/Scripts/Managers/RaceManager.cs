@@ -290,6 +290,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION,
                 INTERACTION_TYPE.FIRST_AID_ACTION,
                 INTERACTION_TYPE.EAT_DEFENSELESS,
+                INTERACTION_TYPE.PROTECT_ACTION,
+                INTERACTION_TYPE.LOCATE_MISSING,
             } },
             { RACE.ELVES, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -315,6 +317,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION,
                 INTERACTION_TYPE.FIRST_AID_ACTION,
                 INTERACTION_TYPE.EAT_DEFENSELESS,
+                INTERACTION_TYPE.PROTECT_ACTION,
+                INTERACTION_TYPE.LOCATE_MISSING,
             } },
             { RACE.GOBLIN, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -340,6 +344,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION,
                 INTERACTION_TYPE.FIRST_AID_ACTION,
                 INTERACTION_TYPE.EAT_DEFENSELESS,
+                INTERACTION_TYPE.PROTECT_ACTION,
+                INTERACTION_TYPE.LOCATE_MISSING,
             } },
             { RACE.FAERY, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -365,6 +371,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION,
                 INTERACTION_TYPE.FIRST_AID_ACTION,
                 INTERACTION_TYPE.EAT_DEFENSELESS,
+                INTERACTION_TYPE.PROTECT_ACTION,
+                INTERACTION_TYPE.LOCATE_MISSING,
             } },
             { RACE.SKELETON, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -390,6 +398,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION,
                 INTERACTION_TYPE.FIRST_AID_ACTION,
                 INTERACTION_TYPE.EAT_DEFENSELESS,
+                INTERACTION_TYPE.PROTECT_ACTION,
+                INTERACTION_TYPE.LOCATE_MISSING,
             } },
             { RACE.SPIDER, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -415,6 +425,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION,
                 INTERACTION_TYPE.FIRST_AID_ACTION,
                 INTERACTION_TYPE.EAT_DEFENSELESS,
+                INTERACTION_TYPE.PROTECT_ACTION,
+                INTERACTION_TYPE.LOCATE_MISSING,
             } },
             { RACE.WOLF, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -440,6 +452,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION,
                 INTERACTION_TYPE.FIRST_AID_ACTION,
                 INTERACTION_TYPE.EAT_DEFENSELESS,
+                INTERACTION_TYPE.PROTECT_ACTION,
+                INTERACTION_TYPE.LOCATE_MISSING,
             } },
             { RACE.DRAGON, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -465,6 +479,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION,
                 INTERACTION_TYPE.FIRST_AID_ACTION,
                 INTERACTION_TYPE.EAT_DEFENSELESS,
+                INTERACTION_TYPE.PROTECT_ACTION,
+                INTERACTION_TYPE.LOCATE_MISSING,
             } },
         };
     }

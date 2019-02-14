@@ -1611,6 +1611,39 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return false;
     }
+    public bool HasRelationshipOfTypeWith(Character character, RELATIONSHIP_TRAIT relType) {
+        if (relationships.ContainsKey(character)) {
+            for (int i = 0; i < relationships[character].rels.Count; i++) {
+                RelationshipTrait currTrait = relationships[character].rels[i];
+                if (currTrait.relType == relType) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    public bool HasRelationshipOfTypeWith(Character character, RELATIONSHIP_TRAIT relType1, RELATIONSHIP_TRAIT relType2) {
+        if (relationships.ContainsKey(character)) {
+            for (int i = 0; i < relationships[character].rels.Count; i++) {
+                RelationshipTrait currTrait = relationships[character].rels[i];
+                if (currTrait.relType == relType1 || currTrait.relType == relType2) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    public bool HasRelationshipOfTypeWith(Character character, RELATIONSHIP_TRAIT relType1, RELATIONSHIP_TRAIT relType2, RELATIONSHIP_TRAIT relType3) {
+        if (relationships.ContainsKey(character)) {
+            for (int i = 0; i < relationships[character].rels.Count; i++) {
+                RelationshipTrait currTrait = relationships[character].rels[i];
+                if (currTrait.relType == relType1 || currTrait.relType == relType2 || currTrait.relType == relType3) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     public CharacterRelationshipData GetCharacterRelationshipData(Character character) {
         if (relationships.ContainsKey(character)) {
             return relationships[character];
