@@ -1,14 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 using UnityEngine.UI;
 
-public class LocationGridTile : MonoBehaviour {
+public class LocationGridTile {
 
     public enum Tile_Type { Empty, Wall, Structure, Gate }
 
-    public int xCoordinate { get; private set; }
-    public int yCoordinate { get; private set; }
+    public Tilemap parentMap { get; private set; }
+    public Vector3Int localPlace { get; private set; }
+    public Vector3 worldLocation { get; private set; }
     public bool isInside { get; private set; }
     public Tile_Type tileType { get; private set; }
 
@@ -17,15 +19,18 @@ public class LocationGridTile : MonoBehaviour {
 
     public Dictionary<TileNeighbourDirection, LocationGridTile> neighbours;
 
-    public void Init(int x, int y) {
-        xCoordinate = x;
-        yCoordinate = y;
-        name = x.ToString() + ", " + y.ToString();
+    public LocationGridTile(int x, int y, Tilemap tilemap) {
+        parentMap = tilemap;
+        localPlace = new Vector3Int(x, y, 0);
+        worldLocation = tilemap.CellToWorld(localPlace);
+        //xCoordinate = x;
+        //yCoordinate = y;
+        //name = x.ToString() + ", " + y.ToString();
     }
 
     public void FindNeighbours(LocationGridTile[,] map) {
         neighbours = new Dictionary<TileNeighbourDirection, LocationGridTile>();
-        Point thisPoint = new Point(xCoordinate, yCoordinate);
+        Point thisPoint = new Point(localPlace.x, localPlace.y);
         foreach (KeyValuePair<TileNeighbourDirection, Point> kvp in possibleExits) {
             TileNeighbourDirection currDir = kvp.Key;
             Point exit = kvp.Value;
@@ -61,7 +66,7 @@ public class LocationGridTile : MonoBehaviour {
         this.tileType = tileType;
         switch (tileType) {
             case Tile_Type.Wall:
-                UpdateWallVisual(true);
+                //UpdateWallVisual(true);
                 break;
             default:
                 break;

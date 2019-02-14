@@ -71,7 +71,7 @@ public class GridTownGenerator : MonoBehaviour {
                 GameObject obj = Instantiate(tilePrefab, gridParent);
                 obj.transform.localPosition = new Vector3(x * cellSize, y * cellSize);
                 LocationGridTile tile = obj.GetComponent<LocationGridTile>();
-                tile.Init(x, y);
+                //tile.Init(x, y);
                 map[x, y] = tile;
                 allTiles.Add(tile);
             }
@@ -117,15 +117,15 @@ public class GridTownGenerator : MonoBehaviour {
         
         for (int i = 0; i < allTiles.Count; i++) {
             LocationGridTile currTile = allTiles[i];
-            if (xOutRange.IsInRange(currTile.xCoordinate) && yOutRange.IsInRange(currTile.yCoordinate)) {
-                //outside
-                currTile.SetIsInside(false);
-                outsideTiles.Add(currTile);
-            } else {
-                //inside
-                currTile.SetIsInside(true);
-                insideTiles.Add(currTile);
-            }
+            //if (xOutRange.IsInRange(currTile.xCoordinate) && yOutRange.IsInRange(currTile.yCoordinate)) {
+            //    //outside
+            //    currTile.SetIsInside(false);
+            //    outsideTiles.Add(currTile);
+            //} else {
+            //    //inside
+            //    currTile.SetIsInside(true);
+            //    insideTiles.Add(currTile);
+            //}
         }
     }
     private void ConstructWalls() {
