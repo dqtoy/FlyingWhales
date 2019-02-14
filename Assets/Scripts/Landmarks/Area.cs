@@ -54,6 +54,7 @@ public class Area {
     public Dictionary<STRUCTURE_TYPE, List<LocationStructure>> structures { get; private set; }
     public int dungeonSupplyRangeMin { get; private set; }
     public int dungeonSupplyRangeMax { get; private set; }
+    public AreaInnerTileMap areaMap { get; private set; }
 
     //misc
     public Sprite locationPortrait { get; private set; }
@@ -1755,6 +1756,19 @@ public class Area {
         }
         return structures;
     }
+    public Dictionary<STRUCTURE_TYPE, List<LocationStructure>> GetStructures(bool inside) {
+        Dictionary<STRUCTURE_TYPE, List<LocationStructure>> structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
+        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp in this.structures) {
+            structures.Add(kvp.Key, new List<LocationStructure>());
+            for (int i = 0; i < kvp.Value.Count; i++) {
+                LocationStructure currStructure = kvp.Value[i];
+                if (currStructure.isInside == inside) {
+                    structures[kvp.Key].Add(currStructure);
+                }
+            }
+        }
+        return structures;
+    }
     public bool HasStructure(STRUCTURE_TYPE type) {
         return structures.ContainsKey(type);
     }
@@ -1767,6 +1781,9 @@ public class Area {
     }
     public void SetDungeonSupplyMaxRange(int max) {
         dungeonSupplyRangeMax = max;
+    }
+    public void SetAreaMap(AreaInnerTileMap map) {
+        areaMap = map;
     }
     #endregion
 

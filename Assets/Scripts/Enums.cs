@@ -1262,11 +1262,11 @@ public enum JOB_ACTION_TARGET {
     FACTION
 }
 public enum STRUCTURE_TYPE {
+    INN,
+    WAREHOUSE,
     DWELLING,
     DUNGEON,
     WILDERNESS,
-    INN,
-    WAREHOUSE,
     WORK_AREA,
 }
 public enum RELATIONSHIP_TRAIT {

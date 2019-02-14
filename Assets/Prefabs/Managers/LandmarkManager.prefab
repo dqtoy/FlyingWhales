@@ -1377,3 +1377,6 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 4ceb2b47beb2817498a263252bf1e68f, type: 3}
     - {fileID: 21300000, guid: 4ceb2b47beb2817498a263252bf1e68f, type: 3}
     - {fileID: 21300000, guid: 4ceb2b47beb2817498a263252bf1e68f, type: 3}
+  innerStructurePrefab: {fileID: 1759440644899536, guid: 86e63e32c0ee7f3468de5bdb7a3369f9,
+    type: 2}
+  areaMapsParent: {fileID: 0}

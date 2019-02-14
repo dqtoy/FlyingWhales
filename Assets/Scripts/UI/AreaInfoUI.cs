@@ -43,6 +43,10 @@ public class AreaInfoUI : UIMenu {
     [SerializeField] private Color evenLogColor;
     [SerializeField] private Color oddLogColor;
 
+    [Space(10)]
+    [Header("Map")]
+    [SerializeField] private Toggle mapToggle;
+
     private CombatGrid combatGrid;
 
     private LogHistoryItem[] logHistoryItems;
@@ -88,6 +92,7 @@ public class AreaInfoUI : UIMenu {
         
         if (previousArea != null) {
             previousArea.SetOutlineState(false);
+            previousArea.areaMap.gameObject.SetActive(false);
         }
         if (activeArea != null) {
             activeArea.SetOutlineState(true);
@@ -96,12 +101,16 @@ public class AreaInfoUI : UIMenu {
         if(activeArea.owner != PlayerManager.Instance.player.playerFaction) {
             PlayerUI.Instance.attackSlot.ShowAttackButton();
         }
+        if (mapToggle.isOn) {
+            activeArea.areaMap.gameObject.SetActive(true);
+        }
     }
     public override void CloseMenu() {
         //Utilities.DestroyChildren(charactersScrollView.content);
         base.CloseMenu();
         if (activeArea != null) {
             activeArea.SetOutlineState(false);
+            activeArea.areaMap.gameObject.SetActive(false);
         }
         activeArea = null;
         //UIManager.Instance.SetCoverState(false);
@@ -493,6 +502,13 @@ public class AreaInfoUI : UIMenu {
             FactionManager.Instance.neutralFaction.AddToOwnedAreas(activeArea);
             OpenMenu();
         }
+    }
+    #endregion
+
+    #region Area Map
+    public void ToggleMapMenu(bool state) {
+        mapToggle.isOn = state;
+        activeArea.areaMap.gameObject.SetActive(state);
     }
     #endregion
 }

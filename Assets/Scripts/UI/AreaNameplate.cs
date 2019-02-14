@@ -36,7 +36,7 @@ public class AreaNameplate : MonoBehaviour {
         //Vector2 originalPos = area.coreTile.transform.position;
         //originalPos.y -= 1f;
         Vector2 ScreenPosition = Camera.main.WorldToScreenPoint(area.nameplatePos);
-        this.transform.position = ScreenPosition;
+        this.transform.position = area.nameplatePos;
     }
 
     public void LateUpdate() {

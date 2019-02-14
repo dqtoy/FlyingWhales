@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine.Tilemaps;
 
 public class LandmarkManager : MonoBehaviour {
 
@@ -26,6 +27,10 @@ public class LandmarkManager : MonoBehaviour {
 
     public RaceClassListDictionary defaultRaceDefenders;
     public StringSpriteDictionary locationPortraits; //NOTE: Move this to world creation when time permits.
+
+    [Header("Inner Structures")]
+    [SerializeField] private GameObject innerStructurePrefab;
+    [SerializeField] private Transform areaMapsParent;
 
     #region Monobehaviours
     private void Awake() {
@@ -170,65 +175,6 @@ public class LandmarkManager : MonoBehaviour {
     #endregion
 
     #region Landmark Generation
-    //public bool GenerateLandmarks() {
-    //    List<BaseLandmark> createdLandmarks = new List<BaseLandmark>();
-    //    List<HexTile> elligibleTiles = new List<HexTile>(GridMap.Instance.hexTiles);
-
-    //    for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
-    //        Region currRegion = GridMap.Instance.allRegions[i];
-    //        Utilities.ListRemoveRange(elligibleTiles, currRegion.outerTiles);
-    //    }
-
-    //    //create landmarks on all regions' center of mass first
-    //    for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
-    //        Region currRegion = GridMap.Instance.allRegions[i];
-    //        if (currRegion.centerOfMass.landmarkOnTile == null) {
-    //            WeightedDictionary<LANDMARK_TYPE> landmarkWeights = GetLandmarkAppearanceWeights(currRegion);
-    //            LANDMARK_TYPE chosenType = landmarkWeights.PickRandomElementGivenWeights();
-    //            BaseLandmark createdLandmark = CreateNewLandmarkOnTile(currRegion.centerOfMass, chosenType);
-    //            elligibleTiles.Remove(createdLandmark.tileLocation);
-    //            Utilities.ListRemoveRange(elligibleTiles, createdLandmark.tileLocation.GetTilesInRange(3)); //remove tiles in range (3)
-    //            createdLandmarks.Add(createdLandmark);
-    //        }
-    //    }
-
-    //    //all factions must have 1 kings castle in 1 of their owned regions
-    //    for (int i = 0; i < FactionManager.Instance.allTribes.Count; i++) {
-    //        Faction currTribe = FactionManager.Instance.allTribes[i];
-    //        if (currTribe.HasAccessToLandmarkOfType(LANDMARK_TYPE.KINGS_CASTLE)) {
-    //            //occupy that kings castle instead
-    //            BaseLandmark kingsCastle = currTribe.GetAccessibleLandmarkOfType(LANDMARK_TYPE.KINGS_CASTLE);
-    //            kingsCastle.OccupyLandmark(currTribe);
-    //        } else {
-    //            //the currTribe doesn't own a region that has a kings castle create a new one and occupy it
-    //            List<HexTile> tilesToChooseFrom = new List<HexTile>();
-    //            currTribe.ownedRegions.ForEach(x => tilesToChooseFrom.AddRange(x.tilesInRegion.Where(y => elligibleTiles.Contains(y))));
-    //            HexTile chosenTile = tilesToChooseFrom[Random.Range(0, tilesToChooseFrom.Count)];
-    //            BaseLandmark createdLandmark = CreateNewLandmarkOnTile(chosenTile, LANDMARK_TYPE.KINGS_CASTLE);
-    //            createdLandmark.OccupyLandmark(currTribe);
-    //            elligibleTiles.Remove(createdLandmark.tileLocation);
-    //            Utilities.ListRemoveRange(elligibleTiles, createdLandmark.tileLocation.GetTilesInRange(3)); //remove tiles in range (3)
-    //            createdLandmarks.Add(createdLandmark);
-    //        }
-    //    }
-
-    //    while (createdLandmarks.Count < initialLandmarkCount) {
-    //        if (elligibleTiles.Count <= 0) {
-    //            return false; //ran out of tiles
-    //        }
-    //        HexTile chosenTile = elligibleTiles[Random.Range(0, elligibleTiles.Count)];
-    //        WeightedDictionary<LANDMARK_TYPE> landmarkWeights = GetLandmarkAppearanceWeights(chosenTile.region);
-    //        LANDMARK_TYPE chosenType = landmarkWeights.PickRandomElementGivenWeights();
-    //        BaseLandmark createdLandmark = CreateNewLandmarkOnTile(chosenTile, chosenType);
-    //        elligibleTiles.Remove(createdLandmark.tileLocation);
-    //        Utilities.ListRemoveRange(elligibleTiles, createdLandmark.tileLocation.GetTilesInRange(3)); //remove tiles in range (3)
-    //        createdLandmarks.Add(createdLandmark);
-    //    }
-
-    //    Debug.Log("Created " + createdLandmarks.Count + " landmarks.");
-
-    //    return true;
-    //}
     public void GeneratePlayerLandmarks(Region chosenRegion) {
         //generate landmarks owned by the player in the empty region
         //Create Demonic Portal on the tile nearest to the center of the region
@@ -280,98 +226,6 @@ public class LandmarkManager : MonoBehaviour {
             LoadLandmarkOnTile(currentTile, save.hextiles[i].landmark);
         }
     }
-    //private Dictionary<LANDMARK_TYPE, int> GetLandmarkSettings(LEVEL wealthLvl, LEVEL populationLvl, LEVEL mightLvl, LEVEL needLvl, Faction faction) {
-    //    Dictionary<LANDMARK_TYPE, int> landmarkSettings = new Dictionary<LANDMARK_TYPE, int>();
-    //    AddWealthSettings(wealthLvl, landmarkSettings);
-    //    AddPopulationSettings(populationLvl, landmarkSettings, faction);
-    //    AddNeedSettings(needLvl, landmarkSettings);
-    //    AddMightSettings(mightLvl, landmarkSettings);
-    //    return landmarkSettings;
-    //}
-    //private void AddWealthSettings(LEVEL level, Dictionary<LANDMARK_TYPE, int> landmarksSettings) {
-    //    switch (level) {
-    //        case LEVEL.HIGH:
-    //            landmarksSettings.Add(LANDMARK_TYPE.IRON_MINES, 2);
-    //            landmarksSettings.Add(LANDMARK_TYPE.OAK_LUMBERYARD, 2);
-    //            break;
-    //        case LEVEL.AVERAGE:
-    //            if (Random.Range(0, 2) == 0) {
-    //                landmarksSettings.Add(LANDMARK_TYPE.IRON_MINES, 1);
-    //                landmarksSettings.Add(LANDMARK_TYPE.OAK_LUMBERYARD, 2);
-    //            } else {
-    //                landmarksSettings.Add(LANDMARK_TYPE.IRON_MINES, 2);
-    //                landmarksSettings.Add(LANDMARK_TYPE.OAK_LUMBERYARD, 1);
-    //            }
-    //            break;
-    //        case LEVEL.LOW:
-    //            landmarksSettings.Add(LANDMARK_TYPE.IRON_MINES, 1);
-    //            landmarksSettings.Add(LANDMARK_TYPE.OAK_LUMBERYARD, 1);
-    //            break;
-    //        default:
-    //            break;
-    //    }
-    //}
-    //private void AddPopulationSettings(LEVEL level, Dictionary<LANDMARK_TYPE, int> landmarksSettings, Faction faction) {
-    //    LANDMARK_TYPE settlementTypeToUse = LANDMARK_TYPE.HUMAN_SETTLEMENT;
-    //    //if (faction.race == RACE.ELVES) {
-    //    //    settlementTypeToUse = LANDMARK_TYPE.ELVEN_SETTLEMENT;
-    //    //}
-    //    switch (level) {
-    //        case LEVEL.HIGH:
-    //            landmarksSettings.Add(settlementTypeToUse, 6);
-    //            break;
-    //        case LEVEL.AVERAGE:
-    //            landmarksSettings.Add(settlementTypeToUse, 4);
-    //            break;
-    //        case LEVEL.LOW:
-    //            landmarksSettings.Add(settlementTypeToUse, 2);
-    //            break;
-    //        default:
-    //            break;
-    //    }
-    //}
-    //private void AddMightSettings(LEVEL level, Dictionary<LANDMARK_TYPE, int> landmarksSettings) {
-    //    switch (level) {
-    //        case LEVEL.HIGH:
-    //            landmarksSettings.Add(LANDMARK_TYPE.OAK_FORTIFICATION, 8);
-    //            landmarksSettings.Add(LANDMARK_TYPE.IRON_FORTIFICATION, 5);
-    //            break;
-    //        case LEVEL.AVERAGE:
-    //            landmarksSettings.Add(LANDMARK_TYPE.OAK_FORTIFICATION, 6);
-    //            landmarksSettings.Add(LANDMARK_TYPE.IRON_FORTIFICATION, 4);
-    //            break;
-    //        case LEVEL.LOW:
-    //            landmarksSettings.Add(LANDMARK_TYPE.OAK_FORTIFICATION, 4);
-    //            landmarksSettings.Add(LANDMARK_TYPE.IRON_FORTIFICATION, 3);
-    //            break;
-    //        default:
-    //            break;
-    //    }
-    //}
-    //private void AddNeedSettings(LEVEL level, Dictionary<LANDMARK_TYPE, int> landmarksSettings) {
-    //    switch (level) {
-    //        case LEVEL.HIGH:
-    //            landmarksSettings.Add(LANDMARK_TYPE.INN, 2);
-    //            landmarksSettings.Add(LANDMARK_TYPE.HUNTING_GROUNDS, 2);
-    //            //landmarksSettings.Add(LANDMARK_TYPE.PUB, 2);
-    //            landmarksSettings.Add(LANDMARK_TYPE.TEMPLE, 2);
-    //            break;
-    //        case LEVEL.AVERAGE:
-    //            landmarksSettings.Add(LANDMARK_TYPE.INN, 2);
-    //            landmarksSettings.Add(LANDMARK_TYPE.HUNTING_GROUNDS, 2);
-    //            //landmarksSettings.Add(LANDMARK_TYPE.PUB, 1);
-    //            landmarksSettings.Add(LANDMARK_TYPE.TEMPLE, 1);
-    //            break;
-    //        case LEVEL.LOW:
-    //            landmarksSettings.Add(LANDMARK_TYPE.INN, 1);
-    //            landmarksSettings.Add(LANDMARK_TYPE.HUNTING_GROUNDS, 1);
-    //            //landmarksSettings.Add(LANDMARK_TYPE.PUB, 1);
-    //            landmarksSettings.Add(LANDMARK_TYPE.TEMPLE, 1);
-    //            break;
-    //        default:
-    //            break;
-    //    }
-    //}
     private LEVEL RandomizeLevel(int highPercent, int averagePercent, int lowPercent) {
         int chance = Random.Range(0, 100);
         if (chance <= lowPercent) {
@@ -639,6 +493,15 @@ public class LandmarkManager : MonoBehaviour {
         if (locationPortraits.ContainsKey(newArea.name)) {
             newArea.SetLocationPortrait(locationPortraits[newArea.name]);
         }
+#if !WORLD_CREATION_TOOL
+        GameObject areaMapGO = GameObject.Instantiate(innerStructurePrefab, areaMapsParent);
+        areaMapGO.transform.localScale = new Vector3(0.2f, 0.2f, 1f);
+        areaMapGO.transform.localPosition = Vector3.zero;
+        AreaInnerTileMap areaMap = areaMapGO.GetComponent<AreaInnerTileMap>();
+        areaMap.Initialize(newArea);
+        newArea.SetAreaMap(areaMap);
+        areaMapGO.SetActive(false);
+#endif
         Messenger.Broadcast(Signals.AREA_CREATED, newArea);
         allAreas.Add(newArea);
         return newArea;

@@ -1000,6 +1000,15 @@ public class Utilities : MonoBehaviour {
     #endregion
 
     #region List Utilities
+    public static bool ContainsRange<T>(List<T> sourceList, List<T> otherList) {
+        //this is used to check whether a list has all the values in another list
+        for (int i = 0; i < otherList.Count; i++) {
+            if (!sourceList.Contains(otherList[i])) {
+                return false;
+            }
+        }
+        return true;
+    }
     public static T[] GetEnumValues<T>() where T : struct {
         if (!typeof(T).IsEnum) {
             throw new ArgumentException("GetValues<T> can only be called for types derived from System.Enum", "T");

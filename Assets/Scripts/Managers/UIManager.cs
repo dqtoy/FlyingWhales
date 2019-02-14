@@ -743,6 +743,7 @@ public class UIManager : MonoBehaviour {
     #region Nameplate
     public void CreateAreaNameplate(Area area) {
         GameObject nameplateGO = UIManager.Instance.InstantiateUIObject("AreaNameplate", nameplateParent);
+        //nameplateGO.transform.localScale = new Vector3(0.02f, 0.02f, 1f);
         nameplateGO.GetComponent<AreaNameplate>().SetArea(area);
     }
     #endregion
