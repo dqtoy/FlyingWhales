@@ -161,6 +161,13 @@ public class InteractionManager : MonoBehaviour {
                 actorEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.OBTAIN_SUPPLY } },
                 targetCharacterEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.DEATH } },
             } },
+            { INTERACTION_TYPE.CONSUME_PRISONER_ACTION, new InteractionAttributes(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.SUPPLY },
+                alignment = INTERACTION_ALIGNMENT.NEUTRAL,
+                actorEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.OBTAIN_SUPPLY } },
+                targetCharacterEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.DEATH } },
+            } },
+            //CHARACTER NPC ACTIONS-----------------------------------------------------------------------------------------------------------------------------------------------------------------
             { INTERACTION_TYPE.MOVE_TO_RETURN_HOME, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.OTHER },
                 alignment = INTERACTION_ALIGNMENT.NEUTRAL,
@@ -839,6 +846,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.LOCATE_MISSING:
                 createdInteraction = new LocateMissing(interactable);
                 break;
+            case INTERACTION_TYPE.CONSUME_PRISONER_ACTION:
+                createdInteraction = new ConsumePrisonerAction(interactable);
+                break;
         }
         return createdInteraction;
     }
@@ -1460,9 +1470,9 @@ public class InteractionManager : MonoBehaviour {
                 return false;
             case INTERACTION_TYPE.RESTRAIN_CRIMINAL_ACTION:
                 if (character.isAtHomeArea) {
-                    List<LocationStructure> insideSettlements = character.specificLocation.GetStructuresAtLocation(true);
-                    for (int i = 0; i < insideSettlements.Count; i++) {
-                        LocationStructure currStructure = insideSettlements[i];
+                    List<LocationStructure> insideSettlementsRestrain = character.specificLocation.GetStructuresAtLocation(true);
+                    for (int i = 0; i < insideSettlementsRestrain.Count; i++) {
+                        LocationStructure currStructure = insideSettlementsRestrain[i];
                         for (int j = 0; j < currStructure.charactersHere.Count; j++) {
                             Character currCharacter = currStructure.charactersHere[j];
                             if(currCharacter.id != character.id && currCharacter.faction.id == character.faction.id 
@@ -1488,6 +1498,18 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.LOCATE_MISSING:
                 CharacterRelationshipData relationshipData = character.GetCharacterRelationshipData(targetCharacter);
                 return relationshipData != null && relationshipData.isCharacterMissing && relationshipData.isCharacterLocated && !relationshipData.HasRelationshipTrait(RELATIONSHIP_TRAIT.ENEMY);
+            case INTERACTION_TYPE.CONSUME_PRISONER_ACTION:
+                List<LocationStructure> insideSettlementsConsumePrisoner = character.specificLocation.GetStructuresAtLocation(true);
+                for (int i = 0; i < insideSettlementsConsumePrisoner.Count; i++) {
+                    LocationStructure currStructure = insideSettlementsConsumePrisoner[i];
+                    for (int j = 0; j < currStructure.charactersHere.Count; j++) {
+                        Character currCharacter = currStructure.charactersHere[j];
+                        if (currCharacter.id != character.id && currCharacter.GetTraitOr("Abducted", "Restrained") != null) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
             default:
                 return true;
         }

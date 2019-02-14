@@ -90,7 +90,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.MOVE_TO_SCAVENGE_EVENT_FACTION,
                 INTERACTION_TYPE.MOVE_TO_OCCUPY_ACTION_FACTION,
                 INTERACTION_TYPE.PATROL_ACTION_FACTION,
-                //Add Consume Prisoner Action
+                INTERACTION_TYPE.CONSUME_PRISONER_ACTION,
             } },
             { RACE.SPIDER, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_ABDUCT_ACTION,
