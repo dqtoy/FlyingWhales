@@ -4,15 +4,14 @@ using UnityEngine;
 
 public class MoveToGiftBeast : Interaction {
     private const string Start = "Start";
-    private const string Abduct_Cancelled = "Abduct Cancelled";
-    private const string Abduct_Proceeds = "Abduct Proceeds";
-    private const string Normal_Abduct = "Normal Abduct";
+    private const string Gifting_Proceeds = "Gifting Proceeds";
 
-    private Area _targetArea;
+    private Character _targetCharacter;
 
     public override Area targetArea {
-        get { return _targetArea; }
+        get { return _targetCharacter.homeArea; }
     }
+
     public override INTERACTION_TYPE pairedInteractionType {
         get { return INTERACTION_TYPE.GIFT_BEAST; }
     }
@@ -21,162 +20,116 @@ public class MoveToGiftBeast : Interaction {
         _name = "Move To Gift Beast";
     }
 
-
     #region Overrides
     public override void CreateStates() {
-        if (_targetArea == null) {
-            _targetArea = GetTargetLocation(_characterInvolved);
+        if (_targetCharacter == null) {
+            SetTargetCharacter(GetTargetCharacter(_characterInvolved));
         }
-
         InteractionState startState = new InteractionState(Start, this);
-        InteractionState abductCancelledState = new InteractionState(Abduct_Cancelled, this);
-        InteractionState abductProceedsState = new InteractionState(Abduct_Proceeds, this);
-        InteractionState normalAbductState = new InteractionState(Normal_Abduct, this);
+        InteractionState giftingProceeds = new InteractionState(Gifting_Proceeds, this);
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description", this);
-        startStateDescriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2);
+        startStateDescriptionLog.AddToFillers(targetArea, targetArea.name, LOG_IDENTIFIER.LANDMARK_2);
+        startStateDescriptionLog.AddToFillers(targetCharacter.faction, targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_1);
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 
         CreateActionOptions(startState);
 
-        abductCancelledState.SetEffect(() => AbductCancelledEffect(abductCancelledState));
-        abductProceedsState.SetEffect(() => AbductProceedsEffect(abductProceedsState));
-        normalAbductState.SetEffect(() => NormalAbductEffect(normalAbductState));
+        giftingProceeds.SetEffect(() => GiftingProceedsEffect(giftingProceeds));
 
         _states.Add(startState.name, startState);
-        _states.Add(abductCancelledState.name, abductCancelledState);
-        _states.Add(abductProceedsState.name, abductProceedsState);
-        _states.Add(normalAbductState.name, normalAbductState);
+        _states.Add(giftingProceeds.name, giftingProceeds);
 
         SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {
-            ActionOption preventOption = new ActionOption {
-                interactionState = state,
-                cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
-                name = "Prevent " + Utilities.GetPronounString(_characterInvolved.gender, PRONOUN_TYPE.OBJECTIVE, false) + " from leaving.",
-                duration = 0,
-                jobNeeded = JOB.DEBILITATOR,
-                disabledTooltipText = "Must be a Dissuader.",
-                effect = () => PreventOption(),
-            };
-            ActionOption doNothingOption = new ActionOption {
+            ActionOption doNothing = new ActionOption {
                 interactionState = state,
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Do nothing.",
                 duration = 0,
-                effect = () => DoNothingOption(),
+                effect = () => DoNothingEffect(state),
             };
-
-            state.AddActionOption(preventOption);
-            state.AddActionOption(doNothingOption);
-            state.SetDefaultOption(doNothingOption);
+            state.AddActionOption(doNothing);
+            state.SetDefaultOption(doNothing);
         }
     }
     public override bool CanInteractionBeDoneBy(Character character) {
-        _targetArea = GetTargetLocation(character);
-        if (_targetArea == null) {
+        if (!InteractionManager.Instance.CanCreateInteraction(type, character)) {
+            return false;
+        }
+        if (_targetCharacter == null) {
+            SetTargetCharacter(GetTargetCharacter(character));
+        }
+        if (_targetCharacter == null) {
             return false;
         }
         return base.CanInteractionBeDoneBy(character);
     }
     public override void DoActionUponMoveToArrival() {
-        CreateAbductAction();
+        Interaction interaction = CreateConnectedEvent(INTERACTION_TYPE.GIFT_BEAST, targetArea);
+        interaction.SetTargetCharacter(targetCharacter);
+    }
+    public override void SetTargetCharacter(Character character) {
+        _targetCharacter = character;
     }
     #endregion
 
-    #region Action Options
-    private void PreventOption() {
-        WeightedDictionary<string> effectWeights = new WeightedDictionary<string>();
-        effectWeights.AddElement(Abduct_Cancelled, investigatorCharacter.job.GetSuccessRate());
-        effectWeights.AddElement(Abduct_Proceeds, investigatorCharacter.job.GetFailRate());
-        string chosenEffect = effectWeights.PickRandomElementGivenWeights();
-        SetCurrentState(_states[chosenEffect]);
-    }
-    private void DoNothingOption() {
-        SetCurrentState(_states[Normal_Abduct]);
+    #region Option Effects
+    private void DoNothingEffect(InteractionState state) {
+        SetCurrentState(_states[Gifting_Proceeds]);
     }
     #endregion
 
-    #region State Effects
-    private void AbductCancelledEffect(InteractionState state) {
-        //investigatorCharacter.LevelUp();
-    }
-    private void AbductProceedsEffect(InteractionState state) {
-        state.descriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2);
+    #region Reward Effects
+    private void GiftingProceedsEffect(InteractionState state) {
+        List<Character> idleBeasts = new List<Character>();
+        for (int i = 0; i < _characterInvolved.specificLocation.areaResidents.Count; i++) {
+            Character resident = _characterInvolved.specificLocation.areaResidents[i];
+            if (resident.id != _characterInvolved.id && resident.role.roleType == CHARACTER_ROLE.BEAST && resident.faction.id == _characterInvolved.faction.id && resident.isIdle) {
+                idleBeasts.Add(resident);
+            }
+        }
+        Character chosenBeast = idleBeasts[UnityEngine.Random.Range(0, idleBeasts.Count)];
+        chosenBeast.AddTrait(AttributeManager.Instance.allTraits["Packaged"]);
+        _characterInvolved.currentParty.AddCharacter(chosenBeast);
 
-        state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2));
+        state.descriptionLog.AddToFillers(targetArea, targetArea.name, LOG_IDENTIFIER.LANDMARK_2);
+        state.descriptionLog.AddToFillers(targetCharacter.faction, targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_1);
+        state.descriptionLog.AddToFillers(chosenBeast, chosenBeast.name, LOG_IDENTIFIER.CHARACTER_3);
+
+        state.AddLogFiller(new LogFiller(targetArea, targetArea.name, LOG_IDENTIFIER.LANDMARK_2));
+        state.AddLogFiller(new LogFiller(targetCharacter.faction, targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_1));
+        state.AddLogFiller(new LogFiller(chosenBeast, chosenBeast.name, LOG_IDENTIFIER.CHARACTER_3));
 
         StartMoveToAction();
     }
-    private void NormalAbductEffect(InteractionState state) {
-        state.descriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2);
-
-        state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2));
-
-        StartMoveToAction();
-    }
     #endregion
 
-    private void CreateAbductAction() {
-        AddToDebugLog(_characterInvolved.name + " will now create abduct action");
-        Interaction abduct = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.ABDUCT_ACTION, _characterInvolved.specificLocation);
-        //abduct.SetCanInteractionBeDoneAction(IsAbductStillValid);
-        _characterInvolved.SetForcedInteraction(abduct);
-    }
-    private bool IsAbductStillValid() {
-        if (!_characterInvolved.homeArea.IsResidentsFull()) {
-            for (int i = 0; i < _targetArea.charactersAtLocation.Count; i++) {
-                Character currCharacter = _targetArea.charactersAtLocation[i];
-                if (currCharacter.id != _characterInvolved.id && !currCharacter.currentParty.icon.isTravelling && currCharacter.IsInOwnParty()) {
-                    if (currCharacter.isFactionless || currCharacter.faction.id != _characterInvolved.faction.id) {
-                        return true;
-                    }
+    private Character GetTargetCharacter(Character character) {
+        WeightedDictionary<Character> weights = new WeightedDictionary<Character>();
+        foreach (KeyValuePair<Faction, FactionRelationship> kvp in character.faction.relationships) {
+            if (kvp.Key == PlayerManager.Instance.player.playerFaction) { continue; }
+            if (kvp.Value.relationshipStatus == FACTION_RELATIONSHIP_STATUS.ENEMY) {
+                if(kvp.Key.leader is Character) {
+                    Character factionLeader = kvp.Key.leader as Character;
+                    weights.AddElement(factionLeader, 20);
+                }
+            } else if (kvp.Value.relationshipStatus == FACTION_RELATIONSHIP_STATUS.DISLIKED || kvp.Value.relationshipStatus == FACTION_RELATIONSHIP_STATUS.NEUTRAL) {
+                if (kvp.Key.leader is Character) {
+                    Character factionLeader = kvp.Key.leader as Character;
+                    weights.AddElement(factionLeader, 15);
+                }   
+            } else if (kvp.Value.relationshipStatus == FACTION_RELATIONSHIP_STATUS.FRIEND) {
+                if (kvp.Key.leader is Character) {
+                    Character factionLeader = kvp.Key.leader as Character;
+                    weights.AddElement(factionLeader, 5);
                 }
             }
         }
-        return false;
-    }
-
-    private Area GetTargetLocation(Character characterInvolved) {
-        WeightedDictionary<Area> locationWeights = new WeightedDictionary<Area>();
-        bool areaFitsCriteria = false;
-        for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
-            Area currArea = LandmarkManager.Instance.allAreas[i];
-            areaFitsCriteria = false;
-            if (currArea.owner == null || currArea.owner.id != PlayerManager.Instance.player.playerFaction.id && currArea.owner.id != characterInvolved.faction.id) {
-                for (int j = 0; j < currArea.charactersAtLocation.Count; j++) {
-                    Character character = currArea.charactersAtLocation[j];
-                    if (character.id != characterInvolved.id && character.IsInOwnParty() && !character.currentParty.icon.isTravelling && (character.isFactionless || character.faction.id != characterInvolved.faction.id)) {
-                        areaFitsCriteria = true;
-                        break;
-                    }
-                }
-            }
-            if (areaFitsCriteria) {
-                int weight = 0;
-                if (currArea.owner == null) {
-                    weight += 15;
-                } else if (currArea.owner.id != PlayerManager.Instance.player.playerFaction.id && currArea.owner.id != characterInvolved.faction.id) {
-                    FactionRelationship rel = currArea.owner.GetRelationshipWith(characterInvolved.faction);
-                    if (rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.ENEMY || rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.DISLIKED) {
-                        weight += 25;
-                    } else if (rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.NEUTRAL) {
-                        weight += 15;
-                    } else if (rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.FRIEND) {
-                        weight += 5;
-                    } else if (rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.ALLY) {
-                        weight += 2;
-                    }
-                }
-                if (weight > 0) {
-                    locationWeights.AddElement(currArea, weight);
-                }
-            }
-        }
-        if (locationWeights.GetTotalOfWeights() > 0) {
-            return locationWeights.PickRandomElementGivenWeights();
+        if (weights.Count > 0) {
+            return weights.PickRandomElementGivenWeights();
         }
         return null;
     }

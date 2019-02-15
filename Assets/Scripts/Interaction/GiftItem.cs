@@ -103,7 +103,7 @@ public class GiftItem : Interaction {
         if (_characterInvolved.faction.id != _targetCharacter.faction.id && !_characterInvolved.isFactionless && !_targetCharacter.isFactionless) {
             AdjustFactionsRelationship(_characterInvolved.faction, _targetCharacter.faction, 1, state);
         } else {
-            throw new System.Exception("CAN'T DO COURTESY CALL: " + _characterInvolved.name + " of " + _characterInvolved.faction.name + " to " + _targetCharacter.name + " of " + _targetCharacter.faction.name);
+            throw new System.Exception("CAN'T DO GIFT ITEM: " + _characterInvolved.name + " of " + _characterInvolved.faction.name + " to " + _targetCharacter.name + " of " + _targetCharacter.faction.name);
         }
     }
     private void GiftFailEffect(InteractionState state) {

@@ -99,11 +99,11 @@ public class MoveToGiftItem : Interaction {
         }
 
         state.descriptionLog.AddToFillers(targetArea, targetArea.name, LOG_IDENTIFIER.LANDMARK_2);
-        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.descriptionLog.AddToFillers(targetCharacter.faction, targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_1);
         state.descriptionLog.AddToFillers(_characterInvolved.tokenInInventory, _characterInvolved.tokenInInventory.name, LOG_IDENTIFIER.ITEM_1);
 
         state.AddLogFiller(new LogFiller(targetArea, targetArea.name, LOG_IDENTIFIER.LANDMARK_2));
-        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(targetCharacter.faction, targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_1));
         state.AddLogFiller(new LogFiller(_characterInvolved.tokenInInventory, _characterInvolved.tokenInInventory.name, LOG_IDENTIFIER.ITEM_1));
 
         StartMoveToAction();
@@ -134,7 +134,7 @@ public class MoveToGiftItem : Interaction {
                         }
                     }
                 }
-            } else if (kvp.Value.relationshipStatus == FACTION_RELATIONSHIP_STATUS.DISLIKED || kvp.Value.relationshipStatus == FACTION_RELATIONSHIP_STATUS.NEUTRAL) {
+            } else if (kvp.Value.relationshipStatus == FACTION_RELATIONSHIP_STATUS.FRIEND) {
                 for (int i = 0; i < kvp.Key.ownedAreas.Count; i++) {
                     Area currArea = kvp.Key.ownedAreas[i];
                     for (int k = 0; k < currArea.areaResidents.Count; k++) {

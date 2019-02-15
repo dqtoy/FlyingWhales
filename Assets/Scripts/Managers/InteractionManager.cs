@@ -179,6 +179,12 @@ public class InteractionManager : MonoBehaviour {
                 actorEffect = null,
                 targetCharacterEffect = null,
             } },
+            { INTERACTION_TYPE.GIFT_BEAST, new InteractionAttributes(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.DIPLOMACY },
+                alignment = INTERACTION_ALIGNMENT.NEUTRAL,
+                actorEffect = null,
+                targetCharacterEffect = null,
+            } },
             //CHARACTER NPC ACTIONS-----------------------------------------------------------------------------------------------------------------------------------------------------------------
             { INTERACTION_TYPE.MOVE_TO_RETURN_HOME, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.OTHER },
@@ -873,6 +879,12 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.GIFT_ITEM:
                 createdInteraction = new GiftItem(interactable);
                 break;
+            case INTERACTION_TYPE.MOVE_TO_GIFT_BEAST:
+                createdInteraction = new MoveToGiftBeast(interactable);
+                break;
+            case INTERACTION_TYPE.GIFT_BEAST:
+                createdInteraction = new GiftBeast(interactable);
+                break;
         }
         return createdInteraction;
     }
@@ -1537,16 +1549,26 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.MOVE_TO_COURTESY_CALL:
                 return character.faction.id != FactionManager.Instance.neutralFaction.id;
             case INTERACTION_TYPE.MOVE_TO_GIFT_ITEM:
-                if (character.isHoldingItem) {
-                    return true;
-                } else {
-                    List<LocationStructure> allWarehouses = character.specificLocation.GetStructuresOfType(STRUCTURE_TYPE.WAREHOUSE);
-                    if (allWarehouses != null && allWarehouses.Count > 0) {
-                        for (int i = 0; i < allWarehouses.Count; i++) {
-                            if(allWarehouses[i].itemsInStructure.Count > 0) {
-                                return true;
+                if(character.faction.id != FactionManager.Instance.neutralFaction.id){
+                    if (character.isHoldingItem) {
+                        return true;
+                    } else {
+                        List<LocationStructure> allWarehouses = character.specificLocation.GetStructuresOfType(STRUCTURE_TYPE.WAREHOUSE);
+                        if (allWarehouses != null && allWarehouses.Count > 0) {
+                            for (int i = 0; i < allWarehouses.Count; i++) {
+                                if (allWarehouses[i].itemsInStructure.Count > 0) {
+                                    return true;
+                                }
                             }
                         }
+                    }
+                }
+                return false;
+            case INTERACTION_TYPE.MOVE_TO_GIFT_BEAST:
+                for (int i = 0; i < character.specificLocation.areaResidents.Count; i++) {
+                    Character resident = character.specificLocation.areaResidents[i];
+                    if(resident.id != character.id && resident.role.roleType == CHARACTER_ROLE.BEAST && resident.faction.id == character.faction.id && resident.isIdle) {
+                        return true;
                     }
                 }
                 return false;

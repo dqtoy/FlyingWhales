@@ -935,7 +935,7 @@ public class Area {
         Dictionary<Character, List<INTERACTION_TYPE>> residentInteractions = new Dictionary<Character, List<INTERACTION_TYPE>>();
         for (int i = 0; i < areaResidents.Count; i++) {
             Character resident = areaResidents[i];
-            if (resident.doNotDisturb <= 0 && !resident.isDefender && !resident.currentParty.icon.isTravelling && resident.specificLocation.id == id && resident.GetTraitOr("Starving", "Exhausted") == null) {
+            if (resident.isIdle && resident.specificLocation.id == id && resident.GetTraitOr("Starving", "Exhausted") == null) {
                 if (attackCharacters != null && attackCharacters.Contains(resident)) {
                     continue;
                 }

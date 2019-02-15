@@ -72,7 +72,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.MOVE_TO_SCAVENGE_EVENT_FACTION,
                 INTERACTION_TYPE.MOVE_TO_RAID_EVENT_FACTION,
                 INTERACTION_TYPE.MOVE_TO_OCCUPY_ACTION_FACTION,
-                //Add Gift Beast Action
+                INTERACTION_TYPE.MOVE_TO_GIFT_BEAST,
             } },
             { RACE.FAERY, new INTERACTION_TYPE[] {
                 //INTERACTION_TYPE.CRAFT_ITEM,
