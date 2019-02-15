@@ -446,8 +446,10 @@ public class UIManager : MonoBehaviour {
         message = message.Replace("\\n", "\n");
 
         smallInfoLbl.text = message;
-        smallInfoGO.SetActive(true);
-        smallInfoEnvelopContent.Execute();
+        if (!IsSmallInfoShowing()) {
+            smallInfoGO.SetActive(true);
+            smallInfoEnvelopContent.Execute();
+        }
         if (position == null) {
             smallInfoRT.SetParent(this.transform);
             PositionTooltip(smallInfoRT);
@@ -461,8 +463,13 @@ public class UIManager : MonoBehaviour {
         //Debug.Log("Show small info " + info);
     }
     public void HideSmallInfo() {
-        smallInfoGO.SetActive(false);
+        if (IsSmallInfoShowing()) {
+            smallInfoGO.SetActive(false);
+        }
         //smallInfoGO.transform.parent = this.transform;
+    }
+    public bool IsSmallInfoShowing() {
+        return smallInfoGO.activeSelf;
     }
     public void ShowCharacterPortraitHoverInfo(Character character) {
         characterPortraitHoverInfo.GeneratePortrait(character);

@@ -38,7 +38,7 @@ public class GridTownGenerator : MonoBehaviour {
     private Dictionary<STRUCTURE_TYPE, List<LocationStructure>> testingOutsideStructures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>() {
         { STRUCTURE_TYPE.DUNGEON,
             new List<LocationStructure>(){
-                {new LocationStructure(STRUCTURE_TYPE.INN, null, true) },
+                {new LocationStructure(STRUCTURE_TYPE.DUNGEON, null, true) },
             }
         },
     };

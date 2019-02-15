@@ -9,6 +9,10 @@ public class AreaInnerTileMap : MonoBehaviour {
     public int width;
     public int height;
 
+    [SerializeField] private Grid grid;
+    [SerializeField] private Canvas canvas;
+    [SerializeField] private Transform tilemapsParent;
+
     [SerializeField] private Tilemap groundTilemap;
     [SerializeField] private Tilemap wallTilemap;
     [SerializeField] private Tilemap strcutureTilemap;
@@ -57,9 +61,12 @@ public class AreaInnerTileMap : MonoBehaviour {
         },
     };
 
+    private Vector3Int hoverCoordinates;
+
     public void Initialize(Area area) {
         this.area = area;
         this.name = area.name + "'s Inner Map";
+        canvas.worldCamera = CameraMove.Instance.nameplateCamera;
         GenerateInnerStructures();
     }
 
@@ -167,20 +174,20 @@ public class AreaInnerTileMap : MonoBehaviour {
         }
     }
     private void PlaceStructures(Dictionary<STRUCTURE_TYPE, List<LocationStructure>> structures, List<LocationGridTile> sourceTiles) {
-        Dictionary<STRUCTURE_TYPE, List<Point>> structuresToCreate = new Dictionary<STRUCTURE_TYPE, List<Point>>();
+        Dictionary<LocationStructure, Point> structuresToCreate = new Dictionary<LocationStructure, Point>();
         int neededTiles = 0;
         foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp in structures) {
             if (!structureSettings.ContainsKey(kvp.Key)) {
                 continue; //skip
             }
-            structuresToCreate.Add(kvp.Key, new List<Point>());
+            //structuresToCreate.Add(kvp.Key, new List<Point>());
             for (int i = 0; i < kvp.Value.Count; i++) {
                 Point point = structureSettings[kvp.Key][Random.Range(0, structureSettings[kvp.Key].Count)];
-                structuresToCreate[kvp.Key].Add(point);
+                structuresToCreate.Add(kvp.Value[i], point);
                 neededTiles += point.Product();
             }
         }
-        structuresToCreate = structuresToCreate.OrderBy(x => x.Key).ToDictionary((keyItem) => keyItem.Key, (valueItem) => valueItem.Value);
+        structuresToCreate = structuresToCreate.OrderBy(x => x.Key.structureType).ToDictionary((keyItem) => keyItem.Key, (valueItem) => valueItem.Value);
 
         Debug.Log("We need at least " + neededTiles.ToString() + " tiles to meet the required structures. Current tiles are: " + sourceTiles.Count);
         List<LocationGridTile> elligibleTiles = new List<LocationGridTile>(sourceTiles);
@@ -189,53 +196,52 @@ public class AreaInnerTileMap : MonoBehaviour {
         int topMostCoordinate = sourceTiles.Max(t => t.localPlace.y);
         int botMostCoordinate = sourceTiles.Min(t => t.localPlace.y);
 
-        foreach (KeyValuePair<STRUCTURE_TYPE, List<Point>> kvp in structuresToCreate) {
-            for (int i = 0; i < kvp.Value.Count; i++) {
-                Point currPoint = kvp.Value[i];
-                List<LocationGridTile> choices = elligibleTiles.Where(
-                    t => t.localPlace.x + currPoint.X < rightMostCoordinate
-                    && t.localPlace.y + currPoint.Y < topMostCoordinate
-                    && Utilities.ContainsRange(elligibleTiles, GetTiles(currPoint, t))).ToList();
-                if (choices.Count <= 0) {
-                    throw new System.Exception("No More Tiles");
+        foreach (KeyValuePair<LocationStructure, Point> kvp in structuresToCreate) {
+            Point currPoint = kvp.Value;
+            List<LocationGridTile> choices = elligibleTiles.Where(
+                t => t.localPlace.x + currPoint.X < rightMostCoordinate
+                && t.localPlace.y + currPoint.Y < topMostCoordinate
+                && Utilities.ContainsRange(elligibleTiles, GetTiles(currPoint, t))).ToList();
+            if (choices.Count <= 0) {
+                throw new System.Exception("No More Tiles");
+            }
+            LocationGridTile chosenStartingTile = choices[Random.Range(0, choices.Count)];
+            List<LocationGridTile> tiles = GetTiles(currPoint, chosenStartingTile);
+            for (int j = 0; j < tiles.Count; j++) {
+                LocationGridTile currTile = tiles[j];
+                strcutureTilemap.SetTile(currTile.localPlace, structureTile);
+                currTile.SetTileType(LocationGridTile.Tile_Type.Structure);
+                currTile.SetStructure(kvp.Key);
+                elligibleTiles.Remove(currTile);
+                switch (kvp.Key.structureType) {
+                    case STRUCTURE_TYPE.INN:
+                        for (int k = 0; k < currTile.neighbours.Values.Count; k++) {
+                            elligibleTiles.Remove(currTile.neighbours.Values.ToList()[k]);
+                        }
+                        strcutureTilemap.SetColor(currTile.localPlace, Color.red);
+                        break;
+                    case STRUCTURE_TYPE.WAREHOUSE:
+                        for (int k = 0; k < currTile.neighbours.Values.Count; k++) {
+                            elligibleTiles.Remove(currTile.neighbours.Values.ToList()[k]);
+                        }
+                        strcutureTilemap.SetColor(currTile.localPlace, Color.blue);
+                        break;
+                    case STRUCTURE_TYPE.DWELLING:
+                        for (int k = 0; k < currTile.neighbours.Values.Count; k++) {
+                            elligibleTiles.Remove(currTile.neighbours.Values.ToList()[k]);
+                        }
+                        strcutureTilemap.SetColor(currTile.localPlace, Color.green);
+                        break;
+                    case STRUCTURE_TYPE.DUNGEON:
+                        for (int k = 0; k < currTile.neighbours.Values.Count; k++) {
+                            elligibleTiles.Remove(currTile.neighbours.Values.ToList()[k]);
+                        }
+                        strcutureTilemap.SetColor(currTile.localPlace, Color.yellow);
+                        break;
+                    default:
+                        break;
                 }
-                LocationGridTile chosenStartingTile = choices[Random.Range(0, choices.Count)];
-                List<LocationGridTile> tiles = GetTiles(currPoint, chosenStartingTile);
-                for (int j = 0; j < tiles.Count; j++) {
-                    LocationGridTile currTile = tiles[j];
-                    strcutureTilemap.SetTile(currTile.localPlace, structureTile);
-                    currTile.SetTileType(LocationGridTile.Tile_Type.Structure);
-                    elligibleTiles.Remove(currTile);
-                    switch (kvp.Key) {
-                        case STRUCTURE_TYPE.INN:
-                            for (int k = 0; k < currTile.neighbours.Values.Count; k++) {
-                                elligibleTiles.Remove(currTile.neighbours.Values.ToList()[k]);
-                            }
-                            strcutureTilemap.SetColor(currTile.localPlace, Color.red);
-                            break;
-                        case STRUCTURE_TYPE.WAREHOUSE:
-                            for (int k = 0; k < currTile.neighbours.Values.Count; k++) {
-                                elligibleTiles.Remove(currTile.neighbours.Values.ToList()[k]);
-                            }
-                            strcutureTilemap.SetColor(currTile.localPlace, Color.blue);
-                            break;
-                        case STRUCTURE_TYPE.DWELLING:
-                            for (int k = 0; k < currTile.neighbours.Values.Count; k++) {
-                                elligibleTiles.Remove(currTile.neighbours.Values.ToList()[k]);
-                            }
-                            strcutureTilemap.SetColor(currTile.localPlace, Color.green);
-                            break;
-                        case STRUCTURE_TYPE.DUNGEON:
-                            for (int k = 0; k < currTile.neighbours.Values.Count; k++) {
-                                elligibleTiles.Remove(currTile.neighbours.Values.ToList()[k]);
-                            }
-                            strcutureTilemap.SetColor(currTile.localPlace, Color.yellow);
-                            break;
-                        default:
-                            break;
-                    }
-                    //yield return new WaitForSeconds(0.1f);
-                }
+                //yield return new WaitForSeconds(0.1f);
             }
         }
     }
@@ -363,5 +369,32 @@ public class AreaInnerTileMap : MonoBehaviour {
             }
         }
         return tiles;
+    }
+
+   
+    public void Update() {
+        //if (UIManager.Instance == null) {
+        //    return;
+        //}
+        Vector3 mouseWorldPos = (canvas.worldCamera.ScreenToWorldPoint(Input.mousePosition) / tilemapsParent.transform.localScale.x);
+        mouseWorldPos = new Vector3(mouseWorldPos.x + (tilemapsParent.transform.localPosition.x * -1), mouseWorldPos.y + (tilemapsParent.transform.localPosition.y * -1));
+        Vector3 localPos = grid.WorldToLocal(mouseWorldPos);
+        Vector3Int coordinate = grid.LocalToCell(localPos);
+        //Vector3Int coordinate = grid.WorldToCell(mouseWorldPos);
+        if (coordinate.x >= 0 && coordinate.x < width 
+            && coordinate.y >= 0 && coordinate.y < height) {
+            //hovered on new tile
+            groundTilemap.SetColor(hoverCoordinates, Color.white);
+            hoverCoordinates = coordinate;
+            LocationGridTile hoveredTile = map[coordinate.x, coordinate.y];
+            groundTilemap.SetColor(coordinate, Color.black);
+            //if (hoveredTile.structure != null) {
+            //    UIManager.Instance.ShowSmallInfo(hoveredTile.structure.ToString());
+            //} else {
+            //    UIManager.Instance.HideSmallInfo();
+            //}
+        } else {
+            //UIManager.Instance.HideSmallInfo();
+        }
     }
 }
