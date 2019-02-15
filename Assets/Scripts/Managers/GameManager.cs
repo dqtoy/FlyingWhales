@@ -251,7 +251,7 @@ public class GameManager : MonoBehaviour {
         Cursor.SetCursor(targetCursorTexture, hotSpot, cursorMode);
     }
     public void SetCursorToDrag() {
-        Cursor.SetCursor(dragWorldCursorTexture, hotSpot, cursorMode);
+        Cursor.SetCursor(dragWorldCursorTexture, new Vector2(16f, 16f), cursorMode);
     }
     #endregion
 

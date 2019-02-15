@@ -66,16 +66,18 @@ public class AreaInnerTileMap : MonoBehaviour {
     public void Initialize(Area area) {
         this.area = area;
         this.name = area.name + "'s Inner Map";
-        canvas.worldCamera = CameraMove.Instance.nameplateCamera;
+        canvas.worldCamera = CameraMove.Instance.areaMapsCamera;
         GenerateInnerStructures();
     }
 
     public void GenerateInnerStructures() {
+        groundTilemap.ClearAllTiles();
         GenerateGrid();
         SplitMap();
         ConstructWalls();
         PlaceStructures(area.GetStructures(true), insideTiles);
         PlaceStructures(area.GetStructures(false), outsideTiles);
+        //scrollContent.sizeDelta = new Vector2()
     }
 
     public void GenerateInnerStructures(Dictionary<STRUCTURE_TYPE, List<LocationStructure>> inside, Dictionary<STRUCTURE_TYPE, List<LocationStructure>> outside) {
@@ -371,7 +373,22 @@ public class AreaInnerTileMap : MonoBehaviour {
         return tiles;
     }
 
-   
+    private float xDiff = 14.5f;
+    private float yDiff = 12f;
+    private float originX = -14.5f;
+    private float originY = -8.5f;
+
+    public void OnScroll(Vector2 value) {
+        //Debug.Log(value);
+        Vector2 newMapPos;
+        float newX = originX - (xDiff * value.x);
+        float newY = originY - (yDiff * value.y);
+        newMapPos = new Vector2(newX, newY);
+        tilemapsParent.transform.localPosition = newMapPos;
+        //if (value.x ) {
+
+        //}
+    }
     public void Update() {
         //if (UIManager.Instance == null) {
         //    return;
@@ -384,17 +401,49 @@ public class AreaInnerTileMap : MonoBehaviour {
         if (coordinate.x >= 0 && coordinate.x < width 
             && coordinate.y >= 0 && coordinate.y < height) {
             //hovered on new tile
-            groundTilemap.SetColor(hoverCoordinates, Color.white);
+            //groundTilemap.SetColor(hoverCoordinates, Color.white);
             hoverCoordinates = coordinate;
             LocationGridTile hoveredTile = map[coordinate.x, coordinate.y];
-            groundTilemap.SetColor(coordinate, Color.black);
-            //if (hoveredTile.structure != null) {
-            //    UIManager.Instance.ShowSmallInfo(hoveredTile.structure.ToString());
-            //} else {
-            //    UIManager.Instance.HideSmallInfo();
-            //}
+            //groundTilemap.SetColor(coordinate, Color.black);
+            if (UIManager.Instance != null) {
+                if (hoveredTile.structure != null) {
+                    string summary = hoveredTile.structure.ToString();
+                    if (hoveredTile.structure is Dwelling) {
+                        Dwelling dwelling = hoveredTile.structure as Dwelling;
+                        summary += "\nResidents: ";
+                        if (dwelling.residents.Count > 0) {
+                            for (int i = 0; i < dwelling.residents.Count; i++) {
+                                summary += "\n\t" + dwelling.residents[i].name;
+                            }
+                        } else {
+                            summary += "None";
+                        }
+                        
+                    }
+                    summary += "\nCharacter's Here: ";
+                    if (hoveredTile.structure.charactersHere.Count > 0) {
+                        for (int i = 0; i < hoveredTile.structure.charactersHere.Count; i++) {
+                            summary += "\n\t" + hoveredTile.structure.charactersHere[i].name;
+                        }
+                    } else {
+                        summary += "None";
+                    }
+                    UIManager.Instance.ShowSmallInfo(summary);
+                } else {
+                    UIManager.Instance.HideSmallInfo();
+                }
+            }
         } else {
-            //UIManager.Instance.HideSmallInfo();
+            if (UIManager.Instance != null) {
+                UIManager.Instance.HideSmallInfo();
+            }
+        }
+    }
+
+    public void Close() {
+        //this.gameObject.SetActive(false);
+        if (UIManager.Instance.areaInfoUI.isShowing) {
+            UIManager.Instance.areaInfoUI.ToggleMapMenu(false);
         }
     }
 }

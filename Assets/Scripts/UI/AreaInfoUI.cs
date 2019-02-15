@@ -92,7 +92,7 @@ public class AreaInfoUI : UIMenu {
         
         if (previousArea != null) {
             previousArea.SetOutlineState(false);
-            //previousArea.areaMap.gameObject.SetActive(false);
+            previousArea.areaMap.gameObject.SetActive(false);
         }
         if (activeArea != null) {
             activeArea.SetOutlineState(true);
@@ -101,16 +101,16 @@ public class AreaInfoUI : UIMenu {
         if(activeArea.owner != PlayerManager.Instance.player.playerFaction) {
             PlayerUI.Instance.attackSlot.ShowAttackButton();
         }
-        //if (mapToggle.isOn) {
-        //    activeArea.areaMap.gameObject.SetActive(true);
-        //}
+        if (mapToggle.isOn) {
+            activeArea.areaMap.gameObject.SetActive(true);
+        }
     }
     public override void CloseMenu() {
         //Utilities.DestroyChildren(charactersScrollView.content);
         base.CloseMenu();
         if (activeArea != null) {
             activeArea.SetOutlineState(false);
-            //activeArea.areaMap.gameObject.SetActive(false);
+            activeArea.areaMap.gameObject.SetActive(false);
         }
         activeArea = null;
         //UIManager.Instance.SetCoverState(false);
@@ -508,7 +508,7 @@ public class AreaInfoUI : UIMenu {
     #region Area Map
     public void ToggleMapMenu(bool state) {
         mapToggle.isOn = state;
-        //activeArea.areaMap.gameObject.SetActive(state);
+        activeArea.areaMap.gameObject.SetActive(state);
     }
     #endregion
 }

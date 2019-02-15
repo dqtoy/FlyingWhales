@@ -493,15 +493,15 @@ public class LandmarkManager : MonoBehaviour {
         if (locationPortraits.ContainsKey(newArea.name)) {
             newArea.SetLocationPortrait(locationPortraits[newArea.name]);
         }
-//#if !WORLD_CREATION_TOOL
-//        GameObject areaMapGO = GameObject.Instantiate(innerStructurePrefab, areaMapsParent);
-//        //areaMapGO.transform.localScale = new Vector3(0.2f, 0.2f, 1f);
-//        //areaMapGO.transform.localPosition = Vector3.zero;
-//        AreaInnerTileMap areaMap = areaMapGO.GetComponent<AreaInnerTileMap>();
-//        areaMap.Initialize(newArea);
-//        newArea.SetAreaMap(areaMap);
-//        areaMapGO.SetActive(false);
-//#endif
+#if !WORLD_CREATION_TOOL
+        GameObject areaMapGO = GameObject.Instantiate(innerStructurePrefab, areaMapsParent);
+        //areaMapGO.transform.localScale = new Vector3(0.2f, 0.2f, 1f);
+        //areaMapGO.transform.localPosition = Vector3.zero;
+        AreaInnerTileMap areaMap = areaMapGO.GetComponent<AreaInnerTileMap>();
+        areaMap.Initialize(newArea);
+        newArea.SetAreaMap(areaMap);
+        areaMapGO.SetActive(false);
+#endif
         Messenger.Broadcast(Signals.AREA_CREATED, newArea);
         allAreas.Add(newArea);
         return newArea;
