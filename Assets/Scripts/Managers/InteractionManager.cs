@@ -1732,16 +1732,34 @@ public class InteractionManager : MonoBehaviour {
         GameDate scheduledDate = GameManager.Instance.Today();
         scheduledDate.AddDays(5);
         log += "\n==========Scheduling <b>" + area.name + "'s</b> interactions on " + scheduledDate.ConvertToContinuousDays()  + "==========";
-        List<Interaction> interactionsInArea = new List<Interaction>(area.currentInteractions);
-        for (int j = 0; j < interactionsInArea.Count; j++) {
-            Interaction currInteraction = interactionsInArea[j];
+        List<Interaction> interactionsInArea = new List<Interaction>();
+        for (int j = 0; j < area.currentInteractions.Count; j++) {
+            Interaction currInteraction = area.currentInteractions[j];
             Character character = currInteraction.characterInvolved;
-            log += "\n" + currInteraction.name;
-            if (character != null) {
-                log += " for " + character.name;
+            if (!currInteraction.hasActivatedTimeOut) {
+                if (character == null || (!character.isDead && currInteraction.CanInteractionBeDoneBy(character))) {
+                    log += "\nScheduling interaction " + currInteraction.type.ToString();
+                    if (character != null) {
+                        log += " Involving <b><color=green>" + character.name + "</color></b>";
+                    }
+                    interactionsInArea.Add(currInteraction);
+                    log += "\n";
+                } else {
+                    //area.RemoveInteraction(currInteraction);
+                    currInteraction.EndInteraction();
+                    log += "\n<color=red>" + character.name + " is unable to perform " + currInteraction.name + "!</color>";
+                    //Unable to perform
+                    UnableToPerform unable = CreateNewInteraction(INTERACTION_TYPE.UNABLE_TO_PERFORM, area) as UnableToPerform;
+                    unable.SetActionNameThatCannotBePerformed(currInteraction.name);
+                    unable.SetCharacterInvolved(character);
+                    unable.TimedOutRunDefault(ref log);
+                    log += "\n";
+                }
             }
         }
-        SchedulingManager.Instance.AddEntry(scheduledDate, () => DefaultInteractionsInArea(interactionsInArea, area));
+        if(interactionsInArea.Count > 0) {
+            SchedulingManager.Instance.AddEntry(scheduledDate, () => DefaultInteractionsInArea(interactionsInArea, area));
+        }
         area.currentInteractions.Clear();
     }
     private void DefaultInteractionsInArea(List<Interaction> interactions, Area area) {
@@ -1762,7 +1780,7 @@ public class InteractionManager : MonoBehaviour {
             Interaction currInteraction = interactions[j];
             Character character = currInteraction.characterInvolved;
             if (!currInteraction.hasActivatedTimeOut) {
-                if (character == null || (!character.isDead && currInteraction.CanInteractionBeDoneBy(character))) {
+                if (character == null || currInteraction.CanStillDoInteraction(character)) {
                     log += "\nRunning interaction default " + currInteraction.type.ToString();
                     if (character != null) {
                         log += " Involving <b><color=green>" + character.name + "</color></b>";
@@ -1772,12 +1790,7 @@ public class InteractionManager : MonoBehaviour {
                 } else {
                     //area.RemoveInteraction(currInteraction);
                     currInteraction.EndInteraction();
-                    log += "\n<color=red>" + character.name + " is unable to perform " + currInteraction.name + "!</color>";
-                    //Unable to perform
-                    UnableToPerform unable = CreateNewInteraction(INTERACTION_TYPE.UNABLE_TO_PERFORM, area) as UnableToPerform;
-                    unable.SetActionNameThatCannotBePerformed(currInteraction.name);
-                    unable.SetCharacterInvolved(character);
-                    unable.TimedOutRunDefault(ref log);
+                    log += "\n<color=red>" + currInteraction.name + " can no longer be done by " + character.name + "!</color>";
                     log += "\n";
                 }
             }
