@@ -59,7 +59,8 @@ public class TravelLine : MonoBehaviour {
     }
     public void OnClickTravelLine() {
         if (_character != null) {
-            if(UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.id == _character.id) {
+            if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.id == _character.id) {
+                iconImg.sprite = clickedSprite;
                 return;
             }
             UIManager.Instance.ShowCharacterInfo(_character);
