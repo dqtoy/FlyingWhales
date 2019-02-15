@@ -39,6 +39,7 @@ public class Interaction {
 
     public int dayStarted { get; protected set; }
     public int dayCompleted { get; protected set; }
+    public bool isPrevented { get; protected set; }
     public List<InteractionCharacterEffect> actualEffectsOnActor { get; protected set; } //what actually happened to the actor
     public List<InteractionCharacterEffect> actualEffectsOnTarget { get; protected set; } //what actually happened to the target
 
@@ -215,7 +216,12 @@ public class Interaction {
     public virtual void DoActionUponMoveToArrival() {
 
     }
-    //public virtual bool CanStillDoInteraction() { return true; }
+    public virtual bool CanStillDoInteraction(Character character) {
+        if (character.doNotDisturb > 1 || character.isDead || !character.IsInOwnParty() || isPrevented) {
+            return false;
+        }
+        return true;
+    }
     public virtual Interaction CreateConnectedEvent(INTERACTION_TYPE connectedType, Area interactable) {
         Interaction interaction = InteractionManager.Instance.CreateNewInteraction(connectedType, interactable);
         _characterInvolved.SetForcedInteraction(interaction);
@@ -452,6 +458,9 @@ public class Interaction {
         }
         AddToDebugLog(_characterInvolved.name + " starts moving towards " + targetArea.name + "!(" + _type.ToString() + ")");
         _characterInvolved.currentParty.GoToLocation(targetArea, PATHFINDING_MODE.NORMAL, null, () => DoActionUponMoveToArrival(), null, this);
+    }
+    public void SetIsPrevented(bool state) {
+        isPrevented = state;
     }
     #endregion
 

@@ -214,6 +214,7 @@ public class UIManager : MonoBehaviour {
 
         Messenger.AddListener(Signals.INTERACTION_MENU_OPENED, OnInteractionMenuOpened);
         Messenger.AddListener(Signals.INTERACTION_MENU_CLOSED, OnInteractionMenuClosed);
+        Messenger.AddListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnPartyStartedTravelling);
     }
     //public void UnifySelectables() {
     //    UnifiedSelectableBehaviour[] selectables = this.GetComponentsInChildren<UnifiedSelectableBehaviour>(true);
@@ -1030,6 +1031,12 @@ public class UIManager : MonoBehaviour {
     public void UpdateCharacterInfo() {
         if (characterInfoUI.isShowing) {
             characterInfoUI.UpdateCharacterInfo();
+        }
+    }
+    private void OnPartyStartedTravelling(Party party) {
+        if(characterInfoUI.isShowing && party.characters.Contains(characterInfoUI.activeCharacter)) {
+            characterInfoUI.activeCharacter.CenterOnCharacter();
+            characterInfoUI.activeCharacter.currentParty.icon.travelLine.OnClickTravelLine();
         }
     }
     #endregion

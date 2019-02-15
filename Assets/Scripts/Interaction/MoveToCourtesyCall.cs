@@ -115,7 +115,7 @@ public class MoveToCourtesyCall : Interaction {
                         }
                     }
                 }
-            } else if (kvp.Value.relationshipStatus == FACTION_RELATIONSHIP_STATUS.DISLIKED || kvp.Value.relationshipStatus == FACTION_RELATIONSHIP_STATUS.NEUTRAL) {
+            } else if (kvp.Value.relationshipStatus == FACTION_RELATIONSHIP_STATUS.FRIEND) {
                 for (int i = 0; i < kvp.Key.ownedAreas.Count; i++) {
                     Area currArea = kvp.Key.ownedAreas[i];
                     for (int k = 0; k < currArea.areaResidents.Count; k++) {

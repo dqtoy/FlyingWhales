@@ -179,6 +179,12 @@ public class InteractionManager : MonoBehaviour {
                 actorEffect = null,
                 targetCharacterEffect = null,
             } },
+            { INTERACTION_TYPE.GIFT_BEAST, new InteractionAttributes(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.DIPLOMACY },
+                alignment = INTERACTION_ALIGNMENT.NEUTRAL,
+                actorEffect = null,
+                targetCharacterEffect = null,
+            } },
             //CHARACTER NPC ACTIONS-----------------------------------------------------------------------------------------------------------------------------------------------------------------
             { INTERACTION_TYPE.MOVE_TO_RETURN_HOME, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.OTHER },
@@ -873,6 +879,12 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.GIFT_ITEM:
                 createdInteraction = new GiftItem(interactable);
                 break;
+            case INTERACTION_TYPE.MOVE_TO_GIFT_BEAST:
+                createdInteraction = new MoveToGiftBeast(interactable);
+                break;
+            case INTERACTION_TYPE.GIFT_BEAST:
+                createdInteraction = new GiftBeast(interactable);
+                break;
         }
         return createdInteraction;
     }
@@ -1321,7 +1333,7 @@ public class InteractionManager : MonoBehaviour {
                 if (!character.homeArea.IsResidentsFull()) {
                     for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
                         Character currCharacter = CharacterManager.Instance.allCharacters[i];
-                        if (currCharacter.role.roleType == CHARACTER_ROLE.BEAST && currCharacter.faction == FactionManager.Instance.neutralFaction) {
+                        if (currCharacter.id != character.id && currCharacter.role.roleType == CHARACTER_ROLE.BEAST && currCharacter.faction == FactionManager.Instance.neutralFaction) {
                             return true;
                         }
                     }
@@ -1537,16 +1549,26 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.MOVE_TO_COURTESY_CALL:
                 return character.faction.id != FactionManager.Instance.neutralFaction.id;
             case INTERACTION_TYPE.MOVE_TO_GIFT_ITEM:
-                if (character.isHoldingItem) {
-                    return true;
-                } else {
-                    List<LocationStructure> allWarehouses = character.specificLocation.GetStructuresOfType(STRUCTURE_TYPE.WAREHOUSE);
-                    if (allWarehouses != null && allWarehouses.Count > 0) {
-                        for (int i = 0; i < allWarehouses.Count; i++) {
-                            if(allWarehouses[i].itemsInStructure.Count > 0) {
-                                return true;
+                if(character.faction.id != FactionManager.Instance.neutralFaction.id){
+                    if (character.isHoldingItem) {
+                        return true;
+                    } else {
+                        List<LocationStructure> allWarehouses = character.specificLocation.GetStructuresOfType(STRUCTURE_TYPE.WAREHOUSE);
+                        if (allWarehouses != null && allWarehouses.Count > 0) {
+                            for (int i = 0; i < allWarehouses.Count; i++) {
+                                if (allWarehouses[i].itemsInStructure.Count > 0) {
+                                    return true;
+                                }
                             }
                         }
+                    }
+                }
+                return false;
+            case INTERACTION_TYPE.MOVE_TO_GIFT_BEAST:
+                for (int i = 0; i < character.specificLocation.areaResidents.Count; i++) {
+                    Character resident = character.specificLocation.areaResidents[i];
+                    if(resident.id != character.id && resident.role.roleType == CHARACTER_ROLE.BEAST && resident.faction.id == character.faction.id && resident.isIdle) {
+                        return true;
                     }
                 }
                 return false;
@@ -1710,16 +1732,34 @@ public class InteractionManager : MonoBehaviour {
         GameDate scheduledDate = GameManager.Instance.Today();
         scheduledDate.AddDays(5);
         log += "\n==========Scheduling <b>" + area.name + "'s</b> interactions on " + scheduledDate.ConvertToContinuousDays()  + "==========";
-        List<Interaction> interactionsInArea = new List<Interaction>(area.currentInteractions);
-        for (int j = 0; j < interactionsInArea.Count; j++) {
-            Interaction currInteraction = interactionsInArea[j];
+        List<Interaction> interactionsInArea = new List<Interaction>();
+        for (int j = 0; j < area.currentInteractions.Count; j++) {
+            Interaction currInteraction = area.currentInteractions[j];
             Character character = currInteraction.characterInvolved;
-            log += "\n" + currInteraction.name;
-            if (character != null) {
-                log += " for " + character.name;
+            if (!currInteraction.hasActivatedTimeOut) {
+                if (character == null || (!character.isDead && currInteraction.CanInteractionBeDoneBy(character))) {
+                    log += "\nScheduling interaction " + currInteraction.type.ToString();
+                    if (character != null) {
+                        log += " Involving <b><color=green>" + character.name + "</color></b>";
+                    }
+                    interactionsInArea.Add(currInteraction);
+                    log += "\n";
+                } else {
+                    //area.RemoveInteraction(currInteraction);
+                    currInteraction.EndInteraction();
+                    log += "\n<color=red>" + character.name + " is unable to perform " + currInteraction.name + "!</color>";
+                    //Unable to perform
+                    UnableToPerform unable = CreateNewInteraction(INTERACTION_TYPE.UNABLE_TO_PERFORM, area) as UnableToPerform;
+                    unable.SetActionNameThatCannotBePerformed(currInteraction.name);
+                    unable.SetCharacterInvolved(character);
+                    unable.TimedOutRunDefault(ref log);
+                    log += "\n";
+                }
             }
         }
-        SchedulingManager.Instance.AddEntry(scheduledDate, () => DefaultInteractionsInArea(interactionsInArea, area));
+        if(interactionsInArea.Count > 0) {
+            SchedulingManager.Instance.AddEntry(scheduledDate, () => DefaultInteractionsInArea(interactionsInArea, area));
+        }
         area.currentInteractions.Clear();
     }
     private void DefaultInteractionsInArea(List<Interaction> interactions, Area area) {
@@ -1740,7 +1780,7 @@ public class InteractionManager : MonoBehaviour {
             Interaction currInteraction = interactions[j];
             Character character = currInteraction.characterInvolved;
             if (!currInteraction.hasActivatedTimeOut) {
-                if (character == null || (!character.isDead && currInteraction.CanInteractionBeDoneBy(character))) {
+                if (character == null || currInteraction.CanStillDoInteraction(character)) {
                     log += "\nRunning interaction default " + currInteraction.type.ToString();
                     if (character != null) {
                         log += " Involving <b><color=green>" + character.name + "</color></b>";
@@ -1750,12 +1790,7 @@ public class InteractionManager : MonoBehaviour {
                 } else {
                     //area.RemoveInteraction(currInteraction);
                     currInteraction.EndInteraction();
-                    log += "\n<color=red>" + character.name + " is unable to perform " + currInteraction.name + "!</color>";
-                    //Unable to perform
-                    UnableToPerform unable = CreateNewInteraction(INTERACTION_TYPE.UNABLE_TO_PERFORM, area) as UnableToPerform;
-                    unable.SetActionNameThatCannotBePerformed(currInteraction.name);
-                    unable.SetCharacterInvolved(character);
-                    unable.TimedOutRunDefault(ref log);
+                    log += "\n<color=red>" + currInteraction.name + " can no longer be done by " + character.name + "!</color>";
                     log += "\n";
                 }
             }

@@ -289,6 +289,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 8bdc1a1cf8a1c5842be972458dd90a72, type: 3}
   - {fileID: 21300000, guid: 688af52cfc1d07b42a817bbbf1ec1360, type: 3}
   - {fileID: 21300000, guid: df565b2c1e4b47f42b35e56d39363e93, type: 3}
+  - {fileID: 21300000, guid: 9446df3c48b01e7409f52c0e260f7f62, type: 3}
   - {fileID: 21300000, guid: 54202d4c9c12b6c42b0a5d56630b9b11, type: 3}
   - {fileID: 21300000, guid: 41b46e5c79a790a4587ee7aef9acb301, type: 3}
   - {fileID: 21300000, guid: 5982206c24543a34eb45b8b331a6b4b7, type: 3}
@@ -611,6 +612,7 @@ SpriteAtlas:
   - main_menu_loadgame_btn_hover
   - main_menu_continue_btn_hover
   - ge_icon-16
+  - Empty
   - button_close_hover
   - minion_icon_instigator
   - faction_relationship_container
