@@ -1,0 +1,154 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class MoveToGiftItem : Interaction {
+    private const string Start = "Start";
+    private const string Gifting_Proceeds = "Gifting Proceeds";
+
+    private Character _targetCharacter;
+
+    public override Area targetArea {
+        get { return _targetCharacter.homeArea; }
+    }
+
+    public override INTERACTION_TYPE pairedInteractionType {
+        get { return INTERACTION_TYPE.GIFT_ITEM; }
+    }
+
+    public MoveToGiftItem(Area interactable) : base(interactable, INTERACTION_TYPE.MOVE_TO_GIFT_ITEM, 0) {
+        _name = "Move To Gift Item";
+    }
+
+    #region Overrides
+    public override void CreateStates() {
+        if (_targetCharacter == null) {
+            SetTargetCharacter(GetTargetCharacter(_characterInvolved));
+        }
+        InteractionState startState = new InteractionState(Start, this);
+        InteractionState giftingProceeds = new InteractionState(Gifting_Proceeds, this);
+
+        Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description", this);
+        startStateDescriptionLog.AddToFillers(targetArea, targetArea.name, LOG_IDENTIFIER.LANDMARK_2);
+        startStateDescriptionLog.AddToFillers(targetCharacter.faction, targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_1);
+        startState.OverrideDescriptionLog(startStateDescriptionLog);
+
+        CreateActionOptions(startState);
+
+        giftingProceeds.SetEffect(() => GiftingProceedsEffect(giftingProceeds));
+
+        _states.Add(startState.name, startState);
+        _states.Add(giftingProceeds.name, giftingProceeds);
+
+        SetCurrentState(startState);
+    }
+    public override void CreateActionOptions(InteractionState state) {
+        if (state.name == "Start") {
+            ActionOption doNothing = new ActionOption {
+                interactionState = state,
+                cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
+                name = "Do nothing.",
+                duration = 0,
+                effect = () => DoNothingEffect(state),
+            };
+            state.AddActionOption(doNothing);
+            state.SetDefaultOption(doNothing);
+        }
+    }
+    public override bool CanInteractionBeDoneBy(Character character) {
+        if(!InteractionManager.Instance.CanCreateInteraction(type, character)) {
+            return false;
+        }
+        if (_targetCharacter == null) {
+            SetTargetCharacter(GetTargetCharacter(character));
+        }
+        if (_targetCharacter == null) {
+            return false;
+        }
+        return base.CanInteractionBeDoneBy(character);
+    }
+    public override void DoActionUponMoveToArrival() {
+        Interaction interaction = CreateConnectedEvent(INTERACTION_TYPE.GIFT_ITEM, targetArea);
+        interaction.SetTargetCharacter(targetCharacter);
+    }
+    public override void SetTargetCharacter(Character character) {
+        _targetCharacter = character;
+    }
+    #endregion
+
+    #region Option Effects
+    private void DoNothingEffect(InteractionState state) {
+        SetCurrentState(_states[Gifting_Proceeds]);
+    }
+    #endregion
+
+    #region Reward Effects
+    private void GiftingProceedsEffect(InteractionState state) {
+        if(!_characterInvolved.isHoldingItem) {
+            List<LocationStructure> allWarehouses = _characterInvolved.specificLocation.GetStructuresOfType(STRUCTURE_TYPE.WAREHOUSE);
+            if (allWarehouses != null && allWarehouses.Count > 0) {
+                for (int i = 0; i < allWarehouses.Count; i++) {
+                    if (allWarehouses[i].itemsInStructure.Count > 0) {
+                        SpecialToken chosenItem = allWarehouses[i].itemsInStructure[UnityEngine.Random.Range(0, allWarehouses[i].itemsInStructure.Count)];
+                        allWarehouses[i].RemoveItem(chosenItem);
+                        _characterInvolved.ObtainToken(chosenItem);
+                        break;
+                    }
+                }
+            }
+        }
+
+        state.descriptionLog.AddToFillers(targetArea, targetArea.name, LOG_IDENTIFIER.LANDMARK_2);
+        state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        state.descriptionLog.AddToFillers(_characterInvolved.tokenInInventory, _characterInvolved.tokenInInventory.name, LOG_IDENTIFIER.ITEM_1);
+
+        state.AddLogFiller(new LogFiller(targetArea, targetArea.name, LOG_IDENTIFIER.LANDMARK_2));
+        state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_characterInvolved.tokenInInventory, _characterInvolved.tokenInInventory.name, LOG_IDENTIFIER.ITEM_1));
+
+        StartMoveToAction();
+    }
+    #endregion
+
+    private Character GetTargetCharacter(Character character) {
+        WeightedDictionary<Character> weights = new WeightedDictionary<Character>();
+        foreach (KeyValuePair<Faction, FactionRelationship> kvp in character.faction.relationships) {
+            if (kvp.Key == PlayerManager.Instance.player.playerFaction) { continue; }
+            if (kvp.Value.relationshipStatus == FACTION_RELATIONSHIP_STATUS.ENEMY) {
+                for (int i = 0; i < kvp.Key.ownedAreas.Count; i++) {
+                    Area currArea = kvp.Key.ownedAreas[i];
+                    for (int k = 0; k < currArea.areaResidents.Count; k++) {
+                        Character resident = currArea.areaResidents[k];
+                        if (resident.id != character.id && resident.faction.id == kvp.Key.id && (resident.role.roleType == CHARACTER_ROLE.NOBLE || resident.isLeader)) {
+                            weights.AddElement(resident, 20);
+                        }
+                    }
+                }
+            } else if (kvp.Value.relationshipStatus == FACTION_RELATIONSHIP_STATUS.DISLIKED || kvp.Value.relationshipStatus == FACTION_RELATIONSHIP_STATUS.NEUTRAL) {
+                for (int i = 0; i < kvp.Key.ownedAreas.Count; i++) {
+                    Area currArea = kvp.Key.ownedAreas[i];
+                    for (int k = 0; k < currArea.areaResidents.Count; k++) {
+                        Character resident = currArea.areaResidents[k];
+                        if (resident.id != character.id && resident.faction.id == kvp.Key.id && (resident.role.roleType == CHARACTER_ROLE.NOBLE || resident.isLeader)) {
+                            weights.AddElement(resident, 15);
+                        }
+                    }
+                }
+            } else if (kvp.Value.relationshipStatus == FACTION_RELATIONSHIP_STATUS.DISLIKED || kvp.Value.relationshipStatus == FACTION_RELATIONSHIP_STATUS.NEUTRAL) {
+                for (int i = 0; i < kvp.Key.ownedAreas.Count; i++) {
+                    Area currArea = kvp.Key.ownedAreas[i];
+                    for (int k = 0; k < currArea.areaResidents.Count; k++) {
+                        Character resident = currArea.areaResidents[k];
+                        if (resident.id != character.id && resident.faction.id == kvp.Key.id && (resident.role.roleType == CHARACTER_ROLE.NOBLE || resident.isLeader)) {
+                            weights.AddElement(resident, 5);
+                        }
+                    }
+                }
+            }
+        }
+        if (weights.Count > 0) {
+            return weights.PickRandomElementGivenWeights();
+        }
+        return null;
+    }
+}

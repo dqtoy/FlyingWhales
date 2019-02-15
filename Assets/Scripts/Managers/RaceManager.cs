@@ -48,7 +48,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.MOVE_TO_OCCUPY_ACTION_FACTION,
                 INTERACTION_TYPE.PATROL_ACTION_FACTION,
                 INTERACTION_TYPE.MOVE_TO_EXPLORE_EVENT_FACTION,
-                //Add Gift Item Action
+                INTERACTION_TYPE.MOVE_TO_GIFT_ITEM,
             } },
             { RACE.ELVES, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_TAME_BEAST_ACTION,
