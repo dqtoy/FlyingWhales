@@ -104,6 +104,23 @@ public class AreaInnerTileMap : MonoBehaviour {
         allTiles.ForEach(x => x.FindNeighbours(map));
     }
     private void SplitMap() {
+        //float elevationFrequency = 19.1f; //14.93f;//2.66f;
+
+        //for (int i = 0; i < allTiles.Count; i++) {
+        //    LocationGridTile tile = allTiles[i];
+        //    float nx = ((float)tile.localPlace.x/(float)width);
+        //    float ny = ((float)tile.localPlace.y/(float)height);
+        //    float elevationRand = UnityEngine.Random.Range(500f, 2000f);
+        //    float elevationNoise = Mathf.PerlinNoise((nx + elevationRand) * elevationFrequency, (ny + elevationRand) * elevationFrequency);
+        //    Debug.Log(elevationNoise);
+        //    if (elevationNoise < 0.50f) {
+        //        groundTilemap.SetTile(tile.localPlace, outsideTile);
+        //    } else {
+        //        groundTilemap.SetTile(tile.localPlace, insideTile);
+        //    }
+
+        //}
+        //return;
         outsideTiles = new List<LocationGridTile>();
         insideTiles = new List<LocationGridTile>();
         Cardinal_Direction[] choices = Utilities.GetEnumValues<Cardinal_Direction>();
