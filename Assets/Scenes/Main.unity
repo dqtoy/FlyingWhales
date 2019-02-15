@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.12731749, g: 0.13414757, b: 0.1210787, a: 1}
+  m_IndirectSpecularColor: {r: 0.1273174, g: 0.13414761, b: 0.12107885, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -11675,6 +11675,16 @@ Prefab:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
+    - target: {fileID: 114344577214669652, guid: 92d03677d05ecec4ba3a597bfa1ae2ad,
+        type: 2}
+      propertyPath: m_havePropertiesChanged
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114344577214669652, guid: 92d03677d05ecec4ba3a597bfa1ae2ad,
+        type: 2}
+      propertyPath: m_isInputParsingRequired
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 114036181928794364, guid: 92d03677d05ecec4ba3a597bfa1ae2ad,
         type: 2}
       propertyPath: m_havePropertiesChanged
@@ -11691,16 +11701,6 @@ Prefab:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 114129861338535948, guid: 92d03677d05ecec4ba3a597bfa1ae2ad,
-        type: 2}
-      propertyPath: m_isInputParsingRequired
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114344577214669652, guid: 92d03677d05ecec4ba3a597bfa1ae2ad,
-        type: 2}
-      propertyPath: m_havePropertiesChanged
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114344577214669652, guid: 92d03677d05ecec4ba3a597bfa1ae2ad,
         type: 2}
       propertyPath: m_isInputParsingRequired
       value: 1
@@ -12118,7 +12118,7 @@ GameObject:
   - component: {fileID: 323383585}
   - component: {fileID: 323383584}
   m_Layer: 28
-  m_Name: Canvas
+  m_Name: AreaNameplates
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -21164,10 +21164,10 @@ MonoBehaviour:
     type: 2}
   tile1: {fileID: 0}
   tile2: {fileID: 0}
-  defaultCursorTexture: {fileID: 2800000, guid: 3b159dc765142944492cd69555358826,
+  defaultCursorTexture: {fileID: 2800000, guid: e139e92190d431d4a85b50db3bbc175e,
     type: 3}
   targetCursorTexture: {fileID: 2800000, guid: 7357d53bb13f567458d4c9364c6fa54d, type: 3}
-  dragWorldCursorTexture: {fileID: 2800000, guid: e2413cfeba426a441aa726cb5aa972a4,
+  dragWorldCursorTexture: {fileID: 2800000, guid: 311558d663a1b434da71198ded51ad58,
     type: 3}
   cursorMode: 1
   hotSpot: {x: 0, y: 0}

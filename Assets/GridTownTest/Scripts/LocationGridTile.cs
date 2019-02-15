@@ -12,7 +12,8 @@ public class LocationGridTile {
     public Vector3 worldLocation { get; private set; }
     public bool isInside { get; private set; }
     public Tile_Type tileType { get; private set; }
-    public Dictionary<TileNeighbourDirection, LocationGridTile> neighbours;
+    public LocationStructure structure { get; private set; }
+    public Dictionary<TileNeighbourDirection, LocationGridTile> neighbours { get; private set; }
 
     public LocationGridTile(int x, int y, Tilemap tilemap) {
         parentMap = tilemap;
@@ -53,6 +54,11 @@ public class LocationGridTile {
         this.tileType = tileType;
     }
 
+    #region Structures
+    public void SetStructure(LocationStructure structure) {
+        this.structure = structure;
+    }
+    #endregion
 
     #region Utilities
     public bool HasOutsideNeighbour() {

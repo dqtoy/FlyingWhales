@@ -10,7 +10,7 @@ public class CameraMove : MonoBehaviour {
 	[SerializeField] private float _maxFov;
 	[SerializeField] private float sensitivity;
     [SerializeField] private float _zoomSpeed = 5f;
-    [SerializeField] private Camera nameplateCamera;
+    public Camera nameplateCamera;
     [SerializeField] private Camera _uiCamera;
 
     private float dampTime = 0.2f;
