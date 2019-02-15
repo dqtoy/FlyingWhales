@@ -1333,7 +1333,7 @@ public class InteractionManager : MonoBehaviour {
                 if (!character.homeArea.IsResidentsFull()) {
                     for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
                         Character currCharacter = CharacterManager.Instance.allCharacters[i];
-                        if (currCharacter.role.roleType == CHARACTER_ROLE.BEAST && currCharacter.faction == FactionManager.Instance.neutralFaction) {
+                        if (currCharacter.id != character.id && currCharacter.role.roleType == CHARACTER_ROLE.BEAST && currCharacter.faction == FactionManager.Instance.neutralFaction) {
                             return true;
                         }
                     }
