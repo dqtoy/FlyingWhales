@@ -173,6 +173,12 @@ public class InteractionManager : MonoBehaviour {
                 actorEffect = null,
                 targetCharacterEffect = null,
             } },
+            { INTERACTION_TYPE.GIFT_ITEM, new InteractionAttributes(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.DIPLOMACY },
+                alignment = INTERACTION_ALIGNMENT.NEUTRAL,
+                actorEffect = null,
+                targetCharacterEffect = null,
+            } },
             //CHARACTER NPC ACTIONS-----------------------------------------------------------------------------------------------------------------------------------------------------------------
             { INTERACTION_TYPE.MOVE_TO_RETURN_HOME, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.OTHER },
@@ -861,6 +867,12 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.COURTESY_CALL:
                 createdInteraction = new CourtesyCall(interactable);
                 break;
+            case INTERACTION_TYPE.MOVE_TO_GIFT_ITEM:
+                createdInteraction = new MoveToGiftItem(interactable);
+                break;
+            case INTERACTION_TYPE.GIFT_ITEM:
+                createdInteraction = new GiftItem(interactable);
+                break;
         }
         return createdInteraction;
     }
@@ -1524,6 +1536,20 @@ public class InteractionManager : MonoBehaviour {
                 return false;
             case INTERACTION_TYPE.MOVE_TO_COURTESY_CALL:
                 return character.faction.id != FactionManager.Instance.neutralFaction.id;
+            case INTERACTION_TYPE.MOVE_TO_GIFT_ITEM:
+                if (character.isHoldingItem) {
+                    return true;
+                } else {
+                    List<LocationStructure> allWarehouses = character.specificLocation.GetStructuresOfType(STRUCTURE_TYPE.WAREHOUSE);
+                    if (allWarehouses != null && allWarehouses.Count > 0) {
+                        for (int i = 0; i < allWarehouses.Count; i++) {
+                            if(allWarehouses[i].itemsInStructure.Count > 0) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+                return false;
             default:
                 return true;
         }

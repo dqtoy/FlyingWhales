@@ -78,9 +78,9 @@ public class HuntAction : Interaction {
     }
     public override void SetTargetCharacter(Character targetCharacter) {
         _targetCharacter = targetCharacter;
-        if(_targetCharacter != null) {
-            Debug.LogWarning("CHOSEN TARGET CHARACTER FOR HUNT ACTION OF " + _characterInvolved.name + " IS " + _targetCharacter.name);
-        }
+        //if(_targetCharacter != null) {
+        //    Debug.LogWarning("CHOSEN TARGET CHARACTER FOR HUNT ACTION OF " + _characterInvolved.name + " IS " + _targetCharacter.name);
+        //}
     }
     #endregion
 

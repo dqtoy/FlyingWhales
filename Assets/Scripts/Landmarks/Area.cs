@@ -1744,6 +1744,12 @@ public class Area {
         }
         return null;
     }
+    public List<LocationStructure> GetStructuresOfType(STRUCTURE_TYPE structureType) {
+        if (structures.ContainsKey(structureType)) {
+            return structures[structureType];
+        }
+        return null;
+    }
     public List<LocationStructure> GetStructuresAtLocation(bool inside) {
         List<LocationStructure> structures = new List<LocationStructure>();
         foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp in this.structures) {
