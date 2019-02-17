@@ -32,7 +32,7 @@ public class CharacterManager : MonoBehaviour {
     public GameObject characterPortraitPrefab;
     [SerializeField] private List<RacePortraitAssets> portraitAssets;
     public List<Color> hairColors;
-    [SerializeField] private JobPortraitFramesDictionary portraitFrames;
+    [SerializeField] private RolePortraitFramesDictionary portraitFrames;
     [SerializeField] private StringSpriteDictionary classPortraits;
 
     [Header("Character Role Animators")]
@@ -218,16 +218,6 @@ public class CharacterManager : MonoBehaviour {
             }
         }
 
-        //if (data.inventoryData != null) {
-        //    for (int i = 0; i < data.inventoryData.Count; i++) {
-        //        string itemName = data.inventoryData[i];
-        //        Item currItem = ItemManager.Instance.CreateNewItemInstance(itemName);
-        //        if (currItem != null) {
-        //            newCharacter.PickupItem(currItem);
-        //        }
-        //    }
-        //}
-
         if (data.level != 0) {
             newCharacter.SetLevel(data.level);
         }
@@ -248,20 +238,14 @@ public class CharacterManager : MonoBehaviour {
         string[] classes = System.IO.Directory.GetFiles(path, "*.json");
         for (int i = 0; i < classes.Length; i++) {
             CharacterClass currentClass = JsonUtility.FromJson<CharacterClass>(System.IO.File.ReadAllText(classes[i]));
-            //CharacterClass currentClass = new CharacterClass();
             currentClass.ConstructData();
             _classesDictionary.Add(currentClass.className, currentClass);
         }
     }
     public string GetRandomDeadlySinsClassName() {
-        //return "Envy";
-        //return "Sloth";
         return _sevenDeadlySinsClassNames[UnityEngine.Random.Range(0, _sevenDeadlySinsClassNames.Length)];
     }
     public string GetDeadlySinsClassNameFromRotation() {
-        //return "Envy";
-        //return "Sloth";
-        //return _sevenDeadlySinsClassNames[UnityEngine.Random.Range(0, _sevenDeadlySinsClassNames.Length)];
         if (deadlySinsRotation.Count == 0) {
             deadlySinsRotation.AddRange(_sevenDeadlySinsClassNames);
         }
@@ -501,28 +485,21 @@ public class CharacterManager : MonoBehaviour {
 
     #region Avatars
     public Sprite GetSpriteByRole(CHARACTER_ROLE role){
-		switch(role){
-		case CHARACTER_ROLE.HERO:
-			return heroSprite;
-		case CHARACTER_ROLE.VILLAIN:
-			return villainSprite;
-        case CHARACTER_ROLE.BEAST:
-            return beastSprite;
-        case CHARACTER_ROLE.BANDIT:
-            return banditSprite;
-        case CHARACTER_ROLE.LEADER:
-            return chieftainSprite;
-            //case CHARACTER_ROLE.HERMIT:
-            //	return hermitSprite;
-            //case CHARACTER_ROLE.BEAST:
-            //	return beastSprite;
-            //case CHARACTER_ROLE.BANDIT:
-            //	return banditSprite;
-            //case CHARACTER_ROLE.CHIEFTAIN:
-            //	return chieftainSprite;
-        }
-        return null;
-	}
+        return heroSprite;
+        //switch(role){
+        //case CHARACTER_ROLE.HERO:
+        //	return heroSprite;
+        //case CHARACTER_ROLE.VILLAIN:
+        //	return villainSprite;
+        //      case CHARACTER_ROLE.BEAST:
+        //          return beastSprite;
+        //      case CHARACTER_ROLE.BANDIT:
+        //          return banditSprite;
+        //      case CHARACTER_ROLE.LEADER:
+        //          return chieftainSprite;
+        //      }
+        //return null;
+    }
     public Sprite GetSpriteByMonsterType(MONSTER_TYPE monsterType) {
         //TODO: Add different sprite for diff monster types
         return beastSprite;
@@ -593,11 +570,11 @@ public class CharacterManager : MonoBehaviour {
         PortraitAssetCollection pac = GetPortraitAssets(race, gender);
         return pac.underAssets.ElementAtOrDefault(index);
     }
-    public PortraitFrame GetPortraitFrame(JOB job) {
-        if (portraitFrames.ContainsKey(job)) {
-            return portraitFrames[job];
+    public PortraitFrame GetPortraitFrame(CHARACTER_ROLE role) {
+        if (portraitFrames.ContainsKey(role)) {
+            return portraitFrames[role];
         }
-        throw new System.Exception("There is no frame for job " + job.ToString());
+        throw new System.Exception("There is no frame for role " + role.ToString());
     }
     public Sprite GetClassPortraitSprite(string className) {
         if (classPortraits.ContainsKey(className)) {

@@ -1038,23 +1038,23 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             wasRoleChanged = true;
         }
         switch (role) {
-            case CHARACTER_ROLE.HERO:
-            _role = new Hero(this);
+            case CHARACTER_ROLE.NOBLE:
+            _role = new Noble(this);
             break;
-            case CHARACTER_ROLE.VILLAIN:
-            _role = new Villain(this);
+            case CHARACTER_ROLE.ADVENTURER:
+            _role = new Adventurer(this);
             break;
             case CHARACTER_ROLE.CIVILIAN:
             _role = new Civilian(this);
             break;
-            case CHARACTER_ROLE.KING:
-            _role = new King(this);
+            case CHARACTER_ROLE.MINION:
+            _role = new MinionRole(this);
             break;
             case CHARACTER_ROLE.PLAYER:
             _role = new PlayerRole(this);
             break;
-            case CHARACTER_ROLE.GUARDIAN:
-            _role = new Guardian(this);
+            case CHARACTER_ROLE.SOLDIER:
+            _role = new Soldier(this);
             break;
             case CHARACTER_ROLE.BEAST:
             _role = new Beast(this);
@@ -1065,8 +1065,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             case CHARACTER_ROLE.BANDIT:
             _role = new Bandit(this);
             break;
-            case CHARACTER_ROLE.ARMY:
-            _role = new Army(this);
             SetName(this.characterClass.className);
             break;
             default:

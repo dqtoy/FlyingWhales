@@ -368,17 +368,15 @@ public enum TECHNOLOGY {
 }
 public enum CHARACTER_ROLE {
     NONE,
-    HERO,
-	VILLAIN,
     CIVILIAN,
-    KING,
     PLAYER,
-    GUARDIAN,
     BANDIT,
     LEADER,
     BEAST,
-    ARMY,
     NOBLE,
+    SOLDIER,
+    ADVENTURER,
+    MINION,
 }
 public enum CHARACTER_CLASS {
     WARRIOR,
@@ -899,16 +897,6 @@ public enum QUEST_GIVER_TYPE {
     QUEST_BOARD,
     CHARACTER,
 }
-//public enum DEMON_TYPE {
-//    NONE,
-//    LUST,
-//    GLUTTONY,
-//    GREED,
-//    SLOTH,
-//    WRATH,
-//    ENVY,
-//    PRIDE,
-//}
 public enum COMBATANT_TYPE {
     CHARACTER,
     ARMY, //Party
@@ -1307,4 +1295,4 @@ public enum INTERACTION_CHARACTER_EFFECT {
     CHANGE_HOME,
     TIREDNESS_RECOVERY,
 }
-public enum TileNeighbourDirection { Top, Bottom, Left, Right, None}
+public enum TileNeighbourDirection { Top, Bottom, Left, Right, None }
