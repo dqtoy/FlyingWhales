@@ -124,8 +124,9 @@ public class SpecialToken : Token, IPointOfInterest {
     public int weight;
     public Faction owner;
     public LocationStructure structureLocation { get; private set; }
-
     public InteractionAttributes interactionAttributes { get; protected set; }
+
+    private LocationGridTile tile;
 
     #region getters/setters
     public override string tokenName {
@@ -148,6 +149,9 @@ public class SpecialToken : Token, IPointOfInterest {
     }
     public POINT_OF_INTEREST_TYPE poiType {
         get { return POINT_OF_INTEREST_TYPE.ITEM; }
+    }
+    public LocationGridTile gridTileLocation {
+        get { return tile; }
     }
     #endregion
 
@@ -183,6 +187,12 @@ public class SpecialToken : Token, IPointOfInterest {
     public override string ToString() {
         return name;
     }
+
+    #region Area Map
+    public void SetGridTileLocation(LocationGridTile tile) {
+        this.tile = tile;
+    }
+    #endregion
 }
 
 public class DefenderToken : Token {

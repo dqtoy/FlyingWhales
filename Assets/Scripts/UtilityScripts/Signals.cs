@@ -67,8 +67,8 @@ public static class Signals {
     public static string COLLIDED_WITH_CHARACTER = "OnCollideWithCharacter"; //Parameters (Character character1, Character character2)
     public static string CHARACTER_CREATED = "OnCharacterCreated"; //Parameters (Character createdCharacter)
     public static string ROLE_CHANGED = "OnCharacterRoleChanged"; //Parameters (Character characterThatChangedRole)
-    public static string RELATIONSHIP_CREATED = "OnRelationshipCreated"; //Parameters (Relationship createdRelationship)
-    public static string RELATIONSHIP_REMOVED = "OnRelationshipRemoved"; //Parameters (Relationship removedRelationship)
+    //public static string RELATIONSHIP_CREATED = "OnRelationshipCreated"; //Parameters (Relationship createdRelationship)
+    //public static string RELATIONSHIP_REMOVED = "OnRelationshipRemoved"; //Parameters (Relationship removedRelationship)
     public static string GENDER_CHANGED = "OnGenderChanged"; //Parameters (Character characterThatChangedGender, GENDER newGender)
     public static string CHARACTER_REMOVED = "OnCharacterRemoved"; //Parameters (Character removedCharacter)
     public static string ITEM_EQUIPPED = "OnItemEquipped"; //Parameters (Item equippedItem, Character character)
@@ -86,6 +86,7 @@ public static class Signals {
     public static string CHARACTER_MIGRATED_HOME = "OnCharacterChangedHome"; //Parameters (Character, Area previousHome, Area newHome); 
     public static string CHARACTER_CHANGED_RACE = "OnCharacterChangedRace"; //Parameters (Character); 
     public static string CHARACTER_ARRIVED_AT_STRUCTURE = "OnCharacterArrivedAtStructure"; //Parameters (Character, LocationStructure); 
+    public static string RELATIONSHIP_ADDED = "OnCharacterGainedRelationship"; //Parameters (Character, RelationshipTrait)
     #endregion
 
     #region UI

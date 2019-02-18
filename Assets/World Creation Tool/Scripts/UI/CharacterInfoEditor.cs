@@ -54,8 +54,8 @@ namespace worldcreator {
         public Dictionary<string, PortraitSettings> portraitTemplates;
 
         public void Initialize() {
-            Messenger.AddListener<Relationship>(Signals.RELATIONSHIP_CREATED, OnRelationshipCreated);
-            Messenger.AddListener<Relationship>(Signals.RELATIONSHIP_REMOVED, OnRelationshipRemoved);
+            //Messenger.AddListener<Relationship>(Signals.RELATIONSHIP_CREATED, OnRelationshipCreated);
+            //Messenger.AddListener<Relationship>(Signals.RELATIONSHIP_REMOVED, OnRelationshipRemoved);
 
             LoadEquipmentChoices();
             LoadInventoryChoices();

@@ -46,7 +46,7 @@ TagManager:
   - AvatarCombat
   - LoadingScreen
   - WorldUI
-  - 
+  - Area Maps
   - 
   - 
   m_SortingLayers:
@@ -115,4 +115,7 @@ TagManager:
     locked: 0
   - name: WorldUI
     uniqueID: 295978201
+    locked: 0
+  - name: Area Maps
+    uniqueID: 1024382313
     locked: 0

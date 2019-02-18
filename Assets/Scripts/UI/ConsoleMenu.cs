@@ -607,9 +607,17 @@ public class ConsoleMenu : UIMenu {
         if (interaction.type == INTERACTION_TYPE.USE_ITEM_ON_CHARACTER) {
             (interaction as UseItemOnCharacter).SetItemToken(character.tokenInInventory);
         }
-        character.SetForcedInteraction(interaction);
 
-        AddSuccessMessage("Set " + character.name + "'s override to " + interaction.name);
+        //if (interaction.CanInteractionBeDoneBy(character)) {
+            character.SetForcedInteraction(interaction);
+            AddSuccessMessage("Set " + character.name + "'s override to " + interaction.name);
+        //} else {
+        //    AddErrorMessage(character.name + " cannot do " + interaction.name);
+            //interaction.EndInteraction();
+        //}
+        
+
+        
     }
     private void ToggleFreezeCharacter(string[] parameter) {
         if (parameter.Length < 1) {

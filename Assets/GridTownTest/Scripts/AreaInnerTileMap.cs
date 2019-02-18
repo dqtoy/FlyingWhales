@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.Tilemaps;
 
 public class AreaInnerTileMap : MonoBehaviour {
@@ -30,6 +31,8 @@ public class AreaInnerTileMap : MonoBehaviour {
     public List<LocationGridTile> outsideTiles { get; private set; }
     public List<LocationGridTile> insideTiles { get; private set; }
     //public Sprite[,] groundTileData;
+
+    private bool isHovering;
 
     private enum Cardinal_Direction { North, South, East, West };
     private Dictionary<STRUCTURE_TYPE, List<Point>> structureSettings = new Dictionary<STRUCTURE_TYPE, List<Point>>() {
@@ -79,7 +82,7 @@ public class AreaInnerTileMap : MonoBehaviour {
         ConstructWalls();
         PlaceStructures(area.GetStructures(true), insideTiles);
         PlaceStructures(area.GetStructures(false), outsideTiles);
-        //scrollContent.sizeDelta = new Vector2()
+        AssignOuterAreas();
     }
 
     public void GenerateInnerStructures(Dictionary<STRUCTURE_TYPE, List<LocationStructure>> inside, Dictionary<STRUCTURE_TYPE, List<LocationStructure>> outside) {
@@ -88,6 +91,7 @@ public class AreaInnerTileMap : MonoBehaviour {
         ConstructWalls();
         PlaceStructures(inside, insideTiles);
         PlaceStructures(outside, outsideTiles);
+        AssignOuterAreas();
     }
 
     private void GenerateGrid() {
@@ -264,6 +268,7 @@ public class AreaInnerTileMap : MonoBehaviour {
                 }
                 //yield return new WaitForSeconds(0.1f);
             }
+            //kvp.Key.DetermineInsideTiles();
         }
     }
     //private void PlaceInsideStructures(Dictionary<STRUCTURE_TYPE, List<LocationStructure>> structures) {
@@ -384,27 +389,49 @@ public class AreaInnerTileMap : MonoBehaviour {
     //}
     private List<LocationGridTile> GetTiles(Point size, LocationGridTile startingTile) {
         List<LocationGridTile> tiles = new List<LocationGridTile>();
-        for (int x = startingTile.localPlace.x; x <= startingTile.localPlace.x + size.X; x++) {
-            for (int y = startingTile.localPlace.y; y <= startingTile.localPlace.y + size.Y; y++) {
+        for (int x = startingTile.localPlace.x; x < startingTile.localPlace.x + size.X; x++) {
+            for (int y = startingTile.localPlace.y; y < startingTile.localPlace.y + size.Y; y++) {
                 tiles.Add(map[x, y]);
             }
         }
         return tiles;
     }
 
+    private void AssignOuterAreas() {
+        if (area.HasStructure(STRUCTURE_TYPE.WORK_AREA)) {
+            for (int i = 0; i < insideTiles.Count; i++) {
+                LocationGridTile currTile = insideTiles[i];
+                if (currTile.structure == null) {
+                    currTile.SetStructure(area.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA));
+                }
+            }
+        } else {
+            Debug.LogWarning(area.name + " doesn't have a structure for work area");
+        }
+        if (area.HasStructure(STRUCTURE_TYPE.WILDERNESS)) {
+            for (int i = 0; i < outsideTiles.Count; i++) {
+                LocationGridTile currTile = outsideTiles[i];
+                if (currTile.structure == null) {
+                    currTile.SetStructure(area.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS));
+                }
+            }
+        } else {
+            Debug.LogWarning(area.name + " doesn't have a structure for wilderness");
+        }
+    }
+
     private float xDiff = 14.5f;
     private float yDiff = 12f;
     private float originX = -14.5f;
     private float originY = -8.5f;
-    public void PlaceCharacter(Character character, LocationGridTile tile) {
+    public void PlaceObject(IPointOfInterest obj, LocationGridTile tile) {
         charactersTilemap.SetTile(tile.localPlace, characterTile);
+        tile.SetObjectHere(obj);
     }
-
-    public void RemoveCharacterVisualFromTile(LocationGridTile tile) {
+    public void RemoveObject(LocationGridTile tile) {
+        tile.RemoveObjectHere();
         charactersTilemap.SetTile(tile.localPlace, null);
     }
-
-
 
     public void OnScroll(Vector2 value) {
         //Debug.Log(value);
@@ -417,10 +444,10 @@ public class AreaInnerTileMap : MonoBehaviour {
 
         //}
     }
-    public void Update() {
-        //if (UIManager.Instance == null) {
-        //    return;
-        //}
+    public void LateUpdate() {
+        if (!isHovering) {
+            return;
+        }
         Vector3 mouseWorldPos = (canvas.worldCamera.ScreenToWorldPoint(Input.mousePosition) / tilemapsParent.transform.localScale.x);
         mouseWorldPos = new Vector3(mouseWorldPos.x + (tilemapsParent.transform.localPosition.x * -1), mouseWorldPos.y + (tilemapsParent.transform.localPosition.y * -1));
         Vector3 localPos = grid.WorldToLocal(mouseWorldPos);
@@ -434,32 +461,7 @@ public class AreaInnerTileMap : MonoBehaviour {
             LocationGridTile hoveredTile = map[coordinate.x, coordinate.y];
             //groundTilemap.SetColor(coordinate, Color.black);
             if (UIManager.Instance != null) {
-                if (hoveredTile.structure != null) {
-                    string summary = hoveredTile.structure.ToString();
-                    if (hoveredTile.structure is Dwelling) {
-                        Dwelling dwelling = hoveredTile.structure as Dwelling;
-                        summary += "\nResidents: ";
-                        if (dwelling.residents.Count > 0) {
-                            for (int i = 0; i < dwelling.residents.Count; i++) {
-                                summary += "\n\t" + dwelling.residents[i].name;
-                            }
-                        } else {
-                            summary += "None";
-                        }
-                        
-                    }
-                    summary += "\nCharacter's Here: ";
-                    if (hoveredTile.structure.charactersHere.Count > 0) {
-                        for (int i = 0; i < hoveredTile.structure.charactersHere.Count; i++) {
-                            summary += "\n\t" + hoveredTile.structure.charactersHere[i].name;
-                        }
-                    } else {
-                        summary += "None";
-                    }
-                    UIManager.Instance.ShowSmallInfo(summary);
-                } else {
-                    UIManager.Instance.HideSmallInfo();
-                }
+                ShowTileData(hoveredTile);
             }
         } else {
             if (UIManager.Instance != null) {
@@ -473,5 +475,27 @@ public class AreaInnerTileMap : MonoBehaviour {
         if (UIManager.Instance.areaInfoUI.isShowing) {
             UIManager.Instance.areaInfoUI.ToggleMapMenu(false);
         }
+        isHovering = false;
+    }
+
+    public void OnPointerEnter(BaseEventData baseData) {
+        isHovering = true;
+    }
+    public void OnPointerExit(BaseEventData baseData) {
+        isHovering = false;
+        if (UIManager.Instance != null) {
+            UIManager.Instance.HideSmallInfo();
+        }
+    }
+
+    private void ShowTileData(LocationGridTile tile) {
+        string summary = tile.localPlace.ToString();
+        summary += "\nTile Type: " + tile.tileType.ToString();
+        summary += "\nTile State: " + tile.tileState.ToString();
+        summary += "\nContent: " + tile.objHere?.ToString() ?? "None";
+        if (tile.structure != null) {
+            summary += "\nStructure: " + tile.structure.ToString();
+        }
+        UIManager.Instance.ShowSmallInfo(summary);
     }
 }

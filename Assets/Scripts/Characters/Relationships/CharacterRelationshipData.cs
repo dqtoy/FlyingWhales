@@ -15,6 +15,7 @@ public class CharacterRelationshipData {
     public LocationStructure knownStructure { get; private set; }
     public List<Trait> trouble { get; private set; } //Set this to trait for now, but this could change in future iterations
     public InteractionIntel plannedActionIntel { get; private set; } //this is only occupied if the player gives the character an intel to the owner, regarding this character
+    public List<Character> knownLovedOnes { get; private set; }
 
     public string lastEncounterLog { get; private set; }
 
@@ -28,19 +29,9 @@ public class CharacterRelationshipData {
         isCharacterLocated = true;
         SetKnownStructure(targetCharacter.homeStructure);
         trouble = new List<Trait>();
+        LoadInitialLovedOnes();
         AddListeners();
     }
-    //public CharacterRelationshipData(Character owner, Character targetCharacter, CharacterRelationshipData data) {
-    //    this.owner = owner;
-    //    this.targetCharacter = targetCharacter;
-    //    rels = new List<RelationshipTrait>(data.rels);
-    //    lastEncounter = data.lastEncounter;
-    //    encounterMultiplier = data.encounterMultiplier;
-    //    isCharacterMissing = data.isCharacterMissing;
-    //    isCharacterLocated = data.isCharacterLocated;
-    //    SetKnownStructure(data.knownStructure);
-    //    trouble = new List<Trait>(data.trouble);
-    //}
 
     public void AddListeners() {
         Messenger.AddListener(Signals.DAY_STARTED, LastEncounterTick);
@@ -48,6 +39,7 @@ public class CharacterRelationshipData {
         Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
         //Messenger.AddListener<Character, Trait>(Signals.TRAIT_ADDED, OnTraitAddedToCharacter);
         Messenger.AddListener<Character, Trait>(Signals.TRAIT_REMOVED, OnTraitRemovedFromCharacter);
+        Messenger.AddListener<Character, RelationshipTrait>(Signals.RELATIONSHIP_ADDED, OnCharacterGainedRelationship);
     }
     public void RemoveListeners() {
         Messenger.RemoveListener(Signals.DAY_STARTED, LastEncounterTick);
@@ -159,6 +151,15 @@ public class CharacterRelationshipData {
             return 15;
         }
         return 0;
+    }
+    public bool HasRelationshipOfEffect(TRAIT_EFFECT effect) {
+        for (int i = 0; i < rels.Count; i++) {
+            RelationshipTrait currTrait = rels[i];
+            if (currTrait.effect == effect) {
+                return true;
+            }
+        }
+        return false;
     }
     #endregion
 
@@ -343,11 +344,37 @@ public class CharacterRelationshipData {
     }
     #endregion
 
+    #region Known Loved Ones
+    private void LoadInitialLovedOnes() {
+        knownLovedOnes = new List<Character>();
+        if (targetCharacter.HasRelationshipTraitOf(RELATIONSHIP_TRAIT.RELATIVE)) {
+            foreach (KeyValuePair<Character, CharacterRelationshipData> kvp in targetCharacter.relationships) {
+                if (kvp.Value.HasRelationshipTrait(RELATIONSHIP_TRAIT.RELATIVE)) {
+                    AddKnownLovedOne(kvp.Key);
+                }
+            }
+        }
+    }
+    private void OnCharacterGainedRelationship(Character character, RelationshipTrait rel) {
+        if (character.id == targetCharacter.id && rel.relType == RELATIONSHIP_TRAIT.RELATIVE) {
+            AddKnownLovedOne(rel.targetCharacter);
+        }
+    }
+    public void AddKnownLovedOne(Character character) {
+        if (!knownLovedOnes.Contains(character)) {
+            knownLovedOnes.Add(character);
+        }
+    }
+    public void RemoveKnownLovedOne(Character character) {
+        knownLovedOnes.Remove(character);
+    }
+    #endregion
+
     #region For Testing
     public string GetSummary() {
         string text = targetCharacter.name + " (" + targetCharacter.faction.name + "): ";
         for (int i = 0; i < rels.Count; i++) {
-            text += "|" + rels[i].name + "|";
+            text += "|" + rels[i].name + "(" + rels[i].severity.ToString() + ")"+ "|";
         }
         text += "\n\t<b>Last Encounter:</b> " + lastEncounter.ToString() + " (" + lastEncounterLog + ")";
         text += "\n\t<b>Encounter Multiplier:</b> " + encounterMultiplier.ToString();
@@ -365,6 +392,14 @@ public class CharacterRelationshipData {
         text += "\n\t<b>Planned Action Intel:</b> ";
         if (plannedActionIntel != null) {
             text += "\n" + plannedActionIntel.GetDebugInfo();
+        } else {
+            text += "None";
+        }
+        text += "\n\t<b>Known Loved Ones:</b> ";
+        if (knownLovedOnes.Count > 0) {
+            for (int i = 0; i < knownLovedOnes.Count; i++) {
+                text += "|" + knownLovedOnes[i].name + "|";
+            }
         } else {
             text += "None";
         }
