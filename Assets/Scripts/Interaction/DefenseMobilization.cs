@@ -102,7 +102,7 @@ public class DefenseMobilization : Interaction {
         interactable.AddDefenderGroup(newDefenders);
         for (int i = 0; i < interactable.areaResidents.Count; i++) {
             Character resident = interactable.areaResidents[i];
-            if (resident.forcedInteraction == null && resident.doNotDisturb <= 0 && resident.IsInOwnParty() && !resident.isLeader && !resident.isDefender && !resident.currentParty.icon.isTravelling && resident.role.roleType != CHARACTER_ROLE.CIVILIAN && resident.specificLocation.id == interactable.id) {
+            if (resident.isIdle && !resident.isLeader && !resident.isDefender && !resident.characterClass.isNonCombatant && resident.specificLocation.id == interactable.id) {
                 newDefenders.AddCharacterToGroup(resident);
                 if (newDefenders.party.characters.Count >= 4) {
                     break;

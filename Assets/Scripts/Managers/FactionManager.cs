@@ -117,8 +117,7 @@ public class FactionManager : MonoBehaviour {
             Faction faction = startFactions[i];
             if (!faction.isActive) {
                 OwnInitialAreasOfFaction(data.areaData, faction);
-                faction.GenerateStartingLeader(9);
-                faction.ownedAreas[0].GenerateStartingFollowers(7);
+                faction.GenerateStartingCitizens(9, 7);
                 faction.SetFactionActiveState(true);
             }
         }

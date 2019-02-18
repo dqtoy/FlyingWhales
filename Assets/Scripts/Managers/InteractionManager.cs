@@ -15,9 +15,6 @@ public class InteractionManager : MonoBehaviour {
 
     public Queue<Interaction> interactionUIQueue { get; private set; }
 
-    [SerializeField] private RoleInteractionsListDictionary roleDefaultInteractions;
-    [SerializeField] private JobInteractionsListDictionary jobNPCInteractions;
-
     private string dailyInteractionSummary;
 
     public Dictionary<INTERACTION_TYPE, InteractionAttributes> interactionCategoryAndAlignment { get; private set; }
@@ -915,7 +912,7 @@ public class InteractionManager : MonoBehaviour {
                     int idleCharactersCount = 0;
                     for (int i = 0; i < location.areaResidents.Count; i++) {
                         Character resident = location.areaResidents[i];
-                        if (resident.forcedInteraction == null && resident.doNotDisturb <= 0 && resident.IsInOwnParty() && !resident.isLeader && !resident.isDefender && !resident.currentParty.icon.isTravelling && resident.role.roleType != CHARACTER_ROLE.CIVILIAN && resident.specificLocation.id == location.id) {
+                        if (resident.forcedInteraction == null && resident.doNotDisturb <= 0 && resident.IsInOwnParty() && !resident.isLeader && !resident.isDefender && !resident.currentParty.icon.isTravelling && !resident.characterClass.isNonCombatant && resident.specificLocation.id == location.id) {
                             idleCharactersCount++;
                             if (idleCharactersCount >= 4) {
                                 return true;
@@ -1254,10 +1251,10 @@ public class InteractionManager : MonoBehaviour {
                 }
                 return false;
             case INTERACTION_TYPE.CHANCE_ENCOUNTER:
-                if (character.characterClass.roleType != CHARACTER_ROLE.BEAST) { // && character.race != RACE.SKELETON
+                if (character.role.roleType != CHARACTER_ROLE.BEAST) { // && character.race != RACE.SKELETON
                     for (int i = 0; i < character.specificLocation.charactersAtLocation.Count; i++) {
                         Character currCharacter = character.specificLocation.charactersAtLocation[i];
-                        if (currCharacter.id != character.id && currCharacter.characterClass.roleType != CHARACTER_ROLE.BEAST && currCharacter.race != RACE.SKELETON) {
+                        if (currCharacter.id != character.id && currCharacter.role.roleType != CHARACTER_ROLE.BEAST && currCharacter.race != RACE.SKELETON) {
                             return true;
                         }
                     }
@@ -1614,19 +1611,6 @@ public class InteractionManager : MonoBehaviour {
             return new Reward { rewardType = config.rewardType, amount = Random.Range(config.lowerRange, config.higherRange + 1) };
         }
         throw new System.Exception("There is no reward configuration with name " + rewardName);
-    }
-
-    public List<CharacterInteractionWeight> GetDefaultInteractionWeightsForRole(CHARACTER_ROLE role) {
-        if (roleDefaultInteractions.ContainsKey(role)) {
-            return roleDefaultInteractions[role];
-        }
-        return null;
-    }
-    public List<CharacterInteractionWeight> GetJobNPCInteractionWeights(JOB jobType) {
-        if (jobNPCInteractions.ContainsKey(jobType)) {
-            return jobNPCInteractions[jobType];
-        }
-        return null;
     }
     public void OnClickInteraction(Interaction interaction) {
         if(interaction != null) {

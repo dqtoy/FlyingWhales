@@ -161,7 +161,7 @@ public class FoundBestalia : Interaction {
                 character.SetForcedInteraction(null);
             }
         }
-        interactable.SpawnRandomCharacters(2);
+        //interactable.SpawnRandomCharacters(2);
 
         state.descriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
         state.descriptionLog.AddToFillers(oldFaction, oldFaction.name, LOG_IDENTIFIER.FACTION_2);
@@ -189,7 +189,7 @@ public class FoundBestalia : Interaction {
                 character.SetForcedInteraction(null);
             }
         }
-        interactable.SpawnRandomCharacters(2);
+        //interactable.SpawnRandomCharacters(2);
 
         state.descriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
         state.descriptionLog.AddToFillers(oldFaction, oldFaction.name, LOG_IDENTIFIER.FACTION_2);
@@ -220,7 +220,7 @@ public class FoundBestalia : Interaction {
                 character.SetForcedInteraction(null);
             }
         }
-        interactable.SpawnRandomCharacters(2);
+        //interactable.SpawnRandomCharacters(2);
 
         state.descriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
         state.descriptionLog.AddToFillers(oldFaction, oldFaction.name, LOG_IDENTIFIER.FACTION_2);
@@ -252,7 +252,7 @@ public class FoundBestalia : Interaction {
                 character.SetForcedInteraction(null);
             }
         }
-        interactable.SpawnRandomCharacters(2);
+        //interactable.SpawnRandomCharacters(2);
     }
     private void AllianceFailEffect(InteractionState state) {
         //Remove character from her current Faction and turn her into the Faction Leader of a new Bestalia faction. Current area becomes owned by Bestalia faction, set its race to the character's race.
@@ -273,7 +273,7 @@ public class FoundBestalia : Interaction {
                 character.SetForcedInteraction(null);
             }
         }
-        interactable.SpawnRandomCharacters(2);
+        //interactable.SpawnRandomCharacters(2);
     }
     private void AllianceCritFailEffect(InteractionState state) {
         //Remove character from her current Faction and turn her into the Faction Leader of a new Bestalia faction. Current area becomes owned by Bestalia faction, set its race to the character's race.
@@ -297,7 +297,7 @@ public class FoundBestalia : Interaction {
                 character.SetForcedInteraction(null);
             }
         }
-        interactable.SpawnRandomCharacters(2);
+        //interactable.SpawnRandomCharacters(2);
     }
     private void DissuadeSuccessEffect(InteractionState state) {
         //investigatorCharacter.LevelUp();
@@ -321,7 +321,7 @@ public class FoundBestalia : Interaction {
                 character.SetForcedInteraction(null);
             }
         }
-        interactable.SpawnRandomCharacters(2);
+        //interactable.SpawnRandomCharacters(2);
     }
     private void BestaliaFoundEffect(InteractionState state) {
         //Remove character from her current Faction and turn her into the Faction Leader of a new Bestalia faction. Current area becomes owned by Bestalia faction, set its race to the character's race.
@@ -342,7 +342,7 @@ public class FoundBestalia : Interaction {
                 character.SetForcedInteraction(null);
             }
         }
-        interactable.SpawnRandomCharacters(2);
+        //interactable.SpawnRandomCharacters(2);
     }
     #endregion
 }

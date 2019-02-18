@@ -104,10 +104,10 @@ public class MysteryHum : Interaction {
         //investigatorMinion.character.currentParty.iactionData.AssignAction(characterAction, playerLandmarkToAttack.landmarkObj);
     }
     private void ArmyRecruitedRewardEffect(InteractionState state) {
-        Minion newMinion = PlayerManager.Instance.player.CreateNewMinion("Earthbinders", RACE.FAERY);
-        newMinion.character.SetLevel(5);
-        PlayerManager.Instance.player.AddMinion(newMinion);
-        investigatorCharacter.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
+        //Minion newMinion = PlayerManager.Instance.player.CreateNewMinion("Earthbinders", RACE.FAERY);
+        //newMinion.character.SetLevel(5);
+        //PlayerManager.Instance.player.AddMinion(newMinion);
+        //investigatorCharacter.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
     }
     private void DoNothingRewardEffect(InteractionState state) {
         //explorerMinion.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Exp_Reward_2));

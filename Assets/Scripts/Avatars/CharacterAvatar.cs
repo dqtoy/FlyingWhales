@@ -90,11 +90,8 @@ public class CharacterAvatar : MonoBehaviour{
         _isInitialized = true;
         _hasArrived = true;
         SetVisualState(true);
-        if (_party.mainCharacter is CharacterArmyUnit) {
-            _avatarSpriteRenderer.sprite = CharacterManager.Instance.villainSprite;
-        } else {
-            SetSprite(_party.mainCharacter.role.roleType);
-        }
+        SetSprite(_party.mainCharacter.role.roleType);
+
 #if !WORLD_CREATION_TOOL
         GameObject portraitGO = UIManager.Instance.InstantiateUIObject(CharacterManager.Instance.characterPortraitPrefab.name, this.transform);
         characterPortrait = portraitGO.GetComponent<CharacterPortrait>();

@@ -187,7 +187,7 @@ namespace worldcreator {
         }
         public void SetRole(int choice) {
             CHARACTER_ROLE newRole = (CHARACTER_ROLE)Enum.Parse(typeof(CHARACTER_ROLE), roleField.options[choice].text);
-            _character.AssignRole(newRole);
+            _character.AssignRole(CharacterRole.GetRoleByRoleType(newRole));
         }
         public void SetClass(int choice) {
             string newClass = classField.options[choice].text;

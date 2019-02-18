@@ -9,11 +9,6 @@ public class CharacterParty : Party {
     private bool _isIdle; //can't do action, needs will not deplete
 
     #region getters/setters
-    public override string name {
-        get {
-            return GetPartyName();
-        }
-    }
     public bool isIdle {
         get { return _isIdle; }
     }
@@ -37,21 +32,6 @@ public class CharacterParty : Party {
     }
 
     #region Utilities
-    private string GetPartyName() {
-        if (owner is CharacterArmyUnit) {
-            if (characters.Count > 1) {
-                string name = "Army of:";
-                for (int i = 0; i < characters.Count; i++) {
-                    name += "\n" + characters[i].name;
-                }
-                return name;
-            } else {
-                return owner.name;
-            }
-        } else {
-            return base.name;
-        }
-    }
     //If true, party can't do daily action (onDailyAction), i.e. actions, needs
     public void SetIsIdle(bool state) {
         _isIdle = state;

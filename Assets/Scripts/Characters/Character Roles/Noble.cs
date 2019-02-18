@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class Noble : CharacterRole {
 
-    public Noble(Character character) : base(character) {
-        _roleType = CHARACTER_ROLE.NOBLE;
+    public Noble() : base(CHARACTER_ROLE.NOBLE, "Noble", new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.SUBTERFUGE, INTERACTION_CATEGORY.DIPLOMACY, INTERACTION_CATEGORY.EXPANSION }) {
     }
 }

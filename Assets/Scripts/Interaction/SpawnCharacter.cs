@@ -125,58 +125,58 @@ public class SpawnCharacter : Interaction {
         state.AddLogFiller(new LogFiller(null, _classNameToBeSpawned, LOG_IDENTIFIER.STRING_2));
     }
     private void FailCancelEffect(InteractionState state) {
-        Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(_classNameToBeSpawned, interactable.raceType, Utilities.GetRandomGender(), interactable.owner, interactable);
+        //Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(_classNameToBeSpawned, interactable.raceType, Utilities.GetRandomGender(), interactable.owner, interactable);
 
-        state.descriptionLog.AddToFillers(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_1);
-        state.descriptionLog.AddToFillers(null, Utilities.NormalizeString(interactable.raceType.ToString()), LOG_IDENTIFIER.STRING_1);
-        state.descriptionLog.AddToFillers(null, _classNameToBeSpawned, LOG_IDENTIFIER.STRING_2);
-        state.descriptionLog.AddToFillers(createdCharacter, createdCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        //state.descriptionLog.AddToFillers(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_1);
+        //state.descriptionLog.AddToFillers(null, Utilities.NormalizeString(interactable.raceType.ToString()), LOG_IDENTIFIER.STRING_1);
+        //state.descriptionLog.AddToFillers(null, _classNameToBeSpawned, LOG_IDENTIFIER.STRING_2);
+        //state.descriptionLog.AddToFillers(createdCharacter, createdCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
-        state.AddLogFiller(new LogFiller(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_1));
-        state.AddLogFiller(new LogFiller(null, Utilities.NormalizeString(interactable.raceType.ToString()), LOG_IDENTIFIER.STRING_1));
-        state.AddLogFiller(new LogFiller(null, _classNameToBeSpawned, LOG_IDENTIFIER.STRING_2));
-        state.AddLogFiller(new LogFiller(createdCharacter, createdCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        //state.AddLogFiller(new LogFiller(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_1));
+        //state.AddLogFiller(new LogFiller(null, Utilities.NormalizeString(interactable.raceType.ToString()), LOG_IDENTIFIER.STRING_1));
+        //state.AddLogFiller(new LogFiller(null, _classNameToBeSpawned, LOG_IDENTIFIER.STRING_2));
+        //state.AddLogFiller(new LogFiller(createdCharacter, createdCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     private void SuccessCurseEffect(InteractionState state) {
-        //investigatorCharacter.LevelUp();
+        ////investigatorCharacter.LevelUp();
 
-        Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(_classNameToBeSpawned, interactable.raceType, Utilities.GetRandomGender(), interactable.owner, interactable);
-        Trait curse = AttributeManager.Instance.allTraits["Placeholder Curse 1"];
-        createdCharacter.AddTrait(curse);
+        //Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(_classNameToBeSpawned, interactable.raceType, Utilities.GetRandomGender(), interactable.owner, interactable);
+        //Trait curse = AttributeManager.Instance.allTraits["Placeholder Curse 1"];
+        //createdCharacter.AddTrait(curse);
 
-        state.descriptionLog.AddToFillers(null, Utilities.NormalizeString(interactable.raceType.ToString()), LOG_IDENTIFIER.STRING_1);
-        state.descriptionLog.AddToFillers(null, _classNameToBeSpawned, LOG_IDENTIFIER.STRING_2);
-        state.descriptionLog.AddToFillers(createdCharacter, createdCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        state.descriptionLog.AddToFillers(null, curse.name, LOG_IDENTIFIER.OTHER);
+        //state.descriptionLog.AddToFillers(null, Utilities.NormalizeString(interactable.raceType.ToString()), LOG_IDENTIFIER.STRING_1);
+        //state.descriptionLog.AddToFillers(null, _classNameToBeSpawned, LOG_IDENTIFIER.STRING_2);
+        //state.descriptionLog.AddToFillers(createdCharacter, createdCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        //state.descriptionLog.AddToFillers(null, curse.name, LOG_IDENTIFIER.OTHER);
 
-        state.AddLogFiller(new LogFiller(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_1));
-        state.AddLogFiller(new LogFiller(null, Utilities.NormalizeString(interactable.raceType.ToString()), LOG_IDENTIFIER.STRING_1));
-        state.AddLogFiller(new LogFiller(null, _classNameToBeSpawned, LOG_IDENTIFIER.STRING_2));
-        state.AddLogFiller(new LogFiller(createdCharacter, createdCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
-        state.AddLogFiller(new LogFiller(null, curse.name, LOG_IDENTIFIER.OTHER));
+        //state.AddLogFiller(new LogFiller(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_1));
+        //state.AddLogFiller(new LogFiller(null, Utilities.NormalizeString(interactable.raceType.ToString()), LOG_IDENTIFIER.STRING_1));
+        //state.AddLogFiller(new LogFiller(null, _classNameToBeSpawned, LOG_IDENTIFIER.STRING_2));
+        //state.AddLogFiller(new LogFiller(createdCharacter, createdCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        //state.AddLogFiller(new LogFiller(null, curse.name, LOG_IDENTIFIER.OTHER));
     }
     private void FailCurseEffect(InteractionState state) {
-        Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(_classNameToBeSpawned, interactable.raceType, Utilities.GetRandomGender(), interactable.owner, interactable);
+        //Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(_classNameToBeSpawned, interactable.raceType, Utilities.GetRandomGender(), interactable.owner, interactable);
 
-        state.descriptionLog.AddToFillers(null, Utilities.NormalizeString(interactable.raceType.ToString()), LOG_IDENTIFIER.STRING_1);
-        state.descriptionLog.AddToFillers(null, _classNameToBeSpawned, LOG_IDENTIFIER.STRING_2);
+        //state.descriptionLog.AddToFillers(null, Utilities.NormalizeString(interactable.raceType.ToString()), LOG_IDENTIFIER.STRING_1);
+        //state.descriptionLog.AddToFillers(null, _classNameToBeSpawned, LOG_IDENTIFIER.STRING_2);
 
-        state.AddLogFiller(new LogFiller(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_1));
-        state.AddLogFiller(new LogFiller(null, Utilities.NormalizeString(interactable.raceType.ToString()), LOG_IDENTIFIER.STRING_1));
-        state.AddLogFiller(new LogFiller(null, _classNameToBeSpawned, LOG_IDENTIFIER.STRING_2));
-        state.AddLogFiller(new LogFiller(createdCharacter, createdCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        //state.AddLogFiller(new LogFiller(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_1));
+        //state.AddLogFiller(new LogFiller(null, Utilities.NormalizeString(interactable.raceType.ToString()), LOG_IDENTIFIER.STRING_1));
+        //state.AddLogFiller(new LogFiller(null, _classNameToBeSpawned, LOG_IDENTIFIER.STRING_2));
+        //state.AddLogFiller(new LogFiller(createdCharacter, createdCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     private void NormalSpawnEffect(InteractionState state) {
-        Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(_classNameToBeSpawned, interactable.raceType, Utilities.GetRandomGender(), interactable.owner, interactable);
+        //Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(_classNameToBeSpawned, interactable.raceType, Utilities.GetRandomGender(), interactable.owner, interactable);
 
-        state.descriptionLog.AddToFillers(null, Utilities.NormalizeString(interactable.raceType.ToString()), LOG_IDENTIFIER.STRING_1);
-        state.descriptionLog.AddToFillers(null, _classNameToBeSpawned, LOG_IDENTIFIER.STRING_2);
-        state.descriptionLog.AddToFillers(createdCharacter, createdCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        //state.descriptionLog.AddToFillers(null, Utilities.NormalizeString(interactable.raceType.ToString()), LOG_IDENTIFIER.STRING_1);
+        //state.descriptionLog.AddToFillers(null, _classNameToBeSpawned, LOG_IDENTIFIER.STRING_2);
+        //state.descriptionLog.AddToFillers(createdCharacter, createdCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
-        state.AddLogFiller(new LogFiller(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_1));
-        state.AddLogFiller(new LogFiller(null, Utilities.NormalizeString(interactable.raceType.ToString()), LOG_IDENTIFIER.STRING_1));
-        state.AddLogFiller(new LogFiller(null, _classNameToBeSpawned, LOG_IDENTIFIER.STRING_2));
-        state.AddLogFiller(new LogFiller(createdCharacter, createdCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        //state.AddLogFiller(new LogFiller(interactable.owner, interactable.owner.name, LOG_IDENTIFIER.FACTION_1));
+        //state.AddLogFiller(new LogFiller(null, Utilities.NormalizeString(interactable.raceType.ToString()), LOG_IDENTIFIER.STRING_1));
+        //state.AddLogFiller(new LogFiller(null, _classNameToBeSpawned, LOG_IDENTIFIER.STRING_2));
+        //state.AddLogFiller(new LogFiller(createdCharacter, createdCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     #endregion
 }

@@ -83,7 +83,7 @@ public class MapGenerator : MonoBehaviour {
         //CameraMove.Instance.UpdateMinimapTexture();
         //QuestManager.Instance.Initialize();
         //EventManager.Instance.Initialize();
-        CharacterManager.Instance.LoadCharactersInfo();
+        //CharacterManager.Instance.LoadCharactersInfo();
         if (SteamManager.Initialized) {
             AchievementManager.Instance.Initialize();
         }

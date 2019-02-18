@@ -161,19 +161,19 @@ public class ArmyUnitTraining : Interaction {
         //}
     }
     private void ArmyProducedRewardEffect(InteractionState state) {
-        CharacterManager.Instance.CreateNewCharacter(_chosenClassName, interactable.owner.raceType, GENDER.MALE, interactable.owner, interactable);
-        if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(_interactable.owner.raceType), LOG_IDENTIFIER.STRING_1);
-            state.descriptionLog.AddToFillers(null, _chosenClassName, LOG_IDENTIFIER.STRING_2);
-        }
-        state.AddLogFiller(new LogFiller(_interactable.owner, _interactable.owner.name, LOG_IDENTIFIER.FACTION_1));
-        state.AddLogFiller(new LogFiller(null, Utilities.GetNormalizedSingularRace(_interactable.owner.raceType), LOG_IDENTIFIER.STRING_1));
-        state.AddLogFiller(new LogFiller(null, _chosenClassName, LOG_IDENTIFIER.STRING_2));
-        //if (state.minionLog != null) {
-        //    state.minionLog.AddToFillers(_interactable.faction, _interactable.faction.name, LOG_IDENTIFIER.FACTION_1);
-        //    state.minionLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(_interactable.faction.race), LOG_IDENTIFIER.STRING_1);
-        //    state.minionLog.AddToFillers(null, _chosenClassName, LOG_IDENTIFIER.STRING_2);
+        //CharacterManager.Instance.CreateNewCharacter(_chosenClassName, interactable.owner.raceType, GENDER.MALE, interactable.owner, interactable);
+        //if (state.descriptionLog != null) {
+        //    state.descriptionLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(_interactable.owner.raceType), LOG_IDENTIFIER.STRING_1);
+        //    state.descriptionLog.AddToFillers(null, _chosenClassName, LOG_IDENTIFIER.STRING_2);
         //}
+        //state.AddLogFiller(new LogFiller(_interactable.owner, _interactable.owner.name, LOG_IDENTIFIER.FACTION_1));
+        //state.AddLogFiller(new LogFiller(null, Utilities.GetNormalizedSingularRace(_interactable.owner.raceType), LOG_IDENTIFIER.STRING_1));
+        //state.AddLogFiller(new LogFiller(null, _chosenClassName, LOG_IDENTIFIER.STRING_2));
+        ////if (state.minionLog != null) {
+        ////    state.minionLog.AddToFillers(_interactable.faction, _interactable.faction.name, LOG_IDENTIFIER.FACTION_1);
+        ////    state.minionLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(_interactable.faction.race), LOG_IDENTIFIER.STRING_1);
+        ////    state.minionLog.AddToFillers(null, _chosenClassName, LOG_IDENTIFIER.STRING_2);
+        ////}
 
     }
     #endregion

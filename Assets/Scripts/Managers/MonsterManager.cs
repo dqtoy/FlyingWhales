@@ -6,7 +6,6 @@ public class MonsterManager : MonoBehaviour {
     public static MonsterManager Instance = null;
 
     private Dictionary<string, Monster> _monstersDictionary;
-    private Dictionary<string, MonsterArmyUnit> _monsterArmyUnitsDictionary;
 
     public GameObject monsterIconPrefab;
     //public MonsterComponent monsterComponent;
@@ -16,7 +15,6 @@ public class MonsterManager : MonoBehaviour {
 
     public List<MonsterParty> allMonsterParties;
     public List<Monster> allMonsters;
-    public List<MonsterArmyUnit> allMonsterArmyUnits;
 
     [Header("Monster Icons")]
     [SerializeField] private Sprite catSprite;
@@ -41,7 +39,6 @@ public class MonsterManager : MonoBehaviour {
         Instance = this;
         allMonsterParties = new List<MonsterParty>();
         allMonsters = new List<Monster>();
-        allMonsterArmyUnits = new List<MonsterArmyUnit>();
     }
 
     public void Initialize() {
@@ -50,29 +47,19 @@ public class MonsterManager : MonoBehaviour {
 
     private void ConstructAllMonsters() {
         _monstersDictionary = new Dictionary<string, Monster>();
-        _monsterArmyUnitsDictionary = new Dictionary<string, MonsterArmyUnit>();
         string path = Utilities.dataPath + "Monsters/";
         string[] monsters = System.IO.Directory.GetFiles(path, "*.json");
         for (int i = 0; i < monsters.Length; i++) {
             //JsonUtility.FromJsonOverwrite(System.IO.File.ReadAllText(classes[i]), monsterComponent);
             Monster monster = JsonUtility.FromJson<Monster>(System.IO.File.ReadAllText(monsters[i]));
-            MonsterArmyUnit monsterArmyUnit = JsonUtility.FromJson<MonsterArmyUnit>(System.IO.File.ReadAllText(monsters[i]));
             monster.ConstructMonsterData();
-            monsterArmyUnit.ConstructMonsterData();
             _monstersDictionary.Add(monster.name, monster);
-            _monsterArmyUnitsDictionary.Add(monsterArmyUnit.name, monsterArmyUnit);
         }
     }
     public Monster CreateNewMonster(string monsterName) {
         Monster newMonster = _monstersDictionary[monsterName].CreateNewCopy();
         newMonster.Initialize();
         allMonsters.Add(newMonster);
-        return newMonster;
-    }
-    public MonsterArmyUnit CreateNewMonsterArmyUnit(string monsterName) {
-        MonsterArmyUnit newMonster = _monsterArmyUnitsDictionary[monsterName].CreateNewCopy();
-        newMonster.Initialize();
-        allMonsterArmyUnits.Add(newMonster);
         return newMonster;
     }
     //public Monster CreateNewMonster(MonsterSaveData data) {

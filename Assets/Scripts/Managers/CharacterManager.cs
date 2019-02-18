@@ -12,7 +12,6 @@ public class CharacterManager : MonoBehaviour {
     public Transform characterIconsParent;
 
     public int maxLevel;
-    private Dictionary<string, CharacterClass> _classesDictionary;
     private Dictionary<ELEMENT, float> _elementsChanceDictionary;
     private List<Character> _allCharacters;
     private List<CharacterAvatar> _allCharacterAvatars;
@@ -47,14 +46,17 @@ public class CharacterManager : MonoBehaviour {
     public Dictionary<INTERACTION_TYPE, int> awayFromHomeInteractionWeights { get; private set; }
     public Dictionary<INTERACTION_TYPE, int> atHomeInteractionWeights { get; private set; }
     public Dictionary<CHARACTER_ROLE, INTERACTION_TYPE[]> characterRoleInteractions { get; private set; }
+    public Dictionary<string, CharacterClass> classesDictionary { get; private set; }
+    public Dictionary<string, CharacterClass> uniqueClasses { get; private set; }
+    public Dictionary<string, CharacterClass> normalClasses { get; private set; }
+    public Dictionary<string, CharacterClass> beastClasses { get; private set; }
+    public Dictionary<string, CharacterClass> demonClasses { get; private set; }
+    public Dictionary<string, Dictionary<string, CharacterClass>> identifierClasses { get; private set; }
 
     private static readonly string[] _sevenDeadlySinsClassNames = { "Lust", "Gluttony", "Greed", "Sloth", "Wrath", "Envy", "Pride" };
     private List<string> deadlySinsRotation = new List<string>();
 
     #region getters/setters
-    public Dictionary<string, CharacterClass> classesDictionary {
-        get { return _classesDictionary; }
-    }
     public List<Character> allCharacters {
         get { return _allCharacters; }
     }
@@ -113,15 +115,15 @@ public class CharacterManager : MonoBehaviour {
 #endif
         }
     }
-    public void LoadCharactersInfo() {
-        for (int i = 0; i < allCharacters.Count; i++) {
-            Character currCharacter = allCharacters[i];
-            //CheckForHiddenDesire(currCharacter);
-            //CheckForIntelActions(currCharacter);
-            //CheckForIntelReactions(currCharacter);
-            //CheckForSecrets(currCharacter);
-        }
-    }
+    //public void LoadCharactersInfo() {
+    //    for (int i = 0; i < allCharacters.Count; i++) {
+    //        Character currCharacter = allCharacters[i];
+    //        //CheckForHiddenDesire(currCharacter);
+    //        //CheckForIntelActions(currCharacter);
+    //        //CheckForIntelReactions(currCharacter);
+    //        //CheckForSecrets(currCharacter);
+    //    }
+    //}
     //public void LoadCharactersInfo(WorldSaveData data) {
     //    for (int i = 0; i < allCharacters.Count; i++) {
     //        Character currCharacter = allCharacters[i];
@@ -157,11 +159,14 @@ public class CharacterManager : MonoBehaviour {
     /*
      Create a new character, given a role, class and race.
          */
-    public Character CreateNewCharacter(string className, RACE race, GENDER gender, Faction faction = null, Area homeLocation = null, bool generateTraits = true) {
-		if(className == "None"){
-            className = "Classless";
-		}
-		Character newCharacter = new Character(className, race, gender);
+    public Character CreateNewCharacter(CharacterRole role, RACE race, GENDER gender, Faction faction = null, Area homeLocation = null, bool generateTraits = true) {
+        Character newCharacter = null;
+        if (role == CharacterRole.LEADER) {
+            //If the role is leader, it must have a faction, so get the data for the class from the faction
+            newCharacter = new Character(role, faction.initialLeaderClass, race, gender);
+        } else {
+            newCharacter = new Character(role, race, gender);
+        }
         Party party = newCharacter.CreateOwnParty();
         if (faction != null) {
             faction.AddNewCharacter(newCharacter);
@@ -171,6 +176,32 @@ public class CharacterManager : MonoBehaviour {
 #if !WORLD_CREATION_TOOL
         party.CreateIcon();
         if(homeLocation != null) {
+            party.icon.SetPosition(homeLocation.coreTile.transform.position);
+            newCharacter.MigrateHomeTo(homeLocation, false);
+            homeLocation.AddCharacterToLocation(party, newCharacter.homeStructure);
+        }
+#endif
+        if (generateTraits) {
+            newCharacter.GenerateRandomTraits();
+        }
+        newCharacter.CreateInitialTraitsByClass();
+        //newCharacter.CreateInitialTraitsByRace();
+        _allCharacters.Add(newCharacter);
+        //CheckForDuplicateIDs(newCharacter);
+        Messenger.Broadcast(Signals.CHARACTER_CREATED, newCharacter);
+        return newCharacter;
+    }
+    public Character CreateNewCharacter(CharacterRole role, string className, RACE race, GENDER gender, Faction faction = null, Area homeLocation = null, bool generateTraits = true) {
+        Character newCharacter = new Character(role, className, race, gender);
+        Party party = newCharacter.CreateOwnParty();
+        if (faction != null) {
+            faction.AddNewCharacter(newCharacter);
+        } else {
+            FactionManager.Instance.neutralFaction.AddNewCharacter(newCharacter);
+        }
+#if !WORLD_CREATION_TOOL
+        party.CreateIcon();
+        if (homeLocation != null) {
             party.icon.SetPosition(homeLocation.coreTile.transform.position);
             newCharacter.MigrateHomeTo(homeLocation, false);
             homeLocation.AddCharacterToLocation(party, newCharacter.homeStructure);
@@ -233,14 +264,41 @@ public class CharacterManager : MonoBehaviour {
         Messenger.Broadcast<Character>(Signals.CHARACTER_REMOVED, character);
     }
     private void ConstructAllClasses() {
-        _classesDictionary = new Dictionary<string, CharacterClass>();
+        classesDictionary = new Dictionary<string, CharacterClass>();
+        normalClasses = new Dictionary<string, CharacterClass>();
+        uniqueClasses = new Dictionary<string, CharacterClass>();
+        beastClasses = new Dictionary<string, CharacterClass>();
+        demonClasses = new Dictionary<string, CharacterClass>();
+        identifierClasses = new Dictionary<string, Dictionary<string, CharacterClass>>();
         string path = Utilities.dataPath + "CharacterClasses/";
         string[] classes = System.IO.Directory.GetFiles(path, "*.json");
         for (int i = 0; i < classes.Length; i++) {
             CharacterClass currentClass = JsonUtility.FromJson<CharacterClass>(System.IO.File.ReadAllText(classes[i]));
             currentClass.ConstructData();
-            _classesDictionary.Add(currentClass.className, currentClass);
+            classesDictionary.Add(currentClass.className, currentClass);
+            if(currentClass.identifier == "Normal") {
+                normalClasses.Add(currentClass.className, currentClass);
+                if (!identifierClasses.ContainsKey(currentClass.identifier)) {
+                    identifierClasses.Add(currentClass.identifier, normalClasses);
+                }
+            }else if (currentClass.identifier == "Unique") {
+                uniqueClasses.Add(currentClass.className, currentClass);
+                if (!identifierClasses.ContainsKey(currentClass.identifier)) {
+                    identifierClasses.Add(currentClass.identifier, uniqueClasses);
+                }
+            } else if (currentClass.identifier == "Beast") {
+                beastClasses.Add(currentClass.className, currentClass);
+                if (!identifierClasses.ContainsKey(currentClass.identifier)) {
+                    identifierClasses.Add(currentClass.identifier, beastClasses);
+                }
+            } else if (currentClass.identifier == "Demon") {
+                demonClasses.Add(currentClass.className, currentClass);
+                if (!identifierClasses.ContainsKey(currentClass.identifier)) {
+                    identifierClasses.Add(currentClass.identifier, demonClasses);
+                }
+            }
         }
+        identifierClasses.Add("All", classesDictionary);
     }
     public string GetRandomDeadlySinsClassName() {
         return _sevenDeadlySinsClassNames[UnityEngine.Random.Range(0, _sevenDeadlySinsClassNames.Length)];
@@ -253,6 +311,15 @@ public class CharacterManager : MonoBehaviour {
         deadlySinsRotation.RemoveAt(0);
         return nextClass;
     }
+    public string GetRandomClassByIdentifier(string identifier) {
+        if(identifier == "Demon") {
+            return GetDeadlySinsClassNameFromRotation();
+        } else if (identifierClasses.ContainsKey(identifier)) {
+            return GetRandomClassName(identifierClasses[identifier]);
+        }
+        return string.Empty;
+        //throw new System.Exception("There are no classes with the identifier " + identifier);
+    }
     public bool IsClassADeadlySin(string className) {
         for (int i = 0; i < _sevenDeadlySinsClassNames.Length; i++) {
             if(className == _sevenDeadlySinsClassNames[i]) {
@@ -261,10 +328,10 @@ public class CharacterManager : MonoBehaviour {
         }
         return false;
     }
-    public string GetRandomClassName() {
-        int random = UnityEngine.Random.Range(0, CharacterManager.Instance.classesDictionary.Count);
+    public string GetRandomClassName(Dictionary<string, CharacterClass> dict) {
+        int random = UnityEngine.Random.Range(0, dict.Count);
         int count = 0;
-        foreach (string className in CharacterManager.Instance.classesDictionary.Keys) {
+        foreach (string className in dict.Keys) {
             if (count == random) {
                 return className;
             }

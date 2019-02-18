@@ -137,9 +137,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public string raceClassName {
         get {
             if (Utilities.IsRaceBeast(race)) {
-                return Utilities.NormalizeString(race.ToString());
+                return Utilities.NormalizeString(race.ToString()) + " " + role.name;
             }
-            return Utilities.GetNormalizedRaceAdjective(race) + " " + characterClass.className;
+            if(role.name == characterClass.className) {
+                return Utilities.GetNormalizedRaceAdjective(race) + " " + role.name;
+            }
+            return Utilities.GetNormalizedRaceAdjective(race) + " " + role.name + " " + characterClass.className;
         }
     }
     public int id {
@@ -423,25 +426,27 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     #endregion
 
-    public Character(string className, RACE race, GENDER gender) : this() {
+    public Character(CharacterRole role, RACE race, GENDER gender) : this() {
         _id = Utilities.SetID(this);
-        //_characterClass = CharacterManager.Instance.classesDictionary[className].CreateNewCopy();
         _raceSetting = RaceManager.Instance.racesDictionary[race.ToString()].CreateNewCopy();
-        if (CharacterManager.Instance.classesDictionary.ContainsKey(className)) {
-            AssignClass(CharacterManager.Instance.classesDictionary[className]);
-        } else {
-            throw new Exception("There is no class named " + className + " but it is being assigned to " + this.name);
-        }
+        AssignRole(role);
+        AssignClassByRole(role);
         _gender = gender;
         SetName(RandomNameGenerator.Instance.GenerateRandomName(_raceSetting.race, _gender));
-        if (this is CharacterArmyUnit) {
-            _portraitSettings = CharacterManager.Instance.GenerateRandomPortrait(RACE.HUMANS, GENDER.MALE);
-        } else {
-            _portraitSettings = CharacterManager.Instance.GenerateRandomPortrait(race, gender);
-        }
-        if (_characterClass.roleType != CHARACTER_ROLE.NONE) {
-            AssignRole(_characterClass.roleType);
-        }
+        _portraitSettings = CharacterManager.Instance.GenerateRandomPortrait(race, gender);
+        AssignRandomJob();
+        SetMorality(MORALITY.GOOD);
+        SetTraitsFromRace();
+        ResetToFullHP();
+    }
+    public Character(CharacterRole role, string className, RACE race, GENDER gender) : this() {
+        _id = Utilities.SetID(this);
+        _raceSetting = RaceManager.Instance.racesDictionary[race.ToString()].CreateNewCopy();
+        AssignRole(role);
+        AssignClass(className);
+        _gender = gender;
+        SetName(RandomNameGenerator.Instance.GenerateRandomName(_raceSetting.race, _gender));
+        _portraitSettings = CharacterManager.Instance.GenerateRandomPortrait(race, gender);
         AssignRandomJob();
         SetMorality(MORALITY.GOOD);
         SetTraitsFromRace();
@@ -450,13 +455,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public Character(CharacterSaveData data) : this() {
         _id = Utilities.SetID(this, data.id);
         _raceSetting = RaceManager.Instance.racesDictionary[data.race.ToString()].CreateNewCopy();
-        AssignClass(CharacterManager.Instance.classesDictionary[data.className]);
+        AssignRole(data.role);
+        AssignClass(data.className);
         _gender = data.gender;
         SetName(data.name);
         _portraitSettings = CharacterManager.Instance.GenerateRandomPortrait(race, gender);
-        if (_characterClass.roleType != CHARACTER_ROLE.NONE) {
-            AssignRole(_characterClass.roleType);
-        }
+        //if (_characterClass.roleType != CHARACTER_ROLE.NONE) {
+        //    AssignRole(_characterClass.roleType);
+        //}
         AssignRandomJob();
         SetMorality(data.morality);
         SetTraitsFromRace();
@@ -626,17 +632,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 throw new Exception("Specific location of " + this.name + " is null! Please use command /l_character_location_history [Character Name/ID] in console menu to log character's location history. (Use '~' to show console menu)");
             }
 
-            //if (currentParty.specificLocation != null && currentParty.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
-            //    Log deathLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "death");
-            //    deathLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            //    AddHistory(deathLog);
-            //    (currentParty.specificLocation.coreTile.landmarkOnTile).AddHistory(deathLog);
-            //}
-
-            //Drop all Items
-            //            while (_equippedItems.Count > 0) {
-            //	ThrowItem (_equippedItems [0]);
-            //}
             if (ownParty.specificLocation != null && isHoldingItem) {
                 tokenInInventory.SetOwner(null);
                 DropToken(ownParty.specificLocation, currentStructure);
@@ -648,51 +643,19 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 _currentParty.RemoveCharacter(this);
             }
             _ownParty.PartyDeath();
-            //if (currentParty.id != _ownParty.id) {
-            //}
-            //_ownParty.PartyDeath();
-            //Remove ActionData
-            //_actionData.DetachActionData();
-
-            //if(_home != null){
-            //                //Remove character home on landmark
-            //	_home.RemoveCharacterHomeOnLandmark (this);
-            //}
 
             if (this._faction != null) {
                 this._faction.RemoveCharacter(this); //remove this character from it's factions list of characters
             }
 
-            //if (_specificLocation != null) {
-            //    _specificLocation.RemoveCharacterFromLocation(this);
-            //}
-            //if (_avatar != null) {
-            //    if (_avatar.mainCharacter.id == this.id) {
-            //        DestroyAvatar();
-            //    } else {
-            //        _avatar.RemoveCharacter(this); //if the character has an avatar, remove it from the list of characters
-            //    }
-            //}
-            //if (_isPrisoner){
-            //	PrisonerDeath ();
-            //}
             if (_role != null) {
-                _role.DeathRole();
+                _role.OnDeath(this);
             }
             if (homeArea != null) {
                 Area home = homeArea;
                 homeArea.RemoveResident(this);
                 SetHome(home); //keep this data with character to prevent errors
             }
-            //while(_tags.Count > 0){
-            //	RemoveCharacterAttribute (_tags [0]);
-            //}
-            //while (questData.Count != 0) {
-            //    questData[0].AbandonQuest();
-            //}
-            //				if(Messenger.eventTable.ContainsKey("CharacterDeath")){
-            //					Messenger.Broadcast ("CharacterDeath", this);
-            //				}
 
             List<Character> characterRels = new List<Character>(this.relationships.Keys.ToList());
             for (int i = 0; i < characterRels.Count; i++) {
@@ -707,16 +670,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
             onCharacterDeath = null;
             Messenger.Broadcast(Signals.CHARACTER_DEATH, this);
-            //if (killer != null) {
-            //    Messenger.Broadcast(Signals.CHARACTER_KILLED, killer, this);
-            //}
-
-
-            //ObjectState deadState = _characterObject.GetState("Dead");
-            //_characterObject.ChangeState(deadState);
-
-            //GameObject.Destroy(_icon.gameObject);
-            //_icon = null;
 
             Debug.Log(GameManager.Instance.TodayLogString() + this.name + " died of " + cause);
             Log log = null;
@@ -1027,10 +980,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     #endregion
 
     #region Roles
-    public void AssignRole(CHARACTER_ROLE role) {
+    public void AssignRole(CharacterRole role) {
         bool wasRoleChanged = false;
         if (_role != null) {
-            _role.ChangedRole();
+            _role.OnChange(this);
 #if !WORLD_CREATION_TOOL
             Log roleChangeLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "change_role");
             roleChangeLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -1038,44 +991,42 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 #endif
             wasRoleChanged = true;
         }
-        switch (role) {
-            case CHARACTER_ROLE.NOBLE:
-            _role = new Noble(this);
-            break;
-            case CHARACTER_ROLE.ADVENTURER:
-            _role = new Adventurer(this);
-            break;
-            case CHARACTER_ROLE.CIVILIAN:
-            _role = new Civilian(this);
-            break;
-            case CHARACTER_ROLE.MINION:
-            _role = new MinionRole(this);
-            break;
-            case CHARACTER_ROLE.PLAYER:
-            _role = new PlayerRole(this);
-            break;
-            case CHARACTER_ROLE.SOLDIER:
-            _role = new Soldier(this);
-            break;
-            case CHARACTER_ROLE.BEAST:
-            _role = new Beast(this);
-            break;
-            case CHARACTER_ROLE.LEADER:
-            _role = new Leader(this);
-            break;
-            case CHARACTER_ROLE.BANDIT:
-            _role = new Bandit(this);
-            break;
-            SetName(this.characterClass.className);
-            break;
-            default:
-            break;
-        }
+        _role = role;
+        //switch (role) {
+        //    case CHARACTER_ROLE.NOBLE:
+        //    _role = new Noble(this);
+        //    break;
+        //    case CHARACTER_ROLE.ADVENTURER:
+        //    _role = new Adventurer(this);
+        //    break;
+        //    case CHARACTER_ROLE.CIVILIAN:
+        //    _role = new Civilian(this);
+        //    break;
+        //    case CHARACTER_ROLE.MINION:
+        //    _role = new MinionRole(this);
+        //    break;
+        //    case CHARACTER_ROLE.PLAYER:
+        //    _role = new PlayerRole(this);
+        //    break;
+        //    case CHARACTER_ROLE.SOLDIER:
+        //    _role = new Soldier(this);
+        //    break;
+        //    case CHARACTER_ROLE.BEAST:
+        //    _role = new Beast(this);
+        //    break;
+        //    case CHARACTER_ROLE.LEADER:
+        //    _role = new Leader(this);
+        //    break;
+        //    case CHARACTER_ROLE.BANDIT:
+        //    _role = new Bandit(this);
+        //    break;
+        //    SetName(this.characterClass.className);
+        //    break;
+        //    default:
+        //    break;
+        //}
         if (_role != null) {
-            _role.OnAssignRole();
-#if !WORLD_CREATION_TOOL
-            AddDefaultInteractions();
-#endif
+            _role.OnAssign(this);
         }
         if (wasRoleChanged) {
             Messenger.Broadcast(Signals.ROLE_CHANGED, this);
@@ -1084,12 +1035,28 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     #endregion
 
     #region Character Class
-    public void AssignClass(CharacterClass charClass) {
-        _characterClass = charClass.CreateNewCopy();
-        _skills = new List<Skill>();
-        _skills.Add(_characterClass.skill);
-        //EquipItemsByClass();
-        SetTraitsFromClass();
+    private void AssignClassByRole(CharacterRole role) {
+        if(role == CharacterRole.BEAST) {
+            AssignClass(Utilities.GetRespectiveBeastClassNameFromByRace(race));
+        } else {
+            string className = CharacterManager.Instance.GetRandomClassByIdentifier(role.classNameOrIdentifier);
+            if (className != string.Empty) {
+                AssignClass(className);
+            } else {
+                AssignClass(role.classNameOrIdentifier);
+            }
+        }
+    }
+    private void AssignClass(string className) {
+        if (CharacterManager.Instance.classesDictionary.ContainsKey(className)) {
+            _characterClass = CharacterManager.Instance.classesDictionary[className].CreateNewCopy();
+            _skills = new List<Skill>();
+            _skills.Add(_characterClass.skill);
+            //EquipItemsByClass();
+            SetTraitsFromClass();
+        } else {
+            throw new Exception("There is no class named " + className + " but it is being assigned to " + this.name);
+        }
     }
     #endregion
 
@@ -1324,8 +1291,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public void ChangeClass(string className) {
         //TODO: Change data as needed
         string previousClassName = _characterClass.className;
-        CharacterClass charClass = CharacterManager.Instance.classesDictionary[className];
-        AssignClass(charClass);
+        AssignClass(className);
         //_characterClass = charClass.CreateNewCopy();
         OnCharacterClassChange();
 
@@ -2896,30 +2862,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         }
         return null;
-    }
-    private WeightedDictionary<INTERACTION_TYPE> GetValidInteractionWeights() {
-        List<CharacterInteractionWeight> jobInteractions = InteractionManager.Instance.GetJobNPCInteractionWeights(job.jobType);
-        WeightedDictionary<INTERACTION_TYPE> weights = new WeightedDictionary<INTERACTION_TYPE>();
-        if (jobInteractions != null) {
-            for (int i = 0; i < jobInteractions.Count; i++) {
-                if (GetInteractionOfType(jobInteractions[i].interactionType) == null && InteractionManager.Instance.CanCreateInteraction(jobInteractions[i].interactionType, this)) {
-                    weights.AddElement(jobInteractions[i].interactionType, jobInteractions[i].weight);
-                }
-            }
-        }
-        if (InteractionManager.Instance.CanCreateInteraction(INTERACTION_TYPE.RETURN_HOME, this)) {
-            weights.AddElement(INTERACTION_TYPE.RETURN_HOME, 10);
-        }
-        return weights;
-    }
-    private void AddDefaultInteractions() {
-        List<CharacterInteractionWeight> defaultInteractions = InteractionManager.Instance.GetDefaultInteractionWeightsForRole(this.role.roleType);
-        if (defaultInteractions != null) {
-            for (int i = 0; i < defaultInteractions.Count; i++) {
-                CharacterInteractionWeight currWeight = defaultInteractions[i];
-                interactionWeights.AddElement(currWeight.interactionType, currWeight.weight);
-            }
-        }
     }
     public void ClaimReward(Reward reward) {
         switch (reward.rewardType) {

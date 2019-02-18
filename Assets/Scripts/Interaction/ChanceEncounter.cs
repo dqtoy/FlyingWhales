@@ -264,7 +264,7 @@ public class ChanceEncounter : Interaction {
         for (int i = 0; i < interactable.charactersAtLocation.Count; i++) {
             Character currCharacter = interactable.charactersAtLocation[i];
             if (currCharacter.forcedInteraction == null && currCharacter.id != characterInvolved.id
-                && currCharacter.characterClass.roleType != CHARACTER_ROLE.BEAST && currCharacter.race != RACE.SKELETON) {
+                && currCharacter.role.roleType != CHARACTER_ROLE.BEAST && currCharacter.race != RACE.SKELETON) {
                 characterList.Add(currCharacter);
             }
         }

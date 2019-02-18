@@ -691,20 +691,6 @@ public class Area {
     #endregion
 
     #region Supplies
-    //private void StartSupplyLine() {
-    //    //AdjustSuppliesInBank(100);
-    //    Messenger.AddListener(Signals.MONTH_START, StartMonthActions);
-    //}
-    //public void StopSupplyLine() {
-    //    Messenger.RemoveListener(Signals.MONTH_START, StartMonthActions);
-    //}
-    //private void StartMonthActions() {
-    //    if (areaInvestigation.assignedMinion != null) {
-    //        areaInvestigation.assignedMinion.character.job.DoPassiveEffect(this);
-    //    }
-    //    //CollectMonthlySupplies();
-    //    //AreaTasksAssignments();
-    //}
     public void AreaTasksAssignments() {
         //List<Character> defenderCandidates = new List<Character>();
         List<Character> interactionCandidates = new List<Character>();
@@ -931,11 +917,12 @@ public class Area {
     public bool CanDoAreaTaskInteraction(INTERACTION_TYPE interactionType, Character character, int supplyCost) {
         return suppliesInBank >= supplyCost; //&& InteractionManager.Instance.CanCreateInteraction(interactionType, character);
     }
-    public Dictionary<Character, List<INTERACTION_TYPE>> GetResidentAndInteractionsTheyCanDoByCategoryAndAlignment(INTERACTION_CATEGORY category) {
+    public Dictionary<Character, List<INTERACTION_TYPE>> GetResidentAndInteractionsForFactionTasks(INTERACTION_CATEGORY category) {
         Dictionary<Character, List<INTERACTION_TYPE>> residentInteractions = new Dictionary<Character, List<INTERACTION_TYPE>>();
         for (int i = 0; i < areaResidents.Count; i++) {
             Character resident = areaResidents[i];
-            if (resident.isIdle && resident.specificLocation.id == id && resident.GetTraitOr("Starving", "Exhausted") == null) {
+            if (resident.isIdle && resident.specificLocation.id == id && resident.role.interactionCategories != null && resident.role.interactionCategories.Contains(category)
+                && resident.GetTraitOr("Starving", "Exhausted") == null) {
                 if (attackCharacters != null && attackCharacters.Contains(resident)) {
                     continue;
                 }
@@ -1409,49 +1396,24 @@ public class Area {
         }
         InitialRaceSetup setup = GetRaceSetup(defaultRace);
         int charactersToCreate = UnityEngine.Random.Range(setup.spawnRange.lowerBound, setup.spawnRange.upperBound + 1);
-        WeightedDictionary<AreaCharacterClass> classWeights = GetClassWeights();
-        if (classWeights.GetTotalOfWeights() > 0) {
-            for (int i = 0; i < charactersToCreate; i++) {
-                AreaCharacterClass chosenClass = classWeights.PickRandomElementGivenWeights();
-                Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(chosenClass.className, defaultRace.race, Utilities.GetRandomGender(), 
-                    FactionManager.Instance.neutralFaction, this);
-                createdCharacter.SetLevel(UnityEngine.Random.Range(setup.levelRange.lowerBound, setup.levelRange.upperBound + 1));
-                //Debug.Log(GameManager.Instance.TodayLogString() + "Generated Lvl. " + createdCharacter.level.ToString() + 
-                //    " neutral character " + createdCharacter.characterClass.className + " " + createdCharacter.name + " at " + this.name);
+        bool isRaceBeast = Utilities.IsRaceBeast(defaultRace.race);
+        CharacterRole chosenRole = CharacterRole.BEAST;
+        for (int i = 0; i < charactersToCreate; i++) {
+            chosenRole = CharacterRole.BEAST;
+            if (!isRaceBeast) {
+                if(UnityEngine.Random.Range(0, 2) == 0) {
+                    chosenRole = CharacterRole.BANDIT;
+                } else {
+                    chosenRole = CharacterRole.ADVENTURER;
+                }
             }
+            Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(chosenRole, defaultRace.race, Utilities.GetRandomGender(),
+                FactionManager.Instance.neutralFaction, this);
+            createdCharacter.SetLevel(UnityEngine.Random.Range(setup.levelRange.lowerBound, setup.levelRange.upperBound + 1));
         }
-        
     }
     public void SetInitialResidents(int initialResidents) {
         this.initialResidents = initialResidents;
-    }
-    private void GenerateInitialResidents() {
-        if (initialResidents <= 0) {
-            return;
-        }
-        WeightedDictionary<AreaCharacterClass> classWeights = GetClassWeights();
-        int remainingCharactersToGenerate = initialResidents - areaResidents.Count;
-        for (int i = 0; i < remainingCharactersToGenerate; i++) {
-            AreaCharacterClass chosenClass = classWeights.PickRandomElementGivenWeights();
-            Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(chosenClass.className, this.raceType, Utilities.GetRandomGender(),
-                owner, this);
-            createdCharacter.SetLevel(owner.level);
-            //Debug.Log(GameManager.Instance.TodayLogString() + "Generated Lvl. " + createdCharacter.level.ToString() +
-            //        " character " + createdCharacter.characterClass.className + " " + createdCharacter.name + " at " + this.name + " for faction " + this.owner.name);
-        }
-    }
-    public void GenerateStartingFollowers(int followersLevel) {
-        if(owner != null) {
-            for (int i = 0; i < owner.startingFollowers.Count; i++) {
-                WeightedDictionary<AreaCharacterClass> classWeights = GetClassWeights(owner.startingFollowers[i]);
-                AreaCharacterClass chosenClass = classWeights.PickRandomElementGivenWeights();
-                Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(chosenClass.className, owner.startingFollowers[i], Utilities.GetRandomGender(),
-                    owner, this);
-                createdCharacter.LevelUp(followersLevel - 1);
-                //Debug.Log(GameManager.Instance.TodayLogString() + "Generated Lvl. " + createdCharacter.level.ToString() +
-                //        " character " + createdCharacter.characterClass.className + " " + createdCharacter.name + " at " + this.name + " for faction " + this.owner.name);
-            }
-        }
     }
     public bool HasCharacterThatIsNotFromFaction(Faction faction) {
         for (int i = 0; i < charactersAtLocation.Count; i++) {
@@ -1464,19 +1426,6 @@ public class Area {
     }
     public void SetMonthlyActions(int amount) {
         monthlyActions = amount;
-    }
-    public void SpawnRandomCharacters(int howMany) {
-        if (IsResidentsFull()) {
-            return;
-        }
-        WeightedDictionary<AreaCharacterClass> classWeights = GetClassWeights();
-        for (int i = 0; i < howMany; i++) {
-            if (IsResidentsFull()) {
-                break;
-            }
-            string classNameToBeSpawned = classWeights.PickRandomElementGivenWeights().className;
-            Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(classNameToBeSpawned, raceType, Utilities.GetRandomGender(), owner, this);
-        }
     }
     #endregion
 
@@ -1507,7 +1456,7 @@ public class Area {
         for (int i = 0; i < areaResidents.Count; i++) {
             Character resident = areaResidents[i];
             if (resident.isIdle && !resident.isLeader
-                && resident.role.roleType != CHARACTER_ROLE.CIVILIAN
+                && !resident.characterClass.isNonCombatant
                 && !resident.isDefender && resident.specificLocation.id == id && resident.currentStructure.isInside) {
                 if((owner != null && resident.faction == owner) || (owner == null && resident.faction == FactionManager.Instance.neutralFaction)) {
                     residentsAtArea.Add(resident);
@@ -1558,24 +1507,6 @@ public class Area {
     #endregion
 
     #region Special Tokens
-    //private void LoadSpecialTokens(AreaSaveData data) {
-    //    possibleSpecialTokenSpawns = new List<SpecialToken>();
-    //    if (data.possibleSpecialTokenSpawns != null) {
-    //        for (int i = 0; i < data.possibleSpecialTokenSpawns.Count; i++) {
-    //            string tokenName = data.possibleSpecialTokenSpawns[i];
-    //            possibleSpecialTokenSpawns.Add(TokenManager.Instance.GetSpecialToken(tokenName));
-    //        }
-    //        Messenger.AddListener<SpecialToken>(Signals.SPECIAL_TOKEN_RAN_OUT, OnSpecialTokenRanOut);
-    //    }
-    //}
-    //private void OnSpecialTokenRanOut(SpecialToken token) { //Called when special token quantity reaches 0
-    //    if (possibleSpecialTokenSpawns.Contains(token)) {
-    //        possibleSpecialTokenSpawns.Remove(token);
-    //        if (possibleSpecialTokenSpawns.Count == 0) {
-    //            Messenger.RemoveListener<SpecialToken>(Signals.SPECIAL_TOKEN_RAN_OUT, OnSpecialTokenRanOut);
-    //        }
-    //    }
-    //}
     public bool AddSpecialTokenToLocation(SpecialToken token, LocationStructure structure = null) {
         if (!IsItemInventoryFull() && !possibleSpecialTokenSpawns.Contains(token)) {
             possibleSpecialTokenSpawns.Add(token);

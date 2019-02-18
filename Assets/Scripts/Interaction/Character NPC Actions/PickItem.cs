@@ -48,24 +48,12 @@ public class PickItem : Interaction {
         }
         return base.CanInteractionBeDoneBy(character);
     }
-    //public override bool CanStillDoInteraction() {
-    //    if (_characterInvolved.tokenInInventory != null) {
-    //        return false;
-    //    } else {
-    //        for (int i = 0; i < interactable.possibleSpecialTokenSpawns.Count; i++) {
-    //            SpecialToken token = interactable.possibleSpecialTokenSpawns[i];
-    //            if (token.npcAssociatedInteractionType != INTERACTION_TYPE.USE_ITEM_ON_SELF) {
-    //                pickWeights.AddElement(token, 60);
-    //            } else if (token.CanBeUsedBy(_characterInvolved)) {
-    //                pickWeights.AddElement(token, 100);
-    //            }
-    //        }
-    //        if (pickWeights.Count <= 0) {
-    //            return false;
-    //        }
-    //    }
-    //    return base.CanStillDoInteraction();
-    //}
+    public override bool CanStillDoInteraction(Character character) {
+        if(targetToken.structureLocation == null) {
+            return false;
+        }
+        return base.CanStillDoInteraction(character);
+    }
     public override object GetTarget() {
         return targetToken;
     }
