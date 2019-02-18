@@ -117,10 +117,11 @@ public class LocationStructure {
     public void RemovePOI(IPointOfInterest poi) {
         if (pointsOfInterest.Remove(poi)) {
 #if !WORLD_CREATION_TOOL
-            if (poi.gridTileLocation == null) {
-                throw new System.Exception("Provided tile of " + poi.ToString() + " is null!");
+            if (poi.gridTileLocation != null) {
+                location.areaMap.RemoveObject(poi.gridTileLocation);
+                //throw new System.Exception("Provided tile of " + poi.ToString() + " is null!");
             }
-            location.areaMap.RemoveObject(poi.gridTileLocation);
+            
 #endif  
         }
     }
@@ -161,9 +162,9 @@ public class LocationStructure {
             Debug.LogWarning("There are no tiles at " + structureType.ToString() + " at " + location.name + " for " + poi.ToString());
         }
     }
-#endregion
+    #endregion
 
-#region Traits
+    #region Traits
     public void AddTrait(string traitName) {
         StructureTrait createdTrait = null;
         switch (traitName) {
@@ -195,9 +196,9 @@ public class LocationStructure {
         }
         return null;
     }
-#endregion
+    #endregion
 
-#region Corpses
+    #region Corpses
     public void AddCorpse(Character character) {
         if (!HasCorpseOf(character)) {
             corpses.Add(new Corpse(character, this));
@@ -224,9 +225,9 @@ public class LocationStructure {
         }
         return null;
     }
-#endregion
+    #endregion
 
-#region Tiles
+    #region Tiles
     public void AddTile(LocationGridTile tile) {
         if (!tiles.Contains(tile)) {
             tiles.Add(tile);
@@ -235,7 +236,10 @@ public class LocationStructure {
     public void RemoveTile(LocationGridTile tile) {
         tiles.Remove(tile);
     }
-#endregion
+    public bool IsFull() {
+        return unoccupiedTiles.Count <= 0;
+    }
+    #endregion
 
     public override string ToString() {
         return structureType.ToString() + " " + location.structures[structureType].IndexOf(this).ToString() + " at " + location.name;

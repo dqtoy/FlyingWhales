@@ -1156,7 +1156,9 @@ public class Area {
                 //if none, check if they have a master/servant in the area
                 Character master = character.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.MASTER);
                 if (master != null && areaResidents.Contains(master)) { //if this character is the servant
-                    chosenDwelling = master.homeStructure; //Move to his master's home, since this character doesn't have a lover (from the first checking) 
+                    if (!master.homeStructure.IsFull()) {
+                        chosenDwelling = master.homeStructure; //Move to his master's home, since this character doesn't have a lover (from the first checking) 
+                    }
                 } else { //if this character is a master
                     List<Character> servants = GetResidentsFromChoices(character.GetCharactersWithRelationship(RELATIONSHIP_TRAIT.SERVANT));
                     if (servants.Count > 0) { //check if he has any servant in this location that does not have a lover living with him

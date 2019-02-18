@@ -28,6 +28,9 @@ public class Dwelling : LocationStructure {
     }
 
     public bool CanBeResidentHere(Character character) {
+        if (this.IsFull()) {
+            return false;
+        }
         if (residents.Count == 0) {
             return true;
         } else {
