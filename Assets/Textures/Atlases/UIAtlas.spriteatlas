@@ -33,6 +33,7 @@ SpriteAtlas:
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
   - {fileID: 21300000, guid: 373550004dae78d40a853eac3ee92801, type: 3}
+  - {fileID: 21300000, guid: 073ef81035992a6439c0a87af3654bf2, type: 3}
   - {fileID: 21300000, guid: 5b6a9120e63507d4283bd6d9395709ad, type: 3}
   - {fileID: 21300000, guid: 87bb45208dd227c4692921a192026acb, type: 3}
   - {fileID: 21300000, guid: 2914eb20255e070448ce2bab92c250a6, type: 3}
@@ -356,6 +357,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 044a10ffb7cf1ea4fa87052f5c9563f8, type: 3}
   m_PackedSpriteNamesToIndex:
   - main_menu_logo
+  - traveller_default 1
   - ge_cont-05B
   - assault_icon
   - footprint_icon

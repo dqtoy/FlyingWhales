@@ -1,5 +1,1 @@
-<<<<<<< HEAD
 {"_className":"Archer","_baseAttackPower":120,"_attackPowerPerLevel":33,"_baseSpeed":55,"_speedPerLevel":17,"_hpPerLevel":100,"_baseHP":230,"_skillName":"Attack","_traitNames":[],"_roleType":1,"_jobType":2,"_combatPosition":1,"_combatTarget":0,"_attackType":0,"_rangeType":1,"_occupiedTileType":0,"_recruitmentCost":{"amount":200,"currency":0}}
-=======
-{"_className":"Archer","_baseAttackPower":140,"_attackPowerPerLevel":140,"_baseSpeed":60,"_speedPerLevel":3,"_hpPerLevel":55,"_baseHP":504,"_skillName":"Attack","_traitNames":["Ranged Trait"],"_roleType":1,"_jobType":2,"_combatPosition":1,"_combatTarget":0,"_attackType":0,"_rangeType":1,"_occupiedTileType":0,"_recruitmentCost":{"amount":200,"currency":0}}
->>>>>>> 6c72e2aab347c745eb6f40a8b17518e646cfcefe
