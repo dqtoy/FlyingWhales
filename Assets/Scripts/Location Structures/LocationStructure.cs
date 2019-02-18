@@ -15,6 +15,7 @@ public class LocationStructure {
     public List<IPointOfInterest> pointsOfInterest { get; private set; }
     public List<StructureTrait> traits { get; private set; }
     public List<Corpse> corpses { get; private set; }
+    public List<LocationGridTile> tiles { get; private set; }
 
     #region getters
     public Area location {
@@ -34,6 +35,7 @@ public class LocationStructure {
         pointsOfInterest = new List<IPointOfInterest>();
         traits = new List<StructureTrait>();
         corpses = new List<Corpse>();
+        tiles = new List<LocationGridTile>();
         if (structureType == STRUCTURE_TYPE.DUNGEON || structureType == STRUCTURE_TYPE.WAREHOUSE) {
             AddPOI(new SupplyPile(this));
         }
@@ -61,12 +63,16 @@ public class LocationStructure {
             character.SetCurrentStructureLocation(this);
             AddPOI(character);
             OnCharacterAddedToLocation(character);
+            //PlaceCharacterAtAppropriateTile(character);
         }
     }
     public void RemoveCharacterAtLocation(Character character) {
         if (charactersHere.Remove(character)) {
             character.SetCurrentStructureLocation(null);
+            LocationGridTile tile = character.currentStructureTile;
+            character.SetCurrentStructureTileLocation(null);
             RemovePOI(character);
+            //OnCharacterRemovedFromTile(character, tile);
         }
     }
     private void OnCharacterAddedToLocation(Character character) {
@@ -192,6 +198,32 @@ public class LocationStructure {
             }
         }
         return null;
+    }
+    #endregion
+
+    #region Tiles
+    public void AddTile(LocationGridTile tile) {
+        if (!tiles.Contains(tile)) {
+            tiles.Add(tile);
+        }
+    }
+    public void RemoveTile(LocationGridTile tile) {
+        tiles.Remove(tile);
+    }
+    private void PlaceCharacterAtAppropriateTile(Character character) {
+        LocationGridTile chosenTile = tiles[Random.Range(0, tiles.Count)];
+        character.SetCurrentStructureTileLocation(chosenTile);
+        location.areaMap.PlaceCharacter(character, chosenTile);
+    }
+    private void OnCharacterRemovedFromTile(Character character, LocationGridTile tile) {
+        //check if there are any characters here that are also at that tile, if there are, fo not remove visual
+        for (int i = 0; i < charactersHere.Count; i++) {
+            Character currCharacter = charactersHere[i];
+            if (currCharacter.currentStructureTile == tile) {
+                return;
+            }
+        }
+        location.areaMap.RemoveCharacterVisualFromTile(tile);
     }
     #endregion
 

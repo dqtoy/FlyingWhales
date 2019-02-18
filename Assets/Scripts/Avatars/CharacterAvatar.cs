@@ -95,11 +95,6 @@ public class CharacterAvatar : MonoBehaviour{
         } else {
             SetSprite(_party.mainCharacter.role.roleType);
         }
-        //else if (_party.mainCharacter is MonsterArmyUnit) {
-        //    _avatarSpriteRenderer.sprite = CharacterManager.Instance.villainSprite;
-        //} else if (_party.mainCharacter is Monster) {
-        //    SetSprite((_party.mainCharacter as Monster).type);
-        //}
 #if !WORLD_CREATION_TOOL
         GameObject portraitGO = UIManager.Instance.InstantiateUIObject(CharacterManager.Instance.characterPortraitPrefab.name, this.transform);
         characterPortrait = portraitGO.GetComponent<CharacterPortrait>();

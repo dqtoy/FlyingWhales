@@ -285,23 +285,23 @@ MonoBehaviour:
   portraitFrames:
     m_keys: 030000000700000002000000010000000500000004000000060000000800000009000000
     m_values:
-    - baseBG: {fileID: 21300000, guid: 94079e3476351c243b5ce1bc5dfdd56c, type: 3}
-      frameOutline: {fileID: 21300000, guid: 7cbb3446f1ca8a64b8c1e2f0e6649137, type: 3}
-    - baseBG: {fileID: 21300000, guid: fd831390331f6a9438bcbbdbc410df2b, type: 3}
-      frameOutline: {fileID: 21300000, guid: 7cbb3446f1ca8a64b8c1e2f0e6649137, type: 3}
-    - baseBG: {fileID: 21300000, guid: b1facc086f831d64990f9d4056411274, type: 3}
+    - baseBG: {fileID: 21300000, guid: 15f890e3e4e2dbe489f30640f9216043, type: 3}
       frameOutline: {fileID: 21300000, guid: 7cbb3446f1ca8a64b8c1e2f0e6649137, type: 3}
     - baseBG: {fileID: 21300000, guid: 1a3fc1ca90050a74aa21609e4eeb7ebc, type: 3}
       frameOutline: {fileID: 21300000, guid: 7cbb3446f1ca8a64b8c1e2f0e6649137, type: 3}
-    - baseBG: {fileID: 21300000, guid: 76777303e5e4de04ca96fb3200b75bf9, type: 3}
+    - baseBG: {fileID: 21300000, guid: c18f5d6f944cfbc48819debe987cdaba, type: 3}
+      frameOutline: {fileID: 21300000, guid: 7cbb3446f1ca8a64b8c1e2f0e6649137, type: 3}
+    - baseBG: {fileID: 21300000, guid: fd831390331f6a9438bcbbdbc410df2b, type: 3}
       frameOutline: {fileID: 21300000, guid: 7cbb3446f1ca8a64b8c1e2f0e6649137, type: 3}
     - baseBG: {fileID: 21300000, guid: 76281f5e595b10341a1cfcf28ada49f0, type: 3}
       frameOutline: {fileID: 21300000, guid: 7cbb3446f1ca8a64b8c1e2f0e6649137, type: 3}
-    - baseBG: {fileID: 21300000, guid: 15f890e3e4e2dbe489f30640f9216043, type: 3}
+    - baseBG: {fileID: 21300000, guid: 76777303e5e4de04ca96fb3200b75bf9, type: 3}
       frameOutline: {fileID: 21300000, guid: 7cbb3446f1ca8a64b8c1e2f0e6649137, type: 3}
-    - baseBG: {fileID: 21300000, guid: fd831390331f6a9438bcbbdbc410df2b, type: 3}
+    - baseBG: {fileID: 21300000, guid: 94079e3476351c243b5ce1bc5dfdd56c, type: 3}
       frameOutline: {fileID: 21300000, guid: 7cbb3446f1ca8a64b8c1e2f0e6649137, type: 3}
-    - baseBG: {fileID: 21300000, guid: fd831390331f6a9438bcbbdbc410df2b, type: 3}
+    - baseBG: {fileID: 21300000, guid: b1facc086f831d64990f9d4056411274, type: 3}
+      frameOutline: {fileID: 21300000, guid: 7cbb3446f1ca8a64b8c1e2f0e6649137, type: 3}
+    - baseBG: {fileID: 21300000, guid: c18f5d6f944cfbc48819debe987cdaba, type: 3}
       frameOutline: {fileID: 21300000, guid: 7cbb3446f1ca8a64b8c1e2f0e6649137, type: 3}
   classPortraits:
     m_keys:

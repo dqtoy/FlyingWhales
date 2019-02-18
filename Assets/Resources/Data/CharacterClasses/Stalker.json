@@ -1,1 +1,5 @@
+<<<<<<< HEAD
+{"_className":"Stalker","_baseAttackPower":100,"_attackPowerPerLevel":33,"_baseSpeed":50,"_speedPerLevel":17,"_hpPerLevel":100,"_baseHP":300,"_skillName":"Attack","_traitNames":[],"_roleType":1,"_jobType":6,"_combatPosition":0,"_combatTarget":0,"_attackType":0,"_rangeType":1,"_occupiedTileType":0,"_recruitmentCost":{"amount":200,"currency":0}}
+=======
 {"_className":"Stalker","_baseAttackPower":135,"_attackPowerPerLevel":135,"_baseSpeed":55,"_speedPerLevel":3,"_hpPerLevel":70,"_baseHP":630,"_skillName":"Attack","_traitNames":["Ranged Trait"],"_roleType":1,"_jobType":6,"_combatPosition":0,"_combatTarget":0,"_attackType":0,"_rangeType":1,"_occupiedTileType":0,"_recruitmentCost":{"amount":200,"currency":0}}
+>>>>>>> 6c72e2aab347c745eb6f40a8b17518e646cfcefe

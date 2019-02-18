@@ -23,7 +23,7 @@ public class TileSpriteCorruptionListDictionary : SerializableDictionary<Sprite,
 [System.Serializable]
 public class RaceClassListDictionary : SerializableDictionary<RACE, List<RaceAreaDefenderSetting>, RaceDefenderListStorage> { }
 [System.Serializable]
-public class JobPortraitFramesDictionary : SerializableDictionary<JOB, PortraitFrame> { }
+public class RolePortraitFramesDictionary : SerializableDictionary<CHARACTER_ROLE, PortraitFrame> { }
 [System.Serializable]
 public class BiomeSpriteAnimationDictionary : SerializableDictionary<Sprite, RuntimeAnimatorController> { }
 [System.Serializable]

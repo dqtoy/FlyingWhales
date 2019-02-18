@@ -24,7 +24,7 @@ public class JobInteractionsListDictionaryPropertyDrawer : SerializableDictionar
 public class TileSpriteCorruptionListDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(RaceClassListDictionary))]
 public class RaceDefenderListDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
-[CustomPropertyDrawer(typeof(JobPortraitFramesDictionary))]
+[CustomPropertyDrawer(typeof(RolePortraitFramesDictionary))]
 public class JobPortraitFramesDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(BiomeSpriteAnimationDictionary))]
 public class BiomeSpriteAnimationDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }

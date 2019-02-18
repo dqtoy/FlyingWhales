@@ -87,6 +87,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public Area homeArea { get; protected set; }
     public Dwelling homeStructure { get; protected set; }
     public LocationStructure currentStructure { get; private set; } //what structure is this character currently in.
+    public LocationGridTile currentStructureTile { get; private set; } //what tile in the structure is this character currently in.
     public Area defendingArea { get; private set; }
     public MORALITY morality { get; private set; }
     public CharacterToken characterToken { get; private set; }
@@ -1038,23 +1039,23 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             wasRoleChanged = true;
         }
         switch (role) {
-            case CHARACTER_ROLE.HERO:
-            _role = new Hero(this);
+            case CHARACTER_ROLE.NOBLE:
+            _role = new Noble(this);
             break;
-            case CHARACTER_ROLE.VILLAIN:
-            _role = new Villain(this);
+            case CHARACTER_ROLE.ADVENTURER:
+            _role = new Adventurer(this);
             break;
             case CHARACTER_ROLE.CIVILIAN:
             _role = new Civilian(this);
             break;
-            case CHARACTER_ROLE.KING:
-            _role = new King(this);
+            case CHARACTER_ROLE.MINION:
+            _role = new MinionRole(this);
             break;
             case CHARACTER_ROLE.PLAYER:
             _role = new PlayerRole(this);
             break;
-            case CHARACTER_ROLE.GUARDIAN:
-            _role = new Guardian(this);
+            case CHARACTER_ROLE.SOLDIER:
+            _role = new Soldier(this);
             break;
             case CHARACTER_ROLE.BEAST:
             _role = new Beast(this);
@@ -1065,8 +1066,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             case CHARACTER_ROLE.BANDIT:
             _role = new Bandit(this);
             break;
-            case CHARACTER_ROLE.ARMY:
-            _role = new Army(this);
             SetName(this.characterClass.className);
             break;
             default:
@@ -1279,6 +1278,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (currentStructure != null && broadcast) {
             Messenger.Broadcast(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, this, currentStructure);
         }
+    }
+    public void SetCurrentStructureTileLocation(LocationGridTile tile) {
+        currentStructureTile = tile;
     }
     public void MoveToRandomStructureInArea() {
         LocationStructure locationStructure = specificLocation.GetRandomStructure();
