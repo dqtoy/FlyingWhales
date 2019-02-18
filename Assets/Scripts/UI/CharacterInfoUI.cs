@@ -19,52 +19,15 @@ public class CharacterInfoUI : UIMenu {
     [SerializeField] private CharacterPortrait characterPortrait;
     [SerializeField] private TextMeshProUGUI nameLbl;
     [SerializeField] private TextMeshProUGUI lvlClassLbl;
+    [SerializeField] private TextMeshProUGUI plansLbl;
     [SerializeField] private FactionEmblem factionEmblem;
     [SerializeField] private PartyEmblem partyEmblem;
-    //[SerializeField] private ActionIconCharacterInfoUI currentActionIcon;
-    //[SerializeField] private GameObject actionIconPrefab;
-    //[SerializeField] private string actionIconPrefabName;
-
-    //[Space(10)]
-    //[Header("Stats")]
-    //[SerializeField] private Slider healthProgressBar;
-    //[SerializeField] private Slider manaProgressBar;
-    //[SerializeField] private TextMeshProUGUI strengthLbl;
-    //[SerializeField] private TextMeshProUGUI agilityLbl;
-    //[SerializeField] private TextMeshProUGUI intelligenceLbl;
-    //[SerializeField] private TextMeshProUGUI vitalityLbl;
-    //[SerializeField] private ScrollRect tagsScrollView;
-    //[SerializeField] private GameObject characterTagPrefab;
 
     [Space(10)]
     [Header("Item And Location")]
     [SerializeField] private LocationPortrait visitorLocationPortrait;
     [SerializeField] private LocationPortrait residentLocationPortrait;
     [SerializeField] private ItemContainer itemContainer;
-
-    //[Space(10)]
-    //[Header("Mood")]
-    //[SerializeField] private GameObject moodMenuGO;
-    //[SerializeField] private TextMeshProUGUI moodTabLbl;
-    //[SerializeField] private Slider overallProgressBar;
-    //[SerializeField] private Slider energyProgressBar;
-    //[SerializeField] private Slider fullnessProgressBar;
-    //[SerializeField] private Slider funProgressBar;
-    //[SerializeField] private Slider prestigeProgressBar;
-    //[SerializeField] private Slider sanityProgressBar;
-
-    [Space(10)]
-    [Header("Items")]
-    [SerializeField] private GameObject itemsMenuGO;
-    [SerializeField] private ItemContainer headArmorContainer;
-    [SerializeField] private ItemContainer leftHandContainer;
-    [SerializeField] private ItemContainer rightHandContainer;
-    [SerializeField] private ItemContainer chestArmorContainer;
-    [SerializeField] private ItemContainer legArmorContainer;
-    [SerializeField] private ItemContainer leftFootArmorContainer;
-    [SerializeField] private ItemContainer rightFootArmorContainer;
-    [SerializeField] private RectTransform inventoryItemContainersParent;
-    [SerializeField] private GameObject itemsMenuCover;
 
     [Space(10)]
     [Header("Relations")]
@@ -74,21 +37,6 @@ public class CharacterInfoUI : UIMenu {
     [SerializeField] private Color evenRelationshipColor;
     [SerializeField] private Color oddRelationshipColor;
     [SerializeField] private GameObject relationsMenuCover;
-
-    //[Space(10)]
-    //[Header("Info")]
-    //[SerializeField] private SecretItem[] secretItems;
-    //[SerializeField] private TokenItem[] tokenItems;
-    //[SerializeField] private HiddenDesireItem hiddenDesireItem;
-    //[SerializeField] private GameObject infoMenuCover;
-
-    //[Space(10)]
-    //[Header("Content")]
-    //[SerializeField] private TextMeshProUGUI statInfoLbl;
-    //[SerializeField] private TextMeshProUGUI traitInfoLbl;
-    //[SerializeField] private TextMeshProUGUI equipmentInfoLbl;
-    //[SerializeField] private TextMeshProUGUI inventoryInfoLbl;
-    //[SerializeField] private TextMeshProUGUI relationshipsLbl;
 
     [Space(10)]
     [Header("Logs")]
@@ -153,26 +101,13 @@ public class CharacterInfoUI : UIMenu {
     internal override void Initialize() {
         base.Initialize();
         isWaitingForAttackTarget = false;
-        //Messenger.AddListener(Signals.UPDATE_UI, UpdateCharacterInfo);
         Messenger.AddListener<object>(Signals.HISTORY_ADDED, UpdateHistory);
         Messenger.AddListener<BaseLandmark>(Signals.PLAYER_LANDMARK_CREATED, OnPlayerLandmarkCreated);
         Messenger.AddListener<Character, Trait>(Signals.TRAIT_ADDED, UpdateTraitsFromSignal);
         Messenger.AddListener<Character, Trait>(Signals.TRAIT_REMOVED, UpdateTraitsFromSignal);
-
-        //Messenger.AddListener<ActionQueueItem, Character>(Signals.ACTION_ADDED_TO_QUEUE, OnActionAddedToQueue);
-        //Messenger.AddListener<ActionQueueItem, Character>(Signals.ACTION_REMOVED_FROM_QUEUE, OnActionRemovedFromQueue);
-        //Messenger.AddListener<CharacterAction, CharacterParty>(Signals.ACTION_TAKEN, OnActionTaken);
-
-        //Messenger.AddListener<Character, Attribute>(Signals.ATTRIBUTE_ADDED, OnCharacterAttributeAdded);
-        //Messenger.AddListener<Character, Attribute>(Signals.ATTRIBUTE_REMOVED, OnCharacterAttributeRemoved);
         Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
-        //affiliations.Initialize();
-        //currentActionIcon.Initialize();
-        //Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         InitializeLogsMenu();
-        //InititalizeInventoryMenu();
-        //InitializeSchedulingMenu();
     }
     private void InitializeLogsMenu() {
         logHistoryItems = new LogHistoryItem[MAX_HISTORY_LOGS];
@@ -186,9 +121,6 @@ public class CharacterInfoUI : UIMenu {
         for (int i = 0; i < logHistoryItems.Length; i++) {
             logHistoryItems[i].gameObject.SetActive(false);
         }
-    }
-    private void InitializeInventoryMenu() {
-        inventoryItemContainers = Utilities.GetComponentsInDirectChildren<ItemContainer>(inventoryItemContainersParent.gameObject);
     }
 
     #region Overrides
@@ -253,20 +185,6 @@ public class CharacterInfoUI : UIMenu {
     //}
     #endregion
 
-    private void SetCoversState(bool state) {
-        //infoMenuCover.SetActive(state);
-        itemsMenuCover.SetActive(state);
-        relationsMenuCover.SetActive(state);
-        //logsMenuCover.SetActive(state);
-    }
-
-    //private void OnCharacterDied(Character deadCharacter) {
-    //    if (isShowing && _activeCharacter != null && _activeCharacter.id == deadCharacter.id) {
-    //        SetData(null);
-    //        CloseMenu();
-    //    }
-    //}
-
     public override void SetData(object data) {
         base.SetData(data);
         if (isShowing) {
@@ -325,6 +243,16 @@ public class CharacterInfoUI : UIMenu {
     private void UpdateBasicInfo() {
         nameLbl.text = _activeCharacter.name;
         lvlClassLbl.text = _activeCharacter.raceClassName;
+        if (_activeCharacter.isTracked) {
+            if (_activeCharacter.plannedInteraction == null) {
+                plansLbl.text = _activeCharacter.name + " does not have any immediate plans at the moment.";
+            } else {
+                //plansLbl.text = Utilities.LogReplacer(_activeCharacter.plannedInteraction.states["Start"].descriptionLog);
+                plansLbl.text = string.Empty;
+            }
+        } else {
+            plansLbl.text = "Track " + _activeCharacter.name + " to be able to read " + Utilities.GetPronounString(_activeCharacter.gender, PRONOUN_TYPE.POSSESSIVE, false) + " immediate plans.";
+        }
     }
 
     #region Stats

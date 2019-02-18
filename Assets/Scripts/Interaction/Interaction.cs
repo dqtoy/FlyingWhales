@@ -137,6 +137,9 @@ public class Interaction {
     public virtual LocationStructure actionStructureLocation {
         get { return _actionStructureLocation; }
     }
+    public Dictionary<string, InteractionState> states {
+        get { return _states; }
+    }
     #endregion
 
     public Interaction(Area interactable, INTERACTION_TYPE type, int timeOutTicks) {

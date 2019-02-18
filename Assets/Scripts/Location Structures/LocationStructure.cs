@@ -158,7 +158,7 @@ public class LocationStructure {
             LocationGridTile chosenTile = tilesToUse[Random.Range(0, tilesToUse.Count)];
             location.areaMap.PlaceObject(poi, chosenTile);
         } else {
-            Debug.LogWarning("There are no tiles for " + structureType.ToString() + " at " + location.name);
+            Debug.LogWarning("There are no tiles at " + structureType.ToString() + " at " + location.name + " for " + poi.ToString());
         }
     }
 #endregion

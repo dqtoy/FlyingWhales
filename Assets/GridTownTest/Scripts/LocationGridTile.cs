@@ -102,14 +102,14 @@ public class LocationGridTile {
         }
         return false;
     }
-    //public bool HasDifferentDwellingOrOutsideNeighbour() {
-    //    foreach (KeyValuePair<TileNeighbourDirection, LocationGridTile> kvp in neighbours) {
-    //        if (!kvp.Value.isInside || (kvp.Value.structure != this.structure)) {
-    //            return true;
-    //        }
-    //    }
-    //    return false;
-    //}
+    public bool HasDifferentDwellingOrOutsideNeighbour() {
+        foreach (KeyValuePair<TileNeighbourDirection, LocationGridTile> kvp in neighbours) {
+            if (!kvp.Value.isInside || (kvp.Value.structure != this.structure)) {
+                return true;
+            }
+        }
+        return false;
+    }
     #endregion
 }
 

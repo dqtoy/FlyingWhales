@@ -24,6 +24,7 @@ public class AreaInnerTileMap : MonoBehaviour {
     [SerializeField] private TileBase wallTile;
     [SerializeField] private TileBase structureTile;
     [SerializeField] private TileBase characterTile;
+    [SerializeField] private TileBase floorTile;
 
     public Area area { get; private set; }
     public LocationGridTile[,] map { get; private set; }
@@ -40,7 +41,7 @@ public class AreaInnerTileMap : MonoBehaviour {
             new List<Point>(){
                 new Point(3, 2),
                 new Point(2, 3),
-                new Point(2, 2),
+                //new Point(2, 2),
                 new Point(3, 3),
             }
         },
@@ -77,6 +78,9 @@ public class AreaInnerTileMap : MonoBehaviour {
 
     public void GenerateInnerStructures() {
         groundTilemap.ClearAllTiles();
+        charactersTilemap.ClearAllTiles();
+        strcutureTilemap.ClearAllTiles();
+        wallTilemap.ClearAllTiles();
         GenerateGrid();
         SplitMap();
         ConstructWalls();
@@ -235,6 +239,7 @@ public class AreaInnerTileMap : MonoBehaviour {
             for (int j = 0; j < tiles.Count; j++) {
                 LocationGridTile currTile = tiles[j];
                 strcutureTilemap.SetTile(currTile.localPlace, structureTile);
+                groundTilemap.SetTile(currTile.localPlace, floorTile);
                 currTile.SetTileType(LocationGridTile.Tile_Type.Structure);
                 currTile.SetStructure(kvp.Key);
                 elligibleTiles.Remove(currTile);
@@ -268,6 +273,7 @@ public class AreaInnerTileMap : MonoBehaviour {
                 }
                 //yield return new WaitForSeconds(0.1f);
             }
+            //DrawStructureTileAssets(tiles);
             //kvp.Key.DetermineInsideTiles();
         }
     }
@@ -396,6 +402,15 @@ public class AreaInnerTileMap : MonoBehaviour {
         }
         return tiles;
     }
+    private void DrawStructureTileAssets(List<LocationGridTile> tiles) {
+        //List<LocationGridTile> tilesWithWalls = new List<LocationGridTile>();
+        for (int i = 0; i < tiles.Count; i++) {
+            LocationGridTile currTile = tiles[i];
+            if (currTile.HasDifferentDwellingOrOutsideNeighbour()) {
+                strcutureTilemap.SetTile(currTile.localPlace, structureTile);
+            }
+        }
+    }
 
     private void AssignOuterAreas() {
         if (area.HasStructure(STRUCTURE_TYPE.WORK_AREA)) {
@@ -420,10 +435,10 @@ public class AreaInnerTileMap : MonoBehaviour {
         }
     }
 
-    private float xDiff = 14.5f;
-    private float yDiff = 12f;
-    private float originX = -14.5f;
-    private float originY = -8.5f;
+    private float xDiff = 31f;
+    private float yDiff = 22f;
+    private float originX = -7.5f;
+    private float originY = -4.5f;
     public void PlaceObject(IPointOfInterest obj, LocationGridTile tile) {
         charactersTilemap.SetTile(tile.localPlace, characterTile);
         tile.SetObjectHere(obj);

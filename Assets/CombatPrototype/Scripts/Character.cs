@@ -94,6 +94,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public SpecialToken tokenInInventory { get; private set; }
     public Dictionary<Character, CharacterRelationshipData> relationships { get; private set; }
     public List<INTERACTION_TYPE> currentInteractionTypes { get; private set; }
+    public Interaction plannedInteraction { get; private set; }
 
     private LocationGridTile tile; //what tile in the structure is this character currently in.
 
@@ -516,6 +517,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         Messenger.AddListener(Signals.DAY_ENDED, DecreaseNeeds);
         //Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, RemoveRelationshipWith);
         Messenger.AddListener<Character, Area, Area>(Signals.CHARACTER_MIGRATED_HOME, OnCharacterMigratedHome);
+        Messenger.AddListener<Interaction>(Signals.INTERACTION_ENDED, OnInteractionEnded);
     }
     public void UnsubscribeSignals() {
         //Messenger.RemoveListener<Character>(Signals.CHARACTER_SNATCHED, OnCharacterSnatched);
@@ -2891,7 +2893,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return chosenType;
     }
-
     public Interaction GetInteractionOfType(INTERACTION_TYPE type) {
         for (int i = 0; i < _currentInteractions.Count; i++) {
             Interaction currInteraction = _currentInteractions[i];
@@ -2939,6 +2940,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             break;
             default:
             break;
+        }
+    }
+    public void SetPlannedAction(Interaction interaction) {
+        plannedInteraction = interaction;
+    }
+    private void OnInteractionEnded(Interaction interaction) {
+        if (plannedInteraction != null && plannedInteraction == interaction) {
+            SetPlannedAction(null);
         }
     }
     #endregion
