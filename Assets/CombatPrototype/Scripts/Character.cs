@@ -1472,6 +1472,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         relationships[character].AddRelationship(newRel);
         OnRelationshipWithCharacterAdded(character);
+        Messenger.Broadcast(Signals.RELATIONSHIP_ADDED, this, newRel);
     }
     private void RemoveRelationship(Character character) {
         if (relationships.ContainsKey(character)) {

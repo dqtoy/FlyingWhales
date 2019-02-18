@@ -6,6 +6,10 @@ public class RelationshipTrait : Trait {
     public Character targetCharacter { get; private set; }
 
     public RELATIONSHIP_TRAIT relType { get; protected set; }
+    public int severity { get; protected set; }
+
+    private const int MIN_SEVERITY = 1;
+    private const int MAX_SEVERITY = 3;
 
     public RelationshipTrait(Character target) {
         targetCharacter = target;
@@ -16,5 +20,17 @@ public class RelationshipTrait : Trait {
         associatedInteraction = INTERACTION_TYPE.NONE;
         daysDuration = 0;
         effects = new List<TraitEffect>();
+        severity = MIN_SEVERITY;
     }
+
+    #region Severity
+    public void AdjustSeverity(int amount) {
+        severity += amount;
+        severity = Mathf.Clamp(severity, MIN_SEVERITY, MAX_SEVERITY);
+    }
+    public void SetSeverity(int amount) {
+        severity = amount;
+        severity = Mathf.Clamp(severity, MIN_SEVERITY, MAX_SEVERITY);
+    }
+    #endregion
 }
