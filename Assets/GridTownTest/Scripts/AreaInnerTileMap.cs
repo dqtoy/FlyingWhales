@@ -16,11 +16,13 @@ public class AreaInnerTileMap : MonoBehaviour {
     [SerializeField] private Tilemap groundTilemap;
     [SerializeField] private Tilemap wallTilemap;
     [SerializeField] private Tilemap strcutureTilemap;
+    [SerializeField] private Tilemap charactersTilemap;
 
     [SerializeField] private TileBase outsideTile;
     [SerializeField] private TileBase insideTile;
     [SerializeField] private TileBase wallTile;
     [SerializeField] private TileBase structureTile;
+    [SerializeField] private TileBase characterTile;
 
     public Area area { get; private set; }
     public LocationGridTile[,] map { get; private set; }
@@ -371,7 +373,16 @@ public class AreaInnerTileMap : MonoBehaviour {
         return tiles;
     }
 
-   
+    public void PlaceCharacter(Character character, LocationGridTile tile) {
+        charactersTilemap.SetTile(tile.localPlace, characterTile);
+    }
+
+    public void RemoveCharacterVisualFromTile(LocationGridTile tile) {
+        charactersTilemap.SetTile(tile.localPlace, null);
+    }
+
+
+
     public void Update() {
         //if (UIManager.Instance == null) {
         //    return;

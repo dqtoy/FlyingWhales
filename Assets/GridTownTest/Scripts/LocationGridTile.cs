@@ -57,6 +57,7 @@ public class LocationGridTile {
     #region Structures
     public void SetStructure(LocationStructure structure) {
         this.structure = structure;
+        this.structure.AddTile(this);
     }
     #endregion
 

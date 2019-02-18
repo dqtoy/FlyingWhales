@@ -87,6 +87,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public Area homeArea { get; protected set; }
     public Dwelling homeStructure { get; protected set; }
     public LocationStructure currentStructure { get; private set; } //what structure is this character currently in.
+    public LocationGridTile currentStructureTile { get; private set; } //what tile in the structure is this character currently in.
     public Area defendingArea { get; private set; }
     public MORALITY morality { get; private set; }
     public CharacterToken characterToken { get; private set; }
@@ -1279,6 +1280,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (currentStructure != null && broadcast) {
             Messenger.Broadcast(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, this, currentStructure);
         }
+    }
+    public void SetCurrentStructureTileLocation(LocationGridTile tile) {
+        currentStructureTile = tile;
     }
     public void MoveToRandomStructureInArea() {
         LocationStructure locationStructure = specificLocation.GetRandomStructure();
