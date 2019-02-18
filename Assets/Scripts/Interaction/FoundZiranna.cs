@@ -148,7 +148,7 @@ public class FoundZiranna : Interaction {
         _characterInvolved.faction.GetRelationshipWith(oldFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.ENEMY);
 
         //Spawn 6 new characters in the location or until the resident capacity has been reached. Race is the same as the character's.
-        interactable.SpawnRandomCharacters(6);
+        //interactable.SpawnRandomCharacters(6);
 
         //state.descriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
         state.descriptionLog.AddToFillers(oldFaction, oldFaction.name, LOG_IDENTIFIER.FACTION_2);
@@ -163,7 +163,7 @@ public class FoundZiranna : Interaction {
         interactable.SetRaceType(RACE.SKELETON);
 
         //Spawn 6 new characters in the location or until the resident capacity has been reached. Race is the same as the character's.
-        interactable.SpawnRandomCharacters(6);
+        //interactable.SpawnRandomCharacters(6);
 
         //state.descriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
         state.descriptionLog.AddToFillers(oldFaction, oldFaction.name, LOG_IDENTIFIER.FACTION_2);
@@ -181,7 +181,7 @@ public class FoundZiranna : Interaction {
         _characterInvolved.faction.GetRelationshipWith(oldFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.FRIEND);
 
         //Spawn 6 new characters in the location or until the resident capacity has been reached. Race is the same as the character's.
-        interactable.SpawnRandomCharacters(6);
+        //interactable.SpawnRandomCharacters(6);
 
         //state.descriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
         state.descriptionLog.AddToFillers(oldFaction, oldFaction.name, LOG_IDENTIFIER.FACTION_2);
@@ -200,7 +200,7 @@ public class FoundZiranna : Interaction {
         _characterInvolved.faction.GetRelationshipWith(PlayerManager.Instance.player.playerFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.ALLY);
 
         //Spawn 6 new characters in the location or until the resident capacity has been reached. Race is the same as the character's.
-        interactable.SpawnRandomCharacters(6);
+        //interactable.SpawnRandomCharacters(6);
     }
     private void AllianceFailEffect(InteractionState state) {
         //Remove character from her current Faction and turn her into the Faction Leader of a new Ziranna faction. Current area becomes owned by Ziranna faction, set its race to Skeleton.
@@ -208,7 +208,7 @@ public class FoundZiranna : Interaction {
         interactable.SetRaceType(RACE.SKELETON);
 
         //Spawn 6 new characters in the location or until the resident capacity has been reached. Race is the same as the character's.
-        interactable.SpawnRandomCharacters(6);
+        //interactable.SpawnRandomCharacters(6);
     }
     private void AllianceCritFailEffect(InteractionState state) {
         //Remove character from her current Faction and turn her into the Faction Leader of a new Ziranna faction. Current area becomes owned by Ziranna faction, set its race to Skeleton.
@@ -219,7 +219,7 @@ public class FoundZiranna : Interaction {
         _characterInvolved.faction.GetRelationshipWith(PlayerManager.Instance.player.playerFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.DISLIKED);
 
         //Spawn 6 new characters in the location or until the resident capacity has been reached. Race is the same as the character's.
-        interactable.SpawnRandomCharacters(6);
+        //interactable.SpawnRandomCharacters(6);
     }
     private void DissuadeSuccessEffect(InteractionState state) {
         //investigatorCharacter.LevelUp();
@@ -230,7 +230,7 @@ public class FoundZiranna : Interaction {
         interactable.SetRaceType(RACE.SKELETON);
 
         //Spawn 6 new characters in the location or until the resident capacity has been reached. Race is the same as the character's.
-        interactable.SpawnRandomCharacters(6);
+        //interactable.SpawnRandomCharacters(6);
     }
     private void ZirannaFoundEffect(InteractionState state) {
         //Remove character from her current Faction and turn her into the Faction Leader of a new Ziranna faction. Current area becomes owned by Ziranna faction, set its race to Skeleton.
@@ -238,7 +238,7 @@ public class FoundZiranna : Interaction {
         interactable.SetRaceType(RACE.SKELETON);
 
         //Spawn 6 new characters in the location or until the resident capacity has been reached. Race is the same as the character's.
-        interactable.SpawnRandomCharacters(6);
+        //interactable.SpawnRandomCharacters(6);
     }
     #endregion
 }

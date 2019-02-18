@@ -14,6 +14,7 @@ public class ClassPanelUI : MonoBehaviour {
     public static ClassPanelUI Instance;
 
     public InputField classNameInput;
+    public InputField identifierInput;
     public InputField baseAttackPowerInput;
     public InputField attackPowerPerLevelInput;
     public InputField baseSpeedInput;
@@ -23,6 +24,7 @@ public class ClassPanelUI : MonoBehaviour {
     public InputField baseSPInput;
     public InputField spPerLevelInput;
     public InputField recruitmentCostInput;
+    public Toggle nonCombatantToggle;
 
     public Dropdown weaponsOptions;
     public Dropdown armorsOptions;
@@ -34,7 +36,7 @@ public class ClassPanelUI : MonoBehaviour {
     public Dropdown attackTypeOptions;
     public Dropdown rangeTypeOptions;
     public Dropdown occupiedTileOptions;
-    public Dropdown roleOptions;
+    //public Dropdown roleOptions;
     public Dropdown skillOptions;
     public Dropdown jobTypeOptions;
     public Dropdown recruitmentCostOptions;
@@ -122,7 +124,7 @@ public class ClassPanelUI : MonoBehaviour {
         attackTypeOptions.ClearOptions();
         rangeTypeOptions.ClearOptions();
         occupiedTileOptions.ClearOptions();
-        roleOptions.ClearOptions();
+        //roleOptions.ClearOptions();
         jobTypeOptions.ClearOptions();
         recruitmentCostOptions.ClearOptions();
 
@@ -131,7 +133,7 @@ public class ClassPanelUI : MonoBehaviour {
         string[] attackTypes = System.Enum.GetNames(typeof(ATTACK_TYPE));
         string[] rangeTypes = System.Enum.GetNames(typeof(RANGE_TYPE));
         string[] occupiedTiles = System.Enum.GetNames(typeof(COMBAT_OCCUPIED_TILE));
-        string[] roles = System.Enum.GetNames(typeof(CHARACTER_ROLE));
+        //string[] roles = System.Enum.GetNames(typeof(CHARACTER_ROLE));
         string[] jobs = System.Enum.GetNames(typeof(JOB));
         string[] cost = System.Enum.GetNames(typeof(CURRENCY));
 
@@ -140,7 +142,7 @@ public class ClassPanelUI : MonoBehaviour {
         attackTypeOptions.AddOptions(attackTypes.ToList());
         rangeTypeOptions.AddOptions(rangeTypes.ToList());
         occupiedTileOptions.AddOptions(occupiedTiles.ToList());
-        roleOptions.AddOptions(roles.ToList());
+        //roleOptions.AddOptions(roles.ToList());
         jobTypeOptions.AddOptions(jobs.ToList());
         recruitmentCostOptions.AddOptions(cost.ToList());
         UpdateClassList();
@@ -153,6 +155,9 @@ public class ClassPanelUI : MonoBehaviour {
         currentSelectedClassTraitButton = null;
 
         classNameInput.text = string.Empty;
+        identifierInput.text = string.Empty;
+
+        nonCombatantToggle.isOn = false;
 
         baseAttackPowerInput.text = "0";
         attackPowerPerLevelInput.text = "0";
@@ -174,7 +179,7 @@ public class ClassPanelUI : MonoBehaviour {
         rangeTypeOptions.value = 0;
         occupiedTileOptions.value = 0;
         skillOptions.value = 0;
-        roleOptions.value = 0;
+        //roleOptions.value = 0;
         jobTypeOptions.value = 0;
         recruitmentCostOptions.value = 0;
 
@@ -191,6 +196,12 @@ public class ClassPanelUI : MonoBehaviour {
         if (string.IsNullOrEmpty(classNameInput.text)) {
 #if UNTIY_EDITOR
             EditorUtility.DisplayDialog("Error", "Please specify a Class Name", "OK");
+            return;
+#endif
+        }
+        if (string.IsNullOrEmpty(identifierInput.text)) {
+#if UNTIY_EDITOR
+            EditorUtility.DisplayDialog("Error", "Please specify an Identifier", "OK");
             return;
 #endif
         }
@@ -242,6 +253,8 @@ public class ClassPanelUI : MonoBehaviour {
 
     private void LoadClassDataToUI(CharacterClass characterClass) {
         classNameInput.text = characterClass.className;
+        identifierInput.text = characterClass.identifier;
+        nonCombatantToggle.isOn = characterClass.isNonCombatant;
         baseAttackPowerInput.text = characterClass.baseAttackPower.ToString();
         attackPowerPerLevelInput.text = characterClass.attackPowerPerLevel.ToString();
         baseSpeedInput.text = characterClass.baseSpeed.ToString();
@@ -257,7 +270,7 @@ public class ClassPanelUI : MonoBehaviour {
         rangeTypeOptions.value = GetDropdownIndex(rangeTypeOptions, characterClass.rangeType.ToString());
         occupiedTileOptions.value = GetDropdownIndex(occupiedTileOptions, characterClass.occupiedTileType.ToString());
 
-        roleOptions.value = GetDropdownIndex(roleOptions, characterClass.roleType.ToString());
+        //roleOptions.value = GetDropdownIndex(roleOptions, characterClass.roleType.ToString());
         skillOptions.value = GetDropdownIndex(skillOptions, characterClass.skillName.ToString());
         jobTypeOptions.value = GetDropdownIndex(jobTypeOptions, characterClass.jobType.ToString());
         recruitmentCostOptions.value = GetDropdownIndex(recruitmentCostOptions, characterClass.recruitmentCost.currency.ToString());

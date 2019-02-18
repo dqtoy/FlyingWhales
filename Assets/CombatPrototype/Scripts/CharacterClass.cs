@@ -14,7 +14,9 @@ public class CharacterClass : EntityComponent {
     [SerializeField] private string _skillName;
 
     [SerializeField] private string[] _traitNames;
-    [SerializeField] private CHARACTER_ROLE _roleType;
+    [SerializeField] private string _identifier;
+    [SerializeField] private bool _isNonCombatant;
+    //[SerializeField] private CHARACTER_ROLE _roleType;
     [SerializeField] private JOB _jobType;
     [SerializeField] private COMBAT_POSITION _combatPosition;
     [SerializeField] private COMBAT_TARGET _combatTarget;
@@ -32,6 +34,12 @@ public class CharacterClass : EntityComponent {
     public string className {
         get { return _className; }
         //set { _className = value; }
+    }
+    public string identifier {
+        get { return _identifier; }
+    }
+    public bool isNonCombatant {
+        get { return _isNonCombatant; }
     }
     public int baseAttackPower {
         get { return _baseAttackPower; }
@@ -51,9 +59,9 @@ public class CharacterClass : EntityComponent {
     public int hpPerLevel {
         get { return _hpPerLevel; }
     }
-    public CHARACTER_ROLE roleType {
-        get { return _roleType; }
-    }
+    //public CHARACTER_ROLE roleType {
+    //    get { return _roleType; }
+    //}
     public JOB jobType {
         get { return _jobType; }
     }
@@ -89,6 +97,8 @@ public class CharacterClass : EntityComponent {
     public CharacterClass CreateNewCopy() {
         CharacterClass newClass = new CharacterClass();
         newClass._className = this._className;
+        newClass._identifier = this._identifier;
+        newClass._isNonCombatant = this._isNonCombatant;
         newClass._baseAttackPower = this._baseAttackPower;
         newClass._baseSpeed = this._baseSpeed;
         newClass._baseHP = this._baseHP;
@@ -101,7 +111,7 @@ public class CharacterClass : EntityComponent {
         newClass._attackType = this._attackType;
         newClass._rangeType = this._rangeType;
         newClass._occupiedTileType = this._occupiedTileType;
-        newClass._roleType = this._roleType;
+        //newClass._roleType = this._roleType;
         newClass._skillName = this._skillName;
         newClass._skill = this._skill; //.CreateNewCopy()
         newClass._traitNames = this._traitNames;
@@ -128,6 +138,8 @@ public class CharacterClass : EntityComponent {
 
     public void SetDataFromClassPanelUI() {
         this._className = ClassPanelUI.Instance.classNameInput.text;
+        this._identifier = ClassPanelUI.Instance.identifierInput.text;
+        this._isNonCombatant = ClassPanelUI.Instance.nonCombatantToggle.isOn;
         this._baseAttackPower = int.Parse(ClassPanelUI.Instance.baseAttackPowerInput.text);
         this._attackPowerPerLevel = int.Parse(ClassPanelUI.Instance.attackPowerPerLevelInput.text);
         this._baseSpeed = int.Parse(ClassPanelUI.Instance.baseSpeedInput.text);
@@ -139,7 +151,7 @@ public class CharacterClass : EntityComponent {
         this._attackType = (ATTACK_TYPE) System.Enum.Parse(typeof(ATTACK_TYPE), ClassPanelUI.Instance.attackTypeOptions.options[ClassPanelUI.Instance.attackTypeOptions.value].text);
         this._rangeType = (RANGE_TYPE) System.Enum.Parse(typeof(RANGE_TYPE), ClassPanelUI.Instance.rangeTypeOptions.options[ClassPanelUI.Instance.rangeTypeOptions.value].text);
         this._occupiedTileType = (COMBAT_OCCUPIED_TILE) System.Enum.Parse(typeof(COMBAT_OCCUPIED_TILE), ClassPanelUI.Instance.occupiedTileOptions.options[ClassPanelUI.Instance.occupiedTileOptions.value].text);
-        this._roleType = (CHARACTER_ROLE) System.Enum.Parse(typeof(CHARACTER_ROLE), ClassPanelUI.Instance.roleOptions.options[ClassPanelUI.Instance.roleOptions.value].text);
+        //this._roleType = (CHARACTER_ROLE) System.Enum.Parse(typeof(CHARACTER_ROLE), ClassPanelUI.Instance.roleOptions.options[ClassPanelUI.Instance.roleOptions.value].text);
         this._skillName = ClassPanelUI.Instance.skillOptions.options[ClassPanelUI.Instance.skillOptions.value].text;
         this._traitNames = ClassPanelUI.Instance.traitNames.ToArray();
         this._jobType = (JOB) System.Enum.Parse(typeof(JOB), ClassPanelUI.Instance.jobTypeOptions.options[ClassPanelUI.Instance.jobTypeOptions.value].text);

@@ -220,7 +220,7 @@ public class Player : ILeader {
         PlayerUI.Instance.ResetAllMinionItems();
         _minions = new List<Minion>();
         for (int i = 0; i < 20; i++) {
-            AddMinion(CreateNewMinion(CharacterManager.Instance.GetDeadlySinsClassNameFromRotation(), RACE.DEMON));
+            AddMinion(CreateNewMinion(RACE.DEMON));
         }
         //AddMinion(CreateNewMinion(CharacterManager.Instance.GetRandomDeadlySinsClassName(), RACE.DEMON, false));
         //AddMinion(CreateNewMinion(CharacterManager.Instance.GetRandomDeadlySinsClassName(), RACE.DEMON, false));
@@ -235,8 +235,12 @@ public class Player : ILeader {
     public Minion CreateNewMinion(Character character) {
         return new Minion(character, true);
     }
+    public Minion CreateNewMinion(RACE race) {
+        Minion minion = new Minion(CharacterManager.Instance.CreateNewCharacter(CharacterRole.MINION, race, GENDER.MALE, playerFaction, playerArea, false), false);
+        return minion;
+    }
     public Minion CreateNewMinion(string className, RACE race) {
-        Minion minion = new Minion(CharacterManager.Instance.CreateNewCharacter(className, race, GENDER.MALE, playerFaction, playerArea, false), false);
+        Minion minion = new Minion(CharacterManager.Instance.CreateNewCharacter(CharacterRole.MINION, className, race, GENDER.MALE, playerFaction, playerArea, false), false);
         return minion;
     }
     public void UpdateMinions() {

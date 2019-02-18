@@ -1478,6 +1478,18 @@ public class Utilities : MonoBehaviour {
     public static bool IsRaceBeast(RACE race) {
         return beastRaces.Contains(race);
     }
+    public static string GetRespectiveBeastClassNameFromByRace(RACE race) {
+        if(race == RACE.ABOMINATION) {
+            return "Abomination";
+        } else if(race == RACE.DRAGON) {
+            return "Dragon";
+        } else if (race == RACE.SPIDER) {
+            return "Spinner";
+        } else if (race == RACE.WOLF) {
+            return "Ravager";
+        }
+        throw new Exception("No beast class for " + race.ToString() + " Race!");
+    }
     public static GameObject FindParentWithTag(GameObject childObject, string tag) {
         Transform t = childObject.transform;
         while (t.parent != null) {

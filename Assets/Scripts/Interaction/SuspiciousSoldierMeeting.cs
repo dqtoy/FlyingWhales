@@ -219,18 +219,18 @@ public class SuspiciousSoldierMeeting : Interaction {
         state.AddLogFiller(new LogFiller(_interactable.owner, _interactable.owner.name, LOG_IDENTIFIER.FACTION_1));
     }
     private void ArmyGainedRewardEffect(InteractionState state) {
-        investigatorCharacter.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
-        Minion newMinion = PlayerManager.Instance.player.CreateNewMinion("Knights", RACE.HUMANS);
-        newMinion.character.SetLevel(UnityEngine.Random.Range(5, 9));
-        PlayerManager.Instance.player.AddMinion(newMinion);
+        //investigatorCharacter.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));
+        //Minion newMinion = PlayerManager.Instance.player.CreateNewMinion("Knights", RACE.HUMANS);
+        //newMinion.character.SetLevel(UnityEngine.Random.Range(5, 9));
+        //PlayerManager.Instance.player.AddMinion(newMinion);
 
-        //if (_interactable is BaseLandmark) {
-        //    BaseLandmark landmark = _interactable;
-        //    ICharacter icharacter = landmark.GetResidentCharacterOfClass("General");
-        //    if (icharacter != null) {
-        //        icharacter.Assassinate(explorerMinion.icharacter);
-        //    }
-        //}
+        ////if (_interactable is BaseLandmark) {
+        ////    BaseLandmark landmark = _interactable;
+        ////    ICharacter icharacter = landmark.GetResidentCharacterOfClass("General");
+        ////    if (icharacter != null) {
+        ////        icharacter.Assassinate(explorerMinion.icharacter);
+        ////    }
+        ////}
     }
     private void NothingHappensRewardEffect(InteractionState state) {
         investigatorCharacter.ClaimReward(InteractionManager.Instance.GetReward(InteractionManager.Level_Reward_1));

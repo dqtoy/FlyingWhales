@@ -117,58 +117,53 @@ public class SpawnNeutralCharacter : Interaction {
         state.AddLogFiller(new LogFiller(null, _classNameToBeSpawned, LOG_IDENTIFIER.STRING_2));
     }
     private void FailCancelEffect(InteractionState state) {
-        Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(_classNameToBeSpawned, interactable.raceType, Utilities.GetRandomGender(), FactionManager.Instance.neutralFaction, interactable);
-        createdCharacter.SetLevel(createdCharacter.raceSetting.neutralSpawnLevel);
-        //Debug.Log("CREATED NEW NEUTRAL CHARACTER: " + createdCharacter.name + " - " + createdCharacter.level);
+        //Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(_classNameToBeSpawned, interactable.raceType, Utilities.GetRandomGender(), FactionManager.Instance.neutralFaction, interactable);
+        //createdCharacter.SetLevel(createdCharacter.raceSetting.neutralSpawnLevel);
 
-        state.descriptionLog.AddToFillers(null, Utilities.NormalizeString(interactable.raceType.ToString()), LOG_IDENTIFIER.STRING_1);
-        state.descriptionLog.AddToFillers(null, _classNameToBeSpawned, LOG_IDENTIFIER.STRING_2);
+        //state.descriptionLog.AddToFillers(null, Utilities.NormalizeString(interactable.raceType.ToString()), LOG_IDENTIFIER.STRING_1);
+        //state.descriptionLog.AddToFillers(null, _classNameToBeSpawned, LOG_IDENTIFIER.STRING_2);
 
-        state.AddLogFiller(new LogFiller(null, Utilities.NormalizeString(interactable.raceType.ToString()), LOG_IDENTIFIER.STRING_1));
-        state.AddLogFiller(new LogFiller(null, _classNameToBeSpawned, LOG_IDENTIFIER.STRING_2));
-        state.AddLogFiller(new LogFiller(createdCharacter, createdCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        //state.AddLogFiller(new LogFiller(null, Utilities.NormalizeString(interactable.raceType.ToString()), LOG_IDENTIFIER.STRING_1));
+        //state.AddLogFiller(new LogFiller(null, _classNameToBeSpawned, LOG_IDENTIFIER.STRING_2));
+        //state.AddLogFiller(new LogFiller(createdCharacter, createdCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     private void SuccessRecruitEffect(InteractionState state) {
-        //investigatorCharacter.LevelUp();
+        ////investigatorCharacter.LevelUp();
 
-        Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(_classNameToBeSpawned, interactable.raceType, Utilities.GetRandomGender(), FactionManager.Instance.neutralFaction, interactable);
-        createdCharacter.SetLevel(createdCharacter.raceSetting.neutralSpawnLevel);
-        createdCharacter.RecruitAsMinion();
+        //Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(_classNameToBeSpawned, interactable.raceType, Utilities.GetRandomGender(), FactionManager.Instance.neutralFaction, interactable);
+        //createdCharacter.SetLevel(createdCharacter.raceSetting.neutralSpawnLevel);
+        //createdCharacter.RecruitAsMinion();
 
-        //Debug.Log("CREATED NEW NEUTRAL CHARACTER: " + createdCharacter.name + " - " + createdCharacter.level);
+        //state.descriptionLog.AddToFillers(null, Utilities.NormalizeString(interactable.raceType.ToString()), LOG_IDENTIFIER.STRING_1);
+        //state.descriptionLog.AddToFillers(null, _classNameToBeSpawned, LOG_IDENTIFIER.STRING_2);
+        //state.descriptionLog.AddToFillers(createdCharacter, createdCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
-        state.descriptionLog.AddToFillers(null, Utilities.NormalizeString(interactable.raceType.ToString()), LOG_IDENTIFIER.STRING_1);
-        state.descriptionLog.AddToFillers(null, _classNameToBeSpawned, LOG_IDENTIFIER.STRING_2);
-        state.descriptionLog.AddToFillers(createdCharacter, createdCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-
-        state.AddLogFiller(new LogFiller(null, Utilities.NormalizeString(interactable.raceType.ToString()), LOG_IDENTIFIER.STRING_1));
-        state.AddLogFiller(new LogFiller(null, _classNameToBeSpawned, LOG_IDENTIFIER.STRING_2));
-        state.AddLogFiller(new LogFiller(createdCharacter, createdCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        //state.AddLogFiller(new LogFiller(null, Utilities.NormalizeString(interactable.raceType.ToString()), LOG_IDENTIFIER.STRING_1));
+        //state.AddLogFiller(new LogFiller(null, _classNameToBeSpawned, LOG_IDENTIFIER.STRING_2));
+        //state.AddLogFiller(new LogFiller(createdCharacter, createdCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     private void FailRecruitEffect(InteractionState state) {
-        Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(_classNameToBeSpawned, interactable.raceType, Utilities.GetRandomGender(), FactionManager.Instance.neutralFaction, interactable);
-        createdCharacter.SetLevel(createdCharacter.raceSetting.neutralSpawnLevel);
-        //Debug.Log("CREATED NEW NEUTRAL CHARACTER: " + createdCharacter.name + " - " + createdCharacter.level);
+        //Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(_classNameToBeSpawned, interactable.raceType, Utilities.GetRandomGender(), FactionManager.Instance.neutralFaction, interactable);
+        //createdCharacter.SetLevel(createdCharacter.raceSetting.neutralSpawnLevel);
 
-        state.descriptionLog.AddToFillers(null, Utilities.NormalizeString(interactable.raceType.ToString()), LOG_IDENTIFIER.STRING_1);
-        state.descriptionLog.AddToFillers(null, _classNameToBeSpawned, LOG_IDENTIFIER.STRING_2);
+        //state.descriptionLog.AddToFillers(null, Utilities.NormalizeString(interactable.raceType.ToString()), LOG_IDENTIFIER.STRING_1);
+        //state.descriptionLog.AddToFillers(null, _classNameToBeSpawned, LOG_IDENTIFIER.STRING_2);
 
-        state.AddLogFiller(new LogFiller(null, Utilities.NormalizeString(interactable.raceType.ToString()), LOG_IDENTIFIER.STRING_1));
-        state.AddLogFiller(new LogFiller(null, _classNameToBeSpawned, LOG_IDENTIFIER.STRING_2));
-        state.AddLogFiller(new LogFiller(createdCharacter, createdCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        //state.AddLogFiller(new LogFiller(null, Utilities.NormalizeString(interactable.raceType.ToString()), LOG_IDENTIFIER.STRING_1));
+        //state.AddLogFiller(new LogFiller(null, _classNameToBeSpawned, LOG_IDENTIFIER.STRING_2));
+        //state.AddLogFiller(new LogFiller(createdCharacter, createdCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     private void NormalSpawnEffect(InteractionState state) {
-        Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(_classNameToBeSpawned, interactable.raceType, Utilities.GetRandomGender(), FactionManager.Instance.neutralFaction, interactable);
-        createdCharacter.SetLevel(createdCharacter.raceSetting.neutralSpawnLevel);
-        //Debug.Log("CREATED NEW NEUTRAL CHARACTER: " + createdCharacter.name + " - " + createdCharacter.level);
+        //Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(_classNameToBeSpawned, interactable.raceType, Utilities.GetRandomGender(), FactionManager.Instance.neutralFaction, interactable);
+        //createdCharacter.SetLevel(createdCharacter.raceSetting.neutralSpawnLevel);
 
-        state.descriptionLog.AddToFillers(null, Utilities.NormalizeString(interactable.raceType.ToString()), LOG_IDENTIFIER.STRING_1);
-        state.descriptionLog.AddToFillers(null, _classNameToBeSpawned, LOG_IDENTIFIER.STRING_2);
-        state.descriptionLog.AddToFillers(createdCharacter, createdCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        //state.descriptionLog.AddToFillers(null, Utilities.NormalizeString(interactable.raceType.ToString()), LOG_IDENTIFIER.STRING_1);
+        //state.descriptionLog.AddToFillers(null, _classNameToBeSpawned, LOG_IDENTIFIER.STRING_2);
+        //state.descriptionLog.AddToFillers(createdCharacter, createdCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
-        state.AddLogFiller(new LogFiller(null, Utilities.NormalizeString(interactable.raceType.ToString()), LOG_IDENTIFIER.STRING_1));
-        state.AddLogFiller(new LogFiller(null, _classNameToBeSpawned, LOG_IDENTIFIER.STRING_2));
-        state.AddLogFiller(new LogFiller(createdCharacter, createdCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        //state.AddLogFiller(new LogFiller(null, Utilities.NormalizeString(interactable.raceType.ToString()), LOG_IDENTIFIER.STRING_1));
+        //state.AddLogFiller(new LogFiller(null, _classNameToBeSpawned, LOG_IDENTIFIER.STRING_2));
+        //state.AddLogFiller(new LogFiller(createdCharacter, createdCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     #endregion
 }

@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class Beast : CharacterRole {
 
-    public Beast(Character character) : base(character) {
-        _roleType = CHARACTER_ROLE.BEAST;
+    public Beast() : base(CHARACTER_ROLE.BEAST, "Beast", new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.OFFENSE, INTERACTION_CATEGORY.DEFENSE, INTERACTION_CATEGORY.INVENTORY, INTERACTION_CATEGORY.RECRUITMENT }) {
     }
 }

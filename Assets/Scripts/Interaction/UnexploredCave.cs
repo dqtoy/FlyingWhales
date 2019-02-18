@@ -146,38 +146,38 @@ public class UnexploredCave : Interaction {
         //investigatorMinion.character.UpgradeArmor();
     }
     private void UnleashedMonsterEffect(InteractionState state) {
-        //TODO: awaken monster and put it in defenders list
-        WeightedDictionary<string> monsterWeights = new WeightedDictionary<string>();
-        monsterWeights.AddElement("Spider Spinner", 10);
-        monsterWeights.AddElement("Wolf Ravager", 10);
+        ////TODO: awaken monster and put it in defenders list
+        //WeightedDictionary<string> monsterWeights = new WeightedDictionary<string>();
+        //monsterWeights.AddElement("Spider Spinner", 10);
+        //monsterWeights.AddElement("Wolf Ravager", 10);
 
-        string chosenMonster = monsterWeights.PickRandomElementGivenWeights();
-        RACE chosenRace = RACE.HUMANS;
-        string chosenClass = string.Empty;
-        if(chosenMonster == "Spider Spinner") {
-            chosenRace = RACE.SPIDER;
-            chosenClass = "Spinner";
-        }else if (chosenMonster == "Wolf Ravager") {
-            chosenRace = RACE.WOLF;
-            chosenClass = "Ravager";
-        }
+        //string chosenMonster = monsterWeights.PickRandomElementGivenWeights();
+        //RACE chosenRace = RACE.HUMANS;
+        //string chosenClass = string.Empty;
+        //if(chosenMonster == "Spider Spinner") {
+        //    chosenRace = RACE.SPIDER;
+        //    chosenClass = "Spinner";
+        //}else if (chosenMonster == "Wolf Ravager") {
+        //    chosenRace = RACE.WOLF;
+        //    chosenClass = "Ravager";
+        //}
 
-        if(chosenClass != string.Empty) {
-            Character newDefender = CharacterManager.Instance.CreateNewCharacter(chosenClass, chosenRace, GENDER.MALE, null, _interactable);
-            //BaseLandmark landmark = _interactable;
-            //landmark.AddDefender(newDefender);
+        //if(chosenClass != string.Empty) {
+        //    Character newDefender = CharacterManager.Instance.CreateNewCharacter(chosenClass, chosenRace, GENDER.MALE, null, _interactable);
+        //    //BaseLandmark landmark = _interactable;
+        //    //landmark.AddDefender(newDefender);
 
-            if (state.descriptionLog != null) {
-                state.descriptionLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(chosenRace), LOG_IDENTIFIER.STRING_1);
-                state.descriptionLog.AddToFillers(null, chosenClass, LOG_IDENTIFIER.STRING_2);
-            }
-            state.AddLogFiller(new LogFiller(null, Utilities.GetNormalizedSingularRace(chosenRace), LOG_IDENTIFIER.STRING_1));
-            state.AddLogFiller(new LogFiller(null, chosenClass, LOG_IDENTIFIER.STRING_2));
-            //if (state.minionLog != null) {
-            //    state.minionLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(chosenRace), LOG_IDENTIFIER.STRING_1);
-            //    state.minionLog.AddToFillers(null, chosenClass, LOG_IDENTIFIER.STRING_2);
-            //}
-        }
+        //    if (state.descriptionLog != null) {
+        //        state.descriptionLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(chosenRace), LOG_IDENTIFIER.STRING_1);
+        //        state.descriptionLog.AddToFillers(null, chosenClass, LOG_IDENTIFIER.STRING_2);
+        //    }
+        //    state.AddLogFiller(new LogFiller(null, Utilities.GetNormalizedSingularRace(chosenRace), LOG_IDENTIFIER.STRING_1));
+        //    state.AddLogFiller(new LogFiller(null, chosenClass, LOG_IDENTIFIER.STRING_2));
+        //    //if (state.minionLog != null) {
+        //    //    state.minionLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(chosenRace), LOG_IDENTIFIER.STRING_1);
+        //    //    state.minionLog.AddToFillers(null, chosenClass, LOG_IDENTIFIER.STRING_2);
+        //    //}
+        //}
     }
 
     private void LeftAloneRewardEffect(InteractionState state) {

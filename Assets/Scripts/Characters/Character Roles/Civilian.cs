@@ -5,8 +5,7 @@ using UnityEngine;
 
 public class Civilian : CharacterRole {
 
-    public Civilian(Character character) : base(character) {
-        _roleType = CHARACTER_ROLE.CIVILIAN;
+    public Civilian() : base(CHARACTER_ROLE.CIVILIAN, "Civilian", new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.SUPPLY, INTERACTION_CATEGORY.INVENTORY }) {
     }
 
     //#region Overrides

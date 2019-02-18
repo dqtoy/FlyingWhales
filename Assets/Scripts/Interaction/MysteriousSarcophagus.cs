@@ -314,18 +314,18 @@ public class MysteriousSarcophagus : Interaction {
     #endregion
 
     private void SpawnUndeadCharacter() {
-        RACE race = RACE.FAERY;
-        int levelModifier = 0;
-        if (interactable.name == "Tessellated Triangle") {
-            race = RACE.FAERY;
-            levelModifier = 6;
-        } else if (interactable.name == "Gloomhollow Crypts") {
-            race = RACE.SKELETON;
-            levelModifier = 3;
-        }
-        WeightedDictionary<AreaCharacterClass> classWeights = LandmarkManager.Instance.GetDefaultClassWeights(race);
-        string className = classWeights.PickRandomElementGivenWeights().className;
-        _undeadCharacter = CharacterManager.Instance.CreateNewCharacter(className, race, Utilities.GetRandomGender(), interactable.owner, interactable);
-        _undeadCharacter.SetLevel(FactionManager.Instance.GetAverageFactionLevel() + levelModifier);
+        //RACE race = RACE.FAERY;
+        //int levelModifier = 0;
+        //if (interactable.name == "Tessellated Triangle") {
+        //    race = RACE.FAERY;
+        //    levelModifier = 6;
+        //} else if (interactable.name == "Gloomhollow Crypts") {
+        //    race = RACE.SKELETON;
+        //    levelModifier = 3;
+        //}
+        //WeightedDictionary<AreaCharacterClass> classWeights = LandmarkManager.Instance.GetDefaultClassWeights(race);
+        //string className = classWeights.PickRandomElementGivenWeights().className;
+        //_undeadCharacter = CharacterManager.Instance.CreateNewCharacter(className, race, Utilities.GetRandomGender(), interactable.owner, interactable);
+        //_undeadCharacter.SetLevel(FactionManager.Instance.GetAverageFactionLevel() + levelModifier);
     }
 }

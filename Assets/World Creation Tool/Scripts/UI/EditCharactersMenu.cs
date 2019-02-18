@@ -39,8 +39,8 @@ namespace worldcreator {
             //CHARACTER_JOB job = (CHARACTER_JOB)Enum.Parse(typeof(CHARACTER_JOB), jobDropdown.options[jobDropdown.value].text);
             string className = classDropdown.options[classDropdown.value].text;
 
-            CharacterSetup setup = CombatManager.Instance.GetBaseCharacterSetup(className);
-            Character newCharacter = CharacterManager.Instance.CreateNewCharacter(className, race, gender);
+            //CharacterSetup setup = CombatManager.Instance.GetBaseCharacterSetup(className);
+            Character newCharacter = CharacterManager.Instance.CreateNewCharacter(CharacterRole.GetRoleByRoleType(role), race, gender);
             //Debug.Log("Created new character " + newCharacter.name + "")
         }
         private void OnCreateNewCharacter(Character newCharacter) {

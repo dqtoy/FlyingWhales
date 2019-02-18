@@ -147,7 +147,7 @@ public class FoundLucareth : Interaction {
         _characterInvolved.faction.GetRelationshipWith(oldFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.ENEMY);
 
         //Spawn 4 new characters in the location or until the resident capacity has been reached. Race is the same as the character's.
-        interactable.SpawnRandomCharacters(4);
+        //interactable.SpawnRandomCharacters(4);
 
         state.descriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
         state.descriptionLog.AddToFillers(oldFaction, oldFaction.name, LOG_IDENTIFIER.FACTION_2);
@@ -161,7 +161,7 @@ public class FoundLucareth : Interaction {
         _characterInvolved.FoundFaction("Lucareth", interactable);
 
         //Spawn 4 new characters in the location or until the resident capacity has been reached. Race is the same as the character's.
-        interactable.SpawnRandomCharacters(4);
+        //interactable.SpawnRandomCharacters(4);
 
         state.descriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
         state.descriptionLog.AddToFillers(oldFaction, oldFaction.name, LOG_IDENTIFIER.FACTION_2);
@@ -178,7 +178,7 @@ public class FoundLucareth : Interaction {
         _characterInvolved.faction.GetRelationshipWith(oldFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.FRIEND);
 
         //Spawn 4 new characters in the location or until the resident capacity has been reached. Race is the same as the character's.
-        interactable.SpawnRandomCharacters(4);
+        //interactable.SpawnRandomCharacters(4);
 
         state.descriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
         state.descriptionLog.AddToFillers(oldFaction, oldFaction.name, LOG_IDENTIFIER.FACTION_2);
@@ -196,14 +196,14 @@ public class FoundLucareth : Interaction {
         _characterInvolved.faction.GetRelationshipWith(PlayerManager.Instance.player.playerFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.ALLY);
 
         //Spawn 4 new characters in the location or until the resident capacity has been reached. Race is the same as the character's.
-        interactable.SpawnRandomCharacters(4);
+        //interactable.SpawnRandomCharacters(4);
     }
     private void AllianceFailEffect(InteractionState state) {
         //Remove character from her current Faction and turn her into the Faction Leader of a new Lucareth faction. Current area becomes owned by Lucareth faction, set its race to the character's race.
         _characterInvolved.FoundFaction("Lucareth", interactable);
 
         //Spawn 4 new characters in the location or until the resident capacity has been reached. Race is the same as the character's.
-        interactable.SpawnRandomCharacters(4);
+        //interactable.SpawnRandomCharacters(4);
     }
     private void AllianceCritFailEffect(InteractionState state) {
         //Remove character from her current Faction and turn her into the Faction Leader of a new Lucareth faction. Current area becomes owned by Lucareth faction, set its race to the character's race.
@@ -213,7 +213,7 @@ public class FoundLucareth : Interaction {
         _characterInvolved.faction.GetRelationshipWith(PlayerManager.Instance.player.playerFaction).SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.DISLIKED);
 
         //Spawn 4 new characters in the location or until the resident capacity has been reached. Race is the same as the character's.
-        interactable.SpawnRandomCharacters(4);
+        //interactable.SpawnRandomCharacters(4);
     }
     private void DissuadeSuccessEffect(InteractionState state) {
         //investigatorCharacter.LevelUp();
@@ -223,14 +223,14 @@ public class FoundLucareth : Interaction {
         _characterInvolved.FoundFaction("Lucareth", interactable);
 
         //Spawn 4 new characters in the location or until the resident capacity has been reached. Race is the same as the character's.
-        interactable.SpawnRandomCharacters(4);
+        //interactable.SpawnRandomCharacters(4);
     }
     private void LucarethFoundEffect(InteractionState state) {
         //Remove character from her current Faction and turn her into the Faction Leader of a new Lucareth faction. Current area becomes owned by Lucareth faction, set its race to the character's race.
         _characterInvolved.FoundFaction("Lucareth", interactable);
 
         //Spawn 4 new characters in the location or until the resident capacity has been reached. Race is the same as the character's.
-        interactable.SpawnRandomCharacters(4);
+        //interactable.SpawnRandomCharacters(4);
     }
     #endregion
 }

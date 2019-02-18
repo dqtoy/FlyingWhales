@@ -8,7 +8,7 @@ public class CharacterSaveData {
     public string name;
     public RACE race;
     public GENDER gender;
-    public CHARACTER_ROLE role;
+    public CharacterRole role;
     public string className;
     public LOCATION_IDENTIFIER locationType;
     public int locationID;
@@ -31,7 +31,7 @@ public class CharacterSaveData {
         name = character.name;
         race = character.raceSetting.race;
         gender = character.gender;
-        role = character.role.roleType;
+        role = character.role;
         className = character.characterClass.className;
 
         if (character.party.specificLocation != null) {
