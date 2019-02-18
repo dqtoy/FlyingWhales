@@ -1,5 +1,1 @@
-<<<<<<< HEAD
 {"_className":"Dragon","_baseAttackPower":75,"_attackPowerPerLevel":30,"_baseSpeed":25,"_speedPerLevel":10,"_hpPerLevel":1000,"_baseHP":2500,"_skillName":"Attack","_traitNames":[],"_roleType":9,"_jobType":5,"_combatPosition":0,"_combatTarget":1,"_attackType":0,"_rangeType":0,"_occupiedTileType":3,"_recruitmentCost":{"amount":600,"currency":0}}
-=======
-{"_className":"Dragon","_baseAttackPower":50,"_attackPowerPerLevel":30,"_baseSpeed":50,"_speedPerLevel":2,"_hpPerLevel":70,"_baseHP":2500,"_skillName":"Attack","_traitNames":["Dragon Trait"],"_roleType":9,"_jobType":5,"_combatPosition":0,"_combatTarget":1,"_attackType":0,"_rangeType":0,"_occupiedTileType":3,"_recruitmentCost":{"amount":600,"currency":0}}
->>>>>>> 6c72e2aab347c745eb6f40a8b17518e646cfcefe

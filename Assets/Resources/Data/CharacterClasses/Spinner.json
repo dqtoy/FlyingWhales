@@ -1,5 +1,1 @@
-<<<<<<< HEAD
 {"_className":"Spinner","_baseAttackPower":85,"_attackPowerPerLevel":34,"_baseSpeed":85,"_speedPerLevel":34,"_hpPerLevel":376,"_baseHP":940,"_skillName":"Attack","_traitNames":[],"_roleType":9,"_jobType":1,"_combatPosition":1,"_combatTarget":0,"_attackType":0,"_rangeType":1,"_occupiedTileType":1,"_recruitmentCost":{"amount":150,"currency":0}}
-=======
-{"_className":"Spinner","_baseAttackPower":125,"_attackPowerPerLevel":125,"_baseSpeed":80,"_speedPerLevel":6,"_hpPerLevel":130,"_baseHP":1250,"_skillName":"Attack","_traitNames":["Melee Vulnerable"],"_roleType":9,"_jobType":1,"_combatPosition":1,"_combatTarget":0,"_attackType":0,"_rangeType":1,"_occupiedTileType":1,"_recruitmentCost":{"amount":150,"currency":0}}
->>>>>>> 6c72e2aab347c745eb6f40a8b17518e646cfcefe

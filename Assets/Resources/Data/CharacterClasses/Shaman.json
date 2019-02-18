@@ -1,5 +1,1 @@
-<<<<<<< HEAD
 {"_className":"Shaman","_baseAttackPower":65,"_attackPowerPerLevel":22,"_baseSpeed":45,"_speedPerLevel":15,"_hpPerLevel":62,"_baseHP":185,"_skillName":"Attack","_traitNames":[],"_roleType":7,"_jobType":7,"_combatPosition":1,"_combatTarget":5,"_attackType":1,"_rangeType":1,"_occupiedTileType":0,"_recruitmentCost":{"amount":200,"currency":0}}
-=======
-{"_className":"Shaman","_baseAttackPower":80,"_attackPowerPerLevel":80,"_baseSpeed":50,"_speedPerLevel":2,"_hpPerLevel":70,"_baseHP":650,"_skillName":"Attack","_traitNames":["Magic Trait"],"_roleType":7,"_jobType":7,"_combatPosition":1,"_combatTarget":5,"_attackType":1,"_rangeType":1,"_occupiedTileType":0,"_recruitmentCost":{"amount":200,"currency":0}}
->>>>>>> 6c72e2aab347c745eb6f40a8b17518e646cfcefe

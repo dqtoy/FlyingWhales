@@ -1,5 +1,1 @@
-<<<<<<< HEAD
 {"_className":"Druid","_baseAttackPower":65,"_attackPowerPerLevel":22,"_baseSpeed":35,"_speedPerLevel":12,"_hpPerLevel":63,"_baseHP":190,"_skillName":"Attack","_traitNames":[],"_roleType":1,"_jobType":3,"_combatPosition":1,"_combatTarget":4,"_attackType":1,"_rangeType":1,"_occupiedTileType":0,"_recruitmentCost":{"amount":200,"currency":0}}
-=======
-{"_className":"Druid","_baseAttackPower":60,"_attackPowerPerLevel":60,"_baseSpeed":40,"_speedPerLevel":2,"_hpPerLevel":80,"_baseHP":735,"_skillName":"Attack","_traitNames":["Magic Trait"],"_roleType":1,"_jobType":3,"_combatPosition":1,"_combatTarget":4,"_attackType":1,"_rangeType":1,"_occupiedTileType":0,"_recruitmentCost":{"amount":200,"currency":0}}
->>>>>>> 6c72e2aab347c745eb6f40a8b17518e646cfcefe
