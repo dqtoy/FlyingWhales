@@ -87,7 +87,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public Area homeArea { get; protected set; }
     public Dwelling homeStructure { get; protected set; }
     public LocationStructure currentStructure { get; private set; } //what structure is this character currently in.
-    public LocationGridTile currentStructureTile { get; private set; } //what tile in the structure is this character currently in.
     public Area defendingArea { get; private set; }
     public MORALITY morality { get; private set; }
     public CharacterToken characterToken { get; private set; }
@@ -95,6 +94,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public SpecialToken tokenInInventory { get; private set; }
     public Dictionary<Character, CharacterRelationshipData> relationships { get; private set; }
     public List<INTERACTION_TYPE> currentInteractionTypes { get; private set; }
+
+    private LocationGridTile tile; //what tile in the structure is this character currently in.
 
     private Dictionary<STAT, float> _buffs;
     public Dictionary<int, Combat> combatHistory;
@@ -420,6 +421,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public POINT_OF_INTEREST_TYPE poiType {
         get { return POINT_OF_INTEREST_TYPE.CHARACTER; }
+    }
+    public LocationGridTile gridTileLocation {
+        get { return tile; }
     }
     #endregion
 
@@ -1279,9 +1283,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             Messenger.Broadcast(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, this, currentStructure);
         }
     }
-    public void SetCurrentStructureTileLocation(LocationGridTile tile) {
-        currentStructureTile = tile;
-    }
     public void MoveToRandomStructureInArea() {
         LocationStructure locationStructure = specificLocation.GetRandomStructure();
         MoveToAnotherStructure(locationStructure);
@@ -1303,7 +1304,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         newStructure.AddCharacterAtLocation(this);
     }
-    
+    public void SetGridTileLocation(LocationGridTile tile) {
+        this.tile = tile;
+    }
     #endregion
 
     #region Utilities

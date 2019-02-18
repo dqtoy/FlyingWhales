@@ -160,6 +160,15 @@ public class CharacterRelationshipData {
         }
         return 0;
     }
+    public bool HasRelationshipOfEffect(TRAIT_EFFECT effect) {
+        for (int i = 0; i < rels.Count; i++) {
+            RelationshipTrait currTrait = rels[i];
+            if (currTrait.effect == effect) {
+                return true;
+            }
+        }
+        return false;
+    }
     #endregion
 
     #region Encounter Multiplier

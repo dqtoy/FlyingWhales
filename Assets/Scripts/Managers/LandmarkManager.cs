@@ -501,6 +501,7 @@ public class LandmarkManager : MonoBehaviour {
         areaMap.Initialize(newArea);
         newArea.SetAreaMap(areaMap);
         areaMapGO.SetActive(false);
+        newArea.PlaceSupplyPiles();
 #endif
         Messenger.Broadcast(Signals.AREA_CREATED, newArea);
         allAreas.Add(newArea);

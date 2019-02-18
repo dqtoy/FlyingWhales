@@ -24,6 +24,9 @@ public class LocationStructure {
     public List<SpecialToken> itemsInStructure {
         get { return _itemsHere; }
     }
+    public List<LocationGridTile> unoccupiedTiles {
+        get { return tiles.Where(x => x.tileState == LocationGridTile.Tile_State.Empty).ToList(); }
+    }
     #endregion
 
     public LocationStructure(STRUCTURE_TYPE structureType, Area location, bool isInside) {
@@ -36,9 +39,9 @@ public class LocationStructure {
         traits = new List<StructureTrait>();
         corpses = new List<Corpse>();
         tiles = new List<LocationGridTile>();
-        if (structureType == STRUCTURE_TYPE.DUNGEON || structureType == STRUCTURE_TYPE.WAREHOUSE) {
-            AddPOI(new SupplyPile(this));
-        }
+        //if (structureType == STRUCTURE_TYPE.DUNGEON || structureType == STRUCTURE_TYPE.WAREHOUSE) {
+        //    AddPOI(new SupplyPile(this));
+        //}
     }
 
     #region Utilities
@@ -63,16 +66,14 @@ public class LocationStructure {
             character.SetCurrentStructureLocation(this);
             AddPOI(character);
             OnCharacterAddedToLocation(character);
-            //PlaceCharacterAtAppropriateTile(character);
         }
     }
     public void RemoveCharacterAtLocation(Character character) {
         if (charactersHere.Remove(character)) {
             character.SetCurrentStructureLocation(null);
-            LocationGridTile tile = character.currentStructureTile;
-            character.SetCurrentStructureTileLocation(null);
+            //LocationGridTile tile = character.currentStructureTile;
+            //character.SetCurrentStructureTileLocation(null);
             RemovePOI(character);
-            //OnCharacterRemovedFromTile(character, tile);
         }
     }
     private void OnCharacterAddedToLocation(Character character) {
@@ -108,10 +109,20 @@ public class LocationStructure {
     public void AddPOI(IPointOfInterest poi) {
         if (!pointsOfInterest.Contains(poi)) {
             pointsOfInterest.Add(poi);
+#if !WORLD_CREATION_TOOL
+            PlacePOIAtAppropriateTile(poi);
+#endif
         }
     }
     public void RemovePOI(IPointOfInterest poi) {
-        pointsOfInterest.Remove(poi);
+        if (pointsOfInterest.Remove(poi)) {
+#if !WORLD_CREATION_TOOL
+            if (poi.gridTileLocation == null) {
+                throw new System.Exception("Provided tile of " + poi.ToString() + " is null!");
+            }
+            location.areaMap.RemoveObject(poi.gridTileLocation);
+#endif  
+        }
     }
     public bool HasPOIOfType(POINT_OF_INTEREST_TYPE type) {
         for (int i = 0; i < pointsOfInterest.Count; i++) {
@@ -136,9 +147,23 @@ public class LocationStructure {
         }
         return pointsOfInterest[Random.Range(0, pointsOfInterest.Count)];
     }
-    #endregion
+    private void PlacePOIAtAppropriateTile(IPointOfInterest poi) {
+        List<LocationGridTile> tilesToUse;
+        if (location.areaType == AREA_TYPE.DEMONIC_INTRUSION) { //player area
+            tilesToUse = tiles;
+        } else {
+            tilesToUse = unoccupiedTiles;
+        }
+        if (tilesToUse.Count > 0) {
+            LocationGridTile chosenTile = tilesToUse[Random.Range(0, tilesToUse.Count)];
+            location.areaMap.PlaceObject(poi, chosenTile);
+        } else {
+            Debug.LogWarning("There are no tiles for " + structureType.ToString() + " at " + location.name);
+        }
+    }
+#endregion
 
-    #region Traits
+#region Traits
     public void AddTrait(string traitName) {
         StructureTrait createdTrait = null;
         switch (traitName) {
@@ -170,9 +195,9 @@ public class LocationStructure {
         }
         return null;
     }
-    #endregion
+#endregion
 
-    #region Corpses
+#region Corpses
     public void AddCorpse(Character character) {
         if (!HasCorpseOf(character)) {
             corpses.Add(new Corpse(character, this));
@@ -199,9 +224,9 @@ public class LocationStructure {
         }
         return null;
     }
-    #endregion
+#endregion
 
-    #region Tiles
+#region Tiles
     public void AddTile(LocationGridTile tile) {
         if (!tiles.Contains(tile)) {
             tiles.Add(tile);
@@ -210,22 +235,7 @@ public class LocationStructure {
     public void RemoveTile(LocationGridTile tile) {
         tiles.Remove(tile);
     }
-    private void PlaceCharacterAtAppropriateTile(Character character) {
-        LocationGridTile chosenTile = tiles[Random.Range(0, tiles.Count)];
-        character.SetCurrentStructureTileLocation(chosenTile);
-        location.areaMap.PlaceCharacter(character, chosenTile);
-    }
-    private void OnCharacterRemovedFromTile(Character character, LocationGridTile tile) {
-        //check if there are any characters here that are also at that tile, if there are, fo not remove visual
-        for (int i = 0; i < charactersHere.Count; i++) {
-            Character currCharacter = charactersHere[i];
-            if (currCharacter.currentStructureTile == tile) {
-                return;
-            }
-        }
-        location.areaMap.RemoveCharacterVisualFromTile(tile);
-    }
-    #endregion
+#endregion
 
     public override string ToString() {
         return structureType.ToString() + " " + location.structures[structureType].IndexOf(this).ToString() + " at " + location.name;

@@ -9,6 +9,7 @@ public class CharmActionFaction : Interaction {
     private const string Normal_Charm_Success = "Normal Charm Success";
     private const string Normal_Charm_Fail = "Normal Charm Fail";
     private const string Normal_Charm_Critical_Fail = "Normal Charm Critical Fail";
+    private const string Target_Missing = "Target Missing";
 
     public override Character targetCharacter {
         get { return _targetCharacter; }
@@ -30,10 +31,9 @@ public class CharmActionFaction : Interaction {
         InteractionState normalCharmSuccess = new InteractionState(Normal_Charm_Success, this);
         InteractionState normalCharmFail = new InteractionState(Normal_Charm_Fail, this);
         InteractionState normalCharmCriticalFail = new InteractionState(Normal_Charm_Critical_Fail, this);
+        InteractionState targetMissing = new InteractionState(Target_Missing, this);
 
-        SetTargetCharacter(GetTargetCharacter(_characterInvolved));
-        _targetStructure = targetCharacter.currentStructure;
-        _characterInvolved.MoveToAnotherStructure(actionStructureLocation);
+        //SetTargetCharacter(GetTargetCharacter(_characterInvolved));
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description", this);
         startStateDescriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
@@ -42,15 +42,19 @@ public class CharmActionFaction : Interaction {
 
         CreateActionOptions(startState);
 
+        startState.SetEffect(() => StartEffect(startState), false);
+
         normalCharmSuccess.SetEffect(() => NormalCharmSuccessRewardEffect(normalCharmSuccess));
         normalCharmFail.SetEffect(() => NormalCharmFailRewardEffect(normalCharmFail));
         normalCharmCriticalFail.SetEffect(() => NormalCharmCriticalFailRewardEffect(normalCharmCriticalFail));
+        targetMissing.SetEffect(() => TargetMissingEffect(targetMissing));
 
         _states.Add(startState.name, startState);
 
         _states.Add(normalCharmSuccess.name, normalCharmSuccess);
         _states.Add(normalCharmFail.name, normalCharmFail);
         _states.Add(normalCharmCriticalFail.name, normalCharmCriticalFail);
+        _states.Add(targetMissing.name, targetMissing);
 
         SetCurrentState(startState);
     }
@@ -67,38 +71,47 @@ public class CharmActionFaction : Interaction {
         }
     }
     public override bool CanInteractionBeDoneBy(Character character) {
-        if (GetTargetCharacter(character) == null || character.homeArea.IsResidentsFull()) {
+        Character targetCharacter = GetTargetCharacter(character);
+        if (targetCharacter == null || character.homeArea.IsResidentsFull()) {
             return false;
         }
+        SetTargetCharacter(targetCharacter);
         return base.CanInteractionBeDoneBy(character);
     }
     public override void SetTargetCharacter(Character targetCharacter) {
         this._targetCharacter = targetCharacter;
+        _targetStructure = targetCharacter.currentStructure;
         AddToDebugLog("Set " + targetCharacter.name + " as target");
     }
     #endregion
 
     #region Option Effect
     private void DoNothingOptionEffect(InteractionState state) {
-        WeightedDictionary<RESULT> resultWeights = _characterInvolved.job.GetJobRateWeights();
-
         string nextState = string.Empty;
-        switch (resultWeights.PickRandomElementGivenWeights()) {
-            case RESULT.SUCCESS:
-                nextState = Normal_Charm_Success;
-                break;
-            case RESULT.FAIL:
-                nextState = Normal_Charm_Fail;
-                break;
-            case RESULT.CRITICAL_FAIL:
-                nextState = Normal_Charm_Critical_Fail;
-                break;
+        if (_targetCharacter.currentStructure == _targetStructure) {
+            WeightedDictionary<RESULT> resultWeights = _characterInvolved.job.GetJobRateWeights();
+            switch (resultWeights.PickRandomElementGivenWeights()) {
+                case RESULT.SUCCESS:
+                    nextState = Normal_Charm_Success;
+                    break;
+                case RESULT.FAIL:
+                    nextState = Normal_Charm_Fail;
+                    break;
+                case RESULT.CRITICAL_FAIL:
+                    nextState = Normal_Charm_Critical_Fail;
+                    break;
+            }
+        } else {
+            nextState = Target_Missing;
         }
         SetCurrentState(_states[nextState]);
     }
     #endregion
 
     #region Reward Effect
+    private void StartEffect(InteractionState state) {
+        _characterInvolved.MoveToAnotherStructure(_targetStructure);
+    }
     private void NormalCharmSuccessRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -132,6 +145,14 @@ public class CharmActionFaction : Interaction {
         state.AddLogFiller(new LogFiller(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1));
         _characterInvolved.Death();
     }
+    private void TargetMissingEffect(InteractionState state) {
+        if (state.descriptionLog != null) {
+            state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            state.descriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
+        }
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        state.AddLogFiller(new LogFiller(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1));
+    }
     #endregion
 
     private void TransferCharacter(Character character, Faction faction) {
@@ -163,6 +184,7 @@ public class CharmActionFaction : Interaction {
                 && !currCharacter.isLeader //- character must not be a Faction Leader
                 && !currCharacter.currentParty.icon.isTravelling
                 && currCharacter.minion == null 
+                && currCharacter.currentStructure.isInside
                 && currCharacter.faction.id != characterInvolved.faction.id
                 && !currCharacter.HasRelationshipOfEffectWith(characterInvolved, TRAIT_EFFECT.POSITIVE)) { //- character must not have any Positive relationship with Charmer
                 int weight = 0;

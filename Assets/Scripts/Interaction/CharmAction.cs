@@ -47,6 +47,7 @@ public class CharmAction : Interaction {
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 
         CreateActionOptions(startState);
+
         thwartedCharmSuccess.SetEffect(() => ThwartedCharmSuccessRewardEffect(thwartedCharmSuccess));
         thwartedCharmFail.SetEffect(() => ThwartedCharmFailRewardEffect(thwartedCharmFail));
         thwartedCharmCriticalFail.SetEffect(() => ThwartedCharmCriticalFailRewardEffect(thwartedCharmCriticalFail));
@@ -105,13 +106,15 @@ public class CharmAction : Interaction {
         }
     }
     public override bool CanInteractionBeDoneBy(Character character) {
-        if (GetTargetCharacter(character) == null) {
+        Character target = GetTargetCharacter(character);
+        if (target == null) {
             return false;
         }
+        SetTargetCharacter(target);
         return base.CanInteractionBeDoneBy(character);
     }
     public override void SetTargetCharacter(Character targetCharacter) {
-        this._targetCharacter = targetCharacter;
+        _targetCharacter = targetCharacter;
         AddToDebugLog("Set " + targetCharacter.name + " as target");
     }
     #endregion
@@ -322,11 +325,11 @@ public class CharmAction : Interaction {
             Character currCharacter = interactable.charactersAtLocation[i];
             if (currCharacter.id != characterInvolved.id 
                 && !currCharacter.isLeader //character must not be a Faction Leader
-                //&& !currCharacter.isDefender 
                 && !currCharacter.currentParty.icon.isTravelling
                 && currCharacter.minion == null 
                 && currCharacter.faction.id != characterInvolved.faction.id
-                && currCharacter.GetFriendTraitWith(characterInvolved) == null) { //character must not be a personal Friend of charmer
+                && currCharacter.currentStructure.isInside //- character must be Inside Settlement
+                && !currCharacter.GetCharacterRelationshipData(characterInvolved).HasRelationshipOfEffect(TRAIT_EFFECT.POSITIVE)) { //character must not have any Positive relationship with Charmer
                 int weight = 0;
                 if (currCharacter.isFactionless) {
                     weight += 150; // character is not part of any Faction: Weight +150

@@ -5,12 +5,16 @@ using UnityEngine;
 public class SupplyPile : IPointOfInterest {
 
     public LocationStructure location { get; private set; }
-
     public int suppliesInPile { get; private set; }
+
+    private LocationGridTile tile;
 
     #region getters/setters
     public POINT_OF_INTEREST_TYPE poiType {
         get { return POINT_OF_INTEREST_TYPE.SUPLY_PILE; }
+    }
+    public LocationGridTile gridTileLocation {
+        get { return tile; }
     }
     #endregion
 
@@ -61,4 +65,10 @@ public class SupplyPile : IPointOfInterest {
     public override string ToString() {
         return "Supply Pile";
     }
+
+    #region Area Map
+    public void SetGridTileLocation(LocationGridTile tile) {
+        this.tile = tile;
+    }
+    #endregion
 }

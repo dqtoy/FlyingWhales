@@ -7,18 +7,24 @@ using UnityEngine.UI;
 public class LocationGridTile {
 
     public enum Tile_Type { Empty, Wall, Structure, Gate }
+    public enum Tile_State { Impassable, Empty, Reserved, Occupied }
     public Tilemap parentMap { get; private set; }
     public Vector3Int localPlace { get; private set; }
     public Vector3 worldLocation { get; private set; }
     public bool isInside { get; private set; }
     public Tile_Type tileType { get; private set; }
+    public Tile_State tileState { get; private set; }
     public LocationStructure structure { get; private set; }
     public Dictionary<TileNeighbourDirection, LocationGridTile> neighbours { get; private set; }
+
+    public IPointOfInterest objHere { get; private set; }
 
     public LocationGridTile(int x, int y, Tilemap tilemap) {
         parentMap = tilemap;
         localPlace = new Vector3Int(x, y, 0);
         worldLocation = tilemap.CellToWorld(localPlace);
+        tileType = Tile_Type.Empty;
+        tileState = Tile_State.Empty;
     }
 
     public void FindNeighbours(LocationGridTile[,] map) {
@@ -52,12 +58,38 @@ public class LocationGridTile {
 
     public void SetTileType(Tile_Type tileType) {
         this.tileType = tileType;
+        switch (tileType) {
+            case Tile_Type.Wall:
+                SetTileState(Tile_State.Impassable);
+                break;
+            default:
+                SetTileState(Tile_State.Empty);
+                break;
+        }
     }
 
     #region Structures
     public void SetStructure(LocationStructure structure) {
         this.structure = structure;
         this.structure.AddTile(this);
+    }
+    public void SetTileState(Tile_State state) {
+        this.tileState = state;
+    }
+    #endregion
+
+    #region Points of Interest
+    public void SetObjectHere(IPointOfInterest poi) {
+        objHere = poi;
+        SetTileState(Tile_State.Occupied);
+        poi.SetGridTileLocation(this);
+    }
+    public void RemoveObjectHere() {
+        if (objHere != null) {
+            objHere.SetGridTileLocation(null);
+            objHere = null;
+            SetTileState(Tile_State.Empty);
+        }
     }
     #endregion
 
@@ -70,6 +102,14 @@ public class LocationGridTile {
         }
         return false;
     }
+    //public bool HasDifferentDwellingOrOutsideNeighbour() {
+    //    foreach (KeyValuePair<TileNeighbourDirection, LocationGridTile> kvp in neighbours) {
+    //        if (!kvp.Value.isInside || (kvp.Value.structure != this.structure)) {
+    //            return true;
+    //        }
+    //    }
+    //    return false;
+    //}
     #endregion
 }
 

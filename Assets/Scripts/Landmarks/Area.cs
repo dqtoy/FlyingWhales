@@ -1791,6 +1791,20 @@ public class Area {
     public void SetAreaMap(AreaInnerTileMap map) {
         areaMap = map;
     }
+    public void PlaceSupplyPiles() {
+        if (structures.ContainsKey(STRUCTURE_TYPE.DUNGEON)) {
+            for (int i = 0; i < structures[STRUCTURE_TYPE.DUNGEON].Count; i++) {
+                LocationStructure structure = structures[STRUCTURE_TYPE.DUNGEON][i];
+                structure.AddPOI(new SupplyPile(structure));
+            }
+        }
+        if (structures.ContainsKey(STRUCTURE_TYPE.WAREHOUSE)) {
+            for (int i = 0; i < structures[STRUCTURE_TYPE.WAREHOUSE].Count; i++) {
+                LocationStructure structure = structures[STRUCTURE_TYPE.WAREHOUSE][i];
+                structure.AddPOI(new SupplyPile(structure));
+            }
+        }
+    }
     #endregion
 
     public override string ToString() {
