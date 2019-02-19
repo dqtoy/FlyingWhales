@@ -2545,8 +2545,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         Character otherCharacter = null;
         INTERACTION_TYPE chosenRelationshipInteraction = INTERACTION_TYPE.NONE;
         List<string> allNegativeTraitNames = new List<string>();
-        string timeInWordsString = GameManager.GetCurrentTimeInWordsOfTick().ToString();   
-        
+        //string timeInWordsString = GameManager.GetCurrentTimeInWordsOfTick().ToString();   
+        TIME_IN_WORDS currentTimeInWords = GameManager.GetCurrentTimeInWordsOfTick();
+
         bool isHungry = false, isStarving = false, isTired = false, isExhausted = false;
         for (int i = 0; i < _traits.Count; i++) {
             if(_traits[i].name == "Hungry") {
@@ -2565,7 +2566,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (isHungry) {
             List<INTERACTION_TYPE> fullnessRecoveryInteractions = RaceManager.Instance.GetNPCInteractionsOfRace(this, INTERACTION_CATEGORY.FULLNESS_RECOVERY);
             if(fullnessRecoveryInteractions.Count > 0) {
-                if(timeInWordsString.Contains("MORNING") || timeInWordsString.Contains("AFTERNOON")) {
+                if(currentTimeInWords == TIME_IN_WORDS.MORNING || currentTimeInWords == TIME_IN_WORDS.AFTERNOON) {
                     INTERACTION_TYPE chosenType = fullnessRecoveryInteractions[UnityEngine.Random.Range(0, fullnessRecoveryInteractions.Count)];
                     personalActionWeights.AddElement(chosenType, 50);
                     interactionLog += "\nFULLNESS RECOVERY: " + chosenType.ToString() + " - 50";
@@ -2574,9 +2575,19 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         } else if (isStarving) {
             List<INTERACTION_TYPE> fullnessRecoveryInteractions = RaceManager.Instance.GetNPCInteractionsOfRace(this, INTERACTION_CATEGORY.FULLNESS_RECOVERY);
             if (fullnessRecoveryInteractions.Count > 0) {
-                INTERACTION_TYPE chosenType = fullnessRecoveryInteractions[UnityEngine.Random.Range(0, fullnessRecoveryInteractions.Count)];
-                personalActionWeights.AddElement(chosenType, 100);
-                interactionLog += "\nFULLNESS RECOVERY: " + chosenType.ToString() + " - 100";
+                int weight = 0;
+                if (currentTimeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
+                    weight = 100;
+                } else if (currentTimeInWords == TIME_IN_WORDS.MORNING) {
+                    weight = 500;
+                } else if (currentTimeInWords == TIME_IN_WORDS.AFTERNOON) {
+                    weight = 500;
+                } else if (currentTimeInWords == TIME_IN_WORDS.NIGHT) {
+                    weight = 100;
+                }
+                INTERACTION_TYPE chosenType = fullnessRecoveryInteractions[UnityEngine.Random.Range(0, fullnessRecoveryInteractions.Count)];    
+                personalActionWeights.AddElement(chosenType, weight);
+                interactionLog += "\nFULLNESS RECOVERY: " + chosenType.ToString() + " - " + weight;
             }
         }
 
@@ -2584,16 +2595,28 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (isTired) {
             List<INTERACTION_TYPE> tirednessRecoveryInteractions = RaceManager.Instance.GetNPCInteractionsOfRace(this, INTERACTION_CATEGORY.TIREDNESS_RECOVERY);
             if (tirednessRecoveryInteractions.Count > 0) {
-                INTERACTION_TYPE chosenType = tirednessRecoveryInteractions[UnityEngine.Random.Range(0, tirednessRecoveryInteractions.Count)];
-                personalActionWeights.AddElement(chosenType, 50);
-                interactionLog += "\nTIREDNESS RECOVERY: " + chosenType.ToString() + " - 50";
+                if (currentTimeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT || currentTimeInWords == TIME_IN_WORDS.NIGHT) {
+                    INTERACTION_TYPE chosenType = tirednessRecoveryInteractions[UnityEngine.Random.Range(0, tirednessRecoveryInteractions.Count)];
+                    personalActionWeights.AddElement(chosenType, 50);
+                    interactionLog += "\nTIREDNESS RECOVERY: " + chosenType.ToString() + " - 50";
+                }
             }
         } else if (isExhausted) {
             List<INTERACTION_TYPE> tirednessRecoveryInteractions = RaceManager.Instance.GetNPCInteractionsOfRace(this, INTERACTION_CATEGORY.TIREDNESS_RECOVERY);
             if (tirednessRecoveryInteractions.Count > 0) {
                 INTERACTION_TYPE chosenType = tirednessRecoveryInteractions[UnityEngine.Random.Range(0, tirednessRecoveryInteractions.Count)];
-                personalActionWeights.AddElement(chosenType, 100);
-                interactionLog += "\nTIREDNESS RECOVERY: " + chosenType.ToString() + " - 100";
+                int weight = 0;
+                if (currentTimeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
+                    weight = 500;
+                } else if (currentTimeInWords == TIME_IN_WORDS.MORNING) {
+                    weight = 100;
+                } else if (currentTimeInWords == TIME_IN_WORDS.AFTERNOON) {
+                    weight = 100;
+                } else if (currentTimeInWords == TIME_IN_WORDS.NIGHT) {
+                    weight = 500;
+                }
+                personalActionWeights.AddElement(chosenType, weight);
+                interactionLog += "\nTIREDNESS RECOVERY: " + chosenType.ToString() + " - " + weight;
             }
         }
 
@@ -2625,16 +2648,37 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 CharacterRelationshipData chosenData = characterWeights.PickRandomElementGivenWeights();
                 int weight = 0;
                 targetCharacter = chosenData.targetCharacter;
+                INTERACTION_CATEGORY category = INTERACTION_CATEGORY.OTHER;
                 interactionLog += "\nCHOSEN TARGET: " + targetCharacter.name;
                 interactionLog += "\n---WEIGHTS---";
-                chosenRelationshipInteraction = CharacterNPCActionTypes(chosenData, ref weight, ref targetCharacter, ref otherCharacter, ref interactionLog);
+                chosenRelationshipInteraction = CharacterNPCActionTypes(chosenData, ref weight, ref targetCharacter, ref otherCharacter, ref interactionLog, ref category);
                 if (chosenRelationshipInteraction != INTERACTION_TYPE.NONE) {
-                    if(weight <= 0) {
-                        weight = 100;
+                    if(category == INTERACTION_CATEGORY.SUBTERFUGE) {
+                        if (currentTimeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
+                            weight += 20;
+                        } else if (currentTimeInWords == TIME_IN_WORDS.MORNING) {
+                            weight += 20;
+                        } else if (currentTimeInWords == TIME_IN_WORDS.AFTERNOON) {
+                            weight += 20;
+                        } else if (currentTimeInWords == TIME_IN_WORDS.NIGHT) {
+                            weight += 100;
+                        }
+                    } else {
+                        if (currentTimeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
+                            weight += 0;
+                        } else if (currentTimeInWords == TIME_IN_WORDS.MORNING) {
+                            weight += 100;
+                        } else if (currentTimeInWords == TIME_IN_WORDS.AFTERNOON) {
+                            weight += 100;
+                        } else if (currentTimeInWords == TIME_IN_WORDS.NIGHT) {
+                            weight += 20;
+                        }
                     }
-                    personalActionWeights.AddElement(chosenRelationshipInteraction, weight);
+                    if (weight > 0) {
+                        personalActionWeights.AddElement(chosenRelationshipInteraction, weight);
+                        interactionLog += "\nCHOSEN INTERACTION FOR CHARACTER NPC ACTION TYPES: " + chosenRelationshipInteraction.ToString() + " - " + weight;
+                    }
                 }
-                interactionLog += "\nCHOSEN INTERACTION FOR CHARACTER NPC ACTION TYPES: " + chosenRelationshipInteraction.ToString() + " - " + weight;
             }
             interactionLog += "\n----END CHARACTER NPC ACTION TYPES----\n";
         }
@@ -2642,10 +2686,24 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //**E. loop through relevant traits then add relevant weights per associated action**
         for (int i = 0; i < _traits.Count; i++) {
             Trait trait = _traits[i];
-            if(trait.associatedInteraction != INTERACTION_TYPE.NONE && InteractionManager.Instance.CanCreateInteraction(trait.associatedInteraction, this, targetCharacter)) {
-                personalActionWeights.AddElement(trait.associatedInteraction, 100);
-                interactionLog += "\nTRAIT ACTION: " + trait.associatedInteraction.ToString() + " - 100";
+            if(trait.name == "Lycanthrope") {
+                //Special case for Lycanthrope trait
+                if(currentTimeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
+                    if(race == RACE.WOLF) {
+                        personalActionWeights.AddElement(INTERACTION_TYPE.REVERT_TO_NORMAL, 100);
+                        interactionLog += "\nTRAIT ACTION: REVERT_TO_NORMAL - 100";
+                    } else {
+                        personalActionWeights.AddElement(INTERACTION_TYPE.TURN_TO_WOLF, 100);
+                        interactionLog += "\nTRAIT ACTION: TURN_TO_WOLF - 100";
+                    }
+                }
+            } else {
+                if (trait.associatedInteraction != INTERACTION_TYPE.NONE && InteractionManager.Instance.CanCreateInteraction(trait.associatedInteraction, this, targetCharacter)) {
+                    personalActionWeights.AddElement(trait.associatedInteraction, 100);
+                    interactionLog += "\nTRAIT ACTION: " + trait.associatedInteraction.ToString() + " - 100";
+                }
             }
+            
             if(trait.effect == TRAIT_EFFECT.NEGATIVE) {
                 allNegativeTraitNames.Add(trait.name);
             }
@@ -2655,28 +2713,60 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (!isStarving && !isExhausted) {
             if (isHoldingItem) {
                 if (isAtHomeStructure) {
-                    personalActionWeights.AddElement(INTERACTION_TYPE.DROP_ITEM, 10);
-                    interactionLog += "\nDROP_ITEM - 10";
+                    int weight = 0;
+                    if (currentTimeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
+                        weight += 0;
+                    } else if (currentTimeInWords == TIME_IN_WORDS.MORNING) {
+                        weight += 10;
+                    } else if (currentTimeInWords == TIME_IN_WORDS.AFTERNOON) {
+                        weight += 10;
+                    } else if (currentTimeInWords == TIME_IN_WORDS.NIGHT) {
+                        weight += 5;
+                    }
+                    if (weight > 0) {
+                        personalActionWeights.AddElement(INTERACTION_TYPE.DROP_ITEM, weight);
+                        interactionLog += "\nDROP_ITEM - " + weight;
+                    }
                 }
             } else {
                 if (specificLocation.owner != null && specificLocation.owner == faction && (isAtHomeStructure || specificLocation.HasStructure(STRUCTURE_TYPE.WAREHOUSE))) {
-                    personalActionWeights.AddElement(INTERACTION_TYPE.PICK_ITEM, 20);
-                    interactionLog += "\nPICK_ITEM - 20";
+                    int weight = 0;
+                    if (currentTimeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
+                        weight += 0;
+                    } else if (currentTimeInWords == TIME_IN_WORDS.MORNING) {
+                        weight += 20;
+                    } else if (currentTimeInWords == TIME_IN_WORDS.AFTERNOON) {
+                        weight += 20;
+                    } else if (currentTimeInWords == TIME_IN_WORDS.NIGHT) {
+                        weight += 5;
+                    }
+                    if(weight > 0) {
+                        personalActionWeights.AddElement(INTERACTION_TYPE.PICK_ITEM, weight);
+                        interactionLog += "\nPICK_ITEM - " + weight;
+                    }
                 }
             }
         }
 
         if(specificLocation.id != homeArea.id) {
             //**G. if away from home, compute Return Home weight**
-            int returnHomeWeight = 50;
-            if (isHungry) {
-                returnHomeWeight += 100;
+            if(_forcedInteraction == null || _forcedInteraction.interactable.id != specificLocation.id) { //If character has an override that must be done in current location
+                int returnHomeWeight = 0;
+                if (currentTimeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
+                    returnHomeWeight += 10;
+                } else if (currentTimeInWords == TIME_IN_WORDS.MORNING) {
+                    returnHomeWeight += 150;
+                } else if (currentTimeInWords == TIME_IN_WORDS.AFTERNOON) {
+                    returnHomeWeight += 50;
+                } else if (currentTimeInWords == TIME_IN_WORDS.NIGHT) {
+                    returnHomeWeight += 10;
+                }
+                if (isHungry || isTired) {
+                    returnHomeWeight *= 2;
+                }
+                personalActionWeights.AddElement(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, returnHomeWeight);
+                interactionLog += "\nMOVE_TO_RETURN_HOME - " + returnHomeWeight;
             }
-            if (isTired) {
-                returnHomeWeight += 100;
-            }
-            personalActionWeights.AddElement(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, returnHomeWeight);
-            interactionLog += "\nMOVE_TO_RETURN_HOME - " + returnHomeWeight;
 
             //**H. if away from home, Transfer Home weight**
             if (specificLocation.owner != null && specificLocation.owner == faction) {
@@ -2699,8 +2789,20 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         } else {
             //**J. if at home, compute weight to simply visit other locations**
             if (!isStarving && !isExhausted) {
-                personalActionWeights.AddElement(INTERACTION_TYPE.MOVE_TO_VISIT, 25);
-                interactionLog += "\nMOVE_TO_VISIT - 25";
+                int weight = 0;
+                if (currentTimeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
+                    weight += 0;
+                } else if (currentTimeInWords == TIME_IN_WORDS.MORNING) {
+                    weight += 25;
+                } else if (currentTimeInWords == TIME_IN_WORDS.AFTERNOON) {
+                    weight += 10;
+                } else if (currentTimeInWords == TIME_IN_WORDS.NIGHT) {
+                    weight += 5;
+                }
+                if(weight > 0) {
+                    personalActionWeights.AddElement(INTERACTION_TYPE.MOVE_TO_VISIT, weight);
+                    interactionLog += "\nMOVE_TO_VISIT - " + weight;
+                }
             }
         }
 
@@ -2708,18 +2810,42 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (!isStarving && !isExhausted) {
             List<INTERACTION_TYPE> workActions = RaceManager.Instance.GetNPCInteractionsOfRace(this, INTERACTION_CATEGORY.WORK);
             if (workActions.Count > 0) {
-                INTERACTION_TYPE chosenType = workActions[UnityEngine.Random.Range(0, workActions.Count)];
-                personalActionWeights.AddElement(chosenType, 100);
-                interactionLog += "\nWORK: " + chosenType.ToString() + " - 100";
+                int weight = 0;
+                if (currentTimeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
+                    weight += 0;
+                } else if (currentTimeInWords == TIME_IN_WORDS.MORNING) {
+                    weight += 100;
+                } else if (currentTimeInWords == TIME_IN_WORDS.AFTERNOON) {
+                    weight += 100;
+                } else if (currentTimeInWords == TIME_IN_WORDS.NIGHT) {
+                    weight += 100;
+                }
+                if(weight > 0) {
+                    INTERACTION_TYPE chosenType = workActions[UnityEngine.Random.Range(0, workActions.Count)];
+                    personalActionWeights.AddElement(chosenType, weight);
+                    interactionLog += "\nWORK: " + chosenType.ToString() + " - " + weight;
+                }
             }
         }
 
         //**K. characters may also perform actions to empower themselves**
         List<INTERACTION_TYPE> personalEmpowermentInteractions = RaceManager.Instance.GetNPCInteractionsOfRace(this, INTERACTION_CATEGORY.PERSONAL_EMPOWERMENT);
         if (personalEmpowermentInteractions.Count > 0) {
-            INTERACTION_TYPE chosenType = personalEmpowermentInteractions[UnityEngine.Random.Range(0, personalEmpowermentInteractions.Count)];
-            personalActionWeights.AddElement(chosenType, 25);
-            interactionLog += "\nPERSONAL EMPOWERMENT: " + chosenType.ToString() + " - 25";
+            int weight = 0;
+            if (currentTimeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
+                weight += 0;
+            } else if (currentTimeInWords == TIME_IN_WORDS.MORNING) {
+                weight += 25;
+            } else if (currentTimeInWords == TIME_IN_WORDS.AFTERNOON) {
+                weight += 25;
+            } else if (currentTimeInWords == TIME_IN_WORDS.NIGHT) {
+                weight += 25;
+            }
+            if(weight > 0) {
+                INTERACTION_TYPE chosenType = personalEmpowermentInteractions[UnityEngine.Random.Range(0, personalEmpowermentInteractions.Count)];
+                personalActionWeights.AddElement(chosenType, weight);
+                interactionLog += "\nPERSONAL EMPOWERMENT: " + chosenType.ToString() + " - " + weight;
+            }
         }
 
         //**L.characters may also perform actions to save themselves**
@@ -2741,8 +2867,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 
         //**M. compute Do Nothing weight**
         if (!isStarving && !isExhausted) {
-            personalActionWeights.AddElement(INTERACTION_TYPE.NONE, 150);
-            interactionLog += "\nDO_NOTHING - 150";
+            int weight = 150;
+            if (!isAtHomeArea) {
+                weight = 50;
+            }
+            personalActionWeights.AddElement(INTERACTION_TYPE.NONE, weight);
+            interactionLog += "\nDO_NOTHING - " + weight;
         }
 
 
@@ -2788,7 +2918,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         interactionLog += "\n----------------------END CHARACTER PERSONAL ACTIONS-----------------------";
         Debug.Log(interactionLog);
     }
-    private INTERACTION_TYPE CharacterNPCActionTypes(CharacterRelationshipData relationshipData, ref int weight, ref Character targetCharacter, ref Character otherCharacter, ref string interactionLog) {
+    private INTERACTION_TYPE CharacterNPCActionTypes(CharacterRelationshipData relationshipData, ref int weight, ref Character targetCharacter, ref Character otherCharacter, ref string interactionLog, ref INTERACTION_CATEGORY category) {
         WeightedDictionary<INTERACTION_CATEGORY> npcActionWeights = new WeightedDictionary<INTERACTION_CATEGORY>();
 
         if (relationshipData.HasRelationshipTrait(RELATIONSHIP_TRAIT.ENEMY)) {
@@ -2809,6 +2939,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 if (allSaveInteractionsThatCanBeDone != null && allSaveInteractionsThatCanBeDone.Count > 0) {
                     weight += 300;
                     interactionLog += "\nCAN DO SAVE ACTION, EXITING CHARACTER NPC ACTION TYPES";
+                    category = INTERACTION_CATEGORY.SAVE;
                     return allSaveInteractionsThatCanBeDone[UnityEngine.Random.Range(0, allSaveInteractionsThatCanBeDone.Count)];
                 } else {
                     List<Character> characterChoices = new List<Character>();
@@ -2832,6 +2963,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                         targetCharacter = characterChoices[UnityEngine.Random.Range(0, characterChoices.Count)];
                         otherCharacter = relationshipData.targetCharacter;
                         interactionLog += "\nCAN DO ASK FOR HELP ACTION, EXITING CHARACTER NPC ACTION TYPES";
+                        category = InteractionManager.Instance.GetCategoryAndAlignment(INTERACTION_TYPE.ASK_FOR_HELP, this).categories[0];
                         return INTERACTION_TYPE.ASK_FOR_HELP;
                     }
                 }
@@ -2859,7 +2991,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 
         INTERACTION_TYPE chosenType = INTERACTION_TYPE.NONE;
         while(chosenType == INTERACTION_TYPE.NONE && npcActionWeights.Count > 0) {
-            INTERACTION_CATEGORY category = npcActionWeights.PickRandomElementGivenWeights();
+            category = npcActionWeights.PickRandomElementGivenWeights();
             List<INTERACTION_TYPE> allInteractionsThatCanBeDone = RaceManager.Instance.GetNPCInteractionsOfRace(this, category, targetCharacter);
             if(allInteractionsThatCanBeDone.Count > 0) {
                 interactionLog += "\nCHOSEN CATEGORY: " + category.ToString();

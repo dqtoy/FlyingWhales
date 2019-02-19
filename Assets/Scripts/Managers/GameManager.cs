@@ -9,7 +9,13 @@ public class GameManager : MonoBehaviour {
 	public static GameManager Instance = null;
 
     public static string[] daysInWords = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
-    public static TIME_IN_WORDS[] timeInWords = (TIME_IN_WORDS[]) System.Enum.GetValues(typeof(TIME_IN_WORDS));
+    public static TIME_IN_WORDS[] timeInWords = new TIME_IN_WORDS[] {
+        TIME_IN_WORDS.AFTER_MIDNIGHT, TIME_IN_WORDS.AFTER_MIDNIGHT
+        , TIME_IN_WORDS.MORNING, TIME_IN_WORDS.MORNING
+        , TIME_IN_WORDS.AFTERNOON, TIME_IN_WORDS.AFTERNOON
+        , TIME_IN_WORDS.NIGHT, TIME_IN_WORDS.NIGHT };
+
+
     public int month;
 	public int days;
 	public int year;
