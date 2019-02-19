@@ -271,7 +271,17 @@ public class GameManager : MonoBehaviour {
         }
         return timeInWords[intTime];
     }
-
+    public static TIME_IN_WORDS GetCurrentTimeInWordsOfTick() {
+        float time = GameManager.Instance.tick / (float) ticksPerTimeInWords;
+        int intTime = (int) time;
+        if (time == intTime && intTime > 0) {
+            //This will make sure that the 12th tick is still part of the previous time in words
+            //Example: In ticks 1 - 11, the intTime is 0 (AFTER_MIDNIGHT_1), however, in tick 12, intTime is already 1 (AFTER_MIDNIGHT_2), but we still want it to be part of AFTER_MIDNIGHT_1
+            //Hence, this checker ensures that tick 12's intTime is 0
+            intTime -= 1;
+        }
+        return timeInWords[intTime];
+    }
     #region Cursor
     public void SetCursorToDefault() {
         Cursor.SetCursor(defaultCursorTexture, hotSpot, cursorMode);

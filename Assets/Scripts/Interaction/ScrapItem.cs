@@ -76,6 +76,12 @@ public class ScrapItem : Interaction {
         }
         return base.CanInteractionBeDoneBy(character);
     }
+    public override bool CanStillDoInteraction(Character character) {
+        if(_targetItem.structureLocation == null) {
+            return false;
+        }
+        return base.CanStillDoInteraction(character);
+    }
     #endregion
 
     #region Option Effect

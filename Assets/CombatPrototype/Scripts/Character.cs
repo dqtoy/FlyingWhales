@@ -2519,11 +2519,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (!IsInOwnParty() || isDefender || ownParty.icon.isTravelling || _doNotDisturb > 0 || _job == null) {
             return; //if this character is not in own party, is a defender or is travelling or cannot be disturbed, do not generate interaction
         }
-        if (job.jobType == JOB.NONE) {
-            return;
-        }
         string interactionLog = GameManager.Instance.TodayLogString() + "Generating daily interaction for " + this.name;
-        if (_forcedInteraction != null) {
+        if (_forcedInteraction != null && GetTraitOr("Starving", "Exhausted") == null) {
+            //the current day is valid for the override's next action component
+            //the character is not Starving and not Exhausted
             interactionLog += "\nUsing forced interaction: " + _forcedInteraction.type.ToString();
             AddInteraction(_forcedInteraction);
             _forcedInteraction = null;
@@ -2546,7 +2545,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         Character otherCharacter = null;
         INTERACTION_TYPE chosenRelationshipInteraction = INTERACTION_TYPE.NONE;
         List<string> allNegativeTraitNames = new List<string>();
-
+        string timeInWordsString = GameManager.GetCurrentTimeInWordsOfTick().ToString();   
+        
         bool isHungry = false, isStarving = false, isTired = false, isExhausted = false;
         for (int i = 0; i < _traits.Count; i++) {
             if(_traits[i].name == "Hungry") {
@@ -2565,9 +2565,11 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (isHungry) {
             List<INTERACTION_TYPE> fullnessRecoveryInteractions = RaceManager.Instance.GetNPCInteractionsOfRace(this, INTERACTION_CATEGORY.FULLNESS_RECOVERY);
             if(fullnessRecoveryInteractions.Count > 0) {
-                INTERACTION_TYPE chosenType = fullnessRecoveryInteractions[UnityEngine.Random.Range(0, fullnessRecoveryInteractions.Count)];
-                personalActionWeights.AddElement(chosenType, 50);
-                interactionLog += "\nFULLNESS RECOVERY: " + chosenType.ToString() + " - 50";
+                if(timeInWordsString.Contains("MORNING") || timeInWordsString.Contains("AFTERNOON")) {
+                    INTERACTION_TYPE chosenType = fullnessRecoveryInteractions[UnityEngine.Random.Range(0, fullnessRecoveryInteractions.Count)];
+                    personalActionWeights.AddElement(chosenType, 50);
+                    interactionLog += "\nFULLNESS RECOVERY: " + chosenType.ToString() + " - 50";
+                }
             }
         } else if (isStarving) {
             List<INTERACTION_TYPE> fullnessRecoveryInteractions = RaceManager.Instance.GetNPCInteractionsOfRace(this, INTERACTION_CATEGORY.FULLNESS_RECOVERY);

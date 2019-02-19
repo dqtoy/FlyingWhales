@@ -12,7 +12,7 @@ public struct GameDate {
         this.month = month;
 		this.day = day;
 		this.year = year;
-        this.tick = 0;
+        this.tick = tick;
     }
 
     public void AddTicks(int amount) {
