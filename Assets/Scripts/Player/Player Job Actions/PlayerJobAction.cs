@@ -88,7 +88,7 @@ public class PlayerJobAction {
     private void ActivateCooldown() {
         daysInCooldown = 0;
         parentData.SetLockedState(true);
-        Messenger.AddListener(Signals.DAY_ENDED, CheckForCooldown);
+        Messenger.AddListener(Signals.TICK_ENDED, CheckForCooldown);
         Messenger.Broadcast(Signals.JOB_ACTION_COOLDOWN_ACTIVATED, this);
     }
     private void CheckForCooldown() {
@@ -101,7 +101,7 @@ public class PlayerJobAction {
     }
     private void OnCooldownDone() {
         parentData.SetLockedState(false);
-        Messenger.RemoveListener(Signals.DAY_ENDED, CheckForCooldown);
+        Messenger.RemoveListener(Signals.TICK_ENDED, CheckForCooldown);
         Messenger.Broadcast(Signals.JOB_ACTION_COOLDOWN_DONE, this);
     }
     private void ResetCooldown() {

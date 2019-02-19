@@ -35,7 +35,7 @@ public class InteractionManager : MonoBehaviour {
         Messenger.AddListener<Interaction>(Signals.CLICKED_INTERACTION_BUTTON, OnClickInteraction);
     }
     public void Initialize() {
-        Messenger.AddListener(Signals.DAY_ENDED_2, TryExecuteInteractionsDefault);
+        Messenger.AddListener(Signals.TICK_ENDED_2, TryExecuteInteractionsDefault);
         ConstructInteractionCategoryAndAlignment();
     }
 
@@ -1658,7 +1658,7 @@ public class InteractionManager : MonoBehaviour {
             //then show the first interaction, that will then start the line of queues
             Interaction interactionToShow = interactionUIQueue.Dequeue();
             InteractionUI.Instance.OpenInteractionUI(interactionToShow);
-            GameManager.Instance.pauseDayEnded2 = true;
+            GameManager.Instance.pauseTickEnded2 = true;
         } else {
             ExecuteInteractionsDefault();
         }
@@ -1698,7 +1698,7 @@ public class InteractionManager : MonoBehaviour {
     }
 
     private void ExecuteInteractionsDefault() {
-        GameManager.Instance.pauseDayEnded2 = false;
+        GameManager.Instance.pauseTickEnded2 = false;
         dailyInteractionSummary = GameManager.Instance.TodayLogString() + "Scheduling interactions";
         for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
             Area currArea = LandmarkManager.Instance.allAreas[i];
@@ -1769,6 +1769,7 @@ public class InteractionManager : MonoBehaviour {
                     if (character != null) {
                         log += " Involving <b><color=green>" + character.name + "</color></b>";
                     }
+                    character.AdjustDailyInteractionGenerationTick();
                     currInteraction.TimedOutRunDefault(ref log);
                     log += "\n";
                 } else {

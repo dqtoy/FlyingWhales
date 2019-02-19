@@ -79,7 +79,7 @@ public class Player : ILeader {
         ConstructCurrencies();
         ConstructRoleSlots();
         Messenger.AddListener<Area, HexTile>(Signals.AREA_TILE_REMOVED, OnTileRemovedFromPlayerArea);
-        Messenger.AddListener(Signals.DAY_STARTED, EverydayAction);
+        Messenger.AddListener(Signals.TICK_STARTED, EverydayAction);
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         AddWinListener();
     }

@@ -16,7 +16,7 @@ public class LogHistoryItem : LogItem {
     public override void SetLog(Log log) {
         base.SetLog(log);
         this.name = log.id.ToString();
-        dateLbl.text = log.date.ConvertToContinuousDaysWithTime();
+        dateLbl.text = log.date.ConvertToContinuousDaysWithTime(true);
         if (_log.fillers.Count > 0) {
             this.logLbl.text = Utilities.LogReplacer(_log);
         } else {

@@ -512,31 +512,19 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 
     #region Signals
     private void SubscribeToSignals() {
-        //Messenger.AddListener<Character>(Signals.CHARACTER_SNATCHED, OnCharacterSnatched);
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnOtherCharacterDied);
-        //Messenger.AddListener(Signals.HOUR_ENDED, EverydayAction);
-        //Messenger.AddListener<StructureObj, int>("CiviliansDeath", CiviliansDiedReduceSanity);
-        //Messenger.AddListener<Character>(Signals.CHARACTER_REMOVED, RemoveRelationshipWith);
-        //Messenger.AddListener<Area>(Signals.AREA_DELETED, OnAreaDeleted);
-        //Messenger.AddListener<BaseLandmark>(Signals.DESTROY_LANDMARK, OnDestroyLandmark);
-        Messenger.AddListener(Signals.DAY_STARTED, DailyInteractionGeneration);
-        Messenger.AddListener(Signals.DAY_ENDED, DecreaseNeeds);
-        //Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, RemoveRelationshipWith);
+        Messenger.AddListener(Signals.TICK_STARTED, DailyInteractionGeneration);
+        Messenger.AddListener(Signals.TICK_ENDED, DecreaseNeeds);
         Messenger.AddListener<Character, Area, Area>(Signals.CHARACTER_MIGRATED_HOME, OnCharacterMigratedHome);
         Messenger.AddListener<Interaction>(Signals.INTERACTION_ENDED, OnInteractionEnded);
+        Messenger.AddListener(Signals.DAY_STARTED, DayStartedRemoveOverrideInteraction);
     }
     public void UnsubscribeSignals() {
-        //Messenger.RemoveListener<Character>(Signals.CHARACTER_SNATCHED, OnCharacterSnatched);
         Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnOtherCharacterDied);
-        //Messenger.RemoveListener(Signals.HOUR_ENDED, EverydayAction);
-        //Messenger.RemoveListener<StructureObj, int>("CiviliansDeath", CiviliansDiedReduceSanity);
-        //Messenger.RemoveListener<Character>(Signals.CHARACTER_REMOVED, RemoveRelationshipWith);
-        //Messenger.RemoveListener<Area>(Signals.AREA_DELETED, OnAreaDeleted);
-        //Messenger.RemoveListener<BaseLandmark>(Signals.DESTROY_LANDMARK, OnDestroyLandmark);
-        Messenger.RemoveListener(Signals.DAY_STARTED, DailyInteractionGeneration);
-        Messenger.RemoveListener(Signals.DAY_ENDED, DecreaseNeeds);
-        //Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, RemoveRelationshipWith);
+        Messenger.RemoveListener(Signals.TICK_STARTED, DailyInteractionGeneration);
+        Messenger.RemoveListener(Signals.TICK_ENDED, DecreaseNeeds);
         Messenger.RemoveListener<Character, Area, Area>(Signals.CHARACTER_MIGRATED_HOME, OnCharacterMigratedHome);
+        Messenger.RemoveListener(Signals.DAY_STARTED, DayStartedRemoveOverrideInteraction);
     }
     #endregion
 
@@ -2480,7 +2468,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         return UnityEngine.Random.Range(startDay, startDay + daysInMonth);
     }
     public void DisableInteractionGeneration() {
-        Messenger.RemoveListener(Signals.DAY_STARTED, DailyInteractionGeneration);
+        Messenger.RemoveListener(Signals.TICK_STARTED, DailyInteractionGeneration);
     }
     public void AddInteractionWeight(INTERACTION_TYPE type, int weight) {
         interactionWeights.AddElement(type, weight);
@@ -2497,18 +2485,30 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //    _currentInteractionTick = UnityEngine.Random.Range(startDay, startDay + 7);
         //}
         int remainingDaysInWeek = 12 - (GameManager.Instance.tick % 12);
+        if(remainingDaysInWeek == 12) {
+            remainingDaysInWeek = 0;
+        }
         int startDay = GameManager.Instance.tick + remainingDaysInWeek + 1;
         if(startDay > 96) {
             startDay -= 96;
         }
-        //if(startDay < 13) {
-        //    startDay = 13;
-        //}
+        if (startDay < 25) {
+            startDay = 25;
+        }
         _currentInteractionTick = UnityEngine.Random.Range(startDay, startDay + 12);
+    }
+    public void AdjustDailyInteractionGenerationTick() {
+        //Adjusts the tick trigger for this character to compensate for the 5 day delay interaction trigger
+        //Characters trigger AI once every 12 ticks but exclude any tick that will be reached by the 5-tick wait time of the preceding tick.
+        int remainingDaysInWeek = 12 - (GameManager.Instance.tick % 12);
+        if (remainingDaysInWeek < 12) {
+            int startDay = GameManager.Instance.tick + remainingDaysInWeek + 1;
+            _currentInteractionTick = UnityEngine.Random.Range(GameManager.Instance.tick + 1, startDay);
+        }
     }
     public void SetDailyInteractionGenerationTick(int tick) {
         _currentInteractionTick = tick;
-    }
+    } 
     public void DailyInteractionGeneration() {
         if (_currentInteractionTick == GameManager.Instance.tick) {
             GenerateDailyInteraction();
@@ -2536,6 +2536,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public void InduceInteraction(Interaction interaction) {
         SetForcedInteraction(interaction);
         SetDailyInteractionGenerationTick(GameManager.Instance.continuousDays + 1);
+    }
+    private void DayStartedRemoveOverrideInteraction() {
+        SetForcedInteraction(null);
     }
     private void CharacterPersonalActions() {
         //Checker of Disabler trait is on GenerateDailyInteraction()

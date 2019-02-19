@@ -34,7 +34,7 @@ public class CharacterRelationshipData {
     }
 
     public void AddListeners() {
-        Messenger.AddListener(Signals.DAY_STARTED, LastEncounterTick);
+        Messenger.AddListener(Signals.TICK_STARTED, LastEncounterTick);
         Messenger.AddListener<Interaction>(Signals.INTERACTION_INITIALIZED, OnInteractionInitialized);
         Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
         //Messenger.AddListener<Character, Trait>(Signals.TRAIT_ADDED, OnTraitAddedToCharacter);
@@ -42,7 +42,7 @@ public class CharacterRelationshipData {
         Messenger.AddListener<Character, RelationshipTrait>(Signals.RELATIONSHIP_ADDED, OnCharacterGainedRelationship);
     }
     public void RemoveListeners() {
-        Messenger.RemoveListener(Signals.DAY_STARTED, LastEncounterTick);
+        Messenger.RemoveListener(Signals.TICK_STARTED, LastEncounterTick);
         Messenger.RemoveListener<Interaction>(Signals.INTERACTION_INITIALIZED, OnInteractionInitialized);
         Messenger.RemoveListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
         //Messenger.RemoveListener<Character, Trait>(Signals.TRAIT_ADDED, OnTraitAddedToCharacter);

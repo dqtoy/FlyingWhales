@@ -117,7 +117,7 @@ public class LandmarkInvestigation {
             _assignedMinion.TravelBackFromAssignment(() => SetMinionRecallExploreState(false));
             _landmark.landmarkVisual.StopInteractionTimer();
             _landmark.landmarkVisual.HideInteractionTimer();
-            Messenger.RemoveListener(Signals.DAY_STARTED, OnExploreTick);
+            Messenger.RemoveListener(Signals.TICK_STARTED, OnExploreTick);
             UnexploreLandmark();
             SetMinionRecallExploreState(true);
             UIManager.Instance.landmarkInfoUI.OnUpdateLandmarkInvestigationState("explore");
@@ -134,7 +134,7 @@ public class LandmarkInvestigation {
             _assignedMinion.SetEnabledState(true);
             _landmark.landmarkVisual.StopInteractionTimer();
             _landmark.landmarkVisual.HideInteractionTimer();
-            Messenger.RemoveListener(Signals.DAY_STARTED, OnExploreTick);
+            Messenger.RemoveListener(Signals.TICK_STARTED, OnExploreTick);
             UnexploreLandmark();
         }
         if (_isAttacking && action == "attack") {
@@ -167,7 +167,7 @@ public class LandmarkInvestigation {
         _landmark.SetIsBeingInspected(true);
         _duration = 30;
         _currentTick = 0;
-        Messenger.AddListener(Signals.DAY_STARTED, OnExploreTick);
+        Messenger.AddListener(Signals.TICK_STARTED, OnExploreTick);
         _landmark.landmarkVisual.SetAndStartInteractionTimer(_duration);
         //_landmark.landmarkVisual.ShowNoInteractionForeground();
         _landmark.landmarkVisual.ShowInteractionTimer(_currentInteraction);
@@ -194,7 +194,7 @@ public class LandmarkInvestigation {
     }
     private void OnExploreTick() {
         if(_currentTick >= _duration) {
-            Messenger.RemoveListener(Signals.DAY_STARTED, OnExploreTick);
+            Messenger.RemoveListener(Signals.TICK_STARTED, OnExploreTick);
             ExploreDoneCheckForExistingEvents();
             return;
         }
@@ -203,8 +203,8 @@ public class LandmarkInvestigation {
     }
     public void OnDestroyLandmark() {
         if (_isActivated) {
-            if (Messenger.eventTable.ContainsKey(Signals.DAY_STARTED)) {
-                Messenger.RemoveListener(Signals.DAY_STARTED, OnExploreTick);
+            if (Messenger.eventTable.ContainsKey(Signals.TICK_STARTED)) {
+                Messenger.RemoveListener(Signals.TICK_STARTED, OnExploreTick);
             }
             _landmark.landmarkVisual.StopInteractionTimer();
             _landmark.landmarkVisual.HideInteractionTimer();

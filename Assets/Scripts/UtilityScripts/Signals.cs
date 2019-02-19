@@ -3,10 +3,11 @@ using System.Collections;
 
 public static class Signals {
 
+    public static string TICK_STARTED = "OnTickStart";
+    public static string TICK_STARTED_2 = "OnTickStart2";
+    public static string TICK_ENDED = "OnTickEnd";
+    public static string TICK_ENDED_2 = "OnTickEnd2";
     public static string DAY_STARTED = "OnDayStart";
-    public static string DAY_STARTED_2 = "OnDayStart2";
-    public static string DAY_ENDED = "OnDayEnd";
-    public static string DAY_ENDED_2 = "OnDayEnd2";
     public static string MONTH_START = "OnMonthStart";
     public static string MONTH_END = "OnMonthEnd";
     public static string FOUND_ITEM = "OnItemFound"; //Parameters (Character characterThatFoundItem, Item foundItem)

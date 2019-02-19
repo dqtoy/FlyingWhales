@@ -33,7 +33,7 @@ public class InteractionTimer : MonoBehaviour {
 	public void StartTimer() {
         ResetTimer();
         if (_timer == -1) { return; }
-        Messenger.AddListener(Signals.DAY_STARTED, RunTimer);
+        Messenger.AddListener(Signals.TICK_STARTED, RunTimer);
     }
     public void StopTimer() {
         if (!_isStopped) {
@@ -42,8 +42,8 @@ public class InteractionTimer : MonoBehaviour {
                 onStopTimer();
                 onStopTimer = null;
             }
-            if (Messenger.eventTable.ContainsKey(Signals.DAY_STARTED)) {
-                Messenger.RemoveListener(Signals.DAY_STARTED, RunTimer);
+            if (Messenger.eventTable.ContainsKey(Signals.TICK_STARTED)) {
+                Messenger.RemoveListener(Signals.TICK_STARTED, RunTimer);
             }
         }
     }

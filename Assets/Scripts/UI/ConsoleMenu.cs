@@ -54,7 +54,7 @@ public class ConsoleMenu : UIMenu {
         };
 
 #if UNITY_EDITOR
-        Messenger.AddListener(Signals.DAY_ENDED, CheckForWrongCharacterData);
+        Messenger.AddListener(Signals.TICK_ENDED, CheckForWrongCharacterData);
         Messenger.AddListener<Interaction>(Signals.INTERACTION_INITIALIZED, ListenForInteraction);
 #endif
         InitializeMinion();

@@ -153,9 +153,9 @@ public class Job {
         //if(_actionDuration != -1) {
         //    Messenger.AddListener(Signals.DAY_STARTED, CheckJobAction);
         //}
-        Messenger.AddListener(Signals.DAY_STARTED, CheckTokenTriggeredEvent);
+        Messenger.AddListener(Signals.TICK_STARTED, CheckTokenTriggeredEvent);
         if (_hasCaptureEvent) {
-            Messenger.AddListener(Signals.DAY_ENDED, CatchRandomEvent);
+            Messenger.AddListener(Signals.TICK_ENDED, CatchRandomEvent);
         }
         if (_useInteractionTimer) {
             _character.specificLocation.coreTile.landmarkOnTile.landmarkVisual.SetAndStartInteractionTimerJob(_actionDuration);
@@ -174,9 +174,9 @@ public class Job {
         //if (_actionDuration != -1) {
         //    Messenger.RemoveListener(Signals.DAY_STARTED, CheckJobAction);
         //}
-        Messenger.RemoveListener(Signals.DAY_STARTED, CheckTokenTriggeredEvent);
+        Messenger.RemoveListener(Signals.TICK_STARTED, CheckTokenTriggeredEvent);
         if (_hasCaptureEvent) {
-            Messenger.RemoveListener(Signals.DAY_ENDED, CatchRandomEvent);
+            Messenger.RemoveListener(Signals.TICK_ENDED, CatchRandomEvent);
         }
     }
     public void StopCreatedInteraction() {

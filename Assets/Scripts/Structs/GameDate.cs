@@ -200,7 +200,10 @@ public struct GameDate {
         return totalDays;
     }
 
-    public string ConvertToContinuousDaysWithTime() {
+    public string ConvertToContinuousDaysWithTime(bool nextLineTime = false) {
+        if (nextLineTime) {
+            return "Day " + ConvertToContinuousDays().ToString() + "\n" + GameManager.ConvertTickToTime(this.tick);
+        }
         return "Day " + ConvertToContinuousDays().ToString() + " " + GameManager.ConvertTickToTime(this.tick);
     }
 

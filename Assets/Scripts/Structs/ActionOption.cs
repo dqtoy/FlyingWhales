@@ -100,14 +100,14 @@ public class ActionOption {
                 effect();
             }
         } else {
-            Messenger.AddListener(Signals.DAY_STARTED, CheckDuration);
+            Messenger.AddListener(Signals.TICK_STARTED, CheckDuration);
         }
     }
     private void CheckDuration() {
         _currentDuration++;
         if(_currentDuration >= duration) {
             interactionState.interaction.SetActivatedState(false);
-            Messenger.RemoveListener(Signals.DAY_STARTED, CheckDuration);
+            Messenger.RemoveListener(Signals.TICK_STARTED, CheckDuration);
             if (effect != null) {
                 effect();
             }

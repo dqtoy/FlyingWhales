@@ -58,7 +58,7 @@ public class GameManager : MonoBehaviour {
     [SerializeField] private CursorMode cursorMode = CursorMode.Auto;
     [SerializeField] private Vector2 hotSpot = Vector2.zero;
 
-    public bool pauseDayEnded2 = false;
+    public bool pauseTickEnded2 = false;
 
     #region getters/setters
     public bool gameHasStarted {
@@ -84,12 +84,12 @@ public class GameManager : MonoBehaviour {
         }
         if (_gameHasStarted && !isPaused) {
             if (this.timeElapsed == 0f) {
-                this.DayStarted();
+                this.TickStarted();
             }
             this.timeElapsed += Time.deltaTime;
             if (this.timeElapsed >= this.progressionSpeed) {
                 this.timeElapsed = 0f;
-                StartCoroutine(this.DayEnded());
+                StartCoroutine(this.TickEnded());
             }
         }
     }
@@ -218,18 +218,18 @@ public class GameManager : MonoBehaviour {
         //CombatManager.Instance.updateIntervals = this.progressionSpeed / (float) CombatManager.Instance.numOfCombatActionPerDay;
         Messenger.Broadcast(Signals.PROGRESSION_SPEED_CHANGED, progSpeed);
 	}
-    public void DayStarted() {
-        Messenger.Broadcast(Signals.DAY_STARTED);
-        Messenger.Broadcast(Signals.DAY_STARTED_2);
+    public void TickStarted() {
+        Messenger.Broadcast(Signals.TICK_STARTED);
+        Messenger.Broadcast(Signals.TICK_STARTED_2);
         Messenger.Broadcast(Signals.UPDATE_UI);
     }
     /*
      * Function that triggers daily actions
      * */
-    public IEnumerator DayEnded(){
-        Messenger.Broadcast(Signals.DAY_ENDED);
-        Messenger.Broadcast(Signals.DAY_ENDED_2);
-        while (pauseDayEnded2) {
+    public IEnumerator TickEnded(){
+        Messenger.Broadcast(Signals.TICK_ENDED);
+        Messenger.Broadcast(Signals.TICK_ENDED_2);
+        while (pauseTickEnded2) {
             yield return null;
         }
         Messenger.Broadcast(Signals.UPDATE_UI);
@@ -239,6 +239,7 @@ public class GameManager : MonoBehaviour {
             this.tick = 1;
             this.days += 1;
             this.continuousDays += 1;
+            Messenger.Broadcast(Signals.DAY_STARTED);
             if (days > daysPerMonth) {
                 this.days = 1;
                 this.month += 1;

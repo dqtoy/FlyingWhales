@@ -836,7 +836,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
 
     #region Interaction Generation
     public void DisableInteractionGeneration() {
-        Messenger.RemoveListener(Signals.DAY_STARTED, DailyInteractionGeneration);
+        Messenger.RemoveListener(Signals.TICK_STARTED, DailyInteractionGeneration);
     }
     public void AddInteractionWeight(INTERACTION_TYPE type, int weight) {
         interactionWeights.AddElement(type, weight);

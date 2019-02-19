@@ -477,7 +477,7 @@ public class BaseLandmark : ILocation {
             //_horizontalBlocked = 0;
             //tileLocation.region.LandmarkStartedCorruption(this);
             PutWallDown();
-            Messenger.AddListener(Signals.DAY_ENDED, DoCorruption);
+            Messenger.AddListener(Signals.TICK_ENDED, DoCorruption);
             //if (Messenger.eventTable.ContainsKey("StartCorruption")) {
             //    Messenger.RemoveListener<BaseLandmark>("StartCorruption", ALandmarkHasStartedCorruption);
             //    Messenger.Broadcast<BaseLandmark>("StartCorruption", this);
@@ -504,7 +504,7 @@ public class BaseLandmark : ILocation {
             PathGenerator.Instance.CreatePath(this, this.tileLocation, chosenTile, PATHFINDING_MODE.UNRESTRICTED);
         }
         //tileLocation.region.LandmarkStoppedCorruption(this);
-        Messenger.RemoveListener(Signals.DAY_ENDED, DoCorruption);
+        Messenger.RemoveListener(Signals.TICK_ENDED, DoCorruption);
         //Messenger.Broadcast<BaseLandmark>("StopCorruption", this);
     }
     private void DoCorruption() {

@@ -153,8 +153,8 @@ public class CharacterAvatar : MonoBehaviour{
         if (_isTravelling && !_isTravelCancelled) {
             _isTravelCancelled = true;
             onPathCancelled = onCancelTravel;
-            Messenger.RemoveListener(Signals.DAY_STARTED, TraverseCurveLine);
-            Messenger.AddListener(Signals.DAY_STARTED, ReduceCurveLine);
+            Messenger.RemoveListener(Signals.TICK_STARTED, TraverseCurveLine);
+            Messenger.AddListener(Signals.TICK_STARTED, ReduceCurveLine);
         }
     }
     private void StartTravelling() {
@@ -163,16 +163,16 @@ public class CharacterAvatar : MonoBehaviour{
         _distanceToTarget = PathGenerator.Instance.GetTravelTime(_party.specificLocation.coreTile, targetLocation.coreTile);
         _travelLine = _party.specificLocation.coreTile.CreateTravelLine(targetLocation.coreTile, _distanceToTarget, _party.owner);
         _travelLine.SetActiveMeter(isVisualShowing);
-        Messenger.AddListener(Signals.DAY_STARTED, TraverseCurveLine);
+        Messenger.AddListener(Signals.TICK_STARTED, TraverseCurveLine);
         Messenger.Broadcast(Signals.PARTY_STARTED_TRAVELLING, this.party);
     }
     private void TraverseCurveLine() {
         if (_travelLine == null) {
-            Messenger.RemoveListener(Signals.DAY_STARTED, TraverseCurveLine);
+            Messenger.RemoveListener(Signals.TICK_STARTED, TraverseCurveLine);
             return;
         }
         if (_travelLine.isDone) {
-            Messenger.RemoveListener(Signals.DAY_STARTED, TraverseCurveLine);
+            Messenger.RemoveListener(Signals.TICK_STARTED, TraverseCurveLine);
             ArriveAtLocation();
             return;
         }
@@ -180,7 +180,7 @@ public class CharacterAvatar : MonoBehaviour{
     }
     private void ReduceCurveLine() {
         if (_travelLine.isDone) {
-            Messenger.RemoveListener(Signals.DAY_STARTED, ReduceCurveLine);
+            Messenger.RemoveListener(Signals.TICK_STARTED, ReduceCurveLine);
             CancelTravelDeparture();
             return;
         }
