@@ -14,7 +14,6 @@ public class ArgueAction : Interaction {
     public override Character targetCharacter {
         get { return _targetCharacter; }
     }
-    private LocationStructure _targetStructure;
     public override LocationStructure actionStructureLocation {
         get { return _targetStructure; }
     }

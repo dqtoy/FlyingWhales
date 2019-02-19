@@ -6,16 +6,18 @@ using UnityEngine.UI;
 
 public class LocationGridTile {
 
-    public enum Tile_Type { Empty, Wall, Structure, Gate }
+    public enum Tile_Type { Empty, Wall, Structure, Gate, Exit }
     public enum Tile_State { Impassable, Empty, Reserved, Occupied }
     public Tilemap parentMap { get; private set; }
     public Vector3Int localPlace { get; private set; }
     public Vector3 worldLocation { get; private set; }
+    public Vector3 localLocation { get; private set; }
     public bool isInside { get; private set; }
     public Tile_Type tileType { get; private set; }
     public Tile_State tileState { get; private set; }
     public LocationStructure structure { get; private set; }
     public Dictionary<TileNeighbourDirection, LocationGridTile> neighbours { get; private set; }
+    public GameObject tileGO;
 
     public IPointOfInterest objHere { get; private set; }
 
@@ -23,6 +25,7 @@ public class LocationGridTile {
         parentMap = tilemap;
         localPlace = new Vector3Int(x, y, 0);
         worldLocation = tilemap.CellToWorld(localPlace);
+        localLocation = tilemap.CellToLocal(localPlace);
         tileType = Tile_Type.Empty;
         tileState = Tile_State.Empty;
     }

@@ -2903,6 +2903,18 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             SetPlannedAction(null);
         }
     }
+    public void OnForcedInteractionSubmitted(Interaction interaction) {
+        if (interaction.targetStructure != null) {
+            if (interaction.targetStructure.location.id == this.specificLocation.id) {
+                LocationGridTile targetTile = interaction.targetStructure.tiles[UnityEngine.Random.Range(0, interaction.targetStructure.tiles.Count)];
+                this.specificLocation.areaMap.DrawLine(this.gridTileLocation, targetTile);
+            } else {
+                this.specificLocation.areaMap.DrawLineToExit(this.gridTileLocation);
+            }
+        } else if (interaction.targetArea != null && interaction.targetArea.id != this.specificLocation.id) {
+            this.specificLocation.areaMap.DrawLineToExit(this.gridTileLocation);
+        }
+    }
     #endregion
 
     #region Token Inventory

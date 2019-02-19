@@ -24,8 +24,6 @@ public class TortureActionNPC : Interaction {
         get { return _targetStructure; }
     }
 
-    private LocationStructure _targetStructure;
-
     public TortureActionNPC(Area interactable): base(interactable, INTERACTION_TYPE.TORTURE_ACTION_NPC, 0) {
         _name = "Torture Action NPC";
     }

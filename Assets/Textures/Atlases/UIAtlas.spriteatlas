@@ -138,6 +138,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: bb509da42e3be0f4e95943059bf2eebd, type: 3}
   - {fileID: 21300000, guid: c32c75b435985cf45baf96e2289b6495, type: 3}
   - {fileID: 21300000, guid: 68d992c4014feb04986516d28be61453, type: 3}
+  - {fileID: 21300000, guid: e05fd5c4d5a07ed4486563925c248e61, type: 3}
   - {fileID: 21300000, guid: 8fdd06c4ca82199459a8145f73a1a5ad, type: 3}
   - {fileID: 21300000, guid: 6a669ec4417b23349a373fe06578d61c, type: 3}
   - {fileID: 21300000, guid: c99104d4f7e23ed49acd0e41e2e431e9, type: 3}
@@ -478,6 +479,7 @@ SpriteAtlas:
   - wall1011-00
   - ge_cont-03A
   - bestalia_s
+  - AreaMapTravelLine
   - tile_character_list_bottom_widget
   - Pitthize
   - bottom_goals1

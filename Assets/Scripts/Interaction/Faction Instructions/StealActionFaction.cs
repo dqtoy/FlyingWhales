@@ -16,8 +16,6 @@ public class StealActionFaction : Interaction {
         get { return _targetCharacter; }
     }
 
-    private LocationStructure _targetStructure;
-
     public StealActionFaction(Area interactable)
         : base(interactable, INTERACTION_TYPE.STEAL_ACTION_FACTION, 0) {
         _name = "Steal Action Faction";
