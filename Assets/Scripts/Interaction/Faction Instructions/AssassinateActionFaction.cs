@@ -15,8 +15,6 @@ public class AssassinateActionFaction : Interaction {
         get { return _targetCharacter; }
     }
 
-    private LocationStructure _targetStructure;
-
     public AssassinateActionFaction(Area interactable)
         : base(interactable, INTERACTION_TYPE.ASSASSINATE_ACTION_FACTION, 0) {
         _name = "Assassinate Action Faction";

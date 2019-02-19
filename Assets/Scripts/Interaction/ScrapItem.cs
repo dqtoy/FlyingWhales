@@ -9,7 +9,6 @@ public class ScrapItem : Interaction {
     private const string Normal_Scrapping = "Normal Scrapping";
 
     private SpecialToken _targetItem;
-    private LocationStructure _targetStructure;
 
     public override LocationStructure actionStructureLocation {
         get { return _targetStructure; }

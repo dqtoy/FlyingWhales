@@ -15,8 +15,6 @@ public class ReleaseAbductedAction : Interaction {
         get { return _targetCharacter; }
     }
 
-    private LocationStructure _targetStructure;
-
     public ReleaseAbductedAction(Area interactable) 
         : base(interactable, INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION, 0) {
         _name = "Release Abducted Action";

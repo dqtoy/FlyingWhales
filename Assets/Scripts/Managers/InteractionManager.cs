@@ -1725,6 +1725,7 @@ public class InteractionManager : MonoBehaviour {
                     log += "\nScheduling interaction " + currInteraction.type.ToString();
                     if (character != null) {
                         log += " Involving <b><color=green>" + character.name + "</color></b>";
+                        character.OnForcedInteractionSubmitted(currInteraction);
                     }
                     interactionsInArea.Add(currInteraction);
                     log += "\n";

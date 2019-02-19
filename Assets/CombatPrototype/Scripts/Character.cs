@@ -103,9 +103,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 
     //Needs
     public int tiredness { get; private set; }
-    private const int TIREDNESS_DEFAULT = 380;
+    private const int TIREDNESS_DEFAULT = 384;
+    private const int TIREDNESS_THRESHOLD_1 = 324;
+    private const int TIREDNESS_THRESHOLD_2 = 288;
     public int fullness { get; private set; }
-    private const int FULLNESS_DEFAULT = 240;
+    private const int FULLNESS_DEFAULT = 768;
+    private const int FULLNESS_THRESHOLD_1 = 728;
+    private const int FULLNESS_THRESHOLD_2 = 672;
 
     //portrait
     public float hSkinColor { get; private set; }
@@ -3038,6 +3042,21 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             SetPlannedAction(null);
         }
     }
+    public void OnForcedInteractionSubmitted(Interaction interaction) {
+        if (this.gridTileLocation == null) {
+            return;
+        }
+        if (interaction.targetStructure != null) {
+            if (interaction.targetStructure.location.id == this.specificLocation.id) {
+                LocationGridTile targetTile = interaction.targetStructure.tiles[UnityEngine.Random.Range(0, interaction.targetStructure.tiles.Count)];
+                this.specificLocation.areaMap.DrawLine(this.gridTileLocation, targetTile);
+            } else {
+                this.specificLocation.areaMap.DrawLineToExit(this.gridTileLocation);
+            }
+        } else if (interaction.targetArea != null && interaction.targetArea.id != this.specificLocation.id) {
+            this.specificLocation.areaMap.DrawLineToExit(this.gridTileLocation);
+        }
+    }
     #endregion
 
     #region Token Inventory
@@ -3124,7 +3143,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         tiredness = Mathf.Clamp(tiredness, 0, TIREDNESS_DEFAULT);
         if (tiredness == 0) {
             Death("starvation");
-        } else if (tiredness <= 260) {
+        } else if (tiredness <= TIREDNESS_THRESHOLD_2) {
             Trait hungerTrait = GetTrait("Hungry");
             Trait starvationTrait = GetTrait("Starving");
             if (hungerTrait != null) {
@@ -3133,7 +3152,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             if (starvationTrait == null) {
                 AddTrait("Starving");
             }
-        } else if (tiredness <= 332) {
+        } else if (tiredness <= TIREDNESS_THRESHOLD_1) {
             Trait hungerTrait = GetTrait("Hungry");
             if (hungerTrait == null) {
                 AddTrait("Hungry");
@@ -3143,9 +3162,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public void DecreaseTirednessMeter() { //this is used for when tiredness is only decreased by 1 (I did this for optimization, so as not to check for traits everytime)
         tiredness -= 1;
         tiredness = Mathf.Clamp(tiredness, 0, TIREDNESS_DEFAULT);
-        if (tiredness == 332) {
+        if (tiredness == TIREDNESS_THRESHOLD_1) {
             AddTrait("Tired");
-        } else if (tiredness == 260) {
+        } else if (tiredness == TIREDNESS_THRESHOLD_2) {
             RemoveTrait("Tired");
             AddTrait("Exhausted");
         } else if (tiredness == 0) {
@@ -3165,7 +3184,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         fullness = Mathf.Clamp(fullness, 0, FULLNESS_DEFAULT);
         if (fullness == 0) {
             Death("starvation");
-        } else if (fullness <= 120) {
+        } else if (fullness <= FULLNESS_THRESHOLD_2) {
             Trait hungerTrait = GetTrait("Hungry");
             Trait starvationTrait = GetTrait("Starving");
             if (hungerTrait != null) {
@@ -3174,7 +3193,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             if (starvationTrait == null) {
                 AddTrait("Starving");
             }
-        } else if (fullness <= 180) {
+        } else if (fullness <= FULLNESS_THRESHOLD_1) {
             Trait hungerTrait = GetTrait("Hungry");
             if (hungerTrait == null) {
                 AddTrait("Hungry");
@@ -3184,9 +3203,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public void DecreaseFullnessMeter() { //this is used for when fullness is only decreased by 1 (I did this for optimization, so as not to check for traits everytime)
         fullness -= 1;
         fullness = Mathf.Clamp(fullness, 0, FULLNESS_DEFAULT);
-        if (fullness == 180) {
+        if (fullness == FULLNESS_THRESHOLD_1) {
             AddTrait("Hungry");
-        } else if (fullness == 120) {
+        } else if (fullness == FULLNESS_THRESHOLD_2) {
             RemoveTrait("Hungry");
             AddTrait("Starving");
         } else if (fullness == 0) {

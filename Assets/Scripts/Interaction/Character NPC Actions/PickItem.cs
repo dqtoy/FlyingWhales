@@ -7,7 +7,6 @@ public class PickItem : Interaction {
     List<SpecialToken> items = new List<SpecialToken>();
 
     private SpecialToken targetToken;
-    private LocationStructure _targetStructure;
     public override LocationStructure actionStructureLocation {
         get { return _targetStructure; }
     }

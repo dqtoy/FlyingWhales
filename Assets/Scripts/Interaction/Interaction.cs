@@ -36,6 +36,7 @@ public class Interaction {
     protected InteractionIntel _intel;
     private string interactionDebugLog;
     protected LocationStructure _actionStructureLocation;
+    protected LocationStructure _targetStructure;
 
     public int dayStarted { get; protected set; }
     public int dayCompleted { get; protected set; }
@@ -139,6 +140,9 @@ public class Interaction {
     }
     public Dictionary<string, InteractionState> states {
         get { return _states; }
+    }
+    public LocationStructure targetStructure {
+        get { return _targetStructure; }
     }
     #endregion
 
