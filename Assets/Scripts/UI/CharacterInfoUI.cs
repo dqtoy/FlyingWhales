@@ -573,15 +573,15 @@ public class CharacterInfoUI : UIMenu {
     private void UpdateDays(MONTH month) {
         dayDropdown.ClearOptions();
         List<string> options = new List<string>();
-        for (int i = 1; i <= GameManager.daysInMonth[(int)month]; i++) {
+        for (int i = 1; i <= GameManager.daysPerMonth; i++) {
             options.Add(i.ToString());
         }
         dayDropdown.AddOptions(options);
     }
-    public void ValidateHour(string value) {
-        int hour = Int32.Parse(value);
-        hour = Mathf.Clamp(hour, 1, GameManager.hoursPerDay);
-        tickField.text = hour.ToString();
+    public void ValidateTicks(string value) {
+        int tick = Int32.Parse(value);
+        tick = Mathf.Clamp(tick, 1, GameManager.ticksPerDay);
+        tickField.text = tick.ToString();
     }
     public void ValidateYear(string value) {
         int year = Int32.Parse(value);

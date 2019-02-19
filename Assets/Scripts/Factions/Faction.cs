@@ -150,7 +150,7 @@ public class Faction {
         //InitializeInteractions();
         ConstructFactionTasksWeights();
 #if !WORLD_CREATION_TOOL
-        SetDailyInteractionGenerationTick();
+        //SetDailyInteractionGenerationTick();
         AddListeners();
 #endif
     }
@@ -198,7 +198,7 @@ public class Faction {
         //InitializeInteractions();
         ConstructFactionTasksWeights();
 #if !WORLD_CREATION_TOOL
-        SetDailyInteractionGenerationTick();
+        //SetDailyInteractionGenerationTick();
         AddListeners();
 #endif
     }
@@ -969,15 +969,17 @@ public class Faction {
     }
     private void SetDailyInteractionGenerationTick() {
         //_currentInteractionTick = UnityEngine.Random.Range(1, GameManager.hoursPerDay + 1);
-        int daysInMonth = GameManager.daysInMonth[GameManager.Instance.month];
-        int remainingDaysInMonth = GameManager.Instance.continuousDays % daysInMonth;
+        int remainingDaysInMonth = GameManager.Instance.continuousDays % GameManager.daysPerMonth;
         int startDay = GameManager.Instance.continuousDays + remainingDaysInMonth + 1;
-        _currentInteractionTick = UnityEngine.Random.Range(startDay, startDay + daysInMonth);
+        _currentInteractionTick = UnityEngine.Random.Range(startDay, startDay + GameManager.daysPerMonth);
+    }
+    public void SetDailyInteractionGenerationTick(int tick) {
+        _currentInteractionTick = tick;
     }
     private void DailyInteractionGeneration() {
-        if (_currentInteractionTick == GameManager.Instance.continuousDays) {
+        if (_currentInteractionTick == GameManager.Instance.tick) {
             GenerateDailyInteraction();
-            SetDailyInteractionGenerationTick();
+            //SetDailyInteractionGenerationTick();
         }
     }
     private void GenerateDailyInteraction() {

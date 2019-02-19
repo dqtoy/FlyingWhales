@@ -20,6 +20,7 @@ public class FactionManager : MonoBehaviour {
     //[SerializeField] private List<Sprite> usedEmblems = new List<Sprite>();
 
     private int[] _inventoryTaskWeights = new int[] { 100, 250, 500 };
+    private List<int> factionTaskTriggerTicks = new List<int>();
 
     #region getters
     public List<EmblemBG> emblemBGs {
@@ -257,6 +258,7 @@ public class FactionManager : MonoBehaviour {
         CreateRelationshipsForFaction(newFaction);
         CreateFavorsForFaction(newFaction);
         if (!isPlayerFaction) {
+            newFaction.SetDailyInteractionGenerationTick(GetFactionTaskTickTrigger());
             Messenger.Broadcast(Signals.FACTION_CREATED, newFaction);
         } else {
             newFaction.SetName("Player faction");
@@ -265,6 +267,7 @@ public class FactionManager : MonoBehaviour {
     }
     public Faction CreateNewFaction(FactionSaveData data) {
         Faction newFaction = new Faction(data);
+        newFaction.SetDailyInteractionGenerationTick(GetFactionTaskTickTrigger());
         allFactions.Add(newFaction);
         LoadRelationshipsForFaction(newFaction, data);
         //LoadFavorsForFaction(newFaction, data);
@@ -283,6 +286,17 @@ public class FactionManager : MonoBehaviour {
         RemoveRelationshipsWith(faction);
         Messenger.Broadcast(Signals.FACTION_DELETED, faction);
         allFactions.Remove(faction);
+    }
+    private int GetFactionTaskTickTrigger() {
+        if(factionTaskTriggerTicks.Count <= 0) {
+            for (int i = 1; i <= GameManager.ticksPerTimeInWords; i++) {
+                factionTaskTriggerTicks.Add(i);
+            }
+        }
+        int index = UnityEngine.Random.Range(0, factionTaskTriggerTicks.Count);
+        int tick = factionTaskTriggerTicks[index];
+        factionTaskTriggerTicks.RemoveAt(index);
+        return tick;
     }
     //public void OccupyLandmarksInFactionRegions() {
     //    for (int i = 0; i < allFactions.Count; i++) {

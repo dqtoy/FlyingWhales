@@ -9,7 +9,7 @@ public class Log {
 	public MONTH month;
 	public int day;
 	public int year;
-    public int hour;
+    public int tick;
 
 	public string category;
 	public string file;
@@ -24,15 +24,15 @@ public class Log {
     public Interaction fromInteraction { get; private set; }
 
     public GameDate date {
-        get { return new GameDate((int)month, day, year, hour); }
+        get { return new GameDate((int)month, day, year, tick); }
     }
 
-    public Log(int month, int day, int year, int hour, string category, string file, string key, Interaction fromInteraction = null){
+    public Log(int month, int day, int year, int tick, string category, string file, string key, Interaction fromInteraction = null){
         this.id = Utilities.SetID<Log>(this);
 		this.month = (MONTH)month;
 		this.day = day;
 		this.year = year;
-        this.hour = hour;
+        this.tick = tick;
 		this.category = category;
 		this.file = file;
 		this.key = key;
@@ -46,7 +46,7 @@ public class Log {
         this.month = (MONTH)date.month;
         this.day = date.day;
         this.year = date.year;
-        this.hour = date.hour;
+        this.tick = date.tick;
         this.category = category;
         this.file = file;
         this.key = key;

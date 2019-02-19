@@ -8,14 +8,16 @@ public class GameManager : MonoBehaviour {
 
 	public static GameManager Instance = null;
 
-	public static int[] daysInMonth = {0, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30};
     public static string[] daysInWords = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
-	public int month;
+    public static TIME_IN_WORDS[] timeInWords = (TIME_IN_WORDS[]) System.Enum.GetValues(typeof(TIME_IN_WORDS));
+    public int month;
 	public int days;
 	public int year;
-    public int hour;
+    public int tick;
     public int continuousDays;
-    public const int hoursPerDay = 30;
+    public const int daysPerMonth = 30;
+    public const int ticksPerDay = 96;
+    public const int ticksPerTimeInWords = 12;
 
     public int startYear;
 
@@ -150,13 +152,13 @@ public class GameManager : MonoBehaviour {
     }
 
     public GameDate Today() {
-        return new GameDate(this.month, this.days, this.year, this.hour);
+        return new GameDate(this.month, this.days, this.year, this.tick);
     }
     public string TodayLogString() {
-        return "[" + new GameDate(this.month, this.days, this.year, this.hour).GetDayAndTicksString() + "] ";
+        return "[" + continuousDays + " - " + ConvertTickToTime(tick) + "] ";
     }
     public GameDate EndOfTheMonth() {
-        return new GameDate(this.month, daysInMonth[this.month], this.year, hoursPerDay);
+        return new GameDate(this.month, daysPerMonth, this.year, ticksPerDay);
     }
     public int GetNextMonth() {
         int currMonth = this.month;
@@ -169,11 +171,11 @@ public class GameManager : MonoBehaviour {
     public int GetTicksDifferenceOfTwoDates(GameDate fromDate, GameDate toDate) {
         int date1DaysDiff = fromDate.day;
         for (int i = 1; i < fromDate.month; i++) {
-            date1DaysDiff += daysInMonth[i];
+            date1DaysDiff += daysPerMonth;
         }
         int date2DaysDiff = toDate.day;
         for (int i = 1; i < toDate.month; i++) {
-            date2DaysDiff += daysInMonth[i];
+            date2DaysDiff += daysPerMonth;
         }
         int daysDiff = date2DaysDiff - date1DaysDiff;
         int yearDiff = toDate.year - fromDate.year;
@@ -181,7 +183,7 @@ public class GameManager : MonoBehaviour {
             yearDiff = fromDate.year - toDate.year;
         }
 
-        int tickDifference = (daysDiff + (yearDiff * 365)) * hoursPerDay;
+        int tickDifference = (daysDiff + (yearDiff * 365)) * daysPerMonth;
         return tickDifference;
     }
     public GameDate FirstDayOfTheMonth() {
@@ -226,21 +228,48 @@ public class GameManager : MonoBehaviour {
         }
         Messenger.Broadcast(Signals.UPDATE_UI);
 
-        this.days += 1;
-        this.continuousDays += 1;
-        if (days > daysInMonth[this.month]) {
-            this.days = 1;
-            this.month += 1;
-            if (this.month > 12) {
-                this.month = 1;
-                this.year += 1;
+        this.tick += 1;
+        if (this.tick > ticksPerDay) {
+            this.tick = 1;
+            this.days += 1;
+            this.continuousDays += 1;
+            if (days > daysPerMonth) {
+                this.days = 1;
+                this.month += 1;
+                if (this.month > 12) {
+                    this.month = 1;
+                    this.year += 1;
+                }
+                Messenger.Broadcast(Signals.MONTH_START);
             }
-            Messenger.Broadcast(Signals.MONTH_START);
         }
-        //this.hour += 1;
-        //if(this.hour > hoursPerDay) {
-        //    this.hour = 1;
-        //}
+    }
+    public static string ConvertTickToTime(int tick) {
+        float floatConversion = tick * 0.25f;
+        int hour = (int) floatConversion;
+        int minutes = (int)(((floatConversion - hour) * 4) * 15);
+        string timeOfDay = "AM";
+        if(hour >= 12) {
+            if(hour < 24) {
+                timeOfDay = "PM";
+            }
+            hour -= 12;
+        }
+        if(hour == 0) {
+            hour = 12;
+        }
+        return hour + ":" + minutes.ToString("D2") + " " + timeOfDay;
+    }
+    public static TIME_IN_WORDS GetTimeInWordsOfTick(int tick) {
+        float time = tick / (float)ticksPerTimeInWords;
+        int intTime = (int) time;
+        if(time == intTime && intTime > 0) {
+            //This will make sure that the 12th tick is still part of the previous time in words
+            //Example: In ticks 1 - 11, the intTime is 0 (AFTER_MIDNIGHT_1), however, in tick 12, intTime is already 1 (AFTER_MIDNIGHT_2), but we still want it to be part of AFTER_MIDNIGHT_1
+            //Hence, this checker ensures that tick 12's intTime is 0
+            intTime -= 1;
+        }
+        return timeInWords[intTime];
     }
 
     #region Cursor

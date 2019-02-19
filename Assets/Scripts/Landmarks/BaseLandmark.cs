@@ -455,27 +455,6 @@ public class BaseLandmark : ILocation {
     }
     #endregion
 
-    #region Traces
-    public void AddTrace(Character character) {
-        GameDate expDate = GameManager.Instance.Today();
-        expDate.AddMonths(90);
-        if (!_characterTraces.ContainsKey(character)) {
-            _characterTraces.Add(character, expDate);
-        } else {
-            SchedulingManager.Instance.RemoveSpecificEntry(_characterTraces[character], () => RemoveTrace(character));
-            _characterTraces[character] = expDate;
-        }
-        SchedulingManager.Instance.AddEntry(expDate, () => RemoveTrace(character));
-    }
-    public void RemoveTrace(Character character) {
-        if (_characterTraces.ContainsKey(character)) {
-            if (GameManager.Instance.Today().IsSameDate(_characterTraces[character])) {
-                _characterTraces.Remove(character);
-            }
-        }
-    }
-    #endregion
-
     #region Tags
     private void ConstructTags(LandmarkData landmarkData) {
         _landmarkTags = new List<LANDMARK_TAG>(landmarkData.uniqueTags); //add unique tags
@@ -1051,22 +1030,6 @@ public class BaseLandmark : ILocation {
             }
         }
         return null;
-    }
-    #endregion
-
-    #region Raid
-    public void SetRaidedState(bool state) {
-        if (_isRaided != state) {
-            _isRaided = state;
-            if (state) {
-                StartRaidedState();
-            }
-        }
-    }
-    private void StartRaidedState() {
-        GameDate endRaidedDate = GameManager.Instance.Today();
-        endRaidedDate.AddMonths(5);
-        SchedulingManager.Instance.AddEntry(endRaidedDate, () => SetRaidedState(false));
     }
     #endregion
 

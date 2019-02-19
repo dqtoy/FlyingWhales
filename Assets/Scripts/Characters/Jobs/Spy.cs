@@ -140,7 +140,7 @@ public class Spy : Job {
         if (currMonth > 12) {
             currMonth = 1;
         }
-        _currentInteractionTick = UnityEngine.Random.Range(1, GameManager.daysInMonth[currMonth] + 1);
+        _currentInteractionTick = UnityEngine.Random.Range(1, GameManager.daysPerMonth + 1);
     }
     private void GenerateSpawnedInteraction() {
         List<INTERACTION_TYPE> choices = GetValidSpySpawnEvents();

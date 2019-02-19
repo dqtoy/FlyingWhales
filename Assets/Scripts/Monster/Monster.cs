@@ -845,7 +845,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
         interactionWeights.RemoveElement(type);
     }
     public void SetDailyInteractionGenerationTick() {
-        _currentInteractionTick = UnityEngine.Random.Range(1, GameManager.hoursPerDay + 1);
+        _currentInteractionTick = UnityEngine.Random.Range(1, GameManager.daysPerMonth + 1);
     }
     public void DailyInteractionGeneration() {
         if (_currentInteractionTick == GameManager.Instance.days) {

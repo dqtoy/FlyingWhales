@@ -34,6 +34,7 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private Toggle x2Btn;
     [SerializeField] private Toggle x4Btn;
     [SerializeField] private TextMeshProUGUI dateLbl;
+    [SerializeField] private TextMeshProUGUI timeLbl;
 
     [Space(10)]
     [Header("Small Info")]
@@ -314,7 +315,8 @@ public class UIManager : MonoBehaviour {
     #endregion
 
     private void UpdateUI() {
-        dateLbl.SetText("Day " + GameManager.Instance.continuousDays);
+        dateLbl.SetText(GameManager.Instance.continuousDays + "/" + GameManager.ConvertTickToTime(GameManager.Instance.tick));
+        timeLbl.SetText(GameManager.GetTimeInWordsOfTick(GameManager.Instance.tick).ToString());
 
         UpdateInteractableInfoUI();
         UpdateFactionInfo();

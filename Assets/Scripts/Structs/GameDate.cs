@@ -6,28 +6,28 @@ public struct GameDate {
 	public int month;
 	public int day;
 	public int year;
-    public int hour;
+    public int tick;
 
-    public GameDate(int month, int day, int year, int hour){
+    public GameDate(int month, int day, int year, int tick){
         this.month = month;
 		this.day = day;
 		this.year = year;
-        this.hour = 0;
+        this.tick = 0;
     }
 
-   // public void AddHours(int amount) {
-   //     this.hour += amount;
-   //     while (this.hour > GameManager.hoursPerDay) {
-			//this.hour -= GameManager.hoursPerDay;
-   //         AddDays(1);
-   //     }
-   // }
+    public void AddTicks(int amount) {
+        this.tick += amount;
+        while (this.tick > GameManager.ticksPerDay) {
+            this.tick -= GameManager.ticksPerDay;
+            AddDays(1);
+        }
+    }
 
-	public void AddDays(int amount){
+    public void AddDays(int amount){
 		this.day += amount;
         int count = 0;
-		while (this.day > GameManager.daysInMonth[this.month]) {
-			this.day -= GameManager.daysInMonth [this.month];
+		while (this.day > GameManager.daysPerMonth) {
+			this.day -= GameManager.daysPerMonth;
             count++;
 		}
         if(count > 0) {
@@ -40,20 +40,20 @@ public struct GameDate {
 			this.month -= 12;
             AddYears(1);
         }
-        if(this.day > GameManager.daysInMonth[this.month]) {
-            this.day = GameManager.daysInMonth[this.month];
+        if(this.day > GameManager.daysPerMonth) {
+            this.day = GameManager.daysPerMonth;
         }
 	}
 	public void AddYears(int amount){
 		this.year += amount;
 	}
 
-    public void ReduceHours(int amount) {
+    public void ReduceTicks(int amount) {
         for (int i = 0; i < amount; i++) {
-            this.hour -= 1;
-            if (this.hour <= 0) {
+            this.tick -= 1;
+            if (this.tick <= 0) {
                 ReduceDays(1);
-                this.hour = GameManager.hoursPerDay;
+                this.tick = GameManager.ticksPerDay;
             }
         }
     }
@@ -62,7 +62,7 @@ public struct GameDate {
             this.day -= 1;
             if (this.day == 0) {
                 ReduceMonth(1);
-                this.day = GameManager.daysInMonth[this.month];
+                this.day = GameManager.daysPerMonth;
             }
         }
     }
@@ -80,29 +80,29 @@ public struct GameDate {
             this.year -= 1;
         }
     }
-	public void SetDate(int month, int day, int year, int hour){
+	public void SetDate(int month, int day, int year, int tick){
 		this.month = month;
 		this.day = day;
 		this.year = year;
-        this.hour = hour;
+        this.tick = tick;
 	}
-    public void SetHours(int hour) {
-        this.hour = hour;
+    public void SetTicks(int tick) {
+        this.tick = tick;
     }
 	public void SetDate(GameDate gameDate){
 		this.month = gameDate.month;
 		this.day = gameDate.day;
 		this.year = gameDate.year;
-        this.hour = gameDate.hour;
+        this.tick = gameDate.tick;
 	}
-	public bool IsSameDate(int month, int day, int year, int hour){
-		if(this.month == month && this.day == day && this.year == year && this.hour == hour){
+	public bool IsSameDate(int month, int day, int year, int tick){
+		if(this.month == month && this.day == day && this.year == year && this.tick == tick){
 			return true;
 		}
 		return false;
 	}
 	public bool IsSameDate(GameDate gameDate){
-		if(this.month == gameDate.month && this.day == gameDate.day && this.year == gameDate.year && this.hour == gameDate.hour) {
+		if(this.month == gameDate.month && this.day == gameDate.day && this.year == gameDate.year && this.tick == gameDate.tick) {
 			return true;
 		}
 		return false;
@@ -124,9 +124,9 @@ public struct GameDate {
                 if (this.day < otherDate.day) {
                     return true;
                 } else if (this.day == otherDate.day) {
-                    if (this.hour < otherDate.hour) {
+                    if (this.tick < otherDate.tick) {
                         return true;
-                    } else if (this.hour == otherDate.hour) {
+                    } else if (this.tick == otherDate.tick) {
                         //the 2 dates are the exact same, return false
                         return false;
                     } else {
@@ -163,9 +163,9 @@ public struct GameDate {
                 if (this.day < otherDate.day) {
                     return false;
                 } else if (this.day == otherDate.day) {
-                    if (this.hour < otherDate.hour) {
+                    if (this.tick < otherDate.tick) {
                         return false;
-                    } else if (this.hour == otherDate.hour) {
+                    } else if (this.tick == otherDate.tick) {
                         //the 2 dates are the exact same, return false
                         return false;
                     } else {
@@ -187,21 +187,21 @@ public struct GameDate {
     }
 
     public string ToStringDate(){
-		return ((MONTH)this.month).ToString() + " " + this.day + ", " + this.year + " H: " + this.hour;
+		return ((MONTH)this.month).ToString() + " " + this.day + ", " + this.year + " T: " + this.tick;
 	}
 
     public int ConvertToContinuousDays() {
         int totalDays = 0;
         if (year > GameManager.Instance.startYear) {
             int difference = year - GameManager.Instance.startYear;
-            totalDays += ((difference * 12) * GameManager.hoursPerDay);
+            totalDays += ((difference * 12) * GameManager.daysPerMonth);
         }
-        totalDays += (((month - 1) * GameManager.hoursPerDay) + day);
+        totalDays += (((month - 1) * GameManager.daysPerMonth) + day);
         return totalDays;
     }
 
-    public string GetDayAndTicksString() {
-        return ConvertToContinuousDays().ToString();// + "." + hour.ToString();
+    public string ConvertToContinuousDaysWithTime() {
+        return "Day " + ConvertToContinuousDays().ToString() + " " + GameManager.ConvertTickToTime(this.tick);
     }
 
     public override bool Equals(object obj) {

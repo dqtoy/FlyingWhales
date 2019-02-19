@@ -1714,7 +1714,7 @@ public class InteractionManager : MonoBehaviour {
             return;
         }
         GameDate scheduledDate = GameManager.Instance.Today();
-        scheduledDate.AddDays(5);
+        scheduledDate.AddTicks(5);
         log += "\n==========Scheduling <b>" + area.name + "'s</b> interactions on " + scheduledDate.ConvertToContinuousDays()  + "==========";
         List<Interaction> interactionsInArea = new List<Interaction>();
         for (int j = 0; j < area.currentInteractions.Count; j++) {

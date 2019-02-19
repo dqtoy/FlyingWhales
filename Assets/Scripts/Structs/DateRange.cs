@@ -33,11 +33,7 @@ public struct DateRange {
     }
 
     public override string ToString() {
-        return startDate.GetDayAndTicksString() + " - " + endDate.GetDayAndTicksString();
-    }
-
-    public int GetStartDateValue() {
-        return (startDate.day * GameManager.hoursPerDay)  + startDate.hour;
+        return startDate.ConvertToContinuousDaysWithTime() + " - " + endDate.ConvertToContinuousDaysWithTime();
     }
 
     private int GetRangeInTicks() {

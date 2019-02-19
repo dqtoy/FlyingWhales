@@ -1296,3 +1296,4 @@ public enum INTERACTION_CHARACTER_EFFECT {
     TIREDNESS_RECOVERY,
 }
 public enum TileNeighbourDirection { Top, Bottom, Left, Right, None }
+public enum TIME_IN_WORDS { AFTER_MIDNIGHT_1, AFTER_MIDNIGHT_2, MORNING_1, MORNING_2, AFTERNOON_1, AFTERNOON_2, NIGHT_1, NIGHT_2 }

@@ -504,7 +504,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 
         GetRandomCharacterColor();
 #if !WORLD_CREATION_TOOL
-        SetDailyInteractionGenerationTick(GetMonthInteractionTick());
+        SetDailyInteractionGenerationTick();
 #endif
         SubscribeToSignals();
     }
@@ -2115,7 +2115,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         ApplyTraitEffects(trait);
         if (trait.daysDuration > 0) {
             GameDate removeDate = GameManager.Instance.Today();
-            removeDate.AddDays(trait.daysDuration);
+            removeDate.AddTicks(trait.daysDuration);
             SchedulingManager.Instance.AddEntry(removeDate, () => RemoveTrait(trait));
         }
         trait.OnAddTrait(this);
@@ -2489,19 +2489,28 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         interactionWeights.RemoveElement(type);
     }
     public void SetDailyInteractionGenerationTick() {
-        if(specificLocation == null || specificLocation.id == homeArea.id) {
-            _currentInteractionTick = GetMonthInteractionTick();
-        } else {
-            int remainingDaysInWeek = GameManager.Instance.continuousDays % 7;
-            int startDay = GameManager.Instance.continuousDays + remainingDaysInWeek + 1;
-            _currentInteractionTick = UnityEngine.Random.Range(startDay, startDay + 7);
+        //if(specificLocation == null || specificLocation.id == homeArea.id) {
+        //    _currentInteractionTick = GetMonthInteractionTick();
+        //} else {
+        //    int remainingDaysInWeek = GameManager.Instance.continuousDays % 7;
+        //    int startDay = GameManager.Instance.continuousDays + remainingDaysInWeek + 1;
+        //    _currentInteractionTick = UnityEngine.Random.Range(startDay, startDay + 7);
+        //}
+        int remainingDaysInWeek = 12 - (GameManager.Instance.tick % 12);
+        int startDay = GameManager.Instance.tick + remainingDaysInWeek + 1;
+        if(startDay > 96) {
+            startDay -= 96;
         }
+        //if(startDay < 13) {
+        //    startDay = 13;
+        //}
+        _currentInteractionTick = UnityEngine.Random.Range(startDay, startDay + 12);
     }
     public void SetDailyInteractionGenerationTick(int tick) {
         _currentInteractionTick = tick;
     }
     public void DailyInteractionGeneration() {
-        if (_currentInteractionTick == GameManager.Instance.continuousDays) {
+        if (_currentInteractionTick == GameManager.Instance.tick) {
             GenerateDailyInteraction();
             SetDailyInteractionGenerationTick();
         } 
