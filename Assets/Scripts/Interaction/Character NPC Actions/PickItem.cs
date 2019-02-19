@@ -29,28 +29,35 @@ public class PickItem : Interaction {
     public override bool CanInteractionBeDoneBy(Character character) {
         if (character.isHoldingItem) {
             return false;
+        }
+        //} else {
+        //    for (int i = 0; i < interactable.possibleSpecialTokenSpawns.Count; i++) {
+        //        SpecialToken token = interactable.possibleSpecialTokenSpawns[i];
+        //        if(token.structureLocation.structureType == STRUCTURE_TYPE.WAREHOUSE || 
+        //            (character.isAtHomeStructure && token.structureLocation == character.homeStructure)) {
+        //            items.Add(token);
+        //        }
+        //    }
+        //    if (items.Count <= 0) {
+        //        return false;
+        //    }
+        //}
+        return base.CanInteractionBeDoneBy(character);
+    }
+    public override bool CanStillDoInteraction(Character character) {
+        if (character.isHoldingItem) {
+            return false;
         } else {
             for (int i = 0; i < interactable.possibleSpecialTokenSpawns.Count; i++) {
                 SpecialToken token = interactable.possibleSpecialTokenSpawns[i];
-                if(token.structureLocation.structureType == STRUCTURE_TYPE.WAREHOUSE || 
+                if (token.structureLocation.structureType == STRUCTURE_TYPE.WAREHOUSE ||
                     (character.isAtHomeStructure && token.structureLocation == character.homeStructure)) {
                     items.Add(token);
-                    //if (token.npcAssociatedInteractionType != INTERACTION_TYPE.USE_ITEM_ON_SELF) {
-                    //    pickWeights.AddElement(token, 60);
-                    //} else if (token.CanBeUsedBy(character)) {
-                    //    pickWeights.AddElement(token, 100);
-                    //}
                 }
             }
             if (items.Count <= 0) {
                 return false;
             }
-        }
-        return base.CanInteractionBeDoneBy(character);
-    }
-    public override bool CanStillDoInteraction(Character character) {
-        if(targetToken.structureLocation == null) {
-            return false;
         }
         return base.CanStillDoInteraction(character);
     }
