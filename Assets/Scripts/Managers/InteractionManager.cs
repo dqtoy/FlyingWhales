@@ -1775,7 +1775,9 @@ public class InteractionManager : MonoBehaviour {
                     if (character != null) {
                         log += " Involving <b><color=green>" + character.name + "</color></b>";
                     }
-                    character.AdjustDailyInteractionGenerationTick();
+                    if(character.currentInteractionTick <= GameManager.Instance.tick) {
+                        character.AdjustDailyInteractionGenerationTick();
+                    }
                     currInteraction.TimedOutRunDefault(ref log);
                     log += "\n";
                 } else {

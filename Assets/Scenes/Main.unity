@@ -69741,6 +69741,23 @@ MonoBehaviour:
     - Pitthize
     - Moringa
     - Lamina
+  - tokenName: Scroll Of Frenzy
+    tokenType: 17
+    quantity: 4
+    appearanceWeight: 100
+    areaLocations:
+    - Cardell
+    - Narris
+    - Cindermaul
+    - Denrio
+    - Radisle
+    - Visteri
+    - Odious
+    - Gloomhollow
+    - Tribu
+    - Pitthize
+    - Moringa
+    - Lamina
 --- !u!1 &1695113739
 GameObject:
   m_ObjectHideFlags: 0

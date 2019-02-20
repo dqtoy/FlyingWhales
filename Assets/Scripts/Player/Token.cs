@@ -177,6 +177,9 @@ public class SpecialToken : Token, IPointOfInterest {
     public virtual void OnObtainToken(Character character) { }
     public virtual void OnUnobtainToken(Character character) { }
     public virtual void OnConsumeToken(Character character) { }
+    public virtual void StartTokenInteractionState(Character user, Character target) {
+        user.MoveToAnotherStructure(target.currentStructure);
+    }
     #endregion
     public void SetOwner(Faction owner) {
         this.owner = owner;
