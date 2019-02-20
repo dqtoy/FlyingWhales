@@ -27,6 +27,10 @@ public class MakeLoveAction : Interaction {
         InteractionState actorRejected = new InteractionState(Actor_Rejected, this);
         InteractionState actorAccepted = new InteractionState(Actor_Accepted, this);
 
+        Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description", this);
+        startStateDescriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        startState.OverrideDescriptionLog(startStateDescriptionLog);
+
         CreateActionOptions(startState);
 
         startState.SetEffect(() => StartRewardEffect(startState), false);

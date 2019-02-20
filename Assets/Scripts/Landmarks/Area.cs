@@ -1555,7 +1555,7 @@ public class Area {
          */
         List<LocationStructure> choices = new List<LocationStructure>();
         foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp in structures) {
-            if (kvp.Key != STRUCTURE_TYPE.DWELLING) {
+            if (kvp.Key != STRUCTURE_TYPE.DWELLING && kvp.Key != STRUCTURE_TYPE.EXIT) {
                 choices.AddRange(kvp.Value);
             }
         }
@@ -1667,6 +1667,7 @@ public class Area {
         return null;
     }
     public LocationStructure GetRandomStructure() {
+        Dictionary<STRUCTURE_TYPE, List<LocationStructure>> structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>(this.structures);
         int dictIndex = UnityEngine.Random.Range(0, structures.Count);
         int count = 0;
         foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp in structures) {
@@ -1688,20 +1689,23 @@ public class Area {
         foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp in this.structures) {
             for (int i = 0; i < kvp.Value.Count; i++) {
                 LocationStructure currStructure = kvp.Value[i];
-                if (currStructure.isInside == inside) {
+                if (currStructure.isInside == inside && currStructure.structureType != STRUCTURE_TYPE.EXIT) {
                     structures.Add(currStructure);
                 }
             }
         }
         return structures;
     }
-    public Dictionary<STRUCTURE_TYPE, List<LocationStructure>> GetStructures(bool inside) {
+    public Dictionary<STRUCTURE_TYPE, List<LocationStructure>> GetStructures(bool inside, bool includeExit = false) {
         Dictionary<STRUCTURE_TYPE, List<LocationStructure>> structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
         foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp in this.structures) {
             structures.Add(kvp.Key, new List<LocationStructure>());
             for (int i = 0; i < kvp.Value.Count; i++) {
                 LocationStructure currStructure = kvp.Value[i];
                 if (currStructure.isInside == inside) {
+                    if (kvp.Key == STRUCTURE_TYPE.EXIT && !includeExit) {
+                        continue; //do not include exit
+                    }
                     structures[kvp.Key].Add(currStructure);
                 }
             }

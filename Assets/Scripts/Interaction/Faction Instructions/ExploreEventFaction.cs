@@ -68,7 +68,8 @@ public class ExploreEventFaction : Interaction {
     private void DoNothingOptionEffect(InteractionState state) {
         //poi = structure.GetRandomPOI();
         List<IPointOfInterest> choices = new List<IPointOfInterest>(
-            structure.pointsOfInterest.Where(x => x.poiType != POINT_OF_INTEREST_TYPE.CHARACTER && x.poiType != POINT_OF_INTEREST_TYPE.LANDMARK && x.poiType != POINT_OF_INTEREST_TYPE.CORPSE)
+            structure.pointsOfInterest.Where(x => x.poiType != POINT_OF_INTEREST_TYPE.CHARACTER 
+            && x.poiType != POINT_OF_INTEREST_TYPE.LANDMARK && x.poiType != POINT_OF_INTEREST_TYPE.CORPSE)
         );
         poi =  choices[Random.Range(0, choices.Count)];
         string nextState = string.Empty;
@@ -85,6 +86,9 @@ public class ExploreEventFaction : Interaction {
                     break;
                 case POINT_OF_INTEREST_TYPE.SUPLY_PILE:
                     nextState = Explore_Supply_Pile_Found;
+                    break;
+                default:
+                    nextState = Explore_Nothing_Found;
                     break;
             }
         } else {

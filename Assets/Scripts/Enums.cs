@@ -1268,6 +1268,7 @@ public enum STRUCTURE_TYPE {
     DUNGEON,
     WILDERNESS,
     WORK_AREA,
+    EXIT,
 }
 public enum RELATIONSHIP_TRAIT {
     NONE,

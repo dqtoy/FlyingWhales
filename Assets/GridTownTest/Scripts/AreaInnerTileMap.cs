@@ -15,11 +15,13 @@ public class AreaInnerTileMap : MonoBehaviour {
     [SerializeField] private Canvas canvas;
     [SerializeField] private Transform tilemapsParent;
 
+    [Header("Tile Maps")]
     [SerializeField] private Tilemap groundTilemap;
     [SerializeField] private Tilemap wallTilemap;
     [SerializeField] private Tilemap strcutureTilemap;
     [SerializeField] private Tilemap charactersTilemap;
 
+    [Header("Tiles")]
     [SerializeField] private TileBase outsideTile;
     [SerializeField] private TileBase insideTile;
     [SerializeField] private TileBase wallTile;
@@ -27,6 +29,7 @@ public class AreaInnerTileMap : MonoBehaviour {
     [SerializeField] private TileBase characterTile;
     [SerializeField] private TileBase floorTile;
 
+    [Header("Other")]
     [SerializeField] private RectTransform scrollviewContent;
     [SerializeField] private GameObject travelLinePrefab;
     [SerializeField] private Transform travelLineParent;
@@ -37,19 +40,18 @@ public class AreaInnerTileMap : MonoBehaviour {
     public List<LocationGridTile> outsideTiles { get; private set; }
     public List<LocationGridTile> insideTiles { get; private set; }
 
-    private LocationGridTile exitTile;
-    //public Sprite[,] groundTileData;
-
+    //private LocationGridTile exitTile;
     private bool isHovering;
 
     private enum Cardinal_Direction { North, South, East, West };
     private Dictionary<STRUCTURE_TYPE, List<Point>> structureSettings = new Dictionary<STRUCTURE_TYPE, List<Point>>() {
          { STRUCTURE_TYPE.DWELLING,
             new List<Point>(){
-                new Point(3, 2),
-                new Point(2, 3),
+                new Point(4, 3),
+                new Point(3, 4),
                 //new Point(2, 2),
                 new Point(3, 3),
+                new Point(4, 4),
             }
         },
         { STRUCTURE_TYPE.WAREHOUSE,
@@ -70,6 +72,13 @@ public class AreaInnerTileMap : MonoBehaviour {
                 new Point(4, 9),
                 new Point(8, 5),
                 new Point(9, 4),
+            }
+        },
+        { STRUCTURE_TYPE.EXIT,
+            new List<Point>(){
+                new Point(3, 2),
+                new Point(2, 3),
+                new Point(3, 3),
             }
         },
     };
@@ -93,10 +102,10 @@ public class AreaInnerTileMap : MonoBehaviour {
         GenerateGrid();
         SplitMap();
         ConstructWalls();
-        PlaceStructures(area.GetStructures(true), insideTiles);
-        PlaceStructures(area.GetStructures(false), outsideTiles);
+        PlaceStructures(area.GetStructures(true, true), insideTiles);
+        PlaceStructures(area.GetStructures(false, true), outsideTiles);
         AssignOuterAreas();
-        DetermineExitTile();
+        //DetermineExitTile();
     }
 
     public void GenerateInnerStructures(Dictionary<STRUCTURE_TYPE, List<LocationStructure>> inside, Dictionary<STRUCTURE_TYPE, List<LocationStructure>> outside) {
@@ -239,10 +248,68 @@ public class AreaInnerTileMap : MonoBehaviour {
 
         foreach (KeyValuePair<LocationStructure, Point> kvp in structuresToCreate) {
             Point currPoint = kvp.Value;
-            List<LocationGridTile> choices = elligibleTiles.Where(
+            List<LocationGridTile> choices;
+            if (kvp.Key.structureType == STRUCTURE_TYPE.EXIT) {
+                string summary = "Generating exit structure for " + area.name;
+                summary += "\nLeft most coordinate is " + leftMostCoordinate;
+                summary += "\nRight most coordinate is " + rightMostCoordinate;
+                summary += "\nTop most coordinate is " + topMostCoordinate;
+                summary += "\nBot most coordinate is " + botMostCoordinate;
+                List<Cardinal_Direction> exitChoices = new List<Cardinal_Direction>();
+                if (leftMostCoordinate == 0) {
+                    //left edge
+                    exitChoices.Add(Cardinal_Direction.West);
+                }
+                if (rightMostCoordinate == width - 1) {
+                    //right edge
+                    exitChoices.Add(Cardinal_Direction.East);
+                }
+                if (topMostCoordinate == height - 1) {
+                    //top edge
+                    exitChoices.Add(Cardinal_Direction.North);
+                }
+                if (botMostCoordinate == 0) {
+                    //bottom edge
+                    exitChoices.Add(Cardinal_Direction.South);
+                }
+                Cardinal_Direction chosenEdge = exitChoices[UnityEngine.Random.Range(0, exitChoices.Count)];
+                summary += "\nChosen edge is " + chosenEdge.ToString();
+                switch (chosenEdge) {
+                    case Cardinal_Direction.North:
+                        choices = elligibleTiles.Where(
+                        t => (t.localPlace.x + currPoint.X <= rightMostCoordinate && t.localPlace.y + currPoint.Y == topMostCoordinate + 1)
+                        && Utilities.ContainsRange(elligibleTiles, GetTiles(currPoint, t))).ToList();
+                        break;
+                    case Cardinal_Direction.South:
+                        choices = elligibleTiles.Where(
+                        t => (t.localPlace.x + currPoint.X <= rightMostCoordinate && t.localPlace.y == botMostCoordinate)
+                        && Utilities.ContainsRange(elligibleTiles, GetTiles(currPoint, t))).ToList();
+                        break;
+                    case Cardinal_Direction.East:
+                        choices = elligibleTiles.Where(
+                        t => (t.localPlace.x + currPoint.X == rightMostCoordinate + 1 && t.localPlace.y + currPoint.Y <= topMostCoordinate)
+                        && Utilities.ContainsRange(elligibleTiles, GetTiles(currPoint, t))).ToList();
+                        break;
+                    case Cardinal_Direction.West:
+                        choices = elligibleTiles.Where(
+                        t => (t.localPlace.x == leftMostCoordinate && t.localPlace.y + currPoint.Y <= topMostCoordinate)
+                        && Utilities.ContainsRange(elligibleTiles, GetTiles(currPoint, t))).ToList();
+                        break;
+                    default:
+                        choices = elligibleTiles.Where(
+                        t => t.localPlace.x + currPoint.X < rightMostCoordinate
+                        && t.localPlace.y + currPoint.Y < topMostCoordinate
+                        && Utilities.ContainsRange(elligibleTiles, GetTiles(currPoint, t))).ToList();
+                        break;
+                }
+                Debug.Log(summary);
+            } else {
+                choices = elligibleTiles.Where(
                 t => t.localPlace.x + currPoint.X < rightMostCoordinate
                 && t.localPlace.y + currPoint.Y < topMostCoordinate
                 && Utilities.ContainsRange(elligibleTiles, GetTiles(currPoint, t))).ToList();
+            }
+            
             if (choices.Count <= 0) {
                 throw new System.Exception("No More Tiles");
             }
@@ -307,11 +374,11 @@ public class AreaInnerTileMap : MonoBehaviour {
             }
         }
     }
-    private void DetermineExitTile() {
-        List<LocationGridTile> choices = new List<LocationGridTile>(outsideTiles.Where(x => x.structure == null || x.structure.structureType == STRUCTURE_TYPE.WILDERNESS));
-        exitTile = choices[Random.Range(0, choices.Count)];
-        exitTile.SetTileType(LocationGridTile.Tile_Type.Exit);
-    }
+    //private void DetermineExitTile() {
+    //    List<LocationGridTile> choices = new List<LocationGridTile>(outsideTiles.Where(x => x.structure == null || x.structure.structureType == STRUCTURE_TYPE.WILDERNESS));
+    //    exitTile = choices[Random.Range(0, choices.Count)];
+    //    exitTile.SetTileType(LocationGridTile.Tile_Type.Exit);
+    //}
 
     private void AssignOuterAreas() {
         if (area.HasStructure(STRUCTURE_TYPE.WORK_AREA)) {
@@ -432,6 +499,7 @@ public class AreaInnerTileMap : MonoBehaviour {
     public void DrawLineToExit(LocationGridTile startTile, Character character) {
         GameObject travelLine = ObjectPoolManager.Instance.InstantiateObjectFromPool
             (travelLinePrefab.name, Vector3.zero, Quaternion.identity, travelLineParent);
+        LocationGridTile exitTile = area.structures[STRUCTURE_TYPE.EXIT][0].tiles[Random.Range(0, area.structures[STRUCTURE_TYPE.EXIT][0].tiles.Count)];
         travelLine.GetComponent<AreaMapTravelLine>().DrawLine(startTile, exitTile, character);
         Debug.Log(GameManager.Instance.TodayLogString() + "Drawing line at " + area.name + "'s map. From " + startTile.localPlace.ToString() + " to exit" + exitTile.localPlace.ToString());
     }
