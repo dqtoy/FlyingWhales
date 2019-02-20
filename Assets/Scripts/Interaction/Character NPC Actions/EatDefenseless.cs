@@ -104,9 +104,11 @@ public class EatDefenseless : Interaction {
     #endregion
 
     public Character GetTargetCharacter(Character characterInvolved) {
+        bool isCannibal = characterInvolved.GetTrait("Cannibal") != null;
         WeightedDictionary<Character> characterWeights = new WeightedDictionary<Character>();
         for (int i = 0; i < interactable.charactersAtLocation.Count; i++) {
             Character currCharacter = interactable.charactersAtLocation[i];
+            if(!isCannibal && characterInvolved.race == currCharacter.race) { continue; }
             if (currCharacter.id != characterInvolved.id && !currCharacter.currentParty.icon.isTravelling && currCharacter.IsInOwnParty() 
                 && currCharacter.currentStructure.isInside && currCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_EFFECT.NEUTRAL, TRAIT_TYPE.DISABLER)) {
                 int weight = 0;
@@ -116,7 +118,9 @@ public class EatDefenseless : Interaction {
                     if (currCharacter.faction != characterInvolved.faction) {
                         weight += 30;
                     } else {
-                        weight += 15;
+                        if(characterInvolved.HasRelationshipOfTypeWith(currCharacter, RELATIONSHIP_TRAIT.ENEMY)) {
+                            weight += 15;
+                        }
                     }
                 }
                 List<RelationshipTrait> relationships = characterInvolved.GetAllRelationshipTraitWith(currCharacter);
