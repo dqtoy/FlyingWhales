@@ -1150,7 +1150,7 @@ public class Area {
             chosenDwelling = structures[STRUCTURE_TYPE.DWELLING][0] as Dwelling; //to avoid errors, residents in player area will all share the same dwelling
         } else {
             Character lover = character.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.LOVER);
-            if (lover != null && areaResidents.Contains(lover)) { //check if the character has a lover that lives in the area
+            if (lover != null && lover.faction.id == character.faction.id && areaResidents.Contains(lover)) { //check if the character has a lover that lives in the area
                 chosenDwelling = lover.homeStructure;
             } 
             //else {
@@ -1577,8 +1577,8 @@ public class Area {
     #endregion
 
     #region Corpses
-    public void AddCorpse(Character character, LocationStructure structure) {
-        structure.AddCorpse(character);
+    public void AddCorpse(Character character, LocationStructure structure, LocationGridTile tile) {
+        structure.AddCorpse(character, tile);
     }
     public void RemoveCorpse(Character character) {
         foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp in structures) {

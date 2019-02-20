@@ -39,7 +39,7 @@ public class InstigatorTargetLocation : Interaction {
         _states.Add(induceAttackState.name, induceAttackState);
         _states.Add(doNothingState.name, doNothingState);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

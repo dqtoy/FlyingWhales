@@ -20,6 +20,7 @@ public class CharacterInfoUI : UIMenu {
     [SerializeField] private TextMeshProUGUI nameLbl;
     [SerializeField] private TextMeshProUGUI lvlClassLbl;
     [SerializeField] private TextMeshProUGUI plansLbl;
+    [SerializeField] private LogItem plansLblLogItem;
     [SerializeField] private FactionEmblem factionEmblem;
     [SerializeField] private PartyEmblem partyEmblem;
 
@@ -243,12 +244,12 @@ public class CharacterInfoUI : UIMenu {
     private void UpdateBasicInfo() {
         nameLbl.text = _activeCharacter.name;
         lvlClassLbl.text = _activeCharacter.raceClassName;
-        if (_activeCharacter.isTracked) {
+        if (_activeCharacter.isTracked || GameManager.Instance.inspectAll) {
             if (_activeCharacter.plannedInteraction == null) {
                 plansLbl.text = _activeCharacter.name + " does not have any immediate plans at the moment.";
             } else {
-                //plansLbl.text = Utilities.LogReplacer(_activeCharacter.plannedInteraction.states["Start"].descriptionLog);
-                plansLbl.text = string.Empty;
+                plansLblLogItem.SetLog(_activeCharacter.plannedInteraction.states["Start"].descriptionLog);
+                plansLbl.text = Utilities.LogReplacer(_activeCharacter.plannedInteraction.states["Start"].descriptionLog);
             }
         } else {
             plansLbl.text = "Track " + _activeCharacter.name + " to be able to read " + Utilities.GetPronounString(_activeCharacter.gender, PRONOUN_TYPE.POSSESSIVE, false) + " immediate plans.";

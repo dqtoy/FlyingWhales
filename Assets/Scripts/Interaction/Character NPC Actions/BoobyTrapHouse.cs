@@ -39,7 +39,7 @@ public class BoobyTrapHouse : Interaction {
         _states.Add(trapContinues.name, trapContinues);
         _states.Add(characterTrap.name, characterTrap);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

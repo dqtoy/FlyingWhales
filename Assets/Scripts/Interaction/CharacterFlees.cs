@@ -26,7 +26,7 @@ public class CharacterFlees : Interaction {
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 
         _states.Add(startState.name, startState);
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     #endregion
 

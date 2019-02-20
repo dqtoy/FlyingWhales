@@ -43,7 +43,7 @@ public class SpySpawnInteraction2 : Interaction {
         _states.Add(character3TokenObtainedState.name, character3TokenObtainedState);
         _states.Add(doNothingState.name, doNothingState);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

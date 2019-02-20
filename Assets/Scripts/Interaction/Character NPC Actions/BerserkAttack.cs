@@ -54,7 +54,7 @@ public class BerserkAttack : Interaction {
         _states.Add(berserkAttackItem.name, berserkAttackItem);
         _states.Add(berserkNoTarget.name, berserkNoTarget);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

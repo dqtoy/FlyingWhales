@@ -106,11 +106,11 @@ public class LocationStructure {
     #endregion
 
     #region Points Of Interest
-    public void AddPOI(IPointOfInterest poi) {
+    public void AddPOI(IPointOfInterest poi, LocationGridTile tileLocation = null) {
         if (!pointsOfInterest.Contains(poi)) {
             pointsOfInterest.Add(poi);
 #if !WORLD_CREATION_TOOL
-            PlacePOIAtAppropriateTile(poi);
+            PlacePOIAtAppropriateTile(poi, tileLocation);
 #endif
         }
     }
@@ -148,19 +148,24 @@ public class LocationStructure {
         }
         return pointsOfInterest[Random.Range(0, pointsOfInterest.Count)];
     }
-    private void PlacePOIAtAppropriateTile(IPointOfInterest poi) {
-        List<LocationGridTile> tilesToUse;
-        if (location.areaType == AREA_TYPE.DEMONIC_INTRUSION) { //player area
-            tilesToUse = tiles;
+    private void PlacePOIAtAppropriateTile(IPointOfInterest poi, LocationGridTile tile) {
+        if (tile != null) {
+            location.areaMap.PlaceObject(poi, tile);
         } else {
-            tilesToUse = unoccupiedTiles;
+            List<LocationGridTile> tilesToUse;
+            if (location.areaType == AREA_TYPE.DEMONIC_INTRUSION) { //player area
+                tilesToUse = tiles;
+            } else {
+                tilesToUse = unoccupiedTiles;
+            }
+            if (tilesToUse.Count > 0) {
+                LocationGridTile chosenTile = tilesToUse[Random.Range(0, tilesToUse.Count)];
+                location.areaMap.PlaceObject(poi, chosenTile);
+            } else {
+                Debug.LogWarning("There are no tiles at " + structureType.ToString() + " at " + location.name + " for " + poi.ToString());
+            }
         }
-        if (tilesToUse.Count > 0) {
-            LocationGridTile chosenTile = tilesToUse[Random.Range(0, tilesToUse.Count)];
-            location.areaMap.PlaceObject(poi, chosenTile);
-        } else {
-            Debug.LogWarning("There are no tiles at " + structureType.ToString() + " at " + location.name + " for " + poi.ToString());
-        }
+       
     }
     #endregion
 
@@ -199,13 +204,17 @@ public class LocationStructure {
     #endregion
 
     #region Corpses
-    public void AddCorpse(Character character) {
+    public void AddCorpse(Character character, LocationGridTile tile) {
         if (!HasCorpseOf(character)) {
-            corpses.Add(new Corpse(character, this));
+            Corpse corpse = new Corpse(character, this);
+            corpses.Add(corpse);
+            AddPOI(corpse, tile);
         }
     }
     public bool RemoveCorpse(Character character) {
-        return corpses.Remove(GetCorpseOf(character));
+        Corpse corpse = GetCorpseOf(character);
+        RemovePOI(corpse);
+        return corpses.Remove(corpse);
     }
     public bool HasCorpseOf(Character character) {
         for (int i = 0; i < corpses.Count; i++) {

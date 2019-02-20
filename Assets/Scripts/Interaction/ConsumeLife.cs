@@ -41,7 +41,7 @@ public class ConsumeLife : Interaction {
         _states.Add(consumeProceedsState.name, consumeProceedsState);
         _states.Add(normalConsumeState.name, normalConsumeState);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

@@ -47,7 +47,7 @@ public class HangOutAction : Interaction {
         _states.Add(targetMissing.name, targetMissing);
         _states.Add(targetUnavailable.name, targetUnavailable);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

@@ -1724,10 +1724,12 @@ public class InteractionManager : MonoBehaviour {
             Character character = currInteraction.characterInvolved;
             if (!currInteraction.hasActivatedTimeOut) {
                 if (character == null || (!character.isDead && currInteraction.CanInteractionBeDoneBy(character))) {
+                    currInteraction.PreLoad();
                     log += "\nScheduling interaction " + currInteraction.type.ToString();
                     if (character != null) {
                         log += " Involving <b><color=green>" + character.name + "</color></b>";
                         character.OnForcedInteractionSubmitted(currInteraction);
+                        character.SetPlannedAction(currInteraction);
                     }
                     interactionsInArea.Add(currInteraction);
                     log += "\n";
@@ -1739,6 +1741,7 @@ public class InteractionManager : MonoBehaviour {
                     UnableToPerform unable = CreateNewInteraction(INTERACTION_TYPE.UNABLE_TO_PERFORM, area) as UnableToPerform;
                     unable.SetActionNameThatCannotBePerformed(currInteraction.name);
                     unable.SetCharacterInvolved(character);
+                    unable.PreLoad();
                     unable.TimedOutRunDefault(ref log);
                     log += "\n";
                 }

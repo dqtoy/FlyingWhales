@@ -52,7 +52,7 @@ public class MoveToSave : Interaction {
         _states.Add(saveProceeds.name, saveProceeds);
         _states.Add(normalSave.name, normalSave);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

@@ -51,7 +51,7 @@ public class MoveToScavenge : Interaction {
         _states.Add(scavengeCancelled.name, scavengeCancelled);
         _states.Add(scavengeProceeds.name, scavengeProceeds);
         _states.Add(normalScavenge.name, normalScavenge);
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

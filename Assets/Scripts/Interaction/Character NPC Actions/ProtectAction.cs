@@ -37,7 +37,7 @@ public class ProtectAction : Interaction {
         _states.Add(protectBegins.name, protectBegins);
         _states.Add(protectFails.name, protectFails);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

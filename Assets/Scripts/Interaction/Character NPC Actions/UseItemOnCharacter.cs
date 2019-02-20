@@ -56,7 +56,7 @@ public class UseItemOnCharacter : Interaction {
         //_states.Add(stopFail.name, stopFail);
         _states.Add(doNothing.name, doNothing);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

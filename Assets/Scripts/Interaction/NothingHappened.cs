@@ -19,7 +19,7 @@ public class NothingHappened : Interaction {
 
         _states.Add(startState.name, startState);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

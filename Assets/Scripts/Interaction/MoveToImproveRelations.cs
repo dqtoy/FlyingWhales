@@ -49,7 +49,7 @@ public class MoveToImproveRelations : Interaction {
         _states.Add(improveRelationsProceeds.name, improveRelationsProceeds);
         _states.Add(normalImproveRelations.name, normalImproveRelations);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

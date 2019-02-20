@@ -21,7 +21,7 @@ public class UnableToPerform : Interaction {
 
         SetInteractionIntel(null);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     #endregion
 

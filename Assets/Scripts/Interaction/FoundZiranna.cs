@@ -56,7 +56,7 @@ public class FoundZiranna : Interaction {
         _states.Add(dissuadeFailState.name, dissuadeFailState);
         _states.Add(zirannaFoundedState.name, zirannaFoundedState);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

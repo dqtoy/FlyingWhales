@@ -38,7 +38,7 @@ public class MoveToRecruitFriendFaction : Interaction {
         _states.Add(startState.name, startState);
         _states.Add(doNothing.name, doNothing);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

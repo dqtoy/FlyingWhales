@@ -38,7 +38,7 @@ public class DiplomatFactionMediation : Interaction {
         _states.Add(improveRelationshipState.name, improveRelationshipState);
         _states.Add(doNothingState.name, doNothingState);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

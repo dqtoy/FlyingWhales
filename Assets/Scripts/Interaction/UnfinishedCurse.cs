@@ -49,7 +49,7 @@ public class UnfinishedCurse : Interaction {
         _states.Add(curseFailedToCompleteState.name, curseFailedToCompleteState);
         _states.Add(obtainManaState.name, obtainManaState);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

@@ -74,7 +74,7 @@ public class StealAction : Interaction {
         _states.Add(normalTheftFail.name, normalTheftFail);
         _states.Add(normalTheftCriticalFail.name, normalTheftCriticalFail);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

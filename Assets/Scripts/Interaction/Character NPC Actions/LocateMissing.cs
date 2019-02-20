@@ -37,7 +37,7 @@ public class LocateMissing : Interaction {
         _states.Add(targetFound.name, targetFound);
         _states.Add(targetMissing.name, targetMissing);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

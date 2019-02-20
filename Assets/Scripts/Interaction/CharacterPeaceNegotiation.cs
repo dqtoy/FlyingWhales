@@ -49,7 +49,7 @@ public class CharacterPeaceNegotiation : Interaction {
         _states.Add(normalNegotiationsSuccessState.name, normalNegotiationsSuccessState);
         _states.Add(normalNegotiationsFailState.name, normalNegotiationsFailState);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

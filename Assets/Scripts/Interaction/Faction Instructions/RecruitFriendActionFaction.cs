@@ -41,7 +41,7 @@ public class RecruitFriendActionFaction : Interaction {
         _states.Add(normalRecruitmenSuccess.name, normalRecruitmenSuccess);
         _states.Add(normalRecruitmentFail.name, normalRecruitmentFail);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

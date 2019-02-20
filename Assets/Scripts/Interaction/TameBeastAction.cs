@@ -49,7 +49,7 @@ public class TameBeastAction : Interaction {
         _states.Add(normalTameCriticalFail.name, normalTameCriticalFail);
         _states.Add(targetMissing.name, targetMissing);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

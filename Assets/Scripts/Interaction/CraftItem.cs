@@ -39,7 +39,7 @@ public class CraftItem : Interaction {
         _states.Add(normalCraftingSuccessful.name, normalCraftingSuccessful);
         _states.Add(normalCraftingFailed.name, normalCraftingFailed);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

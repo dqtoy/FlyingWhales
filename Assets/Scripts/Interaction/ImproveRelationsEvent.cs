@@ -61,7 +61,7 @@ public class ImproveRelationsEvent : Interaction {
         _states.Add(normalImproveRelationsFail.name, normalImproveRelationsFail);
         _states.Add(normalImproveRelationsCriticalFail.name, normalImproveRelationsCriticalFail);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

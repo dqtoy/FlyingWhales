@@ -29,7 +29,7 @@ public class LootAction : Interaction {
         _states.Add(lootFound.name, lootFound);
         _states.Add(noLootFound.name, noLootFound);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

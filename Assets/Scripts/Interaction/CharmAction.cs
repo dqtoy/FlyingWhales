@@ -73,7 +73,7 @@ public class CharmAction : Interaction {
         _states.Add(normalCharmFail.name, normalCharmFail);
         _states.Add(normalCharmCriticalFail.name, normalCharmCriticalFail);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

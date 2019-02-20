@@ -44,7 +44,7 @@ public class ExploreEventFaction : Interaction {
         _states.Add(exploreSupply.name, exploreSupply);
         _states.Add(exploreNothing.name, exploreNothing);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {
@@ -68,7 +68,7 @@ public class ExploreEventFaction : Interaction {
     private void DoNothingOptionEffect(InteractionState state) {
         //poi = structure.GetRandomPOI();
         List<IPointOfInterest> choices = new List<IPointOfInterest>(
-            structure.pointsOfInterest.Where(x => x.poiType != POINT_OF_INTEREST_TYPE.CHARACTER && x.poiType != POINT_OF_INTEREST_TYPE.LANDMARK)
+            structure.pointsOfInterest.Where(x => x.poiType != POINT_OF_INTEREST_TYPE.CHARACTER && x.poiType != POINT_OF_INTEREST_TYPE.LANDMARK && x.poiType != POINT_OF_INTEREST_TYPE.CORPSE)
         );
         poi =  choices[Random.Range(0, choices.Count)];
         string nextState = string.Empty;

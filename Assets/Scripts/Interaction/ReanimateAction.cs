@@ -48,7 +48,7 @@ public class ReanimateAction : Interaction {
         _states.Add(reanimationFail.name, reanimationFail);
         _states.Add(corpseMissing.name, corpseMissing);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

@@ -52,7 +52,7 @@ public class StealActionFaction : Interaction {
         _states.Add(targetItemless.name, targetItemless);
         _states.Add(targetMissing.name, targetMissing);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

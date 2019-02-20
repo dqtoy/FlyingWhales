@@ -260,25 +260,25 @@ public class AreaInnerTileMap : MonoBehaviour {
                         for (int k = 0; k < currTile.neighbours.Values.Count; k++) {
                             elligibleTiles.Remove(currTile.neighbours.Values.ToList()[k]);
                         }
-                        strcutureTilemap.SetColor(currTile.localPlace, Color.red);
+                        //strcutureTilemap.SetColor(currTile.localPlace, Color.red);
                         break;
                     case STRUCTURE_TYPE.WAREHOUSE:
                         for (int k = 0; k < currTile.neighbours.Values.Count; k++) {
                             elligibleTiles.Remove(currTile.neighbours.Values.ToList()[k]);
                         }
-                        strcutureTilemap.SetColor(currTile.localPlace, Color.blue);
+                        //strcutureTilemap.SetColor(currTile.localPlace, Color.blue);
                         break;
                     case STRUCTURE_TYPE.DWELLING:
                         for (int k = 0; k < currTile.neighbours.Values.Count; k++) {
                             elligibleTiles.Remove(currTile.neighbours.Values.ToList()[k]);
                         }
-                        strcutureTilemap.SetColor(currTile.localPlace, Color.green);
+                        //strcutureTilemap.SetColor(currTile.localPlace, Color.green);
                         break;
                     case STRUCTURE_TYPE.DUNGEON:
                         for (int k = 0; k < currTile.neighbours.Values.Count; k++) {
                             elligibleTiles.Remove(currTile.neighbours.Values.ToList()[k]);
                         }
-                        strcutureTilemap.SetColor(currTile.localPlace, Color.yellow);
+                        //strcutureTilemap.SetColor(currTile.localPlace, Color.yellow);
                         break;
                     default:
                         break;
@@ -341,6 +341,9 @@ public class AreaInnerTileMap : MonoBehaviour {
     private float originX = -8f;
     private float originY = -4.5f;
     public void PlaceObject(IPointOfInterest obj, LocationGridTile tile) {
+        if (tile.tileState == LocationGridTile.Tile_State.Occupied) {
+            Debug.LogWarning("Something is trying to put a " + obj.ToString() + " at " + tile.ToString() + " at " + area.name);
+        }
         charactersTilemap.SetTile(tile.localPlace, characterTile);
         tile.SetObjectHere(obj);
     }
@@ -420,16 +423,16 @@ public class AreaInnerTileMap : MonoBehaviour {
     }
 
     #region Travel Lines
-    public void DrawLine(LocationGridTile startTile, LocationGridTile destination) {
+    public void DrawLine(LocationGridTile startTile, LocationGridTile destination, Character character) {
         GameObject travelLine = ObjectPoolManager.Instance.InstantiateObjectFromPool
             (travelLinePrefab.name, Vector3.zero, Quaternion.identity, travelLineParent);
-        travelLine.GetComponent<AreaMapTravelLine>().DrawLine(startTile, destination);
+        travelLine.GetComponent<AreaMapTravelLine>().DrawLine(startTile, destination, character);
         Debug.Log(GameManager.Instance.TodayLogString() + "Drawing line at " + area.name + "'s map. From " + startTile.localPlace.ToString() + " to " + destination.localPlace.ToString());
     }
-    public void DrawLineToExit(LocationGridTile startTile) {
+    public void DrawLineToExit(LocationGridTile startTile, Character character) {
         GameObject travelLine = ObjectPoolManager.Instance.InstantiateObjectFromPool
             (travelLinePrefab.name, Vector3.zero, Quaternion.identity, travelLineParent);
-        travelLine.GetComponent<AreaMapTravelLine>().DrawLine(startTile, exitTile);
+        travelLine.GetComponent<AreaMapTravelLine>().DrawLine(startTile, exitTile, character);
         Debug.Log(GameManager.Instance.TodayLogString() + "Drawing line at " + area.name + "'s map. From " + startTile.localPlace.ToString() + " to exit" + exitTile.localPlace.ToString());
     }
     [ContextMenu("Draw Line For Testing")]
@@ -438,7 +441,7 @@ public class AreaInnerTileMap : MonoBehaviour {
         LocationGridTile destinationTile = new LocationGridTile(20, 15, groundTilemap);
 
         GameObject travelLine = GameObject.Instantiate(travelLinePrefab, travelLineParent);
-        travelLine.GetComponent<AreaMapTravelLine>().DrawLine(startTile, destinationTile);
+        travelLine.GetComponent<AreaMapTravelLine>().DrawLine(startTile, destinationTile, null);
 
         //(newLine.transform as RectTransform).anchoredPosition = new Vector2(32f * startTile.localPlace.x, 32f * startTile.localPlace.y);
         //float angle = Mathf.Atan2(destinationTile.worldLocation.y - startTile.worldLocation.y, destinationTile.worldLocation.x - startTile.worldLocation.x) * Mathf.Rad2Deg;

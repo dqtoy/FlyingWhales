@@ -37,7 +37,7 @@ public class SpawnNeutralCharacter : Interaction {
         _states.Add(failRecruitState.name, failRecruitState);
         _states.Add(normalSpawnState.name, normalSpawnState);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

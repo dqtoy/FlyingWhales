@@ -48,7 +48,7 @@ public class MoveToCharmFaction : Interaction {
         _states.Add(characterCharmContinues.name, characterCharmContinues);
         _states.Add(doNothing.name, doNothing);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

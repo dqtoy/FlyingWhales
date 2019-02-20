@@ -43,7 +43,7 @@ public class RaiderTargetLocation : Interaction {
         _states.Add(induceScavengeState.name, induceScavengeState);
         _states.Add(doNothingState.name, doNothingState);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

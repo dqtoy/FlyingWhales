@@ -52,7 +52,7 @@ public class HuntAction : Interaction {
         _states.Add(characterKilledHunter.name, characterKilledHunter);
         _states.Add(characterInjuredHunter.name, characterInjuredHunter);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

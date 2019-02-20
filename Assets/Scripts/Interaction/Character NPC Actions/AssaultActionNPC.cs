@@ -53,7 +53,7 @@ public class AssaultActionNPC : Interaction {
         _states.Add(actorKnockedOut.name, actorKnockedOut);
         _states.Add(actorKilled.name, actorKilled);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

@@ -12,9 +12,10 @@ public class AreaMapTravelLine : MonoBehaviour {
 
     private float targetXScale; //linespriteFill
     private int ticksLeft;
+    private Character owner;
 
-
-    public void DrawLine(LocationGridTile start, LocationGridTile end) {
+    public void DrawLine(LocationGridTile start, LocationGridTile end, Character owner) {
+        this.owner = owner;
         this.transform.localPosition = Vector3.zero;
         startTransform.localPosition = new Vector3(start.localPlace.x + 0.5f, start.localPlace.y + 0.5f, 0f);
         targetTransform.localPosition = new Vector3(end.localPlace.x + 0.5f, end.localPlace.y + 0.5f, 0f);
@@ -39,11 +40,14 @@ public class AreaMapTravelLine : MonoBehaviour {
         targetXScale = lineSprite.transform.localScale.x;
         
         ticksLeft = InteractionManager.Character_Action_Delay;
-        Messenger.AddListener(Signals.TICK_STARTED, FillProgress);
+        UpdateVisibility();
 
+        AddListeners();
         //SchedulingManager.Instance.AddEntry(GameManager.Instance.Today().AddDays(5), () => DestroyLine());
     }
-
+    private void UpdateVisibility() {
+        this.gameObject.SetActive(owner.isTracked || GameManager.Instance.inspectAll);
+    }
     private void FillProgress() {
         ticksLeft--;
         if (ticksLeft == 0) {
@@ -54,9 +58,29 @@ public class AreaMapTravelLine : MonoBehaviour {
         }
         
     }
-
     private void DestroyLine() {
-        Messenger.RemoveListener(Signals.TICK_STARTED, FillProgress);
+        RemoveListeners();
         ObjectPoolManager.Instance.DestroyObject(this.gameObject);
     }
+
+    #region Listeners
+    private void AddListeners() {
+        Messenger.AddListener(Signals.INSPECT_ALL, OnInspectAll);
+        Messenger.AddListener(Signals.TICK_STARTED, FillProgress);
+        Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+    }
+    private void RemoveListeners() {
+        Messenger.RemoveListener(Signals.INSPECT_ALL, OnInspectAll);
+        Messenger.RemoveListener(Signals.TICK_STARTED, FillProgress);
+        Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+    }
+    private void OnCharacterDied(Character character) {
+        if (owner.id == character.id) {
+            DestroyLine();
+        }
+    }
+    private void OnInspectAll() {
+        UpdateVisibility();
+    }
+    #endregion
 }

@@ -31,7 +31,7 @@ public class DefenseMobilization : Interaction {
         _states.Add(stopMobilizationFailState.name, stopMobilizationFailState);
         _states.Add(defenderGroupCreatedState.name, defenderGroupCreatedState);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

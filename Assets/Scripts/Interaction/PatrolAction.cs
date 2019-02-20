@@ -90,7 +90,7 @@ public class PatrolAction : Interaction {
         _states.Add(normalCharacterInjuredPatroller.name, normalCharacterInjuredPatroller);
         _states.Add(normalPatrolFailed.name, normalPatrolFailed);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

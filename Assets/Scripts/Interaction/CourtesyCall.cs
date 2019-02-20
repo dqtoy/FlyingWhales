@@ -41,7 +41,7 @@ public class CourtesyCall : Interaction {
         _states.Add(courtesyCallFail.name, courtesyCallFail);
         _states.Add(targetMissing.name, targetMissing);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

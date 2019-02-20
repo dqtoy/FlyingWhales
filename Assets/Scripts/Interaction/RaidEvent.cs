@@ -54,7 +54,7 @@ public class RaidEvent : Interaction {
         _states.Add(normalRaidFail.name, normalRaidFail);
         _states.Add(normalRaidCriticalFail.name, normalRaidCriticalFail);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

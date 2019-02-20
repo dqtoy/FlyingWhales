@@ -43,7 +43,7 @@ public class WorkEvent : Interaction {
         _states.Add(stealSupplyFail.name, stealSupplyFail);
         _states.Add(normalWork.name, normalWork);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

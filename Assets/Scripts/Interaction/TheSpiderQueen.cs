@@ -53,7 +53,7 @@ public class TheSpiderQueen : Interaction {
         _states.Add(demonDiesState.name, demonDiesState);
         _states.Add(spidersAttackState.name, spidersAttackState);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "State 1") {

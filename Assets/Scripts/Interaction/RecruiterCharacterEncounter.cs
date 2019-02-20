@@ -36,7 +36,7 @@ public class RecruiterCharacterEncounter : Interaction {
         _states.Add(recruitmentFailState.name, recruitmentFailState);
         _states.Add(doNothingState.name, doNothingState);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

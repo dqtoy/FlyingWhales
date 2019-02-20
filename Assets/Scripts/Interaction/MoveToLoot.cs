@@ -49,7 +49,7 @@ public class MoveToLoot : Interaction {
         _states.Add(lootProceedsState.name, lootProceedsState);
         _states.Add(normalLootState.name, normalLootState);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

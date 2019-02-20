@@ -50,7 +50,7 @@ public class AssassinateActionFaction : Interaction {
         _states.Add(normalAssassinationCriticalFail.name, normalAssassinationCriticalFail);
         _states.Add(targetMissing.name, targetMissing);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

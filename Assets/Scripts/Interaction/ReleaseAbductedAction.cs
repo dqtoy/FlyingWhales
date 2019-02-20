@@ -46,7 +46,7 @@ public class ReleaseAbductedAction : Interaction {
         _states.Add(normalReleaseCriticalFail.name, normalReleaseCriticalFail);
         _states.Add(targetMissing.name, targetMissing);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

@@ -22,7 +22,7 @@ public class RaidSuccess : Interaction {
         startState.SetEffect(() => RaidSuccessEffect(startState));
 
         _states.Add(startState.name, startState);
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     #endregion
 

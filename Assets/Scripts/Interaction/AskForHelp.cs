@@ -42,7 +42,7 @@ public class AskForHelp : Interaction {
         _states.Add(askHelpSuccessfulState.name, askHelpSuccessfulState);
         _states.Add(askHelpFailState.name, askHelpFailState);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

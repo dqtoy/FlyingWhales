@@ -47,7 +47,7 @@ public class ArgueAction : Interaction {
         _states.Add(character1Injured.name, character1Injured);
         _states.Add(character2Injured.name, character2Injured);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

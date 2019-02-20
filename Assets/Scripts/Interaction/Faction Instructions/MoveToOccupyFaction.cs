@@ -51,7 +51,7 @@ public class MoveToOccupyFaction : Interaction {
         _states.Add(expandCancelled.name, expandCancelled);
         _states.Add(expandContinues.name, expandContinues);
         _states.Add(normalExpand.name, normalExpand);
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

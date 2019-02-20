@@ -52,7 +52,7 @@ public class AbductAction : Interaction {
         _states.Add(abductorInjured.name, abductorInjured);
         _states.Add(abductorKnockedOut.name, abductorKnockedOut);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

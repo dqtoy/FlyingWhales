@@ -40,7 +40,7 @@ public class InflictIllness : Interaction {
         _states.Add(induceIllnessFail.name, induceIllnessFail);
         _states.Add(induceIllnessCriticalFail.name, induceIllnessCriticalFail);
         _states.Add(doNothing.name, doNothing);
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {
