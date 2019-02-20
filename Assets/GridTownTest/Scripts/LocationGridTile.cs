@@ -113,6 +113,9 @@ public class LocationGridTile {
         }
         return false;
     }
+    public override string ToString() {
+        return localPlace.ToString();
+    }
     #endregion
 }
 

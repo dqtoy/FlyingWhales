@@ -54,7 +54,7 @@ public class HarvestSeason : Interaction {
         _states.Add(stealCropsCriticalFail.name, stealCropsCriticalFail);
         _states.Add(doNothingState.name, doNothingState);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

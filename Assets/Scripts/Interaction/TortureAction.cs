@@ -53,7 +53,7 @@ public class TortureAction : Interaction {
         _states.Add(targetTorturedRecruited.name, targetTorturedRecruited);
         _states.Add(targetMissing.name, targetMissing);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

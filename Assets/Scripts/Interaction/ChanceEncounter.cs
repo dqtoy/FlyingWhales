@@ -108,7 +108,7 @@ public class ChanceEncounter : Interaction {
         _states.Add(normalEncounterNeutral.name, normalEncounterNeutral);
         _states.Add(normalEncounterNegative.name, normalEncounterNegative);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

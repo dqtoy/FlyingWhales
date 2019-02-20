@@ -47,7 +47,7 @@ public class MoveToExplore : Interaction {
         _states.Add(characterExploreContinues.name, characterExploreContinues);
         _states.Add(doNothing.name, doNothing);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

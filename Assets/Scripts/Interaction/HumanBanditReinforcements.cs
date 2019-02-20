@@ -45,7 +45,7 @@ public class HumanBanditReinforcements : Interaction {
         _states.Add(unitStolenState.name, unitStolenState);
         _states.Add(doNothingState.name, doNothingState);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

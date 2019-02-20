@@ -63,7 +63,7 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler{
                         UIManager.Instance.ShowMonsterInfo(monster);
                     }
                 }
-            } else {
+            } else if (logItem.log != null) {
                 int indexToUse = int.Parse(linkInfo.GetLinkID());
                 LogFiller lf = logItem.log.fillers[indexToUse];
                 if (lf.obj != null) {

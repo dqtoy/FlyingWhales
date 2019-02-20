@@ -38,7 +38,7 @@ public class UseItemOnLocation : Interaction {
         _states.Add(stopSuccessful.name, stopSuccessful);
         _states.Add(doNothing.name, doNothing);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

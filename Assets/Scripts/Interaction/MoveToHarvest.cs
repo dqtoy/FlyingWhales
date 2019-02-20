@@ -47,7 +47,7 @@ public class MoveToHarvest : Interaction {
         _states.Add(harvestProceedsState.name, harvestProceedsState);
         _states.Add(normalHarvestState.name, normalHarvestState);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

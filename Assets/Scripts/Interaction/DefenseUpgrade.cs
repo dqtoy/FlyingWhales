@@ -31,7 +31,7 @@ public class DefenseUpgrade : Interaction {
         _states.Add(stopUpgradeFailState.name, stopUpgradeFailState);
         _states.Add(defenderGroupUpgradeState.name, defenderGroupUpgradeState);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

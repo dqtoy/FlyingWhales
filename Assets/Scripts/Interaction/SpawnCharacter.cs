@@ -37,7 +37,7 @@ public class SpawnCharacter : Interaction {
         _states.Add(failCurseState.name, failCurseState);
         _states.Add(normalSpawnState.name, normalSpawnState);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

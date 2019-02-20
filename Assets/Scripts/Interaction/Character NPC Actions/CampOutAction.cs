@@ -39,7 +39,7 @@ public class CampOutAction : Interaction {
         _states.Add(campContinues.name, campContinues);
         _states.Add(normalCamp.name, normalCamp);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

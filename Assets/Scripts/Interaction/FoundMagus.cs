@@ -56,7 +56,7 @@ public class FoundMagus : Interaction {
         _states.Add(dissuadeFailState.name, dissuadeFailState);
         _states.Add(magusFoundedState.name, magusFoundedState);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

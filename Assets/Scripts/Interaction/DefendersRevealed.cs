@@ -15,7 +15,7 @@ public class DefendersRevealed : Interaction {
         startState.SetEffect(() => DefenderRevealedEffect(startState));
 
         _states.Add(startState.name, startState);
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     #endregion
 

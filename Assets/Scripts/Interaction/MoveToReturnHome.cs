@@ -29,7 +29,7 @@ public class MoveToReturnHome : Interaction {
 
         _states.Add(startState.name, startState);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     #endregion
 

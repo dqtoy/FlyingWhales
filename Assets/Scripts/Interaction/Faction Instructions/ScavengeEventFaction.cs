@@ -44,7 +44,7 @@ public class ScavengeEventFaction : Interaction {
         _states.Add(normalScavengeSuccess.name, normalScavengeSuccess);
         _states.Add(normalScavengeFail.name, normalScavengeFail);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

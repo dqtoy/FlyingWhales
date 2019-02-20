@@ -52,7 +52,7 @@ public class UnexploredCave : Interaction {
         _states.Add(nothingState.name, nothingState);
         _states.Add(leftAloneState.name, leftAloneState);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if(state.name == "Start") {

@@ -36,7 +36,7 @@ public class UseItemOnSelf : Interaction {
         _states.Add(startState.name, startState);
         _states.Add(stopSuccessful.name, stopSuccessful);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

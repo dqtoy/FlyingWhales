@@ -491,6 +491,8 @@ GameObject:
   - component: {fileID: 224734872903616812}
   - component: {fileID: 222680689196355098}
   - component: {fileID: 114418987349231008}
+  - component: {fileID: 114484931960358062}
+  - component: {fileID: 114282139537712572}
   m_Layer: 5
   m_Name: PlansLbl
   m_TagString: Untagged
@@ -4399,6 +4401,17 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: Enter text...
+--- !u!114 &114282139537712572
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1187058910115616}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7903b780d109b7c48b4ee3320806edb8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114285370468554848
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5297,7 +5310,7 @@ MonoBehaviour:
   m_isAlignmentEnumConverted: 1
   m_characterSpacing: 0
   m_wordSpacing: 0
-  m_lineSpacing: -5
+  m_lineSpacing: -8
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
@@ -5993,6 +6006,30 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
     m_TypeName: UnityEngine.UI.ScrollRect+ScrollRectEvent, UnityEngine.UI, Version=1.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+--- !u!114 &114484931960358062
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1187058910115616}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f737e5ae56a617244ad293beb715783c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  logItem: {fileID: 114282139537712572}
+  text: {fileID: 114418987349231008}
+  allowClickAction: 1
+  hoverAction:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: EventLabelHoverAction, Assembly-CSharp, Version=1.0.0.0, Culture=neutral,
+      PublicKeyToken=null
+  hoverOutAction:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &114493624448700782
 MonoBehaviour:
@@ -9432,6 +9469,7 @@ MonoBehaviour:
   nameLbl: {fileID: 114680396287632648}
   lvlClassLbl: {fileID: 114458738148691882}
   plansLbl: {fileID: 114418987349231008}
+  plansLblLogItem: {fileID: 114282139537712572}
   factionEmblem: {fileID: 114568243727987702}
   partyEmblem: {fileID: 114086727933139876}
   visitorLocationPortrait: {fileID: 114883397216525130}

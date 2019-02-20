@@ -15,7 +15,7 @@ public class DropItem : Interaction {
         startState.SetEffect(() => StartRewardEffect(startState));
 
         _states.Add(startState.name, startState);
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override bool CanInteractionBeDoneBy(Character character) {
         if (!character.isHoldingItem) {

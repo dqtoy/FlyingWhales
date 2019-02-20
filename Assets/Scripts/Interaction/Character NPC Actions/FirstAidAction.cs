@@ -45,7 +45,7 @@ public class FirstAidAction : Interaction {
         _states.Add(firstAidCritFail.name, firstAidCritFail);
         _states.Add(targetMissing.name, targetMissing);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

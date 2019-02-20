@@ -46,7 +46,7 @@ public class MoveToAssassinateFaction : Interaction {
         _states.Add(stealProceeds.name, stealProceeds);
         _states.Add(normalSteal.name, normalSteal);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

@@ -58,7 +58,7 @@ public class CharacterTracking : Interaction {
         _states.Add(minionMisdirectedState.name, minionMisdirectedState);
         _states.Add(doNothingState.name, doNothingState);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         string subjectivePronoun = "him";

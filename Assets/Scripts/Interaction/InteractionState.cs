@@ -123,7 +123,7 @@ public class InteractionState {
         if (_effect != null) {
             _effect();
         }
-        SetDescription();
+        LoadLogValues();
         //if(_isTimed && _defaultOption != null) {
         //    SchedulingManager.Instance.AddEntry(_timeDate, () => ActivateDefault());
         //}
@@ -177,37 +177,18 @@ public class InteractionState {
     public void OverrideDescriptionLog(Log descriptionLog) {
         _descriptionLog = descriptionLog;
     }
-    public virtual void SetDescription() {
+    public virtual void LoadLogValues() {
         //TODO: make this more performant
-        if(_descriptionLog != null) {
-            //if (!_useInvestigatorMinionOnly && !_useTokeneerMinionOnly) {
-            //    if (_interaction.investigatorCharacter != null) {
-            //        _descriptionLog.AddToFillers(_interaction.investigatorCharacter, _interaction.investigatorCharacter.name, LOG_IDENTIFIER.MINION_1);
-            //    }
-            //} else if (_useInvestigatorMinionOnly && _useTokeneerMinionOnly) {
-            //    if (_interaction.investigatorCharacter != null) {
-            //        _descriptionLog.AddToFillers(_interaction.investigatorCharacter, _interaction.investigatorCharacter.name, LOG_IDENTIFIER.MINION_1);
-            //    }
-            //    if (_interaction.tokeneerMinion != null) {
-            //        _descriptionLog.AddToFillers(_interaction.tokeneerMinion.character, _interaction.tokeneerMinion.character.name, LOG_IDENTIFIER.MINION_2);
-            //    }
-            //} else {
-            //    if (_useInvestigatorMinionOnly) {
-            //        if (_interaction.investigatorCharacter != null) {
-            //            _descriptionLog.AddToFillers(_interaction.investigatorCharacter, _interaction.investigatorCharacter.name, LOG_IDENTIFIER.MINION_1);
-            //        }
-            //    }
-            //    if (_useTokeneerMinionOnly) {
-            //        if (_interaction.tokeneerMinion != null) {
-            //            _descriptionLog.AddToFillers(_interaction.tokeneerMinion.character, _interaction.tokeneerMinion.character.name, LOG_IDENTIFIER.MINION_1);
-            //        }
-            //    }
-            //}
+        LoadDescriptionLogValues();
+        LoadOtherLogValues();
+    }
+    public void LoadDescriptionLogValues() {
+        if (_descriptionLog != null) {
             if (_interaction.investigatorCharacter != null) {
                 _descriptionLog.AddToFillers(_interaction.investigatorCharacter, _interaction.investigatorCharacter.name, LOG_IDENTIFIER.MINION_1);
             }
             if (interaction.characterInvolved != null) {
-                if(!_descriptionLog.HasFillerForIdentifier(LOG_IDENTIFIER.ACTIVE_CHARACTER)){
+                if (!_descriptionLog.HasFillerForIdentifier(LOG_IDENTIFIER.ACTIVE_CHARACTER)) {
                     _descriptionLog.AddToFillers(interaction.characterInvolved, interaction.characterInvolved.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 }
                 _descriptionLog.AddToFillers(interaction.characterInvolved.currentStructure, interaction.characterInvolved.currentStructure.ToString(), LOG_IDENTIFIER.STRUCTURE_1);
@@ -222,30 +203,9 @@ public class InteractionState {
             _description = Utilities.LogReplacer(descriptionLog);
             //InteractionUI.Instance.interactionItem.SetDescription(_description, descriptionLog);
         }
+    }
+    public void LoadOtherLogValues() {
         if (otherLogs != null && otherLogs.Count > 0) {
-            //if (!_useInvestigatorMinionOnly && !_useTokeneerMinionOnly) {
-            //    if (_interaction.investigatorCharacter != null) {
-            //        logFillers.Add(new LogFiller(_interaction.investigatorCharacter, _interaction.investigatorCharacter.name, LOG_IDENTIFIER.MINION_1));
-            //    }
-            //} else if (_useInvestigatorMinionOnly && _useTokeneerMinionOnly) {
-            //    if (_interaction.investigatorCharacter != null) {
-            //        logFillers.Add(new LogFiller(_interaction.investigatorCharacter, _interaction.investigatorCharacter.name, LOG_IDENTIFIER.MINION_1));
-            //    }
-            //    if (_interaction.tokeneerMinion != null) {
-            //        logFillers.Add(new LogFiller(_interaction.tokeneerMinion.character, _interaction.tokeneerMinion.character.name, LOG_IDENTIFIER.MINION_2));
-            //    }
-            //} else {
-            //    if (_useInvestigatorMinionOnly) {
-            //          if (_interaction.investigatorCharacter != null) {
-            //              logFillers.Add(new LogFiller(_interaction.investigatorCharacter, _interaction.investigatorCharacter.name, LOG_IDENTIFIER.MINION_1));
-            //          }
-            //    }
-            //    if (_useTokeneerMinionOnly) {
-            //        if (_interaction.tokeneerMinion != null) {
-            //            logFillers.Add(new LogFiller(_interaction.tokeneerMinion.character, _interaction.tokeneerMinion.character.name, LOG_IDENTIFIER.MINION_1));
-            //        }
-            //    }
-            //}
             if (_interaction.investigatorCharacter != null) {
                 logFillers.Add(new LogFiller(_interaction.investigatorCharacter, _interaction.investigatorCharacter.name, LOG_IDENTIFIER.MINION_1));
             }

@@ -49,7 +49,7 @@ public class MoveToHangOut : Interaction {
         _states.Add(hangOutContinues.name, hangOutContinues);
         _states.Add(doNothing.name, doNothing);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

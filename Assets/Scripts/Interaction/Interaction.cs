@@ -167,6 +167,12 @@ public class Interaction {
     }
 
     #region Virtuals
+    public virtual void PreLoad() {
+        //NOTE: This is used to setup data before the character's 5 tick delay
+        CreateStates();
+        _states["Start"].CreateLogs();
+        _states["Start"].LoadDescriptionLogValues();
+    }
     public virtual void Initialize() {
         _hasInitialized = true;
         if(_initializeAction != null) {
@@ -174,14 +180,14 @@ public class Interaction {
         }
         //SetCharacterInvolved(characterInvolved);
         dayStarted = GameManager.Instance.continuousDays;
-        CreateStates();
+        SetCurrentState(_states["Start"]);
+        //CreateStates();
         _actionStructureLocation = _characterInvolved.currentStructure;
         //SetExplorerMinion(explorerMinion);
         //ScheduleFirstTimeOut();
         Messenger.Broadcast(Signals.INTERACTION_INITIALIZED, this);
     }
-    public virtual void CreateStates() {
-    }
+    public virtual void CreateStates() { }
     public virtual void CreateActionOptions(InteractionState state) { }
     public virtual void EndInteraction() {
         _isDone = true;
@@ -209,7 +215,7 @@ public class Interaction {
         //interactable.landmarkVisual.StopInteractionTimer();
         //interactable.landmarkVisual.HideInteractionTimer();
         _currentState.CreateLogs();
-        _currentState.SetDescription();
+        _currentState.LoadLogValues();
         Messenger.Broadcast(Signals.UPDATED_INTERACTION_STATE, this);
     } //this is called when the player clicks the "exclamation point" button and this interaction was chosen
     public virtual bool CanInteractionBeDoneBy(Character character) { //Converted this to virtual so each instance of interaction can also have trigger requirements other than CanCreateInteraction at InteractionManager

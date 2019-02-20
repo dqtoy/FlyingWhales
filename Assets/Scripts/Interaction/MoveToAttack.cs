@@ -50,7 +50,7 @@ public class MoveToAttack : Interaction {
         _states.Add(stopFailState.name, stopFailState);
         _states.Add(doNothingState.name, doNothingState);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

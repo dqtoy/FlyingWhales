@@ -39,7 +39,7 @@ public class PoisonHouseFood : Interaction {
         _states.Add(poisoningContinues.name, poisoningContinues);
         _states.Add(characterPoisons.name, characterPoisons);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

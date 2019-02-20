@@ -46,7 +46,7 @@ public class MoveToVisit : Interaction {
         _states.Add(visitProceedsState.name, visitProceedsState);
         _states.Add(normalVisitState.name, normalVisitState);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

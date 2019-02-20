@@ -40,7 +40,7 @@ public class ArmyUnitTraining : Interaction {
         _states.Add(demonDisappearsState.name, demonDisappearsState);
         _states.Add(armyProducedState.name, armyProducedState);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
         SetArmyClassNameToBeCreated();
     }
     public override void CreateActionOptions(InteractionState state) {

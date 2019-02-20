@@ -33,7 +33,7 @@ public class RestAtHomeAction : Interaction {
         _states.Add(restContinues.name, restContinues);
         _states.Add(characterRests.name, characterRests);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

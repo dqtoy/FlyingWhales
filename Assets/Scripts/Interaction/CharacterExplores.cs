@@ -64,7 +64,7 @@ public class CharacterExplores : Interaction {
         _states.Add(characterExploreRedirectedState.name, characterExploreRedirectedState);
         _states.Add(doNothingState.name, doNothingState);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

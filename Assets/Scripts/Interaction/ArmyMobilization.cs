@@ -38,7 +38,7 @@ public class ArmyMobilization : Interaction {
         _states.Add(demonDisappearsState.name, demonDisappearsState);
         _states.Add(armyMobilizedState.name, armyMobilizedState);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

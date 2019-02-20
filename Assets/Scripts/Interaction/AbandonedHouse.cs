@@ -40,7 +40,7 @@ public class AbandonedHouse : Interaction {
         _states.Add(demonBonusExpState.name, demonBonusExpState);
         _states.Add(leftAloneState.name, leftAloneState);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if(state.name == "Start") {

@@ -64,7 +64,7 @@ public class BanditRaid : Interaction {
         _states.Add(misusedFundsState.name, misusedFundsState);
         _states.Add(demonDiesState.name, demonDiesState);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

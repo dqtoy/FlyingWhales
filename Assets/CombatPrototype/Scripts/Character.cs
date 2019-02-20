@@ -634,13 +634,18 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 tokenInInventory.SetOwner(null);
                 DropToken(ownParty.specificLocation, currentStructure);
             }
-            if (this.race != RACE.SKELETON && this.role.roleType != CHARACTER_ROLE.BEAST) {
-                ownParty.specificLocation.AddCorpse(this, currentStructure);
-            }
+            Area deathLocation = ownParty.specificLocation;
+            LocationStructure deathStructure = currentStructure;
+            LocationGridTile deathTile = gridTileLocation;
+
             if (!IsInOwnParty()) {
                 _currentParty.RemoveCharacter(this);
             }
             _ownParty.PartyDeath();
+
+            if (this.race != RACE.SKELETON && this.role.roleType != CHARACTER_ROLE.BEAST) {
+                deathLocation.AddCorpse(this, deathStructure, deathTile);
+            }
 
             if (this._faction != null) {
                 this._faction.RemoveCharacter(this); //remove this character from it's factions list of characters
@@ -3069,12 +3074,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (interaction.targetStructure != null) {
             if (interaction.targetStructure.location.id == this.specificLocation.id) {
                 LocationGridTile targetTile = interaction.targetStructure.tiles[UnityEngine.Random.Range(0, interaction.targetStructure.tiles.Count)];
-                this.specificLocation.areaMap.DrawLine(this.gridTileLocation, targetTile);
+                this.specificLocation.areaMap.DrawLine(this.gridTileLocation, targetTile, this);
             } else {
-                this.specificLocation.areaMap.DrawLineToExit(this.gridTileLocation);
+                this.specificLocation.areaMap.DrawLineToExit(this.gridTileLocation, this);
             }
         } else if (interaction.targetArea != null && interaction.targetArea.id != this.specificLocation.id) {
-            this.specificLocation.areaMap.DrawLineToExit(this.gridTileLocation);
+            this.specificLocation.areaMap.DrawLineToExit(this.gridTileLocation, this);
         }
     }
     #endregion

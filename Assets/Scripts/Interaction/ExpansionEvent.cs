@@ -42,7 +42,7 @@ public class ExpansionEvent : Interaction {
         _states.Add(characterInjuredMinion.name, characterInjuredMinion);
         _states.Add(normalExpansion.name, normalExpansion);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

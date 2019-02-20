@@ -45,7 +45,7 @@ public class SuspiciousSoldierMeeting : Interaction {
         _states.Add(nothingHappensState.name, nothingHappensState);
         _states.Add(doNothingState.name, doNothingState);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

@@ -70,7 +70,7 @@ public class Attack : Interaction {
         _states.Add(normalAttackersLostState.name, normalAttackersLostState);
         _states.Add(normalAttackersNoDefState.name, normalAttackersNoDefState);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

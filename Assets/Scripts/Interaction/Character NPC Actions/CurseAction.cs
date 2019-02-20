@@ -52,7 +52,7 @@ public class CurseAction : Interaction {
         _states.Add(curserInjured.name, curserInjured);
         _states.Add(curserKilled.name, curserKilled);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

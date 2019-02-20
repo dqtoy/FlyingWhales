@@ -39,7 +39,7 @@ public class MakeLoveAction : Interaction {
         _states.Add(actorRejected.name, actorRejected);
         _states.Add(actorAccepted.name, actorAccepted);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

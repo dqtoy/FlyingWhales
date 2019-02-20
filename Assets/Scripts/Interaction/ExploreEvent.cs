@@ -73,7 +73,7 @@ public class ExploreEvent : Interaction {
         _states.Add(normalExploreFail.name, normalExploreFail);
         _states.Add(normalExploreCriticalFail.name, normalExploreCriticalFail);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

@@ -37,7 +37,7 @@ public class FeedPrisonerAction : Interaction {
         _states.Add(startState.name, startState);
         _states.Add(actorDisappointed.name, actorDisappointed);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

@@ -61,7 +61,7 @@ public class ArmyAttacks : Interaction {
         _states.Add(redirectionFailureState.name, redirectionFailureState);
         _states.Add(doNothingState.name, doNothingState);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

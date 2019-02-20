@@ -32,7 +32,7 @@ public class CreateNecromancer : Interaction {
         _states.Add(necromancerCreatedState.name, necromancerCreatedState);
         _states.Add(doNothingState.name, doNothingState);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

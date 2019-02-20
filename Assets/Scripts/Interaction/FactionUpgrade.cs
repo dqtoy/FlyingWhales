@@ -47,7 +47,7 @@ public class FactionUpgrade : Interaction {
         _states.Add(assistedFactionUpgradeState.name, assistedFactionUpgradeState);
         _states.Add(normalFactionUpgradeState.name, normalFactionUpgradeState);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

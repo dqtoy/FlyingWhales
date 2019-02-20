@@ -47,7 +47,7 @@ public class MoveToMine : Interaction {
         _states.Add(mineProceedsState.name, mineProceedsState);
         _states.Add(normalMineState.name, normalMineState);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

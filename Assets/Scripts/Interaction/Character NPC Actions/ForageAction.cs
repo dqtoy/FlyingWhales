@@ -37,7 +37,7 @@ public class ForageAction : Interaction {
         _states.Add(forageMildSuccess.name, forageMildSuccess);
         _states.Add(forageFail.name, forageFail);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

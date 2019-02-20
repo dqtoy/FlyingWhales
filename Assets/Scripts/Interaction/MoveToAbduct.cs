@@ -50,7 +50,7 @@ public class MoveToAbduct : Interaction {
         _states.Add(abductProceedsState.name, abductProceedsState);
         _states.Add(normalAbductState.name, normalAbductState);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

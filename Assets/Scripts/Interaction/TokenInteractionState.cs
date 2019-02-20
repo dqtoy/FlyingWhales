@@ -62,7 +62,7 @@ public class TokenInteractionState : InteractionState {
             }
         }
     }
-    public override void SetDescription() {
+    public override void LoadLogValues() {
         //TODO: make this more performant
         if (_descriptionLog != null) {
             _descriptionLog.AddToFillers(_tokenUser, _tokenUser.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

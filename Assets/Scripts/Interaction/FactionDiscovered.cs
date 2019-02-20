@@ -20,7 +20,7 @@ public class FactionDiscovered : Interaction {
         startState.SetEffect(() => FactionDiscoveredEffect(startState));
 
         _states.Add(startState.name, startState);
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     #endregion
 

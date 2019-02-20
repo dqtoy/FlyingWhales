@@ -49,7 +49,7 @@ public class EatHomeMealAction : Interaction {
         _states.Add(characterEatsKilled.name, characterEatsKilled);
         _states.Add(characterEatsSick.name, characterEatsSick);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

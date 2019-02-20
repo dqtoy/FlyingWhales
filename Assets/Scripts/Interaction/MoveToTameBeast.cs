@@ -38,7 +38,7 @@ public class MoveToTameBeast : Interaction {
         _states.Add(startState.name, startState);
         _states.Add(normalTameState.name, normalTameState);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

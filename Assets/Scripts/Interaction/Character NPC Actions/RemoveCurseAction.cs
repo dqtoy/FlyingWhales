@@ -41,7 +41,7 @@ public class RemoveCurseAction : Interaction {
         _states.Add(curseTransferred.name, curseTransferred);
         _states.Add(targetMissing.name, targetMissing);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

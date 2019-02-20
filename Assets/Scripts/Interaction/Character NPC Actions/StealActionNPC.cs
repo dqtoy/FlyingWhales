@@ -37,7 +37,7 @@ public class StealActionNPC : Interaction {
         _states.Add(stealSuccess.name, stealSuccess);
         _states.Add(stealFailed.name, stealFailed);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

@@ -46,7 +46,7 @@ public class RaiderCharacterEncounter : Interaction {
         _states.Add(characterInjuredMinionState.name, characterInjuredMinionState);
         _states.Add(doNothingState.name, doNothingState);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

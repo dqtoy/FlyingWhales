@@ -45,7 +45,7 @@ public class InduceWar : Interaction {
         _states.Add(induceWarFail.name, induceWarFail);
         _states.Add(doNothing.name, doNothing);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

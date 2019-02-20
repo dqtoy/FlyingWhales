@@ -56,7 +56,7 @@ public class FoundLucareth : Interaction {
         _states.Add(dissuadeFailState.name, dissuadeFailState);
         _states.Add(lucarethFoundedState.name, lucarethFoundedState);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

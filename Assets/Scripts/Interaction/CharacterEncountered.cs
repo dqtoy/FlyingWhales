@@ -29,7 +29,7 @@ public class CharacterEncountered : Interaction {
         startState.SetEffect(() => CharacterEncounteredEffect(startState));
 
         _states.Add(startState.name, startState);
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     #endregion
 

@@ -54,7 +54,7 @@ public class MoveToExpand : Interaction {
         _states.Add(characterExpandContinues.name, characterExpandContinues);
         _states.Add(characterNormalExpand.name, characterNormalExpand);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

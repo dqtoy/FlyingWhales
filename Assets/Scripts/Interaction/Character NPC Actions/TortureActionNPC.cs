@@ -73,7 +73,7 @@ public class TortureActionNPC : Interaction {
         _states.Add(characterKnockedOut.name, characterKnockedOut);
         _states.Add(characterEscapes.name, characterEscapes);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

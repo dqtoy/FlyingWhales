@@ -60,7 +60,7 @@ public class ScavengeEvent : Interaction {
         _states.Add(normalScavengeFail.name, normalScavengeFail);
         _states.Add(normalScavengeCriticalFail.name, normalScavengeCriticalFail);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

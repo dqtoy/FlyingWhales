@@ -44,7 +44,7 @@ public class ScrapItem : Interaction {
         _states.Add(scrappingContinues.name, scrappingContinues);
         _states.Add(normalScrapping.name, normalScrapping);
 
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {

@@ -51,7 +51,7 @@ public class MoveToRaidFaction : Interaction {
         _states.Add(raidCancelled.name, raidCancelled);
         _states.Add(raidProceeds.name, raidProceeds);
         _states.Add(normalRaid.name, normalRaid);
-        SetCurrentState(startState);
+        //SetCurrentState(startState);
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {
