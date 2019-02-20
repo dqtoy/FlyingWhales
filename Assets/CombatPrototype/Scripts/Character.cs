@@ -3142,20 +3142,20 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         tiredness += adjustment;
         tiredness = Mathf.Clamp(tiredness, 0, TIREDNESS_DEFAULT);
         if (tiredness == 0) {
-            Death("starvation");
+            Death("exhaustion");
         } else if (tiredness <= TIREDNESS_THRESHOLD_2) {
-            Trait hungerTrait = GetTrait("Hungry");
-            Trait starvationTrait = GetTrait("Starving");
-            if (hungerTrait != null) {
-                RemoveTrait(hungerTrait);
+            Trait tiredTrait = GetTrait("Tired");
+            Trait exhaustedTrait = GetTrait("Exhausted");
+            if (tiredTrait != null) {
+                RemoveTrait(tiredTrait);
             }
-            if (starvationTrait == null) {
-                AddTrait("Starving");
+            if (exhaustedTrait == null) {
+                AddTrait("Exhausted");
             }
         } else if (tiredness <= TIREDNESS_THRESHOLD_1) {
-            Trait hungerTrait = GetTrait("Hungry");
+            Trait hungerTrait = GetTrait("Tired");
             if (hungerTrait == null) {
-                AddTrait("Hungry");
+                AddTrait("Tired");
             }
         }
     }
