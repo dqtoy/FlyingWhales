@@ -751,9 +751,10 @@ public class CharacterManager : MonoBehaviour {
                 Debug.Log(currCharacter.name + " and " + targetCharacter.name + " became " + rel.ToString() + " - " + pair.ToString());
             }
 
-        } else {
-            Debug.LogWarning(currCharacter.name + " and " + targetCharacter.name + " cannot have relationship " + rel.ToString() + " - " + pair.ToString());
         }
+        //else {
+            //Debug.LogWarning(currCharacter.name + " and " + targetCharacter.name + " cannot have relationship " + rel.ToString() + " - " + pair.ToString());
+        //}
     }
     public void RemoveRelationshipBetween(Character character, Character targetCharacter, RELATIONSHIP_TRAIT rel) {
         if (!character.relationships.ContainsKey(targetCharacter) 

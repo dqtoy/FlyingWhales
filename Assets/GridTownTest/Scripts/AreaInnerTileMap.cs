@@ -341,9 +341,9 @@ public class AreaInnerTileMap : MonoBehaviour {
     private float originX = -8f;
     private float originY = -4.5f;
     public void PlaceObject(IPointOfInterest obj, LocationGridTile tile) {
-        if (tile.tileState == LocationGridTile.Tile_State.Occupied) {
-            Debug.LogWarning("Something is trying to put a " + obj.ToString() + " at " + tile.ToString() + " at " + area.name);
-        }
+        //if (tile.tileState == LocationGridTile.Tile_State.Occupied) {
+        //    Debug.LogWarning("Something is trying to put a " + obj.ToString() + " at " + tile.ToString() + " at " + area.name);
+        //}
         charactersTilemap.SetTile(tile.localPlace, characterTile);
         tile.SetObjectHere(obj);
     }
