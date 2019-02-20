@@ -103,14 +103,14 @@ public class ArgueAction : Interaction {
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
         _characterInvolved.AddTrait(AttributeManager.Instance.allTraits["Injured"]);
-        _targetCharacter.AddTrait(AttributeManager.Instance.allTraits["Cheery"]);
+        _targetCharacter.AddTrait(AttributeManager.Instance.allTraits["Happy"]);
     }
     private void Character2InjuredEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
-        _characterInvolved.AddTrait(AttributeManager.Instance.allTraits["Cheery"]);
+        _characterInvolved.AddTrait(AttributeManager.Instance.allTraits["Happy"]);
         _targetCharacter.AddTrait(AttributeManager.Instance.allTraits["Injured"]);
     }
     #endregion
