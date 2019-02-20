@@ -145,10 +145,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             if (Utilities.IsRaceBeast(race)) {
                 return Utilities.NormalizeString(race.ToString()) + " " + role.name;
             }
-            if(role.name == characterClass.className) {
-                return Utilities.GetNormalizedRaceAdjective(race) + " " + role.name;
-            }
-            return Utilities.GetNormalizedRaceAdjective(race) + " " + role.name + " " + characterClass.className;
+            //if(role.name == characterClass.className) {
+                return Utilities.GetNormalizedRaceAdjective(race) + " " + characterClass.className;
+            //}
+            //return Utilities.GetNormalizedRaceAdjective(race) + " " + role.name + " " + characterClass.className;
         }
     }
     public int id {

@@ -17,6 +17,7 @@ public class Trait {
     public TRAIT_EFFECT effect;
     public TRAIT_TRIGGER trigger;
     public INTERACTION_TYPE associatedInteraction;
+    public CRIME_SEVERITY crimeSeverity;
     public int daysDuration; //Zero (0) means Permanent
     public List<TraitEffect> effects;
 

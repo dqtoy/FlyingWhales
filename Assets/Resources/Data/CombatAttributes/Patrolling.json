@@ -1,1 +1,1 @@
-{"name":"Patrolling","description":"This character is patrolling the area.","type":6,"effect":0,"trigger":0,"associatedInteraction":0,"daysDuration":15,"effects":[]}
+{"name":"Patrolling","description":"This character is patrolling the area.","type":6,"effect":0,"trigger":0,"associatedInteraction":0,"crimeSeverity":0,"daysDuration":15,"effects":[]}
