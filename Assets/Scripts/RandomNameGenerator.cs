@@ -112,7 +112,7 @@ public class RandomNameGenerator : MonoBehaviour {
         "Glork", "Rakkan", "Bumble", "Lartath", "Typchray", "Kahu", "Kaljou", "Tuvok", "Kyshf", "Palluhae", "Ezeroc",
         "Spidrid", "Slerdach", "Meleth", "Snendos", "Libnrak", "Umusaq", "Serpigo", "Ijushir", "Eshacer", "Alakyrr", "Iguker", "Skirax",
         "Ujarak", "Eruanna", "Annelida", "Naraku", "Xaggavea", "Ilphstra", "Ekicak", "Scissa", "Lakkucoa", "Tsuki", "Incey", "Ahmose", "Aurantia", "Alta", "Hesutu",
-        "Anastera", "Krigon", "Seti", "Meleth", "Feriave", "Elifif", "Arkaitz", "Adiyis", "Shelob", "Xennowua", "Aine", "Gigit",
+        "Anastera", "Krigon", "Seti", "Tal Tal", "Feriave", "Elifif", "Arkaitz", "Adiyis", "Shelob", "Xennowua", "Aine", "Gigit",
     };
 
     private string[] faeryFemaleNames = new string[] {

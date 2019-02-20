@@ -743,7 +743,14 @@ public class CharacterManager : MonoBehaviour {
 
             currCharacter.AddTrait(CreateRelationshipTrait(rel, targetCharacter));
             targetCharacter.AddTrait(CreateRelationshipTrait(pair, currCharacter));
-            
+
+            if (currCharacter.GetRelationshipTraitWith(targetCharacter, rel) == null 
+                || targetCharacter.GetRelationshipTraitWith(currCharacter, pair) == null) {
+                Debug.LogWarning(currCharacter.name + " and " + targetCharacter.name + " have inconsistent relationships: " + rel.ToString() + " - " + pair.ToString());
+            } else {
+                Debug.Log(currCharacter.name + " and " + targetCharacter.name + " became " + rel.ToString() + " - " + pair.ToString());
+            }
+
         } else {
             Debug.LogWarning(currCharacter.name + " and " + targetCharacter.name + " cannot have relationship " + rel.ToString() + " - " + pair.ToString());
         }

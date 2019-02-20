@@ -13,6 +13,8 @@ public class InteractionManager : MonoBehaviour {
     public static readonly string Level_Reward_1 = "LevelReward1";
     public static readonly string Level_Reward_2 = "LevelReward2";
 
+    public static readonly int Character_Action_Delay = 5;
+
     public Queue<Interaction> interactionUIQueue { get; private set; }
 
     private string dailyInteractionSummary;
@@ -1714,7 +1716,7 @@ public class InteractionManager : MonoBehaviour {
             return;
         }
         GameDate scheduledDate = GameManager.Instance.Today();
-        scheduledDate.AddTicks(5);
+        scheduledDate.AddTicks(Character_Action_Delay);
         log += "\n==========Scheduling <b>" + area.name + "'s</b> interactions on " + scheduledDate.ConvertToContinuousDays()  + "==========";
         List<Interaction> interactionsInArea = new List<Interaction>();
         for (int j = 0; j < area.currentInteractions.Count; j++) {
