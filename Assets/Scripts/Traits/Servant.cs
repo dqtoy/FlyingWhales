@@ -18,4 +18,8 @@ public class Servant : RelationshipTrait {
         daysDuration = 0;
         effects = new List<TraitEffect>();
     }
+
+    public override bool IsUnique() {
+        return false;
+    }
 }

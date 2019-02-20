@@ -1431,7 +1431,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             relationships.Add(character, new CharacterRelationshipData(this, character));
         }
         relationships[character].AddRelationship(newRel);
-        OnRelationshipWithCharacterAdded(character);
+        OnRelationshipWithCharacterAdded(character, newRel);
         Messenger.Broadcast(Signals.RELATIONSHIP_ADDED, this, newRel);
     }
     private void RemoveRelationship(Character character) {
@@ -1488,28 +1488,43 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public bool CanHaveRelationshipWith(RELATIONSHIP_TRAIT type, Character target) {
         //NOTE: This is only one way checking. This character will only check itself, if he/she meets the requirements of a given relationship
         List<RELATIONSHIP_TRAIT> relationshipsWithTarget = GetAllRelationshipTraitTypesWith(target);
-        if(relationshipsWithTarget == null) { return true; }
+        //if(relationshipsWithTarget == null) { return true; }
         switch (type) {
             case RELATIONSHIP_TRAIT.ENEMY:
-                return !relationshipsWithTarget.Contains(RELATIONSHIP_TRAIT.ENEMY); //check that the target character is not already this characters enemy
+                return relationshipsWithTarget!= null && !relationshipsWithTarget.Contains(RELATIONSHIP_TRAIT.ENEMY); //check that the target character is not already this characters enemy
             case RELATIONSHIP_TRAIT.FRIEND:
-                return !relationshipsWithTarget.Contains(RELATIONSHIP_TRAIT.FRIEND); //check that the target character is not already this characters friend
+                return relationshipsWithTarget!= null && !relationshipsWithTarget.Contains(RELATIONSHIP_TRAIT.FRIEND); //check that the target character is not already this characters friend
             case RELATIONSHIP_TRAIT.LOVER:
                 //- **Lover:** Positive, Permanent (Can only have 1)
                 //check if this character already has a lover and that the target character is not his/her paramour
-                if (GetCharacterWithRelationship(type) == null
-                    && !relationshipsWithTarget.Contains(RELATIONSHIP_TRAIT.PARAMOUR)) {
-                    return true;
+                if (GetCharacterWithRelationship(type) != null) {
+                    return false;
                 }
-                return false;
+                if (relationshipsWithTarget!= null && relationshipsWithTarget.Contains(RELATIONSHIP_TRAIT.PARAMOUR)) {
+                    return false;
+                }
+                return true;
+
+                //if (GetCharacterWithRelationship(type) == null
+                //    && !relationshipsWithTarget.Contains(RELATIONSHIP_TRAIT.PARAMOUR)) {
+                //    return true;
+                //}
+                //return false;
             case RELATIONSHIP_TRAIT.PARAMOUR:
                 //- **Paramour:** Positive, Transient (Can only have 1)
                 //check if this character already has a paramour and that the target character is not his/her lover
-                if (GetCharacterWithRelationship(type) == null 
-                    && !relationshipsWithTarget.Contains(RELATIONSHIP_TRAIT.LOVER)) { 
-                    return true;
+                if (GetCharacterWithRelationship(type) != null) {
+                    return false;
                 }
-                return false;
+                if (relationshipsWithTarget!= null && relationshipsWithTarget.Contains(RELATIONSHIP_TRAIT.LOVER)) {
+                    return false;
+                }
+                return true;
+                //if (GetCharacterWithRelationship(type) == null 
+                //    && !relationshipsWithTarget.Contains(RELATIONSHIP_TRAIT.LOVER)) { 
+                //    return true;
+                //}
+                //return false;
             case RELATIONSHIP_TRAIT.MASTER: 
                 //this means that the target character will be this characters master, therefore making this character his/her servant
                 //so check if this character isn't already serving a master, or that this character is not a master himself
@@ -1528,11 +1543,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return true;
     }
-    private void OnRelationshipWithCharacterAdded(Character targetCharacter) {
+    private void OnRelationshipWithCharacterAdded(Character targetCharacter, RelationshipTrait newRel) {
         //check if they share the same home, then migrate them accordingly
-        if (this.homeArea.id == targetCharacter.homeArea.id) {
+        if (newRel.relType == RELATIONSHIP_TRAIT.LOVER 
+            && this.homeArea.id == targetCharacter.homeArea.id
+            && this.homeStructure != targetCharacter.homeStructure) {
             homeArea.AssignCharacterToDwellingInArea(this);
-            homeArea.AssignCharacterToDwellingInArea(targetCharacter);
+            //homeArea.AssignCharacterToDwellingInArea(targetCharacter);
         }
     }
     public bool HasRelationshipOfEffectWith(Character character, TRAIT_EFFECT effect) {

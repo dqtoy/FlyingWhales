@@ -11,7 +11,7 @@ public class AreaMapTravelLine : MonoBehaviour {
     [SerializeField] private Transform targetTransform;
 
     private float targetXScale; //linespriteFill
-    private int daysLeft;
+    private int ticksLeft;
 
 
     public void DrawLine(LocationGridTile start, LocationGridTile end) {
@@ -38,25 +38,25 @@ public class AreaMapTravelLine : MonoBehaviour {
 
         targetXScale = lineSprite.transform.localScale.x;
         
-        daysLeft = 5;
-        Messenger.AddListener(Signals.DAY_STARTED, FillProgress);
+        ticksLeft = InteractionManager.Character_Action_Delay;
+        Messenger.AddListener(Signals.TICK_STARTED, FillProgress);
 
         //SchedulingManager.Instance.AddEntry(GameManager.Instance.Today().AddDays(5), () => DestroyLine());
     }
 
     private void FillProgress() {
-        daysLeft--;
-        if (daysLeft == 0) {
+        ticksLeft--;
+        if (ticksLeft == 0) {
             lineSpriteFill.transform.localScale = new Vector2(targetXScale, 0.03f);
             DestroyLine();
         } else {
-            lineSpriteFill.transform.localScale = new Vector2(targetXScale/(float)daysLeft, 0.03f);
+            lineSpriteFill.transform.localScale = new Vector2(targetXScale/(float)ticksLeft, 0.03f);
         }
         
     }
 
     private void DestroyLine() {
-        Messenger.RemoveListener(Signals.DAY_STARTED, FillProgress);
+        Messenger.RemoveListener(Signals.TICK_STARTED, FillProgress);
         ObjectPoolManager.Instance.DestroyObject(this.gameObject);
     }
 }
