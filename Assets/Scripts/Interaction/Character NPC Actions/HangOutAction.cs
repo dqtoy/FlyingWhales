@@ -107,8 +107,8 @@ public class HangOutAction : Interaction {
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
         //**Mechanics**: Both characters will gain Cheery Trait for 5 days.
-        _characterInvolved.AddTrait(AttributeManager.Instance.allTraits["Cheery"]);
-        _targetCharacter.AddTrait(AttributeManager.Instance.allTraits["Cheery"]);
+        _characterInvolved.AddTrait(AttributeManager.Instance.allTraits["Happy"]);
+        _targetCharacter.AddTrait(AttributeManager.Instance.allTraits["Happy"]);
         //**Mechanics**: If either character has a negative status-type Trait, add it to the other character's **character trouble** list for his relationship data
         Trait targetNegative = targetCharacter.GetTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER);
         Trait characterNegative = characterInvolved.GetTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER);

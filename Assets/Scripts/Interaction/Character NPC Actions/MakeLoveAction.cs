@@ -100,8 +100,8 @@ public class MakeLoveAction : Interaction {
     }
     private void ActorAcceptedRewardEffect(InteractionState state) {
         //**Mechanics**: Both characters will gain https://trello.com/c/OPL4tXyV/1151-cheery Trait for 5 days.
-        _characterInvolved.AddTrait("Cheery");
-        _targetCharacter.AddTrait("Cheery");
+        _characterInvolved.AddTrait("Happy");
+        _targetCharacter.AddTrait("Happy");
         //**Mechanics**: Both characters lose 25 Tiredness Meter amount, check if Tired or Exhausted trait must be added to either.
         _characterInvolved.AdjustTiredness(-25);
         _targetCharacter.AdjustTiredness(-25);

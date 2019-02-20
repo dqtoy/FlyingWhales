@@ -323,14 +323,14 @@ public class InteractionManager : MonoBehaviour {
             { INTERACTION_TYPE.HANG_OUT_ACTION, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.SOCIAL },
                 alignment = INTERACTION_ALIGNMENT.NEUTRAL,
-                actorEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_GAIN, effectString = "Cheery" } },
-                targetCharacterEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_GAIN, effectString = "Cheery" } },
+                actorEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_GAIN, effectString = "Happy" } },
+                targetCharacterEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_GAIN, effectString = "Happy" } },
             } },
             { INTERACTION_TYPE.MAKE_LOVE_ACTION, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.ROMANTIC },
                 alignment = INTERACTION_ALIGNMENT.NEUTRAL,
-                actorEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_GAIN, effectString = "Cheery" } },
-                targetCharacterEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_GAIN, effectString = "Cheery" } },
+                actorEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_GAIN, effectString = "Happy" } },
+                targetCharacterEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TRAIT_GAIN, effectString = "Happy" } },
             } },
             { INTERACTION_TYPE.REMOVE_CURSE_ACTION, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.SAVE },
