@@ -604,30 +604,30 @@ public class Player : ILeader {
     #region Tracking
     public List<Character> GetTrackedCharacters() {
         List<Character> characters = new List<Character>();
-        foreach (KeyValuePair<JOB, PlayerJobData> keyValuePair in roleSlots) {
-            if (keyValuePair.Value.activeAction != null) {
-                if (keyValuePair.Value.activeAction is Track) {
-                    Track track = keyValuePair.Value.activeAction as Track;
-                    if (track.currentTargetType == JOB_ACTION_TARGET.CHARACTER) {
-                        characters.Add(track.target as Character);
-                    }
-                }
-            }
-        }
+        //foreach (KeyValuePair<JOB, PlayerJobData> keyValuePair in roleSlots) {
+        //    if (keyValuePair.Value.activeAction != null) {
+        //        if (keyValuePair.Value.activeAction is Track) {
+        //            Track track = keyValuePair.Value.activeAction as Track;
+        //            if (track.currentTargetType == JOB_ACTION_TARGET.CHARACTER) {
+        //                characters.Add(track.target as Character);
+        //            }
+        //        }
+        //    }
+        //}
         return characters;
     }
     public List<Area> GetTrackedAreas() {
         List<Area> characters = new List<Area>();
-        foreach (KeyValuePair<JOB, PlayerJobData> keyValuePair in roleSlots) {
-            if (keyValuePair.Value.activeAction != null) {
-                if (keyValuePair.Value.activeAction is Track) {
-                    Track track = keyValuePair.Value.activeAction as Track;
-                    if (track.currentTargetType == JOB_ACTION_TARGET.AREA) {
-                        characters.Add(track.target as Area);
-                    }
-                }
-            }
-        }
+        //foreach (KeyValuePair<JOB, PlayerJobData> keyValuePair in roleSlots) {
+        //    if (keyValuePair.Value.activeAction != null) {
+        //        if (keyValuePair.Value.activeAction is Track) {
+        //            Track track = keyValuePair.Value.activeAction as Track;
+        //            if (track.currentTargetType == JOB_ACTION_TARGET.AREA) {
+        //                characters.Add(track.target as Area);
+        //            }
+        //        }
+        //    }
+        //}
         return characters;
     }
     #endregion

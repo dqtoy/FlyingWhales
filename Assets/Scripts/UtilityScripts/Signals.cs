@@ -88,6 +88,7 @@ public static class Signals {
     public static string CHARACTER_CHANGED_RACE = "OnCharacterChangedRace"; //Parameters (Character); 
     public static string CHARACTER_ARRIVED_AT_STRUCTURE = "OnCharacterArrivedAtStructure"; //Parameters (Character, LocationStructure); 
     public static string RELATIONSHIP_ADDED = "OnCharacterGainedRelationship"; //Parameters (Character, RelationshipTrait)
+    public static string CHARACTER_TRACKED = "OnCharacterTracked"; //Parameters (Character character)
     #endregion
 
     #region UI

@@ -108,6 +108,7 @@ public class CharacterInfoUI : UIMenu {
         Messenger.AddListener<Character, Trait>(Signals.TRAIT_REMOVED, UpdateTraitsFromSignal);
         Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
+        Messenger.AddListener<Character>(Signals.CHARACTER_TRACKED, OnCharacterTracked);
         InitializeLogsMenu();
     }
     private void InitializeLogsMenu() {
@@ -637,11 +638,10 @@ public class CharacterInfoUI : UIMenu {
     //}
     #endregion
 
-    private void CheckIfMenuShouldBeHidden() {
-        if (UIManager.Instance.partyinfoUI.isShowing) {
-            logParentGO.SetActive(false);
-        } else {
-            logParentGO.SetActive(true);
+    #region Listeners
+    private void OnCharacterTracked(Character character) {
+        if (isShowing && activeCharacter.id == character.id) {
+            UpdateBasicInfo();
         }
     }
     private void OnMenuOpened(UIMenu openedMenu) {
@@ -658,6 +658,15 @@ public class CharacterInfoUI : UIMenu {
         //    }
         //}
     }
+    #endregion
+    private void CheckIfMenuShouldBeHidden() {
+        if (UIManager.Instance.partyinfoUI.isShowing) {
+            logParentGO.SetActive(false);
+        } else {
+            logParentGO.SetActive(true);
+        }
+    }
+   
 
     public void ShowCharacterTestingInfo() {
         string summary = "Home structure: " + activeCharacter.homeStructure?.ToString() ?? "None";
