@@ -1427,6 +1427,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public void SetTracked(bool state) {
         _isTracked = state;
+        if (_isTracked) {
+            Messenger.Broadcast(Signals.CHARACTER_TRACKED, this);
+        }
     }
     #endregion
 
