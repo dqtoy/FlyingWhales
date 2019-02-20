@@ -16,6 +16,8 @@ public class LocationStructure {
     public List<StructureTrait> traits { get; private set; }
     public List<Corpse> corpses { get; private set; }
     public List<LocationGridTile> tiles { get; private set; }
+    public Dictionary<FOOD, int> foodCount { get; private set; }
+
 
     #region getters
     public Area location {
@@ -39,6 +41,13 @@ public class LocationStructure {
         traits = new List<StructureTrait>();
         corpses = new List<Corpse>();
         tiles = new List<LocationGridTile>();
+        foodCount = new Dictionary<FOOD, int> {
+            {FOOD.BERRY, 0},
+            {FOOD.MUSHROOM, 0},
+            {FOOD.RABBIT, 0},
+            {FOOD.RAT, 0},
+        };
+        AddListeners();
         //if (structureType == STRUCTURE_TYPE.DUNGEON || structureType == STRUCTURE_TYPE.WAREHOUSE) {
         //    AddPOI(new SupplyPile(this));
         //}
@@ -50,6 +59,13 @@ public class LocationStructure {
     }
     public void DestroyStructure() {
         _location.RemoveStructure(this);
+        RemoveListeners();
+    }
+    private void AddListeners() {
+        Messenger.AddListener(Signals.DAY_STARTED, SpawnFoodOnStartDay);
+    }
+    private void RemoveListeners() {
+        Messenger.RemoveListener(Signals.DAY_STARTED, SpawnFoodOnStartDay);
     }
     #endregion
 
@@ -106,13 +122,15 @@ public class LocationStructure {
     #endregion
 
     #region Points Of Interest
-    public void AddPOI(IPointOfInterest poi, LocationGridTile tileLocation = null) {
+    public bool AddPOI(IPointOfInterest poi, LocationGridTile tileLocation = null) {
         if (!pointsOfInterest.Contains(poi)) {
-            pointsOfInterest.Add(poi);
 #if !WORLD_CREATION_TOOL
-            PlacePOIAtAppropriateTile(poi, tileLocation);
+            if (!PlacePOIAtAppropriateTile(poi, tileLocation)) { return false; }
 #endif
+            pointsOfInterest.Add(poi);
+            return true;
         }
+        return false;
     }
     public void RemovePOI(IPointOfInterest poi) {
         if (pointsOfInterest.Remove(poi)) {
@@ -148,9 +166,10 @@ public class LocationStructure {
         }
         return pointsOfInterest[Random.Range(0, pointsOfInterest.Count)];
     }
-    private void PlacePOIAtAppropriateTile(IPointOfInterest poi, LocationGridTile tile) {
+    private bool PlacePOIAtAppropriateTile(IPointOfInterest poi, LocationGridTile tile) {
         if (tile != null) {
             location.areaMap.PlaceObject(poi, tile);
+            return true;
         } else {
             List<LocationGridTile> tilesToUse;
             if (location.areaType == AREA_TYPE.DEMONIC_INTRUSION) { //player area
@@ -161,11 +180,70 @@ public class LocationStructure {
             if (tilesToUse.Count > 0) {
                 LocationGridTile chosenTile = tilesToUse[Random.Range(0, tilesToUse.Count)];
                 location.areaMap.PlaceObject(poi, chosenTile);
+                return true;
             } else {
                 Debug.LogWarning("There are no tiles at " + structureType.ToString() + " at " + location.name + " for " + poi.ToString());
             }
         }
-       
+        return false;
+    }
+    public void SpawnFoodOnStartDay() {
+        if(structureType == STRUCTURE_TYPE.WILDERNESS) {
+            LocationGridTile[] berryRabbitSpawnPoints = GetSpawnPointsForFood(_location.SPAWN_BERRY_COUNT + _location.SPAWN_RABBIT_COUNT);
+            for (int i = 0; i < berryRabbitSpawnPoints.Length; i++) {
+                if(berryRabbitSpawnPoints[i] != null) {
+                    if (UnityEngine.Random.Range(0, 2) == 0) {
+                        if(foodCount[FOOD.BERRY] < _location.MAX_BERRY) {
+                            AddPOI(new Food(this, FOOD.BERRY), berryRabbitSpawnPoints[i]);
+                        } else if (foodCount[FOOD.RABBIT] < _location.MAX_RABBIT) {
+                            AddPOI(new Food(this, FOOD.RABBIT), berryRabbitSpawnPoints[i]);
+                        }
+                    } else {
+                        if (foodCount[FOOD.RABBIT] < _location.MAX_RABBIT) {
+                            AddPOI(new Food(this, FOOD.RABBIT), berryRabbitSpawnPoints[i]);
+                        } else if (foodCount[FOOD.BERRY] < _location.MAX_BERRY) {
+                            AddPOI(new Food(this, FOOD.BERRY), berryRabbitSpawnPoints[i]);
+                        }
+                    }
+                }
+            }
+        }else if (structureType == STRUCTURE_TYPE.DUNGEON) {
+            LocationGridTile[] mushroomRatSpawnPoints = GetSpawnPointsForFood(_location.SPAWN_MUSHROOM_COUNT + _location.SPAWN_RAT_COUNT);
+            for (int i = 0; i < mushroomRatSpawnPoints.Length; i++) {
+                if (mushroomRatSpawnPoints[i] != null) {
+                    if (UnityEngine.Random.Range(0, 2) == 0) {
+                        if (foodCount[FOOD.MUSHROOM] < _location.MAX_MUSHROOM) {
+                            AddPOI(new Food(this, FOOD.MUSHROOM), mushroomRatSpawnPoints[i]);
+                        } else if (foodCount[FOOD.RAT] < _location.MAX_RAT) {
+                            AddPOI(new Food(this, FOOD.RAT), mushroomRatSpawnPoints[i]);
+                        }
+                    } else {
+                        if (foodCount[FOOD.RAT] < _location.MAX_RAT) {
+                            AddPOI(new Food(this, FOOD.RAT), mushroomRatSpawnPoints[i]);
+                        } else if (foodCount[FOOD.MUSHROOM] < _location.MAX_MUSHROOM) {
+                            AddPOI(new Food(this, FOOD.MUSHROOM), mushroomRatSpawnPoints[i]);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    private LocationGridTile[] GetSpawnPointsForFood(int spawnCount) {
+        LocationGridTile[] spawnPoints = new LocationGridTile[spawnCount];
+        List<LocationGridTile> unoccupied = unoccupiedTiles;
+        for (int i = 0; i < spawnPoints.Length; i++) {
+            if(unoccupied.Count > 0) {
+                int index = UnityEngine.Random.Range(0, unoccupied.Count);
+                spawnPoints[i] = unoccupied[index];
+                unoccupied.RemoveAt(index);
+            } else {
+                break;
+            }
+        }
+        return spawnPoints;
+    }
+    public void AdjustFoodCount(FOOD food, int amount) {
+        foodCount[food] += amount;
     }
     #endregion
 
