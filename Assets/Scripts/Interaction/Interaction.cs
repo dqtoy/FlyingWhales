@@ -41,6 +41,7 @@ public class Interaction {
     public int dayStarted { get; protected set; }
     public int dayCompleted { get; protected set; }
     public bool isPrevented { get; protected set; }
+    public bool cannotBeClearedOut { get; protected set; }
     public List<InteractionCharacterEffect> actualEffectsOnActor { get; protected set; } //what actually happened to the actor
     public List<InteractionCharacterEffect> actualEffectsOnTarget { get; protected set; } //what actually happened to the target
 
@@ -231,6 +232,7 @@ public class Interaction {
     }
     public virtual Interaction CreateConnectedEvent(INTERACTION_TYPE connectedType, Area interactable) {
         Interaction interaction = InteractionManager.Instance.CreateNewInteraction(connectedType, interactable);
+        interaction.SetCannotBeClearedOut(true);
         _characterInvolved.SetForcedInteraction(interaction);
         interaction.SetCharacterInvolved(_characterInvolved, false);
         interaction.SetInteractionIntel(this.intel);
@@ -468,6 +470,9 @@ public class Interaction {
     }
     public void SetIsPrevented(bool state) {
         isPrevented = state;
+    }
+    public void SetCannotBeClearedOut(bool state) {
+        cannotBeClearedOut = state;
     }
     #endregion
 

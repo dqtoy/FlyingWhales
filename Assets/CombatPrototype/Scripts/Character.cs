@@ -508,7 +508,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 
         GetRandomCharacterColor();
 #if !WORLD_CREATION_TOOL
-        SetDailyInteractionGenerationTick();
+        SetDailyInteractionGenerationTick(UnityEngine.Random.Range(1, 13));
 #endif
         SubscribeToSignals();
     }
@@ -2513,9 +2513,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if(startDay > 96) {
             startDay -= 96;
         }
-        if (startDay < 25) {
-            startDay = 25;
-        }
+        //if (startDay < 25) {
+        //    startDay = 25;
+        //}
         _currentInteractionTick = UnityEngine.Random.Range(startDay, startDay + 12);
     }
     public void AdjustDailyInteractionGenerationTick() {
@@ -2541,7 +2541,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             return; //if this character is not in own party, is a defender or is travelling or cannot be disturbed, do not generate interaction
         }
         string interactionLog = GameManager.Instance.TodayLogString() + "Generating daily interaction for " + this.name;
-        if (_forcedInteraction != null && GetTraitOr("Starving", "Exhausted") == null) {
+        if (_forcedInteraction != null && GameManager.GetCurrentTimeInWordsOfTick() != TIME_IN_WORDS.AFTER_MIDNIGHT && GetTraitOr("Starving", "Exhausted") == null) {
+            //Only do override actions on morning, afternoon, or night
             //the current day is valid for the override's next action component
             //the character is not Starving and not Exhausted
             interactionLog += "\nUsing forced interaction: " + _forcedInteraction.type.ToString();
@@ -2559,7 +2560,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         SetDailyInteractionGenerationTick(GameManager.Instance.continuousDays + 1);
     }
     private void DayStartedRemoveOverrideInteraction() {
-        SetForcedInteraction(null);
+        if(_forcedInteraction != null && !_forcedInteraction.cannotBeClearedOut) {
+            SetForcedInteraction(null);
+        }
     }
     private void CharacterPersonalActions() {
         //Checker of Disabler trait is on GenerateDailyInteraction()
