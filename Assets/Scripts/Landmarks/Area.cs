@@ -71,6 +71,17 @@ public class Area {
     private List<SpriteRenderer> outline;
     private int _offenseTaskWeightMultiplier;
 
+    //Food
+    public int MAX_BERRY = 20;
+    public int MAX_MUSHROOM = 21;
+    public int MAX_RABBIT = 15;
+    public int MAX_RAT = 28;
+
+    public int SPAWN_BERRY_COUNT = 4;
+    public int SPAWN_MUSHROOM_COUNT = 3;
+    public int SPAWN_RABBIT_COUNT = 3;
+    public int SPAWN_RAT_COUNT = 4;
+
     #region getters
     public RACE raceType {
         get { return _raceType; }
@@ -1735,6 +1746,20 @@ public class Area {
             for (int i = 0; i < structures[STRUCTURE_TYPE.WAREHOUSE].Count; i++) {
                 LocationStructure structure = structures[STRUCTURE_TYPE.WAREHOUSE][i];
                 structure.AddPOI(new SupplyPile(structure));
+            }
+        }
+    }
+    public void SpawnFoodNow() {
+        if (structures.ContainsKey(STRUCTURE_TYPE.WILDERNESS)) {
+            for (int i = 0; i < structures[STRUCTURE_TYPE.WILDERNESS].Count; i++) {
+                LocationStructure structure = structures[STRUCTURE_TYPE.WILDERNESS][i];
+                structure.SpawnFoodOnStartDay();
+            }
+        }
+        if (structures.ContainsKey(STRUCTURE_TYPE.DUNGEON)) {
+            for (int i = 0; i < structures[STRUCTURE_TYPE.DUNGEON].Count; i++) {
+                LocationStructure structure = structures[STRUCTURE_TYPE.DUNGEON][i];
+                structure.SpawnFoodOnStartDay();
             }
         }
     }

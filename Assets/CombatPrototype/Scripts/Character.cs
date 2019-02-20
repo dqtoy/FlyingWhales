@@ -2274,9 +2274,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         if(trait.name == "Abducted" || trait.name == "Restrained") {
             AdjustDoNotGetTired(1);
-        }else if (trait.name == "Packaged" || trait.name == "Hibernating") {
+        } else if (trait.name == "Packaged" || trait.name == "Hibernating") {
             AdjustDoNotGetTired(1);
             AdjustDoNotGetHungry(1);
+        } else if (trait.name == "Eating") {
+            AdjustDoNotGetHungry(1);
+        } else if (trait.name == "Resting") {
+            AdjustDoNotGetTired(1);
         }
         for (int i = 0; i < trait.effects.Count; i++) {
             TraitEffect traitEffect = trait.effects[i];
@@ -2310,6 +2314,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         } else if (trait.name == "Packaged" || trait.name == "Hibernating") {
             AdjustDoNotGetTired(-1);
             AdjustDoNotGetHungry(-1);
+        } else if (trait.name == "Eating") {
+            AdjustDoNotGetHungry(-1);
+        } else if (trait.name == "Resting") {
+            AdjustDoNotGetTired(-1);
         }
         for (int i = 0; i < trait.effects.Count; i++) {
             TraitEffect traitEffect = trait.effects[i];

@@ -1219,15 +1219,23 @@ public class InteractionManager : MonoBehaviour {
                 return character.characterClass.className == "Necromancer" && character.specificLocation.owner == null
                     && character.specificLocation.possibleOccupants.Contains(character.race) && !FactionManager.Instance.GetFactionBasedOnName("Ziranna").isActive;
             case INTERACTION_TYPE.EAT_DEFENSELESS:
-                //if (character.race == RACE.GOBLIN || character.race == RACE.SPIDER || character.race == RACE.WOLF) {
-                    for (int i = 0; i < character.specificLocation.charactersAtLocation.Count; i++) {
-                        Character characterAtLocation = character.specificLocation.charactersAtLocation[i];
-                        if (characterAtLocation.id != character.id && !characterAtLocation.currentParty.icon.isTravelling && characterAtLocation.IsInOwnParty() 
-                        && characterAtLocation.currentStructure.isInside && characterAtLocation.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_EFFECT.NEUTRAL, TRAIT_TYPE.DISABLER)) {
+                for (int i = 0; i < character.specificLocation.charactersAtLocation.Count; i++) {
+                    Character characterAtLocation = character.specificLocation.charactersAtLocation[i];
+                    if (characterAtLocation.id != character.id && !characterAtLocation.currentParty.icon.isTravelling && characterAtLocation.IsInOwnParty() 
+                    && characterAtLocation.currentStructure.isInside && characterAtLocation.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_EFFECT.NEUTRAL, TRAIT_TYPE.DISABLER)) {
+                        if (characterAtLocation.faction == FactionManager.Instance.neutralFaction) {
                             return true;
+                        } else {
+                            if (characterAtLocation.faction != character.faction) {
+                                return true;
+                            } else {
+                                if (character.HasRelationshipOfTypeWith(characterAtLocation, RELATIONSHIP_TRAIT.ENEMY)) {
+                                    return true;
+                                }
+                            }
                         }
                     }
-                //}
+                }
                 return false;
             case INTERACTION_TYPE.TORTURE_ACTION:
                 //if (character.race == RACE.GOBLIN || character.race == RACE.HUMANS || character.race == RACE.SKELETON) {

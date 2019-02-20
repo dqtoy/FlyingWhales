@@ -502,6 +502,7 @@ public class LandmarkManager : MonoBehaviour {
         newArea.SetAreaMap(areaMap);
         areaMapGO.SetActive(false);
         newArea.PlaceSupplyPiles();
+        newArea.SpawnFoodNow();
 #endif
         Messenger.Broadcast(Signals.AREA_CREATED, newArea);
         allAreas.Add(newArea);
