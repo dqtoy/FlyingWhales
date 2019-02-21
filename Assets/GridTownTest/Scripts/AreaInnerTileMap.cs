@@ -39,6 +39,10 @@ public class AreaInnerTileMap : MonoBehaviour {
     [SerializeField] private GameObject travelLinePrefab;
     [SerializeField] private Transform travelLineParent;
 
+    public int x;
+    public int y;
+    public int radius;
+
     public Area area { get; private set; }
     public LocationGridTile[,] map { get; private set; }
     public List<LocationGridTile> allTiles { get; private set; }
@@ -494,6 +498,29 @@ public class AreaInnerTileMap : MonoBehaviour {
         }
         UIManager.Instance.ShowSmallInfo(summary);
     }
+    public List<LocationGridTile> GetTilesInRadius(LocationGridTile centerTile, int radius, bool includeCenterTile = false) {
+        List<LocationGridTile> tiles = new List<LocationGridTile>();
+        int mapSizeX = map.GetUpperBound(0);
+        int mapSizeY = map.GetUpperBound(1);
+        int x = centerTile.localPlace.x;
+        int y = centerTile.localPlace.y;
+        if (includeCenterTile) {
+            tiles.Add(centerTile);
+        }
+        for (int dx = x - radius; dx <= x + radius; dx++) {
+            for (int dy = y - radius; dy <= y + radius; dy++) {
+                if(dx >= 0 && dx <= mapSizeX && dy >= 0 && dy <= mapSizeY) {
+                    if(dx == x && dy == y) {
+                        continue;
+                    }
+                    LocationGridTile result = map[dx, dy];
+                    tiles.Add(result);
+                }
+            }
+        }
+        return tiles;
+    }
+
     #endregion
 
     #region Travel Lines
@@ -558,4 +585,12 @@ public class AreaInnerTileMap : MonoBehaviour {
         ShowEventPopupAt(startTile, null);
     }
     #endregion
+
+    [ContextMenu("Get Radius")]
+    public void GetRadius() {
+        List<LocationGridTile> tiles = GetTilesInRadius(map[x, y], radius);
+        for (int i = 0; i < tiles.Count; i++) {
+            Debug.Log(tiles[i].localPlace.x + "," + tiles[i].localPlace.y);
+        }
+    }
 }

@@ -272,10 +272,10 @@ public class ConsoleMenu : UIMenu {
                     Debug.LogWarning("There is an alive character with a null faction! " + currCharacter.name);
                     UIManager.Instance.Pause();
                 }
-                if (currCharacter.homeStructure == null) {
-                    Debug.LogWarning("There is an alive character with a null home structure! " + currCharacter.name);
-                    UIManager.Instance.Pause();
-                }
+                //if (currCharacter.homeStructure == null) {
+                //    Debug.LogWarning("There is an alive character with a null home structure! " + currCharacter.name);
+                //    UIManager.Instance.Pause();
+                //}
                 if (currCharacter.currentStructure == null) {
                     Debug.LogWarning("There is an alive character with a null current structure! " + currCharacter.name);
                     //UIManager.Instance.Pause();

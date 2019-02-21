@@ -44,7 +44,7 @@ public class EventPopup : PooledObject {
     }
 
     private void UpdatePosition() {
-        Vector3 worldPos = location.parentMap.CellToWorld(location.localPlace);
+        Vector3 worldPos = location.parentTileMap.CellToWorld(location.localPlace);
         (this.transform as RectTransform).OverlayPosition(worldPos, canvas.worldCamera);
     }
 

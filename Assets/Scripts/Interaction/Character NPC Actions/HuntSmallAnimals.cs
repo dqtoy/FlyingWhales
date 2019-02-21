@@ -2,36 +2,36 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ForageAction : Interaction {
+public class HuntSmallAnimals : Interaction {
     private const string Start = "Start";
-    private const string Forage_Success = "Forage Success";
-    private const string Forage_Mild_Success = "Forage Mild Success";
-    private const string Forage_Fail = "Forage Fail";
+    private const string Hunt_Success = "Hunt Success";
+    private const string Hunt_Mild_Success = "Hunt Mild Success";
+    private const string Hunt_Fail = "Hunt Fail";
 
     private List<Food> _nearbyFood;
 
-    public ForageAction(Area interactable): base(interactable, INTERACTION_TYPE.FORAGE_ACTION, 0) {
-        _name = "Forage Action";
+    public HuntSmallAnimals(Area interactable): base(interactable, INTERACTION_TYPE.HUNT_SMALL_ANIMALS, 0) {
+        _name = "Hunt Small Animals";
     }
 
     #region Override
     public override void CreateStates() {
         InteractionState startState = new InteractionState(Start, this);
-        InteractionState forageSuccess = new InteractionState(Forage_Success, this);
-        InteractionState forageMildSuccess = new InteractionState(Forage_Mild_Success, this);
-        InteractionState forageFail = new InteractionState(Forage_Fail, this);
+        InteractionState huntSuccess = new InteractionState(Hunt_Success, this);
+        InteractionState huntMildSuccess = new InteractionState(Hunt_Mild_Success, this);
+        InteractionState huntFail = new InteractionState(Hunt_Fail, this);
 
         CreateActionOptions(startState);
 
         startState.SetEffect(() => StartEffect(startState), false);
-        forageSuccess.SetEffect(() => ForageSuccessEffect(forageSuccess));
-        forageMildSuccess.SetEffect(() => ForageMildSuccessEffect(forageMildSuccess));
-        forageFail.SetEffect(() => ForageFailEffect(forageFail));
+        huntSuccess.SetEffect(() => HuntSuccessEffect(huntSuccess));
+        huntMildSuccess.SetEffect(() => HuntMildSuccessEffect(huntMildSuccess));
+        huntFail.SetEffect(() => HuntFailEffect(huntFail));
 
         _states.Add(startState.name, startState);
-        _states.Add(forageSuccess.name, forageSuccess);
-        _states.Add(forageMildSuccess.name, forageMildSuccess);
-        _states.Add(forageFail.name, forageFail);
+        _states.Add(huntSuccess.name, huntSuccess);
+        _states.Add(huntMildSuccess.name, huntMildSuccess);
+        _states.Add(huntFail.name, huntFail);
 
         //SetCurrentState(startState);
     }
@@ -60,19 +60,19 @@ public class ForageAction : Interaction {
         List<LocationGridTile> tilesInRadius = _characterInvolved.specificLocation.areaMap.GetTilesInRadius(_characterInvolved.gridTileLocation, 3);
         _nearbyFood = new List<Food>();
         for (int i = 0; i < tilesInRadius.Count; i++) {
-            if (tilesInRadius[i].objHere != null && tilesInRadius[i].objHere.poiType == POINT_OF_INTEREST_TYPE.FOOD) {
+            if(tilesInRadius[i].objHere != null && tilesInRadius[i].objHere.poiType == POINT_OF_INTEREST_TYPE.FOOD) {
                 Food food = tilesInRadius[i].objHere as Food;
-                if (food.foodType == FOOD.BERRY || food.foodType == FOOD.MUSHROOM) {
+                if(food.foodType == FOOD.RABBIT || food.foodType == FOOD.RAT) {
                     _nearbyFood.Add(food);
                 }
             }
         }
-        if (_nearbyFood.Count >= 2) {
-            SetCurrentState(_states[Forage_Success]);
+        if(_nearbyFood.Count >= 2) {
+            SetCurrentState(_states[Hunt_Success]);
         } else if (_nearbyFood.Count == 1) {
-            SetCurrentState(_states[Forage_Mild_Success]);
+            SetCurrentState(_states[Hunt_Mild_Success]);
         } else {
-            SetCurrentState(_states[Forage_Fail]);
+            SetCurrentState(_states[Hunt_Fail]);
         }
 
     }
@@ -84,7 +84,7 @@ public class ForageAction : Interaction {
         //TODO: Explore area and randomization
         _characterInvolved.MoveToRandomStructureInArea(STRUCTURE_TYPE.WILDERNESS);
     }
-    private void ForageSuccessEffect(InteractionState state) {
+    private void HuntSuccessEffect(InteractionState state) {
         _characterInvolved.ResetFullnessMeter();
         int index1 = UnityEngine.Random.Range(0, _nearbyFood.Count);
         _characterInvolved.currentStructure.RemovePOI(_nearbyFood[index1]);
@@ -93,11 +93,11 @@ public class ForageAction : Interaction {
         int index2 = UnityEngine.Random.Range(0, _nearbyFood.Count);
         _characterInvolved.currentStructure.RemovePOI(_nearbyFood[index2]);
     }
-    private void ForageMildSuccessEffect(InteractionState state) {
+    private void HuntMildSuccessEffect(InteractionState state) {
         _characterInvolved.AdjustFullness(80);
         _characterInvolved.currentStructure.RemovePOI(_nearbyFood[0]);
     }
-    private void ForageFailEffect(InteractionState state) {
+    private void HuntFailEffect(InteractionState state) {
     }
     #endregion
 }

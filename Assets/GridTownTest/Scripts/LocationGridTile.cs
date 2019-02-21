@@ -8,7 +8,7 @@ public class LocationGridTile {
 
     public enum Tile_Type { Empty, Wall, Structure, Gate, Exit }
     public enum Tile_State { Impassable, Empty, Reserved, Occupied }
-    public Tilemap parentMap { get; private set; }
+    public Tilemap parentTileMap { get; private set; }
     public Vector3Int localPlace { get; private set; }
     public Vector3 worldLocation { get; private set; }
     public Vector3 localLocation { get; private set; }
@@ -17,12 +17,13 @@ public class LocationGridTile {
     public Tile_State tileState { get; private set; }
     public LocationStructure structure { get; private set; }
     public Dictionary<TileNeighbourDirection, LocationGridTile> neighbours { get; private set; }
+    //public List<LocationGridTile> neighborList { get; private set; }
     public GameObject tileGO;
 
     public IPointOfInterest objHere { get; private set; }
 
     public LocationGridTile(int x, int y, Tilemap tilemap) {
-        parentMap = tilemap;
+        parentTileMap = tilemap;
         localPlace = new Vector3Int(x, y, 0);
         worldLocation = tilemap.CellToWorld(localPlace);
         localLocation = tilemap.CellToLocal(localPlace);
@@ -32,16 +33,28 @@ public class LocationGridTile {
 
     public void FindNeighbours(LocationGridTile[,] map) {
         neighbours = new Dictionary<TileNeighbourDirection, LocationGridTile>();
+        //neighborList = new List<LocationGridTile>();
+        int mapUpperBoundX = map.GetUpperBound(0);
+        int mapUpperBoundY = map.GetUpperBound(1);
         Point thisPoint = new Point(localPlace.x, localPlace.y);
         foreach (KeyValuePair<TileNeighbourDirection, Point> kvp in possibleExits) {
             TileNeighbourDirection currDir = kvp.Key;
             Point exit = kvp.Value;
             Point result = exit.Sum(thisPoint);
-            if (Utilities.IsInRange(result.X, 0, map.GetUpperBound(0) + 1) &&
-                Utilities.IsInRange(result.Y, 0, map.GetUpperBound(1) + 1)) {
+            if (Utilities.IsInRange(result.X, 0, mapUpperBoundX + 1) &&
+                Utilities.IsInRange(result.Y, 0, mapUpperBoundY + 1)) {
                 neighbours.Add(currDir, map[result.X, result.Y]);
             }
         }
+
+        //for (int i = 0; i < LandmarkManager.mapNeighborPoints.Count; i++) {
+        //    Point pointCalculation = LandmarkManager.mapNeighborPoints[i];
+        //    Point result = thisPoint.Sum(pointCalculation);
+        //    if (Utilities.IsInRange(result.X, 0, mapUpperBoundX + 1) &&
+        //        Utilities.IsInRange(result.Y, 0, mapUpperBoundY + 1)) {
+        //        neighborList.Add(map[result.X, result.Y]);
+        //    }
+        //}
     }
 
     public Dictionary<TileNeighbourDirection, Point> possibleExits {

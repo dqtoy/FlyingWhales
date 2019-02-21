@@ -266,7 +266,7 @@ public class Party {
     }
     public void GoHome(Action doneAction = null, Action actionOnStartOfMovement = null) {
         if (_isDead) { return; }
-        GoToLocation(owner.homeArea, PATHFINDING_MODE.PASSABLE, mainCharacter.homeStructure, doneAction, actionOnStartOfMovement);
+        GoToLocation(owner.homeArea, PATHFINDING_MODE.PASSABLE, null, doneAction, actionOnStartOfMovement);
     }
     public void GoHomeAndDisband(Action actionOnStartOfMovement = null, Interaction cause = null) {
         if(_isDead) { return; }

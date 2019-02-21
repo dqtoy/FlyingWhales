@@ -314,12 +314,6 @@ public class InteractionManager : MonoBehaviour {
                 actorEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TIREDNESS_RECOVERY } },
                 targetCharacterEffect = null,
             } },
-            { INTERACTION_TYPE.FORAGE_ACTION, new InteractionAttributes(){
-                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.FULLNESS_RECOVERY },
-                alignment = INTERACTION_ALIGNMENT.NEUTRAL,
-                actorEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.FULLNESS_RECOVERY} },
-                targetCharacterEffect = null,
-            } },
             { INTERACTION_TYPE.HANG_OUT_ACTION, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.SOCIAL },
                 alignment = INTERACTION_ALIGNMENT.NEUTRAL,
@@ -375,6 +369,18 @@ public class InteractionManager : MonoBehaviour {
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.SOCIAL },
                 alignment = INTERACTION_ALIGNMENT.NEUTRAL,
                 actorEffect = null,
+                targetCharacterEffect = null,
+            } },
+            { INTERACTION_TYPE.HUNT_SMALL_ANIMALS, new InteractionAttributes(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.FULLNESS_RECOVERY },
+                alignment = INTERACTION_ALIGNMENT.NEUTRAL,
+                actorEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.FULLNESS_RECOVERY} },
+                targetCharacterEffect = null,
+            } },
+            { INTERACTION_TYPE.FORAGE_ACTION, new InteractionAttributes(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.FULLNESS_RECOVERY },
+                alignment = INTERACTION_ALIGNMENT.NEUTRAL,
+                actorEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.FULLNESS_RECOVERY} },
                 targetCharacterEffect = null,
             } },
         };
@@ -883,6 +889,9 @@ public class InteractionManager : MonoBehaviour {
                 break;
             case INTERACTION_TYPE.GIFT_BEAST:
                 createdInteraction = new GiftBeast(interactable);
+                break;
+            case INTERACTION_TYPE.HUNT_SMALL_ANIMALS:
+                createdInteraction = new HuntSmallAnimals(interactable);
                 break;
         }
         return createdInteraction;
@@ -1462,11 +1471,11 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.REST_AT_HOME_ACTION:
             case INTERACTION_TYPE.EAT_HOME_MEAL_ACTION:
                 //**Trigger Criteria 1**: Character is in his Home location
-                return character.specificLocation.id == character.homeArea.id;
+                return character.specificLocation.id == character.homeArea.id && character.homeStructure != null;
             case INTERACTION_TYPE.POISON_HOUSE_FOOD:
             case INTERACTION_TYPE.BOOBY_TRAP_HOUSE:
                 //**Trigger Criteria 1**: target's home Dwelling is in the current location
-                return character.specificLocation.id == targetCharacter.homeArea.id;
+                return character.specificLocation.id == targetCharacter.homeArea.id && targetCharacter.homeStructure != null;
             case INTERACTION_TYPE.FEED_PRISONER_ACTION:
                 if (character.isAtHomeArea) {
                     List<LocationStructure> structures = character.specificLocation.GetStructuresAtLocation(true);
@@ -1488,12 +1497,10 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.CAMP_OUT_ACTION:
                 //**Trigger Criteria 1**: character is not in his Home location
                 return character.specificLocation.id != character.homeArea.id;
-            case INTERACTION_TYPE.FORAGE_ACTION:
-                return !character.isAtHomeArea;
             case INTERACTION_TYPE.MAKE_LOVE_ACTION:
                 //**Trigger Criteria 1**: the target must be in the character's current location and must also be in the target's home Dwelling
                 if (targetCharacter.specificLocation.id != character.specificLocation.id 
-                    || targetCharacter.currentStructure != targetCharacter.homeStructure) {
+                    || targetCharacter.homeStructure == null || targetCharacter.currentStructure != targetCharacter.homeStructure) {
                     return false;
                 }
                 //**Trigger Criteria 2**: the actor must not be https://trello.com/c/GzhGi1XZ/1135-starving nor https://trello.com/c/I3gnHfsZ/1185-exhausted
@@ -1579,6 +1586,10 @@ public class InteractionManager : MonoBehaviour {
                     }
                 }
                 return false;
+            case INTERACTION_TYPE.HUNT_SMALL_ANIMALS:
+                return (!character.isAtHomeArea || character.homeStructure == null) && character.GetTrait("Carnivore") != null;
+            case INTERACTION_TYPE.FORAGE_ACTION:
+                return (!character.isAtHomeArea || character.homeStructure == null) && character.GetTrait("Herbivore") != null;
             default:
                 return true;
         }
