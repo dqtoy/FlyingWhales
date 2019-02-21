@@ -76,11 +76,11 @@ public class LocationStructure {
     #endregion
 
     #region Characters
-    public void AddCharacterAtLocation(Character character) {
+    public void AddCharacterAtLocation(Character character, LocationGridTile tile = null) {
         if (!charactersHere.Contains(character)) {
             charactersHere.Add(character);
             character.SetCurrentStructureLocation(this);
-            AddPOI(character);
+            AddPOI(character, tile);
             OnCharacterAddedToLocation(character);
         }
     }

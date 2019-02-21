@@ -109,7 +109,7 @@ public class CharmActionFaction : Interaction {
 
     #region Reward Effect
     private void StartEffect(InteractionState state) {
-        _characterInvolved.MoveToAnotherStructure(_targetStructure);
+        _characterInvolved.MoveToAnotherStructure(_targetStructure, _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetStructure));
     }
     private void NormalCharmSuccessRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {

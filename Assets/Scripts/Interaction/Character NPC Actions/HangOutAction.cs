@@ -98,7 +98,7 @@ public class HangOutAction : Interaction {
     #region Reward Effect
     private void StartRewardEffect(InteractionState state) {
         //**Structure**: Move the character to the target's Structure
-        _characterInvolved.MoveToAnotherStructure(_targetCharacter.currentStructure);
+        _characterInvolved.MoveToAnotherStructure(_targetCharacter.currentStructure, _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetCharacter.currentStructure));
     }
     private void BothBecomesCheeryRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {

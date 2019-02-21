@@ -81,7 +81,7 @@ public class ConsumePrisonerAction : Interaction {
 
     #region State Effects
     private void StartEffect(InteractionState state) {
-        _characterInvolved.MoveToAnotherStructure(_targetCharacter.currentStructure);
+        _characterInvolved.MoveToAnotherStructure(_targetCharacter.currentStructure, _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetCharacter.currentStructure));
     }
     private void CharacterConsumedEffect(InteractionState state) {
         int supplyObtained = UnityEngine.Random.Range(35, 76);

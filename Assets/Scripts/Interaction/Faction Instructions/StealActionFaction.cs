@@ -102,7 +102,7 @@ public class StealActionFaction : Interaction {
 
     #region Reward Effect
     private void StartEffect(InteractionState state) {
-        _characterInvolved.MoveToAnotherStructure(_targetStructure);
+        _characterInvolved.MoveToAnotherStructure(_targetStructure, _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetStructure));
     }
     private void TheftSuccessRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {

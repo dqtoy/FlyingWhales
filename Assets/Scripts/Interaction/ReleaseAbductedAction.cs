@@ -110,7 +110,7 @@ public class ReleaseAbductedAction : Interaction {
     #region Reward Effect
     private void StartEffect(InteractionState state) {
         _targetStructure = _characterInvolved.GetCharacterRelationshipData(targetCharacter).knownStructure;
-        _characterInvolved.MoveToAnotherStructure(_targetStructure);
+        _characterInvolved.MoveToAnotherStructure(_targetStructure, targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetStructure));
     }
     private void NormalReleaseSuccessRewardEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);

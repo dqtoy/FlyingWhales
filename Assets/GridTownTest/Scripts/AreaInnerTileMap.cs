@@ -13,6 +13,7 @@ public class AreaInnerTileMap : MonoBehaviour {
 
     [SerializeField] private Grid grid;
     [SerializeField] private Canvas canvas;
+    [SerializeField] private Canvas worldUICanvas;
     [SerializeField] private Transform tilemapsParent;
 
     [Header("Tile Maps")]
@@ -28,6 +29,10 @@ public class AreaInnerTileMap : MonoBehaviour {
     [SerializeField] private TileBase structureTile;
     [SerializeField] private TileBase characterTile;
     [SerializeField] private TileBase floorTile;
+
+    [Header("Events")]
+    [SerializeField] private GameObject eventPopupPrefab;
+    [SerializeField] private RectTransform eventPopupParent;
 
     [Header("Other")]
     [SerializeField] private RectTransform scrollviewContent;
@@ -83,22 +88,23 @@ public class AreaInnerTileMap : MonoBehaviour {
         },
     };
 
-    private Vector3Int hoverCoordinates;
-
+    #region Map Generation
     public void Initialize(Area area) {
         this.area = area;
         this.name = area.name + "'s Inner Map";
         canvas.worldCamera = CameraMove.Instance.areaMapsCamera;
+        worldUICanvas.worldCamera = CameraMove.Instance.areaMapsCamera;
         GenerateInnerStructures();
     }
-
     public void GenerateInnerStructures() {
         groundTilemap.ClearAllTiles();
         charactersTilemap.ClearAllTiles();
         strcutureTilemap.ClearAllTiles();
         wallTilemap.ClearAllTiles();
         scrollviewContent.sizeDelta = new Vector2(cellSize * width, cellSize * height);
+        eventPopupParent.sizeDelta = new Vector2(cellSize * width, cellSize * height);
         scrollviewContent.anchoredPosition = Vector2.zero;
+        eventPopupParent.anchoredPosition = Vector2.zero;
         GenerateGrid();
         SplitMap();
         ConstructWalls();
@@ -107,7 +113,6 @@ public class AreaInnerTileMap : MonoBehaviour {
         AssignOuterAreas();
         //DetermineExitTile();
     }
-
     public void GenerateInnerStructures(Dictionary<STRUCTURE_TYPE, List<LocationStructure>> inside, Dictionary<STRUCTURE_TYPE, List<LocationStructure>> outside) {
         GenerateGrid();
         SplitMap();
@@ -116,7 +121,6 @@ public class AreaInnerTileMap : MonoBehaviour {
         PlaceStructures(outside, outsideTiles);
         AssignOuterAreas();
     }
-
     private void GenerateGrid() {
         map = new LocationGridTile[width, height];
         allTiles = new List<LocationGridTile>();
@@ -309,7 +313,7 @@ public class AreaInnerTileMap : MonoBehaviour {
                 && t.localPlace.y + currPoint.Y < topMostCoordinate
                 && Utilities.ContainsRange(elligibleTiles, GetTiles(currPoint, t))).ToList();
             }
-            
+
             if (choices.Count <= 0) {
                 throw new System.Exception("No More Tiles");
             }
@@ -374,12 +378,6 @@ public class AreaInnerTileMap : MonoBehaviour {
             }
         }
     }
-    //private void DetermineExitTile() {
-    //    List<LocationGridTile> choices = new List<LocationGridTile>(outsideTiles.Where(x => x.structure == null || x.structure.structureType == STRUCTURE_TYPE.WILDERNESS));
-    //    exitTile = choices[Random.Range(0, choices.Count)];
-    //    exitTile.SetTileType(LocationGridTile.Tile_Type.Exit);
-    //}
-
     private void AssignOuterAreas() {
         if (area.HasStructure(STRUCTURE_TYPE.WORK_AREA)) {
             for (int i = 0; i < insideTiles.Count; i++) {
@@ -402,23 +400,13 @@ public class AreaInnerTileMap : MonoBehaviour {
             Debug.LogWarning(area.name + " doesn't have a structure for wilderness");
         }
     }
+    #endregion
 
+    #region Movement & Mouse Interaction
     private float xDiff = 30.5f;
     private float yDiff = 22f;
     private float originX = -8f;
     private float originY = -4.5f;
-    public void PlaceObject(IPointOfInterest obj, LocationGridTile tile) {
-        //if (tile.tileState == LocationGridTile.Tile_State.Occupied) {
-        //    Debug.LogWarning("Something is trying to put a " + obj.ToString() + " at " + tile.ToString() + " at " + area.name);
-        //}
-        charactersTilemap.SetTile(tile.localPlace, characterTile);
-        tile.SetObjectHere(obj);
-    }
-    public void RemoveObject(LocationGridTile tile) {
-        tile.RemoveObjectHere();
-        charactersTilemap.SetTile(tile.localPlace, null);
-    }
-
     public void OnScroll(Vector2 value) {
         //Debug.Log(value);
         Vector2 newMapPos;
@@ -426,6 +414,7 @@ public class AreaInnerTileMap : MonoBehaviour {
         float newY = originY + ((yDiff * value.y) * -1f);
         newMapPos = new Vector2(newX, newY);
         tilemapsParent.transform.localPosition = newMapPos;
+        eventPopupParent.transform.position = scrollviewContent.transform.position;
         //if (value.x ) {
 
         //}
@@ -447,7 +436,6 @@ public class AreaInnerTileMap : MonoBehaviour {
             && coordinate.y >= 0 && coordinate.y < height) {
             //hovered on new tile
             //groundTilemap.SetColor(hoverCoordinates, Color.white);
-            hoverCoordinates = coordinate;
             LocationGridTile hoveredTile = map[coordinate.x, coordinate.y];
             //groundTilemap.SetColor(coordinate, Color.black);
             if (UIManager.Instance != null) {
@@ -459,15 +447,6 @@ public class AreaInnerTileMap : MonoBehaviour {
             }
         }
     }
-
-    public void Close() {
-        //this.gameObject.SetActive(false);
-        if (UIManager.Instance.areaInfoUI.isShowing) {
-            UIManager.Instance.areaInfoUI.ToggleMapMenu(false);
-        }
-        isHovering = false;
-    }
-
     public void OnPointerEnter(BaseEventData baseData) {
         isHovering = true;
     }
@@ -477,7 +456,30 @@ public class AreaInnerTileMap : MonoBehaviour {
             UIManager.Instance.HideSmallInfo();
         }
     }
+    #endregion
 
+    #region Points of Interest
+    public void PlaceObject(IPointOfInterest obj, LocationGridTile tile) {
+        //if (tile.tileState == LocationGridTile.Tile_State.Occupied) {
+        //    Debug.LogWarning("Something is trying to put a " + obj.ToString() + " at " + tile.ToString() + " at " + area.name);
+        //}
+        charactersTilemap.SetTile(tile.localPlace, characterTile);
+        tile.SetObjectHere(obj);
+    }
+    public void RemoveObject(LocationGridTile tile) {
+        tile.RemoveObjectHere();
+        charactersTilemap.SetTile(tile.localPlace, null);
+    }
+    #endregion
+
+    #region Other
+    public void Close() {
+        //this.gameObject.SetActive(false);
+        if (UIManager.Instance.areaInfoUI.isShowing) {
+            UIManager.Instance.areaInfoUI.ToggleMapMenu(false);
+        }
+        isHovering = false;
+    }
     private void ShowTileData(LocationGridTile tile) {
         string summary = tile.localPlace.ToString();
         summary += "\nTile Type: " + tile.tileType.ToString();
@@ -488,6 +490,7 @@ public class AreaInnerTileMap : MonoBehaviour {
         }
         UIManager.Instance.ShowSmallInfo(summary);
     }
+    #endregion
 
     #region Travel Lines
     public void DrawLine(LocationGridTile startTile, LocationGridTile destination, Character character) {
@@ -522,6 +525,29 @@ public class AreaInnerTileMap : MonoBehaviour {
     public void MoveTravelLineContent() {
         Debug.Log(grid.CellToWorld(new Vector3Int(0, 0, 0)).ToString());
         //(travelLineParent.transform as RectTransform).anchoredPosition = canvas.worldCamera.WorldToViewportPoint();
+    }
+    #endregion
+
+    #region Events
+    public void ShowEventPopupAt(LocationGridTile location, Log log) {
+        Vector3 worldPos = groundTilemap.CellToWorld(location.localPlace);
+        //Vector3 screenPos = worldUICanvas.worldCamera.WorldToScreenPoint(worldPos);
+        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(eventPopupPrefab.name, Vector3.zero, Quaternion.identity, eventPopupParent);
+        go.transform.localScale = Vector3.one;
+        (go.transform as RectTransform).OverlayPosition(worldPos, worldUICanvas.worldCamera);
+        //go.transform.SetParent(eventPopupParent);
+        
+
+        EventPopup popup = go.GetComponent<EventPopup>();
+        popup.Initialize(log, location, worldUICanvas);
+    }
+    [Header("Event Popup testing")]
+    [SerializeField] private int xLocation;
+    [SerializeField] private int yLocation;
+    [ContextMenu("Create Event Popup For testing")]
+    public void CreateEventPopupForTesting() {
+        LocationGridTile startTile = map[xLocation, yLocation];
+        ShowEventPopupAt(startTile, null);
     }
     #endregion
 }

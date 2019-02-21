@@ -97,7 +97,7 @@ public class PoisonHouseFood : Interaction {
 
     #region Reward Effect
     private void StartRewardEffect(InteractionState state) {
-        _characterInvolved.MoveToAnotherStructure(_targetCharacter.homeStructure);
+        _characterInvolved.MoveToAnotherStructure(_targetCharacter.homeStructure, _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetCharacter.homeStructure));
     }
     private void PoisoningCancelledRewardEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));

@@ -44,7 +44,7 @@ public class AcidFlask : SpecialToken {
         targetCharacter.AddTrait("Ugly");
         state.tokenUser.ConsumeToken();
 
-        state.tokenUser.MoveToAnotherStructure(targetCharacter.currentStructure);
+        state.tokenUser.MoveToAnotherStructure(targetCharacter.currentStructure, targetCharacter.GetNearestUnoccupiedTileFromCharacter(targetCharacter.currentStructure));
 
         if (state.tokenUser.id == targetCharacter.id) {
             //Used item on self

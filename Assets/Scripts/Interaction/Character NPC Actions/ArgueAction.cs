@@ -87,7 +87,7 @@ public class ArgueAction : Interaction {
     #region Reward Effect
     private void StartEffect(InteractionState state) {
         _targetStructure = _targetCharacter.currentStructure;
-        _characterInvolved.MoveToAnotherStructure(_targetStructure);
+        _characterInvolved.MoveToAnotherStructure(_targetStructure, _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetStructure));
     }
     private void BothGetsAnnoyedEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
