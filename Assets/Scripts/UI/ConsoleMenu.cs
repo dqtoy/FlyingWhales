@@ -254,7 +254,7 @@ public class ConsoleMenu : UIMenu {
                 Character character = currArea.charactersAtLocation[j];
                 if (character.isDead) {
                     Debug.LogWarning("There is still a dead character at " + currArea.name + " : " + character.name);
-                    UIManager.Instance.Pause();
+                    //UIManager.Instance.Pause();
                 }
             }
             for (int j = 0; j < currArea.possibleSpecialTokenSpawns.Count; j++) {

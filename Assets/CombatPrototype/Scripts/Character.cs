@@ -656,8 +656,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
             if (homeArea != null) {
                 Area home = homeArea;
+                Dwelling homeStructure = this.homeStructure;
                 homeArea.RemoveResident(this);
                 SetHome(home); //keep this data with character to prevent errors
+                SetHomeStructure(homeStructure); //keep this data with character to prevent errors
             }
 
             List<Character> characterRels = new List<Character>(this.relationships.Keys.ToList());
