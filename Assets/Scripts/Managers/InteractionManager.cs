@@ -1462,11 +1462,11 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.REST_AT_HOME_ACTION:
             case INTERACTION_TYPE.EAT_HOME_MEAL_ACTION:
                 //**Trigger Criteria 1**: Character is in his Home location
-                return character.specificLocation.id == character.homeArea.id;
+                return character.specificLocation.id == character.homeArea.id && character.homeStructure != null;
             case INTERACTION_TYPE.POISON_HOUSE_FOOD:
             case INTERACTION_TYPE.BOOBY_TRAP_HOUSE:
                 //**Trigger Criteria 1**: target's home Dwelling is in the current location
-                return character.specificLocation.id == targetCharacter.homeArea.id;
+                return character.specificLocation.id == targetCharacter.homeArea.id && targetCharacter.homeStructure != null;
             case INTERACTION_TYPE.FEED_PRISONER_ACTION:
                 if (character.isAtHomeArea) {
                     List<LocationStructure> structures = character.specificLocation.GetStructuresAtLocation(true);
@@ -1493,7 +1493,7 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.MAKE_LOVE_ACTION:
                 //**Trigger Criteria 1**: the target must be in the character's current location and must also be in the target's home Dwelling
                 if (targetCharacter.specificLocation.id != character.specificLocation.id 
-                    || targetCharacter.currentStructure != targetCharacter.homeStructure) {
+                    || targetCharacter.homeStructure == null || targetCharacter.currentStructure != targetCharacter.homeStructure) {
                     return false;
                 }
                 //**Trigger Criteria 2**: the actor must not be https://trello.com/c/GzhGi1XZ/1135-starving nor https://trello.com/c/I3gnHfsZ/1185-exhausted

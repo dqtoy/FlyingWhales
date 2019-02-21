@@ -1151,11 +1151,21 @@ public class Area {
         }
     }
     public void AssignCharacterToDwellingInArea(Character character) {
-        if (!structures.ContainsKey(STRUCTURE_TYPE.DWELLING)) {
+        if (character.faction.id != FactionManager.Instance.neutralFaction.id && !structures.ContainsKey(STRUCTURE_TYPE.DWELLING)) {
             Debug.LogWarning(this.name + " doesn't have any dwellings for " + character.name);
             return;
         }
-
+        if(character.faction.id == FactionManager.Instance.neutralFaction.id) {
+            character.SetHomeStructure(null);
+            if (character.specificLocation != null
+                && character.specificLocation.id == this.id) { //if the character is currently at his home area, and his home was changed, relocate him
+                if(character.currentStructure != null) {
+                    character.currentStructure.RemoveCharacterAtLocation(character);
+                }
+                AddCharacterToAppropriateStructure(character);
+            }
+            return;
+        }
         Dwelling chosenDwelling = null;
         if (PlayerManager.Instance.player != null && this.id == PlayerManager.Instance.player.playerArea.id) {
             chosenDwelling = structures[STRUCTURE_TYPE.DWELLING][0] as Dwelling; //to avoid errors, residents in player area will all share the same dwelling
@@ -1239,7 +1249,9 @@ public class Area {
     public void RemoveResident(Character character) {
         if (areaResidents.Remove(character)) {
             character.SetHome(null);
-            character.homeStructure.RemoveResident(character);
+            if(character.homeArea != null) {
+                character.homeStructure.RemoveResident(character);
+            }
             CheckForUnoccupancy();
             //Messenger.Broadcast(Signals.AREA_RESIDENT_REMOVED, this, character);
         }
@@ -1306,10 +1318,26 @@ public class Area {
         } else {
             if (character.homeArea.id == this.id) {
                 if (character.homeStructure == null) {
-                    throw new Exception(character.name + "'s homeStructure is null!");
+                    //throw new Exception(character.name + "'s homeStructure is null!");
+                    if(UnityEngine.Random.Range(0, 2) == 0) {
+                        LocationStructure wilderness = GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+                        if (wilderness != null) {
+                            wilderness.AddCharacterAtLocation(character);
+                        } else {
+                            GetRandomStructureOfType(STRUCTURE_TYPE.DUNGEON).AddCharacterAtLocation(character);
+                        }
+                    } else {
+                        LocationStructure dungeon = GetRandomStructureOfType(STRUCTURE_TYPE.DUNGEON);
+                        if (dungeon != null) {
+                            dungeon.AddCharacterAtLocation(character);
+                        } else {
+                            GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS).AddCharacterAtLocation(character);
+                        }
+                    }
+                } else {
+                    //If this is his home, the character will be placed in his Dwelling.
+                    character.homeStructure.AddCharacterAtLocation(character);
                 }
-                //If this is his home, the character will be placed in his Dwelling.
-                character.homeStructure.AddCharacterAtLocation(character);
             } else {
                 // Otherwise:
                 if (Utilities.IsRaceBeast(character.race)) {

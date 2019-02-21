@@ -1558,6 +1558,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (newRel.relType == RELATIONSHIP_TRAIT.LOVER 
             && this.homeArea.id == targetCharacter.homeArea.id
             && this.homeStructure != targetCharacter.homeStructure) {
+            //Lover conquers all, even if one character is factionless they will be together, meaning the factionless character will still have home structure
             homeArea.AssignCharacterToDwellingInArea(this);
             //homeArea.AssignCharacterToDwellingInArea(targetCharacter);
         }
@@ -1960,7 +1961,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         this.homeStructure = homeStructure;
     }
     public bool IsLivingWith(RELATIONSHIP_TRAIT type) {
-        if (homeStructure.residents.Count > 1) {
+        if (homeStructure != null && homeStructure.residents.Count > 1) {
             Character relTarget = GetCharacterWithRelationship(type);
             if (homeStructure.residents.Contains(relTarget)) {
                 return true;
