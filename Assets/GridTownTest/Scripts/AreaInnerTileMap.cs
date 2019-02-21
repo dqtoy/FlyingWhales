@@ -45,6 +45,10 @@ public class AreaInnerTileMap : MonoBehaviour {
     public List<LocationGridTile> outsideTiles { get; private set; }
     public List<LocationGridTile> insideTiles { get; private set; }
 
+    public Tilemap charactersTM {
+        get { return charactersTilemap; }
+    }
+
     //private LocationGridTile exitTile;
     private bool isHovering;
 
@@ -496,14 +500,14 @@ public class AreaInnerTileMap : MonoBehaviour {
     public void DrawLine(LocationGridTile startTile, LocationGridTile destination, Character character) {
         GameObject travelLine = ObjectPoolManager.Instance.InstantiateObjectFromPool
             (travelLinePrefab.name, Vector3.zero, Quaternion.identity, travelLineParent);
-        travelLine.GetComponent<AreaMapTravelLine>().DrawLine(startTile, destination, character);
+        travelLine.GetComponent<AreaMapTravelLine>().DrawLine(startTile, destination, character, this);
         Debug.Log(GameManager.Instance.TodayLogString() + "Drawing line at " + area.name + "'s map. From " + startTile.localPlace.ToString() + " to " + destination.localPlace.ToString());
     }
     public void DrawLineToExit(LocationGridTile startTile, Character character) {
         GameObject travelLine = ObjectPoolManager.Instance.InstantiateObjectFromPool
             (travelLinePrefab.name, Vector3.zero, Quaternion.identity, travelLineParent);
         LocationGridTile exitTile = area.structures[STRUCTURE_TYPE.EXIT][0].tiles[Random.Range(0, area.structures[STRUCTURE_TYPE.EXIT][0].tiles.Count)];
-        travelLine.GetComponent<AreaMapTravelLine>().DrawLine(startTile, exitTile, character);
+        travelLine.GetComponent<AreaMapTravelLine>().DrawLine(startTile, exitTile, character, this);
         Debug.Log(GameManager.Instance.TodayLogString() + "Drawing line at " + area.name + "'s map. From " + startTile.localPlace.ToString() + " to exit" + exitTile.localPlace.ToString());
     }
     [ContextMenu("Draw Line For Testing")]
@@ -512,7 +516,7 @@ public class AreaInnerTileMap : MonoBehaviour {
         LocationGridTile destinationTile = new LocationGridTile(20, 15, groundTilemap);
 
         GameObject travelLine = GameObject.Instantiate(travelLinePrefab, travelLineParent);
-        travelLine.GetComponent<AreaMapTravelLine>().DrawLine(startTile, destinationTile, null);
+        travelLine.GetComponent<AreaMapTravelLine>().DrawLine(startTile, destinationTile, null, this);
 
         //(newLine.transform as RectTransform).anchoredPosition = new Vector2(32f * startTile.localPlace.x, 32f * startTile.localPlace.y);
         //float angle = Mathf.Atan2(destinationTile.worldLocation.y - startTile.worldLocation.y, destinationTile.worldLocation.x - startTile.worldLocation.x) * Mathf.Rad2Deg;
@@ -530,6 +534,10 @@ public class AreaInnerTileMap : MonoBehaviour {
 
     #region Events
     public void ShowEventPopupAt(LocationGridTile location, Log log) {
+        if (location == null) {
+            Debug.LogWarning(GameManager.Instance.TodayLogString() + "Passed location is null! Not showing event popup for log: " + Utilities.LogReplacer(log));
+            return;
+        }
         Vector3 worldPos = groundTilemap.CellToWorld(location.localPlace);
         //Vector3 screenPos = worldUICanvas.worldCamera.WorldToScreenPoint(worldPos);
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(eventPopupPrefab.name, Vector3.zero, Quaternion.identity, eventPopupParent);

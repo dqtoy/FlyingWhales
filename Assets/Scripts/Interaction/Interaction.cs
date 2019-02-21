@@ -33,7 +33,7 @@ public class Interaction {
     protected Job _jobAssociated;
     protected JOB[] _jobFilter;
     protected object[] otherData;
-    protected InteractionIntel _intel;
+    //protected InteractionIntel _intel;
     private string interactionDebugLog;
     protected LocationStructure _actionStructureLocation;
     protected LocationStructure _targetStructure;
@@ -130,9 +130,9 @@ public class Interaction {
     public virtual Area targetArea {
         get { return null; }
     }
-    public InteractionIntel intel {
-        get { return _intel; }
-    }
+    //public InteractionIntel intel {
+    //    get { return _intel; }
+    //}
     public virtual INTERACTION_TYPE pairedInteractionType {
         get { return INTERACTION_TYPE.NONE; }
     }
@@ -160,7 +160,7 @@ public class Interaction {
         _endInteractionActions = new List<Action>();
         actualEffectsOnActor = new List<InteractionCharacterEffect>();
         actualEffectsOnTarget = new List<InteractionCharacterEffect>();
-        SetInteractionIntel(new InteractionIntel(this));
+        //SetInteractionIntel(new InteractionIntel(this));
         //_jobFilter = new JOB[] { JOB.NONE };
         interactionDebugLog = type.ToString() + " Event at " + interactable.name + "(" + interactable.name + ") Summary: \n" +
             GameManager.Instance.TodayLogString() + " Event Created.";
@@ -241,7 +241,7 @@ public class Interaction {
         interaction.SetCannotBeClearedOut(true);
         _characterInvolved.SetForcedInteraction(interaction);
         interaction.SetCharacterInvolved(_characterInvolved, false);
-        interaction.SetInteractionIntel(this.intel);
+        //interaction.SetInteractionIntel(this.intel);
         return interaction;
     }
     public virtual void SetTargetCharacter(Character character) { }
@@ -483,12 +483,12 @@ public class Interaction {
     #endregion
 
     #region Intel
-    public void SetInteractionIntel(InteractionIntel intel) {
-        _intel = intel;
-        if (intel != null) {
-            intel.SetConnectedInteraction(this);
-        }
-    }
+    //public void SetInteractionIntel(InteractionIntel intel) {
+    //    _intel = intel;
+    //    if (intel != null) {
+    //        intel.SetConnectedInteraction(this);
+    //    }
+    //}
     public virtual object GetTarget() {
         if (targetCharacter != null) {
             return targetCharacter;

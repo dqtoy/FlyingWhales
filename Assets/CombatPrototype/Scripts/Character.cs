@@ -1286,7 +1286,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         this.tile = tile;
     }
     public LocationGridTile GetNearestUnoccupiedTileFromCharacter(LocationStructure structure) {
-        if (!isDead && currentStructure == structure) {
+        if (!isDead && gridTileLocation != null && currentStructure == structure) {
             List<LocationGridTile> choices = currentStructure.tiles.Where(x => x != gridTileLocation).OrderBy(x => Vector2.Distance(gridTileLocation.localLocation, x.localLocation)).ToList();
             if (choices.Count > 0) {
                 return choices[UnityEngine.Random.Range(0, choices.Count)];
@@ -3281,24 +3281,24 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 
     #region Share Intel
     public void ShareIntel(InteractionIntel intel) {
-        if (relationships.ContainsKey(intel.actor)) {
-            if (!intel.isCompleted) {
-                relationships[intel.actor].SetPlannedActionIntel(intel);
-            } else {
-                Debug.Log(GameManager.Instance.TodayLogString() + "The intel given to " + this.name + " regarding " + intel.actor.name + " has already been completed, not setting planned action...");
-            }
-            relationships[intel.actor].OnIntelGivenToCharacter(intel);
-            PlayerManager.Instance.player.RemoveIntel(intel);
-        } else {
-            Debug.Log(GameManager.Instance.TodayLogString() + this.name + " does not have a relationship with " + intel.actor.name + ". He/she doesn't care about any intel you give that is about " + intel.actor.name);
-        }
-        if (intel.target is Character) {
-            Character target = intel.target as Character;
-            if (relationships.ContainsKey(target)) {
-                relationships[target].OnIntelGivenToCharacter(intel);
-                PlayerManager.Instance.player.RemoveIntel(intel);
-            }
-        }
+        //if (relationships.ContainsKey(intel.actor)) {
+        //    if (!intel.isCompleted) {
+        //        relationships[intel.actor].SetPlannedActionIntel(intel);
+        //    } else {
+        //        Debug.Log(GameManager.Instance.TodayLogString() + "The intel given to " + this.name + " regarding " + intel.actor.name + " has already been completed, not setting planned action...");
+        //    }
+        //    relationships[intel.actor].OnIntelGivenToCharacter(intel);
+        //    PlayerManager.Instance.player.RemoveIntel(intel);
+        //} else {
+        //    Debug.Log(GameManager.Instance.TodayLogString() + this.name + " does not have a relationship with " + intel.actor.name + ". He/she doesn't care about any intel you give that is about " + intel.actor.name);
+        //}
+        //if (intel.target is Character) {
+        //    Character target = intel.target as Character;
+        //    if (relationships.ContainsKey(target)) {
+        //        relationships[target].OnIntelGivenToCharacter(intel);
+        //        PlayerManager.Instance.player.RemoveIntel(intel);
+        //    }
+        //}
     }
     #endregion
 }

@@ -268,9 +268,9 @@ public class Party {
         if (_isDead) { return; }
         GoToLocation(owner.homeArea, PATHFINDING_MODE.PASSABLE, mainCharacter.homeStructure, doneAction, actionOnStartOfMovement);
     }
-    public void GoHomeAndDisband(Action actionOnStartOfMovement = null) {
+    public void GoHomeAndDisband(Action actionOnStartOfMovement = null, Interaction cause = null) {
         if(_isDead) { return; }
-        GoToLocation(owner.homeArea, PATHFINDING_MODE.PASSABLE, null, () => DisbandParty(), actionOnStartOfMovement);
+        GoToLocation(owner.homeArea, PATHFINDING_MODE.PASSABLE, null, () => DisbandParty(), actionOnStartOfMovement, cause);
     }
     #endregion
 

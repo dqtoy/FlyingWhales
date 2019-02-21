@@ -34,8 +34,8 @@ public class MoveToReturnHome : Interaction {
     #endregion
 
     private void StartStateRewardEffect(InteractionState state) {
-        //**Mechanics**: Character will start its travel to home location
-        _characterInvolved.ownParty.GoHomeAndDisband();
         state.AddLogFiller(new LogFiller(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_2));
+        //**Mechanics**: Character will start its travel to home location
+        _characterInvolved.ownParty.GoHomeAndDisband(null, this);
     }
 }

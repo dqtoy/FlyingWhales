@@ -117,7 +117,7 @@ public class GiftBeast : Interaction {
         state.AddLogFiller(new LogFiller(_targetCharacter.faction, _targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_1));
         state.AddLogFiller(new LogFiller(_beast, _beast.name, LOG_IDENTIFIER.CHARACTER_3));
 
-        _characterInvolved.currentParty.GoHomeAndDisband();
+        _characterInvolved.currentParty.GoHomeAndDisband(null, this);
     }
     private void TargetMissingEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -126,7 +126,7 @@ public class GiftBeast : Interaction {
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
         state.AddLogFiller(new LogFiller(_beast, _beast.name, LOG_IDENTIFIER.CHARACTER_3));
 
-        _characterInvolved.currentParty.GoHomeAndDisband();
+        _characterInvolved.currentParty.GoHomeAndDisband(null, this);
     }
     #endregion
 }

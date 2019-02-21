@@ -123,9 +123,9 @@ public class Log {
         lockFillers = state;
     }
     public string GetLogDebugInfo() {
-        if (fromInteraction.intel != null) {
-            return fromInteraction.intel.GetDebugInfo();
-        }
+        //if (fromInteraction.intel != null) {
+        //    return fromInteraction.intel.GetDebugInfo();
+        //}
         return string.Empty;
     }
     #endregion
