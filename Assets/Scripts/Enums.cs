@@ -1114,6 +1114,7 @@ public enum INTERACTION_TYPE {
     GIFT_ITEM,
     TURN_TO_WOLF,
     REVERT_TO_NORMAL,
+    HUNT_SMALL_ANIMALS,
 }
 public enum INTERACTION_ALIGNMENT {
     EVIL,
@@ -1304,7 +1305,7 @@ public enum INTERACTION_CHARACTER_EFFECT {
     CHANGE_HOME,
     TIREDNESS_RECOVERY,
 }
-public enum TileNeighbourDirection { Top, Bottom, Left, Right, None }
+public enum TileNeighbourDirection { Top, Bottom, Left, Right, Upper_Left, Upper_Right, Bottom_Left, Bottom_Right, None }
 public enum TIME_IN_WORDS { AFTER_MIDNIGHT, AFTER_MIDNIGHT_1, AFTER_MIDNIGHT_2, MORNING, MORNING_1, MORNING_2, AFTERNOON, AFTERNOON_1, AFTERNOON_2, NIGHT, NIGHT_1, NIGHT_2 }
 public enum CRIME_SEVERITY { NONE, INFRACTION, MISDEMEANOUR, SERIOUS_CRIME, }
 public enum FOOD { BERRY, MUSHROOM, RABBIT, RAT }

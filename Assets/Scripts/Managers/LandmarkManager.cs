@@ -32,6 +32,17 @@ public class LandmarkManager : MonoBehaviour {
     [SerializeField] private GameObject innerStructurePrefab;
     [SerializeField] private Transform areaMapsParent;
 
+    public static List<Point> mapNeighborPoints = new List<Point> {
+        new Point(0,1), //up
+        new Point(1,1), //upper right
+        new Point(1,0), //right
+        new Point(1,-1), //bottom right
+        new Point(0,-1), //bottom
+        new Point(-1,-1), //bottom left
+        new Point(-1,0), //left
+        new Point(-1,1), //upper left
+    };
+
     #region Monobehaviours
     private void Awake() {
         Instance = this;
