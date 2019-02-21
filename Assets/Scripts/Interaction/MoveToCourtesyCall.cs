@@ -11,7 +11,10 @@ public class MoveToCourtesyCall : Interaction {
     public override Area targetArea {
         get { return _targetCharacter.homeArea; }
     }
-    
+    public override Character targetCharacter {
+        get { return _targetCharacter; }
+    }
+
     public override INTERACTION_TYPE pairedInteractionType {
         get { return INTERACTION_TYPE.COURTESY_CALL; }
     }
