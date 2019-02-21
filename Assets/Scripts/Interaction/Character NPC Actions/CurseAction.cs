@@ -126,7 +126,7 @@ public class CurseAction : Interaction {
     #region State Effect
     private void StartEffect(InteractionState state) {
         _targetStructure = _targetCharacter.currentStructure;
-        _characterInvolved.MoveToAnotherStructure(_targetStructure);
+        _characterInvolved.MoveToAnotherStructure(_targetStructure, _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetStructure));
     }
     private void CurseSuccessfulEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);

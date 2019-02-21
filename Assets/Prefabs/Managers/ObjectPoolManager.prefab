@@ -73,6 +73,7 @@ MonoBehaviour:
   - {fileID: 1407515856224950, guid: 0c64f5050d08386459366dc1cbd0f055, type: 2}
   - {fileID: 1843790752060090, guid: 2674725fb5f60ba47aa65b6afbc32fba, type: 2}
   - {fileID: 1897089078281118, guid: db15a42321436b0418accd5b6584fe1b, type: 2}
+  - {fileID: 1904789271207382, guid: d6c210b076dd0154bbec1d7cbed06448, type: 2}
   otherPrefabs:
   - {fileID: 1000012712350628, guid: 5372250d22a51bc40a200236eee58ac2, type: 2}
   - {fileID: 1674000059252808, guid: 3030287a209452f45ba8aca3380a5e2e, type: 2}

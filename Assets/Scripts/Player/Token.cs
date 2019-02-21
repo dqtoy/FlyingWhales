@@ -178,7 +178,7 @@ public class SpecialToken : Token, IPointOfInterest {
     public virtual void OnUnobtainToken(Character character) { }
     public virtual void OnConsumeToken(Character character) { }
     public virtual void StartTokenInteractionState(Character user, Character target) {
-        user.MoveToAnotherStructure(target.currentStructure);
+        user.MoveToAnotherStructure(target.currentStructure, target.GetNearestUnoccupiedTileFromCharacter(target.currentStructure));
     }
     #endregion
     public void SetOwner(Faction owner) {

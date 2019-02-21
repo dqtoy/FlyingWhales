@@ -90,7 +90,7 @@ public class AskForHelp : Interaction {
     #region State Effects
     private void StartEffect(InteractionState state) {
         _targetStructure = _targetCharacter.currentStructure;
-        _characterInvolved.MoveToAnotherStructure(_targetStructure);
+        _characterInvolved.MoveToAnotherStructure(_targetStructure, _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetStructure));
     }
     private void AskSuccessfulEffect(InteractionState state) {
         //Add relationship save target and saver

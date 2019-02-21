@@ -393,12 +393,13 @@ public class ConsoleMenu : UIMenu {
     
     #region Characters
     private void KillCharacter(string[] parameters) {
-        if (parameters.Length != 1) {
+        if (parameters.Length < 1) {
             AddCommandHistory(consoleLbl.text);
             AddErrorMessage("There was an error in the command format of /kill");
             return;
         }
         string characterParameterString = parameters[0];
+        string causeString = parameters.ElementAtOrDefault(1);
         int characterID;
 
         bool isCharacterParameterNumeric = int.TryParse(characterParameterString, out characterID);
@@ -417,7 +418,11 @@ public class ConsoleMenu : UIMenu {
             return;
         }
 
-        character.Death();
+        if (string.IsNullOrEmpty(causeString)) {
+            causeString = "normal";
+        }
+
+        character.Death(causeString);
     }
     private void CenterOnCharacter(string[] parameters) {
         if (parameters.Length != 1) {

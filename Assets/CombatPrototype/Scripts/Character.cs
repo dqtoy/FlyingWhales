@@ -686,6 +686,16 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             log.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             AddHistory(log);
             specificLocation.AddHistory(log);
+
+            switch (cause) {
+                case "exhaustion":
+                case "starvation":
+                    deathLocation.areaMap.ShowEventPopupAt(deathTile, log);
+                    break;
+                default:
+                    break;
+            }
+
         }
     }
     public void Assassinate(Character assassin) {
@@ -1266,14 +1276,23 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             throw new Exception("Can't move " + name + " to a " + structureType.ToString() + " because " + specificLocation.name + " does not have that structure!");
         }
     }
-    public void MoveToAnotherStructure(LocationStructure newStructure) {
+    public void MoveToAnotherStructure(LocationStructure newStructure, LocationGridTile tile = null) {
         if(currentStructure != null) {
             currentStructure.RemoveCharacterAtLocation(this);
         }
-        newStructure.AddCharacterAtLocation(this);
+        newStructure.AddCharacterAtLocation(this, tile);
     }
     public void SetGridTileLocation(LocationGridTile tile) {
         this.tile = tile;
+    }
+    public LocationGridTile GetNearestUnoccupiedTileFromCharacter(LocationStructure structure) {
+        if (!isDead && currentStructure == structure) {
+            List<LocationGridTile> choices = currentStructure.tiles.Where(x => x != gridTileLocation).OrderBy(x => Vector2.Distance(gridTileLocation.localLocation, x.localLocation)).ToList();
+            if (choices.Count > 0) {
+                return choices[UnityEngine.Random.Range(0, choices.Count)];
+            }
+        }
+        return null;
     }
     #endregion
 
@@ -3196,6 +3215,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             if (hungerTrait == null) {
                 AddTrait("Tired");
             }
+        } else {
+            //tiredness is higher than both thresholds
+            RemoveTrait("Tired");
+            RemoveTrait("Exhausted");
         }
     }
     public void DecreaseTirednessMeter() { //this is used for when tiredness is only decreased by 1 (I did this for optimization, so as not to check for traits everytime)
@@ -3237,6 +3260,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             if (hungerTrait == null) {
                 AddTrait("Hungry");
             }
+        } else {
+            //fullness is higher than both thresholds
+            RemoveTrait("Hungry");
+            RemoveTrait("Starving");
         }
     }
     public void DecreaseFullnessMeter() { //this is used for when fullness is only decreased by 1 (I did this for optimization, so as not to check for traits everytime)

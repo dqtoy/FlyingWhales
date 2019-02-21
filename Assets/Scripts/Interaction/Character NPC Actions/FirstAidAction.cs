@@ -89,7 +89,7 @@ public class FirstAidAction : Interaction {
     private void StartEffect(InteractionState state) {
         CharacterRelationshipData characterRelationshipData = _characterInvolved.GetCharacterRelationshipData(_targetCharacter);
         if (characterRelationshipData != null) {
-            _characterInvolved.MoveToAnotherStructure(characterRelationshipData.knownStructure);
+            _characterInvolved.MoveToAnotherStructure(characterRelationshipData.knownStructure, _targetCharacter.GetNearestUnoccupiedTileFromCharacter(characterRelationshipData.knownStructure));
         }
     }
     private void FirstAidSuccessEffect(InteractionState state) {

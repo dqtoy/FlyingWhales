@@ -86,7 +86,7 @@ public class StealActionNPC : Interaction {
 
     #region State Effects
     private void StartEffect(InteractionState state) {
-        _characterInvolved.MoveToAnotherStructure(_targetCharacter.currentStructure);
+        _characterInvolved.MoveToAnotherStructure(_targetCharacter.currentStructure, _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetCharacter.currentStructure));
     }
     private void StealSuccessEffect(InteractionState state) {
         SpecialToken item = _targetCharacter.tokenInInventory;

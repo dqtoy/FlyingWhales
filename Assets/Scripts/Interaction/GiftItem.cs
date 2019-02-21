@@ -86,7 +86,7 @@ public class GiftItem : Interaction {
 
     #region State Effects
     private void StartEffect(InteractionState state) {
-        _characterInvolved.MoveToAnotherStructure(_targetCharacter.homeStructure);
+        _characterInvolved.MoveToAnotherStructure(_targetCharacter.homeStructure, _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetCharacter.homeStructure));
     }
     private void GiftSuccessEffect(InteractionState state) {
         SpecialToken item = _characterInvolved.tokenInInventory;

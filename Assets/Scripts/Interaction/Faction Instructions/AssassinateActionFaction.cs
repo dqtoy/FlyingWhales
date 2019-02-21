@@ -104,7 +104,7 @@ public class AssassinateActionFaction : Interaction {
 
     #region Reward Effect
     private void StartEffect(InteractionState state) {
-        _characterInvolved.MoveToAnotherStructure(targetCharacter.currentStructure);
+        _characterInvolved.MoveToAnotherStructure(targetCharacter.currentStructure, targetCharacter.GetNearestUnoccupiedTileFromCharacter(targetCharacter.currentStructure));
     }
     private void NormalAssassinationSuccessRewardEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
