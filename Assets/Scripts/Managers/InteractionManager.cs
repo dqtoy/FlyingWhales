@@ -1001,7 +1001,8 @@ public class InteractionManager : MonoBehaviour {
     }
     public bool CanCreateInteraction(INTERACTION_TYPE interactionType, Character character, Character targetCharacter = null) {
         Area area = null;
-        FactionRelationship relationship = null;
+        FactionRelationship factionRel = null;
+        WeightedDictionary<string> stringWeights = null;
         switch (interactionType) {
             case INTERACTION_TYPE.RETURN_HOME:
                 return character.specificLocation.id != character.homeArea.id;
@@ -1063,8 +1064,8 @@ public class InteractionManager : MonoBehaviour {
                         if (currArea.owner != null
                             && currArea.owner.id != character.faction.id
                             && currArea.id != PlayerManager.Instance.player.playerArea.id) {
-                            relationship = character.faction.GetRelationshipWith(currArea.owner);
-                            if (relationship.relationshipStatus != FACTION_RELATIONSHIP_STATUS.ALLY && relationship.relationshipStatus != FACTION_RELATIONSHIP_STATUS.FRIEND) {
+                            factionRel = character.faction.GetRelationshipWith(currArea.owner);
+                            if (factionRel.relationshipStatus != FACTION_RELATIONSHIP_STATUS.ALLY && factionRel.relationshipStatus != FACTION_RELATIONSHIP_STATUS.FRIEND) {
                                 return true;
                             }
                         }
@@ -1097,8 +1098,8 @@ public class InteractionManager : MonoBehaviour {
                                 continue; //skip
                             }
                             if (faction.id != PlayerManager.Instance.player.playerFaction.id && faction.id != character.faction.id && faction.isActive) {
-                                relationship = character.faction.GetRelationshipWith(faction);
-                                if (relationship.relationshipStatus != FACTION_RELATIONSHIP_STATUS.ALLY) {
+                                factionRel = character.faction.GetRelationshipWith(faction);
+                                if (factionRel.relationshipStatus != FACTION_RELATIONSHIP_STATUS.ALLY) {
                                     return true;
 
                                 }
@@ -1167,10 +1168,10 @@ public class InteractionManager : MonoBehaviour {
                                     //Unaligned?
                                     return true;
                                 } else if(currCharacter.faction.id != character.faction.id && currCharacter.faction.ownedAreas.Count > 0) {
-                                        relationship = currCharacter.faction.GetRelationshipWith(character.faction);
-                                        if (relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.DISLIKED 
-                                            || relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.NEUTRAL
-                                            || relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.FRIEND) {
+                                        factionRel = currCharacter.faction.GetRelationshipWith(character.faction);
+                                        if (factionRel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.DISLIKED 
+                                            || factionRel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.NEUTRAL
+                                            || factionRel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.FRIEND) {
                                             return true;
                                         }
                                 }
@@ -1479,7 +1480,38 @@ public class InteractionManager : MonoBehaviour {
                 if(character.specificLocation.id == targetCharacter.specificLocation.id && targetCharacter.currentStructure.isInside) {
                     CharacterRelationshipData characterRelationshipData = character.GetCharacterRelationshipData(targetCharacter);
                     if(characterRelationshipData != null && !characterRelationshipData.isCharacterMissing) {
-                        return true;
+                        stringWeights = new WeightedDictionary<string>();
+                        int validWeight = 0;
+                        int invalidWeight = 50;
+                        if(character.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.SERVANT, RELATIONSHIP_TRAIT.RELATIVE)) {
+                            validWeight += 20;
+                        }
+                        if (character.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.FRIEND)) {
+                            validWeight += 10;
+                        }
+                        if (character.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.ENEMY)) {
+                            validWeight += 30;
+                        }
+                        if (character.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.PARAMOUR)) {
+                            validWeight += 10;
+                        }
+
+                        if(character.GetTrait("Happy") != null) {
+                            invalidWeight = (int) (invalidWeight * 1.5f);
+                        }
+                        if (character.GetTrait("Hungry") != null) {
+                            validWeight *= 3;
+                        }
+                        if (character.GetTrait("Tired") != null) {
+                            validWeight *= 3;
+                        }
+                        stringWeights.AddElement("Valid", validWeight);
+                        stringWeights.AddElement("Invalid", invalidWeight);
+
+                        string result = stringWeights.PickRandomElementGivenWeights();
+                        if(result == "Valid") {
+                            return true;
+                        }
                     }
                 }
                 return false;
@@ -1613,7 +1645,7 @@ public class InteractionManager : MonoBehaviour {
                 if(!character.isAtHomeArea && character.role.roleType != CHARACTER_ROLE.BEAST 
                     && character.specificLocation.owner != null && character.faction.id != FactionManager.Instance.neutralFaction.id
                     && character.specificLocation.owner.id != character.faction.id && character.specificLocation.HasStructure(STRUCTURE_TYPE.INN)) {
-                    FactionRelationship factionRel = character.faction.GetRelationshipWith(character.specificLocation.owner);
+                    factionRel = character.faction.GetRelationshipWith(character.specificLocation.owner);
                     if(factionRel.relationshipStatus != FACTION_RELATIONSHIP_STATUS.AT_WAR) {
                         return true;
                     }
