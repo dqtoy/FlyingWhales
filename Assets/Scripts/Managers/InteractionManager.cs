@@ -204,7 +204,7 @@ public class InteractionManager : MonoBehaviour {
                 targetCharacterEffect = null,
             } },
             { INTERACTION_TYPE.EAT_DEFENSELESS, new InteractionAttributes(){
-                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.FULLNESS_RECOVERY, INTERACTION_CATEGORY.FULLNESS_RECOVERY },
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.FULLNESS_RECOVERY },
                 alignment = INTERACTION_ALIGNMENT.EVIL,
                 actorEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.FULLNESS_RECOVERY } },
                 targetCharacterEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.DEATH } },
