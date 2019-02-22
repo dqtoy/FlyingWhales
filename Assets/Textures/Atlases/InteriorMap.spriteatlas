@@ -13,7 +13,7 @@ SpriteAtlas:
       compressionQuality: 50
       maxTextureSize: 2048
       textureCompression: 0
-      filterMode: 1
+      filterMode: 0
       generateMipMaps: 0
       readable: 0
       crunchedCompression: 0
@@ -24,13 +24,154 @@ SpriteAtlas:
       padding: 4
       blockOffset: 1
       allowAlphaSplitting: 0
-      enableRotation: 1
-      enableTightPacking: 1
+      enableRotation: 0
+      enableTightPacking: 0
     variantMultiplier: 1
-    packables: []
+    packables:
+    - {fileID: 102900000, guid: 129c2b5e0c8f0e14d9fb8b1c30296b6d, type: 3}
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
-  m_PackedSprites: []
-  m_PackedSpriteNamesToIndex: []
+  m_PackedSprites:
+  - {fileID: 21300000, guid: 51b8d9413124c5b4ab5d4d0957dc7b0d, type: 3}
+  - {fileID: 21300000, guid: 2417b851f27359d4c811378d4fc90b09, type: 3}
+  - {fileID: 21300000, guid: b4653f91d7eebfc41a2f642020052773, type: 3}
+  - {fileID: 21300000, guid: 132d5ff19d4feae49892c7d58acc4341, type: 3}
+  - {fileID: 21300000, guid: da448402c93477e43af355d647b7e607, type: 3}
+  - {fileID: 21300000, guid: b37b76423ce4fdc4996d0357ef065cbe, type: 3}
+  - {fileID: 21300000, guid: f7fdfb52141bb9343b10d14a1ce1fb7b, type: 3}
+  - {fileID: 21300000, guid: b59aaf62346fa9c438b0217e689b999c, type: 3}
+  - {fileID: 21300000, guid: dba2db03a9806054a80deaacdb6184a0, type: 3}
+  - {fileID: 21300000, guid: 84de5f136a48b644688b5bca6a49bddc, type: 3}
+  - {fileID: 21300000, guid: 2f339c335f66ce647a95ab13d4068766, type: 3}
+  - {fileID: 21300000, guid: 5754c683be215e54f989dea775f3d717, type: 3}
+  - {fileID: 21300000, guid: ba852783ee8d3244299fbb253966f8bc, type: 3}
+  - {fileID: 21300000, guid: 4b74cfe3bb142ed479b7baf725527788, type: 3}
+  - {fileID: 21300000, guid: e1722514db53ab84d99399475d182c0a, type: 3}
+  - {fileID: 21300000, guid: 96edce1485823af4ea68bfb95ce288a2, type: 3}
+  - {fileID: 21300000, guid: 9e70eb347cc091f4194765e6de46ad52, type: 3}
+  - {fileID: 21300000, guid: 4b953f74ed0622346a281b6c71d91395, type: 3}
+  - {fileID: 21300000, guid: 299692a4411b32243882b05318969993, type: 3}
+  - {fileID: 21300000, guid: bb509da42e3be0f4e95943059bf2eebd, type: 3}
+  - {fileID: 21300000, guid: f1af60e415e8133428fb505f5521ed5e, type: 3}
+  - {fileID: 21300000, guid: ba1396157978f19418ee16b8984f1bb6, type: 3}
+  - {fileID: 21300000, guid: 3fde3e3528aa38d498b4ac65c6fc27e1, type: 3}
+  - {fileID: 21300000, guid: 759905a56957eb34f8fa1839716f09bc, type: 3}
+  - {fileID: 21300000, guid: 3f95b6a5d7a4fcc42aefc0b03f213fcd, type: 3}
+  - {fileID: 21300000, guid: 1b4c1fa5e6609e644a3d358bdbd5e672, type: 3}
+  - {fileID: 21300000, guid: d9ae31d554049214ba62b98bd07e4949, type: 3}
+  - {fileID: 21300000, guid: a0a6dd46d561369489c2beba5be0c228, type: 3}
+  - {fileID: 21300000, guid: aa2f8c5696543444c8822787f0246fb0, type: 3}
+  - {fileID: 21300000, guid: c2403a66f7868484f8c4c381f392bdbf, type: 3}
+  - {fileID: 21300000, guid: 7b611076b148ceb4ea1032e281a98a52, type: 3}
+  - {fileID: 21300000, guid: 6085ef96f99827b48a3fa4743d5bbefd, type: 3}
+  - {fileID: 21300000, guid: 00761ba6bb004494db6b4ebd41cb77be, type: 3}
+  - {fileID: 21300000, guid: 8c52fab61c7d6d8478dad9cda239a048, type: 3}
+  - {fileID: 21300000, guid: f02fcbb687879304c85e56344a6110d4, type: 3}
+  - {fileID: 21300000, guid: 80deb517aa362ca4692d227826ab98d7, type: 3}
+  - {fileID: 21300000, guid: ee3014572f016804ab67286f8f090022, type: 3}
+  - {fileID: 21300000, guid: 26c83677e033ab44792f31e7242f071d, type: 3}
+  - {fileID: 21300000, guid: 32d101c7287c00b43888ac765c65ea92, type: 3}
+  - {fileID: 21300000, guid: 09102028cc847204dbb3df3c20cfcceb, type: 3}
+  - {fileID: 21300000, guid: d205cd381db07734982e9412d0d5a440, type: 3}
+  - {fileID: 21300000, guid: b9621d788a42ddc4da348d380e9445bc, type: 3}
+  - {fileID: 21300000, guid: 167e6698c2e3ddd4a8ad8c1a5d09a4d7, type: 3}
+  - {fileID: 21300000, guid: ee29e4c8b11a88c449a51aacc7c063b3, type: 3}
+  - {fileID: 21300000, guid: 15b5e0d8cc5bfcd4ba349dc5fb8f33d7, type: 3}
+  - {fileID: 21300000, guid: 1a5de389fbb917544a7bd83ab8831cd1, type: 3}
+  - {fileID: 21300000, guid: acd979997eb35524b8cb032c7c3dd425, type: 3}
+  - {fileID: 21300000, guid: f7b4cbc935ced0342bb02b2e1ac1d927, type: 3}
+  - {fileID: 21300000, guid: 556f49e9a96e81d489e091b17c46d44e, type: 3}
+  - {fileID: 21300000, guid: 147c3ff9cbb6c5c40bb53acf45f3f76a, type: 3}
+  - {fileID: 21300000, guid: feff812aa7309c9488d1a7435245be46, type: 3}
+  - {fileID: 21300000, guid: 4982222acd0a30a4ba1007f2fd963b8c, type: 3}
+  - {fileID: 21300000, guid: 82cea84b2cbfe8e41a650de56692fb4a, type: 3}
+  - {fileID: 21300000, guid: 807c776b946f27248a5ed8719ddf076e, type: 3}
+  - {fileID: 21300000, guid: 636c786b50377ae45bca7927bc3e2494, type: 3}
+  - {fileID: 21300000, guid: 3cc3a11c3b309d044b940463b7b44b14, type: 3}
+  - {fileID: 21300000, guid: 9446df3c48b01e7409f52c0e260f7f62, type: 3}
+  - {fileID: 21300000, guid: b438f3fcf6b728641a17af44e51ea325, type: 3}
+  - {fileID: 21300000, guid: c96e980d2c47e4349b94fd94196801a6, type: 3}
+  - {fileID: 21300000, guid: ab4abe1df8096d84391f156cbafbc18e, type: 3}
+  - {fileID: 21300000, guid: 4a7b205dc6673cc4db9d3ab9d31ece4c, type: 3}
+  - {fileID: 21300000, guid: b9d5286d4a7d09940bf30037757d308a, type: 3}
+  - {fileID: 21300000, guid: d59756ad7cc381a4693f8872dee43007, type: 3}
+  - {fileID: 21300000, guid: 803a03cd868824c41b5106d469aa24ac, type: 3}
+  - {fileID: 21300000, guid: 301aee0e32979d74caa93afcdbe5c0fc, type: 3}
+  - {fileID: 21300000, guid: 11226b1e948092b418ef8e55fa635e57, type: 3}
+  - {fileID: 21300000, guid: accaa33e3ecce3f47b6b6cb83ca0aef7, type: 3}
+  - {fileID: 21300000, guid: 85ba5ffebaddc6340b23ac01f681b234, type: 3}
+  - {fileID: 21300000, guid: 5ce7121fe2d0b4644aa34f2e9ca3bc87, type: 3}
+  - {fileID: 21300000, guid: 5b1fc77fdf8c4a141b8c234ee6272a37, type: 3}
+  m_PackedSpriteNamesToIndex:
+  - wall1010-01
+  - wallA-0100-00
+  - cobble03
+  - wall1110
+  - wallA-0101-00
+  - road01
+  - wall1011
+  - minion_icon_diplomat 1
+  - wallA-1001-00
+  - grass03
+  - wall1010-doorway00
+  - dirt00
+  - wallA-1100-00
+  - grass00
+  - wallA-0011-00
+  - road00
+  - floorA03
+  - wallA-0101-01
+  - grass02
+  - wall1011-00
+  - minion_icon_defender 1
+  - wall0102-00
+  - wall1100
+  - minion_icon_instigator 1
+  - event_button_default
+  - wall0000
+  - wallA-1000-00
+  - wall1101-00
+  - minion_icon_debilitator 1
+  - grass06
+  - grass01
+  - wall1001-00
+  - cobble02
+  - dirt01
+  - wall0011
+  - floorA00
+  - wall0011-00
+  - wallA-1010-01
+  - floorA02
+  - wall1111
+  - grass04
+  - minion_icon_attacker 1
+  - wall1001
+  - dirt03
+  - wall0101-00
+  - wall1010
+  - floorA01
+  - wall1101
+  - cobble00
+  - wallA-1010-00
+  - wallA-0110-00
+  - dirt02
+  - wall0110
+  - road02
+  - road03
+  - wall0111
+  - Empty
+  - wall1110-00
+  - grass05
+  - wall0110-00
+  - wall0111-00
+  - wallA-0001-00
+  - wall1010-00
+  - wall0101
+  - grass07
+  - wallA-0010-00
+  - wall1100-00
+  - event_button_hover
+  - wall0101-doorway00
+  - cobble01
   m_Tag: InteriorMap
   m_IsVariant: 0

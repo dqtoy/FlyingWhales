@@ -219,9 +219,9 @@ public class CharacterRelationshipData {
           - this turns back to False when **countdown from last encounter** has been reset
          */
         try {
-            if (lastEncounter >= 150 && targetCharacter.faction.id == owner.faction.id) {
+            if (lastEncounter >= 480 && targetCharacter.faction.id == owner.faction.id) {
                 SetIsCharacterMissing(true);
-            } else if (lastEncounter >= 300 && targetCharacter.faction.id != owner.faction.id) {
+            } else if (lastEncounter >= 960 && targetCharacter.faction.id != owner.faction.id) {
                 SetIsCharacterMissing(true);
             }
         } catch (System.Exception e){

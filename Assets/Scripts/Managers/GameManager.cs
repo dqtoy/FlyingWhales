@@ -89,7 +89,7 @@ public class GameManager : MonoBehaviour {
             this.timeElapsed += Time.deltaTime;
             if (this.timeElapsed >= this.progressionSpeed) {
                 this.timeElapsed = 0f;
-                StartCoroutine(this.TickEnded());
+                TickEnded();
             }
         }
     }
@@ -226,12 +226,12 @@ public class GameManager : MonoBehaviour {
     /*
      * Function that triggers daily actions
      * */
-    public IEnumerator TickEnded(){
+    public void TickEnded(){
         Messenger.Broadcast(Signals.TICK_ENDED);
         Messenger.Broadcast(Signals.TICK_ENDED_2);
-        while (pauseTickEnded2) {
-            yield return null;
-        }
+        //while (pauseTickEnded2) {
+        //    yield return null;
+        //}
         Messenger.Broadcast(Signals.UPDATE_UI);
 
         this.tick += 1;

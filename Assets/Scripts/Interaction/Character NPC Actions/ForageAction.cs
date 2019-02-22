@@ -51,6 +51,7 @@ public class ForageAction : Interaction {
         //if (!InteractionManager.Instance.CanCreateInteraction(type, character)) {
         //    return false;
         //}
+        _targetStructure = character.specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
         return base.CanInteractionBeDoneBy(character);
     }
     #endregion
@@ -82,7 +83,7 @@ public class ForageAction : Interaction {
     private void StartEffect(InteractionState state) {
         //Move the character to a random Wilderness or Explore Area tile
         //TODO: Explore area and randomization
-        _characterInvolved.MoveToRandomStructureInArea(STRUCTURE_TYPE.WILDERNESS);
+        _characterInvolved.MoveToAnotherStructure(_targetStructure);
     }
     private void ForageSuccessEffect(InteractionState state) {
         _characterInvolved.ResetFullnessMeter();
