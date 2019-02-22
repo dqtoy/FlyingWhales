@@ -807,8 +807,14 @@ public class CharacterManager : MonoBehaviour {
         return characters[Random.Range(0, characters.Count)];
     }
     private RELATIONSHIP_TRAIT GetRandomRelationship() {
-        RELATIONSHIP_TRAIT[] choices = Utilities.GetEnumValues<RELATIONSHIP_TRAIT>();
-        return choices[Random.Range(1, choices.Length - 2)];
+        WeightedDictionary<RELATIONSHIP_TRAIT> relWeights = new WeightedDictionary<RELATIONSHIP_TRAIT>();
+        relWeights.AddElement(RELATIONSHIP_TRAIT.ENEMY, 35);
+        relWeights.AddElement(RELATIONSHIP_TRAIT.FRIEND, 35);
+        relWeights.AddElement(RELATIONSHIP_TRAIT.LOVER, 10);
+        relWeights.AddElement(RELATIONSHIP_TRAIT.RELATIVE, 10);
+        relWeights.AddElement(RELATIONSHIP_TRAIT.PARAMOUR, 10);
+        //RELATIONSHIP_TRAIT[] choices = Utilities.GetEnumValues<RELATIONSHIP_TRAIT>();
+        return relWeights.PickRandomElementGivenWeights();
     }
     #endregion
 }

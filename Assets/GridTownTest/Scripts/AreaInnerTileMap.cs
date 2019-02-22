@@ -233,7 +233,13 @@ public class AreaInnerTileMap : MonoBehaviour {
         }
 
         //randomly choose a gate from the outer tiles
-        LocationGridTile chosenGate = outerTiles[Random.Range(0, outerTiles.Count)];
+        List<LocationGridTile> gateChoices = outerTiles.Where(
+            x => Utilities.IsInRange(x.localPlace.x - 3, 0, width)
+            && Utilities.IsInRange(x.localPlace.x + 3, 0, width)
+            && Utilities.IsInRange(x.localPlace.y - 3, 0, height)
+            && Utilities.IsInRange(x.localPlace.y + 3, 0, height)
+            ).ToList();
+        LocationGridTile chosenGate = gateChoices[Random.Range(0, gateChoices.Count)];
         outerTiles.Remove(chosenGate);
         chosenGate.SetTileType(LocationGridTile.Tile_Type.Gate);
         insideTiles.Remove(chosenGate); //NOTE: I remove the tiles that become gates from inside tiles, so as not to include them when determining tiles with structures

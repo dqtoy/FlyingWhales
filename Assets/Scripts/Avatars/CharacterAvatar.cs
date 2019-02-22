@@ -161,7 +161,7 @@ public class CharacterAvatar : MonoBehaviour{
         _isTravelling = true;
         //float distance = Vector3.Distance(_party.specificLocation.coreTile.transform.position, targetLocation.coreTile.transform.position);
         if (causeForTravel != null) {
-            _party.specificLocation.areaMap.ShowEventPopupAt(_party.owner.gridTileLocation, causeForTravel.states["Start"].descriptionLog);
+            _party.specificLocation.areaMap.ShowEventPopupAt(_party.owner.gridTileLocation, causeForTravel.currentState.lastAddedLog);
         } else {
             Debug.LogWarning(_party.owner.name + " does not have a cause for travel! Not showing event popup for his/her departure");
         }

@@ -15,8 +15,6 @@ public class InteractionIntel {
     public INTERACTION_ALIGNMENT alignment;
     public InteractionCharacterEffect[] effectsOnActor;
     public InteractionCharacterEffect[] effectsOnTarget;
-    
-
 
     public InteractionIntel(Interaction interaction, Log log) {
         obtainedFromLog = log;
@@ -33,9 +31,9 @@ public class InteractionIntel {
 
         //action structure
         actionLocationStructure = null;
-        if (!connectedInteraction.name.Contains("Move To")) {
-            actionLocationStructure = connectedInteraction.actionStructureLocation; //because move to usually doesn't know what target location
-        }
+        //if (!connectedInteraction.name.Contains("Move To")) {
+        actionLocationStructure = connectedInteraction.actionStructureLocation; //because move to usually doesn't know what target location
+        //}
 
         //action deadline
         if (connectedInteraction.name.Contains("Move To")) {
