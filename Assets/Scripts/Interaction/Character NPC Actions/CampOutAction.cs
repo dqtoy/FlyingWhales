@@ -64,7 +64,7 @@ public class CampOutAction : Interaction {
         }
     }
     public override bool CanInteractionBeDoneBy(Character character) {
-        if (character.homeArea.id == character.specificLocation.id) {
+        if (!InteractionManager.Instance.CanCreateInteraction(type, character)) {
             return false;
         }
         return base.CanInteractionBeDoneBy(character);
