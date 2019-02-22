@@ -39,6 +39,8 @@ public static class Signals {
     public static string CHARACTER_EXITED_AREA = "OnCharacterExitedArea"; //Parameters (Area affectedArea, Character character)
     public static string ITEM_REMOVED_FROM_AREA = "OnItemRemovedFromArea"; //Parameters (Area affectedArea, SpecialToken token)
     public static string ITEM_ADDED_TO_AREA = "OnItemAddedToArea"; //Parameters (Area affectedArea, SpecialToken token)
+    public static string AREA_MAP_OPENED = "OnAreaMapOpened"; //parameters (Area area)
+    public static string AREA_MAP_CLOSED = "OnAreaMapClosed"; //parameters (Area area)
     #endregion
 
     #region Landmarks

@@ -38,6 +38,10 @@ public class FactionEmblemDictionaryPropertyDrawer : SerializableDictionaryPrope
 public class JobIconsDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(WallSpritesDictionary))]
 public class WallSpritesDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(ItemTileBaseDictionary))]
+public class ItemTileBaseDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(FoodTileBaseDictionary))]
+public class FoodTileBaseDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 
 [CustomPropertyDrawer(typeof(CharacterTagListStorage))]
 public class CharacterTagListStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer { }

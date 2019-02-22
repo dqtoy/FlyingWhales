@@ -50,10 +50,15 @@ public class CharacterRelationshipData {
     }
 
     private void OnInteractionInitialized(Interaction interaction) {
-        if (interaction.characterInvolved.id == owner.id 
-            && interaction.targetCharacter != null 
+        if (interaction.characterInvolved.id == owner.id) { //owner is character involved
+            if (interaction.targetCharacter != null
             && interaction.targetCharacter.id == targetCharacter.id) {
-            ResetLastEncounter();
+                ResetLastEncounter();
+            }
+        } else if (interaction.targetCharacter != null && interaction.targetCharacter.id == owner.id) { //owner is targetCharacter
+            if (interaction.characterInvolved.id == this.targetCharacter.id) {
+                ResetLastEncounter();
+            }
         }
     }
     private void OnCharacterArrivedAtStructure(Character character, LocationStructure structure) {

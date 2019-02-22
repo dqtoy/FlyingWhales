@@ -43,10 +43,6 @@ public class AreaInfoUI : UIMenu {
     [SerializeField] private Color evenLogColor;
     [SerializeField] private Color oddLogColor;
 
-    [Space(10)]
-    [Header("Map")]
-    [SerializeField] private Toggle mapToggle;
-
     private CombatGrid combatGrid;
 
     private LogHistoryItem[] logHistoryItems;
@@ -58,6 +54,8 @@ public class AreaInfoUI : UIMenu {
 
     public Area activeArea { get; private set; }
     private float _currentWinChance;
+
+    private bool hideOnShowAreaMap = true;
 
     internal override void Initialize() {
         base.Initialize();
@@ -79,6 +77,8 @@ public class AreaInfoUI : UIMenu {
         Messenger.AddListener<Character, Area, Area>(Signals.CHARACTER_MIGRATED_HOME, OnCharacterMigratedHome);
         Messenger.AddListener<Area, SpecialToken>(Signals.ITEM_ADDED_TO_AREA, OnItemAddedToArea);
         Messenger.AddListener<Area, SpecialToken>(Signals.ITEM_REMOVED_FROM_AREA, OnItemRemovedFromArea);
+        Messenger.AddListener<Area>(Signals.AREA_MAP_OPENED, OnAreaMapOpened);
+        Messenger.AddListener<Area>(Signals.AREA_MAP_CLOSED, OnAreaMapClosed);
     }
 
     public override void OpenMenu() {
@@ -92,7 +92,6 @@ public class AreaInfoUI : UIMenu {
         
         if (previousArea != null) {
             previousArea.SetOutlineState(false);
-            previousArea.areaMap.gameObject.SetActive(false);
         }
         if (activeArea != null) {
             activeArea.SetOutlineState(true);
@@ -101,8 +100,12 @@ public class AreaInfoUI : UIMenu {
         if(activeArea.owner != PlayerManager.Instance.player.playerFaction) {
             PlayerUI.Instance.attackSlot.ShowAttackButton();
         }
-        if (mapToggle.isOn) {
-            activeArea.areaMap.gameObject.SetActive(true);
+
+        if (InteriorMapManager.Instance.isAnAreaMapShowing) {
+            InteriorMapManager.Instance.HideAreaMap();
+            hideOnShowAreaMap = false;
+            InteriorMapManager.Instance.ShowAreaMap(activeArea);
+            hideOnShowAreaMap = true;
         }
     }
     public override void CloseMenu() {
@@ -110,7 +113,6 @@ public class AreaInfoUI : UIMenu {
         base.CloseMenu();
         if (activeArea != null) {
             activeArea.SetOutlineState(false);
-            activeArea.areaMap.gameObject.SetActive(false);
         }
         activeArea = null;
         //UIManager.Instance.SetCoverState(false);
@@ -506,9 +508,16 @@ public class AreaInfoUI : UIMenu {
     #endregion
 
     #region Area Map
-    public void ToggleMapMenu(bool state) {
-        mapToggle.isOn = state;
-        activeArea.areaMap.gameObject.SetActive(state);
+    public void ShowAreaMap() {
+        InteriorMapManager.Instance.ShowAreaMap(activeArea);
+    }
+    private void OnAreaMapOpened(Area area) {
+        if (hideOnShowAreaMap) {
+            CloseMenu(); //hide area menu when inner map is shown
+        }
+    }
+    private void OnAreaMapClosed(Area area) {
+        
     }
     #endregion
 }

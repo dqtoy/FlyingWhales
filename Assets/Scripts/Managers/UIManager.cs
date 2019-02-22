@@ -216,6 +216,8 @@ public class UIManager : MonoBehaviour {
         Messenger.AddListener(Signals.INTERACTION_MENU_OPENED, OnInteractionMenuOpened);
         Messenger.AddListener(Signals.INTERACTION_MENU_CLOSED, OnInteractionMenuClosed);
         Messenger.AddListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnPartyStartedTravelling);
+        Messenger.AddListener<Area>(Signals.AREA_MAP_OPENED, OnAreaMapOpened);
+        Messenger.AddListener<Area>(Signals.AREA_MAP_CLOSED, OnAreaMapClosed);
     }
     //public void UnifySelectables() {
     //    UnifiedSelectableBehaviour[] selectables = this.GetComponentsInChildren<UnifiedSelectableBehaviour>(true);
@@ -1456,6 +1458,19 @@ public class UIManager : MonoBehaviour {
         }
         return false;
     }
+
+    #region Area Map
+    [SerializeField] private GameObject returnToWorldGO;
+    private void OnAreaMapOpened(Area area) {
+        returnToWorldGO.SetActive(true);
+    }
+    private void OnAreaMapClosed(Area area) {
+        returnToWorldGO.SetActive(false);
+    }
+    public void ReturnToWorlMap() {
+        InteriorMapManager.Instance.HideAreaMap();
+    }
+    #endregion
 
     //public void EnvelopContentCoroutineStarter(RectTransform thisTransform, RectTransform otherTransform,
     //    bool followWidth, bool followHeight, Vector2 padding) {

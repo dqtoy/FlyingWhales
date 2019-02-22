@@ -4,48 +4,42 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 
 public class InteriorMapManager : MonoBehaviour {
-    public int width;
-    public int height;
 
-    public Tilemap interiorMap;
-    public Tile[] outsideGroundTiles;
-    public Tile[] insideGroundTiles;
+    public static InteriorMapManager Instance = null;
+    public AreaInnerTileMap currentlyShowingMap { get; private set; }
+    public Area currentlyShowingArea { get; private set; }
 
-    private TileData[,] map; //0 = outside, 1 = inside
+    public bool isAnAreaMapShowing {
+        get {
+            return currentlyShowingMap != null;
+        }
+    }
 
     private void Awake() {
-        
-    }
-    // Use this for initialization
-    void Start () {
-        CreateInteriorMap();
-	}
-	
-	
-    private void CreateInteriorMap() {
-        map = new TileData[width, height];
-        for (int x = 0; x < map.GetUpperBound(0); x++) {
-            for (int y = 0; y < map.GetUpperBound(1); y++) {
-                TileData data = map[x, y];
-                data.isInside = false;
-                map[x, y] = data;
-            }
-        }
+        Instance = this;
     }
 
-    private Tile GetRandomOutsideGroundTiles() {
-        return outsideGroundTiles[UnityEngine.Random.Range(0, outsideGroundTiles.Length)];
+    public void Initialize() {
+        AreaMapCameraMove.Instance.Initialize();
     }
 
-    private void UpdateMap() {
-        for (int x = 0; x < map.GetUpperBound(0); x++) {
-            for (int y = 0; y < map.GetUpperBound(1); y++) {
-                //map[x, y] = 0;
-            }
-        }
+    public void ShowAreaMap(Area area) {
+        area.areaMap.Open();
+        currentlyShowingMap = area.areaMap;
+        currentlyShowingArea = area;
+        Messenger.Broadcast(Signals.AREA_MAP_OPENED, area);
     }
+
+    public void HideAreaMap() {
+        if (currentlyShowingMap == null) {
+            return;
+        }
+        currentlyShowingMap.Close();
+        Messenger.Broadcast(Signals.AREA_MAP_CLOSED, currentlyShowingArea);
+        currentlyShowingMap = null;
+        currentlyShowingArea = null;
+    }
+
+    
 }
 
-public struct TileData {
-    public bool isInside;
-}

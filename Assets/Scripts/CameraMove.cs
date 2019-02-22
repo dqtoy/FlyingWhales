@@ -26,7 +26,6 @@ public class CameraMove : MonoBehaviour {
     [SerializeField] internal float MAX_Y;
 
     [SerializeField] private Bounds bounds;
-
     [SerializeField] private bool allowZoom = true;
 
     [Header("Dragging")]
@@ -37,6 +36,8 @@ public class CameraMove : MonoBehaviour {
     private bool isDragging = false;
 
     private float previousCameraFOV;
+
+    private bool cameraControlEnabled = true;
 
     #region getters/setters
     public Camera uiCamera {
@@ -54,6 +55,9 @@ public class CameraMove : MonoBehaviour {
 		Instance = this;
 	}
     private void LateUpdate() {
+        if (!cameraControlEnabled) {
+            return;
+        }
         ArrowKeysMovement();
 #if !WORLD_CREATION_TOOL
         Dragging();
@@ -67,6 +71,8 @@ public class CameraMove : MonoBehaviour {
         Messenger.AddListener(Signals.GAME_LOADED, SetInitialCameraPosition);
         Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
+        Messenger.AddListener<Area>(Signals.AREA_MAP_OPENED, OnAreaMapOpened);
+        Messenger.AddListener<Area>(Signals.AREA_MAP_CLOSED, OnAreaMapClosed);
     }
 
     #region Utilities
@@ -403,6 +409,18 @@ public class CameraMove : MonoBehaviour {
             allowZoom = true;
             ZoomToTarget(lastZoomAmount);
         }
+    }
+    private void OnAreaMapOpened(Area area) {
+        SetCameraControlState(false);
+    }
+    private void OnAreaMapClosed(Area area) {
+        SetCameraControlState(true);
+    }
+    #endregion
+
+    #region Camera Control
+    public void SetCameraControlState(bool state) {
+        cameraControlEnabled = state;
     }
     #endregion
 }

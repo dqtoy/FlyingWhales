@@ -51,7 +51,12 @@ public class AreaMapTravelLine : MonoBehaviour {
         //SchedulingManager.Instance.AddEntry(GameManager.Instance.Today().AddDays(5), () => DestroyLine());
     }
     private void UpdateVisibility() {
-        this.gameObject.SetActive(owner.isTracked || GameManager.Instance.inspectAll);
+        if ((UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.id == owner.id)
+            || GameManager.Instance.inspectAll) {
+            this.gameObject.SetActive(true);
+        } else {
+            this.gameObject.SetActive(false);
+        }
     }
     private void FillProgress() {
         if (ticksLeft == 0) {
@@ -66,6 +71,9 @@ public class AreaMapTravelLine : MonoBehaviour {
         RemoveListeners();
         if (start.objHere == owner) {
             areaMap.charactersTM.SetTile(start.localPlace, null);
+            if (start.prefabHere != null) {
+                ObjectPoolManager.Instance.DestroyObject(start.prefabHere);
+            }
         }
         ObjectPoolManager.Instance.DestroyObject(this.gameObject);
     }
@@ -74,11 +82,15 @@ public class AreaMapTravelLine : MonoBehaviour {
     private void AddListeners() {
         Messenger.AddListener(Signals.INSPECT_ALL, OnInspectAll);
         Messenger.AddListener(Signals.TICK_STARTED, FillProgress);
+        Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
+        Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
     }
     private void RemoveListeners() {
         Messenger.RemoveListener(Signals.INSPECT_ALL, OnInspectAll);
         Messenger.RemoveListener(Signals.TICK_STARTED, FillProgress);
+        Messenger.RemoveListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
+        Messenger.RemoveListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
         Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
     }
     private void OnCharacterDied(Character character) {
@@ -88,6 +100,16 @@ public class AreaMapTravelLine : MonoBehaviour {
     }
     private void OnInspectAll() {
         UpdateVisibility();
+    }
+    private void OnMenuOpened(UIMenu menu) {
+        if (menu is CharacterInfoUI) {
+            UpdateVisibility();
+        }
+    }
+    private void OnMenuClosed(UIMenu menu) {
+        if (menu is CharacterInfoUI) {
+            UpdateVisibility();
+        }
     }
     #endregion
 }
