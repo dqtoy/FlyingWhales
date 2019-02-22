@@ -1588,7 +1588,7 @@ public class InteractionManager : MonoBehaviour {
                 return targetCharacter.specificLocation.id == character.specificLocation.id && targetCharacter.IsInOwnParty();
             case INTERACTION_TYPE.CAMP_OUT_ACTION:
                 //**Trigger Criteria 1**: character is not in his Home location
-                return character.specificLocation.id != character.homeArea.id;
+                return !character.isAtHomeArea || character.homeStructure == null;
             case INTERACTION_TYPE.MAKE_LOVE_ACTION:
                 //**Trigger Criteria 1**: the target must be in the character's current location and must also be in the target's home Dwelling
                 if (targetCharacter.specificLocation.id != character.specificLocation.id 
