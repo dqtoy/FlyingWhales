@@ -2074,23 +2074,23 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public void CreateInitialTraitsByClass() {
         //Attack Type
         if (characterClass.attackType == ATTACK_TYPE.PHYSICAL) {
-            AddTrait(AttributeManager.Instance.allTraits["Physical Attacker"]);
+            AddTrait("Physical Attacker");
         } else if (characterClass.attackType == ATTACK_TYPE.MAGICAL) {
-            AddTrait(AttributeManager.Instance.allTraits["Magic User"]);
+            AddTrait("Magic User");
         }
 
         //Range Type
         if (characterClass.rangeType == RANGE_TYPE.MELEE) {
-            AddTrait(AttributeManager.Instance.allTraits["Melee Attack"]);
+            AddTrait("Melee Attack");
         } else if (characterClass.rangeType == RANGE_TYPE.RANGED) {
-            AddTrait(AttributeManager.Instance.allTraits["Ranged Attack"]);
+            AddTrait("Ranged Attack");
         }
 
         //Combat Position
         if (characterClass.combatPosition == COMBAT_POSITION.FRONTLINE) {
-            AddTrait(AttributeManager.Instance.allTraits["Frontline Combatant"]);
+            AddTrait("Frontline Combatant");
         } else if (characterClass.combatPosition == COMBAT_POSITION.BACKLINE) {
-            AddTrait(AttributeManager.Instance.allTraits["Backline Combatant"]);
+            AddTrait("Backline Combatant");
         }
 
         ////Class Name
@@ -2122,23 +2122,23 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public void CreateInitialTraitsByRace() {
         if (race == RACE.HUMANS) {
-            AddTrait(AttributeManager.Instance.allTraits["Beast Slayer"]);
+            AddTrait("Beast Slayer");
         } else if (race == RACE.ELVES) {
-            AddTrait(AttributeManager.Instance.allTraits["Anti Magic Aura"]);
+            AddTrait("Anti Magic Aura");
         } else if (race == RACE.GOBLIN) {
-            AddTrait(AttributeManager.Instance.allTraits["Soft Target"]);
+            AddTrait("Soft Target");
         } else if (race == RACE.FAERY) {
-            AddTrait(AttributeManager.Instance.allTraits["Melee Slayer"]);
+            AddTrait("Melee Slayer");
         } else if (race == RACE.SKELETON) {
-            AddTrait(AttributeManager.Instance.allTraits["Brittle Bones"]);
+            AddTrait("Brittle Bones");
         } else if (race == RACE.DRAGON) {
-            AddTrait(AttributeManager.Instance.allTraits["Steely Hide"]);
+            AddTrait("Steely Hide");
         } else if (race == RACE.SPIDER) {
-            AddTrait(AttributeManager.Instance.allTraits["Faery Slayer"]);
+            AddTrait("Faery Slayer");
         } else if (race == RACE.WOLF) {
-            AddTrait(AttributeManager.Instance.allTraits["Goblin Slayer"]);
+            AddTrait("Goblin Slayer");
         } else if (race == RACE.ABOMINATION) {
-            AddTrait(AttributeManager.Instance.allTraits["Elf Slayer"]);
+            AddTrait("Elf Slayer");
         }
     }
     public void AddTrait(string traitName) {
@@ -2428,7 +2428,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public void GenerateRandomTraits() {
         //All characters have a 1 in 8 chance of having Crooked trait when spawned
         if (UnityEngine.Random.Range(0, 8) < 1) {
-            AddTrait(AttributeManager.Instance.allTraits["Crooked"]);
+            AddTrait("Crooked");
             //Debug.Log(this.name + " is set to be Crooked");
         }
     }
@@ -2631,10 +2631,20 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (isHungry) {
             List<INTERACTION_TYPE> fullnessRecoveryInteractions = RaceManager.Instance.GetNPCInteractionsOfRace(this, INTERACTION_CATEGORY.FULLNESS_RECOVERY);
             if(fullnessRecoveryInteractions.Count > 0) {
-                if(currentTimeInWords == TIME_IN_WORDS.MORNING || currentTimeInWords == TIME_IN_WORDS.AFTERNOON) {
+                int weight = 0;
+                if (currentTimeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
+                    weight += 0;
+                } else if (currentTimeInWords == TIME_IN_WORDS.MORNING) {
+                    weight += 100;
+                } else if (currentTimeInWords == TIME_IN_WORDS.AFTERNOON) {
+                    weight += 500;
+                } else if (currentTimeInWords == TIME_IN_WORDS.NIGHT) {
+                    weight += 0;
+                }
+                if (weight > 0) {
                     INTERACTION_TYPE chosenType = fullnessRecoveryInteractions[UnityEngine.Random.Range(0, fullnessRecoveryInteractions.Count)];
-                    personalActionWeights.AddElement(chosenType, 50);
-                    interactionLog += "\nFULLNESS RECOVERY: " + chosenType.ToString() + " - 50";
+                    personalActionWeights.AddElement(chosenType, weight);
+                    interactionLog += "\nFULLNESS RECOVERY: " + chosenType.ToString() + " - " + weight;
                 }
             }
         } else if (isStarving) {
@@ -2642,17 +2652,19 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             if (fullnessRecoveryInteractions.Count > 0) {
                 int weight = 0;
                 if (currentTimeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
-                    weight = 100;
+                    weight += 0;
                 } else if (currentTimeInWords == TIME_IN_WORDS.MORNING) {
-                    weight = 500;
+                    weight += 100;
                 } else if (currentTimeInWords == TIME_IN_WORDS.AFTERNOON) {
-                    weight = 500;
+                    weight += 1000;
                 } else if (currentTimeInWords == TIME_IN_WORDS.NIGHT) {
-                    weight = 100;
+                    weight += 0;
                 }
-                INTERACTION_TYPE chosenType = fullnessRecoveryInteractions[UnityEngine.Random.Range(0, fullnessRecoveryInteractions.Count)];    
-                personalActionWeights.AddElement(chosenType, weight);
-                interactionLog += "\nFULLNESS RECOVERY: " + chosenType.ToString() + " - " + weight;
+                if(weight > 0) {
+                    INTERACTION_TYPE chosenType = fullnessRecoveryInteractions[UnityEngine.Random.Range(0, fullnessRecoveryInteractions.Count)];
+                    personalActionWeights.AddElement(chosenType, weight);
+                    interactionLog += "\nFULLNESS RECOVERY: " + chosenType.ToString() + " - " + weight;
+                }
             }
         }
 
@@ -2660,28 +2672,40 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (isTired) {
             List<INTERACTION_TYPE> tirednessRecoveryInteractions = RaceManager.Instance.GetNPCInteractionsOfRace(this, INTERACTION_CATEGORY.TIREDNESS_RECOVERY);
             if (tirednessRecoveryInteractions.Count > 0) {
-                if (currentTimeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT || currentTimeInWords == TIME_IN_WORDS.NIGHT) {
+                int weight = 0;
+                if (currentTimeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
+                    weight += 100;
+                } else if (currentTimeInWords == TIME_IN_WORDS.MORNING) {
+                    weight += 0;
+                } else if (currentTimeInWords == TIME_IN_WORDS.AFTERNOON) {
+                    weight += 0;
+                } else if (currentTimeInWords == TIME_IN_WORDS.NIGHT) {
+                    weight += 500;
+                }
+                if (weight > 0) {
                     INTERACTION_TYPE chosenType = tirednessRecoveryInteractions[UnityEngine.Random.Range(0, tirednessRecoveryInteractions.Count)];
-                    personalActionWeights.AddElement(chosenType, 50);
-                    interactionLog += "\nTIREDNESS RECOVERY: " + chosenType.ToString() + " - 50";
+                    personalActionWeights.AddElement(chosenType, weight);
+                    interactionLog += "\nTIREDNESS RECOVERY: " + chosenType.ToString() + " - " + weight;
                 }
             }
         } else if (isExhausted) {
             List<INTERACTION_TYPE> tirednessRecoveryInteractions = RaceManager.Instance.GetNPCInteractionsOfRace(this, INTERACTION_CATEGORY.TIREDNESS_RECOVERY);
             if (tirednessRecoveryInteractions.Count > 0) {
-                INTERACTION_TYPE chosenType = tirednessRecoveryInteractions[UnityEngine.Random.Range(0, tirednessRecoveryInteractions.Count)];
                 int weight = 0;
                 if (currentTimeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
-                    weight = 500;
+                    weight += 100;
                 } else if (currentTimeInWords == TIME_IN_WORDS.MORNING) {
-                    weight = 100;
+                    weight += 0;
                 } else if (currentTimeInWords == TIME_IN_WORDS.AFTERNOON) {
-                    weight = 100;
+                    weight += 0;
                 } else if (currentTimeInWords == TIME_IN_WORDS.NIGHT) {
-                    weight = 500;
+                    weight += 1000;
                 }
-                personalActionWeights.AddElement(chosenType, weight);
-                interactionLog += "\nTIREDNESS RECOVERY: " + chosenType.ToString() + " - " + weight;
+                if (weight > 0) {
+                    INTERACTION_TYPE chosenType = tirednessRecoveryInteractions[UnityEngine.Random.Range(0, tirednessRecoveryInteractions.Count)];
+                    personalActionWeights.AddElement(chosenType, weight);
+                    interactionLog += "\nTIREDNESS RECOVERY: " + chosenType.ToString() + " - " + weight;
+                }
             }
         }
 
@@ -2738,6 +2762,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                         } else if (currentTimeInWords == TIME_IN_WORDS.NIGHT) {
                             weight += 20;
                         }
+                    }
+                    if(!chosenData.isCharacterMissing && !chosenData.HasRelationshipTrait(RELATIONSHIP_TRAIT.ENEMY)) {
+                        weight *= 3;
                     }
                     if (weight > 0) {
                         personalActionWeights.AddElement(chosenRelationshipInteraction, weight);

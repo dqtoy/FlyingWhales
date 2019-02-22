@@ -114,7 +114,7 @@ public class TortureAction : Interaction {
 
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
-        _targetCharacter.AddTrait(AttributeManager.Instance.allTraits["Injured"]);
+        _targetCharacter.AddTrait("Injured");
     }
     private void TargetRecruitedEffect(InteractionState state) {
         //_characterInvolved.LevelUp();

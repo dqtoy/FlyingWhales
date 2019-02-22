@@ -48,9 +48,9 @@ public class HuntSmallAnimals : Interaction {
         }
     }
     public override bool CanInteractionBeDoneBy(Character character) {
-        if (!InteractionManager.Instance.CanCreateInteraction(type, character)) {
-            return false;
-        }
+        //if (!InteractionManager.Instance.CanCreateInteraction(type, character)) {
+        //    return false;
+        //}
         return base.CanInteractionBeDoneBy(character);
     }
     #endregion

@@ -194,8 +194,8 @@ public class TameBeastAction : Interaction {
         for (int j = 0; j < interactable.areaResidents.Count; j++) {
             Character resident = interactable.areaResidents[j];
             if (!resident.currentParty.icon.isTravelling && resident.doNotDisturb <= 0 && resident.IsInOwnParty() 
-                && resident.specificLocation.id == interactable.id && resident.faction == FactionManager.Instance.neutralFaction
-                && resident.role.roleType == CHARACTER_ROLE.BEAST) {
+                && resident.specificLocation.id == interactable.id && resident.faction.id == FactionManager.Instance.neutralFaction.id
+                && resident.role.roleType == CHARACTER_ROLE.BEAST && resident.GetTraitOr("Resting", "Eating") == null) {
                 int weight = 0;
                 if(resident.level < characterInvolved.level) {
                     weight += 50;

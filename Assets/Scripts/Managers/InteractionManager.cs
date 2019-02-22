@@ -383,6 +383,18 @@ public class InteractionManager : MonoBehaviour {
                 actorEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.FULLNESS_RECOVERY} },
                 targetCharacterEffect = null,
             } },
+            { INTERACTION_TYPE.EAT_INN_MEAL, new InteractionAttributes(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.FULLNESS_RECOVERY },
+                alignment = INTERACTION_ALIGNMENT.NEUTRAL,
+                actorEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.FULLNESS_RECOVERY} },
+                targetCharacterEffect = null,
+            } },
+            { INTERACTION_TYPE.REST_AT_INN, new InteractionAttributes(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.TIREDNESS_RECOVERY },
+                alignment = INTERACTION_ALIGNMENT.NEUTRAL,
+                actorEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TIREDNESS_RECOVERY} },
+                targetCharacterEffect = null,
+            } },
         };
     }
     public InteractionAttributes GetCategoryAndAlignment (INTERACTION_TYPE type, Character actor) {
@@ -893,6 +905,12 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.HUNT_SMALL_ANIMALS:
                 createdInteraction = new HuntSmallAnimals(interactable);
                 break;
+            case INTERACTION_TYPE.EAT_INN_MEAL:
+                createdInteraction = new EatInnMeal(interactable);
+                break;
+            case INTERACTION_TYPE.REST_AT_INN:
+                createdInteraction = new RestAtInn(interactable);
+                break;
         }
         return createdInteraction;
     }
@@ -983,7 +1001,8 @@ public class InteractionManager : MonoBehaviour {
     }
     public bool CanCreateInteraction(INTERACTION_TYPE interactionType, Character character, Character targetCharacter = null) {
         Area area = null;
-        FactionRelationship relationship = null;
+        FactionRelationship factionRel = null;
+        WeightedDictionary<string> stringWeights = null;
         switch (interactionType) {
             case INTERACTION_TYPE.RETURN_HOME:
                 return character.specificLocation.id != character.homeArea.id;
@@ -1045,8 +1064,8 @@ public class InteractionManager : MonoBehaviour {
                         if (currArea.owner != null
                             && currArea.owner.id != character.faction.id
                             && currArea.id != PlayerManager.Instance.player.playerArea.id) {
-                            relationship = character.faction.GetRelationshipWith(currArea.owner);
-                            if (relationship.relationshipStatus != FACTION_RELATIONSHIP_STATUS.ALLY && relationship.relationshipStatus != FACTION_RELATIONSHIP_STATUS.FRIEND) {
+                            factionRel = character.faction.GetRelationshipWith(currArea.owner);
+                            if (factionRel.relationshipStatus != FACTION_RELATIONSHIP_STATUS.ALLY && factionRel.relationshipStatus != FACTION_RELATIONSHIP_STATUS.FRIEND) {
                                 return true;
                             }
                         }
@@ -1079,8 +1098,8 @@ public class InteractionManager : MonoBehaviour {
                                 continue; //skip
                             }
                             if (faction.id != PlayerManager.Instance.player.playerFaction.id && faction.id != character.faction.id && faction.isActive) {
-                                relationship = character.faction.GetRelationshipWith(faction);
-                                if (relationship.relationshipStatus != FACTION_RELATIONSHIP_STATUS.ALLY) {
+                                factionRel = character.faction.GetRelationshipWith(faction);
+                                if (factionRel.relationshipStatus != FACTION_RELATIONSHIP_STATUS.ALLY) {
                                     return true;
 
                                 }
@@ -1149,10 +1168,10 @@ public class InteractionManager : MonoBehaviour {
                                     //Unaligned?
                                     return true;
                                 } else if(currCharacter.faction.id != character.faction.id && currCharacter.faction.ownedAreas.Count > 0) {
-                                        relationship = currCharacter.faction.GetRelationshipWith(character.faction);
-                                        if (relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.DISLIKED 
-                                            || relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.NEUTRAL
-                                            || relationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.FRIEND) {
+                                        factionRel = currCharacter.faction.GetRelationshipWith(character.faction);
+                                        if (factionRel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.DISLIKED 
+                                            || factionRel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.NEUTRAL
+                                            || factionRel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.FRIEND) {
                                             return true;
                                         }
                                 }
@@ -1361,7 +1380,49 @@ public class InteractionManager : MonoBehaviour {
                 if (targetCharacter.specificLocation.id == character.specificLocation.id 
                     && targetCharacter.currentStructure.isInside
                     && !character.GetCharacterRelationshipData(targetCharacter).isCharacterMissing) {
-                    return true;
+                    stringWeights = new WeightedDictionary<string>();
+                    int validWeightHangOut = 0;
+                    int invalidWeightHangOut = 50;
+                    if (character.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.SERVANT, RELATIONSHIP_TRAIT.RELATIVE)) {
+                        validWeightHangOut += 25;
+                    }
+                    if (character.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.FRIEND)) {
+                        validWeightHangOut += 50;
+                    }
+                    if (character.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.PARAMOUR)) {
+                        validWeightHangOut += 100;
+                    }
+
+                    bool isAnnoyedHangOut = false, isHungryHangOut = false, isTiredHangOut = false, isSickHangOut = false, isInjuredHangOut = false;
+                    for (int i = 0; i < character.traits.Count; i++) {
+                        if(character.traits[i].name == "Annoyed") { isAnnoyedHangOut = true; }
+                        else if (character.traits[i].name == "Hungry") { isHungryHangOut = true; }
+                        else if (character.traits[i].name == "Tired") { isTiredHangOut = true; } 
+                        else if (character.traits[i].name == "Sick") { isSickHangOut = true; } 
+                        else if (character.traits[i].name == "Injured") { isInjuredHangOut = true; }
+                    }
+                    if (isAnnoyedHangOut) {
+                        invalidWeightHangOut = (int) (invalidWeightHangOut * 1.5f);
+                    }
+                    if (isHungryHangOut) {
+                        invalidWeightHangOut = (int) (invalidWeightHangOut * 1.5f);
+                    }
+                    if (isTiredHangOut) {
+                        invalidWeightHangOut = (int) (invalidWeightHangOut * 1.5f);
+                    }
+                    if (isSickHangOut) {
+                        invalidWeightHangOut *= 2;
+                    }
+                    if (isInjuredHangOut) {
+                        invalidWeightHangOut *= 2;
+                    }
+                    stringWeights.AddElement("Valid", validWeightHangOut);
+                    stringWeights.AddElement("Invalid", invalidWeightHangOut);
+
+                    string resultHangOut = stringWeights.PickRandomElementGivenWeights();
+                    if (resultHangOut == "Valid") {
+                        return true;
+                    }
                 }
                 return false;
             case INTERACTION_TYPE.MOVE_TO_SCAVENGE_EVENT_FACTION:
@@ -1461,7 +1522,38 @@ public class InteractionManager : MonoBehaviour {
                 if(character.specificLocation.id == targetCharacter.specificLocation.id && targetCharacter.currentStructure.isInside) {
                     CharacterRelationshipData characterRelationshipData = character.GetCharacterRelationshipData(targetCharacter);
                     if(characterRelationshipData != null && !characterRelationshipData.isCharacterMissing) {
-                        return true;
+                        stringWeights = new WeightedDictionary<string>();
+                        int validWeightArgue = 0;
+                        int invalidWeightArgue = 50;
+                        if(character.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.SERVANT, RELATIONSHIP_TRAIT.RELATIVE)) {
+                            validWeightArgue += 20;
+                        }
+                        if (character.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.FRIEND)) {
+                            validWeightArgue += 10;
+                        }
+                        if (character.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.ENEMY)) {
+                            validWeightArgue += 30;
+                        }
+                        if (character.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.PARAMOUR)) {
+                            validWeightArgue += 10;
+                        }
+
+                        if(character.GetTrait("Happy") != null) {
+                            invalidWeightArgue = (int) (invalidWeightArgue * 1.5f);
+                        }
+                        if (character.GetTrait("Hungry") != null) {
+                            validWeightArgue *= 3;
+                        }
+                        if (character.GetTrait("Tired") != null) {
+                            validWeightArgue *= 3;
+                        }
+                        stringWeights.AddElement("Valid", validWeightArgue);
+                        stringWeights.AddElement("Invalid", invalidWeightArgue);
+
+                        string resultArgue = stringWeights.PickRandomElementGivenWeights();
+                        if(resultArgue == "Valid") {
+                            return true;
+                        }
                     }
                 }
                 return false;
@@ -1503,16 +1595,56 @@ public class InteractionManager : MonoBehaviour {
                     || targetCharacter.homeStructure == null || targetCharacter.currentStructure != targetCharacter.homeStructure) {
                     return false;
                 }
-                //**Trigger Criteria 2**: the actor must not be https://trello.com/c/GzhGi1XZ/1135-starving nor https://trello.com/c/I3gnHfsZ/1185-exhausted
-                if (character.GetTrait("Starving") != null 
-                    || character.GetTrait("Exhausted") != null) {
-                    return false;
-                }
+                ////**Trigger Criteria 2**: the actor must not be https://trello.com/c/GzhGi1XZ/1135-starving nor https://trello.com/c/I3gnHfsZ/1185-exhausted
+                //if (character.GetTrait("Starving") != null 
+                //    || character.GetTrait("Exhausted") != null) {
+                //    return false;
+                //}
                 //**Trigger Criteria 3**: the target's **character missing** is False
                 if (character.GetCharacterRelationshipData(targetCharacter).isCharacterMissing) {
                     return false;
                 }
-                return true;
+
+                stringWeights = new WeightedDictionary<string>();
+                int validWeightMakeLove = 0;
+                int invalidWeightMakeLove = 50;
+                if (character.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.FRIEND)) {
+                    validWeightMakeLove += 5;
+                }
+                if (character.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.LOVER)) {
+                    validWeightMakeLove += 25;
+                }
+                if (character.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.PARAMOUR)) {
+                    validWeightMakeLove += 50;
+                }
+
+                bool isAnnoyedMakeLove = false, isHungryMakeLove = false, isTiredMakeLove = false, isSickMakeLove = false, isInjuredMakeLove = false;
+                for (int i = 0; i < character.traits.Count; i++) {
+                    if (character.traits[i].name == "Annoyed") { isAnnoyedMakeLove = true; } else if (character.traits[i].name == "Hungry") { isHungryMakeLove = true; } else if (character.traits[i].name == "Tired") { isTiredMakeLove = true; } else if (character.traits[i].name == "Sick") { isSickMakeLove = true; } else if (character.traits[i].name == "Injured") { isInjuredMakeLove = true; }
+                }
+                if (isAnnoyedMakeLove) {
+                    invalidWeightMakeLove = (int) (invalidWeightMakeLove * 1.5f);
+                }
+                if (isHungryMakeLove) {
+                    invalidWeightMakeLove = (int) (invalidWeightMakeLove * 1.5f);
+                }
+                if (isTiredMakeLove) {
+                    invalidWeightMakeLove = (int) (invalidWeightMakeLove * 1.5f);
+                }
+                if (isSickMakeLove) {
+                    invalidWeightMakeLove *= 2;
+                }
+                if (isInjuredMakeLove) {
+                    invalidWeightMakeLove *= 2;
+                }
+                stringWeights.AddElement("Valid", validWeightMakeLove);
+                stringWeights.AddElement("Invalid", invalidWeightMakeLove);
+
+                string resultMakeLove = stringWeights.PickRandomElementGivenWeights();
+                if (resultMakeLove == "Valid") {
+                    return true;
+                }
+                return false;
             case INTERACTION_TYPE.REMOVE_CURSE_ACTION:
                 if(character.characterClass.attackType == ATTACK_TYPE.MAGICAL && targetCharacter.GetTrait("Cursed") != null) {
                     return true;
@@ -1590,6 +1722,17 @@ public class InteractionManager : MonoBehaviour {
                 return (!character.isAtHomeArea || character.homeStructure == null) && character.GetTrait("Carnivore") != null;
             case INTERACTION_TYPE.FORAGE_ACTION:
                 return (!character.isAtHomeArea || character.homeStructure == null) && character.GetTrait("Herbivore") != null;
+            case INTERACTION_TYPE.EAT_INN_MEAL:
+            case INTERACTION_TYPE.REST_AT_INN:
+                if(!character.isAtHomeArea && character.role.roleType != CHARACTER_ROLE.BEAST 
+                    && character.specificLocation.owner != null && character.faction.id != FactionManager.Instance.neutralFaction.id
+                    && character.specificLocation.owner.id != character.faction.id && character.specificLocation.HasStructure(STRUCTURE_TYPE.INN)) {
+                    factionRel = character.faction.GetRelationshipWith(character.specificLocation.owner);
+                    if(factionRel.relationshipStatus != FACTION_RELATIONSHIP_STATUS.AT_WAR) {
+                        return true;
+                    }
+                }
+                return false;
             default:
                 return true;
         }
