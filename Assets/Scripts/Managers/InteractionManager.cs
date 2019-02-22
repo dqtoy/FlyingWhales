@@ -1227,7 +1227,7 @@ public class InteractionManager : MonoBehaviour {
                 for (int i = 0; i < character.specificLocation.charactersAtLocation.Count; i++) {
                     Character currCharacter = character.specificLocation.charactersAtLocation[i];
                     if (currCharacter.id != character.id && !currCharacter.currentParty.icon.isTravelling && currCharacter.IsInOwnParty() && !currCharacter.isLeader
-                        && currCharacter.role.roleType == CHARACTER_ROLE.BEAST && currCharacter.isFactionless) {
+                        && currCharacter.role.roleType == CHARACTER_ROLE.BEAST && currCharacter.faction.id == FactionManager.Instance.neutralFaction.id) {
                         return true;
                     }
                 }

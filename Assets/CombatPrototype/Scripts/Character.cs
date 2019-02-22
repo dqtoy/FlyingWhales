@@ -167,14 +167,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public bool isFactionless { //is the character part of the neutral faction? or no faction?
         get {
-            if (FactionManager.Instance.neutralFaction == null) {
-                return faction == null;
+            if (faction == null || FactionManager.Instance.neutralFaction.id == faction.id) {
+                return true;
             } else {
-                if (faction == null || FactionManager.Instance.neutralFaction.id == faction.id) {
-                    return true;
-                } else {
-                    return false;
-                }
+                return false;
             }
         }
     }
