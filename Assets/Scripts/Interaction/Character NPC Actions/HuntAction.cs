@@ -81,6 +81,12 @@ public class HuntAction : Interaction {
         //    Debug.LogWarning("CHOSEN TARGET CHARACTER FOR HUNT ACTION OF " + _characterInvolved.name + " IS " + _targetCharacter.name);
         //}
     }
+    public override bool CanStillDoInteraction(Character character) {
+        if(_targetCharacter.faction.id == _characterInvolved.faction.id) {
+            return false;
+        }
+        return base.CanStillDoInteraction(character);
+    }
     #endregion
 
     #region Option Effect
@@ -126,11 +132,12 @@ public class HuntAction : Interaction {
         //_characterInvolved.LevelUp();
 
         if (!_targetCharacter.isFactionless && !_characterInvolved.isFactionless) {
-            Debug.LogError(_targetCharacter.name + " of " + _targetCharacter.faction.name + " will adjust faction relationship with " + _characterInvolved.name + " of " + _characterInvolved.faction.name);
+            //Debug.LogError(_targetCharacter.name + " of " + _targetCharacter.faction.name + " will adjust faction relationship with " + _characterInvolved.name + " of " + _characterInvolved.faction.name);
             AdjustFactionsRelationship(_targetCharacter.faction, _characterInvolved.faction, -1, state);
         }
 
         _targetCharacter.Death();
+        _characterInvolved.ResetFullnessMeter();
     }
     private void HunterInjuredCharacterEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -148,7 +155,7 @@ public class HuntAction : Interaction {
         //_targetCharacter.LevelUp();
 
         if (!_targetCharacter.isFactionless && !_characterInvolved.isFactionless) {
-            Debug.LogError(_targetCharacter.name + " of " + _targetCharacter.faction.name + " will adjust faction relationship with " + _characterInvolved.name + " of " + _characterInvolved.faction.name);
+            //Debug.LogError(_targetCharacter.name + " of " + _targetCharacter.faction.name + " will adjust faction relationship with " + _characterInvolved.name + " of " + _characterInvolved.faction.name);
             AdjustFactionsRelationship(_targetCharacter.faction, _characterInvolved.faction, -1, state);
         }
 
@@ -169,7 +176,7 @@ public class HuntAction : Interaction {
         for (int i = 0; i < characterInvolved.specificLocation.charactersAtLocation.Count; i++) {
             Character currCharacter = characterInvolved.specificLocation.charactersAtLocation[i];
             if (currCharacter.id != characterInvolved.id && !currCharacter.currentParty.icon.isTravelling && currCharacter.IsInOwnParty() && !currCharacter.isLeader
-                && currCharacter.role.roleType == CHARACTER_ROLE.BEAST && currCharacter.isFactionless) {
+                && currCharacter.role.roleType == CHARACTER_ROLE.BEAST && currCharacter.faction.id == FactionManager.Instance.neutralFaction.id) {
                 characterChoices.Add(currCharacter);
             }
         }
