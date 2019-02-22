@@ -287,59 +287,59 @@ public class CharacterRelationshipData {
     #region Action Intel
     public void SetPlannedActionIntel(InteractionIntel intel) {
         plannedActionIntel = intel;
-        if (plannedActionIntel != null) {
-            Debug.Log(owner.name + " was informed that " + targetCharacter.name + " has plans to:\n" + intel.GetDebugInfo());
-            Messenger.AddListener<Interaction>(Signals.INTERACTION_ENDED, CheckIfPlannedInteractionDone);
-        } else {
-            Messenger.RemoveListener<Interaction>(Signals.INTERACTION_ENDED, CheckIfPlannedInteractionDone);
-        }
+        //if (plannedActionIntel != null) {
+        //    Debug.Log(owner.name + " was informed that " + targetCharacter.name + " has plans to:\n" + intel.GetDebugInfo());
+        //    Messenger.AddListener<Interaction>(Signals.INTERACTION_ENDED, CheckIfPlannedInteractionDone);
+        //} else {
+        //    Messenger.RemoveListener<Interaction>(Signals.INTERACTION_ENDED, CheckIfPlannedInteractionDone);
+        //}
     }
     private void CheckIfPlannedInteractionDone(Interaction interaction) {
-        if (plannedActionIntel != null) {
-            if (plannedActionIntel.connectedInteraction == interaction) {
-                SetPlannedActionIntel(null);
-            }
-        }
+        //if (plannedActionIntel != null) {
+        //    if (plannedActionIntel.connectedInteraction == interaction) {
+        //        SetPlannedActionIntel(null);
+        //    }
+        //}
     }
     public void OnIntelGivenToCharacter(InteractionIntel intel) {
-        if (intel.isCompleted) {
-            InteractionCharacterEffect[] effectsOnCharacter = null;
-            if (intel.actor.id == targetCharacter.id) {
-                effectsOnCharacter = intel.effectsOnActor;
-            } else if (intel.target is Character && (intel.target as Character).id == targetCharacter.id) {
-                effectsOnCharacter = intel.effectsOnTarget;
-            }
-            if (effectsOnCharacter != null) {
-                for (int i = 0; i < effectsOnCharacter.Length; i++) {
-                    InteractionCharacterEffect effect = effectsOnCharacter[i];
-                    if (effect.effect == INTERACTION_CHARACTER_EFFECT.TRAIT_GAIN) {
-                        string gainedTrait = effect.effectString;
-                        Trait trouble;
-                        switch (gainedTrait) {
-                            case "Charmed":
-                            case "Abducted":
-                            case "Unconscious":
-                                trouble = targetCharacter.GetTrait(gainedTrait);
-                                AddTrouble(trouble);
-                                SetIsCharacterMissing(true);
-                                break;
-                            case "Injured":
-                            case "Cursed":
-                                trouble = targetCharacter.GetTrait(gainedTrait);
-                                AddTrouble(trouble);
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-                }
-            }
+        //if (intel.isCompleted) {
+        //    InteractionCharacterEffect[] effectsOnCharacter = null;
+        //    if (intel.actor.id == targetCharacter.id) {
+        //        effectsOnCharacter = intel.effectsOnActor;
+        //    } else if (intel.target is Character && (intel.target as Character).id == targetCharacter.id) {
+        //        effectsOnCharacter = intel.effectsOnTarget;
+        //    }
+        //    if (effectsOnCharacter != null) {
+        //        for (int i = 0; i < effectsOnCharacter.Length; i++) {
+        //            InteractionCharacterEffect effect = effectsOnCharacter[i];
+        //            if (effect.effect == INTERACTION_CHARACTER_EFFECT.TRAIT_GAIN) {
+        //                string gainedTrait = effect.effectString;
+        //                Trait trouble;
+        //                switch (gainedTrait) {
+        //                    case "Charmed":
+        //                    case "Abducted":
+        //                    case "Unconscious":
+        //                        trouble = targetCharacter.GetTrait(gainedTrait);
+        //                        AddTrouble(trouble);
+        //                        SetIsCharacterMissing(true);
+        //                        break;
+        //                    case "Injured":
+        //                    case "Cursed":
+        //                        trouble = targetCharacter.GetTrait(gainedTrait);
+        //                        AddTrouble(trouble);
+        //                        break;
+        //                    default:
+        //                        break;
+        //                }
+        //            }
+        //        }
+        //    }
             
-            if (intel.actionLocationStructure != null) {
-                SetIsCharacterLocated(true);
-                SetKnownStructure(intel.actionLocationStructure);
-            }
-        }
+        //    if (intel.actionLocationStructure != null) {
+        //        SetIsCharacterLocated(true);
+        //        SetKnownStructure(intel.actionLocationStructure);
+        //    }
+        //}
         
     }
     #endregion

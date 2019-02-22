@@ -10,12 +10,17 @@ public class AreaMapTravelLine : MonoBehaviour {
     [SerializeField] private Transform startTransform;
     [SerializeField] private Transform targetTransform;
 
+    private LocationGridTile start;
+    private AreaInnerTileMap areaMap;
+
     private float targetXScale; //linespriteFill
     private int ticksLeft;
     private Character owner;
 
-    public void DrawLine(LocationGridTile start, LocationGridTile end, Character owner) {
+    public void DrawLine(LocationGridTile start, LocationGridTile end, Character owner, AreaInnerTileMap areaMap) {
         this.owner = owner;
+        this.start = start;
+        this.areaMap = areaMap;
         this.transform.localPosition = Vector3.zero;
         startTransform.localPosition = new Vector3(start.localPlace.x + 0.5f, start.localPlace.y + 0.5f, 0f);
         targetTransform.localPosition = new Vector3(end.localPlace.x + 0.5f, end.localPlace.y + 0.5f, 0f);
@@ -49,17 +54,19 @@ public class AreaMapTravelLine : MonoBehaviour {
         this.gameObject.SetActive(owner.isTracked || GameManager.Instance.inspectAll);
     }
     private void FillProgress() {
-        ticksLeft--;
         if (ticksLeft == 0) {
             lineSpriteFill.transform.localScale = new Vector2(targetXScale, 0.03f);
             DestroyLine();
         } else {
             lineSpriteFill.transform.localScale = new Vector2(targetXScale/(float)ticksLeft, 0.03f);
         }
-        
+        ticksLeft--;        
     }
     private void DestroyLine() {
         RemoveListeners();
+        if (start.objHere == owner) {
+            areaMap.charactersTM.SetTile(start.localPlace, null);
+        }
         ObjectPoolManager.Instance.DestroyObject(this.gameObject);
     }
 

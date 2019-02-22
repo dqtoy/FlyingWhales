@@ -52,11 +52,11 @@ public class LogHistoryItem : LogItem {
     }
 
     public void ShowLogDebugInfo() {
-        if (log.fromInteraction != null && log.fromInteraction.intel != null) {
-            string text = log.GetLogDebugInfo();
-            text += "\n\n<i>(Double Click to Obatin intel)</i>";
-            UIManager.Instance.ShowSmallInfo(text);
-        }
+        //if (log.fromInteraction != null && log.fromInteraction.intel != null) {
+        //    string text = log.GetLogDebugInfo();
+        //    text += "\n\n<i>(Double Click to Obatin intel)</i>";
+        //    UIManager.Instance.ShowSmallInfo(text);
+        //}
     }
     public void HideLogDebugInfo() {
         UIManager.Instance.HideSmallInfo();
@@ -70,11 +70,11 @@ public class LogHistoryItem : LogItem {
     }
 
     public void ObtainIntel() {
-        if (log.fromInteraction != null && log.fromInteraction.intel != null) {
-            if (!PlayerManager.Instance.player.AlreadyHasIntel(log.fromInteraction.intel)) {
-                log.fromInteraction.intel.SetLog(log);
-                PlayerManager.Instance.player.AddIntel(log.fromInteraction.intel);
-            }
-        }
+        //if (log.fromInteraction != null && log.fromInteraction.intel != null) {
+        //    if (!PlayerManager.Instance.player.AlreadyHasIntel(log.fromInteraction.intel)) {
+        //        log.fromInteraction.intel.SetLog(log);
+        //        PlayerManager.Instance.player.AddIntel(log.fromInteraction.intel);
+        //    }
+        //}
     }
 }

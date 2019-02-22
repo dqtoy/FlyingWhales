@@ -160,6 +160,12 @@ public class CharacterAvatar : MonoBehaviour{
     private void StartTravelling() {
         _isTravelling = true;
         //float distance = Vector3.Distance(_party.specificLocation.coreTile.transform.position, targetLocation.coreTile.transform.position);
+        if (causeForTravel != null) {
+            _party.specificLocation.areaMap.ShowEventPopupAt(_party.owner.gridTileLocation, causeForTravel.states["Start"].descriptionLog);
+        } else {
+            Debug.LogWarning(_party.owner.name + " does not have a cause for travel! Not showing event popup for his/her departure");
+        }
+        
         _distanceToTarget = PathGenerator.Instance.GetTravelTime(_party.specificLocation.coreTile, targetLocation.coreTile);
         _travelLine = _party.specificLocation.coreTile.CreateTravelLine(targetLocation.coreTile, _distanceToTarget, _party.owner);
         _travelLine.SetActiveMeter(isVisualShowing);
@@ -217,6 +223,7 @@ public class CharacterAvatar : MonoBehaviour{
             }
             arriveLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1);
             arriveLog.AddLogToInvolvedObjects();
+            _party.specificLocation.areaMap.ShowEventPopupAt(_party.owner.gridTileLocation, arriveLog);
         }
 
         if (onPathFinished != null) {

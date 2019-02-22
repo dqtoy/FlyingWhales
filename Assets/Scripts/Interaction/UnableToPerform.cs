@@ -19,7 +19,7 @@ public class UnableToPerform : Interaction {
         startState.SetEffect(() => StartStateRewardEffect(startState));
         _states.Add(startState.name, startState);
 
-        SetInteractionIntel(null);
+        //SetInteractionIntel(null);
 
         //SetCurrentState(startState);
     }
