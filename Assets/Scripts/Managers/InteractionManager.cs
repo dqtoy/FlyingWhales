@@ -1380,6 +1380,49 @@ public class InteractionManager : MonoBehaviour {
                 if (targetCharacter.specificLocation.id == character.specificLocation.id 
                     && targetCharacter.currentStructure.isInside
                     && !character.GetCharacterRelationshipData(targetCharacter).isCharacterMissing) {
+                    stringWeights = new WeightedDictionary<string>();
+                    int validWeight = 0;
+                    int invalidWeight = 50;
+                    if (character.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.SERVANT, RELATIONSHIP_TRAIT.RELATIVE)) {
+                        validWeight += 25;
+                    }
+                    if (character.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.FRIEND)) {
+                        validWeight += 50;
+                    }
+                    if (character.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.PARAMOUR)) {
+                        validWeight += 100;
+                    }
+
+                    bool isAnnoyed = false, isHungry = false, isTired = false, isSick = false, isInjured = false;
+                    for (int i = 0; i < character.traits.Count; i++) {
+                        if(character.traits[i].name == "Annoyed") { isAnnoyed = true; }
+                        else if (character.traits[i].name == "Hungry") { isHungry = true; }
+                        else if (character.traits[i].name == "Tired") { isTired = true; } 
+                        else if (character.traits[i].name == "Sick") { isSick = true; } 
+                        else if (character.traits[i].name == "Injured") { isInjured = true; }
+                    }
+                    if (isAnnoyed) {
+                        invalidWeight = (int) (invalidWeight * 1.5f);
+                    }
+                    if (isHungry) {
+                        invalidWeight = (int) (invalidWeight * 1.5f);
+                    }
+                    if (isTired) {
+                        invalidWeight = (int) (invalidWeight * 1.5f);
+                    }
+                    if (isSick) {
+                        invalidWeight *= 2;
+                    }
+                    if (isInjured) {
+                        invalidWeight *= 2;
+                    }
+                    stringWeights.AddElement("Valid", validWeight);
+                    stringWeights.AddElement("Invalid", invalidWeight);
+
+                    string result = stringWeights.PickRandomElementGivenWeights();
+                    if (result == "Valid") {
+                        return true;
+                    }
                     return true;
                 }
                 return false;
