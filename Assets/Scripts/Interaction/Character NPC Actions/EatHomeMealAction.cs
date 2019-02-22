@@ -122,7 +122,7 @@ public class EatHomeMealAction : Interaction {
     private void StartRewardEffect(InteractionState state) {
         _characterInvolved.MoveToAnotherStructure(_characterInvolved.homeStructure);
         if (_characterInvolved.isDead) {
-            EndInteraction();
+            EndInteraction(false);
         }
     }
     private void EatCancelledRewardEffect(InteractionState state) {

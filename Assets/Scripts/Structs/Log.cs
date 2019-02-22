@@ -129,4 +129,10 @@ public class Log {
         return string.Empty;
     }
     #endregion
+
+    #region Intel
+    public InteractionIntel ConvertToIntel() {
+        return new InteractionIntel(fromInteraction, this);
+    }
+    #endregion
 }

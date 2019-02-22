@@ -36,6 +36,7 @@ public class Interaction {
     //protected InteractionIntel _intel;
     private string interactionDebugLog;
     protected LocationStructure _actionStructureLocation;
+    protected LocationGridTile _actionGridLocation;
     protected LocationStructure _targetStructure;
 
     public int dayStarted { get; protected set; }
@@ -183,13 +184,14 @@ public class Interaction {
         SetCurrentState(_states["Start"]);
         //CreateStates();
         _actionStructureLocation = _characterInvolved.currentStructure;
+        _actionGridLocation = _characterInvolved.gridTileLocation;
         //SetExplorerMinion(explorerMinion);
         //ScheduleFirstTimeOut();
         Messenger.Broadcast(Signals.INTERACTION_INITIALIZED, this);
     }
     public virtual void CreateStates() { }
     public virtual void CreateActionOptions(InteractionState state) { }
-    public virtual void EndInteraction() {
+    public virtual void EndInteraction(bool showEventPopup = true) {
         _isDone = true;
         if(_characterInvolved != null) {
             _characterInvolved.AdjustDoNotDisturb(-1);
@@ -208,6 +210,12 @@ public class Interaction {
         if(InteractionUI.Instance.interaction == this) {
             InteractionUI.Instance.HideInteractionUI();
         }
+
+        //show event popup
+        if (showEventPopup && !this.name.Contains("Move To")) {
+            interactable.areaMap.ShowEventPopupAt(_actionGridLocation, _currentState.lastAddedLog);
+        }
+
         Messenger.Broadcast<Interaction>(Signals.INTERACTION_ENDED, this);
     }
     public virtual void OnInteractionActive() {
@@ -252,7 +260,7 @@ public class Interaction {
     public void SetCurrentState(InteractionState state) {
         if (state.name == "Start" && _name.Contains("Move To") && targetArea != null && targetArea == _characterInvolved.specificLocation) {
             DoActionUponMoveToArrival();
-            EndInteraction();
+            EndInteraction(false);
         } else {
             _previousState = _currentState;
             //if(_currentState != null && _currentState.chosenOption != null) {

@@ -1897,7 +1897,7 @@ public class InteractionManager : MonoBehaviour {
                     log += "\n";
                 } else {
                     //area.RemoveInteraction(currInteraction);
-                    currInteraction.EndInteraction();
+                    currInteraction.EndInteraction(false);
                     log += "\n<color=red>" + character.name + " is unable to perform " + currInteraction.name + "!</color>";
                     //Unable to perform
                     UnableToPerform unable = CreateNewInteraction(INTERACTION_TYPE.UNABLE_TO_PERFORM, area) as UnableToPerform;
@@ -1944,7 +1944,7 @@ public class InteractionManager : MonoBehaviour {
                     log += "\n";
                 } else {
                     //area.RemoveInteraction(currInteraction);
-                    currInteraction.EndInteraction();
+                    currInteraction.EndInteraction(false);
                     log += "\n<color=red>" + currInteraction.name + " can no longer be done by " + character.name + "!</color>";
                     log += "\n";
                 }

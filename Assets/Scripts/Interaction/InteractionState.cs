@@ -20,7 +20,7 @@ public class InteractionState {
     protected ActionOption[] _actionOptions;
     protected List<object> _assignedObjects;
     protected List<LogFiller> logFillers;
-    protected List<Log> otherLogs;
+    public List<Log> otherLogs { get; protected set; }
 
     #region getters/setters
     public string name {
@@ -70,6 +70,15 @@ public class InteractionState {
     }
     public List<object> assignedObjects {
         get { return _assignedObjects; }
+    }
+    public Log lastAddedLog {
+        get {
+            if (otherLogs.Count > 0) {
+                return otherLogs[otherLogs.Count - 1];
+            }
+            Debug.LogWarning("There is no last added log for " + this.name + " state in interaction " + interaction.name);
+            return null;
+        }
     }
     #endregion
 

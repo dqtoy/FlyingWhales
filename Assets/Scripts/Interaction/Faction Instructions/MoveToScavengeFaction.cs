@@ -69,10 +69,6 @@ public class MoveToScavengeFaction : Interaction {
             state.SetDefaultOption(doNothing);
         }
     }
-    public override void EndInteraction() {
-        base.EndInteraction();
-        //TODO: _characterInvolved.SetForce
-    }
     public override void DoActionUponMoveToArrival() {
         AddToDebugLog(_characterInvolved.name + " will now create scavenge event");
         CreateConnectedEvent(INTERACTION_TYPE.SCAVENGE_EVENT_FACTION, _characterInvolved.specificLocation);
