@@ -1381,49 +1381,48 @@ public class InteractionManager : MonoBehaviour {
                     && targetCharacter.currentStructure.isInside
                     && !character.GetCharacterRelationshipData(targetCharacter).isCharacterMissing) {
                     stringWeights = new WeightedDictionary<string>();
-                    int validWeight = 0;
-                    int invalidWeight = 50;
+                    int validWeightHangOut = 0;
+                    int invalidWeightHangOut = 50;
                     if (character.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.SERVANT, RELATIONSHIP_TRAIT.RELATIVE)) {
-                        validWeight += 25;
+                        validWeightHangOut += 25;
                     }
                     if (character.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.FRIEND)) {
-                        validWeight += 50;
+                        validWeightHangOut += 50;
                     }
                     if (character.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.PARAMOUR)) {
-                        validWeight += 100;
+                        validWeightHangOut += 100;
                     }
 
-                    bool isAnnoyed = false, isHungry = false, isTired = false, isSick = false, isInjured = false;
+                    bool isAnnoyedHangOut = false, isHungryHangOut = false, isTiredHangOut = false, isSickHangOut = false, isInjuredHangOut = false;
                     for (int i = 0; i < character.traits.Count; i++) {
-                        if(character.traits[i].name == "Annoyed") { isAnnoyed = true; }
-                        else if (character.traits[i].name == "Hungry") { isHungry = true; }
-                        else if (character.traits[i].name == "Tired") { isTired = true; } 
-                        else if (character.traits[i].name == "Sick") { isSick = true; } 
-                        else if (character.traits[i].name == "Injured") { isInjured = true; }
+                        if(character.traits[i].name == "Annoyed") { isAnnoyedHangOut = true; }
+                        else if (character.traits[i].name == "Hungry") { isHungryHangOut = true; }
+                        else if (character.traits[i].name == "Tired") { isTiredHangOut = true; } 
+                        else if (character.traits[i].name == "Sick") { isSickHangOut = true; } 
+                        else if (character.traits[i].name == "Injured") { isInjuredHangOut = true; }
                     }
-                    if (isAnnoyed) {
-                        invalidWeight = (int) (invalidWeight * 1.5f);
+                    if (isAnnoyedHangOut) {
+                        invalidWeightHangOut = (int) (invalidWeightHangOut * 1.5f);
                     }
-                    if (isHungry) {
-                        invalidWeight = (int) (invalidWeight * 1.5f);
+                    if (isHungryHangOut) {
+                        invalidWeightHangOut = (int) (invalidWeightHangOut * 1.5f);
                     }
-                    if (isTired) {
-                        invalidWeight = (int) (invalidWeight * 1.5f);
+                    if (isTiredHangOut) {
+                        invalidWeightHangOut = (int) (invalidWeightHangOut * 1.5f);
                     }
-                    if (isSick) {
-                        invalidWeight *= 2;
+                    if (isSickHangOut) {
+                        invalidWeightHangOut *= 2;
                     }
-                    if (isInjured) {
-                        invalidWeight *= 2;
+                    if (isInjuredHangOut) {
+                        invalidWeightHangOut *= 2;
                     }
-                    stringWeights.AddElement("Valid", validWeight);
-                    stringWeights.AddElement("Invalid", invalidWeight);
+                    stringWeights.AddElement("Valid", validWeightHangOut);
+                    stringWeights.AddElement("Invalid", invalidWeightHangOut);
 
-                    string result = stringWeights.PickRandomElementGivenWeights();
-                    if (result == "Valid") {
+                    string resultHangOut = stringWeights.PickRandomElementGivenWeights();
+                    if (resultHangOut == "Valid") {
                         return true;
                     }
-                    return true;
                 }
                 return false;
             case INTERACTION_TYPE.MOVE_TO_SCAVENGE_EVENT_FACTION:
@@ -1524,35 +1523,35 @@ public class InteractionManager : MonoBehaviour {
                     CharacterRelationshipData characterRelationshipData = character.GetCharacterRelationshipData(targetCharacter);
                     if(characterRelationshipData != null && !characterRelationshipData.isCharacterMissing) {
                         stringWeights = new WeightedDictionary<string>();
-                        int validWeight = 0;
-                        int invalidWeight = 50;
+                        int validWeightArgue = 0;
+                        int invalidWeightArgue = 50;
                         if(character.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.SERVANT, RELATIONSHIP_TRAIT.RELATIVE)) {
-                            validWeight += 20;
+                            validWeightArgue += 20;
                         }
                         if (character.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.FRIEND)) {
-                            validWeight += 10;
+                            validWeightArgue += 10;
                         }
                         if (character.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.ENEMY)) {
-                            validWeight += 30;
+                            validWeightArgue += 30;
                         }
                         if (character.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.PARAMOUR)) {
-                            validWeight += 10;
+                            validWeightArgue += 10;
                         }
 
                         if(character.GetTrait("Happy") != null) {
-                            invalidWeight = (int) (invalidWeight * 1.5f);
+                            invalidWeightArgue = (int) (invalidWeightArgue * 1.5f);
                         }
                         if (character.GetTrait("Hungry") != null) {
-                            validWeight *= 3;
+                            validWeightArgue *= 3;
                         }
                         if (character.GetTrait("Tired") != null) {
-                            validWeight *= 3;
+                            validWeightArgue *= 3;
                         }
-                        stringWeights.AddElement("Valid", validWeight);
-                        stringWeights.AddElement("Invalid", invalidWeight);
+                        stringWeights.AddElement("Valid", validWeightArgue);
+                        stringWeights.AddElement("Invalid", invalidWeightArgue);
 
-                        string result = stringWeights.PickRandomElementGivenWeights();
-                        if(result == "Valid") {
+                        string resultArgue = stringWeights.PickRandomElementGivenWeights();
+                        if(resultArgue == "Valid") {
                             return true;
                         }
                     }
@@ -1596,16 +1595,56 @@ public class InteractionManager : MonoBehaviour {
                     || targetCharacter.homeStructure == null || targetCharacter.currentStructure != targetCharacter.homeStructure) {
                     return false;
                 }
-                //**Trigger Criteria 2**: the actor must not be https://trello.com/c/GzhGi1XZ/1135-starving nor https://trello.com/c/I3gnHfsZ/1185-exhausted
-                if (character.GetTrait("Starving") != null 
-                    || character.GetTrait("Exhausted") != null) {
-                    return false;
-                }
+                ////**Trigger Criteria 2**: the actor must not be https://trello.com/c/GzhGi1XZ/1135-starving nor https://trello.com/c/I3gnHfsZ/1185-exhausted
+                //if (character.GetTrait("Starving") != null 
+                //    || character.GetTrait("Exhausted") != null) {
+                //    return false;
+                //}
                 //**Trigger Criteria 3**: the target's **character missing** is False
                 if (character.GetCharacterRelationshipData(targetCharacter).isCharacterMissing) {
                     return false;
                 }
-                return true;
+
+                stringWeights = new WeightedDictionary<string>();
+                int validWeightMakeLove = 0;
+                int invalidWeightMakeLove = 50;
+                if (character.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.FRIEND)) {
+                    validWeightMakeLove += 5;
+                }
+                if (character.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.LOVER)) {
+                    validWeightMakeLove += 25;
+                }
+                if (character.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.PARAMOUR)) {
+                    validWeightMakeLove += 50;
+                }
+
+                bool isAnnoyedMakeLove = false, isHungryMakeLove = false, isTiredMakeLove = false, isSickMakeLove = false, isInjuredMakeLove = false;
+                for (int i = 0; i < character.traits.Count; i++) {
+                    if (character.traits[i].name == "Annoyed") { isAnnoyedMakeLove = true; } else if (character.traits[i].name == "Hungry") { isHungryMakeLove = true; } else if (character.traits[i].name == "Tired") { isTiredMakeLove = true; } else if (character.traits[i].name == "Sick") { isSickMakeLove = true; } else if (character.traits[i].name == "Injured") { isInjuredMakeLove = true; }
+                }
+                if (isAnnoyedMakeLove) {
+                    invalidWeightMakeLove = (int) (invalidWeightMakeLove * 1.5f);
+                }
+                if (isHungryMakeLove) {
+                    invalidWeightMakeLove = (int) (invalidWeightMakeLove * 1.5f);
+                }
+                if (isTiredMakeLove) {
+                    invalidWeightMakeLove = (int) (invalidWeightMakeLove * 1.5f);
+                }
+                if (isSickMakeLove) {
+                    invalidWeightMakeLove *= 2;
+                }
+                if (isInjuredMakeLove) {
+                    invalidWeightMakeLove *= 2;
+                }
+                stringWeights.AddElement("Valid", validWeightMakeLove);
+                stringWeights.AddElement("Invalid", invalidWeightMakeLove);
+
+                string resultMakeLove = stringWeights.PickRandomElementGivenWeights();
+                if (resultMakeLove == "Valid") {
+                    return true;
+                }
+                return false;
             case INTERACTION_TYPE.REMOVE_CURSE_ACTION:
                 if(character.characterClass.attackType == ATTACK_TYPE.MAGICAL && targetCharacter.GetTrait("Cursed") != null) {
                     return true;
