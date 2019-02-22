@@ -14,6 +14,8 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
 
     public bool ignoreInteractions = false;
 
+    private PointerEventData.InputButton interactionBtn = PointerEventData.InputButton.Right;
+
     [Header("BG")]
     [SerializeField] private Image baseBG;
     [SerializeField] private Image lockedFrame;
@@ -157,13 +159,16 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     #endregion
 
     #region Pointer Actions
+    public void SetClickButton(PointerEventData.InputButton btn) {
+        interactionBtn = btn;
+    }
     public void OnPointerClick(PointerEventData eventData) {
 #if !WORLD_CREATION_TOOL
         if (ignoreInteractions) {
             return;
         }
-        if (eventData.button == PointerEventData.InputButton.Right) {
-            OnRightClick();
+        if (eventData.button == interactionBtn) {
+            OnClick();
         }
         
 #endif
@@ -174,7 +179,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         }
         OnPointerClick(eventData as PointerEventData);
     }
-    public void OnRightClick() {
+    public void OnClick() {
         ShowCharacterMenu();
     }
     public void SetHoverHighlightState(bool state) {

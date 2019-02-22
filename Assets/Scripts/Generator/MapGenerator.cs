@@ -187,6 +187,7 @@ public class MapGenerator : MonoBehaviour {
             AchievementManager.Instance.Initialize();
         }
         CharacterManager.Instance.GenerateRelationshipsForTesting();
+        InteriorMapManager.Instance.Initialize();
         loadingWatch.Stop();
         Debug.Log(string.Format("Total loading time is {0} ms", loadingWatch.ElapsedMilliseconds));
         LevelLoaderManager.SetLoadingState(false);

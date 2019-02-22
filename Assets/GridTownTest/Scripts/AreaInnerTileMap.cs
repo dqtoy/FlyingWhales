@@ -9,7 +9,10 @@ public class AreaInnerTileMap : MonoBehaviour {
 
     public int width;
     public int height;
-    private const float cellSize = 32f;
+    private const float cellSize = 64f;
+
+    private LocationGridTile gate;
+    private Cardinal_Direction outsideDirection;
 
     [SerializeField] private Grid grid;
     [SerializeField] private Canvas canvas;
@@ -20,15 +23,22 @@ public class AreaInnerTileMap : MonoBehaviour {
     [SerializeField] private Tilemap groundTilemap;
     [SerializeField] private Tilemap wallTilemap;
     [SerializeField] private Tilemap strcutureTilemap;
-    [SerializeField] private Tilemap charactersTilemap;
+    [SerializeField] private Tilemap objectsTilemap;
 
     [Header("Tiles")]
     [SerializeField] private TileBase outsideTile;
     [SerializeField] private TileBase insideTile;
     [SerializeField] private TileBase wallTile;
     [SerializeField] private TileBase structureTile;
-    [SerializeField] private TileBase characterTile;
     [SerializeField] private TileBase floorTile;
+    [SerializeField] private TileBase characterTile;
+    [SerializeField] private TileBase supplyIconTile;
+    [SerializeField] private TileBase corpseIconTile;
+    [SerializeField] private ItemTileBaseDictionary itemTiles;
+    [SerializeField] private FoodTileBaseDictionary foodTiles;
+
+    [Header("Characters")]
+    [SerializeField] private RectTransform charactersParent;
 
     [Header("Events")]
     [SerializeField] private GameObject eventPopupPrefab;
@@ -50,7 +60,7 @@ public class AreaInnerTileMap : MonoBehaviour {
     public List<LocationGridTile> insideTiles { get; private set; }
 
     public Tilemap charactersTM {
-        get { return charactersTilemap; }
+        get { return objectsTilemap; }
     }
 
     //private LocationGridTile exitTile;
@@ -89,8 +99,6 @@ public class AreaInnerTileMap : MonoBehaviour {
         },
         { STRUCTURE_TYPE.EXIT,
             new List<Point>(){
-                new Point(3, 2),
-                new Point(2, 3),
                 new Point(3, 3),
             }
         },
@@ -100,13 +108,13 @@ public class AreaInnerTileMap : MonoBehaviour {
     public void Initialize(Area area) {
         this.area = area;
         this.name = area.name + "'s Inner Map";
-        canvas.worldCamera = CameraMove.Instance.areaMapsCamera;
-        worldUICanvas.worldCamera = CameraMove.Instance.areaMapsCamera;
+        canvas.worldCamera = AreaMapCameraMove.Instance.areaMapsCamera;
+        worldUICanvas.worldCamera = AreaMapCameraMove.Instance.areaMapsCamera;
         GenerateInnerStructures();
     }
     public void GenerateInnerStructures() {
         groundTilemap.ClearAllTiles();
-        charactersTilemap.ClearAllTiles();
+        objectsTilemap.ClearAllTiles();
         strcutureTilemap.ClearAllTiles();
         wallTilemap.ClearAllTiles();
         scrollviewContent.sizeDelta = new Vector2(cellSize * width, cellSize * height);
@@ -171,6 +179,8 @@ public class AreaInnerTileMap : MonoBehaviour {
         IntRange xOutRange = new IntRange();
         IntRange yOutRange = new IntRange();
 
+        this.outsideDirection = outsideDirection;
+
         int edgeRange = 12;
         float outerMapPercentage = 0.40f;
         switch (outsideDirection) {
@@ -227,6 +237,7 @@ public class AreaInnerTileMap : MonoBehaviour {
         outerTiles.Remove(chosenGate);
         chosenGate.SetTileType(LocationGridTile.Tile_Type.Gate);
         insideTiles.Remove(chosenGate); //NOTE: I remove the tiles that become gates from inside tiles, so as not to include them when determining tiles with structures
+        gate = chosenGate;
 
         for (int i = 0; i < outerTiles.Count; i++) {
             LocationGridTile currTile = outerTiles[i];
@@ -267,44 +278,28 @@ public class AreaInnerTileMap : MonoBehaviour {
                 summary += "\nRight most coordinate is " + rightMostCoordinate;
                 summary += "\nTop most coordinate is " + topMostCoordinate;
                 summary += "\nBot most coordinate is " + botMostCoordinate;
-                List<Cardinal_Direction> exitChoices = new List<Cardinal_Direction>();
-                if (leftMostCoordinate == 0) {
-                    //left edge
-                    exitChoices.Add(Cardinal_Direction.West);
-                }
-                if (rightMostCoordinate == width - 1) {
-                    //right edge
-                    exitChoices.Add(Cardinal_Direction.East);
-                }
-                if (topMostCoordinate == height - 1) {
-                    //top edge
-                    exitChoices.Add(Cardinal_Direction.North);
-                }
-                if (botMostCoordinate == 0) {
-                    //bottom edge
-                    exitChoices.Add(Cardinal_Direction.South);
-                }
-                Cardinal_Direction chosenEdge = exitChoices[UnityEngine.Random.Range(0, exitChoices.Count)];
+
+                Cardinal_Direction chosenEdge = outsideDirection;
                 summary += "\nChosen edge is " + chosenEdge.ToString();
                 switch (chosenEdge) {
                     case Cardinal_Direction.North:
                         choices = elligibleTiles.Where(
-                        t => (t.localPlace.x + currPoint.X <= rightMostCoordinate && t.localPlace.y + currPoint.Y == topMostCoordinate + 1)
+                        t => (t.localPlace.x == gate.localPlace.x && t.localPlace.y + currPoint.Y == topMostCoordinate + 1)
                         && Utilities.ContainsRange(elligibleTiles, GetTiles(currPoint, t))).ToList();
                         break;
                     case Cardinal_Direction.South:
                         choices = elligibleTiles.Where(
-                        t => (t.localPlace.x + currPoint.X <= rightMostCoordinate && t.localPlace.y == botMostCoordinate)
+                        t => (t.localPlace.x == gate.localPlace.x && t.localPlace.y == botMostCoordinate)
                         && Utilities.ContainsRange(elligibleTiles, GetTiles(currPoint, t))).ToList();
                         break;
                     case Cardinal_Direction.East:
                         choices = elligibleTiles.Where(
-                        t => (t.localPlace.x + currPoint.X == rightMostCoordinate + 1 && t.localPlace.y + currPoint.Y <= topMostCoordinate)
+                        t => (t.localPlace.x + currPoint.X == rightMostCoordinate + 1 && t.localPlace.y == gate.localPlace.y)
                         && Utilities.ContainsRange(elligibleTiles, GetTiles(currPoint, t))).ToList();
                         break;
                     case Cardinal_Direction.West:
                         choices = elligibleTiles.Where(
-                        t => (t.localPlace.x == leftMostCoordinate && t.localPlace.y + currPoint.Y <= topMostCoordinate)
+                        t => (t.localPlace.x == leftMostCoordinate && t.localPlace.y == gate.localPlace.y)
                         && Utilities.ContainsRange(elligibleTiles, GetTiles(currPoint, t))).ToList();
                         break;
                     default:
@@ -408,6 +403,20 @@ public class AreaInnerTileMap : MonoBehaviour {
             Debug.LogWarning(area.name + " doesn't have a structure for wilderness");
         }
     }
+    private Cardinal_Direction GetOppositeDirection(Cardinal_Direction dir) {
+        switch (dir) {
+            case Cardinal_Direction.North:
+                return Cardinal_Direction.South;
+            case Cardinal_Direction.South:
+                return Cardinal_Direction.North;
+            case Cardinal_Direction.East:
+                return Cardinal_Direction.West;
+            case Cardinal_Direction.West:
+                return Cardinal_Direction.East;
+            default:
+                return Cardinal_Direction.North;
+        }
+    }
     #endregion
 
     #region Movement & Mouse Interaction
@@ -428,15 +437,18 @@ public class AreaInnerTileMap : MonoBehaviour {
         //}
     }
     public void LateUpdate() {
-        if (!isHovering) {
+        if (UIManager.Instance.IsMouseOnUI()) {
             return;
         }
+        //if (!isHovering) {
+        //    return;
+        //}
         //Debug.Log("Mouse Pos: " + Input.mousePosition.ToString());
         //Vector3 mouseWorldPos = canvas.worldCamera.ScreenToWorldPoint(Input.mousePosition);
         //Debug.Log("Screen To World Pos: " + mouseWorldPos.ToString());
         //Debug.Log("Local Pos: " + grid.WorldToLocal(mouseWorldPos));
-        Vector3 mouseWorldPos = (canvas.worldCamera.ScreenToWorldPoint(Input.mousePosition) / tilemapsParent.transform.localScale.x);
-        mouseWorldPos = new Vector3(mouseWorldPos.x + (tilemapsParent.transform.localPosition.x * -1), mouseWorldPos.y + (tilemapsParent.transform.localPosition.y * -1));
+        Vector3 mouseWorldPos = (worldUICanvas.worldCamera.ScreenToWorldPoint(Input.mousePosition));
+        //mouseWorldPos = new Vector3(mouseWorldPos.x + (tilemapsParent.transform.localPosition.x * -1), mouseWorldPos.y + (tilemapsParent.transform.localPosition.y * -1));
         Vector3 localPos = grid.WorldToLocal(mouseWorldPos);
         Vector3Int coordinate = grid.LocalToCell(localPos);
         //Vector3Int coordinate = grid.WorldToCell(mouseWorldPos);
@@ -455,37 +467,89 @@ public class AreaInnerTileMap : MonoBehaviour {
             }
         }
     }
-    public void OnPointerEnter(BaseEventData baseData) {
-        isHovering = true;
-    }
-    public void OnPointerExit(BaseEventData baseData) {
-        isHovering = false;
-        if (UIManager.Instance != null) {
-            UIManager.Instance.HideSmallInfo();
-        }
-    }
+    //public void OnPointerEnter(BaseEventData baseData) {
+    //    isHovering = true;
+    //}
+    //public void OnPointerExit(BaseEventData baseData) {
+    //    isHovering = false;
+    //    if (UIManager.Instance != null) {
+    //        UIManager.Instance.HideSmallInfo();
+    //    }
+    //}
     #endregion
 
     #region Points of Interest
     public void PlaceObject(IPointOfInterest obj, LocationGridTile tile) {
-        //if (tile.tileState == LocationGridTile.Tile_State.Occupied) {
-        //    Debug.LogWarning("Something is trying to put a " + obj.ToString() + " at " + tile.ToString() + " at " + area.name);
-        //}
-        charactersTilemap.SetTile(tile.localPlace, characterTile);
+        TileBase tileToUse = null;
+        switch (obj.poiType) {
+            case POINT_OF_INTEREST_TYPE.ITEM:
+                tileToUse = itemTiles[(obj as SpecialToken).specialTokenType];
+                break;
+            case POINT_OF_INTEREST_TYPE.SUPLY_PILE:
+                tileToUse = supplyIconTile;
+                break;
+            case POINT_OF_INTEREST_TYPE.CORPSE:
+                OnPlaceCorpseOnTile(obj as Corpse, tile);
+                //tileToUse = corpseIconTile;
+                break;
+            case POINT_OF_INTEREST_TYPE.FOOD:
+                tileToUse = foodTiles[(obj as Food).foodType];
+                break;
+            case POINT_OF_INTEREST_TYPE.CHARACTER:
+                OnPlaceCharacterOnTile(obj as Character, tile);
+                //tileToUse = characterTile;
+                break;
+            default:
+                tileToUse = characterTile;
+                break;
+        }
+        objectsTilemap.SetTile(tile.localPlace, tileToUse);
         tile.SetObjectHere(obj);
     }
     public void RemoveObject(LocationGridTile tile) {
         tile.RemoveObjectHere();
-        charactersTilemap.SetTile(tile.localPlace, null);
+        if (tile.prefabHere != null) {
+            ObjectPoolManager.Instance.DestroyObject(tile.prefabHere);
+        }
+        objectsTilemap.SetTile(tile.localPlace, null);
+    }
+    private void OnPlaceCharacterOnTile(Character character, LocationGridTile tile) {
+        Vector3 pos = new Vector3(tile.localPlace.x + 0.5f, tile.localPlace.y + 0.5f);
+        GameObject portraitGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("CharacterPortrait", pos, Quaternion.identity, charactersParent);
+        CharacterPortrait portrait = portraitGO.GetComponent<CharacterPortrait>();
+        portrait.SetClickButton(PointerEventData.InputButton.Left);
+        RectTransform rect = portraitGO.transform as RectTransform;
+        rect.anchorMax = Vector2.zero;
+        rect.anchorMin = Vector2.zero;
+        portrait.gameObject.layer = LayerMask.NameToLayer("Area Maps");
+        portrait.GeneratePortrait(character);
+        portraitGO.transform.localScale = new Vector3(0.008f, 0.008f, 1f);
+        rect.anchoredPosition = pos;
+        tile.SetPrefabHere(portraitGO);
+    }
+    private void OnPlaceCorpseOnTile(Corpse corpse, LocationGridTile tile) {
+        Vector3 pos = new Vector3(tile.localPlace.x, tile.localPlace.y);
+        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool("CorpseObject", pos, Quaternion.identity, charactersParent);
+        CorpseObject obj = go.GetComponent<CorpseObject>();
+        obj.SetCorpse(corpse);
+        RectTransform rect = go.transform as RectTransform;
+        rect.anchorMax = Vector2.zero;
+        rect.anchorMin = Vector2.zero;
+        go.layer = LayerMask.NameToLayer("Area Maps");
+        rect.anchoredPosition = pos;
+        tile.SetPrefabHere(go);
     }
     #endregion
 
     #region Other
+    public void Open() {
+        this.gameObject.SetActive(true);
+    }
     public void Close() {
-        //this.gameObject.SetActive(false);
-        if (UIManager.Instance.areaInfoUI.isShowing) {
-            UIManager.Instance.areaInfoUI.ToggleMapMenu(false);
-        }
+        this.gameObject.SetActive(false);
+        //if (UIManager.Instance.areaInfoUI.isShowing) {
+        //    UIManager.Instance.areaInfoUI.ToggleMapMenu(false);
+        //}
         isHovering = false;
     }
     private void ShowTileData(LocationGridTile tile) {
@@ -520,7 +584,6 @@ public class AreaInnerTileMap : MonoBehaviour {
         }
         return tiles;
     }
-
     #endregion
 
     #region Travel Lines
@@ -565,13 +628,15 @@ public class AreaInnerTileMap : MonoBehaviour {
             Debug.LogWarning(GameManager.Instance.TodayLogString() + "Passed location is null! Not showing event popup for log: " + Utilities.LogReplacer(log));
             return;
         }
-        Vector3 worldPos = groundTilemap.CellToWorld(location.localPlace);
+        Vector3 pos = new Vector3(location.localPlace.x + 0.5f, location.localPlace.y + 0.5f);
+        //Vector3 worldPos = groundTilemap.CellToWorld(location.localPlace);
         //Vector3 screenPos = worldUICanvas.worldCamera.WorldToScreenPoint(worldPos);
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(eventPopupPrefab.name, Vector3.zero, Quaternion.identity, eventPopupParent);
         go.transform.localScale = Vector3.one;
-        (go.transform as RectTransform).OverlayPosition(worldPos, worldUICanvas.worldCamera);
+        (go.transform as RectTransform).anchoredPosition = pos;
+        //(go.transform as RectTransform).OverlayPosition(worldPos, worldUICanvas.worldCamera);
         //go.transform.SetParent(eventPopupParent);
-        
+
 
         EventPopup popup = go.GetComponent<EventPopup>();
         popup.Initialize(log, location, worldUICanvas);

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 [System.Serializable]
 public class PhaseItemDictionary : SerializableDictionary<SCHEDULE_ACTION_CATEGORY, int> { }
@@ -36,6 +37,11 @@ public class FactionEmblemDictionary : SerializableDictionary<int, Sprite> { }
 public class JobIconsDictionary : SerializableDictionary<JOB, Sprite> { }
 [System.Serializable]
 public class WallSpritesDictionary : SerializableDictionary<TwoTileDirections, Sprite> { }
+[System.Serializable]
+public class ItemTileBaseDictionary : SerializableDictionary<SPECIAL_TOKEN, TileBase> { }
+[System.Serializable]
+public class FoodTileBaseDictionary : SerializableDictionary<FOOD, TileBase> { }
+
 
 [System.Serializable]
 public class CharacterTagListStorage : SerializableDictionary.Storage<List<CharacterActionTagRequirement>> { }

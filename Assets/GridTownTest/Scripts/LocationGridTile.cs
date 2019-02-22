@@ -17,8 +17,8 @@ public class LocationGridTile {
     public Tile_State tileState { get; private set; }
     public LocationStructure structure { get; private set; }
     public Dictionary<TileNeighbourDirection, LocationGridTile> neighbours { get; private set; }
+    public GameObject prefabHere { get; private set; } //if there is a prefab that was instantiated at this tiles location
     //public List<LocationGridTile> neighborList { get; private set; }
-    public GameObject tileGO;
 
     public IPointOfInterest objHere { get; private set; }
 
@@ -100,12 +100,15 @@ public class LocationGridTile {
         SetTileState(Tile_State.Occupied);
         poi.SetGridTileLocation(this);
     }
-    public void RemoveObjectHere() {
+    public IPointOfInterest RemoveObjectHere() {
         if (objHere != null) {
+            IPointOfInterest removedObj = objHere;
             objHere.SetGridTileLocation(null);
             objHere = null;
             SetTileState(Tile_State.Empty);
+            return removedObj;
         }
+        return null;
     }
     #endregion
 
@@ -128,6 +131,9 @@ public class LocationGridTile {
     }
     public override string ToString() {
         return localPlace.ToString();
+    }
+    public void SetPrefabHere(GameObject obj) {
+        prefabHere = obj;
     }
     #endregion
 }

@@ -40,7 +40,7 @@ public class CharacterPickerItem : ObjectPickerItem<Character>, IPointerClickHan
     public void OnPointerClick(PointerEventData eventData) {
         if (eventData.button == PointerEventData.InputButton.Right) {
             //Debug.Log("Right clicked character portrait!");
-            portrait.OnRightClick();
+            portrait.OnClick();
         } else {
             OnClick();
         }

@@ -1268,10 +1268,10 @@ public enum STRUCTURE_TYPE {
     INN,
     WAREHOUSE,
     DWELLING,
+    EXIT,
     DUNGEON,
     WILDERNESS,
     WORK_AREA,
-    EXIT,
 }
 public enum RELATIONSHIP_TRAIT {
     NONE,
