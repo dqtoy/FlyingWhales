@@ -2631,10 +2631,20 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (isHungry) {
             List<INTERACTION_TYPE> fullnessRecoveryInteractions = RaceManager.Instance.GetNPCInteractionsOfRace(this, INTERACTION_CATEGORY.FULLNESS_RECOVERY);
             if(fullnessRecoveryInteractions.Count > 0) {
-                if(currentTimeInWords == TIME_IN_WORDS.MORNING || currentTimeInWords == TIME_IN_WORDS.AFTERNOON) {
+                int weight = 0;
+                if (currentTimeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
+                    weight += 0;
+                } else if (currentTimeInWords == TIME_IN_WORDS.MORNING) {
+                    weight += 100;
+                } else if (currentTimeInWords == TIME_IN_WORDS.AFTERNOON) {
+                    weight += 500;
+                } else if (currentTimeInWords == TIME_IN_WORDS.NIGHT) {
+                    weight += 0;
+                }
+                if (weight > 0) {
                     INTERACTION_TYPE chosenType = fullnessRecoveryInteractions[UnityEngine.Random.Range(0, fullnessRecoveryInteractions.Count)];
-                    personalActionWeights.AddElement(chosenType, 50);
-                    interactionLog += "\nFULLNESS RECOVERY: " + chosenType.ToString() + " - 50";
+                    personalActionWeights.AddElement(chosenType, weight);
+                    interactionLog += "\nFULLNESS RECOVERY: " + chosenType.ToString() + " - " + weight;
                 }
             }
         } else if (isStarving) {
@@ -2642,17 +2652,19 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             if (fullnessRecoveryInteractions.Count > 0) {
                 int weight = 0;
                 if (currentTimeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
-                    weight = 100;
+                    weight += 0;
                 } else if (currentTimeInWords == TIME_IN_WORDS.MORNING) {
-                    weight = 500;
+                    weight += 100;
                 } else if (currentTimeInWords == TIME_IN_WORDS.AFTERNOON) {
-                    weight = 500;
+                    weight += 1000;
                 } else if (currentTimeInWords == TIME_IN_WORDS.NIGHT) {
-                    weight = 100;
+                    weight += 0;
                 }
-                INTERACTION_TYPE chosenType = fullnessRecoveryInteractions[UnityEngine.Random.Range(0, fullnessRecoveryInteractions.Count)];    
-                personalActionWeights.AddElement(chosenType, weight);
-                interactionLog += "\nFULLNESS RECOVERY: " + chosenType.ToString() + " - " + weight;
+                if(weight > 0) {
+                    INTERACTION_TYPE chosenType = fullnessRecoveryInteractions[UnityEngine.Random.Range(0, fullnessRecoveryInteractions.Count)];
+                    personalActionWeights.AddElement(chosenType, weight);
+                    interactionLog += "\nFULLNESS RECOVERY: " + chosenType.ToString() + " - " + weight;
+                }
             }
         }
 
@@ -2660,28 +2672,40 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (isTired) {
             List<INTERACTION_TYPE> tirednessRecoveryInteractions = RaceManager.Instance.GetNPCInteractionsOfRace(this, INTERACTION_CATEGORY.TIREDNESS_RECOVERY);
             if (tirednessRecoveryInteractions.Count > 0) {
-                if (currentTimeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT || currentTimeInWords == TIME_IN_WORDS.NIGHT) {
+                int weight = 0;
+                if (currentTimeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
+                    weight += 100;
+                } else if (currentTimeInWords == TIME_IN_WORDS.MORNING) {
+                    weight += 0;
+                } else if (currentTimeInWords == TIME_IN_WORDS.AFTERNOON) {
+                    weight += 0;
+                } else if (currentTimeInWords == TIME_IN_WORDS.NIGHT) {
+                    weight += 500;
+                }
+                if (weight > 0) {
                     INTERACTION_TYPE chosenType = tirednessRecoveryInteractions[UnityEngine.Random.Range(0, tirednessRecoveryInteractions.Count)];
-                    personalActionWeights.AddElement(chosenType, 50);
-                    interactionLog += "\nTIREDNESS RECOVERY: " + chosenType.ToString() + " - 50";
+                    personalActionWeights.AddElement(chosenType, weight);
+                    interactionLog += "\nTIREDNESS RECOVERY: " + chosenType.ToString() + " - " + weight;
                 }
             }
         } else if (isExhausted) {
             List<INTERACTION_TYPE> tirednessRecoveryInteractions = RaceManager.Instance.GetNPCInteractionsOfRace(this, INTERACTION_CATEGORY.TIREDNESS_RECOVERY);
             if (tirednessRecoveryInteractions.Count > 0) {
-                INTERACTION_TYPE chosenType = tirednessRecoveryInteractions[UnityEngine.Random.Range(0, tirednessRecoveryInteractions.Count)];
                 int weight = 0;
                 if (currentTimeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
-                    weight = 500;
+                    weight += 100;
                 } else if (currentTimeInWords == TIME_IN_WORDS.MORNING) {
-                    weight = 100;
+                    weight += 0;
                 } else if (currentTimeInWords == TIME_IN_WORDS.AFTERNOON) {
-                    weight = 100;
+                    weight += 0;
                 } else if (currentTimeInWords == TIME_IN_WORDS.NIGHT) {
-                    weight = 500;
+                    weight += 1000;
                 }
-                personalActionWeights.AddElement(chosenType, weight);
-                interactionLog += "\nTIREDNESS RECOVERY: " + chosenType.ToString() + " - " + weight;
+                if (weight > 0) {
+                    INTERACTION_TYPE chosenType = tirednessRecoveryInteractions[UnityEngine.Random.Range(0, tirednessRecoveryInteractions.Count)];
+                    personalActionWeights.AddElement(chosenType, weight);
+                    interactionLog += "\nTIREDNESS RECOVERY: " + chosenType.ToString() + " - " + weight;
+                }
             }
         }
 
@@ -2738,6 +2762,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                         } else if (currentTimeInWords == TIME_IN_WORDS.NIGHT) {
                             weight += 20;
                         }
+                    }
+                    if(!chosenData.isCharacterMissing && !chosenData.HasRelationshipTrait(RELATIONSHIP_TRAIT.ENEMY)) {
+                        weight *= 3;
                     }
                     if (weight > 0) {
                         personalActionWeights.AddElement(chosenRelationshipInteraction, weight);
