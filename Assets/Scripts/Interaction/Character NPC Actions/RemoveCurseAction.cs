@@ -101,7 +101,7 @@ public class RemoveCurseAction : Interaction {
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
         _targetCharacter.RemoveTrait("Cursed");
-        _characterInvolved.AddTrait(AttributeManager.Instance.allTraits["Cursed"]);
+        _characterInvolved.AddTrait("Cursed");
     }
     private void TargetMissingEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);

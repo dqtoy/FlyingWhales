@@ -94,24 +94,24 @@ public class ArgueAction : Interaction {
 
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
-        _characterInvolved.AddTrait(AttributeManager.Instance.allTraits["Annoyed"]);
-        _targetCharacter.AddTrait(AttributeManager.Instance.allTraits["Annoyed"]);
+        _characterInvolved.AddTrait("Annoyed");
+        _targetCharacter.AddTrait("Annoyed");
     }
     private void Character1InjuredEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
-        _characterInvolved.AddTrait(AttributeManager.Instance.allTraits["Injured"]);
-        _targetCharacter.AddTrait(AttributeManager.Instance.allTraits["Happy"]);
+        _characterInvolved.AddTrait("Injured");
+        _targetCharacter.AddTrait("Happy");
     }
     private void Character2InjuredEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
-        _characterInvolved.AddTrait(AttributeManager.Instance.allTraits["Happy"]);
-        _targetCharacter.AddTrait(AttributeManager.Instance.allTraits["Injured"]);
+        _characterInvolved.AddTrait("Happy");
+        _targetCharacter.AddTrait("Injured");
     }
     #endregion
 }

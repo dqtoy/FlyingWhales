@@ -117,7 +117,7 @@ public class ExpansionEvent : Interaction {
     }
     private void MinionInjuredCharacterRewardEffect(InteractionState state) {
         //**Mechanic**: Character Injured, Expansion cancelled
-        _characterInvolved.AddTrait(AttributeManager.Instance.allTraits["Injured"]);
+        _characterInvolved.AddTrait("Injured");
         //**Level Up**: Instigator Minion +1
         //investigatorCharacter.LevelUp();
 
@@ -137,7 +137,7 @@ public class ExpansionEvent : Interaction {
     }
     private void CharacterInjuredMinionRewardEffect(InteractionState state) {
         //**Mechanic**: Minion Injured, Location becomes part of Character's faction and its Race will be set as Character's Race
-        investigatorCharacter.AddTrait(AttributeManager.Instance.allTraits["Injured"]);
+        investigatorCharacter.AddTrait("Injured");
         OwnArea(_characterInvolved);
         //Migrate Character to the new settlement
         _characterInvolved.MigrateHomeTo(interactable);

@@ -161,7 +161,7 @@ public class TortureActionNPC : Interaction {
 
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
-        _targetCharacter.AddTrait(AttributeManager.Instance.allTraits["Injured"]);
+        _targetCharacter.AddTrait("Injured");
     }
     private void PersuadeCharacterKnockedOutEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -169,7 +169,7 @@ public class TortureActionNPC : Interaction {
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
         //_characterInvolved.LevelUp();
-        _targetCharacter.AddTrait(AttributeManager.Instance.allTraits["Unconscious"]);
+        _targetCharacter.AddTrait("Unconscious");
     }
     private void PersuadeCharacterEscapesEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -207,7 +207,7 @@ public class TortureActionNPC : Interaction {
 
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
-        _targetCharacter.AddTrait(AttributeManager.Instance.allTraits["Injured"]);
+        _targetCharacter.AddTrait("Injured");
     }
     private void CharacterKnockedOutEffect(InteractionState state) {
         //_characterInvolved.LevelUp();
@@ -216,7 +216,7 @@ public class TortureActionNPC : Interaction {
 
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
-        _targetCharacter.AddTrait(AttributeManager.Instance.allTraits["Unconscious"]);
+        _targetCharacter.AddTrait("Unconscious");
     }
     private void CharacterEscapesEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);

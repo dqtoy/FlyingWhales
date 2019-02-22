@@ -267,7 +267,7 @@ public class PatrolAction : Interaction {
     }
     private void RevealedPatrollerInjuredCharacter(InteractionState state) {
         //**Mechanics**: Character gains Injured.
-        _targetCharacter.AddTrait(AttributeManager.Instance.allTraits["Injured"]);
+        _targetCharacter.AddTrait("Injured");
 
         //**Level Up**: Patroller +1
         //_characterInvolved.LevelUp();
@@ -288,7 +288,7 @@ public class PatrolAction : Interaction {
     }
     private void RevealedCharacterInjuredPatroller(InteractionState state) {
         //**Mechanics**: Patroller gains Injured.
-        _characterInvolved.AddTrait(AttributeManager.Instance.allTraits["Injured"]);
+        _characterInvolved.AddTrait("Injured");
 
         //**Level Up**: Character +1
         //_targetCharacter.LevelUp();
@@ -312,7 +312,7 @@ public class PatrolAction : Interaction {
     }
     private void PursuadedPatrollerInjuredCharacter(InteractionState state) {
         //**Mechanics**: Character gains Injured.
-        _targetCharacter.AddTrait(AttributeManager.Instance.allTraits["Injured"]);
+        _targetCharacter.AddTrait("Injured");
 
         //**Level Up**: Patroller +1
         //_characterInvolved.LevelUp();
@@ -330,7 +330,7 @@ public class PatrolAction : Interaction {
     }
     private void PursuadedCharacterInjuredPatroller(InteractionState state) {
         //**Mechanics**: Patroller gains Injured.
-        _characterInvolved.AddTrait(AttributeManager.Instance.allTraits["Injured"]);
+        _characterInvolved.AddTrait("Injured");
 
         //**Level Up**: Character +1
         //_targetCharacter.LevelUp();
@@ -354,7 +354,7 @@ public class PatrolAction : Interaction {
     }
     private void NormalPatrollerInjuredCharacter(InteractionState state) {
         //**Mechanics**: Character gains Injured.
-        _targetCharacter.AddTrait(AttributeManager.Instance.allTraits["Injured"]);
+        _targetCharacter.AddTrait("Injured");
 
         //**Level Up**: Patroller +1
         //_characterInvolved.LevelUp();
@@ -375,7 +375,7 @@ public class PatrolAction : Interaction {
     }
     private void NormalCharacterInjuredPatroller(InteractionState state) {
         //**Mechanics**: Patroller gains Injured.
-        _characterInvolved.AddTrait(AttributeManager.Instance.allTraits["Injured"]);
+        _characterInvolved.AddTrait("Injured");
 
         //**Level Up**: Character +1
         //_targetCharacter.LevelUp();

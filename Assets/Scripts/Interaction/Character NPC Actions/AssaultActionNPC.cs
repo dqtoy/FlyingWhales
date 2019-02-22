@@ -119,14 +119,14 @@ public class AssaultActionNPC : Interaction {
 
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
-        _targetCharacter.AddTrait(AttributeManager.Instance.allTraits["Injured"]);
+        _targetCharacter.AddTrait("Injured");
     }
     private void TargetKnockedOutEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
-        _targetCharacter.AddTrait(AttributeManager.Instance.allTraits["Unconscious"]);
+        _targetCharacter.AddTrait("Unconscious");
     }
     private void TargetKilledEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -140,14 +140,14 @@ public class AssaultActionNPC : Interaction {
 
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
-        _characterInvolved.AddTrait(AttributeManager.Instance.allTraits["Injured"]);
+        _characterInvolved.AddTrait("Injured");
     }
     private void ActorKnockedOutEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
-        _characterInvolved.AddTrait(AttributeManager.Instance.allTraits["Unconscious"]);
+        _characterInvolved.AddTrait("Unconscious");
     }
     private void ActorKilledEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);

@@ -138,7 +138,7 @@ public class HuntAction : Interaction {
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
         //_characterInvolved.LevelUp();
-        _targetCharacter.AddTrait(AttributeManager.Instance.allTraits["Injured"]);
+        _targetCharacter.AddTrait("Injured");
     }
     private void CharacterKilledHunterEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -160,7 +160,7 @@ public class HuntAction : Interaction {
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
         //_targetCharacter.LevelUp();
-        _characterInvolved.AddTrait(AttributeManager.Instance.allTraits["Injured"]);
+        _characterInvolved.AddTrait("Injured");
     }
     #endregion
 

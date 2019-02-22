@@ -92,7 +92,7 @@ public class MoveToGiftBeast : Interaction {
             }
         }
         Character chosenBeast = idleBeasts[UnityEngine.Random.Range(0, idleBeasts.Count)];
-        chosenBeast.AddTrait(AttributeManager.Instance.allTraits["Packaged"]);
+        chosenBeast.AddTrait("Packaged");
         _characterInvolved.currentParty.AddCharacter(chosenBeast);
 
         state.descriptionLog.AddToFillers(targetArea, targetArea.name, LOG_IDENTIFIER.LANDMARK_2);

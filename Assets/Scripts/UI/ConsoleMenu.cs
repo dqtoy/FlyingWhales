@@ -548,7 +548,7 @@ public class ConsoleMenu : UIMenu {
         }
 
         if (AttributeManager.Instance.allTraits.ContainsKey(traitParameterString)) {
-            character.AddTrait(AttributeManager.Instance.allTraits[traitParameterString]);
+            character.AddTrait(traitParameterString);
         } else {
             switch (traitParameterString) {
                 case "Criminal":

@@ -134,21 +134,21 @@ public class CurseAction : Interaction {
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
         //_characterInvolved.LevelUp();
-        _targetCharacter.AddTrait(AttributeManager.Instance.allTraits["Cursed"]);
+        _targetCharacter.AddTrait("Cursed");
     }
     private void CurserUnconsciousEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
-        _characterInvolved.AddTrait(AttributeManager.Instance.allTraits["Unconscious"]);
+        _characterInvolved.AddTrait("Unconscious");
     }
     private void CurserInjuredEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
-        _characterInvolved.AddTrait(AttributeManager.Instance.allTraits["Injured"]);
+        _characterInvolved.AddTrait("Injured");
     }
     private void CurserKilledEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);

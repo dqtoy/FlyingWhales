@@ -85,7 +85,7 @@ public class ProtectAction : Interaction {
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
         _characterInvolved.AddTrait(new PatrollingCharacter(_targetCharacter));
-        _targetCharacter.AddTrait(AttributeManager.Instance.allTraits["Protected"]);
+        _targetCharacter.AddTrait("Protected");
 
     }
     private void ProtectFailsEffect(InteractionState state) {

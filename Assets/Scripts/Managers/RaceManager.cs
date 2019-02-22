@@ -292,6 +292,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.EAT_DEFENSELESS,
                 INTERACTION_TYPE.PROTECT_ACTION,
                 INTERACTION_TYPE.LOCATE_MISSING,
+                INTERACTION_TYPE.EAT_INN_MEAL,
+                INTERACTION_TYPE.REST_AT_INN,
             } },
             { RACE.ELVES, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -319,6 +321,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.EAT_DEFENSELESS,
                 INTERACTION_TYPE.PROTECT_ACTION,
                 INTERACTION_TYPE.LOCATE_MISSING,
+                INTERACTION_TYPE.EAT_INN_MEAL,
+                INTERACTION_TYPE.REST_AT_INN,
             } },
             { RACE.GOBLIN, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -346,6 +350,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.EAT_DEFENSELESS,
                 INTERACTION_TYPE.PROTECT_ACTION,
                 INTERACTION_TYPE.LOCATE_MISSING,
+                INTERACTION_TYPE.EAT_INN_MEAL,
+                INTERACTION_TYPE.REST_AT_INN,
             } },
             { RACE.FAERY, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -373,6 +379,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.EAT_DEFENSELESS,
                 INTERACTION_TYPE.PROTECT_ACTION,
                 INTERACTION_TYPE.LOCATE_MISSING,
+                INTERACTION_TYPE.EAT_INN_MEAL,
+                INTERACTION_TYPE.REST_AT_INN,
             } },
             { RACE.SKELETON, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -400,6 +408,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.EAT_DEFENSELESS,
                 INTERACTION_TYPE.PROTECT_ACTION,
                 INTERACTION_TYPE.LOCATE_MISSING,
+                INTERACTION_TYPE.EAT_INN_MEAL,
+                INTERACTION_TYPE.REST_AT_INN,
             } },
             { RACE.SPIDER, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -427,6 +437,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.EAT_DEFENSELESS,
                 INTERACTION_TYPE.PROTECT_ACTION,
                 INTERACTION_TYPE.LOCATE_MISSING,
+                INTERACTION_TYPE.EAT_INN_MEAL,
+                INTERACTION_TYPE.REST_AT_INN,
             } },
             { RACE.WOLF, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -454,6 +466,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.EAT_DEFENSELESS,
                 INTERACTION_TYPE.PROTECT_ACTION,
                 INTERACTION_TYPE.LOCATE_MISSING,
+                INTERACTION_TYPE.EAT_INN_MEAL,
+                INTERACTION_TYPE.REST_AT_INN,
             } },
             { RACE.DRAGON, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -481,6 +495,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.EAT_DEFENSELESS,
                 INTERACTION_TYPE.PROTECT_ACTION,
                 INTERACTION_TYPE.LOCATE_MISSING,
+                INTERACTION_TYPE.EAT_INN_MEAL,
+                INTERACTION_TYPE.REST_AT_INN,
             } },
         };
     }

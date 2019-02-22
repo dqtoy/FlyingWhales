@@ -383,6 +383,18 @@ public class InteractionManager : MonoBehaviour {
                 actorEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.FULLNESS_RECOVERY} },
                 targetCharacterEffect = null,
             } },
+            { INTERACTION_TYPE.EAT_INN_MEAL, new InteractionAttributes(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.FULLNESS_RECOVERY },
+                alignment = INTERACTION_ALIGNMENT.NEUTRAL,
+                actorEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.FULLNESS_RECOVERY} },
+                targetCharacterEffect = null,
+            } },
+            { INTERACTION_TYPE.REST_AT_INN, new InteractionAttributes(){
+                categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.TIREDNESS_RECOVERY },
+                alignment = INTERACTION_ALIGNMENT.NEUTRAL,
+                actorEffect = new InteractionCharacterEffect[]{ new InteractionCharacterEffect() { effect = INTERACTION_CHARACTER_EFFECT.TIREDNESS_RECOVERY} },
+                targetCharacterEffect = null,
+            } },
         };
     }
     public InteractionAttributes GetCategoryAndAlignment (INTERACTION_TYPE type, Character actor) {
@@ -892,6 +904,12 @@ public class InteractionManager : MonoBehaviour {
                 break;
             case INTERACTION_TYPE.HUNT_SMALL_ANIMALS:
                 createdInteraction = new HuntSmallAnimals(interactable);
+                break;
+            case INTERACTION_TYPE.EAT_INN_MEAL:
+                createdInteraction = new EatInnMeal(interactable);
+                break;
+            case INTERACTION_TYPE.REST_AT_INN:
+                createdInteraction = new RestAtInn(interactable);
                 break;
         }
         return createdInteraction;
@@ -1590,6 +1608,17 @@ public class InteractionManager : MonoBehaviour {
                 return (!character.isAtHomeArea || character.homeStructure == null) && character.GetTrait("Carnivore") != null;
             case INTERACTION_TYPE.FORAGE_ACTION:
                 return (!character.isAtHomeArea || character.homeStructure == null) && character.GetTrait("Herbivore") != null;
+            case INTERACTION_TYPE.EAT_INN_MEAL:
+            case INTERACTION_TYPE.REST_AT_INN:
+                if(!character.isAtHomeArea && character.role.roleType != CHARACTER_ROLE.BEAST 
+                    && character.specificLocation.owner != null && character.faction.id != FactionManager.Instance.neutralFaction.id
+                    && character.specificLocation.owner.id != character.faction.id && character.specificLocation.HasStructure(STRUCTURE_TYPE.INN)) {
+                    FactionRelationship factionRel = character.faction.GetRelationshipWith(character.specificLocation.owner);
+                    if(factionRel.relationshipStatus != FACTION_RELATIONSHIP_STATUS.AT_WAR) {
+                        return true;
+                    }
+                }
+                return false;
             default:
                 return true;
         }
