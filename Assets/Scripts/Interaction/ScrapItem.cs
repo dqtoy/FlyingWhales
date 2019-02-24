@@ -73,6 +73,7 @@ public class ScrapItem : Interaction {
         if (_targetItem == null) {
             return false;
         }
+        _targetStructure = _targetItem.structureLocation;
         return base.CanInteractionBeDoneBy(character);
     }
     public override bool CanStillDoInteraction(Character character) {
@@ -98,7 +99,6 @@ public class ScrapItem : Interaction {
 
     #region State Effect
     private void StartEffect(InteractionState state) {
-        _targetStructure = _targetItem.structureLocation;
         _characterInvolved.MoveToAnotherStructure(_targetStructure);
     }
     private void ScrappingCancelledEffect(InteractionState state) {

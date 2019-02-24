@@ -15,7 +15,6 @@ public class EatHomeMealAction : Interaction {
     public EatHomeMealAction(Area interactable)
         : base(interactable, INTERACTION_TYPE.EAT_HOME_MEAL_ACTION, 0) {
         _name = "Eat Home Meal Action";
-        _jobFilter = new JOB[] { JOB.INSTIGATOR, JOB.DIPLOMAT };
     }
 
     #region Override
@@ -53,22 +52,12 @@ public class EatHomeMealAction : Interaction {
     }
     public override void CreateActionOptions(InteractionState state) {
         if (state.name == "Start") {
-            ActionOption prevent = new ActionOption {
-                interactionState = state,
-                cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
-                name = "Prevent " + Utilities.GetPronounString(_characterInvolved.gender, PRONOUN_TYPE.OBJECTIVE, false) + " from eating a meal.",
-                duration = 0,
-                effect = () => PreventFromLeavingOptionEffect(state),
-                jobNeeded = JOB.DEBILITATOR,
-                doesNotMeetRequirementsStr = "Must have debilitator minion.",
-            };
             ActionOption doNothing = new ActionOption {
                 interactionState = state,
                 cost = new CurrenyCost { amount = 0, currency = CURRENCY.SUPPLY },
                 name = "Do nothing.",
                 effect = () => DoNothingOptionEffect(state),
             };
-            state.AddActionOption(prevent);
             state.AddActionOption(doNothing);
             state.SetDefaultOption(doNothing);
         }

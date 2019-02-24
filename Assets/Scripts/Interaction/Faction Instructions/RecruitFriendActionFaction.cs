@@ -8,6 +8,7 @@ public class RecruitFriendActionFaction : Interaction {
 
     private const string Normal_Recruitment_Success = "Normal Recruitment Success";
     private const string Normal_Recruitment_Fail = "Normal Recruitment Fail";
+    private const string Target_Missing = "Target Missing";
 
     public override Character targetCharacter {
         get { return _targetCharacter; }
@@ -24,10 +25,7 @@ public class RecruitFriendActionFaction : Interaction {
         InteractionState startState = new InteractionState("Start", this);
         InteractionState normalRecruitmenSuccess = new InteractionState(Normal_Recruitment_Success, this);
         InteractionState normalRecruitmentFail = new InteractionState(Normal_Recruitment_Fail, this);
-
-        if (_targetCharacter == null) {
-            SetTargetCharacter(GetTargetCharacter(_characterInvolved));
-        }
+        InteractionState targetMissing = new InteractionState(Target_Missing, this);
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description", this);
         startStateDescriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -36,10 +34,12 @@ public class RecruitFriendActionFaction : Interaction {
         CreateActionOptions(startState);
         normalRecruitmenSuccess.SetEffect(() => NormalRecruitmentSuccessRewardEffect(normalRecruitmenSuccess));
         normalRecruitmentFail.SetEffect(() => NormalRecruitmentFailRewardEffect(normalRecruitmentFail));
+        targetMissing.SetEffect(() => TargetMissingRewardEffect(targetMissing));
 
         _states.Add(startState.name, startState);
         _states.Add(normalRecruitmenSuccess.name, normalRecruitmenSuccess);
         _states.Add(normalRecruitmentFail.name, normalRecruitmentFail);
+        _states.Add(targetMissing.name, targetMissing);
 
         //SetCurrentState(startState);
     }
@@ -59,31 +59,39 @@ public class RecruitFriendActionFaction : Interaction {
         if (interactable.IsResidentsFull()) {
             return false;
         }
-        if (GetTargetCharacter(character) == null) { //check if a target character can be found using the provided weights
+        Character targetCharacter = GetTargetCharacter(character);
+        if (targetCharacter == null) { //check if a target character can be found using the provided weights
             return false;
         }
+        SetTargetCharacter(targetCharacter);
         return base.CanInteractionBeDoneBy(character);
     }
     public override void SetTargetCharacter(Character targetCharacter) {
         this._targetCharacter = targetCharacter;
+        _targetStructure = targetCharacter.homeStructure;
         AddToDebugLog("Set target character to " + targetCharacter.name);
     }
     #endregion
 
     #region Option Effect
     private void DoNothingOptionEffect(InteractionState state) {
-        WeightedDictionary<RESULT> resultWeights = _characterInvolved.job.GetJobRateWeights();
-        resultWeights.RemoveElement(RESULT.CRITICAL_FAIL);
-
         string nextState = string.Empty;
-        switch (resultWeights.PickRandomElementGivenWeights()) {
-            case RESULT.SUCCESS:
-                nextState = Normal_Recruitment_Success;
-                break;
-            case RESULT.FAIL:
-                nextState = Normal_Recruitment_Fail;
-                break;
+
+        if (targetCharacter.currentStructure == targetStructure) {
+            WeightedDictionary<RESULT> resultWeights = _characterInvolved.job.GetJobRateWeights();
+            resultWeights.RemoveElement(RESULT.CRITICAL_FAIL);
+            switch (resultWeights.PickRandomElementGivenWeights()) {
+                case RESULT.SUCCESS:
+                    nextState = Normal_Recruitment_Success;
+                    break;
+                case RESULT.FAIL:
+                    nextState = Normal_Recruitment_Fail;
+                    break;
+            }
+        } else {
+            nextState = Target_Missing;
         }
+        
         SetCurrentState(_states[nextState]);
     }
     #endregion
@@ -111,6 +119,12 @@ public class RecruitFriendActionFaction : Interaction {
         }
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
+    private void TargetMissingRewardEffect(InteractionState state) {
+        if (state.descriptionLog != null) {
+            state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        }
+        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+    }
     #endregion
 
     private void TransferCharacter(Character character, Faction faction) {
@@ -121,14 +135,16 @@ public class RecruitFriendActionFaction : Interaction {
         character.SetForcedInteraction(interaction);
     }
     public Character GetTargetCharacter(Character characterInvolved) {
+        //**Trigger Criteria 2**: Actor has at least one friend from a different faction or unaligned Inside Settlement of current area
         List<Character> choices = new List<Character>();
         for (int i = 0; i < interactable.charactersAtLocation.Count; i++) {
             Character currCharacter = interactable.charactersAtLocation[i];
             if (characterInvolved.GetFriendTraitWith(currCharacter) != null //- personal friend of the character
+                && currCharacter.specificLocation == currCharacter.homeArea
+                && currCharacter.currentStructure.isInside
                 && (currCharacter.isFactionless || currCharacter.faction.id != characterInvolved.faction.id)  //- unaligned or from a different faction
                 && currCharacter.role.roleType != CHARACTER_ROLE.BEAST //- not a Beast and not a Skeleton
-                && currCharacter.race != RACE.SKELETON
-                && !currCharacter.HasTraitOf(TRAIT_TYPE.DISABLER)) { //- must not have a Disabler trait
+                && currCharacter.race != RACE.SKELETON) {
                 choices.Add(currCharacter);
             }
         }

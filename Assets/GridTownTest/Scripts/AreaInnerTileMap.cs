@@ -324,7 +324,7 @@ public class AreaInnerTileMap : MonoBehaviour {
             }
 
             if (choices.Count <= 0) {
-                throw new System.Exception("No More Tiles");
+                throw new System.Exception("No More Tiles for" + kvp.Key + " at " + area.name);
             }
             LocationGridTile chosenStartingTile = choices[Random.Range(0, choices.Count)];
             List<LocationGridTile> tiles = GetTiles(currPoint, chosenStartingTile);
