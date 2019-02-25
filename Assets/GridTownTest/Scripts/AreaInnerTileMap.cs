@@ -446,31 +446,27 @@ public class AreaInnerTileMap : MonoBehaviour {
         if (UIManager.Instance.IsMouseOnUI()) {
             return;
         }
-        //if (!isHovering) {
-        //    return;
-        //}
-        //Debug.Log("Mouse Pos: " + Input.mousePosition.ToString());
-        //Vector3 mouseWorldPos = canvas.worldCamera.ScreenToWorldPoint(Input.mousePosition);
-        //Debug.Log("Screen To World Pos: " + mouseWorldPos.ToString());
-        //Debug.Log("Local Pos: " + grid.WorldToLocal(mouseWorldPos));
         Vector3 mouseWorldPos = (worldUICanvas.worldCamera.ScreenToWorldPoint(Input.mousePosition));
-        //mouseWorldPos = new Vector3(mouseWorldPos.x + (tilemapsParent.transform.localPosition.x * -1), mouseWorldPos.y + (tilemapsParent.transform.localPosition.y * -1));
         Vector3 localPos = grid.WorldToLocal(mouseWorldPos);
         Vector3Int coordinate = grid.LocalToCell(localPos);
-        //Vector3Int coordinate = grid.WorldToCell(mouseWorldPos);
         if (coordinate.x >= 0 && coordinate.x < width
             && coordinate.y >= 0 && coordinate.y < height) {
-            //hovered on new tile
-            //groundTilemap.SetColor(hoverCoordinates, Color.white);
             LocationGridTile hoveredTile = map[coordinate.x, coordinate.y];
-            //groundTilemap.SetColor(coordinate, Color.black);
-            if (UIManager.Instance != null) {
+            if (hoveredTile.objHere != null) {
                 ShowTileData(hoveredTile);
-            }
-        } else {
-            if (UIManager.Instance != null) {
+                if (Input.GetMouseButtonDown(0)) {
+                    if (hoveredTile.objHere is Character) {
+                        UIManager.Instance.ShowCharacterInfo(hoveredTile.objHere as Character);
+                    }
+                }
+            } else {
+                if (Input.GetMouseButtonDown(0)) {
+                    Messenger.Broadcast(Signals.HIDE_MENUS);
+                }
                 UIManager.Instance.HideSmallInfo();
             }
+        } else {
+            UIManager.Instance.HideSmallInfo();
         }
     }
     //public void OnPointerEnter(BaseEventData baseData) {
@@ -515,6 +511,10 @@ public class AreaInnerTileMap : MonoBehaviour {
     public void RemoveObject(LocationGridTile tile) {
         tile.RemoveObjectHere();
         if (tile.prefabHere != null) {
+            CharacterPortrait portrait = tile.prefabHere.GetComponent<CharacterPortrait>();
+            if (portrait != null) {
+                portrait.SetImageRaycastTargetState(true);
+            }
             ObjectPoolManager.Instance.DestroyObject(tile.prefabHere);
         }
         objectsTilemap.SetTile(tile.localPlace, null);
@@ -530,6 +530,7 @@ public class AreaInnerTileMap : MonoBehaviour {
         portrait.gameObject.layer = LayerMask.NameToLayer("Area Maps");
         portrait.GeneratePortrait(character);
         portraitGO.transform.localScale = new Vector3(0.008f, 0.008f, 1f);
+        portrait.SetImageRaycastTargetState(false);
         rect.anchoredPosition = pos;
         tile.SetPrefabHere(portraitGO);
     }

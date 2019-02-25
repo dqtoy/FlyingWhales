@@ -156,6 +156,13 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     public void HideCharacterInfo() {
         UIManager.Instance.HideSmallInfo();
     }
+    public void SetImageRaycastTargetState(bool state) {
+        Image[] targets = this.GetComponentsInChildren<Image>();
+        for (int i = 0; i < targets.Length; i++) {
+            Image currImage = targets[i];
+            currImage.raycastTarget = state;
+        }
+    }
     #endregion
 
     #region Pointer Actions
