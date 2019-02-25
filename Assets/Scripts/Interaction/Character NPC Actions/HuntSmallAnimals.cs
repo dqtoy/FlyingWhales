@@ -5,7 +5,7 @@ using UnityEngine;
 public class HuntSmallAnimals : Interaction {
     private const string Start = "Start";
     private const string Hunt_Success = "Hunt Success";
-    private const string Hunt_Mild_Success = "Hunt Mild Success";
+    //private const string Hunt_Mild_Success = "Hunt Mild Success";
     private const string Hunt_Fail = "Hunt Fail";
 
     private List<Food> _nearbyFood;
@@ -18,19 +18,19 @@ public class HuntSmallAnimals : Interaction {
     public override void CreateStates() {
         InteractionState startState = new InteractionState(Start, this);
         InteractionState huntSuccess = new InteractionState(Hunt_Success, this);
-        InteractionState huntMildSuccess = new InteractionState(Hunt_Mild_Success, this);
+        //InteractionState huntMildSuccess = new InteractionState(Hunt_Mild_Success, this);
         InteractionState huntFail = new InteractionState(Hunt_Fail, this);
 
         CreateActionOptions(startState);
 
         startState.SetEffect(() => StartEffect(startState), false);
         huntSuccess.SetEffect(() => HuntSuccessEffect(huntSuccess));
-        huntMildSuccess.SetEffect(() => HuntMildSuccessEffect(huntMildSuccess));
+        //huntMildSuccess.SetEffect(() => HuntMildSuccessEffect(huntMildSuccess));
         huntFail.SetEffect(() => HuntFailEffect(huntFail));
 
         _states.Add(startState.name, startState);
         _states.Add(huntSuccess.name, huntSuccess);
-        _states.Add(huntMildSuccess.name, huntMildSuccess);
+        //_states.Add(huntMildSuccess.name, huntMildSuccess);
         _states.Add(huntFail.name, huntFail);
 
         //SetCurrentState(startState);
@@ -67,13 +67,14 @@ public class HuntSmallAnimals : Interaction {
                 }
             }
         }
-        if(_nearbyFood.Count >= 2) {
+        if(_nearbyFood.Count >= 1) {
             SetCurrentState(_states[Hunt_Success]);
-        } else if (_nearbyFood.Count == 1) {
-            SetCurrentState(_states[Hunt_Mild_Success]);
         } else {
             SetCurrentState(_states[Hunt_Fail]);
         }
+        //else if (_nearbyFood.Count == 1) {
+        //    SetCurrentState(_states[Hunt_Mild_Success]);
+        //} 
 
     }
     #endregion
@@ -86,9 +87,11 @@ public class HuntSmallAnimals : Interaction {
     }
     private void HuntSuccessEffect(InteractionState state) {
         _characterInvolved.ResetFullnessMeter();
-        int index1 = UnityEngine.Random.Range(0, _nearbyFood.Count);
-        _characterInvolved.currentStructure.RemovePOI(_nearbyFood[index1]);
-        _nearbyFood.RemoveAt(index1);
+        _characterInvolved.AddTrait("Eating");
+
+        //int index1 = UnityEngine.Random.Range(0, _nearbyFood.Count);
+        //_characterInvolved.currentStructure.RemovePOI(_nearbyFood[index1]);
+        //_nearbyFood.RemoveAt(index1);
 
         int index2 = UnityEngine.Random.Range(0, _nearbyFood.Count);
         _characterInvolved.currentStructure.RemovePOI(_nearbyFood[index2]);

@@ -73,6 +73,7 @@ public class EatInnMeal : Interaction {
     }
     private void CharacterCleanEatsEffect(InteractionState state) {
         _characterInvolved.ResetFullnessMeter();
+        _characterInvolved.AddTrait("Eating");
     }
     private void CharacterEatsKilledEffect(InteractionState state) {
         _characterInvolved.currentStructure.RemoveTrait("Poisoned Food");
@@ -82,6 +83,7 @@ public class EatInnMeal : Interaction {
         _characterInvolved.ResetFullnessMeter();
         _characterInvolved.currentStructure.RemoveTrait("Poisoned Food");
         _characterInvolved.AddTrait("Sick");
+        _characterInvolved.AddTrait("Eating");
     }
     #endregion
 }
