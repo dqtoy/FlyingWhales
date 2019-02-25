@@ -1224,11 +1224,13 @@ public class InteractionManager : MonoBehaviour {
                 //**Trigger Criteria 1**: This character must not have an item
                 return !character.isHoldingItem;
             case INTERACTION_TYPE.HUNT_ACTION:
-                for (int i = 0; i < character.specificLocation.charactersAtLocation.Count; i++) {
-                    Character currCharacter = character.specificLocation.charactersAtLocation[i];
-                    if (currCharacter.id != character.id && !currCharacter.currentParty.icon.isTravelling && currCharacter.IsInOwnParty() && !currCharacter.isLeader
-                        && currCharacter.role.roleType == CHARACTER_ROLE.BEAST && currCharacter.faction.id == FactionManager.Instance.neutralFaction.id) {
-                        return true;
+                if(character.role.roleType != CHARACTER_ROLE.BEAST) {
+                    for (int i = 0; i < character.specificLocation.charactersAtLocation.Count; i++) {
+                        Character currCharacter = character.specificLocation.charactersAtLocation[i];
+                        if (currCharacter.id != character.id && !currCharacter.currentParty.icon.isTravelling && currCharacter.IsInOwnParty() && !currCharacter.isLeader
+                            && currCharacter.role.roleType == CHARACTER_ROLE.BEAST && currCharacter.isFactionless) {
+                            return true;
+                        }
                     }
                 }
                 return false;

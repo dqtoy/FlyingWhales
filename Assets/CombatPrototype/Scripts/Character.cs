@@ -504,7 +504,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 
         GetRandomCharacterColor();
 #if !WORLD_CREATION_TOOL
-        SetDailyInteractionGenerationTick(UnityEngine.Random.Range(1, 13));
+        SetDailyInteractionGenerationTick(); //UnityEngine.Random.Range(1, 13)
 #endif
         SubscribeToSignals();
     }
@@ -2539,24 +2539,24 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //    int startDay = GameManager.Instance.continuousDays + remainingDaysInWeek + 1;
         //    _currentInteractionTick = UnityEngine.Random.Range(startDay, startDay + 7);
         //}
-        int remainingDaysInWeek = 12 - (GameManager.Instance.tick % 12);
-        if(remainingDaysInWeek == 12) {
+        int remainingDaysInWeek = GameManager.ticksPerTimeInWords - (GameManager.Instance.tick % GameManager.ticksPerTimeInWords);
+        if(remainingDaysInWeek == GameManager.ticksPerTimeInWords) {
             remainingDaysInWeek = 0;
         }
         int startDay = GameManager.Instance.tick + remainingDaysInWeek + 1;
-        if(startDay > 96) {
-            startDay -= 96;
+        if(startDay > GameManager.ticksPerDay) {
+            startDay -= GameManager.ticksPerDay;
         }
         //if (startDay < 25) {
         //    startDay = 25;
         //}
-        _currentInteractionTick = UnityEngine.Random.Range(startDay, startDay + 12);
+        _currentInteractionTick = UnityEngine.Random.Range(startDay, startDay + GameManager.ticksPerTimeInWords);
     }
     public void AdjustDailyInteractionGenerationTick() {
         //Adjusts the tick trigger for this character to compensate for the 5 day delay interaction trigger
         //Characters trigger AI once every 12 ticks but exclude any tick that will be reached by the 5-tick wait time of the preceding tick.
-        int remainingDaysInWeek = 12 - (GameManager.Instance.tick % 12);
-        if (remainingDaysInWeek < 12) {
+        int remainingDaysInWeek = GameManager.ticksPerTimeInWords - (GameManager.Instance.tick % GameManager.ticksPerTimeInWords);
+        if (remainingDaysInWeek < GameManager.ticksPerTimeInWords) {
             int startDay = GameManager.Instance.tick + remainingDaysInWeek + 1;
             _currentInteractionTick = UnityEngine.Random.Range(GameManager.Instance.tick + 1, startDay);
         }
@@ -2721,15 +2721,15 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                         }
                     }
                     if (kvp.Value.encounterMultiplier > 0f && weight > 0) {
-                        weight = (int) (weight * kvp.Value.encounterMultiplier);
+                        weight += (int) (weight * kvp.Value.encounterMultiplier);
                     }
-                    interactionLog += "(weight=" + weight + "), ";
+                    interactionLog += kvp.Key.name + "(weight=" + weight + "), ";
                     if (weight > 0) {
                         characterWeights.AddElement(kvp.Value, weight);
                     }
                 }
             }
-            if(characterWeights.GetTotalOfWeights() > 0) {
+            if(characterWeights.Count > 0) {
                 CharacterRelationshipData chosenData = characterWeights.PickRandomElementGivenWeights();
                 int weight = 0;
                 targetCharacter = chosenData.targetCharacter;
