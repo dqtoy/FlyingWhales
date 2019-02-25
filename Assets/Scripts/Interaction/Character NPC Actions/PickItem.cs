@@ -89,7 +89,7 @@ public class PickItem : Interaction {
 
     #region Option Effects
     private void DoNothingOptionEffect() {
-        if (_characterInvolved.currentStructure == _targetCharacter.currentStructure) {
+        if (_characterInvolved.currentStructure == targetToken.structureLocation) {
             SetCurrentState(_states[Item_Obtained]);
         } else {
             SetCurrentState(_states[Item_Missing]);
