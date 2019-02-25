@@ -30,6 +30,8 @@ public class PickItem : Interaction {
         descriptionLog.AddToFillers(interactable, interactable.name, LOG_IDENTIFIER.LANDMARK_1);
         startState.OverrideDescriptionLog(descriptionLog);
 
+        CreateActionOptions(startState);
+
         //LoadItemChoices(characterInvolved);
         startState.SetEffect(() => StartRewardEffect(startState), false);
         itemObtained.SetEffect(() => ItemObtainedRewardEffect(itemObtained));
@@ -111,9 +113,9 @@ public class PickItem : Interaction {
     }
     private void ItemMissingRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(null, _characterInvolved.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1);
+            state.descriptionLog.AddToFillers(null, targetToken.nameInBold, LOG_IDENTIFIER.STRING_1);
         }
-        state.AddLogFiller(new LogFiller(null, _characterInvolved.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1));
+        state.AddLogFiller(new LogFiller(null, targetToken.nameInBold, LOG_IDENTIFIER.STRING_1));
     }
     #endregion
 
