@@ -105,7 +105,7 @@ public class TokenManager : MonoBehaviour {
             string areaName = setting.areaLocations[i];
             Area area = LandmarkManager.Instance.GetAreaByName(areaName);
             if (area == null) {
-                throw new System.Exception("There is no area named " + areaName);
+                //throw new System.Exception("There is no area named " + areaName);
             } else {
                 areas.Add(area);
             }

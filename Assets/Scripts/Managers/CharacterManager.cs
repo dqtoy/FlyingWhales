@@ -159,7 +159,7 @@ public class CharacterManager : MonoBehaviour {
     /*
      Create a new character, given a role, class and race.
          */
-    public Character CreateNewCharacter(CharacterRole role, RACE race, GENDER gender, Faction faction = null, Area homeLocation = null, bool generateTraits = true) {
+    public Character CreateNewCharacter(CharacterRole role, RACE race, GENDER gender, Faction faction = null, Area homeLocation = null, Dwelling homeStructure = null, bool generateTraits = true) {
         Character newCharacter = null;
         if (role == CharacterRole.LEADER) {
             //If the role is leader, it must have a faction, so get the data for the class from the faction
@@ -178,6 +178,9 @@ public class CharacterManager : MonoBehaviour {
         if(homeLocation != null) {
             party.icon.SetPosition(homeLocation.coreTile.transform.position);
             newCharacter.MigrateHomeTo(homeLocation, false);
+            if (homeStructure != null) {
+                newCharacter.MigrateHomeStructureTo(homeStructure);
+            }
             if(newCharacter.homeStructure == null) {
                 homeLocation.AddCharacterToLocation(party);
             } else {

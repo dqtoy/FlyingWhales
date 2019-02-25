@@ -236,7 +236,7 @@ public class Player : ILeader {
         return new Minion(character, true);
     }
     public Minion CreateNewMinion(RACE race) {
-        Minion minion = new Minion(CharacterManager.Instance.CreateNewCharacter(CharacterRole.MINION, race, GENDER.MALE, playerFaction, playerArea, false), false);
+        Minion minion = new Minion(CharacterManager.Instance.CreateNewCharacter(CharacterRole.MINION, race, GENDER.MALE, playerFaction, playerArea, null, false), false);
         return minion;
     }
     public Minion CreateNewMinion(string className, RACE race) {

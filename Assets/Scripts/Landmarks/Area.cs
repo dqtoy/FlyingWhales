@@ -203,7 +203,7 @@ public class Area {
 #if WORLD_CREATION_TOOL
         SetCoreTile(worldcreator.WorldCreatorManager.Instance.GetHexTile(data.coreTileID));
 #else
-        SetSuppliesInBank(data.monthlySupply);
+        SetSuppliesInBank(300);
         SetCoreTile(GridMap.Instance.GetHexTile(data.coreTileID));
         ConstructAreaTasksInteractionWeights();
         //StartSupplyLine();
@@ -1432,26 +1432,60 @@ public class Area {
         return structures[structureType].Where(x => !x.IsOccupied()).Count();
     }
     public void GenerateNeutralCharacters() {
-        if (defaultRace.race == RACE.NONE) {
-            return; //no default race was generated
+        //if (defaultRace.race == RACE.NONE) {
+        //    return; //no default race was generated
+        //}
+        List<InitialRaceSetup> raceSetups = new List<InitialRaceSetup>();
+        if (this.name == "Visteri" || this.name == "Odious") {
+            raceSetups.AddRange(initialSpawnSetup);
+        } else {
+            raceSetups.Add(initialSpawnSetup[UnityEngine.Random.Range(0, initialSpawnSetup.Count)]);
         }
-        InitialRaceSetup setup = GetRaceSetup(defaultRace);
-        int charactersToCreate = UnityEngine.Random.Range(setup.spawnRange.lowerBound, setup.spawnRange.upperBound + 1);
-        bool isRaceBeast = Utilities.IsRaceBeast(defaultRace.race);
-        CharacterRole chosenRole = CharacterRole.BEAST;
-        for (int i = 0; i < charactersToCreate; i++) {
-            chosenRole = CharacterRole.BEAST;
-            if (!isRaceBeast) {
-                if(UnityEngine.Random.Range(0, 2) == 0) {
-                    chosenRole = CharacterRole.BANDIT;
-                } else {
-                    chosenRole = CharacterRole.ADVENTURER;
+        //InitialRaceSetup setup = GetRaceSetup(defaultRace);
+        for (int i = 0; i < raceSetups.Count; i++) {
+            InitialRaceSetup setup = raceSetups[i];
+            int charactersToCreate = UnityEngine.Random.Range(setup.spawnRange.lowerBound, setup.spawnRange.upperBound + 1);
+            bool isRaceBeast = Utilities.IsRaceBeast(setup.race.race);
+            CharacterRole chosenRole = CharacterRole.BEAST;
+            for (int j = 0; j < charactersToCreate; j++) {
+                chosenRole = CharacterRole.BEAST;
+                if (!isRaceBeast) {
+                    if (UnityEngine.Random.Range(0, 2) == 0) {
+                        chosenRole = CharacterRole.BANDIT;
+                    } else {
+                        chosenRole = CharacterRole.ADVENTURER;
+                    }
+                }
+                Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(chosenRole, setup.race.race, Utilities.GetRandomGender(),
+                    FactionManager.Instance.neutralFaction, this);
+                createdCharacter.SetLevel(UnityEngine.Random.Range(setup.levelRange.lowerBound, setup.levelRange.upperBound + 1));
+                if (this.name == "Visteri") {
+                    List<LocationStructure> choices = new List<LocationStructure>();
+                    if (createdCharacter.race == RACE.DRAGON) {
+                        choices = GetStructuresAtLocation(true);
+                    } else if (createdCharacter.race == RACE.SPIDER) {
+                        choices = GetStructuresAtLocation(true);
+                        choices.AddRange(GetStructuresOfType(STRUCTURE_TYPE.WILDERNESS));
+                    }
+                    if (choices.Count > 0) {
+                        LocationStructure structure = choices[UnityEngine.Random.Range(0, choices.Count)];
+                        createdCharacter.MoveToAnotherStructure(structure);
+                    }
+                } else if (this.name == "Odious") {
+                    List<LocationStructure> choices = new List<LocationStructure>();
+                    if (createdCharacter.race == RACE.ELVES) {
+                        choices = GetStructuresOfType(STRUCTURE_TYPE.WILDERNESS);
+                    } else if (createdCharacter.race == RACE.WOLF) {
+                        choices = GetStructuresAtLocation(true);
+                    }
+                    if (choices.Count > 0) {
+                        LocationStructure structure = choices[UnityEngine.Random.Range(0, choices.Count)];
+                        createdCharacter.MoveToAnotherStructure(structure);
+                    }
                 }
             }
-            Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(chosenRole, defaultRace.race, Utilities.GetRandomGender(),
-                FactionManager.Instance.neutralFaction, this);
-            createdCharacter.SetLevel(UnityEngine.Random.Range(setup.levelRange.lowerBound, setup.levelRange.upperBound + 1));
         }
+        
     }
     public void SetInitialResidents(int initialResidents) {
         this.initialResidents = initialResidents;

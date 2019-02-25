@@ -77,6 +77,15 @@ public class AreaInnerTileMap : MonoBehaviour {
                 new Point(4, 4),
             }
         },
+          { STRUCTURE_TYPE.EXPLORE_AREA,
+            new List<Point>(){
+                new Point(4, 3),
+                new Point(3, 4),
+                //new Point(2, 2),
+                new Point(3, 3),
+                new Point(4, 4),
+            }
+        },
         { STRUCTURE_TYPE.WAREHOUSE,
             new List<Point>(){
                 new Point(4, 8),

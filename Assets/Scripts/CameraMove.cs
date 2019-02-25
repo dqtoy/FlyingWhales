@@ -58,13 +58,20 @@ public class CameraMove : MonoBehaviour {
         if (!cameraControlEnabled) {
             return;
         }
+
+#if WORLD_CREATION_TOOL
         ArrowKeysMovement();
-#if !WORLD_CREATION_TOOL
-        Dragging();
-#endif
         Zooming();
         Targetting();
         ConstrainCameraBounds();
+#else
+        //ArrowKeysMovement();
+        //Dragging();
+        //Zooming();
+        //Targetting();
+        //ConstrainCameraBounds();
+#endif
+
     }
 
     public void Initialize() {
@@ -104,8 +111,9 @@ public class CameraMove : MonoBehaviour {
 
     #region Positioning
     private void SetInitialCameraPosition() {
-        Vector3 initialPos = Vector3.zero;
-        initialPos.z = -10;
+        //Vector3 initialPos = Vector3.zero;
+        //initialPos.z = -10;
+        Vector3 initialPos = new Vector3(-2.35f, -1.02f, -10f);
         this.transform.position = initialPos;
     }
     public void MoveMainCamera(Vector2 newPos) {
