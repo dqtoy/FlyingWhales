@@ -209,7 +209,7 @@ public class CharacterInfoUI : UIMenu {
         characterPortrait.GeneratePortrait(_activeCharacter);
         //characterPortrait.SetBGState(false);
     }
-    private void UpdateBasicInfo() {
+    public void UpdateBasicInfo() {
         nameLbl.text = _activeCharacter.name;
         lvlClassLbl.text = _activeCharacter.raceClassName;
         if (_activeCharacter.isTracked || GameManager.Instance.inspectAll) {

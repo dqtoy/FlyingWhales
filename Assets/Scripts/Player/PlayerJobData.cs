@@ -27,6 +27,9 @@ public class PlayerJobData {
             case JOB.DIPLOMAT:
                 jobActions.Add(new ShareIntel());
                 break;
+            case JOB.DEBILITATOR:
+                jobActions.Add(new Intervene());
+                break;
         }
         for (int i = 0; i < jobActions.Count; i++) {
             jobActions[i].SetParentData(this);

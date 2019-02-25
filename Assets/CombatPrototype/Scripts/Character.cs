@@ -3127,7 +3127,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public void SetPlannedAction(Interaction interaction) {
         plannedInteraction = interaction;
     }
-    private void OnInteractionEnded(Interaction interaction) {
+    public void OnInteractionEnded(Interaction interaction) {
         if (plannedInteraction != null && plannedInteraction == interaction) {
             SetPlannedAction(null);
         }
