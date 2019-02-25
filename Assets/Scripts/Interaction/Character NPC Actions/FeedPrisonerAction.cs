@@ -6,22 +6,12 @@ public class FeedPrisonerAction : Interaction {
     private const string Start = "Start";
     private const string Actor_Disappointed = "Actor Disappointed";
 
-    private Character _targetCharacter;
-
-    public override Character targetCharacter {
-        get { return _targetCharacter; }
-    }
-
     public FeedPrisonerAction(Area interactable): base(interactable, INTERACTION_TYPE.FEED_PRISONER_ACTION, 0) {
         _name = "Feed Prisoner Action";
     }
 
     #region Override
     public override void CreateStates() {
-        if (_targetCharacter == null) {
-            SetTargetCharacter(GetTargetCharacter(_characterInvolved));
-        }
-
         InteractionState startState = new InteractionState(Start, this);
         InteractionState actorDisappointed = new InteractionState(Actor_Disappointed, this);
 
@@ -61,7 +51,11 @@ public class FeedPrisonerAction : Interaction {
         return base.CanInteractionBeDoneBy(character);
     }
     public override void SetTargetCharacter(Character targetCharacter) {
-        this._targetCharacter = targetCharacter;
+        _targetCharacter = targetCharacter;
+        if (_targetCharacter != null) {
+            _targetStructure = _targetCharacter.currentStructure;
+            targetGridLocation = _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetStructure);
+        }
     }
     #endregion
 
@@ -73,7 +67,7 @@ public class FeedPrisonerAction : Interaction {
 
     #region State Effects
     private void StartEffect(InteractionState state) {
-        _characterInvolved.MoveToAnotherStructure(_targetCharacter.currentStructure, _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetCharacter.currentStructure));
+        _characterInvolved.MoveToAnotherStructure(_targetStructure, _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetStructure));
     }
     private void ActorDisappointedEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);

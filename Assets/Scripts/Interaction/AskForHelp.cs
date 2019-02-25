@@ -8,11 +8,7 @@ public class AskForHelp : Interaction {
     private const string Ask_Help_Fail = "Ask Help Fail";
 
     private Character _otherCharacter;
-    private Character _targetCharacter;
 
-    public override Character targetCharacter {
-        get { return _targetCharacter; }
-    }
     public override LocationStructure actionStructureLocation {
         get { return _targetStructure; }
     }
@@ -60,6 +56,8 @@ public class AskForHelp : Interaction {
     }
     public override void SetTargetCharacter(Character character) {
         _targetCharacter = character;
+        _targetStructure = _targetCharacter.currentStructure;
+        targetGridLocation = _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetStructure);
     }
     public override void SetOtherCharacter(Character character) {
         _otherCharacter = character;
@@ -89,7 +87,6 @@ public class AskForHelp : Interaction {
 
     #region State Effects
     private void StartEffect(InteractionState state) {
-        _targetStructure = _targetCharacter.currentStructure;
         _characterInvolved.MoveToAnotherStructure(_targetStructure, _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetStructure));
     }
     private void AskSuccessfulEffect(InteractionState state) {

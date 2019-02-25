@@ -71,6 +71,7 @@ public class BoobyTrapHouse : Interaction {
     }
     public override void SetTargetCharacter(Character character) {
         _targetCharacter = character;
+        _targetStructure = _targetCharacter.homeStructure;
     }
     #endregion
 
@@ -97,7 +98,7 @@ public class BoobyTrapHouse : Interaction {
 
     #region Reward Effect
     private void StartRewardEffect(InteractionState state) {
-        _characterInvolved.MoveToAnotherStructure(_targetCharacter.homeStructure, _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetCharacter.homeStructure));
+        _characterInvolved.MoveToAnotherStructure(_targetStructure);
     }
     private void TrapCancelledRewardEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));

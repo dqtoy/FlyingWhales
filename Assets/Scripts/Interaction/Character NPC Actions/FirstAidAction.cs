@@ -9,12 +9,6 @@ public class FirstAidAction : Interaction {
     private const string First_Aid_Critical_Fail = "First Aid Critical Fail";
     private const string Target_Missing = "Target Missing";
 
-    private Character _targetCharacter;
-
-    public override Character targetCharacter {
-        get { return _targetCharacter; }
-    }
-
     public FirstAidAction(Area interactable): base(interactable, INTERACTION_TYPE.FIRST_AID_ACTION, 0) {
         _name = "First Aid Action";
     }
@@ -63,16 +57,21 @@ public class FirstAidAction : Interaction {
         if (_targetCharacter == null) {
             return false;
         }
+        CharacterRelationshipData characterRelationshipData = character.GetCharacterRelationshipData(_targetCharacter);
+        if (characterRelationshipData != null) {
+            _targetStructure = characterRelationshipData.knownStructure;
+            targetGridLocation = _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetStructure);
+        }
         return base.CanInteractionBeDoneBy(character);
     }
     public override void SetTargetCharacter(Character targetCharacter) {
-        this._targetCharacter = targetCharacter;
+        _targetCharacter = targetCharacter;
     }
     #endregion
 
     #region Option Effect
     private void DoNothingOptionEffect() {
-        if (_characterInvolved.currentStructure == _targetCharacter.currentStructure) {
+        if (_targetStructure == _targetCharacter.currentStructure) {
             WeightedDictionary<string> resultWeights = new WeightedDictionary<string>();
             resultWeights.AddElement(First_Aid_Success, 30);
             resultWeights.AddElement(First_Aid_Fail, 10);
@@ -87,10 +86,7 @@ public class FirstAidAction : Interaction {
 
     #region State Effects
     private void StartEffect(InteractionState state) {
-        CharacterRelationshipData characterRelationshipData = _characterInvolved.GetCharacterRelationshipData(_targetCharacter);
-        if (characterRelationshipData != null) {
-            _characterInvolved.MoveToAnotherStructure(characterRelationshipData.knownStructure, _targetCharacter.GetNearestUnoccupiedTileFromCharacter(characterRelationshipData.knownStructure));
-        }
+        _characterInvolved.MoveToAnotherStructure(_targetStructure, _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetStructure));
     }
     private void FirstAidSuccessEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);

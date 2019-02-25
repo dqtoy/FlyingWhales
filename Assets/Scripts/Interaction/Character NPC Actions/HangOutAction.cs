@@ -4,17 +4,10 @@ using UnityEngine;
 
 public class HangOutAction : Interaction {
 
-    private Character _targetCharacter;
-
     private const string Both_Becomes_Cheery = "Both becomes Cheery";
     private const string Both_Becomes_Annoyed = "Both becomes Annoyed";
     private const string Target_Missing = "Target Missing";
     private const string Target_Unavailable = "Target Unavailable";
-
-    public override Character targetCharacter {
-        get { return _targetCharacter; }
-    }
-    private LocationStructure targetStructure;
 
     public HangOutAction(Area interactable)
         : base(interactable, INTERACTION_TYPE.HANG_OUT_ACTION, 0) {
@@ -70,7 +63,8 @@ public class HangOutAction : Interaction {
     }
     public override void SetTargetCharacter(Character targetCharacter) {
         _targetCharacter = targetCharacter;
-        targetStructure = targetCharacter.currentStructure;
+        _targetStructure = targetCharacter.currentStructure;
+        targetGridLocation = _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetStructure);
         AddToDebugLog("Set " + targetCharacter.name + " at " + targetStructure?.ToString() ?? "Nowhere" + " as target");
     }
     #endregion
@@ -98,7 +92,7 @@ public class HangOutAction : Interaction {
     #region Reward Effect
     private void StartRewardEffect(InteractionState state) {
         //**Structure**: Move the character to the target's Structure
-        _characterInvolved.MoveToAnotherStructure(_targetCharacter.currentStructure, _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetCharacter.currentStructure));
+        _characterInvolved.MoveToAnotherStructure(_targetStructure, _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetStructure));
     }
     private void BothBecomesCheeryRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {

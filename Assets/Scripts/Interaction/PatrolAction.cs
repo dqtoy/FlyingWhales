@@ -20,12 +20,6 @@ public class PatrolAction : Interaction {
     private const string Normal_Character_Injured_Patroller = "Normal Character Injured Patroller";
     private const string Normal_Patrol_Failed = "Normal Patrol Failed";
 
-    private Character _targetCharacter;
-
-    public override Character targetCharacter {
-        get { return _targetCharacter; }
-    }
-
     public PatrolAction(Area interactable) 
         : base(interactable, INTERACTION_TYPE.PATROL_ACTION, 0) {
         _name = "Patrol Action";

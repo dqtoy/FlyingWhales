@@ -8,12 +8,6 @@ public class GiftItem : Interaction {
     private const string Gift_Fail = "Gift Fail";
     private const string Target_Missing = "Target Missing";
 
-    private Character _targetCharacter;
-
-    public override Character targetCharacter {
-        get { return _targetCharacter; }
-    }
-
     public GiftItem(Area interactable) : base(interactable, INTERACTION_TYPE.GIFT_ITEM, 0) {
         _name = "Gift Item";
     }
@@ -66,7 +60,9 @@ public class GiftItem : Interaction {
         return base.CanInteractionBeDoneBy(character);
     }
     public override void SetTargetCharacter(Character targetCharacter) {
-        this._targetCharacter = targetCharacter;
+        _targetCharacter = targetCharacter;
+        _targetStructure = _targetCharacter.homeStructure;
+        targetGridLocation = _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetStructure);
     }
     #endregion
 
@@ -86,7 +82,7 @@ public class GiftItem : Interaction {
 
     #region State Effects
     private void StartEffect(InteractionState state) {
-        _characterInvolved.MoveToAnotherStructure(_targetCharacter.homeStructure, _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetCharacter.homeStructure));
+        _characterInvolved.MoveToAnotherStructure(_targetStructure, _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetStructure));
     }
     private void GiftSuccessEffect(InteractionState state) {
         SpecialToken item = _characterInvolved.tokenInInventory;

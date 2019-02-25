@@ -106,20 +106,20 @@ public class MoveToScavengeFaction : Interaction {
         MinionSuccess();
     }
     private void ScavengeProceedsRewardEffect(InteractionState state) {
-        //Selected character will travel to Location 1 to start a Scavenge Event.
-        StartMoveToAction();
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2);
         }
         state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2));
+        //Selected character will travel to Location 1 to start a Scavenge Event.
+        StartMoveToAction();
     }
     private void NormalScavengeRewardEffect(InteractionState state) {
-        //Selected character will travel to Location 1 to start a Scavenge Event.
-        StartMoveToAction();
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2);
         }
         state.AddLogFiller(new LogFiller(_targetArea, _targetArea.name, LOG_IDENTIFIER.LANDMARK_2));
+        //Selected character will travel to Location 1 to start a Scavenge Event.
+        StartMoveToAction();
     }
 
     //private void CreateEvent() {

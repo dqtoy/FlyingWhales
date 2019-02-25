@@ -6,13 +6,8 @@ public class MoveToCourtesyCall : Interaction {
     private const string Start = "Start";
     private const string Courtesy_Call_Proceeds = "Courtesy Call Proceeds";
 
-    private Character _targetCharacter;
-
     public override Area targetArea {
         get { return _targetCharacter.homeArea; }
-    }
-    public override Character targetCharacter {
-        get { return _targetCharacter; }
     }
 
     public override INTERACTION_TYPE pairedInteractionType {

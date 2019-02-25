@@ -4,16 +4,12 @@ using UnityEngine;
 
 public class AbductAction : Interaction {
 
-    private Character _targetCharacter;
 
     private const string Start = "Start";
     private const string Abduction_Success = "Abduction Success";
     private const string Abductor_Injured = "Abductor Injured";
     private const string Abductor_Knocked_Out = "Abductor Knocked Out";
 
-    public override Character targetCharacter {
-        get { return _targetCharacter; }
-    }
     public override LocationStructure actionStructureLocation {
         get { return _targetStructure; }
     }
@@ -26,10 +22,6 @@ public class AbductAction : Interaction {
 
     #region Override
     public override void CreateStates() {
-        if(targetCharacter == null) {
-            SetTargetCharacter(GetTargetCharacter(_characterInvolved));
-        }
-
         InteractionState startState = new InteractionState(Start, this);
         InteractionState abductionSuccess = new InteractionState(Abduction_Success, this);
         InteractionState abductorInjured = new InteractionState(Abductor_Injured, this);
@@ -76,7 +68,11 @@ public class AbductAction : Interaction {
         return base.CanInteractionBeDoneBy(character);
     }
     public override void SetTargetCharacter(Character targetCharacter) {
-        this._targetCharacter = targetCharacter;
+        _targetCharacter = targetCharacter;
+        if (targetCharacter != null) {
+            _targetStructure = _targetCharacter.currentStructure;
+            targetGridLocation = _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetStructure);
+        }
     }
     #endregion
 
@@ -112,7 +108,6 @@ public class AbductAction : Interaction {
 
     #region State Effect
     private void StartEffect(InteractionState state) {
-        _targetStructure = _targetCharacter.currentStructure;
         _characterInvolved.MoveToAnotherStructure(_targetStructure, _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetStructure));
     }
     private void AbductionSuccessEffect(InteractionState state) {

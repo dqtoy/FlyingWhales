@@ -37,6 +37,10 @@ public class MineAction : Interaction {
             state.SetDefaultOption(doNothing);
         }
     }
+    public override bool CanInteractionBeDoneBy(Character character) {
+        _targetStructure = interactable.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA);
+        return base.CanInteractionBeDoneBy(character);
+    }
     #endregion
 
     #region Option Effect
@@ -47,7 +51,7 @@ public class MineAction : Interaction {
 
     #region State Effect
     private void StartEffect(InteractionState state) {
-        _characterInvolved.MoveToRandomStructureInArea(STRUCTURE_TYPE.WORK_AREA);
+        _characterInvolved.MoveToAnotherStructure(_targetStructure);
     }
     private void MineSuccessfulEffect(InteractionState state) {
         int minedSupply = UnityEngine.Random.Range(50, 151);

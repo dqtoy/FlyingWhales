@@ -7,12 +7,6 @@ public class ProtectAction : Interaction {
     private const string Protect_Begins = "Protect Begins";
     private const string Protect_Fails = "Protect Fails";
 
-    private Character _targetCharacter;
-
-    public override Character targetCharacter {
-        get { return _targetCharacter; }
-    }
-
     public ProtectAction(Area interactable) : base(interactable, INTERACTION_TYPE.PROTECT_ACTION, 0) {
         _name = "Protect Action";
     }
@@ -55,10 +49,14 @@ public class ProtectAction : Interaction {
         if (_targetCharacter == null) {
             return false;
         }
+        CharacterRelationshipData characterRelationshipData = character.GetCharacterRelationshipData(_targetCharacter);
+        if (characterRelationshipData != null) {
+            _targetStructure = characterRelationshipData.knownStructure;
+        }
         return base.CanInteractionBeDoneBy(character);
     }
     public override void SetTargetCharacter(Character targetCharacter) {
-        this._targetCharacter = targetCharacter;
+        _targetCharacter = targetCharacter;
     }
     #endregion
 
@@ -74,10 +72,7 @@ public class ProtectAction : Interaction {
 
     #region State Effects
     private void StartEffect(InteractionState state) {
-        CharacterRelationshipData characterRelationshipData = _characterInvolved.GetCharacterRelationshipData(_targetCharacter);
-        if (characterRelationshipData != null) {
-            _characterInvolved.MoveToAnotherStructure(characterRelationshipData.knownStructure);
-        }
+        _characterInvolved.MoveToAnotherStructure(_targetStructure);
     }
     private void ProtectBeginsEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);

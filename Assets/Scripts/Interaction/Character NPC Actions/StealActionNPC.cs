@@ -7,12 +7,6 @@ public class StealActionNPC : Interaction {
     private const string Steal_Success = "Steal Success";
     private const string Steal_Failed = "Steal Failed";
 
-    private Character _targetCharacter;
-
-    public override Character targetCharacter {
-        get { return _targetCharacter; }
-    }
-
     public StealActionNPC(Area interactable): base(interactable, INTERACTION_TYPE.STEAL_ACTION_NPC, 0) {
         _name = "Steal Action NPC";
     }
@@ -58,7 +52,9 @@ public class StealActionNPC : Interaction {
         return base.CanInteractionBeDoneBy(character);
     }
     public override void SetTargetCharacter(Character targetCharacter) {
-        this._targetCharacter = targetCharacter;
+        _targetCharacter = targetCharacter;
+        _targetStructure = _targetCharacter.currentStructure;
+        targetGridLocation = _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetStructure);
     }
     #endregion
 
@@ -86,7 +82,7 @@ public class StealActionNPC : Interaction {
 
     #region State Effects
     private void StartEffect(InteractionState state) {
-        _characterInvolved.MoveToAnotherStructure(_targetCharacter.currentStructure, _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetCharacter.currentStructure));
+        _characterInvolved.MoveToAnotherStructure(_targetStructure, _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetStructure));
     }
     private void StealSuccessEffect(InteractionState state) {
         SpecialToken item = _targetCharacter.tokenInInventory;

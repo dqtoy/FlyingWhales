@@ -11,12 +11,6 @@ public class AssaultActionNPC : Interaction {
     private const string Actor_Knocked_Out = "Actor Knocked Out";
     private const string Actor_Killed = "Actor Killed";
 
-    private Character _targetCharacter;
-
-    public override Character targetCharacter {
-        get { return _targetCharacter; }
-    }
-
     public AssaultActionNPC(Area interactable): base(interactable, INTERACTION_TYPE.ASSAULT_ACTION_NPC, 0) {
         _name = "Assault Action NPC";
     }
@@ -71,10 +65,12 @@ public class AssaultActionNPC : Interaction {
         if (_targetCharacter == null) {
             return false;
         }
+        _targetStructure = _targetCharacter.currentStructure;
+        targetGridLocation = _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetStructure);
         return base.CanInteractionBeDoneBy(character);
     }
     public override void SetTargetCharacter(Character targetCharacter) {
-        this._targetCharacter = targetCharacter;
+        _targetCharacter = targetCharacter;
     }
     #endregion
 

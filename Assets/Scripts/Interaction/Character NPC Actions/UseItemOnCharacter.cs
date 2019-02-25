@@ -5,11 +5,6 @@ using UnityEngine;
 public class UseItemOnCharacter : Interaction {
 
     private SpecialToken _tokenToBeUsed;
-    private Character _targetCharacter;
-
-    public override Character targetCharacter {
-        get { return _targetCharacter; }
-    }
 
     public UseItemOnCharacter(Area interactable) : base(interactable, INTERACTION_TYPE.USE_ITEM_ON_CHARACTER, 0) {
         _name = "Use Item On Character";

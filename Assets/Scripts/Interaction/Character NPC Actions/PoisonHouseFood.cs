@@ -8,12 +8,6 @@ public class PoisonHouseFood : Interaction {
     private const string Poisoning_Continues = "Poisoning Continues";
     private const string Character_Poisons = "Character Poisons";
 
-    private Character _targetCharacter;
-
-    public override Character targetCharacter {
-        get { return _targetCharacter; }
-    }
-
     public PoisonHouseFood(Area interactable)
         : base(interactable, INTERACTION_TYPE.POISON_HOUSE_FOOD, 0) {
         _name = "Poison House Food";
@@ -71,6 +65,8 @@ public class PoisonHouseFood : Interaction {
     }
     public override void SetTargetCharacter(Character character) {
         _targetCharacter = character;
+        _targetStructure = _targetCharacter.homeStructure;
+        targetGridLocation = _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetStructure);
     }
     #endregion
 
@@ -97,7 +93,7 @@ public class PoisonHouseFood : Interaction {
 
     #region Reward Effect
     private void StartRewardEffect(InteractionState state) {
-        _characterInvolved.MoveToAnotherStructure(_targetCharacter.homeStructure, _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetCharacter.homeStructure));
+        _characterInvolved.MoveToAnotherStructure(_targetStructure, _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetStructure));
     }
     private void PoisoningCancelledRewardEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));

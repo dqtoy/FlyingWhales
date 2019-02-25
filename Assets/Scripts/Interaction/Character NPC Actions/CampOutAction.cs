@@ -8,12 +8,6 @@ public class CampOutAction : Interaction {
     private const string Camp_Continues = "Camp Continues";
     private const string Normal_Camp = "Normal Camp";
 
-    private Character _targetCharacter;
-
-    public override Character targetCharacter {
-        get { return _targetCharacter; }
-    }
-
     public CampOutAction(Area interactable)
         : base(interactable, INTERACTION_TYPE.CAMP_OUT_ACTION, 0) {
         _name = "Camp Out Action";
@@ -67,10 +61,8 @@ public class CampOutAction : Interaction {
         if (!InteractionManager.Instance.CanCreateInteraction(type, character)) {
             return false;
         }
+        _targetStructure = interactable.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
         return base.CanInteractionBeDoneBy(character);
-    }
-    public override void SetTargetCharacter(Character character) {
-        _targetCharacter = character;
     }
     #endregion
 
@@ -98,7 +90,7 @@ public class CampOutAction : Interaction {
     #region Reward Effect
     private void StartRewardEffect(InteractionState state) {
         //**Structure**: Move the character to a random Wilderness structure
-        _characterInvolved.MoveToAnotherStructure(interactable.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS));
+        _characterInvolved.MoveToAnotherStructure(_targetStructure);
     }
     private void CampCancelledRewardEffect(InteractionState state) {
         

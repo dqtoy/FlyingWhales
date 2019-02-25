@@ -4,15 +4,9 @@ using UnityEngine;
 
 public class RecruitFriendActionFaction : Interaction {
 
-    private Character _targetCharacter;
-
     private const string Normal_Recruitment_Success = "Normal Recruitment Success";
     private const string Normal_Recruitment_Fail = "Normal Recruitment Fail";
     private const string Target_Missing = "Target Missing";
-
-    public override Character targetCharacter {
-        get { return _targetCharacter; }
-    }
 
     public RecruitFriendActionFaction(Area interactable) 
         : base(interactable, INTERACTION_TYPE.RECRUIT_FRIEND_ACTION_FACTION, 0) {
@@ -67,7 +61,7 @@ public class RecruitFriendActionFaction : Interaction {
         return base.CanInteractionBeDoneBy(character);
     }
     public override void SetTargetCharacter(Character targetCharacter) {
-        this._targetCharacter = targetCharacter;
+        _targetCharacter = targetCharacter;
         _targetStructure = targetCharacter.homeStructure;
         AddToDebugLog("Set target character to " + targetCharacter.name);
     }

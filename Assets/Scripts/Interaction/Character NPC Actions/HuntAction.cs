@@ -3,17 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class HuntAction : Interaction {
-    private Character _targetCharacter;
-
     private const string Start = "Start";
     private const string Hunter_Killed_Character = "Hunter Killed Character";
     private const string Hunter_Injured_Character = "Hunter Injured Character";
     private const string Character_Killed_Hunter = "Character Killed Hunter";
     private const string Character_Injured_Hunter = "Character Injured Hunter";
 
-    public override Character targetCharacter {
-        get { return _targetCharacter; }
-    }
     public override LocationStructure actionStructureLocation {
         get { return _targetStructure; }
     }
@@ -24,10 +19,6 @@ public class HuntAction : Interaction {
 
     #region Override
     public override void CreateStates() {
-        if (_targetCharacter == null) {
-            SetTargetCharacter(GetTargetCharacter(_characterInvolved));
-        }
-
         InteractionState startState = new InteractionState(Start, this);
         InteractionState hunterKilledCharacter = new InteractionState(Hunter_Killed_Character, this);
         InteractionState hunterInjuredCharacter = new InteractionState(Hunter_Injured_Character, this);
@@ -77,9 +68,11 @@ public class HuntAction : Interaction {
     }
     public override void SetTargetCharacter(Character targetCharacter) {
         _targetCharacter = targetCharacter;
-        //if(_targetCharacter != null) {
-        //    Debug.LogWarning("CHOSEN TARGET CHARACTER FOR HUNT ACTION OF " + _characterInvolved.name + " IS " + _targetCharacter.name);
-        //}
+        if (_targetCharacter != null) {
+            //Debug.LogWarning("CHOSEN TARGET CHARACTER FOR HUNT ACTION OF " + _characterInvolved.name + " IS " + _targetCharacter.name);
+            _targetStructure = _targetCharacter.currentStructure;
+            targetGridLocation = _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetStructure);
+        }
     }
     public override bool CanStillDoInteraction(Character character) {
         if(_targetCharacter.faction.id == _characterInvolved.faction.id) {
@@ -121,7 +114,6 @@ public class HuntAction : Interaction {
 
     #region Reward Effect
     private void StartEffect(InteractionState state) {
-        _targetStructure = _targetCharacter.currentStructure;
         _characterInvolved.MoveToAnotherStructure(_targetStructure, _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetStructure));
     }
     private void HunterKilledCharacterEffect(InteractionState state) {

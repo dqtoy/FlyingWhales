@@ -6,8 +6,6 @@ public class MoveToGiftBeast : Interaction {
     private const string Start = "Start";
     private const string Gifting_Proceeds = "Gifting Proceeds";
 
-    private Character _targetCharacter;
-
     public override Area targetArea {
         get { return _targetCharacter.homeArea; }
     }

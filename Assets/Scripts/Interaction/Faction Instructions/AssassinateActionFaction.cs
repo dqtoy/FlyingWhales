@@ -29,10 +29,6 @@ public class AssassinateActionFaction : Interaction {
         InteractionState normalAssassinationCriticalFail = new InteractionState(Normal_Assassination_Critical_Fail, this);
         InteractionState targetMissing = new InteractionState(Target_Missing, this);
 
-        if (_targetCharacter == null) {
-            SetTargetCharacter(GetTargetCharacter(_characterInvolved));
-        }
-
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description", this);
         startStateDescriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         startState.OverrideDescriptionLog(startStateDescriptionLog);
@@ -75,6 +71,7 @@ public class AssassinateActionFaction : Interaction {
     public override void SetTargetCharacter(Character targetCharacter) {
         _targetCharacter = targetCharacter;
         _targetStructure = _targetCharacter.currentStructure;
+        targetGridLocation = _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetStructure);
         AddToDebugLog("Set target character to " + targetCharacter.name);
     }
     #endregion

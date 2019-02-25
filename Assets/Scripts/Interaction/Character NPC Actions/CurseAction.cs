@@ -4,17 +4,12 @@ using UnityEngine;
 
 public class CurseAction : Interaction {
 
-    private Character _targetCharacter;
-
     private const string Start = "Start";
     private const string Curse_Successful = "Curse Successful";
     private const string Curser_Unconscious = "Curser Unconscious";
     private const string Curser_Injured = "Curser Injured";
     private const string Curser_Killed = "Curser Killed";
 
-    public override Character targetCharacter {
-        get { return _targetCharacter; }
-    }
     public override LocationStructure actionStructureLocation {
         get { return _targetStructure; }
     }
@@ -88,7 +83,9 @@ public class CurseAction : Interaction {
         return base.CanInteractionBeDoneBy(character);
     }
     public override void SetTargetCharacter(Character targetCharacter) {
-        this._targetCharacter = targetCharacter;
+        _targetCharacter = targetCharacter;
+        _targetStructure = _targetCharacter.currentStructure;
+        targetGridLocation = _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetStructure);
     }
     #endregion
 
@@ -125,7 +122,6 @@ public class CurseAction : Interaction {
 
     #region State Effect
     private void StartEffect(InteractionState state) {
-        _targetStructure = _targetCharacter.currentStructure;
         _characterInvolved.MoveToAnotherStructure(_targetStructure, _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetStructure));
     }
     private void CurseSuccessfulEffect(InteractionState state) {
