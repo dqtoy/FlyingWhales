@@ -13,6 +13,7 @@ public class Trait {
     }
     public string name;
     public string description;
+    public string thoughtText;
     public TRAIT_TYPE type;
     public TRAIT_EFFECT effect;
     public TRAIT_TRIGGER trigger;

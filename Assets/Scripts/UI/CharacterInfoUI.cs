@@ -204,39 +204,6 @@ public class CharacterInfoUI : UIMenu {
         UpdateLocationInfo();
         UpdateItemInfo();
         UpdateAllHistoryInfo();
-
-        //if (GameManager.Instance.inspectAll) {
-        //SetCoversState(false);
-        //} else {
-        //    //if the character has never been inspected
-        //    //activate all the tab menu covers
-        //    //else, disable all the tab menu covers
-        //    SetCoversState(!_activeCharacter.hasBeenInspected);
-        //}
-
-
-        //UpdateInfoMenu();
-
-        //if (_activeCharacter.isBeingInspected || GameManager.Instance.inspectAll) {
-        //UpdateStatInfo();
-        //UpdateEquipmentInfo();
-        //UpdateItemsInfo();
-        //UpdateTagInfo(_activeCharacter.attributes);
-        //UpdateRelationshipInfo(_activeCharacter.relationships.Values.ToList());
-        //} else {
-        //    //UpdateStatInfo(_activeCharacter.uiData);
-        //    UpdateEquipmentInfo(_activeCharacter.uiData);
-        //    //UpdateItemsInfo(_activeCharacter.uiData);
-        //    //UpdateTagInfo(_activeCharacter.uiData.attributes);
-        //    //UpdateRelationshipInfo(_activeCharacter.uiData.relationships);
-        //}
-
-        //UpdateGeneralInfo();
-        //UpdateMoodInfo();
-
-        //UpdateActionQueue();
-        //UpdateEquipmentInfo();
-        //UpdateInventoryInfo();
     }
     private void UpdatePortrait() {
         characterPortrait.GeneratePortrait(_activeCharacter);
@@ -246,11 +213,55 @@ public class CharacterInfoUI : UIMenu {
         nameLbl.text = _activeCharacter.name;
         lvlClassLbl.text = _activeCharacter.raceClassName;
         if (_activeCharacter.isTracked || GameManager.Instance.inspectAll) {
-            if (_activeCharacter.plannedInteraction == null) {
-                plansLbl.text = _activeCharacter.name + " does not have any immediate plans at the moment.";
-            } else {
+            //Disabler Thought
+            if (_activeCharacter.doNotDisturb > 0) {
+                Trait disablerTrait = _activeCharacter.GetTraitOf(TRAIT_TYPE.DISABLER);
+                if (disablerTrait != null) {
+                    if (disablerTrait.thoughtText != null && disablerTrait.thoughtText != string.Empty) {
+                        plansLbl.text = disablerTrait.thoughtText.Replace("[Character]", _activeCharacter.name);
+                    } else {
+                        plansLbl.text = _activeCharacter.name + " has a disabler trait: " + disablerTrait.name + ".";
+                    }
+                    return;
+                }
+            }
+
+            //Travel Thought
+            if (!_activeCharacter.isDead && _activeCharacter.currentParty.icon.isTravelling) {
+                plansLbl.text = _activeCharacter.name + " is travelling to " + _activeCharacter.currentParty.icon.targetLocation.name + ".";
+                return;
+            }
+
+            //Planned Action
+            if (_activeCharacter.plannedInteraction != null) {
                 plansLblLogItem.SetLog(_activeCharacter.plannedInteraction.states["Start"].descriptionLog);
                 plansLbl.text = Utilities.LogReplacer(_activeCharacter.plannedInteraction.states["Start"].descriptionLog);
+                //plansLbl.text = _activeCharacter.name + " does not have any immediate plans at the moment.";
+                return;
+            }
+
+            //Default - Do nothing/Idle
+            if (_activeCharacter.isAtHomeStructure) {
+                plansLbl.text = _activeCharacter.name + " is at home.";
+            } else {
+                if (_activeCharacter.currentStructure.structureType == STRUCTURE_TYPE.DWELLING) {
+                    Dwelling dwelling = _activeCharacter.currentStructure as Dwelling;
+                    if (dwelling.residents.Count > 0) {
+                        plansLbl.text = _activeCharacter.name + " is in " + dwelling.residents[0].name + "'s house.";
+                    } else {
+                        plansLbl.text = _activeCharacter.name + " is in a dwelling.";
+                    }
+                } else if (_activeCharacter.currentStructure.structureType == STRUCTURE_TYPE.WORK_AREA) {
+                    plansLbl.text = _activeCharacter.name + " is in " + _activeCharacter.currentStructure.location.name + ".";
+                } else if (_activeCharacter.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS) {
+                    plansLbl.text = _activeCharacter.name + " is in the " + _activeCharacter.currentStructure.structureType.ToString().ToLower() + ".";
+                } else if (_activeCharacter.currentStructure.structureType == STRUCTURE_TYPE.INN) {
+                    plansLbl.text = _activeCharacter.name + " is at the " + _activeCharacter.currentStructure.structureType.ToString().ToLower() + ".";
+                } else if (_activeCharacter.currentStructure.structureType == STRUCTURE_TYPE.DUNGEON) {
+                    plansLbl.text = _activeCharacter.name + " is in a " + _activeCharacter.currentStructure.structureType.ToString().ToLower() + ".";
+                } else if (_activeCharacter.currentStructure.structureType == STRUCTURE_TYPE.WAREHOUSE) {
+                    plansLbl.text = _activeCharacter.name + " is in the " + _activeCharacter.currentStructure.structureType.ToString().ToLower() + ".";
+                }
             }
         } else {
             plansLbl.text = "Track " + _activeCharacter.name + " to be able to read " + Utilities.GetPronounString(_activeCharacter.gender, PRONOUN_TYPE.POSSESSIVE, false) + " immediate plans.";

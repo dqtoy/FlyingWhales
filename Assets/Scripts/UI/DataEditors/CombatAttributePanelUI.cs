@@ -16,6 +16,7 @@ public class CombatAttributePanelUI : MonoBehaviour {
     //General
     public InputField nameInput;
     public InputField descriptionInput;
+    public InputField thoughtInput;
     public InputField durationInput;
     public Dropdown traitTypeOptions;
     public Dropdown traitEffectOptions;
@@ -133,6 +134,7 @@ public class CombatAttributePanelUI : MonoBehaviour {
 
         nameInput.text = string.Empty;
         descriptionInput.text = string.Empty;
+        thoughtInput.text = string.Empty;
         traitEffectDescriptionInput.text = string.Empty;
         amountInput.text = "0";
         durationInput.text = "0";
@@ -173,6 +175,7 @@ public class CombatAttributePanelUI : MonoBehaviour {
         Trait newTrait = new Trait {
             name = nameInput.text,
             description = descriptionInput.text,
+            thoughtText = thoughtInput.text,
             type = (TRAIT_TYPE) System.Enum.Parse(typeof(TRAIT_TYPE), traitTypeOptions.options[traitTypeOptions.value].text),
             effect = (TRAIT_EFFECT) System.Enum.Parse(typeof(TRAIT_EFFECT), traitEffectOptions.options[traitEffectOptions.value].text),
             trigger = (TRAIT_TRIGGER) System.Enum.Parse(typeof(TRAIT_TRIGGER), traitTriggerOptions.options[traitTriggerOptions.value].text),
@@ -210,6 +213,7 @@ public class CombatAttributePanelUI : MonoBehaviour {
     private void LoadCombatAttributeDataToUI(Trait trait) {
         nameInput.text = trait.name;
         descriptionInput.text = trait.description;
+        thoughtInput.text = trait.thoughtText;
         traitTypeOptions.value = GetOptionIndex(trait.type.ToString(), traitTypeOptions);
         traitEffectOptions.value = GetOptionIndex(trait.effect.ToString(), traitEffectOptions);
         traitTriggerOptions.value = GetOptionIndex(trait.trigger.ToString(), traitTriggerOptions);
