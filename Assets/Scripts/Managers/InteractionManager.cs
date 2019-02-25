@@ -1249,10 +1249,13 @@ public class InteractionManager : MonoBehaviour {
                 return character.characterClass.className == "Necromancer" && character.specificLocation.owner == null
                     && character.specificLocation.possibleOccupants.Contains(character.race) && !FactionManager.Instance.GetFactionBasedOnName("Ziranna").isActive;
             case INTERACTION_TYPE.EAT_DEFENSELESS:
+                bool isCannibalEatDefenseless = character.GetTrait("Cannibal") != null;
                 for (int i = 0; i < character.specificLocation.charactersAtLocation.Count; i++) {
                     Character characterAtLocation = character.specificLocation.charactersAtLocation[i];
+                    if (!isCannibalEatDefenseless && character.race == characterAtLocation.race) { continue; }
                     if (characterAtLocation.id != character.id && !characterAtLocation.currentParty.icon.isTravelling && characterAtLocation.IsInOwnParty() 
-                    && characterAtLocation.currentStructure.isInside && characterAtLocation.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_EFFECT.NEUTRAL, TRAIT_TYPE.DISABLER)) {
+                    && characterAtLocation.currentStructure.isInside && characterAtLocation.level <= character.level
+                    && characterAtLocation.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_EFFECT.NEUTRAL, TRAIT_TYPE.DISABLER)) {
                         if (characterAtLocation.faction == FactionManager.Instance.neutralFaction) {
                             return true;
                         } else {

@@ -104,7 +104,7 @@ public class EatDefenseless : Interaction {
             Character currCharacter = interactable.charactersAtLocation[i];
             if(!isCannibal && characterInvolved.race == currCharacter.race) { continue; }
             if (currCharacter.id != characterInvolved.id && !currCharacter.currentParty.icon.isTravelling && currCharacter.IsInOwnParty() 
-                && currCharacter.currentStructure.isInside && currCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_EFFECT.NEUTRAL, TRAIT_TYPE.DISABLER)) {
+                && currCharacter.currentStructure.isInside && currCharacter.level <= characterInvolved.level && currCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_EFFECT.NEUTRAL, TRAIT_TYPE.DISABLER)) {
                 int weight = 0;
                 if (currCharacter.faction == FactionManager.Instance.neutralFaction) {
                     weight += 80;
