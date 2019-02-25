@@ -4,16 +4,11 @@ using UnityEngine;
 
 public class ArgueAction : Interaction {
 
-    private Character _targetCharacter;
-
     private const string Start = "Start";
     private const string Both_Gets_Annoyed = "Both Gets Annoyed";
     private const string Character_1_Injured = "Character 1 Injured"; //Character 1 = Active Character / Character Involved
     private const string Character_2_Injured = "Character 2 Injured"; //Character 2 = Target Character
 
-    public override Character targetCharacter {
-        get { return _targetCharacter; }
-    }
     public override LocationStructure actionStructureLocation {
         get { return _targetStructure; }
     }
@@ -68,7 +63,9 @@ public class ArgueAction : Interaction {
         return base.CanInteractionBeDoneBy(character);
     }
     public override void SetTargetCharacter(Character targetCharacter) {
-        this._targetCharacter = targetCharacter;
+        _targetCharacter = targetCharacter;
+        _targetStructure = _targetCharacter.currentStructure;
+        targetGridLocation = _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetStructure);
     }
     #endregion
 
@@ -86,7 +83,6 @@ public class ArgueAction : Interaction {
 
     #region Reward Effect
     private void StartEffect(InteractionState state) {
-        _targetStructure = _targetCharacter.currentStructure;
         _characterInvolved.MoveToAnotherStructure(_targetStructure, _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetStructure));
     }
     private void BothGetsAnnoyedEffect(InteractionState state) {

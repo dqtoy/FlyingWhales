@@ -10,11 +10,8 @@ public class Interaction {
     protected int _timeOutTicks;
     protected GameDate _timeDate;
     protected INTERACTION_TYPE _type;
-    //protected INTERACTION_CATEGORY[] _categories;f
-    //protected INTERACTION_ALIGNMENT _alignment;
     protected Area _interactable;
     protected Dictionary<string, InteractionState> _states;
-    //protected InteractionItem _interactionItem;
     protected bool _isActivated;
     protected bool _isDone;
     protected bool _hasActivatedTimeOut;
@@ -33,11 +30,11 @@ public class Interaction {
     protected Job _jobAssociated;
     protected JOB[] _jobFilter;
     protected object[] otherData;
-    //protected InteractionIntel _intel;
     private string interactionDebugLog;
     protected LocationStructure _actionStructureLocation;
     protected LocationGridTile _actionGridLocation;
     protected LocationStructure _targetStructure;
+    protected Character _targetCharacter;
 
     public int dayStarted { get; protected set; }
     public int dayCompleted { get; protected set; }
@@ -45,9 +42,9 @@ public class Interaction {
     public bool cannotBeClearedOut { get; protected set; }
     public List<InteractionCharacterEffect> actualEffectsOnActor { get; protected set; } //what actually happened to the actor
     public List<InteractionCharacterEffect> actualEffectsOnTarget { get; protected set; } //what actually happened to the target
+    public LocationGridTile targetGridLocation { get; protected set; }
 
     private bool _hasUsedBaseCreateStates;
-
     public const int secondTimeOutTicks = 30;
 
     #region getters/setters
@@ -98,9 +95,6 @@ public class Interaction {
     public Character characterInvolved {
         get { return _characterInvolved; }
     }
-    //public InteractionItem interactionItem {
-    //    get { return _interactionItem; }
-    //}
     public Area interactable {
         get { return _interactable; }
     }
@@ -126,14 +120,11 @@ public class Interaction {
         get { return _jobFilter; }
     }
     public virtual Character targetCharacter {
-        get { return null; }
+        get { return _targetCharacter; }
     }
     public virtual Area targetArea {
         get { return null; }
     }
-    //public InteractionIntel intel {
-    //    get { return _intel; }
-    //}
     public virtual INTERACTION_TYPE pairedInteractionType {
         get { return INTERACTION_TYPE.NONE; }
     }
@@ -255,7 +246,9 @@ public class Interaction {
         //interaction.SetInteractionIntel(this.intel);
         return interaction;
     }
-    public virtual void SetTargetCharacter(Character character) { }
+    public virtual void SetTargetCharacter(Character character) {
+        _targetCharacter = character;
+    }
     public virtual void SetOtherCharacter(Character character) { }
     #endregion
 
@@ -322,22 +315,6 @@ public class Interaction {
     public void SetMinionSuccessAction(Action action) {
         _minionSuccessfulAction = action;
     }
-    //public void SetInteractionItem(InteractionItem interactionItem) {
-    //    _interactionItem = interactionItem;
-    //}
-    //protected int GetRemainingDurationFromState(InteractionState state) {
-    //    return GameManager.Instance.GetTicksDifferenceOfTwoDates(GameManager.Instance.Today(), state.timeDate);
-    //}
-    //protected void SetDefaultActionDurationAsRemainingTicks(string optionName, InteractionState stateFrom) {
-    //    ActionOption option = stateFrom.GetOption(optionName);
-    //    int remainingTicks = GameManager.Instance.GetTicksDifferenceOfTwoDates(GameManager.Instance.Today(), stateFrom.timeDate);
-    //    option.duration = remainingTicks;
-    //}
-    //protected void FirstTimeOut() {
-    //    if (!_isFirstTimeOutCancelled) {
-    //        TimedOutRunDefault();
-    //    }
-    //}
     public void SecondTimeOut() {
         if (!_isSecondTimeOutCancelled) {
             //interactable.landmarkVisual.StopInteractionTimer();
@@ -443,7 +420,6 @@ public class Interaction {
     public void SetTokenTrigger(Token token) {
         _tokenTrigger = token;
     }
-    
     public void AddLogFillerToAllStates(LogFiller filler) {
         foreach (KeyValuePair<string, InteractionState> kvp in _states) {
             kvp.Value.AddLogFiller(filler);
@@ -494,12 +470,6 @@ public class Interaction {
     #endregion
 
     #region Intel
-    //public void SetInteractionIntel(InteractionIntel intel) {
-    //    _intel = intel;
-    //    if (intel != null) {
-    //        intel.SetConnectedInteraction(this);
-    //    }
-    //}
     public virtual object GetTarget() {
         if (targetCharacter != null) {
             return targetCharacter;

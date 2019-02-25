@@ -4,17 +4,12 @@ using UnityEngine;
 
 public class TortureAction : Interaction {
 
-    private Character _targetCharacter;
-
     private const string Start = "Start";
     private const string Target_Tortured_Died = "Target Tortured Died";
     private const string Target_Tortured_Injured = "Target Tortured Injured";
     private const string Target_Tortured_Recruited = "Target Tortured Recruited";
     private const string Target_Missing = "Target Missing";
 
-    public override Character targetCharacter {
-        get { return _targetCharacter; }
-    }
     public override LocationStructure actionStructureLocation {
         get { return _targetStructure; }
     }
@@ -25,10 +20,6 @@ public class TortureAction : Interaction {
 
     #region Override
     public override void CreateStates() {
-        if (_targetCharacter == null) {
-            SetTargetCharacter(GetTargetCharacter(_characterInvolved));
-        }
-
         InteractionState startState = new InteractionState(Start, this);
         InteractionState targetTorturedDied = new InteractionState(Target_Tortured_Died, this);
         InteractionState targetTorturedInjured = new InteractionState(Target_Tortured_Injured, this);
@@ -77,7 +68,11 @@ public class TortureAction : Interaction {
         return base.CanInteractionBeDoneBy(character);
     }
     public override void SetTargetCharacter(Character targetCharacter) {
-        this._targetCharacter = targetCharacter;
+        _targetCharacter = targetCharacter;
+        if (_targetCharacter != null) {
+            _targetStructure = _targetCharacter.currentStructure;
+            targetGridLocation = _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetStructure);
+        }
     }
     #endregion
 
@@ -99,7 +94,6 @@ public class TortureAction : Interaction {
 
     #region Reward Effect
     private void StartEffect(InteractionState state) {
-        _targetStructure = _targetCharacter.currentStructure;
         _characterInvolved.MoveToAnotherStructure(_targetStructure, _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetStructure));
     }
     private void TargetDiedEffect(InteractionState state) {

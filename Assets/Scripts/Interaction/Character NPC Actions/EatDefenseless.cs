@@ -4,15 +4,10 @@ using UnityEngine;
 
 public class EatDefenseless : Interaction {
 
-    private Character _targetCharacter;
-
     private const string Start = "Start";
     private const string Target_Eaten = "Target Eaten";
     private const string Target_Missing = "Target Missing";
 
-    public override Character targetCharacter {
-        get { return _targetCharacter; }
-    }
     public override LocationStructure actionStructureLocation {
         get { return _targetStructure; }
     }
@@ -23,10 +18,6 @@ public class EatDefenseless : Interaction {
 
     #region Override
     public override void CreateStates() {
-        if (_targetCharacter == null) {
-            SetTargetCharacter(GetTargetCharacter(_characterInvolved));
-        }
-
         InteractionState startState = new InteractionState(Start, this);
         InteractionState targetEaten = new InteractionState(Target_Eaten, this);
         InteractionState targetMissing = new InteractionState(Target_Missing, this);
@@ -69,13 +60,17 @@ public class EatDefenseless : Interaction {
         return base.CanInteractionBeDoneBy(character);
     }
     public override void SetTargetCharacter(Character targetCharacter) {
-        this._targetCharacter = targetCharacter;
+        _targetCharacter = targetCharacter;
+        if (targetCharacter != null) {
+            _targetStructure = _targetCharacter.currentStructure;
+            targetGridLocation = _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetStructure);
+        }
     }
     #endregion
 
     #region Option Effect
     private void DoNothingOptionEffect() {
-        if (_characterInvolved.currentStructure == _targetCharacter.currentStructure) {
+        if (_targetStructure == _targetCharacter.currentStructure) {
             SetCurrentState(_states[Target_Eaten]);
         } else {
             SetCurrentState(_states[Target_Missing]);
@@ -85,7 +80,6 @@ public class EatDefenseless : Interaction {
 
     #region Reward Effect
     private void StartEffect(InteractionState state) {
-        _targetStructure = _targetCharacter.currentStructure;
         _characterInvolved.MoveToAnotherStructure(_targetStructure, _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetStructure));
     }
     private void TargetEatenEffect(InteractionState state) {

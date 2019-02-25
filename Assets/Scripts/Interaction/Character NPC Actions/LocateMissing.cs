@@ -7,12 +7,6 @@ public class LocateMissing : Interaction {
     private const string Target_Found = "Target Found";
     private const string Target_Missing = "Target Missing";
 
-    private Character _targetCharacter;
-
-    public override Character targetCharacter {
-        get { return _targetCharacter; }
-    }
-
     public LocateMissing(Area interactable) : base(interactable, INTERACTION_TYPE.LOCATE_MISSING, 0) {
         _name = "Locate Missing";
     }
@@ -55,10 +49,15 @@ public class LocateMissing : Interaction {
         if (_targetCharacter == null) {
             return false;
         }
+        CharacterRelationshipData characterRelationshipData = character.GetCharacterRelationshipData(_targetCharacter);
+        if (characterRelationshipData != null) {
+            _targetStructure = characterRelationshipData.knownStructure;
+        }
         return base.CanInteractionBeDoneBy(character);
     }
     public override void SetTargetCharacter(Character targetCharacter) {
-        this._targetCharacter = targetCharacter;
+        _targetCharacter = targetCharacter;
+        
     }
     #endregion
 
@@ -74,10 +73,7 @@ public class LocateMissing : Interaction {
 
     #region State Effects
     private void StartEffect(InteractionState state) {
-        CharacterRelationshipData characterRelationshipData = _characterInvolved.GetCharacterRelationshipData(_targetCharacter);
-        if (characterRelationshipData != null) {
-            _characterInvolved.MoveToAnotherStructure(characterRelationshipData.knownStructure);
-        }
+        _characterInvolved.MoveToAnotherStructure(_targetStructure);
     }
     private void TargetFoundEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);

@@ -8,12 +8,6 @@ public class MakeLoveAction : Interaction {
     private const string Actor_Rejected = "Actor Rejected";
     private const string Actor_Accepted = "Actor Accepted";
 
-    private Character _targetCharacter;
-
-    public override Character targetCharacter {
-        get { return _targetCharacter; }
-    }
-
     public MakeLoveAction(Area interactable)
         : base(interactable, INTERACTION_TYPE.MAKE_LOVE_ACTION, 0) {
         _name = "Make Love Action";
@@ -65,6 +59,8 @@ public class MakeLoveAction : Interaction {
     //}
     public override void SetTargetCharacter(Character character) {
         _targetCharacter = character;
+        _targetStructure = _targetCharacter.homeStructure;
+        targetGridLocation = _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetStructure);
     }
     #endregion
 
@@ -88,7 +84,7 @@ public class MakeLoveAction : Interaction {
     #region Reward Effect
     private void StartRewardEffect(InteractionState state) {
         //**Structure**: Move the character to the target's home Dwelling
-        _characterInvolved.MoveToAnotherStructure(_targetCharacter.homeStructure, _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetCharacter.homeStructure));
+        _characterInvolved.MoveToAnotherStructure(_targetStructure, _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetStructure));
     }
     private void ActorDisappointedRewardEffect(InteractionState state) {
         //**Mechanics**: Character 1 gains https://trello.com/c/KWmQt7DF/1152-annoyed trait

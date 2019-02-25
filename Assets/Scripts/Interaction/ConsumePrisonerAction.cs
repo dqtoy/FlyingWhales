@@ -7,22 +7,12 @@ public class ConsumePrisonerAction : Interaction {
     private const string Character_Consumed = "Character Consumed";
     private const string Target_Missing = "Target Missing";
 
-    private Character _targetCharacter;
-
-    public override Character targetCharacter {
-        get { return _targetCharacter; }
-    }
-
     public ConsumePrisonerAction(Area interactable) : base(interactable, INTERACTION_TYPE.CONSUME_PRISONER_ACTION, 0) {
         _name = "Consume Prisoner Action";
     }
 
     #region Override
     public override void CreateStates() {
-        if (_targetCharacter == null) {
-            SetTargetCharacter(GetTargetCharacter(_characterInvolved));
-        }
-
         InteractionState startState = new InteractionState(Start, this);
         InteractionState characterConsumed = new InteractionState(Character_Consumed, this);
         InteractionState targetMissing = new InteractionState(Target_Missing, this);
@@ -65,13 +55,15 @@ public class ConsumePrisonerAction : Interaction {
         return base.CanInteractionBeDoneBy(character);
     }
     public override void SetTargetCharacter(Character targetCharacter) {
-        this._targetCharacter = targetCharacter;
+        _targetCharacter = targetCharacter;
+        _targetStructure = _targetCharacter.currentStructure;
+        targetGridLocation = _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetStructure);
     }
     #endregion
 
     #region Option Effect
     private void DoNothingOptionEffect() {
-        if (_characterInvolved.currentStructure == _targetCharacter.currentStructure) {
+        if (_targetStructure == _targetCharacter.currentStructure) {
             SetCurrentState(_states[Character_Consumed]);
         } else {
             SetCurrentState(_states[Target_Missing]);
@@ -81,7 +73,7 @@ public class ConsumePrisonerAction : Interaction {
 
     #region State Effects
     private void StartEffect(InteractionState state) {
-        _characterInvolved.MoveToAnotherStructure(_targetCharacter.currentStructure, _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetCharacter.currentStructure));
+        _characterInvolved.MoveToAnotherStructure(_targetStructure, _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetCharacter.currentStructure));
     }
     private void CharacterConsumedEffect(InteractionState state) {
         int supplyObtained = UnityEngine.Random.Range(35, 76);

@@ -1285,7 +1285,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (!isDead && gridTileLocation != null && currentStructure == structure) {
             List<LocationGridTile> choices = currentStructure.tiles.Where(x => x != gridTileLocation).OrderBy(x => Vector2.Distance(gridTileLocation.localLocation, x.localLocation)).ToList();
             if (choices.Count > 0) {
-                return choices[UnityEngine.Random.Range(0, choices.Count)];
+                return choices[0];
             }
         }
         return null;
@@ -3136,10 +3136,17 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (this.gridTileLocation == null) {
             return;
         }
+        if (interaction.targetStructure == null) {
+            Debug.LogWarning(this.name + "'s target structure from " + interaction.name + " is null! Not drawing inside structure line");
+        }
         if (interaction.targetStructure != null) {
             if (interaction.targetStructure.location.id == this.specificLocation.id) {
-                LocationGridTile targetTile = interaction.targetStructure.tiles[UnityEngine.Random.Range(0, interaction.targetStructure.tiles.Count)];
+                LocationGridTile targetTile = interaction.targetGridLocation;
+                if (targetTile == null) {
+                    targetTile =  interaction.targetStructure.tiles[UnityEngine.Random.Range(0, interaction.targetStructure.tiles.Count)];
+                }
                 this.specificLocation.areaMap.DrawLine(this.gridTileLocation, targetTile, this);
+                Debug.Log(this.name + " is drawing an inside structure travel line at " + this.specificLocation.name);
             } else {
                 this.specificLocation.areaMap.DrawLineToExit(this.gridTileLocation, this);
             }

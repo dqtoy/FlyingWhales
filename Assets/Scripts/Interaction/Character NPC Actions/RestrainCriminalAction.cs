@@ -19,10 +19,6 @@ public class RestrainCriminalAction : Interaction {
 
     #region Override
     public override void CreateStates() {
-        if(_targetCharacter == null) {
-            SetTargetCharacter(GetTargetCharacter(_characterInvolved));
-        }
-
         InteractionState startState = new InteractionState(Start, this);
         InteractionState targetArrested = new InteractionState(Target_Arrested, this);
         InteractionState targetMissing = new InteractionState(Target_Missing, this);
@@ -65,7 +61,11 @@ public class RestrainCriminalAction : Interaction {
         return base.CanInteractionBeDoneBy(character);
     }
     public override void SetTargetCharacter(Character targetCharacter) {
-        this._targetCharacter = targetCharacter;
+        _targetCharacter = targetCharacter;
+        if (targetCharacter != null) {
+            _targetStructure = _targetCharacter.currentStructure;
+            targetGridLocation = _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetStructure);
+        }
     }
     #endregion
 
@@ -81,7 +81,7 @@ public class RestrainCriminalAction : Interaction {
 
     #region State Effects
     private void StartEffect(InteractionState state) {
-        _characterInvolved.MoveToAnotherStructure(_targetCharacter.currentStructure, _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetCharacter.currentStructure));
+        _characterInvolved.MoveToAnotherStructure(_targetStructure, _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetStructure));
     }
     private void TargetArrestedEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);

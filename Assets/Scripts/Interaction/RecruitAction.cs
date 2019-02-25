@@ -4,18 +4,12 @@ using UnityEngine;
 
 public class RecruitAction : Interaction {
 
-    private Character _targetCharacter;
-
     private const string Disrupted_Recruitment_Success = "Disrupted Recruitment Success";
     private const string Disrupted_Recruitment_Fail = "Disrupted Recruitment Fail";
     private const string Assisted_Recruitment_Success = "Assisted Recruitment Success";
     private const string Assisted_Recruitment_Fail = "Assisted Recruitment Fail";
     private const string Normal_Recruitment_Success = "Normal Recruitment Success";
     private const string Normal_Recruitment_Fail = "Normal Recruitment Fail";
-
-    public override Character targetCharacter {
-        get { return _targetCharacter; }
-    }
 
     public RecruitAction(Area interactable) 
         : base(interactable, INTERACTION_TYPE.RECRUIT_ACTION, 0) {
@@ -104,7 +98,7 @@ public class RecruitAction : Interaction {
         return base.CanInteractionBeDoneBy(character);
     }
     public override void SetTargetCharacter(Character targetCharacter) {
-        this._targetCharacter = targetCharacter;
+        _targetCharacter = targetCharacter;
         AddToDebugLog("Set target character to " + targetCharacter.name);
     }
     #endregion

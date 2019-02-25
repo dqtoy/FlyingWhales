@@ -1265,10 +1265,10 @@ public enum JOB_ACTION_TARGET {
     FACTION
 }
 public enum STRUCTURE_TYPE {
+    EXIT,
     INN,
     WAREHOUSE,
     DWELLING,
-    EXIT,
     DUNGEON,
     WILDERNESS,
     WORK_AREA,

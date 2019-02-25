@@ -4,16 +4,11 @@ using UnityEngine;
 
 public class CharmActionFaction : Interaction {
 
-    private Character _targetCharacter;
-
     private const string Normal_Charm_Success = "Normal Charm Success";
     private const string Normal_Charm_Fail = "Normal Charm Fail";
     private const string Normal_Charm_Critical_Fail = "Normal Charm Critical Fail";
     private const string Target_Missing = "Target Missing";
 
-    public override Character targetCharacter {
-        get { return _targetCharacter; }
-    }
     public override LocationStructure actionStructureLocation {
         get { return _targetStructure; }
     }
@@ -78,8 +73,9 @@ public class CharmActionFaction : Interaction {
         return base.CanInteractionBeDoneBy(character);
     }
     public override void SetTargetCharacter(Character targetCharacter) {
-        this._targetCharacter = targetCharacter;
+        _targetCharacter = targetCharacter;
         _targetStructure = targetCharacter.currentStructure;
+        targetGridLocation = _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetStructure);
         AddToDebugLog("Set " + targetCharacter.name + " as target");
     }
     #endregion

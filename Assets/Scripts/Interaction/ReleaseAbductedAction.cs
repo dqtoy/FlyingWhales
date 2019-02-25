@@ -4,16 +4,10 @@ using UnityEngine;
 
 public class ReleaseAbductedAction : Interaction {
 
-    private Character _targetCharacter;
-
     private const string Release_Success = "Release Success";
     private const string Release_Fail = "Release Fail";
     private const string Release_Critical_Fail = "Release Critical Fail";
     private const string Target_Missing = "Target Missing";
-
-    public override Character targetCharacter {
-        get { return _targetCharacter; }
-    }
 
     public ReleaseAbductedAction(Area interactable) 
         : base(interactable, INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION, 0) {
@@ -72,10 +66,12 @@ public class ReleaseAbductedAction : Interaction {
             || targetCharacter.isDead) {
             return false;
         }
+        _targetStructure = character.GetCharacterRelationshipData(targetCharacter).knownStructure;
+        targetGridLocation = _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetStructure);
         return base.CanInteractionBeDoneBy(character);
     }
     public override void SetTargetCharacter(Character targetCharacter) {
-        this._targetCharacter = targetCharacter;
+        _targetCharacter = targetCharacter;
         AddToDebugLog("Set " + targetCharacter.name + " as target");
     }
     #endregion
@@ -109,7 +105,6 @@ public class ReleaseAbductedAction : Interaction {
 
     #region Reward Effect
     private void StartEffect(InteractionState state) {
-        _targetStructure = _characterInvolved.GetCharacterRelationshipData(targetCharacter).knownStructure;
         _characterInvolved.MoveToAnotherStructure(_targetStructure, targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetStructure));
     }
     private void NormalReleaseSuccessRewardEffect(InteractionState state) {

@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class StealAction : Interaction {
 
-    private Character _targetCharacter;
-
     private const string Assisted_Theft_Success = "Assisted Theft Success";
     private const string Assisted_Theft_Fail = "Assisted Theft Fail";
     private const string Assisted_Theft_Critical_Fail = "Assisted Theft Critical Fail";
@@ -17,10 +15,6 @@ public class StealAction : Interaction {
     private const string Normal_Theft_Success = "Normal Theft Success";
     private const string Normal_Theft_Fail = "Normal Theft Fail";
     private const string Normal_Theft_Critical_Fail = "Normal Theft Critical Fail";
-
-    public override Character targetCharacter {
-        get { return _targetCharacter; }
-    }
 
     public StealAction(Area interactable)
         : base(interactable, INTERACTION_TYPE.STEAL_ACTION, 0) {
@@ -40,8 +34,6 @@ public class StealAction : Interaction {
         InteractionState normalTheftSuccess = new InteractionState(Normal_Theft_Success, this);
         InteractionState normalTheftFail = new InteractionState(Normal_Theft_Fail, this);
         InteractionState normalTheftCriticalFail = new InteractionState(Normal_Theft_Critical_Fail, this);
-
-        SetTargetCharacter(GetTargetCharacter(_characterInvolved));
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description", this);
         startStateDescriptionLog.AddToFillers(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1);
@@ -107,13 +99,14 @@ public class StealAction : Interaction {
         }
     }
     public override bool CanInteractionBeDoneBy(Character character) {
-        if (GetTargetCharacter(character) == null) {
+        Character target = GetTargetCharacter(character);
+        if (target == null) {
             return false;
         }
         return base.CanInteractionBeDoneBy(character);
     }
     public override void SetTargetCharacter(Character targetCharacter) {
-        this._targetCharacter = targetCharacter;
+        _targetCharacter = targetCharacter;
     }
     #endregion
 

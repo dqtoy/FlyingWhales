@@ -8,12 +8,6 @@ public class RemoveCurseAction : Interaction {
     private const string Curse_Transferred = "Curse Transferred";
     private const string Target_Missing = "Target Missing";
 
-    private Character _targetCharacter;
-
-    public override Character targetCharacter {
-        get { return _targetCharacter; }
-    }
-
     public RemoveCurseAction(Area interactable): base(interactable, INTERACTION_TYPE.REMOVE_CURSE_ACTION, 0) {
         _name = "Remove Curse Action";
     }
@@ -59,10 +53,15 @@ public class RemoveCurseAction : Interaction {
         if (_targetCharacter == null) {
             return false;
         }
+        CharacterRelationshipData characterRelationshipData = _characterInvolved.GetCharacterRelationshipData(_targetCharacter);
+        if (characterRelationshipData != null) {
+            _targetStructure = characterRelationshipData.knownStructure;
+        }
         return base.CanInteractionBeDoneBy(character);
     }
     public override void SetTargetCharacter(Character targetCharacter) {
-        this._targetCharacter = targetCharacter;
+        _targetCharacter = targetCharacter;
+        
     }
     #endregion
 
@@ -83,10 +82,7 @@ public class RemoveCurseAction : Interaction {
 
     #region State Effects
     private void StartEffect(InteractionState state) {
-       CharacterRelationshipData characterRelationshipData = _characterInvolved.GetCharacterRelationshipData(_targetCharacter);
-       if(characterRelationshipData != null) {
-            _characterInvolved.MoveToAnotherStructure(characterRelationshipData.knownStructure);
-        }
+         _characterInvolved.MoveToAnotherStructure(_targetStructure);
     }
     private void CurseRemovedEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);

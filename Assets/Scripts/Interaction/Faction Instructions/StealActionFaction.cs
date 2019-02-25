@@ -3,18 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class StealActionFaction : Interaction {
-
-    private Character _targetCharacter;
     
     private const string Theft_Success = "Theft Success";
     private const string Theft_Failed = "Theft Failed";
     private const string Thief_Caught = "Thief Caught";
     private const string Target_Itemless = "Target Itemless";
     private const string Target_Missing = "Target Missing";
-
-    public override Character targetCharacter {
-        get { return _targetCharacter; }
-    }
 
     public StealActionFaction(Area interactable)
         : base(interactable, INTERACTION_TYPE.STEAL_ACTION_FACTION, 0) {
@@ -30,8 +24,6 @@ public class StealActionFaction : Interaction {
         InteractionState thiefCaught = new InteractionState(Thief_Caught, this);
         InteractionState targetItemless = new InteractionState(Target_Itemless, this);
         InteractionState targetMissing = new InteractionState(Target_Missing, this);
-
-        SetTargetCharacter(GetTargetCharacter(_characterInvolved));
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description", this);
         startStateDescriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -77,6 +69,7 @@ public class StealActionFaction : Interaction {
     public override void SetTargetCharacter(Character targetCharacter) {
         _targetCharacter = targetCharacter;
         _targetStructure = _targetCharacter.currentStructure;
+        targetGridLocation = _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetStructure);
     }
     #endregion
 

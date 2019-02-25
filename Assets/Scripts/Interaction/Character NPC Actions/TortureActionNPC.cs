@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class TortureActionNPC : Interaction {
-
-    private Character _targetCharacter;
-
     private const string Start = "Start";
     private const string Persuade_Success = "Persuade Success";
     private const string Persuade_Character_Tortured_Died = "Persuade Character Tortured Died";
@@ -17,9 +14,6 @@ public class TortureActionNPC : Interaction {
     private const string Character_Tortured_Knocked_Out = "Character Tortured Knocked Out";
     private const string Character_Tortured_Escapes = "Character Tortured Escapes";
 
-    public override Character targetCharacter {
-        get { return _targetCharacter; }
-    }
     public override LocationStructure actionStructureLocation {
         get { return _targetStructure; }
     }
@@ -103,7 +97,9 @@ public class TortureActionNPC : Interaction {
         return base.CanInteractionBeDoneBy(character);
     }
     public override void SetTargetCharacter(Character targetCharacter) {
-        this._targetCharacter = targetCharacter;
+        _targetCharacter = targetCharacter;
+        _targetStructure = _targetCharacter.currentStructure;
+        targetGridLocation = _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetStructure);
     }
     #endregion
 
@@ -139,7 +135,6 @@ public class TortureActionNPC : Interaction {
 
     #region Reward Effect
     private void StartEffect(InteractionState state) {
-        _targetStructure = _targetCharacter.currentStructure;
         _characterInvolved.MoveToAnotherStructure(_targetStructure, _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetStructure));
     }
     private void PersuadeSuccessEffect(InteractionState state) {
