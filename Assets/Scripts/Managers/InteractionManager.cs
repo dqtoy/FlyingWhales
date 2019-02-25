@@ -1224,11 +1224,13 @@ public class InteractionManager : MonoBehaviour {
                 //**Trigger Criteria 1**: This character must not have an item
                 return !character.isHoldingItem;
             case INTERACTION_TYPE.HUNT_ACTION:
-                for (int i = 0; i < character.specificLocation.charactersAtLocation.Count; i++) {
-                    Character currCharacter = character.specificLocation.charactersAtLocation[i];
-                    if (currCharacter.id != character.id && !currCharacter.currentParty.icon.isTravelling && currCharacter.IsInOwnParty() && !currCharacter.isLeader
-                        && currCharacter.role.roleType == CHARACTER_ROLE.BEAST && currCharacter.faction.id == FactionManager.Instance.neutralFaction.id) {
-                        return true;
+                if(character.role.roleType != CHARACTER_ROLE.BEAST) {
+                    for (int i = 0; i < character.specificLocation.charactersAtLocation.Count; i++) {
+                        Character currCharacter = character.specificLocation.charactersAtLocation[i];
+                        if (currCharacter.id != character.id && !currCharacter.currentParty.icon.isTravelling && currCharacter.IsInOwnParty() && !currCharacter.isLeader
+                            && currCharacter.role.roleType == CHARACTER_ROLE.BEAST && currCharacter.isFactionless) {
+                            return true;
+                        }
                     }
                 }
                 return false;
@@ -1870,7 +1872,7 @@ public class InteractionManager : MonoBehaviour {
             //StartCoroutine(DefaultInteractionsInAreaCoroutine(currArea, AddToDailySummary));
         }
         dailyInteractionSummary += "\n==========Done==========";
-        //Debug.Log(dailyInteractionSummary);
+        Debug.Log(dailyInteractionSummary);
     }
     public void ScheduleDefaultInteractionsInArea(Area area, ref string log) {
         if (area.currentInteractions.Count <= 0) {
@@ -1951,7 +1953,7 @@ public class InteractionManager : MonoBehaviour {
             }
         }
         log += "\n==========Done==========";
-        //Debug.Log(log);
+        Debug.Log(log);
     }
     public void UnlockAllTokens() {
         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {

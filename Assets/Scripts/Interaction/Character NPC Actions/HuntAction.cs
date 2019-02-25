@@ -82,10 +82,12 @@ public class HuntAction : Interaction {
         //}
     }
     public override bool CanStillDoInteraction(Character character) {
-        if(_targetCharacter.faction.id == _characterInvolved.faction.id) {
-            return false;
+        if (base.CanStillDoInteraction(character)) {
+            if (_targetCharacter.faction.id == character.faction.id && !character.isFactionless) {
+                return false;
+            }
         }
-        return base.CanStillDoInteraction(character);
+        return true;
     }
     #endregion
 
@@ -172,11 +174,14 @@ public class HuntAction : Interaction {
     #endregion
 
     public Character GetTargetCharacter(Character characterInvolved) {
+        if(characterInvolved.role.roleType == CHARACTER_ROLE.BEAST) {
+            return null;
+        }
         List<Character> characterChoices = new List<Character>();
         for (int i = 0; i < characterInvolved.specificLocation.charactersAtLocation.Count; i++) {
             Character currCharacter = characterInvolved.specificLocation.charactersAtLocation[i];
             if (currCharacter.id != characterInvolved.id && !currCharacter.currentParty.icon.isTravelling && currCharacter.IsInOwnParty() && !currCharacter.isLeader
-                && currCharacter.role.roleType == CHARACTER_ROLE.BEAST && currCharacter.faction.id == FactionManager.Instance.neutralFaction.id) {
+                && currCharacter.role.roleType == CHARACTER_ROLE.BEAST && currCharacter.isFactionless) {
                 characterChoices.Add(currCharacter);
             }
         }

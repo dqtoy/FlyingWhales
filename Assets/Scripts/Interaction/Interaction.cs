@@ -242,6 +242,9 @@ public class Interaction {
         if (character.doNotDisturb > 1 || character.isDead || !character.IsInOwnParty() || isPrevented) {
             return false;
         }
+        if(targetCharacter != null && targetCharacter.isDead) {
+            return false;
+        }
         return true;
     }
     public virtual Interaction CreateConnectedEvent(INTERACTION_TYPE connectedType, Area interactable) {

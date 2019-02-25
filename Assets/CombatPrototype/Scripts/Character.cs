@@ -2721,15 +2721,15 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                         }
                     }
                     if (kvp.Value.encounterMultiplier > 0f && weight > 0) {
-                        weight = (int) (weight * kvp.Value.encounterMultiplier);
+                        weight += (int) (weight * kvp.Value.encounterMultiplier);
                     }
-                    interactionLog += "(weight=" + weight + "), ";
+                    interactionLog += kvp.Key.name + "(weight=" + weight + "), ";
                     if (weight > 0) {
                         characterWeights.AddElement(kvp.Value, weight);
                     }
                 }
             }
-            if(characterWeights.GetTotalOfWeights() > 0) {
+            if(characterWeights.Count > 0) {
                 CharacterRelationshipData chosenData = characterWeights.PickRandomElementGivenWeights();
                 int weight = 0;
                 targetCharacter = chosenData.targetCharacter;
