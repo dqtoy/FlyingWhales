@@ -21149,7 +21149,7 @@ MonoBehaviour:
   month: 1
   days: 1
   year: 80
-  tick: 0
+  tick: 24
   continuousDays: 1
   startYear: 80
   currProgressionSpeed: 0
@@ -29177,7 +29177,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_text: 1/12:00 AM
+  m_text: 1/6:00 AM
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: f8d165fc58518da4b871ca2551648bf9, type: 2}
   m_sharedMaterial: {fileID: 21189737157306288, guid: f8d165fc58518da4b871ca2551648bf9,
@@ -29246,7 +29246,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: -0.36340332, w: 0}
   m_textInfo:
     textComponent: {fileID: 739042433}
-    characterCount: 10
+    characterCount: 9
     spriteCount: 0
     spaceCount: 1
     wordCount: 4
@@ -68837,7 +68837,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_text: AFTER_MIDNIGHT_1
+  m_text: MORNING
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: f8d165fc58518da4b871ca2551648bf9, type: 2}
   m_sharedMaterial: {fileID: 21189737157306288, guid: f8d165fc58518da4b871ca2551648bf9,
@@ -68906,10 +68906,10 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: -0.36340332, w: 0}
   m_textInfo:
     textComponent: {fileID: 1671671427}
-    characterCount: 16
+    characterCount: 7
     spriteCount: 0
     spaceCount: 0
-    wordCount: 3
+    wordCount: 1
     linkCount: 0
     lineCount: 1
     pageCount: 1
