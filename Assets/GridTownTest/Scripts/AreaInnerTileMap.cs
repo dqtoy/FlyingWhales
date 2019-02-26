@@ -72,9 +72,8 @@ public class AreaInnerTileMap : MonoBehaviour {
             new List<Point>(){
                 new Point(4, 3),
                 new Point(3, 4),
-                //new Point(2, 2),
                 new Point(3, 3),
-                new Point(4, 4),
+                //new Point(4, 4),
             }
         },
           { STRUCTURE_TYPE.EXPLORE_AREA,
@@ -183,15 +182,15 @@ public class AreaInnerTileMap : MonoBehaviour {
         //return;
         outsideTiles = new List<LocationGridTile>();
         insideTiles = new List<LocationGridTile>();
-        Cardinal_Direction[] choices = Utilities.GetEnumValues<Cardinal_Direction>();
-        Cardinal_Direction outsideDirection = choices[Random.Range(0, choices.Length)];
+        //Cardinal_Direction[] choices = Utilities.GetEnumValues<Cardinal_Direction>();
+        Cardinal_Direction outsideDirection = Cardinal_Direction.East;
         IntRange xOutRange = new IntRange();
         IntRange yOutRange = new IntRange();
 
         this.outsideDirection = outsideDirection;
 
         int edgeRange = 12;
-        float outerMapPercentage = 0.40f;
+        float outerMapPercentage = 0.30f;
         switch (outsideDirection) {
             case Cardinal_Direction.North:
                 edgeRange = (int)(height * outerMapPercentage);
@@ -319,8 +318,8 @@ public class AreaInnerTileMap : MonoBehaviour {
                         break;
                     default:
                         choices = elligibleTiles.Where(
-                        t => t.localPlace.x + currPoint.X < rightMostCoordinate
-                        && t.localPlace.y + currPoint.Y < topMostCoordinate
+                        t => t.localPlace.x + currPoint.X <= rightMostCoordinate
+                        && t.localPlace.y + currPoint.Y <= topMostCoordinate
                         && Utilities.ContainsRange(elligibleTiles, GetTiles(currPoint, t))).ToList();
                         break;
                 }
@@ -345,31 +344,10 @@ public class AreaInnerTileMap : MonoBehaviour {
                 currTile.SetStructure(kvp.Key);
                 elligibleTiles.Remove(currTile);
                 switch (kvp.Key.structureType) {
-                    case STRUCTURE_TYPE.INN:
-                        for (int k = 0; k < currTile.neighbours.Values.Count; k++) {
-                            elligibleTiles.Remove(currTile.neighbours.Values.ToList()[k]);
-                        }
-                        //strcutureTilemap.SetColor(currTile.localPlace, Color.red);
-                        break;
-                    case STRUCTURE_TYPE.WAREHOUSE:
-                        for (int k = 0; k < currTile.neighbours.Values.Count; k++) {
-                            elligibleTiles.Remove(currTile.neighbours.Values.ToList()[k]);
-                        }
-                        //strcutureTilemap.SetColor(currTile.localPlace, Color.blue);
-                        break;
-                    case STRUCTURE_TYPE.DWELLING:
-                        for (int k = 0; k < currTile.neighbours.Values.Count; k++) {
-                            elligibleTiles.Remove(currTile.neighbours.Values.ToList()[k]);
-                        }
-                        //strcutureTilemap.SetColor(currTile.localPlace, Color.green);
-                        break;
-                    case STRUCTURE_TYPE.DUNGEON:
-                        for (int k = 0; k < currTile.neighbours.Values.Count; k++) {
-                            elligibleTiles.Remove(currTile.neighbours.Values.ToList()[k]);
-                        }
-                        //strcutureTilemap.SetColor(currTile.localPlace, Color.yellow);
-                        break;
                     default:
+                        for (int k = 0; k < currTile.neighbours.Values.Count; k++) {
+                            elligibleTiles.Remove(currTile.neighbours.Values.ToList()[k]);
+                        }
                         break;
                 }
                 //yield return new WaitForSeconds(0.1f);

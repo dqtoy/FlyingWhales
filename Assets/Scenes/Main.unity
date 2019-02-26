@@ -72937,10 +72937,10 @@ MonoBehaviour:
   _zoomSpeed: 15
   areaMapsCamera: {fileID: 1713567858}
   target: {fileID: 0}
-  MIN_X: -199.95
-  MAX_X: -168.33
+  MIN_X: -199.9
+  MAX_X: -138.5
   MIN_Y: 0
-  MAX_Y: 24
+  MAX_Y: 0
   bounds:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 0, y: 0, z: 0}

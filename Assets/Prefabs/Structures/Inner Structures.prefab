@@ -714,8 +714,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65491b50daf36c540bd504bab406ae86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  width: 60
-  height: 40
+  width: 90
+  height: 16
   grid: {fileID: 2569400266708677946}
   canvas: {fileID: 223372050258974636}
   worldUICanvas: {fileID: 223640290245089918}
