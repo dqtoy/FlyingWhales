@@ -89,6 +89,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 19b91c02f997c3545aa5ecccba2c5d0f, type: 3}
   - {fileID: 21300000, guid: 204850225c36adb459c086bfb4363355, type: 3}
   - {fileID: 21300000, guid: d0bab72205ba05c46a58108cb567e4ed, type: 3}
+  - {fileID: 21300000, guid: 9f1e6a42fe38ac343b2a103d06514f78, type: 3}
   - {fileID: 21300000, guid: 07145f423dc12574788bba69fa143ed5, type: 3}
   - {fileID: 21300000, guid: e6d74152ef264b14ca512319a7b07b38, type: 3}
   - {fileID: 21300000, guid: da6818628eb5dbc44a06b49caf27e15a, type: 3}
@@ -97,6 +98,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 7da1be72bd366c545867e963650021f9, type: 3}
   - {fileID: 21300000, guid: f24ef182f2c352046ace6aa76d7a3a73, type: 3}
   - {fileID: 21300000, guid: ba0fc3828133c0d42be179961035c5e6, type: 3}
+  - {fileID: 21300000, guid: 6a3862923bc59e3408203ee9df91b0fc, type: 3}
   - {fileID: 21300000, guid: 2375e0b2dbb652541ba13facd9be9d44, type: 3}
   - {fileID: 21300000, guid: aed80cb2f9f2f8d4fbff72fff6c6a95e, type: 3}
   - {fileID: 21300000, guid: 12f193c25cad8824a978c1a8d9d8377f, type: 3}
@@ -156,6 +158,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 74158844490518a46aeb6fb05b4599a1, type: 3}
   - {fileID: 21300000, guid: 79d84754018f74d4c9e6bf4bfc9c772e, type: 3}
   - {fileID: 21300000, guid: 70aad954371057a43b4ec4ea68784e39, type: 3}
+  - {fileID: 21300000, guid: 9c3c0e5445d94284b90c96cbab889937, type: 3}
   - {fileID: 21300000, guid: c6c6d764484dd724e959da9633800a3e, type: 3}
   - {fileID: 21300000, guid: 2d67f964dfa60a04597e6133df5949c6, type: 3}
   - {fileID: 21300000, guid: ae2f7f649e1b014458063ba66dd577ba, type: 3}
@@ -243,6 +246,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: deaa0c186fe247e4d8e239db94677267, type: 3}
   - {fileID: 21300000, guid: 9de9b52844130a048b34892ae787e5e4, type: 3}
   - {fileID: 21300000, guid: 0c8bdc28ff116d24086cd06a6b50a1ae, type: 3}
+  - {fileID: 21300000, guid: 4fbebd3819f55ca47a56d25a0a84d46e, type: 3}
   - {fileID: 21300000, guid: fe34e0485bddf104d8d98eed51c230d6, type: 3}
   - {fileID: 21300000, guid: 7ebd12583adb45e40bc03fef427b9527, type: 3}
   - {fileID: 21300000, guid: 356fbb78b07fba448afeb34b17cf4e4b, type: 3}
@@ -357,11 +361,13 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 1f41a93de977cdd40a28b1625c8e1bf6, type: 3}
   - {fileID: 21300000, guid: f6c0635d4100ac445b606bcafe7c9da6, type: 3}
   - {fileID: 21300000, guid: 3e9e9e5d9c9b88847ab5b03efdf86a68, type: 3}
+  - {fileID: 21300000, guid: a295258db8d480046b768b474deea9ab, type: 3}
   - {fileID: 21300000, guid: e2010f8d9d2040643b192ac83839c687, type: 3}
   - {fileID: 21300000, guid: 523c119d318e11e47b2de5a07181fcff, type: 3}
   - {fileID: 21300000, guid: 12d4c19dc27955848a72b0783d602369, type: 3}
   - {fileID: 21300000, guid: 0ad167dd82c7d4a4d92f41f321f61523, type: 3}
   - {fileID: 21300000, guid: 453c2fdd7d4fc0d46a752bd4696ffb3b, type: 3}
+  - {fileID: 21300000, guid: 9d587aedde59e4e45885cde1e5758b37, type: 3}
   - {fileID: 21300000, guid: 394aa4fd5942cb241bc0b16085e7cf43, type: 3}
   - {fileID: 21300000, guid: 58ba89fd582365f45aa0c4a195348bf1, type: 3}
   - {fileID: 21300000, guid: cb190dfd06cd9ce45b2997f2a9f3ffa4, type: 3}
@@ -470,6 +476,7 @@ SpriteAtlas:
   - av-h_m-hair-10b
   - av-h_f-eye-1
   - demon_sloth_portrait
+  - abomination_top
   - av-h_m-nose-4
   - av-e_f-bg
   - av-h_f-hair-6b
@@ -478,6 +485,7 @@ SpriteAtlas:
   - av-e_f-mouth-7
   - av-e_f-brow-9
   - av-e_f-eye-4
+  - abomination_skin
   - Rat_2
   - king
   - demon_envy_portrait
@@ -537,6 +545,7 @@ SpriteAtlas:
   - av-h_f-nose-3
   - av-e_m-nose-9
   - faery_f_top
+  - bandit_boss
   - av-h_m-brow-10
   - av-e_f-brow-3
   - av-e_f-hair-8
@@ -624,6 +633,7 @@ SpriteAtlas:
   - av-h_m-eye-8
   - av-e_m-hair-5
   - portrait_bg_explorer
+  - demon_gluttony_portrait
   - av-h_m-nose-3
   - av-h_f-mouth-6
   - av-h_m-mouth-3
@@ -738,11 +748,13 @@ SpriteAtlas:
   - av-h_m-brow-2
   - av-h_m-face-7
   - av-h_f-hair-10b
+  - abomination_under
   - av-e_f-hair-5
   - av-e_f-mouth-1
   - av-e_m-mouth-4
   - av-h_f-hair-8b
   - av-e_f-hair-6b
+  - tempest
   - av-h_m-beard-4
   - av-e_m-hair-2b
   - av-e_f-face-9

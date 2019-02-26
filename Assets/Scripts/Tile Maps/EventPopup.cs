@@ -40,6 +40,9 @@ public class EventPopup : PooledObject {
     }
 
     private void ToggleLog() {
+        if (!logGO.activeSelf) {
+            logText.SetText(Utilities.LogReplacer(log));
+        }
         logGO.SetActive(!logGO.activeSelf);
     }
 
