@@ -10,6 +10,7 @@ public class AttackPickerItem : ObjectPickerItem<Character>, IDragParentItem {
 
     public CharacterPortrait portrait;
     public GameObject portraitCover;
+    public Image jobIcon;
 
     #region getters/setters
     public object associatedObj {
@@ -31,5 +32,12 @@ public class AttackPickerItem : ObjectPickerItem<Character>, IDragParentItem {
         portrait.GeneratePortrait(character);
         mainLbl.text = character.name;
         subLbl.text = character.raceClassName;
+        JOB charactersJob = PlayerManager.Instance.player.GetCharactersCurrentJob(character);
+        if(charactersJob != JOB.NONE) {
+            jobIcon.sprite = CharacterManager.Instance.GetJobSprite(charactersJob);
+            jobIcon.gameObject.SetActive(true);
+        } else {
+            jobIcon.gameObject.SetActive(false);
+        }
     }
 }
