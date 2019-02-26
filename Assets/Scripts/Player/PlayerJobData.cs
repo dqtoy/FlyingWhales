@@ -44,6 +44,16 @@ public class PlayerJobData {
         activeAction = action;
     }
 
+    public PlayerJobAction GetAction(System.Type type) {
+        for (int i = 0; i < jobActions.Count; i++) {
+            PlayerJobAction currAction = jobActions[i];
+            if (currAction.GetType() == type) {
+                return currAction;
+            }
+        }
+        return null;
+    }
+
     public void SetLockedState(bool locked) {
         if (locked == isSlotLocked) {
             return; //ignore change

@@ -57,6 +57,7 @@ public class PlayerJobActionButton : MonoBehaviour {
     public void OnClickAction() {
         if (clickAction != null) {
             clickAction();
+            UpdateInteractableState();
         }
     }
     #endregion

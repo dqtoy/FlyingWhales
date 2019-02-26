@@ -375,7 +375,7 @@ public class CharacterInfoUI : UIMenu {
 
     #region Buttons
     public void OnClickLogButton() {
-        logParentGO.SetActive(true);
+        logParentGO.SetActive(!logParentGO.activeSelf);
     }
     public void OnCloseLog() {
         logParentGO.SetActive(false);

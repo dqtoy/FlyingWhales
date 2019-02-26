@@ -456,18 +456,20 @@ public class CharacterManager : MonoBehaviour {
         }
         return null;
     }
-    public void CreateNewRelationshipBetween(Character currCharacter, Character targetCharacter, RELATIONSHIP_TRAIT rel) {
+    public CharacterRelationshipData CreateNewRelationshipBetween(Character currCharacter, Character targetCharacter, RELATIONSHIP_TRAIT rel) {
         RELATIONSHIP_TRAIT pair = GetPairedRelationship(rel);
         //if (currCharacter.CanHaveRelationshipWith(rel, targetCharacter)
         //    && targetCharacter.CanHaveRelationshipWith(pair, currCharacter)) {
 
-            currCharacter.AddTrait(CreateRelationshipTrait(rel, targetCharacter));
-            targetCharacter.AddTrait(CreateRelationshipTrait(pair, currCharacter));
+        currCharacter.AddTrait(CreateRelationshipTrait(rel, targetCharacter));
+        targetCharacter.AddTrait(CreateRelationshipTrait(pair, currCharacter));
 
-            if (currCharacter.GetRelationshipTraitWith(targetCharacter, rel) == null
-                || targetCharacter.GetRelationshipTraitWith(currCharacter, pair) == null) {
-                Debug.LogWarning(currCharacter.name + " and " + targetCharacter.name + " have inconsistent relationships: " + rel.ToString() + " - " + pair.ToString());
-            }
+        if (currCharacter.GetRelationshipTraitWith(targetCharacter, rel) == null
+            || targetCharacter.GetRelationshipTraitWith(currCharacter, pair) == null) {
+            Debug.LogWarning(currCharacter.name + " and " + targetCharacter.name + " have inconsistent relationships: " + rel.ToString() + " - " + pair.ToString());
+        }
+
+        return currCharacter.GetCharacterRelationshipData(targetCharacter);
             //else {
             //    Debug.Log(currCharacter.name + " and " + targetCharacter.name + " became " + rel.ToString() + " - " + pair.ToString());
             //}
