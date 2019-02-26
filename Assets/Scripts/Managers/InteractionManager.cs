@@ -2030,8 +2030,10 @@ public struct CharacterInteractionWeight {
 public class InteractionAttributes {
     public INTERACTION_CATEGORY[] categories;
     public INTERACTION_ALIGNMENT alignment;
+    public Precondition[] preconditions;
     public InteractionCharacterEffect[] actorEffect;
     public InteractionCharacterEffect[] targetCharacterEffect;
+    public int cost;
 }
 public struct InteractionCharacterEffect {
     public INTERACTION_CHARACTER_EFFECT effect;
