@@ -146,6 +146,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 224d7236dc7afb847ad516c0f98e3954, type: 3}
   - {fileID: 21300000, guid: af2b7646c03591747aedfdbd71c350c4, type: 3}
   - {fileID: 21300000, guid: aa65e846891081d49901dbf649c804cf, type: 3}
+  - {fileID: 21300000, guid: 6502736615352f243aa4bbc115e3ef91, type: 3}
   - {fileID: 21300000, guid: de3b286662bb62542bb6e034ee1d6feb, type: 3}
   - {fileID: 21300000, guid: ac095d66703753d43b3f8cfdd825bd8e, type: 3}
   - {fileID: 21300000, guid: 0f22c7965bc7c8b40902a59a17bc9039, type: 3}
@@ -423,6 +424,7 @@ SpriteAtlas:
   - assign_button_hover
   - main_menu_newgame_btn_pressed
   - Cindermaul Hideout
+  - Share_Intel_Dialog
   - character_ui_container
   - ge_icon-30
   - main_menu_continue_btn_pressed

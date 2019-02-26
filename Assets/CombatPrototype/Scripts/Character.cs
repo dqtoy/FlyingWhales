@@ -2720,7 +2720,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             interactionLog += "\n\n----CHARACTER NPC ACTION TYPES----";
             interactionLog += "\nPOSSIBLE TARGETS:\n";
             foreach (KeyValuePair<Character, CharacterRelationshipData> kvp in relationships) {
-                if(specificLocation.id == kvp.Key.specificLocation.id && !kvp.Key.currentParty.icon.isTravelling && !kvp.Key.isDefender && kvp.Value.knownStructure.location.id == specificLocation.id) {
+                if (specificLocation.id == kvp.Key.specificLocation.id && !kvp.Key.currentParty.icon.isTravelling && !kvp.Key.isDefender && kvp.Value.knownStructure != null && kvp.Value.knownStructure.location.id == specificLocation.id) {
                     int weight = kvp.Value.GetTotalRelationshipWeight();
                     if (kvp.Value.isCharacterMissing && !kvp.Value.HasRelationshipTrait(RELATIONSHIP_TRAIT.ENEMY)) {
                         if (kvp.Value.isCharacterLocated) {
@@ -2730,7 +2730,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                         }
                     }
                     if (kvp.Value.encounterMultiplier > 0f && weight > 0) {
-                        weight += (int) (weight * kvp.Value.encounterMultiplier);
+                        weight += (int)(weight * kvp.Value.encounterMultiplier);
                     }
                     interactionLog += kvp.Key.name + "(weight=" + weight + "), ";
                     if (weight > 0) {
