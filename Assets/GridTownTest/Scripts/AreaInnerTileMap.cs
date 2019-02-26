@@ -607,6 +607,7 @@ public class AreaInnerTileMap : MonoBehaviour {
         GameObject travelLine = ObjectPoolManager.Instance.InstantiateObjectFromPool
             (travelLinePrefab.name, Vector3.zero, Quaternion.identity, travelLineParent);
         travelLine.GetComponent<AreaMapTravelLine>().DrawLine(startTile, destination, character, this);
+        
         Debug.Log(GameManager.Instance.TodayLogString() + "Drawing line at " + area.name + "'s map. From " + startTile.localPlace.ToString() + " to " + destination.localPlace.ToString());
     }
     public void DrawLineToExit(LocationGridTile startTile, Character character) {

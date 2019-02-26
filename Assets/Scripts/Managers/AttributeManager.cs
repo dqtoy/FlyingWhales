@@ -36,13 +36,9 @@ public class AttributeManager : MonoBehaviour {
         string[] files = Directory.GetFiles(path, "*.json");
         for (int i = 0; i < files.Length; i++) {
             Trait attribute = JsonUtility.FromJson<Trait>(System.IO.File.ReadAllText(files[i]));
-            _allTraits.Add(attribute.name, attribute);
-            if(attribute.effect == TRAIT_EFFECT.POSITIVE) {
-                _allPositiveTraits.Add(attribute.name, attribute);
-            } else if (attribute.type == TRAIT_TYPE.ILLNESS) {
-                _allIlnesses.Add(attribute.name, attribute);
-            }
+            CategorizeTrait(attribute);
         }
+        AddSpecialTraits();
     }
     public Action<Character> GetBehavior(ATTRIBUTE_BEHAVIOR type) {
         switch (type) {
@@ -62,10 +58,35 @@ public class AttributeManager : MonoBehaviour {
         }
         return string.Empty;
     }
-
     public string GetRandomIllness() {
         //TODO: Optimize this for performance
         int random = UnityEngine.Random.Range(0, _allIlnesses.Count);
         return _allIlnesses.Keys.ElementAt(random);
+    }
+
+    private void AddSpecialTraits() {
+        Trait[] specialTraits = new Trait[] {
+            new Abducted(null),
+            new Charmed(null, null),
+            new Craftsman(),
+            new Criminal(),
+            new Grudge(),
+            new PatrollingCharacter(),
+            new Reanimated(),
+            new Restrained(),
+        };
+        for (int i = 0; i < specialTraits.Length; i++) {
+            CategorizeTrait(specialTraits[i]);
+        }
+    }
+
+    private void CategorizeTrait(Trait attribute) {
+        _allTraits.Add(attribute.name, attribute);
+        if (attribute.effect == TRAIT_EFFECT.POSITIVE) {
+            _allPositiveTraits.Add(attribute.name, attribute);
+        }
+        if (attribute.type == TRAIT_TYPE.ILLNESS) {
+            _allIlnesses.Add(attribute.name, attribute);
+        }
     }
 }

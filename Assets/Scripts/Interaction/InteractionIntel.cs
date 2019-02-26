@@ -16,6 +16,10 @@ public class InteractionIntel {
     public InteractionCharacterEffect[] effectsOnActor;
     public InteractionCharacterEffect[] effectsOnTarget;
 
+    public Character targetCharacter {
+        get { return target as Character; }
+    }
+
     public InteractionIntel(Interaction interaction, Log log) {
         obtainedFromLog = log;
         connectedInteraction = interaction;
@@ -96,15 +100,109 @@ public class InteractionIntel {
             }
         }
     }
-    //public InteractionIntel(Log log, Character character) {
-    //    actor = character;
-    //    obtainedFromLog = log;
-    //    connectedInteraction = log.fromInteraction;
-    //    target = null;
-    //    if (character.isTracked) {
+    public bool IsOfCategory(INTERACTION_CATEGORY category) {
+        if (categories != null) {
+            for (int i = 0; i < categories.Length; i++) {
+                if (categories[i] == category) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
-    //    }
-    //}
+    #region Actor Effects
+    public bool HasActorEffect(INTERACTION_CHARACTER_EFFECT effect, string effectString) {
+        if (effectsOnActor != null) {
+            for (int i = 0; i < effectsOnActor.Length; i++) {
+                InteractionCharacterEffect currEffect = effectsOnActor[i];
+                if (currEffect.effect == effect) {
+                    if (currEffect.effectString == effectString) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    public bool HasActorEffect(TRAIT_EFFECT traitEffect, TRAIT_TYPE type) {
+        if (effectsOnActor != null) {
+            for (int i = 0; i < effectsOnActor.Length; i++) {
+                InteractionCharacterEffect currEffect = effectsOnActor[i];
+                if (currEffect.effect == INTERACTION_CHARACTER_EFFECT.TRAIT_GAIN) {
+                    if (AttributeManager.Instance.allTraits.ContainsKey(currEffect.effectString)
+                        && AttributeManager.Instance.allTraits[currEffect.effectString].effect == traitEffect
+                        && AttributeManager.Instance.allTraits[currEffect.effectString].type == type) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    public InteractionCharacterEffect GetActorEffect(TRAIT_EFFECT traitEffect, TRAIT_TYPE type) {
+        if (effectsOnActor != null) {
+            for (int i = 0; i < effectsOnActor.Length; i++) {
+                InteractionCharacterEffect currEffect = effectsOnActor[i];
+                if (currEffect.effect == INTERACTION_CHARACTER_EFFECT.TRAIT_GAIN) {
+                    if (AttributeManager.Instance.allTraits.ContainsKey(currEffect.effectString)
+                        && AttributeManager.Instance.allTraits[currEffect.effectString].effect == traitEffect
+                        && AttributeManager.Instance.allTraits[currEffect.effectString].type == type) {
+                        return currEffect;
+                    }
+                }
+            }
+        }
+        return new InteractionCharacterEffect();
+    }
+    #endregion
+
+    #region Target Effects
+    public bool HasTargetEffect(INTERACTION_CHARACTER_EFFECT effect, string effectString) {
+        if (effectsOnTarget != null) {
+            for (int i = 0; i < effectsOnTarget.Length; i++) {
+                InteractionCharacterEffect currEffect = effectsOnTarget[i];
+                if (currEffect.effect == effect) {
+                    if (currEffect.effectString == effectString) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    public bool HasTargetEffect(TRAIT_EFFECT traitEffect, TRAIT_TYPE type) {
+        if (effectsOnTarget != null) {
+            for (int i = 0; i < effectsOnTarget.Length; i++) {
+                InteractionCharacterEffect currEffect = effectsOnTarget[i];
+                if (currEffect.effect == INTERACTION_CHARACTER_EFFECT.TRAIT_GAIN) {
+                    if (AttributeManager.Instance.allTraits.ContainsKey(currEffect.effectString)
+                        && AttributeManager.Instance.allTraits[currEffect.effectString].effect == traitEffect
+                        && AttributeManager.Instance.allTraits[currEffect.effectString].type == type) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    public InteractionCharacterEffect GetTargetEffect(TRAIT_EFFECT traitEffect, TRAIT_TYPE type) {
+        if (effectsOnTarget != null) {
+            for (int i = 0; i < effectsOnTarget.Length; i++) {
+                InteractionCharacterEffect currEffect = effectsOnTarget[i];
+                if (currEffect.effect == INTERACTION_CHARACTER_EFFECT.TRAIT_GAIN) {
+                    if (AttributeManager.Instance.allTraits.ContainsKey(currEffect.effectString)
+                        && AttributeManager.Instance.allTraits[currEffect.effectString].effect == traitEffect
+                        && AttributeManager.Instance.allTraits[currEffect.effectString].type == type) {
+                        return currEffect;
+                    }
+                }
+            }
+        }
+        return new InteractionCharacterEffect();
+    }
+    #endregion
+
 
     public string GetDebugInfo() {
         string text = connectedInteraction.ToString() + " Intel Data: ";
@@ -120,7 +218,7 @@ public class InteractionIntel {
             }
         }
         text += "\n<b>Alignment:</b> " + alignment.ToString();
-        text += "\n<b>Action Deadline:</b> " + actionDeadline.ToString();
+        text += "\n<b>Action Deadline:</b> " + GameManager.ConvertTickToTime(actionDeadline);
         text += "\n<b>Action Location:</b> " + actionLocation.name;
         text += "\n<b>Action Structure Location:</b> " + actionLocationStructure?.ToString() ?? "None";
         text += "\n<b>Effects on Actor:</b> ";

@@ -1283,7 +1283,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public LocationGridTile GetNearestUnoccupiedTileFromCharacter(LocationStructure structure) {
         if (!isDead && gridTileLocation != null && currentStructure == structure) {
-            List<LocationGridTile> choices = currentStructure.tiles.Where(x => x != gridTileLocation).OrderBy(x => Vector2.Distance(gridTileLocation.localLocation, x.localLocation)).ToList();
+            List<LocationGridTile> choices = currentStructure.unoccupiedTiles.Where(x => x != gridTileLocation).OrderBy(x => Vector2.Distance(gridTileLocation.localLocation, x.localLocation)).ToList();
             if (choices.Count > 0) {
                 return choices[0];
             }
@@ -3339,6 +3339,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //        PlayerManager.Instance.player.RemoveIntel(intel);
         //    }
         //}
+        PlayerManager.Instance.player.RemoveIntel(intel);
     }
     #endregion
 }

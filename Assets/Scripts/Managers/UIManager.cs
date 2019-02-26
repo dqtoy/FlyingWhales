@@ -219,12 +219,6 @@ public class UIManager : MonoBehaviour {
         Messenger.AddListener<Area>(Signals.AREA_MAP_OPENED, OnAreaMapOpened);
         Messenger.AddListener<Area>(Signals.AREA_MAP_CLOSED, OnAreaMapClosed);
     }
-    //public void UnifySelectables() {
-    //    UnifiedSelectableBehaviour[] selectables = this.GetComponentsInChildren<UnifiedSelectableBehaviour>(true);
-    //    for (int i = 0; i < selectables.Length; i++) {
-    //        selectables[i].Initialize();
-    //    }
-    //}
     private void HideMenus() {
         HideContextMenu();
         if (characterInfoUI.isShowing) {
@@ -689,8 +683,9 @@ public class UIManager : MonoBehaviour {
         }
         return true;
     }
-    public void SetCoverState(bool state) {
+    public void SetCoverState(bool state, bool blockClicks = true) {
         cover.SetActive(state);
+        cover.GetComponent<Image>().raycastTarget = blockClicks;
     }
     private void BeforeOpeningMenu(UIMenu menuToOpen) {
         //if none of the menus are showing, pause the game when the menu opens
@@ -784,15 +779,6 @@ public class UIManager : MonoBehaviour {
             landmarkInfoUI.currentlyShowingLandmark.tileLocation.SetCorruption(true, landmarkInfoUI.currentlyShowingLandmark);
         }
     }
-    //public void ToggleResourceIcons() {
-    //    CameraMove.Instance.ToggleResourceIcons();
-    //}
-    //public void ToggleGeneralCamera() {
-    //    CameraMove.Instance.ToggleGeneralCamera();
-    //}
-    //public void ToggleTraderCamera() {
-    //    CameraMove.Instance.ToggleTraderCamera();
-    //}
     public void AddLifestonesToWorld() {
         PlayerManager.Instance.AdjustTotalLifestones(10);
         PlayerUI.Instance.UpdateUI();
@@ -815,13 +801,6 @@ public class UIManager : MonoBehaviour {
         this.gameObject.SetActive(state);
     }
     #endregion
-
-    //private void HideMainUI() {
-    //    mainUIGO.SetActive(false);
-    //}
-    //public void ShowMainUI() {
-    //    mainUIGO.SetActive(true);
-    //}
     #region Area Info
     [Space(10)]
     [Header("Area Info")]
@@ -1128,21 +1107,6 @@ public class UIManager : MonoBehaviour {
     }
     #endregion
 
-    //#region Player Actions
-    //[Space(10)]
-    //[Header("Player Actions")]
-    //[SerializeField] internal PlayerActionsUI playerActionsUI;
-    //public void ShowPlayerActions(BaseLandmark landmark) {
-    //    playerActionsUI.SetData(landmark);
-    //    playerActionsUI.OpenMenu();
-    //}
-    //public void UpdatePlayerActions() {
-    //    if (playerActionsUI.isShowing) {
-    //        playerActionsUI.UpdatePlayerActions();
-    //    }
-    //}
-    //#endregion
-
     #region Combat Info
     [Space(10)]
     [Header("Combat History")]
@@ -1268,32 +1232,6 @@ public class UIManager : MonoBehaviour {
         //LevelLoaderManager.Instance.LoadLevel("MainMenu");
     }
     #endregion
-
-    //#region Quest Summary
-    //[Space(10)]
-    //[Header("Quest Summary")]
-    //[SerializeField] private TextMeshProUGUI questSummaryLbl;
-    //public void UpdateQuestSummary() {
-    //    string questSummary = string.Empty;
-    //    //foreach (KeyValuePair<QUEST_TYPE, List<Quest>> kvp in QuestManager.Instance.availableQuests) {
-    //    //    for (int i = 0; i < kvp.Value.Count; i++) {
-    //    //        Quest currQuest = kvp.Value[i];
-    //    //        questSummary += "<b>" + currQuest.name + "</b>\n";
-    //    //        //if (currQuest is BuildStructureQuest) {
-    //    //        //    List<Resource> neededResources = (currQuest as BuildStructureQuest).GetNeededResources();
-    //    //        //    questSummary += "Needed Resources: ";
-    //    //        //    neededResources.ForEach(x => questSummary += x.resource.ToString() + " - " + x.amount.ToString() + "\n");
-    //    //        //}
-    //    //        //List<Character> characters = currQuest.GetAcceptedCharacters();
-    //    //        //for (int j = 0; j < characters.Count; j++) {
-    //    //        //    questSummary += "       " + characters[j].urlName + "\n";
-    //    //        //}
-    //    //    }
-           
-    //    //}
-    //    questSummaryLbl.text = questSummary;
-    //}
-    //#endregion
 
     #region Tile Hover
     private HexTile previousTileHovered;
@@ -1472,23 +1410,17 @@ public class UIManager : MonoBehaviour {
     }
     #endregion
 
-    //public void EnvelopContentCoroutineStarter(RectTransform thisTransform, RectTransform otherTransform,
-    //    bool followWidth, bool followHeight, Vector2 padding) {
-    //    StartCoroutine(Envelop(thisTransform, otherTransform, followWidth, followHeight, padding));
-    //}
-
-    //private IEnumerator Envelop(RectTransform thisTransform, RectTransform otherTransform, 
-    //    bool followWidth, bool followHeight, Vector2 padding) {
-    //    yield return null;
-    //    Vector2 newSize = thisTransform.sizeDelta;
-    //    if (followWidth) {
-    //        newSize.x = otherTransform.sizeDelta.x;
-    //        newSize.x += padding.x;
-    //    }
-    //    if (followHeight) {
-    //        newSize.y = otherTransform.sizeDelta.y;
-    //        newSize.y += padding.y;
-    //    }
-    //    thisTransform.sizeDelta = newSize;
-    //}
+    #region Share Intel
+    [Header("Share Intel")]
+    [SerializeField] private ShareIntelMenu shareIntelMenu;
+    public void OpenShareIntelMenu(Character targetCharacter, Character actor) {
+        shareIntelMenu.Open(targetCharacter, actor);
+    }
+    public bool IsShareIntelMenuOpen() {
+        return shareIntelMenu.gameObject.activeSelf;
+    }
+    public void CloseShareIntelMenu() {
+        shareIntelMenu.Close();
+    }
+    #endregion
 }
