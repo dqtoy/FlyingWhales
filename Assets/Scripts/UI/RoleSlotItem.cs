@@ -18,10 +18,17 @@ public class RoleSlotItem : MonoBehaviour {
     [SerializeField] private GameObject jobActionBtnPrefab;
     [SerializeField] private RectTransform jobActionsParent;
 
+    [SerializeField] private GameObject validPortraitGO;
+    [SerializeField] private GameObject invalidPortraitGO;
+    public CustomDropZone dropZone;
+
+    public System.Type neededType { get; private set; }
+
     public void SetSlotJob(JOB job) { //This should only be called once!
         slotJob = job;
         UpdateVisuals();
         AddListeners();
+        neededType = typeof(Character);
     }
 
     private void AddListeners() {
@@ -30,6 +37,8 @@ public class RoleSlotItem : MonoBehaviour {
         Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
         Messenger.AddListener<JOB, bool>(Signals.JOB_SLOT_LOCK_CHANGED, OnJobSlotLockChanged);
+        Messenger.AddListener<DragObject>(Signals.DRAG_OBJECT_CREATED, OnDragObjectCreated);
+        Messenger.AddListener<DragObject>(Signals.DRAG_OBJECT_DESTROYED, OnDragObjectDestroyed);
     }
 
     public void SetCharacter(Character character) {
@@ -85,6 +94,43 @@ public class RoleSlotItem : MonoBehaviour {
             SetCharacter(null);
         }
     }
+
+    #region Drag
+    private void OnDragObjectCreated(DragObject obj) {
+        if (dropZone != null && dropZone.isEnabled && neededType != null && CanAssignCharacter(obj.parentItem.associatedObj)) {
+            //glowGO.SetActive(true);
+            validPortraitGO.SetActive(true);
+            invalidPortraitGO.SetActive(false);
+        } else {
+            validPortraitGO.SetActive(false);
+            invalidPortraitGO.SetActive(true);
+        }
+    }
+    private void OnDragObjectDestroyed(DragObject obj) {
+        //glowGO.SetActive(false);
+        validPortraitGO.SetActive(false);
+        invalidPortraitGO.SetActive(false);
+    }
+    private bool CanAssignCharacter(object obj) {
+        if(obj is Character) {
+            Character character = obj as Character;
+            return CanAssignCharacterToJob(character);
+        }
+        return false;
+    }
+    public void OnDropItemAtDropZone(GameObject go) { //this is used to filter if the dragged object is valid for this slot
+        DragObject dragObj = go.GetComponent<DragObject>();
+        if (dragObj == null) {
+            return;
+        }
+        IDragParentItem parentItem = dragObj.parentItem;
+        if (parentItem != null) {
+            if (CanAssignCharacter(parentItem.associatedObj)) {
+                AssignCharacterToJob(parentItem.associatedObj as Character);
+            }
+        }
+    }
+    #endregion
 
     #region Assign
     private void OnJobSlotLockChanged(JOB job, bool isLocked) {

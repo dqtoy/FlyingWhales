@@ -425,6 +425,9 @@ public class PlayerUI : MonoBehaviour {
         minionItems.Remove(item);
         ObjectPoolManager.Instance.DestroyObject(item.gameObject);
     }
+    public void OnClickAssign() {
+        UIManager.Instance.ShowDraggableObjectPicker(PlayerManager.Instance.player.allOwnedCharacters, new CharacterLevelComparer());
+    }
     #endregion
 
     public void SetMinionsMenuShowing(bool state) {

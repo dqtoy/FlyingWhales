@@ -35,11 +35,12 @@ public class AreaMapTravelLine : MonoBehaviour {
         lineSpriteFill.transform.eulerAngles = new Vector3(line.transform.rotation.x, line.transform.rotation.y, angle);
 
         float distance = Vector2.Distance(startTransform.localPosition, targetTransform.localPosition);
-        //Debug.Log(distance);
+        Debug.LogWarning(distance);
         lineSprite.transform.localPosition = new Vector2(startTransform.localPosition.x, startTransform.localPosition.y);
         lineSpriteFill.transform.localPosition = new Vector2(startTransform.localPosition.x, startTransform.localPosition.y);
 
-        lineSprite.transform.localScale = new Vector2(distance/7.04f, 0.03f);
+        lineSprite.size = new Vector2(distance, 0.35f);
+        //lineSprite.transform.localScale = new Vector2(distance/7.04f, 0.03f);
         lineSpriteFill.transform.localScale = new Vector2(0f, 0.03f);
 
         targetXScale = lineSprite.transform.localScale.x;

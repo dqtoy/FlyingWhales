@@ -233,6 +233,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: e86a48caa8eb8c644869e929bb47816e, type: 3}
   - {fileID: 21300000, guid: d335bdca66268984eb43439db8430380, type: 3}
   - {fileID: 21300000, guid: a5dcbdca302a5144c89d2c39bada8400, type: 3}
+  - {fileID: 21300000, guid: 2f89f0eabd5de7548944eca6d41afab8, type: 3}
   - {fileID: 21300000, guid: 2472b8fadbb4cbb45b9f4042515ee5af, type: 3}
   - {fileID: 21300000, guid: 5b4fd8fae79fa8643883fcbf95f88ee3, type: 3}
   - {fileID: 21300000, guid: 658e054bda22c0a4c976ef2344240399, type: 3}
@@ -511,6 +512,7 @@ SpriteAtlas:
   - main_menu_settings_btn_hover
   - ge_icon-24
   - bottom_intel1
+  - travel_line
   - interaction_used_list_decor
   - Radisle Cavern
   - minion_container_draggable
