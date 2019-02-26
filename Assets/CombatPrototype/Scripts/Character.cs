@@ -502,7 +502,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         demonColor = UnityEngine.Random.Range(-144f, 144f);
 
         locationHistory = new List<string>();
-        _goapInteractions = new Queue<INTERACTION_TYPE>();
+        _goapInteractions = new List<INTERACTION_TYPE>();
 
         GetRandomCharacterColor();
 #if !WORLD_CREATION_TOOL
@@ -3163,6 +3163,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public void AssignGoapInteractionsRecursively(INTERACTION_TYPE type, Character targetCharacter) {
         InteractionAttributes attributes = InteractionManager.Instance.GetCategoryAndAlignment(type, this);
+        //use came_from to track down the path
         if(attributes.preconditions != null && attributes.preconditions.Length > 0) {
 
         } else {
