@@ -48,6 +48,6 @@ public class GridTownGenerator : MonoBehaviour {
     }
 
     private void Start() {
-        map.GenerateInnerStructures(testingInsideStructures, testingOutsideStructures);
+        //map.GenerateInnerStructures(testingInsideStructures, testingOutsideStructures);
     }
 }

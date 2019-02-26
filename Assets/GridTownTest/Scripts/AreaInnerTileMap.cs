@@ -135,16 +135,15 @@ public class AreaInnerTileMap : MonoBehaviour {
         PlaceStructures(area.GetStructures(true, true), insideTiles);
         PlaceStructures(area.GetStructures(false, true), outsideTiles);
         AssignOuterAreas();
-        //DetermineExitTile();
     }
-    public void GenerateInnerStructures(Dictionary<STRUCTURE_TYPE, List<LocationStructure>> inside, Dictionary<STRUCTURE_TYPE, List<LocationStructure>> outside) {
-        GenerateGrid();
-        SplitMap();
-        ConstructWalls();
-        PlaceStructures(inside, insideTiles);
-        PlaceStructures(outside, outsideTiles);
-        AssignOuterAreas();
-    }
+    //public void GenerateInnerStructures(Dictionary<STRUCTURE_TYPE, List<LocationStructure>> inside, Dictionary<STRUCTURE_TYPE, List<LocationStructure>> outside) {
+    //    GenerateGrid();
+    //    SplitMap();
+    //    ConstructWalls();
+    //    PlaceStructures(inside, insideTiles);
+    //    PlaceStructures(outside, outsideTiles);
+    //    AssignOuterAreas();
+    //}
     private void GenerateGrid() {
         map = new LocationGridTile[width, height];
         allTiles = new List<LocationGridTile>();
@@ -375,26 +374,46 @@ public class AreaInnerTileMap : MonoBehaviour {
         }
     }
     private void AssignOuterAreas() {
-        if (area.HasStructure(STRUCTURE_TYPE.WORK_AREA)) {
-            for (int i = 0; i < insideTiles.Count; i++) {
-                LocationGridTile currTile = insideTiles[i];
-                if (currTile.structure == null) {
-                    currTile.SetStructure(area.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA));
+        //if (area.name == "Visteri" || area.name == "Odious") { //TODO: Change this to use area type instead
+        //    for (int i = 0; i < insideTiles.Count; i++) {
+        //        LocationGridTile currTile = insideTiles[i];
+        //        if (currTile.structure == null) {
+        //            wallTilemap.SetTile(currTile.localPlace, wallTile);
+        //        }
+        //    }
+        //    if (area.HasStructure(STRUCTURE_TYPE.WILDERNESS)) {
+        //        for (int i = 0; i < outsideTiles.Count; i++) {
+        //            LocationGridTile currTile = outsideTiles[i];
+        //            if (currTile.structure == null) {
+        //                currTile.SetStructure(area.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS));
+        //            }
+        //        }
+        //    } else {
+        //        Debug.LogWarning(area.name + " doesn't have a structure for wilderness");
+        //    }
+        //} else {
+            if (area.HasStructure(STRUCTURE_TYPE.WORK_AREA)) {
+                for (int i = 0; i < insideTiles.Count; i++) {
+                    LocationGridTile currTile = insideTiles[i];
+                    if (currTile.structure == null) {
+                        currTile.SetStructure(area.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA));
+                    }
                 }
+            } else {
+                Debug.LogWarning(area.name + " doesn't have a structure for work area");
             }
-        } else {
-            Debug.LogWarning(area.name + " doesn't have a structure for work area");
-        }
-        if (area.HasStructure(STRUCTURE_TYPE.WILDERNESS)) {
-            for (int i = 0; i < outsideTiles.Count; i++) {
-                LocationGridTile currTile = outsideTiles[i];
-                if (currTile.structure == null) {
-                    currTile.SetStructure(area.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS));
+            if (area.HasStructure(STRUCTURE_TYPE.WILDERNESS)) {
+                for (int i = 0; i < outsideTiles.Count; i++) {
+                    LocationGridTile currTile = outsideTiles[i];
+                    if (currTile.structure == null) {
+                        currTile.SetStructure(area.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS));
+                    }
                 }
+            } else {
+                Debug.LogWarning(area.name + " doesn't have a structure for wilderness");
             }
-        } else {
-            Debug.LogWarning(area.name + " doesn't have a structure for wilderness");
-        }
+        //}
+        
     }
     private Cardinal_Direction GetOppositeDirection(Cardinal_Direction dir) {
         switch (dir) {

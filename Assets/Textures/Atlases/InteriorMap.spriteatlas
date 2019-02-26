@@ -50,6 +50,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 4b953f74ed0622346a281b6c71d91395, type: 3}
   - {fileID: 21300000, guid: 299692a4411b32243882b05318969993, type: 3}
   - {fileID: 21300000, guid: bb509da42e3be0f4e95943059bf2eebd, type: 3}
+  - {fileID: 21300000, guid: f38628b44799f074191ee0573e058e55, type: 3}
   - {fileID: 21300000, guid: f1af60e415e8133428fb505f5521ed5e, type: 3}
   - {fileID: 21300000, guid: ba1396157978f19418ee16b8984f1bb6, type: 3}
   - {fileID: 21300000, guid: 759905a56957eb34f8fa1839716f09bc, type: 3}
@@ -68,19 +69,24 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 32d101c7287c00b43888ac765c65ea92, type: 3}
   - {fileID: 21300000, guid: b9621d788a42ddc4da348d380e9445bc, type: 3}
   - {fileID: 21300000, guid: ee29e4c8b11a88c449a51aacc7c063b3, type: 3}
+  - {fileID: 21300000, guid: f2957fc859f29fd4185beb90804b9b3f, type: 3}
   - {fileID: 21300000, guid: 15b5e0d8cc5bfcd4ba349dc5fb8f33d7, type: 3}
   - {fileID: 21300000, guid: b826fa597d3a712419ec98bb28518ef0, type: 3}
   - {fileID: 21300000, guid: acd979997eb35524b8cb032c7c3dd425, type: 3}
+  - {fileID: 21300000, guid: c7c885c979ee2f0478de6efd8a687e80, type: 3}
   - {fileID: 21300000, guid: 556f49e9a96e81d489e091b17c46d44e, type: 3}
   - {fileID: 21300000, guid: 147c3ff9cbb6c5c40bb53acf45f3f76a, type: 3}
   - {fileID: 21300000, guid: feff812aa7309c9488d1a7435245be46, type: 3}
   - {fileID: 21300000, guid: 4982222acd0a30a4ba1007f2fd963b8c, type: 3}
   - {fileID: 21300000, guid: 807c776b946f27248a5ed8719ddf076e, type: 3}
   - {fileID: 21300000, guid: 636c786b50377ae45bca7927bc3e2494, type: 3}
+  - {fileID: 21300000, guid: 23ab1c7b4e7bb314cabac07eb4ce39ed, type: 3}
   - {fileID: 21300000, guid: 9446df3c48b01e7409f52c0e260f7f62, type: 3}
   - {fileID: 21300000, guid: b438f3fcf6b728641a17af44e51ea325, type: 3}
   - {fileID: 21300000, guid: ab4abe1df8096d84391f156cbafbc18e, type: 3}
+  - {fileID: 21300000, guid: 438fe73d8fbe426458156c85824b58ab, type: 3}
   - {fileID: 21300000, guid: 4a7b205dc6673cc4db9d3ab9d31ece4c, type: 3}
+  - {fileID: 21300000, guid: f5a55e5d990e4c7468a3bcae088ecf36, type: 3}
   - {fileID: 21300000, guid: b9d5286d4a7d09940bf30037757d308a, type: 3}
   - {fileID: 21300000, guid: d59756ad7cc381a4693f8872dee43007, type: 3}
   - {fileID: 21300000, guid: 11226b1e948092b418ef8e55fa635e57, type: 3}
@@ -106,6 +112,7 @@ SpriteAtlas:
   - wallA-0101-01
   - grass02
   - wall1011-00
+  - wallA-1011-00
   - minion_icon_defender 1
   - wall0102-00
   - minion_icon_instigator 1
@@ -124,19 +131,24 @@ SpriteAtlas:
   - floorA02
   - minion_icon_attacker 1
   - dirt03
+  - Empty_Black
   - wall0101-00
   - wall0101-door00
   - floorA01
+  - wallA-1111-00
   - cobble00
   - wallA-1010-00
   - wallA-0110-00
   - dirt02
   - road02
   - road03
+  - wallA-0111-00
   - Empty
   - wall1110-00
   - wall0110-00
+  - wallA-1101-00
   - wall0111-00
+  - wallA-1110-00
   - wallA-0001-00
   - wall1010-00
   - wallA-0010-00
