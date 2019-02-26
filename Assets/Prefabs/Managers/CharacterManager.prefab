@@ -278,6 +278,27 @@ MonoBehaviour:
       - {fileID: 21300000, guid: d2b917c8cdfc12841a95783692927377, type: 3}
       topAssets:
       - {fileID: 21300000, guid: e58358365063d3f46b6441878edcf958, type: 3}
+  - race: 18
+    maleAssets:
+      gender: 0
+      bodyAssets: []
+      hairAssets: []
+      skinAssets:
+      - {fileID: 21300000, guid: 6a3862923bc59e3408203ee9df91b0fc, type: 3}
+      underAssets:
+      - {fileID: 21300000, guid: a295258db8d480046b768b474deea9ab, type: 3}
+      topAssets:
+      - {fileID: 21300000, guid: 9f1e6a42fe38ac343b2a103d06514f78, type: 3}
+    femaleAssets:
+      gender: 1
+      bodyAssets: []
+      hairAssets: []
+      skinAssets:
+      - {fileID: 21300000, guid: 6a3862923bc59e3408203ee9df91b0fc, type: 3}
+      underAssets:
+      - {fileID: 21300000, guid: a295258db8d480046b768b474deea9ab, type: 3}
+      topAssets:
+      - {fileID: 21300000, guid: 9f1e6a42fe38ac343b2a103d06514f78, type: 3}
   hairColors:
   - {r: 0, g: 0, b: 0, a: 1}
   - {r: 0.8396226, g: 0.32872015, b: 0.32872015, a: 1}
@@ -317,6 +338,8 @@ MonoBehaviour:
     - Necromancer
     - Queen
     - Witch
+    - Bandit Boss
+    - Tempest
     m_values:
     - {fileID: 21300000, guid: 12f193c25cad8824a978c1a8d9d8377f, type: 3}
     - {fileID: 21300000, guid: f261d9fe21365c246a0f3849c9c58ca8, type: 3}
@@ -324,12 +347,15 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 04ef7d1d8eae8034ea5fca1b1cfaf3ea, type: 3}
     - {fileID: 21300000, guid: d0bab72205ba05c46a58108cb567e4ed, type: 3}
     - {fileID: 21300000, guid: a34aeae4a70d5274db9c2f551390673f, type: 3}
-    - {fileID: 21300000, guid: d0bab72205ba05c46a58108cb567e4ed, type: 3}
+    - {fileID: 21300000, guid: 4fbebd3819f55ca47a56d25a0a84d46e, type: 3}
     - {fileID: 21300000, guid: 0cb595964c09773418771050839e6f06, type: 3}
     - {fileID: 21300000, guid: aed80cb2f9f2f8d4fbff72fff6c6a95e, type: 3}
     - {fileID: 21300000, guid: c13636746116b374bab64e03d481aaa5, type: 3}
     - {fileID: 21300000, guid: adb86d074f2cc8e4c9f28133c8903b62, type: 3}
     - {fileID: 21300000, guid: 87a778188658a9845a02219ebd9be40f, type: 3}
+    - {fileID: 21300000, guid: 9c3c0e5445d94284b90c96cbab889937, type: 3}
+    - {fileID: 21300000, guid: 9d587aedde59e4e45885cde1e5758b37, type: 3}
+  hsvMaterial: {fileID: 2100000, guid: f635580cdf2e2344ea31e0dba17cb9b5, type: 2}
   characterAnimators:
   - {fileID: 9100000, guid: 99c541d13ccccd24e8bade5dc18cd996, type: 2}
   - {fileID: 9100000, guid: 52ac513067146394f9dfb6caf8fa93b3, type: 2}
@@ -344,4 +370,3 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 41b46e5c79a790a4587ee7aef9acb301, type: 3}
     - {fileID: 21300000, guid: 00217fe9096ed3d45b81d2d815267235, type: 3}
     - {fileID: 21300000, guid: 1c0d578e62658cb41889305f732afc6e, type: 3}
-  hsvMaterial: {fileID: 2100000, guid: f635580cdf2e2344ea31e0dba17cb9b5, type: 2}
