@@ -56,7 +56,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     protected Dictionary<ELEMENT, float> _elementalWeaknesses;
     protected Dictionary<ELEMENT, float> _elementalResistances;
     protected PlayerCharacterItem _playerCharacterItem;
-    protected List<INTERACTION_TYPE> _goapInteractions;
 
     //Stats
     protected SIDES _currentSide;
@@ -502,7 +501,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         demonColor = UnityEngine.Random.Range(-144f, 144f);
 
         locationHistory = new List<string>();
-        _goapInteractions = new List<INTERACTION_TYPE>();
+        //_goapInteractions = new List<INTERACTION_TYPE>();
 
         GetRandomCharacterColor();
 #if !WORLD_CREATION_TOOL
@@ -3198,7 +3197,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public void AssignQueueActionsToCharacter(Character targetCharacter) {
         INTERACTION_TYPE chosenInteractionType = INTERACTION_TYPE.NONE; //TODO
-        _goapInteractions.Clear();
+        //_goapInteractions.Clear();
 
     }
     public void AssignGoapInteractionsRecursively(INTERACTION_TYPE type, Character targetCharacter) {
@@ -3207,7 +3206,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if(attributes.preconditions != null && attributes.preconditions.Length > 0) {
 
         } else {
-            _goapInteractions.Add(type);
+            //_goapInteractions.Add(type);
         }
     }
     #endregion

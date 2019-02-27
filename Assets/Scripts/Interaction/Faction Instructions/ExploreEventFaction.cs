@@ -86,7 +86,7 @@ public class ExploreEventFaction : Interaction {
                 case POINT_OF_INTEREST_TYPE.CHARACTER:
                     nextState = Explore_Character_Encountered;
                     break;
-                case POINT_OF_INTEREST_TYPE.SUPLY_PILE:
+                case POINT_OF_INTEREST_TYPE.SUPPLY_PILE:
                     nextState = Explore_Supply_Pile_Found;
                     break;
                 default:

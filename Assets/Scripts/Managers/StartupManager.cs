@@ -12,7 +12,7 @@ public class StartupManager : MonoBehaviour {
         //EncounterPartyManager.Instance.Initialize ();
 		MaterialManager.Instance.Initialize ();
 		ProductionManager.Instance.Initialize ();
-		TaskManager.Instance.Initialize ();
+		//TaskManager.Instance.Initialize ();
 
         LevelLoaderManager.UpdateLoadingInfo("Initializing World...");
         if (WorldConfigManager.Instance == null || WorldConfigManager.Instance.loadedData == null) {

@@ -713,9 +713,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.MOVE_TO_SAVE_ACTION:
                 createdInteraction = new MoveToSave(interactable);
                 break;
-            case INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION:
-                createdInteraction = new ReleaseAbductedAction(interactable);
-                break;
+            //case INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION:
+            //    createdInteraction = new ReleaseAbductedAction(interactable);
+            //    break;
             case INTERACTION_TYPE.MOVE_TO_VISIT:
                 createdInteraction = new MoveToVisit(interactable);
                 break;
@@ -913,6 +913,14 @@ public class InteractionManager : MonoBehaviour {
                 break;
         }
         return createdInteraction;
+    }
+    public void CreateNewGoapInteraction(INTERACTION_TYPE type, IPointOfInterest target) {
+        GoapAction goapAction = null;
+        //switch (type) {
+        //    case INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION:
+        //        goapAction = new ReleaseAbductedAction(target);
+        //        break;
+        //}
     }
     public bool CanCreateInteraction(INTERACTION_TYPE interactionType, Area location) {
         int count = 0;

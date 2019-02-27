@@ -549,7 +549,7 @@ public class AreaInnerTileMap : MonoBehaviour {
             case POINT_OF_INTEREST_TYPE.ITEM:
                 tileToUse = itemTiles[(obj as SpecialToken).specialTokenType];
                 break;
-            case POINT_OF_INTEREST_TYPE.SUPLY_PILE:
+            case POINT_OF_INTEREST_TYPE.SUPPLY_PILE:
                 tileToUse = supplyIconTile;
                 break;
             case POINT_OF_INTEREST_TYPE.CORPSE:
