@@ -154,7 +154,7 @@ public class LocationStructure {
     public SupplyPile GetSupplyPile() {
         for (int i = 0; i < pointsOfInterest.Count; i++) {
             IPointOfInterest poi = pointsOfInterest[i];
-            if (poi.poiType == POINT_OF_INTEREST_TYPE.SUPLY_PILE) {
+            if (poi.poiType == POINT_OF_INTEREST_TYPE.SUPPLY_PILE) {
                 return poi as SupplyPile;
             }
         }

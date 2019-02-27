@@ -6,6 +6,7 @@ public interface IPointOfInterest {
 
     POINT_OF_INTEREST_TYPE poiType { get; }
     LocationGridTile gridTileLocation { get; }
+    //List<INTERACTION_TYPE> poiInteractions { get; }
 
     void SetGridTileLocation(LocationGridTile tile);
 }

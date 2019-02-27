@@ -11,7 +11,7 @@ public class SupplyPile : IPointOfInterest {
 
     #region getters/setters
     public POINT_OF_INTEREST_TYPE poiType {
-        get { return POINT_OF_INTEREST_TYPE.SUPLY_PILE; }
+        get { return POINT_OF_INTEREST_TYPE.SUPPLY_PILE; }
     }
     public LocationGridTile gridTileLocation {
         get { return tile; }
