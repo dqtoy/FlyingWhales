@@ -575,7 +575,7 @@ public class AreaInnerTileMap : MonoBehaviour {
         }
         UIManager.Instance.ShowSmallInfo(summary);
     }
-    public List<LocationGridTile> GetTilesInRadius(LocationGridTile centerTile, int radius, bool includeCenterTile = false) {
+    public List<LocationGridTile> GetTilesInRadius(LocationGridTile centerTile, int radius, bool includeCenterTile = false, bool includeTilesInDifferentStructure = false) {
         List<LocationGridTile> tiles = new List<LocationGridTile>();
         int mapSizeX = map.GetUpperBound(0);
         int mapSizeY = map.GetUpperBound(1);
@@ -591,6 +591,7 @@ public class AreaInnerTileMap : MonoBehaviour {
                         continue;
                     }
                     LocationGridTile result = map[dx, dy];
+                    if(!includeTilesInDifferentStructure && result.structure != centerTile.structure) { continue; }
                     tiles.Add(result);
                 }
             }

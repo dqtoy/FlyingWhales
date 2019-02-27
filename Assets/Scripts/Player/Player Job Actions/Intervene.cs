@@ -6,7 +6,7 @@ public class Intervene : PlayerJobAction {
 
     public Intervene() {
         actionName = "Intervene";
-        SetDefaultCooldownTime(90);
+        SetDefaultCooldownTime(48);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
     }
 

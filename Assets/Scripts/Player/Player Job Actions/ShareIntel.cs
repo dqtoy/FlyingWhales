@@ -8,7 +8,7 @@ public class ShareIntel : PlayerJobAction {
 
     public ShareIntel() {
         actionName = "Share Intel";
-        SetDefaultCooldownTime(10);
+        SetDefaultCooldownTime(48);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
     }
 

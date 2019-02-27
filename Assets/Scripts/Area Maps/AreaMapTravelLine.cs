@@ -42,7 +42,7 @@ public class AreaMapTravelLine : MonoBehaviour {
         lineSprite.transform.localPosition = new Vector2(startTransform.localPosition.x, startTransform.localPosition.y);
         lineSpriteFill.transform.localPosition = new Vector2(startTransform.localPosition.x, startTransform.localPosition.y);
 
-        lineSprite.size = new Vector2(distance, 0.35f);
+        lineSprite.size = new Vector2(distance, lineSprite.size.y);
         //lineSprite.transform.localScale = new Vector2(distance/7.04f, 0.03f);
         lineSpriteFill.transform.localScale = new Vector2(0f, 0.03f);
 
