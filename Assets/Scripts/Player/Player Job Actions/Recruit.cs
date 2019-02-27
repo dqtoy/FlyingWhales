@@ -9,7 +9,7 @@ public class Recruit : PlayerJobAction {
 
     public Recruit() {
         actionName = "Recruit";
-        SetDefaultCooldownTime(60);
+        SetDefaultCooldownTime(48);
         currentTargetType = JOB_ACTION_TARGET.NONE;
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
     }

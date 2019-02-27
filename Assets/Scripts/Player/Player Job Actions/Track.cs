@@ -9,7 +9,7 @@ public class Track : PlayerJobAction {
 
     public Track() {
         actionName = "Track";
-        SetDefaultCooldownTime(90);
+        SetDefaultCooldownTime(48);
         //currentTargetType = JOB_ACTION_TARGET.NONE;
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
     }
