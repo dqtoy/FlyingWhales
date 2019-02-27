@@ -97,7 +97,7 @@ public class MoveToRecruit : Interaction {
     }
     public override void DoActionUponMoveToArrival() {
         Interaction interaction = CreateConnectedEvent(INTERACTION_TYPE.RECRUIT_ACTION, _targetArea);
-        (interaction as RecruitAction).SetTargetCharacter(_targetCharacter);
+        (interaction as RecruitAction).SetTargetCharacter(_targetCharacter, _characterInvolved);
     }
     #endregion
 

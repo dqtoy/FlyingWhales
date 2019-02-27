@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 
@@ -178,9 +179,10 @@ public class SpecialToken : Token, IPointOfInterest {
     public virtual void OnUnobtainToken(Character character) { }
     public virtual void OnConsumeToken(Character character) { }
     public virtual void StartTokenInteractionState(Character user, Character target) {
-        user.MoveToAnotherStructure(target.currentStructure, target.GetNearestUnoccupiedTileFromCharacter(target.currentStructure));
+        user.MoveToAnotherStructure(target.currentStructure, target.GetNearestUnoccupiedTileFromThis(target.currentStructure, user));
     }
     #endregion
+
     public void SetOwner(Faction owner) {
         this.owner = owner;
     }
@@ -194,6 +196,23 @@ public class SpecialToken : Token, IPointOfInterest {
     #region Area Map
     public void SetGridTileLocation(LocationGridTile tile) {
         this.tile = tile;
+    }
+    public LocationGridTile GetNearestUnoccupiedTileFromThis(LocationStructure structure, Character otherCharacter) {
+        if (gridTileLocation != null && structureLocation == structure) {
+            List<LocationGridTile> choices = structureLocation.unoccupiedTiles.Where(x => x != gridTileLocation).OrderBy(x => Vector2.Distance(gridTileLocation.localLocation, x.localLocation)).ToList();
+            if (choices.Count > 0) {
+                LocationGridTile nearestTile = choices[0];
+                if (otherCharacter.currentStructure == structure && otherCharacter.gridTileLocation != null) {
+                    float ogDistance = Vector2.Distance(this.gridTileLocation.localLocation, otherCharacter.gridTileLocation.localLocation);
+                    float newDistance = Vector2.Distance(this.gridTileLocation.localLocation, nearestTile.localLocation);
+                    if (newDistance > ogDistance) {
+                        return otherCharacter.gridTileLocation; //keep the other character's current tile
+                    }
+                }
+                return nearestTile;
+            }
+        }
+        return null;
     }
     #endregion
 }

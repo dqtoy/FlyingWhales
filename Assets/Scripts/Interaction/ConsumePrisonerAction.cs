@@ -47,17 +47,17 @@ public class ConsumePrisonerAction : Interaction {
     }
     public override bool CanInteractionBeDoneBy(Character character) {
         if (_targetCharacter == null) {
-            SetTargetCharacter(GetTargetCharacter(character));
+            SetTargetCharacter(GetTargetCharacter(character), character);
         }
         if (_targetCharacter == null) {
             return false;
         }
         return base.CanInteractionBeDoneBy(character);
     }
-    public override void SetTargetCharacter(Character targetCharacter) {
-        _targetCharacter = targetCharacter;
+    public override void SetTargetCharacter(Character character, Character actor) {
+        _targetCharacter = character;
         _targetStructure = _targetCharacter.currentStructure;
-        targetGridLocation = _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetStructure);
+        targetGridLocation = _targetCharacter.GetNearestUnoccupiedTileFromThis(_targetStructure, actor);
     }
     #endregion
 
@@ -73,7 +73,7 @@ public class ConsumePrisonerAction : Interaction {
 
     #region State Effects
     private void StartEffect(InteractionState state) {
-        _characterInvolved.MoveToAnotherStructure(_targetStructure, _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetCharacter.currentStructure));
+        _characterInvolved.MoveToAnotherStructure(_targetStructure, targetGridLocation, _targetCharacter);
     }
     private void CharacterConsumedEffect(InteractionState state) {
         int supplyObtained = UnityEngine.Random.Range(35, 76);

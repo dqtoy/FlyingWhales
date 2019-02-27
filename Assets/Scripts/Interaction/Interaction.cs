@@ -203,7 +203,7 @@ public class Interaction {
         }
 
         //show event popup
-        if (showEventPopup && !this.name.Contains("Move To")) {
+        if (showEventPopup && !this.name.Contains("Move To") && this.type != INTERACTION_TYPE.UNABLE_TO_PERFORM) {
             interactable.areaMap.ShowEventPopupAt(_actionGridLocation, _currentState.lastAddedLog);
         }
 
@@ -246,7 +246,7 @@ public class Interaction {
         //interaction.SetInteractionIntel(this.intel);
         return interaction;
     }
-    public virtual void SetTargetCharacter(Character character) {
+    public virtual void SetTargetCharacter(Character character, Character actor) {
         _targetCharacter = character;
     }
     public virtual void SetOtherCharacter(Character character) { }

@@ -31,6 +31,7 @@ public class AreaInnerTileMap : MonoBehaviour {
     [SerializeField] private TileBase wallTile;
     [SerializeField] private TileBase structureTile;
     [SerializeField] private TileBase floorTile;
+    [SerializeField] private TileBase dirtTile;
     [SerializeField] private TileBase characterTile;
     [SerializeField] private TileBase supplyIconTile;
     [SerializeField] private TileBase corpseIconTile;
@@ -78,10 +79,6 @@ public class AreaInnerTileMap : MonoBehaviour {
         },
           { STRUCTURE_TYPE.EXPLORE_AREA,
             new List<Point>(){
-                new Point(4, 3),
-                new Point(3, 4),
-                //new Point(2, 2),
-                new Point(3, 3),
                 new Point(4, 4),
             }
         },
@@ -147,13 +144,9 @@ public class AreaInnerTileMap : MonoBehaviour {
     private void GenerateGrid() {
         map = new LocationGridTile[width, height];
         allTiles = new List<LocationGridTile>();
-        //groundTileData = new Sprite[width, height];
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 groundTilemap.SetTile(new Vector3Int(x, y, 0), insideTile);
-                //GameObject tileGO = GameObject.Instantiate(tilePrefab, tilePrefabParent);
-                //tileGO.transform.position = new Vector3(x, y, 0);
-                //TileBase tbase = groundTilemap.GetTile(new Vector3Int(x, y, 0));
                 LocationGridTile tile = new LocationGridTile(x, y, groundTilemap);
                 allTiles.Add(tile);
                 map[x, y] = tile;
@@ -182,7 +175,7 @@ public class AreaInnerTileMap : MonoBehaviour {
         outsideTiles = new List<LocationGridTile>();
         insideTiles = new List<LocationGridTile>();
         //Cardinal_Direction[] choices = Utilities.GetEnumValues<Cardinal_Direction>();
-        Cardinal_Direction outsideDirection = Cardinal_Direction.East;
+        Cardinal_Direction outsideDirection = Cardinal_Direction.West;
         IntRange xOutRange = new IntRange();
         IntRange yOutRange = new IntRange();
 
@@ -215,13 +208,16 @@ public class AreaInnerTileMap : MonoBehaviour {
                 break;
         }
 
+        int leftMostCoordinate = 0;
         for (int i = 0; i < allTiles.Count; i++) {
             LocationGridTile currTile = allTiles[i];
             if (xOutRange.IsInRange(currTile.localPlace.x) && yOutRange.IsInRange(currTile.localPlace.y)) {
                 //outside
                 currTile.SetIsInside(false);
                 groundTilemap.SetTile(new Vector3Int(currTile.localPlace.x, currTile.localPlace.y, 0), outsideTile);
-                outsideTiles.Add(currTile);
+                if (currTile.localPlace.x > leftMostCoordinate + 7) { //added 7 to exclude tiles that will be blocked by UI
+                    outsideTiles.Add(currTile);
+                }
             } else {
                 //inside
                 currTile.SetIsInside(true);
@@ -312,7 +308,7 @@ public class AreaInnerTileMap : MonoBehaviour {
                         break;
                     case Cardinal_Direction.West:
                         choices = elligibleTiles.Where(
-                        t => (t.localPlace.x == leftMostCoordinate && t.localPlace.y == gate.localPlace.y)
+                        t => (t.localPlace.x == leftMostCoordinate && t.localPlace.y == gate.localPlace.y) 
                         && Utilities.ContainsRange(elligibleTiles, GetTiles(currPoint, t))).ToList();
                         break;
                     default:
@@ -337,13 +333,27 @@ public class AreaInnerTileMap : MonoBehaviour {
             List<LocationGridTile> tiles = GetTiles(currPoint, chosenStartingTile);
             for (int j = 0; j < tiles.Count; j++) {
                 LocationGridTile currTile = tiles[j];
-                strcutureTilemap.SetTile(currTile.localPlace, structureTile);
-                groundTilemap.SetTile(currTile.localPlace, floorTile);
-                currTile.SetTileType(LocationGridTile.Tile_Type.Structure);
                 currTile.SetStructure(kvp.Key);
                 elligibleTiles.Remove(currTile);
                 switch (kvp.Key.structureType) {
+                    case STRUCTURE_TYPE.EXIT:
+                        //strcutureTilemap.SetTile(currTile.localPlace, structureTile);
+                        groundTilemap.SetTile(currTile.localPlace, dirtTile);
+                        currTile.SetTileType(LocationGridTile.Tile_Type.Structure);
+                        break;
+                    case STRUCTURE_TYPE.EXPLORE_AREA:
+                        strcutureTilemap.SetTile(currTile.localPlace, structureTile);
+                        groundTilemap.SetTile(currTile.localPlace, floorTile);
+                        currTile.SetTileType(LocationGridTile.Tile_Type.Structure);
+                        List<LocationGridTile> neighbourTiles = GetTilesInRadius(currTile, 3);
+                        for (int k = 0; k < neighbourTiles.Count; k++) {
+                            elligibleTiles.Remove(neighbourTiles[k]);
+                        }
+                        break;
                     default:
+                        strcutureTilemap.SetTile(currTile.localPlace, structureTile);
+                        groundTilemap.SetTile(currTile.localPlace, floorTile);
+                        currTile.SetTileType(LocationGridTile.Tile_Type.Structure);
                         for (int k = 0; k < currTile.neighbours.Values.Count; k++) {
                             elligibleTiles.Remove(currTile.neighbours.Values.ToList()[k]);
                         }
@@ -570,9 +580,9 @@ public class AreaInnerTileMap : MonoBehaviour {
         summary += "\nTile Type: " + tile.tileType.ToString();
         summary += "\nTile State: " + tile.tileState.ToString();
         summary += "\nContent: " + tile.objHere?.ToString() ?? "None";
-        if (tile.structure != null) {
-            summary += "\nStructure: " + tile.structure.ToString();
-        }
+        //if (tile.structure != null) {
+            summary += "\nStructure: " + tile.structure?.ToString() ?? "None";
+        //}
         UIManager.Instance.ShowSmallInfo(summary);
     }
     public List<LocationGridTile> GetTilesInRadius(LocationGridTile centerTile, int radius, bool includeCenterTile = false) {

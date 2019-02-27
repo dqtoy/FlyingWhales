@@ -86,7 +86,7 @@ public class MoveToSave : Interaction {
     }
     public override void DoActionUponMoveToArrival() {
         Interaction interaction = CreateConnectedEvent(INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION, _characterInvolved.specificLocation);
-        (interaction as ReleaseAbductedAction).SetTargetCharacter(_targetCharacter);
+        (interaction as ReleaseAbductedAction).SetTargetCharacter(_targetCharacter, _characterInvolved);
     }
     #endregion
 

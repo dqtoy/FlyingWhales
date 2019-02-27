@@ -60,10 +60,10 @@ public class GiftBeast : Interaction {
         }
         return base.CanInteractionBeDoneBy(character);
     }
-    public override void SetTargetCharacter(Character targetCharacter) {
-        _targetCharacter = targetCharacter;
+    public override void SetTargetCharacter(Character character, Character actor) {
+        _targetCharacter = character;
         _targetStructure = _targetCharacter.homeStructure;
-        targetGridLocation = _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetStructure);
+        targetGridLocation = _targetCharacter.GetNearestUnoccupiedTileFromThis(_targetStructure, actor);
     }
     #endregion
 
@@ -83,7 +83,7 @@ public class GiftBeast : Interaction {
 
     #region State Effects
     private void StartEffect(InteractionState state) {
-        _characterInvolved.MoveToAnotherStructure(_targetStructure, _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetStructure));
+        _characterInvolved.MoveToAnotherStructure(_targetStructure, targetGridLocation, _targetCharacter);
     }
     private void GiftSuccessEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);

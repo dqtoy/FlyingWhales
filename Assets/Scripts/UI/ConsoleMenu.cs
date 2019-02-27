@@ -604,7 +604,7 @@ public class ConsoleMenu : UIMenu {
         Character otherCharacter = CharacterManager.Instance.GetCharacterByName(otherCharacterStr);
         Interaction interaction = InteractionManager.Instance.CreateNewInteraction(interactionType, character.specificLocation);
         if (targetCharacter != null) {
-            interaction.SetTargetCharacter(targetCharacter);
+            interaction.SetTargetCharacter(targetCharacter, character);
         }
         if (otherCharacter != null) {
             interaction.SetOtherCharacter(otherCharacter);

@@ -66,11 +66,11 @@ public class AssaultActionNPC : Interaction {
             return false;
         }
         _targetStructure = _targetCharacter.currentStructure;
-        targetGridLocation = _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetStructure);
+        targetGridLocation = _targetCharacter.GetNearestUnoccupiedTileFromThis(_targetStructure, character);
         return base.CanInteractionBeDoneBy(character);
     }
-    public override void SetTargetCharacter(Character targetCharacter) {
-        _targetCharacter = targetCharacter;
+    public override void SetTargetCharacter(Character character, Character actor) {
+        _targetCharacter = character;
     }
     #endregion
 
@@ -108,7 +108,7 @@ public class AssaultActionNPC : Interaction {
 
     #region State Effects
     private void StartEffect(InteractionState state) {
-        _characterInvolved.MoveToAnotherStructure(_targetCharacter.currentStructure, _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetCharacter.currentStructure));
+        _characterInvolved.MoveToAnotherStructure(_targetCharacter.currentStructure, targetGridLocation, _targetCharacter);
     }
     private void TargetInjuredEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);

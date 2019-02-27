@@ -57,10 +57,10 @@ public class MakeLoveAction : Interaction {
     //    }
     //    return base.CanInteractionBeDoneBy(character);
     //}
-    public override void SetTargetCharacter(Character character) {
-        _targetCharacter = character;
+    public override void SetTargetCharacter(Character targetCharacter, Character actor) {
+        _targetCharacter = targetCharacter;
         _targetStructure = _targetCharacter.homeStructure;
-        targetGridLocation = _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetStructure);
+        targetGridLocation = _targetCharacter.GetNearestUnoccupiedTileFromThis(_targetStructure, actor);
     }
     #endregion
 
@@ -84,7 +84,7 @@ public class MakeLoveAction : Interaction {
     #region Reward Effect
     private void StartRewardEffect(InteractionState state) {
         //**Structure**: Move the character to the target's home Dwelling
-        _characterInvolved.MoveToAnotherStructure(_targetStructure, _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetStructure));
+        _characterInvolved.MoveToAnotherStructure(_targetStructure, targetGridLocation, _targetCharacter);
     }
     private void ActorDisappointedRewardEffect(InteractionState state) {
         //**Mechanics**: Character 1 gains https://trello.com/c/KWmQt7DF/1152-annoyed trait

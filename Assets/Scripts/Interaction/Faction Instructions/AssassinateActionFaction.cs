@@ -65,13 +65,13 @@ public class AssassinateActionFaction : Interaction {
         if (target == null) { //check if a target character can be found using the provided weights
             return false;
         }
-        SetTargetCharacter(target);
+        SetTargetCharacter(target, character);
         return base.CanInteractionBeDoneBy(character);
     }
-    public override void SetTargetCharacter(Character targetCharacter) {
-        _targetCharacter = targetCharacter;
+    public override void SetTargetCharacter(Character character, Character actor) {
+        _targetCharacter = character;
         _targetStructure = _targetCharacter.currentStructure;
-        targetGridLocation = _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetStructure);
+        targetGridLocation = _targetCharacter.GetNearestUnoccupiedTileFromThis(_targetStructure, actor);
         AddToDebugLog("Set target character to " + targetCharacter.name);
     }
     #endregion
@@ -101,7 +101,7 @@ public class AssassinateActionFaction : Interaction {
 
     #region Reward Effect
     private void StartEffect(InteractionState state) {
-        _characterInvolved.MoveToAnotherStructure(targetCharacter.currentStructure, targetCharacter.GetNearestUnoccupiedTileFromCharacter(targetCharacter.currentStructure));
+        _characterInvolved.MoveToAnotherStructure(targetCharacter.currentStructure, targetGridLocation, _targetCharacter);
     }
     private void NormalAssassinationSuccessRewardEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);

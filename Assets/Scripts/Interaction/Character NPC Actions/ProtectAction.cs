@@ -55,8 +55,8 @@ public class ProtectAction : Interaction {
         }
         return base.CanInteractionBeDoneBy(character);
     }
-    public override void SetTargetCharacter(Character targetCharacter) {
-        _targetCharacter = targetCharacter;
+    public override void SetTargetCharacter(Character character, Character actor) {
+        _targetCharacter = character;
     }
     #endregion
 

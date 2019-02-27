@@ -34,7 +34,7 @@ public class ChanceEncounter : Interaction {
     #region Overrides
     public override void CreateStates() {
         if (_targetCharacter == null) {
-            SetTargetCharacter(GetTargetCharacter(_characterInvolved));
+            SetTargetCharacter(GetTargetCharacter(_characterInvolved), _characterInvolved);
         }
 
         encounterWeights.AddElement(Positive, 100);
@@ -145,15 +145,15 @@ public class ChanceEncounter : Interaction {
     }
     public override bool CanInteractionBeDoneBy(Character character) {
         if (_targetCharacter == null) {
-            SetTargetCharacter(GetTargetCharacter(character));
+            SetTargetCharacter(GetTargetCharacter(character), character);
         }
         if (_targetCharacter == null) {
             return false;
         }
         return base.CanInteractionBeDoneBy(character);
     }
-    public override void SetTargetCharacter(Character targetCharacter) {
-        this._targetCharacter = targetCharacter;
+    public override void SetTargetCharacter(Character character, Character actor) {
+        this._targetCharacter = character;
     }
     #endregion
 

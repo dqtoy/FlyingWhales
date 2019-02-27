@@ -53,18 +53,18 @@ public class RestrainCriminalAction : Interaction {
     }
     public override bool CanInteractionBeDoneBy(Character character) {
         if (_targetCharacter == null) {
-            SetTargetCharacter(GetTargetCharacter(character));
+            SetTargetCharacter(GetTargetCharacter(character), character);
         }
         if(_targetCharacter == null) {
             return false;
         }
         return base.CanInteractionBeDoneBy(character);
     }
-    public override void SetTargetCharacter(Character targetCharacter) {
-        _targetCharacter = targetCharacter;
+    public override void SetTargetCharacter(Character character, Character actor) {
+        _targetCharacter = character;
         if (targetCharacter != null) {
             _targetStructure = _targetCharacter.currentStructure;
-            targetGridLocation = _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetStructure);
+            targetGridLocation = _targetCharacter.GetNearestUnoccupiedTileFromThis(_targetStructure, actor);
         }
     }
     #endregion
@@ -81,7 +81,7 @@ public class RestrainCriminalAction : Interaction {
 
     #region State Effects
     private void StartEffect(InteractionState state) {
-        _characterInvolved.MoveToAnotherStructure(_targetStructure, _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetStructure));
+        _characterInvolved.MoveToAnotherStructure(_targetStructure, targetGridLocation, _targetCharacter);
     }
     private void TargetArrestedEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);

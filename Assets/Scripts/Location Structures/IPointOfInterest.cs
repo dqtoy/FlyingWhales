@@ -8,4 +8,5 @@ public interface IPointOfInterest {
     LocationGridTile gridTileLocation { get; }
 
     void SetGridTileLocation(LocationGridTile tile);
+    LocationGridTile GetNearestUnoccupiedTileFromThis(LocationStructure structure, Character otherCharacter);
 }

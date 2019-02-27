@@ -21,7 +21,7 @@ public class MoveToCourtesyCall : Interaction {
     #region Overrides
     public override void CreateStates() {
         if (_targetCharacter == null) {
-            SetTargetCharacter(GetTargetCharacter(_characterInvolved));
+            SetTargetCharacter(GetTargetCharacter(_characterInvolved), _characterInvolved);
         }
         InteractionState startState = new InteractionState(Start, this);
         InteractionState courtesyCallProceeds = new InteractionState(Courtesy_Call_Proceeds, this);
@@ -55,7 +55,7 @@ public class MoveToCourtesyCall : Interaction {
     }
     public override bool CanInteractionBeDoneBy(Character character) {
         if (_targetCharacter == null) {
-            SetTargetCharacter(GetTargetCharacter(character));
+            SetTargetCharacter(GetTargetCharacter(character), character);
         }
         if (_targetCharacter == null) {
             return false;
@@ -64,9 +64,9 @@ public class MoveToCourtesyCall : Interaction {
     }
     public override void DoActionUponMoveToArrival() {
         Interaction interaction = CreateConnectedEvent(INTERACTION_TYPE.COURTESY_CALL, targetArea);
-        interaction.SetTargetCharacter(targetCharacter);
+        interaction.SetTargetCharacter(targetCharacter, _characterInvolved);
     }
-    public override void SetTargetCharacter(Character character) {
+    public override void SetTargetCharacter(Character character, Character actor) {
         _targetCharacter = character;
     }
     #endregion

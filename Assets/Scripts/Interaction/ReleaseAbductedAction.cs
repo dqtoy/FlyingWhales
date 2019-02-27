@@ -67,11 +67,11 @@ public class ReleaseAbductedAction : Interaction {
             return false;
         }
         _targetStructure = character.GetCharacterRelationshipData(targetCharacter).knownStructure;
-        targetGridLocation = _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetStructure);
+        targetGridLocation = _targetCharacter.GetNearestUnoccupiedTileFromThis(_targetStructure, character);
         return base.CanInteractionBeDoneBy(character);
     }
-    public override void SetTargetCharacter(Character targetCharacter) {
-        _targetCharacter = targetCharacter;
+    public override void SetTargetCharacter(Character character, Character actor) {
+        _targetCharacter = character;
         AddToDebugLog("Set " + targetCharacter.name + " as target");
     }
     #endregion
@@ -105,7 +105,7 @@ public class ReleaseAbductedAction : Interaction {
 
     #region Reward Effect
     private void StartEffect(InteractionState state) {
-        _characterInvolved.MoveToAnotherStructure(_targetStructure, targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetStructure));
+        _characterInvolved.MoveToAnotherStructure(_targetStructure, targetGridLocation, _targetCharacter);
     }
     private void NormalReleaseSuccessRewardEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
