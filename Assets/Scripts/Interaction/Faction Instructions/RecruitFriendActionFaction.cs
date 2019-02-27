@@ -57,11 +57,11 @@ public class RecruitFriendActionFaction : Interaction {
         if (targetCharacter == null) { //check if a target character can be found using the provided weights
             return false;
         }
-        SetTargetCharacter(targetCharacter);
+        SetTargetCharacter(targetCharacter, character);
         return base.CanInteractionBeDoneBy(character);
     }
-    public override void SetTargetCharacter(Character targetCharacter) {
-        _targetCharacter = targetCharacter;
+    public override void SetTargetCharacter(Character character, Character actor) {
+        _targetCharacter = character;
         _targetStructure = targetCharacter.homeStructure;
         AddToDebugLog("Set target character to " + targetCharacter.name);
     }

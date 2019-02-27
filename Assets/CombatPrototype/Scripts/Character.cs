@@ -1273,20 +1273,41 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             throw new Exception("Can't move " + name + " to a " + structureType.ToString() + " because " + specificLocation.name + " does not have that structure!");
         }
     }
-    public void MoveToAnotherStructure(LocationStructure newStructure, LocationGridTile tile = null) {
+    public void MoveToAnotherStructure(LocationStructure newStructure, LocationGridTile tile = null, IPointOfInterest targetPOI = null) {
         if(currentStructure != null) {
             currentStructure.RemoveCharacterAtLocation(this);
         }
-        newStructure.AddCharacterAtLocation(this, tile);
+        LocationGridTile tileToUse = tile;
+        if (tile != null && targetPOI != null) {
+            //check if the provided tile is still the nearest tile to the POI
+            LocationGridTile newNearestTile = targetPOI.GetNearestUnoccupiedTileFromThis(newStructure, this);
+            if (newNearestTile != null) {
+                //check if the new nearest tile is nearer than the provided tile, if it is, use that instead
+                float ogDistance = Vector2.Distance(targetPOI.gridTileLocation.localLocation, tile.localLocation);
+                float newDistance = Vector2.Distance(targetPOI.gridTileLocation.localLocation, newNearestTile.localLocation);
+                if (newDistance < ogDistance) {
+                    tileToUse = newNearestTile;
+                }
+            }
+        }
+        newStructure.AddCharacterAtLocation(this, tileToUse);
     }
     public void SetGridTileLocation(LocationGridTile tile) {
         this.tile = tile;
     }
-    public LocationGridTile GetNearestUnoccupiedTileFromCharacter(LocationStructure structure) {
+    public LocationGridTile GetNearestUnoccupiedTileFromThis(LocationStructure structure, Character otherCharacter) {
         if (!isDead && gridTileLocation != null && currentStructure == structure) {
             List<LocationGridTile> choices = currentStructure.unoccupiedTiles.Where(x => x != gridTileLocation).OrderBy(x => Vector2.Distance(gridTileLocation.localLocation, x.localLocation)).ToList();
             if (choices.Count > 0) {
-                return choices[0];
+                LocationGridTile nearestTile = choices[0];
+                if (otherCharacter.currentStructure == structure && otherCharacter.gridTileLocation != null) {
+                    float ogDistance = Vector2.Distance(this.gridTileLocation.localLocation, otherCharacter.gridTileLocation.localLocation);
+                    float newDistance = Vector2.Distance(this.gridTileLocation.localLocation, nearestTile.localLocation);
+                    if (newDistance >= ogDistance) {
+                        return otherCharacter.gridTileLocation; //keep the other character's current tile
+                    }
+                }
+                return nearestTile;
             }
         }
         return null;
@@ -1659,6 +1680,21 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             return relationships[character];
         }
         return null;
+    }
+    public int GetAllRelationshipCount(List<RELATIONSHIP_TRAIT> except = null) {
+        int count = 0;
+        for (int i = 0; i < traits.Count; i++) {
+            if (traits[i] is RelationshipTrait) {
+                RelationshipTrait relTrait = traits[i] as RelationshipTrait;
+                if (except != null) {
+                    if (except.Contains(relTrait.relType)) {
+                        continue; //skip
+                    }
+                }
+                count++;
+            }
+        }
+        return count;
     }
     #endregion
 
@@ -3002,7 +3038,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                             relationship.ResetEncounterMultiplier();
                         }
                     }
-                    interaction.SetTargetCharacter(targetCharacter);
+                    interaction.SetTargetCharacter(targetCharacter, this);
                 }
                 if (otherCharacter != null) {
                     interactionLog += "\nOTHER CHARACTER: " + otherCharacter.name;
@@ -3144,7 +3180,11 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             if (interaction.targetStructure.location.id == this.specificLocation.id) {
                 LocationGridTile targetTile = interaction.targetGridLocation;
                 if (targetTile == null) {
-                    targetTile =  interaction.targetStructure.tiles[UnityEngine.Random.Range(0, interaction.targetStructure.tiles.Count)];
+                    targetTile =  interaction.targetStructure.unoccupiedTiles[UnityEngine.Random.Range(0, interaction.targetStructure.unoccupiedTiles.Count)];
+                }
+                if (targetTile == gridTileLocation) {
+                    //already at location, do not draw line 
+                    return;
                 }
                 this.specificLocation.areaMap.DrawLine(this.gridTileLocation, targetTile, this);
                 Debug.Log(this.name + " is drawing an inside structure travel line at " + this.specificLocation.name);

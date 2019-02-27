@@ -21,7 +21,7 @@ public class MoveToGiftBeast : Interaction {
     #region Overrides
     public override void CreateStates() {
         if (_targetCharacter == null) {
-            SetTargetCharacter(GetTargetCharacter(_characterInvolved));
+            SetTargetCharacter(GetTargetCharacter(_characterInvolved), _characterInvolved);
         }
         InteractionState startState = new InteractionState(Start, this);
         InteractionState giftingProceeds = new InteractionState(Gifting_Proceeds, this);
@@ -58,7 +58,7 @@ public class MoveToGiftBeast : Interaction {
             return false;
         }
         if (_targetCharacter == null) {
-            SetTargetCharacter(GetTargetCharacter(character));
+            SetTargetCharacter(GetTargetCharacter(character), character);
         }
         if (_targetCharacter == null) {
             return false;
@@ -67,9 +67,9 @@ public class MoveToGiftBeast : Interaction {
     }
     public override void DoActionUponMoveToArrival() {
         Interaction interaction = CreateConnectedEvent(INTERACTION_TYPE.GIFT_BEAST, targetArea);
-        interaction.SetTargetCharacter(targetCharacter);
+        interaction.SetTargetCharacter(targetCharacter, _characterInvolved);
     }
-    public override void SetTargetCharacter(Character character) {
+    public override void SetTargetCharacter(Character character, Character actor) {
         _targetCharacter = character;
     }
     #endregion

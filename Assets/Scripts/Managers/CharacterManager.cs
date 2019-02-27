@@ -522,7 +522,11 @@ public class CharacterManager : MonoBehaviour {
         RELATIONSHIP_TRAIT[] relsInOrder = new RELATIONSHIP_TRAIT[] { RELATIONSHIP_TRAIT.RELATIVE, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.ENEMY, RELATIONSHIP_TRAIT.FRIEND, RELATIONSHIP_TRAIT.PARAMOUR };
         for (int i = 0; i < allCharacters.Count; i++) {
             Character currCharacter = allCharacters[i];
-            int totalCreatedRels = 0;
+            int currentRelCount = currCharacter.GetAllRelationshipCount(new List<RELATIONSHIP_TRAIT>() { RELATIONSHIP_TRAIT.MASTER, RELATIONSHIP_TRAIT.SERVANT });
+            if (currentRelCount >= maxInitialRels) {
+                continue; //skip
+            }
+            int totalCreatedRels = currentRelCount;
             string summary = currCharacter.name + " relationship generation summary:";
             for (int k = 0; k < relsInOrder.Length; k++) {
                 RELATIONSHIP_TRAIT currRel = relsInOrder[k];
@@ -582,6 +586,9 @@ public class CharacterManager : MonoBehaviour {
                                         else weight += 10; //character is in different location: +10 Weight
 
                                         if (currCharacter.race != otherCharacter.race) weight *= 0; //character is a different race: Weight x0
+                                        if (existingRels != null && existingRels.Contains(RELATIONSHIP_TRAIT.FRIEND)) {
+                                            weight *= 0;
+                                        }
                                     }
                                     break;
                                 case RELATIONSHIP_TRAIT.LOVER:

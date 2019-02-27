@@ -69,8 +69,8 @@ public class BoobyTrapHouse : Interaction {
         }
         return base.CanInteractionBeDoneBy(character);
     }
-    public override void SetTargetCharacter(Character character) {
-        _targetCharacter = character;
+    public override void SetTargetCharacter(Character targetCharacter, Character actor) {
+        _targetCharacter = targetCharacter;
         _targetStructure = _targetCharacter.homeStructure;
     }
     #endregion

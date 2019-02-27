@@ -30,19 +30,6 @@ public class PathGenerator : MonoBehaviour {
         }
     }
 
-    [ContextMenu("Get Path Region")]
-    public void GetPathRegion() {
-        List<Region> path = GetPath(startTile.region, targetTile.region);
-        if (path != null) {
-            Debug.Log("========== Path from " + startTile.name + " to " + targetTile.name + "============");
-            for (int i = 0; i < path.Count; i++) {
-                Debug.Log(path[i].centerOfMass.name, path[i].centerOfMass);
-            }
-        } else {
-            Debug.LogError("Cannot get path from " + startTile.name + " to " + targetTile.name + " using " + modeToUse.ToString());
-        }
-    }
-
     [ContextMenu("Log All Paths")]
     public void LogAllPaths() {
         List<List<HexTile>> allPaths = GetAllPaths(startTile, targetTile);
@@ -128,6 +115,12 @@ public class PathGenerator : MonoBehaviour {
 		}
 		return null;
 	}
+    public List<LocationGridTile> GetPath(LocationGridTile startingTile, LocationGridTile destinationTile) {
+        Func<LocationGridTile, LocationGridTile, double> distance = (node1, node2) => 1;
+        Func<LocationGridTile, double> estimate = t => Math.Sqrt(Math.Pow(t.localPlace.x - destinationTile.localPlace.x, 2) + Math.Pow(t.localPlace.y - destinationTile.localPlace.y, 2));
+        var path = PathFind.PathFind.FindPath(startingTile, destinationTile, distance, estimate);
+        return path.ToList();
+    }
     public PathFindingThread CreatePath(CharacterAvatar characterAvatar, HexTile startingTile, HexTile destinationTile, PATHFINDING_MODE pathfindingMode, object data = null) {
         if (startingTile == null || destinationTile == null) {
             return null;
@@ -163,34 +156,6 @@ public class PathGenerator : MonoBehaviour {
 		}
 		return 99999;
 	}
-
-    /*
-	 * Get List of tiles (Path) that will connect 2 city tiles
-	 * */
-    public List<Region> GetPath(Region root, Region goal) {
-        if (root == null || goal == null) {
-            return null;
-        }
-
-        Func<Region, Region, double> distance = (node1, node2) => 1;
-        Func<Region, double> estimate = t => Math.Sqrt(Math.Pow(t.centerOfMass.xCoordinate - goal.centerOfMass.xCoordinate, 2) + Math.Pow(t.centerOfMass.yCoordinate - goal.centerOfMass.yCoordinate, 2));
-
-        var path = PathFind.PathFind.FindPath(root, goal, distance, estimate);
-
-        if (path != null) {
-            //if (pathfindingMode == PATHFINDING_MODE.REGION_CONNECTION || pathfindingMode == PATHFINDING_MODE.USE_ROADS_TRADE ||
-            //    pathfindingMode == PATHFINDING_MODE.LANDMARK_ROADS || pathfindingMode == PATHFINDING_MODE.LANDMARK_CONNECTION) {
-            return path.Reverse().ToList();
-            //} else {
-            //List<Region> newPath = path.Reverse().ToList();
-            //if (newPath.Count > 1) {
-            //    newPath.RemoveAt(0);
-            //}
-            //return newPath;
-            //}
-        }
-        return null;
-    }
 
     // Gets all paths from
     // 's' to 'd'
@@ -252,37 +217,6 @@ public class PathGenerator : MonoBehaviour {
 
         // Mark the current node
         isVisited[u] = false;
-    }
-
-
-    public List<List<BaseLandmark>> GetAllLandmarkPaths(BaseLandmark s, BaseLandmark d) {
-        System.Diagnostics.Stopwatch st = new System.Diagnostics.Stopwatch();
-        st.Start();
-        List<List<BaseLandmark>> paths = new List<List<BaseLandmark>>();
-
-        Dictionary<BaseLandmark, bool> isVisited = new Dictionary<BaseLandmark, bool>();
-
-        List<Region> regionPath = GetPath(s.tileLocation.region, d.tileLocation.region);
-        if (regionPath == null) {
-            return null;
-        }
-        
-        List<BaseLandmark> allLandmarks = LandmarkManager.Instance.GetAllLandmarks(regionPath);
-        for (int i = 0; i < allLandmarks.Count; i++) {
-            isVisited.Add(allLandmarks[i], false);
-        }
-        List<BaseLandmark> pathList = new List<BaseLandmark>();
-
-        //add source to path[]
-        pathList.Add(s);
-
-        Debug.Log("Following are all different paths from " + s.landmarkName + " to " + d.landmarkName);
-
-        //Call recursive utility
-        GetAllLandmarkPathsUtil(s, d, isVisited, pathList, paths, regionPath);
-        st.Stop();
-        Debug.Log(string.Format("GetAllLandmarkPaths took {0} ms to complete", st.ElapsedMilliseconds));
-        return paths;
     }
 
     // A recursive function to print

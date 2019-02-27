@@ -61,10 +61,10 @@ public class HangOutAction : Interaction {
         }
         return base.CanInteractionBeDoneBy(character);
     }
-    public override void SetTargetCharacter(Character targetCharacter) {
-        _targetCharacter = targetCharacter;
+    public override void SetTargetCharacter(Character character, Character actor) {
+        _targetCharacter = character;
         _targetStructure = targetCharacter.currentStructure;
-        targetGridLocation = _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetStructure);
+        targetGridLocation = _targetCharacter.GetNearestUnoccupiedTileFromThis(_targetStructure, actor);
         AddToDebugLog("Set " + targetCharacter.name + " at " + targetStructure?.ToString() ?? "Nowhere" + " as target");
     }
     #endregion
@@ -92,7 +92,7 @@ public class HangOutAction : Interaction {
     #region Reward Effect
     private void StartRewardEffect(InteractionState state) {
         //**Structure**: Move the character to the target's Structure
-        _characterInvolved.MoveToAnotherStructure(_targetStructure, _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetStructure));
+        _characterInvolved.MoveToAnotherStructure(_targetStructure, targetGridLocation, _targetCharacter);
     }
     private void BothBecomesCheeryRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {

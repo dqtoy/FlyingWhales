@@ -58,8 +58,8 @@ public class UseItemOnCharacter : Interaction {
         }
         return base.CanInteractionBeDoneBy(character);
     }
-    public override void SetTargetCharacter(Character character) {
-        _targetCharacter = character;
+    public override void SetTargetCharacter(Character targetCharacter, Character actor) {
+        _targetCharacter = targetCharacter;
     }
     #endregion
 

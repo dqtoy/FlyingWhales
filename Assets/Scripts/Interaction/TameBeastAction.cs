@@ -153,7 +153,7 @@ public class TameBeastAction : Interaction {
 
     #region State Effect
     private void StartStateEffect(InteractionState state) {
-        _characterInvolved.MoveToAnotherStructure(_targetBeast.currentStructure, _targetBeast.GetNearestUnoccupiedTileFromCharacter(_targetBeast.currentStructure));
+        _characterInvolved.MoveToAnotherStructure(_targetBeast.currentStructure, targetGridLocation, _targetBeast);
     }
     private void NormalTameSuccessEffect(InteractionState state) {
         //_characterInvolved.LevelUp();

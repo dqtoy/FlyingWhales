@@ -28,7 +28,7 @@ public class RecruitAction : Interaction {
         InteractionState normalRecruitmentFail = new InteractionState(Normal_Recruitment_Fail, this);
 
         if (_targetCharacter == null) {
-            SetTargetCharacter(GetTargetCharacter(_characterInvolved));
+            SetTargetCharacter(GetTargetCharacter(_characterInvolved), _characterInvolved);
         }
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description", this);
@@ -97,8 +97,8 @@ public class RecruitAction : Interaction {
         }
         return base.CanInteractionBeDoneBy(character);
     }
-    public override void SetTargetCharacter(Character targetCharacter) {
-        _targetCharacter = targetCharacter;
+    public override void SetTargetCharacter(Character character, Character actor) {
+        _targetCharacter = character;
         AddToDebugLog("Set target character to " + targetCharacter.name);
     }
     #endregion

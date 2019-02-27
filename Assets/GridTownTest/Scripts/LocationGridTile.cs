@@ -1,12 +1,14 @@
-﻿using System.Collections;
+﻿using PathFind;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.UI;
 
-public class LocationGridTile {
+public class LocationGridTile : IHasNeighbours<LocationGridTile> {
 
-    public enum Tile_Type { Empty, Wall, Structure, Gate, Exit }
+    public enum Tile_Type { Empty, Wall, Structure, Gate }
     public enum Tile_State { Impassable, Empty, Reserved, Occupied }
     public Tilemap parentTileMap { get; private set; }
     public Vector3Int localPlace { get; private set; }
@@ -19,8 +21,9 @@ public class LocationGridTile {
     public Dictionary<TileNeighbourDirection, LocationGridTile> neighbours { get; private set; }
     public GameObject prefabHere { get; private set; } //if there is a prefab that was instantiated at this tiles location
     //public List<LocationGridTile> neighborList { get; private set; }
-
     public IPointOfInterest objHere { get; private set; }
+
+    public List<LocationGridTile> ValidTiles { get { return neighbours.Values.Where(o => o.tileType == Tile_Type.Empty || o.tileType == Tile_Type.Gate).ToList(); } }
 
     public LocationGridTile(int x, int y, Tilemap tilemap) {
         parentTileMap = tilemap;
@@ -30,7 +33,6 @@ public class LocationGridTile {
         tileType = Tile_Type.Empty;
         tileState = Tile_State.Empty;
     }
-
     public void FindNeighbours(LocationGridTile[,] map) {
         neighbours = new Dictionary<TileNeighbourDirection, LocationGridTile>();
         //neighborList = new List<LocationGridTile>();
@@ -56,7 +58,6 @@ public class LocationGridTile {
         //    }
         //}
     }
-
     public Dictionary<TileNeighbourDirection, Point> possibleExits {
         get {
             return new Dictionary<TileNeighbourDirection, Point>() {
@@ -67,11 +68,9 @@ public class LocationGridTile {
             };
         }
     }
-
     public void SetIsInside(bool isInside) {
         this.isInside = isInside;
     }
-
     public void SetTileType(Tile_Type tileType) {
         this.tileType = tileType;
         switch (tileType) {

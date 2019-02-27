@@ -199,6 +199,10 @@ public class UIManager : MonoBehaviour {
             allMenus[i].Initialize();
             //allMenus[i].ApplyUnifiedSettings(settings);
         }
+        Image[] images = this.gameObject.GetComponentsInChildren<Image>();
+        for (int i = 0; i < images.Length; i++) {
+            images[i].alphaHitTestMinimumThreshold = 1f;
+        }
         //UnifySelectables();
         //popupMessageBox.Initialize();
         Messenger.AddListener<HexTile>(Signals.TILE_RIGHT_CLICKED, ShowContextMenu);

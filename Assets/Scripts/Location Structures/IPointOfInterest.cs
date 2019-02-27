@@ -9,4 +9,5 @@ public interface IPointOfInterest {
     //List<INTERACTION_TYPE> poiInteractions { get; }
 
     void SetGridTileLocation(LocationGridTile tile);
+    LocationGridTile GetNearestUnoccupiedTileFromThis(LocationStructure structure, Character otherCharacter);
 }

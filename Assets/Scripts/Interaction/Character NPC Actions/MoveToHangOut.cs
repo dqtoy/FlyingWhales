@@ -82,7 +82,7 @@ public class MoveToHangOut : Interaction {
     }
     public override void DoActionUponMoveToArrival() {
         Interaction interaction = CreateConnectedEvent(INTERACTION_TYPE.HANG_OUT_ACTION, _targetArea);
-        (interaction as HangOutAction).SetTargetCharacter(targetCharacter);
+        (interaction as HangOutAction).SetTargetCharacter(targetCharacter, _characterInvolved);
     }
     #endregion
 

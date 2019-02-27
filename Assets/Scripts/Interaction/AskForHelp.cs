@@ -54,10 +54,10 @@ public class AskForHelp : Interaction {
             state.SetDefaultOption(doNothingOption);
         }
     }
-    public override void SetTargetCharacter(Character character) {
-        _targetCharacter = character;
+    public override void SetTargetCharacter(Character targetCharacter, Character actor) {
+        _targetCharacter = targetCharacter;
         _targetStructure = _targetCharacter.currentStructure;
-        targetGridLocation = _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetStructure);
+        targetGridLocation = _targetCharacter.GetNearestUnoccupiedTileFromThis(_targetStructure, actor);
     }
     public override void SetOtherCharacter(Character character) {
         _otherCharacter = character;
@@ -87,7 +87,7 @@ public class AskForHelp : Interaction {
 
     #region State Effects
     private void StartEffect(InteractionState state) {
-        _characterInvolved.MoveToAnotherStructure(_targetStructure, _targetCharacter.GetNearestUnoccupiedTileFromCharacter(_targetStructure));
+        _characterInvolved.MoveToAnotherStructure(_targetStructure, targetGridLocation, _targetCharacter);
     }
     private void AskSuccessfulEffect(InteractionState state) {
         //Add relationship save target and saver

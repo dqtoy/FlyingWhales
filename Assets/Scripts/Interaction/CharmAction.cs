@@ -39,7 +39,7 @@ public class CharmAction : Interaction {
         InteractionState normalCharmFail = new InteractionState(Normal_Charm_Fail, this);
         InteractionState normalCharmCriticalFail = new InteractionState(Normal_Charm_Critical_Fail, this);
 
-        SetTargetCharacter(GetTargetCharacter(_characterInvolved));
+        SetTargetCharacter(GetTargetCharacter(_characterInvolved), _characterInvolved);
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description", this);
         startStateDescriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
@@ -110,11 +110,11 @@ public class CharmAction : Interaction {
         if (target == null) {
             return false;
         }
-        SetTargetCharacter(target);
+        SetTargetCharacter(target, character);
         return base.CanInteractionBeDoneBy(character);
     }
-    public override void SetTargetCharacter(Character targetCharacter) {
-        _targetCharacter = targetCharacter;
+    public override void SetTargetCharacter(Character character, Character actor) {
+        _targetCharacter = character;
         AddToDebugLog("Set " + targetCharacter.name + " as target");
     }
     #endregion

@@ -108,7 +108,7 @@ public class DispelScroll : SpecialToken {
         //**Mechanics**: Remove all Enchantment type traits on the target
         RemoveAllEnchantments(state.tokenUser, targetCharacter);
 
-        state.tokenUser.MoveToAnotherStructure(targetCharacter.currentStructure, targetCharacter.GetNearestUnoccupiedTileFromCharacter(targetCharacter.currentStructure));
+        state.tokenUser.MoveToAnotherStructure(targetCharacter.currentStructure, targetCharacter.GetNearestUnoccupiedTileFromThis(targetCharacter.currentStructure, state.tokenUser));
         if (state.tokenUser.id == targetCharacter.id) {
             //Used item on self
             Log stateDescriptionLog = new Log(GameManager.Instance.Today(), "Tokens", this.GetType().ToString(), state.name.ToLower() + "-npc" + "_description", state.interaction);

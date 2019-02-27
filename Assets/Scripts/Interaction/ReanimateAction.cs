@@ -71,6 +71,8 @@ public class ReanimateAction : Interaction {
             return false;
         }
         _targetCorpse = corpse;
+        _targetStructure = _targetCorpse.location;
+        targetGridLocation = _targetCorpse.GetNearestUnoccupiedTileFromThis(_targetStructure, _characterInvolved);
         return base.CanInteractionBeDoneBy(character);
     }
     #endregion
@@ -92,7 +94,7 @@ public class ReanimateAction : Interaction {
 
     #region Reward Effect
     private void StartEffect(InteractionState state) {
-        _characterInvolved.MoveToAnotherStructure(_targetCorpse.location);
+        _characterInvolved.MoveToAnotherStructure(_targetCorpse.location, targetGridLocation, _targetCorpse);
     }
     private void ReanimationSuccessRewardEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);

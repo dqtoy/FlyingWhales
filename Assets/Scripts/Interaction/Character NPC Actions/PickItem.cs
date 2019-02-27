@@ -65,6 +65,7 @@ public class PickItem : Interaction {
         }
         targetToken = items[UnityEngine.Random.Range(0, items.Count)];
         _targetStructure = targetToken.structureLocation;
+        targetGridLocation = targetToken.GetNearestUnoccupiedTileFromThis(_targetStructure, _characterInvolved);
         return base.CanInteractionBeDoneBy(character);
     }
     public override bool CanStillDoInteraction(Character character) {
@@ -101,7 +102,7 @@ public class PickItem : Interaction {
 
     #region Reward Effect
     private void StartRewardEffect(InteractionState state) {
-        _characterInvolved.MoveToAnotherStructure(_targetStructure);
+        _characterInvolved.MoveToAnotherStructure(_targetStructure, targetGridLocation, targetToken);
     }
     private void ItemObtainedRewardEffect(InteractionState state) {
         _characterInvolved.PickUpToken(targetToken, interactable);
