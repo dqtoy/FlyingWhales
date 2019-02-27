@@ -116,10 +116,22 @@ public class PathGenerator : MonoBehaviour {
 		return null;
 	}
     public List<LocationGridTile> GetPath(LocationGridTile startingTile, LocationGridTile destinationTile) {
+        LocationGridTile.Tile_Type startType = startingTile.tileType;
+        LocationGridTile.Tile_Type destinationType = destinationTile.tileType;
+        startingTile.SetTileType(LocationGridTile.Tile_Type.Empty);
+        destinationTile.SetTileType(LocationGridTile.Tile_Type.Empty);
+
         Func<LocationGridTile, LocationGridTile, double> distance = (node1, node2) => 1;
         Func<LocationGridTile, double> estimate = t => Math.Sqrt(Math.Pow(t.localPlace.x - destinationTile.localPlace.x, 2) + Math.Pow(t.localPlace.y - destinationTile.localPlace.y, 2));
         var path = PathFind.PathFind.FindPath(startingTile, destinationTile, distance, estimate);
-        return path.ToList();
+
+        startingTile.SetTileType(startType);
+        destinationTile.SetTileType(destinationType);
+
+        if (path != null) {
+            return path.ToList();
+        }
+        return null;
     }
     public PathFindingThread CreatePath(CharacterAvatar characterAvatar, HexTile startingTile, HexTile destinationTile, PATHFINDING_MODE pathfindingMode, object data = null) {
         if (startingTile == null || destinationTile == null) {

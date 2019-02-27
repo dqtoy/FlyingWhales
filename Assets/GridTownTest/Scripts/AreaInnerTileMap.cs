@@ -29,6 +29,7 @@ public class AreaInnerTileMap : MonoBehaviour {
     [SerializeField] private TileBase outsideTile;
     [SerializeField] private TileBase insideTile;
     [SerializeField] private TileBase wallTile;
+    [SerializeField] private TileBase dungeonTile;
     [SerializeField] private TileBase structureTile;
     [SerializeField] private TileBase floorTile;
     [SerializeField] private TileBase dirtTile;
@@ -79,7 +80,9 @@ public class AreaInnerTileMap : MonoBehaviour {
         },
           { STRUCTURE_TYPE.EXPLORE_AREA,
             new List<Point>(){
-                new Point(4, 4),
+                new Point(3, 5),
+                //new Point(6, 6),
+                new Point(5, 4),
             }
         },
         { STRUCTURE_TYPE.WAREHOUSE,
@@ -132,6 +135,7 @@ public class AreaInnerTileMap : MonoBehaviour {
         PlaceStructures(area.GetStructures(true, true), insideTiles);
         PlaceStructures(area.GetStructures(false, true), outsideTiles);
         AssignOuterAreas();
+        ConnectExploreAreas();
     }
     //public void GenerateInnerStructures(Dictionary<STRUCTURE_TYPE, List<LocationStructure>> inside, Dictionary<STRUCTURE_TYPE, List<LocationStructure>> outside) {
     //    GenerateGrid();
@@ -342,10 +346,10 @@ public class AreaInnerTileMap : MonoBehaviour {
                         currTile.SetTileType(LocationGridTile.Tile_Type.Structure);
                         break;
                     case STRUCTURE_TYPE.EXPLORE_AREA:
-                        strcutureTilemap.SetTile(currTile.localPlace, structureTile);
-                        groundTilemap.SetTile(currTile.localPlace, floorTile);
+                        //strcutureTilemap.SetTile(currTile.localPlace, structureTile);
+                        groundTilemap.SetTile(currTile.localPlace, dirtTile);
                         currTile.SetTileType(LocationGridTile.Tile_Type.Structure);
-                        List<LocationGridTile> neighbourTiles = GetTilesInRadius(currTile, 3);
+                        List<LocationGridTile> neighbourTiles = GetTilesInRadius(currTile, 1, false, true);
                         for (int k = 0; k < neighbourTiles.Count; k++) {
                             elligibleTiles.Remove(neighbourTiles[k]);
                         }
@@ -384,24 +388,24 @@ public class AreaInnerTileMap : MonoBehaviour {
         }
     }
     private void AssignOuterAreas() {
-        //if (area.name == "Visteri" || area.name == "Odious") { //TODO: Change this to use area type instead
-        //    for (int i = 0; i < insideTiles.Count; i++) {
-        //        LocationGridTile currTile = insideTiles[i];
-        //        if (currTile.structure == null) {
-        //            wallTilemap.SetTile(currTile.localPlace, wallTile);
-        //        }
-        //    }
-        //    if (area.HasStructure(STRUCTURE_TYPE.WILDERNESS)) {
-        //        for (int i = 0; i < outsideTiles.Count; i++) {
-        //            LocationGridTile currTile = outsideTiles[i];
-        //            if (currTile.structure == null) {
-        //                currTile.SetStructure(area.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS));
-        //            }
-        //        }
-        //    } else {
-        //        Debug.LogWarning(area.name + " doesn't have a structure for wilderness");
-        //    }
-        //} else {
+        if (area.name == "Visteri" || area.name == "Odious") { //TODO: Change this to use area type instead
+            for (int i = 0; i < insideTiles.Count; i++) {
+                LocationGridTile currTile = insideTiles[i];
+                if (currTile.structure == null) {
+                    wallTilemap.SetTile(currTile.localPlace, dungeonTile);
+                }
+            }
+            if (area.HasStructure(STRUCTURE_TYPE.WILDERNESS)) {
+                for (int i = 0; i < outsideTiles.Count; i++) {
+                    LocationGridTile currTile = outsideTiles[i];
+                    if (currTile.structure == null) {
+                        currTile.SetStructure(area.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS));
+                    }
+                }
+            } else {
+                Debug.LogWarning(area.name + " doesn't have a structure for wilderness");
+            }
+        } else {
             if (area.HasStructure(STRUCTURE_TYPE.WORK_AREA)) {
                 for (int i = 0; i < insideTiles.Count; i++) {
                     LocationGridTile currTile = insideTiles[i];
@@ -422,8 +426,8 @@ public class AreaInnerTileMap : MonoBehaviour {
             } else {
                 Debug.LogWarning(area.name + " doesn't have a structure for wilderness");
             }
-        //}
-        
+        }
+
     }
     private Cardinal_Direction GetOppositeDirection(Cardinal_Direction dir) {
         switch (dir) {
@@ -438,6 +442,48 @@ public class AreaInnerTileMap : MonoBehaviour {
             default:
                 return Cardinal_Direction.North;
         }
+    }
+    private void ConnectExploreAreas() {
+        if (area.HasStructure(STRUCTURE_TYPE.EXPLORE_AREA)) {
+            List<LocationStructure> exploreAreas = area.GetStructuresOfType(STRUCTURE_TYPE.EXPLORE_AREA);
+            exploreAreas = Utilities.Shuffle(exploreAreas);
+            for (int i = 0; i < exploreAreas.Count; i++) {
+                LocationStructure currArea = exploreAreas[i];
+                LocationStructure otherArea = exploreAreas.ElementAtOrDefault(i + 1);
+                if (otherArea == null) {
+                    break;
+                }
+                //connect currArea to otherArea
+                List<LocationGridTile> currAreaOuter = GetOuterTilesFrom(currArea.tiles);
+                List<LocationGridTile> otherAreaOuter = GetOuterTilesFrom(otherArea.tiles);
+
+                LocationGridTile chosenCurrArea = currAreaOuter[Random.Range(0, currAreaOuter.Count)];
+                LocationGridTile chosenOtherArea = otherAreaOuter[Random.Range(0, otherAreaOuter.Count)];
+
+                List<LocationGridTile> path = PathGenerator.Instance.GetPath(chosenCurrArea, chosenOtherArea);
+                if (path != null) {
+                    for (int j = 0; j < path.Count; j++) {
+                        if (path[j].structure == null) {
+                            wallTilemap.SetTile(path[j].localPlace, dirtTile);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    private List<LocationGridTile> GetOuterTilesFrom(List<LocationGridTile> sourceTiles) {
+        List<LocationGridTile> tiles = new List<LocationGridTile>();
+        for (int i = 0; i < sourceTiles.Count; i++) {
+            LocationGridTile currTile = sourceTiles[i];
+            for (int j = 0; j < currTile.ValidTiles.Count; j++) {
+                LocationGridTile neighbour = currTile.ValidTiles.ElementAt(j);
+                if (!sourceTiles.Contains(neighbour)) {
+                    tiles.Add(currTile);
+                    break;
+                }
+            }
+        }
+        return tiles;
     }
     #endregion
 
@@ -682,5 +728,19 @@ public class AreaInnerTileMap : MonoBehaviour {
         for (int i = 0; i < tiles.Count; i++) {
             Debug.Log(tiles[i].localPlace.x + "," + tiles[i].localPlace.y);
         }
+    }
+
+    [ContextMenu("Get Path")]
+    public void GetPath() {
+        List<LocationGridTile> tiles = PathGenerator.Instance.GetPath(map[0, 0], map[5, 5]);
+        if (tiles != null) {
+            for (int i = 0; i < tiles.Count; i++) {
+                Debug.Log(tiles[i].localPlace.x + "," + tiles[i].localPlace.y);
+                groundTilemap.SetTile(tiles[i].localPlace, dirtTile);
+            }
+        } else {
+            Debug.Log("No Path!");
+        }
+        
     }
 }
