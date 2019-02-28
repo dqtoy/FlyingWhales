@@ -1,21 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 public class Precondition {
-    public CHARACTER keyTarget { get; private set; }
-    public InteractionCharacterEffect keyEffect { get; private set; }
+    public GoapEffect goapEffect { get; private set; }
+    public Func<bool> condition { get; private set; }
 
-    public Precondition(CHARACTER keyTarget, INTERACTION_CHARACTER_EFFECT characterEffect, string effectString) {
-        this.keyTarget = keyTarget;
-        this.keyEffect = new InteractionCharacterEffect() {
-            effect = characterEffect,
-            effectString = effectString,
-        };
+    public Precondition(GoapEffect goapEffect, Func<bool> condition) {
+        this.goapEffect = goapEffect;
+        this.condition = condition;
     }
 
-    public bool CanSatisfyCondition(Character character) {
-        //TODO
-        return true;
+    public bool CanSatisfyCondition() {
+        return condition();
     }
 }

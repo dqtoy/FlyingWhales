@@ -7,6 +7,7 @@ public class SupplyPile : IPointOfInterest {
 
     public LocationStructure location { get; private set; }
     public int suppliesInPile { get; private set; }
+    public List<INTERACTION_TYPE> poiGoapActions { get; private set; }
 
     private LocationGridTile tile;
 
@@ -86,6 +87,25 @@ public class SupplyPile : IPointOfInterest {
                 return nearestTile;
             }
         }
+        return null;
+    }
+    #endregion
+
+    #region Point Of Interest
+    public List<GoapAction> AdvertiseActionsToActor(Character actor, List<INTERACTION_TYPE> actorAllowedInteractions) {
+        if (poiGoapActions != null && poiGoapActions.Count > 0) {
+            List<GoapAction> usableActions = new List<GoapAction>();
+            for (int i = 0; i < poiGoapActions.Count; i++) {
+                if (actorAllowedInteractions.Contains(poiGoapActions[i])) {
+                    GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(poiGoapActions[i], this);
+                    if (goapAction.CanSatisfyRequirements()) {
+                        usableActions.Add(goapAction);
+                    }
+                }
+            }
+            return usableActions;
+        }
+
         return null;
     }
     #endregion
