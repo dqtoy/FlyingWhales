@@ -22,6 +22,7 @@ public class Abducted : Trait {
         type = TRAIT_TYPE.DISABLER;
         effect = TRAIT_EFFECT.NEGATIVE;
         associatedInteraction = INTERACTION_TYPE.NONE;
+        advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION };
         daysDuration = 0;
         effects = new List<TraitEffect>();
     }

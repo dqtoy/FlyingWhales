@@ -95,6 +95,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public Dictionary<Character, CharacterRelationshipData> relationships { get; private set; }
     public List<INTERACTION_TYPE> currentInteractionTypes { get; private set; }
     public Interaction plannedInteraction { get; private set; }
+    public List<IPointOfInterest> awareness { get; private set; }
+    public List<INTERACTION_TYPE> poiGoapActions { get; private set; }
+    public GoapPlanner planner { get; set; }
 
     private LocationGridTile tile; //what tile in the structure is this character currently in.
 
@@ -490,8 +493,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         characterToken = new CharacterToken(this);
         tokenInInventory = null;
         interactionWeights = new WeightedDictionary<INTERACTION_TYPE>();
-
         relationships = new Dictionary<Character, CharacterRelationshipData>();
+        
 
         tiredness = TIREDNESS_DEFAULT;
         fullness = FULLNESS_DEFAULT;
@@ -501,7 +504,11 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         demonColor = UnityEngine.Random.Range(-144f, 144f);
 
         locationHistory = new List<string>();
-        //_goapInteractions = new List<INTERACTION_TYPE>();
+
+        //If this is a minion, this should not be initiated
+        awareness = new List<IPointOfInterest>();
+        planner = new GoapPlanner(this);
+        AddAwareness(this);
 
         GetRandomCharacterColor();
 #if !WORLD_CREATION_TOOL
@@ -2185,6 +2192,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         _traits.Add(trait);
         trait.SetCharacterResponsibleForTrait(characterResponsible);
         ApplyTraitEffects(trait);
+        ApplyPOITraitInteractions(trait);
         if (trait.daysDuration > 0) {
             GameDate removeDate = GameManager.Instance.Today();
             removeDate.AddTicks(trait.daysDuration);
@@ -2200,6 +2208,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public bool RemoveTrait(Trait trait, bool triggerOnRemove = true) {
         if (_traits.Remove(trait)) {
             UnapplyTraitEffects(trait);
+            UnapplyPOITraitInteractions(trait);
             if (triggerOnRemove) {
                 trait.OnRemoveTrait(this);
             }
@@ -2403,6 +2412,20 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                         AdjustSpeedMod(-(int) traitEffect.amount);
                     }
                 }
+            }
+        }
+    }
+    private void ApplyPOITraitInteractions(Trait trait) {
+        if (trait.advertisedInteractions != null) {
+            for (int i = 0; i < trait.advertisedInteractions.Count; i++) {
+                poiGoapActions.Add(trait.advertisedInteractions[i]);
+            }
+        }
+    }
+    private void UnapplyPOITraitInteractions(Trait trait) {
+        if (trait.advertisedInteractions != null) {
+            for (int i = 0; i < trait.advertisedInteractions.Count; i++) {
+                poiGoapActions.Remove(trait.advertisedInteractions[i]);
             }
         }
     }
@@ -3395,6 +3418,73 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //    }
         //}
         PlayerManager.Instance.player.RemoveIntel(intel);
+    }
+    #endregion
+
+    #region Awareness
+    public void AddAwareness(IPointOfInterest pointOfInterest) {
+        if (!awareness.Contains(pointOfInterest)) {
+            awareness.Add(pointOfInterest);
+        }
+    }
+    public void RemoveAwareness(IPointOfInterest pointOfInterest) {
+        awareness.Remove(pointOfInterest);
+    }
+    #endregion
+
+    #region Point Of Interest
+    public List<GoapAction> AdvertiseActionsToActor(Character actor, List<INTERACTION_TYPE> actorAllowedInteractions) {
+        if(poiGoapActions != null && poiGoapActions.Count > 0) {
+            List<GoapAction> usableActions = new List<GoapAction>();
+            for (int i = 0; i < poiGoapActions.Count; i++) {
+                if (actorAllowedInteractions.Contains(poiGoapActions[i])){
+                    GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(poiGoapActions[i], this);
+                    if (goapAction.CanSatisfyRequirements()) {
+                        usableActions.Add(goapAction);
+                    }
+                }
+            }
+            return usableActions;
+        }
+        return null;
+    }
+    #endregion
+
+    #region Goap
+    public void StartGOAP(GoapEffect goal, IPointOfInterest target) {
+        List<GoapAction> usableActions = new List<GoapAction>();
+        List<INTERACTION_TYPE> actorAllowedActions = RaceManager.Instance.GetNPCInteractionsOfRace(this);
+        for (int i = 0; i < awareness.Count; i++) {
+            List<GoapAction> awarenessActions = awareness[i].AdvertiseActionsToActor(this, actorAllowedActions);
+            if(awarenessActions != null && awarenessActions.Count > 0) {
+                usableActions.AddRange(awarenessActions);
+            }
+        }
+
+        List<List<GoapNode>> allPlans = new List<List<GoapNode>>();
+        for (int i = 0; i < usableActions.Count; i++) {
+            if (usableActions[i].WillEffectsSatisfyPrecondition(goal)) {
+                List<GoapNode> plan = planner.PlanActions(target, usableActions[i], usableActions);
+                if(plan != null && plan.Count > 0) {
+                    allPlans.Add(plan);
+                }
+            }
+        }
+
+        List<GoapNode> shortestPathToGoal = null;
+        if(allPlans.Count > 0) {
+            for (int i = 0; i < allPlans.Count; i++) {
+                if (shortestPathToGoal == null) {
+                    shortestPathToGoal = allPlans[i];
+                } else {
+                    if(allPlans[i].Sum(x => x.runningCost) < shortestPathToGoal.Sum(x => x.runningCost)) {
+                        shortestPathToGoal = allPlans[i];
+                    }
+                }
+            }
+        }
+
+        //Assign to actor the shortestPathToGoal
     }
     #endregion
 }

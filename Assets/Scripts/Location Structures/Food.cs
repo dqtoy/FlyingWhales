@@ -8,6 +8,7 @@ public class Food : IPointOfInterest {
     public LocationStructure location { get; private set; }
     public FOOD foodType { get; private set; }
     public string foodName { get; private set; }
+    public List<INTERACTION_TYPE> poiGoapActions { get; private set; }
 
     private LocationGridTile tile;
 
@@ -24,6 +25,7 @@ public class Food : IPointOfInterest {
         this.location = location;
         this.foodType = foodType;
         this.foodName = Utilities.NormalizeStringUpperCaseFirstLetters(this.foodType.ToString());
+        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.EAT_FOOD };
     }
 
     public override string ToString() {
@@ -54,6 +56,25 @@ public class Food : IPointOfInterest {
                 return nearestTile;
             }
         }
+        return null;
+    }
+    #endregion
+
+    #region Point Of Interest
+    public List<GoapAction> AdvertiseActionsToActor(Character actor, List<INTERACTION_TYPE> actorAllowedInteractions) {
+        if (poiGoapActions != null && poiGoapActions.Count > 0) {
+            List<GoapAction> usableActions = new List<GoapAction>();
+            for (int i = 0; i < poiGoapActions.Count; i++) {
+                if (actorAllowedInteractions.Contains(poiGoapActions[i])) {
+                    GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(poiGoapActions[i], this);
+                    if (goapAction.CanSatisfyRequirements()) {
+                        usableActions.Add(goapAction);
+                    }
+                }
+            }
+            return usableActions;
+        }
+
         return null;
     }
     #endregion

@@ -914,8 +914,9 @@ public class InteractionManager : MonoBehaviour {
         }
         return createdInteraction;
     }
-    public void CreateNewGoapInteraction(INTERACTION_TYPE type, IPointOfInterest target) {
+    public GoapAction CreateNewGoapInteraction(INTERACTION_TYPE type, IPointOfInterest target) {
         GoapAction goapAction = null;
+        return goapAction;
         //switch (type) {
         //    case INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION:
         //        goapAction = new ReleaseAbductedAction(target);

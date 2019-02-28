@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class Corpse: IPointOfInterest {
+public class Corpse : IPointOfInterest {
 
     public Character character { get; private set; }
     public LocationStructure location { get; private set; }
+    public List<INTERACTION_TYPE> poiGoapActions { get; private set; }
 
     public POINT_OF_INTEREST_TYPE poiType { get { return POINT_OF_INTEREST_TYPE.CORPSE; } }
 
@@ -44,4 +45,22 @@ public class Corpse: IPointOfInterest {
     public override string ToString() {
         return "Corpse of " + character.name;
     }
+
+    #region Point Of Interest
+    public List<GoapAction> AdvertiseActionsToActor(Character actor, List<INTERACTION_TYPE> actorAllowedInteractions) {
+        if (poiGoapActions != null && poiGoapActions.Count > 0) {
+            List<GoapAction> usableActions = new List<GoapAction>();
+            for (int i = 0; i < poiGoapActions.Count; i++) {
+                if (actorAllowedInteractions.Contains(poiGoapActions[i])) {
+                    GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(poiGoapActions[i], this);
+                    if (goapAction.CanSatisfyRequirements()) {
+                        usableActions.Add(goapAction);
+                    }
+                }
+            }
+            return usableActions;
+        }
+        return null;
+    }
+    #endregion
 }

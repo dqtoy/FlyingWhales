@@ -126,6 +126,7 @@ public class SpecialToken : Token, IPointOfInterest {
     public Faction owner;
     public LocationStructure structureLocation { get; private set; }
     public InteractionAttributes interactionAttributes { get; protected set; }
+    public List<INTERACTION_TYPE> poiGoapActions { get; private set; }
 
     private LocationGridTile tile;
 
@@ -162,6 +163,7 @@ public class SpecialToken : Token, IPointOfInterest {
         this.name = Utilities.NormalizeStringUpperCaseFirstLetters(this.specialTokenType.ToString());
         weight = appearanceRate;
         npcAssociatedInteractionType = INTERACTION_TYPE.NONE;
+        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.PICK_ITEM };
     }
     //public void AdjustQuantity(int amount) {
     //    quantity += amount;
@@ -211,6 +213,24 @@ public class SpecialToken : Token, IPointOfInterest {
                 }
                 return nearestTile;
             }
+        }
+        return null;
+    }
+    #endregion
+
+    #region Point Of Interest
+    public List<GoapAction> AdvertiseActionsToActor(Character actor, List<INTERACTION_TYPE> actorAllowedInteractions) {
+        if (poiGoapActions != null && poiGoapActions.Count > 0) {
+            List<GoapAction> usableActions = new List<GoapAction>();
+            for (int i = 0; i < poiGoapActions.Count; i++) {
+                if (actorAllowedInteractions.Contains(poiGoapActions[i])) {
+                    GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(poiGoapActions[i], this);
+                    if (goapAction.CanSatisfyRequirements()) {
+                        usableActions.Add(goapAction);
+                    }
+                }
+            }
+            return usableActions;
         }
         return null;
     }
