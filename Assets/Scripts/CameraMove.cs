@@ -39,6 +39,8 @@ public class CameraMove : MonoBehaviour {
 
     private bool cameraControlEnabled = true;
 
+    int defaultMask;
+
     #region getters/setters
     public Camera uiCamera {
         get { return _uiCamera; }
@@ -85,6 +87,7 @@ public class CameraMove : MonoBehaviour {
     #region Utilities
     public void ToggleMainCameraLayer(string layerName) {
         Camera.main.cullingMask ^= 1 << LayerMask.NameToLayer(layerName);
+        defaultMask = Camera.main.cullingMask;
     }
     public void ZoomToTarget(float targetZoom) {
         StartCoroutine(lerpFieldOfView(Camera.main, targetZoom, 0.1f));
@@ -419,9 +422,11 @@ public class CameraMove : MonoBehaviour {
         }
     }
     private void OnAreaMapOpened(Area area) {
+        Camera.main.cullingMask = 0;
         SetCameraControlState(false);
     }
     private void OnAreaMapClosed(Area area) {
+        Camera.main.cullingMask = defaultMask;
         SetCameraControlState(true);
     }
     #endregion

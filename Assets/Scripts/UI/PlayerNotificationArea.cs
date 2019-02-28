@@ -26,9 +26,14 @@ public class PlayerNotificationArea : UIMenu {
     }
 
     private void OnMenuOpened(UIMenu openedMenu) {
-        this.transform.localPosition = otherMenuOpenedPos;
+        if (openedMenu is CharacterInfoUI || openedMenu is AreaInfoUI || openedMenu is FactionInfoUI) {
+            this.transform.localPosition = otherMenuOpenedPos;
+        }
+        
     }
     private void OnMenuClosed(UIMenu openedMenu) {
-        this.transform.localPosition = defaultPos;
+        if (openedMenu is CharacterInfoUI || openedMenu is AreaInfoUI || openedMenu is FactionInfoUI) {
+            this.transform.localPosition = defaultPos;
+        }
     }
 }

@@ -189,9 +189,9 @@ public class CharacterInfoUI : UIMenu {
 
     public override void SetData(object data) {
         base.SetData(data);
-        if (isShowing) {
-            UpdateCharacterInfo();
-        }
+        //if (isShowing) {
+        //    UpdateCharacterInfo();
+        //}
     }
 
     public void UpdateCharacterInfo() {
