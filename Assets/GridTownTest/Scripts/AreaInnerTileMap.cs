@@ -22,6 +22,7 @@ public class AreaInnerTileMap : MonoBehaviour {
     [Header("Tile Maps")]
     [SerializeField] private Tilemap groundTilemap;
     [SerializeField] private Tilemap wallTilemap;
+    [SerializeField] private Tilemap detailsTilemap;
     [SerializeField] private Tilemap strcutureTilemap;
     [SerializeField] private Tilemap objectsTilemap;
 
@@ -30,13 +31,14 @@ public class AreaInnerTileMap : MonoBehaviour {
     [SerializeField] private TileBase insideTile;
     [SerializeField] private TileBase wallTile;
     [SerializeField] private TileBase dungeonWallTile;
-    [SerializeField] private TileBase dungeonTile;
     [SerializeField] private TileBase structureTile;
     [SerializeField] private TileBase floorTile;
     [SerializeField] private TileBase dirtTile;
     [SerializeField] private TileBase characterTile;
     [SerializeField] private TileBase supplyIconTile;
     [SerializeField] private TileBase corpseIconTile;
+    [SerializeField] private RuleTile outsideDetailTile;
+    [SerializeField] private RuleTile insideDetailTile;
     [SerializeField] private ItemTileBaseDictionary itemTiles;
     [SerializeField] private FoodTileBaseDictionary foodTiles;
 
@@ -126,10 +128,13 @@ public class AreaInnerTileMap : MonoBehaviour {
         objectsTilemap.ClearAllTiles();
         strcutureTilemap.ClearAllTiles();
         wallTilemap.ClearAllTiles();
+        detailsTilemap.ClearAllTiles();
         scrollviewContent.sizeDelta = new Vector2(cellSize * width, cellSize * height);
         eventPopupParent.sizeDelta = new Vector2(cellSize * width, cellSize * height);
         scrollviewContent.anchoredPosition = Vector2.zero;
         eventPopupParent.anchoredPosition = Vector2.zero;
+        outsideDetailTile.m_TilingRules[0].m_PerlinScale = Random.Range(0f, 1f);
+        insideDetailTile.m_TilingRules[0].m_PerlinScale = Random.Range(0.3f, 0.8f);
         GenerateGrid();
         SplitMap();
         ConstructWalls();
@@ -258,16 +263,23 @@ public class AreaInnerTileMap : MonoBehaviour {
         insideTiles.Remove(chosenGate); //NOTE: I remove the tiles that become gates from inside tiles, so as not to include them when determining tiles with structures
         gate = chosenGate;
 
-        for (int i = 0; i < outerTiles.Count; i++) {
-            LocationGridTile currTile = outerTiles[i];
-            currTile.SetTileType(LocationGridTile.Tile_Type.Wall);
+        for (int i = 0; i < insideTiles.Count; i++) {
+            LocationGridTile currTile = insideTiles[i];
             if (area.areaType == AREA_TYPE.DUNGEON) {
-                wallTilemap.SetTile(new Vector3Int(currTile.localPlace.x, currTile.localPlace.y, 0), dungeonWallTile);
+                wallTilemap.SetTile(currTile.localPlace, dungeonWallTile);
+                if (outerTiles.Contains(currTile)) {
+                    currTile.SetTileType(LocationGridTile.Tile_Type.Wall);
+                }
             } else {
-                wallTilemap.SetTile(new Vector3Int(currTile.localPlace.x, currTile.localPlace.y, 0), wallTile);
+                if (outerTiles.Contains(currTile)) {
+                    currTile.SetTileType(LocationGridTile.Tile_Type.Wall);
+                    wallTilemap.SetTile(currTile.localPlace, wallTile);
+                }
             }
-            
-            insideTiles.Remove(currTile); //NOTE: I remove the tiles that become walls from inside tiles, so as not to include them when determining tiles with structures
+        }
+
+        for (int i = 0; i < outerTiles.Count; i++) {
+            insideTiles.Remove(outerTiles[i]); //NOTE: I remove the tiles that become walls from inside tiles, so as not to include them when determining tiles with structures
         }
     }
     private void PlaceStructures(Dictionary<STRUCTURE_TYPE, List<LocationStructure>> structures, List<LocationGridTile> sourceTiles) {
@@ -361,7 +373,7 @@ public class AreaInnerTileMap : MonoBehaviour {
                         //strcutureTilemap.SetTile(currTile.localPlace, structureTile);
                         groundTilemap.SetTile(currTile.localPlace, dirtTile);
                         currTile.SetTileType(LocationGridTile.Tile_Type.Structure);
-                        List<LocationGridTile> neighbourTiles = GetTilesInRadius(currTile, 1, false, true);
+                        List<LocationGridTile> neighbourTiles = GetTilesInRadius(currTile, 2, false, true);
                         for (int k = 0; k < neighbourTiles.Count; k++) {
                             elligibleTiles.Remove(neighbourTiles[k]);
                         }
@@ -404,7 +416,9 @@ public class AreaInnerTileMap : MonoBehaviour {
             for (int i = 0; i < insideTiles.Count; i++) {
                 LocationGridTile currTile = insideTiles[i];
                 if (currTile.structure == null) {
-                    wallTilemap.SetTile(currTile.localPlace, dungeonTile);
+                    wallTilemap.SetTile(currTile.localPlace, dungeonWallTile);
+                } else {
+                    wallTilemap.SetTile(currTile.localPlace, null);
                 }
             }
         } else {
@@ -412,6 +426,7 @@ public class AreaInnerTileMap : MonoBehaviour {
                 for (int i = 0; i < insideTiles.Count; i++) {
                     LocationGridTile currTile = insideTiles[i];
                     if (currTile.structure == null) {
+                        detailsTilemap.SetTile(currTile.localPlace, insideDetailTile);
                         currTile.SetStructure(area.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA));
                     }
                 }
@@ -422,9 +437,13 @@ public class AreaInnerTileMap : MonoBehaviour {
         if (area.HasStructure(STRUCTURE_TYPE.WILDERNESS)) {
             for (int i = 0; i < outsideTiles.Count; i++) {
                 LocationGridTile currTile = outsideTiles[i];
-                if (currTile.structure == null && !Utilities.IsInRange(currTile.localPlace.x, 0, 7)) {
-                    currTile.SetStructure(area.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS));
+                if (currTile.structure == null) {
+                    detailsTilemap.SetTile(currTile.localPlace, outsideDetailTile);
+                    if (!Utilities.IsInRange(currTile.localPlace.x, 0, 7)) {
+                        currTile.SetStructure(area.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS));
+                    }
                 }
+                
             }
         } else {
             Debug.LogWarning(area.name + " doesn't have a structure for wilderness");
