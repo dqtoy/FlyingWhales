@@ -67,7 +67,7 @@ public class UIManager : MonoBehaviour {
 
     [Space(10)]
     [Header("Notification Area")]
-    [SerializeField] private PlayerNotificationArea notificationArea;
+    public PlayerNotificationArea notificationArea;
 
     [Space(10)]
     [Header("Portraits")]

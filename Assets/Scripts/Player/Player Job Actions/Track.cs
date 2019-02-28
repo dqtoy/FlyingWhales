@@ -1,46 +1,32 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Track : PlayerJobAction {
 
-    //public object target { get; private set; }
-    //public JOB_ACTION_TARGET currentTargetType { get; private set; }
+    public Character target { get; private set; }
 
     public Track() {
         actionName = "Track";
         SetDefaultCooldownTime(48);
-        //currentTargetType = JOB_ACTION_TARGET.NONE;
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
+        Messenger.AddListener<EventPopup>(Signals.EVENT_POPPED_UP, OnEventPoppedUp);
     }
 
-    //public override void ActivateAction(Character assignedCharacter, Area targetArea) {
-    //    base.ActivateAction(assignedCharacter, targetArea);
-    //    currentTargetType = JOB_ACTION_TARGET.AREA;
-    //    target = targetArea;
-    //    targetArea.SetTrackedState(true);
-    //    Debug.Log(GameManager.Instance.TodayLogString() + assignedCharacter.name + " is now tracking " + targetArea.name);
-    //    SetSubText("Currently tracking " + targetArea.name);
-    //}
     public override void ActivateAction(Character assignedCharacter, Character targetCharacter) {
         base.ActivateAction(assignedCharacter, targetCharacter);
-        //currentTargetType = JOB_ACTION_TARGET.CHARACTER;
-        //target = targetCharacter;
-        //targetCharacter.ownParty.icon.SetVisualState(true);
-        targetCharacter.SetTracked(true);
+        target = targetCharacter;
+        target.SetTracked(true);
         Debug.Log(GameManager.Instance.TodayLogString() + assignedCharacter.name + " is now tracking " + targetCharacter.name);
         //SetSubText("Currently tracking " + targetCharacter.name);
     }
     public override void DeactivateAction() {
         base.DeactivateAction();
-        //if (target is Character) {
-        //    (target as Character).ownParty.icon.SetVisualState(false);
-        //} else 
-        //if (target is Area) {
-        //    (target as Area).SetTrackedState(false);
-        //}
-        //currentTargetType = JOB_ACTION_TARGET.NONE;
-        //target = null;
+        if (target != null) {
+            target.SetTracked(false);
+        }
+        target = null;
         //SetSubText(string.Empty);
     }
     protected override bool ShouldButtonBeInteractable(Character character, Character targetCharacter) {
@@ -54,6 +40,22 @@ public class Track : PlayerJobAction {
             return false;
         }
         return base.ShouldButtonBeInteractable(character, targetCharacter);
+    }
+
+    private void OnEventPoppedUp(EventPopup popup) {
+        if (target != null) {
+            if (popup.log.IsIncludedInFillers(target)) {
+                Log log = popup.log;
+                Messenger.Broadcast<string, int, UnityAction>(Signals.SHOW_NOTIFICATION, Utilities.LogReplacer(log), 5, () => ConvertToIntel(log, popup));
+            }
+        }
+    }
+    private void ConvertToIntel(Log log, EventPopup popup) {
+        InteractionIntel intel = log.ConvertToIntel();
+        PlayerManager.Instance.player.AddIntel(intel);
+        if (popup.isAlive) {
+            popup.DestroyPopup();
+        }
     }
     //protected override bool ShouldButtonBeInteractable(Character character, Area targetArea) {
     //    if (currentTargetType != JOB_ACTION_TARGET.NONE) {

@@ -117,6 +117,14 @@ public class Log {
         }
         return default(LogFiller);
     }
+    public bool IsIncludedInFillers(object obj) {
+        for (int i = 0; i < fillers.Count; i++) {
+            if (fillers[i].obj == obj) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     #region Utilities
     public void SetFillerLockedState(bool state) {

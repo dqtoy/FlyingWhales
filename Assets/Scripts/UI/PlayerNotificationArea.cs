@@ -9,10 +9,26 @@ public class PlayerNotificationArea : UIMenu {
     [SerializeField] private GameObject notificationItemPrefab;
     [SerializeField] private ScrollRect notificationsScrollView;
 
+    [SerializeField] private Vector2 defaultPos;
+    [SerializeField] private Vector2 otherMenuOpenedPos;
+
+    internal override void Initialize() {
+        base.Initialize();
+        Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
+        Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
+    }
+
     public void ShowNotification(string text, int expirationTicks, UnityAction onClickAction = null) {
         GameObject notificationGO = UIManager.Instance.InstantiateUIObject(notificationItemPrefab.name, notificationsScrollView.content);
         PlayerNotificationItem notificationItem = notificationGO.GetComponent<PlayerNotificationItem>();
         notificationGO.SetActive(true);
         notificationItem.SetNotification(text, expirationTicks, onClickAction);
+    }
+
+    private void OnMenuOpened(UIMenu openedMenu) {
+        this.transform.localPosition = otherMenuOpenedPos;
+    }
+    private void OnMenuClosed(UIMenu openedMenu) {
+        this.transform.localPosition = defaultPos;
     }
 }

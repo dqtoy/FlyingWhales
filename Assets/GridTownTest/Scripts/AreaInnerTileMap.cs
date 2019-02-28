@@ -711,6 +711,7 @@ public class AreaInnerTileMap : MonoBehaviour {
 
         EventPopup popup = go.GetComponent<EventPopup>();
         popup.Initialize(log, location, worldUICanvas);
+        Messenger.Broadcast(Signals.EVENT_POPPED_UP, popup);
     }
     [Header("Event Popup testing")]
     [SerializeField] private int xLocation;

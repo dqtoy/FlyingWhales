@@ -635,6 +635,12 @@ public class Player : ILeader {
     #region Intel
     public void AddIntel(InteractionIntel newIntel) {
         if (!allIntel.Contains(newIntel)) {
+            for (int i = 0; i < allIntel.Count; i++) {
+                InteractionIntel currIntel = allIntel[i];
+                if (currIntel.obtainedFromLog == newIntel.obtainedFromLog) {
+                    return;
+                }
+            }
             allIntel.Add(newIntel);
             if (allIntel.Count > MAX_INTEL) {
                 RemoveIntel(allIntel[0]);

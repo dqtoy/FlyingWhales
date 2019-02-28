@@ -6,14 +6,18 @@ using UnityEngine;
 
 public class EventPopup : PooledObject {
     private const int Lifetime = 5;
-    private Log log;
+    
     private int ticksAlive;
     private LocationGridTile location;
     private Canvas canvas;
 
+    public bool isAlive = false;
+
     [Header("Log")]
     [SerializeField] private GameObject logGO;
     [SerializeField] private TextMeshProUGUI logText;
+
+    public Log log { get; private set; }
 
     public void Initialize(Log log, LocationGridTile location, Canvas canvas) {
         this.log = log;
@@ -26,6 +30,7 @@ public class EventPopup : PooledObject {
 
     private void StartCountdown() {
         ticksAlive = 0;
+        isAlive = true;
         Messenger.AddListener(Signals.TICK_STARTED, CheckForExpiry);
     }
     private void CheckForExpiry() {
@@ -34,7 +39,7 @@ public class EventPopup : PooledObject {
         }
         ticksAlive++;
     }
-    private void DestroyPopup() {
+    public void DestroyPopup() {
         Messenger.RemoveListener(Signals.TICK_STARTED, CheckForExpiry);
         ObjectPoolManager.Instance.DestroyObject(this.gameObject);
     }
@@ -77,6 +82,7 @@ public class EventPopup : PooledObject {
         base.Reset();
         ticksAlive = 0;
         log = null;
+        isAlive = false;
     }
     #endregion
 }

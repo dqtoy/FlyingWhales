@@ -188,6 +188,7 @@ public static class Signals {
     public static string INTERACTION_ENDED = "OnInteractionEnded"; //Parameters (Interaction interaction)
     public static string MINION_STARTS_INVESTIGATING_AREA = "OnMinionStartInvestigateArea"; //Parameters (Minion minion, Area area)
     public static string INTERACTION_INITIALIZED = "OnInteractionInitialized"; //Parameters (Interaction interaction)
+    public static string EVENT_POPPED_UP = "OnEventPopup"; //Parameters (EventPopup)
     #endregion
 
     #region Tokens

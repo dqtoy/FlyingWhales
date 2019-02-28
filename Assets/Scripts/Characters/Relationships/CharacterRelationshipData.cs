@@ -385,7 +385,7 @@ public class CharacterRelationshipData {
         text += "\n\t<b>Encounter Multiplier:</b> " + encounterMultiplier.ToString();
         text += "\n\t<b>Is Missing?:</b> " + isCharacterMissing.ToString();
         text += "\n\t<b>Is Located?:</b> " + isCharacterLocated.ToString();
-        text += "\n\t<b>Known Structure:</b> " + knownStructure.ToString();
+        text += "\n\t<b>Known Structure:</b> " + knownStructure?.ToString() ?? "Unknown";
         text += "\n\t<b>Trouble:</b> ";
         if (trouble.Count > 0) {
             for (int i = 0; i < trouble.Count; i++) {
