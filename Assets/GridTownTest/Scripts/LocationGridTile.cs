@@ -120,6 +120,15 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         }
         return false;
     }
+    public bool IsAtEdgeOfMap() {
+        TileNeighbourDirection[] dirs = Utilities.GetEnumValues<TileNeighbourDirection>();
+        for (int i = 0; i < dirs.Length; i++) {
+            if (!neighbours.ContainsKey(dirs[i])) {
+                return true;
+            }
+        }
+        return false;
+    }
     public bool HasDifferentDwellingOrOutsideNeighbour() {
         foreach (KeyValuePair<TileNeighbourDirection, LocationGridTile> kvp in neighbours) {
             if (!kvp.Value.isInside || (kvp.Value.structure != this.structure)) {

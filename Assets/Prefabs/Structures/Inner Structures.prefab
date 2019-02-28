@@ -407,7 +407,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4416850454280092}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4276482833732314
 Transform:
@@ -420,7 +420,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4416850454280092}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4320971665297406
 Transform:
@@ -446,8 +446,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4912902495872174}
-  - {fileID: 4115541264121874}
   - {fileID: 4276482833732314}
+  - {fileID: 4115541264121874}
   - {fileID: 4320971665297406}
   - {fileID: 4708611216525386}
   m_Father: {fileID: 4962896830789656}
@@ -727,6 +727,7 @@ MonoBehaviour:
   outsideTile: {fileID: 11400000, guid: eb3f0a06db068d04f86d266316b14e08, type: 2}
   insideTile: {fileID: 11400000, guid: 34f9b3db99247e14c82054ed5b39c5a8, type: 2}
   wallTile: {fileID: 11400000, guid: 04286a618bd418a4383f64faeb657fea, type: 2}
+  dungeonWallTile: {fileID: 11400000, guid: 0e76310f7d566d54c98f2d850927ab6d, type: 2}
   dungeonTile: {fileID: 11400000, guid: 179be48da5f94ae4aa9d75fef25117d1, type: 2}
   structureTile: {fileID: 11400000, guid: b980e9be30d67fc4b9a27e8f82835d35, type: 2}
   floorTile: {fileID: 11400000, guid: f0dacbe9adb2017408952900686d4c7b, type: 2}
@@ -1595,7 +1596,7 @@ TilemapRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1024382313
   m_SortingLayer: 19
-  m_SortingOrder: 11
+  m_SortingOrder: 12
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
   m_MaxChunkCount: 16
@@ -1679,7 +1680,7 @@ TilemapRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1024382313
   m_SortingLayer: 19
-  m_SortingOrder: 12
+  m_SortingOrder: 11
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
   m_MaxChunkCount: 16

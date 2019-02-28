@@ -1277,10 +1277,12 @@ MonoBehaviour:
   - areaType: 1
     baseAreaType: 0
   - areaType: 2
-    baseAreaType: 1
+    baseAreaType: 0
   - areaType: 3
     baseAreaType: 2
   - areaType: 4
+    baseAreaType: 1
+  - areaType: 5
     baseAreaType: 1
   corruptedLandmarksCount: 0
   ancientRuinTowerSprite: {fileID: 21300000, guid: ef09c80c77be9fd44b96fa5ee6f851e5,
