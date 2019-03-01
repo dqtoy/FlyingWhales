@@ -97,6 +97,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public Interaction plannedInteraction { get; private set; }
     public List<IPointOfInterest> awareness { get; private set; }
     public List<INTERACTION_TYPE> poiGoapActions { get; private set; }
+    public List<GoapPlan> allGoapPlans { get; private set; }
     public GoapPlanner planner { get; set; }
 
     private LocationGridTile tile; //what tile in the structure is this character currently in.
@@ -494,7 +495,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         tokenInInventory = null;
         interactionWeights = new WeightedDictionary<INTERACTION_TYPE>();
         relationships = new Dictionary<Character, CharacterRelationshipData>();
-        
+        poiGoapActions = new List<INTERACTION_TYPE>();
+        allGoapPlans = new List<GoapPlan>();
 
         tiredness = TIREDNESS_DEFAULT;
         fullness = FULLNESS_DEFAULT;
@@ -3438,7 +3440,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             List<GoapAction> usableActions = new List<GoapAction>();
             for (int i = 0; i < poiGoapActions.Count; i++) {
                 if (actorAllowedInteractions.Contains(poiGoapActions[i])){
-                    GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(poiGoapActions[i], this);
+                    GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(poiGoapActions[i], actor, this);
                     if (goapAction.CanSatisfyRequirements()) {
                         usableActions.Add(goapAction);
                     }
@@ -3461,23 +3463,23 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         }
 
-        List<List<GoapNode>> allPlans = new List<List<GoapNode>>();
+        List<GoapPlan> allPlans = new List<GoapPlan>();
         for (int i = 0; i < usableActions.Count; i++) {
             if (usableActions[i].WillEffectsSatisfyPrecondition(goal)) {
-                List<GoapNode> plan = planner.PlanActions(target, usableActions[i], usableActions);
-                if(plan != null && plan.Count > 0) {
+                GoapPlan plan = planner.PlanActions(target, usableActions[i], usableActions);
+                if(plan != null) {
                     allPlans.Add(plan);
                 }
             }
         }
 
-        List<GoapNode> shortestPathToGoal = null;
+        GoapPlan shortestPathToGoal = null;
         if(allPlans.Count > 0) {
             for (int i = 0; i < allPlans.Count; i++) {
                 if (shortestPathToGoal == null) {
                     shortestPathToGoal = allPlans[i];
                 } else {
-                    if(allPlans[i].Sum(x => x.runningCost) < shortestPathToGoal.Sum(x => x.runningCost)) {
+                    if(allPlans[i].startingNode.runningCost < shortestPathToGoal.startingNode.runningCost) {
                         shortestPathToGoal = allPlans[i];
                     }
                 }
