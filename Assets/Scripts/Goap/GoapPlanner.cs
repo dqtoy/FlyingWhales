@@ -30,8 +30,34 @@ public class GoapPlanner {
                 }
             }
         }
+        GOAP_EFFECT_CONDITION[] goalEffects = new GOAP_EFFECT_CONDITION[goalAction.effects.Count];
+        for (int i = 0; i < goalAction.effects.Count; i++) {
+            goalEffects[i] = goalAction.effects[i].conditionType;
+        }
+        GoapPlan plan = new GoapPlan(cheapestStartingNode, goalEffects);
+        return plan;
+    }
+    public bool RecalculatePathForPlan(GoapPlan currentPlan, List<GoapAction> usableActions) {
+        //List of all starting nodes that can do the goal
+        List<GoapNode> startingNodes = new List<GoapNode>();
 
-        return null;
+        bool success = BuildGoapTree(currentPlan.currentNode, startingNodes, usableActions);
+        if (!success) {
+            return false;
+        }
+
+        GoapNode cheapestStartingNode = null;
+        for (int i = 0; i < startingNodes.Count; i++) {
+            if (cheapestStartingNode == null) {
+                cheapestStartingNode = startingNodes[i];
+            } else {
+                if (startingNodes[i].runningCost < cheapestStartingNode.runningCost) {
+                    cheapestStartingNode = startingNodes[i];
+                }
+            }
+        }
+        currentPlan.Reset(cheapestStartingNode);
+        return true;
     }
 
     private bool BuildGoapTree(GoapNode parent, List<GoapNode> startingNodes, List<GoapAction> usableActions) {

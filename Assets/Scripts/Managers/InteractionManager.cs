@@ -916,12 +916,12 @@ public class InteractionManager : MonoBehaviour {
     }
     public GoapAction CreateNewGoapInteraction(INTERACTION_TYPE type, Character actor, IPointOfInterest target) {
         GoapAction goapAction = null;
+        switch (type) {
+            case INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION:
+                goapAction = new ReleaseCharacter(actor, target);
+                break;
+        }
         return goapAction;
-        //switch (type) {
-        //    case INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION:
-        //        goapAction = new ReleaseAbductedAction(target);
-        //        break;
-        //}
     }
     public bool CanCreateInteraction(INTERACTION_TYPE interactionType, Area location) {
         int count = 0;

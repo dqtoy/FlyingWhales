@@ -30,9 +30,7 @@ public class GoapAction {
     protected virtual int GetCost() {
         return 0;
     }
-    public virtual void PerformAction() {
-
-    }
+    public virtual bool PerformActualAction() { return CanSatisfyRequirements() && CanSatisfyAllPreconditions(); }
     public virtual bool IsHalted() {
         return false;
     }
@@ -53,11 +51,27 @@ public class GoapAction {
         }
         return true;
     }
+    public void DoAction(GoapPlan plan) {
+        if(actor.specificLocation != poiTarget.gridTileLocation.structure.location) {
+            actor.currentParty.GoToLocation(poiTarget.gridTileLocation.structure.location, PATHFINDING_MODE.NORMAL, poiTarget.gridTileLocation.structure, () => actor.PerformGoapAction(plan));
+        } else if (actor.currentStructure != poiTarget.gridTileLocation.structure) {
+            actor.MoveToAnotherStructure(poiTarget.gridTileLocation.structure);
+            actor.PerformGoapAction(plan);
+        }
+    }
     #endregion
 
     #region Preconditions
     protected void AddPrecondition(GoapEffect effect, Func<bool> condition) {
         preconditions.Add(new Precondition(effect, condition));
+    }
+    public bool CanSatisfyAllPreconditions() {
+        for (int i = 0; i < preconditions.Count; i++) {
+            if (!preconditions[i].CanSatisfyCondition()) {
+                return false;
+            }
+        }
+        return true;
     }
     #endregion
 
@@ -74,24 +88,28 @@ public class GoapAction {
         return false;
     }
     private bool EffectPreconditionMatching(GoapEffect effect, GoapEffect precondition) {
-        if(effect.targetPOI == precondition.targetPOI) {
-            switch (effect.conditionType) {
-                case GOAP_EFFECT_CONDITION.HAS_SUPPLY:
-                    int effectInt = (int) effect.conditionKey;
-                    int preconditionInt = (int) precondition.conditionKey;
-                    return effectInt >= preconditionInt;
-                default:
-                    return effect.conditionKey == precondition.conditionKey;
-                //case GOAP_EFFECT_CONDITION.HAS_ITEM:
-                //    string effectString = effect.conditionKey as string;
-                //    string preconditionString = precondition.conditionKey as string;
-                //    return effectString.ToLower() == preconditionString.ToLower();
-                
-                //case GOAP_EFFECT_CONDITION.REMOVE_TRAIT:
-                //case GOAP_EFFECT_CONDITION.HAS_TRAIT:
-                //    effectString = effect.conditionKey as string;
-                //    preconditionString = precondition.conditionKey as string;
-                //    return effectString.ToLower() == preconditionString.ToLower();
+        if(effect.targetPOI == precondition.targetPOI && effect.conditionType == precondition.conditionType) {
+            if(effect.conditionKey != null && precondition.conditionKey != null) {
+                switch (effect.conditionType) {
+                    case GOAP_EFFECT_CONDITION.HAS_SUPPLY:
+                        int effectInt = (int) effect.conditionKey;
+                        int preconditionInt = (int) precondition.conditionKey;
+                        return effectInt >= preconditionInt;
+                    default:
+                        return effect.conditionKey == precondition.conditionKey;
+                        //case GOAP_EFFECT_CONDITION.HAS_ITEM:
+                        //    string effectString = effect.conditionKey as string;
+                        //    string preconditionString = precondition.conditionKey as string;
+                        //    return effectString.ToLower() == preconditionString.ToLower();
+
+                        //case GOAP_EFFECT_CONDITION.REMOVE_TRAIT:
+                        //case GOAP_EFFECT_CONDITION.HAS_TRAIT:
+                        //    effectString = effect.conditionKey as string;
+                        //    preconditionString = precondition.conditionKey as string;
+                        //    return effectString.ToLower() == preconditionString.ToLower();
+                }
+            } else {
+                return true;
             }
         }
         return false;
@@ -102,5 +120,5 @@ public class GoapAction {
 public struct GoapEffect {
     public GOAP_EFFECT_CONDITION conditionType;
     public object conditionKey;
-    public TARGET_POI targetPOI;
+    public IPointOfInterest targetPOI;
 }
