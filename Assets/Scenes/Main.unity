@@ -21685,9 +21685,14 @@ MonoBehaviour:
   targetCursorTexture: {fileID: 2800000, guid: 7357d53bb13f567458d4c9364c6fa54d, type: 3}
   dragWorldCursorTexture: {fileID: 2800000, guid: 311558d663a1b434da71198ded51ad58,
     type: 3}
+  dragItemHoverCursorTexture: {fileID: 2800000, guid: dacb59acfc7b3d34a99f4168a675d4b6,
+    type: 3}
+  dragItemClickedCursorTexture: {fileID: 2800000, guid: 75069d9bb4ffcc24bac92b65ce01788c,
+    type: 3}
   cursorMode: 0
   hotSpot: {x: 0, y: 0}
   pauseTickEnded2: 0
+  isDraggingItem: 0
 --- !u!114 &557822220
 MonoBehaviour:
   m_ObjectHideFlags: 0
