@@ -30,15 +30,17 @@ public class AreaInnerTileMap : MonoBehaviour {
     [SerializeField] private RuleTile outsideTile;
     [SerializeField] private TileBase insideTile;
     [SerializeField] private TileBase wallTile;
-    [SerializeField] private TileBase dungeonWallTile;
     [SerializeField] private TileBase structureTile;
     [SerializeField] private TileBase floorTile;
-    [SerializeField] private TileBase dirtTile;
     [SerializeField] private TileBase characterTile;
     [SerializeField] private TileBase supplyIconTile;
     [SerializeField] private TileBase corpseIconTile;
     [SerializeField] private ItemTileBaseDictionary itemTiles;
     [SerializeField] private FoodTileBaseDictionary foodTiles;
+
+    [Header("Dungeon Tiles")]
+    [SerializeField] private TileBase dungeonWallTile;
+    [SerializeField] private TileBase dungeonFloorTile;
 
     [Header("Oustide Tiles")]
     [SerializeField] private TileBase grassTile;
@@ -334,14 +336,14 @@ public class AreaInnerTileMap : MonoBehaviour {
                 elligibleTiles.Remove(currTile);
                 switch (kvp.Key.structureType) {
                     case STRUCTURE_TYPE.EXIT:
-                        groundTilemap.SetTile(currTile.localPlace, dirtTile);
+                        groundTilemap.SetTile(currTile.localPlace, dungeonFloorTile);
                         detailsTilemap.SetTile(currTile.localPlace, null);
                         currTile.SetTileType(LocationGridTile.Tile_Type.Structure);
                         break;
                     case STRUCTURE_TYPE.EXPLORE_AREA:
-                        groundTilemap.SetTile(currTile.localPlace, dirtTile);
+                        groundTilemap.SetTile(currTile.localPlace, dungeonFloorTile);
                         currTile.SetTileType(LocationGridTile.Tile_Type.Structure);
-                        List<LocationGridTile> neighbourTiles = GetTilesInRadius(currTile, 2, false, true);
+                        List<LocationGridTile> neighbourTiles = GetTilesInRadius(currTile, 1, false, true);
                         for (int k = 0; k < neighbourTiles.Count; k++) {
                             elligibleTiles.Remove(neighbourTiles[k]);
                         }
@@ -484,7 +486,8 @@ public class AreaInnerTileMap : MonoBehaviour {
             if (path != null) {
                 for (int j = 0; j < path.Count; j++) {
                     if (path[j].structure == null) {
-                        wallTilemap.SetTile(path[j].localPlace, dirtTile);
+                        wallTilemap.SetTile(path[j].localPlace, null);
+                        groundTilemap.SetTile(path[j].localPlace, dungeonFloorTile);
                     }
                 }
             }
@@ -507,7 +510,8 @@ public class AreaInnerTileMap : MonoBehaviour {
         if (p != null) {
             for (int j = 0; j < p.Count; j++) {
                 if (p[j].structure == null) {
-                    wallTilemap.SetTile(p[j].localPlace, dirtTile);
+                    wallTilemap.SetTile(p[j].localPlace, null);
+                    groundTilemap.SetTile(p[j].localPlace, dungeonFloorTile);
                 }
             }
         }
@@ -963,7 +967,7 @@ public class AreaInnerTileMap : MonoBehaviour {
         if (tiles != null) {
             for (int i = 0; i < tiles.Count; i++) {
                 Debug.Log(tiles[i].localPlace.x + "," + tiles[i].localPlace.y);
-                groundTilemap.SetTile(tiles[i].localPlace, dirtTile);
+                groundTilemap.SetTile(tiles[i].localPlace, dungeonFloorTile);
             }
         } else {
             Debug.Log("No Path!");

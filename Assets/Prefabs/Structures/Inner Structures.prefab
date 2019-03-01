@@ -758,10 +758,8 @@ MonoBehaviour:
   outsideTile: {fileID: 11400000, guid: eb3f0a06db068d04f86d266316b14e08, type: 2}
   insideTile: {fileID: 11400000, guid: 34f9b3db99247e14c82054ed5b39c5a8, type: 2}
   wallTile: {fileID: 11400000, guid: 04286a618bd418a4383f64faeb657fea, type: 2}
-  dungeonWallTile: {fileID: 11400000, guid: 0e76310f7d566d54c98f2d850927ab6d, type: 2}
   structureTile: {fileID: 11400000, guid: b980e9be30d67fc4b9a27e8f82835d35, type: 2}
   floorTile: {fileID: 11400000, guid: f0dacbe9adb2017408952900686d4c7b, type: 2}
-  dirtTile: {fileID: 11400000, guid: e032f61ee534a5840adefbac37ee9379, type: 2}
   characterTile: {fileID: 11400000, guid: 193bd90ca3bb1b94dafda8c721696592, type: 2}
   supplyIconTile: {fileID: 11400000, guid: 2ca7b845206b24d4aa519c328da9a7ea, type: 2}
   corpseIconTile: {fileID: 11400000, guid: 43666d40bbb7aa94692b4b9a87005259, type: 2}
@@ -793,6 +791,8 @@ MonoBehaviour:
     - {fileID: 11400000, guid: a4383e48cdad05843ae8ce38ef3d6827, type: 2}
     - {fileID: 11400000, guid: 005ad161081c96d4eaa007bd4e39aae8, type: 2}
     - {fileID: 11400000, guid: 005ad161081c96d4eaa007bd4e39aae8, type: 2}
+  dungeonWallTile: {fileID: 11400000, guid: 0e76310f7d566d54c98f2d850927ab6d, type: 2}
+  dungeonFloorTile: {fileID: 11400000, guid: 2403de5724c5b4247bc3fa5bfd41f6aa, type: 2}
   grassTile: {fileID: 11400000, guid: 5d1dfc24b82640c44bf0dd6e37c21a5f, type: 2}
   soilTile: {fileID: 11400000, guid: 9730174dcd21daf4f9643570dea4e144, type: 2}
   stoneTile: {fileID: 11400000, guid: 1eadf98aa5a55484f8390f237ea1f0f4, type: 2}
