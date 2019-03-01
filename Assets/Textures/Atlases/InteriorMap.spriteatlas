@@ -47,6 +47,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: b59aaf62346fa9c438b0217e689b999c, type: 3}
   - {fileID: 21300000, guid: a955c382b87ae1b469d9e3938e55b82e, type: 3}
   - {fileID: 21300000, guid: 92f77f82a0cfc204db364a00b7901373, type: 3}
+  - {fileID: 21300000, guid: c236f4926fa5e114ea5b76f7125fe18a, type: 3}
   - {fileID: 21300000, guid: 287396b2075d13248a96c0e28c087b2b, type: 3}
   - {fileID: 21300000, guid: e41388b260dde7e40a8aebd9fc59d5c6, type: 3}
   - {fileID: 21300000, guid: 34a6f5e2ed4f9844ca33ede5d41c5d98, type: 3}
@@ -80,6 +81,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: d9ae31d554049214ba62b98bd07e4949, type: 3}
   - {fileID: 21300000, guid: d1e20ae58b832e7478ae889735dce36b, type: 3}
   - {fileID: 21300000, guid: db8a44165c5814d4b871f608a71d4db2, type: 3}
+  - {fileID: 21300000, guid: 56be2c264d164374aa09a794d74609a5, type: 3}
   - {fileID: 21300000, guid: a0a6dd46d561369489c2beba5be0c228, type: 3}
   - {fileID: 21300000, guid: aa2f8c5696543444c8822787f0246fb0, type: 3}
   - {fileID: 21300000, guid: 7b611076b148ceb4ea1032e281a98a52, type: 3}
@@ -93,7 +95,9 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 340e1ae64b6a22f4fbde896f6081c937, type: 3}
   - {fileID: 21300000, guid: 80deb517aa362ca4692d227826ab98d7, type: 3}
   - {fileID: 21300000, guid: be25ca178f757964a966abd43d0701a3, type: 3}
+  - {fileID: 21300000, guid: b6829437c52ca3f4c8b8bfcf5f89dcef, type: 3}
   - {fileID: 21300000, guid: ee3014572f016804ab67286f8f090022, type: 3}
+  - {fileID: 21300000, guid: 9de607579992d7946a9c068fbf86e380, type: 3}
   - {fileID: 21300000, guid: 26c83677e033ab44792f31e7242f071d, type: 3}
   - {fileID: 21300000, guid: 7f435497afd6b074e876fa727e7a7e21, type: 3}
   - {fileID: 21300000, guid: 711d3fb7a2e987149b56455b1fc25858, type: 3}
@@ -129,8 +133,12 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 636c786b50377ae45bca7927bc3e2494, type: 3}
   - {fileID: 21300000, guid: 23ab1c7b4e7bb314cabac07eb4ce39ed, type: 3}
   - {fileID: 21300000, guid: 9446df3c48b01e7409f52c0e260f7f62, type: 3}
+  - {fileID: 21300000, guid: 51135a4c08bdb184a91a8ae51a729303, type: 3}
   - {fileID: 21300000, guid: c5018b4cb25d48445a48272dbf7753f0, type: 3}
   - {fileID: 21300000, guid: c2cf3f4cb2da6a34a9ea6bcbb9c882cf, type: 3}
+  - {fileID: 21300000, guid: d5311ebcfc2ffbc4bb33d3f2b7f1a970, type: 3}
+  - {fileID: 21300000, guid: 079ce5cc13bbd324fa99a5820bda0d54, type: 3}
+  - {fileID: 21300000, guid: 6b0d9acc33c3f924faa7c6840e010066, type: 3}
   - {fileID: 21300000, guid: b438f3fcf6b728641a17af44e51ea325, type: 3}
   - {fileID: 21300000, guid: 22ff750ded684d945a241b880c86643c, type: 3}
   - {fileID: 21300000, guid: ab4abe1df8096d84391f156cbafbc18e, type: 3}
@@ -143,6 +151,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: d59756ad7cc381a4693f8872dee43007, type: 3}
   - {fileID: 21300000, guid: 866fc2fd1952a3e4096feb783efef97b, type: 3}
   - {fileID: 21300000, guid: 955cd41edecb1504ba459a1eadd6f249, type: 3}
+  - {fileID: 21300000, guid: 04bc161e03119a1499a546c9c01f6422, type: 3}
   - {fileID: 21300000, guid: 11226b1e948092b418ef8e55fa635e57, type: 3}
   - {fileID: 21300000, guid: accaa33e3ecce3f47b6b6cb83ca0aef7, type: 3}
   - {fileID: 21300000, guid: 918d893e6c4c568499aa05881fa73183, type: 3}
@@ -171,6 +180,7 @@ SpriteAtlas:
   - minion_icon_diplomat 1
   - caveWallA-0010-00
   - caveWallA-1100-01
+  - table00
   - caveWallA-1001-00
   - wall0110-00_extended
   - caveWallA-1100-00
@@ -204,6 +214,7 @@ SpriteAtlas:
   - wallA-1000-00
   - flowers02
   - wall1111-00
+  - rabbit00
   - wall1101-00
   - minion_icon_debilitator 1
   - grass01
@@ -217,7 +228,9 @@ SpriteAtlas:
   - caveWallA-1010-00
   - floorA00
   - barrels01
+  - treasureChest00
   - wall0011-00
+  - berryBushEmpty00
   - wallA-1010-01
   - flowers00
   - barrels00
@@ -253,8 +266,12 @@ SpriteAtlas:
   - road03
   - wallA-0111-00
   - Empty
+  - oreDepleted00
   - treeBig00
   - caveWallA-1000-00
+  - chair00
+  - bed00
+  - berryBush00
   - wall1110-00
   - crates01
   - wall0110-00
@@ -267,6 +284,7 @@ SpriteAtlas:
   - wall1010-00
   - shrub01
   - debrisRocks02
+  - ore00
   - wallA-0010-00
   - wall1100-00
   - shrub00

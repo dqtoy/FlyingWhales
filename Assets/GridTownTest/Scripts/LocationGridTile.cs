@@ -10,6 +10,10 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
 
     public enum Tile_Type { Empty, Wall, Structure, Gate }
     public enum Tile_State { Impassable, Empty, Reserved, Occupied }
+    public enum Ground_Type { Soil, Grass, Stone }
+
+    public bool hasDetail = false;
+
     public Tilemap parentTileMap { get; private set; }
     public Vector3Int localPlace { get; private set; }
     public Vector3 worldLocation { get; private set; }
@@ -17,6 +21,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     public bool isInside { get; private set; }
     public Tile_Type tileType { get; private set; }
     public Tile_State tileState { get; private set; }
+    public Ground_Type groundType { get; set; }
     public LocationStructure structure { get; private set; }
     public Dictionary<TileNeighbourDirection, LocationGridTile> neighbours { get; private set; }
     public GameObject prefabHere { get; private set; } //if there is a prefab that was instantiated at this tiles location
@@ -129,9 +134,25 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         }
         return false;
     }
+    public bool HasNeighborAtEdgeOfMap() {
+        foreach (KeyValuePair<TileNeighbourDirection, LocationGridTile> kvp in neighbours) {
+            if (kvp.Value.IsAtEdgeOfMap()) {
+                return true;
+            }
+        }
+        return false;
+    }
     public bool HasDifferentDwellingOrOutsideNeighbour() {
         foreach (KeyValuePair<TileNeighbourDirection, LocationGridTile> kvp in neighbours) {
             if (!kvp.Value.isInside || (kvp.Value.structure != this.structure)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public bool IsAdjacentToWall() {
+        foreach (KeyValuePair<TileNeighbourDirection, LocationGridTile> kvp in neighbours) {
+            if (kvp.Value.tileType == Tile_Type.Wall || (kvp.Value.structure != null && kvp.Value.structure.structureType != STRUCTURE_TYPE.WORK_AREA)) {
                 return true;
             }
         }
