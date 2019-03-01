@@ -33,6 +33,9 @@ public class GoapAction {
     public virtual void PerformAction() {
 
     }
+    public virtual bool IsHalted() {
+        return false;
+    }
     #endregion
 
     #region Utilities
@@ -71,20 +74,25 @@ public class GoapAction {
         return false;
     }
     private bool EffectPreconditionMatching(GoapEffect effect, GoapEffect precondition) {
-        switch (effect.conditionType) {
-            case GOAP_EFFECT_CONDITION.HAS_ITEM:
-                string effectString = effect.conditionKey as string;
-                string preconditionString = precondition.conditionKey as string;
-                return effectString.ToLower() == preconditionString.ToLower();
-            case GOAP_EFFECT_CONDITION.HAS_SUPPLY:
-                int effectInt = (int) effect.conditionKey;
-                int preconditionInt = (int) precondition.conditionKey;
-                return effectInt >= preconditionInt;
-            case GOAP_EFFECT_CONDITION.REMOVE_TRAIT:
-            case GOAP_EFFECT_CONDITION.HAS_TRAIT:
-                effectString = effect.conditionKey as string;
-                preconditionString = precondition.conditionKey as string;
-                return effectString.ToLower() == preconditionString.ToLower();
+        if(effect.targetPOI == precondition.targetPOI) {
+            switch (effect.conditionType) {
+                case GOAP_EFFECT_CONDITION.HAS_SUPPLY:
+                    int effectInt = (int) effect.conditionKey;
+                    int preconditionInt = (int) precondition.conditionKey;
+                    return effectInt >= preconditionInt;
+                default:
+                    return effect.conditionKey == precondition.conditionKey;
+                //case GOAP_EFFECT_CONDITION.HAS_ITEM:
+                //    string effectString = effect.conditionKey as string;
+                //    string preconditionString = precondition.conditionKey as string;
+                //    return effectString.ToLower() == preconditionString.ToLower();
+                
+                //case GOAP_EFFECT_CONDITION.REMOVE_TRAIT:
+                //case GOAP_EFFECT_CONDITION.HAS_TRAIT:
+                //    effectString = effect.conditionKey as string;
+                //    preconditionString = precondition.conditionKey as string;
+                //    return effectString.ToLower() == preconditionString.ToLower();
+            }
         }
         return false;
     }

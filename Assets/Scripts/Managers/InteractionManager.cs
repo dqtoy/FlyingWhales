@@ -914,7 +914,7 @@ public class InteractionManager : MonoBehaviour {
         }
         return createdInteraction;
     }
-    public GoapAction CreateNewGoapInteraction(INTERACTION_TYPE type, IPointOfInterest target) {
+    public GoapAction CreateNewGoapInteraction(INTERACTION_TYPE type, Character actor, IPointOfInterest target) {
         GoapAction goapAction = null;
         return goapAction;
         //switch (type) {
