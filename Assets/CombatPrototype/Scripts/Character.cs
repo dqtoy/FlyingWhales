@@ -494,7 +494,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         tokenInInventory = null;
         interactionWeights = new WeightedDictionary<INTERACTION_TYPE>();
         relationships = new Dictionary<Character, CharacterRelationshipData>();
-        
+        poiGoapActions = new List<INTERACTION_TYPE>();
 
         tiredness = TIREDNESS_DEFAULT;
         fullness = FULLNESS_DEFAULT;
@@ -3438,7 +3438,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             List<GoapAction> usableActions = new List<GoapAction>();
             for (int i = 0; i < poiGoapActions.Count; i++) {
                 if (actorAllowedInteractions.Contains(poiGoapActions[i])){
-                    GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(poiGoapActions[i], this);
+                    GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(poiGoapActions[i], actor, this);
                     if (goapAction.CanSatisfyRequirements()) {
                         usableActions.Add(goapAction);
                     }
