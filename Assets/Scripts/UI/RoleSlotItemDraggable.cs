@@ -2,14 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.UI;
 
-public class NewMinionDraggable : DraggableItem {
+public class RoleSlotItemDraggable : DraggableItem {
 
-    private AttackPickerItem _characterItem;
+    private RoleSlotItem roleSlotItem;
 
     private void Awake() {
-        _characterItem = gameObject.GetComponent<AttackPickerItem>();
+        roleSlotItem = gameObject.GetComponent<RoleSlotItem>();
         SetDraggable(_isDraggable);
     }
 
@@ -22,10 +21,10 @@ public class NewMinionDraggable : DraggableItem {
         }
         GameManager.Instance.SetCursorToItemDragClicked();
         //_characterItem = gameObject.GetComponent<PlayerCharacterItem>();
-        CharacterPortrait portrait = _characterItem.portrait;
+        CharacterPortrait portrait = roleSlotItem.portrait;
         GameObject clone = (GameObject)Instantiate(portrait.gameObject);
         _draggingObject = clone.GetComponent<RectTransform>();
-        _draggingObject.gameObject.AddComponent<DragObject>().parentItem = _characterItem;
+        _draggingObject.gameObject.AddComponent<DragObject>().parentItem = roleSlotItem;
 
         //Put _dragging object into the dragging area
         _draggingObject.sizeDelta = portrait.gameObject.GetComponent<RectTransform>().rect.size;
@@ -35,7 +34,7 @@ public class NewMinionDraggable : DraggableItem {
     public override void OnEndDrag(PointerEventData eventData) {
         _isDragging = false;
         GameManager.Instance.SetCursorToItemDragHover();
-        if (_characterItem != null && _draggingObject != null) {
+        if (roleSlotItem != null && _draggingObject != null) {
             List<RaycastResult> newRaycastResults = new List<RaycastResult>();
             CustomDropZone customDropzone = null;
             EventSystem.current.RaycastAll(eventData, newRaycastResults);
@@ -51,6 +50,8 @@ public class NewMinionDraggable : DraggableItem {
                 customDropzone.OnDrop(_draggingObject.gameObject);
                 Destroy(_draggingObject.gameObject);
             } else {
+                GameManager.Instance.SetCursorToDefault();
+                PlayerManager.Instance.player.UnassignCharacterFromJob(roleSlotItem.slotJob);
                 CancelDrag();
             }
         }
@@ -70,4 +71,17 @@ public class NewMinionDraggable : DraggableItem {
         }
     }
     #endregion
+
+    public override void OnPointerEnter(PointerEventData eventData) {
+        if (roleSlotItem.associatedObj == null) {
+            return;
+        }
+        base.OnPointerEnter(eventData);
+    }
+    public override void OnPointerExit(PointerEventData eventData) {
+        if (roleSlotItem.associatedObj == null) {
+            return;
+        }
+        base.OnPointerExit(eventData);
+    }
 }

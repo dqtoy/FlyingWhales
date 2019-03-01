@@ -55,10 +55,13 @@ public class GameManager : MonoBehaviour {
     [SerializeField] private Texture2D defaultCursorTexture;
     [SerializeField] private Texture2D targetCursorTexture;
     [SerializeField] private Texture2D dragWorldCursorTexture;
+    [SerializeField] private Texture2D dragItemHoverCursorTexture;
+    [SerializeField] private Texture2D dragItemClickedCursorTexture;
     [SerializeField] private CursorMode cursorMode = CursorMode.Auto;
     [SerializeField] private Vector2 hotSpot = Vector2.zero;
 
     public bool pauseTickEnded2 = false;
+    public bool isDraggingItem = false;
 
     #region getters/setters
     public bool gameHasStarted {
@@ -289,8 +292,10 @@ public class GameManager : MonoBehaviour {
         }
         return timeInWords[intTime];
     }
+
     #region Cursor
     public void SetCursorToDefault() {
+        isDraggingItem = false;
         Cursor.SetCursor(defaultCursorTexture, hotSpot, cursorMode);
     }
     public void SetCursorToTarget() {
@@ -298,6 +303,14 @@ public class GameManager : MonoBehaviour {
     }
     public void SetCursorToDrag() {
         Cursor.SetCursor(dragWorldCursorTexture, new Vector2(16f, 16f), cursorMode);
+    }
+    public void SetCursorToItemDragHover() {
+        isDraggingItem = false;
+        Cursor.SetCursor(dragItemHoverCursorTexture, hotSpot, cursorMode);
+    }
+    public void SetCursorToItemDragClicked() {
+        isDraggingItem = true;
+        Cursor.SetCursor(dragItemClickedCursorTexture, hotSpot, cursorMode);
     }
     #endregion
 

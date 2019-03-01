@@ -4,14 +4,15 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class RoleSlotItem : MonoBehaviour {
+public class RoleSlotItem : MonoBehaviour, IDragParentItem {
 
     private Character character;
 
-    [SerializeField] private JOB slotJob;
+    public CharacterPortrait portrait;
+
+    public JOB slotJob { get; private set; }
     [SerializeField] private Image jobIcon;
     [SerializeField] private TextMeshProUGUI jobNameLbl;
-    [SerializeField] private CharacterPortrait portrait;
     [SerializeField] private Button assignBtn;
 
     [Header("Job Actions")]
@@ -23,6 +24,10 @@ public class RoleSlotItem : MonoBehaviour {
     public CustomDropZone dropZone;
 
     public System.Type neededType { get; private set; }
+
+    public object associatedObj {
+        get { return character; }
+    }
 
     public void SetSlotJob(JOB job) { //This should only be called once!
         slotJob = job;

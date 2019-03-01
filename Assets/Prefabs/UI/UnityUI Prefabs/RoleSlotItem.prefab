@@ -109,6 +109,7 @@ GameObject:
   - component: {fileID: 114389122463645684}
   - component: {fileID: 114433901452890674}
   - component: {fileID: 114285873107019808}
+  - component: {fileID: 114324032712288712}
   m_Layer: 5
   m_Name: RoleSlotItem
   m_TagString: Untagged
@@ -981,6 +982,19 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114324032712288712
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1260979678377894}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b308af2da1ea4f34b99339d9ce9ea174, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _isDraggable: 1
+  _isDragging: 0
 --- !u!114 &114389122463645684
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1155,10 +1169,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 17991923c0122a7438818a306767d536, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  portrait: {fileID: 114840016544442870}
   slotJob: 0
   jobIcon: {fileID: 114030249917892534}
   jobNameLbl: {fileID: 114427035971924372}
-  portrait: {fileID: 114840016544442870}
   assignBtn: {fileID: 114031635474075278}
   jobActionBtnPrefab: {fileID: 1407515856224950, guid: 0c64f5050d08386459366dc1cbd0f055,
     type: 2}
