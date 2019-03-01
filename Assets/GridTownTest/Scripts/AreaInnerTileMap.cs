@@ -101,8 +101,13 @@ public class AreaInnerTileMap : MonoBehaviour {
           { STRUCTURE_TYPE.EXPLORE_AREA,
             new List<Point>(){
                 new Point(3, 5),
-                //new Point(6, 6),
                 new Point(5, 4),
+                //new Point(4, 5),
+                //new Point(4, 6),
+                //new Point(5, 6),
+                //new Point(5, 5),
+                //new Point(6, 5),
+                //new Point(6, 4)
             }
         },
         { STRUCTURE_TYPE.WAREHOUSE,
@@ -509,43 +514,56 @@ public class AreaInnerTileMap : MonoBehaviour {
 
     }
     private void GenerateExploreAreas() {
-        //wallTilemap.gameObject.SetActive(false);
-        //detailsTilemap.gameObject.SetActive(false);
-        //strcutureTilemap.gameObject.SetActive(false);
-        //objectsTilemap.gameObject.SetActive(false);
         List<LocationStructure> exploreAreas = area.GetStructuresOfType(STRUCTURE_TYPE.EXPLORE_AREA);
-        List<LocationGridTile> elligibleTiles = new List<LocationGridTile>(insideTiles);
         List<ExploreArea> createdExploreAreas = new List<ExploreArea>();
-        int exploreAreaCount = exploreAreas.Count;
-        for (int i = 0; i < exploreAreaCount; i++) {
-            LocationGridTile chosenTile = elligibleTiles[Random.Range(0, elligibleTiles.Count)];
-            ExploreArea newEA = new ExploreArea();
-            newEA.coreTile = chosenTile;
-            createdExploreAreas.Add(newEA);
-            List<LocationGridTile> nearTiles = GetTilesInRadius(chosenTile, 6, true, true);
-            Utilities.ListRemoveRange(elligibleTiles, nearTiles);
-        }
+        int xCoord = gate.localPlace.x + Random.Range(3, 5);
+        List<LocationGridTile> column = GetColumn(xCoord);
+        //get random tile that is 3 or 4 tiles from the entrance
+        Queue<LocationGridTile> tilesToCheck = new Queue<LocationGridTile>();
+        tilesToCheck.Enqueue(column[Random.Range(0, tilesToCheck.Count)]);
 
-        elligibleTiles = new List<LocationGridTile>(insideTiles);
-        for (int i = 0; i < createdExploreAreas.Count; i++) {
-            elligibleTiles.Remove(createdExploreAreas[i].coreTile);
-        }
+        while (exploreAreas.Count > createdExploreAreas.Count) {
 
-        for (int i = 0; i < elligibleTiles.Count; i++) {
-            LocationGridTile currTile = elligibleTiles[i];
-            ExploreArea nearestArea = GetNearestExploreArea(createdExploreAreas, currTile);
-            nearestArea.AddTile(currTile);
-        }
-
-        for (int i = 0; i < createdExploreAreas.Count; i++) {
-            ExploreArea currArea = createdExploreAreas[i];
-            List<LocationGridTile> converted = currArea.ConvertToActualArea(map);
-            for (int j = 0; j < converted.Count; j++) {
-                LocationGridTile currTile = converted[j];
-                wallTilemap.SetTile(currTile.localPlace, null);
-            }
         }
     }
+    //private void GenerateExploreAreas() {
+    //    //wallTilemap.gameObject.SetActive(false);
+    //    //detailsTilemap.gameObject.SetActive(false);
+    //    //strcutureTilemap.gameObject.SetActive(false);
+    //    //objectsTilemap.gameObject.SetActive(false);
+    //    List<LocationStructure> exploreAreas = area.GetStructuresOfType(STRUCTURE_TYPE.EXPLORE_AREA);
+    //    List<LocationGridTile> elligibleTiles = new List<LocationGridTile>(insideTiles);
+    //    List<ExploreArea> createdExploreAreas = new List<ExploreArea>();
+    //    int exploreAreaCount = exploreAreas.Count;
+    //    for (int i = 0; i < exploreAreaCount; i++) {
+    //        LocationGridTile chosenTile = elligibleTiles[Random.Range(0, elligibleTiles.Count)];
+    //        ExploreArea newEA = new ExploreArea();
+    //        newEA.coreTile = chosenTile;
+    //        createdExploreAreas.Add(newEA);
+    //        List<LocationGridTile> nearTiles = GetTilesInRadius(chosenTile, 6, true, true);
+    //        Utilities.ListRemoveRange(elligibleTiles, nearTiles);
+    //    }
+
+    //    elligibleTiles = new List<LocationGridTile>(insideTiles);
+    //    for (int i = 0; i < createdExploreAreas.Count; i++) {
+    //        elligibleTiles.Remove(createdExploreAreas[i].coreTile);
+    //    }
+
+    //    for (int i = 0; i < elligibleTiles.Count; i++) {
+    //        LocationGridTile currTile = elligibleTiles[i];
+    //        ExploreArea nearestArea = GetNearestExploreArea(createdExploreAreas, currTile);
+    //        nearestArea.AddTile(currTile);
+    //    }
+
+    //    for (int i = 0; i < createdExploreAreas.Count; i++) {
+    //        ExploreArea currArea = createdExploreAreas[i];
+    //        List<LocationGridTile> converted = currArea.ConvertToActualArea(map);
+    //        for (int j = 0; j < converted.Count; j++) {
+    //            LocationGridTile currTile = converted[j];
+    //            wallTilemap.SetTile(currTile.localPlace, null);
+    //        }
+    //    }
+    //}
     private ExploreArea GetNearestExploreArea(List<ExploreArea> areas, LocationGridTile tile) {
         ExploreArea nearestArea = null;
         float nearestDist = 99999f;
@@ -679,9 +697,8 @@ public class AreaInnerTileMap : MonoBehaviour {
         if (coordinate.x >= 0 && coordinate.x < width
             && coordinate.y >= 0 && coordinate.y < height) {
             LocationGridTile hoveredTile = map[coordinate.x, coordinate.y];
-            ShowTileData(hoveredTile);
             if (hoveredTile.objHere != null) {
-                
+                ShowTileData(hoveredTile);
                 if (Input.GetMouseButtonDown(0)) {
                     if (hoveredTile.objHere is Character) {
                         UIManager.Instance.ShowCharacterInfo(hoveredTile.objHere as Character);
@@ -691,7 +708,7 @@ public class AreaInnerTileMap : MonoBehaviour {
                 if (Input.GetMouseButtonDown(0)) {
                     Messenger.Broadcast(Signals.HIDE_MENUS);
                 }
-                //UIManager.Instance.HideSmallInfo();
+                UIManager.Instance.HideSmallInfo();
             }
         } else {
             UIManager.Instance.HideSmallInfo();
@@ -805,6 +822,14 @@ public class AreaInnerTileMap : MonoBehaviour {
             }
         }
         return tiles;
+    }
+    private List<LocationGridTile> GetColumn(int x) {
+        List<LocationGridTile> column = new List<LocationGridTile>();
+        for (int i = 0; i < height; i++) {
+            LocationGridTile currTile = map[x, i];
+            column.Add(currTile);
+        }
+        return column;
     }
     #endregion
 
