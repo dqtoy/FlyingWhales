@@ -290,78 +290,95 @@ public class AreaInnerTileMap : MonoBehaviour {
         }
     }
     private void PlaceStructures(Dictionary<STRUCTURE_TYPE, List<LocationStructure>> structures, List<LocationGridTile> sourceTiles) {
-        Dictionary<LocationStructure, Point> structuresToCreate = new Dictionary<LocationStructure, Point>();
-        int neededTiles = 0;
-        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp in structures) {
-            if (!structureSettings.ContainsKey(kvp.Key)) {
-                //if (!structureSettings.ContainsKey(kvp.Key) || kvp.Key == STRUCTURE_TYPE.EXPLORE_AREA) { //skip explore areas
-                continue; //skip
-            }
-            //structuresToCreate.Add(kvp.Key, new List<Point>());
-            for (int i = 0; i < kvp.Value.Count; i++) {
-                Point point = structureSettings[kvp.Key][Random.Range(0, structureSettings[kvp.Key].Count)];
-                structuresToCreate.Add(kvp.Value[i], point);
-                neededTiles += point.Product();
-            }
-        }
-        structuresToCreate = structuresToCreate.OrderBy(x => x.Key.structureType).ToDictionary((keyItem) => keyItem.Key, (valueItem) => valueItem.Value);
-
-        Debug.Log("We need at least " + neededTiles.ToString() + " tiles to meet the required structures. Current tiles are: " + sourceTiles.Count);
         List<LocationGridTile> elligibleTiles = new List<LocationGridTile>(sourceTiles.Where(x => !x.IsAtEdgeOfMap() && !x.HasNeighborAtEdgeOfMap()));
         int leftMostCoordinate = elligibleTiles.Min(t => t.localPlace.x);
         int rightMostCoordinate = elligibleTiles.Max(t => t.localPlace.x);
         int topMostCoordinate = elligibleTiles.Max(t => t.localPlace.y);
         int botMostCoordinate = elligibleTiles.Min(t => t.localPlace.y);
-
-        foreach (KeyValuePair<LocationStructure, Point> kvp in structuresToCreate) {
-            Point currPoint = kvp.Value;
-            List<LocationGridTile> choices;
-            if (kvp.Key.structureType == STRUCTURE_TYPE.EXIT) {
-                choices = GetTilesForExitStructure(sourceTiles, currPoint);
-            } else {
-                choices = elligibleTiles.Where(
-                t => t.localPlace.x + currPoint.X < rightMostCoordinate
-                && t.localPlace.y + currPoint.Y < topMostCoordinate
-                && Utilities.ContainsRange(elligibleTiles, GetTiles(currPoint, t))).ToList();
+        structures = structures.OrderBy(x => x.Key).ToDictionary((keyItem) => keyItem.Key, (valueItem) => valueItem.Value);
+        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp in structures) {
+            if (!structureSettings.ContainsKey(kvp.Key)) {
+                //if (!structureSettings.ContainsKey(kvp.Key) || kvp.Key == STRUCTURE_TYPE.EXPLORE_AREA) { //skip explore areas
+                continue; //skip
             }
+            for (int i = 0; i < kvp.Value.Count; i++) {
+                LocationStructure currStruct = kvp.Value[i];
+                List<LocationGridTile> choices;
+                Point currPoint = new Point(0,0);
+                if (kvp.Key == STRUCTURE_TYPE.EXIT) {
+                    currPoint = structureSettings[kvp.Key][0];
+                    choices = GetTilesForExitStructure(sourceTiles, currPoint);
+                } else {
+                    List<Point> pointChoices = GetValidStructureSettings(kvp.Key, elligibleTiles, rightMostCoordinate, topMostCoordinate);
+                    if (pointChoices.Count == 0) {
+                        throw new System.Exception("No More Tiles for" + kvp.Key + " at " + area.name);
+                    }
+                    currPoint = pointChoices[Random.Range(0, pointChoices.Count)];
 
-            if (choices.Count <= 0) {
-                throw new System.Exception("No More Tiles for" + kvp.Key + " at " + area.name);
-            }
-            LocationGridTile chosenStartingTile = choices[Random.Range(0, choices.Count)];
-            List<LocationGridTile> tiles = GetTiles(currPoint, chosenStartingTile);
-            for (int j = 0; j < tiles.Count; j++) {
-                LocationGridTile currTile = tiles[j];
-                currTile.SetStructure(kvp.Key);
-                elligibleTiles.Remove(currTile);
-                switch (kvp.Key.structureType) {
-                    case STRUCTURE_TYPE.EXIT:
-                        groundTilemap.SetTile(currTile.localPlace, dungeonFloorTile);
-                        detailsTilemap.SetTile(currTile.localPlace, null);
-                        currTile.SetTileType(LocationGridTile.Tile_Type.Structure);
-                        break;
-                    case STRUCTURE_TYPE.EXPLORE_AREA:
-                        groundTilemap.SetTile(currTile.localPlace, dungeonFloorTile);
-                        currTile.SetTileType(LocationGridTile.Tile_Type.Structure);
-                        List<LocationGridTile> neighbourTiles = GetTilesInRadius(currTile, 1, false, true);
-                        for (int k = 0; k < neighbourTiles.Count; k++) {
-                            elligibleTiles.Remove(neighbourTiles[k]);
-                        }
-                        break;
-                    default:
-                        strcutureTilemap.SetTile(currTile.localPlace, structureTile);
-                        groundTilemap.SetTile(currTile.localPlace, floorTile);
-                        currTile.SetTileType(LocationGridTile.Tile_Type.Structure);
-                        for (int k = 0; k < currTile.neighbours.Values.Count; k++) {
-                            elligibleTiles.Remove(currTile.neighbours.Values.ToList()[k]);
-                        }
-                        break;
+                    choices = elligibleTiles.Where(
+                    t => t.localPlace.x + currPoint.X < rightMostCoordinate
+                    && t.localPlace.y + currPoint.Y < topMostCoordinate
+                    && Utilities.ContainsRange(elligibleTiles, GetTiles(currPoint, t))).ToList();
+                   
                 }
-                //yield return new WaitForSeconds(0.1f);
+
+                LocationGridTile chosenStartingTile = choices[Random.Range(0, choices.Count)];
+                List<LocationGridTile> tiles = GetTiles(currPoint, chosenStartingTile);
+                for (int j = 0; j < tiles.Count; j++) {
+                    LocationGridTile currTile = tiles[j];
+                    currTile.SetStructure(currStruct);
+                    elligibleTiles.Remove(currTile);
+                    switch (kvp.Key) {
+                        case STRUCTURE_TYPE.EXIT:
+                            groundTilemap.SetTile(currTile.localPlace, dungeonFloorTile);
+                            detailsTilemap.SetTile(currTile.localPlace, null);
+                            currTile.SetTileType(LocationGridTile.Tile_Type.Structure);
+                            break;
+                        case STRUCTURE_TYPE.EXPLORE_AREA:
+                            groundTilemap.SetTile(currTile.localPlace, dungeonFloorTile);
+                            currTile.SetTileType(LocationGridTile.Tile_Type.Structure);
+                            List<LocationGridTile> neighbourTiles = GetTilesInRadius(currTile, 1, false, true);
+                            for (int k = 0; k < neighbourTiles.Count; k++) {
+                                elligibleTiles.Remove(neighbourTiles[k]);
+                            }
+                            break;
+                        //case STRUCTURE_TYPE.DWELLING:
+                        //    strcutureTilemap.SetTile(currTile.localPlace, structureTile);
+                        //    groundTilemap.SetTile(currTile.localPlace, floorTile);
+                        //    currTile.SetTileType(LocationGridTile.Tile_Type.Structure);
+                        //    break;
+                        default:
+                            strcutureTilemap.SetTile(currTile.localPlace, structureTile);
+                            groundTilemap.SetTile(currTile.localPlace, floorTile);
+                            currTile.SetTileType(LocationGridTile.Tile_Type.Structure);
+                            for (int k = 0; k < currTile.neighbours.Values.Count; k++) {
+                                elligibleTiles.Remove(currTile.neighbours.Values.ToList()[k]);
+                            }
+                            break;
+                    }
+                }
             }
-            //DrawStructureTileAssets(tiles);
-            //kvp.Key.DetermineInsideTiles();
         }
+
+        //foreach (KeyValuePair<LocationStructure, Point> kvp in structuresToCreate) {
+        //    Point currPoint = kvp.Value;
+        //    List<LocationGridTile> choices;
+        //    if (kvp.Key.structureType == STRUCTURE_TYPE.EXIT) {
+        //        choices = GetTilesForExitStructure(sourceTiles, currPoint);
+        //    } else {
+        //        choices = elligibleTiles.Where(
+        //        t => t.localPlace.x + currPoint.X < rightMostCoordinate
+        //        && t.localPlace.y + currPoint.Y < topMostCoordinate
+        //        && Utilities.ContainsRange(elligibleTiles, GetTiles(currPoint, t))).ToList();
+        //    }
+
+        //    if (choices.Count <= 0) {
+        //        throw new System.Exception("No More Tiles for" + kvp.Key + " at " + area.name);
+        //    }
+            
+        //    //DrawStructureTileAssets(tiles);
+        //    //kvp.Key.DetermineInsideTiles();
+        //}
     }
     private void DrawStructureTileAssets(List<LocationGridTile> tiles) {
         //List<LocationGridTile> tilesWithWalls = new List<LocationGridTile>();
@@ -412,6 +429,19 @@ public class AreaInnerTileMap : MonoBehaviour {
         } else {
             Debug.LogWarning(area.name + " doesn't have a structure for wilderness");
         }
+    }
+    private List<Point> GetValidStructureSettings(STRUCTURE_TYPE type, List<LocationGridTile> elligibleTiles, int rightMostCoordinate, int topMostCoordinate) {
+        List<Point> valid = new List<Point>();
+        for (int i = 0; i < structureSettings[type].Count; i++) {
+            Point currPoint = structureSettings[type][i];
+            if(elligibleTiles.Where(
+                t => t.localPlace.x + currPoint.X < rightMostCoordinate
+                && t.localPlace.y + currPoint.Y < topMostCoordinate
+                && Utilities.ContainsRange(elligibleTiles, GetTiles(currPoint, t))).Count() != 0) {
+                valid.Add(currPoint);
+            }
+        }
+        return valid;
     }
     #endregion
 
