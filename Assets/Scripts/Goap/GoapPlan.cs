@@ -11,14 +11,31 @@ public class GoapPlan {
 
     public GoapNode startingNode { get; private set; }
     public GoapNode currentNode { get; private set; }
+    public GoapNode previousNode { get; private set; }
+    public GOAP_EFFECT_CONDITION[] goalEffects { get; private set; }
+    public bool isEnd { get; private set; }
 
-    public GoapPlan(GoapNode startingNode) {
+    public GoapPlan(GoapNode startingNode, GOAP_EFFECT_CONDITION[] goalEffects) {
+        this.startingNode = startingNode;
+        this.currentNode = startingNode;
+        this.goalEffects = goalEffects;
+    }
+
+    public void Reset(GoapNode startingNode) {
         this.startingNode = startingNode;
         this.currentNode = startingNode;
     }
 
-    public GoapNode GetNextNode() {
-        return currentNode.parent;
+    public void SetNextNode() {
+        previousNode = currentNode;
+        currentNode = currentNode.parent;
+    }
+
+    public void EndPlan() {
+        isEnd = true;
+        startingNode = null;
+        currentNode = null;
+        previousNode = null;
     }
 
     private int GetNodeCount() {

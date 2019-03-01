@@ -2657,6 +2657,36 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             CharacterPersonalActions();
         }
     }
+    private void DoGoapActions() {
+        if (!IsInOwnParty() || isDefender || ownParty.icon.isTravelling || _doNotDisturb > 0 || _job == null) {
+            return; //if this character is not in own party, is a defender or is travelling or cannot be disturbed, do not generate interaction
+        }
+        Trait hungryOrStarving = GetTraitOr("Starving", "Hungry");
+        Trait tiredOrExhausted = GetTraitOr("Exhausted", "Tired");
+
+        if(hungryOrStarving != null && GetPlanWithGoalEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY) == null) {
+            int chance = UnityEngine.Random.Range(0, 100);
+            int value = 30;
+            if (hungryOrStarving.name == "Starving") {
+                value = 80;
+            }
+            if(chance < value) {
+                StartGOAP(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, this, true);
+                return;
+            }
+        } else if (tiredOrExhausted != null && GetPlanWithGoalEffect(GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY) == null) {
+            int chance = UnityEngine.Random.Range(0, 100);
+            int value = 30;
+            if (hungryOrStarving.name == "Exhausted") {
+                value = 80;
+            }
+            if (chance < value) {
+                StartGOAP(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = null, targetPOI = this }, this, true);
+                return;
+            }
+        }
+        PerformGoapPlans();
+    }
     public void SetForcedInteraction(Interaction interaction) {
         _forcedInteraction = interaction;
     }
@@ -3453,12 +3483,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     #endregion
 
     #region Goap
-    public void StartGOAP(GoapEffect goal, IPointOfInterest target) {
+    public void StartGOAP(GoapEffect goal, IPointOfInterest target, bool isPriority = false) {
         List<GoapAction> usableActions = new List<GoapAction>();
         List<INTERACTION_TYPE> actorAllowedActions = RaceManager.Instance.GetNPCInteractionsOfRace(this);
         for (int i = 0; i < awareness.Count; i++) {
             List<GoapAction> awarenessActions = awareness[i].AdvertiseActionsToActor(this, actorAllowedActions);
-            if(awarenessActions != null && awarenessActions.Count > 0) {
+            if (awarenessActions != null && awarenessActions.Count > 0) {
                 usableActions.AddRange(awarenessActions);
             }
         }
@@ -3467,26 +3497,103 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         for (int i = 0; i < usableActions.Count; i++) {
             if (usableActions[i].WillEffectsSatisfyPrecondition(goal)) {
                 GoapPlan plan = planner.PlanActions(target, usableActions[i], usableActions);
-                if(plan != null) {
+                if (plan != null) {
                     allPlans.Add(plan);
                 }
             }
         }
 
-        GoapPlan shortestPathToGoal = null;
-        if(allPlans.Count > 0) {
+        if (allPlans.Count > 0) {
+            GoapPlan shortestPathToGoal = null;
             for (int i = 0; i < allPlans.Count; i++) {
                 if (shortestPathToGoal == null) {
                     shortestPathToGoal = allPlans[i];
                 } else {
-                    if(allPlans[i].startingNode.runningCost < shortestPathToGoal.startingNode.runningCost) {
+                    if (allPlans[i].startingNode.runningCost < shortestPathToGoal.startingNode.runningCost) {
                         shortestPathToGoal = allPlans[i];
                     }
                 }
             }
+            if (isPriority) {
+                allGoapPlans.Insert(0, shortestPathToGoal);
+            } else {
+                allGoapPlans.Add(shortestPathToGoal);
+            }
         }
-
-        //Assign to actor the shortestPathToGoal
+    }
+    public bool RecalculatePlan(GoapPlan currentPlan) {
+        List<GoapAction> usableActions = new List<GoapAction>();
+        List<INTERACTION_TYPE> actorAllowedActions = RaceManager.Instance.GetNPCInteractionsOfRace(this);
+        for (int i = 0; i < awareness.Count; i++) {
+            List<GoapAction> awarenessActions = awareness[i].AdvertiseActionsToActor(this, actorAllowedActions);
+            if (awarenessActions != null && awarenessActions.Count > 0) {
+                usableActions.AddRange(awarenessActions);
+            }
+        }
+        if(usableActions.Count > 0) {
+            return planner.RecalculatePathForPlan(currentPlan, usableActions);
+        }
+        return false;
+    }
+    public void PerformGoapPlans() {
+        if(allGoapPlans.Count > 0) {
+            List<INTERACTION_TYPE> actorAllowedActions = RaceManager.Instance.GetNPCInteractionsOfRace(this);
+            for (int i = 0; i < allGoapPlans.Count; i++) {
+                GoapPlan plan = allGoapPlans[i];
+                if (actorAllowedActions.Contains(plan.currentNode.action.goapType) && plan.currentNode.action.CanSatisfyRequirements()) {
+                    if (plan.currentNode.action.IsHalted()) { continue; }
+                    int recalculateCount = 0;
+                    bool preconditionsSatisfied = plan.currentNode.action.CanSatisfyAllPreconditions();
+                    bool canRecalculatePlan = true;
+                    while (!preconditionsSatisfied && recalculateCount < 3 && canRecalculatePlan) {
+                        canRecalculatePlan = RecalculatePlan(plan);
+                        if (canRecalculatePlan) {
+                            preconditionsSatisfied = plan.currentNode.action.CanSatisfyAllPreconditions();
+                            recalculateCount++;
+                        }
+                    }
+                    if (!canRecalculatePlan) {
+                        DropPlan(plan);
+                        i--;
+                    } else if (preconditionsSatisfied) {
+                        plan.currentNode.action.DoAction(plan);
+                        break;
+                    } else if (recalculateCount >= 3) {
+                        DropPlan(plan);
+                        i--;
+                    }
+                } else {
+                    DropPlan(plan);
+                    i--;
+                }
+            }
+        }
+    }
+    public void PerformGoapAction(GoapPlan plan) {
+        bool success = plan.currentNode.action.PerformActualAction();
+        if (!success) {
+            if (!RecalculatePlan(plan)) {
+                DropPlan(plan);
+            }
+        } else {
+            plan.SetNextNode();
+            if(plan.currentNode == null) {
+                //this means that this is the end goal so end this plan now
+                DropPlan(plan);
+            }
+        }
+    }
+    private void DropPlan(GoapPlan plan) {
+        allGoapPlans.Remove(plan);
+        plan.EndPlan();
+    }
+    public GoapPlan GetPlanWithGoalEffect(GOAP_EFFECT_CONDITION goalEffect) {
+        for (int i = 0; i < allGoapPlans.Count; i++) {
+            if (allGoapPlans[i].goalEffects.Contains(goalEffect)) {
+                return allGoapPlans[i];
+            }
+        }
+        return null;
     }
     #endregion
 }
