@@ -3,72 +3,32 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class SupplyPile : IPointOfInterest {
+public class Ore : IPointOfInterest {
     public string name { get { return ToString(); } }
     public LocationStructure location { get; private set; }
-    public int suppliesInPile { get; private set; }
     public List<INTERACTION_TYPE> poiGoapActions { get; private set; }
 
     private LocationGridTile tile;
 
     #region getters/setters
     public POINT_OF_INTEREST_TYPE poiType {
-        get { return POINT_OF_INTEREST_TYPE.SUPPLY_PILE; }
+        get { return POINT_OF_INTEREST_TYPE.TILE_OBJECT; }
     }
     public LocationGridTile gridTileLocation {
         get { return tile; }
     }
     #endregion
 
-    public SupplyPile(LocationStructure location) {
+    public Ore(LocationStructure location) {
         this.location = location;
-    }
-
-    public int GetSuppliesObtained() {
-        if (location.structureType == STRUCTURE_TYPE.DUNGEON) {
-            return Random.Range(location.location.dungeonSupplyRangeMin, location.location.dungeonSupplyRangeMax + 1);
-        } else {
-            return Random.Range(1, suppliesInPile);
-        }
-    }
-
-    public int GetAndReduceSuppliesObtained(Area reciever) {
-        int suppliesObtained = GetSuppliesObtained();
-        TransferSuppliesTo(reciever, suppliesObtained);
-        return suppliesObtained;
-    }
-
-    public void SetSuppliesInPile(int amount) {
-        suppliesInPile = amount;
-        suppliesInPile = Mathf.Max(0, suppliesInPile);
-    }
-
-    public void AdjustSuppliesInPile(int adjustment) {
-        suppliesInPile += adjustment;
-        suppliesInPile = Mathf.Max(0, suppliesInPile);
-    }
-
-    public void TransferSuppliesTo(Area reciever, int amount) {
-        if (location.structureType == STRUCTURE_TYPE.WAREHOUSE) { //if supplies come from warehouse, reduce amount
-            location.location.AdjustSuppliesInBank(-amount);
-            reciever.AdjustSuppliesInBank(amount);
-        } else if (location.structureType == STRUCTURE_TYPE.DUNGEON) { //if supplies come from dungeon, do not reduce amount in area
-            reciever.AdjustSuppliesInBank(amount);
-        }
-    }
-
-    public bool HasSupply() {
-        if (location.structureType == STRUCTURE_TYPE.WAREHOUSE) {
-            return suppliesInPile > 0;
-        }
-        return true;
+        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.MINE_ACTION };
     }
 
     public override string ToString() {
-        return "Supply Pile";
+        return "Ore";
     }
 
-    #region Area Map
+    #region Interface
     public void SetGridTileLocation(LocationGridTile tile) {
         this.tile = tile;
     }

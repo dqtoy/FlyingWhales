@@ -920,6 +920,33 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION:
                 goapAction = new ReleaseCharacter(actor, target);
                 break;
+            case INTERACTION_TYPE.EAT_FOOD:
+                goapAction = new EatFood(actor, target);
+                break;
+            case INTERACTION_TYPE.CRAFT_TOOL:
+                goapAction = new CraftTool(actor, target);
+                break;
+            case INTERACTION_TYPE.PICK_ITEM:
+                goapAction = new PickItemGoap(actor, target);
+                break;
+            case INTERACTION_TYPE.MINE_ACTION:
+                goapAction = new MineGoap(actor, target);
+                break;
+            case INTERACTION_TYPE.SLEEP:
+                goapAction = new Sleep(actor, target);
+                break;
+            case INTERACTION_TYPE.ASSAULT_ACTION_NPC:
+                goapAction = new AssaultCharacter(actor, target);
+                break;
+            case INTERACTION_TYPE.ABDUCT_ACTION:
+                goapAction = new AbductCharacter(actor, target);
+                break;
+            case INTERACTION_TYPE.CARRY_CHARACTER:
+                goapAction = new CarryCharacter(actor, target);
+                break;
+            case INTERACTION_TYPE.DROP_CHARACTER:
+                goapAction = new DropCharacter(actor, target);
+                break;
         }
         return goapAction;
     }

@@ -99,6 +99,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public List<INTERACTION_TYPE> poiGoapActions { get; private set; }
     public List<GoapPlan> allGoapPlans { get; private set; }
     public GoapPlanner planner { get; set; }
+    public int supply { get; set; }
 
     private LocationGridTile tile; //what tile in the structure is this character currently in.
 
@@ -3483,6 +3484,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     #endregion
 
     #region Goap
+    private void ConstructInitialGoapAdvertisementActions() {
+        poiGoapActions = new List<INTERACTION_TYPE>();
+        poiGoapActions.Add(INTERACTION_TYPE.CARRY_CHARACTER);
+        poiGoapActions.Add(INTERACTION_TYPE.ASSAULT_ACTION_NPC);
+        poiGoapActions.Add(INTERACTION_TYPE.DROP_CHARACTER);
+        poiGoapActions.Add(INTERACTION_TYPE.ABDUCT_ACTION);
+    }
     public void StartGOAP(GoapEffect goal, IPointOfInterest target, bool isPriority = false) {
         List<GoapAction> usableActions = new List<GoapAction>();
         List<INTERACTION_TYPE> actorAllowedActions = RaceManager.Instance.GetNPCInteractionsOfRace(this);
@@ -3594,6 +3602,15 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         }
         return null;
+    }
+    #endregion
+
+    #region Supply
+    public void AdjustSupply(int amount) {
+        supply += amount;
+        if(supply < 0) {
+            supply = 0;
+        }
     }
     #endregion
 }

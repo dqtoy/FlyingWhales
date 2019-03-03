@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 
 public class Corpse : IPointOfInterest {
-
+    public string name { get { return ToString(); } }
     public Character character { get; private set; }
     public LocationStructure location { get; private set; }
     public List<INTERACTION_TYPE> poiGoapActions { get; private set; }

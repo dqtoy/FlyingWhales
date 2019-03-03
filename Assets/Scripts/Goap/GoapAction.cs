@@ -11,6 +11,7 @@ public class GoapAction {
     public int cost { get { return GetCost(); } }
     public List<Precondition> preconditions { get; private set; }
     public List<GoapEffect> effects { get; private set; }
+    public virtual LocationStructure targetStructure { get { return poiTarget.gridTileLocation.structure; } }
 
     protected Func<bool> _requirementAction;
 
@@ -52,10 +53,10 @@ public class GoapAction {
         return true;
     }
     public void DoAction(GoapPlan plan) {
-        if(actor.specificLocation != poiTarget.gridTileLocation.structure.location) {
-            actor.currentParty.GoToLocation(poiTarget.gridTileLocation.structure.location, PATHFINDING_MODE.NORMAL, poiTarget.gridTileLocation.structure, () => actor.PerformGoapAction(plan));
-        } else if (actor.currentStructure != poiTarget.gridTileLocation.structure) {
-            actor.MoveToAnotherStructure(poiTarget.gridTileLocation.structure);
+        if(actor.specificLocation != targetStructure.location) {
+            actor.currentParty.GoToLocation(targetStructure.location, PATHFINDING_MODE.NORMAL, targetStructure, () => actor.PerformGoapAction(plan));
+        } else if (actor.currentStructure != targetStructure) {
+            actor.MoveToAnotherStructure(targetStructure);
             actor.PerformGoapAction(plan);
         }
     }

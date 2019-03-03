@@ -4,6 +4,7 @@ using UnityEngine;
 
 public interface IPointOfInterest {
 
+    string name { get; }
     POINT_OF_INTEREST_TYPE poiType { get; }
     LocationGridTile gridTileLocation { get; }
     List<INTERACTION_TYPE> poiGoapActions { get; }

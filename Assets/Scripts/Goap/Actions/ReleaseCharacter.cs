@@ -29,6 +29,9 @@ public class ReleaseCharacter : GoapAction {
         }
         return false;
     }
+    protected override int GetCost() {
+        return 1;
+    }
     #endregion
 
     #region Preconditions

@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEngine;
 
 public class Table : IPointOfInterest {
+    public string name { get { return ToString(); } }
     public LocationStructure location { get; private set; }
     public List<INTERACTION_TYPE> poiGoapActions { get; private set; }
 
@@ -18,7 +19,7 @@ public class Table : IPointOfInterest {
     }
     #endregion
 
-    public Table(LocationStructure location, FOOD foodType) {
+    public Table(LocationStructure location) {
         this.location = location;
         poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.EAT_FOOD };
     }

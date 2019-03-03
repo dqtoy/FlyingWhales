@@ -118,9 +118,9 @@ public class CharacterToken : Token {
 }
 
 public class SpecialToken : Token, IPointOfInterest {
+    public string name { get; private set; }
     public SPECIAL_TOKEN specialTokenType;
     public INTERACTION_TYPE npcAssociatedInteractionType;
-    public string name;
     //public int quantity;
     public int weight;
     public Faction owner;

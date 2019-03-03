@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 
 public class Food : IPointOfInterest {
-
+    public string name { get { return ToString(); } }
     public LocationStructure location { get; private set; }
     public FOOD foodType { get; private set; }
     public string foodName { get; private set; }
