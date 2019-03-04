@@ -51,6 +51,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: a955c382b87ae1b469d9e3938e55b82e, type: 3}
   - {fileID: 21300000, guid: 92f77f82a0cfc204db364a00b7901373, type: 3}
   - {fileID: 21300000, guid: c236f4926fa5e114ea5b76f7125fe18a, type: 3}
+  - {fileID: 21300000, guid: fc52d1b2285534747b486ee03709a4c8, type: 3}
   - {fileID: 21300000, guid: 287396b2075d13248a96c0e28c087b2b, type: 3}
   - {fileID: 21300000, guid: e41388b260dde7e40a8aebd9fc59d5c6, type: 3}
   - {fileID: 21300000, guid: 93d6b0c2dc8b696429edb6f164b53ac0, type: 3}
@@ -213,6 +214,7 @@ SpriteAtlas:
   - caveWallA-0010-00
   - caveWallA-1100-01
   - table00
+  - magicCircle00
   - caveWallA-1001-00
   - wall0110-00_extended
   - Vertical

@@ -194,15 +194,15 @@ public class LocationStructure {
                 if(berryRabbitSpawnPoints[i] != null) {
                     if (UnityEngine.Random.Range(0, 2) == 0) {
                         if(foodCount[FOOD.BERRY] < _location.MAX_BERRY) {
-                            AddPOI(new Food(this, FOOD.BERRY), berryRabbitSpawnPoints[i]);
+                            AddPOI(CreateFood(FOOD.BERRY), berryRabbitSpawnPoints[i]);
                         } else if (foodCount[FOOD.RABBIT] < _location.MAX_RABBIT) {
-                            AddPOI(new Food(this, FOOD.RABBIT), berryRabbitSpawnPoints[i]);
+                            AddPOI(CreateFood(FOOD.RABBIT), berryRabbitSpawnPoints[i]);
                         }
                     } else {
                         if (foodCount[FOOD.RABBIT] < _location.MAX_RABBIT) {
-                            AddPOI(new Food(this, FOOD.RABBIT), berryRabbitSpawnPoints[i]);
+                            AddPOI(CreateFood(FOOD.RABBIT), berryRabbitSpawnPoints[i]);
                         } else if (foodCount[FOOD.BERRY] < _location.MAX_BERRY) {
-                            AddPOI(new Food(this, FOOD.BERRY), berryRabbitSpawnPoints[i]);
+                            AddPOI(CreateFood(FOOD.BERRY), berryRabbitSpawnPoints[i]);
                         }
                     }
                 }
@@ -213,15 +213,15 @@ public class LocationStructure {
                 if (mushroomRatSpawnPoints[i] != null) {
                     if (UnityEngine.Random.Range(0, 2) == 0) {
                         if (foodCount[FOOD.MUSHROOM] < _location.MAX_MUSHROOM) {
-                            AddPOI(new Food(this, FOOD.MUSHROOM), mushroomRatSpawnPoints[i]);
+                            AddPOI(CreateFood(FOOD.MUSHROOM), mushroomRatSpawnPoints[i]);
                         } else if (foodCount[FOOD.RAT] < _location.MAX_RAT) {
-                            AddPOI(new Food(this, FOOD.RAT), mushroomRatSpawnPoints[i]);
+                            AddPOI(CreateFood(FOOD.RAT), mushroomRatSpawnPoints[i]);
                         }
                     } else {
                         if (foodCount[FOOD.RAT] < _location.MAX_RAT) {
-                            AddPOI(new Food(this, FOOD.RAT), mushroomRatSpawnPoints[i]);
+                            AddPOI(CreateFood(FOOD.RAT), mushroomRatSpawnPoints[i]);
                         } else if (foodCount[FOOD.MUSHROOM] < _location.MAX_MUSHROOM) {
-                            AddPOI(new Food(this, FOOD.MUSHROOM), mushroomRatSpawnPoints[i]);
+                            AddPOI(CreateFood(FOOD.MUSHROOM), mushroomRatSpawnPoints[i]);
                         }
                     }
                 }
@@ -244,6 +244,18 @@ public class LocationStructure {
     }
     public void AdjustFoodCount(FOOD food, int amount) {
         foodCount[food] += amount;
+    }
+    private Food CreateFood(FOOD foodType) {
+        switch (foodType) {
+            case FOOD.BERRY:
+            case FOOD.MUSHROOM:
+                return new EdiblePlant(this, foodType);
+            case FOOD.RABBIT:
+            case FOOD.RAT:
+                return new SmallAnimal(this, foodType);
+            default:
+                return new Food(this, foodType);
+        }
     }
     #endregion
 
