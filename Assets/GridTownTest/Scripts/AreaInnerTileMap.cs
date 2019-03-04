@@ -38,6 +38,16 @@ public class AreaInnerTileMap : MonoBehaviour {
     [SerializeField] private ItemTileBaseDictionary itemTiles;
     [SerializeField] private FoodTileBaseDictionary foodTiles;
 
+    [Header("Structure Tiles")]
+    [SerializeField] private TileBase leftWall;
+    [SerializeField] private TileBase rightWall;
+    [SerializeField] private TileBase topWall;
+    [SerializeField] private TileBase bottomWall;
+    [SerializeField] private TileBase topLeftCornerWall;
+    [SerializeField] private TileBase botLeftCornerWall;
+    [SerializeField] private TileBase topRightCornerWall;
+    [SerializeField] private TileBase botRightCornerWall;
+
     [Header("Dungeon Tiles")]
     [SerializeField] private TileBase dungeonWallTile;
     [SerializeField] private TileBase dungeonFloorTile;
@@ -102,14 +112,14 @@ public class AreaInnerTileMap : MonoBehaviour {
         },
           { STRUCTURE_TYPE.EXPLORE_AREA,
             new List<Point>(){
-                new Point(3, 5),
-                new Point(5, 4),
-                //new Point(4, 5),
-                //new Point(4, 6),
-                //new Point(5, 6),
-                //new Point(5, 5),
-                //new Point(6, 5),
-                //new Point(6, 4)
+                //new Point(3, 5),
+                //new Point(5, 4),
+                new Point(4, 5),
+                new Point(4, 6),
+                new Point(5, 6),
+                new Point(5, 5),
+                new Point(6, 5), 
+                new Point(6, 4)
             }
         },
         { STRUCTURE_TYPE.WAREHOUSE,
@@ -282,6 +292,7 @@ public class AreaInnerTileMap : MonoBehaviour {
         OutsideMapDetails(outsideTiles);
         ConstructWalls();
         PlaceStructures(area.GetStructures(true, true), insideTiles);
+        //DrawDwellingTileAssets();
         PlaceStructures(area.GetStructures(false, true), outsideTiles);
         AssignOuterAreas();
         if (area.HasStructure(STRUCTURE_TYPE.EXPLORE_AREA)) {
@@ -343,7 +354,7 @@ public class AreaInnerTileMap : MonoBehaviour {
                             }
                             break;
                         //case STRUCTURE_TYPE.DWELLING:
-                        //    strcutureTilemap.SetTile(currTile.localPlace, structureTile);
+                        //    //strcutureTilemap.SetTile(currTile.localPlace, structureTile);
                         //    groundTilemap.SetTile(currTile.localPlace, floorTile);
                         //    currTile.SetTileType(LocationGridTile.Tile_Type.Structure);
                         //    break;
@@ -359,34 +370,40 @@ public class AreaInnerTileMap : MonoBehaviour {
                 }
             }
         }
-
-        //foreach (KeyValuePair<LocationStructure, Point> kvp in structuresToCreate) {
-        //    Point currPoint = kvp.Value;
-        //    List<LocationGridTile> choices;
-        //    if (kvp.Key.structureType == STRUCTURE_TYPE.EXIT) {
-        //        choices = GetTilesForExitStructure(sourceTiles, currPoint);
-        //    } else {
-        //        choices = elligibleTiles.Where(
-        //        t => t.localPlace.x + currPoint.X < rightMostCoordinate
-        //        && t.localPlace.y + currPoint.Y < topMostCoordinate
-        //        && Utilities.ContainsRange(elligibleTiles, GetTiles(currPoint, t))).ToList();
-        //    }
-
-        //    if (choices.Count <= 0) {
-        //        throw new System.Exception("No More Tiles for" + kvp.Key + " at " + area.name);
-        //    }
-            
-        //    //DrawStructureTileAssets(tiles);
-        //    //kvp.Key.DetermineInsideTiles();
-        //}
     }
-    private void DrawStructureTileAssets(List<LocationGridTile> tiles) {
-        //List<LocationGridTile> tilesWithWalls = new List<LocationGridTile>();
-        for (int i = 0; i < tiles.Count; i++) {
-            LocationGridTile currTile = tiles[i];
-            if (currTile.HasDifferentDwellingOrOutsideNeighbour()) {
-                strcutureTilemap.SetTile(currTile.localPlace, structureTile);
+    private void DrawDwellingTileAssets() {
+        List<LocationStructure> dwellings = area.GetStructuresOfType(STRUCTURE_TYPE.DWELLING);
+        if (dwellings == null) {
+            return;
+        }
+        for (int i = 0; i < dwellings.Count; i++) {
+            LocationStructure currDwelling = dwellings[i];
+            for (int j = 0; j < currDwelling.tiles.Count; j++) {
+                LocationGridTile currTile = currDwelling.tiles[j];
+                List<TileNeighbourDirection> sameStructNeighbours = currTile.GetSameStructureNeighbourDirections();
+                if (!sameStructNeighbours.Contains(TileNeighbourDirection.Left)) {
+                    if (!sameStructNeighbours.Contains(TileNeighbourDirection.Top)) {
+                        strcutureTilemap.SetTile(currTile.localPlace, topLeftCornerWall);
+                    } else if (!sameStructNeighbours.Contains(TileNeighbourDirection.Bottom)) {
+                        strcutureTilemap.SetTile(currTile.localPlace, botLeftCornerWall);
+                    } else {
+                        strcutureTilemap.SetTile(currTile.localPlace, leftWall);
+                    }
+                } else if (!sameStructNeighbours.Contains(TileNeighbourDirection.Right)) {
+                    if (!sameStructNeighbours.Contains(TileNeighbourDirection.Top)) {
+                        strcutureTilemap.SetTile(currTile.localPlace, topRightCornerWall);
+                    } else if (!sameStructNeighbours.Contains(TileNeighbourDirection.Bottom)) {
+                        strcutureTilemap.SetTile(currTile.localPlace, botRightCornerWall);
+                    } else {
+                        strcutureTilemap.SetTile(currTile.localPlace, rightWall);
+                    }
+                } else if (!sameStructNeighbours.Contains(TileNeighbourDirection.Bottom)) {
+                    strcutureTilemap.SetTile(currTile.localPlace, bottomWall);
+                } else if (!sameStructNeighbours.Contains(TileNeighbourDirection.Top)) {
+                    strcutureTilemap.SetTile(currTile.localPlace, topWall);
+                }
             }
+            
         }
     }
     private void AssignOuterAreas() {

@@ -88,6 +88,16 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         }
     }
 
+    public List<TileNeighbourDirection> GetSameStructureNeighbourDirections() {
+        List<TileNeighbourDirection> dirs = new List<TileNeighbourDirection>();
+        foreach (KeyValuePair<TileNeighbourDirection, LocationGridTile> kvp in neighbours) {
+            if (kvp.Value.structure == this.structure) {
+                dirs.Add(kvp.Key);
+            }
+        }
+        return dirs;
+    }
+
     #region Structures
     public void SetStructure(LocationStructure structure) {
         this.structure = structure;
