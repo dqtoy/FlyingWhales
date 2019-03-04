@@ -533,7 +533,8 @@ public class AreaInnerTileMap : MonoBehaviour {
                             continue; //skip
                         }
                         //groundTilemap.SetTile(currTile.localPlace, insideTile);
-                        roadTilemap.SetTile(currTile.localPlace, roadTile);
+                        //roadTilemap.SetTile(currTile.localPlace, roadTile);
+                        roadTilemap.SetTile(currTile.localPlace, insideTile);
                         detailsTilemap.SetTile(currTile.localPlace, null);
                         currTile.SetTileType(LocationGridTile.Tile_Type.Road);
                         if (!roadTiles.Contains(currTile)) {
