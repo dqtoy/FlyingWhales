@@ -115,15 +115,28 @@ public class PathGenerator : MonoBehaviour {
 		}
 		return null;
 	}
-    public List<LocationGridTile> GetPath(LocationGridTile startingTile, LocationGridTile destinationTile) {
+    public List<LocationGridTile> GetPath(LocationGridTile startingTile, LocationGridTile destinationTile, GRID_PATHFINDING_MODE pathMode = GRID_PATHFINDING_MODE.NORMAL) {
         LocationGridTile.Tile_Type startType = startingTile.tileType;
         LocationGridTile.Tile_Type destinationType = destinationTile.tileType;
-        startingTile.SetTileType(LocationGridTile.Tile_Type.Empty);
-        destinationTile.SetTileType(LocationGridTile.Tile_Type.Empty);
+        switch (pathMode) {
+            case GRID_PATHFINDING_MODE.NORMAL:
+                startingTile.SetTileType(LocationGridTile.Tile_Type.Empty);
+                destinationTile.SetTileType(LocationGridTile.Tile_Type.Empty);
+                break;
+            case GRID_PATHFINDING_MODE.ROADS_ONLY:
+                startingTile.SetTileType(LocationGridTile.Tile_Type.Road);
+                destinationTile.SetTileType(LocationGridTile.Tile_Type.Road);
+                break;
+            default:
+                startingTile.SetTileType(LocationGridTile.Tile_Type.Empty);
+                destinationTile.SetTileType(LocationGridTile.Tile_Type.Empty);
+                break;
+        }
+       
 
         Func<LocationGridTile, LocationGridTile, double> distance = (node1, node2) => 1;
         Func<LocationGridTile, double> estimate = t => Math.Sqrt(Math.Pow(t.localPlace.x - destinationTile.localPlace.x, 2) + Math.Pow(t.localPlace.y - destinationTile.localPlace.y, 2));
-        var path = PathFind.PathFind.FindPath(startingTile, destinationTile, distance, estimate);
+        var path = PathFind.PathFind.FindPath(startingTile, destinationTile, distance, estimate, pathMode);
 
         startingTile.SetTileType(startType);
         destinationTile.SetTileType(destinationType);

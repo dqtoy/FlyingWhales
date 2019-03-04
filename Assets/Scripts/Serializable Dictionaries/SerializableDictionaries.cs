@@ -42,7 +42,6 @@ public class ItemTileBaseDictionary : SerializableDictionary<SPECIAL_TOKEN, Tile
 [System.Serializable]
 public class FoodTileBaseDictionary : SerializableDictionary<FOOD, TileBase> { }
 
-
 [System.Serializable]
 public class CharacterTagListStorage : SerializableDictionary.Storage<List<CharacterActionTagRequirement>> { }
 [System.Serializable]

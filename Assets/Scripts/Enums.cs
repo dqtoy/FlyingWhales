@@ -80,6 +80,10 @@ public enum PATHFINDING_MODE{
     REGION_ISLAND_CONNECTION,
     AREA_ONLY,
 }
+public enum GRID_PATHFINDING_MODE {
+    NORMAL,
+    ROADS_ONLY,
+}
 
 public enum GENDER{
 	MALE,

@@ -165,7 +165,7 @@ namespace PathFind {
             return null;
         }
 
-        public static Path<Node> FindPath<Node>(Node start, Node destination, Func<Node, Node, double> distance, Func<Node, double> estimate)
+        public static Path<Node> FindPath<Node>(Node start, Node destination, Func<Node, Node, double> distance, Func<Node, double> estimate, GRID_PATHFINDING_MODE pathMode)
             where Node : LocationGridTile, IHasNeighbours<Node> {
 
             var closed = new HashSet<Node>();
@@ -185,11 +185,30 @@ namespace PathFind {
 
                 double d;
                 Path<Node> newPath;
-                foreach (Node n in path.LastStep.ValidTiles) {
-                    d = distance(path.LastStep, n);
-                    newPath = path.AddStep(n, d);
-                    queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
+                switch (pathMode) {
+                    case GRID_PATHFINDING_MODE.NORMAL:
+                        foreach (Node n in path.LastStep.ValidTiles) {
+                            d = distance(path.LastStep, n);
+                            newPath = path.AddStep(n, d);
+                            queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
+                        }
+                        break;
+                    case GRID_PATHFINDING_MODE.ROADS_ONLY:
+                        foreach (Node n in path.LastStep.RoadTiles) {
+                            d = distance(path.LastStep, n);
+                            newPath = path.AddStep(n, d);
+                            queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
+                        }
+                        break;
+                    default:
+                        foreach (Node n in path.LastStep.ValidTiles) {
+                            d = distance(path.LastStep, n);
+                            newPath = path.AddStep(n, d);
+                            queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
+                        }
+                        break;
                 }
+                
             }
             return null;
         }

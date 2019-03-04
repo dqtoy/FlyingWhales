@@ -35,6 +35,8 @@ public class CharacterManager : MonoBehaviour {
     [SerializeField] private StringSpriteDictionary classPortraits;
     public Material hsvMaterial;
 
+    [Header("Character Marker Assets")]
+
     [Header("Character Role Animators")]
     [SerializeField] private RuntimeAnimatorController[] characterAnimators;
 

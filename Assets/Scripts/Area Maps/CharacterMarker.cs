@@ -15,7 +15,20 @@ public class CharacterMarker : PooledObject {
     public Character character { get; private set; }
     public LocationGridTile location { get; private set; }
 
+    [SerializeField] private RectTransform rt;
     [SerializeField] private Toggle toggle;
+    [SerializeField] private Image mainImg;
+    [SerializeField] private Image clickedImg;
+
+    [Header("Male")]
+    [SerializeField] private Sprite defaultMaleSprite;
+    [SerializeField] private Sprite hoveredMaleSprite;
+    [SerializeField] private Sprite clickedMaleSprite;
+
+    [Header("Female")]
+    [SerializeField] private Sprite defaultFemaleSprite;
+    [SerializeField] private Sprite hoveredFemaleSprite;
+    [SerializeField] private Sprite clickedFemaleSprite;
 
     public void SetCharacter(Character character, LocationGridTile location) {
         this.character = character;
@@ -23,7 +36,33 @@ public class CharacterMarker : PooledObject {
         if (UIManager.Instance.characterInfoUI.isShowing) {
             toggle.isOn = UIManager.Instance.characterInfoUI.activeCharacter.id == character.id;
         }
-        
+        SpriteState ss = new SpriteState();
+        switch (character.gender) {
+            case GENDER.MALE:
+                mainImg.sprite = defaultMaleSprite;
+                clickedImg.sprite = clickedMaleSprite;
+                ss.highlightedSprite = hoveredMaleSprite;
+                ss.pressedSprite = clickedMaleSprite;
+                break;
+            case GENDER.FEMALE:
+                mainImg.sprite = defaultFemaleSprite;
+                clickedImg.sprite = clickedFemaleSprite;
+                ss.highlightedSprite = hoveredFemaleSprite;
+                ss.pressedSprite = clickedFemaleSprite;
+                break;
+            default:
+                mainImg.sprite = defaultMaleSprite;
+                clickedImg.sprite = clickedMaleSprite;
+                ss.highlightedSprite = hoveredMaleSprite;
+                ss.pressedSprite = clickedMaleSprite;
+                break;
+        }
+        toggle.spriteState = ss;
+
+        Vector3 randomRotation = new Vector3(0f, 0f, 90f);
+        randomRotation.z *= Random.Range(1f, 4f);
+        rt.localRotation = Quaternion.Euler(randomRotation);
+
         Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
     }
