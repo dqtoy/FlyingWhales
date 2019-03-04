@@ -25,7 +25,7 @@ public class Bed : IPointOfInterest {
     }
 
     public override string ToString() {
-        return "Ore";
+        return "Bed";
     }
 
     #region Interface

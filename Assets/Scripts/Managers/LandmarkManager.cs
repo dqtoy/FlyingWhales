@@ -512,6 +512,8 @@ public class LandmarkManager : MonoBehaviour {
         areaMap.Initialize(newArea);
         newArea.SetAreaMap(areaMap);
         areaMapGO.SetActive(false);
+        newArea.PlaceBedsAndTables();
+        newArea.PlaceOres();
         newArea.PlaceSupplyPiles();
         newArea.SpawnFoodNow();
 #endif

@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 public class LocationGridTile : IHasNeighbours<LocationGridTile> {
 
-    public enum Tile_Type { Empty, Wall, Structure, Gate }
+    public enum Tile_Type { Empty, Wall, Structure, Gate, Road }
     public enum Tile_State { Impassable, Empty, Reserved, Occupied }
     public enum Ground_Type { Soil, Grass, Stone }
 
@@ -173,6 +173,9 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     }
     public void SetPrefabHere(GameObject obj) {
         prefabHere = obj;
+    }
+    public float GetDistanceTo(LocationGridTile tile) {
+        return Vector2.Distance(this.localLocation, tile.localLocation);
     }
     #endregion
 }

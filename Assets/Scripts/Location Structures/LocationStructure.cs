@@ -326,7 +326,7 @@ public class LocationStructure {
     public bool IsFull() {
         return unoccupiedTiles.Count <= 0;
     }
-    public LocationGridTile GetNearestDistanceTo(LocationGridTile tile) {
+    public LocationGridTile GetNearestTileTo(LocationGridTile tile) {
         LocationGridTile nearestTile = null;
         float nearestDist = 99999f;
         for (int i = 0; i < tiles.Count; i++) {
@@ -338,6 +338,19 @@ public class LocationStructure {
             }
         }
         return nearestTile;
+    }
+    public float GetNearestDistanceTo(LocationGridTile tile) {
+        LocationGridTile nearestTile = null;
+        float nearestDist = 99999f;
+        for (int i = 0; i < tiles.Count; i++) {
+            LocationGridTile currTile = tiles[i];
+            float dist = Vector2.Distance(currTile.localLocation, tile.localLocation);
+            if (dist < nearestDist) {
+                nearestTile = currTile;
+                nearestDist = dist;
+            }
+        }
+        return nearestDist;
     }
     #endregion
 

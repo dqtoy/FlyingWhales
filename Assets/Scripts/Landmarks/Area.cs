@@ -1801,6 +1801,27 @@ public class Area {
     public void SetAreaMap(AreaInnerTileMap map) {
         areaMap = map;
     }
+    //TODO: Unify placement of static POI's
+    public void PlaceBedsAndTables() {
+        if (structures.ContainsKey(STRUCTURE_TYPE.DWELLING)) {
+            for (int i = 0; i < structures[STRUCTURE_TYPE.DWELLING].Count; i++) {
+                LocationStructure structure = structures[STRUCTURE_TYPE.DWELLING][i];
+                structure.AddPOI(new Bed(structure));
+                structure.AddPOI(new Table(structure));
+            }
+        }
+    }
+    public void PlaceOres() {
+        if (structures.ContainsKey(STRUCTURE_TYPE.WILDERNESS)) {
+            int oreCount = 5;
+            for (int i = 0; i < structures[STRUCTURE_TYPE.WILDERNESS].Count; i++) {
+                LocationStructure structure = structures[STRUCTURE_TYPE.WILDERNESS][i];
+                for (int j = 0; j < oreCount; j++) {
+                    structure.AddPOI(new Ore(structure));
+                }
+            }
+        }
+    }
     public void PlaceSupplyPiles() {
         if (structures.ContainsKey(STRUCTURE_TYPE.DUNGEON)) {
             for (int i = 0; i < structures[STRUCTURE_TYPE.DUNGEON].Count; i++) {

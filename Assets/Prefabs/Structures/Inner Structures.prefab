@@ -763,6 +763,9 @@ MonoBehaviour:
   characterTile: {fileID: 11400000, guid: 193bd90ca3bb1b94dafda8c721696592, type: 2}
   supplyIconTile: {fileID: 11400000, guid: 2ca7b845206b24d4aa519c328da9a7ea, type: 2}
   corpseIconTile: {fileID: 11400000, guid: 43666d40bbb7aa94692b4b9a87005259, type: 2}
+  bedIconTile: {fileID: 11400000, guid: 6f3954dc9b93b6d48a95ccf4a1b548f9, type: 2}
+  tableIconTile: {fileID: 11400000, guid: 06974d1136b6fdb4ca04bcf1592704c4, type: 2}
+  oreIconTile: {fileID: 11400000, guid: 0b068d2916458ec42b003236284308b3, type: 2}
   itemTiles:
     m_keys: 000000000100000002000000030000000400000005000000060000000700000008000000090000000a0000000b0000000c0000000d0000000e0000000f0000001000000011000000
     m_values:
