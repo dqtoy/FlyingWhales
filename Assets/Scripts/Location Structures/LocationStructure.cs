@@ -352,6 +352,14 @@ public class LocationStructure {
         }
         return nearestDist;
     }
+    public bool HasRoadTo(LocationGridTile tile) {
+        for (int i = 0; i < tiles.Count; i++) {
+            if (PathGenerator.Instance.GetPath(tiles[i], tile, GRID_PATHFINDING_MODE.ROADS_ONLY) != null) {
+                return true;
+            }
+        }
+        return false;
+    }
     #endregion
 
     public override string ToString() {

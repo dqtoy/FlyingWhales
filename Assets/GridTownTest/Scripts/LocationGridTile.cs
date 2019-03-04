@@ -29,6 +29,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     public IPointOfInterest objHere { get; private set; }
 
     public List<LocationGridTile> ValidTiles { get { return neighbours.Values.Where(o => o.tileType == Tile_Type.Empty || o.tileType == Tile_Type.Gate).ToList(); } }
+    public List<LocationGridTile> RoadTiles { get { return neighbours.Values.Where(o => o.tileType == Tile_Type.Road).ToList(); } }
 
     public LocationGridTile(int x, int y, Tilemap tilemap) {
         parentTileMap = tilemap;
@@ -147,6 +148,14 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     public bool HasNeighborAtEdgeOfMap() {
         foreach (KeyValuePair<TileNeighbourDirection, LocationGridTile> kvp in neighbours) {
             if (kvp.Value.IsAtEdgeOfMap()) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public bool HasNeighborGate() {
+        foreach (KeyValuePair<TileNeighbourDirection, LocationGridTile> kvp in neighbours) {
+            if (kvp.Value.tileType == Tile_Type.Gate) {
                 return true;
             }
         }
