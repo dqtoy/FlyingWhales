@@ -10,6 +10,10 @@ public class Corpse : IPointOfInterest {
     public List<INTERACTION_TYPE> poiGoapActions { get; private set; }
 
     public POINT_OF_INTEREST_TYPE poiType { get { return POINT_OF_INTEREST_TYPE.CORPSE; } }
+    public POI_STATE state {
+        get { return _state; }
+    }
+    private POI_STATE _state;
 
     private LocationGridTile _gridTileLocation;
     public LocationGridTile gridTileLocation {
@@ -61,6 +65,9 @@ public class Corpse : IPointOfInterest {
             return usableActions;
         }
         return null;
+    }
+    public void SetPOIState(POI_STATE state) {
+        _state = state;
     }
     #endregion
 }

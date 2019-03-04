@@ -1304,6 +1304,11 @@ public enum POINT_OF_INTEREST_TYPE {
     TILE_OBJECT,
     STRUCTURE,
 }
+public enum POI_STATE {
+    ACTIVE,
+    RESERVED,
+    INACTIVE,
+}
 public enum INTERACTION_CHARACTER_EFFECT {
     NONE,
     TRAIT_GAIN,

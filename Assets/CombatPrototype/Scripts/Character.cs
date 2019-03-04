@@ -102,6 +102,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public int supply { get; set; }
 
     private LocationGridTile tile; //what tile in the structure is this character currently in.
+    private POI_STATE _state;
 
     private Dictionary<STAT, float> _buffs;
     public Dictionary<int, Combat> combatHistory;
@@ -433,6 +434,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public LocationGridTile gridTileLocation {
         get { return tile; }
+    }
+    public POI_STATE state {
+        get { return _state; }
     }
     #endregion
 
@@ -3480,6 +3484,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             return usableActions;
         }
         return null;
+    }
+    public void SetPOIState(POI_STATE state) {
+        _state = state;
     }
     #endregion
 

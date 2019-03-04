@@ -11,6 +11,7 @@ public class Food : IPointOfInterest {
     public List<INTERACTION_TYPE> poiGoapActions { get; private set; }
 
     private LocationGridTile tile;
+    private POI_STATE _state;
 
     #region getters/setters
     public POINT_OF_INTEREST_TYPE poiType {
@@ -18,6 +19,9 @@ public class Food : IPointOfInterest {
     }
     public LocationGridTile gridTileLocation {
         get { return tile; }
+    }
+    public POI_STATE state {
+        get { return _state; }
     }
     #endregion
 
@@ -76,6 +80,9 @@ public class Food : IPointOfInterest {
         }
 
         return null;
+    }
+    public void SetPOIState(POI_STATE state) {
+        _state = state;
     }
     #endregion
 }
