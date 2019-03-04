@@ -95,7 +95,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public Dictionary<Character, CharacterRelationshipData> relationships { get; private set; }
     public List<INTERACTION_TYPE> currentInteractionTypes { get; private set; }
     public Interaction plannedInteraction { get; private set; }
-    public List<IPointOfInterest> awareness { get; private set; }
+    public Dictionary<POINT_OF_INTEREST_TYPE, List<IAwareness>> awareness { get; private set; }
     public List<INTERACTION_TYPE> poiGoapActions { get; private set; }
     public List<GoapPlan> allGoapPlans { get; private set; }
     public GoapPlanner planner { get; set; }
@@ -513,7 +513,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         locationHistory = new List<string>();
 
         //If this is a minion, this should not be initiated
-        awareness = new List<IPointOfInterest>();
+        awareness = new Dictionary<POINT_OF_INTEREST_TYPE, List<IAwareness>>();
         planner = new GoapPlanner(this);
         AddAwareness(this);
 
@@ -3459,13 +3459,81 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     #endregion
 
     #region Awareness
-    public void AddAwareness(IPointOfInterest pointOfInterest) {
-        if (!awareness.Contains(pointOfInterest)) {
-            awareness.Add(pointOfInterest);
+    public IAwareness AddAwareness(IPointOfInterest pointOfInterest) {
+        IAwareness iawareness = GetAwareness(pointOfInterest);
+        if (iawareness == null && pointOfInterest != this) {
+            iawareness = CreateNewAwareness(pointOfInterest);
+            if(iawareness != null) {
+                if (awareness.ContainsKey(pointOfInterest.poiType)) {
+                    awareness[pointOfInterest.poiType].Add(iawareness);
+                } else {
+                    awareness.Add(pointOfInterest.poiType, new List<IAwareness>() { iawareness });
+                }
+            }
         }
+        return iawareness;
     }
     public void RemoveAwareness(IPointOfInterest pointOfInterest) {
-        awareness.Remove(pointOfInterest);
+        if (awareness.ContainsKey(pointOfInterest.poiType)) {
+            List<IAwareness> awarenesses = awareness[pointOfInterest.poiType];
+            for (int i = 0; i < awarenesses.Count; i++) {
+                IAwareness iawareness = awarenesses[i];
+                if (iawareness.poi == pointOfInterest) {
+                    awarenesses.RemoveAt(i);
+                    break;
+                }
+            }
+        }
+    }
+    public IAwareness GetAwareness(IPointOfInterest poi) {
+        if (awareness.ContainsKey(poi.poiType)) {
+            List<IAwareness> awarenesses = awareness[poi.poiType];
+            for (int i = 0; i < awarenesses.Count; i++) {
+                IAwareness iawareness = awarenesses[i];
+                if(iawareness.poi == poi) {
+                    return iawareness;
+                }
+            }
+            return null;
+        }
+        return null;
+    }
+    private IAwareness CreateNewAwareness(IPointOfInterest poi) {
+        if(poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+            return new CharacterAwareness(poi as Character);
+        }else if (poi.poiType == POINT_OF_INTEREST_TYPE.ITEM) {
+            return new ItemAwareness(poi as SpecialToken);
+        }else if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+            return new TileObjectAwareness(poi);
+        } else if (poi.poiType == POINT_OF_INTEREST_TYPE.FOOD) {
+            return new TileObjectAwareness(poi);
+        }//TODO: Structure Awareness
+        return null;
+    }
+    public void ScanForAwareness() {
+        List<LocationGridTile> tilesInRadius = specificLocation.areaMap.GetTilesInRadius(gridTileLocation, 3);
+        for (int i = 0; i < tilesInRadius.Count; i++) {
+            if(tilesInRadius[i].objHere != null) {
+                AddAwareness(tilesInRadius[i].objHere);
+            }
+        }
+    }
+    public void AddInitialAwareness() {
+        if (gridTileLocation.isInside) {
+            for (int i = 0; i < gridTileLocation.structure.location.areaMap.insideTiles.Count; i++) {
+                LocationGridTile insideTile = gridTileLocation.structure.location.areaMap.insideTiles[i];
+                if (insideTile.objHere != null && insideTile.objHere != this) {
+                    AddAwareness(insideTile.objHere);
+                }
+            }
+        } else {
+            for (int i = 0; i < gridTileLocation.structure.location.areaMap.outsideTiles.Count; i++) {
+                LocationGridTile outsideTile = gridTileLocation.structure.location.areaMap.outsideTiles[i];
+                if (outsideTile.objHere != null && outsideTile.objHere != this) {
+                    AddAwareness(outsideTile.objHere);
+                }
+            }
+        }
     }
     #endregion
 
@@ -3498,15 +3566,45 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         poiGoapActions.Add(INTERACTION_TYPE.DROP_CHARACTER);
         poiGoapActions.Add(INTERACTION_TYPE.ABDUCT_ACTION);
     }
-    public void StartGOAP(GoapEffect goal, IPointOfInterest target, bool isPriority = false) {
-        List<GoapAction> usableActions = new List<GoapAction>();
-        List<INTERACTION_TYPE> actorAllowedActions = RaceManager.Instance.GetNPCInteractionsOfRace(this);
-        for (int i = 0; i < awareness.Count; i++) {
-            List<GoapAction> awarenessActions = awareness[i].AdvertiseActionsToActor(this, actorAllowedActions);
-            if (awarenessActions != null && awarenessActions.Count > 0) {
-                usableActions.AddRange(awarenessActions);
+    public void StartGOAP(GoapEffect goal, IPointOfInterest target, bool isPriority = false, List<Character> otherCharactePOIs = null) {
+        List<CharacterAwareness> characterTargetsAwareness = new List<CharacterAwareness>();
+        if (target.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+            CharacterAwareness characterAwareness = AddAwareness(target) as CharacterAwareness;
+            if (characterAwareness != null) {
+                characterTargetsAwareness.Add(characterAwareness);
             }
         }
+        
+        if(otherCharactePOIs != null) {
+            for (int i = 0; i < otherCharactePOIs.Count; i++) {
+                CharacterAwareness characterAwareness = AddAwareness(otherCharactePOIs[i]) as CharacterAwareness;
+                if (characterAwareness != null) {
+                    characterTargetsAwareness.Add(characterAwareness);
+                }
+            }
+        }
+        List<GoapAction> usableActions = new List<GoapAction>();
+        List<INTERACTION_TYPE> actorAllowedActions = RaceManager.Instance.GetNPCInteractionsOfRace(this);
+        foreach (KeyValuePair<POINT_OF_INTEREST_TYPE, List<IAwareness>> kvp in awareness) {
+            if(kvp.Key == POINT_OF_INTEREST_TYPE.CHARACTER) {
+                for (int i = 0; i < kvp.Value.Count; i++) {
+                    if(kvp.Value[i].poi.gridTileLocation.structure == currentStructure || IsPOIInCharacterAwarenessList(kvp.Value[i].poi, characterTargetsAwareness)) {
+                        List<GoapAction> awarenessActions = kvp.Value[i].poi.AdvertiseActionsToActor(this, actorAllowedActions);
+                        if (awarenessActions != null && awarenessActions.Count > 0) {
+                            usableActions.AddRange(awarenessActions);
+                        }
+                    }
+                }
+            } else {
+                for (int i = 0; i < kvp.Value.Count; i++) {
+                    List<GoapAction> awarenessActions = kvp.Value[i].poi.AdvertiseActionsToActor(this, actorAllowedActions);
+                    if (awarenessActions != null && awarenessActions.Count > 0) {
+                        usableActions.AddRange(awarenessActions);
+                    }
+                }
+            }
+        }
+       
 
         List<GoapPlan> allPlans = new List<GoapPlan>();
         for (int i = 0; i < usableActions.Count; i++) {
@@ -3529,6 +3627,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     }
                 }
             }
+            shortestPathToGoal.SetListOfCharacterAwareness(characterTargetsAwareness);
             if (isPriority) {
                 allGoapPlans.Insert(0, shortestPathToGoal);
             } else {
@@ -3539,14 +3638,35 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public bool RecalculatePlan(GoapPlan currentPlan) {
         List<GoapAction> usableActions = new List<GoapAction>();
         List<INTERACTION_TYPE> actorAllowedActions = RaceManager.Instance.GetNPCInteractionsOfRace(this);
-        for (int i = 0; i < awareness.Count; i++) {
-            List<GoapAction> awarenessActions = awareness[i].AdvertiseActionsToActor(this, actorAllowedActions);
-            if (awarenessActions != null && awarenessActions.Count > 0) {
-                usableActions.AddRange(awarenessActions);
+        foreach (KeyValuePair<POINT_OF_INTEREST_TYPE, List<IAwareness>> kvp in awareness) {
+            if (kvp.Key == POINT_OF_INTEREST_TYPE.CHARACTER) {
+                for (int i = 0; i < kvp.Value.Count; i++) {
+                    if (kvp.Value[i].poi.gridTileLocation.structure == currentStructure || IsPOIInCharacterAwarenessList(kvp.Value[i].poi, currentPlan.goalCharacterTargets)) {
+                        List<GoapAction> awarenessActions = kvp.Value[i].poi.AdvertiseActionsToActor(this, actorAllowedActions);
+                        if (awarenessActions != null && awarenessActions.Count > 0) {
+                            usableActions.AddRange(awarenessActions);
+                        }
+                    }
+                }
+            } else {
+                for (int i = 0; i < kvp.Value.Count; i++) {
+                    List<GoapAction> awarenessActions = kvp.Value[i].poi.AdvertiseActionsToActor(this, actorAllowedActions);
+                    if (awarenessActions != null && awarenessActions.Count > 0) {
+                        usableActions.AddRange(awarenessActions);
+                    }
+                }
             }
         }
-        if(usableActions.Count > 0) {
+        if (usableActions.Count > 0) {
             return planner.RecalculatePathForPlan(currentPlan, usableActions);
+        }
+        return false;
+    }
+    private bool IsPOIInCharacterAwarenessList(IPointOfInterest poi, List<CharacterAwareness> awarenesses) {
+        for (int i = 0; i < awarenesses.Count; i++) {
+            if(awarenesses[i].poi == poi) {
+                return true;
+            }
         }
         return false;
     }

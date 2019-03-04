@@ -9,13 +9,16 @@ public class GoapPlan {
         }
     }
 
+    public IPointOfInterest target { get; private set; }
     public GoapNode startingNode { get; private set; }
     public GoapNode currentNode { get; private set; }
     public GoapNode previousNode { get; private set; }
     public GOAP_EFFECT_CONDITION[] goalEffects { get; private set; }
+    public List<CharacterAwareness> goalCharacterTargets { get; private set; } ////Only characters in the same structure and characters in this list are allowed to advertise actions even if they are part of the awareness list of the actor
     public bool isEnd { get; private set; }
 
-    public GoapPlan(GoapNode startingNode, GOAP_EFFECT_CONDITION[] goalEffects) {
+    public GoapPlan(IPointOfInterest target, GoapNode startingNode, GOAP_EFFECT_CONDITION[] goalEffects) {
+        this.target = target;
         this.startingNode = startingNode;
         this.currentNode = startingNode;
         this.goalEffects = goalEffects;
@@ -47,5 +50,9 @@ public class GoapPlan {
             node = node.parent;
         }
         return count;
+    }
+
+    public void SetListOfCharacterAwareness(List<CharacterAwareness> list) {
+        goalCharacterTargets = list;
     }
 }
