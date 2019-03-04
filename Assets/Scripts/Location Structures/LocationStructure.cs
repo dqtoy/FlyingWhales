@@ -5,7 +5,7 @@ using UnityEngine;
 
 [System.Serializable]
 public class LocationStructure {
-
+    public string name { get; private set; }
     public STRUCTURE_TYPE structureType { get; private set; }
     public bool isInside { get; private set; }
     public List<Character> charactersHere { get; private set; }
@@ -17,7 +17,8 @@ public class LocationStructure {
     public List<Corpse> corpses { get; private set; }
     public List<LocationGridTile> tiles { get; private set; }
     public Dictionary<FOOD, int> foodCount { get; private set; }
-
+    public List<INTERACTION_TYPE> poiGoapActions { get; private set; }
+    public POI_STATE state { get; private set; }
 
     #region getters
     public Area location {
@@ -29,10 +30,14 @@ public class LocationStructure {
     public List<LocationGridTile> unoccupiedTiles {
         get { return tiles.Where(x => x.tileState == LocationGridTile.Tile_State.Empty).ToList(); }
     }
+    public POINT_OF_INTEREST_TYPE poiType {
+        get { return POINT_OF_INTEREST_TYPE.STRUCTURE; }
+    }
     #endregion
 
     public LocationStructure(STRUCTURE_TYPE structureType, Area location, bool isInside) {
         this.structureType = structureType;
+        this.name = Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString());
         this.isInside = isInside;
         _location = location;
         charactersHere = new List<Character>();
@@ -80,7 +85,9 @@ public class LocationStructure {
         if (!charactersHere.Contains(character)) {
             charactersHere.Add(character);
             character.SetCurrentStructureLocation(this);
-            AddPOI(character, tile);
+            if(AddPOI(character, tile)){
+                character.ScanForAwareness();
+            }
             OnCharacterAddedToLocation(character);
         }
     }
@@ -357,4 +364,22 @@ public class LocationStructure {
     public override string ToString() {
         return structureType.ToString() + " " + location.structures[structureType].IndexOf(this).ToString() + " at " + location.name;
     }
+
+    //#region Point Of Interest
+    //public List<GoapAction> AdvertiseActionsToActor(Character actor, List<INTERACTION_TYPE> actorAllowedInteractions) {
+    //    if (poiGoapActions != null && poiGoapActions.Count > 0) {
+    //        List<GoapAction> usableActions = new List<GoapAction>();
+    //        for (int i = 0; i < poiGoapActions.Count; i++) {
+    //            if (actorAllowedInteractions.Contains(poiGoapActions[i])) {
+    //                GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(poiGoapActions[i], actor, this);
+    //                if (goapAction.CanSatisfyRequirements()) {
+    //                    usableActions.Add(goapAction);
+    //                }
+    //            }
+    //        }
+    //        return usableActions;
+    //    }
+    //    return null;
+    //}
+    //#endregion
 }

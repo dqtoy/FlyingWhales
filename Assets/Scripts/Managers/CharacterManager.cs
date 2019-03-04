@@ -386,6 +386,12 @@ public class CharacterManager : MonoBehaviour {
             }
         }
     }
+    public void GenerateInitialAwareness() {
+        for (int i = 0; i < allCharacters.Count; i++) {
+            Character character = allCharacters[i];
+            character.AddInitialAwareness();
+        }
+    }
     #endregion
 
     #region Relationships
