@@ -685,4 +685,11 @@ public class CharacterInfoUI : UIMenu {
     public void HideCharacterTestingInfo() {
         UIManager.Instance.HideSmallInfo();
     }
+
+    public void DropACharacter() {
+        _activeCharacter.DropACharacter();
+    }
+    public void LogAwareness() {
+        _activeCharacter.LogAwarenessList();
+    }
 }

@@ -53,10 +53,16 @@ public class GoapAction {
         return true;
     }
     public void DoAction(GoapPlan plan) {
+        if(poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+            Character targetCharacter = poiTarget as Character;
+            targetCharacter.AdjustIsWaitingForInteraction(1);
+        }
         if(actor.specificLocation != targetStructure.location) {
             actor.currentParty.GoToLocation(targetStructure.location, PATHFINDING_MODE.NORMAL, targetStructure, () => actor.PerformGoapAction(plan));
         } else if (actor.currentStructure != targetStructure) {
             actor.MoveToAnotherStructure(targetStructure);
+            actor.PerformGoapAction(plan);
+        } else {
             actor.PerformGoapAction(plan);
         }
     }
@@ -122,4 +128,17 @@ public struct GoapEffect {
     public GOAP_EFFECT_CONDITION conditionType;
     public object conditionKey;
     public IPointOfInterest targetPOI;
+
+    public string conditionString() {
+        if(conditionKey is string) {
+            return conditionKey.ToString();
+        } else if (conditionKey is int) {
+            return conditionKey.ToString();
+        } else if (conditionKey is Character) {
+            return (conditionKey as Character).name;
+        } else if (conditionKey is Area) {
+            return (conditionKey as Area).name;
+        }
+        return string.Empty;
+    }
 }

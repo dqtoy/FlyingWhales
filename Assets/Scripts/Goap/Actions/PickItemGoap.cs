@@ -28,7 +28,7 @@ public class PickItemGoap : GoapAction {
 
     #region Requirements
     protected bool Requirement() {
-        return !actor.isHoldingItem;
+        return !actor.isHoldingItem && poiTarget.gridTileLocation != null;
     }
     #endregion
 }

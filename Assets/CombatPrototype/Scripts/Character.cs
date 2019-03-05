@@ -101,6 +101,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public List<GoapPlan> allGoapPlans { get; private set; }
     public GoapPlanner planner { get; set; }
     public int supply { get; set; }
+    public int isWaitingForInteraction { get; private set; }
 
     private LocationGridTile tile; //what tile in the structure is this character currently in.
     private POI_STATE _state;
@@ -520,16 +521,20 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 
         GetRandomCharacterColor();
 #if !WORLD_CREATION_TOOL
-        SetDailyInteractionGenerationTick(); //UnityEngine.Random.Range(1, 13)
+        //SetDailyInteractionGenerationTick(); //UnityEngine.Random.Range(1, 13)
 #endif
+        ConstructInitialGoapAdvertisementActions();
         SubscribeToSignals();
+        StartDailyGoapPlanGeneration();
     }
-    public void Initialize() { }
+    public void Initialize() {
+    }
 
     #region Signals
     private void SubscribeToSignals() {
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnOtherCharacterDied);
-        Messenger.AddListener(Signals.TICK_STARTED, DailyInteractionGeneration);
+        //Messenger.AddListener(Signals.TICK_STARTED, DailyInteractionGeneration);
+        //Messenger.AddListener(Signals.TICK_STARTED, DailyGoapPlanGeneration);
         Messenger.AddListener(Signals.TICK_ENDED, DecreaseNeeds);
         Messenger.AddListener<Character, Area, Area>(Signals.CHARACTER_MIGRATED_HOME, OnCharacterMigratedHome);
         Messenger.AddListener<Interaction>(Signals.INTERACTION_ENDED, OnInteractionEnded);
@@ -537,7 +542,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public void UnsubscribeSignals() {
         Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnOtherCharacterDied);
-        Messenger.RemoveListener(Signals.TICK_STARTED, DailyInteractionGeneration);
+        //Messenger.RemoveListener(Signals.TICK_STARTED, DailyInteractionGeneration);
         Messenger.RemoveListener(Signals.TICK_ENDED, DecreaseNeeds);
         Messenger.RemoveListener<Character, Area, Area>(Signals.CHARACTER_MIGRATED_HOME, OnCharacterMigratedHome);
         Messenger.RemoveListener(Signals.DAY_STARTED, DayStartedRemoveOverrideInteraction);
@@ -1483,6 +1488,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         _isTracked = state;
         if (_isTracked) {
             Messenger.Broadcast(Signals.CHARACTER_TRACKED, this);
+        }
+    }
+    public void AdjustIsWaitingForInteraction(int amount) {
+        isWaitingForInteraction += amount;
+        if(isWaitingForInteraction < 0) {
+            isWaitingForInteraction = 0;
         }
     }
     #endregion
@@ -2664,23 +2675,24 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
     }
     public void StartDailyGoapPlanGeneration() {
-        _activateDailyGoapPlanInteraction = true;
-        Messenger.AddListener(Signals.TICK_STARTED, DailyGoapPlanGeneration);
-        _currentInteractionTick = GameManager.Instance.tick;
-        DailyGoapPlanGeneration();
+        if (!_activateDailyGoapPlanInteraction) {
+            _activateDailyGoapPlanInteraction = true;
+            SetDailyGoapGenerationTick();
+            Messenger.AddListener(Signals.TICK_STARTED, DailyGoapPlanGeneration);
+        }
+        //_currentInteractionTick = GameManager.Instance.tick;
+        //DailyGoapPlanGeneration();
     }
     public void StopDailyGoapPlanGeneration() {
-        _activateDailyGoapPlanInteraction = false;
-        Messenger.RemoveListener(Signals.TICK_STARTED, DailyGoapPlanGeneration);
+        if (_activateDailyGoapPlanInteraction) {
+            _activateDailyGoapPlanInteraction = false;
+            Messenger.RemoveListener(Signals.TICK_STARTED, DailyGoapPlanGeneration);
+        }
     }
     private void DailyGoapPlanGeneration() {
         if(_currentInteractionTick == GameManager.Instance.tick) {
-            PlanAndDoGoapActions();
-            if (allGoapPlans.Count <= 0) {
-                SetDailyGoapGenerationTick();
-            } else {
-                StopDailyGoapPlanGeneration();
-            }
+            PlanGoapActions();
+            SetDailyGoapGenerationTick();
         }
     }
     public void SetDailyGoapGenerationTick() {
@@ -2694,17 +2706,24 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         _currentInteractionTick = UnityEngine.Random.Range(startDay, startDay + 6);
     }
-    private void PlanAndDoGoapActions() {
-        if (!IsInOwnParty() || isDefender || ownParty.icon.isTravelling || _doNotDisturb > 0 || _job == null) {
+    private void PlanGoapActions() {
+        if (!IsInOwnParty() || isDefender || ownParty.icon.isTravelling || _doNotDisturb > 0 || _job == null || isWaitingForInteraction > 0) {
             return; //if this character is not in own party, is a defender or is travelling or cannot be disturbed, do not generate interaction
         }
-        PlanNeedsActions();
-        SchedulePerformGoapPlans();
+        //PlanFullnessRecoveryActions();
+        //PlanTirednessRecoveryActions();
+        if(allGoapPlans.Count > 0) {
+            StopDailyGoapPlanGeneration();
+            PerformGoapPlans();
+            //SchedulePerformGoapPlans();
+        } else {
+            //Plan actions?
+        }
+        //SchedulePerformGoapPlans();
     }
-    private void PlanNeedsActions() {
+    private void PlanFullnessRecoveryActions() {
         TIME_IN_WORDS currentTimeInWords = GameManager.GetCurrentTimeInWordsOfTick();
         Trait hungryOrStarving = GetTraitOr("Starving", "Hungry");
-        Trait tiredOrExhausted = GetTraitOr("Exhausted", "Tired");
 
         if (hungryOrStarving != null && GetPlanWithGoalEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY) == null) {
             int chance = UnityEngine.Random.Range(0, 100);
@@ -2722,10 +2741,16 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 StartGOAP(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, this, true);
                 //return;
             }
-        } else if (tiredOrExhausted != null && GetPlanWithGoalEffect(GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY) == null) {
+        }
+    }
+    private void PlanTirednessRecoveryActions() {
+        TIME_IN_WORDS currentTimeInWords = GameManager.GetCurrentTimeInWordsOfTick();
+        Trait tiredOrExhausted = GetTraitOr("Exhausted", "Tired");
+
+        if (tiredOrExhausted != null && GetPlanWithGoalEffect(GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY) == null) {
             int chance = UnityEngine.Random.Range(0, 100);
             int value = 0;
-            if (hungryOrStarving.name == "Exhausted") {
+            if (tiredOrExhausted.name == "Exhausted") {
                 value = 100;
             } else {
                 if (currentTimeInWords == TIME_IN_WORDS.MORNING) {
@@ -3158,7 +3183,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             interactionLog += "\nCAN'T CHOOSE PERSONAL ACTION BECAUSE THERE ARE NO WEIGHTS AVAILABLE!";
         }
         interactionLog += "\n----------------------END CHARACTER PERSONAL ACTIONS-----------------------";
-        Debug.Log(interactionLog);
+        //Debug.Log(interactionLog);
     }
     private INTERACTION_TYPE CharacterNPCActionTypes(CharacterRelationshipData relationshipData, ref int weight, ref Character targetCharacter, ref Character otherCharacter, ref string interactionLog, ref INTERACTION_CATEGORY category) {
         WeightedDictionary<INTERACTION_CATEGORY> npcActionWeights = new WeightedDictionary<INTERACTION_CATEGORY>();
@@ -3412,11 +3437,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             if (exhaustedTrait == null) {
                 AddTrait("Exhausted");
             }
+            PlanTirednessRecoveryActions();
         } else if (tiredness <= TIREDNESS_THRESHOLD_1) {
             Trait hungerTrait = GetTrait("Tired");
             if (hungerTrait == null) {
                 AddTrait("Tired");
             }
+            PlanTirednessRecoveryActions();
         } else {
             //tiredness is higher than both thresholds
             RemoveTrait("Tired");
@@ -3426,13 +3453,19 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public void DecreaseTirednessMeter() { //this is used for when tiredness is only decreased by 1 (I did this for optimization, so as not to check for traits everytime)
         tiredness -= 1;
         tiredness = Mathf.Clamp(tiredness, 0, TIREDNESS_DEFAULT);
-        if (tiredness == TIREDNESS_THRESHOLD_1) {
-            AddTrait("Tired");
-        } else if (tiredness == TIREDNESS_THRESHOLD_2) {
-            RemoveTrait("Tired");
-            AddTrait("Exhausted");
-        } else if (tiredness == 0) {
+        if (tiredness == 0) {
             Death("exhaustion");
+        } else if (tiredness <= TIREDNESS_THRESHOLD_2) {
+            if (tiredness == TIREDNESS_THRESHOLD_2) {
+                RemoveTrait("Tired");
+                AddTrait("Exhausted");
+            }
+            PlanTirednessRecoveryActions();
+        } else if (tiredness <= TIREDNESS_THRESHOLD_1) {
+            if (tiredness == TIREDNESS_THRESHOLD_1) {
+                AddTrait("Tired");
+            }
+            PlanTirednessRecoveryActions();
         }
     }
     #endregion
@@ -3457,11 +3490,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             if (starvationTrait == null) {
                 AddTrait("Starving");
             }
+            PlanFullnessRecoveryActions();
         } else if (fullness <= FULLNESS_THRESHOLD_1) {
             Trait hungerTrait = GetTrait("Hungry");
             if (hungerTrait == null) {
                 AddTrait("Hungry");
             }
+            PlanFullnessRecoveryActions();
         } else {
             //fullness is higher than both thresholds
             RemoveTrait("Hungry");
@@ -3471,13 +3506,19 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public void DecreaseFullnessMeter() { //this is used for when fullness is only decreased by 1 (I did this for optimization, so as not to check for traits everytime)
         fullness -= 1;
         fullness = Mathf.Clamp(fullness, 0, FULLNESS_DEFAULT);
-        if (fullness == FULLNESS_THRESHOLD_1) {
-            AddTrait("Hungry");
-        } else if (fullness == FULLNESS_THRESHOLD_2) {
-            RemoveTrait("Hungry");
-            AddTrait("Starving");
-        } else if (fullness == 0) {
+        if (fullness == 0) {
             Death("starvation");
+        } else if (fullness <= FULLNESS_THRESHOLD_2) {
+            if (fullness == FULLNESS_THRESHOLD_2) {
+                RemoveTrait("Hungry");
+                AddTrait("Starving");
+            }
+            PlanFullnessRecoveryActions();
+        } else if (fullness <= FULLNESS_THRESHOLD_1) {
+            if (fullness == FULLNESS_THRESHOLD_1) {
+                AddTrait("Hungry");
+            }
+            PlanFullnessRecoveryActions();
         }
     }
     #endregion
@@ -3583,6 +3624,19 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         }
     }
+    public void LogAwarenessList() {
+        string log = "--------------AWARENESS LIST OF " + name + "-----------------";
+        foreach (KeyValuePair<POINT_OF_INTEREST_TYPE, List<IAwareness>> kvp in awareness) {
+            log += "\n" + kvp.Key.ToString() + ": ";
+            for (int i = 0; i < kvp.Value.Count; i++) {
+                if(i > 0) {
+                    log += ", ";
+                }
+                log += kvp.Value[i].poi.name;
+            }
+        }
+        Debug.Log(log);
+    }
     #endregion
 
     #region Point Of Interest
@@ -3622,8 +3676,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 characterTargetsAwareness.Add(characterAwareness);
             }
         }
-        
-        if(otherCharactePOIs != null) {
+
+        if (otherCharactePOIs != null) {
             for (int i = 0; i < otherCharactePOIs.Count; i++) {
                 CharacterAwareness characterAwareness = AddAwareness(otherCharactePOIs[i]) as CharacterAwareness;
                 if (characterAwareness != null) {
@@ -3631,12 +3685,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 }
             }
         }
-        List<GoapAction> usableActions = new List<GoapAction>();
+
         List<INTERACTION_TYPE> actorAllowedActions = RaceManager.Instance.GetNPCInteractionsOfRace(this);
+        List<GoapAction> usableActions = new List<GoapAction>();
         foreach (KeyValuePair<POINT_OF_INTEREST_TYPE, List<IAwareness>> kvp in awareness) {
-            if(kvp.Key == POINT_OF_INTEREST_TYPE.CHARACTER) {
+            if (kvp.Key == POINT_OF_INTEREST_TYPE.CHARACTER) {
                 for (int i = 0; i < kvp.Value.Count; i++) {
-                    if(kvp.Value[i].poi.gridTileLocation.structure == currentStructure || IsPOIInCharacterAwarenessList(kvp.Value[i].poi, characterTargetsAwareness)) {
+                    if (kvp.Value[i].poi.gridTileLocation.structure == currentStructure || IsPOIInCharacterAwarenessList(kvp.Value[i].poi, characterTargetsAwareness)) {
                         List<GoapAction> awarenessActions = kvp.Value[i].poi.AdvertiseActionsToActor(this, actorAllowedActions);
                         if (awarenessActions != null && awarenessActions.Count > 0) {
                             usableActions.AddRange(awarenessActions);
@@ -3652,38 +3707,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 }
             }
         }
-       
 
-        List<GoapPlan> allPlans = new List<GoapPlan>();
-        for (int i = 0; i < usableActions.Count; i++) {
-            if (usableActions[i].WillEffectsSatisfyPrecondition(goal)) {
-                GoapPlan plan = planner.PlanActions(target, usableActions[i], usableActions);
-                if (plan != null) {
-                    allPlans.Add(plan);
-                }
-            }
-        }
-
-        if (allPlans.Count > 0) {
-            GoapPlan shortestPathToGoal = null;
-            for (int i = 0; i < allPlans.Count; i++) {
-                if (shortestPathToGoal == null) {
-                    shortestPathToGoal = allPlans[i];
-                } else {
-                    if (allPlans[i].startingNode.runningCost < shortestPathToGoal.startingNode.runningCost) {
-                        shortestPathToGoal = allPlans[i];
-                    }
-                }
-            }
-            shortestPathToGoal.SetListOfCharacterAwareness(characterTargetsAwareness);
-            if (isPriority) {
-                allGoapPlans.Insert(0, shortestPathToGoal);
-            } else {
-                allGoapPlans.Add(shortestPathToGoal);
-            }
-        }
+        MultiThreadPool.Instance.AddToThreadPool(new GoapThread(this, target, goal, isPriority, characterTargetsAwareness, actorAllowedActions, usableActions));
     }
-    public bool RecalculatePlan(GoapPlan currentPlan) {
+    public void RecalculatePlan(GoapPlan currentPlan) {
+        currentPlan.SetIsBeingRecalculated(true);
+
         List<GoapAction> usableActions = new List<GoapAction>();
         List<INTERACTION_TYPE> actorAllowedActions = RaceManager.Instance.GetNPCInteractionsOfRace(this);
         foreach (KeyValuePair<POINT_OF_INTEREST_TYPE, List<IAwareness>> kvp in awareness) {
@@ -3705,54 +3734,77 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 }
             }
         }
-        if (usableActions.Count > 0) {
-            return planner.RecalculatePathForPlan(currentPlan, usableActions);
-        }
-        return false;
+
+        MultiThreadPool.Instance.AddToThreadPool(new GoapThread(this, currentPlan, usableActions));
     }
     private bool IsPOIInCharacterAwarenessList(IPointOfInterest poi, List<CharacterAwareness> awarenesses) {
         for (int i = 0; i < awarenesses.Count; i++) {
-            if(awarenesses[i].poi == poi) {
+            if (awarenesses[i].poi == poi) {
                 return true;
             }
         }
         return false;
     }
     private void SchedulePerformGoapPlans() {
-        if(allGoapPlans.Count > 0) {
+        if (!IsInOwnParty() || isDefender || ownParty.icon.isTravelling || _doNotDisturb > 0 || _job == null || isWaitingForInteraction > 0) {
+            StartDailyGoapPlanGeneration();
+            return; //if this character is not in own party, is a defender or is travelling or cannot be disturbed, do not generate interaction
+        }
+        if (allGoapPlans.Count > 0) {
+            StopDailyGoapPlanGeneration();
             GameDate dueDate = GameManager.Instance.Today();
             dueDate.AddTicks(1);
             SchedulingManager.Instance.AddEntry(dueDate, PerformGoapPlans);
         }
     }
     public void PerformGoapPlans() {
+        string log = GameManager.Instance.TodayLogString() + "PERFORMING GOAP PLANS OF " + name;
         List<INTERACTION_TYPE> actorAllowedActions = RaceManager.Instance.GetNPCInteractionsOfRace(this);
+        bool willGoIdleState = true;
         for (int i = 0; i < allGoapPlans.Count; i++) {
             GoapPlan plan = allGoapPlans[i];
+            log += "\n" + plan.currentNode.action.goapName;
             if (actorAllowedActions.Contains(plan.currentNode.action.goapType) && plan.currentNode.action.CanSatisfyRequirements()) {
-                if (plan.currentNode.action.IsHalted()) { continue; }
+                if (plan.isBeingRecalculated) {
+                    log += "\n - Plan is being recalculated, skipping...";
+                    continue;
+                }
+                if (plan.currentNode.action.IsHalted()) {
+                    log += "\n - Action is waiting, skipping...";
+                    continue;
+                }
                 bool preconditionsSatisfied = plan.currentNode.action.CanSatisfyAllPreconditions();
                 if (!preconditionsSatisfied) {
-                    bool canRecalculatePlan = RecalculatePlan(plan);
-                    if (canRecalculatePlan) {
-                        plan.currentNode.action.DoAction(plan);
-                        break;
-                    } else {
-                        if(allGoapPlans.Count == 1) {
-                            DropPlan(plan);
-                            break;
-                        } else {
-                            DropPlan(plan);
-                            i--;
-                        }
-                    }
+                    log += "\n - Action's preconditions are not all satisfied, trying to recalculate plan...";
+                    RecalculatePlan(plan);
+                    //bool canRecalculatePlan = RecalculatePlan(plan);
+                    //if (canRecalculatePlan) {
+                    //    log += "\n - Successfully recalculated plan! Doing action...";
+                    //    plan.currentNode.action.DoAction(plan);
+                    //    willGoIdleState = false;
+                    //    break;
+                    //} else {
+                    //    log += "\n - Failed to recalculate plan! Dropping plan...";
+                    //    if (allGoapPlans.Count == 1) {
+                    //        DropPlan(plan);
+                    //        willGoIdleState = false;
+                    //        break;
+                    //    } else {
+                    //        DropPlan(plan);
+                    //        i--;
+                    //    }
+                    //}
                 } else {
+                    log += "\n - Action's preconditions are all satisfied, doing action...";
                     plan.currentNode.action.DoAction(plan);
+                    willGoIdleState = false;
                     break;
                 }
             } else {
+                log += "\n - Action did not meet current requirements and allowed actions, dropping plan...";
                 if (allGoapPlans.Count == 1) {
                     DropPlan(plan);
+                    willGoIdleState = false;
                     break;
                 } else {
                     DropPlan(plan);
@@ -3760,28 +3812,42 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 }
             }
         }
+        if (willGoIdleState) {
+            log += "\nCHARACTER WILL GO INTO IDLE STATE";
+            StartDailyGoapPlanGeneration();
+        }
+        Debug.Log(log);
     }
     public void PerformGoapAction(GoapPlan plan) {
+        string log = GameManager.Instance.TodayLogString() + name + " is performing goap action: " + plan.currentNode.action.goapName;
         bool success = plan.currentNode.action.PerformActualAction();
-        bool hasDroppedPlan = false;
+        if (plan.currentNode.action.poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+            Character targetCharacter = plan.currentNode.action.poiTarget as Character;
+            targetCharacter.AdjustIsWaitingForInteraction(-1);
+        }
         if (!success) {
-            if (!RecalculatePlan(plan)) {
-                DropPlan(plan);
-                hasDroppedPlan = true;
-            }
+            log += "\nFailed to perform action. Will try to recalculate plan...";
+            RecalculatePlan(plan);
+            //if (!RecalculatePlan(plan)) {
+            //    log += "\nFailed to recalculate plan! Will now drop plan...";
+            //    DropPlan(plan);
+            //} else {
+            //    log += "\nSuccessfully recalculated plan! Try to perform an action again...";
+            //}
         } else {
+            log += "\nSuccessfully performed action!";
             plan.SetNextNode();
             if(plan.currentNode == null) {
+                log += "\nThis action is the end of plan.";
                 //this means that this is the end goal so end this plan now
                 DropPlan(plan);
-                hasDroppedPlan = true;
+            } else {
+                log += "\nNext action for this plan: " + plan.currentNode.action.goapName;
             }
         }
-        //Check for needs plan
-        if (!hasDroppedPlan) {
-            PlanNeedsActions();
-            SchedulePerformGoapPlans();
-        }
+
+        //Debug.Log(log);
+        SchedulePerformGoapPlans();
     }
     private void DropPlan(GoapPlan plan) {
         allGoapPlans.Remove(plan);
@@ -3797,6 +3863,45 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         }
         return null;
+    }
+
+    //For testing: Drop Character
+    public void DropACharacter() {
+        if (awareness.ContainsKey(POINT_OF_INTEREST_TYPE.CHARACTER)) {
+            List<IAwareness> characterAwarenesses = awareness[POINT_OF_INTEREST_TYPE.CHARACTER];
+            Character randomTarget = characterAwarenesses[UnityEngine.Random.Range(0, characterAwarenesses.Count)].poi as Character;
+            GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = homeArea, targetPOI = randomTarget };
+            StartGOAP(goapEffect, randomTarget);
+        }
+    }
+
+    public void ReceivePlanFromGoapThread(GoapThread goapThread) {
+        Debug.Log(goapThread.log);
+        if (goapThread.createdPlan != null) {
+            if(goapThread.recalculationPlan == null) {
+                if (goapThread.isPriority) {
+                    allGoapPlans.Insert(0, goapThread.createdPlan);
+                } else {
+                    allGoapPlans.Add(goapThread.createdPlan);
+                }
+            } else {
+                //Receive plan recalculation
+                goapThread.createdPlan.SetIsBeingRecalculated(false);
+            }
+            if (allGoapPlans.Count == 1) {
+                //Start this plan immediately since this is the only plan
+                SchedulePerformGoapPlans();
+            }
+        } else {
+            if (goapThread.recalculationPlan != null) {
+                //This means that the recalculation has failed
+                DropPlan(goapThread.recalculationPlan);
+            } else {
+                if(allGoapPlans.Count <= 0) {
+                    StartDailyGoapPlanGeneration();
+                }
+            }
+        }
     }
     #endregion
 

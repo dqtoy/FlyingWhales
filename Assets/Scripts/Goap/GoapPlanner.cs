@@ -34,7 +34,7 @@ public class GoapPlanner {
         for (int i = 0; i < goalAction.effects.Count; i++) {
             goalEffects[i] = goalAction.effects[i].conditionType;
         }
-        GoapPlan plan = new GoapPlan(target, cheapestStartingNode, goalEffects);
+        GoapPlan plan = new GoapPlan(cheapestStartingNode, goalEffects);
         return plan;
     }
     public bool RecalculatePathForPlan(GoapPlan currentPlan, List<GoapAction> usableActions) {
