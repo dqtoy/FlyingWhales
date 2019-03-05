@@ -15,12 +15,13 @@ public struct GameDate {
         this.tick = tick;
     }
 
-    public void AddTicks(int amount) {
+    public GameDate AddTicks(int amount) {
         this.tick += amount;
         while (this.tick > GameManager.ticksPerDay) {
             this.tick -= GameManager.ticksPerDay;
             AddDays(1);
         }
+        return this;
     }
 
 	public GameDate AddDays(int amount){

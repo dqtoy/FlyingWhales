@@ -26,11 +26,19 @@ public class Bed : TileObject, IPointOfInterest {
     public Bed(LocationStructure location) {
         this.location = location;
         poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.SLEEP };
+        Initialize(this);
     }
 
     public override string ToString() {
         return "Bed";
     }
+
+    #region Overrides
+    public override void OnDoActionToObject(GoapAction action) {
+        base.OnDoActionToObject(action);
+        action.actor.AddTrait(AttributeManager.Instance.allTraits["Resting"], null, () => OnDoneActionTowardsTarget(action));
+    }
+    #endregion
 
     #region Interface
     public void SetGridTileLocation(LocationGridTile tile) {
@@ -57,7 +65,7 @@ public class Bed : TileObject, IPointOfInterest {
 
     #region Point Of Interest
     public List<GoapAction> AdvertiseActionsToActor(Character actor, List<INTERACTION_TYPE> actorAllowedInteractions) {
-        if (poiGoapActions != null && poiGoapActions.Count > 0) {
+        if (poiGoapActions != null && poiGoapActions.Count > 0  && state == POI_STATE.ACTIVE) {
             List<GoapAction> usableActions = new List<GoapAction>();
             for (int i = 0; i < poiGoapActions.Count; i++) {
                 if (actorAllowedInteractions.Contains(poiGoapActions[i])) {

@@ -999,6 +999,9 @@ public class AreaInnerTileMap : MonoBehaviour {
         summary += "\nTile Type: " + tile.tileType.ToString();
         summary += "\nTile State: " + tile.tileState.ToString();
         summary += "\nContent: " + tile.objHere?.ToString() ?? "None";
+        if (tile.objHere != null) {
+            summary += "\n\tObject State: " + tile.objHere.state.ToString();
+        }
         //if (tile.structure != null) {
             summary += "\nStructure: " + tile.structure?.ToString() ?? "None";
         //}

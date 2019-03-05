@@ -17,6 +17,7 @@ public class EatFood : GoapAction {
         if (base.PerformActualAction()) {
             if(actor.currentStructure == poiTarget.gridTileLocation.structure) {
                 actor.ResetFullnessMeter();
+                OnPerformActualActionToTarget();
                 return true;
             }
         }

@@ -8,8 +8,11 @@ public class Ore : TileObject, IPointOfInterest {
     public LocationStructure location { get; private set; }
     public List<INTERACTION_TYPE> poiGoapActions { get; private set; }
 
+    private int yield;
     private LocationGridTile tile;
     private POI_STATE _state;
+
+    private const int Supply_Per_Mine = 50;
 
     #region getters/setters
     public POINT_OF_INTEREST_TYPE poiType {
@@ -26,11 +29,30 @@ public class Ore : TileObject, IPointOfInterest {
     public Ore(LocationStructure location) {
         this.location = location;
         poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.MINE_ACTION };
+        Initialize(this);
+        yield = Random.Range(15, 36);
     }
 
     public override string ToString() {
         return "Ore";
     }
+
+    #region Overrides
+    public override void OnDoActionToObject(GoapAction action) {
+        base.OnDoActionToObject(action);
+        //switch (action.goapType) {
+        //    case INTERACTION_TYPE.MINE_ACTION:
+        //        action.actor.AdjustSupply(Supply_Per_Mine);
+        //        AdjustYield(-Supply_Per_Mine);
+        //        break;
+        //    default:
+        //        action.actor.AdjustSupply(Supply_Per_Mine);
+        //        AdjustYield(-Supply_Per_Mine);
+        //        break;
+        //}
+        OnDoneActionTowardsTarget(action);
+    }
+    #endregion
 
     #region Interface
     public void SetGridTileLocation(LocationGridTile tile) {
@@ -57,7 +79,7 @@ public class Ore : TileObject, IPointOfInterest {
 
     #region Point Of Interest
     public List<GoapAction> AdvertiseActionsToActor(Character actor, List<INTERACTION_TYPE> actorAllowedInteractions) {
-        if (poiGoapActions != null && poiGoapActions.Count > 0) {
+        if (poiGoapActions != null && poiGoapActions.Count > 0 && state == POI_STATE.ACTIVE) {
             List<GoapAction> usableActions = new List<GoapAction>();
             for (int i = 0; i < poiGoapActions.Count; i++) {
                 if (actorAllowedInteractions.Contains(poiGoapActions[i])) {
@@ -76,4 +98,15 @@ public class Ore : TileObject, IPointOfInterest {
         _state = state;
     }
     #endregion
+
+    public int GetSupplyPerMine() {
+        return Supply_Per_Mine;
+    }
+    public void AdjustYield(int amount) {
+        yield += amount;
+        yield = Mathf.Max(0, yield);
+        if (yield == 0) {
+            location.RemovePOI(this);
+        }
+    }
 }

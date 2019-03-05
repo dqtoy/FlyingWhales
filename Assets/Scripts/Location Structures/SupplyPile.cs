@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class SupplyPile : IPointOfInterest {
+public class SupplyPile : TileObject, IPointOfInterest {
     public string name { get { return ToString(); } }
     public LocationStructure location { get; private set; }
     public int suppliesInPile { get; private set; }
@@ -97,7 +97,7 @@ public class SupplyPile : IPointOfInterest {
 
     #region Point Of Interest
     public List<GoapAction> AdvertiseActionsToActor(Character actor, List<INTERACTION_TYPE> actorAllowedInteractions) {
-        if (poiGoapActions != null && poiGoapActions.Count > 0) {
+        if (poiGoapActions != null && poiGoapActions.Count > 0  && state == POI_STATE.ACTIVE) {
             List<GoapAction> usableActions = new List<GoapAction>();
             for (int i = 0; i < poiGoapActions.Count; i++) {
                 if (actorAllowedInteractions.Contains(poiGoapActions[i])) {
