@@ -29,6 +29,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     protected bool _hasBeenInspected;
     protected bool _alreadyTargetedByGrudge;
     protected bool _isTracked;
+    protected bool _activateDailyGoapPlanInteraction;
     protected GENDER _gender;
     protected MODE _currentMode;
     protected CharacterClass _characterClass;
@@ -2662,35 +2663,82 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             CharacterPersonalActions();
         }
     }
-    private void DoGoapActions() {
+    public void StartDailyGoapPlanGeneration() {
+        _activateDailyGoapPlanInteraction = true;
+        Messenger.AddListener(Signals.TICK_STARTED, DailyGoapPlanGeneration);
+        _currentInteractionTick = GameManager.Instance.tick;
+        DailyGoapPlanGeneration();
+    }
+    public void StopDailyGoapPlanGeneration() {
+        _activateDailyGoapPlanInteraction = false;
+        Messenger.RemoveListener(Signals.TICK_STARTED, DailyGoapPlanGeneration);
+    }
+    private void DailyGoapPlanGeneration() {
+        if(_currentInteractionTick == GameManager.Instance.tick) {
+            PlanAndDoGoapActions();
+            if (allGoapPlans.Count <= 0) {
+                SetDailyGoapGenerationTick();
+            } else {
+                StopDailyGoapPlanGeneration();
+            }
+        }
+    }
+    public void SetDailyGoapGenerationTick() {
+        int remainingDaysInWeek = 6 - (GameManager.Instance.tick % 6);
+        if (remainingDaysInWeek == 6) {
+            remainingDaysInWeek = 0;
+        }
+        int startDay = GameManager.Instance.tick + remainingDaysInWeek + 1;
+        if (startDay > GameManager.ticksPerDay) {
+            startDay -= GameManager.ticksPerDay;
+        }
+        _currentInteractionTick = UnityEngine.Random.Range(startDay, startDay + 6);
+    }
+    private void PlanAndDoGoapActions() {
         if (!IsInOwnParty() || isDefender || ownParty.icon.isTravelling || _doNotDisturb > 0 || _job == null) {
             return; //if this character is not in own party, is a defender or is travelling or cannot be disturbed, do not generate interaction
         }
+        PlanNeedsActions();
+        SchedulePerformGoapPlans();
+    }
+    private void PlanNeedsActions() {
+        TIME_IN_WORDS currentTimeInWords = GameManager.GetCurrentTimeInWordsOfTick();
         Trait hungryOrStarving = GetTraitOr("Starving", "Hungry");
         Trait tiredOrExhausted = GetTraitOr("Exhausted", "Tired");
 
-        if(hungryOrStarving != null && GetPlanWithGoalEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY) == null) {
+        if (hungryOrStarving != null && GetPlanWithGoalEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY) == null) {
             int chance = UnityEngine.Random.Range(0, 100);
-            int value = 30;
+            int value = 0;
             if (hungryOrStarving.name == "Starving") {
-                value = 80;
+                value = 100;
+            } else {
+                if(currentTimeInWords == TIME_IN_WORDS.MORNING) {
+                    value = 25;
+                }else if (currentTimeInWords == TIME_IN_WORDS.EARLY_NIGHT) {
+                    value = 50;
+                }
             }
-            if(chance < value) {
+            if (chance < value) {
                 StartGOAP(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, this, true);
-                return;
+                //return;
             }
         } else if (tiredOrExhausted != null && GetPlanWithGoalEffect(GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY) == null) {
             int chance = UnityEngine.Random.Range(0, 100);
-            int value = 30;
+            int value = 0;
             if (hungryOrStarving.name == "Exhausted") {
-                value = 80;
+                value = 100;
+            } else {
+                if (currentTimeInWords == TIME_IN_WORDS.MORNING) {
+                    value = 15;
+                } else if (currentTimeInWords == TIME_IN_WORDS.LATE_NIGHT) {
+                    value = 65;
+                }
             }
             if (chance < value) {
                 StartGOAP(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = null, targetPOI = this }, this, true);
-                return;
+                //return;
             }
         }
-        PerformGoapPlans();
     }
     public void SetForcedInteraction(Interaction interaction) {
         _forcedInteraction = interaction;
@@ -2740,7 +2788,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     weight += 100;
                 } else if (currentTimeInWords == TIME_IN_WORDS.AFTERNOON) {
                     weight += 500;
-                } else if (currentTimeInWords == TIME_IN_WORDS.NIGHT) {
+                } else {
                     weight += 0;
                 }
                 if (weight > 0) {
@@ -2759,7 +2807,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     weight += 100;
                 } else if (currentTimeInWords == TIME_IN_WORDS.AFTERNOON) {
                     weight += 1000;
-                } else if (currentTimeInWords == TIME_IN_WORDS.NIGHT) {
+                } else {
                     weight += 0;
                 }
                 if(weight > 0) {
@@ -2781,7 +2829,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     weight += 0;
                 } else if (currentTimeInWords == TIME_IN_WORDS.AFTERNOON) {
                     weight += 0;
-                } else if (currentTimeInWords == TIME_IN_WORDS.NIGHT) {
+                } else {
                     weight += 500;
                 }
                 if (weight > 0) {
@@ -2800,7 +2848,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     weight += 0;
                 } else if (currentTimeInWords == TIME_IN_WORDS.AFTERNOON) {
                     weight += 0;
-                } else if (currentTimeInWords == TIME_IN_WORDS.NIGHT) {
+                } else {
                     weight += 1000;
                 }
                 if (weight > 0) {
@@ -2851,7 +2899,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                             weight += 20;
                         } else if (currentTimeInWords == TIME_IN_WORDS.AFTERNOON) {
                             weight += 20;
-                        } else if (currentTimeInWords == TIME_IN_WORDS.NIGHT) {
+                        } else {
                             weight += 100;
                         }
                     } else {
@@ -2861,7 +2909,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                             weight += 100;
                         } else if (currentTimeInWords == TIME_IN_WORDS.AFTERNOON) {
                             weight += 100;
-                        } else if (currentTimeInWords == TIME_IN_WORDS.NIGHT) {
+                        } else {
                             weight += 20;
                         }
                     }
@@ -2914,7 +2962,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                         weight += 10;
                     } else if (currentTimeInWords == TIME_IN_WORDS.AFTERNOON) {
                         weight += 10;
-                    } else if (currentTimeInWords == TIME_IN_WORDS.NIGHT) {
+                    } else {
                         weight += 5;
                     }
                     if (weight > 0) {
@@ -2931,7 +2979,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                         weight += 20;
                     } else if (currentTimeInWords == TIME_IN_WORDS.AFTERNOON) {
                         weight += 20;
-                    } else if (currentTimeInWords == TIME_IN_WORDS.NIGHT) {
+                    } else {
                         weight += 5;
                     }
                     if(weight > 0) {
@@ -2952,7 +3000,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     returnHomeWeight += 150;
                 } else if (currentTimeInWords == TIME_IN_WORDS.AFTERNOON) {
                     returnHomeWeight += 50;
-                } else if (currentTimeInWords == TIME_IN_WORDS.NIGHT) {
+                } else {
                     returnHomeWeight += 10;
                 }
                 if (isHungry || isTired) {
@@ -2990,7 +3038,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     weight += 25;
                 } else if (currentTimeInWords == TIME_IN_WORDS.AFTERNOON) {
                     weight += 10;
-                } else if (currentTimeInWords == TIME_IN_WORDS.NIGHT) {
+                } else {
                     weight += 5;
                 }
                 if(weight > 0) {
@@ -3011,7 +3059,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     weight += 100;
                 } else if (currentTimeInWords == TIME_IN_WORDS.AFTERNOON) {
                     weight += 100;
-                } else if (currentTimeInWords == TIME_IN_WORDS.NIGHT) {
+                } else {
                     weight += 100;
                 }
                 if(weight > 0) {
@@ -3032,7 +3080,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 weight += 25;
             } else if (currentTimeInWords == TIME_IN_WORDS.AFTERNOON) {
                 weight += 25;
-            } else if (currentTimeInWords == TIME_IN_WORDS.NIGHT) {
+            } else {
                 weight += 25;
             }
             if(weight > 0) {
@@ -3670,33 +3718,42 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return false;
     }
-    public void PerformGoapPlans() {
+    private void SchedulePerformGoapPlans() {
         if(allGoapPlans.Count > 0) {
-            List<INTERACTION_TYPE> actorAllowedActions = RaceManager.Instance.GetNPCInteractionsOfRace(this);
-            for (int i = 0; i < allGoapPlans.Count; i++) {
-                GoapPlan plan = allGoapPlans[i];
-                if (actorAllowedActions.Contains(plan.currentNode.action.goapType) && plan.currentNode.action.CanSatisfyRequirements()) {
-                    if (plan.currentNode.action.IsHalted()) { continue; }
-                    int recalculateCount = 0;
-                    bool preconditionsSatisfied = plan.currentNode.action.CanSatisfyAllPreconditions();
-                    bool canRecalculatePlan = true;
-                    while (!preconditionsSatisfied && recalculateCount < 3 && canRecalculatePlan) {
-                        canRecalculatePlan = RecalculatePlan(plan);
-                        if (canRecalculatePlan) {
-                            preconditionsSatisfied = plan.currentNode.action.CanSatisfyAllPreconditions();
-                            recalculateCount++;
-                        }
-                    }
-                    if (!canRecalculatePlan) {
-                        DropPlan(plan);
-                        i--;
-                    } else if (preconditionsSatisfied) {
+            GameDate dueDate = GameManager.Instance.Today();
+            dueDate.AddTicks(1);
+            SchedulingManager.Instance.AddEntry(dueDate, PerformGoapPlans);
+        }
+    }
+    public void PerformGoapPlans() {
+        List<INTERACTION_TYPE> actorAllowedActions = RaceManager.Instance.GetNPCInteractionsOfRace(this);
+        for (int i = 0; i < allGoapPlans.Count; i++) {
+            GoapPlan plan = allGoapPlans[i];
+            if (actorAllowedActions.Contains(plan.currentNode.action.goapType) && plan.currentNode.action.CanSatisfyRequirements()) {
+                if (plan.currentNode.action.IsHalted()) { continue; }
+                bool preconditionsSatisfied = plan.currentNode.action.CanSatisfyAllPreconditions();
+                if (!preconditionsSatisfied) {
+                    bool canRecalculatePlan = RecalculatePlan(plan);
+                    if (canRecalculatePlan) {
                         plan.currentNode.action.DoAction(plan);
                         break;
-                    } else if (recalculateCount >= 3) {
-                        DropPlan(plan);
-                        i--;
+                    } else {
+                        if(allGoapPlans.Count == 1) {
+                            DropPlan(plan);
+                            break;
+                        } else {
+                            DropPlan(plan);
+                            i--;
+                        }
                     }
+                } else {
+                    plan.currentNode.action.DoAction(plan);
+                    break;
+                }
+            } else {
+                if (allGoapPlans.Count == 1) {
+                    DropPlan(plan);
+                    break;
                 } else {
                     DropPlan(plan);
                     i--;
@@ -3706,21 +3763,32 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public void PerformGoapAction(GoapPlan plan) {
         bool success = plan.currentNode.action.PerformActualAction();
+        bool hasDroppedPlan = false;
         if (!success) {
             if (!RecalculatePlan(plan)) {
                 DropPlan(plan);
+                hasDroppedPlan = true;
             }
         } else {
             plan.SetNextNode();
             if(plan.currentNode == null) {
                 //this means that this is the end goal so end this plan now
                 DropPlan(plan);
+                hasDroppedPlan = true;
             }
+        }
+        //Check for needs plan
+        if (!hasDroppedPlan) {
+            PlanNeedsActions();
+            SchedulePerformGoapPlans();
         }
     }
     private void DropPlan(GoapPlan plan) {
         allGoapPlans.Remove(plan);
         plan.EndPlan();
+        if (allGoapPlans.Count <= 0) {
+            StartDailyGoapPlanGeneration();
+        }
     }
     public GoapPlan GetPlanWithGoalEffect(GOAP_EFFECT_CONDITION goalEffect) {
         for (int i = 0; i < allGoapPlans.Count; i++) {

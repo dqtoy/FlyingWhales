@@ -13,7 +13,7 @@ public class GameManager : MonoBehaviour {
         TIME_IN_WORDS.AFTER_MIDNIGHT, TIME_IN_WORDS.AFTER_MIDNIGHT
         , TIME_IN_WORDS.MORNING, TIME_IN_WORDS.MORNING
         , TIME_IN_WORDS.AFTERNOON, TIME_IN_WORDS.AFTERNOON
-        , TIME_IN_WORDS.NIGHT, TIME_IN_WORDS.NIGHT };
+        , TIME_IN_WORDS.EARLY_NIGHT, TIME_IN_WORDS.LATE_NIGHT };
 
 
     public int month;
@@ -22,8 +22,8 @@ public class GameManager : MonoBehaviour {
     public int tick;
     public int continuousDays;
     public const int daysPerMonth = 30;
-    public const int ticksPerDay = 96;
-    public const int ticksPerTimeInWords = 12;
+    public const int ticksPerDay = 288;
+    public const int ticksPerTimeInWords = 36;
 
     public int startYear;
 
@@ -255,9 +255,9 @@ public class GameManager : MonoBehaviour {
         }
     }
     public static string ConvertTickToTime(int tick) {
-        float floatConversion = tick * 0.25f;
+        float floatConversion = tick / 12f;
         int hour = (int) floatConversion;
-        int minutes = (int)(((floatConversion - hour) * 4) * 15);
+        int minutes = Mathf.CeilToInt(((floatConversion - hour) * 12) * 5);
         string timeOfDay = "AM";
         if(hour >= 12) {
             if(hour < 24) {
