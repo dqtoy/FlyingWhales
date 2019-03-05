@@ -2203,12 +2203,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public void AddTrait(string traitName) {
         AddTrait(AttributeManager.Instance.allTraits[traitName]);
     }
-    public void AddTrait(Trait trait, Character characterResponsible = null) {
+    public void AddTrait(Trait trait, Character characterResponsible = null, System.Action onRemoveAction = null) {
         if (trait.IsUnique() && GetTrait(trait.name) != null) {
             trait.SetCharacterResponsibleForTrait(characterResponsible);
             return;
         }
         _traits.Add(trait);
+        trait.SetOnRemoveAction(onRemoveAction);
         trait.SetCharacterResponsibleForTrait(characterResponsible);
         ApplyTraitEffects(trait);
         ApplyPOITraitInteractions(trait);
@@ -3641,7 +3642,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 
     #region Point Of Interest
     public List<GoapAction> AdvertiseActionsToActor(Character actor, List<INTERACTION_TYPE> actorAllowedInteractions) {
-        if(poiGoapActions != null && poiGoapActions.Count > 0) {
+        if(poiGoapActions != null && poiGoapActions.Count > 0  && state == POI_STATE.ACTIVE) {
             List<GoapAction> usableActions = new List<GoapAction>();
             for (int i = 0; i < poiGoapActions.Count; i++) {
                 if (actorAllowedInteractions.Contains(poiGoapActions[i])){

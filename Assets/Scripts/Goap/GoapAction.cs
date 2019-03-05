@@ -57,6 +57,7 @@ public class GoapAction {
             Character targetCharacter = poiTarget as Character;
             targetCharacter.AdjustIsWaitingForInteraction(1);
         }
+        ReserveTarget();
         if(actor.specificLocation != targetStructure.location) {
             actor.currentParty.GoToLocation(targetStructure.location, PATHFINDING_MODE.NORMAL, targetStructure, () => actor.PerformGoapAction(plan));
         } else if (actor.currentStructure != targetStructure) {
@@ -120,6 +121,21 @@ public class GoapAction {
             }
         }
         return false;
+    }
+    #endregion
+
+    #region Tile Objects
+    protected virtual void ReserveTarget() {
+        if (poiTarget is TileObject) {
+            TileObject target = poiTarget as TileObject;
+            target.OnTargetObject(this);
+        }
+    }
+    protected virtual void OnPerformActualActionToTarget() {
+        if (poiTarget is TileObject) {
+            TileObject target = poiTarget as TileObject;
+            target.OnDoActionToObject(this);
+        }
     }
     #endregion
 }

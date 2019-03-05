@@ -30,6 +30,7 @@ public class Food : TileObject, IPointOfInterest {
         this.foodType = foodType;
         this.foodName = Utilities.NormalizeStringUpperCaseFirstLetters(this.foodType.ToString());
         poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.EAT_FOOD };
+        Initialize(this);
     }
 
     public override string ToString() {
@@ -65,8 +66,8 @@ public class Food : TileObject, IPointOfInterest {
     #endregion
 
     #region Point Of Interest
-    public List<GoapAction> AdvertiseActionsToActor(Character actor, List<INTERACTION_TYPE> actorAllowedInteractions) {
-        if (poiGoapActions != null && poiGoapActions.Count > 0) {
+    public virtual List<GoapAction> AdvertiseActionsToActor(Character actor, List<INTERACTION_TYPE> actorAllowedInteractions) {
+        if (poiGoapActions != null && poiGoapActions.Count > 0  && state == POI_STATE.ACTIVE) {
             List<GoapAction> usableActions = new List<GoapAction>();
             for (int i = 0; i < poiGoapActions.Count; i++) {
                 if (actorAllowedInteractions.Contains(poiGoapActions[i])) {

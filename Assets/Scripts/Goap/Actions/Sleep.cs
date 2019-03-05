@@ -22,6 +22,7 @@ public class Sleep : GoapAction {
             if (poiTarget.gridTileLocation.structure.structureType == STRUCTURE_TYPE.INN) {
                 actor.AdjustSupply(-20);
             }
+            OnPerformActualActionToTarget();
             return true;
         }
         return false;

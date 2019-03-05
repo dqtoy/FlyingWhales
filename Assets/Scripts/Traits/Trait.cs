@@ -23,12 +23,21 @@ public class Trait {
     public int daysDuration; //Zero (0) means Permanent
     public List<TraitEffect> effects;
 
+    private System.Action onRemoveAction;
+
     #region Virtuals
     public virtual void OnAddTrait(Character sourceCharacter) { }
-    public virtual void OnRemoveTrait(Character sourceCharacter) { }
+    public virtual void OnRemoveTrait(Character sourceCharacter) {
+        if (onRemoveAction != null) {
+            onRemoveAction();
+        }
+    }
     public virtual void SetCharacterResponsibleForTrait(Character character) { }
     public virtual string GetToolTipText() { return string.Empty; }
     public virtual bool IsUnique() { return true; }
+    public void SetOnRemoveAction(System.Action onRemoveAction) {
+        this.onRemoveAction = onRemoveAction;
+    }
     #endregion
 }
 

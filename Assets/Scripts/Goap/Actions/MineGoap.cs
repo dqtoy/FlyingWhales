@@ -17,7 +17,13 @@ public class MineGoap : GoapAction {
     }
     public override bool PerformActualAction() {
         if (base.PerformActualAction()) {
-            actor.AdjustSupply(UnityEngine.Random.Range(MIN_SUPPLY, MAX_SUPPLY + 1));
+            if (poiTarget is Ore) {
+                Ore ore = poiTarget as Ore;
+                int gained = ore.GetSupplyPerMine();
+                actor.AdjustSupply(gained);
+                ore.AdjustYield(gained);
+                OnPerformActualActionToTarget();
+            }
             return true;
         }
         return false;
