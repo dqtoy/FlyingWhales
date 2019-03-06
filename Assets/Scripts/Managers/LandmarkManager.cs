@@ -439,7 +439,7 @@ public class LandmarkManager : MonoBehaviour {
             for (int i = 0; i < data.areaData.Count; i++) {
                 AreaSaveData areaData = data.areaData[i];
                 Area newArea = CreateNewArea(areaData);
-                if (newArea.name.Equals("Player Area")) {
+                if (newArea.areaType == AREA_TYPE.DEMONIC_INTRUSION) {
                     continue; //player area should not be owned by any saved faction, owning of that area is done during player generation.
                 }
                 if (areaData.ownerID != -1) {

@@ -299,6 +299,7 @@ public class AreaInnerTileMap : MonoBehaviour {
         MapPerlinDetails(outsideTiles);
         MapPerlinDetails(insideTiles);
         ConstructWalls();
+        //PlaceStructures(area.GetStructures(true, true).Take(10).ToDictionary(k => k.Key, v => v.Value), insideTiles);
         PlaceStructures(area.GetStructures(true, true), insideTiles);
         //DrawDwellingTileAssets();
         PlaceStructures(area.GetStructures(false, true), outsideTiles);
@@ -333,6 +334,7 @@ public class AreaInnerTileMap : MonoBehaviour {
                 } else {
                     List<Point> pointChoices = GetValidStructureSettings(kvp.Key, elligibleTiles, rightMostCoordinate, topMostCoordinate);
                     if (pointChoices.Count == 0) {
+                        //continue;
                         throw new System.Exception("No More Tiles for" + kvp.Key + " at " + area.name);
                     }
                     currPoint = pointChoices[Random.Range(0, pointChoices.Count)];
@@ -365,6 +367,7 @@ public class AreaInnerTileMap : MonoBehaviour {
                             for (int k = 0; k < neighbourTiles.Count; k++) {
                                 elligibleTiles.Remove(neighbourTiles[k]);
                                 detailsTilemap.SetTile(neighbourTiles[k].localPlace, null);
+                                neighbourTiles[k].SetTileState(LocationGridTile.Tile_State.Empty);
                             }
                             break;
                         //case STRUCTURE_TYPE.DWELLING:
@@ -380,6 +383,7 @@ public class AreaInnerTileMap : MonoBehaviour {
                             for (int k = 0; k < neighbourTiles.Count; k++) {
                                 elligibleTiles.Remove(neighbourTiles[k]);
                                 detailsTilemap.SetTile(neighbourTiles[k].localPlace, null);
+                                neighbourTiles[k].SetTileState(LocationGridTile.Tile_State.Empty);
                             }
                             break;
                     }
@@ -451,6 +455,9 @@ public class AreaInnerTileMap : MonoBehaviour {
         if (area.HasStructure(STRUCTURE_TYPE.WILDERNESS)) {
             for (int i = 0; i < outsideTiles.Count; i++) {
                 LocationGridTile currTile = outsideTiles[i];
+                if (currTile.IsAtEdgeOfMap()) {
+                    continue; //skip
+                }
                 if (currTile.structure == null) {
                     //detailsTilemap.SetTile(currTile.localPlace, outsideDetailTile);
                     if (!Utilities.IsInRange(currTile.localPlace.x, 0, 7)) {
@@ -513,6 +520,7 @@ public class AreaInnerTileMap : MonoBehaviour {
 
             LocationGridTile nearestTile = currBuilding.GetNearestTileTo(gate);
             if (nearestTile == null) {
+                //continue;
                 throw new System.Exception("There is no nearest tile to gate at " + area.name);
             }
             List<LocationGridTile> choices = new List<LocationGridTile>();
@@ -536,6 +544,7 @@ public class AreaInnerTileMap : MonoBehaviour {
                         //roadTilemap.SetTile(currTile.localPlace, roadTile);
                         roadTilemap.SetTile(currTile.localPlace, insideTile);
                         detailsTilemap.SetTile(currTile.localPlace, null);
+                        currTile.SetTileState(LocationGridTile.Tile_State.Empty);
                         currTile.SetTileType(LocationGridTile.Tile_Type.Road);
                         if (!roadTiles.Contains(currTile)) {
                             roadTiles.Add(currTile);
@@ -763,11 +772,14 @@ public class AreaInnerTileMap : MonoBehaviour {
                                     LocationGridTile ovTile = overlappedTiles[i];
                                     ovTile.hasDetail = true;
                                     detailsTilemap.SetTile(ovTile.localPlace, null);
+                                    ovTile.SetTileState(LocationGridTile.Tile_State.Occupied);
                                 }
                                 detailsTilemap.SetTile(currTile.localPlace, bigTreeTile);
+                                currTile.SetTileState(LocationGridTile.Tile_State.Occupied);
                             } else {
                                 currTile.hasDetail = true;
                                 detailsTilemap.SetTile(currTile.localPlace, treeTile);
+                                currTile.SetTileState(LocationGridTile.Tile_State.Occupied);
                             }
                         }
                     } else {
@@ -785,9 +797,11 @@ public class AreaInnerTileMap : MonoBehaviour {
                 if (Random.Range(0, 100) < 3) {
                     currTile.hasDetail = true;
                     detailsTilemap.SetTile(currTile.localPlace, flowerTile);
+                    currTile.SetTileState(LocationGridTile.Tile_State.Occupied);
                 } else if (Random.Range(0, 100) < 4) {
                     currTile.hasDetail = true;
                     detailsTilemap.SetTile(currTile.localPlace, rockTile);
+                    currTile.SetTileState(LocationGridTile.Tile_State.Occupied);
                 } else if (Random.Range(0, 100) < 3) {
                     currTile.hasDetail = true;
                     detailsTilemap.SetTile(currTile.localPlace, randomGarbTile);
@@ -810,6 +824,7 @@ public class AreaInnerTileMap : MonoBehaviour {
             if (Random.Range(0, 100) < 5) {
                 currTile.hasDetail = true;
                 detailsTilemap.SetTile(currTile.localPlace, crateBarrelTile);
+                currTile.SetTileState(LocationGridTile.Tile_State.Occupied);
             }
         }
 

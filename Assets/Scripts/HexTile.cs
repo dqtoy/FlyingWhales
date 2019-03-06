@@ -1406,7 +1406,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         }
 
         GameDate nextCorruptionDate = GameManager.Instance.Today();
-        nextCorruptionDate.AddTicks(GameManager.ticksPerDay);
+        nextCorruptionDate.AddTicks(1);
         SchedulingManager.Instance.AddEntry(nextCorruptionDate, () => SpreadCorruptionToNeighbors());
     }
     public void StartCorruptionAnimation() {

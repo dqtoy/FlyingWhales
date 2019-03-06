@@ -689,6 +689,9 @@ public class Area {
         return targets;
     }
     public string GetAreaTypeString() {
+        if (areaType == AREA_TYPE.DEMONIC_INTRUSION) {
+            return "Demonic Portal";
+        }
         if (_raceType != RACE.NONE) {
             if (tiles.Count > 1) {
                 return Utilities.GetNormalizedRaceAdjective(_raceType) + " " + Utilities.NormalizeStringUpperCaseFirstLetters(GetBaseAreaType().ToString());

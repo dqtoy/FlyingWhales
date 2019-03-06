@@ -80,7 +80,7 @@ public class PlayerManager : MonoBehaviour {
         player = new Player();
         PlayerUI.Instance.Initialize();
         player.CreatePlayerFaction();
-        Area existingPlayerArea = LandmarkManager.Instance.GetAreaByName("Player Area");
+        Area existingPlayerArea = LandmarkManager.Instance.GetAreaByName("Portal");
         if (existingPlayerArea == null) {
             player.CreatePlayerArea(portal);
         } else {
