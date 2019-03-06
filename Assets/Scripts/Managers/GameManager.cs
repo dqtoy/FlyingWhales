@@ -257,7 +257,7 @@ public class GameManager : MonoBehaviour {
     public static string ConvertTickToTime(int tick) {
         float floatConversion = tick / 12f;
         int hour = (int) floatConversion;
-        int minutes = Mathf.CeilToInt(((floatConversion - hour) * 12) * 5);
+        int minutes = Mathf.RoundToInt(((floatConversion - hour) * 12) * 5);
         string timeOfDay = "AM";
         if(hour >= 12) {
             if(hour < 24) {
