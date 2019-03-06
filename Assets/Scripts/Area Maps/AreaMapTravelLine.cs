@@ -78,9 +78,9 @@ public class AreaMapTravelLine : MonoBehaviour {
         }
         if (start.objHere == owner) {
             areaMap.charactersTM.SetTile(start.localPlace, null);
-            if (start.prefabHere != null) {
-                ObjectPoolManager.Instance.DestroyObject(start.prefabHere);
-            }
+            //if (start.prefabHere != null) {
+            //    ObjectPoolManager.Instance.DestroyObject(start.prefabHere);
+            //}
         }
         ObjectPoolManager.Instance.DestroyObject(this.gameObject);
     }

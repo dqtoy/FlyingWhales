@@ -200,6 +200,16 @@ namespace PathFind {
                             queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
                         }
                         break;
+                    case GRID_PATHFINDING_MODE.REALISTIC:
+                        foreach (Node n in path.LastStep.RealisticTiles) {
+                            if(n.tileType == LocationGridTile.Tile_Type.Structure && n.structure != start.structure && n.structure != destination.structure) {
+                                continue;
+                            }
+                            d = distance(path.LastStep, n);
+                            newPath = path.AddStep(n, d);
+                            queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
+                        }
+                        break;
                     default:
                         foreach (Node n in path.LastStep.ValidTiles) {
                             d = distance(path.LastStep, n);

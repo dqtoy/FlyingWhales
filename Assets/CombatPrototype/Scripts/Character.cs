@@ -103,6 +103,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public GoapPlanner planner { get; set; }
     public int supply { get; set; }
     public int isWaitingForInteraction { get; private set; }
+    public CharacterMarker marker { get; private set; }
 
     private LocationGridTile tile; //what tile in the structure is this character currently in.
     private POI_STATE _state;
@@ -555,6 +556,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     #endregion
 
+    public void SetCharacterMarker(CharacterMarker marker) {
+        this.marker = marker;
+    }
+    public void ShowTileData(Character character, LocationGridTile location) {
+        specificLocation.areaMap.ShowTileData(this, gridTileLocation);
+    }
     //Changes row number of this character
     public void SetRowNumber(int rowNumber) {
         this._currentRow = rowNumber;
@@ -693,6 +700,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             if (_minion != null) {
                 PlayerManager.Instance.player.RemoveMinion(_minion);
             }
+
+            //gridTileLocation.SetPrefabHere(null);
+            ObjectPoolManager.Instance.DestroyObject(marker.gameObject);
+
             if (onCharacterDeath != null) {
                 onCharacterDeath();
             }
@@ -1289,34 +1300,52 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         MoveToAnotherStructure(locationStructure);
     }
     public void MoveToRandomStructureInArea(STRUCTURE_TYPE structureType) {
-        if (currentStructure != null) {
-            currentStructure.RemoveCharacterAtLocation(this);
-        }
         if (specificLocation.HasStructure(structureType)) {
             LocationStructure newStructure = specificLocation.GetRandomStructureOfType(structureType);
-            newStructure.AddCharacterAtLocation(this);
+            MoveToAnotherStructure(newStructure);
         } else {
             throw new Exception("Can't move " + name + " to a " + structureType.ToString() + " because " + specificLocation.name + " does not have that structure!");
         }
     }
-    public void MoveToAnotherStructure(LocationStructure newStructure, LocationGridTile tile = null, IPointOfInterest targetPOI = null) {
-        if(currentStructure != null) {
-            currentStructure.RemoveCharacterAtLocation(this);
-        }
-        LocationGridTile tileToUse = tile;
-        if (tile != null && targetPOI != null) {
-            //check if the provided tile is still the nearest tile to the POI
-            LocationGridTile newNearestTile = targetPOI.GetNearestUnoccupiedTileFromThis(newStructure, this);
-            if (newNearestTile != null) {
-                //check if the new nearest tile is nearer than the provided tile, if it is, use that instead
-                float ogDistance = Vector2.Distance(targetPOI.gridTileLocation.localLocation, tile.localLocation);
-                float newDistance = Vector2.Distance(targetPOI.gridTileLocation.localLocation, newNearestTile.localLocation);
-                if (newDistance < ogDistance) {
-                    tileToUse = newNearestTile;
+    public void MoveToAnotherStructure(LocationStructure newStructure, LocationGridTile tile = null, IPointOfInterest targetPOI = null, Action arrivalAction = null) {
+        if(currentStructure == newStructure) {
+            if(arrivalAction != null) {
+                arrivalAction();
+            }
+        } else {
+            LocationGridTile destinationTile = tile;
+            if (tile != null && targetPOI != null) {
+                //check if the provided tile is still the nearest tile to the POI
+                LocationGridTile newNearestTile = targetPOI.GetNearestUnoccupiedTileFromThis(newStructure, this);
+                if (newNearestTile != null) {
+                    //check if the new nearest tile is nearer than the provided tile, if it is, use that instead
+                    float ogDistance = Vector2.Distance(targetPOI.gridTileLocation.localLocation, tile.localLocation);
+                    float newDistance = Vector2.Distance(targetPOI.gridTileLocation.localLocation, newNearestTile.localLocation);
+                    if (newDistance < ogDistance) {
+                        destinationTile = newNearestTile;
+                    }
                 }
             }
+
+            if (currentStructure != null) {
+                if (destinationTile == null) {
+                    List<LocationGridTile> tilesToUse;
+                    if (newStructure.location.areaType == AREA_TYPE.DEMONIC_INTRUSION) { //player area
+                        tilesToUse = newStructure.tiles;
+                    } else {
+                        tilesToUse = newStructure.unoccupiedTiles;
+                    }
+                    if (tilesToUse.Count > 0) {
+                        destinationTile = tilesToUse[UnityEngine.Random.Range(0, tilesToUse.Count)];
+                    } else {
+                        Debug.LogWarning("There are no tiles at " + newStructure.structureType.ToString() + " at " + newStructure.location.name + " for " + name);
+                    }
+                }
+                marker.GoToTile(destinationTile, arrivalAction);
+            } else {
+                newStructure.AddCharacterAtLocation(this, destinationTile);
+            }
         }
-        newStructure.AddCharacterAtLocation(this, tileToUse);
     }
     public void SetGridTileLocation(LocationGridTile tile) {
         this.tile = tile;
@@ -3723,10 +3752,16 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         foreach (KeyValuePair<POINT_OF_INTEREST_TYPE, List<IAwareness>> kvp in awareness) {
             if (kvp.Key == POINT_OF_INTEREST_TYPE.CHARACTER) {
                 for (int i = 0; i < kvp.Value.Count; i++) {
-                    if (kvp.Value[i].poi.gridTileLocation.structure == currentStructure || IsPOIInCharacterAwarenessList(kvp.Value[i].poi, characterTargetsAwareness)) {
-                        List<GoapAction> awarenessActions = kvp.Value[i].poi.AdvertiseActionsToActor(this, actorAllowedActions);
-                        if (awarenessActions != null && awarenessActions.Count > 0) {
-                            usableActions.AddRange(awarenessActions);
+                    Character character = kvp.Value[i].poi as Character;
+                    if (character.isDead) {
+                        kvp.Value.RemoveAt(i);
+                        i--;
+                    } else {
+                        if (character.gridTileLocation.structure == currentStructure || IsPOIInCharacterAwarenessList(character, characterTargetsAwareness)) {
+                            List<GoapAction> awarenessActions = kvp.Value[i].poi.AdvertiseActionsToActor(this, actorAllowedActions);
+                            if (awarenessActions != null && awarenessActions.Count > 0) {
+                                usableActions.AddRange(awarenessActions);
+                            }
                         }
                     }
                 }
@@ -3750,10 +3785,16 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         foreach (KeyValuePair<POINT_OF_INTEREST_TYPE, List<IAwareness>> kvp in awareness) {
             if (kvp.Key == POINT_OF_INTEREST_TYPE.CHARACTER) {
                 for (int i = 0; i < kvp.Value.Count; i++) {
-                    if (kvp.Value[i].poi.gridTileLocation.structure == currentStructure || IsPOIInCharacterAwarenessList(kvp.Value[i].poi, currentPlan.goalCharacterTargets)) {
-                        List<GoapAction> awarenessActions = kvp.Value[i].poi.AdvertiseActionsToActor(this, actorAllowedActions);
-                        if (awarenessActions != null && awarenessActions.Count > 0) {
-                            usableActions.AddRange(awarenessActions);
+                    Character character = kvp.Value[i].poi as Character;
+                    if (character.isDead) {
+                        kvp.Value.RemoveAt(i);
+                        i--;
+                    } else {
+                        if (character.gridTileLocation.structure == currentStructure || IsPOIInCharacterAwarenessList(character, currentPlan.goalCharacterTargets)) {
+                            List<GoapAction> awarenessActions = kvp.Value[i].poi.AdvertiseActionsToActor(this, actorAllowedActions);
+                            if (awarenessActions != null && awarenessActions.Count > 0) {
+                                usableActions.AddRange(awarenessActions);
+                            }
                         }
                     }
                 }
