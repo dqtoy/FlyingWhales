@@ -222,6 +222,7 @@ public class UIManager : MonoBehaviour {
         Messenger.AddListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnPartyStartedTravelling);
         Messenger.AddListener<Area>(Signals.AREA_MAP_OPENED, OnAreaMapOpened);
         Messenger.AddListener<Area>(Signals.AREA_MAP_CLOSED, OnAreaMapClosed);
+        UpdateUI();
     }
     private void HideMenus() {
         HideContextMenu();

@@ -91,7 +91,7 @@ public interface ICharacter {
     void SetMode(MODE mode);
     void SetMinion(Minion minion);
     void Assassinate(Character assassin);
-    void AddTrait(Trait combatAttribute, Character responsibleCharacter = null, System.Action onRemoveAction = null);
+    bool AddTrait(Trait combatAttribute, Character responsibleCharacter = null, System.Action onRemoveAction = null);
     bool IsInParty();
     bool IsInOwnParty();
     bool RemoveTrait(Trait combatAttribute, bool triggerOnRemove = true);

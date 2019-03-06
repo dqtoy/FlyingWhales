@@ -1804,8 +1804,18 @@ public class Area {
     public void SetAreaMap(AreaInnerTileMap map) {
         areaMap = map;
     }
-    //TODO: Unify placement of static POI's
-    public void PlaceBedsAndTables() {
+    public void PlaceTileObjects() { //TODO: Unify placement of static POI's
+        PlaceBedsAndTables();
+        PlaceOres();
+        PlaceSupplyPiles();
+        SpawnFoodNow();
+        //magic circle
+        if (structures.ContainsKey(STRUCTURE_TYPE.WILDERNESS)) {
+            LocationStructure structure = structures[STRUCTURE_TYPE.WILDERNESS][0];
+            structure.AddPOI(new MagicCircle(structure));
+        }
+    }
+    private void PlaceBedsAndTables() {
         if (structures.ContainsKey(STRUCTURE_TYPE.DWELLING)) {
             for (int i = 0; i < structures[STRUCTURE_TYPE.DWELLING].Count; i++) {
                 LocationStructure structure = structures[STRUCTURE_TYPE.DWELLING][i];
@@ -1814,7 +1824,7 @@ public class Area {
             }
         }
     }
-    public void PlaceOres() {
+    private void PlaceOres() {
         if (structures.ContainsKey(STRUCTURE_TYPE.WILDERNESS)) {
             int oreCount = 5;
             for (int i = 0; i < structures[STRUCTURE_TYPE.WILDERNESS].Count; i++) {
@@ -1825,7 +1835,7 @@ public class Area {
             }
         }
     }
-    public void PlaceSupplyPiles() {
+    private void PlaceSupplyPiles() {
         if (structures.ContainsKey(STRUCTURE_TYPE.DUNGEON)) {
             for (int i = 0; i < structures[STRUCTURE_TYPE.DUNGEON].Count; i++) {
                 LocationStructure structure = structures[STRUCTURE_TYPE.DUNGEON][i];
@@ -1839,7 +1849,7 @@ public class Area {
             }
         }
     }
-    public void SpawnFoodNow() {
+    private void SpawnFoodNow() {
         if (structures.ContainsKey(STRUCTURE_TYPE.WILDERNESS)) {
             for (int i = 0; i < structures[STRUCTURE_TYPE.WILDERNESS].Count; i++) {
                 LocationStructure structure = structures[STRUCTURE_TYPE.WILDERNESS][i];

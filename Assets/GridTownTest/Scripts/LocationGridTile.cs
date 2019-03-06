@@ -28,8 +28,8 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     //public List<LocationGridTile> neighborList { get; private set; }
     public IPointOfInterest objHere { get; private set; }
 
-    public List<LocationGridTile> ValidTiles { get { return neighbours.Values.Where(o => o.tileType == Tile_Type.Empty || o.tileType == Tile_Type.Gate).ToList(); } }
-    public List<LocationGridTile> RoadTiles { get { return neighbours.Values.Where(o => o.tileType == Tile_Type.Road).ToList(); } }
+    public List<LocationGridTile> ValidTiles { get { return FourNeighbours().Where(o => o.tileType == Tile_Type.Empty || o.tileType == Tile_Type.Gate).ToList(); } }
+    public List<LocationGridTile> RoadTiles { get { return FourNeighbours().Where(o => o.tileType == Tile_Type.Road).ToList(); } }
 
     public LocationGridTile(int x, int y, Tilemap tilemap) {
         parentTileMap = tilemap;
@@ -38,6 +38,20 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         localLocation = tilemap.CellToLocal(localPlace);
         tileType = Tile_Type.Empty;
         tileState = Tile_State.Empty;
+    }
+    public List<LocationGridTile> FourNeighbours() {
+        List<LocationGridTile> fn = new List<LocationGridTile>();
+        foreach (KeyValuePair<TileNeighbourDirection, LocationGridTile> keyValuePair in neighbours) {
+            switch (keyValuePair.Key) {
+                case TileNeighbourDirection.North:
+                case TileNeighbourDirection.South:
+                case TileNeighbourDirection.West:
+                case TileNeighbourDirection.East:
+                    fn.Add(keyValuePair.Value);
+                    break;
+            }
+        }
+        return fn;
     }
     public void FindNeighbours(LocationGridTile[,] map) {
         neighbours = new Dictionary<TileNeighbourDirection, LocationGridTile>();
@@ -53,6 +67,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
                 Utilities.IsInRange(result.Y, 0, mapUpperBoundY + 1)) {
                 neighbours.Add(currDir, map[result.X, result.Y]);
             }
+            
         }
 
         //for (int i = 0; i < LandmarkManager.mapNeighborPoints.Count; i++) {
@@ -67,10 +82,14 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     public Dictionary<TileNeighbourDirection, Point> possibleExits {
         get {
             return new Dictionary<TileNeighbourDirection, Point>() {
-                {TileNeighbourDirection.Top, new Point(0,1) },
-                {TileNeighbourDirection.Bottom, new Point(0,-1) },
-                {TileNeighbourDirection.Left, new Point(-1,0) },
-                {TileNeighbourDirection.Right, new Point(1,0) },
+                {TileNeighbourDirection.North, new Point(0,1) },
+                {TileNeighbourDirection.South, new Point(0,-1) },
+                {TileNeighbourDirection.West, new Point(-1,0) },
+                {TileNeighbourDirection.East, new Point(1,0) },
+                {TileNeighbourDirection.North_West, new Point(-1,1) },
+                {TileNeighbourDirection.North_East, new Point(1,1) },
+                {TileNeighbourDirection.South_West, new Point(-1,-1) },
+                {TileNeighbourDirection.South_East, new Point(1,-1) },
             };
         }
     }
@@ -185,6 +204,17 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     }
     public float GetDistanceTo(LocationGridTile tile) {
         return Vector2.Distance(this.localLocation, tile.localLocation);
+    }
+    #endregion
+
+    #region Intel
+    public void OnClickTileActions() {
+        Messenger.Broadcast(Signals.HIDE_MENUS);
+        if (objHere is TileObject) {
+            PlayerManager.Instance.player.AddIntel(InteractionManager.Instance.CreateNewIntel(objHere));
+        } else if (objHere is Character) {
+            UIManager.Instance.ShowCharacterInfo(objHere as Character);
+        }
     }
     #endregion
 }

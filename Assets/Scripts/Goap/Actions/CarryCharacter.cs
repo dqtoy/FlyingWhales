@@ -12,7 +12,7 @@ public class CarryCharacter : GoapAction {
     }
     protected override void ConstructPreconditionsAndEffects() {
         AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Abducted", targetPOI = poiTarget }, HasAbductedOrRestrainedTrait);
-        AddEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, conditionKey = actor, targetPOI = poiTarget });
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, conditionKey = actor, targetPOI = poiTarget });
     }
     public override bool PerformActualAction() {
         if (base.PerformActualAction()) {

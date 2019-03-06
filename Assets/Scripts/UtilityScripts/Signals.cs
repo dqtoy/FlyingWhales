@@ -7,6 +7,7 @@ public static class Signals {
     public static string TICK_STARTED_2 = "OnTickStart2";
     public static string TICK_ENDED = "OnTickEnd";
     public static string TICK_ENDED_2 = "OnTickEnd2";
+    public static string HOUR_STARTED = "OnHourStart";
     public static string DAY_STARTED = "OnDayStart";
     public static string MONTH_START = "OnMonthStart";
     public static string MONTH_END = "OnMonthEnd";
@@ -195,5 +196,9 @@ public static class Signals {
     //public static string SPECIAL_TOKEN_RAN_OUT = "OnSpecialTokenRanOut"; //Parameters (SpecialToken specialToken)
     public static string SPECIAL_TOKEN_CREATED = "OnSpecialTokenCreated"; //Parameters (SpecialToken specialToken)
     public static string TOKEN_CONSUMED = "OnTokenConsumed"; //Parameters (SpecialToken specialToken)
+    #endregion
+
+    #region GOAP
+    public static string CHARACTER_RECIEVED_PLAN = "OnCharacterRecievedPlan"; //Parameters (Character, GoapPlan)
     #endregion
 }

@@ -14,7 +14,7 @@ public class Sleep : GoapAction {
         if(poiTarget.gridTileLocation.structure.structureType == STRUCTURE_TYPE.INN) {
             AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_SUPPLY, conditionKey = 20, targetPOI = actor }, HasSupply);
         }
-        AddEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = null, targetPOI = actor });
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = null, targetPOI = actor });
     }
     public override bool PerformActualAction() {
         if (base.PerformActualAction()) {

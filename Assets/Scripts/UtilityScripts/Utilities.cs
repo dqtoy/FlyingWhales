@@ -803,6 +803,11 @@ public class Utilities : MonoBehaviour {
         }
         return matched;
     }
+    public static string RemoveWhitespace(string input) {
+        return new string(input.ToCharArray()
+            .Where(c => !Char.IsWhiteSpace(c))
+            .ToArray());
+    }
     #endregion
 
     #region Weighted Dictionary

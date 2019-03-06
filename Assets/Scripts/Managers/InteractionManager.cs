@@ -1,11 +1,15 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection;
 using UnityEngine;
 
 public class InteractionManager : MonoBehaviour {
-
     public static InteractionManager Instance = null;
+
+    public delegate T ObjectActivator<T>(params object[] args);
 
     public static readonly string Supply_Cache_Reward_1 = "SupplyCacheReward1";
     public static readonly string Mana_Cache_Reward_1 = "ManaCacheReward1";
@@ -18,6 +22,7 @@ public class InteractionManager : MonoBehaviour {
     public Queue<Interaction> interactionUIQueue { get; private set; }
 
     private string dailyInteractionSummary;
+    //private ObjectActivator<GoapAction> goapActionCreator;
 
     public Dictionary<INTERACTION_TYPE, InteractionAttributes> interactionCategoryAndAlignment { get; private set; }
 
@@ -39,6 +44,9 @@ public class InteractionManager : MonoBehaviour {
     public void Initialize() {
         Messenger.AddListener(Signals.TICK_ENDED_2, ExecuteInteractionsDefault); //TryExecuteInteractionsDefault
         ConstructInteractionCategoryAndAlignment();
+
+        //ConstructorInfo ctor = typeof(GoapAction).GetConstructors().First();
+        //goapActionCreator = GetActivator<GoapAction>(ctor);
     }
 
     #region Interaction Category And Alignment
@@ -913,6 +921,12 @@ public class InteractionManager : MonoBehaviour {
                 break;
         }
         return createdInteraction;
+    }
+    public T CreateNewGoapInteraction<T>(Character actor, IPointOfInterest target) { //TODO: Need to test performance of this
+        ConstructorInfo ctor = typeof(T).GetConstructors().First();
+        ObjectActivator<T> goapActionCreator = GetActivator<T>(ctor);
+        T goapAction = goapActionCreator(actor, target);
+        return goapAction;
     }
     public GoapAction CreateNewGoapInteraction(INTERACTION_TYPE type, Character actor, IPointOfInterest target) {
         GoapAction goapAction = null;
@@ -1813,7 +1827,7 @@ public class InteractionManager : MonoBehaviour {
     public Reward GetReward(string rewardName) {
         if (rewardConfig.ContainsKey(rewardName)) {
             RewardConfig config = rewardConfig[rewardName];
-            return new Reward { rewardType = config.rewardType, amount = Random.Range(config.lowerRange, config.higherRange + 1) };
+            return new Reward { rewardType = config.rewardType, amount = UnityEngine.Random.Range(config.lowerRange, config.higherRange + 1) };
         }
         throw new System.Exception("There is no reward configuration with name " + rewardName);
     }
@@ -1849,7 +1863,7 @@ public class InteractionManager : MonoBehaviour {
                 Area currArea = trackedAreas[i];
                 List<Interaction> interactionsInvolved = GetAllValidInteractionsInvolving(currArea).Where(x => !interactionUIQueue.Contains(x)).ToList();
                 if (interactionsInvolved.Count > 0) {
-                    Interaction chosen = interactionsInvolved[Random.Range(0, interactionsInvolved.Count)];
+                    Interaction chosen = interactionsInvolved[UnityEngine.Random.Range(0, interactionsInvolved.Count)];
                     AddToInteractionQueue(chosen);
                     Debug.Log(GameManager.Instance.TodayLogString() + " Added " + chosen.name + " from " + currArea.name + " to execute interactions queue.");
                 }
@@ -2046,6 +2060,62 @@ public class InteractionManager : MonoBehaviour {
         return false;
     }
     #endregion
+
+    #region Intel
+    public Intel CreateNewIntel(IPointOfInterest poi) {
+        switch (poi.poiType) {
+            case POINT_OF_INTEREST_TYPE.ITEM:
+            case POINT_OF_INTEREST_TYPE.SUPPLY_PILE:
+            case POINT_OF_INTEREST_TYPE.CORPSE:
+            case POINT_OF_INTEREST_TYPE.FOOD:
+            case POINT_OF_INTEREST_TYPE.TILE_OBJECT:
+                return new TileObjectIntel(poi);
+            default:
+                return new Intel();
+        }
+    }
+    #endregion
+
+
+    public ObjectActivator<T> GetActivator<T> (ConstructorInfo ctor) {
+        Type type = ctor.DeclaringType;
+        ParameterInfo[] paramsInfo = ctor.GetParameters();
+
+        //create a single param of type object[]
+        ParameterExpression param =
+            Expression.Parameter(typeof(object[]), "args");
+
+        Expression[] argsExp =
+            new Expression[paramsInfo.Length];
+
+        //pick each arg from the params array 
+        //and create a typed expression of them
+        for (int i = 0; i < paramsInfo.Length; i++) {
+            Expression index = Expression.Constant(i);
+            Type paramType = paramsInfo[i].ParameterType;
+
+            Expression paramAccessorExp =
+                Expression.ArrayIndex(param, index);
+
+            Expression paramCastExp =
+                Expression.Convert(paramAccessorExp, paramType);
+
+            argsExp[i] = paramCastExp;
+        }
+
+        //make a NewExpression that calls the
+        //ctor with the args we just created
+        NewExpression newExp = Expression.New(ctor, argsExp);
+
+        //create a lambda with the New
+        //Expression as body and our param object[] as arg
+        LambdaExpression lambda =
+            Expression.Lambda(typeof(ObjectActivator<T>), newExp, param);
+
+        //compile it
+        ObjectActivator<T> compiled = (ObjectActivator<T>)lambda.Compile();
+        return compiled;
+    }
 }
 
 public struct RewardConfig {

@@ -39,6 +39,7 @@ public class AreaInnerTileMap : MonoBehaviour {
     [SerializeField] private TileBase bedIconTile;
     [SerializeField] private TileBase tableIconTile;
     [SerializeField] private TileBase oreIconTile;
+    [SerializeField] private TileBase magicCircleTile;
     [SerializeField] private TileBase roadTile;
     [SerializeField] private ItemTileBaseDictionary itemTiles;
     [SerializeField] private FoodTileBaseDictionary foodTiles;
@@ -388,6 +389,9 @@ public class AreaInnerTileMap : MonoBehaviour {
                             break;
                     }
                 }
+                //if (kvp.Key == STRUCTURE_TYPE.DWELLING || kvp.Key == STRUCTURE_TYPE.INN || kvp.Key == STRUCTURE_TYPE.WAREHOUSE) {
+                //    DrawStructureWalls(currStruct);
+                //}
             }
         }
     }
@@ -401,25 +405,25 @@ public class AreaInnerTileMap : MonoBehaviour {
             for (int j = 0; j < currDwelling.tiles.Count; j++) {
                 LocationGridTile currTile = currDwelling.tiles[j];
                 List<TileNeighbourDirection> sameStructNeighbours = currTile.GetSameStructureNeighbourDirections();
-                if (!sameStructNeighbours.Contains(TileNeighbourDirection.Left)) {
-                    if (!sameStructNeighbours.Contains(TileNeighbourDirection.Top)) {
+                if (!sameStructNeighbours.Contains(TileNeighbourDirection.West)) {
+                    if (!sameStructNeighbours.Contains(TileNeighbourDirection.North)) {
                         strcutureTilemap.SetTile(currTile.localPlace, topLeftCornerWall);
-                    } else if (!sameStructNeighbours.Contains(TileNeighbourDirection.Bottom)) {
+                    } else if (!sameStructNeighbours.Contains(TileNeighbourDirection.South)) {
                         strcutureTilemap.SetTile(currTile.localPlace, botLeftCornerWall);
                     } else {
                         strcutureTilemap.SetTile(currTile.localPlace, leftWall);
                     }
-                } else if (!sameStructNeighbours.Contains(TileNeighbourDirection.Right)) {
-                    if (!sameStructNeighbours.Contains(TileNeighbourDirection.Top)) {
+                } else if (!sameStructNeighbours.Contains(TileNeighbourDirection.East)) {
+                    if (!sameStructNeighbours.Contains(TileNeighbourDirection.North)) {
                         strcutureTilemap.SetTile(currTile.localPlace, topRightCornerWall);
-                    } else if (!sameStructNeighbours.Contains(TileNeighbourDirection.Bottom)) {
+                    } else if (!sameStructNeighbours.Contains(TileNeighbourDirection.South)) {
                         strcutureTilemap.SetTile(currTile.localPlace, botRightCornerWall);
                     } else {
                         strcutureTilemap.SetTile(currTile.localPlace, rightWall);
                     }
-                } else if (!sameStructNeighbours.Contains(TileNeighbourDirection.Bottom)) {
+                } else if (!sameStructNeighbours.Contains(TileNeighbourDirection.South)) {
                     strcutureTilemap.SetTile(currTile.localPlace, bottomWall);
-                } else if (!sameStructNeighbours.Contains(TileNeighbourDirection.Top)) {
+                } else if (!sameStructNeighbours.Contains(TileNeighbourDirection.North)) {
                     strcutureTilemap.SetTile(currTile.localPlace, topWall);
                 }
             }
@@ -553,6 +557,18 @@ public class AreaInnerTileMap : MonoBehaviour {
                     break;
                 }
             }
+        }
+    }
+    private void DrawStructureWalls(LocationStructure structure) {
+        for (int i = 0; i < structure.tiles.Count; i++) {
+            LocationGridTile currTile = structure.tiles[i];
+            LocationGridTile eastTile = currTile.neighbours[TileNeighbourDirection.East];
+            LocationGridTile southTile = currTile.neighbours[TileNeighbourDirection.South];
+            LocationGridTile southEastTile = currTile.neighbours[TileNeighbourDirection.South_East];
+            strcutureTilemap.SetTile(currTile.localPlace, structureTile);
+            strcutureTilemap.SetTile(eastTile.localPlace, structureTile);
+            strcutureTilemap.SetTile(southTile.localPlace, structureTile);
+            strcutureTilemap.SetTile(southEastTile.localPlace, structureTile);
         }
     }
     #endregion
@@ -854,13 +870,11 @@ public class AreaInnerTileMap : MonoBehaviour {
             if (hoveredTile.objHere != null) {
                 ShowTileData(hoveredTile);
                 if (Input.GetMouseButtonDown(0)) {
-                    if (hoveredTile.objHere is Character) {
-                        UIManager.Instance.ShowCharacterInfo(hoveredTile.objHere as Character);
-                    }
+                    hoveredTile.OnClickTileActions();
                 }
             } else {
                 if (Input.GetMouseButtonDown(0)) {
-                    Messenger.Broadcast(Signals.HIDE_MENUS);
+                    hoveredTile.OnClickTileActions();
                 }
                 UIManager.Instance.HideSmallInfo();
             }
@@ -898,6 +912,8 @@ public class AreaInnerTileMap : MonoBehaviour {
                     tileToUse = tableIconTile;
                 } else if (obj.ToString() == "Bed") {
                     tileToUse = bedIconTile;
+                } else if (obj.ToString() == "Magic Circle") {
+                    tileToUse = magicCircleTile;
                 } else {
                     tileToUse = characterTile;
                 }

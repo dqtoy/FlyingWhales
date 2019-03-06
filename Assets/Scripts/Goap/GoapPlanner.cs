@@ -30,9 +30,9 @@ public class GoapPlanner {
                 }
             }
         }
-        GOAP_EFFECT_CONDITION[] goalEffects = new GOAP_EFFECT_CONDITION[goalAction.effects.Count];
-        for (int i = 0; i < goalAction.effects.Count; i++) {
-            goalEffects[i] = goalAction.effects[i].conditionType;
+        GOAP_EFFECT_CONDITION[] goalEffects = new GOAP_EFFECT_CONDITION[goalAction.expectedEffects.Count];
+        for (int i = 0; i < goalAction.expectedEffects.Count; i++) {
+            goalEffects[i] = goalAction.expectedEffects[i].conditionType;
         }
         GoapPlan plan = new GoapPlan(cheapestStartingNode, goalEffects);
         return plan;

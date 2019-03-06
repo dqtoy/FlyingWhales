@@ -13,7 +13,7 @@ public class MineGoap : GoapAction {
     //    _requirementAction = Requirement;
     //}
     protected override void ConstructPreconditionsAndEffects() {
-        AddEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_SUPPLY, conditionKey = MAX_SUPPLY, targetPOI = actor });
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_SUPPLY, conditionKey = MAX_SUPPLY, targetPOI = actor });
     }
     public override bool PerformActualAction() {
         if (base.PerformActualAction()) {

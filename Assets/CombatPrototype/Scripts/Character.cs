@@ -21,6 +21,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     protected int _doNotDisturb;
     protected int _doNotGetHungry;
     protected int _doNotGetTired;
+    protected int _doNotGetLonely;
     protected float _actRate;
     protected bool _isDead;
     protected bool _isFainted;
@@ -111,13 +112,17 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 
     //Needs
     public int tiredness { get; private set; }
-    private const int TIREDNESS_DEFAULT = 384;
-    private const int TIREDNESS_THRESHOLD_1 = 324;
-    private const int TIREDNESS_THRESHOLD_2 = 288;
+    private const int TIREDNESS_DEFAULT = 1200;
+    private const int TIREDNESS_THRESHOLD_1 = 1040;
+    private const int TIREDNESS_THRESHOLD_2 = 880;
     public int fullness { get; private set; }
-    private const int FULLNESS_DEFAULT = 768;
-    private const int FULLNESS_THRESHOLD_1 = 728;
-    private const int FULLNESS_THRESHOLD_2 = 672;
+    private const int FULLNESS_DEFAULT = 1440;
+    private const int FULLNESS_THRESHOLD_1 = 1390;
+    private const int FULLNESS_THRESHOLD_2 = 1200;
+    public int happiness { get; private set; }
+    private const int HAPPINESS_DEFAULT = 240;
+    private const int HAPPINESS_THRESHOLD_1 = 160;
+    private const int HAPPINESS_THRESHOLD_2 = 0;
 
     //portrait
     public float hSkinColor { get; private set; }
@@ -507,6 +512,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 
         tiredness = TIREDNESS_DEFAULT;
         fullness = FULLNESS_DEFAULT;
+        happiness = HAPPINESS_DEFAULT;
 
         hSkinColor = UnityEngine.Random.Range(-360f, 360f);
         hHairColor = UnityEngine.Random.Range(-360f, 360f);
@@ -535,7 +541,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnOtherCharacterDied);
         //Messenger.AddListener(Signals.TICK_STARTED, DailyInteractionGeneration);
         //Messenger.AddListener(Signals.TICK_STARTED, DailyGoapPlanGeneration);
-        Messenger.AddListener(Signals.TICK_ENDED, DecreaseNeeds);
+        Messenger.AddListener(Signals.HOUR_STARTED, DecreaseNeeds);
         Messenger.AddListener<Character, Area, Area>(Signals.CHARACTER_MIGRATED_HOME, OnCharacterMigratedHome);
         Messenger.AddListener<Interaction>(Signals.INTERACTION_ENDED, OnInteractionEnded);
         Messenger.AddListener(Signals.DAY_STARTED, DayStartedRemoveOverrideInteraction);
@@ -543,7 +549,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public void UnsubscribeSignals() {
         Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnOtherCharacterDied);
         //Messenger.RemoveListener(Signals.TICK_STARTED, DailyInteractionGeneration);
-        Messenger.RemoveListener(Signals.TICK_ENDED, DecreaseNeeds);
+        Messenger.RemoveListener(Signals.HOUR_STARTED, DecreaseNeeds);
         Messenger.RemoveListener<Character, Area, Area>(Signals.CHARACTER_MIGRATED_HOME, OnCharacterMigratedHome);
         Messenger.RemoveListener(Signals.DAY_STARTED, DayStartedRemoveOverrideInteraction);
     }
@@ -1422,6 +1428,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         _doNotGetHungry += amount;
         _doNotGetHungry = Math.Max(_doNotGetHungry, 0);
     }
+    public void AdjustDoNotGetLonely(int amount) {
+        _doNotGetLonely += amount;
+        _doNotGetLonely = Math.Max(_doNotGetLonely, 0);
+    }
     public void AdjustDoNotGetTired(int amount) {
         _doNotGetTired += amount;
         _doNotGetTired = Math.Max(_doNotGetTired, 0);
@@ -2200,13 +2210,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             AddTrait("Elf Slayer");
         }
     }
-    public void AddTrait(string traitName) {
-        AddTrait(AttributeManager.Instance.allTraits[traitName]);
+    public bool AddTrait(string traitName) {
+        return AddTrait(AttributeManager.Instance.allTraits[traitName]);
     }
-    public void AddTrait(Trait trait, Character characterResponsible = null, System.Action onRemoveAction = null) {
+    public bool AddTrait(Trait trait, Character characterResponsible = null, System.Action onRemoveAction = null) {
         if (trait.IsUnique() && GetTrait(trait.name) != null) {
             trait.SetCharacterResponsibleForTrait(characterResponsible);
-            return;
+            return false;
         }
         _traits.Add(trait);
         trait.SetOnRemoveAction(onRemoveAction);
@@ -2224,6 +2234,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             RelationshipTrait rel = trait as RelationshipTrait;
             AddRelationship(rel.targetCharacter, rel);
         }
+        return true;
     }
     public bool RemoveTrait(Trait trait, bool triggerOnRemove = true) {
         if (_traits.Remove(trait)) {
@@ -2367,13 +2378,18 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         if(trait.name == "Abducted" || trait.name == "Restrained") {
             AdjustDoNotGetTired(1);
-        } else if (trait.name == "Packaged" || trait.name == "Hibernating") {
+        } else if (trait.name == "Packaged" || trait.name == "Hibernating" || trait.name == "Reanimated") {
             AdjustDoNotGetTired(1);
             AdjustDoNotGetHungry(1);
+            AdjustDoNotGetLonely(1);
         } else if (trait.name == "Eating") {
             AdjustDoNotGetHungry(1);
         } else if (trait.name == "Resting") {
             AdjustDoNotGetTired(1);
+            AdjustDoNotGetHungry(1);
+            AdjustDoNotGetLonely(1);
+        } else if (trait.name == "Charmed") {
+            AdjustDoNotGetLonely(1);
         }
         for (int i = 0; i < trait.effects.Count; i++) {
             TraitEffect traitEffect = trait.effects[i];
@@ -2404,13 +2420,18 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         if (trait.name == "Abducted" || trait.name == "Restrained") {
             AdjustDoNotGetTired(-1);
-        } else if (trait.name == "Packaged" || trait.name == "Hibernating") {
+        } else if (trait.name == "Packaged" || trait.name == "Hibernating" || trait.name == "Reanimated") {
             AdjustDoNotGetTired(-1);
             AdjustDoNotGetHungry(-1);
+            AdjustDoNotGetLonely(-1);
         } else if (trait.name == "Eating") {
             AdjustDoNotGetHungry(-1);
         } else if (trait.name == "Resting") {
             AdjustDoNotGetTired(-1);
+            AdjustDoNotGetHungry(-1);
+            AdjustDoNotGetLonely(-1);
+        } else if (trait.name == "Charmed") {
+            AdjustDoNotGetLonely(-1);
         }
         for (int i = 0; i < trait.effects.Count; i++) {
             TraitEffect traitEffect = trait.effects[i];
@@ -3405,15 +3426,19 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             return;
         }
         if(_doNotGetHungry <= 0) {
-            DecreaseFullnessMeter();
+            AdjustFullness(-10);
         }
         if(_doNotGetTired <= 0) {
-            DecreaseTirednessMeter();
+            AdjustTiredness(-10);
+        }
+        if (_doNotGetLonely <= 0) {
+            AdjustHappiness(-10);
         }
     }
     public string GetNeedsSummary() {
         string summary = "Fullness: " + fullness.ToString() + "/" + FULLNESS_DEFAULT.ToString();
         summary += "\nTiredness: " + tiredness + "/" + TIREDNESS_DEFAULT.ToString();
+        summary += "\nHappiness: " + happiness + "/" + HAPPINESS_DEFAULT.ToString();
         return summary;
     }
     #endregion
@@ -3430,20 +3455,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (tiredness == 0) {
             Death("exhaustion");
         } else if (tiredness <= TIREDNESS_THRESHOLD_2) {
-            Trait tiredTrait = GetTrait("Tired");
-            Trait exhaustedTrait = GetTrait("Exhausted");
-            if (tiredTrait != null) {
-                RemoveTrait(tiredTrait);
-            }
-            if (exhaustedTrait == null) {
-                AddTrait("Exhausted");
-            }
+            RemoveTrait("Tired");
+            AddTrait("Exhausted");
             PlanTirednessRecoveryActions();
         } else if (tiredness <= TIREDNESS_THRESHOLD_1) {
-            Trait hungerTrait = GetTrait("Tired");
-            if (hungerTrait == null) {
-                AddTrait("Tired");
-            }
+            AddTrait("Tired");
+            RemoveTrait("Exhausted");
             PlanTirednessRecoveryActions();
         } else {
             //tiredness is higher than both thresholds
@@ -3483,20 +3500,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (fullness == 0) {
             Death("starvation");
         } else if (fullness <= FULLNESS_THRESHOLD_2) {
-            Trait hungerTrait = GetTrait("Hungry");
-            Trait starvationTrait = GetTrait("Starving");
-            if (hungerTrait != null) {
-                RemoveTrait(hungerTrait);
-            }
-            if (starvationTrait == null) {
-                AddTrait("Starving");
-            }
+            RemoveTrait("Hungry");
+            AddTrait("Starving");
             PlanFullnessRecoveryActions();
         } else if (fullness <= FULLNESS_THRESHOLD_1) {
-            Trait hungerTrait = GetTrait("Hungry");
-            if (hungerTrait == null) {
-                AddTrait("Hungry");
-            }
+            RemoveTrait("Starving");
+            AddTrait("Hungry");
             PlanFullnessRecoveryActions();
         } else {
             //fullness is higher than both thresholds
@@ -3524,8 +3533,30 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     #endregion
 
+    #region Happiness
+    public void ResetHappinessMeter() {
+        happiness = HAPPINESS_DEFAULT;
+        RemoveTrait("Lonely");
+        RemoveTrait("Forlorn");
+    }
+    public void AdjustHappiness(int adjustment) {
+        happiness += adjustment;
+        happiness = Mathf.Clamp(happiness, 0, HAPPINESS_DEFAULT);
+        if (happiness <= HAPPINESS_THRESHOLD_2) {
+            RemoveTrait("Lonely");
+            AddTrait("Forlorn");
+        } else if (happiness <= HAPPINESS_THRESHOLD_1) {
+            AddTrait("Lonely");
+            RemoveTrait("Forlorn");
+        } else {
+            RemoveTrait("Lonely");
+            RemoveTrait("Forlorn");
+        }
+    }
+    #endregion
+
     #region Share Intel
-    public void ShareIntel(InteractionIntel intel) {
+    public void ShareIntel(Intel intel) {
         //if (relationships.ContainsKey(intel.actor)) {
         //    if (!intel.isCompleted) {
         //        relationships[intel.actor].SetPlannedActionIntel(intel);
@@ -3885,6 +3916,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 } else {
                     allGoapPlans.Add(goapThread.createdPlan);
                 }
+                Messenger.Broadcast(Signals.CHARACTER_RECIEVED_PLAN, this, goapThread.createdPlan);
             } else {
                 //Receive plan recalculation
                 goapThread.createdPlan.SetIsBeingRecalculated(false);

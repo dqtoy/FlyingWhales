@@ -23,6 +23,7 @@ public class GameManager : MonoBehaviour {
     public int continuousDays;
     public const int daysPerMonth = 30;
     public const int ticksPerDay = 288;
+    public const int ticksPerHour = 12;
     public const int ticksPerTimeInWords = 36;
 
     public int startYear;
@@ -222,6 +223,10 @@ public class GameManager : MonoBehaviour {
         Messenger.Broadcast(Signals.PROGRESSION_SPEED_CHANGED, progSpeed);
 	}
     public void TickStarted() {
+        if (tick % ticksPerHour == 0 && !IsStartOfGame()) {
+            //hour reached
+            Messenger.Broadcast(Signals.HOUR_STARTED);
+        }
         Messenger.Broadcast(Signals.TICK_STARTED);
         Messenger.Broadcast(Signals.TICK_STARTED_2);
         Messenger.Broadcast(Signals.UPDATE_UI);
@@ -340,6 +345,12 @@ public class GameManager : MonoBehaviour {
     }
     public void ToggleIgnoreEventTriggerWeights(bool state) {
         ignoreEventTriggerWeights = state;
+    }
+    private bool IsStartOfGame() {
+        if (year == startYear && month == 1 && days == 1 && tick == 24) {
+            return true;
+        }
+        return false;
     }
     #endregion
 }

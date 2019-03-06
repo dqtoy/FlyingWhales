@@ -51,11 +51,11 @@ public class Track : PlayerJobAction {
         }
     }
     private void ConvertToIntel(Log log, EventPopup popup) {
-        InteractionIntel intel = log.ConvertToIntel();
-        PlayerManager.Instance.player.AddIntel(intel);
-        if (popup.isAlive) {
-            popup.DestroyPopup();
-        }
+        //InteractionIntel intel = log.ConvertToIntel();
+        //PlayerManager.Instance.player.AddIntel(intel);
+        //if (popup.isAlive) {
+        //    popup.DestroyPopup();
+        //}
     }
     //protected override bool ShouldButtonBeInteractable(Character character, Area targetArea) {
     //    if (currentTargetType != JOB_ACTION_TARGET.NONE) {

@@ -45,7 +45,7 @@ public class ShareIntelMenu : MonoBehaviour {
         intelGO.SetActive(true);
         for (int i = 0; i < intelItems.Length; i++) {
             InteractionIntelItem currItem = intelItems[i];
-            InteractionIntel intel = PlayerManager.Instance.player.allIntel.ElementAtOrDefault(i);
+            Intel intel = PlayerManager.Instance.player.allIntel.ElementAtOrDefault(i);
             if (intel == null) {
                 currItem.gameObject.SetActive(false);
             } else {
@@ -64,13 +64,13 @@ public class ShareIntelMenu : MonoBehaviour {
         this.gameObject.SetActive(false);
     }
 
-    private void ReactToIntel(InteractionIntel intel) {
+    private void ReactToIntel(Intel intel) {
         closeBtn.interactable = false;
         HideIntel();
 
         GameObject actorDialog = ObjectPoolManager.Instance.InstantiateObjectFromPool(dialogItemPrefab.name, Vector3.zero, Quaternion.identity, dialogScrollView.content);
         DialogItem actorItem = actorDialog.GetComponent<DialogItem>();
-        actorItem.SetData(actor, "You might want to know that, " + Utilities.LogReplacer(intel.obtainedFromLog), DialogItem.Position.Right);
+        actorItem.SetData(actor, "You might want to know that, " + Utilities.LogReplacer(intel.intelLog), DialogItem.Position.Right);
 
         ShareIntel share = PlayerManager.Instance.player.roleSlots[JOB.DIPLOMAT].GetAction(typeof(ShareIntel)) as ShareIntel;
         share.BaseActivate(targetCharacter);

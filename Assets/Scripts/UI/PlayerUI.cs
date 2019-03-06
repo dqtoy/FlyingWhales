@@ -111,8 +111,8 @@ public class PlayerUI : MonoBehaviour {
         Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
         Messenger.AddListener(Signals.UPDATED_CURRENCIES, UpdateUI);
-        Messenger.AddListener<InteractionIntel>(Signals.PLAYER_OBTAINED_INTEL, OnIntelObtained);
-        Messenger.AddListener<InteractionIntel>(Signals.PLAYER_REMOVED_INTEL, OnIntelRemoved);
+        Messenger.AddListener<Intel>(Signals.PLAYER_OBTAINED_INTEL, OnIntelObtained);
+        Messenger.AddListener<Intel>(Signals.PLAYER_REMOVED_INTEL, OnIntelRemoved);
     }
 
     #region Role Slots
@@ -465,16 +465,16 @@ public class PlayerUI : MonoBehaviour {
     }
 
     #region Intel
-    private void OnIntelObtained(InteractionIntel intel) {
+    private void OnIntelObtained(Intel intel) {
         UpdateIntel();
     }
-    private void OnIntelRemoved(InteractionIntel intel) {
+    private void OnIntelRemoved(Intel intel) {
         UpdateIntel();
     }
     private void UpdateIntel() {
         for (int i = 0; i < intelItems.Length; i++) {
             InteractionIntelItem currItem = intelItems[i];
-            InteractionIntel intel = PlayerManager.Instance.player.allIntel.ElementAtOrDefault(i);
+            Intel intel = PlayerManager.Instance.player.allIntel.ElementAtOrDefault(i);
             currItem.SetIntel(intel);
         }
     }

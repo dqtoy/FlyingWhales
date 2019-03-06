@@ -6,9 +6,9 @@ using UnityEngine.UI;
 
 public class InteractionIntelItem : MonoBehaviour {
 
-    private InteractionIntel intel;
+    private Intel intel;
 
-    public delegate void OnClickAction(InteractionIntel intel);
+    public delegate void OnClickAction(Intel intel);
     private OnClickAction onClickAction;
 
     private List<System.Action> otherClickActions;
@@ -16,12 +16,12 @@ public class InteractionIntelItem : MonoBehaviour {
     [SerializeField] private TextMeshProUGUI infoLbl;
     [SerializeField] private Button mainBtn;
 
-    public void SetIntel(InteractionIntel intel) {
+    public void SetIntel(Intel intel) {
         this.intel = intel;
         otherClickActions = new List<System.Action>();
         ClearClickActions();
         if (intel != null) {
-            infoLbl.text = "On <b>Day " + intel.obtainedFromLog.date.ConvertToContinuousDays() + "</b>: " +  Utilities.LogReplacer(intel.obtainedFromLog);
+            infoLbl.text = "On <b>Day " + intel.intelLog.date.ConvertToContinuousDays() + "</b>: " +  Utilities.LogReplacer(intel.intelLog);
             mainBtn.interactable = true;
         } else {
             infoLbl.text = "Get some intel!";
@@ -30,8 +30,8 @@ public class InteractionIntelItem : MonoBehaviour {
     }
     public void ShowLogDebugInfo() {
         if (intel != null) {
-            string text = intel.GetDebugInfo();
-            UIManager.Instance.ShowSmallInfo(text);
+            //string text = intel.GetDebugInfo();
+            //UIManager.Instance.ShowSmallInfo(text);
         }
     }
     public void HideLogDebugInfo() {

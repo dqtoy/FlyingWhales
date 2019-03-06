@@ -11,7 +11,7 @@ public class PickItemGoap : GoapAction {
         _requirementAction = Requirement;
     }
     protected override void ConstructPreconditionsAndEffects() {
-        AddEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = poiTarget.name, targetPOI = actor });
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = poiTarget.name, targetPOI = actor });
     }
     public override bool PerformActualAction() {
         if (base.PerformActualAction()) {

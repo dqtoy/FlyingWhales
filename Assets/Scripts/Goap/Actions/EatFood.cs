@@ -11,7 +11,7 @@ public class EatFood : GoapAction {
     //    _requirementAction = Requirement;
     //}
     protected override void ConstructPreconditionsAndEffects() {
-        AddEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = actor });
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = actor });
     }
     public override bool PerformActualAction() {
         if (base.PerformActualAction()) {
@@ -36,6 +36,18 @@ public class EatFood : GoapAction {
             return 10;
         }
         return 0;
+    }
+    #endregion
+
+    #region Effects
+    private void EatSuccess() {
+        Debug.Log(actor.name + " Eat Succcess!");
+    }
+    private void EatFail() {
+        Debug.Log(actor.name + " Eat Fail!");
+    }
+    private void TargetMissing() {
+        Debug.Log(actor.name + " Target Missing!");
     }
     #endregion
 

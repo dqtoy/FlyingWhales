@@ -73,7 +73,7 @@ public class EventPopup : PooledObject {
 
     public void ConvertToIntel() {
         InteractionIntel intel = log.ConvertToIntel();
-        PlayerManager.Instance.player.AddIntel(intel);
+        //PlayerManager.Instance.player.AddIntel(intel);
         DestroyPopup();
     }
 

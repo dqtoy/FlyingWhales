@@ -24,7 +24,7 @@ public class Player : ILeader {
     public Dictionary<JOB, PlayerJobData> roleSlots { get; private set; }
     public CombatGrid attackGrid { get; private set; }
     public CombatGrid defenseGrid { get; private set; }
-    public List<InteractionIntel> allIntel { get; private set; }
+    public List<Intel> allIntel { get; private set; }
 
     #region getters/setters
     public int id {
@@ -74,18 +74,25 @@ public class Player : ILeader {
         attackGrid.Initialize();
         defenseGrid.Initialize();
         maxImps = 5;
-        allIntel = new List<InteractionIntel>();
+        allIntel = new List<Intel>();
         SetCurrentLifestoneChance(25f);
         ConstructCurrencies();
         ConstructRoleSlots();
-        Messenger.AddListener<Area, HexTile>(Signals.AREA_TILE_REMOVED, OnTileRemovedFromPlayerArea);
-        Messenger.AddListener(Signals.TICK_STARTED, EverydayAction);
-        Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
-        AddWinListener();
+        AddListeners();
     }
 
     private void EverydayAction() {
         //DepleteThreatLevel();
+    }
+
+    private void AddListeners() {
+        AddWinListener();
+        Messenger.AddListener<Area, HexTile>(Signals.AREA_TILE_REMOVED, OnTileRemovedFromPlayerArea);
+        Messenger.AddListener(Signals.TICK_STARTED, EverydayAction);
+        Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+
+        //goap
+        Messenger.AddListener<Character, GoapPlan>(Signals.CHARACTER_RECIEVED_PLAN, OnCharacterRecievedPlan);
     }
 
     #region ILeader
@@ -633,11 +640,11 @@ public class Player : ILeader {
     #endregion
 
     #region Intel
-    public void AddIntel(InteractionIntel newIntel) {
+    public void AddIntel(Intel newIntel) {
         if (!allIntel.Contains(newIntel)) {
             for (int i = 0; i < allIntel.Count; i++) {
-                InteractionIntel currIntel = allIntel[i];
-                if (currIntel.obtainedFromLog == newIntel.obtainedFromLog) {
+                Intel currIntel = allIntel[i];
+                if (currIntel.intelLog == newIntel.intelLog) {
                     return;
                 }
             }
@@ -648,13 +655,27 @@ public class Player : ILeader {
             Messenger.Broadcast(Signals.PLAYER_OBTAINED_INTEL, newIntel);
         }
     }
-    public void RemoveIntel(InteractionIntel intel) {
+    public void RemoveIntel(Intel intel) {
         if (allIntel.Remove(intel)) {
             Messenger.Broadcast(Signals.PLAYER_REMOVED_INTEL, intel);
         }
     }
-    public bool AlreadyHasIntel(InteractionIntel intel) {
+    public bool AlreadyHasIntel(Intel intel) {
         return allIntel.Contains(intel);
+    }
+    private void OnCharacterRecievedPlan(Character character, GoapPlan plan) {
+        bool showPopup = false;
+        if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.id == character.id) {
+            showPopup = true;
+        } else if (roleSlots[JOB.SPY].activeAction is Track) {
+            Track track = roleSlots[JOB.SPY].activeAction as Track;
+            if (track.target == character) {
+                showPopup = true;
+            }
+        }
+        if (showPopup) {
+            //Messenger.Broadcast<string, int, UnityEngine.Events.UnityAction>(Signals.SHOW_NOTIFICATION, Utilities.LogReplacer(plan.endNode.action.thoughtBubbleLog), -1, null);
+        }
     }
     #endregion
 }
