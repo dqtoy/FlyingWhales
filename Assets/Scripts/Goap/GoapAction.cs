@@ -61,8 +61,8 @@ public class GoapAction {
         if(actor.specificLocation != targetStructure.location) {
             actor.currentParty.GoToLocation(targetStructure.location, PATHFINDING_MODE.NORMAL, targetStructure, () => actor.PerformGoapAction(plan));
         } else if (actor.currentStructure != targetStructure) {
-            actor.MoveToAnotherStructure(targetStructure);
-            actor.PerformGoapAction(plan);
+            actor.MoveToAnotherStructure(targetStructure, null, null, () => actor.PerformGoapAction(plan));
+            //actor.PerformGoapAction(plan);
         } else {
             actor.PerformGoapAction(plan);
         }

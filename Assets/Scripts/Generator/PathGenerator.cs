@@ -127,6 +127,10 @@ public class PathGenerator : MonoBehaviour {
                 startingTile.SetTileType(LocationGridTile.Tile_Type.Road);
                 destinationTile.SetTileType(LocationGridTile.Tile_Type.Road);
                 break;
+            case GRID_PATHFINDING_MODE.REALISTIC:
+                startingTile.SetTileState(LocationGridTile.Tile_State.Empty);
+                destinationTile.SetTileState(LocationGridTile.Tile_State.Empty);
+                break;
             default:
                 startingTile.SetTileType(LocationGridTile.Tile_Type.Empty);
                 destinationTile.SetTileType(LocationGridTile.Tile_Type.Empty);
@@ -142,7 +146,9 @@ public class PathGenerator : MonoBehaviour {
         destinationTile.SetTileType(destinationType);
 
         if (path != null) {
-            return path.ToList();
+            List<LocationGridTile> truePath = path.Reverse().ToList();
+            truePath.RemoveAt(0);
+            return truePath;
         }
         return null;
     }

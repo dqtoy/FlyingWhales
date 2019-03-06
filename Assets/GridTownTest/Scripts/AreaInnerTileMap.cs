@@ -92,7 +92,12 @@ public class AreaInnerTileMap : MonoBehaviour {
     public float offsetX;
     public float offsetY;
 
+    public Vector3 startPos;
+    public Vector3 endPos;
+
+
     public Area area { get; private set; }
+    public RectTransform mapCharactersParent { get { return charactersParent; } }
     public LocationGridTile[,] map { get; private set; }
     public List<LocationGridTile> allTiles { get; private set; }
     public List<LocationGridTile> outsideTiles { get; private set; }
@@ -916,19 +921,29 @@ public class AreaInnerTileMap : MonoBehaviour {
             if (portrait != null) {
                 portrait.SetImageRaycastTargetState(true);
             }
-            ObjectPoolManager.Instance.DestroyObject(tile.prefabHere);
+            //ObjectPoolManager.Instance.DestroyObject(tile.prefabHere);
+            tile.SetPrefabHere(null);
         }
         objectsTilemap.SetTile(tile.localPlace, null);
     }
     private void OnPlaceCharacterOnTile(Character character, LocationGridTile tile) {
         Vector3 pos = new Vector3(tile.localPlace.x + 0.5f, tile.localPlace.y + 0.5f);
-        GameObject portraitGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("CharacterMarker", pos, Quaternion.identity, charactersParent);
-        CharacterMarker portrait = portraitGO.GetComponent<CharacterMarker>();
-        portrait.SetCharacter(character, tile);
-        portrait.SetHoverAction(ShowTileData, UIManager.Instance.HideSmallInfo);
-        RectTransform rect = portraitGO.transform as RectTransform;
+        if(character.marker == null) {
+            GameObject portraitGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("CharacterMarker", pos, Quaternion.identity, charactersParent);
+            character.SetCharacterMarker(portraitGO.GetComponent<CharacterMarker>());
+            character.marker.SetCharacter(character);
+            character.marker.SetHoverAction(character.ShowTileData, UIManager.Instance.HideSmallInfo);
+        } else {
+            character.marker.gameObject.transform.SetParent(charactersParent);
+            character.marker.gameObject.transform.localPosition = pos;
+        }
+        if (!character.marker.gameObject.activeSelf) {
+            character.marker.gameObject.SetActive(true);
+        }
+        character.marker.SetLocation(tile);
+        RectTransform rect = character.marker.gameObject.transform as RectTransform;
         rect.anchoredPosition = pos;
-        tile.SetPrefabHere(portraitGO);
+        tile.SetPrefabHere(character.marker.gameObject);
     }
     private void OnPlaceCorpseOnTile(Corpse corpse, LocationGridTile tile) {
         Vector3 pos = new Vector3(tile.localPlace.x, tile.localPlace.y);
@@ -1001,6 +1016,7 @@ public class AreaInnerTileMap : MonoBehaviour {
     #region Other
     public void Open() {
         this.gameObject.SetActive(true);
+        SwitchFromEstimatedMovementToPathfinding();
     }
     public void Close() {
         this.gameObject.SetActive(false);
@@ -1022,7 +1038,7 @@ public class AreaInnerTileMap : MonoBehaviour {
         //}
         UIManager.Instance.ShowSmallInfo(summary);
     }
-    private void ShowTileData(Character character, LocationGridTile tile) {
+    public void ShowTileData(Character character, LocationGridTile tile) {
         ShowTileData(tile);
     }
     public List<LocationGridTile> GetTilesInRadius(LocationGridTile centerTile, int radius, bool includeCenterTile = false, bool includeTilesInDifferentStructure = false) {
@@ -1047,6 +1063,15 @@ public class AreaInnerTileMap : MonoBehaviour {
             }
         }
         return tiles;
+    }
+    private void SwitchFromEstimatedMovementToPathfinding() {
+        for (int i = 0; i < area.charactersAtLocation.Count; i++) {
+            Character character = area.charactersAtLocation[i];
+            if(character.currentParty.icon.isTravelling && character.currentParty.icon.travelLine == null) {
+                //This means that the character is only travelling inside the map, he/she is not travelling to another area
+                character.marker.SwitchToPathfinding();
+            }
+        }
     }
     #endregion
 
@@ -1137,6 +1162,12 @@ public class AreaInnerTileMap : MonoBehaviour {
             Debug.Log("No Path!");
         }
         
+    }
+
+    [ContextMenu("Get Distance")]
+    public void GetDistance() {
+        float distance = Vector2.Distance(map[(int) startPos.x, (int) startPos.y].localLocation, map[(int) endPos.x, (int) endPos.y].localLocation);
+        Debug.LogWarning(distance);
     }
 }
 

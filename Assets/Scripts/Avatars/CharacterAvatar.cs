@@ -158,7 +158,7 @@ public class CharacterAvatar : MonoBehaviour{
         }
     }
     private void StartTravelling() {
-        _isTravelling = true;
+        SetIsTravelling(true);
         //float distance = Vector3.Distance(_party.specificLocation.coreTile.transform.position, targetLocation.coreTile.transform.position);
         if (causeForTravel != null) {
             _party.specificLocation.areaMap.ShowEventPopupAt(_party.owner.gridTileLocation, causeForTravel.currentState.lastAddedLog);
@@ -199,14 +199,16 @@ public class CharacterAvatar : MonoBehaviour{
         }
     }
     private void CancelledDeparture() {
-        _isTravelling = false;
-        _isTravelCancelled = false;
-        _travelLine.travelLineParent.RemoveChild(_travelLine);
-        GameObject.Destroy(_travelLine.gameObject);
-        _travelLine = null;
+        if(_travelLine != null) {
+            SetIsTravelling(false);
+            _isTravelCancelled = false;
+            _travelLine.travelLineParent.RemoveChild(_travelLine);
+            GameObject.Destroy(_travelLine.gameObject);
+            _travelLine = null;
+        }
     }
     private void ArriveAtLocation() {
-        _isTravelling = false;
+        SetIsTravelling(false);
         _travelLine.travelLineParent.RemoveChild(_travelLine);
         GameObject.Destroy(_travelLine.gameObject);
         _travelLine = null;
@@ -249,7 +251,7 @@ public class CharacterAvatar : MonoBehaviour{
         if (path != null && path.Count > 0) {
             this.path = path;
             _currPathfindingRequest = null;
-            _isTravelling = true;
+            SetIsTravelling(true);
             //if(_party.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
             //    _party.specificLocation.coreTile.landmarkOnTile.landmarkVisual.OnCharacterExitedLandmark(_party);
             //}
@@ -304,7 +306,7 @@ public class CharacterAvatar : MonoBehaviour{
     public virtual void HasArrivedAtTargetLocation() {
 		if (_party.specificLocation.coreTile.id == targetLocation.id) {
             if (!this._hasArrived) {
-                _isTravelling = false;
+                SetIsTravelling(false);
                 //_trackTarget = null;
                 SetHasArrivedState(true);
                 targetLocation.AddCharacterToLocation(_party);
@@ -364,6 +366,9 @@ public class CharacterAvatar : MonoBehaviour{
     }
     public void AddActionOnPathFinished(Action action) {
         onPathFinished += action;
+    }
+    public void SetIsTravelling(bool state) {
+        _isTravelling = state;
     }
     #endregion
 
