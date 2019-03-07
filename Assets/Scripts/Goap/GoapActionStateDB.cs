@@ -4,7 +4,6 @@ using UnityEngine;
 
 public static class GoapActionStateDB {
 
-<<<<<<< HEAD
     public static Dictionary<INTERACTION_TYPE, StateNameAndDuration[]> goapActionStates = new Dictionary<INTERACTION_TYPE, StateNameAndDuration[]>() {
         {INTERACTION_TYPE.EAT_PLANT, new StateNameAndDuration[]{
             new StateNameAndDuration(){ name = "Eat Success", status = InteractionManager.Goap_State_Success, duration = AttributeManager.Instance.allTraits["Eating"].daysDuration },
