@@ -48,6 +48,7 @@ public class GoapPlan {
         allNodes.Add(node);
         while (node.parent != null) {
             node = node.parent;
+            node.action.SetParentPlan(this);
             allNodes.Add(node);
         }
         endNode = node;

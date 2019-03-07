@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class InteractionIntelItem : MonoBehaviour {
+public class IntelItem : MonoBehaviour {
 
     private Intel intel;
 
@@ -21,7 +21,13 @@ public class InteractionIntelItem : MonoBehaviour {
         otherClickActions = new List<System.Action>();
         ClearClickActions();
         if (intel != null) {
-            infoLbl.text = "On <b>Day " + intel.intelLog.date.ConvertToContinuousDays() + "</b>: " +  Utilities.LogReplacer(intel.intelLog);
+            string preText = "Tip: ";
+            if (intel is EventIntel) {
+                preText = "Event: ";
+            } else if (intel is PlanIntel) {
+                preText = "Plan: ";
+            }
+            infoLbl.text = preText +  Utilities.LogReplacer(intel.intelLog);
             mainBtn.interactable = true;
         } else {
             infoLbl.text = "Get some intel!";

@@ -42,7 +42,7 @@ GameObject:
   - component: {fileID: 114468978955019332}
   - component: {fileID: 114875487385073656}
   m_Layer: 5
-  m_Name: InteractionIntelItem
+  m_Name: IntelItem
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -305,6 +305,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.ABDUCT_ACTION,
                 INTERACTION_TYPE.CARRY_CHARACTER,
                 INTERACTION_TYPE.DROP_CHARACTER,
+                INTERACTION_TYPE.DAYDREAM,
             } },
             { RACE.ELVES, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -345,6 +346,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.ABDUCT_ACTION,
                 INTERACTION_TYPE.CARRY_CHARACTER,
                 INTERACTION_TYPE.DROP_CHARACTER,
+                INTERACTION_TYPE.DAYDREAM,
             } },
             { RACE.GOBLIN, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -385,6 +387,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.ABDUCT_ACTION,
                 INTERACTION_TYPE.CARRY_CHARACTER,
                 INTERACTION_TYPE.DROP_CHARACTER,
+                INTERACTION_TYPE.DAYDREAM,
             } },
             { RACE.FAERY, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -425,6 +428,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.ABDUCT_ACTION,
                 INTERACTION_TYPE.CARRY_CHARACTER,
                 INTERACTION_TYPE.DROP_CHARACTER,
+                INTERACTION_TYPE.DAYDREAM,
             } },
             { RACE.SKELETON, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -455,6 +459,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.EAT_INN_MEAL,
                 INTERACTION_TYPE.REST_AT_INN,
                 INTERACTION_TYPE.HUNT_SMALL_ANIMALS,
+                INTERACTION_TYPE.DAYDREAM,
             } },
             { RACE.SPIDER, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -495,6 +500,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.ABDUCT_ACTION,
                 INTERACTION_TYPE.CARRY_CHARACTER,
                 INTERACTION_TYPE.DROP_CHARACTER,
+                INTERACTION_TYPE.DAYDREAM,
             } },
             { RACE.WOLF, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -535,6 +541,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.ABDUCT_ACTION,
                 INTERACTION_TYPE.CARRY_CHARACTER,
                 INTERACTION_TYPE.DROP_CHARACTER,
+                INTERACTION_TYPE.DAYDREAM,
             } },
             { RACE.DRAGON, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -575,6 +582,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.ABDUCT_ACTION,
                 INTERACTION_TYPE.CARRY_CHARACTER,
                 INTERACTION_TYPE.DROP_CHARACTER,
+                INTERACTION_TYPE.DAYDREAM,
             } },
         };
     }

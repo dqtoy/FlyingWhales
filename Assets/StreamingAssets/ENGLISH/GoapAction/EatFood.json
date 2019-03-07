@@ -1,1 +1,1 @@
-{"items":[{"key":"thought_bubble","value":"%00@ is planning to eat at [[Owner Name]'s place/home]."}]}
+{"items":[{"key":"thought_bubble","value":"%00@ is planning to eat at %10@'s home."},{"key":"eat success_description","value":"%00@ ate at %10@' home."},{"key":"eat fail_description","value":"%00@ ate at %10@' home."},{"key":"target missing_description","value":"%00@ ate at %10@' home."}]}

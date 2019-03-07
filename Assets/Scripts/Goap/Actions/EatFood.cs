@@ -16,10 +16,11 @@ public class EatFood : GoapAction {
     public override bool PerformActualAction() {
         if (base.PerformActualAction()) {
             if(actor.currentStructure == poiTarget.gridTileLocation.structure) {
-                actor.ResetFullnessMeter();
-                OnPerformActualActionToTarget();
-                return true;
+                SetState("Eat Success");
+            } else {
+                SetState("Eat Fail");
             }
+            return true;
         }
         return false;
     }
@@ -40,13 +41,19 @@ public class EatFood : GoapAction {
     #endregion
 
     #region Effects
-    private void EatSuccess() {
+    private void PreEatSuccess() {
+        actor.ResetFullnessMeter();
+        OnPerformActualActionToTarget();
         Debug.Log(actor.name + " Eat Succcess!");
     }
-    private void EatFail() {
+    private void PreEatFail() {
+        actor.ResetFullnessMeter();
+        OnPerformActualActionToTarget();
         Debug.Log(actor.name + " Eat Fail!");
     }
-    private void TargetMissing() {
+    private void PreTargetMissing() {
+        actor.ResetFullnessMeter();
+        OnPerformActualActionToTarget();
         Debug.Log(actor.name + " Target Missing!");
     }
     #endregion

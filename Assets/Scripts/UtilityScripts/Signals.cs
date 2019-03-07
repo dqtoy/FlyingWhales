@@ -111,6 +111,7 @@ public static class Signals {
     public static string HIDE_MENUS = "HideMenus";
     public static string DRAG_OBJECT_CREATED = "OnDragObjectCreated"; //Parameters (DragObject obj)
     public static string DRAG_OBJECT_DESTROYED = "OnDragObjectDestroyed"; //Parameters (DragObject obj)
+    public static string SHOW_INTEL_NOTIFICATION = "ShowIntelNotification"; //Parameters (Intel)
     #endregion
 
     #region Quest Signals
@@ -200,5 +201,6 @@ public static class Signals {
 
     #region GOAP
     public static string CHARACTER_RECIEVED_PLAN = "OnCharacterRecievedPlan"; //Parameters (Character, GoapPlan)
+    public static string CHARACTER_DID_ACTION = "OnCharacterDidAction"; //Parameters (Character, GoapAction)
     #endregion
 }

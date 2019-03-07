@@ -222,6 +222,8 @@ public class UIManager : MonoBehaviour {
         Messenger.AddListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnPartyStartedTravelling);
         Messenger.AddListener<Area>(Signals.AREA_MAP_OPENED, OnAreaMapOpened);
         Messenger.AddListener<Area>(Signals.AREA_MAP_CLOSED, OnAreaMapClosed);
+
+        Messenger.AddListener<Intel>(Signals.SHOW_INTEL_NOTIFICATION, ShowIntelNotification);
         UpdateUI();
     }
     private void HideMenus() {
@@ -734,6 +736,14 @@ public class UIManager : MonoBehaviour {
             lastOpenedMenu.OpenMenu();
             lastOpenedMenu = null;
         }
+    }
+    public void ScrollRectSnapTo(ScrollRect scrollRect, RectTransform target) {
+        Canvas.ForceUpdateCanvases();
+        Vector2 ogPos = scrollRect.content.anchoredPosition;
+        Vector2 diff = (Vector2)scrollRect.transform.InverseTransformPoint(scrollRect.content.position)
+            - (Vector2)scrollRect.transform.InverseTransformPoint(target.position);
+        scrollRect.content.anchoredPosition = new Vector2(ogPos.x, diff.y);
+            
     }
     #endregion
 
@@ -1426,6 +1436,16 @@ public class UIManager : MonoBehaviour {
     }
     public void CloseShareIntelMenu() {
         shareIntelMenu.Close();
+    }
+    #endregion
+
+    #region Intel Notification
+    [Header("Intel Notification")]
+    [SerializeField] private GameObject intelPrefab;
+    [SerializeField] private ScrollRect intelNotifScrollView;
+    private void ShowIntelNotification(Intel intel) {
+        GameObject newIntelGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(intelPrefab.name, Vector3.zero, Quaternion.identity, intelNotifScrollView.content);
+        newIntelGO.GetComponent<IntelNotificationItem>().Initialize(intel);
     }
     #endregion
 }

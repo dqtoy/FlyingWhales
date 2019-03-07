@@ -9,6 +9,10 @@ public static class GoapActionStateDB {
             "Eat Success",
             "Eat Fail",
             "Target Missing",
+        } },
+        {INTERACTION_TYPE.DAYDREAM, new string[]{
+            "Daydream Success",
+            "Daydream Failed",
         } }
     };
 }

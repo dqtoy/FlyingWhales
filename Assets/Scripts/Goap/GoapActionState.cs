@@ -24,7 +24,7 @@ public class GoapActionState {
     }
 
     private void CreateLog() {
-        descriptionLog = new Log(GameManager.Instance.Today(), "Events", parentAction.GetType().ToString(), name.ToLower() + "_description");
+        descriptionLog = new Log(GameManager.Instance.Today(), "GoapAction", parentAction.GetType().ToString(), name.ToLower() + "_description");
         AddLogFiller(parentAction.actor, parentAction.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
     }
 
@@ -33,9 +33,7 @@ public class GoapActionState {
     }
 
     public void Execute() {
-        if (preEffect != null) {
-            preEffect();
-        }
+        preEffect?.Invoke();
         descriptionLog.AddLogToInvolvedObjects();
     }
 }
