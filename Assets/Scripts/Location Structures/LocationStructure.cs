@@ -379,6 +379,12 @@ public class LocationStructure {
         }
         return false;
     }
+    public LocationGridTile GetRandomUnoccupiedTile() {
+        if (unoccupiedTiles.Count <= 0) {
+            return null;
+        }
+        return unoccupiedTiles[Random.Range(0, unoccupiedTiles.Count)];
+    }
     #endregion
 
     public override string ToString() {

@@ -14,7 +14,7 @@ public class ShareIntelMenu : MonoBehaviour {
 
     [Header("Intel")]
     [SerializeField] private GameObject intelGO;
-    [SerializeField] private InteractionIntelItem[] intelItems;
+    [SerializeField] private IntelItem[] intelItems;
 
     private Character targetCharacter;
     private Character actor;
@@ -44,7 +44,7 @@ public class ShareIntelMenu : MonoBehaviour {
     private void UpdateIntel() {
         intelGO.SetActive(true);
         for (int i = 0; i < intelItems.Length; i++) {
-            InteractionIntelItem currItem = intelItems[i];
+            IntelItem currItem = intelItems[i];
             Intel intel = PlayerManager.Instance.player.allIntel.ElementAtOrDefault(i);
             if (intel == null) {
                 currItem.gameObject.SetActive(false);
@@ -68,14 +68,13 @@ public class ShareIntelMenu : MonoBehaviour {
         closeBtn.interactable = false;
         HideIntel();
 
-        GameObject actorDialog = ObjectPoolManager.Instance.InstantiateObjectFromPool(dialogItemPrefab.name, Vector3.zero, Quaternion.identity, dialogScrollView.content);
-        DialogItem actorItem = actorDialog.GetComponent<DialogItem>();
-        actorItem.SetData(actor, "You might want to know that, " + Utilities.LogReplacer(intel.intelLog), DialogItem.Position.Right);
+        //GameObject actorDialog = ObjectPoolManager.Instance.InstantiateObjectFromPool(dialogItemPrefab.name, Vector3.zero, Quaternion.identity, dialogScrollView.content);
+        //DialogItem actorItem = actorDialog.GetComponent<DialogItem>();
+        //actorItem.SetData(actor, "You might want to know that, " + Utilities.LogReplacer(intel.intelLog), DialogItem.Position.Right);
 
         ShareIntel share = PlayerManager.Instance.player.roleSlots[JOB.DIPLOMAT].GetAction(typeof(ShareIntel)) as ShareIntel;
         share.BaseActivate(targetCharacter);
-        targetCharacter.ShareIntel(intel);
-        List<string> reactions = share.ReactToIntel(intel);
+        List<string> reactions = targetCharacter.ShareIntel(intel);
         StartCoroutine(ShowReactions(reactions));
     }
     string[] randomNothings = new string[] {
@@ -95,10 +94,13 @@ public class ShareIntelMenu : MonoBehaviour {
             GameObject targetDialog = ObjectPoolManager.Instance.InstantiateObjectFromPool(dialogItemPrefab.name, Vector3.zero, Quaternion.identity, dialogScrollView.content);
             DialogItem item = targetDialog.GetComponent<DialogItem>();
             item.SetData(targetCharacter, reactions[i]);
-            dialogScrollView.verticalNormalizedPosition = 0f;
+            UIManager.Instance.ScrollRectSnapTo(dialogScrollView, item.characterDialogParent);
+            //dialogScrollView.verticalNormalizedPosition = 0f;
             yield return new WaitForSeconds(0.5f);
         }
         closeBtn.interactable = true;
         yield return null;
+        ShareIntel share = PlayerManager.Instance.player.roleSlots[JOB.DIPLOMAT].GetAction(typeof(ShareIntel)) as ShareIntel;
+        share.DeactivateAction();
     }
 }

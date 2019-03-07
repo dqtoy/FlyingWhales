@@ -93,6 +93,7 @@ public class Player : ILeader {
 
         //goap
         Messenger.AddListener<Character, GoapPlan>(Signals.CHARACTER_RECIEVED_PLAN, OnCharacterRecievedPlan);
+        Messenger.AddListener<Character, GoapAction>(Signals.CHARACTER_DID_ACTION, OnCharacterDidAction);
     }
 
     #region ILeader
@@ -674,7 +675,21 @@ public class Player : ILeader {
             }
         }
         if (showPopup) {
-            //Messenger.Broadcast<string, int, UnityEngine.Events.UnityAction>(Signals.SHOW_NOTIFICATION, Utilities.LogReplacer(plan.endNode.action.thoughtBubbleLog), -1, null);
+            Messenger.Broadcast<Intel>(Signals.SHOW_INTEL_NOTIFICATION, InteractionManager.Instance.CreateNewIntel(plan, character));
+        }
+    }
+    private void OnCharacterDidAction(Character character, GoapAction action) {
+        bool showPopup = false;
+        if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.id == character.id) {
+            showPopup = true;
+        } else if (roleSlots[JOB.SPY].activeAction is Track) {
+            Track track = roleSlots[JOB.SPY].activeAction as Track;
+            if (track.target == character) {
+                showPopup = true;
+            }
+        }
+        if (showPopup) {
+            Messenger.Broadcast<Intel>(Signals.SHOW_INTEL_NOTIFICATION, InteractionManager.Instance.CreateNewIntel(action, character));
         }
     }
     #endregion

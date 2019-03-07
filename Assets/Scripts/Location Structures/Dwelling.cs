@@ -1,10 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Dwelling : LocationStructure {
 
     public List<Character> residents { get; private set; }
+
+    public Character owner {
+        get { return residents.ElementAtOrDefault(0); }
+    }
 
     public Dwelling(Area location, bool isInside) 
         : base(STRUCTURE_TYPE.DWELLING, location, isInside) {

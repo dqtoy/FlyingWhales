@@ -49,7 +49,7 @@ public class PlayerUI : MonoBehaviour {
     public ToggleGroup minionSortingToggleGroup;
 
     [Header("Intel")]
-    [SerializeField] private InteractionIntelItem[] intelItems;
+    [SerializeField] private IntelItem[] intelItems;
     [SerializeField] private Toggle intelToggle;
 
     [Header("Miscellaneous")]
@@ -473,7 +473,7 @@ public class PlayerUI : MonoBehaviour {
     }
     private void UpdateIntel() {
         for (int i = 0; i < intelItems.Length; i++) {
-            InteractionIntelItem currItem = intelItems[i];
+            IntelItem currItem = intelItems[i];
             Intel intel = PlayerManager.Instance.player.allIntel.ElementAtOrDefault(i);
             currItem.SetIntel(intel);
         }
@@ -489,19 +489,19 @@ public class PlayerUI : MonoBehaviour {
     }
     private void OnCloseIntelMenu() {
         for (int i = 0; i < intelItems.Length; i++) {
-            InteractionIntelItem currItem = intelItems[i];
+            IntelItem currItem = intelItems[i];
             currItem.ClearClickActions();
         }
     }
-    public void SetIntelItemClickActions(InteractionIntelItem.OnClickAction clickAction) {
+    public void SetIntelItemClickActions(IntelItem.OnClickAction clickAction) {
         for (int i = 0; i < intelItems.Length; i++) {
-            InteractionIntelItem currItem = intelItems[i];
+            IntelItem currItem = intelItems[i];
             currItem.SetClickAction(clickAction);
         }
     }
     public void AddIntelItemOtherClickActions(System.Action clickAction) {
         for (int i = 0; i < intelItems.Length; i++) {
-            InteractionIntelItem currItem = intelItems[i];
+            IntelItem currItem = intelItems[i];
             currItem.AddOtherClickAction(clickAction);
         }
     }

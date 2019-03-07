@@ -14,13 +14,16 @@ public class GoapAction {
     public List<Precondition> preconditions { get; private set; }
     public List<GoapEffect> expectedEffects { get; private set; }
     public virtual LocationStructure targetStructure { get { return poiTarget.gridTileLocation.structure; } }
+    public virtual LocationGridTile targetTile { get { return null; } }
     public Dictionary<string, GoapActionState> states { get; protected set; }
     public List<GoapEffect> actualEffects { get; private set; } //stores what really happened. NOTE: Only storing relevant data to share intel, no need to store everything that happened.
     public Log thoughtBubbleLog { get; private set; }
     public GoapActionState currentState { get; private set; }
+    public GoapPlan parentPlan { get; private set; }
 
     protected Func<bool> _requirementAction;
     protected System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+    protected string actionSummary;
 
     public GoapAction(INTERACTION_TYPE goapType, INTERACTION_ALIGNMENT alignment, Character actor, IPointOfInterest poiTarget) {
         this.alignment = alignment;
@@ -31,9 +34,25 @@ public class GoapAction {
         preconditions = new List<Precondition>();
         expectedEffects = new List<GoapEffect>();
         actualEffects = new List<GoapEffect>();
+        actionSummary = GameManager.Instance.TodayLogString() + actor.name + " created " + goapType.ToString() + " action, targetting " + poiTarget?.ToString() ?? "Nothing";
         Initialize();
     }
 
+    public void SetParentPlan(GoapPlan plan) {
+        parentPlan = plan;
+    }
+
+    #region States
+    public void SetState(string stateName) {
+        currentState = states[stateName];
+        AddActionLog(GameManager.Instance.TodayLogString() + " Set state to " + currentState.name);
+        currentState.Execute();
+        //TODO: Change this to accomodate duration changes
+        actor.OnCharacterDoAction(this);
+    }
+    #endregion
+
+    #region Virtuals
     protected virtual void CreateStates() {
         string summary = "Creating states for goap action (Dynamic) " + goapType.ToString();
         sw.Start();
@@ -67,17 +86,8 @@ public class GoapAction {
         }
         sw.Stop();
         Debug.Log(summary + "\n" + string.Format("Total creation time is {0}ms", sw.ElapsedMilliseconds));
-        
-    }
 
-    #region States
-    public void SetState(string stateName) {
-        currentState = states[stateName];
-        currentState.Execute();
     }
-    #endregion
-
-    #region Virtuals
     protected virtual void ConstructPreconditionsAndEffects() { }
     protected virtual void ConstructRequirement() { }
     protected virtual int GetCost() {
@@ -86,14 +96,6 @@ public class GoapAction {
     public virtual void PerformActualAction() { }
     public virtual bool IsHalted() {
         return false;
-    }
-    #endregion
-
-    #region Utilities
-    protected void Initialize() {
-        ConstructRequirement();
-        ConstructPreconditionsAndEffects();
-        CreateThoughtBubbleLog();
     }
     protected virtual void CreateThoughtBubbleLog() {
         thoughtBubbleLog = new Log(GameManager.Instance.Today(), "GoapAction", this.GetType().ToString(), "thought_bubble");
@@ -105,8 +107,31 @@ public class GoapAction {
             } else {
                 thoughtBubbleLog.AddToFillers(actor.specificLocation, actor.specificLocation.name, LOG_IDENTIFIER.LANDMARK_1);
             }
-
         }
+    }
+    public virtual void DoAction(GoapPlan plan) {
+        CreateStates(); //Not sure if this is the best place for this.
+        if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+            Character targetCharacter = poiTarget as Character;
+            targetCharacter.AdjustIsWaitingForInteraction(1);
+        }
+        ReserveTarget();
+        if (actor.specificLocation != targetStructure.location) {
+            actor.currentParty.GoToLocation(targetStructure.location, PATHFINDING_MODE.NORMAL, targetStructure, () => actor.PerformGoapAction(plan));
+        } else if (actor.currentStructure != targetStructure) {
+            actor.MoveToAnotherStructure(targetStructure, targetTile, null, () => actor.PerformGoapAction(plan));
+            //actor.PerformGoapAction(plan);
+        } else {
+            actor.PerformGoapAction(plan);
+        }
+    }
+    #endregion
+
+    #region Utilities
+    protected void Initialize() {
+        ConstructRequirement();
+        ConstructPreconditionsAndEffects();
+        CreateThoughtBubbleLog();
     }
     public bool IsThisPartOfActorActionPool(Character actor) {
         List<INTERACTION_TYPE> actorInteractions = RaceManager.Instance.GetNPCInteractionsOfRace(actor);
@@ -118,22 +143,7 @@ public class GoapAction {
         }
         return true;
     }
-    public void DoAction(GoapPlan plan) {
-        CreateStates(); //Not sure if this is the best place for this.
-        if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-            Character targetCharacter = poiTarget as Character;
-            targetCharacter.AdjustIsWaitingForInteraction(1);
-        }
-        ReserveTarget();
-        if(actor.specificLocation != targetStructure.location) {
-            actor.currentParty.GoToLocation(targetStructure.location, PATHFINDING_MODE.NORMAL, targetStructure, () => actor.PerformGoapAction(plan));
-        } else if (actor.currentStructure != targetStructure) {
-            actor.MoveToAnotherStructure(targetStructure, null, null, () => actor.PerformGoapAction(plan));
-            //actor.PerformGoapAction(plan);
-        } else {
-            actor.PerformGoapAction(plan);
-        }
-    }
+    
     public void AddTraitTo(Character target, string traitName) {
         if (target.AddTrait(traitName)) {
             AddActualEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.ADD_TRAIT, conditionKey = traitName, targetPOI = target });
@@ -146,6 +156,9 @@ public class GoapAction {
     }
     public void ReturnToActorTheActionResult(string result) {
         actor.GoapActionResult(result, this);
+    }
+    protected void AddActionLog(string log) {
+        actionSummary += "\n" + log;
     }
     #endregion
 
@@ -228,6 +241,12 @@ public struct GoapEffect {
     public object conditionKey;
     public IPointOfInterest targetPOI;
 
+    public GoapEffect(GOAP_EFFECT_CONDITION conditionType, object conditionKey = null, IPointOfInterest targetPOI = null) {
+        this.conditionType = conditionType;
+        this.conditionKey = conditionKey;
+        this.targetPOI = targetPOI;
+    }
+
     public string conditionString() {
         if(conditionKey is string) {
             return conditionKey.ToString();
@@ -239,5 +258,22 @@ public struct GoapEffect {
             return (conditionKey as Area).name;
         }
         return string.Empty;
+    }
+
+    public override bool Equals(object obj) {
+        if (obj is GoapEffect) {
+            GoapEffect otherEffect = (GoapEffect)obj;
+            if (otherEffect.conditionType == conditionType) {
+                if (string.IsNullOrEmpty(conditionString())) {
+                    return true;
+                } else {
+                    return otherEffect.conditionString() == conditionString();
+                }
+            }
+        }
+        return base.Equals(obj);
+    }
+    public override int GetHashCode() {
+        return base.GetHashCode();
     }
 }

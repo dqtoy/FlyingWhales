@@ -11,7 +11,7 @@ public class DialogItem : MonoBehaviour {
     [SerializeField] private RectTransform portraitRT;
     [SerializeField] private CharacterPortrait portrait;
     [SerializeField] private TextMeshProUGUI characterDialog;
-    [SerializeField] private RectTransform characterDialogParent;
+    public RectTransform characterDialogParent;
 
     [SerializeField] private Vector2 leftPortraitPos;
     [SerializeField] private Vector2 rightPortraitPos;

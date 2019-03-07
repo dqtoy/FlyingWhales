@@ -970,6 +970,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.DROP_CHARACTER:
                 goapAction = new DropCharacter(actor, target);
                 break;
+            case INTERACTION_TYPE.DAYDREAM:
+                goapAction = new Daydream(actor, target);
+                break;
         }
         return goapAction;
     }
@@ -2082,6 +2085,14 @@ public class InteractionManager : MonoBehaviour {
             default:
                 return new Intel();
         }
+    }
+    public Intel CreateNewIntel(params object[] obj) {
+        if (obj[0] is GoapPlan) {
+            return new PlanIntel(obj[1] as Character, obj[0] as GoapPlan);
+        } else if (obj[0] is GoapAction) {
+            return new EventIntel(obj[1] as Character, obj[0] as GoapAction);
+        }
+        return null;
     }
     #endregion
 

@@ -3585,7 +3585,32 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     #endregion
 
     #region Share Intel
-    public void ShareIntel(Intel intel) {
+    public List<string> ShareIntel(Intel intel) {
+        List<string> dialogReactions = new List<string>();
+        if (intel is TileObjectIntel) {
+            TileObjectIntel toi = intel as TileObjectIntel;
+            if (GetAwareness(toi.obj) != null) {
+                dialogReactions.Add("I already know about that.");
+            } else {
+                AddAwareness(toi.obj);
+                dialogReactions.Add("There is an " + toi.obj.name + " in " + toi.knownLocation.structure.location.name + "? Thanks for letting me know.");
+            }
+        } else if (intel is EventIntel) {
+            EventIntel ei = intel as EventIntel;
+            Dictionary<ActionEffectReaction, GoapEffect> reactions = new Dictionary<ActionEffectReaction, GoapEffect>();
+            List<GoapEffect> reactingToEffects = new List<GoapEffect>();
+            for (int i = 0; i < ei.action.actualEffects.Count; i++) {
+                GoapEffect currEffect = ei.action.actualEffects[i];
+                if (ActionEffectReactionDB.eventIntelReactions.ContainsKey(currEffect)) {
+                    reactions.Add(ActionEffectReactionDB.eventIntelReactions[currEffect], currEffect);
+                }
+            }
+            foreach (KeyValuePair<ActionEffectReaction, GoapEffect> keyValuePair in reactions) {
+                dialogReactions.Add(keyValuePair.Key.GetReactionFrom(this, intel, keyValuePair.Value));
+            }
+        }
+        PlayerManager.Instance.player.RemoveIntel(intel);
+        return dialogReactions;
         //if (relationships.ContainsKey(intel.actor)) {
         //    if (!intel.isCompleted) {
         //        relationships[intel.actor].SetPlannedActionIntel(intel);
@@ -3604,7 +3629,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //        PlayerManager.Instance.player.RemoveIntel(intel);
         //    }
         //}
-        PlayerManager.Instance.player.RemoveIntel(intel);
+
     }
     #endregion
 
@@ -3998,11 +4023,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public GoapPlan GetPlanWithCurrentAction(GoapAction action) {
         for (int i = 0; i < allGoapPlans.Count; i++) {
-            if(allGoapPlans[i].currentNode.action == action) {
+            if (allGoapPlans[i].currentNode.action == action) {
                 return allGoapPlans[i];
             }
         }
         return null;
+    }
+    public void OnCharacterDoAction(GoapAction action) {
+        Messenger.Broadcast(Signals.CHARACTER_DID_ACTION, this, action);
     }
     #endregion
 

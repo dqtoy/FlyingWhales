@@ -86,7 +86,7 @@ public class RoleSlotItem : MonoBehaviour, IDragParentItem {
     private void AssignCharacterToJob(Character character) {
         Debug.Log("Assigning " + character.name + " to job " + slotJob.ToString());
         PlayerManager.Instance.player.AssignCharacterToJob(slotJob, character);
-        UIManager.Instance.HideObjectPicker();
+        //UIManager.Instance.HideObjectPicker();
     }
 
     private void OnCharacterAssignedToJob(JOB job, Character character) {

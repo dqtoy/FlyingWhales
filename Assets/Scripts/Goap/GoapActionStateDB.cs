@@ -4,6 +4,7 @@ using UnityEngine;
 
 public static class GoapActionStateDB {
 
+<<<<<<< HEAD
     public static Dictionary<INTERACTION_TYPE, StateNameAndDuration[]> goapActionStates = new Dictionary<INTERACTION_TYPE, StateNameAndDuration[]>() {
         {INTERACTION_TYPE.EAT_PLANT, new StateNameAndDuration[]{
             new StateNameAndDuration(){ name = "Eat Success", status = InteractionManager.Goap_State_Success, duration = AttributeManager.Instance.allTraits["Eating"].daysDuration },
@@ -52,6 +53,10 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.PICK_ITEM, new StateNameAndDuration[]{
             new StateNameAndDuration(){ name = "Take Success", status = InteractionManager.Goap_State_Success, duration = 0 },
             new StateNameAndDuration(){ name = "Target Missing", status = InteractionManager.Goap_State_Fail, duration = 0 },
+        } },
+        {INTERACTION_TYPE.DAYDREAM, new StateNameAndDuration[]{
+            new StateNameAndDuration(){ name = "Daydream Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(1) },
+            new StateNameAndDuration(){ name = "Daydream Failed", status = InteractionManager.Goap_State_Fail, duration = 0 },
         } },
     };
 }
