@@ -2768,9 +2768,29 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             PerformGoapPlans();
             //SchedulePerformGoapPlans();
         } else {
+            OtherPlanCreations();
             //Plan actions?
         }
         //SchedulePerformGoapPlans();
+    }
+    private void OtherPlanCreations() {
+        int chance = UnityEngine.Random.Range(0, 100);
+        if (GetTrait("Berserker") != null) {
+            if(chance < 15) {
+                Character target = specificLocation.GetRandomCharacterAtLocationExcept(this);
+                if (target != null) {
+                    StartGOAP(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_NON_POSITIVE_TRAIT, conditionKey = "Disabler", targetPOI = target }, target);
+                }
+            } else {
+                chance = UnityEngine.Random.Range(0, 100);
+                if (chance < 15) {
+                    IPointOfInterest target = specificLocation.GetRandomTileObject();
+                    if (target != null) {
+                        StartGOAP(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.DESTROY, conditionKey = target, targetPOI = target }, target);
+                    }
+                }
+            }
+        }
     }
     private void PlanFullnessRecoveryActions() {
         TIME_IN_WORDS currentTimeInWords = GameManager.GetCurrentTimeInWordsOfTick();
@@ -2812,6 +2832,32 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
             if (chance < value) {
                 StartGOAP(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = null, targetPOI = this }, this, true);
+                //return;
+            }
+        }
+    }
+    private void PlanHappinessRecoveryActions() {
+        TIME_IN_WORDS currentTimeInWords = GameManager.GetCurrentTimeInWordsOfTick();
+        Trait lonelyOrForlorn = GetTraitOr("Forlorn", "Lonely");
+
+        if (lonelyOrForlorn != null && GetPlanWithGoalEffect(GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY) == null) {
+            int chance = UnityEngine.Random.Range(0, 100);
+            int value = 0;
+            if (lonelyOrForlorn.name == "Forlorn") {
+                value = 100;
+            } else {
+                if (currentTimeInWords == TIME_IN_WORDS.MORNING) {
+                    value = 15;
+                } else if (currentTimeInWords == TIME_IN_WORDS.AFTERNOON) {
+                    value = 35;
+                } else if (currentTimeInWords == TIME_IN_WORDS.EARLY_NIGHT) {
+                    value = 35;
+                } else if (currentTimeInWords == TIME_IN_WORDS.LATE_NIGHT) {
+                    value = 15;
+                }
+            }
+            if (chance < value) {
+                StartGOAP(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = null, targetPOI = this }, this, true);
                 //return;
             }
         }
@@ -3574,9 +3620,11 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (happiness <= HAPPINESS_THRESHOLD_2) {
             RemoveTrait("Lonely");
             AddTrait("Forlorn");
+            PlanHappinessRecoveryActions();
         } else if (happiness <= HAPPINESS_THRESHOLD_1) {
             AddTrait("Lonely");
             RemoveTrait("Forlorn");
+            PlanHappinessRecoveryActions();
         } else {
             RemoveTrait("Lonely");
             RemoveTrait("Forlorn");

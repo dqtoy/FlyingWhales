@@ -1505,6 +1505,18 @@ public class Area {
     public void SetMonthlyActions(int amount) {
         monthlyActions = amount;
     }
+    public Character GetRandomCharacterAtLocationExcept(Character character) {
+        List<Character> choices = new List<Character>();
+        for (int i = 0; i < charactersAtLocation.Count; i++) {
+            if(charactersAtLocation[i] != character) {
+                choices.Add(charactersAtLocation[i]);
+            }
+        }
+        if(choices.Count > 0) {
+            return choices[UnityEngine.Random.Range(0, choices.Count)];
+        }
+        return null;
+    }
     #endregion
 
     #region Logs
@@ -1862,6 +1874,22 @@ public class Area {
                 structure.SpawnFoodOnStartDay();
             }
         }
+    }
+    public IPointOfInterest GetRandomTileObject() {
+        List<IPointOfInterest> tileObjects = new List<IPointOfInterest>();
+        foreach (List<LocationStructure> locationStructures in structures.Values) {
+            for (int i = 0; i < locationStructures.Count; i++) {
+                for (int j = 0; j < locationStructures[i].pointsOfInterest.Count; j++) {
+                    if(locationStructures[i].pointsOfInterest[j].poiType != POINT_OF_INTEREST_TYPE.CHARACTER) {
+                        tileObjects.Add(locationStructures[i].pointsOfInterest[j]);
+                    }
+                }
+            }
+        }
+        if(tileObjects.Count > 0) {
+            return tileObjects[UnityEngine.Random.Range(0, tileObjects.Count)];
+        }
+        return null;
     }
     #endregion
 
