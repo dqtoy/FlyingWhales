@@ -25,7 +25,7 @@ public class Table : TileObject, IPointOfInterest {
 
     public Table(LocationStructure location) {
         this.location = location;
-        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.EAT_FOOD };
+        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.EAT_DWELLING_TABLE };
         Initialize(this);
     }
 

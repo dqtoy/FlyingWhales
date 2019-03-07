@@ -1,0 +1,1 @@
+{"items":[{"key":"rest success","value":"%00@ rested at %04@."},{"key":"rest fail","value":"%00@ wanted to rest at %04@ but the bed was unavailable."},{"key":"target missing","value":"%00@ wanted to rest at %04@ but the bed was no longer there."}]}

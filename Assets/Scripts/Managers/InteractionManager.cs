@@ -17,6 +17,9 @@ public class InteractionManager : MonoBehaviour {
     public static readonly string Level_Reward_1 = "LevelReward1";
     public static readonly string Level_Reward_2 = "LevelReward2";
 
+    public const string Goap_State_Success = "Success";
+    public const string Goap_State_Fail = "Fail";
+
     public static readonly int Character_Action_Delay = 5;
 
     public Queue<Interaction> interactionUIQueue { get; private set; }
@@ -934,11 +937,17 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION:
                 goapAction = new ReleaseCharacter(actor, target);
                 break;
-            case INTERACTION_TYPE.EAT_FOOD:
-                goapAction = new EatFood(actor, target);
+            case INTERACTION_TYPE.EAT_PLANT:
+                goapAction = new EatPlant(actor, target);
                 break;
-            case INTERACTION_TYPE.CRAFT_TOOL:
-                goapAction = new CraftTool(actor, target);
+            case INTERACTION_TYPE.EAT_SMALL_ANIMAL:
+                goapAction = new EatAnimal(actor, target);
+                break;
+            case INTERACTION_TYPE.EAT_DWELLING_TABLE:
+                goapAction = new EatAtTable(actor, target);
+                break;
+            case INTERACTION_TYPE.CRAFT_ITEM:
+                goapAction = new CraftItemGoap(actor, target);
                 break;
             case INTERACTION_TYPE.PICK_ITEM:
                 goapAction = new PickItemGoap(actor, target);

@@ -9,7 +9,7 @@ public class DropCharacter : GoapAction {
         get { return _workAreaStructure; }
     }
 
-    public DropCharacter(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.DROP_CHARACTER, actor, poiTarget) {
+    public DropCharacter(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.DROP_CHARACTER, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         _workAreaStructure = actor.homeArea.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA);
     }
 
@@ -21,14 +21,8 @@ public class DropCharacter : GoapAction {
         AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, conditionKey = actor, targetPOI = poiTarget }, IsInActorParty);
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = actor.homeArea, targetPOI = poiTarget });
     }
-    public override bool PerformActualAction() {
-        if (base.PerformActualAction()) {
-            Character target = poiTarget as Character;
-            actor.ownParty.RemoveCharacter(target);
-            target.MoveToAnotherStructure(_workAreaStructure);
-            return true;
-        }
-        return false;
+    public override void PerformActualAction() {
+        SetState("Drop Success");
     }
     protected override int GetCost() {
         return 1;
@@ -45,6 +39,18 @@ public class DropCharacter : GoapAction {
     private bool IsInActorParty() {
         Character target = poiTarget as Character;
         return target.currentParty == actor.currentParty;
+    }
+    #endregion
+
+    #region State Effects
+    public void PreDropSuccess() {
+        currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        currentState.AddLogFiller(_workAreaStructure.location, _workAreaStructure.ToString(), LOG_IDENTIFIER.LANDMARK_1);
+    }
+    public void AfterDropSuccess() {
+        Character target = poiTarget as Character;
+        actor.ownParty.RemoveCharacter(target);
+        target.MoveToAnotherStructure(_workAreaStructure);
     }
     #endregion
 }

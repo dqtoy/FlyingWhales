@@ -297,6 +297,9 @@ public class GameManager : MonoBehaviour {
         }
         return timeInWords[intTime];
     }
+    public int GetTicksBasedOnHour(int hours) {
+        return ticksPerHour * hours;
+    }
 
     #region Cursor
     public void SetCursorToDefault() {

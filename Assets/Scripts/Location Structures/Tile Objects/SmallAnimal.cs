@@ -7,6 +7,7 @@ public class SmallAnimal : Food {
     private const int Replenishment_Countdown = 96;
 
     public SmallAnimal(LocationStructure location, FOOD foodType) : base(location, foodType) {
+        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.EAT_SMALL_ANIMAL };
     }
 
     #region Overrides

@@ -3419,9 +3419,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             UnobtainToken();
         }
     }
-    public void PickUpToken(SpecialToken token, Area location) {
+    public void PickUpToken(SpecialToken token) {
         if (!isHoldingItem) {
-            location.RemoveSpecialTokenFromLocation(token);
+            token.gridTileLocation.structure.location.RemoveSpecialTokenFromLocation(token);
             ObtainToken(token);
         }
     }
@@ -3438,7 +3438,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
             if(pickWeights.Count > 0) {
                 SpecialToken chosenToken = pickWeights.PickRandomElementGivenWeights();
-                PickUpToken(chosenToken, location);
+                PickUpToken(chosenToken);
             }
         }
     }
@@ -3893,12 +3893,41 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public void PerformGoapAction(GoapPlan plan) {
         string log = GameManager.Instance.TodayLogString() + name + " is performing goap action: " + plan.currentNode.action.goapName;
-        bool success = plan.currentNode.action.PerformActualAction();
-        if (plan.currentNode.action.poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-            Character targetCharacter = plan.currentNode.action.poiTarget as Character;
+        if(plan.currentNode.action.CanSatisfyRequirements() && plan.currentNode.action.CanSatisfyAllPreconditions()) {
+            plan.currentNode.action.PerformActualAction();
+        } else {
+            log += "\nFailed to perform action. Will try to recalculate plan...";
+            if (plan.currentNode.action.poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+                Character targetCharacter = plan.currentNode.action.poiTarget as Character;
+                targetCharacter.AdjustIsWaitingForInteraction(-1);
+            }
+            RecalculatePlan(plan);
+            SchedulePerformGoapPlans();
+        }
+        //Debug.Log(log);
+    }
+    public void GoapActionResult(string result, GoapAction action) {
+        string log = GameManager.Instance.TodayLogString() + name + " is done performing goap action: " + action.goapName;
+        if (isDead) {
+            log += "\nCharacter is dead!";
+            return;
+        }
+        if (action.poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+            Character targetCharacter = action.poiTarget as Character;
             targetCharacter.AdjustIsWaitingForInteraction(-1);
         }
-        if (!success) {
+        GoapPlan plan = GetPlanWithCurrentAction(action);
+        if (result == InteractionManager.Goap_State_Success) {
+            log += "\nSuccessfully performed action!";
+            plan.SetNextNode();
+            if (plan.currentNode == null) {
+                log += "\nThis action is the end of plan.";
+                //this means that this is the end goal so end this plan now
+                DropPlan(plan);
+            } else {
+                log += "\nNext action for this plan: " + plan.currentNode.action.goapName;
+            }
+        } else if(result == InteractionManager.Goap_State_Fail) {
             log += "\nFailed to perform action. Will try to recalculate plan...";
             RecalculatePlan(plan);
             //if (!RecalculatePlan(plan)) {
@@ -3907,16 +3936,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             //} else {
             //    log += "\nSuccessfully recalculated plan! Try to perform an action again...";
             //}
-        } else {
-            log += "\nSuccessfully performed action!";
-            plan.SetNextNode();
-            if(plan.currentNode == null) {
-                log += "\nThis action is the end of plan.";
-                //this means that this is the end goal so end this plan now
-                DropPlan(plan);
-            } else {
-                log += "\nNext action for this plan: " + plan.currentNode.action.goapName;
-            }
         }
 
         //Debug.Log(log);
@@ -3976,6 +3995,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 }
             }
         }
+    }
+    public GoapPlan GetPlanWithCurrentAction(GoapAction action) {
+        for (int i = 0; i < allGoapPlans.Count; i++) {
+            if(allGoapPlans[i].currentNode.action == action) {
+                return allGoapPlans[i];
+            }
+        }
+        return null;
     }
     #endregion
 

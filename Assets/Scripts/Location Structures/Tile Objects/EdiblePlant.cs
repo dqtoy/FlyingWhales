@@ -7,6 +7,7 @@ public class EdiblePlant : Food {
     private const int Replenishment_Countdown = 96;
 
     public EdiblePlant(LocationStructure location, FOOD foodType) : base(location, foodType) {
+        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.EAT_PLANT };
     }
 
     #region Overrides

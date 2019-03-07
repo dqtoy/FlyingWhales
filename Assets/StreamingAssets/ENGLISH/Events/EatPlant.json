@@ -1,0 +1,1 @@
+{"items":[{"key":"eat success","value":"%00@ found some berries to consume in %04@."},{"key":"eat fail","value":"%00@ wanted to consume an edible plant in %04@ but it didn't have any berries yet."},{"key":"target missing","value":"%00@ wanted to consume an edible plant from %04@ but it was no longer there."}]}

@@ -8,7 +8,7 @@ public class Food : TileObject, IPointOfInterest {
     public LocationStructure location { get; private set; }
     public FOOD foodType { get; private set; }
     public string foodName { get; private set; }
-    public List<INTERACTION_TYPE> poiGoapActions { get; private set; }
+    public List<INTERACTION_TYPE> poiGoapActions { get; protected set; }
 
     private LocationGridTile tile;
     private POI_STATE _state;
@@ -29,7 +29,6 @@ public class Food : TileObject, IPointOfInterest {
         this.location = location;
         this.foodType = foodType;
         this.foodName = Utilities.NormalizeStringUpperCaseFirstLetters(this.foodType.ToString());
-        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.EAT_FOOD };
         Initialize(this);
     }
 

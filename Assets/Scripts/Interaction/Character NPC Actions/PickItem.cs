@@ -105,7 +105,7 @@ public class PickItem : Interaction {
         _characterInvolved.MoveToAnotherStructure(_targetStructure, targetGridLocation, targetToken);
     }
     private void ItemObtainedRewardEffect(InteractionState state) {
-        _characterInvolved.PickUpToken(targetToken, interactable);
+        _characterInvolved.PickUpToken(targetToken);
 
         if (state.descriptionLog != null) {
             state.descriptionLog.AddToFillers(null, _characterInvolved.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1);

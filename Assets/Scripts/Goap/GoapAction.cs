@@ -6,6 +6,7 @@ using System.Reflection;
 
 public class GoapAction {
     public INTERACTION_TYPE goapType { get; private set; }
+    public INTERACTION_ALIGNMENT alignment { get; private set; }
     public string goapName { get; private set; }
     public IPointOfInterest poiTarget { get; private set; }
     public Character actor { get; private set; }
@@ -21,7 +22,8 @@ public class GoapAction {
     protected Func<bool> _requirementAction;
     protected System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
 
-    public GoapAction(INTERACTION_TYPE goapType, Character actor, IPointOfInterest poiTarget) {
+    public GoapAction(INTERACTION_TYPE goapType, INTERACTION_ALIGNMENT alignment, Character actor, IPointOfInterest poiTarget) {
+        this.alignment = alignment;
         this.goapType = goapType;
         this.goapName = Utilities.NormalizeStringUpperCaseFirstLetters(goapType.ToString());
         this.poiTarget = poiTarget;
@@ -37,10 +39,10 @@ public class GoapAction {
         sw.Start();
         states = new Dictionary<string, GoapActionState>();
         if (GoapActionStateDB.goapActionStates.ContainsKey(this.goapType)) {
-            string[] statesSetup = GoapActionStateDB.goapActionStates[this.goapType];
+            StateNameAndDuration[] statesSetup = GoapActionStateDB.goapActionStates[this.goapType];
             for (int i = 0; i < statesSetup.Length; i++) {
-                string state = statesSetup[i];
-                string trimmedState = Utilities.RemoveWhitespace(state);
+                StateNameAndDuration state = statesSetup[i];
+                string trimmedState = Utilities.RemoveWhitespace(state.name);
                 Type thisType = this.GetType();
                 MethodInfo preMethod = thisType.GetMethod("Pre" + trimmedState, BindingFlags.NonPublic | BindingFlags.Instance);
                 MethodInfo perMethod = thisType.GetMethod("PerTick" + trimmedState, BindingFlags.NonPublic | BindingFlags.Instance);
@@ -57,9 +59,9 @@ public class GoapAction {
                 if (afterMethod != null) {
                     afterAction = (Action)Delegate.CreateDelegate(typeof(Action), this, afterMethod, false);
                 }
-                GoapActionState newState = new GoapActionState(state, this, preAction, perAction, afterAction);
-                states.Add(state, newState);
-                summary += "\n Creating state " + state;
+                GoapActionState newState = new GoapActionState(state.name, this, preAction, perAction, afterAction, state.duration, state.status);
+                states.Add(state.name, newState);
+                summary += "\n Creating state " + state.name;
             }
 
         }
@@ -81,7 +83,7 @@ public class GoapAction {
     protected virtual int GetCost() {
         return 0;
     }
-    public virtual bool PerformActualAction() { return CanSatisfyRequirements() && CanSatisfyAllPreconditions(); }
+    public virtual void PerformActualAction() { }
     public virtual bool IsHalted() {
         return false;
     }
@@ -97,12 +99,13 @@ public class GoapAction {
         thoughtBubbleLog = new Log(GameManager.Instance.Today(), "GoapAction", this.GetType().ToString(), "thought_bubble");
         if (thoughtBubbleLog != null) {
             thoughtBubbleLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            thoughtBubbleLog.AddToFillers(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER); //Target character is only the identifier but it doesn't mean that this is a character, it can be item, etc.
             if (targetStructure != null) {
                 thoughtBubbleLog.AddToFillers(targetStructure.location, targetStructure.location.name, LOG_IDENTIFIER.LANDMARK_1);
             } else {
                 thoughtBubbleLog.AddToFillers(actor.specificLocation, actor.specificLocation.name, LOG_IDENTIFIER.LANDMARK_1);
             }
-            
+
         }
     }
     public bool IsThisPartOfActorActionPool(Character actor) {
@@ -140,6 +143,9 @@ public class GoapAction {
         if (target.RemoveTrait(traitName)) {
             AddActualEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = traitName, targetPOI = target });
         }
+    }
+    public void ReturnToActorTheActionResult(string result) {
+        actor.GoapActionResult(result, this);
     }
     #endregion
 
