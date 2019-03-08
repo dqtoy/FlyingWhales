@@ -19,7 +19,7 @@ public class GoapAction {
     public List<GoapEffect> actualEffects { get; private set; } //stores what really happened. NOTE: Only storing relevant data to share intel, no need to store everything that happened.
     public Log thoughtBubbleLog { get; private set; }
     public GoapActionState currentState { get; private set; }
-    public GoapPlan parentPlan { get; private set; }
+    public GoapPlan parentPlan { get { return actor.GetPlanWithCurrentAction(this); } }
 
     protected Func<bool> _requirementAction;
     protected System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
@@ -38,9 +38,9 @@ public class GoapAction {
         Initialize();
     }
 
-    public void SetParentPlan(GoapPlan plan) {
-        parentPlan = plan;
-    }
+    //public void SetParentPlan(GoapPlan plan) {
+    //    parentPlan = plan;
+    //}
 
     #region States
     public void SetState(string stateName) {
@@ -112,6 +112,7 @@ public class GoapAction {
     }
     public virtual void DoAction(GoapPlan plan) {
         CreateStates(); //Not sure if this is the best place for this.
+        actor.SetCurrentAction(this);
         if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
             Character targetCharacter = poiTarget as Character;
             targetCharacter.AdjustIsWaitingForInteraction(1);

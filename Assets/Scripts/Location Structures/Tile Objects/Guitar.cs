@@ -35,6 +35,9 @@ public class Guitar : TileObject, IPointOfInterest {
 
     #region Interface
     public void SetGridTileLocation(LocationGridTile tile) {
+        if (tile != null) {
+            tile.SetTileAccess(LocationGridTile.Tile_Access.Impassable);
+        }
         this.tile = tile;
     }
     public LocationGridTile GetNearestUnoccupiedTileFromThis(LocationStructure structure, Character otherCharacter) {

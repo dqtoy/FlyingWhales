@@ -26,7 +26,7 @@ public class Daydream : GoapAction {
     }
     protected override int GetCost() {
         //**Cost**: randomize between 3-10
-        return Random.Range(3, 11);
+        return Utilities.rng.Next(3, 10);
     }
     public override void DoAction(GoapPlan plan) {
         //**Movement**: Move Actor to a random unoccupied tile in current location Wilderness or Work Area.
@@ -46,8 +46,16 @@ public class Daydream : GoapAction {
     #endregion
 
     #region Effects
-    private void PerTickDayDreamSuccess() {
+    private void DreDaydreamSuccess() {
+        actor.AdjustDoNotGetLonely(1);
+        actor.AdjustDoNotGetTired(1);
+    }
+    private void PerTickDaydreamSuccess() {
         actor.AdjustHappiness(3);
+    }
+    private void AfterDaydreamSuccess() {
+        actor.AdjustDoNotGetLonely(-1);
+        actor.AdjustDoNotGetTired(-1);
     }
     #endregion
 }

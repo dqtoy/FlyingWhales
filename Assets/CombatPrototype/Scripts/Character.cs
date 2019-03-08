@@ -104,6 +104,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public int supply { get; set; }
     public int isWaitingForInteraction { get; private set; }
     public CharacterMarker marker { get; private set; }
+    public GoapAction currentAction { get; private set; }
 
     private LocationGridTile tile; //what tile in the structure is this character currently in.
     private POI_STATE _state;
@@ -4105,9 +4106,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         Messenger.Broadcast(Signals.CHARACTER_DID_ACTION, this, action);
     }
     public void FaceTarget(IPointOfInterest target) {
-        if(this != target) {
+        if (this != target) {
             marker.RotateMarker(gridTileLocation.centeredWorldLocation, target.gridTileLocation.centeredWorldLocation);
         }
+    }
+    public void SetCurrentAction(GoapAction action) {
+        currentAction = action;
     }
     #endregion
 

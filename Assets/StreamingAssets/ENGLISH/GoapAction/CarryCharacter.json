@@ -1,1 +1,1 @@
-{"items":[{"key":"carry success","value":"%00@ took %10@ with %84b."},{"key":"target missing","value":"%00@ wanted to take %10@ with %84b but %95b wasn't there."}]}
+{"items":[{"key":"carry success_description","value":"%00@ took %10@ with %84b."},{"key":"target missing_description","value":"%00@ wanted to take %10@ with %84b but %95b wasn't there."}]}

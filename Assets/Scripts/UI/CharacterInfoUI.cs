@@ -232,9 +232,14 @@ public class CharacterInfoUI : UIMenu {
         }
 
         //Planned Action
-        if (_activeCharacter.plannedInteraction != null) {
-            plansLblLogItem.SetLog(_activeCharacter.plannedInteraction.states["Start"].descriptionLog);
-            plansLbl.text = Utilities.LogReplacer(_activeCharacter.plannedInteraction.states["Start"].descriptionLog);
+        if (_activeCharacter.currentAction != null) {
+            if (_activeCharacter.currentAction.currentState == null) {
+                plansLblLogItem.SetLog(_activeCharacter.currentAction.thoughtBubbleLog);
+                plansLbl.text = Utilities.LogReplacer(_activeCharacter.currentAction.thoughtBubbleLog);
+            } else {
+                plansLblLogItem.SetLog(_activeCharacter.currentAction.currentState.descriptionLog);
+                plansLbl.text = Utilities.LogReplacer(_activeCharacter.currentAction.currentState.descriptionLog);
+            }
             //plansLbl.text = _activeCharacter.name + " does not have any immediate plans at the moment.";
             return;
         }
