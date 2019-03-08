@@ -36,7 +36,7 @@ public class Bed : TileObject, IPointOfInterest {
     #region Interface
     public void SetGridTileLocation(LocationGridTile tile) {
         if (tile != null) {
-            this.tile.SetTileAccess(LocationGridTile.Tile_Access.Impassable);
+            tile.SetTileAccess(LocationGridTile.Tile_Access.Impassable);
         }
         this.tile = tile;
     }

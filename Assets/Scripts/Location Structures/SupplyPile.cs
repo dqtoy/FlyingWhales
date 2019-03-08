@@ -76,7 +76,7 @@ public class SupplyPile : TileObject, IPointOfInterest {
     #region Area Map
     public void SetGridTileLocation(LocationGridTile tile) {
         if (tile != null) {
-            this.tile.SetTileAccess(LocationGridTile.Tile_Access.Impassable);
+            tile.SetTileAccess(LocationGridTile.Tile_Access.Impassable);
         }
         this.tile = tile;
     }
