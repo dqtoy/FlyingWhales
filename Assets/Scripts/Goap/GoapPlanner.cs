@@ -14,7 +14,7 @@ public class GoapPlanner {
         //List of all starting nodes that can do the goal
         List<GoapNode> startingNodes = new List<GoapNode>();
 
-        GoapNode goalNode = new GoapNode(null, 0, goalAction);
+        GoapNode goalNode = new GoapNode(null, goalAction.cost, goalAction);
         bool success = BuildGoapTree(goalNode, startingNodes, usableActions);
         if (!success) {
             return null;

@@ -1309,43 +1309,50 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
     }
     public void MoveToAnotherStructure(LocationStructure newStructure, LocationGridTile tile = null, IPointOfInterest targetPOI = null, Action arrivalAction = null) {
-        if(currentStructure == newStructure) {
-            if(arrivalAction != null) {
-                arrivalAction();
-            }
-        } else {
-            LocationGridTile destinationTile = tile;
-            if (tile != null && targetPOI != null) {
-                //check if the provided tile is still the nearest tile to the POI
-                LocationGridTile newNearestTile = targetPOI.GetNearestUnoccupiedTileFromThis(newStructure, this);
-                if (newNearestTile != null) {
-                    //check if the new nearest tile is nearer than the provided tile, if it is, use that instead
-                    float ogDistance = Vector2.Distance(targetPOI.gridTileLocation.localLocation, tile.localLocation);
-                    float newDistance = Vector2.Distance(targetPOI.gridTileLocation.localLocation, newNearestTile.localLocation);
-                    if (newDistance < ogDistance) {
+        LocationGridTile destinationTile = tile;
+        if(destinationTile == null) {
+            if (targetPOI != null) {
+                float ogDistance = Vector2.Distance(targetPOI.gridTileLocation.localLocation, gridTileLocation.localLocation);
+                if(ogDistance <= 1f) {
+                    destinationTile = gridTileLocation;
+                } else {
+                    //get nearest tile from poi
+                    LocationGridTile newNearestTile = targetPOI.GetNearestUnoccupiedTileFromThis(newStructure, this);
+                    if (newNearestTile != null) {
                         destinationTile = newNearestTile;
                     }
                 }
             }
+        }
 
+        if (destinationTile == null) {
             if (currentStructure != null) {
-                if (destinationTile == null) {
-                    List<LocationGridTile> tilesToUse;
-                    if (newStructure.location.areaType == AREA_TYPE.DEMONIC_INTRUSION) { //player area
-                        tilesToUse = newStructure.tiles;
-                    } else {
-                        tilesToUse = newStructure.unoccupiedTiles;
-                    }
-                    if (tilesToUse.Count > 0) {
-                        destinationTile = tilesToUse[UnityEngine.Random.Range(0, tilesToUse.Count)];
-                    } else {
-                        Debug.LogWarning("There are no tiles at " + newStructure.structureType.ToString() + " at " + newStructure.location.name + " for " + name);
-                    }
+                List<LocationGridTile> tilesToUse;
+                if (newStructure.location.areaType == AREA_TYPE.DEMONIC_INTRUSION) { //player area
+                    tilesToUse = newStructure.tiles;
+                } else {
+                    tilesToUse = newStructure.unoccupiedTiles;
                 }
-                marker.GoToTile(destinationTile, arrivalAction);
+                if (tilesToUse.Count > 0) {
+                    destinationTile = tilesToUse[UnityEngine.Random.Range(0, tilesToUse.Count)];
+                } else {
+                    throw new Exception ("There are no tiles at " + newStructure.structureType.ToString() + " at " + newStructure.location.name + " for " + name);
+                }
             } else {
                 newStructure.AddCharacterAtLocation(this, destinationTile);
+                if (arrivalAction != null) {
+                    arrivalAction();
+                }
+                return;
             }
+        }
+
+        if (gridTileLocation == destinationTile) {
+            if (arrivalAction != null) {
+                arrivalAction();
+            }
+        } else {
+            marker.GoToTile(destinationTile, arrivalAction);
         }
     }
     public void SetGridTileLocation(LocationGridTile tile) {
@@ -3747,18 +3754,27 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
     }
     public void AddInitialAwareness() {
-        if (gridTileLocation.isInside) {
-            for (int i = 0; i < gridTileLocation.structure.location.areaMap.insideTiles.Count; i++) {
-                LocationGridTile insideTile = gridTileLocation.structure.location.areaMap.insideTiles[i];
-                if (insideTile.objHere != null && insideTile.objHere != this) {
-                    AddAwareness(insideTile.objHere);
+        if(faction == FactionManager.Instance.neutralFaction) {
+            for (int i = 0; i < gridTileLocation.structure.location.areaMap.allTiles.Count; i++) {
+                LocationGridTile tile = gridTileLocation.structure.location.areaMap.allTiles[i];
+                if (tile.objHere != null && tile.objHere != this) {
+                    AddAwareness(tile.objHere);
                 }
             }
         } else {
-            for (int i = 0; i < gridTileLocation.structure.location.areaMap.outsideTiles.Count; i++) {
-                LocationGridTile outsideTile = gridTileLocation.structure.location.areaMap.outsideTiles[i];
-                if (outsideTile.objHere != null && outsideTile.objHere != this) {
-                    AddAwareness(outsideTile.objHere);
+            if (gridTileLocation.isInside) {
+                for (int i = 0; i < gridTileLocation.structure.location.areaMap.insideTiles.Count; i++) {
+                    LocationGridTile insideTile = gridTileLocation.structure.location.areaMap.insideTiles[i];
+                    if (insideTile.objHere != null && insideTile.objHere != this) {
+                        AddAwareness(insideTile.objHere);
+                    }
+                }
+            } else {
+                for (int i = 0; i < gridTileLocation.structure.location.areaMap.outsideTiles.Count; i++) {
+                    LocationGridTile outsideTile = gridTileLocation.structure.location.areaMap.outsideTiles[i];
+                    if (outsideTile.objHere != null && outsideTile.objHere != this) {
+                        AddAwareness(outsideTile.objHere);
+                    }
                 }
             }
         }
@@ -3780,7 +3796,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 
     #region Point Of Interest
     public List<GoapAction> AdvertiseActionsToActor(Character actor, List<INTERACTION_TYPE> actorAllowedInteractions) {
-        if(poiGoapActions != null && poiGoapActions.Count > 0  && state == POI_STATE.ACTIVE) {
+        if(poiGoapActions != null && poiGoapActions.Count > 0 && state == POI_STATE.ACTIVE) {
             List<GoapAction> usableActions = new List<GoapAction>();
             for (int i = 0; i < poiGoapActions.Count; i++) {
                 if (actorAllowedInteractions.Contains(poiGoapActions[i])){
@@ -3902,7 +3918,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     private void SchedulePerformGoapPlans() {
         if (!IsInOwnParty() || isDefender || ownParty.icon.isTravelling || _doNotDisturb > 0 || _job == null || isWaitingForInteraction > 0) {
             StartDailyGoapPlanGeneration();
-            return; //if this character is not in own party, is a defender or is travelling or cannot be disturbed, do not generate interaction
+            return;
         }
         if (allGoapPlans.Count > 0) {
             StopDailyGoapPlanGeneration();

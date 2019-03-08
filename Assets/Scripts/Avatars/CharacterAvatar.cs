@@ -25,6 +25,8 @@ public class CharacterAvatar : MonoBehaviour{
 
     public Area targetLocation { get; protected set; }
     public LocationStructure targetStructure { get; protected set; }
+    public LocationGridTile targetTile { get; protected set; }
+    public IPointOfInterest targetPOI { get; protected set; }
 
     [SerializeField] protected List<HexTile> path;
 
@@ -122,9 +124,11 @@ public class CharacterAvatar : MonoBehaviour{
     #endregion
 
     #region Pathfinding
-    public void SetTarget(Area target, LocationStructure structure) {
+    public void SetTarget(Area target, LocationStructure structure, IPointOfInterest poi, LocationGridTile tile) {
         targetLocation = target;
         targetStructure = structure;
+        targetPOI = poi;
+        targetTile = tile;
     }
     public void SetCauseForTravel(Interaction cause) {
         causeForTravel = cause;
@@ -214,7 +218,7 @@ public class CharacterAvatar : MonoBehaviour{
         _travelLine = null;
         SetHasArrivedState(true);
         _party.specificLocation.RemoveCharacterFromLocation(_party);
-        targetLocation.AddCharacterToLocation(_party, targetStructure);
+        targetLocation.AddCharacterToLocation(_party, targetStructure, targetPOI, targetTile);
         Debug.Log(GameManager.Instance.TodayLogString() + _party.name + " has arrived at " + targetLocation.name + " on " + GameManager.Instance.continuousDays);
         if(_party.characters.Count > 0) {
             Log arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "arrive_location", causeForTravel);

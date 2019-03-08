@@ -119,12 +119,10 @@ public class GoapAction {
         }
         ReserveTarget();
         if (actor.specificLocation != targetStructure.location) {
-            actor.currentParty.GoToLocation(targetStructure.location, PATHFINDING_MODE.NORMAL, targetStructure, () => actor.PerformGoapAction(plan));
-        } else if (actor.currentStructure != targetStructure) {
-            actor.MoveToAnotherStructure(targetStructure, targetTile, null, () => actor.PerformGoapAction(plan));
-            //actor.PerformGoapAction(plan);
+            actor.currentParty.GoToLocation(targetStructure.location, PATHFINDING_MODE.NORMAL, targetStructure, () => actor.PerformGoapAction(plan), null, null, poiTarget, targetTile);
         } else {
-            actor.PerformGoapAction(plan);
+            actor.MoveToAnotherStructure(targetStructure, targetTile, poiTarget, () => actor.PerformGoapAction(plan));
+            //actor.PerformGoapAction(plan);
         }
     }
     public void End() {

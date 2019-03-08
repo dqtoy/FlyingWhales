@@ -643,6 +643,7 @@ public class AreaInnerTileMap : MonoBehaviour {
             if (path != null) {
                 for (int j = 0; j < path.Count; j++) {
                     if (path[j].structure == null) {
+                        path[j].SetTileType(LocationGridTile.Tile_Type.Road);
                         wallTilemap.SetTile(path[j].localPlace, null);
                         groundTilemap.SetTile(path[j].localPlace, dungeonFloorTile);
                     }
@@ -667,6 +668,7 @@ public class AreaInnerTileMap : MonoBehaviour {
         if (p != null) {
             for (int j = 0; j < p.Count; j++) {
                 if (p[j].structure == null) {
+                    p[j].SetTileType(LocationGridTile.Tile_Type.Road);
                     wallTilemap.SetTile(p[j].localPlace, null);
                     groundTilemap.SetTile(p[j].localPlace, dungeonFloorTile);
                 }
@@ -1020,6 +1022,7 @@ public class AreaInnerTileMap : MonoBehaviour {
         string summary = tile.localPlace.ToString();
         summary += "\nTile Type: " + tile.tileType.ToString();
         summary += "\nTile State: " + tile.tileState.ToString();
+        summary += "\nTile Access: " + tile.tileAccess.ToString();
         summary += "\nContent: " + tile.objHere?.ToString() ?? "None";
         if (tile.objHere != null) {
             summary += "\n\tObject State: " + tile.objHere.state.ToString();
