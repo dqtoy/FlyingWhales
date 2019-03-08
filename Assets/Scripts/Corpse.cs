@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class Corpse : IPointOfInterest {
+public class Corpse : TileObject, IPointOfInterest {
     public string name { get { return ToString(); } }
     public Character character { get; private set; }
     public LocationStructure location { get; private set; }
     public List<INTERACTION_TYPE> poiGoapActions { get; private set; }
 
-    public POINT_OF_INTEREST_TYPE poiType { get { return POINT_OF_INTEREST_TYPE.CORPSE; } }
+    public POINT_OF_INTEREST_TYPE poiType { get { return POINT_OF_INTEREST_TYPE.TILE_OBJECT; } }
     public POI_STATE state {
         get { return _state; }
     }
@@ -23,6 +23,7 @@ public class Corpse : IPointOfInterest {
     public Corpse(Character character, LocationStructure structure) {
         this.character = character;
         location = structure;
+        Initialize(this, TILE_OBJECT_TYPE.CORPSE);
     }
 
     public void SetGridTileLocation(LocationGridTile tile) {

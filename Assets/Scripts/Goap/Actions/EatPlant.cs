@@ -58,7 +58,7 @@ public class EatPlant : GoapAction {
 
     #region Requirements
     protected bool Requirement() {
-        return poiTarget.state == POI_STATE.ACTIVE;
+        return poiTarget.state != POI_STATE.INACTIVE;
     }
     #endregion
 }

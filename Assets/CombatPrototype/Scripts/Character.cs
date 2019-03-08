@@ -2426,6 +2426,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             AdjustDoNotGetLonely(1);
         } else if (trait.name == "Charmed") {
             AdjustDoNotGetLonely(1);
+        } else if (trait.name == "Daydreaming") {
+            AdjustDoNotGetTired(1);
+            AdjustDoNotGetLonely(1);
         }
         for (int i = 0; i < trait.effects.Count; i++) {
             TraitEffect traitEffect = trait.effects[i];
@@ -2467,6 +2470,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             AdjustDoNotGetHungry(-1);
             AdjustDoNotGetLonely(-1);
         } else if (trait.name == "Charmed") {
+            AdjustDoNotGetLonely(-1);
+        } else if (trait.name == "Daydreaming") {
+            AdjustDoNotGetTired(-1);
             AdjustDoNotGetLonely(-1);
         }
         for (int i = 0; i < trait.effects.Count; i++) {
@@ -3735,8 +3741,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             return new ItemAwareness(poi as SpecialToken);
         }else if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
             return new TileObjectAwareness(poi);
-        } else if (poi.poiType == POINT_OF_INTEREST_TYPE.FOOD) {
-            return new TileObjectAwareness(poi);
         }//TODO: Structure Awareness
         return null;
     }
@@ -3796,6 +3800,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             for (int i = 0; i < poiGoapActions.Count; i++) {
                 if (actorAllowedInteractions.Contains(poiGoapActions[i])){
                     GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(poiGoapActions[i], actor, this);
+                    if (goapAction == null) {
+                        throw new Exception("Goap action " + poiGoapActions[i].ToString() + " is null!");
+                    }
                     if (goapAction.CanSatisfyRequirements()) {
                         usableActions.Add(goapAction);
                     }

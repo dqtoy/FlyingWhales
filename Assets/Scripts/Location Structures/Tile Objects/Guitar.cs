@@ -3,13 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class EdiblePlant : TileObject, IPointOfInterest {
-
-    private const int Replenishment_Countdown = 96;
-
+public class Guitar : TileObject, IPointOfInterest {
     public string name { get { return ToString(); } }
     public LocationStructure location { get; private set; }
-    public List<INTERACTION_TYPE> poiGoapActions { get; protected set; }
+    public List<INTERACTION_TYPE> poiGoapActions { get; private set; }
 
     private LocationGridTile tile;
     private POI_STATE _state;
@@ -26,37 +23,15 @@ public class EdiblePlant : TileObject, IPointOfInterest {
     }
     #endregion
 
-    public EdiblePlant(LocationStructure location) {
-        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.EAT_PLANT };
-        Initialize(this, TILE_OBJECT_TYPE.EDIBLE_PLANT);
+    public Guitar(LocationStructure location) {
+        this.location = location;
+        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.PLAY_GUITAR };
+        Initialize(this, TILE_OBJECT_TYPE.GUITAR);
     }
 
-    #region Overrides
-    public override void OnDoActionToObject(GoapAction action) {
-        base.OnDoActionToObject(action);
-        ScheduleCooldown(action);
+    public override string ToString() {
+        return "Guitar";
     }
-    public List<GoapAction> AdvertiseActionsToActor(Character actor, List<INTERACTION_TYPE> actorAllowedInteractions) {
-        if (actor.GetTrait("Herbivore") != null) { //Carnivores only
-            if (poiGoapActions != null && poiGoapActions.Count > 0  && state == POI_STATE.ACTIVE) {
-                List<GoapAction> usableActions = new List<GoapAction>();
-                for (int i = 0; i < poiGoapActions.Count; i++) {
-                    if (actorAllowedInteractions.Contains(poiGoapActions[i])) {
-                        GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(poiGoapActions[i], actor, this);
-                        if (goapAction.CanSatisfyRequirements()) {
-                            usableActions.Add(goapAction);
-                        }
-                    }
-                }
-                return usableActions;
-            }
-        }
-        return null;
-    }
-    public void SetPOIState(POI_STATE state) {
-        _state = state;
-    }
-    #endregion
 
     #region Interface
     public void SetGridTileLocation(LocationGridTile tile) {
@@ -81,9 +56,25 @@ public class EdiblePlant : TileObject, IPointOfInterest {
     }
     #endregion
 
+    #region Point Of Interest
+    public List<GoapAction> AdvertiseActionsToActor(Character actor, List<INTERACTION_TYPE> actorAllowedInteractions) {
+        if (poiGoapActions != null && poiGoapActions.Count > 0  && state == POI_STATE.ACTIVE) {
+            List<GoapAction> usableActions = new List<GoapAction>();
+            for (int i = 0; i < poiGoapActions.Count; i++) {
+                if (actorAllowedInteractions.Contains(poiGoapActions[i])) {
+                    GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(poiGoapActions[i], actor, this);
+                    if (goapAction.CanSatisfyRequirements()) {
+                        usableActions.Add(goapAction);
+                    }
+                }
+            }
+            return usableActions;
+        }
 
-    private void ScheduleCooldown(GoapAction action) {
-        GameDate dueDate = GameManager.Instance.Today().AddTicks(Replenishment_Countdown);
-        SchedulingManager.Instance.AddEntry(dueDate, () => OnDoneActionTowardsTarget(action));
+        return null;
     }
+    public void SetPOIState(POI_STATE state) {
+        _state = state;
+    }
+    #endregion
 }

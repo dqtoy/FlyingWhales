@@ -70,8 +70,9 @@ public class ExploreEventFaction : Interaction {
         List<IPointOfInterest> choices = new List<IPointOfInterest>(
             structure.pointsOfInterest.Where(x => x.poiType != POINT_OF_INTEREST_TYPE.CHARACTER 
             && x.poiType != POINT_OF_INTEREST_TYPE.LANDMARK 
-            && x.poiType != POINT_OF_INTEREST_TYPE.CORPSE 
-            && x.poiType != POINT_OF_INTEREST_TYPE.FOOD)
+            //&& x.poiType != POINT_OF_INTEREST_TYPE.CORPSE 
+            //&& x.poiType != POINT_OF_INTEREST_TYPE.FOOD
+            )
         );
         poi =  choices[Random.Range(0, choices.Count)];
         string nextState = string.Empty;
@@ -86,9 +87,9 @@ public class ExploreEventFaction : Interaction {
                 case POINT_OF_INTEREST_TYPE.CHARACTER:
                     nextState = Explore_Character_Encountered;
                     break;
-                case POINT_OF_INTEREST_TYPE.SUPPLY_PILE:
-                    nextState = Explore_Supply_Pile_Found;
-                    break;
+                //case POINT_OF_INTEREST_TYPE.SUPPLY_PILE:
+                //    nextState = Explore_Supply_Pile_Found;
+                //    break;
                 default:
                     nextState = Explore_Nothing_Found;
                     break;

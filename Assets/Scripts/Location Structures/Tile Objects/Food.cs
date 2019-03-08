@@ -15,7 +15,7 @@ public class Food : TileObject, IPointOfInterest {
 
     #region getters/setters
     public POINT_OF_INTEREST_TYPE poiType {
-        get { return POINT_OF_INTEREST_TYPE.FOOD; }
+        get { return POINT_OF_INTEREST_TYPE.TILE_OBJECT; }
     }
     public LocationGridTile gridTileLocation {
         get { return tile; }
@@ -29,7 +29,7 @@ public class Food : TileObject, IPointOfInterest {
         this.location = location;
         this.foodType = foodType;
         this.foodName = Utilities.NormalizeStringUpperCaseFirstLetters(this.foodType.ToString());
-        Initialize(this);
+        Initialize(this, TILE_OBJECT_TYPE.FOOD);
     }
 
     public override string ToString() {
@@ -38,11 +38,6 @@ public class Food : TileObject, IPointOfInterest {
 
     #region Interface
     public void SetGridTileLocation(LocationGridTile tile) {
-        if (tile != null) {
-            location.AdjustFoodCount(foodType, 1);
-        } else {
-            location.AdjustFoodCount(foodType, -1);
-        }
         this.tile = tile;
     }
     public LocationGridTile GetNearestUnoccupiedTileFromThis(LocationStructure structure, Character otherCharacter) {

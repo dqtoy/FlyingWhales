@@ -26,19 +26,12 @@ public class MagicCircle : TileObject, IPointOfInterest {
     public MagicCircle(LocationStructure location) {
         this.location = location;
         poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.SLEEP };
-        Initialize(this);
+        Initialize(this, TILE_OBJECT_TYPE.MAGIC_CIRCLE);
     }
 
     public override string ToString() {
         return "Magic Circle";
     }
-
-    #region Overrides
-    public override void OnDoActionToObject(GoapAction action) {
-        base.OnDoActionToObject(action);
-        action.actor.AddTrait(AttributeManager.Instance.allTraits["Resting"], null, () => OnDoneActionTowardsTarget(action));
-    }
-    #endregion
 
     #region Interface
     public void SetGridTileLocation(LocationGridTile tile) {

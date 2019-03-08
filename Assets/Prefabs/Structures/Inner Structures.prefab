@@ -793,11 +793,6 @@ MonoBehaviour:
   structureTile: {fileID: 11400000, guid: b980e9be30d67fc4b9a27e8f82835d35, type: 2}
   floorTile: {fileID: 11400000, guid: 4c0a1b3069ff1ab4eba18e4b8362b997, type: 2}
   characterTile: {fileID: 11400000, guid: 193bd90ca3bb1b94dafda8c721696592, type: 2}
-  supplyIconTile: {fileID: 11400000, guid: 2ca7b845206b24d4aa519c328da9a7ea, type: 2}
-  corpseIconTile: {fileID: 11400000, guid: 43666d40bbb7aa94692b4b9a87005259, type: 2}
-  bedIconTile: {fileID: 11400000, guid: 6f3954dc9b93b6d48a95ccf4a1b548f9, type: 2}
-  tableIconTile: {fileID: 11400000, guid: 06974d1136b6fdb4ca04bcf1592704c4, type: 2}
-  oreIconTile: {fileID: 11400000, guid: 0b068d2916458ec42b003236284308b3, type: 2}
   roadTile: {fileID: 11400000, guid: e032f61ee534a5840adefbac37ee9379, type: 2}
   itemTiles:
     m_keys: 000000000100000002000000030000000400000005000000060000000700000008000000090000000a0000000b0000000c0000000d0000000e0000000f0000001000000011000000
@@ -820,13 +815,18 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 75978c68bd2afdf498ce5b98995c6524, type: 2}
     - {fileID: 11400000, guid: 75978c68bd2afdf498ce5b98995c6524, type: 2}
     - {fileID: 11400000, guid: 75978c68bd2afdf498ce5b98995c6524, type: 2}
-  foodTiles:
-    m_keys: 00000000010000000200000003000000
+  tileObjectTiles:
+    m_keys: 000000000100000002000000030000000400000005000000060000000700000008000000
     m_values:
-    - {fileID: 11400000, guid: a4383e48cdad05843ae8ce38ef3d6827, type: 2}
-    - {fileID: 11400000, guid: a4383e48cdad05843ae8ce38ef3d6827, type: 2}
+    - {fileID: 11400000, guid: 2ca7b845206b24d4aa519c328da9a7ea, type: 2}
+    - {fileID: 11400000, guid: 43666d40bbb7aa94692b4b9a87005259, type: 2}
     - {fileID: 11400000, guid: 005ad161081c96d4eaa007bd4e39aae8, type: 2}
-    - {fileID: 11400000, guid: 005ad161081c96d4eaa007bd4e39aae8, type: 2}
+    - {fileID: 11400000, guid: a4383e48cdad05843ae8ce38ef3d6827, type: 2}
+    - {fileID: 11400000, guid: 37808a54698e0bf4688e2e6d6a834a41, type: 2}
+    - {fileID: 11400000, guid: 651aef02b9d2d034691339e7b2f90102, type: 2}
+    - {fileID: 11400000, guid: 06974d1136b6fdb4ca04bcf1592704c4, type: 2}
+    - {fileID: 11400000, guid: 6f3954dc9b93b6d48a95ccf4a1b548f9, type: 2}
+    - {fileID: 11400000, guid: 0b068d2916458ec42b003236284308b3, type: 2}
   leftWall: {fileID: 11400000, guid: c05951cff2b0fc7449f72ccebda1c382, type: 2}
   rightWall: {fileID: 11400000, guid: 9c1ad6fdb19ade5428fd7d86124e6aa4, type: 2}
   topWall: {fileID: 11400000, guid: 801dc14b009276d4cb7b1cc2212bceee, type: 2}
@@ -860,6 +860,8 @@ MonoBehaviour:
   radius: 0
   offsetX: 0
   offsetY: 0
+  startPos: {x: 0, y: 0, z: 0}
+  endPos: {x: 0, y: 0, z: 0}
   xLocation: 0
   yLocation: 0
 --- !u!114 &114419090812351620

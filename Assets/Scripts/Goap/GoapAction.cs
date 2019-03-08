@@ -46,6 +46,7 @@ public class GoapAction {
     public void SetState(string stateName) {
         currentState = states[stateName];
         AddActionLog(GameManager.Instance.TodayLogString() + " Set state to " + currentState.name);
+        OnPerformActualActionToTarget();
         currentState.Execute();
         //TODO: Change this to accomodate duration changes
         actor.OnCharacterDoAction(this);
@@ -54,7 +55,7 @@ public class GoapAction {
 
     #region Virtuals
     protected virtual void CreateStates() {
-        string summary = "Creating states for goap action (Dynamic) " + goapType.ToString();
+        string summary = "Creating states for goap action (Dynamic) " + goapType.ToString() + " for actor " + actor.name;
         sw.Start();
         states = new Dictionary<string, GoapActionState>();
         if (GoapActionStateDB.goapActionStates.ContainsKey(this.goapType)) {
@@ -123,6 +124,12 @@ public class GoapAction {
             //actor.PerformGoapAction(plan);
         }
     }
+    public void End() {
+        if (Messenger.eventTable.ContainsKey(Signals.CHARACTER_DEATH)) {
+            Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnActorDied);
+        }
+        Debug.Log(this.goapType.ToString() + " action by " + this.actor.name  + " Summary: \n" + actionSummary);
+    }
     #endregion
 
     #region Utilities
@@ -141,7 +148,6 @@ public class GoapAction {
         }
         return true;
     }
-    
     public void AddTraitTo(Character target, string traitName) {
         if (target.AddTrait(traitName)) {
             AddActualEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.ADD_TRAIT, conditionKey = traitName, targetPOI = target });
@@ -153,6 +159,7 @@ public class GoapAction {
         }
     }
     public void ReturnToActorTheActionResult(string result) {
+        End();
         actor.GoapActionResult(result, this);
     }
     protected void AddActionLog(string log) {
@@ -223,12 +230,21 @@ public class GoapAction {
         if (poiTarget is TileObject) {
             TileObject target = poiTarget as TileObject;
             target.OnTargetObject(this);
+            Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnActorDied);
         }
     }
     protected virtual void OnPerformActualActionToTarget() {
         if (poiTarget is TileObject) {
             TileObject target = poiTarget as TileObject;
             target.OnDoActionToObject(this);
+        }
+    }
+    private void OnActorDied(Character character) {
+        if (character.id == actor.id) {
+            if (poiTarget is TileObject) {
+                TileObject target = poiTarget as TileObject;
+                target.owner.SetPOIState(POI_STATE.ACTIVE); //this is for when the character that reserved the target object died
+            }
         }
     }
     #endregion

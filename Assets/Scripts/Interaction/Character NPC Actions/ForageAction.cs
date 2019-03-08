@@ -8,7 +8,7 @@ public class ForageAction : Interaction {
     //private const string Forage_Mild_Success = "Forage Mild Success";
     private const string Forage_Fail = "Forage Fail";
 
-    private List<Food> _nearbyFood;
+    //private List<Food> _nearbyFood;
 
     public ForageAction(Area interactable): base(interactable, INTERACTION_TYPE.FORAGE_ACTION, 0) {
         _name = "Forage Action";
@@ -59,20 +59,20 @@ public class ForageAction : Interaction {
     #region Option Effect
     private void DoNothingOptionEffect() {
         List<LocationGridTile> tilesInRadius = _characterInvolved.specificLocation.areaMap.GetTilesInRadius(_characterInvolved.gridTileLocation, 3);
-        _nearbyFood = new List<Food>();
+        //_nearbyFood = new List<Food>();
         for (int i = 0; i < tilesInRadius.Count; i++) {
-            if (tilesInRadius[i].objHere != null && tilesInRadius[i].objHere.poiType == POINT_OF_INTEREST_TYPE.FOOD) {
-                Food food = tilesInRadius[i].objHere as Food;
-                if (food.foodType == FOOD.BERRY || food.foodType == FOOD.MUSHROOM) {
-                    _nearbyFood.Add(food);
-                }
-            }
+            //if (tilesInRadius[i].objHere != null && tilesInRadius[i].objHere.poiType == POINT_OF_INTEREST_TYPE.FOOD) {
+            //    Food food = tilesInRadius[i].objHere as Food;
+            //    if (food.foodType == FOOD.BERRY || food.foodType == FOOD.MUSHROOM) {
+            //        _nearbyFood.Add(food);
+            //    }
+            //}
         }
-        if (_nearbyFood.Count >= 1) {
-            SetCurrentState(_states[Forage_Success]);
-        } else {
-            SetCurrentState(_states[Forage_Fail]);
-        }
+        //if (_nearbyFood.Count >= 1) {
+        //    SetCurrentState(_states[Forage_Success]);
+        //} else {
+        //    SetCurrentState(_states[Forage_Fail]);
+        //}
         //else if (_nearbyFood.Count == 1) {
         //    SetCurrentState(_states[Forage_Mild_Success]);
         //} 
@@ -94,13 +94,13 @@ public class ForageAction : Interaction {
         //_characterInvolved.currentStructure.RemovePOI(_nearbyFood[index1]);
         //_nearbyFood.RemoveAt(index1);
 
-        int index2 = UnityEngine.Random.Range(0, _nearbyFood.Count);
-        _characterInvolved.currentStructure.RemovePOI(_nearbyFood[index2]);
+        //int index2 = UnityEngine.Random.Range(0, _nearbyFood.Count);
+        //_characterInvolved.currentStructure.RemovePOI(_nearbyFood[index2]);
 
     }
     private void ForageMildSuccessEffect(InteractionState state) {
         _characterInvolved.AdjustFullness(80);
-        _characterInvolved.currentStructure.RemovePOI(_nearbyFood[0]);
+        //_characterInvolved.currentStructure.RemovePOI(_nearbyFood[0]);
     }
     private void ForageFailEffect(InteractionState state) {
     }

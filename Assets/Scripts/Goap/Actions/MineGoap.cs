@@ -32,7 +32,7 @@ public class MineGoap : GoapAction {
 
     #region Requirements
     protected bool Requirement() {
-        return poiTarget.state == POI_STATE.ACTIVE;
+        return poiTarget.state != POI_STATE.INACTIVE;
     }
     #endregion
 
@@ -50,7 +50,6 @@ public class MineGoap : GoapAction {
             Ore ore = poiTarget as Ore;
             actor.AdjustSupply(_gainedSupply);
             ore.AdjustYield(-_gainedSupply);
-            OnPerformActualActionToTarget();
         }
     }
     public void PreTargetMissing() {

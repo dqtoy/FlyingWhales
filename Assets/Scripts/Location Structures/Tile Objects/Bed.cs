@@ -26,19 +26,12 @@ public class Bed : TileObject, IPointOfInterest {
     public Bed(LocationStructure location) {
         this.location = location;
         poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.SLEEP };
-        Initialize(this);
+        Initialize(this, TILE_OBJECT_TYPE.BED);
     }
 
     public override string ToString() {
         return "Bed";
     }
-
-    #region Overrides
-    public override void OnDoActionToObject(GoapAction action) {
-        base.OnDoActionToObject(action);
-        action.actor.AddTrait(AttributeManager.Instance.allTraits["Resting"], null, () => OnDoneActionTowardsTarget(action));
-    }
-    #endregion
 
     #region Interface
     public void SetGridTileLocation(LocationGridTile tile) {

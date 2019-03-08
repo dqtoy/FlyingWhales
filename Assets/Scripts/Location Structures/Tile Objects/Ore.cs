@@ -29,30 +29,13 @@ public class Ore : TileObject, IPointOfInterest {
     public Ore(LocationStructure location) {
         this.location = location;
         poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.MINE_ACTION };
-        Initialize(this);
+        Initialize(this, TILE_OBJECT_TYPE.ORE);
         yield = Random.Range(15, 36);
     }
 
     public override string ToString() {
         return "Ore";
     }
-
-    #region Overrides
-    public override void OnDoActionToObject(GoapAction action) {
-        base.OnDoActionToObject(action);
-        //switch (action.goapType) {
-        //    case INTERACTION_TYPE.MINE_ACTION:
-        //        action.actor.AdjustSupply(Supply_Per_Mine);
-        //        AdjustYield(-Supply_Per_Mine);
-        //        break;
-        //    default:
-        //        action.actor.AdjustSupply(Supply_Per_Mine);
-        //        AdjustYield(-Supply_Per_Mine);
-        //        break;
-        //}
-        OnDoneActionTowardsTarget(action);
-    }
-    #endregion
 
     #region Interface
     public void SetGridTileLocation(LocationGridTile tile) {
