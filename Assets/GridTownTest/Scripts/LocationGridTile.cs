@@ -15,6 +15,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
 
     public bool hasDetail = false;
 
+    public AreaInnerTileMap parentAreaMap { get; private set; }
     public Tilemap parentTileMap { get; private set; }
     public Vector3Int localPlace { get; private set; }
     public Vector3 worldLocation { get; private set; }
@@ -37,7 +38,8 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     public List<LocationGridTile> RealisticTiles { get { return neighbours.Values.Where(o => o.tileAccess == Tile_Access.Passable && (o.structure != null || o.tileType == Tile_Type.Road || o.tileType == Tile_Type.Gate)).ToList(); } }
     public List<LocationGridTile> RoadTiles { get { return neighbours.Values.Where(o => o.tileType == Tile_Type.Road).ToList(); } }
 
-    public LocationGridTile(int x, int y, Tilemap tilemap) {
+    public LocationGridTile(int x, int y, Tilemap tilemap, AreaInnerTileMap parentAreaMap) {
+        this.parentAreaMap = parentAreaMap;
         parentTileMap = tilemap;
         localPlace = new Vector3Int(x, y, 0);
         worldLocation = tilemap.CellToWorld(localPlace);
@@ -230,8 +232,9 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     #region Intel
     public void OnClickTileActions() {
         Messenger.Broadcast(Signals.HIDE_MENUS);
-        if (objHere is TileObject) {
-            PlayerManager.Instance.player.AddIntel(InteractionManager.Instance.CreateNewIntel(objHere));
+        if (objHere is TileObject || objHere is SpecialToken) {
+            parentAreaMap.ShowIntelItemAt(this, InteractionManager.Instance.CreateNewIntel(objHere));
+            //PlayerManager.Instance.player.AddIntel();
         } else if (objHere is Character) {
             UIManager.Instance.ShowCharacterInfo(objHere as Character);
         }

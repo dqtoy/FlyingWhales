@@ -168,7 +168,7 @@ public class AreaInnerTileMap : MonoBehaviour {
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 groundTilemap.SetTile(new Vector3Int(x, y, 0), insideTile);
-                LocationGridTile tile = new LocationGridTile(x, y, groundTilemap);
+                LocationGridTile tile = new LocationGridTile(x, y, groundTilemap, this);
                 allTiles.Add(tile);
                 map[x, y] = tile;
             }
@@ -291,7 +291,7 @@ public class AreaInnerTileMap : MonoBehaviour {
         detailsTilemap.ClearAllTiles();
         roadTilemap.ClearAllTiles();
         scrollviewContent.sizeDelta = new Vector2(cellSize * width, cellSize * height);
-        eventPopupParent.sizeDelta = new Vector2(cellSize * width, cellSize * height);
+        //eventPopupParent.sizeDelta = new Vector2(cellSize * width, cellSize * height);
         scrollviewContent.anchoredPosition = Vector2.zero;
         eventPopupParent.anchoredPosition = Vector2.zero;
         GenerateGrid();
@@ -1098,6 +1098,17 @@ public class AreaInnerTileMap : MonoBehaviour {
     }
     #endregion
 
+    #region UI
+    [SerializeField] private GameObject intelPrefab;
+    public void ShowIntelItemAt(LocationGridTile tile, Intel intel) {
+        GameObject intelGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(intelPrefab.name, Input.mousePosition, Quaternion.identity, eventPopupParent);
+        intelGO.transform.localScale = new Vector2(0.02f, 0.02f);
+        IntelNotificationItem intelItem = intelGO.GetComponent<IntelNotificationItem>();
+        intelItem.Initialize(intel);
+        (intelGO.transform as RectTransform).anchoredPosition = new Vector2(tile.localPlace.x + 0.5f, tile.localPlace.y + 1.5f);
+    }
+    #endregion
+
     #region Travel Lines
     public void DrawLine(LocationGridTile startTile, LocationGridTile destination, Character character) {
         GameObject travelLine = ObjectPoolManager.Instance.InstantiateObjectFromPool
@@ -1115,8 +1126,8 @@ public class AreaInnerTileMap : MonoBehaviour {
     }
     [ContextMenu("Draw Line For Testing")]
     public void DrawLineForTesting() {
-        LocationGridTile startTile = new LocationGridTile(0, 4, groundTilemap);
-        LocationGridTile destinationTile = new LocationGridTile(20, 15, groundTilemap);
+        LocationGridTile startTile = new LocationGridTile(0, 4, groundTilemap, null);
+        LocationGridTile destinationTile = new LocationGridTile(20, 15, groundTilemap, null);
 
         GameObject travelLine = GameObject.Instantiate(travelLinePrefab, travelLineParent);
         travelLine.GetComponent<AreaMapTravelLine>().DrawLine(startTile, destinationTile, null, this);
