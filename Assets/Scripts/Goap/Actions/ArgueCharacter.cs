@@ -88,12 +88,14 @@ public class ArgueCharacter : GoapAction {
 
     #region State Effects
     private void PreArgueSuccess() {
+        actor.AdjustDoNotGetLonely(1);
         currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
     }
     private void PerTickArgueSuccess() {
         actor.AdjustHappiness(4);
     }
     private void AfterArgueSuccess() {
+        actor.AdjustDoNotGetLonely(-1);
         (poiTarget as Character).AddTrait("Annoyed");
     }
     private void PreTargetMissing() {

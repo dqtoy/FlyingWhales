@@ -35,12 +35,10 @@ public class Table : TileObject, IPointOfInterest {
 
     #region Interface
     public void SetGridTileLocation(LocationGridTile tile) {
-        this.tile = tile;
-        if (this.tile == null) {
-            tile.SetTileAccess(LocationGridTile.Tile_Access.Passable);
-        } else {
-            tile.SetTileAccess(LocationGridTile.Tile_Access.Impassable);
+        if (tile != null) {
+            this.tile.SetTileAccess(LocationGridTile.Tile_Access.Impassable);
         }
+        this.tile = tile;
     }
     public LocationGridTile GetNearestUnoccupiedTileFromThis(LocationStructure structure, Character otherCharacter) {
         if (gridTileLocation != null && location == structure) {

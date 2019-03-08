@@ -22,16 +22,21 @@ public class PlayGuitar : GoapAction {
         }
     }
     protected override int GetCost() {
-        return Random.Range(3, 11);
+        return Utilities.rng.Next(3, 10);
+        //return Random.Range(3, 11);
     }
     #endregion
 
     #region State Effects
     public void PrePlaySuccess() {
+        actor.AdjustDoNotGetLonely(1);
         poiTarget.SetPOIState(POI_STATE.INACTIVE);
     }
     public void PerTickPlaySuccess() {
         actor.AdjustHappiness(4);
+    }
+    public void AfterPlaySuccess() {
+        actor.AdjustDoNotGetLonely(-1);
     }
     public void PreTargetMissing() {
         actor.RemoveAwareness(poiTarget);

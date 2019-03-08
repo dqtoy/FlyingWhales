@@ -80,10 +80,14 @@ public class ChatCharacter : GoapAction {
 
     #region State Effects
     private void PreChatSuccess() {
+        actor.AdjustDoNotGetLonely(1);
         currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
     }
     private void PerTickChatSuccess() {
         actor.AdjustHappiness(6);
+    }
+    private void AfterChatSuccess() {
+        actor.AdjustDoNotGetLonely(-1);
     }
     private void PreTargetMissing() {
         currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
