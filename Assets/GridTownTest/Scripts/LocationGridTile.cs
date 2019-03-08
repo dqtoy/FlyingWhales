@@ -32,9 +32,10 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     public GameObject prefabHere { get; private set; } //if there is a prefab that was instantiated at this tiles location
     //public List<LocationGridTile> neighborList { get; private set; }
     public IPointOfInterest objHere { get; private set; }
+    public List<Character> charactersHere { get; private set; }
 
     public List<LocationGridTile> ValidTiles { get { return FourNeighbours().Where(o => o.tileType == Tile_Type.Empty || o.tileType == Tile_Type.Gate || o.tileType == Tile_Type.Road).ToList(); } }
-    public List<LocationGridTile> RealisticTiles { get { return neighbours.Values.Where(o => o.tileAccess == Tile_Access.Passable && (o.structure != null || o.tileType == Tile_Type.Road)).ToList(); } }
+    public List<LocationGridTile> RealisticTiles { get { return neighbours.Values.Where(o => o.tileAccess == Tile_Access.Passable && (o.structure != null || o.tileType == Tile_Type.Road || o.tileType == Tile_Type.Gate)).ToList(); } }
     public List<LocationGridTile> RoadTiles { get { return neighbours.Values.Where(o => o.tileType == Tile_Type.Road).ToList(); } }
 
     public LocationGridTile(int x, int y, Tilemap tilemap, AreaInnerTileMap parentAreaMap) {
@@ -47,6 +48,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         tileType = Tile_Type.Empty;
         tileState = Tile_State.Empty;
         tileAccess = Tile_Access.Passable;
+        charactersHere = new List<Character>();
     }
     public List<LocationGridTile> FourNeighbours() {
         List<LocationGridTile> fn = new List<LocationGridTile>();

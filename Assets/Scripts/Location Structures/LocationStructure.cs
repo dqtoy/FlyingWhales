@@ -136,7 +136,11 @@ public class LocationStructure {
         if (pointsOfInterest.Remove(poi)) {
 #if !WORLD_CREATION_TOOL
             if (poi.gridTileLocation != null) {
-                location.areaMap.RemoveObject(poi.gridTileLocation);
+                if(poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+                    location.areaMap.RemoveCharacter(poi.gridTileLocation, poi as Character);
+                } else {
+                    location.areaMap.RemoveObject(poi.gridTileLocation);
+                }
                 //throw new System.Exception("Provided tile of " + poi.ToString() + " is null!");
             }
             

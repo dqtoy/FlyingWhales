@@ -80,4 +80,9 @@ public class Table : TileObject, IPointOfInterest {
         _state = state;
     }
     #endregion
+
+    #region Tile Objects
+    public override void OnDoActionToObject(GoapAction action) {
+    }
+    #endregion
 }
