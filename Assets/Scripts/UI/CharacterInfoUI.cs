@@ -226,7 +226,7 @@ public class CharacterInfoUI : UIMenu {
         }
 
         //Travel Thought
-        if (!_activeCharacter.isDead && _activeCharacter.currentParty.icon.isTravelling) {
+        if (!_activeCharacter.isDead && _activeCharacter.currentParty.icon.isTravelling && _activeCharacter.currentParty.icon.travelLine != null) {
             plansLbl.text = _activeCharacter.name + " is travelling to " + _activeCharacter.currentParty.icon.targetLocation.name + ".";
             return;
         }
