@@ -3989,7 +3989,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public void PerformGoapAction(GoapPlan plan) {
         string log = GameManager.Instance.TodayLogString() + name + " is performing goap action: " + plan.currentNode.action.goapName;
-        if(plan.currentNode.action.CanSatisfyRequirements() && plan.currentNode.action.CanSatisfyAllPreconditions()) {
+        FaceTarget(plan.currentNode.action.poiTarget);
+        if (plan.currentNode.action.CanSatisfyRequirements() && plan.currentNode.action.CanSatisfyAllPreconditions()) {
             plan.currentNode.action.PerformActualAction();
         } else {
             log += "\nFailed to perform action. Will try to recalculate plan...";
@@ -4102,6 +4103,11 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public void OnCharacterDoAction(GoapAction action) {
         Messenger.Broadcast(Signals.CHARACTER_DID_ACTION, this, action);
+    }
+    public void FaceTarget(IPointOfInterest target) {
+        if(this != target) {
+            marker.RotateMarker(gridTileLocation.centeredWorldLocation, target.gridTileLocation.centeredWorldLocation);
+        }
     }
     #endregion
 
