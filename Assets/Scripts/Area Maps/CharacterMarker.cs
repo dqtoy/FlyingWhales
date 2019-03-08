@@ -130,6 +130,7 @@ public class CharacterMarker : PooledObject {
     #region Pathfinding Movement
     public void GoToTile(LocationGridTile destinationTile, Action arrivalAction = null) {
         _destinationTile = destinationTile;
+        _arrivalAction = arrivalAction;
         if (character.gridTileLocation.structure.location.areaMap.gameObject.activeSelf) {
             //If area map is showing, do pathfinding
             _currentPath = PathGenerator.Instance.GetPath(character.gridTileLocation, destinationTile, GRID_PATHFINDING_MODE.REALISTIC);
@@ -191,8 +192,7 @@ public class CharacterMarker : PooledObject {
         }
     }
     private IEnumerator MoveToPosition(Vector3 from, Vector3 to) {
-        float angle = Mathf.Atan2(to.y - from.y, to.x - from.x) * Mathf.Rad2Deg;
-        gameObject.transform.eulerAngles = new Vector3(gameObject.transform.rotation.x, gameObject.transform.rotation.y, angle);
+        RotateMarker(from, to);
 
         float t = 0f;
         while (t < 1) {
@@ -203,6 +203,10 @@ public class CharacterMarker : PooledObject {
             yield return null;
         }
         Move();
+    }
+    public void RotateMarker(Vector3 from, Vector3 to) {
+        float angle = Mathf.Atan2(to.y - from.y, to.x - from.x) * Mathf.Rad2Deg;
+        gameObject.transform.eulerAngles = new Vector3(gameObject.transform.rotation.x, gameObject.transform.rotation.y, angle);
     }
     public void SwitchToPathfinding() {
         if (Messenger.eventTable.ContainsKey(Signals.TICK_STARTED)) {
