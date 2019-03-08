@@ -144,9 +144,11 @@ SpriteAtlas:
   - {fileID: 21300000, guid: a0928a890c785c64faa0cd3b3baef349, type: 3}
   - {fileID: 21300000, guid: acd979997eb35524b8cb032c7c3dd425, type: 3}
   - {fileID: 21300000, guid: 0f04f4b95fe70eb42a152004552dc025, type: 3}
+  - {fileID: 21300000, guid: e85247b9c5ad0ba48b54c98a216a9cff, type: 3}
   - {fileID: 21300000, guid: c7c885c979ee2f0478de6efd8a687e80, type: 3}
   - {fileID: 21300000, guid: 3bcb53e9cf5da944e9ce47d767ac583c, type: 3}
   - {fileID: 21300000, guid: 556f49e9a96e81d489e091b17c46d44e, type: 3}
+  - {fileID: 21300000, guid: fb1a6ce9958395a44a4b2d8c350575b9, type: 3}
   - {fileID: 21300000, guid: 147c3ff9cbb6c5c40bb53acf45f3f76a, type: 3}
   - {fileID: 21300000, guid: ec914b0adf68767468fd588db4e9c4cf, type: 3}
   - {fileID: 21300000, guid: feff812aa7309c9488d1a7435245be46, type: 3}
@@ -194,6 +196,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 563164dd027b8a5459339f60b557cf40, type: 3}
   - {fileID: 21300000, guid: 0632a7edade14e24b991ae40a6b23ba3, type: 3}
   - {fileID: 21300000, guid: 866fc2fd1952a3e4096feb783efef97b, type: 3}
+  - {fileID: 21300000, guid: 5255390e6fedf8140a25b567a5f57b6c, type: 3}
   - {fileID: 21300000, guid: 955cd41edecb1504ba459a1eadd6f249, type: 3}
   - {fileID: 21300000, guid: 04bc161e03119a1499a546c9c01f6422, type: 3}
   - {fileID: 21300000, guid: 11226b1e948092b418ef8e55fa635e57, type: 3}
@@ -331,9 +334,11 @@ SpriteAtlas:
   - rocks03
   - floorA01
   - caveWallA-1010-02
+  - supplies
   - wallA-1111-00
   - caveWallA-0111-03
   - cobble00
+  - guitar
   - wallA-1010-00
   - maleAvatar_hover
   - wallA-0110-00
@@ -381,6 +386,7 @@ SpriteAtlas:
   - wall1110-00
   - caveWallA-1110-03
   - shrub01
+  - skeleton
   - debrisRocks02
   - ore00
   - wallA-0010-00

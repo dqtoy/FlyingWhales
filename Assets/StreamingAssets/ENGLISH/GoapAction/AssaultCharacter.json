@@ -1,1 +1,1 @@
-{"items":[{"key":"target injured","value":"%00@ assaulted %10@. %10@ was injured!"},{"key":"target knocked out","value":"%00@ assaulted %10@. %10@ got knocked out!"},{"key":"target killed","value":"%00@ assaulted %10@. %10@ was killed!"}]}
+{"items":[{"key":"target injured_description","value":"%00@ assaulted %10@. %10@ was injured!"},{"key":"target knocked out_description","value":"%00@ assaulted %10@. %10@ got knocked out!"},{"key":"target killed_description","value":"%00@ assaulted %10@. %10@ was killed!"}]}

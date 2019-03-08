@@ -8,7 +8,7 @@ public class PlayGuitar : GoapAction {
 
     #region Overrides
     protected override void ConstructPreconditionsAndEffects() {
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = poiTarget });
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
     }
     public override void PerformActualAction() {
         if (poiTarget.gridTileLocation.structure == actor.gridTileLocation.structure) {
