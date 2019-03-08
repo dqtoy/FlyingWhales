@@ -862,6 +862,8 @@ MonoBehaviour:
   offsetY: 0
   startPos: {x: 0, y: 0, z: 0}
   endPos: {x: 0, y: 0, z: 0}
+  intelPrefab: {fileID: 1520246901535660, guid: 31553687798ac7f4f8153f94dc861add,
+    type: 2}
   xLocation: 0
   yLocation: 0
 --- !u!114 &114419090812351620
@@ -876,7 +878,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_UiScaleMode: 1
-  m_ReferencePixelsPerUnit: 64
+  m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0

@@ -11,14 +11,18 @@ public class IntelNotificationItem : PooledObject {
 
     public Intel intel { get; private set; }
 
-    [SerializeField] private EnvelopContentUnityUI envelopContent;
+    [SerializeField] private EnvelopContentUnityUI mainEnvelopContent;
+    [SerializeField] private EnvelopContentUnityUI logEnvelopContent;
     [SerializeField] private TextMeshProUGUI intelLbl;
     [SerializeField] private Button getIntelBtn;
+    [SerializeField] private LogItem intelLogItem;
 
     public void Initialize(Intel intel) {
         this.intel = intel;
         intelLbl.SetText(Utilities.LogReplacer(intel.intelLog));
-        envelopContent.Execute();
+        intelLogItem.SetLog(intel.intelLog);
+        logEnvelopContent.Execute();
+        mainEnvelopContent.Execute();
 
         //schedule expiry
         SchedulingManager.Instance.AddEntry(GameManager.Instance.Today().AddTicks(Expiration_Ticks), () => OnExpire());
@@ -33,13 +37,12 @@ public class IntelNotificationItem : PooledObject {
     }
 
     private void OnExpire() {
-        //TODO: Make this disabled instead
-        //DeleteNotification();
-        getIntelBtn.interactable = false;
+        DeleteNotification();
+        //getIntelBtn.interactable = false;
     }
-
     public override void Reset() {
         base.Reset();
-        getIntelBtn.interactable = true;
+        //getIntelBtn.interactable = true;
+        this.transform.localScale = Vector3.one;
     }
 }
