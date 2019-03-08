@@ -293,7 +293,7 @@ public class Party {
         this.partyColor = partyColor;
     }
     public void GoToLocation(Area targetLocation, PATHFINDING_MODE pathfindingMode, LocationStructure targetStructure = null,
-        Action doneAction = null, Action actionOnStartOfMovement = null, Interaction causeForTravel = null) {
+        Action doneAction = null, Action actionOnStartOfMovement = null, Interaction causeForTravel = null, IPointOfInterest targetPOI = null, LocationGridTile targetTile = null) {
         //if (_icon.isMovingToHex) {
         //    _icon.SetQueuedAction(() => GoToLocation(targetLocation, pathfindingMode, doneAction, trackTarget, actionOnStartOfMovement));
         //    return;
@@ -308,7 +308,7 @@ public class Party {
             }
         } else {
             //_icon.SetActionOnTargetReached(doneAction);
-            _icon.SetTarget(targetLocation, targetStructure);
+            _icon.SetTarget(targetLocation, targetStructure, targetPOI, targetTile);
             _icon.SetCauseForTravel(causeForTravel);
             _icon.StartPath(PATHFINDING_MODE.PASSABLE, doneAction, actionOnStartOfMovement);
         }

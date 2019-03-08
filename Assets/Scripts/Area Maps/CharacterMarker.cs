@@ -136,7 +136,7 @@ public class CharacterMarker : PooledObject {
             if (_currentPath != null) {
                 StartMovement();
             } else {
-                Debug.LogError("Can't create path!");
+                Debug.LogError("Can't create path for " + character.name + " from " + character.gridTileLocation.ToString() + " to " + destinationTile.ToString());
             }
         } else {
             //If area map is not showing, do estimated travel

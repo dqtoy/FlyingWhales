@@ -9,7 +9,8 @@ using UnityEngine.UI;
 public class LocationGridTile : IHasNeighbours<LocationGridTile> {
 
     public enum Tile_Type { Empty, Wall, Structure, Gate, Road }
-    public enum Tile_State { Impassable, Empty, Reserved, Occupied }
+    public enum Tile_State { Empty, Reserved, Occupied }
+    public enum Tile_Access { Passable, Impassable, }
     public enum Ground_Type { Soil, Grass, Stone }
 
     public bool hasDetail = false;
@@ -22,6 +23,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     public bool isInside { get; private set; }
     public Tile_Type tileType { get; private set; }
     public Tile_State tileState { get; private set; }
+    public Tile_Access tileAccess { get; private set; }
     public Ground_Type groundType { get; set; }
     public LocationStructure structure { get; private set; }
     public Dictionary<TileNeighbourDirection, LocationGridTile> neighbours { get; private set; }
@@ -31,7 +33,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     public IPointOfInterest objHere { get; private set; }
 
     public List<LocationGridTile> ValidTiles { get { return FourNeighbours().Where(o => o.tileType == Tile_Type.Empty || o.tileType == Tile_Type.Gate).ToList(); } }
-    public List<LocationGridTile> RealisticTiles { get { return neighbourList.Where(o => o.tileState != Tile_State.Impassable && o.tileState != Tile_State.Occupied && o.structure != null).ToList(); } }
+    public List<LocationGridTile> RealisticTiles { get { return neighbourList.Where(o => o.tileAccess == Tile_Access.Passable && (o.structure != null || o.tileType == Tile_Type.Road)).ToList(); } }
     public List<LocationGridTile> RoadTiles { get { return neighbours.Values.Where(o => o.tileType == Tile_Type.Road).ToList(); } }
 
     public LocationGridTile(int x, int y, Tilemap tilemap) {
@@ -42,6 +44,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         centeredWorldLocation = new Vector3(worldLocation.x + 0.5f, worldLocation.y + 0.5f, worldLocation.z);
         tileType = Tile_Type.Empty;
         tileState = Tile_State.Empty;
+        tileAccess = Tile_Access.Passable;
     }
     public List<LocationGridTile> FourNeighbours() {
         List<LocationGridTile> fn = new List<LocationGridTile>();
@@ -104,7 +107,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         this.tileType = tileType;
         switch (tileType) {
             case Tile_Type.Wall:
-                SetTileState(Tile_State.Impassable);
+                SetTileAccess(Tile_Access.Impassable);
                 break;
             default:
                 SetTileState(Tile_State.Empty);
@@ -129,6 +132,9 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     }
     public void SetTileState(Tile_State state) {
         this.tileState = state;
+    }
+    public void SetTileAccess(Tile_Access state) {
+        this.tileAccess = state;
     }
     #endregion
 

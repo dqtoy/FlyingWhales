@@ -1277,14 +1277,25 @@ public class Area {
             }
         }
     }
-    public void AddCharacterToLocation(Character character, LocationStructure structureOverride = null) {
+    public void AddCharacterToLocation(Character character, LocationStructure structureOverride = null, IPointOfInterest targetPOI = null, LocationGridTile tileOverride = null) {
         if (!charactersAtLocation.Contains(character)) {
             charactersAtLocation.Add(character);
             character.ownParty.SetSpecificLocation(this);
             AddCharacterAtLocationHistory("Added " + character.name + "ST: " + StackTraceUtility.ExtractStackTrace());
             //if (PlayerManager.Instance.player == null || PlayerManager.Instance.player.playerArea.id != this.id) {
             if (structureOverride != null) {
-                structureOverride.AddCharacterAtLocation(character);
+                if (tileOverride != null) {
+                    structureOverride.AddCharacterAtLocation(character, tileOverride);
+                } else if (targetPOI != null) {
+                    LocationGridTile newNearestTile = targetPOI.GetNearestUnoccupiedTileFromThis(structureOverride, character);
+                    if (newNearestTile != null) {
+                        structureOverride.AddCharacterAtLocation(character, newNearestTile);
+                    } else {
+                        structureOverride.AddCharacterAtLocation(character, tileOverride);
+                    }
+                } else {
+                    structureOverride.AddCharacterAtLocation(character, tileOverride);
+                }
             } else {
                 AddCharacterToAppropriateStructure(character);
             }
@@ -1293,9 +1304,9 @@ public class Area {
             Messenger.Broadcast(Signals.CHARACTER_ENTERED_AREA, this, character);
         }
     }
-    public void AddCharacterToLocation(Party party, LocationStructure structureOverride = null) {
+    public void AddCharacterToLocation(Party party, LocationStructure structureOverride = null, IPointOfInterest targetPOI = null, LocationGridTile tileOverride = null) {
         for (int i = 0; i < party.characters.Count; i++) {
-            AddCharacterToLocation(party.characters[i], structureOverride);
+            AddCharacterToLocation(party.characters[i], structureOverride, targetPOI, tileOverride);
         }
     }
     public void RemoveCharacterFromLocation(Character character) {
@@ -1472,7 +1483,8 @@ public class Area {
                     }
                     if (choices.Count > 0) {
                         LocationStructure structure = choices[UnityEngine.Random.Range(0, choices.Count)];
-                        createdCharacter.MoveToAnotherStructure(structure);
+                        createdCharacter.currentStructure.RemoveCharacterAtLocation(createdCharacter);
+                        structure.AddCharacterAtLocation(createdCharacter);
                     }
                 } else if (this.name == "Odious") {
                     List<LocationStructure> choices = new List<LocationStructure>();
@@ -1483,7 +1495,8 @@ public class Area {
                     }
                     if (choices.Count > 0) {
                         LocationStructure structure = choices[UnityEngine.Random.Range(0, choices.Count)];
-                        createdCharacter.MoveToAnotherStructure(structure);
+                        createdCharacter.currentStructure.RemoveCharacterAtLocation(createdCharacter);
+                        structure.AddCharacterAtLocation(createdCharacter);
                     }
                 }
             }

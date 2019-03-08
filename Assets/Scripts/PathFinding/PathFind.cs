@@ -202,8 +202,10 @@ namespace PathFind {
                         break;
                     case GRID_PATHFINDING_MODE.REALISTIC:
                         foreach (Node n in path.LastStep.RealisticTiles) {
-                            if(n.tileType == LocationGridTile.Tile_Type.Structure && n.structure != start.structure && n.structure != destination.structure) {
-                                continue;
+                            if(n.structure != null && n.structure.location.areaType != AREA_TYPE.DUNGEON) {
+                                if (n.tileType == LocationGridTile.Tile_Type.Structure && n.structure != start.structure && n.structure != destination.structure) {
+                                    continue;
+                                }
                             }
                             d = distance(path.LastStep, n);
                             newPath = path.AddStep(n, d);
