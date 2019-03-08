@@ -32,6 +32,9 @@ public class GoapActionState {
         descriptionLog = new Log(GameManager.Instance.Today(), "GoapAction", parentAction.GetType().ToString(), name.ToLower() + "_description");
         AddLogFiller(parentAction.actor, parentAction.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
     }
+    public void OverrideDescriptionLog(Log log) {
+        descriptionLog = log;
+    }
 
     public void AddLogFiller(object obj, string value, LOG_IDENTIFIER identifier) {
         descriptionLog.AddToFillers(obj, value, identifier);

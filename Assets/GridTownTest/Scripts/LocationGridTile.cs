@@ -25,13 +25,13 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     public Ground_Type groundType { get; set; }
     public LocationStructure structure { get; private set; }
     public Dictionary<TileNeighbourDirection, LocationGridTile> neighbours { get; private set; }
-    public List<LocationGridTile> neighbourList { get; private set; }
+    //public List<LocationGridTile> neighbourList { get; private set; }
     public GameObject prefabHere { get; private set; } //if there is a prefab that was instantiated at this tiles location
     //public List<LocationGridTile> neighborList { get; private set; }
     public IPointOfInterest objHere { get; private set; }
 
     public List<LocationGridTile> ValidTiles { get { return FourNeighbours().Where(o => o.tileType == Tile_Type.Empty || o.tileType == Tile_Type.Gate).ToList(); } }
-    public List<LocationGridTile> RealisticTiles { get { return neighbourList.Where(o => o.tileState != Tile_State.Impassable && o.tileState != Tile_State.Occupied && o.structure != null).ToList(); } }
+    public List<LocationGridTile> RealisticTiles { get { return neighbours.Values.Where(o => o.tileState != Tile_State.Impassable && o.tileState != Tile_State.Occupied && o.structure != null).ToList(); } }
     public List<LocationGridTile> RoadTiles { get { return neighbours.Values.Where(o => o.tileType == Tile_Type.Road).ToList(); } }
 
     public LocationGridTile(int x, int y, Tilemap tilemap) {
@@ -59,7 +59,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     }
     public void FindNeighbours(LocationGridTile[,] map) {
         neighbours = new Dictionary<TileNeighbourDirection, LocationGridTile>();
-        neighbourList = new List<LocationGridTile>();
+        //neighbourList = new List<LocationGridTile>();
         int mapUpperBoundX = map.GetUpperBound(0);
         int mapUpperBoundY = map.GetUpperBound(1);
         Point thisPoint = new Point(localPlace.x, localPlace.y);
@@ -74,14 +74,14 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
             
         }
 
-        for (int i = 0; i < LandmarkManager.mapNeighborPoints.Count; i++) {
-            Point pointCalculation = LandmarkManager.mapNeighborPoints[i];
-            Point result = thisPoint.Sum(pointCalculation);
-            if (Utilities.IsInRange(result.X, 0, mapUpperBoundX + 1) &&
-                Utilities.IsInRange(result.Y, 0, mapUpperBoundY + 1)) {
-                neighbourList.Add(map[result.X, result.Y]);
-            }
-        }
+        //for (int i = 0; i < LandmarkManager.mapNeighborPoints.Count; i++) {
+        //    Point pointCalculation = LandmarkManager.mapNeighborPoints[i];
+        //    Point result = thisPoint.Sum(pointCalculation);
+        //    if (Utilities.IsInRange(result.X, 0, mapUpperBoundX + 1) &&
+        //        Utilities.IsInRange(result.Y, 0, mapUpperBoundY + 1)) {
+        //        neighbourList.Add(map[result.X, result.Y]);
+        //    }
+        //}
     }
     public Dictionary<TileNeighbourDirection, Point> possibleExits {
         get {

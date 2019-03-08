@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class Bed : TileObject, IPointOfInterest {
+public class Guitar : TileObject, IPointOfInterest {
     public string name { get { return ToString(); } }
     public LocationStructure location { get; private set; }
     public List<INTERACTION_TYPE> poiGoapActions { get; private set; }
@@ -23,14 +23,14 @@ public class Bed : TileObject, IPointOfInterest {
     }
     #endregion
 
-    public Bed(LocationStructure location) {
+    public Guitar(LocationStructure location) {
         this.location = location;
-        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.SLEEP };
+        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.PLAY_GUITAR };
         Initialize(this);
     }
 
     public override string ToString() {
-        return "Bed";
+        return "Guitar";
     }
 
     #region Interface

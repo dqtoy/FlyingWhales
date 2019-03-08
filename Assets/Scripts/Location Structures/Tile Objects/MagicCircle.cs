@@ -33,13 +33,6 @@ public class MagicCircle : TileObject, IPointOfInterest {
         return "Magic Circle";
     }
 
-    #region Overrides
-    public override void OnDoActionToObject(GoapAction action) {
-        base.OnDoActionToObject(action);
-        action.actor.AddTrait(AttributeManager.Instance.allTraits["Resting"], null, () => OnDoneActionTowardsTarget(action));
-    }
-    #endregion
-
     #region Interface
     public void SetGridTileLocation(LocationGridTile tile) {
         this.tile = tile;

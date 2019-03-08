@@ -37,23 +37,6 @@ public class Ore : TileObject, IPointOfInterest {
         return "Ore";
     }
 
-    #region Overrides
-    public override void OnDoActionToObject(GoapAction action) {
-        base.OnDoActionToObject(action);
-        //switch (action.goapType) {
-        //    case INTERACTION_TYPE.MINE_ACTION:
-        //        action.actor.AdjustSupply(Supply_Per_Mine);
-        //        AdjustYield(-Supply_Per_Mine);
-        //        break;
-        //    default:
-        //        action.actor.AdjustSupply(Supply_Per_Mine);
-        //        AdjustYield(-Supply_Per_Mine);
-        //        break;
-        //}
-        OnDoneActionTowardsTarget(action);
-    }
-    #endregion
-
     #region Interface
     public void SetGridTileLocation(LocationGridTile tile) {
         this.tile = tile;

@@ -973,6 +973,15 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.DAYDREAM:
                 goapAction = new Daydream(actor, target);
                 break;
+            case INTERACTION_TYPE.PLAY_GUITAR:
+                goapAction = new PlayGuitar(actor, target);
+                break;
+            case INTERACTION_TYPE.CHAT_CHARACTER:
+                goapAction = new ChatCharacter(actor, target);
+                break;
+            case INTERACTION_TYPE.ARGUE_CHARACTER:
+                goapAction = new ArgueCharacter(actor, target);
+                break;
         }
         return goapAction;
     }
