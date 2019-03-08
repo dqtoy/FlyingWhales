@@ -798,6 +798,7 @@ MonoBehaviour:
   bedIconTile: {fileID: 11400000, guid: 6f3954dc9b93b6d48a95ccf4a1b548f9, type: 2}
   tableIconTile: {fileID: 11400000, guid: 06974d1136b6fdb4ca04bcf1592704c4, type: 2}
   oreIconTile: {fileID: 11400000, guid: 0b068d2916458ec42b003236284308b3, type: 2}
+  magicCircleTile: {fileID: 11400000, guid: 651aef02b9d2d034691339e7b2f90102, type: 2}
   roadTile: {fileID: 11400000, guid: e032f61ee534a5840adefbac37ee9379, type: 2}
   itemTiles:
     m_keys: 000000000100000002000000030000000400000005000000060000000700000008000000090000000a0000000b0000000c0000000d0000000e0000000f0000001000000011000000
@@ -860,6 +861,8 @@ MonoBehaviour:
   radius: 0
   offsetX: 0
   offsetY: 0
+  startPos: {x: 0, y: 0, z: 0}
+  endPos: {x: 0, y: 0, z: 0}
   xLocation: 0
   yLocation: 0
 --- !u!114 &114419090812351620
