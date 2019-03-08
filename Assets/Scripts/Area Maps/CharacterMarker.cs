@@ -171,18 +171,20 @@ public class CharacterMarker : PooledObject {
         }
         if(_currentPath.Count > 0 && character.currentParty.icon.isTravelling) {
             LocationGridTile currentTile = _currentPath[0];
-            if(currentTile.structure != character.currentStructure) {
+            if(_currentPath.Count == 1) {
+                character.currentParty.icon.SetIsTravelling(false); //Quick fix for movement issue
+            }
+            if (currentTile.structure != character.currentStructure) {
                 character.currentStructure.RemoveCharacterAtLocation(character);
                 currentTile.structure.AddCharacterAtLocation(character, currentTile);
             } else {
-                character.gridTileLocation.structure.location.areaMap.RemoveObject(character.gridTileLocation);
+                character.gridTileLocation.structure.location.areaMap.RemoveCharacter(character.gridTileLocation, character);
                 currentTile.structure.location.areaMap.PlaceObject(character, currentTile);
             }
             _currentPath.RemoveAt(0);
 
             if(_currentPath.Count <= 0) {
                 //Arrival
-                character.currentParty.icon.SetIsTravelling(false);
                 if (_arrivalAction != null) {
                     _arrivalAction();
                 }

@@ -891,6 +891,8 @@ public class AreaInnerTileMap : MonoBehaviour {
         switch (obj.poiType) {
             case POINT_OF_INTEREST_TYPE.ITEM:
                 tileToUse = itemTiles[(obj as SpecialToken).specialTokenType];
+                tile.SetObjectHere(obj);
+                objectsTilemap.SetTile(tile.localPlace, tileToUse);
                 break;
             case POINT_OF_INTEREST_TYPE.CHARACTER:
                 OnPlaceCharacterOnTile(obj as Character, tile);
@@ -899,13 +901,15 @@ public class AreaInnerTileMap : MonoBehaviour {
             case POINT_OF_INTEREST_TYPE.TILE_OBJECT:
                 TileObject to = obj as TileObject;
                 tileToUse = tileObjectTiles[to.tileObjectType];
+                tile.SetObjectHere(obj);
+                objectsTilemap.SetTile(tile.localPlace, tileToUse);
                 break;
             default:
                 tileToUse = characterTile;
+                tile.SetObjectHere(obj);
+                objectsTilemap.SetTile(tile.localPlace, tileToUse);
                 break;
         }
-        objectsTilemap.SetTile(tile.localPlace, tileToUse);
-        tile.SetObjectHere(obj);
     }
     public void RemoveObject(LocationGridTile tile) {
         tile.RemoveObjectHere();
@@ -918,6 +922,23 @@ public class AreaInnerTileMap : MonoBehaviour {
             tile.SetPrefabHere(null);
         }
         objectsTilemap.SetTile(tile.localPlace, null);
+    }
+    public void RemoveCharacter(LocationGridTile tile, Character character) {
+        if (tile.objHere == character) {
+            RemoveObject(tile);
+        } else {
+            if (tile.charactersHere.Remove(character)) {
+                character.SetGridTileLocation(null);
+                if (tile.prefabHere != null) {
+                    CharacterPortrait portrait = tile.prefabHere.GetComponent<CharacterPortrait>();
+                    if (portrait != null) {
+                        portrait.SetImageRaycastTargetState(true);
+                    }
+                    //ObjectPoolManager.Instance.DestroyObject(tile.prefabHere);
+                    tile.SetPrefabHere(null);
+                }
+            }
+        }
     }
     private void OnPlaceCharacterOnTile(Character character, LocationGridTile tile) {
         Vector3 pos = new Vector3(tile.localPlace.x + 0.5f, tile.localPlace.y + 0.5f);
@@ -937,6 +958,14 @@ public class AreaInnerTileMap : MonoBehaviour {
         RectTransform rect = character.marker.gameObject.transform as RectTransform;
         rect.anchoredPosition = pos;
         tile.SetPrefabHere(character.marker.gameObject);
+
+        if(character.currentParty.icon.isTravelling && character.currentParty.icon.travelLine == null) {
+            tile.charactersHere.Add(character);
+            character.SetGridTileLocation(tile);
+        } else {
+            tile.SetObjectHere(character);
+            objectsTilemap.SetTile(tile.localPlace, null);
+        }
     }
     private void OnPlaceCorpseOnTile(Corpse corpse, LocationGridTile tile) {
         Vector3 pos = new Vector3(tile.localPlace.x, tile.localPlace.y);

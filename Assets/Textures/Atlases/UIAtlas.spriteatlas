@@ -253,6 +253,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 8bdc1a1cf8a1c5842be972458dd90a72, type: 3}
   - {fileID: 21300000, guid: 688af52cfc1d07b42a817bbbf1ec1360, type: 3}
   - {fileID: 21300000, guid: df565b2c1e4b47f42b35e56d39363e93, type: 3}
+  - {fileID: 21300000, guid: cd0fdf3cea6343b489b62c13f949612b, type: 3}
   - {fileID: 21300000, guid: 54202d4c9c12b6c42b0a5d56630b9b11, type: 3}
   - {fileID: 21300000, guid: 41b46e5c79a790a4587ee7aef9acb301, type: 3}
   - {fileID: 21300000, guid: 5982206c24543a34eb45b8b331a6b4b7, type: 3}
@@ -269,6 +270,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 62cc391ddf5e0c54b90366603efc2e32, type: 3}
   - {fileID: 21300000, guid: 4e72ca1dca662654c8f2748b29510203, type: 3}
   - {fileID: 21300000, guid: 9d71b66d2e6ae4946b19b0b489663fd3, type: 3}
+  - {fileID: 21300000, guid: ff09ff8d935290549957e2037d5cb0c8, type: 3}
   - {fileID: 21300000, guid: e26dc0ad13ea5214a8bbbca1cfa08889, type: 3}
   - {fileID: 21300000, guid: f52eccad996af5040acdcd7df9507bf9, type: 3}
   - {fileID: 21300000, guid: 08b2bfcd8eaec3a40ad63c6c2b861d07, type: 3}
@@ -285,6 +287,8 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 5b1f5f7e5b6d3c94eb68f515dc13967d, type: 3}
   - {fileID: 21300000, guid: 6ae7e28e53de7564f9cd5da42b57c804, type: 3}
   - {fileID: 21300000, guid: 1c0d578e62658cb41889305f732afc6e, type: 3}
+  - {fileID: 21300000, guid: b7df3a8ed9e668f4b893d56e8b8f19da, type: 3}
+  - {fileID: 21300000, guid: fe70dd9e7b458b147bf6087c61efe10c, type: 3}
   - {fileID: 21300000, guid: e87141bea9d9a0246b7760df857768f9, type: 3}
   - {fileID: 21300000, guid: 6acb08cebcf86d04c97e40d6fff922e3, type: 3}
   - {fileID: 21300000, guid: f9ddf8ce0ba0595419a58730fbc42b74, type: 3}
@@ -532,6 +536,7 @@ SpriteAtlas:
   - main_menu_loadgame_btn_hover
   - main_menu_continue_btn_hover
   - ge_icon-16
+  - notification_intel_button_hover
   - button_close_hover
   - minion_icon_instigator
   - faction_relationship_container
@@ -548,6 +553,7 @@ SpriteAtlas:
   - interaction_tab_unselected
   - location_ui_visitors_icon
   - assault_defense_container
+  - notification_intel_button_default
   - ge_icon-02
   - button_back_clicked
   - scroll_button_left_invalid
@@ -564,6 +570,8 @@ SpriteAtlas:
   - ge_cont-02A
   - log_panel
   - minion_icon_spy
+  - notification_container
+  - notification_intel_button_clicked
   - Redheart Den
   - button_pause_off
   - text_scroll_bg

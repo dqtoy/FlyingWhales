@@ -1425,7 +1425,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     //}
     public void CenterOnCharacter() {
         if (!this.isDead) {
-            if (currentParty.icon.isTravelling) {
+            if (currentParty.icon.isTravelling && currentParty.icon.travelLine != null) {
                 CameraMove.Instance.CenterCameraOn(currentParty.icon.travelLine.iconImg.gameObject);
             } else {
                 CameraMove.Instance.CenterCameraOn(currentParty.specificLocation.coreTile.gameObject);
@@ -3751,6 +3751,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             if(tilesInRadius[i].objHere != null) {
                 AddAwareness(tilesInRadius[i].objHere);
             }
+            for (int j = 0; j < tilesInRadius[i].charactersHere.Count; j++) {
+                AddAwareness(tilesInRadius[i].charactersHere[j]);
+            }
         }
     }
     public void AddInitialAwareness() {
@@ -3760,6 +3763,11 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 if (tile.objHere != null && tile.objHere != this) {
                     AddAwareness(tile.objHere);
                 }
+                for (int j = 0; j < tile.charactersHere.Count; j++) {
+                    if(tile.charactersHere[j] != this) {
+                        AddAwareness(tile.charactersHere[j]);
+                    }
+                }
             }
         } else {
             if (gridTileLocation.isInside) {
@@ -3768,12 +3776,22 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     if (insideTile.objHere != null && insideTile.objHere != this) {
                         AddAwareness(insideTile.objHere);
                     }
+                    for (int j = 0; j < insideTile.charactersHere.Count; j++) {
+                        if (insideTile.charactersHere[j] != this) {
+                            AddAwareness(insideTile.charactersHere[j]);
+                        }
+                    }
                 }
             } else {
                 for (int i = 0; i < gridTileLocation.structure.location.areaMap.outsideTiles.Count; i++) {
                     LocationGridTile outsideTile = gridTileLocation.structure.location.areaMap.outsideTiles[i];
                     if (outsideTile.objHere != null && outsideTile.objHere != this) {
                         AddAwareness(outsideTile.objHere);
+                    }
+                    for (int j = 0; j < outsideTile.charactersHere.Count; j++) {
+                        if (outsideTile.charactersHere[j] != this) {
+                            AddAwareness(outsideTile.charactersHere[j]);
+                        }
                     }
                 }
             }
