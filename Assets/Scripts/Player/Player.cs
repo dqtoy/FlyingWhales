@@ -679,18 +679,17 @@ public class Player : ILeader {
         }
     }
     private void OnCharacterDidAction(Character character, GoapAction action) {
-        bool showPopup = true;
-        //if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.id == character.id) {
-        //    showPopup = true;
-        //} else if (roleSlots[JOB.SPY].activeAction is Track) {
-        //    Track track = roleSlots[JOB.SPY].activeAction as Track;
-        //    if (track.target == character) {
-        //        showPopup = true;
-        //    }
-        //}
+        bool showPopup = false;
+        if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.id == character.id) {
+            showPopup = true;
+        } else if (roleSlots[JOB.SPY].activeAction is Track) {
+            Track track = roleSlots[JOB.SPY].activeAction as Track;
+            if (track.target == character) {
+                showPopup = true;
+            }
+        }
         if (showPopup) {
             Messenger.Broadcast<Intel>(Signals.SHOW_INTEL_NOTIFICATION, InteractionManager.Instance.CreateNewIntel(action, character));
-            UIManager.Instance.Pause();
         }
     }
     #endregion
