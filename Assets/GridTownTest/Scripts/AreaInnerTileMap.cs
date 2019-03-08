@@ -532,15 +532,18 @@ public class AreaInnerTileMap : MonoBehaviour {
             choices = choices.OrderBy(x => x.GetDistanceTo(nearestTile)).ToList();
             for (int k = 0; k < choices.Count; k++) {
                 LocationGridTile currChoice = choices[k];
-                List<LocationGridTile> path = PathGenerator.Instance.GetPath(nearestTile, currChoice);
+                List<LocationGridTile> path = PathGenerator.Instance.GetPath(nearestTile, currChoice, GRID_PATHFINDING_MODE.NORMAL, true);
                 if (path != null) {
                     path.Reverse();
                     for (int j = 0; j < path.Count; j++) {
                         LocationGridTile currTile = path[j];
                         if (currTile.tileType == LocationGridTile.Tile_Type.Road) {
-                            break; //skip
+                            continue; //skip
                         }
                         if (currTile.tileType == LocationGridTile.Tile_Type.Structure) {
+                            continue; //skip
+                        }
+                        if (currTile.tileType == LocationGridTile.Tile_Type.Gate) {
                             continue; //skip
                         }
                         //groundTilemap.SetTile(currTile.localPlace, insideTile);
@@ -639,13 +642,14 @@ public class AreaInnerTileMap : MonoBehaviour {
             LocationGridTile chosenCurrArea = currAreaOuter[Random.Range(0, currAreaOuter.Count)];
             LocationGridTile chosenOtherArea = otherAreaOuter[Random.Range(0, otherAreaOuter.Count)];
 
-            List<LocationGridTile> path = PathGenerator.Instance.GetPath(chosenCurrArea, chosenOtherArea);
+            List<LocationGridTile> path = PathGenerator.Instance.GetPath(chosenCurrArea, chosenOtherArea, GRID_PATHFINDING_MODE.NORMAL, true);
             if (path != null) {
                 for (int j = 0; j < path.Count; j++) {
-                    if (path[j].structure == null) {
-                        path[j].SetTileType(LocationGridTile.Tile_Type.Road);
-                        wallTilemap.SetTile(path[j].localPlace, null);
-                        groundTilemap.SetTile(path[j].localPlace, dungeonFloorTile);
+                    LocationGridTile currTile = path[j];
+                    if (currTile.structure == null) {
+                        currTile.SetTileType(LocationGridTile.Tile_Type.Road);
+                        wallTilemap.SetTile(currTile.localPlace, null);
+                        groundTilemap.SetTile(currTile.localPlace, dungeonFloorTile);
                     }
                 }
             }
@@ -664,13 +668,17 @@ public class AreaInnerTileMap : MonoBehaviour {
             }
         }
 
-        List<LocationGridTile> p = PathGenerator.Instance.GetPath(gate, nearestTile);
+        List<LocationGridTile> p = PathGenerator.Instance.GetPath(gate, nearestTile, GRID_PATHFINDING_MODE.NORMAL, true);
         if (p != null) {
+            p.Add(gate);
             for (int j = 0; j < p.Count; j++) {
-                if (p[j].structure == null) {
-                    p[j].SetTileType(LocationGridTile.Tile_Type.Road);
-                    wallTilemap.SetTile(p[j].localPlace, null);
-                    groundTilemap.SetTile(p[j].localPlace, dungeonFloorTile);
+                LocationGridTile currTile = p[j];
+                if (currTile.structure == null) {
+                    if (currTile.tileType != LocationGridTile.Tile_Type.Gate) {
+                        currTile.SetTileType(LocationGridTile.Tile_Type.Road);
+                    }
+                    wallTilemap.SetTile(currTile.localPlace, null);
+                    groundTilemap.SetTile(currTile.localPlace, dungeonFloorTile);
                 }
             }
         }
@@ -1073,7 +1081,7 @@ public class AreaInnerTileMap : MonoBehaviour {
     [SerializeField] private GameObject intelPrefab;
     public void ShowIntelItemAt(LocationGridTile tile, Intel intel) {
         GameObject intelGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(intelPrefab.name, Input.mousePosition, Quaternion.identity, eventPopupParent);
-        intelGO.transform.localScale = new Vector2(0.02f, 0.02f);
+        intelGO.transform.localScale = new Vector2(0.015f, 0.015f);
         IntelNotificationItem intelItem = intelGO.GetComponent<IntelNotificationItem>();
         intelItem.Initialize(intel);
         (intelGO.transform as RectTransform).anchoredPosition = new Vector2(tile.localPlace.x + 0.5f, tile.localPlace.y + 1.5f);

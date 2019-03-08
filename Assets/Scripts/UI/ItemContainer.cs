@@ -14,6 +14,12 @@ public class ItemContainer : PooledObject {
     public void SetItem(SpecialToken item) {
         this.item = item;
         itemIcon.gameObject.SetActive(item != null);
+        if (item != null) {
+            Sprite sprite = TokenManager.Instance.GetItemSprite(item.specialTokenType);
+            if (sprite != null) {
+                itemIcon.sprite = sprite;
+            }
+        }
         //UpdateVisual(hasBeenInspected);
     }
 

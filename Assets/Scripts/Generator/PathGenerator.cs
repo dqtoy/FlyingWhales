@@ -115,7 +115,7 @@ public class PathGenerator : MonoBehaviour {
 		}
 		return null;
 	}
-    public List<LocationGridTile> GetPath(LocationGridTile startingTile, LocationGridTile destinationTile, GRID_PATHFINDING_MODE pathMode = GRID_PATHFINDING_MODE.NORMAL) {
+    public List<LocationGridTile> GetPath(LocationGridTile startingTile, LocationGridTile destinationTile, GRID_PATHFINDING_MODE pathMode = GRID_PATHFINDING_MODE.NORMAL, bool includeFirstTile = false) {
         LocationGridTile.Tile_Type startType = startingTile.tileType;
         LocationGridTile.Tile_Type destinationType = destinationTile.tileType;
         switch (pathMode) {
@@ -147,7 +147,9 @@ public class PathGenerator : MonoBehaviour {
 
         if (path != null) {
             List<LocationGridTile> truePath = path.Reverse().ToList();
-            truePath.RemoveAt(0);
+            if (!includeFirstTile) {
+                truePath.RemoveAt(0);
+            }
             return truePath;
         }
         return null;

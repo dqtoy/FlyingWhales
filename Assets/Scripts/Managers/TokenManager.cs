@@ -21,6 +21,8 @@ public class TokenManager : MonoBehaviour {
 
     public List<SpecialTokenSettings> specialTokenSettings;
 
+    [SerializeField] private ItemSpriteDictionary itemSpritesDictionary;
+
     #region getters/setters
     //public Dictionary<int, Intel> intelLookup {
     //    get { return _intelLookup; }
@@ -111,6 +113,13 @@ public class TokenManager : MonoBehaviour {
             }
         }
         return areas;
+    }
+
+    public Sprite GetItemSprite(SPECIAL_TOKEN tokenType) {
+        if (itemSpritesDictionary.ContainsKey(tokenType)) {
+            return itemSpritesDictionary[tokenType];
+        }
+        return null;
     }
 
     //public SpecialToken GetSpecialToken(string name) {

@@ -33,7 +33,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     //public List<LocationGridTile> neighborList { get; private set; }
     public IPointOfInterest objHere { get; private set; }
 
-    public List<LocationGridTile> ValidTiles { get { return FourNeighbours().Where(o => o.tileType == Tile_Type.Empty || o.tileType == Tile_Type.Gate).ToList(); } }
+    public List<LocationGridTile> ValidTiles { get { return FourNeighbours().Where(o => o.tileType == Tile_Type.Empty || o.tileType == Tile_Type.Gate || o.tileType == Tile_Type.Road).ToList(); } }
     public List<LocationGridTile> RealisticTiles { get { return neighbours.Values.Where(o => o.tileAccess == Tile_Access.Passable && (o.structure != null || o.tileType == Tile_Type.Road)).ToList(); } }
     public List<LocationGridTile> RoadTiles { get { return neighbours.Values.Where(o => o.tileType == Tile_Type.Road).ToList(); } }
 

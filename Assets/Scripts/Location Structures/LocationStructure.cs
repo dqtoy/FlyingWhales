@@ -371,7 +371,7 @@ public class LocationStructure {
     }
     public bool HasRoadTo(LocationGridTile tile) {
         for (int i = 0; i < tiles.Count; i++) {
-            if (PathGenerator.Instance.GetPath(tiles[i], tile, GRID_PATHFINDING_MODE.ROADS_ONLY) != null) {
+            if (PathGenerator.Instance.GetPath(tiles[i], tile, GRID_PATHFINDING_MODE.ROADS_ONLY, true) != null) {
                 return true;
             }
         }

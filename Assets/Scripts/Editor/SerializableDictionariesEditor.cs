@@ -44,6 +44,8 @@ public class ItemTileBaseDictionaryPropertyDrawer : SerializableDictionaryProper
 public class FoodTileBaseDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(TileObjectTileBaseDictionary))]
 public class TileObjectTileBaseDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(ItemSpriteDictionary))]
+public class ItemSpriteDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 
 [CustomPropertyDrawer(typeof(CharacterTagListStorage))]
 public class CharacterTagListStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer { }
