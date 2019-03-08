@@ -26,7 +26,7 @@ public class Guitar : TileObject, IPointOfInterest {
     public Guitar(LocationStructure location) {
         this.location = location;
         poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.PLAY_GUITAR };
-        Initialize(this);
+        Initialize(this, TILE_OBJECT_TYPE.GUITAR);
     }
 
     public override string ToString() {

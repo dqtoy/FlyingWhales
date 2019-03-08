@@ -34,15 +34,9 @@ public class AreaInnerTileMap : MonoBehaviour {
     [SerializeField] private TileBase structureTile;
     [SerializeField] private TileBase floorTile;
     [SerializeField] private TileBase characterTile;
-    [SerializeField] private TileBase supplyIconTile;
-    [SerializeField] private TileBase corpseIconTile;
-    [SerializeField] private TileBase bedIconTile;
-    [SerializeField] private TileBase tableIconTile;
-    [SerializeField] private TileBase oreIconTile;
-    [SerializeField] private TileBase magicCircleTile;
     [SerializeField] private TileBase roadTile;
     [SerializeField] private ItemTileBaseDictionary itemTiles;
-    [SerializeField] private FoodTileBaseDictionary foodTiles;
+    [SerializeField] private TileObjectTileBaseDictionary tileObjectTiles;
 
     [Header("Structure Tiles")]
     [SerializeField] private TileBase leftWall;
@@ -896,32 +890,13 @@ public class AreaInnerTileMap : MonoBehaviour {
             case POINT_OF_INTEREST_TYPE.ITEM:
                 tileToUse = itemTiles[(obj as SpecialToken).specialTokenType];
                 break;
-            case POINT_OF_INTEREST_TYPE.SUPPLY_PILE:
-                tileToUse = supplyIconTile;
-                break;
-            case POINT_OF_INTEREST_TYPE.CORPSE:
-                OnPlaceCorpseOnTile(obj as Corpse, tile);
-                //tileToUse = corpseIconTile;
-                break;
-            case POINT_OF_INTEREST_TYPE.FOOD:
-                tileToUse = foodTiles[(obj as Food).foodType];
-                break;
             case POINT_OF_INTEREST_TYPE.CHARACTER:
                 OnPlaceCharacterOnTile(obj as Character, tile);
                 //tileToUse = characterTile;
                 break;
             case POINT_OF_INTEREST_TYPE.TILE_OBJECT:
-                if (obj.ToString() == "Ore") {
-                    tileToUse = oreIconTile;
-                } else if (obj.ToString() == "Table") {
-                    tileToUse = tableIconTile;
-                } else if (obj.ToString() == "Bed") {
-                    tileToUse = bedIconTile;
-                } else if (obj.ToString() == "Magic Circle") {
-                    tileToUse = magicCircleTile;
-                } else {
-                    tileToUse = characterTile;
-                }
+                TileObject to = obj as TileObject;
+                tileToUse = tileObjectTiles[to.tileObjectType];
                 break;
             default:
                 tileToUse = characterTile;

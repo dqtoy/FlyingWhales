@@ -95,12 +95,12 @@ public class CharacterMarker : PooledObject {
 
     public override void Reset() {
         base.Reset();
+        StopMovement();
         character = null;
         location = null;
         hoverEnterAction = null;
         hoverExitAction = null;
         _destinationTile = null;
-        StopMovement();
         Messenger.RemoveListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.RemoveListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
     }
@@ -157,7 +157,9 @@ public class CharacterMarker : PooledObject {
         if (Messenger.eventTable.ContainsKey(Signals.TICK_STARTED)) {
             Messenger.RemoveListener(Signals.TICK_STARTED, EstimatedMove);
         }
-        character.currentParty.icon.SetIsTravelling(false);
+        if (character.currentParty != null && character.currentParty.icon != null) {
+            character.currentParty.icon.SetIsTravelling(false);
+        }
         _arrivalAction = null;
         _currentPath = null;
     }

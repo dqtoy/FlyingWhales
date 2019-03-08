@@ -2086,9 +2086,6 @@ public class InteractionManager : MonoBehaviour {
     public Intel CreateNewIntel(IPointOfInterest poi) {
         switch (poi.poiType) {
             case POINT_OF_INTEREST_TYPE.ITEM:
-            case POINT_OF_INTEREST_TYPE.SUPPLY_PILE:
-            case POINT_OF_INTEREST_TYPE.CORPSE:
-            case POINT_OF_INTEREST_TYPE.FOOD:
             case POINT_OF_INTEREST_TYPE.TILE_OBJECT:
                 return new TileObjectIntel(poi);
             default:

@@ -42,6 +42,8 @@ public class WallSpritesDictionaryPropertyDrawer : SerializableDictionaryPropert
 public class ItemTileBaseDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(FoodTileBaseDictionary))]
 public class FoodTileBaseDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(TileObjectTileBaseDictionary))]
+public class TileObjectTileBaseDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 
 [CustomPropertyDrawer(typeof(CharacterTagListStorage))]
 public class CharacterTagListStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer { }

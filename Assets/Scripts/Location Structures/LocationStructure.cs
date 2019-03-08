@@ -16,7 +16,6 @@ public class LocationStructure {
     public List<StructureTrait> traits { get; private set; }
     public List<Corpse> corpses { get; private set; }
     public List<LocationGridTile> tiles { get; private set; }
-    public Dictionary<FOOD, int> foodCount { get; private set; }
     public List<INTERACTION_TYPE> poiGoapActions { get; private set; }
     public POI_STATE state { get; private set; }
 
@@ -46,12 +45,6 @@ public class LocationStructure {
         traits = new List<StructureTrait>();
         corpses = new List<Corpse>();
         tiles = new List<LocationGridTile>();
-        foodCount = new Dictionary<FOOD, int> {
-            {FOOD.BERRY, 0},
-            {FOOD.MUSHROOM, 0},
-            {FOOD.RABBIT, 0},
-            {FOOD.RAT, 0},
-        };
         AddListeners();
         //if (structureType == STRUCTURE_TYPE.DUNGEON || structureType == STRUCTURE_TYPE.WAREHOUSE) {
         //    AddPOI(new SupplyPile(this));
@@ -67,10 +60,10 @@ public class LocationStructure {
         RemoveListeners();
     }
     private void AddListeners() {
-        Messenger.AddListener(Signals.DAY_STARTED, SpawnFoodOnStartDay);
+        //Messenger.AddListener(Signals.DAY_STARTED, SpawnFoodOnStartDay);
     }
     private void RemoveListeners() {
-        Messenger.RemoveListener(Signals.DAY_STARTED, SpawnFoodOnStartDay);
+        //Messenger.RemoveListener(Signals.DAY_STARTED, SpawnFoodOnStartDay);
     }
     #endregion
 
@@ -161,7 +154,7 @@ public class LocationStructure {
     public SupplyPile GetSupplyPile() {
         for (int i = 0; i < pointsOfInterest.Count; i++) {
             IPointOfInterest poi = pointsOfInterest[i];
-            if (poi.poiType == POINT_OF_INTEREST_TYPE.SUPPLY_PILE) {
+            if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT && (poi as TileObject).tileObjectType == TILE_OBJECT_TYPE.SUPPLY_PILE) {
                 return poi as SupplyPile;
             }
         }
@@ -182,7 +175,12 @@ public class LocationStructure {
             if (location.areaType == AREA_TYPE.DEMONIC_INTRUSION) { //player area
                 tilesToUse = tiles;
             } else {
-                tilesToUse = unoccupiedTiles;
+                if (poi is MagicCircle) {
+                    tilesToUse = unoccupiedTiles.Where(x => !x.HasOccupiedNeighbour()).ToList();
+                } else {
+                    tilesToUse = unoccupiedTiles;
+                }
+                
             }
             if (tilesToUse.Count > 0) {
                 LocationGridTile chosenTile = tilesToUse[Random.Range(0, tilesToUse.Count)];
@@ -194,76 +192,76 @@ public class LocationStructure {
         }
         return false;
     }
-    public void SpawnFoodOnStartDay() {
-        if(structureType == STRUCTURE_TYPE.WILDERNESS) {
-            LocationGridTile[] berryRabbitSpawnPoints = GetSpawnPointsForFood(_location.SPAWN_BERRY_COUNT + _location.SPAWN_RABBIT_COUNT);
-            for (int i = 0; i < berryRabbitSpawnPoints.Length; i++) {
-                if(berryRabbitSpawnPoints[i] != null) {
-                    if (UnityEngine.Random.Range(0, 2) == 0) {
-                        if(foodCount[FOOD.BERRY] < _location.MAX_BERRY) {
-                            AddPOI(CreateFood(FOOD.BERRY), berryRabbitSpawnPoints[i]);
-                        } else if (foodCount[FOOD.RABBIT] < _location.MAX_RABBIT) {
-                            AddPOI(CreateFood(FOOD.RABBIT), berryRabbitSpawnPoints[i]);
-                        }
-                    } else {
-                        if (foodCount[FOOD.RABBIT] < _location.MAX_RABBIT) {
-                            AddPOI(CreateFood(FOOD.RABBIT), berryRabbitSpawnPoints[i]);
-                        } else if (foodCount[FOOD.BERRY] < _location.MAX_BERRY) {
-                            AddPOI(CreateFood(FOOD.BERRY), berryRabbitSpawnPoints[i]);
-                        }
-                    }
-                }
-            }
-        }else if (structureType == STRUCTURE_TYPE.DUNGEON) {
-            LocationGridTile[] mushroomRatSpawnPoints = GetSpawnPointsForFood(_location.SPAWN_MUSHROOM_COUNT + _location.SPAWN_RAT_COUNT);
-            for (int i = 0; i < mushroomRatSpawnPoints.Length; i++) {
-                if (mushroomRatSpawnPoints[i] != null) {
-                    if (UnityEngine.Random.Range(0, 2) == 0) {
-                        if (foodCount[FOOD.MUSHROOM] < _location.MAX_MUSHROOM) {
-                            AddPOI(CreateFood(FOOD.MUSHROOM), mushroomRatSpawnPoints[i]);
-                        } else if (foodCount[FOOD.RAT] < _location.MAX_RAT) {
-                            AddPOI(CreateFood(FOOD.RAT), mushroomRatSpawnPoints[i]);
-                        }
-                    } else {
-                        if (foodCount[FOOD.RAT] < _location.MAX_RAT) {
-                            AddPOI(CreateFood(FOOD.RAT), mushroomRatSpawnPoints[i]);
-                        } else if (foodCount[FOOD.MUSHROOM] < _location.MAX_MUSHROOM) {
-                            AddPOI(CreateFood(FOOD.MUSHROOM), mushroomRatSpawnPoints[i]);
-                        }
-                    }
-                }
-            }
-        }
-    }
-    private LocationGridTile[] GetSpawnPointsForFood(int spawnCount) {
-        LocationGridTile[] spawnPoints = new LocationGridTile[spawnCount];
-        List<LocationGridTile> unoccupied = unoccupiedTiles;
-        for (int i = 0; i < spawnPoints.Length; i++) {
-            if(unoccupied.Count > 0) {
-                int index = UnityEngine.Random.Range(0, unoccupied.Count);
-                spawnPoints[i] = unoccupied[index];
-                unoccupied.RemoveAt(index);
-            } else {
-                break;
-            }
-        }
-        return spawnPoints;
-    }
-    public void AdjustFoodCount(FOOD food, int amount) {
-        foodCount[food] += amount;
-    }
-    private Food CreateFood(FOOD foodType) {
-        switch (foodType) {
-            case FOOD.BERRY:
-            case FOOD.MUSHROOM:
-                return new EdiblePlant(this, foodType);
-            case FOOD.RABBIT:
-            case FOOD.RAT:
-                return new SmallAnimal(this, foodType);
-            default:
-                return new Food(this, foodType);
-        }
-    }
+    //public void SpawnFoodOnStartDay() {
+    //    if(structureType == STRUCTURE_TYPE.WILDERNESS) {
+    //        LocationGridTile[] berryRabbitSpawnPoints = GetSpawnPointsForFood(_location.SPAWN_BERRY_COUNT + _location.SPAWN_RABBIT_COUNT);
+    //        for (int i = 0; i < berryRabbitSpawnPoints.Length; i++) {
+    //            if(berryRabbitSpawnPoints[i] != null) {
+    //                if (UnityEngine.Random.Range(0, 2) == 0) {
+    //                    if(foodCount[FOOD.BERRY] < _location.MAX_EDIBLE_PLANT) {
+    //                        AddPOI(CreateFood(FOOD.BERRY), berryRabbitSpawnPoints[i]);
+    //                    } else if (foodCount[FOOD.RABBIT] < _location.MAX_SMALL_ANIMAL) {
+    //                        AddPOI(CreateFood(FOOD.RABBIT), berryRabbitSpawnPoints[i]);
+    //                    }
+    //                } else {
+    //                    if (foodCount[FOOD.RABBIT] < _location.MAX_SMALL_ANIMAL) {
+    //                        AddPOI(CreateFood(FOOD.RABBIT), berryRabbitSpawnPoints[i]);
+    //                    } else if (foodCount[FOOD.BERRY] < _location.MAX_EDIBLE_PLANT) {
+    //                        AddPOI(CreateFood(FOOD.BERRY), berryRabbitSpawnPoints[i]);
+    //                    }
+    //                }
+    //            }
+    //        }
+    //    }else if (structureType == STRUCTURE_TYPE.DUNGEON) {
+    //        LocationGridTile[] mushroomRatSpawnPoints = GetSpawnPointsForFood(_location.SPAWN_MUSHROOM_COUNT + _location.SPAWN_RAT_COUNT);
+    //        for (int i = 0; i < mushroomRatSpawnPoints.Length; i++) {
+    //            if (mushroomRatSpawnPoints[i] != null) {
+    //                if (UnityEngine.Random.Range(0, 2) == 0) {
+    //                    if (foodCount[FOOD.MUSHROOM] < _location.MAX_MUSHROOM) {
+    //                        AddPOI(CreateFood(FOOD.MUSHROOM), mushroomRatSpawnPoints[i]);
+    //                    } else if (foodCount[FOOD.RAT] < _location.MAX_RAT) {
+    //                        AddPOI(CreateFood(FOOD.RAT), mushroomRatSpawnPoints[i]);
+    //                    }
+    //                } else {
+    //                    if (foodCount[FOOD.RAT] < _location.MAX_RAT) {
+    //                        AddPOI(CreateFood(FOOD.RAT), mushroomRatSpawnPoints[i]);
+    //                    } else if (foodCount[FOOD.MUSHROOM] < _location.MAX_MUSHROOM) {
+    //                        AddPOI(CreateFood(FOOD.MUSHROOM), mushroomRatSpawnPoints[i]);
+    //                    }
+    //                }
+    //            }
+    //        }
+    //    }
+    //}
+    //private LocationGridTile[] GetSpawnPointsForFood(int spawnCount) {
+    //    LocationGridTile[] spawnPoints = new LocationGridTile[spawnCount];
+    //    List<LocationGridTile> unoccupied = unoccupiedTiles;
+    //    for (int i = 0; i < spawnPoints.Length; i++) {
+    //        if(unoccupied.Count > 0) {
+    //            int index = UnityEngine.Random.Range(0, unoccupied.Count);
+    //            spawnPoints[i] = unoccupied[index];
+    //            unoccupied.RemoveAt(index);
+    //        } else {
+    //            break;
+    //        }
+    //    }
+    //    return spawnPoints;
+    //}
+    //public void AdjustFoodCount(FOOD food, int amount) {
+    //    foodCount[food] += amount;
+    //}
+    //private IPointOfInterest CreateFood(FOOD foodType) {
+    //    switch (foodType) {
+    //        case FOOD.BERRY:
+    //        case FOOD.MUSHROOM:
+    //            return new EdiblePlant(this);
+    //        case FOOD.RABBIT:
+    //        case FOOD.RAT:
+    //            return new SmallAnimal(this);
+    //        default:
+    //            return null;
+    //    }
+    //}
     #endregion
 
     #region Traits

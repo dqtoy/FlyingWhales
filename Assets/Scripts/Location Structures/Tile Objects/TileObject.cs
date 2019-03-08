@@ -5,9 +5,11 @@ using UnityEngine;
 public class TileObject {
 
     public IPointOfInterest owner { get; private set; }
+    public TILE_OBJECT_TYPE tileObjectType { get; private set; }
 
-    protected void Initialize(IPointOfInterest owner) {
+    protected void Initialize(IPointOfInterest owner, TILE_OBJECT_TYPE tileObjectType) {
         this.owner = owner;
+        this.tileObjectType = tileObjectType;
     }
 
 	public virtual void OnTargetObject(GoapAction action) {

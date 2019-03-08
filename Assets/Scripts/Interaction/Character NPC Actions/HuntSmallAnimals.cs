@@ -8,7 +8,7 @@ public class HuntSmallAnimals : Interaction {
     //private const string Hunt_Mild_Success = "Hunt Mild Success";
     private const string Hunt_Fail = "Hunt Fail";
 
-    private List<Food> _nearbyFood;
+    //private List<Food> _nearbyFood;
 
     public HuntSmallAnimals(Area interactable): base(interactable, INTERACTION_TYPE.HUNT_SMALL_ANIMALS, 0) {
         _name = "Hunt Small Animals";
@@ -58,20 +58,20 @@ public class HuntSmallAnimals : Interaction {
     #region Option Effect
     private void DoNothingOptionEffect() {
         List<LocationGridTile> tilesInRadius = _characterInvolved.specificLocation.areaMap.GetTilesInRadius(_characterInvolved.gridTileLocation, 3);
-        _nearbyFood = new List<Food>();
+        //_nearbyFood = new List<Food>();
         for (int i = 0; i < tilesInRadius.Count; i++) {
-            if(tilesInRadius[i].objHere != null && tilesInRadius[i].objHere.poiType == POINT_OF_INTEREST_TYPE.FOOD) {
-                Food food = tilesInRadius[i].objHere as Food;
-                if(food.foodType == FOOD.RABBIT || food.foodType == FOOD.RAT) {
-                    _nearbyFood.Add(food);
-                }
-            }
+            //if(tilesInRadius[i].objHere != null && tilesInRadius[i].objHere.poiType == POINT_OF_INTEREST_TYPE.FOOD) {
+            //    Food food = tilesInRadius[i].objHere as Food;
+            //    if(food.foodType == FOOD.RABBIT || food.foodType == FOOD.RAT) {
+            //        _nearbyFood.Add(food);
+            //    }
+            //}
         }
-        if(_nearbyFood.Count >= 1) {
-            SetCurrentState(_states[Hunt_Success]);
-        } else {
-            SetCurrentState(_states[Hunt_Fail]);
-        }
+        //if(_nearbyFood.Count >= 1) {
+        //    SetCurrentState(_states[Hunt_Success]);
+        //} else {
+        //    SetCurrentState(_states[Hunt_Fail]);
+        //}
         //else if (_nearbyFood.Count == 1) {
         //    SetCurrentState(_states[Hunt_Mild_Success]);
         //} 
@@ -93,12 +93,12 @@ public class HuntSmallAnimals : Interaction {
         //_characterInvolved.currentStructure.RemovePOI(_nearbyFood[index1]);
         //_nearbyFood.RemoveAt(index1);
 
-        int index2 = UnityEngine.Random.Range(0, _nearbyFood.Count);
-        _characterInvolved.currentStructure.RemovePOI(_nearbyFood[index2]);
+        //int index2 = UnityEngine.Random.Range(0, _nearbyFood.Count);
+        //_characterInvolved.currentStructure.RemovePOI(_nearbyFood[index2]);
     }
     private void HuntMildSuccessEffect(InteractionState state) {
         _characterInvolved.AdjustFullness(80);
-        _characterInvolved.currentStructure.RemovePOI(_nearbyFood[0]);
+        //_characterInvolved.currentStructure.RemovePOI(_nearbyFood[0]);
     }
     private void HuntFailEffect(InteractionState state) {
     }

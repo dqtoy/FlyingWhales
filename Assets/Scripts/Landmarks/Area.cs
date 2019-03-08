@@ -72,10 +72,8 @@ public class Area {
     private int _offenseTaskWeightMultiplier;
 
     //Food
-    public int MAX_BERRY = 20;
-    public int MAX_MUSHROOM = 21;
-    public int MAX_RABBIT = 15;
-    public int MAX_RAT = 28;
+    public int MAX_EDIBLE_PLANT = 20;
+    public int MAX_SMALL_ANIMAL = 15;
 
     public int SPAWN_BERRY_COUNT = 4;
     public int SPAWN_MUSHROOM_COUNT = 3;
@@ -1827,9 +1825,12 @@ public class Area {
             structure.AddPOI(new MagicCircle(structure));
         }
         //Guitar
-        if (structures.ContainsKey(STRUCTURE_TYPE.WILDERNESS)) {
-            LocationStructure structure = structures[STRUCTURE_TYPE.WILDERNESS][0];
-            structure.AddPOI(new Guitar(structure));
+        int guitarCount = 5;
+        if (structures.ContainsKey(STRUCTURE_TYPE.DWELLING)) {
+            for (int i = 0; i < guitarCount; i++) {
+                LocationStructure structure = GetRandomStructureOfType(STRUCTURE_TYPE.DWELLING);
+                structure.AddPOI(new Guitar(structure));
+            }
         }
     }
     private void PlaceBedsAndTables() {
@@ -1870,15 +1871,28 @@ public class Area {
         if (structures.ContainsKey(STRUCTURE_TYPE.WILDERNESS)) {
             for (int i = 0; i < structures[STRUCTURE_TYPE.WILDERNESS].Count; i++) {
                 LocationStructure structure = structures[STRUCTURE_TYPE.WILDERNESS][i];
-                structure.SpawnFoodOnStartDay();
+                //structure.SpawnFoodOnStartDay();
+                int randomFoodCount = UnityEngine.Random.Range(10, 21);
+                for (int j = 0; j < randomFoodCount; j++) {
+                    if (structure.unoccupiedTiles.Count == 0) {
+                        break;
+                    }
+                    if (UnityEngine.Random.Range(0, 2) == 0) {
+                        //spawn small animal
+                        structure.AddPOI(new SmallAnimal(structure));
+                    } else {
+                        //spawn edible plant
+                        structure.AddPOI(new EdiblePlant(structure));
+                    }
+                }
             }
         }
-        if (structures.ContainsKey(STRUCTURE_TYPE.DUNGEON)) {
-            for (int i = 0; i < structures[STRUCTURE_TYPE.DUNGEON].Count; i++) {
-                LocationStructure structure = structures[STRUCTURE_TYPE.DUNGEON][i];
-                structure.SpawnFoodOnStartDay();
-            }
-        }
+        //if (structures.ContainsKey(STRUCTURE_TYPE.DUNGEON)) {
+        //    for (int i = 0; i < structures[STRUCTURE_TYPE.DUNGEON].Count; i++) {
+        //        LocationStructure structure = structures[STRUCTURE_TYPE.DUNGEON][i];
+        //        //structure.SpawnFoodOnStartDay();
+        //    }
+        //}
     }
     public IPointOfInterest GetRandomTileObject() {
         List<IPointOfInterest> tileObjects = new List<IPointOfInterest>();

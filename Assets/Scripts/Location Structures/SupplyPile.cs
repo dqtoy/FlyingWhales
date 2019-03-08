@@ -14,7 +14,7 @@ public class SupplyPile : TileObject, IPointOfInterest {
 
     #region getters/setters
     public POINT_OF_INTEREST_TYPE poiType {
-        get { return POINT_OF_INTEREST_TYPE.SUPPLY_PILE; }
+        get { return POINT_OF_INTEREST_TYPE.TILE_OBJECT; }
     }
     public LocationGridTile gridTileLocation {
         get { return tile; }
@@ -26,6 +26,7 @@ public class SupplyPile : TileObject, IPointOfInterest {
 
     public SupplyPile(LocationStructure location) {
         this.location = location;
+        Initialize(this, TILE_OBJECT_TYPE.SUPPLY_PILE);
     }
 
     public int GetSuppliesObtained() {

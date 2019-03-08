@@ -209,6 +209,14 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     public float GetDistanceTo(LocationGridTile tile) {
         return Vector2.Distance(this.localLocation, tile.localLocation);
     }
+    public bool HasOccupiedNeighbour() {
+        for (int i = 0; i < neighbours.Values.Count; i++) {
+            if (neighbours.Values.ElementAt(i).tileState != Tile_State.Empty) {
+                return true;
+            }
+        }
+        return false;
+    }
     #endregion
 
     #region Intel

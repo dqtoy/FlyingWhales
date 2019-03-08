@@ -1310,11 +1310,21 @@ public enum POINT_OF_INTEREST_TYPE {
     ITEM,
     LANDMARK,
     CHARACTER,
-    SUPPLY_PILE,
-    CORPSE,
-    FOOD,
     TILE_OBJECT,
     STRUCTURE,
+}
+public enum TILE_OBJECT_TYPE {
+    SUPPLY_PILE,
+    CORPSE,
+    SMALL_ANIMAL,
+    EDIBLE_PLANT,
+    GUITAR,
+    MAGIC_CIRCLE,
+    TABLE,
+    BED,
+    ORE,
+    FOOD,
+
 }
 public enum POI_STATE {
     ACTIVE,

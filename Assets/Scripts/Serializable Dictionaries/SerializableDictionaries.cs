@@ -41,6 +41,8 @@ public class WallSpritesDictionary : SerializableDictionary<TwoTileDirections, S
 public class ItemTileBaseDictionary : SerializableDictionary<SPECIAL_TOKEN, TileBase> { }
 [System.Serializable]
 public class FoodTileBaseDictionary : SerializableDictionary<FOOD, TileBase> { }
+[System.Serializable]
+public class TileObjectTileBaseDictionary : SerializableDictionary<TILE_OBJECT_TYPE, TileBase> { }
 
 [System.Serializable]
 public class CharacterTagListStorage : SerializableDictionary.Storage<List<CharacterActionTagRequirement>> { }

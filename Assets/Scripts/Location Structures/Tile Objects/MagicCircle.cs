@@ -26,7 +26,7 @@ public class MagicCircle : TileObject, IPointOfInterest {
     public MagicCircle(LocationStructure location) {
         this.location = location;
         poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.SLEEP };
-        Initialize(this);
+        Initialize(this, TILE_OBJECT_TYPE.MAGIC_CIRCLE);
     }
 
     public override string ToString() {
