@@ -184,9 +184,9 @@ public class CharacterManager : MonoBehaviour {
                 newCharacter.MigrateHomeStructureTo(homeStructure);
             }
             if(newCharacter.homeStructure == null) {
-                homeLocation.AddCharacterToLocation(party);
+                homeLocation.AddCharacterToLocation(party, null, null, null, true);
             } else {
-                homeLocation.AddCharacterToLocation(party, newCharacter.homeStructure);
+                homeLocation.AddCharacterToLocation(party, newCharacter.homeStructure, null, null, true);
             }
         }
 #endif
@@ -214,9 +214,9 @@ public class CharacterManager : MonoBehaviour {
             party.icon.SetPosition(homeLocation.coreTile.transform.position);
             newCharacter.MigrateHomeTo(homeLocation, false);
             if (newCharacter.homeStructure == null) {
-                homeLocation.AddCharacterToLocation(party);
+                homeLocation.AddCharacterToLocation(party, null, null, null, true);
             } else {
-                homeLocation.AddCharacterToLocation(party, newCharacter.homeStructure);
+                homeLocation.AddCharacterToLocation(party, newCharacter.homeStructure, null, null, true);
             }
         }
 #endif
@@ -248,7 +248,7 @@ public class CharacterManager : MonoBehaviour {
                 party.CreateIcon();
                 party.icon.SetPosition(currentLocation.coreTile.transform.position);            
 #endif
-                currentLocation.AddCharacterToLocation(party);
+                currentLocation.AddCharacterToLocation(party, null, null, null, true);
             }
         }
 

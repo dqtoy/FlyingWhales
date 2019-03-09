@@ -69,9 +69,9 @@ public class GoapAction {
                 StateNameAndDuration state = statesSetup[i];
                 string trimmedState = Utilities.RemoveWhitespace(state.name);
                 Type thisType = this.GetType();
-                MethodInfo preMethod = thisType.GetMethod("Pre" + trimmedState, BindingFlags.NonPublic | BindingFlags.Instance);
-                MethodInfo perMethod = thisType.GetMethod("PerTick" + trimmedState, BindingFlags.NonPublic | BindingFlags.Instance);
-                MethodInfo afterMethod = thisType.GetMethod("After" + trimmedState, BindingFlags.NonPublic | BindingFlags.Instance);
+                MethodInfo preMethod = thisType.GetMethod("Pre" + trimmedState, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+                MethodInfo perMethod = thisType.GetMethod("PerTick" + trimmedState, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+                MethodInfo afterMethod = thisType.GetMethod("After" + trimmedState, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
                 Action preAction = null;
                 Action perAction = null;
                 Action afterAction = null;
@@ -91,7 +91,7 @@ public class GoapAction {
 
         }
         sw.Stop();
-        Debug.Log(summary + "\n" + string.Format("Total creation time is {0}ms", sw.ElapsedMilliseconds));
+        //Debug.Log(summary + "\n" + string.Format("Total creation time is {0}ms", sw.ElapsedMilliseconds));
 
     }
     protected virtual void ConstructPreconditionsAndEffects() { }

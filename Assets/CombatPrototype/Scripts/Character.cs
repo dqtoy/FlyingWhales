@@ -1239,7 +1239,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //if (ownParty.specificLocation is BaseLandmark) {
         //    ownParty.specificLocation.RemoveCharacterFromLocation(ownParty);
         //}
-        PlayerManager.Instance.player.playerArea.AddCharacterToLocation(ownParty);
+        PlayerManager.Instance.player.playerArea.AddCharacterToLocation(ownParty, null, null, null, true);
         //if (this.homeArea != null) {
         //    this.homeArea.RemoveResident(this);
         //}
@@ -3825,7 +3825,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 
     #region Point Of Interest
     public List<GoapAction> AdvertiseActionsToActor(Character actor, List<INTERACTION_TYPE> actorAllowedInteractions) {
-        if(poiGoapActions != null && poiGoapActions.Count > 0 && state == POI_STATE.ACTIVE) {
+        if(poiGoapActions != null && poiGoapActions.Count > 0 && state == POI_STATE.ACTIVE && !isDead) {
             List<GoapAction> usableActions = new List<GoapAction>();
             for (int i = 0; i < poiGoapActions.Count; i++) {
                 if (actorAllowedInteractions.Contains(poiGoapActions[i])){
@@ -4047,7 +4047,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     targetCharacter.AdjustIsWaitingForInteraction(-1);
                 }
                 RecalculatePlan(plan);
-                SchedulePerformGoapPlans();
+                //SchedulePerformGoapPlans();
             }
         }
         Debug.Log(log);
@@ -4086,11 +4086,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
             if (allGoapPlans.Count > 0) {
                 PerformGoapPlans();
+            } else {
+                StartDailyGoapPlanGeneration();
             }
         } else if(result == InteractionManager.Goap_State_Fail) {
             log += "\nFailed to perform action. Will try to recalculate plan...";
             RecalculatePlan(plan);
-            SchedulePerformGoapPlans();
+            //SchedulePerformGoapPlans();
             //if (!RecalculatePlan(plan)) {
             //    log += "\nFailed to recalculate plan! Will now drop plan...";
             //    DropPlan(plan);
@@ -4141,10 +4143,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 //Receive plan recalculation
                 goapThread.createdPlan.SetIsBeingRecalculated(false);
             }
-            if (allGoapPlans.Count == 1) {
-                //Start this plan immediately since this is the only plan
-                SchedulePerformGoapPlans();
-            }
+            //if (allGoapPlans.Count == 1) {
+            //    //Start this plan immediately since this is the only plan
+            //    SchedulePerformGoapPlans();
+            //} else {
+            //    StartDailyGoapPlanGeneration();
+            //}
         } else {
             if (goapThread.recalculationPlan != null) {
                 //This means that the recalculation has failed

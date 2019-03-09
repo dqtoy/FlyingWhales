@@ -262,7 +262,7 @@ public class CharacterMarker : PooledObject {
                 StartMovement();
             }
         } else {
-            Debug.LogError("Can't create path!");
+            Debug.LogError("Can't create path for " + character.name + " from " + character.gridTileLocation.ToString() + " to " + _destinationTile.ToString());
         }
     }
     #endregion
