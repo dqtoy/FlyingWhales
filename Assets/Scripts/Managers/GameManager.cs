@@ -40,6 +40,7 @@ public class GameManager : MonoBehaviour {
     public bool inspectAll = false;
     public bool ignoreEventTriggerWeights = false;
     public bool showFullDebug = false;
+    public static bool showAllTilesTooltip = false;
 
     public GameObject travelLineParentPrefab;
     public GameObject travelLinePrefab;

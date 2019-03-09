@@ -29,7 +29,6 @@ public class AreaMapTravelLine : MonoBehaviour {
         line.positionCount = 2;
         line.SetPosition(0, startTransform.localPosition);
         line.SetPosition(1, targetTransform.localPosition);
-        end.SetTileState(LocationGridTile.Tile_State.Reserved);
 
         float angle = Mathf.Atan2(targetTransform.localPosition.y - startTransform.localPosition.y,
             targetTransform.localPosition.x - startTransform.localPosition.x) * Mathf.Rad2Deg;
@@ -73,9 +72,6 @@ public class AreaMapTravelLine : MonoBehaviour {
     }
     private void DestroyLine() {
         RemoveListeners();
-        if (end.tileState == LocationGridTile.Tile_State.Reserved) {
-            end.SetTileState(LocationGridTile.Tile_State.Empty);
-        }
         if (start.objHere == owner) {
             areaMap.charactersTM.SetTile(start.localPlace, null);
             //if (start.prefabHere != null) {

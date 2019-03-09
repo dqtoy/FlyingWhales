@@ -54,7 +54,6 @@ public class GoapAction {
         AddActionLog(GameManager.Instance.TodayLogString() + " Set state to " + currentState.name);
         OnPerformActualActionToTarget();
         currentState.Execute();
-        //TODO: Change this to accomodate duration changes
         actor.OnCharacterDoAction(this);
     }
     #endregion
@@ -123,7 +122,7 @@ public class GoapAction {
             Character targetCharacter = poiTarget as Character;
             targetCharacter.AdjustIsWaitingForInteraction(1);
         }
-        ReserveTarget();
+        //ReserveTarget(); //Removed this because all objects will be reserved when the plan
         if (actor.specificLocation != targetStructure.location) {
             actor.currentParty.GoToLocation(targetStructure.location, PATHFINDING_MODE.NORMAL, targetStructure, () => actor.PerformGoapAction(plan), null, null, poiTarget, targetTile);
         } else {

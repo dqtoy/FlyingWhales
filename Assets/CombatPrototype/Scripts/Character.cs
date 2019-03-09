@@ -725,7 +725,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             switch (cause) {
                 case "exhaustion":
                 case "starvation":
-                    deathLocation.areaMap.ShowEventPopupAt(deathTile, log);
+                    //deathLocation.areaMap.ShowEventPopupAt(deathTile, log);
                     break;
                 default:
                     break;
@@ -1317,7 +1317,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     destinationTile = gridTileLocation;
                 } else {
                     //get nearest tile from poi
-                    LocationGridTile newNearestTile = targetPOI.GetNearestUnoccupiedTileFromThis(newStructure, this);
+                    LocationGridTile newNearestTile = targetPOI.GetNearestUnoccupiedTileFromThis();
                     if (newNearestTile != null) {
                         destinationTile = newNearestTile;
                     }
@@ -1352,25 +1352,36 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 arrivalAction();
             }
         } else {
-            marker.GoToTile(destinationTile, arrivalAction);
+            marker.GoToTile(destinationTile, targetPOI, arrivalAction);
         }
     }
     public void SetGridTileLocation(LocationGridTile tile) {
         this.tile = tile;
     }
-    public LocationGridTile GetNearestUnoccupiedTileFromThis(LocationStructure structure, Character otherCharacter) {
-        if (!isDead && gridTileLocation != null && currentStructure == structure) {
-            List<LocationGridTile> choices = currentStructure.unoccupiedTiles.Where(x => x != gridTileLocation).OrderBy(x => Vector2.Distance(gridTileLocation.localLocation, x.localLocation)).ToList();
-            if (choices.Count > 0) {
-                LocationGridTile nearestTile = choices[0];
-                if (otherCharacter.currentStructure == structure && otherCharacter.gridTileLocation != null) {
-                    float ogDistance = Vector2.Distance(this.gridTileLocation.localLocation, otherCharacter.gridTileLocation.localLocation);
-                    float newDistance = Vector2.Distance(this.gridTileLocation.localLocation, nearestTile.localLocation);
-                    if (newDistance >= ogDistance) {
-                        return otherCharacter.gridTileLocation; //keep the other character's current tile
-                    }
-                }
-                return nearestTile;
+    //public LocationGridTile GetNearestUnoccupiedTileFromThis() {
+    //    if (!isDead && gridTileLocation != null && currentStructure == structure) {
+    //        List<LocationGridTile> choices = currentStructure.unoccupiedTiles.Where(x => x != gridTileLocation).OrderBy(x => Vector2.Distance(gridTileLocation.localLocation, x.localLocation)).ToList();
+    //        if (choices.Count > 0) {
+    //            LocationGridTile nearestTile = choices[0];
+    //            if (otherCharacter.currentStructure == structure && otherCharacter.gridTileLocation != null) {
+    //                float ogDistance = Vector2.Distance(this.gridTileLocation.localLocation, otherCharacter.gridTileLocation.localLocation);
+    //                float newDistance = Vector2.Distance(this.gridTileLocation.localLocation, nearestTile.localLocation);
+    //                if (newDistance >= ogDistance) {
+    //                    return otherCharacter.gridTileLocation; //keep the other character's current tile
+    //                }
+    //            }
+    //            return nearestTile;
+    //        }
+    //    }
+    //    return null;
+    //}
+    public LocationGridTile GetNearestUnoccupiedTileFromThis() {
+        if (!isDead  && gridTileLocation != null) {
+            List<LocationGridTile> unoccupiedNeighbours = gridTileLocation.UnoccupiedNeighbours;
+            if (unoccupiedNeighbours.Count == 0) {
+                return null;
+            } else {
+                return unoccupiedNeighbours[UnityEngine.Random.Range(0, unoccupiedNeighbours.Count)];
             }
         }
         return null;
@@ -3952,7 +3963,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         for (int i = 0; i < allGoapPlans.Count; i++) {
             GoapPlan plan = allGoapPlans[i];
             log += "\n" + plan.currentNode.action.goapName;
-            if (actorAllowedActions.Contains(plan.currentNode.action.goapType) && plan.currentNode.action.CanSatisfyRequirements()) {
+            //check if current action can still find a destination tile towards the target POI
+            LocationGridTile destinationTile = plan.currentNode.action.poiTarget.GetNearestUnoccupiedTileFromThis();
+            if (actorAllowedActions.Contains(plan.currentNode.action.goapType) && plan.currentNode.action.CanSatisfyRequirements() && destinationTile != null) {
                 if (plan.isBeingRecalculated) {
                     log += "\n - Plan is being recalculated, skipping...";
                     continue;
@@ -3984,6 +3997,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     //}
                 } else {
                     log += "\n - Action's preconditions are all satisfied, doing action...";
+
                     plan.currentNode.action.DoAction(plan);
                     willGoIdleState = false;
                     break;

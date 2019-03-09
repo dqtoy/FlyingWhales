@@ -65,7 +65,7 @@ public class PickItem : Interaction {
         }
         targetToken = items[UnityEngine.Random.Range(0, items.Count)];
         _targetStructure = targetToken.structureLocation;
-        targetGridLocation = targetToken.GetNearestUnoccupiedTileFromThis(_targetStructure, _characterInvolved);
+        targetGridLocation = targetToken.GetNearestUnoccupiedTileFromThis();
         return base.CanInteractionBeDoneBy(character);
     }
     public override bool CanStillDoInteraction(Character character) {

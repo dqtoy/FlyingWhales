@@ -15,7 +15,7 @@ public class Daydream : GoapAction {
 
     #region Overrides
     protected override void ConstructPreconditionsAndEffects() {
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = null, targetPOI = actor });
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
     }
     public override void PerformActualAction() {
         base.PerformActualAction();
@@ -47,7 +47,7 @@ public class Daydream : GoapAction {
     #endregion
 
     #region Effects
-    private void DreDaydreamSuccess() {
+    private void DaydreamSuccess() {
         actor.AdjustDoNotGetLonely(1);
         actor.AdjustDoNotGetTired(1);
     }

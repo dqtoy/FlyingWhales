@@ -63,7 +63,7 @@ public class EatDefenseless : Interaction {
         _targetCharacter = character;
         if (targetCharacter != null) {
             _targetStructure = _targetCharacter.currentStructure;
-            targetGridLocation = _targetCharacter.GetNearestUnoccupiedTileFromThis(_targetStructure, actor);
+            targetGridLocation = _targetCharacter.GetNearestUnoccupiedTileFromThis();
         }
     }
     #endregion

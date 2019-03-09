@@ -60,7 +60,7 @@ public class FirstAidAction : Interaction {
         CharacterRelationshipData characterRelationshipData = character.GetCharacterRelationshipData(_targetCharacter);
         if (characterRelationshipData != null) {
             _targetStructure = characterRelationshipData.knownStructure;
-            targetGridLocation = _targetCharacter.GetNearestUnoccupiedTileFromThis(_targetStructure, character);
+            targetGridLocation = _targetCharacter.GetNearestUnoccupiedTileFromThis();
         }
         return base.CanInteractionBeDoneBy(character);
     }

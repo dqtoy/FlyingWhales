@@ -72,7 +72,7 @@ public class ReanimateAction : Interaction {
         }
         _targetCorpse = corpse;
         _targetStructure = _targetCorpse.location;
-        targetGridLocation = _targetCorpse.GetNearestUnoccupiedTileFromThis(_targetStructure, _characterInvolved);
+        targetGridLocation = _targetCorpse.GetNearestUnoccupiedTileFromThis();
         return base.CanInteractionBeDoneBy(character);
     }
     #endregion

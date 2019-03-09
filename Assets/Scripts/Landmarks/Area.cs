@@ -1285,7 +1285,7 @@ public class Area {
                 if (tileOverride != null) {
                     structureOverride.AddCharacterAtLocation(character, tileOverride);
                 } else if (targetPOI != null) {
-                    LocationGridTile newNearestTile = targetPOI.GetNearestUnoccupiedTileFromThis(structureOverride, character);
+                    LocationGridTile newNearestTile = targetPOI.GetNearestUnoccupiedTileFromThis();
                     if (newNearestTile != null) {
                         structureOverride.AddCharacterAtLocation(character, newNearestTile);
                     } else {

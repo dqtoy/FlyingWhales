@@ -894,17 +894,39 @@ public class AreaInnerTileMap : MonoBehaviour {
         if (coordinate.x >= 0 && coordinate.x < width
             && coordinate.y >= 0 && coordinate.y < height) {
             LocationGridTile hoveredTile = map[coordinate.x, coordinate.y];
-            if (hoveredTile.objHere != null) {
+            if (GameManager.showAllTilesTooltip) {
                 ShowTileData(hoveredTile);
-                if (Input.GetMouseButtonDown(0)) {
-                    hoveredTile.OnClickTileActions();
+                if (hoveredTile.objHere != null) {
+                    if (Input.GetMouseButtonDown(0)) {
+                        hoveredTile.OnClickTileActions(PointerEventData.InputButton.Left);
+                    } else if (Input.GetMouseButtonDown(1)) {
+                        hoveredTile.OnClickTileActions(PointerEventData.InputButton.Right);
+                    }
+                } else {
+                    if (Input.GetMouseButtonDown(0)) {
+                        hoveredTile.OnClickTileActions(PointerEventData.InputButton.Left);
+                    } else if (Input.GetMouseButtonDown(1)) {
+                        hoveredTile.OnClickTileActions(PointerEventData.InputButton.Right);
+                    }
                 }
             } else {
-                if (Input.GetMouseButtonDown(0)) {
-                    hoveredTile.OnClickTileActions();
+                if (hoveredTile.objHere != null) {
+                    ShowTileData(hoveredTile);
+                    if (Input.GetMouseButtonDown(0)) {
+                        hoveredTile.OnClickTileActions(PointerEventData.InputButton.Left);
+                    } else if (Input.GetMouseButtonDown(1)) {
+                        hoveredTile.OnClickTileActions(PointerEventData.InputButton.Right);
+                    }
+                } else {
+                    if (Input.GetMouseButtonDown(0)) {
+                        hoveredTile.OnClickTileActions(PointerEventData.InputButton.Left);
+                    } else if (Input.GetMouseButtonDown(1)) {
+                        hoveredTile.OnClickTileActions(PointerEventData.InputButton.Right);
+                    }
+                    UIManager.Instance.HideSmallInfo();
                 }
-                UIManager.Instance.HideSmallInfo();
             }
+            
         } else {
             UIManager.Instance.HideSmallInfo();
         }
@@ -1247,6 +1269,16 @@ public class AreaInnerTileMap : MonoBehaviour {
     }
     public void HidePath() {
         pathLineRenderer.gameObject.SetActive(false);
+    }
+    public void QuicklyHighlightTile(LocationGridTile tile) {
+        StartCoroutine(HighlightThenUnhighlightTile(tile));
+    }
+    private IEnumerator HighlightThenUnhighlightTile(LocationGridTile tile) {
+        groundTilemap.SetColor(tile.localPlace, Color.black);
+
+        yield return new WaitForSeconds(1f);
+
+        groundTilemap.SetColor(tile.localPlace, Color.white);
     }
     #endregion
 

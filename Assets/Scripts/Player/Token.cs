@@ -185,7 +185,7 @@ public class SpecialToken : Token, IPointOfInterest {
     public virtual void OnUnobtainToken(Character character) { }
     public virtual void OnConsumeToken(Character character) { }
     public virtual void StartTokenInteractionState(Character user, Character target) {
-        user.MoveToAnotherStructure(target.currentStructure, target.GetNearestUnoccupiedTileFromThis(target.currentStructure, user));
+        user.MoveToAnotherStructure(target.currentStructure, target.GetNearestUnoccupiedTileFromThis());
     }
     #endregion
 
@@ -203,19 +203,30 @@ public class SpecialToken : Token, IPointOfInterest {
     public void SetGridTileLocation(LocationGridTile tile) {
         this.tile = tile;
     }
-    public LocationGridTile GetNearestUnoccupiedTileFromThis(LocationStructure structure, Character otherCharacter) {
-        if (gridTileLocation != null && structureLocation == structure) {
-            List<LocationGridTile> choices = structureLocation.unoccupiedTiles.Where(x => x != gridTileLocation).OrderBy(x => Vector2.Distance(gridTileLocation.localLocation, x.localLocation)).ToList();
-            if (choices.Count > 0) {
-                LocationGridTile nearestTile = choices[0];
-                if (otherCharacter.currentStructure == structure && otherCharacter.gridTileLocation != null) {
-                    float ogDistance = Vector2.Distance(this.gridTileLocation.localLocation, otherCharacter.gridTileLocation.localLocation);
-                    float newDistance = Vector2.Distance(this.gridTileLocation.localLocation, nearestTile.localLocation);
-                    if (newDistance > ogDistance) {
-                        return otherCharacter.gridTileLocation; //keep the other character's current tile
-                    }
-                }
-                return nearestTile;
+    //public LocationGridTile GetNearestUnoccupiedTileFromThis() {
+    //    if (gridTileLocation != null && structureLocation == structure) {
+    //        List<LocationGridTile> choices = structureLocation.unoccupiedTiles.Where(x => x != gridTileLocation).OrderBy(x => Vector2.Distance(gridTileLocation.localLocation, x.localLocation)).ToList();
+    //        if (choices.Count > 0) {
+    //            LocationGridTile nearestTile = choices[0];
+    //            if (otherCharacter.currentStructure == structure && otherCharacter.gridTileLocation != null) {
+    //                float ogDistance = Vector2.Distance(this.gridTileLocation.localLocation, otherCharacter.gridTileLocation.localLocation);
+    //                float newDistance = Vector2.Distance(this.gridTileLocation.localLocation, nearestTile.localLocation);
+    //                if (newDistance > ogDistance) {
+    //                    return otherCharacter.gridTileLocation; //keep the other character's current tile
+    //                }
+    //            }
+    //            return nearestTile;
+    //        }
+    //    }
+    //    return null;
+    //}
+    public LocationGridTile GetNearestUnoccupiedTileFromThis() {
+        if (gridTileLocation != null) {
+            List<LocationGridTile> unoccupiedNeighbours = gridTileLocation.UnoccupiedNeighbours;
+            if (unoccupiedNeighbours.Count == 0) {
+                return null;
+            } else {
+                return unoccupiedNeighbours[Random.Range(0, unoccupiedNeighbours.Count)];
             }
         }
         return null;
@@ -224,7 +235,7 @@ public class SpecialToken : Token, IPointOfInterest {
 
     #region Point Of Interest
     public List<GoapAction> AdvertiseActionsToActor(Character actor, List<INTERACTION_TYPE> actorAllowedInteractions) {
-        if (poiGoapActions != null && poiGoapActions.Count > 0  && state == POI_STATE.ACTIVE) {
+        if (poiGoapActions != null && poiGoapActions.Count > 0) {
             List<GoapAction> usableActions = new List<GoapAction>();
             for (int i = 0; i < poiGoapActions.Count; i++) {
                 if (actorAllowedInteractions.Contains(poiGoapActions[i])) {

@@ -60,7 +60,7 @@ public class MakeLoveAction : Interaction {
     public override void SetTargetCharacter(Character targetCharacter, Character actor) {
         _targetCharacter = targetCharacter;
         _targetStructure = _targetCharacter.homeStructure;
-        targetGridLocation = _targetCharacter.GetNearestUnoccupiedTileFromThis(_targetStructure, actor);
+        targetGridLocation = _targetCharacter.GetNearestUnoccupiedTileFromThis();
     }
     #endregion
 

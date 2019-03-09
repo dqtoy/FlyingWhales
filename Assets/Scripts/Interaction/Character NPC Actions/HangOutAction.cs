@@ -64,7 +64,7 @@ public class HangOutAction : Interaction {
     public override void SetTargetCharacter(Character character, Character actor) {
         _targetCharacter = character;
         _targetStructure = targetCharacter.currentStructure;
-        targetGridLocation = _targetCharacter.GetNearestUnoccupiedTileFromThis(_targetStructure, actor);
+        targetGridLocation = _targetCharacter.GetNearestUnoccupiedTileFromThis();
         AddToDebugLog("Set " + targetCharacter.name + " at " + targetStructure?.ToString() ?? "Nowhere" + " as target");
     }
     #endregion

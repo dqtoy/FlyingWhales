@@ -72,4 +72,21 @@ public class GoapPlan {
         }
         return log;
     }
+
+    public string GetPlanSummary() {
+        string summary = GetGoalSummary();
+        summary += "\nPlanned Actions are: ";
+        for (int i = 0; i < allNodes.Count; i++) {
+            summary += "\n" + (i + 1) + ". " + allNodes[i].action.goapName + " - " + allNodes[i].action.poiTarget.name;
+        }
+        return summary;
+    }
+
+    public string GetGoalSummary() {
+        string summary = "Plan with goal: ";
+        for (int i = 0; i < goalEffects.Length; i++) {
+            summary += goalEffects[i].ToString() + ", ";
+        }
+        return summary;
+    }
 }

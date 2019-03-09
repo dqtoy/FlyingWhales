@@ -66,7 +66,7 @@ public class AssaultActionNPC : Interaction {
             return false;
         }
         _targetStructure = _targetCharacter.currentStructure;
-        targetGridLocation = _targetCharacter.GetNearestUnoccupiedTileFromThis(_targetStructure, character);
+        targetGridLocation = _targetCharacter.GetNearestUnoccupiedTileFromThis();
         return base.CanInteractionBeDoneBy(character);
     }
     public override void SetTargetCharacter(Character character, Character actor) {

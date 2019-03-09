@@ -1328,7 +1328,6 @@ public enum TILE_OBJECT_TYPE {
 }
 public enum POI_STATE {
     ACTIVE,
-    RESERVED,
     INACTIVE,
 }
 public enum INTERACTION_CHARACTER_EFFECT {

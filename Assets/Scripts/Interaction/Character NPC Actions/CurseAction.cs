@@ -85,7 +85,7 @@ public class CurseAction : Interaction {
     public override void SetTargetCharacter(Character character, Character actor) {
         _targetCharacter = character;
         _targetStructure = _targetCharacter.currentStructure;
-        targetGridLocation = _targetCharacter.GetNearestUnoccupiedTileFromThis(_targetStructure, actor);
+        targetGridLocation = _targetCharacter.GetNearestUnoccupiedTileFromThis();
     }
     #endregion
 

@@ -67,7 +67,7 @@ public class ReleaseAbductedAction : Interaction {
             return false;
         }
         _targetStructure = character.GetCharacterRelationshipData(targetCharacter).knownStructure;
-        targetGridLocation = _targetCharacter.GetNearestUnoccupiedTileFromThis(_targetStructure, character);
+        targetGridLocation = _targetCharacter.GetNearestUnoccupiedTileFromThis();
         return base.CanInteractionBeDoneBy(character);
     }
     public override void SetTargetCharacter(Character character, Character actor) {
