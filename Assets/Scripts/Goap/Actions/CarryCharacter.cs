@@ -15,12 +15,12 @@ public class CarryCharacter : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, conditionKey = actor, targetPOI = poiTarget });
     }
     public override void PerformActualAction() {
-        base.PerformActualAction();
         if (poiTarget.gridTileLocation.structure == actor.gridTileLocation.structure) {
             SetState("Carry Success");
         } else {
             SetState("Target Missing");
         }
+        base.PerformActualAction();
     }
     protected override int GetCost() {
         return 1;

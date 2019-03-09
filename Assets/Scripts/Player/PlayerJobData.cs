@@ -30,6 +30,9 @@ public class PlayerJobData {
             case JOB.DEBILITATOR:
                 jobActions.Add(new Intervene());
                 break;
+            case JOB.INSTIGATOR:
+                jobActions.Add(new RileUp());
+                break;
         }
         for (int i = 0; i < jobActions.Count; i++) {
             jobActions[i].SetParentData(this);

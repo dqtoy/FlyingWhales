@@ -10,6 +10,7 @@ public class ObjectPicker : MonoBehaviour {
     [Header("Object Picker")]
     [SerializeField] private ScrollRect objectPickerScrollView;
     [SerializeField] private GameObject objectPickerCharacterItemPrefab;
+    [SerializeField] private GameObject objectPickerAreaItemPrefab;
     [SerializeField] private GameObject objectPickerAttackItemPrefab;
 
     public void ShowClickable<T>(List<T> items, Action<T> onClickItemAction, IComparer<T> comparer = null, Func<T, bool> validityChecker = null) {
@@ -20,6 +21,8 @@ public class ObjectPicker : MonoBehaviour {
         Type type = typeof(T);
         if (type == typeof(Character)) {
             ShowCharacterItems(validItems.Cast<Character>().ToList(), invalidItems.Cast<Character>().ToList(), onClickItemAction);
+        }else if (type == typeof(Area)) {
+            ShowAreaItems(validItems.Cast<Area>().ToList(), invalidItems.Cast<Area>().ToList(), onClickItemAction);
         }
         this.gameObject.SetActive(true);
     }
@@ -97,10 +100,34 @@ public class ObjectPicker : MonoBehaviour {
             characterItem.SetDraggableState(false);
         }
     }
-
+    private void ShowAreaItems<T>(List<Area> validItems, List<Area> invalidItems, Action<T> onClickItemAction) {
+        Action<Area> convertedAction = null;
+        if (onClickItemAction != null) {
+            convertedAction = ConvertToArea(onClickItemAction);
+        }
+        for (int i = 0; i < validItems.Count; i++) {
+            Area currArea = validItems[i];
+            GameObject areaItemGO = UIManager.Instance.InstantiateUIObject(objectPickerAreaItemPrefab.name, objectPickerScrollView.content);
+            AreaPickerItem areaItem = areaItemGO.GetComponent<AreaPickerItem>();
+            areaItem.SetArea(currArea);
+            areaItem.onClickAction = convertedAction;
+            areaItem.SetButtonState(true);
+        }
+        for (int i = 0; i < invalidItems.Count; i++) {
+            Area currArea = invalidItems[i];
+            GameObject areaItemGO = UIManager.Instance.InstantiateUIObject(objectPickerAreaItemPrefab.name, objectPickerScrollView.content);
+            AreaPickerItem areaItem = areaItemGO.GetComponent<AreaPickerItem>();
+            areaItem.SetArea(currArea);
+            areaItem.SetButtonState(false);
+        }
+    }
     public Action<Character> Convert<T>(Action<T> myActionT) {
         if (myActionT == null) return null;
         else return new Action<Character>(o => myActionT((T)(object)o));
+    }
+    public Action<Area> ConvertToArea<T>(Action<T> myActionT) {
+        if (myActionT == null) return null;
+        else return new Action<Area>(o => myActionT((T) (object) o));
     }
 }
 

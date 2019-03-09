@@ -45183,6 +45183,8 @@ MonoBehaviour:
   objectPickerScrollView: {fileID: 401762191}
   objectPickerCharacterItemPrefab: {fileID: 1918348133013666, guid: 65f91393e3c6b264fbfc1545702ef828,
     type: 2}
+  objectPickerAreaItemPrefab: {fileID: 1337403436229296, guid: 3cb0177c221907e40ada41e23c3e10e7,
+    type: 2}
   objectPickerAttackItemPrefab: {fileID: 1281087095607850, guid: a2e8dcf04a730f542b0dbeb63f54d763,
     type: 2}
 --- !u!1001 &1107691114
