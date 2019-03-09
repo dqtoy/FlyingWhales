@@ -48,7 +48,7 @@ public class PlayerJobAction {
         Messenger.RemoveListener<JOB, Character>(Signals.CHARACTER_UNASSIGNED_FROM_JOB, OnCharacterUnassignedFromJob);
     }
     protected virtual void OnCharacterDied(Character characterThatDied) {
-        if (characterThatDied.id == assignedCharacter.id) {
+        if (assignedCharacter != null && characterThatDied.id == assignedCharacter.id) {
             DeactivateAction();
             ResetCooldown(); //only reset cooldown if the assigned character dies
         }

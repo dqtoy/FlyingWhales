@@ -2783,6 +2783,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         _currentInteractionTick = UnityEngine.Random.Range(startDay, startDay + 6);
     }
     private void PlanGoapActions() {
+        if (isDead) {
+            StopDailyGoapPlanGeneration();
+            return;
+        }
         if (!IsInOwnParty() || isDefender || ownParty.icon.isTravelling || _doNotDisturb > 0 || _job == null || isWaitingForInteraction > 0) {
             return; //if this character is not in own party, is a defender or is travelling or cannot be disturbed, do not generate interaction
         }
