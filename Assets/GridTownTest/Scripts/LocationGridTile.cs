@@ -3,13 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.Tilemaps;
 using UnityEngine.UI;
 
 public class LocationGridTile : IHasNeighbours<LocationGridTile> {
 
     public enum Tile_Type { Empty, Wall, Structure, Gate, Road }
-    public enum Tile_State { Empty, Reserved, Occupied }
+    public enum Tile_State { Empty, Occupied }
     public enum Tile_Access { Passable, Impassable, }
     public enum Ground_Type { Soil, Grass, Stone }
 
@@ -37,6 +38,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     public List<LocationGridTile> ValidTiles { get { return FourNeighbours().Where(o => o.tileType == Tile_Type.Empty || o.tileType == Tile_Type.Gate || o.tileType == Tile_Type.Road).ToList(); } }
     public List<LocationGridTile> RealisticTiles { get { return neighbours.Values.Where(o => o.tileAccess == Tile_Access.Passable && (o.structure != null || o.tileType == Tile_Type.Road || o.tileType == Tile_Type.Gate)).ToList(); } }
     public List<LocationGridTile> RoadTiles { get { return neighbours.Values.Where(o => o.tileType == Tile_Type.Road).ToList(); } }
+    public List<LocationGridTile> UnoccupiedNeighbours { get { return neighbours.Values.Where(o => o.tileState != Tile_State.Occupied && o.structure == this.structure).ToList(); } }
 
     public LocationGridTile(int x, int y, Tilemap tilemap, AreaInnerTileMap parentAreaMap) {
         this.parentAreaMap = parentAreaMap;
@@ -136,6 +138,9 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     }
     public void SetTileState(Tile_State state) {
         this.tileState = state;
+        if (state == Tile_State.Occupied) {
+            Messenger.Broadcast(Signals.TILE_OCCUPIED, this, objHere);
+        }
     }
     public void SetTileAccess(Tile_Access state) {
         this.tileAccess = state;
@@ -145,8 +150,8 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     #region Points of Interest
     public void SetObjectHere(IPointOfInterest poi) {
         objHere = poi;
-        SetTileState(Tile_State.Occupied);
         poi.SetGridTileLocation(this);
+        SetTileState(Tile_State.Occupied);
     }
     public IPointOfInterest RemoveObjectHere() {
         if (objHere != null) {
@@ -230,13 +235,35 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     #endregion
 
     #region Intel
-    public void OnClickTileActions() {
+    public void OnClickTileActions(PointerEventData.InputButton inputButton) {
         Messenger.Broadcast(Signals.HIDE_MENUS);
+        //if (inputButton == PointerEventData.InputButton.Right) {
+        //    if (tileState == Tile_State.Occupied) {
+        //        SetTileState(Tile_State.Empty);
+        //    } else {
+        //        SetTileState(Tile_State.Occupied);
+        //    }
+            
+        //    return;
+        //}
         if (objHere is TileObject || objHere is SpecialToken) {
             parentAreaMap.ShowIntelItemAt(this, InteractionManager.Instance.CreateNewIntel(objHere));
             //PlayerManager.Instance.player.AddIntel();
+            LocationGridTile nearestTile = objHere.GetNearestUnoccupiedTileFromThis();
+            if (nearestTile != null) {
+                parentAreaMap.QuicklyHighlightTile(nearestTile);
+            } else {
+                Debug.LogWarning(objHere.ToString() + " does not have a nearest unoccupied tile!");
+            }
         } else if (objHere is Character) {
             UIManager.Instance.ShowCharacterInfo(objHere as Character);
+            LocationGridTile nearestTile = objHere.GetNearestUnoccupiedTileFromThis();
+            parentAreaMap.QuicklyHighlightTile(nearestTile);
+            if (nearestTile != null) {
+                parentAreaMap.QuicklyHighlightTile(nearestTile);
+            } else {
+                Debug.LogWarning(objHere.ToString() + " does not have a nearest unoccupied tile!");
+            }
         }
     }
     #endregion

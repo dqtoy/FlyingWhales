@@ -38,6 +38,8 @@ public class CharacterMarker : PooledObject {
     private int _currentTravelTime;
 
     private LocationGridTile _destinationTile;
+    private IPointOfInterest _targetPOI;
+    private bool shouldRecalculatePath = false;
 
     #region getters/setters
     public List<LocationGridTile> currentPath {
@@ -136,9 +138,11 @@ public class CharacterMarker : PooledObject {
     }
 
     #region Pathfinding Movement
-    public void GoToTile(LocationGridTile destinationTile, Action arrivalAction = null) {
+    public void GoToTile(LocationGridTile destinationTile, IPointOfInterest targetPOI, Action arrivalAction = null) {
         _destinationTile = destinationTile;
+        _targetPOI = targetPOI;
         _arrivalAction = arrivalAction;
+        Messenger.AddListener<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, OnTileOccupied);
         if (character.gridTileLocation.structure.location.areaMap.gameObject.activeSelf) {
             //If area map is showing, do pathfinding
             _currentPath = PathGenerator.Instance.GetPath(character.gridTileLocation, destinationTile, GRID_PATHFINDING_MODE.REALISTIC);
@@ -167,6 +171,7 @@ public class CharacterMarker : PooledObject {
         if (Messenger.eventTable.ContainsKey(Signals.TICK_STARTED)) {
             Messenger.RemoveListener(Signals.TICK_STARTED, EstimatedMove);
         }
+        Messenger.RemoveListener<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, OnTileOccupied);
         if (character.currentParty != null && character.currentParty.icon != null) {
             character.currentParty.icon.SetIsTravelling(false);
         }
@@ -178,7 +183,25 @@ public class CharacterMarker : PooledObject {
             StopMovement();
             return;
         }
-        if(_currentPath.Count > 0) {
+        //check if the marker should recalculate path
+        if (shouldRecalculatePath) {
+            LocationGridTile nearestTileToTarget = _targetPOI.GetNearestUnoccupiedTileFromThis();
+            shouldRecalculatePath = false;
+            character.gridTileLocation.structure.location.areaMap.RemoveCharacter(character.gridTileLocation, character);
+            _currentPath[0].structure.location.areaMap.PlaceObject(character, _currentPath[0]);
+            Messenger.RemoveListener<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, OnTileOccupied);
+            if (nearestTileToTarget == null) {
+                //Cancel current action and recalculate plan
+                //character.currentAction.StopAction();
+                character.RecalculatePlan(character.GetPlanWithCurrentAction(character.currentAction));
+                _currentPath = null;
+                return;
+            } else {
+                GoToTile(nearestTileToTarget, _targetPOI, _arrivalAction);
+                return;
+            }
+        }
+        if (_currentPath.Count > 0) {
             LocationGridTile currentTile = _currentPath[0];
             bool currentIsTravelling = character.currentParty.icon.isTravelling;
             if(_currentPath.Count == 1) {
@@ -201,6 +224,7 @@ public class CharacterMarker : PooledObject {
                     if (_arrivalAction != null) {
                         _arrivalAction();
                     }
+                    Messenger.RemoveListener<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, OnTileOccupied);
                 } else {
                     StartCoroutine(MoveToPosition(currentTile.centeredWorldLocation, _currentPath[0].centeredWorldLocation));
                 }
@@ -280,4 +304,10 @@ public class CharacterMarker : PooledObject {
         }
     }
     #endregion
+
+    private void OnTileOccupied(LocationGridTile currTile, IPointOfInterest poi) {
+        if (_destinationTile != null && currTile == _destinationTile && poi != this.character) {
+            shouldRecalculatePath = true;
+        }
+    }
 }

@@ -71,7 +71,7 @@ public class HuntAction : Interaction {
         if (_targetCharacter != null) {
             //Debug.LogWarning("CHOSEN TARGET CHARACTER FOR HUNT ACTION OF " + _characterInvolved.name + " IS " + _targetCharacter.name);
             _targetStructure = _targetCharacter.currentStructure;
-            targetGridLocation = _targetCharacter.GetNearestUnoccupiedTileFromThis(_targetStructure, actor);
+            targetGridLocation = _targetCharacter.GetNearestUnoccupiedTileFromThis();
         }
     }
     public override bool CanStillDoInteraction(Character character) {

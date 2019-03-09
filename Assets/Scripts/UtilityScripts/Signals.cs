@@ -204,4 +204,8 @@ public static class Signals {
     public static string CHARACTER_DID_ACTION = "OnCharacterDidAction"; //Parameters (Character, GoapAction)
     public static string STOP_ACTION = "OnStopAction"; //Parameters (GoapAction)
     #endregion
+
+    #region Location Grid Tile
+    public static string TILE_OCCUPIED = "OnTileOccupied"; //Parameters (LocationGridTile, IPointOfInterest)
+    #endregion
 }

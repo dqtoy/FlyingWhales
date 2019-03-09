@@ -112,11 +112,24 @@ public class ConsoleMenu : UIMenu {
         text += "\n<b>Home Location:</b> " + character.homeStructure?.ToString() ?? "None";
         text += "\n<b>Faction:</b> " + character.faction?.name ?? "None";
         text += "\n<b>Next Tick:</b> " + character.currentInteractionTick.ToString();
-        text += "\n<b>Override:</b> " + character.forcedInteraction?.ToString() ?? "None";
+        text += "\n<b>Current Action:</b> " + character.currentAction?.goapName ?? "None";
+        if (character.currentAction != null) {
+            text += "\n<b>Current Plan:</b> " + character.GetPlanWithCurrentAction(character.currentAction).GetGoalSummary();
+        }
         if (character.currentParty.icon != null) {
             text += "\n<b>Target Location:</b> " + character.currentParty.icon.targetLocation?.name ?? "None";
             text += "\n<b>Target Structure:</b> " + character.currentParty.icon.targetStructure?.ToString() ?? "None";
         }
+        text += "\n<b>All Plans:</b> ";
+        if (character.allGoapPlans.Count > 0) {
+            for (int i = 0; i < character.allGoapPlans.Count; i++) {
+                GoapPlan goapPlan = character.allGoapPlans[i];
+                text += "\n" + goapPlan.GetPlanSummary();
+            }
+        } else {
+            text += "\nNone";
+        }
+        
         return text;
     }
     private string GetSecondaryCharacterInfo() {
@@ -302,6 +315,9 @@ public class ConsoleMenu : UIMenu {
     }
     public void MovePreviousPage(TextMeshProUGUI text) {
         text.pageToDisplay -= 1;
+    }
+    public void ToggleShowAllTileTooltip(bool state) {
+        GameManager.showAllTilesTooltip = state;
     }
     #endregion
 

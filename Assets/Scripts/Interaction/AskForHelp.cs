@@ -57,7 +57,7 @@ public class AskForHelp : Interaction {
     public override void SetTargetCharacter(Character targetCharacter, Character actor) {
         _targetCharacter = targetCharacter;
         _targetStructure = _targetCharacter.currentStructure;
-        targetGridLocation = _targetCharacter.GetNearestUnoccupiedTileFromThis(_targetStructure, actor);
+        targetGridLocation = _targetCharacter.GetNearestUnoccupiedTileFromThis();
     }
     public override void SetOtherCharacter(Character character) {
         _otherCharacter = character;

@@ -54,7 +54,7 @@ public class FeedPrisonerAction : Interaction {
         _targetCharacter = character;
         if (_targetCharacter != null) {
             _targetStructure = _targetCharacter.currentStructure;
-            targetGridLocation = _targetCharacter.GetNearestUnoccupiedTileFromThis(_targetStructure, actor);
+            targetGridLocation = _targetCharacter.GetNearestUnoccupiedTileFromThis();
         }
     }
     #endregion

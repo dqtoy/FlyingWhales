@@ -165,7 +165,7 @@ public class CharacterAvatar : MonoBehaviour{
         SetIsTravelling(true);
         //float distance = Vector3.Distance(_party.specificLocation.coreTile.transform.position, targetLocation.coreTile.transform.position);
         if (causeForTravel != null) {
-            _party.specificLocation.areaMap.ShowEventPopupAt(_party.owner.gridTileLocation, causeForTravel.currentState.lastAddedLog);
+            //_party.specificLocation.areaMap.ShowEventPopupAt(_party.owner.gridTileLocation, causeForTravel.currentState.lastAddedLog);
         } else {
             Debug.LogWarning(_party.owner.name + " does not have a cause for travel! Not showing event popup for his/her departure");
         }
@@ -229,7 +229,7 @@ public class CharacterAvatar : MonoBehaviour{
             }
             arriveLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1);
             arriveLog.AddLogToInvolvedObjects();
-            _party.specificLocation.areaMap.ShowEventPopupAt(_party.owner.gridTileLocation, arriveLog);
+            //_party.specificLocation.areaMap.ShowEventPopupAt(_party.owner.gridTileLocation, arriveLog);
         }
         _party.owner.MoveToAnotherStructure(targetStructure, targetTile, targetPOI, onPathFinished);
         //if (onPathFinished != null) {

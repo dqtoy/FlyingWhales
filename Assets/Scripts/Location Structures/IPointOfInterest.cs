@@ -12,7 +12,7 @@ public interface IPointOfInterest {
 
     void SetGridTileLocation(LocationGridTile tile);
     List<GoapAction> AdvertiseActionsToActor(Character actor, List<INTERACTION_TYPE> actorAllowedInteractions);
-    LocationGridTile GetNearestUnoccupiedTileFromThis(LocationStructure structure, Character otherCharacter);
+    LocationGridTile GetNearestUnoccupiedTileFromThis();
 
     void SetPOIState(POI_STATE state);
 }
