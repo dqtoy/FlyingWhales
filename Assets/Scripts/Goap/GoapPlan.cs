@@ -13,6 +13,7 @@ public class GoapPlan {
     public List<GoapNode> allNodes { get; private set; }
     public bool isEnd { get; private set; }
     public bool isBeingRecalculated { get; private set; }
+    public GOAP_PLAN_STATE state { get; private set; }
 
     public GoapPlan(GoapNode startingNode, GOAP_EFFECT_CONDITION[] goalEffects) {
         this.startingNode = startingNode;
@@ -57,9 +58,11 @@ public class GoapPlan {
     public void SetListOfCharacterAwareness(List<CharacterAwareness> list) {
         goalCharacterTargets = list;
     }
-
     public void SetIsBeingRecalculated(bool state) {
         isBeingRecalculated = state;
+    }
+    public void SetPlanState(GOAP_PLAN_STATE state) {
+        this.state = state;
     }
 
     public string LogPlan() {

@@ -20,6 +20,9 @@ public class GoapAction {
     public Log thoughtBubbleLog { get; private set; }
     public GoapActionState currentState { get; private set; }
     public GoapPlan parentPlan { get { return actor.GetPlanWithCurrentAction(this); } }
+    public bool isStopped { get; private set; }
+    public bool isPerformingActualAction { get; private set; }
+    public bool isDone { get; private set; }
 
     protected Func<bool> _requirementAction;
     protected System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
@@ -31,6 +34,9 @@ public class GoapAction {
         this.goapName = Utilities.NormalizeStringUpperCaseFirstLetters(goapType.ToString());
         this.poiTarget = poiTarget;
         this.actor = actor;
+        isStopped = false;
+        isPerformingActualAction = false;
+        isDone = false;
         preconditions = new List<Precondition>();
         expectedEffects = new List<GoapEffect>();
         actualEffects = new List<GoapEffect>();
@@ -94,7 +100,7 @@ public class GoapAction {
     protected virtual int GetCost() {
         return 0;
     }
-    public virtual void PerformActualAction() { }
+    public virtual void PerformActualAction() { isPerformingActualAction = true; }
     public virtual bool IsHalted() {
         return false;
     }
@@ -125,12 +131,6 @@ public class GoapAction {
             //actor.PerformGoapAction(plan);
         }
     }
-    public void End() {
-        if (Messenger.eventTable.ContainsKey(Signals.CHARACTER_DEATH)) {
-            Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnActorDied);
-        }
-        Debug.Log(this.goapType.ToString() + " action by " + this.actor.name  + " Summary: \n" + actionSummary);
-    }
     #endregion
 
     #region Utilities
@@ -160,11 +160,36 @@ public class GoapAction {
         }
     }
     public void ReturnToActorTheActionResult(string result) {
+        currentState.StopPerTickEffect();
         End();
         actor.GoapActionResult(result, this);
     }
     protected void AddActionLog(string log) {
         actionSummary += "\n" + log;
+    }
+    public void End() {
+        isPerformingActualAction = false;
+        isDone = true;
+        if (Messenger.eventTable.ContainsKey(Signals.CHARACTER_DEATH)) {
+            Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnActorDied);
+        }
+        Debug.Log(this.goapType.ToString() + " action by " + this.actor.name + " Summary: \n" + actionSummary);
+    }
+    public void StopAction() {
+        //actor.SetCurrentAction(null);
+        if (actor.currentParty.icon.isTravelling && actor.currentParty.icon.travelLine == null) {
+            //This means that the actor currently travelling to another tile in tilemap
+            actor.marker.StopMovement();
+        }
+        SetIsStopped(true);
+        if(isPerformingActualAction && !isDone) {
+            ReturnToActorTheActionResult(InteractionManager.Goap_State_Fail);
+        }
+        UIManager.Instance.characterInfoUI.UpdateBasicInfo();
+        Messenger.Broadcast<GoapAction>(Signals.STOP_ACTION, this);
+    }
+    public void SetIsStopped(bool state) {
+        isStopped = state;
     }
     #endregion
 

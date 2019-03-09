@@ -19,7 +19,8 @@ public class MineGoap : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_SUPPLY, conditionKey = MAX_SUPPLY, targetPOI = actor });
     }
     public override void PerformActualAction() {
-        if(poiTarget.gridTileLocation != null && poiTarget.gridTileLocation.structure == actor.gridTileLocation.structure) {
+        base.PerformActualAction();
+        if (poiTarget.gridTileLocation != null && poiTarget.gridTileLocation.structure == actor.gridTileLocation.structure) {
             SetState("Mine Success");
         } else {
             SetState("Target Missing");

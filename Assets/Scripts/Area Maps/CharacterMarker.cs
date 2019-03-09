@@ -143,6 +143,7 @@ public class CharacterMarker : PooledObject {
             //If area map is showing, do pathfinding
             _currentPath = PathGenerator.Instance.GetPath(character.gridTileLocation, destinationTile, GRID_PATHFINDING_MODE.REALISTIC);
             if (_currentPath != null) {
+                Debug.LogWarning("Created path for " + character.name + " from " + character.gridTileLocation.ToString() + " to " + destinationTile.ToString());
                 StartMovement();
             } else {
                 Debug.LogError("Can't create path for " + character.name + " from " + character.gridTileLocation.ToString() + " to " + destinationTile.ToString());
@@ -170,15 +171,16 @@ public class CharacterMarker : PooledObject {
             character.currentParty.icon.SetIsTravelling(false);
         }
         _arrivalAction = null;
-        _currentPath = null;
+        //_currentPath = null;
     }
     private void Move() {
         if (character.isDead) {
             StopMovement();
             return;
         }
-        if(_currentPath.Count > 0 && character.currentParty.icon.isTravelling) {
+        if(_currentPath.Count > 0) {
             LocationGridTile currentTile = _currentPath[0];
+            bool currentIsTravelling = character.currentParty.icon.isTravelling;
             if(_currentPath.Count == 1) {
                 character.currentParty.icon.SetIsTravelling(false); //Quick fix for movement issue
             }
@@ -190,14 +192,18 @@ public class CharacterMarker : PooledObject {
                 currentTile.structure.location.areaMap.PlaceObject(character, currentTile);
             }
             _currentPath.RemoveAt(0);
+            character.currentParty.icon.SetIsTravelling(currentIsTravelling);
 
-            if(_currentPath.Count <= 0) {
-                //Arrival
-                if (_arrivalAction != null) {
-                    _arrivalAction();
+            if (character.currentParty.icon.isTravelling) {
+                if (_currentPath.Count <= 0) {
+                    //Arrival
+                    character.currentParty.icon.SetIsTravelling(false);
+                    if (_arrivalAction != null) {
+                        _arrivalAction();
+                    }
+                } else {
+                    StartCoroutine(MoveToPosition(currentTile.centeredWorldLocation, _currentPath[0].centeredWorldLocation));
                 }
-            } else {
-                StartCoroutine(MoveToPosition(currentTile.centeredWorldLocation, _currentPath[0].centeredWorldLocation));
             }
         }
     }

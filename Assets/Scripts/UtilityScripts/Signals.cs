@@ -202,5 +202,6 @@ public static class Signals {
     #region GOAP
     public static string CHARACTER_RECIEVED_PLAN = "OnCharacterRecievedPlan"; //Parameters (Character, GoapPlan)
     public static string CHARACTER_DID_ACTION = "OnCharacterDidAction"; //Parameters (Character, GoapAction)
+    public static string STOP_ACTION = "OnStopAction"; //Parameters (GoapAction)
     #endregion
 }

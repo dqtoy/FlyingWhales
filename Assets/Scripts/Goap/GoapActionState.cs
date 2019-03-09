@@ -24,7 +24,7 @@ public class GoapActionState {
         this.afterEffect = afterEffect;
         this.parentAction = parentAction;
         this.duration = duration;
-        this.status = status;   
+        this.status = status;
         CreateLog();
     }
 
@@ -58,11 +58,16 @@ public class GoapActionState {
         Messenger.AddListener(Signals.TICK_STARTED, PerTickEffect);
     }
     private void EndPerTickEffect() {
-        Messenger.RemoveListener(Signals.TICK_STARTED, PerTickEffect);
+        //Messenger.RemoveListener(Signals.TICK_STARTED, PerTickEffect);
         if (afterEffect != null) {
             afterEffect();
         }
         parentAction.ReturnToActorTheActionResult(status);
+    }
+    public void StopPerTickEffect() {
+        if (Messenger.eventTable.ContainsKey(Signals.TICK_STARTED)) {
+            Messenger.RemoveListener(Signals.TICK_STARTED, PerTickEffect);
+        }
     }
     private void PerTickEffect() {
         _currentDuration++;

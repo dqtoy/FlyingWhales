@@ -1,1 +1,1 @@
-{"items":[{"key":"release success_description","value":"%00@ released %10@ from captivity."},{"key":"target missing_description","value":"%00@ wanted to release %10@ from captivity but %95b was not there."}]}
+{"items":[{"key":"release success_description","value":"%00@ released %10@ from captivity."},{"key":"target missing_description","value":"%00@ wanted to release %10@ from captivity but %95b was not there."},{"key":"thought_bubble","value":"%00@ is planning to release %10@ from captivity."}]}

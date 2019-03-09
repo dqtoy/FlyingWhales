@@ -14,6 +14,7 @@ public class EatAtTable : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = actor });
     }
     public override void PerformActualAction() {
+        base.PerformActualAction();
         if (poiTarget.gridTileLocation.structure == actor.gridTileLocation.structure) {
             //TODO: CHECKER IF TABLE IS POISONED
             SetState("Eat Success");
@@ -28,8 +29,8 @@ public class EatAtTable : GoapAction {
         }
     }
     protected override int GetCost() {
-        if(poiTarget is TileObject) {
-            TileObject tileObject = poiTarget as TileObject;
+        if(poiTarget is Table) {
+            Table tileObject = poiTarget as Table;
             if(tileObject.owner == null) {
                 return 10;
             } else {
