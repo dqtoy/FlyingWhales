@@ -85,7 +85,7 @@ public class ChatCharacter : GoapAction {
         currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
     }
     private void PerTickChatSuccess() {
-        actor.AdjustHappiness(6);
+        actor.AdjustHappiness(60);
     }
     private void AfterChatSuccess() {
         actor.AdjustDoNotGetLonely(-1);

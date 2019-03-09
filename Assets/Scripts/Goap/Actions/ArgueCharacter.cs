@@ -93,7 +93,7 @@ public class ArgueCharacter : GoapAction {
         currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
     }
     private void PerTickArgueSuccess() {
-        actor.AdjustHappiness(4);
+        actor.AdjustHappiness(40);
     }
     private void AfterArgueSuccess() {
         actor.AdjustDoNotGetLonely(-1);

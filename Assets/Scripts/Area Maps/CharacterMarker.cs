@@ -200,8 +200,10 @@ public class CharacterMarker : PooledObject {
                 _currentPath = null;
                 return;
             } else {
-                GoToTile(nearestTileToTarget, _targetPOI, _arrivalAction);
-                return;
+                if (nearestTileToTarget != character.gridTileLocation) {
+                    GoToTile(nearestTileToTarget, _targetPOI, _arrivalAction);
+                    return;
+                }
             }
         }
         if (_currentPath.Count > 0) {
