@@ -450,6 +450,7 @@ public class AreaInnerTileMap : MonoBehaviour {
                         workAreaTiles.Add(currTile);
                     }
                 }
+                gate.SetStructure(area.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA));
                 InsideMapDetails(workAreaTiles);
             } else {
                 Debug.LogWarning(area.name + " doesn't have a structure for work area");
@@ -630,14 +631,14 @@ public class AreaInnerTileMap : MonoBehaviour {
         List<LocationStructure> exploreAreas = area.GetStructuresOfType(STRUCTURE_TYPE.EXPLORE_AREA);
         exploreAreas = Utilities.Shuffle(exploreAreas);
         for (int i = 0; i < exploreAreas.Count; i++) {
-            LocationStructure currArea = exploreAreas[i];
-            LocationStructure otherArea = exploreAreas.ElementAtOrDefault(i + 1);
-            if (otherArea == null) {
+            LocationStructure currExploreArea = exploreAreas[i];
+            LocationStructure otherExploreArea = exploreAreas.ElementAtOrDefault(i + 1);
+            if (otherExploreArea == null) {
                 break;
             }
             //connect currArea to otherArea
-            List<LocationGridTile> currAreaOuter = GetOuterTilesFrom(currArea.tiles);
-            List<LocationGridTile> otherAreaOuter = GetOuterTilesFrom(otherArea.tiles);
+            List<LocationGridTile> currAreaOuter = GetOuterTilesFrom(currExploreArea.tiles);
+            List<LocationGridTile> otherAreaOuter = GetOuterTilesFrom(otherExploreArea.tiles);
 
             LocationGridTile chosenCurrArea = currAreaOuter[Random.Range(0, currAreaOuter.Count)];
             LocationGridTile chosenOtherArea = otherAreaOuter[Random.Range(0, otherAreaOuter.Count)];
@@ -648,6 +649,7 @@ public class AreaInnerTileMap : MonoBehaviour {
                     LocationGridTile currTile = path[j];
                     if (currTile.structure == null) {
                         currTile.SetTileType(LocationGridTile.Tile_Type.Road);
+                        currTile.SetStructure(currExploreArea);
                         wallTilemap.SetTile(currTile.localPlace, null);
                         groundTilemap.SetTile(currTile.localPlace, dungeonFloorTile);
                     }
@@ -677,6 +679,7 @@ public class AreaInnerTileMap : MonoBehaviour {
                     if (currTile.tileType != LocationGridTile.Tile_Type.Gate) {
                         currTile.SetTileType(LocationGridTile.Tile_Type.Road);
                     }
+                    currTile.SetStructure(nearestTile.structure);
                     wallTilemap.SetTile(currTile.localPlace, null);
                     groundTilemap.SetTile(currTile.localPlace, dungeonFloorTile);
                 }
