@@ -39,6 +39,12 @@ public class CharacterMarker : PooledObject {
 
     private LocationGridTile _destinationTile;
 
+    #region getters/setters
+    public List<LocationGridTile> currentPath {
+        get { return _currentPath; }
+    }
+    #endregion
+
     public void SetCharacter(Character character) {
         this.character = character;
         if (UIManager.Instance.characterInfoUI.isShowing) {
@@ -86,11 +92,13 @@ public class CharacterMarker : PooledObject {
         if (hoverEnterAction != null) {
             hoverEnterAction.Invoke(character, location);
         }
+        //ShowPath();
     }
     public void HoverExitAction() {
         if (hoverExitAction != null) {
             hoverExitAction();
         }
+        //HidePath();
     }
 
     public override void Reset() {
@@ -251,6 +259,19 @@ public class CharacterMarker : PooledObject {
             StopMovement();
         }
         _currentTravelTime++;
+    }
+    #endregion
+
+    #region For Testing
+    private void ShowPath() {
+        if (character != null && _currentPath != null && character.specificLocation != null) {
+            character.specificLocation.areaMap.ShowPath(_currentPath);
+        }
+    }
+    private void HidePath() {
+        if (character != null && character.specificLocation != null) {
+            character.specificLocation.areaMap.HidePath();
+        }
     }
     #endregion
 }
