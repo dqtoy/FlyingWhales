@@ -188,12 +188,15 @@ public class CharacterMarker : PooledObject {
             LocationGridTile nearestTileToTarget = _targetPOI.GetNearestUnoccupiedTileFromThis();
             shouldRecalculatePath = false;
             character.gridTileLocation.structure.location.areaMap.RemoveCharacter(character.gridTileLocation, character);
-            _currentPath[0].structure.location.areaMap.PlaceObject(character, _currentPath[0]);
+            _currentPath[0].structure.AddCharacterAtLocation(character, _currentPath[0]);
+            character.SetGridTileLocation(_currentPath[0]);
             Messenger.RemoveListener<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, OnTileOccupied);
             if (nearestTileToTarget == null) {
                 //Cancel current action and recalculate plan
-                //character.currentAction.StopAction();
-                character.RecalculatePlan(character.GetPlanWithAction(character.currentAction));
+                character.currentAction.StopAction();
+                //character.RecalculatePlan(character.GetPlanWithAction(character.currentAction));
+                //character.SetCurrentAction(null);
+                //character.StartDailyGoapPlanGeneration();
                 _currentPath = null;
                 return;
             } else {

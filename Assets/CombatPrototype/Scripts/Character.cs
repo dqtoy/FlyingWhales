@@ -3964,8 +3964,15 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             GoapPlan plan = allGoapPlans[i];
             log += "\n" + plan.currentNode.action.goapName;
             //check if current action can still find a destination tile towards the target POI
-            LocationGridTile destinationTile = plan.currentNode.action.poiTarget.GetNearestUnoccupiedTileFromThis();
-            if (actorAllowedActions.Contains(plan.currentNode.action.goapType) && plan.currentNode.action.CanSatisfyRequirements() && destinationTile != null) {
+            bool hasValidDestination = false;
+            if (plan.currentNode.action.poiTarget.gridTileLocation.IsNeighbour(gridTileLocation)) {
+                hasValidDestination = true;
+            } else {
+                LocationGridTile destinationTile = plan.currentNode.action.poiTarget.GetNearestUnoccupiedTileFromThis();
+                hasValidDestination = destinationTile != null;
+            }
+            
+            if (actorAllowedActions.Contains(plan.currentNode.action.goapType) && plan.currentNode.action.CanSatisfyRequirements() && hasValidDestination) {
                 if (plan.isBeingRecalculated) {
                     log += "\n - Plan is being recalculated, skipping...";
                     continue;

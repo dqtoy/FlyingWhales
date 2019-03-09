@@ -232,6 +232,22 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         }
         return false;
     }
+    public bool HasNeighbourOfType(Tile_Type type) {
+        for (int i = 0; i < neighbours.Values.Count; i++) {
+            if (neighbours.Values.ElementAt(i).tileType != type) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public bool IsNeighbour(LocationGridTile tile) {
+        foreach (KeyValuePair<TileNeighbourDirection, LocationGridTile> keyValuePair in neighbours) {
+            if (keyValuePair.Value == tile) {
+                return true;
+            }
+        }
+        return false;
+    }
     #endregion
 
     #region Intel
@@ -243,7 +259,6 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         //    } else {
         //        SetTileState(Tile_State.Occupied);
         //    }
-            
         //    return;
         //}
         if (objHere is TileObject || objHere is SpecialToken) {

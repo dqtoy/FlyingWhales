@@ -110,6 +110,7 @@ public class ConsoleMenu : UIMenu {
         text += "\n<b>Is Dead?:</b> " + character.isDead.ToString();
         text += "\n<b>Current Location:</b> " + character.currentStructure?.ToString() ?? "None";
         text += "\n<b>Home Location:</b> " + character.homeStructure?.ToString() ?? "None";
+        text += "\n<b>Grid Location:</b> " + character.gridTileLocation?.localPlace.ToString() ?? "None";
         text += "\n<b>Faction:</b> " + character.faction?.name ?? "None";
         text += "\n<b>Next Tick:</b> " + character.currentInteractionTick.ToString();
         text += "\n<b>Current Action:</b> " + character.currentAction?.goapName ?? "None";

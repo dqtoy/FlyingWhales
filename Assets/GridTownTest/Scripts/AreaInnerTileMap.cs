@@ -1096,6 +1096,9 @@ public class AreaInnerTileMap : MonoBehaviour {
         isHovering = false;
     }
     private void ShowTileData(LocationGridTile tile) {
+        if (tile == null) {
+            return;
+        }
         string summary = tile.localPlace.ToString();
         summary += "\nTile Type: " + tile.tileType.ToString();
         summary += "\nTile State: " + tile.tileState.ToString();
