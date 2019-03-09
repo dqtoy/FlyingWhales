@@ -1446,7 +1446,7 @@ public class UIManager : MonoBehaviour {
     private void ShowIntelNotification(Intel intel) {
         GameObject newIntelGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(intelPrefab.name, Vector3.zero, Quaternion.identity, intelNotifScrollView.content);
         newIntelGO.GetComponent<IntelNotificationItem>().Initialize(intel);
-        (intelNotifScrollView.transform as RectTransform).SetAsFirstSibling();
+        (newIntelGO.transform as RectTransform).SetAsFirstSibling();
     }
     #endregion
 }
