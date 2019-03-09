@@ -193,7 +193,7 @@ public class CharacterMarker : PooledObject {
             if (nearestTileToTarget == null) {
                 //Cancel current action and recalculate plan
                 //character.currentAction.StopAction();
-                character.RecalculatePlan(character.GetPlanWithCurrentAction(character.currentAction));
+                character.RecalculatePlan(character.GetPlanWithAction(character.currentAction));
                 _currentPath = null;
                 return;
             } else {
