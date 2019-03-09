@@ -12,10 +12,10 @@ public class PlayGuitar : GoapAction {
     }
     public override void PerformActualAction() {
         if (poiTarget.gridTileLocation.structure == actor.gridTileLocation.structure) {
-            if (poiTarget.state == POI_STATE.ACTIVE) {
-                SetState("Play Success");
-            } else if (poiTarget.state == POI_STATE.INACTIVE) {
+            if (poiTarget.state == POI_STATE.INACTIVE) {
                 SetState("Play Fail");
+            } else {
+                SetState("Play Success");
             }
         } else {
             SetState("Target Missing");
@@ -38,6 +38,7 @@ public class PlayGuitar : GoapAction {
     }
     public void AfterPlaySuccess() {
         actor.AdjustDoNotGetLonely(-1);
+        poiTarget.SetPOIState(POI_STATE.ACTIVE);
     }
     public void PreTargetMissing() {
         actor.RemoveAwareness(poiTarget);

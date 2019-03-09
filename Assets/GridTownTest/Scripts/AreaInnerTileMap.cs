@@ -80,6 +80,9 @@ public class AreaInnerTileMap : MonoBehaviour {
     [SerializeField] private GameObject travelLinePrefab;
     [SerializeField] private Transform travelLineParent;
 
+    [Header("For Testing")]
+    [SerializeField] private LineRenderer pathLineRenderer;
+
     public int x;
     public int y;
     public int radius;
@@ -869,6 +872,18 @@ public class AreaInnerTileMap : MonoBehaviour {
 
     #region Movement & Mouse Interaction
     public void LateUpdate() {
+        if (UIManager.Instance.characterInfoUI.isShowing 
+            && UIManager.Instance.characterInfoUI.activeCharacter.specificLocation == this.area
+            && !UIManager.Instance.characterInfoUI.activeCharacter.isDead) {
+            if (UIManager.Instance.characterInfoUI.activeCharacter.marker.currentPath != null) {
+                ShowPath(UIManager.Instance.characterInfoUI.activeCharacter.marker.currentPath);
+            } else {
+                HidePath();
+            }
+        } else {
+            HidePath();
+        }
+
         //return;
         if (UIManager.Instance.IsMouseOnUI()) {
             return;
@@ -879,9 +894,8 @@ public class AreaInnerTileMap : MonoBehaviour {
         if (coordinate.x >= 0 && coordinate.x < width
             && coordinate.y >= 0 && coordinate.y < height) {
             LocationGridTile hoveredTile = map[coordinate.x, coordinate.y];
-            ShowTileData(hoveredTile);
             if (hoveredTile.objHere != null) {
-                
+                ShowTileData(hoveredTile);
                 if (Input.GetMouseButtonDown(0)) {
                     hoveredTile.OnClickTileActions();
                 }
@@ -889,7 +903,7 @@ public class AreaInnerTileMap : MonoBehaviour {
                 if (Input.GetMouseButtonDown(0)) {
                     hoveredTile.OnClickTileActions();
                 }
-                //UIManager.Instance.HideSmallInfo();
+                UIManager.Instance.HideSmallInfo();
             }
         } else {
             UIManager.Instance.HideSmallInfo();
@@ -1196,6 +1210,7 @@ public class AreaInnerTileMap : MonoBehaviour {
     }
     #endregion
 
+    #region For Testing
     [ContextMenu("Get Radius")]
     public void GetRadius() {
         List<LocationGridTile> tiles = GetTilesInRadius(map[x, y], radius);
@@ -1203,7 +1218,6 @@ public class AreaInnerTileMap : MonoBehaviour {
             Debug.Log(tiles[i].localPlace.x + "," + tiles[i].localPlace.y);
         }
     }
-
     [ContextMenu("Get Path")]
     public void GetPath() {
         List<LocationGridTile> tiles = PathGenerator.Instance.GetPath(map[0, 0], map[5, 5]);
@@ -1215,14 +1229,27 @@ public class AreaInnerTileMap : MonoBehaviour {
         } else {
             Debug.Log("No Path!");
         }
-        
-    }
 
+    }
     [ContextMenu("Get Distance")]
     public void GetDistance() {
-        float distance = Vector2.Distance(map[(int) startPos.x, (int) startPos.y].localLocation, map[(int) endPos.x, (int) endPos.y].localLocation);
+        float distance = Vector2.Distance(map[(int)startPos.x, (int)startPos.y].localLocation, map[(int)endPos.x, (int)endPos.y].localLocation);
         Debug.LogWarning(distance);
     }
+    public void ShowPath(List<LocationGridTile> path) {
+        pathLineRenderer.gameObject.SetActive(true);
+        pathLineRenderer.positionCount = path.Count;
+        Vector3[] positions = new Vector3[path.Count];
+        for (int i = 0; i < path.Count; i++) {
+            positions[i] = new Vector3(path[i].localPlace.x + 0.5f, path[i].localPlace.y + 0.5f);
+        }
+        pathLineRenderer.SetPositions(positions);
+    }
+    public void HidePath() {
+        pathLineRenderer.gameObject.SetActive(false);
+    }
+    #endregion
+
 }
 
 public class ExploreArea {

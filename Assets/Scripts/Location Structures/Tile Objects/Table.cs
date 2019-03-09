@@ -82,6 +82,9 @@ public class Table : TileObject, IPointOfInterest {
     #endregion
 
     #region Tile Objects
+    public override void OnTargetObject(GoapAction action) {
+        
+    }
     public override void OnDoActionToObject(GoapAction action) {
     }
     #endregion
