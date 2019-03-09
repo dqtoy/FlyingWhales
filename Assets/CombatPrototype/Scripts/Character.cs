@@ -4152,7 +4152,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public void SetCurrentAction(GoapAction action) {
         currentAction = action;
-        Debug.Log(GameManager.Instance.TodayLogString() + this.name + " will do action " + action.goapType.ToString() + " to " + action.poiTarget.ToString());
+        if (currentAction != null) {
+            Debug.Log(GameManager.Instance.TodayLogString() + this.name + " will do action " + action.goapType.ToString() + " to " + action.poiTarget.ToString());
+        }
     }
     #endregion
 
