@@ -12,6 +12,8 @@ public class AttributeManager : MonoBehaviour {
     private Dictionary<string, Trait> _allPositiveTraits;
     private Dictionary<string, Trait> _allIlnesses;
 
+    [SerializeField] private StringSpriteDictionary traitIconDictionary;
+
     #region getters/setters
     public Dictionary<string, Trait> allTraits {
         get { return _allTraits; }
@@ -79,7 +81,6 @@ public class AttributeManager : MonoBehaviour {
             CategorizeTrait(specialTraits[i]);
         }
     }
-
     private void CategorizeTrait(Trait attribute) {
         _allTraits.Add(attribute.name, attribute);
         if (attribute.effect == TRAIT_EFFECT.POSITIVE) {
@@ -88,5 +89,12 @@ public class AttributeManager : MonoBehaviour {
         if (attribute.type == TRAIT_TYPE.ILLNESS) {
             _allIlnesses.Add(attribute.name, attribute);
         }
+    }
+
+    public Sprite GetTraitIcon(string traitName) {
+        if (traitIconDictionary.ContainsKey(traitName)) {
+            return traitIconDictionary[traitName];
+        }
+        return null;
     }
 }

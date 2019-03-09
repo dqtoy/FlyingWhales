@@ -22,7 +22,6 @@ GameObject:
   - component: {fileID: 114749049423832922}
   - component: {fileID: 114747223886226308}
   - component: {fileID: 114379826282364466}
-  - component: {fileID: 114526566919104050}
   - component: {fileID: 114716861888690220}
   - component: {fileID: 114240431830993452}
   m_Layer: 5
@@ -56,6 +55,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b3dda202ad60c7d4f9d336e858f0d1a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  traitIconDictionary:
+    m_keys:
+    - Hungry
+    - Melee Attack
+    - Ranged Attack
+    - Reanimated
+    - Starving
+    m_values:
+    - {fileID: 21300000, guid: 360bd7c134b76554488e42b1b995ce62, type: 3}
+    - {fileID: 21300000, guid: b657484a4dbd1c34d9511855a8a101af, type: 3}
+    - {fileID: 21300000, guid: 3f7dcd15b629a5e4e84bf5000cbc748a, type: 3}
+    - {fileID: 21300000, guid: 8d5d07972a054c648a726e3008902938, type: 3}
+    - {fileID: 21300000, guid: 4e3a242f72e3fda43bae897ef9e9598c, type: 3}
 --- !u!114 &114379826282364466
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -67,20 +79,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a41368e4cf9e7d42b7e49fa3ccfd45d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &114526566919104050
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1847744613062142}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a4e631494c371c340b0d0ad164ee4ffd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  numOfCombatActionPerDay: 5
-  baseCharacters: []
-  characterColors: []
 --- !u!114 &114716861888690220
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -14,6 +14,10 @@ public class CombatAttributeItem : MonoBehaviour {
     public void SetCombatAttribute(Trait combatAttribute) {
         _combatAttribute = combatAttribute;
         nameText.text = _combatAttribute.nameInUI;
+        Sprite icon = AttributeManager.Instance.GetTraitIcon(combatAttribute.name);
+        if (icon != null) {
+            iconImg.sprite = icon;
+        }
         descriptionText.text = _combatAttribute.description;
     }
 
