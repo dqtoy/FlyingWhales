@@ -26,11 +26,11 @@ public class AbductCharacter : GoapAction {
         return 3;
     }
     public override bool IsHalted() {
-        TIME_IN_WORDS timeInWords = GameManager.GetCurrentTimeInWordsOfTick();
-        if(timeInWords == TIME_IN_WORDS.EARLY_NIGHT || timeInWords == TIME_IN_WORDS.LATE_NIGHT || timeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
-            return false;
-        }
-        if(poiTarget.gridTileLocation.structure.structureType == STRUCTURE_TYPE.WILDERNESS || poiTarget.gridTileLocation.structure.charactersHere.Count == 1) {
+        //TIME_IN_WORDS timeInWords = GameManager.GetCurrentTimeInWordsOfTick();
+        //if(timeInWords == TIME_IN_WORDS.EARLY_NIGHT || timeInWords == TIME_IN_WORDS.LATE_NIGHT || timeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
+        //    return false;
+        //}
+        if(poiTarget.gridTileLocation.structure.structureType == STRUCTURE_TYPE.WILDERNESS || poiTarget.gridTileLocation.structure.charactersHere.Count == 2) {
             return false;
         }
         return true;
