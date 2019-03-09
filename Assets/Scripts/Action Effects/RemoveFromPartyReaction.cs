@@ -31,19 +31,21 @@ public class RemoveFromPartyReaction : ActionEffectReaction {
             } else if (character.HasRelationshipOfEffectWith(targetCharacter, TRAIT_EFFECT.POSITIVE)) {
                 if (character.characterClass.className == "Soldier" || character.characterClass.className == "Adventurer") {
                     //If the target is an enemy of abducted or restrained character: 
+                    //Character will create a Release Plan. Add the target as Relevant Target.
+                    character.StartGOAP(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Abducted" }, targetCharacter);
                     if (justAddedPlan) {
                         return string.Format("{0} is in trouble? I must save {1}.", targetCharacter.name, Utilities.GetPronounString(targetCharacter.gender, PRONOUN_TYPE.REFLEXIVE, false));
                     } else {
                         return string.Format("Thank you for letting me know where {0} was taken. I must save {1}.", targetCharacter.name, Utilities.GetPronounString(targetCharacter.gender, PRONOUN_TYPE.REFLEXIVE, false));
                     }
-                    //TODO: - Character will create a Release Plan. Add the target as Relevant Target.
                 } else {
+                    //Character will create a Release Help Plan. Add the target as Relevant Target.
+                    character.StartGOAP(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Abducted" }, targetCharacter);
                     if (justAddedPlan) {
                         return string.Format("{0} is in trouble? I must find someone who can save {1}.", targetCharacter.name, Utilities.GetPronounString(targetCharacter.gender, PRONOUN_TYPE.REFLEXIVE, false));
                     } else {
                         return string.Format("Thank you for letting me know where {0} was taken. I must find someone who can save {1}.", targetCharacter.name, Utilities.GetPronounString(targetCharacter.gender, PRONOUN_TYPE.REFLEXIVE, false));
                     }
-                    //TODO: - Character will create a Release Help Plan. Add the target as Relevant Target.
                 }
             } else {
                 if (justAddedPlan) {

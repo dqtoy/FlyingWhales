@@ -1111,12 +1111,20 @@ public class AreaInnerTileMap : MonoBehaviour {
 
     #region UI
     [SerializeField] private GameObject intelPrefab;
+    IntelNotificationItem currentlyShowingIntelItem;
     public void ShowIntelItemAt(LocationGridTile tile, Intel intel) {
+        if (currentlyShowingIntelItem != null) {
+            currentlyShowingIntelItem.DeleteNotification();
+        }
         GameObject intelGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(intelPrefab.name, Input.mousePosition, Quaternion.identity, eventPopupParent);
         intelGO.transform.localScale = new Vector2(0.015f, 0.015f);
         IntelNotificationItem intelItem = intelGO.GetComponent<IntelNotificationItem>();
-        intelItem.Initialize(intel);
-        (intelGO.transform as RectTransform).anchoredPosition = new Vector2(tile.localPlace.x + 0.5f, tile.localPlace.y + 1.5f);
+        intelItem.Initialize(intel, false);
+        RectTransform rt = intelGO.transform as RectTransform;
+        rt.anchorMin = Vector2.zero;
+        rt.anchorMax = Vector2.zero;
+        rt.anchoredPosition = new Vector2(tile.localPlace.x + 0.5f, tile.localPlace.y + 1.5f);
+        currentlyShowingIntelItem = intelItem;
     }
     #endregion
 
