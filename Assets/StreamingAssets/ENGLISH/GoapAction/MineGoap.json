@@ -1,1 +1,1 @@
-{"items":[{"key":"mine success_description","value":"%00@ mined %111% from %04@."},{"key":"target missing_description","value":"%00@ wanted to mine from an ore in %04@ but it was no longer there."}]}
+{"items":[{"key":"mine success_description","value":"%00@ mined %111% from %04@."},{"key":"target missing_description","value":"%00@ wanted to mine from an ore in %04@ but it was no longer there."},{"key":"thought_bubble","value":"%00@ is planning to mine at %04@."}]}

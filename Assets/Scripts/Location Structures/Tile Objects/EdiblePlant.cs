@@ -27,6 +27,7 @@ public class EdiblePlant : TileObject, IPointOfInterest {
     #endregion
 
     public EdiblePlant(LocationStructure location) {
+        this.location = location;
         poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.EAT_PLANT };
         Initialize(this, TILE_OBJECT_TYPE.EDIBLE_PLANT);
     }

@@ -27,6 +27,7 @@ public class SmallAnimal : TileObject, IPointOfInterest {
     #endregion
 
     public SmallAnimal(LocationStructure location) {
+        this.location = location;
         poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.EAT_SMALL_ANIMAL };
         Initialize(this, TILE_OBJECT_TYPE.SMALL_ANIMAL);
     }

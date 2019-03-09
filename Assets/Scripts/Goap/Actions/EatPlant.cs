@@ -14,6 +14,7 @@ public class EatPlant : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = actor });
     }
     public override void PerformActualAction() {
+        base.PerformActualAction();
         if (poiTarget.gridTileLocation.structure == actor.gridTileLocation.structure) {
             if(poiTarget.state != POI_STATE.INACTIVE) {
                 SetState("Eat Success");

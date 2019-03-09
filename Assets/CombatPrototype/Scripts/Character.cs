@@ -4007,32 +4007,51 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         Debug.Log(log);
     }
     public void PerformGoapAction(GoapPlan plan) {
-        string log = GameManager.Instance.TodayLogString() + name + " is performing goap action: " + plan.currentNode.action.goapName;
-        FaceTarget(plan.currentNode.action.poiTarget);
-        if (plan.currentNode.action.CanSatisfyRequirements() && plan.currentNode.action.CanSatisfyAllPreconditions()) {
-            plan.currentNode.action.PerformActualAction();
+        string log = GameManager.Instance.TodayLogString() + name + " is performing goap action: " + currentAction.goapName;
+        FaceTarget(currentAction.poiTarget);
+        if (currentAction.isStopped) {
+            log += "\n Action is stopped! Dropping plan...";
+            SetCurrentAction(null);
+            DropPlan(plan);
+            StartDailyGoapPlanGeneration();
         } else {
-            log += "\nFailed to perform action. Will try to recalculate plan...";
-            if (plan.currentNode.action.poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-                Character targetCharacter = plan.currentNode.action.poiTarget as Character;
-                targetCharacter.AdjustIsWaitingForInteraction(-1);
+            if (currentAction.CanSatisfyRequirements() && currentAction.CanSatisfyAllPreconditions()) {
+                log += "\nSucessfully performed action " + currentAction.goapName + " to " + currentAction.poiTarget.name + " at " + currentAction.poiTarget.gridTileLocation.ToString();
+                currentAction.PerformActualAction();
+            } else {
+                log += "\nFailed to perform action. Will try to recalculate plan...";
+                if (currentAction.poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+                    Character targetCharacter = currentAction.poiTarget as Character;
+                    targetCharacter.AdjustIsWaitingForInteraction(-1);
+                }
+                RecalculatePlan(plan);
+                SchedulePerformGoapPlans();
             }
-            RecalculatePlan(plan);
-            SchedulePerformGoapPlans();
         }
-        //Debug.Log(log);
+        Debug.Log(log);
     }
     public void GoapActionResult(string result, GoapAction action) {
         string log = GameManager.Instance.TodayLogString() + name + " is done performing goap action: " + action.goapName;
-        if (isDead) {
-            log += "\nCharacter is dead!";
-            return;
+        if(action == currentAction) {
+            SetCurrentAction(null);
         }
         if (action.poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
             Character targetCharacter = action.poiTarget as Character;
             targetCharacter.AdjustIsWaitingForInteraction(-1);
         }
+        if (isDead) {
+            log += "\nCharacter is dead!";
+            Debug.Log(log);
+            return;
+        }
         GoapPlan plan = GetPlanWithCurrentAction(action);
+        if (action.isStopped) {
+            log += "\nAction is stopped!";
+            DropPlan(plan);
+            StartDailyGoapPlanGeneration();
+            Debug.Log(log);
+            return;
+        }
         if (result == InteractionManager.Goap_State_Success) {
             log += "\nSuccessfully performed action!";
             plan.SetNextNode();
@@ -4043,9 +4062,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             } else {
                 log += "\nNext action for this plan: " + plan.currentNode.action.goapName;
             }
+            if (allGoapPlans.Count > 0) {
+                PerformGoapPlans();
+            }
         } else if(result == InteractionManager.Goap_State_Fail) {
             log += "\nFailed to perform action. Will try to recalculate plan...";
             RecalculatePlan(plan);
+            SchedulePerformGoapPlans();
             //if (!RecalculatePlan(plan)) {
             //    log += "\nFailed to recalculate plan! Will now drop plan...";
             //    DropPlan(plan);
@@ -4055,7 +4078,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
 
         //Debug.Log(log);
-        SchedulePerformGoapPlans();
     }
     private void DropPlan(GoapPlan plan) {
         allGoapPlans.Remove(plan);

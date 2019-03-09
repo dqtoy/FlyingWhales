@@ -14,6 +14,7 @@ public class AssaultCharacter : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_NON_POSITIVE_TRAIT, conditionKey = "Disabler", targetPOI = poiTarget });
     }
     public override void PerformActualAction() {
+        base.PerformActualAction();
         //List<Character> attackers = new List<Character>();
         //attackers.Add(actor);
 

@@ -15,7 +15,10 @@ public class Intervene : PlayerJobAction {
         //targetCharacter.plannedInteraction.SetIsPrevented(true);
         //targetCharacter.OnInteractionEnded(targetCharacter.plannedInteraction);
         //UIManager.Instance.characterInfoUI.UpdateBasicInfo();
-
+        if (targetCharacter.isDead || targetCharacter.currentAction == null) {
+            return;
+        }
+        targetCharacter.currentAction.StopAction();
     }
 
     protected override bool ShouldButtonBeInteractable(Character character, Character targetCharacter) {

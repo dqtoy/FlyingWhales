@@ -1,1 +1,1 @@
-{"items":[{"key":"take success_description","value":"%00@ picked up %107@ from %04@."},{"key":"target missing_description","value":"%00@ wanted to pick up %107@ from %04@ but it was no longer there."}]}
+{"items":[{"key":"take success_description","value":"%00@ picked up %107@ from %04@."},{"key":"target missing_description","value":"%00@ wanted to pick up %107@ from %04@ but it was no longer there."},{"key":"thought_bubble","value":"%00@ is planning to pick up %10@ from %04@."}]}

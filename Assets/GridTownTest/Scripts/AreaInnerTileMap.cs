@@ -879,8 +879,9 @@ public class AreaInnerTileMap : MonoBehaviour {
         if (coordinate.x >= 0 && coordinate.x < width
             && coordinate.y >= 0 && coordinate.y < height) {
             LocationGridTile hoveredTile = map[coordinate.x, coordinate.y];
+            ShowTileData(hoveredTile);
             if (hoveredTile.objHere != null) {
-                ShowTileData(hoveredTile);
+                
                 if (Input.GetMouseButtonDown(0)) {
                     hoveredTile.OnClickTileActions();
                 }
@@ -888,7 +889,7 @@ public class AreaInnerTileMap : MonoBehaviour {
                 if (Input.GetMouseButtonDown(0)) {
                     hoveredTile.OnClickTileActions();
                 }
-                UIManager.Instance.HideSmallInfo();
+                //UIManager.Instance.HideSmallInfo();
             }
         } else {
             UIManager.Instance.HideSmallInfo();

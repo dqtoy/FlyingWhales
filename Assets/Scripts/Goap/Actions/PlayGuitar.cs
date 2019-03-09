@@ -11,6 +11,7 @@ public class PlayGuitar : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
     }
     public override void PerformActualAction() {
+        base.PerformActualAction();
         if (poiTarget.gridTileLocation.structure == actor.gridTileLocation.structure) {
             if (poiTarget.state == POI_STATE.ACTIVE) {
                 SetState("Play Success");

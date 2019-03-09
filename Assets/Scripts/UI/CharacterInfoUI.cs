@@ -232,7 +232,7 @@ public class CharacterInfoUI : UIMenu {
         }
 
         //Planned Action
-        if (_activeCharacter.currentAction != null) {
+        if (_activeCharacter.currentAction != null && !_activeCharacter.currentAction.isStopped && !_activeCharacter.currentAction.isDone) {
             if (_activeCharacter.currentAction.currentState == null) {
                 plansLblLogItem.SetLog(_activeCharacter.currentAction.thoughtBubbleLog);
                 plansLbl.text = Utilities.LogReplacer(_activeCharacter.currentAction.thoughtBubbleLog);

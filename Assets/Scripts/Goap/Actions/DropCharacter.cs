@@ -22,6 +22,7 @@ public class DropCharacter : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = actor.homeArea, targetPOI = poiTarget });
     }
     public override void PerformActualAction() {
+        base.PerformActualAction();
         SetState("Drop Success");
     }
     protected override int GetCost() {
