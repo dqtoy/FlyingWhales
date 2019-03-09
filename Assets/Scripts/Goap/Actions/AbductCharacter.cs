@@ -15,12 +15,12 @@ public class AbductCharacter : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Abducted", targetPOI = poiTarget });
     }
     public override void PerformActualAction() {
-        base.PerformActualAction();
         if (poiTarget.gridTileLocation.structure == actor.gridTileLocation.structure) {
             SetState("Abduct Success");
         } else {
             SetState("Target Missing");
         }
+        base.PerformActualAction();
     }
     protected override int GetCost() {
         return 3;

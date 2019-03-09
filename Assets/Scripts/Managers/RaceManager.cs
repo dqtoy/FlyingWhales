@@ -311,6 +311,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.PLAY_GUITAR,
                 INTERACTION_TYPE.CHAT_CHARACTER,
                 INTERACTION_TYPE.ARGUE_CHARACTER,
+                //INTERACTION_TYPE.CRAFT_ITEM,
             } },
             { RACE.ELVES, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -357,6 +358,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.PLAY_GUITAR,
                 INTERACTION_TYPE.CHAT_CHARACTER,
                 INTERACTION_TYPE.ARGUE_CHARACTER,
+                //INTERACTION_TYPE.CRAFT_ITEM,
             } },
             { RACE.GOBLIN, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -403,6 +405,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.PLAY_GUITAR,
                 INTERACTION_TYPE.CHAT_CHARACTER,
                 INTERACTION_TYPE.ARGUE_CHARACTER,
+                //INTERACTION_TYPE.CRAFT_ITEM,
             } },
             { RACE.FAERY, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -449,6 +452,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.PLAY_GUITAR,
                 INTERACTION_TYPE.CHAT_CHARACTER,
                 INTERACTION_TYPE.ARGUE_CHARACTER,
+                //INTERACTION_TYPE.CRAFT_ITEM,
             } },
             { RACE.SKELETON, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -495,6 +499,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.PLAY_GUITAR,
                 INTERACTION_TYPE.CHAT_CHARACTER,
                 INTERACTION_TYPE.ARGUE_CHARACTER,
+                //INTERACTION_TYPE.CRAFT_ITEM,
             } },
             { RACE.SPIDER, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -539,6 +544,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.DROP_CHARACTER,
                 INTERACTION_TYPE.DAYDREAM,
                 INTERACTION_TYPE.PLAY_GUITAR,
+                //INTERACTION_TYPE.CRAFT_ITEM,
             } },
             { RACE.WOLF, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -583,6 +589,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.DROP_CHARACTER,
                 INTERACTION_TYPE.DAYDREAM,
                 INTERACTION_TYPE.PLAY_GUITAR,
+                //INTERACTION_TYPE.CRAFT_ITEM,
             } },
             { RACE.DRAGON, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -627,6 +634,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.DROP_CHARACTER,
                 INTERACTION_TYPE.DAYDREAM,
                 INTERACTION_TYPE.PLAY_GUITAR,
+                //INTERACTION_TYPE.CRAFT_ITEM,
             } },
         };
     }

@@ -19,7 +19,7 @@ public class GoapAction {
     public List<GoapEffect> actualEffects { get; private set; } //stores what really happened. NOTE: Only storing relevant data to share intel, no need to store everything that happened.
     public Log thoughtBubbleLog { get; private set; }
     public GoapActionState currentState { get; private set; }
-    public GoapPlan parentPlan { get { return actor.GetPlanWithCurrentAction(this); } }
+    public GoapPlan parentPlan { get { return actor.GetPlanWithAction(this); } }
     public bool isStopped { get; private set; }
     public bool isPerformingActualAction { get; private set; }
     public bool isDone { get; private set; }
@@ -176,7 +176,7 @@ public class GoapAction {
         Debug.Log(this.goapType.ToString() + " action by " + this.actor.name + " Summary: \n" + actionSummary);
     }
     public void StopAction() {
-        //actor.SetCurrentAction(null);
+        actor.SetCurrentAction(null);
         if (actor.currentParty.icon.isTravelling && actor.currentParty.icon.travelLine == null) {
             //This means that the actor currently travelling to another tile in tilemap
             actor.marker.StopMovement();
@@ -184,6 +184,9 @@ public class GoapAction {
         SetIsStopped(true);
         if(isPerformingActualAction && !isDone) {
             ReturnToActorTheActionResult(InteractionManager.Goap_State_Fail);
+        } else {
+            actor.DropPlan(parentPlan);
+            actor.StartDailyGoapPlanGeneration();
         }
         UIManager.Instance.characterInfoUI.UpdateBasicInfo();
         Messenger.Broadcast<GoapAction>(Signals.STOP_ACTION, this);

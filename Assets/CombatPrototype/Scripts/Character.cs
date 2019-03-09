@@ -2599,7 +2599,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         Craftsman craftsmanTrait = GetTrait("Craftsman") as Craftsman;
         if(craftsmanTrait != null) {
             //SpecialTokenSettings settings = TokenManager.Instance.GetTokenSettings(craftsmanTrait.craftedItemName);
-            return TokenManager.Instance.CreateSpecialToken(craftsmanTrait.craftedItemName); //, settings.appearanceWeight
+            //return TokenManager.Instance.CreateSpecialToken(craftsmanTrait.craftedItemName); //, settings.appearanceWeight
         }
         return null;
     }
@@ -4007,7 +4007,15 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         Debug.Log(log);
     }
     public void PerformGoapAction(GoapPlan plan) {
-        string log = GameManager.Instance.TodayLogString() + name + " is performing goap action: " + currentAction.goapName;
+        string log = string.Empty;
+        if (currentAction == null) {
+            log = GameManager.Instance.TodayLogString() + name + " cancelled current action!";
+            Debug.Log(log);
+            DropPlan(plan);
+            StartDailyGoapPlanGeneration();
+            return;
+        }
+        log = GameManager.Instance.TodayLogString() + name + " is performing goap action: " + currentAction.goapName;
         FaceTarget(currentAction.poiTarget);
         if (currentAction.isStopped) {
             log += "\n Action is stopped! Dropping plan...";
@@ -4032,7 +4040,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public void GoapActionResult(string result, GoapAction action) {
         string log = GameManager.Instance.TodayLogString() + name + " is done performing goap action: " + action.goapName;
-        if(action == currentAction) {
+        if (action == currentAction) {
             SetCurrentAction(null);
         }
         if (action.poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
@@ -4044,7 +4052,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             Debug.Log(log);
             return;
         }
-        GoapPlan plan = GetPlanWithCurrentAction(action);
+        GoapPlan plan = GetPlanWithAction(action);
         if (action.isStopped) {
             log += "\nAction is stopped!";
             DropPlan(plan);
@@ -4079,7 +4087,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 
         //Debug.Log(log);
     }
-    private void DropPlan(GoapPlan plan) {
+    public void DropPlan(GoapPlan plan) {
         allGoapPlans.Remove(plan);
         plan.EndPlan();
         if (allGoapPlans.Count <= 0) {
@@ -4134,10 +4142,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         }
     }
-    public GoapPlan GetPlanWithCurrentAction(GoapAction action) {
+    public GoapPlan GetPlanWithAction(GoapAction action) {
         for (int i = 0; i < allGoapPlans.Count; i++) {
-            if (allGoapPlans[i].currentNode.action == action) {
-                return allGoapPlans[i];
+            for (int j = 0; j < allGoapPlans[i].allNodes.Count; j++) {
+                if (allGoapPlans[i].allNodes[j].action == action) {
+                    return allGoapPlans[i];
+                }
             }
         }
         return null;

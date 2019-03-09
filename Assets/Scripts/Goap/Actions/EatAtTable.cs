@@ -14,7 +14,6 @@ public class EatAtTable : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = actor });
     }
     public override void PerformActualAction() {
-        base.PerformActualAction();
         if (poiTarget.gridTileLocation.structure == actor.gridTileLocation.structure) {
             //TODO: CHECKER IF TABLE IS POISONED
             SetState("Eat Success");
@@ -27,6 +26,7 @@ public class EatAtTable : GoapAction {
         } else {
             SetState("Target Missing");
         }
+        base.PerformActualAction();
     }
     protected override int GetCost() {
         if(poiTarget is Table) {
@@ -57,14 +57,14 @@ public class EatAtTable : GoapAction {
     #region Effects
     private void PreEatSuccess() {
         currentState.AddLogFiller(poiTarget.gridTileLocation.structure.location, poiTarget.gridTileLocation.structure.ToString(), LOG_IDENTIFIER.LANDMARK_1);
-        actor.AddTrait("Eating");
+        //actor.AddTrait("Eating");
     }
     private void PerTickEatSuccess() {
         actor.AdjustFullness(10);
     }
     private void PreEatPoisoned() {
         currentState.AddLogFiller(poiTarget.gridTileLocation.structure.location, poiTarget.gridTileLocation.structure.ToString(), LOG_IDENTIFIER.LANDMARK_1);
-        actor.AddTrait("Eating");
+        //actor.AddTrait("Eating");
         //Remove poisoned trait from table
         //TODO: ADD TRAITS AT IPOINTOFINTEREST
     }

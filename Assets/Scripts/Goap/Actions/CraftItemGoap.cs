@@ -15,8 +15,8 @@ public class CraftItemGoap : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = poiTarget, targetPOI = actor });
     }
     public override void PerformActualAction() {
-        base.PerformActualAction();
         SetState("Craft Success");
+        base.PerformActualAction();
     }
     protected override int GetCost() {
         return 2;

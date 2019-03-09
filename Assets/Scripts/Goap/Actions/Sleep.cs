@@ -14,7 +14,6 @@ public class Sleep : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = null, targetPOI = actor });
     }
     public override void PerformActualAction() {
-        base.PerformActualAction();
         if (poiTarget.gridTileLocation.structure == actor.gridTileLocation.structure) {
             if (poiTarget.state != POI_STATE.INACTIVE) {
                 SetState("Rest Success");
@@ -24,6 +23,7 @@ public class Sleep : GoapAction {
         } else {
             SetState("Target Missing");
         }
+        base.PerformActualAction();
     }
     protected override int GetCost() {
         Dwelling dwelling = poiTarget.gridTileLocation.structure as Dwelling;
@@ -59,7 +59,7 @@ public class Sleep : GoapAction {
     private void PreRestSuccess() {
         currentState.AddLogFiller(poiTarget.gridTileLocation.structure.location, poiTarget.gridTileLocation.structure.ToString(), LOG_IDENTIFIER.LANDMARK_1);
         poiTarget.SetPOIState(POI_STATE.INACTIVE);
-        actor.AddTrait("Resting");
+        //actor.AddTrait("Resting");
     }
     private void PerTickRestSuccess() {
         actor.AdjustFullness(5);
