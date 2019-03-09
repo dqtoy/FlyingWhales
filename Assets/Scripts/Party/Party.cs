@@ -251,7 +251,7 @@ public class Party {
             RemoveCurrentBuffsFromCharacter(character);
             character.ownParty.icon.transform.position = this.specificLocation.coreTile.transform.position;
             //if (this.specificLocation is BaseLandmark) {
-            this.specificLocation.AddCharacterToLocation(character.ownParty);
+            this.specificLocation.AddCharacterToLocation(character.ownParty, null, null, null, true);
             character.RemoveTrait("Packaged");
             //} else {
             //    character.ownParty.SetSpecificLocation(this.specificLocation);

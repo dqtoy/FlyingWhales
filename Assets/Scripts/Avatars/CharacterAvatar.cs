@@ -231,10 +231,10 @@ public class CharacterAvatar : MonoBehaviour{
             arriveLog.AddLogToInvolvedObjects();
             _party.specificLocation.areaMap.ShowEventPopupAt(_party.owner.gridTileLocation, arriveLog);
         }
-
-        if (onPathFinished != null) {
-            onPathFinished();
-        }
+        _party.owner.MoveToAnotherStructure(targetStructure, targetTile, targetPOI, onPathFinished);
+        //if (onPathFinished != null) {
+        //    onPathFinished();
+        //}
         Messenger.Broadcast(Signals.PARTY_DONE_TRAVELLING, this.party);
     }
     public virtual void ReceivePath(List<HexTile> path, PathFindingThread fromThread) {

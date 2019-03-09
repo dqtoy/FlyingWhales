@@ -97,7 +97,7 @@ public class GoapThread : Multithread {
         }
     }
     private void RecalculatePlan() {
-        string log = "-----------------RECALCULATING PLAN OF " + actor.name + " WITH TARGET " + recalculationPlan.target.name + " (" + actor.specificLocation.name + ")-----------------------";
+        log = "-----------------RECALCULATING PLAN OF " + actor.name + " WITH TARGET " + recalculationPlan.target.name + " (" + actor.specificLocation.name + ")-----------------------";
         log += "\nGOAL ACTION: " + recalculationPlan.endNode.action.goapName + " - " + recalculationPlan.endNode.action.poiTarget.name;
         log += "\nUSABLE ACTIONS: ";
         if (usableActions.Count > 0) {
@@ -115,8 +115,9 @@ public class GoapThread : Multithread {
             } else {
                 log += "\nFAILED TO RECALCULATE PLAN!";
             }
+        } else {
+            log += "\nNO USABLE ACTIONS! FAILED TO RECALCULATE PLAN!";
         }
-        log += "\nNO USABLE ACTIONS! FAILED TO RECALCULATE PLAN!";
     }
     public void ReturnPlanFromGoapThread() {
         actor.ReceivePlanFromGoapThread(this);
