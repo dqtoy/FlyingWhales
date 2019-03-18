@@ -191,7 +191,7 @@ public class CharacterRelationshipData {
           - ticks every day until the characters share the same non-Wilderness or non-Dungeon structure
           - in Wilderness or Dungeon, will reset this if either this character or target becomes part of the same event (either being the actor, target or reacting to it)
          */
-        if (owner.currentStructure.structureType != STRUCTURE_TYPE.DUNGEON 
+        if (owner.currentStructure != null && owner.currentStructure.structureType != STRUCTURE_TYPE.DUNGEON 
             && owner.currentStructure.structureType != STRUCTURE_TYPE.WILDERNESS) {
             if (owner.currentStructure == targetCharacter.currentStructure) {
                 ResetLastEncounter();

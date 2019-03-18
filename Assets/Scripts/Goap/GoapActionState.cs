@@ -42,6 +42,7 @@ public class GoapActionState {
 
     public void Execute() {
         preEffect?.Invoke();
+        descriptionLog.SetDate(GameManager.Instance.Today());
         descriptionLog.AddLogToInvolvedObjects();
 
         if(duration > 0) {
