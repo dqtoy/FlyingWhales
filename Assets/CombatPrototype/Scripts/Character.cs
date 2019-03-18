@@ -4058,6 +4058,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     targetCharacter.AdjustIsWaitingForInteraction(-1);
                 }
                 RecalculatePlan(plan);
+                StartDailyGoapPlanGeneration();
                 //SchedulePerformGoapPlans();
             }
         }
@@ -4103,6 +4104,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         } else if(result == InteractionManager.Goap_State_Fail) {
             log += "\nFailed to perform action. Will try to recalculate plan...";
             RecalculatePlan(plan);
+            StartDailyGoapPlanGeneration();
             //SchedulePerformGoapPlans();
             //if (!RecalculatePlan(plan)) {
             //    log += "\nFailed to recalculate plan! Will now drop plan...";
