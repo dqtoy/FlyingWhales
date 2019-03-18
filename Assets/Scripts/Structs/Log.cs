@@ -136,6 +136,12 @@ public class Log {
         //}
         return string.Empty;
     }
+    public void SetDate(GameDate date) {
+        this.month = (MONTH)date.month;
+        this.day = date.day;
+        this.year = date.year;
+        this.tick = date.tick;
+    }
     #endregion
 
     #region Intel
