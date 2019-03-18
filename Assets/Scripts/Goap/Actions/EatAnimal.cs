@@ -14,7 +14,7 @@ public class EatAnimal : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = actor });
     }
     public override void PerformActualAction() {
-        if (poiTarget.gridTileLocation.structure == actor.gridTileLocation.structure) {
+        if (targetStructure == actor.gridTileLocation.structure) {
             if(poiTarget.state != POI_STATE.INACTIVE) {
                 SetState("Eat Success");
             } else {
@@ -36,7 +36,7 @@ public class EatAnimal : GoapAction {
 
     #region Effects
     private void PreEatSuccess() {
-        currentState.AddLogFiller(poiTarget.gridTileLocation.structure.location, poiTarget.gridTileLocation.structure.ToString(), LOG_IDENTIFIER.LANDMARK_1);
+        currentState.AddLogFiller(targetStructure.location, targetStructure.ToString(), LOG_IDENTIFIER.LANDMARK_1);
         poiTarget.SetPOIState(POI_STATE.INACTIVE);
         //actor.AddTrait("Eating");
     }
@@ -47,10 +47,10 @@ public class EatAnimal : GoapAction {
         poiTarget.SetPOIState(POI_STATE.ACTIVE);
     }
     private void PreEatFail() {
-        currentState.AddLogFiller(poiTarget.gridTileLocation.structure.location, poiTarget.gridTileLocation.structure.ToString(), LOG_IDENTIFIER.LANDMARK_1);
+        currentState.AddLogFiller(targetStructure.location, targetStructure.ToString(), LOG_IDENTIFIER.LANDMARK_1);
     }
     private void PreTargetMissing() {
-        currentState.AddLogFiller(poiTarget.gridTileLocation.structure.location, poiTarget.gridTileLocation.structure.ToString(), LOG_IDENTIFIER.LANDMARK_1);
+        currentState.AddLogFiller(targetStructure.location, targetStructure.ToString(), LOG_IDENTIFIER.LANDMARK_1);
     }
     private void AfterTargetMissing() {
         actor.RemoveAwareness(poiTarget);

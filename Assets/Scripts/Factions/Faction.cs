@@ -417,7 +417,7 @@ public class Faction {
         Debug.Log(GameManager.Instance.TodayLogString() + "LEADER Generated Lvl. " + leader.level.ToString() +
                 " character " + leader.characterClass.className + " " + leader.name + " at " + this.name + " for faction " + leader.name);
 
-        if(_name == "Fyn") {
+        if (_name == "Fyn") {
             //Male Human King with **3 Human Soldiers** as his servants
             for (int i = 0; i < 3; i++) {
                 Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.HUMANS, Utilities.GetRandomGender(),
@@ -507,7 +507,7 @@ public class Faction {
             //**2 Skeleton Adventurers** and **2 Goblin Adventurers**
             //**3 Goblin Civilians**
             for (int i = 0; i < 3; i++) {
-                if(i < 2) {
+                if (i < 2) {
                     Character skeletonSoldier = CharacterManager.Instance.CreateNewCharacter(CharacterRole.ADVENTURER, RACE.SKELETON, Utilities.GetRandomGender(),
                             this, _ownedAreas[0]);
                     skeletonSoldier.LevelUp(citizensLevel - 1);

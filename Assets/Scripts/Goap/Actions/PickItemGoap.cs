@@ -14,7 +14,7 @@ public class PickItemGoap : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = poiTarget, targetPOI = actor });
     }
     public override void PerformActualAction() {
-        if (poiTarget.gridTileLocation.structure == actor.gridTileLocation.structure) {
+        if (targetStructure  == actor.gridTileLocation.structure) {
             SetState("Take Success");
         } else {
             SetState("Target Missing");
@@ -35,14 +35,14 @@ public class PickItemGoap : GoapAction {
     #region State Effects
     public void PreTakeSuccess() {
         currentState.AddLogFiller(poiTarget as SpecialToken, poiTarget.name, LOG_IDENTIFIER.ITEM_1);
-        currentState.AddLogFiller(poiTarget.gridTileLocation.structure.location, poiTarget.gridTileLocation.structure.ToString(), LOG_IDENTIFIER.LANDMARK_1);
+        currentState.AddLogFiller(targetStructure.location, targetStructure.ToString(), LOG_IDENTIFIER.LANDMARK_1);
     }
     public void AfterTakeSuccess() {
         actor.PickUpToken(poiTarget as SpecialToken);
     }
     public void PreTargetMissing() {
         currentState.AddLogFiller(poiTarget as SpecialToken, poiTarget.name, LOG_IDENTIFIER.ITEM_1);
-        currentState.AddLogFiller(poiTarget.gridTileLocation.structure.location, poiTarget.gridTileLocation.structure.ToString(), LOG_IDENTIFIER.LANDMARK_1);
+        currentState.AddLogFiller(targetStructure.location, targetStructure.ToString(), LOG_IDENTIFIER.LANDMARK_1);
     }
     public void AfterTargetMissing() {
         actor.RemoveAwareness(poiTarget);

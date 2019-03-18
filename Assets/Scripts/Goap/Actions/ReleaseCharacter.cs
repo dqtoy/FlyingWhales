@@ -17,7 +17,7 @@ public class ReleaseCharacter : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Restrained", targetPOI = poiTarget });
     }
     public override void PerformActualAction() {
-        if (poiTarget.gridTileLocation.structure == actor.gridTileLocation.structure) {
+        if (targetStructure == actor.gridTileLocation.structure) {
             SetState("Release Success");
         } else {
             SetState("Target Missing");

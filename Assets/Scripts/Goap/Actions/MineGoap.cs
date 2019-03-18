@@ -19,7 +19,7 @@ public class MineGoap : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_SUPPLY, conditionKey = MAX_SUPPLY, targetPOI = actor });
     }
     public override void PerformActualAction() {
-        if (poiTarget.gridTileLocation != null && poiTarget.gridTileLocation.structure == actor.gridTileLocation.structure) {
+        if (poiTarget.gridTileLocation != null && targetStructure == actor.gridTileLocation.structure) {
             SetState("Mine Success");
         } else {
             SetState("Target Missing");
@@ -44,7 +44,7 @@ public class MineGoap : GoapAction {
             _gainedSupply = ore.GetSupplyPerMine();
         }
         currentState.AddLogFiller(null, _gainedSupply.ToString(), LOG_IDENTIFIER.STRING_1);
-        currentState.AddLogFiller(poiTarget.gridTileLocation.structure.location, poiTarget.gridTileLocation.structure.ToString(), LOG_IDENTIFIER.LANDMARK_1);
+        currentState.AddLogFiller(targetStructure.location, targetStructure.ToString(), LOG_IDENTIFIER.LANDMARK_1);
     }
     public void AfterMineSuccess() {
         if (poiTarget is Ore) {
@@ -54,7 +54,7 @@ public class MineGoap : GoapAction {
         }
     }
     public void PreTargetMissing() {
-        currentState.AddLogFiller(poiTarget.gridTileLocation.structure.location, poiTarget.gridTileLocation.structure.ToString(), LOG_IDENTIFIER.LANDMARK_1);
+        currentState.AddLogFiller(targetStructure.location, targetStructure.ToString(), LOG_IDENTIFIER.LANDMARK_1);
     }
     public void AfterTargetMissing() {
         actor.RemoveAwareness(poiTarget);
