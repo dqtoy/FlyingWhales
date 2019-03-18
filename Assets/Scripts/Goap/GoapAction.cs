@@ -10,7 +10,7 @@ public class GoapAction {
     public string goapName { get; private set; }
     public IPointOfInterest poiTarget { get; private set; }
     public Character actor { get; private set; }
-    public int cost { get { return GetCost(); } }
+    public int cost { get { return GetCost() + GetDistanceCost(); } }
     public List<Precondition> preconditions { get; private set; }
     public List<GoapEffect> expectedEffects { get; private set; }
     public virtual LocationStructure targetStructure { get { return poiTarget.gridTileLocation.structure; } }
@@ -194,6 +194,18 @@ public class GoapAction {
     }
     public void SetIsStopped(bool state) {
         isStopped = state;
+    }
+    public int GetDistanceCost() {
+        if(actor.specificLocation != targetStructure.location) {
+            return 3;
+        } else {
+            LocationGridTile tile = targetTile;
+            if(tile == null) {
+                tile = poiTarget.gridTileLocation;
+            }
+            int distance = Mathf.RoundToInt(actor.gridTileLocation.GetDistanceTo(tile));
+            return distance / 6;
+        }
     }
     #endregion
 
