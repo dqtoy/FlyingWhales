@@ -70,7 +70,7 @@ public class SupplyPile : TileObject, IPointOfInterest {
     }
 
     public override string ToString() {
-        return "Supply Pile";
+        return "Supply Pile " + id.ToString();
     }
 
     #region Area Map

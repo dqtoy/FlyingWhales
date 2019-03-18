@@ -6,9 +6,7 @@ using UnityEngine;
 public class Daydream : GoapAction {
 
     private LocationStructure _targetStructure;
-    private LocationGridTile _targetTile;
     public override LocationStructure targetStructure { get { return _targetStructure; } }
-    public override LocationGridTile targetTile { get { return _targetTile; } }
 
     public Daydream(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.DAYDREAM, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
     }
@@ -18,7 +16,7 @@ public class Daydream : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
     }
     public override void PerformActualAction() {
-        if (_targetTile.tileState == LocationGridTile.Tile_State.Occupied) {
+        if (targetTile.tileState == LocationGridTile.Tile_State.Occupied) {
             SetState("Daydream Failed");
         } else {
             SetState("Daydream Success");
@@ -34,7 +32,7 @@ public class Daydream : GoapAction {
         List<LocationStructure> choices = actor.specificLocation.GetStructuresOfType(STRUCTURE_TYPE.WILDERNESS).Where(x => x.unoccupiedTiles.Count > 0).ToList();
         choices.AddRange(actor.specificLocation.GetStructuresOfType(STRUCTURE_TYPE.WORK_AREA).Where(x => x.unoccupiedTiles.Count > 0));
         _targetStructure = choices[Random.Range(0, choices.Count)];
-        _targetTile = _targetStructure.GetRandomUnoccupiedTile();
+        targetTile = _targetStructure.GetRandomUnoccupiedTile();
         base.DoAction(plan);
     }
     public override bool IsHalted() {

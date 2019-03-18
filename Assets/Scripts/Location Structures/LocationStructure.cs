@@ -51,22 +51,6 @@ public class LocationStructure {
         //}
     }
 
-    #region Utilities
-    public void SetInsideState(bool isInside) {
-        this.isInside = isInside;
-    }
-    public void DestroyStructure() {
-        _location.RemoveStructure(this);
-        RemoveListeners();
-    }
-    private void AddListeners() {
-        //Messenger.AddListener(Signals.DAY_STARTED, SpawnFoodOnStartDay);
-    }
-    private void RemoveListeners() {
-        //Messenger.RemoveListener(Signals.DAY_STARTED, SpawnFoodOnStartDay);
-    }
-    #endregion
-
     #region Residents
     public virtual bool IsOccupied() {
         return false; //will only ever use this in dwellings, to prevent need for casting
@@ -386,6 +370,43 @@ public class LocationStructure {
             return null;
         }
         return unoccupiedTiles[Random.Range(0, unoccupiedTiles.Count)];
+    }
+    #endregion
+
+    #region Utilities
+    public void SetInsideState(bool isInside) {
+        this.isInside = isInside;
+    }
+    public void DestroyStructure() {
+        _location.RemoveStructure(this);
+        RemoveListeners();
+    }
+    private void AddListeners() {
+        //Messenger.AddListener(Signals.DAY_STARTED, SpawnFoodOnStartDay);
+    }
+    private void RemoveListeners() {
+        //Messenger.RemoveListener(Signals.DAY_STARTED, SpawnFoodOnStartDay);
+    }
+    /// <summary>
+    /// Get the structure's name based on specified rules.
+    /// Rules are at - https://trello.com/c/mRzzH9BE/1432-location-naming-convention
+    /// </summary>
+    /// <param name="character">The character requesting the name</param>
+    public virtual string GetNameRelativeTo(Character character) {
+        switch (structureType) {
+            case STRUCTURE_TYPE.INN:
+                return "at the inn";
+            case STRUCTURE_TYPE.WAREHOUSE:
+                return "at the " + location.name + " warehouse";
+            case STRUCTURE_TYPE.WILDERNESS:
+                return "outside of " + location.name;
+            case STRUCTURE_TYPE.DUNGEON:
+            case STRUCTURE_TYPE.WORK_AREA:
+            case STRUCTURE_TYPE.EXPLORE_AREA:
+                return "in " + location.name;
+            default:
+                return ToString();
+        }
     }
     #endregion
 

@@ -57,6 +57,9 @@ public class SmallAnimal : TileObject, IPointOfInterest {
     public void SetPOIState(POI_STATE state) {
         _state = state;
     }
+    public override string ToString() {
+        return "Small Animal " + id.ToString();
+    }
     #endregion
 
     #region Interface

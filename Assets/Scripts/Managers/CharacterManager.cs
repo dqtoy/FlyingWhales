@@ -36,6 +36,7 @@ public class CharacterManager : MonoBehaviour {
     public Material hsvMaterial;
 
     [Header("Character Marker Assets")]
+    [SerializeField] private List<RaceMarkerAssets> markerAssets;
 
     [Header("Character Role Animators")]
     [SerializeField] private RuntimeAnimatorController[] characterAnimators;
@@ -1126,6 +1127,25 @@ public class CharacterManager : MonoBehaviour {
             }
         }
         return -1;
+    }
+    #endregion
+
+    #region Marker Assets
+    public MarkerAsset GetMarkerAsset(RACE race, GENDER gender) {
+        for (int i = 0; i < markerAssets.Count; i++) {
+            RaceMarkerAssets currRaceAsset = markerAssets[i];
+            if (currRaceAsset.race == race) {
+                MarkerAsset asset = currRaceAsset.maleAssets;
+                if (gender == GENDER.FEMALE) {
+                    asset  = currRaceAsset.femaleAssets;
+                }
+                return asset;
+            }
+        }
+        if (gender == GENDER.FEMALE) {
+            return markerAssets[0].femaleAssets;
+        }
+        return markerAssets[0].maleAssets;
     }
     #endregion
 

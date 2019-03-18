@@ -56,14 +56,14 @@ public class EatAtTable : GoapAction {
 
     #region Effects
     private void PreEatSuccess() {
-        currentState.AddLogFiller(targetStructure.location, targetStructure.ToString(), LOG_IDENTIFIER.LANDMARK_1);
+        currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
         //actor.AddTrait("Eating");
     }
     private void PerTickEatSuccess() {
         actor.AdjustFullness(10);
     }
     private void PreEatPoisoned() {
-        currentState.AddLogFiller(targetStructure.location, targetStructure.ToString(), LOG_IDENTIFIER.LANDMARK_1);
+        currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
         //actor.AddTrait("Eating");
         //Remove poisoned trait from table
         //TODO: ADD TRAITS AT IPOINTOFINTEREST
@@ -81,7 +81,7 @@ public class EatAtTable : GoapAction {
         //TODO: DIFFERENT DESCRIPTION LOGS IN SAME STATE
     }
     private void PreTargetMissing() {
-        currentState.AddLogFiller(targetStructure.location, targetStructure.ToString(), LOG_IDENTIFIER.LANDMARK_1);
+        currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
     }
     private void AfterTargetMissing() {
         actor.RemoveAwareness(poiTarget);

@@ -4,10 +4,12 @@ using UnityEngine;
 
 public class TileObject {
 
+    public int id { get; private set; }
     public IPointOfInterest owner { get; private set; }
     public TILE_OBJECT_TYPE tileObjectType { get; private set; }
 
     protected void Initialize(IPointOfInterest owner, TILE_OBJECT_TYPE tileObjectType) {
+        id = Utilities.SetID(this);
         this.owner = owner;
         this.tileObjectType = tileObjectType;
     }

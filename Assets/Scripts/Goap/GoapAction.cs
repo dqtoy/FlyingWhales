@@ -14,7 +14,7 @@ public class GoapAction {
     public List<Precondition> preconditions { get; private set; }
     public List<GoapEffect> expectedEffects { get; private set; }
     public virtual LocationStructure targetStructure { get { return poiTarget.gridTileLocation.structure; } }
-    public virtual LocationGridTile targetTile { get { return null; } }
+    public LocationGridTile targetTile { get; protected set; }
     public Dictionary<string, GoapActionState> states { get; protected set; }
     public List<GoapEffect> actualEffects { get; private set; } //stores what really happened. NOTE: Only storing relevant data to share intel, no need to store everything that happened.
     public Log thoughtBubbleLog { get; private set; }
@@ -23,6 +23,7 @@ public class GoapAction {
     public bool isStopped { get; private set; }
     public bool isPerformingActualAction { get; private set; }
     public bool isDone { get; private set; }
+    public ACTION_LOCATION_TYPE actionLocationType { get; protected set; } //This is set in every action's constructor
 
     protected Func<bool> _requirementAction;
     protected System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
@@ -40,6 +41,7 @@ public class GoapAction {
         preconditions = new List<Precondition>();
         expectedEffects = new List<GoapEffect>();
         actualEffects = new List<GoapEffect>();
+        actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
         actionSummary = GameManager.Instance.TodayLogString() + actor.name + " created " + goapType.ToString() + " action, targetting " + poiTarget?.ToString() ?? "Nothing";
         Initialize();
     }
@@ -115,20 +117,38 @@ public class GoapAction {
             }
         }
     }
+
+    ///<summary>
+    ///This is called when the actor decides to do this specific action.
+    ///All movement related actions should be done here.
+    ///</summary>
+    ///<param name="plan">Plan where this action came from.</param>
     public virtual void DoAction(GoapPlan plan) {
         CreateStates(); //Not sure if this is the best place for this.
         actor.SetCurrentAction(this);
+
+        //if the current target is a character, make him/her wait for this action
         if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
             Character targetCharacter = poiTarget as Character;
             targetCharacter.AdjustIsWaitingForInteraction(1);
         }
-        //ReserveTarget(); //Removed this because all objects will be reserved when the plan
+
+        //if the specified target tile is null. Use the default means to get the target tile. (Uses Action Location Type)
+        if (targetTile == null) {
+            targetTile = GetTargetLocationTile();
+        }
+
+        //if the actor is NOT at the area where the target structure is, make him/her go there first.
         if (actor.specificLocation != targetStructure.location) {
             actor.currentParty.GoToLocation(targetStructure.location, PATHFINDING_MODE.NORMAL, targetStructure, () => actor.PerformGoapAction(plan), null, null, poiTarget, targetTile);
         } else {
+            //if the actor is already at the area where the target structure is, just make the actor move to the specified target structure (ususally the structure where the poiTarget is at).
             actor.MoveToAnotherStructure(targetStructure, targetTile, poiTarget, () => actor.PerformGoapAction(plan));
             //actor.PerformGoapAction(plan);
         }
+    }
+    public virtual LocationGridTile GetTargetLocationTile() {
+        return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, poiTarget, targetStructure);
     }
     #endregion
 

@@ -44,7 +44,7 @@ public class MineGoap : GoapAction {
             _gainedSupply = ore.GetSupplyPerMine();
         }
         currentState.AddLogFiller(null, _gainedSupply.ToString(), LOG_IDENTIFIER.STRING_1);
-        currentState.AddLogFiller(targetStructure.location, targetStructure.ToString(), LOG_IDENTIFIER.LANDMARK_1);
+        currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
     }
     public void AfterMineSuccess() {
         if (poiTarget is Ore) {
@@ -54,7 +54,7 @@ public class MineGoap : GoapAction {
         }
     }
     public void PreTargetMissing() {
-        currentState.AddLogFiller(targetStructure.location, targetStructure.ToString(), LOG_IDENTIFIER.LANDMARK_1);
+        currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
     }
     public void AfterTargetMissing() {
         actor.RemoveAwareness(poiTarget);

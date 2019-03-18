@@ -30,7 +30,7 @@ public class MagicCircle : TileObject, IPointOfInterest {
     }
 
     public override string ToString() {
-        return "Magic Circle";
+        return "Magic Circle " + id.ToString();
     }
 
     #region Interface

@@ -30,7 +30,7 @@ public class Table : TileObject, IPointOfInterest {
     }
 
     public override string ToString() {
-        return "Table";
+        return "Table " + id.ToString();
     }
 
     #region Interface

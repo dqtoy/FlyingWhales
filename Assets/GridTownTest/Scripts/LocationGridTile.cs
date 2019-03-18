@@ -253,6 +253,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     #region Intel
     public void OnClickTileActions(PointerEventData.InputButton inputButton) {
         Messenger.Broadcast(Signals.HIDE_MENUS);
+        //Comment Reason: Used this to quickly set a tiles state from occupied to empty and vice versa.
         //if (inputButton == PointerEventData.InputButton.Right) {
         //    if (tileState == Tile_State.Occupied) {
         //        SetTileState(Tile_State.Empty);
@@ -263,13 +264,6 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         //}
         if (objHere is TileObject || objHere is SpecialToken) {
             parentAreaMap.ShowIntelItemAt(this, InteractionManager.Instance.CreateNewIntel(objHere));
-            //PlayerManager.Instance.player.AddIntel();
-            LocationGridTile nearestTile = objHere.GetNearestUnoccupiedTileFromThis();
-            if (nearestTile != null) {
-                parentAreaMap.QuicklyHighlightTile(nearestTile);
-            } else {
-                Debug.LogWarning(objHere.ToString() + " does not have a nearest unoccupied tile!");
-            }
         } else if (objHere is Character) {
             UIManager.Instance.ShowCharacterInfo(objHere as Character);
             LocationGridTile nearestTile = objHere.GetNearestUnoccupiedTileFromThis();

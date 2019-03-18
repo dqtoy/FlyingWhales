@@ -57,7 +57,7 @@ public class Sleep : GoapAction {
 
     #region State Effects
     private void PreRestSuccess() {
-        currentState.AddLogFiller(targetStructure.location, targetStructure.ToString(), LOG_IDENTIFIER.LANDMARK_1);
+        currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
         poiTarget.SetPOIState(POI_STATE.INACTIVE);
         //actor.AddTrait("Resting");
     }
@@ -68,10 +68,10 @@ public class Sleep : GoapAction {
         poiTarget.SetPOIState(POI_STATE.ACTIVE);
     }
     private void PreRestFail() {
-        currentState.AddLogFiller(targetStructure.location, targetStructure.ToString(), LOG_IDENTIFIER.LANDMARK_1);
+        currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
     }
     private void PreTargetMissing() {
-        currentState.AddLogFiller(targetStructure.location, targetStructure.ToString(), LOG_IDENTIFIER.LANDMARK_1);
+        currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
     }
     //private void AfterTargetMissing() {
     //    actor.RemoveAwareness(poiTarget);
