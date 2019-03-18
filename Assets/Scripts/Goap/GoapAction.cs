@@ -187,7 +187,9 @@ public class GoapAction {
             actor.DropPlan(parentPlan);
             actor.StartDailyGoapPlanGeneration();
         }
-        UIManager.Instance.characterInfoUI.UpdateBasicInfo();
+        if (UIManager.Instance.characterInfoUI.isShowing) {
+            UIManager.Instance.characterInfoUI.UpdateBasicInfo();
+        }
         Messenger.Broadcast<GoapAction>(Signals.STOP_ACTION, this);
     }
     public void SetIsStopped(bool state) {

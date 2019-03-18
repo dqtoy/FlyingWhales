@@ -171,7 +171,9 @@ public class CharacterMarker : PooledObject {
         if (Messenger.eventTable.ContainsKey(Signals.TICK_STARTED)) {
             Messenger.RemoveListener(Signals.TICK_STARTED, EstimatedMove);
         }
-        Messenger.RemoveListener<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, OnTileOccupied);
+        if (Messenger.eventTable.ContainsKey(Signals.TICK_STARTED)) {
+            Messenger.RemoveListener<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, OnTileOccupied);
+        }
         if (character.currentParty != null && character.currentParty.icon != null) {
             character.currentParty.icon.SetIsTravelling(false);
         }
@@ -185,6 +187,7 @@ public class CharacterMarker : PooledObject {
         }
         //check if the marker should recalculate path
         if (shouldRecalculatePath) {
+            Debug.Log(GameManager.Instance.TodayLogString() + this.character.name + "'s marker must recalculate path towards " + _targetPOI.name + "!");
             LocationGridTile nearestTileToTarget = _targetPOI.GetNearestUnoccupiedTileFromThis();
             shouldRecalculatePath = false;
             character.gridTileLocation.structure.location.areaMap.RemoveCharacter(character.gridTileLocation, character);

@@ -815,7 +815,11 @@ public class UIManager : MonoBehaviour {
         //}
         this.gameObject.SetActive(state);
     }
+    public void DateHover() {
+        ShowSmallInfo("Day: " +  GameManager.Instance.continuousDays.ToString() + " Tick: " + GameManager.Instance.tick.ToString());
+    }
     #endregion
+
     #region Area Info
     [Space(10)]
     [Header("Area Info")]
