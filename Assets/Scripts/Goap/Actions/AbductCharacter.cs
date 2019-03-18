@@ -15,7 +15,7 @@ public class AbductCharacter : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Abducted", targetPOI = poiTarget });
     }
     public override void PerformActualAction() {
-        if (poiTarget.gridTileLocation.structure == actor.gridTileLocation.structure) {
+        if (targetStructure == actor.gridTileLocation.structure) {
             SetState("Abduct Success");
         } else {
             SetState("Target Missing");
@@ -30,7 +30,7 @@ public class AbductCharacter : GoapAction {
         //if(timeInWords == TIME_IN_WORDS.EARLY_NIGHT || timeInWords == TIME_IN_WORDS.LATE_NIGHT || timeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
         //    return false;
         //}
-        if(poiTarget.gridTileLocation.structure.structureType == STRUCTURE_TYPE.WILDERNESS || poiTarget.gridTileLocation.structure.charactersHere.Count == 2) {
+        if(targetStructure.structureType == STRUCTURE_TYPE.WILDERNESS || targetStructure.charactersHere.Count == 2) {
             return false;
         }
         return true;

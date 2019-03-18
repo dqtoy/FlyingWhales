@@ -14,7 +14,7 @@ public class Sleep : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = null, targetPOI = actor });
     }
     public override void PerformActualAction() {
-        if (poiTarget.gridTileLocation.structure == actor.gridTileLocation.structure) {
+        if (targetStructure == actor.gridTileLocation.structure) {
             if (poiTarget.state != POI_STATE.INACTIVE) {
                 SetState("Rest Success");
             } else {
@@ -26,7 +26,7 @@ public class Sleep : GoapAction {
         base.PerformActualAction();
     }
     protected override int GetCost() {
-        Dwelling dwelling = poiTarget.gridTileLocation.structure as Dwelling;
+        Dwelling dwelling = targetStructure as Dwelling;
         if (dwelling.residents.Contains(actor)) {
             return 1;
         } else {
@@ -48,7 +48,7 @@ public class Sleep : GoapAction {
 
     #region Requirements
     protected bool Requirement() {
-        if(poiTarget.gridTileLocation.structure.structureType == STRUCTURE_TYPE.DWELLING && poiTarget.state == POI_STATE.ACTIVE) {
+        if(targetStructure.structureType == STRUCTURE_TYPE.DWELLING && poiTarget.state == POI_STATE.ACTIVE) {
             return true;
         }
         return false;
@@ -57,7 +57,7 @@ public class Sleep : GoapAction {
 
     #region State Effects
     private void PreRestSuccess() {
-        currentState.AddLogFiller(poiTarget.gridTileLocation.structure.location, poiTarget.gridTileLocation.structure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
+        currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
         poiTarget.SetPOIState(POI_STATE.INACTIVE);
         //actor.AddTrait("Resting");
     }
@@ -68,10 +68,10 @@ public class Sleep : GoapAction {
         poiTarget.SetPOIState(POI_STATE.ACTIVE);
     }
     private void PreRestFail() {
-        currentState.AddLogFiller(poiTarget.gridTileLocation.structure.location, poiTarget.gridTileLocation.structure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
+        currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
     }
     private void PreTargetMissing() {
-        currentState.AddLogFiller(poiTarget.gridTileLocation.structure.location, poiTarget.gridTileLocation.structure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
+        currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
     }
     //private void AfterTargetMissing() {
     //    actor.RemoveAwareness(poiTarget);

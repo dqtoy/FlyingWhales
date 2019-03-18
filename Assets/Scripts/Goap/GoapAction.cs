@@ -204,8 +204,9 @@ public class GoapAction {
         if(isPerformingActualAction && !isDone) {
             ReturnToActorTheActionResult(InteractionManager.Goap_State_Fail);
         } else {
-            actor.DropPlan(parentPlan);
-            actor.StartDailyGoapPlanGeneration();
+            if (!actor.DropPlan(parentPlan)) {
+                actor.PlanGoapActions();
+            }
         }
         if (UIManager.Instance.characterInfoUI.isShowing) {
             UIManager.Instance.characterInfoUI.UpdateBasicInfo();

@@ -982,6 +982,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.ARGUE_CHARACTER:
                 goapAction = new ArgueCharacter(actor, target);
                 break;
+            case INTERACTION_TYPE.STROLL:
+                goapAction = new Stroll(actor, target);
+                break;
         }
         return goapAction;
     }

@@ -533,7 +533,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 #endif
         ConstructInitialGoapAdvertisementActions();
         SubscribeToSignals();
-        StartDailyGoapPlanGeneration();
+        //StartDailyGoapPlanGeneration();
+        GameDate gameDate = GameManager.Instance.Today();
+        gameDate.AddTicks(1);
+        SchedulingManager.Instance.AddEntry(gameDate, () => PlanGoapActions());
     }
     public void Initialize() {
     }
@@ -2765,8 +2768,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public void StartDailyGoapPlanGeneration() {
         if (!_activateDailyGoapPlanInteraction) {
             _activateDailyGoapPlanInteraction = true;
-            SetDailyGoapGenerationTick();
-            Messenger.AddListener(Signals.TICK_STARTED, DailyGoapPlanGeneration);
+            PlanGoapActions();
+            //SetDailyGoapGenerationTick();
+            //Messenger.AddListener(Signals.TICK_STARTED, DailyGoapPlanGeneration);
         }
         //_currentInteractionTick = GameManager.Instance.tick;
         //DailyGoapPlanGeneration();
@@ -2774,7 +2778,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public void StopDailyGoapPlanGeneration() {
         if (_activateDailyGoapPlanInteraction) {
             _activateDailyGoapPlanInteraction = false;
-            Messenger.RemoveListener(Signals.TICK_STARTED, DailyGoapPlanGeneration);
+            //Messenger.RemoveListener(Signals.TICK_STARTED, DailyGoapPlanGeneration);
         }
     }
     private void DailyGoapPlanGeneration() {
@@ -2794,33 +2798,45 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         _currentInteractionTick = UnityEngine.Random.Range(startDay, startDay + 6);
     }
-    private void PlanGoapActions() {
+    public void PlanGoapActions() {
         if (isDead) {
-            StopDailyGoapPlanGeneration();
+            //StopDailyGoapPlanGeneration();
             return;
         }
-        if (!IsInOwnParty() || isDefender || ownParty.icon.isTravelling || _doNotDisturb > 0 || _job == null || isWaitingForInteraction > 0) {
+        if (minion != null || !IsInOwnParty() || isDefender || ownParty.icon.isTravelling || _doNotDisturb > 0 || _job == null || isWaitingForInteraction > 0) {
             return; //if this character is not in own party, is a defender or is travelling or cannot be disturbed, do not generate interaction
         }
-        //PlanFullnessRecoveryActions();
-        //PlanTirednessRecoveryActions();
+
         if(allGoapPlans.Count > 0) {
-            StopDailyGoapPlanGeneration();
+            //StopDailyGoapPlanGeneration();
             PerformGoapPlans();
             //SchedulePerformGoapPlans();
         } else {
-            OtherPlanCreations();
-            //Plan actions?
+            IdlePlans();
         }
-        //SchedulePerformGoapPlans();
     }
-    private void OtherPlanCreations() {
+    private void IdlePlans() {
+        if (!OtherPlanCreations()) {
+            if (!PlanFullnessRecoveryActions()) {
+                if (!PlanTirednessRecoveryActions()) {
+                    if (!PlanHappinessRecoveryActions()) {
+                        if (!PlanWorkActions()) {
+                            PlanIdleStroll();
+                            PlanGoapActions();
+                        }
+                    }
+                }
+            }
+        }
+    }
+    private bool OtherPlanCreations() {
         int chance = UnityEngine.Random.Range(0, 100);
         if (GetTrait("Berserker") != null) {
             if(chance < 15) {
                 Character target = specificLocation.GetRandomCharacterAtLocationExcept(this);
                 if (target != null) {
                     StartGOAP(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_NON_POSITIVE_TRAIT, conditionKey = "Disabler", targetPOI = target }, target);
+                    return true;
                 }
             } else {
                 chance = UnityEngine.Random.Range(0, 100);
@@ -2828,12 +2844,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     IPointOfInterest target = specificLocation.GetRandomTileObject();
                     if (target != null) {
                         StartGOAP(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.DESTROY, conditionKey = target, targetPOI = target }, target);
+                        return true;
                     }
                 }
             }
         }
+        return false;
     }
-    private void PlanFullnessRecoveryActions() {
+    private bool PlanFullnessRecoveryActions() {
         TIME_IN_WORDS currentTimeInWords = GameManager.GetCurrentTimeInWordsOfTick();
         Trait hungryOrStarving = GetTraitOr("Starving", "Hungry");
 
@@ -2851,11 +2869,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
             if (chance < value) {
                 StartGOAP(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, this, true);
-                //return;
+                return true;
             }
         }
+        return false;
     }
-    private void PlanTirednessRecoveryActions() {
+    private bool PlanTirednessRecoveryActions() {
         TIME_IN_WORDS currentTimeInWords = GameManager.GetCurrentTimeInWordsOfTick();
         Trait tiredOrExhausted = GetTraitOr("Exhausted", "Tired");
 
@@ -2873,11 +2892,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
             if (chance < value) {
                 StartGOAP(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = null, targetPOI = this }, this, true);
-                //return;
+                return true;
             }
         }
+        return false;
     }
-    private void PlanHappinessRecoveryActions() {
+    private bool PlanHappinessRecoveryActions() {
         TIME_IN_WORDS currentTimeInWords = GameManager.GetCurrentTimeInWordsOfTick();
         Trait lonelyOrForlorn = GetTraitOr("Forlorn", "Lonely");
 
@@ -2899,9 +2919,25 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
             if (chance < value) {
                 StartGOAP(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = null, targetPOI = this }, this, true);
-                //return;
+                return true;
             }
         }
+        return false;
+    }
+    private bool PlanWorkActions() {
+        if(this.faction.id != FactionManager.Instance.neutralFaction.id) {
+            //Plan work actions
+        }
+        return false;
+    }
+    private bool PlanIdleStroll() {
+        //Debug.Log("---------" + GameManager.Instance.TodayLogString() + "CREATING IDLE STROLL ACTION FOR " + name + "-------------");
+        Stroll goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.STROLL, this, this) as Stroll;
+        goapAction.SetTargetStructure(currentStructure);
+        GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
+        GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE });
+        allGoapPlans.Add(goapPlan);
+        return true;
     }
     public void SetForcedInteraction(Interaction interaction) {
         _forcedInteraction = interaction;
@@ -3870,6 +3906,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         poiGoapActions.Add(INTERACTION_TYPE.ASSAULT_ACTION_NPC);
         poiGoapActions.Add(INTERACTION_TYPE.DROP_CHARACTER);
         poiGoapActions.Add(INTERACTION_TYPE.ABDUCT_ACTION);
+        poiGoapActions.Add(INTERACTION_TYPE.STROLL);
     }
     public void StartGOAP(GoapEffect goal, IPointOfInterest target, bool isPriority = false, List<Character> otherCharactePOIs = null) {
         List<CharacterAwareness> characterTargetsAwareness = new List<CharacterAwareness>();
@@ -3981,13 +4018,18 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             log += "\n" + plan.currentNode.action.goapName;
             //check if current action can still find a destination tile towards the target POI
             bool hasValidDestination = false;
-            if (plan.currentNode.action.poiTarget.gridTileLocation.IsNeighbour(gridTileLocation)) {
+            if (plan.currentNode.action.targetTile != null) {
                 hasValidDestination = true;
             } else {
-                LocationGridTile destinationTile = plan.currentNode.action.poiTarget.GetNearestUnoccupiedTileFromThis();
-                hasValidDestination = destinationTile != null;
+                if (plan.currentNode.action.poiTarget.gridTileLocation.IsNeighbour(gridTileLocation)) {
+                    hasValidDestination = true;
+                } else {
+                    LocationGridTile destinationTile = plan.currentNode.action.poiTarget.GetNearestUnoccupiedTileFromThis();
+                    hasValidDestination = destinationTile != null;
+                }
+
             }
-            
+
             if (actorAllowedActions.Contains(plan.currentNode.action.goapType) && plan.currentNode.action.CanSatisfyRequirements() && hasValidDestination) {
                 if (plan.isBeingRecalculated) {
                     log += "\n - Plan is being recalculated, skipping...";
@@ -4001,26 +4043,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 if (!preconditionsSatisfied) {
                     log += "\n - Action's preconditions are not all satisfied, trying to recalculate plan...";
                     RecalculatePlan(plan);
-                    //bool canRecalculatePlan = RecalculatePlan(plan);
-                    //if (canRecalculatePlan) {
-                    //    log += "\n - Successfully recalculated plan! Doing action...";
-                    //    plan.currentNode.action.DoAction(plan);
-                    //    willGoIdleState = false;
-                    //    break;
-                    //} else {
-                    //    log += "\n - Failed to recalculate plan! Dropping plan...";
-                    //    if (allGoapPlans.Count == 1) {
-                    //        DropPlan(plan);
-                    //        willGoIdleState = false;
-                    //        break;
-                    //    } else {
-                    //        DropPlan(plan);
-                    //        i--;
-                    //    }
-                    //}
                 } else {
                     log += "\n - Action's preconditions are all satisfied, doing action...";
-
                     plan.currentNode.action.DoAction(plan);
                     willGoIdleState = false;
                     break;
@@ -4039,17 +4063,19 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         if (willGoIdleState) {
             log += "\nCHARACTER WILL GO INTO IDLE STATE";
-            StartDailyGoapPlanGeneration();
+            IdlePlans();
         }
-        Debug.Log(log);
+        //Debug.Log(log);
     }
     public void PerformGoapAction(GoapPlan plan) {
         string log = string.Empty;
         if (currentAction == null) {
             log = GameManager.Instance.TodayLogString() + name + " cancelled current action!";
             Debug.Log(log);
-            DropPlan(plan);
-            StartDailyGoapPlanGeneration();
+            if(!DropPlan(plan)) {
+                PlanGoapActions();
+            }
+            //StartDailyGoapPlanGeneration();
             return;
         }
         log = GameManager.Instance.TodayLogString() + name + " is performing goap action: " + currentAction.goapName;
@@ -4057,8 +4083,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (currentAction.isStopped) {
             log += "\n Action is stopped! Dropping plan...";
             SetCurrentAction(null);
-            DropPlan(plan);
-            StartDailyGoapPlanGeneration();
+            if (!DropPlan(plan)) {
+                PlanGoapActions();
+            }
         } else {
             if (currentAction.CanSatisfyRequirements() && currentAction.CanSatisfyAllPreconditions()) {
                 log += "\nSucessfully performed action " + currentAction.goapName + " to " + currentAction.poiTarget.name + " at " + currentAction.poiTarget.gridTileLocation.ToString();
@@ -4070,14 +4097,16 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     targetCharacter.AdjustIsWaitingForInteraction(-1);
                 }
                 RecalculatePlan(plan);
-                StartDailyGoapPlanGeneration();
+                IdlePlans();
+                //StartDailyGoapPlanGeneration();
                 //SchedulePerformGoapPlans();
             }
         }
-        Debug.Log(log);
+        //Debug.Log(log);
     }
     public void GoapActionResult(string result, GoapAction action) {
         string log = GameManager.Instance.TodayLogString() + name + " is done performing goap action: " + action.goapName;
+        Debug.Log(log);
         if (action == currentAction) {
             SetCurrentAction(null);
         }
@@ -4087,15 +4116,16 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         if (isDead) {
             log += "\nCharacter is dead!";
-            Debug.Log(log);
+            //Debug.Log(log);
             return;
         }
         GoapPlan plan = GetPlanWithAction(action);
         if (action.isStopped) {
             log += "\nAction is stopped!";
-            DropPlan(plan);
-            StartDailyGoapPlanGeneration();
-            Debug.Log(log);
+            if (!DropPlan(plan)) {
+                PlanGoapActions();
+            }
+            //Debug.Log(log);
             return;
         }
         if (result == InteractionManager.Goap_State_Success) {
@@ -4104,19 +4134,18 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             if (plan.currentNode == null) {
                 log += "\nThis action is the end of plan.";
                 //this means that this is the end goal so end this plan now
-                DropPlan(plan);
+                if (!DropPlan(plan)) {
+                    PlanGoapActions();
+                }
             } else {
                 log += "\nNext action for this plan: " + plan.currentNode.action.goapName;
-            }
-            if (allGoapPlans.Count > 0) {
                 PerformGoapPlans();
-            } else {
-                StartDailyGoapPlanGeneration();
             }
         } else if(result == InteractionManager.Goap_State_Fail) {
             log += "\nFailed to perform action. Will try to recalculate plan...";
             RecalculatePlan(plan);
-            StartDailyGoapPlanGeneration();
+            //StartDailyGoapPlanGeneration();
+            IdlePlans();
             //SchedulePerformGoapPlans();
             //if (!RecalculatePlan(plan)) {
             //    log += "\nFailed to recalculate plan! Will now drop plan...";
@@ -4128,12 +4157,15 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 
         //Debug.Log(log);
     }
-    public void DropPlan(GoapPlan plan) {
+    public bool DropPlan(GoapPlan plan) {
         allGoapPlans.Remove(plan);
         plan.EndPlan();
         if (allGoapPlans.Count <= 0) {
-            StartDailyGoapPlanGeneration();
+            PlanGoapActions();
+            return true;
+            //StartDailyGoapPlanGeneration();
         }
+        return false;
     }
     public GoapPlan GetPlanWithGoalEffect(GOAP_EFFECT_CONDITION goalEffect) {
         for (int i = 0; i < allGoapPlans.Count; i++) {
@@ -4155,7 +4187,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
 
     public void ReceivePlanFromGoapThread(GoapThread goapThread) {
-        Debug.Log(goapThread.log);
+        //Debug.Log(goapThread.log);
         if (goapThread.createdPlan != null) {
             if(goapThread.recalculationPlan == null) {
                 if (goapThread.isPriority) {
@@ -4164,6 +4196,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     allGoapPlans.Add(goapThread.createdPlan);
                 }
                 Messenger.Broadcast(Signals.CHARACTER_RECIEVED_PLAN, this, goapThread.createdPlan);
+                PlanGoapActions();
             } else {
                 //Receive plan recalculation
                 goapThread.createdPlan.SetIsBeingRecalculated(false);
@@ -4180,7 +4213,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 DropPlan(goapThread.recalculationPlan);
             } else {
                 if(allGoapPlans.Count <= 0) {
-                    StartDailyGoapPlanGeneration();
+                    //StartDailyGoapPlanGeneration();
+                    PlanGoapActions();
                 }
             }
         }
@@ -4206,7 +4240,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public void SetCurrentAction(GoapAction action) {
         currentAction = action;
         if (currentAction != null) {
-            Debug.Log(GameManager.Instance.TodayLogString() + this.name + " will do action " + action.goapType.ToString() + " to " + action.poiTarget.ToString());
+            //Debug.Log(GameManager.Instance.TodayLogString() + this.name + " will do action " + action.goapType.ToString() + " to " + action.poiTarget.ToString());
         }
     }
     #endregion

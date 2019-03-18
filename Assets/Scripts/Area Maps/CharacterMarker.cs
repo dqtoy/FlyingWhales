@@ -125,7 +125,7 @@ public class CharacterMarker : PooledObject {
             //If area map is showing, do pathfinding
             _currentPath = PathGenerator.Instance.GetPath(character.gridTileLocation, destinationTile, GRID_PATHFINDING_MODE.REALISTIC);
             if (_currentPath != null) {
-                Debug.LogWarning("Created path for " + character.name + " from " + character.gridTileLocation.ToString() + " to " + destinationTile.ToString());
+                //Debug.LogWarning("Created path for " + character.name + " from " + character.gridTileLocation.ToString() + " to " + destinationTile.ToString());
                 StartMovement();
             } else {
                 Debug.LogError("Can't create path for " + character.name + " from " + character.gridTileLocation.ToString() + " to " + destinationTile.ToString());
