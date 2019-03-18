@@ -245,7 +245,10 @@ public class CharacterInfoUI : UIMenu {
         }
 
         //Default - Do nothing/Idle
-        plansLbl.text =  _activeCharacter.name + " is " + _activeCharacter.currentStructure.GetNameRelativeTo(_activeCharacter);
+        if (_activeCharacter.currentStructure != null) {
+            plansLbl.text =  _activeCharacter.name + " is " + _activeCharacter.currentStructure.GetNameRelativeTo(_activeCharacter);
+        }
+        
         
         //if (_activeCharacter.isAtHomeStructure) {
         //    plansLbl.text = _activeCharacter.name + " is at home.";

@@ -170,21 +170,35 @@ public class CharacterMarker : PooledObject {
             shouldRecalculatePath = false;
             Debug.Log(GameManager.Instance.TodayLogString() + this.character.name + "'s marker must recalculate path towards " + _targetPOI.name + "!");
             //LocationGridTile nearestTileToTarget = character.currentAction.GetTargetLocationTile();
+            //if (Messenger.eventTable.ContainsKey(Signals.TILE_OCCUPIED)) {
+            //    Messenger.RemoveListener<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, OnTileOccupied);
+            //}
+            //character.gridTileLocation.structure.location.areaMap.RemoveCharacter(character.gridTileLocation, character);
+            //_currentPath[0].structure.AddCharacterAtLocation(character, _currentPath[0]);
+            //character.SetGridTileLocation(_currentPath[0]);
             //if (nearestTileToTarget != null) {
             //    shouldRecalculatePath = false;
             //    GoToTile(nearestTileToTarget, _targetPOI, _arrivalAction);
             //    return;
             //} else {
             //    //there is no longer any available tile for this character, continue towards last target tile.
+            //    //if the next tile is already occupied, stay at the current tile and drop the plan
+            //    LocationGridTile nextTile = _currentPath[1];
+            //    if (nextTile.tileState == LocationGridTile.Tile_State.Occupied) {
+            //        character.currentParty.icon.SetIsTravelling(false);
+            //        _currentPath[0].structure.location.areaMap.PlaceObject(character, _currentPath[0]);
+            //        character.currentAction.StopAction();
+            //        _currentPath = null;
+            //        return;
+            //    }
+
             //}
 
             LocationGridTile nearestTileToTarget = _targetPOI.GetNearestUnoccupiedTileFromThis();
             character.gridTileLocation.structure.location.areaMap.RemoveCharacter(character.gridTileLocation, character);
             _currentPath[0].structure.AddCharacterAtLocation(character, _currentPath[0]);
             character.SetGridTileLocation(_currentPath[0]);
-            if (Messenger.eventTable.ContainsKey(Signals.TILE_OCCUPIED)) {
-                Messenger.RemoveListener<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, OnTileOccupied);
-            }
+            Messenger.RemoveListener<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, OnTileOccupied);
             if (nearestTileToTarget == null) {
                 //Cancel current action and recalculate plan
                 character.currentAction.StopAction();
@@ -224,7 +238,9 @@ public class CharacterMarker : PooledObject {
                         _arrivalAction();
                     }
                     PlayIdle();
-                    Messenger.RemoveListener<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, OnTileOccupied);
+                    if (Messenger.eventTable.ContainsKey(Signals.TILE_OCCUPIED)) {
+                        Messenger.RemoveListener<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, OnTileOccupied);
+                    }
                 } else {
                     StartCoroutine(MoveToPosition(currentTile.centeredWorldLocation, _currentPath[0].centeredWorldLocation));
                 }
@@ -323,6 +339,10 @@ public class CharacterMarker : PooledObject {
         animator.Play("Idle");
     }
     #endregion
+
+    private void RecalculatePath() {
+
+    }
 
     /// <summary>
     /// Listener for when a grid tile has been occupied.

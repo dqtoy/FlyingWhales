@@ -4,9 +4,7 @@ using UnityEngine;
 
 public class Stroll : GoapAction {
     public override LocationStructure targetStructure { get { return _targetStructure; } }
-    public override LocationGridTile targetTile { get { return _targetTile; } }
 
-    private LocationGridTile _targetTile;
     private LocationStructure _targetStructure;
 
     public Stroll(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.STROLL, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
@@ -17,7 +15,7 @@ public class Stroll : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.NONE, targetPOI = actor });
     }
     public override void PerformActualAction() {
-        if (_targetTile != null) {
+        if (targetTile != null) {
             SetState("Stroll Success");
         } else {
             SetState("Stroll Fail");
@@ -45,7 +43,7 @@ public class Stroll : GoapAction {
         } else {
             List<LocationGridTile> unoccupiedTiles = _targetStructure.unoccupiedTiles;
             if (unoccupiedTiles.Count > 0) {
-                _targetTile = unoccupiedTiles[UnityEngine.Random.Range(0, unoccupiedTiles.Count)];
+                targetTile = unoccupiedTiles[UnityEngine.Random.Range(0, unoccupiedTiles.Count)];
             }
         }
     }
