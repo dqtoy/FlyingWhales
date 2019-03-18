@@ -182,7 +182,9 @@ public class CharacterMarker : PooledObject {
             character.gridTileLocation.structure.location.areaMap.RemoveCharacter(character.gridTileLocation, character);
             _currentPath[0].structure.AddCharacterAtLocation(character, _currentPath[0]);
             character.SetGridTileLocation(_currentPath[0]);
-            Messenger.RemoveListener<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, OnTileOccupied);
+            if (Messenger.eventTable.ContainsKey(Signals.TILE_OCCUPIED)) {
+                Messenger.RemoveListener<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, OnTileOccupied);
+            }
             if (nearestTileToTarget == null) {
                 //Cancel current action and recalculate plan
                 character.currentAction.StopAction();
