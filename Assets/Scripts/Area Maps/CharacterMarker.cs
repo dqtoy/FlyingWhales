@@ -154,7 +154,7 @@ public class CharacterMarker : PooledObject {
             }
         } else {
             //If area map is not showing, do estimated travel
-            _estimatedTravelTime = Mathf.RoundToInt(Vector2.Distance(character.gridTileLocation.localLocation, destinationTile.localLocation));
+            _estimatedTravelTime = Mathf.RoundToInt(character.gridTileLocation.GetDistanceTo(destinationTile));
             if(_estimatedTravelTime > 0) {
                 StartEstimatedMovement();
             } else {

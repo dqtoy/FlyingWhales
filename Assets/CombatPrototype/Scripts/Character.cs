@@ -1312,7 +1312,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         LocationGridTile destinationTile = tile;
         if(destinationTile == null) {
             if (targetPOI != null) {
-                float ogDistance = Vector2.Distance(targetPOI.gridTileLocation.localLocation, gridTileLocation.localLocation);
+                float ogDistance = targetPOI.gridTileLocation.GetDistanceTo(gridTileLocation);
                 if(ogDistance <= 1f) {
                     destinationTile = gridTileLocation;
                 } else {

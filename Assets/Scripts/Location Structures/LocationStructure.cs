@@ -352,7 +352,7 @@ public class LocationStructure {
         float nearestDist = 99999f;
         for (int i = 0; i < tiles.Count; i++) {
             LocationGridTile currTile = tiles[i];
-            float dist = Vector2.Distance(currTile.localLocation, tile.localLocation);
+            float dist = currTile.GetDistanceTo(tile);
             if (dist < nearestDist) {
                 nearestTile = currTile;
                 nearestDist = dist;
@@ -365,7 +365,7 @@ public class LocationStructure {
         float nearestDist = 99999f;
         for (int i = 0; i < tiles.Count; i++) {
             LocationGridTile currTile = tiles[i];
-            float dist = Vector2.Distance(currTile.localLocation, tile.localLocation);
+            float dist = currTile.GetDistanceTo(tile);
             if (dist < nearestDist) {
                 nearestTile = currTile;
                 nearestDist = dist;

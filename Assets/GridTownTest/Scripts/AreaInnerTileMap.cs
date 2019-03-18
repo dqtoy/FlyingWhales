@@ -666,7 +666,7 @@ public class AreaInnerTileMap : MonoBehaviour {
         for (int i = 0; i < exploreAreas.Count; i++) {
             LocationStructure currArea = exploreAreas[i];
             LocationGridTile tile = currArea.GetNearestTileTo(gate);
-            float dist = Vector2.Distance(tile.localLocation, gate.localLocation);
+            float dist = tile.GetDistanceTo(gate);
             if (dist < nearestDist) {
                 nearestTile = tile;
                 nearestDist = dist;
@@ -1304,7 +1304,7 @@ public class ExploreArea {
     }
 
     public float DistanceFromCore(LocationGridTile tile) {
-        return Vector2.Distance(coreTile.localLocation, tile.localLocation);
+        return coreTile.GetDistanceTo(tile);
     }
 
     public List<LocationGridTile> ConvertToActualArea(LocationGridTile[,] map) {
