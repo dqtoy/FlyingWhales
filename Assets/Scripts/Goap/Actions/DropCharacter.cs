@@ -46,7 +46,7 @@ public class DropCharacter : GoapAction {
     #region State Effects
     public void PreDropSuccess() {
         currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        currentState.AddLogFiller(_workAreaStructure.location, _workAreaStructure.ToString(), LOG_IDENTIFIER.LANDMARK_1);
+        currentState.AddLogFiller(_workAreaStructure.location, _workAreaStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
     }
     public void AfterDropSuccess() {
         Character target = poiTarget as Character;

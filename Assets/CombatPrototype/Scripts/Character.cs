@@ -1308,10 +1308,19 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             throw new Exception("Can't move " + name + " to a " + structureType.ToString() + " because " + specificLocation.name + " does not have that structure!");
         }
     }
-    public void MoveToAnotherStructure(LocationStructure newStructure, LocationGridTile tile = null, IPointOfInterest targetPOI = null, Action arrivalAction = null) {
-        LocationGridTile destinationTile = tile;
-        if(destinationTile == null) {
+    /// <summary>
+    /// Move this character to another structure in the same area.
+    /// </summary>
+    /// <param name="newStructure">New structure the character is going to.</param>
+    /// <param name="destinationTile">LocationGridTile where the character will go to (Must be inside the new structure).</param>
+    /// <param name="targetPOI">The Point of Interest this character will interact with</param>
+    /// <param name="arrivalAction">What should this character do when it reaches its target tile?</param>
+    public void MoveToAnotherStructure(LocationStructure newStructure, LocationGridTile destinationTile = null, IPointOfInterest targetPOI = null, Action arrivalAction = null) {
+        //if the provided destination tile is null (Default)
+        if (destinationTile == null) {
+            //and the target Point of Interest is not null
             if (targetPOI != null) {
+                //check if this character's current location is already the nearest tile from it's target Point of Interest
                 float ogDistance = targetPOI.gridTileLocation.GetDistanceTo(gridTileLocation);
                 if(ogDistance <= 1f) {
                     destinationTile = gridTileLocation;
@@ -1325,6 +1334,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         }
 
+        //if the destination tile is still null
         if (destinationTile == null) {
             if (currentStructure != null) {
                 List<LocationGridTile> tilesToUse;
@@ -1347,11 +1357,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         }
 
+        //if the character is already at the destination tile, just do the specified arrival action, if any.
         if (gridTileLocation == destinationTile) {
             if (arrivalAction != null) {
                 arrivalAction();
             }
         } else {
+            //trigger the characters marker to go to the target tile.
             marker.GoToTile(destinationTile, targetPOI, arrivalAction);
         }
     }

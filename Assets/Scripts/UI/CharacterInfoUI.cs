@@ -245,28 +245,30 @@ public class CharacterInfoUI : UIMenu {
         }
 
         //Default - Do nothing/Idle
-        if (_activeCharacter.isAtHomeStructure) {
-            plansLbl.text = _activeCharacter.name + " is at home.";
-        } else {
-            if (_activeCharacter.currentStructure.structureType == STRUCTURE_TYPE.DWELLING) {
-                Dwelling dwelling = _activeCharacter.currentStructure as Dwelling;
-                if (dwelling.residents.Count > 0) {
-                    plansLbl.text = _activeCharacter.name + " is in " + dwelling.residents[0].name + "'s house.";
-                } else {
-                    plansLbl.text = _activeCharacter.name + " is in a dwelling.";
-                }
-            } else if (_activeCharacter.currentStructure.structureType == STRUCTURE_TYPE.WORK_AREA) {
-                plansLbl.text = _activeCharacter.name + " is in " + _activeCharacter.currentStructure.location.name + ".";
-            } else if (_activeCharacter.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS) {
-                plansLbl.text = _activeCharacter.name + " is in the " + _activeCharacter.currentStructure.structureType.ToString().ToLower() + ".";
-            } else if (_activeCharacter.currentStructure.structureType == STRUCTURE_TYPE.INN) {
-                plansLbl.text = _activeCharacter.name + " is at the " + _activeCharacter.currentStructure.structureType.ToString().ToLower() + ".";
-            } else if (_activeCharacter.currentStructure.structureType == STRUCTURE_TYPE.DUNGEON) {
-                plansLbl.text = _activeCharacter.name + " is in a " + _activeCharacter.currentStructure.structureType.ToString().ToLower() + ".";
-            } else if (_activeCharacter.currentStructure.structureType == STRUCTURE_TYPE.WAREHOUSE) {
-                plansLbl.text = _activeCharacter.name + " is in the " + _activeCharacter.currentStructure.structureType.ToString().ToLower() + ".";
-            }
-        }
+        plansLbl.text =  _activeCharacter.name + " is " + _activeCharacter.currentStructure.GetNameRelativeTo(_activeCharacter);
+        
+        //if (_activeCharacter.isAtHomeStructure) {
+        //    plansLbl.text = _activeCharacter.name + " is at home.";
+        //} else {
+        //    if (_activeCharacter.currentStructure.structureType == STRUCTURE_TYPE.DWELLING) {
+        //        Dwelling dwelling = _activeCharacter.currentStructure as Dwelling;
+        //        if (dwelling.residents.Count > 0) {
+        //            plansLbl.text = _activeCharacter.name + " is in " + dwelling.residents[0].name + "'s house.";
+        //        } else {
+        //            plansLbl.text = _activeCharacter.name + " is in a dwelling.";
+        //        }
+        //    } else if (_activeCharacter.currentStructure.structureType == STRUCTURE_TYPE.WORK_AREA) {
+        //        plansLbl.text = _activeCharacter.name + " is in " + _activeCharacter.currentStructure.location.name + ".";
+        //    } else if (_activeCharacter.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS) {
+        //        plansLbl.text = _activeCharacter.name + " is in the " + _activeCharacter.currentStructure.structureType.ToString().ToLower() + ".";
+        //    } else if (_activeCharacter.currentStructure.structureType == STRUCTURE_TYPE.INN) {
+        //        plansLbl.text = _activeCharacter.name + " is at the " + _activeCharacter.currentStructure.structureType.ToString().ToLower() + ".";
+        //    } else if (_activeCharacter.currentStructure.structureType == STRUCTURE_TYPE.DUNGEON) {
+        //        plansLbl.text = _activeCharacter.name + " is in a " + _activeCharacter.currentStructure.structureType.ToString().ToLower() + ".";
+        //    } else if (_activeCharacter.currentStructure.structureType == STRUCTURE_TYPE.WAREHOUSE) {
+        //        plansLbl.text = _activeCharacter.name + " is in the " + _activeCharacter.currentStructure.structureType.ToString().ToLower() + ".";
+        //    }
+        //}
     }
 
     #region Stats

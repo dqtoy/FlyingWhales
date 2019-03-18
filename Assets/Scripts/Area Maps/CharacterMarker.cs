@@ -150,7 +150,7 @@ public class CharacterMarker : PooledObject {
         if (Messenger.eventTable.ContainsKey(Signals.TICK_STARTED)) {
             Messenger.RemoveListener(Signals.TICK_STARTED, EstimatedMove);
         }
-        if (Messenger.eventTable.ContainsKey(Signals.TICK_STARTED)) {
+        if (Messenger.eventTable.ContainsKey(Signals.TILE_OCCUPIED)) {
             Messenger.RemoveListener<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, OnTileOccupied);
         }
         if (character.currentParty != null && character.currentParty.icon != null) {
@@ -167,9 +167,18 @@ public class CharacterMarker : PooledObject {
         }
         //check if the marker should recalculate path
         if (shouldRecalculatePath) {
-            Debug.Log(GameManager.Instance.TodayLogString() + this.character.name + "'s marker must recalculate path towards " + _targetPOI.name + "!");
-            LocationGridTile nearestTileToTarget = _targetPOI.GetNearestUnoccupiedTileFromThis();
             shouldRecalculatePath = false;
+            Debug.Log(GameManager.Instance.TodayLogString() + this.character.name + "'s marker must recalculate path towards " + _targetPOI.name + "!");
+            //LocationGridTile nearestTileToTarget = character.currentAction.GetTargetLocationTile();
+            //if (nearestTileToTarget != null) {
+            //    shouldRecalculatePath = false;
+            //    GoToTile(nearestTileToTarget, _targetPOI, _arrivalAction);
+            //    return;
+            //} else {
+            //    //there is no longer any available tile for this character, continue towards last target tile.
+            //}
+
+            LocationGridTile nearestTileToTarget = _targetPOI.GetNearestUnoccupiedTileFromThis();
             character.gridTileLocation.structure.location.areaMap.RemoveCharacter(character.gridTileLocation, character);
             _currentPath[0].structure.AddCharacterAtLocation(character, _currentPath[0]);
             character.SetGridTileLocation(_currentPath[0]);
@@ -313,9 +322,32 @@ public class CharacterMarker : PooledObject {
     }
     #endregion
 
+    /// <summary>
+    /// Listener for when a grid tile has been occupied.
+    /// </summary>
+    /// <param name="currTile">The tile that was occupied.</param>
+    /// <param name="poi">The object that occupied the tile.</param>
     private void OnTileOccupied(LocationGridTile currTile, IPointOfInterest poi) {
         if (_destinationTile != null && currTile == _destinationTile && poi != this.character) {
             shouldRecalculatePath = true;
+            /*
+             When location is **Nearby**, **Random Location**, **Random Location B** or **Near Target** and the character's target location becomes unavailable, 
+             he should be informed so that he may attempt to choose another valid location and update his pathfinding. 
+             If none is available, character will still attempt to go to last target tile.
+             */
+            //if (this.character.currentAction != null) {
+            //    switch (this.character.currentAction.actionLocationType) {
+            //        case ACTION_LOCATION_TYPE.NEARBY:
+            //        case ACTION_LOCATION_TYPE.RANDOM_LOCATION:
+            //        case ACTION_LOCATION_TYPE.RANDOM_LOCATION_B:
+            //        case ACTION_LOCATION_TYPE.NEAR_TARGET:
+            //            shouldRecalculatePath = true;
+            //            break;
+            //        default:
+            //            break;
+            //    }
+            //}
+            
         }
     }
 }

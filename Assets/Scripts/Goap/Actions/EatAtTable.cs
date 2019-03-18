@@ -56,14 +56,14 @@ public class EatAtTable : GoapAction {
 
     #region Effects
     private void PreEatSuccess() {
-        currentState.AddLogFiller(poiTarget.gridTileLocation.structure.location, poiTarget.gridTileLocation.structure.ToString(), LOG_IDENTIFIER.LANDMARK_1);
+        currentState.AddLogFiller(poiTarget.gridTileLocation.structure.location, poiTarget.gridTileLocation.structure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
         //actor.AddTrait("Eating");
     }
     private void PerTickEatSuccess() {
         actor.AdjustFullness(10);
     }
     private void PreEatPoisoned() {
-        currentState.AddLogFiller(poiTarget.gridTileLocation.structure.location, poiTarget.gridTileLocation.structure.ToString(), LOG_IDENTIFIER.LANDMARK_1);
+        currentState.AddLogFiller(poiTarget.gridTileLocation.structure.location, poiTarget.gridTileLocation.structure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
         //actor.AddTrait("Eating");
         //Remove poisoned trait from table
         //TODO: ADD TRAITS AT IPOINTOFINTEREST
@@ -81,7 +81,7 @@ public class EatAtTable : GoapAction {
         //TODO: DIFFERENT DESCRIPTION LOGS IN SAME STATE
     }
     private void PreTargetMissing() {
-        currentState.AddLogFiller(poiTarget.gridTileLocation.structure.location, poiTarget.gridTileLocation.structure.ToString(), LOG_IDENTIFIER.LANDMARK_1);
+        currentState.AddLogFiller(poiTarget.gridTileLocation.structure.location, poiTarget.gridTileLocation.structure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
     }
     private void AfterTargetMissing() {
         actor.RemoveAwareness(poiTarget);
