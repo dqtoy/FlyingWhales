@@ -20,6 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4506135321327042}
   - component: {fileID: 114341627776737400}
+  - component: {fileID: 95759216883234714}
   m_Layer: 5
   m_Name: CharacterManager
   m_TagString: Untagged
@@ -40,6 +41,24 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!95 &95759216883234714
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1585311253791458}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: c1094acbda689b743a560588e35f4337, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!114 &114341627776737400
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -356,12 +375,39 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 9c3c0e5445d94284b90c96cbab889937, type: 3}
     - {fileID: 21300000, guid: 9d587aedde59e4e45885cde1e5758b37, type: 3}
   hsvMaterial: {fileID: 2100000, guid: f635580cdf2e2344ea31e0dba17cb9b5, type: 2}
+  markerAssets:
+  - race: 1
+    maleAssets:
+      gender: 0
+      defaultSprite: {fileID: 21300000, guid: 94475c8d3316bae45b0f52eec2c2ea25, type: 3}
+      hoverSprite: {fileID: 21300000, guid: ec914b0adf68767468fd588db4e9c4cf, type: 3}
+      clickedSprite: {fileID: 21300000, guid: 260d3d2393afbfd45afd87419937c87a, type: 3}
+      animator: {fileID: 9100000, guid: ffe6e2853385f4440abc8c2b55a9068f, type: 2}
+    femaleAssets:
+      gender: 1
+      defaultSprite: {fileID: 21300000, guid: fbdf443ba2b2b6b48984cb614f9d6297, type: 3}
+      hoverSprite: {fileID: 21300000, guid: 752576a71888a4e449e89de313c81659, type: 3}
+      clickedSprite: {fileID: 21300000, guid: ecf702ce7dcbb76498e6c9f447be1c4f, type: 3}
+      animator: {fileID: 22100000, guid: a4c9b209d307a3b4aa590916ee5f9703, type: 2}
+  - race: 13
+    maleAssets:
+      gender: 0
+      defaultSprite: {fileID: 21300000, guid: 117a7958b7b80384fa8e7a1b09a4caeb, type: 3}
+      hoverSprite: {fileID: 21300000, guid: 117a7958b7b80384fa8e7a1b09a4caeb, type: 3}
+      clickedSprite: {fileID: 21300000, guid: 117a7958b7b80384fa8e7a1b09a4caeb, type: 3}
+      animator: {fileID: 22100000, guid: 854a6491febd9814aab3d1926810e193, type: 2}
+    femaleAssets:
+      gender: 1
+      defaultSprite: {fileID: 21300000, guid: 117a7958b7b80384fa8e7a1b09a4caeb, type: 3}
+      hoverSprite: {fileID: 21300000, guid: 117a7958b7b80384fa8e7a1b09a4caeb, type: 3}
+      clickedSprite: {fileID: 21300000, guid: 117a7958b7b80384fa8e7a1b09a4caeb, type: 3}
+      animator: {fileID: 22100000, guid: 854a6491febd9814aab3d1926810e193, type: 2}
   characterAnimators:
-  - {fileID: 9100000, guid: 99c541d13ccccd24e8bade5dc18cd996, type: 2}
-  - {fileID: 9100000, guid: 52ac513067146394f9dfb6caf8fa93b3, type: 2}
-  - {fileID: 9100000, guid: 8efddeb1fd5629b459de99851a8d758b, type: 2}
-  - {fileID: 9100000, guid: 391c4c9ecbeeb4e44bea4fd871b44df7, type: 2}
-  - {fileID: 9100000, guid: a980adc8910cb7847b091bec2c84c0e2, type: 2}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   jobIcons:
     m_keys: 0700000003000000010000000400000006000000
     m_values:

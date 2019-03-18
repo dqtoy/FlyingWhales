@@ -17,19 +17,12 @@ public class CharacterMarker : PooledObject {
     public LocationGridTile location { get; private set; }
 
     [SerializeField] private RectTransform rt;
-    [SerializeField] private Toggle toggle;
     [SerializeField] private Image mainImg;
+    [SerializeField] private Image hoveredImg;
     [SerializeField] private Image clickedImg;
 
-    [Header("Male")]
-    [SerializeField] private Sprite defaultMaleSprite;
-    [SerializeField] private Sprite hoveredMaleSprite;
-    [SerializeField] private Sprite clickedMaleSprite;
-
-    [Header("Female")]
-    [SerializeField] private Sprite defaultFemaleSprite;
-    [SerializeField] private Sprite hoveredFemaleSprite;
-    [SerializeField] private Sprite clickedFemaleSprite;
+    [Header("Animation")]
+    [SerializeField] private Animator animator;
 
     private List<LocationGridTile> _currentPath;
     private Action _arrivalAction;
@@ -50,30 +43,15 @@ public class CharacterMarker : PooledObject {
     public void SetCharacter(Character character) {
         this.character = character;
         if (UIManager.Instance.characterInfoUI.isShowing) {
-            toggle.isOn = UIManager.Instance.characterInfoUI.activeCharacter.id == character.id;
+            clickedImg.gameObject.SetActive(UIManager.Instance.characterInfoUI.activeCharacter.id == character.id);
         }
-        SpriteState ss = new SpriteState();
-        switch (character.gender) {
-            case GENDER.MALE:
-                mainImg.sprite = defaultMaleSprite;
-                clickedImg.sprite = clickedMaleSprite;
-                ss.highlightedSprite = hoveredMaleSprite;
-                ss.pressedSprite = clickedMaleSprite;
-                break;
-            case GENDER.FEMALE:
-                mainImg.sprite = defaultFemaleSprite;
-                clickedImg.sprite = clickedFemaleSprite;
-                ss.highlightedSprite = hoveredFemaleSprite;
-                ss.pressedSprite = clickedFemaleSprite;
-                break;
-            default:
-                mainImg.sprite = defaultMaleSprite;
-                clickedImg.sprite = clickedMaleSprite;
-                ss.highlightedSprite = hoveredMaleSprite;
-                ss.pressedSprite = clickedMaleSprite;
-                break;
-        }
-        toggle.spriteState = ss;
+        MarkerAsset assets = CharacterManager.Instance.GetMarkerAsset(character.race, character.gender);
+
+        mainImg.sprite = assets.defaultSprite;
+        //clickedImg.sprite = assets.clickedSprite;
+        //hoveredImg.sprite = assets.hoverSprite;
+        animator.runtimeAnimatorController = assets.animator;
+        //PlayIdle();
 
         Vector3 randomRotation = new Vector3(0f, 0f, 90f);
         randomRotation.z *= UnityEngine.Random.Range(1f, 4f);
@@ -94,13 +72,15 @@ public class CharacterMarker : PooledObject {
         if (hoverEnterAction != null) {
             hoverEnterAction.Invoke(character, location);
         }
-        //ShowPath();
+        //show hovered image
+        hoveredImg.gameObject.SetActive(true);
     }
     public void HoverExitAction() {
         if (hoverExitAction != null) {
             hoverExitAction();
         }
-        //HidePath();
+        //hide hovered image
+        hoveredImg.gameObject.SetActive(false);
     }
 
     public override void Reset() {
@@ -115,25 +95,23 @@ public class CharacterMarker : PooledObject {
         Messenger.RemoveListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
     }
 
-    public void OnPointerClick(bool state) {
-        if (state) {
-            UIManager.Instance.ShowCharacterInfo(character);
-        }
+    public void OnPointerClick(BaseEventData bd) {
+        UIManager.Instance.ShowCharacterInfo(character);
     }
 
     private void OnMenuOpened(UIMenu menu) {
         if (menu is CharacterInfoUI) {
             if ((menu as CharacterInfoUI).activeCharacter.id == character.id) {
-                toggle.isOn = true;
+                clickedImg.gameObject.SetActive(true);
             } else {
-                toggle.isOn = false;
+                clickedImg.gameObject.SetActive(false);
             }
              
         }
     }
     private void OnMenuClosed(UIMenu menu) {
         if (menu is CharacterInfoUI) {
-            toggle.isOn = false;
+            clickedImg.gameObject.SetActive(false);
         }
     }
 
@@ -164,6 +142,7 @@ public class CharacterMarker : PooledObject {
     }
     private void StartMovement() {
         character.currentParty.icon.SetIsTravelling(true);
+        StartWalkingAnimation();
         StartCoroutine(MoveToPosition(character.gridTileLocation.centeredWorldLocation, _currentPath[0].centeredWorldLocation));
         //Messenger.AddListener(Signals.TICK_STARTED, Move);
     }
@@ -179,6 +158,7 @@ public class CharacterMarker : PooledObject {
         }
         _arrivalAction = null;
         //_currentPath = null;
+        PlayIdle();
     }
     private void Move() {
         if (character.isDead) {
@@ -232,6 +212,7 @@ public class CharacterMarker : PooledObject {
                     if (_arrivalAction != null) {
                         _arrivalAction();
                     }
+                    PlayIdle();
                     Messenger.RemoveListener<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, OnTileOccupied);
                 } else {
                     StartCoroutine(MoveToPosition(currentTile.centeredWorldLocation, _currentPath[0].centeredWorldLocation));
@@ -266,6 +247,9 @@ public class CharacterMarker : PooledObject {
             if(currentProgress > 0) {
                 _currentPath.RemoveRange(0, currentProgress);
                 Move();
+                if (_currentPath.Count > 1) {
+                    StartWalkingAnimation();
+                }
             } else {
                 StartMovement();
             }
@@ -279,6 +263,7 @@ public class CharacterMarker : PooledObject {
     private void StartEstimatedMovement() {
         character.currentParty.icon.SetIsTravelling(true);
         _currentTravelTime = 0;
+        StartWalkingAnimation();
         Messenger.AddListener(Signals.TICK_STARTED, EstimatedMove);
     }
     private void EstimatedMove() {
@@ -310,6 +295,21 @@ public class CharacterMarker : PooledObject {
         if (character != null && character.specificLocation != null) {
             character.specificLocation.areaMap.HidePath();
         }
+    }
+    #endregion
+
+    #region Animation
+    private void StartWalkingAnimation() {
+        if (!this.gameObject.activeInHierarchy) {
+            return;
+        }
+        animator.Play("Walk");
+    }
+    private void PlayIdle() {
+        if (!this.gameObject.activeInHierarchy) {
+            return;
+        }
+        animator.Play("Idle");
     }
     #endregion
 

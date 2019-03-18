@@ -7,7 +7,7 @@ public class EdiblePlant : TileObject, IPointOfInterest {
 
     private const int Replenishment_Countdown = 96;
 
-    public string name { get { return ToString(); } }
+    public string name { get { return ToString() + " "  + id.ToString(); } }
     public LocationStructure location { get; private set; }
     public List<INTERACTION_TYPE> poiGoapActions { get; protected set; }
 
@@ -56,6 +56,9 @@ public class EdiblePlant : TileObject, IPointOfInterest {
     }
     public void SetPOIState(POI_STATE state) {
         _state = state;
+    }
+    public override string ToString() {
+        return "Edible Plant " + id.ToString();
     }
     #endregion
 

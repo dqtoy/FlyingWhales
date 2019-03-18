@@ -30,7 +30,7 @@ public class Bed : TileObject, IPointOfInterest {
     }
 
     public override string ToString() {
-        return "Bed";
+        return "Bed " + id.ToString();
     }
 
     #region Interface

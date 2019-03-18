@@ -30,7 +30,7 @@ public class Guitar : TileObject, IPointOfInterest {
     }
 
     public override string ToString() {
-        return "Guitar";
+        return "Guitar " + id.ToString();
     }
 
     #region Interface

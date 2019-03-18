@@ -34,7 +34,7 @@ public class Ore : TileObject, IPointOfInterest {
     }
 
     public override string ToString() {
-        return "Ore";
+        return "Ore " + id.ToString();
     }
 
     #region Interface
