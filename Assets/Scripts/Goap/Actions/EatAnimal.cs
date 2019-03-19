@@ -38,12 +38,14 @@ public class EatAnimal : GoapAction {
     private void PreEatSuccess() {
         currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
         poiTarget.SetPOIState(POI_STATE.INACTIVE);
+        actor.AdjustDoNotGetHungry(1);
         //actor.AddTrait("Eating");
     }
     private void PerTickEatSuccess() {
         actor.AdjustFullness(5);
     }
     private void AfterEatSuccess() {
+        actor.AdjustDoNotGetHungry(-1);
         //poiTarget.SetPOIState(POI_STATE.ACTIVE);
     }
     private void PreEatFail() {

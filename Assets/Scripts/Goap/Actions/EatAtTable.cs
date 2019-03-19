@@ -57,13 +57,18 @@ public class EatAtTable : GoapAction {
     #region Effects
     private void PreEatSuccess() {
         currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
+        actor.AdjustDoNotGetHungry(1);
         //actor.AddTrait("Eating");
     }
     private void PerTickEatSuccess() {
         actor.AdjustFullness(10);
     }
+    private void AfterEatSuccess() {
+        actor.AdjustDoNotGetHungry(-1);
+    }
     private void PreEatPoisoned() {
         currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
+        actor.AdjustDoNotGetHungry(1);
         //actor.AddTrait("Eating");
         //Remove poisoned trait from table
         //TODO: ADD TRAITS AT IPOINTOFINTEREST
@@ -72,6 +77,7 @@ public class EatAtTable : GoapAction {
         actor.AdjustFullness(10);
     }
     private void AfterEatPoisoned() {
+        actor.AdjustDoNotGetHungry(-1);
         int chance = UnityEngine.Random.Range(0, 2);
         if(chance == 0) {
             actor.AddTrait("Sick");

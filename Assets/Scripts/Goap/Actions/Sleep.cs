@@ -60,6 +60,7 @@ public class Sleep : GoapAction {
     private void PreRestSuccess() {
         currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
         poiTarget.SetPOIState(POI_STATE.INACTIVE);
+        actor.AdjustDoNotGetTired(1);
         //actor.AddTrait("Resting");
     }
     private void PerTickRestSuccess() {
@@ -67,6 +68,7 @@ public class Sleep : GoapAction {
     }
     private void AfterRestSuccess() {
         poiTarget.SetPOIState(POI_STATE.ACTIVE);
+        actor.AdjustDoNotGetTired(-1);
     }
     private void PreRestFail() {
         currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
