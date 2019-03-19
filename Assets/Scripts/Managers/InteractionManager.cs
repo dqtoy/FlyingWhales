@@ -2116,7 +2116,7 @@ public class InteractionManager : MonoBehaviour {
                 return actor.gridTileLocation;
             case ACTION_LOCATION_TYPE.NEARBY:
                 //**Nearby**: an unoccupied tile within a 3 tile radius around the character
-                choices = actor.specificLocation.areaMap.GetTilesInRadius(actor.gridTileLocation, 3).Where(x => x.tileState == LocationGridTile.Tile_State.Empty).ToList();
+                choices = actor.specificLocation.areaMap.GetTilesInRadius(actor.gridTileLocation, 3).Where(x => !x.isOccupied).ToList();
                 if (choices.Count > 0) {
                     return choices[UnityEngine.Random.Range(0, choices.Count)];
                 }

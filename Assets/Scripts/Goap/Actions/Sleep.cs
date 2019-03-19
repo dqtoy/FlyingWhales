@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Sleep : GoapAction {
     public Sleep(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.SLEEP, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+        actionLocationType = ACTION_LOCATION_TYPE.ON_TARGET;
     }
 
     #region Overrides
@@ -59,13 +60,15 @@ public class Sleep : GoapAction {
     private void PreRestSuccess() {
         currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
         poiTarget.SetPOIState(POI_STATE.INACTIVE);
+        actor.AdjustDoNotGetTired(1);
         //actor.AddTrait("Resting");
     }
     private void PerTickRestSuccess() {
-        actor.AdjustFullness(5);
+        actor.AdjustTiredness(7);
     }
     private void AfterRestSuccess() {
         poiTarget.SetPOIState(POI_STATE.ACTIVE);
+        actor.AdjustDoNotGetTired(-1);
     }
     private void PreRestFail() {
         currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);

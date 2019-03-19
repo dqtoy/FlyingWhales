@@ -351,7 +351,7 @@ public class CharacterMarker : PooledObject {
             //if the next tile is already occupied, stay at the current tile and drop the plan
             pathRecalSummary += "\nCould not find new target tile. Continuing travel to original target tile.";
             LocationGridTile nextTile = _currentPath[0];
-            if (nextTile.tileState == LocationGridTile.Tile_State.Occupied) {
+            if (nextTile.isOccupied) {
                 pathRecalSummary += "\nNext Tile " + nextTile.ToString() + " is occupied. Stopping movement and action.";
                 character.currentAction.StopAction();
                 if (currentMoveCoroutine != null) {

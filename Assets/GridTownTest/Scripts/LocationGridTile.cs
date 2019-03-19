@@ -34,11 +34,13 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     //public List<LocationGridTile> neighborList { get; private set; }
     public IPointOfInterest objHere { get; private set; }
     public List<Character> charactersHere { get; private set; }
+    public Character occupant { get; private set; }
+    public bool isOccupied { get { return tileState == Tile_State.Occupied || occupant != null; } }
 
     public List<LocationGridTile> ValidTiles { get { return FourNeighbours().Where(o => o.tileType == Tile_Type.Empty || o.tileType == Tile_Type.Gate || o.tileType == Tile_Type.Road).ToList(); } }
     public List<LocationGridTile> RealisticTiles { get { return neighbours.Values.Where(o => o.tileAccess == Tile_Access.Passable && (o.structure != null || o.tileType == Tile_Type.Road || o.tileType == Tile_Type.Gate)).ToList(); } }
     public List<LocationGridTile> RoadTiles { get { return neighbours.Values.Where(o => o.tileType == Tile_Type.Road).ToList(); } }
-    public List<LocationGridTile> UnoccupiedNeighbours { get { return neighbours.Values.Where(o => o.tileState != Tile_State.Occupied && o.structure == this.structure).ToList(); } }
+    public List<LocationGridTile> UnoccupiedNeighbours { get { return neighbours.Values.Where(o => !o.isOccupied && o.structure == this.structure).ToList(); } }
 
     public LocationGridTile(int x, int y, Tilemap tilemap, AreaInnerTileMap parentAreaMap) {
         this.parentAreaMap = parentAreaMap;
@@ -115,9 +117,9 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
             case Tile_Type.Wall:
                 SetTileAccess(Tile_Access.Impassable);
                 break;
-            default:
-                SetTileState(Tile_State.Empty);
-                break;
+            //default:
+            //    SetTileState(Tile_State.Empty);
+            //    break;
         }
     }
 
@@ -226,7 +228,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     }
     public bool HasOccupiedNeighbour() {
         for (int i = 0; i < neighbours.Values.Count; i++) {
-            if (neighbours.Values.ElementAt(i).tileState != Tile_State.Empty) {
+            if (neighbours.Values.ElementAt(i).isOccupied) {
                 return true;
             }
         }
@@ -248,6 +250,24 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         }
         return false;
     }
+    public void SetOccupant(Character character) {
+        occupant = character;
+        character.SetGridTileLocation(this);
+    }
+    public void RemoveOccupant() {
+        if(occupant != null) {
+            occupant.SetGridTileLocation(null);
+            occupant = null;
+            if (prefabHere != null) {
+                CharacterPortrait portrait = prefabHere.GetComponent<CharacterPortrait>();
+                if (portrait != null) {
+                    portrait.SetImageRaycastTargetState(true);
+                }
+                //ObjectPoolManager.Instance.DestroyObject(tile.prefabHere);
+                SetPrefabHere(null);
+            }
+        }
+    }
     #endregion
 
     #region Intel
@@ -264,14 +284,14 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         //}
         if (objHere is TileObject || objHere is SpecialToken) {
             parentAreaMap.ShowIntelItemAt(this, InteractionManager.Instance.CreateNewIntel(objHere));
-        } else if (objHere is Character) {
-            UIManager.Instance.ShowCharacterInfo(objHere as Character);
-            LocationGridTile nearestTile = objHere.GetNearestUnoccupiedTileFromThis();
+        } else if (occupant != null) {
+            UIManager.Instance.ShowCharacterInfo(occupant);
+            LocationGridTile nearestTile = occupant.GetNearestUnoccupiedTileFromThis();
             parentAreaMap.QuicklyHighlightTile(nearestTile);
             if (nearestTile != null) {
                 parentAreaMap.QuicklyHighlightTile(nearestTile);
             } else {
-                Debug.LogWarning(objHere.ToString() + " does not have a nearest unoccupied tile!");
+                Debug.LogWarning(occupant.ToString() + " does not have a nearest unoccupied tile!");
             }
         }
     }

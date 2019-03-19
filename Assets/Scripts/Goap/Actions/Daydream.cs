@@ -16,7 +16,7 @@ public class Daydream : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
     }
     public override void PerformActualAction() {
-        if (targetTile.tileState == LocationGridTile.Tile_State.Occupied) {
+        if (targetTile.isOccupied) {
             SetState("Daydream Failed");
         } else {
             SetState("Daydream Success");

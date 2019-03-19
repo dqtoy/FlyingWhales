@@ -94,6 +94,7 @@ public class CharacterAvatar : MonoBehaviour{
         _hasArrived = true;
         SetVisualState(true);
         SetSprite(_party.mainCharacter.role.roleType);
+        SetIsPlaceCharacterAsTileObject(true);
 
 #if !WORLD_CREATION_TOOL
         GameObject portraitGO = UIManager.Instance.InstantiateUIObject(CharacterManager.Instance.characterPortraitPrefab.name, this.transform);
