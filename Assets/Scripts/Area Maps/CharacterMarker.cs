@@ -130,7 +130,7 @@ public class CharacterMarker : PooledObject {
             //If area map is showing, do pathfinding
             _currentPath = PathGenerator.Instance.GetPath(character.gridTileLocation, destinationTile, GRID_PATHFINDING_MODE.REALISTIC);
             if (_currentPath != null) {
-                //Debug.LogWarning("Created path for " + character.name + " from " + character.gridTileLocation.ToString() + " to " + destinationTile.ToString());
+                Debug.Log("Created path for " + character.name + " from " + character.gridTileLocation.ToString() + " to " + destinationTile.ToString());
                 StartMovement();
             } else {
                 Debug.LogError("Can't create path for " + character.name + " from " + character.gridTileLocation.ToString() + " to " + destinationTile.ToString());
@@ -149,10 +149,19 @@ public class CharacterMarker : PooledObject {
         character.currentParty.icon.SetIsTravelling(true);
         StartWalkingAnimation();
         if (_currentPath.Count == 0) {
-            throw new Exception(character.name + "'s marker path count is 0, but movement is starting! Destination Tile is: " + _destinationTile.ToString());
+            //Arrival
+            character.currentParty.icon.SetIsTravelling(false);
+            if (_arrivalAction != null) {
+                _arrivalAction();
+            }
+            PlayIdle();
+            if (Messenger.eventTable.ContainsKey(Signals.TILE_OCCUPIED)) {
+                Messenger.RemoveListener<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, OnTileOccupied);
+            }
+            //throw new Exception(character.name + "'s marker path count is 0, but movement is starting! Destination Tile is: " + _destinationTile.ToString());
+        } else {
+            currentMoveCoroutine = StartCoroutine(MoveToPosition(transform.position, _currentPath[0].centeredWorldLocation));
         }
-        currentMoveCoroutine = StartCoroutine(MoveToPosition(transform.position, _currentPath[0].centeredWorldLocation));
-        
         //Messenger.AddListener(Signals.TICK_STARTED, Move);
     }
     public void StopMovement() {
@@ -347,16 +356,19 @@ public class CharacterMarker : PooledObject {
                 character.currentAction.StopAction();
                 if (currentMoveCoroutine != null) {
                     StopCoroutine(currentMoveCoroutine);
-                    
                 }
+                LocationGridTile tileToUse;
                 if (lastRemovedTileFromPath != null) {
-                    if (lastRemovedTileFromPath.structure != character.currentStructure) {
-                        character.currentStructure.RemoveCharacterAtLocation(character);
-                        lastRemovedTileFromPath.structure.AddCharacterAtLocation(character, lastRemovedTileFromPath);
-                    } else {
-                        character.gridTileLocation.structure.location.areaMap.RemoveCharacter(character.gridTileLocation, character);
-                        lastRemovedTileFromPath.structure.location.areaMap.PlaceObject(character, lastRemovedTileFromPath);
-                    }
+                    tileToUse = lastRemovedTileFromPath;
+                } else {
+                    tileToUse = nextTile;
+                }
+                if (tileToUse.structure != character.currentStructure) {
+                    character.currentStructure.RemoveCharacterAtLocation(character);
+                    tileToUse.structure.AddCharacterAtLocation(character, tileToUse);
+                } else {
+                    character.gridTileLocation.structure.location.areaMap.RemoveCharacter(character.gridTileLocation, character);
+                    tileToUse.structure.location.areaMap.PlaceObject(character, tileToUse);
                 }
                 //character.currentParty.icon.SetIsTravelling(false);
 
