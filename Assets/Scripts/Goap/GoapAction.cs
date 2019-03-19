@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 using System.Reflection;
+using System.Linq;
 
 public class GoapAction {
     public INTERACTION_TYPE goapType { get; private set; }
@@ -29,6 +30,7 @@ public class GoapAction {
     protected Func<bool> _requirementAction;
     protected System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
     protected string actionSummary;
+    protected TIME_IN_WORDS[] validTimeOfDays;
 
     public GoapAction(INTERACTION_TYPE goapType, INTERACTION_ALIGNMENT alignment, Character actor, IPointOfInterest poiTarget) {
         this.alignment = alignment;
@@ -104,9 +106,6 @@ public class GoapAction {
         return 0;
     }
     public virtual void PerformActualAction() { isPerformingActualAction = true; }
-    public virtual bool IsHalted() {
-        return false;
-    }
     protected virtual void CreateThoughtBubbleLog() {
         thoughtBubbleLog = new Log(GameManager.Instance.Today(), "GoapAction", this.GetType().ToString(), "thought_bubble");
         if (thoughtBubbleLog != null) {
@@ -229,6 +228,15 @@ public class GoapAction {
             int distance = Mathf.RoundToInt(actor.gridTileLocation.GetDistanceTo(tile));
             return distance / 6;
         }
+    }
+    //This is for the waiting time, if this returns true, this action will not be done by the actor momentarily, this will be skipped until this returns false
+    public bool IsHalted() {
+        //Only waiting condition for now is the time of day
+        //The default for the valid time of days is null, if it is null, do not wait meaning return false
+        if(validTimeOfDays != null && !validTimeOfDays.Contains(GameManager.GetCurrentTimeInWordsOfTick())) {
+            return true;
+        }
+        return false;
     }
     #endregion
 

@@ -35,13 +35,13 @@ public class Daydream : GoapAction {
         targetTile = _targetStructure.GetRandomUnoccupiedTile();
         base.DoAction(plan);
     }
-    public override bool IsHalted() {
-        TIME_IN_WORDS timeInWords = GameManager.GetCurrentTimeInWordsOfTick();
-        if (timeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
-            return true;
-        }
-        return false;
-    }
+    //public override bool IsHalted() {
+    //    TIME_IN_WORDS timeInWords = GameManager.GetCurrentTimeInWordsOfTick();
+    //    if (timeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
+    //        return true;
+    //    }
+    //    return false;
+    //}
     #endregion
 
     #region Effects

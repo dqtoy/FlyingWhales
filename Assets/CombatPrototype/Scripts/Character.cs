@@ -4133,6 +4133,18 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
             return;
         }
+        if(plan == null) {
+            log += "\nAction " + action.goapName + " no longer has a plan, current plans are: ";
+            for (int i = 0; i < allGoapPlans.Count; i++) {
+                if(i > 0) {
+                    log += ", ";
+                }
+                log += allGoapPlans[i].endNode.action.goapName;
+            }
+            Debug.Log(log);
+            PlanGoapActions();
+            return;
+        }
         if (result == InteractionManager.Goap_State_Success) {
             log += "\nAction performed is a success!";
             plan.SetNextNode();
