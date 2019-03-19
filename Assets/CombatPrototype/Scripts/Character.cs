@@ -2821,8 +2821,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 if (!PlanTirednessRecoveryActions()) {
                     if (!PlanHappinessRecoveryActions()) {
                         if (!PlanWorkActions()) {
-                            PlanIdleStroll();
-                            PlanGoapActions();
+                            if (PlanIdleStroll()) {
+                                PlanGoapActions();
+                            }
                         }
                     }
                 }
@@ -2932,12 +2933,15 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     private bool PlanIdleStroll() {
         //Debug.Log("---------" + GameManager.Instance.TodayLogString() + "CREATING IDLE STROLL ACTION FOR " + name + "-------------");
-        Stroll goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.STROLL, this, this) as Stroll;
-        goapAction.SetTargetStructure(currentStructure);
-        GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
-        GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE });
-        allGoapPlans.Add(goapPlan);
-        return true;
+        if(currentStructure.unoccupiedTiles.Count > 0) {
+            Stroll goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.STROLL, this, this) as Stroll;
+            goapAction.SetTargetStructure(currentStructure);
+            GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
+            GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE });
+            allGoapPlans.Add(goapPlan);
+            return true;
+        }
+        return false;
     }
     public void SetForcedInteraction(Interaction interaction) {
         _forcedInteraction = interaction;
