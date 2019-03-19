@@ -25,6 +25,7 @@ public class GoapAction {
     public bool isDone { get; private set; }
     public ACTION_LOCATION_TYPE actionLocationType { get; protected set; } //This is set in every action's constructor
     public bool showIntelNotification { get; protected set; } //should this action show a notification when it is done by its actor or when it recieves a plan with this action as it's end node?
+    public bool shouldAddLogs { get; protected set; } //should this action add logs to it's actor?
 
     protected Func<bool> _requirementAction;
     protected System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
@@ -40,6 +41,7 @@ public class GoapAction {
         isPerformingActualAction = false;
         isDone = false;
         showIntelNotification = true;
+        shouldAddLogs = true;
         preconditions = new List<Precondition>();
         expectedEffects = new List<GoapEffect>();
         actualEffects = new List<GoapEffect>();

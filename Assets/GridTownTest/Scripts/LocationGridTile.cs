@@ -234,7 +234,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     }
     public bool HasNeighbourOfType(Tile_Type type) {
         for (int i = 0; i < neighbours.Values.Count; i++) {
-            if (neighbours.Values.ElementAt(i).tileType != type) {
+            if (neighbours.Values.ElementAt(i).tileType == type) {
                 return true;
             }
         }

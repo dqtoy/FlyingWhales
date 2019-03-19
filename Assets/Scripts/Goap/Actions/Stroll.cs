@@ -9,6 +9,7 @@ public class Stroll : GoapAction {
 
     public Stroll(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.STROLL, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         showIntelNotification = false;
+        shouldAddLogs = false;
     }
 
     #region Overrides
@@ -30,10 +31,10 @@ public class Stroll : GoapAction {
 
     #region State Effects
     public void PreStrollSuccess() {
-        currentState.AddLogFiller(targetStructure.location, targetStructure.ToString(), LOG_IDENTIFIER.LANDMARK_1);
+        currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
     }
     public void PreStrollFail() {
-        currentState.AddLogFiller(targetStructure.location, targetStructure.ToString(), LOG_IDENTIFIER.LANDMARK_1);
+        currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
     }
     #endregion
 
