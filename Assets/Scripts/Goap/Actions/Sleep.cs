@@ -62,7 +62,7 @@ public class Sleep : GoapAction {
         //actor.AddTrait("Resting");
     }
     private void PerTickRestSuccess() {
-        actor.AdjustFullness(5);
+        actor.AdjustTiredness(7);
     }
     private void AfterRestSuccess() {
         poiTarget.SetPOIState(POI_STATE.ACTIVE);
