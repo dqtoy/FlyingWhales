@@ -164,7 +164,7 @@ public class LocationStructure {
                 tilesToUse = tiles;
             } else {
                 if (poi is MagicCircle) {
-                    tilesToUse = unoccupiedTiles.Where(x => !x.HasOccupiedNeighbour()).ToList();
+                    tilesToUse = unoccupiedTiles.Where(x => !x.HasOccupiedNeighbour() && !x.HasNeighbourOfType(LocationGridTile.Tile_Type.Wall)).ToList();
                 } else {
                     tilesToUse = unoccupiedTiles;
                 }

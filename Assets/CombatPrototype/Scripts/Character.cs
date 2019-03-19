@@ -4110,7 +4110,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
     }
     public void GoapActionResult(string result, GoapAction action) {
-        string log = GameManager.Instance.TodayLogString() + name + " is done performing goap action: " + action.goapName;
+        string log = GameManager.Instance.TodayLogString() + name + " is done performing goap action: " + action.goapName + ". Result: " + result;
         //Debug.Log(log);
         if (action == currentAction) {
             SetCurrentAction(null);
