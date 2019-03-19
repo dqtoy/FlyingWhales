@@ -25,16 +25,16 @@ public class AbductCharacter : GoapAction {
     protected override int GetCost() {
         return 3;
     }
-    public override bool IsHalted() {
-        //TIME_IN_WORDS timeInWords = GameManager.GetCurrentTimeInWordsOfTick();
-        //if(timeInWords == TIME_IN_WORDS.EARLY_NIGHT || timeInWords == TIME_IN_WORDS.LATE_NIGHT || timeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
-        //    return false;
-        //}
-        if(targetStructure.structureType == STRUCTURE_TYPE.WILDERNESS || targetStructure.charactersHere.Count == 2) {
-            return false;
-        }
-        return true;
-    }
+    //public override bool IsHalted() {
+    //    //TIME_IN_WORDS timeInWords = GameManager.GetCurrentTimeInWordsOfTick();
+    //    //if(timeInWords == TIME_IN_WORDS.EARLY_NIGHT || timeInWords == TIME_IN_WORDS.LATE_NIGHT || timeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
+    //    //    return false;
+    //    //}
+    //    if(targetStructure.structureType == STRUCTURE_TYPE.WILDERNESS || targetStructure.charactersHere.Count == 2) {
+    //        return false;
+    //    }
+    //    return true;
+    //}
     #endregion
 
     #region Requirements

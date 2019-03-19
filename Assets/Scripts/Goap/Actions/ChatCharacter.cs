@@ -61,13 +61,13 @@ public class ChatCharacter : GoapAction {
         }
         return cost;
     }
-    public override bool IsHalted() {
-        TIME_IN_WORDS timeInWords = GameManager.GetCurrentTimeInWordsOfTick();
-        if (timeInWords == TIME_IN_WORDS.LATE_NIGHT || timeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
-            return true;
-        }
-        return false;
-    }
+    //public override bool IsHalted() {
+    //    TIME_IN_WORDS timeInWords = GameManager.GetCurrentTimeInWordsOfTick();
+    //    if (timeInWords == TIME_IN_WORDS.LATE_NIGHT || timeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
+    //        return true;
+    //    }
+    //    return false;
+    //}
     public override void DoAction(GoapPlan plan) {
         CharacterRelationshipData relData = actor.GetCharacterRelationshipData(poiTarget as Character);
         if (relData != null && relData.knownStructure != null) {
