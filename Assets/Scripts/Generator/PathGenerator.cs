@@ -118,6 +118,8 @@ public class PathGenerator : MonoBehaviour {
     public List<LocationGridTile> GetPath(LocationGridTile startingTile, LocationGridTile destinationTile, GRID_PATHFINDING_MODE pathMode = GRID_PATHFINDING_MODE.NORMAL, bool includeFirstTile = false) {
         LocationGridTile.Tile_Type startType = startingTile.tileType;
         LocationGridTile.Tile_Type destinationType = destinationTile.tileType;
+        LocationGridTile.Tile_Access startAccess = startingTile.tileAccess;
+        LocationGridTile.Tile_Access destinationAccess = destinationTile.tileAccess;
         switch (pathMode) {
             case GRID_PATHFINDING_MODE.NORMAL:
                 startingTile.SetTileType(LocationGridTile.Tile_Type.Empty);
@@ -128,8 +130,8 @@ public class PathGenerator : MonoBehaviour {
                 destinationTile.SetTileType(LocationGridTile.Tile_Type.Road);
                 break;
             case GRID_PATHFINDING_MODE.REALISTIC:
-                startingTile.SetTileState(LocationGridTile.Tile_State.Empty);
-                destinationTile.SetTileState(LocationGridTile.Tile_State.Empty);
+                startingTile.SetTileAccess(LocationGridTile.Tile_Access.Passable);
+                destinationTile.SetTileAccess(LocationGridTile.Tile_Access.Passable);
                 break;
             default:
                 startingTile.SetTileType(LocationGridTile.Tile_Type.Empty);
@@ -144,6 +146,8 @@ public class PathGenerator : MonoBehaviour {
 
         startingTile.SetTileType(startType);
         destinationTile.SetTileType(destinationType);
+        startingTile.SetTileAccess(startAccess);
+        destinationTile.SetTileAccess(destinationAccess);
 
         if (path != null) {
             List<LocationGridTile> truePath = path.Reverse().ToList();

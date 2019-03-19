@@ -961,19 +961,11 @@ public class AreaInnerTileMap : MonoBehaviour {
     }
     public void RemoveObject(LocationGridTile tile) {
         tile.RemoveObjectHere();
-        if (tile.prefabHere != null) {
-            CharacterPortrait portrait = tile.prefabHere.GetComponent<CharacterPortrait>();
-            if (portrait != null) {
-                portrait.SetImageRaycastTargetState(true);
-            }
-            //ObjectPoolManager.Instance.DestroyObject(tile.prefabHere);
-            tile.SetPrefabHere(null);
-        }
         objectsTilemap.SetTile(tile.localPlace, null);
     }
     public void RemoveCharacter(LocationGridTile tile, Character character) {
-        if (tile.objHere == character) {
-            RemoveObject(tile);
+        if (tile.occupant == character) {
+            tile.RemoveOccupant();
         } else {
             if (tile.charactersHere.Remove(character)) {
                 character.SetGridTileLocation(null);
@@ -1012,8 +1004,8 @@ public class AreaInnerTileMap : MonoBehaviour {
             character.SetGridTileLocation(tile);
         } else {
             character.currentParty.icon.SetIsPlaceCharacterAsTileObject(false);
-            tile.SetObjectHere(character);
-            objectsTilemap.SetTile(tile.localPlace, null);
+            tile.SetOccupant(character);
+            //objectsTilemap.SetTile(tile.localPlace, null);
         }
     }
     private void OnPlaceCorpseOnTile(Corpse corpse, LocationGridTile tile) {
@@ -1108,6 +1100,8 @@ public class AreaInnerTileMap : MonoBehaviour {
         if (tile.objHere != null) {
             summary += "\n\tObject State: " + tile.objHere.state.ToString();
         }
+        summary += "\nOccupant: " + tile.occupant?.name ?? "None";
+
         //if (tile.structure != null) {
             summary += "\nStructure: " + tile.structure?.ToString() ?? "None";
         //}

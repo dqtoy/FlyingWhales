@@ -27,7 +27,7 @@ public class LocationStructure {
         get { return _itemsHere; }
     }
     public List<LocationGridTile> unoccupiedTiles {
-        get { return tiles.Where(x => x.tileState == LocationGridTile.Tile_State.Empty).ToList(); }
+        get { return tiles.Where(x => !x.isOccupied).ToList(); }
     }
     public POINT_OF_INTEREST_TYPE poiType {
         get { return POINT_OF_INTEREST_TYPE.STRUCTURE; }

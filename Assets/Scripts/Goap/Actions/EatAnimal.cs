@@ -44,7 +44,7 @@ public class EatAnimal : GoapAction {
         actor.AdjustFullness(5);
     }
     private void AfterEatSuccess() {
-        poiTarget.SetPOIState(POI_STATE.ACTIVE);
+        //poiTarget.SetPOIState(POI_STATE.ACTIVE);
     }
     private void PreEatFail() {
         currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);

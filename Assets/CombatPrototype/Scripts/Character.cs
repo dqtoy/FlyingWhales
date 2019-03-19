@@ -4015,13 +4015,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public void PerformGoapPlans() {
         string log = GameManager.Instance.TodayLogString() + "PERFORMING GOAP PLANS OF " + name;
-        List<INTERACTION_TYPE> actorAllowedActions = RaceManager.Instance.GetNPCInteractionsOfRace(this);
-        bool willGoIdleState = true;
-        if(currentAction != null) {
+        if (currentAction != null) {
             log += "\n" + name + " can't perform another action because he/she is currently performing " + currentAction.goapName;
             Debug.Log(log);
             return;
         }
+        List<INTERACTION_TYPE> actorAllowedActions = RaceManager.Instance.GetNPCInteractionsOfRace(this);
+        bool willGoIdleState = true;
         for (int i = 0; i < allGoapPlans.Count; i++) {
             GoapPlan plan = allGoapPlans[i];
             log += "\n" + plan.currentNode.action.goapName;
