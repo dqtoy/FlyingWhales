@@ -138,9 +138,9 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     }
     public void SetTileState(Tile_State state) {
         this.tileState = state;
-        if (state == Tile_State.Occupied) {
-            Messenger.Broadcast(Signals.TILE_OCCUPIED, this, objHere);
-        }
+        //if (state == Tile_State.Occupied) {
+        //    Messenger.Broadcast(Signals.TILE_OCCUPIED, this, objHere);
+        //}
     }
     public void SetTileAccess(Tile_Access state) {
         this.tileAccess = state;

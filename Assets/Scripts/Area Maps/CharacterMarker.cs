@@ -164,6 +164,7 @@ public class CharacterMarker : PooledObject {
         }
         if (character.currentParty != null && character.currentParty.icon != null) {
             character.currentParty.icon.SetIsTravelling(false);
+            character.currentParty.icon.SetIsPlaceCharacterAsTileObject(true);
         }
         _arrivalAction = null;
         //_currentPath = null;
@@ -182,9 +183,11 @@ public class CharacterMarker : PooledObject {
         //if the current path is not empty
         if (_currentPath != null && _currentPath.Count > 0) {
             LocationGridTile currentTile = _currentPath[0];
-            bool currentIsTravelling = character.currentParty.icon.isTravelling;
+            //bool currentIsTravelling = character.currentParty.icon.isTravelling;
             if(_currentPath.Count == 1) {
-                character.currentParty.icon.SetIsTravelling(false); //Quick fix for movement issue
+                //If the path only has 1 node left, this means that this is the destination tile, set the boolean to true so that when this character is placed
+                //the algorithm will place the character as the object of the destination tile instead of being added in the moving characters list and the tile will be set as occupied
+                character.currentParty.icon.SetIsPlaceCharacterAsTileObject(true);
             }
             if (currentTile.structure != character.currentStructure) {
                 character.currentStructure.RemoveCharacterAtLocation(character);
@@ -195,7 +198,7 @@ public class CharacterMarker : PooledObject {
             }
             _currentPath.RemoveAt(0);
             lastRemovedTileFromPath = currentTile;
-            character.currentParty.icon.SetIsTravelling(currentIsTravelling);
+            //character.currentParty.icon.SetIsTravelling(currentIsTravelling);
 
             if (character.currentParty.icon.isTravelling) {
                 if (_currentPath.Count <= 0) {
@@ -209,6 +212,9 @@ public class CharacterMarker : PooledObject {
                         Messenger.RemoveListener<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, OnTileOccupied);
                     }
                 } else {
+                    if(_currentPath.Count == 1) {
+                        Messenger.Broadcast(Signals.TILE_OCCUPIED, _currentPath[0], character as IPointOfInterest);
+                    }
                     currentMoveCoroutine = StartCoroutine(MoveToPosition(transform.position, _currentPath[0].centeredWorldLocation));
                 }
             }
@@ -338,14 +344,22 @@ public class CharacterMarker : PooledObject {
             LocationGridTile nextTile = _currentPath[0];
             if (nextTile.tileState == LocationGridTile.Tile_State.Occupied) {
                 pathRecalSummary += "\nNext Tile " + nextTile.ToString() + " is occupied. Stopping movement and action.";
+                character.currentAction.StopAction();
                 if (currentMoveCoroutine != null) {
                     StopCoroutine(currentMoveCoroutine);
+                    
                 }
-                character.currentParty.icon.SetIsTravelling(false);
                 if (lastRemovedTileFromPath != null) {
-                    lastRemovedTileFromPath.structure.location.areaMap.PlaceObject(character, lastRemovedTileFromPath);
+                    if (lastRemovedTileFromPath.structure != character.currentStructure) {
+                        character.currentStructure.RemoveCharacterAtLocation(character);
+                        lastRemovedTileFromPath.structure.AddCharacterAtLocation(character, lastRemovedTileFromPath);
+                    } else {
+                        character.gridTileLocation.structure.location.areaMap.RemoveCharacter(character.gridTileLocation, character);
+                        lastRemovedTileFromPath.structure.location.areaMap.PlaceObject(character, lastRemovedTileFromPath);
+                    }
                 }
-                character.currentAction.StopAction();
+                //character.currentParty.icon.SetIsTravelling(false);
+
                 _currentPath = null;
                 recalculationResult = false;
             }

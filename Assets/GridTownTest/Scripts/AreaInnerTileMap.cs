@@ -1007,10 +1007,11 @@ public class AreaInnerTileMap : MonoBehaviour {
         rect.anchoredPosition = pos;
         tile.SetPrefabHere(character.marker.gameObject);
 
-        if(character.currentParty.icon.isTravelling && character.currentParty.icon.travelLine == null) {
+        if(!character.currentParty.icon.placeCharacterAsTileObject) {
             tile.charactersHere.Add(character);
             character.SetGridTileLocation(tile);
         } else {
+            character.currentParty.icon.SetIsPlaceCharacterAsTileObject(false);
             tile.SetObjectHere(character);
             objectsTilemap.SetTile(tile.localPlace, null);
         }

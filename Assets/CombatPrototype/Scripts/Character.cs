@@ -4013,6 +4013,11 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         string log = GameManager.Instance.TodayLogString() + "PERFORMING GOAP PLANS OF " + name;
         List<INTERACTION_TYPE> actorAllowedActions = RaceManager.Instance.GetNPCInteractionsOfRace(this);
         bool willGoIdleState = true;
+        if(currentAction != null) {
+            log += "\n" + name + " can't perform another action because he/she is currently performing " + currentAction.goapName;
+            Debug.Log(log);
+            return;
+        }
         for (int i = 0; i < allGoapPlans.Count; i++) {
             GoapPlan plan = allGoapPlans[i];
             log += "\n" + plan.currentNode.action.goapName;
@@ -4110,7 +4115,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
     }
     public void GoapActionResult(string result, GoapAction action) {
-        string log = GameManager.Instance.TodayLogString() + name + " is done performing goap action: " + action.goapName + ". Result: " + result;
+        string log = GameManager.Instance.TodayLogString() + name + " is done performing goap action: " + action.goapName;
         //Debug.Log(log);
         if (action == currentAction) {
             SetCurrentAction(null);
@@ -4198,6 +4203,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
 
     public void ReceivePlanFromGoapThread(GoapThread goapThread) {
+        if(goapThread.recalculationPlan != null && goapThread.recalculationPlan.isEnd) {
+            return;
+        }
         Debug.Log(goapThread.log);
         if (goapThread.createdPlan != null) {
             if(goapThread.recalculationPlan == null) {

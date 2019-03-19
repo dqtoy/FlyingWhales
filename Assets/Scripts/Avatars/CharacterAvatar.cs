@@ -27,6 +27,7 @@ public class CharacterAvatar : MonoBehaviour{
     public LocationStructure targetStructure { get; protected set; }
     public LocationGridTile targetTile { get; protected set; }
     public IPointOfInterest targetPOI { get; protected set; }
+    public bool placeCharacterAsTileObject { get; private set; }
 
     [SerializeField] protected List<HexTile> path;
 
@@ -373,6 +374,9 @@ public class CharacterAvatar : MonoBehaviour{
     }
     public void SetIsTravelling(bool state) {
         _isTravelling = state;
+    }
+    public void SetIsPlaceCharacterAsTileObject(bool state) {
+        placeCharacterAsTileObject = state;
     }
     #endregion
 
