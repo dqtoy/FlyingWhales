@@ -117,9 +117,9 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
             case Tile_Type.Wall:
                 SetTileAccess(Tile_Access.Impassable);
                 break;
-            default:
-                SetTileState(Tile_State.Empty);
-                break;
+            //default:
+            //    SetTileState(Tile_State.Empty);
+            //    break;
         }
     }
 
