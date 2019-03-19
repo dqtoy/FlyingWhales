@@ -125,6 +125,10 @@ public class CharacterMarker : PooledObject {
         _targetPOI = targetPOI;
         _arrivalAction = arrivalAction;
         lastRemovedTileFromPath = null;
+        //if (destinationTile.tileState == LocationGridTile.Tile_State.Occupied) {
+        //    RecalculatePath(); //if the destination tile is already occupied, recalculate
+        //    return;
+        //}
         Messenger.AddListener<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, OnTileOccupied);
         if (character.gridTileLocation.structure.location.areaMap.gameObject.activeSelf) {
             //If area map is showing, do pathfinding
@@ -149,10 +153,19 @@ public class CharacterMarker : PooledObject {
         character.currentParty.icon.SetIsTravelling(true);
         StartWalkingAnimation();
         if (_currentPath.Count == 0) {
-            throw new Exception(character.name + "'s marker path count is 0, but movement is starting! Destination Tile is: " + _destinationTile.ToString());
+            //Arrival
+            character.currentParty.icon.SetIsTravelling(false);
+            if (_arrivalAction != null) {
+                _arrivalAction();
+            }
+            PlayIdle();
+            if (Messenger.eventTable.ContainsKey(Signals.TILE_OCCUPIED)) {
+                Messenger.RemoveListener<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, OnTileOccupied);
+            }
+            //throw new Exception(character.name + "'s marker path count is 0, but movement is starting! Destination Tile is: " + _destinationTile.ToString());
+        } else {
+            currentMoveCoroutine = StartCoroutine(MoveToPosition(transform.position, _currentPath[0].centeredWorldLocation));
         }
-        currentMoveCoroutine = StartCoroutine(MoveToPosition(transform.position, _currentPath[0].centeredWorldLocation));
-        
         //Messenger.AddListener(Signals.TICK_STARTED, Move);
     }
     public void StopMovement() {
@@ -344,6 +357,8 @@ public class CharacterMarker : PooledObject {
                 character.currentParty.icon.SetIsTravelling(false);
                 if (lastRemovedTileFromPath != null) {
                     lastRemovedTileFromPath.structure.location.areaMap.PlaceObject(character, lastRemovedTileFromPath);
+                } else {
+                    nextTile.structure.location.areaMap.PlaceObject(character, nextTile);
                 }
                 character.currentAction.StopAction();
                 _currentPath = null;
