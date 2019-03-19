@@ -3613,11 +3613,11 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         } else if (tiredness <= TIREDNESS_THRESHOLD_2) {
             RemoveTrait("Tired");
             AddTrait("Exhausted");
-            PlanTirednessRecoveryActions();
+            //PlanTirednessRecoveryActions();
         } else if (tiredness <= TIREDNESS_THRESHOLD_1) {
             AddTrait("Tired");
             RemoveTrait("Exhausted");
-            PlanTirednessRecoveryActions();
+            //PlanTirednessRecoveryActions();
         } else {
             //tiredness is higher than both thresholds
             RemoveTrait("Tired");
@@ -3634,12 +3634,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 RemoveTrait("Tired");
                 AddTrait("Exhausted");
             }
-            PlanTirednessRecoveryActions();
+            //PlanTirednessRecoveryActions();
         } else if (tiredness <= TIREDNESS_THRESHOLD_1) {
             if (tiredness == TIREDNESS_THRESHOLD_1) {
                 AddTrait("Tired");
             }
-            PlanTirednessRecoveryActions();
+            //PlanTirednessRecoveryActions();
         }
     }
     #endregion
@@ -3658,11 +3658,11 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         } else if (fullness <= FULLNESS_THRESHOLD_2) {
             RemoveTrait("Hungry");
             AddTrait("Starving");
-            PlanFullnessRecoveryActions();
+            //PlanFullnessRecoveryActions();
         } else if (fullness <= FULLNESS_THRESHOLD_1) {
             RemoveTrait("Starving");
             AddTrait("Hungry");
-            PlanFullnessRecoveryActions();
+            //PlanFullnessRecoveryActions();
         } else {
             //fullness is higher than both thresholds
             RemoveTrait("Hungry");
@@ -3679,12 +3679,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 RemoveTrait("Hungry");
                 AddTrait("Starving");
             }
-            PlanFullnessRecoveryActions();
+            //PlanFullnessRecoveryActions();
         } else if (fullness <= FULLNESS_THRESHOLD_1) {
             if (fullness == FULLNESS_THRESHOLD_1) {
                 AddTrait("Hungry");
             }
-            PlanFullnessRecoveryActions();
+            //PlanFullnessRecoveryActions();
         }
     }
     #endregion
@@ -3701,11 +3701,11 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (happiness <= HAPPINESS_THRESHOLD_2) {
             RemoveTrait("Lonely");
             AddTrait("Forlorn");
-            PlanHappinessRecoveryActions();
+            //PlanHappinessRecoveryActions();
         } else if (happiness <= HAPPINESS_THRESHOLD_1) {
             AddTrait("Lonely");
             RemoveTrait("Forlorn");
-            PlanHappinessRecoveryActions();
+            //PlanHappinessRecoveryActions();
         } else {
             RemoveTrait("Lonely");
             RemoveTrait("Forlorn");
