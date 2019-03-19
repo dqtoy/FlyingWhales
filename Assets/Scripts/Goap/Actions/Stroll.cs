@@ -8,6 +8,7 @@ public class Stroll : GoapAction {
     private LocationStructure _targetStructure;
 
     public Stroll(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.STROLL, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+        showIntelNotification = false;
     }
 
     #region Overrides
