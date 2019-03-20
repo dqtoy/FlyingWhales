@@ -316,6 +316,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.RETURN_HOME,
                 INTERACTION_TYPE.DRINK,
                 INTERACTION_TYPE.SLEEP_OUTSIDE,
+                INTERACTION_TYPE.EXPLORE,
             } },
             { RACE.ELVES, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -367,6 +368,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.RETURN_HOME,
                 INTERACTION_TYPE.DRINK,
                 INTERACTION_TYPE.SLEEP_OUTSIDE,
+                INTERACTION_TYPE.EXPLORE,
             } },
             { RACE.GOBLIN, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -418,6 +420,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.RETURN_HOME,
                 INTERACTION_TYPE.DRINK,
                 INTERACTION_TYPE.SLEEP_OUTSIDE,
+                INTERACTION_TYPE.EXPLORE,
             } },
             { RACE.FAERY, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -469,6 +472,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.RETURN_HOME,
                 INTERACTION_TYPE.DRINK,
                 INTERACTION_TYPE.SLEEP_OUTSIDE,
+                INTERACTION_TYPE.EXPLORE,
             } },
             { RACE.SKELETON, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -520,6 +524,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.RETURN_HOME,
                 INTERACTION_TYPE.DRINK,
                 INTERACTION_TYPE.SLEEP_OUTSIDE,
+                INTERACTION_TYPE.EXPLORE,
             } },
             { RACE.SPIDER, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -568,6 +573,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.STROLL,
                 INTERACTION_TYPE.RETURN_HOME,
                 INTERACTION_TYPE.SLEEP_OUTSIDE,
+                INTERACTION_TYPE.EXPLORE,
             } },
             { RACE.WOLF, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -616,6 +622,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.STROLL,
                 INTERACTION_TYPE.RETURN_HOME,
                 INTERACTION_TYPE.SLEEP_OUTSIDE,
+                INTERACTION_TYPE.EXPLORE,
             } },
             { RACE.DRAGON, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -664,6 +671,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.STROLL,
                 INTERACTION_TYPE.RETURN_HOME,
                 INTERACTION_TYPE.SLEEP_OUTSIDE,
+                INTERACTION_TYPE.EXPLORE,
             } },
         };
     }

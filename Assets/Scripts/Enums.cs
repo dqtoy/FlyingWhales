@@ -1138,6 +1138,8 @@ public enum INTERACTION_TYPE {
     STROLL,
     DRINK,
     SLEEP_OUTSIDE,
+    EXPLORE,
+    PATROL,
 }
 public enum INTERACTION_ALIGNMENT {
     EVIL,

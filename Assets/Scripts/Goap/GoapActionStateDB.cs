@@ -87,6 +87,10 @@ public static class GoapActionStateDB {
             new StateNameAndDuration(){ name = "Rest Success", status = InteractionManager.Goap_State_Success, duration = AttributeManager.Instance.allTraits["Resting"].daysDuration },
             new StateNameAndDuration(){ name = "Rest Fail", status = InteractionManager.Goap_State_Fail, duration = 0 },
         } },
+        {INTERACTION_TYPE.EXPLORE, new StateNameAndDuration[]{
+            new StateNameAndDuration(){ name = "Explore Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+            new StateNameAndDuration(){ name = "Explore Fail", status = InteractionManager.Goap_State_Fail, duration = 0 },
+        } },
     };
 }
 
