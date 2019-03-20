@@ -72,8 +72,10 @@ public class CharacterInfoUI : UIMenu {
     [SerializeField] private TextMeshProUGUI speedLbl;
 
     [Space(10)]
-    [Header("Combat Attributes")]
-    [SerializeField] private Transform combatAttributeContentTransform;
+    [Header("Traits")]
+    [SerializeField] private ScrollRect statusTraitsScrollView;
+    [SerializeField] private ScrollRect normalTraitsScrollView;
+    [SerializeField] private ScrollRect relationshipTraitsScrollView;
     [SerializeField] private GameObject combatAttributePrefab;
 
     [Space(10)]
@@ -140,7 +142,7 @@ public class CharacterInfoUI : UIMenu {
         base.OpenMenu();
         UpdateCharacterInfo();
         //if (_activeCharacter.isBeingInspected || GameManager.Instance.inspectAll) {
-            UpdateCombatAttributes();
+            UpdateTraits();
         //} else {
         //    UpdateCombatAttributes(_activeCharacter.uiData);
         //}
@@ -159,7 +161,7 @@ public class CharacterInfoUI : UIMenu {
         //PlayerAbilitiesUI.Instance.ShowPlayerAbilitiesUI(_activeCharacter);
         //PlayerUI.Instance.UncollapseMinionHolder();
         //InteractionUI.Instance.OpenInteractionUI(_activeCharacter);
-        historyScrollView.verticalNormalizedPosition = 1;
+        ResetAllScrollPositions();
         //CheckIfMenuShouldBeHidden();
         //UIManager.Instance.SetCoverState(true);
     }
@@ -187,6 +189,12 @@ public class CharacterInfoUI : UIMenu {
     //}
     #endregion
 
+    public void ResetAllScrollPositions() {
+        historyScrollView.verticalNormalizedPosition = 1;
+        relationshipTraitsScrollView.verticalNormalizedPosition = 1;
+        statusTraitsScrollView.verticalNormalizedPosition = 1;
+        normalTraitsScrollView.verticalNormalizedPosition = 1;
+    }
     public override void SetData(object data) {
         base.SetData(data);
         //if (isShowing) {
@@ -358,22 +366,26 @@ public class CharacterInfoUI : UIMenu {
         if(_activeCharacter == null || _activeCharacter != character) {
             return;
         }
-        UpdateCombatAttributes();
+        UpdateTraits();
     }
-    private void UpdateCombatAttributes() {
-        Utilities.DestroyChildren(combatAttributeContentTransform);
+    private void UpdateTraits() {
+        Utilities.DestroyChildren(statusTraitsScrollView.content);
+        Utilities.DestroyChildren(normalTraitsScrollView.content);
+        Utilities.DestroyChildren(relationshipTraitsScrollView.content);
         for (int i = 0; i < _activeCharacter.traits.Count; i++) {
-            CreateCombatAttributeGO(_activeCharacter.traits[i]);
+            Trait currTrait = _activeCharacter.traits[i];
+            if (currTrait is RelationshipTrait) {
+                CreateTraitGO(currTrait, relationshipTraitsScrollView.content);
+            } else if (currTrait.type == TRAIT_TYPE.STATUS || currTrait.type == TRAIT_TYPE.DISABLER) {
+                CreateTraitGO(currTrait, statusTraitsScrollView.content);
+            } else {
+                CreateTraitGO(currTrait, normalTraitsScrollView.content);
+            }
+            
         }
     }
-    private void UpdateCombatAttributes(CharacterUIData uiData) {
-        combatAttributeContentTransform.DestroyChildren();
-        for (int i = 0; i < uiData.combatAttributes.Count; i++) {
-            CreateCombatAttributeGO(uiData.combatAttributes[i]);
-        }
-    }
-    private void CreateCombatAttributeGO(Trait combatAttribute) {
-        GameObject go = GameObject.Instantiate(combatAttributePrefab, combatAttributeContentTransform);
+    private void CreateTraitGO(Trait combatAttribute, RectTransform parent) {
+        GameObject go = GameObject.Instantiate(combatAttributePrefab, parent);
         CombatAttributeItem combatAttributeItem = go.GetComponent<CombatAttributeItem>();
         combatAttributeItem.SetCombatAttribute(combatAttribute);
     }
