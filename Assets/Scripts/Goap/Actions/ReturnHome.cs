@@ -11,7 +11,6 @@ public class ReturnHome : GoapAction {
         showIntelNotification = false;
         shouldAddLogs = false;
         actionLocationType = ACTION_LOCATION_TYPE.RANDOM_LOCATION;
-        _targetStructure = actor.homeStructure;
     }
 
     #region Overrides
@@ -28,6 +27,10 @@ public class ReturnHome : GoapAction {
     }
     protected override int GetCost() {
         return 3;
+    }
+    public override void DoAction(GoapPlan plan) {
+        _targetStructure = actor.homeStructure;
+        base.DoAction(plan);
     }
     public override void FailAction() {
         base.FailAction();

@@ -7,6 +7,10 @@ public class Dwelling : LocationStructure {
 
     public List<Character> residents { get; private set; }
 
+    public override bool hasResidents {
+        get { return residents.Count > 0; }
+    }
+
     public Character owner {
         get { return residents.ElementAtOrDefault(0); }
     }

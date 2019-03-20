@@ -32,6 +32,9 @@ public class LocationStructure {
     public POINT_OF_INTEREST_TYPE poiType {
         get { return POINT_OF_INTEREST_TYPE.STRUCTURE; }
     }
+    public virtual bool hasResidents {
+        get { return false; }
+    }
     #endregion
 
     public LocationStructure(STRUCTURE_TYPE structureType, Area location, bool isInside) {

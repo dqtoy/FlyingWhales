@@ -988,6 +988,12 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.RETURN_HOME:
                 goapAction = new ReturnHome(actor, target);
                 break;
+            case INTERACTION_TYPE.DRINK:
+                goapAction = new Drink(actor, target);
+                break;
+            case INTERACTION_TYPE.SLEEP_OUTSIDE:
+                goapAction = new SleepOutside(actor, target);
+                break;
         }
         if(goapAction != null && willInitialize) {
             goapAction.Initialize();
