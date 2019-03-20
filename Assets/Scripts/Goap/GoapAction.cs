@@ -156,7 +156,9 @@ public class GoapAction {
         return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, poiTarget, targetStructure);
     }
     public virtual void SetTargetStructure() {
-        targetTile = GetTargetLocationTile();
+        if(targetStructure != null) {
+            targetTile = GetTargetLocationTile();
+        }
     }
     #endregion
 

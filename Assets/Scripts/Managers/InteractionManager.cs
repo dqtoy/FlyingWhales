@@ -994,6 +994,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.SLEEP_OUTSIDE:
                 goapAction = new SleepOutside(actor, target);
                 break;
+            case INTERACTION_TYPE.EXPLORE:
+                goapAction = new Explore(actor, target);
+                break;
         }
         if(goapAction != null && willInitialize) {
             goapAction.Initialize();
