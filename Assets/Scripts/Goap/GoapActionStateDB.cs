@@ -74,6 +74,10 @@ public static class GoapActionStateDB {
             new StateNameAndDuration(){ name = "Stroll Success", status = InteractionManager.Goap_State_Success, duration = 6 },
             new StateNameAndDuration(){ name = "Stroll Fail", status = InteractionManager.Goap_State_Fail, duration = 0 },
         } },
+        {INTERACTION_TYPE.RETURN_HOME, new StateNameAndDuration[]{
+            new StateNameAndDuration(){ name = "Return Home Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+            new StateNameAndDuration(){ name = "Return Home Failed", status = InteractionManager.Goap_State_Fail, duration = 0 },
+        } },
     };
 }
 

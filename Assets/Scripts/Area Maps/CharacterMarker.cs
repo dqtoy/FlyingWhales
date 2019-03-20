@@ -151,12 +151,12 @@ public class CharacterMarker : PooledObject {
         if (_currentPath.Count == 0) {
             //Arrival
             character.currentParty.icon.SetIsTravelling(false);
-            if (_arrivalAction != null) {
-                _arrivalAction();
-            }
             PlayIdle();
             if (Messenger.eventTable.ContainsKey(Signals.TILE_OCCUPIED)) {
                 Messenger.RemoveListener<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, OnTileOccupied);
+            }
+            if (_arrivalAction != null) {
+                _arrivalAction();
             }
             //throw new Exception(character.name + "'s marker path count is 0, but movement is starting! Destination Tile is: " + _destinationTile.ToString());
         } else {
@@ -213,12 +213,12 @@ public class CharacterMarker : PooledObject {
                 if (_currentPath.Count <= 0) {
                     //Arrival
                     character.currentParty.icon.SetIsTravelling(false);
-                    if (_arrivalAction != null) {
-                        _arrivalAction();
-                    }
                     PlayIdle();
                     if (Messenger.eventTable.ContainsKey(Signals.TILE_OCCUPIED)) {
                         Messenger.RemoveListener<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, OnTileOccupied);
+                    }
+                    if (_arrivalAction != null) {
+                        _arrivalAction();
                     }
                 } else {
                     if(_currentPath.Count == 1) {
@@ -285,10 +285,10 @@ public class CharacterMarker : PooledObject {
             character.currentStructure.RemoveCharacterAtLocation(character);
             _destinationTile.structure.AddCharacterAtLocation(character, _destinationTile);
             character.currentParty.icon.SetIsTravelling(false);
+            StopMovement();
             if (_arrivalAction != null) {
                 _arrivalAction();
             }
-            StopMovement();
         }
         _currentTravelTime++;
     }
@@ -312,6 +312,10 @@ public class CharacterMarker : PooledObject {
         if (!this.gameObject.activeInHierarchy) {
             return;
         }
+        StartCoroutine(StartWalking());
+    }
+    IEnumerator StartWalking() {
+        yield return null;
         animator.Play("Walk");
     }
     private void PlayIdle() {
@@ -399,6 +403,7 @@ public class CharacterMarker : PooledObject {
                     case ACTION_LOCATION_TYPE.RANDOM_LOCATION:
                     case ACTION_LOCATION_TYPE.RANDOM_LOCATION_B:
                     case ACTION_LOCATION_TYPE.NEAR_TARGET:
+                    case ACTION_LOCATION_TYPE.ON_TARGET:
                         shouldRecalculatePath = true;
                         RecalculatePath();
                         break;

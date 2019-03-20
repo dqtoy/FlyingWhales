@@ -125,7 +125,7 @@ public class GoapAction {
     ///All movement related actions should be done here.
     ///</summary>
     ///<param name="plan">Plan where this action came from.</param>
-    public virtual void DoAction(GoapPlan plan) {
+    public virtual void DoAction(GoapPlan plan, LocationGridTile targetTile) {
         CreateStates(); //Not sure if this is the best place for this.
         actor.SetCurrentAction(this);
 
@@ -136,8 +136,11 @@ public class GoapAction {
         }
 
         //if the specified target tile is null. Use the default means to get the target tile. (Uses Action Location Type)
-        if (targetTile == null) {
-            targetTile = GetTargetLocationTile();
+        //if (targetTile == null) {
+        //    targetTile = GetTargetLocationTile();
+        //}
+        if(this.targetTile == null) {
+            this.targetTile = targetTile;
         }
 
         //if the actor is NOT at the area where the target structure is, make him/her go there first.

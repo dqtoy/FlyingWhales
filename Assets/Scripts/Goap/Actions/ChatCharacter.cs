@@ -68,14 +68,14 @@ public class ChatCharacter : GoapAction {
     //    }
     //    return false;
     //}
-    public override void DoAction(GoapPlan plan) {
+    public override void DoAction(GoapPlan plan, LocationGridTile targetTile) {
         CharacterRelationshipData relData = actor.GetCharacterRelationshipData(poiTarget as Character);
         if (relData != null && relData.knownStructure != null) {
             _targetStructure = relData.knownStructure;
         } else {
             _targetStructure = poiTarget.gridTileLocation.structure;
         }
-        base.DoAction(plan);
+        base.DoAction(plan, targetTile);
     }
     #endregion
 

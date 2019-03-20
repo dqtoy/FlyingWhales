@@ -27,13 +27,13 @@ public class Daydream : GoapAction {
         //**Cost**: randomize between 3-10
         return Utilities.rng.Next(3, 10);
     }
-    public override void DoAction(GoapPlan plan) {
+    public override void DoAction(GoapPlan plan, LocationGridTile targetTile) {
         //**Movement**: Move Actor to a random unoccupied tile in current location Wilderness or Work Area.
         List<LocationStructure> choices = actor.specificLocation.GetStructuresOfType(STRUCTURE_TYPE.WILDERNESS).Where(x => x.unoccupiedTiles.Count > 0).ToList();
         choices.AddRange(actor.specificLocation.GetStructuresOfType(STRUCTURE_TYPE.WORK_AREA).Where(x => x.unoccupiedTiles.Count > 0));
         _targetStructure = choices[Random.Range(0, choices.Count)];
         targetTile = _targetStructure.GetRandomUnoccupiedTile();
-        base.DoAction(plan);
+        base.DoAction(plan, targetTile);
     }
     //public override bool IsHalted() {
     //    TIME_IN_WORDS timeInWords = GameManager.GetCurrentTimeInWordsOfTick();

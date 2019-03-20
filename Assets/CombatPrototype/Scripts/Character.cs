@@ -2835,9 +2835,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 if (!PlanTirednessRecoveryActions()) {
                     if (!PlanHappinessRecoveryActions()) {
                         if (!PlanWorkActions()) {
-                            if (PlanIdleStroll()) {
-                                PlanGoapActions();
+                            if(homeStructure != null && currentStructure.structureType == STRUCTURE_TYPE.DWELLING && currentStructure != homeStructure) {
+                                PlanIdleReturnHome();
+                            } else {
+                                PlanIdleStroll();
                             }
+                            PlanGoapActions();
                         }
                     }
                 }
@@ -2956,6 +2959,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             return true;
         //}
         //return false;
+    }
+    private bool PlanIdleReturnHome() {
+        GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.RETURN_HOME, this, this);
+        GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
+        GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE });
+        allGoapPlans.Add(goapPlan);
+        return true;
     }
     public void SetForcedInteraction(Interaction interaction) {
         _forcedInteraction = interaction;
@@ -4052,20 +4062,21 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             GoapPlan plan = allGoapPlans[i];
             log += "\n" + plan.currentNode.action.goapName;
             //check if current action can still find a destination tile towards the target POI
-            bool hasValidDestination = false;
-            if (plan.currentNode.action.targetTile != null) {
-                hasValidDestination = true;
-            } else {
-                if (plan.currentNode.action.poiTarget.gridTileLocation.IsNeighbour(gridTileLocation)) {
-                    hasValidDestination = true;
-                } else {
-                    LocationGridTile destinationTile = plan.currentNode.action.poiTarget.GetNearestUnoccupiedTileFromThis();
-                    hasValidDestination = destinationTile != null;
-                }
+            //bool hasValidDestination = false;
+            //if (plan.currentNode.action.targetTile != null) {
+            //    hasValidDestination = true;
+            //} else {
+            //    if (plan.currentNode.action.poiTarget.gridTileLocation.IsNeighbour(gridTileLocation)) {
+            //        hasValidDestination = true;
+            //    } else {
+            //        LocationGridTile destinationTile = plan.currentNode.action.poiTarget.GetNearestUnoccupiedTileFromThis();
+            //        hasValidDestination = destinationTile != null;
+            //    }
+            //}
 
-            }
+            LocationGridTile targetTile = plan.currentNode.action.GetTargetLocationTile();
 
-            if (actorAllowedActions.Contains(plan.currentNode.action.goapType) && plan.currentNode.action.CanSatisfyRequirements() && hasValidDestination) {
+            if (actorAllowedActions.Contains(plan.currentNode.action.goapType) && plan.currentNode.action.CanSatisfyRequirements() && targetTile != null) {
                 if (plan.isBeingRecalculated) {
                     log += "\n - Plan for " + plan.endNode.action.goapName + " is being recalculated, skipping...";
                     continue;
@@ -4082,7 +4093,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 } else {
                     log += "\n - Action's preconditions are all satisfied, doing action...";
                     Debug.Log(log);
-                    plan.currentNode.action.DoAction(plan);
+                    plan.currentNode.action.DoAction(plan, targetTile);
                     willGoIdleState = false;
                     break;
                 }

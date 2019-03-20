@@ -985,6 +985,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.STROLL:
                 goapAction = new Stroll(actor, target);
                 break;
+            case INTERACTION_TYPE.RETURN_HOME:
+                goapAction = new ReturnHome(actor, target);
+                break;
         }
         if(goapAction != null && willInitialize) {
             goapAction.Initialize();
@@ -2149,7 +2152,10 @@ public class InteractionManager : MonoBehaviour {
                 return null;
             case ACTION_LOCATION_TYPE.ON_TARGET:
                 //**On Target**: in the same tile as the target item or tile object
-                return target.gridTileLocation;
+                if(target.gridTileLocation.occupant == null) {
+                    return target.gridTileLocation;
+                }
+                return null;
             default:
                 return null;
         }

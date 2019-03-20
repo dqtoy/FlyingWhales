@@ -313,6 +313,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.ARGUE_CHARACTER,
                 //INTERACTION_TYPE.CRAFT_ITEM,
                 INTERACTION_TYPE.STROLL,
+                INTERACTION_TYPE.RETURN_HOME,
             } },
             { RACE.ELVES, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -361,6 +362,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.ARGUE_CHARACTER,
                 //INTERACTION_TYPE.CRAFT_ITEM,
                 INTERACTION_TYPE.STROLL,
+                INTERACTION_TYPE.RETURN_HOME,
             } },
             { RACE.GOBLIN, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -409,6 +411,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.ARGUE_CHARACTER,
                 //INTERACTION_TYPE.CRAFT_ITEM,
                 INTERACTION_TYPE.STROLL,
+                INTERACTION_TYPE.RETURN_HOME,
             } },
             { RACE.FAERY, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -457,6 +460,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.ARGUE_CHARACTER,
                 //INTERACTION_TYPE.CRAFT_ITEM,
                 INTERACTION_TYPE.STROLL,
+                INTERACTION_TYPE.RETURN_HOME,
             } },
             { RACE.SKELETON, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -505,6 +509,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.ARGUE_CHARACTER,
                 //INTERACTION_TYPE.CRAFT_ITEM,
                 INTERACTION_TYPE.STROLL,
+                INTERACTION_TYPE.RETURN_HOME,
             } },
             { RACE.SPIDER, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -551,6 +556,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.PLAY_GUITAR,
                 //INTERACTION_TYPE.CRAFT_ITEM,
                 INTERACTION_TYPE.STROLL,
+                INTERACTION_TYPE.RETURN_HOME,
             } },
             { RACE.WOLF, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -597,6 +603,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.PLAY_GUITAR,
                 //INTERACTION_TYPE.CRAFT_ITEM,
                 INTERACTION_TYPE.STROLL,
+                INTERACTION_TYPE.RETURN_HOME,
             } },
             { RACE.DRAGON, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -643,6 +650,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.PLAY_GUITAR,
                 //INTERACTION_TYPE.CRAFT_ITEM,
                 INTERACTION_TYPE.STROLL,
+                INTERACTION_TYPE.RETURN_HOME,
             } },
         };
     }
