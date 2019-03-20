@@ -52,6 +52,10 @@ public class EatAtTable : GoapAction {
         }
         return 0;
     }
+    public override void FailAction() {
+        base.FailAction();
+        SetState("Target Missing");
+    }
     #endregion
 
     #region Effects

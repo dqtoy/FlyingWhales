@@ -1861,7 +1861,16 @@ public class Area {
                 structure.AddPOI(new Table(structure));
             }
         }
-    }
+        if (structures.ContainsKey(STRUCTURE_TYPE.INN)) {
+            int randomInnTables = UnityEngine.Random.Range(2, 5);
+            for (int i = 0; i < structures[STRUCTURE_TYPE.INN].Count; i++) {
+                LocationStructure structure = structures[STRUCTURE_TYPE.INN][i];
+                for (int j = 0; j < randomInnTables; j++) {
+                    structure.AddPOI(new Table(structure));
+                }
+            }
+        }
+        }
     private void PlaceOres() {
         if (structures.ContainsKey(STRUCTURE_TYPE.WILDERNESS)) {
             int oreCount = 5;

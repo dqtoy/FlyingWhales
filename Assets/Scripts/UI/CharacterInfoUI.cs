@@ -210,7 +210,7 @@ public class CharacterInfoUI : UIMenu {
         UpdateBasicInfo();
         UpdateStatInfo();
         UpdateLocationInfo();
-        UpdateItemInfo();
+        //UpdateItemInfo();
         UpdateAllHistoryInfo();
     }
     private void UpdatePortrait() {

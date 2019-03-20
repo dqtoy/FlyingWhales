@@ -527,7 +527,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //If this is a minion, this should not be initiated
         awareness = new Dictionary<POINT_OF_INTEREST_TYPE, List<IAwareness>>();
         planner = new GoapPlanner(this);
-        AddAwareness(this);
+        //AddAwareness(this);
 
         GetRandomCharacterColor();
 #if !WORLD_CREATION_TOOL
@@ -3789,7 +3789,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     #region Awareness
     public IAwareness AddAwareness(IPointOfInterest pointOfInterest) {
         IAwareness iawareness = GetAwareness(pointOfInterest);
-        if (iawareness == null && pointOfInterest != this) {
+        if (iawareness == null) {
             iawareness = CreateNewAwareness(pointOfInterest);
             if(iawareness != null) {
                 if (awareness.ContainsKey(pointOfInterest.poiType)) {
@@ -3947,6 +3947,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         poiGoapActions.Add(INTERACTION_TYPE.DROP_CHARACTER);
         poiGoapActions.Add(INTERACTION_TYPE.ABDUCT_ACTION);
         poiGoapActions.Add(INTERACTION_TYPE.STROLL);
+        poiGoapActions.Add(INTERACTION_TYPE.DAYDREAM);
     }
     public void StartGOAP(GoapEffect goal, IPointOfInterest target, bool isPriority = false, List<Character> otherCharactePOIs = null) {
         List<CharacterAwareness> characterTargetsAwareness = new List<CharacterAwareness>();

@@ -45,6 +45,10 @@ public class Sleep : GoapAction {
             return 10;
         }
     }
+    public override void FailAction() {
+        base.FailAction();
+        SetState("Rest Fail");
+    }
     #endregion
 
     #region Requirements

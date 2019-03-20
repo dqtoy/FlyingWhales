@@ -155,6 +155,13 @@ public class GoapAction {
     public virtual LocationGridTile GetTargetLocationTile() {
         return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, poiTarget, targetStructure);
     }
+    public virtual void FailAction() {
+        if (actor.currentParty.icon.isTravelling && actor.currentParty.icon.travelLine == null) {
+            //This means that the actor currently travelling to another tile in tilemap
+            actor.marker.StopMovement();
+        }
+        //Set state to failed after this (in overrides)
+    }
     #endregion
 
     #region Utilities

@@ -28,6 +28,10 @@ public class Stroll : GoapAction {
     protected override int GetCost() {
         return 5;
     }
+    public override void FailAction() {
+        base.FailAction();
+        SetState("Stroll Fail");
+    }
     #endregion
 
     #region State Effects

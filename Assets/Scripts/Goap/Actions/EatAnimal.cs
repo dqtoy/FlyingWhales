@@ -33,6 +33,10 @@ public class EatAnimal : GoapAction {
             return 12;
         }
     }
+    public override void FailAction() {
+        base.FailAction();
+        SetState("Eat Fail");
+    }
     #endregion
 
     #region Effects

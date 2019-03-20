@@ -31,7 +31,10 @@ public class PlayGuitar : GoapAction {
         return Utilities.rng.Next(3, 10);
         //return Random.Range(3, 11);
     }
-    
+    public override void FailAction() {
+        base.FailAction();
+        SetState("Play Fail");
+    }
     #endregion
 
     #region State Effects
