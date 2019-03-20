@@ -22,6 +22,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     protected int _doNotGetHungry;
     protected int _doNotGetTired;
     protected int _doNotGetLonely;
+    protected int _numOfWaitingForGoapThread;
     protected float _actRate;
     protected bool _isDead;
     protected bool _isFainted;
@@ -31,6 +32,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     protected bool _alreadyTargetedByGrudge;
     protected bool _isTracked;
     protected bool _activateDailyGoapPlanInteraction;
+    protected bool _hasAlreadyAskedForPlan;
     protected GENDER _gender;
     protected MODE _currentMode;
     protected CharacterClass _characterClass;
@@ -545,7 +547,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     private void SubscribeToSignals() {
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnOtherCharacterDied);
         //Messenger.AddListener(Signals.TICK_STARTED, DailyInteractionGeneration);
-        //Messenger.AddListener(Signals.TICK_STARTED, DailyGoapPlanGeneration);
+        Messenger.AddListener(Signals.TICK_STARTED, DailyGoapPlanGeneration);
         Messenger.AddListener(Signals.HOUR_STARTED, DecreaseNeeds);
         Messenger.AddListener<Character, Area, Area>(Signals.CHARACTER_MIGRATED_HOME, OnCharacterMigratedHome);
         Messenger.AddListener<Interaction>(Signals.INTERACTION_ENDED, OnInteractionEnded);
@@ -554,6 +556,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public void UnsubscribeSignals() {
         Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnOtherCharacterDied);
         //Messenger.RemoveListener(Signals.TICK_STARTED, DailyInteractionGeneration);
+        Messenger.RemoveListener(Signals.TICK_STARTED, DailyGoapPlanGeneration);
         Messenger.RemoveListener(Signals.HOUR_STARTED, DecreaseNeeds);
         Messenger.RemoveListener<Character, Area, Area>(Signals.CHARACTER_MIGRATED_HOME, OnCharacterMigratedHome);
         Messenger.RemoveListener(Signals.DAY_STARTED, DayStartedRemoveOverrideInteraction);
@@ -2782,10 +2785,17 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
     }
     private void DailyGoapPlanGeneration() {
-        if(_currentInteractionTick == GameManager.Instance.tick) {
+        //This is to ensure that this character will not be idle forever
+        //If at the start of the tick, the character is not currently doing any action, and is not waiting for any new plans, it means that the character will no longer perform any actions
+        //so start doing actions again
+        _hasAlreadyAskedForPlan = false;
+        if(currentAction == null && _numOfWaitingForGoapThread <= 0) {
             PlanGoapActions();
-            SetDailyGoapGenerationTick();
         }
+        //if(_currentInteractionTick == GameManager.Instance.tick) {
+        //    PlanGoapActions();
+        //    SetDailyGoapGenerationTick();
+        //}
     }
     public void SetDailyGoapGenerationTick() {
         int remainingDaysInWeek = 6 - (GameManager.Instance.tick % 6);
@@ -2816,6 +2826,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
     }
     private void IdlePlans() {
+        if (_hasAlreadyAskedForPlan) {
+            return;
+        }
+        _hasAlreadyAskedForPlan = true;
         if (!OtherPlanCreations()) {
             if (!PlanFullnessRecoveryActions()) {
                 if (!PlanTirednessRecoveryActions()) {
@@ -2933,15 +2947,15 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     private bool PlanIdleStroll() {
         //Debug.Log("---------" + GameManager.Instance.TodayLogString() + "CREATING IDLE STROLL ACTION FOR " + name + "-------------");
-        if(currentStructure.unoccupiedTiles.Count > 0) {
+        //if(currentStructure.unoccupiedTiles.Count > 0) {
             Stroll goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.STROLL, this, this) as Stroll;
             goapAction.SetTargetStructure(currentStructure);
             GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
             GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE });
             allGoapPlans.Add(goapPlan);
             return true;
-        }
-        return false;
+        //}
+        //return false;
     }
     public void SetForcedInteraction(Interaction interaction) {
         _forcedInteraction = interaction;
@@ -3969,7 +3983,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 }
             }
         }
-
+        _numOfWaitingForGoapThread ++;
         MultiThreadPool.Instance.AddToThreadPool(new GoapThread(this, target, goal, isPriority, characterTargetsAwareness, actorAllowedActions, usableActions));
     }
     public void RecalculatePlan(GoapPlan currentPlan) {
@@ -4221,6 +4235,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public void ReceivePlanFromGoapThread(GoapThread goapThread) {
         if(goapThread.recalculationPlan != null && goapThread.recalculationPlan.isEnd) {
             return;
+        }
+        if(goapThread.recalculationPlan == null) {
+            _numOfWaitingForGoapThread--;
         }
         Debug.Log(goapThread.log);
         if (goapThread.createdPlan != null) {
