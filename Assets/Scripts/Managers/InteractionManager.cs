@@ -931,7 +931,7 @@ public class InteractionManager : MonoBehaviour {
         T goapAction = goapActionCreator(actor, target);
         return goapAction;
     }
-    public GoapAction CreateNewGoapInteraction(INTERACTION_TYPE type, Character actor, IPointOfInterest target) {
+    public GoapAction CreateNewGoapInteraction(INTERACTION_TYPE type, Character actor, IPointOfInterest target, bool willInitialize = true) {
         GoapAction goapAction = null;
         switch (type) {
             case INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION:
@@ -986,7 +986,7 @@ public class InteractionManager : MonoBehaviour {
                 goapAction = new Stroll(actor, target);
                 break;
         }
-        if(goapAction != null) {
+        if(goapAction != null && willInitialize) {
             goapAction.Initialize();
         }
         return goapAction;

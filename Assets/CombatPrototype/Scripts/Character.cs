@@ -3886,16 +3886,24 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             for (int i = 0; i < poiGoapActions.Count; i++) {
                 if (actorAllowedInteractions.Contains(poiGoapActions[i])){
                     if(poiGoapActions[i] == INTERACTION_TYPE.CRAFT_ITEM) {
-
+                        Craftsman craftsman = GetTrait("Craftsman") as Craftsman;
+                        for (int j = 0; j < craftsman.craftedItemNames.Length; j++) {
+                            CraftItemGoap goapAction = InteractionManager.Instance.CreateNewGoapInteraction(poiGoapActions[i], actor, this, false) as CraftItemGoap;
+                            goapAction.SetCraftedItem(craftsman.craftedItemNames[j]);
+                            goapAction.Initialize();
+                            if (goapAction.CanSatisfyRequirements()) {
+                                usableActions.Add(goapAction);
+                            }
+                        }
                     } else {
                         GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(poiGoapActions[i], actor, this);
-                    }
-                    if (goapAction == null) {
-                        throw new Exception("Goap action " + poiGoapActions[i].ToString() + " is null!");
-                    }
-                    if (goapAction.CanSatisfyRequirements()) {
-                        usableActions.Add(goapAction);
-                    }
+                        if (goapAction == null) {
+                            throw new Exception("Goap action " + poiGoapActions[i].ToString() + " is null!");
+                        }
+                        if (goapAction.CanSatisfyRequirements()) {
+                            usableActions.Add(goapAction);
+                        }
+                    } 
                 }
             }
             return usableActions;
