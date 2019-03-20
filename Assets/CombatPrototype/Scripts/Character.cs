@@ -3885,7 +3885,11 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             List<GoapAction> usableActions = new List<GoapAction>();
             for (int i = 0; i < poiGoapActions.Count; i++) {
                 if (actorAllowedInteractions.Contains(poiGoapActions[i])){
-                    GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(poiGoapActions[i], actor, this);
+                    if(poiGoapActions[i] == INTERACTION_TYPE.CRAFT_ITEM) {
+
+                    } else {
+                        GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(poiGoapActions[i], actor, this);
+                    }
                     if (goapAction == null) {
                         throw new Exception("Goap action " + poiGoapActions[i].ToString() + " is null!");
                     }

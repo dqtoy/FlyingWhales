@@ -127,9 +127,9 @@ public class SpecialToken : Token, IPointOfInterest {
     public LocationStructure structureLocation { get; private set; }
     public InteractionAttributes interactionAttributes { get; protected set; }
     public List<INTERACTION_TYPE> poiGoapActions { get; private set; }
-    public int supplyValue { get; private set; }
-    public int craftCost { get; private set; }
-    public int purchaseCost { get; private set; }
+    public int supplyValue { get { return ItemManager.Instance.itemData[specialTokenType].supplyValue; } }
+    public int craftCost { get { return ItemManager.Instance.itemData[specialTokenType].craftCost; } }
+    public int purchaseCost { get { return ItemManager.Instance.itemData[specialTokenType].purchaseCost; } }
 
     private LocationGridTile tile;
     private POI_STATE _state;
@@ -171,16 +171,6 @@ public class SpecialToken : Token, IPointOfInterest {
         weight = appearanceRate;
         npcAssociatedInteractionType = INTERACTION_TYPE.NONE;
         poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.PICK_ITEM };
-
-        if(specialTokenType == SPECIAL_TOKEN.TOOL) {
-            supplyValue = 15;
-            craftCost = 25;
-            purchaseCost = 35;
-        } else {
-            supplyValue = 0;
-            craftCost = 0;
-            purchaseCost = 0;
-        }
     }
     //public void AdjustQuantity(int amount) {
     //    quantity += amount;

@@ -986,6 +986,9 @@ public class InteractionManager : MonoBehaviour {
                 goapAction = new Stroll(actor, target);
                 break;
         }
+        if(goapAction != null) {
+            goapAction.Initialize();
+        }
         return goapAction;
     }
     public bool CanCreateInteraction(INTERACTION_TYPE interactionType, Area location) {

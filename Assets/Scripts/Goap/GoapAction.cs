@@ -49,7 +49,6 @@ public class GoapAction {
         actualEffects = new List<GoapEffect>();
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
         actionSummary = GameManager.Instance.TodayLogString() + actor.name + " created " + goapType.ToString() + " action, targetting " + poiTarget?.ToString() ?? "Nothing";
-        Initialize();
     }
 
     //public void SetParentPlan(GoapPlan plan) {
@@ -156,7 +155,7 @@ public class GoapAction {
     #endregion
 
     #region Utilities
-    protected void Initialize() {
+    public void Initialize() {
         ConstructRequirement();
         ConstructPreconditionsAndEffects();
         CreateThoughtBubbleLog();

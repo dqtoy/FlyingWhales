@@ -34,6 +34,8 @@ public class ItemManager : MonoBehaviour {
 
     private Dictionary<string, Sprite> _iconSprites;
 
+    public Dictionary<SPECIAL_TOKEN, ItemData> itemData { get; private set; }
+
     //private List<List<Item>> _itemTiers;
     //private List<List<Weapon>> _weaponTiers;
     //private List<List<Armor>> _armorTiers;
@@ -85,27 +87,36 @@ public class ItemManager : MonoBehaviour {
         Instance = this;
     }
 	internal void Initialize(){
-        _weaponPrefixes = new Dictionary<WEAPON_PREFIX, WeaponPrefix>();
-        _weaponSuffixes = new Dictionary<WEAPON_SUFFIX, WeaponSuffix>();
-        _armorPrefixes = new Dictionary<ARMOR_PREFIX, ArmorPrefix>();
-        _armorSuffixes = new Dictionary<ARMOR_SUFFIX, ArmorSuffix>();
-        _equipmentTypes = new Dictionary<ITEM_TYPE, List<EQUIPMENT_TYPE>> ();
-		_equipmentTypes.Add (ITEM_TYPE.WEAPON, new List<EQUIPMENT_TYPE> ());
-		_equipmentTypes.Add (ITEM_TYPE.ARMOR, new List<EQUIPMENT_TYPE> ());
-		//_equipmentTypes.Add (ITEM_TYPE.ITEM, new List<EQUIPMENT_TYPE> ());
-		ConstructItemsDictionary();
-        ConstructItemSprites();
-        ConstructWeaponTypeData();
-        ConstructArmorTypeData();
-        CreateWeaponPrefix(WEAPON_PREFIX.NONE);
-        CreateWeaponSuffix(WEAPON_SUFFIX.NONE);
-        CreateArmorPrefix(ARMOR_PREFIX.NONE);
-        CreateArmorSuffix(ARMOR_SUFFIX.NONE);
-		//ConstructWeaponTiers ();
-		//ConstructArmorTiers ();
-		//ConstructItemTiers ();
-
+        //      _weaponPrefixes = new Dictionary<WEAPON_PREFIX, WeaponPrefix>();
+        //      _weaponSuffixes = new Dictionary<WEAPON_SUFFIX, WeaponSuffix>();
+        //      _armorPrefixes = new Dictionary<ARMOR_PREFIX, ArmorPrefix>();
+        //      _armorSuffixes = new Dictionary<ARMOR_SUFFIX, ArmorSuffix>();
+        //      _equipmentTypes = new Dictionary<ITEM_TYPE, List<EQUIPMENT_TYPE>>();
+        //      _equipmentTypes.Add(ITEM_TYPE.WEAPON, new List<EQUIPMENT_TYPE>());
+        //      _equipmentTypes.Add(ITEM_TYPE.ARMOR, new List<EQUIPMENT_TYPE>());
+        //      //_equipmentTypes.Add (ITEM_TYPE.ITEM, new List<EQUIPMENT_TYPE> ());
+        //      ConstructItemsDictionary();
+        //      ConstructItemSprites();
+        //      ConstructWeaponTypeData();
+        //      ConstructArmorTypeData();
+        //      CreateWeaponPrefix(WEAPON_PREFIX.NONE);
+        //      CreateWeaponSuffix(WEAPON_SUFFIX.NONE);
+        //      CreateArmorPrefix(ARMOR_PREFIX.NONE);
+        //      CreateArmorSuffix(ARMOR_SUFFIX.NONE);
+        ////ConstructWeaponTiers ();
+        ////ConstructArmorTiers ();
+        ////ConstructItemTiers ();
+        ConstructItemData();
 	}
+
+    private void ConstructItemData() {
+        itemData = new Dictionary<SPECIAL_TOKEN, ItemData>() {
+            {SPECIAL_TOKEN.TOOL, new ItemData(){
+                supplyValue = 15,
+                craftCost = 25,
+                purchaseCost = 35 } },
+        };
+    }
     private void ConstructItemsDictionary() {
         _allItems = new Dictionary<string, Item>(StringComparer.OrdinalIgnoreCase);
 		_allWeapons = new Dictionary<string, Weapon>(StringComparer.OrdinalIgnoreCase);
@@ -356,72 +367,10 @@ public class ItemManager : MonoBehaviour {
         }
         return null;
     }
+}
 
-    //internal Weapon GetRandomWeaponTier(int tier){
-    //	if(tier > 0){
-    //		int index = tier - 1;
-    //		Weapon weaponAsset = _weaponTiers [index] [UnityEngine.Random.Range (0, _weaponTiers [index].Count)];
-    //		return (Weapon)CreateNewItemInstance (weaponAsset.itemName);
-    //	}
-    //	return null;
-    //}
-
-    //internal Armor GetRandomArmorTier(int tier){
-    //	if(tier > 0){
-    //		int index = tier - 1;
-    //		Armor armorAsset = _armorTiers [index] [UnityEngine.Random.Range (0, _armorTiers [index].Count)];
-    //		return (Armor)CreateNewItemInstance (armorAsset.itemName);
-    //	}
-    //	return null;
-    //}
-
-    //internal Item GetRandomItemTier(int tier){
-    //	if(tier > 0){
-    //		int index = tier - 1;
-    //		Item itemAsset = _itemTiers [index] [UnityEngine.Random.Range (0, _itemTiers [index].Count)];
-    //		return CreateNewItemInstance (itemAsset.itemName);
-    //	}
-    //	return null;
-    //}
-    //internal Item GetRandomTier(int tier, ITEM_TYPE itemType){
-    //	if(itemType == ITEM_TYPE.WEAPON){
-    //		return GetRandomWeaponTier (tier);
-    //	}else if(itemType == ITEM_TYPE.ARMOR){
-    //		return GetRandomArmorTier (tier);
-    //	}else if(itemType == ITEM_TYPE.ITEM){
-    //		return GetRandomItemTier (tier);
-    //	}
-    //	return null;
-    //}
-
-    //internal List<Weapon> GetWeaponTierList(int tier){
-    //	if(tier > 0){
-    //		int index = tier - 1;
-    //		return _weaponTiers [index];
-    //	}
-    //	return null;
-    //}
-
-    //internal List<Armor> GetArmorTierList(int tier){
-    //	if(tier > 0){
-    //		int index = tier - 1;
-    //		return _armorTiers [index];
-    //	}
-    //	return null;
-    //}
-
-    //internal List<Item> GetItemTierList(int tier){
-    //	if(tier > 0){
-    //		int index = tier - 1;
-    //		return _itemTiers [index];
-    //	}
-    //	return null;
-    //}
-
-    //   public bool IsLootChest(Item item) {
-    //       if (lootChestNames.Contains(item.itemName)) {
-    //           return true;
-    //       }
-    //       return false;
-    //   }
+public struct ItemData {
+    public int supplyValue;
+    public int craftCost;
+    public int purchaseCost;
 }

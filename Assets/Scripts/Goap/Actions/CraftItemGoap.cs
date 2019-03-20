@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class CraftItemGoap : GoapAction {
+    public SPECIAL_TOKEN craftedItem { get; private set; }
+
     public CraftItemGoap(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.CRAFT_ITEM, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+
     }
 
     #region Overrides
@@ -11,8 +14,8 @@ public class CraftItemGoap : GoapAction {
         _requirementAction = Requirement;
     }
     protected override void ConstructPreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_SUPPLY, conditionKey = 25, targetPOI = actor }, HasSupply);
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = poiTarget, targetPOI = actor });
+        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_SUPPLY, conditionKey = ItemManager.Instance.itemData[craftedItem].craftCost, targetPOI = actor }, HasSupply);
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = craftedItem, targetPOI = actor });
     }
     public override void PerformActualAction() {
         SetState("Craft Success");
@@ -25,7 +28,7 @@ public class CraftItemGoap : GoapAction {
 
     #region Preconditions
     private bool HasSupply() {
-        return actor.supply >= 25;
+        return actor.supply >= ItemManager.Instance.itemData[craftedItem].craftCost;
     }
     #endregion
 
@@ -38,10 +41,10 @@ public class CraftItemGoap : GoapAction {
     #region State Effects
     private void PreCraftSuccess() {
         currentState.AddLogFiller(poiTarget as SpecialToken, poiTarget.gridTileLocation.structure.ToString(), LOG_IDENTIFIER.LANDMARK_1);
-        actor.AdjustSupply(-25);
+        actor.AdjustSupply(-ItemManager.Instance.itemData[craftedItem].craftCost);
     }
     private void AfterCraftSuccess() {
-        SpecialToken tool = TokenManager.Instance.CreateSpecialToken(SPECIAL_TOKEN.TOOL);
+        SpecialToken tool = TokenManager.Instance.CreateSpecialToken(craftedItem);
         actor.ObtainToken(tool);
     }
     #endregion
