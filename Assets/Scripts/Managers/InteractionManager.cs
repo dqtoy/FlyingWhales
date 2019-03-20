@@ -2170,9 +2170,9 @@ public class InteractionManager : MonoBehaviour {
             default:
                 break;
         }
-        if (chosenTile != null && chosenTile.occupant != null) {
-            throw new Exception(actor.name + " is going to an occupied tile!");
-        }
+        //if (chosenTile != null && chosenTile.occupant != null) {
+        //    throw new Exception(actor.name + " is going to an occupied tile!");
+        //}
         return chosenTile;
     }
     #endregion
