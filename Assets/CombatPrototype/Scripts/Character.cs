@@ -2962,6 +2962,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     private bool PlanIdleReturnHome() {
         GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.RETURN_HOME, this, this);
+        goapAction.SetTargetStructure();
         GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
         GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE });
         allGoapPlans.Add(goapPlan);
@@ -4075,7 +4076,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             //        hasValidDestination = destinationTile != null;
             //    }
             //}
-            plan.currentNode.action.SetTargetStructure();
+            //plan.currentNode.action.SetTargetStructure();
             //LocationGridTile targetTile = plan.currentNode.action.GetTargetLocationTile();
 
             if (actorAllowedActions.Contains(plan.currentNode.action.goapType) && plan.currentNode.action.CanSatisfyRequirements() && plan.currentNode.action.targetTile != null) {

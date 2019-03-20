@@ -174,6 +174,7 @@ public class GoapAction {
         ConstructRequirement();
         ConstructPreconditionsAndEffects();
         CreateThoughtBubbleLog();
+        SetTargetStructure();
     }
     public bool IsThisPartOfActorActionPool(Character actor) {
         List<INTERACTION_TYPE> actorInteractions = RaceManager.Instance.GetNPCInteractionsOfRace(actor);
