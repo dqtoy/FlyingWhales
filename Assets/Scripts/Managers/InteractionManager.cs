@@ -2112,47 +2112,54 @@ public class InteractionManager : MonoBehaviour {
     public LocationGridTile GetTargetLocationTile(ACTION_LOCATION_TYPE locationType, Character actor, IPointOfInterest target, params object[] other) {
         List<LocationGridTile> choices;
         LocationStructure specifiedStructure;
+        LocationGridTile chosenTile = null;
         //Action Location says where the character will go to when performing the action:
         switch (locationType) {
             case ACTION_LOCATION_TYPE.IN_PLACE:
                 //**In Place**: where he currently is
-                return actor.gridTileLocation;
+                chosenTile = actor.gridTileLocation;
+                break;
             case ACTION_LOCATION_TYPE.NEARBY:
                 //**Nearby**: an unoccupied tile within a 3 tile radius around the character
                 choices = actor.specificLocation.areaMap.GetTilesInRadius(actor.gridTileLocation, 3).Where(x => !x.isOccupied).ToList();
                 if (choices.Count > 0) {
-                    return choices[UnityEngine.Random.Range(0, choices.Count)];
+                    chosenTile = choices[UnityEngine.Random.Range(0, choices.Count)];
                 }
-                return null;
+                break;
             case ACTION_LOCATION_TYPE.RANDOM_LOCATION:
                 //**Random Location**: chooses a random unoccupied tile in the specified structure
                 specifiedStructure = other[0] as LocationStructure;
                 choices = specifiedStructure.unoccupiedTiles;
                 if (choices.Count > 0) {
-                    return choices[UnityEngine.Random.Range(0, choices.Count)];
+                    chosenTile = choices[UnityEngine.Random.Range(0, choices.Count)];
                 }
-                return null;
+                break;
             case ACTION_LOCATION_TYPE.RANDOM_LOCATION_B:
                 //**Random Location B**: chooses a random unoccupied tile in the specified structure that is also adjacent to one other unoccupied tile
                 specifiedStructure = other[0] as LocationStructure;
                 choices = specifiedStructure.unoccupiedTiles.Where(x => x.UnoccupiedNeighbours.Count > 0).ToList();
                 if (choices.Count > 0) {
-                    return choices[UnityEngine.Random.Range(0, choices.Count)];
+                    chosenTile = choices[UnityEngine.Random.Range(0, choices.Count)];
                 }
-                return null;
+                break;
             case ACTION_LOCATION_TYPE.NEAR_TARGET:
                 //**Near Target**: adjacent unoccupied tile beside the target item, tile object, character
                 choices = target.gridTileLocation.UnoccupiedNeighbours;
                 if (choices.Count > 0) {
-                    return choices[UnityEngine.Random.Range(0, choices.Count)];
+                    chosenTile = choices[UnityEngine.Random.Range(0, choices.Count)];
                 }
-                return null;
+                break;
             case ACTION_LOCATION_TYPE.ON_TARGET:
                 //**On Target**: in the same tile as the target item or tile object
-                return target.gridTileLocation;
+                chosenTile = target.gridTileLocation;
+                break;
             default:
-                return null;
+                break;
         }
+        if (chosenTile != null && chosenTile.occupant != null) {
+            throw new Exception(actor.name + " is going to an occupied tile!");
+        }
+        return chosenTile;
     }
     #endregion
 

@@ -253,6 +253,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     public void SetOccupant(Character character) {
         occupant = character;
         character.SetGridTileLocation(this);
+        Messenger.Broadcast<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, this, occupant);
     }
     public void RemoveOccupant() {
         if(occupant != null) {

@@ -43,13 +43,12 @@ public class Stroll : GoapAction {
         _targetStructure = structure;
         if(_targetStructure == null) {
             RandomizeTargetStructure();
-        } 
-        //else {
-        //    List<LocationGridTile> unoccupiedTiles = _targetStructure.unoccupiedTiles;
-        //    if (unoccupiedTiles.Count > 0) {
-        //        targetTile = unoccupiedTiles[UnityEngine.Random.Range(0, unoccupiedTiles.Count)];
-        //    }
-        //}
+        } else {
+            //List<LocationGridTile> unoccupiedTiles = _targetStructure.unoccupiedTiles;
+            //if (unoccupiedTiles.Count > 0) {
+                targetTile = GetTargetLocationTile();
+            //}
+        }
     }
 
     private void RandomizeTargetStructure() {
