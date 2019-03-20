@@ -6,7 +6,6 @@ public class MineGoap : GoapAction {
     private const int MAX_SUPPLY = 50;
     private const int MIN_SUPPLY = 20;
 
-
     private int _gainedSupply;
     public MineGoap(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.MINE_ACTION, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
     }

@@ -13,7 +13,7 @@ public class ReleaseCharacter : GoapAction {
     }
     protected override void ConstructPreconditionsAndEffects() {
         AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = SPECIAL_TOKEN.TOOL, targetPOI = actor }, HasItemTool);
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Abducted", targetPOI = poiTarget });
+        //AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Abducted", targetPOI = poiTarget });
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Restrained", targetPOI = poiTarget });
     }
     public override void PerformActualAction() {
@@ -39,7 +39,8 @@ public class ReleaseCharacter : GoapAction {
     protected bool HasAbductedOrRestrainedTrait() {
         if (poiTarget is Character) {
             Character target = poiTarget as Character;
-            return target.GetTraitOr("Abducted", "Restrained") != null;
+            //return target.GetTraitOr("Abducted", "Restrained") != null;
+            return target.GetTrait("Restrained") != null;
         }
         return false;
     }

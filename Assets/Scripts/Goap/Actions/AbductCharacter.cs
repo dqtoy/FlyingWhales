@@ -12,7 +12,7 @@ public class AbductCharacter : GoapAction {
     }
     protected override void ConstructPreconditionsAndEffects() {
         AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_NON_POSITIVE_TRAIT, conditionKey = "Disabler", targetPOI = poiTarget }, HasNonPositiveDisablerTrait);
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Abducted", targetPOI = poiTarget });
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = poiTarget });
     }
     public override void PerformActualAction() {
         if (targetStructure == actor.gridTileLocation.structure) {
@@ -60,8 +60,8 @@ public class AbductCharacter : GoapAction {
     }
     public void AfterAbductSuccess() {
         Character target = poiTarget as Character;
-        Abducted abductedTrait = new Abducted(target.homeArea);
-        target.AddTrait(abductedTrait, actor);
+        Restrained restrainedTrait = new Restrained();
+        target.AddTrait(restrainedTrait, actor);
     }
     public void PreTargetMissing() {
         currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);

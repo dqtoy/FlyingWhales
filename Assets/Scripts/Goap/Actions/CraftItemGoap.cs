@@ -48,4 +48,8 @@ public class CraftItemGoap : GoapAction {
         actor.ObtainToken(tool);
     }
     #endregion
+
+    public void SetCraftedItem(SPECIAL_TOKEN item) {
+        craftedItem = item;
+    }
 }

@@ -11,6 +11,7 @@ public class DropCharacter : GoapAction {
 
     public DropCharacter(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.DROP_CHARACTER, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         _workAreaStructure = actor.homeArea.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA);
+        actionLocationType = ACTION_LOCATION_TYPE.RANDOM_LOCATION_B;
     }
 
     #region Overrides

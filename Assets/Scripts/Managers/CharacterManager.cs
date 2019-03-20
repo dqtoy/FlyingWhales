@@ -1071,7 +1071,11 @@ public class CharacterManager : MonoBehaviour {
 
     #region Interaction
     private void ConstructRoleInteractions() {
-        characterRoleInteractions = new Dictionary<CHARACTER_ROLE, INTERACTION_TYPE[]>();
+        characterRoleInteractions = new Dictionary<CHARACTER_ROLE, INTERACTION_TYPE[]>() {
+            {CHARACTER_ROLE.CIVILIAN, new INTERACTION_TYPE[] {
+                INTERACTION_TYPE.MINE_ACTION,
+            } },
+        };
     }
     private void ConstructAwayFromHomeInteractionWeights() {
         awayFromHomeInteractionWeights = new Dictionary<INTERACTION_TYPE, int> {
