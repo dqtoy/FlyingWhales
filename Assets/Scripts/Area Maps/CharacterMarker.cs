@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using System;
+using TMPro;
 
 public class CharacterMarker : PooledObject {
 
@@ -16,10 +17,11 @@ public class CharacterMarker : PooledObject {
     public Character character { get; private set; }
     public LocationGridTile location { get; private set; }
 
-    [SerializeField] private RectTransform rt;
+    [SerializeField] private RectTransform visualsRT;
     [SerializeField] private Image mainImg;
     [SerializeField] private Image hoveredImg;
     [SerializeField] private Image clickedImg;
+    [SerializeField] private TextMeshProUGUI nameLbl;
 
     [Header("Animation")]
     [SerializeField] private Animator animator;
@@ -45,6 +47,8 @@ public class CharacterMarker : PooledObject {
     #endregion
 
     public void SetCharacter(Character character) {
+        this.name = character.name + "'s Marker";
+        nameLbl.SetText(character.name);
         this.character = character;
         if (UIManager.Instance.characterInfoUI.isShowing) {
             clickedImg.gameObject.SetActive(UIManager.Instance.characterInfoUI.activeCharacter.id == character.id);
@@ -52,14 +56,12 @@ public class CharacterMarker : PooledObject {
         MarkerAsset assets = CharacterManager.Instance.GetMarkerAsset(character.race, character.gender);
 
         mainImg.sprite = assets.defaultSprite;
-        //clickedImg.sprite = assets.clickedSprite;
-        //hoveredImg.sprite = assets.hoverSprite;
         animator.runtimeAnimatorController = assets.animator;
         //PlayIdle();
 
         Vector3 randomRotation = new Vector3(0f, 0f, 90f);
         randomRotation.z *= UnityEngine.Random.Range(1f, 4f);
-        rt.localRotation = Quaternion.Euler(randomRotation);
+        visualsRT.localRotation = Quaternion.Euler(randomRotation);
 
         Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
@@ -119,17 +121,29 @@ public class CharacterMarker : PooledObject {
         }
     }
 
+    private void Update() {
+        if (character != null) {
+            nameLbl.SetText(character.name + "\n<size=50%>" + character.currentAction?.goapName ?? "None");
+        }
+    }
+
     #region Pathfinding Movement
     public void GoToTile(LocationGridTile destinationTile, IPointOfInterest targetPOI, Action arrivalAction = null) {
         _destinationTile = destinationTile;
         _targetPOI = targetPOI;
         _arrivalAction = arrivalAction;
         lastRemovedTileFromPath = null;
-        Messenger.AddListener<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, OnTileOccupied);
+        if (destinationTile.occupant != null) {
+            //NOTE: Sometimes character's can still target tiles that are occupied for some reason, even though the logic for getting the target tile excludes occupied tiles. Need to investigate more, but for now this is the fix
+            //throw new Exception(character.name + " is going to an occupied tile!");
+            //destinationTile = character.currentAction.GetTargetLocationTile();
+            shouldRecalculatePath = true;
+        }
         if (character.gridTileLocation.structure.location.areaMap.gameObject.activeSelf) {
             //If area map is showing, do pathfinding
             _currentPath = PathGenerator.Instance.GetPath(character.gridTileLocation, destinationTile, GRID_PATHFINDING_MODE.REALISTIC);
             if (_currentPath != null) {
+                Messenger.AddListener<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, OnTileOccupied);
                 Debug.Log("Created path for " + character.name + " from " + character.gridTileLocation.ToString() + " to " + destinationTile.ToString());
                 StartMovement();
             } else {
@@ -184,9 +198,15 @@ public class CharacterMarker : PooledObject {
             StopMovement();
             return;
         }
+        string recalculationSummary = string.Empty;
         //check if the marker should recalculate path
         if (shouldRecalculatePath) {
-            if (RecalculatePath()) return;
+            try {
+                bool result = RecalculatePath(ref recalculationSummary);
+                if (result) return;
+            } catch (Exception e) {
+                throw new Exception(e.Message + "\nThere was a problem trying to recalculate path of " + this.character.name + "'s Marker. Recalculation Summary: \n" + recalculationSummary);
+            }
         }
 
         //if the current path is not empty
@@ -244,7 +264,7 @@ public class CharacterMarker : PooledObject {
     }
     public void RotateMarker(Vector3 from, Vector3 to) {
         float angle = Mathf.Atan2(to.y - from.y, to.x - from.x) * Mathf.Rad2Deg;
-        gameObject.transform.eulerAngles = new Vector3(gameObject.transform.rotation.x, gameObject.transform.rotation.y, angle);
+        visualsRT.eulerAngles = new Vector3(visualsRT.rotation.x, visualsRT.rotation.y, angle);
     }
     public void SwitchToPathfinding() {
         if (Messenger.eventTable.ContainsKey(Signals.TICK_STARTED)) {
@@ -330,18 +350,13 @@ public class CharacterMarker : PooledObject {
     /// Called when this marker needs to recalculate its path, usually because its current target tile is already occupied.
     /// </summary>
     /// <returns>Returns true if the character found another valid target tile.</returns>
-    private bool RecalculatePath() {
+    private bool RecalculatePath(ref string pathRecalSummary) {
         bool recalculationResult = false;
-        string pathRecalSummary = GameManager.Instance.TodayLogString() + this.character.name + "'s marker must recalculate path towards " + _targetPOI.name + "!";
+        pathRecalSummary = GameManager.Instance.TodayLogString() + this.character.name + "'s marker must recalculate path towards " + _targetPOI.name + "!";
         LocationGridTile nearestTileToTarget = character.currentAction.GetTargetLocationTile();
         if (Messenger.eventTable.ContainsKey(Signals.TILE_OCCUPIED)) {
             Messenger.RemoveListener<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, OnTileOccupied);
         }
-        //character.gridTileLocation.structure.location.areaMap.RemoveCharacter(character.gridTileLocation, character);
-        //_currentPath[0].structure.AddCharacterAtLocation(character, _currentPath[0]);
-        //character.SetGridTileLocation(_currentPath[0]);
-        //character.currentParty.icon.SetIsTravelling(false);
-        //_currentPath[0].structure.location.areaMap.PlaceObject(character, _currentPath[0]);
         if (nearestTileToTarget != null) {
             pathRecalSummary += "\nGot new target tile " + nearestTileToTarget.ToString() + ". Going there now.";
             if (currentMoveCoroutine != null) {
@@ -374,9 +389,7 @@ public class CharacterMarker : PooledObject {
                     character.gridTileLocation.structure.location.areaMap.RemoveCharacter(character.gridTileLocation, character);
                     tileToUse.structure.location.areaMap.PlaceObject(character, tileToUse);
                 }
-                //character.currentParty.icon.SetIsTravelling(false);
-
-                _currentPath = null;
+                //_currentPath = null;
                 recalculationResult = false;
             }
         }
@@ -405,7 +418,12 @@ public class CharacterMarker : PooledObject {
                     case ACTION_LOCATION_TYPE.NEAR_TARGET:
                     case ACTION_LOCATION_TYPE.ON_TARGET:
                         shouldRecalculatePath = true;
-                        RecalculatePath();
+                        string recalculationSummary = string.Empty;
+                        try {
+                            RecalculatePath(ref recalculationSummary);
+                        } catch (Exception e){
+                            throw new Exception(e.Message + "\nThere was a problem trying to recalculate path of " + this.character.name + "'s Marker. Recalculation Summary: \n" + recalculationSummary);
+                        }
                         break;
                     default:
                         break;

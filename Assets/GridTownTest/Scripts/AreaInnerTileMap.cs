@@ -447,7 +447,8 @@ public class AreaInnerTileMap : MonoBehaviour {
                 List<LocationGridTile> workAreaTiles = new List<LocationGridTile>();
                 for (int i = 0; i < insideTiles.Count; i++) {
                     LocationGridTile currTile = insideTiles[i];
-                    if (currTile.structure == null && !currTile.HasNeighborAtEdgeOfMap()) {
+                    //&& !currTile.HasNeighborAtEdgeOfMap()
+                    if (currTile.structure == null) {
                         //detailsTilemap.SetTile(currTile.localPlace, insideDetailTile);
                         currTile.SetStructure(area.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA));
                         workAreaTiles.Add(currTile);
