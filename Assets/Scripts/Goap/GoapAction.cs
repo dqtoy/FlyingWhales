@@ -113,7 +113,7 @@ public class GoapAction {
             thoughtBubbleLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             thoughtBubbleLog.AddToFillers(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER); //Target character is only the identifier but it doesn't mean that this is a character, it can be item, etc.
             if (targetStructure != null) {
-                thoughtBubbleLog.AddToFillers(targetStructure.location, targetStructure.location.name, LOG_IDENTIFIER.LANDMARK_1);
+                thoughtBubbleLog.AddToFillers(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
             } else {
                 thoughtBubbleLog.AddToFillers(actor.specificLocation, actor.specificLocation.name, LOG_IDENTIFIER.LANDMARK_1);
             }
@@ -125,7 +125,7 @@ public class GoapAction {
     ///All movement related actions should be done here.
     ///</summary>
     ///<param name="plan">Plan where this action came from.</param>
-    public virtual void DoAction(GoapPlan plan, LocationGridTile targetTile) {
+    public virtual void DoAction(GoapPlan plan) {
         CreateStates(); //Not sure if this is the best place for this.
         actor.SetCurrentAction(this);
 
@@ -154,6 +154,9 @@ public class GoapAction {
     }
     public virtual LocationGridTile GetTargetLocationTile() {
         return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, poiTarget, targetStructure);
+    }
+    public virtual void SetTargetStructure() {
+        targetTile = GetTargetLocationTile();
     }
     #endregion
 

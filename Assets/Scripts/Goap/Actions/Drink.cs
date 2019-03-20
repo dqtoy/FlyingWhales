@@ -1,0 +1,72 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Drink : GoapAction {
+    public Drink(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.DRINK, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+        validTimeOfDays = new TIME_IN_WORDS[] {
+            TIME_IN_WORDS.EARLY_NIGHT,
+            TIME_IN_WORDS.LATE_NIGHT,
+        };
+    }
+
+    #region Overrides
+    protected override void ConstructRequirement() {
+        _requirementAction = Requirement;
+    }
+    protected override void ConstructPreconditionsAndEffects() {
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
+    }
+    public override void PerformActualAction() {
+        if (targetStructure == actor.gridTileLocation.structure) {
+            SetState("Drink Success");
+            //Add Drink Poisoned State when tile objects have traits
+        } else {
+            SetState("Target Missing");
+        }
+        base.PerformActualAction();
+    }
+    protected override int GetCost() {
+        return 7;
+    }
+
+    #endregion
+
+    #region State Effects
+    public void PreDrinkSuccess() {
+        actor.AdjustDoNotGetLonely(1);
+    }
+    public void PerTickDrinkSuccess() {
+        actor.AdjustHappiness(8);
+    }
+    public void AfterDrinkSuccess() {
+        actor.AdjustDoNotGetLonely(-1);
+    }
+    public void PreDrinkPoisoned() {
+        actor.AdjustDoNotGetLonely(1);
+        //Remove poisoned trait from table
+        //TODO: ADD TRAITS AT IPOINTOFINTEREST
+    }
+    public void PerTickDrinkPoisoned() {
+        actor.AdjustHappiness(8);
+    }
+    public void AfterDrinkPoisoned() {
+        actor.AdjustDoNotGetLonely(-1);
+        int chance = UnityEngine.Random.Range(0, 2);
+        if (chance == 0) {
+            actor.AddTrait("Sick");
+        } else {
+            actor.Death();
+        }
+    }
+    public void PreTargetMissing() {
+        actor.RemoveAwareness(poiTarget);
+    }
+    #endregion
+
+    #region Requirements
+    protected bool Requirement() {
+        return targetStructure.structureType == STRUCTURE_TYPE.INN;
+    }
+    #endregion
+}

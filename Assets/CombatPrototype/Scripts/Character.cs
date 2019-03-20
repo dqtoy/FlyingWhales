@@ -3947,6 +3947,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         poiGoapActions.Add(INTERACTION_TYPE.DROP_CHARACTER);
         poiGoapActions.Add(INTERACTION_TYPE.ABDUCT_ACTION);
         poiGoapActions.Add(INTERACTION_TYPE.STROLL);
+        poiGoapActions.Add(INTERACTION_TYPE.SLEEP_OUTSIDE);
     }
     public void StartGOAP(GoapEffect goal, IPointOfInterest target, bool isPriority = false, List<Character> otherCharactePOIs = null) {
         List<CharacterAwareness> characterTargetsAwareness = new List<CharacterAwareness>();
@@ -4073,10 +4074,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             //        hasValidDestination = destinationTile != null;
             //    }
             //}
+            plan.currentNode.action.SetTargetStructure();
+            //LocationGridTile targetTile = plan.currentNode.action.GetTargetLocationTile();
 
-            LocationGridTile targetTile = plan.currentNode.action.GetTargetLocationTile();
-
-            if (actorAllowedActions.Contains(plan.currentNode.action.goapType) && plan.currentNode.action.CanSatisfyRequirements() && targetTile != null) {
+            if (actorAllowedActions.Contains(plan.currentNode.action.goapType) && plan.currentNode.action.CanSatisfyRequirements() && plan.currentNode.action.targetTile != null) {
                 if (plan.isBeingRecalculated) {
                     log += "\n - Plan for " + plan.endNode.action.goapName + " is being recalculated, skipping...";
                     continue;
@@ -4093,7 +4094,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 } else {
                     log += "\n - Action's preconditions are all satisfied, doing action...";
                     Debug.Log(log);
-                    plan.currentNode.action.DoAction(plan, targetTile);
+                    plan.currentNode.action.DoAction(plan);
                     willGoIdleState = false;
                     break;
                 }

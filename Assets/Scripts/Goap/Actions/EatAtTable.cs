@@ -69,7 +69,6 @@ public class EatAtTable : GoapAction {
     private void PreEatPoisoned() {
         currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
         actor.AdjustDoNotGetHungry(1);
-        //actor.AddTrait("Eating");
         //Remove poisoned trait from table
         //TODO: ADD TRAITS AT IPOINTOFINTEREST
     }

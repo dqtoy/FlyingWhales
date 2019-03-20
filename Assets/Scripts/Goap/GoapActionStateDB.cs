@@ -17,7 +17,7 @@ public static class GoapActionStateDB {
         } },
         {INTERACTION_TYPE.EAT_DWELLING_TABLE, new StateNameAndDuration[]{
             new StateNameAndDuration(){ name = "Eat Success", status = InteractionManager.Goap_State_Success, duration = AttributeManager.Instance.allTraits["Eating"].daysDuration },
-            new StateNameAndDuration(){ name = "Eat Poisoned", status = InteractionManager.Goap_State_Success, duration = 0 },
+            new StateNameAndDuration(){ name = "Eat Poisoned", status = InteractionManager.Goap_State_Success, duration = AttributeManager.Instance.allTraits["Eating"].daysDuration },
             new StateNameAndDuration(){ name = "Target Missing", status = InteractionManager.Goap_State_Fail, duration = 0 },
         } },
         {INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION, new StateNameAndDuration[]{
@@ -77,6 +77,15 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.RETURN_HOME, new StateNameAndDuration[]{
             new StateNameAndDuration(){ name = "Return Home Success", status = InteractionManager.Goap_State_Success, duration = 0 },
             new StateNameAndDuration(){ name = "Return Home Failed", status = InteractionManager.Goap_State_Fail, duration = 0 },
+        } },
+        {INTERACTION_TYPE.DRINK, new StateNameAndDuration[]{
+            new StateNameAndDuration(){ name = "Drink Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(1) },
+            new StateNameAndDuration(){ name = "Drink Poisoned", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(1) },
+            new StateNameAndDuration(){ name = "Target Missing", status = InteractionManager.Goap_State_Fail, duration = 0 },
+        } },
+        {INTERACTION_TYPE.SLEEP_OUTSIDE, new StateNameAndDuration[]{
+            new StateNameAndDuration(){ name = "Rest Success", status = InteractionManager.Goap_State_Success, duration = AttributeManager.Instance.allTraits["Resting"].daysDuration },
+            new StateNameAndDuration(){ name = "Rest Fail", status = InteractionManager.Goap_State_Fail, duration = 0 },
         } },
     };
 }
