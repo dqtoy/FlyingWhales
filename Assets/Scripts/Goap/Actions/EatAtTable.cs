@@ -1,15 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class EatAtTable : GoapAction {
+﻿public class EatAtTable : GoapAction {
     public EatAtTable(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.EAT_DWELLING_TABLE, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
     }
 
     #region Overrides
-    //protected override void ConstructRequirement() {
-    //    _requirementAction = Requirement;
-    //}
+    protected override void ConstructRequirement() {
+        _requirementAction = Requirement;
+    }
     protected override void ConstructPreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = actor });
     }
@@ -30,15 +26,15 @@ public class EatAtTable : GoapAction {
     }
     protected override int GetCost() {
         if(poiTarget is Table) {
-            Table tileObject = poiTarget as Table;
-            if(tileObject.owner == null) {
+            Dwelling dwelling = poiTarget.gridTileLocation.structure as Dwelling;
+            if (!dwelling.IsOccupied()) {
                 return 10;
             } else {
-                if(tileObject.owner == actor) {
+                if(dwelling.IsResident(actor)) {
                     return 1;
                 } else {
-                    if(tileObject.owner is Character) {
-                        Character owner = tileObject.owner as Character;
+                    for (int i = 0; i < dwelling.residents.Count; i++) {
+                        Character owner = dwelling.residents[i];
                         CharacterRelationshipData characterRelationshipData = actor.GetCharacterRelationshipData(owner);
                         if (characterRelationshipData != null) {
                             if (characterRelationshipData.HasRelationshipOfEffect(TRAIT_EFFECT.POSITIVE)) {
@@ -97,8 +93,8 @@ public class EatAtTable : GoapAction {
     #endregion
 
     #region Requirements
-    //protected bool Requirement() {
-    //    return poiTarget.state == POI_STATE.ACTIVE;
-    //}
+    protected bool Requirement() {
+        return poiTarget.gridTileLocation.structure.structureType == STRUCTURE_TYPE.DWELLING;
+    }
     #endregion
 }

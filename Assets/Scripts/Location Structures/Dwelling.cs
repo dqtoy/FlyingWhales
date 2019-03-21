@@ -7,10 +7,6 @@ public class Dwelling : LocationStructure {
 
     public List<Character> residents { get; private set; }
 
-    public override bool hasResidents {
-        get { return residents.Count > 0; }
-    }
-
     public Character owner {
         get { return residents.ElementAtOrDefault(0); }
     }
@@ -30,6 +26,14 @@ public class Dwelling : LocationStructure {
         if (residents.Remove(character)) {
             character.SetHomeStructure(null);
         }
+    }
+    public bool IsResident(Character character) {
+        for (int i = 0; i < residents.Count; i++) {
+            if(residents[i].id == character.id) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public override bool IsOccupied() {

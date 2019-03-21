@@ -10,6 +10,7 @@ public interface IPointOfInterest {
     LocationGridTile gridTileLocation { get; }
     List<INTERACTION_TYPE> poiGoapActions { get; }
     List<Trait> traits { get; }
+    Faction factionOwner { get; }
 
     void SetGridTileLocation(LocationGridTile tile);
     List<GoapAction> AdvertiseActionsToActor(Character actor, List<INTERACTION_TYPE> actorAllowedInteractions);

@@ -1015,6 +1015,12 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.PATROL:
                 goapAction = new Patrol(actor, target);
                 break;
+            case INTERACTION_TYPE.STEAL:
+                goapAction = new Steal(actor, target);
+                break;
+            case INTERACTION_TYPE.SCRAP:
+                goapAction = new Scrap(actor, target);
+                break;
         }
         if(goapAction != null && willInitialize) {
             goapAction.Initialize();
