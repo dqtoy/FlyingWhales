@@ -166,6 +166,9 @@ public class SpecialToken : Token, IPointOfInterest {
     public List<Trait> traits {
         get { return _traits; }
     }
+    public Faction factionOwner {
+        get { return owner; }
+    }
     #endregion
 
     public SpecialToken(SPECIAL_TOKEN specialTokenType, int appearanceRate) : base() {
@@ -174,7 +177,7 @@ public class SpecialToken : Token, IPointOfInterest {
         this.name = Utilities.NormalizeStringUpperCaseFirstLetters(this.specialTokenType.ToString());
         weight = appearanceRate;
         npcAssociatedInteractionType = INTERACTION_TYPE.NONE;
-        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.PICK_ITEM };
+        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.PICK_ITEM, INTERACTION_TYPE.STEAL, INTERACTION_TYPE.SCRAP };
         _traits = new List<Trait>();
     }
     //public void AdjustQuantity(int amount) {

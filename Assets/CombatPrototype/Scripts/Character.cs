@@ -247,6 +247,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public Faction faction {
         get { return _faction; }
     }
+    public Faction factionOwner {
+        get { return _faction; }
+    }
     public virtual Party ownParty {
         get { return _ownParty; }
     }
@@ -3592,6 +3595,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 SpecialToken chosenToken = pickWeights.PickRandomElementGivenWeights();
                 PickUpToken(chosenToken);
             }
+        }
+    }
+    public void DestroyToken(SpecialToken token) {
+        token.gridTileLocation.structure.location.RemoveSpecialTokenFromLocation(token);
+    }
+    public void DestroyHeldToken() {
+        if (isHoldingItem) {
+            UnobtainToken();
         }
     }
     private void UpdateTokenOwner() {

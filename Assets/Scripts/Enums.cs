@@ -1144,6 +1144,8 @@ public enum INTERACTION_TYPE {
     TABLE_POISON,
     PRAY,
     CHOP_WOOD,
+    STEAL,
+    SCRAP,
 }
 public enum INTERACTION_ALIGNMENT {
     EVIL,

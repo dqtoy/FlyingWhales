@@ -322,6 +322,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.PRAY,
                 INTERACTION_TYPE.CHOP_WOOD,
                 INTERACTION_TYPE.PATROL,
+                INTERACTION_TYPE.STEAL,
+                INTERACTION_TYPE.SCRAP,
             } },
             { RACE.ELVES, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -379,6 +381,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.PRAY,
                 INTERACTION_TYPE.CHOP_WOOD,
                 INTERACTION_TYPE.PATROL,
+                INTERACTION_TYPE.STEAL,
+                INTERACTION_TYPE.SCRAP,
             } },
             { RACE.GOBLIN, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -436,6 +440,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.PRAY,
                 INTERACTION_TYPE.CHOP_WOOD,
                 INTERACTION_TYPE.PATROL,
+                INTERACTION_TYPE.STEAL,
+                INTERACTION_TYPE.SCRAP,
             } },
             { RACE.FAERY, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -493,6 +499,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.PRAY,
                 INTERACTION_TYPE.CHOP_WOOD,
                 INTERACTION_TYPE.PATROL,
+                INTERACTION_TYPE.STEAL,
+                INTERACTION_TYPE.SCRAP,
             } },
             { RACE.SKELETON, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -550,6 +558,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.PRAY,
                 INTERACTION_TYPE.CHOP_WOOD,
                 INTERACTION_TYPE.PATROL,
+                INTERACTION_TYPE.STEAL,
+                INTERACTION_TYPE.SCRAP,
             } },
             { RACE.SPIDER, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -601,6 +611,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.EXPLORE,
                 INTERACTION_TYPE.CHOP_WOOD,
                 INTERACTION_TYPE.PATROL,
+                INTERACTION_TYPE.STEAL,
             } },
             { RACE.WOLF, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -652,6 +663,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.EXPLORE,
                 INTERACTION_TYPE.CHOP_WOOD,
                 INTERACTION_TYPE.PATROL,
+                INTERACTION_TYPE.STEAL,
             } },
             { RACE.DRAGON, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -703,6 +715,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.EXPLORE,
                 INTERACTION_TYPE.CHOP_WOOD,
                 INTERACTION_TYPE.PATROL,
+                INTERACTION_TYPE.STEAL,
             } },
         };
     }

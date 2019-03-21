@@ -7,7 +7,7 @@ public class TileObject {
     public int id { get; private set; }
     public IPointOfInterest owner { get; private set; }
     public TILE_OBJECT_TYPE tileObjectType { get; private set; }
-
+    public Faction factionOwner { get { return null; } }
     protected List<Trait> _traits;
     public List<Trait> traits {
         get { return _traits; }
