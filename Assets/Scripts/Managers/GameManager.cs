@@ -301,6 +301,10 @@ public class GameManager : MonoBehaviour {
     public int GetTicksBasedOnHour(int hours) {
         return ticksPerHour * hours;
     }
+    public int GetTicksBasedOnMinutes(int minutes) {
+        float percent = (float)minutes/60f;
+        return Mathf.FloorToInt(ticksPerHour * percent);
+    }
 
     #region Cursor
     public void SetCursorToDefault() {

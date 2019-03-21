@@ -264,6 +264,9 @@ public class GoapAction {
         }
         return false;
     }
+    protected bool HasSupply(int neededSupply) {
+        return actor.supply >= neededSupply;
+    }
     #endregion
 
     #region Preconditions
