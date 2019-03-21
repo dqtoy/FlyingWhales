@@ -8,6 +8,11 @@ public class ChatCharacter : GoapAction {
         get { return _targetStructure; }
     }
     public ChatCharacter(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.CHAT_CHARACTER, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+        validTimeOfDays = new TIME_IN_WORDS[] {
+            TIME_IN_WORDS.MORNING,
+            TIME_IN_WORDS.AFTERNOON,
+            TIME_IN_WORDS.EARLY_NIGHT,
+        };
     }
 
     #region Overrides
@@ -18,7 +23,7 @@ public class ChatCharacter : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
     }
     public override void PerformActualAction() {
-        if (targetStructure == actor.gridTileLocation.structure) {
+        if (poiTarget.gridTileLocation.structure == actor.gridTileLocation.structure) {
             SetState("Chat Success");
         } else {
             SetState("Target Missing");
@@ -30,35 +35,42 @@ public class ChatCharacter : GoapAction {
         Character targetCharacter = poiTarget as Character;
         Charmed charmed = actor.GetTrait("Charmed") as Charmed;
         if (charmed != null && charmed.responsibleCharacter != null && charmed.responsibleCharacter.id == targetCharacter.id) {
-            cost -=2;
+            //If Actor is charmed and target is the charmer: -2
+            cost -= 2;
         }
         if (actor.faction.id != targetCharacter.faction.id) {
+            //Target is not from the same faction: +2
             cost += 2;
         }
         if (actor.race != targetCharacter.race) {
-            cost += 4;
+            //Target is a different race: +2
+            cost += 2;
         }
         CharacterRelationshipData relData = actor.GetCharacterRelationshipData(targetCharacter);
         if (relData != null) {
             if (relData.HasRelationshipTrait(RELATIONSHIP_TRAIT.ENEMY)) {
-                cost += 8;
-            }
-            if (relData.HasRelationshipTrait(RELATIONSHIP_TRAIT.SERVANT)) {
-                cost -= 1;
+                //Target is an Enemy: +4
+                cost += 4;
             }
             if (relData.HasRelationshipTrait(RELATIONSHIP_TRAIT.LOVER)) {
-                cost -= 2;
+                //Target is a Lover: -1
+                cost -= 1;
             }
             if (relData.HasRelationshipTrait(RELATIONSHIP_TRAIT.RELATIVE)) {
-                cost -= 2;
+                //Target is a Relative: -1
+                cost -= 1;
             }
             if (relData.HasRelationshipTrait(RELATIONSHIP_TRAIT.FRIEND)) {
-                cost -= 3;
+                //Target is a Friend: -2
+                cost -= 2;
             }
             if (relData.HasRelationshipTrait(RELATIONSHIP_TRAIT.PARAMOUR)) {
-                cost -= 3;
+                //Target is a Paramour: -2
+                cost -= 2;
             }
         }
+        //Then add a random cost between 0 to 4.
+        cost += Utilities.rng.Next(0, 4);
         return cost;
     }
     //public override bool IsHalted() {
@@ -77,6 +89,10 @@ public class ChatCharacter : GoapAction {
         }
         base.DoAction(plan);
     }
+    public override void FailAction() {
+        base.FailAction();
+        SetState("Target Missing");
+    }
     #endregion
 
     #region State Effects
@@ -85,7 +101,7 @@ public class ChatCharacter : GoapAction {
         currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
     }
     private void PerTickChatSuccess() {
-        actor.AdjustHappiness(60);
+        actor.AdjustHappiness(10);
     }
     private void AfterChatSuccess() {
         actor.AdjustDoNotGetLonely(-1);
