@@ -320,6 +320,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.TABLE_REMOVE_POISON,
                 INTERACTION_TYPE.TABLE_POISON,
                 INTERACTION_TYPE.PRAY,
+                INTERACTION_TYPE.CHOP_WOOD,
             } },
             { RACE.ELVES, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -375,6 +376,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.TABLE_REMOVE_POISON,
                 INTERACTION_TYPE.TABLE_POISON,
                 INTERACTION_TYPE.PRAY,
+                INTERACTION_TYPE.CHOP_WOOD,
             } },
             { RACE.GOBLIN, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -430,6 +432,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.TABLE_REMOVE_POISON,
                 INTERACTION_TYPE.TABLE_POISON,
                 INTERACTION_TYPE.PRAY,
+                INTERACTION_TYPE.CHOP_WOOD,
             } },
             { RACE.FAERY, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -485,6 +488,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.TABLE_REMOVE_POISON,
                 INTERACTION_TYPE.TABLE_POISON,
                 INTERACTION_TYPE.PRAY,
+                INTERACTION_TYPE.CHOP_WOOD,
             } },
             { RACE.SKELETON, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -540,6 +544,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.TABLE_REMOVE_POISON,
                 INTERACTION_TYPE.TABLE_POISON,
                 INTERACTION_TYPE.PRAY,
+                INTERACTION_TYPE.CHOP_WOOD,
             } },
             { RACE.SPIDER, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -589,6 +594,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.RETURN_HOME,
                 INTERACTION_TYPE.SLEEP_OUTSIDE,
                 INTERACTION_TYPE.EXPLORE,
+                INTERACTION_TYPE.CHOP_WOOD,
             } },
             { RACE.WOLF, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -638,6 +644,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.RETURN_HOME,
                 INTERACTION_TYPE.SLEEP_OUTSIDE,
                 INTERACTION_TYPE.EXPLORE,
+                INTERACTION_TYPE.CHOP_WOOD,
             } },
             { RACE.DRAGON, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -687,6 +694,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.RETURN_HOME,
                 INTERACTION_TYPE.SLEEP_OUTSIDE,
                 INTERACTION_TYPE.EXPLORE,
+                INTERACTION_TYPE.CHOP_WOOD,
             } },
         };
     }

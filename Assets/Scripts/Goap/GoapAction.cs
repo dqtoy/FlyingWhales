@@ -14,7 +14,16 @@ public class GoapAction {
     public int cost { get { return GetCost() + GetDistanceCost(); } }
     public List<Precondition> preconditions { get; private set; }
     public List<GoapEffect> expectedEffects { get; private set; }
-    public virtual LocationStructure targetStructure { get { return poiTarget.gridTileLocation.structure; } }
+    public virtual LocationStructure targetStructure {
+        get {
+            try {
+                return poiTarget.gridTileLocation.structure;
+            } catch {
+                throw new Exception("Error with target structure in " + goapName + " targetting " + poiTarget.ToString() + " by " + actor.name);
+            }
+            
+        }
+    }
     public LocationGridTile targetTile { get; protected set; }
     public Dictionary<string, GoapActionState> states { get; protected set; }
     public List<GoapEffect> actualEffects { get; private set; } //stores what really happened. NOTE: Only storing relevant data to share intel, no need to store everything that happened.

@@ -8,7 +8,7 @@ public class Ore : TileObject, IPointOfInterest {
     public LocationStructure location { get; private set; }
     public List<INTERACTION_TYPE> poiGoapActions { get; private set; }
 
-    private int yield;
+    public int yield { get; private set; }
     private LocationGridTile tile;
     private POI_STATE _state;
 
@@ -94,6 +94,9 @@ public class Ore : TileObject, IPointOfInterest {
     #endregion
 
     public int GetSupplyPerMine() {
+        if (yield < Supply_Per_Mine) {
+            return yield;
+        }
         return Supply_Per_Mine;
     }
     public void AdjustYield(int amount) {

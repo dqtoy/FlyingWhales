@@ -1844,6 +1844,13 @@ public class Area {
             LocationStructure structure = structures[STRUCTURE_TYPE.WILDERNESS][0];
             structure.AddPOI(new MagicCircle(structure));
         }
+        //trees
+        for (int i = 0; i < areaMap.trees.Count; i++) {
+            LocationGridTile currTree = areaMap.trees[i];
+            if (currTree.structure != null) {
+                currTree.structure.AddPOI(new Tree(currTree.structure), currTree);
+            }
+        }
         //Guitar
         int guitarCount = 5;
         if (structures.ContainsKey(STRUCTURE_TYPE.DWELLING)) {
@@ -1852,6 +1859,7 @@ public class Area {
                 structure.AddPOI(new Guitar(structure));
             }
         }
+        
     }
     private void PlaceBedsAndTables() {
         if (structures.ContainsKey(STRUCTURE_TYPE.DWELLING)) {

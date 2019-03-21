@@ -1143,6 +1143,7 @@ public enum INTERACTION_TYPE {
     TABLE_REMOVE_POISON,
     TABLE_POISON,
     PRAY,
+    CHOP_WOOD,
 }
 public enum INTERACTION_ALIGNMENT {
     EVIL,
@@ -1331,6 +1332,7 @@ public enum TILE_OBJECT_TYPE {
     TABLE,
     BED,
     ORE,
+    TREE,
     FOOD,
 
 }

@@ -100,6 +100,7 @@ public class AreaInnerTileMap : MonoBehaviour {
     public List<LocationGridTile> allTiles { get; private set; }
     public List<LocationGridTile> outsideTiles { get; private set; }
     public List<LocationGridTile> insideTiles { get; private set; }
+    public List<LocationGridTile> trees { get; private set; }
 
     public Tilemap charactersTM {
         get { return objectsTilemap; }
@@ -161,6 +162,7 @@ public class AreaInnerTileMap : MonoBehaviour {
     public void Initialize(Area area) {
         this.area = area;
         this.name = area.name + "'s Inner Map";
+        trees = new List<LocationGridTile>();
         canvas.worldCamera = AreaMapCameraMove.Instance.areaMapsCamera;
         worldUICanvas.worldCamera = AreaMapCameraMove.Instance.areaMapsCamera;
         GenerateInnerStructures();
@@ -261,12 +263,14 @@ public class AreaInnerTileMap : MonoBehaviour {
         insideTiles.Remove(chosenGate); //NOTE: I remove the tiles that become gates from inside tiles, so as not to include them when determining tiles with structures
         gate = chosenGate;
         detailsTilemap.SetTile(gate.localPlace, null);
+        trees.Remove(gate);
 
         for (int i = 0; i < insideTiles.Count; i++) {
             LocationGridTile currTile = insideTiles[i];
             if (area.areaType == AREA_TYPE.DUNGEON) {
                 wallTilemap.SetTile(currTile.localPlace, dungeonWallTile);
                 detailsTilemap.SetTile(currTile.localPlace, null);
+                trees.Remove(currTile);
                 if (outerTiles.Contains(currTile)) {
                     currTile.SetTileType(LocationGridTile.Tile_Type.Wall);
                 }
@@ -275,6 +279,7 @@ public class AreaInnerTileMap : MonoBehaviour {
                     currTile.SetTileType(LocationGridTile.Tile_Type.Wall);
                     wallTilemap.SetTile(currTile.localPlace, wallTile);
                     detailsTilemap.SetTile(currTile.localPlace, null);
+                    trees.Remove(currTile);
                 }
             }
         }
@@ -356,6 +361,7 @@ public class AreaInnerTileMap : MonoBehaviour {
                     currTile.SetStructure(currStruct);
                     elligibleTiles.Remove(currTile);
                     detailsTilemap.SetTile(currTile.localPlace, null);
+                    trees.Remove(currTile);
                     List<LocationGridTile> neighbourTiles = new List<LocationGridTile>();
                     switch (kvp.Key) {
                         case STRUCTURE_TYPE.EXIT:
@@ -555,6 +561,7 @@ public class AreaInnerTileMap : MonoBehaviour {
                         //roadTilemap.SetTile(currTile.localPlace, roadTile);
                         roadTilemap.SetTile(currTile.localPlace, insideTile);
                         detailsTilemap.SetTile(currTile.localPlace, null);
+                        trees.Remove(currTile);
                         currTile.SetTileState(LocationGridTile.Tile_State.Empty);
                         currTile.SetTileType(LocationGridTile.Tile_Type.Road);
                         if (!roadTiles.Contains(currTile)) {
@@ -809,9 +816,19 @@ public class AreaInnerTileMap : MonoBehaviour {
                                 detailsTilemap.SetTile(currTile.localPlace, bigTreeTile);
                                 currTile.SetTileState(LocationGridTile.Tile_State.Occupied);
                             } else {
-                                currTile.hasDetail = true;
-                                detailsTilemap.SetTile(currTile.localPlace, treeTile);
-                                currTile.SetTileState(LocationGridTile.Tile_State.Occupied);
+                                if (Random.Range(0, 100) < 50) {
+                                    //shrubs
+                                    currTile.hasDetail = true;
+                                    detailsTilemap.SetTile(currTile.localPlace, shrubTile);
+                                    currTile.SetTileState(LocationGridTile.Tile_State.Occupied);
+                                } else {
+                                    //normal tree
+                                    currTile.hasDetail = true;
+                                    detailsTilemap.SetTile(currTile.localPlace, treeTile);
+                                    currTile.SetTileState(LocationGridTile.Tile_State.Occupied);
+                                    trees.Add(currTile);
+                                }
+                               
                             }
                         }
                     } else {
@@ -952,6 +969,9 @@ public class AreaInnerTileMap : MonoBehaviour {
                 tileToUse = tileObjectTiles[to.tileObjectType];
                 tile.SetObjectHere(obj);
                 objectsTilemap.SetTile(tile.localPlace, tileToUse);
+                if (to is Tree) {
+                    detailsTilemap.SetTile(tile.localPlace, null);
+                }
                 break;
             default:
                 tileToUse = characterTile;
@@ -1100,6 +1120,11 @@ public class AreaInnerTileMap : MonoBehaviour {
         summary += "\nContent: " + tile.objHere?.ToString() ?? "None";
         if (tile.objHere != null) {
             summary += "\n\tObject State: " + tile.objHere.state.ToString();
+            if (tile.objHere is Tree) {
+                summary += "\n\tYield: " + (tile.objHere as Tree).yield.ToString();
+            } else if (tile.objHere is Ore) {
+                summary += "\n\tYield: " + (tile.objHere as Ore).yield.ToString();
+            }
         }
         summary += "\nOccupant: " + tile.occupant?.name ?? "None";
 

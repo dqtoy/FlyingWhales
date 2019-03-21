@@ -846,7 +846,7 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 75978c68bd2afdf498ce5b98995c6524, type: 2}
     - {fileID: 11400000, guid: 75978c68bd2afdf498ce5b98995c6524, type: 2}
   tileObjectTiles:
-    m_keys: 000000000100000002000000030000000400000005000000060000000700000008000000
+    m_keys: 00000000010000000200000003000000040000000500000006000000070000000800000009000000
     m_values:
     - {fileID: 11400000, guid: 2ca7b845206b24d4aa519c328da9a7ea, type: 2}
     - {fileID: 11400000, guid: 43666d40bbb7aa94692b4b9a87005259, type: 2}
@@ -857,6 +857,7 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 06974d1136b6fdb4ca04bcf1592704c4, type: 2}
     - {fileID: 11400000, guid: 6f3954dc9b93b6d48a95ccf4a1b548f9, type: 2}
     - {fileID: 11400000, guid: 0b068d2916458ec42b003236284308b3, type: 2}
+    - {fileID: 11400000, guid: 2e58fd5b2fae6c04d9113fc8182a44ae, type: 2}
   leftWall: {fileID: 11400000, guid: c05951cff2b0fc7449f72ccebda1c382, type: 2}
   rightWall: {fileID: 11400000, guid: 9c1ad6fdb19ade5428fd7d86124e6aa4, type: 2}
   topWall: {fileID: 11400000, guid: 801dc14b009276d4cb7b1cc2212bceee, type: 2}
