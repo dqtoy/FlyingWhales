@@ -2947,7 +2947,33 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     private bool PlanWorkActions() {
         if(this.faction.id != FactionManager.Instance.neutralFaction.id) {
-            //Plan work actions
+            //WeightedDictionary<string> weightedDictionary = new WeightedDictionary<string>();
+            ////Drop Supply Plan
+            //if(supply > role.reservedSupply) {
+            //    weightedDictionary.AddElement("Drop Supply", 2);
+            //}
+            ////Obtain Supply Plan
+            //if(role.roleType == CHARACTER_ROLE.CIVILIAN) {
+            //    SupplyPile supplyPile = homeArea.supplyPile;
+            //    if(supplyPile.suppliesInPile < 100) {
+            //        weightedDictionary.AddElement("Obtain Supply", 4);
+            //    }
+            //} else {
+            //    if (supply < role.reservedSupply) {
+            //        weightedDictionary.AddElement("Obtain Supply", 4);
+            //    }
+            //}
+
+            //if(weightedDictionary.Count > 0) {
+            //    string result = weightedDictionary.PickRandomElementGivenWeights();
+            //    SupplyPile supplyPile = homeArea.supplyPile;
+            //    if (result == "Drop Supply") {
+            //        StartGOAP(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_SUPPLY, supply, supplyPile), supplyPile);
+            //    } else {
+            //        StartGOAP(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_SUPPLY, supplyPile.suppliesInPile, this), this);
+            //    }
+            //}
+            //return true;
         }
         return false;
     }
