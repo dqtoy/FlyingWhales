@@ -1021,6 +1021,12 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.SCRAP:
                 goapAction = new Scrap(actor, target);
                 break;
+            case INTERACTION_TYPE.GET_SUPPLY:
+                goapAction = new GetSupply(actor, target);
+                break;
+            case INTERACTION_TYPE.DROP_SUPPLY:
+                goapAction = new DropSupply(actor, target);
+                break;
         }
         if(goapAction != null && willInitialize) {
             goapAction.Initialize();

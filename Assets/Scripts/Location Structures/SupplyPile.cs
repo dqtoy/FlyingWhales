@@ -26,6 +26,7 @@ public class SupplyPile : TileObject, IPointOfInterest {
 
     public SupplyPile(LocationStructure location) {
         this.location = location;
+        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.GET_SUPPLY, INTERACTION_TYPE.DROP_SUPPLY };
         Initialize(this, TILE_OBJECT_TYPE.SUPPLY_PILE);
     }
 

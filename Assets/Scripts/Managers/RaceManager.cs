@@ -325,6 +325,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.PATROL,
                 INTERACTION_TYPE.STEAL,
                 INTERACTION_TYPE.SCRAP,
+                INTERACTION_TYPE.GET_SUPPLY,
+                INTERACTION_TYPE.DROP_SUPPLY,
             } },
             { RACE.ELVES, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -385,6 +387,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.PATROL,
                 INTERACTION_TYPE.STEAL,
                 INTERACTION_TYPE.SCRAP,
+                INTERACTION_TYPE.GET_SUPPLY,
+                INTERACTION_TYPE.DROP_SUPPLY,
             } },
             { RACE.GOBLIN, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -445,6 +449,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.PATROL,
                 INTERACTION_TYPE.STEAL,
                 INTERACTION_TYPE.SCRAP,
+                INTERACTION_TYPE.GET_SUPPLY,
+                INTERACTION_TYPE.DROP_SUPPLY,
             } },
             { RACE.FAERY, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -505,6 +511,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.PATROL,
                 INTERACTION_TYPE.STEAL,
                 INTERACTION_TYPE.SCRAP,
+                INTERACTION_TYPE.GET_SUPPLY,
+                INTERACTION_TYPE.DROP_SUPPLY,
             } },
             { RACE.SKELETON, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -565,6 +573,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.PATROL,
                 INTERACTION_TYPE.STEAL,
                 INTERACTION_TYPE.SCRAP,
+                INTERACTION_TYPE.GET_SUPPLY,
+                INTERACTION_TYPE.DROP_SUPPLY,
             } },
             { RACE.SPIDER, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,

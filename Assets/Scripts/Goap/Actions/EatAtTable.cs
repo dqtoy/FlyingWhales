@@ -25,28 +25,25 @@
         base.PerformActualAction();
     }
     protected override int GetCost() {
-        if(poiTarget is Table) {
-            Dwelling dwelling = poiTarget.gridTileLocation.structure as Dwelling;
-            if (!dwelling.IsOccupied()) {
-                return 10;
+        Dwelling dwelling = poiTarget.gridTileLocation.structure as Dwelling;
+        if (!dwelling.IsOccupied()) {
+            return 10;
+        } else {
+            if (dwelling.IsResident(actor)) {
+                return 1;
             } else {
-                if(dwelling.IsResident(actor)) {
-                    return 1;
-                } else {
-                    for (int i = 0; i < dwelling.residents.Count; i++) {
-                        Character owner = dwelling.residents[i];
-                        CharacterRelationshipData characterRelationshipData = actor.GetCharacterRelationshipData(owner);
-                        if (characterRelationshipData != null) {
-                            if (characterRelationshipData.HasRelationshipOfEffect(TRAIT_EFFECT.POSITIVE)) {
-                                return 4;
-                            }
+                for (int i = 0; i < dwelling.residents.Count; i++) {
+                    Character owner = dwelling.residents[i];
+                    CharacterRelationshipData characterRelationshipData = actor.GetCharacterRelationshipData(owner);
+                    if (characterRelationshipData != null) {
+                        if (characterRelationshipData.HasRelationshipOfEffect(TRAIT_EFFECT.POSITIVE)) {
+                            return 4;
                         }
                     }
-                    return 10;
                 }
+                return 10;
             }
         }
-        return 0;
     }
     public override void FailAction() {
         base.FailAction();
