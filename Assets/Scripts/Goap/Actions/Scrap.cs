@@ -23,7 +23,7 @@ public class Scrap : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_SUPPLY, conditionKey = ItemManager.Instance.itemData[item.specialTokenType].supplyValue, targetPOI = actor });
     }
     public override void PerformActualAction() {
-        if (poiTarget.gridTileLocation == actor.gridTileLocation) {
+        if (poiTarget.gridTileLocation.structure == actor.gridTileLocation.structure) {
             SetState("Scrap Success");
         } else {
             SetState("Target Missing");

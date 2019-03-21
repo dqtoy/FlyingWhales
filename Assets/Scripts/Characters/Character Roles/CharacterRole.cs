@@ -26,6 +26,7 @@ public class CharacterRole {
     public string name { get; protected set; }
     public CHARACTER_ROLE roleType { get; protected set; }
     public INTERACTION_CATEGORY[] interactionCategories { get; protected set; }
+    public virtual int reservedSupply { get { return 0; } }
 
     protected CharacterRole(CHARACTER_ROLE roleType, string classNameOrIdentifier, INTERACTION_CATEGORY[] interactionCategories) {
         this.roleType = roleType;

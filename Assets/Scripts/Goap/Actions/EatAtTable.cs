@@ -3,9 +3,9 @@
     }
 
     #region Overrides
-    //protected override void ConstructRequirement() {
-    //    _requirementAction = Requirement;
-    //}
+    protected override void ConstructRequirement() {
+        _requirementAction = Requirement;
+    }
     protected override void ConstructPreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = actor });
     }
@@ -25,7 +25,7 @@
         base.PerformActualAction();
     }
     protected override int GetCost() {
-        if(poiTarget.gridTileLocation.structure.structureType == STRUCTURE_TYPE.DWELLING && poiTarget is Table) {
+        if(poiTarget is Table) {
             Dwelling dwelling = poiTarget.gridTileLocation.structure as Dwelling;
             if (!dwelling.IsOccupied()) {
                 return 10;
@@ -93,8 +93,8 @@
     #endregion
 
     #region Requirements
-    //protected bool Requirement() {
-    //    return poiTarget.state == POI_STATE.ACTIVE;
-    //}
+    protected bool Requirement() {
+        return poiTarget.gridTileLocation.structure.structureType == STRUCTURE_TYPE.DWELLING;
+    }
     #endregion
 }
