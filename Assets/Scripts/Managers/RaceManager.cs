@@ -317,6 +317,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.DRINK,
                 INTERACTION_TYPE.SLEEP_OUTSIDE,
                 INTERACTION_TYPE.EXPLORE,
+                INTERACTION_TYPE.TABLE_REMOVE_POISON,
             } },
             { RACE.ELVES, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -369,6 +370,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.DRINK,
                 INTERACTION_TYPE.SLEEP_OUTSIDE,
                 INTERACTION_TYPE.EXPLORE,
+                INTERACTION_TYPE.TABLE_REMOVE_POISON,
             } },
             { RACE.GOBLIN, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -421,6 +423,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.DRINK,
                 INTERACTION_TYPE.SLEEP_OUTSIDE,
                 INTERACTION_TYPE.EXPLORE,
+                INTERACTION_TYPE.TABLE_REMOVE_POISON,
             } },
             { RACE.FAERY, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -473,6 +476,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.DRINK,
                 INTERACTION_TYPE.SLEEP_OUTSIDE,
                 INTERACTION_TYPE.EXPLORE,
+                INTERACTION_TYPE.TABLE_REMOVE_POISON,
             } },
             { RACE.SKELETON, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -525,6 +529,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.DRINK,
                 INTERACTION_TYPE.SLEEP_OUTSIDE,
                 INTERACTION_TYPE.EXPLORE,
+                INTERACTION_TYPE.TABLE_REMOVE_POISON,
             } },
             { RACE.SPIDER, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,

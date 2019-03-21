@@ -997,6 +997,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.EXPLORE:
                 goapAction = new Explore(actor, target);
                 break;
+            case INTERACTION_TYPE.TABLE_REMOVE_POISON:
+                goapAction = new TableRemovePoison(actor, target);
+                break;
         }
         if(goapAction != null && willInitialize) {
             goapAction.Initialize();

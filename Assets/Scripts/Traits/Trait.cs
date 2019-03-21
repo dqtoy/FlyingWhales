@@ -26,8 +26,8 @@ public class Trait {
     private System.Action onRemoveAction;
 
     #region Virtuals
-    public virtual void OnAddTrait(Character sourceCharacter) { }
-    public virtual void OnRemoveTrait(Character sourceCharacter) {
+    public virtual void OnAddTrait(IPointOfInterest sourceCharacter) { }
+    public virtual void OnRemoveTrait(IPointOfInterest sourceCharacter) {
         if (onRemoveAction != null) {
             onRemoveAction();
         }

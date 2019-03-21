@@ -28,9 +28,11 @@ public class Charmed : Trait {
     }
 
     #region Overrides
-    public override void OnRemoveTrait(Character sourceCharacter) {
-        base.OnRemoveTrait(sourceCharacter);
-        sourceCharacter.ReturnToOriginalHomeAndFaction(originalHome, originalFaction);
+    public override void OnRemoveTrait(IPointOfInterest sourcePOI) {
+        base.OnRemoveTrait(sourcePOI);
+        if (sourcePOI is Character) {
+            (sourcePOI as Character).ReturnToOriginalHomeAndFaction(originalHome, originalFaction);
+        }
     }
     public override void SetCharacterResponsibleForTrait(Character character) {
         _responsibleCharacter = character;

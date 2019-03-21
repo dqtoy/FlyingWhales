@@ -15,9 +15,11 @@ public class Reanimated : Trait {
     }
 
     #region Overrides
-    public override void OnRemoveTrait(Character sourceCharacter) {
-        base.OnRemoveTrait(sourceCharacter);
-        sourceCharacter.Death(); //when a character with a reanimated trait has the reanimated trait removed from him/her, he/she dies again
+    public override void OnRemoveTrait(IPointOfInterest sourcePOI) {
+        base.OnRemoveTrait(sourcePOI);
+        if (sourcePOI is Character) {
+            (sourcePOI as Character).Death(); //when a character with a reanimated trait has the reanimated trait removed from him/her, he/she dies again
+        }
     }
     #endregion
 }

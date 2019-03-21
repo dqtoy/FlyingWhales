@@ -8,7 +8,7 @@ using System.Linq;
 public class GoapAction {
     public INTERACTION_TYPE goapType { get; private set; }
     public INTERACTION_ALIGNMENT alignment { get; private set; }
-    public string goapName { get; private set; }
+    public string goapName { get; protected set; }
     public IPointOfInterest poiTarget { get; private set; }
     public Character actor { get; private set; }
     public int cost { get { return GetCost() + GetDistanceCost(); } }

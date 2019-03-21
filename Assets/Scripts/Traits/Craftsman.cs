@@ -19,7 +19,7 @@ public class Craftsman : Trait {
     }
 
     #region Overrides
-    public override void OnAddTrait(Character sourceCharacter) {
+    public override void OnAddTrait(IPointOfInterest sourcePOI) {
         //if(sourceCharacter.race == RACE.HUMANS) {
         //    craftedItemName = SPECIAL_TOKEN.HEALING_POTION;
         //}else if (sourceCharacter.race == RACE.ELVES) {
@@ -29,10 +29,14 @@ public class Craftsman : Trait {
         //}else if (sourceCharacter.race == RACE.GOBLIN) {
         //    craftedItemName = SPECIAL_TOKEN.JUNK;
         //}
-        sourceCharacter.AddInteractionType(INTERACTION_TYPE.CRAFT_ITEM);
+        if (sourcePOI is Character) {
+            (sourcePOI as Character).AddInteractionType(INTERACTION_TYPE.CRAFT_ITEM);
+        }
     }
-    public override void OnRemoveTrait(Character sourceCharacter) {
-        sourceCharacter.RemoveInteractionType(INTERACTION_TYPE.CRAFT_ITEM);
+    public override void OnRemoveTrait(IPointOfInterest sourcePOI) {
+        if (sourcePOI is Character) {
+            (sourcePOI as Character).RemoveInteractionType(INTERACTION_TYPE.CRAFT_ITEM);
+        }
     }
     #endregion
 }
