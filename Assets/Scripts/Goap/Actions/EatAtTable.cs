@@ -15,14 +15,14 @@ public class EatAtTable : GoapAction {
     }
     public override void PerformActualAction() {
         if (targetStructure == actor.gridTileLocation.structure) {
-            //TODO: CHECKER IF TABLE IS POISONED
-            SetState("Eat Success");
+            ////TODO: CHECKER IF TABLE IS POISONED
+            //SetState("Eat Success");
 
-            //if (poiTarget.GetTrait("Poisoned") != null) {
-            //    SetState("Eat Poisoned");
-            //} else {
-            //    SetState("Eat Success");
-            //}
+            if (poiTarget.GetTrait("Poisoned") != null) {
+                SetState("Eat Poisoned");
+            } else {
+                SetState("Eat Success");
+            }
         } else {
             SetState("Target Missing");
         }
@@ -73,8 +73,7 @@ public class EatAtTable : GoapAction {
     private void PreEatPoisoned() {
         currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
         actor.AdjustDoNotGetHungry(1);
-        //Remove poisoned trait from table
-        //TODO: ADD TRAITS AT IPOINTOFINTEREST
+        poiTarget.RemoveTrait("Poisoned");
     }
     private void PerTickEatPoisoned() {
         actor.AdjustFullness(10);

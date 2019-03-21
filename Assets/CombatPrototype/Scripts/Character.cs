@@ -3951,6 +3951,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         poiGoapActions.Add(INTERACTION_TYPE.DAYDREAM);
         poiGoapActions.Add(INTERACTION_TYPE.SLEEP_OUTSIDE);
         poiGoapActions.Add(INTERACTION_TYPE.PRAY);
+        poiGoapActions.Add(INTERACTION_TYPE.EXPLORE);
+        poiGoapActions.Add(INTERACTION_TYPE.PATROL);
     }
     public void StartGOAP(GoapEffect goal, IPointOfInterest target, bool isPriority = false, List<Character> otherCharactePOIs = null) {
         List<CharacterAwareness> characterTargetsAwareness = new List<CharacterAwareness>();
