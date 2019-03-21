@@ -3953,6 +3953,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         poiGoapActions.Add(INTERACTION_TYPE.PRAY);
         poiGoapActions.Add(INTERACTION_TYPE.EXPLORE);
         poiGoapActions.Add(INTERACTION_TYPE.PATROL);
+        poiGoapActions.Add(INTERACTION_TYPE.CHAT_CHARACTER);
+        poiGoapActions.Add(INTERACTION_TYPE.ARGUE_CHARACTER);
     }
     public void StartGOAP(GoapEffect goal, IPointOfInterest target, bool isPriority = false, List<Character> otherCharactePOIs = null) {
         List<CharacterAwareness> characterTargetsAwareness = new List<CharacterAwareness>();
