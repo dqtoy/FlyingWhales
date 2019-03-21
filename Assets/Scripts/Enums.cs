@@ -1144,12 +1144,9 @@ public enum INTERACTION_TYPE {
     TABLE_POISON,
     PRAY,
     CHOP_WOOD,
-<<<<<<< HEAD
     STEAL,
     SCRAP,
-=======
     MAGIC_CIRCLE_PERFORM_RITUAL,
->>>>>>> 7fe25e0cedfc4c2d43471867e38ae504ad5543b7
 }
 public enum INTERACTION_ALIGNMENT {
     EVIL,
