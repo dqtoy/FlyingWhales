@@ -1000,6 +1000,12 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.TABLE_REMOVE_POISON:
                 goapAction = new TableRemovePoison(actor, target);
                 break;
+            case INTERACTION_TYPE.TABLE_POISON:
+                goapAction = new TablePoison(actor, target);
+                break;
+            case INTERACTION_TYPE.PRAY:
+                goapAction = new Pray(actor, target);
+                break;
         }
         if(goapAction != null && willInitialize) {
             goapAction.Initialize();

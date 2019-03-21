@@ -318,6 +318,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.SLEEP_OUTSIDE,
                 INTERACTION_TYPE.EXPLORE,
                 INTERACTION_TYPE.TABLE_REMOVE_POISON,
+                INTERACTION_TYPE.TABLE_POISON,
+                INTERACTION_TYPE.PRAY,
             } },
             { RACE.ELVES, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -371,6 +373,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.SLEEP_OUTSIDE,
                 INTERACTION_TYPE.EXPLORE,
                 INTERACTION_TYPE.TABLE_REMOVE_POISON,
+                INTERACTION_TYPE.TABLE_POISON,
+                INTERACTION_TYPE.PRAY,
             } },
             { RACE.GOBLIN, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -424,6 +428,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.SLEEP_OUTSIDE,
                 INTERACTION_TYPE.EXPLORE,
                 INTERACTION_TYPE.TABLE_REMOVE_POISON,
+                INTERACTION_TYPE.TABLE_POISON,
+                INTERACTION_TYPE.PRAY,
             } },
             { RACE.FAERY, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -477,6 +483,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.SLEEP_OUTSIDE,
                 INTERACTION_TYPE.EXPLORE,
                 INTERACTION_TYPE.TABLE_REMOVE_POISON,
+                INTERACTION_TYPE.TABLE_POISON,
+                INTERACTION_TYPE.PRAY,
             } },
             { RACE.SKELETON, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -530,6 +538,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.SLEEP_OUTSIDE,
                 INTERACTION_TYPE.EXPLORE,
                 INTERACTION_TYPE.TABLE_REMOVE_POISON,
+                INTERACTION_TYPE.TABLE_POISON,
+                INTERACTION_TYPE.PRAY,
             } },
             { RACE.SPIDER, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
