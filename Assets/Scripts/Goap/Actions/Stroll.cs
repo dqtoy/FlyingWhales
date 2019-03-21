@@ -10,7 +10,6 @@ public class Stroll : GoapAction {
     public Stroll(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.STROLL, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         showIntelNotification = false;
         shouldAddLogs = false;
-        actionLocationType = ACTION_LOCATION_TYPE.RANDOM_LOCATION;
     }
 
     #region Overrides
@@ -45,12 +44,18 @@ public class Stroll : GoapAction {
 
     public void SetTargetStructure(LocationStructure structure) {
         _targetStructure = structure;
+        
         if(_targetStructure == null) {
             RandomizeTargetStructure();
         } else {
             //List<LocationGridTile> unoccupiedTiles = _targetStructure.unoccupiedTiles;
             //if (unoccupiedTiles.Count > 0) {
-                targetTile = GetTargetLocationTile();
+            if(_targetStructure == actor.currentStructure) {
+                actionLocationType = ACTION_LOCATION_TYPE.NEARBY;
+            } else {
+                actionLocationType = ACTION_LOCATION_TYPE.RANDOM_LOCATION;
+            }
+            targetTile = GetTargetLocationTile();
             //}
         }
     }

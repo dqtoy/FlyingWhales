@@ -1012,6 +1012,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.MAGIC_CIRCLE_PERFORM_RITUAL:
                 goapAction = new MagicCirclePerformRitual(actor, target);
                 break;
+            case INTERACTION_TYPE.PATROL:
+                goapAction = new Patrol(actor, target);
+                break;
         }
         if(goapAction != null && willInitialize) {
             goapAction.Initialize();
