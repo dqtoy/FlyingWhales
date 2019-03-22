@@ -25,7 +25,7 @@ public class Instigator : Job {
     protected override void PassiveEffect(Area area) {
         int supplies = area.suppliesInBank;
         supplies /= 2;
-        area.SetSuppliesInBank(supplies);
+        //area.SetSuppliesInBank(supplies);
     }
     protected override bool IsTokenCompatibleWithJob(Token token) {
         if(token.tokenType == TOKEN_TYPE.CHARACTER) {

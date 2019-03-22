@@ -506,19 +506,12 @@ public class LandmarkManager : MonoBehaviour {
         }
 #if !WORLD_CREATION_TOOL
         GameObject areaMapGO = GameObject.Instantiate(innerStructurePrefab, areaMapsParent);
-        //areaMapGO.transform.localScale = new Vector3(0.2f, 0.2f, 1f);
-        //areaMapGO.transform.localPosition = Vector3.zero;
         AreaInnerTileMap areaMap = areaMapGO.GetComponent<AreaInnerTileMap>();
         areaMap.Initialize(newArea);
         newArea.SetAreaMap(areaMap);
-        //areaMapGO.SetActive(false);
+        areaMapGO.SetActive(false);
         newArea.PlaceTileObjects();
-        areaMap.Close();
-
-        //newArea.PlaceBedsAndTables();
-        //newArea.PlaceOres();
-        //newArea.PlaceSupplyPiles();
-        //newArea.SpawnFoodNow();
+        areaMap.GenerateDetails();
 #endif
         Messenger.Broadcast(Signals.AREA_CREATED, newArea);
         allAreas.Add(newArea);

@@ -201,6 +201,9 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         }
         return false;
     }
+    /// <summary>
+    /// Does this tile have a neighbour that is part of a different structure, or is part of the outside map?
+    /// </summary>
     public bool HasDifferentDwellingOrOutsideNeighbour() {
         foreach (KeyValuePair<TileNeighbourDirection, LocationGridTile> kvp in neighbours) {
             if (!kvp.Value.isInside || (kvp.Value.structure != this.structure)) {
@@ -275,6 +278,40 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
                 return true;
             }
         }
+        return false;
+    }
+    public bool IsAdjacentTo(System.Type type) {
+        foreach (KeyValuePair<TileNeighbourDirection, LocationGridTile> keyValuePair in neighbours) {
+            if ((keyValuePair.Value.objHere != null && keyValuePair.Value.objHere.GetType() == type) 
+                || (keyValuePair.Value.occupant != null && keyValuePair.Value.occupant.GetType() == type)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public bool IsAdjacentToPasssableTiles(int count = 1) {
+        int passableCount = 0;
+        foreach (KeyValuePair<TileNeighbourDirection, LocationGridTile> kvp in neighbours) {
+            if (kvp.Value.tileAccess == Tile_Access.Passable && kvp.Value.structure == structure) {
+                passableCount++;
+            }
+            if (passableCount >= count) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public bool WillMakeNeighboursPassableTileInvalid(int neededPassable = 1) {
+        SetTileAccess(Tile_Access.Impassable);
+        foreach (KeyValuePair<TileNeighbourDirection, LocationGridTile> kvp in neighbours) {
+            if (kvp.Value.structure == structure) {
+                if (!kvp.Value.IsAdjacentToPasssableTiles(neededPassable)) {
+                    SetTileAccess(Tile_Access.Passable);
+                    return true;
+                }
+            }
+        }
+        SetTileAccess(Tile_Access.Passable);
         return false;
     }
     #endregion

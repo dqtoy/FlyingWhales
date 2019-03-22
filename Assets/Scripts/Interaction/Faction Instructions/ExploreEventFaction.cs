@@ -122,9 +122,9 @@ public class ExploreEventFaction : Interaction {
     private void ExploreSupplyRewardEffect(InteractionState state) {
         SupplyPile supplyPile = poi as SupplyPile;
         //**Mechanics**: Obtain amount based on the location's range.
-        int obtainedSupply = supplyPile.GetAndReduceSuppliesObtained(_characterInvolved.homeArea);
-        state.descriptionLog.AddToFillers(null, obtainedSupply.ToString(), LOG_IDENTIFIER.STRING_1);
-        state.AddLogFiller(new LogFiller(null, obtainedSupply.ToString(), LOG_IDENTIFIER.STRING_1));
+        //int obtainedSupply = supplyPile.GetAndReduceSuppliesObtained(_characterInvolved.homeArea);
+        //state.descriptionLog.AddToFillers(null, obtainedSupply.ToString(), LOG_IDENTIFIER.STRING_1);
+        //state.AddLogFiller(new LogFiller(null, obtainedSupply.ToString(), LOG_IDENTIFIER.STRING_1));
     }
     
     private void ExploreNothingRewardEffect(InteractionState state) {

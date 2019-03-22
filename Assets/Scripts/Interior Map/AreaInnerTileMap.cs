@@ -76,7 +76,6 @@ public class AreaInnerTileMap : MonoBehaviour {
     [SerializeField] private RectTransform eventPopupParent;
 
     [Header("Other")]
-    [SerializeField] private RectTransform scrollviewContent;
     [SerializeField] private GameObject travelLinePrefab;
     [SerializeField] private Transform travelLineParent;
 
@@ -93,23 +92,17 @@ public class AreaInnerTileMap : MonoBehaviour {
     public Vector3 startPos;
     public Vector3 endPos;
 
-
     public Area area { get; private set; }
     public RectTransform mapCharactersParent { get { return charactersParent; } }
     public LocationGridTile[,] map { get; private set; }
     public List<LocationGridTile> allTiles { get; private set; }
     public List<LocationGridTile> outsideTiles { get; private set; }
     public List<LocationGridTile> insideTiles { get; private set; }
-    public List<LocationGridTile> trees { get; private set; }
-    //public bool isShowing { get; private set; }
-
-    //private Vector3 _originalPosition;
 
     public Tilemap charactersTM {
         get { return objectsTilemap; }
     }
 
-    //private LocationGridTile exitTile;
     private bool isHovering;
 
     private enum Cardinal_Direction { North, South, East, West };
@@ -118,14 +111,11 @@ public class AreaInnerTileMap : MonoBehaviour {
             new List<Point>(){
                 new Point(4, 3),
                 new Point(3, 4),
-                new Point(3, 3),
-                //new Point(4, 4),
+                //new Point(3, 3),
             }
         },
           { STRUCTURE_TYPE.EXPLORE_AREA,
             new List<Point>(){
-                //new Point(3, 5),
-                //new Point(5, 4),
                 new Point(4, 5),
                 new Point(4, 6),
                 new Point(5, 6),
@@ -165,11 +155,9 @@ public class AreaInnerTileMap : MonoBehaviour {
     public void Initialize(Area area) {
         this.area = area;
         this.name = area.name + "'s Inner Map";
-        trees = new List<LocationGridTile>();
         canvas.worldCamera = AreaMapCameraMove.Instance.areaMapsCamera;
         worldUICanvas.worldCamera = AreaMapCameraMove.Instance.areaMapsCamera;
         GenerateInnerStructures();
-        //_originalPosition = this.transform.position;
     }
     private void GenerateGrid() {
         map = new LocationGridTile[width, height];
@@ -239,7 +227,7 @@ public class AreaInnerTileMap : MonoBehaviour {
             } else {
                 //inside
                 currTile.SetIsInside(true);
-                groundTilemap.SetTile(new Vector3Int(currTile.localPlace.x, currTile.localPlace.y, 0), insideTile);
+                groundTilemap.SetTile(new Vector3Int(currTile.localPlace.x, currTile.localPlace.y, 0), outsideTile);
                 insideTiles.Add(currTile);
             }
         }
@@ -267,14 +255,12 @@ public class AreaInnerTileMap : MonoBehaviour {
         insideTiles.Remove(chosenGate); //NOTE: I remove the tiles that become gates from inside tiles, so as not to include them when determining tiles with structures
         gate = chosenGate;
         detailsTilemap.SetTile(gate.localPlace, null);
-        trees.Remove(gate);
 
         for (int i = 0; i < insideTiles.Count; i++) {
             LocationGridTile currTile = insideTiles[i];
             if (area.areaType == AREA_TYPE.DUNGEON) {
                 wallTilemap.SetTile(currTile.localPlace, dungeonWallTile);
                 detailsTilemap.SetTile(currTile.localPlace, null);
-                trees.Remove(currTile);
                 if (outerTiles.Contains(currTile)) {
                     currTile.SetTileType(LocationGridTile.Tile_Type.Wall);
                 }
@@ -283,7 +269,6 @@ public class AreaInnerTileMap : MonoBehaviour {
                     currTile.SetTileType(LocationGridTile.Tile_Type.Wall);
                     wallTilemap.SetTile(currTile.localPlace, wallTile);
                     detailsTilemap.SetTile(currTile.localPlace, null);
-                    trees.Remove(currTile);
                 }
             }
         }
@@ -296,24 +281,14 @@ public class AreaInnerTileMap : MonoBehaviour {
 
     #region Structures
     public void GenerateInnerStructures() {
-        groundTilemap.ClearAllTiles();
-        objectsTilemap.ClearAllTiles();
-        strcutureTilemap.ClearAllTiles();
-        wallTilemap.ClearAllTiles();
-        detailsTilemap.ClearAllTiles();
-        roadTilemap.ClearAllTiles();
-        scrollviewContent.sizeDelta = new Vector2(cellSize * width, cellSize * height);
-        //eventPopupParent.sizeDelta = new Vector2(cellSize * width, cellSize * height);
-        scrollviewContent.anchoredPosition = Vector2.zero;
+        ClearAllTilemaps();
         eventPopupParent.anchoredPosition = Vector2.zero;
         GenerateGrid();
         SplitMap();
-        MapPerlinDetails(outsideTiles);
-        MapPerlinDetails(insideTiles);
+        //MapPerlinDetails(outsideTiles);
+        //MapPerlinDetails(insideTiles);
         ConstructWalls();
-        //PlaceStructures(area.GetStructures(true, true).Take(10).ToDictionary(k => k.Key, v => v.Value), insideTiles);
         PlaceStructures(area.GetStructures(true, true), insideTiles);
-        //DrawDwellingTileAssets();
         PlaceStructures(area.GetStructures(false, true), outsideTiles);
         if (area.areaType != AREA_TYPE.DUNGEON) {
             GenerateRoads();
@@ -365,7 +340,6 @@ public class AreaInnerTileMap : MonoBehaviour {
                     currTile.SetStructure(currStruct);
                     elligibleTiles.Remove(currTile);
                     detailsTilemap.SetTile(currTile.localPlace, null);
-                    trees.Remove(currTile);
                     List<LocationGridTile> neighbourTiles = new List<LocationGridTile>();
                     switch (kvp.Key) {
                         case STRUCTURE_TYPE.EXIT:
@@ -465,7 +439,7 @@ public class AreaInnerTileMap : MonoBehaviour {
                     }
                 }
                 gate.SetStructure(area.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA));
-                InsideMapDetails(workAreaTiles);
+                //InsideMapDetails(workAreaTiles);
             } else {
                 Debug.LogWarning(area.name + " doesn't have a structure for work area");
             }
@@ -502,29 +476,6 @@ public class AreaInnerTileMap : MonoBehaviour {
         return valid;
     }
     private void GenerateRoads() {
-        //List<LocationGridTile> mainRoad = new List<LocationGridTile>();
-        //List<LocationGridTile> rightWalls = Utilities.Shuffle(GetColumn(width - 1));
-        //for (int i = 0; i < rightWalls.Count; i++) {
-        //    LocationGridTile currEndPoint = rightWalls[i];
-        //    List<LocationGridTile> path = PathGenerator.Instance.GetPath(gate, currEndPoint);
-        //    if (path != null) {
-        //        for (int j = 0; j < path.Count; j++) {
-        //            LocationGridTile currTile = path[j];
-        //            if (currTile.tileType == LocationGridTile.Tile_Type.Structure) {
-        //                continue; //skip
-        //            }
-        //            groundTilemap.SetTile(currTile.localPlace, insideTile);
-        //            detailsTilemap.SetTile(currTile.localPlace, null);
-        //            currTile.SetTileType(LocationGridTile.Tile_Type.Road);
-        //            if (!mainRoad.Contains(currTile)) {
-        //                mainRoad.Add(currTile);
-        //            }
-        //        }
-        //        break;
-        //    }
-        //}
-
-
         List<LocationStructure> buildings = area.GetStructuresAtLocation(true).OrderBy(x => x.GetNearestDistanceTo(gate)).ToList();
         List<LocationGridTile> roadTiles = new List<LocationGridTile>();
         for (int i = 0; i < buildings.Count; i++) {
@@ -565,7 +516,6 @@ public class AreaInnerTileMap : MonoBehaviour {
                         //roadTilemap.SetTile(currTile.localPlace, roadTile);
                         roadTilemap.SetTile(currTile.localPlace, insideTile);
                         detailsTilemap.SetTile(currTile.localPlace, null);
-                        trees.Remove(currTile);
                         currTile.SetTileState(LocationGridTile.Tile_State.Empty);
                         currTile.SetTileType(LocationGridTile.Tile_Type.Road);
                         if (!roadTiles.Contains(currTile)) {
@@ -769,6 +719,35 @@ public class AreaInnerTileMap : MonoBehaviour {
     #endregion
 
     #region Details
+    public void GenerateDetails() {
+        //Generate details for the outside map
+        MapPerlinDetails(outsideTiles.Where(x => 
+        x.objHere == null 
+        && !x.HasNeighbourOfType(LocationGridTile.Tile_Type.Gate) 
+        && !x.IsAdjacentTo(typeof(MagicCircle))).ToList()); //Make this better!
+
+        if (area.areaType != AREA_TYPE.DUNGEON) {
+            if (area.structures.ContainsKey(STRUCTURE_TYPE.WORK_AREA)) {
+                //only put details on tiles that
+                //  - do not already have details
+                //  - is not a road
+                //  - does not have an object place there (Point of Interest)
+                //  - is not near the gate (so as not to block path going outside)
+
+                //Generate details for inside map (Trees, shrubs, etc.)
+                MapPerlinDetails(area.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA).tiles
+                    .Where(x => !x.hasDetail && x.tileType != LocationGridTile.Tile_Type.Road
+                    && x.objHere == null && !x.HasNeighbourOfType(LocationGridTile.Tile_Type.Gate)
+                    && x.tileType != LocationGridTile.Tile_Type.Gate).ToList());
+
+                //Generate details for work area (crates, barrels)
+                WorkAreaDetails(area.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA).tiles
+                    .Where(x => !x.hasDetail && x.tileType != LocationGridTile.Tile_Type.Road
+                    && x.objHere == null && !x.HasNeighbourOfType(LocationGridTile.Tile_Type.Gate)
+                    && x.tileType != LocationGridTile.Tile_Type.Gate).ToList());
+            }
+        }
+    }
     private void MapPerlinDetails(List<LocationGridTile> tiles) {
         offsetX = Random.Range(0f, 99999f);
         offsetY = Random.Range(0f, 99999f);
@@ -780,70 +759,78 @@ public class AreaInnerTileMap : MonoBehaviour {
         int width = maxX - minX;
         int height = maxY - minY;
 
-        for (int x = minX; x <= maxX; x++) {
-            for (int y = minY; y <= maxY; y++) {
-                LocationGridTile currTile = map[x, y];
+        for (int i = 0; i < tiles.Count; i++) {
+            LocationGridTile currTile = tiles[i];
+            float xCoord = (float)currTile.localPlace.x / width * 11f + offsetX;
+            float yCoord = (float)currTile.localPlace.y / height * 11f + offsetY;
 
-                float xCoord = (float)x / width * 11f + offsetX;
-                float yCoord = (float)y / height * 11f + offsetY;
+            float xCoordDetail = (float)currTile.localPlace.x / width * 8f + offsetX;
+            float yCoordDetail = (float)currTile.localPlace.y / height * 8f + offsetY;
 
-                float xCoordDetail = (float)x / width * 8f + offsetX;
-                float yCoordDetail = (float)y / height * 8f + offsetY;
+            float sample = Mathf.PerlinNoise(xCoord, yCoord);
+            float sampleDetail = Mathf.PerlinNoise(xCoordDetail, yCoordDetail);
 
-                float sample = Mathf.PerlinNoise(xCoord, yCoord);
-                float sampleDetail = Mathf.PerlinNoise(xCoordDetail, yCoordDetail);
+            //ground
+            if (sample < 0.5f) {
+                currTile.groundType = LocationGridTile.Ground_Type.Grass;
+                groundTilemap.SetTile(currTile.localPlace, grassTile);
+            } else if (sample >= 0.5f && sample < 0.8f) {
+                currTile.groundType = LocationGridTile.Ground_Type.Soil;
+                groundTilemap.SetTile(currTile.localPlace, soilTile);
+            } else {
+                currTile.groundType = LocationGridTile.Ground_Type.Stone;
+                groundTilemap.SetTile(currTile.localPlace, stoneTile);
+            }
 
-                if (sample < 0.5f) {
-                    currTile.groundType = LocationGridTile.Ground_Type.Grass;
-                    groundTilemap.SetTile(currTile.localPlace, grassTile);
-                } else if (sample >= 0.5f && sample < 0.8f) {
-                    currTile.groundType = LocationGridTile.Ground_Type.Soil;
-                    groundTilemap.SetTile(currTile.localPlace, soilTile);
-                } else {
-                    currTile.groundType = LocationGridTile.Ground_Type.Stone;
-                    groundTilemap.SetTile(currTile.localPlace, stoneTile);
-                }
-
-                if (!currTile.hasDetail) {
-                    if (sampleDetail < 0.5f) {
-                        if (currTile.groundType == LocationGridTile.Ground_Type.Grass) {
-                            List<LocationGridTile> overlappedTiles = GetTiles(new Point(2, 2), currTile, tiles);
-                            int invalidOverlap = overlappedTiles.Where(t => t.hasDetail).Count();
-                            if (!currTile.IsAtEdgeOfMap() && !currTile.HasNeighborAtEdgeOfMap() && invalidOverlap == 0 && overlappedTiles.Count == 4 && Random.Range(0, 100) < 5) {
-                                //big tree
-                                for (int i = 0; i < overlappedTiles.Count; i++) {
-                                    LocationGridTile ovTile = overlappedTiles[i];
-                                    ovTile.hasDetail = true;
-                                    detailsTilemap.SetTile(ovTile.localPlace, null);
-                                    ovTile.SetTileState(LocationGridTile.Tile_State.Occupied);
-                                }
-                                detailsTilemap.SetTile(currTile.localPlace, bigTreeTile);
+            //trees and shrubs
+            if (!currTile.hasDetail) {
+                if (sampleDetail < 0.5f) {
+                    if (currTile.groundType == LocationGridTile.Ground_Type.Grass) {
+                        List<LocationGridTile> overlappedTiles = GetTiles(new Point(2, 2), currTile, tiles);
+                        int invalidOverlap = overlappedTiles.Where(t => t.hasDetail || !tiles.Contains(t) || t.objHere != null).Count();
+                        if (currTile.IsAdjacentToPasssableTiles(3) && !currTile.IsAtEdgeOfMap() 
+                            && !currTile.HasNeighborAtEdgeOfMap() && invalidOverlap == 0 
+                            && overlappedTiles.Count == 4 && Random.Range(0, 100) < 5) {
+                            //big tree
+                            for (int j = 0; j < overlappedTiles.Count; j++) {
+                                LocationGridTile ovTile = overlappedTiles[j];
+                                ovTile.hasDetail = true;
+                                detailsTilemap.SetTile(ovTile.localPlace, null);
+                                ovTile.SetTileState(LocationGridTile.Tile_State.Occupied);
+                                ovTile.SetTileAccess(LocationGridTile.Tile_Access.Impassable);
+                            }
+                            detailsTilemap.SetTile(currTile.localPlace, bigTreeTile);
+                            currTile.SetTileState(LocationGridTile.Tile_State.Occupied);
+                            currTile.SetTileAccess(LocationGridTile.Tile_Access.Impassable);
+                        } else {
+                            if (Random.Range(0, 100) < 50) {
+                                //shrubs
+                                currTile.hasDetail = true;
+                                detailsTilemap.SetTile(currTile.localPlace, shrubTile);
                                 currTile.SetTileState(LocationGridTile.Tile_State.Occupied);
                             } else {
-                                if (Random.Range(0, 100) < 50) {
-                                    //shrubs
-                                    currTile.hasDetail = true;
-                                    detailsTilemap.SetTile(currTile.localPlace, shrubTile);
-                                    currTile.SetTileState(LocationGridTile.Tile_State.Occupied);
-                                } else {
+                                //Crates, Barrels, Ore, Stone and Tree tiles should be impassable. They should all be placed in spots adjacent to at least three passable tiles.
+                                if (currTile.IsAdjacentToPasssableTiles(3) && !currTile.WillMakeNeighboursPassableTileInvalid(3)) {
                                     //normal tree
                                     currTile.hasDetail = true;
                                     detailsTilemap.SetTile(currTile.localPlace, treeTile);
                                     currTile.SetTileState(LocationGridTile.Tile_State.Occupied);
-                                    trees.Add(currTile);
+                                    if (currTile.structure != null) {
+                                        currTile.structure.AddPOI(new Tree(currTile.structure), currTile);
+                                    }
                                 }
-                               
                             }
                         }
-                    } else {
-                        currTile.hasDetail = false;
-                        detailsTilemap.SetTile(currTile.localPlace, null);
                     }
-                    //groundTilemap.SetColor(currTile.localPlace, new Color(sample, sample, sample));
+                } else {
+                    currTile.hasDetail = false;
+                    detailsTilemap.SetTile(currTile.localPlace, null);
                 }
+                //groundTilemap.SetColor(currTile.localPlace, new Color(sample, sample, sample));
             }
         }
 
+        //flower, rock and garbage
         for (int i = 0; i < tiles.Count; i++) {
             LocationGridTile currTile = tiles[i];
             if (!currTile.hasDetail) {
@@ -852,9 +839,13 @@ public class AreaInnerTileMap : MonoBehaviour {
                     detailsTilemap.SetTile(currTile.localPlace, flowerTile);
                     currTile.SetTileState(LocationGridTile.Tile_State.Occupied);
                 } else if (Random.Range(0, 100) < 4) {
-                    currTile.hasDetail = true;
-                    detailsTilemap.SetTile(currTile.localPlace, rockTile);
-                    currTile.SetTileState(LocationGridTile.Tile_State.Occupied);
+                    //Crates, Barrels, Ore, Stone and Tree tiles should be impassable. They should all be placed in spots adjacent to at least three passable tiles.
+                    if (currTile.IsAdjacentToPasssableTiles(3)) {
+                        currTile.hasDetail = true;
+                        detailsTilemap.SetTile(currTile.localPlace, rockTile);
+                        currTile.SetTileState(LocationGridTile.Tile_State.Occupied);
+                        currTile.SetTileAccess(LocationGridTile.Tile_Access.Impassable);
+                    }
                 } else if (Random.Range(0, 100) < 3) {
                     currTile.hasDetail = true;
                     detailsTilemap.SetTile(currTile.localPlace, randomGarbTile);
@@ -862,7 +853,11 @@ public class AreaInnerTileMap : MonoBehaviour {
             }
         }
     }
-    private void InsideMapDetails(List<LocationGridTile> insideTiles) {
+    /// <summary>
+    /// Generate details for the work area (Crates, Barrels, etc.)
+    /// </summary>
+    /// <param name="insideTiles">Tiles included in the work area</param>
+    private void WorkAreaDetails(List<LocationGridTile> insideTiles) {
         //5% of tiles that are adjacent to thin and thick walls should have crates or barrels
         List<LocationGridTile> tilesForBarrels = new List<LocationGridTile>();
         for (int i = 0; i < insideTiles.Count; i++) {
@@ -878,6 +873,8 @@ public class AreaInnerTileMap : MonoBehaviour {
                 currTile.hasDetail = true;
                 detailsTilemap.SetTile(currTile.localPlace, crateBarrelTile);
                 currTile.SetTileState(LocationGridTile.Tile_State.Occupied);
+                //Crates, Barrels, Ore, Stone and Tree tiles should be impassable. They should all be placed in spots adjacent to at least three passable tiles.
+                currTile.SetTileAccess(LocationGridTile.Tile_Access.Impassable);
             }
         }
 
@@ -894,9 +891,6 @@ public class AreaInnerTileMap : MonoBehaviour {
 
     #region Movement & Mouse Interaction
     public void LateUpdate() {
-        //if (!isShowing) {
-        //    return;
-        //}
         if (UIManager.Instance.characterInfoUI.isShowing 
             && UIManager.Instance.characterInfoUI.activeCharacter.specificLocation == this.area
             && !UIManager.Instance.characterInfoUI.activeCharacter.isDead) {
@@ -1051,6 +1045,14 @@ public class AreaInnerTileMap : MonoBehaviour {
     #endregion
 
     #region Utilities
+    private void ClearAllTilemaps() {
+        groundTilemap.ClearAllTiles();
+        objectsTilemap.ClearAllTiles();
+        strcutureTilemap.ClearAllTiles();
+        wallTilemap.ClearAllTiles();
+        detailsTilemap.ClearAllTiles();
+        roadTilemap.ClearAllTiles();
+    }
     private List<LocationGridTile> GetTiles(Point size, LocationGridTile startingTile, List<LocationGridTile> mustBeIn = null) {
         List<LocationGridTile> tiles = new List<LocationGridTile>();
         for (int x = startingTile.localPlace.x; x < startingTile.localPlace.x + size.X; x++) {
@@ -1106,20 +1108,15 @@ public class AreaInnerTileMap : MonoBehaviour {
 
     #region Other
     public void Open() {
-        //isShowing = true;
-        //this.transform.position = _originalPosition;
         this.gameObject.SetActive(true);
         SwitchFromEstimatedMovementToPathfinding();
     }
     public void Close() {
-        //isShowing = false;
-        //this.transform.position = new Vector3(-999f, _originalPosition.y, _originalPosition.z);
         this.gameObject.SetActive(false);
         //if (UIManager.Instance.areaInfoUI.isShowing) {
         //    UIManager.Instance.areaInfoUI.ToggleMapMenu(false);
         //}
         isHovering = false;
-        SwitchFromPathfindingToEstimatedMovement();
     }
     private void ShowTileData(LocationGridTile tile) {
         if (tile == null) {
@@ -1129,6 +1126,7 @@ public class AreaInnerTileMap : MonoBehaviour {
         summary += "\nTile Type: " + tile.tileType.ToString();
         summary += "\nTile State: " + tile.tileState.ToString();
         summary += "\nTile Access: " + tile.tileAccess.ToString();
+        summary += "\nHas Detail: " + tile.hasDetail.ToString();
         summary += "\nContent: " + tile.objHere?.ToString() ?? "None";
         if (tile.objHere != null) {
             summary += "\n\tObject State: " + tile.objHere.state.ToString();
@@ -1136,6 +1134,8 @@ public class AreaInnerTileMap : MonoBehaviour {
                 summary += "\n\tYield: " + (tile.objHere as Tree).yield.ToString();
             } else if (tile.objHere is Ore) {
                 summary += "\n\tYield: " + (tile.objHere as Ore).yield.ToString();
+            } else if (tile.objHere is SupplyPile) {
+                summary += "\n\tSupplies in Pile: " + (tile.objHere as SupplyPile).suppliesInPile.ToString();
             }
         }
         summary += "\nOccupant: " + tile.occupant?.name ?? "None";
@@ -1177,15 +1177,6 @@ public class AreaInnerTileMap : MonoBehaviour {
             if(character.currentParty.icon.isTravelling && character.currentParty.icon.travelLine == null) {
                 //This means that the character is only travelling inside the map, he/she is not travelling to another area
                 character.marker.SwitchToPathfinding();
-            }
-        }
-    }
-    private void SwitchFromPathfindingToEstimatedMovement() {
-        for (int i = 0; i < area.charactersAtLocation.Count; i++) {
-            Character character = area.charactersAtLocation[i];
-            if (character.currentParty.icon.isTravelling && character.currentParty.icon.travelLine == null) {
-                //This means that the character is only travelling inside the map, he/she is not travelling to another area
-                character.marker.SwitchToEstimatedMovement();
             }
         }
     }

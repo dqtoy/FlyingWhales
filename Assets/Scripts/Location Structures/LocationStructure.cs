@@ -164,12 +164,7 @@ public class LocationStructure {
             if (location.areaType == AREA_TYPE.DEMONIC_INTRUSION) { //player area
                 tilesToUse = tiles;
             } else {
-                if (poi is MagicCircle) {
-                    tilesToUse = unoccupiedTiles.Where(x => !x.HasOccupiedNeighbour() && !x.HasNeighbourOfType(LocationGridTile.Tile_Type.Wall)).ToList();
-                } else {
-                    tilesToUse = unoccupiedTiles;
-                }
-                
+                tilesToUse = GetValidTilesToPlace(poi);
             }
             if (tilesToUse.Count > 0) {
                 LocationGridTile chosenTile = tilesToUse[Random.Range(0, tilesToUse.Count)];
@@ -251,6 +246,22 @@ public class LocationStructure {
     //            return null;
     //    }
     //}
+    private List<LocationGridTile> GetValidTilesToPlace(IPointOfInterest poi) {
+        switch (poi.poiType) {
+            case POINT_OF_INTEREST_TYPE.TILE_OBJECT:
+                if (poi is MagicCircle) {
+                    return unoccupiedTiles.Where(x => !x.HasOccupiedNeighbour() && !x.HasNeighbourOfType(LocationGridTile.Tile_Type.Wall)).ToList();
+                } else if (poi is Guitar || poi is Bed || poi is Table) {
+                    return GetOuterTiles().Where(x => unoccupiedTiles.Contains(x)).ToList();
+                } else {
+                    return unoccupiedTiles;
+                }
+            case POINT_OF_INTEREST_TYPE.CHARACTER:
+                return unoccupiedTiles;
+            default:
+                return unoccupiedTiles.Where(x => !x.IsAdjacentTo(typeof(MagicCircle))).ToList();
+        }
+    }
     #endregion
 
     #region Traits
@@ -408,6 +419,16 @@ public class LocationStructure {
             default:
                 return ToString();
         }
+    }
+    public List<LocationGridTile> GetOuterTiles() {
+        List<LocationGridTile> outerTiles = new List<LocationGridTile>();
+        for (int i = 0; i < tiles.Count; i++) {
+            LocationGridTile currTile = tiles[i];
+            if (currTile.HasDifferentDwellingOrOutsideNeighbour()) {
+                outerTiles.Add(currTile);
+            }
+        }
+        return outerTiles;
     }
     #endregion
 

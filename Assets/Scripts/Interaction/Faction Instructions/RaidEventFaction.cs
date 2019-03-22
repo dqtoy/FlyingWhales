@@ -76,14 +76,14 @@ public class RaidEventFaction : Interaction {
 
     private void NormalRaidSuccessRewardEffect(InteractionState state) {
         SupplyPile pile = structure.GetSupplyPile();
-        int obtainedSupply = pile.GetSuppliesObtained();
+        //int obtainedSupply = pile.GetSuppliesObtained();
         //_characterInvolved.homeArea.GetSuppliesFrom(interactable, obtainedSupply);
-        pile.TransferSuppliesTo(_characterInvolved.homeArea, obtainedSupply);
+        //pile.TransferSuppliesTo(_characterInvolved.homeArea, obtainedSupply);
 
-        if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(null, obtainedSupply.ToString(), LOG_IDENTIFIER.STRING_1);
-        }
-        state.AddLogFiller(new LogFiller(null, obtainedSupply.ToString(), LOG_IDENTIFIER.STRING_1));
+        //if (state.descriptionLog != null) {
+        //    state.descriptionLog.AddToFillers(null, obtainedSupply.ToString(), LOG_IDENTIFIER.STRING_1);
+        //}
+        //state.AddLogFiller(new LogFiller(null, obtainedSupply.ToString(), LOG_IDENTIFIER.STRING_1));
     }
     private void NormalRaidFailRewardEffect(InteractionState state) {
         
