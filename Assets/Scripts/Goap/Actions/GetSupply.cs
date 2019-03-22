@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class GetSupply : GoapAction {
     public GetSupply(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.GET_SUPPLY, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+        actionIconString = GoapActionStateDB.Work_Icon;
     }
 
     #region Overrides

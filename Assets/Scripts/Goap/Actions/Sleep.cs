@@ -5,6 +5,7 @@ using UnityEngine;
 public class Sleep : GoapAction {
     public Sleep(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.SLEEP, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionLocationType = ACTION_LOCATION_TYPE.ON_TARGET;
+        actionIconString = GoapActionStateDB.Sleep_Icon;
     }
 
     #region Overrides

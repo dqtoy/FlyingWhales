@@ -6,9 +6,13 @@ public class Pray : GoapAction {
     public Pray(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.PRAY, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         this.goapName = "Pray";
         actionLocationType = ACTION_LOCATION_TYPE.NEARBY;
+        actionIconString = GoapActionStateDB.Joy_Icon;
     }
 
     #region Overrides
+    protected override void ConstructRequirement() {
+        _requirementAction = Requirement;
+    }
     protected override void ConstructPreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
     }
@@ -38,6 +42,12 @@ public class Pray : GoapAction {
     }
     public void AfterPraySuccess() {
         actor.AdjustDoNotGetLonely(-1);
+    }
+    #endregion
+
+    #region Requirement
+    protected bool Requirement() {
+        return actor == poiTarget;
     }
     #endregion
 }

@@ -12,6 +12,7 @@ public class Steal : GoapAction {
             TIME_IN_WORDS.LATE_NIGHT,
             TIME_IN_WORDS.AFTER_MIDNIGHT,
         };
+        actionIconString = GoapActionStateDB.Hostile_Icon;
     }
 
     #region Overrides

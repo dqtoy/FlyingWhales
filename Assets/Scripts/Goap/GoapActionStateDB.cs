@@ -4,6 +4,14 @@ using UnityEngine;
 
 public static class GoapActionStateDB {
 
+    public static string No_Icon = "None";
+    public static string Eat_Icon = "Eat";
+    public static string Hostile_Icon = "Hostile";
+    public static string Joy_Icon = "Joy";
+    public static string Sleep_Icon = "Sleep";
+    public static string Social_Icon = "Social";
+    public static string Work_Icon = "Work";
+
     public static Dictionary<INTERACTION_TYPE, StateNameAndDuration[]> goapActionStates = new Dictionary<INTERACTION_TYPE, StateNameAndDuration[]>() {
         {INTERACTION_TYPE.EAT_PLANT, new StateNameAndDuration[]{
             new StateNameAndDuration(){ name = "Eat Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(1) },

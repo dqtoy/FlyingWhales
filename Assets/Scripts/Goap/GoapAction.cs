@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Linq;
 
 public class GoapAction {
+
     public INTERACTION_TYPE goapType { get; private set; }
     public INTERACTION_ALIGNMENT alignment { get; private set; }
     public string goapName { get; protected set; }
@@ -36,6 +37,7 @@ public class GoapAction {
     public ACTION_LOCATION_TYPE actionLocationType { get; protected set; } //This is set in every action's constructor
     public bool showIntelNotification { get; protected set; } //should this action show a notification when it is done by its actor or when it recieves a plan with this action as it's end node?
     public bool shouldAddLogs { get; protected set; } //should this action add logs to it's actor?
+    public string actionIconString { get; protected set; }
 
     protected Func<bool> _requirementAction;
     protected System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
@@ -57,6 +59,7 @@ public class GoapAction {
         expectedEffects = new List<GoapEffect>();
         actualEffects = new List<GoapEffect>();
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
+        actionIconString = GoapActionStateDB.Joy_Icon;
         actionSummary = GameManager.Instance.TodayLogString() + actor.name + " created " + goapType.ToString() + " action, targetting " + poiTarget?.ToString() ?? "Nothing";
     }
 
@@ -148,9 +151,9 @@ public class GoapAction {
         //if (targetTile == null) {
         //    targetTile = GetTargetLocationTile();
         //}
-        if(this.targetTile == null) {
-            this.targetTile = targetTile;
-        }
+        //if(this.targetTile == null) {
+        //    this.targetTile = targetTile;
+        //}
 
         //if the actor is NOT at the area where the target structure is, make him/her go there first.
         if (actor.specificLocation != targetStructure.location) {
@@ -160,6 +163,7 @@ public class GoapAction {
             actor.MoveToAnotherStructure(targetStructure, targetTile, poiTarget, () => actor.PerformGoapAction(plan));
             //actor.PerformGoapAction(plan);
         }
+        Messenger.Broadcast(Signals.CHARACTER_DOING_ACTION, actor, this);
     }
     public virtual LocationGridTile GetTargetLocationTile() {
         return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, poiTarget, targetStructure);
@@ -209,6 +213,7 @@ public class GoapAction {
         currentState.StopPerTickEffect();
         End();
         actor.GoapActionResult(result, this);
+        Messenger.Broadcast(Signals.CHARACTER_FINISHED_ACTION, actor, this);
     }
     protected void AddActionLog(string log) {
         actionSummary += "\n" + log;

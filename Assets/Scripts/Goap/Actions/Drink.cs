@@ -8,6 +8,7 @@ public class Drink : GoapAction {
             TIME_IN_WORDS.EARLY_NIGHT,
             TIME_IN_WORDS.LATE_NIGHT,
         };
+        actionIconString = GoapActionStateDB.Eat_Icon;
     }
 
     #region Overrides

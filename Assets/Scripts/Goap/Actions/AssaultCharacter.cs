@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class AssaultCharacter : GoapAction {
     public AssaultCharacter(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.ASSAULT_ACTION_NPC, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+        actionIconString = GoapActionStateDB.Hostile_Icon;
     }
 
     #region Overrides

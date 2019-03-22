@@ -11,6 +11,7 @@ public class ReturnHome : GoapAction {
         showIntelNotification = false;
         shouldAddLogs = false;
         actionLocationType = ACTION_LOCATION_TYPE.RANDOM_LOCATION;
+        actionIconString = GoapActionStateDB.Joy_Icon;
     }
 
     #region Overrides

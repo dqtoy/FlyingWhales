@@ -5,6 +5,7 @@ using UnityEngine;
 public class ReleaseCharacter : GoapAction {
 
     public ReleaseCharacter(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION, INTERACTION_ALIGNMENT.GOOD, actor, poiTarget) {
+        actionIconString = GoapActionStateDB.Social_Icon;
     }
 
     #region Overrides

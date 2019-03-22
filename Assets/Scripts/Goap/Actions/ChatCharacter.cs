@@ -13,6 +13,7 @@ public class ChatCharacter : GoapAction {
             TIME_IN_WORDS.AFTERNOON,
             TIME_IN_WORDS.EARLY_NIGHT,
         };
+        actionIconString = GoapActionStateDB.Social_Icon;
     }
 
     #region Overrides

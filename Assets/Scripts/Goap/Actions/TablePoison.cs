@@ -5,6 +5,7 @@ using UnityEngine;
 public class TablePoison : GoapAction {
     public TablePoison(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.TABLE_POISON, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         this.goapName = "Poison Table";
+        actionIconString = GoapActionStateDB.Hostile_Icon;
     }
 
     #region Overrides

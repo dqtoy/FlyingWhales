@@ -10,6 +10,7 @@ public class Stroll : GoapAction {
     public Stroll(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.STROLL, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         showIntelNotification = false;
         shouldAddLogs = false;
+        actionIconString = GoapActionStateDB.No_Icon;
     }
 
     #region Overrides

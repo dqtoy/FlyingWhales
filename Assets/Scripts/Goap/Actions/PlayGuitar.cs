@@ -9,6 +9,7 @@ public class PlayGuitar : GoapAction {
             TIME_IN_WORDS.AFTERNOON,
             TIME_IN_WORDS.EARLY_NIGHT,
         };
+        actionIconString = GoapActionStateDB.Joy_Icon;
     }
 
     #region Overrides

@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class AbductCharacter : GoapAction {
     public AbductCharacter(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.ABDUCT_ACTION, INTERACTION_ALIGNMENT.EVIL, actor, poiTarget) {
+        actionIconString = GoapActionStateDB.Hostile_Icon;
     }
 
     #region Overrides

@@ -8,6 +8,7 @@ public class MineGoap : GoapAction {
 
     private int _gainedSupply;
     public MineGoap(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.MINE_ACTION, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+        actionIconString = GoapActionStateDB.Work_Icon;
     }
 
     #region Overrides

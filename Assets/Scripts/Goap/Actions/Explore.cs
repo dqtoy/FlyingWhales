@@ -9,6 +9,7 @@ public class Explore : GoapAction {
     private LocationStructure _targetStructure;
     public Explore(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.EXPLORE, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionLocationType = ACTION_LOCATION_TYPE.RANDOM_LOCATION;
+        actionIconString = GoapActionStateDB.Work_Icon;
     }
 
     #region Overrides

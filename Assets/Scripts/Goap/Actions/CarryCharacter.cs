@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class CarryCharacter : GoapAction {
     public CarryCharacter(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.CARRY_CHARACTER, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+        actionIconString = GoapActionStateDB.Hostile_Icon;
     }
 
     #region Overrides

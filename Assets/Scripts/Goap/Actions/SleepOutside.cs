@@ -10,6 +10,7 @@ public class SleepOutside : GoapAction {
 
     public SleepOutside(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.SLEEP_OUTSIDE, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionLocationType = ACTION_LOCATION_TYPE.RANDOM_LOCATION;
+        actionIconString = GoapActionStateDB.Sleep_Icon;
     }
 
     #region Overrides

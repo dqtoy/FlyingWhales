@@ -22,6 +22,9 @@ public class CharacterMarker : PooledObject {
     [SerializeField] private Image hoveredImg;
     [SerializeField] private Image clickedImg;
     [SerializeField] private TextMeshProUGUI nameLbl;
+    [SerializeField] private Image actionIcon;
+
+    [SerializeField] private StringSpriteDictionary actionIconDictionary;
 
     [Header("Animation")]
     [SerializeField] private Animator animator;
@@ -63,9 +66,12 @@ public class CharacterMarker : PooledObject {
         Vector3 randomRotation = new Vector3(0f, 0f, 90f);
         randomRotation.z *= UnityEngine.Random.Range(1f, 4f);
         visualsRT.localRotation = Quaternion.Euler(randomRotation);
+        UpdateActionIcon();
 
         Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
+        Messenger.AddListener<Character, GoapAction>(Signals.CHARACTER_DOING_ACTION, OnCharacterDoingAction);
+        Messenger.AddListener<Character, GoapAction>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
     }
     public void SetLocation(LocationGridTile location) {
         this.location = location;
@@ -100,6 +106,8 @@ public class CharacterMarker : PooledObject {
         _destinationTile = null;
         Messenger.RemoveListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.RemoveListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
+        Messenger.RemoveListener<Character, GoapAction>(Signals.CHARACTER_DOING_ACTION, OnCharacterDoingAction);
+        Messenger.RemoveListener<Character, GoapAction>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
     }
 
     public void OnPointerClick(BaseEventData bd) {
@@ -122,12 +130,23 @@ public class CharacterMarker : PooledObject {
         }
     }
 
-    private void Update() {
-        //if(!character.specificLocation.areaMap.isShowing) {
-        //    return;
-        //}
-        if (character != null) {
-            nameLbl.SetText(character.name + "\n<size=50%>" + character.currentAction?.goapName ?? "None");
+    private void UpdateActionIcon() {
+        if (character.currentAction != null && character.currentAction.actionIconString != GoapActionStateDB.No_Icon) {
+            actionIcon.sprite = actionIconDictionary[character.currentAction.actionIconString];
+            actionIcon.gameObject.SetActive(true);
+        } else {
+            actionIcon.gameObject.SetActive(false);
+        }
+    }
+
+    private void OnCharacterDoingAction(Character character, GoapAction action) {
+        if (this.character == character) {
+            UpdateActionIcon();
+        }
+    }
+    private void OnCharacterFinishedAction(Character character, GoapAction action) {
+        if (this.character == character) {
+            UpdateActionIcon();
         }
     }
 
