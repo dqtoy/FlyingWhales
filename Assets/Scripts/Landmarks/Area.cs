@@ -1844,19 +1844,14 @@ public class Area {
             LocationStructure structure = structures[STRUCTURE_TYPE.WILDERNESS][0];
             structure.AddPOI(new MagicCircle(structure));
         }
-        //trees
-        for (int i = 0; i < areaMap.trees.Count; i++) {
-            LocationGridTile currTree = areaMap.trees[i];
-            if (currTree.structure != null) {
-                currTree.structure.AddPOI(new Tree(currTree.structure), currTree);
-            }
-        }
         //Guitar
-        int guitarCount = 5;
+        //Each Dwelling has a 40% chance of having one Guitar. Guitar should be placed at an edge tile.
         if (structures.ContainsKey(STRUCTURE_TYPE.DWELLING)) {
-            for (int i = 0; i < guitarCount; i++) {
-                LocationStructure structure = GetRandomStructureOfType(STRUCTURE_TYPE.DWELLING);
-                structure.AddPOI(new Guitar(structure));
+            for (int i = 0; i < structures[STRUCTURE_TYPE.DWELLING].Count; i++) {
+                if (UnityEngine.Random.Range(0, 100) < 40) {
+                    LocationStructure currDwelling = structures[STRUCTURE_TYPE.DWELLING][i];
+                    currDwelling.AddPOI(new Guitar(currDwelling));
+                }
             }
         }
         
@@ -1881,11 +1876,15 @@ public class Area {
         }
     private void PlaceOres() {
         if (structures.ContainsKey(STRUCTURE_TYPE.WILDERNESS)) {
-            int oreCount = 5;
-            for (int i = 0; i < structures[STRUCTURE_TYPE.WILDERNESS].Count; i++) {
-                LocationStructure structure = structures[STRUCTURE_TYPE.WILDERNESS][i];
-                for (int j = 0; j < oreCount; j++) {
-                    structure.AddPOI(new Ore(structure));
+            LocationStructure structure = structures[STRUCTURE_TYPE.WILDERNESS][0];
+            int oreCount = 4;
+            for (int i = 0; i < oreCount; i++) {
+                List<LocationGridTile> validTiles = structure.unoccupiedTiles.Where(x => x.IsAdjacentToPasssableTiles(3)).ToList();
+                if (validTiles.Count > 0) {
+                    LocationGridTile chosenTile = validTiles[UnityEngine.Random.Range(0, validTiles.Count)];
+                    structure.AddPOI(new Ore(structure), chosenTile);
+                } else {
+                    break;
                 }
             }
         }
@@ -1906,30 +1905,32 @@ public class Area {
     }
     private void SpawnFoodNow() {
         if (structures.ContainsKey(STRUCTURE_TYPE.WILDERNESS)) {
-            for (int i = 0; i < structures[STRUCTURE_TYPE.WILDERNESS].Count; i++) {
-                LocationStructure structure = structures[STRUCTURE_TYPE.WILDERNESS][i];
-                //structure.SpawnFoodOnStartDay();
-                int randomFoodCount = UnityEngine.Random.Range(10, 21);
-                for (int j = 0; j < randomFoodCount; j++) {
-                    if (structure.unoccupiedTiles.Count == 0) {
-                        break;
-                    }
-                    if (UnityEngine.Random.Range(0, 2) == 0) {
-                        //spawn small animal
-                        structure.AddPOI(new SmallAnimal(structure));
-                    } else {
-                        //spawn edible plant
-                        structure.AddPOI(new EdiblePlant(structure));
-                    }
+            LocationStructure structure = structures[STRUCTURE_TYPE.WILDERNESS][0];
+            //Reduce number of Small Animals and Edible Plants in the wilderness to 4 and 6 respectively. 
+            //Also, they should all be placed in spots adjacent to at least three passsable tiles.
+            int smallAnimalCount = 4;
+            int ediblePlantsCount = 6;
+
+            for (int i = 0; i < smallAnimalCount; i++) {
+                List<LocationGridTile> validTiles = structure.unoccupiedTiles.Where(x => x.IsAdjacentToPasssableTiles(3)).ToList();
+                if (validTiles.Count > 0) {
+                    LocationGridTile chosenTile = validTiles[UnityEngine.Random.Range(0, validTiles.Count)];
+                    structure.AddPOI(new SmallAnimal(structure), chosenTile);
+                } else {
+                    break;
+                }
+            }
+
+            for (int i = 0; i < ediblePlantsCount; i++) {
+                List<LocationGridTile> validTiles = structure.unoccupiedTiles.Where(x => x.IsAdjacentToPasssableTiles(3)).ToList();
+                if (validTiles.Count > 0) {
+                    LocationGridTile chosenTile = validTiles[UnityEngine.Random.Range(0, validTiles.Count)];
+                    structure.AddPOI(new EdiblePlant(structure), chosenTile);
+                } else {
+                    break;
                 }
             }
         }
-        //if (structures.ContainsKey(STRUCTURE_TYPE.DUNGEON)) {
-        //    for (int i = 0; i < structures[STRUCTURE_TYPE.DUNGEON].Count; i++) {
-        //        LocationStructure structure = structures[STRUCTURE_TYPE.DUNGEON][i];
-        //        //structure.SpawnFoodOnStartDay();
-        //    }
-        //}
     }
     public IPointOfInterest GetRandomTileObject() {
         List<IPointOfInterest> tileObjects = new List<IPointOfInterest>();
