@@ -249,15 +249,24 @@ public class GoapAction {
         isStopped = state;
     }
     public int GetDistanceCost() {
-        if(actor.specificLocation != targetStructure.location) {
+        if (actor.specificLocation != targetStructure.location) {
             return 3;
         } else {
             LocationGridTile tile = targetTile;
-            if(tile == null) {
+            if (tile == null) {
                 tile = poiTarget.gridTileLocation;
             }
-            int distance = Mathf.RoundToInt(actor.gridTileLocation.GetDistanceTo(tile));
-            return distance / 6;
+            try {
+                int distance = Mathf.RoundToInt(actor.gridTileLocation.GetDistanceTo(tile));
+                return distance / 6;
+            } catch(System.Exception e) {
+                if(actor.gridTileLocation == null) {
+                    Console.WriteLine("ACTOR TILE LOCATION IS NULL!");
+                } else if (tile == null) {
+                    Console.WriteLine("TILE IS NULL!");
+                }
+            }
+            return 0;
         }
     }
     //This is for the waiting time, if this returns true, this action will not be done by the actor momentarily, this will be skipped until this returns false
