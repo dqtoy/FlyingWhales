@@ -33,6 +33,10 @@ public class EatAnimal : GoapAction {
             return 12;
         }
     }
+    public override void FailAction() {
+        base.FailAction();
+        SetState("Eat Fail");
+    }
     #endregion
 
     #region Effects
@@ -62,7 +66,7 @@ public class EatAnimal : GoapAction {
 
     #region Requirements
     protected bool Requirement() {
-        return poiTarget.state != POI_STATE.INACTIVE;
+        return poiTarget.state != POI_STATE.INACTIVE && poiTarget.gridTileLocation != null && poiTarget.gridTileLocation.occupant == null;
     }
     #endregion
 }

@@ -19,8 +19,12 @@ public class Drink : GoapAction {
     }
     public override void PerformActualAction() {
         if (targetStructure == actor.gridTileLocation.structure) {
-            SetState("Drink Success");
-            //Add Drink Poisoned State when tile objects have traits
+            //SetState("Drink Success");
+            if (poiTarget.GetTrait("Poisoned") != null) {
+                SetState("Drink Poisoned");
+            } else {
+                SetState("Drink Success");
+            }
         } else {
             SetState("Target Missing");
         }
@@ -44,8 +48,7 @@ public class Drink : GoapAction {
     }
     public void PreDrinkPoisoned() {
         actor.AdjustDoNotGetLonely(1);
-        //Remove poisoned trait from table
-        //TODO: ADD TRAITS AT IPOINTOFINTEREST
+        poiTarget.RemoveTrait("Poisoned");
     }
     public void PerTickDrinkPoisoned() {
         actor.AdjustHappiness(8);

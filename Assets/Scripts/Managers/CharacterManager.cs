@@ -190,6 +190,7 @@ public class CharacterManager : MonoBehaviour {
                 homeLocation.AddCharacterToLocation(party, newCharacter.homeStructure, null, null, true);
             }
         }
+        newCharacter.AddAwareness(newCharacter);
 #endif
         if (generateTraits) {
             newCharacter.GenerateRandomTraits();
@@ -220,6 +221,7 @@ public class CharacterManager : MonoBehaviour {
                 homeLocation.AddCharacterToLocation(party, newCharacter.homeStructure, null, null, true);
             }
         }
+        newCharacter.AddAwareness(newCharacter);
 #endif
         if (generateTraits) {
             newCharacter.GenerateRandomTraits();
@@ -252,6 +254,7 @@ public class CharacterManager : MonoBehaviour {
                 currentLocation.AddCharacterToLocation(party, null, null, null, true);
             }
         }
+        newCharacter.AddAwareness(newCharacter);
 
         if (data.equipmentData != null) {
             for (int i = 0; i < data.equipmentData.Count; i++) {

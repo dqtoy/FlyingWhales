@@ -997,6 +997,36 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.EXPLORE:
                 goapAction = new Explore(actor, target);
                 break;
+            case INTERACTION_TYPE.TABLE_REMOVE_POISON:
+                goapAction = new TableRemovePoison(actor, target);
+                break;
+            case INTERACTION_TYPE.TABLE_POISON:
+                goapAction = new TablePoison(actor, target);
+                break;
+            case INTERACTION_TYPE.PRAY:
+                goapAction = new Pray(actor, target);
+                break;
+            case INTERACTION_TYPE.CHOP_WOOD:
+                goapAction = new ChopWood(actor, target);
+                break;
+            case INTERACTION_TYPE.MAGIC_CIRCLE_PERFORM_RITUAL:
+                goapAction = new MagicCirclePerformRitual(actor, target);
+                break;
+            case INTERACTION_TYPE.PATROL:
+                goapAction = new Patrol(actor, target);
+                break;
+            case INTERACTION_TYPE.STEAL:
+                goapAction = new Steal(actor, target);
+                break;
+            case INTERACTION_TYPE.SCRAP:
+                goapAction = new Scrap(actor, target);
+                break;
+            case INTERACTION_TYPE.GET_SUPPLY:
+                goapAction = new GetSupply(actor, target);
+                break;
+            case INTERACTION_TYPE.DROP_SUPPLY:
+                goapAction = new DropSupply(actor, target);
+                break;
         }
         if(goapAction != null && willInitialize) {
             goapAction.Initialize();
@@ -2170,9 +2200,9 @@ public class InteractionManager : MonoBehaviour {
             default:
                 break;
         }
-        if (chosenTile != null && chosenTile.occupant != null) {
-            throw new Exception(actor.name + " is going to an occupied tile!");
-        }
+        //if (chosenTile != null && chosenTile.occupant != null) {
+        //    throw new Exception(actor.name + " is going to an occupied tile!");
+        //}
         return chosenTile;
     }
     #endregion

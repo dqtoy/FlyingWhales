@@ -28,9 +28,13 @@ public class ReturnHome : GoapAction {
     protected override int GetCost() {
         return 3;
     }
-    public override void DoAction(GoapPlan plan) {
+    public override void FailAction() {
+        base.FailAction();
+        SetState("Return Home Failed");
+    }
+    public override void SetTargetStructure() {
         _targetStructure = actor.homeStructure;
-        base.DoAction(plan);
+        base.SetTargetStructure();
     }
     #endregion
 

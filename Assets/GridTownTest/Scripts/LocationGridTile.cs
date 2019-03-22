@@ -269,6 +269,14 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
             }
         }
     }
+    public bool IsAdjacentTo(IPointOfInterest poi) {
+        foreach (KeyValuePair<TileNeighbourDirection, LocationGridTile> keyValuePair in neighbours) {
+            if (keyValuePair.Value.objHere == poi || keyValuePair.Value.occupant == poi) {
+                return true;
+            }
+        }
+        return false;
+    }
     #endregion
 
     #region Intel

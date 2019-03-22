@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class Civilian : CharacterRole {
 
+    public override int reservedSupply { get { return 50; } }
+
     public Civilian() : base(CHARACTER_ROLE.CIVILIAN, "Civilian", new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.SUPPLY, INTERACTION_CATEGORY.INVENTORY }) {
     }
 

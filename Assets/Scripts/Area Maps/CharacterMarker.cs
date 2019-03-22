@@ -372,7 +372,7 @@ public class CharacterMarker : PooledObject {
             LocationGridTile nextTile = _currentPath[0];
             if (nextTile.isOccupied) {
                 pathRecalSummary += "\nNext Tile " + nextTile.ToString() + " is occupied. Stopping movement and action.";
-                character.currentAction.StopAction();
+                character.currentAction.FailAction();
                 if (currentMoveCoroutine != null) {
                     StopCoroutine(currentMoveCoroutine);
                 }

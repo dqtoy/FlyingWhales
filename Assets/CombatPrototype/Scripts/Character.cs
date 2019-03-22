@@ -247,6 +247,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public Faction faction {
         get { return _faction; }
     }
+    public Faction factionOwner {
+        get { return _faction; }
+    }
     public virtual Party ownParty {
         get { return _ownParty; }
     }
@@ -527,7 +530,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //If this is a minion, this should not be initiated
         awareness = new Dictionary<POINT_OF_INTEREST_TYPE, List<IAwareness>>();
         planner = new GoapPlanner(this);
-        AddAwareness(this);
+        //AddAwareness(this);
 
         GetRandomCharacterColor();
 #if !WORLD_CREATION_TOOL
@@ -2604,11 +2607,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         return false;
     }
     public void GenerateRandomTraits() {
-        //All characters have a 1 in 8 chance of having Crooked trait when spawned
-        if (UnityEngine.Random.Range(0, 8) < 1) {
-            AddTrait("Crooked");
-            //Debug.Log(this.name + " is set to be Crooked");
-        }
+        
     }
     public bool ReleaseFromAbduction() {
         Trait trait = GetTrait("Abducted");
@@ -2944,7 +2943,33 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     private bool PlanWorkActions() {
         if(this.faction.id != FactionManager.Instance.neutralFaction.id) {
-            //Plan work actions
+            //WeightedDictionary<string> weightedDictionary = new WeightedDictionary<string>();
+            ////Drop Supply Plan
+            //if(supply > role.reservedSupply) {
+            //    weightedDictionary.AddElement("Drop Supply", 2);
+            //}
+            ////Obtain Supply Plan
+            //if(role.roleType == CHARACTER_ROLE.CIVILIAN) {
+            //    SupplyPile supplyPile = homeArea.supplyPile;
+            //    if(supplyPile.suppliesInPile < 100) {
+            //        weightedDictionary.AddElement("Obtain Supply", 4);
+            //    }
+            //} else {
+            //    if (supply < role.reservedSupply) {
+            //        weightedDictionary.AddElement("Obtain Supply", 4);
+            //    }
+            //}
+
+            //if(weightedDictionary.Count > 0) {
+            //    string result = weightedDictionary.PickRandomElementGivenWeights();
+            //    SupplyPile supplyPile = homeArea.supplyPile;
+            //    if (result == "Drop Supply") {
+            //        StartGOAP(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_SUPPLY, supply, supplyPile), supplyPile);
+            //    } else {
+            //        StartGOAP(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_SUPPLY, supplyPile.suppliesInPile, this), this);
+            //    }
+            //}
+            //return true;
         }
         return false;
     }
@@ -2962,6 +2987,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     private bool PlanIdleReturnHome() {
         GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.RETURN_HOME, this, this);
+        goapAction.SetTargetStructure();
         GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
         GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE });
         allGoapPlans.Add(goapPlan);
@@ -3593,6 +3619,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         }
     }
+    public void DestroyToken(SpecialToken token) {
+        token.gridTileLocation.structure.location.RemoveSpecialTokenFromLocation(token);
+    }
+    public void DestroyHeldToken() {
+        if (isHoldingItem) {
+            UnobtainToken();
+        }
+    }
     private void UpdateTokenOwner() {
         if (isHoldingItem) {
             tokenInInventory.SetOwner(this.faction);
@@ -3789,7 +3823,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     #region Awareness
     public IAwareness AddAwareness(IPointOfInterest pointOfInterest) {
         IAwareness iawareness = GetAwareness(pointOfInterest);
-        if (iawareness == null && pointOfInterest != this) {
+        if (iawareness == null) {
             iawareness = CreateNewAwareness(pointOfInterest);
             if(iawareness != null) {
                 if (awareness.ContainsKey(pointOfInterest.poiType)) {
@@ -3947,7 +3981,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         poiGoapActions.Add(INTERACTION_TYPE.DROP_CHARACTER);
         poiGoapActions.Add(INTERACTION_TYPE.ABDUCT_ACTION);
         poiGoapActions.Add(INTERACTION_TYPE.STROLL);
+        poiGoapActions.Add(INTERACTION_TYPE.DAYDREAM);
         poiGoapActions.Add(INTERACTION_TYPE.SLEEP_OUTSIDE);
+        poiGoapActions.Add(INTERACTION_TYPE.PRAY);
+        poiGoapActions.Add(INTERACTION_TYPE.EXPLORE);
+        poiGoapActions.Add(INTERACTION_TYPE.PATROL);
+        poiGoapActions.Add(INTERACTION_TYPE.CHAT_CHARACTER);
+        poiGoapActions.Add(INTERACTION_TYPE.ARGUE_CHARACTER);
     }
     public void StartGOAP(GoapEffect goal, IPointOfInterest target, bool isPriority = false, List<Character> otherCharactePOIs = null) {
         List<CharacterAwareness> characterTargetsAwareness = new List<CharacterAwareness>();
@@ -4074,7 +4114,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             //        hasValidDestination = destinationTile != null;
             //    }
             //}
-            plan.currentNode.action.SetTargetStructure();
+            //plan.currentNode.action.SetTargetStructure();
             //LocationGridTile targetTile = plan.currentNode.action.GetTargetLocationTile();
 
             if (actorAllowedActions.Contains(plan.currentNode.action.goapType) && plan.currentNode.action.CanSatisfyRequirements() && plan.currentNode.action.targetTile != null) {

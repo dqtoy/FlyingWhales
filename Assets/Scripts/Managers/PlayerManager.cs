@@ -67,6 +67,7 @@ public class PlayerManager : MonoBehaviour {
         player.CreatePlayerArea(tile);
         //player.SetMaxMinions(9);
         player.CreateInitialMinions();
+        player.PreAssignJobSlots();
         LandmarkManager.Instance.OwnArea(player.playerFaction, RACE.DEMON, player.playerArea);
         Messenger.RemoveListener<HexTile>(Signals.TILE_LEFT_CLICKED, OnChooseStartingTile);
         Messenger.Broadcast(Signals.HIDE_POPUP_MESSAGE);
@@ -88,6 +89,7 @@ public class PlayerManager : MonoBehaviour {
         }
         //player.SetMaxMinions(9);
         player.CreateInitialMinions();
+        player.PreAssignJobSlots();
         LandmarkManager.Instance.OwnArea(player.playerFaction, RACE.DEMON, player.playerArea);
         portal.SetIsBeingInspected(true);
         portal.SetHasBeenInspected(true);

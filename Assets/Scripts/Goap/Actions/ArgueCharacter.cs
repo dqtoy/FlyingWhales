@@ -8,6 +8,11 @@ public class ArgueCharacter : GoapAction {
         get { return _targetStructure; }
     }
     public ArgueCharacter(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.ARGUE_CHARACTER, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+        validTimeOfDays = new TIME_IN_WORDS[] {
+            TIME_IN_WORDS.MORNING,
+            TIME_IN_WORDS.AFTERNOON,
+            TIME_IN_WORDS.EARLY_NIGHT,
+        };
     }
 
     #region Overrides
@@ -20,7 +25,7 @@ public class ArgueCharacter : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
     }
     public override void PerformActualAction() {
-        if (targetStructure == actor.gridTileLocation.structure) {
+        if (poiTarget.gridTileLocation.structure == actor.gridTileLocation.structure) {
             SetState("Argue Success");
         } else {
             SetState("Target Missing");
@@ -28,39 +33,45 @@ public class ArgueCharacter : GoapAction {
         base.PerformActualAction();
     }
     protected override int GetCost() {
-        int cost = 4;
+        int cost = 5; //Base cost: +5
         Character targetCharacter = poiTarget as Character;
         Charmed charmed = actor.GetTrait("Charmed") as Charmed;
         if (charmed != null && charmed.responsibleCharacter != null && charmed.responsibleCharacter.id == targetCharacter.id) {
-            cost -=2;
+            //If Actor is charmed and target is the charmer: +10
+            cost += 10; 
         }
         if (actor.faction.id != targetCharacter.faction.id) {
-            cost += 2;
+            //Target is not from the same faction: -1
+            cost -= 1; 
         }
         if (actor.race != targetCharacter.race) {
-            cost += 4;
+            //Target is a different race: -1
+            cost -= 1;
         }
         CharacterRelationshipData relData = actor.GetCharacterRelationshipData(targetCharacter);
         if (relData != null) {
             if (relData.HasRelationshipTrait(RELATIONSHIP_TRAIT.ENEMY)) {
-                cost += 8;
-            }
-            if (relData.HasRelationshipTrait(RELATIONSHIP_TRAIT.SERVANT)) {
-                cost -= 1;
+                //Target is an Enemy: -2
+                cost -= 2;
             }
             if (relData.HasRelationshipTrait(RELATIONSHIP_TRAIT.LOVER)) {
-                cost -= 2;
+                //Target is a Lover: +2
+                cost += 2;
             }
             if (relData.HasRelationshipTrait(RELATIONSHIP_TRAIT.RELATIVE)) {
-                cost -= 2;
+                //Target is a Relative: +2
+                cost += 2;
             }
             if (relData.HasRelationshipTrait(RELATIONSHIP_TRAIT.FRIEND)) {
-                cost -= 3;
+                //Target is a Friend: +3
+                cost += 3;
             }
             if (relData.HasRelationshipTrait(RELATIONSHIP_TRAIT.PARAMOUR)) {
-                cost -= 3;
+                //Target is a Paramour: +3
+                cost += 3;
             }
         }
+        cost += Utilities.rng.Next(0, 4); //Then add a random cost between 0 to 4.
         return cost;
     }
     //public override bool IsHalted() {
@@ -70,15 +81,6 @@ public class ArgueCharacter : GoapAction {
     //    }
     //    return false;
     //}
-    public override void DoAction(GoapPlan plan) {
-        CharacterRelationshipData relData = actor.GetCharacterRelationshipData(poiTarget as Character);
-        if (relData != null && relData.knownStructure != null) {
-            _targetStructure = relData.knownStructure;
-        } else {
-            _targetStructure = poiTarget.gridTileLocation.structure;
-        }
-        base.DoAction(plan);
-    }
     #endregion
 
     #region Preconditions
@@ -93,7 +95,7 @@ public class ArgueCharacter : GoapAction {
         currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
     }
     private void PerTickArgueSuccess() {
-        actor.AdjustHappiness(40);
+        actor.AdjustHappiness(6);
     }
     private void AfterArgueSuccess() {
         actor.AdjustDoNotGetLonely(-1);

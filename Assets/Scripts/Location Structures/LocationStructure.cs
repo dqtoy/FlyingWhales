@@ -32,9 +32,6 @@ public class LocationStructure {
     public POINT_OF_INTEREST_TYPE poiType {
         get { return POINT_OF_INTEREST_TYPE.STRUCTURE; }
     }
-    public virtual bool hasResidents {
-        get { return false; }
-    }
     #endregion
 
     public LocationStructure(STRUCTURE_TYPE structureType, Area location, bool isInside) {
@@ -123,6 +120,7 @@ public class LocationStructure {
         if (pointsOfInterest.Remove(poi)) {
 #if !WORLD_CREATION_TOOL
             if (poi.gridTileLocation != null) {
+                Debug.Log("Removed " + poi.ToString() + " from " + poi.gridTileLocation.ToString() + " at " + this.ToString());
                 if(poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
                     location.areaMap.RemoveCharacter(poi.gridTileLocation, poi as Character);
                 } else {

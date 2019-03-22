@@ -27,6 +27,10 @@ public class ReleaseCharacter : GoapAction {
     protected override int GetCost() {
         return 1;
     }
+    public override void FailAction() {
+        base.FailAction();
+        SetState("Target Missing");
+    }
     #endregion
 
     #region Preconditions

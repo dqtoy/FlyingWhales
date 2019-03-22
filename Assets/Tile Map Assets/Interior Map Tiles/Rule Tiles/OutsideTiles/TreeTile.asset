@@ -18,9 +18,6 @@ MonoBehaviour:
     m_Sprites:
     - {fileID: 21300000, guid: e298e16d6e4a4a345816aff73283be2a, type: 3}
     - {fileID: 21300000, guid: 5d9748d7deff06443b2a493abd02760d, type: 3}
-    - {fileID: 21300000, guid: 918d893e6c4c568499aa05881fa73183, type: 3}
-    - {fileID: 21300000, guid: 866fc2fd1952a3e4096feb783efef97b, type: 3}
-    - {fileID: 21300000, guid: dfc0f975a76d87f408f2de99b76d6615, type: 3}
     m_AnimationSpeed: 1
     m_PerlinScale: 0.5
     m_RuleTransform: 0

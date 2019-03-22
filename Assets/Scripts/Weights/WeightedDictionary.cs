@@ -96,6 +96,9 @@ public class WeightedDictionary<T> {
         }
     }
 
+    public bool HasElement(T key) {
+        return _dictionary.ContainsKey(key);
+    }
     /*
      * This will get a random element in the weighted
      * dictionary.

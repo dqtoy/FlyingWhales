@@ -28,7 +28,7 @@ public class Sleep : GoapAction {
     }
     protected override int GetCost() {
         Dwelling dwelling = targetStructure as Dwelling;
-        if (dwelling.residents.Contains(actor)) {
+        if (dwelling.IsResident(actor)) {
             return 1;
         } else {
             for (int i = 0; i < dwelling.residents.Count; i++) {
@@ -45,11 +45,15 @@ public class Sleep : GoapAction {
             return 10;
         }
     }
+    public override void FailAction() {
+        base.FailAction();
+        SetState("Rest Fail");
+    }
     #endregion
 
     #region Requirements
     protected bool Requirement() {
-        if(targetStructure.structureType == STRUCTURE_TYPE.DWELLING && poiTarget.state == POI_STATE.ACTIVE) {
+        if(targetStructure.structureType == STRUCTURE_TYPE.DWELLING && poiTarget.gridTileLocation != null && poiTarget.gridTileLocation.occupant == null) {
             return true;
         }
         return false;

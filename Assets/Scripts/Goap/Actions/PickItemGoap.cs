@@ -24,6 +24,10 @@ public class PickItemGoap : GoapAction {
     protected override int GetCost() {
         return 2;
     }
+    public override void FailAction() {
+        base.FailAction();
+        SetState("Target Missing");
+    }
     #endregion
 
     #region Requirements
