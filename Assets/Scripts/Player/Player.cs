@@ -583,6 +583,27 @@ public class Player : ILeader {
     public Character GetCharacterAssignedToJob(JOB job) {
         return roleSlots[job].assignedCharacter;
     }
+    private List<Character> GetValidCharactersForJob(JOB job) {
+        List<Character> valid = new List<Character>();
+        for (int i = 0; i < minions.Count; i++) {
+            Character currMinion = minions[i].character;
+            if (CanAssignCharacterToJob(job, currMinion) && GetCharactersCurrentJob(currMinion) == JOB.NONE) {
+                valid.Add(currMinion);
+            }
+        }
+        return valid;
+    }
+    public void PreAssignJobSlots() {
+        foreach (KeyValuePair<JOB, PlayerJobData> kvp in roleSlots) {
+            List<Character> validCharacters = GetValidCharactersForJob(kvp.Key);
+            if (validCharacters.Count > 0) {
+                Character chosenCharacter = validCharacters[UnityEngine.Random.Range(0, validCharacters.Count)];
+                AssignCharacterToJob(kvp.Key, chosenCharacter);
+            } else {
+                Debug.LogWarning("Could not pre assign any character to job: " + kvp.Key.ToString());
+            }
+        }
+    }
     #endregion
 
     #region Role Actions

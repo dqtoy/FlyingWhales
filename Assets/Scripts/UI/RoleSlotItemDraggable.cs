@@ -5,18 +5,24 @@ using UnityEngine.EventSystems;
 
 public class RoleSlotItemDraggable : DraggableItem {
 
-    private RoleSlotItem roleSlotItem;
+    [SerializeField] private RoleSlotItem roleSlotItem;
+
+    #region getters/setters
+    public override bool isDraggable {
+        get { return !PlayerManager.Instance.player.roleSlots[roleSlotItem.slotJob].isSlotLocked; }
+    }
+    #endregion
 
     private void Awake() {
-        roleSlotItem = gameObject.GetComponent<RoleSlotItem>();
-        SetDraggable(_isDraggable);
+        //roleSlotItem = gameObject.GetComponent<RoleSlotItem>();
+        SetDraggable(isDraggable);
     }
 
     #region Overrides
     public override void OnBeginDrag(PointerEventData eventData) {
         //base.OnBeginDrag(eventData);
         //_characterItem = null;
-        if (!_isDraggable) {
+        if (!isDraggable) {
             return;
         }
         GameManager.Instance.SetCursorToItemDragClicked();
@@ -61,7 +67,7 @@ public class RoleSlotItemDraggable : DraggableItem {
         //_characterItem = null;
     }
     public override void SetDraggable(bool state) {
-        if (_isDraggable != state) {
+        if (isDraggable != state) {
             base.SetDraggable(state);
             //if (state) {
             //    _characterItem.portrait.SwitchBGToDraggable();

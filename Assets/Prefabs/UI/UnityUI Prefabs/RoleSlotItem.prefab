@@ -109,7 +109,6 @@ GameObject:
   - component: {fileID: 114389122463645684}
   - component: {fileID: 114433901452890674}
   - component: {fileID: 114285873107019808}
-  - component: {fileID: 114324032712288712}
   m_Layer: 5
   m_Name: RoleSlotItem
   m_TagString: Untagged
@@ -161,6 +160,9 @@ GameObject:
   m_Component:
   - component: {fileID: 224950954813257774}
   - component: {fileID: 114840016544442870}
+  - component: {fileID: 222801688508201010}
+  - component: {fileID: 114442782165971760}
+  - component: {fileID: 114043302524487350}
   m_Layer: 5
   m_Name: CharacterPortrait
   m_TagString: Untagged
@@ -644,6 +646,20 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!114 &114043302524487350
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1322354212105278}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b308af2da1ea4f34b99339d9ce9ea174, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _isDraggable: 1
+  _isDragging: 0
+  roleSlotItem: {fileID: 114433901452890674}
 --- !u!114 &114047690896594838
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -982,19 +998,6 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
---- !u!114 &114324032712288712
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1260979678377894}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b308af2da1ea4f34b99339d9ce9ea174, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _isDraggable: 1
-  _isDragging: 0
 --- !u!114 &114389122463645684
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1170,7 +1173,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   portrait: {fileID: 114840016544442870}
-  slotJob: 0
   jobIcon: {fileID: 114030249917892534}
   jobNameLbl: {fileID: 114427035971924372}
   assignBtn: {fileID: 114031635474075278}
@@ -1180,6 +1182,33 @@ MonoBehaviour:
   validPortraitGO: {fileID: 1053127407712162}
   invalidPortraitGO: {fileID: 1643880904136382}
   dropZone: {fileID: 114285873107019808}
+--- !u!114 &114442782165971760
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1322354212105278}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
+  m_RaycastTarget: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
+      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+  m_Sprite: {fileID: 21300000, guid: febd7bc28a21ea044a06f7266d76b729, type: 3}
+  m_Type: 1
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
 --- !u!114 &114457916272259888
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1702,6 +1731,12 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1816323347704908}
+--- !u!222 &222801688508201010
+CanvasRenderer:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1322354212105278}
 --- !u!222 &222850643684546694
 CanvasRenderer:
   m_ObjectHideFlags: 1
