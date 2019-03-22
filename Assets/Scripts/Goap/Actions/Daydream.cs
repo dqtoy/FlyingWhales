@@ -5,7 +5,9 @@ using UnityEngine;
 
 public class Daydream : GoapAction {
 
-    public override LocationStructure targetStructure { get { return GetTargetStructure(); } }
+    private LocationStructure _targetStructure;
+
+    public override LocationStructure targetStructure { get { return _targetStructure; } }
 
     public Daydream(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.DAYDREAM, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionLocationType = ACTION_LOCATION_TYPE.RANDOM_LOCATION;
@@ -13,18 +15,6 @@ public class Daydream : GoapAction {
             TIME_IN_WORDS.MORNING,
             TIME_IN_WORDS.AFTERNOON,
         };
-    }
-
-    private LocationStructure GetTargetStructure() {
-        //Select structure by first randomly selecting from the following areas:
-        //  - wilderness in current location
-        //  - work area or dungeon area in current location
-        List<LocationStructure> choices = actor.specificLocation.GetStructuresOfType(STRUCTURE_TYPE.WILDERNESS).ToList();
-        choices.AddRange(actor.specificLocation.GetStructuresOfType(STRUCTURE_TYPE.WORK_AREA));
-        if (choices.Count > 0) {
-            return choices[Utilities.rng.Next(0, choices.Count)];
-        }
-        return null;
     }
 
     #region Overrides
@@ -49,6 +39,14 @@ public class Daydream : GoapAction {
     public override void FailAction() {
         base.FailAction();
         SetState("Daydream Failed");
+    }
+    public override void SetTargetStructure() {
+        List<LocationStructure> choices = actor.specificLocation.GetStructuresOfType(STRUCTURE_TYPE.WILDERNESS).ToList();
+        choices.AddRange(actor.specificLocation.GetStructuresOfType(STRUCTURE_TYPE.WORK_AREA));
+        if (choices.Count > 0) {
+            _targetStructure = choices[Utilities.rng.Next(0, choices.Count)];
+        }
+        base.SetTargetStructure();
     }
     #endregion
 

@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class ArgueCharacter : GoapAction {
+
     private LocationStructure _targetStructure;
     public override LocationStructure targetStructure {
         get { return _targetStructure; }
     }
+
     public ArgueCharacter(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.ARGUE_CHARACTER, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         validTimeOfDays = new TIME_IN_WORDS[] {
             TIME_IN_WORDS.MORNING,
@@ -81,6 +83,15 @@ public class ArgueCharacter : GoapAction {
     //    }
     //    return false;
     //}
+    public override void DoAction(GoapPlan plan) {
+        SetTargetStructure();
+        base.DoAction(plan);
+    }
+    public override void SetTargetStructure() {
+        //TODO: Change to known location when plan data has been set up
+        _targetStructure = poiTarget.gridTileLocation.structure;
+        base.SetTargetStructure();
+    }
     #endregion
 
     #region Preconditions
