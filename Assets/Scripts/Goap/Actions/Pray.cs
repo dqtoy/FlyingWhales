@@ -21,7 +21,7 @@ public class Pray : GoapAction {
         base.PerformActualAction();
     }
     protected override int GetCost() {
-        return Utilities.rng.Next(3, 10);
+        return Utilities.rng.Next(7, 14);
     }
     public override void FailAction() {
         base.FailAction();

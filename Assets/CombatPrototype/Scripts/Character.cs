@@ -2907,6 +2907,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     value = 15;
                 } else if (currentTimeInWords == TIME_IN_WORDS.LATE_NIGHT) {
                     value = 65;
+                } else if (currentTimeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
+                    value = 65;
                 }
             }
             if (chance < value) {
@@ -2927,13 +2929,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 value = 100;
             } else {
                 if (currentTimeInWords == TIME_IN_WORDS.MORNING) {
-                    value = 15;
+                    value = 25;
                 } else if (currentTimeInWords == TIME_IN_WORDS.AFTERNOON) {
-                    value = 35;
+                    value = 40;
                 } else if (currentTimeInWords == TIME_IN_WORDS.EARLY_NIGHT) {
-                    value = 35;
+                    value = 40;
                 } else if (currentTimeInWords == TIME_IN_WORDS.LATE_NIGHT) {
-                    value = 15;
+                    value = 25;
                 }
             }
             if (chance < value) {
@@ -3890,11 +3892,15 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 if (tile.objHere != null && tile.objHere != this) {
                     AddAwareness(tile.objHere);
                 }
-                for (int j = 0; j < tile.charactersHere.Count; j++) {
+                if ((tile.occupant != null) && (tile.occupant != this))
+                {
+                    AddAwareness(tile.occupant);
+                }
+                /*for (int j = 0; j < tile.charactersHere.Count; j++) {
                     if(tile.charactersHere[j] != this) {
                         AddAwareness(tile.charactersHere[j]);
                     }
-                }
+                }*/
             }
         } else {
             if (gridTileLocation.isInside) {
@@ -3903,11 +3909,16 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     if (insideTile.objHere != null && insideTile.objHere != this) {
                         AddAwareness(insideTile.objHere);
                     }
+                    if ((insideTile.occupant != null) && (insideTile.occupant != this))
+                    {
+                        AddAwareness(insideTile.occupant);
+                    }
+                    /*
                     for (int j = 0; j < insideTile.charactersHere.Count; j++) {
                         if (insideTile.charactersHere[j] != this) {
                             AddAwareness(insideTile.charactersHere[j]);
                         }
-                    }
+                    }*/
                 }
             } else {
                 for (int i = 0; i < gridTileLocation.structure.location.areaMap.outsideTiles.Count; i++) {
@@ -3915,11 +3926,16 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     if (outsideTile.objHere != null && outsideTile.objHere != this) {
                         AddAwareness(outsideTile.objHere);
                     }
+                    if ((outsideTile.occupant != null) && (outsideTile.occupant != this))
+                    {
+                        AddAwareness(outsideTile.occupant);
+                    }
+                    /*
                     for (int j = 0; j < outsideTile.charactersHere.Count; j++) {
                         if (outsideTile.charactersHere[j] != this) {
                             AddAwareness(outsideTile.charactersHere[j]);
                         }
-                    }
+                    }*/
                 }
             }
         }

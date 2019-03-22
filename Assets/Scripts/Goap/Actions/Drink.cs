@@ -31,7 +31,7 @@ public class Drink : GoapAction {
         base.PerformActualAction();
     }
     protected override int GetCost() {
-        return 7;
+        return Utilities.rng.Next(7, 10);
     }
 
     #endregion
