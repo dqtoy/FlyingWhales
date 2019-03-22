@@ -53,8 +53,12 @@ public class Sleep : GoapAction {
 
     #region Requirements
     protected bool Requirement() {
-        if(targetStructure.structureType == STRUCTURE_TYPE.DWELLING && poiTarget.gridTileLocation != null && poiTarget.gridTileLocation.occupant == null) {
-            return true;
+        if(targetStructure.structureType == STRUCTURE_TYPE.DWELLING && poiTarget.gridTileLocation != null) {
+            if(poiTarget.gridTileLocation.occupant == null) {
+                return true;
+            } else if (poiTarget.gridTileLocation.occupant == actor) {
+                return true;
+            }
         }
         return false;
     }

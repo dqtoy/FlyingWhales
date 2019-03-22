@@ -102,7 +102,7 @@ public class FactionManager : MonoBehaviour {
 
         Faction goodMajor = goodMajorChoices[Random.Range(0, goodMajorChoices.Count)];
         Faction evilMajor = evilMajorChoices[Random.Range(0, evilMajorChoices.Count)];
-        List<Faction> startFactions = new List<Faction>() { goodMajor, evilMajor };
+        List<Faction> startFactions = new List<Faction>() { goodMajor, evilMajor }; //
 
         log += "\nGood Major: " + goodMajor.name;
         log += "\nEvil Major: " + evilMajor.name;
