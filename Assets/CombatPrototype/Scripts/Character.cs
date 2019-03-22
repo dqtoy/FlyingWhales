@@ -518,8 +518,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         allGoapPlans = new List<GoapPlan>();
 
         tiredness = TIREDNESS_DEFAULT;
-        fullness = FULLNESS_DEFAULT;
-        happiness = HAPPINESS_DEFAULT;
+        //Fullness value between 1300 and 1440.
+        SetFullness(UnityEngine.Random.Range(1300, FULLNESS_DEFAULT + 1));
+        //Happiness value between 100 and 240.
+        SetHappiness(UnityEngine.Random.Range(100, HAPPINESS_DEFAULT + 1));
 
         hSkinColor = UnityEngine.Random.Range(-360f, 360f);
         hHairColor = UnityEngine.Random.Range(-360f, 360f);
@@ -3745,6 +3747,25 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             //PlanFullnessRecoveryActions();
         }
     }
+    public void SetFullness(int amount) {
+        fullness = amount;
+        fullness = Mathf.Clamp(fullness, 0, FULLNESS_DEFAULT);
+        if (fullness == 0) {
+            Death("starvation");
+        } else if (fullness <= FULLNESS_THRESHOLD_2) {
+            RemoveTrait("Hungry");
+            AddTrait("Starving");
+            //PlanFullnessRecoveryActions();
+        } else if (fullness <= FULLNESS_THRESHOLD_1) {
+            RemoveTrait("Starving");
+            AddTrait("Hungry");
+            //PlanFullnessRecoveryActions();
+        } else {
+            //fullness is higher than both thresholds
+            RemoveTrait("Hungry");
+            RemoveTrait("Starving");
+        }
+    }
     #endregion
 
     #region Happiness
@@ -3755,6 +3776,22 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public void AdjustHappiness(int adjustment) {
         happiness += adjustment;
+        happiness = Mathf.Clamp(happiness, 0, HAPPINESS_DEFAULT);
+        if (happiness <= HAPPINESS_THRESHOLD_2) {
+            RemoveTrait("Lonely");
+            AddTrait("Forlorn");
+            //PlanHappinessRecoveryActions();
+        } else if (happiness <= HAPPINESS_THRESHOLD_1) {
+            AddTrait("Lonely");
+            RemoveTrait("Forlorn");
+            //PlanHappinessRecoveryActions();
+        } else {
+            RemoveTrait("Lonely");
+            RemoveTrait("Forlorn");
+        }
+    }
+    public void SetHappiness(int amount) {
+        happiness = amount;
         happiness = Mathf.Clamp(happiness, 0, HAPPINESS_DEFAULT);
         if (happiness <= HAPPINESS_THRESHOLD_2) {
             RemoveTrait("Lonely");
@@ -4392,6 +4429,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (currentAction != null) {
             Debug.Log(GameManager.Instance.TodayLogString() + this.name + " will do action " + action.goapType.ToString() + " to " + action.poiTarget.ToString());
         }
+
     }
     #endregion
 
