@@ -39,6 +39,9 @@ public class Ore : TileObject, IPointOfInterest {
 
     #region Interface
     public void SetGridTileLocation(LocationGridTile tile) {
+        if (tile != null) {
+            tile.SetTileAccess(LocationGridTile.Tile_Access.Impassable);
+        }
         this.tile = tile;
     }
     //public LocationGridTile GetNearestUnoccupiedTileFromThis() {

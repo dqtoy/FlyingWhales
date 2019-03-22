@@ -267,6 +267,13 @@ public class GoapAction {
     protected bool HasSupply(int neededSupply) {
         return actor.supply >= neededSupply;
     }
+    /// <summary>
+    /// This is used by the character marker so that when it recalculates a path, his/her current action is updated.
+    /// </summary>
+    /// <param name="targetTile">The new target tile.</param>
+    public void UpdateTargetTile(LocationGridTile targetTile) {
+        this.targetTile = targetTile;
+    }
     #endregion
 
     #region Preconditions
