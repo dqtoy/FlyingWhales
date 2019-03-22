@@ -13,6 +13,7 @@ public class MultiThreadPool : MonoBehaviour {
     private Queue<Multithread> functionsToBeResolved;
 
     private Thread newThread;
+    //private ManualResetEventSlim exitHandle = new ManualResetEventSlim();
     private bool isRunning;
 
     void Awake() {
@@ -39,19 +40,28 @@ public class MultiThreadPool : MonoBehaviour {
     }
 
     private void RunThread() {
-        while (isRunning) {
+        while (isRunning) { // && !exitHandle.Wait(20)
             if (this.functionsToBeRunInThread.Count > 0) {
-                Thread.Sleep(20);
+                //Thread.Sleep(20);
                 Multithread newFunction = this.functionsToBeRunInThread.Dequeue();
                 if (newFunction != null) {
-                    newFunction.DoMultithread();
+                    lock (THREAD_LOCKER) {
+                        newFunction.DoMultithread();
+                    }
                     this.functionsToBeResolved.Enqueue(newFunction);
                 }
             }
         }
+        
     }
-
+    private void Stop() {
+        ////exitHandle.Set();
+        //exitHandle.Dispose();
+        //exitHandle = null;
+        newThread.Join();
+    }
     void OnDestroy() {
         this.isRunning = false;
+        //Stop();
     }
 }

@@ -3883,42 +3883,75 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public void AddInitialAwareness() {
         if(faction == FactionManager.Instance.neutralFaction) {
-            for (int i = 0; i < gridTileLocation.structure.location.areaMap.allTiles.Count; i++) {
-                LocationGridTile tile = gridTileLocation.structure.location.areaMap.allTiles[i];
-                if (tile.objHere != null && tile.objHere != this) {
-                    AddAwareness(tile.objHere);
-                }
-                for (int j = 0; j < tile.charactersHere.Count; j++) {
-                    if(tile.charactersHere[j] != this) {
-                        AddAwareness(tile.charactersHere[j]);
+            foreach (List<LocationStructure> structures in gridTileLocation.structure.location.structures.Values) {
+                for (int i = 0; i < structures.Count; i++) {
+                    for (int j = 0; j < structures[i].pointsOfInterest.Count; j++) {
+                        IPointOfInterest poi = structures[i].pointsOfInterest[j];
+                        if (poi != this) {
+                            AddAwareness(poi);
+                        }
                     }
                 }
             }
+
+            //for (int i = 0; i < gridTileLocation.structure.location.areaMap.allTiles.Count; i++) {
+            //    LocationGridTile tile = gridTileLocation.structure.location.areaMap.allTiles[i];
+            //    if (tile.objHere != null && tile.objHere != this) {
+            //        AddAwareness(tile.objHere);
+            //    }
+            //    for (int j = 0; j < tile.charactersHere.Count; j++) {
+            //        if(tile.charactersHere[j] != this) {
+            //            AddAwareness(tile.charactersHere[j]);
+            //        }
+            //    }
+            //}
         } else {
             if (gridTileLocation.isInside) {
-                for (int i = 0; i < gridTileLocation.structure.location.areaMap.insideTiles.Count; i++) {
-                    LocationGridTile insideTile = gridTileLocation.structure.location.areaMap.insideTiles[i];
-                    if (insideTile.objHere != null && insideTile.objHere != this) {
-                        AddAwareness(insideTile.objHere);
-                    }
-                    for (int j = 0; j < insideTile.charactersHere.Count; j++) {
-                        if (insideTile.charactersHere[j] != this) {
-                            AddAwareness(insideTile.charactersHere[j]);
+                List<LocationStructure> structures = gridTileLocation.structure.location.GetStructuresAtLocation(true);
+                if (structures != null) {
+                    for (int i = 0; i < structures.Count; i++) {
+                        for (int j = 0; j < structures[i].pointsOfInterest.Count; j++) {
+                            IPointOfInterest poi = structures[i].pointsOfInterest[j];
+                            if (poi != this) {
+                                AddAwareness(poi);
+                            }
                         }
                     }
                 }
+                //for (int i = 0; i < gridTileLocation.structure.location.areaMap.insideTiles.Count; i++) {
+                //    LocationGridTile insideTile = gridTileLocation.structure.location.areaMap.insideTiles[i];
+                //    if (insideTile.objHere != null && insideTile.objHere != this) {
+                //        AddAwareness(insideTile.objHere);
+                //    }
+                //    for (int j = 0; j < insideTile.charactersHere.Count; j++) {
+                //        if (insideTile.charactersHere[j] != this) {
+                //            AddAwareness(insideTile.charactersHere[j]);
+                //        }
+                //    }
+                //}
             } else {
-                for (int i = 0; i < gridTileLocation.structure.location.areaMap.outsideTiles.Count; i++) {
-                    LocationGridTile outsideTile = gridTileLocation.structure.location.areaMap.outsideTiles[i];
-                    if (outsideTile.objHere != null && outsideTile.objHere != this) {
-                        AddAwareness(outsideTile.objHere);
-                    }
-                    for (int j = 0; j < outsideTile.charactersHere.Count; j++) {
-                        if (outsideTile.charactersHere[j] != this) {
-                            AddAwareness(outsideTile.charactersHere[j]);
+                List<LocationStructure> structures = gridTileLocation.structure.location.GetStructuresAtLocation(false);
+                if (structures != null) {
+                    for (int i = 0; i < structures.Count; i++) {
+                        for (int j = 0; j < structures[i].pointsOfInterest.Count; j++) {
+                            IPointOfInterest poi = structures[i].pointsOfInterest[j];
+                            if (poi != this) {
+                                AddAwareness(poi);
+                            }
                         }
                     }
                 }
+                //for (int i = 0; i < gridTileLocation.structure.location.areaMap.outsideTiles.Count; i++) {
+                //    LocationGridTile outsideTile = gridTileLocation.structure.location.areaMap.outsideTiles[i];
+                //    if (outsideTile.objHere != null && outsideTile.objHere != this) {
+                //        AddAwareness(outsideTile.objHere);
+                //    }
+                //    for (int j = 0; j < outsideTile.charactersHere.Count; j++) {
+                //        if (outsideTile.charactersHere[j] != this) {
+                //            AddAwareness(outsideTile.charactersHere[j]);
+                //        }
+                //    }
+                //}
             }
         }
     }
@@ -4035,6 +4068,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         }
         _numOfWaitingForGoapThread ++;
+        //Debug.LogWarning(name + " sent a plan to other thread(" + _numOfWaitingForGoapThread + ")");
         MultiThreadPool.Instance.AddToThreadPool(new GoapThread(this, target, goal, isPriority, characterTargetsAwareness, actorAllowedActions, usableActions));
     }
     public void RecalculatePlan(GoapPlan currentPlan) {
@@ -4131,6 +4165,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     log += "\n - Action's preconditions are not all satisfied, trying to recalculate plan...";
                     Debug.Log(log);
                     RecalculatePlan(plan);
+                    //willGoIdleState = false;
                 } else {
                     log += "\n - Action's preconditions are all satisfied, doing action...";
                     Debug.Log(log);
@@ -4189,10 +4224,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     Character targetCharacter = currentAction.poiTarget as Character;
                     targetCharacter.AdjustIsWaitingForInteraction(-1);
                 }
+                SetCurrentAction(null);
                 RecalculatePlan(plan);
                 IdlePlans();
-                //StartDailyGoapPlanGeneration();
-                //SchedulePerformGoapPlans();
             }
         }
     }
@@ -4248,11 +4282,17 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 PerformGoapPlans();
             }
         } else if(result == InteractionManager.Goap_State_Fail) {
-            log += "\nAction performed has failed. Will try to recalculate plan...";
-            Debug.Log(log);
-            RecalculatePlan(plan);
-            //StartDailyGoapPlanGeneration();
-            IdlePlans();
+            if(plan.endNode.action == action) {
+                log += "\nAction performed has failed. Since this action is the end/goal action, it will not recalculate anymore. Dropping plan...";
+                if (!DropPlan(plan)) {
+                    PlanGoapActions();
+                }
+            } else {
+                log += "\nAction performed has failed. Will try to recalculate plan...";
+                Debug.Log(log);
+                RecalculatePlan(plan);
+                IdlePlans();
+            }
         }
     }
     public bool DropPlan(GoapPlan plan) {
@@ -4285,7 +4325,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
 
     public void ReceivePlanFromGoapThread(GoapThread goapThread) {
-        if(goapThread.recalculationPlan != null && goapThread.recalculationPlan.isEnd) {
+        //string log = name + " received a plan from other thread(" + _numOfWaitingForGoapThread + ")";
+        //if(goapThread.recalculationPlan == null) {
+        //    log += " - thread has no recalculation plan";
+        //}
+        //Debug.LogWarning(log);
+
+        if (goapThread.recalculationPlan != null && goapThread.recalculationPlan.isEnd) {
             return;
         }
         if(goapThread.recalculationPlan == null) {

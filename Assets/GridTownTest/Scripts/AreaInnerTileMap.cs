@@ -101,6 +101,9 @@ public class AreaInnerTileMap : MonoBehaviour {
     public List<LocationGridTile> outsideTiles { get; private set; }
     public List<LocationGridTile> insideTiles { get; private set; }
     public List<LocationGridTile> trees { get; private set; }
+    //public bool isShowing { get; private set; }
+
+    //private Vector3 _originalPosition;
 
     public Tilemap charactersTM {
         get { return objectsTilemap; }
@@ -166,6 +169,7 @@ public class AreaInnerTileMap : MonoBehaviour {
         canvas.worldCamera = AreaMapCameraMove.Instance.areaMapsCamera;
         worldUICanvas.worldCamera = AreaMapCameraMove.Instance.areaMapsCamera;
         GenerateInnerStructures();
+        //_originalPosition = this.transform.position;
     }
     private void GenerateGrid() {
         map = new LocationGridTile[width, height];
@@ -890,6 +894,9 @@ public class AreaInnerTileMap : MonoBehaviour {
 
     #region Movement & Mouse Interaction
     public void LateUpdate() {
+        //if (!isShowing) {
+        //    return;
+        //}
         if (UIManager.Instance.characterInfoUI.isShowing 
             && UIManager.Instance.characterInfoUI.activeCharacter.specificLocation == this.area
             && !UIManager.Instance.characterInfoUI.activeCharacter.isDead) {
@@ -1099,15 +1106,20 @@ public class AreaInnerTileMap : MonoBehaviour {
 
     #region Other
     public void Open() {
+        //isShowing = true;
+        //this.transform.position = _originalPosition;
         this.gameObject.SetActive(true);
         SwitchFromEstimatedMovementToPathfinding();
     }
     public void Close() {
+        //isShowing = false;
+        //this.transform.position = new Vector3(-999f, _originalPosition.y, _originalPosition.z);
         this.gameObject.SetActive(false);
         //if (UIManager.Instance.areaInfoUI.isShowing) {
         //    UIManager.Instance.areaInfoUI.ToggleMapMenu(false);
         //}
         isHovering = false;
+        SwitchFromPathfindingToEstimatedMovement();
     }
     private void ShowTileData(LocationGridTile tile) {
         if (tile == null) {
@@ -1165,6 +1177,15 @@ public class AreaInnerTileMap : MonoBehaviour {
             if(character.currentParty.icon.isTravelling && character.currentParty.icon.travelLine == null) {
                 //This means that the character is only travelling inside the map, he/she is not travelling to another area
                 character.marker.SwitchToPathfinding();
+            }
+        }
+    }
+    private void SwitchFromPathfindingToEstimatedMovement() {
+        for (int i = 0; i < area.charactersAtLocation.Count; i++) {
+            Character character = area.charactersAtLocation[i];
+            if (character.currentParty.icon.isTravelling && character.currentParty.icon.travelLine == null) {
+                //This means that the character is only travelling inside the map, he/she is not travelling to another area
+                character.marker.SwitchToEstimatedMovement();
             }
         }
     }

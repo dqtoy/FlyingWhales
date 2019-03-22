@@ -18,6 +18,7 @@ public class GoapThread : Multithread {
 
     public GoapThread(Character actor, IPointOfInterest target, GoapEffect goal, bool isPriority, List<CharacterAwareness> characterTargetsAwareness, List<INTERACTION_TYPE> actorAllowedActions, List<GoapAction> usableActions) {
         this.createdPlan = null;
+        this.recalculationPlan = null;
         this.actor = actor;
         this.target = target;
         this.goal = goal;
@@ -36,7 +37,11 @@ public class GoapThread : Multithread {
     #region Overrides
     public override void DoMultithread() {
         base.DoMultithread();
-        CreatePlan();
+        try {
+            CreatePlan();
+        }catch(System.Exception e) {
+            Debug.LogError(e.StackTrace);
+        }
     }
     public override void FinishMultithread() {
         base.FinishMultithread();

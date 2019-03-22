@@ -511,8 +511,10 @@ public class LandmarkManager : MonoBehaviour {
         AreaInnerTileMap areaMap = areaMapGO.GetComponent<AreaInnerTileMap>();
         areaMap.Initialize(newArea);
         newArea.SetAreaMap(areaMap);
-        areaMapGO.SetActive(false);
+        //areaMapGO.SetActive(false);
         newArea.PlaceTileObjects();
+        areaMap.Close();
+
         //newArea.PlaceBedsAndTables();
         //newArea.PlaceOres();
         //newArea.PlaceSupplyPiles();

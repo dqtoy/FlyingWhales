@@ -66,7 +66,14 @@ public class EatAnimal : GoapAction {
 
     #region Requirements
     protected bool Requirement() {
-        return poiTarget.state != POI_STATE.INACTIVE && poiTarget.gridTileLocation != null && poiTarget.gridTileLocation.occupant == null;
+        if (poiTarget.state != POI_STATE.INACTIVE && poiTarget.gridTileLocation != null) {
+            if (poiTarget.gridTileLocation.occupant == null) {
+                return true;
+            } else if (poiTarget.gridTileLocation.occupant == actor) {
+                return true;
+            }
+        }
+        return false;
     }
     #endregion
 }

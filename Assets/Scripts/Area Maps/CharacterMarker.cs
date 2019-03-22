@@ -33,6 +33,7 @@ public class CharacterMarker : PooledObject {
 
     private int _estimatedTravelTime;
     private int _currentTravelTime;
+    private bool _isMovementEstimated;
 
     private LocationGridTile _destinationTile;
     private IPointOfInterest _targetPOI;
@@ -122,6 +123,9 @@ public class CharacterMarker : PooledObject {
     }
 
     private void Update() {
+        //if(!character.specificLocation.areaMap.isShowing) {
+        //    return;
+        //}
         if (character != null) {
             nameLbl.SetText(character.name + "\n<size=50%>" + character.currentAction?.goapName ?? "None");
         }
@@ -141,6 +145,7 @@ public class CharacterMarker : PooledObject {
         }
         if (character.gridTileLocation.structure.location.areaMap.gameObject.activeSelf) {
             //If area map is showing, do pathfinding
+            _isMovementEstimated = false;
             _currentPath = PathGenerator.Instance.GetPath(character.gridTileLocation, destinationTile, GRID_PATHFINDING_MODE.REALISTIC);
             if (_currentPath != null) {
                 Messenger.AddListener<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, OnTileOccupied);
@@ -267,6 +272,10 @@ public class CharacterMarker : PooledObject {
         visualsRT.eulerAngles = new Vector3(visualsRT.rotation.x, visualsRT.rotation.y, angle);
     }
     public void SwitchToPathfinding() {
+        if (!_isMovementEstimated) {
+            return;
+        }
+        _isMovementEstimated = false;
         if (Messenger.eventTable.ContainsKey(Signals.TICK_STARTED)) {
             Messenger.RemoveListener(Signals.TICK_STARTED, EstimatedMove);
         }
@@ -289,7 +298,22 @@ public class CharacterMarker : PooledObject {
     #endregion
 
     #region Estimated Movement
+    public void SwitchToEstimatedMovement() {
+        if (_isMovementEstimated) {
+            return;
+        }
+        _isMovementEstimated = true;
+        _estimatedTravelTime = _currentPath.Count;
+        if(_estimatedTravelTime > 0) {
+            _currentTravelTime = 0;
+            StartWalkingAnimation();
+            Messenger.AddListener(Signals.TICK_STARTED, EstimatedMove);
+        } else {
+            Debug.LogError(character.name + " can't switch to estimated movement because travel time is zero");
+        }
+    }
     private void StartEstimatedMovement() {
+        _isMovementEstimated = true;
         character.currentParty.icon.SetIsTravelling(true);
         _currentTravelTime = 0;
         StartWalkingAnimation();
@@ -305,9 +329,10 @@ public class CharacterMarker : PooledObject {
             character.currentStructure.RemoveCharacterAtLocation(character);
             _destinationTile.structure.AddCharacterAtLocation(character, _destinationTile);
             character.currentParty.icon.SetIsTravelling(false);
+            Action preservedArrivalAction = _arrivalAction;
             StopMovement();
-            if (_arrivalAction != null) {
-                _arrivalAction();
+            if (preservedArrivalAction != null) {
+                preservedArrivalAction();
             }
         }
         _currentTravelTime++;
