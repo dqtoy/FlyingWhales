@@ -256,8 +256,10 @@ public class LocationStructure {
                 } else {
                     return unoccupiedTiles;
                 }
-            default:
+            case POINT_OF_INTEREST_TYPE.CHARACTER:
                 return unoccupiedTiles;
+            default:
+                return unoccupiedTiles.Where(x => !x.IsAdjacentTo(typeof(MagicCircle))).ToList();
         }
     }
     #endregion

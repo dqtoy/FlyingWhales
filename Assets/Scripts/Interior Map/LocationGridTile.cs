@@ -280,6 +280,15 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         }
         return false;
     }
+    public bool IsAdjacentTo(System.Type type) {
+        foreach (KeyValuePair<TileNeighbourDirection, LocationGridTile> keyValuePair in neighbours) {
+            if ((keyValuePair.Value.objHere != null && keyValuePair.Value.objHere.GetType() == type) 
+                || (keyValuePair.Value.occupant != null && keyValuePair.Value.occupant.GetType() == type)) {
+                return true;
+            }
+        }
+        return false;
+    }
     public bool IsAdjacentToPasssableTiles(int count = 1) {
         int passableCount = 0;
         foreach (KeyValuePair<TileNeighbourDirection, LocationGridTile> kvp in neighbours) {

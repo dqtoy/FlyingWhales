@@ -84,18 +84,18 @@ public class ScavengeEventFaction : Interaction {
     private void SupplyScavengedSuccessRewardEffect(InteractionState state) {
         //**Mechanics**: If the Structure is a Dungeon, randomize from the Dungeon's Supply Pile range.
         SupplyPile pile = structure.GetSupplyPile();
-        int obtainedSupply = pile.GetSuppliesObtained();
+        //int obtainedSupply = pile.GetSuppliesObtained();
         //if (structure.structureType == STRUCTURE_TYPE.WAREHOUSE) {
         //    _characterInvolved.homeArea.GetSuppliesFrom(interactable, obtainedSupply);
         //} else {
         //    _characterInvolved.homeArea.AdjustSuppliesInBank(obtainedSupply);
         //}
-        pile.TransferSuppliesTo(_characterInvolved.homeArea, obtainedSupply);
+        //pile.TransferSuppliesTo(_characterInvolved.homeArea, obtainedSupply);
 
-        if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(null, obtainedSupply.ToString(), LOG_IDENTIFIER.STRING_1);
-        }
-        state.AddLogFiller(new LogFiller(null, obtainedSupply.ToString(), LOG_IDENTIFIER.STRING_1));
+        //if (state.descriptionLog != null) {
+        //    state.descriptionLog.AddToFillers(null, obtainedSupply.ToString(), LOG_IDENTIFIER.STRING_1);
+        //}
+        //state.AddLogFiller(new LogFiller(null, obtainedSupply.ToString(), LOG_IDENTIFIER.STRING_1));
     }
     private void NoSupplyRewardEffect(InteractionState state) {
         

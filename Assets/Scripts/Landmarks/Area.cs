@@ -201,7 +201,7 @@ public class Area {
 #if WORLD_CREATION_TOOL
         SetCoreTile(worldcreator.WorldCreatorManager.Instance.GetHexTile(data.coreTileID));
 #else
-        SetSuppliesInBank(300);
+        SetSuppliesInBank(1000);
         SetCoreTile(GridMap.Instance.GetHexTile(data.coreTileID));
         ConstructAreaTasksInteractionWeights();
         //StartSupplyLine();

@@ -518,8 +518,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         allGoapPlans = new List<GoapPlan>();
 
         tiredness = TIREDNESS_DEFAULT;
-        fullness = FULLNESS_DEFAULT;
-        happiness = HAPPINESS_DEFAULT;
+        //Fullness value between 1300 and 1440.
+        fullness = UnityEngine.Random.Range(1300, FULLNESS_DEFAULT + 1);
+        //Happiness value between 100 and 240.
+        happiness = UnityEngine.Random.Range(100, HAPPINESS_DEFAULT + 1);
 
         hSkinColor = UnityEngine.Random.Range(-360f, 360f);
         hHairColor = UnityEngine.Random.Range(-360f, 360f);

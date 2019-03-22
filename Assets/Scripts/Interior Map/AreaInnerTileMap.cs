@@ -720,14 +720,31 @@ public class AreaInnerTileMap : MonoBehaviour {
 
     #region Details
     public void GenerateDetails() {
-        MapPerlinDetails(outsideTiles.Where(x => x.objHere == null && !x.HasNeighbourOfType(LocationGridTile.Tile_Type.Gate)).ToList());
+        //Generate details for the outside map
+        MapPerlinDetails(outsideTiles.Where(x => 
+        x.objHere == null 
+        && !x.HasNeighbourOfType(LocationGridTile.Tile_Type.Gate) 
+        && !x.IsAdjacentTo(typeof(MagicCircle))).ToList()); //Make this better!
+
         if (area.areaType != AREA_TYPE.DUNGEON) {
             if (area.structures.ContainsKey(STRUCTURE_TYPE.WORK_AREA)) {
-                List<LocationGridTile> validWorkAreaTiles = area.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA).tiles
-                    .Where(x => x.tileType != LocationGridTile.Tile_Type.Road 
-                    && x.objHere == null && !x.HasNeighbourOfType(LocationGridTile.Tile_Type.Gate)).ToList();
-                MapPerlinDetails(validWorkAreaTiles);
-                WorkAreaDetails(validWorkAreaTiles);
+                //only put details on tiles that
+                //  - do not already have details
+                //  - is not a road
+                //  - does not have an object place there (Point of Interest)
+                //  - is not near the gate (so as not to block path going outside)
+
+                //Generate details for inside map (Trees, shrubs, etc.)
+                MapPerlinDetails(area.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA).tiles
+                    .Where(x => !x.hasDetail && x.tileType != LocationGridTile.Tile_Type.Road
+                    && x.objHere == null && !x.HasNeighbourOfType(LocationGridTile.Tile_Type.Gate)
+                    && x.tileType != LocationGridTile.Tile_Type.Gate).ToList());
+
+                //Generate details for work area (crates, barrels)
+                WorkAreaDetails(area.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA).tiles
+                    .Where(x => !x.hasDetail && x.tileType != LocationGridTile.Tile_Type.Road
+                    && x.objHere == null && !x.HasNeighbourOfType(LocationGridTile.Tile_Type.Gate)
+                    && x.tileType != LocationGridTile.Tile_Type.Gate).ToList());
             }
         }
     }
@@ -1109,6 +1126,7 @@ public class AreaInnerTileMap : MonoBehaviour {
         summary += "\nTile Type: " + tile.tileType.ToString();
         summary += "\nTile State: " + tile.tileState.ToString();
         summary += "\nTile Access: " + tile.tileAccess.ToString();
+        summary += "\nHas Detail: " + tile.hasDetail.ToString();
         summary += "\nContent: " + tile.objHere?.ToString() ?? "None";
         if (tile.objHere != null) {
             summary += "\n\tObject State: " + tile.objHere.state.ToString();
@@ -1116,6 +1134,8 @@ public class AreaInnerTileMap : MonoBehaviour {
                 summary += "\n\tYield: " + (tile.objHere as Tree).yield.ToString();
             } else if (tile.objHere is Ore) {
                 summary += "\n\tYield: " + (tile.objHere as Ore).yield.ToString();
+            } else if (tile.objHere is SupplyPile) {
+                summary += "\n\tSupplies in Pile: " + (tile.objHere as SupplyPile).suppliesInPile.ToString();
             }
         }
         summary += "\nOccupant: " + tile.occupant?.name ?? "None";

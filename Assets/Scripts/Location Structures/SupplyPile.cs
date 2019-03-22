@@ -28,20 +28,7 @@ public class SupplyPile : TileObject, IPointOfInterest {
         this.location = location;
         poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.GET_SUPPLY, INTERACTION_TYPE.DROP_SUPPLY };
         Initialize(this, TILE_OBJECT_TYPE.SUPPLY_PILE);
-    }
-
-    public int GetSuppliesObtained() {
-        if (location.structureType == STRUCTURE_TYPE.DUNGEON) {
-            return Random.Range(location.location.dungeonSupplyRangeMin, location.location.dungeonSupplyRangeMax + 1);
-        } else {
-            return Random.Range(1, suppliesInPile);
-        }
-    }
-
-    public int GetAndReduceSuppliesObtained(Area reciever) {
-        int suppliesObtained = GetSuppliesObtained();
-        TransferSuppliesTo(reciever, suppliesObtained);
-        return suppliesObtained;
+        SetSuppliesInPile(1000);
     }
 
     public void SetSuppliesInPile(int amount) {
@@ -52,14 +39,10 @@ public class SupplyPile : TileObject, IPointOfInterest {
     public void AdjustSuppliesInPile(int adjustment) {
         suppliesInPile += adjustment;
         suppliesInPile = Mathf.Max(0, suppliesInPile);
-    }
-
-    public void TransferSuppliesTo(Area reciever, int amount) {
-        if (location.structureType == STRUCTURE_TYPE.WAREHOUSE) { //if supplies come from warehouse, reduce amount
-            location.location.AdjustSuppliesInBank(-amount);
-            reciever.AdjustSuppliesInBank(amount);
-        } else if (location.structureType == STRUCTURE_TYPE.DUNGEON) { //if supplies come from dungeon, do not reduce amount in area
-            reciever.AdjustSuppliesInBank(amount);
+        if (suppliesInPile == 0) {
+            //LocationGridTile loc = gridTileLocation;
+            location.RemovePOI(this);
+            //SetGridTileLocation(loc); //so that it can still be targetted by aware characters.
         }
     }
 
