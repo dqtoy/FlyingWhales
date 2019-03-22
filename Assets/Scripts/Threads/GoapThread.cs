@@ -8,6 +8,7 @@ public class GoapThread : Multithread {
     public GoapEffect goal { get; private set; }
     public IPointOfInterest target { get; private set; }
     public bool isPriority { get; private set; }
+    public bool isPersonalPlan { get; private set; }
     public List<CharacterAwareness> characterTargetsAwareness { get; private set; }
     public List<INTERACTION_TYPE> actorAllowedActions { get; private set; }
     public List<GoapAction> usableActions { get; private set; }
@@ -16,7 +17,7 @@ public class GoapThread : Multithread {
     //For recalculation
     public GoapPlan recalculationPlan;
 
-    public GoapThread(Character actor, IPointOfInterest target, GoapEffect goal, bool isPriority, List<CharacterAwareness> characterTargetsAwareness, List<INTERACTION_TYPE> actorAllowedActions, List<GoapAction> usableActions) {
+    public GoapThread(Character actor, IPointOfInterest target, GoapEffect goal, bool isPriority, List<CharacterAwareness> characterTargetsAwareness, List<INTERACTION_TYPE> actorAllowedActions, List<GoapAction> usableActions, bool isPersonalPlan) {
         this.createdPlan = null;
         this.recalculationPlan = null;
         this.actor = actor;
@@ -26,6 +27,7 @@ public class GoapThread : Multithread {
         this.characterTargetsAwareness = characterTargetsAwareness;
         this.actorAllowedActions = actorAllowedActions;
         this.usableActions = usableActions;
+        this.isPersonalPlan = isPersonalPlan;
     }
     public GoapThread(Character actor, GoapPlan currentPlan, List<GoapAction> usableActions) {
         this.createdPlan = null;
@@ -68,7 +70,7 @@ public class GoapThread : Multithread {
             }
             log += usableActions[i].goapName + " (" + usableActions[i].poiTarget.name + ")";
             if (usableActions[i].WillEffectsSatisfyPrecondition(goal)) {
-                GoapPlan plan = actor.planner.PlanActions(target, usableActions[i], usableActions);
+                GoapPlan plan = actor.planner.PlanActions(target, usableActions[i], usableActions, isPersonalPlan);
                 if (plan != null) {
                     allPlans.Add(plan);
                 }
