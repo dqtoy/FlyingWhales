@@ -1030,6 +1030,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.TILE_OBJECT_DESTROY:
                 goapAction = new TileObjectDestroy(actor, target);
                 break;
+            case INTERACTION_TYPE.ITEM_DESTROY:
+                goapAction = new ItemDestroy(actor, target);
+                break;
         }
         if(goapAction != null && willInitialize) {
             goapAction.Initialize();

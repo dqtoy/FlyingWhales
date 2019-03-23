@@ -177,7 +177,7 @@ public class SpecialToken : Token, IPointOfInterest {
         this.name = Utilities.NormalizeStringUpperCaseFirstLetters(this.specialTokenType.ToString());
         weight = appearanceRate;
         npcAssociatedInteractionType = INTERACTION_TYPE.NONE;
-        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.PICK_ITEM, INTERACTION_TYPE.STEAL, INTERACTION_TYPE.SCRAP };
+        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.PICK_ITEM, INTERACTION_TYPE.STEAL, INTERACTION_TYPE.SCRAP, INTERACTION_TYPE.ITEM_DESTROY, };
         _traits = new List<Trait>();
     }
     //public void AdjustQuantity(int amount) {

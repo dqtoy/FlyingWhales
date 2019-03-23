@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TileObjectDestroy : GoapAction {
-    public TileObjectDestroy(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.TILE_OBJECT_DESTROY, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+public class ItemDestroy : GoapAction {
+    public ItemDestroy(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.ITEM_DESTROY, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Hostile_Icon;
     }
 
@@ -33,15 +33,15 @@ public class TileObjectDestroy : GoapAction {
 
     #region State Effects
     private void PreDestroySuccess() {
-        currentState.AddLogFiller(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        currentState.AddLogFiller(null, poiTarget.name, LOG_IDENTIFIER.ITEM_1);
         currentState.AddLogFiller(poiTarget.gridTileLocation.structure.location, poiTarget.gridTileLocation.structure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
     }
     private void AfterDestroySuccess() {
-        //**After Effect 1**: Destroy target tile object
+        //**After Effect 1**: Destroy target item
         poiTarget.gridTileLocation.structure.RemovePOI(poiTarget);
     }
     private void PreTargetMissing() {
-        currentState.AddLogFiller(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        currentState.AddLogFiller(null, poiTarget.name, LOG_IDENTIFIER.ITEM_1);
     }
     #endregion
 

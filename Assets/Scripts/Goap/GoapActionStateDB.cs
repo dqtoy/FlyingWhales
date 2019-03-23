@@ -147,6 +147,10 @@ public static class GoapActionStateDB {
             new StateNameAndDuration(){ name = "Destroy Success", status = InteractionManager.Goap_State_Success, duration = 0 },
             new StateNameAndDuration(){ name = "Target Missing", status = InteractionManager.Goap_State_Fail, duration = 0 },
         } },
+        {INTERACTION_TYPE.ITEM_DESTROY, new StateNameAndDuration[]{
+            new StateNameAndDuration(){ name = "Destroy Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+            new StateNameAndDuration(){ name = "Target Missing", status = InteractionManager.Goap_State_Fail, duration = 0 },
+        } },
     };
 }
 

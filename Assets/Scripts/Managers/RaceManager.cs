@@ -328,6 +328,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.GET_SUPPLY,
                 INTERACTION_TYPE.DROP_SUPPLY,
                 INTERACTION_TYPE.TILE_OBJECT_DESTROY,
+                INTERACTION_TYPE.ITEM_DESTROY,
             } },
             { RACE.ELVES, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -391,6 +392,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.GET_SUPPLY,
                 INTERACTION_TYPE.DROP_SUPPLY,
                 INTERACTION_TYPE.TILE_OBJECT_DESTROY,
+                INTERACTION_TYPE.ITEM_DESTROY,
             } },
             { RACE.GOBLIN, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -454,6 +456,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.GET_SUPPLY,
                 INTERACTION_TYPE.DROP_SUPPLY,
                 INTERACTION_TYPE.TILE_OBJECT_DESTROY,
+                INTERACTION_TYPE.ITEM_DESTROY,
             } },
             { RACE.FAERY, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -517,6 +520,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.GET_SUPPLY,
                 INTERACTION_TYPE.DROP_SUPPLY,
                 INTERACTION_TYPE.TILE_OBJECT_DESTROY,
+                INTERACTION_TYPE.ITEM_DESTROY,
             } },
             { RACE.SKELETON, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -580,6 +584,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.GET_SUPPLY,
                 INTERACTION_TYPE.DROP_SUPPLY,
                 INTERACTION_TYPE.TILE_OBJECT_DESTROY,
+                INTERACTION_TYPE.ITEM_DESTROY,
             } },
             { RACE.SPIDER, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -633,6 +638,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.PATROL,
                 INTERACTION_TYPE.STEAL,
                 INTERACTION_TYPE.TILE_OBJECT_DESTROY,
+                INTERACTION_TYPE.ITEM_DESTROY,
             } },
             { RACE.WOLF, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -686,6 +692,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.PATROL,
                 INTERACTION_TYPE.STEAL,
                 INTERACTION_TYPE.TILE_OBJECT_DESTROY,
+                INTERACTION_TYPE.ITEM_DESTROY,
             } },
             { RACE.DRAGON, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -739,6 +746,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.PATROL,
                 INTERACTION_TYPE.STEAL,
                 INTERACTION_TYPE.TILE_OBJECT_DESTROY,
+                INTERACTION_TYPE.ITEM_DESTROY,
             } },
         };
     }
