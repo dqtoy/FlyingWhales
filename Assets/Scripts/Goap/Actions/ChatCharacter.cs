@@ -25,7 +25,13 @@ public class ChatCharacter : GoapAction {
     }
     public override void PerformActualAction() {
         if (poiTarget.gridTileLocation.structure == actor.gridTileLocation.structure) {
-            SetState("Chat Success");
+            Character target = poiTarget as Character;
+            if (target.currentAction != null 
+                && (target.currentAction.goapType == INTERACTION_TYPE.SLEEP || target.currentAction.goapType == INTERACTION_TYPE.SLEEP_OUTSIDE)) {
+                SetState("Chat Fail");
+            } else {
+                SetState("Chat Success");
+            }
         } else {
             SetState("Target Missing");
         }
@@ -106,13 +112,16 @@ public class ChatCharacter : GoapAction {
     #region State Effects
     private void PreChatSuccess() {
         actor.AdjustDoNotGetLonely(1);
+        (poiTarget as Character).AdjustDoNotGetLonely(1);
         currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
     }
     private void PerTickChatSuccess() {
         actor.AdjustHappiness(10);
+        (poiTarget as Character).AdjustHappiness(5);
     }
     private void AfterChatSuccess() {
         actor.AdjustDoNotGetLonely(-1);
+        (poiTarget as Character).AdjustDoNotGetLonely(-1);
     }
     private void PreTargetMissing() {
         currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -123,6 +132,10 @@ public class ChatCharacter : GoapAction {
     protected bool Requirement() {
         if (actor != poiTarget) {
             Character target = poiTarget as Character;
+            if (target.currentAction != null 
+                && (target.currentAction.goapType == INTERACTION_TYPE.SLEEP || target.currentAction.goapType == INTERACTION_TYPE.SLEEP_OUTSIDE)) {
+                return false;
+            }
             return target.role.roleType != CHARACTER_ROLE.BEAST;
         }
         return false;

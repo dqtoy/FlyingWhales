@@ -72,6 +72,7 @@ public static class GoapActionStateDB {
         } },
         {INTERACTION_TYPE.CHAT_CHARACTER, new StateNameAndDuration[]{
             new StateNameAndDuration(){ name = "Chat Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(1) },
+            new StateNameAndDuration(){ name = "Chat Fail", status = InteractionManager.Goap_State_Fail, duration = 0 },
             new StateNameAndDuration(){ name = "Target Missing", status = InteractionManager.Goap_State_Fail, duration = 0 },
         } },
         {INTERACTION_TYPE.ARGUE_CHARACTER, new StateNameAndDuration[]{
