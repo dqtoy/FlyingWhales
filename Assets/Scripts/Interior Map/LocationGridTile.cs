@@ -332,13 +332,13 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
             parentAreaMap.ShowIntelItemAt(this, InteractionManager.Instance.CreateNewIntel(objHere));
         } else if (occupant != null) {
             UIManager.Instance.ShowCharacterInfo(occupant);
-            LocationGridTile nearestTile = occupant.GetNearestUnoccupiedTileFromThis();
-            parentAreaMap.QuicklyHighlightTile(nearestTile);
-            if (nearestTile != null) {
-                parentAreaMap.QuicklyHighlightTile(nearestTile);
-            } else {
-                Debug.LogWarning(occupant.ToString() + " does not have a nearest unoccupied tile!");
-            }
+            //LocationGridTile nearestTile = occupant.GetNearestUnoccupiedTileFromThis();
+            //parentAreaMap.QuicklyHighlightTile(nearestTile);
+            //if (nearestTile != null) {
+            //    parentAreaMap.QuicklyHighlightTile(nearestTile);
+            //} else {
+            //    Debug.LogWarning(occupant.ToString() + " does not have a nearest unoccupied tile!");
+            //}
         }
     }
     #endregion
