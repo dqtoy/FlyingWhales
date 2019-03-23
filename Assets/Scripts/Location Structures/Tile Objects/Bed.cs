@@ -25,7 +25,7 @@ public class Bed : TileObject, IPointOfInterest {
 
     public Bed(LocationStructure location) {
         this.location = location;
-        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.SLEEP };
+        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.SLEEP, INTERACTION_TYPE.TILE_OBJECT_DESTROY, };
         Initialize(this, TILE_OBJECT_TYPE.BED);
     }
 

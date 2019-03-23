@@ -28,7 +28,7 @@ public class Tree : TileObject, IPointOfInterest {
 
     public Tree(LocationStructure location) {
         this.location = location;
-        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.CHOP_WOOD };
+        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.CHOP_WOOD, INTERACTION_TYPE.TILE_OBJECT_DESTROY, };
         Initialize(this, TILE_OBJECT_TYPE.TREE);
         yield = Random.Range(15, 36);
     }

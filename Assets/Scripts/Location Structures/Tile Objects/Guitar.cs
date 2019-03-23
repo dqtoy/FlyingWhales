@@ -25,7 +25,7 @@ public class Guitar : TileObject, IPointOfInterest {
 
     public Guitar(LocationStructure location) {
         this.location = location;
-        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.PLAY_GUITAR };
+        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.PLAY_GUITAR, INTERACTION_TYPE.TILE_OBJECT_DESTROY, };
         Initialize(this, TILE_OBJECT_TYPE.GUITAR);
     }
 
