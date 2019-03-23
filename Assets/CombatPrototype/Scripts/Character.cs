@@ -2903,9 +2903,11 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             if (tiredOrExhausted.name == "Exhausted") {
                 value = 100;
             } else {
-                if (currentTimeInWords == TIME_IN_WORDS.MORNING) {
+                if (currentTimeInWords == TIME_IN_WORDS.EARLY_NIGHT) {
                     value = 15;
                 } else if (currentTimeInWords == TIME_IN_WORDS.LATE_NIGHT) {
+                    value = 65;
+                } else if (currentTimeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
                     value = 65;
                 }
             }
@@ -2927,13 +2929,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 value = 100;
             } else {
                 if (currentTimeInWords == TIME_IN_WORDS.MORNING) {
-                    value = 15;
+                    value = 25;
                 } else if (currentTimeInWords == TIME_IN_WORDS.AFTERNOON) {
-                    value = 35;
+                    value = 40;
                 } else if (currentTimeInWords == TIME_IN_WORDS.EARLY_NIGHT) {
-                    value = 35;
+                    value = 40;
                 } else if (currentTimeInWords == TIME_IN_WORDS.LATE_NIGHT) {
-                    value = 15;
+                    value = 25;
                 }
             }
             if (chance < value) {
