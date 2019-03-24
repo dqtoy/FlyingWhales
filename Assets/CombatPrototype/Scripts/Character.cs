@@ -2854,7 +2854,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             if(chance < 15) {
                 Character target = specificLocation.GetRandomCharacterAtLocationExcept(this);
                 if (target != null) {
-                    StartGOAP(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_NON_POSITIVE_TRAIT, conditionKey = "Disabler", targetPOI = target }, target);
+                    StartGOAP(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_NON_POSITIVE_TRAIT, conditionKey = "Disabler", targetPOI = target }, target, GOAP_CATEGORY.NONE);
                     return true;
                 }
             } else {
@@ -2862,7 +2862,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 if (chance < 15) {
                     IPointOfInterest target = specificLocation.GetRandomTileObject();
                     if (target != null) {
-                        StartGOAP(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.DESTROY, conditionKey = target, targetPOI = target }, target);
+                        StartGOAP(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.DESTROY, conditionKey = target, targetPOI = target }, target, GOAP_CATEGORY.NONE);
                         return true;
                     }
                 }
@@ -2874,7 +2874,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         TIME_IN_WORDS currentTimeInWords = GameManager.GetCurrentTimeInWordsOfTick();
         Trait hungryOrStarving = GetTraitOr("Starving", "Hungry");
 
-        if (hungryOrStarving != null && GetPlanWithGoalEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY) == null) {
+        if (hungryOrStarving != null && GetPlanByCategory(GOAP_CATEGORY.FULLNESS) == null) {
             int chance = UnityEngine.Random.Range(0, 100);
             int value = 0;
             if (hungryOrStarving.name == "Starving") {
@@ -2887,7 +2887,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 }
             }
             if (chance < value) {
-                StartGOAP(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, this, true);
+                StartGOAP(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, this, GOAP_CATEGORY.FULLNESS, true);
                 return true;
             }
         }
@@ -2897,7 +2897,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         TIME_IN_WORDS currentTimeInWords = GameManager.GetCurrentTimeInWordsOfTick();
         Trait tiredOrExhausted = GetTraitOr("Exhausted", "Tired");
 
-        if (tiredOrExhausted != null && GetPlanWithGoalEffect(GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY) == null) {
+        if (tiredOrExhausted != null && GetPlanByCategory(GOAP_CATEGORY.TIREDNESS) == null) {
             int chance = UnityEngine.Random.Range(0, 100);
             int value = 0;
             if (tiredOrExhausted.name == "Exhausted") {
@@ -2912,7 +2912,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 }
             }
             if (chance < value) {
-                StartGOAP(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = null, targetPOI = this }, this, true);
+                StartGOAP(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = null, targetPOI = this }, this, GOAP_CATEGORY.TIREDNESS, true);
                 return true;
             }
         }
@@ -2922,7 +2922,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         TIME_IN_WORDS currentTimeInWords = GameManager.GetCurrentTimeInWordsOfTick();
         Trait lonelyOrForlorn = GetTraitOr("Forlorn", "Lonely");
 
-        if (lonelyOrForlorn != null && GetPlanWithGoalEffect(GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY) == null) {
+        if (lonelyOrForlorn != null && GetPlanByCategory(GOAP_CATEGORY.HAPPINESS) == null) {
             int chance = UnityEngine.Random.Range(0, 100);
             int value = 0;
             if (lonelyOrForlorn.name == "Forlorn") {
@@ -2939,41 +2939,43 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 }
             }
             if (chance < value) {
-                StartGOAP(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = null, targetPOI = this }, this, true);
+                StartGOAP(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = null, targetPOI = this }, this, GOAP_CATEGORY.HAPPINESS, true);
                 return true;
             }
         }
         return false;
     }
     private bool PlanWorkActions() {
-        if(this.faction.id != FactionManager.Instance.neutralFaction.id) {
-            //WeightedDictionary<string> weightedDictionary = new WeightedDictionary<string>();
-            ////Drop Supply Plan
-            //if(supply > role.reservedSupply) {
-            //    weightedDictionary.AddElement("Drop Supply", 2);
-            //}
-            ////Obtain Supply Plan
-            //if(role.roleType == CHARACTER_ROLE.CIVILIAN) {
-            //    SupplyPile supplyPile = homeArea.supplyPile;
-            //    if(supplyPile.suppliesInPile < 100) {
-            //        weightedDictionary.AddElement("Obtain Supply", 4);
-            //    }
-            //} else {
-            //    if (supply < role.reservedSupply) {
-            //        weightedDictionary.AddElement("Obtain Supply", 4);
-            //    }
-            //}
+        if(this.faction.id != FactionManager.Instance.neutralFaction.id && GetPlanByCategory(GOAP_CATEGORY.WORK) == null) {
+            WeightedDictionary<string> weightedDictionary = new WeightedDictionary<string>();
+            //Drop Supply Plan
+            if (supply > role.reservedSupply) {
+                weightedDictionary.AddElement("Drop Supply", 2);
+            }
+            //Obtain Supply Plan
+            if (role.roleType == CHARACTER_ROLE.CIVILIAN) {
+                SupplyPile supplyPile = homeArea.supplyPile;
+                if (supplyPile.suppliesInPile < 100) {
+                    weightedDictionary.AddElement("Obtain Supply", 4);
+                }
+            } else {
+                if (supply < role.reservedSupply) {
+                    weightedDictionary.AddElement("Obtain Supply", 4);
+                }
+            }
 
-            //if(weightedDictionary.Count > 0) {
-            //    string result = weightedDictionary.PickRandomElementGivenWeights();
-            //    SupplyPile supplyPile = homeArea.supplyPile;
-            //    if (result == "Drop Supply") {
-            //        StartGOAP(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_SUPPLY, supply, supplyPile), supplyPile);
-            //    } else {
-            //        StartGOAP(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_SUPPLY, supplyPile.suppliesInPile, this), this);
-            //    }
-            //}
-            //return true;
+            if (weightedDictionary.Count > 0) {
+                string result = weightedDictionary.PickRandomElementGivenWeights();
+                SupplyPile supplyPile = homeArea.supplyPile;
+                if (result == "Drop Supply") {
+                    StartGOAP(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_SUPPLY, supply, supplyPile), supplyPile, GOAP_CATEGORY.WORK);
+                } else {
+                    StartGOAP(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_SUPPLY, supplyPile.suppliesInPile, this), this, GOAP_CATEGORY.WORK);
+                }
+                return true;
+            } else {
+                return false;
+            }
         }
         return false;
     }
@@ -2983,7 +2985,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             Stroll goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.STROLL, this, this) as Stroll;
             goapAction.SetTargetStructure(currentStructure);
             GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
-            GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE });
+            GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.IDLE);
             allGoapPlans.Add(goapPlan);
             return true;
         //}
@@ -2993,7 +2995,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.RETURN_HOME, this, this);
         goapAction.SetTargetStructure();
         GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
-        GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE });
+        GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.IDLE);
         allGoapPlans.Add(goapPlan);
         return true;
     }
@@ -4061,7 +4063,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         poiGoapActions.Add(INTERACTION_TYPE.CHAT_CHARACTER);
         poiGoapActions.Add(INTERACTION_TYPE.ARGUE_CHARACTER);
     }
-    public void StartGOAP(GoapEffect goal, IPointOfInterest target, bool isPriority = false, List<Character> otherCharactePOIs = null, bool isPersonalPlan = true) {
+    public void StartGOAP(GoapEffect goal, IPointOfInterest target, GOAP_CATEGORY category, bool isPriority = false, List<Character> otherCharactePOIs = null, bool isPersonalPlan = true) {
         List<CharacterAwareness> characterTargetsAwareness = new List<CharacterAwareness>();
         if (target.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
             CharacterAwareness characterAwareness = AddAwareness(target) as CharacterAwareness;
@@ -4079,71 +4081,45 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         }
 
-        List<INTERACTION_TYPE> actorAllowedActions = RaceManager.Instance.GetNPCInteractionsOfRace(this);
-        List<GoapAction> usableActions = new List<GoapAction>();
-        foreach (KeyValuePair<POINT_OF_INTEREST_TYPE, List<IAwareness>> kvp in awareness) {
-            if (kvp.Key == POINT_OF_INTEREST_TYPE.CHARACTER) {
-                for (int i = 0; i < kvp.Value.Count; i++) {
-                    Character character = kvp.Value[i].poi as Character;
-                    if (character.isDead) {
-                        kvp.Value.RemoveAt(i);
-                        i--;
-                    } else {
-                        if (character.gridTileLocation.structure == currentStructure || IsPOIInCharacterAwarenessList(character, characterTargetsAwareness)) {
-                            List<GoapAction> awarenessActions = kvp.Value[i].poi.AdvertiseActionsToActor(this, actorAllowedActions);
-                            if (awarenessActions != null && awarenessActions.Count > 0) {
-                                usableActions.AddRange(awarenessActions);
-                            }
-                        }
-                    }
-                }
-            } else {
-                for (int i = 0; i < kvp.Value.Count; i++) {
-                    List<GoapAction> awarenessActions = kvp.Value[i].poi.AdvertiseActionsToActor(this, actorAllowedActions);
-                    if (awarenessActions != null && awarenessActions.Count > 0) {
-                        usableActions.AddRange(awarenessActions);
-                    }
-                }
-            }
-        }
+        //List<INTERACTION_TYPE> actorAllowedActions = RaceManager.Instance.GetNPCInteractionsOfRace(this);
+        //List<GoapAction> usableActions = new List<GoapAction>();
+        //foreach (KeyValuePair<POINT_OF_INTEREST_TYPE, List<IAwareness>> kvp in awareness) {
+        //    if (kvp.Key == POINT_OF_INTEREST_TYPE.CHARACTER) {
+        //        for (int i = 0; i < kvp.Value.Count; i++) {
+        //            Character character = kvp.Value[i].poi as Character;
+        //            if (character.isDead) {
+        //                kvp.Value.RemoveAt(i);
+        //                i--;
+        //            } else {
+        //                if (character.gridTileLocation.structure == currentStructure || IsPOIInCharacterAwarenessList(character, characterTargetsAwareness)) {
+        //                    List<GoapAction> awarenessActions = kvp.Value[i].poi.AdvertiseActionsToActor(this, actorAllowedActions);
+        //                    if (awarenessActions != null && awarenessActions.Count > 0) {
+        //                        usableActions.AddRange(awarenessActions);
+        //                    }
+        //                }
+        //            }
+        //        }
+        //    } else {
+        //        for (int i = 0; i < kvp.Value.Count; i++) {
+        //            List<GoapAction> awarenessActions = kvp.Value[i].poi.AdvertiseActionsToActor(this, actorAllowedActions);
+        //            if (awarenessActions != null && awarenessActions.Count > 0) {
+        //                usableActions.AddRange(awarenessActions);
+        //            }
+        //        }
+        //    }
+        //}
         _numOfWaitingForGoapThread ++;
         //Debug.LogWarning(name + " sent a plan to other thread(" + _numOfWaitingForGoapThread + ")");
-        MultiThreadPool.Instance.AddToThreadPool(new GoapThread(this, target, goal, isPriority, characterTargetsAwareness, actorAllowedActions, usableActions, isPersonalPlan));
+        MultiThreadPool.Instance.AddToThreadPool(new GoapThread(this, target, goal, category, isPriority, characterTargetsAwareness, isPersonalPlan));
     }
     public void RecalculatePlan(GoapPlan currentPlan) {
         currentPlan.SetIsBeingRecalculated(true);
 
-        List<GoapAction> usableActions = new List<GoapAction>();
-        List<INTERACTION_TYPE> actorAllowedActions = RaceManager.Instance.GetNPCInteractionsOfRace(this);
-        foreach (KeyValuePair<POINT_OF_INTEREST_TYPE, List<IAwareness>> kvp in awareness) {
-            if (kvp.Key == POINT_OF_INTEREST_TYPE.CHARACTER) {
-                for (int i = 0; i < kvp.Value.Count; i++) {
-                    Character character = kvp.Value[i].poi as Character;
-                    if (character.isDead) {
-                        kvp.Value.RemoveAt(i);
-                        i--;
-                    } else {
-                        if (character.gridTileLocation.structure == currentStructure || IsPOIInCharacterAwarenessList(character, currentPlan.goalCharacterTargets)) {
-                            List<GoapAction> awarenessActions = kvp.Value[i].poi.AdvertiseActionsToActor(this, actorAllowedActions);
-                            if (awarenessActions != null && awarenessActions.Count > 0) {
-                                usableActions.AddRange(awarenessActions);
-                            }
-                        }
-                    }
-                }
-            } else {
-                for (int i = 0; i < kvp.Value.Count; i++) {
-                    List<GoapAction> awarenessActions = kvp.Value[i].poi.AdvertiseActionsToActor(this, actorAllowedActions);
-                    if (awarenessActions != null && awarenessActions.Count > 0) {
-                        usableActions.AddRange(awarenessActions);
-                    }
-                }
-            }
-        }
+        
 
-        MultiThreadPool.Instance.AddToThreadPool(new GoapThread(this, currentPlan, usableActions));
+        MultiThreadPool.Instance.AddToThreadPool(new GoapThread(this, currentPlan));
     }
-    private bool IsPOIInCharacterAwarenessList(IPointOfInterest poi, List<CharacterAwareness> awarenesses) {
+    public bool IsPOIInCharacterAwarenessList(IPointOfInterest poi, List<CharacterAwareness> awarenesses) {
         for (int i = 0; i < awarenesses.Count; i++) {
             if (awarenesses[i].poi == poi) {
                 return true;
@@ -4352,6 +4328,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return null;
     }
+    public GoapPlan GetPlanByCategory(GOAP_CATEGORY category) {
+        for (int i = 0; i < allGoapPlans.Count; i++) {
+            if (allGoapPlans[i].category == category) {
+                return allGoapPlans[i];
+            }
+        }
+        return null;
+    }
 
     //For testing: Drop Character
     public void DropACharacter() {
@@ -4359,7 +4343,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             List<IAwareness> characterAwarenesses = awareness[POINT_OF_INTEREST_TYPE.CHARACTER];
             Character randomTarget = characterAwarenesses[UnityEngine.Random.Range(0, characterAwarenesses.Count)].poi as Character;
             GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = homeArea, targetPOI = randomTarget };
-            StartGOAP(goapEffect, randomTarget);
+            StartGOAP(goapEffect, randomTarget, GOAP_CATEGORY.REACTION);
         }
     }
 

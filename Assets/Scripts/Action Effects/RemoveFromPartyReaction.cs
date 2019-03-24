@@ -32,7 +32,7 @@ public class RemoveFromPartyReaction : ActionEffectReaction {
                 if (character.characterClass.className == "Soldier" || character.characterClass.className == "Adventurer") {
                     //If the target is an enemy of abducted or restrained character: 
                     //Character will create a Release Plan. Add the target as Relevant Target.
-                    character.StartGOAP(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Abducted" }, targetCharacter);
+                    character.StartGOAP(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Abducted" }, targetCharacter, GOAP_CATEGORY.REACTION);
                     if (justAddedPlan) {
                         return string.Format("{0} is in trouble? I must save {1}.", targetCharacter.name, Utilities.GetPronounString(targetCharacter.gender, PRONOUN_TYPE.REFLEXIVE, false));
                     } else {
@@ -40,7 +40,7 @@ public class RemoveFromPartyReaction : ActionEffectReaction {
                     }
                 } else {
                     //Character will create a Release Help Plan. Add the target as Relevant Target.
-                    character.StartGOAP(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Abducted" }, targetCharacter);
+                    character.StartGOAP(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Abducted" }, targetCharacter, GOAP_CATEGORY.REACTION);
                     if (justAddedPlan) {
                         return string.Format("{0} is in trouble? I must find someone who can save {1}.", targetCharacter.name, Utilities.GetPronounString(targetCharacter.gender, PRONOUN_TYPE.REFLEXIVE, false));
                     } else {

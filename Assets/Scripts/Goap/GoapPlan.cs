@@ -15,12 +15,14 @@ public class GoapPlan {
     public bool isBeingRecalculated { get; private set; }
     public bool isPersonalPlan { get; private set; }
     public GOAP_PLAN_STATE state { get; private set; }
+    public GOAP_CATEGORY category { get; private set; }
 
-    public GoapPlan(GoapNode startingNode, GOAP_EFFECT_CONDITION[] goalEffects, bool isPersonalPlan = true) {
+    public GoapPlan(GoapNode startingNode, GOAP_EFFECT_CONDITION[] goalEffects, GOAP_CATEGORY category, bool isPersonalPlan = true) {
         this.startingNode = startingNode;
         this.currentNode = startingNode;
         this.goalEffects = goalEffects;
         this.isPersonalPlan = isPersonalPlan;
+        this.category = category;
         allNodes = new List<GoapNode>();
         ConstructAllNodes();
     }

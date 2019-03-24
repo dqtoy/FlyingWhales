@@ -48,7 +48,7 @@ public class RileUp : PlayerJobAction {
         UIManager.Instance.HideObjectPicker();
 
         GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = _targetCharacter.homeArea, targetPOI = character };
-        _targetCharacter.StartGOAP(goapEffect, character);
+        _targetCharacter.StartGOAP(goapEffect, character, GOAP_CATEGORY.REACTION);
     }
     private bool CanRileUpCharacter(Character character) {
         if(_targetCharacter == character) {

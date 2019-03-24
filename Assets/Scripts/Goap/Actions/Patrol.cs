@@ -99,7 +99,7 @@ public class Patrol : GoapAction {
                 _targetStructure = factionLeader.homeStructure;
             }else if(chosenStructureType == STRUCTURE_TYPE.DWELLING) {
                 if(factionLeader != null && dwellingChoices != null) {
-                    _targetStructure = dwellingChoices[UnityEngine.Random.Range(0, dwellingChoices.Count)];
+                    _targetStructure = dwellingChoices[Utilities.rng.Next(0, dwellingChoices.Count)];
                 } else {
                     _targetStructure = area.GetRandomStructureOfType(chosenStructureType);
                 }

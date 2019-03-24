@@ -38,6 +38,10 @@ public class Steal : GoapAction {
         _targetStructure = awareness.knownLocation.structure;
         targetTile = awareness.knownLocation;
     }
+    public override void FailAction() {
+        base.FailAction();
+        SetState("Target Missing");
+    }
     #endregion
 
     #region Requirements
