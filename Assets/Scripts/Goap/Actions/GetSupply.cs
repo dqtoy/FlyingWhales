@@ -17,7 +17,12 @@ public class GetSupply : GoapAction {
     }
     public override void PerformActualAction() {
         if (poiTarget.gridTileLocation.structure == actor.gridTileLocation.structure) {
-            SetState("Take Success");
+            SupplyPile supplyPile = poiTarget as SupplyPile;
+            if (supplyPile.suppliesInPile > 0) {
+                SetState("Take Success");
+            } else {
+                SetState("Take Fail");
+            }
         } else {
             SetState("Target Missing");
         }
@@ -63,9 +68,12 @@ public class GetSupply : GoapAction {
         actor.AdjustSupply(takenSupply);
         supplyPile.AdjustSuppliesInPile(-takenSupply);
     }
-    private void PreTargetMissing() {
-        currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
-    }
+    //private void PreTakeFail() {
+    //    currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
+    //}
+    //private void PreTargetMissing() {
+    //    currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
+    //}
     //public void AfterTargetMissing() {
     //    actor.RemoveAwareness(poiTarget);
     //}

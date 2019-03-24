@@ -39,11 +39,11 @@ public class SupplyPile : TileObject, IPointOfInterest {
     public void AdjustSuppliesInPile(int adjustment) {
         suppliesInPile += adjustment;
         suppliesInPile = Mathf.Max(0, suppliesInPile);
-        if (suppliesInPile == 0) {
-            //LocationGridTile loc = gridTileLocation;
-            location.RemovePOI(this);
-            //SetGridTileLocation(loc); //so that it can still be targetted by aware characters.
-        }
+        //if (suppliesInPile == 0) {
+        //    //LocationGridTile loc = gridTileLocation;
+        //    location.RemovePOI(this);
+        //    //SetGridTileLocation(loc); //so that it can still be targetted by aware characters.
+        //}
     }
 
     public bool HasSupply() {
