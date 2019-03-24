@@ -34,7 +34,10 @@ public class Drink : GoapAction {
     protected override int GetCost() {
         return Utilities.rng.Next(7, 10);
     }
-
+    public override void FailAction() {
+        base.FailAction();
+        SetState("Target Missing");
+    }
     #endregion
 
     #region State Effects

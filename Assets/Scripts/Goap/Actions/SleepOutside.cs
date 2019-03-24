@@ -34,7 +34,7 @@ public class SleepOutside : GoapAction {
     public override void SetTargetStructure() {
         List<LocationStructure> choices = actor.specificLocation.GetStructuresOfType(STRUCTURE_TYPE.WILDERNESS).Where(x => x.unoccupiedTiles.Count > 0).ToList();
         choices.AddRange(actor.specificLocation.GetStructuresOfType(STRUCTURE_TYPE.DWELLING).Where(x => x.unoccupiedTiles.Count > 0 && !x.IsOccupied()));
-        _targetStructure = choices[Random.Range(0, choices.Count)];
+        _targetStructure = choices[Utilities.rng.Next(0, choices.Count)];
         base.SetTargetStructure();
     }
     #endregion

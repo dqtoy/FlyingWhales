@@ -35,10 +35,12 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 6e98e7305208df84d9a40d1e71f230d0, type: 3}
   - {fileID: 21300000, guid: 4bc20e6069bd2a34399027e4cc618bc2, type: 3}
   - {fileID: 21300000, guid: dfaabd8072304c74eb5487b3a43d9850, type: 3}
+  - {fileID: 21300000, guid: 95f79231f93a3f0499e46aa40e19fcef, type: 3}
   - {fileID: 21300000, guid: c46fa5b1eb9140743979afe7c0bccdf4, type: 3}
   - {fileID: 21300000, guid: 6fc6aed1faff671429136cccc8493b42, type: 3}
   - {fileID: 21300000, guid: 4ebda2420b6477148ab6436cfa58dbc0, type: 3}
   - {fileID: 21300000, guid: 586fbee221a9f5b47ad90762d0ab9ec9, type: 3}
+  - {fileID: 21300000, guid: 5a786d93d2807cf40b59d2f8e2175578, type: 3}
   - {fileID: 21300000, guid: 1656d52481b04e44bad547c4389fcd5a, type: 3}
   - {fileID: 21300000, guid: e1b7a9c4d7d3de24d83f872cbf414216, type: 3}
   - {fileID: 21300000, guid: da7bd83586668da41b63bd5f848053c8, type: 3}
@@ -47,23 +49,30 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 117a7958b7b80384fa8e7a1b09a4caeb, type: 3}
   - {fileID: 21300000, guid: 45b22988c879646488b23dcc2915bc35, type: 3}
   - {fileID: 21300000, guid: bc6a8fc8cedacc64ea511731cf7d25a6, type: 3}
+  - {fileID: 21300000, guid: f40590d8658d1cd45924f2e84e08d0d4, type: 3}
   - {fileID: 21300000, guid: 633fb2e8b5d890c40959c1167376d4be, type: 3}
   - {fileID: 21300000, guid: dbc19c69feaff6a49ad02e284efa82ff, type: 3}
+  - {fileID: 21300000, guid: d0440b2a2239fdc4d9c82c807fb76a59, type: 3}
   - {fileID: 21300000, guid: d100023a8cd7a7c43a03530185cb581c, type: 3}
   - {fileID: 21300000, guid: d1f332aa27640674b96169f5ea7ec243, type: 3}
+  - {fileID: 21300000, guid: 5a6c315d820be4a47be6b608d557c894, type: 3}
   - {fileID: 21300000, guid: d22266cdc64a6b642990a83496dbb5d4, type: 3}
   - {fileID: 21300000, guid: c4d7104e1102ac44b971c8b8f79159c3, type: 3}
+  - {fileID: 21300000, guid: 4a350f5e5db0b524b8f529b0332d1359, type: 3}
   - {fileID: 21300000, guid: 58aaaa6e7ca84b246a0072bf4a326c99, type: 3}
+  - {fileID: 21300000, guid: a0bf001f1e836dd4fb26d8cdbda6577a, type: 3}
   - {fileID: 21300000, guid: a05ef86f5362d7046a14344e817354e1, type: 3}
   - {fileID: 21300000, guid: 4110c4df7cf393d47992fe735f160123, type: 3}
   m_PackedSpriteNamesToIndex:
   - human_m_walk01
   - human_f_walk01
   - human_m_walk02
+  - action_icon_hostile
   - skeleton_idle03
   - human_f_walk02
   - human_f_walk00
   - human_f_idle01
+  - action_icon_eat
   - skeleton_walk02
   - human_m_walk03
   - human_f_idle03
@@ -72,13 +81,18 @@ SpriteAtlas:
   - skeleton_idle00
   - human_m_idle00
   - human_f_walk03
+  - ActionIcon
   - human_f_idle00
   - human_m_idle01
+  - action_icon_work
   - human_m_idle02
   - human_m_walk00
+  - action_icon_social
   - skeleton_walk01
   - skeleton_idle01
+  - action_icon_joy
   - skeleton_idle02
+  - action_icon_sleep
   - skeleton_walk00
   - human_f_idle02
   m_Tag: CharacterAtlas

@@ -2171,7 +2171,7 @@ public class InteractionManager : MonoBehaviour {
                 //**Nearby**: an unoccupied tile within a 3 tile radius around the character
                 choices = actor.specificLocation.areaMap.GetTilesInRadius(actor.gridTileLocation, 3).Where(x => !x.isOccupied).ToList();
                 if (choices.Count > 0) {
-                    chosenTile = choices[UnityEngine.Random.Range(0, choices.Count)];
+                    chosenTile = choices[Utilities.rng.Next(0, choices.Count)];
                 }
                 break;
             case ACTION_LOCATION_TYPE.RANDOM_LOCATION:
@@ -2179,7 +2179,7 @@ public class InteractionManager : MonoBehaviour {
                 specifiedStructure = other[0] as LocationStructure;
                 choices = specifiedStructure.unoccupiedTiles;
                 if (choices.Count > 0) {
-                    chosenTile = choices[UnityEngine.Random.Range(0, choices.Count)];
+                    chosenTile = choices[Utilities.rng.Next(0, choices.Count)];
                 }
                 break;
             case ACTION_LOCATION_TYPE.RANDOM_LOCATION_B:
@@ -2187,14 +2187,14 @@ public class InteractionManager : MonoBehaviour {
                 specifiedStructure = other[0] as LocationStructure;
                 choices = specifiedStructure.unoccupiedTiles.Where(x => x.UnoccupiedNeighbours.Count > 0).ToList();
                 if (choices.Count > 0) {
-                    chosenTile = choices[UnityEngine.Random.Range(0, choices.Count)];
+                    chosenTile = choices[Utilities.rng.Next(0, choices.Count)];
                 }
                 break;
             case ACTION_LOCATION_TYPE.NEAR_TARGET:
                 //**Near Target**: adjacent unoccupied tile beside the target item, tile object, character
                 choices = target.gridTileLocation.UnoccupiedNeighbours;
                 if (choices.Count > 0) {
-                    chosenTile = choices[UnityEngine.Random.Range(0, choices.Count)];
+                    chosenTile = choices[Utilities.rng.Next(0, choices.Count)];
                 }
                 break;
             case ACTION_LOCATION_TYPE.ON_TARGET:

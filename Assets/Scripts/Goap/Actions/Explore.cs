@@ -38,8 +38,12 @@ public class Explore : GoapAction {
                 choices.AddRange(area.GetStructuresOfType(STRUCTURE_TYPE.WILDERNESS).Where(x => x.unoccupiedTiles.Count > 0).ToList());
             }
         }
-        _targetStructure = choices[Random.Range(0, choices.Count)];
+        _targetStructure = choices[Utilities.rng.Next(0, choices.Count)];
         base.SetTargetStructure();
+    }
+    public override void FailAction() {
+        base.FailAction();
+        SetState("Target Missing");
     }
     #endregion
 

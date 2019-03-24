@@ -10,7 +10,7 @@ public class GoapPlanner {
         this.actor = actor;
     }
 
-    public GoapPlan PlanActions(IPointOfInterest target, GoapAction goalAction, List<GoapAction> usableActions, bool isPersonalPlan) {
+    public GoapPlan PlanActions(IPointOfInterest target, GoapAction goalAction, List<GoapAction> usableActions, GOAP_CATEGORY category, bool isPersonalPlan) {
         //List of all starting nodes that can do the goal
         List<GoapNode> startingNodes = new List<GoapNode>();
 
@@ -34,7 +34,7 @@ public class GoapPlanner {
         for (int i = 0; i < goalAction.expectedEffects.Count; i++) {
             goalEffects[i] = goalAction.expectedEffects[i].conditionType;
         }
-        GoapPlan plan = new GoapPlan(cheapestStartingNode, goalEffects, isPersonalPlan);
+        GoapPlan plan = new GoapPlan(cheapestStartingNode, goalEffects, category, isPersonalPlan);
         return plan;
     }
     public bool RecalculatePathForPlan(GoapPlan currentPlan, List<GoapAction> usableActions) {

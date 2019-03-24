@@ -36,6 +36,10 @@ public class AbductCharacter : GoapAction {
     //    }
     //    return true;
     //}
+    public override void FailAction() {
+        base.FailAction();
+        SetState("Target Missing");
+    }
     #endregion
 
     #region Requirements

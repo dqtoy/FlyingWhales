@@ -1748,7 +1748,7 @@ public class Area {
     public LocationStructure GetRandomStructureOfType(STRUCTURE_TYPE type, int locationStatus = 2) { 
         if (structures.ContainsKey(type)) { //any
             if (locationStatus == 2) {
-                return structures[type][UnityEngine.Random.Range(0, structures[type].Count)];
+                return structures[type][Utilities.rng.Next(0, structures[type].Count)];
             } else if (locationStatus == 0) { //outside only
                 List<LocationStructure> choices = new List<LocationStructure>();
                 for (int i = 0; i < structures[type].Count; i++) {
@@ -1766,7 +1766,7 @@ public class Area {
                         choices.Add(currStructure);
                     }
                 }
-                return choices[UnityEngine.Random.Range(0, choices.Count)];
+                return choices[Utilities.rng.Next(0, choices.Count)];
             }
             
         }
