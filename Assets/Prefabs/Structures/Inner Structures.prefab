@@ -866,6 +866,10 @@ MonoBehaviour:
   botLeftCornerWall: {fileID: 11400000, guid: ec01d22f2c77ecb46b909fed89362bee, type: 2}
   topRightCornerWall: {fileID: 11400000, guid: d855b9adcb25c324a8c20945831a0cc9, type: 2}
   botRightCornerWall: {fileID: 11400000, guid: c488737a2bf124f4599aad80018fff80, type: 2}
+  topDoor: {fileID: 11400000, guid: 26fbebc594b3e6f49b93c968f1fe1f56, type: 2}
+  botDoor: {fileID: 11400000, guid: a4b51625580fecd48b2c75811029140c, type: 2}
+  leftDoor: {fileID: 11400000, guid: 0aef789ae48f000469cfc460a08750c1, type: 2}
+  rightDoor: {fileID: 11400000, guid: 45d4a712d80be9c40b53af4c40d053f6, type: 2}
   dungeonWallTile: {fileID: 11400000, guid: 0e76310f7d566d54c98f2d850927ab6d, type: 2}
   dungeonFloorTile: {fileID: 11400000, guid: 2403de5724c5b4247bc3fa5bfd41f6aa, type: 2}
   grassTile: {fileID: 11400000, guid: 5d1dfc24b82640c44bf0dd6e37c21a5f, type: 2}
@@ -882,7 +886,6 @@ MonoBehaviour:
   eventPopupPrefab: {fileID: 1904789271207382, guid: d6c210b076dd0154bbec1d7cbed06448,
     type: 2}
   eventPopupParent: {fileID: 224053078617451378}
-  scrollviewContent: {fileID: 224062496566206746}
   travelLinePrefab: {fileID: 1674000059252808, guid: 3030287a209452f45ba8aca3380a5e2e,
     type: 2}
   travelLineParent: {fileID: 4708611216525386}

@@ -15,9 +15,13 @@ public class LocationStructure {
     public List<IPointOfInterest> pointsOfInterest { get; private set; }
     public List<StructureTrait> traits { get; private set; }
     public List<Corpse> corpses { get; private set; }
-    public List<LocationGridTile> tiles { get; private set; }
+   
     public List<INTERACTION_TYPE> poiGoapActions { get; private set; }
     public POI_STATE state { get; private set; }
+
+    //Inner Map
+    public List<LocationGridTile> tiles { get; private set; }
+    public LocationGridTile entranceTile { get; private set; }
 
     #region getters
     public Area location {
@@ -252,14 +256,14 @@ public class LocationStructure {
                 if (poi is MagicCircle) {
                     return unoccupiedTiles.Where(x => !x.HasOccupiedNeighbour() && !x.HasNeighbourOfType(LocationGridTile.Tile_Type.Wall)).ToList();
                 } else if (poi is Guitar || poi is Bed || poi is Table) {
-                    return GetOuterTiles().Where(x => unoccupiedTiles.Contains(x)).ToList();
+                    return GetOuterTiles().Where(x => unoccupiedTiles.Contains(x) && x.tileType != LocationGridTile.Tile_Type.Structure_Entrance).ToList();
                 } else {
-                    return unoccupiedTiles;
+                    return unoccupiedTiles.Where(x => x.tileType != LocationGridTile.Tile_Type.Structure_Entrance).ToList(); ;
                 }
             case POINT_OF_INTEREST_TYPE.CHARACTER:
                 return unoccupiedTiles;
             default:
-                return unoccupiedTiles.Where(x => !x.IsAdjacentTo(typeof(MagicCircle))).ToList();
+                return unoccupiedTiles.Where(x => !x.IsAdjacentTo(typeof(MagicCircle)) && x.tileType != LocationGridTile.Tile_Type.Structure_Entrance).ToList();
         }
     }
     #endregion
@@ -383,6 +387,9 @@ public class LocationStructure {
         }
         return unoccupiedTiles[Random.Range(0, unoccupiedTiles.Count)];
     }
+    public void SetEntranceTile(LocationGridTile tile) {
+        entranceTile = tile;
+    }
     #endregion
 
     #region Utilities
@@ -429,6 +436,16 @@ public class LocationStructure {
             }
         }
         return outerTiles;
+    }
+    public List<LocationGridTile> GetValidEntranceTiles() {
+        List<LocationGridTile> validTiles = new List<LocationGridTile>();
+        for (int i = 0; i < tiles.Count; i++) {
+            LocationGridTile currTile = tiles[i];
+            if (currTile.CanBeAnEntrance()) {
+                validTiles.Add(currTile);
+            }
+        }
+        return validTiles;
     }
     #endregion
 

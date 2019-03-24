@@ -9,7 +9,7 @@ using UnityEngine.UI;
 
 public class LocationGridTile : IHasNeighbours<LocationGridTile> {
 
-    public enum Tile_Type { Empty, Wall, Structure, Gate, Road }
+    public enum Tile_Type { Empty, Wall, Structure, Gate, Road, Structure_Entrance }
     public enum Tile_State { Empty, Occupied }
     public enum Tile_Access { Passable, Impassable, }
     public enum Ground_Type { Soil, Grass, Stone }
@@ -38,7 +38,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     public bool isOccupied { get { return tileState == Tile_State.Occupied || occupant != null; } }
 
     public List<LocationGridTile> ValidTiles { get { return FourNeighbours().Where(o => o.tileType == Tile_Type.Empty || o.tileType == Tile_Type.Gate || o.tileType == Tile_Type.Road).ToList(); } }
-    public List<LocationGridTile> RealisticTiles { get { return neighbours.Values.Where(o => o.tileAccess == Tile_Access.Passable && (o.structure != null || o.tileType == Tile_Type.Road || o.tileType == Tile_Type.Gate)).ToList(); } }
+    public List<LocationGridTile> RealisticTiles { get { return FourNeighbours().Where(o => o.tileAccess == Tile_Access.Passable && (o.structure != null || o.tileType == Tile_Type.Road || o.tileType == Tile_Type.Gate)).ToList(); } }
     public List<LocationGridTile> RoadTiles { get { return neighbours.Values.Where(o => o.tileType == Tile_Type.Road).ToList(); } }
     public List<LocationGridTile> UnoccupiedNeighbours { get { return neighbours.Values.Where(o => !o.isOccupied && o.structure == this.structure).ToList(); } }
 
@@ -63,6 +63,20 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
                 case TileNeighbourDirection.West:
                 case TileNeighbourDirection.East:
                     fn.Add(keyValuePair.Value);
+                    break;
+            }
+        }
+        return fn;
+    }
+    public Dictionary<TileNeighbourDirection, LocationGridTile> FourNeighboursDictionary() {
+        Dictionary<TileNeighbourDirection, LocationGridTile> fn = new Dictionary<TileNeighbourDirection, LocationGridTile>();
+        foreach (KeyValuePair<TileNeighbourDirection, LocationGridTile> keyValuePair in neighbours) {
+            switch (keyValuePair.Key) {
+                case TileNeighbourDirection.North:
+                case TileNeighbourDirection.South:
+                case TileNeighbourDirection.West:
+                case TileNeighbourDirection.East:
+                    fn.Add(keyValuePair.Key, keyValuePair.Value);
                     break;
             }
         }
@@ -127,6 +141,15 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         List<TileNeighbourDirection> dirs = new List<TileNeighbourDirection>();
         foreach (KeyValuePair<TileNeighbourDirection, LocationGridTile> kvp in neighbours) {
             if (kvp.Value.structure == this.structure) {
+                dirs.Add(kvp.Key);
+            }
+        }
+        return dirs;
+    }
+    public List<TileNeighbourDirection> GetDifferentStructureNeighbourDirections() {
+        List<TileNeighbourDirection> dirs = new List<TileNeighbourDirection>();
+        foreach (KeyValuePair<TileNeighbourDirection, LocationGridTile> kvp in neighbours) {
+            if (kvp.Value.structure != this.structure) {
                 dirs.Add(kvp.Key);
             }
         }
@@ -313,6 +336,31 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         }
         SetTileAccess(Tile_Access.Passable);
         return false;
+    }
+    public bool HasNeighbouringStructureOfType(STRUCTURE_TYPE type) {
+        foreach (KeyValuePair<TileNeighbourDirection, LocationGridTile> keyValuePair in neighbours) {
+            if (keyValuePair.Value.structure != null && keyValuePair.Value.structure.structureType == type) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public bool CanBeAnEntrance() {
+        if (!HasNeighbouringStructureOfType(STRUCTURE_TYPE.WORK_AREA)) {
+            return false;
+        }
+        if (GetDifferentStructureNeighbourDirections().Count > 3) { //because corner tiles of structures always have more than 3 different structure neighbours, and corner tiles should not be made entrances (looks weird)
+            return false;
+        }
+        return true;
+    }
+    public TileNeighbourDirection GetCardinalDirectionOfStructureType(STRUCTURE_TYPE type) {
+        foreach (KeyValuePair<TileNeighbourDirection, LocationGridTile> keyValuePair in FourNeighboursDictionary()) {
+            if (keyValuePair.Value.structure != null && keyValuePair.Value.structure.structureType == type) {
+                return keyValuePair.Key;
+            }
+        }
+        throw new System.Exception(this.ToString() + " this tile is not next to a structure of type " + type.ToString());
     }
     #endregion
 
