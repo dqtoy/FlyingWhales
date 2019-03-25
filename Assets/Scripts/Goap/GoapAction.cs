@@ -181,6 +181,15 @@ public class GoapAction {
         }
         //Set state to failed after this (in overrides)
     }
+    //This is for the waiting time, if this returns true, this action will not be done by the actor momentarily, this will be skipped until this returns false
+    public virtual bool IsHalted() {
+        //Only waiting condition for now is the time of day
+        //The default for the valid time of days is null, if it is null, do not wait meaning return false
+        if (validTimeOfDays != null && !validTimeOfDays.Contains(GameManager.GetCurrentTimeInWordsOfTick())) {
+            return true;
+        }
+        return false;
+    }
     #endregion
 
     #region Utilities
@@ -269,15 +278,6 @@ public class GoapAction {
             }
             return 0;
         }
-    }
-    //This is for the waiting time, if this returns true, this action will not be done by the actor momentarily, this will be skipped until this returns false
-    public bool IsHalted() {
-        //Only waiting condition for now is the time of day
-        //The default for the valid time of days is null, if it is null, do not wait meaning return false
-        if(validTimeOfDays != null && !validTimeOfDays.Contains(GameManager.GetCurrentTimeInWordsOfTick())) {
-            return true;
-        }
-        return false;
     }
     protected bool HasSupply(int neededSupply) {
         return actor.supply >= neededSupply;

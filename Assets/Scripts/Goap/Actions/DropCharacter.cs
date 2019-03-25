@@ -34,6 +34,10 @@ public class DropCharacter : GoapAction {
         base.FailAction();
         SetState("Target Missing");
     }
+    public override void DoAction(GoapPlan plan) {
+        SetTargetStructure();
+        base.DoAction(plan);
+    }
     #endregion
 
     #region Requirements
@@ -57,7 +61,7 @@ public class DropCharacter : GoapAction {
     public void AfterDropSuccess() {
         Character target = poiTarget as Character;
         actor.ownParty.RemoveCharacter(target);
-        target.MoveToAnotherStructure(_workAreaStructure);
+        //target.MoveToAnotherStructure(_workAreaStructure);
     }
     #endregion
 }

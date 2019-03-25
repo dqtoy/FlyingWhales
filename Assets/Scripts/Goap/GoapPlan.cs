@@ -14,6 +14,7 @@ public class GoapPlan {
     public bool isEnd { get; private set; }
     public bool isBeingRecalculated { get; private set; }
     public bool isPersonalPlan { get; private set; }
+    public bool doNotRecalculate { get; private set; }
     public GOAP_PLAN_STATE state { get; private set; }
     public GOAP_CATEGORY category { get; private set; }
 
@@ -25,6 +26,7 @@ public class GoapPlan {
         this.goalEffects = goalEffects;
         this.isPersonalPlan = isPersonalPlan;
         this.category = category;
+        this.doNotRecalculate = false;
         allNodes = new List<GoapNode>();
         ConstructAllNodes();
         Messenger.AddListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnActionInPlanFinished);
@@ -75,10 +77,12 @@ public class GoapPlan {
     public void SetIsBeingRecalculated(bool state) {
         isBeingRecalculated = state;
     }
+    public void SetDoNotRecalculate(bool state) {
+        doNotRecalculate = state;
+    }
     public void SetPlanState(GOAP_PLAN_STATE state) {
         this.state = state;
     }
-
     public string LogPlan() {
         string log = "\n---------------------NEW PLAN OF " + endNode.action.actor.name + " FOR " + endNode.action.goapName + " WITH TARGET " + target.name + " (" + endNode.action.actor.specificLocation.name + ")--------------------------";
         for (int i = 0; i < allNodes.Count; i++) {

@@ -42,14 +42,21 @@ public class AssaultCharacter : GoapAction {
         //string nextState = resultWeights.PickRandomElementGivenWeights();
         //SetState(nextState);
 
-        WeightedDictionary<string> resultWeights = new WeightedDictionary<string>();
-        resultWeights.AddElement("Target Injured", 30);
-        resultWeights.AddElement("Target Knocked Out", 20);
-        resultWeights.AddElement("Target Killed", 5);
+        if (actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
+            WeightedDictionary<string> resultWeights = new WeightedDictionary<string>();
+            resultWeights.AddElement("Target Injured", 30);
+            resultWeights.AddElement("Target Knocked Out", 20);
+            resultWeights.AddElement("Target Killed", 5);
 
-        string nextState = resultWeights.PickRandomElementGivenWeights();
-        SetState(nextState);
-
+            string nextState = resultWeights.PickRandomElementGivenWeights();
+            if(nextState == "Target Killed") {
+                GoapPlan plan = actor.GetPlanWithAction(this);
+                plan.SetDoNotRecalculate(true);
+            }
+            SetState(nextState);
+        } else {
+            SetState("Target Missing");
+        }
         base.PerformActualAction();
     }
     protected override int GetCost() {
@@ -58,6 +65,10 @@ public class AssaultCharacter : GoapAction {
     public override void FailAction() {
         base.FailAction();
         SetState("Target Missing");
+    }
+    public override void DoAction(GoapPlan plan) {
+        SetTargetStructure();
+        base.DoAction(plan);
     }
     #endregion
 
@@ -88,6 +99,9 @@ public class AssaultCharacter : GoapAction {
     public void AfterTargetKilled() {
         Character target = poiTarget as Character;
         target.Death();
+    }
+    public void PreTargetMissing() {
+        currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
     }
     #endregion
 }

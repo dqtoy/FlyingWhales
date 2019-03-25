@@ -107,12 +107,12 @@ public class FactionManager : MonoBehaviour {
         log += "\nGood Major: " + goodMajor.name;
         log += "\nEvil Major: " + evilMajor.name;
 
-        for (int i = 0; i < 1; i++) {
-            Faction chosenMinorFaction = minorChoices[Random.Range(0, minorChoices.Count)];
-            minorChoices.Remove(chosenMinorFaction);
-            startFactions.Add(chosenMinorFaction);
-            log += "\nMinor Faction: " + chosenMinorFaction.name;
-        }
+        //for (int i = 0; i < 1; i++) {
+        //    Faction chosenMinorFaction = minorChoices[Random.Range(0, minorChoices.Count)];
+        //    minorChoices.Remove(chosenMinorFaction);
+        //    startFactions.Add(chosenMinorFaction);
+        //    log += "\nMinor Faction: " + chosenMinorFaction.name;
+        //}
 
         for (int i = 0; i < startFactions.Count; i++) {
             Faction faction = startFactions[i];
