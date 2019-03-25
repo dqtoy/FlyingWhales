@@ -12,10 +12,12 @@ public class PathGenerator : MonoBehaviour {
 
     #region For Testing
     [Header("For Testing")]
-    [SerializeField]
-    private HexTile startTile;
+    [SerializeField] private HexTile startTile;
     [SerializeField] private HexTile targetTile;
+    [SerializeField] private Vector2Int startLocGrid;
+    [SerializeField] private Vector2Int destLocGrid;
     public PATHFINDING_MODE modeToUse;
+    public GRID_PATHFINDING_MODE gridModeToUse;
 
     [ContextMenu("Get Path")]
     public void GetPathForTesting() {
@@ -29,7 +31,6 @@ public class PathGenerator : MonoBehaviour {
             Debug.LogError("Cannot get path from " + startTile.name + " to " + targetTile.name + " using " + modeToUse.ToString());
         }
     }
-
     [ContextMenu("Log All Paths")]
     public void LogAllPaths() {
         List<List<HexTile>> allPaths = GetAllPaths(startTile, targetTile);
@@ -40,23 +41,32 @@ public class PathGenerator : MonoBehaviour {
             }
         }
     }
-
     [ContextMenu("Get Distance")]
     public void GetDistance() {
         Debug.Log(Vector2.Distance(startTile.transform.position, targetTile.transform.position));
     }
-
     [ContextMenu("Show all road tiles")]
     public void ShowAllRoadTiles() {
         foreach (HexTile h in roadTiles) {
             h.spriteRenderer.color = Color.red;
         }
     }
-
     [ContextMenu("Hide all road tiles")]
     public void HideAllRoadTiles() {
         foreach (HexTile h in roadTiles) {
             h.spriteRenderer.color = Color.white;
+        }
+    }
+    [ContextMenu("Get Loc GridPath")]
+    public void GetLocGridPathForTesting() {
+        List<LocationGridTile> path = GetPath(InteriorMapManager.Instance.currentlyShowingMap.map[startLocGrid.x, startLocGrid.y], InteriorMapManager.Instance.currentlyShowingMap.map[destLocGrid.x, destLocGrid.y], gridModeToUse);
+        if (path != null) {
+            Debug.Log("========== Path from " + startTile.name + " to " + targetTile.name + "============");
+            for (int i = 0; i < path.Count; i++) {
+                Debug.Log(path[i].ToString());
+            }
+        } else {
+            Debug.LogError("Cannot get path from " + startTile.name + " to " + targetTile.name + " using " + modeToUse.ToString());
         }
     }
     #endregion
@@ -138,11 +148,60 @@ public class PathGenerator : MonoBehaviour {
                 destinationTile.SetTileType(LocationGridTile.Tile_Type.Empty);
                 break;
         }
-       
 
-        Func<LocationGridTile, LocationGridTile, double> distance = (node1, node2) => 1;
-        Func<LocationGridTile, double> estimate = t => Math.Sqrt(Math.Pow(t.localPlace.x - destinationTile.localPlace.x, 2) + Math.Pow(t.localPlace.y - destinationTile.localPlace.y, 2));
-        var path = PathFind.PathFind.FindPath(startingTile, destinationTile, distance, estimate, pathMode);
+
+        List<LocationGridTile> path = null;
+
+        
+        if (pathMode == GRID_PATHFINDING_MODE.REALISTIC && startingTile.structure != destinationTile.structure && (startingTile.structure.entranceTile != null || destinationTile.structure.entranceTile != null)) {
+            //pathfinding logic to use structure entrances
+
+            Func<LocationGridTile, LocationGridTile, double> dist = (node1, node2) => 1;
+
+            if (startingTile.structure.entranceTile != null && destinationTile.structure.entranceTile != null) {
+                //both structures have entrances
+                Func<LocationGridTile, double> est = t => Math.Sqrt(Math.Pow(t.localPlace.x - startingTile.structure.entranceTile.localPlace.x, 2) + Math.Pow(t.localPlace.y - startingTile.structure.entranceTile.localPlace.y, 2));
+                var prePath = PathFind.PathFind.FindPath(startingTile, startingTile.structure.entranceTile, dist, est, pathMode).Reverse().ToList();
+
+                est = t => Math.Sqrt(Math.Pow(t.localPlace.x - destinationTile.structure.entranceTile.localPlace.x, 2) + Math.Pow(t.localPlace.y - destinationTile.structure.entranceTile.localPlace.y, 2));
+                var midPath = PathFind.PathFind.FindPath(startingTile.structure.entranceTile, destinationTile.structure.entranceTile, dist, est, pathMode, SameStructureTiles,
+                startingTile.parentAreaMap.area.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA), startingTile.structure.entranceTile, destinationTile.structure.entranceTile).Reverse().ToList();
+
+                est = t => Math.Sqrt(Math.Pow(t.localPlace.x - destinationTile.localPlace.x, 2) + Math.Pow(t.localPlace.y - destinationTile.localPlace.y, 2));
+                var afterPath = PathFind.PathFind.FindPath(destinationTile.structure.entranceTile, destinationTile, dist, est, pathMode).Reverse().ToList();
+
+                path = prePath.Union(midPath).Union(afterPath).Reverse().ToList();
+            } else if (startingTile.structure.entranceTile != null && destinationTile.structure.entranceTile == null) {
+                //only the starting tile has an entrance
+                Func<LocationGridTile, double> est = t => Math.Sqrt(Math.Pow(t.localPlace.x - startingTile.structure.entranceTile.localPlace.x, 2) + Math.Pow(t.localPlace.y - startingTile.structure.entranceTile.localPlace.y, 2));
+                var prePath = PathFind.PathFind.FindPath(startingTile, startingTile.structure.entranceTile, dist, est, pathMode).Reverse().ToList();
+
+                est = t => Math.Sqrt(Math.Pow(t.localPlace.x - destinationTile.localPlace.x, 2) + Math.Pow(t.localPlace.y - destinationTile.localPlace.y, 2));
+                var midPath = PathFind.PathFind.FindPath(startingTile.structure.entranceTile, destinationTile, dist, est, pathMode, AllowedStructureTiles,
+                new List<STRUCTURE_TYPE>() { STRUCTURE_TYPE.WORK_AREA, STRUCTURE_TYPE.WILDERNESS }, startingTile.structure.entranceTile, destinationTile).Reverse().ToList();
+
+                path = prePath.Union(midPath).Reverse().ToList();
+            } else {
+                //only the destination tile has an entrance
+                Func<LocationGridTile, double> est = t => Math.Sqrt(Math.Pow(t.localPlace.x - destinationTile.structure.entranceTile.localPlace.x, 2) + Math.Pow(t.localPlace.y - destinationTile.structure.entranceTile.localPlace.y, 2));
+                var prePath = PathFind.PathFind.FindPath(startingTile, destinationTile.structure.entranceTile, dist, est, pathMode, AllowedStructureTiles,
+                new List<STRUCTURE_TYPE>() { STRUCTURE_TYPE.WORK_AREA, STRUCTURE_TYPE.WILDERNESS }, startingTile, destinationTile.structure.entranceTile).Reverse().ToList();
+
+                est = t => Math.Sqrt(Math.Pow(t.localPlace.x - destinationTile.localPlace.x, 2) + Math.Pow(t.localPlace.y - destinationTile.localPlace.y, 2));
+                var midPath = PathFind.PathFind.FindPath(destinationTile.structure.entranceTile, destinationTile, dist, est, pathMode).Reverse().ToList();
+
+                path = prePath.Union(midPath).Reverse().ToList();
+            }
+        } else {
+            //normal pathfinding logic
+            Func<LocationGridTile, LocationGridTile, double> distance = (node1, node2) => 1;
+            Func<LocationGridTile, double> estimate = t => Math.Sqrt(Math.Pow(t.localPlace.x - destinationTile.localPlace.x, 2) + Math.Pow(t.localPlace.y - destinationTile.localPlace.y, 2));
+            var p = PathFind.PathFind.FindPath(startingTile, destinationTile, distance, estimate, pathMode);
+            if (p != null) {
+                path = p.ToList();
+            }
+            
+        }
 
         startingTile.SetTileType(startType);
         destinationTile.SetTileType(destinationType);
@@ -150,11 +209,11 @@ public class PathGenerator : MonoBehaviour {
         destinationTile.SetTileAccess(destinationAccess);
 
         if (path != null) {
-            List<LocationGridTile> truePath = path.Reverse().ToList();
+            path.Reverse();
             if (!includeFirstTile) {
-                truePath.RemoveAt(0);
+                path.RemoveAt(0);
             }
-            return truePath;
+            return path;
         }
         return null;
     }
@@ -297,4 +356,37 @@ public class PathGenerator : MonoBehaviour {
         float distance = Vector3.Distance(from.transform.position, to.transform.position);
         return (Mathf.CeilToInt(distance / 2.315188f)) * 2;
     }
+
+    #region Tile Getters
+    private List<LocationGridTile> SameStructureTiles(LocationGridTile tile, params object[] args) {
+        LocationStructure structure = args[0] as LocationStructure;
+        LocationGridTile startingTile = args[1] as LocationGridTile;
+        LocationGridTile destinationTile = args[2] as LocationGridTile;
+
+        List<LocationGridTile> tiles = new List<LocationGridTile>();
+        List<LocationGridTile> neighbours = tile.FourNeighbours();
+        for (int i = 0; i < neighbours.Count; i++) {
+            LocationGridTile currTile = neighbours[i];
+            if (currTile == startingTile || currTile == destinationTile || (currTile.tileAccess == LocationGridTile.Tile_Access.Passable && currTile.structure == structure)) {
+                tiles.Add(currTile);
+            }
+        }
+        return tiles;
+    }
+    private List<LocationGridTile> AllowedStructureTiles(LocationGridTile tile, params object[] args) {
+        List<STRUCTURE_TYPE> allowedTypes = args[0] as List<STRUCTURE_TYPE>;
+        LocationGridTile startingTile = args[1] as LocationGridTile;
+        LocationGridTile destinationTile = args[2] as LocationGridTile;
+
+        List<LocationGridTile> tiles = new List<LocationGridTile>();
+        List<LocationGridTile> neighbours = tile.FourNeighbours();
+        for (int i = 0; i < neighbours.Count; i++) {
+            LocationGridTile currTile = neighbours[i];
+            if (currTile == startingTile || currTile == destinationTile || (currTile.tileAccess == LocationGridTile.Tile_Access.Passable && currTile.structure != null && allowedTypes.Contains(currTile.structure.structureType))) {
+                tiles.Add(currTile);
+            }
+        }
+        return tiles;
+    }
+    #endregion
 }

@@ -165,7 +165,8 @@ namespace PathFind {
             return null;
         }
 
-        public static Path<Node> FindPath<Node>(Node start, Node destination, Func<Node, Node, double> distance, Func<Node, double> estimate, GRID_PATHFINDING_MODE pathMode)
+        public static Path<Node> FindPath<Node>(Node start, Node destination, Func<Node, Node, double> distance, Func<Node, double> estimate,
+            GRID_PATHFINDING_MODE pathMode, Func<Node, object[], List<Node>> tileGetFunction = null, params object[] args)
             where Node : LocationGridTile, IHasNeighbours<Node> {
 
             var closed = new HashSet<Node>();
@@ -185,41 +186,51 @@ namespace PathFind {
 
                 double d;
                 Path<Node> newPath;
-                switch (pathMode) {
-                    case GRID_PATHFINDING_MODE.NORMAL:
-                        foreach (Node n in path.LastStep.ValidTiles) {
-                            d = distance(path.LastStep, n);
-                            newPath = path.AddStep(n, d);
-                            queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
-                        }
-                        break;
-                    case GRID_PATHFINDING_MODE.ROADS_ONLY:
-                        foreach (Node n in path.LastStep.RoadTiles) {
-                            d = distance(path.LastStep, n);
-                            newPath = path.AddStep(n, d);
-                            queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
-                        }
-                        break;
-                    case GRID_PATHFINDING_MODE.REALISTIC:
-                        foreach (Node n in path.LastStep.RealisticTiles) {
-                            if(n.structure != null && n.structure.location.areaType != AREA_TYPE.DUNGEON) {
-                                if (n.tileType == LocationGridTile.Tile_Type.Structure && n.structure != start.structure && n.structure != destination.structure) {
-                                    continue;
-                                }
+                if (tileGetFunction != null) {
+                    List<Node> validTiles = tileGetFunction(path.LastStep, args);
+                    foreach (Node n in validTiles) {
+                        d = distance(path.LastStep, n);
+                        newPath = path.AddStep(n, d);
+                        queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
+                    }
+                } else {
+                    switch (pathMode) {
+                        case GRID_PATHFINDING_MODE.NORMAL:
+                            foreach (Node n in path.LastStep.ValidTiles) {
+                                d = distance(path.LastStep, n);
+                                newPath = path.AddStep(n, d);
+                                queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
                             }
-                            d = distance(path.LastStep, n);
-                            newPath = path.AddStep(n, d);
-                            queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
-                        }
-                        break;
-                    default:
-                        foreach (Node n in path.LastStep.ValidTiles) {
-                            d = distance(path.LastStep, n);
-                            newPath = path.AddStep(n, d);
-                            queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
-                        }
-                        break;
+                            break;
+                        case GRID_PATHFINDING_MODE.ROADS_ONLY:
+                            foreach (Node n in path.LastStep.RoadTiles) {
+                                d = distance(path.LastStep, n);
+                                newPath = path.AddStep(n, d);
+                                queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
+                            }
+                            break;
+                        case GRID_PATHFINDING_MODE.REALISTIC:
+                            foreach (Node n in path.LastStep.RealisticTiles) {
+                                if (n.structure != null && n.structure.location.areaType != AREA_TYPE.DUNGEON) {
+                                    if (n.tileType == LocationGridTile.Tile_Type.Structure && n.structure != start.structure && n.structure != destination.structure) {
+                                        continue;
+                                    }
+                                }
+                                d = distance(path.LastStep, n);
+                                newPath = path.AddStep(n, d);
+                                queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
+                            }
+                            break;
+                        default:
+                            foreach (Node n in path.LastStep.ValidTiles) {
+                                d = distance(path.LastStep, n);
+                                newPath = path.AddStep(n, d);
+                                queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
+                            }
+                            break;
+                    }
                 }
+                
                 
             }
             return null;
