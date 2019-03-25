@@ -231,9 +231,9 @@ public class GoapAction {
     public void End() {
         isPerformingActualAction = false;
         isDone = true;
-        if (Messenger.eventTable.ContainsKey(Signals.CHARACTER_DEATH)) {
-            Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnActorDied);
-        }
+        //if (Messenger.eventTable.ContainsKey(Signals.CHARACTER_DEATH)) {
+        //    Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnActorDied);
+        //}
         Debug.Log(this.goapType.ToString() + " action by " + this.actor.name + " Summary: \n" + actionSummary);
     }
     public void StopAction( ) {
@@ -350,25 +350,10 @@ public class GoapAction {
     #endregion
 
     #region Tile Objects
-    protected virtual void ReserveTarget() {
-        if (poiTarget is TileObject) {
-            TileObject target = poiTarget as TileObject;
-            target.OnTargetObject(this);
-            Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnActorDied);
-        }
-    }
     protected virtual void OnPerformActualActionToTarget() {
         if (poiTarget is TileObject) {
             TileObject target = poiTarget as TileObject;
             target.OnDoActionToObject(this);
-        }
-    }
-    private void OnActorDied(Character character) {
-        if (character.id == actor.id) {
-            if (poiTarget is TileObject) {
-                TileObject target = poiTarget as TileObject;
-                target.owner.SetPOIState(POI_STATE.ACTIVE); //this is for when the character that reserved the target object died
-            }
         }
     }
     #endregion

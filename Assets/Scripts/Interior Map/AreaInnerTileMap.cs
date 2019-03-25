@@ -709,7 +709,7 @@ public class AreaInnerTileMap : MonoBehaviour {
 
         while (exploreAreas.Count > createdExploreAreas.Count) {
             List<Point> validSettings = GetValidStructureSettings(STRUCTURE_TYPE.EXPLORE_AREA, elligibleTiles, rightMostCoordinate, topMostCoordinate);
-            if (validSettings.Count > 0) {
+            if (validSettings.Count > 0 && tilesToCheck.Count > 0) {
                 Point chosenSetting = validSettings[UnityEngine.Random.Range(0, validSettings.Count)];
                 LocationGridTile currEntrance = tilesToCheck.Dequeue();
                 //get a random tile that is 3 or 4 tiles from the current entrance
@@ -728,6 +728,17 @@ public class AreaInnerTileMap : MonoBehaviour {
                         newArea.AddTile(currTile);
                         elligibleTiles.Remove(currTile);
                     }
+                    //connect to currEntrance
+                    LocationGridTile nearest = newArea.GetNearestTileFrom(currEntrance);
+                    TileNeighbourDirection tileDir = newArea.GetOuterTileDirection(nearest);
+                    List<LocationGridTile> road = PathGenerator.Instance.GetPath(currEntrance, nearest, GRID_PATHFINDING_MODE.NORMAL);
+                    for (int i = 0; i < road.Count; i++) {
+                        LocationGridTile currTile = road[i];
+                        wallTilemap.SetTile(currTile.localPlace, null);
+                        groundTilemap.SetTile(currTile.localPlace, dungeonFloorTile);
+                    }
+                    newArea.isConnected[tileDir] = true;
+
                     newArea.CreateEntrances();
                     for (int i = 0; i < newArea.entrances.Count; i++) {
                         tilesToCheck.Enqueue(newArea.entrances[i]);
@@ -1447,10 +1458,16 @@ public class ExploreArea {
     public Color color;
 
     public List<LocationGridTile> entrances;
+    public Dictionary<TileNeighbourDirection, bool> isConnected;
 
     public ExploreArea() {
         tiles = new List<LocationGridTile>();
         color = Random.ColorHSV();
+        isConnected = new Dictionary<TileNeighbourDirection, bool>();
+        isConnected.Add(TileNeighbourDirection.North, false);
+        isConnected.Add(TileNeighbourDirection.East, false);
+        isConnected.Add(TileNeighbourDirection.South, false);
+        isConnected.Add(TileNeighbourDirection.West, false);
     }
 
     public void AddTile(LocationGridTile tile) {
@@ -1465,15 +1482,14 @@ public class ExploreArea {
     public void CreateEntrances() {
         entrances = new List<LocationGridTile>();
         int randomNumber = UnityEngine.Random.Range(2, 4);
-        List<LocationGridTile> elligible = GetOuterTiles();
         for (int i = 0; i < randomNumber; i++) {
-            LocationGridTile chosenEntrance = elligible[UnityEngine.Random.Range(0, elligible.Count)];
-            entrances.Add(chosenEntrance);
-            chosenEntrance.SetTileType(LocationGridTile.Tile_Type.Structure_Entrance);
-            elligible.Remove(chosenEntrance);
+            List<LocationGridTile> elligible = GetOuterTiles().Where(x => !IsCorner(x) && !isConnected[GetOuterTileDirection(x)]).ToList();
             if (elligible.Count == 0) {
                 break;
             }
+            LocationGridTile chosenEntrance = elligible[UnityEngine.Random.Range(0, elligible.Count)];
+            entrances.Add(chosenEntrance);
+            chosenEntrance.SetTileType(LocationGridTile.Tile_Type.Structure_Entrance);
         }
     }
 
@@ -1526,5 +1542,52 @@ public class ExploreArea {
             }
         }
         return tiles;
+    }
+
+    public LocationGridTile GetNearestTileFrom(LocationGridTile tile) {
+        LocationGridTile nearestTile = null;
+        float nearest = 99999f;
+        for (int i = 0; i < tiles.Count; i++) {
+            LocationGridTile currTile = tiles[i];
+            float dist = Vector2.Distance(currTile.localLocation, tile.localLocation);
+            if (dist < nearest) {
+                nearestTile = currTile;
+            }
+        }
+        return nearestTile;
+    }
+    public TileNeighbourDirection GetOuterTileDirection(LocationGridTile currTile) {
+        TileNeighbourDirection[] cardinal = new TileNeighbourDirection[] { TileNeighbourDirection.North, TileNeighbourDirection.East, TileNeighbourDirection.South, TileNeighbourDirection.West };
+        for (int i = 0; i < cardinal.Length; i++) {
+            if (currTile.neighbours.ContainsKey(cardinal[i]) &&  !tiles.Contains(currTile.neighbours[cardinal[i]])) {
+                return cardinal[i];
+            }
+        }
+        return TileNeighbourDirection.South_East;
+    }
+    public bool IsCorner(LocationGridTile currTile) {
+        if (!GetOuterTiles().Contains(currTile)) { //if the tile is not an outer tile, it is not a corner
+            return false;
+        }
+        bool hasVerticalNeighbour = false;
+        bool hasHorizontalNeighbour = false;
+        foreach (KeyValuePair<TileNeighbourDirection, LocationGridTile> kvp in currTile.neighbours) {
+            if (tiles.Contains(kvp.Value)) {
+                switch (kvp.Key) {
+                    case TileNeighbourDirection.North:
+                    case TileNeighbourDirection.South:
+                        hasVerticalNeighbour = true;
+                        break;
+                    case TileNeighbourDirection.West:
+                    case TileNeighbourDirection.East:
+                        hasHorizontalNeighbour = true;
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+        return hasVerticalNeighbour && hasHorizontalNeighbour; //if has both horizontal and vertical neighbour, the tile is a corner
     }
 }

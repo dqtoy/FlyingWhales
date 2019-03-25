@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Pray : GoapAction {
+
+    private LocationStructure _targetStructure;
+    public override LocationStructure targetStructure { get { return _targetStructure; } }
+
     public Pray(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.PRAY, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         this.goapName = "Pray";
         actionLocationType = ACTION_LOCATION_TYPE.NEARBY;
@@ -30,6 +34,10 @@ public class Pray : GoapAction {
     public override void FailAction() {
         base.FailAction();
         SetState("Pray Failed");
+    }
+    public override void SetTargetStructure() {
+        _targetStructure = actor.currentStructure;
+        base.SetTargetStructure();
     }
     #endregion
 

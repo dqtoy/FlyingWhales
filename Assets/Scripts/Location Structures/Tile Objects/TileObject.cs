@@ -24,7 +24,7 @@ public class TileObject {
         
     }
     public virtual void OnDoActionToObject(GoapAction action) {
-        owner.SetPOIState(POI_STATE.INACTIVE);
+        //owner.SetPOIState(POI_STATE.INACTIVE);
     }
     public virtual void OnDoneActionTowardsTarget(GoapAction action) { //called when the action towrds this object has been done aka. setting this object to active again
         owner.SetPOIState(POI_STATE.ACTIVE);
