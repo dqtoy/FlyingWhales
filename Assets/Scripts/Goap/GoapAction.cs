@@ -140,6 +140,7 @@ public class GoapAction {
     public virtual void DoAction(GoapPlan plan) {
         CreateStates(); //Not sure if this is the best place for this.
         actor.SetCurrentAction(this);
+        plan.SetPlanState(GOAP_PLAN_STATE.IN_PROGRESS);
 
         //if the current target is a character, make him/her wait for this action
         if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
@@ -222,7 +223,7 @@ public class GoapAction {
         currentState.StopPerTickEffect();
         End();
         actor.GoapActionResult(result, this);
-        Messenger.Broadcast(Signals.CHARACTER_FINISHED_ACTION, actor, this);
+        Messenger.Broadcast(Signals.CHARACTER_FINISHED_ACTION, actor, this, result);
     }
     protected void AddActionLog(string log) {
         actionSummary += "\n" + log;

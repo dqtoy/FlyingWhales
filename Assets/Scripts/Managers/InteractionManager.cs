@@ -1033,6 +1033,12 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.ITEM_DESTROY:
                 goapAction = new ItemDestroy(actor, target);
                 break;
+            case INTERACTION_TYPE.TRAVEL:
+                goapAction = new Travel(actor, target);
+                break;
+            case INTERACTION_TYPE.RETURN_HOME_LOCATION:
+                goapAction = new ReturnHomeLocation(actor, target);
+                break;
         }
         if(goapAction != null && willInitialize) {
             goapAction.Initialize();

@@ -29,7 +29,7 @@ public class Pray : GoapAction {
     }
     public override void FailAction() {
         base.FailAction();
-        SetState("Pray Fail");
+        SetState("Pray Failed");
     }
     #endregion
 

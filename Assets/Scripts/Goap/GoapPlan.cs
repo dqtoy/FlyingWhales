@@ -27,6 +27,7 @@ public class GoapPlan {
         this.doNotRecalculate = false;
         allNodes = new List<GoapNode>();
         ConstructAllNodes();
+        Messenger.AddListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnActionInPlanFinished);
     }
 
     public void Reset(GoapNode startingNode) {
@@ -47,6 +48,9 @@ public class GoapPlan {
         previousNode = null;
         endNode = null;
         allNodes.Clear();
+        //if this plan was ended, and it's state has not been set to failed or success, this means that this plan was not completed.
+        if (state == GOAP_PLAN_STATE.IN_PROGRESS) SetPlanState(GOAP_PLAN_STATE.CANCELLED);
+        Messenger.RemoveListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnActionInPlanFinished);
     }
 
     private void ConstructAllNodes() {
@@ -96,5 +100,15 @@ public class GoapPlan {
             summary += goalEffects[i].ToString() + ", ";
         }
         return summary;
+    }
+
+    public void OnActionInPlanFinished(Character actor, GoapAction action, string result) {
+        if (action == endNode.action) {
+            if (result == InteractionManager.Goap_State_Success) {
+                SetPlanState(GOAP_PLAN_STATE.SUCCESS);
+            } else if (result == InteractionManager.Goap_State_Fail) {
+                SetPlanState(GOAP_PLAN_STATE.FAILED);
+            }
+        }
     }
 }
