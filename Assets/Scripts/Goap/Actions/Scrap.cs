@@ -13,6 +13,7 @@ public class Scrap : GoapAction {
             TIME_IN_WORDS.EARLY_NIGHT,
         };
         actionIconString = GoapActionStateDB.Work_Icon;
+        actionLocationType = ACTION_LOCATION_TYPE.ON_TARGET;
     }
 
     #region Overrides
@@ -35,9 +36,9 @@ public class Scrap : GoapAction {
         return 2;
     }
     public override void SetTargetStructure() {
-        ItemAwareness awareness = actor.GetAwareness(poiTarget) as ItemAwareness;
-        _targetStructure = awareness.knownLocation.structure;
-        targetTile = awareness.knownLocation;
+        //ItemAwareness awareness = actor.GetAwareness(poiTarget) as ItemAwareness;
+        _targetStructure = poiTarget.gridTileLocation.structure;
+        //targetTile = awareness.knownLocation;
     }
     public override void FailAction() {
         base.FailAction();

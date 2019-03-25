@@ -106,7 +106,9 @@ public class Ore : TileObject, IPointOfInterest {
         yield += amount;
         yield = Mathf.Max(0, yield);
         if (yield == 0) {
+            LocationGridTile loc = gridTileLocation;
             location.RemovePOI(this);
+            SetGridTileLocation(loc); //so that it can still be targetted by aware characters.
         }
     }
 }

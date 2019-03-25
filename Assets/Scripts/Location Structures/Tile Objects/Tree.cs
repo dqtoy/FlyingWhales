@@ -89,9 +89,9 @@ public class Tree : TileObject, IPointOfInterest {
         yield += amount;
         yield = Mathf.Max(0, yield);
         if (yield == 0) {
-            //LocationGridTile loc = gridTileLocation;
+            LocationGridTile loc = gridTileLocation;
             location.RemovePOI(this);
-            //SetGridTileLocation(loc); //so that it can still be targetted by aware characters.
+            SetGridTileLocation(loc); //so that it can still be targetted by aware characters.
         }
     }
 }

@@ -35,6 +35,7 @@ public class SmallAnimal : TileObject, IPointOfInterest {
     #region Overrides
     public override void OnDoActionToObject(GoapAction action) {
         base.OnDoActionToObject(action);
+        SetPOIState(POI_STATE.INACTIVE);
         ScheduleCooldown(action);
     }
     public List<GoapAction> AdvertiseActionsToActor(Character actor, List<INTERACTION_TYPE> actorAllowedInteractions) {

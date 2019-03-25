@@ -44,7 +44,7 @@ public class GoapThread : Multithread {
         try {
             CreatePlan();
         }catch(System.Exception e) {
-            Debug.LogError(e.StackTrace);
+            Debug.LogError("Problem with " + actor.name + "'s GoapThread!\n" + e.Message + "\n" + e.StackTrace);
         }
     }
     public override void FinishMultithread() {
