@@ -13,9 +13,9 @@ public class RileUp : PlayerJobAction {
     }
 
     public override void ActivateAction(Character assignedCharacter, Character targetCharacter) {
-        if (targetCharacter.role.roleType == CHARACTER_ROLE.BEAST) {
-            return;
-        }
+        //if (targetCharacter.role.roleType == CHARACTER_ROLE.BEAST) {
+        //    return;
+        //}
         _targetCharacter = targetCharacter;
         UIManager.Instance.ShowClickableObjectPicker(LandmarkManager.Instance.allAreas, OnClickArea, null, CanClickArea);
     }
@@ -24,7 +24,7 @@ public class RileUp : PlayerJobAction {
         if (targetCharacter.isDead || character.id == targetCharacter.id || (!targetCharacter.isTracked && !GameManager.Instance.inspectAll)) {
             return false;
         }
-        if(targetCharacter.race != RACE.SKELETON && targetCharacter.race != RACE.GOBLIN) {
+        if(targetCharacter.role.roleType != CHARACTER_ROLE.BEAST && targetCharacter.race != RACE.SKELETON && targetCharacter.race != RACE.GOBLIN) {
             return false;
         }
         return base.ShouldButtonBeInteractable(character, targetCharacter);
@@ -32,7 +32,11 @@ public class RileUp : PlayerJobAction {
 
     #region Area Checkers
     private void OnClickArea(Area area) {
-        UIManager.Instance.ShowClickableObjectPicker(area.charactersAtLocation, RileUpCharacter, null, CanRileUpCharacter);
+        if(_targetCharacter.role.roleType == CHARACTER_ROLE.BEAST) {
+            RileUpCharacter(area);
+        } else {
+            UIManager.Instance.ShowClickableObjectPicker(area.charactersAtLocation, RileUpCharacter, null, CanRileUpCharacter);
+        }
     }
     private bool CanClickArea(Area area) {
         if(PlayerManager.Instance.player.playerArea == area) {
@@ -49,6 +53,17 @@ public class RileUp : PlayerJobAction {
 
         GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = _targetCharacter.homeArea, targetPOI = character };
         _targetCharacter.StartGOAP(goapEffect, character, GOAP_CATEGORY.REACTION);
+    }
+    private void RileUpCharacter(Area area) {
+        base.ActivateAction(assignedCharacter, _targetCharacter);
+        UIManager.Instance.HideObjectPicker();
+
+        if(_targetCharacter.currentAction != null) {
+            _targetCharacter.SetHasAlreadyAskedForPlan(true);
+            _targetCharacter.currentAction.StopAction();
+        }
+        _targetCharacter.AddTrait("Berserker");
+        _targetCharacter.currentParty.GoToLocation(area, PATHFINDING_MODE.NORMAL);
     }
     private bool CanRileUpCharacter(Character character) {
         if(_targetCharacter == character) {

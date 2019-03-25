@@ -2790,7 +2790,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //This is to ensure that this character will not be idle forever
         //If at the start of the tick, the character is not currently doing any action, and is not waiting for any new plans, it means that the character will no longer perform any actions
         //so start doing actions again
-        _hasAlreadyAskedForPlan = false;
+        SetHasAlreadyAskedForPlan(false);
         if(currentAction == null && _numOfWaitingForGoapThread <= 0) {
             PlanGoapActions();
         }
@@ -2831,7 +2831,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (_hasAlreadyAskedForPlan) {
             return;
         }
-        _hasAlreadyAskedForPlan = true;
+        SetHasAlreadyAskedForPlan(true);
         if (!OtherPlanCreations()) {
             if (!PlanFullnessRecoveryActions()) {
                 if (!PlanTirednessRecoveryActions()) {
@@ -4480,6 +4480,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             Debug.Log(GameManager.Instance.TodayLogString() + this.name + " will do action " + action.goapType.ToString() + " to " + action.poiTarget.ToString());
         }
 
+    }
+    public void SetHasAlreadyAskedForPlan(bool state) {
+        _hasAlreadyAskedForPlan = state;
     }
     #endregion
 

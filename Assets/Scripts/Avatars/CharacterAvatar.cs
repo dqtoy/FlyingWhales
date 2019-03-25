@@ -233,7 +233,9 @@ public class CharacterAvatar : MonoBehaviour{
             arriveLog.AddLogToInvolvedObjects();
             //_party.specificLocation.areaMap.ShowEventPopupAt(_party.owner.gridTileLocation, arriveLog);
         }
-        _party.owner.MoveToAnotherStructure(targetStructure, targetTile, targetPOI, onPathFinished);
+        if(targetStructure != null) {
+            _party.owner.MoveToAnotherStructure(targetStructure, targetTile, targetPOI, onPathFinished);
+        }
         //if (onPathFinished != null) {
         //    onPathFinished();
         //}

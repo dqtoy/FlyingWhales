@@ -236,7 +236,7 @@ public class GoapAction {
         }
         Debug.Log(this.goapType.ToString() + " action by " + this.actor.name + " Summary: \n" + actionSummary);
     }
-    public void StopAction() {
+    public void StopAction( ) {
         actor.SetCurrentAction(null);
         if (actor.currentParty.icon.isTravelling && actor.currentParty.icon.travelLine == null) {
             //This means that the actor currently travelling to another tile in tilemap
