@@ -39,10 +39,12 @@ public class GetSupply : GoapAction {
 
     #region Requirements
     protected bool Requirement() {
-        if (poiTarget is SupplyPile) {
-            SupplyPile supplyPile = poiTarget as SupplyPile;
-            if(supplyPile.suppliesInPile > 0 && actor.homeArea == supplyPile.gridTileLocation.structure.location && actor.supply < actor.role.reservedSupply) {
-                return true; 
+        if(actor.role.roleType != CHARACTER_ROLE.CIVILIAN && actor.homeArea == poiTarget.gridTileLocation.structure.location && actor.supply < actor.role.reservedSupply) {
+            if (poiTarget is SupplyPile) {
+                SupplyPile supplyPile = poiTarget as SupplyPile;
+                if (supplyPile.suppliesInPile > 0) {
+                    return true;
+                }
             }
         }
         return false;
