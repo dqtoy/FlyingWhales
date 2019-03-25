@@ -164,8 +164,8 @@ public class PathGenerator : MonoBehaviour {
                 var prePath = PathFind.PathFind.FindPath(startingTile, startingTile.structure.entranceTile, dist, est, pathMode).Reverse().ToList();
 
                 est = t => Math.Sqrt(Math.Pow(t.localPlace.x - destinationTile.structure.entranceTile.localPlace.x, 2) + Math.Pow(t.localPlace.y - destinationTile.structure.entranceTile.localPlace.y, 2));
-                var midPath = PathFind.PathFind.FindPath(startingTile.structure.entranceTile, destinationTile.structure.entranceTile, dist, est, pathMode, SameStructureTiles,
-                startingTile.parentAreaMap.area.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA), startingTile.structure.entranceTile, destinationTile.structure.entranceTile).Reverse().ToList();
+                var midPath = PathFind.PathFind.FindPath(startingTile.structure.entranceTile, destinationTile.structure.entranceTile, dist, est, pathMode, AllowedStructureTiles,
+                new List<STRUCTURE_TYPE>() { STRUCTURE_TYPE.WORK_AREA, STRUCTURE_TYPE.WILDERNESS }, startingTile.structure.entranceTile, destinationTile.structure.entranceTile).Reverse().ToList();
 
                 est = t => Math.Sqrt(Math.Pow(t.localPlace.x - destinationTile.localPlace.x, 2) + Math.Pow(t.localPlace.y - destinationTile.localPlace.y, 2));
                 var afterPath = PathFind.PathFind.FindPath(destinationTile.structure.entranceTile, destinationTile, dist, est, pathMode).Reverse().ToList();

@@ -153,6 +153,14 @@ public static class GoapActionStateDB {
             new StateNameAndDuration(){ name = "Destroy Success", status = InteractionManager.Goap_State_Success, duration = 0 },
             new StateNameAndDuration(){ name = "Target Missing", status = InteractionManager.Goap_State_Fail, duration = 0 },
         } },
+        {INTERACTION_TYPE.TRAVEL, new StateNameAndDuration[]{
+            new StateNameAndDuration(){ name = "Travel Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+            new StateNameAndDuration(){ name = "Travel Failed", status = InteractionManager.Goap_State_Fail, duration = 0 },
+        } },
+        {INTERACTION_TYPE.RETURN_HOME_LOCATION, new StateNameAndDuration[]{
+            new StateNameAndDuration(){ name = "Return Home Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+            new StateNameAndDuration(){ name = "Return Home Failed", status = InteractionManager.Goap_State_Fail, duration = 0 },
+        } },
     };
 }
 

@@ -203,7 +203,7 @@ public static class Signals {
     public static string CHARACTER_RECIEVED_PLAN = "OnCharacterRecievedPlan"; //Parameters (Character, GoapPlan)
     public static string CHARACTER_DID_ACTION = "OnCharacterDidAction"; //Parameters (Character, GoapAction)
     public static string STOP_ACTION = "OnStopAction"; //Parameters (GoapAction)
-    public static string CHARACTER_FINISHED_ACTION = "OnCharacterFinishedAction"; //Parameters (Character, GoapAction)
+    public static string CHARACTER_FINISHED_ACTION = "OnCharacterFinishedAction"; //Parameters (Character, GoapAction, String result)
     public static string CHARACTER_DOING_ACTION = "OnCharacterDoingAction"; //Parameters (Character, GoapAction)
     #endregion
 

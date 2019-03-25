@@ -71,7 +71,7 @@ public class CharacterMarker : PooledObject {
         Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
         Messenger.AddListener<Character, GoapAction>(Signals.CHARACTER_DOING_ACTION, OnCharacterDoingAction);
-        Messenger.AddListener<Character, GoapAction>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
+        Messenger.AddListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
     }
     public void SetLocation(LocationGridTile location) {
         this.location = location;
@@ -107,7 +107,7 @@ public class CharacterMarker : PooledObject {
         Messenger.RemoveListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.RemoveListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
         Messenger.RemoveListener<Character, GoapAction>(Signals.CHARACTER_DOING_ACTION, OnCharacterDoingAction);
-        Messenger.RemoveListener<Character, GoapAction>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
+        Messenger.RemoveListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
     }
 
     public void OnPointerClick(BaseEventData bd) {
@@ -144,7 +144,7 @@ public class CharacterMarker : PooledObject {
             UpdateActionIcon();
         }
     }
-    private void OnCharacterFinishedAction(Character character, GoapAction action) {
+    private void OnCharacterFinishedAction(Character character, GoapAction action, string result) {
         if (this.character == character) {
             UpdateActionIcon();
         }
