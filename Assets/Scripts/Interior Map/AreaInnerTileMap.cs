@@ -1152,6 +1152,7 @@ public class AreaInnerTileMap : MonoBehaviour {
         //    UIManager.Instance.areaInfoUI.ToggleMapMenu(false);
         //}
         isHovering = false;
+        SwitchFromPathfindingToEstimatedMovement();
     }
     private void ShowTileData(LocationGridTile tile) {
         if (tile == null) {
@@ -1215,6 +1216,15 @@ public class AreaInnerTileMap : MonoBehaviour {
             }
         }
     }
+    private void SwitchFromPathfindingToEstimatedMovement() {
+        for (int i = 0; i < area.charactersAtLocation.Count; i++) {
+            Character character = area.charactersAtLocation[i];
+            if (character.currentParty.icon.isTravelling && character.currentParty.icon.travelLine == null) {
+                //This means that the character is only travelling inside the map, he/she is not travelling to another area
+                character.marker.SwitchToEstimatedMovement();
+            }
+        }
+    }
     #endregion
 
     #region UI
@@ -1270,6 +1280,16 @@ public class AreaInnerTileMap : MonoBehaviour {
     public void MoveTravelLineContent() {
         Debug.Log(grid.CellToWorld(new Vector3Int(0, 0, 0)).ToString());
         //(travelLineParent.transform as RectTransform).anchoredPosition = canvas.worldCamera.WorldToViewportPoint();
+    }
+    [ContextMenu("Create Realistic Path")]
+    public void CreateRealisticPath() {
+        List<LocationGridTile> _currentPath = PathGenerator.Instance.GetPath(map[(int) startPos.x, (int)startPos.y], map[(int) endPos.x, (int) endPos.y], GRID_PATHFINDING_MODE.REALISTIC);
+        if (_currentPath != null) {
+            //ShowPath(_currentPath);
+            Debug.LogWarning("Created path from " + map[(int) startPos.x, (int) startPos.y].ToString() + " to " + map[(int) endPos.x, (int) endPos.y].ToString());
+        } else {
+            Debug.LogError("Can't create path from " + map[(int) startPos.x, (int) startPos.y].ToString() + " to " + map[(int) endPos.x, (int) endPos.y].ToString());
+        }
     }
     #endregion
 

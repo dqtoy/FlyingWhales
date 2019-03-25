@@ -324,13 +324,14 @@ public class CharacterMarker : PooledObject {
         }
         _isMovementEstimated = true;
         _estimatedTravelTime = _currentPath.Count;
-        if(_estimatedTravelTime > 0) {
-            _currentTravelTime = 0;
-            StartWalkingAnimation();
-            Messenger.AddListener(Signals.TICK_STARTED, EstimatedMove);
-        } else {
-            Debug.LogError(character.name + " can't switch to estimated movement because travel time is zero");
-        }
+        _currentTravelTime = 0;
+        StartWalkingAnimation();
+        Messenger.AddListener(Signals.TICK_STARTED, EstimatedMove);
+        //if (_estimatedTravelTime > 0) {
+            
+        //} else {
+        //    Debug.LogError(character.name + " can't switch to estimated movement because travel time is zero");
+        //}
     }
     private void StartEstimatedMovement() {
         _isMovementEstimated = true;

@@ -48,6 +48,8 @@ public class CharacterRole {
     public virtual void OnDeath(Character character) { }
     public virtual void OnAssign(Character character) { }
     public virtual void OnChange(Character character) { }
+    public virtual void AddRoleWorkPlansToCharacterWeights(WeightedDictionary<INTERACTION_TYPE> weights) { }
+    public virtual GoapPlan PickRoleWorkPlanFromCharacterWeights(INTERACTION_TYPE pickedActionType, Character actor) { return null; }
     #endregion
     //protected Character _character;
     //   protected CHARACTER_ROLE _roleType;

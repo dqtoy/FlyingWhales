@@ -228,13 +228,19 @@ public class Party {
             _currentRegion = _specificLocation.coreTile.region;
         }
     }
-    public bool AddCharacter(Character character) {
+    public bool AddCharacter(Character character, bool isOwner = false) {
         if (!isFull && !_characters.Contains(character)) {
             _characters.Add(character);
             character.SetCurrentParty(this);
             character.OnAddedToParty(); //this will remove character from his/her location
-            if (owner.specificLocation != null) {
-                owner.specificLocation.AddCharacterToLocation(character, owner.currentStructure);
+            if (isOwner) {
+                if (owner.specificLocation != null) {
+                    owner.specificLocation.AddCharacterToLocation(character, owner.currentStructure);
+                }
+            } else {
+                character.SetGridTileLocation(owner.gridTileLocation);
+                character.SetCurrentStructureLocation(owner.currentStructure);
+                character.marker.gameObject.SetActive(false);
             }
             ApplyCurrentBuffsToCharacter(character);
             Messenger.Broadcast(Signals.CHARACTER_JOINED_PARTY, character, this);
@@ -251,7 +257,6 @@ public class Party {
             RemoveCurrentBuffsFromCharacter(character);
             character.ownParty.icon.transform.position = this.specificLocation.coreTile.transform.position;
             //if (this.specificLocation is BaseLandmark) {
-            this.specificLocation.AddCharacterToLocation(character.ownParty, null, null, null, true);
             character.RemoveTrait("Packaged");
             //} else {
             //    character.ownParty.SetSpecificLocation(this.specificLocation);

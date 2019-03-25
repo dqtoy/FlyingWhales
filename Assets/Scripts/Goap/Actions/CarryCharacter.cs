@@ -30,6 +30,10 @@ public class CarryCharacter : GoapAction {
         base.FailAction();
         SetState("Target Missing");
     }
+    public override void DoAction(GoapPlan plan) {
+        SetTargetStructure();
+        base.DoAction(plan);
+    }
     #endregion
 
     #region Requirements
@@ -41,7 +45,7 @@ public class CarryCharacter : GoapAction {
     #region Preconditions
     private bool HasAbductedOrRestrainedTrait() {
         Character target = poiTarget as Character;
-        return target.GetTrait("Abducted") != null;
+        return target.GetTrait("Restrained") != null;
     }
     #endregion
 

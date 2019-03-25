@@ -1219,7 +1219,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         CharacterParty newParty = new CharacterParty(this);
         SetOwnedParty(newParty);
-        newParty.AddCharacter(this);
+        newParty.AddCharacter(this, true);
         //newParty.CreateCharacterObject();
         return newParty;
     }
@@ -1230,6 +1230,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         _currentParty = party as CharacterParty;
     }
     public void OnRemovedFromParty() {
+        currentParty.owner.specificLocation.AddCharacterToLocation(this, null, null, null, true);
         SetCurrentParty(ownParty); //set the character's party to it's own party
         //if (ownParty is CharacterParty) {
         //    if ((ownParty as CharacterParty).actionData.currentAction != null) {
@@ -1242,7 +1243,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public void OnAddedToParty() {
         if (currentParty.id != ownParty.id) {
-            ownParty.specificLocation.RemoveCharacterFromLocation(ownParty);
+            ownParty.specificLocation.RemoveCharacterFromLocation(this);
             //ownParty.icon.SetVisualState(false);
         }
     }
@@ -2835,13 +2836,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             if (!PlanFullnessRecoveryActions()) {
                 if (!PlanTirednessRecoveryActions()) {
                     if (!PlanHappinessRecoveryActions()) {
-                        if (!PlanWorkActions()) {
-                            if(homeStructure != null && currentStructure.structureType == STRUCTURE_TYPE.DWELLING && currentStructure != homeStructure) {
-                                PlanIdleReturnHome();
-                            } else {
-                                PlanIdleStroll();
+                        bool hasAddedToGoapPlans = false;
+                        if (!PlanWorkActions(ref hasAddedToGoapPlans)) {
+                            OtherIdlePlans();
+                        } else {
+                            if (hasAddedToGoapPlans) {
+                                PlanGoapActions();
                             }
-                            PlanGoapActions();
                         }
                     }
                 }
@@ -2945,32 +2946,41 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return false;
     }
-    private bool PlanWorkActions() {
+    private bool PlanWorkActions(ref bool hasAddedToGoapPlans) {
         if(this.faction.id != FactionManager.Instance.neutralFaction.id && GetPlanByCategory(GOAP_CATEGORY.WORK) == null) {
-            WeightedDictionary<string> weightedDictionary = new WeightedDictionary<string>();
+            WeightedDictionary<INTERACTION_TYPE> weightedDictionary = new WeightedDictionary<INTERACTION_TYPE>();
             //Drop Supply Plan
             if (supply > role.reservedSupply) {
-                weightedDictionary.AddElement("Drop Supply", 2);
+                weightedDictionary.AddElement(INTERACTION_TYPE.DROP_SUPPLY, 2);
             }
             //Obtain Supply Plan
             if (role.roleType == CHARACTER_ROLE.CIVILIAN) {
                 SupplyPile supplyPile = homeArea.supplyPile;
                 if (supplyPile.suppliesInPile < 100) {
-                    weightedDictionary.AddElement("Obtain Supply", 4);
+                    weightedDictionary.AddElement(INTERACTION_TYPE.GET_SUPPLY, 4);
                 }
             } else {
                 if (supply < role.reservedSupply) {
-                    weightedDictionary.AddElement("Obtain Supply", 4);
+                    weightedDictionary.AddElement(INTERACTION_TYPE.GET_SUPPLY, 4);
                 }
             }
 
+            role.AddRoleWorkPlansToCharacterWeights(weightedDictionary);
+
             if (weightedDictionary.Count > 0) {
-                string result = weightedDictionary.PickRandomElementGivenWeights();
+                INTERACTION_TYPE result = weightedDictionary.PickRandomElementGivenWeights();
                 SupplyPile supplyPile = homeArea.supplyPile;
-                if (result == "Drop Supply") {
+                if (result == INTERACTION_TYPE.DROP_SUPPLY) {
                     StartGOAP(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_SUPPLY, supply, supplyPile), supplyPile, GOAP_CATEGORY.WORK);
-                } else {
+                } else if (result == INTERACTION_TYPE.GET_SUPPLY) {
                     StartGOAP(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_SUPPLY, supplyPile.suppliesInPile, this), this, GOAP_CATEGORY.WORK);
+                } else {
+                    //Role work plans
+                    GoapPlan plan = role.PickRoleWorkPlanFromCharacterWeights(result, this);
+                    if(plan != null) {
+                        allGoapPlans.Add(plan);
+                        hasAddedToGoapPlans = true;
+                    }
                 }
                 return true;
             } else {
@@ -2998,6 +3008,27 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.IDLE);
         allGoapPlans.Add(goapPlan);
         return true;
+    }
+    private void OtherIdlePlans() {
+        if (homeStructure != null && currentStructure.structureType == STRUCTURE_TYPE.DWELLING && currentStructure != homeStructure) {
+            PlanIdleReturnHome();
+        } else if (homeStructure != null) {
+            int chance = UnityEngine.Random.Range(0, 100);
+            int returnHomeChance = 0;
+            if(currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS || currentStructure.structureType == STRUCTURE_TYPE.DUNGEON || currentStructure.structureType == STRUCTURE_TYPE.WORK_AREA) {
+                returnHomeChance = 25;
+            }else if (currentStructure.structureType == STRUCTURE_TYPE.WAREHOUSE || currentStructure.structureType == STRUCTURE_TYPE.INN) {
+                returnHomeChance = 75;
+            }
+            if(chance < returnHomeChance) {
+                PlanIdleReturnHome();
+            } else {
+                PlanIdleStroll();
+            }
+        } else {
+            PlanIdleStroll();
+        }
+        PlanGoapActions();
     }
     public void SetForcedInteraction(Interaction interaction) {
         _forcedInteraction = interaction;
@@ -4114,9 +4145,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public void RecalculatePlan(GoapPlan currentPlan) {
         currentPlan.SetIsBeingRecalculated(true);
-
-        
-
         MultiThreadPool.Instance.AddToThreadPool(new GoapThread(this, currentPlan));
     }
     public bool IsPOIInCharacterAwarenessList(IPointOfInterest poi, List<CharacterAwareness> awarenesses) {
@@ -4178,9 +4206,22 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 bool preconditionsSatisfied = plan.currentNode.action.CanSatisfyAllPreconditions();
                 if (!preconditionsSatisfied) {
                     log += "\n - Action's preconditions are not all satisfied, trying to recalculate plan...";
-                    Debug.Log(log);
-                    RecalculatePlan(plan);
-                    //willGoIdleState = false;
+                    if (plan.doNotRecalculate) {
+                        log += "\n - Action's plan has doNotRecalculate state set to true, dropping plan...";
+                        Debug.Log(log);
+                        if (allGoapPlans.Count == 1) {
+                            DropPlan(plan);
+                            willGoIdleState = false;
+                            break;
+                        } else {
+                            DropPlan(plan);
+                            i--;
+                        }
+                    } else {
+                        Debug.Log(log);
+                        RecalculatePlan(plan);
+                        willGoIdleState = false;
+                    }
                 } else {
                     log += "\n - Action's preconditions are all satisfied, doing action...";
                     Debug.Log(log);
@@ -4228,20 +4269,33 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 PlanGoapActions();
             }
         } else {
+            if (currentAction.IsHalted()) {
+                log += "\n Action is waiting! Not doing action...";
+                SetCurrentAction(null);
+                return;
+            }
             if (currentAction.CanSatisfyRequirements() && currentAction.CanSatisfyAllPreconditions()) {
                 log += "\nAction satisfies all requirements and preconditions, proceeding to perform actual action: " + currentAction.goapName + " to " + currentAction.poiTarget.name + " at " + currentAction.poiTarget.gridTileLocation.ToString();
                 Debug.Log(log);
                 currentAction.PerformActualAction();
             } else {
                 log += "\nAction did not meet all requirements and preconditions. Will try to recalculate plan...";
-                Debug.Log(log);
                 if (currentAction.poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
                     Character targetCharacter = currentAction.poiTarget as Character;
                     targetCharacter.AdjustIsWaitingForInteraction(-1);
                 }
                 SetCurrentAction(null);
-                RecalculatePlan(plan);
-                IdlePlans();
+                if (plan.doNotRecalculate) {
+                    log += "\n - Action's plan has doNotRecalculate state set to true, dropping plan...";
+                    Debug.Log(log);
+                    if (!DropPlan(plan)) {
+                        PlanGoapActions();
+                    }
+                } else {
+                    Debug.Log(log);
+                    RecalculatePlan(plan);
+                    //IdlePlans();
+                }
             }
         }
     }
@@ -4294,7 +4348,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             } else {
                 log += "\nNext action for this plan: " + plan.currentNode.action.goapName;
                 Debug.Log(log);
-                PerformGoapPlans();
+                PlanGoapActions();
             }
         } else if(result == InteractionManager.Goap_State_Fail) {
             if(plan.endNode.action == action) {
@@ -4304,9 +4358,17 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 }
             } else {
                 log += "\nAction performed has failed. Will try to recalculate plan...";
-                Debug.Log(log);
-                RecalculatePlan(plan);
-                IdlePlans();
+                if (plan.doNotRecalculate) {
+                    log += "\n - Action's plan has doNotRecalculate state set to true, dropping plan...";
+                    Debug.Log(log);
+                    if (!DropPlan(plan)) {
+                        PlanGoapActions();
+                    }
+                } else {
+                    Debug.Log(log);
+                    RecalculatePlan(plan);
+                    //IdlePlans();
+                }
             }
         }
     }

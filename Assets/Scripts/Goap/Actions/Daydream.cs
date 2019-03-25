@@ -43,7 +43,9 @@ public class Daydream : GoapAction {
     }
     public override void SetTargetStructure() {
         List<LocationStructure> choices = actor.specificLocation.GetStructuresOfType(STRUCTURE_TYPE.WILDERNESS).ToList();
-        choices.AddRange(actor.specificLocation.GetStructuresOfType(STRUCTURE_TYPE.WORK_AREA));
+        if (actor.specificLocation.HasStructure(STRUCTURE_TYPE.WORK_AREA)) {
+            choices.AddRange(actor.specificLocation.GetStructuresOfType(STRUCTURE_TYPE.WORK_AREA));
+        }
         if (choices.Count > 0) {
             _targetStructure = choices[Utilities.rng.Next(0, choices.Count)];
         }

@@ -1310,9 +1310,10 @@ public class Area {
         }
     }
     public void AddCharacterToLocation(Party party, LocationStructure structureOverride = null, IPointOfInterest targetPOI = null, LocationGridTile tileOverride = null, bool isInitial = false) {
-        for (int i = 0; i < party.characters.Count; i++) {
-            AddCharacterToLocation(party.characters[i], structureOverride, targetPOI, tileOverride, isInitial);
-        }
+        AddCharacterToLocation(party.owner, structureOverride, targetPOI, tileOverride, isInitial);
+        //for (int i = 0; i < party.characters.Count; i++) {
+        //    AddCharacterToLocation(party.characters[i], structureOverride, targetPOI, tileOverride, isInitial);
+        //}
     }
     public void RemoveCharacterFromLocation(Character character) {
         if (charactersAtLocation.Remove(character)) {
@@ -1327,12 +1328,13 @@ public class Area {
 
     }
     public void RemoveCharacterFromLocation(Party party) {
-        for (int i = 0; i < party.characters.Count; i++) {
-            RemoveCharacterFromLocation(party.characters[i]);
-        }
+        RemoveCharacterFromLocation(party.owner);
+        //for (int i = 0; i < party.characters.Count; i++) {
+        //    RemoveCharacterFromLocation(party.characters[i]);
+        //}
     }
     public void AddCharacterToAppropriateStructure(Character character) {
-        if(character.GetTraitOr("Abducted", "Restained") != null) {
+        if(character.GetTraitOr("Abducted", "Restrained") != null) {
             GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA).AddCharacterAtLocation(character);
         } else {
             if (character.homeArea.id == this.id) {

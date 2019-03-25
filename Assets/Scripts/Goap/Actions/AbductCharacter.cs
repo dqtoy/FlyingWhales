@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class AbductCharacter : GoapAction {
+    private int _numOfTries;
     public AbductCharacter(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.ABDUCT_ACTION, INTERACTION_ALIGNMENT.EVIL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Hostile_Icon;
+        _numOfTries = 0;
     }
 
     #region Overrides
@@ -17,7 +19,13 @@ public class AbductCharacter : GoapAction {
     }
     public override void PerformActualAction() {
         if (targetStructure == actor.gridTileLocation.structure) {
-            SetState("Abduct Success");
+            if (!HasOtherCharacterInRadius()) {
+                SetState("Abduct Success");
+            } else {
+                GoapPlan plan = actor.GetPlanWithAction(this);
+                plan.SetDoNotRecalculate(true);
+                SetState("Target Missing");
+            }
         } else {
             SetState("Target Missing");
         }
@@ -26,19 +34,20 @@ public class AbductCharacter : GoapAction {
     protected override int GetCost() {
         return 3;
     }
-    //public override bool IsHalted() {
-    //    //TIME_IN_WORDS timeInWords = GameManager.GetCurrentTimeInWordsOfTick();
-    //    //if(timeInWords == TIME_IN_WORDS.EARLY_NIGHT || timeInWords == TIME_IN_WORDS.LATE_NIGHT || timeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
-    //    //    return false;
-    //    //}
-    //    if(targetStructure.structureType == STRUCTURE_TYPE.WILDERNESS || targetStructure.charactersHere.Count == 2) {
-    //        return false;
-    //    }
-    //    return true;
-    //}
+    public override bool IsHalted() {
+        if (_numOfTries < 18 && HasOtherCharacterInRadius()) {
+            _numOfTries++;
+            return true;
+        }
+        return base.IsHalted();
+    }
     public override void FailAction() {
         base.FailAction();
         SetState("Target Missing");
+    }
+    public override void DoAction(GoapPlan plan) {
+        SetTargetStructure();
+        base.DoAction(plan);
     }
     #endregion
 
@@ -73,6 +82,18 @@ public class AbductCharacter : GoapAction {
     }
     public void AfterTargetMissing() {
         actor.RemoveAwareness(poiTarget);
+    }
+    #endregion
+
+    #region Special Note: Stealth
+    public bool HasOtherCharacterInRadius() {
+        List<LocationGridTile> tiles = poiTarget.gridTileLocation.structure.location.areaMap.GetTilesInRadius(poiTarget.gridTileLocation, 3);
+        for (int i = 0; i < tiles.Count; i++) {
+            if (tiles[i].occupant != null && tiles[i].occupant != actor) {
+                return true;
+            }
+        }
+        return false;
     }
     #endregion
 }
