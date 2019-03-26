@@ -185,9 +185,9 @@ public class GoapAction {
     public virtual bool IsHalted() {
         //Only waiting condition for now is the time of day
         //The default for the valid time of days is null, if it is null, do not wait meaning return false
-        if (validTimeOfDays != null && !validTimeOfDays.Contains(GameManager.GetCurrentTimeInWordsOfTick())) {
-            return true;
-        }
+        //if (validTimeOfDays != null && !validTimeOfDays.Contains(GameManager.GetCurrentTimeInWordsOfTick())) {
+        //    return true;
+        //}
         return false;
     }
     #endregion
@@ -204,10 +204,11 @@ public class GoapAction {
         return actorInteractions.Contains(goapType);
     }
     public bool CanSatisfyRequirements() {
+        bool requirementActionSatisfied = true;
         if(_requirementAction != null) {
-            return _requirementAction();
+            requirementActionSatisfied = _requirementAction();
         }
-        return true;
+        return requirementActionSatisfied && (validTimeOfDays == null || validTimeOfDays.Contains(GameManager.GetCurrentTimeInWordsOfTick()));
     }
     public void AddTraitTo(Character target, string traitName) {
         if (target.AddTrait(traitName)) {
