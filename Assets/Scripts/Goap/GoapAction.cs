@@ -247,10 +247,10 @@ public class GoapAction {
         if(isPerformingActualAction && !isDone) {
             ReturnToActorTheActionResult(InteractionManager.Goap_State_Fail);
         } else {
-            if (action != null && action.poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-                Character targetCharacter = action.poiTarget as Character;
-                targetCharacter.AdjustIsWaitingForInteraction(-1);
-            }
+            //if (action != null && action.poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+            //    Character targetCharacter = action.poiTarget as Character;
+            //    targetCharacter.AdjustIsWaitingForInteraction(-1);
+            //}
             if (!actor.DropPlan(parentPlan)) {
                 actor.PlanGoapActions();
             }

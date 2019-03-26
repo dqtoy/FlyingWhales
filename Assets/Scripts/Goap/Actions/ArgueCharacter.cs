@@ -28,7 +28,7 @@ public class ArgueCharacter : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
     }
     public override void PerformActualAction() {
-        if (poiTarget.gridTileLocation.structure == actor.gridTileLocation.structure) {
+        if (actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
             SetState("Argue Success");
         } else {
             SetState("Target Missing");
@@ -108,6 +108,16 @@ public class ArgueCharacter : GoapAction {
     #region State Effects
     private void PreArgueSuccess() {
         actor.AdjustDoNotGetLonely(1);
+        Character target = poiTarget as Character;
+        if (target.currentParty.icon.isTravelling && target.currentParty.icon.travelLine == null) {
+            target.SetCurrentAction(null);
+            target.marker.StopMovement();
+        }
+        if (target.marker.isStillMovingToAnotherTile) {
+            target.marker.SetOnArriveAtTileAction(() => target.FaceTarget(actor));
+        } else {
+            target.FaceTarget(actor);
+        }
         currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
     }
     private void PerTickArgueSuccess() {

@@ -21847,7 +21847,7 @@ MonoBehaviour:
   month: 1
   days: 1
   year: 80
-  tick: 24
+  tick: 96
   continuousDays: 1
   startYear: 80
   currProgressionSpeed: 0
@@ -61899,7 +61899,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   startTile: {fileID: 0}
   targetTile: {fileID: 0}
+  startLocGrid: {x: 0, y: 0}
+  destLocGrid: {x: 0, y: 0}
   modeToUse: 0
+  gridModeToUse: 0
 --- !u!1 &1480326875
 GameObject:
   m_ObjectHideFlags: 0

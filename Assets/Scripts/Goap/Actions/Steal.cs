@@ -23,7 +23,7 @@ public class Steal : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = poiTarget, targetPOI = actor });
     }
     public override void PerformActualAction() {
-        if(poiTarget.gridTileLocation.structure == actor.gridTileLocation.structure) {
+        if(actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
             SetState("Steal Success");
         } else {
             SetState("Target Missing");

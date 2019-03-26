@@ -4270,6 +4270,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         } else {
             if (currentAction.IsHalted()) {
                 log += "\n Action is waiting! Not doing action...";
+                //if (currentAction.poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+                //    Character targetCharacter = currentAction.poiTarget as Character;
+                //    targetCharacter.AdjustIsWaitingForInteraction(-1);
+                //}
                 SetCurrentAction(null);
                 return;
             }
@@ -4279,10 +4283,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 currentAction.PerformActualAction();
             } else {
                 log += "\nAction did not meet all requirements and preconditions. Will try to recalculate plan...";
-                if (currentAction.poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-                    Character targetCharacter = currentAction.poiTarget as Character;
-                    targetCharacter.AdjustIsWaitingForInteraction(-1);
-                }
+                //if (currentAction.poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+                //    Character targetCharacter = currentAction.poiTarget as Character;
+                //    targetCharacter.AdjustIsWaitingForInteraction(-1);
+                //}
                 SetCurrentAction(null);
                 if (plan.doNotRecalculate) {
                     log += "\n - Action's plan has doNotRecalculate state set to true, dropping plan...";
@@ -4304,10 +4308,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (action == currentAction) {
             SetCurrentAction(null);
         }
-        if (action.poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-            Character targetCharacter = action.poiTarget as Character;
-            targetCharacter.AdjustIsWaitingForInteraction(-1);
-        }
+        //if (action.poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+        //    Character targetCharacter = action.poiTarget as Character;
+        //    targetCharacter.AdjustIsWaitingForInteraction(-1);
+        //}
         if (isDead) {
             log += "\nCharacter is dead!";
             Debug.Log(log);
@@ -4473,6 +4477,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
     }
     public void SetCurrentAction(GoapAction action) {
+        if(currentAction != null && action == null) {
+            //This means that the current action of this character is being set to null, when this happens, the poi target of the current action must not wait for interaction anymore
+            if (currentAction.poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+                Character targetCharacter = currentAction.poiTarget as Character;
+                targetCharacter.AdjustIsWaitingForInteraction(-1);
+            }
+        }
         currentAction = action;
         if (currentAction != null) {
             Debug.Log(GameManager.Instance.TodayLogString() + this.name + " will do action " + action.goapType.ToString() + " to " + action.poiTarget.ToString());

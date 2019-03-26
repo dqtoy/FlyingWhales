@@ -37,7 +37,6 @@ public class CharacterMarker : PooledObject {
     private int _estimatedTravelTime;
     private int _currentTravelTime;
     private bool _isMovementEstimated;
-    private bool isStillMovingToAnotherTile;
     private Action onArrivedAtTileAction;
 
     private LocationGridTile _destinationTile;
@@ -45,6 +44,8 @@ public class CharacterMarker : PooledObject {
     private bool shouldRecalculatePath = false;
 
     private Coroutine currentMoveCoroutine;
+
+    public bool isStillMovingToAnotherTile { get; private set; }
 
     #region getters/setters
     public List<LocationGridTile> currentPath {
@@ -155,7 +156,7 @@ public class CharacterMarker : PooledObject {
     #region Pathfinding Movement
     public void GoToTile(LocationGridTile destinationTile, IPointOfInterest targetPOI, Action arrivalAction = null) {
         if (isStillMovingToAnotherTile) {
-            onArrivedAtTileAction = () => GoToTile(destinationTile, targetPOI, arrivalAction);
+            SetOnArriveAtTileAction(() => GoToTile(destinationTile, targetPOI, arrivalAction));
             return;
         }
         _destinationTile = destinationTile;
@@ -222,7 +223,9 @@ public class CharacterMarker : PooledObject {
         }
         _arrivalAction = null;
         //_currentPath = null;
-        //PlayIdle();
+        if (!isStillMovingToAnotherTile) {
+            PlayIdle();
+        }
     }
     private void Move() {
         if (character.isDead) {
@@ -491,5 +494,8 @@ public class CharacterMarker : PooledObject {
                 }
             }
         }
+    }
+    public void SetOnArriveAtTileAction(Action action) {
+        onArrivedAtTileAction = action;
     }
 }

@@ -20,7 +20,7 @@ public class PlayGuitar : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
     }
     public override void PerformActualAction() {
-        if (targetStructure == actor.gridTileLocation.structure) {
+        if (actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
             if (poiTarget.state == POI_STATE.INACTIVE) {
                 SetState("Play Fail");
             } else {
