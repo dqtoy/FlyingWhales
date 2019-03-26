@@ -912,7 +912,7 @@ public class AreaInnerTileMap : MonoBehaviour {
                         currTile.hasDetail = true;
                         detailsTilemap.SetTile(currTile.localPlace, rockTile);
                         currTile.SetTileState(LocationGridTile.Tile_State.Occupied);
-                        currTile.SetTileAccess(LocationGridTile.Tile_Access.Impassable);
+                        //currTile.SetTileAccess(LocationGridTile.Tile_Access.Impassable);
                     }
                 } else if (Random.Range(0, 100) < 3) {
                     currTile.hasDetail = true;
