@@ -44,9 +44,9 @@ public class AssaultCharacter : GoapAction {
 
         if (actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
             WeightedDictionary<string> resultWeights = new WeightedDictionary<string>();
-            //resultWeights.AddElement("Target Injured", 30);
+            resultWeights.AddElement("Target Injured", 30);
             resultWeights.AddElement("Target Knocked Out", 20);
-            //resultWeights.AddElement("Target Killed", 5);
+            resultWeights.AddElement("Target Killed", 5);
 
             string nextState = resultWeights.PickRandomElementGivenWeights();
             if(nextState == "Target Killed") {
