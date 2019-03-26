@@ -131,6 +131,7 @@ public class MapGenerator : MonoBehaviour {
         //RoadManager.Instance.GenerateTilePassableTypes();
 
         UIManager.Instance.InitializeUI();
+        InteriorMapManager.Instance.Initialize();
         //ObjectManager.Instance.Initialize();
 
         LevelLoaderManager.UpdateLoadingInfo("Loading Factions...");
@@ -189,7 +190,6 @@ public class MapGenerator : MonoBehaviour {
         }
         //CharacterManager.Instance.GenerateRelationshipsForTesting();
         CharacterManager.Instance.GenerateRelationships();
-        InteriorMapManager.Instance.Initialize();
         loadingWatch.Stop();
         Debug.Log(string.Format("Total loading time is {0} ms", loadingWatch.ElapsedMilliseconds));
         LevelLoaderManager.SetLoadingState(false);

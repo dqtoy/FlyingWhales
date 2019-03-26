@@ -22,6 +22,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     public Vector3 worldLocation { get; private set; }
     public Vector3 centeredWorldLocation { get; private set; }
     public Vector3 localLocation { get; private set; }
+    public Vector3 centeredLocalLocation { get; private set; }
     public bool isInside { get; private set; }
     public Tile_Type tileType { get; private set; }
     public Tile_State tileState { get; private set; }
@@ -48,6 +49,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         localPlace = new Vector3Int(x, y, 0);
         worldLocation = tilemap.CellToWorld(localPlace);
         localLocation = tilemap.CellToLocal(localPlace);
+        centeredLocalLocation = new Vector3(localLocation.x + 0.5f, localLocation.y + 0.5f, localLocation.z);
         centeredWorldLocation = new Vector3(worldLocation.x + 0.5f, worldLocation.y + 0.5f, worldLocation.z);
         tileType = Tile_Type.Empty;
         tileState = Tile_State.Empty;
@@ -377,16 +379,23 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         //    return;
         //}
         if (objHere is TileObject || objHere is SpecialToken) {
-            parentAreaMap.ShowIntelItemAt(this, InteractionManager.Instance.CreateNewIntel(objHere));
+            if (inputButton == PointerEventData.InputButton.Right && objHere is TileObject) {
+                (objHere as TileObject).LogActionHistory();
+            } else {
+                parentAreaMap.ShowIntelItemAt(this, InteractionManager.Instance.CreateNewIntel(objHere));
+            }
+        } else if (objHere is Character) {
+            if (inputButton == PointerEventData.InputButton.Right) {
+                (objHere as Character).marker.LogPOIsInRange();
+            } else {
+                UIManager.Instance.ShowCharacterInfo((objHere as Character));
+            }
         } else if (occupant != null) {
-            UIManager.Instance.ShowCharacterInfo(occupant);
-            //LocationGridTile nearestTile = occupant.GetNearestUnoccupiedTileFromThis();
-            //parentAreaMap.QuicklyHighlightTile(nearestTile);
-            //if (nearestTile != null) {
-            //    parentAreaMap.QuicklyHighlightTile(nearestTile);
-            //} else {
-            //    Debug.LogWarning(occupant.ToString() + " does not have a nearest unoccupied tile!");
-            //}
+            if (inputButton == PointerEventData.InputButton.Right) {
+                occupant.marker.LogPOIsInRange();
+            } else {
+                UIManager.Instance.ShowCharacterInfo(occupant);
+            }
         }
     }
     #endregion

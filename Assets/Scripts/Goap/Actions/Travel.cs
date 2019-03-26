@@ -68,6 +68,11 @@ public class Travel : GoapAction {
                 LocationStructure wilderness = currArea.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
                 if (wilderness != null) {
                     int weight = 20;
+                    List<HexTile> path = PathGenerator.Instance.GetPath(actor.specificLocation.coreTile, currArea.coreTile, PATHFINDING_MODE.UNRESTRICTED);
+                    if (path != null) {
+                        weight -= 2 * path.Count;
+                    }
+                    weight = Mathf.Max(weight, 2);
                     weights.AddElement(wilderness, weight);
                 }
             }

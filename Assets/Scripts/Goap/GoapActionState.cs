@@ -46,7 +46,9 @@ public class GoapActionState {
             descriptionLog.SetDate(GameManager.Instance.Today());
             descriptionLog.AddLogToInvolvedObjects();
         }
-       
+
+        parentAction.SetExecutionDate(GameManager.Instance.Today());
+
         if(duration > 0) {
             _currentDuration = 0;
             StartPerTickEffect();
