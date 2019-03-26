@@ -51,7 +51,7 @@ public class ChopWood : GoapAction {
         if (poiTarget is Tree) {
             Tree tree = poiTarget as Tree;
             actor.AdjustSupply(_gainedSupply);
-            tree.AdjustYield(-_gainedSupply);
+            tree.AdjustYield(-1);
         }
     }
     public void PreTargetMissing() {

@@ -533,6 +533,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         awareness = new Dictionary<POINT_OF_INTEREST_TYPE, List<IAwareness>>();
         planner = new GoapPlanner(this);
         //AddAwareness(this);
+        SetSupply(UnityEngine.Random.Range(10, 61)); //Randomize initial supply per character (Random amount between 10 to 60.)
 
         GetRandomCharacterColor();
 #if !WORLD_CREATION_TOOL
@@ -4507,6 +4508,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public void AdjustSupply(int amount) {
         supply += amount;
         if(supply < 0) {
+            supply = 0;
+        }
+    }
+    public void SetSupply(int amount) {
+        supply = amount;
+        if (supply < 0) {
             supply = 0;
         }
     }

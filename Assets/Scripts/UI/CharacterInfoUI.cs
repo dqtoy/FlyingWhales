@@ -20,6 +20,7 @@ public class CharacterInfoUI : UIMenu {
     [SerializeField] private TextMeshProUGUI nameLbl;
     [SerializeField] private TextMeshProUGUI lvlClassLbl;
     [SerializeField] private TextMeshProUGUI plansLbl;
+    [SerializeField] private TextMeshProUGUI supplyLbl;
     [SerializeField] private LogItem plansLblLogItem;
     [SerializeField] private FactionEmblem factionEmblem;
     [SerializeField] private PartyEmblem partyEmblem;
@@ -141,52 +142,9 @@ public class CharacterInfoUI : UIMenu {
         _activeCharacter = _data as Character;
         base.OpenMenu();
         UpdateCharacterInfo();
-        //if (_activeCharacter.isBeingInspected || GameManager.Instance.inspectAll) {
-            UpdateTraits();
-        //} else {
-        //    UpdateCombatAttributes(_activeCharacter.uiData);
-        //}
-        //if (_activeCharacter.isBeingInspected) {
-        //    UpdateTagInfo(_activeCharacter.attributes);
-        //} else {
-        //    UpdateTagInfo(_activeCharacter.uiData.attributes);
-        //}
-        //UpdateTagInfo();
-        //UpdateRelationshipInfo();
-        //ShowAttackButton();
-        //ShowReleaseButton();
-        //CheckShowSnatchButton();
-        //currentActionIcon.SetCharacter(_activeCharacter);
-        //currentActionIcon.SetAction(_activeCharacter.currentParty.currentAction);
-        //PlayerAbilitiesUI.Instance.ShowPlayerAbilitiesUI(_activeCharacter);
-        //PlayerUI.Instance.UncollapseMinionHolder();
-        //InteractionUI.Instance.OpenInteractionUI(_activeCharacter);
+        UpdateTraits();
         ResetAllScrollPositions();
-        //CheckIfMenuShouldBeHidden();
-        //UIManager.Instance.SetCoverState(true);
     }
-    //public override void ShowTooltip(GameObject objectHovered) {
-    //    base.ShowTooltip(objectHovered);
-    //    if(objectHovered == healthProgressBar.gameObject) {
-    //        UIManager.Instance.ShowSmallInfo(_activeCharacter.currentHP + "/" + _activeCharacter.maxHP);
-    //    } else if (objectHovered == manaProgressBar.gameObject) {
-    //        UIManager.Instance.ShowSmallInfo(_activeCharacter.currentSP + "/" + _activeCharacter.maxSP);
-    //    } 
-    //    //else if (objectHovered == overallProgressBar.gameObject) {
-    //    //    UIManager.Instance.ShowSmallInfo(_activeCharacter.role.happiness.ToString());
-    //    //} else if (objectHovered == energyProgressBar.gameObject) {
-    //    //    UIManager.Instance.ShowSmallInfo(_activeCharacter.role.energy.ToString());
-    //    //} else if (objectHovered == fullnessProgressBar.gameObject) {
-    //    //    UIManager.Instance.ShowSmallInfo(_activeCharacter.role.fullness.ToString());
-    //    //} else if (objectHovered == funProgressBar.gameObject) {
-    //    //    UIManager.Instance.ShowSmallInfo(_activeCharacter.role.fun.ToString());
-    //    //} 
-    //    //else if (objectHovered == prestigeProgressBar.gameObject) {
-    //    //    UIManager.Instance.ShowSmallInfo(_activeCharacter.role.prestige.ToString());
-    //    //} else if (objectHovered == sanityProgressBar.gameObject) {
-    //    //    UIManager.Instance.ShowSmallInfo(_activeCharacter.role.sanity.ToString());
-    //    //}
-    //}
     #endregion
 
     public void ResetAllScrollPositions() {
@@ -210,7 +168,6 @@ public class CharacterInfoUI : UIMenu {
         UpdateBasicInfo();
         UpdateStatInfo();
         UpdateLocationInfo();
-        //UpdateItemInfo();
         UpdateAllHistoryInfo();
     }
     private void UpdatePortrait() {
@@ -220,6 +177,7 @@ public class CharacterInfoUI : UIMenu {
     public void UpdateBasicInfo() {
         nameLbl.text = _activeCharacter.name;
         lvlClassLbl.text = _activeCharacter.raceClassName;
+        supplyLbl.text = _activeCharacter.supply.ToString();
         //Disabler Thought
         if (_activeCharacter.doNotDisturb > 0) {
             Trait disablerTrait = _activeCharacter.GetTraitOf(TRAIT_TYPE.DISABLER);
