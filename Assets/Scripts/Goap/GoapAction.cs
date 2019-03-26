@@ -234,7 +234,7 @@ public class GoapAction {
         if (Messenger.eventTable.ContainsKey(Signals.CHARACTER_DEATH)) {
             Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnActorDied);
         }
-        Debug.Log(this.goapType.ToString() + " action by " + this.actor.name + " Summary: \n" + actionSummary);
+        this.actor.PrintLogIfActive(this.goapType.ToString() + " action by " + this.actor.name + " Summary: \n" + actionSummary);
     }
     public void StopAction( ) {
         GoapAction action = actor.currentAction;

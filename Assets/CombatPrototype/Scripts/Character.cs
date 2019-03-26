@@ -4181,7 +4181,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         string log = GameManager.Instance.TodayLogString() + "PERFORMING GOAP PLANS OF " + name;
         if (currentAction != null) {
             log += "\n" + name + " can't perform another action because he/she is currently performing " + currentAction.goapName;
-            Debug.Log(log);
+            PrintLogIfActive(log);
             return;
         }
         List<INTERACTION_TYPE> actorAllowedActions = RaceManager.Instance.GetNPCInteractionsOfRace(this);
@@ -4207,7 +4207,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     log += "\n - Action's preconditions are not all satisfied, trying to recalculate plan...";
                     if (plan.doNotRecalculate) {
                         log += "\n - Action's plan has doNotRecalculate state set to true, dropping plan...";
-                        Debug.Log(log);
+                        PrintLogIfActive(log);
                         if (allGoapPlans.Count == 1) {
                             DropPlan(plan);
                             willGoIdleState = false;
@@ -4217,20 +4217,20 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                             i--;
                         }
                     } else {
-                        Debug.Log(log);
+                        PrintLogIfActive(log);
                         RecalculatePlan(plan);
                         willGoIdleState = false;
                     }
                 } else {
                     log += "\n - Action's preconditions are all satisfied, doing action...";
-                    Debug.Log(log);
+                    PrintLogIfActive(log);
                     plan.currentNode.action.DoAction(plan);
                     willGoIdleState = false;
                     break;
                 }
             } else {
                 log += "\n - Action did not meet current requirements and allowed actions, dropping plan...";
-                Debug.Log(log);
+                PrintLogIfActive(log);
                 if (allGoapPlans.Count == 1) {
                     DropPlan(plan);
                     willGoIdleState = false;
@@ -4243,7 +4243,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         if (willGoIdleState) {
             log += "\n - Character will go into idle state";
-            Debug.Log(log);
+            PrintLogIfActive(log);
             IdlePlans();
         }
     }
@@ -4251,8 +4251,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         string log = string.Empty;
         if (currentAction == null) {
             log = GameManager.Instance.TodayLogString() + name + " cancelled current action!";
-            Debug.Log(log);
-            if(!DropPlan(plan)) {
+            PrintLogIfActive(log);
+            if (!DropPlan(plan)) {
                 PlanGoapActions();
             }
             //StartDailyGoapPlanGeneration();
@@ -4262,7 +4262,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         FaceTarget(currentAction.poiTarget);
         if (currentAction.isStopped) {
             log += "\n Action is stopped! Dropping plan...";
-            Debug.Log(log);
+            PrintLogIfActive(log);
             SetCurrentAction(null);
             if (!DropPlan(plan)) {
                 PlanGoapActions();
@@ -4279,7 +4279,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
             if (currentAction.CanSatisfyRequirements() && currentAction.CanSatisfyAllPreconditions()) {
                 log += "\nAction satisfies all requirements and preconditions, proceeding to perform actual action: " + currentAction.goapName + " to " + currentAction.poiTarget.name + " at " + currentAction.poiTarget.gridTileLocation.ToString();
-                Debug.Log(log);
+                PrintLogIfActive(log);
                 currentAction.PerformActualAction();
             } else {
                 log += "\nAction did not meet all requirements and preconditions. Will try to recalculate plan...";
@@ -4290,12 +4290,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 SetCurrentAction(null);
                 if (plan.doNotRecalculate) {
                     log += "\n - Action's plan has doNotRecalculate state set to true, dropping plan...";
-                    Debug.Log(log);
+                    PrintLogIfActive(log);
                     if (!DropPlan(plan)) {
                         PlanGoapActions();
                     }
                 } else {
-                    Debug.Log(log);
+                    PrintLogIfActive(log);
                     RecalculatePlan(plan);
                     //IdlePlans();
                 }
@@ -4314,13 +4314,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //}
         if (isDead) {
             log += "\nCharacter is dead!";
-            Debug.Log(log);
+            PrintLogIfActive(log);
             return;
         }
         GoapPlan plan = GetPlanWithAction(action);
         if (action.isStopped) {
             log += "\nAction is stopped!";
-            Debug.Log(log);
+            PrintLogIfActive(log);
             if (!DropPlan(plan)) {
                 PlanGoapActions();
             }
@@ -4334,7 +4334,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 }
                 log += allGoapPlans[i].endNode.action.goapName;
             }
-            Debug.Log(log);
+            PrintLogIfActive(log);
             PlanGoapActions();
             return;
         }
@@ -4343,20 +4343,20 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             plan.SetNextNode();
             if (plan.currentNode == null) {
                 log += "\nThis action is the end of plan.";
-                Debug.Log(log);
+                PrintLogIfActive(log);
                 //this means that this is the end goal so end this plan now
                 if (!DropPlan(plan)) {
                     PlanGoapActions();
                 }
             } else {
                 log += "\nNext action for this plan: " + plan.currentNode.action.goapName;
-                Debug.Log(log);
+                PrintLogIfActive(log);
                 PlanGoapActions();
             }
         } else if(result == InteractionManager.Goap_State_Fail) {
             if(plan.endNode.action == action) {
                 log += "\nAction performed has failed. Since this action is the end/goal action, it will not recalculate anymore. Dropping plan...";
-                Debug.Log(log);
+                PrintLogIfActive(log);
                 if (!DropPlan(plan)) {
                     PlanGoapActions();
                 }
@@ -4364,12 +4364,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 log += "\nAction performed has failed. Will try to recalculate plan...";
                 if (plan.doNotRecalculate) {
                     log += "\n - Action's plan has doNotRecalculate state set to true, dropping plan...";
-                    Debug.Log(log);
+                    PrintLogIfActive(log);
                     if (!DropPlan(plan)) {
                         PlanGoapActions();
                     }
                 } else {
-                    Debug.Log(log);
+                    PrintLogIfActive(log);
                     RecalculatePlan(plan);
                     //IdlePlans();
                 }
@@ -4426,7 +4426,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if(goapThread.recalculationPlan == null) {
             _numOfWaitingForGoapThread--;
         }
-        Debug.Log(goapThread.log);
+        PrintLogIfActive(goapThread.log);
         if (goapThread.createdPlan != null) {
             if(goapThread.recalculationPlan == null) {
                 if (goapThread.isPriority) {
@@ -4486,12 +4486,17 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         currentAction = action;
         if (currentAction != null) {
-            Debug.Log(GameManager.Instance.TodayLogString() + this.name + " will do action " + action.goapType.ToString() + " to " + action.poiTarget.ToString());
+            PrintLogIfActive(GameManager.Instance.TodayLogString() + this.name + " will do action " + action.goapType.ToString() + " to " + action.poiTarget.ToString());
         }
 
     }
     public void SetHasAlreadyAskedForPlan(bool state) {
         _hasAlreadyAskedForPlan = state;
+    }
+    public void PrintLogIfActive(string log) {
+        if(UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == this) {
+            Debug.Log(log);
+        }
     }
     #endregion
 

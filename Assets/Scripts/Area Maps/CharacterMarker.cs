@@ -175,7 +175,7 @@ public class CharacterMarker : PooledObject {
             _currentPath = PathGenerator.Instance.GetPath(character.gridTileLocation, destinationTile, GRID_PATHFINDING_MODE.REALISTIC);
             if (_currentPath != null) {
                 Messenger.AddListener<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, OnTileOccupied);
-                Debug.Log("Created path for " + character.name + " from " + character.gridTileLocation.ToString() + " to " + destinationTile.ToString());
+                character.PrintLogIfActive("Created path for " + character.name + " from " + character.gridTileLocation.ToString() + " to " + destinationTile.ToString());
                 character.currentAction.UpdateTargetTile(destinationTile);
                 StartMovement();
             } else {
@@ -457,7 +457,7 @@ public class CharacterMarker : PooledObject {
                 recalculationResult = false;
             }
         }
-        Debug.Log(pathRecalSummary);
+        character.PrintLogIfActive(pathRecalSummary);
         return recalculationResult;
     }
 

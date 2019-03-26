@@ -313,10 +313,15 @@ public class Party {
             }
         } else {
             //_icon.SetActionOnTargetReached(doneAction);
-            _icon.SetTarget(targetLocation, targetStructure, targetPOI, targetTile);
-            _icon.SetCauseForTravel(causeForTravel);
-            _icon.StartPath(PATHFINDING_MODE.PASSABLE, doneAction, actionOnStartOfMovement);
+            LocationGridTile exitTile = owner.specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS).GetRandomUnoccupiedTile();
+            owner.marker.GoToTile(exitTile, null, () => MoveToAnotherArea(targetLocation, pathfindingMode, targetStructure, doneAction, actionOnStartOfMovement, causeForTravel, targetPOI, targetTile));
         }
+    }
+    private void MoveToAnotherArea(Area targetLocation, PATHFINDING_MODE pathfindingMode, LocationStructure targetStructure = null,
+        Action doneAction = null, Action actionOnStartOfMovement = null, Interaction causeForTravel = null, IPointOfInterest targetPOI = null, LocationGridTile targetTile = null) {
+        _icon.SetTarget(targetLocation, targetStructure, targetPOI, targetTile);
+        _icon.SetCauseForTravel(causeForTravel);
+        _icon.StartPath(PATHFINDING_MODE.PASSABLE, doneAction, actionOnStartOfMovement);
     }
     public void CancelTravel(Action onCancelTravel = null) {
         _icon.CancelTravel(onCancelTravel);
