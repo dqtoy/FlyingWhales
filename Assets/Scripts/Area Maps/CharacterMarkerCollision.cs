@@ -12,7 +12,7 @@ public class CharacterMarkerCollision : MonoBehaviour {
             && collidedWith.poi != parentMarker.character 
             && collidedWith.poi.gridTileLocation.structure == parentMarker.character.currentStructure) {
 
-            Debug.Log(this.parentMarker.name + " trigger enter with " + collidedWith.poi.name);
+            //Debug.Log(this.parentMarker.name + " trigger enter with " + collidedWith.poi.name);
             parentMarker.AddPOIAsInRange(collidedWith.poi);
         }
     }
@@ -22,7 +22,7 @@ public class CharacterMarkerCollision : MonoBehaviour {
         if (collidedWith != null && collidedWith.poi != null 
             && collidedWith.poi != parentMarker.character) {
 
-            Debug.Log(this.parentMarker.name + " trigger exit with " + collidedWith.poi.name);
+            //Debug.Log(this.parentMarker.name + " trigger exit with " + collidedWith.poi.name);
             parentMarker.RemovePOIFromInRange(collidedWith.poi);
         }
     }
