@@ -38,6 +38,7 @@ public class GoapAction {
     public bool showIntelNotification { get; protected set; } //should this action show a notification when it is done by its actor or when it recieves a plan with this action as it's end node?
     public bool shouldAddLogs { get; protected set; } //should this action add logs to it's actor?
     public string actionIconString { get; protected set; }
+    public GameDate executionDate { get; protected set; }
 
     protected Func<bool> _requirementAction;
     protected System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
@@ -296,6 +297,9 @@ public class GoapAction {
     /// <param name="targetTile">The new target tile.</param>
     public void UpdateTargetTile(LocationGridTile targetTile) {
         this.targetTile = targetTile;
+    }
+    public void SetExecutionDate(GameDate date) {
+        executionDate = date;
     }
     #endregion
 

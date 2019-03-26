@@ -35,7 +35,7 @@ public class AreaMapCameraMove : MonoBehaviour {
 
     private float previousCameraFOV;
 
-    private bool cameraControlEnabled = false;
+    [SerializeField] private bool cameraControlEnabled = false;
 
     #region getters/setters
     public float currentFOV {
@@ -61,16 +61,21 @@ public class AreaMapCameraMove : MonoBehaviour {
     }
 
     public void Initialize() {
-        SetInitialCameraPosition();
+        //SetInitialCameraPosition();
+        gameObject.SetActive(false);
         Messenger.AddListener<Area>(Signals.AREA_MAP_OPENED, OnAreaMapOpened);
         Messenger.AddListener<Area>(Signals.AREA_MAP_CLOSED, OnAreaMapClosed);
     }
 
     #region Listeners
     private void OnAreaMapOpened(Area area) {
+        gameObject.SetActive(true);
         SetCameraControlState(true);
+        SetCameraBordersForMap(area.areaMap);
+        ConstrainCameraBounds();
     }
     private void OnAreaMapClosed(Area area) {
+        gameObject.SetActive(false);
         SetCameraControlState(false);
     }
     #endregion
@@ -218,6 +223,11 @@ public class AreaMapCameraMove : MonoBehaviour {
         isDragging = false;
         startedOnUI = false;
         hasReachedThreshold = false;
+    }
+    private void SetCameraBordersForMap(AreaInnerTileMap map) {
+        float y = map.transform.localPosition.y + (map.height / 2f);
+        MIN_Y = y;
+        MAX_Y = y;
     }
     #endregion
 

@@ -54,7 +54,7 @@ public class MineGoap : GoapAction {
         if (poiTarget is Ore) {
             Ore ore = poiTarget as Ore;
             actor.AdjustSupply(_gainedSupply);
-            ore.AdjustYield(-_gainedSupply);
+            ore.AdjustYield(-1);
         }
     }
     public void PreTargetMissing() {

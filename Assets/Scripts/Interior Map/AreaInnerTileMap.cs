@@ -14,9 +14,9 @@ public class AreaInnerTileMap : MonoBehaviour {
     private LocationGridTile gate;
     private Cardinal_Direction outsideDirection;
 
-    [SerializeField] private Grid grid;
+    public Grid grid;
     [SerializeField] private Canvas canvas;
-    [SerializeField] private Canvas worldUICanvas;
+    public Canvas worldUICanvas;
     [SerializeField] private Transform tilemapsParent;
 
     [Header("Tile Maps")]
@@ -109,6 +109,10 @@ public class AreaInnerTileMap : MonoBehaviour {
     }
 
     private bool isHovering;
+
+    public bool isShowing {
+        get { return InteriorMapManager.Instance.currentlyShowingMap == this; }
+    }
 
     public enum Cardinal_Direction { North, South, East, West };
     private Dictionary<STRUCTURE_TYPE, List<Point>> structureSettings = new Dictionary<STRUCTURE_TYPE, List<Point>>() {
@@ -938,7 +942,7 @@ public class AreaInnerTileMap : MonoBehaviour {
                 detailsTilemap.SetTile(currTile.localPlace, crateBarrelTile);
                 currTile.SetTileState(LocationGridTile.Tile_State.Occupied);
                 //Crates, Barrels, Ore, Stone and Tree tiles should be impassable. They should all be placed in spots adjacent to at least three passable tiles.
-                currTile.SetTileAccess(LocationGridTile.Tile_Access.Impassable);
+                //currTile.SetTileAccess(LocationGridTile.Tile_Access.Impassable);
             }
         }
 
@@ -965,53 +969,6 @@ public class AreaInnerTileMap : MonoBehaviour {
             }
         } else {
             HidePath();
-        }
-
-        //return;
-        if (UIManager.Instance.IsMouseOnUI()) {
-            return;
-        }
-        Vector3 mouseWorldPos = (worldUICanvas.worldCamera.ScreenToWorldPoint(Input.mousePosition));
-        Vector3 localPos = grid.WorldToLocal(mouseWorldPos);
-        Vector3Int coordinate = grid.LocalToCell(localPos);
-        if (coordinate.x >= 0 && coordinate.x < width
-            && coordinate.y >= 0 && coordinate.y < height) {
-            LocationGridTile hoveredTile = map[coordinate.x, coordinate.y];
-            if (GameManager.showAllTilesTooltip) {
-                ShowTileData(hoveredTile);
-                if (hoveredTile.objHere != null) {
-                    if (Input.GetMouseButtonDown(0)) {
-                        hoveredTile.OnClickTileActions(PointerEventData.InputButton.Left);
-                    } else if (Input.GetMouseButtonDown(1)) {
-                        hoveredTile.OnClickTileActions(PointerEventData.InputButton.Right);
-                    }
-                } else {
-                    if (Input.GetMouseButtonDown(0)) {
-                        hoveredTile.OnClickTileActions(PointerEventData.InputButton.Left);
-                    } else if (Input.GetMouseButtonDown(1)) {
-                        hoveredTile.OnClickTileActions(PointerEventData.InputButton.Right);
-                    }
-                }
-            } else {
-                if (hoveredTile.objHere != null) {
-                    ShowTileData(hoveredTile);
-                    if (Input.GetMouseButtonDown(0)) {
-                        hoveredTile.OnClickTileActions(PointerEventData.InputButton.Left);
-                    } else if (Input.GetMouseButtonDown(1)) {
-                        hoveredTile.OnClickTileActions(PointerEventData.InputButton.Right);
-                    }
-                } else {
-                    if (Input.GetMouseButtonDown(0)) {
-                        hoveredTile.OnClickTileActions(PointerEventData.InputButton.Left);
-                    } else if (Input.GetMouseButtonDown(1)) {
-                        hoveredTile.OnClickTileActions(PointerEventData.InputButton.Right);
-                    }
-                    UIManager.Instance.HideSmallInfo();
-                }
-            }
-            
-        } else {
-            UIManager.Instance.HideSmallInfo();
         }
     }
     #endregion
@@ -1072,7 +1029,7 @@ public class AreaInnerTileMap : MonoBehaviour {
             GameObject portraitGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("CharacterMarker", pos, Quaternion.identity, charactersParent);
             character.SetCharacterMarker(portraitGO.GetComponent<CharacterMarker>());
             character.marker.SetCharacter(character);
-            character.marker.SetHoverAction(character.ShowTileData, UIManager.Instance.HideSmallInfo);
+            character.marker.SetHoverAction(character.ShowTileData, InteriorMapManager.Instance.HideTileData);
         } else {
             character.marker.gameObject.transform.SetParent(charactersParent);
             character.marker.gameObject.transform.localPosition = pos;
@@ -1219,46 +1176,16 @@ public class AreaInnerTileMap : MonoBehaviour {
 
     #region Other
     public void Open() {
-        this.gameObject.SetActive(true);
-        SwitchFromEstimatedMovementToPathfinding();
+        //this.gameObject.SetActive(true);
+        //SwitchFromEstimatedMovementToPathfinding();
     }
     public void Close() {
-        this.gameObject.SetActive(false);
-        //if (UIManager.Instance.areaInfoUI.isShowing) {
-        //    UIManager.Instance.areaInfoUI.ToggleMapMenu(false);
-        //}
-        isHovering = false;
-        SwitchFromPathfindingToEstimatedMovement();
-    }
-    private void ShowTileData(LocationGridTile tile) {
-        if (tile == null) {
-            return;
-        }
-        string summary = tile.localPlace.ToString();
-        summary += "\nTile Type: " + tile.tileType.ToString();
-        summary += "\nTile State: " + tile.tileState.ToString();
-        summary += "\nTile Access: " + tile.tileAccess.ToString();
-        summary += "\nHas Detail: " + tile.hasDetail.ToString();
-        summary += "\nContent: " + tile.objHere?.ToString() ?? "None";
-        if (tile.objHere != null) {
-            summary += "\n\tObject State: " + tile.objHere.state.ToString();
-            if (tile.objHere is Tree) {
-                summary += "\n\tYield: " + (tile.objHere as Tree).yield.ToString();
-            } else if (tile.objHere is Ore) {
-                summary += "\n\tYield: " + (tile.objHere as Ore).yield.ToString();
-            } else if (tile.objHere is SupplyPile) {
-                summary += "\n\tSupplies in Pile: " + (tile.objHere as SupplyPile).suppliesInPile.ToString();
-            }
-        }
-        summary += "\nOccupant: " + tile.occupant?.name ?? "None";
-
-        //if (tile.structure != null) {
-            summary += "\nStructure: " + tile.structure?.ToString() ?? "None";
-        //}
-        UIManager.Instance.ShowSmallInfo(summary);
-    }
-    public void ShowTileData(Character character, LocationGridTile tile) {
-        ShowTileData(tile);
+        //this.gameObject.SetActive(false);
+        ////if (UIManager.Instance.areaInfoUI.isShowing) {
+        ////    UIManager.Instance.areaInfoUI.ToggleMapMenu(false);
+        ////}
+        //isHovering = false;
+        //SwitchFromPathfindingToEstimatedMovement();
     }
     public List<LocationGridTile> GetTilesInRadius(LocationGridTile centerTile, int radius, bool includeCenterTile = false, bool includeTilesInDifferentStructure = false) {
         List<LocationGridTile> tiles = new List<LocationGridTile>();
@@ -1283,24 +1210,24 @@ public class AreaInnerTileMap : MonoBehaviour {
         }
         return tiles;
     }
-    private void SwitchFromEstimatedMovementToPathfinding() {
-        for (int i = 0; i < area.charactersAtLocation.Count; i++) {
-            Character character = area.charactersAtLocation[i];
-            if(character.currentParty.icon.isTravelling && character.currentParty.icon.travelLine == null) {
-                //This means that the character is only travelling inside the map, he/she is not travelling to another area
-                character.marker.SwitchToPathfinding();
-            }
-        }
-    }
-    private void SwitchFromPathfindingToEstimatedMovement() {
-        for (int i = 0; i < area.charactersAtLocation.Count; i++) {
-            Character character = area.charactersAtLocation[i];
-            if (character.currentParty.icon.isTravelling && character.currentParty.icon.travelLine == null) {
-                //This means that the character is only travelling inside the map, he/she is not travelling to another area
-                character.marker.SwitchToEstimatedMovement();
-            }
-        }
-    }
+    //private void SwitchFromEstimatedMovementToPathfinding() {
+    //    for (int i = 0; i < area.charactersAtLocation.Count; i++) {
+    //        Character character = area.charactersAtLocation[i];
+    //        if(character.currentParty.icon.isTravelling && character.currentParty.icon.travelLine == null) {
+    //            //This means that the character is only travelling inside the map, he/she is not travelling to another area
+    //            character.marker.SwitchToPathfinding();
+    //        }
+    //    }
+    //}
+    //private void SwitchFromPathfindingToEstimatedMovement() {
+    //    for (int i = 0; i < area.charactersAtLocation.Count; i++) {
+    //        Character character = area.charactersAtLocation[i];
+    //        if (character.currentParty.icon.isTravelling && character.currentParty.icon.travelLine == null) {
+    //            //This means that the character is only travelling inside the map, he/she is not travelling to another area
+    //            character.marker.SwitchToEstimatedMovement();
+    //        }
+    //    }
+    //}
     #endregion
 
     #region UI

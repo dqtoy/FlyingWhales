@@ -17,6 +17,7 @@ public class CharacterMarker : PooledObject {
     public Character character { get; private set; }
     public LocationGridTile location { get; private set; }
 
+    [SerializeField] private RectTransform mainRT;
     [SerializeField] private RectTransform visualsRT;
     [SerializeField] private Image mainImg;
     [SerializeField] private Image hoveredImg;
@@ -24,10 +25,14 @@ public class CharacterMarker : PooledObject {
     [SerializeField] private TextMeshProUGUI nameLbl;
     [SerializeField] private Image actionIcon;
 
+    [Header("Actions")]
     [SerializeField] private StringSpriteDictionary actionIconDictionary;
 
     [Header("Animation")]
     [SerializeField] private Animator animator;
+
+    [Header("Collision")]
+    [SerializeField] private GameObject collisionTriggerPrefab;
 
     private LocationGridTile lastRemovedTileFromPath;
 
@@ -36,7 +41,7 @@ public class CharacterMarker : PooledObject {
 
     private int _estimatedTravelTime;
     private int _currentTravelTime;
-    private bool _isMovementEstimated;
+    //private bool _isMovementEstimated;
     private Action onArrivedAtTileAction;
 
     private LocationGridTile _destinationTile;
@@ -45,6 +50,7 @@ public class CharacterMarker : PooledObject {
 
     private Coroutine currentMoveCoroutine;
 
+    public List<IPointOfInterest> inRangePOIs; //POI's in this characters collider
     public bool isStillMovingToAnotherTile { get; private set; }
 
     #region getters/setters
@@ -70,6 +76,12 @@ public class CharacterMarker : PooledObject {
         randomRotation.z *= UnityEngine.Random.Range(1f, 4f);
         visualsRT.localRotation = Quaternion.Euler(randomRotation);
         UpdateActionIcon();
+
+        inRangePOIs = new List<IPointOfInterest>();
+
+        GameObject collisionTriggerGO = GameObject.Instantiate(collisionTriggerPrefab, this.transform);
+        collisionTriggerGO.transform.localPosition = Vector3.zero;
+        collisionTriggerGO.GetComponent<POICollisionTrigger>().Initialize(character);
 
         Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
@@ -114,6 +126,8 @@ public class CharacterMarker : PooledObject {
     }
 
     public void OnPointerClick(BaseEventData bd) {
+        PointerEventData ped = bd as PointerEventData;
+        character.gridTileLocation.OnClickTileActions(ped.button);
         UIManager.Instance.ShowCharacterInfo(character);
     }
 
@@ -169,27 +183,39 @@ public class CharacterMarker : PooledObject {
             //destinationTile = character.currentAction.GetTargetLocationTile();
             shouldRecalculatePath = true;
         }
-        if (character.gridTileLocation.structure.location.areaMap.gameObject.activeSelf) {
-            //If area map is showing, do pathfinding
-            _isMovementEstimated = false;
-            _currentPath = PathGenerator.Instance.GetPath(character.gridTileLocation, destinationTile, GRID_PATHFINDING_MODE.REALISTIC);
-            if (_currentPath != null) {
-                Messenger.AddListener<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, OnTileOccupied);
-                character.PrintLogIfActive("Created path for " + character.name + " from " + character.gridTileLocation.ToString() + " to " + destinationTile.ToString());
-                character.currentAction.UpdateTargetTile(destinationTile);
-                StartMovement();
-            } else {
-                Debug.LogError("Can't create path for " + character.name + " from " + character.gridTileLocation.ToString() + " to " + destinationTile.ToString());
-            }
+        //If area map is showing, do pathfinding
+        //_isMovementEstimated = false;
+        _currentPath = PathGenerator.Instance.GetPath(character.gridTileLocation, destinationTile, GRID_PATHFINDING_MODE.REALISTIC);
+        if (_currentPath != null) {
+            Messenger.AddListener<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, OnTileOccupied);
+            character.PrintLogIfActive("Created path for " + character.name + " from " + character.gridTileLocation.ToString() + " to " + destinationTile.ToString());
+            character.currentAction.UpdateTargetTile(destinationTile);
+            StartMovement();
         } else {
-            //If area map is not showing, do estimated travel
-            _estimatedTravelTime = Mathf.RoundToInt(character.gridTileLocation.GetDistanceTo(destinationTile));
-            if(_estimatedTravelTime > 0) {
-                StartEstimatedMovement();
-            } else {
-                Debug.LogError("Estimated travel time is zero");
-            }
+            Debug.LogError("Can't create path for " + character.name + " from " + character.gridTileLocation.ToString() + " to " + destinationTile.ToString());
         }
+
+        //if (character.gridTileLocation.structure.location.areaMap.gameObject.activeSelf) {
+        //    //If area map is showing, do pathfinding
+        //    _isMovementEstimated = false;
+        //    _currentPath = PathGenerator.Instance.GetPath(character.gridTileLocation, destinationTile, GRID_PATHFINDING_MODE.REALISTIC);
+        //    if (_currentPath != null) {
+        //        Messenger.AddListener<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, OnTileOccupied);
+        //        Debug.Log("Created path for " + character.name + " from " + character.gridTileLocation.ToString() + " to " + destinationTile.ToString());
+        //        character.currentAction.UpdateTargetTile(destinationTile);
+        //        StartMovement();
+        //    } else {
+        //        Debug.LogError("Can't create path for " + character.name + " from " + character.gridTileLocation.ToString() + " to " + destinationTile.ToString());
+        //    }
+        //} else {
+        //    //If area map is not showing, do estimated travel
+        //    _estimatedTravelTime = Mathf.RoundToInt(character.gridTileLocation.GetDistanceTo(destinationTile));
+        //    if(_estimatedTravelTime > 0) {
+        //        StartEstimatedMovement();
+        //    } else {
+        //        Debug.LogError("Estimated travel time is zero");
+        //    }
+        //}
     }
     private void StartMovement() {
         character.currentParty.icon.SetIsTravelling(true);
@@ -206,14 +232,14 @@ public class CharacterMarker : PooledObject {
             }
             //throw new Exception(character.name + "'s marker path count is 0, but movement is starting! Destination Tile is: " + _destinationTile.ToString());
         } else {
-            currentMoveCoroutine = StartCoroutine(MoveToPosition(transform.position, _currentPath[0].centeredWorldLocation));
+            currentMoveCoroutine = StartCoroutine(MoveToPosition(mainRT.anchoredPosition, _currentPath[0].centeredLocalLocation));
         }
         //Messenger.AddListener(Signals.TICK_STARTED, Move);
     }
     public void StopMovement() {
-        if (Messenger.eventTable.ContainsKey(Signals.TICK_STARTED)) {
-            Messenger.RemoveListener(Signals.TICK_STARTED, EstimatedMove);
-        }
+        //if (Messenger.eventTable.ContainsKey(Signals.TICK_STARTED)) {
+        //    Messenger.RemoveListener(Signals.TICK_STARTED, EstimatedMove);
+        //}
         if (Messenger.eventTable.ContainsKey(Signals.TILE_OCCUPIED)) {
             Messenger.RemoveListener<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, OnTileOccupied);
         }
@@ -235,12 +261,8 @@ public class CharacterMarker : PooledObject {
         string recalculationSummary = string.Empty;
         //check if the marker should recalculate path
         if (shouldRecalculatePath) {
-            try {
-                bool result = RecalculatePath(ref recalculationSummary);
-                if (result) return;
-            } catch (Exception e) {
-                throw new Exception(e.Message + "\nThere was a problem trying to recalculate path of " + this.character.name + "'s Marker. Recalculation Summary: \n" + recalculationSummary);
-            }
+            bool result = RecalculatePath(ref recalculationSummary);
+            if (result) return;
         }
 
         //if the current path is not empty
@@ -285,7 +307,7 @@ public class CharacterMarker : PooledObject {
                     if(_currentPath.Count == 1) {
                         Messenger.Broadcast(Signals.TILE_OCCUPIED, _currentPath[0], character as IPointOfInterest);
                     }
-                    currentMoveCoroutine = StartCoroutine(MoveToPosition(transform.position, _currentPath[0].centeredWorldLocation));
+                    currentMoveCoroutine = StartCoroutine(MoveToPosition(mainRT.anchoredPosition, _currentPath[0].centeredLocalLocation));
                 }
             }
         }
@@ -298,7 +320,7 @@ public class CharacterMarker : PooledObject {
         while (t < 1) {
             if (!GameManager.Instance.isPaused) {
                 t += Time.deltaTime / GameManager.Instance.progressionSpeed;
-                transform.position = Vector3.Lerp(from, to, t);
+                mainRT.anchoredPosition = Vector3.Lerp(from, to, t);
             }
             yield return null;
         }
@@ -309,74 +331,74 @@ public class CharacterMarker : PooledObject {
         float angle = Mathf.Atan2(to.y - from.y, to.x - from.x) * Mathf.Rad2Deg;
         visualsRT.eulerAngles = new Vector3(visualsRT.rotation.x, visualsRT.rotation.y, angle);
     }
-    public void SwitchToPathfinding() {
-        if (!_isMovementEstimated) {
-            return;
-        }
-        _isMovementEstimated = false;
-        if (Messenger.eventTable.ContainsKey(Signals.TICK_STARTED)) {
-            Messenger.RemoveListener(Signals.TICK_STARTED, EstimatedMove);
-        }
-        _currentPath = PathGenerator.Instance.GetPath(character.gridTileLocation, _destinationTile, GRID_PATHFINDING_MODE.REALISTIC);
-        if (_currentPath != null) {
-            int currentProgress = Mathf.RoundToInt((_currentTravelTime / (float) _estimatedTravelTime) * _currentPath.Count);
-            if(currentProgress > 0) {
-                _currentPath.RemoveRange(0, currentProgress);
-                Move();
-                if (_currentPath.Count > 1) {
-                    StartWalkingAnimation();
-                }
-            } else {
-                StartMovement();
-            }
-        } else {
-            Debug.LogError("Can't create path for " + character.name + " from " + character.gridTileLocation.ToString() + " to " + _destinationTile.ToString());
-        }
-    }
+    //public void SwitchToPathfinding() {
+    //    if (!_isMovementEstimated) {
+    //        return;
+    //    }
+    //    _isMovementEstimated = false;
+    //    if (Messenger.eventTable.ContainsKey(Signals.TICK_STARTED)) {
+    //        Messenger.RemoveListener(Signals.TICK_STARTED, EstimatedMove);
+    //    }
+    //    _currentPath = PathGenerator.Instance.GetPath(character.gridTileLocation, _destinationTile, GRID_PATHFINDING_MODE.REALISTIC);
+    //    if (_currentPath != null) {
+    //        int currentProgress = Mathf.RoundToInt((_currentTravelTime / (float) _estimatedTravelTime) * _currentPath.Count);
+    //        if(currentProgress > 0) {
+    //            _currentPath.RemoveRange(0, currentProgress);
+    //            Move();
+    //            if (_currentPath.Count > 1) {
+    //                StartWalkingAnimation();
+    //            }
+    //        } else {
+    //            StartMovement();
+    //        }
+    //    } else {
+    //        Debug.LogError("Can't create path for " + character.name + " from " + character.gridTileLocation.ToString() + " to " + _destinationTile.ToString());
+    //    }
+    //}
     #endregion
 
-    #region Estimated Movement
-    public void SwitchToEstimatedMovement() {
-        if (_isMovementEstimated) {
-            return;
-        }
-        _isMovementEstimated = true;
-        _estimatedTravelTime = _currentPath.Count;
-        _currentTravelTime = 0;
-        StartWalkingAnimation();
-        Messenger.AddListener(Signals.TICK_STARTED, EstimatedMove);
-        //if (_estimatedTravelTime > 0) {
+    //#region Estimated Movement
+    //public void SwitchToEstimatedMovement() {
+    //    if (_isMovementEstimated) {
+    //        return;
+    //    }
+    //    _isMovementEstimated = true;
+    //    _estimatedTravelTime = _currentPath.Count;
+    //    _currentTravelTime = 0;
+    //    StartWalkingAnimation();
+    //    Messenger.AddListener(Signals.TICK_STARTED, EstimatedMove);
+    //    //if (_estimatedTravelTime > 0) {
             
-        //} else {
-        //    Debug.LogError(character.name + " can't switch to estimated movement because travel time is zero");
-        //}
-    }
-    private void StartEstimatedMovement() {
-        _isMovementEstimated = true;
-        character.currentParty.icon.SetIsTravelling(true);
-        _currentTravelTime = 0;
-        StartWalkingAnimation();
-        Messenger.AddListener(Signals.TICK_STARTED, EstimatedMove);
-    }
-    private void EstimatedMove() {
-        if (character.isDead) {
-            StopMovement();
-            return;
-        }
-        if (_currentTravelTime >= _estimatedTravelTime) {
-            //Arrival
-            character.currentStructure.RemoveCharacterAtLocation(character);
-            _destinationTile.structure.AddCharacterAtLocation(character, _destinationTile);
-            character.currentParty.icon.SetIsTravelling(false);
-            Action preservedArrivalAction = _arrivalAction;
-            StopMovement();
-            if (preservedArrivalAction != null) {
-                preservedArrivalAction();
-            }
-        }
-        _currentTravelTime++;
-    }
-    #endregion
+    //    //} else {
+    //    //    Debug.LogError(character.name + " can't switch to estimated movement because travel time is zero");
+    //    //}
+    //}
+    //private void StartEstimatedMovement() {
+    //    _isMovementEstimated = true;
+    //    character.currentParty.icon.SetIsTravelling(true);
+    //    _currentTravelTime = 0;
+    //    StartWalkingAnimation();
+    //    Messenger.AddListener(Signals.TICK_STARTED, EstimatedMove);
+    //}
+    //private void EstimatedMove() {
+    //    if (character.isDead) {
+    //        StopMovement();
+    //        return;
+    //    }
+    //    if (_currentTravelTime >= _estimatedTravelTime) {
+    //        //Arrival
+    //        character.currentStructure.RemoveCharacterAtLocation(character);
+    //        _destinationTile.structure.AddCharacterAtLocation(character, _destinationTile);
+    //        character.currentParty.icon.SetIsTravelling(false);
+    //        Action preservedArrivalAction = _arrivalAction;
+    //        StopMovement();
+    //        if (preservedArrivalAction != null) {
+    //            preservedArrivalAction();
+    //        }
+    //    }
+    //    _currentTravelTime++;
+    //}
+    //#endregion
 
     #region For Testing
     private void ShowPath() {
@@ -407,6 +429,27 @@ public class CharacterMarker : PooledObject {
             return;
         }
         animator.Play("Idle");
+    }
+    #endregion
+
+    #region POIs
+    public void AddPOIAsInRange(IPointOfInterest poi) {
+        if (!inRangePOIs.Contains(poi)) {
+            inRangePOIs.Add(poi);
+        }
+    }
+    public void RemovePOIFromInRange(IPointOfInterest poi) {
+        inRangePOIs.Remove(poi);
+    }
+    public void LogPOIsInRange() {
+        string summary = character.name + "'s POIs in range: ";
+        for (int i = 0; i < inRangePOIs.Count; i++) {
+            summary += "\n- " + inRangePOIs[i].ToString();
+        }
+        Debug.Log(summary);
+    }
+    public void ClearPOIsInRange() {
+        inRangePOIs.Clear();
     }
     #endregion
 

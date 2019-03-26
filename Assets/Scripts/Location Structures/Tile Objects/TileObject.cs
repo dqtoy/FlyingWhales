@@ -13,11 +13,14 @@ public class TileObject {
         get { return _traits; }
     }
 
+    public List<string> actionHistory { get; private set; } //list of actions that was done to this object
+
     protected void Initialize(IPointOfInterest owner, TILE_OBJECT_TYPE tileObjectType) {
         id = Utilities.SetID(this);
         this.owner = owner;
         this.tileObjectType = tileObjectType;
         _traits = new List<Trait>();
+        actionHistory = new List<string>();
     }
 
 	public virtual void OnTargetObject(GoapAction action) {
@@ -25,9 +28,7 @@ public class TileObject {
     }
     public virtual void OnDoActionToObject(GoapAction action) {
         //owner.SetPOIState(POI_STATE.INACTIVE);
-    }
-    public virtual void OnDoneActionTowardsTarget(GoapAction action) { //called when the action towrds this object has been done aka. setting this object to active again
-        owner.SetPOIState(POI_STATE.ACTIVE);
+        AddActionToHistory(action);
     }
 
     #region Traits
@@ -82,6 +83,23 @@ public class TileObject {
             }
         }
         return null;
+    }
+    #endregion
+
+    #region For Testing
+    protected void AddActionToHistory(GoapAction action) {
+        string summary = GameManager.Instance.ConvertDayToLogString(action.executionDate) + action.actor.name + " performed " + action.goapName;
+        actionHistory.Add(summary);
+        if (actionHistory.Count > 50) {
+            actionHistory.RemoveAt(0);
+        }
+    }
+    public void LogActionHistory() {
+        string summary = owner.ToString() + "'s action history:";
+        for (int i = 0; i < actionHistory.Count; i++) {
+            summary += "\n" + (i + 1).ToString() + " - " + actionHistory[i];
+        }
+        Debug.Log(summary);
     }
     #endregion
 }

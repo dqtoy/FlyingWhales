@@ -100,6 +100,6 @@ public class EdiblePlant : TileObject, IPointOfInterest {
 
     private void ScheduleCooldown(GoapAction action) {
         GameDate dueDate = GameManager.Instance.Today().AddTicks(Replenishment_Countdown);
-        SchedulingManager.Instance.AddEntry(dueDate, () => OnDoneActionTowardsTarget(action));
+        SchedulingManager.Instance.AddEntry(dueDate, () => owner.SetPOIState(POI_STATE.ACTIVE));
     }
 }

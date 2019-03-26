@@ -663,8 +663,7 @@ public class UIManager : MonoBehaviour {
 
         if (raycastResults.Count > 0) {
             foreach (var go in raycastResults) {
-                if (go.gameObject.layer == LayerMask.NameToLayer("UI") || go.gameObject.layer == LayerMask.NameToLayer("WorldUI")
-                     || go.gameObject.layer == LayerMask.NameToLayer("Area Maps")) {
+                if (go.gameObject.layer == LayerMask.NameToLayer("UI") || go.gameObject.layer == LayerMask.NameToLayer("WorldUI")) {
                     //Debug.Log(go.gameObject.name, go.gameObject);
                     return true;
                 }

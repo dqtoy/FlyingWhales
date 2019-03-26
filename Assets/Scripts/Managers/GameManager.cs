@@ -163,10 +163,13 @@ public class GameManager : MonoBehaviour {
     }
 
     public GameDate Today() {
-        return new GameDate(this.month, this.days, this.year, this.tick);
+        return new GameDate(this.month, this.days, this.year, this.tick, this.continuousDays);
     }
     public string TodayLogString() {
         return "[" + continuousDays + " - " + ConvertTickToTime(tick) + "] ";
+    }
+    public string ConvertDayToLogString(GameDate date) {
+        return "[" + date.continuousDays + " - " + ConvertTickToTime(date.tick) + "] ";
     }
     public GameDate EndOfTheMonth() {
         return new GameDate(this.month, daysPerMonth, this.year, ticksPerDay);
