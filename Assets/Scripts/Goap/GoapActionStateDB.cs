@@ -161,6 +161,12 @@ public static class GoapActionStateDB {
             new StateNameAndDuration(){ name = "Return Home Success", status = InteractionManager.Goap_State_Success, duration = 0 },
             new StateNameAndDuration(){ name = "Return Home Failed", status = InteractionManager.Goap_State_Fail, duration = 0 },
         } },
+        {INTERACTION_TYPE.HUNT_ACTION, new StateNameAndDuration[]{
+            new StateNameAndDuration(){ name = "Target Injured", status = InteractionManager.Goap_State_Success, duration = 0 },
+            new StateNameAndDuration(){ name = "Target Killed", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(1) },
+            new StateNameAndDuration(){ name = "Target Won", status = InteractionManager.Goap_State_Success, duration = 0 },
+            new StateNameAndDuration(){ name = "Target Missing", status = InteractionManager.Goap_State_Fail, duration = 0 },
+        } },
     };
 }
 

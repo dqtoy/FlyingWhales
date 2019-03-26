@@ -138,14 +138,14 @@ public class Explorer : Job {
         return validTypes;
     }
 
-    public Interaction CreateExplorerEvent() {
-        List<INTERACTION_TYPE> choices = GetValidExplorerEvents();
-        if (choices.Count > 0) {
-            Area area = _character.specificLocation;
-            INTERACTION_TYPE chosenType = choices[Random.Range(0, choices.Count)];
-            //Get Random Explorer Event
-            return InteractionManager.Instance.CreateNewInteraction(chosenType, area);
-        }
-        return null;
-    }
+    //public Interaction CreateExplorerEvent() {
+    //    List<INTERACTION_TYPE> choices = GetValidExplorerEvents();
+    //    if (choices.Count > 0) {
+    //        Area area = _character.specificLocation;
+    //        INTERACTION_TYPE chosenType = choices[Random.Range(0, choices.Count)];
+    //        //Get Random Explorer Event
+    //        return InteractionManager.Instance.CreateNewInteraction(chosenType, area);
+    //    }
+    //    return null;
+    //}
 }
