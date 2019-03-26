@@ -271,17 +271,19 @@ public class GoapAction {
             if (tile == null) {
                 tile = poiTarget.gridTileLocation;
             }
-            try {
-                int distance = Mathf.RoundToInt(actor.gridTileLocation.GetDistanceTo(tile));
-                return distance / 6;
-            } catch(System.Exception e) {
-                if(actor.gridTileLocation == null) {
-                    Console.WriteLine("ACTOR TILE LOCATION IS NULL!");
-                } else if (tile == null) {
-                    Console.WriteLine("TILE IS NULL!");
-                }
-            }
-            return 0;
+            int distance = Mathf.RoundToInt(actor.gridTileLocation.GetDistanceTo(tile));
+            return distance / 6;
+            //try {
+            //    int distance = Mathf.RoundToInt(actor.gridTileLocation.GetDistanceTo(tile));
+            //    return distance / 6;
+            //} catch(System.Exception e) {
+            //    if(actor.gridTileLocation == null) {
+            //        Console.WriteLine("ACTOR TILE LOCATION IS NULL!");
+            //    } else if (tile == null) {
+            //        Console.WriteLine("TILE IS NULL!");
+            //    }
+            //}
+            //return 0;
         }
     }
     protected bool HasSupply(int neededSupply) {

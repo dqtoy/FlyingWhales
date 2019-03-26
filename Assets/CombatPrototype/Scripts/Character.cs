@@ -4185,26 +4185,11 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 log += "\n - Plan is currently being recalculated, skipping...";
                 continue; //skip plan
             }
-            //check if current action can still find a destination tile towards the target POI
-            //bool hasValidDestination = false;
-            //if (plan.currentNode.action.targetTile != null) {
-            //    hasValidDestination = true;
-            //} else {
-            //    if (plan.currentNode.action.poiTarget.gridTileLocation.IsNeighbour(gridTileLocation)) {
-            //        hasValidDestination = true;
-            //    } else {
-            //        LocationGridTile destinationTile = plan.currentNode.action.poiTarget.GetNearestUnoccupiedTileFromThis();
-            //        hasValidDestination = destinationTile != null;
-            //    }
-            //}
-            //plan.currentNode.action.SetTargetStructure();
-            //LocationGridTile targetTile = plan.currentNode.action.GetTargetLocationTile();
-
             if (actorAllowedActions.Contains(plan.currentNode.action.goapType) && plan.currentNode.action.CanSatisfyRequirements() && plan.currentNode.action.targetTile != null) {
-                if (plan.isBeingRecalculated) {
-                    log += "\n - Plan for " + plan.endNode.action.goapName + " is being recalculated, skipping...";
-                    continue;
-                }
+                //if (plan.isBeingRecalculated) {
+                //    log += "\n - Plan is currently being recalculated, skipping...";
+                //    continue; //skip plan
+                //}
                 if (plan.currentNode.action.IsHalted()) {
                     log += "\n - Action " + plan.currentNode.action.goapName + " is waiting, skipping...";
                     continue;
@@ -4359,6 +4344,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         } else if(result == InteractionManager.Goap_State_Fail) {
             if(plan.endNode.action == action) {
                 log += "\nAction performed has failed. Since this action is the end/goal action, it will not recalculate anymore. Dropping plan...";
+                Debug.Log(log);
                 if (!DropPlan(plan)) {
                     PlanGoapActions();
                 }
