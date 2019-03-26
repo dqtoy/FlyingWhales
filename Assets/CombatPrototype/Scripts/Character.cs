@@ -1385,6 +1385,16 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public void SetGridTileLocation(LocationGridTile tile) {
         this.tile = tile;
+        string summary = string.Empty;
+        if (tile == null) {
+            summary = GameManager.Instance.TodayLogString() + "Set tile location to null";
+        } else {
+            summary = GameManager.Instance.TodayLogString() + "Set tile location to " + tile.localPlace.ToString();
+        }
+        locationHistory.Add(summary);
+        if (locationHistory.Count > 80) {
+            locationHistory.RemoveAt(0);
+        }
     }
     //public LocationGridTile GetNearestUnoccupiedTileFromThis() {
     //    if (!isDead && gridTileLocation != null && currentStructure == structure) {
