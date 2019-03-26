@@ -18,7 +18,7 @@ public class AbductCharacter : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = poiTarget });
     }
     public override void PerformActualAction() {
-        if (targetStructure == actor.gridTileLocation.structure) {
+        if (actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
             if (!HasOtherCharacterInRadius()) {
                 SetState("Abduct Success");
             } else {

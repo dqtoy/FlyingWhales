@@ -6,7 +6,7 @@ public class Intervene : PlayerJobAction {
 
     public Intervene() {
         actionName = "Intervene";
-        SetDefaultCooldownTime(3);
+        SetDefaultCooldownTime(48);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
     }
 
@@ -22,7 +22,7 @@ public class Intervene : PlayerJobAction {
     }
 
     protected override bool ShouldButtonBeInteractable(Character character, Character targetCharacter) {
-        if (targetCharacter.isDead || character.id == targetCharacter.id || targetCharacter.currentAction == null || (!targetCharacter.isTracked && !GameManager.Instance.inspectAll)) {
+        if (targetCharacter.isDead || character.id == targetCharacter.id || targetCharacter.currentAction == null) { //|| (!targetCharacter.isTracked && !GameManager.Instance.inspectAll)
             return false;
         }
         return base.ShouldButtonBeInteractable(character, targetCharacter);

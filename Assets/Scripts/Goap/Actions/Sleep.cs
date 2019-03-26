@@ -16,7 +16,7 @@ public class Sleep : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = null, targetPOI = actor });
     }
     public override void PerformActualAction() {
-        if (targetStructure == actor.gridTileLocation.structure) {
+        if (actor.gridTileLocation == poiTarget.gridTileLocation) {
             if (poiTarget.state != POI_STATE.INACTIVE) {
                 SetState("Rest Success");
             } else {

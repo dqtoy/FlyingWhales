@@ -11,10 +11,7 @@
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = actor });
     }
     public override void PerformActualAction() {
-        if (targetStructure == actor.gridTileLocation.structure) {
-            ////TODO: CHECKER IF TABLE IS POISONED
-            //SetState("Eat Success");
-
+        if (actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
             if (poiTarget.GetTrait("Poisoned") != null) {
                 SetState("Eat Poisoned");
             } else {

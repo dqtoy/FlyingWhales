@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Steal : GoapAction {
-    public override LocationStructure targetStructure { get { return _targetStructure; } }
+    //public override LocationStructure targetStructure { get { return _targetStructure; } }
 
-    private LocationStructure _targetStructure;
+    //private LocationStructure _targetStructure;
     public Steal(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.STEAL, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         validTimeOfDays = new TIME_IN_WORDS[] {
             TIME_IN_WORDS.EARLY_NIGHT,
@@ -23,7 +23,7 @@ public class Steal : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = poiTarget, targetPOI = actor });
     }
     public override void PerformActualAction() {
-        if(poiTarget.gridTileLocation.structure == actor.gridTileLocation.structure) {
+        if(actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
             SetState("Steal Success");
         } else {
             SetState("Target Missing");
@@ -33,11 +33,11 @@ public class Steal : GoapAction {
     protected override int GetCost() {
         return 2;
     }
-    public override void SetTargetStructure() {
-        ItemAwareness awareness = actor.GetAwareness(poiTarget) as ItemAwareness;
-        _targetStructure = awareness.knownLocation.structure;
-        targetTile = awareness.knownLocation;
-    }
+    //public override void SetTargetStructure() {
+    //    ItemAwareness awareness = actor.GetAwareness(poiTarget) as ItemAwareness;
+    //    _targetStructure = awareness.knownLocation.structure;
+    //    targetTile = awareness.knownLocation;
+    //}
     public override void FailAction() {
         base.FailAction();
         SetState("Target Missing");

@@ -24,7 +24,7 @@ public class ChatCharacter : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
     }
     public override void PerformActualAction() {
-        if (poiTarget.gridTileLocation.structure == actor.gridTileLocation.structure) {
+        if (actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
             Character target = poiTarget as Character;
             if (target.currentAction != null 
                 && (target.currentAction.goapType == INTERACTION_TYPE.SLEEP || target.currentAction.goapType == INTERACTION_TYPE.SLEEP_OUTSIDE)) {
@@ -112,8 +112,18 @@ public class ChatCharacter : GoapAction {
     #region State Effects
     private void PreChatSuccess() {
         actor.AdjustDoNotGetLonely(1);
-        (poiTarget as Character).AdjustDoNotGetLonely(1);
-        currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        Character target = poiTarget as Character;
+        target.AdjustDoNotGetLonely(1);
+        if(target.currentParty.icon.isTravelling && target.currentParty.icon.travelLine == null) {
+            target.SetCurrentAction(null);
+            target.marker.StopMovement();
+        }
+        if (target.marker.isStillMovingToAnotherTile) {
+            target.marker.SetOnArriveAtTileAction(() => target.FaceTarget(actor));
+        } else {
+            target.FaceTarget(actor);
+        }
+        currentState.AddLogFiller(target, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
     }
     private void PerTickChatSuccess() {
         actor.AdjustHappiness(10);

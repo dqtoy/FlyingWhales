@@ -134,9 +134,9 @@ public class GoapThread : Multithread {
         }
     }
     private void RecalculatePlan() {
-        if (recalculationPlan.isEnd) {
-            return;
-        }
+        //if (recalculationPlan.isEnd) {
+        //    return;
+        //}
         log = "-----------------RECALCULATING PLAN OF " + actor.name + " WITH TARGET " + recalculationPlan.target.name + " (" + actor.specificLocation.name + ")-----------------------";
         log += "\nGOAL ACTION: " + recalculationPlan.endNode.action.goapName + " - " + recalculationPlan.endNode.action.poiTarget.name;
 

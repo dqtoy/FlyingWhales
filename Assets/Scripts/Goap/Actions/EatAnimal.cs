@@ -16,7 +16,7 @@ public class EatAnimal : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = actor });
     }
     public override void PerformActualAction() {
-        if (targetStructure == actor.gridTileLocation.structure) {
+        if (actor.gridTileLocation == poiTarget.gridTileLocation) {
             if(poiTarget.state != POI_STATE.INACTIVE) {
                 SetState("Eat Success");
             } else {

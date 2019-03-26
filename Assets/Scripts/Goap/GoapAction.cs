@@ -186,9 +186,9 @@ public class GoapAction {
     public virtual bool IsHalted() {
         //Only waiting condition for now is the time of day
         //The default for the valid time of days is null, if it is null, do not wait meaning return false
-        if (validTimeOfDays != null && !validTimeOfDays.Contains(GameManager.GetCurrentTimeInWordsOfTick())) {
-            return true;
-        }
+        //if (validTimeOfDays != null && !validTimeOfDays.Contains(GameManager.GetCurrentTimeInWordsOfTick())) {
+        //    return true;
+        //}
         return false;
     }
     #endregion
@@ -205,10 +205,11 @@ public class GoapAction {
         return actorInteractions.Contains(goapType);
     }
     public bool CanSatisfyRequirements() {
+        bool requirementActionSatisfied = true;
         if(_requirementAction != null) {
-            return _requirementAction();
+            requirementActionSatisfied = _requirementAction();
         }
-        return true;
+        return requirementActionSatisfied && (validTimeOfDays == null || validTimeOfDays.Contains(GameManager.GetCurrentTimeInWordsOfTick()));
     }
     public void AddTraitTo(Character target, string traitName) {
         if (target.AddTrait(traitName)) {
@@ -235,7 +236,7 @@ public class GoapAction {
         if (Messenger.eventTable.ContainsKey(Signals.CHARACTER_DEATH)) {
             Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnActorDied);
         }
-        Debug.Log(this.goapType.ToString() + " action by " + this.actor.name + " Summary: \n" + actionSummary);
+        this.actor.PrintLogIfActive(this.goapType.ToString() + " action by " + this.actor.name + " Summary: \n" + actionSummary);
     }
     public void StopAction( ) {
         GoapAction action = actor.currentAction;
@@ -248,10 +249,10 @@ public class GoapAction {
         if(isPerformingActualAction && !isDone) {
             ReturnToActorTheActionResult(InteractionManager.Goap_State_Fail);
         } else {
-            if (action != null && action.poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-                Character targetCharacter = action.poiTarget as Character;
-                targetCharacter.AdjustIsWaitingForInteraction(-1);
-            }
+            //if (action != null && action.poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+            //    Character targetCharacter = action.poiTarget as Character;
+            //    targetCharacter.AdjustIsWaitingForInteraction(-1);
+            //}
             if (!actor.DropPlan(parentPlan)) {
                 actor.PlanGoapActions();
             }
@@ -272,17 +273,19 @@ public class GoapAction {
             if (tile == null) {
                 tile = poiTarget.gridTileLocation;
             }
-            try {
-                int distance = Mathf.RoundToInt(actor.gridTileLocation.GetDistanceTo(tile));
-                return distance / 6;
-            } catch(System.Exception e) {
-                if(actor.gridTileLocation == null) {
-                    Console.WriteLine("ACTOR TILE LOCATION IS NULL!");
-                } else if (tile == null) {
-                    Console.WriteLine("TILE IS NULL!");
-                }
-            }
-            return 0;
+            int distance = Mathf.RoundToInt(actor.gridTileLocation.GetDistanceTo(tile));
+            return distance / 6;
+            //try {
+            //    int distance = Mathf.RoundToInt(actor.gridTileLocation.GetDistanceTo(tile));
+            //    return distance / 6;
+            //} catch(System.Exception e) {
+            //    if(actor.gridTileLocation == null) {
+            //        Console.WriteLine("ACTOR TILE LOCATION IS NULL!");
+            //    } else if (tile == null) {
+            //        Console.WriteLine("TILE IS NULL!");
+            //    }
+            //}
+            //return 0;
         }
     }
     protected bool HasSupply(int neededSupply) {

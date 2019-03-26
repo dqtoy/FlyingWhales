@@ -29,7 +29,7 @@ public class TablePoison : GoapAction {
         
     }
     public override void PerformActualAction() {
-        if (poiTarget.gridTileLocation.structure == actor.gridTileLocation.structure) {
+        if (actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
             if (poiTarget.gridTileLocation.structure.charactersHere.Count == 1 && poiTarget.gridTileLocation.structure.charactersHere.Contains(actor)) {
                 SetState("Poison Success");
             } else {

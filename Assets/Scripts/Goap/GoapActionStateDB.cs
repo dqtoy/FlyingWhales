@@ -138,7 +138,7 @@ public static class GoapActionStateDB {
         } },
         {INTERACTION_TYPE.GET_SUPPLY, new StateNameAndDuration[]{
             new StateNameAndDuration(){ name = "Take Success", status = InteractionManager.Goap_State_Success, duration = 0 },
-            new StateNameAndDuration(){ name = "Take Fail", status = InteractionManager.Goap_State_Success, duration = 0 },
+            new StateNameAndDuration(){ name = "Take Fail", status = InteractionManager.Goap_State_Fail, duration = 0 },
             new StateNameAndDuration(){ name = "Target Missing", status = InteractionManager.Goap_State_Fail, duration = 0 },
         } },
         {INTERACTION_TYPE.DROP_SUPPLY, new StateNameAndDuration[]{

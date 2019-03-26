@@ -42,6 +42,7 @@ public class CharacterMarker : PooledObject {
     private int _estimatedTravelTime;
     private int _currentTravelTime;
     //private bool _isMovementEstimated;
+    private Action onArrivedAtTileAction;
 
     private LocationGridTile _destinationTile;
     private IPointOfInterest _targetPOI;
@@ -50,6 +51,7 @@ public class CharacterMarker : PooledObject {
     private Coroutine currentMoveCoroutine;
 
     public List<IPointOfInterest> inRangePOIs; //POI's in this characters collider
+    public bool isStillMovingToAnotherTile { get; private set; }
 
     #region getters/setters
     public List<LocationGridTile> currentPath {
@@ -167,6 +169,10 @@ public class CharacterMarker : PooledObject {
 
     #region Pathfinding Movement
     public void GoToTile(LocationGridTile destinationTile, IPointOfInterest targetPOI, Action arrivalAction = null) {
+        if (isStillMovingToAnotherTile) {
+            SetOnArriveAtTileAction(() => GoToTile(destinationTile, targetPOI, arrivalAction));
+            return;
+        }
         _destinationTile = destinationTile;
         _targetPOI = targetPOI;
         _arrivalAction = arrivalAction;
@@ -182,7 +188,7 @@ public class CharacterMarker : PooledObject {
         _currentPath = PathGenerator.Instance.GetPath(character.gridTileLocation, destinationTile, GRID_PATHFINDING_MODE.REALISTIC);
         if (_currentPath != null) {
             Messenger.AddListener<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, OnTileOccupied);
-            Debug.Log("Created path for " + character.name + " from " + character.gridTileLocation.ToString() + " to " + destinationTile.ToString());
+            character.PrintLogIfActive("Created path for " + character.name + " from " + character.gridTileLocation.ToString() + " to " + destinationTile.ToString());
             character.currentAction.UpdateTargetTile(destinationTile);
             StartMovement();
         } else {
@@ -243,7 +249,9 @@ public class CharacterMarker : PooledObject {
         }
         _arrivalAction = null;
         //_currentPath = null;
-        PlayIdle();
+        if (!isStillMovingToAnotherTile) {
+            PlayIdle();
+        }
     }
     private void Move() {
         if (character.isDead) {
@@ -277,6 +285,13 @@ public class CharacterMarker : PooledObject {
             lastRemovedTileFromPath = currentTile;
             //character.currentParty.icon.SetIsTravelling(currentIsTravelling);
 
+            if(onArrivedAtTileAction != null) {
+                PlayIdle();
+                onArrivedAtTileAction();
+                onArrivedAtTileAction = null;
+                return;
+            }
+
             if (character.currentParty.icon.isTravelling) {
                 if (_currentPath.Count <= 0) {
                     //Arrival
@@ -300,6 +315,7 @@ public class CharacterMarker : PooledObject {
     private IEnumerator MoveToPosition(Vector3 from, Vector3 to) {
         RotateMarker(from, to);
 
+        isStillMovingToAnotherTile = true;
         float t = 0f;
         while (t < 1) {
             if (!GameManager.Instance.isPaused) {
@@ -308,6 +324,7 @@ public class CharacterMarker : PooledObject {
             }
             yield return null;
         }
+        isStillMovingToAnotherTile = false;
         Move();
     }
     public void RotateMarker(Vector3 from, Vector3 to) {
@@ -449,9 +466,9 @@ public class CharacterMarker : PooledObject {
         }
         if (nearestTileToTarget != null) {
             pathRecalSummary += "\nGot new target tile " + nearestTileToTarget.ToString() + ". Going there now.";
-            if (currentMoveCoroutine != null) {
-                StopCoroutine(currentMoveCoroutine);
-            }
+            //if (currentMoveCoroutine != null) {
+            //    StopCoroutine(currentMoveCoroutine);
+            //}
             shouldRecalculatePath = false;
             GoToTile(nearestTileToTarget, _targetPOI, _arrivalAction);
             recalculationResult = true;
@@ -483,7 +500,7 @@ public class CharacterMarker : PooledObject {
                 recalculationResult = false;
             }
         }
-        Debug.Log(pathRecalSummary);
+        character.PrintLogIfActive(pathRecalSummary);
         return recalculationResult;
     }
 
@@ -520,5 +537,8 @@ public class CharacterMarker : PooledObject {
                 }
             }
         }
+    }
+    public void SetOnArriveAtTileAction(Action action) {
+        onArrivedAtTileAction = action;
     }
 }

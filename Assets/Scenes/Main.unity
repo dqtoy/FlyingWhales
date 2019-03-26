@@ -21847,7 +21847,7 @@ MonoBehaviour:
   month: 1
   days: 1
   year: 80
-  tick: 24
+  tick: 96
   continuousDays: 1
   startYear: 80
   currProgressionSpeed: 0

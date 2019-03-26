@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Scrap : GoapAction {
-    public override LocationStructure targetStructure { get { return _targetStructure; } }
+    //public override LocationStructure targetStructure { get { return _targetStructure; } }
 
-    private LocationStructure _targetStructure;
+    //private LocationStructure _targetStructure;
     public Scrap(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.SCRAP, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         validTimeOfDays = new TIME_IN_WORDS[] {
             TIME_IN_WORDS.MORNING,
@@ -13,7 +13,7 @@ public class Scrap : GoapAction {
             TIME_IN_WORDS.EARLY_NIGHT,
         };
         actionIconString = GoapActionStateDB.Work_Icon;
-        actionLocationType = ACTION_LOCATION_TYPE.ON_TARGET;
+        //actionLocationType = ACTION_LOCATION_TYPE.ON_TARGET;
     }
 
     #region Overrides
@@ -25,7 +25,7 @@ public class Scrap : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_SUPPLY, conditionKey = ItemManager.Instance.itemData[item.specialTokenType].supplyValue, targetPOI = actor });
     }
     public override void PerformActualAction() {
-        if (poiTarget.gridTileLocation.structure == actor.gridTileLocation.structure) {
+        if (actor.gridTileLocation == poiTarget.gridTileLocation) {
             SetState("Scrap Success");
         } else {
             SetState("Target Missing");
@@ -35,11 +35,12 @@ public class Scrap : GoapAction {
     protected override int GetCost() {
         return 2;
     }
-    public override void SetTargetStructure() {
-        //ItemAwareness awareness = actor.GetAwareness(poiTarget) as ItemAwareness;
-        _targetStructure = poiTarget.gridTileLocation.structure;
-        //targetTile = awareness.knownLocation;
-    }
+    //public override void SetTargetStructure() {
+    //    ItemAwareness awareness = actor.GetAwareness(poiTarget) as ItemAwareness;
+    //    _targetStructure = poiTarget.gridTileLocation.structure;
+    //    base.SetTargetStructure();
+    //    //targetTile = awareness.knownLocation;
+    //}
     public override void FailAction() {
         base.FailAction();
         SetState("Target Missing");
