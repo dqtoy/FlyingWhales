@@ -8,7 +8,7 @@ public class RileUp : PlayerJobAction {
 
     public RileUp() {
         actionName = "Rile Up";
-        SetDefaultCooldownTime(3);
+        SetDefaultCooldownTime(48);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
     }
 
@@ -21,7 +21,7 @@ public class RileUp : PlayerJobAction {
     }
 
     protected override bool ShouldButtonBeInteractable(Character character, Character targetCharacter) {
-        if (targetCharacter.isDead || character.id == targetCharacter.id || (!targetCharacter.isTracked && !GameManager.Instance.inspectAll)) {
+        if (targetCharacter.isDead || character.id == targetCharacter.id) { //|| (!targetCharacter.isTracked && !GameManager.Instance.inspectAll)
             return false;
         }
         if(targetCharacter.role.roleType != CHARACTER_ROLE.BEAST && targetCharacter.race != RACE.SKELETON && targetCharacter.race != RACE.GOBLIN) {

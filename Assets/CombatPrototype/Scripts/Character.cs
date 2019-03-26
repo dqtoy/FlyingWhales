@@ -2948,6 +2948,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     private bool PlanWorkActions(ref bool hasAddedToGoapPlans) {
         if(this.faction.id != FactionManager.Instance.neutralFaction.id && GetPlanByCategory(GOAP_CATEGORY.WORK) == null) {
+            if(GetTrait("Berserker") != null) {
+                return false;
+            }
             WeightedDictionary<INTERACTION_TYPE> weightedDictionary = new WeightedDictionary<INTERACTION_TYPE>();
             //Drop Supply Plan
             if (supply > role.reservedSupply) {
@@ -3002,11 +3005,16 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //return false;
     }
     private bool PlanIdleReturnHome() {
-        GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.RETURN_HOME, this, this);
-        goapAction.SetTargetStructure();
-        GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
-        GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.IDLE);
-        allGoapPlans.Add(goapPlan);
+        if (GetTrait("Berserker") != null) {
+            //Return home becomes stroll if the character has berserker trait
+            PlanIdleStroll();
+        } else {
+            GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.RETURN_HOME, this, this);
+            goapAction.SetTargetStructure();
+            GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
+            GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.IDLE);
+            allGoapPlans.Add(goapPlan);
+        }
         return true;
     }
     private void OtherIdlePlans() {

@@ -37,6 +37,8 @@ public class CharacterMarker : PooledObject {
     private int _estimatedTravelTime;
     private int _currentTravelTime;
     private bool _isMovementEstimated;
+    private bool isStillMovingToAnotherTile;
+    private Action onArrivedAtTileAction;
 
     private LocationGridTile _destinationTile;
     private IPointOfInterest _targetPOI;
@@ -152,6 +154,10 @@ public class CharacterMarker : PooledObject {
 
     #region Pathfinding Movement
     public void GoToTile(LocationGridTile destinationTile, IPointOfInterest targetPOI, Action arrivalAction = null) {
+        if (isStillMovingToAnotherTile) {
+            onArrivedAtTileAction = () => GoToTile(destinationTile, targetPOI, arrivalAction);
+            return;
+        }
         _destinationTile = destinationTile;
         _targetPOI = targetPOI;
         _arrivalAction = arrivalAction;
@@ -216,7 +222,7 @@ public class CharacterMarker : PooledObject {
         }
         _arrivalAction = null;
         //_currentPath = null;
-        PlayIdle();
+        //PlayIdle();
     }
     private void Move() {
         if (character.isDead) {
@@ -254,6 +260,13 @@ public class CharacterMarker : PooledObject {
             lastRemovedTileFromPath = currentTile;
             //character.currentParty.icon.SetIsTravelling(currentIsTravelling);
 
+            if(onArrivedAtTileAction != null) {
+                PlayIdle();
+                onArrivedAtTileAction();
+                onArrivedAtTileAction = null;
+                return;
+            }
+
             if (character.currentParty.icon.isTravelling) {
                 if (_currentPath.Count <= 0) {
                     //Arrival
@@ -277,6 +290,7 @@ public class CharacterMarker : PooledObject {
     private IEnumerator MoveToPosition(Vector3 from, Vector3 to) {
         RotateMarker(from, to);
 
+        isStillMovingToAnotherTile = true;
         float t = 0f;
         while (t < 1) {
             if (!GameManager.Instance.isPaused) {
@@ -285,6 +299,7 @@ public class CharacterMarker : PooledObject {
             }
             yield return null;
         }
+        isStillMovingToAnotherTile = false;
         Move();
     }
     public void RotateMarker(Vector3 from, Vector3 to) {
@@ -405,9 +420,9 @@ public class CharacterMarker : PooledObject {
         }
         if (nearestTileToTarget != null) {
             pathRecalSummary += "\nGot new target tile " + nearestTileToTarget.ToString() + ". Going there now.";
-            if (currentMoveCoroutine != null) {
-                StopCoroutine(currentMoveCoroutine);
-            }
+            //if (currentMoveCoroutine != null) {
+            //    StopCoroutine(currentMoveCoroutine);
+            //}
             shouldRecalculatePath = false;
             GoToTile(nearestTileToTarget, _targetPOI, _arrivalAction);
             recalculationResult = true;
