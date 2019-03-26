@@ -44,9 +44,6 @@ public class GoapPlan {
     }
 
     public void EndPlan() {
-        if (isBeingRecalculated) {
-            return; //do not end plan yet
-        }
         isEnd = true;
         startingNode = null;
         currentNode = null;

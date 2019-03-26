@@ -4181,6 +4181,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         for (int i = 0; i < allGoapPlans.Count; i++) {
             GoapPlan plan = allGoapPlans[i];
             log += "\n" + plan.currentNode.action.goapName;
+            if (plan.isBeingRecalculated) {
+                log += "\n - Plan is currently being recalculated, skipping...";
+                continue; //skip plan
+            }
             //check if current action can still find a destination tile towards the target POI
             //bool hasValidDestination = false;
             //if (plan.currentNode.action.targetTile != null) {
