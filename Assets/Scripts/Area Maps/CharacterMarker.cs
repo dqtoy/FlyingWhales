@@ -247,18 +247,22 @@ public class CharacterMarker : PooledObject {
         if (Messenger.eventTable.ContainsKey(Signals.TILE_OCCUPIED)) {
             Messenger.RemoveListener<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, OnTileOccupied);
         }
+        if (character.currentParty != null && character.currentParty.icon != null) {
+            character.currentParty.icon.SetIsTravelling(false);
+            character.currentParty.icon.SetIsPlaceCharacterAsTileObject(true);
+        }
         //_currentPath = null;
         if (!isStillMovingToAnotherTile) {
             PlayIdle();
-            if (character.gridTileLocation.charactersHere.Remove(character)) {
-                character.ownParty.icon.SetIsPlaceCharacterAsTileObject(false);
-                character.gridTileLocation.SetOccupant(character);
-            }
+            //if (character.gridTileLocation.charactersHere.Remove(character)) {
+            //    character.ownParty.icon.SetIsPlaceCharacterAsTileObject(false);
+            //    character.gridTileLocation.SetOccupant(character);
+            //}
         } else {
-            if (character.currentParty != null && character.currentParty.icon != null) {
-                character.currentParty.icon.SetIsTravelling(false);
-                character.currentParty.icon.SetIsPlaceCharacterAsTileObject(true);
-            }
+            //if (character.currentParty != null && character.currentParty.icon != null) {
+            //    character.currentParty.icon.SetIsTravelling(false);
+            //    character.currentParty.icon.SetIsPlaceCharacterAsTileObject(true);
+            //}
         }
     }
     private void Move() {
