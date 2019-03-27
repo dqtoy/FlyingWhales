@@ -10,7 +10,7 @@ public class Daydream : GoapAction {
     public override LocationStructure targetStructure { get { return _targetStructure; } }
 
     public Daydream(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.DAYDREAM, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
-        actionLocationType = ACTION_LOCATION_TYPE.RANDOM_LOCATION;
+        actionLocationType = ACTION_LOCATION_TYPE.NEARBY;
         validTimeOfDays = new TIME_IN_WORDS[] {
             TIME_IN_WORDS.MORNING,
             TIME_IN_WORDS.AFTERNOON,
@@ -69,7 +69,11 @@ public class Daydream : GoapAction {
 
     #region Requirement
     protected bool Requirement() {
-        return actor == poiTarget;
+        if (actor == poiTarget) {
+            //actor should be non-beast
+            return actor.role.roleType != CHARACTER_ROLE.BEAST;
+        }
+        return false;
     }
     #endregion
 }
