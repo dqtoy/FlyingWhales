@@ -4488,7 +4488,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         Messenger.Broadcast(Signals.CHARACTER_DID_ACTION, this, action);
     }
     public void FaceTarget(IPointOfInterest target) {
-        if (this != target) {
+        if (this != target && !this.isDead && target.gridTileLocation != null && gridTileLocation != null) {
             marker.RotateMarker(gridTileLocation.centeredWorldLocation, target.gridTileLocation.centeredWorldLocation);
         }
     }

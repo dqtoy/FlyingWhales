@@ -492,6 +492,10 @@ public class CharacterMarker : PooledObject {
     private bool RecalculatePath(ref string pathRecalSummary) {
         bool recalculationResult = false;
         pathRecalSummary = GameManager.Instance.TodayLogString() + this.character.name + "'s marker must recalculate path towards " + _targetPOI.name + "!";
+        if(character.currentAction == null) {
+            Debug.LogError(character.name + " can't recalculate path because there is no current action!");
+            return false;
+        }
         LocationGridTile nearestTileToTarget = character.currentAction.GetTargetLocationTile();
         if (Messenger.eventTable.ContainsKey(Signals.TILE_OCCUPIED)) {
             Messenger.RemoveListener<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, OnTileOccupied);
