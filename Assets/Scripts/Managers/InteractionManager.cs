@@ -2208,7 +2208,7 @@ public class InteractionManager : MonoBehaviour {
                 break;
             case ACTION_LOCATION_TYPE.ON_TARGET:
                 //**On Target**: in the same tile as the target item or tile object
-                if(target.gridTileLocation.occupant == null) {
+                if(target.gridTileLocation.occupant == null || target.gridTileLocation.occupant == actor) {
                     chosenTile = target.gridTileLocation;
                 }
                 break;

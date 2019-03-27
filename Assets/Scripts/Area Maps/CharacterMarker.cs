@@ -48,6 +48,8 @@ public class CharacterMarker : PooledObject {
     private IPointOfInterest _targetPOI;
     private bool shouldRecalculatePath = false;
 
+    private InnerPathfindingThread _pathfindingThread;
+
     private Coroutine currentMoveCoroutine;
 
     public List<IPointOfInterest> inRangePOIs; //POI's in this characters collider
@@ -63,6 +65,7 @@ public class CharacterMarker : PooledObject {
         this.name = character.name + "'s Marker";
         nameLbl.SetText(character.name);
         this.character = character;
+        _pathfindingThread = new InnerPathfindingThread(character);
         if (UIManager.Instance.characterInfoUI.isShowing) {
             clickedImg.gameObject.SetActive(UIManager.Instance.characterInfoUI.activeCharacter.id == character.id);
         }
@@ -185,15 +188,17 @@ public class CharacterMarker : PooledObject {
         }
         //If area map is showing, do pathfinding
         //_isMovementEstimated = false;
-        _currentPath = PathGenerator.Instance.GetPath(character.gridTileLocation, destinationTile, GRID_PATHFINDING_MODE.REALISTIC);
-        if (_currentPath != null) {
-            Messenger.AddListener<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, OnTileOccupied);
-            character.PrintLogIfActive("Created path for " + character.name + " from " + character.gridTileLocation.ToString() + " to " + destinationTile.ToString());
-            character.currentAction.UpdateTargetTile(destinationTile);
-            StartMovement();
-        } else {
-            Debug.LogError("Can't create path for " + character.name + " from " + character.gridTileLocation.ToString() + " to " + destinationTile.ToString());
-        }
+        _pathfindingThread.SetValues(character.gridTileLocation, destinationTile, GRID_PATHFINDING_MODE.REALISTIC);
+        MultiThreadPool.Instance.AddToThreadPool(_pathfindingThread);
+        //_currentPath = PathGenerator.Instance.GetPath(character.gridTileLocation, destinationTile, GRID_PATHFINDING_MODE.REALISTIC);
+        //    if (_currentPath != null) {
+        //        Messenger.AddListener<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, OnTileOccupied);
+        //        Debug.Log("Created path for " + character.name + " from " + character.gridTileLocation.ToString() + " to " + destinationTile.ToString());
+        //        character.currentAction.UpdateTargetTile(destinationTile);
+        //        StartMovement();
+        //    } else {
+        //        Debug.LogError("Can't create path for " + character.name + " from " + character.gridTileLocation.ToString() + " to " + destinationTile.ToString());
+        //    }
 
         //if (character.gridTileLocation.structure.location.areaMap.gameObject.activeSelf) {
         //    //If area map is showing, do pathfinding
@@ -330,6 +335,17 @@ public class CharacterMarker : PooledObject {
     public void RotateMarker(Vector3 from, Vector3 to) {
         float angle = Mathf.Atan2(to.y - from.y, to.x - from.x) * Mathf.Rad2Deg;
         visualsRT.eulerAngles = new Vector3(visualsRT.rotation.x, visualsRT.rotation.y, angle);
+    }
+    public void ReceivePathFromPathfindingThread(InnerPathfindingThread innerPathfindingThread) {
+        _currentPath = innerPathfindingThread.path;
+        if (_currentPath != null) {
+            Messenger.AddListener<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, OnTileOccupied);
+            character.PrintLogIfActive("Created path for " + innerPathfindingThread.character.name + " from " + innerPathfindingThread.startingTile.ToString() + " to " + innerPathfindingThread.destinationTile.ToString());
+            character.currentAction.UpdateTargetTile(innerPathfindingThread.destinationTile);
+            StartMovement();
+        } else {
+            Debug.LogError("Can't create path for " + innerPathfindingThread.character.name + " from " + innerPathfindingThread.startingTile.ToString() + " to " + innerPathfindingThread.destinationTile.ToString());
+        }
     }
     //public void SwitchToPathfinding() {
     //    if (!_isMovementEstimated) {
