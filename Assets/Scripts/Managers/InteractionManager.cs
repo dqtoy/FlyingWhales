@@ -1042,6 +1042,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.HUNT_ACTION:
                 goapAction = new Hunt(actor, target);
                 break;
+            case INTERACTION_TYPE.PLAY:
+                goapAction = new Play(actor, target);
+                break;
         }
         if(goapAction != null && willInitialize) {
             goapAction.Initialize();

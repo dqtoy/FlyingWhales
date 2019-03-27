@@ -4118,6 +4118,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         poiGoapActions.Add(INTERACTION_TYPE.TRAVEL);
         poiGoapActions.Add(INTERACTION_TYPE.RETURN_HOME_LOCATION);
         poiGoapActions.Add(INTERACTION_TYPE.HUNT_ACTION);
+        poiGoapActions.Add(INTERACTION_TYPE.PLAY);
     }
     public void StartGOAP(GoapEffect goal, IPointOfInterest target, GOAP_CATEGORY category, bool isPriority = false, List<Character> otherCharactePOIs = null, bool isPersonalPlan = true) {
         List<CharacterAwareness> characterTargetsAwareness = new List<CharacterAwareness>();

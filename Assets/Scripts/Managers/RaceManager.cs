@@ -645,6 +645,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.ITEM_DESTROY,
                 INTERACTION_TYPE.TRAVEL,
                 INTERACTION_TYPE.HUNT_ACTION,
+                INTERACTION_TYPE.PLAY,
             } },
             { RACE.WOLF, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -700,6 +701,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.ITEM_DESTROY,
                 INTERACTION_TYPE.TRAVEL,
                 INTERACTION_TYPE.HUNT_ACTION,
+                INTERACTION_TYPE.PLAY,
             } },
             { RACE.DRAGON, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -755,6 +757,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.ITEM_DESTROY,
                 INTERACTION_TYPE.TRAVEL,
                 INTERACTION_TYPE.HUNT_ACTION,
+                INTERACTION_TYPE.PLAY,
             } },
         };
     }

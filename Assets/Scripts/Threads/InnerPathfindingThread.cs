@@ -23,7 +23,11 @@ public class InnerPathfindingThread : Multithread {
     #region Overrides
     public override void DoMultithread() {
         base.DoMultithread();
-        FindPath();
+        try {
+            FindPath();
+        } catch (System.Exception e) {
+            Debug.LogError("Problem with " + character.name + "'s " + pathfindingMode.ToString() + " Pathfinding from " + startingTile.ToString() + " to " + destinationTile.ToString() + "!\n" + e.Message + "\n" + e.StackTrace);
+        }
     }
     public override void FinishMultithread() {
         base.FinishMultithread();

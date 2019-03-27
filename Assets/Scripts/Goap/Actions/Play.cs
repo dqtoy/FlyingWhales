@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class Daydream : GoapAction {
+public class Play : GoapAction {
 
     //private LocationStructure _targetStructure;
 
     //public override LocationStructure targetStructure { get { return _targetStructure; } }
 
-    public Daydream(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.DAYDREAM, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public Play(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.PLAY, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionLocationType = ACTION_LOCATION_TYPE.NEARBY;
         validTimeOfDays = new TIME_IN_WORDS[] {
             TIME_IN_WORDS.MORNING,
@@ -27,9 +27,9 @@ public class Daydream : GoapAction {
     }
     public override void PerformActualAction() {
         if (targetTile.occupant != null && targetTile.occupant != actor) {
-            SetState("Daydream Failed");
+            SetState("Play Failed");
         } else {
-            SetState("Daydream Success");
+            SetState("Play Success");
         }
         base.PerformActualAction();
     }
@@ -39,7 +39,7 @@ public class Daydream : GoapAction {
     }
     public override void FailAction() {
         base.FailAction();
-        SetState("Daydream Failed");
+        SetState("Play Failed");
     }
     //public override void SetTargetStructure() {
     //    List<LocationStructure> choices = actor.specificLocation.GetStructuresOfType(STRUCTURE_TYPE.WILDERNESS).ToList();
@@ -54,14 +54,14 @@ public class Daydream : GoapAction {
     #endregion
 
     #region Effects
-    private void DaydreamSuccess() {
+    private void PlaySuccess() {
         actor.AdjustDoNotGetLonely(1);
         actor.AdjustDoNotGetTired(1);
     }
-    private void PerTickDaydreamSuccess() {
-        actor.AdjustHappiness(6);
+    private void PerTickPlaySuccess() {
+        actor.AdjustHappiness(12);
     }
-    private void AfterDaydreamSuccess() {
+    private void AfterPlaySuccess() {
         actor.AdjustDoNotGetLonely(-1);
         actor.AdjustDoNotGetTired(-1);
     }
@@ -70,11 +70,6 @@ public class Daydream : GoapAction {
     #region Requirement
     protected bool Requirement() {
         return actor == poiTarget;
-        //if (actor == poiTarget) {
-        //    //actor should be non-beast
-        //    return actor.role.roleType != CHARACTER_ROLE.BEAST;
-        //}
-        //return false;
     }
     #endregion
 }

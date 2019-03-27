@@ -20,6 +20,7 @@ public class Sleep : GoapAction {
             if (poiTarget.state != POI_STATE.INACTIVE) {
                 SetState("Rest Success");
             } else {
+                Debug.LogError(actor.name + " failed " + goapName + " action while performing it!");
                 SetState("Rest Fail");
             }
         } else {
@@ -47,6 +48,7 @@ public class Sleep : GoapAction {
         }
     }
     public override void FailAction() {
+        Debug.LogError(actor.name + " failed " + goapName + " action from recalculate path!");
         base.FailAction();
         SetState("Rest Fail");
     }
