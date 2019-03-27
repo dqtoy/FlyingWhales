@@ -114,15 +114,15 @@ public class ChatCharacter : GoapAction {
         actor.AdjustDoNotGetLonely(1);
         Character target = poiTarget as Character;
         target.AdjustDoNotGetLonely(1);
-        if(target.currentParty.icon.isTravelling && target.currentParty.icon.travelLine == null) {
-            target.SetCurrentAction(null);
-            target.marker.StopMovement();
-        }
-        if (target.marker.isStillMovingToAnotherTile) {
-            target.marker.SetOnArriveAtTileAction(() => target.FaceTarget(actor));
-        } else {
-            target.FaceTarget(actor);
-        }
+        //if(target.currentParty.icon.isTravelling && target.currentParty.icon.travelLine == null) {
+        //    target.SetCurrentAction(null);
+        //    target.marker.StopMovement();
+        //}
+        //if (target.marker.isStillMovingToAnotherTile) {
+        //    target.marker.SetOnArriveAtTileAction(() => target.FaceTarget(actor));
+        //} else {
+        //    target.FaceTarget(actor);
+        //}
         currentState.AddLogFiller(target, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
     }
     private void PerTickChatSuccess() {

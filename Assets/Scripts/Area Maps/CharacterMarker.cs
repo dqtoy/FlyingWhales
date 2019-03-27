@@ -48,12 +48,11 @@ public class CharacterMarker : PooledObject {
     private IPointOfInterest _targetPOI;
     private bool shouldRecalculatePath = false;
 
-    private InnerPathfindingThread _pathfindingThread;
-
     private Coroutine currentMoveCoroutine;
 
     public List<IPointOfInterest> inRangePOIs; //POI's in this characters collider
     public bool isStillMovingToAnotherTile { get; private set; }
+    public InnerPathfindingThread pathfindingThread { get; private set; }
 
     #region getters/setters
     public List<LocationGridTile> currentPath {
@@ -65,7 +64,6 @@ public class CharacterMarker : PooledObject {
         this.name = character.name + "'s Marker";
         nameLbl.SetText(character.name);
         this.character = character;
-        _pathfindingThread = new InnerPathfindingThread(character);
         if (UIManager.Instance.characterInfoUI.isShowing) {
             clickedImg.gameObject.SetActive(UIManager.Instance.characterInfoUI.activeCharacter.id == character.id);
         }
@@ -188,8 +186,8 @@ public class CharacterMarker : PooledObject {
         }
         //If area map is showing, do pathfinding
         //_isMovementEstimated = false;
-        _pathfindingThread.SetValues(character.gridTileLocation, destinationTile, GRID_PATHFINDING_MODE.REALISTIC);
-        MultiThreadPool.Instance.AddToThreadPool(_pathfindingThread);
+        pathfindingThread = new InnerPathfindingThread(character, character.gridTileLocation, destinationTile, GRID_PATHFINDING_MODE.REALISTIC);
+        MultiThreadPool.Instance.AddToThreadPool(pathfindingThread);
         //_currentPath = PathGenerator.Instance.GetPath(character.gridTileLocation, destinationTile, GRID_PATHFINDING_MODE.REALISTIC);
         //    if (_currentPath != null) {
         //        Messenger.AddListener<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, OnTileOccupied);
@@ -245,17 +243,22 @@ public class CharacterMarker : PooledObject {
         //if (Messenger.eventTable.ContainsKey(Signals.TICK_STARTED)) {
         //    Messenger.RemoveListener(Signals.TICK_STARTED, EstimatedMove);
         //}
+        _arrivalAction = null;
         if (Messenger.eventTable.ContainsKey(Signals.TILE_OCCUPIED)) {
             Messenger.RemoveListener<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, OnTileOccupied);
         }
-        if (character.currentParty != null && character.currentParty.icon != null) {
-            character.currentParty.icon.SetIsTravelling(false);
-            character.currentParty.icon.SetIsPlaceCharacterAsTileObject(true);
-        }
-        _arrivalAction = null;
         //_currentPath = null;
         if (!isStillMovingToAnotherTile) {
             PlayIdle();
+            if (character.gridTileLocation.charactersHere.Remove(character)) {
+                character.ownParty.icon.SetIsPlaceCharacterAsTileObject(false);
+                character.gridTileLocation.SetOccupant(character);
+            }
+        } else {
+            if (character.currentParty != null && character.currentParty.icon != null) {
+                character.currentParty.icon.SetIsTravelling(false);
+                character.currentParty.icon.SetIsPlaceCharacterAsTileObject(true);
+            }
         }
     }
     private void Move() {
@@ -338,10 +341,19 @@ public class CharacterMarker : PooledObject {
     }
     public void ReceivePathFromPathfindingThread(InnerPathfindingThread innerPathfindingThread) {
         _currentPath = innerPathfindingThread.path;
+        pathfindingThread = null;
+        if (innerPathfindingThread.doNotMove) {
+            return;
+        }
+        if (character.minion != null || !character.IsInOwnParty() || character.isDefender || character.doNotDisturb > 0 || character.job == null || character.isWaitingForInteraction > 0) {
+            return; //if this character is not in own party, is a defender or is travelling or cannot be disturbed, do not generate interaction
+        }
         if (_currentPath != null) {
             Messenger.AddListener<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, OnTileOccupied);
             character.PrintLogIfActive("Created path for " + innerPathfindingThread.character.name + " from " + innerPathfindingThread.startingTile.ToString() + " to " + innerPathfindingThread.destinationTile.ToString());
-            character.currentAction.UpdateTargetTile(innerPathfindingThread.destinationTile);
+            if(character.currentAction != null) {
+                character.currentAction.UpdateTargetTile(innerPathfindingThread.destinationTile);
+            }
             StartMovement();
         } else {
             Debug.LogError("Can't create path for " + innerPathfindingThread.character.name + " from " + innerPathfindingThread.startingTile.ToString() + " to " + innerPathfindingThread.destinationTile.ToString());

@@ -4240,6 +4240,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 } else {
                     log += "\n - Action's preconditions are all satisfied, doing action...";
                     PrintLogIfActive(log);
+                    Messenger.Broadcast(Signals.CHARACTER_WILL_DO_PLAN, this, plan);
                     plan.currentNode.action.DoAction(plan);
                     willGoIdleState = false;
                     break;
@@ -4450,7 +4451,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 } else {
                     allGoapPlans.Add(goapThread.createdPlan);
                 }
-                Messenger.Broadcast(Signals.CHARACTER_RECIEVED_PLAN, this, goapThread.createdPlan);
                 PlanGoapActions();
             } else {
                 //Receive plan recalculation
@@ -4497,7 +4497,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             //This means that the current action of this character is being set to null, when this happens, the poi target of the current action must not wait for interaction anymore
             if (currentAction.poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
                 Character targetCharacter = currentAction.poiTarget as Character;
-                targetCharacter.AdjustIsWaitingForInteraction(-1);
+                if (targetCharacter != currentAction.actor) {
+                    targetCharacter.AdjustIsWaitingForInteraction(-1);
+                }
             }
         }
         currentAction = action;

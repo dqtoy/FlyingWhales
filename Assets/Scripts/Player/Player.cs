@@ -92,7 +92,7 @@ public class Player : ILeader {
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
 
         //goap
-        Messenger.AddListener<Character, GoapPlan>(Signals.CHARACTER_RECIEVED_PLAN, OnCharacterRecievedPlan);
+        Messenger.AddListener<Character, GoapPlan>(Signals.CHARACTER_WILL_DO_PLAN, OnCharacterRecievedPlan);
         Messenger.AddListener<Character, GoapAction>(Signals.CHARACTER_DID_ACTION, OnCharacterDidAction);
     }
 

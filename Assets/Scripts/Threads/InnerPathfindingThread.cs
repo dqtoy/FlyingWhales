@@ -8,18 +8,18 @@ public class InnerPathfindingThread : Multithread {
     public LocationGridTile startingTile { get; private set; }
     public LocationGridTile destinationTile { get; private set; }
     public GRID_PATHFINDING_MODE pathfindingMode { get; private set; }
+    public bool doNotMove { get; private set; }
 
-    public InnerPathfindingThread(Character character) {
+    public InnerPathfindingThread(Character character, LocationGridTile startingTile, LocationGridTile destinationTile, GRID_PATHFINDING_MODE pathfindingMode) {
         this.character = character;
-    }
-
-    public void SetValues(LocationGridTile startingTile, LocationGridTile destinationTile, GRID_PATHFINDING_MODE pathfindingMode) {
         this.startingTile = startingTile;
         this.destinationTile = destinationTile;
         this.pathfindingMode = pathfindingMode;
         this.path = null;
     }
-
+    public void SetDoNotMove(bool state) {
+        doNotMove = state;
+    }
     #region Overrides
     public override void DoMultithread() {
         base.DoMultithread();

@@ -108,16 +108,16 @@ public class ArgueCharacter : GoapAction {
     #region State Effects
     private void PreArgueSuccess() {
         actor.AdjustDoNotGetLonely(1);
-        Character target = poiTarget as Character;
-        if (target.currentParty.icon.isTravelling && target.currentParty.icon.travelLine == null) {
-            target.SetCurrentAction(null);
-            target.marker.StopMovement();
-        }
-        if (target.marker.isStillMovingToAnotherTile) {
-            target.marker.SetOnArriveAtTileAction(() => target.FaceTarget(actor));
-        } else {
-            target.FaceTarget(actor);
-        }
+        //Character target = poiTarget as Character;
+        //if (target.currentParty.icon.isTravelling && target.currentParty.icon.travelLine == null) {
+        //    target.SetCurrentAction(null);
+        //    target.marker.StopMovement();
+        //}
+        //if (target.marker.isStillMovingToAnotherTile) {
+        //    target.marker.SetOnArriveAtTileAction(() => target.FaceTarget(actor));
+        //} else {
+        //    target.FaceTarget(actor);
+        //}
         currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
     }
     private void PerTickArgueSuccess() {

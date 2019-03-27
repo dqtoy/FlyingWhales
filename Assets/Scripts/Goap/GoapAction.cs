@@ -74,7 +74,6 @@ public class GoapAction {
         AddActionLog(GameManager.Instance.TodayLogString() + " Set state to " + currentState.name);
         OnPerformActualActionToTarget();
         currentState.Execute();
-        actor.OnCharacterDoAction(this);
     }
     #endregion
 
@@ -119,7 +118,15 @@ public class GoapAction {
     protected virtual int GetCost() {
         return 0;
     }
-    public virtual void PerformActualAction() { isPerformingActualAction = true; }
+    public virtual void PerformActualAction() {
+        isPerformingActualAction = true;
+        if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+            Character targetCharacter = poiTarget as Character;
+            if (targetCharacter != actor) {
+                targetCharacter.FaceTarget(actor);
+            }
+        }
+    }
     protected virtual void CreateThoughtBubbleLog() {
         thoughtBubbleLog = new Log(GameManager.Instance.Today(), "GoapAction", this.GetType().ToString(), "thought_bubble");
         if (thoughtBubbleLog != null) {
@@ -142,11 +149,25 @@ public class GoapAction {
         CreateStates(); //Not sure if this is the best place for this.
         actor.SetCurrentAction(this);
         plan.SetPlanState(GOAP_PLAN_STATE.IN_PROGRESS);
+        Messenger.Broadcast(Signals.CHARACTER_DOING_ACTION, actor, this);
 
         //if the current target is a character, make him/her wait for this action
         if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
             Character targetCharacter = poiTarget as Character;
-            targetCharacter.AdjustIsWaitingForInteraction(1);
+            if(targetCharacter != actor) {
+                GameManager.Instance.SetPausedState(true);
+                targetCharacter.AdjustIsWaitingForInteraction(1);
+                if (targetCharacter.currentAction != null && !targetCharacter.currentAction.isPerformingActualAction && !targetCharacter.currentAction.isDone) {
+                    targetCharacter.SetCurrentAction(null);
+                }
+                if (targetCharacter.currentParty.icon.isTravelling && targetCharacter.currentParty.icon.travelLine == null) {
+                    targetCharacter.marker.StopMovement();
+                    if (targetCharacter.marker.isStillMovingToAnotherTile) {
+                        targetCharacter.marker.SetOnArriveAtTileAction(() => MoveToDoAction(plan));
+                        return;
+                    }
+                }
+            }
         }
 
         //if the specified target tile is null. Use the default means to get the target tile. (Uses Action Location Type)
@@ -156,16 +177,7 @@ public class GoapAction {
         //if(this.targetTile == null) {
         //    this.targetTile = targetTile;
         //}
-
-        //if the actor is NOT at the area where the target structure is, make him/her go there first.
-        if (actor.specificLocation != targetStructure.location) {
-            actor.currentParty.GoToLocation(targetStructure.location, PATHFINDING_MODE.NORMAL, targetStructure, () => actor.PerformGoapAction(plan), null, null, poiTarget, targetTile);
-        } else {
-            //if the actor is already at the area where the target structure is, just make the actor move to the specified target structure (ususally the structure where the poiTarget is at).
-            actor.MoveToAnotherStructure(targetStructure, targetTile, poiTarget, () => actor.PerformGoapAction(plan));
-            //actor.PerformGoapAction(plan);
-        }
-        Messenger.Broadcast(Signals.CHARACTER_DOING_ACTION, actor, this);
+        MoveToDoAction(plan);
     }
     public virtual LocationGridTile GetTargetLocationTile() {
         return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, poiTarget, targetStructure);
@@ -222,6 +234,7 @@ public class GoapAction {
         }
     }
     public void ReturnToActorTheActionResult(string result) {
+        actor.OnCharacterDoAction(this);
         currentState.StopPerTickEffect();
         End();
         actor.GoapActionResult(result, this);
@@ -239,7 +252,10 @@ public class GoapAction {
         this.actor.PrintLogIfActive(this.goapType.ToString() + " action by " + this.actor.name + " Summary: \n" + actionSummary);
     }
     public void StopAction( ) {
-        GoapAction action = actor.currentAction;
+        //GoapAction action = actor.currentAction;
+        if(actor.marker.pathfindingThread != null) {
+            actor.marker.pathfindingThread.SetDoNotMove(true);
+        }
         actor.SetCurrentAction(null);
         if (actor.currentParty.icon.isTravelling && actor.currentParty.icon.travelLine == null) {
             //This means that the actor currently travelling to another tile in tilemap
@@ -300,6 +316,16 @@ public class GoapAction {
     }
     public void SetExecutionDate(GameDate date) {
         executionDate = date;
+    }
+    private void MoveToDoAction(GoapPlan plan) {
+        //if the actor is NOT at the area where the target structure is, make him/her go there first.
+        if (actor.specificLocation != targetStructure.location) {
+            actor.currentParty.GoToLocation(targetStructure.location, PATHFINDING_MODE.NORMAL, targetStructure, () => actor.PerformGoapAction(plan), null, null, poiTarget, targetTile);
+        } else {
+            //if the actor is already at the area where the target structure is, just make the actor move to the specified target structure (ususally the structure where the poiTarget is at).
+            actor.MoveToAnotherStructure(targetStructure, targetTile, poiTarget, () => actor.PerformGoapAction(plan));
+            //actor.PerformGoapAction(plan);
+        }
     }
     #endregion
 
