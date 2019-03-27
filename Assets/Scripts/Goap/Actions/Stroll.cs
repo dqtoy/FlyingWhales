@@ -6,11 +6,13 @@ public class Stroll : GoapAction {
     public override LocationStructure targetStructure { get { return _targetStructure; } }
 
     private LocationStructure _targetStructure;
+    private bool _isStrollFromPatrol;
 
     public Stroll(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.STROLL, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         showIntelNotification = false;
         shouldAddLogs = false;
         actionIconString = GoapActionStateDB.No_Icon;
+        _isStrollFromPatrol = false;
     }
 
     #region Overrides
@@ -31,6 +33,12 @@ public class Stroll : GoapAction {
     public override void FailAction() {
         base.FailAction();
         SetState("Stroll Fail");
+    }
+    public override void DoAction(GoapPlan plan) {
+        if (_isStrollFromPatrol) {
+            SetTargetStructure(actor.currentStructure);
+        }
+        base.DoAction(plan);
     }
     #endregion
 
@@ -85,5 +93,8 @@ public class Stroll : GoapAction {
                 SetTargetStructure(area.GetRandomStructureOfType(chosenStructureType));
             }
         }
+    }
+    public void SetIsStrollFromPatrol(bool state) {
+        _isStrollFromPatrol = state;
     }
 }

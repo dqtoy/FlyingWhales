@@ -125,7 +125,7 @@ public static class GoapActionStateDB {
             new StateNameAndDuration(){ name = "Target Missing", status = InteractionManager.Goap_State_Fail, duration = 0 },
         } },
         {INTERACTION_TYPE.PATROL, new StateNameAndDuration[]{
-            new StateNameAndDuration(){ name = "Patrol Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(1) },
+            new StateNameAndDuration(){ name = "Patrol Success", status = InteractionManager.Goap_State_Success, duration = 0 },
             new StateNameAndDuration(){ name = "Patrol Fail", status = InteractionManager.Goap_State_Fail, duration = 0 },
         } },
         {INTERACTION_TYPE.STEAL, new StateNameAndDuration[]{

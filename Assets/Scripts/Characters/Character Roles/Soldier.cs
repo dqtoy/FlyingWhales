@@ -23,11 +23,17 @@ public class Soldier : CharacterRole {
 
     private GoapPlan PatrolPlan(Character actor) {
         GoapAction goapAction1 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.PATROL, actor, actor);
-        GoapAction goapAction2 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.PATROL, actor, actor);
+        Stroll goapAction2 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.STROLL, actor, actor) as Stroll;
+        goapAction2.SetTargetStructure(actor.currentStructure);
+        goapAction2.SetIsStrollFromPatrol(true);
         GoapAction goapAction3 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.PATROL, actor, actor);
+        Stroll goapAction4 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.STROLL, actor, actor) as Stroll;
+        goapAction4.SetTargetStructure(actor.currentStructure);
+        goapAction4.SetIsStrollFromPatrol(true);
 
-        GoapNode goalNode = new GoapNode(null, goapAction3.cost, goapAction3);
-        GoapNode secondNode = new GoapNode(goalNode, goapAction2.cost, goapAction2);
+        GoapNode goalNode = new GoapNode(null, goapAction4.cost, goapAction4);
+        GoapNode thirdNode = new GoapNode(goalNode, goapAction3.cost, goapAction3);
+        GoapNode secondNode = new GoapNode(thirdNode, goapAction2.cost, goapAction2);
         GoapNode startingNode = new GoapNode(secondNode, goapAction1.cost, goapAction1);
 
         GoapPlan goapPlan = new GoapPlan(startingNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.WORK);
