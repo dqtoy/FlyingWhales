@@ -43,10 +43,10 @@
             }
         }
     }
-    public override void FailAction() {
-        base.FailAction();
-        SetState("Target Missing");
-    }
+    //public override void FailAction() {
+    //    base.FailAction();
+    //    SetState("Target Missing");
+    //}
     #endregion
 
     #region Effects

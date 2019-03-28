@@ -41,10 +41,10 @@ public class Explore : GoapAction {
         _targetStructure = choices[Utilities.rng.Next(0, choices.Count)];
         base.SetTargetStructure();
     }
-    public override void FailAction() {
-        base.FailAction();
-        SetState("Target Missing");
-    }
+    //public override void FailAction() {
+    //    base.FailAction();
+    //    SetState("Target Missing");
+    //}
     #endregion
 
     #region Requirements

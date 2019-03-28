@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class TablePoison : GoapAction {
+    protected override string failActionState { get { return "Poison Fail"; } }
+
     public TablePoison(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.TABLE_POISON, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         this.goapName = "Poison Table";
         actionIconString = GoapActionStateDB.Hostile_Icon;
@@ -43,10 +45,10 @@ public class TablePoison : GoapAction {
     protected override int GetCost() {
         return 4;
     }
-    public override void FailAction() {
-        base.FailAction();
-        SetState("Poison Fail");
-    }
+    //public override void FailAction() {
+    //    base.FailAction();
+    //    SetState("Poison Fail");
+    //}
     #endregion
 
     #region State Effects

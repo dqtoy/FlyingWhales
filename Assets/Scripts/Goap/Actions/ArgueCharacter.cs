@@ -93,10 +93,10 @@ public class ArgueCharacter : GoapAction {
         _targetStructure = poiTarget.gridTileLocation.structure;
         base.SetTargetStructure();
     }
-    public override void FailAction() {
-        base.FailAction();
-        SetState("Target Missing");
-    }
+    //public override void FailAction() {
+    //    base.FailAction();
+    //    SetState("Target Missing");
+    //}
     #endregion
 
     #region Preconditions

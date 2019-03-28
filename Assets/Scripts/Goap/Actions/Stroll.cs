@@ -8,6 +8,8 @@ public class Stroll : GoapAction {
     private LocationStructure _targetStructure;
     private bool _isStrollFromPatrol;
 
+    protected override string failActionState { get { return "Stroll Fail"; } }
+
     public Stroll(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.STROLL, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         showIntelNotification = false;
         shouldAddLogs = false;
@@ -30,10 +32,10 @@ public class Stroll : GoapAction {
     protected override int GetCost() {
         return 5;
     }
-    public override void FailAction() {
-        base.FailAction();
-        SetState("Stroll Fail");
-    }
+    //public override void FailAction() {
+    //    base.FailAction();
+    //    SetState("Stroll Fail");
+    //}
     public override void DoAction(GoapPlan plan) {
         if (_isStrollFromPatrol) {
             SetTargetStructure(actor.currentStructure);

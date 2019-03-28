@@ -7,6 +7,8 @@ public class Pray : GoapAction {
     private LocationStructure _targetStructure;
     public override LocationStructure targetStructure { get { return _targetStructure; } }
 
+    protected override string failActionState { get { return "Pray Failed"; } }
+
     public Pray(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.PRAY, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         this.goapName = "Pray";
         actionLocationType = ACTION_LOCATION_TYPE.NEARBY;
@@ -31,10 +33,10 @@ public class Pray : GoapAction {
     protected override int GetCost() {
         return Utilities.rng.Next(7, 14);
     }
-    public override void FailAction() {
-        base.FailAction();
-        SetState("Pray Failed");
-    }
+    //public override void FailAction() {
+    //    base.FailAction();
+    //    SetState("Pray Failed");
+    //}
     public override void SetTargetStructure() {
         _targetStructure = actor.currentStructure;
         base.SetTargetStructure();

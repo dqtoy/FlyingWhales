@@ -25,10 +25,10 @@ public class TileObjectDestroy : GoapAction {
     protected override int GetCost() {
         return 10;
     }
-    public override void FailAction() {
-        base.FailAction();
-        SetState("Target Missing");
-    }
+    //public override void FailAction() {
+    //    base.FailAction();
+    //    SetState("Target Missing");
+    //}
     #endregion
 
     #region State Effects

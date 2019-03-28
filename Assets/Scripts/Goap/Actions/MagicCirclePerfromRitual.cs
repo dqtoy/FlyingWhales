@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class MagicCirclePerformRitual : GoapAction {
+    protected override string failActionState { get { return "Perform Ritual Fail"; } }
+
     public MagicCirclePerformRitual(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.MAGIC_CIRCLE_PERFORM_RITUAL, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         this.goapName = "Perform Ritual";
         validTimeOfDays = new TIME_IN_WORDS[] {
@@ -34,10 +36,10 @@ public class MagicCirclePerformRitual : GoapAction {
     protected override int GetCost() {
         return 3;
     }
-    public override void FailAction() {
-        base.FailAction();
-        SetState("Perform Ritual Fail");
-    }
+    //public override void FailAction() {
+    //    base.FailAction();
+    //    SetState("Perform Ritual Fail");
+    //}
     #endregion
 
     #region State Effects

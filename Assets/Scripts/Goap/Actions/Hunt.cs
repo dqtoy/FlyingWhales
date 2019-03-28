@@ -16,36 +16,41 @@ public class Hunt : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.DEATH, targetPOI = poiTarget });
     }
     public override void PerformActualAction() {
-        if (actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
-            List<Character> attackers = new List<Character>();
-            attackers.Add(actor);
-
-            List<Character> defenders = new List<Character>();
-            defenders.Add(poiTarget as Character);
-
-            float attackersChance = 0f;
-            float defendersChance = 0f;
-
-            CombatManager.Instance.GetCombatChanceOfTwoLists(attackers, defenders, out attackersChance, out defendersChance);
-
-            int chance = UnityEngine.Random.Range(0, 100);
-            if (chance < attackersChance) {
-                //Actor Win
-                WeightedDictionary<string> resultWeights = new WeightedDictionary<string>();
-                resultWeights.AddElement("Target Injured", 30);
-                resultWeights.AddElement("Target Killed", 15);
-                string nextState = resultWeights.PickRandomElementGivenWeights();
-                if (nextState == "Target Killed") {
-                    GoapPlan plan = actor.GetPlanWithAction(this);
-                    plan.SetDoNotRecalculate(true);
-                }
-                SetState(nextState);
-            } else {
-                //Target Win
-                SetState("Target Won");
-            }
-        } else {
+        Character target = poiTarget as Character;
+        if (target.isDead) {
             SetState("Target Missing");
+        } else {
+            if (actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
+                List<Character> attackers = new List<Character>();
+                attackers.Add(actor);
+
+                List<Character> defenders = new List<Character>();
+                defenders.Add(poiTarget as Character);
+
+                float attackersChance = 0f;
+                float defendersChance = 0f;
+
+                CombatManager.Instance.GetCombatChanceOfTwoLists(attackers, defenders, out attackersChance, out defendersChance);
+
+                int chance = UnityEngine.Random.Range(0, 100);
+                if (chance < attackersChance) {
+                    //Actor Win
+                    WeightedDictionary<string> resultWeights = new WeightedDictionary<string>();
+                    resultWeights.AddElement("Target Injured", 30);
+                    resultWeights.AddElement("Target Killed", 15);
+                    string nextState = resultWeights.PickRandomElementGivenWeights();
+                    if (nextState == "Target Killed") {
+                        GoapPlan plan = actor.GetPlanWithAction(this);
+                        plan.SetDoNotRecalculate(true);
+                    }
+                    SetState(nextState);
+                } else {
+                    //Target Win
+                    SetState("Target Won");
+                }
+            } else {
+                SetState("Target Missing");
+            }
         }
         base.PerformActualAction();
     }
@@ -79,10 +84,10 @@ public class Hunt : GoapAction {
         }
         return cost;
     }
-    public override void FailAction() {
-        base.FailAction();
-        SetState("Target Missing");
-    }
+    //public override void FailAction() {
+    //    base.FailAction();
+    //    SetState("Target Missing");
+    //}
     public override void DoAction(GoapPlan plan) {
         SetTargetStructure();
         base.DoAction(plan);

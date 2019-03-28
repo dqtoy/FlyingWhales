@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Sleep : GoapAction {
+    protected override string failActionState { get { return "Rest Fail"; } }
+
     public Sleep(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.SLEEP, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionLocationType = ACTION_LOCATION_TYPE.ON_TARGET;
         actionIconString = GoapActionStateDB.Sleep_Icon;
@@ -47,11 +49,11 @@ public class Sleep : GoapAction {
             return 10;
         }
     }
-    public override void FailAction() {
-        Debug.LogError(actor.name + " failed " + goapName + " action from recalculate path!");
-        base.FailAction();
-        SetState("Rest Fail");
-    }
+    //public override void FailAction() {
+    //    Debug.LogError(actor.name + " failed " + goapName + " action from recalculate path!");
+    //    base.FailAction();
+    //    SetState("Rest Fail");
+    //}
     #endregion
 
     #region Requirements

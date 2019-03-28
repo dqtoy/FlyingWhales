@@ -9,6 +9,8 @@ public class Play : GoapAction {
 
     //public override LocationStructure targetStructure { get { return _targetStructure; } }
 
+    protected override string failActionState { get { return "Play Failed"; } }
+
     public Play(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.PLAY, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionLocationType = ACTION_LOCATION_TYPE.NEARBY;
         validTimeOfDays = new TIME_IN_WORDS[] {
@@ -37,10 +39,10 @@ public class Play : GoapAction {
         //**Cost**: randomize between 3-10
         return Utilities.rng.Next(3, 10);
     }
-    public override void FailAction() {
-        base.FailAction();
-        SetState("Play Failed");
-    }
+    //public override void FailAction() {
+    //    base.FailAction();
+    //    SetState("Play Failed");
+    //}
     //public override void SetTargetStructure() {
     //    List<LocationStructure> choices = actor.specificLocation.GetStructuresOfType(STRUCTURE_TYPE.WILDERNESS).ToList();
     //    if (actor.specificLocation.HasStructure(STRUCTURE_TYPE.WORK_AREA)) {

@@ -39,6 +39,7 @@ public class GoapAction {
     public bool shouldAddLogs { get; protected set; } //should this action add logs to it's actor?
     public string actionIconString { get; protected set; }
     public GameDate executionDate { get; protected set; }
+    protected virtual string failActionState { get { return "Target Missing"; } }
 
     protected Func<bool> _requirementAction;
     protected System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
@@ -161,11 +162,8 @@ public class GoapAction {
                     targetCharacter.SetCurrentAction(null);
                 }
                 if (targetCharacter.currentParty.icon.isTravelling && targetCharacter.currentParty.icon.travelLine == null) {
-                    targetCharacter.marker.StopMovement();
-                    if (targetCharacter.marker.isStillMovingToAnotherTile) {
-                        targetCharacter.marker.SetOnArriveAtTileAction(() => MoveToDoAction(plan));
-                        return;
-                    }
+                    targetCharacter.marker.StopMovement(() => MoveToDoAction(plan));
+                    return;
                 }
             }
         }
@@ -186,13 +184,6 @@ public class GoapAction {
         if(targetStructure != null) {
             targetTile = GetTargetLocationTile();
         }
-    }
-    public virtual void FailAction() {
-        if (actor.currentParty.icon.isTravelling && actor.currentParty.icon.travelLine == null) {
-            //This means that the actor currently travelling to another tile in tilemap
-            actor.marker.StopMovement();
-        }
-        //Set state to failed after this (in overrides)
     }
     //This is for the waiting time, if this returns true, this action will not be done by the actor momentarily, this will be skipped until this returns false
     public virtual bool IsHalted() {
@@ -326,6 +317,18 @@ public class GoapAction {
             actor.MoveToAnotherStructure(targetStructure, targetTile, poiTarget, () => actor.PerformGoapAction(plan));
             //actor.PerformGoapAction(plan);
         }
+    }
+    public void FailAction() {
+        //if (goapType == INTERACTION_TYPE.SLEEP) {
+        //    Debug.LogError(actor.name + " failed " + goapName + " action from recalculate path!");
+        //}
+        if (actor.currentParty.icon.isTravelling && actor.currentParty.icon.travelLine == null) {
+            //This means that the actor currently travelling to another tile in tilemap
+            actor.marker.StopMovement(() => SetState(failActionState));
+        } else {
+            SetState(failActionState);
+        }
+        //Set state to failed after this (in overrides)
     }
     #endregion
 

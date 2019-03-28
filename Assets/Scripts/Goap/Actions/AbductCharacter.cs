@@ -41,10 +41,10 @@ public class AbductCharacter : GoapAction {
         }
         return base.IsHalted();
     }
-    public override void FailAction() {
-        base.FailAction();
-        SetState("Target Missing");
-    }
+    //public override void FailAction() {
+    //    base.FailAction();
+    //    SetState("Target Missing");
+    //}
     public override void DoAction(GoapPlan plan) {
         SetTargetStructure();
         base.DoAction(plan);

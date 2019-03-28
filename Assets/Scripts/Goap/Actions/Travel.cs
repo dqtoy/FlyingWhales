@@ -8,6 +8,7 @@ public class Travel : GoapAction {
     public override LocationStructure targetStructure {
         get { return _targetStructure; }
     }
+    protected override string failActionState { get { return "Travel Failed"; } }
 
     public Travel(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.TRAVEL, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         this.goapName = "Travel";
@@ -33,10 +34,10 @@ public class Travel : GoapAction {
     protected override int GetCost() {
         return 3;
     }
-    public override void FailAction() {
-        base.FailAction();
-        SetState("Travel Failed");
-    }
+    //public override void FailAction() {
+    //    base.FailAction();
+    //    SetState("Travel Failed");
+    //}
     public override void SetTargetStructure() {
         _targetStructure = GetTargetStructure();
         base.SetTargetStructure();

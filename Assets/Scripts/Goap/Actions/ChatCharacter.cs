@@ -98,10 +98,10 @@ public class ChatCharacter : GoapAction {
         SetTargetStructure();
         base.DoAction(plan);
     }
-    public override void FailAction() {
-        base.FailAction();
-        SetState("Target Missing");
-    }
+    //public override void FailAction() {
+    //    base.FailAction();
+    //    SetState("Target Missing");
+    //}
     public override void SetTargetStructure() {
         //TODO: Change to known location when plan data has been set up
         _targetStructure = poiTarget.gridTileLocation.structure;

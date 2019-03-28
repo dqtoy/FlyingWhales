@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class EatPlant : GoapAction {
+    protected override string failActionState { get { return "Eat Fail"; } }
+
     public EatPlant(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.EAT_PLANT, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Eat_Icon;
     }
@@ -33,10 +35,10 @@ public class EatPlant : GoapAction {
             return 12;
         }
     }
-    public override void FailAction() {
-        base.FailAction();
-        SetState("Eat Fail");
-    }
+    //public override void FailAction() {
+    //    base.FailAction();
+    //    SetState("Eat Fail");
+    //}
     #endregion
 
     #region Effects

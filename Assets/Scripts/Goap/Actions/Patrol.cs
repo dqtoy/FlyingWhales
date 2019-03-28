@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Patrol : GoapAction {
+    protected override string failActionState { get { return "Patrol Fail"; } }
+
     public override LocationStructure targetStructure { get { return _targetStructure; } }
 
     private LocationStructure _targetStructure;
@@ -27,10 +29,10 @@ public class Patrol : GoapAction {
     protected override int GetCost() {
         return 5;
     }
-    public override void FailAction() {
-        base.FailAction();
-        SetState("Patrol Fail");
-    }
+    //public override void FailAction() {
+    //    base.FailAction();
+    //    SetState("Patrol Fail");
+    //}
     public override void SetTargetStructure() {
         RandomizeTargetStructure();
         base.SetTargetStructure();

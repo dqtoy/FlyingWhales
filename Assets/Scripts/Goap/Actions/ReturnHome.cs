@@ -7,6 +7,8 @@ public class ReturnHome : GoapAction {
 
     private LocationStructure _targetStructure;
 
+    protected override string failActionState { get { return "Return Home Failed"; } }
+
     public ReturnHome(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.RETURN_HOME, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         showIntelNotification = false;
         shouldAddLogs = false;
@@ -29,10 +31,10 @@ public class ReturnHome : GoapAction {
     protected override int GetCost() {
         return 3;
     }
-    public override void FailAction() {
-        base.FailAction();
-        SetState("Return Home Failed");
-    }
+    //public override void FailAction() {
+    //    base.FailAction();
+    //    SetState("Return Home Failed");
+    //}
     public override void SetTargetStructure() {
         _targetStructure = actor.homeStructure;
         base.SetTargetStructure();

@@ -32,10 +32,10 @@ public class ChopWood : GoapAction {
     protected override int GetCost() {
         return 3;
     }
-    public override void FailAction() {
-        base.FailAction();
-        SetState("Target Missing");
-    }
+    //public override void FailAction() {
+    //    base.FailAction();
+    //    SetState("Target Missing");
+    //}
     #endregion
 
     #region State Effects
