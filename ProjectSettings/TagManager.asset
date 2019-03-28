@@ -5,17 +5,10 @@ TagManager:
   serializedVersion: 2
   tags:
   - General
-  - StructureColorizers
-  - Avatar
-  - Trader
-  - Monster
-  - EventTileNameplate
-  - MajorRoad
   - Hextile
-  - MinorRoad
-  - Landmark
   - Character
   - CharacterInfoUI
+  - Character Marker
   layers:
   - Default
   - TransparentFX

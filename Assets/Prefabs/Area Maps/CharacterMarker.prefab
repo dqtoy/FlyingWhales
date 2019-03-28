@@ -122,7 +122,8 @@ GameObject:
   - component: {fileID: 224535499087407282}
   - component: {fileID: 222284462735276048}
   - component: {fileID: 114210333423273764}
-  m_Layer: 5
+  - component: {fileID: 223706497339746704}
+  m_Layer: 29
   m_Name: Action Icon
   m_TagString: Character Marker
   m_Icon: {fileID: 0}
@@ -714,6 +715,26 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1392417203996010}
+--- !u!223 &223706497339746704
+Canvas:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1685916330712290}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 2
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 1
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_AdditionalShaderChannelsFlag: 0
+  m_SortingLayerID: 1024382313
+  m_SortingOrder: 22
+  m_TargetDisplay: 0
 --- !u!224 &224131292797270362
 RectTransform:
   m_ObjectHideFlags: 1
