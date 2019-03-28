@@ -22,7 +22,7 @@ public class PlayGuitar : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
     }
     public override void PerformActualAction() {
-        if (actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
+        if (poiTarget.gridTileLocation != null && actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
             if (poiTarget.state == POI_STATE.INACTIVE) {
                 SetState("Play Fail");
             } else {
@@ -37,10 +37,11 @@ public class PlayGuitar : GoapAction {
         //Cost:
         //- Actor is resident of the Guitar's Dwelling: 2-5
         //- Actor is not a resident but has a positive relationship with the Guitar's Dwelling resident: 7-10
-        if (actor.homeStructure == poiTarget.gridTileLocation.structure) {
+        LocationGridTile knownLoc = actor.GetAwareness(poiTarget).knownGridLocation;
+        if (actor.homeStructure == knownLoc.structure) {
             return Utilities.rng.Next(2, 5);
         } else {
-            Dwelling dwelling = poiTarget.gridTileLocation.structure as Dwelling;
+            Dwelling dwelling = knownLoc.structure as Dwelling;
             if (dwelling.residents.Count > 0) {
                 for (int i = 0; i < dwelling.residents.Count; i++) {
                     Character currResident = dwelling.residents[i];
@@ -82,12 +83,17 @@ public class PlayGuitar : GoapAction {
 
     #region Requirement
     private bool Requirement() {
+        IAwareness awareness = actor.GetAwareness(poiTarget);
+        if (awareness == null) {
+            return false;
+        }
+        LocationGridTile knownLoc = awareness.knownGridLocation;
         //**Advertised To**: Residents of the dwelling or characters with a positive relationship with a Resident
-        if (poiTarget.gridTileLocation.structure is Dwelling) {
-            if (actor.homeStructure == poiTarget.gridTileLocation.structure) {
+        if (knownLoc.structure is Dwelling) {
+            if (actor.homeStructure == knownLoc.structure) {
                 return true;
             } else {
-                Dwelling dwelling = poiTarget.gridTileLocation.structure as Dwelling;
+                Dwelling dwelling = knownLoc.structure as Dwelling;
                 if (dwelling.residents.Count > 0) {
                     for (int i = 0; i < dwelling.residents.Count; i++) {
                         Character currResident = dwelling.residents[i];

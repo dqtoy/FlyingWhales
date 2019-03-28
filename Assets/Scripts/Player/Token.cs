@@ -133,7 +133,7 @@ public class SpecialToken : Token, IPointOfInterest {
     protected List<Trait> _traits;
     private LocationGridTile tile;
     private POI_STATE _state;
-    
+    private POICollisionTrigger _collisionTrigger;
 
     #region getters/setters
     public override string tokenName {
@@ -169,6 +169,9 @@ public class SpecialToken : Token, IPointOfInterest {
     public Faction factionOwner {
         get { return owner; }
     }
+    public POICollisionTrigger collisionTrigger {
+        get { return _collisionTrigger; }
+    }
     #endregion
 
     public SpecialToken(SPECIAL_TOKEN specialTokenType, int appearanceRate) : base() {
@@ -179,6 +182,7 @@ public class SpecialToken : Token, IPointOfInterest {
         npcAssociatedInteractionType = INTERACTION_TYPE.NONE;
         poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.PICK_ITEM, INTERACTION_TYPE.STEAL, INTERACTION_TYPE.SCRAP, INTERACTION_TYPE.ITEM_DESTROY, };
         _traits = new List<Trait>();
+        InitializeCollisionTrigger();
     }
     //public void AdjustQuantity(int amount) {
     //    quantity += amount;
@@ -213,24 +217,12 @@ public class SpecialToken : Token, IPointOfInterest {
     #region Area Map
     public void SetGridTileLocation(LocationGridTile tile) {
         this.tile = tile;
+        if (tile == null) {
+            DisableCollisionTrigger();
+        } else {
+            PlaceCollisionTriggerAt(tile);
+        }
     }
-    //public LocationGridTile GetNearestUnoccupiedTileFromThis() {
-    //    if (gridTileLocation != null && structureLocation == structure) {
-    //        List<LocationGridTile> choices = structureLocation.unoccupiedTiles.Where(x => x != gridTileLocation).OrderBy(x => Vector2.Distance(gridTileLocation.localLocation, x.localLocation)).ToList();
-    //        if (choices.Count > 0) {
-    //            LocationGridTile nearestTile = choices[0];
-    //            if (otherCharacter.currentStructure == structure && otherCharacter.gridTileLocation != null) {
-    //                float ogDistance = Vector2.Distance(this.gridTileLocation.localLocation, otherCharacter.gridTileLocation.localLocation);
-    //                float newDistance = Vector2.Distance(this.gridTileLocation.localLocation, nearestTile.localLocation);
-    //                if (newDistance > ogDistance) {
-    //                    return otherCharacter.gridTileLocation; //keep the other character's current tile
-    //                }
-    //            }
-    //            return nearestTile;
-    //        }
-    //    }
-    //    return null;
-    //}
     public LocationGridTile GetNearestUnoccupiedTileFromThis() {
         if (gridTileLocation != null) {
             List<LocationGridTile> unoccupiedNeighbours = gridTileLocation.UnoccupiedNeighbours;
@@ -317,6 +309,40 @@ public class SpecialToken : Token, IPointOfInterest {
             }
         }
         return null;
+    }
+    #endregion
+
+    #region Collision
+    public void InitializeCollisionTrigger() {
+        GameObject collisionGO = GameObject.Instantiate(InteriorMapManager.Instance.poiCollisionTriggerPrefab, InteriorMapManager.Instance.transform);
+        SetCollisionTrigger(collisionGO.GetComponent<POICollisionTrigger>());
+        collisionGO.SetActive(false);
+        _collisionTrigger.Initialize(this);
+        RectTransform rt = collisionGO.transform as RectTransform;
+        rt.anchorMin = Vector2.zero;
+        rt.anchorMax = Vector2.zero;
+    }
+    public void PlaceCollisionTriggerAt(LocationGridTile tile) {
+        _collisionTrigger.transform.SetParent(tile.parentAreaMap.objectsParent);
+        (_collisionTrigger.transform as RectTransform).anchoredPosition = tile.centeredLocalLocation;
+        _collisionTrigger.gameObject.SetActive(true);
+        _collisionTrigger.SetLocation(tile);
+    }
+    public void DisableCollisionTrigger() {
+        _collisionTrigger.gameObject.SetActive(false);
+    }
+    public void SetCollisionTrigger(POICollisionTrigger trigger) {
+        _collisionTrigger = trigger;
+    }
+    public void PlaceGhostCollisionTriggerAt(LocationGridTile tile) {
+        GameObject ghostGO = GameObject.Instantiate(InteriorMapManager.Instance.ghostCollisionTriggerPrefab, tile.parentAreaMap.objectsParent);
+        RectTransform rt = ghostGO.transform as RectTransform;
+        rt.anchorMin = Vector2.zero;
+        rt.anchorMax = Vector2.zero;
+        (ghostGO.transform as RectTransform).anchoredPosition = tile.centeredLocalLocation;
+        GhostCollisionTrigger gct = ghostGO.GetComponent<GhostCollisionTrigger>();
+        gct.Initialize(this);
+        gct.SetLocation(tile);
     }
     #endregion
 }

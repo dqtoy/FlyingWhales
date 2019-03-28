@@ -9,8 +9,16 @@ using UnityEngine;
 public class POICollisionTrigger : MonoBehaviour {
 
     public IPointOfInterest poi { get; private set; }
+    public virtual LocationGridTile gridTileLocation { get { return _gridTileLocation; } }
 
-    public void Initialize(IPointOfInterest poi) {
+    private LocationGridTile _gridTileLocation;
+
+    public virtual void Initialize(IPointOfInterest poi) {
         this.poi = poi;
+        this.name = poi.name + " collision trigger";
+    }
+
+    public void SetLocation(LocationGridTile location) {
+        _gridTileLocation = location;
     }
 }

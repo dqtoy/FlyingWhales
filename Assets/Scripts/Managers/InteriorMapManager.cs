@@ -9,6 +9,9 @@ public class InteriorMapManager : MonoBehaviour {
     public static InteriorMapManager Instance = null;
     public AreaInnerTileMap currentlyShowingMap { get; private set; }
     public Area currentlyShowingArea { get; private set; }
+    public GameObject poiCollisionTriggerPrefab;
+    public GameObject ghostCollisionTriggerPrefab;
+    public GameObject characterCollisionTriggerPrefab;
 
     private List<AreaInnerTileMap> areaMaps;
     private Vector3 nextMapPos = Vector3.zero;
@@ -148,6 +151,27 @@ public class InteriorMapManager : MonoBehaviour {
     public void HideTileData() {
         isShowingMarkerTileData = false;
         UIManager.Instance.HideSmallInfo();
+    }
+
+    private IPointOfInterest heldPOI;
+    public void HoldPOI(IPointOfInterest poi) {
+        heldPOI = poi;
+        if (heldPOI is SpecialToken) {
+            heldPOI.gridTileLocation.structure.location.RemoveSpecialTokenFromLocation(heldPOI as SpecialToken);
+        } else if (heldPOI is TileObject) {
+            heldPOI.gridTileLocation.structure.RemovePOI(heldPOI);
+        }
+    }
+    public void PlaceHeldPOI(LocationGridTile tile) {
+        if (heldPOI is SpecialToken) {
+            tile.structure.location.AddSpecialTokenToLocation(heldPOI as SpecialToken, tile.structure, tile);
+        } else if (heldPOI is TileObject) {
+            tile.structure.AddPOI(heldPOI, tile);
+        }
+        heldPOI = null;
+    }
+    public bool IsHoldingPOI() {
+        return heldPOI != null;
     }
     #endregion
 }

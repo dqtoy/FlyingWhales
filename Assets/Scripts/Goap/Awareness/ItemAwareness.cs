@@ -5,20 +5,23 @@ using UnityEngine;
 public class ItemAwareness : IAwareness {
     public IPointOfInterest poi { get { return _specialToken; } }
     public SpecialToken item { get { return _specialToken; } }
-    public LocationGridTile knownLocation { get; private set; }
+    public LocationGridTile knownGridLocation { get; private set; }
     public Faction factionOwner { get; private set; }
 
     private SpecialToken _specialToken;
 
     public ItemAwareness(SpecialToken specialToken) {
         _specialToken = specialToken;
-        SetKnownLocation(specialToken.gridTileLocation);
+        SetKnownGridLocation(specialToken.gridTileLocation);
     }
 
-    public void SetKnownLocation(LocationGridTile tile) {
-        knownLocation = tile;
+    public void SetKnownGridLocation(LocationGridTile tile) {
+        knownGridLocation = tile;
     }
     public void SetFactionOwner(Faction faction) {
         factionOwner = faction;
     }
+
+    public void OnAddAwareness(Character character) { }
+    public void OnRemoveAwareness(Character character) { }
 }

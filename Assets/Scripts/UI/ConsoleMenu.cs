@@ -130,7 +130,16 @@ public class ConsoleMenu : UIMenu {
         } else {
             text += "\nNone";
         }
-        
+
+        text += "\n<b>Action History:</b> ";
+        if (character.actionHistory.Count > 0) {
+            for (int i = 0; i < character.actionHistory.Count; i++) {
+                text += "\n\n" + character.actionHistory[i];
+            }
+        } else {
+            text += "\nNone";
+        }
+
         return text;
     }
     private string GetSecondaryCharacterInfo() {

@@ -8,12 +8,19 @@ public class CharacterMarkerCollision : MonoBehaviour {
 
     public void OnTriggerEnter2D(Collider2D collision) {
         POICollisionTrigger collidedWith = collision.gameObject.GetComponent<POICollisionTrigger>();
+        //if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == parentMarker.character) {
+        //    Debug.Log(this.parentMarker.name + " trigger enter with " + collidedWith.poi.name + ". GO - " + collidedWith.gameObject.name + "Type - " + collidedWith.GetType().ToString());
+        //}
         if (collidedWith != null && collidedWith.poi != null 
             && collidedWith.poi != parentMarker.character 
-            && collidedWith.poi.gridTileLocation.structure == parentMarker.character.currentStructure) {
+            && collidedWith.gridTileLocation.structure == parentMarker.character.currentStructure) {
 
+            if (collidedWith is GhostCollisionTrigger) {
+                GhostCollisionHandling(collidedWith as GhostCollisionTrigger);
+            } else {
+                parentMarker.AddPOIAsInRange(collidedWith.poi);
+            }
             //Debug.Log(this.parentMarker.name + " trigger enter with " + collidedWith.poi.name);
-            parentMarker.AddPOIAsInRange(collidedWith.poi);
         }
     }
 
@@ -33,14 +40,38 @@ public class CharacterMarkerCollision : MonoBehaviour {
             && collidedWith.poi != parentMarker.character) {
 
             //Debug.Log(this.parentMarker.name + " trigger stay with " + collidedWith.poi.name);
-            if (collidedWith.poi.gridTileLocation.structure == parentMarker.character.currentStructure
-                && !parentMarker.inRangePOIs.Contains(collidedWith.poi)) {
-                parentMarker.AddPOIAsInRange(collidedWith.poi);
-            } else if (collidedWith.poi.gridTileLocation.structure != parentMarker.character.currentStructure
-                && parentMarker.inRangePOIs.Contains(collidedWith.poi)) {
+            if (collidedWith.gridTileLocation.structure == parentMarker.character.currentStructure) {
+                if (collidedWith is GhostCollisionTrigger) {
+                    GhostCollisionHandling(collidedWith as GhostCollisionTrigger);
+                    //this is for cases when the actual collision trigger of the poi was destroyed while this marker had it in it's range
+                    parentMarker.RemovePOIFromInRange(collidedWith.poi);
+                } else {
+                    parentMarker.AddPOIAsInRange(collidedWith.poi);
+                }
+            } else if (collidedWith.gridTileLocation.structure != parentMarker.character.currentStructure) {
                 parentMarker.RemovePOIFromInRange(collidedWith.poi);
             }
             
         }
+    }
+
+    private void GhostCollisionHandling(GhostCollisionTrigger collidedWith) {
+        string ghostCollisionSummary = parentMarker.character.name + " collided with a ghost collider! " + collidedWith.poi.name;
+        //when a character collides with a ghost collision trigger
+        IAwareness awareness = parentMarker.character.GetAwareness(collidedWith.poi);
+        if (awareness != null) { //it will check if it is aware of the associated poi
+            //if it is aware of the poi
+            ghostCollisionSummary += "\n" + parentMarker.character.name + " is aware of " + collidedWith.poi.name;
+            if (awareness.knownGridLocation == collidedWith.gridTileLocation) { //check if the character's known location is the location of this trigger
+                //if it is, remove the poi from the characters awareness (Object Missing)
+                parentMarker.character.RemoveAwareness(collidedWith.poi);
+                ghostCollisionSummary += "\n" + parentMarker.character.name + "'s known location of " + collidedWith.poi.name + " is same as this ghost colliders position, removing it from it's awareness...";
+                if (parentMarker.character.currentAction != null && parentMarker.character.currentAction.poiTarget == collidedWith.poi) {
+                    //trigger target missing state
+                    parentMarker.character.currentAction.ExecuteTargetMissing();
+                }
+            }
+        }
+        Debug.Log(ghostCollisionSummary);
     }
 }

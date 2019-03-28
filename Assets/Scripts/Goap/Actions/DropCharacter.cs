@@ -62,6 +62,7 @@ public class DropCharacter : GoapAction {
         Character target = poiTarget as Character;
         actor.ownParty.RemoveCharacter(target);
         //target.MoveToAnotherStructure(_workAreaStructure);
+        AddActualEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = actor.homeArea, targetPOI = poiTarget });
     }
     #endregion
 }

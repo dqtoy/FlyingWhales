@@ -135,6 +135,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 
     //For Testing
     public List<string> locationHistory { get; private set; }
+    public List<string> actionHistory { get; private set; }
 
     #region getters / setters
     public string firstName {
@@ -452,6 +453,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public POI_STATE state {
         get { return _state; }
     }
+    public POICollisionTrigger collisionTrigger {
+        get { return marker.collisionTrigger; }
+    }
     #endregion
 
     public Character(CharacterRole role, RACE race, GENDER gender) : this() {
@@ -528,6 +532,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         demonColor = UnityEngine.Random.Range(-144f, 144f);
 
         locationHistory = new List<string>();
+        actionHistory = new List<string>();
 
         //If this is a minion, this should not be initiated
         awareness = new Dictionary<POINT_OF_INTEREST_TYPE, List<IAwareness>>();
@@ -3920,12 +3925,20 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (iawareness == null) {
             iawareness = CreateNewAwareness(pointOfInterest);
             if(iawareness != null) {
-                if (awareness.ContainsKey(pointOfInterest.poiType)) {
-                    awareness[pointOfInterest.poiType].Add(iawareness);
-                } else {
-                    awareness.Add(pointOfInterest.poiType, new List<IAwareness>() { iawareness });
+                if (!awareness.ContainsKey(pointOfInterest.poiType)) {
+                    awareness.Add(pointOfInterest.poiType, new List<IAwareness>());
                 }
+                awareness[pointOfInterest.poiType].Add(iawareness);
+                iawareness.OnAddAwareness(this);
             }
+        } else {
+            if (pointOfInterest.gridTileLocation != null) {
+                //if already has awareness for that poi, just update it's known location. 
+                //Except if it's null, because if it's null, it ususally means the poi is travelling 
+                //and setting it's location to null should be ignored to prevent unexpected behaviour.
+                iawareness.SetKnownGridLocation(pointOfInterest.gridTileLocation);
+            }
+            
         }
         return iawareness;
     }
@@ -3936,6 +3949,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 IAwareness iawareness = awarenesses[i];
                 if (iawareness.poi == pointOfInterest) {
                     awarenesses.RemoveAt(i);
+                    iawareness.OnRemoveAwareness(this);
                     break;
                 }
             }
@@ -4000,18 +4014,24 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             //    }
             //}
         } else {
-            if (gridTileLocation.isInside) {
-                List<LocationStructure> structures = gridTileLocation.structure.location.GetStructuresAtLocation(true);
-                if (structures != null) {
-                    for (int i = 0; i < structures.Count; i++) {
-                        for (int j = 0; j < structures[i].pointsOfInterest.Count; j++) {
-                            IPointOfInterest poi = structures[i].pointsOfInterest[j];
-                            if (poi != this) {
-                                AddAwareness(poi);
-                            }
-                        }
+            if (gridTileLocation.structure is Dwelling) {
+                for (int i = 0; i < gridTileLocation.structure.pointsOfInterest.Count; i++) {
+                    IPointOfInterest poi = gridTileLocation.structure.pointsOfInterest[i];
+                    if (poi != this) {
+                        AddAwareness(poi);
                     }
                 }
+                //List<LocationStructure> structures = gridTileLocation.structure.location.GetStructuresAtLocation(true);
+                //if (structures != null) {
+                //    for (int i = 0; i < structures.Count; i++) {
+                //        for (int j = 0; j < structures[i].pointsOfInterest.Count; j++) {
+                //            IPointOfInterest poi = structures[i].pointsOfInterest[j];
+                //            if (poi != this) {
+                //                AddAwareness(poi);
+                //            }
+                //        }
+                //    }
+                //}
                 //for (int i = 0; i < gridTileLocation.structure.location.areaMap.insideTiles.Count; i++) {
                 //    LocationGridTile insideTile = gridTileLocation.structure.location.areaMap.insideTiles[i];
                 //    if (insideTile.objHere != null && insideTile.objHere != this) {
@@ -4023,30 +4043,35 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 //        }
                 //    }
                 //}
-            } else {
-                List<LocationStructure> structures = gridTileLocation.structure.location.GetStructuresAtLocation(false);
-                if (structures != null) {
-                    for (int i = 0; i < structures.Count; i++) {
-                        for (int j = 0; j < structures[i].pointsOfInterest.Count; j++) {
-                            IPointOfInterest poi = structures[i].pointsOfInterest[j];
-                            if (poi != this) {
-                                AddAwareness(poi);
-                            }
-                        }
-                    }
-                }
-                //for (int i = 0; i < gridTileLocation.structure.location.areaMap.outsideTiles.Count; i++) {
-                //    LocationGridTile outsideTile = gridTileLocation.structure.location.areaMap.outsideTiles[i];
-                //    if (outsideTile.objHere != null && outsideTile.objHere != this) {
-                //        AddAwareness(outsideTile.objHere);
-                //    }
-                //    for (int j = 0; j < outsideTile.charactersHere.Count; j++) {
-                //        if (outsideTile.charactersHere[j] != this) {
-                //            AddAwareness(outsideTile.charactersHere[j]);
-                //        }
-                //    }
-                //}
             }
+            //add Supply pile to all characters (for work)
+            if (homeArea.supplyPile != null) {
+                AddAwareness(homeArea.supplyPile);
+            }
+            //else {
+            //    List<LocationStructure> structures = gridTileLocation.structure.location.GetStructuresAtLocation(false);
+            //    if (structures != null) {
+            //        for (int i = 0; i < structures.Count; i++) {
+            //            for (int j = 0; j < structures[i].pointsOfInterest.Count; j++) {
+            //                IPointOfInterest poi = structures[i].pointsOfInterest[j];
+            //                if (poi != this) {
+            //                    AddAwareness(poi);
+            //                }
+            //            }
+            //        }
+            //    }
+            //    //for (int i = 0; i < gridTileLocation.structure.location.areaMap.outsideTiles.Count; i++) {
+            //    //    LocationGridTile outsideTile = gridTileLocation.structure.location.areaMap.outsideTiles[i];
+            //    //    if (outsideTile.objHere != null && outsideTile.objHere != this) {
+            //    //        AddAwareness(outsideTile.objHere);
+            //    //    }
+            //    //    for (int j = 0; j < outsideTile.charactersHere.Count; j++) {
+            //    //        if (outsideTile.charactersHere[j] != this) {
+            //    //            AddAwareness(outsideTile.charactersHere[j]);
+            //    //        }
+            //    //    }
+            //    //}
+            //}
         }
     }
     public void LogAwarenessList() {
@@ -4295,7 +4320,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 return;
             }
             if (currentAction.CanSatisfyRequirements() && currentAction.CanSatisfyAllPreconditions()) {
-                log += "\nAction satisfies all requirements and preconditions, proceeding to perform actual action: " + currentAction.goapName + " to " + currentAction.poiTarget.name + " at " + currentAction.poiTarget.gridTileLocation.ToString();
+                log += "\nAction satisfies all requirements and preconditions, proceeding to perform actual action: " + currentAction.goapName + " to " + currentAction.poiTarget.name + " at " + currentAction.poiTarget.gridTileLocation?.ToString() ?? "No Tile Location";
                 PrintLogIfActive(log);
                 currentAction.PerformActualAction();
             } else {
@@ -4506,6 +4531,18 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (currentAction != null) {
             PrintLogIfActive(GameManager.Instance.TodayLogString() + this.name + " will do action " + action.goapType.ToString() + " to " + action.poiTarget.ToString());
         }
+        string summary = GameManager.Instance.TodayLogString() + "Set current action to ";
+        if (currentAction == null) {
+            summary += "null";
+        } else {
+            summary += currentAction.goapName + " targetting " + currentAction.poiTarget.name;
+        }
+        summary += "\n StackTrace: " + StackTraceUtility.ExtractStackTrace();
+
+        actionHistory.Add(summary);
+        if (actionHistory.Count > 50) {
+            actionHistory.RemoveAt(0);
+        }
 
     }
     public void SetHasAlreadyAskedForPlan(bool state) {
@@ -4531,5 +4568,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             supply = 0;
         }
     }
+    #endregion
+
+    #region Collision
+    //Most of collision is handled by the character's marker
+    public void InitializeCollisionTrigger() { }
+    public void PlaceCollisionTriggerAt(LocationGridTile tile) { }
+    public void DisableCollisionTrigger() { }
+    public void SetCollisionTrigger(POICollisionTrigger trigger) { }
+    public void PlaceGhostCollisionTriggerAt(LocationGridTile tile) { }
     #endregion
 }

@@ -67,7 +67,7 @@ public class LocationStructure {
             charactersHere.Add(character);
             character.SetCurrentStructureLocation(this);
             if(AddPOI(character, tile)){
-                character.ScanForAwareness();
+                //character.ScanForAwareness();
             }
             OnCharacterAddedToLocation(character);
         }
@@ -89,11 +89,11 @@ public class LocationStructure {
     #endregion
 
     #region Items/Special Tokens
-    public void AddItem(SpecialToken token) {
+    public void AddItem(SpecialToken token, LocationGridTile gridLocation = null) {
         if (!_itemsHere.Contains(token)) {
             _itemsHere.Add(token);
             token.SetStructureLocation(this);
-            AddPOI(token);
+            AddPOI(token, gridLocation);
         }
     }
     public void RemoveItem(SpecialToken token) {

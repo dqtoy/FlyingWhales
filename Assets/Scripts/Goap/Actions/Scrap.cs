@@ -25,7 +25,7 @@ public class Scrap : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_SUPPLY, conditionKey = ItemManager.Instance.itemData[item.specialTokenType].supplyValue, targetPOI = actor });
     }
     public override void PerformActualAction() {
-        if (actor.gridTileLocation == poiTarget.gridTileLocation) {
+        if (poiTarget.gridTileLocation != null && actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
             SetState("Scrap Success");
         } else {
             SetState("Target Missing");
@@ -49,7 +49,12 @@ public class Scrap : GoapAction {
 
     #region Requirements
     protected bool Requirement() {
-        if (poiTarget.gridTileLocation != null) {
+        IAwareness awareness = actor.GetAwareness(poiTarget);
+        if (awareness == null) {
+            return false;
+        }
+        LocationGridTile knownLoc = awareness.knownGridLocation;
+        if (knownLoc != null) {
             if (poiTarget.factionOwner != null) {
                 if (actor.faction.id == poiTarget.factionOwner.id) {
                     return true;
@@ -75,7 +80,7 @@ public class Scrap : GoapAction {
         actor.DestroyToken(item);
     }
     private void PreTargetMissing() {
-        currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
+        currentState.AddLogFiller(actor.currentStructure.location, actor.currentStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
         currentState.AddLogFiller(poiTarget as SpecialToken, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
     }
     public void AfterTargetMissing() {

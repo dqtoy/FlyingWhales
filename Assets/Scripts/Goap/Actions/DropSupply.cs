@@ -29,7 +29,12 @@ public class DropSupply : GoapAction {
 
     #region Requirements
     protected bool Requirement() {
-        return actor.homeArea == poiTarget.gridTileLocation.structure.location && actor.supply > actor.role.reservedSupply;
+        IAwareness awareness = actor.GetAwareness(poiTarget);
+        if (awareness == null) {
+            return false;
+        }
+        LocationGridTile knownLoc = awareness.knownGridLocation;
+        return actor.homeArea == knownLoc.structure.location && actor.supply > actor.role.reservedSupply;
     }
     #endregion
 

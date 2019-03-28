@@ -11,6 +11,7 @@ public interface IPointOfInterest {
     List<INTERACTION_TYPE> poiGoapActions { get; }
     List<Trait> traits { get; }
     Faction factionOwner { get; }
+    POICollisionTrigger collisionTrigger { get; } //Each poi must only hav 1 at a time.
 
     void SetGridTileLocation(LocationGridTile tile);
     List<GoapAction> AdvertiseActionsToActor(Character actor, List<INTERACTION_TYPE> actorAllowedInteractions);
@@ -25,5 +26,13 @@ public interface IPointOfInterest {
     bool RemoveTrait(string traitName, bool triggerOnRemove = true);
     void RemoveTrait(List<Trait> traits);
     Trait GetTrait(string traitName);
+    #endregion
+
+    #region Collision
+    void InitializeCollisionTrigger();
+    void PlaceCollisionTriggerAt(LocationGridTile tile);
+    void DisableCollisionTrigger();
+    void SetCollisionTrigger(POICollisionTrigger trigger);
+    void PlaceGhostCollisionTriggerAt(LocationGridTile tile);
     #endregion
 }

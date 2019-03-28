@@ -17,8 +17,9 @@ public class TablePoison : GoapAction {
     protected override void ConstructPreconditionsAndEffects() {
         //**Effect 1**: Table - Add Trait (Poisoned)
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.ADD_TRAIT, conditionKey = "Poisoned", targetPOI = poiTarget });
-        if (poiTarget.gridTileLocation.structure is Dwelling) {
-            Dwelling dwelling = poiTarget.gridTileLocation.structure as Dwelling;
+        LocationGridTile knownLoc = actor.GetAwareness(poiTarget).knownGridLocation;
+        if (knownLoc.structure is Dwelling) {
+            Dwelling dwelling = knownLoc.structure as Dwelling;
             for (int i = 0; i < dwelling.residents.Count; i++) {
                 //**Effect 2**: Owner/s - Add Trait (Sick)
                 AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.ADD_TRAIT, conditionKey = "Sick", targetPOI = dwelling.residents[i] });
@@ -31,7 +32,7 @@ public class TablePoison : GoapAction {
         
     }
     public override void PerformActualAction() {
-        if (actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
+        if (poiTarget.gridTileLocation != null && actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
             if (poiTarget.gridTileLocation.structure.charactersHere.Count == 1 && poiTarget.gridTileLocation.structure.charactersHere.Contains(actor)) {
                 SetState("Poison Success");
             } else {
@@ -61,14 +62,15 @@ public class TablePoison : GoapAction {
         currentState.AddLogFiller(poiTarget.gridTileLocation.structure.location, poiTarget.gridTileLocation.structure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
     }
     public void PreTargetMissing() {
-        currentState.AddLogFiller(poiTarget.gridTileLocation.structure.location, poiTarget.gridTileLocation.structure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
+        currentState.AddLogFiller(actor.currentStructure.location, actor.currentStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
     }
     #endregion
 
     #region Requirement
     private bool Requirement() {
         //**Advertiser**: All Tables inside Dwellings
-        return poiTarget.gridTileLocation.structure is Dwelling;
+        LocationGridTile knownLoc = actor.GetAwareness(poiTarget).knownGridLocation;
+        return knownLoc.structure is Dwelling;
     }
     #endregion
 }

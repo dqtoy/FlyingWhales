@@ -31,9 +31,6 @@ public class CharacterMarker : PooledObject {
     [Header("Animation")]
     [SerializeField] private Animator animator;
 
-    [Header("Collision")]
-    [SerializeField] private GameObject collisionTriggerPrefab;
-
     private LocationGridTile lastRemovedTileFromPath;
 
     private List<LocationGridTile> _currentPath;
@@ -53,6 +50,7 @@ public class CharacterMarker : PooledObject {
     public List<IPointOfInterest> inRangePOIs; //POI's in this characters collider
     public bool isStillMovingToAnotherTile { get; private set; }
     public InnerPathfindingThread pathfindingThread { get; private set; }
+    public POICollisionTrigger collisionTrigger { get; private set; }
 
     #region getters/setters
     public List<LocationGridTile> currentPath {
@@ -74,15 +72,16 @@ public class CharacterMarker : PooledObject {
         //PlayIdle();
 
         Vector3 randomRotation = new Vector3(0f, 0f, 90f);
-        randomRotation.z *= UnityEngine.Random.Range(1f, 4f);
+        randomRotation.z *= (float)UnityEngine.Random.Range(1, 4);
         visualsRT.localRotation = Quaternion.Euler(randomRotation);
         UpdateActionIcon();
 
         inRangePOIs = new List<IPointOfInterest>();
 
-        GameObject collisionTriggerGO = GameObject.Instantiate(collisionTriggerPrefab, this.transform);
+        GameObject collisionTriggerGO = GameObject.Instantiate(InteriorMapManager.Instance.characterCollisionTriggerPrefab, this.transform);
         collisionTriggerGO.transform.localPosition = Vector3.zero;
-        collisionTriggerGO.GetComponent<POICollisionTrigger>().Initialize(character);
+        collisionTrigger = collisionTriggerGO.GetComponent<POICollisionTrigger>();
+        collisionTrigger.Initialize(character);
 
         Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
@@ -497,6 +496,7 @@ public class CharacterMarker : PooledObject {
     public void AddPOIAsInRange(IPointOfInterest poi) {
         if (!inRangePOIs.Contains(poi)) {
             inRangePOIs.Add(poi);
+            character.AddAwareness(poi);
         }
     }
     public void RemovePOIFromInRange(IPointOfInterest poi) {

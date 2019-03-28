@@ -62,12 +62,28 @@ MonoBehaviour:
     - Ranged Attack
     - Reanimated
     - Starving
+    - Exhausted
+    - Forlorn
+    - Injured
+    - Magic User
+    - Physical Attacker
+    - Lonely
+    - Tired
+    - Unconscious
     m_values:
     - {fileID: 21300000, guid: 360bd7c134b76554488e42b1b995ce62, type: 3}
     - {fileID: 21300000, guid: b657484a4dbd1c34d9511855a8a101af, type: 3}
     - {fileID: 21300000, guid: 3f7dcd15b629a5e4e84bf5000cbc748a, type: 3}
     - {fileID: 21300000, guid: 8d5d07972a054c648a726e3008902938, type: 3}
     - {fileID: 21300000, guid: 4e3a242f72e3fda43bae897ef9e9598c, type: 3}
+    - {fileID: 21300000, guid: c2ef1a16bf701374b81faabaa2014350, type: 3}
+    - {fileID: 21300000, guid: 082f42d3f598c0a49b420fa1c28c4e14, type: 3}
+    - {fileID: 21300000, guid: d98851313d80fa1479483672e9f8a0b5, type: 3}
+    - {fileID: 21300000, guid: 4046870d61c048e4ebc0559ddfa80fe4, type: 3}
+    - {fileID: 21300000, guid: 7cfbe25a31be2aa4c909bf1a7c6742a4, type: 3}
+    - {fileID: 21300000, guid: e03074ea45cbe6c41adaf929e55f2f9f, type: 3}
+    - {fileID: 21300000, guid: 20ac5f109fe13ee449f9ff3c1a4e7fc4, type: 3}
+    - {fileID: 21300000, guid: 88e35ef856bf3404fb43ebc852f031a7, type: 3}
 --- !u!114 &114379826282364466
 MonoBehaviour:
   m_ObjectHideFlags: 1
