@@ -455,20 +455,20 @@ public struct GoapEffect {
         return string.Empty;
     }
 
-    public override bool Equals(object obj) {
-        if (obj is GoapEffect) {
-            GoapEffect otherEffect = (GoapEffect)obj;
-            if (otherEffect.conditionType == conditionType) {
-                if (string.IsNullOrEmpty(conditionString())) {
-                    return true;
-                } else {
-                    return otherEffect.conditionString() == conditionString();
-                }
-            }
-        }
-        return base.Equals(obj);
-    }
-    public override int GetHashCode() {
-        return base.GetHashCode();
-    }
+    //public override bool Equals(object obj) {
+    //    if (obj is GoapEffect) {
+    //        GoapEffect otherEffect = (GoapEffect)obj;
+    //        if (otherEffect.conditionType == conditionType) {
+    //            if (string.IsNullOrEmpty(conditionString())) {
+    //                return true;
+    //            } else {
+    //                return otherEffect.conditionString() == conditionString();
+    //            }
+    //        }
+    //    }
+    //    return base.Equals(obj);
+    //}
+    //public override int GetHashCode() {
+    //    return base.GetHashCode();
+    //}
 }

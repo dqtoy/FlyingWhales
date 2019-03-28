@@ -6,7 +6,7 @@ public class AddTraitReaction : ActionEffectReaction {
 
     public override string GetReactionFrom(Character character, Intel intel, GoapEffect effect) {
         switch (effect.conditionString()) {
-            case "Abducted":
+            case "Restrained":
                 return AbductReaction(character, intel, effect);
         }
         return base.GetReactionFrom(character, intel, effect);

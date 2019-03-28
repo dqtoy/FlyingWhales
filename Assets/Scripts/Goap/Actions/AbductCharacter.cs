@@ -76,6 +76,8 @@ public class AbductCharacter : GoapAction {
         Character target = poiTarget as Character;
         Restrained restrainedTrait = new Restrained();
         target.AddTrait(restrainedTrait, actor);
+
+        AddActualEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = poiTarget });
     }
     public void PreTargetMissing() {
         currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
