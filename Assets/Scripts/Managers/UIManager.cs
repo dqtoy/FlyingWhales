@@ -226,6 +226,9 @@ public class UIManager : MonoBehaviour {
         Messenger.AddListener<Area>(Signals.AREA_MAP_CLOSED, OnAreaMapClosed);
 
         Messenger.AddListener<Intel>(Signals.SHOW_INTEL_NOTIFICATION, ShowIntelNotification);
+
+        Messenger.AddListener(Signals.ON_OPEN_SHARE_INTEL, OnOpenShareIntelMenu);
+        Messenger.AddListener(Signals.ON_CLOSE_SHARE_INTEL, OnCloseShareIntelMenu);
         UpdateUI();
     }
     private void HideMenus() {
@@ -673,16 +676,6 @@ public class UIManager : MonoBehaviour {
             }
         }
         return false;
-            //eventSystem.IsPointerOverGameObject();
-        //if (uiCamera != null) {
-        //if (Minimap.Instance.isDragging) {
-        //    return true;
-        //}
-        //if (UICamera.hoveredObject != null && (UICamera.hoveredObject.layer == LayerMask.NameToLayer("UI") || UICamera.hoveredObject.layer == LayerMask.NameToLayer("PlayerActions"))) {
-        //    return true;
-        //}
-        //}
-        //return false;
     }
     public bool IsMouseOnInput() {
         if (EventSystem.current.currentSelectedGameObject == null ||
@@ -1453,10 +1446,24 @@ public class UIManager : MonoBehaviour {
     public void CloseShareIntelMenu() {
         shareIntelMenu.Close();
     }
+    private void OnOpenShareIntelMenu() {
+        returnToWorldGO.GetComponent<Button>().interactable = false;
+        SetCoverState(true);
+        Pause();
+        SetSpeedTogglesState(false);
+        intelNotificationParent.SetSiblingIndex(1);
+    }
+    private void OnCloseShareIntelMenu() {
+        returnToWorldGO.GetComponent<Button>().interactable = true;
+        SetCoverState(false);
+        SetSpeedTogglesState(true);
+        intelNotificationParent.SetAsLastSibling();
+    }
     #endregion
 
     #region Intel Notification
     [Header("Intel Notification")]
+    [SerializeField] private RectTransform intelNotificationParent;
     [SerializeField] private GameObject intelPrefab;
     [SerializeField] private ScrollRect intelNotifScrollView;
     private void ShowIntelNotification(Intel intel) {

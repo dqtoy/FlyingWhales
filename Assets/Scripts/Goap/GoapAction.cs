@@ -18,9 +18,12 @@ public class GoapAction {
     public virtual LocationStructure targetStructure {
         get {
             try {
-                if (poiTarget is TileObject || poiTarget is SpecialToken) { 
+                if (poiTarget is TileObject || poiTarget is SpecialToken) {
                     //if the target is a tile object or a special token, the actor will always go to it's known location instead of actual
-                    return actor.GetAwareness(poiTarget).knownGridLocation.structure;
+                    IAwareness awareness = actor.GetAwareness(poiTarget);
+                    if (awareness != null) {
+                        return awareness.knownGridLocation.structure;
+                    }
                 }
                 return poiTarget.gridTileLocation.structure;
             } catch {

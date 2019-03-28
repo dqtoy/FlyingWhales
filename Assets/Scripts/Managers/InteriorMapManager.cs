@@ -103,6 +103,25 @@ public class InteriorMapManager : MonoBehaviour {
         nextMapPos = new Vector3(nextMapPos.x, nextMapPos.y + newMap.height + 1, nextMapPos.z);
     }
 
+    public bool IsMouseOnMarker() {
+        PointerEventData pointer = new PointerEventData(EventSystem.current);
+        pointer.position = Input.mousePosition;
+
+        List<RaycastResult> raycastResults = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(pointer, raycastResults);
+
+        if (raycastResults.Count > 0) {
+            foreach (var go in raycastResults) {
+                if (go.gameObject.tag == "Character Marker") {
+                    //Debug.Log(go.gameObject.name, go.gameObject);
+                    return true;
+                }
+
+            }
+        }
+        return false;
+    }
+
     #region For Testing
     bool isShowingMarkerTileData = false;
     private void ShowTileData(LocationGridTile tile, Character character = null) {

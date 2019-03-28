@@ -20,10 +20,11 @@ public class ShareIntelMenu : MonoBehaviour {
     private Character actor;
 
     public void Open(Character targetCharacter, Character actor) {
-        UIManager.Instance.SetCoverState(true);
-        UIManager.Instance.Pause();
-        UIManager.Instance.SetSpeedTogglesState(false);
+        //UIManager.Instance.SetCoverState(true);
+        //UIManager.Instance.Pause();
+        //UIManager.Instance.SetSpeedTogglesState(false);
         this.gameObject.SetActive(true);
+        Messenger.Broadcast(Signals.ON_OPEN_SHARE_INTEL);
 
         this.targetCharacter = targetCharacter;
         this.actor = actor;
@@ -66,9 +67,10 @@ public class ShareIntelMenu : MonoBehaviour {
         }
     }
     public void Close() {
-        UIManager.Instance.SetCoverState(false);
-        UIManager.Instance.SetSpeedTogglesState(true);
+        //UIManager.Instance.SetCoverState(false);
+        //UIManager.Instance.SetSpeedTogglesState(true);
         this.gameObject.SetActive(false);
+        Messenger.Broadcast(Signals.ON_CLOSE_SHARE_INTEL);
     }
 
     private void ReactToIntel(Intel intel) {

@@ -29,7 +29,12 @@ public class ArgueCharacter : GoapAction {
     }
     public override void PerformActualAction() {
         if (actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
-            SetState("Argue Success");
+            Character target = poiTarget as Character;
+            if (IsTargetUnable(target)) {
+                SetState("Argue Fail");
+            } else {
+                SetState("Argue Success");
+            }
         } else {
             SetState("Target Missing");
         }
@@ -77,13 +82,6 @@ public class ArgueCharacter : GoapAction {
         cost += Utilities.rng.Next(0, 4); //Then add a random cost between 0 to 4.
         return cost;
     }
-    //public override bool IsHalted() {
-    //    TIME_IN_WORDS timeInWords = GameManager.GetCurrentTimeInWordsOfTick();
-    //    if (timeInWords == TIME_IN_WORDS.LATE_NIGHT || timeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
-    //        return true;
-    //    }
-    //    return false;
-    //}
     public override void DoAction(GoapPlan plan) {
         SetTargetStructure();
         base.DoAction(plan);
@@ -127,6 +125,9 @@ public class ArgueCharacter : GoapAction {
         actor.AdjustDoNotGetLonely(-1);
         (poiTarget as Character).AddTrait("Annoyed");
     }
+    private void PreArgueFail() {
+        currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+    }
     private void PreTargetMissing() {
         currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
     }
@@ -136,9 +137,22 @@ public class ArgueCharacter : GoapAction {
     protected bool Requirement() {
         if (actor != poiTarget) {
             Character target = poiTarget as Character;
+            if (IsTargetUnable(target)) return false;
             return target.role.roleType != CHARACTER_ROLE.BEAST;
         }
         return false;
     }
+    private bool IsTargetUnable(Character target) {
+        if (target.currentAction != null
+                && (target.currentAction.goapType == INTERACTION_TYPE.SLEEP || target.currentAction.goapType == INTERACTION_TYPE.SLEEP_OUTSIDE)) {
+            return true;
+        }
+        if (target.GetTrait("Unconscious") != null) {
+            return true;
+        }
+        return false;
+    }
     #endregion
+
+
 }

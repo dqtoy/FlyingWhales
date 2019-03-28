@@ -1176,6 +1176,7 @@ MonoBehaviour:
   jobIcon: {fileID: 114030249917892534}
   jobNameLbl: {fileID: 114427035971924372}
   assignBtn: {fileID: 114031635474075278}
+  draggable: {fileID: 114043302524487350}
   jobActionBtnPrefab: {fileID: 1407515856224950, guid: 0c64f5050d08386459366dc1cbd0f055,
     type: 2}
   jobActionsParent: {fileID: 224105693486312028}

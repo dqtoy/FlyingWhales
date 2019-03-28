@@ -79,13 +79,19 @@ public class AreaInfoUI : UIMenu {
         Messenger.AddListener<Area, SpecialToken>(Signals.ITEM_REMOVED_FROM_AREA, OnItemRemovedFromArea);
         Messenger.AddListener<Area>(Signals.AREA_MAP_OPENED, OnAreaMapOpened);
         Messenger.AddListener<Area>(Signals.AREA_MAP_CLOSED, OnAreaMapClosed);
+        Messenger.AddListener(Signals.ON_OPEN_SHARE_INTEL, OnOpenShareIntelMenu);
+        Messenger.AddListener(Signals.ON_CLOSE_SHARE_INTEL, OnCloseShareIntelMenu);
     }
 
     public override void OpenMenu() {
         Area previousArea = activeArea;
         activeArea = _data as Area;
         base.OpenMenu();
-        
+
+        if (UIManager.Instance.IsShareIntelMenuOpen()) {
+            backButton.interactable = false;
+        }
+
         UpdateAreaInfo();
         UpdateCharacters();
         ResetScrollPositions();
@@ -520,4 +526,11 @@ public class AreaInfoUI : UIMenu {
         
     }
     #endregion
+
+    private void OnOpenShareIntelMenu() {
+        backButton.interactable = false;
+    }
+    private void OnCloseShareIntelMenu() {
+        backButton.interactable = UIManager.Instance.GetLastUIMenuHistory() != null;
+    }
 }

@@ -7,15 +7,25 @@ public class RoleSlotItemDraggable : DraggableItem {
 
     [SerializeField] private RoleSlotItem roleSlotItem;
 
+    private bool isDraggableOverride = true; //used to set if the role slot shoul be draggable or not, outside normal conditions
+
     #region getters/setters
     public override bool isDraggable {
-        get { return !PlayerManager.Instance.player.roleSlots[roleSlotItem.slotJob].isSlotLocked; }
+        get {
+            if (!isDraggableOverride) {
+                return false; //if the draggable override is set to false, do not allow drag
+            }
+            return !PlayerManager.Instance.player.roleSlots[roleSlotItem.slotJob].isSlotLocked; }
     }
     #endregion
 
     private void Awake() {
         //roleSlotItem = gameObject.GetComponent<RoleSlotItem>();
         SetDraggable(isDraggable);
+    }
+
+    public void SetDraggableOverride(bool state) {
+        isDraggableOverride = state;
     }
 
     #region Overrides
@@ -38,6 +48,9 @@ public class RoleSlotItemDraggable : DraggableItem {
         _isDragging = true;
     }
     public override void OnEndDrag(PointerEventData eventData) {
+        if (!isDraggable) {
+            return;
+        }
         _isDragging = false;
         GameManager.Instance.SetCursorToItemDragHover();
         if (roleSlotItem != null && _draggingObject != null) {

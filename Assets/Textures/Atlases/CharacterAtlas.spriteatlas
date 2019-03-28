@@ -49,7 +49,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 117a7958b7b80384fa8e7a1b09a4caeb, type: 3}
   - {fileID: 21300000, guid: 45b22988c879646488b23dcc2915bc35, type: 3}
   - {fileID: 21300000, guid: bc6a8fc8cedacc64ea511731cf7d25a6, type: 3}
-  - {fileID: 21300000, guid: f40590d8658d1cd45924f2e84e08d0d4, type: 3}
   - {fileID: 21300000, guid: 633fb2e8b5d890c40959c1167376d4be, type: 3}
   - {fileID: 21300000, guid: dbc19c69feaff6a49ad02e284efa82ff, type: 3}
   - {fileID: 21300000, guid: d0440b2a2239fdc4d9c82c807fb76a59, type: 3}
@@ -81,7 +80,6 @@ SpriteAtlas:
   - skeleton_idle00
   - human_m_idle00
   - human_f_walk03
-  - ActionIcon
   - human_f_idle00
   - human_m_idle01
   - action_icon_work

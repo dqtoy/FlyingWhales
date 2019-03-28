@@ -14,6 +14,7 @@ public class RoleSlotItem : MonoBehaviour, IDragParentItem {
     [SerializeField] private Image jobIcon;
     [SerializeField] private TextMeshProUGUI jobNameLbl;
     [SerializeField] private Button assignBtn;
+    [SerializeField] private RoleSlotItemDraggable draggable;
 
     [Header("Job Actions")]
     [SerializeField] private GameObject jobActionBtnPrefab;
@@ -135,6 +136,9 @@ public class RoleSlotItem : MonoBehaviour, IDragParentItem {
             }
         }
     }
+    public void OverrideDraggableState(bool isDraggable) {
+        draggable.SetDraggableOverride(isDraggable);
+    }
     #endregion
 
     #region Assign
@@ -146,10 +150,10 @@ public class RoleSlotItem : MonoBehaviour, IDragParentItem {
     #endregion
 
     #region Action Buttons
-    private void HideActionButtons() {
+    public void HideActionButtons() {
         jobActionsParent.gameObject.SetActive(false);
     }
-    private void ShowActionButtons(JOB_ACTION_TARGET actionTarget) {
+    public void ShowActionButtons(JOB_ACTION_TARGET actionTarget) {
         Utilities.DestroyChildren(jobActionsParent);
         List<PlayerJobAction> actions = PlayerManager.Instance.player.GetJobActionsThatCanTarget(slotJob, actionTarget);
         for (int i = 0; i < actions.Count; i++) {
@@ -180,7 +184,10 @@ public class RoleSlotItem : MonoBehaviour, IDragParentItem {
     private void OnMenuClosed(UIMenu menu) {
         UpdateActionButtons();
     }
-    private void UpdateActionButtons() {
+    public void UpdateActionButtons() {
+        if (UIManager.Instance.IsShareIntelMenuOpen()) {
+            return;
+        }
         if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.minion == null) {
             ShowActionButtons(JOB_ACTION_TARGET.CHARACTER);
         } else if (UIManager.Instance.areaInfoUI.isShowing && UIManager.Instance.areaInfoUI.activeArea.id != PlayerManager.Instance.player.playerArea.id) {

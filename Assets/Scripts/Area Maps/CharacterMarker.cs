@@ -130,7 +130,7 @@ public class CharacterMarker : PooledObject {
 
     public void OnPointerClick(BaseEventData bd) {
         PointerEventData ped = bd as PointerEventData;
-        character.gridTileLocation.OnClickTileActions(ped.button);
+        //character.gridTileLocation.OnClickTileActions(ped.button);
         UIManager.Instance.ShowCharacterInfo(character);
     }
 

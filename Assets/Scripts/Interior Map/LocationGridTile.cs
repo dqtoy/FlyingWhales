@@ -371,6 +371,9 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         //    }
         //    return;
         //}
+        if (InteriorMapManager.Instance.IsMouseOnMarker()) {
+            return;
+        }
         if (objHere == null) {
             if (inputButton == PointerEventData.InputButton.Right) {
                 if (InteriorMapManager.Instance.IsHoldingPOI()) {
@@ -393,7 +396,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
             UIManager.Instance.ShowCharacterInfo(occupant);
         }
     }
-    #endregion
+    #endregion    
 }
 
 [System.Serializable]
