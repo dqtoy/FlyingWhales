@@ -43,6 +43,7 @@ public class ShareIntelMenu : MonoBehaviour {
 
     private void UpdateIntel() {
         intelGO.SetActive(true);
+        SetIntelButtonsInteractable(true);
         for (int i = 0; i < intelItems.Length; i++) {
             IntelItem currItem = intelItems[i];
             Intel intel = PlayerManager.Instance.player.allIntel.ElementAtOrDefault(i);
@@ -58,6 +59,12 @@ public class ShareIntelMenu : MonoBehaviour {
     private void HideIntel() {
         intelGO.SetActive(false);
     }
+    private void SetIntelButtonsInteractable(bool state) {
+        for (int i = 0; i < intelItems.Length; i++) {
+            IntelItem currItem = intelItems[i];
+            currItem.GetComponent<Button>().interactable = state;
+        }
+    }
     public void Close() {
         UIManager.Instance.SetCoverState(false);
         UIManager.Instance.SetSpeedTogglesState(true);
@@ -66,7 +73,8 @@ public class ShareIntelMenu : MonoBehaviour {
 
     private void ReactToIntel(Intel intel) {
         closeBtn.interactable = false;
-        HideIntel();
+        //HideIntel();
+        SetIntelButtonsInteractable(false);
 
         //GameObject actorDialog = ObjectPoolManager.Instance.InstantiateObjectFromPool(dialogItemPrefab.name, Vector3.zero, Quaternion.identity, dialogScrollView.content);
         //DialogItem actorItem = actorDialog.GetComponent<DialogItem>();

@@ -133,6 +133,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 98381b75e2162b84b949aba1a7d10260, type: 3}
   - {fileID: 21300000, guid: f9c50e85008e55e4c81f3e2f45f5ca53, type: 3}
   - {fileID: 21300000, guid: c11cdd95d9cf04c44b9712b03115fac9, type: 3}
+  - {fileID: 21300000, guid: 7cc2cfa56fdd4584f97dfafa02611407, type: 3}
   - {fileID: 21300000, guid: 1311a4b5fe4c0fd4cb1879feb3334c4e, type: 3}
   - {fileID: 21300000, guid: 859053c5bb0e8084f9c896ede4a432d6, type: 3}
   - {fileID: 21300000, guid: 032552e545dd3cb42960bef5cdcb48b7, type: 3}
@@ -201,6 +202,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 39b326a8c5f2cb4479ab665ea3fe1e5d, type: 3}
   - {fileID: 21300000, guid: 189752b89c81e9541b45c7ece9ed0a54, type: 3}
   - {fileID: 21300000, guid: 7a4596b896e6fc84b9412fa20aab74b1, type: 3}
+  - {fileID: 21300000, guid: cdfb21c8c20403f4ba4b30d1f5af1157, type: 3}
   - {fileID: 21300000, guid: bc6b7be8dcd117c40b523b0c469b914d, type: 3}
   - {fileID: 21300000, guid: b26562098a29bbb4695da637ab5ce5ba, type: 3}
   - {fileID: 21300000, guid: 39fc0a092793d3943833bb3061e7a870, type: 3}
@@ -425,6 +427,7 @@ SpriteAtlas:
   - bottom_factions0
   - ge_cont-06A
   - minion_icon_attacker
+  - share_intel_decor
   - interaction_main_decor
   - minion_filter_class_on
   - main_menu_newgame_btn_hover
@@ -493,6 +496,7 @@ SpriteAtlas:
   - caeven_s
   - main_menu_credits_btn_hover
   - ge_cont-06C
+  - share_intel_container
   - assign_minion_list_container
   - minion_icon_debilitator
   - ge_icon-22

@@ -259,11 +259,11 @@ public class CharacterMarker : PooledObject {
     }
     private void CheckIfCurrentTileIsOccupiedOnStopMovement(Action afterStoppingAction = null) {
         if (character.gridTileLocation.isOccupied) {
-            LocationGridTile newTargetTile = InteractionManager.Instance.GetTargetLocationTile(ACTION_LOCATION_TYPE.NEARBY, character, character, character.gridTileLocation.structure);
+            LocationGridTile newTargetTile = InteractionManager.Instance.GetTargetLocationTile(ACTION_LOCATION_TYPE.NEARBY, character, character.gridTileLocation, character.gridTileLocation.structure);
             if(newTargetTile != null) {
                 character.marker.GoToTile(newTargetTile, character, afterStoppingAction);
             } else {
-                newTargetTile = InteractionManager.Instance.GetTargetLocationTile(ACTION_LOCATION_TYPE.RANDOM_LOCATION, character, character, character.gridTileLocation.structure);
+                newTargetTile = InteractionManager.Instance.GetTargetLocationTile(ACTION_LOCATION_TYPE.RANDOM_LOCATION, character, character.gridTileLocation, character.gridTileLocation.structure);
                 if (newTargetTile != null) {
                     character.marker.GoToTile(newTargetTile, character, afterStoppingAction);
                 } else {

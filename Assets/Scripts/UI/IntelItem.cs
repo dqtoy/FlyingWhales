@@ -21,11 +21,11 @@ public class IntelItem : MonoBehaviour {
         otherClickActions = new List<System.Action>();
         ClearClickActions();
         if (intel != null) {
-            string preText = "Tip: ";
+            string preText = "TIP: ";
             if (intel is EventIntel) {
-                preText = "Event: ";
+                preText = "EVENT: ";
             } else if (intel is PlanIntel) {
-                preText = "Plan: ";
+                preText = "PLAN: ";
             }
             infoLbl.text = preText +  Utilities.LogReplacer(intel.intelLog);
             mainBtn.interactable = true;
