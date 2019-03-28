@@ -16,7 +16,7 @@ public class GetSupply : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_SUPPLY, conditionKey = supplyPile.suppliesInPile, targetPOI = actor });
     }
     public override void PerformActualAction() {
-        if (actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
+        if (poiTarget.gridTileLocation != null && actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
             SupplyPile supplyPile = poiTarget as SupplyPile;
             if (supplyPile.suppliesInPile > 0) {
                 SetState("Take Success");
@@ -39,7 +39,12 @@ public class GetSupply : GoapAction {
 
     #region Requirements
     protected bool Requirement() {
-        if(actor.role.roleType != CHARACTER_ROLE.CIVILIAN && actor.homeArea == poiTarget.gridTileLocation.structure.location && actor.supply < actor.role.reservedSupply) {
+        IAwareness awareness = actor.GetAwareness(poiTarget);
+        if (awareness == null) {
+            return false;
+        }
+        LocationGridTile knownLoc = awareness.knownGridLocation;
+        if (actor.role.roleType != CHARACTER_ROLE.CIVILIAN && actor.homeArea == knownLoc.structure.location && actor.supply < actor.role.reservedSupply) {
             if (poiTarget is SupplyPile) {
                 SupplyPile supplyPile = poiTarget as SupplyPile;
                 if (supplyPile.suppliesInPile > 0) {

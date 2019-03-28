@@ -179,6 +179,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         objHere = poi;
         poi.SetGridTileLocation(this);
         SetTileState(Tile_State.Occupied);
+        Messenger.Broadcast(Signals.OBJECT_PLACED_ON_TILE, this, poi);
     }
     public IPointOfInterest RemoveObjectHere() {
         if (objHere != null) {
@@ -213,14 +214,6 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     public bool HasNeighborAtEdgeOfMap() {
         foreach (KeyValuePair<TileNeighbourDirection, LocationGridTile> kvp in neighbours) {
             if (kvp.Value.IsAtEdgeOfMap()) {
-                return true;
-            }
-        }
-        return false;
-    }
-    public bool HasNeighborGate() {
-        foreach (KeyValuePair<TileNeighbourDirection, LocationGridTile> kvp in neighbours) {
-            if (kvp.Value.tileType == Tile_Type.Gate) {
                 return true;
             }
         }
@@ -378,24 +371,26 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         //    }
         //    return;
         //}
-        if (objHere is TileObject || objHere is SpecialToken) {
-            if (inputButton == PointerEventData.InputButton.Right && objHere is TileObject) {
+        if (objHere == null) {
+            if (inputButton == PointerEventData.InputButton.Right) {
+                if (InteriorMapManager.Instance.IsHoldingPOI()) {
+                    InteriorMapManager.Instance.PlaceHeldPOI(this);
+                }
+            }
+        } else if (objHere is TileObject || objHere is SpecialToken) {
+            if (inputButton == PointerEventData.InputButton.Middle && objHere is TileObject) {
                 (objHere as TileObject).LogActionHistory();
+            } else if (inputButton == PointerEventData.InputButton.Right) {
+                if (!InteriorMapManager.Instance.IsHoldingPOI()) {
+                    InteriorMapManager.Instance.HoldPOI(objHere);
+                }
             } else {
                 parentAreaMap.ShowIntelItemAt(this, InteractionManager.Instance.CreateNewIntel(objHere));
             }
         } else if (objHere is Character) {
-            if (inputButton == PointerEventData.InputButton.Right) {
-                (objHere as Character).marker.LogPOIsInRange();
-            } else {
-                UIManager.Instance.ShowCharacterInfo((objHere as Character));
-            }
+            UIManager.Instance.ShowCharacterInfo((objHere as Character));
         } else if (occupant != null) {
-            if (inputButton == PointerEventData.InputButton.Right) {
-                occupant.marker.LogPOIsInRange();
-            } else {
-                UIManager.Instance.ShowCharacterInfo(occupant);
-            }
+            UIManager.Instance.ShowCharacterInfo(occupant);
         }
     }
     #endregion

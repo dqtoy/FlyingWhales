@@ -73,8 +73,8 @@ public class AreaInnerTileMap : MonoBehaviour {
     [Header("Inside Detail Tiles")]
     [SerializeField] private TileBase crateBarrelTile;
 
-    [Header("Characters")]
-    [SerializeField] private RectTransform charactersParent;
+    [Header("Objects")]
+    public RectTransform objectsParent;
 
     [Header("Events")]
     [SerializeField] private GameObject eventPopupPrefab;
@@ -98,7 +98,7 @@ public class AreaInnerTileMap : MonoBehaviour {
     public Vector3 endPos;
 
     public Area area { get; private set; }
-    public RectTransform mapCharactersParent { get { return charactersParent; } }
+    public RectTransform mapCharactersParent { get { return objectsParent; } }
     public LocationGridTile[,] map { get; private set; }
     public List<LocationGridTile> allTiles { get; private set; }
     public List<LocationGridTile> outsideTiles { get; private set; }
@@ -309,7 +309,11 @@ public class AreaInnerTileMap : MonoBehaviour {
         }
     }
     private void PlaceStructures(Dictionary<STRUCTURE_TYPE, List<LocationStructure>> structures, List<LocationGridTile> sourceTiles) {
-        List<LocationGridTile> elligibleTiles = new List<LocationGridTile>(sourceTiles.Where(x => !x.IsAtEdgeOfMap() && !x.HasNeighborAtEdgeOfMap() && !x.HasNeighborGate()));
+        List<LocationGridTile> elligibleTiles = new List<LocationGridTile>(sourceTiles.Where(x => !x.IsAtEdgeOfMap() 
+        && !x.HasNeighborAtEdgeOfMap()
+        && !x.HasNeighbourOfType(LocationGridTile.Tile_Type.Gate)
+        && !x.HasNeighbourOfType(LocationGridTile.Tile_Type.Wall)
+        ));
         int leftMostCoordinate = elligibleTiles.Min(t => t.localPlace.x);
         int rightMostCoordinate = elligibleTiles.Max(t => t.localPlace.x);
         int topMostCoordinate = elligibleTiles.Max(t => t.localPlace.y);
@@ -1026,12 +1030,12 @@ public class AreaInnerTileMap : MonoBehaviour {
     private void OnPlaceCharacterOnTile(Character character, LocationGridTile tile) {
         Vector3 pos = new Vector3(tile.localPlace.x + 0.5f, tile.localPlace.y + 0.5f);
         if(character.marker == null) {
-            GameObject portraitGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("CharacterMarker", pos, Quaternion.identity, charactersParent);
+            GameObject portraitGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("CharacterMarker", pos, Quaternion.identity, objectsParent);
             character.SetCharacterMarker(portraitGO.GetComponent<CharacterMarker>());
             character.marker.SetCharacter(character);
             character.marker.SetHoverAction(character.ShowTileData, InteriorMapManager.Instance.HideTileData);
         } else {
-            character.marker.gameObject.transform.SetParent(charactersParent);
+            character.marker.gameObject.transform.SetParent(objectsParent);
             character.marker.gameObject.transform.localPosition = pos;
         }
         if (!character.marker.gameObject.activeSelf) {
@@ -1053,7 +1057,7 @@ public class AreaInnerTileMap : MonoBehaviour {
     }
     private void OnPlaceCorpseOnTile(Corpse corpse, LocationGridTile tile) {
         Vector3 pos = new Vector3(tile.localPlace.x, tile.localPlace.y);
-        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool("CorpseObject", pos, Quaternion.identity, charactersParent);
+        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool("CorpseObject", pos, Quaternion.identity, objectsParent);
         CorpseObject obj = go.GetComponent<CorpseObject>();
         obj.SetCorpse(corpse);
         RectTransform rect = go.transform as RectTransform;

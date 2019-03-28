@@ -16,7 +16,7 @@ public class TableRemovePoison : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Poisoned", targetPOI = poiTarget });
     }
     public override void PerformActualAction() {
-        if (actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
+        if (poiTarget.gridTileLocation != null && actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
             if (poiTarget.GetTrait("Poisoned") != null) {
                 SetState("Remove Poison Success");
             } else {

@@ -18,6 +18,10 @@ public class GoapAction {
     public virtual LocationStructure targetStructure {
         get {
             try {
+                if (poiTarget is TileObject || poiTarget is SpecialToken) { 
+                    //if the target is a tile object or a special token, the actor will always go to it's known location instead of actual
+                    return actor.GetAwareness(poiTarget).knownGridLocation.structure;
+                }
                 return poiTarget.gridTileLocation.structure;
             } catch {
                 throw new Exception("Error with target structure in " + goapName + " targetting " + poiTarget.ToString() + " by " + actor.name);
@@ -180,7 +184,14 @@ public class GoapAction {
         MoveToDoAction(plan);
     }
     public virtual LocationGridTile GetTargetLocationTile() {
-        return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, poiTarget, targetStructure);
+        LocationGridTile knownTargetLocation = null;
+        if (poiTarget is TileObject || poiTarget is SpecialToken) {
+            //if the target is a tile object or a special token, the actor will always go to it's known location instead of actual
+            knownTargetLocation = actor.GetAwareness(poiTarget).knownGridLocation;
+        } else {
+            knownTargetLocation = poiTarget.gridTileLocation;
+        }
+        return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, knownTargetLocation, targetStructure);
     }
     public virtual void SetTargetStructure() {
         if(targetStructure != null) {
@@ -203,14 +214,22 @@ public class GoapAction {
         //}
         return false;
     }
+    public virtual void ExecuteTargetMissing() {
+        if (states.ContainsKey("Target Missing")) {
+            SetState("Target Missing");
+        } else {
+            //for cases that the current action has no target missing state
+            FailAction();
+        }
+    }
     #endregion
 
     #region Utilities
     public void Initialize() {
         ConstructRequirement();
         ConstructPreconditionsAndEffects();
-        CreateThoughtBubbleLog();
         SetTargetStructure();
+        CreateThoughtBubbleLog();
     }
     public bool IsThisPartOfActorActionPool(Character actor) {
         List<INTERACTION_TYPE> actorInteractions = RaceManager.Instance.GetNPCInteractionsOfRace(actor);
@@ -405,7 +424,7 @@ public class GoapAction {
         if (character.id == actor.id) {
             if (poiTarget is TileObject) {
                 TileObject target = poiTarget as TileObject;
-                target.owner.SetPOIState(POI_STATE.ACTIVE); //this is for when the character that reserved the target object died
+                target.SetPOIState(POI_STATE.ACTIVE); //this is for when the character that reserved the target object died
             }
         }
     }

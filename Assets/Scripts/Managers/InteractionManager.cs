@@ -2169,7 +2169,7 @@ public class InteractionManager : MonoBehaviour {
     #endregion
 
     #region Goap Action Utilities
-    public LocationGridTile GetTargetLocationTile(ACTION_LOCATION_TYPE locationType, Character actor, IPointOfInterest target, params object[] other) {
+    public LocationGridTile GetTargetLocationTile(ACTION_LOCATION_TYPE locationType, Character actor, LocationGridTile knownPOITargetLocation, params object[] other) {
         List<LocationGridTile> choices;
         LocationStructure specifiedStructure;
         LocationGridTile chosenTile = null;
@@ -2204,15 +2204,15 @@ public class InteractionManager : MonoBehaviour {
                 break;
             case ACTION_LOCATION_TYPE.NEAR_TARGET:
                 //**Near Target**: adjacent unoccupied tile beside the target item, tile object, character
-                choices = target.gridTileLocation.UnoccupiedNeighbours;
+                choices = knownPOITargetLocation.UnoccupiedNeighbours;
                 if (choices.Count > 0) {
                     chosenTile = choices[Utilities.rng.Next(0, choices.Count)];
                 }
                 break;
             case ACTION_LOCATION_TYPE.ON_TARGET:
                 //**On Target**: in the same tile as the target item or tile object
-                if(target.gridTileLocation.occupant == null || target.gridTileLocation.occupant == actor) {
-                    chosenTile = target.gridTileLocation;
+                if(knownPOITargetLocation.occupant == null || knownPOITargetLocation.occupant == actor) {
+                    chosenTile = knownPOITargetLocation;
                 }
                 break;
             default:

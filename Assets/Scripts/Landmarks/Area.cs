@@ -1617,19 +1617,19 @@ public class Area {
     #endregion
 
     #region Special Tokens
-    public bool AddSpecialTokenToLocation(SpecialToken token, LocationStructure structure = null) {
+    public bool AddSpecialTokenToLocation(SpecialToken token, LocationStructure structure = null, LocationGridTile gridLocation = null) {
         if (!IsItemInventoryFull() && !possibleSpecialTokenSpawns.Contains(token)) {
             possibleSpecialTokenSpawns.Add(token);
             Debug.Log(GameManager.Instance.TodayLogString() + "Added " + token.name + " at " + name);
             if (structure != null) {
-                structure.AddItem(token);
+                structure.AddItem(token, gridLocation);
                 if (structure.isInside) {
                     token.SetOwner(this.owner);
                 }
             } else {
                 //get structure for token
                 LocationStructure chosen = GetRandomStructureToPlaceItem(token);
-                chosen.AddItem(token);
+                chosen.AddItem(token, gridLocation);
                 if (chosen.isInside) {
                     token.SetOwner(this.owner);
                 }

@@ -8,7 +8,8 @@ public class CharacterAwareness : IAwareness {
     public List<CharacterRelationshipData> knownRelationships { get; private set; }
     public List<Trait> knownTraits { get; private set; }
     public List<GoapPlan> knownPlans { get; private set; }
-    public Area knownLocation { get; private set; }
+    public Area knownLocation { get { return knownGridLocation.parentAreaMap.area; } }
+    public LocationGridTile knownGridLocation { get; private set; }
 
     private Character _character;
 
@@ -17,7 +18,7 @@ public class CharacterAwareness : IAwareness {
         knownRelationships = new List<CharacterRelationshipData>();
         knownTraits = new List<Trait>();
         knownPlans = new List<GoapPlan>();
-        SetKnownLocation(character.specificLocation);
+        SetKnownGridLocation(character.gridTileLocation);
     }
 
     public void AddKnownRelationship(CharacterRelationshipData relationshipData) {
@@ -41,7 +42,10 @@ public class CharacterAwareness : IAwareness {
         knownPlans.Remove(plan);
     }
 
-    public void SetKnownLocation(Area area) {
-        knownLocation = area;
+    public void SetKnownGridLocation(LocationGridTile tile) {
+        knownGridLocation = tile;
     }
+
+    public void OnAddAwareness(Character character) { }
+    public void OnRemoveAwareness(Character character) { }
 }

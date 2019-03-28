@@ -23,7 +23,7 @@ public class Steal : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = poiTarget, targetPOI = actor });
     }
     public override void PerformActualAction() {
-        if(actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
+        if(poiTarget.gridTileLocation != null && actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
             SetState("Steal Success");
         } else {
             SetState("Target Missing");
@@ -46,7 +46,12 @@ public class Steal : GoapAction {
 
     #region Requirements
     protected bool Requirement() {
-        if(poiTarget.gridTileLocation != null && !actor.isHoldingItem && poiTarget.factionOwner != null) {
+        IAwareness awareness = actor.GetAwareness(poiTarget);
+        if (awareness == null) {
+            return false;
+        }
+        LocationGridTile knownLoc = awareness.knownGridLocation;
+        if (knownLoc != null && !actor.isHoldingItem && poiTarget.factionOwner != null) {
             if(actor.faction.id != poiTarget.factionOwner.id) {
                 return true;
             }
@@ -64,7 +69,7 @@ public class Steal : GoapAction {
         actor.PickUpToken(poiTarget as SpecialToken);
     }
     private void PreTargetMissing() {
-        currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
+        currentState.AddLogFiller(actor.currentStructure.location, actor.currentStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
         currentState.AddLogFiller(poiTarget as SpecialToken, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
     }
     public void AfterTargetMissing() {

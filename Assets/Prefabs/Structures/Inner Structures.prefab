@@ -236,7 +236,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224184709286759138}
   m_Layer: 29
-  m_Name: PortraitsParent
+  m_Name: ObjectsParent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -882,7 +882,7 @@ MonoBehaviour:
   rockTile: {fileID: 11400000, guid: 0dcf24bb189c1f643a2a4866a9ccd93c, type: 2}
   randomGarbTile: {fileID: 11400000, guid: 3080d1b756b2fa040bc7e7fd078bf0d5, type: 2}
   crateBarrelTile: {fileID: 11400000, guid: 6b086f52f77704c46a54b33f4dffaedd, type: 2}
-  charactersParent: {fileID: 224184709286759138}
+  objectsParent: {fileID: 224184709286759138}
   eventPopupPrefab: {fileID: 1904789271207382, guid: d6c210b076dd0154bbec1d7cbed06448,
     type: 2}
   eventPopupParent: {fileID: 224053078617451378}

@@ -16,7 +16,7 @@ public class EatAnimal : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = actor });
     }
     public override void PerformActualAction() {
-        if (actor.gridTileLocation == poiTarget.gridTileLocation) {
+        if (poiTarget.gridTileLocation != null && actor.gridTileLocation == poiTarget.gridTileLocation) {
             if(poiTarget.state != POI_STATE.INACTIVE) {
                 SetState("Eat Success");
             } else {
@@ -58,7 +58,7 @@ public class EatAnimal : GoapAction {
         currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
     }
     private void PreTargetMissing() {
-        currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
+        currentState.AddLogFiller(actor.currentStructure.location, actor.currentStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
     }
     private void AfterTargetMissing() {
         actor.RemoveAwareness(poiTarget);
@@ -67,10 +67,15 @@ public class EatAnimal : GoapAction {
 
     #region Requirements
     protected bool Requirement() {
-        if (poiTarget.state != POI_STATE.INACTIVE && poiTarget.gridTileLocation != null) {
-            if (poiTarget.gridTileLocation.occupant == null) {
+        IAwareness awareness = actor.GetAwareness(poiTarget);
+        if (awareness == null) {
+            return false;
+        }
+        LocationGridTile knownLoc = awareness.knownGridLocation;
+        if (poiTarget.state != POI_STATE.INACTIVE && knownLoc != null) {
+            if (knownLoc.occupant == null) {
                 return true;
-            } else if (poiTarget.gridTileLocation.occupant == actor) {
+            } else if (knownLoc.occupant == actor) {
                 return true;
             }
         }

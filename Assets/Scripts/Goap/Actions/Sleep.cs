@@ -16,7 +16,7 @@ public class Sleep : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = null, targetPOI = actor });
     }
     public override void PerformActualAction() {
-        if (actor.gridTileLocation == poiTarget.gridTileLocation) {
+        if (poiTarget.gridTileLocation != null && actor.gridTileLocation == poiTarget.gridTileLocation) {
             if (poiTarget.state != POI_STATE.INACTIVE) {
                 SetState("Rest Success");
             } else {
@@ -56,10 +56,15 @@ public class Sleep : GoapAction {
 
     #region Requirements
     protected bool Requirement() {
-        if(targetStructure.structureType == STRUCTURE_TYPE.DWELLING && poiTarget.gridTileLocation != null && poiTarget.state != POI_STATE.INACTIVE) {
-            if(poiTarget.gridTileLocation.occupant == null) {
+        IAwareness awareness = actor.GetAwareness(poiTarget);
+        if (awareness == null) {
+            return false;
+        }
+        LocationGridTile knownLoc = awareness.knownGridLocation;
+        if (targetStructure.structureType == STRUCTURE_TYPE.DWELLING && knownLoc != null && poiTarget.state != POI_STATE.INACTIVE) {
+            if(knownLoc.occupant == null) {
                 return true;
-            } else if (poiTarget.gridTileLocation.occupant == actor) {
+            } else if (knownLoc.occupant == actor) {
                 return true;
             }
         }
@@ -85,7 +90,7 @@ public class Sleep : GoapAction {
         currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
     }
     private void PreTargetMissing() {
-        currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
+        currentState.AddLogFiller(actor.currentStructure.location, actor.currentStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
     }
     //private void AfterTargetMissing() {
     //    actor.RemoveAwareness(poiTarget);

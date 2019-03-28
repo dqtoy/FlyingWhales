@@ -15,7 +15,7 @@ public class PickItemGoap : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = poiTarget, targetPOI = actor });
     }
     public override void PerformActualAction() {
-        if (actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
+        if (poiTarget.gridTileLocation != null && actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
             SetState("Take Success");
         } else {
             SetState("Target Missing");
@@ -33,7 +33,12 @@ public class PickItemGoap : GoapAction {
 
     #region Requirements
     protected bool Requirement() {
-        return !actor.isHoldingItem && poiTarget.gridTileLocation != null;
+        IAwareness awareness = actor.GetAwareness(poiTarget);
+        if (awareness == null) {
+            return false;
+        }
+        LocationGridTile knownLoc = awareness.knownGridLocation;
+        return !actor.isHoldingItem && knownLoc != null;
     }
     #endregion
 
@@ -47,7 +52,7 @@ public class PickItemGoap : GoapAction {
     }
     public void PreTargetMissing() {
         currentState.AddLogFiller(poiTarget as SpecialToken, poiTarget.name, LOG_IDENTIFIER.ITEM_1);
-        currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
+        currentState.AddLogFiller(actor.currentStructure.location, actor.currentStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
     }
     public void AfterTargetMissing() {
         actor.RemoveAwareness(poiTarget);

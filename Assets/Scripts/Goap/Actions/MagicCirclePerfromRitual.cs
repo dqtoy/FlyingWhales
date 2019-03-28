@@ -20,7 +20,8 @@ public class MagicCirclePerformRitual : GoapAction {
         //AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
     }
     public override void PerformActualAction() {
-        if (poiTarget.gridTileLocation.structure == actor.gridTileLocation.structure && actor.gridTileLocation.IsAdjacentTo(poiTarget)) {
+        if (poiTarget.gridTileLocation != null && poiTarget.gridTileLocation.structure == actor.gridTileLocation.structure 
+            && actor.gridTileLocation.IsAdjacentTo(poiTarget)) {
             if (poiTarget.state != POI_STATE.INACTIVE) {
                 SetState("Perform Ritual Success");
             } else {

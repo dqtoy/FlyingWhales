@@ -11,7 +11,7 @@
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = actor });
     }
     public override void PerformActualAction() {
-        if (actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
+        if (poiTarget.gridTileLocation != null && actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
             if (poiTarget.GetTrait("Poisoned") != null) {
                 SetState("Eat Poisoned");
             } else {
@@ -23,7 +23,8 @@
         base.PerformActualAction();
     }
     protected override int GetCost() {
-        Dwelling dwelling = poiTarget.gridTileLocation.structure as Dwelling;
+        LocationGridTile knownLoc = actor.GetAwareness(poiTarget).knownGridLocation;
+        Dwelling dwelling = knownLoc.structure as Dwelling;
         if (!dwelling.IsOccupied()) {
             return 10;
         } else {
@@ -80,7 +81,7 @@
         //TODO: DIFFERENT DESCRIPTION LOGS IN SAME STATE
     }
     private void PreTargetMissing() {
-        currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
+        currentState.AddLogFiller(actor.currentStructure.location, actor.currentStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
     }
     private void AfterTargetMissing() {
         actor.RemoveAwareness(poiTarget);
@@ -89,7 +90,12 @@
 
     #region Requirements
     protected bool Requirement() {
-        return poiTarget.gridTileLocation.structure.structureType == STRUCTURE_TYPE.DWELLING;
+        IAwareness awareness = actor.GetAwareness(poiTarget);
+        if (awareness == null) {
+            return false;
+        }
+        LocationGridTile knownLoc = awareness.knownGridLocation;
+        return knownLoc.structure.structureType == STRUCTURE_TYPE.DWELLING;
     }
     #endregion
 }
