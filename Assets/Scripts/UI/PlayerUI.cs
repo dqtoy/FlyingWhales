@@ -32,6 +32,7 @@ public class PlayerUI : MonoBehaviour {
     [Header("Role Slots")]
     [SerializeField] private GameObject roleSlotsParent;
     [SerializeField] private RoleSlotItem[] roleSlots;
+    [SerializeField] private Button assignBtn;
 
     [Header("Attack")]
     public GameObject attackGridGO;
@@ -113,6 +114,9 @@ public class PlayerUI : MonoBehaviour {
         Messenger.AddListener(Signals.UPDATED_CURRENCIES, UpdateUI);
         Messenger.AddListener<Intel>(Signals.PLAYER_OBTAINED_INTEL, OnIntelObtained);
         Messenger.AddListener<Intel>(Signals.PLAYER_REMOVED_INTEL, OnIntelRemoved);
+
+        Messenger.AddListener(Signals.ON_OPEN_SHARE_INTEL, OnOpenShareIntelMenu);
+        Messenger.AddListener(Signals.ON_CLOSE_SHARE_INTEL, OnCloseShareIntelMenu);
     }
 
     #region Role Slots
@@ -129,7 +133,6 @@ public class PlayerUI : MonoBehaviour {
             currIndex++;
         }
     }
-
     #endregion
 
     #region Attack UI
@@ -504,6 +507,25 @@ public class PlayerUI : MonoBehaviour {
             IntelItem currItem = intelItems[i];
             currItem.AddOtherClickAction(clickAction);
         }
+    }
+    private void OnOpenShareIntelMenu() {
+        intelToggle.isOn = false;
+        intelToggle.interactable = false;
+        for (int i = 0; i < roleSlots.Length; i++) {
+            RoleSlotItem rsi = roleSlots[i];
+            rsi.HideActionButtons();
+            rsi.OverrideDraggableState(false);
+        }
+        assignBtn.interactable = false;
+    }
+    private void OnCloseShareIntelMenu() {
+        intelToggle.interactable = true;
+        for (int i = 0; i < roleSlots.Length; i++) {
+            RoleSlotItem rsi = roleSlots[i];
+            rsi.UpdateActionButtons();
+            rsi.OverrideDraggableState(true);
+        }
+        assignBtn.interactable = true;
     }
     #endregion
 }

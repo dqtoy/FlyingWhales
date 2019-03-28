@@ -67,12 +67,17 @@ public class FactionInfoUI : UIMenu {
         Messenger.AddListener<Faction, Area>(Signals.FACTION_OWNED_AREA_REMOVED, OnFactionAreaRemoved);
         Messenger.AddListener<FactionRelationship>(Signals.FACTION_RELATIONSHIP_CHANGED, OnFactionRelationshipChanged);
         Messenger.AddListener<Faction>(Signals.FACTION_ACTIVE_CHANGED, OnFactionActiveChanged);
+        Messenger.AddListener(Signals.ON_OPEN_SHARE_INTEL, OnOpenShareIntelMenu);
+        Messenger.AddListener(Signals.ON_CLOSE_SHARE_INTEL, OnCloseShareIntelMenu);
     }
 
     public override void OpenMenu() {
         Faction previousArea = activeFaction;
         activeFaction = _data as Faction;
         base.OpenMenu();
+        if (UIManager.Instance.IsShareIntelMenuOpen()) {
+            backButton.interactable = false;
+        }
         UpdateFactionInfo();
         UpdateAllCharacters();
         UpdateAreas();
@@ -319,4 +324,11 @@ public class FactionInfoUI : UIMenu {
         }
     }
     #endregion
+
+    private void OnOpenShareIntelMenu() {
+        backButton.interactable = false;
+    }
+    private void OnCloseShareIntelMenu() {
+        backButton.interactable = UIManager.Instance.GetLastUIMenuHistory() != null;
+    }
 }

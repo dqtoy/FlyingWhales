@@ -112,6 +112,9 @@ public class CharacterInfoUI : UIMenu {
         Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
         Messenger.AddListener<Character>(Signals.CHARACTER_TRACKED, OnCharacterTracked);
+        Messenger.AddListener(Signals.ON_OPEN_SHARE_INTEL, OnOpenShareIntelMenu);
+        Messenger.AddListener(Signals.ON_CLOSE_SHARE_INTEL, OnCloseShareIntelMenu);
+
         InitializeLogsMenu();
     }
     private void InitializeLogsMenu() {
@@ -141,6 +144,9 @@ public class CharacterInfoUI : UIMenu {
         _previousCharacter = _activeCharacter;
         _activeCharacter = _data as Character;
         base.OpenMenu();
+        if (UIManager.Instance.IsShareIntelMenuOpen()) {
+            backButton.interactable = false;
+        }
         UpdateCharacterInfo();
         UpdateTraits();
         ResetAllScrollPositions();
@@ -644,6 +650,12 @@ public class CharacterInfoUI : UIMenu {
         //        CheckIfMenuShouldBeHidden();
         //    }
         //}
+    }
+    private void OnOpenShareIntelMenu() {
+        backButton.interactable = false;
+    }
+    private void OnCloseShareIntelMenu() {
+        backButton.interactable = UIManager.Instance.GetLastUIMenuHistory() != null;
     }
     #endregion
     private void CheckIfMenuShouldBeHidden() {

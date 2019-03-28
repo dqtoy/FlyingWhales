@@ -26,8 +26,7 @@ public class ChatCharacter : GoapAction {
     public override void PerformActualAction() {
         if (actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
             Character target = poiTarget as Character;
-            if (target.currentAction != null 
-                && (target.currentAction.goapType == INTERACTION_TYPE.SLEEP || target.currentAction.goapType == INTERACTION_TYPE.SLEEP_OUTSIDE)) {
+            if (IsTargetUnable(target)) {
                 SetState("Chat Fail");
             } else {
                 SetState("Chat Success");
@@ -133,6 +132,9 @@ public class ChatCharacter : GoapAction {
         actor.AdjustDoNotGetLonely(-1);
         (poiTarget as Character).AdjustDoNotGetLonely(-1);
     }
+    private void PreChatFail() {
+        currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+    }
     private void PreTargetMissing() {
         currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
     }
@@ -142,11 +144,18 @@ public class ChatCharacter : GoapAction {
     protected bool Requirement() {
         if (actor != poiTarget) {
             Character target = poiTarget as Character;
-            if (target.currentAction != null 
-                && (target.currentAction.goapType == INTERACTION_TYPE.SLEEP || target.currentAction.goapType == INTERACTION_TYPE.SLEEP_OUTSIDE)) {
-                return false;
-            }
+            if (IsTargetUnable(target)) return false;
             return target.role.roleType != CHARACTER_ROLE.BEAST;
+        }
+        return false;
+    }
+    private bool IsTargetUnable(Character target) {
+        if (target.currentAction != null
+                && (target.currentAction.goapType == INTERACTION_TYPE.SLEEP || target.currentAction.goapType == INTERACTION_TYPE.SLEEP_OUTSIDE)) {
+            return true;
+        }
+        if (target.GetTrait("Unconscious") != null) {
+            return true;
         }
         return false;
     }
