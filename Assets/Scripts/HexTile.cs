@@ -6,6 +6,7 @@ using System.Linq;
 
 using worldcreator;
 using SpriteGlow;
+using UnityEngine.EventSystems;
 
 public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 
@@ -1180,15 +1181,15 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         }
         //ShowHexTileInfo();
 #else
-        if (UIManager.Instance.IsMouseOnUI()) {
-            return;
-        }
-        if (Input.GetMouseButtonDown(0)) {
-            LeftClick();
-        }
-        if (Input.GetMouseButtonDown(1)) {
-            RightClick();
-        }
+        //if (UIManager.Instance.IsMouseOnUI()) {
+        //    return;
+        //}
+        //if (Input.GetMouseButtonDown(0)) {
+        //    LeftClick();
+        //}
+        //if (Input.GetMouseButtonDown(1)) {
+        //    RightClick();
+        //}
         if (this.landmarkOnTile != null) {
             _hoverHighlightGO.SetActive(true);
             //if (this.areaOfTile != null) {
@@ -1235,6 +1236,24 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         //}
 
 #endif
+    }
+    private void DoubleClick() {
+        //Debug.Log("double click");
+        if (areaOfTile != null) {
+            InteriorMapManager.Instance.ShowAreaMap(areaOfTile);
+        }
+    }
+    public void PointerClick(BaseEventData bed) {
+        PointerEventData ped = bed as PointerEventData;
+        if (ped.clickCount == 1) {
+            if (ped.button == PointerEventData.InputButton.Left) {
+                LeftClick();
+            } else if (ped.button == PointerEventData.InputButton.Right) {
+                RightClick();
+            }
+        } else if (ped.clickCount == 2) {
+            DoubleClick();
+        }
     }
     #endregion
 

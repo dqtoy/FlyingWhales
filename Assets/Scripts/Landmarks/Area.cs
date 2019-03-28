@@ -1686,7 +1686,15 @@ public class Area {
 
     #region Corpses
     public void AddCorpse(Character character, LocationStructure structure, LocationGridTile tile) {
-        structure.AddCorpse(character, tile);
+        LocationGridTile tileToUse = tile;
+        if (tile.tileState == LocationGridTile.Tile_State.Occupied) {
+            tileToUse = tile.GetNearestUnoccupiedTileFromThis();
+        }
+        if (tileToUse == null) {
+            Debug.LogWarning("Could not find a tile to place " + character.name + "'s corpse at " + structure.ToString());
+            return;
+        }
+        structure.AddCorpse(character, tileToUse);
     }
     public void RemoveCorpse(Character character) {
         foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp in structures) {
