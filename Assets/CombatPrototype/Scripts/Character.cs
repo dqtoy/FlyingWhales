@@ -4540,6 +4540,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public void FaceTarget(IPointOfInterest target) {
         if (this != target && !this.isDead && target.gridTileLocation != null && gridTileLocation != null) {
+            if (target is Character && (target as Character).isDead) {
+                return;
+            }
             marker.RotateMarker(gridTileLocation.centeredWorldLocation, target.gridTileLocation.centeredWorldLocation);
         }
     }
