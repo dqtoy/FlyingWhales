@@ -338,6 +338,9 @@ public class CharacterInfoUI : UIMenu {
         Utilities.DestroyChildren(relationshipTraitsScrollView.content);
         for (int i = 0; i < _activeCharacter.traits.Count; i++) {
             Trait currTrait = _activeCharacter.traits[i];
+            if (currTrait.type == TRAIT_TYPE.ABILITY || currTrait.type == TRAIT_TYPE.ATTACK || currTrait.type == TRAIT_TYPE.COMBAT_POSITION) {
+                continue; //hide combat traits
+            }
             if (currTrait is RelationshipTrait) {
                 CreateTraitGO(currTrait, relationshipTraitsScrollView.content);
             } else if (currTrait.type == TRAIT_TYPE.STATUS || currTrait.type == TRAIT_TYPE.DISABLER) {

@@ -6,6 +6,7 @@ using System.Linq;
 
 using worldcreator;
 using SpriteGlow;
+using UnityEngine.EventSystems;
 
 public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 
@@ -1235,6 +1236,15 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         //}
 
 #endif
+    }
+    private void DoubleClick() {
+        Debug.Log("double click");
+    }
+    public void PointerClick(BaseEventData bed) {
+        PointerEventData ped = bed as PointerEventData;
+        if (ped.clickCount == 2) {
+            DoubleClick();
+        }
     }
     #endregion
 
