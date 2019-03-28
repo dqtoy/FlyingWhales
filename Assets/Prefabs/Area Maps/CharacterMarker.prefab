@@ -23,7 +23,7 @@ GameObject:
   - component: {fileID: 114549982924036252}
   m_Layer: 5
   m_Name: TextMeshPro Text
-  m_TagString: Untagged
+  m_TagString: Character Marker
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -40,7 +40,7 @@ GameObject:
   - component: {fileID: 114912837801110162}
   m_Layer: 5
   m_Name: Text Container
-  m_TagString: Untagged
+  m_TagString: Character Marker
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -55,7 +55,7 @@ GameObject:
   - component: {fileID: 224131292797270362}
   m_Layer: 29
   m_Name: Marker Visuals
-  m_TagString: Untagged
+  m_TagString: Character Marker
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -72,7 +72,7 @@ GameObject:
   - component: {fileID: 114469744146774618}
   m_Layer: 29
   m_Name: Clicked
-  m_TagString: Untagged
+  m_TagString: Character Marker
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -90,7 +90,7 @@ GameObject:
   - component: {fileID: 120046060353121604}
   m_Layer: 29
   m_Name: CharacterMarker
-  m_TagString: Untagged
+  m_TagString: Character Marker
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -107,7 +107,7 @@ GameObject:
   - component: {fileID: 114974926749944748}
   m_Layer: 29
   m_Name: Hovered
-  m_TagString: Untagged
+  m_TagString: Character Marker
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -124,7 +124,7 @@ GameObject:
   - component: {fileID: 114210333423273764}
   m_Layer: 5
   m_Name: Action Icon
-  m_TagString: Untagged
+  m_TagString: Character Marker
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -141,7 +141,7 @@ GameObject:
   - component: {fileID: 114699231813471468}
   m_Layer: 29
   m_Name: Collision
-  m_TagString: Untagged
+  m_TagString: Character Marker
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -161,7 +161,7 @@ GameObject:
   - component: {fileID: 114825110122692990}
   m_Layer: 29
   m_Name: Main
-  m_TagString: Untagged
+  m_TagString: Character Marker
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -271,8 +271,6 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 5a6c315d820be4a47be6b608d557c894, type: 3}
     - {fileID: 21300000, guid: d0440b2a2239fdc4d9c82c807fb76a59, type: 3}
   animator: {fileID: 95186138413260264}
-  collisionTriggerPrefab: {fileID: 1745477595920248, guid: 9104eed68eaa2e04ebc3bc983c63654b,
-    type: 2}
 --- !u!114 &114469744146774618
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -440,11 +438,11 @@ MonoBehaviour:
     lineCount: 1
     pageCount: 1
     materialCount: 1
-  m_havePropertiesChanged: 0
+  m_havePropertiesChanged: 1
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
-  m_isInputParsingRequired: 0
+  m_isInputParsingRequired: 1
   m_inputSource: 0
   m_hasFontAssetChanged: 0
   m_subTextObjects:

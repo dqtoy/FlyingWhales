@@ -41,9 +41,9 @@ public class SupplyPile : TileObject, IPointOfInterest {
     }
 
     public override void SetGridTileLocation(LocationGridTile tile) {
-        if (tile != null) {
-            tile.SetTileAccess(LocationGridTile.Tile_Access.Impassable);
-        }
+        //if (tile != null) {
+        //    tile.SetTileAccess(LocationGridTile.Tile_Access.Impassable);
+        //}
         base.SetGridTileLocation(tile);
     }
 }

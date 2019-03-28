@@ -869,11 +869,11 @@ public class AreaInnerTileMap : MonoBehaviour {
                                 ovTile.hasDetail = true;
                                 detailsTilemap.SetTile(ovTile.localPlace, null);
                                 ovTile.SetTileState(LocationGridTile.Tile_State.Occupied);
-                                ovTile.SetTileAccess(LocationGridTile.Tile_Access.Impassable);
+                                //ovTile.SetTileAccess(LocationGridTile.Tile_Access.Impassable);
                             }
                             detailsTilemap.SetTile(currTile.localPlace, bigTreeTile);
                             currTile.SetTileState(LocationGridTile.Tile_State.Occupied);
-                            currTile.SetTileAccess(LocationGridTile.Tile_Access.Impassable);
+                            //currTile.SetTileAccess(LocationGridTile.Tile_Access.Impassable);
                         } else {
                             if (Random.Range(0, 100) < 50) {
                                 //shrubs
