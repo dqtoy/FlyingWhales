@@ -448,7 +448,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         get { return POINT_OF_INTEREST_TYPE.CHARACTER; }
     }
     public LocationGridTile gridTileLocation {
-        get { return tile; }
+        get {
+            if(tile == null) {
+                LocationGridTile gridTile = specificLocation.areaMap.map[(int) marker.mainRT.anchoredPosition.x, (int) marker.mainRT.anchoredPosition.y];
+                return gridTile;
+            }
+            return tile;
+        }
     }
     public POI_STATE state {
         get { return _state; }
@@ -729,12 +735,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             Messenger.Broadcast(Signals.CHARACTER_DEATH, this);
 
             Debug.Log(GameManager.Instance.TodayLogString() + this.name + " died of " + cause);
-            Log log = null;
-            if (isTracked) {
-                log = new Log(GameManager.Instance.Today(), "Character", "Generic", "death_" + cause);
-            } else {
-                log = new Log(GameManager.Instance.Today(), "Character", "Generic", "something_happened");
-            }
+            Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "death_" + cause);
+            //Log log = null;
+            //if (isTracked) {
+            //    log = new Log(GameManager.Instance.Today(), "Character", "Generic", "death_" + cause);
+            //} else {
+            //    log = new Log(GameManager.Instance.Today(), "Character", "Generic", "something_happened");
+            //}
             log.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             AddHistory(log);
             specificLocation.AddHistory(log);
@@ -1479,10 +1486,24 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     //}
     public void CenterOnCharacter() {
         if (!this.isDead) {
-            if (currentParty.icon.isTravelling && currentParty.icon.travelLine != null) {
-                CameraMove.Instance.CenterCameraOn(currentParty.icon.travelLine.iconImg.gameObject);
+            if (currentParty.icon.isTravelling) {
+                if(currentParty.icon.travelLine != null) {
+                    if (specificLocation.areaMap.isShowing) {
+                        InteriorMapManager.Instance.HideAreaMap();
+                        currentParty.icon.travelLine.OnClickTravelLine();
+                    }
+                    CameraMove.Instance.CenterCameraOn(currentParty.icon.travelLine.iconImg.gameObject);
+                } else {
+                    if (!specificLocation.areaMap.isShowing) {
+                        InteriorMapManager.Instance.ShowAreaMap(specificLocation);
+                    }
+                    AreaMapCameraMove.Instance.CenterCameraOn(marker.gameObject);
+                }
             } else {
-                CameraMove.Instance.CenterCameraOn(currentParty.specificLocation.coreTile.gameObject);
+                if (!specificLocation.areaMap.isShowing) {
+                    InteriorMapManager.Instance.ShowAreaMap(specificLocation);
+                }
+                AreaMapCameraMove.Instance.CenterCameraOn(marker.gameObject);
             }
         }
     }
@@ -4427,6 +4448,11 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             //StartDailyGoapPlanGeneration();
         }
         return false;
+    }
+    public void DropAllPlans() {
+        while(allGoapPlans.Count > 0) {
+            DropPlan(allGoapPlans[0]);
+        }
     }
     public GoapPlan GetPlanWithGoalEffect(GOAP_EFFECT_CONDITION goalEffect) {
         for (int i = 0; i < allGoapPlans.Count; i++) {

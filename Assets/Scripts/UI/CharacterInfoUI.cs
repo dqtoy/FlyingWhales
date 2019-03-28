@@ -132,6 +132,7 @@ public class CharacterInfoUI : UIMenu {
     public override void CloseMenu() {
         base.CloseMenu();
         _activeCharacter = null;
+        AreaMapCameraMove.Instance.CenterCameraOn(null);
         //UIManager.Instance.SetCoverState(false);
         //PlayerAbilitiesUI.Instance.HidePlayerAbilitiesUI();
         //PlayerUI.Instance.CollapseMinionHolder();
@@ -140,6 +141,7 @@ public class CharacterInfoUI : UIMenu {
     public override void OpenMenu() {
         _previousCharacter = _activeCharacter;
         _activeCharacter = _data as Character;
+        _activeCharacter.CenterOnCharacter();
         base.OpenMenu();
         UpdateCharacterInfo();
         UpdateTraits();

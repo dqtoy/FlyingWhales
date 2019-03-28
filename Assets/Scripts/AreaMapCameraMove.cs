@@ -161,6 +161,9 @@ public class AreaMapCameraMove : MonoBehaviour {
             Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.D)
             || (Minimap.Instance != null && Minimap.Instance.isDragging) || isDragging) {
             //reset target when player pushes a button to pan the camera
+            if(target != null) {
+                Messenger.Broadcast(Signals.CAMERA_OUT_OF_FOCUS);
+            }
             target = null;
         }
 
@@ -169,9 +172,9 @@ public class AreaMapCameraMove : MonoBehaviour {
             Vector3 delta = target.position - areaMapsCamera.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, point.z)); //(new Vector3(0.5, 0.5, point.z));
             Vector3 destination = transform.position + delta;
             transform.position = Vector3.SmoothDamp(transform.position, destination, ref velocity, dampTime);
-            if (HasReachedBounds() || (Mathf.Approximately(transform.position.x, destination.x) && Mathf.Approximately(transform.position.y, destination.y))) {
-                target = null;
-            }
+            //if (HasReachedBounds() || (Mathf.Approximately(transform.position.x, destination.x) && Mathf.Approximately(transform.position.y, destination.y))) {
+            //    target = null;
+            //}
         }
     }
     private bool startedOnUI = false;

@@ -220,6 +220,8 @@ public class UIManager : MonoBehaviour {
         Messenger.AddListener(Signals.INTERACTION_MENU_OPENED, OnInteractionMenuOpened);
         Messenger.AddListener(Signals.INTERACTION_MENU_CLOSED, OnInteractionMenuClosed);
         Messenger.AddListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnPartyStartedTravelling);
+        Messenger.AddListener<Party>(Signals.PARTY_DONE_TRAVELLING, OnPartyDoneTravelling);
+        Messenger.AddListener(Signals.CAMERA_OUT_OF_FOCUS, OnCameraOutOfFocus);
         Messenger.AddListener<Area>(Signals.AREA_MAP_OPENED, OnAreaMapOpened);
         Messenger.AddListener<Area>(Signals.AREA_MAP_CLOSED, OnAreaMapClosed);
 
@@ -1027,7 +1029,7 @@ public class UIManager : MonoBehaviour {
         //} else {
         //    characterInfoUI.CloseMenu();
         //}
-        character.CenterOnCharacter();
+        //character.CenterOnCharacter();
         //		playerActionsUI.ShowPlayerActionsUI ();
     }
     public void UpdateCharacterInfo() {
@@ -1038,7 +1040,16 @@ public class UIManager : MonoBehaviour {
     private void OnPartyStartedTravelling(Party party) {
         if(characterInfoUI.isShowing && party.characters.Contains(characterInfoUI.activeCharacter)) {
             characterInfoUI.activeCharacter.CenterOnCharacter();
-            characterInfoUI.activeCharacter.currentParty.icon.travelLine.OnClickTravelLine();
+        }
+    }
+    private void OnPartyDoneTravelling(Party party) {
+        if (characterInfoUI.isShowing && party.characters.Contains(characterInfoUI.activeCharacter)) {
+            characterInfoUI.activeCharacter.CenterOnCharacter();
+        }
+    }
+    private void OnCameraOutOfFocus() {
+        if (characterInfoUI.isShowing) {
+            characterInfoUI.OnClickCloseMenu();
         }
     }
     #endregion
@@ -1426,6 +1437,7 @@ public class UIManager : MonoBehaviour {
     }
     public void ReturnToWorlMap() {
         InteriorMapManager.Instance.HideAreaMap();
+        Messenger.Broadcast(Signals.CAMERA_OUT_OF_FOCUS);
     }
     #endregion
 

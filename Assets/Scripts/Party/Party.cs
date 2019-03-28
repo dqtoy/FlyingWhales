@@ -303,7 +303,7 @@ public class Party {
         //    _icon.SetQueuedAction(() => GoToLocation(targetLocation, pathfindingMode, doneAction, trackTarget, actionOnStartOfMovement));
         //    return;
         //}
-        if (_icon.isTravelling) {
+        if (_icon.isTravelling && _icon.travelLine != null) {
             return;
         }
         if (specificLocation == targetLocation) {
