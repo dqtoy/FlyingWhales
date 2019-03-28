@@ -51,6 +51,7 @@ public class CharacterMarker : PooledObject {
     public bool isStillMovingToAnotherTile { get; private set; }
     public InnerPathfindingThread pathfindingThread { get; private set; }
     public POICollisionTrigger collisionTrigger { get; private set; }
+    public Vector2 anchoredPos { get; private set; }
 
     #region getters/setters
     public List<LocationGridTile> currentPath {
@@ -361,6 +362,7 @@ public class CharacterMarker : PooledObject {
             if (!GameManager.Instance.isPaused) {
                 t += Time.deltaTime / GameManager.Instance.progressionSpeed;
                 mainRT.anchoredPosition = Vector3.Lerp(from, to, t);
+                anchoredPos = mainRT.anchoredPosition;
             }
             yield return null;
         }

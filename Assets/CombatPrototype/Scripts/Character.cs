@@ -450,7 +450,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public LocationGridTile gridTileLocation {
         get {
             if(tile == null) {
-                LocationGridTile gridTile = specificLocation.areaMap.map[(int) marker.mainRT.anchoredPosition.x, (int) marker.mainRT.anchoredPosition.y];
+                LocationGridTile gridTile = specificLocation.areaMap.map[(int) marker.anchoredPos.x, (int) marker.anchoredPos.y];
                 return gridTile;
             }
             return tile;

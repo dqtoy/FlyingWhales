@@ -20,12 +20,12 @@ public class EdiblePlant : TileObject, IPointOfInterest {
         SetPOIState(POI_STATE.INACTIVE);
         ScheduleCooldown(action);
     }
-    public override List<GoapAction> AdvertiseActionsToActor(Character actor, List<INTERACTION_TYPE> actorAllowedInteractions) {
-        if (actor.GetTrait("Herbivore") != null) { //Herbivores only
-            return base.AdvertiseActionsToActor(actor, actorAllowedInteractions);
-        }
-        return null;
-    }
+    //public override List<GoapAction> AdvertiseActionsToActor(Character actor, List<INTERACTION_TYPE> actorAllowedInteractions) {
+    //    if (actor.GetTrait("Herbivore") != null) { //Herbivores only
+    //        return base.AdvertiseActionsToActor(actor, actorAllowedInteractions);
+    //    }
+    //    return null;
+    //}
     public override string ToString() {
         return "Edible Plant " + id.ToString();
     }

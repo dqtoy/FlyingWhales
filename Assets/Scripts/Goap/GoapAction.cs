@@ -163,16 +163,23 @@ public class GoapAction {
         if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
             Character targetCharacter = poiTarget as Character;
             if(targetCharacter != actor) {
-                Debug.LogWarning(actor.name + " is planning to do something to " + targetCharacter.name + " at " + actor.specificLocation.name);
-                GameManager.Instance.SetPausedState(true);
+                string log = actor.name + " is planning to do something to " + targetCharacter.name + " at " + actor.specificLocation.name;
+                //GameManager.Instance.SetPausedState(true);
                 targetCharacter.AdjustIsWaitingForInteraction(1);
                 if (targetCharacter.currentAction != null && !targetCharacter.currentAction.isPerformingActualAction && !targetCharacter.currentAction.isDone) {
                     targetCharacter.SetCurrentAction(null);
+                    log += "\n- " + targetCharacter.name + " is not performing actual action setting current action to null...";
                 }
                 if (targetCharacter.currentParty.icon.isTravelling && targetCharacter.currentParty.icon.travelLine == null) {
                     targetCharacter.marker.StopMovement(() => MoveToDoAction(plan));
+                    log += "\n- " + targetCharacter.name + " is currently travelling, stopping movement";
+                    Debug.LogWarning(log);
                     return;
+                } else {
+                    log += "\n- " + targetCharacter.name + " is not travelling, actor is moving towards it...";
+                    Debug.LogWarning(log);
                 }
+
             }
         }
 

@@ -21,12 +21,12 @@ public class SmallAnimal : TileObject, IPointOfInterest {
         SetPOIState(POI_STATE.INACTIVE);
         ScheduleCooldown(action);
     }
-    public override List<GoapAction> AdvertiseActionsToActor(Character actor, List<INTERACTION_TYPE> actorAllowedInteractions) {
-        if (actor.GetTrait("Carnivore") != null) { //Carnivores only
-            return base.AdvertiseActionsToActor(actor, actorAllowedInteractions);
-        }
-        return null;
-    }
+    //public override List<GoapAction> AdvertiseActionsToActor(Character actor, List<INTERACTION_TYPE> actorAllowedInteractions) {
+    //    if (actor.GetTrait("Carnivore") != null) { //Carnivores only
+    //        return base.AdvertiseActionsToActor(actor, actorAllowedInteractions);
+    //    }
+    //    return null;
+    //}
     public override string ToString() {
         return "Small Animal " + id.ToString();
     }
