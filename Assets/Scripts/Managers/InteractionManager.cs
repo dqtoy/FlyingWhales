@@ -1045,6 +1045,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.PLAY:
                 goapAction = new Play(actor, target);
                 break;
+            case INTERACTION_TYPE.PATROL_ROAM:
+                goapAction = new PatrolRoam(actor, target);
+                break;
         }
         if(goapAction != null && willInitialize) {
             goapAction.Initialize();

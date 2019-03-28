@@ -6,7 +6,6 @@ public class Stroll : GoapAction {
     public override LocationStructure targetStructure { get { return _targetStructure; } }
 
     private LocationStructure _targetStructure;
-    private bool _isStrollFromPatrol;
 
     protected override string failActionState { get { return "Stroll Fail"; } }
 
@@ -14,7 +13,6 @@ public class Stroll : GoapAction {
         showIntelNotification = false;
         shouldAddLogs = false;
         actionIconString = GoapActionStateDB.No_Icon;
-        _isStrollFromPatrol = false;
     }
 
     #region Overrides
@@ -36,12 +34,6 @@ public class Stroll : GoapAction {
     //    base.FailAction();
     //    SetState("Stroll Fail");
     //}
-    public override void DoAction(GoapPlan plan) {
-        if (_isStrollFromPatrol) {
-            SetTargetStructure(actor.currentStructure);
-        }
-        base.DoAction(plan);
-    }
     #endregion
 
     #region State Effects
@@ -95,8 +87,5 @@ public class Stroll : GoapAction {
                 SetTargetStructure(area.GetRandomStructureOfType(chosenStructureType));
             }
         }
-    }
-    public void SetIsStrollFromPatrol(bool state) {
-        _isStrollFromPatrol = state;
     }
 }

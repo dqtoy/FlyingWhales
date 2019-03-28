@@ -4158,7 +4158,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         poiGoapActions.Add(INTERACTION_TYPE.SLEEP_OUTSIDE);
         poiGoapActions.Add(INTERACTION_TYPE.PRAY);
         poiGoapActions.Add(INTERACTION_TYPE.EXPLORE);
-        poiGoapActions.Add(INTERACTION_TYPE.PATROL);
+        //poiGoapActions.Add(INTERACTION_TYPE.PATROL);
         poiGoapActions.Add(INTERACTION_TYPE.CHAT_CHARACTER);
         poiGoapActions.Add(INTERACTION_TYPE.ARGUE_CHARACTER);
         poiGoapActions.Add(INTERACTION_TYPE.TRAVEL);
@@ -4540,6 +4540,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public void FaceTarget(IPointOfInterest target) {
         if (this != target && !this.isDead && target.gridTileLocation != null && gridTileLocation != null) {
+            if(target is Character) {
+                Character targetCharacter = target as Character;
+                if (targetCharacter.isDead) {
+                    return;
+                }
+            }
             marker.RotateMarker(gridTileLocation.centeredWorldLocation, target.gridTileLocation.centeredWorldLocation);
         }
     }

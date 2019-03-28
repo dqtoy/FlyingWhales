@@ -1078,6 +1078,10 @@ public class CharacterManager : MonoBehaviour {
             {CHARACTER_ROLE.CIVILIAN, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MINE_ACTION,
             } },
+            {CHARACTER_ROLE.SOLDIER, new INTERACTION_TYPE[] {
+                INTERACTION_TYPE.PATROL,
+                INTERACTION_TYPE.PATROL_ROAM,
+            } },
         };
     }
     private void ConstructAwayFromHomeInteractionWeights() {

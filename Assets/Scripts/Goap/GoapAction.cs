@@ -163,7 +163,8 @@ public class GoapAction {
         if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
             Character targetCharacter = poiTarget as Character;
             if(targetCharacter != actor) {
-                //GameManager.Instance.SetPausedState(true);
+                Debug.LogWarning(actor.name + " is planning to do something to " + targetCharacter.name + " at " + actor.specificLocation.name);
+                GameManager.Instance.SetPausedState(true);
                 targetCharacter.AdjustIsWaitingForInteraction(1);
                 if (targetCharacter.currentAction != null && !targetCharacter.currentAction.isPerformingActualAction && !targetCharacter.currentAction.isDone) {
                     targetCharacter.SetCurrentAction(null);
