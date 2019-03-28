@@ -17,7 +17,7 @@ public class CharacterMarker : PooledObject {
     public Character character { get; private set; }
     public LocationGridTile location { get; private set; }
 
-    [SerializeField] private RectTransform mainRT;
+    public RectTransform mainRT;
     [SerializeField] private RectTransform visualsRT;
     [SerializeField] private Image mainImg;
     [SerializeField] private Image hoveredImg;

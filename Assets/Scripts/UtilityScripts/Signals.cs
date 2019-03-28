@@ -112,6 +112,7 @@ public static class Signals {
     public static string DRAG_OBJECT_CREATED = "OnDragObjectCreated"; //Parameters (DragObject obj)
     public static string DRAG_OBJECT_DESTROYED = "OnDragObjectDestroyed"; //Parameters (DragObject obj)
     public static string SHOW_INTEL_NOTIFICATION = "ShowIntelNotification"; //Parameters (Intel)
+    public static string CAMERA_OUT_OF_FOCUS = "CameraOutOfFocus";
     public static string ON_OPEN_SHARE_INTEL = "OnOpenShareIntel";
     public static string ON_CLOSE_SHARE_INTEL = "OnCloseShareIntel";
     #endregion

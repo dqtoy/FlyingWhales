@@ -92,6 +92,7 @@ public class InteriorMapManager : MonoBehaviour {
         }
         currentlyShowingMap.Close();
         Messenger.Broadcast(Signals.AREA_MAP_CLOSED, currentlyShowingArea);
+        AreaMapCameraMove.Instance.CenterCameraOn(null);
         currentlyShowingMap = null;
         currentlyShowingArea = null;
     }

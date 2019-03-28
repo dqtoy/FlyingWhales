@@ -58,10 +58,13 @@ public class RileUp : PlayerJobAction {
         base.ActivateAction(assignedCharacter, _targetCharacter);
         UIManager.Instance.HideObjectPicker();
 
-        if(_targetCharacter.currentAction != null) {
-            _targetCharacter.SetHasAlreadyAskedForPlan(true);
+        _targetCharacter.AdjustIsWaitingForInteraction(1);
+        if (_targetCharacter.currentAction != null) {
             _targetCharacter.currentAction.StopAction();
         }
+        _targetCharacter.DropAllPlans();
+        _targetCharacter.AdjustIsWaitingForInteraction(-1);
+
         _targetCharacter.AddTrait("Berserker");
         _targetCharacter.currentParty.GoToLocation(area, PATHFINDING_MODE.NORMAL);
     }
