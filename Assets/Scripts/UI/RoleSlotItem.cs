@@ -15,6 +15,7 @@ public class RoleSlotItem : MonoBehaviour, IDragParentItem {
     [SerializeField] private TextMeshProUGUI jobNameLbl;
     [SerializeField] private Button assignBtn;
     [SerializeField] private RoleSlotItemDraggable draggable;
+    [SerializeField] private Image cooldownProgress;
 
     [Header("Job Actions")]
     [SerializeField] private GameObject jobActionBtnPrefab;
@@ -45,6 +46,7 @@ public class RoleSlotItem : MonoBehaviour, IDragParentItem {
         Messenger.AddListener<JOB, bool>(Signals.JOB_SLOT_LOCK_CHANGED, OnJobSlotLockChanged);
         Messenger.AddListener<DragObject>(Signals.DRAG_OBJECT_CREATED, OnDragObjectCreated);
         Messenger.AddListener<DragObject>(Signals.DRAG_OBJECT_DESTROYED, OnDragObjectDestroyed);
+        Messenger.AddListener<PlayerJobAction>(Signals.JOB_ACTION_COOLDOWN_ACTIVATED, OnJobCooldownActivated);
     }
 
     public void SetCharacter(Character character) {
@@ -75,6 +77,9 @@ public class RoleSlotItem : MonoBehaviour, IDragParentItem {
     private bool CanAssignCharacterToJob(Character character) {
         if (this.character != null && this.character.id == character.id) {
             return false; //This means that the character is already assigned to this job
+        }
+        if (PlayerManager.Instance.player.roleSlots[slotJob].isSlotLocked) {
+            return false;
         }
         JOB charactersJob = PlayerManager.Instance.player.GetCharactersCurrentJob(character);
         if (charactersJob != JOB.NONE 
@@ -194,6 +199,45 @@ public class RoleSlotItem : MonoBehaviour, IDragParentItem {
             ShowActionButtons(JOB_ACTION_TARGET.AREA);
         } else {
             HideActionButtons();
+        }
+    }
+    #endregion
+
+    #region Cooldown
+    private void OnJobCooldownActivated(PlayerJobAction action) {
+        if (PlayerManager.Instance.player.roleSlots[slotJob].activeAction == action) {
+            //the job that was activated is associated with this slot
+            if (action.isInCooldown) {
+                cooldownProgress.fillAmount = 1f;
+                Messenger.AddListener(Signals.TICK_ENDED, UpdateCooldownProgress);
+                Messenger.AddListener<PlayerJobAction>(Signals.JOB_ACTION_COOLDOWN_DONE, OnJobCooldownDone);
+            }
+        }
+    }
+    private void UpdateCooldownProgress() {
+        PlayerJobAction activeAction = PlayerManager.Instance.player.roleSlots[slotJob].activeAction;
+        float destinationValue = 1f - ((float)activeAction.ticksInCooldown / (float)activeAction.cooldown);
+        //float value = Mathf.Lerp(cooldownProgress.fillAmount, destinationValue, Time.deltaTime * 10f);
+        //cooldownProgress.fillAmount = value;
+        StartCoroutine(SmoothProgress(cooldownProgress.fillAmount, destinationValue));
+    }
+
+    IEnumerator SmoothProgress(float start, float end) {
+        float t = 0f;
+        while (t < 1) {
+            if (!GameManager.Instance.isPaused) {
+                t += Time.deltaTime / GameManager.Instance.progressionSpeed;
+                cooldownProgress.fillAmount = Mathf.Lerp(start, end, t);
+            }
+            yield return null;
+        }
+    }
+
+    private void OnJobCooldownDone(PlayerJobAction action) {
+        if (PlayerManager.Instance.player.roleSlots[slotJob].activeAction == action && !action.isInCooldown) {
+            Messenger.RemoveListener(Signals.TICK_ENDED, UpdateCooldownProgress);
+            Messenger.RemoveListener<PlayerJobAction>(Signals.JOB_ACTION_COOLDOWN_DONE, OnJobCooldownDone);
+            cooldownProgress.fillAmount = 0f;
         }
     }
     #endregion

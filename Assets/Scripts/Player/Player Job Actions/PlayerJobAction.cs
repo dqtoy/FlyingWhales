@@ -6,16 +6,16 @@ public class PlayerJobAction {
 
     public PlayerJobData parentData { get; protected set; }
     public string actionName { get; protected set; }
-	public int cooldown { get; protected set; } //cooldown in days
+	public int cooldown { get; protected set; } //cooldown in ticks
     public Character assignedCharacter { get; protected set; }
     public List<JOB_ACTION_TARGET> targettableTypes { get; protected set; } //what sort of objects can this action target
     public bool isActive { get; protected set; }
     public string btnSubText { get; protected set; }
 
-    public int daysInCooldown { get; private set; } //how many days has this action been in cooldown?
+    public int ticksInCooldown { get; private set; } //how many ticks has this action been in cooldown?
 
     public bool isInCooldown {
-        get { return daysInCooldown != cooldown; } //check if the days this action has been in cooldown is the same as cooldown
+        get { return ticksInCooldown != cooldown; } //check if the ticks this action has been in cooldown is the same as cooldown
     }
 
     public void SetParentData(PlayerJobData data) {
@@ -29,8 +29,8 @@ public class PlayerJobAction {
         }
         this.assignedCharacter = assignedCharacter;
         isActive = true;
-        ActivateCooldown();
         parentData.SetActiveAction(this);
+        ActivateCooldown();
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         Messenger.AddListener<JOB, Character>(Signals.CHARACTER_UNASSIGNED_FROM_JOB, OnCharacterUnassignedFromJob);
     }
@@ -83,20 +83,20 @@ public class PlayerJobAction {
     #region Cooldown
     protected void SetDefaultCooldownTime(int cooldown) {
         this.cooldown = cooldown;
-        daysInCooldown = cooldown;
+        ticksInCooldown = cooldown;
     }
     private void ActivateCooldown() {
-        daysInCooldown = 0;
+        ticksInCooldown = 0;
         parentData.SetLockedState(true);
         Messenger.AddListener(Signals.TICK_ENDED, CheckForCooldown);
         Messenger.Broadcast(Signals.JOB_ACTION_COOLDOWN_ACTIVATED, this);
     }
     private void CheckForCooldown() {
-        if (daysInCooldown == cooldown) {
+        if (ticksInCooldown == cooldown) {
             //cooldown has been reached!
             OnCooldownDone();
         } else {
-            daysInCooldown++;
+            ticksInCooldown++;
         }
     }
     private void OnCooldownDone() {
@@ -105,7 +105,7 @@ public class PlayerJobAction {
         Messenger.Broadcast(Signals.JOB_ACTION_COOLDOWN_DONE, this);
     }
     private void ResetCooldown() {
-        daysInCooldown = cooldown;
+        ticksInCooldown = cooldown;
         parentData.SetLockedState(false);
     }
     #endregion
