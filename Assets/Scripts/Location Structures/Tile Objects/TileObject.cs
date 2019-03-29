@@ -92,7 +92,7 @@ public class  TileObject : IPointOfInterest {
 
         return null;
     }
-    public void SetPOIState(POI_STATE state) {
+    public virtual void SetPOIState(POI_STATE state) {
         _state = state;
     }
 
