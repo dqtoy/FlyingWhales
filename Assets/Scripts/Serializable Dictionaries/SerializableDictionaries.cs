@@ -42,7 +42,7 @@ public class ItemTileBaseDictionary : SerializableDictionary<SPECIAL_TOKEN, Tile
 [System.Serializable]
 public class FoodTileBaseDictionary : SerializableDictionary<FOOD, TileBase> { }
 [System.Serializable]
-public class TileObjectTileBaseDictionary : SerializableDictionary<TILE_OBJECT_TYPE, TileBase> { }
+public class TileObjectTileBaseDictionary : SerializableDictionary<TILE_OBJECT_TYPE, TileObjectTileSetting> { }
 [System.Serializable]
 public class ItemSpriteDictionary : SerializableDictionary<SPECIAL_TOKEN, Sprite> { }
 

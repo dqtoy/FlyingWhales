@@ -10,7 +10,7 @@ public struct GameDate {
 
     public int continuousDays;
 
-    public GameDate(int month, int day, int year, int tick, int continuousDays = -1){
+    public GameDate(int month, int day, int year, int tick, int continuousDays){
         this.month = month;
 		this.day = day;
 		this.year = year;
@@ -212,17 +212,17 @@ public struct GameDate {
         return "Day " + ConvertToContinuousDays().ToString() + " " + GameManager.ConvertTickToTime(this.tick);
     }
 
-    public override bool Equals(object obj) {
-        //if (obj is GameDate) {
-        //    return Equals((GameDate)obj);
-        //}
-        return base.Equals(obj);
-    }
+    //public override bool Equals(object obj) {
+    //    //if (obj is GameDate) {
+    //    //    return Equals((GameDate)obj);
+    //    //}
+    //    return base.Equals(obj);
+    //}
 
-    public bool Equals(GameDate otherDate) {
-        if (this.year == otherDate.year && this.month == otherDate.month && this.day == otherDate.day) {
-            return true;
-        }
-        return false;
-    }
+    //public bool Equals(GameDate otherDate) {
+    //    if (this.year == otherDate.year && this.month == otherDate.month && this.day == otherDate.day) {
+    //        return true;
+    //    }
+    //    return false;
+    //}
 }

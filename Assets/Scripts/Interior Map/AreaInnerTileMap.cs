@@ -992,12 +992,10 @@ public class AreaInnerTileMap : MonoBehaviour {
                 break;
             case POINT_OF_INTEREST_TYPE.TILE_OBJECT:
                 TileObject to = obj as TileObject;
-                tileToUse = tileObjectTiles[to.tileObjectType];
+                tileToUse = tileObjectTiles[to.tileObjectType].activeTile;
                 tile.SetObjectHere(obj);
                 objectsTilemap.SetTile(tile.localPlace, tileToUse);
-                if (to is Tree) {
-                    detailsTilemap.SetTile(tile.localPlace, null);
-                }
+                detailsTilemap.SetTile(tile.localPlace, null);
                 break;
             default:
                 tileToUse = characterTile;
@@ -1066,6 +1064,25 @@ public class AreaInnerTileMap : MonoBehaviour {
         go.layer = LayerMask.NameToLayer("Area Maps");
         rect.anchoredPosition = pos;
         tile.SetPrefabHere(go);
+    }
+    /// <summary>
+    /// This is used to update tile objects with different active and inactive visuals
+    /// </summary>
+    /// <param name="obj"></param>
+    public void UpdateTileObjectVisual(TileObject obj) {
+        TileBase tileToUse = null;
+        switch (obj.state) {
+            case POI_STATE.ACTIVE:
+                tileToUse = tileObjectTiles[obj.tileObjectType].activeTile;
+                break;
+            case POI_STATE.INACTIVE:
+                tileToUse = tileObjectTiles[obj.tileObjectType].inactiveTile;
+                break;
+            default:
+                tileToUse = tileObjectTiles[obj.tileObjectType].activeTile;
+                break;
+        }
+        objectsTilemap.SetTile(obj.gridTileLocation.localPlace, tileToUse);
     }
     #endregion
 
@@ -1521,4 +1538,10 @@ public class ExploreArea {
 
         return hasVerticalNeighbour && hasHorizontalNeighbour; //if has both horizontal and vertical neighbour, the tile is a corner
     }
+}
+
+[System.Serializable]
+public struct TileObjectTileSetting {
+    public TileBase activeTile;
+    public TileBase inactiveTile;
 }

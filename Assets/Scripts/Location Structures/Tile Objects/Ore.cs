@@ -17,16 +17,21 @@ public class Ore : TileObject, IPointOfInterest {
         yield = Random.Range(15, 36);
     }
 
+    #region Overrides
     public override string ToString() {
         return "Ore " + id.ToString();
     }
-
+    public override void SetPOIState(POI_STATE state) {
+        base.SetPOIState(state);
+        gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this); //update visual based on state
+    }
     public override void SetGridTileLocation(LocationGridTile tile) {
         //if (tile != null) {
         //    tile.SetTileAccess(LocationGridTile.Tile_Access.Impassable);
         //}
         base.SetGridTileLocation(tile);
     }
+    #endregion
 
     public int GetSupplyPerMine() {
         if (yield < Supply_Per_Mine) {

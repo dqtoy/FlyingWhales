@@ -6,14 +6,14 @@ using System;
 public class SchedulingManager : MonoBehaviour {
 	public static SchedulingManager Instance;
 
-	private Dictionary<GameDate, List<Action>> schedules = new Dictionary<GameDate, List<Action>> ();
+	private Dictionary<GameDate, List<Action>> schedules = new Dictionary<GameDate, List<Action>> (new GameDateComparer());
 	private GameDate checkGameDate;
 
 	void Awake(){
 		Instance = this;
 	}
 	public void StartScheduleCalls(){
-		this.checkGameDate = new GameDate (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, GameManager.Instance.tick);
+		this.checkGameDate = new GameDate (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, GameManager.Instance.tick, GameManager.Instance.continuousDays);
 		Messenger.AddListener (Signals.TICK_ENDED, CheckSchedule);
 	}
 	private void CheckSchedule(){
@@ -27,16 +27,16 @@ public class SchedulingManager : MonoBehaviour {
 		}
 	}
 
-	internal void AddEntry(int month, int day, int year, int hour, Action act){
-		GameDate gameDate = new GameDate (month, day, year, hour);
-		if(this.schedules.ContainsKey(gameDate)){
-			this.schedules [gameDate].Add (act);
-		}else{
-			List<Action> acts = new List<Action> ();
-			acts.Add (act);
-			this.schedules.Add (gameDate, acts);
-		}
-	}
+	//internal void AddEntry(int month, int day, int year, int hour, Action act){
+	//	GameDate gameDate = new GameDate (month, day, year, hour);
+	//	if(this.schedules.ContainsKey(gameDate)){
+	//		this.schedules [gameDate].Add (act);
+	//	}else{
+	//		List<Action> acts = new List<Action> ();
+	//		acts.Add (act);
+	//		this.schedules.Add (gameDate, acts);
+	//	}
+	//}
 	internal void AddEntry(GameDate gameDate, Action act){
 		if(this.schedules.ContainsKey(gameDate)){
 			this.schedules [gameDate].Add (act);
@@ -49,8 +49,8 @@ public class SchedulingManager : MonoBehaviour {
 	internal void RemoveEntry(GameDate gameDate){
 		this.schedules.Remove (gameDate);
 	}
-	internal void RemoveSpecificEntry(int month, int day, int year, int hour, Action act){
-		GameDate gameDate = new GameDate (month, day, year, hour);
+	internal void RemoveSpecificEntry(int month, int day, int year, int hour, int continuousDays, Action act){
+		GameDate gameDate = new GameDate (month, day, year, hour, continuousDays);
 		if(this.schedules.ContainsKey(gameDate)){
 			List<Action> acts = this.schedules[gameDate];
 			for (int i = 0; i < acts.Count; i++) {
@@ -79,4 +79,17 @@ public class SchedulingManager : MonoBehaviour {
 			}
 		}
 	}
+}
+
+public class GameDateComparer : IEqualityComparer<GameDate> {
+    public bool Equals(GameDate x, GameDate y) {
+        if (x.year == y.year && x.month == y.month && x.day == y.day && x.tick == y.tick) {
+            return true;
+        }
+        return false;
+    }
+
+    public int GetHashCode(GameDate obj) {
+        return obj.GetHashCode();
+    }
 }

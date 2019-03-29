@@ -26,6 +26,10 @@ public class EdiblePlant : TileObject, IPointOfInterest {
     //    }
     //    return null;
     //}
+    public override void SetPOIState(POI_STATE state) {
+        base.SetPOIState(state);
+        gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this); //update visual based on state
+    }
     public override string ToString() {
         return "Edible Plant " + id.ToString();
     }
