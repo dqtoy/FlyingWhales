@@ -248,18 +248,21 @@ public class CharacterMarker : PooledObject {
         //Messenger.AddListener(Signals.TICK_STARTED, Move);
     }
     public void StopMovement(Action afterStoppingAction = null) {
-        Debug.LogWarning(character.name + " StopMovement function is called!");
+        string log = character.name + " StopMovement function is called!";
         _arrivalAction = null;
         if (Messenger.eventTable.ContainsKey(Signals.TILE_OCCUPIED)) {
             Messenger.RemoveListener<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, OnTileOccupied);
         }
         if (!isStillMovingToAnotherTile) {
-            CheckIfCurrentTileIsOccupiedOnStopMovement(afterStoppingAction);
+            log += "\n- Not moving to another tile, go to checker...";
+            CheckIfCurrentTileIsOccupiedOnStopMovement(afterStoppingAction, ref log);
         } else {
-            SetOnArriveAtTileAction(() => CheckIfCurrentTileIsOccupiedOnStopMovement(afterStoppingAction));
+            log += "\n- Still moving to another tile, wait until tile arrival...";
+            SetOnArriveAtTileAction(() => CheckIfCurrentTileIsOccupiedOnStopMovement(afterStoppingAction, ref log));
         }
+        Debug.LogWarning(log);
     }
-    private void CheckIfCurrentTileIsOccupiedOnStopMovement(Action afterStoppingAction = null) {
+    private void CheckIfCurrentTileIsOccupiedOnStopMovement(Action afterStoppingAction = null, ref string log) {
         if (character.gridTileLocation.isOccupied) {
             LocationGridTile newTargetTile = InteractionManager.Instance.GetTargetLocationTile(ACTION_LOCATION_TYPE.NEARBY, character, character.gridTileLocation, character.gridTileLocation.structure);
             if(newTargetTile != null) {

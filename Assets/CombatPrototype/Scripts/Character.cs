@@ -1655,7 +1655,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
     }
     public void ReEstablishRelationships(Dictionary<Character, CharacterRelationshipData> prevRelationships) {
+        relationships = prevRelationships;
+        foreach (KeyValuePair<Character, CharacterRelationshipData> kvp in relationships) {
+            List<RelationshipTrait> rels = new List<RelationshipTrait>(kvp.Value.rels);
+            kvp.Value.rels.Clear();
+            for (int i = 0; i < rels.Count; i++) {
 
+            }
+        }
     }
     public RelationshipTrait GetRelationshipTraitWith(Character character, RELATIONSHIP_TRAIT type) {
         if (relationships.ContainsKey(character)) {
