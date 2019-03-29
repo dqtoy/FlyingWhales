@@ -25,6 +25,16 @@ public class CraftItemGoap : GoapAction {
     protected override int GetCost() {
         return 2;
     }
+    protected override void CreateThoughtBubbleLog() {
+        base.CreateThoughtBubbleLog();
+        thoughtBubbleLog.AddToFillers(null, Utilities.GetArticleForWord(craftedItem.ToString()), LOG_IDENTIFIER.STRING_1);
+        thoughtBubbleMovingLog.AddToFillers(null, Utilities.GetArticleForWord(craftedItem.ToString()), LOG_IDENTIFIER.STRING_1);
+        planLog.AddToFillers(null, Utilities.GetArticleForWord(craftedItem.ToString()), LOG_IDENTIFIER.STRING_1);
+
+        thoughtBubbleLog.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(craftedItem.ToString()), LOG_IDENTIFIER.ITEM_1);
+        thoughtBubbleMovingLog.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(craftedItem.ToString()), LOG_IDENTIFIER.STRING_1);
+        planLog.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(craftedItem.ToString()), LOG_IDENTIFIER.STRING_1);
+    }
     #endregion
 
     #region Preconditions
@@ -41,7 +51,9 @@ public class CraftItemGoap : GoapAction {
 
     #region State Effects
     private void PreCraftSuccess() {
-        currentState.AddLogFiller(poiTarget as SpecialToken, poiTarget.gridTileLocation.structure.ToString(), LOG_IDENTIFIER.LANDMARK_1);
+        currentState.AddLogFiller(null, Utilities.GetArticleForWord(craftedItem.ToString()), LOG_IDENTIFIER.STRING_1);
+        currentState.AddLogFiller(null, Utilities.NormalizeStringUpperCaseFirstLetters(craftedItem.ToString()), LOG_IDENTIFIER.ITEM_1);
+
         actor.AdjustSupply(-ItemManager.Instance.itemData[craftedItem].craftCost);
     }
     private void AfterCraftSuccess() {

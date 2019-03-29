@@ -414,15 +414,15 @@ public class LocationStructure {
     public virtual string GetNameRelativeTo(Character character) {
         switch (structureType) {
             case STRUCTURE_TYPE.INN:
-                return "at the inn";
+                return "the inn";
             case STRUCTURE_TYPE.WAREHOUSE:
-                return "at the " + location.name + " warehouse";
+                return "the " + location.name + " warehouse";
             case STRUCTURE_TYPE.WILDERNESS:
-                return "outside of " + location.name;
+                return "the outside of " + location.name;
             case STRUCTURE_TYPE.DUNGEON:
             case STRUCTURE_TYPE.WORK_AREA:
             case STRUCTURE_TYPE.EXPLORE_AREA:
-                return "in " + location.name;
+                return location.name;
             default:
                 return ToString();
         }

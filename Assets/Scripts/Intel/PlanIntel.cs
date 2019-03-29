@@ -10,6 +10,6 @@ public class PlanIntel : Intel {
     public PlanIntel(Character actor, GoapPlan plan) {
         this.actor = actor;
         this.plan = plan;
-        SetIntelLog(plan.endNode.action.thoughtBubbleLog);
+        SetIntelLog(plan.endNode.action.planLog);
     }
 }

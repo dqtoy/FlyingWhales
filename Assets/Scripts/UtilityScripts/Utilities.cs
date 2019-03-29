@@ -812,6 +812,20 @@ public class Utilities : MonoBehaviour {
             .Where(c => !Char.IsWhiteSpace(c))
             .ToArray());
     }
+    public static string GetArticleForWord(string word, bool capitalized = false) {
+        char firstCharacter = word.ToLower().First();
+        if (firstCharacter == 'a' || firstCharacter == 'e' || firstCharacter == 'i' || firstCharacter == 'o' || firstCharacter == 'u') {
+            if (capitalized) {
+                return "An";
+            }
+            return "an";
+        } else {
+            if (capitalized) {
+                return "A";
+            }
+            return "a";
+        }
+    }
     #endregion
 
     #region Weighted Dictionary

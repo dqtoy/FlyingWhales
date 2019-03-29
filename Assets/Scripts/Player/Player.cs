@@ -92,7 +92,7 @@ public class Player : ILeader {
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
 
         //goap
-        Messenger.AddListener<Character, GoapPlan>(Signals.CHARACTER_WILL_DO_PLAN, OnCharacterRecievedPlan);
+        Messenger.AddListener<Character, GoapPlan>(Signals.CHARACTER_WILL_DO_PLAN, OnCharacterWillDoPlan);
         Messenger.AddListener<Character, GoapAction>(Signals.CHARACTER_DID_ACTION, OnCharacterDidAction);
     }
 
@@ -685,9 +685,11 @@ public class Player : ILeader {
     public bool AlreadyHasIntel(Intel intel) {
         return allIntel.Contains(intel);
     }
-    private void OnCharacterRecievedPlan(Character character, GoapPlan plan) {
+    private void OnCharacterWillDoPlan(Character character, GoapPlan plan) {
         bool showPopup = false;
-        if (plan.endNode.action.showIntelNotification) {
+        
+        if (plan.endNode.action.showIntelNotification 
+            && !string.IsNullOrEmpty(LocalizationManager.Instance.GetLocalizedValue(plan.endNode.action.planLog.category, plan.endNode.action.planLog.file, plan.endNode.action.planLog.key))) { //do not show notification if plan log of end node is null, usually means that the action is not that important
             if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.id == character.id) {
                 showPopup = true;
             } else if (roleSlots[JOB.SPY].activeAction is Track) {

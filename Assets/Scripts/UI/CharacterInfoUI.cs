@@ -186,6 +186,10 @@ public class CharacterInfoUI : UIMenu {
         nameLbl.text = _activeCharacter.name;
         lvlClassLbl.text = _activeCharacter.raceClassName;
         supplyLbl.text = _activeCharacter.supply.ToString();
+        UpdateThoughtBubble();
+    }
+
+    private void UpdateThoughtBubble() {
         //Disabler Thought
         if (_activeCharacter.doNotDisturb > 0) {
             Trait disablerTrait = _activeCharacter.GetTraitOf(TRAIT_TYPE.DISABLER);
@@ -200,20 +204,35 @@ public class CharacterInfoUI : UIMenu {
         }
 
         //Travel Thought
-        if (!_activeCharacter.isDead && _activeCharacter.currentParty.icon.isTravelling && _activeCharacter.currentParty.icon.travelLine != null) {
-            plansLbl.text = _activeCharacter.name + " is travelling to " + _activeCharacter.currentParty.icon.targetLocation.name + ".";
+        if (!_activeCharacter.isDead && _activeCharacter.currentParty.icon.isTravelling) {
+            //&& _activeCharacter.currentParty.icon.travelLine != null
+            if (_activeCharacter.currentAction != null) {
+                //use moving log of current action
+                plansLblLogItem.SetLog(_activeCharacter.currentAction.thoughtBubbleMovingLog);
+                plansLbl.text = Utilities.LogReplacer(_activeCharacter.currentAction.thoughtBubbleMovingLog);
+            } else {
+                plansLbl.text = _activeCharacter.name + " is travelling.";
+            }
             return;
         }
 
-        //Planned Action
-        if (_activeCharacter.currentAction != null && !_activeCharacter.currentAction.isStopped && !_activeCharacter.currentAction.isDone) {
-            if (_activeCharacter.currentAction.currentState == null) {
+        //Action
+        if (_activeCharacter.currentAction != null && !_activeCharacter.currentAction.isStopped) {
+            if (!_activeCharacter.currentAction.isDone) {
+                //the current action is not yet done, has a duration?
                 plansLblLogItem.SetLog(_activeCharacter.currentAction.thoughtBubbleLog);
                 plansLbl.text = Utilities.LogReplacer(_activeCharacter.currentAction.thoughtBubbleLog);
             } else {
                 plansLblLogItem.SetLog(_activeCharacter.currentAction.currentState.descriptionLog);
                 plansLbl.text = Utilities.LogReplacer(_activeCharacter.currentAction.currentState.descriptionLog);
             }
+            //if (_activeCharacter.currentAction.currentState == null) {
+            //    plansLblLogItem.SetLog(_activeCharacter.currentAction.thoughtBubbleLog);
+            //    plansLbl.text = Utilities.LogReplacer(_activeCharacter.currentAction.thoughtBubbleLog);
+            //} else {
+            //    plansLblLogItem.SetLog(_activeCharacter.currentAction.currentState.descriptionLog);
+            //    plansLbl.text = Utilities.LogReplacer(_activeCharacter.currentAction.currentState.descriptionLog);
+            //}
             //plansLbl.text = _activeCharacter.name + " does not have any immediate plans at the moment.";
             return;
         }
@@ -222,8 +241,8 @@ public class CharacterInfoUI : UIMenu {
         if (_activeCharacter.currentStructure != null) {
             plansLbl.text =  _activeCharacter.name + " is " + _activeCharacter.currentStructure.GetNameRelativeTo(_activeCharacter);
         }
-        
-        
+
+
         //if (_activeCharacter.isAtHomeStructure) {
         //    plansLbl.text = _activeCharacter.name + " is at home.";
         //} else {

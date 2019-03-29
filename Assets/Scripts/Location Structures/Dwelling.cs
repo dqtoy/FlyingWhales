@@ -61,7 +61,7 @@ public class Dwelling : LocationStructure {
     public override string GetNameRelativeTo(Character character) {
         if (character.homeStructure == this) {
             //- Dwelling where Actor Resides: "at [his/her] home"
-            return "at " + Utilities.GetPronounString(character.gender, PRONOUN_TYPE.POSSESSIVE, false) + " home";
+            return Utilities.GetPronounString(character.gender, PRONOUN_TYPE.POSSESSIVE, false) + " home";
         } else if (residents.Count > 0) {
             //- Dwelling where Someone else Resides: "at [Resident Name]'s home"
             string residentSummary = residents[0].name;
@@ -74,12 +74,12 @@ public class Dwelling : LocationStructure {
                 residentSummary += residents[i].name;
             }
             if (residentSummary.Last() == 's') {
-                return "at " + residentSummary + "' home";
+                return residentSummary + "' home";
             }
-            return "at " + residentSummary + "'s home";
+            return residentSummary + "'s home";
         } else {
             //- Dwelling where no one resides: "at an empty house"
-            return "at an empty house";
+            return "an empty house";
         }
     }
 }

@@ -42,11 +42,6 @@ public class GoapActionState {
 
     public void Execute() {
         preEffect?.Invoke();
-        if (parentAction.shouldAddLogs) {
-            descriptionLog.SetDate(GameManager.Instance.Today());
-            descriptionLog.AddLogToInvolvedObjects();
-        }
-
         parentAction.SetExecutionDate(GameManager.Instance.Today());
 
         if(duration > 0) {
@@ -63,6 +58,10 @@ public class GoapActionState {
         //Messenger.RemoveListener(Signals.TICK_STARTED, PerTickEffect);
         if (afterEffect != null) {
             afterEffect();
+        }
+        if (parentAction.shouldAddLogs) {
+            descriptionLog.SetDate(GameManager.Instance.Today());
+            descriptionLog.AddLogToInvolvedObjects();
         }
         parentAction.ReturnToActorTheActionResult(status);
     }

@@ -33,7 +33,7 @@ public class ItemDestroy : GoapAction {
 
     #region State Effects
     private void PreDestroySuccess() {
-        currentState.AddLogFiller(null, poiTarget.name, LOG_IDENTIFIER.ITEM_1);
+        currentState.AddLogFiller(null, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         currentState.AddLogFiller(poiTarget.gridTileLocation.structure.location, poiTarget.gridTileLocation.structure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
     }
     private void AfterDestroySuccess() {
@@ -41,7 +41,7 @@ public class ItemDestroy : GoapAction {
         poiTarget.gridTileLocation.structure.RemovePOI(poiTarget);
     }
     private void PreTargetMissing() {
-        currentState.AddLogFiller(null, poiTarget.name, LOG_IDENTIFIER.ITEM_1);
+        currentState.AddLogFiller(null, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
     }
     #endregion
 
