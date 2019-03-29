@@ -1660,7 +1660,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             List<RelationshipTrait> rels = new List<RelationshipTrait>(kvp.Value.rels);
             kvp.Value.rels.Clear();
             for (int i = 0; i < rels.Count; i++) {
-
+                CharacterManager.Instance.CreateNewRelationshipBetween(this, kvp.Key, rels[i].relType);
             }
         }
     }

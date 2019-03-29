@@ -221,7 +221,7 @@ public class UIManager : MonoBehaviour {
         Messenger.AddListener(Signals.INTERACTION_MENU_CLOSED, OnInteractionMenuClosed);
         Messenger.AddListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnPartyStartedTravelling);
         Messenger.AddListener<Party>(Signals.PARTY_DONE_TRAVELLING, OnPartyDoneTravelling);
-        Messenger.AddListener(Signals.CAMERA_OUT_OF_FOCUS, OnCameraOutOfFocus);
+        //Messenger.AddListener(Signals.CAMERA_OUT_OF_FOCUS, OnCameraOutOfFocus);
         Messenger.AddListener<Area>(Signals.AREA_MAP_OPENED, OnAreaMapOpened);
         Messenger.AddListener<Area>(Signals.AREA_MAP_CLOSED, OnAreaMapClosed);
 
@@ -1430,7 +1430,7 @@ public class UIManager : MonoBehaviour {
     }
     public void ReturnToWorlMap() {
         InteriorMapManager.Instance.HideAreaMap();
-        Messenger.Broadcast(Signals.CAMERA_OUT_OF_FOCUS);
+        OnCameraOutOfFocus();
     }
     #endregion
 

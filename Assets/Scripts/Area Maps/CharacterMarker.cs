@@ -260,7 +260,6 @@ public class CharacterMarker : PooledObject {
             log += "\n- Still moving to another tile, wait until tile arrival...";
             SetOnArriveAtTileAction(() => CheckIfCurrentTileIsOccupiedOnStopMovement(ref log, afterStoppingAction));
         }
-        Debug.LogWarning(log);
     }
 
     private void CheckIfCurrentTileIsOccupiedOnStopMovement(ref string log, Action afterStoppingAction = null) {
@@ -294,6 +293,7 @@ public class CharacterMarker : PooledObject {
                 afterStoppingAction();
             }
         }
+        Debug.LogWarning(log);
     }
     private void Move() {
         if (character.isDead) {
