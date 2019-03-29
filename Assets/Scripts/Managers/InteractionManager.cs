@@ -1048,6 +1048,12 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.PATROL_ROAM:
                 goapAction = new PatrolRoam(actor, target);
                 break;
+            case INTERACTION_TYPE.TRANSFORM_TO_WOLF:
+                goapAction = new TransformToWolfForm(actor, target);
+                break;
+            case INTERACTION_TYPE.REVERT_TO_NORMAL:
+                goapAction = new RevertToNormalForm(actor, target);
+                break;
         }
         if(goapAction != null && willInitialize) {
             goapAction.Initialize();

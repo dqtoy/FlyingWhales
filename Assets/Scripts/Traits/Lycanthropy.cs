@@ -5,7 +5,7 @@ using UnityEngine;
 public class Lycanthropy : Trait {
 
     private Character _character;
-    private LycanthropyData _data;
+    public LycanthropyData data { get; private set; }
 
     public Lycanthropy() {
         name = "Lycanthropy";
@@ -24,7 +24,7 @@ public class Lycanthropy : Trait {
     #region Overrides
     public override void OnAddTrait(IPointOfInterest sourceCharacter) {
         _character = sourceCharacter as Character;
-        _data = new LycanthropyData();
+        data = new LycanthropyData();
         base.OnAddTrait(sourceCharacter);
     }
     public override void OnRemoveTrait(IPointOfInterest sourceCharacter) {
@@ -33,28 +33,85 @@ public class Lycanthropy : Trait {
     }
     #endregion
 
+    public void PlanTransformToWolf() {
+        GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.TRANSFORM_TO_WOLF, _character, _character);
+        GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
+        GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.REACTION);
+        _character.allGoapPlans.Add(goapPlan);
+    }
+    public void PlanRevertToNormal() {
+        GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.REVERT_TO_NORMAL, _character, _character);
+        GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
+        GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.REACTION);
+        _character.allGoapPlans.Add(goapPlan);
+    }
     public void TurnToWolf() {
-        //Refill all needs meters to full and immediately end sleep, store previous needs values somewhere
+        //Drop all plans except for the current action
         _character.AdjustIsWaitingForInteraction(1);
-        _character.DropAllPlans();
+        _character.DropAllPlans(_character.GetPlanWithAction(_character.currentAction));
         _character.AdjustIsWaitingForInteraction(-1);
 
-        _data.SetData(_character);
+        //Copy non delicate data
+        data.SetData(_character);
 
+        //Reset needs
         _character.ResetFullnessMeter();
         _character.ResetHappinessMeter();
         _character.ResetTirednessMeter();
+
+
+        //Only retain awareness of characters, small animals, and edible plants, all other awareness must be deleted
+        if (_character.awareness.ContainsKey(POINT_OF_INTEREST_TYPE.ITEM)) {
+            _character.awareness.Remove(POINT_OF_INTEREST_TYPE.ITEM);
+        }
+        if (_character.awareness.ContainsKey(POINT_OF_INTEREST_TYPE.TILE_OBJECT)) {
+            for (int i = 0; i < _character.awareness[POINT_OF_INTEREST_TYPE.TILE_OBJECT].Count; i++) {
+                TileObjectAwareness toa = _character.awareness[POINT_OF_INTEREST_TYPE.TILE_OBJECT][i] as TileObjectAwareness;
+                if(toa.tileObject.tileObjectType != TILE_OBJECT_TYPE.SMALL_ANIMAL && toa.tileObject.tileObjectType != TILE_OBJECT_TYPE.EDIBLE_PLANT) {
+                    _character.RemoveAwareness(toa.poi);
+                    i--;
+                }
+            }
+        }
+
+        //Change faction and race
+        _character.ChangeFactionTo(FactionManager.Instance.neutralFaction);
         _character.ChangeRace(RACE.WOLF);
 
-        _data.SetRelationshipData(_character);
+        //Copy relationship data then remove them
+        data.SetRelationshipData(_character);
         _character.RemoveAllRelationships();
 
-        _data.SetTraits(_character);
+        //Copy traits and then remove them
+        data.SetTraits(_character);
+        _character.RemoveAllTraits("Lycanthropy");
 
+        //Plan idle stroll to the wilderness
         _character.PlanIdleStroll(_character.specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS));
+    }
 
+    public void RevertToNormal() {
+        //Drop all plans except for the current action
+        _character.AdjustIsWaitingForInteraction(1);
+        _character.DropAllPlans(_character.GetPlanWithAction(_character.currentAction));
+        _character.AdjustIsWaitingForInteraction(-1);
 
-        //Change race to Wolf
+        //Revert back data including awareness
+        _character.SetFullness(data.fullness);
+        _character.SetTiredness(data.tiredness);
+        _character.SetHappiness(data.happiness);
+        _character.CopyAwareness(data.awareness);
+        _character.SetHomeStructure(data.homeStructure);
+        _character.ChangeFactionTo(data.faction);
+        _character.ChangeRace(data.race);
+
+        //Bring back lost relationships
+        _character.ReEstablishRelationships(data.relationships);
+
+        //Revert back the traits
+        for (int i = 0; i < data.traits.Count; i++) {
+            _character.AddTrait(data.traits[i]);
+        }
     }
 }
 
@@ -62,24 +119,42 @@ public class LycanthropyData {
     public int fullness { get; private set; }
     public int tiredness { get; private set; }
     public int happiness { get; private set; }
+    public Faction faction { get; private set; }
     public Dictionary<POINT_OF_INTEREST_TYPE, List<IAwareness>> awareness { get; private set; }
-    public Dictionary<Character, CharacterRelationshipData> relationships { get; private set; }
+    public List<RelationshipLycanthropyData> relationships { get; private set; }
     public List<Trait> traits { get; set; }
-    public LocationStructure homeStructure { get; private set; }
+    public Dwelling homeStructure { get; private set; }
     public RACE race { get; private set; }
 
     public void SetData(Character character) {
         this.fullness = character.fullness;
         this.tiredness = character.tiredness;
         this.happiness = character.happiness;
+        this.faction = character.faction;
         this.awareness = new Dictionary<POINT_OF_INTEREST_TYPE, List<IAwareness>>(character.awareness);
         this.homeStructure = character.homeStructure;
         this.race = character.race;
     }
+
     public void SetRelationshipData(Character character) {
-        this.relationships = new Dictionary<Character, CharacterRelationshipData>(character.relationships);
+        this.relationships = new List<RelationshipLycanthropyData>();
+        foreach (KeyValuePair<Character, CharacterRelationshipData> kvp in character.relationships) {
+            this.relationships.Add(new RelationshipLycanthropyData(kvp.Key, kvp.Value, kvp.Key.GetCharacterRelationshipData(character)));
+        }
     }
     public void SetTraits(Character character) {
         this.traits = new List<Trait>(character.traits);
+    }
+}
+
+public class RelationshipLycanthropyData {
+    public Character target { get; private set; }
+    public CharacterRelationshipData characterToTargetRelData { get; private set; }
+    public CharacterRelationshipData targetToCharacterRelData { get; private set; }
+
+    public RelationshipLycanthropyData(Character target, CharacterRelationshipData characterToTargetRelData, CharacterRelationshipData targetToCharacterRelData) {
+        this.target = target;
+        this.characterToTargetRelData = characterToTargetRelData;
+        this.targetToCharacterRelData = targetToCharacterRelData;
     }
 }
