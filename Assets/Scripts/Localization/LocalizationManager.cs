@@ -58,6 +58,9 @@ public class LocalizationManager : MonoBehaviour {
 					LocalizationData loadedData = JsonUtility.FromJson<LocalizationData> (dataAsJson);
 
 					for (int k = 0; k < loadedData.items.Count; k++) {
+                        if (this._localizedText[categoryName][fileName].ContainsKey(loadedData.items[k].key)) {
+                            throw new System.Exception("Duplicate key " + loadedData.items[k].key + " in " + fileName);
+                        }
 						this._localizedText[categoryName][fileName].Add(loadedData.items [k].key, loadedData.items [k].value);   
 					}
 					//Debug.Log ("Data loaded, dictionary contains: " + this._localizedText.Count + " entries");

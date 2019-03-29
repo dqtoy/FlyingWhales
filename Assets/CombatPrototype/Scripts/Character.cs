@@ -3784,7 +3784,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             AdjustTiredness(-10);
         }
         if (_doNotGetLonely <= 0) {
-            AdjustHappiness(-5);
+            AdjustHappiness(-7);
         }
     }
     public string GetNeedsSummary() {
@@ -4653,7 +4653,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         summary += "\n StackTrace: " + StackTraceUtility.ExtractStackTrace();
 
         actionHistory.Add(summary);
-        if (actionHistory.Count > 50) {
+        if (actionHistory.Count > 10) {
             actionHistory.RemoveAt(0);
         }
 

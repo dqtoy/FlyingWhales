@@ -35,7 +35,9 @@ public class GoapAction {
     public LocationGridTile targetTile { get; protected set; }
     public Dictionary<string, GoapActionState> states { get; protected set; }
     public List<GoapEffect> actualEffects { get; private set; } //stores what really happened. NOTE: Only storing relevant data to share intel, no need to store everything that happened.
-    public Log thoughtBubbleLog { get; protected set; }
+    public Log thoughtBubbleLog { get; protected set; } //used if the current state of this action has a duration
+    public Log thoughtBubbleMovingLog { get; protected set; } //used when the actor is moving with this as his/her current action
+    public Log planLog { get; protected set; } //used for notification when a character starts this action. NOTE: Do not show notification if this is null
     public GoapActionState currentState { get; private set; }
     public GoapPlan parentPlan { get { return actor.GetPlanWithAction(this); } }
     public bool isStopped { get; private set; }
@@ -138,16 +140,17 @@ public class GoapAction {
     protected virtual void CreateThoughtBubbleLog() {
         thoughtBubbleLog = new Log(GameManager.Instance.Today(), "GoapAction", this.GetType().ToString(), "thought_bubble");
         if (thoughtBubbleLog != null) {
-            thoughtBubbleLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            thoughtBubbleLog.AddToFillers(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER); //Target character is only the identifier but it doesn't mean that this is a character, it can be item, etc.
-            if (targetStructure != null) {
-                thoughtBubbleLog.AddToFillers(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
-            } else {
-                thoughtBubbleLog.AddToFillers(actor.specificLocation, actor.specificLocation.name, LOG_IDENTIFIER.LANDMARK_1);
-            }
+            AddDefaultObjectsToLog(thoughtBubbleLog);
+        }
+        thoughtBubbleMovingLog = new Log(GameManager.Instance.Today(), "GoapAction", this.GetType().ToString(), "thought_bubble_m");
+        if (thoughtBubbleMovingLog != null) {
+            AddDefaultObjectsToLog(thoughtBubbleMovingLog);
+        }
+        planLog = new Log(GameManager.Instance.Today(), "GoapAction", this.GetType().ToString(), "plan_log");
+        if (planLog != null) {
+            AddDefaultObjectsToLog(planLog);
         }
     }
-
     ///<summary>
     ///This is called when the actor decides to do this specific action.
     ///All movement related actions should be done here.
@@ -362,6 +365,15 @@ public class GoapAction {
             SetState(failActionState);
         }
         //Set state to failed after this (in overrides)
+    }
+    private void AddDefaultObjectsToLog(Log log) {
+        log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        log.AddToFillers(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER); //Target character is only the identifier but it doesn't mean that this is a character, it can be item, etc.
+        if (targetStructure != null) {
+            log.AddToFillers(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
+        } else {
+            log.AddToFillers(actor.specificLocation, actor.specificLocation.name, LOG_IDENTIFIER.LANDMARK_1);
+        }
     }
     #endregion
 
