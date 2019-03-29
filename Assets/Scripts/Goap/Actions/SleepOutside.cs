@@ -46,14 +46,16 @@ public class SleepOutside : GoapAction {
     #region State Effects
     private void PreRestSuccess() {
         //currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
-        actor.AdjustDoNotGetTired(1);
-        //actor.AddTrait("Resting");
+        //actor.AdjustDoNotGetTired(1);
+        Resting restingTrait = new Resting();
+        actor.AddTrait(restingTrait);
     }
     private void PerTickRestSuccess() {
         actor.AdjustTiredness(3);
     }
     private void AfterRestSuccess() {
-        actor.AdjustDoNotGetTired(-1);
+        //actor.AdjustDoNotGetTired(-1);
+        actor.RemoveTrait("Resting");
     }
     //private void PreRestFail() {
     //    currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);

@@ -1447,8 +1447,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (_raceSetting.race == race) {
             return; //current race is already the new race, no change
         }
+        RemoveTraitsFromRace();
         RaceSetting raceSetting = RaceManager.Instance.racesDictionary[race.ToString()];
         _raceSetting = raceSetting.CreateNewCopy();
+        SetTraitsFromRace();
         //Update Portrait to use new race
         _portraitSettings = CharacterManager.Instance.GenerateRandomPortrait(race, gender);
         Messenger.Broadcast(Signals.CHARACTER_CHANGED_RACE, this);
@@ -1629,7 +1631,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         OnRelationshipWithCharacterAdded(character, newRel);
         Messenger.Broadcast(Signals.RELATIONSHIP_ADDED, this, newRel);
     }
-    private void RemoveRelationship(Character character) {
+    public void RemoveRelationship(Character character) {
         if (relationships.ContainsKey(character)) {
             List<Trait> traits = relationships[character].rels.Select(x => x as Trait).ToList();
             relationships[character].RemoveListeners();
@@ -1644,6 +1646,16 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 RemoveRelationship(character);
             }
         }
+    }
+    public void RemoveAllRelationships() {
+        List<Character> targetCharacters = relationships.Keys.ToList();
+        while(targetCharacters.Count > 0) {
+            CharacterManager.Instance.RemoveRelationshipBetween(this, targetCharacters[0]);
+            targetCharacters.RemoveAt(0);
+        }
+    }
+    public void ReEstablishRelationships(Dictionary<Character, CharacterRelationshipData> prevRelationships) {
+
     }
     public RelationshipTrait GetRelationshipTraitWith(Character character, RELATIONSHIP_TRAIT type) {
         if (relationships.ContainsKey(character)) {
@@ -2604,6 +2616,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         }
     }
+    private void RemoveTraitsFromRace() {
+        if (_raceSetting.traitNames != null) {
+            for (int i = 0; i < _raceSetting.traitNames.Length; i++) {
+                Trait trait = AttributeManager.Instance.allTraits[_raceSetting.traitNames[i]];
+                RemoveTrait(trait);
+            }
+        }
+    }
     public Friend GetFriendTraitWith(Character character) {
         for (int i = 0; i < _traits.Count; i++) {
             if(_traits[i] is Friend) {
@@ -2855,7 +2875,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             //StopDailyGoapPlanGeneration();
             return;
         }
-        if (minion != null || !IsInOwnParty() || isDefender || ownParty.icon.isTravelling || _doNotDisturb > 0 || _job == null || isWaitingForInteraction > 0) {
+        if (minion != null || !IsInOwnParty() || isDefender || ownParty.icon.isTravelling || _doNotDisturb > 0 || _job == null || isWaitingForInteraction > 0 || marker.pathfindingThread != null) {
             return; //if this character is not in own party, is a defender or is travelling or cannot be disturbed, do not generate interaction
         }
 
@@ -3032,11 +3052,11 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return false;
     }
-    private bool PlanIdleStroll() {
+    public bool PlanIdleStroll(LocationStructure targetStructure) {
         //Debug.Log("---------" + GameManager.Instance.TodayLogString() + "CREATING IDLE STROLL ACTION FOR " + name + "-------------");
         //if(currentStructure.unoccupiedTiles.Count > 0) {
             Stroll goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.STROLL, this, this) as Stroll;
-            goapAction.SetTargetStructure(currentStructure);
+            goapAction.SetTargetStructure(targetStructure);
             GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
             GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.IDLE);
             allGoapPlans.Add(goapPlan);
@@ -3047,7 +3067,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     private bool PlanIdleReturnHome() {
         if (GetTrait("Berserker") != null) {
             //Return home becomes stroll if the character has berserker trait
-            PlanIdleStroll();
+            PlanIdleStroll(currentStructure);
         } else {
             GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.RETURN_HOME, this, this);
             goapAction.SetTargetStructure();
@@ -3071,10 +3091,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             if(chance < returnHomeChance) {
                 PlanIdleReturnHome();
             } else {
-                PlanIdleStroll();
+                PlanIdleStroll(currentStructure);
             }
         } else {
-            PlanIdleStroll();
+            PlanIdleStroll(currentStructure);
         }
         PlanGoapActions();
     }
@@ -3273,7 +3293,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                         personalActionWeights.AddElement(INTERACTION_TYPE.REVERT_TO_NORMAL, 100);
                         interactionLog += "\nTRAIT ACTION: REVERT_TO_NORMAL - 100";
                     } else {
-                        personalActionWeights.AddElement(INTERACTION_TYPE.TURN_TO_WOLF, 100);
+                        personalActionWeights.AddElement(INTERACTION_TYPE.TRANSFORM_TO_WOLF, 100);
                         interactionLog += "\nTRAIT ACTION: TURN_TO_WOLF - 100";
                     }
                 }
@@ -4578,9 +4598,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         _hasAlreadyAskedForPlan = state;
     }
     public void PrintLogIfActive(string log) {
-        if(UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == this) {
+        //if(UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == this) {
             Debug.Log(log);
-        }
+        //}
     }
     #endregion
 

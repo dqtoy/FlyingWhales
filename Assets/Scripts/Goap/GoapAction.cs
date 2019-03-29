@@ -297,7 +297,7 @@ public class GoapAction {
         if (UIManager.Instance.characterInfoUI.isShowing) {
             UIManager.Instance.characterInfoUI.UpdateBasicInfo();
         }
-        Messenger.Broadcast<GoapAction>(Signals.STOP_ACTION, this);
+        //Messenger.Broadcast<GoapAction>(Signals.STOP_ACTION, this);
     }
     public void SetIsStopped(bool state) {
         isStopped = state;

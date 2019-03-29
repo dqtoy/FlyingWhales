@@ -274,6 +274,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     public void SetOccupant(Character character) {
         occupant = character;
         character.SetGridTileLocation(this);
+        Debug.LogWarning("Tile occupied signal fired for tile " + ToString() + " by " + character.name + " because the character is now its occupant");
         Messenger.Broadcast<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, this, occupant);
     }
     public void RemoveOccupant() {

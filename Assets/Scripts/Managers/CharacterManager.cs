@@ -505,6 +505,14 @@ public class CharacterManager : MonoBehaviour {
             Debug.LogWarning(character.name + " and " + targetCharacter.name + " have inconsistent relationships " + rel.ToString() + " - " + pair.ToString() + ". Cannot remove!");
         }
     }
+    public void RemoveRelationshipBetween(Character character, Character targetCharacter) {
+        if (!character.relationships.ContainsKey(targetCharacter)
+            || !targetCharacter.relationships.ContainsKey(character)) {
+            return;
+        }
+        character.RemoveRelationship(targetCharacter);
+        targetCharacter.RemoveRelationship(character);
+    }
     private RELATIONSHIP_TRAIT GetPairedRelationship(RELATIONSHIP_TRAIT rel) {
         switch (rel) {
             case RELATIONSHIP_TRAIT.ENEMY:

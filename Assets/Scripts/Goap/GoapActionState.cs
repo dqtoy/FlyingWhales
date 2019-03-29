@@ -53,16 +53,13 @@ public class GoapActionState {
             _currentDuration = 0;
             StartPerTickEffect();
         } else {
-            if(afterEffect != null) {
-                afterEffect();
-            }
-            parentAction.ReturnToActorTheActionResult(status);
+            EndPerTickEffect();
         }
     }
     private void StartPerTickEffect() {
         Messenger.AddListener(Signals.TICK_STARTED, PerTickEffect);
     }
-    private void EndPerTickEffect() {
+    public void EndPerTickEffect() {
         //Messenger.RemoveListener(Signals.TICK_STARTED, PerTickEffect);
         if (afterEffect != null) {
             afterEffect();

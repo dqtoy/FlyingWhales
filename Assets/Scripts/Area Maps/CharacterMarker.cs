@@ -248,6 +248,7 @@ public class CharacterMarker : PooledObject {
         //Messenger.AddListener(Signals.TICK_STARTED, Move);
     }
     public void StopMovement(Action afterStoppingAction = null) {
+        Debug.LogWarning(character.name + " StopMovement function is called!");
         _arrivalAction = null;
         if (Messenger.eventTable.ContainsKey(Signals.TILE_OCCUPIED)) {
             Messenger.RemoveListener<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, OnTileOccupied);
@@ -288,6 +289,7 @@ public class CharacterMarker : PooledObject {
     private void Move() {
         if (character.isDead) {
             //StopMovement();
+            Debug.LogWarning(character.name + " is dead! Stopped movement!");
             return;
         }
 
@@ -346,6 +348,7 @@ public class CharacterMarker : PooledObject {
                     }
                 } else {
                     if(_currentPath.Count == 1) {
+                        Debug.LogWarning("Tile occupied signal fired for tile " + _currentPath[0].ToString() + " by " + character.name + " because that tile is the next tile and its destination");
                         Messenger.Broadcast(Signals.TILE_OCCUPIED, _currentPath[0], character as IPointOfInterest);
                     }
                     currentMoveCoroutine = StartCoroutine(MoveToPosition(mainRT.anchoredPosition, _currentPath[0].centeredLocalLocation));
@@ -550,12 +553,12 @@ public class CharacterMarker : PooledObject {
             pathRecalSummary += "\nCould not find new target tile. Continuing travel to original target tile.";
             if (_currentPath != null && _currentPath.Count > 0) {
                 LocationGridTile nextTile = _currentPath[0];
-                if (character.gridTileLocation.isOccupied || nextTile.isOccupied) {
+                if ((character.gridTileLocation.tileState == LocationGridTile.Tile_State.Occupied || (character.gridTileLocation.occupant != null && character.gridTileLocation.occupant != character)) || nextTile.isOccupied) {
                     pathRecalSummary += "\nTile " + character.gridTileLocation.ToString() + " or " + nextTile.ToString() + " is occupied. Stopping movement and action.";
                     character.currentAction.FailAction();
                     recalculationResult = true;
                 }
-            }else if (character.gridTileLocation.isOccupied) {
+            }else if (character.gridTileLocation.tileState == LocationGridTile.Tile_State.Occupied || (character.gridTileLocation.occupant != null && character.gridTileLocation.occupant != character)) {
                 pathRecalSummary += "\nCurrent Tile " + character.gridTileLocation.ToString() + " is occupied. Stopping movement and action.";
                 character.currentAction.FailAction();
                 recalculationResult = true;
