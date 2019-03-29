@@ -248,31 +248,39 @@ public class CharacterMarker : PooledObject {
         //Messenger.AddListener(Signals.TICK_STARTED, Move);
     }
     public void StopMovement(Action afterStoppingAction = null) {
-        Debug.LogWarning(character.name + " StopMovement function is called!");
+        string log = character.name + " StopMovement function is called!";
         _arrivalAction = null;
         if (Messenger.eventTable.ContainsKey(Signals.TILE_OCCUPIED)) {
             Messenger.RemoveListener<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, OnTileOccupied);
         }
         if (!isStillMovingToAnotherTile) {
-            CheckIfCurrentTileIsOccupiedOnStopMovement(afterStoppingAction);
+            log += "\n- Not moving to another tile, go to checker...";
+            CheckIfCurrentTileIsOccupiedOnStopMovement(ref log, afterStoppingAction);
         } else {
-            SetOnArriveAtTileAction(() => CheckIfCurrentTileIsOccupiedOnStopMovement(afterStoppingAction));
+            log += "\n- Still moving to another tile, wait until tile arrival...";
+            SetOnArriveAtTileAction(() => CheckIfCurrentTileIsOccupiedOnStopMovement(ref log, afterStoppingAction));
         }
     }
-    private void CheckIfCurrentTileIsOccupiedOnStopMovement(Action afterStoppingAction = null) {
+
+    private void CheckIfCurrentTileIsOccupiedOnStopMovement(ref string log, Action afterStoppingAction = null) {
         if (character.gridTileLocation.tileState == LocationGridTile.Tile_State.Occupied || (character.gridTileLocation.occupant != null && character.gridTileLocation.occupant != character)) {
+            log += "\n- Current tile " + character.gridTileLocation.ToString() + " is occupied, will check nearby tile to go to...";
             LocationGridTile newTargetTile = InteractionManager.Instance.GetTargetLocationTile(ACTION_LOCATION_TYPE.NEARBY, character, character.gridTileLocation, character.gridTileLocation.structure);
             if(newTargetTile != null) {
+                log += "\n- New target tile found: " + newTargetTile.ToString() + ", will go to it...";
                 character.marker.GoToTile(newTargetTile, character, afterStoppingAction);
             } else {
+                log += "\n- Couldn't find nearby tile, will check random location...";
                 newTargetTile = InteractionManager.Instance.GetTargetLocationTile(ACTION_LOCATION_TYPE.RANDOM_LOCATION, character, character.gridTileLocation, character.gridTileLocation.structure);
                 if (newTargetTile != null) {
+                    log += "\n- New target tile found: " + newTargetTile.ToString() + ", will go to it...";
                     character.marker.GoToTile(newTargetTile, character, afterStoppingAction);
                 } else {
                     throw new Exception(character.name + " is stuck and can't go anywhere because everything in the structure is occupied!");
                 }
             }
         } else {
+            log += "\n- Current tile " + character.gridTileLocation.ToString() + " is not occupied, will stay here and occupy this tile...";
             PlayIdle();
             if (character.currentParty.icon != null) {
                 character.currentParty.icon.SetIsTravelling(false);
@@ -285,6 +293,7 @@ public class CharacterMarker : PooledObject {
                 afterStoppingAction();
             }
         }
+        Debug.LogWarning(log);
     }
     private void Move() {
         if (character.isDead) {
@@ -539,6 +548,8 @@ public class CharacterMarker : PooledObject {
         if (Messenger.eventTable.ContainsKey(Signals.TILE_OCCUPIED)) {
             Messenger.RemoveListener<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, OnTileOccupied);
         }
+
+        //TODO: add checker that if the nearest tile to target is same as the destination tile, must not call GoToTile anymore, just set shouldRecalculatePath to false
         if (nearestTileToTarget != null) {
             pathRecalSummary += "\nGot new target tile " + nearestTileToTarget.ToString() + ". Going there now.";
             //if (currentMoveCoroutine != null) {
@@ -552,6 +563,7 @@ public class CharacterMarker : PooledObject {
             //if the next tile is already occupied, stay at the current tile and drop the plan
             pathRecalSummary += "\nCould not find new target tile. Continuing travel to original target tile.";
             if (_currentPath != null && _currentPath.Count > 0) {
+                shouldRecalculatePath = false;
                 LocationGridTile nextTile = _currentPath[0];
                 if ((character.gridTileLocation.tileState == LocationGridTile.Tile_State.Occupied || (character.gridTileLocation.occupant != null && character.gridTileLocation.occupant != character)) || nextTile.isOccupied) {
                     pathRecalSummary += "\nTile " + character.gridTileLocation.ToString() + " or " + nextTile.ToString() + " is occupied. Stopping movement and action.";
@@ -559,6 +571,7 @@ public class CharacterMarker : PooledObject {
                     recalculationResult = true;
                 }
             }else if (character.gridTileLocation.tileState == LocationGridTile.Tile_State.Occupied || (character.gridTileLocation.occupant != null && character.gridTileLocation.occupant != character)) {
+                shouldRecalculatePath = false;
                 pathRecalSummary += "\nCurrent Tile " + character.gridTileLocation.ToString() + " is occupied. Stopping movement and action.";
                 character.currentAction.FailAction();
                 recalculationResult = true;

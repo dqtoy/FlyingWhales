@@ -163,18 +163,14 @@ public class GoapAction {
         Messenger.Broadcast(Signals.CHARACTER_DOING_ACTION, actor, this);
 
         //if the current target is a character, make him/her wait for this action
+        Character targetCharacter = null;
         if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-            Character targetCharacter = poiTarget as Character;
-            if(targetCharacter != actor) {
+            if((poiTarget as Character) != actor) {
+                targetCharacter = poiTarget as Character;
                 string log = actor.name + " is planning to do something to " + targetCharacter.name + " at " + actor.specificLocation.name;
                 //GameManager.Instance.SetPausedState(true);
-                targetCharacter.AdjustIsWaitingForInteraction(1);
-                if (targetCharacter.currentAction != null && !targetCharacter.currentAction.isPerformingActualAction && !targetCharacter.currentAction.isDone) {
-                    targetCharacter.SetCurrentAction(null);
-                    log += "\n- " + targetCharacter.name + " is not performing actual action setting current action to null...";
-                }
                 if (targetCharacter.currentParty.icon.isTravelling && targetCharacter.currentParty.icon.travelLine == null) {
-                    targetCharacter.marker.StopMovement(() => MoveToDoAction(plan));
+                    targetCharacter.marker.StopMovement(() => MoveToDoAction(plan, targetCharacter));
                     log += "\n- " + targetCharacter.name + " is currently travelling, stopping movement";
                     Debug.LogWarning(log);
                     return;
@@ -193,7 +189,7 @@ public class GoapAction {
         //if(this.targetTile == null) {
         //    this.targetTile = targetTile;
         //}
-        MoveToDoAction(plan);
+        MoveToDoAction(plan, targetCharacter);
     }
     public virtual LocationGridTile GetTargetLocationTile() {
         LocationGridTile knownTargetLocation = null;
@@ -341,7 +337,14 @@ public class GoapAction {
     public void SetExecutionDate(GameDate date) {
         executionDate = date;
     }
-    private void MoveToDoAction(GoapPlan plan) {
+    private void MoveToDoAction(GoapPlan plan, Character targetCharacter) {
+        if(targetCharacter != null) {
+            targetCharacter.AdjustIsWaitingForInteraction(1);
+            if (targetCharacter.currentAction != null && !targetCharacter.currentAction.isPerformingActualAction && !targetCharacter.currentAction.isDone) {
+                targetCharacter.SetCurrentAction(null);
+                //log += "\n- " + targetCharacter.name + " is not performing actual action setting current action to null...";
+            }
+        }
         //if the actor is NOT at the area where the target structure is, make him/her go there first.
         if (actor.specificLocation != targetStructure.location) {
             actor.currentParty.GoToLocation(targetStructure.location, PATHFINDING_MODE.NORMAL, targetStructure, () => actor.PerformGoapAction(plan), null, null, poiTarget, targetTile);
