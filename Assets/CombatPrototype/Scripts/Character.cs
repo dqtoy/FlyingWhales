@@ -675,9 +675,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public void Death(string cause = "normal") {
         if (!_isDead) {
-            if (UIManager.Instance.characterInfoUI.isShowing) {
-                UIManager.Instance.characterInfoUI.OnClickCloseMenu();
-            }
+            //if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.id == this.id) {
+            //    UIManager.Instance.characterInfoUI.OnClickCloseMenu();
+            //}
             SetIsDead(true);
             UnsubscribeSignals();
 
@@ -4086,77 +4086,18 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     }
                 }
             }
-
-            //for (int i = 0; i < gridTileLocation.structure.location.areaMap.allTiles.Count; i++) {
-            //    LocationGridTile tile = gridTileLocation.structure.location.areaMap.allTiles[i];
-            //    if (tile.objHere != null && tile.objHere != this) {
-            //        AddAwareness(tile.objHere);
-            //    }
-            //    for (int j = 0; j < tile.charactersHere.Count; j++) {
-            //        if(tile.charactersHere[j] != this) {
-            //            AddAwareness(tile.charactersHere[j]);
-            //        }
-            //    }
-            //}
         } else {
-            if (gridTileLocation.structure is Dwelling) {
-                for (int i = 0; i < gridTileLocation.structure.pointsOfInterest.Count; i++) {
-                    IPointOfInterest poi = gridTileLocation.structure.pointsOfInterest[i];
-                    if (poi != this) {
-                        AddAwareness(poi);
+            foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in specificLocation.structures) {
+                for (int i = 0; i < keyValuePair.Value.Count; i++) {
+                    LocationStructure structure = keyValuePair.Value[i];
+                    for (int j = 0; j < structure.pointsOfInterest.Count; j++) {
+                        IPointOfInterest poi = structure.pointsOfInterest[j];
+                        if (poi != this) {
+                            AddAwareness(poi);
+                        }
                     }
                 }
-                //List<LocationStructure> structures = gridTileLocation.structure.location.GetStructuresAtLocation(true);
-                //if (structures != null) {
-                //    for (int i = 0; i < structures.Count; i++) {
-                //        for (int j = 0; j < structures[i].pointsOfInterest.Count; j++) {
-                //            IPointOfInterest poi = structures[i].pointsOfInterest[j];
-                //            if (poi != this) {
-                //                AddAwareness(poi);
-                //            }
-                //        }
-                //    }
-                //}
-                //for (int i = 0; i < gridTileLocation.structure.location.areaMap.insideTiles.Count; i++) {
-                //    LocationGridTile insideTile = gridTileLocation.structure.location.areaMap.insideTiles[i];
-                //    if (insideTile.objHere != null && insideTile.objHere != this) {
-                //        AddAwareness(insideTile.objHere);
-                //    }
-                //    for (int j = 0; j < insideTile.charactersHere.Count; j++) {
-                //        if (insideTile.charactersHere[j] != this) {
-                //            AddAwareness(insideTile.charactersHere[j]);
-                //        }
-                //    }
-                //}
             }
-            //add Supply pile to all characters (for work)
-            if (homeArea.supplyPile != null) {
-                AddAwareness(homeArea.supplyPile);
-            }
-            //else {
-            //    List<LocationStructure> structures = gridTileLocation.structure.location.GetStructuresAtLocation(false);
-            //    if (structures != null) {
-            //        for (int i = 0; i < structures.Count; i++) {
-            //            for (int j = 0; j < structures[i].pointsOfInterest.Count; j++) {
-            //                IPointOfInterest poi = structures[i].pointsOfInterest[j];
-            //                if (poi != this) {
-            //                    AddAwareness(poi);
-            //                }
-            //            }
-            //        }
-            //    }
-            //    //for (int i = 0; i < gridTileLocation.structure.location.areaMap.outsideTiles.Count; i++) {
-            //    //    LocationGridTile outsideTile = gridTileLocation.structure.location.areaMap.outsideTiles[i];
-            //    //    if (outsideTile.objHere != null && outsideTile.objHere != this) {
-            //    //        AddAwareness(outsideTile.objHere);
-            //    //    }
-            //    //    for (int j = 0; j < outsideTile.charactersHere.Count; j++) {
-            //    //        if (outsideTile.charactersHere[j] != this) {
-            //    //            AddAwareness(outsideTile.charactersHere[j]);
-            //    //        }
-            //    //    }
-            //    //}
-            //}
         }
     }
     public void LogAwarenessList() {

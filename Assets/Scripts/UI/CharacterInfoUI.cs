@@ -115,6 +115,8 @@ public class CharacterInfoUI : UIMenu {
         Messenger.AddListener(Signals.ON_OPEN_SHARE_INTEL, OnOpenShareIntelMenu);
         Messenger.AddListener(Signals.ON_CLOSE_SHARE_INTEL, OnCloseShareIntelMenu);
 
+        Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+
         InitializeLogsMenu();
     }
     private void InitializeLogsMenu() {
@@ -128,6 +130,12 @@ public class CharacterInfoUI : UIMenu {
         }
         for (int i = 0; i < logHistoryItems.Length; i++) {
             logHistoryItems[i].gameObject.SetActive(false);
+        }
+    }
+
+    private void OnCharacterDied(Character character) {
+        if (this.isShowing && activeCharacter.id == character.id) {
+            AreaMapCameraMove.Instance.CenterCameraOn(null);
         }
     }
 
@@ -237,9 +245,13 @@ public class CharacterInfoUI : UIMenu {
             return;
         }
 
+        if (_activeCharacter.isWaitingForInteraction > 0) {
+            plansLbl.text =  _activeCharacter.name + " is waiting for someone.";
+        }
+
         //Default - Do nothing/Idle
         if (_activeCharacter.currentStructure != null) {
-            plansLbl.text =  _activeCharacter.name + " is " + _activeCharacter.currentStructure.GetNameRelativeTo(_activeCharacter);
+            plansLbl.text =  _activeCharacter.name + " is in " + _activeCharacter.currentStructure.GetNameRelativeTo(_activeCharacter);
         }
 
 

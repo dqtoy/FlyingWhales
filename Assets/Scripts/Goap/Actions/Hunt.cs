@@ -113,6 +113,7 @@ public class Hunt : GoapAction {
     public void AfterTargetInjured() {
         Character target = poiTarget as Character;
         target.AddTrait("Injured");
+        actor.AddTrait("Combat Recovery");
     }
     public void PreTargetKilled() {
         Character target = poiTarget as Character;
@@ -124,6 +125,7 @@ public class Hunt : GoapAction {
     }
     public void PreTargetWon() {
         currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        actor.AddTrait("Combat Recovery");
     }
     public void PreTargetMissing() {
         currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
