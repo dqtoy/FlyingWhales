@@ -121,7 +121,7 @@ public class Hunt : GoapAction {
         target.Death();
     }
     public void PerTickTargetKilled() {
-        actor.AdjustFullness(5);
+        actor.AdjustFullness(10);
     }
     public void PreTargetWon() {
         currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);

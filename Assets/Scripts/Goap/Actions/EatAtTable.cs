@@ -57,7 +57,7 @@
         //actor.AddTrait("Eating");
     }
     private void PerTickEatSuccess() {
-        actor.AdjustFullness(10);
+        actor.AdjustFullness(12);
     }
     private void AfterEatSuccess() {
         actor.AdjustDoNotGetHungry(-1);
@@ -68,7 +68,7 @@
         poiTarget.RemoveTrait("Poisoned");
     }
     private void PerTickEatPoisoned() {
-        actor.AdjustFullness(10);
+        actor.AdjustFullness(12);
     }
     private void AfterEatPoisoned() {
         actor.AdjustDoNotGetHungry(-1);

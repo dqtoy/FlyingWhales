@@ -90,15 +90,19 @@ public class LocalizationManager : MonoBehaviour {
         } else {
             result = this._localizedText[category][file][key];
         }
-        
-        //throw new System.Exception("Localization error! " + category + "/" + file + "/" + key);
-        //}
-        //else {
-        //    throw new System.Exception("Localization error! " + category + "/" + file + "/" + key);
-        //}
         return result;
-
 	}
+    public bool HasLocalizedValue(string category, string file, string key) {
+        if (!this._localizedText.ContainsKey(category)) {
+            return false;
+        } else if (!this._localizedText[category].ContainsKey(file)) {
+            return false;
+        } else if (!this._localizedText[category][file].ContainsKey(key)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
     public List<string> GetKeysLike(string category, string file, string keyLike, string[] except = null) {
         List<string> keys = new List<string>();
         if (!this._localizedText.ContainsKey(category)) {

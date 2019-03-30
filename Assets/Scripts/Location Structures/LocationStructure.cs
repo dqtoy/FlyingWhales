@@ -144,6 +144,15 @@ public class LocationStructure {
         }
         return false;
     }
+    public List<IPointOfInterest> GetPOIsOfType(POINT_OF_INTEREST_TYPE type) {
+        List<IPointOfInterest> pois = new List<IPointOfInterest>();
+        for (int i = 0; i < pointsOfInterest.Count; i++) {
+            if (pointsOfInterest[i].poiType == type) {
+                pois.Add(pointsOfInterest[i]);
+            }
+        }
+        return pois;
+    }
     public SupplyPile GetSupplyPile() {
         for (int i = 0; i < pointsOfInterest.Count; i++) {
             IPointOfInterest poi = pointsOfInterest[i];

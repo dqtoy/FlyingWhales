@@ -138,16 +138,16 @@ public class GoapAction {
         }
     }
     protected virtual void CreateThoughtBubbleLog() {
-        thoughtBubbleLog = new Log(GameManager.Instance.Today(), "GoapAction", this.GetType().ToString(), "thought_bubble");
-        if (thoughtBubbleLog != null) {
+        if (LocalizationManager.Instance.HasLocalizedValue("GoapAction", this.GetType().ToString(), "thought_bubble")) {
+            thoughtBubbleLog = new Log(GameManager.Instance.Today(), "GoapAction", this.GetType().ToString(), "thought_bubble");
             AddDefaultObjectsToLog(thoughtBubbleLog);
         }
-        thoughtBubbleMovingLog = new Log(GameManager.Instance.Today(), "GoapAction", this.GetType().ToString(), "thought_bubble_m");
-        if (thoughtBubbleMovingLog != null) {
+        if (LocalizationManager.Instance.HasLocalizedValue("GoapAction", this.GetType().ToString(), "thought_bubble_m")) {
+            thoughtBubbleMovingLog = new Log(GameManager.Instance.Today(), "GoapAction", this.GetType().ToString(), "thought_bubble_m");
             AddDefaultObjectsToLog(thoughtBubbleMovingLog);
         }
-        planLog = new Log(GameManager.Instance.Today(), "GoapAction", this.GetType().ToString(), "plan_log");
-        if (planLog != null) {
+        if (LocalizationManager.Instance.HasLocalizedValue("GoapAction", this.GetType().ToString(), "plan_log")) {
+            planLog = new Log(GameManager.Instance.Today(), "GoapAction", this.GetType().ToString(), "plan_log");
             AddDefaultObjectsToLog(planLog);
         }
     }

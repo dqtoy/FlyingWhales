@@ -211,72 +211,56 @@ public class CharacterInfoUI : UIMenu {
             }
         }
 
-        //Travel Thought
-        if (!_activeCharacter.isDead && _activeCharacter.currentParty.icon.isTravelling) {
-            //&& _activeCharacter.currentParty.icon.travelLine != null
-            if (_activeCharacter.currentAction != null) {
-                //use moving log of current action
-                plansLblLogItem.SetLog(_activeCharacter.currentAction.thoughtBubbleMovingLog);
-                plansLbl.text = Utilities.LogReplacer(_activeCharacter.currentAction.thoughtBubbleMovingLog);
-            } else {
-                plansLbl.text = _activeCharacter.name + " is travelling.";
-            }
-            return;
+        //Waiting
+        if (_activeCharacter.isWaitingForInteraction > 0) {
+            plansLbl.text =  _activeCharacter.name + " is waiting for someone.";
         }
 
         //Action
         if (_activeCharacter.currentAction != null && !_activeCharacter.currentAction.isStopped) {
-            if (!_activeCharacter.currentAction.isDone) {
-                //the current action is not yet done, has a duration?
-                plansLblLogItem.SetLog(_activeCharacter.currentAction.thoughtBubbleLog);
-                plansLbl.text = Utilities.LogReplacer(_activeCharacter.currentAction.thoughtBubbleLog);
+            if (_activeCharacter.currentParty.icon.isTravelling) {
+                //character is travelling
+                plansLblLogItem.SetLog(_activeCharacter.currentAction.thoughtBubbleMovingLog);
+                plansLbl.text = Utilities.LogReplacer(_activeCharacter.currentAction.thoughtBubbleMovingLog);
             } else {
-                plansLblLogItem.SetLog(_activeCharacter.currentAction.currentState.descriptionLog);
-                plansLbl.text = Utilities.LogReplacer(_activeCharacter.currentAction.currentState.descriptionLog);
+                //character is not travelling
+                if (_activeCharacter.currentAction.isDone) {
+                    //action is already done
+                    plansLblLogItem.SetLog(_activeCharacter.currentAction.currentState.descriptionLog);
+                    plansLbl.text = Utilities.LogReplacer(_activeCharacter.currentAction.currentState.descriptionLog);
+                } else {
+                    //action is not yet done
+                    if (activeCharacter.currentAction.currentState == null) {
+                        //if the actions' current state is null, Use moving log
+                        plansLblLogItem.SetLog(_activeCharacter.currentAction.thoughtBubbleMovingLog);
+                        plansLbl.text = Utilities.LogReplacer(_activeCharacter.currentAction.thoughtBubbleMovingLog);
+                    } else {
+                        //if the actions current state has a duration
+                        plansLblLogItem.SetLog(_activeCharacter.currentAction.thoughtBubbleLog);
+                        plansLbl.text = Utilities.LogReplacer(_activeCharacter.currentAction.thoughtBubbleLog);
+                    }
+                }
             }
-            //if (_activeCharacter.currentAction.currentState == null) {
-            //    plansLblLogItem.SetLog(_activeCharacter.currentAction.thoughtBubbleLog);
-            //    plansLbl.text = Utilities.LogReplacer(_activeCharacter.currentAction.thoughtBubbleLog);
-            //} else {
-            //    plansLblLogItem.SetLog(_activeCharacter.currentAction.currentState.descriptionLog);
-            //    plansLbl.text = Utilities.LogReplacer(_activeCharacter.currentAction.currentState.descriptionLog);
-            //}
-            //plansLbl.text = _activeCharacter.name + " does not have any immediate plans at the moment.";
             return;
         }
 
-        if (_activeCharacter.isWaitingForInteraction > 0) {
-            plansLbl.text =  _activeCharacter.name + " is waiting for someone.";
-        }
+        ////Travel Thought
+        //if (!_activeCharacter.isDead && _activeCharacter.currentParty.icon.isTravelling) {
+        //    //&& _activeCharacter.currentParty.icon.travelLine != null
+        //    if (_activeCharacter.currentAction != null) {
+        //        //use moving log of current action
+        //        plansLblLogItem.SetLog(_activeCharacter.currentAction.thoughtBubbleMovingLog);
+        //        plansLbl.text = Utilities.LogReplacer(_activeCharacter.currentAction.thoughtBubbleMovingLog);
+        //    } else {
+        //        plansLbl.text = _activeCharacter.name + " is travelling.";
+        //    }
+        //    return;
+        //}        
 
         //Default - Do nothing/Idle
         if (_activeCharacter.currentStructure != null) {
             plansLbl.text =  _activeCharacter.name + " is in " + _activeCharacter.currentStructure.GetNameRelativeTo(_activeCharacter);
         }
-
-
-        //if (_activeCharacter.isAtHomeStructure) {
-        //    plansLbl.text = _activeCharacter.name + " is at home.";
-        //} else {
-        //    if (_activeCharacter.currentStructure.structureType == STRUCTURE_TYPE.DWELLING) {
-        //        Dwelling dwelling = _activeCharacter.currentStructure as Dwelling;
-        //        if (dwelling.residents.Count > 0) {
-        //            plansLbl.text = _activeCharacter.name + " is in " + dwelling.residents[0].name + "'s house.";
-        //        } else {
-        //            plansLbl.text = _activeCharacter.name + " is in a dwelling.";
-        //        }
-        //    } else if (_activeCharacter.currentStructure.structureType == STRUCTURE_TYPE.WORK_AREA) {
-        //        plansLbl.text = _activeCharacter.name + " is in " + _activeCharacter.currentStructure.location.name + ".";
-        //    } else if (_activeCharacter.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS) {
-        //        plansLbl.text = _activeCharacter.name + " is in the " + _activeCharacter.currentStructure.structureType.ToString().ToLower() + ".";
-        //    } else if (_activeCharacter.currentStructure.structureType == STRUCTURE_TYPE.INN) {
-        //        plansLbl.text = _activeCharacter.name + " is at the " + _activeCharacter.currentStructure.structureType.ToString().ToLower() + ".";
-        //    } else if (_activeCharacter.currentStructure.structureType == STRUCTURE_TYPE.DUNGEON) {
-        //        plansLbl.text = _activeCharacter.name + " is in a " + _activeCharacter.currentStructure.structureType.ToString().ToLower() + ".";
-        //    } else if (_activeCharacter.currentStructure.structureType == STRUCTURE_TYPE.WAREHOUSE) {
-        //        plansLbl.text = _activeCharacter.name + " is in the " + _activeCharacter.currentStructure.structureType.ToString().ToLower() + ".";
-        //    }
-        //}
     }
 
     #region Stats

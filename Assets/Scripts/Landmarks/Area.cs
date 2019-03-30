@@ -1960,6 +1960,18 @@ public class Area {
     }
     #endregion
 
+    #region POI
+    public List<IPointOfInterest> GetPointOfInterestsOfType(POINT_OF_INTEREST_TYPE type) {
+        List<IPointOfInterest> pois = new List<IPointOfInterest>();
+        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in structures) {
+            for (int i = 0; i < keyValuePair.Value.Count; i++) {
+                pois.AddRange(keyValuePair.Value[i].GetPOIsOfType(type));
+            }
+        }
+        return pois;
+    }
+    #endregion
+
     public override string ToString() {
         return name;
     }

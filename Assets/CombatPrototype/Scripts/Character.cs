@@ -4092,12 +4092,24 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     LocationStructure structure = keyValuePair.Value[i];
                     for (int j = 0; j < structure.pointsOfInterest.Count; j++) {
                         IPointOfInterest poi = structure.pointsOfInterest[j];
-                        if (poi != this) {
+                        if (poi != this && !(poi is Tree)) {
                             AddAwareness(poi);
                         }
                     }
                 }
             }
+            
+            //foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in specificLocation.structures) {
+            //    for (int i = 0; i < keyValuePair.Value.Count; i++) {
+            //        LocationStructure structure = keyValuePair.Value[i];
+            //        for (int j = 0; j < structure.pointsOfInterest.Count; j++) {
+            //            IPointOfInterest poi = structure.pointsOfInterest[j];
+            //            if (poi != this) {
+            //                AddAwareness(poi);
+            //            }
+            //        }
+            //    }
+            //}
         }
     }
     public void LogAwarenessList() {
