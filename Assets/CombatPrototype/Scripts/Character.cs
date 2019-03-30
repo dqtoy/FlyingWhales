@@ -574,6 +574,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         Messenger.AddListener<Character, Area, Area>(Signals.CHARACTER_MIGRATED_HOME, OnCharacterMigratedHome);
         Messenger.AddListener<Interaction>(Signals.INTERACTION_ENDED, OnInteractionEnded);
         Messenger.AddListener(Signals.DAY_STARTED, DayStartedRemoveOverrideInteraction);
+        Messenger.AddListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
     }
     public void UnsubscribeSignals() {
         Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnOtherCharacterDied);
@@ -582,6 +583,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         Messenger.RemoveListener(Signals.HOUR_STARTED, DecreaseNeeds);
         Messenger.RemoveListener<Character, Area, Area>(Signals.CHARACTER_MIGRATED_HOME, OnCharacterMigratedHome);
         Messenger.RemoveListener(Signals.DAY_STARTED, DayStartedRemoveOverrideInteraction);
+        Messenger.RemoveListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
     }
     #endregion
 
@@ -4674,6 +4676,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 Character targetCharacter = currentAction.poiTarget as Character;
                 if (targetCharacter != currentAction.actor) {
                     targetCharacter.AdjustIsWaitingForInteraction(-1);
+                    targetCharacter.RemoveTargettedByAction(currentAction);
                 }
             }
         }
@@ -4720,6 +4723,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 marker.OnCharacterRemovedTargettedByAction();
             }
         }
+    }
+    private void OnCharacterFinishedAction(Character character, GoapAction action, string result) {
+        RemoveTargettedByAction(action);
     }
     #endregion
 

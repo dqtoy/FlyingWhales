@@ -1475,6 +1475,7 @@ public class UIManager : MonoBehaviour {
         GameObject newIntelGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(intelPrefab.name, Vector3.zero, Quaternion.identity, intelNotifScrollView.content);
         newIntelGO.GetComponent<IntelNotificationItem>().Initialize(intel);
         (newIntelGO.transform as RectTransform).SetAsFirstSibling();
+        (newIntelGO.transform as RectTransform).localScale = Vector3.one;
     }
     #endregion
 }
