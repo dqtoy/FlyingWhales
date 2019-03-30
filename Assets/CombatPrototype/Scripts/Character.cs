@@ -107,6 +107,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public int isWaitingForInteraction { get; private set; }
     public CharacterMarker marker { get; private set; }
     public GoapAction currentAction { get; private set; }
+    public bool hasAssaultPlan { get; private set; }
+    public Character lastAssaultedCharacter { get; private set; }
 
     private LocationGridTile tile; //what tile in the structure is this character currently in.
     private POI_STATE _state;
@@ -526,6 +528,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         relationships = new Dictionary<Character, CharacterRelationshipData>();
         poiGoapActions = new List<INTERACTION_TYPE>();
         allGoapPlans = new List<GoapPlan>();
+        hasAssaultPlan = false;
 
         tiredness = TIREDNESS_DEFAULT;
         //Fullness value between 1300 and 1440.
@@ -3121,10 +3124,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         PlanGoapActions();
     }
-    public bool hasAssaultPlan = false;
     public bool AssaultCharacter(Character target) {
         //Debug.Log(this.name + " will assault " + target.name);
         hasAssaultPlan = true;
+        lastAssaultedCharacter = target;
         //Debug.Log("---------" + GameManager.Instance.TodayLogString() + "CREATING IDLE STROLL ACTION FOR " + name + "-------------");
         //if(currentStructure.unoccupiedTiles.Count > 0) {
         GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.ASSAULT_ACTION_NPC, this, target);
@@ -3141,8 +3144,22 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //}
         //return false;
     }
+    private void SetLastAssaultedCharacter(Character character) {
+        lastAssaultedCharacter = character;
+        if (character != null) {
+            //cooldown
+            GameDate dueDate = GameManager.Instance.Today().AddTicks(GameManager.ticksPerHour);
+            SchedulingManager.Instance.AddEntry(dueDate, () => RemoveLastAssaultedCharacter(character));
+        }
+    }
+    private void RemoveLastAssaultedCharacter(Character characterToRemove) {
+        if (lastAssaultedCharacter == characterToRemove) {
+            SetLastAssaultedCharacter(null);
+        }
+    }
     private void OnAssaultActionReturn(string result, GoapAction action) {
         hasAssaultPlan = false;
+        SetLastAssaultedCharacter(action.poiTarget as Character);
         GoapActionResult(result, action);
         //if (action == currentAction) {
         //    SetCurrentAction(null);

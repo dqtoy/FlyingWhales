@@ -199,7 +199,7 @@ public class CharacterInfoUI : UIMenu {
 
     private void UpdateThoughtBubble() {
         if (_activeCharacter.isDead) {
-            plansLbl.text = _activeCharacter.name + " has a died.";
+            plansLbl.text = _activeCharacter.name + " has died.";
             return;
         }
         //Disabler Thought

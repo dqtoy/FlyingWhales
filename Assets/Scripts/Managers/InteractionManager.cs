@@ -2213,9 +2213,10 @@ public class InteractionManager : MonoBehaviour {
                 break;
             case ACTION_LOCATION_TYPE.NEAR_TARGET:
                 //**Near Target**: adjacent unoccupied tile beside the target item, tile object, character
-                choices = knownPOITargetLocation.UnoccupiedNeighbours;
+                choices = knownPOITargetLocation.UnoccupiedNeighbours.OrderBy(x => Vector2.Distance(actor.gridTileLocation.localLocation, x.localLocation)).ToList();
                 if (choices.Count > 0) {
-                    chosenTile = choices[Utilities.rng.Next(0, choices.Count)];
+                    //chosenTile = choices[Utilities.rng.Next(0, choices.Count)];
+                    chosenTile = choices[0];
                 }
                 break;
             case ACTION_LOCATION_TYPE.ON_TARGET:

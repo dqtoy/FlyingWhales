@@ -89,6 +89,12 @@ public class CharacterMarkerCollision : MonoBehaviour {
         //}
         if (parentMarker.character.IsHostileWith(character)) {
             string summary = GameManager.Instance.TodayLogString() + parentMarker.character.name + " hostility handling summary with " + character.name;
+            if (parentMarker.character.lastAssaultedCharacter != null && parentMarker.character.lastAssaultedCharacter == character) {
+                summary += "\n" + parentMarker.character.name + " already assaulted " + character.name + ", ignoring...";
+                Debug.Log(summary);
+                return;
+            }
+
             if (parentMarker.character.isWaitingForInteraction > 0) {
                 summary += "\n" + parentMarker.character.name + " is waiting for someone. Ignoring " + character.name;
                 Debug.Log(summary);
