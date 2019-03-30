@@ -8,14 +8,11 @@ public struct GameDate {
 	public int year;
     public int tick;
 
-    public int continuousDays;
-
-    public GameDate(int month, int day, int year, int tick, int continuousDays){
+    public GameDate(int month, int day, int year, int tick){
         this.month = month;
 		this.day = day;
 		this.year = year;
         this.tick = tick;
-        this.continuousDays = continuousDays;
     }
 
     public GameDate AddTicks(int amount) {

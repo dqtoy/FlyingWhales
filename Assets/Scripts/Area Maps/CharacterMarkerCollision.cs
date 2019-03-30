@@ -19,6 +19,9 @@ public class CharacterMarkerCollision : MonoBehaviour {
                 GhostCollisionHandling(collidedWith as GhostCollisionTrigger);
             } else {
                 parentMarker.AddPOIAsInRange(collidedWith.poi);
+                //if (collidedWith.poi is Character) {
+                //    HostilityHandling(collidedWith.poi as Character);
+                //}
             }
             //Debug.Log(this.parentMarker.name + " trigger enter with " + collidedWith.poi.name);
         }
@@ -73,5 +76,17 @@ public class CharacterMarkerCollision : MonoBehaviour {
             }
         }
         Debug.Log(ghostCollisionSummary);
+    }
+    private void HostilityHandling(Character character) {
+        if (parentMarker.character.IsHostileWith(character)) {
+            if (parentMarker.character.currentAction != null && parentMarker.character.currentAction.goapType == INTERACTION_TYPE.ASSAULT_ACTION_NPC) {
+                //if the owner of this collider is already assaulting someone, ignore
+                return;
+            }
+            if (character.currentAction != null && character.currentAction.goapType == INTERACTION_TYPE.ASSAULT_ACTION_NPC) {
+                //if the character in question is already assaulting someone, ignore
+                return;
+            }
+        }
     }
 }

@@ -10,7 +10,6 @@ public class Log {
 	public int day;
 	public int year;
     public int tick;
-    public int continuousDays;
 
     public string category;
 	public string file;
@@ -25,16 +24,15 @@ public class Log {
     public Interaction fromInteraction { get; private set; }
 
     public GameDate date {
-        get { return new GameDate((int)month, day, year, tick, continuousDays); }
+        get { return new GameDate((int)month, day, year, tick); }
     }
 
-    public Log(int month, int day, int year, int tick, int continuousDays, string category, string file, string key, Interaction fromInteraction = null){
+    public Log(int month, int day, int year, int tick, string category, string file, string key, Interaction fromInteraction = null){
         this.id = Utilities.SetID<Log>(this);
 		this.month = (MONTH)month;
 		this.day = day;
 		this.year = year;
         this.tick = tick;
-        this.continuousDays = continuousDays;
         this.category = category;
 		this.file = file;
 		this.key = key;
@@ -49,7 +47,6 @@ public class Log {
         this.day = date.day;
         this.year = date.year;
         this.tick = date.tick;
-        this.continuousDays = date.continuousDays;
         this.category = category;
         this.file = file;
         this.key = key;

@@ -700,7 +700,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
             _ownParty.PartyDeath();
 
-            if (this.race != RACE.SKELETON && this.role.roleType != CHARACTER_ROLE.BEAST) {
+            if (this.race != RACE.SKELETON) {
                 deathLocation.AddCorpse(this, deathStructure, deathTile);
             }
 
@@ -1875,6 +1875,15 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return count;
     }
+    public bool IsHostileWith(Character character) {
+        if (this.role.roleType == CHARACTER_ROLE.BEAST) {
+            //if the character is a beast, it is hostile to any character of any faction, but not towards characters with the same race as him
+            return character.race != this.race;
+        } else {
+            //else, check if the character's factions are different.
+            return this.faction.id != character.faction.id;
+        }
+    }
     #endregion
 
     #region History
@@ -1894,35 +1903,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     #endregion
 
     #region Character
-    public bool IsHostileWith(Character character) {
-        if (this.faction == null) {
-            return true; //this character has no faction
-        }
-        //if (this.currentAction != null && this.currentAction.HasHostilitiesBecauseOfTask(combatInitializer)) {
-        //    return true;
-        //}
-        //Check here if the combatInitializer is hostile with this character, if yes, return true
-        Faction factionOfEnemy = character.faction;
-
-        //if (combatInitializer.icharacterType == ICHARACTER_TYPE.CHARACTER) {
-        //    factionOfEnemy = (combatInitializer as Character).faction;
-        //}else if(combatInitializer is Party) {
-        //    factionOfEnemy = (combatInitializer as Party).faction;
-        //}
-        if (factionOfEnemy != null) {
-            if (factionOfEnemy.id == this.faction.id) {
-                return false; //characters are of same faction
-            }
-            FactionRelationship rel = this.faction.GetRelationshipWith(factionOfEnemy);
-            if (rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.ENEMY) {
-                return true; //factions of combatants are hostile
-            }
-            return false;
-        } else {
-            return true; //enemy has no faction
-        }
-
-    }
     public STANCE GetCurrentStance() {
         return STANCE.NEUTRAL;
     }
@@ -3131,6 +3111,18 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         PlanGoapActions();
     }
+    public bool AssaultCharacter(Character target) {
+        //Debug.Log("---------" + GameManager.Instance.TodayLogString() + "CREATING IDLE STROLL ACTION FOR " + name + "-------------");
+        //if(currentStructure.unoccupiedTiles.Count > 0) {
+        GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.ASSAULT_ACTION_NPC, this, target);
+        //goapAction.SetTargetStructure(target);
+        GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
+        GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.DEATH }, GOAP_CATEGORY.REACTION);
+        allGoapPlans.Add(goapPlan);
+        return true;
+        //}
+        //return false;
+    }
     public void SetForcedInteraction(Interaction interaction) {
         _forcedInteraction = interaction;
     }
@@ -4190,11 +4182,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if(poiGoapActions != null && poiGoapActions.Count > 0 && state == POI_STATE.ACTIVE && !isDead) {
             List<GoapAction> usableActions = new List<GoapAction>();
             for (int i = 0; i < poiGoapActions.Count; i++) {
-                if (actorAllowedInteractions.Contains(poiGoapActions[i])){
-                    if(poiGoapActions[i] == INTERACTION_TYPE.CRAFT_ITEM) {
+                INTERACTION_TYPE currType = poiGoapActions[i];
+                if (actorAllowedInteractions.Contains(currType)){
+                    if(currType == INTERACTION_TYPE.CRAFT_ITEM) {
                         Craftsman craftsman = GetTrait("Craftsman") as Craftsman;
                         for (int j = 0; j < craftsman.craftedItemNames.Length; j++) {
-                            CraftItemGoap goapAction = InteractionManager.Instance.CreateNewGoapInteraction(poiGoapActions[i], actor, this, false) as CraftItemGoap;
+                            CraftItemGoap goapAction = InteractionManager.Instance.CreateNewGoapInteraction(currType, actor, this, false) as CraftItemGoap;
                             goapAction.SetCraftedItem(craftsman.craftedItemNames[j]);
                             goapAction.Initialize();
                             if (goapAction.CanSatisfyRequirements()) {
@@ -4202,9 +4195,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                             }
                         }
                     } else {
-                        GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(poiGoapActions[i], actor, this);
+                        GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(currType, actor, this);
                         if (goapAction == null) {
-                            throw new Exception("Goap action " + poiGoapActions[i].ToString() + " is null!");
+                            throw new Exception("Goap action " + currType.ToString() + " is null!");
                         }
                         if (goapAction.CanSatisfyRequirements()) {
                             usableActions.Add(goapAction);

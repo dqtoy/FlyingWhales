@@ -13,7 +13,7 @@ public class SchedulingManager : MonoBehaviour {
 		Instance = this;
 	}
 	public void StartScheduleCalls(){
-		this.checkGameDate = new GameDate (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, GameManager.Instance.tick, GameManager.Instance.continuousDays);
+		this.checkGameDate = new GameDate (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, GameManager.Instance.tick);
 		Messenger.AddListener (Signals.TICK_ENDED, CheckSchedule);
 	}
 	private void CheckSchedule(){
@@ -50,7 +50,7 @@ public class SchedulingManager : MonoBehaviour {
 		this.schedules.Remove (gameDate);
 	}
 	internal void RemoveSpecificEntry(int month, int day, int year, int hour, int continuousDays, Action act){
-		GameDate gameDate = new GameDate (month, day, year, hour, continuousDays);
+		GameDate gameDate = new GameDate (month, day, year, hour);
 		if(this.schedules.ContainsKey(gameDate)){
 			List<Action> acts = this.schedules[gameDate];
 			for (int i = 0; i < acts.Count; i++) {

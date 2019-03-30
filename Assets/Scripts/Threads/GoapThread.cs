@@ -74,7 +74,7 @@ public class GoapThread : Multithread {
                         kvp.Value.RemoveAt(i);
                         i--;
                     } else {
-                        if (character.gridTileLocation.structure == actor.currentStructure || actor.IsPOIInCharacterAwarenessList(character, characterTargetsAwareness)) {
+                        if (character.specificLocation == actor.specificLocation || actor.IsPOIInCharacterAwarenessList(character, characterTargetsAwareness)) {
                             List<GoapAction> awarenessActions = kvp.Value[i].poi.AdvertiseActionsToActor(actor, actorAllowedActions);
                             if (awarenessActions != null && awarenessActions.Count > 0) {
                                 usableActions.AddRange(awarenessActions);

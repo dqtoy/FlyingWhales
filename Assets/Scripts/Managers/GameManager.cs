@@ -163,16 +163,16 @@ public class GameManager : MonoBehaviour {
     }
 
     public GameDate Today() {
-        return new GameDate(this.month, this.days, this.year, this.tick, this.continuousDays);
+        return new GameDate(this.month, this.days, this.year, this.tick);
     }
     public string TodayLogString() {
         return "[" + continuousDays + " - " + ConvertTickToTime(tick) + "] ";
     }
     public string ConvertDayToLogString(GameDate date) {
-        return "[" + date.continuousDays + " - " + ConvertTickToTime(date.tick) + "] ";
+        return "[" + date.ConvertToContinuousDaysWithTime() + "] ";
     }
     public GameDate EndOfTheMonth() {
-        return new GameDate(this.month, daysPerMonth, this.year, ticksPerDay, continuousDays);
+        return new GameDate(this.month, daysPerMonth, this.year, ticksPerDay);
     }
     public int GetNextMonth() {
         int currMonth = this.month;
@@ -201,7 +201,7 @@ public class GameManager : MonoBehaviour {
         return tickDifference;
     }
     public GameDate FirstDayOfTheMonth() {
-		return new GameDate(this.month, 1, this.year, 1, continuousDays);
+		return new GameDate(this.month, 1, this.year, 1);
 	}
     public void SetPausedState(bool isPaused){
         //Debug.Log("Set paused state to " + isPaused);
