@@ -22,7 +22,7 @@ public class PlayerJobData {
                 jobActions.Add(new Track());
                 break;
             case JOB.RECRUITER:
-                jobActions.Add(new Recruit());
+                jobActions.Add(new Corrupt());
                 break;
             case JOB.DIPLOMAT:
                 jobActions.Add(new ShareIntel());

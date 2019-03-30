@@ -330,6 +330,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.TILE_OBJECT_DESTROY,
                 INTERACTION_TYPE.ITEM_DESTROY,
                 INTERACTION_TYPE.TRAVEL,
+                INTERACTION_TYPE.TRANSFORM_TO_WOLF,
+                INTERACTION_TYPE.REVERT_TO_NORMAL,
             } },
             { RACE.ELVES, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -395,6 +397,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.TILE_OBJECT_DESTROY,
                 INTERACTION_TYPE.ITEM_DESTROY,
                 INTERACTION_TYPE.TRAVEL,
+                INTERACTION_TYPE.TRANSFORM_TO_WOLF,
+                INTERACTION_TYPE.REVERT_TO_NORMAL,
             } },
             { RACE.GOBLIN, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -460,6 +464,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.TILE_OBJECT_DESTROY,
                 INTERACTION_TYPE.ITEM_DESTROY,
                 INTERACTION_TYPE.TRAVEL,
+                INTERACTION_TYPE.TRANSFORM_TO_WOLF,
+                INTERACTION_TYPE.REVERT_TO_NORMAL,
             } },
             { RACE.FAERY, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -525,6 +531,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.TILE_OBJECT_DESTROY,
                 INTERACTION_TYPE.ITEM_DESTROY,
                 INTERACTION_TYPE.TRAVEL,
+                INTERACTION_TYPE.TRANSFORM_TO_WOLF,
+                INTERACTION_TYPE.REVERT_TO_NORMAL,
             } },
             { RACE.SKELETON, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,

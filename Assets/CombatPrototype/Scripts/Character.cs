@@ -4610,7 +4610,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //    log += " - thread has no recalculation plan";
         //}
         //Debug.LogWarning(log);
-
+        if (isDead) {
+            return;
+        }
         if (goapThread.recalculationPlan != null && goapThread.recalculationPlan.isEnd) {
             return;
         }

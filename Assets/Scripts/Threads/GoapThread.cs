@@ -71,8 +71,8 @@ public class GoapThread : Multithread {
                 for (int i = 0; i < kvp.Value.Count; i++) {
                     Character character = kvp.Value[i].poi as Character;
                     if (character.isDead) {
-                        kvp.Value.RemoveAt(i);
-                        i--;
+                        //kvp.Value.RemoveAt(i);
+                        //i--;
                     } else {
                         if (character.specificLocation == actor.specificLocation || actor.IsPOIInCharacterAwarenessList(character, characterTargetsAwareness)) {
                             List<GoapAction> awarenessActions = kvp.Value[i].poi.AdvertiseActionsToActor(actor, actorAllowedActions);
@@ -147,8 +147,8 @@ public class GoapThread : Multithread {
                 for (int i = 0; i < kvp.Value.Count; i++) {
                     Character character = kvp.Value[i].poi as Character;
                     if (character.isDead) {
-                        kvp.Value.RemoveAt(i);
-                        i--;
+                        //kvp.Value.RemoveAt(i);
+                        //i--;
                     } else {
                         if (character.gridTileLocation.structure == actor.currentStructure || actor.IsPOIInCharacterAwarenessList(character, recalculationPlan.goalCharacterTargets)) {
                             List<GoapAction> awarenessActions = kvp.Value[i].poi.AdvertiseActionsToActor(actor, actorAllowedActions);
