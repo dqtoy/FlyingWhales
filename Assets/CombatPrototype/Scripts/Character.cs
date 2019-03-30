@@ -3045,7 +3045,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             //Obtain Supply Plan
             if (role.roleType == CHARACTER_ROLE.CIVILIAN) {
                 SupplyPile supplyPile = homeArea.supplyPile;
-                if (supplyPile.suppliesInPile < 100) {
+                if (supplyPile.suppliesInPile < 200) {
                     weightedDictionary.AddElement(INTERACTION_TYPE.GET_SUPPLY, 4);
                 }
             } else {

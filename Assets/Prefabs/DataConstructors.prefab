@@ -71,6 +71,7 @@ MonoBehaviour:
     - Tired
     - Unconscious
     - Restrained
+    - Resting
     m_values:
     - {fileID: 21300000, guid: 360bd7c134b76554488e42b1b995ce62, type: 3}
     - {fileID: 21300000, guid: b657484a4dbd1c34d9511855a8a101af, type: 3}
@@ -86,6 +87,7 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 20ac5f109fe13ee449f9ff3c1a4e7fc4, type: 3}
     - {fileID: 21300000, guid: 88e35ef856bf3404fb43ebc852f031a7, type: 3}
     - {fileID: 21300000, guid: c83148a4870d1fe4a88d5f24ffe68f29, type: 3}
+    - {fileID: 21300000, guid: 02814b0fa73f19f4ca519ba810b0b300, type: 3}
 --- !u!114 &114379826282364466
 MonoBehaviour:
   m_ObjectHideFlags: 1
