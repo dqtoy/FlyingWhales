@@ -675,6 +675,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public void Death(string cause = "normal") {
         if (!_isDead) {
+            if (UIManager.Instance.characterInfoUI.isShowing) {
+                UIManager.Instance.characterInfoUI.OnClickCloseMenu();
+            }
             SetIsDead(true);
             UnsubscribeSignals();
 
@@ -1654,13 +1657,22 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             targetCharacters.RemoveAt(0);
         }
     }
-    public void ReEstablishRelationships(Dictionary<Character, CharacterRelationshipData> prevRelationships) {
-        relationships = prevRelationships;
-        foreach (KeyValuePair<Character, CharacterRelationshipData> kvp in relationships) {
-            List<RelationshipTrait> rels = new List<RelationshipTrait>(kvp.Value.rels);
-            kvp.Value.rels.Clear();
-            for (int i = 0; i < rels.Count; i++) {
-                CharacterManager.Instance.CreateNewRelationshipBetween(this, kvp.Key, rels[i].relType);
+    public void ReEstablishRelationships(List<RelationshipLycanthropyData> prevRelationships) {
+        for (int i = 0; i < prevRelationships.Count; i++) {
+            RelationshipLycanthropyData relLycanData = prevRelationships[i];
+            if (!relationships.ContainsKey(relLycanData.target)) {
+                relationships.Add(relLycanData.target, relLycanData.characterToTargetRelData);
+            }
+            if (!relLycanData.target.relationships.ContainsKey(this)) {
+                relLycanData.target.relationships.Add(this, relLycanData.targetToCharacterRelData);
+            }
+
+            List<RelationshipTrait> rels = new List<RelationshipTrait>(relLycanData.characterToTargetRelData.rels);
+            relLycanData.characterToTargetRelData.rels.Clear();
+            relLycanData.targetToCharacterRelData.rels.Clear();
+
+            for (int j = 0; j < rels.Count; j++) {
+                CharacterManager.Instance.CreateNewRelationshipBetween(this, relLycanData.target, rels[i].relType);
             }
         }
     }
@@ -2393,6 +2405,20 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public void RemoveTrait(List<Trait> traits) {
         for (int i = 0; i < traits.Count; i++) {
             RemoveTrait(traits[i]);
+        }
+    }
+    public void RemoveAllTraits(string traitNameException = "") {
+        if(traitNameException == "") {
+            while (traits.Count > 0) {
+                RemoveTrait(traits[0]);
+            }
+        } else {
+            for (int i = 0; i < traits.Count; i++) {
+                if(traits[i].name != traitNameException) {
+                    RemoveTrait(traits[i]);
+                    i--;
+                }
+            }
         }
     }
     public Trait GetTrait(string traitName) {
@@ -3812,6 +3838,25 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             //PlanTirednessRecoveryActions();
         }
     }
+    public void SetTiredness(int amount) {
+        tiredness = amount;
+        tiredness = Mathf.Clamp(tiredness, 0, TIREDNESS_DEFAULT);
+        if (tiredness == 0) {
+            Death("exhaustion");
+        } else if (tiredness <= TIREDNESS_THRESHOLD_2) {
+            RemoveTrait("Tired");
+            AddTrait("Exhausted");
+            //PlanTirednessRecoveryActions();
+        } else if (tiredness <= TIREDNESS_THRESHOLD_1) {
+            AddTrait("Tired");
+            RemoveTrait("Exhausted");
+            //PlanTirednessRecoveryActions();
+        } else {
+            //tiredness is higher than both thresholds
+            RemoveTrait("Tired");
+            RemoveTrait("Exhausted");
+        }
+    }
     #endregion
 
     #region Fullness
@@ -4134,6 +4179,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         }
         Debug.Log(log);
+    }
+    public void CopyAwareness(Dictionary<POINT_OF_INTEREST_TYPE, List<IAwareness>> newAwareness) {
+        this.awareness = newAwareness;
     }
     #endregion
 
@@ -4476,9 +4524,18 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return false;
     }
-    public void DropAllPlans() {
-        while(allGoapPlans.Count > 0) {
-            DropPlan(allGoapPlans[0]);
+    public void DropAllPlans(GoapPlan planException = null) {
+        if(planException == null) {
+            while (allGoapPlans.Count > 0) {
+                DropPlan(allGoapPlans[0]);
+            }
+        } else {
+            for (int i = 0; i < allGoapPlans.Count; i++) {
+                if(allGoapPlans[i] != planException) {
+                    DropPlan(allGoapPlans[i]);
+                    i--;
+                }
+            }
         }
     }
     public GoapPlan GetPlanWithGoalEffect(GOAP_EFFECT_CONDITION goalEffect) {

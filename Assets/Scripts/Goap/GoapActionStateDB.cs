@@ -134,7 +134,7 @@ public static class GoapActionStateDB {
             new StateNameAndDuration(){ name = "Patrol Fail", status = InteractionManager.Goap_State_Fail, duration = 0 },
         } },
         {INTERACTION_TYPE.PATROL_ROAM, new StateNameAndDuration[]{
-            new StateNameAndDuration(){ name = "Patrol Success", status = InteractionManager.Goap_State_Success, duration = 6 },
+            new StateNameAndDuration(){ name = "Patrol Success", status = InteractionManager.Goap_State_Success, duration = 0 },
             new StateNameAndDuration(){ name = "Patrol Fail", status = InteractionManager.Goap_State_Fail, duration = 0 },
         } },
         {INTERACTION_TYPE.STEAL, new StateNameAndDuration[]{
@@ -174,6 +174,14 @@ public static class GoapActionStateDB {
             new StateNameAndDuration(){ name = "Target Injured", status = InteractionManager.Goap_State_Success, duration = 0 },
             new StateNameAndDuration(){ name = "Target Killed", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(1) },
             new StateNameAndDuration(){ name = "Target Won", status = InteractionManager.Goap_State_Success, duration = 0 },
+            new StateNameAndDuration(){ name = "Target Missing", status = InteractionManager.Goap_State_Fail, duration = 0 },
+        } },
+        {INTERACTION_TYPE.TRANSFORM_TO_WOLF, new StateNameAndDuration[]{
+            new StateNameAndDuration(){ name = "Transform Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
+            new StateNameAndDuration(){ name = "Target Missing", status = InteractionManager.Goap_State_Fail, duration = 0 },
+        } },
+        {INTERACTION_TYPE.REVERT_TO_NORMAL, new StateNameAndDuration[]{
+            new StateNameAndDuration(){ name = "Transform Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
             new StateNameAndDuration(){ name = "Target Missing", status = InteractionManager.Goap_State_Fail, duration = 0 },
         } },
     };

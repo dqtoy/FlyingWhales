@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class TileObjectAwareness : IAwareness {
     public IPointOfInterest poi { get { return _tileObject; } }
-    public IPointOfInterest tileObject { get { return _tileObject; } }
+    public TileObject tileObject { get { return _tileObject; } }
     public Area knownLocation { get { return knownGridLocation.parentAreaMap.area; } }
     public LocationGridTile knownGridLocation { get; private set; }
 
