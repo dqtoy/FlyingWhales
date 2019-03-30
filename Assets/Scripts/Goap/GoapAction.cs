@@ -348,6 +348,7 @@ public class GoapAction {
     private void MoveToDoAction(GoapPlan plan, Character targetCharacter) {
         if(targetCharacter != null) {
             targetCharacter.AdjustIsWaitingForInteraction(1);
+            targetCharacter.OnTargettedByAction(this);
             if (targetCharacter.currentAction != null && !targetCharacter.currentAction.isPerformingActualAction && !targetCharacter.currentAction.isDone) {
                 targetCharacter.SetCurrentAction(null);
                 //log += "\n- " + targetCharacter.name + " is not performing actual action setting current action to null...";

@@ -125,6 +125,7 @@ public class InteriorMapManager : MonoBehaviour {
     #region For Testing
     bool isShowingMarkerTileData = false;
     private void ShowTileData(LocationGridTile tile, Character character = null) {
+        return;
         if (tile == null) {
             return;
         }
@@ -165,10 +166,12 @@ public class InteriorMapManager : MonoBehaviour {
         UIManager.Instance.ShowSmallInfo(summary);
     }
     public void ShowTileData(Character character, LocationGridTile tile) {
+        return;
         isShowingMarkerTileData = true;
         ShowTileData(tile, character);
     }
     public void HideTileData() {
+        return;
         isShowingMarkerTileData = false;
         UIManager.Instance.HideSmallInfo();
     }

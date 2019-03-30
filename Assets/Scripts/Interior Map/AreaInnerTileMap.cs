@@ -965,7 +965,9 @@ public class AreaInnerTileMap : MonoBehaviour {
     public void LateUpdate() {
         if (UIManager.Instance.characterInfoUI.isShowing 
             && UIManager.Instance.characterInfoUI.activeCharacter.specificLocation == this.area
-            && !UIManager.Instance.characterInfoUI.activeCharacter.isDead) {
+            && !UIManager.Instance.characterInfoUI.activeCharacter.isDead
+            && UIManager.Instance.characterInfoUI.activeCharacter.isWaitingForInteraction <= 0) {
+
             if (UIManager.Instance.characterInfoUI.activeCharacter.marker.currentPath != null) {
                 ShowPath(UIManager.Instance.characterInfoUI.activeCharacter.marker.currentPath);
             } else {

@@ -152,12 +152,25 @@ public class CharacterMarker : PooledObject {
     }
 
     private void UpdateActionIcon() {
-        if (character.currentAction != null && character.currentAction.actionIconString != GoapActionStateDB.No_Icon) {
-            actionIcon.sprite = actionIconDictionary[character.currentAction.actionIconString];
-            actionIcon.gameObject.SetActive(true);
-        } else {
-            actionIcon.gameObject.SetActive(false);
+        if (character == null) {
+            return;
         }
+        if (character.targettedByAction.Count > 0) {
+            if (character.targettedByAction != null && character.targettedByAction[0].actionIconString != GoapActionStateDB.No_Icon) {
+                actionIcon.sprite = actionIconDictionary[character.targettedByAction[0].actionIconString];
+                actionIcon.gameObject.SetActive(true);
+            } else {
+                actionIcon.gameObject.SetActive(false);
+            }
+        } else {
+            if (character.currentAction != null && character.currentAction.actionIconString != GoapActionStateDB.No_Icon) {
+                actionIcon.sprite = actionIconDictionary[character.currentAction.actionIconString];
+                actionIcon.gameObject.SetActive(true);
+            } else {
+                actionIcon.gameObject.SetActive(false);
+            }
+        }
+        
     }
 
     private void OnCharacterDoingAction(Character character, GoapAction action) {
@@ -169,6 +182,13 @@ public class CharacterMarker : PooledObject {
         if (this.character == character) {
             UpdateActionIcon();
         }
+    }
+
+    public void OnCharacterTargettedByAction() {
+        UpdateActionIcon();
+    }
+    public void OnCharacterRemovedTargettedByAction() {
+        UpdateActionIcon();
     }
 
     #region Pathfinding Movement

@@ -215,11 +215,6 @@ public class CharacterInfoUI : UIMenu {
             }
         }
 
-        //Waiting
-        if (_activeCharacter.isWaitingForInteraction > 0) {
-            plansLbl.text =  _activeCharacter.name + " is waiting for someone.";
-        }
-
         //Action
         if (_activeCharacter.currentAction != null && !_activeCharacter.currentAction.isStopped) {
             if (_activeCharacter.currentParty.icon.isTravelling) {
@@ -247,6 +242,27 @@ public class CharacterInfoUI : UIMenu {
             }
             return;
         }
+
+        //Waiting
+        if (_activeCharacter.isWaitingForInteraction > 0) {
+            //character is targetted by an action
+            bool isPerformingActualAction = false;
+            for (int i = 0; i < _activeCharacter.targettedByAction.Count; i++) {
+                GoapAction action = _activeCharacter.targettedByAction[i];
+                if (action.isPerformingActualAction) {
+                    isPerformingActualAction = true;
+                    break;
+                }
+            }
+            if (isPerformingActualAction) {
+                plansLbl.text =  _activeCharacter.name + " interacting with someone";
+            } else {
+                plansLbl.text =  _activeCharacter.name + " is waiting for someone.";
+            }
+            return;
+        }
+
+        
 
         ////Travel Thought
         //if (!_activeCharacter.isDead && _activeCharacter.currentParty.icon.isTravelling) {

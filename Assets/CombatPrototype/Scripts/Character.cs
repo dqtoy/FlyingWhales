@@ -109,6 +109,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public GoapAction currentAction { get; private set; }
     public bool hasAssaultPlan { get; private set; }
     public Character lastAssaultedCharacter { get; private set; }
+    public List<GoapAction> targettedByAction { get; private set; }
 
     private LocationGridTile tile; //what tile in the structure is this character currently in.
     private POI_STATE _state;
@@ -529,6 +530,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         poiGoapActions = new List<INTERACTION_TYPE>();
         allGoapPlans = new List<GoapPlan>();
         hasAssaultPlan = false;
+        targettedByAction = new List<GoapAction>();
 
         tiredness = TIREDNESS_DEFAULT;
         //Fullness value between 1300 and 1440.
@@ -4482,10 +4484,11 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (action == currentAction) {
             SetCurrentAction(null);
         }
-        //if (action.poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-        //    Character targetCharacter = action.poiTarget as Character;
-        //    targetCharacter.AdjustIsWaitingForInteraction(-1);
-        //}
+        if (action.poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+            Character targetCharacter = action.poiTarget as Character;
+            targetCharacter.RemoveTargettedByAction(action);
+        }
+
         if (isDead) {
             log += "\nCharacter is dead!";
             PrintLogIfActive(log);
@@ -4590,7 +4593,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return null;
     }
-
     //For testing: Drop Character
     public void DropACharacter() {
         if (awareness.ContainsKey(POINT_OF_INTEREST_TYPE.CHARACTER)) {
@@ -4600,7 +4602,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             StartGOAP(goapEffect, randomTarget, GOAP_CATEGORY.REACTION);
         }
     }
-
     public void ReceivePlanFromGoapThread(GoapThread goapThread) {
         //string log = name + " received a plan from other thread(" + _numOfWaitingForGoapThread + ")";
         //if(goapThread.recalculationPlan == null) {
@@ -4704,6 +4705,21 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     private void AddPlanAsPriority(GoapPlan plan) {
         allGoapPlans.Insert(0, plan);
+    }
+    public void OnTargettedByAction(GoapAction action) {
+        targettedByAction.Add(action);
+        //targettedByAction = action;
+        if (marker != null) {
+            marker.OnCharacterTargettedByAction();
+        }
+    }
+    public void RemoveTargettedByAction(GoapAction action) {
+        if (targettedByAction.Remove(action)) {
+            //targettedByAction = null;
+            if (marker != null) {
+                marker.OnCharacterRemovedTargettedByAction();
+            }
+        }
     }
     #endregion
 

@@ -188,6 +188,10 @@ public class UIManager : MonoBehaviour {
     }
     #endregion
 
+    public void ExitGame() {
+        Application.Quit();
+    }
+
     public void SetTimeControlsState(bool state) {
         pauseBtn.interactable = state;
         x1Btn.interactable = state;
@@ -323,7 +327,8 @@ public class UIManager : MonoBehaviour {
     #endregion
 
     private void UpdateUI() {
-        dateLbl.SetText(GameManager.Instance.continuousDays + "/" + GameManager.ConvertTickToTime(GameManager.Instance.tick));
+        //dateLbl.SetText(GameManager.Instance.continuousDays + "/" + GameManager.ConvertTickToTime(GameManager.Instance.tick));
+        dateLbl.SetText(GameManager.ConvertTickToTime(GameManager.Instance.tick));
         //timeLbl.SetText(GameManager.GetTimeInWordsOfTick(GameManager.Instance.tick).ToString());
         timeLbl.SetText("");
 
