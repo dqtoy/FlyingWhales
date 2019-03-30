@@ -30,7 +30,10 @@ public class ShareIntel : PlayerJobAction {
         SetTargetCharacter(targetCharacter);
     }
     public override void DeactivateAction() {
-        base.DeactivateAction();
+        this.assignedCharacter = null;
+        isActive = false;
+        Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+        Messenger.RemoveListener<JOB, Character>(Signals.CHARACTER_UNASSIGNED_FROM_JOB, OnCharacterUnassignedFromJob);
         targetCharacter = null;
         SetSubText(string.Empty);
     }
