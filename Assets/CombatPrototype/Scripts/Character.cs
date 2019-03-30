@@ -1876,13 +1876,23 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         return count;
     }
     public bool IsHostileWith(Character character) {
-        if (this.role.roleType == CHARACTER_ROLE.BEAST) {
-            //if the character is a beast, it is hostile to any character of any faction, but not towards characters with the same race as him
+        if (this.faction.id == FactionManager.Instance.neutralFaction.id) {
+            //this character is unaligned
+            //if unaligned, hostile to all other characters, except those of same race
             return character.race != this.race;
         } else {
-            //else, check if the character's factions are different.
+            //this character has a faction
+            //if has a faction, is hostile to characters of every other faction
             return this.faction.id != character.faction.id;
         }
+        //if (this.role.roleType == CHARACTER_ROLE.BEAST) {
+        //    //if the character is a beast, it is hostile to any character of any faction, but not towards characters with the same race as him
+        //    return character.race != this.race;
+        //} else {
+        //    //else, check if the character's factions are different.
+        //    return this.faction.id != character.faction.id;
+        //}
+        //return true;
     }
     #endregion
 
@@ -3111,17 +3121,71 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         PlanGoapActions();
     }
+    public bool hasAssaultPlan = false;
     public bool AssaultCharacter(Character target) {
+        //Debug.Log(this.name + " will assault " + target.name);
+        hasAssaultPlan = true;
         //Debug.Log("---------" + GameManager.Instance.TodayLogString() + "CREATING IDLE STROLL ACTION FOR " + name + "-------------");
         //if(currentStructure.unoccupiedTiles.Count > 0) {
         GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.ASSAULT_ACTION_NPC, this, target);
+        goapAction.SetEndAction(OnAssaultActionReturn);
         //goapAction.SetTargetStructure(target);
         GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
         GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.DEATH }, GOAP_CATEGORY.REACTION);
-        allGoapPlans.Add(goapPlan);
+        goapPlan.SetDoNotRecalculate(true);
+        AddPlanAsPriority(goapPlan);
+        if (currentAction != null) {
+            currentAction.StopAction();
+        }
         return true;
         //}
         //return false;
+    }
+    private void OnAssaultActionReturn(string result, GoapAction action) {
+        hasAssaultPlan = false;
+        GoapActionResult(result, action);
+        //if (action == currentAction) {
+        //    SetCurrentAction(null);
+        //}
+        //if (isDead) {
+        //    return;
+        //}
+        //GoapPlan plan = GetPlanWithAction(action);
+        //if (action.isStopped) {
+        //    if (!DropPlan(plan)) {
+        //        PlanGoapActions();
+        //    }
+        //    return;
+        //}
+        //if (plan == null) {
+        //    PlanGoapActions();
+        //    return;
+        //}
+        //if (result == InteractionManager.Goap_State_Success) {
+        //    plan.SetNextNode();
+        //    if (plan.currentNode == null) {
+        //        //this means that this is the end goal so end this plan now
+        //        if (!DropPlan(plan)) {
+        //            PlanGoapActions();
+        //        }
+        //    } else {
+        //        PlanGoapActions();
+        //    }
+        //} else if (result == InteractionManager.Goap_State_Fail) {
+        //    if (plan.endNode.action == action) {
+        //        if (!DropPlan(plan)) {
+        //            PlanGoapActions();
+        //        }
+        //    } else {
+        //        if (plan.doNotRecalculate) {
+        //            if (!DropPlan(plan)) {
+        //                PlanGoapActions();
+        //            }
+        //        } else {
+        //            RecalculatePlan(plan);
+        //        }
+        //    }
+        //}
     }
     public void SetForcedInteraction(Interaction interaction) {
         _forcedInteraction = interaction;
@@ -3699,6 +3763,15 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         } else {
             //_goapInteractions.Add(type);
         }
+    }
+    public bool HasPlanWithType(INTERACTION_TYPE type) {
+        for (int i = 0; i < allGoapPlans.Count; i++) {
+            GoapPlan currPlan = allGoapPlans[i];
+            if (currPlan.endNode.action != null && currPlan.endNode.action.goapType == type) {
+                return true;
+            }
+        }
+        return false;
     }
     #endregion
 
@@ -4611,6 +4684,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //if(UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == this) {
             Debug.Log(log);
         //}
+    }
+    private void AddPlanAsPriority(GoapPlan plan) {
+        allGoapPlans.Insert(0, plan);
     }
     #endregion
 

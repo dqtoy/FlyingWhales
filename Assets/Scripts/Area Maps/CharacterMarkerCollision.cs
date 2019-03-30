@@ -19,9 +19,9 @@ public class CharacterMarkerCollision : MonoBehaviour {
                 GhostCollisionHandling(collidedWith as GhostCollisionTrigger);
             } else {
                 parentMarker.AddPOIAsInRange(collidedWith.poi);
-                //if (collidedWith.poi is Character) {
-                //    HostilityHandling(collidedWith.poi as Character);
-                //}
+                if (collidedWith.poi is Character && GameManager.Instance.gameHasStarted) {
+                    HostilityHandling(collidedWith.poi as Character);
+                }
             }
             //Debug.Log(this.parentMarker.name + " trigger enter with " + collidedWith.poi.name);
         }
@@ -78,15 +78,48 @@ public class CharacterMarkerCollision : MonoBehaviour {
         Debug.Log(ghostCollisionSummary);
     }
     private void HostilityHandling(Character character) {
+        if (!parentMarker.character.isFactionless && parentMarker.character.role.roleType != CHARACTER_ROLE.SOLDIER
+            && parentMarker.character.role.roleType != CHARACTER_ROLE.ADVENTURER) {
+            //if this character is part of a faction, it can only assault if he/she is a soldier or adventurer
+            return;
+        }
+        //if (parentMarker.character.role.roleType != CHARACTER_ROLE.SOLDIER 
+        //    && parentMarker.character.role.roleType != CHARACTER_ROLE.ADVENTURER) {
+        //    return;
+        //}
         if (parentMarker.character.IsHostileWith(character)) {
-            if (parentMarker.character.currentAction != null && parentMarker.character.currentAction.goapType == INTERACTION_TYPE.ASSAULT_ACTION_NPC) {
+            string summary = GameManager.Instance.TodayLogString() + parentMarker.character.name + " hostility handling summary with " + character.name;
+            if (parentMarker.character.isWaitingForInteraction > 0) {
+                summary += "\n" + parentMarker.character.name + " is waiting for someone. Ignoring " + character.name;
+                Debug.Log(summary);
+                return;
+            }
+            if (parentMarker.character.doNotDisturb > 0) {
+                summary += "\n" + parentMarker.character.name + " has a disabler trait. Ignoring " + character.name;
+                Debug.Log(summary);
+                return;
+            }
+            if (parentMarker.character.hasAssaultPlan ||
+                (parentMarker.character.currentAction != null && (parentMarker.character.currentAction.goapType == INTERACTION_TYPE.ASSAULT_ACTION_NPC
+                || parentMarker.character.HasPlanWithType(INTERACTION_TYPE.ASSAULT_ACTION_NPC)))) {
                 //if the owner of this collider is already assaulting someone, ignore
+                summary += "\n" + parentMarker.character.name + " is already assaulting someone. Ignoring " + character.name;
+                Debug.Log(summary);
                 return;
             }
-            if (character.currentAction != null && character.currentAction.goapType == INTERACTION_TYPE.ASSAULT_ACTION_NPC) {
+            if (character.hasAssaultPlan ||
+                (character.currentAction != null && (character.currentAction.goapType == INTERACTION_TYPE.ASSAULT_ACTION_NPC
+                || character.HasPlanWithType(INTERACTION_TYPE.ASSAULT_ACTION_NPC)))) {
                 //if the character in question is already assaulting someone, ignore
+                summary += "\n" + character.name + " is already assaulting someone. Ignoring " + character.name;
+                Debug.Log(summary);
                 return;
             }
+            //if (parentMarker.character.id == 1) {
+                summary += "\n" + parentMarker.character.name + " will assault " + character.name;
+                parentMarker.character.AssaultCharacter(character);
+            //}
+            Debug.Log(summary);
         }
     }
 }

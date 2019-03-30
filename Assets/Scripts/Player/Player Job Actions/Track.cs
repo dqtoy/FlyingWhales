@@ -19,7 +19,7 @@ public class Track : PlayerJobAction {
         target = targetCharacter;
         target.SetTracked(true);
         Debug.Log(GameManager.Instance.TodayLogString() + assignedCharacter.name + " is now tracking " + targetCharacter.name);
-        //SetSubText("Currently tracking " + targetCharacter.name);
+        SetSubText("Tracking " + targetCharacter.name);
     }
     public override void DeactivateAction() {
         base.DeactivateAction();
@@ -27,7 +27,7 @@ public class Track : PlayerJobAction {
             target.SetTracked(false);
         }
         target = null;
-        //SetSubText(string.Empty);
+        SetSubText(string.Empty);
     }
     protected override bool ShouldButtonBeInteractable(Character character, Character targetCharacter) {
         if (targetCharacter.isDead) {

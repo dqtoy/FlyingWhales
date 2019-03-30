@@ -198,6 +198,10 @@ public class CharacterInfoUI : UIMenu {
     }
 
     private void UpdateThoughtBubble() {
+        if (_activeCharacter.isDead) {
+            plansLbl.text = _activeCharacter.name + " has a died.";
+            return;
+        }
         //Disabler Thought
         if (_activeCharacter.doNotDisturb > 0) {
             Trait disablerTrait = _activeCharacter.GetTraitOf(TRAIT_TYPE.DISABLER);

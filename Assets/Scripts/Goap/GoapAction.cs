@@ -49,6 +49,7 @@ public class GoapAction {
     public string actionIconString { get; protected set; }
     public GameDate executionDate { get; protected set; }
     protected virtual string failActionState { get { return "Target Missing"; } }
+    private System.Action<string, GoapAction> endAction; //if this is not null, this action will return result here, instead of the default actor.GoapActionResult
 
     protected Func<bool> _requirementAction;
     protected System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
@@ -169,7 +170,7 @@ public class GoapAction {
                 targetCharacter = poiTarget as Character;
                 string log = actor.name + " is planning to do something to " + targetCharacter.name + " at " + actor.specificLocation.name;
                 //GameManager.Instance.SetPausedState(true);
-                if (targetCharacter.currentParty.icon.isTravelling && targetCharacter.currentParty.icon.travelLine == null) {
+                if (targetCharacter.currentParty.icon != null && targetCharacter.currentParty.icon.isTravelling && targetCharacter.currentParty.icon.travelLine == null) {
                     targetCharacter.marker.StopMovement(() => MoveToDoAction(plan, targetCharacter));
                     log += "\n- " + targetCharacter.name + " is currently travelling, stopping movement";
                     Debug.LogWarning(log);
@@ -257,7 +258,11 @@ public class GoapAction {
         actor.OnCharacterDoAction(this);
         currentState.StopPerTickEffect();
         End();
-        actor.GoapActionResult(result, this);
+        if (endAction != null) {
+            endAction(result, this);
+        } else {
+            actor.GoapActionResult(result, this);
+        }
         Messenger.Broadcast(Signals.CHARACTER_FINISHED_ACTION, actor, this, result);
     }
     protected void AddActionLog(string log) {
@@ -270,6 +275,9 @@ public class GoapAction {
             Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnActorDied);
         }
         this.actor.PrintLogIfActive(this.goapType.ToString() + " action by " + this.actor.name + " Summary: \n" + actionSummary);
+    }
+    public void SetEndAction(System.Action<string, GoapAction> endAction) {
+        this.endAction = endAction;
     }
     public void StopAction( ) {
         //GoapAction action = actor.currentAction;

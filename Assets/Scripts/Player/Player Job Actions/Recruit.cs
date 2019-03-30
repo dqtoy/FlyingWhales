@@ -8,7 +8,7 @@ public class Recruit : PlayerJobAction {
     public JOB_ACTION_TARGET currentTargetType { get; private set; }
 
     public Recruit() {
-        actionName = "Recruit";
+        actionName = "Corrupt";
         SetDefaultCooldownTime(48);
         currentTargetType = JOB_ACTION_TARGET.NONE;
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
@@ -29,6 +29,7 @@ public class Recruit : PlayerJobAction {
         SetSubText(string.Empty);
     }
     protected override bool ShouldButtonBeInteractable(Character character, Character targetCharacter) {
+        return false; //always deactivate for now
         if (targetCharacter.isDead) {
             return false;
         }
