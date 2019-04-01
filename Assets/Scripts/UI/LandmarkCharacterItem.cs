@@ -61,7 +61,7 @@ public class LandmarkCharacterItem : PooledObject {
                 restrainedIcon.SetActive(false);
                 unrestrainedGO.SetActive(true);
             }
-            if (character.currentParty.icon.isTravelling) {
+            if (character.currentParty.icon.isTravelling && character.currentParty.icon.travelLine != null) {
                 travellingIcon.SetActive(true);
                 arrivedIcon.SetActive(false);
                 coverGO.SetActive(true);

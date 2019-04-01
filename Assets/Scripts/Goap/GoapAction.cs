@@ -196,7 +196,12 @@ public class GoapAction {
         LocationGridTile knownTargetLocation = null;
         if (poiTarget is TileObject || poiTarget is SpecialToken) {
             //if the target is a tile object or a special token, the actor will always go to it's known location instead of actual
-            knownTargetLocation = actor.GetAwareness(poiTarget).knownGridLocation;
+            IAwareness awareness = actor.GetAwareness(poiTarget);
+            if(awareness != null) {
+                knownTargetLocation = actor.GetAwareness(poiTarget).knownGridLocation;
+            } else {
+                knownTargetLocation = poiTarget.gridTileLocation;
+            }
         } else {
             knownTargetLocation = poiTarget.gridTileLocation;
         }
