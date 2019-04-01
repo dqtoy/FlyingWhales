@@ -184,11 +184,12 @@ public class CharacterManager : MonoBehaviour {
             if (homeStructure != null) {
                 newCharacter.MigrateHomeStructureTo(homeStructure);
             }
-            if(newCharacter.homeStructure == null) {
-                homeLocation.AddCharacterToLocation(party, null, null, null, true);
-            } else {
-                homeLocation.AddCharacterToLocation(party, newCharacter.homeStructure, null, null, true);
-            }
+            //if(newCharacter.homeStructure == null) {
+            //    homeLocation.AddCharacterToLocation(party, null, null, null, true);
+            //} else {
+            //    homeLocation.AddCharacterToLocation(party, newCharacter.homeStructure, null, null, true);
+            //}
+            homeLocation.AddCharacterToLocation(party, null, true);
         }
         newCharacter.AddAwareness(newCharacter);
 #endif
@@ -215,11 +216,12 @@ public class CharacterManager : MonoBehaviour {
         if (homeLocation != null) {
             party.icon.SetPosition(homeLocation.coreTile.transform.position);
             newCharacter.MigrateHomeTo(homeLocation, false);
-            if (newCharacter.homeStructure == null) {
-                homeLocation.AddCharacterToLocation(party, null, null, null, true);
-            } else {
-                homeLocation.AddCharacterToLocation(party, newCharacter.homeStructure, null, null, true);
-            }
+            //if (newCharacter.homeStructure == null) {
+            //    homeLocation.AddCharacterToLocation(party, null, null, null, true);
+            //} else {
+            //    homeLocation.AddCharacterToLocation(party, newCharacter.homeStructure, null, null, true);
+            //}
+            homeLocation.AddCharacterToLocation(party, null, true);
         }
         newCharacter.AddAwareness(newCharacter);
 #endif
@@ -251,7 +253,7 @@ public class CharacterManager : MonoBehaviour {
                 party.CreateIcon();
                 party.icon.SetPosition(currentLocation.coreTile.transform.position);            
 #endif
-                currentLocation.AddCharacterToLocation(party, null, null, null, true);
+                currentLocation.AddCharacterToLocation(party, null, true);
             }
         }
         newCharacter.AddAwareness(newCharacter);

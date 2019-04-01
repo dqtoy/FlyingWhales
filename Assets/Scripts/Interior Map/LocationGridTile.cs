@@ -359,28 +359,27 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         throw new System.Exception(this.ToString() + " this tile is not next to a structure of type " + type.ToString());
     }
     public LocationGridTile GetNearestUnoccupiedTileFromThis() {
-        if (this.structure != null) {
-            LocationGridTile nearestTile = null;
-            float nearestDist = 99999f;
-            for (int i = 0; i < this.structure.unoccupiedTiles.Count; i++) {
-                LocationGridTile currTile = this.structure.unoccupiedTiles[i];
-                if (currTile != this) {
-                    float dist = Vector2.Distance(currTile.localLocation, this.localLocation);
-                    if (dist < nearestDist) {
-                        nearestTile = currTile;
-                        nearestDist = dist;
+        List<LocationGridTile> unoccupiedNeighbours = UnoccupiedNeighbours;
+        if (unoccupiedNeighbours.Count == 0) {
+            if (this.structure != null) {
+                LocationGridTile nearestTile = null;
+                float nearestDist = 99999f;
+                for (int i = 0; i < this.structure.unoccupiedTiles.Count; i++) {
+                    LocationGridTile currTile = this.structure.unoccupiedTiles[i];
+                    if (currTile != this) {
+                        float dist = Vector2.Distance(currTile.localLocation, this.localLocation);
+                        if (dist < nearestDist) {
+                            nearestTile = currTile;
+                            nearestDist = dist;
+                        }
                     }
                 }
+                return nearestTile;
             }
-            return nearestTile;
         } else {
-            List<LocationGridTile> unoccupiedNeighbours = UnoccupiedNeighbours;
-            if (unoccupiedNeighbours.Count == 0) {
-                return null;
-            } else {
-                return unoccupiedNeighbours[Random.Range(0, unoccupiedNeighbours.Count)];
-            }
+            return unoccupiedNeighbours[Random.Range(0, unoccupiedNeighbours.Count)];
         }
+        return null;
     }
     #endregion
 

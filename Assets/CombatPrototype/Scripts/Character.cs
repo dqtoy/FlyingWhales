@@ -1253,7 +1253,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         _currentParty = party as CharacterParty;
     }
     public void OnRemovedFromParty() {
-        currentParty.owner.specificLocation.AddCharacterToLocation(this, null, null, null, true);
         SetCurrentParty(ownParty); //set the character's party to it's own party
         //if (ownParty is CharacterParty) {
         //    if ((ownParty as CharacterParty).actionData.currentAction != null) {
@@ -1274,7 +1273,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //if (ownParty.specificLocation is BaseLandmark) {
         //    ownParty.specificLocation.RemoveCharacterFromLocation(ownParty);
         //}
-        PlayerManager.Instance.player.playerArea.AddCharacterToLocation(ownParty, null, null, null, true);
+        PlayerManager.Instance.player.playerArea.AddCharacterToLocation(ownParty, null, true);
         //if (this.homeArea != null) {
         //    this.homeArea.RemoveResident(this);
         //}

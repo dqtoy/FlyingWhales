@@ -1275,7 +1275,7 @@ public class Area {
             }
         }
     }
-    public void AddCharacterToLocation(Character character, LocationStructure structureOverride = null, IPointOfInterest targetPOI = null, LocationGridTile tileOverride = null, bool isInitial = false) {
+    public void AddCharacterToLocation(Character character, LocationGridTile tileOverride = null, bool isInitial = false) {
         if (!charactersAtLocation.Contains(character)) {
             charactersAtLocation.Add(character);
             character.ownParty.SetSpecificLocation(this);
@@ -1299,18 +1299,21 @@ public class Area {
             //    AddCharacterToAppropriateStructure(character);
             //}
             //}
-
-            if (isInitial) {
-                AddCharacterToAppropriateStructure(character);
+            if(tileOverride != null) {
+                tileOverride.structure.AddCharacterAtLocation(character, tileOverride);
             } else {
-                LocationStructure exit = GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
-                exit.AddCharacterAtLocation(character);
+                if (isInitial) {
+                    AddCharacterToAppropriateStructure(character);
+                } else {
+                    LocationStructure exit = GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+                    exit.AddCharacterAtLocation(character);
+                }
             }
             Messenger.Broadcast(Signals.CHARACTER_ENTERED_AREA, this, character);
         }
     }
-    public void AddCharacterToLocation(Party party, LocationStructure structureOverride = null, IPointOfInterest targetPOI = null, LocationGridTile tileOverride = null, bool isInitial = false) {
-        AddCharacterToLocation(party.owner, structureOverride, targetPOI, tileOverride, isInitial);
+    public void AddCharacterToLocation(Party party, LocationGridTile tileOverride = null, bool isInitial = false) {
+        AddCharacterToLocation(party.owner, tileOverride, isInitial);
         //for (int i = 0; i < party.characters.Count; i++) {
         //    AddCharacterToLocation(party.characters[i], structureOverride, targetPOI, tileOverride, isInitial);
         //}

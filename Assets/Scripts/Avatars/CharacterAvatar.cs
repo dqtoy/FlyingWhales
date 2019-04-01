@@ -220,7 +220,7 @@ public class CharacterAvatar : MonoBehaviour{
         _travelLine = null;
         SetHasArrivedState(true);
         _party.specificLocation.RemoveCharacterFromLocation(_party);
-        targetLocation.AddCharacterToLocation(_party, targetStructure, targetPOI, targetTile);
+        targetLocation.AddCharacterToLocation(_party);
         Debug.Log(GameManager.Instance.TodayLogString() + _party.name + " has arrived at " + targetLocation.name + " on " + GameManager.Instance.continuousDays);
         if(_party.characters.Count > 0) {
             Log arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "arrive_location", causeForTravel);

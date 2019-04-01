@@ -727,7 +727,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     }
     public void OnAddedToPlayer() {
         ownParty.specificLocation.RemoveCharacterFromLocation(ownParty);
-        PlayerManager.Instance.player.playerArea.AddCharacterToLocation(ownParty, null, null, null, true);
+        PlayerManager.Instance.player.playerArea.AddCharacterToLocation(ownParty, null, true);
     }
     public bool InviteToParty(Character inviter) {
         return false;

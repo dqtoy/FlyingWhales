@@ -235,7 +235,7 @@ public class Party {
             character.OnAddedToParty(); //this will remove character from his/her location
             if (isOwner) {
                 if (owner.specificLocation != null) {
-                    owner.specificLocation.AddCharacterToLocation(character, owner.currentStructure);
+                    owner.specificLocation.AddCharacterToLocation(character);
                 }
             } else {
                 character.SetGridTileLocation(owner.gridTileLocation);
@@ -253,11 +253,13 @@ public class Party {
             return;
         }
         if (_characters.Remove(character)) {
+            LocationGridTile gridTile = _owner.gridTileLocation.GetNearestUnoccupiedTileFromThis();
+            _owner.specificLocation.AddCharacterToLocation(character, gridTile, true);
             character.OnRemovedFromParty();
             RemoveCurrentBuffsFromCharacter(character);
             character.ownParty.icon.transform.position = this.specificLocation.coreTile.transform.position;
             //if (this.specificLocation is BaseLandmark) {
-            character.RemoveTrait("Packaged");
+            //character.RemoveTrait("Packaged");
             //} else {
             //    character.ownParty.SetSpecificLocation(this.specificLocation);
             //}
