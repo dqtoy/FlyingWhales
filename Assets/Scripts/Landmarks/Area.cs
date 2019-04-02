@@ -308,7 +308,6 @@ public class Area {
         if (!tiles.Contains(tile)) {
             tiles.Add(tile);
             tile.SetArea(this);
-            tile.SetMinimapTileColor(areaColor);
             if (this.coreTile == null) {
                 SetCoreTile(tile);
             }

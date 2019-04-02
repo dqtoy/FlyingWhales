@@ -292,27 +292,6 @@ public class Region : IHasNeighbours<Region> {
         }
         _tilesInRegion.Clear();
     }
-    /*
-     Highlight all tiles in the region.
-         */
-    internal void SetMinimapColor(Color highlightColor, float highlightAlpha) {
-        Color color = highlightColor;
-        color.a = highlightAlpha;
-        Color fullColor = highlightColor;
-        fullColor.a = 255f/255f;
-        for (int i = 0; i < this.tilesInRegion.Count; i++) {
-            HexTile currentTile = this.tilesInRegion[i];
-            //currentTile.kingdomColorSprite.color = color;
-            //currentTile.kingdomColorSprite.gameObject.SetActive(true);
-            currentTile.SetMinimapTileColor(fullColor);
-        }
-        for (int i = 0; i < this.outerGridTilesInRegion.Count; i++) {
-            HexTile currentTile = this.outerGridTilesInRegion[i];
-            //currentTile.kingdomColorSprite.color = color;
-            //currentTile.kingdomColorSprite.gameObject.SetActive(true);
-            currentTile.SetMinimapTileColor(fullColor);
-        }
-    }
     internal void HighlightRegion(Color color, float alpha) {
         for (int i = 0; i < _tilesInRegion.Count; i++) {
             HexTile currTile = _tilesInRegion[i];

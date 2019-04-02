@@ -66,10 +66,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     [SerializeField] private Animator structureAnimation;
 
     [Space(10)]
-    [Header("Minimap Objects")]
-    [SerializeField] private SpriteRenderer minimapHexSprite;
-
-    [Space(10)]
     [Header("Biome Details")]
     [SerializeField] private Transform biomeDetailsParent;
 
@@ -996,10 +992,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         this.centerPiece.GetComponent<SpriteRenderer>().sprite = centerSprite;
         this.centerPiece.SetActive(true);
     }
-    internal void SetMinimapTileColor(Color color) {
-        color.a = 255f / 255f;
-        minimapHexSprite.color = color;
-    }
     public void HighlightTile(Color color, float alpha) {
         color.a = alpha;
         _highlightGO.SetActive(true);
@@ -1122,12 +1114,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     #endregion
 
     #region Monobehaviour Functions
-    private void OnMouseOver() {
-        MouseOver();
-    }
-    private void OnMouseExit() {
-        MouseExit();
-    }
     public void LeftClick() {
 #if !WORLD_CREATION_TOOL
         if (UIManager.Instance.IsMouseOnUI() || UIManager.Instance.IsConsoleShowing()) {
@@ -1163,7 +1149,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         //}
 #endif
     }
-    public void MouseOver() {
+    private void MouseOver() {
 #if WORLD_CREATION_TOOL
         //Debug.Log("IS MOUSE OVER UI " + worldcreator.WorldCreatorUI.Instance.IsMouseOnUI());
         if (!worldcreator.WorldCreatorUI.Instance.IsMouseOnUI()) {
@@ -1181,33 +1167,13 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         }
         //ShowHexTileInfo();
 #else
-        //if (UIManager.Instance.IsMouseOnUI()) {
-        //    return;
-        //}
-        //if (Input.GetMouseButtonDown(0)) {
-        //    LeftClick();
-        //}
-        //if (Input.GetMouseButtonDown(1)) {
-        //    RightClick();
-        //}
         if (this.landmarkOnTile != null) {
             _hoverHighlightGO.SetActive(true);
-            //if (this.areaOfTile != null) {
-            //    this.areaOfTile.HighlightArea();
-            //} else {
-            //    _hoverHighlightGO.SetActive(true);
-            //}
         }
         Messenger.Broadcast(Signals.TILE_HOVERED_OVER, this);
-        //ShowHexTileInfo();
-        //if (Input.GetMouseButtonDown(0)) {
-        //    LeftClick();
-        //} else if (Input.GetMouseButtonDown(1)) {
-        //    RightClick();
-        //}
 #endif
     }
-    public void MouseExit() {
+    private void MouseExit() {
 #if WORLD_CREATION_TOOL
         //if (!worldcreator.WorldCreatorUI.Instance.IsMouseOnUI()) {
             Messenger.Broadcast<HexTile>(Signals.TILE_HOVERED_OUT, this);
@@ -1217,24 +1183,11 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         //}
 #else
         _hoverHighlightGO.SetActive(false);
-        //if (this.landmarkOnTile != null) {
-        //    if (this.areaOfTile != null) {
-        //        this.areaOfTile.UnhighlightArea();
-        //    } else {
-        //        _hoverHighlightGO.SetActive(false);
-        //    }
-        //}
         HideSmallInfoWindow();
-        if (UIManager.Instance.IsMouseOnUI() || UIManager.Instance.IsConsoleShowing()) {
-            return;
-        }
-        Messenger.Broadcast(Signals.TILE_HOVERED_OUT, this);
-        //if (_landmarkOnTile != null && isHabitable) {
-        //	if (_landmarkOnTile.owner != null) {
-        //		this.region.HighlightRegionTiles(_landmarkOnTile.owner.factionColor, 69f / 255f);
-        //	}
+        //if (UIManager.Instance.IsMouseOnUI() || UIManager.Instance.IsConsoleShowing()) {
+        //    return;
         //}
-
+        Messenger.Broadcast(Signals.TILE_HOVERED_OUT, this);
 #endif
     }
     private void DoubleClick() {
@@ -1254,6 +1207,12 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         } else if (ped.clickCount == 2) {
             DoubleClick();
         }
+    }
+    public void OnPointerEnter(BaseEventData bed) {
+        MouseOver();
+    }
+    public void OnPointerExit(BaseEventData bed) {
+        MouseExit();
     }
     #endregion
 

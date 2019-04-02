@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 224934243619306696}
   - component: {fileID: 222672843071653578}
   - component: {fileID: 114129960498231158}
-  m_Layer: 16
+  m_Layer: 13
   m_Name: NameLbl
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -38,7 +38,7 @@ GameObject:
   - component: {fileID: 224950979814515044}
   - component: {fileID: 222090850728464812}
   - component: {fileID: 114561884742299488}
-  m_Layer: 16
+  m_Layer: 13
   m_Name: CountLbl
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -56,7 +56,7 @@ GameObject:
   - component: {fileID: 222896465842506428}
   - component: {fileID: 114904203348111734}
   - component: {fileID: 114036474284203270}
-  m_Layer: 16
+  m_Layer: 13
   m_Name: FactionEmblem
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -73,7 +73,7 @@ GameObject:
   - component: {fileID: 224484343284135416}
   - component: {fileID: 222928654137128664}
   - component: {fileID: 114105625910639158}
-  m_Layer: 5
+  m_Layer: 13
   m_Name: Residents
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -92,7 +92,7 @@ GameObject:
   - component: {fileID: 114667745254162584}
   - component: {fileID: 114726482364068704}
   - component: {fileID: 114198302921296168}
-  m_Layer: 16
+  m_Layer: 13
   m_Name: AreaNameplate
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -109,7 +109,7 @@ GameObject:
   - component: {fileID: 224989786951192896}
   - component: {fileID: 222775372977822492}
   - component: {fileID: 114643234773355864}
-  m_Layer: 5
+  m_Layer: 13
   m_Name: Visitors
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -126,7 +126,7 @@ GameObject:
   - component: {fileID: 224817923092724764}
   - component: {fileID: 222946116977865496}
   - component: {fileID: 114667720474588210}
-  m_Layer: 16
+  m_Layer: 13
   m_Name: CountLbl
   m_TagString: Untagged
   m_Icon: {fileID: 0}

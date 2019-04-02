@@ -9,6 +9,7 @@ TagManager:
   - Character
   - CharacterInfoUI
   - Character Marker
+  - Avatar
   layers:
   - Default
   - TransparentFX
@@ -19,27 +20,27 @@ TagManager:
   - 
   - 
   - Hextiles
-  - EventIcons
-  - ResourceIcons
-  - Avatars
-  - Trader
-  - Minimap
-  - Borders
-  - HextileFogOfWar
-  - Nameplates
-  - MinimapAndHextiles
-  - MinimapUI
   - Unpassable
+  - Nameplates
   - CharacterIcons
-  - Hidden
-  - Agent
-  - AgentItems
-  - Roads
-  - PlayerActions
-  - AvatarCombat
   - LoadingScreen
   - WorldUI
   - Area Maps
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
   - 
   - 
   m_SortingLayers:

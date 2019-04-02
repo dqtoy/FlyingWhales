@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Pathfinding;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -21,6 +22,11 @@ public class InteriorMapManager : MonoBehaviour {
             return currentlyShowingMap != null;
         }
     }
+
+    [Header("Pathfinding")]
+    [SerializeField] private AstarPath pathfinder;
+    private const float nodeSize = 0.2f;
+
 
     private void Awake() {
         Instance = this;
@@ -101,6 +107,27 @@ public class InteriorMapManager : MonoBehaviour {
         newMap.transform.localPosition = nextMapPos;
         //set the next map position based on the new maps height
         nextMapPos = new Vector3(nextMapPos.x, nextMapPos.y + newMap.height + 1, nextMapPos.z);
+        //if (newMap.area.id == 1) {
+            CreatePathfindingGraphForArea(newMap);
+        //}
+        
+    }
+
+    private void CreatePathfindingGraphForArea(AreaInnerTileMap newMap) {
+        GridGraph gg = pathfinder.data.AddGraph(typeof(GridGraph)) as GridGraph;
+        gg.cutCorners = false;
+        gg.rotation = new Vector3(-90f, 0f, 0f);
+        gg.nodeSize = nodeSize;
+        gg.SetDimensions(Mathf.FloorToInt((float)newMap.width / gg.nodeSize), Mathf.FloorToInt((float)newMap.height / gg.nodeSize), nodeSize);
+        Vector3 pos = this.transform.position;
+        pos.x += ((float)newMap.width / 2f);
+        pos.y += ((float)newMap.height / 2f) + newMap.transform.localPosition.y;
+        gg.center = pos;
+        gg.collision.use2D = true;
+        gg.collision.type = ColliderType.Sphere;
+        //gg.collision.diameter = 0.8f;
+        gg.collision.mask = LayerMask.GetMask("Unpassable");
+        AstarPath.active.Scan(gg);
     }
 
     public bool IsMouseOnMarker() {

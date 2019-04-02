@@ -85,7 +85,6 @@ public class FactionManager : MonoBehaviour {
             chosenRegion.SetOwner(newFaction);
             newFaction.OwnRegion(chosenRegion);
             chosenRegion.ReColorBorderTiles(newFaction.factionColor);
-            chosenRegion.SetMinimapColor(newFaction.factionColor, 69f / 255f);
         }
     }
     public void RandomizeStartingFactions(WorldSaveData data) {

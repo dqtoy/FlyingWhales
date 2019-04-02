@@ -97,8 +97,8 @@ public class WorldSaveData {
         }
     }
     public void OccupyPathfindingSettings(HexTile[,] map, int width, int height) {
-        PathfindingManager.Instance.ClearGraphs();
-        PathfindingManager.Instance.CreateGrid(map, width, height);
+        //PathfindingManager.Instance.ClearGraphs();
+        //PathfindingManager.Instance.CreateGrid(map, width, height);
         Pathfinding.Serialization.SerializeSettings settings = new Pathfinding.Serialization.SerializeSettings();
         //Save node info, and output nice JSON
         settings.nodes = true;

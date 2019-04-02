@@ -532,7 +532,6 @@ public class GridMap : MonoBehaviour {
                 owner.OwnRegion(currRegion);
                 currRegion.SetOwner(owner);
                 currRegion.ReColorBorderTiles(owner.factionColor);
-                currRegion.SetMinimapColor(owner.factionColor, 69f / 255f);
             }
         }
     }
