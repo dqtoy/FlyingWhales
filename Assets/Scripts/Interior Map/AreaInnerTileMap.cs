@@ -652,6 +652,7 @@ public class AreaInnerTileMap : MonoBehaviour {
             LocationGridTile currTile = inTiles[i];
             if (currTile.structure == null) {
                 wallTilemap.SetTile(currTile.localPlace, dungeonWallTile);
+                currTile.SetTileType(LocationGridTile.Tile_Type.Wall);
             }
         }
     }
