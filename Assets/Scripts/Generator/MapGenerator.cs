@@ -108,13 +108,6 @@ public class MapGenerator : MonoBehaviour {
         GridMap.Instance.GenerateGrid(data);
         CameraMove.Instance.Initialize();
         ObjectPoolManager.Instance.InitializeObjectPools();
-        //CameraMove.Instance.SetWholemapCameraValues();
-        //Minimap.Instance.Initialize(); TODO: Uncomment When minimap is put back
-        //EquatorGenerator.Instance.GenerateEquator((int)GridMap.Instance.width, (int)GridMap.Instance.height, GridMap.Instance.hexTiles);
-        //Biomes.Instance.GenerateElevation(GridMap.Instance.hexTiles, (int)GridMap.Instance.width, (int)GridMap.Instance.height);
-
-        //LevelLoaderManager.UpdateLoadingInfo("Loading Biomes...");
-        //yield return null;
 
         LevelLoaderManager.UpdateLoadingInfo("Loading Regions...");
         yield return null;
@@ -124,15 +117,11 @@ public class MapGenerator : MonoBehaviour {
 
         GridMap.Instance.GenerateOuterGrid(data);
         CameraMove.Instance.CalculateCameraBounds();
-        //GridMap.Instance.DivideOuterGridRegions();
 
         Biomes.Instance.LoadPassableStates(GridMap.Instance.hexTiles, GridMap.Instance.outerGridList);
 
-        //RoadManager.Instance.GenerateTilePassableTypes();
-
         UIManager.Instance.InitializeUI();
         InteriorMapManager.Instance.Initialize();
-        //ObjectManager.Instance.Initialize();
 
         LevelLoaderManager.UpdateLoadingInfo("Loading Factions...");
         yield return null;
@@ -140,7 +129,6 @@ public class MapGenerator : MonoBehaviour {
         FactionManager.Instance.LoadFactions(data);
         st.Stop();
 
-        //GridMap.Instance.OccupyRegions(data);
         LevelLoaderManager.UpdateLoadingInfo("Loading Areas...");
         yield return null;
         LandmarkManager.Instance.LoadAreas(data);
@@ -152,35 +140,18 @@ public class MapGenerator : MonoBehaviour {
         LandmarkManager.Instance.LoadLandmarks(data);
         st.Stop();
 
-
-        //LandmarkManager.Instance.GeneratePlayerLandmarks(playerRegion);
-        //PathfindingManager.Instance.LoadSettings(data.pathfindingSettings);
-        //PathfindingManager.Instance.CreateGrid(GridMap.Instance.map, (int) GridMap.Instance.width, (int) GridMap.Instance.height);
-
-        //FactionManager.Instance.OccupyLandmarksInFactionRegions();
-
         LevelLoaderManager.UpdateLoadingInfo("Starting Game...");
         yield return null;
 
         Biomes.Instance.UpdateTileVisuals(GridMap.Instance.allTiles);
-        //Biomes.Instance.GenerateTileBiomeDetails(GridMap.Instance.hexTiles);
 
         LandmarkManager.Instance.InitializeLandmarks();
-        //CharacterScheduleManager.Instance.Initialize();
-        //CharacterManager.Instance.GenerateCharactersForTesting(1);
+
         CharacterManager.Instance.LoadCharacters(data);
         LandmarkManager.Instance.LoadAdditionalAreaData();
-        //CharacterManager.Instance.LoadRelationships(data);
 
         TokenManager.Instance.Initialize();
 
-        //CharacterManager.Instance.LoadSquads(data);
-        //LandmarkManager.Instance.LoadDefenders(data);
-
-        //CameraMove.Instance.UpdateMinimapTexture();
-        //QuestManager.Instance.Initialize();
-        //EventManager.Instance.Initialize();
-        //CharacterManager.Instance.LoadCharactersInfo(data);
         FactionManager.Instance.RandomizeStartingFactions(data);
         //CharacterManager.Instance.CreateNeutralCharacters();
         CharacterManager.Instance.GenerateInitialAwareness();
@@ -188,7 +159,6 @@ public class MapGenerator : MonoBehaviour {
         if (SteamManager.Initialized) {
             AchievementManager.Instance.Initialize();
         }
-        //CharacterManager.Instance.GenerateRelationshipsForTesting();
         CharacterManager.Instance.GenerateRelationships();
         loadingWatch.Stop();
         Debug.Log(string.Format("Total loading time is {0} ms", loadingWatch.ElapsedMilliseconds));
@@ -198,7 +168,6 @@ public class MapGenerator : MonoBehaviour {
 
         yield return new WaitForSeconds(1f);
         PlayerManager.Instance.LoadStartingTile();
-        //GameManager.Instance.StartProgression();
     }
 
     internal void ReloadScene() {

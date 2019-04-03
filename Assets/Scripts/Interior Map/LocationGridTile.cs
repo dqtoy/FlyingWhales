@@ -100,7 +100,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
                 Utilities.IsInRange(result.Y, 0, mapUpperBoundY + 1)) {
                 neighbours.Add(currDir, map[result.X, result.Y]);
             }
-            
+
         }
 
         //for (int i = 0; i < LandmarkManager.mapNeighborPoints.Count; i++) {
@@ -135,9 +135,12 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
             case Tile_Type.Wall:
                 SetTileAccess(Tile_Access.Impassable);
                 break;
-            //default:
-            //    SetTileState(Tile_State.Empty);
-            //    break;
+            case Tile_Type.Gate:
+                SetTileAccess(Tile_Access.Passable);
+                break;
+                //default:
+                //    SetTileState(Tile_State.Empty);
+                //    break;
         }
     }
 
@@ -257,8 +260,12 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         }
         return false;
     }
-    public bool HasNeighbourOfType(Tile_Type type) {
-        for (int i = 0; i < neighbours.Values.Count; i++) {
+    public bool HasNeighbourOfType(Tile_Type type, bool useFourNeighbours = false) {
+        Dictionary<TileNeighbourDirection, LocationGridTile> n = neighbours;
+        if (useFourNeighbours) {
+            n = FourNeighboursDictionary();
+        }
+        for (int i = 0; i < n.Values.Count; i++) {
             if (neighbours.Values.ElementAt(i).tileType == type) {
                 return true;
             }
@@ -280,7 +287,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         Messenger.Broadcast<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, this, occupant);
     }
     public void RemoveOccupant() {
-        if(occupant != null) {
+        if (occupant != null) {
             occupant.SetGridTileLocation(null);
             occupant = null;
             //if (prefabHere != null) {
@@ -303,7 +310,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     }
     public bool IsAdjacentTo(System.Type type) {
         foreach (KeyValuePair<TileNeighbourDirection, LocationGridTile> keyValuePair in neighbours) {
-            if ((keyValuePair.Value.objHere != null && keyValuePair.Value.objHere.GetType() == type) 
+            if ((keyValuePair.Value.objHere != null && keyValuePair.Value.objHere.GetType() == type)
                 || (keyValuePair.Value.occupant != null && keyValuePair.Value.occupant.GetType() == type)) {
                 return true;
             }
@@ -335,22 +342,70 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         SetTileAccess(Tile_Access.Passable);
         return false;
     }
-    public bool HasNeighbouringStructureOfType(STRUCTURE_TYPE type) {
-        foreach (KeyValuePair<TileNeighbourDirection, LocationGridTile> keyValuePair in neighbours) {
+    public bool HasNeighbouringStructureOfType(STRUCTURE_TYPE type, bool useFourNeighbours = false) {
+        Dictionary<TileNeighbourDirection, LocationGridTile> n = neighbours;
+        if (useFourNeighbours) {
+            n = FourNeighboursDictionary();
+        }
+        foreach (KeyValuePair<TileNeighbourDirection, LocationGridTile> keyValuePair in n) {
             if (keyValuePair.Value.structure != null && keyValuePair.Value.structure.structureType == type) {
                 return true;
             }
         }
         return false;
     }
+    public bool HasNeighbouringStructureOfType(List<STRUCTURE_TYPE> types) {
+        foreach (KeyValuePair<TileNeighbourDirection, LocationGridTile> keyValuePair in neighbours) {
+            if (keyValuePair.Value.structure != null && types.Contains(keyValuePair.Value.structure.structureType)) {
+                return true;
+            }
+        }
+        return false;
+    }
     public bool CanBeAnEntrance() {
-        if (!HasNeighbouringStructureOfType(STRUCTURE_TYPE.WORK_AREA)) {
+        if (!HasNeighbouringStructureOfType(STRUCTURE_TYPE.WORK_AREA, true)) {
             return false;
         }
         if (GetDifferentStructureNeighbourDirections().Count > 3) { //because corner tiles of structures always have more than 3 different structure neighbours, and corner tiles should not be made entrances (looks weird)
             return false;
         }
         return true;
+    }
+    public bool HasStructureOfTypeInRadius(List<STRUCTURE_TYPE> types, int radius) {
+        List<LocationGridTile> tiles = parentAreaMap.GetTilesInRadius(this, radius, false, true);
+        for (int i = 0; i < tiles.Count; i++) {
+            LocationGridTile currTile = tiles[i];
+            if (currTile.structure != null && types.Contains(currTile.structure.structureType)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public bool HasStructureOfTypeHorizontally(List<STRUCTURE_TYPE> types, int range) {
+        List<LocationGridTile> tiles = new List<LocationGridTile>();
+        if (range > 0) {
+            for (int i = 0; i < range; i++) {
+                int nextX = this.localPlace.x + 1;
+                if (nextX < parentAreaMap.map.GetUpperBound(0)) {
+                    tiles.Add(parentAreaMap.map[nextX, this.localPlace.y]);
+                }
+            }
+        } else if (range < 0) {
+            for (int i = 0; i < Mathf.Abs(range); i++) {
+                int nextX = this.localPlace.x - 1;
+                if (nextX > parentAreaMap.map.GetLowerBound(0)) {
+                    tiles.Add(parentAreaMap.map[nextX, this.localPlace.y]);
+                }
+            }
+        }
+        
+        for (int i = 0; i < tiles.Count; i++) {
+            LocationGridTile currTile = tiles[i];
+            if (currTile.structure != null && types.Contains(currTile.structure.structureType)) {
+                return true;
+            }
+        }
+        return false;
     }
     public TileNeighbourDirection GetCardinalDirectionOfStructureType(STRUCTURE_TYPE type) {
         foreach (KeyValuePair<TileNeighbourDirection, LocationGridTile> keyValuePair in FourNeighboursDictionary()) {

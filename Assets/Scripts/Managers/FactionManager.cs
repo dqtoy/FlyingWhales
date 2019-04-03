@@ -122,7 +122,7 @@ public class FactionManager : MonoBehaviour {
             }
         }
 
-        Debug.Log(log);
+        //Debug.Log(log);
 
         /*
          If both Factions are opposing alignment, -1 to relationship.

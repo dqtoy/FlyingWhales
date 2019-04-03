@@ -84,6 +84,8 @@ public enum GRID_PATHFINDING_MODE {
     NORMAL,
     ROADS_ONLY,
     REALISTIC,
+    MAIN_ROAD_GEN,
+    CAVE_ROAD_GEN,
 }
 
 public enum GENDER{

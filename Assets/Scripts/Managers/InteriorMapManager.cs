@@ -107,10 +107,7 @@ public class InteriorMapManager : MonoBehaviour {
         newMap.transform.localPosition = nextMapPos;
         //set the next map position based on the new maps height
         nextMapPos = new Vector3(nextMapPos.x, nextMapPos.y + newMap.height + 1, nextMapPos.z);
-        //if (newMap.area.id == 1) {
-            CreatePathfindingGraphForArea(newMap);
-        //}
-        
+        CreatePathfindingGraphForArea(newMap);
     }
 
     private void CreatePathfindingGraphForArea(AreaInnerTileMap newMap) {
@@ -124,7 +121,7 @@ public class InteriorMapManager : MonoBehaviour {
         pos.y += ((float)newMap.height / 2f) + newMap.transform.localPosition.y;
         gg.center = pos;
         gg.collision.use2D = true;
-        gg.collision.diameter = 1.3f;
+        gg.collision.type = ColliderType.Sphere;
         //gg.collision.diameter = 0.8f;
         gg.collision.mask = LayerMask.GetMask("Unpassable");
         AstarPath.active.Scan(gg);
@@ -152,13 +149,13 @@ public class InteriorMapManager : MonoBehaviour {
     #region For Testing
     bool isShowingMarkerTileData = false;
     private void ShowTileData(LocationGridTile tile, Character character = null) {
-        //return;
         if (tile == null) {
             return;
         }
         string summary = tile.localPlace.ToString();
         summary += "\nLocal Location: " + tile.localLocation.ToString();
         summary += "\nWorld Location: " + tile.worldLocation.ToString();
+        summary += "\nIs Inside: " + tile.isInside.ToString();
         summary += "\nTile Type: " + tile.tileType.ToString();
         summary += "\nTile State: " + tile.tileState.ToString();
         summary += "\nTile Access: " + tile.tileAccess.ToString();
@@ -194,12 +191,11 @@ public class InteriorMapManager : MonoBehaviour {
         UIManager.Instance.ShowSmallInfo(summary);
     }
     public void ShowTileData(Character character, LocationGridTile tile) {
-        //return;
+        return;
         isShowingMarkerTileData = true;
         ShowTileData(tile, character);
     }
     public void HideTileData() {
-        //return;
         isShowingMarkerTileData = false;
         UIManager.Instance.HideSmallInfo();
     }

@@ -97,7 +97,11 @@ public class Area {
             if (warehouse == null) {
                 return 0;
             }
-            return warehouse.GetSupplyPile().suppliesInPile;
+            SupplyPile supplyPile = warehouse.GetSupplyPile();
+            if (supplyPile == null) {
+                return 0;
+            }
+            return supplyPile.suppliesInPile;
         }
     }
     public SupplyPile supplyPile {
@@ -1622,7 +1626,7 @@ public class Area {
     public bool AddSpecialTokenToLocation(SpecialToken token, LocationStructure structure = null, LocationGridTile gridLocation = null) {
         if (!IsItemInventoryFull() && !possibleSpecialTokenSpawns.Contains(token)) {
             possibleSpecialTokenSpawns.Add(token);
-            Debug.Log(GameManager.Instance.TodayLogString() + "Added " + token.name + " at " + name);
+            //Debug.Log(GameManager.Instance.TodayLogString() + "Added " + token.name + " at " + name);
             if (structure != null) {
                 structure.AddItem(token, gridLocation);
                 if (structure.isInside) {

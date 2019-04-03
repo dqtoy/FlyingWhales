@@ -863,7 +863,7 @@ public class CharacterManager : MonoBehaviour {
                     }
                 }
             }
-            Debug.Log(summary);
+            //Debug.Log(summary);
         }
     }
     #endregion

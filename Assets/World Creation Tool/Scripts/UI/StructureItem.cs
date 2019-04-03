@@ -18,9 +18,12 @@ public class StructureItem : MonoBehaviour {
 
     public void SetIsInsideState(bool isOn) {
         structure.SetInsideState(isOn);
+        worldcreator.WorldCreatorUI.Instance.editAreasMenu.infoEditor.UpdateStructureSummary();
     }
 
     public void DeleteStructure() {
         structure.DestroyStructure();
+        worldcreator.WorldCreatorUI.Instance.editAreasMenu.infoEditor.UpdateStructureSummary();
+        GameObject.Destroy(this.gameObject);
     }
 }
