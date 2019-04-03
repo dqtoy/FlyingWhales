@@ -72,8 +72,8 @@ public class BezierCurveManager : MonoBehaviour {
         Vector3[] positions = new Vector3[numOfPositions];
         for (int i = 1; i <= numOfPositions; i++) {
             t = i / timeDivisor;
-            Vector3 curvePoint = AstarSplines.CubicBezier(startPoint, p1c, p2c, endPoint, t);
-            positions[i - 1] = curvePoint;
+            //Vector3 curvePoint = AstarSplines.CubicBezier(startPoint, p1c, p2c, endPoint, t);
+            //positions[i - 1] = curvePoint;
         }
         bezierCurve.SetPositions(positions);
         return bezierCurve;
@@ -107,8 +107,8 @@ public class BezierCurveManager : MonoBehaviour {
         float t = 0;
         for (int i = 1; i <= numOfInterpolations; i++) {
             t = i / timeDivisor;
-            Vector3 curvePoint = AstarSplines.CubicBezier(startPoint, p1c, p2c, endPoint, t);
-            lineRenderer.SetPosition(i - 1, curvePoint);
+            //Vector3 curvePoint = AstarSplines.CubicBezier(startPoint, p1c, p2c, endPoint, t);
+            //lineRenderer.SetPosition(i - 1, curvePoint);
         }
     }
     public void DrawCubicCurve(Vector3 startPoint, Vector3 endPoint, Vector3 controlPoint1, Vector3 controlPoint2, int numOfInterpolations) {
@@ -118,8 +118,8 @@ public class BezierCurveManager : MonoBehaviour {
         float t = 0;
         for (int i = 1; i <= numOfInterpolations; i++) {
             t = i / timeDivisor;
-            Vector3 curvePoint = AstarSplines.CubicBezier(startPoint, controlPoint1, controlPoint2, endPoint, t);
-            lineRenderer.SetPosition(i - 1, curvePoint);
+            //Vector3 curvePoint = AstarSplines.CubicBezier(startPoint, controlPoint1, controlPoint2, endPoint, t);
+            //lineRenderer.SetPosition(i - 1, curvePoint);
         }
     }
     public BezierCurveParent GetCurveParent(Vector3 startPos, Vector3 endPos) {

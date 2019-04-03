@@ -52,11 +52,15 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         centeredLocalLocation = new Vector3(localLocation.x + 0.5f, localLocation.y + 0.5f, localLocation.z);
         int xMult = worldLocation.x < 0 ? -1 : 1;
         int yMult = worldLocation.y < 0 ? -1 : 1;
-        centeredWorldLocation = new Vector3(((int) worldLocation.x) + (0.5f * xMult), ((int) worldLocation.y) + (0.5f * yMult), worldLocation.z);
+        centeredWorldLocation = new Vector3(((int)worldLocation.x) + (0.5f * xMult), ((int)worldLocation.y) + (0.5f * yMult), worldLocation.z);
         tileType = Tile_Type.Empty;
         tileState = Tile_State.Empty;
         tileAccess = Tile_Access.Passable;
         charactersHere = new List<Character>();
+    }
+    public void UpdateWorldLocation() {
+        worldLocation = parentTileMap.CellToWorld(localPlace);
+        centeredWorldLocation = new Vector3(worldLocation.x + 0.5f, worldLocation.y + 0.5f, worldLocation.z);
     }
     public List<LocationGridTile> FourNeighbours() {
         List<LocationGridTile> fn = new List<LocationGridTile>();

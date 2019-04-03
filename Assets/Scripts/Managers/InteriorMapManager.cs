@@ -108,6 +108,7 @@ public class InteriorMapManager : MonoBehaviour {
         //set the next map position based on the new maps height
         nextMapPos = new Vector3(nextMapPos.x, nextMapPos.y + newMap.height + 1, nextMapPos.z);
         CreatePathfindingGraphForArea(newMap);
+        newMap.UpdateTilesWorldPosition();
     }
 
     private void CreatePathfindingGraphForArea(AreaInnerTileMap newMap) {
@@ -115,14 +116,20 @@ public class InteriorMapManager : MonoBehaviour {
         gg.cutCorners = false;
         gg.rotation = new Vector3(-90f, 0f, 0f);
         gg.nodeSize = nodeSize;
-        gg.SetDimensions(Mathf.FloorToInt((float)newMap.width / gg.nodeSize), Mathf.FloorToInt((float)newMap.height / gg.nodeSize), nodeSize);
+
+        int reducedWidth = newMap.width - (AreaInnerTileMap.eastEdge + AreaInnerTileMap.westEdge);
+        int reducedHeight = newMap.height - (AreaInnerTileMap.northEdge + AreaInnerTileMap.southEdge);
+
+        gg.SetDimensions(Mathf.FloorToInt((float)reducedWidth / gg.nodeSize), Mathf.FloorToInt((float)reducedHeight / gg.nodeSize), nodeSize);
         Vector3 pos = this.transform.position;
         pos.x += ((float)newMap.width / 2f);
         pos.y += ((float)newMap.height / 2f) + newMap.transform.localPosition.y;
+        pos.x += ((AreaInnerTileMap.eastEdge + AreaInnerTileMap.westEdge) / 2 ) - 1;
+
         gg.center = pos;
         gg.collision.use2D = true;
         gg.collision.type = ColliderType.Sphere;
-        //gg.collision.diameter = 0.8f;
+        gg.collision.diameter = 0.5f;
         gg.collision.mask = LayerMask.GetMask("Unpassable");
         AstarPath.active.Scan(gg);
     }
@@ -191,7 +198,6 @@ public class InteriorMapManager : MonoBehaviour {
         UIManager.Instance.ShowSmallInfo(summary);
     }
     public void ShowTileData(Character character, LocationGridTile tile) {
-        return;
         isShowingMarkerTileData = true;
         ShowTileData(tile, character);
     }

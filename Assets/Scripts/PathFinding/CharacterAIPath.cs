@@ -14,12 +14,13 @@ public class CharacterAIPath : AIPath {
     public override void UpdateMe() {
         marker.UpdatePosition();
         base.UpdateMe();
+        marker.visualsParent.localRotation = Quaternion.LookRotation(Vector3.forward, this.velocity);
     }
 
     public void ClearPath() {
         destination = new Vector3(float.PositiveInfinity, float.PositiveInfinity, float.PositiveInfinity);
     }
     public void SetDestination(Vector3 target) {
-        destination = new Vector3(target.x + 15f, target.y + 8f, 0f);
+        destination = target;
     }
 }

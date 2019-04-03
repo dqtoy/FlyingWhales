@@ -83,12 +83,12 @@ TextureImporter:
     sprites: []
     outline: []
     physicsShape:
-    - - {x: -36, y: -33}
-      - {x: -36, y: 40}
-      - {x: -21, y: 40}
-      - {x: -21, y: -20}
-      - {x: 40, y: -20}
-      - {x: 40, y: -33}
+    - - {x: -32, y: -29}
+      - {x: -32, y: 40}
+      - {x: -26, y: 40}
+      - {x: -26, y: -23}
+      - {x: 40, y: -23}
+      - {x: 40, y: -29}
     bones: []
     spriteID: 2c5222002c4d8a54781868b9a0d14c71
     vertices: []

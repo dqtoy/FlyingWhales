@@ -17,13 +17,12 @@ public class CharacterMarker : PooledObject {
 
     public Character character { get; private set; }
 
-    public RectTransform mainRT;
-    [SerializeField] private RectTransform visualsRT;
-    [SerializeField] private Image mainImg;
-    [SerializeField] private Image hoveredImg;
-    [SerializeField] private Image clickedImg;
-    [SerializeField] private TextMeshProUGUI nameLbl;
-    [SerializeField] private Image actionIcon;
+    public Transform visualsParent;
+    [SerializeField] private SpriteRenderer mainImg;
+    [SerializeField] private SpriteRenderer hoveredImg;
+    [SerializeField] private SpriteRenderer clickedImg;
+    [SerializeField] private TextMeshPro nameLbl;
+    [SerializeField] private SpriteRenderer actionIcon;
 
     [Header("Actions")]
     [SerializeField] private StringSpriteDictionary actionIconDictionary;
@@ -71,7 +70,7 @@ public class CharacterMarker : PooledObject {
         this.name = character.name + "'s Marker";
         nameLbl.SetText(character.name);
         this.character = character;
-        _previousTilePosition = new Vector2Int((int) mainRT.anchoredPosition.x, (int) mainRT.anchoredPosition.y);
+        _previousTilePosition = new Vector2Int((int)transform.localPosition.x, (int)transform.localPosition.y);
         if (UIManager.Instance.characterInfoUI.isShowing) {
             clickedImg.gameObject.SetActive(UIManager.Instance.characterInfoUI.activeCharacter.id == character.id);
         }
@@ -284,7 +283,7 @@ public class CharacterMarker : PooledObject {
             }
             //throw new Exception(character.name + "'s marker path count is 0, but movement is starting! Destination Tile is: " + _destinationTile.ToString());
         } else {
-            currentMoveCoroutine = StartCoroutine(MoveToPosition(mainRT.anchoredPosition, _currentPath[0].centeredLocalLocation));
+            currentMoveCoroutine = StartCoroutine(MoveToPosition(transform.localPosition, _currentPath[0].centeredLocalLocation));
         }
         //Messenger.AddListener(Signals.TICK_STARTED, Move);
     }
@@ -405,7 +404,7 @@ public class CharacterMarker : PooledObject {
                         Debug.LogWarning("Tile occupied signal fired for tile " + _currentPath[0].ToString() + " by " + character.name + " because that tile is the next tile and its destination");
                         Messenger.Broadcast(Signals.TILE_OCCUPIED, _currentPath[0], character as IPointOfInterest);
                     }
-                    currentMoveCoroutine = StartCoroutine(MoveToPosition(mainRT.anchoredPosition, _currentPath[0].centeredLocalLocation));
+                    currentMoveCoroutine = StartCoroutine(MoveToPosition(transform.localPosition, _currentPath[0].centeredLocalLocation));
                 }
             }
         }
@@ -418,8 +417,8 @@ public class CharacterMarker : PooledObject {
         while (t < 1) {
             if (!GameManager.Instance.isPaused) {
                 t += Time.deltaTime / GameManager.Instance.progressionSpeed;
-                mainRT.anchoredPosition = Vector3.Lerp(from, to, t);
-                anchoredPos = mainRT.anchoredPosition;
+                transform.localPosition = Vector3.Lerp(from, to, t);
+                anchoredPos = transform.localPosition;
             }
             yield return null;
         }
@@ -428,7 +427,7 @@ public class CharacterMarker : PooledObject {
     }
     public void RotateMarker(Vector3 from, Vector3 to) {
         float angle = Mathf.Atan2(to.y - from.y, to.x - from.x) * Mathf.Rad2Deg;
-        mainRT.eulerAngles = new Vector3(mainRT.rotation.x, mainRT.rotation.y, angle);
+        //transform.eulerAngles = new Vector3(transform.rotation.x, transform.rotation.y, angle);
     }
     public void ReceivePathFromPathfindingThread(InnerPathfindingThread innerPathfindingThread) {
         _currentPath = innerPathfindingThread.path;
@@ -667,7 +666,7 @@ public class CharacterMarker : PooledObject {
         //This is checked per update, stress test this for performance
 
         //I'm keeping a separate field called anchoredPos instead of using the rect transform anchoredPosition directly because the multithread cannot access transform components
-        anchoredPos = mainRT.anchoredPosition;
+        anchoredPos = transform.localPosition;
 
         //This is to check that the character has moved to another tile
         if (_previousTilePosition != character.gridTilePosition) {

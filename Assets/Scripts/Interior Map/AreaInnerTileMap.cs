@@ -7,6 +7,11 @@ using UnityEngine.Tilemaps;
 
 public class AreaInnerTileMap : MonoBehaviour {
 
+    public static int eastEdge = 7;
+    public static int northEdge = 1;
+    public static int southEdge = 1;
+    public static int westEdge = 1;
+
     public int width;
     public int height;
     private const float cellSize = 64f;
@@ -75,7 +80,7 @@ public class AreaInnerTileMap : MonoBehaviour {
     [SerializeField] private TileBase crateBarrelTile;
 
     [Header("Objects")]
-    public RectTransform objectsParent;
+    public Transform objectsParent;
 
     [Header("Events")]
     [SerializeField] private GameObject eventPopupPrefab;
@@ -102,7 +107,6 @@ public class AreaInnerTileMap : MonoBehaviour {
    
 
     public Area area { get; private set; }
-    public RectTransform mapCharactersParent { get { return objectsParent; } }
     public LocationGridTile[,] map { get; private set; }
     public List<LocationGridTile> allTiles { get; private set; }
     public List<LocationGridTile> outsideTiles { get; private set; }
@@ -222,6 +226,13 @@ public class AreaInnerTileMap : MonoBehaviour {
                     groundTilemap.SetTile(currTile.localPlace, outsideTile);
                     insideTiles.Add(currTile);
                 }
+            }
+        }
+    }
+    public void UpdateTilesWorldPosition() {
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                map[x, y].UpdateWorldLocation();
             }
         }
     }
@@ -1083,8 +1094,8 @@ public class AreaInnerTileMap : MonoBehaviour {
         if (character.marker == null) {
             Vector3 pos = new Vector3(tile.localPlace.x + 0.5f, tile.localPlace.y + 0.5f);
             GameObject portraitGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("CharacterMarker", pos, Quaternion.identity, objectsParent);
-            RectTransform rect = portraitGO.transform as RectTransform;
-            rect.anchoredPosition = pos;
+            //RectTransform rect = portraitGO.transform as RectTransform;
+            portraitGO.transform.localPosition = pos;
             character.SetCharacterMarker(portraitGO.GetComponent<CharacterMarker>());
             character.marker.SetCharacter(character);
             character.marker.SetHoverAction(character.ShowTileData, InteriorMapManager.Instance.HideTileData);

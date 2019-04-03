@@ -72740,6 +72740,7 @@ GameObject:
   - component: {fileID: 1713567857}
   - component: {fileID: 1713567858}
   - component: {fileID: 1713567859}
+  - component: {fileID: 1713567860}
   m_Layer: 0
   m_Name: Area Maps Camera
   m_TagString: Untagged
@@ -72822,6 +72823,21 @@ MonoBehaviour:
     m_Extent: {x: 0, y: 0, z: 0}
   allowZoom: 1
   cameraControlEnabled: 0
+--- !u!114 &1713567860
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1713567856}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1690312454, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EventMask:
+    serializedVersion: 2
+    m_Bits: 16384
+  m_MaxRayIntersections: 0
 --- !u!1 &1719068493
 GameObject:
   m_ObjectHideFlags: 0
