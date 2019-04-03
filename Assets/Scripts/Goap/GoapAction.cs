@@ -322,8 +322,14 @@ public class GoapAction {
             if (tile == null) {
                 tile = poiTarget.gridTileLocation;
             }
-            int distance = Mathf.RoundToInt(actor.gridTileLocation.GetDistanceTo(tile));
-            return distance / 6;
+            try {
+                int distance = Mathf.RoundToInt(actor.gridTileLocation.GetDistanceTo(tile));
+                return distance / 6;
+            } catch (Exception e) {
+                Debug.LogError("Distance cost problem for " + poiTarget.name + " with actor " + actor.name + ", poitarget grid location is " + poiTarget.gridTileLocation == null ? "null" : poiTarget.gridTileLocation.ToString());
+            }
+            return 1;
+
             //try {
             //    int distance = Mathf.RoundToInt(actor.gridTileLocation.GetDistanceTo(tile));
             //    return distance / 6;
