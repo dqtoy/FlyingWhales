@@ -57,8 +57,8 @@ namespace worldcreator {
             //Messenger.AddListener<Relationship>(Signals.RELATIONSHIP_CREATED, OnRelationshipCreated);
             //Messenger.AddListener<Relationship>(Signals.RELATIONSHIP_REMOVED, OnRelationshipRemoved);
 
-            LoadEquipmentChoices();
-            LoadInventoryChoices();
+            //LoadEquipmentChoices();
+            //LoadInventoryChoices();
         }
 
         public void UpdateInfo() {

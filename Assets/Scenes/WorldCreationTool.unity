@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028334, g: 0.2257134, b: 0.30692226, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -10636,6 +10636,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   specialTokenSettings: []
+  itemSpritesDictionary:
+    m_keys: 
+    m_values: []
 --- !u!1 &189388249
 GameObject:
   m_ObjectHideFlags: 0
@@ -69112,7 +69115,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   startTile: {fileID: 0}
   targetTile: {fileID: 0}
+  startLocGrid: {x: 0, y: 0}
+  destLocGrid: {x: 0, y: 0}
   modeToUse: 0
+  gridModeToUse: 0
 --- !u!1 &1376514385
 GameObject:
   m_ObjectHideFlags: 0
@@ -94016,7 +94022,7 @@ MonoBehaviour:
   m_Elasticity: 0.1
   m_Inertia: 1
   m_DecelerationRate: 0.135
-  m_ScrollSensitivity: 1
+  m_ScrollSensitivity: 15
   m_Viewport: {fileID: 183702776}
   m_HorizontalScrollbar: {fileID: 894935838}
   m_VerticalScrollbar: {fileID: 1439223442}
@@ -100159,6 +100165,7 @@ MonoBehaviour:
   sensitivity: 15
   _zoomSpeed: 50
   nameplateCamera: {fileID: 298515506}
+  areaMapsCamera: {fileID: 0}
   _uiCamera: {fileID: 1029389646}
   target: {fileID: 0}
   MIN_X: 0
@@ -100333,12 +100340,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1582246f58149247b3fea4ba64d25f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  storylineOptions: {fileID: 1585198747}
-  contentTransform: {fileID: 1512871131}
-  editorTransform: {fileID: 1423092838}
-  storylineBtnPrefab: {fileID: 1133718490580368, guid: 7a557ffa48835014facead9bbcf82ae0,
-    type: 2}
-  dyingKingEditor: {fileID: 0}
 --- !u!1 &2070290593
 GameObject:
   m_ObjectHideFlags: 0

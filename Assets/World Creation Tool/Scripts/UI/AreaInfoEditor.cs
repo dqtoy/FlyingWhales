@@ -165,6 +165,22 @@ public class AreaInfoEditor : MonoBehaviour {
     #endregion
 
     #region Structures
+    public void UpdateStructureSummary() {
+        structuresSummary.text = "Structures Summary:";
+        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in currentArea.structures) {
+            int inside = 0;
+            int outside = 0;
+            for (int i = 0; i < keyValuePair.Value.Count; i++) {
+                LocationStructure structure = keyValuePair.Value[i];
+                if (structure.isInside) {
+                    inside++;
+                } else {
+                    outside++;
+                }
+            }
+            structuresSummary.text += "\n" + keyValuePair.Key.ToString() + " - " + keyValuePair.Value.Count.ToString() + " (Inside - " + inside.ToString() + " Outside - " + outside.ToString() + ")";
+        }
+    }
     private void UpdateStructures() {
         Utilities.DestroyChildren(structureItemsScrollView.content);
         structuresSummary.text = "Structures Summary:";
@@ -181,7 +197,7 @@ public class AreaInfoEditor : MonoBehaviour {
                     outside++;
                 }
             }
-            structuresSummary.text += "\n" + keyValuePair.Key.ToString() + " - " + keyValuePair.Value.Count.ToString() + "(Inside - " + inside.ToString() + " Outside - " + outside.ToString() + ")";
+            structuresSummary.text += "\n" + keyValuePair.Key.ToString() + " - " + keyValuePair.Value.Count.ToString() + " (Inside - " + inside.ToString() + " Outside - " + outside.ToString() + ")";
         }
     }
     public void AddNewStructure() {
