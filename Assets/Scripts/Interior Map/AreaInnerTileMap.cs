@@ -301,7 +301,7 @@ public class AreaInnerTileMap : MonoBehaviour {
     private void GenerateRoads() {
         //main road
         //make a path connecting the east and west gate
-        List<LocationGridTile> mainRoad = PathGenerator.Instance.GetPath(westGate, eastGate, GRID_PATHFINDING_MODE.MAIN_ROAD_GEN);
+        List<LocationGridTile> mainRoad = PathGenerator.Instance.GetPath(westGate, eastGate, GRID_PATHFINDING_MODE.MAIN_ROAD_GEN, true);
         if (mainRoad != null) {
             for (int i = 0; i < mainRoad.Count; i++) {
                 LocationGridTile currTile = mainRoad[i];
@@ -311,9 +311,9 @@ public class AreaInnerTileMap : MonoBehaviour {
                 if (currTile.tileType == LocationGridTile.Tile_Type.Structure) {
                     continue; //skip
                 }
-                if (currTile.tileType == LocationGridTile.Tile_Type.Gate) {
-                    continue; //skip
-                }
+                //if (currTile.tileType == LocationGridTile.Tile_Type.Gate) {
+                //    continue; //skip
+                //}
                 if (currTile.tileType == LocationGridTile.Tile_Type.Structure_Entrance) {
                     continue; //skip
                 }
@@ -327,8 +327,11 @@ public class AreaInnerTileMap : MonoBehaviour {
                     roadTilemap.SetTile(currTile.localPlace, insideTile);
                     detailsTilemap.SetTile(currTile.localPlace, null);
                 }
-                currTile.SetTileState(LocationGridTile.Tile_State.Empty);
-                currTile.SetTileType(LocationGridTile.Tile_Type.Road);
+
+                if (currTile.tileType != LocationGridTile.Tile_Type.Gate) {
+                    currTile.SetTileState(LocationGridTile.Tile_State.Empty);
+                    currTile.SetTileType(LocationGridTile.Tile_Type.Road);
+                }
             }
         }
 
@@ -367,8 +370,10 @@ public class AreaInnerTileMap : MonoBehaviour {
                     //roadTilemap.SetTile(currTile.localPlace, roadTile);
                     roadTilemap.SetTile(currTile.localPlace, insideTile);
                     detailsTilemap.SetTile(currTile.localPlace, null);
-                    currTile.SetTileState(LocationGridTile.Tile_State.Empty);
-                    currTile.SetTileType(LocationGridTile.Tile_Type.Road);
+                    if (currTile.tileType != LocationGridTile.Tile_Type.Gate) {
+                        currTile.SetTileState(LocationGridTile.Tile_State.Empty);
+                        currTile.SetTileType(LocationGridTile.Tile_Type.Road);
+                    }
                 }
             }
         }
