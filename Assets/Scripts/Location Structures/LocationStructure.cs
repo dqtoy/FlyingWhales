@@ -383,12 +383,7 @@ public class LocationStructure {
         return nearestDist;
     }
     public bool HasRoadTo(LocationGridTile tile) {
-        for (int i = 0; i < tiles.Count; i++) {
-            if (PathGenerator.Instance.GetPath(tiles[i], tile, GRID_PATHFINDING_MODE.ROADS_ONLY, true) != null) {
-                return true;
-            }
-        }
-        return false;
+        return PathGenerator.Instance.GetPath(entranceTile, tile, GRID_PATHFINDING_MODE.ROADS_ONLY, true) != null;
     }
     public LocationGridTile GetRandomUnoccupiedTile() {
         if (unoccupiedTiles.Count <= 0) {
@@ -446,11 +441,22 @@ public class LocationStructure {
         }
         return outerTiles;
     }
-    public List<LocationGridTile> GetValidEntranceTiles() {
+    public List<LocationGridTile> GetValidEntranceTiles(int midPoint) {
+
+        //int minX = tiles.Min(x => x.localPlace.x);
+        //int maxX = tiles.Max(x => x.localPlace.x);
+        int minY = tiles.Min(x => x.localPlace.y);
+        int maxY = tiles.Max(x => x.localPlace.y);
+
+        int yToUse = minY;
+        if (maxY <= midPoint) {
+            yToUse = maxY;
+        }
+
         List<LocationGridTile> validTiles = new List<LocationGridTile>();
         for (int i = 0; i < tiles.Count; i++) {
             LocationGridTile currTile = tiles[i];
-            if (currTile.CanBeAnEntrance()) {
+            if (currTile.localPlace.y == yToUse && currTile.CanBeAnEntrance()) {
                 validTiles.Add(currTile);
             }
         }

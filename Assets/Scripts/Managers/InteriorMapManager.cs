@@ -107,10 +107,7 @@ public class InteriorMapManager : MonoBehaviour {
         newMap.transform.localPosition = nextMapPos;
         //set the next map position based on the new maps height
         nextMapPos = new Vector3(nextMapPos.x, nextMapPos.y + newMap.height + 1, nextMapPos.z);
-        //if (newMap.area.id == 1) {
-            CreatePathfindingGraphForArea(newMap);
-        //}
-        
+        CreatePathfindingGraphForArea(newMap);
     }
 
     private void CreatePathfindingGraphForArea(AreaInnerTileMap newMap) {
@@ -152,12 +149,12 @@ public class InteriorMapManager : MonoBehaviour {
     #region For Testing
     bool isShowingMarkerTileData = false;
     private void ShowTileData(LocationGridTile tile, Character character = null) {
-        return;
         if (tile == null) {
             return;
         }
         string summary = tile.localPlace.ToString();
         summary += "\nLocal Location: " + tile.localLocation.ToString();
+        summary += "\nIs Inside: " + tile.isInside.ToString();
         summary += "\nTile Type: " + tile.tileType.ToString();
         summary += "\nTile State: " + tile.tileState.ToString();
         summary += "\nTile Access: " + tile.tileAccess.ToString();
@@ -198,7 +195,6 @@ public class InteriorMapManager : MonoBehaviour {
         ShowTileData(tile, character);
     }
     public void HideTileData() {
-        return;
         isShowingMarkerTileData = false;
         UIManager.Instance.HideSmallInfo();
     }

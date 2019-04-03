@@ -228,9 +228,15 @@ public class AreaMapCameraMove : MonoBehaviour {
         hasReachedThreshold = false;
     }
     private void SetCameraBordersForMap(AreaInnerTileMap map) {
-        float y = map.transform.localPosition.y + (map.height / 2f);
-        MIN_Y = y;
-        MAX_Y = y;
+        float y = map.transform.localPosition.y;
+        //MIN_Y = y;
+        //MAX_Y = y;
+
+        MIN_X = map.cameraBounds.x;
+        MIN_Y = y + map.cameraBounds.y; //need to offset y values based on position of map, because maps are ordered vertically
+        MAX_X = map.cameraBounds.z;
+        MAX_Y = y + map.cameraBounds.w;
+
     }
     #endregion
 
