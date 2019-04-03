@@ -39,5 +39,13 @@ namespace Pathfinding {
                 //ai.destination = target;
             } 
         }
+
+        public void SetDestination(Vector3 destination) {
+            target = destination;
+        }
+
+        public void ClearPath() {
+            target = new Vector3(float.PositiveInfinity, float.PositiveInfinity, float.PositiveInfinity);
+        }
     }
 }

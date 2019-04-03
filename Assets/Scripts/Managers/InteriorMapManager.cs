@@ -180,6 +180,7 @@ public class InteriorMapManager : MonoBehaviour {
         }
         if (character != null) {
             summary += "\nCharacter: " + character.name;
+            summary += "\nDestination: " + (character.marker.destinationTile != null ? character.marker.destinationTile.ToString() : "None");
             summary += "\nPOI's in Range: ";
             if (character.marker.inRangePOIs.Count > 0) {
                 for (int i = 0; i < character.marker.inRangePOIs.Count; i++) {
@@ -198,6 +199,7 @@ public class InteriorMapManager : MonoBehaviour {
         UIManager.Instance.ShowSmallInfo(summary);
     }
     public void ShowTileData(Character character, LocationGridTile tile) {
+        //return;
         isShowingMarkerTileData = true;
         ShowTileData(tile, character);
     }

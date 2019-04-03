@@ -5,6 +5,8 @@ using Pathfinding;
 
 public class CharacterAIPath : AIPath {
     public CharacterMarker marker;
+    public int doNotMove { get; private set; }
+    public bool isStopMovement { get; private set; }
 
     public override void OnTargetReached() {
         base.OnTargetReached();
@@ -13,14 +15,20 @@ public class CharacterAIPath : AIPath {
 
     public override void UpdateMe() {
         marker.UpdatePosition();
+         marker.visualsParent.localRotation = Quaternion.LookRotation(Vector3.forward, this.velocity);
+        if (doNotMove > 0 || isStopMovement) { return; }
         base.UpdateMe();
-        marker.visualsParent.localRotation = Quaternion.LookRotation(Vector3.forward, this.velocity);
+       
     }
-
-    public void ClearPath() {
-        destination = new Vector3(float.PositiveInfinity, float.PositiveInfinity, float.PositiveInfinity);
+    public void AdjustDoNotMove(int amount) {
+        doNotMove += amount;
+        doNotMove = Mathf.Max(0, doNotMove);
+    }
+    public void SetIsStopMovement(bool state) {
+        isStopMovement = state;
     }
     public void SetDestination(Vector3 target) {
         destination = target;
     }
+
 }

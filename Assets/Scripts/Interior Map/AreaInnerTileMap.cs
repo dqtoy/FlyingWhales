@@ -1099,7 +1099,7 @@ public class AreaInnerTileMap : MonoBehaviour {
             character.SetCharacterMarker(portraitGO.GetComponent<CharacterMarker>());
             character.marker.SetCharacter(character);
             character.marker.SetHoverAction(character.ShowTileData, InteriorMapManager.Instance.HideTileData);
-
+            tile.SetOccupant(character);
         }
         //else {
         //    character.marker.gameObject.transform.SetParent(objectsParent);
