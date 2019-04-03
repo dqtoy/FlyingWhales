@@ -91,6 +91,7 @@ GameObject:
   - component: {fileID: 114578536136533292}
   - component: {fileID: 114463735543062698}
   - component: {fileID: 114720397635659402}
+  - component: {fileID: 114946691012557162}
   m_Layer: 29
   m_Name: CharacterMarker
   m_TagString: Character Marker
@@ -276,6 +277,7 @@ MonoBehaviour:
     - {fileID: 21300000, guid: d0440b2a2239fdc4d9c82c807fb76a59, type: 3}
   animator: {fileID: 95186138413260264}
   pathfindingAI: {fileID: 114720397635659402}
+  destinationSetter: {fileID: 114946691012557162}
 --- !u!114 &114463735543062698
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -637,6 +639,19 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114946691012557162
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1392417203996010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a4f825257f3a374f8cd6f11ce1470f2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 1
+  target: {x: 0, y: 0, z: 0}
 --- !u!114 &114974926749944748
 MonoBehaviour:
   m_ObjectHideFlags: 1

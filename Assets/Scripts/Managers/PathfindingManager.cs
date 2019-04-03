@@ -68,9 +68,16 @@ public class PathfindingManager : MonoBehaviour {
     }
 
     private void OnGamePaused(bool state) {
-        for (int i = 0; i < _allAgents.Count; i++) {
-            CharacterAIPath currentAI = _allAgents[i];
-            currentAI.canMove = !state;
+        if (state) {
+            for (int i = 0; i < _allAgents.Count; i++) {
+                CharacterAIPath currentAI = _allAgents[i];
+                currentAI.AdjustDoNotMove(1);
+            }
+        } else {
+            for (int i = 0; i < _allAgents.Count; i++) {
+                CharacterAIPath currentAI = _allAgents[i];
+                currentAI.AdjustDoNotMove(-1);
+            }
         }
     }
     #region Monobehaviours
