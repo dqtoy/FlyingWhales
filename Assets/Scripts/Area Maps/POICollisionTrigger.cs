@@ -21,4 +21,9 @@ public class POICollisionTrigger : MonoBehaviour {
     public void SetLocation(LocationGridTile location) {
         _gridTileLocation = location;
     }
+
+    [ContextMenu("Print World Location")]
+    public void PrintWorldLocation() {
+        Debug.Log(transform.position);
+    }
 }

@@ -154,6 +154,7 @@ public class InteriorMapManager : MonoBehaviour {
         }
         string summary = tile.localPlace.ToString();
         summary += "\nLocal Location: " + tile.localLocation.ToString();
+        summary += "\nWorld Location: " + tile.worldLocation.ToString();
         summary += "\nIs Inside: " + tile.isInside.ToString();
         summary += "\nTile Type: " + tile.tileType.ToString();
         summary += "\nTile State: " + tile.tileState.ToString();

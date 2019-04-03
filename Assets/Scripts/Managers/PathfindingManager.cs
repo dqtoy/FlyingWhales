@@ -10,17 +10,20 @@ public class PathfindingManager : MonoBehaviour {
     [SerializeField] private AstarPath aStarPath;
 
     private GridGraph mainGraph;
-    private List<AIPath> _allAgents;
+    private List<CharacterAIPath> _allAgents;
 
     #region getters/setters
-    public List<AIPath> allAgents {
+    public List<CharacterAIPath> allAgents {
         get { return _allAgents; }
     }
     #endregion
 
     private void Awake() {
         Instance = this;
-        _allAgents = new List<AIPath>();
+        _allAgents = new List<CharacterAIPath>();
+    }
+    void Start() {
+        Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
     }
 
     internal void CreateGrid(HexTile[,] map, int width, int height) {
@@ -57,18 +60,24 @@ public class PathfindingManager : MonoBehaviour {
         AstarPath.active.Scan(mainGraph);
     }
 
-    public void AddAgent(AIPath agent) {
+    public void AddAgent(CharacterAIPath agent) {
         _allAgents.Add(agent);
     }
-    public void RemoveAgent(AIPath agent) {
+    public void RemoveAgent(CharacterAIPath agent) {
         _allAgents.Remove(agent);
     }
 
+    private void OnGamePaused(bool state) {
+        for (int i = 0; i < _allAgents.Count; i++) {
+            CharacterAIPath currentAI = _allAgents[i];
+            currentAI.canMove = !state;
+        }
+    }
     #region Monobehaviours
 #if !WORLD_CREATION_TOOL
     private void Update() {
         for (int i = 0; i < _allAgents.Count; i++) {
-            AIPath currentAI = _allAgents[i];
+            CharacterAIPath currentAI = _allAgents[i];
             currentAI.UpdateMe();
             //if (currentAI is CharacterAIPath && (currentAI as CharacterAIPath).icon.pathfinder.isWaitingForPathCalculation) {
             //    (currentAI as CharacterAIPath).icon.pathfinder.UpdateMe();

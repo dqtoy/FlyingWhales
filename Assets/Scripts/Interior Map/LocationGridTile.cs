@@ -50,7 +50,9 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         worldLocation = tilemap.CellToWorld(localPlace);
         localLocation = tilemap.CellToLocal(localPlace);
         centeredLocalLocation = new Vector3(localLocation.x + 0.5f, localLocation.y + 0.5f, localLocation.z);
-        centeredWorldLocation = new Vector3(worldLocation.x + 0.5f, worldLocation.y + 0.5f, worldLocation.z);
+        int xMult = worldLocation.x < 0 ? -1 : 1;
+        int yMult = worldLocation.y < 0 ? -1 : 1;
+        centeredWorldLocation = new Vector3(((int) worldLocation.x) + (0.5f * xMult), ((int) worldLocation.y) + (0.5f * yMult), worldLocation.z);
         tileType = Tile_Type.Empty;
         tileState = Tile_State.Empty;
         tileAccess = Tile_Access.Passable;
@@ -244,9 +246,9 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     public override string ToString() {
         return localPlace.ToString();
     }
-    public void SetPrefabHere(GameObject obj) {
-        prefabHere = obj;
-    }
+    //public void SetPrefabHere(GameObject obj) {
+    //    prefabHere = obj;
+    //}
     public float GetDistanceTo(LocationGridTile tile) {
         return Vector2.Distance(this.localLocation, tile.localLocation);
     }
@@ -288,14 +290,14 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         if (occupant != null) {
             occupant.SetGridTileLocation(null);
             occupant = null;
-            if (prefabHere != null) {
-                CharacterPortrait portrait = prefabHere.GetComponent<CharacterPortrait>();
-                if (portrait != null) {
-                    portrait.SetImageRaycastTargetState(true);
-                }
-                //ObjectPoolManager.Instance.DestroyObject(tile.prefabHere);
-                SetPrefabHere(null);
-            }
+            //if (prefabHere != null) {
+            //    CharacterPortrait portrait = prefabHere.GetComponent<CharacterPortrait>();
+            //    if (portrait != null) {
+            //        portrait.SetImageRaycastTargetState(true);
+            //    }
+            //    //ObjectPoolManager.Instance.DestroyObject(tile.prefabHere);
+            //    SetPrefabHere(null);
+            //}
         }
     }
     public bool IsAdjacentTo(IPointOfInterest poi) {

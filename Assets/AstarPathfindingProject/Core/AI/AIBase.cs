@@ -309,7 +309,7 @@ namespace Pathfinding {
 			lastDeltaTime = 0;
 		}
 
-		public void UpdateMe() {
+		public virtual void UpdateMe() {
 			if (shouldRecalculatePath) SearchPath();
 
 			// If gravity is used depends on a lot of things.
