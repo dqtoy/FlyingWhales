@@ -1013,47 +1013,52 @@ public class AreaInnerTileMap : MonoBehaviour {
     public void RemoveCharacter(LocationGridTile tile, Character character) {
         if (tile.occupant == character) {
             tile.RemoveOccupant();
-        } else {
-            if (tile.charactersHere.Remove(character)) {
-                character.SetGridTileLocation(null);
-                if (tile.prefabHere != null) {
-                    CharacterPortrait portrait = tile.prefabHere.GetComponent<CharacterPortrait>();
-                    if (portrait != null) {
-                        portrait.SetImageRaycastTargetState(true);
-                    }
-                    //ObjectPoolManager.Instance.DestroyObject(tile.prefabHere);
-                    tile.SetPrefabHere(null);
-                }
-            }
-        }
+        } 
+        //else {
+            //if (tile.charactersHere.Remove(character)) {
+            //    character.SetGridTileLocation(null);
+            //    if (tile.prefabHere != null) {
+            //        CharacterPortrait portrait = tile.prefabHere.GetComponent<CharacterPortrait>();
+            //        if (portrait != null) {
+            //            portrait.SetImageRaycastTargetState(true);
+            //        }
+            //        //ObjectPoolManager.Instance.DestroyObject(tile.prefabHere);
+            //        tile.SetPrefabHere(null);
+            //    }
+            //}
+        //}
     }
     private void OnPlaceCharacterOnTile(Character character, LocationGridTile tile) {
-        Vector3 pos = new Vector3(tile.localPlace.x + 0.5f, tile.localPlace.y + 0.5f);
-        if(character.marker == null) {
+        //Vector3 pos = new Vector3(tile.localPlace.x + 0.5f, tile.localPlace.y + 0.5f);
+        if (character.marker == null) {
+            Vector3 pos = new Vector3(tile.localPlace.x + 0.5f, tile.localPlace.y + 0.5f);
             GameObject portraitGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("CharacterMarker", pos, Quaternion.identity, objectsParent);
+            RectTransform rect = portraitGO.transform as RectTransform;
+            rect.anchoredPosition = pos;
             character.SetCharacterMarker(portraitGO.GetComponent<CharacterMarker>());
             character.marker.SetCharacter(character);
             character.marker.SetHoverAction(character.ShowTileData, InteriorMapManager.Instance.HideTileData);
-        } else {
-            character.marker.gameObject.transform.SetParent(objectsParent);
-            character.marker.gameObject.transform.localPosition = pos;
+
         }
+        //else {
+        //    character.marker.gameObject.transform.SetParent(objectsParent);
+        //    character.marker.gameObject.transform.localPosition = pos;
+        //}
         if (!character.marker.gameObject.activeSelf) {
             character.marker.gameObject.SetActive(true);
         }
-        character.marker.SetLocation(tile);
-        RectTransform rect = character.marker.gameObject.transform as RectTransform;
-        rect.anchoredPosition = pos;
-        tile.SetPrefabHere(character.marker.gameObject);
+        //RectTransform rect = character.marker.gameObject.transform as RectTransform;
+        //rect.anchoredPosition = pos;
+        //tile.SetPrefabHere(character.marker.gameObject);
 
-        if(!character.currentParty.icon.placeCharacterAsTileObject) {
-            tile.charactersHere.Add(character);
-            character.SetGridTileLocation(tile);
-        } else {
-            character.currentParty.icon.SetIsPlaceCharacterAsTileObject(false);
-            tile.SetOccupant(character);
-            //objectsTilemap.SetTile(tile.localPlace, null);
-        }
+        //if(!character.currentParty.icon.placeCharacterAsTileObject) {
+        //    //tile.charactersHere.Add(character);
+        //    character.SetGridTileLocation(tile);
+        //} else {
+        //    character.currentParty.icon.SetIsPlaceCharacterAsTileObject(false);
+        //    tile.SetOccupant(character);
+        //    //objectsTilemap.SetTile(tile.localPlace, null);
+        //}
     }
     private void OnPlaceCorpseOnTile(Corpse corpse, LocationGridTile tile) {
         Vector3 pos = new Vector3(tile.localPlace.x, tile.localPlace.y);
@@ -1065,7 +1070,7 @@ public class AreaInnerTileMap : MonoBehaviour {
         rect.anchorMin = Vector2.zero;
         go.layer = LayerMask.NameToLayer("Area Maps");
         rect.anchoredPosition = pos;
-        tile.SetPrefabHere(go);
+        //tile.SetPrefabHere(go);
     }
     /// <summary>
     /// This is used to update tile objects with different active and inactive visuals

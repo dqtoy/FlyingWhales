@@ -452,12 +452,16 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public LocationGridTile gridTileLocation {
         get {
-            if(tile == null) {
-                LocationGridTile gridTile = specificLocation.areaMap.map[(int) marker.anchoredPos.x, (int) marker.anchoredPos.y];
-                return gridTile;
-            }
-            return tile;
+            return GetLocationGridTileByXY(gridTilePosition.x, gridTilePosition.y);
+            //if (tile == null) {
+            //    LocationGridTile gridTile = specificLocation.areaMap.map[(int) marker.anchoredPos.x, (int) marker.anchoredPos.y];
+            //    return gridTile;
+            //}
+            //return tile;
         }
+    }
+    public Vector2Int gridTilePosition {
+        get { return new Vector2Int((int) marker.anchoredPos.x, (int) marker.anchoredPos.y); }
     }
     public POI_STATE state {
         get { return _state; }
@@ -1628,6 +1632,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if(isWaitingForInteraction < 0) {
             isWaitingForInteraction = 0;
         }
+    }
+    public LocationGridTile GetLocationGridTileByXY(int x, int y) {
+        return specificLocation.areaMap.map[x, y];
     }
     #endregion
 
@@ -4703,9 +4710,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         _hasAlreadyAskedForPlan = state;
     }
     public void PrintLogIfActive(string log) {
-        //if(UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == this) {
+        if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == this) {
             Debug.Log(log);
-        //}
+        }
     }
     private void AddPlanAsPriority(GoapPlan plan) {
         allGoapPlans.Insert(0, plan);

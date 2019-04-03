@@ -126,7 +126,7 @@ public class LocationStructure {
             if (poi.gridTileLocation != null) {
                 //Debug.Log("Removed " + poi.ToString() + " from " + poi.gridTileLocation.ToString() + " at " + this.ToString());
                 if(poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-                    location.areaMap.RemoveCharacter(poi.gridTileLocation, poi as Character);
+                    //location.areaMap.RemoveCharacter(poi.gridTileLocation, poi as Character);
                 } else {
                     location.areaMap.RemoveObject(poi.gridTileLocation);
                 }
