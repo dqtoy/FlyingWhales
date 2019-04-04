@@ -1790,6 +1790,7 @@ public class Area {
     }
     public LocationStructure GetRandomStructure() {
         Dictionary<STRUCTURE_TYPE, List<LocationStructure>> structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>(this.structures);
+        structures.Remove(STRUCTURE_TYPE.EXIT);
         int dictIndex = UnityEngine.Random.Range(0, structures.Count);
         int count = 0;
         foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp in structures) {

@@ -215,6 +215,13 @@ public class CharacterInfoUI : UIMenu {
             }
         }
 
+        //Character State
+        if(_activeCharacter.stateComponent.currentState != null) {
+            plansLblLogItem.SetLog(_activeCharacter.stateComponent.currentState.thoughtBubbleLog);
+            plansLbl.text = Utilities.LogReplacer(_activeCharacter.stateComponent.currentState.thoughtBubbleLog);
+            return;
+        }
+
         //Action
         if (_activeCharacter.currentAction != null && !_activeCharacter.currentAction.isStopped) {
             if (_activeCharacter.currentParty.icon.isTravelling) {

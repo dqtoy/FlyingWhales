@@ -30,6 +30,8 @@ public class CharacterMarker : PooledObject {
     [Header("Animation")]
     [SerializeField] private Animator animator;
 
+    public CharacterStateComponent stateComponent;
+
     private LocationGridTile lastRemovedTileFromPath;
 
     private List<LocationGridTile> _currentPath;
@@ -293,6 +295,11 @@ public class CharacterMarker : PooledObject {
     }
     public void StopMovement(Action afterStoppingAction = null) {
         string log = character.name + " StopMovement function is called!";
+        StopMovementOnly();
+        log += "\n- Not moving to another tile, go to checker...";
+        CheckIfCurrentTileIsOccupiedOnStopMovement(ref log, afterStoppingAction);
+    }
+    public void StopMovementOnly() {
         _arrivalAction = null;
         if (Messenger.eventTable.ContainsKey(Signals.TILE_OCCUPIED)) {
             Messenger.RemoveListener<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, OnTileOccupied);
@@ -307,10 +314,7 @@ public class CharacterMarker : PooledObject {
         destinationSetter.ClearPath();
         pathfindingAI.SetIsStopMovement(true);
         PlayIdle();
-        log += "\n- Not moving to another tile, go to checker...";
-        CheckIfCurrentTileIsOccupiedOnStopMovement(ref log, afterStoppingAction);
     }
-
     private void CheckIfCurrentTileIsOccupiedOnStopMovement(ref string log, Action afterStoppingAction = null) {
         if (character.gridTileLocation.tileState == LocationGridTile.Tile_State.Occupied || (character.gridTileLocation.occupant != null && character.gridTileLocation.occupant != character)) {
             log += "\n- Current tile " + character.gridTileLocation.ToString() + " is occupied, will check nearest tile to go to...";

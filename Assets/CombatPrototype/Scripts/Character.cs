@@ -110,6 +110,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public bool hasAssaultPlan { get; private set; }
     public Character lastAssaultedCharacter { get; private set; }
     public List<GoapAction> targettedByAction { get; private set; }
+    public CharacterStateComponent stateComponent { get; private set; }
 
     private LocationGridTile tile; //what tile in the structure is this character currently in.
     private POI_STATE _state;
@@ -535,6 +536,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         allGoapPlans = new List<GoapPlan>();
         hasAssaultPlan = false;
         targettedByAction = new List<GoapAction>();
+        stateComponent = new CharacterStateComponent(this);
 
         tiredness = TIREDNESS_DEFAULT;
         //Fullness value between 1300 and 1440.
@@ -2914,6 +2916,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (minion != null || !IsInOwnParty() || isDefender || ownParty.icon.isTravelling || _doNotDisturb > 0 || _job == null || isWaitingForInteraction > 0 || marker.pathfindingThread != null) {
             return; //if this character is not in own party, is a defender or is travelling or cannot be disturbed, do not generate interaction
         }
+        if(stateComponent.currentState != null) {
+            Debug.LogWarning("Currently in " + stateComponent.currentState.stateName + " state, can't plan actions!");
+            return;
+        }
 
         if(allGoapPlans.Count > 0) {
             //StopDailyGoapPlanGeneration();
@@ -3075,10 +3081,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     StartGOAP(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_SUPPLY, supplyPile.suppliesInPile, this), this, GOAP_CATEGORY.WORK);
                 } else {
                     //Role work plans
-                    GoapPlan plan = role.PickRoleWorkPlanFromCharacterWeights(result, this);
-                    if(plan != null) {
-                        allGoapPlans.Add(plan);
-                        hasAddedToGoapPlans = true;
+                    if(role.roleType == CHARACTER_ROLE.SOLDIER) {
+                        stateComponent.SwitchToState(CHARACTER_STATE.PATROL);
+                    } else {
+                        GoapPlan plan = role.PickRoleWorkPlanFromCharacterWeights(result, this);
+                        if (plan != null) {
+                            allGoapPlans.Add(plan);
+                            hasAddedToGoapPlans = true;
+                        }
                     }
                 }
                 return true;
