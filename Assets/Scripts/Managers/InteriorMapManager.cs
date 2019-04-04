@@ -129,7 +129,7 @@ public class InteriorMapManager : MonoBehaviour {
         gg.center = pos;
         gg.collision.use2D = true;
         gg.collision.type = ColliderType.Sphere;
-        gg.collision.diameter = 0.5f;
+        gg.collision.diameter = 1f;
         gg.collision.mask = LayerMask.GetMask("Unpassable");
         AstarPath.active.Scan(gg);
     }

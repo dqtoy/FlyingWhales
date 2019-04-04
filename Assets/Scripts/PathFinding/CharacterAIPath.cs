@@ -7,10 +7,17 @@ public class CharacterAIPath : AIPath {
     public CharacterMarker marker;
     public int doNotMove { get; private set; }
     public bool isStopMovement { get; private set; }
+    public Path currentPath { get; private set; }
 
     public override void OnTargetReached() {
         base.OnTargetReached();
         marker.ArrivedAtLocation();
+        currentPath = null;
+    }
+
+    protected override void OnPathComplete(Path newPath) {
+        base.OnPathComplete(newPath);
+        currentPath = newPath;
     }
 
     public override void UpdateMe() {
@@ -27,8 +34,9 @@ public class CharacterAIPath : AIPath {
     public void SetIsStopMovement(bool state) {
         isStopMovement = state;
     }
-    public void SetDestination(Vector3 target) {
-        destination = target;
-    }
+    //NOTE: use SetDestination in CharacterDestinationSetter instead
+    //public void SetDestination(Vector3 target) {
+    //    destination = target;
+    //}
 
 }

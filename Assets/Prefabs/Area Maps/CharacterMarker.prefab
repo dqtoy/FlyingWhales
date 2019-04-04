@@ -87,8 +87,8 @@ GameObject:
   - component: {fileID: 114379759619008666}
   - component: {fileID: 114578536136533292}
   - component: {fileID: 114720397635659402}
-  - component: {fileID: 114635493542709530}
   - component: {fileID: 114643022847900200}
+  - component: {fileID: 114115144342472108}
   m_Layer: 14
   m_Name: CharacterMarker
   m_TagString: Character Marker
@@ -386,6 +386,20 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &114115144342472108
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1392417203996010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77f586f285b3847808d79083bd19ef1f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 1
+  unwrap: 1
+  splitAtEveryPortal: 0
 --- !u!114 &114379759619008666
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -421,6 +435,7 @@ MonoBehaviour:
     - {fileID: 21300000, guid: d0440b2a2239fdc4d9c82c807fb76a59, type: 3}
   animator: {fileID: 95186138413260264}
   pathfindingAI: {fileID: 114720397635659402}
+  seeker: {fileID: 0}
   destinationSetter: {fileID: 114643022847900200}
 --- !u!114 &114578536136533292
 MonoBehaviour:
@@ -449,27 +464,6 @@ MonoBehaviour:
   tagPenalties: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
   graphMask:
     value: -1
---- !u!114 &114635493542709530
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1392417203996010}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb6a34d769a1e4ac7b0b30e433aa443c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  version: 1
-  smoothType: 0
-  subdivisions: 2
-  iterations: 2
-  strength: 0.5
-  uniformLength: 1
-  maxSegmentLength: 0.5
-  bezierTangentLength: 0.4
-  offset: 0.2
-  factor: 0.1
 --- !u!114 &114643022847900200
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -483,6 +477,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   version: 1
   target: {x: 0, y: 0, z: 0}
+  targetTrans: {fileID: 0}
 --- !u!114 &114699231813471468
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -524,7 +519,7 @@ MonoBehaviour:
   maxAcceleration: -2.5
   rotationSpeed: 360
   slowdownDistance: 0.6
-  pickNextWaypointDist: 0.2
+  pickNextWaypointDist: 0.3
   endReachedDistance: 0.2
   alwaysDrawGizmos: 1
   slowWhenNotFacingTarget: 1

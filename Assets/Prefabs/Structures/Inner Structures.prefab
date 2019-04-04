@@ -1306,7 +1306,7 @@ LineRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1024382313
   m_SortingLayer: 19
-  m_SortingOrder: 50
+  m_SortingOrder: 15
   m_Positions:
   - {x: 0.5, y: 0.5, z: 0}
   - {x: 2.5, y: 2.5, z: 0}
@@ -1362,7 +1362,7 @@ LineRenderer:
     alignment: 0
     textureMode: 0
     generateLightingData: 0
-  m_UseWorldSpace: 0
+  m_UseWorldSpace: 1
   m_Loop: 0
 --- !u!222 &222002337971716892
 CanvasRenderer:

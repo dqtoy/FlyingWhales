@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Pathfinding;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -1027,10 +1028,12 @@ public class AreaInnerTileMap : MonoBehaviour {
         if (UIManager.Instance.characterInfoUI.isShowing 
             && UIManager.Instance.characterInfoUI.activeCharacter.specificLocation == this.area
             && !UIManager.Instance.characterInfoUI.activeCharacter.isDead
-            && UIManager.Instance.characterInfoUI.activeCharacter.isWaitingForInteraction <= 0) {
+            && UIManager.Instance.characterInfoUI.activeCharacter.isWaitingForInteraction <= 0
+            && UIManager.Instance.characterInfoUI.activeCharacter.marker.pathfindingAI.hasPath) {
 
-            if (UIManager.Instance.characterInfoUI.activeCharacter.marker.currentPath != null) {
-                ShowPath(UIManager.Instance.characterInfoUI.activeCharacter.marker.currentPath);
+            if (UIManager.Instance.characterInfoUI.activeCharacter.marker.pathfindingAI.currentPath != null) {
+                //ShowPath(UIManager.Instance.characterInfoUI.activeCharacter.marker.currentPath);
+                ShowPath(UIManager.Instance.characterInfoUI.activeCharacter.marker.pathfindingAI.currentPath);
             } else {
                 HidePath();
             }
@@ -1447,6 +1450,16 @@ public class AreaInnerTileMap : MonoBehaviour {
         Vector3[] positions = new Vector3[path.Count];
         for (int i = 0; i < path.Count; i++) {
             positions[i] = new Vector3(path[i].localPlace.x + 0.5f, path[i].localPlace.y + 0.5f);
+        }
+        pathLineRenderer.SetPositions(positions);
+    }
+    public void ShowPath(Path path) {
+        List<Vector3> points = path.vectorPath;
+        pathLineRenderer.gameObject.SetActive(true);
+        pathLineRenderer.positionCount = points.Count;
+        Vector3[] positions = new Vector3[points.Count];
+        for (int i = 0; i < points.Count; i++) {
+            positions[i] = points[i];
         }
         pathLineRenderer.SetPositions(positions);
     }
