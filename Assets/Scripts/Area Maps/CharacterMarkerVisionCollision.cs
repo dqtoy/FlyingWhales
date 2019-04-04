@@ -20,9 +20,11 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
                 GhostCollisionHandling(collidedWith as GhostCollisionTrigger);
             } else {
                 parentMarker.AddPOIAsInVisionRange(collidedWith.poi);
-                //if (collidedWith.poi is Character && GameManager.Instance.gameHasStarted) {
-                //    HostilityHandling(collidedWith.poi as Character);
-                //}
+                if (collidedWith.poi is Character && GameManager.Instance.gameHasStarted) {
+                    Character targetCharacter = collidedWith.poi as Character;
+                    ChatHandling(targetCharacter);
+                    //HostilityHandling(collidedWith.poi as Character);
+                }
             }
             //Debug.Log(this.parentMarker.name + " trigger enter with " + collidedWith.poi.name);
         }
@@ -77,11 +79,11 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
         }
         Debug.Log(ghostCollisionSummary);
     }
-    private void HostilityHandling(Character character) {
+    private bool HostilityHandling(Character character) {
         if (!parentMarker.character.isFactionless && parentMarker.character.role.roleType != CHARACTER_ROLE.SOLDIER
             && parentMarker.character.role.roleType != CHARACTER_ROLE.ADVENTURER) {
             //if this character is part of a faction, it can only assault if he/she is a soldier or adventurer
-            return;
+            return false;
         }
         //if (parentMarker.character.role.roleType != CHARACTER_ROLE.SOLDIER 
         //    && parentMarker.character.role.roleType != CHARACTER_ROLE.ADVENTURER) {
@@ -92,18 +94,18 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
             if (parentMarker.character.lastAssaultedCharacter != null && parentMarker.character.lastAssaultedCharacter == character) {
                 summary += "\n" + parentMarker.character.name + " already assaulted " + character.name + ", ignoring...";
                 Debug.Log(summary);
-                return;
+                return false;
             }
 
             if (parentMarker.character.isWaitingForInteraction > 0) {
                 summary += "\n" + parentMarker.character.name + " is waiting for someone. Ignoring " + character.name;
                 Debug.Log(summary);
-                return;
+                return false;
             }
             if (parentMarker.character.doNotDisturb > 0) {
                 summary += "\n" + parentMarker.character.name + " has a disabler trait. Ignoring " + character.name;
                 Debug.Log(summary);
-                return;
+                return false;
             }
             if (parentMarker.character.hasAssaultPlan ||
                 (parentMarker.character.currentAction != null && (parentMarker.character.currentAction.goapType == INTERACTION_TYPE.ASSAULT_ACTION_NPC
@@ -111,7 +113,7 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
                 //if the owner of this collider is already assaulting someone, ignore
                 summary += "\n" + parentMarker.character.name + " is already assaulting someone. Ignoring " + character.name;
                 Debug.Log(summary);
-                return;
+                return false;
             }
             if (character.hasAssaultPlan ||
                 (character.currentAction != null && (character.currentAction.goapType == INTERACTION_TYPE.ASSAULT_ACTION_NPC
@@ -119,13 +121,25 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
                 //if the character in question is already assaulting someone, ignore
                 summary += "\n" + character.name + " is already assaulting someone. Ignoring " + character.name;
                 Debug.Log(summary);
-                return;
+                return false;
             }
             //if (parentMarker.character.id == 1) {
                 summary += "\n" + parentMarker.character.name + " will assault " + character.name;
                 parentMarker.character.AssaultCharacter(character);
             //}
             Debug.Log(summary);
+            return true;
         }
+        return false;
+    }
+    private bool ChatHandling(Character targetCharacter) {
+        int chance = UnityEngine.Random.Range(0, 100);
+        if(chance < 10) {
+            if (!parentMarker.character.isChatting && !targetCharacter.isChatting) {
+                parentMarker.character.ChatCharacter(targetCharacter);
+                return true;
+            }
+        }
+        return false;
     }
 }

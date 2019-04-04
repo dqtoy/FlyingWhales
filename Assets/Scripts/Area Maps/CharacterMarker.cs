@@ -197,26 +197,30 @@ public class CharacterMarker : PooledObject {
     #endregion
 
     #region Action Icon
-    private void UpdateActionIcon() {
+    public void UpdateActionIcon() {
         if (character == null) {
             return;
         }
-        if (character.targettedByAction.Count > 0) {
-            if (character.targettedByAction != null && character.targettedByAction[0].actionIconString != GoapActionStateDB.No_Icon) {
-                actionIcon.sprite = actionIconDictionary[character.targettedByAction[0].actionIconString];
-                actionIcon.gameObject.SetActive(true);
-            } else {
-                actionIcon.gameObject.SetActive(false);
-            }
+        if (character.isChatting) {
+            actionIcon.sprite = actionIconDictionary[GoapActionStateDB.Social_Icon];
+            actionIcon.gameObject.SetActive(true);
         } else {
-            if (character.currentAction != null && character.currentAction.actionIconString != GoapActionStateDB.No_Icon) {
-                actionIcon.sprite = actionIconDictionary[character.currentAction.actionIconString];
-                actionIcon.gameObject.SetActive(true);
+            if (character.targettedByAction.Count > 0) {
+                if (character.targettedByAction != null && character.targettedByAction[0].actionIconString != GoapActionStateDB.No_Icon) {
+                    actionIcon.sprite = actionIconDictionary[character.targettedByAction[0].actionIconString];
+                    actionIcon.gameObject.SetActive(true);
+                } else {
+                    actionIcon.gameObject.SetActive(false);
+                }
             } else {
-                actionIcon.gameObject.SetActive(false);
+                if (character.currentAction != null && character.currentAction.actionIconString != GoapActionStateDB.No_Icon) {
+                    actionIcon.sprite = actionIconDictionary[character.currentAction.actionIconString];
+                    actionIcon.gameObject.SetActive(true);
+                } else {
+                    actionIcon.gameObject.SetActive(false);
+                }
             }
         }
-
     }
     private void OnCharacterDoingAction(Character character, GoapAction action) {
         if (this.character == character) {
