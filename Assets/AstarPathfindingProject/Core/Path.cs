@@ -374,7 +374,7 @@ namespace Pathfinding {
 			unchecked { return node.Walkable && (enabledTags >> (int)node.Tag & 0x1) != 0; }
 		}
 
-		internal uint GetTraversalCost (GraphNode node) {
+		internal virtual uint GetTraversalCost (GraphNode node) {
 #if ASTAR_NO_TRAVERSAL_COST
 			return 0;
 #else

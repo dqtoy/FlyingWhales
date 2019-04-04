@@ -1034,6 +1034,7 @@ public class AreaInnerTileMap : MonoBehaviour {
             if (UIManager.Instance.characterInfoUI.activeCharacter.marker.pathfindingAI.currentPath != null) {
                 //ShowPath(UIManager.Instance.characterInfoUI.activeCharacter.marker.currentPath);
                 ShowPath(UIManager.Instance.characterInfoUI.activeCharacter.marker.pathfindingAI.currentPath);
+                UIManager.Instance.characterInfoUI.activeCharacter.marker.HighlightHostilesInRange();
             } else {
                 HidePath();
             }

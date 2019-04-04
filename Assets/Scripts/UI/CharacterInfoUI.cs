@@ -729,7 +729,7 @@ public class CharacterInfoUI : UIMenu {
         _activeCharacter.DropACharacter();
     }
     public void LogAwareness() {
-        _activeCharacter.marker.LogPOIsInRange();
+        _activeCharacter.marker.LogPOIsInVisionRange();
         _activeCharacter.LogAwarenessList();
     }
 }

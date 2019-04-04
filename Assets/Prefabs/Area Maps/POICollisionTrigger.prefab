@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 61644342554161036}
   - component: {fileID: 114922450610760088}
   - component: {fileID: 50453947942200684}
-  m_Layer: 29
+  m_Layer: 14
   m_Name: POICollisionTrigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}

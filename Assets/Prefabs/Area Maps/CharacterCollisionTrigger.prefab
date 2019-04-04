@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 61644342554161036}
   - component: {fileID: 50453947942200684}
   - component: {fileID: 114357732100700906}
-  m_Layer: 29
+  m_Layer: 14
   m_Name: CharacterCollisionTrigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}

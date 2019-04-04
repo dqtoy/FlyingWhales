@@ -15,11 +15,11 @@ namespace Pathfinding {
     public class CharacterDestinationSetter : VersionedMonoBehaviour {
         /** The object that the AI should move to */
         public Vector3 target;
-        IAstarAI ai;
+        CharacterAIPath ai;
         public Transform targetTrans;
 
         void OnEnable() {
-            ai = GetComponent<IAstarAI>();
+            ai = GetComponent<CharacterAIPath>();
             // Update the destination right before searching for a path as well.
             // This is enough in theory, but this script will also update the destination every
             // frame as the destination is used for debugging and may be used for other things by other
@@ -36,7 +36,7 @@ namespace Pathfinding {
             if (targetTrans != null && ai != null) {
                 //int x = (int) target.x;
                 //int y = (int) target.y;
-                ai.destination = target;
+                ai.destination = targetTrans.transform.position;
                 //ai.destination = target;
             } 
         }
@@ -44,10 +44,13 @@ namespace Pathfinding {
         public void SetDestination(Vector3 destination) {
             target = destination;
             ai.destination = destination;
+            ai.canSearch = true;
+            //Debug.Log(ai.marker.character.name + " set destination to " + target.ToString());
         }
 
         public void ClearPath() {
             target = new Vector3(float.PositiveInfinity, float.PositiveInfinity, float.PositiveInfinity);
+            ai.OnClearPath();
         }
     }
 }
