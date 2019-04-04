@@ -2190,7 +2190,7 @@ public class InteractionManager : MonoBehaviour {
                 break;
             case ACTION_LOCATION_TYPE.NEARBY:
                 //**Nearby**: an unoccupied tile within a 3 tile radius around the character
-                choices = actor.specificLocation.areaMap.GetTilesInRadius(actor.gridTileLocation, 3).Where(x => !x.isOccupied).ToList();
+                choices = actor.specificLocation.areaMap.GetTilesInRadius(actor.gridTileLocation, 3).Where(x => !x.isOccupied && x.structure != null).ToList();
                 if (choices.Count > 0) {
                     chosenTile = choices[Utilities.rng.Next(0, choices.Count)];
                 }
@@ -2213,7 +2213,7 @@ public class InteractionManager : MonoBehaviour {
                 break;
             case ACTION_LOCATION_TYPE.NEAR_TARGET:
                 //**Near Target**: adjacent unoccupied tile beside the target item, tile object, character
-                choices = knownPOITargetLocation.UnoccupiedNeighbours.OrderBy(x => Vector2.Distance(actor.gridTileLocation.localLocation, x.localLocation)).ToList();
+                choices = knownPOITargetLocation.UnoccupiedNeighbours.Where(x => x.structure != null).OrderBy(x => Vector2.Distance(actor.gridTileLocation.localLocation, x.localLocation)).ToList();
                 if (choices.Count > 0) {
                     //chosenTile = choices[Utilities.rng.Next(0, choices.Count)];
                     chosenTile = choices[0];
