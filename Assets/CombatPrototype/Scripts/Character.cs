@@ -1320,7 +1320,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         LocationStructure previousStructure = this.currentStructure;
         this.currentStructure = currentStructure;
         if (marker != null) {
-            marker.ClearPOIsInRange(); //when the character changes structures, clear pois in range, because pois in range must always be in the same structure
+            marker.ClearPOIsInVisionRange(); //when the character changes structures, clear pois in range, because pois in range must always be in the same structure
         }
         string summary = string.Empty;
         if (currentStructure != null) {
@@ -1895,6 +1895,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         return count;
     }
     public bool IsHostileWith(Character character) {
+        //return true;
         if (this.faction.id == FactionManager.Instance.neutralFaction.id) {
             //this character is unaligned
             //if unaligned, hostile to all other characters, except those of same race
@@ -1904,14 +1905,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             //if has a faction, is hostile to characters of every other faction
             return this.faction.id != character.faction.id;
         }
-        //if (this.role.roleType == CHARACTER_ROLE.BEAST) {
-        //    //if the character is a beast, it is hostile to any character of any faction, but not towards characters with the same race as him
-        //    return character.race != this.race;
-        //} else {
-        //    //else, check if the character's factions are different.
-        //    return this.faction.id != character.faction.id;
-        //}
-        //return true;
     }
     #endregion
 

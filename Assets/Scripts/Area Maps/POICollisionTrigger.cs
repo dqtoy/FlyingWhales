@@ -16,6 +16,7 @@ public class POICollisionTrigger : MonoBehaviour {
     public virtual void Initialize(IPointOfInterest poi) {
         this.poi = poi;
         this.name = poi.name + " collision trigger";
+        //gameObject.layer = LayerMask.GetMask("Area Maps");
     }
 
     public void SetLocation(LocationGridTile location) {

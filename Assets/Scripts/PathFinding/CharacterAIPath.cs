@@ -13,6 +13,9 @@ public class CharacterAIPath : AIPath {
         base.OnTargetReached();
         marker.ArrivedAtLocation();
         currentPath = null;
+        if (marker.hasFleePath) {
+            marker.OnFinishFleePath();
+        }
     }
 
     protected override void OnPathComplete(Path newPath) {
@@ -22,7 +25,7 @@ public class CharacterAIPath : AIPath {
 
     public override void UpdateMe() {
         marker.UpdatePosition();
-         marker.visualsParent.localRotation = Quaternion.LookRotation(Vector3.forward, this.velocity);
+        marker.visualsParent.localRotation = Quaternion.LookRotation(Vector3.forward, this.velocity);
         if (doNotMove > 0 || isStopMovement) { return; }
         base.UpdateMe();
        
@@ -34,9 +37,9 @@ public class CharacterAIPath : AIPath {
     public void SetIsStopMovement(bool state) {
         isStopMovement = state;
     }
-    //NOTE: use SetDestination in CharacterDestinationSetter instead
-    //public void SetDestination(Vector3 target) {
-    //    destination = target;
-    //}
+
+    public void OnClearPath() {
+        currentPath = null;
+    }
 
 }

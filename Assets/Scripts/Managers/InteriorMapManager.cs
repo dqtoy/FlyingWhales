@@ -1,6 +1,7 @@
 ﻿using Pathfinding;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Tilemaps;
@@ -181,11 +182,20 @@ public class InteriorMapManager : MonoBehaviour {
         if (character != null) {
             summary += "\nCharacter: " + character.name;
             summary += "\nDestination: " + (character.marker.destinationTile != null ? character.marker.destinationTile.ToString() : "None");
-            summary += "\nPOI's in Range: ";
-            if (character.marker.inRangePOIs.Count > 0) {
-                for (int i = 0; i < character.marker.inRangePOIs.Count; i++) {
-                    IPointOfInterest poi = character.marker.inRangePOIs[i];
-                    summary += "\n- " + poi.name;
+            //summary += "\nPOI's in Range: ";
+            //if (character.marker.inVisionPOIs.Count > 0) {
+            //    for (int i = 0; i < character.marker.inVisionPOIs.Count; i++) {
+            //        IPointOfInterest poi = character.marker.inVisionPOIs[i];
+            //        summary += "\n- " + poi.name;
+            //    }
+            //} else {
+            //    summary += "None";
+            //}
+            summary += "\nHostiles in Range: ";
+            if (character.marker.hostilesInRange.Count > 0) {
+                for (int i = 0; i < character.marker.hostilesInRange.Count; i++) {
+                    Character poi = character.marker.hostilesInRange.ElementAt(i);
+                    summary += poi.name + ", ";
                 }
             } else {
                 summary += "None";
