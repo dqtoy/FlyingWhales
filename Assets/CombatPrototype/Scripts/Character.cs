@@ -33,6 +33,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     protected bool _isTracked;
     protected bool _activateDailyGoapPlanInteraction;
     protected bool _hasAlreadyAskedForPlan;
+    protected bool _isChatting;
     protected GENDER _gender;
     protected MODE _currentMode;
     protected CharacterClass _characterClass;
@@ -227,6 +228,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
             return _isTracked;
         }
+    }
+    public bool isChatting {
+        get { return _isChatting; }
     }
     public GENDER gender {
         get { return _gender; }
@@ -3224,6 +3228,30 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //    }
         //}
     }
+    public void ChatCharacter(Character targetCharacter) {
+        SetIsChatting(true);
+        targetCharacter.SetIsChatting(true);
+        marker.UpdateActionIcon();
+        targetCharacter.marker.UpdateActionIcon();
+
+        Log chatLog = new Log(GameManager.Instance.Today(), "GoapAction", "ChatCharacter", "chat success_description");
+        chatLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        chatLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        chatLog.AddLogToInvolvedObjects();
+
+        GameDate dueDate = GameManager.Instance.Today();
+        dueDate.AddTicks(4);
+        SchedulingManager.Instance.AddEntry(dueDate, () => EndChatCharacter(targetCharacter));
+    }
+    private void EndChatCharacter(Character targetCharacter) {
+        SetIsChatting(false);
+        targetCharacter.SetIsChatting(false);
+        marker.UpdateActionIcon();
+        targetCharacter.marker.UpdateActionIcon();
+    }
+    public void SetIsChatting(bool state) {
+        _isChatting = state;
+    }
     public void SetForcedInteraction(Interaction interaction) {
         _forcedInteraction = interaction;
     }
@@ -4290,8 +4318,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         poiGoapActions.Add(INTERACTION_TYPE.PRAY);
         poiGoapActions.Add(INTERACTION_TYPE.EXPLORE);
         poiGoapActions.Add(INTERACTION_TYPE.PATROL);
-        poiGoapActions.Add(INTERACTION_TYPE.CHAT_CHARACTER);
-        poiGoapActions.Add(INTERACTION_TYPE.ARGUE_CHARACTER);
+        //poiGoapActions.Add(INTERACTION_TYPE.CHAT_CHARACTER);
+        //poiGoapActions.Add(INTERACTION_TYPE.ARGUE_CHARACTER);
         poiGoapActions.Add(INTERACTION_TYPE.TRAVEL);
         poiGoapActions.Add(INTERACTION_TYPE.RETURN_HOME_LOCATION);
         poiGoapActions.Add(INTERACTION_TYPE.HUNT_ACTION);
