@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 61644342554161036}
   - component: {fileID: 50453947942200684}
   - component: {fileID: 114641204628480910}
-  m_Layer: 14
+  m_Layer: 15
   m_Name: GhostCollisionTrigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -36,7 +36,7 @@ Rigidbody2D:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1745477595920248}
-  m_BodyType: 0
+  m_BodyType: 1
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0

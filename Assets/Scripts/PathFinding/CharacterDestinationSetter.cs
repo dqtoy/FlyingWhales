@@ -36,7 +36,7 @@ namespace Pathfinding {
             if (targetTrans != null && ai != null) {
                 //int x = (int) target.x;
                 //int y = (int) target.y;
-                ai.destination = targetTrans.transform.position;
+                ai.destination = targetTrans.position;
                 //ai.destination = target;
             } 
         }
@@ -47,7 +47,8 @@ namespace Pathfinding {
             ai.canSearch = true;
             //Debug.Log(ai.marker.character.name + " set destination to " + target.ToString());
         }
-        public void SetDestination(Transform target) {
+        public void SetTranformTarget(Transform target) {
+            ai.canSearch = true;
             targetTrans = target;
         }
 
