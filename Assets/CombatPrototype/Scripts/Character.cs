@@ -112,6 +112,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public Character lastAssaultedCharacter { get; private set; }
     public List<GoapAction> targettedByAction { get; private set; }
     public CharacterStateComponent stateComponent { get; private set; }
+    public List<SpecialToken> items { get; private set; }
 
     private LocationGridTile tile; //what tile in the structure is this character currently in.
     private POI_STATE _state;
@@ -541,6 +542,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         hasAssaultPlan = false;
         targettedByAction = new List<GoapAction>();
         stateComponent = new CharacterStateComponent(this);
+        items = new List<SpecialToken>();
 
         tiredness = TIREDNESS_DEFAULT;
         //Fullness value between 1300 and 1440.
@@ -3864,10 +3866,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
     }
     public void PickUpToken(SpecialToken token) {
-        if (!isHoldingItem) {
+        //if (!isHoldingItem) {
+        if (!items.Contains(token)) {
+            items.Add(token);
             token.gridTileLocation.structure.location.RemoveSpecialTokenFromLocation(token);
             ObtainToken(token);
         }
+        //}
     }
     public void PickUpRandomToken(Area location) {
         if (!isHoldingItem) {

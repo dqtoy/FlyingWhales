@@ -29,7 +29,7 @@ public class FleeState : CharacterState {
     public void CheckForEndState() {
         if (stateComponent.character.marker.hostilesInRange.Count == 0) {
             //can end flee
-            stateComponent.ExitCurrentState(this);
+            OnExitThisState();
         } else {
             //redetermine flee path
             stateComponent.character.marker.RedetermineFlee();

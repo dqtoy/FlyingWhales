@@ -20,9 +20,15 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
                 GhostCollisionHandling(collidedWith as GhostCollisionTrigger);
             } else {
                 parentMarker.AddPOIAsInVisionRange(collidedWith.poi);
-                if (collidedWith.poi is Character && GameManager.Instance.gameHasStarted) {
-                    Character targetCharacter = collidedWith.poi as Character;
-                    ChatHandling(targetCharacter);
+
+                if (GameManager.Instance.gameHasStarted) {
+                    if(parentMarker.character.stateComponent.currentState != null) {
+                        if (!parentMarker.character.stateComponent.currentState.OnEnterVisionWith(collidedWith.poi)) {
+                            NormalCollisionHandling(collidedWith.poi);
+                        }
+                    } else {
+                        NormalCollisionHandling(collidedWith.poi);
+                    }
                     //HostilityHandling(collidedWith.poi as Character);
                 }
             }
@@ -141,5 +147,13 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
             }
         }
         return false;
+    }
+    private void NormalCollisionHandling(IPointOfInterest poi) {
+        if(poi is Character) {
+            Character targetCharacter = poi as Character;
+            if(!parentMarker.AddHostileInRange(targetCharacter)) {
+                ChatHandling(targetCharacter);
+            }
+        }
     }
 }

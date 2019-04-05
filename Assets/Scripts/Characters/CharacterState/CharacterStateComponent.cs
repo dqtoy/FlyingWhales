@@ -63,10 +63,10 @@ public class CharacterStateComponent {
                 //If current state is a minor state, simply end it
                 currentState.ExitState();
             }
-
         }
 
         //Assigns new state as the current state then enter that state
+        //newState.SetParentMajorState(previousMajorState);
         currentState = newState;
         currentState.SetTargetCharacter(targetCharacter);
         currentState.EnterState();
@@ -94,6 +94,11 @@ public class CharacterStateComponent {
             currentState.ExitState();
         }
 
+        if (character.isDead) {
+            previousMajorState = null;
+            currentState = null;
+            return;
+        }
         //If the current state is a minor state and there is a previous major state, resume that major state
         if(currentState.stateCategory == CHARACTER_STATE_CATEGORY.MINOR && previousMajorState != null) {
             if(previousMajorState.duration > 0 && previousMajorState.currentDuration >= previousMajorState.duration) {

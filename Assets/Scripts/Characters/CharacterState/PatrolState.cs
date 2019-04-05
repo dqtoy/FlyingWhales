@@ -14,12 +14,19 @@ public class PatrolState : CharacterState {
     #region Overrides
     protected override void DoMovementBehavior() {
         base.DoMovementBehavior();
-        StartExploreMovement();
+        StartPatrolMovement();
+    }
+    public override bool OnEnterVisionWith(IPointOfInterest targetPOI) {
+        if(targetPOI is Character) {
+            stateComponent.character.marker.AddHostileInRange(targetPOI as Character);
+            return true;
+        }
+        return base.OnEnterVisionWith(targetPOI);
     }
     #endregion
 
-    private void StartExploreMovement() {
-        stateComponent.character.marker.GoToTile(PickRandomTileToGoTo(), stateComponent.character, () => StartExploreMovement());
+    private void StartPatrolMovement() {
+        stateComponent.character.marker.GoToTile(PickRandomTileToGoTo(), stateComponent.character, () => StartPatrolMovement());
     }
     private LocationGridTile PickRandomTileToGoTo() {
         LocationStructure chosenStructure = stateComponent.character.specificLocation.GetRandomStructure();

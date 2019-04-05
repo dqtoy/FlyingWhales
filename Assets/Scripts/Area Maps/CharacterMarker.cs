@@ -39,8 +39,6 @@ public class CharacterMarker : PooledObject {
     [Header("For Testing")]
     [SerializeField] private SpriteRenderer colorHighlight;
 
-    public CharacterStateComponent stateComponent;
-
     //public MOVEMENT_MODE movementMode { get; private set; }
 
     //collision
@@ -64,6 +62,7 @@ public class CharacterMarker : PooledObject {
     public POICollisionTrigger collisionTrigger { get; private set; }
     public Vector2 anchoredPos { get; private set; }
     public LocationGridTile destinationTile { get; private set; }
+    public bool cannotCombat { get; private set; }
 
     private Vector2Int _previousTilePosition;
 
@@ -668,13 +667,15 @@ public class CharacterMarker : PooledObject {
     #endregion
 
     #region Hosility Collision
-    public void AddHostileInRange(Character poi) {
+    public bool AddHostileInRange(Character poi) {
         if (!hostilesInRange.Contains(poi)) {
             if (this.character.IsHostileWith(poi)) {
                 hostilesInRange.Add(poi);
-                ReactToHostileCharacter(poi);
+                NormalReactToHostileCharacter(poi);
+                return true;
             }
         }
+        return false;
     }
     public void RemoveHostileInRange(Character poi) {
         if (hostilesInRange.Remove(poi)) {
@@ -690,7 +691,7 @@ public class CharacterMarker : PooledObject {
     #endregion
 
     #region Reactions
-    private void ReactToHostileCharacter(Character otherCharacter) {
+    private void NormalReactToHostileCharacter(Character otherCharacter) {
         //- All characters that see another hostile will drop a non-combat action, if doing any.
         if (character.IsDoingCombatAction()) {
             //if currently doing a combat action, do not react to any characters
@@ -701,13 +702,13 @@ public class CharacterMarker : PooledObject {
         if (character.GetTrait("Injured") != null || character.role.roleType == CHARACTER_ROLE.CIVILIAN
             || character.role.roleType == CHARACTER_ROLE.NOBLE || character.role.roleType == CHARACTER_ROLE.LEADER) {
             //- Injured characters, Civilians, Nobles and Faction Leaders always enter Flee mode
-            character.stateComponent.SwitchToState(CHARACTER_STATE.FLEE);
+            character.stateComponent.SwitchToState(CHARACTER_STATE.FLEE, otherCharacter);
         } else if (character.doNotDisturb > 0 && character.GetTraitOf(TRAIT_TYPE.DISABLER) != null) {
             //- Disabled characters will not do anything
         } else if (character.role.roleType == CHARACTER_ROLE.BEAST || character.role.roleType == CHARACTER_ROLE.ADVENTURER
             || character.role.roleType == CHARACTER_ROLE.SOLDIER) {
             //- Uninjured Beasts, Adventurers and Soldiers will enter Engage mode.
-            character.stateComponent.SwitchToState(CHARACTER_STATE.ENGAGE);
+            character.stateComponent.SwitchToState(CHARACTER_STATE.ENGAGE, otherCharacter);
         }
 
         //for testing
@@ -778,9 +779,25 @@ public class CharacterMarker : PooledObject {
     public void OnReachEngageTarget() {
         Debug.Log(character.name + " has reached engage target!");
         //determine whether to start combat or not
-        currentlyEngaging = null;
-        SetTargetTransform(null);
-        (character.stateComponent.currentState as EngageState).CheckForEndState();
+        if (cannotCombat) {
+            cannotCombat = false;
+            currentlyEngaging = null;
+            SetTargetTransform(null);
+            (character.stateComponent.currentState as EngageState).CheckForEndState();
+        } else {
+            EngageState engageState = character.stateComponent.currentState as EngageState;
+            engageState.CombatOnEngage();
+            SetTargetTransform(null);
+            if (!character.isDead && !currentlyEngaging.isDead) {
+                engageState.CheckForEndState();
+            } else {
+                if (!character.isDead && character.stateComponent.character.marker.hostilesInRange.Count == 0) {
+                    //can end engage
+                    character.stateComponent.currentState.OnExitThisState();
+                }
+            }
+            currentlyEngaging = null;
+        }
     }
     public void RedetermineEngage() {
         if (hostilesInRange.Count == 0) {
@@ -793,6 +810,9 @@ public class CharacterMarker : PooledObject {
             SetTargetTransform(nearestHostile.marker.transform);
             currentlyEngaging = nearestHostile;
         }
+    }
+    public void SetCannotCombat(bool state) {
+        cannotCombat = state;
     }
     private Character GetNearestHostile() {
         Character nearest = null;

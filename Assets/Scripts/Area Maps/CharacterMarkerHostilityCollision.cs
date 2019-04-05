@@ -7,15 +7,15 @@ public class CharacterMarkerHostilityCollision : MonoBehaviour {
     public CharacterMarker parentMarker;
 
     #region Triggers
-    public void OnTriggerEnter2D(Collider2D collision) {
-        POICollisionTrigger collidedWith = collision.gameObject.GetComponent<POICollisionTrigger>();
-        if (collidedWith != null && collidedWith.poi != null
-            && collidedWith.poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER
-            && collidedWith.poi != parentMarker.character) {
-            //&& collidedWith.gridTileLocation.structure == parentMarker.character.currentStructure
-            parentMarker.AddHostileInRange(collidedWith.poi as Character);
-        }
-    }
+    //public void OnTriggerEnter2D(Collider2D collision) {
+    //    POICollisionTrigger collidedWith = collision.gameObject.GetComponent<POICollisionTrigger>();
+    //    if (collidedWith != null && collidedWith.poi != null
+    //        && collidedWith.poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER
+    //        && collidedWith.poi != parentMarker.character) {
+    //        //&& collidedWith.gridTileLocation.structure == parentMarker.character.currentStructure
+    //        parentMarker.AddHostileInRange(collidedWith.poi as Character);
+    //    }
+    //}
     public void OnTriggerExit2D(Collider2D collision) {
         POICollisionTrigger collidedWith = collision.gameObject.GetComponent<POICollisionTrigger>();
         if (collidedWith != null 
