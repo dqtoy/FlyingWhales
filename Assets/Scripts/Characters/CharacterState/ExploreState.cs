@@ -8,7 +8,7 @@ public class ExploreState : CharacterState {
         stateName = "Explore State";
         characterState = CHARACTER_STATE.EXPLORE;
         stateCategory = CHARACTER_STATE_CATEGORY.MAJOR;
-        duration = 288;
+        duration = 96;
     }
 
     #region Overrides
@@ -51,6 +51,7 @@ public class ExploreState : CharacterState {
         stateComponent.character.currentAction.PerformActualAction();
     }
     private void ExploreAgain(string result, GoapAction goapAction) {
+        stateComponent.character.SetCurrentAction(null);
         StartExploreMovement();
     }
     private void StartExploreMovement() {

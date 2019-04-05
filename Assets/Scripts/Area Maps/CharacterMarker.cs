@@ -146,7 +146,10 @@ public class CharacterMarker : PooledObject {
         }
     }
     public void PlaceMarkerAt(LocationGridTile tile) {
-        transform.position = tile.centeredWorldLocation;
+        if(tile != null) {
+            transform.position = tile.centeredWorldLocation;
+            tile.SetOccupant(character);
+        }
     }
 
     #region Pointer Functions
@@ -356,6 +359,7 @@ public class CharacterMarker : PooledObject {
     }
     public void StopMovementOnly() {
         _arrivalAction = null;
+
         //if (Messenger.eventTable.ContainsKey(Signals.TILE_OCCUPIED)) {
         //    Messenger.RemoveListener<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, OnTileOccupied);
         //}
@@ -367,6 +371,9 @@ public class CharacterMarker : PooledObject {
         //    SetOnArriveAtTileAction(() => CheckIfCurrentTileIsOccupiedOnStopMovement(ref log, afterStoppingAction));
         //}
         //destinationSetter.ClearPath();
+        if (character.currentParty.icon != null) {
+            character.currentParty.icon.SetIsTravelling(false);
+        }
         pathfindingAI.SetIsStopMovement(true);
         PlayIdle();
         //log += "\n- Not moving to another tile, go to checker...";
@@ -837,14 +844,15 @@ public class CharacterMarker : PooledObject {
             (character.stateComponent.currentState as EngageState).CheckForEndState();
         } else {
             EngageState engageState = character.stateComponent.currentState as EngageState;
+            Character thisCharacter = this.character;
             engageState.CombatOnEngage();
             SetTargetTransform(null);
-            if (!character.isDead && !currentlyEngaging.isDead) {
+            if (!thisCharacter.isDead && !currentlyEngaging.isDead) {
                 engageState.CheckForEndState();
             } else {
-                if (!character.isDead && character.stateComponent.character.marker.hostilesInRange.Count == 0) {
+                if (!thisCharacter.isDead && thisCharacter.stateComponent.character.marker.hostilesInRange.Count == 0) {
                     //can end engage
-                    character.stateComponent.currentState.OnExitThisState();
+                    thisCharacter.stateComponent.currentState.OnExitThisState();
                 }
             }
             currentlyEngaging = null;

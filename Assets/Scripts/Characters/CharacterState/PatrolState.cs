@@ -8,7 +8,7 @@ public class PatrolState : CharacterState {
         stateName = "Patrol State";
         characterState = CHARACTER_STATE.PATROL;
         stateCategory = CHARACTER_STATE_CATEGORY.MAJOR;
-        duration = 288;
+        duration = 96;
     }
 
     #region Overrides
