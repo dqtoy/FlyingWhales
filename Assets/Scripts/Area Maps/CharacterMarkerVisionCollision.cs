@@ -196,24 +196,20 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
         if (poisInRangeButDiffStructure.Contains(character) && structure == parentMarker.character.currentStructure) {
             NormalEnterHandling(character);
             RemovePOIAsInRangeButDifferentStructure(character);
-                if (poi.gridTileLocation == null) {
-                    RemovePOIAsInRangeButDifferentStructure(poi);
-                } else if (poi.gridTileLocation.structure == parentMarker.character.currentStructure) {
-                
-                
-        } 
-        //else if (character.id == parentMarker.character.id) {
-        //    //if the character that changed structure is the one that changed structures
-        //    //check all pois that were in different structures and revalidate them
-        //    for (int i = 0; i < poisInRangeButDiffStructure.Count; i++) {
-        //        IPointOfInterest poi = poisInRangeButDiffStructure[i];
-        //        if (poi.gridTileLocation.structure == parentMarker.character.currentStructure) {
-        //            NormalEnterHandling(poi);
-        //            RemovePOIAsInRangeButDifferentStructure(poi);
-        //        }
-        //    }
-        //}
-    }
+        } else if (character.id == parentMarker.character.id) {
+                //if the character that changed structure is the one that changed structures
+                //check all pois that were in different structures and revalidate them
+                for (int i = 0; i < poisInRangeButDiffStructure.Count; i++) {
+                    IPointOfInterest poi = poisInRangeButDiffStructure[i];
+                    if (poi.gridTileLocation == null) {
+                        RemovePOIAsInRangeButDifferentStructure(poi);
+                    } else if (poi.gridTileLocation.structure == parentMarker.character.currentStructure) {
+                        NormalEnterHandling(poi);
+                        RemovePOIAsInRangeButDifferentStructure(poi);
+                    }
+                }
+            }
+        }
     #endregion
 
     [ContextMenu("Log Diff Struct")]
