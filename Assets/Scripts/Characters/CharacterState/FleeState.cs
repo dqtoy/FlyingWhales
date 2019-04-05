@@ -20,6 +20,10 @@ public class FleeState : CharacterState {
         base.PerTickInState();
         stateComponent.character.marker.RedetermineFlee(); 
     }
+    public override void OnExitThisState() {
+        stateComponent.character.currentParty.icon.SetIsTravelling(false);
+        base.OnExitThisState();
+    }
     #endregion
 
     private void StartFleeMovement() {
