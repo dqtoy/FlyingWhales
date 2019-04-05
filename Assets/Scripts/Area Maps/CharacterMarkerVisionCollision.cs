@@ -161,15 +161,16 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
 
     private void NormalEnterHandling(IPointOfInterest poi) {
         parentMarker.AddPOIAsInVisionRange(poi);
-        if (poi is Character && GameManager.Instance.gameHasStarted) {
-            Character targetCharacter = poi as Character;
+        if (GameManager.Instance.gameHasStarted) {
             if (parentMarker.character.stateComponent.currentState != null) {
                 if (!parentMarker.character.stateComponent.currentState.OnEnterVisionWith(poi)) {
+                    Character targetCharacter = poi as Character;
                     if (!parentMarker.AddHostileInRange(targetCharacter)) {
                         ChatHandling(targetCharacter);
                     }
                 }
             } else {
+                Character targetCharacter = poi as Character;
                 if (!parentMarker.AddHostileInRange(targetCharacter)) {
                     ChatHandling(targetCharacter);
                 }
