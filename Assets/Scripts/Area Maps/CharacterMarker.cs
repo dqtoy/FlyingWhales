@@ -687,7 +687,7 @@ public class CharacterMarker : PooledObject {
         List<IPointOfInterest> invalid = new List<IPointOfInterest>();
         for (int i = 0; i < inVisionPOIs.Count; i++) {
             IPointOfInterest poi = inVisionPOIs[i];
-            if (poi.gridTileLocation.structure != character.currentStructure) {
+            if (poi.gridTileLocation == null || poi.gridTileLocation.structure != character.currentStructure) {
                 invalid.Add(poi);
             }
         }
