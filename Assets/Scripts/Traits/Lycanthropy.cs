@@ -18,7 +18,7 @@ public class Lycanthropy : Trait {
         crimeSeverity = CRIME_SEVERITY.NONE;
         daysDuration = 0;
         effects = new List<TraitEffect>();
-        advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.TRANSFORM_TO_WOLF, INTERACTION_TYPE.REVERT_TO_NORMAL };
+        //advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.TRANSFORM_TO_WOLF, INTERACTION_TYPE.REVERT_TO_NORMAL };
     }
 
     #region Overrides

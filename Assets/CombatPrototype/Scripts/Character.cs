@@ -3071,7 +3071,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 }
             } else {
                 if (supply < role.reservedSupply) {
-                    //weightedDictionary.AddElement(INTERACTION_TYPE.GET_SUPPLY, 4);
+                    weightedDictionary.AddElement(INTERACTION_TYPE.GET_SUPPLY, 4);
                 }
             }
 

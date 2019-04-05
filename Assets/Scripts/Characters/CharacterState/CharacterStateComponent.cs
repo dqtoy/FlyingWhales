@@ -133,6 +133,9 @@ public class CharacterStateComponent {
             case CHARACTER_STATE.ENGAGE:
                 newState = new EngageState(this);
                 break;
+            case CHARACTER_STATE.HUNT:
+                newState = new HuntState(this);
+                break;
         }
         return newState;
     }

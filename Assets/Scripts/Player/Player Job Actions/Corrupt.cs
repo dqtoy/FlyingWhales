@@ -26,6 +26,9 @@ public class Corrupt : PlayerJobAction {
         if (targetCharacter.role.roleType == CHARACTER_ROLE.BEAST || targetCharacter.race == RACE.SKELETON) {
             return false;
         }
+        if(targetCharacter.GetTrait("Lycanthropy") != null) {
+            return false;
+        }
         return base.ShouldButtonBeInteractable(character, targetCharacter);
     }
 
