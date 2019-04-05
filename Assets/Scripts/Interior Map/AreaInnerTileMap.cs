@@ -941,7 +941,7 @@ public class AreaInnerTileMap : MonoBehaviour {
                                 //shrubs
                                 currTile.hasDetail = true;
                                 detailsTilemap.SetTile(currTile.localPlace, shrubTile);
-                                currTile.SetTileState(LocationGridTile.Tile_State.Occupied);
+                                currTile.SetTileState(LocationGridTile.Tile_State.Empty);
                             } else {
                                 //Crates, Barrels, Ore, Stone and Tree tiles should be impassable. They should all be placed in spots adjacent to at least three passable tiles.
                                 if (currTile.IsAdjacentToPasssableTiles(3) && !currTile.WillMakeNeighboursPassableTileInvalid(3)) {
