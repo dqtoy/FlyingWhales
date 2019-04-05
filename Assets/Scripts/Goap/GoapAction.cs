@@ -89,7 +89,7 @@ public class GoapAction {
     #endregion
 
     #region Virtuals
-    protected virtual void CreateStates() {
+    public virtual void CreateStates() {
         string summary = "Creating states for goap action (Dynamic) " + goapType.ToString() + " for actor " + actor.name;
         sw.Start();
         states = new Dictionary<string, GoapActionState>();

@@ -20,6 +20,7 @@ public class ExploreState : CharacterState {
         if(targetPOI is SpecialToken) {
             GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.PICK_ITEM, stateComponent.character, targetPOI);
             if(goapAction.targetTile != null) {
+                goapAction.CreateStates();
                 stateComponent.character.SetCurrentAction(goapAction);
                 stateComponent.character.marker.GoToTile(goapAction.targetTile, targetPOI, () => OnArriveAtPickUpLocation());
             } else {
@@ -46,7 +47,11 @@ public class ExploreState : CharacterState {
     #endregion
 
     private void OnArriveAtPickUpLocation() {
+        stateComponent.character.currentAction.SetEndAction(ExploreAgain);
         stateComponent.character.currentAction.PerformActualAction();
+    }
+    private void ExploreAgain(string result, GoapAction goapAction) {
+        StartExploreMovement();
     }
     private void StartExploreMovement() {
         stateComponent.character.marker.GoToTile(PickRandomTileToGoTo(), stateComponent.character, () => StartExploreMovement());

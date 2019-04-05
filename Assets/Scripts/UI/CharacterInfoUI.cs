@@ -192,7 +192,7 @@ public class CharacterInfoUI : UIMenu {
     }
     public void UpdateBasicInfo() {
         nameLbl.text = _activeCharacter.name;
-        lvlClassLbl.text = _activeCharacter.raceClassName;
+        lvlClassLbl.text = _activeCharacter.raceClassName + " " + _activeCharacter.role.name;
         supplyLbl.text = _activeCharacter.supply.ToString();
         UpdateThoughtBubble();
     }

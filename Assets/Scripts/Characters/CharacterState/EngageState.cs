@@ -40,6 +40,27 @@ public class EngageState : CharacterState {
         Character targetCharacter = this.targetCharacter;
         if (CanCombatBeTriggeredBetween(engagerCharacter, targetCharacter)) {
             targetCharacter.marker.SetCannotCombat(true);
+
+            targetCharacter.AdjustIsWaitingForInteraction(1);
+            if (targetCharacter.currentAction != null && !targetCharacter.currentAction.isDone) {
+                if (!targetCharacter.currentAction.isPerformingActualAction) {
+                    targetCharacter.SetCurrentAction(null);
+                } else {
+                    targetCharacter.currentAction.currentState.EndPerTickEffect();
+                }
+            }
+            targetCharacter.AdjustIsWaitingForInteraction(-1);
+
+            engagerCharacter.AdjustIsWaitingForInteraction(1);
+            if (engagerCharacter.currentAction != null && !engagerCharacter.currentAction.isDone) {
+                if (!engagerCharacter.currentAction.isPerformingActualAction) {
+                    engagerCharacter.SetCurrentAction(null);
+                } else {
+                    engagerCharacter.currentAction.currentState.EndPerTickEffect();
+                }
+            }
+            engagerCharacter.AdjustIsWaitingForInteraction(-1);
+
             List<Character> attackers = new List<Character>();
             attackers.Add(engagerCharacter);
 

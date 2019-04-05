@@ -3071,7 +3071,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 }
             } else {
                 if (supply < role.reservedSupply) {
-                    weightedDictionary.AddElement(INTERACTION_TYPE.GET_SUPPLY, 4);
+                    //weightedDictionary.AddElement(INTERACTION_TYPE.GET_SUPPLY, 4);
                 }
             }
 
@@ -3086,8 +3086,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     StartGOAP(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_SUPPLY, supplyPile.suppliesInPile, this), this, GOAP_CATEGORY.WORK);
                 } else {
                     //Role work plans
-                    if(role.roleType == CHARACTER_ROLE.SOLDIER) {
+                    if(result == INTERACTION_TYPE.PATROL) {
                         stateComponent.SwitchToState(CHARACTER_STATE.PATROL);
+                    } else if (result == INTERACTION_TYPE.EXPLORE) {
+                        stateComponent.SwitchToState(CHARACTER_STATE.EXPLORE);
                     } else {
                         GoapPlan plan = role.PickRoleWorkPlanFromCharacterWeights(result, this);
                         if (plan != null) {

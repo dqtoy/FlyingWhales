@@ -70,6 +70,8 @@ public class LocationStructure {
                 //character.ScanForAwareness();
             }
             OnCharacterAddedToLocation(character);
+        } else {
+            Debug.LogWarning(GameManager.Instance.TodayLogString() + " " + character.name + " can't be added to " + ToString() + " because it is already there!");
         }
     }
     public void RemoveCharacterAtLocation(Character character) {
@@ -78,6 +80,8 @@ public class LocationStructure {
             //LocationGridTile tile = character.currentStructureTile;
             //character.SetCurrentStructureTileLocation(null);
             RemovePOI(character);
+        } else {
+            Debug.LogWarning(GameManager.Instance.TodayLogString() + " " + character.name + " can't be removed from " + ToString() + " because it is not there!");
         }
     }
     private void OnCharacterAddedToLocation(Character character) {
