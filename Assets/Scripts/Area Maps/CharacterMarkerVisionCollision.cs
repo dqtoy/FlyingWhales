@@ -20,23 +20,26 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
         POICollisionTrigger collidedWith = collision.gameObject.GetComponent<POICollisionTrigger>();
         if (collidedWith != null && collidedWith.poi != null
             && collidedWith.poi != parentMarker.character) {
-
+            string collisionSummary = parentMarker.name + " collided with " + collidedWith.poi.name;
             if (collidedWith is GhostCollisionTrigger) {
                 //ignored same structure requirement for ghost collisions
                 GhostCollisionHandling(collidedWith as GhostCollisionTrigger);
             } else {
                 //when this collides with a poi trigger
                 //check if the poi trigger is in the same structure as this
-                if (collidedWith.gridTileLocation.structure == parentMarker.character.currentStructure) {
+                if (collidedWith.poi.gridTileLocation.structure == parentMarker.character.gridTileLocation.structure) {
                     //if it is, just follow the normal procedure when a poi becomes in range
+                    collisionSummary += "\n-has same structure as " + parentMarker.character.name + " adding as in range";
                     NormalEnterHandling(collidedWith.poi);
                 } else {
                     //if it is not, add the poi to the list of pois in different structures instead
                     //once there, it can only be removed from there if the poi exited this trigger or the poi moved 
                     //to the same structure that this character is in
+                    collisionSummary += "\n-has different structure with " + parentMarker.character.name + " queuing...";
                     AddPOIAsInRangeButDifferentStructure(collidedWith.poi);
                 }
             }
+            //Debug.Log(collisionSummary);
         }
     }
     public void OnTriggerExit2D(Collider2D collision) {
@@ -198,7 +201,9 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
             //check all pois that were in different structures and revalidate them
             for (int i = 0; i < poisInRangeButDiffStructure.Count; i++) {
                 IPointOfInterest poi = poisInRangeButDiffStructure[i];
-                if (poi.gridTileLocation.structure == parentMarker.character.currentStructure) {
+                if (poi.gridTileLocation == null) {
+                    RemovePOIAsInRangeButDifferentStructure(poi);
+                } else if (poi.gridTileLocation.structure == parentMarker.character.currentStructure) {
                     NormalEnterHandling(poi);
                     RemovePOIAsInRangeButDifferentStructure(poi);
                 }
@@ -206,4 +211,13 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
         }
     }
     #endregion
+
+    [ContextMenu("Log Diff Struct")]
+    public void LogCharactersInDifferentStructures() {
+        string summary = parentMarker.character.name + "'s diff structure pois";
+        for (int i = 0; i < poisInRangeButDiffStructure.Count; i++) {
+            summary += "\n" + poisInRangeButDiffStructure[i].name;
+        }
+        Debug.Log(summary);
+    }
 }

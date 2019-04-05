@@ -16,9 +16,13 @@ public class EngageState : CharacterState {
         base.DoMovementBehavior();
         StartEngageMovement();
     }
-    protected override void PerTickInState() {
-        base.PerTickInState();
-        stateComponent.character.marker.RedetermineEngage();
+    //protected override void PerTickInState() {
+    //    base.PerTickInState();
+    //    stateComponent.character.marker.RedetermineEngage();
+    //}
+    public override void OnExitThisState() {
+        stateComponent.character.currentParty.icon.SetIsTravelling(false);
+        base.OnExitThisState();
     }
     #endregion
 
@@ -31,8 +35,10 @@ public class EngageState : CharacterState {
             //can end engage
             OnExitThisState();
         } else {
-            //redetermine flee path
-            stateComponent.character.marker.RedetermineEngage();
+            //engage another hostile
+            Character hostile = stateComponent.character.marker.GetNearestHostile();
+            stateComponent.SwitchToState(CHARACTER_STATE.ENGAGE, hostile);
+            //stateComponent.character.marker.RedetermineEngage();
         }
     }
     public void CombatOnEngage() {

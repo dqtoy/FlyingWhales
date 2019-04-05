@@ -35,6 +35,7 @@ public class CharacterMarker : PooledObject {
     public CharacterAIPath pathfindingAI;    
     public AIDestinationSetter destinationSetter;
     [SerializeField] private Seeker seeker;
+    [SerializeField] private Collider2D[] colliders;
 
     [Header("For Testing")]
     [SerializeField] private SpriteRenderer colorHighlight;
@@ -104,6 +105,7 @@ public class CharacterMarker : PooledObject {
         Messenger.AddListener<Character, GoapAction>(Signals.CHARACTER_DOING_ACTION, OnCharacterDoingAction);
         Messenger.AddListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
         Messenger.AddListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
+        Messenger.AddListener(Signals.GAME_LOADED, OnGameLoaded);
 
         PathfindingManager.Instance.AddAgent(pathfindingAI);
     }
@@ -662,6 +664,16 @@ public class CharacterMarker : PooledObject {
     }
     #endregion
 
+    #region Utilities
+    public void OnGameLoaded() {
+        pathfindingAI.UpdateMe();
+        for (int i = 0; i < colliders.Length; i++) {
+            colliders[i].enabled = true;
+        }
+        Messenger.RemoveListener(Signals.GAME_LOADED, OnGameLoaded);
+    }
+    #endregion
+
     #region Vision Collision
     public void AddPOIAsInVisionRange(IPointOfInterest poi) {
         if (!inVisionPOIs.Contains(poi)) {
@@ -778,6 +790,7 @@ public class CharacterMarker : PooledObject {
         Debug.Log(character.name + " computed a flee path!");
         pathfindingAI.SetIsStopMovement(false);
         StartWalkingAnimation(); //NOTE: Unify this!
+        character.currentParty.icon.SetIsTravelling(true);
     }
     public void RedetermineFlee() {
         if (hostilesInRange.Count == 0) {
@@ -812,6 +825,7 @@ public class CharacterMarker : PooledObject {
         SetTargetTransform(nearestHostile.marker.transform);
         currentlyEngaging = nearestHostile;
         pathfindingAI.SetIsStopMovement(false);
+        character.currentParty.icon.SetIsTravelling(true);
     }
     public void OnReachEngageTarget() {
         Debug.Log(character.name + " has reached engage target!");
@@ -846,7 +860,7 @@ public class CharacterMarker : PooledObject {
             //engage him/her instead
             SetTargetTransform(nearestHostile.marker.transform);
             currentlyEngaging = nearestHostile;
-
+            character.currentParty.icon.SetIsTravelling(true);
         }
     }
     public void SetCannotCombat(bool state) {
