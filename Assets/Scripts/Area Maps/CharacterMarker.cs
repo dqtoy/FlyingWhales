@@ -33,7 +33,7 @@ public class CharacterMarker : PooledObject {
 
     [Header("Pathfinding")]
     public CharacterAIPath pathfindingAI;    
-    public CharacterDestinationSetter destinationSetter;
+    public AIDestinationSetter destinationSetter;
     [SerializeField] private Seeker seeker;
 
     [Header("For Testing")]
@@ -268,7 +268,8 @@ public class CharacterMarker : PooledObject {
         character.currentParty.icon.SetIsTravelling(true);
         pathfindingAI.SetIsStopMovement(false);
         //pathfindingAI.SetOnTargetReachedAction(arrivalAction);
-        destinationSetter.SetDestination(destinationTile.centeredWorldLocation);
+        //destinationSetter.SetDestination(destinationTile.centeredWorldLocation);
+        SetDestination(destinationTile.centeredWorldLocation);
         StartWalkingAnimation();
         //Messenger.AddListener<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, OnTileOccupied);
         //pathfindingAI.SearchPath();
@@ -590,6 +591,14 @@ public class CharacterMarker : PooledObject {
             }
         }
     }
+    public void SetDestination(Vector3 destination) {
+        pathfindingAI.destination = destination;
+        pathfindingAI.canSearch = true;
+    }
+    public void SetTargetTransform(Transform target) {
+        destinationSetter.target = target;
+        pathfindingAI.canSearch = true;
+    }
     #endregion
 
     #region For Testing
@@ -762,14 +771,15 @@ public class CharacterMarker : PooledObject {
         //determine nearest hostile in range
         Character nearestHostile = GetNearestHostile();
         //set them as a target
-        destinationSetter.SetDestination(nearestHostile.marker.transform);
+        SetTargetTransform(nearestHostile.marker.transform);
         currentlyEngaging = nearestHostile;
+        pathfindingAI.SetIsStopMovement(false);
     }
     public void OnReachEngageTarget() {
         Debug.Log(character.name + " has reached engage target!");
         //determine whether to start combat or not
         currentlyEngaging = null;
-        destinationSetter.SetDestination(null);
+        SetTargetTransform(null);
         (character.stateComponent.currentState as EngageState).CheckForEndState();
     }
     public void RedetermineEngage() {
@@ -780,7 +790,7 @@ public class CharacterMarker : PooledObject {
         if (currentlyEngaging != nearestHostile) {
             //there is a hostile nearer than the current one
             //engage him/her instead
-            destinationSetter.SetDestination(nearestHostile.marker.transform);
+            SetTargetTransform(nearestHostile.marker.transform);
             currentlyEngaging = nearestHostile;
         }
     }
