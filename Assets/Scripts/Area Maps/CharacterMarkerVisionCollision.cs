@@ -164,15 +164,19 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
         if (GameManager.Instance.gameHasStarted) {
             if (parentMarker.character.stateComponent.currentState != null) {
                 if (!parentMarker.character.stateComponent.currentState.OnEnterVisionWith(poi)) {
+                    if (poi is Character) {
+                        Character targetCharacter = poi as Character;
+                        if (!parentMarker.AddHostileInRange(targetCharacter)) {
+                            ChatHandling(targetCharacter);
+                        }
+                    }
+                }
+            } else {
+                if (poi is Character) {
                     Character targetCharacter = poi as Character;
                     if (!parentMarker.AddHostileInRange(targetCharacter)) {
                         ChatHandling(targetCharacter);
                     }
-                }
-            } else {
-                Character targetCharacter = poi as Character;
-                if (!parentMarker.AddHostileInRange(targetCharacter)) {
-                    ChatHandling(targetCharacter);
                 }
             }
         }
