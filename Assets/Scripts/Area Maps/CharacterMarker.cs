@@ -129,11 +129,14 @@ public class CharacterMarker : PooledObject {
             if (previousGridTile.structure != currentGridTile.structure) {
                 if (previousGridTile.structure != null) {
                     previousGridTile.structure.RemoveCharacterAtLocation(character);
+                } else {
+                    Debug.LogWarning(GameManager.Instance.TodayLogString() + " " + character.name + " can't be removed from the structure of " + previousGridTile.ToString() + " because it is null!");
                 }
                 if (currentGridTile.structure != null) {
                     currentGridTile.structure.AddCharacterAtLocation(character, currentGridTile);
+                } else {
+                    Debug.LogWarning(GameManager.Instance.TodayLogString() + " " + character.name + " can't be added to the structure of " + currentGridTile.ToString() + " because it is null!");
                 }
-                
             }
 
             //Lastly set the previous tile position to the current tile position so it will not trigger again
