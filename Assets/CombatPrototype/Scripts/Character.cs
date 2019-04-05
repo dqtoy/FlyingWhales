@@ -1322,7 +1322,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         LocationStructure previousStructure = this.currentStructure;
         this.currentStructure = currentStructure;
         if (marker != null) {
-            marker.ClearPOIsInVisionRange(); //when the character changes structures, clear pois in range, because pois in range must always be in the same structure
+            marker.RevalidatePOIsInVisionRange(); //when the character changes structures, revalidate pois in range
         }
         string summary = string.Empty;
         if (currentStructure != null) {
@@ -4218,7 +4218,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public void AddInitialAwareness() {
         if(faction == FactionManager.Instance.neutralFaction) {
-            foreach (List<LocationStructure> structures in gridTileLocation.structure.location.structures.Values) {
+            foreach (List<LocationStructure> structures in specificLocation.structures.Values) {
                 for (int i = 0; i < structures.Count; i++) {
                     for (int j = 0; j < structures[i].pointsOfInterest.Count; j++) {
                         IPointOfInterest poi = structures[i].pointsOfInterest[j];
@@ -4716,7 +4716,11 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             if (target is Character && (target as Character).isDead) {
                 return;
             }
-            marker.RotateMarker(gridTileLocation.centeredWorldLocation, target.gridTileLocation.centeredWorldLocation);
+            if (target is Character) {
+                marker.LookAt((target as Character).marker.transform.position);
+            } else {
+                marker.LookAt(target.gridTileLocation.centeredWorldLocation);
+            }            
         }
     }
     public void SetCurrentAction(GoapAction action) {

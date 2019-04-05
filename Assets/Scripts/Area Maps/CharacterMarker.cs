@@ -42,8 +42,8 @@ public class CharacterMarker : PooledObject {
     //public MOVEMENT_MODE movementMode { get; private set; }
 
     //collision
-    public HashSet<IPointOfInterest> inVisionPOIs { get; private set; } //POI's in this characters vision collider
-    public HashSet<Character> hostilesInRange { get; private set; } //POI's in this characters hostility collider
+    public List<IPointOfInterest> inVisionPOIs { get; private set; } //POI's in this characters vision collider
+    public List<Character> hostilesInRange { get; private set; } //POI's in this characters hostility collider
 
 
     private LocationGridTile lastRemovedTileFromPath;
@@ -91,8 +91,8 @@ public class CharacterMarker : PooledObject {
         //visualsRT.localRotation = Quaternion.Euler(randomRotation);
         UpdateActionIcon();
 
-        inVisionPOIs = new HashSet<IPointOfInterest>();
-        hostilesInRange = new HashSet<Character>();
+        inVisionPOIs = new List<IPointOfInterest>();
+        hostilesInRange = new List<Character>();
 
         GameObject collisionTriggerGO = GameObject.Instantiate(InteriorMapManager.Instance.characterCollisionTriggerPrefab, this.transform);
         collisionTriggerGO.transform.localPosition = Vector3.zero;
@@ -481,8 +481,15 @@ public class CharacterMarker : PooledObject {
         Move();
     }
     public void RotateMarker(Vector3 from, Vector3 to) {
-        float angle = Mathf.Atan2(to.y - from.y, to.x - from.x) * Mathf.Rad2Deg;
-        //transform.eulerAngles = new Vector3(transform.rotation.x, transform.rotation.y, angle);
+        //float angle = Mathf.Atan2(to.y - from.y, to.x - from.x) * Mathf.Rad2Deg;
+        //visualsParent.eulerAngles = new Vector3(transform.rotation.x, transform.rotation.y, angle);
+        //Debug.Log(this.character.name + " is rotating " + angle);
+    }
+    public void LookAt(Vector3 target) {
+        Vector3 diff = target - transform.position;
+        diff.Normalize();
+        float rot_z = Mathf.Atan2(diff.y, diff.x) * Mathf.Rad2Deg;
+        visualsParent.rotation = Quaternion.Euler(0f, 0f, rot_z - 90);
     }
     public void ReceivePathFromPathfindingThread(InnerPathfindingThread innerPathfindingThread) {
         _currentPath = innerPathfindingThread.path;
@@ -623,6 +630,11 @@ public class CharacterMarker : PooledObject {
             hostilesInRange.ElementAt(i).marker.HighlightMarker(Color.red);
         }
     }
+    //public Vector3 lookAtTest;
+    //[ContextMenu("Look At")]
+    //public void LookAtTest() {
+    //    LookAt(lookAtTest);
+    //}
     #endregion
 
     #region Animation
@@ -663,6 +675,19 @@ public class CharacterMarker : PooledObject {
     }
     public void ClearPOIsInVisionRange() {
         inVisionPOIs.Clear();
+    }
+    public void RevalidatePOIsInVisionRange() {
+        //check pois in vision to see if they are still valid
+        List<IPointOfInterest> invalid = new List<IPointOfInterest>();
+        for (int i = 0; i < inVisionPOIs.Count; i++) {
+            IPointOfInterest poi = inVisionPOIs[i];
+            if (poi.gridTileLocation.structure != character.currentStructure) {
+                invalid.Add(poi);
+            }
+        }
+        for (int i = 0; i < invalid.Count; i++) {
+            RemovePOIFromInVisionRange(invalid[i]);
+        }
     }
     #endregion
 
@@ -809,6 +834,7 @@ public class CharacterMarker : PooledObject {
             //engage him/her instead
             SetTargetTransform(nearestHostile.marker.transform);
             currentlyEngaging = nearestHostile;
+
         }
     }
     public void SetCannotCombat(bool state) {
