@@ -1284,7 +1284,6 @@ public class Area {
             character.ownParty.SetSpecificLocation(this);
             AddCharacterAtLocationHistory("Added " + character.name + "ST: " + StackTraceUtility.ExtractStackTrace());
             //if (PlayerManager.Instance.player == null || PlayerManager.Instance.player.playerArea.id != this.id) {
-
             //if (structureOverride != null) {
             //    if (tileOverride != null) {
             //        structureOverride.AddCharacterAtLocation(character, tileOverride);
@@ -1407,6 +1406,11 @@ public class Area {
         }
         if (character.currentStructure == null) {
             Debug.LogWarning(GameManager.Instance.TodayLogString() + "Could not find structure for " + character.name + " at " + this.name);
+        } else {
+            if (character.currentStructure != character.gridTileLocation.structure && character.marker != null) {
+                LocationGridTile tile = character.currentStructure.GetRandomUnoccupiedTile();
+                character.marker.PlaceMarkerAt(tile);
+            }
         }
     }
     private void AddCharacterAtLocationHistory(string str) {

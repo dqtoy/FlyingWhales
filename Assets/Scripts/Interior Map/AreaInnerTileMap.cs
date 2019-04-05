@@ -1096,7 +1096,7 @@ public class AreaInnerTileMap : MonoBehaviour {
     private void OnPlaceCharacterOnTile(Character character, LocationGridTile tile) {
         //Vector3 pos = new Vector3(tile.localPlace.x + 0.5f, tile.localPlace.y + 0.5f);
         if (character.marker == null) {
-            Vector3 pos = new Vector3(tile.localPlace.x + 0.5f, tile.localPlace.y + 0.5f);
+            Vector3 pos = tile.centeredLocalLocation;
             GameObject portraitGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("CharacterMarker", pos, Quaternion.identity, objectsParent);
             //RectTransform rect = portraitGO.transform as RectTransform;
             portraitGO.transform.localPosition = pos;

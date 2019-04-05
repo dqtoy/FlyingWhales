@@ -1321,7 +1321,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         LocationStructure previousStructure = this.currentStructure;
         this.currentStructure = currentStructure;
-        if (marker != null) {
+        if (marker != null && currentStructure != null) {
             marker.RevalidatePOIsInVisionRange(); //when the character changes structures, revalidate pois in range
         }
         string summary = string.Empty;
@@ -1336,7 +1336,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 summary += " to perform <b>" + forcedInteraction.name + "</b> at " + forcedInteraction.interactable.name;
             }
         }
-        locationHistory.Add(summary);
+        locationHistory.Add(summary + "\n" + StackTraceUtility.ExtractStackTrace());
         if (locationHistory.Count > 80) {
             locationHistory.RemoveAt(0);
         }
@@ -1424,7 +1424,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         } else {
             summary = GameManager.Instance.TodayLogString() + "Set tile location to " + tile.localPlace.ToString();
         }
-        locationHistory.Add(summary);
+        locationHistory.Add(summary + "\n" + StackTraceUtility.ExtractStackTrace());
         if (locationHistory.Count > 80) {
             locationHistory.RemoveAt(0);
         }

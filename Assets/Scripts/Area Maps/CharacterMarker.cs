@@ -143,6 +143,9 @@ public class CharacterMarker : PooledObject {
             _previousTilePosition = character.gridTilePosition;
         }
     }
+    public void PlaceMarkerAt(LocationGridTile tile) {
+        transform.position = tile.centeredWorldLocation;
+    }
 
     #region Pointer Functions
     public void SetHoverAction(HoverMarkerAction hoverEnterAction, System.Action hoverExitAction) {
@@ -720,8 +723,11 @@ public class CharacterMarker : PooledObject {
 
     #region Reactions
     private void NormalReactToHostileCharacter(Character otherCharacter) {
+        string summary = character.name + " will react to hostile " + otherCharacter.name;
         //- All characters that see another hostile will drop a non-combat action, if doing any.
         if (character.IsDoingCombatAction()) {
+            summary += "\n" + character.name + " is already doing a combat action. Ignoring " + otherCharacter.name;
+            Debug.Log(summary);
             //if currently doing a combat action, do not react to any characters
             return;
         }
@@ -731,14 +737,17 @@ public class CharacterMarker : PooledObject {
             || character.role.roleType == CHARACTER_ROLE.NOBLE || character.role.roleType == CHARACTER_ROLE.LEADER) {
             //- Injured characters, Civilians, Nobles and Faction Leaders always enter Flee mode
             character.stateComponent.SwitchToState(CHARACTER_STATE.FLEE, otherCharacter);
+            summary += "\n" + character.name + " chose to flee.";
         } else if (character.doNotDisturb > 0 && character.GetTraitOf(TRAIT_TYPE.DISABLER) != null) {
             //- Disabled characters will not do anything
+            summary += "\n" + character.name + " will not do anything.";
         } else if (character.role.roleType == CHARACTER_ROLE.BEAST || character.role.roleType == CHARACTER_ROLE.ADVENTURER
             || character.role.roleType == CHARACTER_ROLE.SOLDIER) {
             //- Uninjured Beasts, Adventurers and Soldiers will enter Engage mode.
             character.stateComponent.SwitchToState(CHARACTER_STATE.ENGAGE, otherCharacter);
+            summary += "\n" + character.name + " chose to engage.";
         }
-
+        Debug.Log(summary);
         //for testing
         //if (this.character.id == 1) {
         //    character.stateComponent.SwitchToState(CHARACTER_STATE.ENGAGE);
@@ -843,7 +852,7 @@ public class CharacterMarker : PooledObject {
     public void SetCannotCombat(bool state) {
         cannotCombat = state;
     }
-    private Character GetNearestHostile() {
+    public Character GetNearestHostile() {
         Character nearest = null;
         float nearestDist = 9999f;
         for (int i = 0; i < hostilesInRange.Count; i++) {
