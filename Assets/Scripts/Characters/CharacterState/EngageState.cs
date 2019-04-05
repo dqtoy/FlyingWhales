@@ -29,10 +29,68 @@ public class EngageState : CharacterState {
     public void CheckForEndState() {
         if (stateComponent.character.marker.hostilesInRange.Count == 0) {
             //can end engage
-            stateComponent.ExitCurrentState(this);
+            OnExitThisState();
         } else {
             //redetermine flee path
             stateComponent.character.marker.RedetermineEngage();
         }
+    }
+    public void CombatOnEngage() {
+        Character engagerCharacter = stateComponent.character;
+        Character targetCharacter = this.targetCharacter;
+        if (CanCombatBeTriggeredBetween(engagerCharacter, targetCharacter)) {
+            targetCharacter.marker.SetCannotCombat(true);
+            List<Character> attackers = new List<Character>();
+            attackers.Add(engagerCharacter);
+
+            List<Character> defenders = new List<Character>();
+            defenders.Add(targetCharacter);
+
+            float attackersChance = 0f;
+            float defendersChance = 0f;
+
+            CombatManager.Instance.GetCombatChanceOfTwoLists(attackers, defenders, out attackersChance, out defendersChance);
+
+            WeightedDictionary<string> resultWeights = new WeightedDictionary<string>();
+            int chance = UnityEngine.Random.Range(0, 100);
+            if (chance < attackersChance) {
+                //Hunter Win
+                resultWeights.AddElement("Target Killed", 20);
+                resultWeights.AddElement("Target Injured", 40);
+            } else {
+                //Target Win
+                resultWeights.AddElement("Hunter Killed", 20);
+                resultWeights.AddElement("Hunter Injured", 40);
+            }
+
+            string result = resultWeights.PickRandomElementGivenWeights();
+            if (result == "Target Killed") {
+                targetCharacter.Death();
+            } else if (result == "Target Injured") {
+                targetCharacter.AddTrait("Injured");
+            } else if (result == "Hunter Killed") {
+                engagerCharacter.Death();
+            } else if (result == "Hunter Injured") {
+                engagerCharacter.AddTrait("Injured");
+            }
+        }
+    }
+    private bool CanCombatBeTriggeredBetween(Character engagerCharacter, Character targetCharacter) {
+        if (engagerCharacter.GetTrait("Combat Recovery") != null) {
+            return false;
+        }
+        if (engagerCharacter.stateComponent.currentState.characterState == CHARACTER_STATE.FLEE) {
+            return false;
+        }
+        if (engagerCharacter.HasTraitOf(TRAIT_TYPE.DISABLER)) {
+            return false;
+        }
+        if (engagerCharacter.currentAction != null) {
+            return false;
+        }
+        if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+            return false;
+        }
+        return true;
     }
 }

@@ -14,6 +14,7 @@ public class CharacterState {
     public Log thoughtBubbleLog { get; protected set; }
 
     public Character targetCharacter { get; protected set; } //Target character of current state
+    //public CharacterState parentMajorState { get; protected set; }
 
     public CharacterState(CharacterStateComponent characterComp) {
         this.stateComponent = characterComp;
@@ -43,12 +44,19 @@ public class CharacterState {
     protected virtual void PerTickInState() {
         if(currentDuration > duration) {
             StopStatePerTick();
-            stateComponent.ExitCurrentState(this);
+            OnExitThisState();
         }
         currentDuration++;
     }
     //Character will do the movement behavior of this state, can be overriden
-    protected virtual void DoMovementBehavior() {
+    protected virtual void DoMovementBehavior() {}
+
+    //What happens when you see another point of interest (character, tile objects, etc)
+    public virtual bool OnEnterVisionWith(IPointOfInterest targetPOI) { return false; }
+
+    //This is called for exiting current state, I made it a virtual because some states still requires something before exiting current state
+    public virtual void OnExitThisState() {
+        stateComponent.ExitCurrentState(this);
     }
     #endregion
 
@@ -68,6 +76,9 @@ public class CharacterState {
     public void SetTargetCharacter(Character target) {
         targetCharacter = target;
     }
+    //public void SetParentMajorState(CharacterState majorState) {
+    //    parentMajorState = majorState;
+    //}
     //This is the one must be called to enter and start this state, if it is already done, it cannot start again
     public void EnterState() {
         if (isDone) {
