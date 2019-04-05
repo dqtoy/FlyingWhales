@@ -13,8 +13,11 @@ public class CharacterAIPath : AIPath {
         base.OnTargetReached();
         marker.ArrivedAtLocation();
         currentPath = null;
+        //TODO: Move these to delegates
         if (marker.hasFleePath) {
             marker.OnFinishFleePath();
+        } else if (marker.currentlyEngaging != null) {
+            marker.OnReachEngageTarget();
         }
     }
 

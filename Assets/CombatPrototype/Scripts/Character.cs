@@ -1642,6 +1642,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public LocationGridTile GetLocationGridTileByXY(int x, int y) {
         return specificLocation.areaMap.map[x, y];
     }
+    public bool IsDoingCombatAction() {
+        if (currentAction != null) {
+            return marker.currentlyEngaging != null || currentAction.goapType == INTERACTION_TYPE.ASSAULT_ACTION_NPC; //TODO: put this in individual actions maybe?
+        }
+        return false;
+    }
     #endregion
 
     #region Relationships

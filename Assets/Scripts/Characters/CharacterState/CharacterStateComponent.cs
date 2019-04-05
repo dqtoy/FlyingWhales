@@ -125,6 +125,9 @@ public class CharacterStateComponent {
             case CHARACTER_STATE.FLEE:
                 newState = new FleeState(this);
                 break;
+            case CHARACTER_STATE.ENGAGE:
+                newState = new EngageState(this);
+                break;
         }
         return newState;
     }

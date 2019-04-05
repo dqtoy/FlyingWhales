@@ -47,6 +47,9 @@ namespace Pathfinding {
             ai.canSearch = true;
             //Debug.Log(ai.marker.character.name + " set destination to " + target.ToString());
         }
+        public void SetDestination(Transform target) {
+            targetTrans = target;
+        }
 
         public void ClearPath() {
             target = new Vector3(float.PositiveInfinity, float.PositiveInfinity, float.PositiveInfinity);

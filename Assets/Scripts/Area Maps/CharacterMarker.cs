@@ -670,6 +670,9 @@ public class CharacterMarker : PooledObject {
     public void RemoveHostileInRange(Character poi) {
         if (hostilesInRange.Remove(poi)) {
             UnhighlightMarker(); //This is for testing only!
+            if (currentlyEngaging == poi) {
+                (character.stateComponent.currentState as EngageState).CheckForEndState();
+            }
         }
     }
     public void ClearHostilesInRange() {
@@ -679,12 +682,28 @@ public class CharacterMarker : PooledObject {
 
     #region Reactions
     private void ReactToHostileCharacter(Character otherCharacter) {
-        //TODO: Add checking for flee or engage here
+        //- All characters that see another hostile will drop a non-combat action, if doing any.
+        if (character.IsDoingCombatAction()) {
+            //if currently doing a combat action, do not react to any characters
+            return;
+        }
 
-        //Just Flee for now
-        //TODO: Set state to flee
-        //if (this.character.id == 1) {
+        //- Determine whether to enter Flee mode or Engage mode:
+        if (character.GetTrait("Injured") != null || character.role.roleType == CHARACTER_ROLE.CIVILIAN
+            || character.role.roleType == CHARACTER_ROLE.NOBLE || character.role.roleType == CHARACTER_ROLE.LEADER) {
+            //- Injured characters, Civilians, Nobles and Faction Leaders always enter Flee mode
             character.stateComponent.SwitchToState(CHARACTER_STATE.FLEE);
+        } else if (character.doNotDisturb > 0 && character.GetTraitOf(TRAIT_TYPE.DISABLER) != null) {
+            //- Disabled characters will not do anything
+        } else if (character.role.roleType == CHARACTER_ROLE.BEAST || character.role.roleType == CHARACTER_ROLE.ADVENTURER
+            || character.role.roleType == CHARACTER_ROLE.SOLDIER) {
+            //- Uninjured Beasts, Adventurers and Soldiers will enter Engage mode.
+            character.stateComponent.SwitchToState(CHARACTER_STATE.ENGAGE);
+        }
+
+        //for testing
+        //if (this.character.id == 1) {
+        //    character.stateComponent.SwitchToState(CHARACTER_STATE.ENGAGE);
         //}
     }
     #endregion
@@ -717,9 +736,9 @@ public class CharacterMarker : PooledObject {
         if (hostilesInRange.Count == 0) {
             return;
         }
-        if (character.currentAction != null) {
-            character.currentAction.StopAction();
-        }
+        //if (character.currentAction != null) {
+        //    character.currentAction.StopAction();
+        //}
         hasFleePath = true;
         pathfindingAI.canSearch = false; //set to false, because if this is true and a destination has been set in the ai path, the ai will still try and go to that point instead of the computed flee path
         FleeMultiplePath fleePath = FleeMultiplePath.Construct(this.transform.position, hostilesInRange.Select(x => x.marker.transform.position).ToArray(), 10000);
@@ -734,6 +753,49 @@ public class CharacterMarker : PooledObject {
         PlayIdle();
         //RedetermineFlee();
         (character.stateComponent.currentState as FleeState).CheckForEndState();
+    }
+    #endregion
+
+    #region Engage
+    public Character currentlyEngaging { get; private set; }
+    public void OnStartEngage() {
+        //determine nearest hostile in range
+        Character nearestHostile = GetNearestHostile();
+        //set them as a target
+        destinationSetter.SetDestination(nearestHostile.marker.transform);
+        currentlyEngaging = nearestHostile;
+    }
+    public void OnReachEngageTarget() {
+        Debug.Log(character.name + " has reached engage target!");
+        //determine whether to start combat or not
+        currentlyEngaging = null;
+        destinationSetter.SetDestination(null);
+        (character.stateComponent.currentState as EngageState).CheckForEndState();
+    }
+    public void RedetermineEngage() {
+        if (hostilesInRange.Count == 0) {
+            return;
+        }
+        Character nearestHostile = GetNearestHostile();
+        if (currentlyEngaging != nearestHostile) {
+            //there is a hostile nearer than the current one
+            //engage him/her instead
+            destinationSetter.SetDestination(nearestHostile.marker.transform);
+            currentlyEngaging = nearestHostile;
+        }
+    }
+    private Character GetNearestHostile() {
+        Character nearest = null;
+        float nearestDist = 9999f;
+        for (int i = 0; i < hostilesInRange.Count; i++) {
+            Character currHostile = hostilesInRange.ElementAt(i);
+            float dist = Vector2.Distance(this.transform.position, currHostile.marker.transform.position);
+            if (nearest == null || dist < nearestDist) {
+                nearest = currHostile;
+                nearestDist = dist;
+            }
+        }
+        return nearest;
     }
     #endregion
 }
