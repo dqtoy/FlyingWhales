@@ -144,11 +144,13 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
         return false;
     }
     private bool ChatHandling(Character targetCharacter) {
-        int chance = UnityEngine.Random.Range(0, 100);
-        if(chance < 10) {
-            if (!parentMarker.character.isChatting && !targetCharacter.isChatting) {
-                parentMarker.character.ChatCharacter(targetCharacter);
-                return true;
+        if(parentMarker.character.faction.id == targetCharacter.faction.id) {
+            int chance = UnityEngine.Random.Range(0, 100);
+            if (chance < 10) {
+                if (!parentMarker.character.isChatting && !targetCharacter.isChatting) {
+                    parentMarker.character.ChatCharacter(targetCharacter);
+                    return true;
+                }
             }
         }
         return false;

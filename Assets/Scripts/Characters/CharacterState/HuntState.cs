@@ -21,12 +21,28 @@ public class HuntState : CharacterState {
             stateComponent.character.marker.AddHostileInRange(targetPOI as Character);
             return true;
         }else if (targetPOI is Corpse) {
-            //Eat action - same as explore state's pick up item action
+            GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.EAT_CORPSE, stateComponent.character, targetPOI);
+            if (goapAction.targetTile != null) {
+                goapAction.CreateStates();
+                stateComponent.character.SetCurrentAction(goapAction);
+                stateComponent.character.marker.GoToTile(goapAction.targetTile, targetPOI, () => OnArriveAtCorpseLocation());
+            } else {
+                Debug.LogWarning(GameManager.Instance.TodayLogString() + " " + stateComponent.character.name + " can't eat corpse " + targetPOI.name + " because there is no tile to go to!");
+            }
+            return true;
         }
         return base.OnEnterVisionWith(targetPOI);
     }
     #endregion
 
+    private void OnArriveAtCorpseLocation() {
+        stateComponent.character.currentAction.SetEndAction(HuntAgain);
+        stateComponent.character.currentAction.PerformActualAction();
+    }
+    private void HuntAgain(string result, GoapAction goapAction) {
+        stateComponent.character.SetCurrentAction(null);
+        StartHuntMovement();
+    }
     private void StartHuntMovement() {
         stateComponent.character.marker.GoToTile(PickRandomTileToGoTo(), stateComponent.character, () => StartHuntMovement());
     }
