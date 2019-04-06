@@ -39,6 +39,7 @@ public class GoapAction {
     public Log thoughtBubbleMovingLog { get; protected set; } //used when the actor is moving with this as his/her current action
     public Log planLog { get; protected set; } //used for notification when a character starts this action. NOTE: Do not show notification if this is null
     public GoapActionState currentState { get; private set; }
+    public GoapActionState endedAtState { get; private set; } //the state this action ended at
     public GoapPlan parentPlan { get { return actor.GetPlanWithAction(this); } }
     public bool isStopped { get; private set; }
     public bool isPerformingActualAction { get; private set; }
@@ -276,6 +277,7 @@ public class GoapAction {
     public void End() {
         isPerformingActualAction = false;
         isDone = true;
+        endedAtState = currentState;
         if (Messenger.eventTable.ContainsKey(Signals.CHARACTER_DEATH)) {
             Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnActorDied);
         }

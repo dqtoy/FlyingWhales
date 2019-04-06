@@ -4112,17 +4112,19 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         } else if (intel is EventIntel) {
             EventIntel ei = intel as EventIntel;
-            Dictionary<ActionEffectReaction, GoapEffect> reactions = new Dictionary<ActionEffectReaction, GoapEffect>();
-            List<GoapEffect> reactingToEffects = new List<GoapEffect>();
-            for (int i = 0; i < ei.action.actualEffects.Count; i++) {
-                GoapEffect currEffect = ei.action.actualEffects[i];
-                if (ActionEffectReactionDB.eventIntelReactions.ContainsKey(currEffect)) {
-                    reactions.Add(ActionEffectReactionDB.eventIntelReactions[currEffect], currEffect);
-                }
-            }
-            foreach (KeyValuePair<ActionEffectReaction, GoapEffect> keyValuePair in reactions) {
-                dialogReactions.Add(keyValuePair.Key.GetReactionFrom(this, intel, keyValuePair.Value));
-            }
+            if (ei.action.endedAtState != null && ei.action.endedAtState.shareIntelReaction != null) {
+                dialogReactions.AddRange(ei.action.endedAtState.shareIntelReaction.Invoke(this));
+            }            
+            //Dictionary<ActionEffectReaction, GoapEffect> reactions = new Dictionary<ActionEffectReaction, GoapEffect>();
+            //for (int i = 0; i < ei.action.actualEffects.Count; i++) {
+            //    GoapEffect currEffect = ei.action.actualEffects[i];
+            //    if (ActionEffectReactionDB.eventIntelReactions.ContainsKey(currEffect)) {
+            //        reactions.Add(ActionEffectReactionDB.eventIntelReactions[currEffect], currEffect);
+            //    }
+            //}
+            //foreach (KeyValuePair<ActionEffectReaction, GoapEffect> keyValuePair in reactions) {
+            //    dialogReactions.Add(keyValuePair.Key.GetReactionFrom(this, intel, keyValuePair.Value));
+            //}
         }
         PlayerManager.Instance.player.RemoveIntel(intel);
         return dialogReactions;

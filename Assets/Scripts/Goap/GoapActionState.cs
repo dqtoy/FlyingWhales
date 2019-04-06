@@ -12,6 +12,7 @@ public class GoapActionState {
     public Action preEffect { get; private set; }
     public Action perTickEffect { get; private set; }
     public Action afterEffect { get; private set; }
+    public Func<Character, List<string>> shareIntelReaction { get; private set; }
     public string status { get; private set; }
 
     public bool hasPerTickEffect { get { return perTickEffect != null; } }
@@ -26,6 +27,10 @@ public class GoapActionState {
         this.duration = duration;
         this.status = status;
         CreateLog();
+    }
+
+    public void SetIntelReaction(Func<Character, List<string>> intelReaction) {
+        shareIntelReaction = intelReaction;
     }
 
     private void CreateLog() {
