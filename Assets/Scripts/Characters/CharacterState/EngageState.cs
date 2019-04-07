@@ -9,6 +9,7 @@ public class EngageState : CharacterState {
         characterState = CHARACTER_STATE.ENGAGE;
         stateCategory = CHARACTER_STATE_CATEGORY.MINOR;
         //duration = 288;
+        duration = 15;
     }
 
     #region Overrides

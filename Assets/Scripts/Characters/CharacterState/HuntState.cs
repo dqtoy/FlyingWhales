@@ -8,7 +8,7 @@ public class HuntState : CharacterState {
         stateName = "Hunt State";
         characterState = CHARACTER_STATE.HUNT;
         stateCategory = CHARACTER_STATE_CATEGORY.MAJOR;
-        duration = 96;
+        duration = 48;
     }
 
     #region Overrides
