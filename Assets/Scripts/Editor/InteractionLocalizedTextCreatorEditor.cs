@@ -82,7 +82,7 @@ public class InteractionLocalizedTextCreatorEditor : EditorWindow {
         for (int i = 0; i < cardData.checklists.Count; i++) {
             Checklist currChecklist = cardData.checklists[i];
             string stateName = string.Empty;
-            if (currChecklist.name.Equals("State 1")){
+            if (currChecklist.name.Equals("Action Start")){
                 stateName = "start";
             } else if (currChecklist.name.Contains("State") || currChecklist.name.Contains("Result")) {
                 stateName = currChecklist.name.Substring(currChecklist.name.IndexOf(": ") + 1);
@@ -101,13 +101,30 @@ public class InteractionLocalizedTextCreatorEditor : EditorWindow {
                         key = stateName + "_description",
                         value = description,
                     });
-                } else if (currChecklistItem.name.Contains("Log") || currChecklistItem.name.Contains("Logs")) {
+                } 
+                //else if (currChecklistItem.name.Contains("Log") || currChecklistItem.name.Contains("Logs")) {
+                //    string log = currChecklistItem.name.Substring(currChecklistItem.name.IndexOf(": ") + 1);
+                //    log = ConvertToLogFillers(log.TrimStart());
+                //    localizationData.items.Add(new LocalizationItem() {
+                //        key = stateName + "_log" + logCount,
+                //        value = log,
+                //    });
+                //    logCount++;
+                //} 
+                else if (currChecklistItem.name.Contains("Thought Bubble")) {
                     string log = currChecklistItem.name.Substring(currChecklistItem.name.IndexOf(": ") + 1);
                     log = ConvertToLogFillers(log.TrimStart());
-                    localizationData.items.Add(new LocalizationItem() {
-                        key = stateName + "_log" + logCount,
-                        value = log,
-                    });
+                    if (currChecklistItem.name.Contains("Moving")) {
+                        localizationData.items.Add(new LocalizationItem() {
+                            key = "thought_bubble_m",
+                            value = log,
+                        });
+                    } else {
+                        localizationData.items.Add(new LocalizationItem() {
+                            key = "thought_bubble",
+                            value = log,
+                        });
+                    }
                     logCount++;
                 }
             }
@@ -165,8 +182,10 @@ public class InteractionLocalizedTextCreatorEditor : EditorWindow {
                 return LOG_IDENTIFIER.MINION_1;
             case "[Character Name]":
             case "[Character Name 1]":
+            case "[Actor Name]":
                 return LOG_IDENTIFIER.ACTIVE_CHARACTER;
             case "[Character Name 2]":
+            case "[Target Name]":
                 return LOG_IDENTIFIER.TARGET_CHARACTER;
             case "[Location Name]":
             case "[Location Name 1]":

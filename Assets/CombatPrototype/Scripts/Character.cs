@@ -139,6 +139,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public float hHairColor { get; private set; }
     public float demonColor { get; private set; }
 
+    //hostility
+    public int ignoreHostility { get; private set; }
+
     //For Testing
     public List<string> locationHistory { get; private set; }
     public List<string> actionHistory { get; private set; }
@@ -554,14 +557,19 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         hHairColor = UnityEngine.Random.Range(-360f, 360f);
         demonColor = UnityEngine.Random.Range(-144f, 144f);
 
+        //for testing
         locationHistory = new List<string>();
         actionHistory = new List<string>();
 
         //If this is a minion, this should not be initiated
         awareness = new Dictionary<POINT_OF_INTEREST_TYPE, List<IAwareness>>();
         planner = new GoapPlanner(this);
-        //AddAwareness(this);
+
+        //supply
         SetSupply(UnityEngine.Random.Range(10, 61)); //Randomize initial supply per character (Random amount between 10 to 60.)
+
+        //hostiltiy
+        ignoreHostility = 0;
 
         GetRandomCharacterColor();
 #if !WORLD_CREATION_TOOL
@@ -1902,18 +1910,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return count;
     }
-    public bool IsHostileWith(Character character) {
-        //return true;
-        if (this.faction.id == FactionManager.Instance.neutralFaction.id) {
-            //this character is unaligned
-            //if unaligned, hostile to all other characters, except those of same race
-            return character.race != this.race;
-        } else {
-            //this character has a faction
-            //if has a faction, is hostile to characters of every other faction
-            return this.faction.id != character.faction.id;
-        }
-    }
     #endregion
 
     #region History
@@ -2363,8 +2359,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             AddTrait("Elf Slayer");
         }
     }
-    public bool AddTrait(string traitName) {
-        return AddTrait(AttributeManager.Instance.allTraits[traitName]);
+    public bool AddTrait(string traitName, Character characterResponsible = null) {
+        return AddTrait(AttributeManager.Instance.allTraits[traitName], characterResponsible);
     }
     public bool AddTrait(Trait trait, Character characterResponsible = null, System.Action onRemoveAction = null) {
         if (trait.IsUnique() && GetTrait(trait.name) != null) {
@@ -3117,7 +3113,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //}
         //return false;
     }
-    private bool PlanIdleReturnHome() {
+    public bool PlanIdleReturnHome() {
         if (GetTrait("Berserker") != null) {
             //Return home becomes stroll if the character has berserker trait
             PlanIdleStroll(currentStructure);
@@ -3840,6 +3836,15 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         }
         return false;
+    }
+    /// <summary>
+    /// This should only be used for plans that come/constructed from the outside.
+    /// </summary>
+    /// <param name="plan">Plan to be added</param>
+    public void AddPlanFromOutside(GoapPlan plan) {
+        if (!allGoapPlans.Contains(plan)) {
+            allGoapPlans.Add(plan);
+        }
     }
     #endregion
 
@@ -4809,5 +4814,36 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public void DisableCollisionTrigger() { }
     public void SetCollisionTrigger(POICollisionTrigger trigger) { }
     public void PlaceGhostCollisionTriggerAt(LocationGridTile tile) { }
+    #endregion
+
+    #region Hostility
+    /// <summary>
+    /// Function to encapsulate, whether or not this character treats another character as hostile.
+    /// </summary>
+    /// <param name="character">Character in question.</param>
+    public bool IsHostileWith(Character character) {
+        if (character.ignoreHostility > 0 || this.ignoreHostility > 0) {
+            //if either the character in question or this character should ignore hostility, return false.
+            return false;
+        }
+        if (this.faction.id == FactionManager.Instance.neutralFaction.id) {
+            //this character is unaligned
+            //if unaligned, hostile to all other characters, except those of same race
+            return character.race != this.race;
+        } else {
+            //this character has a faction
+            //if has a faction, is hostile to characters of every other faction
+            return this.faction.id != character.faction.id;
+        }
+    }
+    /// <summary>
+    /// Adjusts value that ignores hostility. This character will ignore hostiles and will be ignored by other hostiles if
+    /// the value is greater than 0.
+    /// </summary>
+    /// <param name="amount">Amount to increase/decrease</param>
+    public void AdjustIgnoreHostilities(int amount) {
+        ignoreHostility += amount;
+        ignoreHostility = Mathf.Max(0, ignoreHostility);
+    }
     #endregion
 }

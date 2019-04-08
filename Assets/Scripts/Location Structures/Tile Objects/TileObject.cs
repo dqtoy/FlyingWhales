@@ -97,8 +97,8 @@ public class  TileObject : IPointOfInterest {
     }
 
     #region Traits
-    public bool AddTrait(string traitName) {
-        return AddTrait(AttributeManager.Instance.allTraits[traitName]);
+    public bool AddTrait(string traitName, Character characterResponsible = null) {
+        return AddTrait(AttributeManager.Instance.allTraits[traitName], characterResponsible);
     }
     public bool AddTrait(Trait trait, Character characterResponsible = null, System.Action onRemoveAction = null) {
         if (trait.IsUnique() && GetTrait(trait.name) != null) {

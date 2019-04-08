@@ -1057,6 +1057,27 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.EAT_CORPSE:
                 goapAction = new EatCorpse(actor, target);
                 break;
+            case INTERACTION_TYPE.RESTRAIN_CHARACTER:
+                goapAction = new RestrainCharacter(actor, target);
+                break;
+            case INTERACTION_TYPE.FIRST_AID_CHARACTER:
+                goapAction = new FirstAidCharacter(actor, target);
+                break;
+            case INTERACTION_TYPE.CURE_CHARACTER:
+                goapAction = new CureCharacter(actor, target);
+                break;
+            case INTERACTION_TYPE.CURSE_CHARACTER:
+                goapAction = new CurseCharacter(actor, target);
+                break;
+            case INTERACTION_TYPE.DISPEL_MAGIC:
+                goapAction = new DispelMagic(actor, target);
+                break;
+            case INTERACTION_TYPE.JUDGE_CHARACTER:
+                goapAction = new JudgeCharacter(actor, target);
+                break;
+            case INTERACTION_TYPE.REPORT_CRIME:
+                goapAction = new ReportCrime(actor, target);
+                break;
         }
         if(goapAction != null && willInitialize) {
             goapAction.Initialize();

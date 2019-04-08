@@ -252,7 +252,7 @@ public class GoapAction {
     }
     public void AddTraitTo(Character target, string traitName) {
         if (target.AddTrait(traitName)) {
-            AddActualEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.ADD_TRAIT, conditionKey = traitName, targetPOI = target });
+            AddActualEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = traitName, targetPOI = target });
         }
     }
     public void RemoveTraitFrom(Character target, string traitName) {
@@ -397,6 +397,9 @@ public class GoapAction {
             log.AddToFillers(actor.specificLocation, actor.specificLocation.name, LOG_IDENTIFIER.LANDMARK_1);
         }
     }
+    protected bool HasTrait(Character character, string traitName) {
+        return character.GetTrait(traitName) != null;
+    }
     #endregion
 
     #region Preconditions
@@ -410,6 +413,10 @@ public class GoapAction {
             }
         }
         return true;
+    }
+    protected bool HasNonPositiveDisablerTrait() {
+        Character target = poiTarget as Character;
+        return target.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_EFFECT.NEUTRAL, TRAIT_TYPE.DISABLER);
     }
     #endregion
 
