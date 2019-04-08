@@ -28,7 +28,7 @@ public class EdiblePlant : TileObject, IPointOfInterest {
     //}
     public override void SetPOIState(POI_STATE state) {
         base.SetPOIState(state);
-        Debug.Log(GameManager.Instance.TodayLogString() + "Set " + this.ToString() + "' state to " + state.ToString());
+        //Debug.Log(GameManager.Instance.TodayLogString() + "Set " + this.ToString() + "' state to " + state.ToString());
         gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this); //update visual based on state
         if (state == POI_STATE.INACTIVE) {
             ScheduleCooldown();
@@ -42,7 +42,7 @@ public class EdiblePlant : TileObject, IPointOfInterest {
     private void ScheduleCooldown() {
         GameDate dueDate = GameManager.Instance.Today();
         dueDate.AddTicks(Replenishment_Countdown);
-        Debug.Log("Will set " + this.ToString() + " as active again on " + GameManager.Instance.ConvertDayToLogString(dueDate));
+        //Debug.Log("Will set " + this.ToString() + " as active again on " + GameManager.Instance.ConvertDayToLogString(dueDate));
         SchedulingManager.Instance.AddEntry(dueDate, () => SetPOIState(POI_STATE.ACTIVE));
     }
 }

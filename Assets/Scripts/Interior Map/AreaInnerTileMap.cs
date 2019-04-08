@@ -742,7 +742,7 @@ public class AreaInnerTileMap : MonoBehaviour {
             LocationGridTile chosenCurrArea = currAreaOuter[Random.Range(0, currAreaOuter.Count)];
             LocationGridTile chosenOtherArea = otherAreaOuter[Random.Range(0, otherAreaOuter.Count)];
 
-            List<LocationGridTile> path = PathGenerator.Instance.GetPath(chosenCurrArea, chosenOtherArea, GRID_PATHFINDING_MODE.NORMAL, true);
+            List<LocationGridTile> path = PathGenerator.Instance.GetPath(chosenCurrArea, chosenOtherArea, GRID_PATHFINDING_MODE.CAVE_ROAD_GEN, true);
             if (path != null) {
                 for (int j = 0; j < path.Count; j++) {
                     LocationGridTile currTile = path[j];
@@ -769,7 +769,7 @@ public class AreaInnerTileMap : MonoBehaviour {
             }
         }
 
-        List<LocationGridTile> p = PathGenerator.Instance.GetPath(westGate, nearestTile, GRID_PATHFINDING_MODE.NORMAL, true);
+        List<LocationGridTile> p = PathGenerator.Instance.GetPath(westGate, nearestTile, GRID_PATHFINDING_MODE.CAVE_ROAD_GEN, true);
         if (p != null) {
             p.Add(westGate);
             for (int j = 0; j < p.Count; j++) {
@@ -798,7 +798,7 @@ public class AreaInnerTileMap : MonoBehaviour {
             }
         }
 
-        p = PathGenerator.Instance.GetPath(eastGate, nearestTile, GRID_PATHFINDING_MODE.NORMAL, true);
+        p = PathGenerator.Instance.GetPath(eastGate, nearestTile, GRID_PATHFINDING_MODE.CAVE_ROAD_GEN, true);
         if (p != null) {
             p.Add(eastGate);
             for (int j = 0; j < p.Count; j++) {

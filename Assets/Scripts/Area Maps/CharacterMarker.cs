@@ -100,6 +100,9 @@ public class CharacterMarker : PooledObject {
         collisionTrigger = collisionTriggerGO.GetComponent<POICollisionTrigger>();
         collisionTrigger.Initialize(character);
 
+        //flee
+        hasFleePath = false;
+
         Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
         Messenger.AddListener<Character, GoapAction>(Signals.CHARACTER_DOING_ACTION, OnCharacterDoingAction);
@@ -374,6 +377,7 @@ public class CharacterMarker : PooledObject {
         if (character.currentParty.icon != null) {
             character.currentParty.icon.SetIsTravelling(false);
         }
+        hasFleePath = false;
         pathfindingAI.SetIsStopMovement(true);
         PlayIdle();
         //log += "\n- Not moving to another tile, go to checker...";
@@ -730,13 +734,28 @@ public class CharacterMarker : PooledObject {
     public void RemoveHostileInRange(Character poi) {
         if (hostilesInRange.Remove(poi)) {
             UnhighlightMarker(); //This is for testing only!
-            if (currentlyEngaging == poi) {
-                (character.stateComponent.currentState as EngageState).CheckForEndState();
-            }
+            OnHostileInRangeRemoved(poi);
+            
         }
     }
     public void ClearHostilesInRange() {
         hostilesInRange.Clear();
+    }
+    private void OnHostileInRangeRemoved(Character removedCharacter) {
+        if (character.stateComponent.currentState == null) {
+            return;
+        }
+        string removeHostileSummary = removedCharacter.name + " was removed from " + character.name + "'s hostile range.";
+        if (character.stateComponent.currentState.characterState == CHARACTER_STATE.ENGAGE) {
+            removeHostileSummary += "\n" + character.name + "'s current state is engage, checking for end state...";
+            if (currentlyEngaging == removedCharacter) {
+                (character.stateComponent.currentState as EngageState).CheckForEndState();
+            }
+        } else if (character.stateComponent.currentState.characterState == CHARACTER_STATE.FLEE) {
+            removeHostileSummary += "\n" + character.name + "'s current state is flee, checking for end state...";
+            (character.stateComponent.currentState as FleeState).CheckForEndState();
+        }
+        character.PrintLogIfActive(removeHostileSummary);
     }
     #endregion
 
@@ -775,7 +794,7 @@ public class CharacterMarker : PooledObject {
     #endregion
 
     #region Flee
-    public bool hasFleePath = false;
+    public bool hasFleePath { get; private set; }
     public void OnStartFlee() {
         //if (hasFleePath) {
         //    return;
@@ -792,6 +811,8 @@ public class CharacterMarker : PooledObject {
         fleePath.aimStrength = 1;
         fleePath.spread = 4000;
         seeker.StartPath(fleePath, OnFleePathComputed);
+        //UIManager.Instance.Pause();
+        //Debug.LogWarning(character.name + " is fleeing!");
     }
     private void OnFleePathComputed(Path path) {
         Debug.Log(character.name + " computed a flee path!");

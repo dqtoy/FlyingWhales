@@ -21,6 +21,11 @@ public class FleeState : CharacterState {
         stateComponent.character.marker.RedetermineFlee(); 
     }
     public override void OnExitThisState() {
+        if (stateComponent.character.marker.hasFleePath) {
+            //the character still has a current flee path
+            //stop his current movement
+            stateComponent.character.marker.StopMovementOnly();
+        }
         stateComponent.character.currentParty.icon.SetIsTravelling(false);
         base.OnExitThisState();
     }

@@ -18,6 +18,7 @@ public class CharacterState {
 
     public CharacterState(CharacterStateComponent characterComp) {
         this.stateComponent = characterComp;
+        AddDefaultListeners();
     }
 
     #region Virtuals
@@ -38,6 +39,7 @@ public class CharacterState {
     protected virtual void EndState() {
         isDone = true;
         StopStatePerTick();
+        RemoveDefaultListeners();
     }
     
     //This is called per TICK_ENDED if the state has a duration, can be overriden
@@ -103,4 +105,23 @@ public class CharacterState {
         StartStatePerTick();
         DoMovementBehavior();
     }
+
+    #region Listeners
+    private void AddDefaultListeners() {
+        Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+    }
+    private void RemoveDefaultListeners() {
+        Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+    }
+    //handler for when the character that owns this dies
+    private void OnCharacterDied(Character character) {
+        if (character.id == stateComponent.character.id) {
+            if (duration > 0) {
+                StopStatePerTick();
+            }
+            RemoveDefaultListeners();
+        }
+    }
+    #endregion
+
 }
