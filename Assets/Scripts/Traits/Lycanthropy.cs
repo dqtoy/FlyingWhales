@@ -73,18 +73,28 @@ public class Lycanthropy : Trait {
                 }
             }
         }
-
-        //Change faction and race
-        _character.ChangeFactionTo(FactionManager.Instance.neutralFaction);
-        _character.ChangeRace(RACE.WOLF);
-
         //Copy relationship data then remove them
         data.SetRelationshipData(_character);
         _character.RemoveAllRelationships();
 
+        //Remove race and class
+        //This is done first so that when the traits are copied, it will not copy the traits from the race and class because if it is copied and the race and character is brought back, it will be doubled, which is not what we want
+        _character.RemoveRace();
+        _character.RemoveClass();
+
         //Copy traits and then remove them
         data.SetTraits(_character);
         _character.RemoveAllTraits("Lycanthropy");
+
+        //Change faction and race
+        _character.ChangeFactionTo(FactionManager.Instance.neutralFaction);
+        _character.SetRace(RACE.WOLF);
+
+        //Change class and role
+        _character.AssignRole(CharacterRole.BEAST);
+        _character.AssignClassByRole(_character.role);
+
+        Messenger.Broadcast(Signals.CHARACTER_CHANGED_RACE, _character);
 
         //Plan idle stroll to the wilderness
         _character.PlanIdleStroll(_character.specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS));
@@ -104,6 +114,8 @@ public class Lycanthropy : Trait {
         _character.SetHomeStructure(data.homeStructure);
         _character.ChangeFactionTo(data.faction);
         _character.ChangeRace(data.race);
+        _character.AssignRole(data.role);
+        _character.AssignClass(data.characterClass);
 
         //Bring back lost relationships
         _character.ReEstablishRelationships(data.relationships);
@@ -124,6 +136,8 @@ public class LycanthropyData {
     public List<RelationshipLycanthropyData> relationships { get; private set; }
     public List<Trait> traits { get; set; }
     public Dwelling homeStructure { get; private set; }
+    public CharacterClass characterClass { get; private set; }
+    public CharacterRole role { get; private set; }
     public RACE race { get; private set; }
 
     public void SetData(Character character) {
@@ -134,6 +148,8 @@ public class LycanthropyData {
         this.awareness = new Dictionary<POINT_OF_INTEREST_TYPE, List<IAwareness>>(character.awareness);
         this.homeStructure = character.homeStructure;
         this.race = character.race;
+        this.role = character.role;
+        this.characterClass = character.characterClass;
     }
 
     public void SetRelationshipData(Character character) {
