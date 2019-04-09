@@ -757,6 +757,10 @@ public class CharacterMarker : PooledObject {
         }
         character.PrintLogIfActive(removeHostileSummary);
     }
+    public void OnOtherCharacterDied(Character otherCharacter) {
+        RemovePOIFromInVisionRange(otherCharacter);
+        RemoveHostileInRange(otherCharacter);
+    }
     #endregion
 
     #region Reactions

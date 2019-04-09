@@ -22,6 +22,7 @@ public class LocationStructure {
     //Inner Map
     public List<LocationGridTile> tiles { get; private set; }
     public LocationGridTile entranceTile { get; private set; }
+    public bool isFromTemplate { get; private set; }
 
     #region getters
     public Area location {
@@ -458,6 +459,14 @@ public class LocationStructure {
         }
 
         List<LocationGridTile> validTiles = new List<LocationGridTile>();
+        if (isFromTemplate) {
+            LocationGridTile preDoor = GetPreplacedDoor();
+            if (preDoor != null) {
+                validTiles.Add(preDoor);
+                return validTiles;
+            }
+        }
+        
         for (int i = 0; i < tiles.Count; i++) {
             LocationGridTile currTile = tiles[i];
             if (currTile.localPlace.y == yToUse && currTile.CanBeAnEntrance()) {
@@ -468,6 +477,42 @@ public class LocationStructure {
     }
     #endregion
 
+    #region Templates
+    public void SetIfFromTemplate(bool isFromTemplate) {
+        this.isFromTemplate = isFromTemplate;
+    }
+    public void RegisterPreplacedObjects() {
+        for (int i = 0; i < tiles.Count; i++) {
+            LocationGridTile currTile = tiles[i];
+            UnityEngine.Tilemaps.TileBase objTile = currTile.parentAreaMap.objectsTilemap.GetTile(currTile.localPlace);
+            if (objTile != null) {
+                switch (objTile.name) {
+                    case "Bed":
+                        AddPOI(new Bed(this), currTile);
+                        break;
+                    case "Table":
+                        AddPOI(new Table(this), currTile);
+                        break;
+                    case "SupplyPile":
+                        AddPOI(new SupplyPile(this), currTile);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+    }
+    public LocationGridTile GetPreplacedDoor() {
+        for (int i = 0; i < tiles.Count; i++) {
+            LocationGridTile currTile = tiles[i];
+            UnityEngine.Tilemaps.TileBase objTile = currTile.parentAreaMap.objectsTilemap.GetTile(currTile.localPlace);
+            if (objTile != null && objTile.name.Contains("door")) {
+                return currTile;
+            }
+        }
+        return null;
+    }
+    #endregion
     public override string ToString() {
         return structureType.ToString() + " " + location.structures[structureType].IndexOf(this).ToString() + " at " + location.name;
     }

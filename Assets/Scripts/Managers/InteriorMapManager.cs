@@ -1,6 +1,7 @@
 ﻿using Pathfinding;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -28,9 +29,12 @@ public class InteriorMapManager : MonoBehaviour {
     [SerializeField] private AstarPath pathfinder;
     private const float nodeSize = 0.2f;
 
+    //structure templates
+    private string templatePath;
 
     private void Awake() {
         Instance = this;
+        templatePath = Application.dataPath + "/StreamingAssets/Structure Templates/";
     }
     public void LateUpdate() {
         if (UIManager.Instance.IsMouseOnUI() || currentlyShowingMap == null) {
@@ -153,6 +157,43 @@ public class InteriorMapManager : MonoBehaviour {
         }
         return false;
     }
+
+    #region Structure Templates
+    public List<StructureTemplate> GetStructureTemplates(STRUCTURE_TYPE structure) {
+        List<StructureTemplate> templates = new List<StructureTemplate>();
+        string path = templatePath + structure.ToString() + "/";
+        if (Directory.Exists(path)) {
+            DirectoryInfo info = new DirectoryInfo(path);
+            FileInfo[] files = info.GetFiles();
+            for (int i = 0; i < files.Length; i++) {
+                FileInfo currInfo = files[i];
+                if (currInfo.Extension.Equals(".json")) {
+                    string dataAsJson = File.ReadAllText(currInfo.FullName);
+                    StructureTemplate loaded = JsonUtility.FromJson<StructureTemplate>(dataAsJson);
+                    templates.Add(loaded);
+                }
+            }
+        }
+        return templates;
+    }
+    /// <summary>
+    /// Get Tile asset based on name. NOTE: Should only be used on the start of the game when building the area maps.
+    /// </summary>
+    /// <param name="name">Name of the asset</param>
+    public TileBase GetTileAsset(string name) {
+        List<TileBase> allTileAssets = LoadAllTilesAssets();
+        for (int i = 0; i < allTileAssets.Count; i++) {
+            TileBase currTile = allTileAssets[i];
+            if (currTile.name == name) {
+                return currTile;
+            }
+        }
+        return null;
+    }
+    private List<TileBase> LoadAllTilesAssets() {
+        return Resources.LoadAll("Tile Map Assets", typeof(TileBase)).Cast<TileBase>().ToList();
+    }
+    #endregion
 
     #region For Testing
     bool isShowingMarkerTileData = false;
