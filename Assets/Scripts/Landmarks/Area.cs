@@ -1217,7 +1217,9 @@ public class Area {
             character.MigrateHomeStructureTo(chosenDwelling);
             if (character.specificLocation != null
                 && character.specificLocation.id == this.id) { //if the character is currently at his home area, and his home was changed, relocate him
-                character.currentStructure.RemoveCharacterAtLocation(character);
+                if (character.currentStructure != null) {
+                    character.currentStructure.RemoveCharacterAtLocation(character);
+                }
                 AddCharacterToAppropriateStructure(character);
             }
         }

@@ -184,12 +184,12 @@ public class CharacterManager : MonoBehaviour {
             if (homeStructure != null) {
                 newCharacter.MigrateHomeStructureTo(homeStructure);
             }
+            homeLocation.AddCharacterToLocation(party, null, true);
             //if(newCharacter.homeStructure == null) {
             //    homeLocation.AddCharacterToLocation(party, null, null, null, true);
             //} else {
             //    homeLocation.AddCharacterToLocation(party, newCharacter.homeStructure, null, null, true);
             //}
-            homeLocation.AddCharacterToLocation(party, null, true);
         }
         newCharacter.AddAwareness(newCharacter);
 #endif

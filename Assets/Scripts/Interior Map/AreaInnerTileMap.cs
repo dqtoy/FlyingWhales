@@ -1104,11 +1104,14 @@ public class AreaInnerTileMap : MonoBehaviour {
             character.marker.SetCharacter(character);
             character.marker.SetHoverAction(character.ShowTileData, InteriorMapManager.Instance.HideTileData);
             tile.SetOccupant(character);
+        } else {
+            if (character.marker.gameObject.transform.parent != objectsParent) {
+                //This means that the character travelled to a different area
+                character.marker.gameObject.transform.SetParent(objectsParent);
+                character.marker.gameObject.transform.localPosition = tile.centeredLocalLocation;
+            }
         }
-        //else {
-        //    character.marker.gameObject.transform.SetParent(objectsParent);
-        //    character.marker.gameObject.transform.localPosition = pos;
-        //}
+
         if (!character.marker.gameObject.activeSelf) {
             character.marker.gameObject.SetActive(true);
         }
