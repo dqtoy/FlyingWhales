@@ -30,8 +30,8 @@ public class AreaInnerTileMap : MonoBehaviour {
     [SerializeField] private Tilemap groundTilemap;
     [SerializeField] private Tilemap wallTilemap;
     [SerializeField] private Tilemap detailsTilemap;
-    [SerializeField] private Tilemap strcutureTilemap;
-    [SerializeField] private Tilemap objectsTilemap;
+    public Tilemap strcutureTilemap;
+    public Tilemap objectsTilemap;
     [SerializeField] private Tilemap roadTilemap;
 
     [Header("Tiles")]
@@ -103,9 +103,7 @@ public class AreaInnerTileMap : MonoBehaviour {
     public float offsetY;
 
     public Vector3 startPos;
-    public Vector3 endPos;
-
-   
+    public Vector3 endPos;   
 
     public Area area { get; private set; }
     public LocationGridTile[,] map { get; private set; }
@@ -124,42 +122,7 @@ public class AreaInnerTileMap : MonoBehaviour {
     }
 
     public enum Cardinal_Direction { North, South, East, West };
-    private Dictionary<STRUCTURE_TYPE, List<Point>> structureSettings = new Dictionary<STRUCTURE_TYPE, List<Point>>() {
-         { STRUCTURE_TYPE.DWELLING,
-            new List<Point>(){
-                new Point(4, 3),
-                new Point(3, 4),
-                //new Point(3, 3),
-            }
-        },
-          { STRUCTURE_TYPE.EXPLORE_AREA,
-            new List<Point>(){
-                new Point(4, 5),
-                new Point(4, 6),
-                new Point(5, 6),
-                new Point(5, 5),
-                new Point(6, 5), 
-                new Point(6, 4)
-            }
-        },
-        { STRUCTURE_TYPE.WAREHOUSE,
-            new List<Point>(){
-                new Point(5, 6),
-                new Point(6, 5),
-            }
-        },
-        { STRUCTURE_TYPE.INN,
-            new List<Point>(){
-                new Point(4, 5),
-                new Point(5, 4),
-            }
-        },
-        { STRUCTURE_TYPE.EXIT,
-            new List<Point>(){
-                new Point(3, 3),
-            }
-        },
-    };
+   
 
     #region Map Generation
     public void Initialize(Area area) {
@@ -188,7 +151,7 @@ public class AreaInnerTileMap : MonoBehaviour {
         }
         allTiles.ForEach(x => x.FindNeighbours(map));
     }
-    private void GenerateGrid(Dictionary<LocationStructure, Point> settings) {
+    private void GenerateGrid(Dictionary<LocationStructure, LocationStructureSetting> settings) {
         Point determinedSize = GetWidthAndHeightForSettings(settings);
         width = determinedSize.X;
         height = determinedSize.Y;
@@ -244,7 +207,7 @@ public class AreaInnerTileMap : MonoBehaviour {
         ClearAllTilemaps();
         eventPopupParent.anchoredPosition = Vector2.zero;
 
-        Dictionary<LocationStructure, Point> settings = GenerateStructureSettings(area);
+        Dictionary<LocationStructure, LocationStructureSetting> settings = GenerateStructureSettings(area);
         Point mapSize = GetWidthAndHeightForSettings(settings);
 
         Debug.Log("Generated Map size for " + area.name + " is: " + mapSize.X + ", " + mapSize.Y);
@@ -404,6 +367,10 @@ public class AreaInnerTileMap : MonoBehaviour {
 
         for (int i = 0; i < structuresWithWalls.Count; i++) {
             LocationStructure currStructure = structuresWithWalls[i];
+            if (currStructure.isFromTemplate) {
+                //if this structure is from a template, do not draw it's walls
+                continue; //skip
+            }
             List<LocationGridTile> outerTiles = currStructure.GetOuterTiles();
             for (int j = 0; j < outerTiles.Count; j++) {
                 LocationGridTile currTile = outerTiles[j];
@@ -538,31 +505,43 @@ public class AreaInnerTileMap : MonoBehaviour {
     /// </summary>
     /// <param name="area">The area to generate settings for</param>
     /// <returns>Dictionary of Point settings per structure</returns>
-    private Dictionary<LocationStructure, Point> GenerateStructureSettings(Area area) {
-        Dictionary<LocationStructure, Point> generatedSettings = new Dictionary<LocationStructure, Point>();
+    private Dictionary<LocationStructure, LocationStructureSetting> GenerateStructureSettings(Area area) {
+        Dictionary<STRUCTURE_TYPE, List<Point>> structureSettings = GetStructureSettings();
+        Dictionary<LocationStructure, LocationStructureSetting> generatedSettings = new Dictionary<LocationStructure, LocationStructureSetting>();
 
         Dictionary<STRUCTURE_TYPE, List<LocationStructure>> orderedStructures = area.GetStructures(true).OrderBy(x => x.Key).ToDictionary(k => k.Key, v => v.Value);
         foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in orderedStructures) { //generate structure settings for inside structures only
-            if (!structureSettings.ContainsKey(keyValuePair.Key)) {
-                continue; //skip
+            List<StructureTemplate> templates = InteriorMapManager.Instance.GetStructureTemplates(keyValuePair.Key); //check for templates
+
+            if (templates.Count == 0 && !structureSettings.ContainsKey(keyValuePair.Key)) {
+                //if the structure type has no available templates and it has no default settings, skip
+                continue;
             }
+
             for (int i = 0; i < keyValuePair.Value.Count; i++) {
                 LocationStructure currStructure = keyValuePair.Value[i];
-                List<Point> choices = structureSettings[keyValuePair.Key];
-                Point chosenSetting = choices[Random.Range(0, choices.Count)];
-                generatedSettings.Add(currStructure, chosenSetting);
+                if (templates.Count > 0) {
+                    //if the structure type has templates, use those
+                    StructureTemplate template = templates[Random.Range(0, templates.Count)];
+                    generatedSettings.Add(currStructure, new LocationStructureSetting(template));
+                } else {
+                    List<Point> choices = structureSettings[keyValuePair.Key];
+                    Point chosenSetting = choices[Random.Range(0, choices.Count)];
+                    generatedSettings.Add(currStructure, new LocationStructureSetting(chosenSetting));
+                }
+                
             }
         }
 
         return generatedSettings;
     }
-    private Point GetWidthAndHeightForSettings(Dictionary<LocationStructure, Point> settings) {
+    private Point GetWidthAndHeightForSettings(Dictionary<LocationStructure, LocationStructureSetting> settings) {
         //height is always 32, 18 is reserved for the inside structures (NOT including walls), and the remaining 14 is for the outside part (Top and bottom)
         Point size = new Point();
         size.Y = 32;
 
         int ySizeForInner = 18;
-        int minimumNeededTiles = settings.Values.Sum(x => x.Product());
+        int minimumNeededTiles = settings.Values.Sum(x => x.size.Product());
         size.X = minimumNeededTiles / ySizeForInner;
         if (size.X < ySizeForInner) {
             size.X = ySizeForInner;
@@ -570,7 +549,7 @@ public class AreaInnerTileMap : MonoBehaviour {
         if (area.areaType == AREA_TYPE.DUNGEON) {
             size.X += Mathf.FloorToInt(settings.Count * 3f); //add allowance depecnding on number of structures to place
         } else {
-            size.X += Mathf.FloorToInt(settings.Count * 3f); //add allowance depecnding on number of structures to place
+            size.X += Mathf.FloorToInt(settings.Count * 4f); //add allowance depecnding on number of structures to place
         }
 
         //increase size by 7 for each side (west and east) and another 7 for the east side for the part that will be covered by the UI
@@ -578,7 +557,7 @@ public class AreaInnerTileMap : MonoBehaviour {
 
         return size;
     }
-    private void PlaceStructures(Dictionary<LocationStructure, Point> settings, List<LocationGridTile> sourceTiles) {
+    private void PlaceStructures(Dictionary<LocationStructure, LocationStructureSetting> settings, List<LocationGridTile> sourceTiles) {
         List<LocationGridTile>  elligibleTiles = new List<LocationGridTile>(sourceTiles);
         if (elligibleTiles.Count == 0) {
             Debug.LogWarning("There were no elligible tiles for structure placement at " + area.name);
@@ -589,10 +568,15 @@ public class AreaInnerTileMap : MonoBehaviour {
         int topMostCoordinate = elligibleTiles.Max(t => t.localPlace.y);
         int botMostCoordinate = elligibleTiles.Min(t => t.localPlace.y);
         //structures = structures.OrderBy(x => x.Key).ToDictionary((keyItem) => keyItem.Key, (valueItem) => valueItem.Value);
-        foreach (KeyValuePair<LocationStructure, Point> kvp in settings) {
+        foreach (KeyValuePair<LocationStructure, LocationStructureSetting> kvp in settings) {
             LocationStructure currStruct = kvp.Key;
-            Point currPoint = kvp.Value;
+            Point currPoint = kvp.Value.size;
 
+            //get all tiles, that meet the ff requirements:
+            // - it's y coordinate is 1 tile above the bottom most coordinate or it's y coordinate plus the size of the structure is equal to the top most coordinate
+            // - it's x coordinate is greater than the leftmost coordinate plus 1
+            // - it's x coordinate is less than the right most coordinate minus 1
+            // - none of it's tiles, given the size of the structure, are unelligible
             List<LocationGridTile> choices = elligibleTiles.Where(
             t => (t.localPlace.y + currPoint.Y == topMostCoordinate || t.localPlace.y == botMostCoordinate + 1)
             && t.localPlace.x > leftMostCoordinate + 1 && t.localPlace.x + currPoint.X < rightMostCoordinate - 1
@@ -605,40 +589,48 @@ public class AreaInnerTileMap : MonoBehaviour {
             }
 
             LocationGridTile chosenStartingTile = choices[Random.Range(0, choices.Count)];
-            List<LocationGridTile> tiles = GetTiles(currPoint, chosenStartingTile);
-            for (int j = 0; j < tiles.Count; j++) {
-                LocationGridTile currTile = tiles[j];
-                currTile.SetStructure(currStruct);
-                elligibleTiles.Remove(currTile);
-                detailsTilemap.SetTile(currTile.localPlace, null);
-                List<LocationGridTile> neighbourTiles = new List<LocationGridTile>();
-                switch (kvp.Key.structureType) {
-                    case STRUCTURE_TYPE.EXPLORE_AREA:
-                        groundTilemap.SetTile(currTile.localPlace, dungeonFloorTile);
-                        currTile.SetTileType(LocationGridTile.Tile_Type.Structure);
-                        wallTilemap.SetTile(currTile.localPlace, null);
-                        //neighbourTiles = GetTilesInRadius(currTile, 2, false, true);
-                        //for (int k = 0; k < neighbourTiles.Count; k++) {
-                        //    elligibleTiles.Remove(neighbourTiles[k]);
-                        //}
-                        break;
-                    case STRUCTURE_TYPE.INN:
-                    case STRUCTURE_TYPE.WAREHOUSE:
-                        groundTilemap.SetTile(currTile.localPlace, floorTile);
-                        currTile.SetTileType(LocationGridTile.Tile_Type.Structure);
-                        neighbourTiles = GetTilesInRadius(currTile, 1, false, true);
-                        for (int k = 0; k < neighbourTiles.Count; k++) {
-                            elligibleTiles.Remove(neighbourTiles[k]);
-                        }
-                        break;
-                    default:
-                        groundTilemap.SetTile(currTile.localPlace, floorTile);
-                        currTile.SetTileType(LocationGridTile.Tile_Type.Structure);
-                        //neighbourTiles = GetTilesInRadius(currTile, 1, false, true);
-                        //for (int k = 0; k < neighbourTiles.Count; k++) {
-                        //    elligibleTiles.Remove(neighbourTiles[k]);
-                        //}
-                        break;
+            if (kvp.Value.template != null) {
+                //if there is a provided template, draw that instead
+                List<LocationGridTile> tilesUsed = DrawStructureTemplate(kvp.Value.template, chosenStartingTile, kvp.Key);
+                Utilities.ListRemoveRange(elligibleTiles, tilesUsed);
+                currStruct.SetIfFromTemplate(true);
+            } else {
+                //else, use the default way of drawing structures (just a box)
+                List<LocationGridTile> tiles = GetTiles(currPoint, chosenStartingTile);
+                for (int j = 0; j < tiles.Count; j++) {
+                    LocationGridTile currTile = tiles[j];
+                    currTile.SetStructure(currStruct);
+                    elligibleTiles.Remove(currTile);
+                    detailsTilemap.SetTile(currTile.localPlace, null);
+                    List<LocationGridTile> neighbourTiles = new List<LocationGridTile>();
+                    switch (kvp.Key.structureType) {
+                        case STRUCTURE_TYPE.EXPLORE_AREA:
+                            groundTilemap.SetTile(currTile.localPlace, dungeonFloorTile);
+                            currTile.SetTileType(LocationGridTile.Tile_Type.Structure);
+                            wallTilemap.SetTile(currTile.localPlace, null);
+                            //neighbourTiles = GetTilesInRadius(currTile, 2, false, true);
+                            //for (int k = 0; k < neighbourTiles.Count; k++) {
+                            //    elligibleTiles.Remove(neighbourTiles[k]);
+                            //}
+                            break;
+                        case STRUCTURE_TYPE.INN:
+                        case STRUCTURE_TYPE.WAREHOUSE:
+                            groundTilemap.SetTile(currTile.localPlace, floorTile);
+                            currTile.SetTileType(LocationGridTile.Tile_Type.Structure);
+                            neighbourTiles = GetTilesInRadius(currTile, 1, false, true);
+                            for (int k = 0; k < neighbourTiles.Count; k++) {
+                                elligibleTiles.Remove(neighbourTiles[k]);
+                            }
+                            break;
+                        default:
+                            groundTilemap.SetTile(currTile.localPlace, floorTile);
+                            currTile.SetTileType(LocationGridTile.Tile_Type.Structure);
+                            //neighbourTiles = GetTilesInRadius(currTile, 1, false, true);
+                            //for (int k = 0; k < neighbourTiles.Count; k++) {
+                            //    elligibleTiles.Remove(neighbourTiles[k]);
+                            //}
+                            break;
+                    }
                 }
             }
         }
@@ -672,6 +664,87 @@ public class AreaInnerTileMap : MonoBehaviour {
                 currTile.SetTileType(LocationGridTile.Tile_Type.Wall);
             }
         }
+    }
+    private Dictionary<STRUCTURE_TYPE, List<Point>> GetStructureSettings() {
+        Dictionary<STRUCTURE_TYPE, List<Point>> structureSettings = new Dictionary<STRUCTURE_TYPE, List<Point>>() {
+        { STRUCTURE_TYPE.DWELLING,
+            new List<Point>(){
+                new Point(4, 3),
+                new Point(3, 4),
+            }
+        },
+        { STRUCTURE_TYPE.EXPLORE_AREA,
+            new List<Point>(){
+                new Point(4, 5),
+                new Point(4, 6),
+                new Point(5, 6),
+                new Point(5, 5),
+                new Point(6, 5),
+                new Point(6, 4)
+            }
+        },
+        { STRUCTURE_TYPE.WAREHOUSE,
+            new List<Point>(){
+                new Point(5, 6),
+                new Point(6, 5),
+            }
+        },
+        { STRUCTURE_TYPE.INN,
+            new List<Point>(){
+                new Point(4, 5),
+                new Point(5, 4),
+            }
+        },
+        { STRUCTURE_TYPE.EXIT,
+            new List<Point>(){
+                new Point(3, 3),
+            }
+        }};
+        return structureSettings;
+    }
+    private List<LocationGridTile> DrawStructureTemplate(StructureTemplate st, LocationGridTile startingTile, LocationStructure structure) {
+        List<LocationGridTile> tilesUsed = new List<LocationGridTile>();
+
+        Vector3Int currPos = new Vector3Int(startingTile.localPlace.x, startingTile.localPlace.y, 0);
+        for (int i = 0; i < st.groundTiles.Length; i++) {
+            LocationGridTile currTile = map[currPos.x, currPos.y];
+            //ground tile map
+            string groundTileName = st.groundTiles[i];
+            if (string.IsNullOrEmpty(groundTileName)) {
+                //groundTilemap.SetTile(currPos, null);
+            } else {
+                //only addded tiles that are not null to structure
+                currTile.SetStructure(structure);
+                detailsTilemap.SetTile(currTile.localPlace, null);
+                tilesUsed.Add(currTile);
+                groundTilemap.SetTile(currPos, floorTile);
+            }
+
+            //wall tile map
+            string wallTileName = st.structureWallTiles[i];
+            if (string.IsNullOrEmpty(wallTileName)) {
+                //strcutureTilemap.SetTile(currPos, null);
+            } else {
+                strcutureTilemap.SetTile(currPos, InteriorMapManager.Instance.GetTileAsset(wallTileName));
+            }
+
+            //object tile map
+            string objectTileName = st.objectTiles[i];
+            if (string.IsNullOrEmpty(objectTileName)) {
+                objectsTilemap.SetTile(currPos, null);
+            } else {
+                objectsTilemap.SetTile(currPos, InteriorMapManager.Instance.GetTileAsset(objectTileName));
+            }
+
+            //increment positions (goes from left to right, then from bottom to top)
+            currPos.x++;
+            if (Mathf.Abs(startingTile.localPlace.x - currPos.x)  >= st.size.X) {
+                currPos.x = startingTile.localPlace.x;
+                currPos.y++;
+            }
+        }
+
+        return tilesUsed;
     }
     #endregion
 
@@ -1484,149 +1557,23 @@ public class AreaInnerTileMap : MonoBehaviour {
 
 }
 
-public class ExploreArea {
-
-    public LocationGridTile coreTile;
-    public List<LocationGridTile> tiles;
-    public Color color;
-
-    public List<LocationGridTile> entrances;
-    public Dictionary<TileNeighbourDirection, bool> isConnected;
-
-    public ExploreArea() {
-        tiles = new List<LocationGridTile>();
-        color = Random.ColorHSV();
-        isConnected = new Dictionary<TileNeighbourDirection, bool>();
-        isConnected.Add(TileNeighbourDirection.North, false);
-        isConnected.Add(TileNeighbourDirection.East, false);
-        isConnected.Add(TileNeighbourDirection.South, false);
-        isConnected.Add(TileNeighbourDirection.West, false);
-    }
-
-    public void AddTile(LocationGridTile tile) {
-        tiles.Add(tile);
-        //tile.parentTileMap.SetColor(tile.localPlace, color);
-    }
-
-    public float DistanceFromCore(LocationGridTile tile) {
-        return coreTile.GetDistanceTo(tile);
-    }
-
-    public void CreateEntrances() {
-        entrances = new List<LocationGridTile>();
-        int randomNumber = UnityEngine.Random.Range(2, 4);
-        for (int i = 0; i < randomNumber; i++) {
-            List<LocationGridTile> elligible = GetOuterTiles().Where(x => !IsCorner(x) && !isConnected[GetOuterTileDirection(x)]).ToList();
-            if (elligible.Count == 0) {
-                break;
-            }
-            LocationGridTile chosenEntrance = elligible[UnityEngine.Random.Range(0, elligible.Count)];
-            entrances.Add(chosenEntrance);
-            chosenEntrance.SetTileType(LocationGridTile.Tile_Type.Structure_Entrance);
-        }
-    }
-
-    public List<LocationGridTile> GetOuterTiles() {
-        List<LocationGridTile> outer = new List<LocationGridTile>();
-        for (int i = 0; i < tiles.Count; i++) {
-            LocationGridTile currTile = tiles[i];
-            for (int j = 0; j < currTile.neighbours.Values.Count; j++) {
-                LocationGridTile neighbour = currTile.neighbours.Values.ElementAt(j);
-                if (!tiles.Contains(neighbour)) {
-                    outer.Add(currTile);
-                    break;
-                }
-            }
-        }
-        return outer;
-    }
-
-    public List<LocationGridTile> ConvertToActualArea(LocationGridTile[,] map) {
-        List<LocationGridTile> near = GetTilesInRadius(map, coreTile, 4, true, true);
-        List<LocationGridTile> converted = new List<LocationGridTile>();
-        converted.Add(coreTile);
-        for (int i = 0; i < near.Count; i++) {
-            LocationGridTile currTile = near[i];
-            if (tiles.Contains(currTile)) {
-                converted.Add(currTile);
-            }
-        }
-        return converted;
-    }
-    public List<LocationGridTile> GetTilesInRadius(LocationGridTile[,] map, LocationGridTile centerTile, int radius, bool includeCenterTile = false, bool includeTilesInDifferentStructure = false) {
-        List<LocationGridTile> tiles = new List<LocationGridTile>();
-        int mapSizeX = map.GetUpperBound(0);
-        int mapSizeY = map.GetUpperBound(1);
-        int x = centerTile.localPlace.x;
-        int y = centerTile.localPlace.y;
-        if (includeCenterTile) {
-            tiles.Add(centerTile);
-        }
-        for (int dx = x - radius; dx <= x + radius; dx++) {
-            for (int dy = y - radius; dy <= y + radius; dy++) {
-                if (dx >= 0 && dx <= mapSizeX && dy >= 0 && dy <= mapSizeY) {
-                    if (dx == x && dy == y) {
-                        continue;
-                    }
-                    LocationGridTile result = map[dx, dy];
-                    if (!includeTilesInDifferentStructure && result.structure != centerTile.structure) { continue; }
-                    tiles.Add(result);
-                }
-            }
-        }
-        return tiles;
-    }
-
-    public LocationGridTile GetNearestTileFrom(LocationGridTile tile) {
-        LocationGridTile nearestTile = null;
-        float nearest = 99999f;
-        for (int i = 0; i < tiles.Count; i++) {
-            LocationGridTile currTile = tiles[i];
-            float dist = Vector2.Distance(currTile.localLocation, tile.localLocation);
-            if (dist < nearest) {
-                nearestTile = currTile;
-            }
-        }
-        return nearestTile;
-    }
-    public TileNeighbourDirection GetOuterTileDirection(LocationGridTile currTile) {
-        TileNeighbourDirection[] cardinal = new TileNeighbourDirection[] { TileNeighbourDirection.North, TileNeighbourDirection.East, TileNeighbourDirection.South, TileNeighbourDirection.West };
-        for (int i = 0; i < cardinal.Length; i++) {
-            if (currTile.neighbours.ContainsKey(cardinal[i]) &&  !tiles.Contains(currTile.neighbours[cardinal[i]])) {
-                return cardinal[i];
-            }
-        }
-        return TileNeighbourDirection.South_East;
-    }
-    public bool IsCorner(LocationGridTile currTile) {
-        if (!GetOuterTiles().Contains(currTile)) { //if the tile is not an outer tile, it is not a corner
-            return false;
-        }
-        bool hasVerticalNeighbour = false;
-        bool hasHorizontalNeighbour = false;
-        foreach (KeyValuePair<TileNeighbourDirection, LocationGridTile> kvp in currTile.neighbours) {
-            if (tiles.Contains(kvp.Value)) {
-                switch (kvp.Key) {
-                    case TileNeighbourDirection.North:
-                    case TileNeighbourDirection.South:
-                        hasVerticalNeighbour = true;
-                        break;
-                    case TileNeighbourDirection.West:
-                    case TileNeighbourDirection.East:
-                        hasHorizontalNeighbour = true;
-                        break;
-                    default:
-                        break;
-                }
-            }
-        }
-
-        return hasVerticalNeighbour && hasHorizontalNeighbour; //if has both horizontal and vertical neighbour, the tile is a corner
-    }
-}
-
 [System.Serializable]
 public struct TileObjectTileSetting {
     public TileBase activeTile;
     public TileBase inactiveTile;
+}
+
+public struct LocationStructureSetting {
+    public Point size;
+    public StructureTemplate template;
+
+    public LocationStructureSetting(StructureTemplate t) {
+        size = t.size;
+        template = t;
+    }
+
+    public LocationStructureSetting(Point p) {
+        size = p;
+        template = null;
+    }
 }

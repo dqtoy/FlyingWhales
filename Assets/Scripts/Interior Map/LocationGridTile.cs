@@ -373,6 +373,9 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         if (GetDifferentStructureNeighbourDirections().Count > 3) { //because corner tiles of structures always have more than 3 different structure neighbours, and corner tiles should not be made entrances (looks weird)
             return false;
         }
+        if (parentAreaMap.objectsTilemap.GetTile(localPlace) != null) {
+            return false; //if this tile has a preplaced object on it, it is not valid
+        }
         return true;
     }
     public bool HasStructureOfTypeInRadius(List<STRUCTURE_TYPE> types, int radius) {
