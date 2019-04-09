@@ -482,44 +482,47 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 
     public Character(CharacterRole role, RACE race, GENDER gender) : this() {
         _id = Utilities.SetID(this);
-        _raceSetting = RaceManager.Instance.racesDictionary[race.ToString()].CreateNewCopy();
+        _gender = gender;
+        SetRace(race);
+        //_raceSetting = RaceManager.Instance.racesDictionary[race.ToString()].CreateNewCopy();
         AssignRole(role);
         AssignClassByRole(role);
-        _gender = gender;
         SetName(RandomNameGenerator.Instance.GenerateRandomName(_raceSetting.race, _gender));
-        _portraitSettings = CharacterManager.Instance.GenerateRandomPortrait(race, gender);
+        //_portraitSettings = CharacterManager.Instance.GenerateRandomPortrait(race, gender);
         AssignRandomJob();
         SetMorality(MORALITY.GOOD);
-        SetTraitsFromRace();
+        //SetTraitsFromRace();
         ResetToFullHP();
     }
     public Character(CharacterRole role, string className, RACE race, GENDER gender) : this() {
         _id = Utilities.SetID(this);
-        _raceSetting = RaceManager.Instance.racesDictionary[race.ToString()].CreateNewCopy();
+        _gender = gender;
+        SetRace(race);
+        //_raceSetting = RaceManager.Instance.racesDictionary[race.ToString()].CreateNewCopy();
         AssignRole(role);
         AssignClass(className);
-        _gender = gender;
         SetName(RandomNameGenerator.Instance.GenerateRandomName(_raceSetting.race, _gender));
-        _portraitSettings = CharacterManager.Instance.GenerateRandomPortrait(race, gender);
+        //_portraitSettings = CharacterManager.Instance.GenerateRandomPortrait(race, gender);
         AssignRandomJob();
         SetMorality(MORALITY.GOOD);
-        SetTraitsFromRace();
+        //SetTraitsFromRace();
         ResetToFullHP();
     }
     public Character(CharacterSaveData data) : this() {
         _id = Utilities.SetID(this, data.id);
-        _raceSetting = RaceManager.Instance.racesDictionary[data.race.ToString()].CreateNewCopy();
+        _gender = data.gender;
+        SetRace(race);
+        //_raceSetting = RaceManager.Instance.racesDictionary[data.race.ToString()].CreateNewCopy();
         AssignRole(data.role);
         AssignClass(data.className);
-        _gender = data.gender;
         SetName(data.name);
-        _portraitSettings = CharacterManager.Instance.GenerateRandomPortrait(race, gender);
+        //_portraitSettings = CharacterManager.Instance.GenerateRandomPortrait(race, gender);
         //if (_characterClass.roleType != CHARACTER_ROLE.NONE) {
         //    AssignRole(_characterClass.roleType);
         //}
         AssignRandomJob();
         SetMorality(data.morality);
-        SetTraitsFromRace();
+        //SetTraitsFromRace();
         ResetToFullHP();
     }
     public Character() {
@@ -1139,7 +1142,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     #endregion
 
     #region Character Class
-    private void AssignClassByRole(CharacterRole role) {
+    public void AssignClassByRole(CharacterRole role) {
         if(role == CharacterRole.BEAST) {
             AssignClass(Utilities.GetRespectiveBeastClassNameFromByRace(race));
         } else {
@@ -1151,16 +1154,33 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         }
     }
+    public void RemoveClass() {
+        if(_characterClass == null) { return; }
+        RemoveTraitsFromClass();
+        _characterClass = null;
+    }
     private void AssignClass(string className) {
         if (CharacterManager.Instance.classesDictionary.ContainsKey(className)) {
+            if (_characterClass != null) {
+                //This means that the character currently has a class and it will be replaced with a new class
+                RemoveTraitsFromClass();
+            }
             _characterClass = CharacterManager.Instance.classesDictionary[className].CreateNewCopy();
-            _skills = new List<Skill>();
-            _skills.Add(_characterClass.skill);
+            //_skills = new List<Skill>();
+            //_skills.Add(_characterClass.skill);
             //EquipItemsByClass();
             SetTraitsFromClass();
         } else {
             throw new Exception("There is no class named " + className + " but it is being assigned to " + this.name);
         }
+    }
+    public void AssignClass(CharacterClass characterClass) {
+        if (_characterClass != null) {
+            //This means that the character currently has a class and it will be replaced with a new class
+            RemoveTraitsFromClass();
+        }
+        _characterClass = characterClass;
+        SetTraitsFromClass();
     }
     #endregion
 
@@ -1473,16 +1493,32 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         Messenger.Broadcast(Signals.GENDER_CHANGED, this, gender);
     }
     public void ChangeRace(RACE race) {
-        if (_raceSetting.race == race) {
-            return; //current race is already the new race, no change
+        if(_raceSetting != null) {
+            if (_raceSetting.race == race) {
+                return; //current race is already the new race, no change
+            }
+            RemoveTraitsFromRace();
         }
-        RemoveTraitsFromRace();
         RaceSetting raceSetting = RaceManager.Instance.racesDictionary[race.ToString()];
         _raceSetting = raceSetting.CreateNewCopy();
         SetTraitsFromRace();
         //Update Portrait to use new race
         _portraitSettings = CharacterManager.Instance.GenerateRandomPortrait(race, gender);
         Messenger.Broadcast(Signals.CHARACTER_CHANGED_RACE, this);
+    }
+    public void RemoveRace() {
+        if(_raceSetting == null) {
+            return;
+        }
+        RemoveTraitsFromRace();
+        _raceSetting = null;
+    }
+    public void SetRace(RACE race) {
+        RaceSetting raceSetting = RaceManager.Instance.racesDictionary[race.ToString()];
+        _raceSetting = raceSetting.CreateNewCopy();
+        SetTraitsFromRace();
+        //Update Portrait to use new race
+        _portraitSettings = CharacterManager.Instance.GenerateRandomPortrait(race, gender);
     }
     public void ChangeClass(string className) {
         //TODO: Change data as needed
@@ -2648,6 +2684,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         }
     }
+    public void RemoveTraitsFromClass() {
+        if (_characterClass.traitNames != null) {
+            for (int i = 0; i < _characterClass.traitNames.Length; i++) {
+                Trait trait = AttributeManager.Instance.allTraits[_characterClass.traitNames[i]];
+                RemoveTrait(trait);
+            }
+        }
+    }
     private void SetTraitsFromRace() {
         if (_raceSetting.traitNames != null) {
             for (int i = 0; i < _raceSetting.traitNames.Length; i++) {
@@ -2656,7 +2700,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         }
     }
-    private void RemoveTraitsFromRace() {
+    public void RemoveTraitsFromRace() {
         if (_raceSetting.traitNames != null) {
             for (int i = 0; i < _raceSetting.traitNames.Length; i++) {
                 Trait trait = AttributeManager.Instance.allTraits[_raceSetting.traitNames[i]];

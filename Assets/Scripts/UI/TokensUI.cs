@@ -48,8 +48,8 @@ public class TokensUI : UIMenu {
         Messenger.AddListener<Character>(Signals.CHARACTER_CREATED, AddCharacterEntry);
         //Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, RemoveCharacterEntry);
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, UpdateCharacterEntry);
-        Messenger.AddListener<Character>(Signals.ROLE_CHANGED, UpdateCharacterEntry);
-        Messenger.AddListener<Character>(Signals.FACTION_SET, UpdateCharacterEntry);
+        //Messenger.AddListener<Character>(Signals.ROLE_CHANGED, UpdateCharacterEntry);
+        //Messenger.AddListener<Character>(Signals.FACTION_SET, UpdateCharacterEntry);
         
         //Faction
         Messenger.AddListener<Faction>(Signals.FACTION_CREATED, OnFactionCreated);

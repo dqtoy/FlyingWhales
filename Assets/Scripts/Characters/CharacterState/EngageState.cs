@@ -9,7 +9,7 @@ public class EngageState : CharacterState {
         characterState = CHARACTER_STATE.ENGAGE;
         stateCategory = CHARACTER_STATE_CATEGORY.MINOR;
         //duration = 288;
-        duration = 15;
+        duration = 12;
     }
 
     #region Overrides
@@ -22,6 +22,8 @@ public class EngageState : CharacterState {
     //    stateComponent.character.marker.RedetermineEngage();
     //}
     public override void OnExitThisState() {
+        stateComponent.character.marker.SetCurrentlyEngaging(null);
+        stateComponent.character.marker.SetTargetTransform(null);
         stateComponent.character.currentParty.icon.SetIsTravelling(false);
         base.OnExitThisState();
     }
@@ -37,6 +39,8 @@ public class EngageState : CharacterState {
             OnExitThisState();
         } else {
             //engage another hostile
+            stateComponent.character.marker.SetCurrentlyEngaging(null);
+            stateComponent.character.marker.SetTargetTransform(null);
             Character hostile = stateComponent.character.marker.GetNearestHostile();
             stateComponent.SwitchToState(CHARACTER_STATE.ENGAGE, hostile);
             //stateComponent.character.marker.RedetermineEngage();

@@ -48,7 +48,7 @@ public class Resting : Trait {
             }
         } else {
             //Turn to wolf
-            if (chance < 20) {
+            if (chance < 50) {
                 _lycanthropyTrait.PlanTransformToWolf();
                 _character.currentAction.currentState.EndPerTickEffect();
             }

@@ -329,7 +329,7 @@ public class CharacterMarker : PooledObject {
             if (_arrivalAction != null) {
                 _arrivalAction();
             }
-        } else {
+        } else if (destinationTile != null) {
             if(character.currentParty.icon.isTravelling && destinationTile.occupant != null && destinationTile.occupant != character) {
                 Debug.LogWarning(character.name + " cannot occupy " + destinationTile.ToString() + " because it is already occupied by " + destinationTile.occupant.name);
             }
@@ -855,7 +855,7 @@ public class CharacterMarker : PooledObject {
         Character nearestHostile = GetNearestHostile();
         //set them as a target
         SetTargetTransform(nearestHostile.marker.transform);
-        currentlyEngaging = nearestHostile;
+        SetCurrentlyEngaging(nearestHostile);
         pathfindingAI.SetIsStopMovement(false);
         character.currentParty.icon.SetIsTravelling(true);
     }
@@ -864,8 +864,6 @@ public class CharacterMarker : PooledObject {
         //determine whether to start combat or not
         if (cannotCombat) {
             cannotCombat = false;
-            currentlyEngaging = null;
-            SetTargetTransform(null);
             (character.stateComponent.currentState as EngageState).CheckForEndState();
         } else {
             EngageState engageState = character.stateComponent.currentState as EngageState;
@@ -880,7 +878,7 @@ public class CharacterMarker : PooledObject {
                     thisCharacter.stateComponent.currentState.OnExitThisState();
                 }
             }
-            currentlyEngaging = null;
+            SetCurrentlyEngaging(null);
         }
     }
     public void RedetermineEngage() {
@@ -892,7 +890,7 @@ public class CharacterMarker : PooledObject {
             //there is a hostile nearer than the current one
             //engage him/her instead
             SetTargetTransform(nearestHostile.marker.transform);
-            currentlyEngaging = nearestHostile;
+            SetCurrentlyEngaging(nearestHostile);
             character.currentParty.icon.SetIsTravelling(true);
         }
     }
@@ -911,6 +909,9 @@ public class CharacterMarker : PooledObject {
             }
         }
         return nearest;
+    }
+    public void SetCurrentlyEngaging(Character character) {
+        currentlyEngaging = character;
     }
     #endregion
 }
