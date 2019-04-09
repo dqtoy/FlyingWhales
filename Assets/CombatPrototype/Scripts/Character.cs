@@ -1558,6 +1558,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     private void OnOtherCharacterDied(Character characterThatDied) {
         if (characterThatDied.id != this.id) {
             RemoveRelationship(characterThatDied);
+            marker.OnOtherCharacterDied(characterThatDied);
         }
     }
     public void SetMode(MODE mode) {
