@@ -9,9 +9,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 1
   m_Script: {fileID: 13312, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: LeftDoor
+  m_Name: BottomDoor
   m_EditorClassIdentifier: 
-  m_Sprite: {fileID: 21300000, guid: 4777e7ad764645c4c94b8d6b809c4e7d, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 5c44a1ff9dc60ec4283037e2c3d25a0f, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Transform:
     e00: 1

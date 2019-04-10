@@ -1861,10 +1861,21 @@ public class Area {
         areaMap = map;
     }
     public void PlaceTileObjects() { //TODO: Unify placement of static POI's
+        //pre placed objects
+        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in structures) {
+            for (int i = 0; i < keyValuePair.Value.Count; i++) {
+                LocationStructure structure = keyValuePair.Value[i];
+                if (structure.isFromTemplate) {
+                    structure.RegisterPreplacedObjects();
+                }
+            }
+        }        
+
         PlaceBedsAndTables();
         PlaceOres();
         PlaceSupplyPiles();
         SpawnFoodNow();
+
         //magic circle
         if (structures.ContainsKey(STRUCTURE_TYPE.WILDERNESS)) {
             LocationStructure structure = structures[STRUCTURE_TYPE.WILDERNESS][0];
@@ -1874,9 +1885,11 @@ public class Area {
         //Each Dwelling has a 40% chance of having one Guitar. Guitar should be placed at an edge tile.
         if (structures.ContainsKey(STRUCTURE_TYPE.DWELLING)) {
             for (int i = 0; i < structures[STRUCTURE_TYPE.DWELLING].Count; i++) {
-                if (UnityEngine.Random.Range(0, 100) < 40) {
-                    LocationStructure currDwelling = structures[STRUCTURE_TYPE.DWELLING][i];
-                    currDwelling.AddPOI(new Guitar(currDwelling));
+                LocationStructure currDwelling = structures[STRUCTURE_TYPE.DWELLING][i];
+                if (!currDwelling.isFromTemplate) {
+                    if (UnityEngine.Random.Range(0, 100) < 40) {
+                        currDwelling.AddPOI(new Guitar(currDwelling));
+                    }
                 }
             }
         }
@@ -1886,16 +1899,20 @@ public class Area {
         if (structures.ContainsKey(STRUCTURE_TYPE.DWELLING)) {
             for (int i = 0; i < structures[STRUCTURE_TYPE.DWELLING].Count; i++) {
                 LocationStructure structure = structures[STRUCTURE_TYPE.DWELLING][i];
-                structure.AddPOI(new Bed(structure));
-                structure.AddPOI(new Table(structure));
+                if (!structure.isFromTemplate) {
+                    structure.AddPOI(new Bed(structure));
+                    structure.AddPOI(new Table(structure));
+                }
             }
         }
         if (structures.ContainsKey(STRUCTURE_TYPE.INN)) {
             int randomInnTables = UnityEngine.Random.Range(2, 5);
             for (int i = 0; i < structures[STRUCTURE_TYPE.INN].Count; i++) {
                 LocationStructure structure = structures[STRUCTURE_TYPE.INN][i];
-                for (int j = 0; j < randomInnTables; j++) {
-                    structure.AddPOI(new Table(structure));
+                if (!structure.isFromTemplate) {
+                    for (int j = 0; j < randomInnTables; j++) {
+                        structure.AddPOI(new Table(structure));
+                    }
                 }
             }
         }
@@ -1925,7 +1942,9 @@ public class Area {
         if (structures.ContainsKey(STRUCTURE_TYPE.WAREHOUSE)) {
             for (int i = 0; i < structures[STRUCTURE_TYPE.WAREHOUSE].Count; i++) {
                 LocationStructure structure = structures[STRUCTURE_TYPE.WAREHOUSE][i];
-                structure.AddPOI(new SupplyPile(structure));
+                if (!structure.isFromTemplate) {
+                    structure.AddPOI(new SupplyPile(structure));
+                }
             }
         }
     }

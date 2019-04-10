@@ -572,7 +572,6 @@ MonoBehaviour:
   - {fileID: 61886553999808524}
   - {fileID: 58535005990234766}
   colorHighlight: {fileID: 212653369134426336}
-  hasFleePath: 0
 --- !u!114 &114578536136533292
 MonoBehaviour:
   m_ObjectHideFlags: 1
