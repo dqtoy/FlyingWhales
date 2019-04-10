@@ -751,7 +751,8 @@ public class CharacterMarker : PooledObject {
         hostilesInRange.Clear();
     }
     private void OnHostileInRangeRemoved(Character removedCharacter) {
-        if (character.stateComponent.currentState == null) {
+        if (character == null //character died
+            || character.stateComponent.currentState == null) {
             return;
         }
         string removeHostileSummary = removedCharacter.name + " was removed from " + character.name + "'s hostile range.";
@@ -768,7 +769,7 @@ public class CharacterMarker : PooledObject {
     }
     public void OnOtherCharacterDied(Character otherCharacter) {
         RemovePOIFromInVisionRange(otherCharacter);
-        RemoveHostileInRange(otherCharacter);
+        //RemoveHostileInRange(otherCharacter);
     }
     #endregion
 
@@ -889,20 +890,21 @@ public class CharacterMarker : PooledObject {
             Character thisCharacter = this.character;
             engageState.CombatOnEngage();
             SetTargetTransform(null);
-            if (currentlyEngaging == null) {
-                //if currently engaging is null,
-                //it was set by the other character's death on combat engage, when it was removed from this characters hostiles in range
-                return;
-            }
-            if (!thisCharacter.isDead && !currentlyEngaging.isDead) {
-                engageState.CheckForEndState();
-            } else {
-                if (!thisCharacter.isDead && thisCharacter.stateComponent.character.marker.hostilesInRange.Count == 0) {
-                    //can end engage
-                    thisCharacter.stateComponent.currentState.OnExitThisState();
-                }
-            }
-            SetCurrentlyEngaging(null);
+            RemoveHostileInRange(currentlyEngaging);
+            //if (currentlyEngaging == null) {
+            //    //if currently engaging is null,
+            //    //it was set by the other character's death on combat engage, when it was removed from this characters hostiles in range
+            //    return;
+            //}
+            //if (!thisCharacter.isDead && !currentlyEngaging.isDead) {
+            //    engageState.CheckForEndState();
+            //} else {
+            //    if (!thisCharacter.isDead && thisCharacter.stateComponent.character.marker.hostilesInRange.Count == 0) {
+            //        //can end engage
+            //        thisCharacter.stateComponent.currentState.OnExitThisState();
+            //    }
+            //}
+            //SetCurrentlyEngaging(null);
         }
     }
     public void SetCannotCombat(bool state) {
