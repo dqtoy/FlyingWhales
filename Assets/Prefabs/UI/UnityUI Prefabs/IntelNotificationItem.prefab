@@ -432,9 +432,9 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   mainEnvelopContent: {fileID: 114724063497956994}
   logEnvelopContent: {fileID: 114782401211057880}
-  intelLbl: {fileID: 114427347622863494}
+  logLbl: {fileID: 114427347622863494}
+  logItem: {fileID: 114243609836629744}
   getIntelBtn: {fileID: 114111695253146942}
-  intelLogItem: {fileID: 114243609836629744}
 --- !u!114 &114724063497956994
 MonoBehaviour:
   m_ObjectHideFlags: 1

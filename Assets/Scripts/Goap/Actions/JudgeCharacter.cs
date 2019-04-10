@@ -36,25 +36,25 @@ public class JudgeCharacter : GoapAction {
     #region State Effects
     public void PreTargetExecuted() {
         //**Effect 1**: Remove target's Restrained trait
-        poiTarget.RemoveTrait("Restrained");
+        RemoveTraitFrom(poiTarget, "Restrained");
         //**Effect 2**: Target dies
         (poiTarget as Character).Death();
     }
     public void PreTargetReleased() {
         //**Effect 1**: Remove target's Restrained trait
-        poiTarget.RemoveTrait("Restrained");
+        RemoveTraitFrom(poiTarget, "Restrained");
         //**Effect 2**: If target is from a different faction or unaligned, target is not hostile with characters from the Actor's faction until Target leaves the location. Target is forced to create a Return Home plan
         if (poiTarget.factionOwner == FactionManager.Instance.neutralFaction || poiTarget.factionOwner != actor.faction) {
             ForceTargetReturnHome();
         }
         //**Effect 3**: If target is from the same faction, remove any Criminal type trait from him.
         else {
-            poiTarget.RemoveTrait("Criminal");
+            RemoveTraitFrom(poiTarget, "Criminal");
         }
     }
     public void PreTargetExiled() {
         //**Effect 1**: Remove target's Restrained trait
-        poiTarget.RemoveTrait("Restrained");
+        RemoveTraitFrom(poiTarget, "Restrained");
         //**Effect 2**: Target becomes unaligned and will have his Home Location set to a random different location
         Character target = poiTarget as Character;
         target.ChangeFactionTo(FactionManager.Instance.neutralFaction);
@@ -67,7 +67,7 @@ public class JudgeCharacter : GoapAction {
         ForceTargetReturnHome();
 
         //**Effect 4**: Remove any Criminal type trait from him.
-        target.RemoveTrait("Criminal");
+        RemoveTraitFrom(target, "Criminal");
     }
     #endregion
 

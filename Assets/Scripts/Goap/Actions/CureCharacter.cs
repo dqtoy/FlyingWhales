@@ -37,7 +37,7 @@ public class CureCharacter : GoapAction {
     }
     public void AfterCureSuccess() {
         //**After Effect 1**: Reduce target's Sick trait
-        poiTarget.RemoveTrait("Sick");
+        RemoveTraitFrom(poiTarget, "Sick");
         //**After Effect 2**: Reduce character's Supply by 10
         actor.AdjustSupply(-10);
         //**After Effect 3**: Allow movement of Target

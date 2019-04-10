@@ -241,8 +241,18 @@ public class CharacterMarker : PooledObject {
         }
     }
     private void OnCharacterFinishedAction(Character character, GoapAction action, string result) {
-        if (this.character == character) {
+        if (this.character.id == character.id) {
             UpdateActionIcon();
+        } else {
+            //crime system:
+            //if the other character committed a crime,
+            //check if that character is in this characters vision 
+            //and that this character can react to a crime (not in flee or engage mode)
+            if (action.IsConsideredACrimeBy(this.character) 
+                && inVisionPOIs.Contains(character)
+                && this.character.CanReactToCrime()) {
+                this.character.ReactToCrime(action);
+            }
         }
     }
     public void OnCharacterTargettedByAction() {
@@ -721,11 +731,11 @@ public class CharacterMarker : PooledObject {
     #endregion
 
     #region Hosility Collision
-    public bool AddHostileInRange(Character poi) {
+    public bool AddHostileInRange(Character poi, CHARACTER_STATE forcedReaction = CHARACTER_STATE.NONE) {
         if (!hostilesInRange.Contains(poi)) {
             if (this.character.IsHostileWith(poi)) {
                 hostilesInRange.Add(poi);
-                NormalReactToHostileCharacter(poi);
+                NormalReactToHostileCharacter(poi, forcedReaction);
                 return true;
             }
         }
@@ -735,14 +745,14 @@ public class CharacterMarker : PooledObject {
         if (hostilesInRange.Remove(poi)) {
             UnhighlightMarker(); //This is for testing only!
             OnHostileInRangeRemoved(poi);
-            
         }
     }
     public void ClearHostilesInRange() {
         hostilesInRange.Clear();
     }
     private void OnHostileInRangeRemoved(Character removedCharacter) {
-        if (character.stateComponent.currentState == null) {
+        if (character == null //character died
+            || character.stateComponent.currentState == null) {
             return;
         }
         string removeHostileSummary = removedCharacter.name + " was removed from " + character.name + "'s hostile range.";
@@ -759,12 +769,12 @@ public class CharacterMarker : PooledObject {
     }
     public void OnOtherCharacterDied(Character otherCharacter) {
         RemovePOIFromInVisionRange(otherCharacter);
-        RemoveHostileInRange(otherCharacter);
+        //RemoveHostileInRange(otherCharacter);
     }
     #endregion
 
     #region Reactions
-    private void NormalReactToHostileCharacter(Character otherCharacter) {
+    private void NormalReactToHostileCharacter(Character otherCharacter, CHARACTER_STATE forcedReaction = CHARACTER_STATE.NONE) {
         string summary = character.name + " will react to hostile " + otherCharacter.name;
         //- All characters that see another hostile will drop a non-combat action, if doing any.
         if (character.IsDoingCombatAction()) {
@@ -774,21 +784,28 @@ public class CharacterMarker : PooledObject {
             return;
         }
 
-        //- Determine whether to enter Flee mode or Engage mode:
-        if (character.GetTrait("Injured") != null || character.role.roleType == CHARACTER_ROLE.CIVILIAN
-            || character.role.roleType == CHARACTER_ROLE.NOBLE || character.role.roleType == CHARACTER_ROLE.LEADER) {
-            //- Injured characters, Civilians, Nobles and Faction Leaders always enter Flee mode
-            character.stateComponent.SwitchToState(CHARACTER_STATE.FLEE, otherCharacter);
-            summary += "\n" + character.name + " chose to flee.";
-        } else if (character.doNotDisturb > 0 && character.GetTraitOf(TRAIT_TYPE.DISABLER) != null) {
-            //- Disabled characters will not do anything
-            summary += "\n" + character.name + " will not do anything.";
-        } else if (character.role.roleType == CHARACTER_ROLE.BEAST || character.role.roleType == CHARACTER_ROLE.ADVENTURER
-            || character.role.roleType == CHARACTER_ROLE.SOLDIER) {
-            //- Uninjured Beasts, Adventurers and Soldiers will enter Engage mode.
-            character.stateComponent.SwitchToState(CHARACTER_STATE.ENGAGE, otherCharacter);
-            summary += "\n" + character.name + " chose to engage.";
+        if (forcedReaction != CHARACTER_STATE.NONE) {
+            character.stateComponent.SwitchToState(forcedReaction, otherCharacter);
+            summary += "\n" + character.name + " was forced to " + forcedReaction.ToString() + ".";
+        } else {
+            //- Determine whether to enter Flee mode or Engage mode:
+            if (character.GetTrait("Injured") != null || character.role.roleType == CHARACTER_ROLE.CIVILIAN
+                || character.role.roleType == CHARACTER_ROLE.NOBLE || character.role.roleType == CHARACTER_ROLE.LEADER) {
+                //- Injured characters, Civilians, Nobles and Faction Leaders always enter Flee mode
+                character.stateComponent.SwitchToState(CHARACTER_STATE.FLEE, otherCharacter);
+                summary += "\n" + character.name + " chose to flee.";
+            } else if (character.doNotDisturb > 0 && character.GetTraitOf(TRAIT_TYPE.DISABLER) != null) {
+                //- Disabled characters will not do anything
+                summary += "\n" + character.name + " will not do anything.";
+            } else if (character.role.roleType == CHARACTER_ROLE.BEAST || character.role.roleType == CHARACTER_ROLE.ADVENTURER
+                || character.role.roleType == CHARACTER_ROLE.SOLDIER) {
+                //- Uninjured Beasts, Adventurers and Soldiers will enter Engage mode.
+                character.stateComponent.SwitchToState(CHARACTER_STATE.ENGAGE, otherCharacter);
+                summary += "\n" + character.name + " chose to engage.";
+            }
         }
+
+       
         Debug.Log(summary);
         //for testing
         //if (this.character.id == 1) {
@@ -819,6 +836,9 @@ public class CharacterMarker : PooledObject {
         //Debug.LogWarning(character.name + " is fleeing!");
     }
     private void OnFleePathComputed(Path path) {
+        if (character.stateComponent.currentState == null || character.stateComponent.currentState.characterState != CHARACTER_STATE.FLEE) {
+            return; //this is for cases that the character is no longer in a flee state, but the pathfinding thread returns a flee path
+        }
         Debug.Log(character.name + " computed a flee path!");
         pathfindingAI.SetIsStopMovement(false);
         StartWalkingAnimation(); //NOTE: Unify this!
@@ -870,33 +890,8 @@ public class CharacterMarker : PooledObject {
             Character thisCharacter = this.character;
             Character enemy = currentlyEngaging;
             engageState.CombatOnEngage();
-            if (!thisCharacter.isDead && !enemy.isDead) {
-                engageState.CheckForEndState();
-
-                //if (!currentlyEngaging.isDead) {
-                //    engageState.CheckForEndState();
-                //} else {
-                //    if (thisCharacter.stateComponent.character.marker.hostilesInRange.Count == 0) {
-                //        //can end engage
-                //        thisCharacter.stateComponent.currentState.OnExitThisState();
-                //    }
-                //}
-                //SetTargetTransform(null);
-                //SetCurrentlyEngaging(null);
-            }
-        }
-    }
-    public void RedetermineEngage() {
-        if (hostilesInRange.Count == 0) {
-            return;
-        }
-        Character nearestHostile = GetNearestHostile();
-        if (currentlyEngaging != nearestHostile) {
-            //there is a hostile nearer than the current one
-            //engage him/her instead
-            SetTargetTransform(nearestHostile.marker.transform);
-            SetCurrentlyEngaging(nearestHostile);
-            character.currentParty.icon.SetIsTravelling(true);
+            SetTargetTransform(null);
+            RemoveHostileInRange(currentlyEngaging);
         }
     }
     public void SetCannotCombat(bool state) {
@@ -917,6 +912,7 @@ public class CharacterMarker : PooledObject {
     }
     public void SetCurrentlyEngaging(Character character) {
         currentlyEngaging = character;
+        //Debug.Log(GameManager.Instance.TodayLogString() + this.character.name + " set as engaging " + currentlyEngaging?.ToString() ?? "null");
     }
     #endregion
 }

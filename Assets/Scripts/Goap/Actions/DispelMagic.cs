@@ -37,9 +37,9 @@ public class DispelMagic : GoapAction {
     }
     public void AfterDispelMagicSuccess() {
         //**After Effect 1**: Reduce all of target's Enchantment type traits
-        (poiTarget as Character).RemoveAllTraitsByType(TRAIT_TYPE.ENCHANTMENT);
+        RemoveTraitsOfType(poiTarget, TRAIT_TYPE.ENCHANTMENT);
         //**After Effect 2**: Actor loses Ritualized trait.
-        actor.RemoveTrait("Ritualized");
+        RemoveTraitFrom(actor, "Ritualized");
         //**After Effect 3**: Allow movement of Target
         (poiTarget as Character).marker.pathfindingAI.AdjustDoNotMove(-1);
 

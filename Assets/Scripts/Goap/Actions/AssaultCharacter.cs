@@ -80,23 +80,31 @@ public class AssaultCharacter : GoapAction {
     #region State Effects
     public void PreTargetInjured() {
         currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        actor.AddTrait("Combat Recovery");
+        AddTraitTo(actor, "Combat Recovery");
     }
     public void AfterTargetInjured() {
         Character target = poiTarget as Character;
-        target.AddTrait("Injured");
+        AddTraitTo(target, "Injured");
     }
     public void PreTargetKnockedOut() {
+        //**Note**: If the actor is from the same faction as the witness and the target is not considered hostile, this is an Assault crime
+        if (!actor.IsHostileWith(poiTarget as Character)) {
+            SetCommittedCrime(CRIME.ASSAULT);
+        }
         currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        actor.AddTrait("Combat Recovery");
+        AddTraitTo(actor, "Combat Recovery");
     }
     public void AfterTargetKnockedOut() {
         Character target = poiTarget as Character;
-        target.AddTrait("Unconscious");
+        AddTraitTo(target, "Unconscious");
     }
     public void PreTargetKilled() {
+        //**Note**: If the actor is from the same faction as the witness and the target is not considered hostile, this is a Murder crime
+        if (!actor.IsHostileWith(poiTarget as Character)) {
+            SetCommittedCrime(CRIME.MURDER);
+        }
         currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        actor.AddTrait("Combat Recovery");
+        AddTraitTo(actor, "Combat Recovery");
     }
     public void AfterTargetKilled() {
         Character target = poiTarget as Character;

@@ -97,7 +97,7 @@ public class Hunt : GoapAction {
     protected bool Requirement() {
         if(actor != poiTarget) {
             Character target = poiTarget as Character;
-            if(actor.specificLocation == target.specificLocation && actor.faction.id == FactionManager.Instance.neutralFaction.id && target.race != RACE.SKELETON) {
+            if(actor.specificLocation == target.specificLocation && actor.faction == FactionManager.Instance.neutralFaction && target.race != RACE.SKELETON) {
                 return true;
             }
         }
@@ -111,8 +111,8 @@ public class Hunt : GoapAction {
     }
     public void AfterTargetInjured() {
         Character target = poiTarget as Character;
-        target.AddTrait("Injured");
-        actor.AddTrait("Combat Recovery");
+        AddTraitTo(target, "Injured");
+        AddTraitTo(actor, "Combat Recovery");
     }
     public void PreTargetKilled() {
         Character target = poiTarget as Character;
@@ -124,7 +124,7 @@ public class Hunt : GoapAction {
     }
     public void PreTargetWon() {
         currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        actor.AddTrait("Combat Recovery");
+        AddTraitTo(actor, "Combat Recovery");
     }
     public void PreTargetMissing() {
         currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);

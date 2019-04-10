@@ -52,7 +52,7 @@ public class Drink : GoapAction {
     }
     public void PreDrinkPoisoned() {
         actor.AdjustDoNotGetLonely(1);
-        poiTarget.RemoveTrait("Poisoned");
+        RemoveTraitFrom(poiTarget, "Poisoned");
     }
     public void PerTickDrinkPoisoned() {
         actor.AdjustHappiness(8);
@@ -61,7 +61,7 @@ public class Drink : GoapAction {
         actor.AdjustDoNotGetLonely(-1);
         int chance = UnityEngine.Random.Range(0, 2);
         if (chance == 0) {
-            actor.AddTrait("Sick");
+            AddTraitTo(actor, "Sick");
         } else {
             actor.Death();
         }

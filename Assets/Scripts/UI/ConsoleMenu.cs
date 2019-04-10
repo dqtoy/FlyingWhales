@@ -794,7 +794,7 @@ public class ConsoleMenu : UIMenu {
     }
     private void ListenForInteraction(Interaction interaction) {
         if (typesSubscribedTo.Contains(interaction.type)) {
-            Messenger.Broadcast<string, int, UnityAction>(Signals.SHOW_NOTIFICATION,
+            Messenger.Broadcast<string, int, UnityAction>(Signals.SHOW_DEVELOPER_NOTIFICATION,
                 "<b>" + interaction.name + "</b> event happened at <b>" + interaction.interactable.name + "</b>.",
                 10,
                 () => UIManager.Instance.ShowAreaInfo(interaction.interactable));

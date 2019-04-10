@@ -3,61 +3,49 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.EventSystems;
 
-public class PlayerNotificationItem : PooledObject, IPointerClickHandler {
+public class PlayerNotificationItem : PooledObject {
 
-    [SerializeField] private TextMeshProUGUI notificationLbl;
-    [SerializeField] private EnvelopContentUnityUI envelopContent;
+    private const int Expiration_Ticks = 10;
+    private int ticksAlive = 0;
 
-    private UnityAction onClickAction;
+    [SerializeField] private EnvelopContentUnityUI mainEnvelopContent;
+    [SerializeField] private EnvelopContentUnityUI logEnvelopContent;
+    [SerializeField] private TextMeshProUGUI logLbl;
+    [SerializeField] private LogItem logItem;
 
-    private GameDate expirationDate;
-    private bool hasExpiry;
+    public void Initialize(Log log, bool hasExpiry = true) {
+        logLbl.SetText(Utilities.LogReplacer(log));
+        logItem.SetLog(log);
+        logEnvelopContent.Execute();
+        mainEnvelopContent.Execute();
 
-    public void SetNotification(string text, int expirationTicks, UnityAction onClickAction = null) {
-        notificationLbl.text = text;
-        this.onClickAction = onClickAction;
-        envelopContent.Execute();
-        if (expirationTicks != -1) {
-            expirationDate = GameManager.Instance.Today();
-            expirationDate.AddTicks(expirationTicks);
-            hasExpiry = true;
-            Messenger.AddListener(Signals.TICK_ENDED, CheckForExpiration);
-            //SchedulingManager.Instance.AddEntry(expirationDate, () => DestroyObject());
+        if (hasExpiry) {
+            //schedule expiry
+            Messenger.AddListener(Signals.TICK_ENDED, CheckForExpiry);
+        }
+    }
+    private void CheckForExpiry() {
+        if (ticksAlive == Expiration_Ticks) {
+            DeleteNotification();
         } else {
-            hasExpiry = false;
+            ticksAlive++;
         }
     }
-
-    #region Click Actions
-    public void OnPointerClick(PointerEventData eventData) {
-        if (onClickAction != null) {
-            onClickAction();
-            DestroyObject();
-        }
+    private void OnExpire() {
+        DeleteNotification();
+        //getIntelBtn.interactable = false;
     }
-    #endregion
-
-    private void DestroyObject() {
-        //SchedulingManager.Instance.RemoveSpecificEntry(expirationDate, DestroyObject);
-        ObjectPoolManager.Instance.DestroyObject(this.gameObject);
-    }
-
-    private void CheckForExpiration() {
-        if (GameManager.Instance.Today().Equals(expirationDate)) {
-            DestroyObject();
-        }
-    }
-
     public override void Reset() {
         base.Reset();
-        if (hasExpiry) {
-            Messenger.RemoveListener(Signals.TICK_ENDED, CheckForExpiration);
-        }
-        onClickAction = null;
-        hasExpiry = false;
+        //getIntelBtn.interactable = true;
+        ticksAlive = 0;
+        this.transform.localScale = Vector3.one;
     }
-
+    public void DeleteNotification() {
+        if (Messenger.eventTable.ContainsKey(Signals.TICK_ENDED)) {
+            Messenger.RemoveListener(Signals.TICK_ENDED, CheckForExpiry);
+        }
+        ObjectPoolManager.Instance.DestroyObject(this.gameObject);
+    }
 }

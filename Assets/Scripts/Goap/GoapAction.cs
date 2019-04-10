@@ -34,7 +34,7 @@ public class GoapAction {
     }
     public LocationGridTile targetTile { get; protected set; }
     public Dictionary<string, GoapActionState> states { get; protected set; }
-    public List<GoapEffect> actualEffects { get; private set; } //stores what really happened. NOTE: Only storing relevant data to share intel, no need to store everything that happened.
+    public List<GoapEffect> actualEffects { get; private set; }
     public Log thoughtBubbleLog { get; protected set; } //used if the current state of this action has a duration
     public Log thoughtBubbleMovingLog { get; protected set; } //used when the actor is moving with this as his/her current action
     public Log planLog { get; protected set; } //used for notification when a character starts this action. NOTE: Do not show notification if this is null
@@ -51,6 +51,7 @@ public class GoapAction {
     public GameDate executionDate { get; protected set; }
     protected virtual string failActionState { get { return "Target Missing"; } }
     private System.Action<string, GoapAction> endAction; //if this is not null, this action will return result here, instead of the default actor.GoapActionResult
+    public CRIME committedCrime { get; private set; }
 
     protected Func<bool> _requirementAction;
     protected System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
@@ -71,6 +72,10 @@ public class GoapAction {
         preconditions = new List<Precondition>();
         expectedEffects = new List<GoapEffect>();
         actualEffects = new List<GoapEffect>();
+        committedCrime = CRIME.NONE;
+        //for testing
+        //CRIME[] choices = Utilities.GetEnumValues<CRIME>();
+        //committedCrime = choices[Utilities.rng.Next(1, choices.Length)];
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
         actionIconString = GoapActionStateDB.Joy_Icon;
         actionSummary = GameManager.Instance.TodayLogString() + actor.name + " created " + goapType.ToString() + " action, targetting " + poiTarget?.ToString() ?? "Nothing";
@@ -250,16 +255,6 @@ public class GoapAction {
         }
         return requirementActionSatisfied && (validTimeOfDays == null || validTimeOfDays.Contains(GameManager.GetCurrentTimeInWordsOfTick()));
     }
-    public void AddTraitTo(Character target, string traitName) {
-        if (target.AddTrait(traitName)) {
-            AddActualEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = traitName, targetPOI = target });
-        }
-    }
-    public void RemoveTraitFrom(Character target, string traitName) {
-        if (target.RemoveTrait(traitName)) {
-            AddActualEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = traitName, targetPOI = target });
-        }
-    }
     public void ReturnToActorTheActionResult(string result) {
         actor.OnCharacterDoAction(this);
         currentState.StopPerTickEffect();
@@ -400,6 +395,37 @@ public class GoapAction {
     protected bool HasTrait(Character character, string traitName) {
         return character.GetTrait(traitName) != null;
     }
+    /// <summary>
+    /// Helper function to encapsulate adding a trait to a poi and adding actual effect data based on the added trait.
+    /// </summary>
+    /// <param name="target">POI that gains a trait</param>
+    /// <param name="traitName">Trait to be gained</param>
+    protected void AddTraitTo(IPointOfInterest target, string traitName, Character characterResponsible = null) {
+        if (target.AddTrait(traitName, characterResponsible)) {
+            AddActualEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = traitName, targetPOI = target });
+        }
+    }
+    /// <summary>
+    /// Helper function to encapsulate removing a trait from a poi and adding actual effect data based on the removed trait.
+    /// </summary>
+    /// <param name="target">POI that loses a trait</param>
+    /// <param name="traitName">Trait to be lost</param>
+    protected void RemoveTraitFrom(IPointOfInterest target, string traitName) {
+        if (target.RemoveTrait(traitName)) {
+            AddActualEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = traitName, targetPOI = target });
+        }
+    }
+    /// <summary>
+    /// Helper function to encapsulate removing traits of a type from a poi and adding actual effect data based on the removed traits.
+    /// </summary>
+    /// <param name="target">POI that loses traits</param>
+    /// <param name="type">Type of traits to be lost</param>
+    protected void RemoveTraitsOfType(IPointOfInterest target, TRAIT_TYPE type) {
+        List<Trait> removedTraits = target.RemoveAllTraitsByType(type);
+        for (int i = 0; i < removedTraits.Count; i++) {
+            AddActualEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = removedTraits[i].name, targetPOI = target });
+        }
+    }
     #endregion
 
     #region Preconditions
@@ -485,6 +511,15 @@ public class GoapAction {
                 target.SetPOIState(POI_STATE.ACTIVE); //this is for when the character that reserved the target object died
             }
         }
+    }
+    #endregion
+
+    #region Crime System
+    public bool IsConsideredACrimeBy(Character reacting) {
+        return reacting.faction.id == actor.faction.id && committedCrime != CRIME.NONE;
+    }
+    protected void SetCommittedCrime(CRIME crime) {
+        committedCrime = crime;
     }
     #endregion
 }

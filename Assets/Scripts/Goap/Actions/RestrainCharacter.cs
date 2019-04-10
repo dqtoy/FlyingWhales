@@ -30,7 +30,7 @@ public class RestrainCharacter : GoapAction {
     #region State Effects
     public void PreRestrainSuccess() {
         //**Effect 1**: Target gains Restrained trait.
-        poiTarget.AddTrait("Restrained");
+        AddTraitTo(poiTarget, "Restrained");
     }
     public void PreTargetMissing() {
         //**Effect 1**: Remove Target from Actor's Awareness list

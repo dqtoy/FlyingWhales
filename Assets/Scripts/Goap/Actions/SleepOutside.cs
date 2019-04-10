@@ -55,7 +55,7 @@ public class SleepOutside : GoapAction {
     }
     private void AfterRestSuccess() {
         //actor.AdjustDoNotGetTired(-1);
-        actor.RemoveTrait("Resting");
+        RemoveTraitFrom(actor, "Resting");
     }
     //private void PreRestFail() {
     //    currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);

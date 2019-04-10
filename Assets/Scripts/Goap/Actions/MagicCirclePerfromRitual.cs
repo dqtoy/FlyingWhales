@@ -52,7 +52,7 @@ public class MagicCirclePerformRitual : GoapAction {
         //**After Effect 1**: Change Magic Circle's status to Active
         poiTarget.SetPOIState(POI_STATE.ACTIVE);
         //**After Effect 2**: Actor gains Ritualized trait, Actor loses 20 Supply
-        actor.AddTrait("Ritualized");
+        AddTraitTo(actor, "Ritualized");
         actor.AdjustSupply(-20);
     }
     public void PreTargetMissing() {

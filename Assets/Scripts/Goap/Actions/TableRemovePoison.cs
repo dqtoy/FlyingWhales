@@ -41,7 +41,7 @@ public class TableRemovePoison : GoapAction {
     #region State Effects
     public void PreRemovePoisonSuccess() {
         //**Effect 1**: Remove Poisoned Trait from target table
-        poiTarget.RemoveTrait("Poisoned");
+        RemoveTraitFrom(poiTarget, "Poisoned");
     }
     #endregion
 

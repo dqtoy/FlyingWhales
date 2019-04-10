@@ -27,9 +27,9 @@ public class CurseCharacter : GoapAction {
     #region State Effects
     public void AfterCurseSuccess() {
         //**After Effect 1**: Target gains Cursed trait.
-        poiTarget.AddTrait("Cursed");
+        AddTraitTo(poiTarget, "Cursed");
         //**After Effect 2**: Actor loses Ritualized trait.
-        actor.RemoveTrait("Ritualized");
+        RemoveTraitFrom(actor, "Ritualized");
 
         Log actorLog = new Log(GameManager.Instance.Today(), "GoapAction", this.GetType().ToString(), currentState.name.ToLower() + "_description_actor");
         actorLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

@@ -1006,7 +1006,7 @@ public class AreaInnerTileMap : MonoBehaviour {
                                 ovTile.SetTileState(LocationGridTile.Tile_State.Occupied);
                                 //ovTile.SetTileAccess(LocationGridTile.Tile_Access.Impassable);
                             }
-                            detailsTilemap.SetTile(currTile.localPlace, bigTreeTile);
+                            objectsTilemap.SetTile(currTile.localPlace, bigTreeTile);
                             currTile.SetTileState(LocationGridTile.Tile_State.Occupied);
                             //currTile.SetTileAccess(LocationGridTile.Tile_Access.Impassable);
                         } else {

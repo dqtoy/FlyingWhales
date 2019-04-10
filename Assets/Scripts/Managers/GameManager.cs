@@ -342,7 +342,7 @@ public class GameManager : MonoBehaviour {
         //CharacterManager.Instance.CategorizeLog(condition, stackTrace, type);
         if (type == LogType.Error || type == LogType.Exception) {
             string notification = "<color=\"red\">" + TodayLogString() + "Error occurred! Check console for log message</color>";
-            Messenger.Broadcast<string, int, UnityAction>(Signals.SHOW_NOTIFICATION, notification, 100, null);
+            Messenger.Broadcast<string, int, UnityAction>(Signals.SHOW_DEVELOPER_NOTIFICATION, notification, 100, null);
             UIManager.Instance.Pause();
         }
     }
