@@ -402,6 +402,32 @@ MonoBehaviour:
       hoverSprite: {fileID: 21300000, guid: 117a7958b7b80384fa8e7a1b09a4caeb, type: 3}
       clickedSprite: {fileID: 21300000, guid: 117a7958b7b80384fa8e7a1b09a4caeb, type: 3}
       animator: {fileID: 22100000, guid: 854a6491febd9814aab3d1926810e193, type: 2}
+  - race: 10
+    maleAssets:
+      gender: 0
+      defaultSprite: {fileID: 21300000, guid: 3a756fb8b4dda48438d4bfb084c208ce, type: 3}
+      hoverSprite: {fileID: 21300000, guid: 3a756fb8b4dda48438d4bfb084c208ce, type: 3}
+      clickedSprite: {fileID: 21300000, guid: 3a756fb8b4dda48438d4bfb084c208ce, type: 3}
+      animator: {fileID: 22100000, guid: f6789c343b1bc1646ab515ff86483b72, type: 2}
+    femaleAssets:
+      gender: 1
+      defaultSprite: {fileID: 21300000, guid: 3a756fb8b4dda48438d4bfb084c208ce, type: 3}
+      hoverSprite: {fileID: 21300000, guid: 3a756fb8b4dda48438d4bfb084c208ce, type: 3}
+      clickedSprite: {fileID: 21300000, guid: 3a756fb8b4dda48438d4bfb084c208ce, type: 3}
+      animator: {fileID: 22100000, guid: f6789c343b1bc1646ab515ff86483b72, type: 2}
+  - race: 2
+    maleAssets:
+      gender: 0
+      defaultSprite: {fileID: 21300000, guid: 5ee65e07929259446ab8e9d27bbf9b9e, type: 3}
+      hoverSprite: {fileID: 21300000, guid: 5ee65e07929259446ab8e9d27bbf9b9e, type: 3}
+      clickedSprite: {fileID: 21300000, guid: 5ee65e07929259446ab8e9d27bbf9b9e, type: 3}
+      animator: {fileID: 22100000, guid: 839ac1924c2c5b84f9780d1b67ae1e1a, type: 2}
+    femaleAssets:
+      gender: 1
+      defaultSprite: {fileID: 21300000, guid: f45afa27e7c2e63428433d14677844b3, type: 3}
+      hoverSprite: {fileID: 21300000, guid: f45afa27e7c2e63428433d14677844b3, type: 3}
+      clickedSprite: {fileID: 21300000, guid: f45afa27e7c2e63428433d14677844b3, type: 3}
+      animator: {fileID: 22100000, guid: acbfc5b127d225b4fb1b33ed6464266e, type: 2}
   characterAnimators:
   - {fileID: 0}
   - {fileID: 0}
