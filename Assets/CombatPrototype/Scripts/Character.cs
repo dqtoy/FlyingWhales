@@ -4855,20 +4855,27 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             else if (category.IsGreaterThanOrEqual(CRIME_CATEGORY.SERIOUS)) {
                 reactSummary += "\nCrime committed is serious or worse. Removing positive relationships.";
                 //- Witness Log: "[Character Name] saw [Criminal Name] committing [Theft/Assault/Murder]! They are no longer [Friends/Lovers/Paramours]."
-                witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "remove_relationship");
                 List<RelationshipTrait> traitsToRemove = GetAllRelationshipOfEffectWith(crime.actor, TRAIT_EFFECT.POSITIVE);
                 CharacterManager.Instance.RemoveRelationshipBetween(this, crime.actor, traitsToRemove);
 
                 string removedTraitsSummary = string.Empty;
                 for (int i = 0; i < traitsToRemove.Count; i++) {
-                    Trait currTrait = traitsToRemove[i];
-                    if (i + 1 == traitsToRemove.Count) removedTraitsSummary += " and ";  //this is the last element
+                    RelationshipTrait currTrait = traitsToRemove[i];
+                    if (i + 1 == traitsToRemove.Count && traitsToRemove.Count != 1) removedTraitsSummary += " and ";  //this is the last element
                     else if (i > 0) removedTraitsSummary += ", ";
 
-                    removedTraitsSummary += currTrait.name;
+                    removedTraitsSummary += Utilities.GetRelationshipPlural(currTrait.relType);
                 }
                 reactSummary += "\nRemoved relationships: " + removedTraitsSummary;
-                witnessLog.AddToFillers(null, removedTraitsSummary, LOG_IDENTIFIER.STRING_2);
+
+                if (traitsToRemove.Count > 0) {
+                    //if traits were removed, use remove relationship version of log
+                    witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "remove_relationship");
+                    witnessLog.AddToFillers(null, removedTraitsSummary, LOG_IDENTIFIER.STRING_2);
+                } else {
+                    //else use normal witnessed log
+                    witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "witnessed");
+                }
                 PerRoleCrimeReaction(crime);
             }
         }

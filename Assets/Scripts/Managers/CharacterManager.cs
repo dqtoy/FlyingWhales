@@ -501,8 +501,8 @@ public class CharacterManager : MonoBehaviour {
         if (character.relationships[targetCharacter].HasRelationshipTrait(rel)
             && targetCharacter.relationships[character].HasRelationshipTrait(pair)) {
 
-            character.RemoveRelationship(targetCharacter, character.GetRelationshipTraitWith(targetCharacter, rel));
-            targetCharacter.RemoveRelationship(character, targetCharacter.GetRelationshipTraitWith(character, rel));
+            character.RemoveTrait(character.GetRelationshipTraitWith(targetCharacter, rel));
+            targetCharacter.RemoveTrait(targetCharacter.GetRelationshipTraitWith(character, rel));
         } else {
             Debug.LogWarning(character.name + " and " + targetCharacter.name + " have inconsistent relationships " + rel.ToString() + " - " + pair.ToString() + ". Cannot remove!");
         }
@@ -522,8 +522,13 @@ public class CharacterManager : MonoBehaviour {
             || !targetCharacter.relationships.ContainsKey(character)) {
             return;
         }
-        character.RemoveRelationship(targetCharacter);
-        targetCharacter.RemoveRelationship(character);
+        List<RELATIONSHIP_TRAIT> rels = character.GetAllRelationshipTraitTypesWith(targetCharacter);
+        for (int i = 0; i < rels.Count; i++) {
+            RemoveRelationshipBetween(character, targetCharacter, rels[i]);
+        }
+
+        //character.RemoveRelationship(targetCharacter);
+        //targetCharacter.RemoveRelationship(character);
     }
     private RELATIONSHIP_TRAIT GetPairedRelationship(RELATIONSHIP_TRAIT rel) {
         switch (rel) {

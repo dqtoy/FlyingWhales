@@ -73,6 +73,9 @@ public class GoapAction {
         expectedEffects = new List<GoapEffect>();
         actualEffects = new List<GoapEffect>();
         committedCrime = CRIME.NONE;
+        //for testing
+        //CRIME[] choices = Utilities.GetEnumValues<CRIME>();
+        //committedCrime = choices[Utilities.rng.Next(1, choices.Length)];
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
         actionIconString = GoapActionStateDB.Joy_Icon;
         actionSummary = GameManager.Instance.TodayLogString() + actor.name + " created " + goapType.ToString() + " action, targetting " + poiTarget?.ToString() ?? "Nothing";

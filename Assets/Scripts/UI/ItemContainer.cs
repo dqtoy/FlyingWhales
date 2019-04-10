@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class ItemContainer : PooledObject {
+public class ItemContainer : PooledObject, IPointerClickHandler {
 
     private SpecialToken item;
 
@@ -65,6 +65,20 @@ public class ItemContainer : PooledObject {
     public override void Reset() {
         base.Reset();
         item = null;
+    }
+
+    public void OnPointerClick(PointerEventData eventData) {
+        if (item == null) {
+            return;
+        }
+        //center camera on item location
+        LocationGridTile tileLocation = item.gridTileLocation;
+        if (tileLocation != null) {
+            if (!tileLocation.parentAreaMap.isShowing) {
+                InteriorMapManager.Instance.ShowAreaMap(tileLocation.parentAreaMap.area);
+            }
+            AreaMapCameraMove.Instance.CenterCameraOn(item.collisionTrigger.gameObject);
+        }
     }
 
     //private void Update() {
