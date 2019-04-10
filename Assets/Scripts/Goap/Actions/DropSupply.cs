@@ -12,7 +12,8 @@ public class DropSupply : GoapAction {
         _requirementAction = Requirement;
     }
     protected override void ConstructPreconditionsAndEffects() {
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_SUPPLY, conditionKey = actor.supply, targetPOI = poiTarget });
+        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_SUPPLY, conditionKey = 0, targetPOI = actor }, IsActorSupplyEnough);
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_SUPPLY, conditionKey = 0, targetPOI = poiTarget });
     }
     public override void PerformActualAction() {
         SetState("Drop Success");
@@ -27,6 +28,18 @@ public class DropSupply : GoapAction {
     //}
     #endregion
 
+    #region Preconditions
+    private bool IsActorSupplyEnough() {
+        if (actor.supply > actor.role.reservedSupply) {
+            SupplyPile supplyPile = poiTarget as SupplyPile;
+            int supplyToBeDeposited = actor.supply - actor.role.reservedSupply;
+            if((supplyToBeDeposited + supplyPile.suppliesInPile) >= 100) {
+                return true;
+            }
+        }
+        return false;
+    }
+    #endregion
     #region Requirements
     protected bool Requirement() {
         IAwareness awareness = actor.GetAwareness(poiTarget);
@@ -34,7 +47,7 @@ public class DropSupply : GoapAction {
             return false;
         }
         LocationGridTile knownLoc = awareness.knownGridLocation;
-        return actor.homeArea == knownLoc.structure.location && actor.supply > actor.role.reservedSupply;
+        return actor.homeArea == knownLoc.structure.location;
     }
     #endregion
 

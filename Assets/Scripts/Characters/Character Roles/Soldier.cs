@@ -6,6 +6,11 @@ public class Soldier : CharacterRole {
     public override int reservedSupply { get { return 30; } }
 
     public Soldier() : base(CHARACTER_ROLE.SOLDIER, "Normal", new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.SUBTERFUGE, INTERACTION_CATEGORY.OFFENSE, INTERACTION_CATEGORY.DEFENSE }) {
+        allowedInteractions = new INTERACTION_TYPE[] {
+            INTERACTION_TYPE.PATROL,
+            INTERACTION_TYPE.PATROL_ROAM,
+            INTERACTION_TYPE.GET_SUPPLY,
+        };
     }
 
     #region Overrides

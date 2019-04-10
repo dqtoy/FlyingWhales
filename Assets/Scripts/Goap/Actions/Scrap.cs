@@ -33,7 +33,7 @@ public class Scrap : GoapAction {
         base.PerformActualAction();
     }
     protected override int GetCost() {
-        return 2;
+        return 5;
     }
     //public override void SetTargetStructure() {
     //    ItemAwareness awareness = actor.GetAwareness(poiTarget) as ItemAwareness;

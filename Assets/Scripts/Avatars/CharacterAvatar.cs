@@ -233,13 +233,11 @@ public class CharacterAvatar : MonoBehaviour{
             arriveLog.AddLogToInvolvedObjects();
             //_party.specificLocation.areaMap.ShowEventPopupAt(_party.owner.gridTileLocation, arriveLog);
         }
-        if(targetStructure != null) {
+        Messenger.Broadcast(Signals.PARTY_DONE_TRAVELLING, this.party);
+
+        if (targetStructure != null) {
             _party.owner.MoveToAnotherStructure(targetStructure, targetTile, targetPOI, onPathFinished);
         }
-        //if (onPathFinished != null) {
-        //    onPathFinished();
-        //}
-        Messenger.Broadcast(Signals.PARTY_DONE_TRAVELLING, this.party);
     }
     public virtual void ReceivePath(List<HexTile> path, PathFindingThread fromThread) {
         if (!_isInitialized) {

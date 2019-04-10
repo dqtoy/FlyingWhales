@@ -115,7 +115,7 @@ public class ConsoleMenu : UIMenu {
         text += "\n<b>Next Tick:</b> " + character.currentInteractionTick.ToString();
         text += "\n<b>Current Action:</b> " + character.currentAction?.goapName ?? "None";
         if (character.currentAction != null) {
-            text += "\n<b>Current Plan:</b> " + character.GetPlanWithAction(character.currentAction).GetGoalSummary();
+            text += "\n<b>Current Plan:</b> " + character.currentAction.parentPlan.GetGoalSummary();
         }
         if (character.currentParty.icon != null) {
             text += "\n<b>Target Location:</b> " + character.currentParty.icon.targetLocation?.name ?? "None";

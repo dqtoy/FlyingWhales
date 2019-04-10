@@ -11,6 +11,7 @@ public class GoapThread : Multithread {
     public bool isPersonalPlan { get; private set; }
     public GOAP_CATEGORY category { get; private set; }
     public List<CharacterAwareness> characterTargetsAwareness { get; private set; }
+    public JobQueueItem job { get; private set; }
     //public List<INTERACTION_TYPE> actorAllowedActions { get; private set; }
     //public List<GoapAction> usableActions { get; private set; }
     public string log { get; private set; }
@@ -18,7 +19,7 @@ public class GoapThread : Multithread {
     //For recalculation
     public GoapPlan recalculationPlan;
 
-    public GoapThread(Character actor, IPointOfInterest target, GoapEffect goal, GOAP_CATEGORY category, bool isPriority, List<CharacterAwareness> characterTargetsAwareness, bool isPersonalPlan) {//, List<INTERACTION_TYPE> actorAllowedActions, List<GoapAction> usableActions
+    public GoapThread(Character actor, IPointOfInterest target, GoapEffect goal, GOAP_CATEGORY category, bool isPriority, List<CharacterAwareness> characterTargetsAwareness, bool isPersonalPlan, JobQueueItem job) {//, List<INTERACTION_TYPE> actorAllowedActions, List<GoapAction> usableActions
         this.createdPlan = null;
         this.recalculationPlan = null;
         this.actor = actor;
@@ -30,6 +31,7 @@ public class GoapThread : Multithread {
         //this.usableActions = usableActions;
         this.isPersonalPlan = isPersonalPlan;
         this.category = category;
+        this.job = job;
     }
     public GoapThread(Character actor, GoapPlan currentPlan) {//, List<GoapAction> usableActions
         this.createdPlan = null;

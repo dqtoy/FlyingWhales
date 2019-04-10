@@ -4,9 +4,9 @@ using System.Collections;
 public static class Signals {
 
     public static string TICK_STARTED = "OnTickStart";
-    public static string TICK_STARTED_2 = "OnTickStart2";
+    //public static string TICK_STARTED_2 = "OnTickStart2";
     public static string TICK_ENDED = "OnTickEnd";
-    public static string TICK_ENDED_2 = "OnTickEnd2";
+    //public static string TICK_ENDED_2 = "OnTickEnd2";
     public static string HOUR_STARTED = "OnHourStart";
     public static string DAY_STARTED = "OnDayStart";
     public static string MONTH_START = "OnMonthStart";

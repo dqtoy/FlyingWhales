@@ -40,7 +40,7 @@ public class GoapAction {
     public Log planLog { get; protected set; } //used for notification when a character starts this action. NOTE: Do not show notification if this is null
     public GoapActionState currentState { get; private set; }
     public GoapActionState endedAtState { get; private set; } //the state this action ended at
-    public GoapPlan parentPlan { get { return actor.GetPlanWithAction(this); } }
+    public GoapPlan parentPlan { get; private set; }
     public bool isStopped { get; private set; }
     public bool isPerformingActualAction { get; private set; }
     public bool isDone { get; private set; }
@@ -78,9 +78,9 @@ public class GoapAction {
         actionSummary = GameManager.Instance.TodayLogString() + actor.name + " created " + goapType.ToString() + " action, targetting " + poiTarget?.ToString() ?? "Nothing";
     }
 
-    //public void SetParentPlan(GoapPlan plan) {
-    //    parentPlan = plan;
-    //}
+    public void SetParentPlan(GoapPlan plan) {
+        parentPlan = plan;
+    }
 
     #region States
     public void SetState(string stateName) {

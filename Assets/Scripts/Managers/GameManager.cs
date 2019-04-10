@@ -232,7 +232,7 @@ public class GameManager : MonoBehaviour {
             Messenger.Broadcast(Signals.HOUR_STARTED);
         }
         Messenger.Broadcast(Signals.TICK_STARTED);
-        Messenger.Broadcast(Signals.TICK_STARTED_2);
+        //Messenger.Broadcast(Signals.TICK_STARTED_2);
         Messenger.Broadcast(Signals.UPDATE_UI);
     }
     /*
@@ -240,7 +240,7 @@ public class GameManager : MonoBehaviour {
      * */
     public void TickEnded(){
         Messenger.Broadcast(Signals.TICK_ENDED);
-        Messenger.Broadcast(Signals.TICK_ENDED_2);
+        //Messenger.Broadcast(Signals.TICK_ENDED_2);
         //while (pauseTickEnded2) {
         //    yield return null;
         //}

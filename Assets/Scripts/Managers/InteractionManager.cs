@@ -45,7 +45,7 @@ public class InteractionManager : MonoBehaviour {
         Messenger.AddListener<Interaction>(Signals.CLICKED_INTERACTION_BUTTON, OnClickInteraction);
     }
     public void Initialize() {
-        Messenger.AddListener(Signals.TICK_ENDED_2, ExecuteInteractionsDefault); //TryExecuteInteractionsDefault
+        //Messenger.AddListener(Signals.TICK_ENDED_2, ExecuteInteractionsDefault); //TryExecuteInteractionsDefault
         ConstructInteractionCategoryAndAlignment();
 
         //ConstructorInfo ctor = typeof(GoapAction).GetConstructors().First();
