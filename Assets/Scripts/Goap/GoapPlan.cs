@@ -17,6 +17,7 @@ public class GoapPlan {
     public bool doNotRecalculate { get; private set; }
     public GOAP_PLAN_STATE state { get; private set; }
     public GOAP_CATEGORY category { get; private set; }
+    public JobQueueItem job { get; private set; }
 
     public string dropPlanCallStack;
 
@@ -59,10 +60,11 @@ public class GoapPlan {
     private void ConstructAllNodes() {
         allNodes.Clear();
         GoapNode node = startingNode;
+        node.action.SetParentPlan(this);
         allNodes.Add(node);
         while (node.parent != null) {
             node = node.parent;
-            //node.action.SetParentPlan(this);
+            node.action.SetParentPlan(this);
             allNodes.Add(node);
         }
         endNode = node;
@@ -79,6 +81,9 @@ public class GoapPlan {
     }
     public void SetPlanState(GOAP_PLAN_STATE state) {
         this.state = state;
+    }
+    public void SetJob(JobQueueItem job) {
+        this.job = job;
     }
     public string LogPlan() {
         string log = "\n---------------------NEW PLAN OF " + endNode.action.actor.name + " FOR " + endNode.action.goapName + " WITH TARGET " + target.name + " (" + endNode.action.actor.specificLocation.name + ")--------------------------";

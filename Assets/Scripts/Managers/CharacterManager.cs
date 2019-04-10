@@ -86,7 +86,7 @@ public class CharacterManager : MonoBehaviour {
         ConstructElementChanceDictionary();
         ConstructAwayFromHomeInteractionWeights();
         ConstructAtHomeInteractionWeights();
-        ConstructRoleInteractions();
+        //ConstructRoleInteractions();
         //ConstructPortraitDictionaries();
     }
 
@@ -1087,6 +1087,8 @@ public class CharacterManager : MonoBehaviour {
         characterRoleInteractions = new Dictionary<CHARACTER_ROLE, INTERACTION_TYPE[]>() {
             {CHARACTER_ROLE.CIVILIAN, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MINE_ACTION,
+                INTERACTION_TYPE.CHOP_WOOD,
+                INTERACTION_TYPE.SCRAP,
             } },
             {CHARACTER_ROLE.SOLDIER, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.PATROL,

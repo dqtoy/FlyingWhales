@@ -22,8 +22,7 @@ public class AbductCharacter : GoapAction {
             if (!HasOtherCharacterInRadius()) {
                 SetState("Abduct Success");
             } else {
-                GoapPlan plan = actor.GetPlanWithAction(this);
-                plan.SetDoNotRecalculate(true);
+                parentPlan.SetDoNotRecalculate(true);
                 SetState("Target Missing");
             }
         } else {

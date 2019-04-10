@@ -35,6 +35,7 @@ public class Area {
     public Dictionary<INTERACTION_TYPE, int> areaTasksInteractionWeights { get; private set; }
     public int initialResidents { get; private set; }
     public int monthlyActions { get; private set; }
+    public JobQueue jobQueue { get; private set; }
 
     //defenders
     public int maxDefenderGroups { get; private set; }
@@ -151,13 +152,14 @@ public class Area {
         possibleSpecialTokenSpawns = new List<SpecialToken>();
         charactersAtLocationHistory = new List<string>();
         structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
+        jobQueue = new JobQueue();
         SetDungeonSupplyRange(0, 0);
         SetMonthlyActions(2);
         SetAreaType(areaType);
         SetCoreTile(coreTile);
         //SetSupplyCapacity(1000);
         AddTile(coreTile);
-        SetSuppliesInBank(1000);
+        //SetSuppliesInBank(1000);
         //if (areaType != AREA_TYPE.DEMONIC_INTRUSION) {
         //    Messenger.AddListener(Signals.DAY_ENDED_2, DefaultAllExistingInteractions);
         //}
@@ -189,6 +191,7 @@ public class Area {
         charactersAtLocationHistory = new List<string>();
         possibleSpecialTokenSpawns = new List<SpecialToken>();
         supplyLog = new List<string>();
+        jobQueue = new JobQueue();
         if (data.raceSetup != null) {
             initialSpawnSetup = new List<InitialRaceSetup>(data.raceSetup);
         } else {
@@ -205,7 +208,7 @@ public class Area {
 #if WORLD_CREATION_TOOL
         SetCoreTile(worldcreator.WorldCreatorManager.Instance.GetHexTile(data.coreTileID));
 #else
-        SetSuppliesInBank(1000);
+        //SetSuppliesInBank(1000);
         SetCoreTile(GridMap.Instance.GetHexTile(data.coreTileID));
         ConstructAreaTasksInteractionWeights();
         //StartSupplyLine();

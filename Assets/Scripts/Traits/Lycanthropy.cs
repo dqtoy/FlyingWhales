@@ -48,7 +48,7 @@ public class Lycanthropy : Trait {
     public void TurnToWolf() {
         //Drop all plans except for the current action
         _character.AdjustIsWaitingForInteraction(1);
-        _character.DropAllPlans(_character.GetPlanWithAction(_character.currentAction));
+        _character.DropAllPlans(_character.currentAction.parentPlan);
         _character.AdjustIsWaitingForInteraction(-1);
 
         //Copy non delicate data
@@ -103,7 +103,7 @@ public class Lycanthropy : Trait {
     public void RevertToNormal() {
         //Drop all plans except for the current action
         _character.AdjustIsWaitingForInteraction(1);
-        _character.DropAllPlans(_character.GetPlanWithAction(_character.currentAction));
+        _character.DropAllPlans(_character.currentAction.parentPlan);
         _character.AdjustIsWaitingForInteraction(-1);
 
         //Revert back data including awareness

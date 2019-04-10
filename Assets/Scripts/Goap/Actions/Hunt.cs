@@ -40,8 +40,7 @@ public class Hunt : GoapAction {
                     resultWeights.AddElement("Target Killed", 15);
                     string nextState = resultWeights.PickRandomElementGivenWeights();
                     if (nextState == "Target Killed") {
-                        GoapPlan plan = actor.GetPlanWithAction(this);
-                        plan.SetDoNotRecalculate(true);
+                        parentPlan.SetDoNotRecalculate(true);
                     }
                     SetState(nextState);
                 } else {
