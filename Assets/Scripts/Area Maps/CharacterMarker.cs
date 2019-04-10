@@ -65,7 +65,7 @@ public class CharacterMarker : PooledObject {
     public LocationGridTile destinationTile { get; private set; }
     public bool cannotCombat { get; private set; }
 
-    private Vector2Int _previousTilePosition;
+    private LocationGridTile _previousGridTile;
 
     #region getters/setters
     public List<LocationGridTile> currentPath {
@@ -77,7 +77,7 @@ public class CharacterMarker : PooledObject {
         this.name = character.name + "'s Marker";
         nameLbl.SetText(character.name);
         this.character = character;
-        _previousTilePosition = new Vector2Int((int)transform.localPosition.x, (int)transform.localPosition.y);
+        _previousGridTile = character.gridTileLocation;
         if (UIManager.Instance.characterInfoUI.isShowing) {
             clickedImg.gameObject.SetActive(UIManager.Instance.characterInfoUI.activeCharacter.id == character.id);
         }
@@ -122,9 +122,9 @@ public class CharacterMarker : PooledObject {
         anchoredPos = transform.localPosition;
 
         //This is to check that the character has moved to another tile
-        if (_previousTilePosition != character.gridTilePosition) {
+        if (_previousGridTile != character.gridTileLocation) {
             //When a character moves to another tile, check previous tile if the character is the occupant there, if it is, remove it
-            LocationGridTile previousGridTile = character.GetLocationGridTileByXY(_previousTilePosition.x, _previousTilePosition.y);
+            LocationGridTile previousGridTile = _previousGridTile;
             LocationGridTile currentGridTile = character.gridTileLocation;
             if (previousGridTile.occupant == character) {
                 previousGridTile.RemoveOccupant();
@@ -145,7 +145,7 @@ public class CharacterMarker : PooledObject {
             }
 
             //Lastly set the previous tile position to the current tile position so it will not trigger again
-            _previousTilePosition = character.gridTilePosition;
+            _previousGridTile = character.gridTileLocation;
         }
     }
     public void PlaceMarkerAt(LocationGridTile tile) {
@@ -868,17 +868,22 @@ public class CharacterMarker : PooledObject {
         } else {
             EngageState engageState = character.stateComponent.currentState as EngageState;
             Character thisCharacter = this.character;
+            Character enemy = currentlyEngaging;
             engageState.CombatOnEngage();
-            SetTargetTransform(null);
-            if (!thisCharacter.isDead && !currentlyEngaging.isDead) {
+            if (!thisCharacter.isDead && !enemy.isDead) {
                 engageState.CheckForEndState();
-            } else {
-                if (!thisCharacter.isDead && thisCharacter.stateComponent.character.marker.hostilesInRange.Count == 0) {
-                    //can end engage
-                    thisCharacter.stateComponent.currentState.OnExitThisState();
-                }
+
+                //if (!currentlyEngaging.isDead) {
+                //    engageState.CheckForEndState();
+                //} else {
+                //    if (thisCharacter.stateComponent.character.marker.hostilesInRange.Count == 0) {
+                //        //can end engage
+                //        thisCharacter.stateComponent.currentState.OnExitThisState();
+                //    }
+                //}
+                //SetTargetTransform(null);
+                //SetCurrentlyEngaging(null);
             }
-            SetCurrentlyEngaging(null);
         }
     }
     public void RedetermineEngage() {

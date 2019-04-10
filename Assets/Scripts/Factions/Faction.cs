@@ -285,16 +285,16 @@ public class Faction {
     private void AddListeners() {
         Messenger.AddListener<Character>(Signals.CHARACTER_REMOVED, RemoveCharacter);
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
-        if (!_isPlayerFaction) {
-            Messenger.AddListener(Signals.TICK_STARTED, DailyInteractionGeneration);
-        }
+        //if (!_isPlayerFaction) {
+        //    Messenger.AddListener(Signals.TICK_STARTED, DailyInteractionGeneration);
+        //}
     }
     private void RemoveListeners() {
         Messenger.RemoveListener<Character>(Signals.CHARACTER_REMOVED, RemoveCharacter);
         Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
-        if (!_isPlayerFaction) {
-            Messenger.RemoveListener(Signals.TICK_STARTED, DailyInteractionGeneration);
-        }
+        //if (!_isPlayerFaction) {
+        //    Messenger.RemoveListener(Signals.TICK_STARTED, DailyInteractionGeneration);
+        //}
     }
     public void SetRace(Race race) {
         _race = race;

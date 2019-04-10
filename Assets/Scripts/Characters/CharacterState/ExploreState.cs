@@ -8,7 +8,7 @@ public class ExploreState : CharacterState {
         stateName = "Explore State";
         characterState = CHARACTER_STATE.EXPLORE;
         stateCategory = CHARACTER_STATE_CATEGORY.MAJOR;
-        duration = 48;
+        duration = 36;
     }
 
     #region Overrides

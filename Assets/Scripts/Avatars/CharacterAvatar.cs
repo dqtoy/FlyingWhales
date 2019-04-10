@@ -151,6 +151,7 @@ public class CharacterAvatar : MonoBehaviour{
         //     }
         Reset();
         if (targetLocation != null) {
+            //_party.owner.marker.gameObject.SetActive(false);
             onPathFinished = actionOnPathFinished;
             StartTravelling();
         }
@@ -237,6 +238,11 @@ public class CharacterAvatar : MonoBehaviour{
 
         if (targetStructure != null) {
             _party.owner.MoveToAnotherStructure(targetStructure, targetTile, targetPOI, onPathFinished);
+        } else {
+            if(onPathFinished != null) {
+                onPathFinished();
+                onPathFinished = null;
+            }
         }
     }
     public virtual void ReceivePath(List<HexTile> path, PathFindingThread fromThread) {

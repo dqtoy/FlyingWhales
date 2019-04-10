@@ -17,7 +17,7 @@ public class GoapPlan {
     public bool doNotRecalculate { get; private set; }
     public GOAP_PLAN_STATE state { get; private set; }
     public GOAP_CATEGORY category { get; private set; }
-    public JobQueueItem job { get; private set; }
+    public GoapPlanJob job { get; private set; }
 
     public string dropPlanCallStack;
 
@@ -82,7 +82,7 @@ public class GoapPlan {
     public void SetPlanState(GOAP_PLAN_STATE state) {
         this.state = state;
     }
-    public void SetJob(JobQueueItem job) {
+    public void SetJob(GoapPlanJob job) {
         this.job = job;
     }
     public string LogPlan() {

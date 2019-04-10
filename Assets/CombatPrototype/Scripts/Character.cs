@@ -686,6 +686,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             if (currentParty.specificLocation == null) {
                 throw new Exception("Specific location of " + this.name + " is null! Please use command /l_character_location_history [Character Name/ID] in console menu to log character's location history. (Use '~' to show console menu)");
             }
+            if(stateComponent.currentState != null) {
+                stateComponent.currentState.OnExitThisState();
+            }
 
             if (ownParty.specificLocation != null && isHoldingItem) {
                 tokenInInventory.SetOwner(null);
@@ -4306,7 +4309,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         poiGoapActions.Add(INTERACTION_TYPE.HUNT_ACTION);
         poiGoapActions.Add(INTERACTION_TYPE.PLAY);
     }
-    public void StartGOAP(GoapEffect goal, IPointOfInterest target, GOAP_CATEGORY category, bool isPriority = false, List<Character> otherCharactePOIs = null, bool isPersonalPlan = true, JobQueueItem job = null) {
+    public void StartGOAP(GoapEffect goal, IPointOfInterest target, GOAP_CATEGORY category, bool isPriority = false, List<Character> otherCharactePOIs = null, bool isPersonalPlan = true, GoapPlanJob job = null) {
         List<CharacterAwareness> characterTargetsAwareness = new List<CharacterAwareness>();
         if (target.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
             CharacterAwareness characterAwareness = AddAwareness(target) as CharacterAwareness;
@@ -4333,6 +4336,58 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public void RecalculatePlan(GoapPlan currentPlan) {
         currentPlan.SetIsBeingRecalculated(true);
         MultiThreadPool.Instance.AddToThreadPool(new GoapThread(this, currentPlan));
+    }
+    public void ReceivePlanFromGoapThread(GoapThread goapThread) {
+        //string log = name + " received a plan from other thread(" + _numOfWaitingForGoapThread + ")";
+        //if(goapThread.recalculationPlan == null) {
+        //    log += " - thread has no recalculation plan";
+        //}
+        //Debug.LogWarning(log);
+        if (isDead) {
+            return;
+        }
+        if (goapThread.recalculationPlan != null && goapThread.recalculationPlan.isEnd) {
+            return;
+        }
+        if (goapThread.recalculationPlan == null) {
+            _numOfWaitingForGoapThread--;
+        }
+        PrintLogIfActive(goapThread.log);
+        if (goapThread.createdPlan != null) {
+            if (goapThread.recalculationPlan == null) {
+                if (goapThread.isPriority) {
+                    allGoapPlans.Insert(0, goapThread.createdPlan);
+                } else {
+                    allGoapPlans.Add(goapThread.createdPlan);
+                }
+                if (goapThread.job != null) {
+                    goapThread.job.SetAssignedPlan(goapThread.createdPlan);
+                }
+                PlanGoapActions();
+            } else {
+                //Receive plan recalculation
+                goapThread.createdPlan.SetIsBeingRecalculated(false);
+            }
+            //if (allGoapPlans.Count == 1) {
+            //    //Start this plan immediately since this is the only plan
+            //    SchedulePerformGoapPlans();
+            //} else {
+            //    StartDailyGoapPlanGeneration();
+            //}
+        } else {
+            if (goapThread.recalculationPlan != null) {
+                //This means that the recalculation has failed
+                DropPlan(goapThread.recalculationPlan);
+            } else {
+                if (goapThread.job != null) {
+                    goapThread.job.SetAssignedCharacter(null);
+                }
+                if (allGoapPlans.Count <= 0) {
+                    //StartDailyGoapPlanGeneration();
+                    PlanGoapActions();
+                }
+            }
+        }
     }
     public bool IsPOIInCharacterAwarenessList(IPointOfInterest poi, List<CharacterAwareness> awarenesses) {
         for (int i = 0; i < awarenesses.Count; i++) {
@@ -4621,58 +4676,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             Character randomTarget = characterAwarenesses[UnityEngine.Random.Range(0, characterAwarenesses.Count)].poi as Character;
             GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = homeArea, targetPOI = randomTarget };
             StartGOAP(goapEffect, randomTarget, GOAP_CATEGORY.REACTION);
-        }
-    }
-    public void ReceivePlanFromGoapThread(GoapThread goapThread) {
-        //string log = name + " received a plan from other thread(" + _numOfWaitingForGoapThread + ")";
-        //if(goapThread.recalculationPlan == null) {
-        //    log += " - thread has no recalculation plan";
-        //}
-        //Debug.LogWarning(log);
-        if (isDead) {
-            return;
-        }
-        if (goapThread.recalculationPlan != null && goapThread.recalculationPlan.isEnd) {
-            return;
-        }
-        if(goapThread.recalculationPlan == null) {
-            _numOfWaitingForGoapThread--;
-        }
-        PrintLogIfActive(goapThread.log);
-        if (goapThread.createdPlan != null) {
-            if(goapThread.recalculationPlan == null) {
-                if (goapThread.isPriority) {
-                    allGoapPlans.Insert(0, goapThread.createdPlan);
-                } else {
-                    allGoapPlans.Add(goapThread.createdPlan);
-                }
-                if(goapThread.job != null) {
-                    goapThread.job.SetAssignedPlan(goapThread.createdPlan);
-                }
-                PlanGoapActions();
-            } else {
-                //Receive plan recalculation
-                goapThread.createdPlan.SetIsBeingRecalculated(false);
-            }
-            //if (allGoapPlans.Count == 1) {
-            //    //Start this plan immediately since this is the only plan
-            //    SchedulePerformGoapPlans();
-            //} else {
-            //    StartDailyGoapPlanGeneration();
-            //}
-        } else {
-            if (goapThread.recalculationPlan != null) {
-                //This means that the recalculation has failed
-                DropPlan(goapThread.recalculationPlan);
-            } else {
-                if (goapThread.job != null) {
-                    goapThread.job.SetAssignedCharacter(null);
-                }
-                if (allGoapPlans.Count <= 0) {
-                    //StartDailyGoapPlanGeneration();
-                    PlanGoapActions();
-                }
-            }
         }
     }
     public GoapPlan GetPlanWithAction(GoapAction action) {

@@ -12,6 +12,7 @@ public class CharacterState {
     public bool isDone { get; protected set; }
     public bool isPaused { get; protected set; }
     public Log thoughtBubbleLog { get; protected set; }
+    public CharacterStateJob job { get; protected set; }
 
     public Character targetCharacter { get; protected set; } //Target character of current state
     //public CharacterState parentMajorState { get; protected set; }
@@ -24,6 +25,7 @@ public class CharacterState {
     #region Virtuals
     //Starts a state and its movement behavior, can be overridden
     protected virtual void StartState() {
+        stateComponent.SetCurrentState(this);
         currentDuration = 0;
         StartStatePerTick();
 
@@ -40,6 +42,11 @@ public class CharacterState {
         isDone = true;
         StopStatePerTick();
         RemoveDefaultListeners();
+        if(job != null) {
+            job.jobQueueParent.RemoveJobInQueue(job);
+            job.SetAssignedCharacter(null);
+            job.SetAssignedState(null);
+        }
     }
     
     //This is called per TICK_ENDED if the state has a duration, can be overriden
@@ -86,8 +93,20 @@ public class CharacterState {
         if (isDone) {
             return;
         }
-        Debug.Log(GameManager.Instance.TodayLogString() + "Entering " + stateName + " for " + stateComponent.character.name);
-        StartState();
+        if(characterState == CHARACTER_STATE.EXPLORE) {
+            //There is a special case for explore state, character must travel to a dungeon-type area first
+            Area dungeon = LandmarkManager.Instance.GetRandomAreaOfType(AREA_TYPE.DUNGEON);
+            if(dungeon == stateComponent.character.specificLocation) {
+                Debug.Log(GameManager.Instance.TodayLogString() + "Entering " + stateName + " for " + stateComponent.character.name);
+                StartState();
+            } else {
+                Debug.Log(GameManager.Instance.TodayLogString() + "Travelling to " + dungeon.name + " before entering " + stateName + " for " + stateComponent.character.name);
+                stateComponent.character.currentParty.GoToLocation(dungeon, PATHFINDING_MODE.NORMAL, null, () => StartState());
+            }
+        } else {
+            Debug.Log(GameManager.Instance.TodayLogString() + "Entering " + stateName + " for " + stateComponent.character.name);
+            StartState();
+        }
     }
     //This is the one must be called to exit and end this state
     public void ExitState() {
@@ -104,6 +123,10 @@ public class CharacterState {
         isPaused = false;
         StartStatePerTick();
         DoMovementBehavior();
+    }
+
+    public void SetJob(CharacterStateJob job) {
+        this.job = job;
     }
 
     #region Listeners

@@ -535,6 +535,19 @@ public class LandmarkManager : MonoBehaviour {
         }
         return null;
     }
+    public Area GetRandomAreaOfType(AREA_TYPE type) {
+        List<Area> filteredAreas = new List<Area>();
+        for (int i = 0; i < allAreas.Count; i++) {
+            Area area = allAreas[i];
+            if (area.areaType == type) {
+                filteredAreas.Add(area);
+            }
+        }
+        if(filteredAreas.Count > 0) {
+            return filteredAreas[UnityEngine.Random.Range(0, filteredAreas.Count)];
+        }
+        return null;
+    }
     public void OwnArea(Faction newOwner, RACE newRace, Area area) {
         if (area.owner != null) {
             UnownArea(area);

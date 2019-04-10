@@ -21,9 +21,13 @@ public class CharacterStateComponent {
         this.character = character;
     }
 
+    public void SetCurrentState(CharacterState state) {
+        currentState = state;
+    }
+
     //This switches from one state to another
     //If the character is not in a state right now, this simply starts a new state instead of switching
-    public void SwitchToState(CHARACTER_STATE state, Character targetCharacter = null) {
+    public CharacterState SwitchToState(CHARACTER_STATE state, Character targetCharacter = null) {
         //Before switching character must end current action first because once a character is in a state in cannot make plans
         character.AdjustIsWaitingForInteraction(1);
         if (character.currentAction != null && !character.currentAction.isDone) {
@@ -67,9 +71,10 @@ public class CharacterStateComponent {
 
         //Assigns new state as the current state then enter that state
         //newState.SetParentMajorState(previousMajorState);
-        currentState = newState;
-        currentState.SetTargetCharacter(targetCharacter);
-        currentState.EnterState();
+        //currentState = newState;
+        newState.SetTargetCharacter(targetCharacter);
+        newState.EnterState();
+        return newState;
     }
 
     //This ends the current state
@@ -95,8 +100,11 @@ public class CharacterStateComponent {
         }
 
         if (character.isDead) {
+            if(previousMajorState != null) {
+                previousMajorState.ExitState();
+            }
             previousMajorState = null;
-            currentState = null;
+            SetCurrentState(null);
             return;
         }
         //If the current state is a minor state and there is a previous major state, resume that major state
@@ -105,16 +113,16 @@ public class CharacterStateComponent {
                 //In a rare case that the previous major state has already timed out, end that state and do not resume it
                 //This goes back to normal
                 previousMajorState.ExitState();
-                currentState = null;
+                SetCurrentState(null);
             } else {
                 //Resumes previous major state
-                currentState = previousMajorState;
+                SetCurrentState(previousMajorState);
                 currentState.ResumeState();
             }
             previousMajorState = null;
         } else {
             //This goes back to normal
-            currentState = null;
+            SetCurrentState(null);
         }
     }
 
