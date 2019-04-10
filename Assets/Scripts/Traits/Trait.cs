@@ -19,7 +19,7 @@ public class Trait {
     public TRAIT_TRIGGER trigger;
     public INTERACTION_TYPE associatedInteraction;
     public List<INTERACTION_TYPE> advertisedInteractions;
-    public CRIME_SEVERITY crimeSeverity;
+    public CRIME_CATEGORY crimeSeverity;
     public int daysDuration; //Zero (0) means Permanent
     public List<TraitEffect> effects;
 

@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.12731749, g: 0.13414757, b: 0.1210787, a: 1}
+  m_IndirectSpecularColor: {r: 0.1273174, g: 0.13414761, b: 0.12107885, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2996,7 +2996,7 @@ GameObject:
   - component: {fileID: 65978407}
   - component: {fileID: 65978408}
   m_Layer: 5
-  m_Name: NotificationArea
+  m_Name: DeveloperNotificationArea
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -55543,7 +55543,7 @@ GameObject:
   - component: {fileID: 1349046396}
   - component: {fileID: 1349046395}
   m_Layer: 5
-  m_Name: IntelNotificationMenu
+  m_Name: PlayerNotificationMenu
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -65031,8 +65031,6 @@ MonoBehaviour:
   - {fileID: 1297442069}
   - {fileID: 497507705}
   - {fileID: 1741253390}
-  notificationPrefab: {fileID: 1000013330282484, guid: 6f7f3659399d54b46a177dfd8842a12c,
-    type: 2}
   speedToggleGroup: {fileID: 1335387234}
   pauseBtn: {fileID: 42023239}
   x1Btn: {fileID: 1788548037}
@@ -65056,19 +65054,19 @@ MonoBehaviour:
   detailedInfoContentParent: {fileID: 444284242}
   detailedInfoPortraits: []
   areaCenterSprites:
-  - {fileID: 21300000, guid: 3d5d01cc86ac72647b748c6ee18fe349, type: 3}
-  - {fileID: 21300000, guid: 81e1240cf953f764790b09c2fc0a02da, type: 3}
-  - {fileID: 21300000, guid: aa65e846891081d49901dbf649c804cf, type: 3}
-  - {fileID: 21300000, guid: 5de5d9e79e7bca6468fe0c1767df3f96, type: 3}
-  - {fileID: 21300000, guid: 7e068a966a25ef24fb412da184caa1d1, type: 3}
-  - {fileID: 21300000, guid: 486280923a41cbe4c833b8e400fc55d7, type: 3}
-  - {fileID: 21300000, guid: d3d127dddfde41d44ba5bfdb8fc09d38, type: 3}
-  - {fileID: 21300000, guid: 6a669ec4417b23349a373fe06578d61c, type: 3}
-  - {fileID: 21300000, guid: 5b4fd8fae79fa8643883fcbf95f88ee3, type: 3}
-  - {fileID: 21300000, guid: e87141bea9d9a0246b7760df857768f9, type: 3}
-  - {fileID: 21300000, guid: 99d2b917dce57c9489a889b19b42f243, type: 3}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   popupMessageBox: {fileID: 401963491}
-  notificationArea: {fileID: 65978408}
+  developerNotificationArea: {fileID: 65978408}
   characterPortraitsParent: {fileID: 1575492443}
   playerPickerScroll: {fileID: 0}
   playerPickerContentTransform: {fileID: 0}
@@ -65108,10 +65106,12 @@ MonoBehaviour:
   contextMenu: {fileID: 1819999710}
   returnToWorldGO: {fileID: 1040506110}
   shareIntelMenu: {fileID: 431201654}
-  intelNotificationParent: {fileID: 1349046394}
+  playerNotificationParent: {fileID: 1349046394}
   intelPrefab: {fileID: 1520246901535660, guid: 31553687798ac7f4f8153f94dc861add,
     type: 2}
-  intelNotifScrollView: {fileID: 1349046393}
+  defaultNotificationPrefab: {fileID: 1620646669321964, guid: 216ad1daee947014a93e5b7a7120f58d,
+    type: 2}
+  playerNotifScrollView: {fileID: 1349046393}
 --- !u!114 &1538653386
 MonoBehaviour:
   m_ObjectHideFlags: 0

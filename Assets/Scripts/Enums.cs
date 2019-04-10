@@ -1,4 +1,7 @@
-﻿public enum PROGRESSION_SPEED {
+﻿using System.Linq;
+using System.Reflection;
+
+public enum PROGRESSION_SPEED {
     X1,
     X2,
     X4
@@ -1377,7 +1380,7 @@ public enum INTERACTION_CHARACTER_EFFECT {
 public enum TARGET_POI { ACTOR, TARGET, }
 public enum TileNeighbourDirection { North, South, West, East, North_West,  North_East, South_West, South_East }
 public enum TIME_IN_WORDS { AFTER_MIDNIGHT, AFTER_MIDNIGHT_1, AFTER_MIDNIGHT_2, MORNING, MORNING_1, MORNING_2, AFTERNOON, AFTERNOON_1, AFTERNOON_2, EARLY_NIGHT, LATE_NIGHT, NIGHT_1, NIGHT_2 }
-public enum CRIME_SEVERITY { NONE, INFRACTION, MISDEMEANOUR, SERIOUS_CRIME, }
+//public enum CRIME_SEVERITY { NONE, INFRACTION, MISDEMEANOUR, SERIOUS_CRIME, }
 public enum FOOD { BERRY, MUSHROOM, RABBIT, RAT }
 public enum GOAP_EFFECT_CONDITION { NONE, REMOVE_TRAIT, HAS_TRAIT, HAS_SUPPLY, HAS_ITEM, FULLNESS_RECOVERY, TIREDNESS_RECOVERY, HAPPINESS_RECOVERY, HAS_NON_POSITIVE_TRAIT, IN_PARTY, REMOVE_FROM_PARTY, DESTROY, DEATH, }
 public enum GOAP_PLAN_STATE { IN_PROGRESS, SUCCESS, FAILED, CANCELLED, }
@@ -1392,4 +1395,53 @@ public enum ACTION_LOCATION_TYPE {
 }
 public enum CHARACTER_STATE_CATEGORY { MAJOR, MINOR,}
 //public enum MOVEMENT_MODE { NORMAL, FLEE, ENGAGE }
-public enum CHARACTER_STATE { EXPLORE, PATROL, FLEE, ENGAGE, HUNT,}
+public enum CHARACTER_STATE { NONE, EXPLORE, PATROL, FLEE, ENGAGE, HUNT,}
+public enum CRIME_CATEGORY {
+    NONE,
+    INFRACTIONS,
+    MISDEMEANOR,
+    SERIOUS,
+    HEINOUS,
+}
+public enum CRIME {
+    NONE,
+    [SubcategoryOf(CRIME_CATEGORY.MISDEMEANOR)]
+    THEFT,
+    [SubcategoryOf(CRIME_CATEGORY.MISDEMEANOR)]
+    ASSAULT,
+    [SubcategoryOf(CRIME_CATEGORY.SERIOUS)]
+    MURDER,
+}
+
+#region Crime Subcategories
+[System.AttributeUsage(System.AttributeTargets.Field)]
+public class SubcategoryOf : System.Attribute {
+    public SubcategoryOf(CRIME_CATEGORY cat) {
+        Category = cat;
+    }
+    public CRIME_CATEGORY Category { get; private set; }
+}
+public static class Extensions {
+    public static bool IsSubcategoryOf(this CRIME sub, CRIME_CATEGORY cat) {
+        System.Type t = typeof(CRIME);
+        MemberInfo mi = t.GetMember(sub.ToString()).FirstOrDefault(m => m.GetCustomAttribute(typeof(SubcategoryOf)) != null);
+        if (mi == null) throw new System.ArgumentException("Subcategory " + sub + " has no category.");
+        SubcategoryOf subAttr = (SubcategoryOf)mi.GetCustomAttribute(typeof(SubcategoryOf));
+        return subAttr.Category == cat;
+    }
+    public static CRIME_CATEGORY GetCategory(this CRIME sub) {
+        System.Type t = typeof(CRIME);
+        MemberInfo mi = t.GetMember(sub.ToString()).FirstOrDefault(m => m.GetCustomAttribute(typeof(SubcategoryOf)) != null);
+        if (mi == null) throw new System.ArgumentException("Subcategory " + sub + " has no category.");
+        SubcategoryOf subAttr = (SubcategoryOf)mi.GetCustomAttribute(typeof(SubcategoryOf));
+        return subAttr.Category;
+    }
+
+    public static bool IsLessThan(this CRIME_CATEGORY sub, CRIME_CATEGORY other) {
+        return sub < other;
+    }
+    public static bool IsGreaterThanOrEqual(this CRIME_CATEGORY sub, CRIME_CATEGORY other) {
+        return sub >= other;
+    }
+}
+#endregion

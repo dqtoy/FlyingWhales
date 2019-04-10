@@ -98,7 +98,7 @@ public static class Signals {
     public static string SHOW_POPUP_MESSAGE = "ShowPopupMessage"; //Parameters (string message, MESSAGE_BOX_MODE mode, bool expires)
     public static string HIDE_POPUP_MESSAGE = "HidePopupMessage";
     public static string UPDATE_UI = "UpdateUI";
-    public static string SHOW_NOTIFICATION = "ShowNotification"; //Parameters (string text, UnityAction onClickAction)
+    public static string SHOW_DEVELOPER_NOTIFICATION = "ShowNotification"; //Parameters (string text, UnityAction onClickAction)
     public static string SHOW_CHARACTER_DIALOG = "ShowCharacterDialog"; //Parameters(Character character, string text, List<CharacterDialogChoice> choices)
     public static string HISTORY_ADDED = "OnHistoryAdded"; //Parameters (object itemThatHadHistoryAdded) either a character or a landmark
     public static string PAUSED = "OnPauseChanged"; //Parameters (bool isGamePaused)
@@ -112,6 +112,7 @@ public static class Signals {
     public static string DRAG_OBJECT_CREATED = "OnDragObjectCreated"; //Parameters (DragObject obj)
     public static string DRAG_OBJECT_DESTROYED = "OnDragObjectDestroyed"; //Parameters (DragObject obj)
     public static string SHOW_INTEL_NOTIFICATION = "ShowIntelNotification"; //Parameters (Intel)
+    public static string SHOW_PLAYER_NOTIFICATION = "ShowPlayerNotification"; //Parameters (Log)
     public static string CAMERA_OUT_OF_FOCUS = "CameraOutOfFocus";
     public static string ON_OPEN_SHARE_INTEL = "OnOpenShareIntel";
     public static string ON_CLOSE_SHARE_INTEL = "OnCloseShareIntel";

@@ -57,8 +57,8 @@ public class ReleaseCharacter : GoapAction {
     }
     public void AfterReleaseSuccess() {
         Character target = poiTarget as Character;
-        target.RemoveTrait("Abducted");
-        target.RemoveTrait("Restrained");
+        RemoveTraitFrom(target, "Restrained");
+        RemoveTraitFrom(target, "Abducted");
     }
     public void PreTargetMissing() {
         currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);

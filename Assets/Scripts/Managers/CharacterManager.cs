@@ -507,6 +507,16 @@ public class CharacterManager : MonoBehaviour {
             Debug.LogWarning(character.name + " and " + targetCharacter.name + " have inconsistent relationships " + rel.ToString() + " - " + pair.ToString() + ". Cannot remove!");
         }
     }
+    public void RemoveRelationshipBetween(Character character, Character targetCharacter, List<RelationshipTrait> rels) {
+        if (!character.relationships.ContainsKey(targetCharacter)
+            || !targetCharacter.relationships.ContainsKey(character)) {
+            return;
+        }
+        for (int i = 0; i < rels.Count; i++) {
+            RelationshipTrait currRel = rels[i];
+            RemoveRelationshipBetween(character, targetCharacter, currRel.relType);
+        }
+    }
     public void RemoveRelationshipBetween(Character character, Character targetCharacter) {
         if (!character.relationships.ContainsKey(targetCharacter)
             || !targetCharacter.relationships.ContainsKey(character)) {

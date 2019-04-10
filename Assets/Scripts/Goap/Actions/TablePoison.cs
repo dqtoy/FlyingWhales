@@ -51,7 +51,7 @@ public class TablePoison : GoapAction {
     #region State Effects
     public void PrePoisonSuccess() {
         //**Effect 1**: Add Poisoned Trait to target table
-        poiTarget.AddTrait("Poisoned", actor);
+        AddTraitTo(poiTarget, "Poisoned", actor);
         currentState.AddLogFiller(poiTarget.gridTileLocation.structure.location, poiTarget.gridTileLocation.structure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
     }
     public void PreTargetMissing() {

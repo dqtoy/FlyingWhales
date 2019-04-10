@@ -23,10 +23,6 @@ public class UIManager : MonoBehaviour {
     [SerializeField] UIMenu[] allMenus;
 
     [Space(10)]
-    [Header("Prefabs")]
-    [SerializeField] private GameObject notificationPrefab;
-
-    [Space(10)]
     [Header("Date Objects")]
     [SerializeField] private ToggleGroup speedToggleGroup;
     [SerializeField] private Toggle pauseBtn;
@@ -67,7 +63,7 @@ public class UIManager : MonoBehaviour {
 
     [Space(10)]
     [Header("Notification Area")]
-    public PlayerNotificationArea notificationArea;
+    public DeveloperNotificationArea developerNotificationArea;
 
     [Space(10)]
     [Header("Portraits")]
@@ -211,7 +207,7 @@ public class UIManager : MonoBehaviour {
         //popupMessageBox.Initialize();
         Messenger.AddListener<HexTile>(Signals.TILE_RIGHT_CLICKED, ShowContextMenu);
         Messenger.AddListener(Signals.HIDE_MENUS, HideMenus);
-        Messenger.AddListener<string, int, UnityAction>(Signals.SHOW_NOTIFICATION, ShowNotification);
+        Messenger.AddListener<string, int, UnityAction>(Signals.SHOW_DEVELOPER_NOTIFICATION, ShowDeveloperNotification);
 
         Messenger.AddListener<HexTile>(Signals.TILE_HOVERED_OVER, OnHoverOverTile);
         Messenger.AddListener<HexTile>(Signals.TILE_HOVERED_OUT, OnHoverOutTile);
@@ -229,7 +225,8 @@ public class UIManager : MonoBehaviour {
         Messenger.AddListener<Area>(Signals.AREA_MAP_OPENED, OnAreaMapOpened);
         Messenger.AddListener<Area>(Signals.AREA_MAP_CLOSED, OnAreaMapClosed);
 
-        Messenger.AddListener<Intel>(Signals.SHOW_INTEL_NOTIFICATION, ShowIntelNotification);
+        Messenger.AddListener<Intel>(Signals.SHOW_INTEL_NOTIFICATION, ShowPlayerNotification);
+        Messenger.AddListener<Log>(Signals.SHOW_PLAYER_NOTIFICATION, ShowPlayerNotification);
 
         Messenger.AddListener(Signals.ON_OPEN_SHARE_INTEL, OnOpenShareIntelMenu);
         Messenger.AddListener(Signals.ON_CLOSE_SHARE_INTEL, OnCloseShareIntelMenu);
@@ -618,14 +615,9 @@ public class UIManager : MonoBehaviour {
     }
     #endregion
 
-    #region Notifications Area
-    private void ShowNotification(string text, int expirationTicks, UnityAction onClickAction) {
-        notificationArea.ShowNotification(text, expirationTicks, onClickAction);
-    }
-    private void OnInteractionAdded(BaseLandmark interactable, Interaction interaction) {
-        if (GameManager.Instance.inspectAll || interactable.isBeingInspected) {
-            ShowNotification("New <color=\"red\">" + interaction.name + "</color> interaction at <color=\"red\">" + interactable.name + "</color>", 50, () => ShowInteractableInfo(interactable));
-        }
+    #region Developer Notifications Area
+    private void ShowDeveloperNotification(string text, int expirationTicks, UnityAction onClickAction) {
+        developerNotificationArea.ShowNotification(text, expirationTicks, onClickAction);
     }
     #endregion
 
@@ -1351,10 +1343,10 @@ public class UIManager : MonoBehaviour {
             action = () => ShowCharacterTokenMenu();
             notificationText = "Obtained token about special item: <color=\"green\"><b>" + (token as SpecialToken).name;
         }
-        ShowNotification(notificationText, 5, action);
+        ShowDeveloperNotification(notificationText, 5, action);
     }
     private void OnCombatDone(Combat combat) {
-        ShowNotification("Combat at <b>" + combat.location.name + "</b>!", 5, () => ShowCombatLog(combat));
+        ShowDeveloperNotification("Combat at <b>" + combat.location.name + "</b>!", 5, () => ShowCombatLog(combat));
     }
     #endregion
 
@@ -1456,24 +1448,31 @@ public class UIManager : MonoBehaviour {
         SetCoverState(true);
         Pause();
         SetSpeedTogglesState(false);
-        intelNotificationParent.SetSiblingIndex(1);
+        playerNotificationParent.SetSiblingIndex(1);
     }
     private void OnCloseShareIntelMenu() {
         returnToWorldGO.GetComponent<Button>().interactable = true;
         SetCoverState(false);
         SetSpeedTogglesState(true);
-        intelNotificationParent.SetAsLastSibling();
+        playerNotificationParent.SetAsLastSibling();
     }
     #endregion
 
     #region Intel Notification
     [Header("Intel Notification")]
-    [SerializeField] private RectTransform intelNotificationParent;
+    [SerializeField] private RectTransform playerNotificationParent;
     [SerializeField] private GameObject intelPrefab;
-    [SerializeField] private ScrollRect intelNotifScrollView;
-    private void ShowIntelNotification(Intel intel) {
-        GameObject newIntelGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(intelPrefab.name, Vector3.zero, Quaternion.identity, intelNotifScrollView.content);
+    [SerializeField] private GameObject defaultNotificationPrefab;
+    [SerializeField] private ScrollRect playerNotifScrollView;
+    private void ShowPlayerNotification(Intel intel) {
+        GameObject newIntelGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(intelPrefab.name, Vector3.zero, Quaternion.identity, playerNotifScrollView.content);
         newIntelGO.GetComponent<IntelNotificationItem>().Initialize(intel);
+        (newIntelGO.transform as RectTransform).SetAsFirstSibling();
+        (newIntelGO.transform as RectTransform).localScale = Vector3.one;
+    }
+    private void ShowPlayerNotification(Log log) {
+        GameObject newIntelGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(defaultNotificationPrefab.name, Vector3.zero, Quaternion.identity, playerNotifScrollView.content);
+        newIntelGO.GetComponent<PlayerNotificationItem>().Initialize(log);
         (newIntelGO.transform as RectTransform).SetAsFirstSibling();
         (newIntelGO.transform as RectTransform).localScale = Vector3.one;
     }

@@ -38,8 +38,8 @@ public class FirstAidCharacter : GoapAction {
     }
     public void AfterFirstAidSuccess() {
         //**After Effect 1**: Remove target's Injured and Unconscious trait
-        poiTarget.RemoveTrait("Injured");
-        poiTarget.RemoveTrait("Unconscious");
+        RemoveTraitFrom(poiTarget, "Injured");
+        RemoveTraitFrom(poiTarget, "Unconscious");
         //**After Effect 2**: Reduce character's Supply by 10
         actor.AdjustSupply(-10);
         //**After Effect 3**: Allow movement of Target

@@ -91,7 +91,7 @@ public class CombatAttributePanelUI : MonoBehaviour {
         string[] traitEffects = System.Enum.GetNames(typeof(TRAIT_EFFECT));
         string[] traitTriggers = System.Enum.GetNames(typeof(TRAIT_TRIGGER));
         string[] associatedInteractions = System.Enum.GetNames(typeof(INTERACTION_TYPE));
-        string[] crimeSeverities = System.Enum.GetNames(typeof(CRIME_SEVERITY));
+        string[] crimeSeverities = System.Enum.GetNames(typeof(CRIME_CATEGORY));
         string[] requirementTypes = System.Enum.GetNames(typeof(TRAIT_REQUIREMENT));
         string[] requirementTargets = System.Enum.GetNames(typeof(TRAIT_REQUIREMENT_TARGET));
         string[] requirementCheckers = System.Enum.GetNames(typeof(TRAIT_REQUIREMENT_CHECKER));
@@ -180,7 +180,7 @@ public class CombatAttributePanelUI : MonoBehaviour {
             effect = (TRAIT_EFFECT) System.Enum.Parse(typeof(TRAIT_EFFECT), traitEffectOptions.options[traitEffectOptions.value].text),
             trigger = (TRAIT_TRIGGER) System.Enum.Parse(typeof(TRAIT_TRIGGER), traitTriggerOptions.options[traitTriggerOptions.value].text),
             associatedInteraction = (INTERACTION_TYPE) System.Enum.Parse(typeof(INTERACTION_TYPE), associatedInteractionOptions.options[associatedInteractionOptions.value].text),
-            crimeSeverity = (CRIME_SEVERITY) System.Enum.Parse(typeof(CRIME_SEVERITY), crimeSeverityOptions.options[crimeSeverityOptions.value].text),
+            crimeSeverity = (CRIME_CATEGORY) System.Enum.Parse(typeof(CRIME_CATEGORY), crimeSeverityOptions.options[crimeSeverityOptions.value].text),
             daysDuration = int.Parse(durationInput.text),
             effects = _effects
         };

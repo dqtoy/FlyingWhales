@@ -1760,6 +1760,18 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return null;
     }
+    public List<RelationshipTrait> GetAllRelationshipOfEffectWith(Character character, TRAIT_EFFECT effect, RELATIONSHIP_TRAIT include = RELATIONSHIP_TRAIT.NONE) {
+        List<RelationshipTrait> rels = new List<RelationshipTrait>();
+        if (relationships.ContainsKey(character)) {
+            for (int i = 0; i < relationships[character].rels.Count; i++) {
+                RelationshipTrait currTrait = relationships[character].rels[i];
+                if (currTrait.effect == effect || currTrait.relType == include) {
+                    rels.Add(currTrait);
+                }
+            }
+        }
+        return rels;
+    }
     public List<RELATIONSHIP_TRAIT> GetAllRelationshipTraitTypesWith(Character character) {
         if (relationships.ContainsKey(character)) {
             return new List<RELATIONSHIP_TRAIT>(relationships[character].rels.Select(x => x.relType));
@@ -1851,11 +1863,18 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             //homeArea.AssignCharacterToDwellingInArea(targetCharacter);
         }
     }
-    public bool HasRelationshipOfEffectWith(Character character, TRAIT_EFFECT effect) {
+    /// <summary>
+    /// Does this character have a relationship of effect with the provided character?
+    /// </summary>
+    /// <param name="character">Other character.</param>
+    /// <param name="effect">Relationship effect (Positive, Negative, Neutral)</param>
+    /// <param name="include">Relationship type to exclude from checking</param>
+    /// <returns></returns>
+    public bool HasRelationshipOfEffectWith(Character character, TRAIT_EFFECT effect, RELATIONSHIP_TRAIT include = RELATIONSHIP_TRAIT.NONE) {
         if (relationships.ContainsKey(character)) {
             for (int i = 0; i < relationships[character].rels.Count; i++) {
                 RelationshipTrait currTrait = relationships[character].rels[i];
-                if (currTrait.effect == effect) {
+                if (currTrait.effect == effect || currTrait.relType == include) {
                     return true;
                 }
             }
@@ -1931,6 +1950,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             return relationships[character];
         }
         return null;
+    }
+    public bool HasRelationshipWith(Character character) {
+        return relationships.ContainsKey(character);
     }
     public int GetAllRelationshipCount(List<RELATIONSHIP_TRAIT> except = null) {
         int count = 0;
@@ -4889,6 +4911,110 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public void AdjustIgnoreHostilities(int amount) {
         ignoreHostility += amount;
         ignoreHostility = Mathf.Max(0, ignoreHostility);
+    }
+    #endregion
+
+    #region Crime System
+    public void ReactToCrime(GoapAction crime) {
+        string reactSummary = GameManager.Instance.TodayLogString() + this.name + " will react to crime committed by " + crime.actor.name + "(" + crime.goapName + ")";
+        Log witnessLog = null;
+        //If character has a positive relationship (Friend, Lover, Paramour) with the criminal
+        if (this.HasRelationshipOfEffectWith(crime.actor, TRAIT_EFFECT.POSITIVE, RELATIONSHIP_TRAIT.RELATIVE)) {
+            reactSummary += "\n" + this.name + " has a positive relationship with " + crime.actor.name;
+            CRIME_CATEGORY category = crime.committedCrime.GetCategory();
+            //and crime severity is less than Serious Crimes:
+            if (category.IsLessThan(CRIME_CATEGORY.SERIOUS)) {
+                reactSummary += "\nCrime committed is less than serious, " + this.name + " will not do anything." ;
+                //-Witness Log: "[Character Name] saw [Criminal Name] committing [Theft/Assault/Murder] but did not do anything due to their relationship."
+                witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "do_nothing");
+            }
+            //and crime severity is Serious Crimes or worse:
+            else if (category.IsGreaterThanOrEqual(CRIME_CATEGORY.SERIOUS)) {
+                reactSummary += "\nCrime committed is serious or worse. Removing positive relationships.";
+                //- Witness Log: "[Character Name] saw [Criminal Name] committing [Theft/Assault/Murder]! They are no longer [Friends/Lovers/Paramours]."
+                witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "remove_relationship");
+                List<RelationshipTrait> traitsToRemove = GetAllRelationshipOfEffectWith(crime.actor, TRAIT_EFFECT.POSITIVE);
+                CharacterManager.Instance.RemoveRelationshipBetween(this, crime.actor, traitsToRemove);
+
+                string removedTraitsSummary = string.Empty;
+                for (int i = 0; i < traitsToRemove.Count; i++) {
+                    Trait currTrait = traitsToRemove[i];
+                    if (i + 1 == traitsToRemove.Count) removedTraitsSummary += " and ";  //this is the last element
+                    else if (i > 0) removedTraitsSummary += ", ";
+
+                    removedTraitsSummary += currTrait.name;
+                }
+                reactSummary += "\nRemoved relationships: " + removedTraitsSummary;
+                witnessLog.AddToFillers(null, removedTraitsSummary, LOG_IDENTIFIER.STRING_2);
+                PerRoleCrimeReaction(crime);
+            }
+        }
+        //If character has no relationships with the criminal or they are enemies:
+        else if (!this.HasRelationshipWith(crime.actor) || this.HasRelationshipOfTypeWith(crime.actor, RELATIONSHIP_TRAIT.ENEMY)) {
+            reactSummary += "\n" + this.name + " does not have a relationship with or is an enemy of " + crime.actor.name;
+            //-Witness Log: "[Character Name] saw [Criminal Name] committing [Theft/Assault/Murder]!"
+            witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "witnessed");
+            PerRoleCrimeReaction(crime);
+        }
+
+        if (witnessLog != null) {
+            witnessLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            witnessLog.AddToFillers(crime.actor, crime.actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            witnessLog.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(crime.committedCrime.ToString()), LOG_IDENTIFIER.STRING_1);
+            PlayerManager.Instance.player.ShowNotificationFrom(this, witnessLog);
+        }
+        Debug.Log(reactSummary);
+    }
+    private void PerRoleCrimeReaction(GoapAction crime) {
+        switch (role.roleType) {
+            case CHARACTER_ROLE.CIVILIAN:
+            case CHARACTER_ROLE.ADVENTURER:
+                //- If the character is a Civilian or Adventurer, he will enter Flee mode (fleeing the criminal) and will create a Report Crime Job Type in his personal job queue
+                this.marker.AddHostileInRange(crime.actor, CHARACTER_STATE.FLEE);
+                break;
+            case CHARACTER_ROLE.LEADER:
+            case CHARACTER_ROLE.NOBLE:
+                //- If the character is a Noble or Faction Leader, the criminal will gain the relevant Crime-type trait
+                //If he is a Noble or Faction Leader, he will create the Apprehend Job Type in the Location job queue instead.
+                crime.actor.AddCriminalTrait(crime.committedCrime);
+                break;
+            case CHARACTER_ROLE.SOLDIER:
+                //- If the character is a Soldier, the criminal will gain the relevant Crime-type trait
+                crime.actor.AddCriminalTrait(crime.committedCrime);
+                //- If the character is a Soldier, he will also create an Apprehend Job Type in his personal job queue. (TODO)
+                break;
+            default:
+                break;
+        }
+    }
+    public void AddCriminalTrait(CRIME crime) {
+        Trait trait = null;
+        switch (crime) {
+            case CRIME.THEFT:
+                trait = new Thief();
+                break;
+            case CRIME.ASSAULT:
+                trait = new Assaulter();
+                break;
+            case CRIME.MURDER:
+                trait = new Murderer();
+                break;
+            default:
+                break;
+        }
+        if (trait != null) {
+            AddTrait(trait);
+        }
+    }
+    public bool CanReactToCrime() {
+        if (stateComponent.currentState == null) {
+            return true;
+        } else {
+            if (stateComponent.currentState.characterState == CHARACTER_STATE.FLEE || stateComponent.currentState.characterState == CHARACTER_STATE.ENGAGE) {
+                return false;
+            }
+        }
+        return true;
     }
     #endregion
 }

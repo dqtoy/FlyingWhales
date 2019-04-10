@@ -141,6 +141,17 @@ public class  TileObject : IPointOfInterest {
             RemoveTrait(traits[i]);
         }
     }
+    public List<Trait> RemoveAllTraitsByType(TRAIT_TYPE traitType) {
+        List<Trait> removedTraits = new List<Trait>();
+        for (int i = 0; i < _traits.Count; i++) {
+            if (_traits[i].type == traitType) {
+                removedTraits.Add(_traits[i]);
+                _traits.RemoveAt(i);
+                i--;
+            }
+        }
+        return removedTraits;
+    }
     public Trait GetTrait(string traitName) {
         for (int i = 0; i < _traits.Count; i++) {
             if (_traits[i].name == traitName) {

@@ -67,7 +67,7 @@ public class EatAtTable : GoapAction {
     private void PreEatPoisoned() {
         currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
         actor.AdjustDoNotGetHungry(1);
-        poiTarget.RemoveTrait("Poisoned");
+        RemoveTraitFrom(poiTarget, "Poisoned");
     }
     private void PerTickEatPoisoned() {
         actor.AdjustFullness(12);
@@ -76,7 +76,7 @@ public class EatAtTable : GoapAction {
         actor.AdjustDoNotGetHungry(-1);
         int chance = UnityEngine.Random.Range(0, 2);
         if(chance == 0) {
-            actor.AddTrait("Sick");
+            AddTraitTo(actor, "Sick");
         } else {
             actor.Death();
         }

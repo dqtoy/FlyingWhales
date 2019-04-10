@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-public class PlayerNotificationArea : UIMenu {
+public class DeveloperNotificationArea : UIMenu {
 
     [SerializeField] private GameObject notificationItemPrefab;
     [SerializeField] private ScrollRect notificationsScrollView;
@@ -20,7 +20,7 @@ public class PlayerNotificationArea : UIMenu {
 
     public void ShowNotification(string text, int expirationTicks, UnityAction onClickAction = null) {
         GameObject notificationGO = UIManager.Instance.InstantiateUIObject(notificationItemPrefab.name, notificationsScrollView.content);
-        PlayerNotificationItem notificationItem = notificationGO.GetComponent<PlayerNotificationItem>();
+        DeveloperNotificationItem notificationItem = notificationGO.GetComponent<DeveloperNotificationItem>();
         notificationGO.SetActive(true);
         notificationItem.SetNotification(text, expirationTicks, onClickAction);
     }

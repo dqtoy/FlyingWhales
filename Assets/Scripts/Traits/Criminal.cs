@@ -7,7 +7,7 @@ public class Criminal : Trait {
     public Criminal() {
         name = "Criminal";
         description = "This character has been branded as a criminal by his/her own faction.";
-        type = TRAIT_TYPE.STATUS;
+        type = TRAIT_TYPE.CRIMINAL;
         effect = TRAIT_EFFECT.NEGATIVE;
         associatedInteraction = INTERACTION_TYPE.NONE;
         daysDuration = 0;

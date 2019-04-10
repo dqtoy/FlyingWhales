@@ -123,7 +123,7 @@ public class ArgueCharacter : GoapAction {
     }
     private void AfterArgueSuccess() {
         actor.AdjustDoNotGetLonely(-1);
-        (poiTarget as Character).AddTrait("Annoyed");
+        AddTraitTo(poiTarget, "Annoyed");
     }
     private void PreArgueFail() {
         currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);

@@ -88,7 +88,7 @@ public class Sleep : GoapAction {
     private void AfterRestSuccess() {
         poiTarget.SetPOIState(POI_STATE.ACTIVE);
         //actor.AdjustDoNotGetTired(-1);
-        actor.RemoveTrait("Resting");
+        RemoveTraitFrom(actor, "Resting");
     }
     private void PreRestFail() {
         currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);

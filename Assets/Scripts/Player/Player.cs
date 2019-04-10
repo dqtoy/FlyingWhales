@@ -687,17 +687,9 @@ public class Player : ILeader {
     }
     private void OnCharacterWillDoPlan(Character character, GoapPlan plan) {
         bool showPopup = false;
-        
         if (plan.endNode.action.showIntelNotification 
             && plan.endNode.action.planLog != null) { //do not show notification if plan log of end node is null, usually means that the action is not that important
-            if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.id == character.id) {
-                showPopup = true;
-            } else if (roleSlots[JOB.SPY].activeAction is Track) {
-                Track track = roleSlots[JOB.SPY].activeAction as Track;
-                if (track.target == character) {
-                    showPopup = true;
-                }
-            }
+            showPopup = ShouldShowNotificationFrom(character);
         }
         if (showPopup) {
             Messenger.Broadcast<Intel>(Signals.SHOW_INTEL_NOTIFICATION, InteractionManager.Instance.CreateNewIntel(plan, character));
@@ -706,17 +698,31 @@ public class Player : ILeader {
     private void OnCharacterDidAction(Character character, GoapAction action) {
         bool showPopup = false;
         if (action.showIntelNotification) {
-            if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.id == character.id) {
-                showPopup = true;
-            } else if (roleSlots[JOB.SPY].activeAction is Track) {
-                Track track = roleSlots[JOB.SPY].activeAction as Track;
-                if (track.target == character) {
-                    showPopup = true;
-                }
-            }
+            showPopup = ShouldShowNotificationFrom(character);
         }
         if (showPopup) {
             Messenger.Broadcast<Intel>(Signals.SHOW_INTEL_NOTIFICATION, InteractionManager.Instance.CreateNewIntel(action, character));
+        }
+    }
+    #endregion
+
+    #region Player Notifications
+    private bool ShouldShowNotificationFrom(Character character) {
+        //return true;
+        if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.id == character.id) {
+            return true;
+        } else if (roleSlots[JOB.SPY].activeAction is Track) {
+            Track track = roleSlots[JOB.SPY].activeAction as Track;
+            if (track.target == character) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public void ShowNotificationFrom(Character character, Log log) {
+        if (ShouldShowNotificationFrom(character)) {
+            Messenger.Broadcast<Log>(Signals.SHOW_PLAYER_NOTIFICATION, log);
+            //UIManager.Instance.Pause();
         }
     }
     #endregion

@@ -25,6 +25,7 @@ public interface IPointOfInterest {
     bool RemoveTrait(Trait trait, bool triggerOnRemove = true);
     bool RemoveTrait(string traitName, bool triggerOnRemove = true);
     void RemoveTrait(List<Trait> traits);
+    List<Trait> RemoveAllTraitsByType(TRAIT_TYPE traitType);
     Trait GetTrait(string traitName);
     #endregion
 

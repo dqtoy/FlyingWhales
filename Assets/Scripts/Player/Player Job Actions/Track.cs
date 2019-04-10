@@ -46,7 +46,7 @@ public class Track : PlayerJobAction {
         if (target != null) {
             if (popup.log.IsIncludedInFillers(target)) {
                 Log log = popup.log;
-                Messenger.Broadcast<string, int, UnityAction>(Signals.SHOW_NOTIFICATION, Utilities.LogReplacer(log), 5, () => ConvertToIntel(log, popup));
+                Messenger.Broadcast<string, int, UnityAction>(Signals.SHOW_DEVELOPER_NOTIFICATION, Utilities.LogReplacer(log), 5, () => ConvertToIntel(log, popup));
             }
         }
     }

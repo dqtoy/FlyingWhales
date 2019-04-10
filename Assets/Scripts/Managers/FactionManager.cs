@@ -539,7 +539,7 @@ public class FactionManager : MonoBehaviour {
     public void DeclareWarBetween(Faction faction1, Faction faction2) {
         FactionRelationship rel = GetRelationshipBetween(faction1, faction2);
         rel.SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.ENEMY);
-        Messenger.Broadcast<string, int, UnityEngine.Events.UnityAction>(Signals.SHOW_NOTIFICATION, "<color=\"green\"><b> " + faction1.name + "</b></color> declares war on <color=\"green\"><b>" + faction2.name + "</b></color>.", 5, null);
+        Messenger.Broadcast<string, int, UnityEngine.Events.UnityAction>(Signals.SHOW_DEVELOPER_NOTIFICATION, "<color=\"green\"><b> " + faction1.name + "</b></color> declares war on <color=\"green\"><b>" + faction2.name + "</b></color>.", 5, null);
     }
     public void DeclarePeaceBetween(Faction faction1, Faction faction2) {
         //faction1.SetFavorFor(faction2, -4);
@@ -547,7 +547,7 @@ public class FactionManager : MonoBehaviour {
 
         FactionRelationship rel = GetRelationshipBetween(faction1, faction2);
         rel.SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.NEUTRAL);
-        Messenger.Broadcast<string, int, UnityEngine.Events.UnityAction>(Signals.SHOW_NOTIFICATION, "<color=\"green\"><b> " + faction1.name + "</b></color> declares peace on <color=\"green\"><b>" + faction2.name + "</b></color>.", 5, null);
+        Messenger.Broadcast<string, int, UnityEngine.Events.UnityAction>(Signals.SHOW_DEVELOPER_NOTIFICATION, "<color=\"green\"><b> " + faction1.name + "</b></color> declares peace on <color=\"green\"><b>" + faction2.name + "</b></color>.", 5, null);
     }
     public int GetAverageFactionLevel() {
         int activeFactionsCount = allFactions.Where(x => x.isActive).Count();
