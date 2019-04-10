@@ -419,13 +419,14 @@ public class Faction {
 
         if (_name == "Fyn") {
             //Male Human King with **3 Human Soldiers** as his servants
-            for (int i = 0; i < 3; i++) {
+            for (int i = 0; i < 2; i++) {
                 Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.HUMANS, Utilities.GetRandomGender(),
                     this, _ownedAreas[0]);
                 createdCharacter.LevelUp(citizensLevel - 1);
                 CharacterManager.Instance.CreateNewRelationshipBetween(leader, createdCharacter, RELATIONSHIP_TRAIT.SERVANT);
             }
 
+            /*
             //**2 Human Nobles** with **2 Human Soldiers** each as their servants
             for (int i = 0; i < 2; i++) {
                 Character noble = CharacterManager.Instance.CreateNewCharacter(CharacterRole.NOBLE, RACE.HUMANS, Utilities.GetRandomGender(),
@@ -439,10 +440,11 @@ public class Faction {
                     CharacterManager.Instance.CreateNewRelationshipBetween(noble, createdCharacter, RELATIONSHIP_TRAIT.SERVANT);
                 }
             }
+            */
 
-            //**3 Human Adventurers**
-            //**3 Human Civilians**
-            for (int i = 0; i < 3; i++) {
+            //**2 Human Adventurers**
+            //**2 Human Civilians**
+            for (int i = 0; i < 2; i++) {
                 Character adventurer = CharacterManager.Instance.CreateNewCharacter(CharacterRole.ADVENTURER, RACE.HUMANS, Utilities.GetRandomGender(),
                     this, _ownedAreas[0]);
                 adventurer.LevelUp(citizensLevel - 1);
@@ -489,25 +491,23 @@ public class Faction {
 
             }
         } else if (_name == "Ziranna") {
-            //Male Human Necromancer with **3 Skeleton Soldiers** and **2 Goblin Soldiers** as his Servants
-            for (int i = 0; i < 3; i++) {
+            //Male Human Necromancer with **2 Skeleton Soldiers** and **2 Goblin Soldiers** as his Servants
+            for (int i = 0; i < 2; i++) {
                 Character skeletonSoldier = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.SKELETON, Utilities.GetRandomGender(),
                     this, _ownedAreas[0]);
                 skeletonSoldier.LevelUp(citizensLevel - 1);
                 CharacterManager.Instance.CreateNewRelationshipBetween(leader, skeletonSoldier, RELATIONSHIP_TRAIT.SERVANT);
 
-                if (i < 2) {
-                    Character goblinSoldier = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.GOBLIN, Utilities.GetRandomGender(),
-                        this, _ownedAreas[0]);
-                    goblinSoldier.LevelUp(citizensLevel - 1);
-                    CharacterManager.Instance.CreateNewRelationshipBetween(leader, goblinSoldier, RELATIONSHIP_TRAIT.SERVANT);
-                }
+                Character goblinSoldier = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.GOBLIN, Utilities.GetRandomGender(),
+                    this, _ownedAreas[0]);
+                goblinSoldier.LevelUp(citizensLevel - 1);
+                CharacterManager.Instance.CreateNewRelationshipBetween(leader, goblinSoldier, RELATIONSHIP_TRAIT.SERVANT);
             }
 
-            //**2 Skeleton Adventurers** and **2 Goblin Adventurers**
-            //**3 Goblin Civilians**
-            for (int i = 0; i < 3; i++) {
-                if (i < 2) {
+            //**1 Skeleton Adventurer** and **1 Goblin Adventurer**
+            //**2 Goblin Civilians**
+            for (int i = 0; i < 2; i++) {
+                if (i < 1) {
                     Character skeletonSoldier = CharacterManager.Instance.CreateNewCharacter(CharacterRole.ADVENTURER, RACE.SKELETON, Utilities.GetRandomGender(),
                             this, _ownedAreas[0]);
                     skeletonSoldier.LevelUp(citizensLevel - 1);
