@@ -31,7 +31,7 @@ public class SupplyPile : TileObject, IPointOfInterest {
     private void CheckSupply() {
         if (suppliesInPile < 100) {
             if (!location.location.jobQueue.HasJobRelatedTo(GOAP_EFFECT_CONDITION.HAS_SUPPLY, this)) {
-                JobQueueItem job = new JobQueueItem(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_SUPPLY, conditionKey = 0, targetPOI = this });
+                GoapPlanJob job = new GoapPlanJob(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_SUPPLY, conditionKey = 0, targetPOI = this });
                 job.SetCanTakeThisJobChecker(CanCharacterTakeThisJob);
                 location.location.jobQueue.AddJobInQueue(job);
             }

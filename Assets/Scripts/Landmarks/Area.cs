@@ -169,6 +169,7 @@ public class Area {
 #endif
         nameplatePos = LandmarkManager.Instance.GetAreaNameplatePosition(this);
         possibleOccupants = new List<RACE>();
+        //SubscribeToSignals();
     }
     public Area(AreaSaveData data) {
         id = Utilities.SetID(this, data.areaID);
@@ -228,8 +229,17 @@ public class Area {
         //}
         GenerateDefaultRace();
         nameplatePos = LandmarkManager.Instance.GetAreaNameplatePosition(this);
+        //SubscribeToSignals();
     }
 
+    private void SubscribeToSignals() {
+        Messenger.AddListener(Signals.HOUR_STARTED, CreatePatrolAndExploreJobs);
+    }
+    private void UnsubscribeToSignals() {
+        if (Messenger.eventTable.ContainsKey(Signals.HOUR_STARTED)) {
+            Messenger.RemoveListener(Signals.HOUR_STARTED, CreatePatrolAndExploreJobs);
+        }
+    }
     #region Area Details
     public void SetName(string name) {
         this.name = name;
@@ -551,9 +561,9 @@ public class Area {
             }
 #else
             if (currTile.id == coreTile.id) {
-                currTile.HighlightTile(areaColor, 255f/255f);
+                currTile.HighlightTile(areaColor, 255f / 255f);
             } else {
-                currTile.HighlightTile(areaColor, 128f/255f);
+                currTile.HighlightTile(areaColor, 128f / 255f);
             }
 #endif
         }
@@ -591,6 +601,13 @@ public class Area {
     public void SetOwner(Faction owner) {
         previousOwner = this.owner;
         this.owner = owner;
+        if(areaType != AREA_TYPE.DEMONIC_INTRUSION) {
+            if (this.owner != null && this.owner.id != FactionManager.Instance.neutralFaction.id) {
+                SubscribeToSignals();
+            } else {
+                UnsubscribeToSignals();
+            }
+        }
         UpdateBorderColors();
         /*Whenever a location is occupied, 
          all items in structures Inside Settlement will be owned by the occupying faction.*/
@@ -617,7 +634,7 @@ public class Area {
         for (int i = 0; i < tiles.Count; i++) {
             if (owner == null) {
                 Color defaultColor = Color.gray;
-                defaultColor.a = 128f/255f;
+                defaultColor.a = 128f / 255f;
                 tiles[i].SetBorderColor(defaultColor);
             } else {
                 tiles[i].SetBorderColor(owner.factionColor);
@@ -661,6 +678,7 @@ public class Area {
             }
 
             ReleaseAllAbductedCharacters();
+            UnsubscribeToSignals();
         }
     }
     private void ReleaseAllAbductedCharacters() {
@@ -1162,11 +1180,11 @@ public class Area {
             Debug.LogWarning(this.name + " doesn't have any dwellings for " + character.name);
             return;
         }
-        if(character.faction.id == FactionManager.Instance.neutralFaction.id) {
+        if (character.faction.id == FactionManager.Instance.neutralFaction.id) {
             character.SetHomeStructure(null);
             if (character.specificLocation != null
                 && character.specificLocation.id == this.id) { //if the character is currently at his home area, and his home was changed, relocate him
-                if(character.currentStructure != null) {
+                if (character.currentStructure != null) {
                     character.currentStructure.RemoveCharacterAtLocation(character);
                 }
                 AddCharacterToAppropriateStructure(character);
@@ -1180,7 +1198,7 @@ public class Area {
             Character lover = character.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.LOVER);
             if (lover != null && lover.faction.id == character.faction.id && areaResidents.Contains(lover)) { //check if the character has a lover that lives in the area
                 chosenDwelling = lover.homeStructure;
-            } 
+            }
             //else {
             //    //if none, check if they have a master/servant in the area
             //    Character master = character.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.MASTER);
@@ -1250,7 +1268,7 @@ public class Area {
         }
 
         //If character has no relationship whatsoever with residents here, check if there is an empty dwelling to reside in
-        if(GetNumberOfUnoccupiedStructure(STRUCTURE_TYPE.DWELLING) > 0) {
+        if (GetNumberOfUnoccupiedStructure(STRUCTURE_TYPE.DWELLING) > 0) {
             return true;
         }
         return false;
@@ -1258,7 +1276,7 @@ public class Area {
     public void RemoveResident(Character character) {
         if (areaResidents.Remove(character)) {
             character.SetHome(null);
-            if(character.homeArea != null) {
+            if (character.homeArea != null) {
                 character.homeStructure.RemoveResident(character);
             }
             CheckForUnoccupancy();
@@ -1306,7 +1324,7 @@ public class Area {
             //    AddCharacterToAppropriateStructure(character);
             //}
             //}
-            if(tileOverride != null) {
+            if (tileOverride != null) {
                 tileOverride.structure.AddCharacterAtLocation(character, tileOverride);
             } else {
                 if (isInitial) {
@@ -1344,13 +1362,13 @@ public class Area {
         //}
     }
     public void AddCharacterToAppropriateStructure(Character character) {
-        if(character.GetTraitOr("Abducted", "Restrained") != null) {
+        if (character.GetTraitOr("Abducted", "Restrained") != null) {
             GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA).AddCharacterAtLocation(character);
         } else {
             if (character.homeArea.id == this.id) {
                 if (character.homeStructure == null) {
                     //throw new Exception(character.name + "'s homeStructure is null!");
-                    if(UnityEngine.Random.Range(0, 2) == 0) {
+                    if (UnityEngine.Random.Range(0, 2) == 0) {
                         LocationStructure wilderness = GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
                         if (wilderness != null) {
                             wilderness.AddCharacterAtLocation(character);
@@ -1523,7 +1541,7 @@ public class Area {
                 }
             }
         }
-        
+
     }
     public void SetInitialResidents(int initialResidents) {
         this.initialResidents = initialResidents;
@@ -1543,11 +1561,11 @@ public class Area {
     public Character GetRandomCharacterAtLocationExcept(Character character) {
         List<Character> choices = new List<Character>();
         for (int i = 0; i < charactersAtLocation.Count; i++) {
-            if(charactersAtLocation[i] != character) {
+            if (charactersAtLocation[i] != character) {
                 choices.Add(charactersAtLocation[i]);
             }
         }
-        if(choices.Count > 0) {
+        if (choices.Count > 0) {
             return choices[UnityEngine.Random.Range(0, choices.Count)];
         }
         return null;
@@ -1583,7 +1601,7 @@ public class Area {
             if (resident.isIdle && !resident.isLeader
                 && !resident.characterClass.isNonCombatant
                 && !resident.isDefender && resident.specificLocation.id == id && resident.currentStructure.isInside) {
-                if((owner != null && resident.faction == owner) || (owner == null && resident.faction == FactionManager.Instance.neutralFaction)) {
+                if ((owner != null && resident.faction == owner) || (owner == null && resident.faction == FactionManager.Instance.neutralFaction)) {
                     residentsAtArea.Add(resident);
                 }
             }
@@ -1622,7 +1640,7 @@ public class Area {
         List<Character> attackCharacters = new List<Character>();
         for (int i = 0; i < combatGrid.slots.Length; i++) {
             if (combatGrid.slots[i].isOccupied) {
-                if (!attackCharacters.Contains(combatGrid.slots[i].character)){
+                if (!attackCharacters.Contains(combatGrid.slots[i].character)) {
                     attackCharacters.Add(combatGrid.slots[i].character);
                 }
             }
@@ -1660,7 +1678,7 @@ public class Area {
             Debug.Log(GameManager.Instance.TodayLogString() + "Removed " + token.name + " from " + name);
             Messenger.Broadcast(Signals.ITEM_REMOVED_FROM_AREA, this, token);
         }
-        
+
     }
     public bool IsItemInventoryFull() {
         return possibleSpecialTokenSpawns.Count >= MAX_ITEM_CAPACITY;
@@ -1770,7 +1788,7 @@ public class Area {
      1 = inside,
      2 = any
          */
-    public LocationStructure GetRandomStructureOfType(STRUCTURE_TYPE type, int locationStatus = 2) { 
+    public LocationStructure GetRandomStructureOfType(STRUCTURE_TYPE type, int locationStatus = 2) {
         if (structures.ContainsKey(type)) { //any
             if (locationStatus == 2) {
                 return structures[type][Utilities.rng.Next(0, structures[type].Count)];
@@ -1793,7 +1811,7 @@ public class Area {
                 }
                 return choices[Utilities.rng.Next(0, choices.Count)];
             }
-            
+
         }
         return null;
     }
@@ -1803,7 +1821,7 @@ public class Area {
         int dictIndex = UnityEngine.Random.Range(0, structures.Count);
         int count = 0;
         foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp in structures) {
-            if(count == dictIndex) {
+            if (count == dictIndex) {
                 return kvp.Value[UnityEngine.Random.Range(0, kvp.Value.Count)];
             }
             count++;
@@ -1869,7 +1887,7 @@ public class Area {
                     structure.RegisterPreplacedObjects();
                 }
             }
-        }        
+        }
 
         PlaceBedsAndTables();
         PlaceOres();
@@ -1893,7 +1911,7 @@ public class Area {
                 }
             }
         }
-        
+
     }
     private void PlaceBedsAndTables() {
         if (structures.ContainsKey(STRUCTURE_TYPE.DWELLING)) {
@@ -1916,7 +1934,7 @@ public class Area {
                 }
             }
         }
-        }
+    }
     private void PlaceOres() {
         if (structures.ContainsKey(STRUCTURE_TYPE.WILDERNESS)) {
             LocationStructure structure = structures[STRUCTURE_TYPE.WILDERNESS][0];
@@ -1982,13 +2000,13 @@ public class Area {
         foreach (List<LocationStructure> locationStructures in structures.Values) {
             for (int i = 0; i < locationStructures.Count; i++) {
                 for (int j = 0; j < locationStructures[i].pointsOfInterest.Count; j++) {
-                    if(locationStructures[i].pointsOfInterest[j].poiType != POINT_OF_INTEREST_TYPE.CHARACTER) {
+                    if (locationStructures[i].pointsOfInterest[j].poiType != POINT_OF_INTEREST_TYPE.CHARACTER) {
                         tileObjects.Add(locationStructures[i].pointsOfInterest[j]);
                     }
                 }
             }
         }
-        if(tileObjects.Count > 0) {
+        if (tileObjects.Count > 0) {
             return tileObjects[UnityEngine.Random.Range(0, tileObjects.Count)];
         }
         return null;
@@ -2004,6 +2022,22 @@ public class Area {
             }
         }
         return pois;
+    }
+    #endregion
+
+    #region Jobs
+    private void CreatePatrolAndExploreJobs() {
+        int patrolChance = UnityEngine.Random.Range(0, 100);
+        if(patrolChance < 25 && jobQueue.GetNumberOfJobsWith(CHARACTER_STATE.PATROL) < 2) {
+            CharacterStateJob stateJob = new CharacterStateJob(CHARACTER_STATE.PATROL);
+            jobQueue.AddJobInQueue(stateJob);
+        }
+
+        int exploreChance = UnityEngine.Random.Range(0, 100);
+        if (exploreChance < 15 && !jobQueue.HasJobRelatedTo(CHARACTER_STATE.EXPLORE)) {
+            CharacterStateJob stateJob = new CharacterStateJob(CHARACTER_STATE.EXPLORE);
+            jobQueue.AddJobInQueue(stateJob);
+        }
     }
     #endregion
 

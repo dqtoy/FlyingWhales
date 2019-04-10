@@ -1182,6 +1182,7 @@ public class AreaInnerTileMap : MonoBehaviour {
                 //This means that the character travelled to a different area
                 character.marker.gameObject.transform.SetParent(objectsParent);
                 character.marker.gameObject.transform.localPosition = tile.centeredLocalLocation;
+                character.marker.UpdatePosition();
             }
         }
 
