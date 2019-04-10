@@ -826,6 +826,22 @@ public class Utilities : MonoBehaviour {
             return "a";
         }
     }
+    public static string GetRelationshipPlural(RELATIONSHIP_TRAIT rel) {
+        switch (rel) {
+            case RELATIONSHIP_TRAIT.ENEMY:
+                return "Enemies";
+            case RELATIONSHIP_TRAIT.FRIEND:
+                return "Friends";
+            case RELATIONSHIP_TRAIT.RELATIVE:
+                return "Relatives";
+            case RELATIONSHIP_TRAIT.LOVER:
+                return "Lovers";
+            case RELATIONSHIP_TRAIT.PARAMOUR:
+                return "Paramours";
+            default:
+                return NormalizeStringUpperCaseFirstLetters(rel.ToString());
+        }
+    }
     #endregion
 
     #region Weighted Dictionary
