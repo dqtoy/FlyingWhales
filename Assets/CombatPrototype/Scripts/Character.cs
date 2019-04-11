@@ -1437,7 +1437,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         _portraitSettings = CharacterManager.Instance.GenerateRandomPortrait(race, gender);
     }
     public void ChangeClass(string className) {
-        //TODO: Change data as needed
         string previousClassName = _characterClass.className;
         AssignClass(className);
         //_characterClass = charClass.CreateNewCopy();
@@ -1610,7 +1609,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             return true;
         }
         //if (currentAction != null) {
-        //    return currentAction.goapType == INTERACTION_TYPE.ASSAULT_ACTION_NPC; //TODO: put this in individual actions maybe?
+        //    return currentAction.goapType == INTERACTION_TYPE.ASSAULT_ACTION_NPC;
         //}
         return false;
     }
@@ -1619,7 +1618,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //    return true;
         //}
         if (currentAction != null) {
-            return currentAction.goapType == INTERACTION_TYPE.ASSAULT_ACTION_NPC && currentAction.poiTarget == otherCharacter; //TODO: put this in individual actions maybe?
+            return currentAction.goapType == INTERACTION_TYPE.ASSAULT_ACTION_NPC && currentAction.poiTarget == otherCharacter; 
         }
         return false;
     }
@@ -4342,6 +4341,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         poiGoapActions.Add(INTERACTION_TYPE.RETURN_HOME_LOCATION);
         poiGoapActions.Add(INTERACTION_TYPE.HUNT_ACTION);
         poiGoapActions.Add(INTERACTION_TYPE.PLAY);
+        poiGoapActions.Add(INTERACTION_TYPE.REPORT_CRIME);
     }
     public void StartGOAP(GoapEffect goal, IPointOfInterest target, GOAP_CATEGORY category, bool isPriority = false, List<Character> otherCharactePOIs = null, bool isPersonalPlan = true, GoapPlanJob job = null) {
         List<CharacterAwareness> characterTargetsAwareness = new List<CharacterAwareness>();
@@ -4914,6 +4914,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         Debug.Log(reactSummary);
     }
     private void PerRoleCrimeReaction(GoapAction crime) {
+        GoapPlanJob job = null;
         switch (role.roleType) {
             case CHARACTER_ROLE.CIVILIAN:
             case CHARACTER_ROLE.ADVENTURER:
@@ -4925,11 +4926,17 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 //- If the character is a Noble or Faction Leader, the criminal will gain the relevant Crime-type trait
                 //If he is a Noble or Faction Leader, he will create the Apprehend Job Type in the Location job queue instead.
                 crime.actor.AddCriminalTrait(crime.committedCrime);
+                job = new GoapPlanJob(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = crime.actor });
+                homeArea.jobQueue.AddJobInQueue(job);
                 break;
             case CHARACTER_ROLE.SOLDIER:
                 //- If the character is a Soldier, the criminal will gain the relevant Crime-type trait
                 crime.actor.AddCriminalTrait(crime.committedCrime);
-                //- If the character is a Soldier, he will also create an Apprehend Job Type in his personal job queue. (TODO)
+                //- If the character is a Soldier, he will also create an Apprehend Job Type in his personal job queue.
+                job = new GoapPlanJob(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = crime.actor });
+                homeArea.jobQueue.AddJobInQueue(job);
+                homeArea.jobQueue.AssignCharacterToJob(job, this);
+                //job.SetAssignedCharacter(this);
                 break;
             default:
                 break;

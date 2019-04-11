@@ -49,7 +49,7 @@ public class JudgeCharacter : GoapAction {
         }
         //**Effect 3**: If target is from the same faction, remove any Criminal type trait from him.
         else {
-            RemoveTraitFrom(poiTarget, "Criminal");
+            RemoveTraitsOfType(poiTarget, TRAIT_TYPE.CRIMINAL);
         }
     }
     public void PreTargetExiled() {
@@ -67,7 +67,7 @@ public class JudgeCharacter : GoapAction {
         ForceTargetReturnHome();
 
         //**Effect 4**: Remove any Criminal type trait from him.
-        RemoveTraitFrom(target, "Criminal");
+        RemoveTraitsOfType(target, TRAIT_TYPE.CRIMINAL);
     }
     #endregion
 
