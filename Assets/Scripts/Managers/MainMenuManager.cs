@@ -45,7 +45,7 @@ public class MainMenuManager : MonoBehaviour {
         //PlayGame();
         //ShowWorldConfigurations();
         WorldConfigManager.Instance.SetDataToUse(newGameData);
-        LevelLoaderManager.Instance.LoadLevel("Main");
+        LevelLoaderManager.Instance.LoadLevel("Game");
     }
 
     private void ShowWorldConfigurations() {
@@ -90,6 +90,6 @@ public class MainMenuManager : MonoBehaviour {
     }
 
     private void PlayGame() {
-        LevelLoaderManager.Instance.LoadLevel("Main");
+        LevelLoaderManager.Instance.LoadLevel("Game");
     }
 }
