@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class ReportCrime : GoapAction {
 
-    GoapAction crimeToReport;
+    private CRIME crime;
+    private Character criminal;
 
     public ReportCrime(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.REPORT_CRIME, INTERACTION_ALIGNMENT.GOOD, actor, poiTarget) {
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
@@ -17,8 +18,9 @@ public class ReportCrime : GoapAction {
         };
     }
 
-    public void SetCrimeToReport(GoapAction goapAction) {
-        crimeToReport = goapAction;
+    public void SetCrimeToReport(CRIME crime, Character criminal) {
+        this.crime = crime;
+        this.criminal = criminal;
     }
 
     #region Overrides
@@ -41,7 +43,7 @@ public class ReportCrime : GoapAction {
     #region State Effects
     public void PreReportCrimeSuccess() {
         //**Effect 1**: The reported criminal will gain the associated Crime trait
-        crimeToReport.actor.AddCriminalTrait(crimeToReport.committedCrime);
+        criminal.AddCriminalTrait(crime);
     }
     #endregion
 

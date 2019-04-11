@@ -561,7 +561,6 @@ public class CharacterMarker : PooledObject {
         //    Messenger.RemoveListener<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, OnTileOccupied);
         //}
 
-        //TODO: add checker that if the nearest tile to target is same as the destination tile, must not call GoToTile anymore, just set shouldRecalculatePath to false
         if (nearestTileToTarget != null) {
             pathRecalSummary += "\nGot new target tile " + nearestTileToTarget.ToString() + ". Going there now.";
             //if (currentMoveCoroutine != null) {

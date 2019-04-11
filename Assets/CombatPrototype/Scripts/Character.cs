@@ -4856,16 +4856,31 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     #endregion
 
     #region Crime System
-    public void ReactToCrime(GoapAction crime) {
-        string reactSummary = GameManager.Instance.TodayLogString() + this.name + " will react to crime committed by " + crime.actor.name + "(" + crime.goapName + ")";
+    /// <summary>
+    /// Make this character react to a crime that he/she witnessed.
+    /// </summary>
+    /// <param name="witnessedCrime">Witnessed Crime.</param>
+    /// <param name="notifyPlayer">Should the player be notified when this happens?</param>
+    public void ReactToCrime(GoapAction witnessedCrime, bool notifyPlayer = true) {
+        ReactToCrime(witnessedCrime.committedCrime, witnessedCrime.actor, witnessedCrime, notifyPlayer);
+    }
+    /// <summary>
+    /// Base function for crime reactions
+    /// </summary>
+    /// <param name="committedCrime">The type of crime that was committed.</param>
+    /// <param name="actor">The character that committed the crime</param>
+    /// <param name="witnessedCrime">The crime witnessed by this character, if this is null, character was only informed of the crime by someone else.</param>
+    /// <param name="notifyPlayer">Should the player be notified when this happens?</param>
+    public void ReactToCrime(CRIME committedCrime, Character actor, GoapAction witnessedCrime = null, bool notifyPlayer = true) {
+        string reactSummary = GameManager.Instance.TodayLogString() + this.name + " will react to crime committed by " + actor.name;
         Log witnessLog = null;
         //If character has a positive relationship (Friend, Lover, Paramour) with the criminal
-        if (this.HasRelationshipOfEffectWith(crime.actor, TRAIT_EFFECT.POSITIVE, RELATIONSHIP_TRAIT.RELATIVE)) {
-            reactSummary += "\n" + this.name + " has a positive relationship with " + crime.actor.name;
-            CRIME_CATEGORY category = crime.committedCrime.GetCategory();
+        if (this.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE, RELATIONSHIP_TRAIT.RELATIVE)) {
+            reactSummary += "\n" + this.name + " has a positive relationship with " + actor.name;
+            CRIME_CATEGORY category = committedCrime.GetCategory();
             //and crime severity is less than Serious Crimes:
             if (category.IsLessThan(CRIME_CATEGORY.SERIOUS)) {
-                reactSummary += "\nCrime committed is less than serious, " + this.name + " will not do anything." ;
+                reactSummary += "\nCrime committed is less than serious, " + this.name + " will not do anything.";
                 //-Witness Log: "[Character Name] saw [Criminal Name] committing [Theft/Assault/Murder] but did not do anything due to their relationship."
                 witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "do_nothing");
             }
@@ -4873,8 +4888,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             else if (category.IsGreaterThanOrEqual(CRIME_CATEGORY.SERIOUS)) {
                 reactSummary += "\nCrime committed is serious or worse. Removing positive relationships.";
                 //- Witness Log: "[Character Name] saw [Criminal Name] committing [Theft/Assault/Murder]! They are no longer [Friends/Lovers/Paramours]."
-                List<RelationshipTrait> traitsToRemove = GetAllRelationshipOfEffectWith(crime.actor, TRAIT_EFFECT.POSITIVE);
-                CharacterManager.Instance.RemoveRelationshipBetween(this, crime.actor, traitsToRemove);
+                List<RelationshipTrait> traitsToRemove = GetAllRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE);
+                CharacterManager.Instance.RemoveRelationshipBetween(this, actor, traitsToRemove);
 
                 string removedTraitsSummary = string.Empty;
                 for (int i = 0; i < traitsToRemove.Count; i++) {
@@ -4894,49 +4909,66 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     //else use normal witnessed log
                     witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "witnessed");
                 }
-                PerRoleCrimeReaction(crime);
+                PerRoleCrimeReaction(committedCrime, actor);
             }
         }
         //If character has no relationships with the criminal or they are enemies:
-        else if (!this.HasRelationshipWith(crime.actor) || this.HasRelationshipOfTypeWith(crime.actor, RELATIONSHIP_TRAIT.ENEMY)) {
-            reactSummary += "\n" + this.name + " does not have a relationship with or is an enemy of " + crime.actor.name;
+        else if (!this.HasRelationshipWith(actor) || this.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.ENEMY)) {
+            reactSummary += "\n" + this.name + " does not have a relationship with or is an enemy of " + actor.name;
             //-Witness Log: "[Character Name] saw [Criminal Name] committing [Theft/Assault/Murder]!"
             witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "witnessed");
-            PerRoleCrimeReaction(crime);
+            PerRoleCrimeReaction(committedCrime, actor);
         }
 
         if (witnessLog != null) {
             witnessLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            witnessLog.AddToFillers(crime.actor, crime.actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-            witnessLog.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(crime.committedCrime.ToString()), LOG_IDENTIFIER.STRING_1);
-            PlayerManager.Instance.player.ShowNotificationFrom(this, witnessLog);
+            witnessLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            witnessLog.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(committedCrime.ToString()), LOG_IDENTIFIER.STRING_1);
+            if (notifyPlayer) {
+                PlayerManager.Instance.player.ShowNotificationFrom(this, witnessLog);
+            }
         }
         Debug.Log(reactSummary);
     }
-    private void PerRoleCrimeReaction(GoapAction crime) {
+    /// <summary>
+    /// Crime reactions per role.
+    /// </summary>
+    /// <param name="committedCrime">The type of crime that was committed.</param>
+    /// <param name="actor">The character that committed the crime</param>
+    /// <param name="witnessedCrime">The crime witnessed by this character, if this is null, character was only informed of the crime by someone else.</param>
+    private void PerRoleCrimeReaction(CRIME committedCrime, Character actor, GoapAction witnessedCrime = null) {
         GoapPlanJob job = null;
         switch (role.roleType) {
             case CHARACTER_ROLE.CIVILIAN:
             case CHARACTER_ROLE.ADVENTURER:
                 //- If the character is a Civilian or Adventurer, he will enter Flee mode (fleeing the criminal) and will create a Report Crime Job Type in his personal job queue
-                this.marker.AddHostileInRange(crime.actor, CHARACTER_STATE.FLEE);
+                if (witnessedCrime != null) {
+                    //only make character flee, if he/she actually witnessed the crime (not share intel)
+                    this.marker.AddHostileInRange(actor, CHARACTER_STATE.FLEE);
+                }
                 break;
             case CHARACTER_ROLE.LEADER:
             case CHARACTER_ROLE.NOBLE:
                 //- If the character is a Noble or Faction Leader, the criminal will gain the relevant Crime-type trait
                 //If he is a Noble or Faction Leader, he will create the Apprehend Job Type in the Location job queue instead.
-                crime.actor.AddCriminalTrait(crime.committedCrime);
-                job = new GoapPlanJob(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = crime.actor });
-                homeArea.jobQueue.AddJobInQueue(job);
+                if (actor.faction == this.faction) {
+                    //only add apprehend job if the criminal is part of this characters faction
+                    actor.AddCriminalTrait(committedCrime);
+                    job = new GoapPlanJob(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = actor });
+                    homeArea.jobQueue.AddJobInQueue(job);
+                }
+                
                 break;
             case CHARACTER_ROLE.SOLDIER:
                 //- If the character is a Soldier, the criminal will gain the relevant Crime-type trait
-                crime.actor.AddCriminalTrait(crime.committedCrime);
-                //- If the character is a Soldier, he will also create an Apprehend Job Type in his personal job queue.
-                job = new GoapPlanJob(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = crime.actor });
-                homeArea.jobQueue.AddJobInQueue(job);
-                homeArea.jobQueue.AssignCharacterToJob(job, this);
-                //job.SetAssignedCharacter(this);
+                if (actor.faction == this.faction) {
+                    //only add apprehend job if the criminal is part of this characters faction
+                    actor.AddCriminalTrait(committedCrime);
+                    //- If the character is a Soldier, he will also create an Apprehend Job Type in his personal job queue.
+                    job = new GoapPlanJob(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = actor });
+                    homeArea.jobQueue.AddJobInQueue(job);
+                    homeArea.jobQueue.AssignCharacterToJob(job, this);
+                }
                 break;
             default:
                 break;
