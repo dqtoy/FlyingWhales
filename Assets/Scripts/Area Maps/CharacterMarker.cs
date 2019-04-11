@@ -781,6 +781,7 @@ public class CharacterMarker : PooledObject {
     #region Reactions
     private void NormalReactToHostileCharacter(Character otherCharacter, CHARACTER_STATE forcedReaction = CHARACTER_STATE.NONE) {
         string summary = character.name + " will react to hostile " + otherCharacter.name;
+
         //- All characters that see another hostile will drop a non-combat action, if doing any.
         if (character.IsDoingCombatAction()) {
             summary += "\n" + character.name + " is already doing a combat action. Ignoring " + otherCharacter.name;
@@ -808,6 +809,36 @@ public class CharacterMarker : PooledObject {
                     //if the other character is already going to assault this character, and this character chose to engage, wait for the other characters assault instead
                     summary += "\n" + otherCharacter.name + " is already or will engage with this character (" + this.character.name + "), waiting for that, instead of starting new engage state.";
                 } else {
+                    //- A character that is in Flee mode will not trigger combat (but the other side still may)
+                    if (hasFleePath) {
+                        summary += "\n" + character.name + " is fleeing. Ignoring " + otherCharacter.name;
+                        Debug.Log(summary);
+                        return;
+                    }
+
+                    //- A character that is performing an Action will not trigger combat (but the other side still may)
+                    if (character.currentAction != null && character.currentAction.isPerformingActualAction) {
+                        summary += "\n" + character.name + " is currently performing" + character.currentAction.goapName + ". Ignoring " + otherCharacter.name;
+                        Debug.Log(summary);
+                        return;
+                    }
+
+                    //- A character in Combat Recovery will not trigger combat (but the other side still may)
+                    //- A character that has a Disabler trait will not trigger combat (but the other side still may)
+                    //since combat recovery is already a disabler trait, only use 1 case here
+                    if (character.HasTraitOf(TRAIT_TYPE.DISABLER)) {
+                        summary += "\n" + character.name + " has a disabler trait. Ignoring " + otherCharacter.name;
+                        Debug.Log(summary);
+                        return;
+                    }
+
+                    //- If the other character has a Negative Disabler trait, this character will not trigger combat
+                    if (otherCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+                        summary += "\n" + otherCharacter.name + " has a negative disabler trait. Ignoring " + otherCharacter.name;
+                        Debug.Log(summary);
+                        return;
+                    }
+
                     //- Uninjured Beasts, Adventurers and Soldiers will enter Engage mode.
                     character.stateComponent.SwitchToState(CHARACTER_STATE.ENGAGE, otherCharacter);
                     summary += "\n" + character.name + " chose to engage.";
@@ -902,15 +933,34 @@ public class CharacterMarker : PooledObject {
             Character enemy = currentlyEngaging;
             engageState.CombatOnEngage();
             SetTargetTransform(null);
-            RemoveHostileInRange(currentlyEngaging);
-            //if this character was injured from the combat, force him/her to flee from them
-            if (thisCharacter.GetTrait("Injured") != null && !enemy.isDead) {
-                AddHostileInRange(enemy, CHARACTER_STATE.FLEE);
+
+            //if this character died from combat
+            //remove him from the enemies hostiles in range
+            if (thisCharacter.isDead) {
+                enemy.marker.RemoveHostileInRange(thisCharacter);
+            } else {
+                if (!enemy.isDead) {
+                    enemy.marker.NormalReactToHostileCharacter(thisCharacter);
+                }
             }
-            //if the other character was injured from the combat, force him/her to flee this
-            if (enemy.GetTrait("Injured") != null && !thisCharacter.isDead) {
-                enemy.marker.AddHostileInRange(thisCharacter, CHARACTER_STATE.FLEE);
+
+            if (enemy.isDead) {
+                RemoveHostileInRange(enemy);
+            } else {
+                if (!thisCharacter.isDead) {
+                    NormalReactToHostileCharacter(enemy);
+                }
             }
+
+            //RemoveHostileInRange(currentlyEngaging);
+            ////if this character was injured from the combat, force him/her to flee from them
+            //if (thisCharacter.GetTrait("Injured") != null && !enemy.isDead) {
+            //    AddHostileInRange(enemy, CHARACTER_STATE.FLEE);
+            //}
+            ////if the other character was injured from the combat, force him/her to flee this
+            //if (enemy.GetTrait("Injured") != null && !thisCharacter.isDead) {
+            //    enemy.marker.AddHostileInRange(thisCharacter, CHARACTER_STATE.FLEE);
+            //}
         }
     }
     public void SetCannotCombat(bool state) {

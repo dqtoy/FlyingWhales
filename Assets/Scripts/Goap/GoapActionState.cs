@@ -14,6 +14,7 @@ public class GoapActionState {
     public Action afterEffect { get; private set; }
     public Func<Character, List<string>> shareIntelReaction { get; private set; }
     public string status { get; private set; }
+    public bool shouldAddLogs { get; private set; }
 
     public bool hasPerTickEffect { get { return perTickEffect != null; } }
     private int _currentDuration;
@@ -33,6 +34,7 @@ public class GoapActionState {
         shareIntelReaction = intelReaction;
     }
 
+    #region Logs
     private void CreateLog() {
         descriptionLog = new Log(GameManager.Instance.Today(), "GoapAction", parentAction.GetType().ToString(), name.ToLower() + "_description");
         AddLogFiller(parentAction.actor, parentAction.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -40,10 +42,14 @@ public class GoapActionState {
     public void OverrideDescriptionLog(Log log) {
         descriptionLog = log;
     }
-
     public void AddLogFiller(object obj, string value, LOG_IDENTIFIER identifier) {
         descriptionLog.AddToFillers(obj, value, identifier);
     }
+    public void SetShouldAddLogs(bool state) {
+        shouldAddLogs = state;
+    }
+    #endregion
+
 
     public void Execute() {
         preEffect?.Invoke();
@@ -64,7 +70,7 @@ public class GoapActionState {
         if (afterEffect != null) {
             afterEffect();
         }
-        if (parentAction.shouldAddLogs) {
+        if (parentAction.shouldAddLogs && this.shouldAddLogs) { //only add logs if both the parent action and this state should add logs
             descriptionLog.SetDate(GameManager.Instance.Today());
             descriptionLog.AddLogToInvolvedObjects();
         }

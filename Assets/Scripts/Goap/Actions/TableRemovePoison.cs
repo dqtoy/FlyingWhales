@@ -8,6 +8,7 @@ public class TableRemovePoison : GoapAction {
     public TableRemovePoison(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.TABLE_REMOVE_POISON, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         this.goapName = "Remove Poison";
         actionIconString = GoapActionStateDB.Social_Icon;
+        actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
     }
 
     #region Overrides
@@ -15,22 +16,19 @@ public class TableRemovePoison : GoapAction {
         _requirementAction = Requirement;
     }
     protected override void ConstructPreconditionsAndEffects() {
+        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = SPECIAL_TOKEN.TOOL, targetPOI = actor }, HasItemTool);
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Poisoned", targetPOI = poiTarget });
     }
     public override void PerformActualAction() {
-        if (poiTarget.gridTileLocation != null && actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
-            if (poiTarget.GetTrait("Poisoned") != null) {
-                SetState("Remove Poison Success");
-            } else {
-                SetState("Remove Poison Fail");
-            }
+        if (poiTarget.gridTileLocation.structure == actor.currentStructure) {
+            SetState("Remove Poison Success");
         } else {
             SetState("Target Missing");
         }
         base.PerformActualAction();
     }
     protected override int GetCost() {
-        return 1;
+        return 4;
     }
     //public override void FailAction() {
     //    base.FailAction();
@@ -49,6 +47,12 @@ public class TableRemovePoison : GoapAction {
     private bool Requirement() {
         //**Advertiser**: All Tables with Poisoned trait
         return poiTarget.GetTrait("Poisoned") != null;
+    }
+    #endregion
+
+    #region Preconditions
+    private bool HasItemTool() {
+        return actor.isHoldingItem && actor.tokenInInventory.name == "Tool";
     }
     #endregion
 }

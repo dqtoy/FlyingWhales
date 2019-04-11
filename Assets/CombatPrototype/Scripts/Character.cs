@@ -4831,9 +4831,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             //if either the character in question or this character should ignore hostility, return false.
             return false;
         }
-        if (character.GetTrait("Injured") != null) {
-            return false; //ignore injured characters
-        }
         if (this.faction.id == FactionManager.Instance.neutralFaction.id) {
             //this character is unaligned
             //if unaligned, hostile to all other characters, except those of same race
