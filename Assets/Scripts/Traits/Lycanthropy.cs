@@ -54,6 +54,8 @@ public class Lycanthropy : Trait {
         //Copy non delicate data
         data.SetData(_character);
 
+        _character.SetHomeStructure(null);
+
         //Reset needs
         _character.ResetFullnessMeter();
         _character.ResetHappinessMeter();

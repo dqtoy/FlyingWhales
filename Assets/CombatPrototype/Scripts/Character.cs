@@ -1017,11 +1017,11 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         bool wasRoleChanged = false;
         if (_role != null) {
             _role.OnChange(this);
-#if !WORLD_CREATION_TOOL
-            Log roleChangeLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "change_role");
-            roleChangeLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            AddHistory(roleChangeLog);
-#endif
+//#if !WORLD_CREATION_TOOL
+//            Log roleChangeLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "change_role");
+//            roleChangeLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+//            AddHistory(roleChangeLog);
+//#endif
             wasRoleChanged = true;
         }
         _role = role;
@@ -4821,9 +4821,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         _hasAlreadyAskedForPlan = state;
     }
     public void PrintLogIfActive(string log) {
-        //if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == this) {
+        if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == this) {
             Debug.Log(log);
-        //}
+        }
     }
     private void AddPlanAsPriority(GoapPlan plan) {
         allGoapPlans.Insert(0, plan);

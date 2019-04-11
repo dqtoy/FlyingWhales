@@ -658,6 +658,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.HUNT_ACTION,
                 INTERACTION_TYPE.PLAY,
                 INTERACTION_TYPE.FEED,
+                INTERACTION_TYPE.REVERT_TO_NORMAL,
             } },
             { RACE.DRAGON, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
