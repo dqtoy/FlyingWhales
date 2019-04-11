@@ -80,6 +80,7 @@ MonoBehaviour:
   - {fileID: 1520246901535660, guid: 31553687798ac7f4f8153f94dc861add, type: 2}
   - {fileID: 1337403436229296, guid: 3cb0177c221907e40ada41e23c3e10e7, type: 2}
   - {fileID: 1620646669321964, guid: 216ad1daee947014a93e5b7a7120f58d, type: 2}
+  - {fileID: 1064520519975944, guid: eb33a4f2669bc1041a3080f2c1039d1c, type: 2}
   otherPrefabs:
   - {fileID: 1000012712350628, guid: 5372250d22a51bc40a200236eee58ac2, type: 2}
   - {fileID: 1674000059252808, guid: 3030287a209452f45ba8aca3380a5e2e, type: 2}

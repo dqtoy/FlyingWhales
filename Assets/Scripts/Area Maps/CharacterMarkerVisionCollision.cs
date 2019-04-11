@@ -144,7 +144,7 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
         return false;
     }
     private bool ChatHandling(Character targetCharacter) {
-        if(parentMarker.character.faction.id == targetCharacter.faction.id) {
+        if(!parentMarker.character.IsHostileWith(targetCharacter)) {
             int chance = UnityEngine.Random.Range(0, 100);
             if (chance < 10) {
                 if (!parentMarker.character.isChatting && !targetCharacter.isChatting) {

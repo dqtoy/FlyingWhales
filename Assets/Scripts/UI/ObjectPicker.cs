@@ -11,6 +11,7 @@ public class ObjectPicker : MonoBehaviour {
     [SerializeField] private ScrollRect objectPickerScrollView;
     [SerializeField] private GameObject objectPickerCharacterItemPrefab;
     [SerializeField] private GameObject objectPickerAreaItemPrefab;
+    [SerializeField] private GameObject objectPickerStringItemPrefab;
     [SerializeField] private GameObject objectPickerAttackItemPrefab;
 
     public void ShowClickable<T>(List<T> items, Action<T> onClickItemAction, IComparer<T> comparer = null, Func<T, bool> validityChecker = null) {
@@ -21,8 +22,10 @@ public class ObjectPicker : MonoBehaviour {
         Type type = typeof(T);
         if (type == typeof(Character)) {
             ShowCharacterItems(validItems.Cast<Character>().ToList(), invalidItems.Cast<Character>().ToList(), onClickItemAction);
-        }else if (type == typeof(Area)) {
+        } else if (type == typeof(Area)) {
             ShowAreaItems(validItems.Cast<Area>().ToList(), invalidItems.Cast<Area>().ToList(), onClickItemAction);
+        } else if (type == typeof(string)) {
+            ShowStringItems(validItems.Cast<string>().ToList(), invalidItems.Cast<string>().ToList(), onClickItemAction);
         }
         this.gameObject.SetActive(true);
     }
@@ -121,6 +124,27 @@ public class ObjectPicker : MonoBehaviour {
             areaItem.SetButtonState(false);
         }
     }
+    private void ShowStringItems<T>(List<string> validItems, List<string> invalidItems, Action<T> onClickItemAction) {
+        Action<string> convertedAction = null;
+        if (onClickItemAction != null) {
+            convertedAction = ConvertToString(onClickItemAction);
+        }
+        for (int i = 0; i < validItems.Count; i++) {
+            string currString = validItems[i];
+            GameObject stringItemGO = UIManager.Instance.InstantiateUIObject(objectPickerStringItemPrefab.name, objectPickerScrollView.content);
+            StringPickerItem stringItem = stringItemGO.GetComponent<StringPickerItem>();
+            stringItem.SetString(currString);
+            stringItem.onClickAction = convertedAction;
+            stringItem.SetButtonState(true);
+        }
+        for (int i = 0; i < invalidItems.Count; i++) {
+            string currString = invalidItems[i];
+            GameObject stringItemGO = UIManager.Instance.InstantiateUIObject(objectPickerStringItemPrefab.name, objectPickerScrollView.content);
+            StringPickerItem stringItem = stringItemGO.GetComponent<StringPickerItem>();
+            stringItem.SetString(currString);
+            stringItem.SetButtonState(false);
+        }
+    }
     public Action<Character> Convert<T>(Action<T> myActionT) {
         if (myActionT == null) return null;
         else return new Action<Character>(o => myActionT((T)(object)o));
@@ -128,6 +152,10 @@ public class ObjectPicker : MonoBehaviour {
     public Action<Area> ConvertToArea<T>(Action<T> myActionT) {
         if (myActionT == null) return null;
         else return new Action<Area>(o => myActionT((T) (object) o));
+    }
+    public Action<string> ConvertToString<T>(Action<T> myActionT) {
+        if (myActionT == null) return null;
+        else return new Action<string>(o => myActionT((T) (object) o));
     }
 }
 

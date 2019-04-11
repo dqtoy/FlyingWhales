@@ -98,7 +98,8 @@ public class AssaultCharacter : GoapAction {
     }
     public void AfterTargetKnockedOut() {
         Character target = poiTarget as Character;
-        AddTraitTo(target, "Unconscious");
+        Unconscious unconscious = new Unconscious();
+        AddTraitTo(target, unconscious);
     }
     public void PreTargetKilled() {
         //**Note**: If the actor is from the same faction as the witness and the target is not considered hostile, this is a Murder crime

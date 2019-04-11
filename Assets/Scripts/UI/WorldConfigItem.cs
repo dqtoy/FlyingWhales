@@ -31,6 +31,6 @@ public class WorldConfigItem : MonoBehaviour {
         } else {
             WorldConfigManager.Instance.SetDataToUse(null);
         }
-        LevelLoaderManager.Instance.LoadLevel("Main");
+        LevelLoaderManager.Instance.LoadLevel("Game");
     }
 }

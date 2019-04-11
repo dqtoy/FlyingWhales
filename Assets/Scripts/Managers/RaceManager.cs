@@ -245,6 +245,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.CURSE_CHARACTER,
                 INTERACTION_TYPE.DISPEL_MAGIC,
                 INTERACTION_TYPE.JUDGE_CHARACTER,
+                INTERACTION_TYPE.FEED,
             } },
             { RACE.ELVES, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -319,6 +320,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.CURSE_CHARACTER,
                 INTERACTION_TYPE.DISPEL_MAGIC,
                 INTERACTION_TYPE.JUDGE_CHARACTER,
+                INTERACTION_TYPE.FEED,
             } },
             { RACE.GOBLIN, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -393,6 +395,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.CURSE_CHARACTER,
                 INTERACTION_TYPE.DISPEL_MAGIC,
                 INTERACTION_TYPE.JUDGE_CHARACTER,
+                INTERACTION_TYPE.FEED,
             } },
             { RACE.FAERY, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -467,6 +470,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.CURSE_CHARACTER,
                 INTERACTION_TYPE.DISPEL_MAGIC,
                 INTERACTION_TYPE.JUDGE_CHARACTER,
+                INTERACTION_TYPE.FEED,
             } },
             { RACE.SKELETON, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -539,6 +543,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.CURSE_CHARACTER,
                 INTERACTION_TYPE.DISPEL_MAGIC,
                 INTERACTION_TYPE.JUDGE_CHARACTER,
+                INTERACTION_TYPE.FEED,
             } },
             { RACE.SPIDER, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -575,8 +580,8 @@ public class RaceManager : MonoBehaviour {
                 //INTERACTION_TYPE.MINE_ACTION,
                 INTERACTION_TYPE.EAT_PLANT,
                 INTERACTION_TYPE.EAT_SMALL_ANIMAL,
-                INTERACTION_TYPE.EAT_DWELLING_TABLE,
-                INTERACTION_TYPE.SLEEP,
+                //INTERACTION_TYPE.EAT_DWELLING_TABLE,
+                //INTERACTION_TYPE.SLEEP,
                 INTERACTION_TYPE.ASSAULT_ACTION_NPC,
                 INTERACTION_TYPE.ABDUCT_ACTION,
                 INTERACTION_TYPE.CARRY_CHARACTER,
@@ -595,6 +600,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.TRAVEL,
                 INTERACTION_TYPE.HUNT_ACTION,
                 INTERACTION_TYPE.PLAY,
+                INTERACTION_TYPE.FEED,
             } },
             { RACE.WOLF, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -631,8 +637,8 @@ public class RaceManager : MonoBehaviour {
                 //INTERACTION_TYPE.MINE_ACTION,
                 INTERACTION_TYPE.EAT_PLANT,
                 INTERACTION_TYPE.EAT_SMALL_ANIMAL,
-                INTERACTION_TYPE.EAT_DWELLING_TABLE,
-                INTERACTION_TYPE.SLEEP,
+                //INTERACTION_TYPE.EAT_DWELLING_TABLE,
+                //INTERACTION_TYPE.SLEEP,
                 INTERACTION_TYPE.ASSAULT_ACTION_NPC,
                 INTERACTION_TYPE.ABDUCT_ACTION,
                 INTERACTION_TYPE.CARRY_CHARACTER,
@@ -651,6 +657,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.TRAVEL,
                 INTERACTION_TYPE.HUNT_ACTION,
                 INTERACTION_TYPE.PLAY,
+                INTERACTION_TYPE.FEED,
+                INTERACTION_TYPE.REVERT_TO_NORMAL,
             } },
             { RACE.DRAGON, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -687,8 +695,8 @@ public class RaceManager : MonoBehaviour {
                 //INTERACTION_TYPE.MINE_ACTION,
                 INTERACTION_TYPE.EAT_PLANT,
                 INTERACTION_TYPE.EAT_SMALL_ANIMAL,
-                INTERACTION_TYPE.EAT_DWELLING_TABLE,
-                INTERACTION_TYPE.SLEEP,
+                //INTERACTION_TYPE.EAT_DWELLING_TABLE,
+                //INTERACTION_TYPE.SLEEP,
                 INTERACTION_TYPE.ASSAULT_ACTION_NPC,
                 INTERACTION_TYPE.ABDUCT_ACTION,
                 INTERACTION_TYPE.CARRY_CHARACTER,
@@ -707,6 +715,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.TRAVEL,
                 INTERACTION_TYPE.HUNT_ACTION,
                 INTERACTION_TYPE.PLAY,
+                INTERACTION_TYPE.FEED,
             } },
         };
     }

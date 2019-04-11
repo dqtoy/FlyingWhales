@@ -2029,13 +2029,13 @@ public class Area {
     private void CreatePatrolAndExploreJobs() {
         int patrolChance = UnityEngine.Random.Range(0, 100);
         if(patrolChance < 25 && jobQueue.GetNumberOfJobsWith(CHARACTER_STATE.PATROL) < 2) {
-            CharacterStateJob stateJob = new CharacterStateJob(CHARACTER_STATE.PATROL);
+            CharacterStateJob stateJob = new CharacterStateJob("Patrol", CHARACTER_STATE.PATROL);
             jobQueue.AddJobInQueue(stateJob);
         }
 
         int exploreChance = UnityEngine.Random.Range(0, 100);
         if (exploreChance < 15 && !jobQueue.HasJobRelatedTo(CHARACTER_STATE.EXPLORE)) {
-            CharacterStateJob stateJob = new CharacterStateJob(CHARACTER_STATE.EXPLORE);
+            CharacterStateJob stateJob = new CharacterStateJob("Explore", CHARACTER_STATE.EXPLORE);
             jobQueue.AddJobInQueue(stateJob);
         }
     }

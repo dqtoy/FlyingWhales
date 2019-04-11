@@ -42,13 +42,13 @@ public class Resting : Trait {
         int chance = UnityEngine.Random.Range(0, 100);
         if(_character.race == RACE.WOLF) {
             //Turn back to normal form
-            if (chance < 20) {
+            if (chance < 30) {
                 _lycanthropyTrait.PlanRevertToNormal();
                 _character.currentAction.currentState.EndPerTickEffect();
             }
         } else {
             //Turn to wolf
-            if (chance < 50) {
+            if (chance < 30) {
                 _lycanthropyTrait.PlanTransformToWolf();
                 _character.currentAction.currentState.EndPerTickEffect();
             }

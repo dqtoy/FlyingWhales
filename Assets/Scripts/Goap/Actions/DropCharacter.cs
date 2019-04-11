@@ -10,7 +10,7 @@ public class DropCharacter : GoapAction {
     }
 
     public DropCharacter(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.DROP_CHARACTER, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
-        _workAreaStructure = actor.homeArea.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA);
+        _workAreaStructure = actor.homeArea.GetRandomStructureOfType(STRUCTURE_TYPE.WAREHOUSE);
         actionLocationType = ACTION_LOCATION_TYPE.RANDOM_LOCATION_B;
         actionIconString = GoapActionStateDB.Hostile_Icon;
     }
@@ -64,6 +64,9 @@ public class DropCharacter : GoapAction {
         actor.ownParty.RemoveCharacter(target);
         //target.MoveToAnotherStructure(_workAreaStructure);
         AddActualEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = actor.homeArea, targetPOI = poiTarget });
+        if(target.gridTileLocation.structure.structureType == STRUCTURE_TYPE.WAREHOUSE) {
+            //Create judgement job
+        }
     }
     #endregion
 
@@ -77,7 +80,7 @@ public class DropCharacter : GoapAction {
             reactions.Add(string.Format("Thank you for letting me know about this. I've got to find a way to free {0}!", targetCharacter.name));
             //-**Recipient Effect**: If Adventurer or Soldier or Unaligned Non-Beast, create a Save Target plan.If Civilian, Noble or Faction Leader, create an Ask for Save Help plan.
             if (recipient.role.roleType == CHARACTER_ROLE.ADVENTURER || recipient.role.roleType == CHARACTER_ROLE.SOLDIER || (recipient.isFactionless && recipient.role.roleType != CHARACTER_ROLE.BEAST)) {
-                GoapPlanJob job = new GoapPlanJob(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Abducted", targetPOI = targetCharacter });
+                GoapPlanJob job = new GoapPlanJob("Save", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Abducted", targetPOI = targetCharacter });
                 recipient.jobQueue.AddJobInQueue(job);
             }
         }
@@ -87,7 +90,7 @@ public class DropCharacter : GoapAction {
             reactions.Add(string.Format("Thank you for letting me know about this. I've got to find a way to free {0}!", targetCharacter.name));
             //-**Recipient Effect**: If Adventurer or Soldier or Unaligned Non-Beast, create a Save Target plan.If Civilian, Noble or Faction Leader, create an Ask for Save Help plan.
             if (recipient.role.roleType == CHARACTER_ROLE.ADVENTURER || recipient.role.roleType == CHARACTER_ROLE.SOLDIER || (recipient.isFactionless && recipient.role.roleType != CHARACTER_ROLE.BEAST)) {
-                GoapPlanJob job = new GoapPlanJob(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Abducted", targetPOI = targetCharacter });
+                GoapPlanJob job = new GoapPlanJob("Save", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Abducted", targetPOI = targetCharacter });
                 recipient.jobQueue.AddJobInQueue(job);
             }
         }

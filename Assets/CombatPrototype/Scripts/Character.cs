@@ -114,6 +114,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public CharacterStateComponent stateComponent { get; private set; }
     public List<SpecialToken> items { get; private set; }
     public JobQueue jobQueue { get; private set; }
+    public JobQueueItem currentJob { get; private set; }
+    public List<JobQueueItem> allJobsTargettingThis { get; private set; }
 
     private LocationGridTile tile; //what tile in the structure is this character currently in.
     private POI_STATE _state;
@@ -551,6 +553,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         stateComponent = new CharacterStateComponent(this);
         items = new List<SpecialToken>();
         jobQueue = new JobQueue();
+        allJobsTargettingThis = new List<JobQueueItem>();
 
         tiredness = TIREDNESS_DEFAULT;
         //Fullness value between 1300 and 1440.
@@ -1014,11 +1017,11 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         bool wasRoleChanged = false;
         if (_role != null) {
             _role.OnChange(this);
-#if !WORLD_CREATION_TOOL
-            Log roleChangeLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "change_role");
-            roleChangeLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            AddHistory(roleChangeLog);
-#endif
+//#if !WORLD_CREATION_TOOL
+//            Log roleChangeLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "change_role");
+//            roleChangeLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+//            AddHistory(roleChangeLog);
+//#endif
             wasRoleChanged = true;
         }
         _role = role;
@@ -1107,7 +1110,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     #endregion
 
-    #region Job
+    #region Jobs
     private void AssignRandomJob() {
         if (CharacterManager.Instance.IsClassADeadlySin(_characterClass.className)) {
             AssignJob(_characterClass.jobType);
@@ -1151,6 +1154,73 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 break;
         }
         _job.OnAssignJob();
+    }
+    public void SetCurrentJob(JobQueueItem job) {
+        currentJob = job;
+    }
+    public void AddJobTargettingThisCharacter(JobQueueItem job) {
+        allJobsTargettingThis.Add(job);
+    }
+    public bool RemoveJobTargettingThisCharacter(JobQueueItem job) {
+        return allJobsTargettingThis.Remove(job);
+    }
+    public void CancelAllJobsTargettingThisCharacter(string jobName) {
+        for (int i = 0; i < allJobsTargettingThis.Count; i++) {
+            JobQueueItem job = allJobsTargettingThis[i];
+            if (job.name == jobName) {
+                if (job.jobQueueParent.CancelJob(job)) {
+                    i--;
+                }
+            }
+        }
+    }
+    private void CheckApprehendRelatedJobsOnLeaveLocation() {
+        CancelAllJobsTargettingThisCharacter("Apprehend");
+
+        for (int i = 0; i < allGoapPlans.Count; i++) {
+            GoapPlan plan = allGoapPlans[i];
+            if(plan.job != null && plan.job.name == "Apprehend") {
+                plan.job.UnassignJob();
+                i--;
+            }
+        }
+    }
+    public void CreateApprehendJob() {
+        if (homeArea.id == specificLocation.id) {
+            if (!homeArea.jobQueue.HasJob("Apprehend", this)) {
+                GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = homeArea, targetPOI = this };
+                GoapPlanJob job = new GoapPlanJob("Apprehend", goapEffect);
+                job.SetCanTakeThisJobChecker(CanCharacterTakeApprehendJob);
+                homeArea.jobQueue.AddJobInQueue(job);
+            }
+        }
+    }
+    private bool CanCharacterTakeApprehendJob(Character character) {
+        return character.role.roleType == CHARACTER_ROLE.SOLDIER;
+    }
+    private void CreateFeedJob() {
+        if (GetTrait("Restrained") != null && !specificLocation.jobQueue.HasJob("Feed", this)) {
+            GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, targetPOI = this };
+            GoapPlanJob job = new GoapPlanJob("Feed", goapEffect);
+            job.SetCanTakeThisJobChecker(CanCharacterTakeFeedJob);
+            specificLocation.jobQueue.AddJobInQueue(job);
+        }
+    }
+    private void MoveFeedJobToTopPriority() {
+        if (GetTrait("Restrained") != null) {
+            JobQueueItem feedJob = specificLocation.jobQueue.GetJob("Feed", this);
+            if(feedJob != null) {
+                specificLocation.jobQueue.MoveJobToTopPriority(feedJob);
+            } else {
+                GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, targetPOI = this };
+                GoapPlanJob job = new GoapPlanJob("Feed", goapEffect);
+                job.SetCanTakeThisJobChecker(CanCharacterTakeFeedJob);
+                specificLocation.jobQueue.AddJobInQueue(job, true);
+            }
+        }
+    }
+    private bool CanCharacterTakeFeedJob(Character character) {
+        return character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.CIVILIAN;
     }
     #endregion
 
@@ -1392,13 +1462,15 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         return null;
     }
     private void OnLeaveArea(Party party) {
-        if(party == ownParty) {
-
+        if(currentParty == party) {
+            CheckApprehendRelatedJobsOnLeaveLocation();
         }
     }
     private void OnArrivedAtArea(Party party) {
-        if (party == ownParty) {
-
+        if (currentParty == party) {
+            if (HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
+                CreateApprehendJob();
+            }
         }
     }
     #endregion
@@ -2542,6 +2614,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         } else if (trait.name == "Daydreaming") {
             AdjustDoNotGetTired(1);
             AdjustDoNotGetLonely(1);
+        } else if (trait.name == "Hungry") {
+            CreateFeedJob();
+        } else if (trait.name == "Starving") {
+            MoveFeedJobToTopPriority();
         }
         for (int i = 0; i < trait.effects.Count; i++) {
             TraitEffect traitEffect = trait.effects[i];
@@ -4770,9 +4846,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         _hasAlreadyAskedForPlan = state;
     }
     public void PrintLogIfActive(string log) {
-        //if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == this) {
+        if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == this) {
             Debug.Log(log);
-        //}
+        }
     }
     private void AddPlanAsPriority(GoapPlan plan) {
         allGoapPlans.Insert(0, plan);
@@ -4951,7 +5027,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 if (actor.faction == this.faction) {
                     //only add apprehend job if the criminal is part of this characters faction
                     actor.AddCriminalTrait(committedCrime);
-                    job = new GoapPlanJob(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = actor });
+                    job = new GoapPlanJob("Apprehend", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = actor });
                     homeArea.jobQueue.AddJobInQueue(job);
                 }
                 
@@ -4962,7 +5038,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     //only add apprehend job if the criminal is part of this characters faction
                     actor.AddCriminalTrait(committedCrime);
                     //- If the character is a Soldier, he will also create an Apprehend Job Type in his personal job queue.
-                    job = new GoapPlanJob(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = actor });
+                    job = new GoapPlanJob("Apprehend", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = actor });
                     homeArea.jobQueue.AddJobInQueue(job);
                     homeArea.jobQueue.AssignCharacterToJob(job, this);
                 }

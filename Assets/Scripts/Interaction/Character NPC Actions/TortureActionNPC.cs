@@ -164,7 +164,8 @@ public class TortureActionNPC : Interaction {
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
         //_characterInvolved.LevelUp();
-        _targetCharacter.AddTrait("Unconscious");
+        Unconscious unconscious = new Unconscious();
+        _targetCharacter.AddTrait(unconscious);
     }
     private void PersuadeCharacterEscapesEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -211,7 +212,8 @@ public class TortureActionNPC : Interaction {
 
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
-        _targetCharacter.AddTrait("Unconscious");
+        Unconscious unconscious = new Unconscious();
+        _targetCharacter.AddTrait(unconscious);
     }
     private void CharacterEscapesEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
