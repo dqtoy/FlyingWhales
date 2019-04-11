@@ -27,10 +27,10 @@ public class Trait {
 
     #region Virtuals
     public virtual void OnAddTrait(IPointOfInterest sourceCharacter) {
-        if(type == TRAIT_TYPE.CRIMINAL && sourceCharacter is Character) {
-            Character character = sourceCharacter as Character;
-            character.CreateApprehendJob();
-        }
+        //if(type == TRAIT_TYPE.CRIMINAL && sourceCharacter is Character) {
+        //    Character character = sourceCharacter as Character;
+        //    character.CreateApprehendJob();
+        //}
     }
     public virtual void OnRemoveTrait(IPointOfInterest sourceCharacter) {
         if (onRemoveAction != null) {
