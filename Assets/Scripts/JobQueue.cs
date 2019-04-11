@@ -9,12 +9,20 @@ public class JobQueue {
         jobsInQueue = new List<JobQueueItem>();
     }
 
-    public void AddJobInQueue(JobQueueItem job) {
+    public void AddJobInQueue(JobQueueItem job, bool isPriority = false) {
         job.SetJobQueueParent(this);
-        jobsInQueue.Add(job);
+        if (!isPriority) {
+            jobsInQueue.Add(job);
+        } else {
+            jobsInQueue.Insert(0, job);
+        }
+        job.OnAddJobToQueue();
     }
     public bool RemoveJobInQueue(JobQueueItem job) {
-        return jobsInQueue.Remove(job);
+        if (jobsInQueue.Remove(job)) {
+            return job.OnRemoveJobFromQueue();
+        }
+        return false;
     }
     public bool ProcessFirstJobInQueue(Character characterToDoJob) {
         if(jobsInQueue.Count > 0) {
@@ -64,11 +72,41 @@ public class JobQueue {
             }
         }
     }
+    public bool HasJob(JobQueueItem job) {
+        for (int i = 0; i < jobsInQueue.Count; i++) {
+            if (job == jobsInQueue[i]) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public bool HasJob(string jobName, IPointOfInterest targetPOI) {
+        for (int i = 0; i < jobsInQueue.Count; i++) {
+            if(jobsInQueue[i].name == jobName && jobsInQueue[i] is GoapPlanJob) {
+                GoapPlanJob job = jobsInQueue[i] as GoapPlanJob;
+                if (job.targetPOI == targetPOI) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     public bool HasJobRelatedTo(GOAP_EFFECT_CONDITION conditionType, IPointOfInterest poi) {
         for (int i = 0; i < jobsInQueue.Count; i++) {
             if (jobsInQueue[i] is GoapPlanJob) {
                 GoapPlanJob job = jobsInQueue[i] as GoapPlanJob;
                 if (job.targetEffect.conditionType == conditionType && job.targetEffect.targetPOI == poi) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    public bool HasJobRelatedTo(GOAP_EFFECT_CONDITION conditionType, object conditionKey, IPointOfInterest poi) {
+        for (int i = 0; i < jobsInQueue.Count; i++) {
+            if (jobsInQueue[i] is GoapPlanJob) {
+                GoapPlanJob job = jobsInQueue[i] as GoapPlanJob;
+                if (job.targetEffect.conditionType == conditionType && job.targetEffect.conditionKey == conditionKey && job.targetEffect.targetPOI == poi) {
                     return true;
                 }
             }

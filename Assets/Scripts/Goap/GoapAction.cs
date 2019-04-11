@@ -405,6 +405,11 @@ public class GoapAction {
             AddActualEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = traitName, targetPOI = target });
         }
     }
+    protected void AddTraitTo(IPointOfInterest target, Trait trait, Character characterResponsible = null) {
+        if (target.AddTrait(trait, characterResponsible)) {
+            AddActualEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = trait.name, targetPOI = target });
+        }
+    }
     /// <summary>
     /// Helper function to encapsulate removing a trait from a poi and adding actual effect data based on the removed trait.
     /// </summary>

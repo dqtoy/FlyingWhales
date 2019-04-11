@@ -10,7 +10,7 @@ public class DropCharacter : GoapAction {
     }
 
     public DropCharacter(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.DROP_CHARACTER, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
-        _workAreaStructure = actor.homeArea.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA);
+        _workAreaStructure = actor.homeArea.GetRandomStructureOfType(STRUCTURE_TYPE.WAREHOUSE);
         actionLocationType = ACTION_LOCATION_TYPE.RANDOM_LOCATION_B;
         actionIconString = GoapActionStateDB.Hostile_Icon;
     }
@@ -64,6 +64,9 @@ public class DropCharacter : GoapAction {
         actor.ownParty.RemoveCharacter(target);
         //target.MoveToAnotherStructure(_workAreaStructure);
         AddActualEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = actor.homeArea, targetPOI = poiTarget });
+        if(target.gridTileLocation.structure.structureType == STRUCTURE_TYPE.WAREHOUSE) {
+            //Create judgement job
+        }
     }
     #endregion
 

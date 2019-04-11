@@ -137,7 +137,8 @@ public class CurseAction : Interaction {
 
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
-        _characterInvolved.AddTrait("Unconscious");
+        Unconscious unconscious = new Unconscious();
+        _characterInvolved.AddTrait(unconscious);
     }
     private void CurserInjuredEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);

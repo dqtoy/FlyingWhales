@@ -122,7 +122,8 @@ public class AssaultActionNPC : Interaction {
 
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
-        _targetCharacter.AddTrait("Unconscious");
+        Unconscious unconscious = new Unconscious();
+        _targetCharacter.AddTrait(unconscious);
     }
     private void TargetKilledEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -143,7 +144,8 @@ public class AssaultActionNPC : Interaction {
 
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
-        _characterInvolved.AddTrait("Unconscious");
+        Unconscious unconscious = new Unconscious();
+        _characterInvolved.AddTrait(unconscious);
     }
     private void ActorKilledEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);

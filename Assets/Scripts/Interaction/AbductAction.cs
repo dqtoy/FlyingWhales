@@ -139,7 +139,8 @@ public class AbductAction : Interaction {
 
         state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
-        _characterInvolved.AddTrait("Unconscious");
+        Unconscious unconscious = new Unconscious();
+        _characterInvolved.AddTrait(unconscious);
     }
     #endregion
 

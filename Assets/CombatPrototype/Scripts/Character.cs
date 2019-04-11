@@ -114,6 +114,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public CharacterStateComponent stateComponent { get; private set; }
     public List<SpecialToken> items { get; private set; }
     public JobQueue jobQueue { get; private set; }
+    public JobQueueItem currentJob { get; private set; }
+    public List<JobQueueItem> allJobsTargettingThis { get; private set; }
 
     private LocationGridTile tile; //what tile in the structure is this character currently in.
     private POI_STATE _state;
@@ -551,6 +553,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         stateComponent = new CharacterStateComponent(this);
         items = new List<SpecialToken>();
         jobQueue = new JobQueue();
+        allJobsTargettingThis = new List<JobQueueItem>();
 
         tiredness = TIREDNESS_DEFAULT;
         //Fullness value between 1300 and 1440.
@@ -1107,7 +1110,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     #endregion
 
-    #region Job
+    #region Jobs
     private void AssignRandomJob() {
         if (CharacterManager.Instance.IsClassADeadlySin(_characterClass.className)) {
             AssignJob(_characterClass.jobType);
@@ -1151,6 +1154,52 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 break;
         }
         _job.OnAssignJob();
+    }
+    public void SetCurrentJob(JobQueueItem job) {
+        currentJob = job;
+    }
+    public void AddJobTargettingThisCharacter(JobQueueItem job) {
+        allJobsTargettingThis.Add(job);
+    }
+    public bool RemoveJobTargettingThisCharacter(JobQueueItem job) {
+        return allJobsTargettingThis.Remove(job);
+    }
+    public void CancelAllJobsTargettingThisCharacter(string jobName) {
+        for (int i = 0; i < allJobsTargettingThis.Count; i++) {
+            JobQueueItem job = allJobsTargettingThis[i];
+            if (job.name == jobName) {
+                if (job.jobQueueParent.CancelJob(job)) {
+                    i--;
+                }
+            }
+        }
+    }
+    private void CheckApprehendRelatedJobsOnLeaveLocation() {
+        CancelAllJobsTargettingThisCharacter("Apprehend");
+
+        for (int i = 0; i < allGoapPlans.Count; i++) {
+            GoapPlan plan = allGoapPlans[i];
+            if(plan.job != null && plan.job.name == "Apprehend") {
+                plan.job.UnassignJob();
+                i--;
+            }
+        }
+    }
+    public void CreateApprehendJob() {
+        if (homeArea.id == specificLocation.id) {
+            if (!homeArea.jobQueue.HasJob("Apprehend", this)) {
+                GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = homeArea, targetPOI = this };
+                GoapPlanJob job = new GoapPlanJob("Apprehend", goapEffect);
+                job.SetCanTakeThisJobChecker(CanCharacterTakeApprehendJob);
+                homeArea.jobQueue.AddJobInQueue(job);
+            }
+        }
+    }
+    private bool CanCharacterTakeApprehendJob(Character character) {
+        return character.role.roleType == CHARACTER_ROLE.SOLDIER;
+    }
+    private void CreateFeedJob() {
+
     }
     #endregion
 
@@ -1392,13 +1441,15 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         return null;
     }
     private void OnLeaveArea(Party party) {
-        if(party == ownParty) {
-
+        if(currentParty == party) {
+            CheckApprehendRelatedJobsOnLeaveLocation();
         }
     }
     private void OnArrivedAtArea(Party party) {
-        if (party == ownParty) {
-
+        if (currentParty == party) {
+            if (HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
+                CreateApprehendJob();
+            }
         }
     }
     #endregion
