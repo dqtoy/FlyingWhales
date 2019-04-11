@@ -77,7 +77,8 @@ public class DropCharacter : GoapAction {
             reactions.Add(string.Format("Thank you for letting me know about this. I've got to find a way to free {0}!", targetCharacter.name));
             //-**Recipient Effect**: If Adventurer or Soldier or Unaligned Non-Beast, create a Save Target plan.If Civilian, Noble or Faction Leader, create an Ask for Save Help plan.
             if (recipient.role.roleType == CHARACTER_ROLE.ADVENTURER || recipient.role.roleType == CHARACTER_ROLE.SOLDIER || (recipient.isFactionless && recipient.role.roleType != CHARACTER_ROLE.BEAST)) {
-                recipient.StartGOAP(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Abducted" }, targetCharacter, GOAP_CATEGORY.REACTION, true, new List<Character>() { targetCharacter }, false);
+                GoapPlanJob job = new GoapPlanJob(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Abducted", targetPOI = targetCharacter });
+                recipient.jobQueue.AddJobInQueue(job);
             }
         }
         //Recipient and Target have no relationship but from the same faction and Actor is not from the same faction:
@@ -86,7 +87,8 @@ public class DropCharacter : GoapAction {
             reactions.Add(string.Format("Thank you for letting me know about this. I've got to find a way to free {0}!", targetCharacter.name));
             //-**Recipient Effect**: If Adventurer or Soldier or Unaligned Non-Beast, create a Save Target plan.If Civilian, Noble or Faction Leader, create an Ask for Save Help plan.
             if (recipient.role.roleType == CHARACTER_ROLE.ADVENTURER || recipient.role.roleType == CHARACTER_ROLE.SOLDIER || (recipient.isFactionless && recipient.role.roleType != CHARACTER_ROLE.BEAST)) {
-                recipient.StartGOAP(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Abducted" }, targetCharacter, GOAP_CATEGORY.REACTION, true, new List<Character>() { targetCharacter }, false);
+                GoapPlanJob job = new GoapPlanJob(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Abducted", targetPOI = targetCharacter });
+                recipient.jobQueue.AddJobInQueue(job);
             }
         }
         //Recipient and Target are enemies:
