@@ -97,11 +97,11 @@ public class EngageState : CharacterState {
 
             string result = resultWeights.PickRandomElementGivenWeights();
             if (result == "Target Killed") {
-                targetCharacter.Death();
+                targetCharacter.Death("combat");
             } else if (result == "Target Injured") {
                 targetCharacter.AddTrait("Injured");
             } else if (result == "Hunter Killed") {
-                engagerCharacter.Death();
+                engagerCharacter.Death("combat");
             } else if (result == "Hunter Injured") {
                 engagerCharacter.AddTrait("Injured");
             }

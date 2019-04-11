@@ -752,14 +752,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             AddHistory(log);
             specificLocation.AddHistory(log);
 
-            switch (cause) {
-                case "exhaustion":
-                case "starvation":
-                    //deathLocation.areaMap.ShowEventPopupAt(deathTile, log);
-                    break;
-                default:
-                    break;
-            }
+            //switch (cause) {
+            //    case "exhaustion":
+            //    case "starvation":
+            //        //deathLocation.areaMap.ShowEventPopupAt(deathTile, log);
+            //        break;
+            //    default:
+            //        break;
+            //}
 
         }
     }
@@ -1606,8 +1606,20 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         return specificLocation.areaMap.map[x, y];
     }
     public bool IsDoingCombatAction() {
+        if (marker.currentlyEngaging != null) {
+            return true;
+        }
+        //if (currentAction != null) {
+        //    return currentAction.goapType == INTERACTION_TYPE.ASSAULT_ACTION_NPC; //TODO: put this in individual actions maybe?
+        //}
+        return false;
+    }
+    public bool IsDoingCombatActionTowards(Character otherCharacter) {
+        //if (marker.currentlyEngaging == otherCharacter) {
+        //    return true;
+        //}
         if (currentAction != null) {
-            return marker.currentlyEngaging != null || currentAction.goapType == INTERACTION_TYPE.ASSAULT_ACTION_NPC; //TODO: put this in individual actions maybe?
+            return currentAction.goapType == INTERACTION_TYPE.ASSAULT_ACTION_NPC && currentAction.poiTarget == otherCharacter; //TODO: put this in individual actions maybe?
         }
         return false;
     }
