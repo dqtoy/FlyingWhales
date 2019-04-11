@@ -29,5 +29,12 @@ public class Restrained : Trait {
     public override string GetToolTipText() {
         return "This character is restrained by " + _responsibleCharacter.name;
     }
+    public override void OnRemoveTrait(IPointOfInterest sourceCharacter) {
+        if(sourceCharacter is Character) {
+            Character character = sourceCharacter as Character;
+            character.CancelAllJobsTargettingThisCharacter("Feed");
+        }
+        base.OnRemoveTrait(sourceCharacter);
+    }
     #endregion
 }

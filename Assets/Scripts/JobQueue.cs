@@ -24,6 +24,11 @@ public class JobQueue {
         }
         return false;
     }
+    public void MoveJobToTopPriority(JobQueueItem job) {
+        if (jobsInQueue.Remove(job)) {
+            jobsInQueue.Insert(0, job);
+        }
+    }
     public bool ProcessFirstJobInQueue(Character characterToDoJob) {
         if(jobsInQueue.Count > 0) {
             for (int i = 0; i < jobsInQueue.Count; i++) {
@@ -140,6 +145,17 @@ public class JobQueue {
             }
         }
         return false;
+    }
+    public JobQueueItem GetJob(string jobName, IPointOfInterest targetPOI) {
+        for (int i = 0; i < jobsInQueue.Count; i++) {
+            if (jobsInQueue[i].name == jobName && jobsInQueue[i] is GoapPlanJob) {
+                GoapPlanJob job = jobsInQueue[i] as GoapPlanJob;
+                if (job.targetPOI == targetPOI) {
+                    return job;
+                }
+            }
+        }
+        return null;
     }
     public int GetNumberOfJobsWith(CHARACTER_STATE state) {
         int count = 0;

@@ -1199,7 +1199,28 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         return character.role.roleType == CHARACTER_ROLE.SOLDIER;
     }
     private void CreateFeedJob() {
-
+        if (GetTrait("Restrained") != null && !specificLocation.jobQueue.HasJob("Feed", this)) {
+            GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, targetPOI = this };
+            GoapPlanJob job = new GoapPlanJob("Feed", goapEffect);
+            job.SetCanTakeThisJobChecker(CanCharacterTakeFeedJob);
+            specificLocation.jobQueue.AddJobInQueue(job);
+        }
+    }
+    private void MoveFeedJobToTopPriority() {
+        if (GetTrait("Restrained") != null) {
+            JobQueueItem feedJob = specificLocation.jobQueue.GetJob("Feed", this);
+            if(feedJob != null) {
+                specificLocation.jobQueue.MoveJobToTopPriority(feedJob);
+            } else {
+                GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, targetPOI = this };
+                GoapPlanJob job = new GoapPlanJob("Feed", goapEffect);
+                job.SetCanTakeThisJobChecker(CanCharacterTakeFeedJob);
+                specificLocation.jobQueue.AddJobInQueue(job, true);
+            }
+        }
+    }
+    private bool CanCharacterTakeFeedJob(Character character) {
+        return character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.CIVILIAN;
     }
     #endregion
 
@@ -2593,6 +2614,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         } else if (trait.name == "Daydreaming") {
             AdjustDoNotGetTired(1);
             AdjustDoNotGetLonely(1);
+        } else if (trait.name == "Hungry") {
+            CreateFeedJob();
+        } else if (trait.name == "Starving") {
+            MoveFeedJobToTopPriority();
         }
         for (int i = 0; i < trait.effects.Count; i++) {
             TraitEffect traitEffect = trait.effects[i];
