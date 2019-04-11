@@ -72,7 +72,7 @@ public class DropCharacter : GoapAction {
         List<string> reactions = new List<string>();
         //Recipient and Target have at least one non-negative relationship and Actor is not from the same faction:
         Character targetCharacter = poiTarget as Character;
-        if (recipient.HasRelationshipOfEffectWith(targetCharacter, TRAIT_EFFECT.POSITIVE) && actor.faction != recipient.faction) {
+        if (recipient.HasRelationshipOfEffectWith(targetCharacter, TRAIT_EFFECT.POSITIVE, RELATIONSHIP_TRAIT.RELATIVE) && actor.faction != recipient.faction) {
             //- **Recipient Response Text**: "Thank you for letting me know about this. I've got to find a way to free [Target Name]!
             reactions.Add(string.Format("Thank you for letting me know about this. I've got to find a way to free {0}!", targetCharacter.name));
             //-**Recipient Effect**: If Adventurer or Soldier or Unaligned Non-Beast, create a Save Target plan.If Civilian, Noble or Faction Leader, create an Ask for Save Help plan.
