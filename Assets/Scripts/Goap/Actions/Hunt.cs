@@ -97,7 +97,8 @@ public class Hunt : GoapAction {
     protected bool Requirement() {
         if(actor != poiTarget) {
             Character target = poiTarget as Character;
-            if(actor.specificLocation == target.specificLocation && actor.faction == FactionManager.Instance.neutralFaction && target.race != RACE.SKELETON) {
+            if(actor.specificLocation == target.specificLocation && actor.faction == FactionManager.Instance.neutralFaction && target.race != RACE.SKELETON 
+                && actor.GetTrait("Injured") == null) { //added checking for injured so that characters that are injured won't keep trying to hunt a character, then flee after seeing the target
                 return true;
             }
         }

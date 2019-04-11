@@ -611,44 +611,29 @@ public class ConsoleMenu : UIMenu {
         AddSuccessMessage("Transferred " + character.name + " to " + faction.name);
     }
     private void ForceCharacterInteraction(string[] parameters) {
-        string interactionTypeStr = parameters[0];
-        string characterStr = parameters[1];
-        string targetCharacterStr = parameters.ElementAtOrDefault(2);
-        string otherCharacterStr = parameters.ElementAtOrDefault(3);
+        string characterStr = parameters[0];
+        string targetCharacterStr = parameters.ElementAtOrDefault(1);
+        string goapEffectTypeStr = parameters.ElementAtOrDefault(2);
+        string conditionKeyStr = parameters.ElementAtOrDefault(3);
 
-        INTERACTION_TYPE interactionType;
-        if (!System.Enum.TryParse<INTERACTION_TYPE>(interactionTypeStr, out interactionType)) {
-            AddErrorMessage("There is no interaction with type " + interactionTypeStr);
-            return;
-        }
         Character character = CharacterManager.Instance.GetCharacterByName(characterStr);
         if (character == null) {
             AddErrorMessage("There is no character with name " + characterStr);
             return;
         }
         Character targetCharacter = CharacterManager.Instance.GetCharacterByName(targetCharacterStr);
-        Character otherCharacter = CharacterManager.Instance.GetCharacterByName(otherCharacterStr);
-        Interaction interaction = InteractionManager.Instance.CreateNewInteraction(interactionType, character.specificLocation);
-        if (targetCharacter != null) {
-            interaction.SetTargetCharacter(targetCharacter, character);
+        if (targetCharacter == null) {
+            AddErrorMessage("There is no character with name " + targetCharacterStr);
+            return;
         }
-        if (otherCharacter != null) {
-            interaction.SetOtherCharacter(otherCharacter);
-        }
-        if (interaction.type == INTERACTION_TYPE.USE_ITEM_ON_CHARACTER) {
-            (interaction as UseItemOnCharacter).SetItemToken(character.tokenInInventory);
+        GOAP_EFFECT_CONDITION goapEffectType;
+        if (!System.Enum.TryParse(goapEffectTypeStr, out goapEffectType)) {
+            AddErrorMessage("There is no goap effect with type " + goapEffectType);
+            return;
         }
 
-        //if (interaction.CanInteractionBeDoneBy(character)) {
-            character.SetForcedInteraction(interaction);
-            AddSuccessMessage("Set " + character.name + "'s override to " + interaction.name);
-        //} else {
-        //    AddErrorMessage(character.name + " cannot do " + interaction.name);
-            //interaction.EndInteraction();
-        //}
-        
-
-        
+        character.StartGOAP(new GoapEffect() { conditionType = goapEffectType, conditionKey = conditionKeyStr, targetPOI = targetCharacter }, targetCharacter, GOAP_CATEGORY.NONE, true);
+        AddSuccessMessage(character.name + " will create new new plan with effect " + goapEffectType.ToString() + "(" + conditionKeyStr + ") targetting " + targetCharacter.name);
     }
     private void ToggleFreezeCharacter(string[] parameter) {
         if (parameter.Length < 1) {

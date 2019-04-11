@@ -561,7 +561,6 @@ public class CharacterMarker : PooledObject {
         //    Messenger.RemoveListener<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, OnTileOccupied);
         //}
 
-        //TODO: add checker that if the nearest tile to target is same as the destination tile, must not call GoToTile anymore, just set shouldRecalculatePath to false
         if (nearestTileToTarget != null) {
             pathRecalSummary += "\nGot new target tile " + nearestTileToTarget.ToString() + ". Going there now.";
             //if (currentMoveCoroutine != null) {
@@ -733,7 +732,8 @@ public class CharacterMarker : PooledObject {
     #region Hosility Collision
     public bool AddHostileInRange(Character poi, CHARACTER_STATE forcedReaction = CHARACTER_STATE.NONE) {
         if (!hostilesInRange.Contains(poi)) {
-            if (this.character.IsHostileWith(poi)) {
+            if (this.character.IsHostileWith(poi) 
+                || forcedReaction != CHARACTER_STATE.NONE) { //if forced reaction is not equal to none, it means that this character must treat the other character as hostile, regardless of conditions
                 hostilesInRange.Add(poi);
                 NormalReactToHostileCharacter(poi, forcedReaction);
                 return true;
@@ -770,6 +770,11 @@ public class CharacterMarker : PooledObject {
     public void OnOtherCharacterDied(Character otherCharacter) {
         RemovePOIFromInVisionRange(otherCharacter);
         //RemoveHostileInRange(otherCharacter);
+        if (this.hasFleePath) { //if this character is fleeing, remove the character that died from his/her hostile list
+            //this is for cases when this character is fleeing from a character that died because another character assaulted them,
+            //and so, the character that died was not removed from this character's hostile list
+            hostilesInRange.Remove(otherCharacter);
+        }
     }
     #endregion
 
@@ -799,9 +804,14 @@ public class CharacterMarker : PooledObject {
                 summary += "\n" + character.name + " will not do anything.";
             } else if (character.role.roleType == CHARACTER_ROLE.BEAST || character.role.roleType == CHARACTER_ROLE.ADVENTURER
                 || character.role.roleType == CHARACTER_ROLE.SOLDIER) {
-                //- Uninjured Beasts, Adventurers and Soldiers will enter Engage mode.
-                character.stateComponent.SwitchToState(CHARACTER_STATE.ENGAGE, otherCharacter);
-                summary += "\n" + character.name + " chose to engage.";
+                if (otherCharacter.IsDoingCombatActionTowards(this.character) || this.character.IsDoingCombatActionTowards(otherCharacter)) {
+                    //if the other character is already going to assault this character, and this character chose to engage, wait for the other characters assault instead
+                    summary += "\n" + otherCharacter.name + " is already or will engage with this character (" + this.character.name + "), waiting for that, instead of starting new engage state.";
+                } else {
+                    //- Uninjured Beasts, Adventurers and Soldiers will enter Engage mode.
+                    character.stateComponent.SwitchToState(CHARACTER_STATE.ENGAGE, otherCharacter);
+                    summary += "\n" + character.name + " chose to engage.";
+                }
             }
         }
 
@@ -878,6 +888,7 @@ public class CharacterMarker : PooledObject {
         SetCurrentlyEngaging(nearestHostile);
         pathfindingAI.SetIsStopMovement(false);
         character.currentParty.icon.SetIsTravelling(true);
+        StartWalkingAnimation();
     }
     public void OnReachEngageTarget() {
         Debug.Log(character.name + " has reached engage target!");
@@ -892,6 +903,14 @@ public class CharacterMarker : PooledObject {
             engageState.CombatOnEngage();
             SetTargetTransform(null);
             RemoveHostileInRange(currentlyEngaging);
+            //if this character was injured from the combat, force him/her to flee from them
+            if (thisCharacter.GetTrait("Injured") != null && !enemy.isDead) {
+                AddHostileInRange(enemy, CHARACTER_STATE.FLEE);
+            }
+            //if the other character was injured from the combat, force him/her to flee this
+            if (enemy.GetTrait("Injured") != null && !thisCharacter.isDead) {
+                enemy.marker.AddHostileInRange(thisCharacter, CHARACTER_STATE.FLEE);
+            }
         }
     }
     public void SetCannotCombat(bool state) {

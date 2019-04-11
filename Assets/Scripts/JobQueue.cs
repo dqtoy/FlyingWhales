@@ -48,6 +48,23 @@ public class JobQueue {
         }
         return false;
     }
+    public void AssignCharacterToJob(JobQueueItem job, Character characterToDoJob) {
+        if (job.assignedCharacter == null) {
+            job.SetAssignedCharacter(characterToDoJob);
+            if (job is GoapPlanJob) {
+                GoapPlanJob goapPlanJob = job as GoapPlanJob;
+                characterToDoJob.StartGOAP(goapPlanJob.targetEffect, goapPlanJob.targetPOI, GOAP_CATEGORY.WORK, false, null, true, goapPlanJob);
+            } else if (job is CharacterStateJob) {
+                CharacterStateJob stateJob = job as CharacterStateJob;
+                CharacterState newState = characterToDoJob.stateComponent.SwitchToState(stateJob.targetState);
+                if (newState != null) {
+                    stateJob.SetAssignedState(newState);
+                } else {
+                    throw new System.Exception(characterToDoJob.name + " tried doing state " + stateJob.targetState.ToString() + " but was unable to do so! This must not happen!");
+                }
+            }
+        }
+    }
     public void CancelAllJobsRelatedTo(GOAP_EFFECT_CONDITION conditionType, IPointOfInterest poi) {
         for (int i = 0; i < jobsInQueue.Count; i++) {
             if(jobsInQueue[i] is GoapPlanJob) {
