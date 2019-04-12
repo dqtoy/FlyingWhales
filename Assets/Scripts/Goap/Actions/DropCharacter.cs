@@ -55,7 +55,7 @@ public class DropCharacter : GoapAction {
 
     #region State Effects
     public void PreDropSuccess() {
-        currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        //currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         currentState.AddLogFiller(_workAreaStructure.location, _workAreaStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
         currentState.SetIntelReaction(DropSuccessIntelReaction);
     }
@@ -66,6 +66,7 @@ public class DropCharacter : GoapAction {
         AddActualEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = actor.homeArea, targetPOI = poiTarget });
         if(target.gridTileLocation.structure.structureType == STRUCTURE_TYPE.WAREHOUSE) {
             //Create judgement job
+
         }
     }
     #endregion

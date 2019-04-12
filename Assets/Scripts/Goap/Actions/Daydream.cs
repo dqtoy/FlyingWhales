@@ -56,7 +56,7 @@ public class Daydream : GoapAction {
     #endregion
 
     #region Effects
-    private void DaydreamSuccess() {
+    private void PreDaydreamSuccess() {
         actor.AdjustDoNotGetLonely(1);
         actor.AdjustDoNotGetTired(1);
     }

@@ -39,6 +39,9 @@ public class GoapActionState {
     private void CreateLog() {
         descriptionLog = new Log(GameManager.Instance.Today(), "GoapAction", parentAction.GetType().ToString(), name.ToLower() + "_description");
         AddLogFiller(parentAction.actor, parentAction.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        if(parentAction.poiTarget is Character) {
+            AddLogFiller(parentAction.poiTarget as Character, parentAction.poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        }
     }
     public void OverrideDescriptionLog(Log log) {
         descriptionLog = log;

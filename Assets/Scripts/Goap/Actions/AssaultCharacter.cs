@@ -79,7 +79,7 @@ public class AssaultCharacter : GoapAction {
 
     #region State Effects
     public void PreTargetInjured() {
-        currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        //currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         AddTraitTo(actor, "Combat Recovery");
         currentState.SetIntelReaction(State1And2Reactions);
     }
@@ -93,7 +93,7 @@ public class AssaultCharacter : GoapAction {
         if (!actor.IsHostileWith(poiTarget as Character)) {
             SetCommittedCrime(CRIME.ASSAULT);
         }
-        currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        //currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         AddTraitTo(actor, "Combat Recovery");
         currentState.SetIntelReaction(State1And2Reactions);
     }
@@ -107,7 +107,7 @@ public class AssaultCharacter : GoapAction {
         if (!actor.IsHostileWith(poiTarget as Character)) {
             SetCommittedCrime(CRIME.MURDER);
         }
-        currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        //currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         AddTraitTo(actor, "Combat Recovery");
         currentState.SetIntelReaction(State3Reactions);
     }
@@ -115,9 +115,9 @@ public class AssaultCharacter : GoapAction {
         Character target = poiTarget as Character;
         target.Death();
     }
-    public void PreTargetMissing() {
-        currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-    }
+    //public void PreTargetMissing() {
+    //    currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+    //}
     #endregion
 
     #region Intel Reactions

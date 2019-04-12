@@ -56,7 +56,7 @@ public class Play : GoapAction {
     #endregion
 
     #region Effects
-    private void PlaySuccess() {
+    private void PrePlaySuccess() {
         actor.AdjustDoNotGetLonely(1);
         actor.AdjustDoNotGetTired(1);
     }

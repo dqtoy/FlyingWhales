@@ -68,9 +68,9 @@ public class AbductCharacter : GoapAction {
     //#endregion
 
     #region State Effects
-    public void PreAbductSuccess() {
-        currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-    }
+    //public void PreAbductSuccess() {
+        //currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+    //}
     public void AfterAbductSuccess() {
         Character target = poiTarget as Character;
         Restrained restrainedTrait = new Restrained();
@@ -78,9 +78,9 @@ public class AbductCharacter : GoapAction {
 
         AddActualEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = poiTarget });
     }
-    public void PreTargetMissing() {
-        currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-    }
+    //public void PreTargetMissing() {
+    //    currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+    //}
     public void AfterTargetMissing() {
         actor.RemoveAwareness(poiTarget);
     }

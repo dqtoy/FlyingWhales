@@ -107,9 +107,9 @@ public class Hunt : GoapAction {
     #endregion
 
     #region State Effects
-    public void PreTargetInjured() {
-        currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-    }
+    //public void PreTargetInjured() {
+    //    currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+    //}
     public void AfterTargetInjured() {
         Character target = poiTarget as Character;
         Injured injured = new Injured();
@@ -118,18 +118,18 @@ public class Hunt : GoapAction {
     }
     public void PreTargetKilled() {
         Character target = poiTarget as Character;
-        currentState.AddLogFiller(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        //currentState.AddLogFiller(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         target.Death();
     }
     public void PerTickTargetKilled() {
         actor.AdjustFullness(10);
     }
     public void PreTargetWon() {
-        currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        //currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         AddTraitTo(actor, "Combat Recovery");
     }
-    public void PreTargetMissing() {
-        currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-    }
+    //public void PreTargetMissing() {
+    //    currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+    //}
     #endregion
 }
