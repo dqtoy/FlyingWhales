@@ -11,7 +11,7 @@ public class Corrupt : PlayerJobAction {
         actionName = "Corrupt";
         SetDefaultCooldownTime(48);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
-        _traitNames = new List<string>() { "Lycanthropy" };
+        _traitNames = new List<string>() { "Lycanthropy", "Unconscious" };
     }
 
     public override void ActivateAction(Character assignedCharacter, Character targetCharacter) {
@@ -23,9 +23,9 @@ public class Corrupt : PlayerJobAction {
         if (targetCharacter.isDead || character.id == targetCharacter.id) { //|| (!targetCharacter.isTracked && !GameManager.Instance.inspectAll)
             return false;
         }
-        if (targetCharacter.role.roleType == CHARACTER_ROLE.BEAST || targetCharacter.race == RACE.SKELETON) {
-            return false;
-        }
+        //if (targetCharacter.role.roleType == CHARACTER_ROLE.BEAST || targetCharacter.race == RACE.SKELETON) {
+        //    return false;
+        //}
         return base.ShouldButtonBeInteractable(character, targetCharacter);
     }
 
@@ -34,8 +34,11 @@ public class Corrupt : PlayerJobAction {
         base.ActivateAction(assignedCharacter, _targetCharacter);
         UIManager.Instance.HideObjectPicker();
         if (traitName == "Lycanthropy") {
-            Lycanthropy lycanthropy = new Lycanthropy();
-            _targetCharacter.AddTrait(lycanthropy);
+            Lycanthropy newTrait = new Lycanthropy();
+            _targetCharacter.AddTrait(newTrait);
+        }else if (traitName == "Unconscious") {
+            Unconscious newTrait = new Unconscious();
+            _targetCharacter.AddTrait(newTrait);
         }
     }
     private bool CanCorruptCharacter(string traitName) {

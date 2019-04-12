@@ -2596,6 +2596,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     private void ApplyTraitEffects(Trait trait) {
         if(trait.type == TRAIT_TYPE.DISABLER) {
             AdjustDoNotDisturb(1);
+            if(trait.effect == TRAIT_EFFECT.NEGATIVE) {
+                AdjustIgnoreHostilities(1);
+            }
         }
         if(trait.name == "Abducted" || trait.name == "Restrained") {
             AdjustDoNotGetTired(1);
@@ -2645,6 +2648,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     private void UnapplyTraitEffects(Trait trait) {
         if (trait.type == TRAIT_TYPE.DISABLER) {
             AdjustDoNotDisturb(-1);
+            if (trait.effect == TRAIT_EFFECT.NEGATIVE) {
+                AdjustIgnoreHostilities(-1);
+            }
         }
         if (trait.name == "Abducted" || trait.name == "Restrained") {
             AdjustDoNotGetTired(-1);
@@ -4441,6 +4447,29 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         _numOfWaitingForGoapThread ++;
         //Debug.LogWarning(name + " sent a plan to other thread(" + _numOfWaitingForGoapThread + ")");
+        MultiThreadPool.Instance.AddToThreadPool(new GoapThread(this, target, goal, category, isPriority, characterTargetsAwareness, isPersonalPlan, job));
+    }
+    public void StartGOAP(GoapAction goal, IPointOfInterest target, GOAP_CATEGORY category, bool isPriority = false, List<Character> otherCharactePOIs = null, bool isPersonalPlan = true, GoapPlanJob job = null) {
+        List<CharacterAwareness> characterTargetsAwareness = new List<CharacterAwareness>();
+        if (target.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+            CharacterAwareness characterAwareness = AddAwareness(target) as CharacterAwareness;
+            if (characterAwareness != null) {
+                characterTargetsAwareness.Add(characterAwareness);
+            }
+        }
+
+        if (otherCharactePOIs != null) {
+            for (int i = 0; i < otherCharactePOIs.Count; i++) {
+                CharacterAwareness characterAwareness = AddAwareness(otherCharactePOIs[i]) as CharacterAwareness;
+                if (characterAwareness != null) {
+                    characterTargetsAwareness.Add(characterAwareness);
+                }
+            }
+        }
+        if (job != null) {
+            job.SetAssignedPlan(null);
+        }
+        _numOfWaitingForGoapThread++;
         MultiThreadPool.Instance.AddToThreadPool(new GoapThread(this, target, goal, category, isPriority, characterTargetsAwareness, isPersonalPlan, job));
     }
     public void RecalculatePlan(GoapPlan currentPlan) {
