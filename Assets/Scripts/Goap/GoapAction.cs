@@ -235,6 +235,11 @@ public class GoapAction {
             FailAction();
         }
     }
+    /// <summary>
+    /// Setup other data needed for an action, This is called during plan creation.
+    /// </summary>
+    /// <param name="otherData">Array of data</param>
+    public virtual void InitializeOtherData(object[] otherData) { }
     #endregion
 
     #region Utilities
@@ -341,7 +346,7 @@ public class GoapAction {
         }
     }
     protected bool HasSupply(int neededSupply) {
-        return actor.supply - actor.role.reservedSupply >= neededSupply;
+        return actor.supply >= neededSupply;
     }
     /// <summary>
     /// This is used by the character marker so that when it recalculates a path, his/her current action is updated.
@@ -521,6 +526,10 @@ public class GoapAction {
 
     #region Crime System
     public bool IsConsideredACrimeBy(Character reacting) {
+        if (actor.faction == FactionManager.Instance.neutralFaction 
+            || reacting.faction == FactionManager.Instance.neutralFaction) {
+            return false;
+        }
         return reacting.faction.id == actor.faction.id && committedCrime != CRIME.NONE;
     }
     protected void SetCommittedCrime(CRIME crime) {
