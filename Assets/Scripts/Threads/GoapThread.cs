@@ -111,7 +111,7 @@ public class GoapThread : Multithread {
 
         log += "\nUSABLE ACTIONS: ";
         List<GoapPlan> allPlans = new List<GoapPlan>();
-        if(goalAction != null) {
+        if(goalAction == null) {
             for (int i = 0; i < usableActions.Count; i++) {
                 if (i > 0) {
                     log += ", ";
