@@ -51,7 +51,7 @@ public class CharacterState {
     
     //This is called per TICK_ENDED if the state has a duration, can be overriden
     protected virtual void PerTickInState() {
-        if(currentDuration >= duration) {
+        if(currentDuration >= duration || stateComponent.character.doNotDisturb > 0) {
             StopStatePerTick();
             OnExitThisState();
         }
@@ -77,9 +77,7 @@ public class CharacterState {
     }
     //Starts the timer of this state
     public void StartStatePerTick() {
-        if (duration > 0) {
-            Messenger.AddListener(Signals.TICK_ENDED, PerTickInState);
-        }
+        Messenger.AddListener(Signals.TICK_ENDED, PerTickInState);
     }
     //Sets the target character of this state, if there's any
     public void SetTargetCharacter(Character target) {

@@ -1174,6 +1174,26 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         }
     }
+    public bool HasJobTargettingThisCharacter(string jobName) {
+        for (int i = 0; i < allJobsTargettingThis.Count; i++) {
+            JobQueueItem job = allJobsTargettingThis[i];
+            if (job.name == jobName) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public bool HasJobTargettingThisCharacter(string jobName, object conditionKey) {
+        for (int i = 0; i < allJobsTargettingThis.Count; i++) {
+            if(allJobsTargettingThis[i] is GoapPlanJob) {
+                GoapPlanJob job = allJobsTargettingThis[i] as GoapPlanJob;
+                if (job.name == jobName && job.targetEffect.conditionKey == conditionKey) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     private void CheckApprehendRelatedJobsOnLeaveLocation() {
         CancelAllJobsTargettingThisCharacter("Apprehend");
 
@@ -1187,7 +1207,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public void CreateApprehendJob() {
         if (homeArea.id == specificLocation.id) {
-            if (!homeArea.jobQueue.HasJob("Apprehend", this)) {
+            if (!HasJobTargettingThisCharacter("Apprehend")) {
                 GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = homeArea, targetPOI = this };
                 GoapPlanJob job = new GoapPlanJob("Apprehend", goapEffect);
                 job.SetCanTakeThisJobChecker(CanCharacterTakeApprehendJob);
@@ -1197,30 +1217,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     private bool CanCharacterTakeApprehendJob(Character character) {
         return character.role.roleType == CHARACTER_ROLE.SOLDIER;
-    }
-    private void CreateFeedJob() {
-        if (GetTrait("Restrained") != null && !specificLocation.jobQueue.HasJob("Feed", this)) {
-            GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, targetPOI = this };
-            GoapPlanJob job = new GoapPlanJob("Feed", goapEffect);
-            job.SetCanTakeThisJobChecker(CanCharacterTakeFeedJob);
-            specificLocation.jobQueue.AddJobInQueue(job);
-        }
-    }
-    private void MoveFeedJobToTopPriority() {
-        if (GetTrait("Restrained") != null) {
-            JobQueueItem feedJob = specificLocation.jobQueue.GetJob("Feed", this);
-            if(feedJob != null) {
-                specificLocation.jobQueue.MoveJobToTopPriority(feedJob);
-            } else {
-                GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, targetPOI = this };
-                GoapPlanJob job = new GoapPlanJob("Feed", goapEffect);
-                job.SetCanTakeThisJobChecker(CanCharacterTakeFeedJob);
-                specificLocation.jobQueue.AddJobInQueue(job, true);
-            }
-        }
-    }
-    private bool CanCharacterTakeFeedJob(Character character) {
-        return character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.CIVILIAN;
     }
     #endregion
 
@@ -2617,11 +2613,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         } else if (trait.name == "Daydreaming") {
             AdjustDoNotGetTired(1);
             AdjustDoNotGetLonely(1);
-        } else if (trait.name == "Hungry") {
-            CreateFeedJob();
-        } else if (trait.name == "Starving") {
-            MoveFeedJobToTopPriority();
-        }
+        } 
+        //else if (trait.name == "Hungry") {
+        //    CreateFeedJob();
+        //} else if (trait.name == "Starving") {
+        //    MoveFeedJobToTopPriority();
+        //}
         for (int i = 0; i < trait.effects.Count; i++) {
             TraitEffect traitEffect = trait.effects[i];
             if (!traitEffect.hasRequirement && traitEffect.target == TRAIT_REQUIREMENT_TARGET.SELF) {
@@ -2985,7 +2982,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         _currentInteractionTick = UnityEngine.Random.Range(startDay, startDay + 6);
     }
-    public void PlanGoapActions() {
+    public void PlanGoapActions(GoapAction specificAction = null) {
         if (isDead) {
             //StopDailyGoapPlanGeneration();
             return;
@@ -2997,7 +2994,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             Debug.LogWarning("Currently in " + stateComponent.currentState.stateName + " state, can't plan actions!");
             return;
         }
-
+        if(specificAction != null) {
+            WillAboutToDoAction(specificAction);
+        }
         if(allGoapPlans.Count > 0) {
             //StopDailyGoapPlanGeneration();
             PerformGoapPlans();
@@ -3190,12 +3189,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public bool PlanIdleStroll(LocationStructure targetStructure) {
         //Debug.Log("---------" + GameManager.Instance.TodayLogString() + "CREATING IDLE STROLL ACTION FOR " + name + "-------------");
         //if(currentStructure.unoccupiedTiles.Count > 0) {
-            Stroll goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.STROLL, this, this) as Stroll;
-            goapAction.SetTargetStructure(targetStructure);
-            GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
-            GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.IDLE);
-            allGoapPlans.Add(goapPlan);
-            return true;
+        Stroll goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.STROLL, this, this) as Stroll;
+        goapAction.SetTargetStructure(targetStructure);
+        GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
+        GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.IDLE);
+        allGoapPlans.Add(goapPlan);
+        PlanGoapActions(goapAction);
+        return true;
         //}
         //return false;
     }
@@ -3209,6 +3209,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
             GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.IDLE);
             allGoapPlans.Add(goapPlan);
+            PlanGoapActions(goapAction);
         }
         return true;
     }
@@ -3231,7 +3232,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         } else {
             PlanIdleStroll(currentStructure);
         }
-        PlanGoapActions();
+        //PlanGoapActions();
     }
     public bool AssaultCharacter(Character target) {
         //Debug.Log(this.name + " will assault " + target.name);
@@ -4612,6 +4613,50 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     i--;
                 }
             }
+        }
+        if (willGoIdleState) {
+            log += "\n - Character will go into idle state";
+            PrintLogIfActive(log);
+            IdlePlans();
+        }
+    }
+    private void WillAboutToDoAction(GoapAction action) {
+        string log = GameManager.Instance.TodayLogString() + "PERFORMING GOAP PLANS OF " + name;
+        List<INTERACTION_TYPE> actorAllowedActions = RaceManager.Instance.GetNPCInteractionsOfRace(this);
+        bool willGoIdleState = true;
+        if (action.parentPlan.isBeingRecalculated) {
+            log += "\n - Plan is currently being recalculated, skipping...";
+            return; //skip plan
+        }
+        if (actorAllowedActions.Contains(action.goapType) && action.CanSatisfyRequirements() && action.targetTile != null) {
+            if (action.IsHalted()) {
+                log += "\n - Action " + action.goapName + " is waiting, skipping...";
+                return;
+            }
+            bool preconditionsSatisfied = action.CanSatisfyAllPreconditions();
+            if (!preconditionsSatisfied) {
+                log += "\n - Action's preconditions are not all satisfied, trying to recalculate plan...";
+                if (action.parentPlan.doNotRecalculate) {
+                    log += "\n - Action's plan has doNotRecalculate state set to true, dropping plan...";
+                    PrintLogIfActive(log);
+                    DropPlan(action.parentPlan);
+                } else {
+                    PrintLogIfActive(log);
+                    RecalculatePlan(action.parentPlan);
+                }
+                willGoIdleState = false;
+            } else {
+                log += "\n - Action's preconditions are all satisfied, doing action...";
+                PrintLogIfActive(log);
+                Messenger.Broadcast(Signals.CHARACTER_WILL_DO_PLAN, this, action.parentPlan);
+                action.DoAction(action.parentPlan);
+                willGoIdleState = false;
+            }
+        } else {
+            log += "\n - Action did not meet current requirements and allowed actions, dropping plan...";
+            PrintLogIfActive(log);
+            DropPlan(action.parentPlan);
+            willGoIdleState = false;
         }
         if (willGoIdleState) {
             log += "\n - Character will go into idle state";

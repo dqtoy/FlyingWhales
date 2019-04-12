@@ -38,6 +38,9 @@ public class FirstAidCharacter : GoapAction {
     }
     public void AfterFirstAidSuccess() {
         //**After Effect 1**: Remove target's Injured and Unconscious trait
+        if (parentPlan.job != null) {
+            parentPlan.job.SetCannotCancelJob(true);
+        }
         RemoveTraitFrom(poiTarget, "Injured");
         RemoveTraitFrom(poiTarget, "Unconscious");
         //**After Effect 2**: Reduce character's Supply by 10

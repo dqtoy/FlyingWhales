@@ -112,7 +112,8 @@ public class Hunt : GoapAction {
     }
     public void AfterTargetInjured() {
         Character target = poiTarget as Character;
-        AddTraitTo(target, "Injured");
+        Injured injured = new Injured();
+        AddTraitTo(target, injured);
         AddTraitTo(actor, "Combat Recovery");
     }
     public void PreTargetKilled() {

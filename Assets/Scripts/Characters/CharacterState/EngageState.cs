@@ -99,11 +99,13 @@ public class EngageState : CharacterState {
             if (result == "Target Killed") {
                 targetCharacter.Death("combat");
             } else if (result == "Target Injured") {
-                targetCharacter.AddTrait("Injured");
+                Injured injured = new Injured();
+                targetCharacter.AddTrait(injured);
             } else if (result == "Hunter Killed") {
                 engagerCharacter.Death("combat");
             } else if (result == "Hunter Injured") {
-                engagerCharacter.AddTrait("Injured");
+                Injured injured = new Injured();
+                engagerCharacter.AddTrait(injured);
             }
         }
     }

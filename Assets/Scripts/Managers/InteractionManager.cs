@@ -1078,6 +1078,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.REPORT_CRIME:
                 goapAction = new ReportCrime(actor, target);
                 break;
+            case INTERACTION_TYPE.FEED:
+                goapAction = new Feed(actor, target);
+                break;
         }
         if(goapAction != null && willInitialize) {
             goapAction.Initialize();

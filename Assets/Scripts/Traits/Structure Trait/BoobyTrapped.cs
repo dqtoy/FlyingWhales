@@ -52,7 +52,8 @@ public class BoobyTrapped : StructureTrait {
     private void TrapInjures(Character character) {
         /*The character gains Injured trait and his active interaction will continue.
         Log: "[Character Name] activated the booby trap and was injured!"*/
-        character.AddTrait("Injured");
+        Injured injured = new Injured();
+        character.AddTrait(injured);
         Log log = new Log(GameManager.Instance.Today(), "StructureTraits", this.GetType().ToString(), "Trap Injures");
         log.AddToFillers(new LogFiller(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
         character.AddHistory(log);

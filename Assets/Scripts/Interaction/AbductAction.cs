@@ -131,8 +131,8 @@ public class AbductAction : Interaction {
         state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
  
         state.AddLogFiller(new LogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
-
-        _characterInvolved.AddTrait("Injured");
+        Injured injured = new Injured();
+        _characterInvolved.AddTrait(injured);
     }
     private void AbductorKnockedOutEffect(InteractionState state) {
         state.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);

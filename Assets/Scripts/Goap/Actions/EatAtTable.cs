@@ -85,7 +85,8 @@ public class EatAtTable : GoapAction {
             log = new Log(GameManager.Instance.Today(), "GoapAction", "EatAtTable", "eat poisoned_sick");
             log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(poiTarget.gridTileLocation.structure.location, poiTarget.gridTileLocation.structure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
-            AddTraitTo(actor, "Sick");
+            Sick sick = new Sick();
+            AddTraitTo(actor, sick);
         } else {
             log = new Log(GameManager.Instance.Today(), "GoapAction", "EatAtTable", "eat poisoned_killed");
             log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

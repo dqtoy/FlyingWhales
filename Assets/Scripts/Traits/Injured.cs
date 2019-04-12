@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Unconscious : Trait {
+public class Injured : Trait {
     private Character _responsibleCharacter;
     private Character _sourceCharacter;
-    private GoapPlanJob _restrainJob;
     private GoapPlanJob _removeTraitJob;
 
     #region getters/setters
@@ -14,16 +13,15 @@ public class Unconscious : Trait {
     }
     #endregion
 
-    public Unconscious() {
-        name = "Unconscious";
-        description = "This character is unconscious.";
-        thoughtText = "[Character] has been knocked out.";
-        type = TRAIT_TYPE.DISABLER;
+    public Injured() {
+        name = "Injured";
+        description = "Temporary small reduction to overall combat prowess.";
+        type = TRAIT_TYPE.STATUS;
         effect = TRAIT_EFFECT.NEGATIVE;
-        associatedInteraction = INTERACTION_TYPE.NONE;
         trigger = TRAIT_TRIGGER.OUTSIDE_COMBAT;
+        associatedInteraction = INTERACTION_TYPE.NONE;
         crimeSeverity = CRIME_CATEGORY.NONE;
-        daysDuration = 144;
+        daysDuration = 480;
         advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.FIRST_AID_ACTION, };
         effects = new List<TraitEffect>();
     }
@@ -32,41 +30,20 @@ public class Unconscious : Trait {
     public override void SetCharacterResponsibleForTrait(Character character) {
         _responsibleCharacter = character;
     }
-    public override string GetToolTipText() {
-        if (_responsibleCharacter == null) {
-            return description;
-        }
-        return "This character has been knocked out by " + _responsibleCharacter.name;
-    }
     public override void OnAddTrait(IPointOfInterest sourceCharacter) {
         base.OnAddTrait(sourceCharacter);
-        if(sourceCharacter is Character) {
+        if (sourceCharacter is Character) {
             _sourceCharacter = sourceCharacter as Character;
-            CheckToApplyRestrainJob();
             CheckToApplyRemoveTraitJob();
         }
     }
     public override void OnRemoveTrait(IPointOfInterest sourceCharacter) {
-        if (_restrainJob != null) {
-            _restrainJob.jobQueueParent.CancelJob(_restrainJob);
-        }
         if (_removeTraitJob != null) {
             _removeTraitJob.jobQueueParent.CancelJob(_removeTraitJob);
         }
         base.OnRemoveTrait(sourceCharacter);
     }
     #endregion
-
-    private void CheckToApplyRestrainJob() {
-        if (_sourceCharacter.homeArea.id != _sourceCharacter.specificLocation.id && !_sourceCharacter.HasJobTargettingThisCharacter("Restrain")) {
-            _restrainJob = new GoapPlanJob("Restrain", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = _sourceCharacter });
-            _restrainJob.SetCanTakeThisJobChecker(CanCharacterTakeRestrainJob);
-            _sourceCharacter.specificLocation.jobQueue.AddJobInQueue(_restrainJob);
-        }
-    }
-    private bool CanCharacterTakeRestrainJob(Character character) {
-        return character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.CIVILIAN || character.role.roleType == CHARACTER_ROLE.ADVENTURER;
-    }
 
     private void CheckToApplyRemoveTraitJob() {
         if (_sourceCharacter.homeArea.id == _sourceCharacter.specificLocation.id && !_sourceCharacter.HasJobTargettingThisCharacter("Remove Trait", name)) {

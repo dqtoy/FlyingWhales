@@ -76,7 +76,7 @@ public class BlightedPotion : SpecialToken {
     private void ItemUsedEffect(TokenInteractionState state) {
         //string chosenIllnessName = AttributeManager.Instance.GetRandomIllness();
         Character targetCharacter = state.target as Character;
-        Trait sickTrait = AttributeManager.Instance.allTraits["Sick"];
+        Sick sickTrait = new Sick();
         targetCharacter.AddTrait(sickTrait);
         //state.tokenUser.LevelUp();
         state.tokenUser.ConsumeToken();
@@ -105,7 +105,7 @@ public class BlightedPotion : SpecialToken {
     }
     private void StopFailEffect(TokenInteractionState state) {
         //string chosenIllnessName = AttributeManager.Instance.GetRandomIllness();
-        Trait sickTrait = AttributeManager.Instance.allTraits["Sick"];
+        Sick sickTrait = new Sick();
         (state.target as Character).AddTrait(sickTrait);
         //state.tokenUser.LevelUp();
         state.tokenUser.ConsumeToken();

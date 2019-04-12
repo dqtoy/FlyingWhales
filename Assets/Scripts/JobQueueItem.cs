@@ -6,6 +6,7 @@ public class JobQueueItem {
     public JobQueue jobQueueParent { get; protected set; }
     public Character assignedCharacter { get; protected set; }
     public string name { get; private set; }
+    public bool cannotCancelJob { get; private set; }
 
     private System.Func<Character, bool> _canTakeThisJob;
 
@@ -34,6 +35,9 @@ public class JobQueueItem {
     }
     public void SetCanTakeThisJobChecker(System.Func<Character, bool> function) {
         _canTakeThisJob = function;
+    }
+    public void SetCannotCancelJob(bool state) {
+        cannotCancelJob = state;
     }
 
     public bool CanCharacterTakeThisJob(Character character) {

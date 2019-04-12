@@ -85,7 +85,8 @@ public class AssaultCharacter : GoapAction {
     }
     public void AfterTargetInjured() {
         Character target = poiTarget as Character;
-        AddTraitTo(target, "Injured");
+        Injured injured = new Injured();
+        AddTraitTo(target, injured);
     }
     public void PreTargetKnockedOut() {
         //**Note**: If the actor is from the same faction as the witness and the target is not considered hostile, this is an Assault crime

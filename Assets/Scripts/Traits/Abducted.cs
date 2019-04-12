@@ -32,6 +32,9 @@ public class Abducted : Trait {
         _responsibleCharacter = character;
     }
     public override string GetToolTipText() {
+        if(_responsibleCharacter == null) {
+            return description;
+        }
         return "This character has been abducted by " + _responsibleCharacter.name;
     }
     #endregion

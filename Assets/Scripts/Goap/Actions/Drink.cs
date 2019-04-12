@@ -61,7 +61,8 @@ public class Drink : GoapAction {
         actor.AdjustDoNotGetLonely(-1);
         int chance = UnityEngine.Random.Range(0, 2);
         if (chance == 0) {
-            AddTraitTo(actor, "Sick");
+            Sick sick = new Sick();
+            AddTraitTo(actor, sick);
         } else {
             actor.Death();
         }

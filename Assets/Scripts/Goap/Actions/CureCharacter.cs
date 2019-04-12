@@ -37,6 +37,9 @@ public class CureCharacter : GoapAction {
     }
     public void AfterCureSuccess() {
         //**After Effect 1**: Reduce target's Sick trait
+        if(parentPlan.job != null) {
+            parentPlan.job.SetCannotCancelJob(true);
+        }
         RemoveTraitFrom(poiTarget, "Sick");
         //**After Effect 2**: Reduce character's Supply by 10
         actor.AdjustSupply(-10);

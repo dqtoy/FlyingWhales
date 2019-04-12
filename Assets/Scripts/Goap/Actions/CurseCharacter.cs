@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CurseCharacter : GoapAction {
 
-    public CurseCharacter(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.CURE_CHARACTER, INTERACTION_ALIGNMENT.EVIL, actor, poiTarget) {
+    public CurseCharacter(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.CURSE_CHARACTER, INTERACTION_ALIGNMENT.EVIL, actor, poiTarget) {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         actionIconString = GoapActionStateDB.Social_Icon;
         shouldAddLogs = false; //set to false because this action has a special case for logs
@@ -27,7 +27,8 @@ public class CurseCharacter : GoapAction {
     #region State Effects
     public void AfterCurseSuccess() {
         //**After Effect 1**: Target gains Cursed trait.
-        AddTraitTo(poiTarget, "Cursed");
+        Cursed cursed = new Cursed();
+        AddTraitTo(poiTarget, cursed);
         //**After Effect 2**: Actor loses Ritualized trait.
         RemoveTraitFrom(actor, "Ritualized");
 

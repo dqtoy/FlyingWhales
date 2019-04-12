@@ -29,6 +29,9 @@ public class JobQueue {
             jobsInQueue.Insert(0, job);
         }
     }
+    public bool IsJobInTopPriority(JobQueueItem job) {
+        return jobsInQueue.Count > 0 && jobsInQueue[0] == job;
+    }
     public bool ProcessFirstJobInQueue(Character characterToDoJob) {
         if(jobsInQueue.Count > 0) {
             for (int i = 0; i < jobsInQueue.Count; i++) {
@@ -170,7 +173,10 @@ public class JobQueue {
         return count;
     }
     public bool CancelJob(JobQueueItem job) {
-        job.UnassignJob();
-        return RemoveJobInQueue(job);
+        if (!job.cannotCancelJob) {
+            job.UnassignJob();
+            return RemoveJobInQueue(job);
+        }
+        return false;
     }
 }

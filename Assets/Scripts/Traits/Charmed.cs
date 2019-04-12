@@ -38,6 +38,9 @@ public class Charmed : Trait {
         _responsibleCharacter = character;
     }
     public override string GetToolTipText() {
+        if (_responsibleCharacter == null) {
+            return description;
+        }
         return "This character has been charmed by " + _responsibleCharacter.name;
     }
     #endregion

@@ -116,8 +116,13 @@ public class CharacterStateComponent {
                 SetCurrentState(null);
             } else {
                 //Resumes previous major state
-                SetCurrentState(previousMajorState);
-                currentState.ResumeState();
+                if(character.doNotDisturb > 0) {
+                    previousMajorState.ExitState();
+                    SetCurrentState(null);
+                } else {
+                    SetCurrentState(previousMajorState);
+                    currentState.ResumeState();
+                }
             }
             previousMajorState = null;
         } else {

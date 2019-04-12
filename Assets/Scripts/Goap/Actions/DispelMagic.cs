@@ -37,6 +37,9 @@ public class DispelMagic : GoapAction {
     }
     public void AfterDispelMagicSuccess() {
         //**After Effect 1**: Reduce all of target's Enchantment type traits
+        if (parentPlan.job != null) {
+            parentPlan.job.SetCannotCancelJob(true);
+        }
         RemoveTraitsOfType(poiTarget, TRAIT_TYPE.ENCHANTMENT);
         //**After Effect 2**: Actor loses Ritualized trait.
         RemoveTraitFrom(actor, "Ritualized");
