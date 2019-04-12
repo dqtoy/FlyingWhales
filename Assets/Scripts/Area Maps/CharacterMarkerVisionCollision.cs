@@ -144,6 +144,10 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
         return false;
     }
     private bool ChatHandling(Character targetCharacter) {
+        if(targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_EFFECT.NEUTRAL, TRAIT_TYPE.DISABLER) 
+            || parentMarker.character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_EFFECT.NEUTRAL, TRAIT_TYPE.DISABLER)) {
+            return false;
+        }
         if(!parentMarker.character.IsHostileWith(targetCharacter)) {
             int chance = UnityEngine.Random.Range(0, 100);
             if (chance < 10) {

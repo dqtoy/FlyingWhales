@@ -41,6 +41,11 @@ public class AttributeManager : MonoBehaviour {
             CategorizeTrait(attribute);
         }
         AddSpecialTraits();
+        foreach (Trait trait in _allPositiveTraits.Values) {
+            if (trait.type == TRAIT_TYPE.DISABLER) {
+                Debug.Log(trait.name);
+            }
+        }
     }
     public Action<Character> GetBehavior(ATTRIBUTE_BEHAVIOR type) {
         switch (type) {
