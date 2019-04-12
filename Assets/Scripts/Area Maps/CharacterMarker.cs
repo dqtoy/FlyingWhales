@@ -765,6 +765,9 @@ public class CharacterMarker : PooledObject {
         //this will make this character flee when he/she gains an injured trait
         if (character == this.character) {
             if (trait.type == TRAIT_TYPE.DISABLER) { //if the character gained a disabler trait, hinder movement
+                if(character.currentParty.icon.isTravelling && character.currentParty.icon.travelLine == null) {
+                    StopMovementOnly();
+                }
                 pathfindingAI.AdjustDoNotMove(1);
             }
             if (trait.name == "Injured" && trait.responsibleCharacter != null && character.GetTrait("Unconscious") == null) {

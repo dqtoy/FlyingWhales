@@ -17,20 +17,21 @@ public class GoapPlanJob : JobQueueItem {
     public override void UnassignJob() {
         base.UnassignJob();
         if (assignedPlan != null && assignedCharacter != null) {
-            assignedCharacter.AdjustIsWaitingForInteraction(1);
-            if (assignedCharacter.currentAction != null && assignedCharacter.currentAction.parentPlan == assignedPlan) {
-                if(assignedCharacter.currentParty.icon.isTravelling && assignedCharacter.currentParty.icon.travelLine == null) {
-                    assignedCharacter.marker.StopMovementOnly();
+            Character character = assignedCharacter;
+            character.AdjustIsWaitingForInteraction(1);
+            if (character.currentAction != null && character.currentAction.parentPlan == assignedPlan) {
+                if(character.currentParty.icon.isTravelling && character.currentParty.icon.travelLine == null) {
+                    character.marker.StopMovementOnly();
                 }
-                if (assignedCharacter.currentAction.isPerformingActualAction && !assignedCharacter.currentAction.isDone) {
-                    assignedCharacter.currentAction.currentState.EndPerTickEffect();
+                if (character.currentAction.isPerformingActualAction && !character.currentAction.isDone) {
+                    character.currentAction.currentState.EndPerTickEffect();
                 }
-                assignedCharacter.SetCurrentAction(null);
-                assignedCharacter.DropPlan(assignedPlan);
+                character.SetCurrentAction(null);
+                character.DropPlan(assignedPlan);
             } else {
-                assignedCharacter.DropPlan(assignedPlan);
+                character.DropPlan(assignedPlan);
             }
-            assignedCharacter.AdjustIsWaitingForInteraction(-1);
+            character.AdjustIsWaitingForInteraction(-1);
             SetAssignedCharacter(null);
             SetAssignedPlan(null);
         }
