@@ -230,9 +230,9 @@ namespace PathFind {
                                     continue; //skip
                                 }
 
-                                //if (n != start && n != destination && n.HasNeighbourOfType(LocationGridTile.Tile_Type.Wall, true)) {
-                                //    continue; //skip
-                                //}
+                                if (n != start && n != destination && n.tileType == LocationGridTile.Tile_Type.Structure) {
+                                    continue; //skip
+                                }
 
                                 d = distance(path.LastStep, n);
                                 newPath = path.AddStep(n, d);

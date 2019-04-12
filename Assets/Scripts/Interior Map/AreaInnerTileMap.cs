@@ -220,9 +220,10 @@ public class AreaInnerTileMap : MonoBehaviour {
 
         if (area.areaType == AREA_TYPE.DUNGEON) {
             DrawCaveWalls(insideTiles, outsideTiles);
-        } else {
-            ConstructInsideMapWalls(insideTiles, outsideTiles);
-        }
+        } 
+        //else {
+        //    ConstructInsideMapWalls(insideTiles, outsideTiles);
+        //}
 
         PlaceStructures(settings, insideTiles);
         DrawStructureWalls();
@@ -454,8 +455,13 @@ public class AreaInnerTileMap : MonoBehaviour {
         for (int i = 0; i < outTiles.Count; i++) {
             //check for out tiles that have neighbours in the in tile list
             LocationGridTile currOutTile = outTiles[i];
-            if (currOutTile.tileType == LocationGridTile.Tile_Type.Wall) {
-                wallTiles.Add(currOutTile);
+            //if (currOutTile.tileType == LocationGridTile.Tile_Type.Wall) {
+            //    wallTiles.Add(currOutTile);
+            //}
+            for (int j = 0; j < currOutTile.neighbours.Values.Count; j++) {
+                if (!outTiles.Contains(currOutTile.neighbours.Values.ElementAt(j))) {
+                    wallTiles.Add(currOutTile);
+                }
             }
         }
 

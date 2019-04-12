@@ -375,6 +375,7 @@ public class CharacterInfoUI : UIMenu {
             return;
         }
         UpdateTraits();
+        UpdateThoughtBubble();
     }
     private void UpdateTraits() {
         Utilities.DestroyChildren(statusTraitsScrollView.content);

@@ -465,20 +465,25 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
             return;
         }
         if (objHere == null) {
-            if (inputButton == PointerEventData.InputButton.Right) {
-                if (InteriorMapManager.Instance.IsHoldingPOI()) {
-                    InteriorMapManager.Instance.PlaceHeldPOI(this);
-                }
-            }
+            //if (inputButton == PointerEventData.InputButton.Right) {
+            //    if (InteriorMapManager.Instance.IsHoldingPOI()) {
+            //        InteriorMapManager.Instance.PlaceHeldPOI(this);
+            //    }
+            //}
         } else if (objHere is TileObject || objHere is SpecialToken) {
             if (inputButton == PointerEventData.InputButton.Middle && objHere is TileObject) {
                 (objHere as TileObject).LogActionHistory();
-            } else if (inputButton == PointerEventData.InputButton.Right) {
-                if (!InteriorMapManager.Instance.IsHoldingPOI()) {
-                    InteriorMapManager.Instance.HoldPOI(objHere);
-                }
-            } else {
+            } 
+            //else if (inputButton == PointerEventData.InputButton.Right) {
+            //    if (!InteriorMapManager.Instance.IsHoldingPOI()) {
+            //        InteriorMapManager.Instance.HoldPOI(objHere);
+            //    }
+            //} 
+            else {
                 parentAreaMap.ShowIntelItemAt(this, InteractionManager.Instance.CreateNewIntel(objHere));
+                if ((objHere as TileObject).tileObjectType == TILE_OBJECT_TYPE.CORPSE) {
+                    UIManager.Instance.ShowCharacterInfo((objHere as Corpse).character);
+                }
             }
         } else if (objHere is Character) {
             UIManager.Instance.ShowCharacterInfo((objHere as Character));

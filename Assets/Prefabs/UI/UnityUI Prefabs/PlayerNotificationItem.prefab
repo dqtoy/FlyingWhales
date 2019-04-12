@@ -348,7 +348,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 114165725884214804}
         m_MethodName: DeleteNotification
         m_Mode: 1
         m_Arguments:

@@ -2423,6 +2423,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public bool AddTrait(Trait trait, Character characterResponsible = null, System.Action onRemoveAction = null) {
         if (trait.IsUnique() && GetTrait(trait.name) != null) {
             trait.SetCharacterResponsibleForTrait(characterResponsible);
+            if (trait.name == "Injured") { //TODO: Make this more elegant!(Need a way to still broadcast added traits even if it is a duplicate)
+                marker.OnCharacterGainedTrait(this, GetTrait(trait.name));
+            }
             return false;
         }
         _traits.Add(trait);
@@ -4903,6 +4906,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     /// </summary>
     /// <param name="character">Character in question.</param>
     public bool IsHostileWith(Character character) {
+        //return true;
         if (character.ignoreHostility > 0 || this.ignoreHostility > 0) {
             //if either the character in question or this character should ignore hostility, return false.
             return false;
@@ -5027,7 +5031,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 if (actor.faction == this.faction) {
                     //only add apprehend job if the criminal is part of this characters faction
                     actor.AddCriminalTrait(committedCrime);
-                    job = new GoapPlanJob("Apprehend", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = actor });
+                    job = new GoapPlanJob("Apprehend", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = homeArea, targetPOI = actor });
+                    job.SetCanTakeThisJobChecker(CanCharacterTakeApprehendJob);
                     homeArea.jobQueue.AddJobInQueue(job);
                 }
                 
@@ -5038,7 +5043,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     //only add apprehend job if the criminal is part of this characters faction
                     actor.AddCriminalTrait(committedCrime);
                     //- If the character is a Soldier, he will also create an Apprehend Job Type in his personal job queue.
-                    job = new GoapPlanJob("Apprehend", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = actor });
+                    job = new GoapPlanJob("Apprehend", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = homeArea, targetPOI = actor });
+                    job.SetCanTakeThisJobChecker(CanCharacterTakeApprehendJob);
                     homeArea.jobQueue.AddJobInQueue(job);
                     homeArea.jobQueue.AssignCharacterToJob(job, this);
                 }
