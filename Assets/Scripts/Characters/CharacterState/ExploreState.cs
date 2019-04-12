@@ -44,6 +44,15 @@ public class ExploreState : CharacterState {
             //allGoapPlans.Add(goapPlan);
         }
     }
+    protected override void PerTickInState() {
+        base.PerTickInState();
+        if (!isDone) {
+            if (stateComponent.character.GetTrait("Injured") != null) {
+                StopStatePerTick();
+                OnExitThisState();
+            }
+        }
+    }
     #endregion
 
     private void OnArriveAtPickUpLocation() {

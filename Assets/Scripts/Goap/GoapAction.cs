@@ -286,7 +286,7 @@ public class GoapAction {
     public void SetEndAction(System.Action<string, GoapAction> endAction) {
         this.endAction = endAction;
     }
-    public void StopAction( ) {
+    public void StopAction() {
         //GoapAction action = actor.currentAction;
         if(actor.marker.pathfindingThread != null) {
             actor.marker.pathfindingThread.SetDoNotMove(true);

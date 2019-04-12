@@ -2030,14 +2030,19 @@ public class Area {
         int patrolChance = UnityEngine.Random.Range(0, 100);
         if(patrolChance < 25 && jobQueue.GetNumberOfJobsWith(CHARACTER_STATE.PATROL) < 2) {
             CharacterStateJob stateJob = new CharacterStateJob("Patrol", CHARACTER_STATE.PATROL);
+            stateJob.SetCanTakeThisJobChecker(CanDoPatrolAndExplore);
             jobQueue.AddJobInQueue(stateJob);
         }
 
         int exploreChance = UnityEngine.Random.Range(0, 100);
         if (exploreChance < 15 && !jobQueue.HasJobRelatedTo(CHARACTER_STATE.EXPLORE)) {
             CharacterStateJob stateJob = new CharacterStateJob("Explore", CHARACTER_STATE.EXPLORE);
+            stateJob.SetCanTakeThisJobChecker(CanDoPatrolAndExplore);
             jobQueue.AddJobInQueue(stateJob);
         }
+    }
+    private bool CanDoPatrolAndExplore(Character character) {
+        return character.GetTrait("Injured") == null;
     }
     #endregion
 
