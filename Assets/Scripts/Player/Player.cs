@@ -721,9 +721,11 @@ public class Player : ILeader {
     }
     public void ShowNotificationFrom(Character character, Log log) {
         if (ShouldShowNotificationFrom(character)) {
-            Messenger.Broadcast<Log>(Signals.SHOW_PLAYER_NOTIFICATION, log);
-            //UIManager.Instance.Pause();
+            ShowNotification(log);
         }
+    }
+    public void ShowNotification(Log log) {
+        Messenger.Broadcast<Log>(Signals.SHOW_PLAYER_NOTIFICATION, log);
     }
     #endregion
 }

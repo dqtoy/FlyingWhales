@@ -20,6 +20,10 @@ public class FleeState : CharacterState {
         base.PerTickInState();
         stateComponent.character.marker.RedetermineFlee(); 
     }
+    //protected override void EndState() {
+    //    base.EndState();
+    //    OnExitThisState();
+    //}
     public override void OnExitThisState() {
         if (stateComponent.character.marker.hasFleePath) {
             //the character still has a current flee path
@@ -27,6 +31,7 @@ public class FleeState : CharacterState {
             stateComponent.character.marker.StopMovementOnly();
         }
         stateComponent.character.currentParty.icon.SetIsTravelling(false);
+        stateComponent.character.marker.SetHasFleePath(false);
         base.OnExitThisState();
     }
     #endregion
@@ -36,7 +41,7 @@ public class FleeState : CharacterState {
     }
 
     public void CheckForEndState() {
-        if (stateComponent.character.marker.hostilesInRange.Count == 0) {
+        if (stateComponent.character.marker.GetNearestValidHostile() == null) {
             //can end flee
             OnExitThisState();
         } else {

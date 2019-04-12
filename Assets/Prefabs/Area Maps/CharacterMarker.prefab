@@ -637,7 +637,7 @@ MonoBehaviour:
   version: 2
   radius: 0.5
   height: 2
-  repathRate: 0.5
+  repathRate: 0.2
   canSearch: 1
   canMove: 1
   maxSpeed: 2
@@ -649,7 +649,7 @@ MonoBehaviour:
   orientation: 1
   enableRotation: 0
   targetCompatibility: {fileID: 0}
-  maxAcceleration: 100
+  maxAcceleration: 9999
   rotationSpeed: 360
   slowdownDistance: 0.6
   pickNextWaypointDist: 0.3

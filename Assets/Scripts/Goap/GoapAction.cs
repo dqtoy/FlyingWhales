@@ -341,7 +341,7 @@ public class GoapAction {
         }
     }
     protected bool HasSupply(int neededSupply) {
-        return actor.supply >= neededSupply;
+        return actor.supply - actor.role.reservedSupply >= neededSupply;
     }
     /// <summary>
     /// This is used by the character marker so that when it recalculates a path, his/her current action is updated.

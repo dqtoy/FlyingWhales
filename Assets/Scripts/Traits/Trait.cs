@@ -9,7 +9,7 @@ public class Trait {
         get { return name; }
     }
     public virtual Character responsibleCharacter {
-        get { return null; }
+        get { return _responsibleCharacter; }
     }
     public string name;
     public string description;
@@ -22,6 +22,8 @@ public class Trait {
     public CRIME_CATEGORY crimeSeverity;
     public int daysDuration; //Zero (0) means Permanent
     public List<TraitEffect> effects;
+
+    private Character _responsibleCharacter;
 
     private System.Action onRemoveAction;
 
@@ -43,7 +45,9 @@ public class Trait {
             }
         }
     }
-    public virtual void SetCharacterResponsibleForTrait(Character character) { }
+    public virtual void SetCharacterResponsibleForTrait(Character character) {
+        _responsibleCharacter = character;
+    }
     public virtual string GetToolTipText() { return string.Empty; }
     public virtual bool IsUnique() { return true; }
     public void SetOnRemoveAction(System.Action onRemoveAction) {

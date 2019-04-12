@@ -86,7 +86,7 @@ public class AssaultCharacter : GoapAction {
     public void AfterTargetInjured() {
         Character target = poiTarget as Character;
         Injured injured = new Injured();
-        AddTraitTo(target, injured);
+        AddTraitTo(target, injured, actor);
     }
     public void PreTargetKnockedOut() {
         //**Note**: If the actor is from the same faction as the witness and the target is not considered hostile, this is an Assault crime
@@ -100,7 +100,7 @@ public class AssaultCharacter : GoapAction {
     public void AfterTargetKnockedOut() {
         Character target = poiTarget as Character;
         Unconscious unconscious = new Unconscious();
-        AddTraitTo(target, unconscious);
+        AddTraitTo(target, unconscious, actor);
     }
     public void PreTargetKilled() {
         //**Note**: If the actor is from the same faction as the witness and the target is not considered hostile, this is a Murder crime
