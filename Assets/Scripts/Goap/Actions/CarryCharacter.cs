@@ -50,16 +50,16 @@ public class CarryCharacter : GoapAction {
     #endregion
 
     #region State Effects
-    public void PreCarrySuccess() {
-        currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-    }
+    //public void PreCarrySuccess() {
+    //    currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+    //}
     public void AfterCarrySuccess() {
         Character target = poiTarget as Character;
         actor.ownParty.AddCharacter(target);
     }
-    public void PreTargetMissing() {
-        currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-    }
+    //public void PreTargetMissing() {
+    //    currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+    //}
     public void AfterTargetMissing() {
         actor.RemoveAwareness(poiTarget);
     }

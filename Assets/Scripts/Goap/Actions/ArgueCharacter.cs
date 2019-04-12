@@ -116,7 +116,7 @@ public class ArgueCharacter : GoapAction {
         //} else {
         //    target.FaceTarget(actor);
         //}
-        currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        //currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
     }
     private void PerTickArgueSuccess() {
         actor.AdjustHappiness(6);
@@ -125,12 +125,12 @@ public class ArgueCharacter : GoapAction {
         actor.AdjustDoNotGetLonely(-1);
         AddTraitTo(poiTarget, "Annoyed");
     }
-    private void PreArgueFail() {
-        currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-    }
-    private void PreTargetMissing() {
-        currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-    }
+    //private void PreArgueFail() {
+        //currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+    //}
+    //private void PreTargetMissing() {
+    //    currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+    //}
     #endregion
 
     #region Requirement

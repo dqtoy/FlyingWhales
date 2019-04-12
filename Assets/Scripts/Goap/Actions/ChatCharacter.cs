@@ -122,7 +122,7 @@ public class ChatCharacter : GoapAction {
         //} else {
         //    target.FaceTarget(actor);
         //}
-        currentState.AddLogFiller(target, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        //currentState.AddLogFiller(target, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
     }
     private void PerTickChatSuccess() {
         actor.AdjustHappiness(10);
@@ -132,12 +132,12 @@ public class ChatCharacter : GoapAction {
         actor.AdjustDoNotGetLonely(-1);
         (poiTarget as Character).AdjustDoNotGetLonely(-1);
     }
-    private void PreChatFail() {
-        currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-    }
-    private void PreTargetMissing() {
-        currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-    }
+    //private void PreChatFail() {
+    //    currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+    //}
+    //private void PreTargetMissing() {
+    //    currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+    //}
     #endregion
 
     #region Requirement

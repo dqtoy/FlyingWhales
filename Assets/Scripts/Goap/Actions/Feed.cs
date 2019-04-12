@@ -21,7 +21,7 @@ public class Feed : GoapAction {
     //    _requirementAction = Requirement;
     //}
     protected override void ConstructPreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_SUPPLY, conditionKey = 0, targetPOI = actor }, CanFeed);
+        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_SUPPLY, conditionKey = 0, targetPOI = actor }, () => HasSupply(10));
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = poiTarget });
     }
     public override void PerformActualAction() {
@@ -37,17 +37,9 @@ public class Feed : GoapAction {
     }
     #endregion
 
-    #region Preconditions
-    private bool CanFeed() {
-        if (actor.supply >= 10) {
-            return true;
-        }
-        return false;
-    }
-    #endregion
     #region Effects
     private void PreFeedSuccess() {
-        currentState.AddLogFiller(_target, _target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        //currentState.AddLogFiller(_target, _target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         _target.AdjustDoNotGetHungry(1);
         actor.AdjustSupply(-10);
     }
@@ -57,9 +49,9 @@ public class Feed : GoapAction {
     private void AfterFeedSuccess() {
         _target.AdjustDoNotGetHungry(-1);
     }
-    private void PreTargetMissing() {
-        currentState.AddLogFiller(_target, _target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-    }
+    //private void PreTargetMissing() {
+        //currentState.AddLogFiller(_target, _target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+    //}
     #endregion
 
     //#region Requirements

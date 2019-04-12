@@ -52,17 +52,17 @@ public class ReleaseCharacter : GoapAction {
     #endregion
 
     #region State Effects
-    public void PreReleaseSuccess() {
-        currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-    }
+    //public void PreReleaseSuccess() {
+    //    currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+    //}
     public void AfterReleaseSuccess() {
         Character target = poiTarget as Character;
         RemoveTraitFrom(target, "Restrained");
         RemoveTraitFrom(target, "Abducted");
     }
-    public void PreTargetMissing() {
-        currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-    }
+    //public void PreTargetMissing() {
+    //    currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+    //}
     public void AfterTargetMissing() {
         actor.RemoveAwareness(poiTarget);
     }
