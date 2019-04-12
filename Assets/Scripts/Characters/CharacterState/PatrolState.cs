@@ -23,6 +23,15 @@ public class PatrolState : CharacterState {
         }
         return base.OnEnterVisionWith(targetPOI);
     }
+    protected override void PerTickInState() {
+        base.PerTickInState();
+        if (!isDone) {
+            if(stateComponent.character.GetTrait("Injured") != null) {
+                StopStatePerTick();
+                OnExitThisState();
+            }
+        }
+    }
     #endregion
 
     private void StartPatrolMovement() {

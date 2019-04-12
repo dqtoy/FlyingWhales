@@ -4587,6 +4587,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 //    log += "\n - Plan is currently being recalculated, skipping...";
                 //    continue; //skip plan
                 //}
+                if (IsPlanCancelledDueToInjury(plan.currentNode.action)) {
+                    i--;
+                    continue;
+                }
                 if (plan.currentNode.action.IsHalted()) {
                     log += "\n - Action " + plan.currentNode.action.goapName + " is waiting, skipping...";
                     continue;
@@ -4646,6 +4650,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             return; //skip plan
         }
         if (actorAllowedActions.Contains(action.goapType) && action.CanSatisfyRequirements() && action.targetTile != null) {
+            if (IsPlanCancelledDueToInjury(action)) {
+                return;
+            }
             if (action.IsHalted()) {
                 log += "\n - Action " + action.goapName + " is waiting, skipping...";
                 return;
@@ -4680,6 +4687,23 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             PrintLogIfActive(log);
             IdlePlans();
         }
+    }
+    private bool IsPlanCancelledDueToInjury(GoapAction action) {
+        if(action.poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+            Character target = action.poiTarget as Character;
+            if(IsHostileWith(target) && GetTrait("Injured") != null) {
+                AdjustIsWaitingForInteraction(1);
+                DropPlan(action.parentPlan);
+                AdjustIsWaitingForInteraction(-1);
+
+                Log addLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "plan_cancelled_injury");
+                addLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                addLog.AddLogToInvolvedObjects();
+                PlayerManager.Instance.player.ShowNotificationFrom(this, addLog);
+                return true;
+            }
+        }
+        return false;
     }
     public void PerformGoapAction(GoapPlan plan) {
         string log = string.Empty;
