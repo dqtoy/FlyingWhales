@@ -39,11 +39,8 @@ public class Feed : GoapAction {
 
     #region Preconditions
     private bool CanFeed() {
-        if (actor.supply > actor.role.reservedSupply) {
-            int remainingSupply = actor.supply - actor.role.reservedSupply;
-            if (remainingSupply >= 10) {
-                return true;
-            }
+        if (actor.supply >= 10) {
+            return true;
         }
         return false;
     }
