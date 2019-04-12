@@ -241,6 +241,15 @@ public class InteriorMapManager : MonoBehaviour {
             } else {
                 summary += "None";
             }
+            summary += "\nPersonal Job Queue: ";
+            if (character.jobQueue.jobsInQueue.Count > 0) {
+                for (int i = 0; i < character.jobQueue.jobsInQueue.Count; i++) {
+                    JobQueueItem poi = character.jobQueue.jobsInQueue[i];
+                    summary += poi.name + ", ";
+                }
+            } else {
+                summary += "None";
+            }
         }
         summary += "\nOccupant: " + tile.occupant?.name ?? "None";        
 

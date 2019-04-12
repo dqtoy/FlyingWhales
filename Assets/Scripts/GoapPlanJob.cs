@@ -8,12 +8,22 @@ public class GoapPlanJob : JobQueueItem {
     public GoapPlan assignedPlan { get; protected set; }
     public IPointOfInterest targetPOI { get; protected set; }
 
+    //interaction type version
+    public INTERACTION_TYPE targetInteractionType { get; protected set; } //Only used if the plan to be created uses interaction type
+    public object[] otherData { get; protected set; } //Only used if the plan to be created uses interaction type
+
     public GoapPlanJob(string name, GoapEffect targetEffect) : base(name) {
         this.targetEffect = targetEffect;
         this.targetPOI = targetEffect.targetPOI;
     }
+    public GoapPlanJob(string name, INTERACTION_TYPE targetInteractionType, object[] otherData) : base(name) {
+        this.targetEffect = targetEffect;
+        this.targetPOI = targetEffect.targetPOI;
+        this.targetInteractionType = targetInteractionType;
+        this.otherData = otherData;
+    }
 
-    #region Overrides
+    #region Overrides 
     public override void UnassignJob() {
         base.UnassignJob();
         if (assignedPlan != null && assignedCharacter != null) {

@@ -7,6 +7,7 @@ public class GoapThread : Multithread {
     public GoapPlan createdPlan { get; private set; }
     public GoapEffect goalEffect { get; private set; }
     public GoapAction goalAction { get; private set; }
+    public INTERACTION_TYPE goalType { get; private set; }
     public IPointOfInterest target { get; private set; }
     public bool isPriority { get; private set; }
     public bool isPersonalPlan { get; private set; }
@@ -16,6 +17,7 @@ public class GoapThread : Multithread {
     //public List<INTERACTION_TYPE> actorAllowedActions { get; private set; }
     //public List<GoapAction> usableActions { get; private set; }
     public string log { get; private set; }
+    private object[] otherData;
 
     //For recalculation
     public GoapPlan recalculationPlan;
@@ -48,6 +50,20 @@ public class GoapThread : Multithread {
         this.category = category;
         this.job = job;
     }
+    public GoapThread(Character actor, INTERACTION_TYPE goalType, GOAP_CATEGORY category, bool isPriority, List<CharacterAwareness> characterTargetsAwareness, bool isPersonalPlan, GoapPlanJob job, object[] otherData = null) {//, List<INTERACTION_TYPE> actorAllowedActions, List<GoapAction> usableActions
+        this.createdPlan = null;
+        this.recalculationPlan = null;
+        this.actor = actor;
+        this.goalType = goalType;
+        this.isPriority = isPriority;
+        this.characterTargetsAwareness = characterTargetsAwareness;
+        //this.actorAllowedActions = actorAllowedActions;
+        //this.usableActions = usableActions;
+        this.isPersonalPlan = isPersonalPlan;
+        this.category = category;
+        this.job = job;
+        this.otherData = otherData;
+    }
     public GoapThread(Character actor, GoapPlan currentPlan) {//, List<GoapAction> usableActions
         this.createdPlan = null;
         this.actor = actor;
@@ -55,6 +71,7 @@ public class GoapThread : Multithread {
         //this.actorAllowedActions = actorAllowedActions;
         //this.usableActions = usableActions;
     }
+    
     #region Overrides
     public override void DoMultithread() {
         base.DoMultithread();
@@ -78,8 +95,13 @@ public class GoapThread : Multithread {
         }
     }
     private void CreateNewPlan() {
-        log = "-----------------RECEIVING NEW PLAN FROM OTHER THREAD OF " + actor.name + " WITH TARGET " + target.name + " (" + actor.specificLocation.name + ")-----------------------";
-        log += "\nGOAL: " + goalEffect.conditionType.ToString() + " - " + goalEffect.conditionString() + ", target: " + goalEffect.targetPOI.ToString();
+        log = "-----------------RECEIVING NEW PLAN FROM OTHER THREAD OF " + actor.name + " WITH TARGET " + target?.name ?? "None" + " (" + actor.specificLocation.name + ")-----------------------";
+        if (goalType != INTERACTION_TYPE.NONE) {
+            log += "\nGOAL: "  + goalType.ToString();
+        } else {
+            log += "\nGOAL: " + goalEffect.conditionType.ToString() + " - " + goalEffect.conditionString() + ", target: " + goalEffect.targetPOI.ToString();
+        }
+       
 
         List<INTERACTION_TYPE> actorAllowedActions = RaceManager.Instance.GetNPCInteractionsOfRace(actor);
         List<GoapAction> usableActions = new List<GoapAction>();
@@ -111,7 +133,35 @@ public class GoapThread : Multithread {
 
         log += "\nUSABLE ACTIONS: ";
         List<GoapPlan> allPlans = new List<GoapPlan>();
-        if(goalAction == null) {
+        if (goalType != INTERACTION_TYPE.NONE) {
+            //provided goal type
+            for (int i = 0; i < usableActions.Count; i++) {
+                if (i > 0) {
+                    log += ", ";
+                }
+                log += usableActions[i].goapName + " (" + usableActions[i].poiTarget.name + ")";
+                if (usableActions[i].goapType == goalType) {
+                    usableActions[i].InitializeOtherData(otherData);
+                    GoapPlan plan = actor.planner.PlanActions(usableActions[i].poiTarget, usableActions[i], usableActions, category, isPersonalPlan);
+                    if (plan != null) {
+                        allPlans.Add(plan);
+                    }
+                }
+            }
+        } else if (goalAction != null) {
+            //provided goal action
+            for (int i = 0; i < usableActions.Count; i++) {
+                if (i > 0) {
+                    log += ", ";
+                }
+                log += usableActions[i].goapName + " (" + usableActions[i].poiTarget.name + ")";
+            }
+            GoapPlan plan = actor.planner.PlanActions(target, goalAction, usableActions, category, isPersonalPlan);
+            if (plan != null) {
+                allPlans.Add(plan);
+            }
+        } else {
+            //default
             for (int i = 0; i < usableActions.Count; i++) {
                 if (i > 0) {
                     log += ", ";
@@ -124,19 +174,7 @@ public class GoapThread : Multithread {
                     }
                 }
             }
-        } else {
-            for (int i = 0; i < usableActions.Count; i++) {
-                if (i > 0) {
-                    log += ", ";
-                }
-                log += usableActions[i].goapName + " (" + usableActions[i].poiTarget.name + ")";
-            }
-            GoapPlan plan = actor.planner.PlanActions(target, goalAction, usableActions, category, isPersonalPlan);
-            if (plan != null) {
-                allPlans.Add(plan);
-            }
         }
-
 
         log += "\nALL GENERATED PLANS: ";
         if (allPlans.Count > 0) {

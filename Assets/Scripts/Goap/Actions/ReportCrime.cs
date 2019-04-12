@@ -38,19 +38,25 @@ public class ReportCrime : GoapAction {
     protected override int GetCost() {
         return 3;
     }
+    public override void InitializeOtherData(object[] otherData) {
+        base.InitializeOtherData(otherData);
+        GoapAction crime = otherData[0] as GoapAction;
+        SetCrimeToReport(crime.committedCrime, crime.actor);
+    }
     #endregion
 
     #region State Effects
     public void PreReportCrimeSuccess() {
         //**Effect 1**: The reported criminal will gain the associated Crime trait
         criminal.AddCriminalTrait(crime);
+        currentState.AddLogFiller(criminal, criminal.name, LOG_IDENTIFIER.CHARACTER_3);
     }
     #endregion
 
     #region Requirements
     private bool Requirement() {
         //**Advertiser**: All Faction Leaders, Nobles and Soldiers
-        if (poiTarget is Character) {
+        if (poiTarget is Character && poiTarget != actor && poiTarget != criminal) {
             Character character = poiTarget as Character;
             if (character.role.roleType == CHARACTER_ROLE.LEADER || character.role.roleType == CHARACTER_ROLE.NOBLE || character.role.roleType == CHARACTER_ROLE.SOLDIER) {
                 return true;

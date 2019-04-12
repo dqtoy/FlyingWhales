@@ -4482,6 +4482,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         _numOfWaitingForGoapThread++;
         MultiThreadPool.Instance.AddToThreadPool(new GoapThread(this, target, goal, category, isPriority, characterTargetsAwareness, isPersonalPlan, job));
     }
+    public void StartGOAP(INTERACTION_TYPE goalType, IPointOfInterest target, GOAP_CATEGORY category, bool isPriority = false, List<Character> otherCharactePOIs = null, bool isPersonalPlan = true, GoapPlanJob job = null, object[] otherData = null) {
+        List<CharacterAwareness> characterTargetsAwareness = new List<CharacterAwareness>();
+        if (job != null) {
+            job.SetAssignedPlan(null);
+        }
+        _numOfWaitingForGoapThread++;
+        MultiThreadPool.Instance.AddToThreadPool(new GoapThread(this, goalType, category, isPriority, characterTargetsAwareness, isPersonalPlan, job, otherData));
+    }
     public void RecalculatePlan(GoapPlan currentPlan) {
         currentPlan.SetIsBeingRecalculated(true);
         MultiThreadPool.Instance.AddToThreadPool(new GoapThread(this, currentPlan));
@@ -5066,7 +5074,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     //else use normal witnessed log
                     witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "witnessed");
                 }
-                PerRoleCrimeReaction(committedCrime, actor);
+                PerRoleCrimeReaction(committedCrime, actor, witnessedCrime);
             }
         }
         //If character has no relationships with the criminal or they are enemies:
@@ -5074,7 +5082,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             reactSummary += "\n" + this.name + " does not have a relationship with or is an enemy of " + actor.name;
             //-Witness Log: "[Character Name] saw [Criminal Name] committing [Theft/Assault/Murder]!"
             witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "witnessed");
-            PerRoleCrimeReaction(committedCrime, actor);
+            PerRoleCrimeReaction(committedCrime, actor, witnessedCrime);
         }
 
         if (witnessLog != null) {
@@ -5099,16 +5107,20 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             case CHARACTER_ROLE.CIVILIAN:
             case CHARACTER_ROLE.ADVENTURER:
                 //- If the character is a Civilian or Adventurer, he will enter Flee mode (fleeing the criminal) and will create a Report Crime Job Type in his personal job queue
-                if (witnessedCrime != null) {
+                if (witnessedCrime != null && this.faction != FactionManager.Instance.neutralFaction && actor.faction == this.faction) {
                     //only make character flee, if he/she actually witnessed the crime (not share intel)
-                    this.marker.AddHostileInRange(actor, CHARACTER_STATE.FLEE);
+                    //this.marker.AddHostileInRange(actor, CHARACTER_STATE.FLEE);
+                    job = new GoapPlanJob("Report Crime", INTERACTION_TYPE.REPORT_CRIME, new object[] { witnessedCrime });
+                    //job.SetCanTakeThisJobChecker(CanCharacterTakeApprehendJob);
+                    //homeArea.jobQueue.AddJobInQueue(job);
+                    jobQueue.AddJobInQueue(job);
                 }
                 break;
             case CHARACTER_ROLE.LEADER:
             case CHARACTER_ROLE.NOBLE:
                 //- If the character is a Noble or Faction Leader, the criminal will gain the relevant Crime-type trait
                 //If he is a Noble or Faction Leader, he will create the Apprehend Job Type in the Location job queue instead.
-                if (actor.faction == this.faction) {
+                if (this.faction != FactionManager.Instance.neutralFaction && actor.faction == this.faction) {
                     //only add apprehend job if the criminal is part of this characters faction
                     actor.AddCriminalTrait(committedCrime);
                     job = new GoapPlanJob("Apprehend", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = homeArea, targetPOI = actor });
@@ -5119,7 +5131,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 break;
             case CHARACTER_ROLE.SOLDIER:
                 //- If the character is a Soldier, the criminal will gain the relevant Crime-type trait
-                if (actor.faction == this.faction) {
+                if (this.faction != FactionManager.Instance.neutralFaction && actor.faction == this.faction) {
                     //only add apprehend job if the criminal is part of this characters faction
                     actor.AddCriminalTrait(committedCrime);
                     //- If the character is a Soldier, he will also create an Apprehend Job Type in his personal job queue.
