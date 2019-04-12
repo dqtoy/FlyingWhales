@@ -11,7 +11,7 @@ public class Corrupt : PlayerJobAction {
         actionName = "Corrupt";
         SetDefaultCooldownTime(48);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
-        _traitNames = new List<string>() { "Lycanthropy", "Unconscious", "Restrained" };
+        _traitNames = new List<string>() { "Lycanthropy", "Unconscious", "Restrained", "Cursed", "Sick", "Injured" };
     }
 
     public override void ActivateAction(Character assignedCharacter, Character targetCharacter) {
@@ -41,6 +41,15 @@ public class Corrupt : PlayerJobAction {
             _targetCharacter.AddTrait(newTrait);
         } else if (traitName == "Restrained") {
             Restrained newTrait = new Restrained();
+            _targetCharacter.AddTrait(newTrait);
+        } else if (traitName == "Cursed") {
+            Cursed newTrait = new Cursed();
+            _targetCharacter.AddTrait(newTrait);
+        } else if (traitName == "Sick") {
+            Sick newTrait = new Sick();
+            _targetCharacter.AddTrait(newTrait);
+        } else if (traitName == "Injured") {
+            Injured newTrait = new Injured();
             _targetCharacter.AddTrait(newTrait);
         }
     }

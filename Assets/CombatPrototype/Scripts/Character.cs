@@ -1488,6 +1488,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         SetTraitsFromRace();
         //Update Portrait to use new race
         _portraitSettings = CharacterManager.Instance.GenerateRandomPortrait(race, gender);
+        if(marker != null) {
+            marker.UpdateMarkerVisuals();
+        }
         Messenger.Broadcast(Signals.CHARACTER_CHANGED_RACE, this);
     }
     public void RemoveRace() {
@@ -1503,6 +1506,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         SetTraitsFromRace();
         //Update Portrait to use new race
         _portraitSettings = CharacterManager.Instance.GenerateRandomPortrait(race, gender);
+        if(marker != null) {
+            marker.UpdateMarkerVisuals();
+        }
     }
     public void ChangeClass(string className) {
         string previousClassName = _characterClass.className;

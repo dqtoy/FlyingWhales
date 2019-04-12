@@ -81,10 +81,7 @@ public class CharacterMarker : PooledObject {
         if (UIManager.Instance.characterInfoUI.isShowing) {
             clickedImg.gameObject.SetActive(UIManager.Instance.characterInfoUI.activeCharacter.id == character.id);
         }
-        MarkerAsset assets = CharacterManager.Instance.GetMarkerAsset(character.race, character.gender);
-
-        mainImg.sprite = assets.defaultSprite;
-        animator.runtimeAnimatorController = assets.animator;
+        UpdateMarkerVisuals();
         //PlayIdle();
 
         Vector3 randomRotation = new Vector3(0f, 0f, 90f);
@@ -113,6 +110,11 @@ public class CharacterMarker : PooledObject {
         Messenger.AddListener<Character, Trait>(Signals.TRAIT_REMOVED, OnCharacterLostTrait);
 
         PathfindingManager.Instance.AddAgent(pathfindingAI);
+    }
+    public void UpdateMarkerVisuals() {
+        MarkerAsset assets = CharacterManager.Instance.GetMarkerAsset(character.race, character.gender);
+        mainImg.sprite = assets.defaultSprite;
+        animator.runtimeAnimatorController = assets.animator;
     }
     public void SetOnArriveAtTileAction(Action action) {
         onArrivedAtTileAction = action;
