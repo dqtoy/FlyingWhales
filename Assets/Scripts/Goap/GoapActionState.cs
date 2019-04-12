@@ -27,6 +27,7 @@ public class GoapActionState {
         this.parentAction = parentAction;
         this.duration = duration;
         this.status = status;
+        this.shouldAddLogs = true;
         CreateLog();
     }
 
