@@ -16,6 +16,9 @@ public class JudgeCharacter : GoapAction {
     }
 
     #region Overrides
+    protected override void ConstructPreconditionsAndEffects() {
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.NONE, targetPOI = poiTarget });
+    }
     public override void PerformActualAction() {
         if (actor.currentStructure == poiTarget.gridTileLocation.structure) {
             WeightedDictionary<string> weights = new WeightedDictionary<string>();

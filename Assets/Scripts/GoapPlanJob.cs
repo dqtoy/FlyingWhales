@@ -17,10 +17,16 @@ public class GoapPlanJob : JobQueueItem {
         this.targetPOI = targetEffect.targetPOI;
     }
     public GoapPlanJob(string name, INTERACTION_TYPE targetInteractionType, object[] otherData) : base(name) {
-        this.targetEffect = targetEffect;
-        this.targetPOI = targetEffect.targetPOI;
+        //this.targetEffect = targetEffect;
+        //this.targetPOI = targetEffect.targetPOI;
         this.targetInteractionType = targetInteractionType;
         this.otherData = otherData;
+    }
+    public GoapPlanJob(string name, INTERACTION_TYPE targetInteractionType, IPointOfInterest targetPOI) : base(name) {
+        //this.targetEffect = targetEffect;
+        this.targetPOI = targetPOI;
+        this.targetInteractionType = targetInteractionType;
+        //this.otherData = otherData;
     }
 
     #region Overrides 

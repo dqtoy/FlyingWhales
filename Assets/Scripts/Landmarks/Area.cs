@@ -2044,6 +2044,14 @@ public class Area {
     private bool CanDoPatrolAndExplore(Character character) {
         return character.GetTrait("Injured") == null;
     }
+    public void CreateJudgementJob(Character targetCharacter) {
+        GoapPlanJob job = new GoapPlanJob("Judgement", INTERACTION_TYPE.JUDGE_CHARACTER, targetCharacter);
+        job.SetCanTakeThisJobChecker(CanDoJudgementJob);
+        jobQueue.AddJobInQueue(job);
+    }
+    private bool CanDoJudgementJob(Character character) {
+        return character.role.roleType == CHARACTER_ROLE.NOBLE || character.role.roleType == CHARACTER_ROLE.LEADER;
+    }
     #endregion
 
     public override string ToString() {
