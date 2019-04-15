@@ -5133,7 +5133,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 //- If the character is a Civilian or Adventurer, he will enter Flee mode (fleeing the criminal) and will create a Report Crime Job Type in his personal job queue
                 if (witnessedCrime != null && this.faction != FactionManager.Instance.neutralFaction && actor.faction == this.faction) {
                     //only make character flee, if he/she actually witnessed the crime (not share intel)
-                    //this.marker.AddHostileInRange(actor, CHARACTER_STATE.FLEE);
+                    this.marker.AddHostileInRange(actor, CHARACTER_STATE.FLEE);
                     job = new GoapPlanJob("Report Crime", INTERACTION_TYPE.REPORT_CRIME, new object[] { witnessedCrime });
                     //job.SetCanTakeThisJobChecker(CanCharacterTakeApprehendJob);
                     //homeArea.jobQueue.AddJobInQueue(job);
