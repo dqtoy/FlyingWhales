@@ -3966,11 +3966,11 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public bool ConsumeToken(SpecialToken token) {
         if (RemoveToken(token)) {
             token.OnConsumeToken(this);
-            SpecialToken droppedToken = tokenInInventory;
-            if (structure != homeStructure) {
-                //if this character drops this at a structure that is not his/her home structure, set the owner of the item to null
-                droppedToken.SetCharacterOwner(null);
-            }
+            //SpecialToken droppedToken = token;
+            //if (structure != homeStructure) {
+            //    //if this character drops this at a structure that is not his/her home structure, set the owner of the item to null
+            //    droppedToken.SetCharacterOwner(null);
+            //}
             return true;
         }
         return false;
