@@ -1410,6 +1410,8 @@ public enum CRIME {
     THEFT,
     [SubcategoryOf(CRIME_CATEGORY.MISDEMEANOR)]
     ASSAULT,
+    [SubcategoryOf(CRIME_CATEGORY.MISDEMEANOR)]
+    ATTEMPTED_MURDER,
     [SubcategoryOf(CRIME_CATEGORY.SERIOUS)]
     MURDER,
 }

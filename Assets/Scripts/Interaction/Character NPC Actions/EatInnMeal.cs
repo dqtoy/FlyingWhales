@@ -55,15 +55,15 @@ public class EatInnMeal : Interaction {
 
     #region Option Effect
     private void DoNothingOptionEffect() {
-        if(_characterInvolved.currentStructure.GetTrait("Poisoned Food") != null) {
-            WeightedDictionary<string> resultWeights = new WeightedDictionary<string>();
-            resultWeights.AddElement(Character_Eats_Killed, 30);
-            resultWeights.AddElement(Character_Eats_Sick, 20);
-            string result = resultWeights.PickRandomElementGivenWeights();
-            SetCurrentState(_states[result]);
-        } else {
-            SetCurrentState(_states[Character_Clean_Eats]);
-        }
+        //if(_characterInvolved.currentStructure.GetTrait("Poisoned Food") != null) {
+        //    WeightedDictionary<string> resultWeights = new WeightedDictionary<string>();
+        //    resultWeights.AddElement(Character_Eats_Killed, 30);
+        //    resultWeights.AddElement(Character_Eats_Sick, 20);
+        //    string result = resultWeights.PickRandomElementGivenWeights();
+        //    SetCurrentState(_states[result]);
+        //} else {
+        //    SetCurrentState(_states[Character_Clean_Eats]);
+        //}
     }
     #endregion
 
@@ -76,12 +76,12 @@ public class EatInnMeal : Interaction {
         _characterInvolved.AddTrait("Eating");
     }
     private void CharacterEatsKilledEffect(InteractionState state) {
-        _characterInvolved.currentStructure.RemoveTrait("Poisoned Food");
+        //_characterInvolved.currentStructure.RemoveTrait("Poisoned Food");
         _characterInvolved.Death("poison");
     }
     private void CharacterEatsSickEffect(InteractionState state) {
         _characterInvolved.ResetFullnessMeter();
-        _characterInvolved.currentStructure.RemoveTrait("Poisoned Food");
+        //_characterInvolved.currentStructure.RemoveTrait("Poisoned Food");
         _characterInvolved.AddTrait("Sick");
         _characterInvolved.AddTrait("Eating");
     }

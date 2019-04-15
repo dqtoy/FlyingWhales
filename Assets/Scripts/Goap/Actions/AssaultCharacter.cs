@@ -121,7 +121,7 @@ public class AssaultCharacter : GoapAction {
     #endregion
 
     #region Intel Reactions
-    private List<string> State1And2Reactions(Character recipient) {
+    private List<string> State1And2Reactions(Character recipient, Intel sharedIntel) {
         List<string> reactions = new List<string>();
         Character target = poiTarget as Character;
         //Recipient and Target have a positive relationship:
@@ -166,7 +166,7 @@ public class AssaultCharacter : GoapAction {
         }
         return reactions;
     }
-    private List<string> State3Reactions(Character recipient) {
+    private List<string> State3Reactions(Character recipient, Intel sharedIntel) {
         List<string> reactions = new List<string>();
         Character target = poiTarget as Character;
         //Recipient and Target have a positive relationship:

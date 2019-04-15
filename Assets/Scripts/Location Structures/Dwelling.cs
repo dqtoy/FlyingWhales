@@ -28,12 +28,13 @@ public class Dwelling : LocationStructure {
         }
     }
     public bool IsResident(Character character) {
-        for (int i = 0; i < residents.Count; i++) {
-            if(residents[i].id == character.id) {
-                return true;
-            }
-        }
-        return false;
+        return residents.Contains(character);
+        //for (int i = 0; i < residents.Count; i++) {
+        //    if(residents[i].id == character.id) {
+        //        return true;
+        //    }
+        //}
+        //return false;
     }
 
     public override bool IsOccupied() {

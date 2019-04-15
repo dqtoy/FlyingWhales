@@ -32,7 +32,7 @@ public class PlayerNotificationItem : PooledObject {
             ticksAlive++;
         }
     }
-    private void OnExpire() {
+    protected virtual void OnExpire() {
         DeleteNotification();
         //getIntelBtn.interactable = false;
     }

@@ -21,4 +21,9 @@ public class IntelNotificationItem : PlayerNotificationItem {
         DeleteNotification();
     }
 
+    protected override void OnExpire() {
+        base.OnExpire();
+        intel.OnIntelExpire();
+    }
+
 }

@@ -2198,7 +2198,15 @@ public class InteractionManager : MonoBehaviour {
         if (obj[0] is GoapPlan) {
             return new PlanIntel(obj[1] as Character, obj[0] as GoapPlan);
         } else if (obj[0] is GoapAction) {
-            return new EventIntel(obj[1] as Character, obj[0] as GoapAction);
+            GoapAction action = obj[0] as GoapAction;
+            switch (action.goapType) {
+                case INTERACTION_TYPE.TABLE_POISON:
+                    return new PoisonTableIntel(obj[1] as Character, obj[0] as GoapAction);
+                default:
+                    return new EventIntel(obj[1] as Character, obj[0] as GoapAction);
+            }
+
+            
         }
         return null;
     }

@@ -72,7 +72,7 @@ public class DropCharacter : GoapAction {
     #endregion
 
     #region Intel Reactions
-    private List<string> DropSuccessIntelReaction(Character recipient) {
+    private List<string> DropSuccessIntelReaction(Character recipient, Intel sharedIntel) {
         List<string> reactions = new List<string>();
         //Recipient and Target have at least one non-negative relationship and Actor is not from the same faction:
         Character targetCharacter = poiTarget as Character;

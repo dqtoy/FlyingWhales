@@ -9,4 +9,9 @@ public class Intel  {
     public void SetIntelLog(Log log) {
         intelLog = log;
     }
+
+    /// <summary>
+    /// Function called when an intel reaches it's expiry date and the player has not obtained it.
+    /// </summary>
+    public virtual void OnIntelExpire() { } 
 }

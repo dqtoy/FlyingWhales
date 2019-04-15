@@ -124,6 +124,7 @@ public class SpecialToken : Token, IPointOfInterest {
     //public int quantity;
     public int weight;
     public Faction owner;
+    public Character characterOwner { get; private set; }
     public LocationStructure structureLocation { get; private set; }
     public InteractionAttributes interactionAttributes { get; protected set; }
     public List<INTERACTION_TYPE> poiGoapActions { get; private set; }
@@ -207,6 +208,9 @@ public class SpecialToken : Token, IPointOfInterest {
     public void SetOwner(Faction owner) {
         this.owner = owner;
     }
+    public void SetCharacterOwner(Character characterOwner) {
+        this.characterOwner = characterOwner;
+    }
     public void SetStructureLocation(LocationStructure structureLocation) {
         this.structureLocation = structureLocation;
     }
@@ -258,15 +262,16 @@ public class SpecialToken : Token, IPointOfInterest {
     #endregion
 
     #region Traits
-    public bool AddTrait(string traitName, Character characterResponsible = null) {
-        return AddTrait(AttributeManager.Instance.allTraits[traitName], characterResponsible);
+    public bool AddTrait(string traitName, Character characterResponsible = null, System.Action onRemoveAction = null, GoapAction gainedFromDoing = null) {
+        return AddTrait(AttributeManager.Instance.allTraits[traitName], characterResponsible, onRemoveAction, gainedFromDoing);
     }
-    public bool AddTrait(Trait trait, Character characterResponsible = null, System.Action onRemoveAction = null) {
+    public bool AddTrait(Trait trait, Character characterResponsible = null, System.Action onRemoveAction = null, GoapAction gainedFromDoing = null) {
         if (trait.IsUnique() && GetTrait(trait.name) != null) {
             trait.SetCharacterResponsibleForTrait(characterResponsible);
             return false;
         }
         _traits.Add(trait);
+        trait.SetGainedFromDoing(gainedFromDoing);
         trait.SetOnRemoveAction(onRemoveAction);
         trait.SetCharacterResponsibleForTrait(characterResponsible);
         //ApplyTraitEffects(trait);

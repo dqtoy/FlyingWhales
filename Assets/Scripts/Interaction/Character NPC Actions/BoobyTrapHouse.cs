@@ -106,13 +106,13 @@ public class BoobyTrapHouse : Interaction {
     }
     private void TrapContinuesRewardEffect(InteractionState state) {
         //**Mechanics**: Add https://trello.com/c/bJodHyHF/1084-booby-trapped Trait to the current Structure
-        _targetCharacter.homeStructure.AddTrait("Booby Trapped");
+        //_targetCharacter.homeStructure.AddTrait("Booby Trapped");
         state.descriptionLog.AddToFillers(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     private void CharacterTrapRewardEffect(InteractionState state) {
         //**Mechanics**: Add https://trello.com/c/bJodHyHF/1084-booby-trapped Trait to the current Structure
-        _targetCharacter.homeStructure.AddTrait("Booby Trapped");
+        //_targetCharacter.homeStructure.AddTrait("Booby Trapped");
         state.descriptionLog.AddToFillers(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
