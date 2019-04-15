@@ -35,6 +35,10 @@ public class Feed : GoapAction {
     protected override int GetCost() {
         return 1;
     }
+    public override void DoAction(GoapPlan plan) {
+        SetTargetStructure();
+        base.DoAction(plan);
+    }
     #endregion
 
     #region Effects

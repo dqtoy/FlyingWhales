@@ -59,7 +59,7 @@ public class Unconscious : Trait {
 
     private void CheckToApplyRestrainJob() {
         if (_sourceCharacter.homeArea.id != _sourceCharacter.specificLocation.id && !_sourceCharacter.HasJobTargettingThisCharacter("Restrain")) {
-            _restrainJob = new GoapPlanJob("Restrain", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = _sourceCharacter });
+            _restrainJob = new GoapPlanJob("Restrain", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = _sourceCharacter.specificLocation, targetPOI = _sourceCharacter });
             _restrainJob.SetCanTakeThisJobChecker(CanCharacterTakeRestrainJob);
             _sourceCharacter.specificLocation.jobQueue.AddJobInQueue(_restrainJob);
         }

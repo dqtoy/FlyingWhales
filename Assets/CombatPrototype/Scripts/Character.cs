@@ -1315,6 +1315,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return false;
     }
+    public bool IsInPartyOf(Character character) {
+        return currentParty == character.ownParty;
+    }
     public bool IsInOwnParty() {
         if (currentParty.id == ownParty.id) {
             return true;
@@ -4615,6 +4618,16 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                         willGoIdleState = false;
                     }
                 } else {
+                    //Do not perform action if the target character is still in another character's party, this means that he/she is probably being abducted
+                    //Wait for the character to be in its own party before doing the action
+                    if(plan.currentNode.action.poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+                        Character targetCharacter = plan.currentNode.action.poiTarget as Character;
+                        if (!targetCharacter.IsInOwnParty() && targetCharacter.currentParty != _ownParty) {
+                            log += "\n - " + targetCharacter.name + " is not in its own party, waiting and skipping...";
+                            PrintLogIfActive(log);
+                            continue;
+                        }
+                    }
                     log += "\n - Action's preconditions are all satisfied, doing action...";
                     PrintLogIfActive(log);
                     Messenger.Broadcast(Signals.CHARACTER_WILL_DO_PLAN, this, plan);

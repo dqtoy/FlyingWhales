@@ -256,6 +256,9 @@ public class Party {
             LocationGridTile gridTile = _owner.gridTileLocation.GetNearestUnoccupiedTileFromThis();
             _owner.specificLocation.AddCharacterToLocation(character, gridTile, true);
             character.OnRemovedFromParty();
+            character.marker.gameObject.transform.localPosition = gridTile.centeredLocalLocation;
+            character.marker.UpdatePosition();
+
             RemoveCurrentBuffsFromCharacter(character);
             character.ownParty.icon.transform.position = this.specificLocation.coreTile.transform.position;
             //if (this.specificLocation is BaseLandmark) {

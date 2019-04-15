@@ -176,7 +176,7 @@ public class GoapAction {
                 targetCharacter = poiTarget as Character;
                 string log = actor.name + " is planning to do something to " + targetCharacter.name + " at " + actor.specificLocation.name;
                 //GameManager.Instance.SetPausedState(true);
-                if (targetCharacter.currentParty.icon != null && targetCharacter.currentParty.icon.isTravelling && targetCharacter.currentParty.icon.travelLine == null) {
+                if (targetCharacter.ownParty.icon != null && targetCharacter.ownParty.icon.isTravelling && targetCharacter.ownParty.icon.travelLine == null) {
                     targetCharacter.marker.StopMovement(() => MoveToDoAction(plan, targetCharacter));
                     log += "\n- " + targetCharacter.name + " is currently travelling, stopping movement";
                     Debug.LogWarning(log);
