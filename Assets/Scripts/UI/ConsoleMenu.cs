@@ -194,10 +194,6 @@ public class ConsoleMenu : UIMenu {
                 for (int j = 0; j < structure.pointsOfInterest.Count; j++) {
                     text += "\n\t\t-" + structure.pointsOfInterest[j].ToString();
                 }
-                text += "\n\tTraits: ";
-                for (int j = 0; j < structure.traits.Count; j++) {
-                    text += "\n\t\t-" + structure.traits[j].ToString();
-                }
             }
         }
        

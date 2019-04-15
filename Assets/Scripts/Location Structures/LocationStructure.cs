@@ -13,7 +13,6 @@ public class LocationStructure {
     private Area _location;
     private List<SpecialToken> _itemsHere;
     public List<IPointOfInterest> pointsOfInterest { get; private set; }
-    public List<StructureTrait> traits { get; private set; }
     public List<Corpse> corpses { get; private set; }
    
     public List<INTERACTION_TYPE> poiGoapActions { get; private set; }
@@ -47,7 +46,6 @@ public class LocationStructure {
         charactersHere = new List<Character>();
         _itemsHere = new List<SpecialToken>();
         pointsOfInterest = new List<IPointOfInterest>();
-        traits = new List<StructureTrait>();
         corpses = new List<Corpse>();
         tiles = new List<LocationGridTile>();
         AddListeners();
@@ -70,7 +68,6 @@ public class LocationStructure {
             if(AddPOI(character, tile)){
                 //character.ScanForAwareness();
             }
-            OnCharacterAddedToLocation(character);
         } else {
             Debug.LogWarning(GameManager.Instance.TodayLogString() + " " + character.name + " can't be added to " + ToString() + " because it is already there!");
         }
@@ -83,12 +80,6 @@ public class LocationStructure {
             RemovePOI(character);
         } else {
             Debug.LogWarning(GameManager.Instance.TodayLogString() + " " + character.name + " can't be removed from " + ToString() + " because it is not there!");
-        }
-    }
-    private void OnCharacterAddedToLocation(Character character) {
-        for (int i = 0; i < traits.Count; i++) {
-            StructureTrait trait = traits[i];
-            trait.OnCharacterEnteredStructure(character);
         }
     }
     #endregion
@@ -280,41 +271,7 @@ public class LocationStructure {
                 return unoccupiedTiles.Where(x => !x.IsAdjacentTo(typeof(MagicCircle)) && x.tileType != LocationGridTile.Tile_Type.Structure_Entrance).ToList();
         }
     }
-    #endregion
-
-    #region Traits
-    public void AddTrait(string traitName) {
-        StructureTrait createdTrait = null;
-        switch (traitName) {
-            case "Booby Trapped":
-                createdTrait = new BoobyTrapped(this);
-                break;
-            case "Poisoned Food":
-                createdTrait = new PoisonedFood(this);
-                break;
-            default:
-                break;
-        }
-        if (createdTrait != null) {
-            traits.Add(createdTrait);
-        }
-    }
-    public void RemoveTrait(StructureTrait trait) {
-        traits.Remove(trait);
-    }
-    public void RemoveTrait(string traitName) {
-        RemoveTrait(GetTrait(traitName));
-    }
-    public StructureTrait GetTrait(string traitName) {
-        for (int i = 0; i < traits.Count; i++) {
-            StructureTrait currTrait = traits[i];
-            if (currTrait.name == traitName) {
-                return currTrait;
-            }
-        }
-        return null;
-    }
-    #endregion
+    #endregion   
 
     #region Corpses
     public void AddCorpse(Character character, LocationGridTile tile) {

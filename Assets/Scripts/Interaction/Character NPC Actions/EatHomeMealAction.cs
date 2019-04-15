@@ -81,28 +81,28 @@ public class EatHomeMealAction : Interaction {
                 nextState = Eat_Cancelled;
                 break;
             case RESULT.FAIL:
-                if (_characterInvolved.homeStructure.GetTrait("Poisoned Food") == null) {
-                    nextState = Clean_Eat_Continues;
-                } else {
-                    WeightedDictionary<string> result = new WeightedDictionary<string>();
-                    result.AddElement(Eat_Continues_Killed, 30);
-                    result.AddElement(Eat_Continues_Sick, 20);
-                    nextState = result.PickRandomElementGivenWeights();
-                }
+                //if (_characterInvolved.homeStructure.GetTrait("Poisoned Food") == null) {
+                //    nextState = Clean_Eat_Continues;
+                //} else {
+                //    WeightedDictionary<string> result = new WeightedDictionary<string>();
+                //    result.AddElement(Eat_Continues_Killed, 30);
+                //    result.AddElement(Eat_Continues_Sick, 20);
+                //    nextState = result.PickRandomElementGivenWeights();
+                //}
                 break;
         }
         SetCurrentState(_states[nextState]);
     }
     private void DoNothingOptionEffect(InteractionState state) {
         string nextState = string.Empty;
-        if (_characterInvolved.homeStructure.GetTrait("Poisoned Food") == null) {
-            nextState = Character_Clean_Eats;
-        } else {
-            WeightedDictionary<string> result = new WeightedDictionary<string>();
-            result.AddElement(Character_Eats_Killed, 30);
-            result.AddElement(Character_Eats_Sick, 20);
-            nextState = result.PickRandomElementGivenWeights();
-        }
+        //if (_characterInvolved.homeStructure.GetTrait("Poisoned Food") == null) {
+        //    nextState = Character_Clean_Eats;
+        //} else {
+        //    WeightedDictionary<string> result = new WeightedDictionary<string>();
+        //    result.AddElement(Character_Eats_Killed, 30);
+        //    result.AddElement(Character_Eats_Sick, 20);
+        //    nextState = result.PickRandomElementGivenWeights();
+        //}
         SetCurrentState(_states[nextState]);
     }
     #endregion
@@ -122,21 +122,21 @@ public class EatHomeMealAction : Interaction {
         _characterInvolved.ResetFullnessMeter();
     }
     private void EatContinuesKilledRewardEffect(InteractionState state) {
-        _characterInvolved.homeStructure.RemoveTrait("Poisoned Food");
+        //_characterInvolved.homeStructure.RemoveTrait("Poisoned Food");
         //**Mechanics**: Character dies. Remove https://trello.com/c/waFphC2I/1180-poisoned-food trait from the structure
         _characterInvolved.Death();
     }
     private void EatContinuesSickRewardEffect(InteractionState state) {
         //**Mechanics**: Character gains https://trello.com/c/SVR4fnx1/1177-sick trait. Remove https://trello.com/c/waFphC2I/1180-poisoned-food trait from the structure
         _characterInvolved.AddTrait("Sick");
-        _characterInvolved.homeStructure.RemoveTrait("Poisoned Food");
+        //_characterInvolved.homeStructure.RemoveTrait("Poisoned Food");
     }
     private void CharacterCleanEatsRewardEffect(InteractionState state) {
         //**Mechanics**: Fully replenish character's Fullness meter.
         _characterInvolved.ResetFullnessMeter();
     }
     private void CharacterEatsKilledRewardEffect(InteractionState state) {
-        _characterInvolved.homeStructure.RemoveTrait("Poisoned Food");
+        //_characterInvolved.homeStructure.RemoveTrait("Poisoned Food");
         //**Mechanics**: Character dies. Remove https://trello.com/c/waFphC2I/1180-poisoned-food trait from the structure
         _characterInvolved.Death();
     }
@@ -144,7 +144,7 @@ public class EatHomeMealAction : Interaction {
         //**Mechanics**: Fully replenish character's Fullness meter. Character gains https://trello.com/c/SVR4fnx1/1177-sick trait. Remove https://trello.com/c/waFphC2I/1180-poisoned-food trait from the structure
         _characterInvolved.ResetFullnessMeter();
         _characterInvolved.AddTrait("Sick");
-        _characterInvolved.homeStructure.RemoveTrait("Poisoned Food");
+        //_characterInvolved.homeStructure.RemoveTrait("Poisoned Food");
     }
     #endregion
 }

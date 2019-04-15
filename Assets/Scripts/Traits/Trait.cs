@@ -22,6 +22,7 @@ public class Trait {
     public CRIME_CATEGORY crimeSeverity;
     public int daysDuration; //Zero (0) means Permanent
     public List<TraitEffect> effects;
+    public GoapAction gainedFromDoing { get; private set; } //what action was this poi involved in that gave it this trait.
 
     private Character _responsibleCharacter;
 
@@ -50,10 +51,14 @@ public class Trait {
     }
     public virtual string GetToolTipText() { return string.Empty; }
     public virtual bool IsUnique() { return true; }
+    #endregion
+
     public void SetOnRemoveAction(System.Action onRemoveAction) {
         this.onRemoveAction = onRemoveAction;
     }
-    #endregion
+    public void SetGainedFromDoing(GoapAction action) {
+        gainedFromDoing = action;
+    }
 }
 
 [System.Serializable]

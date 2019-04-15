@@ -97,15 +97,16 @@ public class  TileObject : IPointOfInterest {
     }
 
     #region Traits
-    public bool AddTrait(string traitName, Character characterResponsible = null) {
-        return AddTrait(AttributeManager.Instance.allTraits[traitName], characterResponsible);
+    public bool AddTrait(string traitName, Character characterResponsible = null, System.Action onRemoveAction = null, GoapAction gainedFromDoing = null) {
+        return AddTrait(AttributeManager.Instance.allTraits[traitName], characterResponsible, onRemoveAction, gainedFromDoing);
     }
-    public bool AddTrait(Trait trait, Character characterResponsible = null, System.Action onRemoveAction = null) {
+    public bool AddTrait(Trait trait, Character characterResponsible = null, System.Action onRemoveAction = null, GoapAction gainedFromDoing = null) {
         if (trait.IsUnique() && GetTrait(trait.name) != null) {
             trait.SetCharacterResponsibleForTrait(characterResponsible);
             return false;
         }
         _traits.Add(trait);
+        trait.SetGainedFromDoing(gainedFromDoing);
         trait.SetOnRemoveAction(onRemoveAction);
         trait.SetCharacterResponsibleForTrait(characterResponsible);
         //ApplyTraitEffects(trait);

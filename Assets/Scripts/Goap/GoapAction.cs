@@ -52,6 +52,7 @@ public class GoapAction {
     protected virtual string failActionState { get { return "Target Missing"; } }
     private System.Action<string, GoapAction> endAction; //if this is not null, this action will return result here, instead of the default actor.GoapActionResult
     public CRIME committedCrime { get; private set; }
+    public string result { get; private set; }
 
     protected Func<bool> _requirementAction;
     protected System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
@@ -261,6 +262,7 @@ public class GoapAction {
         return requirementActionSatisfied && (validTimeOfDays == null || validTimeOfDays.Contains(GameManager.GetCurrentTimeInWordsOfTick()));
     }
     public void ReturnToActorTheActionResult(string result) {
+        this.result = result;
         actor.OnCharacterDoAction(this);
         currentState.StopPerTickEffect();
         End();
@@ -405,13 +407,13 @@ public class GoapAction {
     /// </summary>
     /// <param name="target">POI that gains a trait</param>
     /// <param name="traitName">Trait to be gained</param>
-    protected void AddTraitTo(IPointOfInterest target, string traitName, Character characterResponsible = null) {
-        if (target.AddTrait(traitName, characterResponsible)) {
+    protected void AddTraitTo(IPointOfInterest target, string traitName, Character characterResponsible = null, System.Action onRemoveAction = null) {
+        if (target.AddTrait(traitName, characterResponsible, onRemoveAction, this)) {
             AddActualEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = traitName, targetPOI = target });
         }
     }
-    protected void AddTraitTo(IPointOfInterest target, Trait trait, Character characterResponsible = null) {
-        if (target.AddTrait(trait, characterResponsible)) {
+    protected void AddTraitTo(IPointOfInterest target, Trait trait, Character characterResponsible = null, System.Action onRemoveAction = null) {
+        if (target.AddTrait(trait, characterResponsible, onRemoveAction, this)) {
             AddActualEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = trait.name, targetPOI = target });
         }
     }

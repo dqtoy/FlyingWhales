@@ -2424,10 +2424,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             AddTrait("Elf Slayer");
         }
     }
-    public bool AddTrait(string traitName, Character characterResponsible = null) {
-        return AddTrait(AttributeManager.Instance.allTraits[traitName], characterResponsible);
+    public bool AddTrait(string traitName, Character characterResponsible = null, System.Action onRemoveAction = null, GoapAction gainedFromDoing = null) {
+        return AddTrait(AttributeManager.Instance.allTraits[traitName], characterResponsible, onRemoveAction, gainedFromDoing);
     }
-    public bool AddTrait(Trait trait, Character characterResponsible = null, System.Action onRemoveAction = null) {
+    public bool AddTrait(Trait trait, Character characterResponsible = null, System.Action onRemoveAction = null, GoapAction gainedFromDoing = null) {
         if (trait.IsUnique() && GetTrait(trait.name) != null) {
             trait.SetCharacterResponsibleForTrait(characterResponsible);
             if (trait.name == "Injured") { //TODO: Make this more elegant!(Need a way to still broadcast added traits even if it is a duplicate)
@@ -2436,6 +2436,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             return false;
         }
         _traits.Add(trait);
+        trait.SetGainedFromDoing(gainedFromDoing);
         trait.SetOnRemoveAction(onRemoveAction);
         trait.SetCharacterResponsibleForTrait(characterResponsible);
         ApplyTraitEffects(trait);
@@ -3954,6 +3955,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (AddToken(token)) {
             token.SetOwner(this.faction);
             token.OnObtainToken(this);
+            token.SetCharacterOwner(this);
             return true;
         }
         return false;
@@ -3969,6 +3971,11 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public bool ConsumeToken(SpecialToken token) {
         if (RemoveToken(token)) {
             token.OnConsumeToken(this);
+            //SpecialToken droppedToken = token;
+            //if (structure != homeStructure) {
+            //    //if this character drops this at a structure that is not his/her home structure, set the owner of the item to null
+            //    droppedToken.SetCharacterOwner(null);
+            //}
             return true;
         }
         return false;
@@ -4251,7 +4258,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         } else if (intel is EventIntel) {
             EventIntel ei = intel as EventIntel;
             if (ei.action.endedAtState != null && ei.action.endedAtState.shareIntelReaction != null) {
-                dialogReactions.AddRange(ei.action.endedAtState.shareIntelReaction.Invoke(this));
+                dialogReactions.AddRange(ei.action.endedAtState.shareIntelReaction.Invoke(this, ei));
             }            
             //Dictionary<ActionEffectReaction, GoapEffect> reactions = new Dictionary<ActionEffectReaction, GoapEffect>();
             //for (int i = 0; i < ei.action.actualEffects.Count; i++) {
@@ -4464,8 +4471,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         poiGoapActions.Add(INTERACTION_TYPE.PRAY);
         poiGoapActions.Add(INTERACTION_TYPE.EXPLORE);
         poiGoapActions.Add(INTERACTION_TYPE.PATROL);
-        //poiGoapActions.Add(INTERACTION_TYPE.CHAT_CHARACTER);
-        //poiGoapActions.Add(INTERACTION_TYPE.ARGUE_CHARACTER);
         poiGoapActions.Add(INTERACTION_TYPE.TRAVEL);
         poiGoapActions.Add(INTERACTION_TYPE.RETURN_HOME_LOCATION);
         poiGoapActions.Add(INTERACTION_TYPE.HUNT_ACTION);

@@ -757,7 +757,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     public void LevelUp(int amount) {
         //Not applicable
     }
-    public bool AddTrait(Trait combatAttribute, Character responsibleCharacter = null, System.Action onRemoveAction = null) {
+    public bool AddTrait(Trait combatAttribute, Character responsibleCharacter = null, System.Action onRemoveAction = null, GoapAction gainedFromDoing = null) {
         //Not applicable
         return false;
     }

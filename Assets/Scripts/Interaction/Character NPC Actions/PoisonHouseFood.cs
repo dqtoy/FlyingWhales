@@ -77,7 +77,7 @@ public class PoisonHouseFood : Interaction {
     }
     private void CharacterPoisonsRewardEffect(InteractionState state) {
         //**Mechanics**: Add https://trello.com/c/waFphC2I/1180-poisoned-food Trait to the current Structure
-        _targetCharacter.homeStructure.AddTrait("Poisoned Food");
+        //_targetCharacter.homeStructure.AddTrait("Poisoned Food");
         state.descriptionLog.AddToFillers(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
