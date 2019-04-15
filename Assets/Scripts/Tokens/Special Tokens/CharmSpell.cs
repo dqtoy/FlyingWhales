@@ -73,7 +73,7 @@ public class CharmSpell : SpecialToken {
         Character targetCharacter = state.target as Character;
         //**Mechanics**: Add https://trello.com/c/4xVYdGAN/1004-charmed trait to the character.
         targetCharacter.AddTrait("Charmed");
-        state.tokenUser.ConsumeToken();
+        state.tokenUser.ConsumeToken(this);
 
         //Used item on other character
         Log stateDescriptionLog = new Log(GameManager.Instance.Today(), "Tokens", this.GetType().ToString(), state.name.ToLower() + "_description", state.interaction);
@@ -91,7 +91,7 @@ public class CharmSpell : SpecialToken {
     }
     private void StopFailEffect(TokenInteractionState state) {
         //state.tokenUser.LevelUp();
-        state.tokenUser.ConsumeToken();
+        state.tokenUser.ConsumeToken(this);
 
         //**Mechanics**: Target character will transfer to character or player's faction
         if (state.target is Character) {

@@ -79,7 +79,7 @@ public class BlightedPotion : SpecialToken {
         Sick sickTrait = new Sick();
         targetCharacter.AddTrait(sickTrait);
         //state.tokenUser.LevelUp();
-        state.tokenUser.ConsumeToken();
+        state.tokenUser.ConsumeToken(this);
 
         if (state.tokenUser.id == targetCharacter.id) {
             //Used item on self
@@ -108,7 +108,7 @@ public class BlightedPotion : SpecialToken {
         Sick sickTrait = new Sick();
         (state.target as Character).AddTrait(sickTrait);
         //state.tokenUser.LevelUp();
-        state.tokenUser.ConsumeToken();
+        state.tokenUser.ConsumeToken(this);
 
         state.descriptionLog.AddToFillers(state.interaction.investigatorCharacter, state.interaction.investigatorCharacter.name, LOG_IDENTIFIER.MINION_1);
         state.descriptionLog.AddToFillers(null, sickTrait.name, LOG_IDENTIFIER.STRING_1);

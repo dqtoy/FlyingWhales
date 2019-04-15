@@ -52,7 +52,7 @@ public class TableRemovePoison : GoapAction {
 
     #region Preconditions
     private bool HasItemTool() {
-        return actor.isHoldingItem && actor.tokenInInventory.name == "Tool";
+        return actor.isHoldingItem && actor.GetToken("Tool") != null;
     }
     #endregion
 }

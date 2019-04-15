@@ -852,15 +852,15 @@ public class NewCombat : MonoBehaviour {
 
     #region Items
     private void UseItem(CombatCharacter combatCharacter) {
-        if(combatCharacter.character.isHoldingItem) {
-            if(combatCharacter.character.tokenInInventory.specialTokenType == SPECIAL_TOKEN.HEALING_POTION) {
-                if (combatCharacter.character.currentHP < (combatCharacter.maxHP / 2)) {
-                    combatCharacter.RestoreToFullHP();
-                    UIManager.Instance.combatUI.AddCombatLogs(combatCharacter.character.name + " used " + combatCharacter.character.tokenInInventory.tokenName, combatCharacter.side);
-                    combatCharacter.character.ConsumeToken();
-                }
-            }
-        }
+        //if(combatCharacter.character.isHoldingItem) {
+        //    if(combatCharacter.character.tokenInInventory.specialTokenType == SPECIAL_TOKEN.HEALING_POTION) {
+        //        if (combatCharacter.character.currentHP < (combatCharacter.maxHP / 2)) {
+        //            combatCharacter.RestoreToFullHP();
+        //            UIManager.Instance.combatUI.AddCombatLogs(combatCharacter.character.name + " used " + combatCharacter.character.tokenInInventory.tokenName, combatCharacter.side);
+        //            combatCharacter.character.ConsumeToken();
+        //        }
+        //    }
+        //}
     }
     #endregion
 }

@@ -40,7 +40,7 @@ public class GoldenNectar : SpecialToken {
         }else if (stat == STAT.ATTACK) {
             targetCharacter.AdjustSpeedMod(1);
         }
-        state.tokenUser.ConsumeToken();
+        state.tokenUser.ConsumeToken(this);
 
         Log stateDescriptionLog = new Log(GameManager.Instance.Today(), "Tokens", this.GetType().ToString(), state.name.ToLower() + "-minion" + "_description", state.interaction);
         stateDescriptionLog.AddToFillers(state.tokenUser, state.tokenUser.name, LOG_IDENTIFIER.MINION_1);
@@ -63,7 +63,7 @@ public class GoldenNectar : SpecialToken {
         } else if (stat == STAT.ATTACK) {
             state.tokenUser.AdjustSpeedMod(1);
         }
-        state.tokenUser.ConsumeToken();
+        state.tokenUser.ConsumeToken(this);
 
         Log stateDescriptionLog = new Log(GameManager.Instance.Today(), "Tokens", this.GetType().ToString(), state.name.ToLower() + "-npc" + "_description", state.interaction);
         stateDescriptionLog.AddToFillers(state.tokenUser, state.tokenUser.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -84,7 +84,7 @@ public class GoldenNectar : SpecialToken {
         } else if (stat == STAT.ATTACK) {
             state.tokenUser.AdjustSpeedMod(1);
         }
-        state.tokenUser.ConsumeToken();
+        state.tokenUser.ConsumeToken(this);
 
         state.descriptionLog.AddToFillers(state.interaction.investigatorCharacter, state.interaction.investigatorCharacter.name, LOG_IDENTIFIER.MINION_1);
         state.descriptionLog.AddToFillers(null, GetStringEquivalentOfStat(stat), LOG_IDENTIFIER.STRING_1);

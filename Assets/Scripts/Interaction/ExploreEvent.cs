@@ -124,11 +124,11 @@ public class ExploreEvent : Interaction {
         string nextState = string.Empty;
         switch (resultWeights.PickRandomElementGivenWeights()) {
             case RESULT.SUCCESS:
-                if (interactable.GetElligibleTokensForCharacter(_characterInvolved).Count > 0) {
-                    nextState = Trapped_Explore_Success_Obtain_Item;
-                } else {
-                    nextState = Trapped_Explore_Success_No_Item;
-                }
+                //if (interactable.GetElligibleTokensForCharacter(_characterInvolved).Count > 0) {
+                //    nextState = Trapped_Explore_Success_Obtain_Item;
+                //} else {
+                //    nextState = Trapped_Explore_Success_No_Item;
+                //}
                 break;
             case RESULT.FAIL:
                 nextState = Trapped_Explore_Fail;
@@ -154,11 +154,11 @@ public class ExploreEvent : Interaction {
         string nextState = string.Empty;
         switch (resultWeights.PickRandomElementGivenWeights()) {
             case RESULT.SUCCESS:
-                if (interactable.GetElligibleTokensForCharacter(_characterInvolved).Count > 0) {
-                    nextState = Assisted_Explore_Success_Obtain_Item;
-                } else {
-                    nextState = Assisted_Explore_Success_No_Item;
-                }
+                //if (interactable.GetElligibleTokensForCharacter(_characterInvolved).Count > 0) {
+                //    nextState = Assisted_Explore_Success_Obtain_Item;
+                //} else {
+                //    nextState = Assisted_Explore_Success_No_Item;
+                //}
                 break;
             case RESULT.FAIL:
                 nextState = Assisted_Explore_Fail;
@@ -184,11 +184,11 @@ public class ExploreEvent : Interaction {
         string nextState = string.Empty;
         switch (resultWeights.PickRandomElementGivenWeights()) {
             case RESULT.SUCCESS:
-                if (interactable.GetElligibleTokensForCharacter(_characterInvolved).Count > 0) {
-                    nextState = Normal_Explore_Success_Obtain_Item;
-                } else {
-                    nextState = Normal_Explore_Success_No_Item;
-                }
+                //if (interactable.GetElligibleTokensForCharacter(_characterInvolved).Count > 0) {
+                //    nextState = Normal_Explore_Success_Obtain_Item;
+                //} else {
+                //    nextState = Normal_Explore_Success_No_Item;
+                //}
                 break;
             case RESULT.FAIL:
                 nextState = Normal_Explore_Fail;
@@ -232,7 +232,7 @@ public class ExploreEvent : Interaction {
     }
 
     private SpecialToken GiveSpecialTokenToCharacter() {
-        List<SpecialToken> choices = interactable.GetElligibleTokensForCharacter(_characterInvolved);
+        List<SpecialToken> choices = null; //interactable.GetElligibleTokensForCharacter(_characterInvolved);
         //WeightedDictionary<SpecialToken> tokenWeights = new WeightedDictionary<SpecialToken>();
         //for (int i = 0; i < choices.Count; i++) {
         //    tokenWeights.AddElement(choices[i], choices[i].weight);

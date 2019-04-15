@@ -416,7 +416,7 @@ public class CharacterInfoUI : UIMenu {
     private void UpdateItemInfo() {
         //UpdateEquipmentInfo(_activeCharacter.equippedItems);
         //UpdateInventoryInfo(_activeCharacter.inventory);
-        itemContainer.SetItem(_activeCharacter.tokenInInventory);
+        //itemContainer.SetItem(_activeCharacter.tokenInInventory);
     }
     private void UpdateInventoryInfo(List<Item> inventory) {
         for (int i = 0; i < inventoryItemContainers.Length; i++) {

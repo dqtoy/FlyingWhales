@@ -1683,12 +1683,12 @@ public class Area {
     public bool IsItemInventoryFull() {
         return possibleSpecialTokenSpawns.Count >= MAX_ITEM_CAPACITY;
     }
-    public List<SpecialToken> GetElligibleTokensForCharacter(Character character) {
-        List<SpecialToken> choices = new List<SpecialToken>(possibleSpecialTokenSpawns);
-        choices.Remove(character.tokenInInventory);
-        //Utilities.ListRemoveRange(choices, character.tokenInInventory);
-        return choices;
-    }
+    //public List<SpecialToken> GetElligibleTokensForCharacter(Character character) {
+    //    List<SpecialToken> choices = new List<SpecialToken>(possibleSpecialTokenSpawns);
+    //    choices.Remove(character.tokenInInventory);
+    //    //Utilities.ListRemoveRange(choices, character.tokenInInventory);
+    //    return choices;
+    //}
     private LocationStructure GetRandomStructureToPlaceItem(SpecialToken token) {
         /*
          Items are now placed specifically in a structure when spawning at world creation. 

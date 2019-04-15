@@ -422,10 +422,10 @@ public class InteractionManager : MonoBehaviour {
             if (interactionCategoryAndAlignment.ContainsKey(type)) {
                 return interactionCategoryAndAlignment[type];
             } else {
-                if((type == INTERACTION_TYPE.USE_ITEM_ON_CHARACTER || type == INTERACTION_TYPE.USE_ITEM_ON_SELF) && actor != null && actor.isHoldingItem) {
-                    InteractionAttributes attributes = actor.tokenInInventory.interactionAttributes;
-                    return attributes;
-                }
+                //if((type == INTERACTION_TYPE.USE_ITEM_ON_CHARACTER || type == INTERACTION_TYPE.USE_ITEM_ON_SELF) && actor != null && actor.isHoldingItem) {
+                //    InteractionAttributes attributes = actor.tokenInInventory.interactionAttributes;
+                //    return attributes;
+                //}
             }
         }
         //Debug.LogWarning("No category and alignment for " + type.ToString());
@@ -1478,10 +1478,10 @@ public class InteractionManager : MonoBehaviour {
                 return false;
             case INTERACTION_TYPE.USE_ITEM_ON_CHARACTER:
             case INTERACTION_TYPE.USE_ITEM_ON_SELF:
-                if (character.isHoldingItem) {
-                    //return character.tokenInInventory.GetTargetCharacterFor(character) != null;
-                    return character.tokenInInventory.CanBeUsedForTarget(character, targetCharacter);
-                }
+                //if (character.isHoldingItem) {
+                //    //return character.tokenInInventory.GetTargetCharacterFor(character) != null;
+                //    return character.tokenInInventory.CanBeUsedForTarget(character, targetCharacter);
+                //}
                 return false;
             case INTERACTION_TYPE.STEAL_ACTION:
                 if(character.specificLocation.id == character.homeArea.id) {

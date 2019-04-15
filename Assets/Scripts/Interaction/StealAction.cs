@@ -36,7 +36,7 @@ public class StealAction : Interaction {
         InteractionState normalTheftCriticalFail = new InteractionState(Normal_Theft_Critical_Fail, this);
 
         Log startStateDescriptionLog = new Log(GameManager.Instance.Today(), "Events", this.GetType().ToString(), startState.name.ToLower() + "_description", this);
-        startStateDescriptionLog.AddToFillers(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1);
+        //startStateDescriptionLog.AddToFillers(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1);
         startStateDescriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         startState.OverrideDescriptionLog(startStateDescriptionLog);
 
@@ -173,11 +173,11 @@ public class StealAction : Interaction {
     #region Reward Effect
     private void AssistedTheftSuccessRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1);
+            //state.descriptionLog.AddToFillers(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1);
             state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             state.descriptionLog.AddToFillers(_targetCharacter.faction, _targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_1);
         }
-        state.AddLogFiller(new  LogFiller(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1));
+        //state.AddLogFiller(new  LogFiller(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1));
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
         state.AddLogFiller(new LogFiller(_targetCharacter.faction, _targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_1));
 
@@ -200,11 +200,11 @@ public class StealAction : Interaction {
     }
     private void AssistedTheftFailRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1);
+            //state.descriptionLog.AddToFillers(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1);
             state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             state.descriptionLog.AddToFillers(_targetCharacter.faction, _targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_1);
         }
-        state.AddLogFiller(new LogFiller(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1));
+        //state.AddLogFiller(new LogFiller(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1));
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
         state.AddLogFiller(new LogFiller(_targetCharacter.faction, _targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_1));
 
@@ -220,22 +220,22 @@ public class StealAction : Interaction {
     }
     private void AssistedTheftCriticalFailRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1);
+            //state.descriptionLog.AddToFillers(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1);
             state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         }
-        state.AddLogFiller(new LogFiller(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1));
+        //state.AddLogFiller(new LogFiller(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1));
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
         //**Mechanics**: Character Name 1 dies.
         _characterInvolved.Death();
     }
     private void ThwartedTheftSuccessRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1);
+            //state.descriptionLog.AddToFillers(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1);
             state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             state.descriptionLog.AddToFillers(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1);
             state.descriptionLog.AddToFillers(_targetCharacter.faction, _targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_2);
         }
-        state.AddLogFiller(new LogFiller(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1));
+        //state.AddLogFiller(new LogFiller(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1));
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
         state.AddLogFiller(new LogFiller(_characterInvolved.faction, _characterInvolved.faction.name, LOG_IDENTIFIER.FACTION_1));
         state.AddLogFiller(new LogFiller(_targetCharacter.faction, _targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_2));
@@ -256,11 +256,11 @@ public class StealAction : Interaction {
     }
     private void ThwartedTheftFailRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1);
+            //state.descriptionLog.AddToFillers(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1);
             state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             state.descriptionLog.AddToFillers(_targetCharacter.faction, _targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_2);
         }
-        state.AddLogFiller(new LogFiller(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1));
+        //state.AddLogFiller(new LogFiller(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1));
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
         state.AddLogFiller(new LogFiller(_targetCharacter.faction, _targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_2));
 
@@ -271,11 +271,11 @@ public class StealAction : Interaction {
     }
     private void ThwartedTheftCriticalFailRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1);
+            //state.descriptionLog.AddToFillers(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1);
             state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             state.descriptionLog.AddToFillers(_targetCharacter.faction, _targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_2);
         }
-        state.AddLogFiller(new LogFiller(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1));
+        //state.AddLogFiller(new LogFiller(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1));
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
         state.AddLogFiller(new LogFiller(_targetCharacter.faction, _targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_2));
 
@@ -290,10 +290,10 @@ public class StealAction : Interaction {
     }
     private void NormalTheftSuccessRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1);
+            //state.descriptionLog.AddToFillers(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1);
             state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         }
-        state.AddLogFiller(new LogFiller(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1));
+        //state.AddLogFiller(new LogFiller(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1));
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
         //**Mechanics**: Transfer item from target character to the thief.
@@ -312,18 +312,18 @@ public class StealAction : Interaction {
     }
     private void NormalTheftFailRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1);
+            //state.descriptionLog.AddToFillers(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1);
             state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         }
-        state.AddLogFiller(new LogFiller(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1));
+        //state.AddLogFiller(new LogFiller(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1));
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
     }
     private void NormalTheftCriticalFailRewardEffect(InteractionState state) {
         if (state.descriptionLog != null) {
-            state.descriptionLog.AddToFillers(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1);
+            //state.descriptionLog.AddToFillers(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1);
             state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         }
-        state.AddLogFiller(new LogFiller(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1));
+        //state.AddLogFiller(new LogFiller(null, _targetCharacter.tokenInInventory.nameInBold, LOG_IDENTIFIER.STRING_1));
         state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
 
         //**Mechanics**: Character Name 1 dies.
@@ -332,8 +332,8 @@ public class StealAction : Interaction {
     #endregion
 
     private void TransferItem(Character sourceCharacter, Character thief) {
-        thief.ObtainToken(sourceCharacter.tokenInInventory);
-        sourceCharacter.UnobtainToken();
+        //thief.ObtainToken(sourceCharacter.tokenInInventory);
+        //sourceCharacter.UnobtainToken();
     }
     public Character GetTargetCharacter(Character characterInvolved) {
         /*

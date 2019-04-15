@@ -539,7 +539,7 @@ public class ConsoleMenu : UIMenu {
         List<Character> characters = new List<Character>();
         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
             Character currCharacter = CharacterManager.Instance.allCharacters[i];
-            if (currCharacter.isHoldingItem && currCharacter.tokenInInventory.tokenName.ToLower() == itemParameterString.ToLower()) {
+            if (currCharacter.isHoldingItem && currCharacter.GetToken(itemParameterString) != null) {
                 characters.Add(currCharacter);
             }
         }
