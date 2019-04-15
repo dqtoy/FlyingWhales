@@ -69,7 +69,7 @@ public class FearSpell : SpecialToken {
 
     private void ItemUsedEffect(TokenInteractionState state) {
         Character targetCharacter = state.target as Character;
-        state.tokenUser.ConsumeToken();
+        state.tokenUser.ConsumeToken(this);
         //**Mechanics**: Target character will trigger https://trello.com/c/vDKl0cyy/859-character-flees on the next tick (overriding any other action).
         if (state.target is Character) {
             Character target = state.target as Character;
@@ -103,7 +103,7 @@ public class FearSpell : SpecialToken {
     }
     private void StopFailEffect(TokenInteractionState state) {
         //state.tokenUser.LevelUp();
-        state.tokenUser.ConsumeToken();
+        state.tokenUser.ConsumeToken(this);
 
         //**Mechanics**: Target character will trigger https://trello.com/c/vDKl0cyy/859-character-flees on the next tick (overriding any other action).
         if (state.target is Character) {

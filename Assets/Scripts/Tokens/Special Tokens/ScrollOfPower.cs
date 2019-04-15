@@ -35,7 +35,7 @@ public class ScrollOfPower : SpecialToken {
     #endregion
 
     private void ItemUsedEffectNPC(TokenInteractionState state) {
-        state.tokenUser.ConsumeToken();
+        state.tokenUser.ConsumeToken(this);
 
         //**Mechanics**: Character Level +2
         state.tokenUser.LevelUp(2);
@@ -48,7 +48,7 @@ public class ScrollOfPower : SpecialToken {
         state.AddLogToInvolvedObjects(log);
     }
     private void ItemUsedEffectMinion(TokenInteractionState state) {
-        state.tokenUser.ConsumeToken();
+        state.tokenUser.ConsumeToken(this);
 
         //**Mechanics**: Character Level +2
         Character targetCharacter = state.target as Character;
@@ -65,7 +65,7 @@ public class ScrollOfPower : SpecialToken {
         }
     }
     private void StopFailEffect(TokenInteractionState state) {
-        state.tokenUser.ConsumeToken();
+        state.tokenUser.ConsumeToken(this);
 
         //**Mechanics**: Character Level +2
         Character targetCharacter = state.target as Character;

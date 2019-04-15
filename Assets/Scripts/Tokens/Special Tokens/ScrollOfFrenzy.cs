@@ -45,7 +45,7 @@ public class ScrollOfFrenzy : SpecialToken {
         Trait berserkerTrait = AttributeManager.Instance.allTraits["Berserker"];
         targetCharacter.AddTrait(berserkerTrait);
         //state.tokenUser.LevelUp();
-        state.tokenUser.ConsumeToken();
+        state.tokenUser.ConsumeToken(this);
 
         if (state.tokenUser.id == targetCharacter.id) {
             //Used item on self
@@ -73,7 +73,7 @@ public class ScrollOfFrenzy : SpecialToken {
         Trait berserkerTrait = AttributeManager.Instance.allTraits["Berserker"];
         (state.target as Character).AddTrait(berserkerTrait);
         //state.tokenUser.LevelUp();
-        state.tokenUser.ConsumeToken();
+        state.tokenUser.ConsumeToken(this);
 
         state.descriptionLog.AddToFillers(state.interaction.investigatorCharacter, state.interaction.investigatorCharacter.name, LOG_IDENTIFIER.MINION_1);
         state.descriptionLog.AddToFillers(null, berserkerTrait.name, LOG_IDENTIFIER.STRING_1);

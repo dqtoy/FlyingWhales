@@ -96,7 +96,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public MORALITY morality { get; private set; }
     public CharacterToken characterToken { get; private set; }
     public WeightedDictionary<INTERACTION_TYPE> interactionWeights { get; private set; }
-    public SpecialToken tokenInInventory { get; private set; }
     public Dictionary<Character, CharacterRelationshipData> relationships { get; private set; }
     public List<INTERACTION_TYPE> currentInteractionTypes { get; private set; }
     public Interaction plannedInteraction { get; private set; }
@@ -220,7 +219,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         get { return job.jobType == JOB.LEADER; }
     }
     public bool isHoldingItem {
-        get { return tokenInInventory != null; }
+        get { return items.Count > 0; }
     }
     public bool isAtHomeStructure {
         get { return currentStructure == homeStructure; }
@@ -543,7 +542,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         _currentInteractions = new List<Interaction>();
         currentInteractionTypes = new List<INTERACTION_TYPE>();
         characterToken = new CharacterToken(this);
-        tokenInInventory = null;
         interactionWeights = new WeightedDictionary<INTERACTION_TYPE>();
         relationships = new Dictionary<Character, CharacterRelationshipData>();
         poiGoapActions = new List<INTERACTION_TYPE>();
@@ -694,8 +692,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
 
             if (ownParty.specificLocation != null && isHoldingItem) {
-                tokenInInventory.SetOwner(null);
-                DropToken(ownParty.specificLocation, currentStructure);
+                DropAllTokens(ownParty.specificLocation, currentStructure, true);
             }
             Area deathLocation = ownParty.specificLocation;
             LocationStructure deathStructure = currentStructure;
@@ -3743,10 +3740,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
             if (chosenPersonalAction != INTERACTION_TYPE.NONE) {
                 Interaction interaction = InteractionManager.Instance.CreateNewInteraction(chosenPersonalAction, specificLocation);
-                if (interaction.type == INTERACTION_TYPE.USE_ITEM_ON_CHARACTER) {
-                    (interaction as UseItemOnCharacter).SetItemToken(tokenInInventory);
-                    interactionLog += "\nITEM: " + tokenInInventory.name;
-                }
+                //if (interaction.type == INTERACTION_TYPE.USE_ITEM_ON_CHARACTER) {
+                //    (interaction as UseItemOnCharacter).SetItemToken(tokenInInventory);
+                //    interactionLog += "\nITEM: " + tokenInInventory.name;
+                //}
                 if (targetCharacter != null) {
                     if(chosenPersonalAction == chosenRelationshipInteraction) {
                         interactionLog += "\nTARGET CHARACTER: " + targetCharacter.name;
@@ -3948,67 +3945,99 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     #endregion
 
     #region Token Inventory
-    public void ObtainToken(SpecialToken token) {
-        SetToken(token);
-        token.SetOwner(this.faction);
-        token.OnObtainToken(this);
+    public bool ObtainToken(SpecialToken token) {
+        if (AddToken(token)) {
+            token.SetOwner(this.faction);
+            token.OnObtainToken(this);
+            return true;
+        }
+        return false;
         //token.AdjustQuantity(-1);
     }
-    public void UnobtainToken() {
-        tokenInInventory.OnUnobtainToken(this);
-        SetToken(null);
+    public bool UnobtainToken(SpecialToken token) {
+        if (RemoveToken(token)) {
+            token.OnUnobtainToken(this);
+            return true;
+        }
+        return false;
     }
-    public void ConsumeToken() {
-        tokenInInventory.OnConsumeToken(this);
-        SetToken(null);
+    public bool ConsumeToken(SpecialToken token) {
+        if (RemoveToken(token)) {
+            token.OnConsumeToken(this);
+            return true;
+        }
+        return false;
     }
-    private void SetToken(SpecialToken token) {
-        tokenInInventory = token;
+    private bool AddToken(SpecialToken token) {
+        if (!items.Contains(token)) {
+            items.Add(token);
+            return true;
+        }
+        return false;
     }
-    public void DropToken(Area location, LocationStructure structure) {
-        if (isHoldingItem) {
-            location.AddSpecialTokenToLocation(tokenInInventory, structure);
-            UnobtainToken();
+    private bool RemoveToken(SpecialToken token) {
+        return items.Remove(token);
+    }
+    public void DropToken(SpecialToken token, Area location, LocationStructure structure) {
+        if (UnobtainToken(token)) {
+            location.AddSpecialTokenToLocation(token, structure);
+        }
+    }
+    public void DropAllTokens(Area location, LocationStructure structure, bool removeFactionOwner = false) {
+        while(isHoldingItem) {
+            SpecialToken token = items[0];
+            if (UnobtainToken(token)) {
+                if (removeFactionOwner) {
+                    token.SetOwner(null);
+                }
+                location.AddSpecialTokenToLocation(token, structure);
+            }
         }
     }
     public void PickUpToken(SpecialToken token) {
-        //if (!isHoldingItem) {
-        if (!items.Contains(token)) {
-            items.Add(token);
+        if (ObtainToken(token)) {
             token.gridTileLocation.structure.location.RemoveSpecialTokenFromLocation(token);
-            ObtainToken(token);
-        }
-        //}
-    }
-    public void PickUpRandomToken(Area location) {
-        if (!isHoldingItem) {
-            WeightedDictionary<SpecialToken> pickWeights = new WeightedDictionary<SpecialToken>();
-            for (int i = 0; i < location.possibleSpecialTokenSpawns.Count; i++) {
-                SpecialToken token = location.possibleSpecialTokenSpawns[i];
-                if(token.npcAssociatedInteractionType != INTERACTION_TYPE.USE_ITEM_ON_SELF) {
-                    pickWeights.AddElement(token, 60);
-                } else if(token.CanBeUsedBy(this)) {
-                    pickWeights.AddElement(token, 100);
-                }
-            }
-            if(pickWeights.Count > 0) {
-                SpecialToken chosenToken = pickWeights.PickRandomElementGivenWeights();
-                PickUpToken(chosenToken);
-            }
         }
     }
+    //public void PickUpRandomToken(Area location) {
+    //    WeightedDictionary<SpecialToken> pickWeights = new WeightedDictionary<SpecialToken>();
+    //    for (int i = 0; i < location.possibleSpecialTokenSpawns.Count; i++) {
+    //        SpecialToken token = location.possibleSpecialTokenSpawns[i];
+    //        if (token.npcAssociatedInteractionType != INTERACTION_TYPE.USE_ITEM_ON_SELF) {
+    //            pickWeights.AddElement(token, 60);
+    //        } else if (token.CanBeUsedBy(this)) {
+    //            pickWeights.AddElement(token, 100);
+    //        }
+    //    }
+    //    if (pickWeights.Count > 0) {
+    //        SpecialToken chosenToken = pickWeights.PickRandomElementGivenWeights();
+    //        PickUpToken(chosenToken);
+    //    }
+    //}
     public void DestroyToken(SpecialToken token) {
         token.gridTileLocation.structure.location.RemoveSpecialTokenFromLocation(token);
     }
-    public void DestroyHeldToken() {
-        if (isHoldingItem) {
-            UnobtainToken();
+    private void UpdateTokenOwner() {
+        for (int i = 0; i < items.Count; i++) {
+            SpecialToken token = items[i];
+            token.SetOwner(this.faction);
         }
     }
-    private void UpdateTokenOwner() {
-        if (isHoldingItem) {
-            tokenInInventory.SetOwner(this.faction);
+    public SpecialToken GetToken(SpecialToken token) {
+        for (int i = 0; i < items.Count; i++) {
+            if(items[i] == token) {
+                return items[i];
+            }
         }
+        return null;
+    }
+    public SpecialToken GetToken(string tokenName) {
+        for (int i = 0; i < items.Count; i++) {
+            if (items[i].tokenName.ToLower() == tokenName.ToLower()) {
+                return items[i];
+            }
+        }
+        return null;
     }
     #endregion
 

@@ -45,7 +45,7 @@ public class CraftItemGoap : GoapAction {
 
     #region Requirements
     protected bool Requirement() {
-        return !actor.isHoldingItem;
+        return actor.GetToken(poiTarget as SpecialToken) == null;
     }
     #endregion
 

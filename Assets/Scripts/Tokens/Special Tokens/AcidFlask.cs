@@ -42,7 +42,7 @@ public class AcidFlask : SpecialToken {
     private void ItemUsedEffectNPC(TokenInteractionState state) {
         Character targetCharacter = state.target as Character;
         targetCharacter.AddTrait("Ugly");
-        state.tokenUser.ConsumeToken();
+        state.tokenUser.ConsumeToken(this);
 
         state.tokenUser.MoveToAnotherStructure(targetCharacter.currentStructure, targetCharacter.GetNearestUnoccupiedTileFromThis());
 
@@ -72,7 +72,7 @@ public class AcidFlask : SpecialToken {
     private void StopFailEffect(TokenInteractionState state) {
         Character targetCharacter = state.target as Character;
         targetCharacter.RemoveTrait("Sick");
-        state.tokenUser.ConsumeToken();
+        state.tokenUser.ConsumeToken(this);
 
         state.descriptionLog.AddToFillers(state.interaction.investigatorCharacter, state.interaction.investigatorCharacter.name, LOG_IDENTIFIER.MINION_1);
 

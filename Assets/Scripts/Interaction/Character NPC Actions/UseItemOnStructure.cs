@@ -43,9 +43,9 @@ public class UseItemOnStructure : Interaction {
         }
     }
     public override bool CanInteractionBeDoneBy(Character character) {
-        if (!character.isHoldingItem || character.tokenInInventory != _tokenToBeUsed) {
-            return false;
-        }
+        //if (!character.isHoldingItem || character.tokenInInventory != _tokenToBeUsed) {
+        //    return false;
+        //}
         return base.CanInteractionBeDoneBy(character);
     }
     #endregion

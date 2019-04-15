@@ -51,9 +51,10 @@ public class UseItemOnCharacter : Interaction {
         }
     }
     public override bool CanInteractionBeDoneBy(Character character) {
-        if (!character.isHoldingItem || character.tokenInInventory != _tokenToBeUsed) {
-            return false;
-        } else if(_targetCharacter == null) {
+        //if (!character.isHoldingItem || character.tokenInInventory != _tokenToBeUsed) {
+        //    return false;
+        //} else 
+        if(_targetCharacter == null) {
             return false;
         }
         return base.CanInteractionBeDoneBy(character);

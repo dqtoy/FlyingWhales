@@ -38,7 +38,7 @@ public class PickItemGoap : GoapAction {
             return false;
         }
         LocationGridTile knownLoc = awareness.knownGridLocation;
-        return !actor.isHoldingItem && knownLoc != null;
+        return knownLoc != null && actor.GetToken(poiTarget as SpecialToken) == null;
     }
     #endregion
 

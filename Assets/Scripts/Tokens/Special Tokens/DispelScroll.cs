@@ -100,7 +100,7 @@ public class DispelScroll : SpecialToken {
 
     private void ItemUsedEffect(TokenInteractionState state) {
         //state.tokenUser.LevelUp(); // **Level Up**: User +1 
-        state.tokenUser.ConsumeToken();
+        state.tokenUser.ConsumeToken(this);
         Character targetCharacter = state.target as Character;
         if (targetCharacter == null) {
             throw new System.Exception(GameManager.Instance.TodayLogString() + "Target character of use dispel scroll by " + state.tokenUser.name + " is either null or not a character");

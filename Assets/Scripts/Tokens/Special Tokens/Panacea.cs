@@ -49,7 +49,7 @@ public class Panacea : SpecialToken {
     private void ItemUsedEffectMinion(TokenInteractionState state) {
         Character targetCharacter = state.target as Character;
         targetCharacter.RemoveTrait("Sick");
-        state.tokenUser.ConsumeToken();
+        state.tokenUser.ConsumeToken(this);
 
         Log stateDescriptionLog = new Log(GameManager.Instance.Today(), "Tokens", this.GetType().ToString(), state.name.ToLower() + "-minion" + "_description", state.interaction);
         stateDescriptionLog.AddToFillers(state.tokenUser, state.tokenUser.name, LOG_IDENTIFIER.MINION_1);
@@ -64,7 +64,7 @@ public class Panacea : SpecialToken {
     private void ItemUsedEffectNPC(TokenInteractionState state) {
         Character targetCharacter = state.target as Character;
         targetCharacter.RemoveTrait("Sick");
-        state.tokenUser.ConsumeToken();
+        state.tokenUser.ConsumeToken(this);
 
         if(state.tokenUser.id == targetCharacter.id) {
             //Used item on self
@@ -92,7 +92,7 @@ public class Panacea : SpecialToken {
     private void StopFailEffect(TokenInteractionState state) {
         Character targetCharacter = state.target as Character;
         targetCharacter.RemoveTrait("Sick");
-        state.tokenUser.ConsumeToken();
+        state.tokenUser.ConsumeToken(this);
 
         state.descriptionLog.AddToFillers(state.interaction.investigatorCharacter, state.interaction.investigatorCharacter.name, LOG_IDENTIFIER.MINION_1);
 

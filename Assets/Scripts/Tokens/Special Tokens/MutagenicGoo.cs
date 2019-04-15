@@ -39,7 +39,7 @@ public class MutagenicGoo : SpecialToken {
         Character targetCharacter = state.target as Character;
         //**Mechanics**: Change target's race randomly (beast to beast only, non-beast to non-beast only). Make sure to change character class when changing from beast to beast
         RACE race = ChangeRaceRandomly(targetCharacter);
-        state.tokenUser.ConsumeToken();
+        state.tokenUser.ConsumeToken(this);
 
         if (state.tokenUser.id == targetCharacter.id) {
             //Used item on self
@@ -69,7 +69,7 @@ public class MutagenicGoo : SpecialToken {
     }
     private void StopFailEffect(TokenInteractionState state) {
         ChangeRaceRandomly(state.tokenUser);
-        state.tokenUser.ConsumeToken();
+        state.tokenUser.ConsumeToken(this);
 
         state.descriptionLog.AddToFillers(state.interaction.investigatorCharacter, state.interaction.investigatorCharacter.name, LOG_IDENTIFIER.MINION_1);
         state.descriptionLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(state.tokenUser.race), LOG_IDENTIFIER.STRING_1);

@@ -85,40 +85,40 @@ public class GiftItem : Interaction {
         _characterInvolved.MoveToAnotherStructure(_targetStructure, targetGridLocation, _targetCharacter);
     }
     private void GiftSuccessEffect(InteractionState state) {
-        SpecialToken item = _characterInvolved.tokenInInventory;
+        //SpecialToken item = _characterInvolved.tokenInInventory;
 
-        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        state.descriptionLog.AddToFillers(item, item.name, LOG_IDENTIFIER.ITEM_1);
+        //state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        //state.descriptionLog.AddToFillers(item, item.name, LOG_IDENTIFIER.ITEM_1);
 
-        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
-        state.AddLogFiller(new LogFiller(item, item.name, LOG_IDENTIFIER.ITEM_1));
+        //state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        //state.AddLogFiller(new LogFiller(item, item.name, LOG_IDENTIFIER.ITEM_1));
 
-        _characterInvolved.UnobtainToken();
-        _characterInvolved.specificLocation.AddSpecialTokenToLocation(item);
+        //_characterInvolved.UnobtainToken();
+        //_characterInvolved.specificLocation.AddSpecialTokenToLocation(item);
 
-        if (_characterInvolved.faction.id != _targetCharacter.faction.id && !_characterInvolved.isFactionless && !_targetCharacter.isFactionless) {
-            AdjustFactionsRelationship(_characterInvolved.faction, _targetCharacter.faction, 1, state);
-        } else {
-            throw new System.Exception("CAN'T DO GIFT ITEM: " + _characterInvolved.name + " of " + _characterInvolved.faction.name + " to " + _targetCharacter.name + " of " + _targetCharacter.faction.name);
-        }
+        //if (_characterInvolved.faction.id != _targetCharacter.faction.id && !_characterInvolved.isFactionless && !_targetCharacter.isFactionless) {
+        //    AdjustFactionsRelationship(_characterInvolved.faction, _targetCharacter.faction, 1, state);
+        //} else {
+        //    throw new System.Exception("CAN'T DO GIFT ITEM: " + _characterInvolved.name + " of " + _characterInvolved.faction.name + " to " + _targetCharacter.name + " of " + _targetCharacter.faction.name);
+        //}
     }
     private void GiftFailEffect(InteractionState state) {
-        SpecialToken item = _characterInvolved.tokenInInventory;
+        //SpecialToken item = _characterInvolved.tokenInInventory;
 
-        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        state.descriptionLog.AddToFillers(item, item.name, LOG_IDENTIFIER.ITEM_1);
+        //state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        //state.descriptionLog.AddToFillers(item, item.name, LOG_IDENTIFIER.ITEM_1);
 
-        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
-        state.AddLogFiller(new LogFiller(item, item.name, LOG_IDENTIFIER.ITEM_1));
+        //state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        //state.AddLogFiller(new LogFiller(item, item.name, LOG_IDENTIFIER.ITEM_1));
     }
     private void TargetMissingEffect(InteractionState state) {
-        SpecialToken item = _characterInvolved.tokenInInventory;
+        //SpecialToken item = _characterInvolved.tokenInInventory;
 
-        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        state.descriptionLog.AddToFillers(item, item.name, LOG_IDENTIFIER.ITEM_1);
+        //state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        //state.descriptionLog.AddToFillers(item, item.name, LOG_IDENTIFIER.ITEM_1);
 
-        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
-        state.AddLogFiller(new LogFiller(item, item.name, LOG_IDENTIFIER.ITEM_1));
+        //state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        //state.AddLogFiller(new LogFiller(item, item.name, LOG_IDENTIFIER.ITEM_1));
     }
     #endregion
 }

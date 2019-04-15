@@ -35,7 +35,7 @@ public class BrandOfTheBeastmaster : SpecialToken {
     private void ItemUsedEffectMinion(TokenInteractionState state) {
         Character targetCharacter = state.target as Character;
         targetCharacter.ChangeClass("Beastmaster");
-        state.tokenUser.ConsumeToken();
+        state.tokenUser.ConsumeToken(this);
 
         Log stateDescriptionLog = new Log(GameManager.Instance.Today(), "Tokens", this.GetType().ToString(), state.name.ToLower() + "-minion" + "_description", state.interaction);
         stateDescriptionLog.AddToFillers(state.tokenUser, state.tokenUser.name, LOG_IDENTIFIER.MINION_1);
@@ -49,7 +49,7 @@ public class BrandOfTheBeastmaster : SpecialToken {
     }
     private void ItemUsedEffectNPC(TokenInteractionState state) {
         state.tokenUser.ChangeClass("Beastmaster");
-        state.tokenUser.ConsumeToken();
+        state.tokenUser.ConsumeToken(this);
 
         Log stateDescriptionLog = new Log(GameManager.Instance.Today(), "Tokens", this.GetType().ToString(), state.name.ToLower() + "-npc" + "_description", state.interaction);
         stateDescriptionLog.AddToFillers(state.tokenUser, state.tokenUser.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -63,7 +63,7 @@ public class BrandOfTheBeastmaster : SpecialToken {
     }
     private void StopFailEffect(TokenInteractionState state) {
         state.tokenUser.ChangeClass("Beastmaster");
-        state.tokenUser.ConsumeToken();
+        state.tokenUser.ConsumeToken(this);
 
         state.descriptionLog.AddToFillers(state.interaction.investigatorCharacter, state.interaction.investigatorCharacter.name, LOG_IDENTIFIER.MINION_1);
 

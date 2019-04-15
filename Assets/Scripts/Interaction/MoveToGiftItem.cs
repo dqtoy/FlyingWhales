@@ -98,11 +98,11 @@ public class MoveToGiftItem : Interaction {
 
         state.descriptionLog.AddToFillers(targetArea, targetArea.name, LOG_IDENTIFIER.LANDMARK_2);
         state.descriptionLog.AddToFillers(targetCharacter.faction, targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_1);
-        state.descriptionLog.AddToFillers(_characterInvolved.tokenInInventory, _characterInvolved.tokenInInventory.name, LOG_IDENTIFIER.ITEM_1);
+        //state.descriptionLog.AddToFillers(_characterInvolved.tokenInInventory, _characterInvolved.tokenInInventory.name, LOG_IDENTIFIER.ITEM_1);
 
         state.AddLogFiller(new LogFiller(targetArea, targetArea.name, LOG_IDENTIFIER.LANDMARK_2));
         state.AddLogFiller(new LogFiller(targetCharacter.faction, targetCharacter.faction.name, LOG_IDENTIFIER.FACTION_1));
-        state.AddLogFiller(new LogFiller(_characterInvolved.tokenInInventory, _characterInvolved.tokenInInventory.name, LOG_IDENTIFIER.ITEM_1));
+        //state.AddLogFiller(new LogFiller(_characterInvolved.tokenInInventory, _characterInvolved.tokenInInventory.name, LOG_IDENTIFIER.ITEM_1));
 
         StartMoveToAction();
     }

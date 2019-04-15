@@ -85,25 +85,25 @@ public class StealActionNPC : Interaction {
         _characterInvolved.MoveToAnotherStructure(_targetStructure, targetGridLocation, _targetCharacter);
     }
     private void StealSuccessEffect(InteractionState state) {
-        SpecialToken item = _targetCharacter.tokenInInventory;
+        //SpecialToken item = _targetCharacter.tokenInInventory;
 
-        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        state.descriptionLog.AddToFillers(item, item.name, LOG_IDENTIFIER.ITEM_1);
+        //state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        //state.descriptionLog.AddToFillers(item, item.name, LOG_IDENTIFIER.ITEM_1);
 
-        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
-        state.AddLogFiller(new LogFiller(item, item.name, LOG_IDENTIFIER.ITEM_1));
+        //state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        //state.AddLogFiller(new LogFiller(item, item.name, LOG_IDENTIFIER.ITEM_1));
 
-        _targetCharacter.UnobtainToken();
-        _characterInvolved.ObtainToken(item);
+        //_targetCharacter.UnobtainToken();
+        //_characterInvolved.ObtainToken(item);
     }
     private void StealFailedEffect(InteractionState state) {
-        SpecialToken item = _targetCharacter.tokenInInventory;
+        //SpecialToken item = _targetCharacter.tokenInInventory;
 
-        state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        state.descriptionLog.AddToFillers(item, item.name, LOG_IDENTIFIER.ITEM_1);
+        //state.descriptionLog.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        //state.descriptionLog.AddToFillers(item, item.name, LOG_IDENTIFIER.ITEM_1);
 
-        state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
-        state.AddLogFiller(new LogFiller(item, item.name, LOG_IDENTIFIER.ITEM_1));
+        //state.AddLogFiller(new LogFiller(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER));
+        //state.AddLogFiller(new LogFiller(item, item.name, LOG_IDENTIFIER.ITEM_1));
     }
     #endregion
 }
