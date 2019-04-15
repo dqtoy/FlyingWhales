@@ -530,7 +530,7 @@ public class GoapAction {
             || reacting.faction == FactionManager.Instance.neutralFaction) {
             return false;
         }
-        return reacting.faction.id == actor.faction.id && committedCrime != CRIME.NONE;
+        return reacting.faction == actor.faction && committedCrime != CRIME.NONE;
     }
     protected void SetCommittedCrime(CRIME crime) {
         committedCrime = crime;

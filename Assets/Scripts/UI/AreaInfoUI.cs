@@ -432,7 +432,15 @@ public class AreaInfoUI : UIMenu {
         string summary = "Location Job Queue: ";
         if (activeArea.jobQueue.jobsInQueue.Count > 0) {
             for (int i = 0; i < activeArea.jobQueue.jobsInQueue.Count; i++) {
-                summary += "\n" + activeArea.jobQueue.jobsInQueue[i].name + " - " + activeArea.jobQueue.jobsInQueue[i].assignedCharacter?.name ?? "None";
+                JobQueueItem jqi = activeArea.jobQueue.jobsInQueue[i];
+                if (jqi is GoapPlanJob) {
+                    GoapPlanJob gpj = jqi as GoapPlanJob;
+                    summary += "\n" + gpj.name + " Targetting " + gpj.targetPOI?.name ?? "None";
+                } else {
+                    summary += "\n" + jqi.name;
+                }
+                summary += "\n\tAssigned Character: " + jqi.assignedCharacter?.name ?? "None";
+
             }
         } else {
             summary += "\nNone";
