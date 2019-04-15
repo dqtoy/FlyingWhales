@@ -2628,7 +2628,25 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         } else if (trait.name == "Daydreaming") {
             AdjustDoNotGetTired(1);
             AdjustDoNotGetLonely(1);
-        } 
+        } else if (trait.name == "Forlorn") {
+            AdjustMoodValue(-35);
+        } else if (trait.name == "Sad") {
+            AdjustMoodValue(-20);
+        } else if (trait.name == "Exhausted") {
+            AdjustMoodValue(-35);
+        } else if (trait.name == "Tired") {
+            AdjustMoodValue(-10);
+        } else if (trait.name == "Starving") {
+            AdjustMoodValue(-25);
+        } else if (trait.name == "Hungry") {
+            AdjustMoodValue(-10);
+        } else if (trait.name == "Injured") {
+            AdjustMoodValue(-15);
+        } else if (trait.name == "Cursed") {
+            AdjustMoodValue(-25);
+        } else if (trait.name == "Sick") {
+            AdjustMoodValue(-15);
+        }
         //else if (trait.name == "Hungry") {
         //    CreateFeedJob();
         //} else if (trait.name == "Starving") {
@@ -2681,6 +2699,24 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         } else if (trait.name == "Daydreaming") {
             AdjustDoNotGetTired(-1);
             AdjustDoNotGetLonely(-1);
+        } else if (trait.name == "Forlorn") {
+            AdjustMoodValue(35);
+        } else if (trait.name == "Sad") {
+            AdjustMoodValue(20);
+        } else if (trait.name == "Exhausted") {
+            AdjustMoodValue(35);
+        } else if (trait.name == "Tired") {
+            AdjustMoodValue(10);
+        } else if (trait.name == "Starving") {
+            AdjustMoodValue(25);
+        } else if (trait.name == "Hungry") {
+            AdjustMoodValue(10);
+        } else if (trait.name == "Injured") {
+            AdjustMoodValue(15);
+        } else if (trait.name == "Cursed") {
+            AdjustMoodValue(25);
+        } else if (trait.name == "Sick") {
+            AdjustMoodValue(15);
         }
         for (int i = 0; i < trait.effects.Count; i++) {
             TraitEffect traitEffect = trait.effects[i];
