@@ -1413,6 +1413,9 @@ public enum CRIME {
     [SubcategoryOf(CRIME_CATEGORY.SERIOUS)]
     MURDER,
 }
+public enum CHARACTER_MOOD {
+    DARK, BAD, GOOD, GREAT,
+}
 
 #region Crime Subcategories
 [System.AttributeUsage(System.AttributeTargets.Field)]

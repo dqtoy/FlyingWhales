@@ -115,6 +115,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public JobQueue jobQueue { get; private set; }
     public JobQueueItem currentJob { get; private set; }
     public List<JobQueueItem> allJobsTargettingThis { get; private set; }
+    public int moodValue { get; private set; }
 
     private LocationGridTile tile; //what tile in the structure is this character currently in.
     private POI_STATE _state;
@@ -480,6 +481,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public POICollisionTrigger collisionTrigger {
         get { return marker.collisionTrigger; }
     }
+    public CHARACTER_MOOD currentMoodType {
+        get { return ConvertCurrentMoodValueToType(); }
+    }
     #endregion
 
     public Character(CharacterRole role, RACE race, GENDER gender) : this() {
@@ -552,6 +556,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         items = new List<SpecialToken>();
         jobQueue = new JobQueue();
         allJobsTargettingThis = new List<JobQueueItem>();
+        SetMoodValue(90);
 
         tiredness = TIREDNESS_DEFAULT;
         //Fullness value between 1300 and 1440.
@@ -5239,6 +5244,31 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         }
         return true;
+    }
+    #endregion
+
+    #region Mood
+    public void SetMoodValue(int amount) {
+        moodValue = amount;
+        moodValue = Mathf.Clamp(moodValue, 1, 100);
+    }
+    public void AdjustMoodValue(int amount) {
+        moodValue += amount;
+        moodValue = Mathf.Clamp(moodValue, 1, 100);
+    }
+    public CHARACTER_MOOD ConvertCurrentMoodValueToType() {
+        return ConvertMoodValueToType(moodValue);
+    }
+    public CHARACTER_MOOD ConvertMoodValueToType(int amount) {
+        if(amount >= 1 && amount < 26) {
+            return CHARACTER_MOOD.DARK;
+        } else if (amount >= 26 && amount < 51) {
+            return CHARACTER_MOOD.BAD;
+        } else if (amount >= 51 && amount < 76) {
+            return CHARACTER_MOOD.GOOD;
+        } else {
+            return CHARACTER_MOOD.GREAT;
+        }
     }
     #endregion
 }
