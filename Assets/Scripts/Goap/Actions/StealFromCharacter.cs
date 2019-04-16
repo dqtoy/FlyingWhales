@@ -5,6 +5,7 @@ using UnityEngine;
 public class StealFromCharacter : GoapAction {
 
     private SpecialToken _targetItem;
+    private Character _targetCharacter;
 
     public StealFromCharacter(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.STEAL_CHARACTER, INTERACTION_ALIGNMENT.EVIL, actor, poiTarget) {
         validTimeOfDays = new TIME_IN_WORDS[] {
@@ -13,6 +14,7 @@ public class StealFromCharacter : GoapAction {
             TIME_IN_WORDS.AFTER_MIDNIGHT,
         };
         actionIconString = GoapActionStateDB.Hostile_Icon;
+        _targetCharacter = poiTarget as Character;
     }
 
     #region Overrides
@@ -29,8 +31,7 @@ public class StealFromCharacter : GoapAction {
     }
     public override void PerformActualAction() {
         if (actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
-            Character target = poiTarget as Character;
-            if (target.isHoldingItem) {
+            if (_targetCharacter.isHoldingItem) {
                 SetState("Steal Success");
             } else {
                 SetState("Steal Fail");
@@ -50,10 +51,13 @@ public class StealFromCharacter : GoapAction {
 
     #region Requirements
     protected bool Requirement() {
-        if (poiTarget.factionOwner.id != actor.faction.id) {
+        if(poiTarget != actor) {
             return true;
-        } else if(actor.faction.id == FactionManager.Instance.neutralFaction.id) {
-            return true;
+            //if (poiTarget.factionOwner.id != actor.faction.id) {
+            //    return true;
+            //} else if (actor.faction.id == FactionManager.Instance.neutralFaction.id) {
+            //    return true;
+            //}
         }
         return false;
     }
@@ -61,15 +65,14 @@ public class StealFromCharacter : GoapAction {
 
     #region State Effects
     private void PreStealSuccess() {
-        Character target = poiTarget as Character;
-        _targetItem = target.items[UnityEngine.Random.Range(0, target.items.Count)];
+        _targetItem = _targetCharacter.items[UnityEngine.Random.Range(0, _targetCharacter.items.Count)];
         //**Note**: This is a Theft crime
         SetCommittedCrime(CRIME.THEFT);
         currentState.AddLogFiller(_targetItem, _targetItem.name, LOG_IDENTIFIER.ITEM_1);
         currentState.SetIntelReaction(State1Reactions);
     }
     private void AfterStealSuccess() {
-        actor.PickUpToken(_targetItem, false);
+        actor.ObtainTokenFrom(_targetCharacter, _targetItem, false);
         if (actor.GetTrait("Kleptomaniac") != null) {
             actor.AdjustHappiness(60);
         }
