@@ -21,9 +21,11 @@ public class StealFromCharacter : GoapAction {
     }
     protected override void ConstructPreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.NONE, targetPOI = actor });
-        if (actor.GetTrait("Kleptomaniac") != null) {
+        //if (actor.GetTrait("Kleptomaniac") != null) {
             AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
-        }
+        //}
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, targetPOI = actor });
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, targetPOI = actor });
     }
     public override void PerformActualAction() {
         if (actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
@@ -64,13 +66,57 @@ public class StealFromCharacter : GoapAction {
         //**Note**: This is a Theft crime
         SetCommittedCrime(CRIME.THEFT);
         currentState.AddLogFiller(_targetItem, _targetItem.name, LOG_IDENTIFIER.ITEM_1);
-        //currentState.SetIntelReaction(State1Reactions);
+        currentState.SetIntelReaction(State1Reactions);
     }
     private void AfterStealSuccess() {
         actor.PickUpToken(_targetItem, false);
         if (actor.GetTrait("Kleptomaniac") != null) {
             actor.AdjustHappiness(60);
         }
+    }
+    #endregion
+
+    #region Intel Reactions
+    private List<string> State1Reactions(Character recipient, Intel sharedIntel) {
+        List<string> reactions = new List<string>();
+        Character targetCharacter = poiTarget as Character;
+        //Recipient and Target is the same:
+        if (recipient == targetCharacter) {
+            //- **Recipient Response Text**: "[Actor Name] stole from me? What a horrible person."
+            reactions.Add(string.Format("{0} stole from me? What a horrible person.", actor.name));
+            //- **Recipient Effect**: Remove Friend/Lover/Paramour relationship between Actor and Recipient.
+            List<RelationshipTrait> traitsToRemove = recipient.GetAllRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE);
+            CharacterManager.Instance.RemoveRelationshipBetween(recipient, actor, traitsToRemove);
+            //Apply Crime System handling as if the Recipient witnessed Actor commit Theft.
+            recipient.ReactToCrime(CRIME.THEFT, actor, null, false);
+        }
+        //Recipient and Actor have a positive relationship:
+        else if (recipient.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE)) {
+            //- **Recipient Response Text**: "[Actor Name] may have committed theft but I know that [he/she] is a good person."
+            reactions.Add(string.Format("{0} may have committed theft but I know that {1} is a good person.", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
+            //-**Recipient Effect * *: no effect
+        }
+        //Recipient and Actor have a negative relationship:
+        else if (recipient.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.NEGATIVE)) {
+            //- **Recipient Response Text**: "[Actor Name] committed theft!? Why am I not surprised."
+            reactions.Add(string.Format("{0} committed theft!? Why am I not surprised.", actor.name));
+            //-**Recipient Effect**: Apply Crime System handling as if the Recipient witnessed Actor commit Theft.
+            recipient.ReactToCrime(CRIME.THEFT, actor, null, false);
+        }
+        //Recipient and Actor have no relationship but are from the same faction:
+        else if (!recipient.HasRelationshipWith(actor) && recipient.faction == actor.faction) {
+            //- **Recipient Response Text**: "[Actor Name] committed theft!? That's illegal."
+            reactions.Add(string.Format("{0} committed theft!? That's illegal.", actor.name));
+            //- **Recipient Effect**: Apply Crime System handling as if the Recipient witnessed Actor commit Theft.
+            recipient.ReactToCrime(CRIME.THEFT, actor, null, false);
+        }
+        //Recipient and Actor is the same:
+        else if (recipient == actor) {
+            //- **Recipient Response Text**: "I know what I did."
+            reactions.Add("I know what I did.");
+            //-**Recipient Effect**: no effect
+        }
+        return reactions;
     }
     #endregion
 }

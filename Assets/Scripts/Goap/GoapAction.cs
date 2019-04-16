@@ -92,6 +92,7 @@ public class GoapAction {
         AddActionLog(GameManager.Instance.TodayLogString() + " Set state to " + currentState.name);
         OnPerformActualActionToTarget();
         currentState.Execute();
+        Messenger.Broadcast(Signals.ACTION_STATE_SET, actor, this, currentState);
     }
     #endregion
 
@@ -500,16 +501,18 @@ public class GoapAction {
     public void AddActualEffect(GoapEffect effect) {
         actualEffects.Add(effect);
     }
+    public bool HasActualEffect(GOAP_EFFECT_CONDITION conditionType, object conditionKey = null, IPointOfInterest targetPOI = null) {
+        for (int i = 0; i < actualEffects.Count; i++) {
+            GoapEffect effect = actualEffects[i];
+            if (effect.conditionType == conditionType && effect.conditionKey == conditionKey && effect.targetPOI == targetPOI) {
+                return true;
+            }
+        }
+        return false;
+    }
     #endregion
 
     #region Tile Objects
-    protected virtual void ReserveTarget() {
-        if (poiTarget is TileObject) {
-            TileObject target = poiTarget as TileObject;
-            target.OnTargetObject(this);
-            Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnActorDied);
-        }
-    }
     protected virtual void OnPerformActualActionToTarget() {
         if (poiTarget is TileObject) {
             TileObject target = poiTarget as TileObject;

@@ -210,6 +210,7 @@ public static class Signals {
     public static string STOP_ACTION = "OnStopAction"; //Parameters (GoapAction)
     public static string CHARACTER_FINISHED_ACTION = "OnCharacterFinishedAction"; //Parameters (Character, GoapAction, String result)
     public static string CHARACTER_DOING_ACTION = "OnCharacterDoingAction"; //Parameters (Character, GoapAction)
+    public static string ACTION_STATE_SET = "OnActionStateSet"; //Parameters (Character, GoapAction, GoapActionState)
     #endregion
 
     #region Location Grid Tile

@@ -108,6 +108,7 @@ public class CharacterMarker : PooledObject {
         Messenger.AddListener(Signals.GAME_LOADED, OnGameLoaded);
         Messenger.AddListener<Character, Trait>(Signals.TRAIT_ADDED, OnCharacterGainedTrait);
         Messenger.AddListener<Character, Trait>(Signals.TRAIT_REMOVED, OnCharacterLostTrait);
+        Messenger.AddListener<Character, GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
 
         PathfindingManager.Instance.AddAgent(pathfindingAI);
     }
@@ -185,6 +186,94 @@ public class CharacterMarker : PooledObject {
     }
     #endregion
 
+    #region Listeners
+    private void OnActionStateSet(Character character, GoapAction goapAction, GoapActionState goapState) {
+        if (this.character == character) {
+            switch (goapAction.goapType) {
+                case INTERACTION_TYPE.SLEEP_OUTSIDE:
+                    if (GoapActionStateDB.GetStateResult(goapAction.goapType, goapState.name) == InteractionManager.Goap_State_Success) {
+                        PlaySleepGround();
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+    private void OnCharacterFinishedAction(Character character, GoapAction action, string result) {
+        if (this.character == character) {
+            //action icon
+            UpdateActionIcon();
+
+            //animation
+            switch (action.goapType) {
+                case INTERACTION_TYPE.SLEEP_OUTSIDE:
+                    PlayIdle();
+                    break;
+                default:
+                    break;
+            }
+        } else {
+            //crime system:
+            //if the other character committed a crime,
+            //check if that character is in this characters vision 
+            //and that this character can react to a crime (not in flee or engage mode)
+            if (action.IsConsideredACrimeBy(this.character)
+                && inVisionPOIs.Contains(character)
+                && this.character.CanReactToCrime()) {
+                this.character.ReactToCrime(action);
+            }
+        }
+    }
+    public void OnCharacterGainedTrait(Character character, Trait trait) {
+        //this will make this character flee when he/she gains an injured trait
+        if (character == this.character) {
+            if (trait.type == TRAIT_TYPE.DISABLER) { //if the character gained a disabler trait, hinder movement
+                if (character.currentParty.icon.isTravelling && character.currentParty.icon.travelLine == null) {
+                    StopMovementOnly();
+                }
+                pathfindingAI.AdjustDoNotMove(1);
+            }
+            if (trait.name == "Injured" && trait.responsibleCharacter != null && character.GetTrait("Unconscious") == null) {
+                if (hostilesInRange.Contains(trait.responsibleCharacter)) {
+                    Debug.Log(character.name + " gained an injured trait. Reacting...");
+                    NormalReactToHostileCharacter(trait.responsibleCharacter, CHARACTER_STATE.FLEE);
+                }
+            }
+            UpdateAnimationBasedOnGainedTrait(trait);
+        }
+    }
+    public void OnCharacterLostTrait(Character character, Trait trait) {
+        if (character == this.character) {
+            if (trait.type == TRAIT_TYPE.DISABLER) { //if the character lost a disabler trait, adjust hinder movement value
+                pathfindingAI.AdjustDoNotMove(-1);
+            }
+            //after this character loses combat recovery trait or unconscious trait, check if he or she can still react to another character, if yes, react.
+            switch (trait.name) {
+                case "Combat Recovery":
+                case "Unconscious":
+                    if (hostilesInRange.Count > 0) {
+                        Character nearestHostile = GetNearestValidHostile();
+                        if (nearestHostile != null) {
+                            NormalReactToHostileCharacter(nearestHostile);
+                        }
+                    }
+                    break;
+                default:
+                    break;
+            }
+            UpdateAnimationBasedOnLostTrait(trait);
+        } else if (hostilesInRange.Contains(character)) {
+            //if the character that lost a trait is not this character and that character is in this character's hostility range
+            //and the trait that was lost is a negative disabler trait, react to them.
+            if (trait.type == TRAIT_TYPE.DISABLER && trait.effect == TRAIT_EFFECT.NEGATIVE) {
+                NormalReactToHostileCharacter(character);
+            }
+
+        }
+    }
+    #endregion
+
     #region UI
     private void OnMenuOpened(UIMenu menu) {
         if (menu is CharacterInfoUI) {
@@ -244,21 +333,6 @@ public class CharacterMarker : PooledObject {
             UpdateActionIcon();
         }
     }
-    private void OnCharacterFinishedAction(Character character, GoapAction action, string result) {
-        if (this.character.id == character.id) {
-            UpdateActionIcon();
-        } else {
-            //crime system:
-            //if the other character committed a crime,
-            //check if that character is in this characters vision 
-            //and that this character can react to a crime (not in flee or engage mode)
-            if (action.IsConsideredACrimeBy(this.character) 
-                && inVisionPOIs.Contains(character)
-                && this.character.CanReactToCrime()) {
-                this.character.ReactToCrime(action);
-            }
-        }
-    }
     public void OnCharacterTargettedByAction() {
         UpdateActionIcon();
     }
@@ -286,6 +360,7 @@ public class CharacterMarker : PooledObject {
         Messenger.RemoveListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
         Messenger.RemoveListener<Character, Trait>(Signals.TRAIT_ADDED, OnCharacterGainedTrait);
         Messenger.RemoveListener<Character, Trait>(Signals.TRAIT_REMOVED, OnCharacterLostTrait);
+        Messenger.RemoveListener<Character, GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
     }
     #endregion
 
@@ -496,10 +571,13 @@ public class CharacterMarker : PooledObject {
         //Debug.Log(this.character.name + " is rotating " + angle);
     }
     public void LookAt(Vector3 target) {
-        Vector3 diff = target - transform.position;
-        diff.Normalize();
-        float rot_z = Mathf.Atan2(diff.y, diff.x) * Mathf.Rad2Deg;
-        visualsParent.rotation = Quaternion.Euler(0f, 0f, rot_z - 90);
+        //only allow asset rotation if the character is in idle animation
+        if (animator.GetCurrentAnimatorStateInfo(0).IsName("Idle")) {
+            Vector3 diff = target - transform.position;
+            diff.Normalize();
+            float rot_z = Mathf.Atan2(diff.y, diff.x) * Mathf.Rad2Deg;
+            visualsParent.rotation = Quaternion.Euler(0f, 0f, rot_z - 90);
+        }
     }
     public void ReceivePathFromPathfindingThread(InnerPathfindingThread innerPathfindingThread) {
         _currentPath = innerPathfindingThread.path;
@@ -647,6 +725,24 @@ public class CharacterMarker : PooledObject {
     #endregion
 
     #region Animation
+    private void UpdateAnimationBasedOnGainedTrait(Trait trait) {
+        switch (trait.name) {
+            case "Unconscious":
+                PlaySleepGround();
+                break;
+            default:
+                break;
+        }
+    }
+    private void UpdateAnimationBasedOnLostTrait(Trait trait) {
+        switch (trait.name) {
+            case "Unconscious":
+                PlayIdle();
+                break;
+            default:
+                break;
+        }
+    }
     private void StartWalkingAnimation() {
         if (!this.gameObject.activeInHierarchy) {
             return;
@@ -662,6 +758,12 @@ public class CharacterMarker : PooledObject {
             return;
         }
         animator.Play("Idle");
+    }
+    private void PlaySleepGround() {
+        if (!this.gameObject.activeInHierarchy) {
+            return;
+        }
+        animator.Play("Sleep Ground");
     }
     #endregion
 
@@ -761,47 +863,6 @@ public class CharacterMarker : PooledObject {
     #endregion
 
     #region Reactions
-    public void OnCharacterGainedTrait(Character character, Trait trait) {
-        //this will make this character flee when he/she gains an injured trait
-        if (character == this.character) {
-            if (trait.type == TRAIT_TYPE.DISABLER) { //if the character gained a disabler trait, hinder movement
-                if(character.currentParty.icon.isTravelling && character.currentParty.icon.travelLine == null) {
-                    StopMovementOnly();
-                }
-                pathfindingAI.AdjustDoNotMove(1);
-            }
-            if (trait.name == "Injured" && trait.responsibleCharacter != null && character.GetTrait("Unconscious") == null) {
-                if (hostilesInRange.Contains(trait.responsibleCharacter)) {
-                    Debug.Log(character.name + " gained an injured trait. Reacting...");
-                    NormalReactToHostileCharacter(trait.responsibleCharacter, CHARACTER_STATE.FLEE);
-                }
-            }
-           
-        }
-    }
-    public void OnCharacterLostTrait(Character character, Trait trait) {
-        if (character == this.character) {
-            if (trait.type == TRAIT_TYPE.DISABLER) { //if the character lost a disabler trait, adjust hinder movement value
-                pathfindingAI.AdjustDoNotMove(-1);
-            }
-            //after this character loses combat recovery trait or unconscious trait, check if he or she can still react to another character, if yes, react.
-            if (trait.name == "Combat Recovery" || trait.name == "Unconscious") {
-                if (hostilesInRange.Count > 0) {
-                    Character nearestHostile = GetNearestValidHostile();
-                    if (nearestHostile != null) {
-                        NormalReactToHostileCharacter(nearestHostile);
-                    }
-                }
-            }
-        } else if (hostilesInRange.Contains(character)) {
-            //if the character that lost a trait is not this character and that character is in this character's hostility range
-            //and the trait that was lost is a negative disabler trait, react to them.
-            if (trait.type == TRAIT_TYPE.DISABLER && trait.effect == TRAIT_EFFECT.NEGATIVE) {
-                NormalReactToHostileCharacter(character);
-            }
-           
-        }
-    }
     private void NormalReactToHostileCharacter(Character otherCharacter, CHARACTER_STATE forcedReaction = CHARACTER_STATE.NONE) {
         string summary = character.name + " will react to hostile " + otherCharacter.name;
 
