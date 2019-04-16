@@ -25,6 +25,7 @@ public class CharacterState {
     #region Virtuals
     //Starts a state and its movement behavior, can be overridden
     protected virtual void StartState() {
+        stateComponent.SetStateToDo(null);
         stateComponent.SetCurrentState(this);
         currentDuration = 0;
         StartStatePerTick();
@@ -86,6 +87,7 @@ public class CharacterState {
         if (isDone) {
             return;
         }
+        stateComponent.SetStateToDo(this);
         if(characterState == CHARACTER_STATE.EXPLORE) {
             //There is a special case for explore state, character must travel to a dungeon-type area first
             Area dungeon = LandmarkManager.Instance.GetRandomAreaOfType(AREA_TYPE.DUNGEON);

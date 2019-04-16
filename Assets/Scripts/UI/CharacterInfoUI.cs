@@ -220,6 +220,10 @@ public class CharacterInfoUI : UIMenu {
             plansLblLogItem.SetLog(_activeCharacter.stateComponent.currentState.thoughtBubbleLog);
             plansLbl.text = Utilities.LogReplacer(_activeCharacter.stateComponent.currentState.thoughtBubbleLog);
             return;
+        }else if (_activeCharacter.stateComponent.stateToDo != null) {
+            plansLblLogItem.SetLog(_activeCharacter.stateComponent.stateToDo.thoughtBubbleLog);
+            plansLbl.text = Utilities.LogReplacer(_activeCharacter.stateComponent.stateToDo.thoughtBubbleLog);
+            return;
         }
 
         //Action
