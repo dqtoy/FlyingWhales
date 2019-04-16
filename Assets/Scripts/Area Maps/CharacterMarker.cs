@@ -64,8 +64,12 @@ public class CharacterMarker : PooledObject {
     public Vector2 anchoredPos { get; private set; }
     public LocationGridTile destinationTile { get; private set; }
     public bool cannotCombat { get; private set; }
+    public float speedModifier { get; private set; }
+    public int useWalkSpeed { get; private set; }
+    public int targettedByRemoveNegativeTraitActionsCounter { get; private set; }
 
     private LocationGridTile _previousGridTile;
+    private float progressionSpeedMultiplier;
 
     #region getters/setters
     public List<LocationGridTile> currentPath {
@@ -204,12 +208,13 @@ public class CharacterMarker : PooledObject {
     }
     private void OnProgressionSpeedChanged(PROGRESSION_SPEED progSpeed) {
         if (progSpeed == PROGRESSION_SPEED.X1) {
-            pathfindingAI.maxSpeed = 2f;
+            progressionSpeedMultiplier = 1f;
         } else if (progSpeed == PROGRESSION_SPEED.X2) {
-            pathfindingAI.maxSpeed = 4f;
+            progressionSpeedMultiplier = 1.5f;
         } else if (progSpeed == PROGRESSION_SPEED.X4) {
-            pathfindingAI.maxSpeed = 6f;
+            progressionSpeedMultiplier = 2f;
         }
+        UpdateSpeed();
     }
     #endregion
 
@@ -259,11 +264,35 @@ public class CharacterMarker : PooledObject {
             }
         }
     }
-    public void OnCharacterTargettedByAction() {
+    public void OnCharacterTargettedByAction(GoapAction action) {
         UpdateActionIcon();
+        for (int i = 0; i < action.expectedEffects.Count; i++) {
+            if(action.expectedEffects[i].conditionType == GOAP_EFFECT_CONDITION.REMOVE_TRAIT) {
+                if(action.expectedEffects[i].conditionKey is string) {
+                    string key = (string) action.expectedEffects[i].conditionKey;
+                    if(AttributeManager.Instance.allTraits.ContainsKey(key) && AttributeManager.Instance.allTraits[key].effect == TRAIT_EFFECT.NEGATIVE) {
+                        AdjustTargettedByRemoveNegativeTraitActions(1);
+                    } else if (key == "Negative") {
+                        AdjustTargettedByRemoveNegativeTraitActions(1);
+                    }
+                }
+            }
+        }
     }
-    public void OnCharacterRemovedTargettedByAction() {
+    public void OnCharacterRemovedTargettedByAction(GoapAction action) {
         UpdateActionIcon();
+        for (int i = 0; i < action.expectedEffects.Count; i++) {
+            if (action.expectedEffects[i].conditionType == GOAP_EFFECT_CONDITION.REMOVE_TRAIT) {
+                if (action.expectedEffects[i].conditionKey is string) {
+                    string key = (string) action.expectedEffects[i].conditionKey;
+                    if (AttributeManager.Instance.allTraits.ContainsKey(key) && AttributeManager.Instance.allTraits[key].effect == TRAIT_EFFECT.NEGATIVE) {
+                        AdjustTargettedByRemoveNegativeTraitActions(-1);
+                    } else if (key == "Negative") {
+                        AdjustTargettedByRemoveNegativeTraitActions(-1);
+                    }
+                }
+            }
+        }
     }
     #endregion
 
@@ -294,12 +323,8 @@ public class CharacterMarker : PooledObject {
         this.destinationTile = destinationTile;
         _arrivalAction = arrivalAction;
         _targetPOI = targetPOI;
-        character.currentParty.icon.SetIsTravelling(true);
-        pathfindingAI.SetIsStopMovement(false);
-        //pathfindingAI.SetOnTargetReachedAction(arrivalAction);
-        //destinationSetter.SetDestination(destinationTile.centeredWorldLocation);
         SetDestination(destinationTile.centeredWorldLocation);
-        StartWalkingAnimation();
+        StartMovement();
     }
     public void ArrivedAtLocation() {
         if(character.currentParty.icon.isTravelling && character.gridTileLocation == destinationTile && destinationTile.occupant == null) {
@@ -327,23 +352,10 @@ public class CharacterMarker : PooledObject {
         }
     }
     private void StartMovement() {
+        UpdateSpeed();
+        pathfindingAI.SetIsStopMovement(false);
         character.currentParty.icon.SetIsTravelling(true);
         StartWalkingAnimation();
-        if (_currentPath.Count == 0) {
-            //Arrival
-            character.currentParty.icon.SetIsTravelling(false);
-            PlayIdle();
-            //if (Messenger.eventTable.ContainsKey(Signals.TILE_OCCUPIED)) {
-            //    Messenger.RemoveListener<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, OnTileOccupied);
-            //}
-            if (_arrivalAction != null) {
-                _arrivalAction();
-            }
-            //throw new Exception(character.name + "'s marker path count is 0, but movement is starting! Destination Tile is: " + _destinationTile.ToString());
-        } else {
-            currentMoveCoroutine = StartCoroutine(MoveToPosition(transform.localPosition, _currentPath[0].centeredLocalLocation));
-        }
-        //Messenger.AddListener(Signals.TICK_STARTED, Move);
     }
     public void StopMovement(Action afterStoppingAction = null) {
         string log = character.name + " StopMovement function is called!";
@@ -673,6 +685,49 @@ public class CharacterMarker : PooledObject {
         }
         Messenger.RemoveListener(Signals.GAME_LOADED, OnGameLoaded);
     }
+    private float GetSpeed() {
+        float speed = character.raceSetting.runSpeed;
+        if(character.stateComponent.currentState == null && targettedByRemoveNegativeTraitActionsCounter > 0) {
+            speed = character.raceSetting.walkSpeed;
+        } else {
+            if (useWalkSpeed > 0) {
+                speed = character.raceSetting.walkSpeed;
+            } else {
+                if (character.stateComponent.currentState != null) {
+                    if (character.stateComponent.currentState.characterState == CHARACTER_STATE.EXPLORE || character.stateComponent.currentState.characterState == CHARACTER_STATE.PATROL) {
+                        //Walk
+                        speed = character.raceSetting.walkSpeed;
+                    }
+                } else if (character.currentAction != null) {
+                    if (character.currentAction.goapType == INTERACTION_TYPE.STROLL) {
+                        //Walk
+                        speed = character.raceSetting.walkSpeed;
+                    }
+                }
+            }
+        }
+        speed += (speed * speedModifier);
+        if (speed <= 0f) {
+            speed = 0.5f;
+        }
+        speed *= progressionSpeedMultiplier;
+        return speed;
+    }
+    public void UpdateSpeed() {
+        pathfindingAI.maxSpeed = GetSpeed();
+    }
+    public void AdjustSpeedModifier(float amount) {
+        speedModifier += amount;
+        UpdateSpeed();
+    }
+    public void AdjustUseWalkSpeed(int amount) {
+        useWalkSpeed += amount;
+        useWalkSpeed = Mathf.Max(0, useWalkSpeed);
+    }
+    public void AdjustTargettedByRemoveNegativeTraitActions(int amount) {
+        targettedByRemoveNegativeTraitActionsCounter += amount;
+        targettedByRemoveNegativeTraitActionsCounter = Mathf.Max(0, targettedByRemoveNegativeTraitActionsCounter);
+    }
     #endregion
 
     #region Vision Collision
@@ -898,9 +953,7 @@ public class CharacterMarker : PooledObject {
             return; //this is for cases that the character is no longer in a flee state, but the pathfinding thread returns a flee path
         }
         Debug.Log(character.name + " computed a flee path!");
-        pathfindingAI.SetIsStopMovement(false);
-        StartWalkingAnimation(); //NOTE: Unify this!
-        character.currentParty.icon.SetIsTravelling(true);
+        StartMovement();
     }
     public void RedetermineFlee() {
         if (hostilesInRange.Count == 0) {
@@ -937,9 +990,7 @@ public class CharacterMarker : PooledObject {
         //set them as a target
         SetTargetTransform(nearestHostile.marker.transform);
         SetCurrentlyEngaging(nearestHostile);
-        pathfindingAI.SetIsStopMovement(false);
-        character.currentParty.icon.SetIsTravelling(true);
-        StartWalkingAnimation();
+        StartMovement();
     }
     public void OnReachEngageTarget() {
         Debug.Log(character.name + " has reached engage target!");

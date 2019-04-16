@@ -23,6 +23,9 @@ public class RacePanelUI : MonoBehaviour {
     public InputField hpPerLevelInput;
     public InputField attackPerLevelInput;
     public InputField neutralSpawnLevelModInput;
+    public InputField runSpeedInput;
+    public InputField walkSpeedInput;
+
 
     public GameObject traitsGO;
     public GameObject hpPerLevelGO;
@@ -73,6 +76,8 @@ public class RacePanelUI : MonoBehaviour {
         hpPerLevelInput.text = "0";
         attackPerLevelInput.text = "0";
         neutralSpawnLevelModInput.text = "0";
+        runSpeedInput.text = "0";
+        walkSpeedInput.text = "0";
 
         raceOptions.ClearOptions();
 
@@ -91,6 +96,8 @@ public class RacePanelUI : MonoBehaviour {
         hpPerLevelInput.text = "0";
         attackPerLevelInput.text = "0";
         neutralSpawnLevelModInput.text = "0";
+        runSpeedInput.text = "0";
+        walkSpeedInput.text = "0";
 
         raceOptions.value = 0;
         traitOptions.value = 0;
@@ -156,6 +163,8 @@ public class RacePanelUI : MonoBehaviour {
         raceOptions.value = GetDropdownIndex(raceOptions, raceSetting.race.ToString());
         attackModifierInput.text = raceSetting.attackPowerModifier.ToString();
         speedModifierInput.text = raceSetting.speedModifier.ToString();
+        runSpeedInput.text = raceSetting.runSpeed.ToString();
+        walkSpeedInput.text = raceSetting.walkSpeed.ToString();
         hpModifierInput.text = raceSetting.hpModifier.ToString();
         neutralSpawnLevelModInput.text = raceSetting.neutralSpawnLevelModifier.ToString();
 

@@ -10,9 +10,9 @@ public class TransformToWolfForm : GoapAction {
     }
 
     #region Overrides
-    protected override void ConstructPreconditionsAndEffects() {
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.NONE, targetPOI = actor });
-    }
+    //protected override void ConstructPreconditionsAndEffects() {
+    //    AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.NONE, targetPOI = actor });
+    //}
     public override void PerformActualAction() {
         SetState("Transform Success");
         base.PerformActualAction();

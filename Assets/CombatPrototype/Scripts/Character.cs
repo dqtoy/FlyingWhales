@@ -2633,8 +2633,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         } else if (trait.name == "Sad") {
             AdjustMoodValue(-20);
         } else if (trait.name == "Exhausted") {
+            marker.AdjustUseWalkSpeed(1);
             AdjustMoodValue(-35);
         } else if (trait.name == "Tired") {
+            marker.AdjustSpeedModifier(-0.2f);
             AdjustMoodValue(-10);
         } else if (trait.name == "Starving") {
             AdjustMoodValue(-25);
@@ -2704,8 +2706,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         } else if (trait.name == "Sad") {
             AdjustMoodValue(20);
         } else if (trait.name == "Exhausted") {
+            marker.AdjustUseWalkSpeed(-1);
             AdjustMoodValue(35);
         } else if (trait.name == "Tired") {
+            marker.AdjustSpeedModifier(0.2f);
             AdjustMoodValue(10);
         } else if (trait.name == "Starving") {
             AdjustMoodValue(25);
@@ -4768,6 +4772,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 }
                 willGoIdleState = false;
             } else {
+                if (action.poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+                    Character targetCharacter = action.poiTarget as Character;
+                    if (!targetCharacter.IsInOwnParty() && targetCharacter.currentParty != _ownParty) {
+                        log += "\n - " + targetCharacter.name + " is not in its own party, waiting and skipping...";
+                        PrintLogIfActive(log);
+                        return;
+                    }
+                }
                 log += "\n - Action's preconditions are all satisfied, doing action...";
                 PrintLogIfActive(log);
                 Messenger.Broadcast(Signals.CHARACTER_WILL_DO_PLAN, this, action.parentPlan);
@@ -5070,14 +5082,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         targettedByAction.Add(action);
         //targettedByAction = action;
         if (marker != null) {
-            marker.OnCharacterTargettedByAction();
+            marker.OnCharacterTargettedByAction(action);
         }
     }
     public void RemoveTargettedByAction(GoapAction action) {
         if (targettedByAction.Remove(action)) {
             //targettedByAction = null;
             if (marker != null) {
-                marker.OnCharacterRemovedTargettedByAction();
+                marker.OnCharacterRemovedTargettedByAction(action);
             }
         }
     }

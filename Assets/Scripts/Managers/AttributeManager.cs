@@ -81,6 +81,23 @@ public class AttributeManager : MonoBehaviour {
             new PatrollingCharacter(),
             new Reanimated(),
             new Restrained(),
+            new Assaulter(),
+            new AttemptedMurderer(),
+            new Cursed(),
+            //new Enemy(null),
+            //new Friend(null),
+            new Injured(),
+            new Kleptomaniac(),
+            //new Lover(null),
+            new Lycanthropy(),
+            new Murderer(),
+            ////new Paramour(null),
+            new Poisoned(),
+            //new Relative(null),
+            new Resting(),
+            new Sick(),
+            new Thief(),
+            new Unconscious(),
         };
         for (int i = 0; i < specialTraits.Length; i++) {
             CategorizeTrait(specialTraits[i]);
