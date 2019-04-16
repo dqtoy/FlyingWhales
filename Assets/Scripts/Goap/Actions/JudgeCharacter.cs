@@ -5,14 +5,14 @@ using UnityEngine;
 public class JudgeCharacter : GoapAction {
 
     public JudgeCharacter(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.JUDGE_CHARACTER, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
-        actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
+        //actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
         actionIconString = GoapActionStateDB.Work_Icon;
-        validTimeOfDays = new TIME_IN_WORDS[] {
-            TIME_IN_WORDS.MORNING,
-            TIME_IN_WORDS.AFTERNOON,
-            TIME_IN_WORDS.EARLY_NIGHT,
-            TIME_IN_WORDS.LATE_NIGHT,
-        };
+        //validTimeOfDays = new TIME_IN_WORDS[] {
+        //    TIME_IN_WORDS.MORNING,
+        //    TIME_IN_WORDS.AFTERNOON,
+        //    TIME_IN_WORDS.EARLY_NIGHT,
+        //    TIME_IN_WORDS.LATE_NIGHT,
+        //};
     }
 
     #region Overrides
@@ -20,7 +20,7 @@ public class JudgeCharacter : GoapAction {
     //    AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.NONE, targetPOI = poiTarget });
     //}
     public override void PerformActualAction() {
-        if (actor.currentStructure == poiTarget.gridTileLocation.structure) {
+        if (actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
             WeightedDictionary<string> weights = new WeightedDictionary<string>();
             weights.AddElement("Target Executed", 10);
             weights.AddElement("Target Released", 10);

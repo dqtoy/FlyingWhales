@@ -4638,6 +4638,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         poiGoapActions.Add(INTERACTION_TYPE.PLAY);
         poiGoapActions.Add(INTERACTION_TYPE.REPORT_CRIME);
         poiGoapActions.Add(INTERACTION_TYPE.STEAL_CHARACTER);
+        poiGoapActions.Add(INTERACTION_TYPE.JUDGE_CHARACTER);
     }
     public void StartGOAP(GoapEffect goal, IPointOfInterest target, GOAP_CATEGORY category, bool isPriority = false, List<Character> otherCharactePOIs = null, bool isPersonalPlan = true, GoapPlanJob job = null) {
         List<CharacterAwareness> characterTargetsAwareness = new List<CharacterAwareness>();
@@ -4688,11 +4689,17 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public void StartGOAP(INTERACTION_TYPE goalType, IPointOfInterest target, GOAP_CATEGORY category, bool isPriority = false, List<Character> otherCharactePOIs = null, bool isPersonalPlan = true, GoapPlanJob job = null, object[] otherData = null) {
         List<CharacterAwareness> characterTargetsAwareness = new List<CharacterAwareness>();
+        if (target != null && target.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+            CharacterAwareness characterAwareness = AddAwareness(target) as CharacterAwareness;
+            if (characterAwareness != null) {
+                characterTargetsAwareness.Add(characterAwareness);
+            }
+        }
         if (job != null) {
             job.SetAssignedPlan(null);
         }
         _numOfWaitingForGoapThread++;
-        MultiThreadPool.Instance.AddToThreadPool(new GoapThread(this, goalType, category, isPriority, characterTargetsAwareness, isPersonalPlan, job, otherData));
+        MultiThreadPool.Instance.AddToThreadPool(new GoapThread(this, goalType, target, category, isPriority, characterTargetsAwareness, isPersonalPlan, job, otherData));
     }
     public void RecalculatePlan(GoapPlan currentPlan) {
         currentPlan.SetIsBeingRecalculated(true);

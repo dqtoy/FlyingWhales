@@ -66,7 +66,7 @@ public class DropCharacter : GoapAction {
         AddActualEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = actor.homeArea, targetPOI = poiTarget });
         if(target.gridTileLocation.structure.structureType == STRUCTURE_TYPE.WAREHOUSE) {
             //Create judgement job
-            //target.gridTileLocation.structure.location.CreateJudgementJob(target);
+            target.gridTileLocation.structure.location.CreateJudgementJob(target);
         }
     }
     #endregion
