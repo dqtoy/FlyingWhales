@@ -34,10 +34,12 @@ public class Sick : Trait {
         base.OnAddTrait(sourceCharacter);
         if (sourceCharacter is Character) {
             _sourceCharacter = sourceCharacter as Character;
+            _sourceCharacter.marker.AdjustSpeedModifier(-0.10f);
             CheckToApplyRemoveTraitJob();
         }
     }
     public override void OnRemoveTrait(IPointOfInterest sourceCharacter) {
+        _sourceCharacter.marker.AdjustSpeedModifier(0.10f);
         if (_removeTraitJob != null) {
             _removeTraitJob.jobQueueParent.CancelJob(_removeTraitJob);
         }

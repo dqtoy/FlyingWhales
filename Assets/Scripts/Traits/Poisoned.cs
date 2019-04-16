@@ -8,7 +8,7 @@ public class Poisoned : Trait {
 
     public Poisoned() {
         name = "Poisoned";
-        description = "Poisoned";
+        description = "This character is poisoned.";
         type = TRAIT_TYPE.STATUS;
         effect = TRAIT_EFFECT.NEGATIVE;
         daysDuration = 0;

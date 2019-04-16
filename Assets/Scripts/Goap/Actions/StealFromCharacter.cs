@@ -22,7 +22,6 @@ public class StealFromCharacter : GoapAction {
         _requirementAction = Requirement;
     }
     protected override void ConstructPreconditionsAndEffects() {
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.NONE, targetPOI = actor });
         if (actor.GetTrait("Kleptomaniac") != null) {
             AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
         }

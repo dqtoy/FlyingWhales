@@ -8,6 +8,8 @@ public class RaceSetting {
     public float attackPowerModifier;
     public float speedModifier;
     public float hpModifier;
+    public float walkSpeed;
+    public float runSpeed;
     public int neutralSpawnLevelModifier;
     //public int[] hpPerLevel;
     //public int[] attackPerLevel;
@@ -25,6 +27,8 @@ public class RaceSetting {
         newRaceSetting.attackPowerModifier = this.attackPowerModifier;
         newRaceSetting.speedModifier = this.speedModifier;
         newRaceSetting.hpModifier = this.hpModifier;
+        newRaceSetting.runSpeed = this.runSpeed;
+        newRaceSetting.walkSpeed = this.walkSpeed;
         //newRaceSetting.hpPerLevel = this.hpPerLevel;
         //newRaceSetting.attackPerLevel = this.attackPerLevel;
         newRaceSetting.traitNames = this.traitNames;
@@ -36,6 +40,8 @@ public class RaceSetting {
         this.attackPowerModifier = float.Parse(RacePanelUI.Instance.attackModifierInput.text);
         this.speedModifier = float.Parse(RacePanelUI.Instance.speedModifierInput.text);
         this.hpModifier = float.Parse(RacePanelUI.Instance.hpModifierInput.text);
+        this.runSpeed = float.Parse(RacePanelUI.Instance.runSpeedInput.text);
+        this.walkSpeed = float.Parse(RacePanelUI.Instance.walkSpeedInput.text);
         //this.hpPerLevel = RacePanelUI.Instance.hpPerLevel.ToArray();
         //this.attackPerLevel = RacePanelUI.Instance.attackPerLevel.ToArray();
         this.traitNames = RacePanelUI.Instance.traitNames.ToArray();

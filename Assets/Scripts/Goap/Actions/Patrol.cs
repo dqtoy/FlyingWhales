@@ -16,9 +16,9 @@ public class Patrol : GoapAction {
     }
 
     #region Overrides
-    protected override void ConstructPreconditionsAndEffects() {
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.NONE, targetPOI = actor });
-    }
+    //protected override void ConstructPreconditionsAndEffects() {
+    //    AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.NONE, targetPOI = actor });
+    //}
     public override void PerformActualAction() {
         if (targetTile != null) {
             SetState("Patrol Success");
