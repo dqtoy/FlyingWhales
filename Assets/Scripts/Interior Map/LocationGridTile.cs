@@ -481,7 +481,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
             //} 
             else {
                 //parentAreaMap.ShowIntelItemAt(this, InteractionManager.Instance.CreateNewIntel(objHere));
-                if ((objHere as TileObject).tileObjectType == TILE_OBJECT_TYPE.CORPSE) {
+                if (objHere is TileObject && (objHere as TileObject).tileObjectType == TILE_OBJECT_TYPE.CORPSE) {
                     UIManager.Instance.ShowCharacterInfo((objHere as Corpse).character);
                 }
             }
