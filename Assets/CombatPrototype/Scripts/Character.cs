@@ -4020,11 +4020,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public bool ConsumeToken(SpecialToken token) {
         if (RemoveToken(token)) {
             token.OnConsumeToken(this);
-            //SpecialToken droppedToken = token;
-            //if (structure != homeStructure) {
-            //    //if this character drops this at a structure that is not his/her home structure, set the owner of the item to null
-            //    droppedToken.SetCharacterOwner(null);
-            //}
             return true;
         }
         return false;
@@ -4042,6 +4037,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public void DropToken(SpecialToken token, Area location, LocationStructure structure) {
         if (UnobtainToken(token)) {
             location.AddSpecialTokenToLocation(token, structure);
+            if (structure != homeStructure) {
+                //if this character drops this at a structure that is not his/her home structure, set the owner of the item to null
+                token.SetCharacterOwner(null);
+            }
         }
     }
     public void DropAllTokens(Area location, LocationStructure structure, bool removeFactionOwner = false) {
@@ -4052,6 +4051,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     token.SetOwner(null);
                 }
                 location.AddSpecialTokenToLocation(token, structure);
+                if (structure != homeStructure) {
+                    //if this character drops this at a structure that is not his/her home structure, set the owner of the item to null
+                    token.SetCharacterOwner(null);
+                }
             }
         }
     }
@@ -5241,12 +5244,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             case CHARACTER_ROLE.CIVILIAN:
             case CHARACTER_ROLE.ADVENTURER:
                 //- If the character is a Civilian or Adventurer, he will enter Flee mode (fleeing the criminal) and will create a Report Crime Job Type in his personal job queue
-                if (witnessedCrime != null && this.faction != FactionManager.Instance.neutralFaction && actor.faction == this.faction) {
+                if (this.faction != FactionManager.Instance.neutralFaction && actor.faction == this.faction) {
                     //only make character flee, if he/she actually witnessed the crime (not share intel)
                     this.marker.AddHostileInRange(actor, CHARACTER_STATE.FLEE);
-                    job = new GoapPlanJob("Report Crime", INTERACTION_TYPE.REPORT_CRIME, new object[] { witnessedCrime });
-                    //job.SetCanTakeThisJobChecker(CanCharacterTakeApprehendJob);
-                    //homeArea.jobQueue.AddJobInQueue(job);
+                    job = new GoapPlanJob("Report Crime", INTERACTION_TYPE.REPORT_CRIME, new object[] { committedCrime, actor });
                     jobQueue.AddJobInQueue(job);
                 }
                 break;

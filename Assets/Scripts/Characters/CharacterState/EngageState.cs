@@ -156,7 +156,7 @@ public class EngageState : CharacterState {
         log.AddToFillers(loser, loser.name, LOG_IDENTIFIER.CHARACTER_3);
 
         log.AddLogToInvolvedObjects();
-        PlayerManager.Instance.player.ShowNotification(log);
+        PlayerManager.Instance.player.ShowNotificationFrom(new List<Character>() { actor, target }, log);
     }
 
     private bool CanCombatBeTriggeredBetween(Character engagerCharacter, Character targetCharacter) {

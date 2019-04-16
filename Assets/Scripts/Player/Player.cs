@@ -708,7 +708,6 @@ public class Player : ILeader {
 
     #region Player Notifications
     private bool ShouldShowNotificationFrom(Character character) {
-        //return true;
         if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.id == character.id) {
             return true;
         } else if (roleSlots[JOB.SPY].activeAction is Track) {
@@ -722,6 +721,14 @@ public class Player : ILeader {
     public void ShowNotificationFrom(Character character, Log log) {
         if (ShouldShowNotificationFrom(character)) {
             ShowNotification(log);
+        }
+    }
+    public void ShowNotificationFrom(List<Character> characters, Log log) {
+        for (int i = 0; i < characters.Count; i++) {
+            if (ShouldShowNotificationFrom(characters[i])) {
+                ShowNotification(log);
+                break;
+            }
         }
     }
     public void ShowNotification(Log log) {

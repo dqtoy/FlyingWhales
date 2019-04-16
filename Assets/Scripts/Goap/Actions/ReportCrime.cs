@@ -40,8 +40,8 @@ public class ReportCrime : GoapAction {
     }
     public override void InitializeOtherData(object[] otherData) {
         base.InitializeOtherData(otherData);
-        GoapAction crime = otherData[0] as GoapAction;
-        SetCrimeToReport(crime.committedCrime, crime.actor);
+        //GoapAction crime = otherData[0] as GoapAction;
+        SetCrimeToReport((CRIME)otherData[0], otherData[1] as Character);
     }
     #endregion
 

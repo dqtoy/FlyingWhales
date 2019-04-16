@@ -12,6 +12,19 @@ public static class GoapActionStateDB {
     public static string Social_Icon = "Social";
     public static string Work_Icon = "Work";
 
+    public static string GetStateResult(INTERACTION_TYPE goapType, string stateName) {
+        if (goapActionStates.ContainsKey(goapType)) {
+            StateNameAndDuration[] snd = goapActionStates[goapType];
+            for (int i = 0; i < snd.Length; i++) {
+                StateNameAndDuration currSND = snd[i];
+                if (currSND.name == stateName) {
+                    return currSND.status;
+                }
+            }
+        }
+        return string.Empty;
+    }
+
     public static Dictionary<INTERACTION_TYPE, StateNameAndDuration[]> goapActionStates = new Dictionary<INTERACTION_TYPE, StateNameAndDuration[]>() {
         {INTERACTION_TYPE.EAT_PLANT, new StateNameAndDuration[]{
             new StateNameAndDuration(){ name = "Eat Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(1) },
