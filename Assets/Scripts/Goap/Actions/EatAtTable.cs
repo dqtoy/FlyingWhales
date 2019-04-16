@@ -95,6 +95,8 @@ public class EatAtTable : GoapAction {
             AddActualEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.DEATH, targetPOI = actor });
         }
         log.AddLogToInvolvedObjects();
+        currentState.OverrideDescriptionLog(log);
+        //UIManager.Instance.Pause();
     }
     private void PreTargetMissing() {
         currentState.AddLogFiller(actor.currentStructure.location, actor.currentStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);

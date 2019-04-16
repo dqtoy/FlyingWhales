@@ -27,9 +27,9 @@ public class TablePoison : GoapAction {
                 AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.DEATH, targetPOI = dwelling.residents[i] });
             }
         }
-        
-        
-        
+        //AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
+        //AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, targetPOI = actor });
+        //AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, targetPOI = actor });
     }
     public override void PerformActualAction() {
         if (poiTarget.gridTileLocation != null && actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
@@ -54,6 +54,7 @@ public class TablePoison : GoapAction {
         AddTraitTo(poiTarget, new Poisoned(), actor);
         currentState.AddLogFiller(poiTarget.gridTileLocation.structure.location, poiTarget.gridTileLocation.structure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
         currentState.SetIntelReaction(PoisonSuccessReactions);
+        //UIManager.Instance.Pause();
     }
     public void PreTargetMissing() {
         currentState.AddLogFiller(actor.currentStructure.location, actor.currentStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
@@ -64,7 +65,19 @@ public class TablePoison : GoapAction {
     private bool Requirement() {
         //**Advertiser**: All Tables inside Dwellings
         LocationGridTile knownLoc = actor.GetAwareness(poiTarget).knownGridLocation;
-        return knownLoc.structure is Dwelling;
+        if (knownLoc.structure is Dwelling) {
+            Dwelling d = knownLoc.structure as Dwelling;
+            if (d.residents.Count == 0) {
+                return false;
+            }
+            Poisoned poisonedTrait = poiTarget.GetTrait("Poisoned") as Poisoned;
+            if (poisonedTrait != null && poisonedTrait.responsibleCharacters.Contains(actor)) {
+                return false; //to prevent poisoning a table that has been already poisoned by this character
+            }
+            return !d.IsResident(actor);
+        }
+
+        return false;
     }
     #endregion
 
@@ -101,7 +114,7 @@ public class TablePoison : GoapAction {
             List<RelationshipTrait> traitsToRemove = recipient.GetAllRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE);
             CharacterManager.Instance.RemoveRelationshipBetween(recipient, actor, traitsToRemove);
             //Add Enemy relationship if they are not yet enemies. 
-            if (!recipient.HasRelationshipOfTypeWith(poisonedTrait.responsibleCharacter, RELATIONSHIP_TRAIT.ENEMY)) {
+            if (!recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.ENEMY)) {
                 CharacterManager.Instance.CreateNewRelationshipBetween(recipient, actor, RELATIONSHIP_TRAIT.ENEMY);
             }
             //Apply Crime System handling as if the Recipient witnessed Actor commit an Assault.
@@ -116,7 +129,7 @@ public class TablePoison : GoapAction {
             List<RelationshipTrait> traitsToRemove = recipient.GetAllRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE);
             CharacterManager.Instance.RemoveRelationshipBetween(recipient, actor, traitsToRemove);
             //Add Enemy relationship if they are not yet enemies. 
-            if (!recipient.HasRelationshipOfTypeWith(poisonedTrait.responsibleCharacter, RELATIONSHIP_TRAIT.ENEMY)) {
+            if (!recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.ENEMY)) {
                 CharacterManager.Instance.CreateNewRelationshipBetween(recipient, actor, RELATIONSHIP_TRAIT.ENEMY);
             }
             //Apply Crime System handling as if the Recipient witnessed Actor commit an Assault.
@@ -131,7 +144,7 @@ public class TablePoison : GoapAction {
             List<RelationshipTrait> traitsToRemove = recipient.GetAllRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE);
             CharacterManager.Instance.RemoveRelationshipBetween(recipient, actor, traitsToRemove);
             //Add Enemy relationship if they are not yet enemies. 
-            if (!recipient.HasRelationshipOfTypeWith(poisonedTrait.responsibleCharacter, RELATIONSHIP_TRAIT.ENEMY)) {
+            if (!recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.ENEMY)) {
                 CharacterManager.Instance.CreateNewRelationshipBetween(recipient, actor, RELATIONSHIP_TRAIT.ENEMY);
             }
             //Apply Crime System handling as if the Recipient witnessed Actor commit a Murder.
@@ -155,7 +168,7 @@ public class TablePoison : GoapAction {
             }
         }
         //Recipient has a positive relationship with owner of the Table and the Table is still currently poisoned:
-        else if (recipient.HasRelationshipOfEffectWith(tableOwner, TRAIT_EFFECT.POSITIVE) && poisonedTrait != null && poisonedTrait.responsibleCharacters.Contains(actor)) {
+        else if (tableOwner != null && recipient.HasRelationshipOfEffectWith(tableOwner, TRAIT_EFFECT.POSITIVE) && poisonedTrait != null && poisonedTrait.responsibleCharacters.Contains(actor)) {
             //- **Recipient Response Text**: "Thank you for letting me know about this. I've got to find a way to remove that poison to save [Target Name]!
             reactions.Add(string.Format("Thank you for letting me know about this. I've got to find a way to remove that poison to save {0}!", actor.name));
             //-**Recipient Effect * *: If Adventurer or Soldier or Unaligned Non - Beast, create a Remove Poison Job.
@@ -171,7 +184,7 @@ public class TablePoison : GoapAction {
             recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, actor, null, false);
         }
         //Recipient has no relationship with owner of the table but they are from the same faction and the Table is still currently poisoned:
-        else if (!recipient.HasRelationshipWith(tableOwner) && tableOwner.faction == recipient.faction && poisonedTrait != null && poisonedTrait.responsibleCharacters.Contains(actor)) {
+        else if (tableOwner != null && !recipient.HasRelationshipWith(tableOwner) && tableOwner.faction == recipient.faction && poisonedTrait != null && poisonedTrait.responsibleCharacters.Contains(actor)) {
             //- **Recipient Response Text**: "Thank you for letting me know about this. I've got to find a way to remove that poison to save [Target Name]!
             reactions.Add(string.Format("Thank you for letting me know about this. I've got to find a way to remove that poison to save {0}!", actor.name));
             //-**Recipient Effect * *: If Adventurer or Soldier or Unaligned Non - Beast, create a Remove Poison Job.
@@ -187,14 +200,14 @@ public class TablePoison : GoapAction {
             recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, actor, null, false);
         }
         //Recipient and Target are enemies and the Table is still currently poisoned:
-        else if (recipient.HasRelationshipOfTypeWith(tableOwner, RELATIONSHIP_TRAIT.ENEMY) && poisonedTrait != null && poisonedTrait.responsibleCharacters.Contains(actor)) {
+        else if (tableOwner != null && recipient.HasRelationshipOfTypeWith(tableOwner, RELATIONSHIP_TRAIT.ENEMY) && poisonedTrait != null && poisonedTrait.responsibleCharacters.Contains(actor)) {
             //- **Recipient Response Text**: "I hope that kills [Target Name]."
             reactions.Add(string.Format("I hope that kills {0}.", tableOwner.name));
             //-**Recipient Effect * *: no effect
         }
         //Recipient and Actor have a positive relationship and the Table is still currently poisoned. Recipient and Target are not enemies:
         else if (recipient.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE) && poisonedTrait != null
-            && poisonedTrait.responsibleCharacters.Contains(actor) && !recipient.HasRelationshipOfTypeWith(tableOwner, RELATIONSHIP_TRAIT.ENEMY)) {
+            && poisonedTrait.responsibleCharacters.Contains(actor) && tableOwner != null && !recipient.HasRelationshipOfTypeWith(tableOwner, RELATIONSHIP_TRAIT.ENEMY)) {
             //- **Recipient Response Text**: "[Actor Name] is attempting murder! I've got to put a stop to this."
             reactions.Add(string.Format("{0} is attempting murder! I've got to put a stop to this.", actor.name));
             //-**Recipient Effect * *: If Adventurer or Soldier or Unaligned Non - Beast, create a Remove Poison Job.
@@ -209,7 +222,7 @@ public class TablePoison : GoapAction {
         }
         //Recipient and Actor have a positive relationship and the Table already killed the Target. Recipient and Target are not enemies:
         else if (recipient.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE) && pti.eatAtTableAction != null 
-            && pti.eatAtTableAction.HasActualEffect(GOAP_EFFECT_CONDITION.DEATH, null, tableOwner) && !recipient.HasRelationshipOfTypeWith(tableOwner, RELATIONSHIP_TRAIT.ENEMY)) {
+            && tableOwner != null && pti.eatAtTableAction.HasActualEffect(GOAP_EFFECT_CONDITION.DEATH, null, tableOwner) && !recipient.HasRelationshipOfTypeWith(tableOwner, RELATIONSHIP_TRAIT.ENEMY)) {
             //- **Recipient Response Text**: "[Actor Name] killed somebody! This is horrible!"
             reactions.Add(string.Format("{0} killed somebody! This is horrible!", actor.name));
             //-**Recipient Effect * *: Apply Crime System handling as if the Recipient witnessed Actor commit a Murder.
@@ -217,7 +230,7 @@ public class TablePoison : GoapAction {
         }
         //Recipient and Actor have no positive relationship but are from the same faction and the Table is still currently poisoned. Recipient and Target have no relationship:
         else if (!recipient.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE) && recipient.faction == actor.faction && poisonedTrait != null
-            && poisonedTrait.responsibleCharacters.Contains(actor) && !recipient.HasRelationshipWith(tableOwner)) {
+            && poisonedTrait.responsibleCharacters.Contains(actor) && tableOwner != null && !recipient.HasRelationshipWith(tableOwner)) {
             //- **Recipient Response Text**: "[Actor Name] is attempting murder!"
             reactions.Add(string.Format("{0} is attempting murder!", actor.name));
             //-**Recipient Effect * *: Apply Crime System handling as if the Recipient witnessed Actor commit an Attempted Murder.

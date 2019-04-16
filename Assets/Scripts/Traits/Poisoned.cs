@@ -7,8 +7,8 @@ public class Poisoned : Trait {
     public List<Character> responsibleCharacters { get; private set; }
 
     public Poisoned() {
-        name = "Injured";
-        description = "Temporary small reduction to overall combat prowess.";
+        name = "Poisoned";
+        description = "Poisoned";
         type = TRAIT_TYPE.STATUS;
         effect = TRAIT_EFFECT.NEGATIVE;
         daysDuration = 0;
