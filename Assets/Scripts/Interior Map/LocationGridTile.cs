@@ -19,7 +19,6 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     public AreaInnerTileMap parentAreaMap { get; private set; }
     public Tilemap parentTileMap { get; private set; }
     public Vector3Int localPlace { get; private set; }
-    public Vector2Int localPlace2D { get; private set; }
     public Vector3 worldLocation { get; private set; }
     public Vector3 centeredWorldLocation { get; private set; }
     public Vector3 localLocation { get; private set; }
@@ -38,6 +37,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     public List<Character> charactersHere { get; private set; }
     public Character occupant { get; private set; }
     public bool isOccupied { get { return tileState == Tile_State.Occupied || occupant != null; } }
+    public bool isEdge { get; private set; }
 
     public List<LocationGridTile> ValidTiles { get { return FourNeighbours().Where(o => o.tileType == Tile_Type.Empty || o.tileType == Tile_Type.Gate || o.tileType == Tile_Type.Road).ToList(); } }
     public List<LocationGridTile> RealisticTiles { get { return FourNeighbours().Where(o => o.tileAccess == Tile_Access.Passable && (o.structure != null || o.tileType == Tile_Type.Road || o.tileType == Tile_Type.Gate)).ToList(); } }
@@ -48,7 +48,6 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         this.parentAreaMap = parentAreaMap;
         parentTileMap = tilemap;
         localPlace = new Vector3Int(x, y, 0);
-        localPlace2D = new Vector2Int(x, y);
         worldLocation = tilemap.CellToWorld(localPlace);
         localLocation = tilemap.CellToLocal(localPlace);
         centeredLocalLocation = new Vector3(localLocation.x + 0.5f, localLocation.y + 0.5f, localLocation.z);
@@ -134,6 +133,9 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     }
     public void SetIsInside(bool isInside) {
         this.isInside = isInside;
+    }
+    public void SetIsEdge(bool state) {
+        isEdge = state;
     }
     public void SetTileType(Tile_Type tileType) {
         this.tileType = tileType;

@@ -108,6 +108,7 @@ public class AreaInnerTileMap : MonoBehaviour {
     public Area area { get; private set; }
     public LocationGridTile[,] map { get; private set; }
     public List<LocationGridTile> allTiles { get; private set; }
+    public List<LocationGridTile> allEdgeTiles { get; private set; }
     public List<LocationGridTile> outsideTiles { get; private set; }
     public List<LocationGridTile> insideTiles { get; private set; }
 
@@ -141,11 +142,19 @@ public class AreaInnerTileMap : MonoBehaviour {
     private void GenerateGrid() {
         map = new LocationGridTile[width, height];
         allTiles = new List<LocationGridTile>();
+        allEdgeTiles = new List<LocationGridTile>();
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 groundTilemap.SetTile(new Vector3Int(x, y, 0), insideTile);
                 LocationGridTile tile = new LocationGridTile(x, y, groundTilemap, this);
                 allTiles.Add(tile);
+                if ((tile.localPlace.x == 1 && tile.localPlace.y > 0 && tile.localPlace.y < (height - 2)) 
+                    || (tile.localPlace.x == (width - 1) && tile.localPlace.y > 0 && tile.localPlace.y < (height - 2)) 
+                    || (tile.localPlace.y == 1 && tile.localPlace.x > 0 && tile.localPlace.x < (width - 2)) 
+                    || (tile.localPlace.y == (height - 1) && tile.localPlace.x > 0 && tile.localPlace.x < (width - 2))) {
+                    tile.SetIsEdge(true);
+                    allEdgeTiles.Add(tile);
+                }
                 map[x, y] = tile;
             }
         }
@@ -157,11 +166,19 @@ public class AreaInnerTileMap : MonoBehaviour {
         height = determinedSize.Y;
         map = new LocationGridTile[width, height];
         allTiles = new List<LocationGridTile>();
+        allEdgeTiles = new List<LocationGridTile>();
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 groundTilemap.SetTile(new Vector3Int(x, y, 0), insideTile);
                 LocationGridTile tile = new LocationGridTile(x, y, groundTilemap, this);
                 allTiles.Add(tile);
+                if ((tile.localPlace.x == 1 && tile.localPlace.y > 0 && tile.localPlace.y < (height - 2))
+                    || (tile.localPlace.x == (width - 2) && tile.localPlace.y > 0 && tile.localPlace.y < (height - 2))
+                    || (tile.localPlace.y == 1 && tile.localPlace.x > 0 && tile.localPlace.x < (width - 2))
+                    || (tile.localPlace.y == (height - 2) && tile.localPlace.x > 0 && tile.localPlace.x < (width - 2))) {
+                    tile.SetIsEdge(true);
+                    allEdgeTiles.Add(tile);
+                }
                 map[x, y] = tile;
             }
         }

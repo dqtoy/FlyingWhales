@@ -205,6 +205,7 @@ public class InteriorMapManager : MonoBehaviour {
         summary += "\nLocal Location: " + tile.localLocation.ToString();
         summary += "\nWorld Location: " + tile.worldLocation.ToString();
         summary += "\nIs Inside: " + tile.isInside.ToString();
+        summary += "\nIs Edge: " + tile.isEdge.ToString();
         summary += "\nTile Type: " + tile.tileType.ToString();
         summary += "\nTile State: " + tile.tileState.ToString();
         summary += "\nTile Access: " + tile.tileAccess.ToString();

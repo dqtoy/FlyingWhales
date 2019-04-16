@@ -1330,8 +1330,8 @@ public class Area {
                 if (isInitial) {
                     AddCharacterToAppropriateStructure(character);
                 } else {
-                    LocationStructure exit = GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
-                    exit.AddCharacterAtLocation(character);
+                    LocationGridTile exit = GetRandomUnoccupiedEdgeTile();
+                    exit.structure.AddCharacterAtLocation(character, exit);
                 }
             }
             Messenger.Broadcast(Signals.CHARACTER_ENTERED_AREA, this, character);
@@ -2008,6 +2008,18 @@ public class Area {
         }
         if (tileObjects.Count > 0) {
             return tileObjects[UnityEngine.Random.Range(0, tileObjects.Count)];
+        }
+        return null;
+    }
+    public LocationGridTile GetRandomUnoccupiedEdgeTile() {
+        List<LocationGridTile> unoccupiedEdgeTiles = new List<LocationGridTile>();
+        for (int i = 0; i < areaMap.allEdgeTiles.Count; i++) {
+            if (!areaMap.allEdgeTiles[i].isOccupied && areaMap.allEdgeTiles[i].structure != null) { //There should not be a checker for structure, fix the generation of allEdgeTiles in AreaInnerTileMap's GenerateGrid
+                unoccupiedEdgeTiles.Add(areaMap.allEdgeTiles[i]);
+            }
+        }
+        if(unoccupiedEdgeTiles.Count > 0) {
+            return unoccupiedEdgeTiles[UnityEngine.Random.Range(0, unoccupiedEdgeTiles.Count)];
         }
         return null;
     }
