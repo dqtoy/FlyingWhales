@@ -3374,8 +3374,117 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         targetCharacter.SetIsChatting(true);
         marker.UpdateActionIcon();
         targetCharacter.marker.UpdateActionIcon();
+        CHARACTER_MOOD thisCharacterMood = currentMoodType;
+        CHARACTER_MOOD targetCharacterMood = targetCharacter.currentMoodType;
 
-        Log chatLog = new Log(GameManager.Instance.Today(), "GoapAction", "ChatCharacter", "chat success_description");
+        WeightedDictionary<string> weights = new WeightedDictionary<string>();
+        weights.AddElement("normal", 40);
+
+        //**if no relationship yet, may become friends**
+        if (GetCharacterRelationshipData(targetCharacter) == null) {
+            int weight = 0;
+            if(thisCharacterMood == CHARACTER_MOOD.DARK) {
+                weight += -5;
+            }else if (thisCharacterMood == CHARACTER_MOOD.BAD) {
+                weight += -2;
+            }else if (thisCharacterMood == CHARACTER_MOOD.GOOD) {
+                weight += 2;
+            }else if (thisCharacterMood == CHARACTER_MOOD.GREAT) {
+                weight += 5;
+            }
+            if (targetCharacterMood == CHARACTER_MOOD.DARK) {
+                weight += -5;
+            } else if (targetCharacterMood == CHARACTER_MOOD.BAD) {
+                weight += -2;
+            } else if (targetCharacterMood == CHARACTER_MOOD.GOOD) {
+                weight += 2;
+            } else if (targetCharacterMood == CHARACTER_MOOD.GREAT) {
+                weight += 5;
+            }
+            if (weight > 0) {
+                weights.AddElement("no rel", weight);
+            }
+        } else {
+
+            //**if no relationship other than relative, may become enemies**
+            List<RelationshipTrait> relTraits = GetAllRelationshipTraitWith(targetCharacter);
+            if(relTraits.Count == 1 && relTraits[0] is Relative) {
+                int weight = 0;
+                if (thisCharacterMood == CHARACTER_MOOD.DARK) {
+                    weight += 5;
+                } else if (thisCharacterMood == CHARACTER_MOOD.BAD) {
+                    weight += 2;
+                } else if (thisCharacterMood == CHARACTER_MOOD.GOOD) {
+                    weight += -2;
+                } else if (thisCharacterMood == CHARACTER_MOOD.GREAT) {
+                    weight += -5;
+                }
+                if (targetCharacterMood == CHARACTER_MOOD.DARK) {
+                    weight += 5;
+                } else if (targetCharacterMood == CHARACTER_MOOD.BAD) {
+                    weight += 2;
+                } else if (targetCharacterMood == CHARACTER_MOOD.GOOD) {
+                    weight += -2;
+                } else if (targetCharacterMood == CHARACTER_MOOD.GREAT) {
+                    weight += -5;
+                }
+                if (weight > 0) {
+                    weights.AddElement("no rel relative", weight);
+                }
+            }
+
+            //**if already has a positive relationship, knowledge may be transferred**
+            if(HasRelationshipOfEffectWith(targetCharacter, TRAIT_EFFECT.POSITIVE)) {
+                weights.AddElement("knowledge transfer", 20);
+            }
+
+            //**if already has a negative relationship, argument may occur**
+            if (HasRelationshipOfEffectWith(targetCharacter, TRAIT_EFFECT.NEGATIVE)) {
+                weights.AddElement("argument", 50);
+
+                //**if already has a negative relationship, relationship may be resolved**
+                int weight = 0;
+                if (thisCharacterMood == CHARACTER_MOOD.DARK) {
+                    weight += -5;
+                } else if (thisCharacterMood == CHARACTER_MOOD.BAD) {
+                    weight += -2;
+                } else if (thisCharacterMood == CHARACTER_MOOD.GOOD) {
+                    weight += 2;
+                } else if (thisCharacterMood == CHARACTER_MOOD.GREAT) {
+                    weight += 5;
+                }
+                if (targetCharacterMood == CHARACTER_MOOD.DARK) {
+                    weight += -5;
+                } else if (targetCharacterMood == CHARACTER_MOOD.BAD) {
+                    weight += -2;
+                } else if (targetCharacterMood == CHARACTER_MOOD.GOOD) {
+                    weight += 2;
+                } else if (targetCharacterMood == CHARACTER_MOOD.GREAT) {
+                    weight += 5;
+                }
+                if (weight > 0) {
+                    weights.AddElement("resolve", weight);
+                }
+            }
+        }
+
+        string result = weights.PickRandomElementGivenWeights();
+        if(result == "no rel") {
+            //may become friends
+            CharacterManager.Instance.CreateNewRelationshipBetween(this, targetCharacter, RELATIONSHIP_TRAIT.FRIEND);
+        } else if (result == "no rel relative") {
+            //may become enemies
+            CharacterManager.Instance.CreateNewRelationshipBetween(this, targetCharacter, RELATIONSHIP_TRAIT.ENEMY);
+        } else if (result == "knowledge transfer") {
+            //TODO: mechanics to be added later
+        } else if (result == "resolve") {
+            //relationship may be resolved
+            List<RelationshipTrait> negativeTraits = GetAllRelationshipOfEffectWith(targetCharacter, TRAIT_EFFECT.NEGATIVE);
+            RelationshipTrait chosenTrait = negativeTraits[UnityEngine.Random.Range(0, negativeTraits.Count)];
+            CharacterManager.Instance.RemoveRelationshipBetween(this, targetCharacter, chosenTrait.relType);
+        }
+
+        Log chatLog = new Log(GameManager.Instance.Today(), "GoapAction", "ChatCharacter", result);
         chatLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         chatLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         chatLog.AddLogToInvolvedObjects();

@@ -150,7 +150,7 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
         }
         if(!parentMarker.character.IsHostileWith(targetCharacter)) {
             int chance = UnityEngine.Random.Range(0, 100);
-            if (chance < 10) {
+            if (chance < 20) {
                 if (!parentMarker.character.isChatting && !targetCharacter.isChatting) {
                     parentMarker.character.ChatCharacter(targetCharacter);
                     return true;
