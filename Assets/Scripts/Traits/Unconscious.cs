@@ -17,7 +17,7 @@ public class Unconscious : Trait {
     public Unconscious() {
         name = "Unconscious";
         description = "This character is unconscious.";
-        thoughtText = "[Character] has been knocked out.";
+        thoughtText = "[Character] is unconscious.";
         type = TRAIT_TYPE.DISABLER;
         effect = TRAIT_EFFECT.NEGATIVE;
         associatedInteraction = INTERACTION_TYPE.NONE;

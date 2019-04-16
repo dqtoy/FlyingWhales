@@ -338,21 +338,6 @@ public class CharacterMarker : PooledObject {
             UpdateActionIcon();
         }
     }
-    private void OnCharacterFinishedAction(Character character, GoapAction action, string result) {
-        if (this.character.id == character.id) {
-            UpdateActionIcon();
-        } else {
-            //crime system:
-            //if the other character committed a crime,
-            //check if that character is in this characters vision 
-            //and that this character can react to a crime (not in flee or engage mode)
-            if (action.IsConsideredACrimeBy(this.character) 
-                && inVisionPOIs.Contains(character)
-                && this.character.CanReactToCrime()) {
-                this.character.ReactToCrime(action);
-            }
-        }
-    }
     public void OnCharacterTargettedByAction(GoapAction action) {
         UpdateActionIcon();
         for (int i = 0; i < action.expectedEffects.Count; i++) {

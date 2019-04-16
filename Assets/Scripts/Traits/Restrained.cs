@@ -15,6 +15,7 @@ public class Restrained : Trait {
     public Restrained() {
         name = "Restrained";
         description = "This character is restrained!";
+        thoughtText = "[Character] is imprisoned.";
         type = TRAIT_TYPE.DISABLER;
         effect = TRAIT_EFFECT.NEGATIVE;
         associatedInteraction = INTERACTION_TYPE.NONE;
