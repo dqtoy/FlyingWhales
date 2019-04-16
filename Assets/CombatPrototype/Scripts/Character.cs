@@ -3987,6 +3987,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     #endregion
 
     #region Token Inventory
+    public bool ObtainTokenFrom(Character target, SpecialToken token, bool changeCharacterOwnership = true) {
+        if (target.UnobtainToken(token)) {
+            ObtainToken(token, changeCharacterOwnership);
+            return true;
+        }
+        return false;
+    }
     public bool ObtainToken(SpecialToken token, bool changeCharacterOwnership = true) {
         if (AddToken(token)) {
             token.SetOwner(this.faction);
