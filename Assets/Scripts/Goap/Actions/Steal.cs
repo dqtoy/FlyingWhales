@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Steal : GoapAction {
-    //public override LocationStructure targetStructure { get { return _targetStructure; } }
 
-    //private LocationStructure _targetStructure;
-    public Steal(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.STEAL, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public Steal(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.STEAL, INTERACTION_ALIGNMENT.EVIL, actor, poiTarget) {
         validTimeOfDays = new TIME_IN_WORDS[] {
             TIME_IN_WORDS.EARLY_NIGHT,
             TIME_IN_WORDS.LATE_NIGHT,
@@ -20,10 +18,10 @@ public class Steal : GoapAction {
         _requirementAction = Requirement;
     }
     protected override void ConstructPreconditionsAndEffects() {
-        //AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
-        //AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, targetPOI = actor });
-        //AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, targetPOI = actor });
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = poiTarget, targetPOI = actor });
+        if(actor.GetTrait("Kleptomaniac") != null) {
+            AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
+        }
     }
     public override void PerformActualAction() {
         if(poiTarget.gridTileLocation != null && actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
@@ -34,31 +32,29 @@ public class Steal : GoapAction {
         base.PerformActualAction();
     }
     protected override int GetCost() {
-        return 2;
+        if (actor.GetTrait("Kleptomaniac") != null) {
+            return 4;
+        }
+        return 12;
     }
-    //public override void SetTargetStructure() {
-    //    ItemAwareness awareness = actor.GetAwareness(poiTarget) as ItemAwareness;
-    //    _targetStructure = awareness.knownLocation.structure;
-    //    targetTile = awareness.knownLocation;
-    //}
-    //public override void FailAction() {
-    //    base.FailAction();
-    //    SetState("Target Missing");
-    //}
     #endregion
 
     #region Requirements
     protected bool Requirement() {
-        IAwareness awareness = actor.GetAwareness(poiTarget);
-        if (awareness == null) {
-            return false;
-        }
-        LocationGridTile knownLoc = awareness.knownGridLocation;
-        //&& !actor.isHoldingItem 
-        if (knownLoc != null && poiTarget.factionOwner != null) {
-            if(actor.faction.id != poiTarget.factionOwner.id) {
-                return true;
-            }
+        //IAwareness awareness = actor.GetAwareness(poiTarget);
+        //if (awareness == null) {
+        //    return false;
+        //}
+        //LocationGridTile knownLoc = awareness.knownGridLocation;
+        ////&& !actor.isHoldingItem 
+        //if (knownLoc != null && poiTarget.factionOwner != null) {
+        //    if(actor.faction.id != poiTarget.factionOwner.id) {
+        //        return true;
+        //    }
+        //}
+        if(poiTarget.gridTileLocation != null) {
+            SpecialToken token = poiTarget as SpecialToken;
+            return token.characterOwner != actor;
         }
         return false;
     }
@@ -73,10 +69,13 @@ public class Steal : GoapAction {
         currentState.SetIntelReaction(State1Reactions);
     }
     private void AfterStealSuccess() {
-        actor.PickUpToken(poiTarget as SpecialToken);
+        actor.PickUpToken(poiTarget as SpecialToken, false);
+        if (actor.GetTrait("Kleptomaniac") != null) {
+            actor.AdjustHappiness(60);
+        }
     }
     private void PreTargetMissing() {
-        currentState.AddLogFiller(actor.currentStructure.location, actor.currentStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
+        currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
         currentState.AddLogFiller(poiTarget as SpecialToken, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
     }
     public void AfterTargetMissing() {

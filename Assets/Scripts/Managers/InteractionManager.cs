@@ -1081,6 +1081,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.FEED:
                 goapAction = new Feed(actor, target);
                 break;
+            case INTERACTION_TYPE.STEAL_CHARACTER:
+                goapAction = new StealFromCharacter(actor, target);
+                break;
         }
         if(goapAction != null && willInitialize) {
             goapAction.Initialize();

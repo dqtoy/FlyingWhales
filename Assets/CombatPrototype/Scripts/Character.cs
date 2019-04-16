@@ -3987,11 +3987,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     #endregion
 
     #region Token Inventory
-    public bool ObtainToken(SpecialToken token) {
+    public bool ObtainToken(SpecialToken token, bool changeCharacterOwnership = true) {
         if (AddToken(token)) {
             token.SetOwner(this.faction);
             token.OnObtainToken(this);
-            token.SetCharacterOwner(this);
+            if (changeCharacterOwnership) {
+                token.SetCharacterOwner(this);
+            }
             return true;
         }
         return false;
@@ -4042,8 +4044,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         }
     }
-    public void PickUpToken(SpecialToken token) {
-        if (ObtainToken(token)) {
+    public void PickUpToken(SpecialToken token, bool changeCharacterOwnership = true) {
+        if (ObtainToken(token, changeCharacterOwnership)) {
             token.gridTileLocation.structure.location.RemoveSpecialTokenFromLocation(token);
         }
     }
@@ -4512,6 +4514,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         poiGoapActions.Add(INTERACTION_TYPE.HUNT_ACTION);
         poiGoapActions.Add(INTERACTION_TYPE.PLAY);
         poiGoapActions.Add(INTERACTION_TYPE.REPORT_CRIME);
+        poiGoapActions.Add(INTERACTION_TYPE.STEAL_CHARACTER);
     }
     public void StartGOAP(GoapEffect goal, IPointOfInterest target, GOAP_CATEGORY category, bool isPriority = false, List<Character> otherCharactePOIs = null, bool isPersonalPlan = true, GoapPlanJob job = null) {
         List<CharacterAwareness> characterTargetsAwareness = new List<CharacterAwareness>();
