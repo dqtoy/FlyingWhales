@@ -318,7 +318,7 @@ public class Party {
             }
         } else {
             //_icon.SetActionOnTargetReached(doneAction);
-            LocationGridTile exitTile = owner.specificLocation.GetRandomUnoccupiedEdgeTile();
+            LocationGridTile exitTile = owner.GetNearestUnoccupiedEdgeTileFromThis();
             owner.marker.GoToTile(exitTile, null, () => MoveToAnotherArea(targetLocation, pathfindingMode, targetStructure, doneAction, actionOnStartOfMovement, causeForTravel, targetPOI, targetTile));
         }
     }

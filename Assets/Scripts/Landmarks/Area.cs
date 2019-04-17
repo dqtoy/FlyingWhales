@@ -2014,7 +2014,7 @@ public class Area {
     public LocationGridTile GetRandomUnoccupiedEdgeTile() {
         List<LocationGridTile> unoccupiedEdgeTiles = new List<LocationGridTile>();
         for (int i = 0; i < areaMap.allEdgeTiles.Count; i++) {
-            if (!areaMap.allEdgeTiles[i].isOccupied) { // && areaMap.allEdgeTiles[i].structure != null - There should not be a checker for structure, fix the generation of allEdgeTiles in AreaInnerTileMap's GenerateGrid
+            if (!areaMap.allEdgeTiles[i].isOccupied && areaMap.allEdgeTiles[i].structure != null) { // - There should not be a checker for structure, fix the generation of allEdgeTiles in AreaInnerTileMap's GenerateGrid
                 unoccupiedEdgeTiles.Add(areaMap.allEdgeTiles[i]);
             }
         }

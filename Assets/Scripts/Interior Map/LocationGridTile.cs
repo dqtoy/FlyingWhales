@@ -30,9 +30,8 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     public Ground_Type groundType { get; set; }
     public LocationStructure structure { get; private set; }
     public Dictionary<TileNeighbourDirection, LocationGridTile> neighbours { get; private set; }
-    //public List<LocationGridTile> neighbourList { get; private set; }
+    public List<LocationGridTile> neighbourList { get; private set; }
     public GameObject prefabHere { get; private set; } //if there is a prefab that was instantiated at this tiles location
-    //public List<LocationGridTile> neighborList { get; private set; }
     public IPointOfInterest objHere { get; private set; }
     public List<Character> charactersHere { get; private set; }
     public Character occupant { get; private set; }
@@ -93,7 +92,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     }
     public void FindNeighbours(LocationGridTile[,] map) {
         neighbours = new Dictionary<TileNeighbourDirection, LocationGridTile>();
-        //neighbourList = new List<LocationGridTile>();
+        neighbourList = new List<LocationGridTile>();
         int mapUpperBoundX = map.GetUpperBound(0);
         int mapUpperBoundY = map.GetUpperBound(1);
         Point thisPoint = new Point(localPlace.x, localPlace.y);
@@ -104,6 +103,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
             if (Utilities.IsInRange(result.X, 0, mapUpperBoundX + 1) &&
                 Utilities.IsInRange(result.Y, 0, mapUpperBoundY + 1)) {
                 neighbours.Add(currDir, map[result.X, result.Y]);
+                neighbourList.Add(map[result.X, result.Y]);
             }
 
         }
