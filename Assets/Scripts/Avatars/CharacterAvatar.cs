@@ -151,7 +151,7 @@ public class CharacterAvatar : MonoBehaviour{
         //     }
         Reset();
         if (targetLocation != null) {
-            //_party.owner.marker.gameObject.SetActive(false);
+            _party.owner.marker.gameObject.SetActive(false);
             onPathFinished = actionOnPathFinished;
             StartTravelling();
         }

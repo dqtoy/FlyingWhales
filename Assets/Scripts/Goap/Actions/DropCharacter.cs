@@ -64,10 +64,8 @@ public class DropCharacter : GoapAction {
         actor.ownParty.RemoveCharacter(target);
         //target.MoveToAnotherStructure(_workAreaStructure);
         AddActualEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = actor.homeArea, targetPOI = poiTarget });
-        if(target.gridTileLocation.structure.structureType == STRUCTURE_TYPE.WAREHOUSE) {
-            //Create judgement job
-            target.gridTileLocation.structure.location.CreateJudgementJob(target);
-        }
+        Restrained restrainedTrait = target.GetTrait("Restrained") as Restrained;
+        restrainedTrait.SetIsPrisoner(true);
     }
     #endregion
 

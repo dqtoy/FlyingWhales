@@ -2014,7 +2014,7 @@ public class Area {
     public LocationGridTile GetRandomUnoccupiedEdgeTile() {
         List<LocationGridTile> unoccupiedEdgeTiles = new List<LocationGridTile>();
         for (int i = 0; i < areaMap.allEdgeTiles.Count; i++) {
-            if (!areaMap.allEdgeTiles[i].isOccupied && areaMap.allEdgeTiles[i].structure != null) { //There should not be a checker for structure, fix the generation of allEdgeTiles in AreaInnerTileMap's GenerateGrid
+            if (!areaMap.allEdgeTiles[i].isOccupied && areaMap.allEdgeTiles[i].structure != null) { // - There should not be a checker for structure, fix the generation of allEdgeTiles in AreaInnerTileMap's GenerateGrid
                 unoccupiedEdgeTiles.Add(areaMap.allEdgeTiles[i]);
             }
         }
@@ -2055,14 +2055,6 @@ public class Area {
     }
     private bool CanDoPatrolAndExplore(Character character) {
         return character.GetTrait("Injured") == null;
-    }
-    public void CreateJudgementJob(Character targetCharacter) {
-        GoapPlanJob job = new GoapPlanJob("Judgement", INTERACTION_TYPE.JUDGE_CHARACTER, targetCharacter);
-        job.SetCanTakeThisJobChecker(CanDoJudgementJob);
-        jobQueue.AddJobInQueue(job);
-    }
-    private bool CanDoJudgementJob(Character character) {
-        return character.role.roleType == CHARACTER_ROLE.NOBLE || character.role.roleType == CHARACTER_ROLE.LEADER;
     }
     #endregion
 

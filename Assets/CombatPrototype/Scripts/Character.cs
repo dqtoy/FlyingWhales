@@ -1198,7 +1198,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     private void CheckApprehendRelatedJobsOnLeaveLocation() {
         CancelAllJobsTargettingThisCharacter("Apprehend");
-
+        
+        //All apprehend jobs that are being done by this character must be unassigned
         for (int i = 0; i < allGoapPlans.Count; i++) {
             GoapPlan plan = allGoapPlans[i];
             if(plan.job != null && plan.job.name == "Apprehend") {
@@ -1207,18 +1208,41 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         }
     }
-    public void CreateApprehendJob() {
-        if (homeArea.id == specificLocation.id) {
-            if (!HasJobTargettingThisCharacter("Apprehend")) {
-                GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = homeArea, targetPOI = this };
-                GoapPlanJob job = new GoapPlanJob("Apprehend", goapEffect);
-                job.SetCanTakeThisJobChecker(CanCharacterTakeApprehendJob);
-                homeArea.jobQueue.AddJobInQueue(job);
+    private void CheckRemoveTraitRelatedJobsOnLeaveLocation() {
+        CancelAllJobsTargettingThisCharacter("Remove Trait");
+
+        //All remove trait jobs that are being done by this character must be unassigned
+        for (int i = 0; i < allGoapPlans.Count; i++) {
+            GoapPlan plan = allGoapPlans[i];
+            if (plan.job != null && plan.job.name == "Remove Trait") {
+                plan.job.UnassignJob();
+                i--;
             }
         }
     }
+    public void CreateApprehendJob() {
+        //if (homeArea.id == specificLocation.id) {
+        if (!HasJobTargettingThisCharacter("Apprehend")) {
+            GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = homeArea, targetPOI = this };
+            GoapPlanJob job = new GoapPlanJob("Apprehend", goapEffect);
+            job.SetCanTakeThisJobChecker(CanCharacterTakeApprehendJob);
+            homeArea.jobQueue.AddJobInQueue(job);
+        }
+        //}
+    }
     private bool CanCharacterTakeApprehendJob(Character character) {
         return character.role.roleType == CHARACTER_ROLE.SOLDIER;
+    }
+    public void CreateRemoveTraitJob(string traitName) {
+        if (!HasJobTargettingThisCharacter("Remove Trait", traitName)) {
+            GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = traitName, targetPOI = this };
+            GoapPlanJob job = new GoapPlanJob("Remove Trait", goapEffect);
+            job.SetCanTakeThisJobChecker(CanCharacterTakeRemoveTraitJob);
+            homeArea.jobQueue.AddJobInQueue(job);
+        }
+    }
+    private bool CanCharacterTakeRemoveTraitJob(Character character) {
+        return !character.HasRelationshipOfTypeWith(this, RELATIONSHIP_TRAIT.ENEMY);
     }
     #endregion
 
@@ -1452,7 +1476,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
     }
     public LocationGridTile GetNearestUnoccupiedTileFromThis() {
-        if (!isDead  && gridTileLocation != null) {
+        if (!isDead && gridTileLocation != null) {
             List<LocationGridTile> unoccupiedNeighbours = gridTileLocation.UnoccupiedNeighbours;
             if (unoccupiedNeighbours.Count == 0) {
                 return null;
@@ -1462,6 +1486,33 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return null;
     }
+    public LocationGridTile GetNearestUnoccupiedEdgeTileFromThis() {
+        LocationGridTile currentGridTile = gridTileLocation;
+        if (currentGridTile.isEdge && currentGridTile.structure != null) {
+            return currentGridTile;
+        }
+
+        LocationGridTile nearestEdgeTile = null;
+        List<LocationGridTile> neighbours = gridTileLocation.neighbourList;
+        for (int i = 0; i < neighbours.Count; i++) {
+            if(neighbours[i].isEdge && neighbours[i].structure != null && !neighbours[i].isOccupied) {
+                nearestEdgeTile = neighbours[i];
+                break;
+            }
+        }
+        if(nearestEdgeTile == null) {
+            float nearestDist = -999f;
+            for (int i = 0; i < specificLocation.areaMap.allEdgeTiles.Count; i++) {
+                LocationGridTile currTile = specificLocation.areaMap.allEdgeTiles[i];
+                float dist = Vector2.Distance(currTile.localLocation, currentGridTile.localLocation);
+                if(nearestDist == -999f || dist < nearestDist) {
+                    nearestEdgeTile = currTile;
+                    nearestDist = dist;
+                }
+            }
+        }
+        return nearestEdgeTile;
+    }
     private void OnLeaveArea(Party party) {
         if(currentParty == party) {
             CheckApprehendRelatedJobsOnLeaveLocation();
@@ -1469,8 +1520,16 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     private void OnArrivedAtArea(Party party) {
         if (currentParty == party) {
-            if (HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
-                CreateApprehendJob();
+            if(homeArea.id == specificLocation.id) {
+                if (HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
+                    CreateApprehendJob();
+                }
+                for (int i = 0; i < traits.Count; i++) {
+                    if (traits[i].name == "Cursed" || traits[i].name == "Sick"
+                        || traits[i].name == "Injured" || traits[i].name == "Unconscious") {
+                        CreateRemoveTraitJob(traits[i].name);
+                    }
+                }
             }
         }
     }
@@ -5147,14 +5206,18 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public void FaceTarget(IPointOfInterest target) {
         if (this != target && !this.isDead && target.gridTileLocation != null && gridTileLocation != null) {
-            if (target is Character && (target as Character).isDead) {
-                return;
-            }
             if (target is Character) {
-                marker.LookAt((target as Character).marker.transform.position);
+                Character targetCharacter = target as Character;
+                if (targetCharacter.isDead) {
+                    return;
+                }
+                CharacterMarker lookAtMarker = targetCharacter.currentParty.owner.marker;
+                if(lookAtMarker.character != this) {
+                    marker.LookAt(lookAtMarker.transform.position);
+                }
             } else {
                 marker.LookAt(target.gridTileLocation.centeredWorldLocation);
-            }            
+            }          
         }
     }
     public void SetCurrentAction(GoapAction action) {

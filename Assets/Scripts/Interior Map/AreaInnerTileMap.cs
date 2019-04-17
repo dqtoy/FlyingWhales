@@ -148,7 +148,7 @@ public class AreaInnerTileMap : MonoBehaviour {
                 groundTilemap.SetTile(new Vector3Int(x, y, 0), insideTile);
                 LocationGridTile tile = new LocationGridTile(x, y, groundTilemap, this);
                 allTiles.Add(tile);
-                if ((tile.localPlace.x == 1 && tile.localPlace.y > 0 && tile.localPlace.y < (height - 2)) 
+                if ((tile.localPlace.x == 7 && tile.localPlace.y > 0 && tile.localPlace.y < (height - 2)) 
                     || (tile.localPlace.x == (width - 1) && tile.localPlace.y > 0 && tile.localPlace.y < (height - 2)) 
                     || (tile.localPlace.y == 1 && tile.localPlace.x > 0 && tile.localPlace.x < (width - 2)) 
                     || (tile.localPlace.y == (height - 1) && tile.localPlace.x > 0 && tile.localPlace.x < (width - 2))) {
@@ -172,7 +172,7 @@ public class AreaInnerTileMap : MonoBehaviour {
                 groundTilemap.SetTile(new Vector3Int(x, y, 0), insideTile);
                 LocationGridTile tile = new LocationGridTile(x, y, groundTilemap, this);
                 allTiles.Add(tile);
-                if ((tile.localPlace.x == 1 && tile.localPlace.y > 0 && tile.localPlace.y < (height - 2))
+                if ((tile.localPlace.x == 7 && tile.localPlace.y > 0 && tile.localPlace.y < (height - 2))
                     || (tile.localPlace.x == (width - 2) && tile.localPlace.y > 0 && tile.localPlace.y < (height - 2))
                     || (tile.localPlace.y == 1 && tile.localPlace.x > 0 && tile.localPlace.x < (width - 2))
                     || (tile.localPlace.y == (height - 2) && tile.localPlace.x > 0 && tile.localPlace.x < (width - 2))) {

@@ -6,6 +6,8 @@ public class Restrained : Trait {
     private Character _responsibleCharacter;
     private Character _sourceCharacter;
 
+    public bool isPrisoner { get; private set; }
+
     #region getters/setters
     public override Character responsibleCharacter {
         get { return _responsibleCharacter; }
@@ -52,7 +54,7 @@ public class Restrained : Trait {
     #endregion
 
     private void CheckRestrainTrait() {
-        if (_sourceCharacter.IsInOwnParty()) {
+        if (isPrisoner && _sourceCharacter.IsInOwnParty()) {
             if(_sourceCharacter.GetTrait("Hungry") != null) {
                 CreateFeedJob();
             }else if (_sourceCharacter.GetTrait("Starving") != null) {
@@ -84,5 +86,21 @@ public class Restrained : Trait {
     }
     private bool CanCharacterTakeFeedJob(Character character) {
         return character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.CIVILIAN;
+    }
+    private void CreateJudgementJob(Character targetCharacter) {
+        if (!_sourceCharacter.HasJobTargettingThisCharacter("Judgement")) {
+            GoapPlanJob job = new GoapPlanJob("Judgement", INTERACTION_TYPE.JUDGE_CHARACTER, targetCharacter);
+            job.SetCanTakeThisJobChecker(CanDoJudgementJob);
+            _sourceCharacter.gridTileLocation.structure.location.jobQueue.AddJobInQueue(job);
+        }
+    }
+    private bool CanDoJudgementJob(Character character) {
+        return character.role.roleType == CHARACTER_ROLE.NOBLE || character.role.roleType == CHARACTER_ROLE.LEADER;
+    }
+    public void SetIsPrisoner(bool state) {
+        isPrisoner = state;
+        if(isPrisoner && _sourceCharacter.IsInOwnParty()) {
+            CreateJudgementJob(_sourceCharacter);
+        }
     }
 }
