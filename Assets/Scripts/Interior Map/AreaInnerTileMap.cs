@@ -1125,7 +1125,11 @@ public class AreaInnerTileMap : MonoBehaviour {
             && UIManager.Instance.characterInfoUI.activeCharacter.specificLocation == this.area
             && !UIManager.Instance.characterInfoUI.activeCharacter.isDead
             && UIManager.Instance.characterInfoUI.activeCharacter.isWaitingForInteraction <= 0
-            && UIManager.Instance.characterInfoUI.activeCharacter.marker.pathfindingAI.hasPath) {
+            && UIManager.Instance.characterInfoUI.activeCharacter.marker.pathfindingAI.hasPath
+            && (UIManager.Instance.characterInfoUI.activeCharacter.stateComponent.currentState == null 
+            || (UIManager.Instance.characterInfoUI.activeCharacter.stateComponent.currentState.characterState != CHARACTER_STATE.PATROL 
+            && UIManager.Instance.characterInfoUI.activeCharacter.stateComponent.currentState.characterState != CHARACTER_STATE.STROLL
+            && UIManager.Instance.characterInfoUI.activeCharacter.stateComponent.currentState.characterState != CHARACTER_STATE.EXPLORE))) {
 
             if (UIManager.Instance.characterInfoUI.activeCharacter.marker.pathfindingAI.currentPath != null) {
                 //ShowPath(UIManager.Instance.characterInfoUI.activeCharacter.marker.currentPath);
@@ -1397,6 +1401,29 @@ public class AreaInnerTileMap : MonoBehaviour {
                     }
                     LocationGridTile result = map[dx, dy];
                     if(!includeTilesInDifferentStructure && result.structure != centerTile.structure) { continue; }
+                    tiles.Add(result);
+                }
+            }
+        }
+        return tiles;
+    }
+    public List<LocationGridTile> GetUnoccupiedTilesInRadius(LocationGridTile centerTile, int radius, bool includeCenterTile = false, bool includeTilesInDifferentStructure = false) {
+        List<LocationGridTile> tiles = new List<LocationGridTile>();
+        int mapSizeX = map.GetUpperBound(0);
+        int mapSizeY = map.GetUpperBound(1);
+        int x = centerTile.localPlace.x;
+        int y = centerTile.localPlace.y;
+        if (includeCenterTile) {
+            tiles.Add(centerTile);
+        }
+        for (int dx = x - radius; dx <= x + radius; dx++) {
+            for (int dy = y - radius; dy <= y + radius; dy++) {
+                if (dx >= 0 && dx <= mapSizeX && dy >= 0 && dy <= mapSizeY) {
+                    if (dx == x && dy == y) {
+                        continue;
+                    }
+                    LocationGridTile result = map[dx, dy];
+                    if ((!includeTilesInDifferentStructure && result.structure != centerTile.structure) || result.isOccupied) { continue; }
                     tiles.Add(result);
                 }
             }

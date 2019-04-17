@@ -48,7 +48,7 @@ public class Injured : Trait {
     #endregion
 
     private void CheckToApplyRemoveTraitJob() {
-        if (_sourceCharacter.homeArea.id == _sourceCharacter.specificLocation.id && !_sourceCharacter.HasJobTargettingThisCharacter("Remove Trait", name)) {
+        if (_sourceCharacter.homeArea.id == _sourceCharacter.specificLocation.id && _sourceCharacter.faction == _sourceCharacter.specificLocation.owner && !_sourceCharacter.HasJobTargettingThisCharacter("Remove Trait", name)) {
             _removeTraitJob = new GoapPlanJob("Remove Trait", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = name, targetPOI = _sourceCharacter });
             _removeTraitJob.SetCanTakeThisJobChecker(CanCharacterTakeRemoveTraitJob);
             _sourceCharacter.specificLocation.jobQueue.AddJobInQueue(_removeTraitJob);

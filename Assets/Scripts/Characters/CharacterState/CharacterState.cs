@@ -111,11 +111,13 @@ public class CharacterState {
     }
     //Pauses this state, used in switching states if this is a major state
     public void PauseState() {
+        Debug.Log(GameManager.Instance.TodayLogString() + "Pausing " + stateName + " for " + stateComponent.character.name);
         isPaused = true;
         StopStatePerTick();
     }
     //Resumes the state and its movement behavior
     public void ResumeState() {
+        Debug.Log(GameManager.Instance.TodayLogString() + "Resuming " + stateName + " for " + stateComponent.character.name);
         isPaused = false;
         StartStatePerTick();
         DoMovementBehavior();

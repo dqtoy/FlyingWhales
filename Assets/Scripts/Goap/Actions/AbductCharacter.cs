@@ -90,7 +90,8 @@ public class AbductCharacter : GoapAction {
     public bool HasOtherCharacterInRadius() {
         List<LocationGridTile> tiles = poiTarget.gridTileLocation.structure.location.areaMap.GetTilesInRadius(poiTarget.gridTileLocation, 3);
         for (int i = 0; i < tiles.Count; i++) {
-            if (tiles[i].occupant != null && tiles[i].occupant != actor && tiles[i].occupant != poiTarget) {
+            LocationGridTile currTile = tiles[i];
+            if (currTile.occupant != null && currTile.occupant != actor && currTile.occupant != poiTarget && !currTile.occupant.HasTraitOf(TRAIT_TYPE.DISABLER)) {
                 return true;
             }
         }

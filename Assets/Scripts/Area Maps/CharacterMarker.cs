@@ -796,16 +796,19 @@ public class CharacterMarker : PooledObject {
                 speed = character.raceSetting.walkSpeed;
             } else {
                 if (character.stateComponent.currentState != null) {
-                    if (character.stateComponent.currentState.characterState == CHARACTER_STATE.EXPLORE || character.stateComponent.currentState.characterState == CHARACTER_STATE.PATROL) {
+                    if (character.stateComponent.currentState.characterState == CHARACTER_STATE.EXPLORE 
+                        || character.stateComponent.currentState.characterState == CHARACTER_STATE.PATROL
+                        || character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL) {
                         //Walk
                         speed = character.raceSetting.walkSpeed;
                     }
-                } else if (character.currentAction != null) {
-                    if (character.currentAction.goapType == INTERACTION_TYPE.STROLL) {
-                        //Walk
-                        speed = character.raceSetting.walkSpeed;
-                    }
-                }
+                } 
+                //else if (character.currentAction != null) {
+                //    if (character.currentAction.goapType == INTERACTION_TYPE.STROLL) {
+                //        //Walk
+                //        speed = character.raceSetting.walkSpeed;
+                //    }
+                //}
             }
         }
         speed += (speed * speedModifier);

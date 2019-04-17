@@ -1241,7 +1241,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         return character.role.roleType == CHARACTER_ROLE.SOLDIER;
     }
     public void CreateRemoveTraitJob(string traitName) {
-        if (!HasJobTargettingThisCharacter("Remove Trait", traitName)) {
+        if (faction == specificLocation.owner && !HasJobTargettingThisCharacter("Remove Trait", traitName)) {
             GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = traitName, targetPOI = this };
             GoapPlanJob job = new GoapPlanJob("Remove Trait", goapEffect);
             job.SetCanTakeThisJobChecker(CanCharacterTakeRemoveTraitJob);
@@ -3315,17 +3315,18 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         return false;
     }
     public bool PlanIdleStroll(LocationStructure targetStructure) {
-        //Debug.Log("---------" + GameManager.Instance.TodayLogString() + "CREATING IDLE STROLL ACTION FOR " + name + "-------------");
-        //if(currentStructure.unoccupiedTiles.Count > 0) {
-        Stroll goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.STROLL, this, this) as Stroll;
-        goapAction.SetTargetStructure(targetStructure);
-        GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
-        GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.IDLE);
-        allGoapPlans.Add(goapPlan);
-        PlanGoapActions(goapAction);
+        if (currentStructure == targetStructure) {
+            stateComponent.SwitchToState(CHARACTER_STATE.STROLL);
+        } else {
+            MoveToAnotherStructure(targetStructure, null, null, () => stateComponent.SwitchToState(CHARACTER_STATE.STROLL));
+        }
+        //Stroll goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.STROLL, this, this) as Stroll;
+        //goapAction.SetTargetStructure(targetStructure);
+        //GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
+        //GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.IDLE);
+        //allGoapPlans.Add(goapPlan);
+        //PlanGoapActions(goapAction);
         return true;
-        //}
-        //return false;
     }
     public bool PlanIdleReturnHome() {
         if (GetTrait("Berserker") != null) {
@@ -5219,7 +5220,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         Messenger.Broadcast(Signals.CHARACTER_DID_ACTION, this, action);
     }
     public void FaceTarget(IPointOfInterest target) {
-        if (this != target && !this.isDead && target.gridTileLocation != null && gridTileLocation != null) {
+        if (this != target && !this.isDead && gridTileLocation != null) {
             if (target is Character) {
                 Character targetCharacter = target as Character;
                 if (targetCharacter.isDead) {

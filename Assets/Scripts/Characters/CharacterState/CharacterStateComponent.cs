@@ -154,6 +154,9 @@ public class CharacterStateComponent {
             case CHARACTER_STATE.HUNT:
                 newState = new HuntState(this);
                 break;
+            case CHARACTER_STATE.STROLL:
+                newState = new StrollState(this);
+                break;
         }
         return newState;
     }
