@@ -5206,14 +5206,18 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public void FaceTarget(IPointOfInterest target) {
         if (this != target && !this.isDead && target.gridTileLocation != null && gridTileLocation != null) {
-            if (target is Character && (target as Character).isDead) {
-                return;
-            }
             if (target is Character) {
-                marker.LookAt((target as Character).marker.transform.position);
+                Character targetCharacter = target as Character;
+                if (targetCharacter.isDead) {
+                    return;
+                }
+                CharacterMarker lookAtMarker = targetCharacter.currentParty.owner.marker;
+                if(lookAtMarker.character != this) {
+                    marker.LookAt(lookAtMarker.transform.position);
+                }
             } else {
                 marker.LookAt(target.gridTileLocation.centeredWorldLocation);
-            }            
+            }          
         }
     }
     public void SetCurrentAction(GoapAction action) {
