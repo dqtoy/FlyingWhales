@@ -87,5 +87,6 @@ public class JudgeCharacter : GoapAction {
 
     private void OnEndGoHome(string result, GoapAction action) {
         (poiTarget as Character).AdjustIgnoreHostilities(-1);
+        (poiTarget as Character).GoapActionResult(result, this);
     }
 }
