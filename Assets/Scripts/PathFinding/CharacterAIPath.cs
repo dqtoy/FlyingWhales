@@ -27,6 +27,9 @@ public class CharacterAIPath : AIPath {
     }
 
     public override void UpdateMe() {
+        if (!marker.gameObject.activeSelf) {
+            return;
+        }
         marker.UpdatePosition();
         if (marker.character.currentParty.icon.isTravelling) { //only rotate if character is travelling
             marker.visualsParent.localRotation = Quaternion.LookRotation(Vector3.forward, this.velocity);
