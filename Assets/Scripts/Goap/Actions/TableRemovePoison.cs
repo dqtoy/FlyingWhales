@@ -7,7 +7,7 @@ public class TableRemovePoison : GoapAction {
 
     public TableRemovePoison(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.TABLE_REMOVE_POISON, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         this.goapName = "Remove Poison";
-        actionIconString = GoapActionStateDB.Social_Icon;
+        actionIconString = GoapActionStateDB.Work_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
     }
 

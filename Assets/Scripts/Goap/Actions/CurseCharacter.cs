@@ -6,7 +6,7 @@ public class CurseCharacter : GoapAction {
 
     public CurseCharacter(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.CURSE_CHARACTER, INTERACTION_ALIGNMENT.EVIL, actor, poiTarget) {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
-        actionIconString = GoapActionStateDB.Social_Icon;
+        actionIconString = GoapActionStateDB.Hostile_Icon;
         shouldAddLogs = false; //set to false because this action has a special case for logs
     }
 

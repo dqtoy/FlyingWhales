@@ -6,7 +6,7 @@ public class FirstAidCharacter : GoapAction {
 
     public FirstAidCharacter(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.FIRST_AID_CHARACTER, INTERACTION_ALIGNMENT.GOOD, actor, poiTarget) {
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
-        actionIconString = GoapActionStateDB.Social_Icon;
+        actionIconString = GoapActionStateDB.Work_Icon;
         validTimeOfDays = new TIME_IN_WORDS[] {
             TIME_IN_WORDS.MORNING,
             TIME_IN_WORDS.AFTERNOON,
