@@ -2511,7 +2511,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (trait.daysDuration > 0) {
             GameDate removeDate = GameManager.Instance.Today();
             removeDate.AddTicks(trait.daysDuration);
-            SchedulingManager.Instance.AddEntry(removeDate, () => RemoveTrait(trait));
+            SchedulingManager.Instance.AddEntry(removeDate, () => RemoveTraitOnSchedule(trait));
         }
         trait.OnAddTrait(this);
         Messenger.Broadcast(Signals.TRAIT_ADDED, this, trait);
@@ -2520,6 +2520,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             AddRelationship(rel.targetCharacter, rel);
         }
         return true;
+    }
+    private bool RemoveTraitOnSchedule(Trait trait, bool triggerOnRemove = true) {
+        if (isDead) {
+            return false;
+        }
+        return RemoveTrait(trait, triggerOnRemove);
     }
     public bool RemoveTrait(Trait trait, bool triggerOnRemove = true) {
         if (_traits.Remove(trait)) {
