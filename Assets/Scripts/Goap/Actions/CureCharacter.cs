@@ -21,7 +21,11 @@ public class CureCharacter : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Sick", targetPOI = poiTarget });
     }
     public override void PerformActualAction() {
-        SetState("Cure Success");
+        if (actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
+            SetState("Cure Success");
+        } else {
+            SetState("Target Missing");
+        }
         base.PerformActualAction();
     }
     protected override int GetCost() {

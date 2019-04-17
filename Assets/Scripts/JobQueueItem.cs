@@ -16,7 +16,9 @@ public class JobQueueItem {
 
     #region Virtuals
     public virtual void UnassignJob() { }
-    protected virtual bool CanTakeJob(Character character) { return true; }
+    protected virtual bool CanTakeJob(Character character) {
+        return true;
+    }
     public virtual void OnAddJobToQueue() { }
     public virtual bool OnRemoveJobFromQueue() { return true; }
     #endregion

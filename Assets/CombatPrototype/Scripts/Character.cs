@@ -695,6 +695,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             if(stateComponent.currentState != null) {
                 stateComponent.currentState.OnExitThisState();
             }
+            CancelAllJobsTargettingThisCharacter();
 
             if (ownParty.specificLocation != null && isHoldingItem) {
                 DropAllTokens(ownParty.specificLocation, currentStructure, true);
@@ -1176,6 +1177,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         }
     }
+    public void CancelAllJobsTargettingThisCharacter() {
+        while (allJobsTargettingThis.Count > 0) {
+            JobQueueItem job = allJobsTargettingThis[0];
+            job.jobQueueParent.CancelJob(job);
+        }
+    }
     public bool HasJobTargettingThisCharacter(string jobName) {
         for (int i = 0; i < allJobsTargettingThis.Count; i++) {
             JobQueueItem job = allJobsTargettingThis[i];
@@ -1516,6 +1523,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     private void OnLeaveArea(Party party) {
         if(currentParty == party) {
             CheckApprehendRelatedJobsOnLeaveLocation();
+            CheckRemoveTraitRelatedJobsOnLeaveLocation();
         }
     }
     private void OnArrivedAtArea(Party party) {

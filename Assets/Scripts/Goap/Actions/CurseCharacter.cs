@@ -16,7 +16,11 @@ public class CurseCharacter : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Cursed", targetPOI = poiTarget });
     }
     public override void PerformActualAction() {
-        SetState("Curse Success");
+        if (actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
+            SetState("Curse Success");
+        } else {
+            SetState("Target Missing");
+        }
         base.PerformActualAction();
     }
     protected override int GetCost() {

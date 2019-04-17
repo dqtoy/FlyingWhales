@@ -65,6 +65,16 @@ public class GoapPlanJob : JobQueueItem {
         }
         return false;
     }
+    protected override bool CanTakeJob(Character character) {
+        if(targetPOI.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+            Character target = targetPOI as Character;
+            if(target.IsInOwnParty() && !target.isDead) {
+                return true;
+            }
+            return false;
+        }
+        return base.CanTakeJob(character);
+    }
     #endregion
 
     public void SetAssignedPlan(GoapPlan plan) {

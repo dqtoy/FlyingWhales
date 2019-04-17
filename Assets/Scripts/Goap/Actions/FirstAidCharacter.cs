@@ -22,7 +22,11 @@ public class FirstAidCharacter : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Unconscious", targetPOI = poiTarget });
     }
     public override void PerformActualAction() {
-        SetState("First Aid Success");
+        if (actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
+            SetState("First Aid Success");
+        } else {
+            SetState("Target Missing");
+        }
         base.PerformActualAction();
     }
     protected override int GetCost() {
