@@ -2767,7 +2767,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             AdjustDoNotGetLonely(1);
         } else if (trait.name == "Forlorn") {
             AdjustMoodValue(-35);
-        } else if (trait.name == "Sad") {
+        } else if (trait.name == "Lonely") {
             AdjustMoodValue(-20);
         } else if (trait.name == "Exhausted") {
             marker.AdjustUseWalkSpeed(1);
@@ -2840,7 +2840,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             AdjustDoNotGetLonely(-1);
         } else if (trait.name == "Forlorn") {
             AdjustMoodValue(35);
-        } else if (trait.name == "Sad") {
+        } else if (trait.name == "Lonely") {
             AdjustMoodValue(20);
         } else if (trait.name == "Exhausted") {
             marker.AdjustUseWalkSpeed(-1);
