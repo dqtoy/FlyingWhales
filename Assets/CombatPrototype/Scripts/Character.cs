@@ -1176,9 +1176,11 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
     }
     public void CancelAllJobsTargettingThisCharacter() {
-        while (allJobsTargettingThis.Count > 0) {
+        for (int i = 0; i < allJobsTargettingThis.Count; i++) {
             JobQueueItem job = allJobsTargettingThis[0];
-            job.jobQueueParent.CancelJob(job);
+            if (job.jobQueueParent.CancelJob(job)) {
+                i--;
+            }
         }
     }
     public bool HasJobTargettingThisCharacter(string jobName) {
