@@ -28,7 +28,7 @@ public class ReportCrime : GoapAction {
         _requirementAction = Requirement;
     }
     public override void PerformActualAction() {
-        if (actor.currentStructure == poiTarget.gridTileLocation.structure) {
+        if (actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
             SetState("Report Crime Success");
         } else {
             SetState("Target Missing");

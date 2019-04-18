@@ -315,11 +315,11 @@ public class PlayerLandmarkInfoUI : UIMenu {
         defendersScrollSnap.enabled = false;
         Utilities.DestroyChildren(defendersScrollView.content);
         defendersScrollSnap.ChildObjects = new GameObject[0];
-        for (int i = 0; i < _activeLandmark.tileLocation.areaOfTile.defenderGroups.Count; i++) {
-            DefenderGroup currGroup = _activeLandmark.tileLocation.areaOfTile.defenderGroups[i];
-            GameObject currGO = UIManager.Instance.InstantiateUIObject(defenderGroupPrefab.name, defendersScrollView.content);
-            currGO.GetComponent<DefenderGroupItem>().SetDefender(currGroup);
-        }
+        //for (int i = 0; i < _activeLandmark.tileLocation.areaOfTile.defenderGroups.Count; i++) {
+        //    DefenderGroup currGroup = _activeLandmark.tileLocation.areaOfTile.defenderGroups[i];
+        //    GameObject currGO = UIManager.Instance.InstantiateUIObject(defenderGroupPrefab.name, defendersScrollView.content);
+        //    currGO.GetComponent<DefenderGroupItem>().SetDefender(currGroup);
+        //}
         //defendersScrollSnap.InitialiseChildObjectsFromScene();
         defendersScrollSnap.enabled = true;
     }

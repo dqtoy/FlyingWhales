@@ -38,7 +38,6 @@ public class Token {
         Messenger.Broadcast(Signals.TOKEN_CONSUMED, this);
     }
     #region Virtuals
-    public virtual void CreateJointInteractionStates(Interaction interaction, Character user, object target) { }
     public virtual bool CanBeUsedBy(Character character) { return false; }
     #endregion
     //public int id;
@@ -120,13 +119,10 @@ public class CharacterToken : Token {
 public class SpecialToken : Token, IPointOfInterest {
     public string name { get; private set; }
     public SPECIAL_TOKEN specialTokenType;
-    public INTERACTION_TYPE npcAssociatedInteractionType;
-    //public int quantity;
     public int weight;
     public Faction owner;
     public Character characterOwner { get; private set; }
     public LocationStructure structureLocation { get; private set; }
-    public InteractionAttributes interactionAttributes { get; protected set; }
     public List<INTERACTION_TYPE> poiGoapActions { get; private set; }
     public int supplyValue { get { return ItemManager.Instance.itemData[specialTokenType].supplyValue; } }
     public int craftCost { get { return ItemManager.Instance.itemData[specialTokenType].craftCost; } }
@@ -181,7 +177,6 @@ public class SpecialToken : Token, IPointOfInterest {
         this.specialTokenType = specialTokenType;
         this.name = Utilities.NormalizeStringUpperCaseFirstLetters(this.specialTokenType.ToString());
         weight = appearanceRate;
-        npcAssociatedInteractionType = INTERACTION_TYPE.NONE;
         poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.PICK_ITEM, INTERACTION_TYPE.STEAL, INTERACTION_TYPE.SCRAP, INTERACTION_TYPE.ITEM_DESTROY, INTERACTION_TYPE.DROP_ITEM};
         _traits = new List<Trait>();
         allJobsTargettingThis = new List<JobQueueItem>();
@@ -202,9 +197,6 @@ public class SpecialToken : Token, IPointOfInterest {
     public virtual void OnObtainToken(Character character) { }
     public virtual void OnUnobtainToken(Character character) { }
     public virtual void OnConsumeToken(Character character) { }
-    public virtual void StartTokenInteractionState(Character user, Character target) {
-        user.MoveToAnotherStructure(target.currentStructure, target.GetNearestUnoccupiedTileFromThis());
-    }
     #endregion
 
     public void SetOwner(Faction owner) {

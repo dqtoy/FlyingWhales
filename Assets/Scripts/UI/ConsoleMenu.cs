@@ -55,7 +55,6 @@ public class ConsoleMenu : UIMenu {
 
 #if UNITY_EDITOR
         Messenger.AddListener(Signals.TICK_ENDED, CheckForWrongCharacterData);
-        Messenger.AddListener<Interaction>(Signals.INTERACTION_INITIALIZED, ListenForInteraction);
 #endif
         InitializeMinion();
     }
@@ -108,9 +107,13 @@ public class ConsoleMenu : UIMenu {
         text += "\n<b>Race:</b> " + character.race.ToString();
         text += "\n<b>Class:</b> " + character.characterClass.className;
         text += "\n<b>Is Dead?:</b> " + character.isDead.ToString();
-        text += "\n<b>Current Location:</b> " + character.currentStructure?.ToString() ?? "None";
         text += "\n<b>Home Location:</b> " + character.homeStructure?.ToString() ?? "None";
-        text += "\n<b>Grid Location:</b> " + character.gridTileLocation?.localPlace.ToString() ?? "None";
+
+        text += "\n<b>LOCATION INFO:</b>";
+        text += "\n\t<b>Area Location:</b> " + character.specificLocation?.name ?? "None";
+        text += "\n\t<b>Structure Location:</b> " + character.currentStructure?.ToString() ?? "None";
+        text += "\n\t<b>Grid Location:</b> " + character.gridTileLocation?.localPlace.ToString() ?? "None";
+
         text += "\n<b>Faction:</b> " + character.faction?.name ?? "None";
         text += "\n<b>Next Tick:</b> " + character.currentInteractionTick.ToString();
         text += "\n<b>Current Action:</b> " + character.currentAction?.goapName ?? "None";
@@ -118,9 +121,19 @@ public class ConsoleMenu : UIMenu {
             text += "\n<b>Current Plan:</b> " + character.currentAction.parentPlan.GetGoalSummary();
         }
         if (character.currentParty.icon != null) {
+            text += "\n<b>Is Travelling:</b> " + character.currentParty.icon.isTravelling.ToString();
             text += "\n<b>Target Location:</b> " + character.currentParty.icon.targetLocation?.name ?? "None";
             text += "\n<b>Target Structure:</b> " + character.currentParty.icon.targetStructure?.ToString() ?? "None";
         }
+
+        if (character.marker != null) {
+            text += "\n<b>MARKER DETAILS:</b>";
+            text += "\n<b>Target POI:</b> " + character.marker.targetPOI?.name ?? "None";
+            text += "\n<b>Destination Tile:</b> " + character.marker.destinationTile?.ToString() ?? "None";
+            text += "\n<b>Do not move:</b> " + character.marker.pathfindingAI.doNotMove.ToString();
+            text += "\n<b>Stop Movement?:</b> " + character.marker.pathfindingAI.isStopMovement.ToString();
+        }
+
         text += "\n<b>All Plans:</b> ";
         if (character.allGoapPlans.Count > 0) {
             for (int i = 0; i < character.allGoapPlans.Count; i++) {
@@ -295,7 +308,7 @@ public class ConsoleMenu : UIMenu {
                 //    Debug.LogWarning("There is an alive character with a null home structure! " + currCharacter.name);
                 //    UIManager.Instance.Pause();
                 //}
-                if (currCharacter.currentStructure == null) {
+                if (currCharacter.currentStructure == null && currCharacter.minion == null) {
                     Debug.LogWarning("There is an alive character with a null current structure! " + currCharacter.name);
                     //UIManager.Instance.Pause();
                 }
@@ -771,15 +784,6 @@ public class ConsoleMenu : UIMenu {
             }
         } else {
             AddErrorMessage("There is no interaction of type " + typeParameterString);
-        }
-    }
-    private void ListenForInteraction(Interaction interaction) {
-        if (typesSubscribedTo.Contains(interaction.type)) {
-            Messenger.Broadcast<string, int, UnityAction>(Signals.SHOW_DEVELOPER_NOTIFICATION,
-                "<b>" + interaction.name + "</b> event happened at <b>" + interaction.interactable.name + "</b>.",
-                10,
-                () => UIManager.Instance.ShowAreaInfo(interaction.interactable));
-            UIManager.Instance.Pause();
         }
     }
     #endregion

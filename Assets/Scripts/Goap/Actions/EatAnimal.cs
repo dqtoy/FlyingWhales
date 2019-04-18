@@ -18,7 +18,7 @@ public class EatAnimal : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = actor });
     }
     public override void PerformActualAction() {
-        if (poiTarget.gridTileLocation != null && actor.gridTileLocation == poiTarget.gridTileLocation) {
+        if (poiTarget.gridTileLocation != null && (actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsAdjacentTo(poiTarget))) {
             if(poiTarget.state != POI_STATE.INACTIVE) {
                 SetState("Eat Success");
             } else {
@@ -75,11 +75,12 @@ public class EatAnimal : GoapAction {
         }
         LocationGridTile knownLoc = awareness.knownGridLocation;
         if (poiTarget.state != POI_STATE.INACTIVE && knownLoc != null) {
-            if (knownLoc.occupant == null) {
-                return true;
-            } else if (knownLoc.occupant == actor) {
-                return true;
-            }
+            //if (knownLoc.occupant == null) {
+            //    return true;
+            //} else if (knownLoc.occupant == actor) {
+            //    return true;
+            //}
+            return true;
         }
         return false;
     }

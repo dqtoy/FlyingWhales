@@ -1591,6 +1591,7 @@ MonoBehaviour:
   botRightBeach: {fileID: 212451169657419164}
   rightBeach: {fileID: 212180639557770306}
   topRightBeach: {fileID: 212686564265827298}
+  uiRaycaster: {fileID: 114301298564578434}
   allNeighbourRoads: []
   range: 0
 --- !u!114 &114000010974686576

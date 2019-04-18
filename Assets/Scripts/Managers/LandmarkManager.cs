@@ -85,9 +85,6 @@ public class LandmarkManager : MonoBehaviour {
         BaseLandmark newLandmark = location.CreateLandmarkOfType(landmarkType);
 #if !WORLD_CREATION_TOOL
         newLandmark.tileLocation.AdjustUncorruptibleLandmarkNeighbors(1);
-        if (!newLandmark.tileLocation.isCorrupted) {
-            newLandmark.ConstructInitialInteractions();
-        }
         //newLandmark.GenerateDiagonalLeftTiles();
         //newLandmark.GenerateDiagonalRightTiles();
         //newLandmark.GenerateHorizontalTiles();
@@ -121,9 +118,6 @@ public class LandmarkManager : MonoBehaviour {
 #if !WORLD_CREATION_TOOL
         if (newLandmark.tileLocation.areaOfTile != null && newLandmark.tileLocation.areaOfTile.owner != null) {
             OccupyLandmark(newLandmark, newLandmark.tileLocation.areaOfTile.owner);
-        }
-        if (!newLandmark.tileLocation.isCorrupted) {
-            newLandmark.ConstructInitialInteractions();
         }
 
         newLandmark.tileLocation.AdjustUncorruptibleLandmarkNeighbors(1);

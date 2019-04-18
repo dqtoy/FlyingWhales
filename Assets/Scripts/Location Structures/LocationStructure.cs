@@ -65,9 +65,8 @@ public class LocationStructure {
         if (!charactersHere.Contains(character)) {
             charactersHere.Add(character);
             character.SetCurrentStructureLocation(this);
-            if(AddPOI(character, tile)){
-                //character.ScanForAwareness();
-            }
+            //location.AddCharacterToLocation(character);
+            AddPOI(character, tile);
         } else {
             //Debug.LogWarning(GameManager.Instance.TodayLogString() + " " + character.name + " can't be added to " + ToString() + " because it is already there!");
         }
@@ -75,8 +74,6 @@ public class LocationStructure {
     public void RemoveCharacterAtLocation(Character character) {
         if (charactersHere.Remove(character)) {
             character.SetCurrentStructureLocation(null);
-            //LocationGridTile tile = character.currentStructureTile;
-            //character.SetCurrentStructureTileLocation(null);
             RemovePOI(character);
         } else {
             //Debug.LogWarning(GameManager.Instance.TodayLogString() + " " + character.name + " can't be removed from " + ToString() + " because it is not there!");
@@ -109,7 +106,9 @@ public class LocationStructure {
     public bool AddPOI(IPointOfInterest poi, LocationGridTile tileLocation = null) {
         if (!pointsOfInterest.Contains(poi)) {
 #if !WORLD_CREATION_TOOL
-            if (!PlacePOIAtAppropriateTile(poi, tileLocation)) { return false; }
+            if (poi.poiType != POINT_OF_INTEREST_TYPE.CHARACTER) {
+                if (!PlacePOIAtAppropriateTile(poi, tileLocation)) { return false; }
+            }
 #endif
             pointsOfInterest.Add(poi);
             return true;
@@ -158,12 +157,6 @@ public class LocationStructure {
         }
         return null;
     }
-    public IPointOfInterest GetRandomPOI() {
-        if (pointsOfInterest.Count <= 0) {
-            return null;
-        }
-        return pointsOfInterest[Random.Range(0, pointsOfInterest.Count)];
-    }
     private bool PlacePOIAtAppropriateTile(IPointOfInterest poi, LocationGridTile tile) {
         if (tile != null) {
             location.areaMap.PlaceObject(poi, tile);
@@ -185,76 +178,6 @@ public class LocationStructure {
         }
         return false;
     }
-    //public void SpawnFoodOnStartDay() {
-    //    if(structureType == STRUCTURE_TYPE.WILDERNESS) {
-    //        LocationGridTile[] berryRabbitSpawnPoints = GetSpawnPointsForFood(_location.SPAWN_BERRY_COUNT + _location.SPAWN_RABBIT_COUNT);
-    //        for (int i = 0; i < berryRabbitSpawnPoints.Length; i++) {
-    //            if(berryRabbitSpawnPoints[i] != null) {
-    //                if (UnityEngine.Random.Range(0, 2) == 0) {
-    //                    if(foodCount[FOOD.BERRY] < _location.MAX_EDIBLE_PLANT) {
-    //                        AddPOI(CreateFood(FOOD.BERRY), berryRabbitSpawnPoints[i]);
-    //                    } else if (foodCount[FOOD.RABBIT] < _location.MAX_SMALL_ANIMAL) {
-    //                        AddPOI(CreateFood(FOOD.RABBIT), berryRabbitSpawnPoints[i]);
-    //                    }
-    //                } else {
-    //                    if (foodCount[FOOD.RABBIT] < _location.MAX_SMALL_ANIMAL) {
-    //                        AddPOI(CreateFood(FOOD.RABBIT), berryRabbitSpawnPoints[i]);
-    //                    } else if (foodCount[FOOD.BERRY] < _location.MAX_EDIBLE_PLANT) {
-    //                        AddPOI(CreateFood(FOOD.BERRY), berryRabbitSpawnPoints[i]);
-    //                    }
-    //                }
-    //            }
-    //        }
-    //    }else if (structureType == STRUCTURE_TYPE.DUNGEON) {
-    //        LocationGridTile[] mushroomRatSpawnPoints = GetSpawnPointsForFood(_location.SPAWN_MUSHROOM_COUNT + _location.SPAWN_RAT_COUNT);
-    //        for (int i = 0; i < mushroomRatSpawnPoints.Length; i++) {
-    //            if (mushroomRatSpawnPoints[i] != null) {
-    //                if (UnityEngine.Random.Range(0, 2) == 0) {
-    //                    if (foodCount[FOOD.MUSHROOM] < _location.MAX_MUSHROOM) {
-    //                        AddPOI(CreateFood(FOOD.MUSHROOM), mushroomRatSpawnPoints[i]);
-    //                    } else if (foodCount[FOOD.RAT] < _location.MAX_RAT) {
-    //                        AddPOI(CreateFood(FOOD.RAT), mushroomRatSpawnPoints[i]);
-    //                    }
-    //                } else {
-    //                    if (foodCount[FOOD.RAT] < _location.MAX_RAT) {
-    //                        AddPOI(CreateFood(FOOD.RAT), mushroomRatSpawnPoints[i]);
-    //                    } else if (foodCount[FOOD.MUSHROOM] < _location.MAX_MUSHROOM) {
-    //                        AddPOI(CreateFood(FOOD.MUSHROOM), mushroomRatSpawnPoints[i]);
-    //                    }
-    //                }
-    //            }
-    //        }
-    //    }
-    //}
-    //private LocationGridTile[] GetSpawnPointsForFood(int spawnCount) {
-    //    LocationGridTile[] spawnPoints = new LocationGridTile[spawnCount];
-    //    List<LocationGridTile> unoccupied = unoccupiedTiles;
-    //    for (int i = 0; i < spawnPoints.Length; i++) {
-    //        if(unoccupied.Count > 0) {
-    //            int index = UnityEngine.Random.Range(0, unoccupied.Count);
-    //            spawnPoints[i] = unoccupied[index];
-    //            unoccupied.RemoveAt(index);
-    //        } else {
-    //            break;
-    //        }
-    //    }
-    //    return spawnPoints;
-    //}
-    //public void AdjustFoodCount(FOOD food, int amount) {
-    //    foodCount[food] += amount;
-    //}
-    //private IPointOfInterest CreateFood(FOOD foodType) {
-    //    switch (foodType) {
-    //        case FOOD.BERRY:
-    //        case FOOD.MUSHROOM:
-    //            return new EdiblePlant(this);
-    //        case FOOD.RABBIT:
-    //        case FOOD.RAT:
-    //            return new SmallAnimal(this);
-    //        default:
-    //            return null;
-    //    }
-    //}
     private List<LocationGridTile> GetValidTilesToPlace(IPointOfInterest poi) {
         switch (poi.poiType) {
             case POINT_OF_INTEREST_TYPE.TILE_OBJECT:

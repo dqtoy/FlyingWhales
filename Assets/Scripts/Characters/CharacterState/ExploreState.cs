@@ -4,14 +4,22 @@ using UnityEngine;
 
 public class ExploreState : CharacterState {
 
+    public bool hasStateStarted { get; private set; }
+
     public ExploreState(CharacterStateComponent characterComp) : base (characterComp) {
         stateName = "Explore State";
         characterState = CHARACTER_STATE.EXPLORE;
         stateCategory = CHARACTER_STATE_CATEGORY.MAJOR;
         duration = 36;
+        hasStateStarted = false;
     }
 
     #region Overrides
+    protected override void StartState() {
+        base.StartState();
+        hasStateStarted = true;
+    }
+
     protected override void DoMovementBehavior() {
         base.DoMovementBehavior();
         StartExploreMovement();
@@ -22,7 +30,7 @@ public class ExploreState : CharacterState {
             if(goapAction.targetTile != null) {
                 goapAction.CreateStates();
                 stateComponent.character.SetCurrentAction(goapAction);
-                stateComponent.character.marker.GoToTile(goapAction.targetTile, targetPOI, () => OnArriveAtPickUpLocation());
+                stateComponent.character.marker.GoTo(goapAction.targetTile, targetPOI, () => OnArriveAtPickUpLocation());
                 PauseState();
             } else {
                 Debug.LogWarning(GameManager.Instance.TodayLogString() + " " + stateComponent.character.name + " can't pick up item " + targetPOI.name + " because there is no tile to go to!");
@@ -65,7 +73,7 @@ public class ExploreState : CharacterState {
         ResumeState();
     }
     private void StartExploreMovement() {
-        stateComponent.character.marker.GoToTile(PickRandomTileToGoTo(), stateComponent.character, () => StartExploreMovement());
+        stateComponent.character.marker.GoTo(PickRandomTileToGoTo(), stateComponent.character, () => StartExploreMovement());
     }
     private LocationGridTile PickRandomTileToGoTo() {
         LocationStructure chosenStructure = stateComponent.character.specificLocation.GetRandomStructure();

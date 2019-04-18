@@ -107,6 +107,7 @@ GameObject:
   - component: {fileID: 114720397635659402}
   - component: {fileID: 114115144342472108}
   - component: {fileID: 114167030245026914}
+  - component: {fileID: 114577038380254382}
   m_Layer: 14
   m_Name: CharacterMarker
   m_TagString: Character Marker
@@ -571,7 +572,34 @@ MonoBehaviour:
   colliders:
   - {fileID: 61886553999808524}
   - {fileID: 58535005990234766}
+  rvoController: {fileID: 114577038380254382}
   colorHighlight: {fileID: 212653369134426336}
+--- !u!114 &114577038380254382
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1392417203996010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 560112f876f5746c780eca0d404e7139, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 2
+  radiusBackingField: 0.5
+  heightBackingField: 2
+  centerBackingField: 1
+  locked: 0
+  lockWhenNotMoving: 0
+  agentTimeHorizon: 1
+  obstacleTimeHorizon: 1
+  maxNeighbours: 10
+  layer: 1
+  collidesWith: 1
+  wallAvoidForce: 1
+  wallAvoidFalloff: 1
+  priority: 0.5
+  debug: 0
 --- !u!114 &114578536136533292
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -635,7 +663,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   version: 2
-  radius: 0.5
+  radius: 0.25
   height: 2
   repathRate: 0.2
   canSearch: 1
@@ -651,14 +679,17 @@ MonoBehaviour:
   targetCompatibility: {fileID: 0}
   maxAcceleration: 9999
   rotationSpeed: 360
-  slowdownDistance: 0.6
-  pickNextWaypointDist: 0.3
-  endReachedDistance: 0.2
+  slowdownDistance: 0.1
+  pickNextWaypointDist: 0.5
+  endReachedDistance: 0.5
   alwaysDrawGizmos: 1
   slowWhenNotFacingTarget: 1
-  whenCloseToDestination: 0
+  whenCloseToDestination: 1
   constrainInsideGraph: 0
   marker: {fileID: 114379759619008666}
+  searchLength: 1000
+  spread: 5000
+  aimStrength: 0.75
 --- !u!114 &114825110122692990
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -8,6 +8,7 @@ using System;
 using TMPro;
 using Pathfinding;
 using System.Linq;
+using Pathfinding.RVO;
 
 public class CharacterMarker : PooledObject {
 
@@ -36,29 +37,20 @@ public class CharacterMarker : PooledObject {
     public AIDestinationSetter destinationSetter;
     [SerializeField] private Seeker seeker;
     [SerializeField] private Collider2D[] colliders;
+    [SerializeField] private RVOController rvoController;
 
     [Header("For Testing")]
     [SerializeField] private SpriteRenderer colorHighlight;
 
-    //public MOVEMENT_MODE movementMode { get; private set; }
-
-    //collision
     public List<IPointOfInterest> inVisionPOIs { get; private set; } //POI's in this characters vision collider
     public List<Character> hostilesInRange { get; private set; } //POI's in this characters hostility collider
 
-
-    private LocationGridTile lastRemovedTileFromPath;
     private List<LocationGridTile> _currentPath;
     private Action _arrivalAction;
 
     private Action onArrivedAtTileAction;
 
-    private IPointOfInterest _targetPOI;
-    private bool shouldRecalculatePath = false;
-
-    private Coroutine currentMoveCoroutine;
-
-    public bool isStillMovingToAnotherTile { get; private set; }
+    public IPointOfInterest targetPOI { get; private set; }
     public InnerPathfindingThread pathfindingThread { get; private set; }
     public POICollisionTrigger collisionTrigger { get; private set; }
     public Vector2 anchoredPos { get; private set; }
@@ -81,7 +73,7 @@ public class CharacterMarker : PooledObject {
         this.name = character.name + "'s Marker";
         nameLbl.SetText(character.name);
         this.character = character;
-        _previousGridTile = character.gridTileLocation;
+        //_previousGridTile = character.gridTileLocation;
         if (UIManager.Instance.characterInfoUI.isShowing) {
             clickedImg.gameObject.SetActive(UIManager.Instance.characterInfoUI.activeCharacter.id == character.id);
         }
@@ -129,39 +121,49 @@ public class CharacterMarker : PooledObject {
 
         //I'm keeping a separate field called anchoredPos instead of using the rect transform anchoredPosition directly because the multithread cannot access transform components
         anchoredPos = transform.localPosition;
-
-        //This is to check that the character has moved to another tile
+        //if (_previousGridTile == null) {
+        //    _previousGridTile = character.gridTileLocation;
+        //}
         if (_previousGridTile != character.gridTileLocation) {
-            //When a character moves to another tile, check previous tile if the character is the occupant there, if it is, remove it
-            LocationGridTile previousGridTile = _previousGridTile;
-            LocationGridTile currentGridTile = character.gridTileLocation;
-            if (previousGridTile.occupant == character) {
-                previousGridTile.RemoveOccupant();
-            }
-
-            //Now check if the current grid tile is of different structure than the previous one, if it is, remove character from the previous structure and add it to the current one
-            if (previousGridTile.structure != currentGridTile.structure) {
-                if (previousGridTile.structure != null) {
-                    previousGridTile.structure.RemoveCharacterAtLocation(character);
-                } else {
-                    Debug.LogWarning(GameManager.Instance.TodayLogString() + " " + character.name + " can't be removed from the structure of " + previousGridTile.ToString() + " because it is null!");
-                }
-                if (currentGridTile.structure != null) {
-                    currentGridTile.structure.AddCharacterAtLocation(character, currentGridTile);
-                } else {
-                    Debug.LogWarning(GameManager.Instance.TodayLogString() + " " + character.name + " can't be added to the structure of " + currentGridTile.ToString() + " because it is null!");
-                }
-            }
-
-            //Lastly set the previous tile position to the current tile position so it will not trigger again
+            character.specificLocation.areaMap.OnCharacterMovedTo(character, character.gridTileLocation, _previousGridTile);
             _previousGridTile = character.gridTileLocation;
         }
+        ////This is to check that the character has moved to another tile
+        //if (_previousGridTile != character.gridTileLocation) {
+        //    //When a character moves to another tile, check previous tile if the character is the occupant there, if it is, remove it
+        //    LocationGridTile previousGridTile = _previousGridTile;
+        //    LocationGridTile currentGridTile = character.gridTileLocation;
+        //    if (previousGridTile.occupant == character) {
+        //        previousGridTile.RemoveOccupant();
+        //    }
+
+        //    //Now check if the current grid tile is of different structure than the previous one, if it is, remove character from the previous structure and add it to the current one
+        //    if (previousGridTile.structure != currentGridTile.structure) {
+        //        if (previousGridTile.structure != null) {
+        //            previousGridTile.structure.RemoveCharacterAtLocation(character);
+        //        } else {
+        //            Debug.LogWarning(GameManager.Instance.TodayLogString() + " " + character.name + " can't be removed from the structure of " + previousGridTile.ToString() + " because it is null!");
+        //        }
+        //        if (currentGridTile.structure != null) {
+        //            currentGridTile.structure.AddCharacterAtLocation(character, currentGridTile);
+        //        } else {
+        //            Debug.LogWarning(GameManager.Instance.TodayLogString() + " " + character.name + " can't be added to the structure of " + currentGridTile.ToString() + " because it is null!");
+        //        }
+        //    }
+
+        //    //Lastly set the previous tile position to the current tile position so it will not trigger again
+        //    _previousGridTile = character.gridTileLocation;
+        //}
     }
     public void PlaceMarkerAt(LocationGridTile tile) {
-        if(tile != null) {
-            transform.position = tile.centeredWorldLocation;
-            tile.SetOccupant(character);
-        }
+        //if(tile != null) {
+        this.gameObject.transform.SetParent(tile.parentAreaMap.objectsParent);
+        transform.position = tile.centeredWorldLocation;
+        tile.structure.location.AddCharacterToLocation(character);
+        this.gameObject.SetActive(true);
+         UpdatePosition();
+            //tile.SetOccupant(character);
+        //}
     }
 
     #region Pointer Functions
@@ -234,11 +236,17 @@ public class CharacterMarker : PooledObject {
         if (character == this.character) {
             if (trait.type == TRAIT_TYPE.DISABLER) { //if the character gained a disabler trait, hinder movement
                 if (character.currentParty.icon.isTravelling && character.currentParty.icon.travelLine == null) {
-                    StopMovementOnly();
+                    StopMovementOnly(false);
                 }
+                rvoController.priority = 0;
                 pathfindingAI.AdjustDoNotMove(1);
             }
-            if (trait.name == "Injured" && trait.responsibleCharacter != null && character.GetTrait("Unconscious") == null) {
+            if (trait.name == "Unconscious") {
+                //if the character gained an unconscious trait, exit current state if it is flee
+                if (character.stateComponent.currentState != null && character.stateComponent.currentState.characterState == CHARACTER_STATE.FLEE) {
+                    character.stateComponent.currentState.OnExitThisState();
+                }
+            } else if (trait.name == "Injured" && trait.responsibleCharacter != null && character.GetTrait("Unconscious") == null) {
                 if (hostilesInRange.Contains(trait.responsibleCharacter)) {
                     Debug.Log(character.name + " gained an injured trait. Reacting...");
                     NormalReactToHostileCharacter(trait.responsibleCharacter, CHARACTER_STATE.FLEE);
@@ -251,6 +259,9 @@ public class CharacterMarker : PooledObject {
         if (character == this.character) {
             if (trait.type == TRAIT_TYPE.DISABLER) { //if the character lost a disabler trait, adjust hinder movement value
                 pathfindingAI.AdjustDoNotMove(-1);
+                if (pathfindingAI.doNotMove <= 0) {
+                    rvoController.priority = 0.5f;
+                }
             }
             //after this character loses combat recovery trait or unconscious trait, check if he or she can still react to another character, if yes, react.
             switch (trait.name) {
@@ -275,6 +286,24 @@ public class CharacterMarker : PooledObject {
             }
 
         }
+    }
+    /// <summary>
+    /// Listener for when a party starts travelling towards another area.
+    /// </summary>
+    /// <param name="travellingParty">The travelling party.</param>
+    private void OnCharacterAreaTravelling(Party travellingParty) {
+        if (targetPOI is Character) {
+            Character targetCharacter = targetPOI as Character;
+            if (travellingParty.characters.Contains(targetCharacter)) {
+                //target character left the area
+                //go to the characters last tile
+                GoTo(targetCharacter.gridTileLocation, targetPOI, _arrivalAction);
+                if (Messenger.eventTable.ContainsKey(Signals.PARTY_STARTED_TRAVELLING)) {
+                    Messenger.RemoveListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling);
+                }
+            }
+        }
+        
     }
     #endregion
 
@@ -374,9 +403,9 @@ public class CharacterMarker : PooledObject {
     public override void Reset() {
         base.Reset();
         //StopMovement();
-        if (currentMoveCoroutine != null) {
-            StopCoroutine(currentMoveCoroutine);
-        }
+        //if (currentMoveCoroutine != null) {
+        //    StopCoroutine(currentMoveCoroutine);
+        //}
         character = null;
         hoverEnterAction = null;
         hoverExitAction = null;
@@ -394,36 +423,81 @@ public class CharacterMarker : PooledObject {
     #endregion
 
     #region Pathfinding Movement
-    public void GoToTile(LocationGridTile destinationTile, IPointOfInterest targetPOI, Action arrivalAction = null) {
+    public void GoTo(LocationGridTile destinationTile, IPointOfInterest targetPOI, Action arrivalAction = null) {
         this.destinationTile = destinationTile;
         _arrivalAction = arrivalAction;
-        _targetPOI = targetPOI;
-        SetDestination(destinationTile.centeredWorldLocation);
+        this.targetPOI = targetPOI;
+        SetTargetTransform(null);
+        if (destinationTile == character.gridTileLocation) {
+            Debug.Log(character.name + " is already at " + destinationTile.ToString() + " executing action...");
+            _arrivalAction?.Invoke();
+            _arrivalAction = null;
+        } else {
+            SetDestination(destinationTile.centeredWorldLocation);
+            StartMovement();
+        }
+        
+    }
+    public void GoTo(IPointOfInterest targetPOI, Action arrivalAction = null, bool forceFollow = false) {
+        _arrivalAction = arrivalAction;
+        this.targetPOI = targetPOI;
+        switch (targetPOI.poiType) {
+            case POINT_OF_INTEREST_TYPE.CHARACTER:
+                Character targetCharacter = targetPOI as Character;
+                SetTargetTransform(targetCharacter.marker.transform);
+                //if the target is a character, 
+                //check first if he/she is still at the location, 
+                if (targetCharacter.specificLocation != character.specificLocation) {
+                    //if not, execute the arrival action
+                    _arrivalAction?.Invoke();
+                    _arrivalAction = null;
+                } else if (targetCharacter.currentParty != null && targetCharacter.currentParty.icon != null && targetCharacter.currentParty.icon.isAreaTravelling) {
+                    OnCharacterAreaTravelling(targetCharacter.currentParty);
+                } else {
+                    //else, Add listener for when a character starts to leave a location
+                    Messenger.AddListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling);
+                }   
+                break;
+            default:
+                SetDestination(targetPOI.gridTileLocation.centeredWorldLocation);
+                break;
+        }
+
         StartMovement();
     }
     public void ArrivedAtLocation() {
-        if(character.currentParty.icon.isTravelling && character.gridTileLocation == destinationTile) { //&& destinationTile.occupant == null
-            character.currentParty.icon.SetIsTravelling(false);
-            //character.currentParty.icon.SetIsPlaceCharacterAsTileObject(true);
-            //if (_destinationTile.structure != character.currentStructure) {
-            //    character.currentStructure.RemoveCharacterAtLocation(character);
-            //    _destinationTile.structure.AddCharacterAtLocation(character, _destinationTile);
-            //} else {
-            //    character.gridTileLocation.structure.location.areaMap.RemoveCharacter(character.gridTileLocation, character);
-            //    _destinationTile.structure.location.areaMap.PlaceObject(character, _destinationTile);
-            //}
-            destinationTile.SetOccupant(character);
-            PlayIdle();
-            //if (Messenger.eventTable.ContainsKey(Signals.TILE_OCCUPIED)) {
-            //    Messenger.RemoveListener<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, OnTileOccupied);
-            //}
-            if (_arrivalAction != null) {
-                _arrivalAction();
-            }
-        } 
-        //else if (destinationTile != null) {
+        //if(character.currentParty.icon.isTravelling && character.gridTileLocation == destinationTile) { // destinationTile.occupant == null
+        //character.currentParty.icon.SetIsTravelling(false);
+        //character.currentParty.icon.SetIsPlaceCharacterAsTileObject(true);
+        //if (_destinationTile.structure != character.currentStructure) {
+        //    character.currentStructure.RemoveCharacterAtLocation(character);
+        //    _destinationTile.structure.AddCharacterAtLocation(character, _destinationTile);
+        //} else {
+        //    character.gridTileLocation.structure.location.areaMap.RemoveCharacter(character.gridTileLocation, character);
+        //    _destinationTile.structure.location.areaMap.PlaceObject(character, _destinationTile);
+        //}
+        //destinationTile.SetOccupant(character);
+        //PlayIdle();
+        //if (Messenger.eventTable.ContainsKey(Signals.TILE_OCCUPIED)) {
+        //    Messenger.RemoveListener<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, OnTileOccupied);
+        //}
+        //if (character.gridTileLocation.occupant != null) {
+        //    character.gridTileLocation.SetOccupant(character);
+        //}
+        //Debug.Log(character.name + " arrived at location!");
+        StopMovementOnly();
+        if (Messenger.eventTable.ContainsKey(Signals.PARTY_STARTED_TRAVELLING)) { Messenger.RemoveListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling); }
+        Action action = _arrivalAction;
+        //set arrival action to null, because some arrival actions set 
+        _arrivalAction = null;
+        action?.Invoke();
+        //_arrivalAction = null;
+        
+        //} else if (destinationTile != null) {
         //    if(character.currentParty.icon.isTravelling && destinationTile.occupant != null && destinationTile.occupant != character) {
         //        Debug.LogWarning(character.name + " cannot occupy " + destinationTile.ToString() + " because it is already occupied by " + destinationTile.occupant.name);
+        //    }
+        //}
         //    }
         //}
     }
@@ -433,14 +507,28 @@ public class CharacterMarker : PooledObject {
         character.currentParty.icon.SetIsTravelling(true);
         StartWalkingAnimation();
     }
+    //private void StartMovement() {
+    //    UpdateSpeed();
+    //    pathfindingAI.SetIsStopMovement(false);
+    //    if (_currentPath.Count == 0) {
+    //        //Arrival
+    //            _arrivalAction();
+    //        }
+    //        //throw new Exception(character.name + "'s marker path count is 0, but movement is starting! Destination Tile is: " + _destinationTile.ToString());
+    //    } else {
+    //        currentMoveCoroutine = StartCoroutine(MoveToPosition(transform.localPosition, _currentPath[0].centeredLocalLocation));
+    //    }
+    //    //Messenger.AddListener(Signals.TICK_STARTED, Move);
+    //}
     public void StopMovement(Action afterStoppingAction = null) {
         string log = character.name + " StopMovement function is called!";
         StopMovementOnly();
         log += "\n- Not moving to another tile, go to checker...";
-        CheckIfCurrentTileIsOccupiedOnStopMovement(ref log, afterStoppingAction);
+        Debug.LogWarning(log);
+        //CheckIfCurrentTileIsOccupiedOnStopMovement(ref log, afterStoppingAction);
     }
-    public void StopMovementOnly() {
-        _arrivalAction = null;
+    public void StopMovementOnly(bool playIdle = true) {
+        //_arrivalAction = null;
 
         //if (Messenger.eventTable.ContainsKey(Signals.TILE_OCCUPIED)) {
         //    Messenger.RemoveListener<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, OnTileOccupied);
@@ -458,131 +546,133 @@ public class CharacterMarker : PooledObject {
         }
         hasFleePath = false;
         pathfindingAI.SetIsStopMovement(true);
-        PlayIdle();
+        if (playIdle) {
+            PlayIdle();
+        }
         //log += "\n- Not moving to another tile, go to checker...";
         //CheckIfCurrentTileIsOccupiedOnStopMovement(ref log, afterStoppingAction);
     }
-    private void CheckIfCurrentTileIsOccupiedOnStopMovement(ref string log, Action afterStoppingAction = null) {
-        if (character.gridTileLocation.tileState == LocationGridTile.Tile_State.Occupied || (character.gridTileLocation.occupant != null && character.gridTileLocation.occupant != character)) {
-            log += "\n- Current tile " + character.gridTileLocation.ToString() + " is occupied, will check nearest tile to go to...";
-            LocationGridTile newTargetTile = character.gridTileLocation.GetNearestUnoccupiedTileFromThis();
-            if(newTargetTile != null) {
-                log += "\n- New target tile found: " + newTargetTile.ToString() + ", will go to it...";
-                character.marker.GoToTile(newTargetTile, character, afterStoppingAction);
-            } else {
-                log += "\n- Couldn't find nearby tile, will check nearby tile...";
-                newTargetTile = InteractionManager.Instance.GetTargetLocationTile(ACTION_LOCATION_TYPE.NEARBY, character, character.gridTileLocation, character.gridTileLocation.structure);
-                if (newTargetTile != null) {
-                    log += "\n- New target tile found: " + newTargetTile.ToString() + ", will go to it...";
-                    character.marker.GoToTile(newTargetTile, character, afterStoppingAction);
-                } else {
-                    throw new Exception(character.name + " is stuck and can't go anywhere because everything in the structure is occupied!");
-                }
-            }
-        } else {
-            log += "\n- Current tile " + character.gridTileLocation.ToString() + " is not occupied, will stay here and occupy this tile...";
-            PlayIdle();
-            if (character.currentParty.icon != null) {
-                character.currentParty.icon.SetIsTravelling(false);
-            }
-            character.gridTileLocation.SetOccupant(character);
-            if (afterStoppingAction != null) {
-                afterStoppingAction();
-            }
-        }
-        Debug.LogWarning(log);
-    }
-    private void Move() {
-        if (character.isDead) {
-            //StopMovement();
-            Debug.LogWarning(character.name + " is dead! Stopped movement!");
-            return;
-        }
+    //private void CheckIfCurrentTileIsOccupiedOnStopMovement(ref string log, Action afterStoppingAction = null) {
+    //    if (character.gridTileLocation.tileState == LocationGridTile.Tile_State.Occupied || (character.gridTileLocation.occupant != null && character.gridTileLocation.occupant != character)) {
+    //        log += "\n- Current tile " + character.gridTileLocation.ToString() + " is occupied, will check nearest tile to go to...";
+    //        LocationGridTile newTargetTile = character.gridTileLocation.GetNearestUnoccupiedTileFromThis();
+    //        if(newTargetTile != null) {
+    //            log += "\n- New target tile found: " + newTargetTile.ToString() + ", will go to it...";
+    //            character.marker.GoToTile(newTargetTile, character, afterStoppingAction);
+    //        } else {
+    //            log += "\n- Couldn't find nearby tile, will check nearby tile...";
+    //            newTargetTile = InteractionManager.Instance.GetTargetLocationTile(ACTION_LOCATION_TYPE.NEARBY, character, character.gridTileLocation, character.gridTileLocation.structure);
+    //            if (newTargetTile != null) {
+    //                log += "\n- New target tile found: " + newTargetTile.ToString() + ", will go to it...";
+    //                character.marker.GoToTile(newTargetTile, character, afterStoppingAction);
+    //            } else {
+    //                throw new Exception(character.name + " is stuck and can't go anywhere because everything in the structure is occupied!");
+    //            }
+    //        }
+    //    } else {
+    //        log += "\n- Current tile " + character.gridTileLocation.ToString() + " is not occupied, will stay here and occupy this tile...";
+    //        PlayIdle();
+    //        if (character.currentParty.icon != null) {
+    //            character.currentParty.icon.SetIsTravelling(false);
+    //        }
+    //        character.gridTileLocation.SetOccupant(character);
+    //        if (afterStoppingAction != null) {
+    //            afterStoppingAction();
+    //        }
+    //    }
+    //    Debug.LogWarning(log);
+    //}
+    //private void Move() {
+    //    if (character.isDead) {
+    //        //StopMovement();
+    //        Debug.LogWarning(character.name + " is dead! Stopped movement!");
+    //        return;
+    //    }
 
-        //if the current path is not empty
-        if (_currentPath != null && _currentPath.Count > 0) {
-            LocationGridTile currentTile = _currentPath[0];
-            //if(_currentPath.Count == 1) {
-            //    //If the path only has 1 node left, this means that this is the destination tile, set the boolean to true so that when this character is placed
-            //    //the algorithm will place the character as the object of the destination tile instead of being added in the moving characters list and the tile will be set as occupied
-            //    character.currentParty.icon.SetIsPlaceCharacterAsTileObject(true);
-            //}
-            if (currentTile.structure != character.currentStructure) {
-                character.currentStructure.RemoveCharacterAtLocation(character);
-                currentTile.structure.AddCharacterAtLocation(character, currentTile);
-            } else {
-                character.gridTileLocation.structure.location.areaMap.RemoveCharacter(character.gridTileLocation, character);
-                currentTile.structure.location.areaMap.PlaceObject(character, currentTile);
-            }
-            _currentPath.RemoveAt(0);
-            lastRemovedTileFromPath = currentTile;
-            //character.currentParty.icon.SetIsTravelling(currentIsTravelling);
+    //    //if the current path is not empty
+    //    if (_currentPath != null && _currentPath.Count > 0) {
+    //        LocationGridTile currentTile = _currentPath[0];
+    //        //if(_currentPath.Count == 1) {
+    //        //    //If the path only has 1 node left, this means that this is the destination tile, set the boolean to true so that when this character is placed
+    //        //    //the algorithm will place the character as the object of the destination tile instead of being added in the moving characters list and the tile will be set as occupied
+    //        //    character.currentParty.icon.SetIsPlaceCharacterAsTileObject(true);
+    //        //}
+    //        if (currentTile.structure != character.currentStructure) {
+    //            character.currentStructure.RemoveCharacterAtLocation(character);
+    //            currentTile.structure.AddCharacterAtLocation(character, currentTile);
+    //        } else {
+    //            character.gridTileLocation.structure.location.areaMap.RemoveCharacter(character.gridTileLocation, character);
+    //            currentTile.structure.location.areaMap.PlaceObject(character, currentTile);
+    //        }
+    //        _currentPath.RemoveAt(0);
+    //        lastRemovedTileFromPath = currentTile;
+    //        //character.currentParty.icon.SetIsTravelling(currentIsTravelling);
 
-            string recalculationSummary = string.Empty;
-            //check if the marker should recalculate path
-            if (shouldRecalculatePath) {
-                bool result = RecalculatePath(ref recalculationSummary);
-                if (result) return;
-            }
+    //        string recalculationSummary = string.Empty;
+    //        //check if the marker should recalculate path
+    //        if (shouldRecalculatePath) {
+    //            bool result = RecalculatePath(ref recalculationSummary);
+    //            if (result) return;
+    //        }
 
-            if (onArrivedAtTileAction != null) {
-                //If this is not null, it means that this character will not finish the travel
-                //Somehow, it is stopped and will this action instead of going to the destination tile
-                PlayIdle();
-                onArrivedAtTileAction();
-                onArrivedAtTileAction = null;
-                return;
-            } else {
-                if (_currentPath.Count <= 0) {
-                    if (character.gridTileLocation.charactersHere.Remove(character)) {
-                        character.ownParty.icon.SetIsPlaceCharacterAsTileObject(false);
-                        character.gridTileLocation.SetOccupant(character);
-                    }
-                }
-            }
+    //        if (onArrivedAtTileAction != null) {
+    //            //If this is not null, it means that this character will not finish the travel
+    //            //Somehow, it is stopped and will this action instead of going to the destination tile
+    //            PlayIdle();
+    //            onArrivedAtTileAction();
+    //            onArrivedAtTileAction = null;
+    //            return;
+    //        } else {
+    //            if (_currentPath.Count <= 0) {
+    //                if (character.gridTileLocation.charactersHere.Remove(character)) {
+    //                    character.ownParty.icon.SetIsPlaceCharacterAsTileObject(false);
+    //                    character.gridTileLocation.SetOccupant(character);
+    //                }
+    //            }
+    //        }
 
-            if (character.currentParty.icon.isTravelling) {
-                if (_currentPath.Count <= 0) {
-                    //Arrival
-                    character.currentParty.icon.SetIsTravelling(false);
-                    PlayIdle();
-                    //if (Messenger.eventTable.ContainsKey(Signals.TILE_OCCUPIED)) {
-                    //    Messenger.RemoveListener<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, OnTileOccupied);
-                    //}
-                    if (_arrivalAction != null) {
-                        _arrivalAction();
-                    }
-                } else {
-                    if(_currentPath.Count == 1) {
-                        Debug.LogWarning("Tile occupied signal fired for tile " + _currentPath[0].ToString() + " by " + character.name + " because that tile is the next tile and its destination");
-                        Messenger.Broadcast(Signals.TILE_OCCUPIED, _currentPath[0], character as IPointOfInterest);
-                    }
-                    currentMoveCoroutine = StartCoroutine(MoveToPosition(transform.localPosition, _currentPath[0].centeredLocalLocation));
-                }
-            }
-        }
-    }
-    private IEnumerator MoveToPosition(Vector3 from, Vector3 to) {
-        RotateMarker(from, to);
+    //        if (character.currentParty.icon.isTravelling) {
+    //            if (_currentPath.Count <= 0) {
+    //                //Arrival
+    //                character.currentParty.icon.SetIsTravelling(false);
+    //                PlayIdle();
+    //                //if (Messenger.eventTable.ContainsKey(Signals.TILE_OCCUPIED)) {
+    //                //    Messenger.RemoveListener<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, OnTileOccupied);
+    //                //}
+    //                if (_arrivalAction != null) {
+    //                    _arrivalAction();
+    //                }
+    //            } else {
+    //                if(_currentPath.Count == 1) {
+    //                    Debug.LogWarning("Tile occupied signal fired for tile " + _currentPath[0].ToString() + " by " + character.name + " because that tile is the next tile and its destination");
+    //                    Messenger.Broadcast(Signals.TILE_OCCUPIED, _currentPath[0], character as IPointOfInterest);
+    //                }
+    //                currentMoveCoroutine = StartCoroutine(MoveToPosition(transform.localPosition, _currentPath[0].centeredLocalLocation));
+    //            }
+    //        }
+    //    }
+    //}
+    //private IEnumerator MoveToPosition(Vector3 from, Vector3 to) {
+    //    RotateMarker(from, to);
 
-        isStillMovingToAnotherTile = true;
-        float t = 0f;
-        while (t < 1) {
-            if (!GameManager.Instance.isPaused) {
-                t += Time.deltaTime / GameManager.Instance.progressionSpeed;
-                transform.localPosition = Vector3.Lerp(from, to, t);
-                anchoredPos = transform.localPosition;
-            }
-            yield return null;
-        }
-        isStillMovingToAnotherTile = false;
-        Move();
-    }
-    public void RotateMarker(Vector3 from, Vector3 to) {
-        //float angle = Mathf.Atan2(to.y - from.y, to.x - from.x) * Mathf.Rad2Deg;
-        //visualsParent.eulerAngles = new Vector3(transform.rotation.x, transform.rotation.y, angle);
-        //Debug.Log(this.character.name + " is rotating " + angle);
-    }
+    //    isStillMovingToAnotherTile = true;
+    //    float t = 0f;
+    //    while (t < 1) {
+    //        if (!GameManager.Instance.isPaused) {
+    //            t += Time.deltaTime / GameManager.Instance.progressionSpeed;
+    //            transform.localPosition = Vector3.Lerp(from, to, t);
+    //            anchoredPos = transform.localPosition;
+    //        }
+    //        yield return null;
+    //    }
+    //    isStillMovingToAnotherTile = false;
+    //    Move();
+    //}
+    //public void RotateMarker(Vector3 from, Vector3 to) {
+    //    //float angle = Mathf.Atan2(to.y - from.y, to.x - from.x) * Mathf.Rad2Deg;
+    //    //visualsParent.eulerAngles = new Vector3(transform.rotation.x, transform.rotation.y, angle);
+    //    //Debug.Log(this.character.name + " is rotating " + angle);
+    //}
     public void LookAt(Vector3 target) {
         //only allow asset rotation if the character is in idle animation
         if (animator.GetCurrentAnimatorStateInfo(0).IsName("Idle")) {
@@ -592,111 +682,111 @@ public class CharacterMarker : PooledObject {
             visualsParent.rotation = Quaternion.Euler(0f, 0f, rot_z - 90);
         }
     }
-    public void ReceivePathFromPathfindingThread(InnerPathfindingThread innerPathfindingThread) {
-        _currentPath = innerPathfindingThread.path;
-        pathfindingThread = null;
-        if (innerPathfindingThread.doNotMove) {
-            return;
-        }
-        if (character.minion != null || !character.IsInOwnParty() || character.isDefender || character.doNotDisturb > 0 || character.job == null || character.isWaitingForInteraction > 0) {
-            return; //if this character is not in own party, is a defender or is travelling or cannot be disturbed, do not generate interaction
-        }
-        if (_currentPath != null) {
-            //Messenger.AddListener<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, OnTileOccupied);
-            character.PrintLogIfActive("Created path for " + innerPathfindingThread.character.name + " from " + innerPathfindingThread.startingTile.ToString() + " to " + innerPathfindingThread.destinationTile.ToString());
-            if(character.currentAction != null) {
-                character.currentAction.UpdateTargetTile(innerPathfindingThread.destinationTile);
-            }
-            StartMovement();
-        } else {
-            Debug.LogError("Can't create path for " + innerPathfindingThread.character.name + " from " + innerPathfindingThread.startingTile.ToString() + " to " + innerPathfindingThread.destinationTile.ToString());
-        }
-    }
+    //public void ReceivePathFromPathfindingThread(InnerPathfindingThread innerPathfindingThread) {
+    //    _currentPath = innerPathfindingThread.path;
+    //    pathfindingThread = null;
+    //    if (innerPathfindingThread.doNotMove) {
+    //        return;
+    //    }
+    //    if (character.minion != null || !character.IsInOwnParty() || character.isDefender || character.doNotDisturb > 0 || character.job == null || character.isWaitingForInteraction > 0) {
+    //        return; //if this character is not in own party, is a defender or is travelling or cannot be disturbed, do not generate interaction
+    //    }
+    //    if (_currentPath != null) {
+    //        //Messenger.AddListener<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, OnTileOccupied);
+    //        character.PrintLogIfActive("Created path for " + innerPathfindingThread.character.name + " from " + innerPathfindingThread.startingTile.ToString() + " to " + innerPathfindingThread.destinationTile.ToString());
+    //        if(character.currentAction != null) {
+    //            character.currentAction.UpdateTargetTile(innerPathfindingThread.destinationTile);
+    //        }
+    //        StartMovement();
+    //    } else {
+    //        Debug.LogError("Can't create path for " + innerPathfindingThread.character.name + " from " + innerPathfindingThread.startingTile.ToString() + " to " + innerPathfindingThread.destinationTile.ToString());
+    //    }
+    //}
     /// <summary>
     /// Called when this marker needs to recalculate its path, usually because its current target tile is already occupied.
     /// </summary>
     /// <returns>Returns true if the character found another valid target tile.</returns>
-    private bool RecalculatePath(ref string pathRecalSummary) {
-        bool recalculationResult = false;
-        pathRecalSummary = GameManager.Instance.TodayLogString() + this.character.name + "'s marker must recalculate path towards " + _targetPOI.name + "!";
-        if (character.currentAction == null) {
-            Debug.LogError(character.name + " can't recalculate path because there is no current action!");
-            return false;
-        }
-        if (character.currentAction.poiTarget.gridTileLocation == null) {
-            Debug.LogWarning(character.name + " can't recalculate path because the target is either dead or no longer there!");
-            character.currentAction.FailAction();
-            return true;
-        }
-        LocationGridTile nearestTileToTarget = character.currentAction.GetTargetLocationTile();
-        //if (Messenger.eventTable.ContainsKey(Signals.TILE_OCCUPIED)) {
-        //    Messenger.RemoveListener<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, OnTileOccupied);
-        //}
+    //private bool RecalculatePath(ref string pathRecalSummary) {
+    //    bool recalculationResult = false;
+    //    pathRecalSummary = GameManager.Instance.TodayLogString() + this.character.name + "'s marker must recalculate path towards " + _targetPOI.name + "!";
+    //    if (character.currentAction == null) {
+    //        Debug.LogError(character.name + " can't recalculate path because there is no current action!");
+    //        return false;
+    //    }
+    //    if (character.currentAction.poiTarget.gridTileLocation == null) {
+    //        Debug.LogWarning(character.name + " can't recalculate path because the target is either dead or no longer there!");
+    //        character.currentAction.FailAction();
+    //        return true;
+    //    }
+    //    LocationGridTile nearestTileToTarget = character.currentAction.GetTargetLocationTile();
+    //    //if (Messenger.eventTable.ContainsKey(Signals.TILE_OCCUPIED)) {
+    //    //    Messenger.RemoveListener<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, OnTileOccupied);
+    //    //}
 
-        if (nearestTileToTarget != null) {
-            pathRecalSummary += "\nGot new target tile " + nearestTileToTarget.ToString() + ". Going there now.";
-            //if (currentMoveCoroutine != null) {
-            //    StopCoroutine(currentMoveCoroutine);
-            //}
-            shouldRecalculatePath = false;
-            GoToTile(nearestTileToTarget, _targetPOI, _arrivalAction);
-            recalculationResult = true;
-        } else {
-            //there is no longer any available tile for this character, continue towards last target tile.
-            //if the next tile is already occupied, stay at the current tile and drop the plan
-            pathRecalSummary += "\nCould not find new target tile. Continuing travel to original target tile.";
-            if (_currentPath != null && _currentPath.Count > 0) {
-                shouldRecalculatePath = false;
-                LocationGridTile nextTile = _currentPath[0];
-                if ((character.gridTileLocation.tileState == LocationGridTile.Tile_State.Occupied || (character.gridTileLocation.occupant != null && character.gridTileLocation.occupant != character)) || nextTile.isOccupied) {
-                    pathRecalSummary += "\nTile " + character.gridTileLocation.ToString() + " or " + nextTile.ToString() + " is occupied. Stopping movement and action.";
-                    character.currentAction.FailAction();
-                    recalculationResult = true;
-                }
-            } else if (character.gridTileLocation.tileState == LocationGridTile.Tile_State.Occupied || (character.gridTileLocation.occupant != null && character.gridTileLocation.occupant != character)) {
-                shouldRecalculatePath = false;
-                pathRecalSummary += "\nCurrent Tile " + character.gridTileLocation.ToString() + " is occupied. Stopping movement and action.";
-                character.currentAction.FailAction();
-                recalculationResult = true;
-            }
-        }
-        character.PrintLogIfActive(pathRecalSummary);
-        return recalculationResult;
-    }
+    //    if (nearestTileToTarget != null) {
+    //        pathRecalSummary += "\nGot new target tile " + nearestTileToTarget.ToString() + ". Going there now.";
+    //        //if (currentMoveCoroutine != null) {
+    //        //    StopCoroutine(currentMoveCoroutine);
+    //        //}
+    //        shouldRecalculatePath = false;
+    //        GoToTile(nearestTileToTarget, _targetPOI, _arrivalAction);
+    //        recalculationResult = true;
+    //    } else {
+    //        //there is no longer any available tile for this character, continue towards last target tile.
+    //        //if the next tile is already occupied, stay at the current tile and drop the plan
+    //        pathRecalSummary += "\nCould not find new target tile. Continuing travel to original target tile.";
+    //        if (_currentPath != null && _currentPath.Count > 0) {
+    //            shouldRecalculatePath = false;
+    //            LocationGridTile nextTile = _currentPath[0];
+    //            if ((character.gridTileLocation.tileState == LocationGridTile.Tile_State.Occupied || (character.gridTileLocation.occupant != null && character.gridTileLocation.occupant != character)) || nextTile.isOccupied) {
+    //                pathRecalSummary += "\nTile " + character.gridTileLocation.ToString() + " or " + nextTile.ToString() + " is occupied. Stopping movement and action.";
+    //                character.currentAction.FailAction();
+    //                recalculationResult = true;
+    //            }
+    //        } else if (character.gridTileLocation.tileState == LocationGridTile.Tile_State.Occupied || (character.gridTileLocation.occupant != null && character.gridTileLocation.occupant != character)) {
+    //            shouldRecalculatePath = false;
+    //            pathRecalSummary += "\nCurrent Tile " + character.gridTileLocation.ToString() + " is occupied. Stopping movement and action.";
+    //            character.currentAction.FailAction();
+    //            recalculationResult = true;
+    //        }
+    //    }
+    //    character.PrintLogIfActive(pathRecalSummary);
+    //    return recalculationResult;
+    //}
     /// <summary>
     /// Listener for when a grid tile has been occupied.
     /// </summary>
     /// <param name="currTile">The tile that was occupied.</param>
     /// <param name="poi">The object that occupied the tile.</param>
-    private void OnTileOccupied(LocationGridTile currTile, IPointOfInterest poi) {
-        if (destinationTile != null && currTile == destinationTile && poi != this.character) {
-            //shouldRecalculatePath = true;
-            /*
-             When location is **Nearby**, **Random Location**, **Random Location B** or **Near Target** and the character's target location becomes unavailable, 
-             he should be informed so that he may attempt to choose another valid location and update his pathfinding. 
-             If none is available, character will still attempt to go to last target tile.
-             */
-            if (this.character.currentAction != null) {
-                switch (this.character.currentAction.actionLocationType) {
-                    case ACTION_LOCATION_TYPE.NEARBY:
-                    case ACTION_LOCATION_TYPE.RANDOM_LOCATION:
-                    case ACTION_LOCATION_TYPE.RANDOM_LOCATION_B:
-                    case ACTION_LOCATION_TYPE.NEAR_TARGET:
-                    case ACTION_LOCATION_TYPE.ON_TARGET:
-                        shouldRecalculatePath = true;
-                        string recalculationSummary = string.Empty;
-                        try {
-                            RecalculatePath(ref recalculationSummary);
-                        } catch (Exception e) {
-                            throw new Exception(e.Message + "\nThere was a problem trying to recalculate path of " + this.character.name + "'s Marker. Recalculation Summary: \n" + recalculationSummary);
-                        }
-                        break;
-                    default:
-                        break;
-                }
-            }
-        }
-    }
+    //private void OnTileOccupied(LocationGridTile currTile, IPointOfInterest poi) {
+    //    if (destinationTile != null && currTile == destinationTile && poi != this.character) {
+    //        //shouldRecalculatePath = true;
+    //        /*
+    //         When location is **Nearby**, **Random Location**, **Random Location B** or **Near Target** and the character's target location becomes unavailable, 
+    //         he should be informed so that he may attempt to choose another valid location and update his pathfinding. 
+    //         If none is available, character will still attempt to go to last target tile.
+    //         */
+    //        if (this.character.currentAction != null) {
+    //            switch (this.character.currentAction.actionLocationType) {
+    //                case ACTION_LOCATION_TYPE.NEARBY:
+    //                case ACTION_LOCATION_TYPE.RANDOM_LOCATION:
+    //                case ACTION_LOCATION_TYPE.RANDOM_LOCATION_B:
+    //                case ACTION_LOCATION_TYPE.NEAR_TARGET:
+    //                case ACTION_LOCATION_TYPE.ON_TARGET:
+    //                    shouldRecalculatePath = true;
+    //                    string recalculationSummary = string.Empty;
+    //                    try {
+    //                        RecalculatePath(ref recalculationSummary);
+    //                    } catch (Exception e) {
+    //                        throw new Exception(e.Message + "\nThere was a problem trying to recalculate path of " + this.character.name + "'s Marker. Recalculation Summary: \n" + recalculationSummary);
+    //                    }
+    //                    break;
+    //                default:
+    //                    break;
+    //            }
+    //        }
+    //    }
+    //}
     public void SetDestination(Vector3 destination) {
         pathfindingAI.destination = destination;
         pathfindingAI.canSearch = true;
@@ -708,16 +798,6 @@ public class CharacterMarker : PooledObject {
     #endregion
 
     #region For Testing
-    private void ShowPath() {
-        if (character != null && _currentPath != null && character.specificLocation != null) {
-            character.specificLocation.areaMap.ShowPath(_currentPath);
-        }
-    }
-    private void HidePath() {
-        if (character != null && character.specificLocation != null) {
-            character.specificLocation.areaMap.HidePath();
-        }
-    }
     public void HighlightMarker(Color color) {
         colorHighlight.gameObject.SetActive(true);
         colorHighlight.color = color;
@@ -766,7 +846,7 @@ public class CharacterMarker : PooledObject {
         yield return null;
         animator.Play("Walk");
     }
-    private void PlayIdle() {
+    public void PlayIdle() {
         if (!this.gameObject.activeInHierarchy) {
             return;
         }
@@ -1017,7 +1097,7 @@ public class CharacterMarker : PooledObject {
         if (character.stateComponent.currentState == null || character.stateComponent.currentState.characterState != CHARACTER_STATE.FLEE) {
             return; //this is for cases that the character is no longer in a flee state, but the pathfinding thread returns a flee path
         }
-        Debug.Log(character.name + " computed a flee path!");
+        //Debug.Log(character.name + " computed a flee path!");
         StartMovement();
     }
     public void RedetermineFlee() {
@@ -1053,9 +1133,10 @@ public class CharacterMarker : PooledObject {
         //determine nearest hostile in range
         Character nearestHostile = GetNearestValidHostile();
         //set them as a target
-        SetTargetTransform(nearestHostile.marker.transform);
+        //SetTargetTransform(nearestHostile.marker.transform);
+        GoTo(nearestHostile);
         SetCurrentlyEngaging(nearestHostile);
-        StartMovement();
+        //StartMovement();
     }
     public void OnReachEngageTarget() {
         Debug.Log(character.name + " has reached engage target!");

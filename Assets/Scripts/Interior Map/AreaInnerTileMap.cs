@@ -1175,43 +1175,25 @@ public class AreaInnerTileMap : MonoBehaviour {
         tile.RemoveObjectHere();
         objectsTilemap.SetTile(tile.localPlace, null);
     }
-    public void RemoveCharacter(LocationGridTile tile, Character character) {
-        if (tile.occupant == character) {
-            tile.RemoveOccupant();
-        } 
-        //else {
-            //if (tile.charactersHere.Remove(character)) {
-            //    character.SetGridTileLocation(null);
-            //    if (tile.prefabHere != null) {
-            //        CharacterPortrait portrait = tile.prefabHere.GetComponent<CharacterPortrait>();
-            //        if (portrait != null) {
-            //            portrait.SetImageRaycastTargetState(true);
-            //        }
-            //        //ObjectPoolManager.Instance.DestroyObject(tile.prefabHere);
-            //        tile.SetPrefabHere(null);
-            //    }
-            //}
-        //}
-    }
     private void OnPlaceCharacterOnTile(Character character, LocationGridTile tile) {
         //Vector3 pos = new Vector3(tile.localPlace.x + 0.5f, tile.localPlace.y + 0.5f);
-        if (character.marker == null) {
-            Vector3 pos = tile.centeredLocalLocation;
-            GameObject portraitGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("CharacterMarker", pos, Quaternion.identity, objectsParent);
-            //RectTransform rect = portraitGO.transform as RectTransform;
-            portraitGO.transform.localPosition = pos;
-            character.SetCharacterMarker(portraitGO.GetComponent<CharacterMarker>());
-            character.marker.SetCharacter(character);
-            character.marker.SetHoverAction(character.ShowTileData, InteriorMapManager.Instance.HideTileData);
-            tile.SetOccupant(character);
-        } else {
+        //if (character.marker == null) {
+        //    Vector3 pos = tile.centeredLocalLocation;
+        //    GameObject portraitGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("CharacterMarker", pos, Quaternion.identity, objectsParent);
+        //    //RectTransform rect = portraitGO.transform as RectTransform;
+        //    portraitGO.transform.localPosition = pos;
+        //    character.SetCharacterMarker(portraitGO.GetComponent<CharacterMarker>());
+        //    character.marker.SetCharacter(character);
+        //    character.marker.SetHoverAction(character.ShowTileData, InteriorMapManager.Instance.HideTileData);
+        //    //tile.SetOccupant(character);
+        //} else {
             if (character.marker.gameObject.transform.parent != objectsParent) {
                 //This means that the character travelled to a different area
                 character.marker.gameObject.transform.SetParent(objectsParent);
                 character.marker.gameObject.transform.localPosition = tile.centeredLocalLocation;
                 character.marker.UpdatePosition();
             }
-        }
+        //}
 
         if (!character.marker.gameObject.activeSelf) {
             character.marker.gameObject.SetActive(true);
@@ -1241,10 +1223,6 @@ public class AreaInnerTileMap : MonoBehaviour {
         rect.anchoredPosition = pos;
         //tile.SetPrefabHere(go);
     }
-    /// <summary>
-    /// This is used to update tile objects with different active and inactive visuals
-    /// </summary>
-    /// <param name="obj"></param>
     public void UpdateTileObjectVisual(TileObject obj) {
         TileBase tileToUse = null;
         switch (obj.state) {
@@ -1259,6 +1237,31 @@ public class AreaInnerTileMap : MonoBehaviour {
                 break;
         }
         objectsTilemap.SetTile(obj.gridTileLocation.localPlace, tileToUse);
+    }
+    public void OnCharacterMovedTo(Character character, LocationGridTile to, LocationGridTile from) {
+        if (from == null) { 
+            //from is null (Usually happens on start up, should not happen otherwise)
+            to.AddCharacterHere(character);
+            to.structure.AddCharacterAtLocation(character);
+        } else {
+            if (to.structure == null) {
+                return; //quick fix for when the character is pushed to a tile with no structure
+            }
+            from.RemoveCharacterHere(character);
+            to.AddCharacterHere(character);
+            if (from.structure != to.structure) {
+                if (from.structure != null) {
+                    from.structure.RemoveCharacterAtLocation(character);
+                }
+                if (to.structure != null) {
+                    to.structure.AddCharacterAtLocation(character);
+                } else {
+                    throw new System.Exception(character.name + " is going to tile " + to.ToString() + " which does not have a structure!");
+                }
+                
+            }
+        }
+        
     }
     #endregion
 
@@ -1369,6 +1372,18 @@ public class AreaInnerTileMap : MonoBehaviour {
         return tiles;
 
     }
+    public List<LocationGridTile> GetAllWallTiles() {
+        List<LocationGridTile> walls = new List<LocationGridTile>();
+        for (int x = 0; x < map.GetUpperBound(0); x++) {
+            for (int y = 0; y < map.GetUpperBound(1); y++) {
+                LocationGridTile tile = map[x, y];
+                if (tile.tileType == LocationGridTile.Tile_Type.Wall) {
+                    walls.Add(tile);
+                }
+            }
+        }
+        return walls;
+    }
     #endregion
 
     #region Other
@@ -1423,7 +1438,7 @@ public class AreaInnerTileMap : MonoBehaviour {
                         continue;
                     }
                     LocationGridTile result = map[dx, dy];
-                    if ((!includeTilesInDifferentStructure && result.structure != centerTile.structure) || result.isOccupied) { continue; }
+                    if ((!includeTilesInDifferentStructure && result.structure != centerTile.structure) || result.isOccupied || result.charactersHere.Count > 0) { continue; }
                     tiles.Add(result);
                 }
             }

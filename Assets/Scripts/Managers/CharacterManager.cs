@@ -162,7 +162,8 @@ public class CharacterManager : MonoBehaviour {
     /*
      Create a new character, given a role, class and race.
          */
-    public Character CreateNewCharacter(CharacterRole role, RACE race, GENDER gender, Faction faction = null, Area homeLocation = null, Dwelling homeStructure = null, bool generateTraits = true) {
+    public Character CreateNewCharacter(CharacterRole role, RACE race, GENDER gender, Faction faction = null, 
+        Area homeLocation = null, Dwelling homeStructure = null) {
         Character newCharacter = null;
         if (role == CharacterRole.LEADER) {
             //If the role is leader, it must have a faction, so get the data for the class from the faction
@@ -180,30 +181,22 @@ public class CharacterManager : MonoBehaviour {
         party.CreateIcon();
         if(homeLocation != null) {
             party.icon.SetPosition(homeLocation.coreTile.transform.position);
-            newCharacter.MigrateHomeTo(homeLocation, false);
-            if (homeStructure != null) {
-                newCharacter.MigrateHomeStructureTo(homeStructure);
-            }
-            homeLocation.AddCharacterToLocation(party, null, true);
-            //if(newCharacter.homeStructure == null) {
-            //    homeLocation.AddCharacterToLocation(party, null, null, null, true);
-            //} else {
-            //    homeLocation.AddCharacterToLocation(party, newCharacter.homeStructure, null, null, true);
+            newCharacter.MigrateHomeTo(homeLocation, homeStructure, false);
+            //if (homeStructure != null) {
+            //    newCharacter.MigrateHomeStructureTo(homeStructure);
             //}
+            homeLocation.AddCharacterToLocation(party.owner, null, true);
         }
-        newCharacter.AddAwareness(newCharacter);
+        //newCharacter.AddAwareness(newCharacter);
 #endif
-        if (generateTraits) {
-            newCharacter.GenerateRandomTraits();
-        }
         newCharacter.CreateInitialTraitsByClass();
         //newCharacter.CreateInitialTraitsByRace();
         _allCharacters.Add(newCharacter);
-        //CheckForDuplicateIDs(newCharacter);
         Messenger.Broadcast(Signals.CHARACTER_CREATED, newCharacter);
         return newCharacter;
     }
-    public Character CreateNewCharacter(CharacterRole role, string className, RACE race, GENDER gender, Faction faction = null, Area homeLocation = null, bool generateTraits = true) {
+    public Character CreateNewCharacter(CharacterRole role, string className, RACE race, GENDER gender, Faction faction = null, 
+        Area homeLocation = null, Dwelling homeStructure = null) {
         Character newCharacter = new Character(role, className, race, gender);
         Party party = newCharacter.CreateOwnParty();
         if (faction != null) {
@@ -215,23 +208,14 @@ public class CharacterManager : MonoBehaviour {
         party.CreateIcon();
         if (homeLocation != null) {
             party.icon.SetPosition(homeLocation.coreTile.transform.position);
-            newCharacter.MigrateHomeTo(homeLocation, false);
-            //if (newCharacter.homeStructure == null) {
-            //    homeLocation.AddCharacterToLocation(party, null, null, null, true);
-            //} else {
-            //    homeLocation.AddCharacterToLocation(party, newCharacter.homeStructure, null, null, true);
-            //}
-            homeLocation.AddCharacterToLocation(party, null, true);
+            newCharacter.MigrateHomeTo(homeLocation, homeStructure, false);
+            homeLocation.AddCharacterToLocation(party.owner, null, true);
         }
-        newCharacter.AddAwareness(newCharacter);
+        //newCharacter.AddAwareness(newCharacter);
 #endif
-        if (generateTraits) {
-            newCharacter.GenerateRandomTraits();
-        }
         newCharacter.CreateInitialTraitsByClass();
         //newCharacter.CreateInitialTraitsByRace();
         _allCharacters.Add(newCharacter);
-        //CheckForDuplicateIDs(newCharacter);
         Messenger.Broadcast(Signals.CHARACTER_CREATED, newCharacter);
         return newCharacter;
     }
@@ -242,7 +226,7 @@ public class CharacterManager : MonoBehaviour {
         if (data.homeAreaID != -1) {
             Area homeArea = LandmarkManager.Instance.GetAreaByID(data.homeAreaID);
             if (homeArea != null) {
-                homeArea.AddResident(newCharacter, true);
+                homeArea.AddResident(newCharacter, null, true);
             }
         }
         Party party = newCharacter.CreateOwnParty();
@@ -251,30 +235,18 @@ public class CharacterManager : MonoBehaviour {
             if (currentLocation != null) {
 #if !WORLD_CREATION_TOOL
                 party.CreateIcon();
-                party.icon.SetPosition(currentLocation.coreTile.transform.position);            
+                party.icon.SetPosition(currentLocation.coreTile.transform.position);
 #endif
-                currentLocation.AddCharacterToLocation(party, null, true);
+                currentLocation.AddCharacterToLocation(party.owner, null, true);
             }
         }
-        newCharacter.AddAwareness(newCharacter);
-
-        if (data.equipmentData != null) {
-            for (int i = 0; i < data.equipmentData.Count; i++) {
-                string equipmentName = data.equipmentData[i];
-                Item currItem = ItemManager.Instance.CreateNewItemInstance(equipmentName);
-                if (currItem != null) {
-                    newCharacter.EquipItem(currItem);
-                }
-            }
-        }
+        //newCharacter.AddAwareness(newCharacter);
 
         if (data.level != 0) {
             newCharacter.SetLevel(data.level);
         }
 
-        newCharacter.GenerateRandomTraits();
         _allCharacters.Add(newCharacter);
-        //CheckForDuplicateIDs(newCharacter);
         Messenger.Broadcast(Signals.CHARACTER_CREATED, newCharacter);
         return newCharacter;
     }
@@ -318,9 +290,6 @@ public class CharacterManager : MonoBehaviour {
             }
         }
         identifierClasses.Add("All", classesDictionary);
-    }
-    public string GetRandomDeadlySinsClassName() {
-        return _sevenDeadlySinsClassNames[UnityEngine.Random.Range(0, _sevenDeadlySinsClassNames.Length)];
     }
     public string GetDeadlySinsClassNameFromRotation() {
         if (deadlySinsRotation.Count == 0) {
@@ -384,69 +353,29 @@ public class CharacterManager : MonoBehaviour {
             }
         }
     }
-    private void CheckForDuplicateIDs(Character createdCharacter) {
-        for (int i = 0; i < allCharacters.Count; i++) {
-            Character currCharacter = allCharacters[i];
-            if (currCharacter != createdCharacter) {
-                if (currCharacter.id == createdCharacter.id) {
-                    throw new System.Exception(currCharacter.name + " has same id as " + createdCharacter.name);
-                }
-            }
-        }
-    }
     public void GenerateInitialAwareness() {
         for (int i = 0; i < allCharacters.Count; i++) {
             Character character = allCharacters[i];
             character.AddInitialAwareness();
         }
     }
-    #endregion
-
-    #region Relationships
-    public void ChangePersonalRelationshipBetweenTwoCharacters(Character character1, Character character2, int amount) {
-        if(amount < 0) {
-            //negative
-            int range = amount * -1;
-            for (int i = 0; i < range; i++) {
-                Friend friendTrait1 = character1.GetFriendTraitWith(character2);
-                Friend friendTrait2 = character2.GetFriendTraitWith(character1);
-
-                Enemy enemyTrait1 = character1.GetEnemyTraitWith(character2);
-                Enemy enemyTrait2 = character2.GetEnemyTraitWith(character1);
-
-                if (friendTrait1 != null && friendTrait2 != null) {
-                    character1.RemoveTrait(friendTrait1);
-                    character2.RemoveTrait(friendTrait2);
-                } else if (enemyTrait1 == null && enemyTrait2 == null) {
-                    enemyTrait1 = new Enemy(character2);
-                    enemyTrait2 = new Enemy(character1);
-
-                    character1.AddTrait(enemyTrait1);
-                    character2.AddTrait(enemyTrait2);
-                }
-            }
-        }else if (amount > 0) {
-            //positive
-            for (int i = 0; i < amount; i++) {
-                Friend friendTrait1 = character1.GetFriendTraitWith(character2);
-                Friend friendTrait2 = character2.GetFriendTraitWith(character1);
-
-                Enemy enemyTrait1 = character1.GetEnemyTraitWith(character2);
-                Enemy enemyTrait2 = character2.GetEnemyTraitWith(character1);
-
-                if (enemyTrait1 != null && enemyTrait2 != null) {
-                    character1.RemoveTrait(enemyTrait1);
-                    character2.RemoveTrait(enemyTrait2);
-                } else if (friendTrait1 == null && friendTrait2 == null) {
-                    friendTrait1 = new Friend(character2);
-                    friendTrait2 = new Friend(character1);
-
-                    character1.AddTrait(friendTrait1);
-                    character2.AddTrait(friendTrait2);
+    public void PlaceInitialCharacters() {
+        for (int i = 0; i < allCharacters.Count; i++) {
+            Character character = allCharacters[i];
+            if (!character.isFactionless) {
+                character.CreateMarker();
+                if (character.homeStructure != null) {
+                    //place the character at a random unoccupied tile in his/her home
+                    List<LocationGridTile> choices = character.homeStructure.unoccupiedTiles;
+                    LocationGridTile chosenTile = choices[UnityEngine.Random.Range(0, choices.Count)];
+                    character.marker.PlaceMarkerAt(chosenTile);
                 }
             }
         }
     }
+    #endregion
+
+    #region Relationships
     public Trait CreateRelationshipTrait(RELATIONSHIP_TRAIT type, Character targetCharacter) {
         switch (type) {
             case RELATIONSHIP_TRAIT.ENEMY:

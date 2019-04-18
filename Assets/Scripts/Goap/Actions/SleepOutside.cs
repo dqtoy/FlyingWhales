@@ -17,12 +17,15 @@ public class SleepOutside : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = null, targetPOI = actor });
     }
     public override void PerformActualAction() {
-        if (targetTile != null) {
+        //if (targetTile != null) {
             SetState("Rest Success");
-        } else {
-            SetState("Rest Fail");
-        }
+        //} else {
+        //    SetState("Rest Fail");
+        //}
         base.PerformActualAction();
+    }
+    public override LocationGridTile GetTargetLocationTile() {
+        return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);
     }
     protected override int GetCost() {
         return 9;

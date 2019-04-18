@@ -18,7 +18,7 @@ public class Sleep : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = null, targetPOI = actor });
     }
     public override void PerformActualAction() {
-        if (poiTarget.gridTileLocation != null && actor.gridTileLocation == poiTarget.gridTileLocation) {
+        if (poiTarget.gridTileLocation != null && (actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation))) {
             if (poiTarget.state != POI_STATE.INACTIVE) {
                 SetState("Rest Success");
             } else {
@@ -64,11 +64,12 @@ public class Sleep : GoapAction {
         }
         LocationGridTile knownLoc = awareness.knownGridLocation;
         if (targetStructure.structureType == STRUCTURE_TYPE.DWELLING && knownLoc != null && poiTarget.state != POI_STATE.INACTIVE) {
-            if(knownLoc.occupant == null) {
-                return true;
-            } else if (knownLoc.occupant == actor) {
-                return true;
-            }
+            //if(knownLoc.occupant == null) {
+            //    return true;
+            //} else if (knownLoc.occupant == actor) {
+            //    return true;
+            //}
+            return true;
         }
         return false;
     }

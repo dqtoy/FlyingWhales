@@ -1,4 +1,5 @@
 ﻿using Pathfinding;
+using Pathfinding.RVO;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -134,7 +135,11 @@ public class InteriorMapManager : MonoBehaviour {
         gg.center = pos;
         gg.collision.use2D = true;
         gg.collision.type = ColliderType.Sphere;
-        gg.collision.diameter = 1f;
+        if (newMap.area.areaType == AREA_TYPE.DUNGEON) {
+            gg.collision.diameter = 2f;
+        } else {
+            gg.collision.diameter = 1f;
+        }
         gg.collision.mask = LayerMask.GetMask("Unpassable");
         AstarPath.active.Scan(gg);
     }
@@ -157,6 +162,32 @@ public class InteriorMapManager : MonoBehaviour {
         }
         return false;
     }
+
+    #region Local Avoidance
+    public void RegisterObstacles() {
+        Pathfinding.RVO.Simulator sim = (FindObjectOfType(typeof(RVOSimulator)) as RVOSimulator).GetSimulator();
+        for (int i = 0; i < areaMaps.Count; i++) {
+            AreaInnerTileMap map = areaMaps[i];
+            //get all wall tiles
+            List<LocationGridTile> walls = map.GetAllWallTiles();
+            for (int j = 0; j < walls.Count; j++) {
+                LocationGridTile wall = walls[j];
+                Vector3[] verts = wall.GetVertices();
+                for (int k = 0; k < verts.Length; k++) {
+                    Vector3 currVert = verts[k];
+                    int nextVertIndex = k + 1;
+                    if (nextVertIndex == verts.Length) {
+                        nextVertIndex = 0;
+                    }
+                    sim.AddObstacle(currVert, verts[nextVertIndex], 1f);
+                }
+
+                //sim.AddObstacle(verts, 2);
+            }
+        }
+    }
+    #endregion
+
 
     #region Structure Templates
     public List<StructureTemplate> GetStructureTemplates(STRUCTURE_TYPE structure) {
@@ -255,7 +286,7 @@ public class InteriorMapManager : MonoBehaviour {
                 summary += "None";
             }
         }
-        summary += "\nOccupant: " + tile.occupant?.name ?? "None";        
+        //summary += "\nOccupant: " + tile.occupant?.name ?? "None";        
 
         //if (tile.structure != null) {
         summary += "\nStructure: " + tile.structure?.ToString() ?? "None";

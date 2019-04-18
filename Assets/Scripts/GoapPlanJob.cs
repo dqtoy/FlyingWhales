@@ -75,6 +75,7 @@ public class GoapPlanJob : JobQueueItem {
     protected override bool CanTakeJob(Character character) {
         if(targetPOI == null) {
             Debug.Log("null target");
+            return true;
         }
         if(targetPOI.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
             Character target = targetPOI as Character;

@@ -171,22 +171,21 @@ public class GoapAction {
         plan.SetPlanState(GOAP_PLAN_STATE.IN_PROGRESS);
         Messenger.Broadcast(Signals.CHARACTER_DOING_ACTION, actor, this);
 
-        //if the current target is a character, make him/her wait for this action
         Character targetCharacter = null;
         if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
             if((poiTarget as Character) != actor) {
                 targetCharacter = poiTarget as Character;
-                string log = actor.name + " is planning to do something to " + targetCharacter.name + " at " + actor.specificLocation.name;
-                //GameManager.Instance.SetPausedState(true);
-                if (targetCharacter.ownParty.icon != null && targetCharacter.ownParty.icon.isTravelling && targetCharacter.ownParty.icon.travelLine == null) {
-                    targetCharacter.marker.StopMovement(() => MoveToDoAction(plan, targetCharacter));
-                    log += "\n- " + targetCharacter.name + " is currently travelling, stopping movement";
-                    Debug.LogWarning(log);
-                    return;
-                } else {
-                    log += "\n- " + targetCharacter.name + " is not travelling, actor is moving towards it...";
-                    Debug.LogWarning(log);
-                }
+                //string log = actor.name + " is planning to do something to " + targetCharacter.name + " at " + actor.specificLocation.name;
+                ////GameManager.Instance.SetPausedState(true);
+                //if (targetCharacter.ownParty.icon != null && targetCharacter.ownParty.icon.isTravelling && targetCharacter.ownParty.icon.travelLine == null) {
+                //    targetCharacter.marker.StopMovement(() => MoveToDoAction(plan, targetCharacter));
+                //    log += "\n- " + targetCharacter.name + " is currently travelling, stopping movement";
+                //    Debug.LogWarning(log);
+                //    return;
+                //} else {
+                //    log += "\n- " + targetCharacter.name + " is not travelling, actor is moving towards it...";
+                //    Debug.LogWarning(log);
+                //}
 
             }
         }
@@ -210,10 +209,12 @@ public class GoapAction {
             } else {
                 knownTargetLocation = poiTarget.gridTileLocation;
             }
-        } else {
-            knownTargetLocation = poiTarget.gridTileLocation;
+            return InteractionManager.Instance.GetTargetLocationTile(ACTION_LOCATION_TYPE.NEAR_TARGET, actor, knownTargetLocation, targetStructure);
         }
-        return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, knownTargetLocation, targetStructure);
+        //else {
+        //    knownTargetLocation = poiTarget.gridTileLocation;
+        //}
+        return null;
     }
     public virtual void SetTargetStructure() {
         if(targetStructure != null) {
@@ -320,6 +321,12 @@ public class GoapAction {
         isStopped = state;
     }
     public int GetDistanceCost() {
+        if (actor.specificLocation == null) {
+            throw new Exception(actor.name + " specific location is null!");
+        }
+        if (targetStructure == null) {
+            throw new Exception(actor.name + "'s target structure in " + goapName + " is null!");
+        }
         if (actor.specificLocation != targetStructure.location) {
             return 3;
         } else {
@@ -355,27 +362,30 @@ public class GoapAction {
     /// This is used by the character marker so that when it recalculates a path, his/her current action is updated.
     /// </summary>
     /// <param name="targetTile">The new target tile.</param>
-    public void UpdateTargetTile(LocationGridTile targetTile) {
-        this.targetTile = targetTile;
-    }
     public void SetExecutionDate(GameDate date) {
         executionDate = date;
     }
     private void MoveToDoAction(GoapPlan plan, Character targetCharacter) {
-        if(targetCharacter != null) {
-            targetCharacter.AdjustIsWaitingForInteraction(1);
-            targetCharacter.OnTargettedByAction(this);
-            if (targetCharacter.currentAction != null && !targetCharacter.currentAction.isPerformingActualAction && !targetCharacter.currentAction.isDone) {
-                targetCharacter.SetCurrentAction(null);
-                //log += "\n- " + targetCharacter.name + " is not performing actual action setting current action to null...";
-            }
-        }
+        //if(targetCharacter != null) {
+        //    targetCharacter.AdjustIsWaitingForInteraction(1);
+        //    targetCharacter.OnTargettedByAction(this);
+        //    if (targetCharacter.currentAction != null && !targetCharacter.currentAction.isPerformingActualAction && !targetCharacter.currentAction.isDone) {
+        //        targetCharacter.SetCurrentAction(null);
+        //        //log += "\n- " + targetCharacter.name + " is not performing actual action setting current action to null...";
+        //    }
+        //}
         //if the actor is NOT at the area where the target structure is, make him/her go there first.
         if (actor.specificLocation != targetStructure.location) {
-            actor.currentParty.GoToLocation(targetStructure.location, PATHFINDING_MODE.NORMAL, targetStructure, () => actor.PerformGoapAction(plan), null, null, poiTarget, targetTile);
+            actor.currentParty.GoToLocation(targetStructure.location, PATHFINDING_MODE.NORMAL, targetStructure, () => actor.PerformGoapAction(plan), null, poiTarget, targetTile);
         } else {
             //if the actor is already at the area where the target structure is, just make the actor move to the specified target structure (ususally the structure where the poiTarget is at).
-            actor.MoveToAnotherStructure(targetStructure, targetTile, poiTarget, () => actor.PerformGoapAction(plan));
+            //actor.MoveToAnotherStructure(targetStructure, targetTile, poiTarget, () => actor.PerformGoapAction(plan));
+            if (targetTile != null) {
+                actor.marker.GoTo(targetTile, poiTarget, () => actor.PerformGoapAction(plan));
+            } else {
+                actor.marker.GoTo(poiTarget, () => actor.PerformGoapAction(plan));
+            }
+
             //actor.PerformGoapAction(plan);
         }
     }

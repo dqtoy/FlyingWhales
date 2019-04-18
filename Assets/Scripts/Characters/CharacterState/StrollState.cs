@@ -25,7 +25,9 @@ public class StrollState : CharacterState {
     #endregion
 
     private void StartStrollMovement() {
-        stateComponent.character.marker.GoToTile(PickRandomTileToGoTo(), stateComponent.character, () => StartStrollMovement());
+        LocationGridTile target = PickRandomTileToGoTo();
+        stateComponent.character.marker.GoTo(target, stateComponent.character, () => StartStrollMovement());
+        //Debug.Log(stateComponent.character.name + " will stroll to " + target.ToString());
     }
     private LocationGridTile PickRandomTileToGoTo() {
         List<LocationGridTile> tiles = stateComponent.character.gridTileLocation.structure.location.areaMap.GetUnoccupiedTilesInRadius(stateComponent.character.gridTileLocation, 3);

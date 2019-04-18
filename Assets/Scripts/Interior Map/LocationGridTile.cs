@@ -31,11 +31,10 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     public LocationStructure structure { get; private set; }
     public Dictionary<TileNeighbourDirection, LocationGridTile> neighbours { get; private set; }
     public List<LocationGridTile> neighbourList { get; private set; }
-    public GameObject prefabHere { get; private set; } //if there is a prefab that was instantiated at this tiles location
     public IPointOfInterest objHere { get; private set; }
     public List<Character> charactersHere { get; private set; }
-    public Character occupant { get; private set; }
-    public bool isOccupied { get { return tileState == Tile_State.Occupied || occupant != null; } }
+    //public Character occupant { get; private set; }
+    public bool isOccupied { get { return tileState == Tile_State.Occupied; } }
     public bool isEdge { get; private set; }
 
     public List<LocationGridTile> ValidTiles { get { return FourNeighbours().Where(o => o.tileType == Tile_Type.Empty || o.tileType == Tile_Type.Gate || o.tileType == Tile_Type.Road).ToList(); } }
@@ -187,6 +186,17 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     }
     #endregion
 
+    #region Characters
+    public void AddCharacterHere(Character character) {
+        if (!charactersHere.Contains(character)) {
+            charactersHere.Add(character);
+        }
+    }
+    public void RemoveCharacterHere(Character character) {
+        charactersHere.Remove(character);
+    }
+    #endregion
+
     #region Points of Interest
     public void SetObjectHere(IPointOfInterest poi) {
         objHere = poi;
@@ -207,14 +217,6 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     #endregion
 
     #region Utilities
-    public bool HasOutsideNeighbour() {
-        foreach (KeyValuePair<TileNeighbourDirection, LocationGridTile> kvp in neighbours) {
-            if (!kvp.Value.isInside) {
-                return true;
-            }
-        }
-        return false;
-    }
     public bool IsAtEdgeOfMap() {
         TileNeighbourDirection[] dirs = Utilities.GetEnumValues<TileNeighbourDirection>();
         for (int i = 0; i < dirs.Length; i++) {
@@ -288,29 +290,9 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         }
         return false;
     }
-    public void SetOccupant(Character character) {
-        occupant = character;
-        character.SetGridTileLocation(this);
-        //Debug.LogWarning("Tile occupied signal fired for tile " + ToString() + " by " + character.name + " because the character is now its occupant");
-        Messenger.Broadcast<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, this, occupant);
-    }
-    public void RemoveOccupant() {
-        if (occupant != null) {
-            //occupant.SetGridTileLocation(null);
-            occupant = null;
-            //if (prefabHere != null) {
-            //    CharacterPortrait portrait = prefabHere.GetComponent<CharacterPortrait>();
-            //    if (portrait != null) {
-            //        portrait.SetImageRaycastTargetState(true);
-            //    }
-            //    //ObjectPoolManager.Instance.DestroyObject(tile.prefabHere);
-            //    SetPrefabHere(null);
-            //}
-        }
-    }
     public bool IsAdjacentTo(IPointOfInterest poi) {
         foreach (KeyValuePair<TileNeighbourDirection, LocationGridTile> keyValuePair in neighbours) {
-            if (keyValuePair.Value.objHere == poi || keyValuePair.Value.occupant == poi) {
+            if (keyValuePair.Value.objHere == poi) {
                 return true;
             }
         }
@@ -318,8 +300,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     }
     public bool IsAdjacentTo(System.Type type) {
         foreach (KeyValuePair<TileNeighbourDirection, LocationGridTile> keyValuePair in neighbours) {
-            if ((keyValuePair.Value.objHere != null && keyValuePair.Value.objHere.GetType() == type)
-                || (keyValuePair.Value.occupant != null && keyValuePair.Value.occupant.GetType() == type)) {
+            if ((keyValuePair.Value.objHere != null && keyValuePair.Value.objHere.GetType() == type)) {
                 return true;
             }
         }
@@ -382,16 +363,6 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         }
         return true;
     }
-    public bool HasStructureOfTypeInRadius(List<STRUCTURE_TYPE> types, int radius) {
-        List<LocationGridTile> tiles = parentAreaMap.GetTilesInRadius(this, radius, false, true);
-        for (int i = 0; i < tiles.Count; i++) {
-            LocationGridTile currTile = tiles[i];
-            if (currTile.structure != null && types.Contains(currTile.structure.structureType)) {
-                return true;
-            }
-        }
-        return false;
-    }
     public bool HasStructureOfTypeHorizontally(List<STRUCTURE_TYPE> types, int range) {
         List<LocationGridTile> tiles = new List<LocationGridTile>();
         if (range > 0) {
@@ -449,6 +420,17 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         }
         return null;
     }
+    public Vector3[] GetVertices() {
+        Vector3[] vertices = new Vector3[4];
+        float allowance = 0.15f;
+        float adjustment = 0.5f + allowance;
+
+        vertices[0] = new Vector3(centeredWorldLocation.x - adjustment, centeredWorldLocation.y + adjustment, 0f); //top left corner
+        vertices[1] = new Vector3(centeredWorldLocation.x + adjustment, centeredWorldLocation.y + adjustment, 0f); //top right corner
+        vertices[2] = new Vector3(centeredWorldLocation.x + adjustment, centeredWorldLocation.y - adjustment, 0f); //bot right corner
+        vertices[3] = new Vector3(centeredWorldLocation.x - adjustment, centeredWorldLocation.y - adjustment, 0f); //bot left corner
+        return vertices;
+    }
     #endregion
 
     #region Intel
@@ -489,9 +471,10 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
             }
         } else if (objHere is Character) {
             UIManager.Instance.ShowCharacterInfo((objHere as Character));
-        } else if (occupant != null) {
-            UIManager.Instance.ShowCharacterInfo(occupant);
         }
+        //else if (occupant != null) {
+        //    UIManager.Instance.ShowCharacterInfo(occupant);
+        //}
     }
     #endregion    
 }

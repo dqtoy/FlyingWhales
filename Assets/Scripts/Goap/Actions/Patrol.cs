@@ -20,11 +20,11 @@ public class Patrol : GoapAction {
     //    AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.NONE, targetPOI = actor });
     //}
     public override void PerformActualAction() {
-        if (targetTile != null) {
+        //if (targetTile != null) {
             SetState("Patrol Success");
-        } else {
-            SetState("Patrol Fail");
-        }
+        //} else {
+        //    SetState("Patrol Fail");
+        //}
         base.PerformActualAction();
     }
     protected override int GetCost() {

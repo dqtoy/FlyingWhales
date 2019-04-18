@@ -38,7 +38,6 @@ public class BaseLandmark : ILocation {
     //protected List<Secret> _secrets;
     protected List<Token> _tokens;
     protected List<string> _encounters;
-    protected List<Interaction> _currentInteractions;
     protected Dictionary<Character, GameDate> _characterTraces; //Lasts for 60 days
     protected Dictionary<int, Combat> _combatHistory;
     protected Dictionary<RESOURCE, int> _resourceInventory;
@@ -106,9 +105,6 @@ public class BaseLandmark : ILocation {
     public List<Token> tokens {
         get { return _tokens; }
     }
-    public List<Interaction> currentInteractions {
-        get { return _currentInteractions; }
-    }
     public List<HexTile> wallTiles {
         get { return _wallTiles; }
     }
@@ -163,7 +159,6 @@ public class BaseLandmark : ILocation {
         //_secrets = new List<Secret>();
         _tokens = new List<Token>();
         _encounters = new List<string>();
-        _currentInteractions = new List<Interaction>();
         _combatHistory = new Dictionary<int, Combat>();
         _characterTraces = new Dictionary<Character, GameDate>();
         _assaultParties = new List<Party>();
@@ -1005,33 +1000,6 @@ public class BaseLandmark : ILocation {
     ////    this.maxDefenderCount = count;
     ////}
     //#endregion
-
-    #region Interactions
-    public void ConstructInitialInteractions() {
-        //_landmarkInvestigation = new LandmarkInvestigation(this);
-        //Interaction investigateInteraction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.INVESTIGATE, this);
-        //Interaction pointOfInterest1 = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.ABANDONED_HOUSE, this);
-        //Interaction pointOfInterest2 = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.UNEXPLORED_CAVE, this);
-        //AddInteraction(investigateInteraction);
-        //AddInteraction(pointOfInterest1);
-        //AddInteraction(pointOfInterest2);
-    }
-    public void AddInteraction(Interaction interaction) {
-        tileLocation.areaOfTile.AddInteraction(interaction);
-    }
-    public void RemoveInteraction(Interaction interaction) {
-        tileLocation.areaOfTile.RemoveInteraction(interaction);
-    }
-    public Interaction GetInteractionOfType(INTERACTION_TYPE type) {
-        for (int i = 0; i < _currentInteractions.Count; i++) {
-            Interaction currInteraction = _currentInteractions[i];
-            if (currInteraction.type == type) {
-                return currInteraction;
-            }
-        }
-        return null;
-    }
-    #endregion
 
     //#region Buffs
     //public void AddDefenderBuff(Buff buff) {

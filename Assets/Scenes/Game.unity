@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.1273174, g: 0.13414761, b: 0.12107885, a: 1}
+  m_IndirectSpecularColor: {r: 0.12731749, g: 0.13414757, b: 0.1210787, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -37470,15 +37470,6 @@ MonoBehaviour:
   historyScrollView: {fileID: 1953266817}
   evenLogColor: {r: 0.18039216, g: 0.16078432, b: 0.28627452, a: 1}
   oddLogColor: {r: 0.39215687, g: 0.3647059, b: 0.43529412, a: 1}
-  defenderSlots:
-  - {fileID: 1107691116}
-  - {fileID: 1600607900}
-  - {fileID: 1356511785}
-  - {fileID: 1512454349}
-  defenderGroupPrefab: {fileID: 1662102530042056, guid: c05e125abbaae31498da82dac4e008dd,
-    type: 2}
-  defendersScrollView: {fileID: 308350276}
-  defendersLayout: {fileID: 0}
   investigationGO: {fileID: 1044067739}
   minionAssignmentGO: {fileID: 1734725569}
   minionAssignmentPortrait: {fileID: 1033307594}
@@ -44687,12 +44678,6 @@ RectTransform:
   m_PrefabParentObject: {fileID: 224572432994399424, guid: 2975c486214c95b4ab5eed6af62fba90,
     type: 2}
   m_PrefabInternal: {fileID: 1107691114}
---- !u!114 &1107691116 stripped
-MonoBehaviour:
-  m_PrefabParentObject: {fileID: 114057165036951230, guid: 2975c486214c95b4ab5eed6af62fba90,
-    type: 2}
-  m_PrefabInternal: {fileID: 1107691114}
-  m_Script: {fileID: 11500000, guid: 8370b761999c6be4ab5d35814b6aaf87, type: 3}
 --- !u!1 &1108979247
 GameObject:
   m_ObjectHideFlags: 0
@@ -56049,12 +56034,6 @@ RectTransform:
   m_PrefabParentObject: {fileID: 224572432994399424, guid: 2975c486214c95b4ab5eed6af62fba90,
     type: 2}
   m_PrefabInternal: {fileID: 1356511783}
---- !u!114 &1356511785 stripped
-MonoBehaviour:
-  m_PrefabParentObject: {fileID: 114057165036951230, guid: 2975c486214c95b4ab5eed6af62fba90,
-    type: 2}
-  m_PrefabInternal: {fileID: 1356511783}
-  m_Script: {fileID: 11500000, guid: 8370b761999c6be4ab5d35814b6aaf87, type: 3}
 --- !u!1 &1358293121
 GameObject:
   m_ObjectHideFlags: 0
@@ -63755,12 +63734,6 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 2975c486214c95b4ab5eed6af62fba90, type: 2}
   m_IsPrefabParent: 0
---- !u!114 &1512454349 stripped
-MonoBehaviour:
-  m_PrefabParentObject: {fileID: 114057165036951230, guid: 2975c486214c95b4ab5eed6af62fba90,
-    type: 2}
-  m_PrefabInternal: {fileID: 1512454348}
-  m_Script: {fileID: 11500000, guid: 8370b761999c6be4ab5d35814b6aaf87, type: 3}
 --- !u!224 &1512454350 stripped
 RectTransform:
   m_PrefabParentObject: {fileID: 224572432994399424, guid: 2975c486214c95b4ab5eed6af62fba90,
@@ -64725,6 +64698,7 @@ GameObject:
   - component: {fileID: 1536722383}
   - component: {fileID: 1536722384}
   - component: {fileID: 1536722385}
+  - component: {fileID: 1536722386}
   m_Layer: 14
   m_Name: InteriorAreaMaps
   m_TagString: Untagged
@@ -64816,6 +64790,24 @@ MonoBehaviour:
     pivotPointRoot: {fileID: 0}
     spreadOutCount: 1
   showGraphs: 1
+--- !u!114 &1536722386
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1536722382}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1764de1de43cc4d19af52679d3eaae06, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 1
+  desiredSimulationFPS: 20
+  workerThreads: 3
+  doubleBuffering: 0
+  symmetryBreakingBias: 0.1
+  movementPlane: 1
+  drawObstacles: 1
 --- !u!1 &1538310601
 GameObject:
   m_ObjectHideFlags: 0
@@ -67303,12 +67295,6 @@ RectTransform:
   m_PrefabParentObject: {fileID: 224572432994399424, guid: 2975c486214c95b4ab5eed6af62fba90,
     type: 2}
   m_PrefabInternal: {fileID: 1600607898}
---- !u!114 &1600607900 stripped
-MonoBehaviour:
-  m_PrefabParentObject: {fileID: 114057165036951230, guid: 2975c486214c95b4ab5eed6af62fba90,
-    type: 2}
-  m_PrefabInternal: {fileID: 1600607898}
-  m_Script: {fileID: 11500000, guid: 8370b761999c6be4ab5d35814b6aaf87, type: 3}
 --- !u!1 &1606410955
 GameObject:
   m_ObjectHideFlags: 0

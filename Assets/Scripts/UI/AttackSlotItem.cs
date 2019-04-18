@@ -30,9 +30,6 @@ public class AttackSlotItem : MonoBehaviour {
         PlayerUI.Instance.HideCombatGrid();
         UpdateVisuals();
     }
-    public void OnClickAttack() {
-        PlayerManager.Instance.AttackLandmark(UIManager.Instance.areaInfoUI.activeArea);
-    }
     private bool CanAssignCharacterToAttack(Character character) {
         return PlayerManager.Instance.player.CanAssignCharacterToAttack(character);
     }

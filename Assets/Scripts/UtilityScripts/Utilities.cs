@@ -27,7 +27,7 @@ public class Utilities : MonoBehaviour {
     public static int lastPartyID = 0;
     public static int lastSquadID = 0;
     public static int lastCharacterSimID = 0;
-    public static int lastInteractionID = 0;
+    //public static int lastInteractionID = 0;
     public static int lastTileObjectID = 0;
 
     public static float defenseBuff = 1.20f;
@@ -86,10 +86,12 @@ public class Utilities : MonoBehaviour {
         } else if (obj is CharacterSim) {
             lastCharacterSimID += 1;
             return lastCharacterSimID;
-        } else if (obj is Interaction) {
-            lastInteractionID += 1;
-            return lastInteractionID;
-        } else if (obj is TileObject) {
+        } 
+        //else if (obj is Interaction) {
+        //    lastInteractionID += 1;
+        //    return lastInteractionID;
+        //} 
+        else if (obj is TileObject) {
             lastTileObjectID += 1;
             return lastTileObjectID;
         }
@@ -118,9 +120,10 @@ public class Utilities : MonoBehaviour {
             lastSquadID = idToUse;
         } else if (obj is CharacterSim) {
             lastCharacterSimID = idToUse;
-        } else if (obj is Interaction) {
-            lastInteractionID = idToUse;
-        }
+        } 
+        //else if (obj is Interaction) {
+        //    lastInteractionID = idToUse;
+        //}
         return idToUse;
     }
 

@@ -25,7 +25,7 @@ public class HuntState : CharacterState {
             if (goapAction.targetTile != null) {
                 goapAction.CreateStates();
                 stateComponent.character.SetCurrentAction(goapAction);
-                stateComponent.character.marker.GoToTile(goapAction.targetTile, targetPOI, () => OnArriveAtCorpseLocation());
+                stateComponent.character.marker.GoTo(goapAction.targetTile, targetPOI, () => OnArriveAtCorpseLocation());
             } else {
                 Debug.LogWarning(GameManager.Instance.TodayLogString() + " " + stateComponent.character.name + " can't eat corpse " + targetPOI.name + " because there is no tile to go to!");
             }
@@ -44,7 +44,7 @@ public class HuntState : CharacterState {
         StartHuntMovement();
     }
     private void StartHuntMovement() {
-        stateComponent.character.marker.GoToTile(PickRandomTileToGoTo(), stateComponent.character, () => StartHuntMovement());
+        stateComponent.character.marker.GoTo(PickRandomTileToGoTo(), stateComponent.character, () => StartHuntMovement());
     }
     private LocationGridTile PickRandomTileToGoTo() {
         LocationStructure chosenStructure = stateComponent.character.specificLocation.GetRandomStructure();

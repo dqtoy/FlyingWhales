@@ -7,12 +7,9 @@ using UnityEngine;
 public class Area {
 
     public int id { get; private set; }
-    public int supplyCapacity { get; private set; }
     public string name { get; private set; }
     public bool isHighlighted { get; private set; }
     public bool hasBeenInspected { get; private set; }
-    public bool areAllLandmarksDead { get; private set; }
-    public bool stopDefaultAllExistingInteractions { get; private set; }
     public bool isDead { get; private set; }
     public AREA_TYPE areaType { get; private set; }
     public HexTile coreTile { get; private set; }
@@ -20,7 +17,6 @@ public class Area {
     public Faction owner { get; private set; }
     public Faction previousOwner { get; private set; }
     public Area attackTarget { get; private set; }
-    public AreaInvestigation areaInvestigation { get; private set; }
     public LocationToken locationToken { get; private set; }
     public DefenderToken defenderToken { get; private set; }
     public List<HexTile> tiles { get; private set; }
@@ -31,8 +27,6 @@ public class Area {
     public List<Character> charactersAtLocation { get; private set; }
     public List<Character> attackCharacters { get; private set; }
     public List<Log> history { get; private set; }
-    public List<Interaction> currentInteractions { get; private set; }
-    public Dictionary<INTERACTION_TYPE, int> areaTasksInteractionWeights { get; private set; }
     public int initialResidents { get; private set; }
     public int monthlyActions { get; private set; }
     public JobQueue jobQueue { get; private set; }
@@ -40,12 +34,10 @@ public class Area {
     //defenders
     public int maxDefenderGroups { get; private set; }
     public int initialDefenderGroups { get; private set; }
-    public List<DefenderGroup> defenderGroups { get; private set; }
     public List<RACE> possibleOccupants { get; private set; }
     public List<InitialRaceSetup> initialSpawnSetup { get; private set; } //only to be used when unoccupied
     public Dictionary<JOB, List<INTERACTION_TYPE>> jobInteractionTypes { get; private set; }
     public int monthlySupply { get; private set; }
-    public List<Interaction> eventsTargettingThis { get; private set; }
 
     //special tokens
     public List<SpecialToken> possibleSpecialTokenSpawns { get; private set; }
@@ -87,10 +79,6 @@ public class Area {
     }
     public List<Character> visitors {
         get { return charactersAtLocation.Where(x => !areaResidents.Contains(x)).ToList(); }
-    }
-    public int offenseTaskWeightMultiplier {
-        get { return _offenseTaskWeightMultiplier; }
-        set { _offenseTaskWeightMultiplier = value; }
     }
     public int suppliesInBank {
         get {
@@ -137,16 +125,12 @@ public class Area {
         charactersAtLocation = new List<Character>();
         exposedTiles = new List<BaseLandmark>();
         unexposedTiles = new List<BaseLandmark>();
-        defenderGroups = new List<DefenderGroup>();
         history = new List<Log>();
-        currentInteractions = new List<Interaction>();
         areaColor = UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
         locationToken = new LocationToken(this);
         defenderToken = new DefenderToken(this);
-        areaInvestigation = new AreaInvestigation(this);
         jobInteractionTypes = new Dictionary<JOB, List<INTERACTION_TYPE>>();
         initialSpawnSetup = new List<InitialRaceSetup>();
-        eventsTargettingThis = new List<Interaction>();
         supplyLog = new List<string>();
         defaultRace = new Race(RACE.HUMANS, RACE_SUB_TYPE.NORMAL);
         possibleSpecialTokenSpawns = new List<SpecialToken>();
@@ -157,19 +141,12 @@ public class Area {
         SetMonthlyActions(2);
         SetAreaType(areaType);
         SetCoreTile(coreTile);
-        //SetSupplyCapacity(1000);
         AddTile(coreTile);
-        //SetSuppliesInBank(1000);
-        //if (areaType != AREA_TYPE.DEMONIC_INTRUSION) {
-        //    Messenger.AddListener(Signals.DAY_ENDED_2, DefaultAllExistingInteractions);
-        //}
 #if !WORLD_CREATION_TOOL
-        ConstructAreaTasksInteractionWeights();
         //StartSupplyLine();
 #endif
         nameplatePos = LandmarkManager.Instance.GetAreaNameplatePosition(this);
         possibleOccupants = new List<RACE>();
-        //SubscribeToSignals();
     }
     public Area(AreaSaveData data) {
         id = Utilities.SetID(this, data.areaID);
@@ -179,16 +156,12 @@ public class Area {
         charactersAtLocation = new List<Character>();
         exposedTiles = new List<BaseLandmark>();
         unexposedTiles = new List<BaseLandmark>();
-        defenderGroups = new List<DefenderGroup>();
         history = new List<Log>();
-        currentInteractions = new List<Interaction>();
         areaColor = data.areaColor;
         SetAreaType(data.areaType);
         locationToken = new LocationToken(this);
         defenderToken = new DefenderToken(this);
-        areaInvestigation = new AreaInvestigation(this);
         jobInteractionTypes = new Dictionary<JOB, List<INTERACTION_TYPE>>();
-        eventsTargettingThis = new List<Interaction>();
         charactersAtLocationHistory = new List<string>();
         possibleSpecialTokenSpawns = new List<SpecialToken>();
         supplyLog = new List<string>();
@@ -199,9 +172,6 @@ public class Area {
             initialSpawnSetup = new List<InitialRaceSetup>();
         }
         SetDungeonSupplyRange(data.dungeonSupplyRangeMin, data.dungeonSupplyRangeMax);
-        SetMaxDefenderGroups(data.maxDefenderGroups);
-        SetInitialDefenderGroups(data.initialDefenderGroups);
-        //SetResidentCapacity(data.residentCapacity);
         SetMonthlySupply(data.monthlySupply);
         SetInitialResidents(data.initialResidents);
         SetMonthlyActions(data.monthlyActions);
@@ -209,10 +179,7 @@ public class Area {
 #if WORLD_CREATION_TOOL
         SetCoreTile(worldcreator.WorldCreatorManager.Instance.GetHexTile(data.coreTileID));
 #else
-        //SetSuppliesInBank(1000);
         SetCoreTile(GridMap.Instance.GetHexTile(data.coreTileID));
-        ConstructAreaTasksInteractionWeights();
-        //StartSupplyLine();
 #endif
 
         possibleOccupants = new List<RACE>();
@@ -220,16 +187,10 @@ public class Area {
             possibleOccupants.AddRange(data.possibleOccupants);
         }
 
-
-        //LoadSpecialTokens(data);
-        AddTile(Utilities.GetTilesFromIDs(data.tileData)); //exposed tiles will be determined after loading landmarks at MapGeneration
+        AddTile(Utilities.GetTilesFromIDs(data.tileData));
         UpdateBorderColors();
-        //if (areaType != AREA_TYPE.DEMONIC_INTRUSION) {
-        //    Messenger.AddListener(Signals.DAY_ENDED_2, DefaultAllExistingInteractions);
-        //}
         GenerateDefaultRace();
         nameplatePos = LandmarkManager.Instance.GetAreaNameplatePosition(this);
-        //SubscribeToSignals();
     }
 
     private void SubscribeToSignals() {
@@ -275,21 +236,6 @@ public class Area {
             }
         }
     }
-    private InitialRaceSetup GetRaceSetup(Race race) {
-        for (int i = 0; i < initialSpawnSetup.Count; i++) {
-            InitialRaceSetup raceSetup = initialSpawnSetup[i];
-            if (raceSetup.race.race == race.race && raceSetup.race.subType == race.subType) {
-                return raceSetup;
-            }
-        }
-        return null;
-    }
-    //public void SetInitialSupplies(int amount) {
-    //    initialSupply = amount;
-    //}
-    //public void SetResidentCapacity(int amount) {
-    //    residentCapacity = amount;
-    //}
     public void SetMonthlySupply(int amount) {
         monthlySupply = amount;
     }
@@ -371,19 +317,6 @@ public class Area {
 #endif
             Messenger.Broadcast(Signals.AREA_TILE_REMOVED, this, tile);
         }
-    }
-    public List<HexTile> GetAdjacentBuildableTiles() {
-        List<HexTile> elligibleTiles = new List<HexTile>();
-        for (int i = 0; i < tiles.Count; i++) {
-            HexTile currTile = tiles[i];
-            for (int j = 0; j < currTile.AllNeighbours.Count; j++) {
-                HexTile currNeighbour = currTile.AllNeighbours[j];
-                if (currNeighbour.isPassable && currNeighbour.landmarkOnTile == null && currNeighbour.areaOfTile == null && !elligibleTiles.Contains(currNeighbour)) {
-                    elligibleTiles.Add(currNeighbour);
-                }
-            }
-        }
-        return elligibleTiles;
     }
     private void OnTileAddedToArea(HexTile addedTile) {
         if (this.areaType == AREA_TYPE.ANCIENT_RUINS) {
@@ -490,12 +423,6 @@ public class Area {
                 currTile.SetInternalState(true);
             }
         }
-    }
-    public BaseLandmark GetRandomExposedLandmark() {
-        if (exposedTiles.Count > 0) {
-            return exposedTiles[UnityEngine.Random.Range(0, exposedTiles.Count)];
-        }
-        return null;
     }
     private void UpdateOuterTiles() {
         outerTiles = new List<HexTile>();
@@ -686,30 +613,6 @@ public class Area {
             charactersAtLocation[i].ReleaseFromAbduction();
         }
     }
-    public bool IsHostileTowards(Character character) {
-        if (character.faction.isNeutral || this.owner == null || this.owner.id == character.faction.id) {
-            return false;
-        }
-        FACTION_RELATIONSHIP_STATUS relStat = FactionManager.Instance.GetRelationshipStatusBetween(character.faction, this.owner);
-        if (relStat == FACTION_RELATIONSHIP_STATUS.ENEMY || relStat == FACTION_RELATIONSHIP_STATUS.ENEMY) {
-            return true;
-        }
-        return false;
-    }
-    public List<Area> GetElligibleExpansionTargets(Character expander) {
-        List<Area> targets = new List<Area>();
-        for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
-            Area currArea = LandmarkManager.Instance.allAreas[i];
-            if (currArea.id != PlayerManager.Instance.player.playerArea.id
-                && currArea.owner == null
-                && currArea.possibleOccupants.Contains(expander.race)
-                && currArea.id != this.id
-                && currArea.GetEventsOfTypeTargettingThis(INTERACTION_TYPE.MOVE_TO_EXPANSION_EVENT).Count == 0) {
-                targets.Add(currArea);
-            }
-        }
-        return targets;
-    }
     public string GetAreaTypeString() {
         if (areaType == AREA_TYPE.DEMONIC_INTRUSION) {
             return "Demonic Portal";
@@ -727,29 +630,6 @@ public class Area {
     #endregion
 
     #region Supplies
-    public void AreaTasksAssignments() {
-        //List<Character> defenderCandidates = new List<Character>();
-        List<Character> interactionCandidates = new List<Character>();
-
-        for (int i = 0; i < areaResidents.Count; i++) {
-            Character resident = areaResidents[i];
-            if (resident.doNotDisturb <= 0 && !resident.isDefender && !resident.currentParty.icon.isTravelling && resident.specificLocation.id == id) {
-                if (attackCharacters != null && attackCharacters.Contains(resident)) {
-                    continue;
-                }
-                //if (resident.forcedInteraction == null || (resident.forcedInteraction != null && resident.forcedInteraction.type != INTERACTION_TYPE.MOVE_TO_ATTACK)) {
-                //    defenderCandidates.Add(resident);
-                //}
-                //if (!resident.isDefender) {
-                if ((owner == null && resident.faction == FactionManager.Instance.neutralFaction) || resident.faction == owner) {
-                    interactionCandidates.Add(resident);
-                }
-                //}
-            }
-        }
-        //AssignMonthlyDefenders(defenderCandidates, interactionCandidates);
-        AssignInteractionsToResidents(interactionCandidates);
-    }
     public void SetSuppliesInBank(int amount) {
         if (supplyPile == null) {
             return;
@@ -766,29 +646,6 @@ public class Area {
         Messenger.Broadcast(Signals.AREA_SUPPLIES_CHANGED, this);
         //suppliesInBank = Mathf.Clamp(suppliesInBank, 0, supplyCapacity);
     }
-    public bool HasEnoughSupplies(int neededSupplies) {
-        return suppliesInBank >= neededSupplies;
-    }
-    public void PayForReward(Reward reward) {
-        if (reward.rewardType == REWARD.SUPPLY) {
-            AdjustSuppliesInBank(-reward.amount);
-        }
-    }
-    //public void GetSuppliesFrom(Area targetArea, int amount) {
-
-    //}
-    #endregion
-
-    #region Rewards
-    public void ClaimReward(Reward reward) {
-        switch (reward.rewardType) {
-            case REWARD.SUPPLY:
-                AdjustSuppliesInBank(reward.amount);
-                break;
-            default:
-                break;
-        }
-    }
     #endregion
 
     #region Landmarks
@@ -797,369 +654,8 @@ public class Area {
     }
     #endregion
 
-    #region Interactions
-    private void ConstructAreaTasksInteractionWeights() {
-        areaTasksInteractionWeights = new Dictionary<INTERACTION_TYPE, int>() {
-            {INTERACTION_TYPE.MOVE_TO_EXPLORE_EVENT, 100},
-            {INTERACTION_TYPE.MOVE_TO_EXPANSION_EVENT, 15},
-            //{INTERACTION_TYPE.MOVE_TO_SCAVENGE, 60},
-            {INTERACTION_TYPE.MOVE_TO_RAID_EVENT, 40},
-            //{INTERACTION_TYPE.MOVE_TO_CHARM, 35},
-            //{INTERACTION_TYPE.MOVE_TO_RECRUIT, 35},
-            {INTERACTION_TYPE.MOVE_TO_ABDUCT_ACTION, 25},
-            //{INTERACTION_TYPE.MOVE_TO_STEAL, 20},
-            {INTERACTION_TYPE.MOVE_TO_HUNT_ACTION, 20},
-            {INTERACTION_TYPE.MOVE_TO_IMPROVE_RELATIONS_EVENT, 40},
-            {INTERACTION_TYPE.PATROL_ACTION, 50},
-            {INTERACTION_TYPE.EAT_DEFENSELESS, 20},
-            {INTERACTION_TYPE.TORTURE_ACTION, 25},
-            {INTERACTION_TYPE.MOVE_TO_REANIMATE_ACTION, 50},
-            {INTERACTION_TYPE.MOVE_TO_SAVE_ACTION, 30},
-            {INTERACTION_TYPE.MOVE_TO_VISIT, 50},
-            {INTERACTION_TYPE.MOVE_TO_LOOT_ACTION, 50},
-            {INTERACTION_TYPE.MOVE_TO_TAME_BEAST_ACTION, 50},
-            {INTERACTION_TYPE.MOVE_TO_HANG_OUT_ACTION, 50},
-            {INTERACTION_TYPE.MOVE_TO_ARGUE_ACTION, 50},
-            {INTERACTION_TYPE.MOVE_TO_CURSE_ACTION, 50},
-            {INTERACTION_TYPE.MOVE_TO_RECRUIT_FRIEND_ACTION_FACTION, 50},
-            {INTERACTION_TYPE.MOVE_TO_CHARM_ACTION_FACTION, 50},
-            {INTERACTION_TYPE.MOVE_TO_ASSASSINATE_ACTION_FACTION, 50},
-            {INTERACTION_TYPE.MOVE_TO_STEAL_ACTION_FACTION, 50},
-            {INTERACTION_TYPE.MOVE_TO_SCAVENGE_EVENT_FACTION, 50},
-        };
-    }
-    public void AddInteraction(Interaction interaction) {
-        if (currentInteractions.Count > 0) {
-            int interactionToBeAddedIndex = Utilities.GetInteractionPriorityIndex(interaction.type);
-            bool hasBeenInserted = false;
-            if (interactionToBeAddedIndex != -1) {
-                for (int i = 0; i < currentInteractions.Count; i++) {
-                    int currentInteractionIndex = Utilities.GetInteractionPriorityIndex(currentInteractions[i].type);
-                    if (currentInteractionIndex == -1 || interactionToBeAddedIndex < currentInteractionIndex) {
-                        hasBeenInserted = true;
-                        currentInteractions.Insert(i, interaction);
-                        break;
-                    }
-                }
-            }
-            if (!hasBeenInserted) {
-                currentInteractions.Add(interaction);
-            }
-        } else {
-            currentInteractions.Add(interaction);
-        }
-    }
-    public void RemoveInteraction(Interaction interaction) {
-        currentInteractions.Remove(interaction);
-    }
-    //public void DefaultAllExistingInteractions() { //NOTE: Only 
-    //    if(stopDefaultAllExistingInteractions) { return; }
-    //    for (int i = 0; i < currentInteractions.Count; i++) {
-    //        if (!currentInteractions[i].hasActivatedTimeOut) {
-    //            currentInteractions[i].TimedOutRunDefault();
-    //            i--;
-    //        }
-    //    }
-    //}
-    public void SetStopDefaultInteractionsState(bool state) {
-        stopDefaultAllExistingInteractions = stopDefaultAllExistingInteractions;
-    }
-    public List<Interaction> GetInteractionsOfJob(JOB jobType) {
-        List<Interaction> choices = new List<Interaction>();
-        for (int i = 0; i < currentInteractions.Count; i++) {
-            Interaction interaction = currentInteractions[i];
-            if (interaction.DoesJobTypeFitsJobFilter(jobType)) {
-                choices.Add(interaction);
-            }
-        }
-        return choices;
-    }
-    public void AddEventTargettingThis(Interaction interaction) {
-        if (!eventsTargettingThis.Contains(interaction)) {
-            eventsTargettingThis.Add(interaction);
-        }
-    }
-    public void RemoveEventTargettingThis(Interaction interaction) {
-        eventsTargettingThis.Remove(interaction);
-    }
-    public List<Interaction> GetEventsOfTypeTargettingThis(INTERACTION_TYPE type) {
-        List<Interaction> events = new List<Interaction>();
-        for (int i = 0; i < eventsTargettingThis.Count; i++) {
-            if (eventsTargettingThis[i].type == type) {
-                events.Add(eventsTargettingThis[i]);
-            }
-        }
-        return events;
-    }
-    private void AssignInteractionsToResidents(List<Character> candidates) {
-        string testLog = "[Day " + GameManager.Instance.continuousDays + "] AREA TASKS FOR " + this.name;
-        int supplySpent = 0;
-        if (candidates.Count <= 0) {
-            testLog += "\nNo available residents to be chosen!";
-        } else {
-            testLog += "\nAvailable residents to choose from: " + candidates[0].name;
-            for (int i = 1; i < candidates.Count; i++) {
-                testLog += ", " + candidates[i].name;
-            }
-            while (candidates.Count > 0) {
-                int index = UnityEngine.Random.Range(0, candidates.Count);
-                Character chosenCandidate = candidates[index];
-                candidates.RemoveAt(index);
-                testLog += "\nChosen Resident: " + chosenCandidate.name;
-                string validInteractionsLog = string.Empty;
-                INTERACTION_TYPE interactionType = GetInteractionTypeForResidentCharacter(chosenCandidate, out validInteractionsLog);
-                testLog += validInteractionsLog;
-                Interaction interaction = null;
-                if (interactionType != INTERACTION_TYPE.MOVE_TO_RAID_EVENT && interactionType != INTERACTION_TYPE.MOVE_TO_SCAVENGE_EVENT) {
-                    supplySpent += 100;
-                    if (supplySpent <= suppliesInBank) {
-                        testLog += "\nChosen Interaction: " + interactionType.ToString();
-                        interaction = InteractionManager.Instance.CreateNewInteraction(interactionType, chosenCandidate.specificLocation);
-                        interaction.SetCanInteractionBeDoneAction(() => CanDoAreaTaskInteraction(interaction.type, chosenCandidate, 100));
-                        interaction.SetInitializeAction(() => AdjustSuppliesInBank(-100));
-                        interaction.SetMinionSuccessAction(() => AdjustSuppliesInBank(100));
-                        chosenCandidate.SetForcedInteraction(interaction);
-                        if (supplySpent == suppliesInBank) {
-                            testLog += "\nAssigning area tasks will stop, all area supplies have been allotted.";
-                            break;
-                        }
-                    } else {
-                        testLog += "\nCan't do " + interactionType.ToString() + "! Area cannot accomodate supply cost anymore!";
-                        break;
-                    }
-                } else {
-                    interaction = InteractionManager.Instance.CreateNewInteraction(interactionType, chosenCandidate.specificLocation);
-                    interaction.SetCanInteractionBeDoneAction(() => InteractionManager.Instance.CanCreateInteraction(interaction.type, chosenCandidate));
-                    chosenCandidate.SetForcedInteraction(interaction);
-                }
-            }
-        }
-        if (UIManager.Instance.areaInfoUI.activeArea != null && UIManager.Instance.areaInfoUI.activeArea.id == id) {
-            Debug.Log(testLog);
-        }
-    }
-    private INTERACTION_TYPE GetInteractionTypeForResidentCharacter(Character resident, out string testLog) {
-        string log = "\nValid Interactions for " + resident.name + ":";
-        WeightedDictionary<INTERACTION_TYPE> interactionWeights = new WeightedDictionary<INTERACTION_TYPE>();
-        foreach (KeyValuePair<INTERACTION_TYPE, int> areaTasks in areaTasksInteractionWeights) {
-            if (InteractionManager.Instance.CanCreateInteraction(areaTasks.Key, resident)) {
-                interactionWeights.AddElement(areaTasks.Key, areaTasks.Value);
-                log += "\n - " + areaTasks.Key.ToString();
-            }
-        }
-        testLog = log;
-        return interactionWeights.PickRandomElementGivenWeights();
-    }
-    public bool CanDoAreaTaskInteraction(INTERACTION_TYPE interactionType, Character character, int supplyCost) {
-        return suppliesInBank >= supplyCost; //&& InteractionManager.Instance.CanCreateInteraction(interactionType, character);
-    }
-    public Dictionary<Character, List<INTERACTION_TYPE>> GetResidentAndInteractionsForFactionTasks(INTERACTION_CATEGORY category) {
-        Dictionary<Character, List<INTERACTION_TYPE>> residentInteractions = new Dictionary<Character, List<INTERACTION_TYPE>>();
-        for (int i = 0; i < areaResidents.Count; i++) {
-            Character resident = areaResidents[i];
-            if (resident.isIdle && resident.specificLocation.id == id && resident.role.interactionCategories != null && resident.role.interactionCategories.Contains(category)
-                && resident.GetTraitOr("Starving", "Exhausted") == null) {
-                if (attackCharacters != null && attackCharacters.Contains(resident)) {
-                    continue;
-                }
-                if ((owner == null && resident.faction == FactionManager.Instance.neutralFaction) || resident.faction == owner) {
-                    List<INTERACTION_TYPE> interactionTypes = RaceManager.Instance.GetFactionInteractionsOfRace(resident, category);
-                    if (interactionTypes != null) {
-                        for (int j = 0; j < interactionTypes.Count; j++) {
-                            if (!InteractionManager.Instance.CanCreateInteraction(interactionTypes[j], resident)) {
-                                interactionTypes.RemoveAt(j);
-                                j--;
-                            }
-                        }
-                        if (interactionTypes.Count > 0) {
-                            residentInteractions.Add(resident, interactionTypes);
-                        }
-                    }
-                }
-            }
-        }
-        return residentInteractions;
-    }
-    #endregion
-
-    #region Defenders
-    public void SetMaxDefenderGroups(int maxDefenderGroups) {
-        this.maxDefenderGroups = maxDefenderGroups;
-    }
-    public void SetInitialDefenderGroups(int initialDefenderGroups) {
-        this.initialDefenderGroups = initialDefenderGroups;
-    }
-    //private void GenerateInitialDefenders() {
-    //    //This will generate an empty defender group
-    //    AddDefenderGroup(new DefenderGroup());
-    //    //if (initialDefenderGroups == 0) {
-    //    //    return;
-    //    //}
-    //    //WeightedDictionary<AreaCharacterClass> defenderWeights = GetClassWeights();
-    //    ////if (this.owner != null && this.owner.defenderWeights.GetTotalOfWeights() > 0) {
-    //    ////    defenderWeights = this.owner.defenderWeights;
-    //    ////} else {
-    //    ////    defenderWeights = LandmarkManager.Instance.GetDefaultDefenderWeights(race);
-    //    ////}
-    //    //if (defenderWeights == null || defenderWeights.GetTotalOfWeights() <= 0) {
-    //    //    return;
-    //    //}
-    //    //for (int i = 0; i < initialDefenderGroups; i++) {
-    //    //    DefenderGroup newGroup = new DefenderGroup();
-    //    //    AddDefenderGroup(newGroup);
-    //    //    int defendersToGenerate = 4;
-    //    //    for (int j = 0; j < defendersToGenerate; j++) {
-    //    //        string chosenClass = defenderWeights.PickRandomElementGivenWeights().className;
-    //    //        Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(chosenClass, raceType, Utilities.GetRandomGender(), owner, coreTile.landmarkOnTile);
-    //    //        newGroup.AddCharacterToGroup(createdCharacter);
-    //    //        //TODO: Add Level
-    //    //    }
-    //    //}
-    //}
-    public void AddDefenderGroup(DefenderGroup defenderGroup) {
-        //if (defenderGroups.Count < maxDefenderGroups) {
-        defenderGroups.Add(defenderGroup);
-        defenderGroup.SetDefendingArea(this);
-        //}
-    }
-    public void RemoveDefenderGroup(DefenderGroup defenderGroup) {
-        if (defenderGroups.Remove(defenderGroup)) {
-            defenderGroup.SetDefendingArea(null);
-        }
-    }
-    public DefenderGroup GetFirstDefenderGroup() {
-        if (defenderGroups.Count > 0) {
-            return defenderGroups[0];
-        }
-        return null;
-    }
-    public DefenderGroup GetDefenseGroup() {
-        List<Character> defenders = FormCombatCharacters();
-        if (defenders.Count > 0) {
-            DefenderGroup group = new DefenderGroup();
-            group.SetDefendingArea(this);
-            for (int i = 0; i < defenders.Count; i++) {
-                group.AddCharacterToGroup(defenders[i]);
-            }
-            return group;
-        }
-        return null;
-    }
-    public DefenderGroup GetRandomDefenderGroup() {
-        if (defenderGroups.Count > 0) {
-            return defenderGroups[UnityEngine.Random.Range(0, defenderGroups.Count)];
-        }
-        return null;
-    }
-    public WeightedDictionary<AreaCharacterClass> GetClassWeights() {
-        return GetClassWeights(raceType);
-    }
-    public WeightedDictionary<AreaCharacterClass> GetClassWeights(RACE raceType) {
-        WeightedDictionary<AreaCharacterClass> classWeights = LandmarkManager.Instance.GetDefaultClassWeights(raceType);
-        if (!Utilities.IsRaceBeast(raceType) //Check if the area is a beast type, if it is, only use the default class weights
-            && this.owner != null
-            && this.owner.additionalClassWeights.GetTotalOfWeights() > 0) {
-            classWeights.AddElements(this.owner.additionalClassWeights);
-        }
-        return classWeights;
-    }
-    public bool HasClassInWeights(string className) {
-        WeightedDictionary<AreaCharacterClass> classWeights = GetClassWeights();
-        foreach (KeyValuePair<AreaCharacterClass, int> keyValuePair in classWeights.dictionary) {
-            if (keyValuePair.Key.className.Equals(className)) {
-                return true;
-            }
-        }
-        return false;
-    }
-    public void UpgradeDefendersToMatchFactionLvl() {
-        for (int i = 0; i < defenderGroups.Count; i++) {
-            for (int j = 0; j < defenderGroups[i].party.characters.Count; j++) {
-                Character defender = defenderGroups[i].party.characters[j];
-                if (defender.level < owner.level) {
-                    defender.SetLevel(owner.level);
-                }
-            }
-        }
-    }
-    private void AssignMonthlyDefenders(List<Character> candidates, List<Character> interactionCandidates) {
-        if (owner != null) {
-            string testLog = "[Day " + GameManager.Instance.continuousDays + "] DEFENDERS FOR " + this.name;
-            DefenderGroup defenderGroup = GetFirstDefenderGroup();
-            if (defenderGroup != null) {
-                testLog += "\nDisbanding current defenders...";
-                //if(defenderGroup.party != null) {
-                //    for (int i = 0; i < defenderGroup.party.characters.Count; i++) {
-                //        interactionCandidates.Add(defenderGroup.party.characters[i]);
-                //    }
-                //}
-                defenderGroup.DisbandGroup();
-            } else {
-                testLog += "\nNo more defender group. Creating new one...";
-                defenderGroup = new DefenderGroup();
-                AddDefenderGroup(defenderGroup);
-            }
-            if (candidates.Count > 0) {
-                List<int> frontlineIndexes = new List<int>();
-                List<int> backlineIndexes = new List<int>();
-                for (int i = 0; i < candidates.Count; i++) {
-                    if (candidates[i].characterClass.combatPosition == COMBAT_POSITION.FRONTLINE) {
-                        frontlineIndexes.Add(i);
-                    } else {
-                        backlineIndexes.Add(i);
-                    }
-                }
-                for (int i = 0; i < 2; i++) {
-                    if (frontlineIndexes.Count > 0) {
-                        int index = UnityEngine.Random.Range(0, frontlineIndexes.Count);
-                        defenderGroup.AddCharacterToGroup(candidates[frontlineIndexes[index]]);
-                        interactionCandidates.Remove(candidates[frontlineIndexes[index]]);
-                        testLog += "\nFRONTLINE DEFENDER " + (i + 1) + ": " + candidates[frontlineIndexes[index]].name;
-                        frontlineIndexes.RemoveAt(index);
-                    }
-                }
-                for (int i = 0; i < 2; i++) {
-                    if (backlineIndexes.Count > 0) {
-                        int index = UnityEngine.Random.Range(0, backlineIndexes.Count);
-                        defenderGroup.AddCharacterToGroup(candidates[backlineIndexes[index]]);
-                        interactionCandidates.Remove(candidates[backlineIndexes[index]]);
-                        testLog += "\nBACKLINE DEFENDER " + (i + 1) + ": " + candidates[backlineIndexes[index]].name;
-                        backlineIndexes.RemoveAt(index);
-                    }
-                }
-            }
-            Messenger.Broadcast(Signals.AREA_DEFENDERS_CHANGED, this);
-            if (UIManager.Instance.areaInfoUI.activeArea != null && UIManager.Instance.areaInfoUI.activeArea.id == id) {
-                Debug.Log(testLog);
-            }
-        }
-    }
-    #endregion
-
     #region Characters
-    /*
-     Check if any of the characters provided is a resident in this area.
-         */
-    private bool HasResidentFromChoices(List<Character> choices) {
-        for (int i = 0; i < areaResidents.Count; i++) {
-            Character currResident = areaResidents[i];
-            if (choices.Contains(currResident)) {
-                return true;
-            }
-        }
-        return false;
-    }
-    private List<Character> GetResidentsFromChoices(List<Character> choices) {
-        List<Character> residents = new List<Character>();
-        for (int i = 0; i < areaResidents.Count; i++) {
-            Character currResident = areaResidents[i];
-            if (choices.Contains(currResident)) {
-                residents.Add(currResident);
-            }
-        }
-        return residents;
-    }
-    public void AddResident(Character character, bool ignoreCapacity = true) {
+    public void AddResident(Character character, Dwelling chosenHome = null, bool ignoreCapacity = true) {
         if (!areaResidents.Contains(character)) {
             if (!ignoreCapacity) {
                 if (IsResidentsFull()) {
@@ -1170,108 +666,62 @@ public class Area {
             character.SetHome(this);
             areaResidents.Add(character);
             //if (PlayerManager.Instance.player == null || PlayerManager.Instance.player.playerArea.id != this.id) {
-            AssignCharacterToDwellingInArea(character);
+            AssignCharacterToDwellingInArea(character, chosenHome);
             //}
             //Messenger.Broadcast(Signals.AREA_RESIDENT_ADDED, this, character);
         }
     }
-    public void AssignCharacterToDwellingInArea(Character character) {
+    public void AssignCharacterToDwellingInArea(Character character, Dwelling dwellingOverride = null) {
         if (character.faction.id != FactionManager.Instance.neutralFaction.id && !structures.ContainsKey(STRUCTURE_TYPE.DWELLING)) {
             Debug.LogWarning(this.name + " doesn't have any dwellings for " + character.name);
             return;
         }
         if (character.faction.id == FactionManager.Instance.neutralFaction.id) {
             character.SetHomeStructure(null);
-            if (character.specificLocation != null
-                && character.specificLocation.id == this.id) { //if the character is currently at his home area, and his home was changed, relocate him
-                if (character.currentStructure != null) {
-                    character.currentStructure.RemoveCharacterAtLocation(character);
-                }
-                AddCharacterToAppropriateStructure(character);
-            }
+            //if (character.specificLocation != null
+            //    && character.specificLocation.id == this.id) { //if the character is currently at his home area, and his home was changed, relocate him
+            //    if (character.currentStructure != null) {
+            //        character.currentStructure.RemoveCharacterAtLocation(character);
+            //    }
+            //    //AddCharacterToAppropriateStructure(character);
+            //}
             return;
         }
-        Dwelling chosenDwelling = null;
-        if (PlayerManager.Instance.player != null && this.id == PlayerManager.Instance.player.playerArea.id) {
-            chosenDwelling = structures[STRUCTURE_TYPE.DWELLING][0] as Dwelling; //to avoid errors, residents in player area will all share the same dwelling
-        } else {
-            Character lover = character.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.LOVER);
-            if (lover != null && lover.faction.id == character.faction.id && areaResidents.Contains(lover)) { //check if the character has a lover that lives in the area
-                chosenDwelling = lover.homeStructure;
+        Dwelling chosenDwelling = dwellingOverride;
+        if (chosenDwelling == null) {
+            if (PlayerManager.Instance.player != null && this.id == PlayerManager.Instance.player.playerArea.id) {
+                chosenDwelling = structures[STRUCTURE_TYPE.DWELLING][0] as Dwelling; //to avoid errors, residents in player area will all share the same dwelling
+            } else {
+                Character lover = character.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.LOVER);
+                if (lover != null && lover.faction.id == character.faction.id && areaResidents.Contains(lover)) { //check if the character has a lover that lives in the area
+                    chosenDwelling = lover.homeStructure;
+                }
             }
-            //else {
-            //    //if none, check if they have a master/servant in the area
-            //    Character master = character.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.MASTER);
-            //    if (master != null && areaResidents.Contains(master)) { //if this character is the servant
-            //        if (!master.homeStructure.IsFull()) {
-            //            chosenDwelling = master.homeStructure; //Move to his master's home, since this character doesn't have a lover (from the first checking) 
-            //        }
-            //    } else { //if this character is a master
-            //        List<Character> servants = GetResidentsFromChoices(character.GetCharactersWithRelationship(RELATIONSHIP_TRAIT.SERVANT));
-            //        if (servants.Count > 0) { //check if he has any servant in this location that does not have a lover living with him
-            //            for (int i = 0; i < servants.Count; i++) {
-            //                Character currServant = servants[i];
-            //                if (!currServant.IsLivingWith(RELATIONSHIP_TRAIT.LOVER)) {
-            //                    chosenDwelling = currServant.homeStructure; //if there is a valid servant, live with the valid servant
-            //                    break;
-            //                }
-            //            }
-            //        }
-            //    }
-            //}
-        }
 
-        if (chosenDwelling == null && (character.homeStructure == null || character.homeStructure.location.id != this.id)) { //else, find an unoccupied dwelling (also check if the character doesn't already live in this area)
-            for (int i = 0; i < structures[STRUCTURE_TYPE.DWELLING].Count; i++) {
-                Dwelling currDwelling = structures[STRUCTURE_TYPE.DWELLING][i] as Dwelling;
-                if (currDwelling.CanBeResidentHere(character)) {
-                    chosenDwelling = currDwelling;
-                    break;
+            if (chosenDwelling == null && (character.homeStructure == null || character.homeStructure.location.id != this.id)) { //else, find an unoccupied dwelling (also check if the character doesn't already live in this area)
+                for (int i = 0; i < structures[STRUCTURE_TYPE.DWELLING].Count; i++) {
+                    Dwelling currDwelling = structures[STRUCTURE_TYPE.DWELLING][i] as Dwelling;
+                    if (currDwelling.CanBeResidentHere(character)) {
+                        chosenDwelling = currDwelling;
+                        break;
+                    }
                 }
             }
         }
-
+        
         if (chosenDwelling == null) {
             //if the code reaches here, it means that the area could not find a dwelling for the character
             Debug.LogWarning(GameManager.Instance.TodayLogString() + "Could not find a dwelling for " + character.name + " at " + this.name);
         } else {
             character.MigrateHomeStructureTo(chosenDwelling);
-            if (character.specificLocation != null
-                && character.specificLocation.id == this.id) { //if the character is currently at his home area, and his home was changed, relocate him
-                if (character.currentStructure != null) {
-                    character.currentStructure.RemoveCharacterAtLocation(character);
-                }
-                AddCharacterToAppropriateStructure(character);
-            }
+            //if (character.specificLocation != null
+            //    && character.specificLocation.id == this.id) { //if the character is currently at his home area, and his home was changed, relocate him
+            //    if (character.currentStructure != null) {
+            //        character.currentStructure.RemoveCharacterAtLocation(character);
+            //    }
+            //    //AddCharacterToAppropriateStructure(character);
+            //}
         }
-    }
-    public bool CanCharacterMigrateHere(Character character) {
-        Character lover = character.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.LOVER);
-        if (lover != null && areaResidents.Contains(lover)) {
-            return true;
-        } else {
-            //if none, check if they have a master/servant in the area
-            Character master = character.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.MASTER);
-            if (master != null && areaResidents.Contains(master)) { //if this character is the servant
-                return true;
-            } else { //if this character is a master
-                List<Character> servants = GetResidentsFromChoices(character.GetCharactersWithRelationship(RELATIONSHIP_TRAIT.SERVANT));
-                if (servants.Count > 0) { //check if he has any servant in this location that does not have a lover living with him
-                    for (int i = 0; i < servants.Count; i++) {
-                        Character currServant = servants[i];
-                        if (!currServant.IsLivingWith(RELATIONSHIP_TRAIT.LOVER)) {
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
-
-        //If character has no relationship whatsoever with residents here, check if there is an empty dwelling to reside in
-        if (GetNumberOfUnoccupiedStructure(STRUCTURE_TYPE.DWELLING) > 0) {
-            return true;
-        }
-        return false;
     }
     public void RemoveResident(Character character) {
         if (areaResidents.Remove(character)) {
@@ -1306,42 +756,18 @@ public class Area {
             charactersAtLocation.Add(character);
             character.ownParty.SetSpecificLocation(this);
             AddCharacterAtLocationHistory("Added " + character.name + "ST: " + StackTraceUtility.ExtractStackTrace());
-            //if (PlayerManager.Instance.player == null || PlayerManager.Instance.player.playerArea.id != this.id) {
-            //if (structureOverride != null) {
-            //    if (tileOverride != null) {
-            //        structureOverride.AddCharacterAtLocation(character, tileOverride);
-            //    } else if (targetPOI != null) {
-            //        LocationGridTile newNearestTile = targetPOI.GetNearestUnoccupiedTileFromThis(structureOverride, character);
-            //        if (newNearestTile != null) {
-            //            structureOverride.AddCharacterAtLocation(character, newNearestTile);
-            //        } else {
-            //            structureOverride.AddCharacterAtLocation(character, tileOverride);
-            //        }
-            //    } else {
-            //        structureOverride.AddCharacterAtLocation(character, tileOverride);
-            //    }
+            //if (tileOverride != null) {
+            //    tileOverride.structure.AddCharacterAtLocation(character, tileOverride);
             //} else {
-            //    AddCharacterToAppropriateStructure(character);
+            //    if (isInitial) {
+            //        AddCharacterToAppropriateStructure(character);
+            //    } else {
+            //        LocationGridTile exit = GetRandomUnoccupiedEdgeTile();
+            //        exit.structure.AddCharacterAtLocation(character, exit);
+            //    }
             //}
-            //}
-            if (tileOverride != null) {
-                tileOverride.structure.AddCharacterAtLocation(character, tileOverride);
-            } else {
-                if (isInitial) {
-                    AddCharacterToAppropriateStructure(character);
-                } else {
-                    LocationGridTile exit = GetRandomUnoccupiedEdgeTile();
-                    exit.structure.AddCharacterAtLocation(character, exit);
-                }
-            }
             Messenger.Broadcast(Signals.CHARACTER_ENTERED_AREA, this, character);
         }
-    }
-    public void AddCharacterToLocation(Party party, LocationGridTile tileOverride = null, bool isInitial = false) {
-        AddCharacterToLocation(party.owner, tileOverride, isInitial);
-        //for (int i = 0; i < party.characters.Count; i++) {
-        //    AddCharacterToLocation(party.characters[i], structureOverride, targetPOI, tileOverride, isInitial);
-        //}
     }
     public void RemoveCharacterFromLocation(Character character) {
         if (charactersAtLocation.Remove(character)) {
@@ -1361,81 +787,81 @@ public class Area {
         //    RemoveCharacterFromLocation(party.characters[i]);
         //}
     }
-    public void AddCharacterToAppropriateStructure(Character character) {
-        if (character.GetTraitOr("Abducted", "Restrained") != null) {
-            GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA).AddCharacterAtLocation(character);
-        } else {
-            if (character.homeArea.id == this.id) {
-                if (character.homeStructure == null) {
-                    //throw new Exception(character.name + "'s homeStructure is null!");
-                    if (UnityEngine.Random.Range(0, 2) == 0) {
-                        LocationStructure wilderness = GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
-                        if (wilderness != null) {
-                            wilderness.AddCharacterAtLocation(character);
-                        } else {
-                            GetRandomStructureOfType(STRUCTURE_TYPE.DUNGEON).AddCharacterAtLocation(character);
-                        }
-                    } else {
-                        LocationStructure dungeon = GetRandomStructureOfType(STRUCTURE_TYPE.DUNGEON);
-                        if (dungeon != null) {
-                            dungeon.AddCharacterAtLocation(character);
-                        } else {
-                            GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS).AddCharacterAtLocation(character);
-                        }
-                    }
-                } else {
-                    //If this is his home, the character will be placed in his Dwelling.
-                    character.homeStructure.AddCharacterAtLocation(character);
-                }
-            } else {
-                // Otherwise:
-                if (Utilities.IsRaceBeast(character.race)) {
-                    //- Beasts will be placed at a random Wilderness.
-                    GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS).AddCharacterAtLocation(character);
-                } else if (this.owner != null) {
-                    FACTION_RELATIONSHIP_STATUS relStat;
-                    if (character.faction.id == this.owner.id) { //character is part of the same faction as the owner of this area
-                        relStat = FACTION_RELATIONSHIP_STATUS.ALLY;
-                    } else {
-                        relStat = character.faction.GetRelationshipWith(this.owner).relationshipStatus;
-                    }
-                    switch (relStat) {
-                        case FACTION_RELATIONSHIP_STATUS.AT_WAR:
-                        case FACTION_RELATIONSHIP_STATUS.ENEMY:
-                            //- If location is occupied, non-beasts whose faction relationship is Enemy or worse will be placed in a random structure Outside Settlement.
-                            List<LocationStructure> choices = GetStructuresAtLocation(false);
-                            choices[UnityEngine.Random.Range(0, choices.Count)].AddCharacterAtLocation(character);
-                            break;
-                        case FACTION_RELATIONSHIP_STATUS.DISLIKED:
-                        case FACTION_RELATIONSHIP_STATUS.NEUTRAL:
-                        case FACTION_RELATIONSHIP_STATUS.FRIEND:
-                        case FACTION_RELATIONSHIP_STATUS.ALLY:
-                            LocationStructure inn = GetRandomStructureOfType(STRUCTURE_TYPE.INN);
-                            if (inn != null) {
-                                //- If location is occupied, non-beasts whose faction relationship is Disliked or better will be placed at the Inn. 
-                                inn.AddCharacterAtLocation(character);
-                            } else {
-                                //If no Inn in the Location, he will be placed in a random Wilderness.
-                                LocationStructure wilderness = GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
-                                wilderness.AddCharacterAtLocation(character);
-                            }
-                            break;
-                    }
-                } else {
-                    //- If location is unoccupied, non-beasts will be placed at a random Wilderness.
-                    GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS).AddCharacterAtLocation(character);
-                }
-            }
-        }
-        if (character.currentStructure == null) {
-            Debug.LogWarning(GameManager.Instance.TodayLogString() + "Could not find structure for " + character.name + " at " + this.name);
-        } else {
-            if (character.currentStructure != character.gridTileLocation.structure && character.marker != null) {
-                LocationGridTile tile = character.currentStructure.GetRandomUnoccupiedTile();
-                character.marker.PlaceMarkerAt(tile);
-            }
-        }
-    }
+    //public void AddCharacterToAppropriateStructure(Character character) {
+    //    if (character.GetTraitOr("Abducted", "Restrained") != null) {
+    //        GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA).AddCharacterAtLocation(character);
+    //    } else {
+    //        if (character.homeArea.id == this.id) {
+    //            if (character.homeStructure == null) {
+    //                //throw new Exception(character.name + "'s homeStructure is null!");
+    //                if (UnityEngine.Random.Range(0, 2) == 0) {
+    //                    LocationStructure wilderness = GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+    //                    if (wilderness != null) {
+    //                        wilderness.AddCharacterAtLocation(character);
+    //                    } else {
+    //                        GetRandomStructureOfType(STRUCTURE_TYPE.DUNGEON).AddCharacterAtLocation(character);
+    //                    }
+    //                } else {
+    //                    LocationStructure dungeon = GetRandomStructureOfType(STRUCTURE_TYPE.DUNGEON);
+    //                    if (dungeon != null) {
+    //                        dungeon.AddCharacterAtLocation(character);
+    //                    } else {
+    //                        GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS).AddCharacterAtLocation(character);
+    //                    }
+    //                }
+    //            } else {
+    //                //If this is his home, the character will be placed in his Dwelling.
+    //                character.homeStructure.AddCharacterAtLocation(character);
+    //            }
+    //        } else {
+    //            // Otherwise:
+    //            if (Utilities.IsRaceBeast(character.race)) {
+    //                //- Beasts will be placed at a random Wilderness.
+    //                GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS).AddCharacterAtLocation(character);
+    //            } else if (this.owner != null) {
+    //                FACTION_RELATIONSHIP_STATUS relStat;
+    //                if (character.faction.id == this.owner.id) { //character is part of the same faction as the owner of this area
+    //                    relStat = FACTION_RELATIONSHIP_STATUS.ALLY;
+    //                } else {
+    //                    relStat = character.faction.GetRelationshipWith(this.owner).relationshipStatus;
+    //                }
+    //                switch (relStat) {
+    //                    case FACTION_RELATIONSHIP_STATUS.AT_WAR:
+    //                    case FACTION_RELATIONSHIP_STATUS.ENEMY:
+    //                        //- If location is occupied, non-beasts whose faction relationship is Enemy or worse will be placed in a random structure Outside Settlement.
+    //                        List<LocationStructure> choices = GetStructuresAtLocation(false);
+    //                        choices[UnityEngine.Random.Range(0, choices.Count)].AddCharacterAtLocation(character);
+    //                        break;
+    //                    case FACTION_RELATIONSHIP_STATUS.DISLIKED:
+    //                    case FACTION_RELATIONSHIP_STATUS.NEUTRAL:
+    //                    case FACTION_RELATIONSHIP_STATUS.FRIEND:
+    //                    case FACTION_RELATIONSHIP_STATUS.ALLY:
+    //                        LocationStructure inn = GetRandomStructureOfType(STRUCTURE_TYPE.INN);
+    //                        if (inn != null) {
+    //                            //- If location is occupied, non-beasts whose faction relationship is Disliked or better will be placed at the Inn. 
+    //                            inn.AddCharacterAtLocation(character);
+    //                        } else {
+    //                            //If no Inn in the Location, he will be placed in a random Wilderness.
+    //                            LocationStructure wilderness = GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+    //                            wilderness.AddCharacterAtLocation(character);
+    //                        }
+    //                        break;
+    //                }
+    //            } else {
+    //                //- If location is unoccupied, non-beasts will be placed at a random Wilderness.
+    //                GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS).AddCharacterAtLocation(character);
+    //            }
+    //        }
+    //    }
+    //    if (character.currentStructure == null) {
+    //        Debug.LogWarning(GameManager.Instance.TodayLogString() + "Could not find structure for " + character.name + " at " + this.name);
+    //    } else {
+    //        if (character.currentStructure != character.gridTileLocation.structure && character.marker != null) {
+    //            LocationGridTile tile = character.currentStructure.GetRandomUnoccupiedTile();
+    //            character.marker.PlaceMarkerAt(tile);
+    //        }
+    //    }
+    //}
     private void AddCharacterAtLocationHistory(string str) {
 #if !WORLD_CREATION_TOOL
         charactersAtLocationHistory.Add(GameManager.Instance.TodayLogString() + str);
@@ -1444,40 +870,11 @@ public class Area {
         }
 #endif
     }
-    public bool HasResidentWithClass(string className) {
-        for (int i = 0; i < areaResidents.Count; i++) {
-            if (areaResidents[i].characterClass != null && areaResidents[i].characterClass.className == className) {
-                return true;
-            }
-        }
-        return false;
-    }
-    public List<Character> GetResidentsWithClass(string className) {
-        List<Character> characters = new List<Character>();
-        for (int i = 0; i < areaResidents.Count; i++) {
-            if (areaResidents[i].characterClass != null && areaResidents[i].characterClass.className == className) {
-                characters.Add(areaResidents[i]);
-            }
-        }
-        return characters;
-    }
     public bool IsResidentsFull() {
         if (PlayerManager.Instance.player != null && PlayerManager.Instance.player.playerArea.id == this.id) {
             return false; //resident capacity is never full for player area
         }
         return structures[STRUCTURE_TYPE.DWELLING].Where(x => !x.IsOccupied()).Count() == 0; //check if there are still unoccupied dwellings
-    }
-    public bool IsResidentsFull(Character character) {
-        if (PlayerManager.Instance.player != null && PlayerManager.Instance.player.playerArea.id == this.id) {
-            return false; //resident capacity is never full for player area
-        }
-        for (int i = 0; i < structures[STRUCTURE_TYPE.DWELLING].Count; i++) {
-            Dwelling dwelling = structures[STRUCTURE_TYPE.DWELLING][i] as Dwelling;
-            if (dwelling.CanBeResidentHere(character)) {
-                return false;
-            }
-        }
-        return true;
     }
     public int GetNumberOfUnoccupiedStructure(STRUCTURE_TYPE structureType) {
         if (PlayerManager.Instance.player != null && PlayerManager.Instance.player.playerArea.id == this.id) {
@@ -1521,10 +918,17 @@ public class Area {
                         choices = GetStructuresAtLocation(true);
                         choices.AddRange(GetStructuresOfType(STRUCTURE_TYPE.WILDERNESS));
                     }
+                    choices = choices.Where(x => x.unoccupiedTiles.Count > 0).ToList();
                     if (choices.Count > 0) {
                         LocationStructure structure = choices[UnityEngine.Random.Range(0, choices.Count)];
-                        createdCharacter.currentStructure.RemoveCharacterAtLocation(createdCharacter);
-                        structure.AddCharacterAtLocation(createdCharacter);
+                        //if (createdCharacter.currentStructure != null) {
+                        //    createdCharacter.currentStructure.RemoveCharacterAtLocation(createdCharacter);
+                        //}
+                        //structure.AddCharacterAtLocation(createdCharacter);
+                        List<LocationGridTile> tileChoices = structure.unoccupiedTiles;
+                        LocationGridTile chosenTile = tileChoices[UnityEngine.Random.Range(0, tileChoices.Count)];
+                        createdCharacter.CreateMarker();
+                        createdCharacter.marker.PlaceMarkerAt(chosenTile);
                     }
                 } else if (this.name == "Odious") {
                     List<LocationStructure> choices = new List<LocationStructure>();
@@ -1533,10 +937,25 @@ public class Area {
                     } else if (createdCharacter.race == RACE.WOLF) {
                         choices = GetStructuresAtLocation(true);
                     }
+                    choices = choices.Where(x => x.unoccupiedTiles.Count > 0).ToList();
                     if (choices.Count > 0) {
                         LocationStructure structure = choices[UnityEngine.Random.Range(0, choices.Count)];
-                        createdCharacter.currentStructure.RemoveCharacterAtLocation(createdCharacter);
-                        structure.AddCharacterAtLocation(createdCharacter);
+                        //createdCharacter.currentStructure.RemoveCharacterAtLocation(createdCharacter);
+                        //structure.AddCharacterAtLocation(createdCharacter);
+                        List<LocationGridTile> tileChoices = structure.unoccupiedTiles;
+                        LocationGridTile chosenTile = tileChoices[UnityEngine.Random.Range(0, tileChoices.Count)];
+                        createdCharacter.CreateMarker();
+                        createdCharacter.marker.PlaceMarkerAt(chosenTile);
+                    }
+                } else {
+                    List<LocationStructure> choices = GetStructuresAtLocation(true);
+                    choices = choices.Where(x => x.unoccupiedTiles.Count > 0).ToList();
+                    if (choices.Count > 0) {
+                        LocationStructure structure = choices[UnityEngine.Random.Range(0, choices.Count)];
+                        List<LocationGridTile> tileChoices = structure.unoccupiedTiles;
+                        LocationGridTile chosenTile = tileChoices[UnityEngine.Random.Range(0, tileChoices.Count)];
+                        createdCharacter.CreateMarker();
+                        createdCharacter.marker.PlaceMarkerAt(chosenTile);
                     }
                 }
             }
@@ -1545,15 +964,6 @@ public class Area {
     }
     public void SetInitialResidents(int initialResidents) {
         this.initialResidents = initialResidents;
-    }
-    public bool HasCharacterThatIsNotFromFaction(Faction faction) {
-        for (int i = 0; i < charactersAtLocation.Count; i++) {
-            Character currChar = charactersAtLocation[i];
-            if (currChar.faction.id != faction.id) {
-                return true;
-            }
-        }
-        return false;
     }
     public void SetMonthlyActions(int amount) {
         monthlyActions = amount;
@@ -1585,13 +995,6 @@ public class Area {
     #endregion
 
     #region Attack
-    public void AttackTarget() {
-        for (int i = 1; i < attackCharacters.Count; i++) {
-            attackCharacters[0].ownParty.AddCharacter(attackCharacters[i]);
-        }
-        attackCharacters[0].AttackAnArea(attackTarget);
-        SetAttackTargetAndCharacters(null, null);
-    }
     public List<Character> FormCombatCharacters() {
         List<Character> residentsAtArea = new List<Character>();
         CombatGrid combatGrid = new CombatGrid();
@@ -1683,12 +1086,6 @@ public class Area {
     public bool IsItemInventoryFull() {
         return possibleSpecialTokenSpawns.Count >= MAX_ITEM_CAPACITY;
     }
-    //public List<SpecialToken> GetElligibleTokensForCharacter(Character character) {
-    //    List<SpecialToken> choices = new List<SpecialToken>(possibleSpecialTokenSpawns);
-    //    choices.Remove(character.tokenInInventory);
-    //    //Utilities.ListRemoveRange(choices, character.tokenInInventory);
-    //    return choices;
-    //}
     private LocationStructure GetRandomStructureToPlaceItem(SpecialToken token) {
         /*
          Items are now placed specifically in a structure when spawning at world creation. 
@@ -1707,16 +1104,6 @@ public class Area {
     }
     #endregion
 
-    #region Tracking
-    public void SetTrackedState(bool state) {
-        isBeingTracked = state;
-        for (int i = 0; i < charactersAtLocation.Count; i++) {
-            Character currCharacter = charactersAtLocation[i];
-            currCharacter.ownParty.icon.UpdateTravelLineVisualState();
-        }
-    }
-    #endregion
-
     #region Corpses
     public void AddCorpse(Character character, LocationStructure structure, LocationGridTile tile) {
         LocationGridTile tileToUse = tile;
@@ -1728,16 +1115,6 @@ public class Area {
             return;
         }
         structure.AddCorpse(character, tileToUse);
-    }
-    public void RemoveCorpse(Character character) {
-        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp in structures) {
-            for (int i = 0; i < kvp.Value.Count; i++) {
-                LocationStructure currStructure = kvp.Value[i];
-                if (currStructure.RemoveCorpse(character)) {
-                    return;
-                }
-            }
-        }
     }
     public List<Corpse> GetAllCorpses() {
         List<Corpse> all = new List<Corpse>();

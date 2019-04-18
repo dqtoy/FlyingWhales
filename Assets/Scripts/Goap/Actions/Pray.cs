@@ -23,12 +23,15 @@ public class Pray : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
     }
     public override void PerformActualAction() {
-        if (targetTile.occupant != null && targetTile.occupant != actor) {
-            SetState("Pray Failed");
-        } else {
+        //if (targetTile.occupant != null && targetTile.occupant != actor) {
+        //    SetState("Pray Failed");
+        //} else {
             SetState("Pray Success");
-        }
+        //}
         base.PerformActualAction();
+    }
+    public override LocationGridTile GetTargetLocationTile() {
+        return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);
     }
     protected override int GetCost() {
         return Utilities.rng.Next(7, 14);

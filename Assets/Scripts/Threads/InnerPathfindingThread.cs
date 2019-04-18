@@ -39,6 +39,6 @@ public class InnerPathfindingThread : Multithread {
     }
 
     public void ReturnPath() {
-        this.character.marker.ReceivePathFromPathfindingThread(this);
+        //this.character.marker.ReceivePathFromPathfindingThread(this);
     }
 }

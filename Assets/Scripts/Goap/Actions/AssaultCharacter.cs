@@ -43,7 +43,7 @@ public class AssaultCharacter : GoapAction {
         //string nextState = resultWeights.PickRandomElementGivenWeights();
         //SetState(nextState);
 
-        if (actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
+        if (poiTarget.state == POI_STATE.ACTIVE) {
             WeightedDictionary<string> resultWeights = new WeightedDictionary<string>();
             resultWeights.AddElement("Target Injured", 10);
             resultWeights.AddElement("Target Knocked Out", 40);
@@ -91,7 +91,9 @@ public class AssaultCharacter : GoapAction {
     }
     public void PreTargetKnockedOut() {
         //**Note**: If the actor is from the same faction as the witness and the target is not considered hostile, this is an Assault crime
-        if (!actor.IsHostileWith(poiTarget as Character)) {
+        if (!actor.IsHostileWith(poiTarget as Character)
+            //Assaulting a criminal as part of apprehending him should not be considered a crime
+            && (parentPlan.job == null || parentPlan.job.name != "Apprehend")) {
             SetCommittedCrime(CRIME.ASSAULT);
         }
         //currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -105,7 +107,9 @@ public class AssaultCharacter : GoapAction {
     }
     public void PreTargetKilled() {
         //**Note**: If the actor is from the same faction as the witness and the target is not considered hostile, this is a Murder crime
-        if (!actor.IsHostileWith(poiTarget as Character)) {
+        if (!actor.IsHostileWith(poiTarget as Character)
+            //Assaulting a criminal as part of apprehending him should not be considered a crime
+            && (parentPlan.job == null || parentPlan.job.name != "Apprehend")) { 
             SetCommittedCrime(CRIME.MURDER);
         }
         //currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
