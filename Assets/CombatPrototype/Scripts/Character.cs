@@ -1,9 +1,7 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.IO;
-using System;
+using UnityEngine;
 
 public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public delegate void OnCharacterDeath();
@@ -1249,7 +1247,69 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
     }
     private bool CanCharacterTakeRemoveTraitJob(Character character) {
-        return !character.HasRelationshipOfTypeWith(this, RELATIONSHIP_TRAIT.ENEMY);
+        return this != character && !character.HasRelationshipOfTypeWith(this, RELATIONSHIP_TRAIT.ENEMY);
+    }
+    public void CreatePersonalJobs() {
+        //Claim Item Job
+        if (faction.id != FactionManager.Instance.neutralFaction.id && !jobQueue.HasJob("Claim Item")) {
+            int numOfItemsOwned = GetNumOfItemsOwned();
+            if (numOfItemsOwned < 3) {
+                int chance = UnityEngine.Random.Range(0, 100);
+                int value = 10 - (numOfItemsOwned * 3);
+                if (chance < value) {
+                    List<SpecialToken> tokens = new List<SpecialToken>();
+                    for (int i = 0; i < specificLocation.possibleSpecialTokenSpawns.Count; i++) {
+                        SpecialToken currToken = specificLocation.possibleSpecialTokenSpawns[i];
+                        if (currToken.characterOwner == null) {
+                            if (currToken.factionOwner != null && faction.id != currToken.factionOwner.id) {
+                                continue;
+                            }
+                            if (currToken.gridTileLocation != null && GetToken(currToken) == null && !currToken.HasJobTargettingThis("Claim Item") && GetAwareness(currToken) != null) {
+                                tokens.Add(currToken);
+                            }
+                        }
+                    }
+                    if (tokens.Count > 0) {
+                        SpecialToken chosenToken = tokens[UnityEngine.Random.Range(0, tokens.Count)];
+                        GoapPlanJob job = new GoapPlanJob("Claim Item", INTERACTION_TYPE.DROP_ITEM, chosenToken);
+                        jobQueue.AddJobInQueue(job);
+                        //Debug.LogWarning(GameManager.Instance.TodayLogString() + "Added a Claim Item Job to " + this.name + " with target " + chosenToken.name + " in " + chosenToken.gridTileLocation.ToString());
+                    }
+                }
+            }
+        }
+
+        //Undermine Enemy Job
+        if (HasRelationshipTraitOf(RELATIONSHIP_TRAIT.ENEMY) && !jobQueue.HasJob("Undermine Enemy")) {
+            int chance = UnityEngine.Random.Range(0, 100);
+            int value = 3;
+            CHARACTER_MOOD currentMood = currentMoodType;
+            if(currentMood == CHARACTER_MOOD.DARK) {
+                value += 1;
+            }else if (currentMood == CHARACTER_MOOD.GOOD) {
+                value -= 1;
+            } else if (currentMood == CHARACTER_MOOD.GREAT) {
+                value -= 3;
+            }
+            if(chance < value) {
+                List<Character> enemyCharacters = GetCharactersWithRelationship(RELATIONSHIP_TRAIT.ENEMY);
+                Character chosenCharacter = null;
+                while(chosenCharacter == null && enemyCharacters.Count > 0) {
+                    int index = UnityEngine.Random.Range(0, enemyCharacters.Count);
+                    Character character = enemyCharacters[index];
+                    if(character.HasJobTargettingThisCharacter("Undermine Enemy")) {
+                        enemyCharacters.RemoveAt(index);
+                    } else {
+                        chosenCharacter = character;
+                    }
+                }
+                if(chosenCharacter != null) {
+                    GoapPlanJob job = new GoapPlanJob("Undermine Enemy", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", targetPOI = chosenCharacter });
+                    jobQueue.AddJobInQueue(job);
+                    Debug.LogWarning(GameManager.Instance.TodayLogString() + "Added an UNDERMINE ENEMY Job to " + this.name + " with target " + chosenCharacter.name);
+                }
+            }
+        }
     }
     #endregion
 
@@ -3254,12 +3314,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         return false;
     }
     private bool PlanWorkActions() { //ref bool hasAddedToGoapPlans
-        if (this.faction.id != FactionManager.Instance.neutralFaction.id && GetPlanByCategory(GOAP_CATEGORY.WORK) == null) {
+        if (GetPlanByCategory(GOAP_CATEGORY.WORK) == null) {
             if(GetTrait("Berserker") != null) {
                 return false;
             }
             if (!jobQueue.ProcessFirstJobInQueue(this)) {
-                if (specificLocation.id == homeArea.id) {
+                if (specificLocation.id == homeArea.id && this.faction.id != FactionManager.Instance.neutralFaction.id) {
                     return homeArea.jobQueue.ProcessFirstJobInQueue(this);
                 } else {
                     return false;
@@ -3337,6 +3397,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             goapAction.SetTargetStructure();
             GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
             GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.IDLE);
+            goapPlan.ConstructAllNodes();
             allGoapPlans.Add(goapPlan);
             PlanGoapActions(goapAction);
         }
@@ -3374,6 +3435,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //goapAction.SetTargetStructure(target);
         GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
         GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.DEATH }, GOAP_CATEGORY.REACTION);
+        goapPlan.ConstructAllNodes();
         goapPlan.SetDoNotRecalculate(true);
         AddPlanAsPriority(goapPlan);
         if (currentAction != null) {
@@ -4187,6 +4249,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             token.OnObtainToken(this);
             if (changeCharacterOwnership) {
                 token.SetCharacterOwner(this);
+            } else {
+                if(token.characterOwner == null) {
+                    token.SetCharacterOwner(this);
+                }
             }
             return true;
         }
@@ -4217,9 +4283,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     private bool RemoveToken(SpecialToken token) {
         return items.Remove(token);
     }
-    public void DropToken(SpecialToken token, Area location, LocationStructure structure) {
+    public void DropToken(SpecialToken token, Area location, LocationStructure structure, LocationGridTile gridTile = null) {
         if (UnobtainToken(token)) {
-            location.AddSpecialTokenToLocation(token, structure);
+            location.AddSpecialTokenToLocation(token, structure, gridTile);
             if (structure != homeStructure) {
                 //if this character drops this at a structure that is not his/her home structure, set the owner of the item to null
                 token.SetCharacterOwner(null);
@@ -4285,6 +4351,38 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         }
         return null;
+    }
+    public List<SpecialToken> GetItemsOwned() {
+        List<SpecialToken> itemsOwned = new List<SpecialToken>();
+        for (int i = 0; i < homeArea.possibleSpecialTokenSpawns.Count; i++) {
+            SpecialToken token = homeArea.possibleSpecialTokenSpawns[i];
+            if (token.characterOwner == this) {
+                itemsOwned.Add(token);
+            }
+        }
+        for (int i = 0; i < items.Count; i++) {
+            SpecialToken token = items[i];
+            if (token.characterOwner == this) {
+                itemsOwned.Add(token);
+            }
+        }
+        return itemsOwned;
+    }
+    public int GetNumOfItemsOwned() {
+        int count = 0;
+        for (int i = 0; i < homeArea.possibleSpecialTokenSpawns.Count; i++) {
+            SpecialToken token = homeArea.possibleSpecialTokenSpawns[i];
+            if (token.characterOwner == this) {
+                count++;
+            }
+        }
+        for (int i = 0; i < items.Count; i++) {
+            SpecialToken token = items[i];
+            if (token.characterOwner == this) {
+                count++;
+            }
+        }
+        return count;
     }
     #endregion
 
@@ -4700,12 +4798,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         poiGoapActions.Add(INTERACTION_TYPE.ASSAULT_ACTION_NPC);
         poiGoapActions.Add(INTERACTION_TYPE.DROP_CHARACTER);
         poiGoapActions.Add(INTERACTION_TYPE.ABDUCT_ACTION);
-        poiGoapActions.Add(INTERACTION_TYPE.STROLL);
+        //poiGoapActions.Add(INTERACTION_TYPE.STROLL);
         poiGoapActions.Add(INTERACTION_TYPE.DAYDREAM);
         poiGoapActions.Add(INTERACTION_TYPE.SLEEP_OUTSIDE);
         poiGoapActions.Add(INTERACTION_TYPE.PRAY);
-        poiGoapActions.Add(INTERACTION_TYPE.EXPLORE);
-        poiGoapActions.Add(INTERACTION_TYPE.PATROL);
+        //poiGoapActions.Add(INTERACTION_TYPE.EXPLORE);
+        //poiGoapActions.Add(INTERACTION_TYPE.PATROL);
         poiGoapActions.Add(INTERACTION_TYPE.TRAVEL);
         poiGoapActions.Add(INTERACTION_TYPE.RETURN_HOME_LOCATION);
         poiGoapActions.Add(INTERACTION_TYPE.HUNT_ACTION);
@@ -4713,6 +4811,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         poiGoapActions.Add(INTERACTION_TYPE.REPORT_CRIME);
         poiGoapActions.Add(INTERACTION_TYPE.STEAL_CHARACTER);
         poiGoapActions.Add(INTERACTION_TYPE.JUDGE_CHARACTER);
+        poiGoapActions.Add(INTERACTION_TYPE.CURSE_CHARACTER);
     }
     public void StartGOAP(GoapEffect goal, IPointOfInterest target, GOAP_CATEGORY category, bool isPriority = false, List<Character> otherCharactePOIs = null, bool isPersonalPlan = true, GoapPlanJob job = null) {
         List<CharacterAwareness> characterTargetsAwareness = new List<CharacterAwareness>();
@@ -5231,6 +5330,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     marker.LookAt(lookAtMarker.transform.position);
                 }
             } else {
+                if(target.gridTileLocation == null) {
+                    return;
+                }
                 marker.LookAt(target.gridTileLocation.centeredWorldLocation);
             }          
         }
@@ -5268,9 +5370,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         _hasAlreadyAskedForPlan = state;
     }
     public void PrintLogIfActive(string log) {
-        if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == this) {
+        //if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == this) {
             Debug.Log(log);
-        }
+        //}
     }
     private void AddPlanAsPriority(GoapPlan plan) {
         allGoapPlans.Insert(0, plan);

@@ -38,6 +38,9 @@ public class JudgeCharacter : GoapAction {
 
     #region State Effects
     public void PreTargetExecuted() {
+        if (parentPlan.job != null) {
+            parentPlan.job.SetCannotCancelJob(true);
+        }
         //**Effect 1**: Remove target's Restrained trait
         RemoveTraitFrom(poiTarget, "Restrained");
         //**Effect 2**: Target dies
@@ -82,6 +85,7 @@ public class JudgeCharacter : GoapAction {
         goapAction.SetEndAction(OnEndGoHome);
         GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
         GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.IDLE);
+        goapPlan.ConstructAllNodes();
         target.AddPlanFromOutside(goapPlan);
     }
 

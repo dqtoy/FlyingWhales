@@ -247,6 +247,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.DISPEL_MAGIC,
                 INTERACTION_TYPE.JUDGE_CHARACTER,
                 INTERACTION_TYPE.FEED,
+                INTERACTION_TYPE.DROP_ITEM,
             } },
             { RACE.ELVES, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -322,6 +323,7 @@ public class RaceManager : MonoBehaviour {
                 //INTERACTION_TYPE.DISPEL_MAGIC,
                 INTERACTION_TYPE.JUDGE_CHARACTER,
                 INTERACTION_TYPE.FEED,
+                INTERACTION_TYPE.DROP_ITEM,
             } },
             { RACE.GOBLIN, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -398,6 +400,7 @@ public class RaceManager : MonoBehaviour {
                 //INTERACTION_TYPE.DISPEL_MAGIC,
                 INTERACTION_TYPE.JUDGE_CHARACTER,
                 INTERACTION_TYPE.FEED,
+                INTERACTION_TYPE.DROP_ITEM,
             } },
             { RACE.FAERY, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -474,6 +477,7 @@ public class RaceManager : MonoBehaviour {
                 //INTERACTION_TYPE.DISPEL_MAGIC,
                 INTERACTION_TYPE.JUDGE_CHARACTER,
                 INTERACTION_TYPE.FEED,
+                INTERACTION_TYPE.DROP_ITEM,
             } },
             { RACE.SKELETON, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -548,6 +552,7 @@ public class RaceManager : MonoBehaviour {
                 //INTERACTION_TYPE.DISPEL_MAGIC,
                 INTERACTION_TYPE.JUDGE_CHARACTER,
                 INTERACTION_TYPE.FEED,
+                INTERACTION_TYPE.DROP_ITEM,
             } },
             { RACE.SPIDER, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,

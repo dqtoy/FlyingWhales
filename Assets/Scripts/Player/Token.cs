@@ -131,6 +131,7 @@ public class SpecialToken : Token, IPointOfInterest {
     public int supplyValue { get { return ItemManager.Instance.itemData[specialTokenType].supplyValue; } }
     public int craftCost { get { return ItemManager.Instance.itemData[specialTokenType].craftCost; } }
     public int purchaseCost { get { return ItemManager.Instance.itemData[specialTokenType].purchaseCost; } }
+    public List<JobQueueItem> allJobsTargettingThis { get; private set; }
     protected List<Trait> _traits;
     private LocationGridTile tile;
     private POI_STATE _state;
@@ -181,8 +182,9 @@ public class SpecialToken : Token, IPointOfInterest {
         this.name = Utilities.NormalizeStringUpperCaseFirstLetters(this.specialTokenType.ToString());
         weight = appearanceRate;
         npcAssociatedInteractionType = INTERACTION_TYPE.NONE;
-        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.PICK_ITEM, INTERACTION_TYPE.STEAL, INTERACTION_TYPE.SCRAP, INTERACTION_TYPE.ITEM_DESTROY, };
+        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.PICK_ITEM, INTERACTION_TYPE.STEAL, INTERACTION_TYPE.SCRAP, INTERACTION_TYPE.ITEM_DESTROY, INTERACTION_TYPE.DROP_ITEM};
         _traits = new List<Trait>();
+        allJobsTargettingThis = new List<JobQueueItem>();
         InitializeCollisionTrigger();
     }
     //public void AdjustQuantity(int amount) {
@@ -216,6 +218,21 @@ public class SpecialToken : Token, IPointOfInterest {
     }
     public override string ToString() {
         return name;
+    }
+    public void AddJobTargettingThis(JobQueueItem job) {
+        allJobsTargettingThis.Add(job);
+    }
+    public bool RemoveJobTargettingThis(JobQueueItem job) {
+        return allJobsTargettingThis.Remove(job);
+    }
+    public bool HasJobTargettingThis(string jobName) {
+        for (int i = 0; i < allJobsTargettingThis.Count; i++) {
+            JobQueueItem job = allJobsTargettingThis[i];
+            if (job.name == jobName) {
+                return true;
+            }
+        }
+        return false;
     }
 
     #region Area Map

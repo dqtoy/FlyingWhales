@@ -16,6 +16,12 @@ public class StrollState : CharacterState {
         base.DoMovementBehavior();
         StartStrollMovement();
     }
+    protected override void PerTickInState() {
+        base.PerTickInState();
+        if (!isDone) {
+            stateComponent.character.CreatePersonalJobs();
+        }
+    }
     #endregion
 
     private void StartStrollMovement() {

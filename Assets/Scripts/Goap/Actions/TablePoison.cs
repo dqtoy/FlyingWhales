@@ -23,6 +23,7 @@ public class TablePoison : GoapAction {
             for (int i = 0; i < dwelling.residents.Count; i++) {
                 //**Effect 2**: Owner/s - Add Trait (Sick)
                 AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Sick", targetPOI = dwelling.residents[i] });
+                AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", targetPOI = dwelling.residents[i] });
                 //**Effect 3**: Kill Owner/s
                 AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.DEATH, targetPOI = dwelling.residents[i] });
             }

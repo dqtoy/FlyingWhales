@@ -29,14 +29,14 @@ public class GoapPlan {
         this.category = category;
         this.doNotRecalculate = false;
         allNodes = new List<GoapNode>();
-        ConstructAllNodes();
+        //ConstructAllNodes();
         Messenger.AddListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnActionInPlanFinished);
     }
 
     public void Reset(GoapNode startingNode) {
         this.startingNode = startingNode;
         this.currentNode = startingNode;
-        ConstructAllNodes();
+        //ConstructAllNodes();
     }
 
     public void SetNextNode() {
@@ -57,7 +57,7 @@ public class GoapPlan {
         dropPlanCallStack = StackTraceUtility.ExtractStackTrace();
     }
 
-    private void ConstructAllNodes() {
+    public void ConstructAllNodes() {
         allNodes.Clear();
         GoapNode node = startingNode;
         node.action.SetParentPlan(this);

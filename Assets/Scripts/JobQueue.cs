@@ -113,6 +113,14 @@ public class JobQueue {
         }
         return false;
     }
+    public bool HasJob(string jobName) {
+        for (int i = 0; i < jobsInQueue.Count; i++) {
+            if (jobsInQueue[i].name == jobName) {
+                return true;
+            }
+        }
+        return false;
+    }
     public bool HasJob(string jobName, IPointOfInterest targetPOI) {
         for (int i = 0; i < jobsInQueue.Count; i++) {
             if(jobsInQueue[i].name == jobName && jobsInQueue[i] is GoapPlanJob) {

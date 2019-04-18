@@ -159,6 +159,7 @@ public class GoapThread : Multithread {
                         GoapPlan plan = actor.planner.PlanActions(usableActions[i].poiTarget, usableActions[i], usableActions, category, isPersonalPlan);
                         if (plan != null) {
                             allPlans.Add(plan);
+                            plan.SetListOfCharacterAwareness(characterTargetsAwareness);
                         }
                     }
                 }
@@ -173,6 +174,7 @@ public class GoapThread : Multithread {
                         GoapPlan plan = actor.planner.PlanActions(usableActions[i].poiTarget, usableActions[i], usableActions, category, isPersonalPlan);
                         if (plan != null) {
                             allPlans.Add(plan);
+                            plan.SetListOfCharacterAwareness(characterTargetsAwareness);
                         }
                     }
                 }
@@ -188,6 +190,7 @@ public class GoapThread : Multithread {
             GoapPlan plan = actor.planner.PlanActions(target, goalAction, usableActions, category, isPersonalPlan);
             if (plan != null) {
                 allPlans.Add(plan);
+                plan.SetListOfCharacterAwareness(characterTargetsAwareness);
             }
         } else {
             //default
@@ -200,6 +203,7 @@ public class GoapThread : Multithread {
                     GoapPlan plan = actor.planner.PlanActions(target, usableActions[i], usableActions, category, isPersonalPlan);
                     if (plan != null) {
                         allPlans.Add(plan);
+                        plan.SetListOfCharacterAwareness(characterTargetsAwareness);
                     }
                 }
             }
@@ -224,7 +228,8 @@ public class GoapThread : Multithread {
                     }
                 }
             }
-            shortestPathToGoal.SetListOfCharacterAwareness(characterTargetsAwareness);
+            //shortestPathToGoal.SetListOfCharacterAwareness(characterTargetsAwareness);
+            shortestPathToGoal.ConstructAllNodes();
             log += shortestPathToGoal.LogPlan();
             createdPlan = shortestPathToGoal;
         } else {
@@ -275,6 +280,7 @@ public class GoapThread : Multithread {
                 log += usableActions[i].goapName + " (" + usableActions[i].poiTarget.name + ")";
             }
             bool success = actor.planner.RecalculatePathForPlan(recalculationPlan, usableActions);
+            recalculationPlan.ConstructAllNodes();
             if (success) {
                 log += "\nSUCCESSFULLY RECALCULATED PLAN!";
                 log += recalculationPlan.LogPlan();

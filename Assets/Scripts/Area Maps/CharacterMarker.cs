@@ -402,7 +402,7 @@ public class CharacterMarker : PooledObject {
         StartMovement();
     }
     public void ArrivedAtLocation() {
-        if(character.currentParty.icon.isTravelling && character.gridTileLocation == destinationTile && destinationTile.occupant == null) {
+        if(character.currentParty.icon.isTravelling && character.gridTileLocation == destinationTile) { //&& destinationTile.occupant == null
             character.currentParty.icon.SetIsTravelling(false);
             //character.currentParty.icon.SetIsPlaceCharacterAsTileObject(true);
             //if (_destinationTile.structure != character.currentStructure) {
@@ -420,11 +420,12 @@ public class CharacterMarker : PooledObject {
             if (_arrivalAction != null) {
                 _arrivalAction();
             }
-        } else if (destinationTile != null) {
-            if(character.currentParty.icon.isTravelling && destinationTile.occupant != null && destinationTile.occupant != character) {
-                Debug.LogWarning(character.name + " cannot occupy " + destinationTile.ToString() + " because it is already occupied by " + destinationTile.occupant.name);
-            }
-        }
+        } 
+        //else if (destinationTile != null) {
+        //    if(character.currentParty.icon.isTravelling && destinationTile.occupant != null && destinationTile.occupant != character) {
+        //        Debug.LogWarning(character.name + " cannot occupy " + destinationTile.ToString() + " because it is already occupied by " + destinationTile.occupant.name);
+        //    }
+        //}
     }
     private void StartMovement() {
         UpdateSpeed();

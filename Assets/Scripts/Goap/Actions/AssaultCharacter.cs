@@ -13,6 +13,7 @@ public class AssaultCharacter : GoapAction {
     }
     protected override void ConstructPreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_NON_POSITIVE_TRAIT, conditionKey = "Disabler", targetPOI = poiTarget });
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", targetPOI = poiTarget });
     }
     public override void PerformActualAction() {
         //List<Character> attackers = new List<Character>();
@@ -112,6 +113,9 @@ public class AssaultCharacter : GoapAction {
         currentState.SetIntelReaction(State3Reactions);
     }
     public void AfterTargetKilled() {
+        if (parentPlan.job != null) {
+            parentPlan.job.SetCannotCancelJob(true);
+        }
         Character target = poiTarget as Character;
         target.Death();
     }

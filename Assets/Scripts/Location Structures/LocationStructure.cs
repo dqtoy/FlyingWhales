@@ -69,7 +69,7 @@ public class LocationStructure {
                 //character.ScanForAwareness();
             }
         } else {
-            Debug.LogWarning(GameManager.Instance.TodayLogString() + " " + character.name + " can't be added to " + ToString() + " because it is already there!");
+            //Debug.LogWarning(GameManager.Instance.TodayLogString() + " " + character.name + " can't be added to " + ToString() + " because it is already there!");
         }
     }
     public void RemoveCharacterAtLocation(Character character) {
@@ -79,7 +79,7 @@ public class LocationStructure {
             //character.SetCurrentStructureTileLocation(null);
             RemovePOI(character);
         } else {
-            Debug.LogWarning(GameManager.Instance.TodayLogString() + " " + character.name + " can't be removed from " + ToString() + " because it is not there!");
+            //Debug.LogWarning(GameManager.Instance.TodayLogString() + " " + character.name + " can't be removed from " + ToString() + " because it is not there!");
         }
     }
     #endregion

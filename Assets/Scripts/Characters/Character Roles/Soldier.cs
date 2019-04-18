@@ -38,6 +38,7 @@ public class Soldier : CharacterRole {
         GoapNode startingNode = new GoapNode(goalNode, goapAction1.cost, goapAction1);
 
         GoapPlan goapPlan = new GoapPlan(startingNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.WORK);
+        goapPlan.ConstructAllNodes();
         return goapPlan;
     }
 }

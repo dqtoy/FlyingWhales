@@ -53,6 +53,6 @@ public class Cursed : Trait {
         }
     }
     private bool CanCharacterTakeRemoveTraitJob(Character character) {
-        return !character.HasRelationshipOfTypeWith(_sourceCharacter, RELATIONSHIP_TRAIT.ENEMY);
+        return _sourceCharacter != character && !character.HasRelationshipOfTypeWith(_sourceCharacter, RELATIONSHIP_TRAIT.ENEMY);
     }
 }

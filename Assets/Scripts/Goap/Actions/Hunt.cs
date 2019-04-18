@@ -119,6 +119,9 @@ public class Hunt : GoapAction {
     public void PreTargetKilled() {
         Character target = poiTarget as Character;
         //currentState.AddLogFiller(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        if(parentPlan.job != null) {
+            parentPlan.job.SetCannotCancelJob(true);
+        }
         target.Death();
     }
     public void PerTickTargetKilled() {

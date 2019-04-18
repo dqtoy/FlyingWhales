@@ -1084,6 +1084,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.STEAL_CHARACTER:
                 goapAction = new StealFromCharacter(actor, target);
                 break;
+            case INTERACTION_TYPE.DROP_ITEM:
+                goapAction = new DropItemHome(actor, target);
+                break;
         }
         if(goapAction != null && willInitialize) {
             goapAction.Initialize();

@@ -64,6 +64,9 @@ public class Drink : GoapAction {
             Sick sick = new Sick();
             AddTraitTo(actor, sick);
         } else {
+            if (parentPlan.job != null) {
+                parentPlan.job.SetCannotCancelJob(true);
+            }
             actor.Death();
         }
     }

@@ -88,6 +88,9 @@ public class EatAtTable : GoapAction {
             Sick sick = new Sick();
             AddTraitTo(actor, sick);
         } else {
+            if (parentPlan.job != null) {
+                parentPlan.job.SetCannotCancelJob(true);
+            }
             log = new Log(GameManager.Instance.Today(), "GoapAction", "EatAtTable", "eat poisoned_killed");
             log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(poiTarget.gridTileLocation.structure.location, poiTarget.gridTileLocation.structure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);

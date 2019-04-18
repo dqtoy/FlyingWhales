@@ -41,9 +41,10 @@ public class GoapPlanJob : JobQueueItem {
                 }
                 if (character.currentAction.isPerformingActualAction && !character.currentAction.isDone) {
                     character.currentAction.currentState.EndPerTickEffect();
+                } else {
+                    character.SetCurrentAction(null);
+                    character.DropPlan(assignedPlan);
                 }
-                character.SetCurrentAction(null);
-                character.DropPlan(assignedPlan);
             } else {
                 character.DropPlan(assignedPlan);
             }
@@ -56,16 +57,25 @@ public class GoapPlanJob : JobQueueItem {
         if (this.targetPOI is Character) {
             Character target = this.targetPOI as Character;
             target.AddJobTargettingThisCharacter(this);
+        }else if (this.targetPOI is SpecialToken) {
+            SpecialToken target = this.targetPOI as SpecialToken;
+            target.AddJobTargettingThis(this);
         }
     }
     public override bool OnRemoveJobFromQueue() {
         if (this.targetPOI is Character) {
             Character target = this.targetPOI as Character;
             return target.RemoveJobTargettingThisCharacter(this);
+        }else if (this.targetPOI is SpecialToken) {
+            SpecialToken target = this.targetPOI as SpecialToken;
+            return target.RemoveJobTargettingThis(this);
         }
         return false;
     }
     protected override bool CanTakeJob(Character character) {
+        if(targetPOI == null) {
+            Debug.Log("null target");
+        }
         if(targetPOI.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
             Character target = targetPOI as Character;
             if(target.IsInOwnParty() && !target.isDead) {
