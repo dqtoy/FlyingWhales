@@ -12,21 +12,28 @@ public class GoapPlanJob : JobQueueItem {
     public INTERACTION_TYPE targetInteractionType { get; protected set; } //Only used if the plan to be created uses interaction type
     public object[] otherData { get; protected set; } //Only used if the plan to be created uses interaction type
 
+    //forced interactions per effect
+    public Dictionary<GoapEffect, INTERACTION_TYPE> forcedActions { get; private set; }
+
+
     public GoapPlanJob(string name, GoapEffect targetEffect) : base(name) {
         this.targetEffect = targetEffect;
         this.targetPOI = targetEffect.targetPOI;
+        forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
     }
     public GoapPlanJob(string name, INTERACTION_TYPE targetInteractionType, object[] otherData) : base(name) {
         //this.targetEffect = targetEffect;
         //this.targetPOI = targetEffect.targetPOI;
         this.targetInteractionType = targetInteractionType;
         this.otherData = otherData;
+        forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
     }
     public GoapPlanJob(string name, INTERACTION_TYPE targetInteractionType, IPointOfInterest targetPOI) : base(name) {
         //this.targetEffect = targetEffect;
         this.targetPOI = targetPOI;
         this.targetInteractionType = targetInteractionType;
         //this.otherData = otherData;
+        forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
     }
 
     #region Overrides 
@@ -96,5 +103,38 @@ public class GoapPlanJob : JobQueueItem {
             plan.SetJob(this);
         }
         assignedPlan = plan;
+    }
+
+    #region Forced Actions
+    /// <summary>
+    /// Add a forced action to this job.
+    /// Forced actions are used for plan generation, when a certain action in the plan has a precondition that is in the dictionary,
+    /// the plan generation must use the specified action type here.
+    /// </summary>
+    /// <param name="precondition"></param>
+    /// <param name="forcedAction"></param>
+    public void AddForcedInteraction(GoapEffect precondition, INTERACTION_TYPE forcedAction) {
+        if (!forcedActions.ContainsKey(precondition)) {
+            forcedActions.Add(precondition, forcedAction);
+        }
+    }
+    #endregion
+}
+
+public class ForcedActionsComparer : IEqualityComparer<GoapEffect> {
+
+    public bool Equals(GoapEffect x, GoapEffect y) {
+        if (x.conditionType == y.conditionType) {
+            if (string.IsNullOrEmpty(x.conditionString()) || string.IsNullOrEmpty(y.conditionString())) {
+                return true;
+            } else {
+                return x.conditionString() == y.conditionString();
+            }
+        }
+        return false;
+    }
+
+    public int GetHashCode(GoapEffect obj) {
+        return obj.GetHashCode();
     }
 }
