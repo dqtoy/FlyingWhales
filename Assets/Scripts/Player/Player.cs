@@ -718,10 +718,12 @@ public class Player : ILeader {
         }
         return false;
     }
-    public void ShowNotificationFrom(Character character, Log log) {
+    public bool ShowNotificationFrom(Character character, Log log) {
         if (ShouldShowNotificationFrom(character)) {
             ShowNotification(log);
+            return true;
         }
+        return false;
     }
     public void ShowNotificationFrom(List<Character> characters, Log log) {
         for (int i = 0; i < characters.Count; i++) {

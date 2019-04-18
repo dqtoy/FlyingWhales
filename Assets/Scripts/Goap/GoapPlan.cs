@@ -69,6 +69,18 @@ public class GoapPlan {
         }
         endNode = node;
     }
+    public int GetNumOfNodes() {
+        if(allNodes.Count > 0) {
+            return allNodes.Count;
+        }
+        int count = 1;
+        GoapNode node = startingNode;
+        while (node.parent != null) {
+            node = node.parent;
+            count++;
+        }
+        return count;
+    }
 
     public void SetListOfCharacterAwareness(List<CharacterAwareness> list) {
         goalCharacterTargets = list;

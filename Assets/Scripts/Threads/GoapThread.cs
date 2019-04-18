@@ -213,13 +213,13 @@ public class GoapThread : Multithread {
         if (allPlans.Count > 0) {
             GoapPlan shortestPathToGoal = null;
             for (int i = 0; i < allPlans.Count; i++) {
-                log += "\n" + (i + 1) + ". (" + allPlans[i].startingNode.runningCost + ") ";
-                for (int j = 0; j < allPlans[i].allNodes.Count; j++) {
-                    if (j > 0) {
-                        log += ", ";
-                    }
-                    log += allPlans[i].allNodes[j].action.goapName + " - " + allPlans[i].allNodes[j].action.poiTarget.name;
-                }
+                log += "\n" + (i + 1) + ". (" + allPlans[i].startingNode.runningCost + ") " + allPlans[i].startingNode.action.goapName + " - " + allPlans[i].startingNode.action.poiTarget.name + "[number of nodes = " + allPlans[i].GetNumOfNodes() + "]";
+                //for (int j = 0; j < allPlans[i].allNodes.Count; j++) {
+                //    if (j > 0) {
+                //        log += ", ";
+                //    }
+                //    log += allPlans[i].allNodes[j].action.goapName + " - " + allPlans[i].allNodes[j].action.poiTarget.name;
+                //}
                 if (shortestPathToGoal == null) {
                     shortestPathToGoal = allPlans[i];
                 } else {

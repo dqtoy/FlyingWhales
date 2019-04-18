@@ -1264,7 +1264,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                             if (currToken.factionOwner != null && faction.id != currToken.factionOwner.id) {
                                 continue;
                             }
-                            if (currToken.gridTileLocation != null && GetToken(currToken) == null && !currToken.HasJobTargettingThis("Claim Item") && GetAwareness(currToken) != null) {
+                            if (currToken.gridTileLocation != null && currToken.gridTileLocation.structure != null 
+                                && currToken.gridTileLocation.structure.structureType == STRUCTURE_TYPE.WAREHOUSE && GetToken(currToken) == null && !currToken.HasJobTargettingThis("Claim Item") 
+                                && GetAwareness(currToken) != null) {
                                 tokens.Add(currToken);
                             }
                         }
@@ -3625,6 +3627,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         chatLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         chatLog.AddLogToInvolvedObjects();
 
+        if (!PlayerManager.Instance.player.ShowNotificationFrom(this, chatLog)) {
+            PlayerManager.Instance.player.ShowNotificationFrom(targetCharacter, chatLog);
+        }
+
         GameDate dueDate = GameManager.Instance.Today();
         dueDate.AddTicks(4);
         SchedulingManager.Instance.AddEntry(dueDate, () => EndChatCharacter(targetCharacter));
@@ -5370,9 +5376,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         _hasAlreadyAskedForPlan = state;
     }
     public void PrintLogIfActive(string log) {
-        //if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == this) {
+        if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == this) {
             Debug.Log(log);
-        //}
+        }
     }
     private void AddPlanAsPriority(GoapPlan plan) {
         allGoapPlans.Insert(0, plan);
