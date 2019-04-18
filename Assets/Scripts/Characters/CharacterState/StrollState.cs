@@ -30,7 +30,7 @@ public class StrollState : CharacterState {
         //Debug.Log(stateComponent.character.name + " will stroll to " + target.ToString());
     }
     private LocationGridTile PickRandomTileToGoTo() {
-        List<LocationGridTile> tiles = stateComponent.character.gridTileLocation.structure.location.areaMap.GetUnoccupiedTilesInRadius(stateComponent.character.gridTileLocation, 3);
+        List<LocationGridTile> tiles = stateComponent.character.gridTileLocation.structure.location.areaMap.GetUnoccupiedTilesInRadius(stateComponent.character.gridTileLocation, 3, false, true);
         if (tiles.Count > 0) {
             return tiles[UnityEngine.Random.Range(0, tiles.Count)];
         } else {

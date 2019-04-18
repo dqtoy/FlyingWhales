@@ -4154,7 +4154,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //poiGoapActions.Add(INTERACTION_TYPE.PATROL);
         poiGoapActions.Add(INTERACTION_TYPE.TRAVEL);
         poiGoapActions.Add(INTERACTION_TYPE.RETURN_HOME_LOCATION);
-        poiGoapActions.Add(INTERACTION_TYPE.HUNT_ACTION);
+        //poiGoapActions.Add(INTERACTION_TYPE.HUNT_ACTION);
         poiGoapActions.Add(INTERACTION_TYPE.PLAY);
         poiGoapActions.Add(INTERACTION_TYPE.REPORT_CRIME);
         poiGoapActions.Add(INTERACTION_TYPE.STEAL_CHARACTER);
@@ -4821,6 +4821,19 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     /// <param name="witnessedCrime">The crime witnessed by this character, if this is null, character was only informed of the crime by someone else.</param>
     /// <param name="notifyPlayer">Should the player be notified when this happens?</param>
     public void ReactToCrime(CRIME committedCrime, Character actor, GoapAction witnessedCrime = null, bool notifyPlayer = true) {
+        if (witnessedCrime != null) {
+            //if the action that should be considered a crime is part of a job from this character's area, do not consider it a crime
+            if (witnessedCrime.parentPlan.job != null 
+                && homeArea.jobQueue.jobsInQueue.Contains(witnessedCrime.parentPlan.job)) {
+                return;
+            }
+            //if the witnessed crime is targetting this character, this character should not react to the crime
+            if (witnessedCrime.poiTarget == this) {
+                return;
+            }
+        }
+
+
         string reactSummary = GameManager.Instance.TodayLogString() + this.name + " will react to crime committed by " + actor.name;
         Log witnessLog = null;
         //If character has a positive relationship (Friend, Lover, Paramour) with the criminal

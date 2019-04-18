@@ -434,6 +434,9 @@ public class CharacterMarker : PooledObject {
     #region Pathfinding Movement
     public void GoTo(LocationGridTile destinationTile, IPointOfInterest targetPOI, Action arrivalAction = null) {
         this.destinationTile = destinationTile;
+        //if (_arrivalAction != null) {
+        //    throw new Exception(character.name + " already has an arrival action, but it is being overwritten!");
+        //}
         _arrivalAction = arrivalAction;
         this.targetPOI = targetPOI;
         SetTargetTransform(null);
@@ -448,6 +451,9 @@ public class CharacterMarker : PooledObject {
         
     }
     public void GoTo(IPointOfInterest targetPOI, Action arrivalAction = null, bool forceFollow = false) {
+        //if (_arrivalAction != null) {
+        //    throw new Exception(character.name + " already has an arrival action, but it is being overwritten!");
+        //}
         _arrivalAction = arrivalAction;
         this.targetPOI = targetPOI;
         switch (targetPOI.poiType) {
@@ -849,22 +855,35 @@ public class CharacterMarker : PooledObject {
         if (!this.gameObject.activeInHierarchy) {
             return;
         }
-        StartCoroutine(StartWalking());
-    }
-    IEnumerator StartWalking() {
-        yield return null;
+        //if the character has a negative or neutral disabler trait, ignore this
+        if (character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_EFFECT.NEUTRAL, TRAIT_TYPE.DISABLER)) {
+            return;
+        }
+        //Debug.Log(character.name + " played walk animation.");
         animator.Play("Walk");
+        //StartCoroutine(StartWalking());
     }
+    //IEnumerator StartWalking() {
+    //    yield return null;
+    //    Debug.Log(character.name + " played walk animation.");
+    //    animator.Play("Walk");
+    //}
     public void PlayIdle() {
         if (!this.gameObject.activeInHierarchy) {
             return;
         }
+        //if the character has a negative or neutral disabler trait, ignore this
+        if (character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_EFFECT.NEUTRAL, TRAIT_TYPE.DISABLER)) {
+            return;
+        }
+        //Debug.Log(character.name + " played idle animation.");
         animator.Play("Idle");
     }
     private void PlaySleepGround() {
         if (!this.gameObject.activeInHierarchy) {
             return;
         }
+        //Debug.Log(character.name + " played sleep ground animation.");
         animator.Play("Sleep Ground");
     }
     #endregion
