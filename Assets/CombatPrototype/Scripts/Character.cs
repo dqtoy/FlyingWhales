@@ -726,10 +726,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 SetHomeStructure(homeStructure); //keep this data with character to prevent errors
             }
 
-            List<Character> characterRels = new List<Character>(this.relationships.Keys.ToList());
-            for (int i = 0; i < characterRels.Count; i++) {
-                RemoveRelationship(characterRels[i]);
-            }
+            //List<Character> characterRels = new List<Character>(this.relationships.Keys.ToList());
+            //for (int i = 0; i < characterRels.Count; i++) {
+            //    RemoveRelationship(characterRels[i]);
+            //}
 
             if (_minion != null) {
                 PlayerManager.Instance.player.RemoveMinion(_minion);
@@ -1232,6 +1232,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (!HasJobTargettingThisCharacter("Apprehend")) {
             GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = homeArea, targetPOI = this };
             GoapPlanJob job = new GoapPlanJob("Apprehend", goapEffect);
+            job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained" }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
             job.SetCanTakeThisJobChecker(CanCharacterTakeApprehendJob);
             homeArea.jobQueue.AddJobInQueue(job);
         }
@@ -1664,7 +1665,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     private void OnOtherCharacterDied(Character characterThatDied) {
         if (characterThatDied.id != this.id) {
-            RemoveRelationship(characterThatDied);
+            //RemoveRelationship(characterThatDied); //do not remove relationships when dying
             marker.OnOtherCharacterDied(characterThatDied);
         }
     }
@@ -1789,10 +1790,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         }
     }
-    public void RemoveAllRelationships() {
+    public void RemoveAllRelationships(bool triggerOnRemove = true) {
         List<Character> targetCharacters = relationships.Keys.ToList();
         while(targetCharacters.Count > 0) {
-            CharacterManager.Instance.RemoveRelationshipBetween(this, targetCharacters[0]);
+            CharacterManager.Instance.RemoveRelationshipBetween(this, targetCharacters[0], triggerOnRemove);
             targetCharacters.RemoveAt(0);
         }
     }
@@ -1811,7 +1812,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             relLycanData.targetToCharacterRelData.rels.Clear();
 
             for (int j = 0; j < rels.Count; j++) {
-                CharacterManager.Instance.CreateNewRelationshipBetween(this, relLycanData.target, rels[i].relType);
+                CharacterManager.Instance.CreateNewRelationshipBetween(this, relLycanData.target, rels[i].relType, false);
             }
         }
     }
@@ -2473,10 +2474,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             AddTrait("Elf Slayer");
         }
     }
-    public bool AddTrait(string traitName, Character characterResponsible = null, System.Action onRemoveAction = null, GoapAction gainedFromDoing = null) {
-        return AddTrait(AttributeManager.Instance.allTraits[traitName], characterResponsible, onRemoveAction, gainedFromDoing);
+    public bool AddTrait(string traitName, Character characterResponsible = null, System.Action onRemoveAction = null, GoapAction gainedFromDoing = null, bool triggerOnAdd = true) {
+        return AddTrait(AttributeManager.Instance.allTraits[traitName], characterResponsible, onRemoveAction, gainedFromDoing, triggerOnAdd);
     }
-    public bool AddTrait(Trait trait, Character characterResponsible = null, System.Action onRemoveAction = null, GoapAction gainedFromDoing = null) {
+    public bool AddTrait(Trait trait, Character characterResponsible = null, System.Action onRemoveAction = null, GoapAction gainedFromDoing = null, bool triggerOnAdd = true) {
         if (trait.IsUnique() && GetTrait(trait.name) != null) {
             trait.SetCharacterResponsibleForTrait(characterResponsible);
             if (trait.name == "Injured") { //TODO: Make this more elegant!(Need a way to still broadcast added traits even if it is a duplicate)
@@ -2495,7 +2496,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             removeDate.AddTicks(trait.daysDuration);
             SchedulingManager.Instance.AddEntry(removeDate, () => RemoveTraitOnSchedule(trait));
         }
-        trait.OnAddTrait(this);
+        if (triggerOnAdd) {
+            trait.OnAddTrait(this);
+        }
         Messenger.Broadcast(Signals.TRAIT_ADDED, this, trait);
         if (trait is RelationshipTrait) {
             RelationshipTrait rel = trait as RelationshipTrait;
@@ -3266,7 +3269,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return false;
     }
-    public bool PlanIdleStroll(LocationStructure targetStructure) {
+    public bool PlanIdleStroll(LocationStructure targetStructure, LocationGridTile targetTile = null) {
         //if (stateComponent.stateToDo != null && stateComponent.stateToDo.characterState == CHARACTER_STATE.EXPLORE) {
         //    if (!(stateComponent.stateToDo as ExploreState).hasStateStarted) {
         //        //if the character will be doing explore state, but is currently travelling to anotehr area, do not stroll
@@ -3276,7 +3279,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (currentStructure == targetStructure) {
             stateComponent.SwitchToState(CHARACTER_STATE.STROLL);
         } else {
-            MoveToAnotherStructure(targetStructure, null, null, () => stateComponent.SwitchToState(CHARACTER_STATE.STROLL));
+            MoveToAnotherStructure(targetStructure, targetTile, null, () => stateComponent.SwitchToState(CHARACTER_STATE.STROLL));
         }
         //Stroll goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.STROLL, this, this) as Stroll;
         //goapAction.SetTargetStructure(targetStructure);
@@ -4773,6 +4776,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     /// <param name="character">Character in question.</param>
     public bool IsHostileWith(Character character) {
         //return true;
+        if (character.isDead || this.isDead) {
+            return false;
+        }
         if (character.ignoreHostility > 0 || this.ignoreHostility > 0) {
             //if either the character in question or this character should ignore hostility, return false.
             return false;
@@ -4902,6 +4908,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     //only add apprehend job if the criminal is part of this characters faction
                     actor.AddCriminalTrait(committedCrime);
                     job = new GoapPlanJob("Apprehend", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = homeArea, targetPOI = actor });
+                    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained" }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
                     job.SetCanTakeThisJobChecker(CanCharacterTakeApprehendJob);
                     homeArea.jobQueue.AddJobInQueue(job);
                 }
@@ -4914,6 +4921,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     actor.AddCriminalTrait(committedCrime);
                     //- If the character is a Soldier, he will also create an Apprehend Job Type in his personal job queue.
                     job = new GoapPlanJob("Apprehend", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = homeArea, targetPOI = actor });
+                    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained" }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
                     job.SetCanTakeThisJobChecker(CanCharacterTakeApprehendJob);
                     homeArea.jobQueue.AddJobInQueue(job);
                     homeArea.jobQueue.AssignCharacterToJob(job, this);

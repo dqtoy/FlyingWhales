@@ -598,7 +598,7 @@ MonoBehaviour:
   collidesWith: 1
   wallAvoidForce: 1
   wallAvoidFalloff: 1
-  priority: 0.5
+  priority: 0.75
   debug: 0
 --- !u!114 &114578536136533292
 MonoBehaviour:
@@ -663,7 +663,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   version: 2
-  radius: 0.25
+  radius: 0.2
   height: 2
   repathRate: 0.2
   canSearch: 1
@@ -679,9 +679,9 @@ MonoBehaviour:
   targetCompatibility: {fileID: 0}
   maxAcceleration: 9999
   rotationSpeed: 360
-  slowdownDistance: 0.1
-  pickNextWaypointDist: 0.35
-  endReachedDistance: 0.35
+  slowdownDistance: 0.2
+  pickNextWaypointDist: 0.65
+  endReachedDistance: 0.5
   alwaysDrawGizmos: 1
   slowWhenNotFacingTarget: 1
   whenCloseToDestination: 1
@@ -690,6 +690,7 @@ MonoBehaviour:
   searchLength: 1000
   spread: 5000
   aimStrength: 0.75
+  stopMovementST: 
 --- !u!114 &114825110122692990
 MonoBehaviour:
   m_ObjectHideFlags: 1

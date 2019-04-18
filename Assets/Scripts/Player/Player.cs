@@ -681,7 +681,7 @@ public class Player : ILeader {
     private void OnCharacterDidAction(Character character, GoapAction action) {
         bool showPopup = false;
         if (action.showIntelNotification) {
-            showPopup = ShouldShowNotificationFrom(character);
+            showPopup = ShouldShowNotificationFrom(character, action.currentState.descriptionLog);
         }
         if (showPopup) {
             Messenger.Broadcast<Intel>(Signals.SHOW_INTEL_NOTIFICATION, InteractionManager.Instance.CreateNewIntel(action, character));
@@ -701,19 +701,39 @@ public class Player : ILeader {
         }
         return false;
     }
-    public bool ShowNotificationFrom(Character character, Log log) {
+    private bool ShouldShowNotificationFrom(Character character, Log log) {
         if (ShouldShowNotificationFrom(character)) {
+            return true;
+        } else {
+            return ShouldShowNotificationFrom(log.fillers.Where(x => x.obj is Character).Select(x => x.obj as Character).ToList());
+        }
+    }
+    private bool ShouldShowNotificationFrom(List<Character> characters) {
+        for (int i = 0; i < characters.Count; i++) {
+            if (ShouldShowNotificationFrom(characters[i])) {
+                return true;
+            }
+        }
+        return false;
+    }
+    private bool ShouldShowNotificationFrom(List<Character> characters, Log log) {
+        for (int i = 0; i < characters.Count; i++) {
+            if (ShouldShowNotificationFrom(characters[i], log)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public bool ShowNotificationFrom(Character character, Log log) {
+        if (ShouldShowNotificationFrom(character, log)) {
             ShowNotification(log);
             return true;
         }
         return false;
     }
     public void ShowNotificationFrom(List<Character> characters, Log log) {
-        for (int i = 0; i < characters.Count; i++) {
-            if (ShouldShowNotificationFrom(characters[i])) {
-                ShowNotification(log);
-                break;
-            }
+        if (ShouldShowNotificationFrom(characters, log)) {
+            ShowNotification(log);
         }
     }
     public void ShowNotification(Log log) {

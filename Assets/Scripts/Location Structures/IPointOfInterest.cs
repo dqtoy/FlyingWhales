@@ -20,8 +20,8 @@ public interface IPointOfInterest {
     void SetPOIState(POI_STATE state);
 
     #region Traits
-    bool AddTrait(string traitName, Character characterResponsible = null, System.Action onRemoveAction = null, GoapAction gainedFromDoing = null);
-    bool AddTrait(Trait trait, Character characterResponsible = null, System.Action onRemoveAction = null, GoapAction gainedFromDoing = null);
+    bool AddTrait(string traitName, Character characterResponsible = null, System.Action onRemoveAction = null, GoapAction gainedFromDoing = null, bool triggerOnAdd = true);
+    bool AddTrait(Trait trait, Character characterResponsible = null, System.Action onRemoveAction = null, GoapAction gainedFromDoing = null, bool triggerOnAdd = true);
     bool RemoveTrait(Trait trait, bool triggerOnRemove = true);
     bool RemoveTrait(string traitName, bool triggerOnRemove = true);
     void RemoveTrait(List<Trait> traits);

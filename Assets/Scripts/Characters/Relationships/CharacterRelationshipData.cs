@@ -33,17 +33,17 @@ public class CharacterRelationshipData {
     }
 
     public void AddListeners() {
-        Messenger.AddListener(Signals.TICK_STARTED, LastEncounterTick);
-        Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
-        //Messenger.AddListener<Character, Trait>(Signals.TRAIT_ADDED, OnTraitAddedToCharacter);
-        Messenger.AddListener<Character, Trait>(Signals.TRAIT_REMOVED, OnTraitRemovedFromCharacter);
-        Messenger.AddListener<Character, RelationshipTrait>(Signals.RELATIONSHIP_ADDED, OnCharacterGainedRelationship);
+        //Messenger.AddListener(Signals.TICK_STARTED, LastEncounterTick);
+        //Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+        ////Messenger.AddListener<Character, Trait>(Signals.TRAIT_ADDED, OnTraitAddedToCharacter);
+        //Messenger.AddListener<Character, Trait>(Signals.TRAIT_REMOVED, OnTraitRemovedFromCharacter);
+        //Messenger.AddListener<Character, RelationshipTrait>(Signals.RELATIONSHIP_ADDED, OnCharacterGainedRelationship);
     }
     public void RemoveListeners() {
-        Messenger.RemoveListener(Signals.TICK_STARTED, LastEncounterTick);
-        Messenger.RemoveListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
-        //Messenger.RemoveListener<Character, Trait>(Signals.TRAIT_ADDED, OnTraitAddedToCharacter);
-        Messenger.RemoveListener<Character, Trait>(Signals.TRAIT_REMOVED, OnTraitRemovedFromCharacter);
+        //Messenger.RemoveListener(Signals.TICK_STARTED, LastEncounterTick);
+        //Messenger.RemoveListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+        ////Messenger.RemoveListener<Character, Trait>(Signals.TRAIT_ADDED, OnTraitAddedToCharacter);
+        //Messenger.RemoveListener<Character, Trait>(Signals.TRAIT_REMOVED, OnTraitRemovedFromCharacter);
     }
 
     private void OnCharacterArrivedAtStructure(Character character, LocationStructure structure) {

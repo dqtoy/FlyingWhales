@@ -76,6 +76,9 @@ public class StealFromCharacter : GoapAction {
             actor.AdjustHappiness(60);
         }
     }
+    private void PreStealFail() {
+        currentState.SetIntelReaction(State2Reactions);
+    }
     #endregion
 
     #region Intel Reactions
@@ -116,6 +119,44 @@ public class StealFromCharacter : GoapAction {
         else if (recipient == actor) {
             //- **Recipient Response Text**: "I know what I did."
             reactions.Add("I know what I did.");
+            //-**Recipient Effect**: no effect
+        }
+        return reactions;
+    }
+    private List<string> State2Reactions(Character recipient, Intel sharedIntel) {
+        List<string> reactions = new List<string>();
+        Character targetCharacter = poiTarget as Character;
+        //Recipient and Target is the same:
+        if (recipient == targetCharacter) {
+            //- **Recipient Response Text**: "Hahaha! Good thing I'm not carrying anything with me at that time. What a loser."
+            reactions.Add("Hahaha! Good thing I'm not carrying anything with me at that time. What a loser.");
+            //- **Recipient Effect**: Remove Friend/Lover/Paramour relationship between Actor and Recipient.
+            List<RelationshipTrait> traitsToRemove = recipient.GetAllRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE);
+            CharacterManager.Instance.RemoveRelationshipBetween(recipient, actor, traitsToRemove);
+        }
+        //Recipient and Actor have a positive relationship:
+        else if (recipient.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE)) {
+            //- **Recipient Response Text**: "Well, nothing was taken, right? Let it go."
+            reactions.Add("Well, nothing was taken, right? Let it go.");
+            //-**Recipient Effect * *: no effect
+        }
+        //Recipient and Actor have a negative relationship:
+        else if (recipient.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.NEGATIVE)) {
+            //- **Recipient Response Text**: "[Actor Name] committed theft!? Why am I not surprised."
+            reactions.Add(string.Format("{0} committed theft!? Why am I not surprised.", actor.name));
+            //- **Recipient Effect**: no effect
+        }
+        //Recipient and Actor have no relationship but are from the same faction:
+        else if (!recipient.HasRelationshipWith(actor) && recipient.faction == actor.faction) {
+            //- **Recipient Response Text**: "[Actor Name] attempted theft!? I better watch my back around [him/her]."
+            reactions.Add(string.Format("{0} attempted theft!? I better watch my back around {1}.", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.OBJECTIVE, false)));
+            //- **Recipient Effect**: Recipient and Actor are now Enemies.
+            CharacterManager.Instance.CreateNewRelationshipBetween(recipient, actor, RELATIONSHIP_TRAIT.ENEMY);
+        }
+        //Recipient and Actor is the same:
+        else if (recipient == actor) {
+            //- **Recipient Response Text**: "At least I didn't get caught. Too bad I got nothing either."
+            reactions.Add("At least I didn't get caught. Too bad I got nothing either.");
             //-**Recipient Effect**: no effect
         }
         return reactions;

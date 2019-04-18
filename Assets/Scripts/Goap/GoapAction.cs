@@ -209,7 +209,9 @@ public class GoapAction {
             } else {
                 knownTargetLocation = poiTarget.gridTileLocation;
             }
-            return InteractionManager.Instance.GetTargetLocationTile(ACTION_LOCATION_TYPE.NEAR_TARGET, actor, knownTargetLocation, targetStructure);
+            return knownTargetLocation;
+
+            //return InteractionManager.Instance.GetTargetLocationTile(ACTION_LOCATION_TYPE.NEAR_TARGET, actor, knownTargetLocation, targetStructure);
         }
         //else {
         //    knownTargetLocation = poiTarget.gridTileLocation;
@@ -325,7 +327,7 @@ public class GoapAction {
             throw new Exception(actor.name + " specific location is null!");
         }
         if (targetStructure == null) {
-            throw new Exception(actor.name + "'s target structure in " + goapName + " is null!");
+            throw new Exception(actor.name + "'s target structure in " + goapName + " is null! Targetting " + poiTarget.name);
         }
         if (actor.specificLocation != targetStructure.location) {
             return 3;
@@ -577,20 +579,20 @@ public struct GoapEffect {
         return string.Empty;
     }
 
-    //public override bool Equals(object obj) {
-    //    if (obj is GoapEffect) {
-    //        GoapEffect otherEffect = (GoapEffect)obj;
-    //        if (otherEffect.conditionType == conditionType) {
-    //            if (string.IsNullOrEmpty(conditionString())) {
-    //                return true;
-    //            } else {
-    //                return otherEffect.conditionString() == conditionString();
-    //            }
-    //        }
-    //    }
-    //    return base.Equals(obj);
-    //}
-    //public override int GetHashCode() {
-    //    return base.GetHashCode();
-    //}
+    public override bool Equals(object obj) {
+        if (obj is GoapEffect) {
+            GoapEffect otherEffect = (GoapEffect)obj;
+            if (otherEffect.conditionType == conditionType) {
+                if (string.IsNullOrEmpty(conditionString())) {
+                    return true;
+                } else {
+                    return otherEffect.conditionString() == conditionString();
+                }
+            }
+        }
+        return base.Equals(obj);
+    }
+    public override int GetHashCode() {
+        return base.GetHashCode();
+    }
 }

@@ -255,6 +255,14 @@ public class InteriorMapManager : MonoBehaviour {
                 summary += "\n\tFaction Owner: " + (tile.objHere as SpecialToken).factionOwner?.name ?? "None";
             }
         }
+        summary += "\nCharacters Here: ";
+        if (tile.charactersHere.Count > 0) {
+            for (int i = 0; i < tile.charactersHere.Count; i++) {
+                summary += "\n\t- " + tile.charactersHere[i].name;
+            }
+        } else {
+            summary += "None";
+        }
         if (character != null) {
             summary += "\nCharacter: " + character.name;
             summary += "\nDestination: " + (character.marker.destinationTile != null ? character.marker.destinationTile.ToString() : "None");

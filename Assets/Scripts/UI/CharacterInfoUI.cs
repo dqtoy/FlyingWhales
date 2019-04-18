@@ -494,7 +494,7 @@ public class CharacterInfoUI : UIMenu {
         }
     }
     private void UpdateAllHistoryInfo() {
-        List<Log> characterHistory = new List<Log>(_activeCharacter.history.OrderByDescending(x => x.date.Sum()));
+        List<Log> characterHistory = new List<Log>(_activeCharacter.history.OrderByDescending(x => x.date.year).ThenByDescending(x => x.date.month).ThenByDescending(x => x.date.day).ThenByDescending(x => x.date.tick));
         for (int i = 0; i < logHistoryItems.Length; i++) {
             LogHistoryItem currItem = logHistoryItems[i];
             Log currLog = characterHistory.ElementAtOrDefault(i);

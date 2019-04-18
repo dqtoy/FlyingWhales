@@ -399,13 +399,13 @@ public class CharacterManager : MonoBehaviour {
         }
         return null;
     }
-    public CharacterRelationshipData CreateNewRelationshipBetween(Character currCharacter, Character targetCharacter, RELATIONSHIP_TRAIT rel) {
+    public CharacterRelationshipData CreateNewRelationshipBetween(Character currCharacter, Character targetCharacter, RELATIONSHIP_TRAIT rel, bool triggerOnAdd = true) {
         RELATIONSHIP_TRAIT pair = GetPairedRelationship(rel);
         //if (currCharacter.CanHaveRelationshipWith(rel, targetCharacter)
         //    && targetCharacter.CanHaveRelationshipWith(pair, currCharacter)) {
 
-        currCharacter.AddTrait(CreateRelationshipTrait(rel, targetCharacter));
-        targetCharacter.AddTrait(CreateRelationshipTrait(pair, currCharacter));
+        currCharacter.AddTrait(CreateRelationshipTrait(rel, targetCharacter), null, null, null, triggerOnAdd);
+        targetCharacter.AddTrait(CreateRelationshipTrait(pair, currCharacter), null, null, null, triggerOnAdd);
 
         if (currCharacter.GetRelationshipTraitWith(targetCharacter, rel) == null
             || targetCharacter.GetRelationshipTraitWith(currCharacter, pair) == null) {
@@ -421,7 +421,7 @@ public class CharacterManager : MonoBehaviour {
         //    Debug.LogWarning(currCharacter.name + " and " + targetCharacter.name + " cannot have relationship " + rel.ToString() + " - " + pair.ToString());
         //}
     }
-    public void RemoveRelationshipBetween(Character character, Character targetCharacter, RELATIONSHIP_TRAIT rel) {
+    public void RemoveRelationshipBetween(Character character, Character targetCharacter, RELATIONSHIP_TRAIT rel, bool triggerOnRemove = true) {
         if (!character.relationships.ContainsKey(targetCharacter)
             || !targetCharacter.relationships.ContainsKey(character)) {
             return;
@@ -430,30 +430,30 @@ public class CharacterManager : MonoBehaviour {
         if (character.relationships[targetCharacter].HasRelationshipTrait(rel)
             && targetCharacter.relationships[character].HasRelationshipTrait(pair)) {
 
-            character.RemoveTrait(character.GetRelationshipTraitWith(targetCharacter, rel));
-            targetCharacter.RemoveTrait(targetCharacter.GetRelationshipTraitWith(character, rel));
+            character.RemoveTrait(character.GetRelationshipTraitWith(targetCharacter, rel), triggerOnRemove);
+            targetCharacter.RemoveTrait(targetCharacter.GetRelationshipTraitWith(character, rel), triggerOnRemove);
         } else {
             Debug.LogWarning(character.name + " and " + targetCharacter.name + " have inconsistent relationships " + rel.ToString() + " - " + pair.ToString() + ". Cannot remove!");
         }
     }
-    public void RemoveRelationshipBetween(Character character, Character targetCharacter, List<RelationshipTrait> rels) {
+    public void RemoveRelationshipBetween(Character character, Character targetCharacter, List<RelationshipTrait> rels, bool triggerOnRemove = true) {
         if (!character.relationships.ContainsKey(targetCharacter)
             || !targetCharacter.relationships.ContainsKey(character)) {
             return;
         }
         for (int i = 0; i < rels.Count; i++) {
             RelationshipTrait currRel = rels[i];
-            RemoveRelationshipBetween(character, targetCharacter, currRel.relType);
+            RemoveRelationshipBetween(character, targetCharacter, currRel.relType, triggerOnRemove);
         }
     }
-    public void RemoveRelationshipBetween(Character character, Character targetCharacter) {
+    public void RemoveRelationshipBetween(Character character, Character targetCharacter, bool triggerOnRemove = true) {
         if (!character.relationships.ContainsKey(targetCharacter)
             || !targetCharacter.relationships.ContainsKey(character)) {
             return;
         }
         List<RELATIONSHIP_TRAIT> rels = character.GetAllRelationshipTraitTypesWith(targetCharacter);
         for (int i = 0; i < rels.Count; i++) {
-            RemoveRelationshipBetween(character, targetCharacter, rels[i]);
+            RemoveRelationshipBetween(character, targetCharacter, rels[i], triggerOnRemove);
         }
 
         //character.RemoveRelationship(targetCharacter);

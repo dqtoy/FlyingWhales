@@ -16,7 +16,8 @@ public class PickItemGoap : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = poiTarget, targetPOI = actor });
     }
     public override void PerformActualAction() {
-        if (poiTarget.gridTileLocation != null && (actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsAdjacentTo(poiTarget))) {
+        if (poiTarget.gridTileLocation != null 
+            && (actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsAdjacentTo(poiTarget) || actor.marker.inVisionPOIs.Contains(poiTarget))) {
             SetState("Take Success");
         } else {
             SetState("Target Missing");

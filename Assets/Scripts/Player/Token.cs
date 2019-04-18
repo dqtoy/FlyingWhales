@@ -271,10 +271,10 @@ public class SpecialToken : Token, IPointOfInterest {
     #endregion
 
     #region Traits
-    public bool AddTrait(string traitName, Character characterResponsible = null, System.Action onRemoveAction = null, GoapAction gainedFromDoing = null) {
-        return AddTrait(AttributeManager.Instance.allTraits[traitName], characterResponsible, onRemoveAction, gainedFromDoing);
+    public bool AddTrait(string traitName, Character characterResponsible = null, System.Action onRemoveAction = null, GoapAction gainedFromDoing = null, bool triggerOnAdd = true) {
+        return AddTrait(AttributeManager.Instance.allTraits[traitName], characterResponsible, onRemoveAction, gainedFromDoing, triggerOnAdd);
     }
-    public bool AddTrait(Trait trait, Character characterResponsible = null, System.Action onRemoveAction = null, GoapAction gainedFromDoing = null) {
+    public bool AddTrait(Trait trait, Character characterResponsible = null, System.Action onRemoveAction = null, GoapAction gainedFromDoing = null, bool triggerOnAdd = true) {
         if (trait.IsUnique() && GetTrait(trait.name) != null) {
             trait.SetCharacterResponsibleForTrait(characterResponsible);
             return false;
@@ -290,7 +290,9 @@ public class SpecialToken : Token, IPointOfInterest {
             removeDate.AddTicks(trait.daysDuration);
             SchedulingManager.Instance.AddEntry(removeDate, () => RemoveTrait(trait));
         }
-        trait.OnAddTrait(this);
+        if (triggerOnAdd) {
+            trait.OnAddTrait(this);
+        }
         return true;
     }
     public bool RemoveTrait(Trait trait, bool triggerOnRemove = true) {

@@ -82,8 +82,12 @@ public class CharacterAIPath : AIPath {
         doNotMove += amount;
         doNotMove = Mathf.Max(0, doNotMove);
     }
+    public string stopMovementST;
     public void SetIsStopMovement(bool state) {
         isStopMovement = state;
+        if (isStopMovement) {
+            stopMovementST = StackTraceUtility.ExtractStackTrace();
+        }
     }
 
     public void OnClearPath() {

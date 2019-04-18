@@ -260,17 +260,19 @@ public class CharacterMarker : PooledObject {
             if (trait.type == TRAIT_TYPE.DISABLER) { //if the character lost a disabler trait, adjust hinder movement value
                 pathfindingAI.AdjustDoNotMove(-1);
                 if (pathfindingAI.doNotMove <= 0) {
-                    rvoController.priority = 0.5f;
+                    rvoController.priority = 0.75f;
                 }
             }
             //after this character loses combat recovery trait or unconscious trait, check if he or she can still react to another character, if yes, react.
             switch (trait.name) {
                 case "Combat Recovery":
                 case "Unconscious":
-                    if (hostilesInRange.Count > 0) {
-                        Character nearestHostile = GetNearestValidHostile();
-                        if (nearestHostile != null) {
-                            NormalReactToHostileCharacter(nearestHostile);
+                    if (character.GetTrait("Unconscious") == null && character.GetTrait("Combat Recovery") == null) {
+                        if (hostilesInRange.Count > 0) {
+                            Character nearestHostile = GetNearestValidHostile();
+                            if (nearestHostile != null) {
+                                NormalReactToHostileCharacter(nearestHostile);
+                            }
                         }
                     }
                     break;
@@ -292,6 +294,10 @@ public class CharacterMarker : PooledObject {
     /// </summary>
     /// <param name="travellingParty">The travelling party.</param>
     private void OnCharacterAreaTravelling(Party travellingParty) {
+        for (int i = 0; i < travellingParty.characters.Count; i++) {
+            RemoveHostileInRange(travellingParty.characters[i]);
+            RemovePOIFromInVisionRange(travellingParty.characters[i]);
+        }
         if (targetPOI is Character) {
             Character targetCharacter = targetPOI as Character;
             if (travellingParty.characters.Contains(targetCharacter)) {
