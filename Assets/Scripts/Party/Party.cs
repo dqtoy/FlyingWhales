@@ -259,10 +259,10 @@ public class Party {
             return;
         }
         if (_characters.Remove(character)) {
-            LocationGridTile gridTile = _owner.gridTileLocation.GetNearestUnoccupiedTileFromThis();
-            _owner.specificLocation.AddCharacterToLocation(character, gridTile, true);
+            //LocationGridTile gridTile = _owner.gridTileLocation.GetNearestUnoccupiedTileFromThis();
+            _owner.specificLocation.AddCharacterToLocation(character);
             character.OnRemovedFromParty();
-            character.marker.PlaceMarkerAt(gridTile);
+            character.marker.PlaceMarkerAt(_owner.gridTileLocation);
             //character.marker.gameObject.transform.localPosition = gridTile.centeredLocalLocation;
             //character.marker.UpdatePosition();
 

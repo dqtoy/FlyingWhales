@@ -693,6 +693,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             if(stateComponent.currentState != null) {
                 stateComponent.currentState.OnExitThisState();
             }
+            if (currentAction != null) {
+                currentAction.StopAction();
+            }
             CancelAllJobsTargettingThisCharacter();
 
             if (ownParty.specificLocation != null && isHoldingItem) {
@@ -737,6 +740,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 
             //gridTileLocation.SetPrefabHere(null);
             ObjectPoolManager.Instance.DestroyObject(marker.gameObject);
+            deathTile.RemoveCharacterHere(this);
 
             if (onCharacterDeath != null) {
                 onCharacterDeath();

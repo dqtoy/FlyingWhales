@@ -728,46 +728,98 @@ public class AreaInnerTileMap : MonoBehaviour {
     private List<LocationGridTile> DrawStructureTemplate(StructureTemplate st, LocationGridTile startingTile, LocationStructure structure) {
         List<LocationGridTile> tilesUsed = new List<LocationGridTile>();
 
-        Vector3Int currPos = new Vector3Int(startingTile.localPlace.x, startingTile.localPlace.y, 0);
-        for (int i = 0; i < st.groundTiles.Length; i++) {
-            LocationGridTile currTile = map[currPos.x, currPos.y];
-            //ground tile map
-            string groundTileName = st.groundTiles[i];
-            if (string.IsNullOrEmpty(groundTileName)) {
-                //groundTilemap.SetTile(currPos, null);
-            } else {
-                //only addded tiles that are not null to structure
-                currTile.SetStructure(structure);
-                detailsTilemap.SetTile(currTile.localPlace, null);
-                tilesUsed.Add(currTile);
-                groundTilemap.SetTile(currPos, floorTile);
-            }
+        List<LocationGridTile> used = DrawTiles(groundTilemap, st.groundTiles, startingTile);
+        DrawTiles(strcutureTilemap, st.structureWallTiles, startingTile);
+        DrawTiles(objectsTilemap, st.objectTiles, startingTile);
+        DrawTiles(detailsTilemap, st.detailTiles, startingTile);
 
-            //wall tile map
-            string wallTileName = st.structureWallTiles[i];
-            if (string.IsNullOrEmpty(wallTileName)) {
-                //strcutureTilemap.SetTile(currPos, null);
-            } else {
-                strcutureTilemap.SetTile(currPos, InteriorMapManager.Instance.GetTileAsset(wallTileName));
-            }
-
-            //object tile map
-            string objectTileName = st.objectTiles[i];
-            if (string.IsNullOrEmpty(objectTileName)) {
-                objectsTilemap.SetTile(currPos, null);
-            } else {
-                objectsTilemap.SetTile(currPos, InteriorMapManager.Instance.GetTileAsset(objectTileName));
-            }
-
-            //increment positions (goes from left to right, then from bottom to top)
-            currPos.x++;
-            if (Mathf.Abs(startingTile.localPlace.x - currPos.x)  >= st.size.X) {
-                currPos.x = startingTile.localPlace.x;
-                currPos.y++;
-            }
+        tilesUsed.AddRange(used);
+        for (int i = 0; i < tilesUsed.Count; i++) {
+            tilesUsed[i].SetStructure(structure);
         }
+        //Vector3Int currPos = new Vector3Int(startingTile.localPlace.x, startingTile.localPlace.y, 0);
+        //for (int i = 0; i < st.groundTiles.Length; i++) {
+        //    TileTemplateData data = st.groundTiles[i];
+        //    try {
+        //        tilesUsed.Add(map[(int)currPos.x + (int)data.tilePosition.x, (int)currPos.y + (int)data.tilePosition.y]);
+        //    } catch {
+        //        Debug.Log("laslaslasld");
+        //    }
+        //}
+        //Vector3Int currPos = new Vector3Int(startingTile.localPlace.x, startingTile.localPlace.y, 0);
+        //for (int i = 0; i < st.groundTiles.Length; i++) {
+        //    LocationGridTile currTile = map[currPos.x, currPos.y];
+        //    tilesUsed.Add(currTile);
+        //    //ground tile map
+        //    TileTemplateData groundTile = st.groundTiles[i];
+        //    if (string.IsNullOrEmpty(groundTile.tileAssetName)) {
+        //        //groundTilemap.SetTile(currPos, null);
+        //    } else {
+        //        //only addded tiles that are not null to structure
+        //        currTile.SetStructure(structure);
+        //        detailsTilemap.SetTile(currTile.localPlace, null);
+
+        //        groundTilemap.SetTile(currPos, floorTile);
+        //    }
+
+        //    //wall tile map
+        //    TileTemplateData wallTileName = st.structureWallTiles[i];
+        //    if (string.IsNullOrEmpty(wallTileName.tileAssetName)) {
+        //        //strcutureTilemap.SetTile(currPos, null);
+        //    } else {
+        //        strcutureTilemap.SetTile(currPos, InteriorMapManager.Instance.GetTileAsset(wallTileName.tileAssetName));
+        //        strcutureTilemap.SetTransformMatrix(currPos, wallTileName.matrix);
+        //    }
+
+        //    //object tile map
+        //    TileTemplateData objectTileName = st.objectTiles[i];
+        //    if (string.IsNullOrEmpty(objectTileName.tileAssetName)) {
+        //        objectsTilemap.SetTile(currPos, null);
+        //    } else {
+        //        objectsTilemap.SetTile(currPos, InteriorMapManager.Instance.GetTileAsset(objectTileName.tileAssetName));
+        //        objectsTilemap.SetTransformMatrix(currPos, objectTileName.matrix);
+        //    }
+
+        //    //detail tile map
+        //    if (st.detailTiles != null) {
+        //        TileTemplateData detailTileName = st.detailTiles[i];
+        //        if (string.IsNullOrEmpty(detailTileName.tileAssetName)) {
+        //            detailsTilemap.SetTile(currPos, null);
+        //        } else {
+        //            detailsTilemap.SetTile(currPos, InteriorMapManager.Instance.GetTileAsset(detailTileName.tileAssetName));
+        //            detailsTilemap.SetTransformMatrix(currPos, detailTileName.matrix);
+        //        }
+        //    }
+
+        //    //increment positions(goes from left to right, then from bottom to top)
+        //    currPos.x++;
+        //    if (Mathf.Abs(startingTile.localPlace.x - currPos.x) >= st.size.X) {
+        //        currPos.x = startingTile.localPlace.x;
+        //        currPos.y++;
+        //    }
+        //}
 
         return tilesUsed;
+    }
+    private List<LocationGridTile> DrawTiles(Tilemap tilemap, TileTemplateData[] data, LocationGridTile startTile) {
+        List<LocationGridTile> tiles = new List<LocationGridTile>();
+        for (int i = 0; i < data.Length; i++) {
+            TileTemplateData currData = data[i];
+            Vector3Int pos = new Vector3Int((int)currData.tilePosition.x, (int)currData.tilePosition.y, 0);
+            pos.x += startTile.localPlace.x;
+            pos.y += startTile.localPlace.y;
+            if (tilemap == groundTilemap) {
+                if (!string.IsNullOrEmpty(currData.tileAssetName)) {
+                    tilemap.SetTile(pos, InteriorMapManager.Instance.GetTileAsset(currData.tileAssetName));
+                    tiles.Add(map[pos.x, pos.y]);
+                }
+            } else {
+                tilemap.SetTile(pos, InteriorMapManager.Instance.GetTileAsset(currData.tileAssetName));
+            }
+            tilemap.SetTransformMatrix(pos, currData.matrix);
+
+        }
+        return tiles;
     }
     #endregion
 

@@ -64802,10 +64802,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   version: 1
-  desiredSimulationFPS: 20
+  desiredSimulationFPS: 10
   workerThreads: 3
   doubleBuffering: 0
-  symmetryBreakingBias: 0.1
+  symmetryBreakingBias: 0.15
   movementPlane: 1
   drawObstacles: 1
 --- !u!1 &1538310601

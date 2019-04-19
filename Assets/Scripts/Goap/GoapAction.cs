@@ -24,6 +24,8 @@ public class GoapAction {
                     if (awareness != null) {
                         return awareness.knownGridLocation.structure;
                     }
+                } else if (poiTarget is Character) {
+                    return (poiTarget as Character).currentStructure;
                 }
                 return poiTarget.gridTileLocation.structure;
             } catch {
@@ -286,9 +288,9 @@ public class GoapAction {
         isPerformingActualAction = false;
         isDone = true;
         endedAtState = currentState;
-        if (Messenger.eventTable.ContainsKey(Signals.CHARACTER_DEATH)) {
-            Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnActorDied);
-        }
+        //if (Messenger.eventTable.ContainsKey(Signals.CHARACTER_DEATH)) {
+        //    Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnActorDied);
+        //}
         this.actor.PrintLogIfActive(this.goapType.ToString() + " action by " + this.actor.name + " Summary: \n" + actionSummary);
     }
     public void SetEndAction(System.Action<string, GoapAction> endAction) {

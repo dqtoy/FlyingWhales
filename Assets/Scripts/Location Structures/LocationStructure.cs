@@ -376,6 +376,9 @@ public class LocationStructure {
                     case "SupplyPile":
                         AddPOI(new SupplyPile(this), currTile);
                         break;
+                    case "Guitar":
+                        AddPOI(new Guitar(this), currTile);
+                        break;
                     default:
                         break;
                 }

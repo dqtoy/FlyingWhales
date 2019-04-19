@@ -14,7 +14,6 @@ public class CharacterMarker : PooledObject {
 
     public delegate void HoverMarkerAction(Character character, LocationGridTile location);
     public HoverMarkerAction hoverEnterAction;
-
     public System.Action hoverExitAction;
 
     public Character character { get; private set; }
@@ -44,11 +43,7 @@ public class CharacterMarker : PooledObject {
 
     public List<IPointOfInterest> inVisionPOIs { get; private set; } //POI's in this characters vision collider
     public List<Character> hostilesInRange { get; private set; } //POI's in this characters hostility collider
-
-    private List<LocationGridTile> _currentPath;
     private Action _arrivalAction;
-
-    private Action onArrivedAtTileAction;
 
     public IPointOfInterest targetPOI { get; private set; }
     public InnerPathfindingThread pathfindingThread { get; private set; }
@@ -62,12 +57,6 @@ public class CharacterMarker : PooledObject {
 
     private LocationGridTile _previousGridTile;
     private float progressionSpeedMultiplier;
-
-    #region getters/setters
-    public List<LocationGridTile> currentPath {
-        get { return _currentPath; }
-    }
-    #endregion
 
     public void SetCharacter(Character character) {
         this.name = character.name + "'s Marker";
@@ -112,9 +101,6 @@ public class CharacterMarker : PooledObject {
         MarkerAsset assets = CharacterManager.Instance.GetMarkerAsset(character.race, character.gender);
         mainImg.sprite = assets.defaultSprite;
         animator.runtimeAnimatorController = assets.animator;
-    }
-    public void SetOnArriveAtTileAction(Action action) {
-        onArrivedAtTileAction = action;
     }
     public void UpdatePosition() {
         //This is checked per update, stress test this for performance
@@ -219,6 +205,7 @@ public class CharacterMarker : PooledObject {
         //this will make this character flee when he/she gains an injured trait
         if (character == this.character) {
             if (trait.type == TRAIT_TYPE.DISABLER) { //if the character gained a disabler trait, hinder movement
+                pathfindingAI.ClearPath();
                 if (character.currentParty.icon.isTravelling && character.currentParty.icon.travelLine == null) {
                     StopMovementOnly();
                 }
@@ -278,11 +265,12 @@ public class CharacterMarker : PooledObject {
     /// </summary>
     /// <param name="travellingParty">The travelling party.</param>
     private void OnCharacterAreaTravelling(Party travellingParty) {
-        RemoveHostileInRange(travellingParty.owner);
-        RemovePOIFromInVisionRange(travellingParty.owner);
         if (targetPOI is Character) {
             Character targetCharacter = targetPOI as Character;
             if (travellingParty.characters.Contains(targetCharacter)) {
+                if (currentlyEngaging == targetCharacter) {
+                    SetCurrentlyEngaging(null);
+                }
                 //target character left the area
                 //go to the characters last tile
                 GoTo(targetCharacter.gridTileLocation, targetPOI, _arrivalAction);
@@ -291,7 +279,9 @@ public class CharacterMarker : PooledObject {
                 }
             }
         }
-        
+        RemoveHostileInRange(travellingParty.owner);
+        RemovePOIFromInVisionRange(travellingParty.owner);
+
     }
     #endregion
 
@@ -1153,7 +1143,11 @@ public class CharacterMarker : PooledObject {
         //determine whether to start combat or not
         if (cannotCombat) {
             cannotCombat = false;
-            (character.stateComponent.currentState as EngageState).CheckForEndState();
+            if (character.stateComponent.currentState is EngageState) {
+                (character.stateComponent.currentState as EngageState).CheckForEndState();
+            } else {
+                throw new Exception(character.name + " reached engage target, but not in engage state! CurrentState is " + character.stateComponent.currentState?.stateName ?? "Null");
+            }
         } else {
             EngageState engageState = character.stateComponent.currentState as EngageState;
             Character thisCharacter = this.character;

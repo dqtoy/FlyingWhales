@@ -90,7 +90,7 @@ public class CharacterAIPath : AIPath {
         }
     }
 
-    public void OnClearPath() {
+    public void ClearPath() {
         currentPath = null;
     }
 
