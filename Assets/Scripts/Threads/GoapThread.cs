@@ -146,7 +146,13 @@ public class GoapThread : Multithread {
 
         log += "\nUSABLE ACTIONS: ";
         List<GoapPlan> allPlans = new List<GoapPlan>();
-        if (goalType != INTERACTION_TYPE.NONE) {
+        if (job != null && job.planConstructor != null) {
+            GoapPlan plan = job.planConstructor.Invoke();
+            if (plan != null) {
+                allPlans.Add(plan);
+                plan.SetListOfCharacterAwareness(characterTargetsAwareness);
+            }
+        } else if (goalType != INTERACTION_TYPE.NONE) {
             //provided goal type
             if (target == null) {
                 for (int i = 0; i < usableActions.Count; i++) {

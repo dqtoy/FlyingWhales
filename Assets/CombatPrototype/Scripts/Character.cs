@@ -3641,11 +3641,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     private bool RemoveToken(SpecialToken token) {
         return items.Remove(token);
     }
-    public void DropToken(SpecialToken token, Area location, LocationStructure structure, LocationGridTile gridTile = null) {
+    public void DropToken(SpecialToken token, Area location, LocationStructure structure, LocationGridTile gridTile = null, bool clearOwner = true) {
         if (UnobtainToken(token)) {
             location.AddSpecialTokenToLocation(token, structure, gridTile);
-            if (structure != homeStructure) {
-                //if this character drops this at a structure that is not his/her home structure, set the owner of the item to null
+            //if (structure != homeStructure) {
+            //    //if this character drops this at a structure that is not his/her home structure, set the owner of the item to null
+            //    token.SetCharacterOwner(null);
+            //}
+            if (clearOwner) {
                 token.SetCharacterOwner(null);
             }
         }
@@ -4996,6 +4999,23 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             return CHARACTER_MOOD.GOOD;
         } else {
             return CHARACTER_MOOD.GREAT;
+        }
+    }
+    #endregion
+
+    #region Explore Items
+    public ExploreState lastExploreState { get; private set; }
+    /// <summary>
+    /// Set the last explore state that ths character did.
+    /// </summary>
+    /// <param name="es">The explore state.</param>
+    public void SetLastExploreState(ExploreState es) {
+        lastExploreState = es;
+    }
+    public void OnReturnHome() {
+        if (lastExploreState != null && lastExploreState.itemsCollected.Count > 0 && role.roleType == CHARACTER_ROLE.ADVENTURER) {
+            //create deliver treasure job that will deposit the items that the character collected during his/her last explore action.
+            lastExploreState.CreateDeliverTreasureJob();
         }
     }
     #endregion

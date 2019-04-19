@@ -242,6 +242,9 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.DROP_ITEM, new StateNameAndDuration[]{
             new StateNameAndDuration(){ name = "Drop Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
+        {INTERACTION_TYPE.DROP_ITEM_WAREHOUSE, new StateNameAndDuration[]{
+            new StateNameAndDuration(){ name = "Drop Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        } },
     };
 }
 

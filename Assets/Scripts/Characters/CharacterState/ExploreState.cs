@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class ExploreState : CharacterState {
 
+    public List<SpecialToken> itemsCollected { get; private set; } //the list of items collected while in this state
+
     public bool hasStateStarted { get; private set; }
 
     public ExploreState(CharacterStateComponent characterComp) : base (characterComp) {
@@ -12,12 +14,14 @@ public class ExploreState : CharacterState {
         stateCategory = CHARACTER_STATE_CATEGORY.MAJOR;
         duration = 36;
         hasStateStarted = false;
+        itemsCollected = new List<SpecialToken>();
     }
 
     #region Overrides
     protected override void StartState() {
         base.StartState();
         hasStateStarted = true;
+        stateComponent.character.SetLastExploreState(null);
     }
 
     protected override void DoMovementBehavior() {
@@ -44,6 +48,7 @@ public class ExploreState : CharacterState {
     }
     public override void OnExitThisState() {
         base.OnExitThisState();
+        stateComponent.character.SetLastExploreState(this);
         if (!stateComponent.character.isDead) {
             //Force deposit items in character home location warehouse
             //Stroll goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.DROP_ITEM, this, this) as Stroll;
@@ -70,6 +75,9 @@ public class ExploreState : CharacterState {
     }
     private void ExploreAgain(string result, GoapAction goapAction) {
         stateComponent.character.SetCurrentAction(null);
+        if (result == InteractionManager.Goap_State_Success && goapAction.poiTarget is SpecialToken) {
+            itemsCollected.Add(goapAction.poiTarget as SpecialToken);
+        }
         ResumeState();
     }
     private void StartExploreMovement() {
@@ -83,5 +91,30 @@ public class ExploreState : CharacterState {
         } else {
             throw new System.Exception("No unoccupied tile in " + chosenStructure.name + " for " + stateComponent.character.name + " to go to in " + stateName);
         }
+    }
+
+    public void CreateDeliverTreasureJob() {
+        GoapPlanJob job = new GoapPlanJob("Deliver Treasure", INTERACTION_TYPE.DROP_ITEM_WAREHOUSE, new object[] { });
+        job.SetPlanConstructor(DeliverTreasureConstructor);
+        stateComponent.character.jobQueue.AddJobInQueue(job);
+    }
+    private GoapPlan DeliverTreasureConstructor() {
+        GoapNode previousNode = null;
+        GoapNode startNode = null;
+        for (int i = 0; i < itemsCollected.Count; i++) {
+            SpecialToken item = itemsCollected[i];
+            GoapAction currAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.DROP_ITEM_WAREHOUSE, stateComponent.character, item);
+            GoapNode currNode = new GoapNode(previousNode, currAction.cost, currAction);
+            //if (startNode == null) {
+            //    startNode = currNode;
+            //}
+            if (i + 1 == itemsCollected.Count) {
+                startNode = currNode;
+            }
+            previousNode = currNode;
+        }
+        GoapPlan goapPlan = new GoapPlan(startNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.WORK);
+        goapPlan.ConstructAllNodes();
+        return goapPlan;
     }
 }

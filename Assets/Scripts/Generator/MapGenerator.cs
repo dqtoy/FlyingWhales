@@ -145,7 +145,7 @@ public class MapGenerator : MonoBehaviour {
 
         LandmarkManager.Instance.InitializeLandmarks();
 
-        //InteriorMapManager.Instance.RegisterObstacles();
+        InteriorMapManager.Instance.RegisterObstacles();
 
         CharacterManager.Instance.LoadCharacters(data);
         LandmarkManager.Instance.LoadAdditionalAreaData();

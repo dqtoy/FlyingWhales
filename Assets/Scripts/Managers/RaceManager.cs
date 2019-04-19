@@ -114,6 +114,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.JUDGE_CHARACTER,
                 INTERACTION_TYPE.FEED,
                 INTERACTION_TYPE.DROP_ITEM,
+                INTERACTION_TYPE.DROP_ITEM_WAREHOUSE,
             } },
             { RACE.ELVES, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -190,6 +191,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.JUDGE_CHARACTER,
                 INTERACTION_TYPE.FEED,
                 INTERACTION_TYPE.DROP_ITEM,
+                INTERACTION_TYPE.DROP_ITEM_WAREHOUSE,
             } },
             { RACE.GOBLIN, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -267,6 +269,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.JUDGE_CHARACTER,
                 INTERACTION_TYPE.FEED,
                 INTERACTION_TYPE.DROP_ITEM,
+                INTERACTION_TYPE.DROP_ITEM_WAREHOUSE,
             } },
             { RACE.FAERY, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -344,6 +347,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.JUDGE_CHARACTER,
                 INTERACTION_TYPE.FEED,
                 INTERACTION_TYPE.DROP_ITEM,
+                INTERACTION_TYPE.DROP_ITEM_WAREHOUSE,
             } },
             { RACE.SKELETON, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -419,6 +423,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.JUDGE_CHARACTER,
                 INTERACTION_TYPE.FEED,
                 INTERACTION_TYPE.DROP_ITEM,
+                INTERACTION_TYPE.DROP_ITEM_WAREHOUSE,
             } },
             { RACE.SPIDER, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,

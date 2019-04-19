@@ -1087,6 +1087,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.DROP_ITEM:
                 goapAction = new DropItemHome(actor, target);
                 break;
+            case INTERACTION_TYPE.DROP_ITEM_WAREHOUSE:
+                goapAction = new DropItemWarehouse(actor, target);
+                break;
         }
         if(goapAction != null && willInitialize) {
             goapAction.Initialize();

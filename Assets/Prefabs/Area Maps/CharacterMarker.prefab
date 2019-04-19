@@ -685,7 +685,7 @@ MonoBehaviour:
   alwaysDrawGizmos: 1
   slowWhenNotFacingTarget: 1
   whenCloseToDestination: 1
-  constrainInsideGraph: 0
+  constrainInsideGraph: 1
   marker: {fileID: 114379759619008666}
   searchLength: 1000
   spread: 5000

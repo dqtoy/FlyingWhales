@@ -15,6 +15,8 @@ public class GoapPlanJob : JobQueueItem {
     //forced interactions per effect
     public Dictionary<GoapEffect, INTERACTION_TYPE> forcedActions { get; private set; }
 
+    //plan constructor
+    public System.Func<GoapPlan> planConstructor { get; private set; } //if this is set, the job will execute this when creating a plan instead of using the normal behaviour
 
     public GoapPlanJob(string name, GoapEffect targetEffect) : base(name) {
         this.targetEffect = targetEffect;
@@ -117,6 +119,12 @@ public class GoapPlanJob : JobQueueItem {
         if (!forcedActions.ContainsKey(precondition)) {
             forcedActions.Add(precondition, forcedAction);
         }
+    }
+    #endregion
+
+    #region Plan Constructor
+    public void SetPlanConstructor(System.Func<GoapPlan> planConstructor) {
+        this.planConstructor = planConstructor;
     }
     #endregion
 }

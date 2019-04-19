@@ -1101,7 +1101,7 @@ public class CharacterMarker : PooledObject {
         //Debug.LogWarning(character.name + " is fleeing!");
     }
     private void OnFleePathComputed(Path path) {
-        if (character.stateComponent.currentState == null || character.stateComponent.currentState.characterState != CHARACTER_STATE.FLEE) {
+        if (character == null || character.stateComponent.currentState == null || character.stateComponent.currentState.characterState != CHARACTER_STATE.FLEE) {
             return; //this is for cases that the character is no longer in a flee state, but the pathfinding thread returns a flee path
         }
         //Debug.Log(character.name + " computed a flee path!");

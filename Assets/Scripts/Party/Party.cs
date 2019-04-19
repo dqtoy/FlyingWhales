@@ -218,6 +218,9 @@ public class Party {
 
     #region Interface
     public void SetSpecificLocation(Area location) {
+        if (_specificLocation == location) {
+            return; //ignore change
+        }
         _specificLocation = location;
         specificLocationHistory.Add("Set specific location to " + _specificLocation.ToString() 
             + " ST: " + StackTraceUtility.ExtractStackTrace());
@@ -226,6 +229,9 @@ public class Party {
         }
         if (_specificLocation != null) {
             _currentRegion = _specificLocation.coreTile.region;
+        }
+        if (owner.homeArea == _specificLocation) {
+            owner.OnReturnHome();
         }
     }
     public bool AddCharacter(Character character, bool isOwner = false) {
