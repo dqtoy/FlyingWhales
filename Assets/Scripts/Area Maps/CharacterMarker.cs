@@ -195,30 +195,14 @@ public class CharacterMarker : PooledObject {
     #region Listeners
     private void OnActionStateSet(Character character, GoapAction goapAction, GoapActionState goapState) {
         if (this.character == character) {
-            switch (goapAction.goapType) {
-                case INTERACTION_TYPE.SLEEP_OUTSIDE:
-                    if (GoapActionStateDB.GetStateResult(goapAction.goapType, goapState.name) == InteractionManager.Goap_State_Success) {
-                        PlaySleepGround();
-                    }
-                    break;
-                default:
-                    break;
-            }
+            UpdateAnimation();
         }
     }
     private void OnCharacterFinishedAction(Character character, GoapAction action, string result) {
         if (this.character == character) {
             //action icon
             UpdateActionIcon();
-
-            //animation
-            switch (action.goapType) {
-                case INTERACTION_TYPE.SLEEP_OUTSIDE:
-                    PlayIdle();
-                    break;
-                default:
-                    break;
-            }
+            UpdateAnimation();
         } else {
             //crime system:
             //if the other character committed a crime,
@@ -236,7 +220,7 @@ public class CharacterMarker : PooledObject {
         if (character == this.character) {
             if (trait.type == TRAIT_TYPE.DISABLER) { //if the character gained a disabler trait, hinder movement
                 if (character.currentParty.icon.isTravelling && character.currentParty.icon.travelLine == null) {
-                    StopMovementOnly(false);
+                    StopMovementOnly();
                 }
                 rvoController.priority = 0;
                 pathfindingAI.AdjustDoNotMove(1);
@@ -252,7 +236,7 @@ public class CharacterMarker : PooledObject {
                     NormalReactToHostileCharacter(trait.responsibleCharacter, CHARACTER_STATE.FLEE);
                 }
             }
-            UpdateAnimationBasedOnGainedTrait(trait);
+            UpdateAnimation();
         }
     }
     public void OnCharacterLostTrait(Character character, Trait trait) {
@@ -279,7 +263,7 @@ public class CharacterMarker : PooledObject {
                 default:
                     break;
             }
-            UpdateAnimationBasedOnLostTrait(trait);
+            UpdateAnimation();
         } else if (hostilesInRange.Contains(character)) {
             //if the character that lost a trait is not this character and that character is in this character's hostility range
             //and the trait that was lost is a negative disabler trait, react to them.
@@ -294,10 +278,8 @@ public class CharacterMarker : PooledObject {
     /// </summary>
     /// <param name="travellingParty">The travelling party.</param>
     private void OnCharacterAreaTravelling(Party travellingParty) {
-        for (int i = 0; i < travellingParty.characters.Count; i++) {
-            RemoveHostileInRange(travellingParty.characters[i]);
-            RemovePOIFromInVisionRange(travellingParty.characters[i]);
-        }
+        RemoveHostileInRange(travellingParty.owner);
+        RemovePOIFromInVisionRange(travellingParty.owner);
         if (targetPOI is Character) {
             Character targetCharacter = targetPOI as Character;
             if (travellingParty.characters.Contains(targetCharacter)) {
@@ -520,7 +502,7 @@ public class CharacterMarker : PooledObject {
         UpdateSpeed();
         pathfindingAI.SetIsStopMovement(false);
         character.currentParty.icon.SetIsTravelling(true);
-        StartWalkingAnimation();
+        UpdateAnimation();
     }
     //private void StartMovement() {
     //    UpdateSpeed();
@@ -542,7 +524,7 @@ public class CharacterMarker : PooledObject {
         Debug.LogWarning(log);
         //CheckIfCurrentTileIsOccupiedOnStopMovement(ref log, afterStoppingAction);
     }
-    public void StopMovementOnly(bool playIdle = true) {
+    public void StopMovementOnly() {
         //_arrivalAction = null;
 
         //if (Messenger.eventTable.ContainsKey(Signals.TILE_OCCUPIED)) {
@@ -561,9 +543,10 @@ public class CharacterMarker : PooledObject {
         }
         hasFleePath = false;
         pathfindingAI.SetIsStopMovement(true);
-        if (playIdle) {
-            PlayIdle();
-        }
+        UpdateAnimation();
+        //if (playIdle) {
+        //    PlayIdle();
+        //}
         //log += "\n- Not moving to another tile, go to checker...";
         //CheckIfCurrentTileIsOccupiedOnStopMovement(ref log, afterStoppingAction);
     }
@@ -833,35 +816,11 @@ public class CharacterMarker : PooledObject {
     #endregion
 
     #region Animation
-    private void UpdateAnimationBasedOnGainedTrait(Trait trait) {
-        switch (trait.name) {
-            case "Unconscious":
-                PlaySleepGround();
-                break;
-            default:
-                break;
-        }
-    }
-    private void UpdateAnimationBasedOnLostTrait(Trait trait) {
-        switch (trait.name) {
-            case "Unconscious":
-                PlayIdle();
-                break;
-            default:
-                break;
-        }
-    }
-    private void StartWalkingAnimation() {
+    private void PlayWalkingAnimation() {
         if (!this.gameObject.activeInHierarchy) {
             return;
         }
-        //if the character has a negative or neutral disabler trait, ignore this
-        if (character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_EFFECT.NEUTRAL, TRAIT_TYPE.DISABLER)) {
-            return;
-        }
-        //Debug.Log(character.name + " played walk animation.");
-        animator.Play("Walk");
-        //StartCoroutine(StartWalking());
+        Play("Walk");
     }
     //IEnumerator StartWalking() {
     //    yield return null;
@@ -872,20 +831,40 @@ public class CharacterMarker : PooledObject {
         if (!this.gameObject.activeInHierarchy) {
             return;
         }
-        //if the character has a negative or neutral disabler trait, ignore this
-        if (character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_EFFECT.NEUTRAL, TRAIT_TYPE.DISABLER)) {
-            return;
-        }
-        //Debug.Log(character.name + " played idle animation.");
-        animator.Play("Idle");
+        Play("Idle");
     }
     private void PlaySleepGround() {
         if (!this.gameObject.activeInHierarchy) {
             return;
         }
-        //Debug.Log(character.name + " played sleep ground animation.");
-        animator.Play("Sleep Ground");
+        Play("Sleep Ground");
     }
+    private void Play(string animation) {
+        //Debug.Log(character.name + " played " + animation + " animation.");
+        animator.Play(animation, 0, 0.5f);
+        //StartCoroutine(PlayAnimation(animation));
+    }
+    private void UpdateAnimation() {
+        if (character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+            PlaySleepGround();
+        } else if (character.currentParty.icon.isTravelling) {
+            //|| character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL
+            PlayWalkingAnimation();
+        } else if (character.currentAction != null && character.currentAction.currentState != null && !string.IsNullOrEmpty(character.currentAction.currentState.animationName)) {
+            Play(character.currentAction.currentState.animationName);
+        } else if (character.currentAction != null && !string.IsNullOrEmpty(character.currentAction.animationName)) {
+            Play(character.currentAction.animationName);
+        } else {
+            PlayIdle();
+        }
+    }
+
+
+    //private IEnumerator PlayAnimation(string animation) {
+    //    yield return null;
+    //    Debug.Log(character.name + " played " + animation + " animation.");
+    //    animator.Play(animation);
+    //}
     #endregion
 
     #region Utilities
@@ -1145,10 +1124,9 @@ public class CharacterMarker : PooledObject {
     public void OnFinishFleePath() {
         Debug.Log(name + " has finished traversing flee path.");
         hasFleePath = false;
-        //pathfindingAI.canSearch = true;
-        PlayIdle();
-        //RedetermineFlee();
+        UpdateAnimation();
         (character.stateComponent.currentState as FleeState).CheckForEndState();
+        
     }
     public void SetHasFleePath(bool state) {
         hasFleePath = state;
@@ -1184,19 +1162,6 @@ public class CharacterMarker : PooledObject {
 
             this.OnFinishCombatWith(enemy);
             enemy.marker.OnFinishCombatWith(this.character);
-
-            ////SetTargetTransform(null);
-            ////SetCurrentlyEngaging(null);
-
-            ////if this character died from combat
-            ////remove him from the enemies hostiles in range
-            //if (thisCharacter.isDead) {
-            //    enemy.marker.RemoveHostileInRange(thisCharacter);
-            //} 
-
-            //if (enemy.isDead) {
-            //    RemoveHostileInRange(enemy);
-            //}
         }
         enemy.marker.pathfindingAI.AdjustDoNotMove(-1);
     }

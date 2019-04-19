@@ -1276,7 +1276,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     }
                     if (tokens.Count > 0) {
                         SpecialToken chosenToken = tokens[UnityEngine.Random.Range(0, tokens.Count)];
-                        GoapPlanJob job = new GoapPlanJob("Claim Item", INTERACTION_TYPE.DROP_ITEM, chosenToken);
+                        GoapPlanJob job = new GoapPlanJob("Claim Item", INTERACTION_TYPE.PICK_ITEM, chosenToken);
                         jobQueue.AddJobInQueue(job);
                         //Debug.LogWarning(GameManager.Instance.TodayLogString() + "Added a Claim Item Job to " + this.name + " with target " + chosenToken.name + " in " + chosenToken.gridTileLocation.ToString());
                     }
@@ -1481,7 +1481,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             if (arrivalAction != null) {
                 arrivalAction();
             }
-            marker.PlayIdle();
+            //marker.PlayIdle();
         } else {
             if (destinationTile == null) {
                 //if destination tile is null, make the charater marker use target poi logic (Usually used for moving targets)

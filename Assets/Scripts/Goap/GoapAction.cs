@@ -53,6 +53,7 @@ public class GoapAction {
     private System.Action<string, GoapAction> endAction; //if this is not null, this action will return result here, instead of the default actor.GoapActionResult
     public CRIME committedCrime { get; private set; }
     public string result { get; private set; }
+    public string animationName { get; protected set; } //what animation should the character be playing while doing this action
 
     protected Func<bool> _requirementAction;
     protected System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
@@ -74,6 +75,7 @@ public class GoapAction {
         expectedEffects = new List<GoapEffect>();
         actualEffects = new List<GoapEffect>();
         committedCrime = CRIME.NONE;
+        animationName = string.Empty;
         //for testing
         //CRIME[] choices = Utilities.GetEnumValues<CRIME>();
         //committedCrime = choices[Utilities.rng.Next(1, choices.Length)];

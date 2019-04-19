@@ -7,6 +7,7 @@ public class SleepOutside : GoapAction {
     public SleepOutside(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.SLEEP_OUTSIDE, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionLocationType = ACTION_LOCATION_TYPE.NEARBY;
         actionIconString = GoapActionStateDB.Sleep_Icon;
+        //animationName = "Sleep Ground";
     }
 
     #region Overrides
@@ -52,6 +53,7 @@ public class SleepOutside : GoapAction {
         //actor.AdjustDoNotGetTired(1);
         Resting restingTrait = new Resting();
         actor.AddTrait(restingTrait);
+        currentState.SetAnimation("Sleep Ground");
     }
     private void PerTickRestSuccess() {
         actor.AdjustTiredness(3);
