@@ -10,7 +10,7 @@ public class DropItemWarehouse : GoapAction {
 
     public DropItemWarehouse(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.DROP_ITEM_WAREHOUSE, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionLocationType = ACTION_LOCATION_TYPE.RANDOM_LOCATION;
-        actionIconString = GoapActionStateDB.Sleep_Icon;
+        actionIconString = GoapActionStateDB.Work_Icon;
     }
 
     #region Overrides
