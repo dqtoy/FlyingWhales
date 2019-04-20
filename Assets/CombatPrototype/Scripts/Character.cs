@@ -3638,12 +3638,17 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     private bool AddToken(SpecialToken token) {
         if (!items.Contains(token)) {
             items.Add(token);
+            Messenger.Broadcast(Signals.CHARACTER_OBTAINED_ITEM, token, this);
             return true;
         }
         return false;
     }
     private bool RemoveToken(SpecialToken token) {
-        return items.Remove(token);
+        if (items.Remove(token)) {
+            Messenger.Broadcast(Signals.CHARACTER_LOST_ITEM, token, this);
+            return true;
+        }
+        return false;
     }
     public void DropToken(SpecialToken token, Area location, LocationStructure structure, LocationGridTile gridTile = null, bool clearOwner = true) {
         if (UnobtainToken(token)) {

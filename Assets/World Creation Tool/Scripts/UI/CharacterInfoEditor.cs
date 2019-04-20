@@ -80,15 +80,15 @@ namespace worldcreator {
             LoadTemplateChoices();
             Messenger.AddListener<Item, Character>(Signals.ITEM_EQUIPPED, OnItemEquipped);
             Messenger.AddListener<Item, Character>(Signals.ITEM_UNEQUIPPED, OnItemUnequipped);
-            Messenger.AddListener<Item, Character>(Signals.ITEM_OBTAINED, OnItemObtained);
-            Messenger.AddListener<Item, Character>(Signals.ITEM_THROWN, OnItemThrown);
+            //Messenger.AddListener<Item, Character>(Signals.ITEM_OBTAINED, OnItemObtained);
+            //Messenger.AddListener<Item, Character>(Signals.ITEM_THROWN, OnItemThrown);
             this.gameObject.SetActive(true);
         }
         public void Close() {
             Messenger.RemoveListener<Item, Character>(Signals.ITEM_EQUIPPED, OnItemEquipped);
             Messenger.RemoveListener<Item, Character>(Signals.ITEM_UNEQUIPPED, OnItemUnequipped);
-            Messenger.RemoveListener<Item, Character>(Signals.ITEM_OBTAINED, OnItemObtained);
-            Messenger.RemoveListener<Item, Character>(Signals.ITEM_THROWN, OnItemThrown);
+            //Messenger.RemoveListener<Item, Character>(Signals.ITEM_OBTAINED, OnItemObtained);
+            //Messenger.RemoveListener<Item, Character>(Signals.ITEM_THROWN, OnItemThrown);
             this.gameObject.SetActive(false);
         }
 

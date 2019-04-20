@@ -209,7 +209,8 @@ public class CharacterMarker : PooledObject {
                 if (character.currentParty.icon.isTravelling && character.currentParty.icon.travelLine == null) {
                     StopMovementOnly();
                 }
-                rvoController.priority = 0;
+                //rvoController.priority = 0;
+                rvoController.enabled = false;
                 pathfindingAI.AdjustDoNotMove(1);
             }
             if (trait.name == "Unconscious") {
@@ -231,7 +232,8 @@ public class CharacterMarker : PooledObject {
             if (trait.type == TRAIT_TYPE.DISABLER) { //if the character lost a disabler trait, adjust hinder movement value
                 pathfindingAI.AdjustDoNotMove(-1);
                 if (pathfindingAI.doNotMove <= 0) {
-                    rvoController.priority = 0.75f;
+                    //rvoController.priority = 0.75f;
+                    rvoController.enabled = true;
                 }
             }
             //after this character loses combat recovery trait or unconscious trait, check if he or she can still react to another character, if yes, react.
@@ -453,40 +455,12 @@ public class CharacterMarker : PooledObject {
         StartMovement();
     }
     public void ArrivedAtLocation() {
-        //if(character.currentParty.icon.isTravelling && character.gridTileLocation == destinationTile) { // destinationTile.occupant == null
-        //character.currentParty.icon.SetIsTravelling(false);
-        //character.currentParty.icon.SetIsPlaceCharacterAsTileObject(true);
-        //if (_destinationTile.structure != character.currentStructure) {
-        //    character.currentStructure.RemoveCharacterAtLocation(character);
-        //    _destinationTile.structure.AddCharacterAtLocation(character, _destinationTile);
-        //} else {
-        //    character.gridTileLocation.structure.location.areaMap.RemoveCharacter(character.gridTileLocation, character);
-        //    _destinationTile.structure.location.areaMap.PlaceObject(character, _destinationTile);
-        //}
-        //destinationTile.SetOccupant(character);
-        //PlayIdle();
-        //if (Messenger.eventTable.ContainsKey(Signals.TILE_OCCUPIED)) {
-        //    Messenger.RemoveListener<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, OnTileOccupied);
-        //}
-        //if (character.gridTileLocation.occupant != null) {
-        //    character.gridTileLocation.SetOccupant(character);
-        //}
-        //Debug.Log(character.name + " arrived at location!");
         StopMovementOnly();
         if (Messenger.eventTable.ContainsKey(Signals.PARTY_STARTED_TRAVELLING)) { Messenger.RemoveListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling); }
         Action action = _arrivalAction;
         //set arrival action to null, because some arrival actions set 
         _arrivalAction = null;
         action?.Invoke();
-        //_arrivalAction = null;
-        
-        //} else if (destinationTile != null) {
-        //    if(character.currentParty.icon.isTravelling && destinationTile.occupant != null && destinationTile.occupant != character) {
-        //        Debug.LogWarning(character.name + " cannot occupy " + destinationTile.ToString() + " because it is already occupied by " + destinationTile.occupant.name);
-        //    }
-        //}
-        //    }
-        //}
     }
     private void StartMovement() {
         UpdateSpeed();
