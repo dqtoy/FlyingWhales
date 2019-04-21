@@ -437,7 +437,7 @@ MonoBehaviour:
     spaceCount: 68
     wordCount: 69
     linkCount: 0
-    lineCount: 12
+    lineCount: 13
     pageCount: 1
     materialCount: 1
   m_havePropertiesChanged: 0
@@ -573,8 +573,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 247, y: -10}
-  m_SizeDelta: {x: 287, y: 0}
+  m_AnchoredPosition: {x: 240.68, y: -10}
+  m_SizeDelta: {x: 274.36, y: 0}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!224 &224320613809129394
 RectTransform:
@@ -613,7 +613,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 396.4, y: 265.41998}
+  m_SizeDelta: {x: 396.4, y: 284.97}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224966408881386234
 RectTransform:
