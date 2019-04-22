@@ -11,7 +11,7 @@ public class CharacterAIPath : AIPath {
 
     public int searchLength = 1000;
     public int spread = 5000;
-    public float aimStrength = 0.75f;
+    public float aimStrength = 1f;
 
     private float _originalRepathRate;
 
@@ -36,33 +36,33 @@ public class CharacterAIPath : AIPath {
         base.OnPathComplete(newPath);
         currentPath = newPath;
     }
-    public override void SearchPath() {
-        if (float.IsPositiveInfinity(destination.x)) return;
-        if (onSearchPath != null) onSearchPath();
+    //public override void SearchPath() {
+    //    if (float.IsPositiveInfinity(destination.x)) return;
+    //    if (onSearchPath != null) onSearchPath();
 
-        lastRepath = Time.time;
-        waitingForPathCalculation = true;
+    //    lastRepath = Time.time;
+    //    waitingForPathCalculation = true;
 
-        seeker.CancelCurrentPathRequest();
+    //    seeker.CancelCurrentPathRequest();
 
-        Vector3 start, end;
-        CalculatePathRequestEndpoints(out start, out end);
+    //    Vector3 start, end;
+    //    CalculatePathRequestEndpoints(out start, out end);
 
 
-        if (marker.character.stateComponent.currentState != null && marker.character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL) {
-            //Alternative way of requesting the path
-            canSearch = false;
-            RandomPath rp = RandomPath.Construct(start, searchLength);
-            rp.spread = spread;
-            rp.aimStrength = aimStrength;
-            rp.aim = Vector3.forward;
-            seeker.StartPath(rp);
-        } else {
-            // This is where we should search to
-            // Request a path to be calculated from our current position to the destination
-            seeker.StartPath(start, end);
-        }
-    }
+    //    if (marker.character.stateComponent.currentState != null && marker.character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL) {
+    //        //Alternative way of requesting the path
+    //        canSearch = false;
+    //        RandomPath rp = RandomPath.Construct(start, searchLength);
+    //        rp.spread = spread;
+    //        rp.aimStrength = aimStrength;
+    //        rp.aim = end;
+    //        seeker.StartPath(rp);
+    //    } else {
+    //        // This is where we should search to
+    //        // Request a path to be calculated from our current position to the destination
+    //        seeker.StartPath(start, end);
+    //    }
+    //}
 
     public override void UpdateMe() {
         if (!marker.gameObject.activeSelf) {
