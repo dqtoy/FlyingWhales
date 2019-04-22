@@ -145,7 +145,11 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
     }
     private bool ChatHandling(Character targetCharacter) {
         if(targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_EFFECT.NEUTRAL, TRAIT_TYPE.DISABLER) 
-            || parentMarker.character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_EFFECT.NEUTRAL, TRAIT_TYPE.DISABLER)) {
+            || parentMarker.character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_EFFECT.NEUTRAL, TRAIT_TYPE.DISABLER)
+            || (targetCharacter.stateComponent.currentState != null && (targetCharacter.stateComponent.currentState.characterState == CHARACTER_STATE.FLEE 
+            || targetCharacter.stateComponent.currentState.characterState == CHARACTER_STATE.ENGAGE))
+            || (parentMarker.character.stateComponent.currentState != null && (parentMarker.character.stateComponent.currentState.characterState == CHARACTER_STATE.FLEE
+            || parentMarker.character.stateComponent.currentState.characterState == CHARACTER_STATE.ENGAGE))) {
             return false;
         }
         if(!parentMarker.character.IsHostileWith(targetCharacter)) {
