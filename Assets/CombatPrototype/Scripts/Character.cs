@@ -1750,9 +1750,17 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             isWaitingForInteraction = 0;
         }
     }
-    public LocationGridTile GetLocationGridTileByXY(int x, int y) {
+    public LocationGridTile GetLocationGridTileByXY(int x, int y, bool throwOnException = true) {
         try {
-            return specificLocation.areaMap.map[x, y];
+            if (throwOnException) {
+                return specificLocation.areaMap.map[x, y];
+            } else {
+                if (Utilities.IsInRange(x, 0, specificLocation.areaMap.map.GetUpperBound(0) + 1) &&
+                    Utilities.IsInRange(y, 0, specificLocation.areaMap.map.GetUpperBound(1) + 1)) {
+                    return specificLocation.areaMap.map[x, y];
+                }
+                return null;
+            }
         } catch(Exception e) {
             throw new Exception(e.Message + "\n " + this.name + "(" + x.ToString() + ", " + y.ToString() + ")");
         }
@@ -4733,9 +4741,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         _hasAlreadyAskedForPlan = state;
     }
     public void PrintLogIfActive(string log) {
-        //if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == this) {
+        if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == this) {
             Debug.Log(log);
-        //}
+        }
     }
     private void AddPlanAsPriority(GoapPlan plan) {
         allGoapPlans.Insert(0, plan);

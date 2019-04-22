@@ -331,33 +331,35 @@ public class GoapAction {
         if (targetStructure == null) {
             throw new Exception(actor.name + "'s target structure in " + goapName + " is null! Targetting " + poiTarget.name);
         }
-        if (actor.specificLocation != targetStructure.location) {
-            return 3;
-        } else {
-            LocationGridTile tile = targetTile;
-            if (tile == null) {
-                tile = poiTarget.gridTileLocation;
-            }
-            try {
-                int distance = Mathf.RoundToInt(actor.gridTileLocation.GetDistanceTo(tile));
-                return distance / 6;
-            } catch (Exception e) {
-                Debug.LogError("Distance cost problem for " + poiTarget.name + " with actor " + actor.name + ", poitarget grid location is " + poiTarget.gridTileLocation == null ? "null" : poiTarget.gridTileLocation.ToString());
-            }
-            return 1;
-
-            //try {
-            //    int distance = Mathf.RoundToInt(actor.gridTileLocation.GetDistanceTo(tile));
-            //    return distance / 6;
-            //} catch(System.Exception e) {
-            //    if(actor.gridTileLocation == null) {
-            //        Console.WriteLine("ACTOR TILE LOCATION IS NULL!");
-            //    } else if (tile == null) {
-            //        Console.WriteLine("TILE IS NULL!");
-            //    }
-            //}
-            //return 0;
+        LocationGridTile tile = targetTile;
+        if (tile == null) {
+            tile = poiTarget.gridTileLocation;
         }
+        try {
+            int distance = Mathf.RoundToInt(Vector2.Distance(actor.gridTileLocation.centeredWorldLocation, tile.centeredWorldLocation));
+            if (actor.specificLocation != targetStructure.location) {
+                return distance + 10;
+            }
+            return distance;
+        } catch (Exception e) {
+            Debug.LogError("Distance cost problem for " + poiTarget.name + " with actor " + actor.name + ", poitarget grid location is " + poiTarget.gridTileLocation == null ? "null" : poiTarget.gridTileLocation.ToString());
+        }
+        return 1;
+        //if (actor.specificLocation != targetStructure.location) {
+        //    return 3;
+        //} else {
+        //    LocationGridTile tile = targetTile;
+        //    if (tile == null) {
+        //        tile = poiTarget.gridTileLocation;
+        //    }
+        //    try {
+        //        int distance = Mathf.RoundToInt(Vector2.Distance(actor.gridTileLocation.centeredWorldLocation, tile.centeredWorldLocation));
+        //        return distance / 6;
+        //    } catch (Exception e) {
+        //        Debug.LogError("Distance cost problem for " + poiTarget.name + " with actor " + actor.name + ", poitarget grid location is " + poiTarget.gridTileLocation == null ? "null" : poiTarget.gridTileLocation.ToString());
+        //    }
+        //    return 1;
+        //}
     }
     protected bool HasSupply(int neededSupply) {
         return actor.supply >= neededSupply;

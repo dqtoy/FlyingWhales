@@ -40,7 +40,7 @@ public class Play : GoapAction {
     }
     protected override int GetCost() {
         //**Cost**: randomize between 3-10
-        return Utilities.rng.Next(3, 10);
+        return Utilities.rng.Next(6, 15);
     }
     //public override void FailAction() {
     //    base.FailAction();

@@ -60,6 +60,11 @@ public class CharacterMarker : PooledObject {
     private LocationGridTile _previousGridTile;
     private float progressionSpeedMultiplier;
 
+    [ContextMenu("Visuals Forward")]
+    public void PrintForwardPosition() {
+        Debug.Log(visualsParent.up);
+    }
+
     public void SetCharacter(Character character) {
         this.name = character.name + "'s Marker";
         nameLbl.SetText(character.name);
