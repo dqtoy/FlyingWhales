@@ -426,6 +426,10 @@ public class CharacterManager : MonoBehaviour {
             || !targetCharacter.relationships.ContainsKey(character)) {
             return;
         }
+        if (!character.HasRelationshipOfTypeWith(targetCharacter, rel)) {
+            //the source character does not have that type of relationship with the character
+            return;
+        }
         RELATIONSHIP_TRAIT pair = GetPairedRelationship(rel);
         if (character.relationships[targetCharacter].HasRelationshipTrait(rel)
             && targetCharacter.relationships[character].HasRelationshipTrait(pair)) {

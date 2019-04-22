@@ -677,7 +677,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             _ownParty.ReturnToLife();
         }
     }
-    public void Death(string cause = "normal") {
+    public void Death(string cause = "normal", bool cancelCurrentAction = true) {
         if (!_isDead) {
             //if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.id == this.id) {
             //    UIManager.Instance.characterInfoUI.OnClickCloseMenu();
@@ -693,7 +693,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             if(stateComponent.currentState != null) {
                 stateComponent.currentState.OnExitThisState();
             }
-            if (currentAction != null) {
+            if (currentAction != null && cancelCurrentAction) {
                 currentAction.StopAction();
             }
             CancelAllJobsTargettingThisCharacter();
@@ -1766,6 +1766,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             return currentAction.goapType == INTERACTION_TYPE.ASSAULT_ACTION_NPC && currentAction.poiTarget == otherCharacter; 
         }
         return false;
+    }
+    public bool IsNear(IPointOfInterest poi) {
+        return gridTileLocation == poi.gridTileLocation || gridTileLocation.IsAdjacentTo(poi);
     }
     #endregion
 

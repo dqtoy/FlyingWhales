@@ -89,7 +89,7 @@ public class AbductCharacter : GoapAction {
 
     #region Special Note: Stealth
     public bool HasOtherCharacterInRadius() {
-        List<LocationGridTile> tiles = poiTarget.gridTileLocation.structure.location.areaMap.GetTilesInRadius(poiTarget.gridTileLocation, 3);
+        List<LocationGridTile> tiles = (poiTarget as Character).currentStructure.location.areaMap.GetTilesInRadius(poiTarget.gridTileLocation, 3);
         for (int i = 0; i < tiles.Count; i++) {
             //if (tiles[i].occupant != null && tiles[i].occupant != actor && tiles[i].occupant != poiTarget) {
             //    return true;

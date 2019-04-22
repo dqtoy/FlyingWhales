@@ -100,7 +100,7 @@ public class Steal : GoapAction {
             CharacterManager.Instance.RemoveRelationshipBetween(recipient, actor, traitsToRemove);
         }
         //Recipient and Actor have a positive relationship:
-        else if (recipient.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE)) {
+        else if (recipient.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE, RELATIONSHIP_TRAIT.RELATIVE)) {
             //- **Recipient Response Text**: "[Actor Name] may have committed theft but I know that [he/she] is a good person."
             reactions.Add(string.Format("{0} may have committed theft but I know that {1} is a good person.", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
             //-**Recipient Effect**: no effect

@@ -33,6 +33,9 @@ public class InteriorMapManager : MonoBehaviour {
     //structure templates
     private string templatePath;
 
+    //Local Avoidance
+    Pathfinding.RVO.Simulator sim;
+
     private void Awake() {
         Instance = this;
         templatePath = Application.dataPath + "/StreamingAssets/Structure Templates/";
@@ -91,6 +94,7 @@ public class InteriorMapManager : MonoBehaviour {
     public void Initialize() {
         areaMaps = new List<AreaInnerTileMap>();
         AreaMapCameraMove.Instance.Initialize();
+        sim = (FindObjectOfType(typeof(RVOSimulator)) as RVOSimulator).GetSimulator();
     }
     public void ShowAreaMap(Area area) {
         area.areaMap.Open();
@@ -122,6 +126,7 @@ public class InteriorMapManager : MonoBehaviour {
         gg.cutCorners = false;
         gg.rotation = new Vector3(-90f, 0f, 0f);
         gg.nodeSize = nodeSize;
+        
 
         int reducedWidth = newMap.width - (AreaInnerTileMap.eastEdge + AreaInnerTileMap.westEdge);
         int reducedHeight = newMap.height - (AreaInnerTileMap.northEdge + AreaInnerTileMap.southEdge);
@@ -165,7 +170,6 @@ public class InteriorMapManager : MonoBehaviour {
 
     #region Local Avoidance
     public void RegisterObstacles() {
-        Pathfinding.RVO.Simulator sim = (FindObjectOfType(typeof(RVOSimulator)) as RVOSimulator).GetSimulator();
         for (int i = 0; i < areaMaps.Count; i++) {
             AreaInnerTileMap map = areaMaps[i];
             //get all wall tiles
@@ -185,6 +189,14 @@ public class InteriorMapManager : MonoBehaviour {
                 //sim.AddObstacle(verts, 2);
             }
         }
+        List<Pathfinding.RVO.Sampled.Agent> agents = sim.GetAgents();
+        Debug.Log(agents.Count + " agents!");
+    }
+    public void AddAgent(IAgent agent) {
+        sim.AddAgent(agent);
+    }
+    public void RemoveAgent(IAgent agent) {
+        sim.RemoveAgent(agent);
     }
     #endregion
 

@@ -37,7 +37,7 @@ public class FirstAidCharacter : GoapAction {
     #region State Effects
     public void PreFirstAidSuccess() {
         //**Pre Effect 1**: Prevent movement of Target
-        (poiTarget as Character).marker.pathfindingAI.AdjustDoNotMove(1);
+        //(poiTarget as Character).marker.pathfindingAI.AdjustDoNotMove(1);
 
     }
     public void AfterFirstAidSuccess() {
@@ -50,7 +50,7 @@ public class FirstAidCharacter : GoapAction {
         //**After Effect 2**: Reduce character's Supply by 10
         actor.AdjustSupply(-10);
         //**After Effect 3**: Allow movement of Target
-        (poiTarget as Character).marker.pathfindingAI.AdjustDoNotMove(-1);
+        //(poiTarget as Character).marker.pathfindingAI.AdjustDoNotMove(-1);
     }
     #endregion
 }

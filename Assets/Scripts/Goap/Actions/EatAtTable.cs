@@ -94,7 +94,7 @@ public class EatAtTable : GoapAction {
             log = new Log(GameManager.Instance.Today(), "GoapAction", "EatAtTable", "eat poisoned_killed");
             log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(poiTarget.gridTileLocation.structure.location, poiTarget.gridTileLocation.structure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
-            actor.Death();
+            actor.Death("normal", false);
             AddActualEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.DEATH, targetPOI = actor });
         }
         log.AddLogToInvolvedObjects();

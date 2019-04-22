@@ -96,7 +96,7 @@ public class StealFromCharacter : GoapAction {
             recipient.ReactToCrime(CRIME.THEFT, actor, null, false);
         }
         //Recipient and Actor have a positive relationship:
-        else if (recipient.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE)) {
+        else if (recipient.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE, RELATIONSHIP_TRAIT.RELATIVE)) {
             //- **Recipient Response Text**: "[Actor Name] may have committed theft but I know that [he/she] is a good person."
             reactions.Add(string.Format("{0} may have committed theft but I know that {1} is a good person.", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
             //-**Recipient Effect * *: no effect
@@ -135,7 +135,7 @@ public class StealFromCharacter : GoapAction {
             CharacterManager.Instance.RemoveRelationshipBetween(recipient, actor, traitsToRemove);
         }
         //Recipient and Actor have a positive relationship:
-        else if (recipient.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE)) {
+        else if (recipient.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE, RELATIONSHIP_TRAIT.RELATIVE)) {
             //- **Recipient Response Text**: "Well, nothing was taken, right? Let it go."
             reactions.Add("Well, nothing was taken, right? Let it go.");
             //-**Recipient Effect * *: no effect

@@ -15,7 +15,6 @@ public class CharacterMarker : PooledObject {
     public delegate void HoverMarkerAction(Character character, LocationGridTile location);
     public HoverMarkerAction hoverEnterAction;
     public System.Action hoverExitAction;
-
     public Character character { get; private set; }
 
     public Transform visualsParent;
@@ -41,10 +40,12 @@ public class CharacterMarker : PooledObject {
     [Header("For Testing")]
     [SerializeField] private SpriteRenderer colorHighlight;
 
+    //vision colliders
     public List<IPointOfInterest> inVisionPOIs { get; private set; } //POI's in this characters vision collider
     public List<Character> hostilesInRange { get; private set; } //POI's in this characters hostility collider
-    private Action _arrivalAction;
 
+    //movement
+    private Action _arrivalAction;
     public IPointOfInterest targetPOI { get; private set; }
     public InnerPathfindingThread pathfindingThread { get; private set; }
     public POICollisionTrigger collisionTrigger { get; private set; }
@@ -55,6 +56,7 @@ public class CharacterMarker : PooledObject {
     public int useWalkSpeed { get; private set; }
     public int targettedByRemoveNegativeTraitActionsCounter { get; private set; }
 
+    private bool forceFollowTarget; //If the character should follow the target no matter where they go, must only be used with characters
     private LocationGridTile _previousGridTile;
     private float progressionSpeedMultiplier;
 
@@ -96,6 +98,7 @@ public class CharacterMarker : PooledObject {
         Messenger.AddListener<Character, GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
 
         PathfindingManager.Instance.AddAgent(pathfindingAI);
+        //InteriorMapManager.Instance.AddAgent(rvoController);
     }
     public void UpdateMarkerVisuals() {
         MarkerAsset assets = CharacterManager.Instance.GetMarkerAsset(character.race, character.gender);
@@ -148,6 +151,8 @@ public class CharacterMarker : PooledObject {
         tile.structure.location.AddCharacterToLocation(character);
         this.gameObject.SetActive(true);
          UpdatePosition();
+        UpdateAnimation();
+        UpdateActionIcon();
             //tile.SetOccupant(character);
         //}
     }
@@ -206,9 +211,9 @@ public class CharacterMarker : PooledObject {
         if (character == this.character) {
             if (trait.type == TRAIT_TYPE.DISABLER) { //if the character gained a disabler trait, hinder movement
                 pathfindingAI.ClearPath();
-                if (character.currentParty.icon.isTravelling && character.currentParty.icon.travelLine == null) {
-                    StopMovementOnly();
-                }
+                //if (character.currentParty.icon.isTravelling && character.currentParty.icon.travelLine == null) {
+                //    StopMovementOnly();
+                //}
                 //rvoController.priority = 0;
                 rvoController.enabled = false;
                 pathfindingAI.AdjustDoNotMove(1);
@@ -225,6 +230,7 @@ public class CharacterMarker : PooledObject {
                 }
             }
             UpdateAnimation();
+            UpdateActionIcon();
         }
     }
     public void OnCharacterLostTrait(Character character, Trait trait) {
@@ -253,6 +259,7 @@ public class CharacterMarker : PooledObject {
                     break;
             }
             UpdateAnimation();
+            UpdateActionIcon();
         } else if (hostilesInRange.Contains(character)) {
             //if the character that lost a trait is not this character and that character is in this character's hostility range
             //and the trait that was lost is a negative disabler trait, react to them.
@@ -273,9 +280,14 @@ public class CharacterMarker : PooledObject {
                 if (currentlyEngaging == targetCharacter) {
                     SetCurrentlyEngaging(null);
                 }
-                //target character left the area
-                //go to the characters last tile
-                GoTo(targetCharacter.gridTileLocation, targetPOI, _arrivalAction);
+                if (forceFollowTarget) {
+                    //if this character must follow the target wherever, and the target started travelling to another area, make this character travel to that area too
+                    character.currentParty.GoToLocation(travellingParty.icon.targetLocation, PATHFINDING_MODE.NORMAL, travellingParty.icon.targetStructure, _arrivalAction, null, targetPOI);
+                } else {
+                    //target character left the area
+                    //go to the characters last tile
+                    GoTo(targetCharacter.gridTileLocation, targetPOI, _arrivalAction);
+                }
                 if (Messenger.eventTable.ContainsKey(Signals.PARTY_STARTED_TRAVELLING)) {
                     Messenger.RemoveListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling);
                 }
@@ -319,6 +331,10 @@ public class CharacterMarker : PooledObject {
     #region Action Icon
     public void UpdateActionIcon() {
         if (character == null) {
+            return;
+        }
+        if (character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+            actionIcon.gameObject.SetActive(false);
             return;
         }
         if (character.isChatting) {
@@ -391,6 +407,7 @@ public class CharacterMarker : PooledObject {
         hoverExitAction = null;
         destinationTile = null;
         PathfindingManager.Instance.RemoveAgent(pathfindingAI);
+        //InteriorMapManager.Instance.RemoveAgent(pathfindingAI);
         Messenger.RemoveListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.RemoveListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
         Messenger.RemoveListener<Character, GoapAction>(Signals.CHARACTER_DOING_ACTION, OnCharacterDoingAction);
@@ -434,6 +451,7 @@ public class CharacterMarker : PooledObject {
             case POINT_OF_INTEREST_TYPE.CHARACTER:
                 Character targetCharacter = targetPOI as Character;
                 SetTargetTransform(targetCharacter.marker.transform);
+                forceFollowTarget = forceFollow;
                 //if the target is a character, 
                 //check first if he/she is still at the location, 
                 if (targetCharacter.specificLocation != character.specificLocation) {
@@ -989,8 +1007,10 @@ public class CharacterMarker : PooledObject {
             summary += "\n" + character.name + " was forced to " + forcedReaction.ToString() + ".";
         } else {
             //- Determine whether to enter Flee mode or Engage mode:
-            if (character.GetTrait("Injured") != null || character.role.roleType == CHARACTER_ROLE.CIVILIAN
-                || character.role.roleType == CHARACTER_ROLE.NOBLE || character.role.roleType == CHARACTER_ROLE.LEADER) {
+            //if the character will do a combat action towards the other character, do not flee.
+            if (!this.character.IsDoingCombatActionTowards(otherCharacter) && (character.GetTrait("Injured") != null 
+                || character.role.roleType == CHARACTER_ROLE.CIVILIAN
+                || character.role.roleType == CHARACTER_ROLE.NOBLE || character.role.roleType == CHARACTER_ROLE.LEADER)) {
                 //- Injured characters, Civilians, Nobles and Faction Leaders always enter Flee mode
                 character.stateComponent.SwitchToState(CHARACTER_STATE.FLEE, otherCharacter);
                 summary += "\n" + character.name + " chose to flee.";
@@ -1104,11 +1124,20 @@ public class CharacterMarker : PooledObject {
         Character nearestHostile = GetNearestValidHostile();
         //set them as a target
         //SetTargetTransform(nearestHostile.marker.transform);
-        GoTo(nearestHostile);
+        GoTo(nearestHostile, () => OnReachEngageTarget());
         SetCurrentlyEngaging(nearestHostile);
         //StartMovement();
     }
     public void OnReachEngageTarget() {
+        //if (!character.IsNear(currentlyEngaging)) {
+        //    throw new Exception(character.name + " reached engage target " + currentlyEngaging.name + ", but is not near to them!");
+        //}
+
+        if (currentlyEngaging == null) {
+            //throw new Exception(this.name + " has reached engage target, but its currently engaging target is null");
+            return;
+        }
+
         Debug.Log(character.name + " has reached engage target!");
         Character enemy = currentlyEngaging;
         //stop the enemy's movement
@@ -1125,7 +1154,18 @@ public class CharacterMarker : PooledObject {
         } else {
             EngageState engageState = character.stateComponent.currentState as EngageState;
             Character thisCharacter = this.character;
-            
+
+            //remove enemy's current action
+            enemy.AdjustIsWaitingForInteraction(1);
+            if (enemy.currentAction != null && !enemy.currentAction.isDone) {
+                if (!enemy.currentAction.isPerformingActualAction) {
+                    enemy.SetCurrentAction(null);
+                } else {
+                    enemy.currentAction.currentState.EndPerTickEffect();
+                }
+            }
+            enemy.AdjustIsWaitingForInteraction(-1);
+
             engageState.CombatOnEngage();
 
             this.OnFinishCombatWith(enemy);
@@ -1164,7 +1204,7 @@ public class CharacterMarker : PooledObject {
     /// regardless if he/she started it or not.
     /// </summary>
     /// <param name="otherCharacter">The character this character fought with</param>
-    public void OnFinishCombatWith(Character otherCharacter) {
+    private void OnFinishCombatWith(Character otherCharacter) {
         if (currentlyEngaging != null && currentlyEngaging == otherCharacter) {
             SetCurrentlyEngaging(null);
             SetTargetTransform(null);
