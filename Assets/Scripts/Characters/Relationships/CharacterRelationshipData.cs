@@ -14,7 +14,6 @@ public class CharacterRelationshipData {
     public bool isCharacterLocated { get; private set; }
     public LocationStructure knownStructure { get; private set; }
     public List<Trait> trouble { get; private set; } //Set this to trait for now, but this could change in future iterations
-    public InteractionIntel plannedActionIntel { get; private set; } //this is only occupied if the player gives the character an intel to the owner, regarding this character
     public List<Character> knownLovedOnes { get; private set; }
 
     public string lastEncounterLog { get; private set; }
@@ -34,51 +33,33 @@ public class CharacterRelationshipData {
     }
 
     public void AddListeners() {
-        Messenger.AddListener(Signals.TICK_STARTED, LastEncounterTick);
-        Messenger.AddListener<Interaction>(Signals.INTERACTION_INITIALIZED, OnInteractionInitialized);
-        Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
-        //Messenger.AddListener<Character, Trait>(Signals.TRAIT_ADDED, OnTraitAddedToCharacter);
-        Messenger.AddListener<Character, Trait>(Signals.TRAIT_REMOVED, OnTraitRemovedFromCharacter);
-        Messenger.AddListener<Character, RelationshipTrait>(Signals.RELATIONSHIP_ADDED, OnCharacterGainedRelationship);
+        //Messenger.AddListener(Signals.TICK_STARTED, LastEncounterTick);
+        //Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+        ////Messenger.AddListener<Character, Trait>(Signals.TRAIT_ADDED, OnTraitAddedToCharacter);
+        //Messenger.AddListener<Character, Trait>(Signals.TRAIT_REMOVED, OnTraitRemovedFromCharacter);
+        //Messenger.AddListener<Character, RelationshipTrait>(Signals.RELATIONSHIP_ADDED, OnCharacterGainedRelationship);
     }
     public void RemoveListeners() {
-        Messenger.RemoveListener(Signals.TICK_STARTED, LastEncounterTick);
-        Messenger.RemoveListener<Interaction>(Signals.INTERACTION_INITIALIZED, OnInteractionInitialized);
-        Messenger.RemoveListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
-        //Messenger.RemoveListener<Character, Trait>(Signals.TRAIT_ADDED, OnTraitAddedToCharacter);
-        Messenger.RemoveListener<Character, Trait>(Signals.TRAIT_REMOVED, OnTraitRemovedFromCharacter);
+        //Messenger.RemoveListener(Signals.TICK_STARTED, LastEncounterTick);
+        //Messenger.RemoveListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+        ////Messenger.RemoveListener<Character, Trait>(Signals.TRAIT_ADDED, OnTraitAddedToCharacter);
+        //Messenger.RemoveListener<Character, Trait>(Signals.TRAIT_REMOVED, OnTraitRemovedFromCharacter);
     }
 
-    private void OnInteractionInitialized(Interaction interaction) {
-        if (interaction.characterInvolved.id == owner.id) { //owner is character involved
-            if (interaction.targetCharacter != null
-            && interaction.targetCharacter.id == targetCharacter.id) {
-                ResetLastEncounter();
-            }
-        } else if (interaction.targetCharacter != null && interaction.targetCharacter.id == owner.id) { //owner is targetCharacter
-            if (interaction.characterInvolved.id == this.targetCharacter.id) {
-                ResetLastEncounter();
-            }
-        }
-    }
     private void OnCharacterArrivedAtStructure(Character character, LocationStructure structure) {
         if (owner.id == character.id && structure == knownStructure) {
-            if (owner.forcedInteraction != null 
-                && owner.forcedInteraction.targetCharacter != null 
-                && owner.forcedInteraction.targetCharacter.id == targetCharacter.id) {
-                if (targetCharacter.currentStructure != structure) {
-                    /*
-                    - character located turns to False whenever the character visits the specific **known character location structure** 
-                    with the intent to meet up with the target and not encounter the target there    
-                     */
-                    SetIsCharacterLocated(false);
+            if (targetCharacter.currentStructure != structure) {
+                /*
+                - character located turns to False whenever the character visits the specific **known character location structure** 
+                with the intent to meet up with the target and not encounter the target there    
+                    */
+                SetIsCharacterLocated(false);
 
-                    /*
-                     character trouble is set to Null when the character visits the **known character location structure** with the intent to 
-                     meet up with the target and was unable to find the character there or was able to resolve the trouble
-                     */
-                    ClearTrouble();
-                }
+                /*
+                    character trouble is set to Null when the character visits the **known character location structure** with the intent to 
+                    meet up with the target and was unable to find the character there or was able to resolve the trouble
+                    */
+                ClearTrouble();
             }
         }
     }
@@ -289,66 +270,6 @@ public class CharacterRelationshipData {
     }
     #endregion
 
-    #region Action Intel
-    public void SetPlannedActionIntel(InteractionIntel intel) {
-        plannedActionIntel = intel;
-        //if (plannedActionIntel != null) {
-        //    Debug.Log(owner.name + " was informed that " + targetCharacter.name + " has plans to:\n" + intel.GetDebugInfo());
-        //    Messenger.AddListener<Interaction>(Signals.INTERACTION_ENDED, CheckIfPlannedInteractionDone);
-        //} else {
-        //    Messenger.RemoveListener<Interaction>(Signals.INTERACTION_ENDED, CheckIfPlannedInteractionDone);
-        //}
-    }
-    private void CheckIfPlannedInteractionDone(Interaction interaction) {
-        //if (plannedActionIntel != null) {
-        //    if (plannedActionIntel.connectedInteraction == interaction) {
-        //        SetPlannedActionIntel(null);
-        //    }
-        //}
-    }
-    public void OnIntelGivenToCharacter(InteractionIntel intel) {
-        //if (intel.isCompleted) {
-        //    InteractionCharacterEffect[] effectsOnCharacter = null;
-        //    if (intel.actor.id == targetCharacter.id) {
-        //        effectsOnCharacter = intel.effectsOnActor;
-        //    } else if (intel.target is Character && (intel.target as Character).id == targetCharacter.id) {
-        //        effectsOnCharacter = intel.effectsOnTarget;
-        //    }
-        //    if (effectsOnCharacter != null) {
-        //        for (int i = 0; i < effectsOnCharacter.Length; i++) {
-        //            InteractionCharacterEffect effect = effectsOnCharacter[i];
-        //            if (effect.effect == INTERACTION_CHARACTER_EFFECT.TRAIT_GAIN) {
-        //                string gainedTrait = effect.effectString;
-        //                Trait trouble;
-        //                switch (gainedTrait) {
-        //                    case "Charmed":
-        //                    case "Abducted":
-        //                    case "Unconscious":
-        //                        trouble = targetCharacter.GetTrait(gainedTrait);
-        //                        AddTrouble(trouble);
-        //                        SetIsCharacterMissing(true);
-        //                        break;
-        //                    case "Injured":
-        //                    case "Cursed":
-        //                        trouble = targetCharacter.GetTrait(gainedTrait);
-        //                        AddTrouble(trouble);
-        //                        break;
-        //                    default:
-        //                        break;
-        //                }
-        //            }
-        //        }
-        //    }
-            
-        //    if (intel.actionLocationStructure != null) {
-        //        SetIsCharacterLocated(true);
-        //        SetKnownStructure(intel.actionLocationStructure);
-        //    }
-        //}
-        
-    }
-    #endregion
-
     #region Known Loved Ones
     private void LoadInitialLovedOnes() {
         knownLovedOnes = new List<Character>();
@@ -391,12 +312,6 @@ public class CharacterRelationshipData {
             for (int i = 0; i < trouble.Count; i++) {
                 text += "|" + trouble[i].name + "|";
             }
-        } else {
-            text += "None";
-        }
-        text += "\n\t<b>Planned Action Intel:</b> ";
-        if (plannedActionIntel != null) {
-            text += "\n" + plannedActionIntel.GetDebugInfo();
         } else {
             text += "None";
         }

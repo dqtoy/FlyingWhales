@@ -38,6 +38,9 @@ public class DropCharacter : GoapAction {
         SetTargetStructure();
         base.DoAction(plan);
     }
+    public override LocationGridTile GetTargetLocationTile() {
+        return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);
+    }
     #endregion
 
     #region Requirements

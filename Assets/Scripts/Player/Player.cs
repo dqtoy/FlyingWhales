@@ -19,7 +19,6 @@ public class Player : ILeader {
     private List<Token> _tokens;
     private List<Minion> _minions;
     private Dictionary<CURRENCY, int> _currencies;
-    public List<Character> otherCharacters;
 
     public Dictionary<JOB, PlayerJobData> roleSlots { get; private set; }
     public CombatGrid attackGrid { get; private set; }
@@ -61,14 +60,13 @@ public class Player : ILeader {
         get { return _minions; }
     }
     public List<Character> allOwnedCharacters {
-        get { return minions.Select(x => x.character).Concat(otherCharacters).ToList(); } //TODO: Optimize this!
+        get { return minions.Select(x => x.character).ToList(); }
     }
     #endregion
 
     public Player() {
         playerArea = null;
         _tokens = new List<Token>();
-        otherCharacters = new List<Character>();
         attackGrid = new CombatGrid();
         defenseGrid = new CombatGrid();
         attackGrid.Initialize();
@@ -244,11 +242,12 @@ public class Player : ILeader {
         return new Minion(character, true);
     }
     public Minion CreateNewMinion(RACE race) {
-        Minion minion = new Minion(CharacterManager.Instance.CreateNewCharacter(CharacterRole.MINION, race, GENDER.MALE, playerFaction, playerArea, null, false), false);
+        Minion minion = new Minion(CharacterManager.Instance.CreateNewCharacter(CharacterRole.MINION, race, GENDER.MALE, playerFaction, playerArea, null), false);
+        //minion.character.CreateMarker();
         return minion;
     }
     public Minion CreateNewMinion(string className, RACE race) {
-        Minion minion = new Minion(CharacterManager.Instance.CreateNewCharacter(CharacterRole.MINION, className, race, GENDER.MALE, playerFaction, playerArea, false), false);
+        Minion minion = new Minion(CharacterManager.Instance.CreateNewCharacter(CharacterRole.MINION, className, race, GENDER.MALE, playerFaction, playerArea), false);
         return minion;
     }
     public void UpdateMinions() {
@@ -327,12 +326,12 @@ public class Player : ILeader {
     public void RemoveMinion(Minion minion) {
         if(_minions.Remove(minion)){
             PlayerUI.Instance.RemoveCharacterItem(minion.minionItem);
-            if (minion.currentlyExploringArea != null) {
-                minion.currentlyExploringArea.areaInvestigation.CancelInvestigation("explore");
-            }
-            if (minion.currentlyAttackingArea != null) {
-                minion.currentlyAttackingArea.areaInvestigation.CancelInvestigation("attack");
-            }
+            //if (minion.currentlyExploringArea != null) {
+            //    minion.currentlyExploringArea.areaInvestigation.CancelInvestigation("explore");
+            //}
+            //if (minion.currentlyAttackingArea != null) {
+            //    minion.currentlyAttackingArea.areaInvestigation.CancelInvestigation("attack");
+            //}
         }
     }
     //public void AdjustMaxMinions(int adjustment) {
@@ -395,22 +394,6 @@ public class Player : ILeader {
             //    break;
             default:
                 break;
-        }
-    }
-    #endregion
-
-    #region Other Characters/Units
-    public void AddNewCharacter(Character character) {
-        if (!otherCharacters.Contains(character)) {
-            otherCharacters.Add(character);
-            character.OnAddedToPlayer();
-            PlayerCharacterItem item = PlayerUI.Instance.GetUnoccupiedCharacterItem();
-            item.SetCharacter(character);
-        }
-    }
-    public void RemoveCharacter(Character character) {
-        if (otherCharacters.Remove(character)) {
-            PlayerUI.Instance.RemoveCharacterItem(character.playerCharacterItem);
         }
     }
     #endregion
@@ -698,7 +681,7 @@ public class Player : ILeader {
     private void OnCharacterDidAction(Character character, GoapAction action) {
         bool showPopup = false;
         if (action.showIntelNotification) {
-            showPopup = ShouldShowNotificationFrom(character);
+            showPopup = ShouldShowNotificationFrom(character, action.currentState.descriptionLog);
         }
         if (showPopup) {
             Messenger.Broadcast<Intel>(Signals.SHOW_INTEL_NOTIFICATION, InteractionManager.Instance.CreateNewIntel(action, character));
@@ -718,17 +701,39 @@ public class Player : ILeader {
         }
         return false;
     }
-    public void ShowNotificationFrom(Character character, Log log) {
+    private bool ShouldShowNotificationFrom(Character character, Log log) {
         if (ShouldShowNotificationFrom(character)) {
-            ShowNotification(log);
+            return true;
+        } else {
+            return ShouldShowNotificationFrom(log.fillers.Where(x => x.obj is Character).Select(x => x.obj as Character).ToList());
         }
     }
-    public void ShowNotificationFrom(List<Character> characters, Log log) {
+    private bool ShouldShowNotificationFrom(List<Character> characters) {
         for (int i = 0; i < characters.Count; i++) {
             if (ShouldShowNotificationFrom(characters[i])) {
-                ShowNotification(log);
-                break;
+                return true;
             }
+        }
+        return false;
+    }
+    private bool ShouldShowNotificationFrom(List<Character> characters, Log log) {
+        for (int i = 0; i < characters.Count; i++) {
+            if (ShouldShowNotificationFrom(characters[i], log)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public bool ShowNotificationFrom(Character character, Log log) {
+        if (ShouldShowNotificationFrom(character, log)) {
+            ShowNotification(log);
+            return true;
+        }
+        return false;
+    }
+    public void ShowNotificationFrom(List<Character> characters, Log log) {
+        if (ShouldShowNotificationFrom(characters, log)) {
+            ShowNotification(log);
         }
     }
     public void ShowNotification(Log log) {

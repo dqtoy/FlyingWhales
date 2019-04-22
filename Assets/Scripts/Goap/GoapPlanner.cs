@@ -10,12 +10,12 @@ public class GoapPlanner {
         this.actor = actor;
     }
 
-    public GoapPlan PlanActions(IPointOfInterest target, GoapAction goalAction, List<GoapAction> usableActions, GOAP_CATEGORY category, bool isPersonalPlan) {
+    public GoapPlan PlanActions(IPointOfInterest target, GoapAction goalAction, List<GoapAction> usableActions, GOAP_CATEGORY category, bool isPersonalPlan, GoapPlanJob job = null) {
         //List of all starting nodes that can do the goal
         List<GoapNode> startingNodes = new List<GoapNode>();
 
         GoapNode goalNode = new GoapNode(null, goalAction.cost, goalAction);
-        bool success = BuildGoapTree(goalNode, startingNodes, usableActions);
+        bool success = BuildGoapTree(goalNode, startingNodes, usableActions, job);
         if (!success) {
             return null;
         }
@@ -60,7 +60,7 @@ public class GoapPlanner {
         return true;
     }
 
-    private bool BuildGoapTree(GoapNode parent, List<GoapNode> startingNodes, List<GoapAction> usableActions) {
+    private bool BuildGoapTree(GoapNode parent, List<GoapNode> startingNodes, List<GoapAction> usableActions, GoapPlanJob job = null) {
         if(parent.action.preconditions.Count > 0) {
             List<Precondition> unsatisfiedPreconditions = new List<Precondition>();
             for (int i = 0; i < parent.action.preconditions.Count; i++) {
@@ -78,14 +78,23 @@ public class GoapPlanner {
                     GoapAction usableAction = usableActions[i];
                     bool canSatisfyAllPreconditions = true;
                     for (int j = 0; j < unsatisfiedPreconditions.Count; j++) {
-                        if (!usableAction.WillEffectsSatisfyPrecondition(unsatisfiedPreconditions[j].goapEffect)){
+                        Precondition precon = unsatisfiedPreconditions[j];
+                        if (job != null && job.forcedActions.ContainsKey(precon.goapEffect)) {
+                            //if there is a provided job, check if it has any forced actions
+                            //if it does, only allow the action that it allows
+                            if (usableAction.goapType != job.forcedActions[precon.goapEffect]) {
+                                canSatisfyAllPreconditions = false;
+                                break;
+                            }
+                        } else if (!usableAction.WillEffectsSatisfyPrecondition(precon.goapEffect)) {
                             canSatisfyAllPreconditions = false;
                             break;
                         }
+
                     }
                     if (canSatisfyAllPreconditions) {
                         GoapNode leafNode = new GoapNode(parent, parent.runningCost + usableAction.cost, usableAction);
-                        bool success = BuildGoapTree(leafNode, startingNodes, usableActions);
+                        bool success = BuildGoapTree(leafNode, startingNodes, usableActions, job);
                         return success;
                     }
                 }

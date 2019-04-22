@@ -695,7 +695,7 @@ public class UIManager : MonoBehaviour {
     private void OnMenuClosed(UIMenu closedMenu) {
         if (GameManager.Instance.isPaused) {
             //if the game is paused, and a menu was closed, check if all other menus are closed, if so unpause the game
-            if (!InteractionUI.Instance.isShowing && !areaInfoUI.isShowing && !characterInfoUI.isShowing && !playerLandmarkInfoUI.isShowing) {
+            if (!areaInfoUI.isShowing && !characterInfoUI.isShowing && !playerLandmarkInfoUI.isShowing) {
                 Unpause();
             }
         }
@@ -897,7 +897,6 @@ public class UIManager : MonoBehaviour {
         }
         landmarkInfoUI.SetData(landmark);
         landmarkInfoUI.OpenMenu();
-        landmarkInfoUI.UpdateInvestigation(indexToggleToBeActivated);
         landmark.CenterOnLandmark();
         //		playerActionsUI.ShowPlayerActionsUI ();
     }

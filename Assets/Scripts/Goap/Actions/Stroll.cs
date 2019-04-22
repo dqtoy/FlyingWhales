@@ -20,11 +20,11 @@ public class Stroll : GoapAction {
     //    AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.NONE, targetPOI = actor });
     //}
     public override void PerformActualAction() {
-        if (targetTile != null) {
+        //if (targetTile != null) {
             SetState("Stroll Success");
-        } else {
-            SetState("Stroll Fail");
-        }
+        //} else {
+        //    SetState("Stroll Fail");
+        //}
         base.PerformActualAction();
     }
     protected override int GetCost() {
@@ -34,6 +34,9 @@ public class Stroll : GoapAction {
     //    base.FailAction();
     //    SetState("Stroll Fail");
     //}
+    public override LocationGridTile GetTargetLocationTile() {
+        return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);
+    }
     #endregion
 
     #region State Effects

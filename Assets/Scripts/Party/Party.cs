@@ -218,6 +218,9 @@ public class Party {
 
     #region Interface
     public void SetSpecificLocation(Area location) {
+        if (_specificLocation == location) {
+            return; //ignore change
+        }
         _specificLocation = location;
         specificLocationHistory.Add("Set specific location to " + _specificLocation.ToString() 
             + " ST: " + StackTraceUtility.ExtractStackTrace());
@@ -226,6 +229,9 @@ public class Party {
         }
         if (_specificLocation != null) {
             _currentRegion = _specificLocation.coreTile.region;
+        }
+        if (owner.homeArea == _specificLocation) {
+            owner.OnReturnHome();
         }
     }
     public bool AddCharacter(Character character, bool isOwner = false) {
@@ -253,11 +259,12 @@ public class Party {
             return;
         }
         if (_characters.Remove(character)) {
-            LocationGridTile gridTile = _owner.gridTileLocation.GetNearestUnoccupiedTileFromThis();
-            _owner.specificLocation.AddCharacterToLocation(character, gridTile, true);
+            //LocationGridTile gridTile = _owner.gridTileLocation.GetNearestUnoccupiedTileFromThis();
+            _owner.specificLocation.AddCharacterToLocation(character);
             character.OnRemovedFromParty();
-            character.marker.gameObject.transform.localPosition = gridTile.centeredLocalLocation;
-            character.marker.UpdatePosition();
+            character.marker.PlaceMarkerAt(_owner.gridTileLocation);
+            //character.marker.gameObject.transform.localPosition = gridTile.centeredLocalLocation;
+            //character.marker.UpdatePosition();
 
             RemoveCurrentBuffsFromCharacter(character);
             character.ownParty.icon.transform.position = this.specificLocation.coreTile.transform.position;
@@ -277,10 +284,6 @@ public class Party {
     public void GoHome(Action doneAction = null, Action actionOnStartOfMovement = null) {
         if (_isDead) { return; }
         GoToLocation(owner.homeArea, PATHFINDING_MODE.PASSABLE, null, doneAction, actionOnStartOfMovement);
-    }
-    public void GoHomeAndDisband(Action actionOnStartOfMovement = null, Interaction cause = null) {
-        if(_isDead) { return; }
-        GoToLocation(owner.homeArea, PATHFINDING_MODE.PASSABLE, null, () => DisbandParty(), actionOnStartOfMovement, cause);
     }
     #endregion
 
@@ -303,11 +306,7 @@ public class Party {
         this.partyColor = partyColor;
     }
     public void GoToLocation(Area targetLocation, PATHFINDING_MODE pathfindingMode, LocationStructure targetStructure = null,
-        Action doneAction = null, Action actionOnStartOfMovement = null, Interaction causeForTravel = null, IPointOfInterest targetPOI = null, LocationGridTile targetTile = null) {
-        //if (_icon.isMovingToHex) {
-        //    _icon.SetQueuedAction(() => GoToLocation(targetLocation, pathfindingMode, doneAction, trackTarget, actionOnStartOfMovement));
-        //    return;
-        //}
+        Action doneAction = null, Action actionOnStartOfMovement = null, IPointOfInterest targetPOI = null, LocationGridTile targetTile = null) {
         if (_icon.isTravelling && _icon.travelLine != null) {
             return;
         }
@@ -319,13 +318,12 @@ public class Party {
         } else {
             //_icon.SetActionOnTargetReached(doneAction);
             LocationGridTile exitTile = owner.GetNearestUnoccupiedEdgeTileFromThis();
-            owner.marker.GoToTile(exitTile, null, () => MoveToAnotherArea(targetLocation, pathfindingMode, targetStructure, doneAction, actionOnStartOfMovement, causeForTravel, targetPOI, targetTile));
+            owner.marker.GoTo(exitTile, null, () => MoveToAnotherArea(targetLocation, pathfindingMode, targetStructure, doneAction, actionOnStartOfMovement, targetPOI, targetTile));
         }
     }
     private void MoveToAnotherArea(Area targetLocation, PATHFINDING_MODE pathfindingMode, LocationStructure targetStructure = null,
-        Action doneAction = null, Action actionOnStartOfMovement = null, Interaction causeForTravel = null, IPointOfInterest targetPOI = null, LocationGridTile targetTile = null) {
+        Action doneAction = null, Action actionOnStartOfMovement = null, IPointOfInterest targetPOI = null, LocationGridTile targetTile = null) {
         _icon.SetTarget(targetLocation, targetStructure, targetPOI, targetTile);
-        _icon.SetCauseForTravel(causeForTravel);
         _icon.StartPath(PATHFINDING_MODE.PASSABLE, doneAction, actionOnStartOfMovement);
     }
     public void CancelTravel(Action onCancelTravel = null) {

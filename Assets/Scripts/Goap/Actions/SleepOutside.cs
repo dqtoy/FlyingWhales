@@ -7,6 +7,7 @@ public class SleepOutside : GoapAction {
     public SleepOutside(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.SLEEP_OUTSIDE, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionLocationType = ACTION_LOCATION_TYPE.NEARBY;
         actionIconString = GoapActionStateDB.Sleep_Icon;
+        //animationName = "Sleep Ground";
     }
 
     #region Overrides
@@ -17,12 +18,15 @@ public class SleepOutside : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = null, targetPOI = actor });
     }
     public override void PerformActualAction() {
-        if (targetTile != null) {
+        //if (targetTile != null) {
             SetState("Rest Success");
-        } else {
-            SetState("Rest Fail");
-        }
+        //} else {
+        //    SetState("Rest Fail");
+        //}
         base.PerformActualAction();
+    }
+    public override LocationGridTile GetTargetLocationTile() {
+        return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);
     }
     protected override int GetCost() {
         return 9;
@@ -49,6 +53,7 @@ public class SleepOutside : GoapAction {
         //actor.AdjustDoNotGetTired(1);
         Resting restingTrait = new Resting();
         actor.AddTrait(restingTrait);
+        currentState.SetAnimation("Sleep Ground");
     }
     private void PerTickRestSuccess() {
         actor.AdjustTiredness(3);

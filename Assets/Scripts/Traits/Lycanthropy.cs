@@ -37,12 +37,14 @@ public class Lycanthropy : Trait {
         GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.TRANSFORM_TO_WOLF, _character, _character);
         GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
         GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.REACTION);
+        goapPlan.ConstructAllNodes();
         _character.allGoapPlans.Add(goapPlan);
     }
     public void PlanRevertToNormal() {
         GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.REVERT_TO_NORMAL, _character, _character);
         GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
         GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.REACTION);
+        goapPlan.ConstructAllNodes();
         _character.allGoapPlans.Add(goapPlan);
     }
     public void TurnToWolf() {
@@ -77,7 +79,7 @@ public class Lycanthropy : Trait {
         }
         //Copy relationship data then remove them
         data.SetRelationshipData(_character);
-        _character.RemoveAllRelationships();
+        _character.RemoveAllRelationships(false);
 
         //Remove race and class
         //This is done first so that when the traits are copied, it will not copy the traits from the race and class because if it is copied and the race and character is brought back, it will be doubled, which is not what we want
@@ -99,7 +101,9 @@ public class Lycanthropy : Trait {
         Messenger.Broadcast(Signals.CHARACTER_CHANGED_RACE, _character);
 
         //Plan idle stroll to the wilderness
-        _character.PlanIdleStroll(_character.specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS));
+        LocationStructure wilderness = _character.specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+        LocationGridTile targetTile = wilderness.GetRandomUnoccupiedTile();
+        _character.PlanIdleStroll(wilderness, targetTile);
     }
 
     public void RevertToNormal() {

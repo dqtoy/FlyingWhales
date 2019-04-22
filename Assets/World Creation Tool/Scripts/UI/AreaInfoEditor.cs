@@ -81,24 +81,6 @@ public class AreaInfoEditor : MonoBehaviour {
     public void SetAreaName(string name) {
         currentArea.SetName(name);
     }
-    public void SetMaxDefenderGroups(string amountStr) {
-        int amount;
-        if (Int32.TryParse(amountStr, out amount)) {
-            currentArea.SetMaxDefenderGroups(amount);
-        }
-    }
-    public void SetInitialDefenderGroups(string amountStr) {
-        int amount;
-        if (Int32.TryParse(amountStr, out amount)) {
-            currentArea.SetInitialDefenderGroups(amount);
-        }
-    }
-    //public void SetSupplyCapacity(string amountStr) {
-    //    int amount;
-    //    if (Int32.TryParse(amountStr, out amount)) {
-    //        currentArea.SetSupplyCapacity(amount);
-    //    }
-    //}
     public void SetDefaultRace(int choice) {
         RACE result;
         //if (Enum.TryParse(defaultRaceDropdown.options[defaultRaceDropdown.value].text, out result)) {

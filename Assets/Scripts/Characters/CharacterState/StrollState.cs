@@ -16,13 +16,21 @@ public class StrollState : CharacterState {
         base.DoMovementBehavior();
         StartStrollMovement();
     }
+    protected override void PerTickInState() {
+        base.PerTickInState();
+        if (!isDone) {
+            stateComponent.character.CreatePersonalJobs();
+        }
+    }
     #endregion
 
     private void StartStrollMovement() {
-        stateComponent.character.marker.GoToTile(PickRandomTileToGoTo(), stateComponent.character, () => StartStrollMovement());
+        LocationGridTile target = PickRandomTileToGoTo();
+        stateComponent.character.marker.GoTo(target, stateComponent.character, () => StartStrollMovement());
+        //Debug.Log(stateComponent.character.name + " will stroll to " + target.ToString());
     }
     private LocationGridTile PickRandomTileToGoTo() {
-        List<LocationGridTile> tiles = stateComponent.character.gridTileLocation.structure.location.areaMap.GetUnoccupiedTilesInRadius(stateComponent.character.gridTileLocation, 3);
+        List<LocationGridTile> tiles = stateComponent.character.gridTileLocation.parentAreaMap.GetUnoccupiedTilesInRadius(stateComponent.character.gridTileLocation, 3, false, true);
         if (tiles.Count > 0) {
             return tiles[UnityEngine.Random.Range(0, tiles.Count)];
         } else {

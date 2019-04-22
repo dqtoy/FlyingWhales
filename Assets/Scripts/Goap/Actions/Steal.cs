@@ -5,11 +5,11 @@ using UnityEngine;
 public class Steal : GoapAction {
 
     public Steal(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.STEAL, INTERACTION_ALIGNMENT.EVIL, actor, poiTarget) {
-        validTimeOfDays = new TIME_IN_WORDS[] {
-            TIME_IN_WORDS.EARLY_NIGHT,
-            TIME_IN_WORDS.LATE_NIGHT,
-            TIME_IN_WORDS.AFTER_MIDNIGHT,
-        };
+        //validTimeOfDays = new TIME_IN_WORDS[] {
+        //    TIME_IN_WORDS.EARLY_NIGHT,
+        //    TIME_IN_WORDS.LATE_NIGHT,
+        //    TIME_IN_WORDS.AFTER_MIDNIGHT,
+        //};
         actionIconString = GoapActionStateDB.Hostile_Icon;
     }
 
@@ -26,7 +26,7 @@ public class Steal : GoapAction {
         //AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, targetPOI = actor });
     }
     public override void PerformActualAction() {
-        if(poiTarget.gridTileLocation != null && actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
+        if(poiTarget.gridTileLocation != null && (actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsAdjacentTo(poiTarget))) {
             SetState("Steal Success");
         } else {
             SetState("Target Missing");

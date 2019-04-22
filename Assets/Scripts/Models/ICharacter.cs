@@ -67,23 +67,17 @@ public interface ICharacter {
 
     //functions
     void SetName(string name);
-    //void ResetToFullHP();
-    //void ResetToFullSP();
     void Initialize();
     void Death(string cause = "normal");
     void LevelUp();
     void OnRemovedFromParty();
     void OnAddedToParty();
-    void OnAddedToPlayer();
-    //void FaintOrDeath(ICharacter killer);
     void SetSide(SIDES side);
     void SetRowNumber(int row);
     void AdjustSP(int amount);
-    //void AdjustHP(int amount, ICharacter killer = null);
     void AdjustExperience(int amount);
     void LevelUp(int amount);
     void SetLevel(int amount);
-    //void EnableDisableSkills(Combat combat);
     void SetOwnedParty(Party party);
     void SetCurrentParty(Party party);
     void SetHome(Area newHome);
@@ -91,7 +85,7 @@ public interface ICharacter {
     void SetMode(MODE mode);
     void SetMinion(Minion minion);
     void Assassinate(Character assassin);
-    bool AddTrait(Trait combatAttribute, Character responsibleCharacter = null, System.Action onRemoveAction = null, GoapAction gainedFromDoing = null);
+    bool AddTrait(Trait combatAttribute, Character responsibleCharacter = null, System.Action onRemoveAction = null, GoapAction gainedFromDoing = null, bool triggerOnAdd = true);
     bool IsInParty();
     bool IsInOwnParty();
     bool RemoveTrait(Trait combatAttribute, bool triggerOnRemove = true);
@@ -101,10 +95,4 @@ public interface ICharacter {
     void AddBuff(Buff buff);
     void RemoveBuff(Buff buff);
     void SetPlayerCharacterItem(PlayerCharacterItem item);
-    void DisableInteractionGeneration();
-    void AddInteractionWeight(INTERACTION_TYPE type, int weight);
-    void RemoveInteractionFromWeights(INTERACTION_TYPE type, int weight);
-    void SetDailyInteractionGenerationTick();
-    void DailyInteractionGeneration();
-    void GenerateDailyInteraction();
 }

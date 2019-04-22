@@ -23,6 +23,7 @@ public class TablePoison : GoapAction {
             for (int i = 0; i < dwelling.residents.Count; i++) {
                 //**Effect 2**: Owner/s - Add Trait (Sick)
                 AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Sick", targetPOI = dwelling.residents[i] });
+                AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", targetPOI = dwelling.residents[i] });
                 //**Effect 3**: Kill Owner/s
                 AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.DEATH, targetPOI = dwelling.residents[i] });
             }
@@ -32,7 +33,7 @@ public class TablePoison : GoapAction {
         //AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, targetPOI = actor });
     }
     public override void PerformActualAction() {
-        if (poiTarget.gridTileLocation != null && actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
+        if (poiTarget.gridTileLocation != null && (actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsAdjacentTo(poiTarget))) {
             SetState("Poison Success");
         } else {
             SetState("Target Missing");

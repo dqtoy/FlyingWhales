@@ -13,6 +13,7 @@ public class AssaultCharacter : GoapAction {
     }
     protected override void ConstructPreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_NON_POSITIVE_TRAIT, conditionKey = "Disabler", targetPOI = poiTarget });
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", targetPOI = poiTarget });
     }
     public override void PerformActualAction() {
         //List<Character> attackers = new List<Character>();
@@ -42,7 +43,7 @@ public class AssaultCharacter : GoapAction {
         //string nextState = resultWeights.PickRandomElementGivenWeights();
         //SetState(nextState);
 
-        if (actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
+        if (poiTarget.state == POI_STATE.ACTIVE) {
             WeightedDictionary<string> resultWeights = new WeightedDictionary<string>();
             resultWeights.AddElement("Target Injured", 10);
             resultWeights.AddElement("Target Knocked Out", 40);
@@ -90,7 +91,9 @@ public class AssaultCharacter : GoapAction {
     }
     public void PreTargetKnockedOut() {
         //**Note**: If the actor is from the same faction as the witness and the target is not considered hostile, this is an Assault crime
-        if (!actor.IsHostileWith(poiTarget as Character)) {
+        if (!actor.IsHostileWith(poiTarget as Character)
+            //Assaulting a criminal as part of apprehending him should not be considered a crime
+            && (parentPlan.job == null || parentPlan.job.name != "Apprehend")) {
             SetCommittedCrime(CRIME.ASSAULT);
         }
         //currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -104,7 +107,9 @@ public class AssaultCharacter : GoapAction {
     }
     public void PreTargetKilled() {
         //**Note**: If the actor is from the same faction as the witness and the target is not considered hostile, this is a Murder crime
-        if (!actor.IsHostileWith(poiTarget as Character)) {
+        if (!actor.IsHostileWith(poiTarget as Character)
+            //Assaulting a criminal as part of apprehending him should not be considered a crime
+            && (parentPlan.job == null || parentPlan.job.name != "Apprehend")) { 
             SetCommittedCrime(CRIME.MURDER);
         }
         //currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -112,6 +117,9 @@ public class AssaultCharacter : GoapAction {
         currentState.SetIntelReaction(State3Reactions);
     }
     public void AfterTargetKilled() {
+        if (parentPlan.job != null) {
+            parentPlan.job.SetCannotCancelJob(true);
+        }
         Character target = poiTarget as Character;
         target.Death();
     }
@@ -124,40 +132,46 @@ public class AssaultCharacter : GoapAction {
     private List<string> State1And2Reactions(Character recipient, Intel sharedIntel) {
         List<string> reactions = new List<string>();
         Character target = poiTarget as Character;
-        //Recipient and Target have a positive relationship:
-        if (recipient.HasRelationshipOfEffectWith(target, TRAIT_EFFECT.POSITIVE, RELATIONSHIP_TRAIT.RELATIVE)) {
-            //- **Recipient Response Text**: "Poor [Target Name]! I hope [he/she]'s okay."
-            reactions.Add(string.Format("Poor {0}! I hope {1}'s okay.", target.name, Utilities.GetPronounString(target.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
-            //-**Recipient Effect**: no effect
-        }
+
         //Recipient and Target have a negative relationship:
-        else if (recipient.HasRelationshipOfEffectWith(target, TRAIT_EFFECT.NEGATIVE)) {
+        if (recipient.HasRelationshipOfEffectWith(target, TRAIT_EFFECT.NEGATIVE)) {
             //- **Recipient Response Text**: "[Target Name] deserves that!"
             reactions.Add(string.Format("{0} deserves that!", target.name));
             //-**Recipient Effect**: no effect
         }
+
+        //Recipient and Actor are from the same faction and they dont have a positive relationship. 
+        else if (recipient.faction == actor.faction && recipient != actor && !recipient.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE, RELATIONSHIP_TRAIT.RELATIVE)
+            && !actor.IsHostileWith(target)) {
+            //Target is not considered Hostile to Recipient and Actor's faction:
+            //- **Recipient Response Text**: "[Actor Name] committed an assault!?"
+            reactions.Add(string.Format("{0} committed an assault!?", actor.name));
+            //-**Recipient Effect**:  Apply Crime System handling as if the Recipient witnessed Actor commit an Assault.
+            recipient.ReactToCrime(CRIME.ASSAULT, actor, null, false);
+        }
+
         //Recipient and Actor are from the same faction and they have a positive relationship:
-        else if (recipient.faction == actor.faction && recipient.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE, RELATIONSHIP_TRAIT.RELATIVE)) {
+        else if (recipient.faction == actor.faction && recipient != actor && recipient.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE, RELATIONSHIP_TRAIT.RELATIVE)) {
             //- **Recipient Response Text**: "I'm sure there's a reason [Actor Name] did that."
             reactions.Add(string.Format("I'm sure there's a reason {0} did that.", actor.name));
+            //-**Recipient Effect * *: no effect
+        }
+
+        //Recipient and Actor are from the same faction and they dont have a positive relationship. Target is considered Hostile to Recipient and Actor's faction:
+        else if (recipient.faction == actor.faction && recipient != actor && !recipient.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE, RELATIONSHIP_TRAIT.RELATIVE)
+            && actor.IsHostileWith(target)) {
+            //- **Recipient Response Text**: "I'm sure there's a reason [Actor Name] did that."
+            reactions.Add(string.Format("I'm sure there's a reason {0} did that.", actor.name));
+            //-**Recipient Effect * *: no effect
+        }
+
+        //Recipient and Target have a positive relationship:
+        else if (recipient.HasRelationshipOfEffectWith(target, TRAIT_EFFECT.POSITIVE, RELATIONSHIP_TRAIT.RELATIVE)) {
+            //- **Recipient Response Text**: "Poor [Target Name]! I hope [he/she]'s okay."
+            reactions.Add(string.Format("Poor {0}! I hope {1}'s okay.", target.name, Utilities.GetPronounString(target.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
             //-**Recipient Effect**: no effect
         }
-        //Recipient and Actor are from the same faction and they dont have a positive relationship. 
-        else if (recipient.faction == actor.faction && recipient != actor && !recipient.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE, RELATIONSHIP_TRAIT.RELATIVE)) {
-            //Target is considered Hostile to Recipient and Actor's faction:
-            if (actor.IsHostileWith(target)) {
-                //- **Recipient Response Text**: "I'm sure there's a reason [Actor Name] did that."
-                reactions.Add(string.Format("I'm sure there's a reason {0} did that.", actor.name));
-                //-**Recipient Effect**: no effect
-            }
-            //Target is not considered Hostile to Recipient and Actor's faction:
-            else {
-                //- **Recipient Response Text**: "[Actor Name] committed an assault!?"
-                reactions.Add(string.Format("{0} committed an assault!?", actor.name));
-                //-**Recipient Effect**:  Apply Crime System handling as if the Recipient witnessed Actor commit an Assault.
-                recipient.ReactToCrime(CRIME.ASSAULT, actor, null, false);
-            }
-        }
+
         //Recipient and Actor are the same
         else if (recipient == actor) {
             //- **Recipient Response Text**: "I know what I've done!"
@@ -169,6 +183,7 @@ public class AssaultCharacter : GoapAction {
     private List<string> State3Reactions(Character recipient, Intel sharedIntel) {
         List<string> reactions = new List<string>();
         Character target = poiTarget as Character;
+
         //Recipient and Target have a positive relationship:
         if (recipient.HasRelationshipOfEffectWith(target, TRAIT_EFFECT.POSITIVE, RELATIONSHIP_TRAIT.RELATIVE)) {
             //- **Recipient Response Text**: "That despicable [Actor Name] killed [Target Name]! [He/She] is a murderer!"

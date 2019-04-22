@@ -16,7 +16,7 @@ public class GetSupply : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_SUPPLY, conditionKey = supplyPile.suppliesInPile, targetPOI = actor });
     }
     public override void PerformActualAction() {
-        if (poiTarget.gridTileLocation != null && actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
+        if (poiTarget.gridTileLocation != null && (actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsAdjacentTo(poiTarget))) {
             SupplyPile supplyPile = poiTarget as SupplyPile;
             if (supplyPile.suppliesInPile > 0) {
                 SetState("Take Success");

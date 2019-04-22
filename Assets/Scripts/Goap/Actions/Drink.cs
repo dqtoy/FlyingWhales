@@ -19,7 +19,7 @@ public class Drink : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
     }
     public override void PerformActualAction() {
-        if (poiTarget.gridTileLocation != null && actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
+        if (poiTarget.gridTileLocation != null && (actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation))) {
             //SetState("Drink Success");
             if (poiTarget.GetTrait("Poisoned") != null) {
                 SetState("Drink Poisoned");
@@ -64,6 +64,9 @@ public class Drink : GoapAction {
             Sick sick = new Sick();
             AddTraitTo(actor, sick);
         } else {
+            if (parentPlan.job != null) {
+                parentPlan.job.SetCannotCancelJob(true);
+            }
             actor.Death();
         }
     }

@@ -40,13 +40,10 @@ public class CharacterAvatar : MonoBehaviour{
     private bool _isVisualShowing;
     private bool _isTravelCancelled;
     private PATHFINDING_MODE _pathfindingMode;
-    //private Character _trackTarget = null;
     private TravelLine _travelLine;
     private Action queuedAction = null;
 
     public CharacterPortrait characterPortrait { get; private set; }
-    public Interaction causeForTravel { get; private set; }
-
     #region getters/setters
     public Party party {
         get { return _party; }
@@ -54,14 +51,8 @@ public class CharacterAvatar : MonoBehaviour{
     public bool isTravelling {
         get { return _isTravelling; }
     }
-    public bool isMovementPaused {
-        get { return _isMovementPaused; }
-    }
-    public bool isMovingToHex {
-		get { return _isMovingToHex; }
-	}
-    public bool hasArrived {
-        get { return _hasArrived; }
+    public bool isAreaTravelling {
+        get { return _isTravelling && _travelLine != null; } //if the character is travelling from area to area, as oppose to only travelling inside area map
     }
     public bool isVisualShowing {
         get {
@@ -76,9 +67,6 @@ public class CharacterAvatar : MonoBehaviour{
             }
             return _isVisualShowing;
         }
-    }
-    public GameObject avatarVisual {
-        get { return _avatarVisual; }
     }
     public TravelLine travelLine {
         get { return _travelLine; }
@@ -132,9 +120,6 @@ public class CharacterAvatar : MonoBehaviour{
         targetPOI = poi;
         targetTile = tile;
     }
-    public void SetCauseForTravel(Interaction cause) {
-        causeForTravel = cause;
-    }
     public void StartPath(PATHFINDING_MODE pathFindingMode, Action actionOnPathFinished = null, Action actionOnPathReceived = null) {
         //if (smoothMovement.isMoving) {
         //    smoothMovement.ForceStopMovement();
@@ -165,13 +150,7 @@ public class CharacterAvatar : MonoBehaviour{
         }
     }
     private void StartTravelling() {
-        SetIsTravelling(true);
-        //float distance = Vector3.Distance(_party.specificLocation.coreTile.transform.position, targetLocation.coreTile.transform.position);
-        if (causeForTravel != null) {
-            //_party.specificLocation.areaMap.ShowEventPopupAt(_party.owner.gridTileLocation, causeForTravel.currentState.lastAddedLog);
-        } else {
-            Debug.LogWarning(_party.owner.name + " does not have a cause for travel! Not showing event popup for his/her departure");
-        }
+        SetIsTravelling(true);       
         
         _distanceToTarget = PathGenerator.Instance.GetTravelTime(_party.specificLocation.coreTile, targetLocation.coreTile);
         _travelLine = _party.specificLocation.coreTile.CreateTravelLine(targetLocation.coreTile, _distanceToTarget, _party.owner);
@@ -221,11 +200,19 @@ public class CharacterAvatar : MonoBehaviour{
         _travelLine = null;
         SetHasArrivedState(true);
         _party.specificLocation.RemoveCharacterFromLocation(_party);
-        targetLocation.AddCharacterToLocation(_party);
+        targetLocation.AddCharacterToLocation(_party.owner);
+
+        //place marker at edge tile of target location
+        LocationGridTile entrance = targetLocation.GetRandomUnoccupiedEdgeTile();
+        _party.owner.marker.ClearHostilesInRange();
+        _party.owner.marker.ClearPOIsInVisionRange();
+        _party.owner.marker.PlaceMarkerAt(entrance);
+        //_party.owner.marker.gameObject.SetActive(true);
+
         _party.owner.marker.pathfindingAI.SetIsStopMovement(true);
         Debug.Log(GameManager.Instance.TodayLogString() + _party.name + " has arrived at " + targetLocation.name + " on " + _party.owner.gridTileLocation.ToString());
         if(_party.characters.Count > 0) {
-            Log arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "arrive_location", causeForTravel);
+            Log arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "arrive_location");
             for (int i = 0; i < _party.characters.Count; i++) {
                 Character character = party.characters[i];
                 character.SetDailyInteractionGenerationTick();
@@ -233,7 +220,6 @@ public class CharacterAvatar : MonoBehaviour{
             }
             arriveLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1);
             arriveLog.AddLogToInvolvedObjects();
-            //_party.specificLocation.areaMap.ShowEventPopupAt(_party.owner.gridTileLocation, arriveLog);
         }
         Messenger.Broadcast(Signals.PARTY_DONE_TRAVELLING, this.party);
 
@@ -286,11 +272,6 @@ public class CharacterAvatar : MonoBehaviour{
             }
         }
     }
-  //  public void MakeCitizenMove(HexTile startTile, HexTile targetTile) {
-		////CharacterHasLeftTile ();
-		//_isMovingToHex = true;
-  //      this.smoothMovement.Move(targetTile.transform.position, this.direction);
-  //  }
     /*
      This is called each time the avatar traverses a node in the
      saved path.
@@ -322,7 +303,7 @@ public class CharacterAvatar : MonoBehaviour{
                 SetIsTravelling(false);
                 //_trackTarget = null;
                 SetHasArrivedState(true);
-                targetLocation.AddCharacterToLocation(_party);
+                targetLocation.AddCharacterToLocation(_party.owner);
                 Debug.Log(_party.name + " has arrived at " + targetLocation.name + " on " + GameManager.Instance.continuousDays);
                 ////Every time the party arrives at home, check if it still not ruined
                 //if(_party.mainCharacter.homeLandmark.specificLandmarkType == LANDMARK_TYPE.CAMP) {
@@ -367,19 +348,6 @@ public class CharacterAvatar : MonoBehaviour{
     public void SetHasArrivedState(bool state) {
         _hasArrived = state;
     }
-    public void PauseMovement() {
-        Debug.Log(_party.name + " has paused movement!");
-        _isMovementPaused = true;
-        smoothMovement.ForceStopMovement();
-    }
-    public void ResumeMovement() {
-        Debug.Log(_party.name + " has resumed movement!");
-        _isMovementPaused = false;
-        NewMove();
-    }
-    public void AddActionOnPathFinished(Action action) {
-        onPathFinished += action;
-    }
     public void SetIsTravelling(bool state) {
         _isTravelling = state;
     }
@@ -389,26 +357,9 @@ public class CharacterAvatar : MonoBehaviour{
     #endregion
 
     #region Utilities
-    /*
-     This will set the avatar reference of all characters
-     using this avatar to null, then return this object back to the pool.
-         */
-    public void DestroyObject() {
-        ObjectPoolManager.Instance.DestroyObject(this.gameObject);
-    }
-    public void ReclaimPortrait() {
-        characterPortrait.transform.SetParent(this.transform);
-        //(characterPortrait.transform as RectTransform).pivot = new Vector2(1f, 1f);
-        characterPortrait.gameObject.SetActive(false);
-    }
     public void SetVisualState(bool state) {
         _isVisualShowing = state;
         if(_travelLine != null) {
-            _travelLine.SetActiveMeter(isVisualShowing);
-        }
-    }
-    public void UpdateTravelLineVisualState() {
-        if (_travelLine != null) {
             _travelLine.SetActiveMeter(isVisualShowing);
         }
     }
@@ -423,42 +374,23 @@ public class CharacterAvatar : MonoBehaviour{
             }
         }
     }
-    public void SetQueuedAction(Action action){
-		queuedAction = action;
-	}
     public void SetHighlightState(bool state) {
         _avatarHighlight.SetActive(state);
     }
     public void SetPosition(Vector3 position) {
         this.transform.position = position;
     }
-    //private void CharacterHasLeftTile(){
-    //	LeaveCharacterTrace();
-    //       CheckForItemDrop();
-    //}
     public void SetSprite(CHARACTER_ROLE role){
 		Sprite sprite = CharacterManager.Instance.GetSpriteByRole (role);
 		if(sprite != null){
 			_avatarSpriteRenderer.sprite = sprite;
 		}
 	}
-    public void SetSprite(MONSTER_TYPE monsterType) {
-        Sprite sprite = CharacterManager.Instance.GetSpriteByMonsterType(monsterType);
-        if (sprite != null) {
-            _avatarSpriteRenderer.sprite = sprite;
-        }
-    }
-    public void SetMovementState(bool state) {
-        smoothMovement.isHalted = state;
-    }
     public void SetFrameOrderLayer(int layer) {
         _frameSpriteRenderer.sortingOrder = layer;
     }
     public void SetCenterOrderLayer(int layer) {
         _centerSpriteRenderer.sortingOrder = layer;
-    }
-    private void OnToggleCharactersVisibility() {
-        UpdateVisualState();
     }
     #endregion
 
@@ -478,25 +410,6 @@ public class CharacterAvatar : MonoBehaviour{
         //_isInitialized = false;
         _currPathfindingRequest = null;
         SetHighlightState(false);
-    }
-    #endregion
-
-    #region Listeners
-    private void OnCharacterTokenObtained(CharacterToken token) {
-        if (_party.owner != null && _party.owner.characterToken == token) {
-            SetVisualState(true);
-        }
-    }
-    private void OnInspectAll() {
-        if (GameManager.Instance.inspectAll) {
-            SetVisualState(true);
-        } else {
-            if(_party.owner.minion != null || _party.owner.characterToken.isObtainedByPlayer) {
-                SetVisualState(true);
-            } else {
-                SetVisualState(false);
-            }
-        }
     }
     #endregion
 

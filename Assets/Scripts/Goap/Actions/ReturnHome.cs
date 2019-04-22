@@ -21,12 +21,15 @@ public class ReturnHome : GoapAction {
     //    AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.NONE, targetPOI = actor });
     //}
     public override void PerformActualAction() {
-        if (targetTile != null) {
+        //if (targetTile != null) {
             SetState("Return Home Success");
-        } else {
-            SetState("Return Home Failed");
-        }
+        //} else {
+        //    SetState("Return Home Failed");
+        //}
         base.PerformActualAction();
+    }
+    public override LocationGridTile GetTargetLocationTile() {
+        return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);
     }
     protected override int GetCost() {
         return 3;
@@ -36,7 +39,12 @@ public class ReturnHome : GoapAction {
     //    SetState("Return Home Failed");
     //}
     public override void SetTargetStructure() {
-        _targetStructure = actor.homeStructure;
+        if (actor.homeStructure != null) {
+            _targetStructure = actor.homeStructure;
+        } else {
+            _targetStructure = actor.homeArea.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+        }
+        
         base.SetTargetStructure();
     }
     #endregion

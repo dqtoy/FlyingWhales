@@ -7,6 +7,7 @@ using System.Linq;
 using worldcreator;
 using SpriteGlow;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 
@@ -83,6 +84,10 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     [SerializeField] private SpriteRenderer botRightBeach;
     [SerializeField] private SpriteRenderer rightBeach;
     [SerializeField] private SpriteRenderer topRightBeach;
+
+    [Space(10)]
+    [Header("UI")]
+    [SerializeField] private GraphicRaycaster uiRaycaster;
 
     private PASSABLE_TYPE _passableType;
     private BaseLandmark _landmarkOnTile = null;
@@ -199,6 +204,15 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         //spriteRenderer = this.GetComponent<SpriteRenderer>();
         //SetMagicAbundance();
         //StartCorruptionAnimation();
+        Messenger.AddListener<Area>(Signals.AREA_MAP_OPENED, AreaMapOpened);
+        Messenger.AddListener<Area>(Signals.AREA_MAP_CLOSED, AreaMapClosed);
+    }
+
+    private void AreaMapOpened(Area area) {
+        uiRaycaster.enabled = false;
+    }
+    private void AreaMapClosed(Area area) {
+        uiRaycaster.enabled = true;
     }
 
     #region Region Functions

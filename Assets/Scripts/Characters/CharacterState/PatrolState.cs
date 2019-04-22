@@ -35,7 +35,7 @@ public class PatrolState : CharacterState {
     #endregion
 
     private void StartPatrolMovement() {
-        stateComponent.character.marker.GoToTile(PickRandomTileToGoTo(), stateComponent.character, () => StartPatrolMovement());
+        stateComponent.character.marker.GoTo(PickRandomTileToGoTo(), stateComponent.character, () => StartPatrolMovement());
     }
     private LocationGridTile PickRandomTileToGoTo() {
         LocationStructure chosenStructure = stateComponent.character.specificLocation.GetRandomStructure();

@@ -16,7 +16,7 @@ public class EatAtTable : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = actor });
     }
     public override void PerformActualAction() {
-        if (poiTarget.gridTileLocation != null && actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
+        if (poiTarget.gridTileLocation != null && (actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsAdjacentTo(poiTarget))) {
             poisonedTrait = poiTarget.GetTrait("Poisoned");
             if (poisonedTrait != null) {
                 SetState("Eat Poisoned");
@@ -88,6 +88,9 @@ public class EatAtTable : GoapAction {
             Sick sick = new Sick();
             AddTraitTo(actor, sick);
         } else {
+            if (parentPlan.job != null) {
+                parentPlan.job.SetCannotCancelJob(true);
+            }
             log = new Log(GameManager.Instance.Today(), "GoapAction", "EatAtTable", "eat poisoned_killed");
             log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(poiTarget.gridTileLocation.structure.location, poiTarget.gridTileLocation.structure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);

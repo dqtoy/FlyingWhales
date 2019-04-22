@@ -38,7 +38,6 @@ public class Token {
         Messenger.Broadcast(Signals.TOKEN_CONSUMED, this);
     }
     #region Virtuals
-    public virtual void CreateJointInteractionStates(Interaction interaction, Character user, object target) { }
     public virtual bool CanBeUsedBy(Character character) { return false; }
     #endregion
     //public int id;
@@ -120,17 +119,15 @@ public class CharacterToken : Token {
 public class SpecialToken : Token, IPointOfInterest {
     public string name { get; private set; }
     public SPECIAL_TOKEN specialTokenType;
-    public INTERACTION_TYPE npcAssociatedInteractionType;
-    //public int quantity;
     public int weight;
     public Faction owner;
     public Character characterOwner { get; private set; }
     public LocationStructure structureLocation { get; private set; }
-    public InteractionAttributes interactionAttributes { get; protected set; }
     public List<INTERACTION_TYPE> poiGoapActions { get; private set; }
     public int supplyValue { get { return ItemManager.Instance.itemData[specialTokenType].supplyValue; } }
     public int craftCost { get { return ItemManager.Instance.itemData[specialTokenType].craftCost; } }
     public int purchaseCost { get { return ItemManager.Instance.itemData[specialTokenType].purchaseCost; } }
+    public List<JobQueueItem> allJobsTargettingThis { get; private set; }
     protected List<Trait> _traits;
     private LocationGridTile tile;
     private POI_STATE _state;
@@ -180,9 +177,9 @@ public class SpecialToken : Token, IPointOfInterest {
         this.specialTokenType = specialTokenType;
         this.name = Utilities.NormalizeStringUpperCaseFirstLetters(this.specialTokenType.ToString());
         weight = appearanceRate;
-        npcAssociatedInteractionType = INTERACTION_TYPE.NONE;
-        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.PICK_ITEM, INTERACTION_TYPE.STEAL, INTERACTION_TYPE.SCRAP, INTERACTION_TYPE.ITEM_DESTROY, };
+        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.PICK_ITEM, INTERACTION_TYPE.STEAL, INTERACTION_TYPE.SCRAP, INTERACTION_TYPE.ITEM_DESTROY, INTERACTION_TYPE.DROP_ITEM};
         _traits = new List<Trait>();
+        allJobsTargettingThis = new List<JobQueueItem>();
         InitializeCollisionTrigger();
     }
     //public void AdjustQuantity(int amount) {
@@ -200,9 +197,6 @@ public class SpecialToken : Token, IPointOfInterest {
     public virtual void OnObtainToken(Character character) { }
     public virtual void OnUnobtainToken(Character character) { }
     public virtual void OnConsumeToken(Character character) { }
-    public virtual void StartTokenInteractionState(Character user, Character target) {
-        user.MoveToAnotherStructure(target.currentStructure, target.GetNearestUnoccupiedTileFromThis());
-    }
     #endregion
 
     public void SetOwner(Faction owner) {
@@ -216,6 +210,21 @@ public class SpecialToken : Token, IPointOfInterest {
     }
     public override string ToString() {
         return name;
+    }
+    public void AddJobTargettingThis(JobQueueItem job) {
+        allJobsTargettingThis.Add(job);
+    }
+    public bool RemoveJobTargettingThis(JobQueueItem job) {
+        return allJobsTargettingThis.Remove(job);
+    }
+    public bool HasJobTargettingThis(string jobName) {
+        for (int i = 0; i < allJobsTargettingThis.Count; i++) {
+            JobQueueItem job = allJobsTargettingThis[i];
+            if (job.name == jobName) {
+                return true;
+            }
+        }
+        return false;
     }
 
     #region Area Map
@@ -262,10 +271,10 @@ public class SpecialToken : Token, IPointOfInterest {
     #endregion
 
     #region Traits
-    public bool AddTrait(string traitName, Character characterResponsible = null, System.Action onRemoveAction = null, GoapAction gainedFromDoing = null) {
-        return AddTrait(AttributeManager.Instance.allTraits[traitName], characterResponsible, onRemoveAction, gainedFromDoing);
+    public bool AddTrait(string traitName, Character characterResponsible = null, System.Action onRemoveAction = null, GoapAction gainedFromDoing = null, bool triggerOnAdd = true) {
+        return AddTrait(AttributeManager.Instance.allTraits[traitName], characterResponsible, onRemoveAction, gainedFromDoing, triggerOnAdd);
     }
-    public bool AddTrait(Trait trait, Character characterResponsible = null, System.Action onRemoveAction = null, GoapAction gainedFromDoing = null) {
+    public bool AddTrait(Trait trait, Character characterResponsible = null, System.Action onRemoveAction = null, GoapAction gainedFromDoing = null, bool triggerOnAdd = true) {
         if (trait.IsUnique() && GetTrait(trait.name) != null) {
             trait.SetCharacterResponsibleForTrait(characterResponsible);
             return false;
@@ -281,7 +290,9 @@ public class SpecialToken : Token, IPointOfInterest {
             removeDate.AddTicks(trait.daysDuration);
             SchedulingManager.Instance.AddEntry(removeDate, () => RemoveTrait(trait));
         }
-        trait.OnAddTrait(this);
+        if (triggerOnAdd) {
+            trait.OnAddTrait(this);
+        }
         return true;
     }
     public bool RemoveTrait(Trait trait, bool triggerOnRemove = true) {

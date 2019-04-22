@@ -5,6 +5,7 @@ using UnityEngine;
 public class PickItemGoap : GoapAction {
     public PickItemGoap(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.PICK_ITEM, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Work_Icon;
+        actionLocationType = ACTION_LOCATION_TYPE.ON_TARGET;
     }
 
     #region Overrides
@@ -15,7 +16,8 @@ public class PickItemGoap : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = poiTarget, targetPOI = actor });
     }
     public override void PerformActualAction() {
-        if (poiTarget.gridTileLocation != null && actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
+        if (poiTarget.gridTileLocation != null 
+            && (actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsAdjacentTo(poiTarget) || actor.marker.inVisionPOIs.Contains(poiTarget))) {
             SetState("Take Success");
         } else {
             SetState("Target Missing");
@@ -25,20 +27,19 @@ public class PickItemGoap : GoapAction {
     protected override int GetCost() {
         return 2;
     }
-    //public override void FailAction() {
-    //    base.FailAction();
-    //    SetState("Target Missing");
-    //}
     #endregion
 
     #region Requirements
     protected bool Requirement() {
-        IAwareness awareness = actor.GetAwareness(poiTarget);
-        if (awareness == null) {
-            return false;
-        }
-        LocationGridTile knownLoc = awareness.knownGridLocation;
-        return knownLoc != null && actor.GetToken(poiTarget as SpecialToken) == null;
+        SpecialToken token = poiTarget as SpecialToken;
+        //if(token.characterOwner == null) {
+        //    if(token.factionOwner != null && actor.faction.id != token.factionOwner.id) {
+        //        return false;
+        //    }
+        //    return poiTarget.gridTileLocation != null && actor.GetToken(token) == null;
+        //}
+        //return false;
+        return poiTarget.gridTileLocation != null && actor.GetToken(token) == null;
     }
     #endregion
 

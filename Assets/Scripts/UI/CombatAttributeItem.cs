@@ -19,6 +19,7 @@ public class CombatAttributeItem : MonoBehaviour {
             iconImg.sprite = icon;
         }
         descriptionText.text = _combatAttribute.description;
+        this.gameObject.SetActive(true);
     }
 
     public void OnHover() {

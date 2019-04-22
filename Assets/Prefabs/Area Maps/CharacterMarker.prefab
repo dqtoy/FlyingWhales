@@ -105,8 +105,9 @@ GameObject:
   - component: {fileID: 114379759619008666}
   - component: {fileID: 114578536136533292}
   - component: {fileID: 114720397635659402}
-  - component: {fileID: 114115144342472108}
   - component: {fileID: 114167030245026914}
+  - component: {fileID: 114577038380254382}
+  - component: {fileID: 114343739314239670}
   m_Layer: 14
   m_Name: CharacterMarker
   m_TagString: Character Marker
@@ -504,20 +505,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &114115144342472108
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1392417203996010}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 77f586f285b3847808d79083bd19ef1f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  version: 1
-  unwrap: 1
-  splitAtEveryPortal: 0
 --- !u!114 &114167030245026914
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -531,6 +518,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   version: 1
   target: {fileID: 0}
+--- !u!114 &114343739314239670
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1392417203996010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b090bec917bbe4c3bbc612ef13f7c4a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 1
+  useRaycasting: 0
+  mask:
+    serializedVersion: 2
+    m_Bits: 49152
+  thickRaycast: 0
+  thickRaycastRadius: 0
+  use2DPhysics: 0
+  raycastOffset: {x: 0, y: 0, z: 0}
+  useGraphRaycasting: 1
+  quality: 1
 --- !u!114 &114379759619008666
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -571,7 +580,34 @@ MonoBehaviour:
   colliders:
   - {fileID: 61886553999808524}
   - {fileID: 58535005990234766}
+  rvoController: {fileID: 114577038380254382}
   colorHighlight: {fileID: 212653369134426336}
+--- !u!114 &114577038380254382
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1392417203996010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 560112f876f5746c780eca0d404e7139, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 2
+  radiusBackingField: 0.5
+  heightBackingField: 2
+  centerBackingField: 1
+  locked: 0
+  lockWhenNotMoving: 1
+  agentTimeHorizon: 1
+  obstacleTimeHorizon: 1
+  maxNeighbours: 10
+  layer: 1
+  collidesWith: 3
+  wallAvoidForce: 1
+  wallAvoidFalloff: 1
+  priority: 0.75
+  debug: 1
 --- !u!114 &114578536136533292
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -635,7 +671,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   version: 2
-  radius: 0.5
+  radius: 0.3
   height: 2
   repathRate: 0.2
   canSearch: 1
@@ -651,14 +687,18 @@ MonoBehaviour:
   targetCompatibility: {fileID: 0}
   maxAcceleration: 9999
   rotationSpeed: 360
-  slowdownDistance: 0.6
-  pickNextWaypointDist: 0.3
-  endReachedDistance: 0.2
+  slowdownDistance: 0.2
+  pickNextWaypointDist: 1
+  endReachedDistance: 0.5
   alwaysDrawGizmos: 1
   slowWhenNotFacingTarget: 1
   whenCloseToDestination: 0
   constrainInsideGraph: 0
   marker: {fileID: 114379759619008666}
+  searchLength: 1000
+  spread: 5000
+  aimStrength: 0.75
+  stopMovementST: 
 --- !u!114 &114825110122692990
 MonoBehaviour:
   m_ObjectHideFlags: 1

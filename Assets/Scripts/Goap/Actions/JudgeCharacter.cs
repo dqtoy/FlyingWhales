@@ -20,7 +20,7 @@ public class JudgeCharacter : GoapAction {
     //    AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.NONE, targetPOI = poiTarget });
     //}
     public override void PerformActualAction() {
-        if (actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
+        if (actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
             WeightedDictionary<string> weights = new WeightedDictionary<string>();
             weights.AddElement("Target Executed", 10);
             weights.AddElement("Target Released", 10);
@@ -38,6 +38,9 @@ public class JudgeCharacter : GoapAction {
 
     #region State Effects
     public void PreTargetExecuted() {
+        if (parentPlan.job != null) {
+            parentPlan.job.SetCannotCancelJob(true);
+        }
         //**Effect 1**: Remove target's Restrained trait
         RemoveTraitFrom(poiTarget, "Restrained");
         //**Effect 2**: Target dies
@@ -82,11 +85,12 @@ public class JudgeCharacter : GoapAction {
         goapAction.SetEndAction(OnEndGoHome);
         GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
         GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.IDLE);
+        goapPlan.ConstructAllNodes();
         target.AddPlanFromOutside(goapPlan);
     }
 
     private void OnEndGoHome(string result, GoapAction action) {
         (poiTarget as Character).AdjustIgnoreHostilities(-1);
-        (poiTarget as Character).GoapActionResult(result, this);
+        (poiTarget as Character).GoapActionResult(result, action);
     }
 }

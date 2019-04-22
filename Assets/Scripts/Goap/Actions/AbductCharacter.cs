@@ -16,9 +16,10 @@ public class AbductCharacter : GoapAction {
     protected override void ConstructPreconditionsAndEffects() {
         AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_NON_POSITIVE_TRAIT, conditionKey = "Disabler", targetPOI = poiTarget }, HasNonPositiveDisablerTrait);
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = poiTarget });
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", targetPOI = poiTarget });
     }
     public override void PerformActualAction() {
-        if (actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
+        if (poiTarget.state == POI_STATE.ACTIVE) {
             if (!HasOtherCharacterInRadius()) {
                 SetState("Abduct Success");
             } else {
@@ -90,9 +91,19 @@ public class AbductCharacter : GoapAction {
     public bool HasOtherCharacterInRadius() {
         List<LocationGridTile> tiles = poiTarget.gridTileLocation.structure.location.areaMap.GetTilesInRadius(poiTarget.gridTileLocation, 3);
         for (int i = 0; i < tiles.Count; i++) {
+            //if (tiles[i].occupant != null && tiles[i].occupant != actor && tiles[i].occupant != poiTarget) {
+            //    return true;
+            //}
             LocationGridTile currTile = tiles[i];
-            if (currTile.occupant != null && currTile.occupant != actor && currTile.occupant != poiTarget && !currTile.occupant.HasTraitOf(TRAIT_TYPE.DISABLER)) {
-                return true;
+            List<Character> characters = new List<Character>(currTile.charactersHere);
+            characters.Remove(actor);
+            characters.Remove(poiTarget as Character);
+            for (int j = 0; j < characters.Count; j++) {
+                Character currCharacter = characters[j];
+                //check each character, if a character has a disabler trait, do not consider them as a character that will notice this action
+                if (!currCharacter.HasTraitOf(TRAIT_TYPE.DISABLER)) {
+                    return true;
+                }
             }
         }
         return false;

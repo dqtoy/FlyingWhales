@@ -28,11 +28,11 @@ public class Daydream : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
     }
     public override void PerformActualAction() {
-        if (targetTile.occupant != null && targetTile.occupant != actor) {
-            SetState("Daydream Failed");
-        } else {
+        //if (targetTile.occupant != null && targetTile.occupant != actor) {
+        //    SetState("Daydream Failed");
+        //} else {
             SetState("Daydream Success");
-        }
+        //}
         base.PerformActualAction();
     }
     protected override int GetCost() {
@@ -53,6 +53,9 @@ public class Daydream : GoapAction {
     //    }
     //    base.SetTargetStructure();
     //}
+    public override LocationGridTile GetTargetLocationTile() {
+        return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);
+    }
     #endregion
 
     #region Effects

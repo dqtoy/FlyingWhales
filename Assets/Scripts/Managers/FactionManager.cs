@@ -257,7 +257,6 @@ public class FactionManager : MonoBehaviour {
         CreateRelationshipsForFaction(newFaction);
         CreateFavorsForFaction(newFaction);
         if (!isPlayerFaction) {
-            newFaction.SetDailyInteractionGenerationTick(GetFactionTaskTickTrigger());
             Messenger.Broadcast(Signals.FACTION_CREATED, newFaction);
         } else {
             newFaction.SetName("Player faction");
@@ -266,7 +265,6 @@ public class FactionManager : MonoBehaviour {
     }
     public Faction CreateNewFaction(FactionSaveData data) {
         Faction newFaction = new Faction(data);
-        newFaction.SetDailyInteractionGenerationTick(GetFactionTaskTickTrigger());
         allFactions.Add(newFaction);
         LoadRelationshipsForFaction(newFaction, data);
         //LoadFavorsForFaction(newFaction, data);

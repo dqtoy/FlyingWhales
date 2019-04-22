@@ -27,10 +27,6 @@ public class LandmarkVisual : MonoBehaviour {
     //[SerializeField] private Seeker seeker;
     //[SerializeField] private AIDestinationSetter destinationSetter;
     //[SerializeField] private LineRenderer lineRenderer;
-    [SerializeField] private InteractionTimer interactionTimer;
-    [SerializeField] private InteractionTimer interactionTimerJobAction;
-    [SerializeField] private TweenRotation interactionTimerTween;
-    [SerializeField] private TweenRotation interactionTimerJobActionTween;
     public Canvas landmarkCanvas;
     public GameObject landmarkHPGO;
 
@@ -46,15 +42,6 @@ public class LandmarkVisual : MonoBehaviour {
         LandmarkData data = LandmarkManager.Instance.GetLandmarkData(_landmark.specificLandmarkType);
         if (data.landmarkObjectSprite != null) {
             iconSprite.sprite = data.landmarkObjectSprite;
-        }
-        Messenger.AddListener<bool>(Signals.PAUSED, OnPauseGame);
-    }
-    private void OnPauseGame(bool state) {
-        if (interactionTimer.gameObject.activeSelf) {
-            interactionTimerTween.enabled = !state;
-        }
-        if (interactionTimerJobAction.gameObject.activeSelf) {
-            interactionTimerJobActionTween.enabled = !state;
         }
     }
     public void UpdateName() {
@@ -132,57 +119,4 @@ public class LandmarkVisual : MonoBehaviour {
     //        portrait.SetBorderState(true);
     //    }
     //}
-
-    #region Interaction
-    public void ShowInteractionTimer(Interaction interaction) {
-        interactionTimer.gameObject.SetActive(true);
-        interactionTimer.ShowInteractionForeground(interaction);
-    }
-    public void HideInteractionTimer() {
-        interactionTimer.gameObject.SetActive(false);
-    }
-    public void SetAndStartInteractionTimer(int ticks, InteractionTimer.OnStopTimer stopTimerAction = null) {
-        if(stopTimerAction != null) {
-            interactionTimer.onStopTimer += stopTimerAction;
-        }
-        interactionTimer.SetTimer(ticks);
-        interactionTimer.StartTimer();
-    }
-    public void StopInteractionTimer() {
-        interactionTimer.StopTimer();
-    }
-    public void ResetInteractionTimer() {
-        interactionTimer.ResetTimer();
-    }
-    public void SetTimerPauseState(bool state) {
-        interactionTimer.SetPauseState(state);
-    }
-
-    public void ShowInteractionTimerJob() {
-        interactionTimerJobAction.gameObject.SetActive(true);
-        interactionTimerJobAction.ShowNoInteractionForeground();
-    }
-    public void HideInteractionTimerJob() {
-        interactionTimerJobAction.gameObject.SetActive(false);
-    }
-    public void SetAndStartInteractionTimerJob(int ticks, InteractionTimer.OnStopTimer stopTimerAction = null) {
-        if (stopTimerAction != null) {
-            interactionTimerJobAction.onStopTimer += stopTimerAction;
-        }
-        interactionTimerJobAction.SetTimer(ticks);
-        interactionTimerJobAction.StartTimer();
-    }
-    public void StopInteractionTimerJob() {
-        interactionTimerJobAction.StopTimer();
-    }
-    public void ResetInteractionTimerJob() {
-        interactionTimerJobAction.ResetTimer();
-    }
-    public void SetTimerPauseStateJob(bool state) {
-        interactionTimerJobAction.SetPauseState(state);
-    }
-    public void OnClickInteractionButton() {
-        interactionTimer.OnClickTimer();
-    }
-    #endregion
 }

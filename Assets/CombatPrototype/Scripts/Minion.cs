@@ -13,7 +13,7 @@ public class Minion {
     private Area _currentlyCollectingArea;
 
     private Character _character;
-    private IInteractable _target;
+    //private IInteractable _target;
     //private DEMON_TYPE _type;
     //private string _strType;
     //private int _lvl;
@@ -75,7 +75,6 @@ public class Minion {
         //PlayerManager.Instance.player.demonicPortal.AddCharacterHomeOnLandmark(_icharacter);
         //PlayerManager.Instance.player.demonicPortal.AddCharacterToLocation(_icharacter.ownParty);
         _character.SetMinion(this);
-        _character.DisableInteractionGeneration();
         _character.characterToken.SetObtainedState(true);
         _character.ownParty.icon.SetVisualState(true);
 

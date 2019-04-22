@@ -10,7 +10,6 @@ using System;
 public class CharacterInfoUI : UIMenu {
 
     private const int MAX_HISTORY_LOGS = 300;
-    private const int MAX_INVENTORY = 16;
     public bool isWaitingForAttackTarget;
     public bool isWaitingForJoinBattleTarget;
 
@@ -26,19 +25,9 @@ public class CharacterInfoUI : UIMenu {
     [SerializeField] private PartyEmblem partyEmblem;
 
     [Space(10)]
-    [Header("Item And Location")]
+    [Header("Location")]
     [SerializeField] private LocationPortrait visitorLocationPortrait;
     [SerializeField] private LocationPortrait residentLocationPortrait;
-    [SerializeField] private ItemContainer itemContainer;
-
-    [Space(10)]
-    [Header("Relations")]
-    [SerializeField] private GameObject relationsGO;
-    [SerializeField] private ScrollRect relationsScrollView;
-    [SerializeField] private GameObject relationshipItemPrefab;
-    [SerializeField] private Color evenRelationshipColor;
-    [SerializeField] private Color oddRelationshipColor;
-    [SerializeField] private GameObject relationsMenuCover;
 
     [Space(10)]
     [Header("Logs")]
@@ -58,15 +47,6 @@ public class CharacterInfoUI : UIMenu {
     [SerializeField] private GameObject releaseBtnGO;
 
     [Space(10)]
-    [Header("Scheduling")]
-    [SerializeField] private Dropdown monthDropdown;
-    [SerializeField] private Dropdown dayDropdown;
-    [SerializeField] private InputField yearField;
-    [SerializeField] private InputField tickField;
-    [SerializeField] private TextMeshProUGUI daysConversionLbl;
-    [SerializeField] private Button scheduleManualBtn;
-
-    [Space(10)]
     [Header("Stats")]
     [SerializeField] private TextMeshProUGUI hpLbl;
     [SerializeField] private TextMeshProUGUI attackLbl;
@@ -77,24 +57,19 @@ public class CharacterInfoUI : UIMenu {
     [SerializeField] private ScrollRect statusTraitsScrollView;
     [SerializeField] private ScrollRect normalTraitsScrollView;
     [SerializeField] private ScrollRect relationshipTraitsScrollView;
+    [SerializeField] private ScrollRect itemsScrollView;
     [SerializeField] private GameObject combatAttributePrefab;
 
-    [Space(10)]
-    [Header("Equipment")]
-    [SerializeField] private Image weaponIcon;
-    [SerializeField] private Image armorIcon;
-    [SerializeField] private Image accessoryIcon;
-    [SerializeField] private Image consumableIcon;
+    private CombatAttributeItem[] statusTraitContainers;
+    private CombatAttributeItem[] normalTraitContainers;
+    private CombatAttributeItem[] relationshipTraitContainers;
+    private ItemContainer[] inventoryItemContainers;
 
     private LogHistoryItem[] logHistoryItems;
-    private ItemContainer[] inventoryItemContainers;
 
     private Character _activeCharacter;
     private Character _previousCharacter;
 
-    //public Character currentlyShowingCharacter {
-    //    get { return _data as Character; }
-    //}
     public Character activeCharacter {
         get { return _activeCharacter; }
     }
@@ -114,8 +89,14 @@ public class CharacterInfoUI : UIMenu {
         Messenger.AddListener<Character>(Signals.CHARACTER_TRACKED, OnCharacterTracked);
         Messenger.AddListener(Signals.ON_OPEN_SHARE_INTEL, OnOpenShareIntelMenu);
         Messenger.AddListener(Signals.ON_CLOSE_SHARE_INTEL, OnCloseShareIntelMenu);
-
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+        Messenger.AddListener<SpecialToken, Character>(Signals.CHARACTER_OBTAINED_ITEM, UpdateInventoryInfoFromSignal);
+        Messenger.AddListener<SpecialToken, Character>(Signals.CHARACTER_LOST_ITEM, UpdateInventoryInfoFromSignal);
+
+        statusTraitContainers = Utilities.GetComponentsInDirectChildren<CombatAttributeItem>(statusTraitsScrollView.content.gameObject);
+        normalTraitContainers = Utilities.GetComponentsInDirectChildren<CombatAttributeItem>(normalTraitsScrollView.content.gameObject);
+        relationshipTraitContainers = Utilities.GetComponentsInDirectChildren<CombatAttributeItem>(relationshipTraitsScrollView.content.gameObject);
+        inventoryItemContainers = Utilities.GetComponentsInDirectChildren<ItemContainer>(itemsScrollView.content.gameObject);
 
         InitializeLogsMenu();
     }
@@ -159,6 +140,7 @@ public class CharacterInfoUI : UIMenu {
         }
         UpdateCharacterInfo();
         UpdateTraits();
+        UpdateInventoryInfo();
         ResetAllScrollPositions();
     }
     #endregion
@@ -192,7 +174,7 @@ public class CharacterInfoUI : UIMenu {
     }
     public void UpdateBasicInfo() {
         nameLbl.text = _activeCharacter.name;
-        lvlClassLbl.text = _activeCharacter.raceClassName; //+ " " + _activeCharacter.role.name;
+        lvlClassLbl.text = _activeCharacter.raceClassName + " (" + _activeCharacter.currentMoodType.ToString() + ")"; //+ " " + _activeCharacter.role.name;
         supplyLbl.text = _activeCharacter.supply.ToString();
         UpdateThoughtBubble();
     }
@@ -312,67 +294,6 @@ public class CharacterInfoUI : UIMenu {
     }
     #endregion
 
-    #region Equipment
-    private void UpdateEquipmentInfo() {
-        if(_activeCharacter.equippedWeapon != null) {
-            weaponIcon.gameObject.SetActive(true);
-            weaponIcon.sprite = ItemManager.Instance.GetIconSprite(_activeCharacter.equippedWeapon.iconName);
-        } else {
-            weaponIcon.gameObject.SetActive(false);
-        }
-
-        if (_activeCharacter.equippedArmor != null) {
-            armorIcon.gameObject.SetActive(true);
-            armorIcon.sprite = ItemManager.Instance.GetIconSprite(_activeCharacter.equippedArmor.iconName);
-        } else {
-            armorIcon.gameObject.SetActive(false);
-        }
-
-        if (_activeCharacter.equippedAccessory != null) {
-            accessoryIcon.gameObject.SetActive(true);
-            accessoryIcon.sprite = ItemManager.Instance.GetIconSprite(_activeCharacter.equippedAccessory.iconName);
-        } else {
-            accessoryIcon.gameObject.SetActive(false);
-        }
-
-        if (_activeCharacter.equippedConsumable != null) {
-            consumableIcon.gameObject.SetActive(true);
-            consumableIcon.sprite = ItemManager.Instance.GetIconSprite(_activeCharacter.equippedConsumable.iconName);
-        } else {
-            consumableIcon.gameObject.SetActive(false);
-        }
-    }
-    //private void UpdateEquipmentInfo(CharacterUIData uiData) {
-    //    if (uiData.equippedWeapon != null) {
-    //        weaponIcon.gameObject.SetActive(true);
-    //        weaponIcon.sprite = ItemManager.Instance.GetIconSprite(uiData.equippedWeapon.iconName);
-    //    } else {
-    //        weaponIcon.gameObject.SetActive(false);
-    //    }
-
-    //    if (uiData.equippedArmor != null) {
-    //        armorIcon.gameObject.SetActive(true);
-    //        armorIcon.sprite = ItemManager.Instance.GetIconSprite(uiData.equippedArmor.iconName);
-    //    } else {
-    //        armorIcon.gameObject.SetActive(false);
-    //    }
-
-    //    if (uiData.equippedAccessory != null) {
-    //        accessoryIcon.gameObject.SetActive(true);
-    //        accessoryIcon.sprite = ItemManager.Instance.GetIconSprite(uiData.equippedAccessory.iconName);
-    //    } else {
-    //        accessoryIcon.gameObject.SetActive(false);
-    //    }
-
-    //    if (uiData.equippedConsumable != null) {
-    //        consumableIcon.gameObject.SetActive(true);
-    //        consumableIcon.sprite = ItemManager.Instance.GetIconSprite(uiData.equippedConsumable.iconName);
-    //    } else {
-    //        consumableIcon.gameObject.SetActive(false);
-    //    }
-    //}
-    #endregion
-
     #region Combat Attributes
     private void UpdateTraitsFromSignal(Character character, Trait trait) {
         if(_activeCharacter == null || _activeCharacter != character) {
@@ -382,29 +303,61 @@ public class CharacterInfoUI : UIMenu {
         UpdateThoughtBubble();
     }
     private void UpdateTraits() {
-        Utilities.DestroyChildren(statusTraitsScrollView.content);
-        Utilities.DestroyChildren(normalTraitsScrollView.content);
-        Utilities.DestroyChildren(relationshipTraitsScrollView.content);
+        //Utilities.DestroyChildren(statusTraitsScrollView.content);
+        //Utilities.DestroyChildren(normalTraitsScrollView.content);
+        //Utilities.DestroyChildren(relationshipTraitsScrollView.content);
+
+        int lastStatusIndex = 0;
+        int lastNormalIndex = 0;
+        int lastRelationshipIndex = 0;
+
         for (int i = 0; i < _activeCharacter.traits.Count; i++) {
             Trait currTrait = _activeCharacter.traits[i];
             if (currTrait.type == TRAIT_TYPE.ABILITY || currTrait.type == TRAIT_TYPE.ATTACK || currTrait.type == TRAIT_TYPE.COMBAT_POSITION) {
                 continue; //hide combat traits
             }
             if (currTrait is RelationshipTrait) {
-                CreateTraitGO(currTrait, relationshipTraitsScrollView.content);
+                //CreateTraitGO(currTrait, relationshipTraitsScrollView.content);
+                if (lastRelationshipIndex < relationshipTraitContainers.Length) {
+                    relationshipTraitContainers[lastRelationshipIndex].SetCombatAttribute(currTrait);
+                    lastRelationshipIndex++;
+                }
             } else if (currTrait.type == TRAIT_TYPE.STATUS || currTrait.type == TRAIT_TYPE.DISABLER) {
-                CreateTraitGO(currTrait, statusTraitsScrollView.content);
+                //CreateTraitGO(currTrait, statusTraitsScrollView.content);
+                if (lastStatusIndex < statusTraitContainers.Length) {
+                    statusTraitContainers[lastStatusIndex].SetCombatAttribute(currTrait);
+                    lastStatusIndex++;
+                }
             } else {
-                CreateTraitGO(currTrait, normalTraitsScrollView.content);
+                //CreateTraitGO(currTrait, normalTraitsScrollView.content);
+                if (lastNormalIndex < normalTraitContainers.Length) {
+                    normalTraitContainers[lastNormalIndex].SetCombatAttribute(currTrait);
+                    lastNormalIndex++;
+                }
             }
-            
+        }
+
+        if (lastRelationshipIndex < relationshipTraitContainers.Length) {
+            for (int i = lastRelationshipIndex; i < relationshipTraitContainers.Length; i++) {
+                relationshipTraitContainers[i].gameObject.SetActive(false);
+            }
+        }
+        if (lastStatusIndex < statusTraitContainers.Length) {
+            for (int i = lastStatusIndex; i < statusTraitContainers.Length; i++) {
+                statusTraitContainers[i].gameObject.SetActive(false);
+            }
+        }
+        if (lastNormalIndex < normalTraitContainers.Length) {
+            for (int i = lastNormalIndex; i < normalTraitContainers.Length; i++) {
+                normalTraitContainers[i].gameObject.SetActive(false);
+            }
         }
     }
-    private void CreateTraitGO(Trait combatAttribute, RectTransform parent) {
-        GameObject go = GameObject.Instantiate(combatAttributePrefab, parent);
-        CombatAttributeItem combatAttributeItem = go.GetComponent<CombatAttributeItem>();
-        combatAttributeItem.SetCombatAttribute(combatAttribute);
-    }
+    //private void CreateTraitGO(Trait combatAttribute, RectTransform parent) {
+    //    GameObject go = GameObject.Instantiate(combatAttributePrefab, parent);
+    //    CombatAttributeItem combatAttributeItem = go.GetComponent<CombatAttributeItem>();
+    //    combatAttributeItem.SetCombatAttribute(combatAttribute);
+    //}
     #endregion
 
     #region Buttons
@@ -417,73 +370,17 @@ public class CharacterInfoUI : UIMenu {
     #endregion
 
     #region Items
-    private void UpdateItemInfo() {
-        //UpdateEquipmentInfo(_activeCharacter.equippedItems);
-        //UpdateInventoryInfo(_activeCharacter.inventory);
-        //itemContainer.SetItem(_activeCharacter.tokenInInventory);
+    private void UpdateInventoryInfoFromSignal(SpecialToken token, Character character) {
+        if (isShowing && _activeCharacter == character) {
+            UpdateInventoryInfo();
+        }
     }
-    private void UpdateInventoryInfo(List<Item> inventory) {
+    private void UpdateInventoryInfo() {
         for (int i = 0; i < inventoryItemContainers.Length; i++) {
             ItemContainer currContainer = inventoryItemContainers[i];
-            Item currInventoryItem = inventory.ElementAtOrDefault(i);
-            //currContainer.SetItem(currInventoryItem);
+            SpecialToken currInventoryItem = _activeCharacter.items.ElementAtOrDefault(i);
+            currContainer.SetItem(currInventoryItem);
         }
-    }
-    #endregion
-
-    #region Relationships
-    List<CharacterRelationshipItem> shownRelationships = new List<CharacterRelationshipItem>();
-    private void UpdateRelationshipInfo(List<Relationship> relationships) {
-        List<Relationship> relationshipsToShow = new List<Relationship>(relationships);
-        List<CharacterRelationshipItem> relationshipsToRemove = new List<CharacterRelationshipItem>();
-        for (int i = 0; i < shownRelationships.Count; i++) {
-            CharacterRelationshipItem currRelItem = shownRelationships[i];
-            if (relationshipsToShow.Contains(currRelItem.rel)) {
-                relationshipsToShow.Remove(currRelItem.rel);
-            } else {
-                relationshipsToRemove.Add(currRelItem);
-            }
-        }
-
-        for (int i = 0; i < relationshipsToRemove.Count; i++) {
-            RemoveRelationship(relationshipsToRemove[i]);
-        }
-
-        //Utilities.DestroyChildren(relationsScrollView.content);
-        for (int i = 0; i < relationshipsToShow.Count; i++) {
-            AddRelationship(relationshipsToShow[i], i);
-        }
-
-        //int counter = 0;
-        //foreach (KeyValuePair<Character, Relationship> kvp in _activeCharacter.relationships) {
-        //    GameObject relItemGO = UIManager.Instance.InstantiateUIObject(relationshipItemPrefab.name, relationsScrollView.content);
-        //    CharacterRelationshipItem relItem = relItemGO.GetComponent<CharacterRelationshipItem>();
-        //    relItem.Initialize();
-        //    if (Utilities.IsEven(counter)) {
-        //        relItem.SetBGColor(evenRelationshipColor, oddRelationshipColor);
-        //    } else {
-        //        relItem.SetBGColor(oddRelationshipColor, evenRelationshipColor);
-        //    }
-        //    relItem.SetRelationship(kvp.Value);
-        //    counter++;
-        //}
-    }
-    private void AddRelationship(Relationship rel, int index) {
-        GameObject relItemGO = UIManager.Instance.InstantiateUIObject(relationshipItemPrefab.name, relationsScrollView.content);
-        CharacterRelationshipItem relItem = relItemGO.GetComponent<CharacterRelationshipItem>();
-        Relationship currRel = rel;
-        relItem.Initialize();
-        if (Utilities.IsEven(index)) {
-            relItem.SetBGColor(evenRelationshipColor, oddRelationshipColor);
-        } else {
-            relItem.SetBGColor(oddRelationshipColor, evenRelationshipColor);
-        }
-        relItem.SetRelationship(currRel);
-        shownRelationships.Add(relItem);
-    }
-    private void RemoveRelationship(CharacterRelationshipItem item) {
-        ObjectPoolManager.Instance.DestroyObject(item.gameObject);
-        shownRelationships.Remove(item);
     }
     #endregion
 
@@ -494,7 +391,7 @@ public class CharacterInfoUI : UIMenu {
         }
     }
     private void UpdateAllHistoryInfo() {
-        List<Log> characterHistory = new List<Log>(_activeCharacter.history.OrderByDescending(x => x.id));
+        List<Log> characterHistory = new List<Log>(_activeCharacter.history.OrderByDescending(x => x.date.year).ThenByDescending(x => x.date.month).ThenByDescending(x => x.date.day).ThenByDescending(x => x.date.tick));
         for (int i = 0; i < logHistoryItems.Length; i++) {
             LogHistoryItem currItem = logHistoryItems[i];
             Log currLog = characterHistory.ElementAtOrDefault(i);
@@ -598,89 +495,6 @@ public class CharacterInfoUI : UIMenu {
         //}
         _activeCharacter.Death();
     }
-    #endregion
-
-    #region Scheduling
-    private void InitializeSchedulingMenu() {
-        monthDropdown.ClearOptions();
-        tickField.text = string.Empty;
-        yearField.text = string.Empty;
-
-        monthDropdown.AddOptions(new List<string>() { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"});
-        //List<string> tickOptions = new List<string>();
-        //for (int i = 1; i <= GameManager.hoursPerDay; i++) {
-        //    tickOptions.Add(i.ToString());
-        //}
-        //tickField.AddOptions(tickOptions);
-        UpdateDays(MONTH.JAN);
-    }
-    public void OnMonthChanged(int choice) {
-        UpdateDays((MONTH)choice + 1);
-    }
-    private void UpdateDays(MONTH month) {
-        dayDropdown.ClearOptions();
-        List<string> options = new List<string>();
-        for (int i = 1; i <= GameManager.daysPerMonth; i++) {
-            options.Add(i.ToString());
-        }
-        dayDropdown.AddOptions(options);
-    }
-    public void ValidateTicks(string value) {
-        int tick = Int32.Parse(value);
-        tick = Mathf.Clamp(tick, 1, GameManager.ticksPerDay);
-        tickField.text = tick.ToString();
-    }
-    public void ValidateYear(string value) {
-        int year = Int32.Parse(value);
-        year = Mathf.Max(GameManager.Instance.year, year);
-        yearField.text = year.ToString();
-    }
-    public void ScheduleManual() {
-        int month = Int32.Parse(monthDropdown.options[monthDropdown.value].text);
-        int day = Int32.Parse(dayDropdown.options[dayDropdown.value].text);
-        int year = Int32.Parse(yearField.text);
-        int hour = Int32.Parse(tickField.text);
-        //TestEvent testEvent = EventManager.Instance.AddNewEvent(GAME_EVENT.TEST_EVENT) as TestEvent;
-        //testEvent.Initialize(new List<Character>() { _activeCharacter });
-        //testEvent.ScheduleEvent(new GameDate(month, day, year, hour));
-    }
-    public void ScheduleAuto() {
-        //TestEvent testEvent = EventManager.Instance.AddNewEvent(GAME_EVENT.TEST_EVENT) as TestEvent;
-        //testEvent.Initialize(new List<Character>() { _activeCharacter });
-        //testEvent.ScheduleEvent();
-    }
-    //public void LogEventSchedule() {
-    //    string text = _activeCharacter.name + "'s Event Schedule: \n";
-    //    text += _activeCharacter.eventSchedule.GetEventScheduleSummary();
-    //    Debug.Log(text);
-    //}
-    //private void Update() {
-    //    int month;
-    //    int day;
-    //    int year;
-    //    int hour;
-    //    //daysConversionLbl.text = "Today is " + GameManager.Instance.Today().ToStringDate() + "Day Conversion: ";
-    //    if (Int32.TryParse(monthDropdown.options[monthDropdown.value].text, out month) && 
-    //        Int32.TryParse(dayDropdown.options[dayDropdown.value].text, out day) &&
-    //        Int32.TryParse(yearField.text, out year) &&
-    //        Int32.TryParse(tickField.text, out hour)) {
-    //        GameDate date = new GameDate(month, day, year);
-    //        daysConversionLbl.text = "Day Conversion: " + date.GetDayAndTicksString();
-    //        if (date.IsBefore(GameManager.Instance.Today())) {
-    //            //the specified schedule date is before today
-    //            //do not allow
-    //            scheduleManualBtn.interactable = false;
-    //            daysConversionLbl.text += "(Invalid)";
-    //        } else {
-    //            if (!scheduleManualBtn.interactable) {
-    //                scheduleManualBtn.interactable = true;
-    //            }
-    //        }
-    //    } else {
-    //        daysConversionLbl.text = "Day Conversion: Invalid";
-    //        scheduleManualBtn.interactable = false;
-    //    }
-    //}
     #endregion
 
     #region Listeners

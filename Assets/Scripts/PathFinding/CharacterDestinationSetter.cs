@@ -54,7 +54,7 @@ namespace Pathfinding {
 
         public void ClearPath() {
             target = new Vector3(float.PositiveInfinity, float.PositiveInfinity, float.PositiveInfinity);
-            ai.OnClearPath();
+            //ai.OnClearPath();
         }
     }
 }

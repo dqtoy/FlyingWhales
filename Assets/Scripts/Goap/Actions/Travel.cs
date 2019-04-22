@@ -24,11 +24,11 @@ public class Travel : GoapAction {
     //    AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
     //}
     public override void PerformActualAction() {
-        if (targetTile.occupant != null && targetTile.occupant != actor) {
-            SetState("Travel Failed");
-        } else {
+        //if (targetTile.occupant != null && targetTile.occupant != actor) {
+        //    SetState("Travel Failed");
+        //} else {
             SetState("Travel Success");
-        }
+        //}
         base.PerformActualAction();
     }
     protected override int GetCost() {

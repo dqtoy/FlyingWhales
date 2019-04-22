@@ -50,7 +50,6 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     //private Combat _currentCombat;
     //private List<BodyPart> _bodyParts;
     protected List<Skill> _skills;
-    protected List<Interaction> _currentInteractions;
     protected Dictionary<ELEMENT, float> _elementalWeaknesses;
     protected Dictionary<ELEMENT, float> _elementalResistances;
     protected Dictionary<string, float> _itemDropsLookup;
@@ -291,9 +290,6 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     }
     public List<Trait> traits {
         get { return null; }
-    }
-    public List<Interaction> currentInteractions {
-        get { return _currentInteractions; }
     }
     public Dictionary<ELEMENT, float> elementalWeaknesses {
         get { return _elementalWeaknesses; }
@@ -540,7 +536,6 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
         _isDead = false;
         _raceSetting = RaceManager.Instance.racesDictionary[_type.ToString()].CreateNewCopy();
         _battleOnlyTracker = new CharacterBattleOnlyTracker();
-        _currentInteractions = new List<Interaction>();
         //characterIntel = new CharacterIntel(this);
         if (_skills == null) {
             _skills = new List<Skill>();
@@ -567,7 +562,6 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
         _isDead = false;
         _raceSetting = JsonUtility.FromJson<RaceSetting>(System.IO.File.ReadAllText(Utilities.dataPath + "RaceSettings/" + _type.ToString() +".json"));
         _battleOnlyTracker = new CharacterBattleOnlyTracker();
-        _currentInteractions = new List<Interaction>();
         ResetToFullHP();
         //ResetToFullSP();
         ConstructSkills();
@@ -725,10 +719,6 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
         //    _ownParty.icon.SetVisualState(false);
         //}
     }
-    public void OnAddedToPlayer() {
-        ownParty.specificLocation.RemoveCharacterFromLocation(ownParty);
-        PlayerManager.Instance.player.playerArea.AddCharacterToLocation(ownParty, null, true);
-    }
     public bool InviteToParty(Character inviter) {
         return false;
     }
@@ -757,7 +747,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     public void LevelUp(int amount) {
         //Not applicable
     }
-    public bool AddTrait(Trait combatAttribute, Character responsibleCharacter = null, System.Action onRemoveAction = null, GoapAction gainedFromDoing = null) {
+    public bool AddTrait(Trait combatAttribute, Character responsibleCharacter = null, System.Action onRemoveAction = null, GoapAction gainedFromDoing = null, bool triggerOnAdd = true) {
         //Not applicable
         return false;
     }
@@ -793,16 +783,6 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     public void EndedInspection() {
         //uiData.UpdateData(this);
     }
-    public void AddInteraction(Interaction interaction) {
-        _currentInteractions.Add(interaction);
-        //interaction.Initialize();
-        //Messenger.Broadcast(Signals.ADDED_INTERACTION, this as IInteractable, interaction);
-    }
-    public void RemoveInteraction(Interaction interaction) {
-        if (_currentInteractions.Remove(interaction)) {
-            //Messenger.Broadcast(Signals.REMOVED_INTERACTION, this as IInteractable, interaction);
-        }
-    }
     #endregion
 
     #region Minion
@@ -834,50 +814,4 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     public void SetPlayerCharacterItem(PlayerCharacterItem item) {
         _playerCharacterItem = item;
     }
-
-    #region Interaction Generation
-    public void DisableInteractionGeneration() {
-        Messenger.RemoveListener(Signals.TICK_STARTED, DailyInteractionGeneration);
-    }
-    public void AddInteractionWeight(INTERACTION_TYPE type, int weight) {
-        interactionWeights.AddElement(type, weight);
-    }
-    public void RemoveInteractionFromWeights(INTERACTION_TYPE type, int weight) {
-        interactionWeights.RemoveElement(type);
-    }
-    public void SetDailyInteractionGenerationTick() {
-        _currentInteractionTick = UnityEngine.Random.Range(1, GameManager.daysPerMonth + 1);
-    }
-    public void DailyInteractionGeneration() {
-        if (_currentInteractionTick == GameManager.Instance.days) {
-            GenerateDailyInteraction();
-            SetDailyInteractionGenerationTick();
-        }
-    }
-    public void GenerateDailyInteraction() {
-        if (!IsInOwnParty() || ownParty.icon.isTravelling) {
-            return; //if this character is not in own party, is a defender or is travelling, do not generate interaction
-        }
-        if (eventTriggerWeights.PickRandomElementGivenWeights()) {
-            WeightedDictionary<INTERACTION_TYPE> validInteractions = GetValidInteractionWeights();
-            if (validInteractions.GetTotalOfWeights() > 0) {
-                INTERACTION_TYPE chosenInteraction = validInteractions.PickRandomElementGivenWeights();
-                //create interaction of type
-                Interaction createdInteraction = InteractionManager.Instance.CreateNewInteraction(chosenInteraction, this.specificLocation);
-                if (createdInteraction != null) {
-                    (this.specificLocation.coreTile.landmarkOnTile).AddInteraction(createdInteraction);
-                }
-            }
-        }
-    }
-    private WeightedDictionary<INTERACTION_TYPE> GetValidInteractionWeights() {
-        WeightedDictionary<INTERACTION_TYPE> weights = new WeightedDictionary<INTERACTION_TYPE>();
-        //foreach (KeyValuePair<INTERACTION_TYPE, int> kvp in interactionWeights.dictionary) {
-        //    if (InteractionManager.Instance.CanCreateInteraction(kvp.Key, this)) {
-        //        weights.AddElement(kvp.Key, kvp.Value);
-        //    }
-        //}
-        return weights;
-    }
-    #endregion
 }

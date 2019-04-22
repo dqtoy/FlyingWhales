@@ -15,6 +15,8 @@ public class GoapActionState {
     public Func<Character, Intel, List<string>> shareIntelReaction { get; private set; }
     public string status { get; private set; }
     public bool shouldAddLogs { get; private set; }
+    public bool isDone { get; private set; }
+    public string animationName { get; private set; } //specific animation per action state
 
     public bool hasPerTickEffect { get { return perTickEffect != null; } }
     private int _currentDuration;
@@ -28,6 +30,7 @@ public class GoapActionState {
         this.duration = duration;
         this.status = status;
         this.shouldAddLogs = true;
+        this.isDone = false;
         CreateLog();
     }
 
@@ -71,6 +74,10 @@ public class GoapActionState {
     }
     public void EndPerTickEffect() {
         //Messenger.RemoveListener(Signals.TICK_STARTED, PerTickEffect);
+        //if (isDone) {
+        //    return;
+        //}
+        //isDone = true;
         if (afterEffect != null) {
             afterEffect();
         }
@@ -94,4 +101,10 @@ public class GoapActionState {
             EndPerTickEffect();
         }
     }
+
+    #region Animation
+    public void SetAnimation(string animationName) {
+        this.animationName = animationName;
+    }
+    #endregion
 }

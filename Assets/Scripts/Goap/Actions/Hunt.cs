@@ -20,7 +20,7 @@ public class Hunt : GoapAction {
         if (target.isDead) {
             SetState("Target Missing");
         } else {
-            if (actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
+            if (actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
                 List<Character> attackers = new List<Character>();
                 attackers.Add(actor);
 
@@ -119,6 +119,9 @@ public class Hunt : GoapAction {
     public void PreTargetKilled() {
         Character target = poiTarget as Character;
         //currentState.AddLogFiller(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        if(parentPlan.job != null) {
+            parentPlan.job.SetCannotCancelJob(true);
+        }
         target.Death();
     }
     public void PerTickTargetKilled() {

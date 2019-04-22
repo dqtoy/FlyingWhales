@@ -17,7 +17,6 @@ public class MapGenerator : MonoBehaviour {
     internal void InitializeWorld(WorldSaveData data) {
         StartCoroutine(InitializeWorldCoroutine(data));
     }
-
     private IEnumerator InitializeWorldCoroutine() {
         System.Diagnostics.Stopwatch loadingWatch = new System.Diagnostics.Stopwatch();
         System.Diagnostics.Stopwatch st = new System.Diagnostics.Stopwatch();
@@ -97,7 +96,6 @@ public class MapGenerator : MonoBehaviour {
 
         //GameManager.Instance.StartProgression();
     }
-
     private IEnumerator InitializeWorldCoroutine(WorldSaveData data) {
         System.Diagnostics.Stopwatch loadingWatch = new System.Diagnostics.Stopwatch();
         System.Diagnostics.Stopwatch st = new System.Diagnostics.Stopwatch();
@@ -147,6 +145,8 @@ public class MapGenerator : MonoBehaviour {
 
         LandmarkManager.Instance.InitializeLandmarks();
 
+        InteriorMapManager.Instance.RegisterObstacles();
+
         CharacterManager.Instance.LoadCharacters(data);
         LandmarkManager.Instance.LoadAdditionalAreaData();
 
@@ -154,12 +154,15 @@ public class MapGenerator : MonoBehaviour {
 
         FactionManager.Instance.RandomizeStartingFactions(data);
         CharacterManager.Instance.CreateNeutralCharacters();
+
+        CharacterManager.Instance.GenerateRelationships();
+        CharacterManager.Instance.PlaceInitialCharacters();
+
         CharacterManager.Instance.GenerateInitialAwareness();
         InteractionManager.Instance.Initialize();
         if (SteamManager.Initialized) {
             AchievementManager.Instance.Initialize();
         }
-        CharacterManager.Instance.GenerateRelationships();
         loadingWatch.Stop();
         Debug.Log(string.Format("Total loading time is {0} ms", loadingWatch.ElapsedMilliseconds));
         LevelLoaderManager.SetLoadingState(false);

@@ -2675,6 +2675,7 @@ MonoBehaviour:
   colliders:
   - {fileID: 976199697}
   - {fileID: 1169935974}
+  rvoController: {fileID: 0}
   colorHighlight: {fileID: 1841024975}
 --- !u!114 &92630685
 MonoBehaviour:
@@ -2752,6 +2753,10 @@ MonoBehaviour:
   whenCloseToDestination: 0
   constrainInsideGraph: 0
   marker: {fileID: 92630684}
+  searchLength: 1000
+  spread: 5000
+  aimStrength: 0.75
+  stopMovementST: 
 --- !u!114 &92630688
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7935,6 +7940,7 @@ MonoBehaviour:
   colliders:
   - {fileID: 639932811}
   - {fileID: 214895377}
+  rvoController: {fileID: 0}
   colorHighlight: {fileID: 524246521}
 --- !u!114 &253410922
 MonoBehaviour:
@@ -8012,6 +8018,10 @@ MonoBehaviour:
   whenCloseToDestination: 0
   constrainInsideGraph: 0
   marker: {fileID: 253410921}
+  searchLength: 1000
+  spread: 5000
+  aimStrength: 0.75
+  stopMovementST: 
 --- !u!114 &253410925
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10511,6 +10521,7 @@ MonoBehaviour:
   colliders:
   - {fileID: 1565763491}
   - {fileID: 2008549996}
+  rvoController: {fileID: 0}
   colorHighlight: {fileID: 940876006}
 --- !u!114 &362231068
 MonoBehaviour:
@@ -10588,6 +10599,10 @@ MonoBehaviour:
   whenCloseToDestination: 0
   constrainInsideGraph: 0
   marker: {fileID: 362231067}
+  searchLength: 1000
+  spread: 5000
+  aimStrength: 0.75
+  stopMovementST: 
 --- !u!114 &362231071
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12008,6 +12023,7 @@ MonoBehaviour:
   colliders:
   - {fileID: 1547943282}
   - {fileID: 853076063}
+  rvoController: {fileID: 0}
   colorHighlight: {fileID: 370936221}
 --- !u!114 &396724357
 MonoBehaviour:
@@ -12085,6 +12101,10 @@ MonoBehaviour:
   whenCloseToDestination: 0
   constrainInsideGraph: 0
   marker: {fileID: 396724356}
+  searchLength: 1000
+  spread: 5000
+  aimStrength: 0.75
+  stopMovementST: 
 --- !u!114 &396724360
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14394,6 +14414,7 @@ MonoBehaviour:
   colliders:
   - {fileID: 956456581}
   - {fileID: 1220094771}
+  rvoController: {fileID: 0}
   colorHighlight: {fileID: 1292306554}
 --- !u!114 &450537279
 MonoBehaviour:
@@ -14471,6 +14492,10 @@ MonoBehaviour:
   whenCloseToDestination: 0
   constrainInsideGraph: 0
   marker: {fileID: 450537278}
+  searchLength: 1000
+  spread: 5000
+  aimStrength: 0.75
+  stopMovementST: 
 --- !u!114 &450537282
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18105,6 +18130,7 @@ MonoBehaviour:
   colliders:
   - {fileID: 863191545}
   - {fileID: 1738222904}
+  rvoController: {fileID: 0}
   colorHighlight: {fileID: 1267262243}
 --- !u!114 &593586478
 MonoBehaviour:
@@ -18182,6 +18208,10 @@ MonoBehaviour:
   whenCloseToDestination: 0
   constrainInsideGraph: 0
   marker: {fileID: 593586477}
+  searchLength: 1000
+  spread: 5000
+  aimStrength: 0.75
+  stopMovementST: 
 --- !u!114 &593586481
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20552,6 +20582,7 @@ MonoBehaviour:
   colliders:
   - {fileID: 1199221794}
   - {fileID: 673793734}
+  rvoController: {fileID: 0}
   colorHighlight: {fileID: 1375287701}
 --- !u!114 &720759250
 MonoBehaviour:
@@ -20629,6 +20660,10 @@ MonoBehaviour:
   whenCloseToDestination: 0
   constrainInsideGraph: 0
   marker: {fileID: 720759249}
+  searchLength: 1000
+  spread: 5000
+  aimStrength: 0.75
+  stopMovementST: 
 --- !u!114 &720759253
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -25347,6 +25382,7 @@ MonoBehaviour:
   colliders:
   - {fileID: 742915290}
   - {fileID: 324139744}
+  rvoController: {fileID: 0}
   colorHighlight: {fileID: 413679473}
 --- !u!114 &886739053
 MonoBehaviour:
@@ -25424,6 +25460,10 @@ MonoBehaviour:
   whenCloseToDestination: 0
   constrainInsideGraph: 0
   marker: {fileID: 886739052}
+  searchLength: 1000
+  spread: 5000
+  aimStrength: 0.75
+  stopMovementST: 
 --- !u!114 &886739056
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -66753,6 +66793,7 @@ MonoBehaviour:
   colliders:
   - {fileID: 2106410438}
   - {fileID: 1952725343}
+  rvoController: {fileID: 0}
   colorHighlight: {fileID: 1522231541}
 --- !u!114 &1007025358
 MonoBehaviour:
@@ -66830,6 +66871,10 @@ MonoBehaviour:
   whenCloseToDestination: 0
   constrainInsideGraph: 0
   marker: {fileID: 1007025357}
+  searchLength: 1000
+  spread: 5000
+  aimStrength: 0.75
+  stopMovementST: 
 --- !u!114 &1007025361
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -70263,6 +70308,7 @@ MonoBehaviour:
   colliders:
   - {fileID: 461254042}
   - {fileID: 2059823410}
+  rvoController: {fileID: 0}
   colorHighlight: {fileID: 787529318}
 --- !u!114 &1124022271
 MonoBehaviour:
@@ -70340,6 +70386,10 @@ MonoBehaviour:
   whenCloseToDestination: 0
   constrainInsideGraph: 0
   marker: {fileID: 1124022270}
+  searchLength: 1000
+  spread: 5000
+  aimStrength: 0.75
+  stopMovementST: 
 --- !u!114 &1124022274
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -74516,6 +74566,7 @@ MonoBehaviour:
   colliders:
   - {fileID: 1525096432}
   - {fileID: 468236528}
+  rvoController: {fileID: 0}
   colorHighlight: {fileID: 540201611}
 --- !u!114 &1328773675
 MonoBehaviour:
@@ -74593,6 +74644,10 @@ MonoBehaviour:
   whenCloseToDestination: 0
   constrainInsideGraph: 0
   marker: {fileID: 1328773674}
+  searchLength: 1000
+  spread: 5000
+  aimStrength: 0.75
+  stopMovementST: 
 --- !u!114 &1328773678
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -84807,6 +84862,7 @@ MonoBehaviour:
   colliders:
   - {fileID: 1569459974}
   - {fileID: 1177484951}
+  rvoController: {fileID: 0}
   colorHighlight: {fileID: 805666438}
 --- !u!114 &1725801973
 MonoBehaviour:
@@ -84884,6 +84940,10 @@ MonoBehaviour:
   whenCloseToDestination: 0
   constrainInsideGraph: 0
   marker: {fileID: 1725801972}
+  searchLength: 1000
+  spread: 5000
+  aimStrength: 0.75
+  stopMovementST: 
 --- !u!114 &1725801976
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -85130,6 +85190,7 @@ MonoBehaviour:
   colliders:
   - {fileID: 423834514}
   - {fileID: 1908180854}
+  rvoController: {fileID: 0}
   colorHighlight: {fileID: 1108410640}
 --- !u!114 &1733846815
 MonoBehaviour:
@@ -85207,6 +85268,10 @@ MonoBehaviour:
   whenCloseToDestination: 0
   constrainInsideGraph: 0
   marker: {fileID: 1733846814}
+  searchLength: 1000
+  spread: 5000
+  aimStrength: 0.75
+  stopMovementST: 
 --- !u!114 &1733846818
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -90844,6 +90909,7 @@ MonoBehaviour:
   colliders:
   - {fileID: 1390602804}
   - {fileID: 284852221}
+  rvoController: {fileID: 0}
   colorHighlight: {fileID: 2145895356}
 --- !u!114 &1945197316
 MonoBehaviour:
@@ -90921,6 +90987,10 @@ MonoBehaviour:
   whenCloseToDestination: 0
   constrainInsideGraph: 0
   marker: {fileID: 1945197315}
+  searchLength: 1000
+  spread: 5000
+  aimStrength: 0.75
+  stopMovementST: 
 --- !u!114 &1945197319
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -91307,6 +91377,7 @@ MonoBehaviour:
   colliders:
   - {fileID: 1320019449}
   - {fileID: 37077230}
+  rvoController: {fileID: 0}
   colorHighlight: {fileID: 1476837197}
 --- !u!114 &1953033936
 MonoBehaviour:
@@ -91384,6 +91455,10 @@ MonoBehaviour:
   whenCloseToDestination: 0
   constrainInsideGraph: 0
   marker: {fileID: 1953033935}
+  searchLength: 1000
+  spread: 5000
+  aimStrength: 0.75
+  stopMovementST: 
 --- !u!114 &1953033939
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -93086,6 +93161,7 @@ MonoBehaviour:
   colliders:
   - {fileID: 924354551}
   - {fileID: 826315895}
+  rvoController: {fileID: 0}
   colorHighlight: {fileID: 180032888}
 --- !u!114 &2024918420
 MonoBehaviour:
@@ -93163,6 +93239,10 @@ MonoBehaviour:
   whenCloseToDestination: 0
   constrainInsideGraph: 0
   marker: {fileID: 2024918419}
+  searchLength: 1000
+  spread: 5000
+  aimStrength: 0.75
+  stopMovementST: 
 --- !u!114 &2024918423
 MonoBehaviour:
   m_ObjectHideFlags: 0
