@@ -64,19 +64,22 @@ public class Lycanthropy : Trait {
         _character.ResetTirednessMeter();
 
 
-        //Only retain awareness of characters, small animals, and edible plants, all other awareness must be deleted
-        if (_character.awareness.ContainsKey(POINT_OF_INTEREST_TYPE.ITEM)) {
-            _character.awareness.Remove(POINT_OF_INTEREST_TYPE.ITEM);
-        }
-        if (_character.awareness.ContainsKey(POINT_OF_INTEREST_TYPE.TILE_OBJECT)) {
-            for (int i = 0; i < _character.awareness[POINT_OF_INTEREST_TYPE.TILE_OBJECT].Count; i++) {
-                TileObjectAwareness toa = _character.awareness[POINT_OF_INTEREST_TYPE.TILE_OBJECT][i] as TileObjectAwareness;
-                if(toa.tileObject.tileObjectType != TILE_OBJECT_TYPE.SMALL_ANIMAL && toa.tileObject.tileObjectType != TILE_OBJECT_TYPE.EDIBLE_PLANT) {
-                    _character.RemoveAwareness(toa.poi);
-                    i--;
+        //Remove all awareness then add all edible plants and small animals of current location to awareness
+        _character.awareness.Clear();
+        foreach (List<LocationStructure> structures in _character.specificLocation.structures.Values) {
+            for (int i = 0; i < structures.Count; i++) {
+                for (int j = 0; j < structures[i].pointsOfInterest.Count; j++) {
+                    IPointOfInterest poi = structures[i].pointsOfInterest[j];
+                    if(poi is TileObject) {
+                        TileObject tileObj = poi as TileObject;
+                        if(tileObj.tileObjectType == TILE_OBJECT_TYPE.SMALL_ANIMAL || tileObj.tileObjectType == TILE_OBJECT_TYPE.EDIBLE_PLANT) {
+                            _character.AddAwareness(tileObj);
+                        }
+                    }
                 }
             }
         }
+
         //Copy relationship data then remove them
         data.SetRelationshipData(_character);
         _character.RemoveAllRelationships(false);

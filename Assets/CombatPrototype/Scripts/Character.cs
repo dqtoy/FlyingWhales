@@ -4738,9 +4738,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         _hasAlreadyAskedForPlan = state;
     }
     public void PrintLogIfActive(string log) {
-        //if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == this) {
+        if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == this) {
             Debug.Log(log);
-        //}
+        }
     }
     private void AddPlanAsPriority(GoapPlan plan) {
         allGoapPlans.Insert(0, plan);
