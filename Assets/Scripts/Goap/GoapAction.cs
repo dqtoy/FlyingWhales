@@ -145,9 +145,7 @@ public class GoapAction {
         isPerformingActualAction = true;
         if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
             Character targetCharacter = poiTarget as Character;
-            if (targetCharacter != actor) {
-                targetCharacter.FaceTarget(actor);
-            }
+            targetCharacter.FaceTarget(actor);
         }
     }
     protected virtual void CreateThoughtBubbleLog() {

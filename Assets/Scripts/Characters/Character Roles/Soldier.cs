@@ -10,6 +10,7 @@ public class Soldier : CharacterRole {
             INTERACTION_TYPE.PATROL,
             INTERACTION_TYPE.PATROL_ROAM,
             INTERACTION_TYPE.GET_SUPPLY,
+            INTERACTION_TYPE.ASSAULT_ACTION_NPC,
         };
     }
 

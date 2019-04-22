@@ -12,6 +12,7 @@ public class Civilian : CharacterRole {
             INTERACTION_TYPE.MINE_ACTION,
             INTERACTION_TYPE.CHOP_WOOD,
             INTERACTION_TYPE.SCRAP,
+            //INTERACTION_TYPE.ASSAULT_ACTION_NPC,
         };
     }
 
