@@ -169,6 +169,15 @@ public class GoapAction {
             AddDefaultObjectsToLog(planLog);
         }
     }
+    protected virtual void AddDefaultObjectsToLog(Log log) {
+        log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        log.AddToFillers(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER); //Target character is only the identifier but it doesn't mean that this is a character, it can be item, etc.
+        if (targetStructure != null) {
+            log.AddToFillers(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
+        } else {
+            log.AddToFillers(actor.specificLocation, actor.specificLocation.name, LOG_IDENTIFIER.LANDMARK_1);
+        }
+    }
     ///<summary>
     ///This is called when the actor decides to do this specific action.
     ///All movement related actions should be done here.
@@ -246,9 +255,9 @@ public class GoapAction {
 
     #region Utilities
     public void Initialize() {
+        SetTargetStructure();
         ConstructRequirement();
         ConstructPreconditionsAndEffects();
-        SetTargetStructure();
         CreateThoughtBubbleLog();
     }
     public bool IsThisPartOfActorActionPool(Character actor) {
@@ -426,15 +435,6 @@ public class GoapAction {
             SetState(failActionState);
         }
         //Set state to failed after this (in overrides)
-    }
-    private void AddDefaultObjectsToLog(Log log) {
-        log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        log.AddToFillers(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER); //Target character is only the identifier but it doesn't mean that this is a character, it can be item, etc.
-        if (targetStructure != null) {
-            log.AddToFillers(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
-        } else {
-            log.AddToFillers(actor.specificLocation, actor.specificLocation.name, LOG_IDENTIFIER.LANDMARK_1);
-        }
     }
     protected bool HasTrait(Character character, string traitName) {
         return character.GetTrait(traitName) != null;

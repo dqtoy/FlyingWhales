@@ -9,9 +9,9 @@ public class Corrupt : PlayerJobAction {
 
     public Corrupt() {
         actionName = "Corrupt";
-        SetDefaultCooldownTime(3);
+        SetDefaultCooldownTime(48);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
-        _traitNames = new List<string>() { "Lycanthropy", "Unconscious", "Restrained", "Cursed", "Sick", "Injured", "Kleptomaniac", "Death" };
+        _traitNames = new List<string>() { "Lycanthropy", "Unconscious", "Restrained", "Cursed", "Sick", "Injured", "Kleptomaniac" };
     }
 
     public override void ActivateAction(Character assignedCharacter, Character targetCharacter) {
@@ -54,9 +54,10 @@ public class Corrupt : PlayerJobAction {
         } else if (traitName == "Kleptomaniac") {
             Kleptomaniac newTrait = new Kleptomaniac();
             _targetCharacter.AddTrait(newTrait);
-        } else if (traitName == "Death") {
-            _targetCharacter.Death();
         }
+        //else if (traitName == "Death") {
+        //    _targetCharacter.Death();
+        //}
     }
     private bool CanCorruptCharacter(string traitName) {
         if (_targetCharacter.GetTrait(traitName) != null) {

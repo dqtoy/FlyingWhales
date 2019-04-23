@@ -1290,10 +1290,57 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         }
     }
+
+    public Character troubledCharacter { get; private set; }
+    public void CreateAskForHelpSaveCharacterJob(Character troubledCharacter) {
+        if(troubledCharacter != null && troubledCharacter != this) {
+            this.troubledCharacter = troubledCharacter;
+            Character targetCharacter = null;
+            List<Character> positiveCharacters = GetCharactersWithRelationship(TRAIT_EFFECT.POSITIVE);
+            if(positiveCharacters.Count > 0) {
+                targetCharacter = positiveCharacters[UnityEngine.Random.Range(0, positiveCharacters.Count)];
+            } else {
+                List<Character> nonEnemyCharacters = GetCharactersWithoutRelationship(RELATIONSHIP_TRAIT.ENEMY).Where(x => x.faction.id == faction.id).ToList();
+                if (nonEnemyCharacters.Count > 0) {
+                    targetCharacter = nonEnemyCharacters[UnityEngine.Random.Range(0, nonEnemyCharacters.Count)];
+                }
+            }
+            if (targetCharacter != null) {
+                GoapPlanJob job = new GoapPlanJob("Ask For Help Save Character", INTERACTION_TYPE.ASK_FOR_HELP_SAVE_CHARACTER, targetCharacter);
+                jobQueue.AddJobInQueue(job);
+            } else {
+                Log addLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "ask_for_help_fail");
+                addLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                addLog.AddToFillers(troubledCharacter, troubledCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                addLog.AddLogToInvolvedObjects();
+                if (PlayerManager.Instance.player.ShouldShowNotificationFrom(this)) {
+                    PlayerManager.Instance.player.ShowNotification(addLog);
+                }
+            }
+        } else {
+            if (troubledCharacter == null) {
+                Debug.LogError(name + " cannot create ask for help save character job because troubled character is null!");
+            } else {
+                Debug.LogError(name + " cannot create ask for help save character job for " + troubledCharacter.name);
+            }
+        }
+    }
+    public void CreateSaveCharacterJob(Character targetCharacter) {
+        if (targetCharacter != null && targetCharacter != this) {
+            GoapPlanJob job = new GoapPlanJob("Save Character", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = targetCharacter.homeArea, targetPOI = targetCharacter });
+            jobQueue.AddJobInQueue(job);
+        } else {
+            if(targetCharacter == null) {
+                Debug.LogError(name + " cannot create save character job because troubled character is null!");
+            } else {
+                Debug.LogError(name + " cannot create save character job for " + targetCharacter.name);
+            }
+        }
+    }
     #endregion
 
-    #region Faction
-    public void SetFaction(Faction newFaction) {
+        #region Faction
+        public void SetFaction(Faction newFaction) {
         if (_faction != null
             && newFaction != null
             && _faction.id == newFaction.id) {
@@ -1851,6 +1898,24 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         List<Character> characters = new List<Character>();
         foreach (KeyValuePair<Character, CharacterRelationshipData> kvp in relationships) {
             if (kvp.Value.HasRelationshipTrait(type)) {
+                characters.Add(kvp.Key);
+            }
+        }
+        return characters;
+    }
+    public List<Character> GetCharactersWithoutRelationship(RELATIONSHIP_TRAIT type) {
+        List<Character> characters = new List<Character>();
+        foreach (KeyValuePair<Character, CharacterRelationshipData> kvp in relationships) {
+            if (!kvp.Value.HasRelationshipTrait(type)) {
+                characters.Add(kvp.Key);
+            }
+        }
+        return characters;
+    }
+    public List<Character> GetCharactersWithRelationship(TRAIT_EFFECT effect) {
+        List<Character> characters = new List<Character>();
+        foreach (KeyValuePair<Character, CharacterRelationshipData> kvp in relationships) {
+            if (kvp.Value.HasRelationshipOfEffect(effect)) {
                 characters.Add(kvp.Key);
             }
         }
@@ -4200,6 +4265,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         poiGoapActions.Add(INTERACTION_TYPE.STEAL_CHARACTER);
         poiGoapActions.Add(INTERACTION_TYPE.JUDGE_CHARACTER);
         poiGoapActions.Add(INTERACTION_TYPE.CURSE_CHARACTER);
+        poiGoapActions.Add(INTERACTION_TYPE.ASK_FOR_HELP_SAVE_CHARACTER);
     }
     public void StartGOAP(GoapEffect goal, IPointOfInterest target, GOAP_CATEGORY category, bool isPriority = false, List<Character> otherCharactePOIs = null, bool isPersonalPlan = true, GoapPlanJob job = null) {
         List<CharacterAwareness> characterTargetsAwareness = new List<CharacterAwareness>();

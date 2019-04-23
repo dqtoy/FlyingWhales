@@ -250,7 +250,7 @@ public class InteractionManager : MonoBehaviour {
                 actorEffect = null,
                 targetCharacterEffect = null,
             } },
-            { INTERACTION_TYPE.ASK_FOR_HELP, new InteractionAttributes(){
+            { INTERACTION_TYPE.ASK_FOR_HELP_SAVE_CHARACTER, new InteractionAttributes(){
                 categories = new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.OTHER },
                 alignment = INTERACTION_ALIGNMENT.NEUTRAL,
                 actorEffect = null,
@@ -1089,6 +1089,9 @@ public class InteractionManager : MonoBehaviour {
                 break;
             case INTERACTION_TYPE.DROP_ITEM_WAREHOUSE:
                 goapAction = new DropItemWarehouse(actor, target);
+                break;
+            case INTERACTION_TYPE.ASK_FOR_HELP_SAVE_CHARACTER:
+                goapAction = new AskForHelpSaveCharacter(actor, target);
                 break;
         }
         if(goapAction != null && willInitialize) {

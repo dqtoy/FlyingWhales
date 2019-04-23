@@ -37,6 +37,13 @@ public class GoapPlanJob : JobQueueItem {
         //this.otherData = otherData;
         forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
     }
+    public GoapPlanJob(string name, INTERACTION_TYPE targetInteractionType, IPointOfInterest targetPOI, object[] otherData) : base(name) {
+        //this.targetEffect = targetEffect;
+        this.targetPOI = targetPOI;
+        this.targetInteractionType = targetInteractionType;
+        this.otherData = otherData;
+        forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
+    }
 
     #region Overrides 
     public override void UnassignJob(bool shouldDoAfterEffect = true) {
