@@ -292,8 +292,14 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     }
     public bool IsAdjacentTo(IPointOfInterest poi) {
         foreach (KeyValuePair<TileNeighbourDirection, LocationGridTile> keyValuePair in neighbours) {
-            if (keyValuePair.Value.objHere == poi) {
-                return true;
+            if (poi is Character) {
+                if (keyValuePair.Value.charactersHere.Contains(poi)) {
+                    return true;
+                }
+            } else {
+                if (keyValuePair.Value.objHere == poi) {
+                    return true;
+                }
             }
         }
         return false;

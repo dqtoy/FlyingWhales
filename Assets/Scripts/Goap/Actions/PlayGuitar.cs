@@ -35,25 +35,25 @@ public class PlayGuitar : GoapAction {
     }
     protected override int GetCost() {
         //Cost:
-        //- Actor is resident of the Guitar's Dwelling: 2-5
-        //- Actor is not a resident but has a positive relationship with the Guitar's Dwelling resident: 7-10
+        //- Actor is resident of the Guitar's Dwelling: 4-10
+        //- Actor is not a resident but has a positive relationship with the Guitar's Dwelling resident: 7-12
         LocationGridTile knownLoc = actor.GetAwareness(poiTarget).knownGridLocation;
         if (actor.homeStructure == knownLoc.structure) {
-            return Utilities.rng.Next(2, 5);
+            return Utilities.rng.Next(4, 10);
         } else {
             Dwelling dwelling = knownLoc.structure as Dwelling;
             if (dwelling.residents.Count > 0) {
                 for (int i = 0; i < dwelling.residents.Count; i++) {
                     Character currResident = dwelling.residents[i];
                     if (currResident.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE)) {
-                        return Utilities.rng.Next(7, 10);
+                        return Utilities.rng.Next(7, 12);
                     }
                 }
                 //the actor does NOT have any positive relations with any resident
                 return 99999; //NOTE: Should never reach here since Requirement prevents this.
             } else {
                 //in cases that the guitar is at a dwelling with no residents, always allow.
-                return Utilities.rng.Next(7, 10);
+                return Utilities.rng.Next(5, 10);
             }
         }
         //return Utilities.rng.Next(3, 10);

@@ -454,7 +454,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
         _characterColor = color;
         _characterColorCode = ColorUtility.ToHtmlStringRGBA(_characterColor).Substring(0, 6);
     }
-    public void Death(string cause = "normal") {
+    public void Death(string cause = "normal", bool cancelCurrentAction = true) {
         _isDead = true;
         //Messenger.RemoveListener<BaseLandmark>(Signals.DESTROY_LANDMARK, OnDestroyLandmark);
         Messenger.Broadcast(Signals.MONSTER_DEATH, this);

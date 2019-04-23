@@ -298,7 +298,7 @@ public class CharacterRelationshipData {
 
     #region For Testing
     public string GetSummary() {
-        string text = targetCharacter.name + " (" + targetCharacter.faction.name + "): ";
+        string text = targetCharacter.name + " (" + targetCharacter.faction?.name ?? "Factionless" + "): ";
         for (int i = 0; i < rels.Count; i++) {
             text += "|" + rels[i].name + "(" + rels[i].severity.ToString() + ")"+ "|";
         }

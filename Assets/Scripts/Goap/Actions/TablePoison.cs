@@ -123,7 +123,7 @@ public class TablePoison : GoapAction {
         }
         //Recipient has a positive relationship with a character that became Sick by using the Table:
         else if (pti.eatAtTableAction != null && pti.eatAtTableAction.HasActualEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Sick", pti.eatAtTableAction.actor)
-            && recipient.HasRelationshipOfEffectWith(pti.eatAtTableAction.actor, TRAIT_EFFECT.POSITIVE)) {
+            && recipient.HasRelationshipOfEffectWith(pti.eatAtTableAction.actor, TRAIT_EFFECT.POSITIVE, RELATIONSHIP_TRAIT.RELATIVE)) {
             //- **Recipient Response Text**: "That despicable [Actor Name] almost killed [Sick Character Name]! That's an assault!"
             reactions.Add(string.Format("That despicable {0} almost killed {1}! That's an assault!", actor.name, pti.eatAtTableAction.actor));
             //-**Recipient Effect * *: Remove any positive relationships between Actor and Recipient.
@@ -169,7 +169,7 @@ public class TablePoison : GoapAction {
             }
         }
         //Recipient has a positive relationship with owner of the Table and the Table is still currently poisoned:
-        else if (tableOwner != null && recipient.HasRelationshipOfEffectWith(tableOwner, TRAIT_EFFECT.POSITIVE) && poisonedTrait != null && poisonedTrait.responsibleCharacters.Contains(actor)) {
+        else if (tableOwner != null && recipient.HasRelationshipOfEffectWith(tableOwner, TRAIT_EFFECT.POSITIVE, RELATIONSHIP_TRAIT.RELATIVE) && poisonedTrait != null && poisonedTrait.responsibleCharacters.Contains(actor)) {
             //- **Recipient Response Text**: "Thank you for letting me know about this. I've got to find a way to remove that poison to save [Target Name]!
             reactions.Add(string.Format("Thank you for letting me know about this. I've got to find a way to remove that poison to save {0}!", actor.name));
             //-**Recipient Effect * *: If Adventurer or Soldier or Unaligned Non - Beast, create a Remove Poison Job.
@@ -207,7 +207,7 @@ public class TablePoison : GoapAction {
             //-**Recipient Effect * *: no effect
         }
         //Recipient and Actor have a positive relationship and the Table is still currently poisoned. Recipient and Target are not enemies:
-        else if (recipient.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE) && poisonedTrait != null
+        else if (recipient.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE, RELATIONSHIP_TRAIT.RELATIVE) && poisonedTrait != null
             && poisonedTrait.responsibleCharacters.Contains(actor) && tableOwner != null && !recipient.HasRelationshipOfTypeWith(tableOwner, RELATIONSHIP_TRAIT.ENEMY)) {
             //- **Recipient Response Text**: "[Actor Name] is attempting murder! I've got to put a stop to this."
             reactions.Add(string.Format("{0} is attempting murder! I've got to put a stop to this.", actor.name));
@@ -222,7 +222,7 @@ public class TablePoison : GoapAction {
             }
         }
         //Recipient and Actor have a positive relationship and the Table already killed the Target. Recipient and Target are not enemies:
-        else if (recipient.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE) && pti.eatAtTableAction != null 
+        else if (recipient.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE, RELATIONSHIP_TRAIT.RELATIVE) && pti.eatAtTableAction != null 
             && tableOwner != null && pti.eatAtTableAction.HasActualEffect(GOAP_EFFECT_CONDITION.DEATH, null, tableOwner) && !recipient.HasRelationshipOfTypeWith(tableOwner, RELATIONSHIP_TRAIT.ENEMY)) {
             //- **Recipient Response Text**: "[Actor Name] killed somebody! This is horrible!"
             reactions.Add(string.Format("{0} killed somebody! This is horrible!", actor.name));
@@ -230,7 +230,7 @@ public class TablePoison : GoapAction {
             recipient.ReactToCrime(CRIME.MURDER, actor, null, false);
         }
         //Recipient and Actor have no positive relationship but are from the same faction and the Table is still currently poisoned. Recipient and Target have no relationship:
-        else if (!recipient.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE) && recipient.faction == actor.faction && poisonedTrait != null
+        else if (!recipient.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE, RELATIONSHIP_TRAIT.RELATIVE) && recipient.faction == actor.faction && poisonedTrait != null
             && poisonedTrait.responsibleCharacters.Contains(actor) && tableOwner != null && !recipient.HasRelationshipWith(tableOwner)) {
             //- **Recipient Response Text**: "[Actor Name] is attempting murder!"
             reactions.Add(string.Format("{0} is attempting murder!", actor.name));

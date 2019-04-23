@@ -145,7 +145,10 @@ public class GoapAction {
         isPerformingActualAction = true;
         if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
             Character targetCharacter = poiTarget as Character;
-            targetCharacter.FaceTarget(actor);
+            if (poiTarget != actor) {
+                targetCharacter.marker.pathfindingAI.AdjustDoNotMove(1);
+                targetCharacter.FaceTarget(actor);
+            }
         }
     }
     protected virtual void CreateThoughtBubbleLog() {
@@ -177,18 +180,6 @@ public class GoapAction {
         if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
             if((poiTarget as Character) != actor) {
                 targetCharacter = poiTarget as Character;
-                //string log = actor.name + " is planning to do something to " + targetCharacter.name + " at " + actor.specificLocation.name;
-                ////GameManager.Instance.SetPausedState(true);
-                //if (targetCharacter.ownParty.icon != null && targetCharacter.ownParty.icon.isTravelling && targetCharacter.ownParty.icon.travelLine == null) {
-                //    targetCharacter.marker.StopMovement(() => MoveToDoAction(plan, targetCharacter));
-                //    log += "\n- " + targetCharacter.name + " is currently travelling, stopping movement";
-                //    Debug.LogWarning(log);
-                //    return;
-                //} else {
-                //    log += "\n- " + targetCharacter.name + " is not travelling, actor is moving towards it...";
-                //    Debug.LogWarning(log);
-                //}
-
             }
         }
 
@@ -272,6 +263,15 @@ public class GoapAction {
         actor.OnCharacterDoAction(this);
         currentState.StopPerTickEffect();
         End();
+
+        if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+            if (poiTarget != actor) {
+                Character targetCharacter = poiTarget as Character;
+                targetCharacter.marker.pathfindingAI.AdjustDoNotMove(-1);
+            }
+            
+        }
+
         if (endAction != null) {
             endAction(result, this);
         } else {

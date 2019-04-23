@@ -37,7 +37,7 @@ public class DispelMagic : GoapAction {
     #region State Effects
     public void PreDispelMagicSuccess() {
         //**Pre Effect 1**: Prevent movement of Target
-        (poiTarget as Character).marker.pathfindingAI.AdjustDoNotMove(1);
+        //(poiTarget as Character).marker.pathfindingAI.AdjustDoNotMove(1);
 
     }
     public void AfterDispelMagicSuccess() {
@@ -49,7 +49,7 @@ public class DispelMagic : GoapAction {
         //**After Effect 2**: Actor loses Ritualized trait.
         RemoveTraitFrom(actor, "Ritualized");
         //**After Effect 3**: Allow movement of Target
-        (poiTarget as Character).marker.pathfindingAI.AdjustDoNotMove(-1);
+        //(poiTarget as Character).marker.pathfindingAI.AdjustDoNotMove(-1);
 
     }
     #endregion

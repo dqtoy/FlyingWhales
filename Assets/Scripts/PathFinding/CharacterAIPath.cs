@@ -27,9 +27,10 @@ public class CharacterAIPath : AIPath {
         //TODO: Move these to delegates
         if (marker.hasFleePath) {
             marker.OnFinishFleePath();
-        } else if (marker.currentlyEngaging != null) {
-            marker.OnReachEngageTarget();
-        }
+        } 
+        //else if (marker.currentlyEngaging != null) {
+        //    marker.OnReachEngageTarget();
+        //}
     }
 
     protected override void OnPathComplete(Path newPath) {

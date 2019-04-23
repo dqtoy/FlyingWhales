@@ -34,11 +34,11 @@ public class CureCharacter : GoapAction {
     #endregion
 
     #region State Effects
-    public void PreCureSuccess() {
-        //**Pre Effect 1**: Prevent movement of Target
-        (poiTarget as Character).marker.pathfindingAI.AdjustDoNotMove(1);
+    //public void PreCureSuccess() {
+    //    //**Pre Effect 1**: Prevent movement of Target
+    //    (poiTarget as Character).marker.pathfindingAI.AdjustDoNotMove(1);
 
-    }
+    //}
     public void AfterCureSuccess() {
         //**After Effect 1**: Reduce target's Sick trait
         if(parentPlan.job != null) {
@@ -48,7 +48,7 @@ public class CureCharacter : GoapAction {
         //**After Effect 2**: Reduce character's Supply by 10
         actor.AdjustSupply(-10);
         //**After Effect 3**: Allow movement of Target
-        (poiTarget as Character).marker.pathfindingAI.AdjustDoNotMove(-1);
+        //(poiTarget as Character).marker.pathfindingAI.AdjustDoNotMove(-1);
     }
     #endregion
 }

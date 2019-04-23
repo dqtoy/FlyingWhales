@@ -160,14 +160,14 @@ public class ConsoleMenu : UIMenu {
     }
     private string GetSecondaryCharacterInfo() {
         Character character = UIManager.Instance.characterInfoUI.activeCharacter;
-        string text = character.name + "'s Relationships " + character.relationships.Count.ToString();
-        int counter = 0;
-        foreach (KeyValuePair<Character, CharacterRelationshipData> kvp in character.relationships) {
-            text += "\n\n" + counter.ToString() + kvp.Value.GetSummary();
-            counter++;
-        }
+        //string text = character.name + "'s Relationships " + character.relationships.Count.ToString();
+        //int counter = 0;
+        //foreach (KeyValuePair<Character, CharacterRelationshipData> kvp in character.relationships) {
+        //    text += "\n\n" + counter.ToString() + kvp.Value.GetSummary();
+        //    counter++;
+        //}
 
-        text += "\n" + character.name + "'s Location History:";
+        string text = "\n" + character.name + "'s Location History:";
         for (int i = 0; i < character.locationHistory.Count; i++) {
             text += "\n\t" + character.locationHistory[i];
         }
@@ -314,6 +314,13 @@ public class ConsoleMenu : UIMenu {
                 if (currCharacter.currentStructure == null && currCharacter.minion == null) {
                     Debug.LogWarning("There is an alive character with a null current structure! " + currCharacter.name);
                     //UIManager.Instance.Pause();
+                }
+            } else {
+                for (int j = 0; j < currCharacter.marker.hostilesInRange.Count; j++) {
+                    Character hostileInRange = currCharacter.marker.hostilesInRange[j];
+                    if (hostileInRange.isDead) {
+                        Debug.LogWarning("There is a dead character (" + hostileInRange.name + ") in " + currCharacter.name + "'s hostile range!");
+                    }
                 }
             }
         }
