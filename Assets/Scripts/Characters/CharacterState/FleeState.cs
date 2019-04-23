@@ -41,12 +41,17 @@ public class FleeState : CharacterState {
     }
 
     public void CheckForEndState() {
-        if (stateComponent.character.marker.GetNearestValidHostile() == null) {
-            //can end flee
+        if (stateComponent.character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+            //if the character has a negative disabler trait, end this state
             OnExitThisState();
         } else {
-            //redetermine flee path
-            stateComponent.character.marker.RedetermineFlee();
+            if (stateComponent.character.marker.GetNearestValidHostile() == null) {
+                //can end flee
+                OnExitThisState();
+            } else {
+                //redetermine flee path
+                stateComponent.character.marker.RedetermineFlee();
+            }
         }
     }
 }

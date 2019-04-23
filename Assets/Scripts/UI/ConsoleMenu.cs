@@ -315,13 +315,16 @@ public class ConsoleMenu : UIMenu {
                     Debug.LogWarning("There is an alive character with a null current structure! " + currCharacter.name);
                     //UIManager.Instance.Pause();
                 }
-            } else {
-                for (int j = 0; j < currCharacter.marker.hostilesInRange.Count; j++) {
-                    Character hostileInRange = currCharacter.marker.hostilesInRange[j];
-                    if (hostileInRange.isDead) {
-                        Debug.LogWarning("There is a dead character (" + hostileInRange.name + ") in " + currCharacter.name + "'s hostile range!");
+                if (currCharacter.marker != null) {
+                    for (int j = 0; j < currCharacter.marker.hostilesInRange.Count; j++) {
+                        Character hostileInRange = currCharacter.marker.hostilesInRange[j];
+                        if (hostileInRange.isDead) {
+                            Debug.LogWarning("There is a dead character (" + hostileInRange.name + ") in " + currCharacter.name + "'s hostile range!");
+                            UIManager.Instance.Pause();
+                        }
                     }
                 }
+                
             }
         }
     }

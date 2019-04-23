@@ -671,7 +671,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   version: 2
-  radius: 0.3
+  radius: 0.15
   height: 2
   repathRate: 0.2
   canSearch: 1
@@ -685,15 +685,15 @@ MonoBehaviour:
   orientation: 1
   enableRotation: 0
   targetCompatibility: {fileID: 0}
-  maxAcceleration: 9999
+  maxAcceleration: 99999
   rotationSpeed: 360
   slowdownDistance: 0
-  pickNextWaypointDist: 0.3
-  endReachedDistance: 0.5
+  pickNextWaypointDist: 0.32
+  endReachedDistance: 0.4
   alwaysDrawGizmos: 1
   slowWhenNotFacingTarget: 1
   whenCloseToDestination: 0
-  constrainInsideGraph: 0
+  constrainInsideGraph: 1
   marker: {fileID: 114379759619008666}
   searchLength: 1000
   spread: 5000
