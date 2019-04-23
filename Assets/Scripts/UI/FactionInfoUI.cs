@@ -215,6 +215,9 @@ public class FactionInfoUI : UIMenu {
     private void OrderCharacterItems() {
         if (activeFaction.leader is Character) {
             LandmarkCharacterItem leaderItem = GetItem(activeFaction.leader as Character);
+            if (leaderItem == null) {
+                throw new System.Exception("Leader item in " + activeFaction.name + "'s UI is null!");
+            }
             leaderItem.transform.SetAsFirstSibling();
             leaderEmblem.gameObject.SetActive(true);
             leaderEmblem.SetParent(leaderItem.transform);

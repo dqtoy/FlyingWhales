@@ -156,7 +156,7 @@ public class CharacterMarker : PooledObject {
         this.gameObject.transform.SetParent(tile.parentAreaMap.objectsParent);
         transform.position = tile.centeredWorldLocation;
         tile.structure.location.AddCharacterToLocation(character);
-        this.gameObject.SetActive(true);
+        SetActiveState(true);
         UpdatePosition();
         UpdateAnimation();
         UpdateActionIcon();
@@ -935,6 +935,9 @@ public class CharacterMarker : PooledObject {
     public void AdjustIsStoppedByOtherCharacter(int amount) {
         isStoppedByOtherCharacter += amount;
         UpdateAnimation();
+    }
+    public void SetActiveState(bool state) {
+        this.gameObject.SetActive(state);
     }
     #endregion
 

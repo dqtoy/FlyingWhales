@@ -266,6 +266,15 @@ public class InteriorMapManager : MonoBehaviour {
                 summary += "\n\tCharacter Owner: " + (tile.objHere as SpecialToken).characterOwner?.name ?? "None";
                 summary += "\n\tFaction Owner: " + (tile.objHere as SpecialToken).factionOwner?.name ?? "None";
             }
+            summary += "\n\tTraits: ";
+            if (tile.objHere.traits.Count > 0) {
+                for (int i = 0; i < tile.objHere.traits.Count; i++) {
+                    summary += "\n\t\t- " + tile.objHere.traits[i].name;
+                }
+               
+            } else {
+                summary += "None";
+            }
         }
         summary += "\nCharacters Here: ";
         if (tile.charactersHere.Count > 0) {

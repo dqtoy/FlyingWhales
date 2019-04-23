@@ -899,6 +899,10 @@ MonoBehaviour:
       inactiveTile: {fileID: 11400000, guid: 83f165685f17d3e4c9d6378fefbfeb4a, type: 2}
     - activeTile: {fileID: 11400000, guid: 2e58fd5b2fae6c04d9113fc8182a44ae, type: 2}
       inactiveTile: {fileID: 11400000, guid: 2e58fd5b2fae6c04d9113fc8182a44ae, type: 2}
+  bed2SleepingVariant: {fileID: 11400000, guid: 07fbfb0f04b704441990560e16face2b,
+    type: 2}
+  bed1SleepingVariant: {fileID: 11400000, guid: 33042c7f3715cf642b7abbb0d2248827,
+    type: 2}
   leftWall: {fileID: 11400000, guid: c05951cff2b0fc7449f72ccebda1c382, type: 2}
   rightWall: {fileID: 11400000, guid: 9c1ad6fdb19ade5428fd7d86124e6aa4, type: 2}
   topWall: {fileID: 11400000, guid: 801dc14b009276d4cb7b1cc2212bceee, type: 2}

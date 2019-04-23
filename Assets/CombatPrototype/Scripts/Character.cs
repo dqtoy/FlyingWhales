@@ -3979,6 +3979,36 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             EventIntel ei = intel as EventIntel;
             if (ei.action.endedAtState != null && ei.action.endedAtState.shareIntelReaction != null) {
                 dialogReactions.AddRange(ei.action.endedAtState.shareIntelReaction.Invoke(this, ei));
+            } else {
+                bool doesNotConcernMe = false;
+                //If the event's actor and target do not have any relationship with the recipient and are not part of his faction, 
+                //and if no item involved is owned by the recipient: "This does not concern me."
+                if (!this.HasRelationshipWith(ei.action.actor) 
+                    && ei.action.actor.faction != this.faction) {
+                    if (ei.action.poiTarget is Character) {
+                        Character otherCharacter = ei.action.poiTarget as Character;
+                        if (!this.HasRelationshipWith(otherCharacter)
+                            && otherCharacter.faction != this.faction) {
+                            doesNotConcernMe = true;
+                        }
+                    } else if (ei.action.poiTarget is TileObject) {
+                        TileObject obj = ei.action.poiTarget as TileObject;
+                        if (!obj.IsOwnedBy(this)) {
+                            doesNotConcernMe = true;
+                        }
+                    } else if (ei.action.poiTarget is SpecialToken) {
+                        SpecialToken obj = ei.action.poiTarget as SpecialToken;
+                        if (obj.characterOwner != this) {
+                            doesNotConcernMe = true;
+                        }
+                    }
+                }
+
+                if (doesNotConcernMe) {
+                    dialogReactions.Add("This does not concern me.");
+                } else {
+                    dialogReactions.Add("A proper response to this information has not been implemented yet.");
+                }
             }            
             //Dictionary<ActionEffectReaction, GoapEffect> reactions = new Dictionary<ActionEffectReaction, GoapEffect>();
             //for (int i = 0; i < ei.action.actualEffects.Count; i++) {

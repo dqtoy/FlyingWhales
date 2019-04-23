@@ -19,10 +19,11 @@ public class Sleep : GoapAction {
     }
     public override void PerformActualAction() {
         if (poiTarget.gridTileLocation != null && (actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation))) {
-            if (poiTarget.state != POI_STATE.INACTIVE) {
+            TileObject obj = poiTarget as TileObject;
+            if (obj.IsAvailable()) {
                 SetState("Rest Success");
             } else {
-                Debug.LogError(actor.name + " failed " + goapName + " action while performing it!");
+                //Debug.LogError(actor.name + " failed " + goapName + " action while performing it!");
                 SetState("Rest Fail");
             }
         } else {
@@ -63,13 +64,14 @@ public class Sleep : GoapAction {
             return false;
         }
         LocationGridTile knownLoc = awareness.knownGridLocation;
-        if (targetStructure.structureType == STRUCTURE_TYPE.DWELLING && knownLoc != null && poiTarget.state != POI_STATE.INACTIVE) {
+        if (targetStructure.structureType == STRUCTURE_TYPE.DWELLING && knownLoc != null) {
+            TileObject obj = poiTarget as TileObject;
+            return obj.IsAvailable();
             //if(knownLoc.occupant == null) {
             //    return true;
             //} else if (knownLoc.occupant == actor) {
             //    return true;
             //}
-            return true;
         }
         return false;
     }
@@ -78,7 +80,7 @@ public class Sleep : GoapAction {
     #region State Effects
     private void PreRestSuccess() {
         currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
-        poiTarget.SetPOIState(POI_STATE.INACTIVE);
+        //poiTarget.SetPOIState(POI_STATE.INACTIVE);
         //actor.AdjustDoNotGetTired(1);
         Resting restingTrait = new Resting();
         actor.AddTrait(restingTrait);
@@ -87,7 +89,7 @@ public class Sleep : GoapAction {
         actor.AdjustTiredness(7);
     }
     private void AfterRestSuccess() {
-        poiTarget.SetPOIState(POI_STATE.ACTIVE);
+        //poiTarget.SetPOIState(POI_STATE.ACTIVE);
         //actor.AdjustDoNotGetTired(-1);
         RemoveTraitFrom(actor, "Resting");
     }
