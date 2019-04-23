@@ -131,6 +131,7 @@ public class ConsoleMenu : UIMenu {
             text += "\n<b>Target POI:</b> " + character.marker.targetPOI?.name ?? "None";
             text += "\n<b>Destination Tile:</b> " + character.marker.destinationTile?.ToString() ?? "None";
             text += "\n<b>Do not move:</b> " + character.marker.pathfindingAI.doNotMove.ToString();
+            text += "\n<b>Last adjust do not move:</b> " + character.marker.pathfindingAI.lastAdjustDoNotMoveST;
             text += "\n<b>Stop Movement?:</b> " + character.marker.pathfindingAI.isStopMovement.ToString();
             if (character.marker.pathfindingAI.isStopMovement) {
                 text += "\n<b>Stop Movement Set by:</b> " + character.marker.pathfindingAI.stopMovementST;

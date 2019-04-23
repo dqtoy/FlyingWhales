@@ -20,6 +20,7 @@ public class JudgeCharacter : GoapAction {
     //    AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.NONE, targetPOI = poiTarget });
     //}
     public override void PerformActualAction() {
+        base.PerformActualAction();
         if (actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
             WeightedDictionary<string> weights = new WeightedDictionary<string>();
             weights.AddElement("Target Executed", 10);
@@ -29,7 +30,6 @@ public class JudgeCharacter : GoapAction {
             }
             SetState(weights.PickRandomElementGivenWeights());
         }
-        base.PerformActualAction();
     }
     protected override int GetCost() {
         return 1;

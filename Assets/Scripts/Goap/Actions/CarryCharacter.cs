@@ -16,13 +16,13 @@ public class CarryCharacter : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, conditionKey = actor, targetPOI = poiTarget });
     }
     public override void PerformActualAction() {
+        base.PerformActualAction();
         //rather than checking location check if the character is not in anyone elses party and is still active
         if ((poiTarget as Character).IsInOwnParty() && poiTarget.state == POI_STATE.ACTIVE) { 
             SetState("Carry Success");
         } else {
             SetState("Target Missing");
         }
-        base.PerformActualAction();
     }
     protected override int GetCost() {
         return 1;

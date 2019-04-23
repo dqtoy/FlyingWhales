@@ -15,8 +15,8 @@ public class DropItemWarehouse : GoapAction {
 
     #region Overrides
     public override void PerformActualAction() {
-        SetState("Drop Success");
         base.PerformActualAction();
+        SetState("Drop Success");
     }
     public override LocationGridTile GetTargetLocationTile() {
         return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);

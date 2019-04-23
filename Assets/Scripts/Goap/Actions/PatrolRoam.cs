@@ -17,12 +17,12 @@ public class PatrolRoam : GoapAction {
     //    AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.NONE, targetPOI = actor });
     //}
     public override void PerformActualAction() {
+        base.PerformActualAction();
         //if (targetTile != null) {
-            SetState("Patrol Success");
+        SetState("Patrol Success");
         //} else {
         //    SetState("Patrol Fail");
         //}
-        base.PerformActualAction();
     }
     protected override int GetCost() {
         return 5;

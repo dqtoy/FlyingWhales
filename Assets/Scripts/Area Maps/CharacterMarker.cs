@@ -678,13 +678,13 @@ public class CharacterMarker : PooledObject {
     //    //Debug.Log(this.character.name + " is rotating " + angle);
     //}
     public void LookAt(Vector3 target) {
-        //only allow asset rotation if the character is in idle animation
-        //if (animator.GetCurrentAnimatorStateInfo(0).IsName("Idle")) {
-            Vector3 diff = target - transform.position;
-            diff.Normalize();
-            float rot_z = Mathf.Atan2(diff.y, diff.x) * Mathf.Rad2Deg;
-            visualsParent.rotation = Quaternion.Euler(0f, 0f, rot_z - 90);
-        //}
+        if (character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+            return;
+        }
+        Vector3 diff = target - transform.position;
+        diff.Normalize();
+        float rot_z = Mathf.Atan2(diff.y, diff.x) * Mathf.Rad2Deg;
+        visualsParent.rotation = Quaternion.Euler(0f, 0f, rot_z - 90);
     }
     //public void ReceivePathFromPathfindingThread(InnerPathfindingThread innerPathfindingThread) {
     //    _currentPath = innerPathfindingThread.path;

@@ -79,9 +79,13 @@ public class CharacterAIPath : AIPath {
         base.UpdateMe();
        
     }
+    public string lastAdjustDoNotMoveST { get; private set; }
     public void AdjustDoNotMove(int amount) {
         doNotMove += amount;
         doNotMove = Mathf.Max(0, doNotMove);
+        if (!StackTraceUtility.ExtractStackTrace().Contains("Pause")) {
+            lastAdjustDoNotMoveST = "Adjustment: " + amount.ToString() + "\n" + StackTraceUtility.ExtractStackTrace();
+        }
     }
     public string stopMovementST;
     public void SetIsStopMovement(bool state) {

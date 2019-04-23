@@ -24,6 +24,7 @@ public class ChatCharacter : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
     }
     public override void PerformActualAction() {
+        base.PerformActualAction();
         if (actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
             Character target = poiTarget as Character;
             if (IsTargetUnable(target)) {
@@ -34,7 +35,6 @@ public class ChatCharacter : GoapAction {
         } else {
             SetState("Target Missing");
         }
-        base.PerformActualAction();
     }
     protected override int GetCost() {
         int cost = 4;

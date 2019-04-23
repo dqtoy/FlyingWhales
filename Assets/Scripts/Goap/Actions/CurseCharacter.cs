@@ -24,12 +24,12 @@ public class CurseCharacter : GoapAction {
         //AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, targetPOI = poiTarget });
     }
     public override void PerformActualAction() {
+        base.PerformActualAction();
         if (actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
             SetState("Curse Success");
         } else {
             SetState("Target Missing");
         }
-        base.PerformActualAction();
     }
     protected override int GetCost() {
         return 3;

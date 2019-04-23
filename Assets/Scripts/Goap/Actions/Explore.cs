@@ -20,12 +20,12 @@ public class Explore : GoapAction {
     //    AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.NONE, targetPOI = actor });
     //}
     public override void PerformActualAction() {
+        base.PerformActualAction();
         //if (targetTile != null) {
-            SetState("Explore Success");
+        SetState("Explore Success");
         //} else {
         //    SetState("Explore Fail");
         //}
-        base.PerformActualAction();
     }
     protected override int GetCost() {
         return 5;

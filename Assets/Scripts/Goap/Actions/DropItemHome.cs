@@ -20,8 +20,8 @@ public class DropItemHome : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_ITEM, conditionKey = poiTarget, targetPOI = actor });
     }
     public override void PerformActualAction() {
-        SetState("Drop Success");
         base.PerformActualAction();
+        SetState("Drop Success");
     }
     protected override int GetCost() {
         return 1;

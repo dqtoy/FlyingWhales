@@ -553,10 +553,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ParentPool: {fileID: 0}
   visualsParent: {fileID: 4833690815638556}
+  nameLbl: {fileID: 114873295937025758}
   mainImg: {fileID: 212044654499763036}
   hoveredImg: {fileID: 212097248544747360}
   clickedImg: {fileID: 212731852412647684}
-  nameLbl: {fileID: 114873295937025758}
   actionIcon: {fileID: 212948007245262788}
   actionIconDictionary:
     m_keys:
@@ -685,7 +685,7 @@ MonoBehaviour:
   orientation: 1
   enableRotation: 0
   targetCompatibility: {fileID: 0}
-  maxAcceleration: 99999
+  maxAcceleration: 9999
   rotationSpeed: 360
   slowdownDistance: 0
   pickNextWaypointDist: 0.32

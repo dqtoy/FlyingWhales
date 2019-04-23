@@ -18,12 +18,12 @@ public class ReleaseCharacter : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Restrained", targetPOI = poiTarget });
     }
     public override void PerformActualAction() {
+        base.PerformActualAction();
         if (actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
             SetState("Release Success");
         } else {
             SetState("Target Missing");
         }
-        base.PerformActualAction();
     }
     protected override int GetCost() {
         return 1;

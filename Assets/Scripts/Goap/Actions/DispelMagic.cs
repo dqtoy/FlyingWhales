@@ -22,12 +22,12 @@ public class DispelMagic : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Reanimated", targetPOI = poiTarget });
     }
     public override void PerformActualAction() {
+        base.PerformActualAction();
         if (actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
             SetState("Dispel Magic Success");
         } else {
             SetState("Target Missing");
         }
-        base.PerformActualAction();
     }
     protected override int GetCost() {
         return 1;
