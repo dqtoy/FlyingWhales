@@ -131,6 +131,7 @@ public class ConsoleMenu : UIMenu {
             text += "\n<b>Target POI:</b> " + character.marker.targetPOI?.name ?? "None";
             text += "\n<b>Destination Tile:</b> " + character.marker.destinationTile?.ToString() ?? "None";
             text += "\n<b>Do not move:</b> " + character.marker.pathfindingAI.doNotMove.ToString();
+            text += "\n<b>Last adjust do not move:</b> " + character.marker.pathfindingAI.lastAdjustDoNotMoveST;
             text += "\n<b>Stop Movement?:</b> " + character.marker.pathfindingAI.isStopMovement.ToString();
             if (character.marker.pathfindingAI.isStopMovement) {
                 text += "\n<b>Stop Movement Set by:</b> " + character.marker.pathfindingAI.stopMovementST;
@@ -315,13 +316,16 @@ public class ConsoleMenu : UIMenu {
                     Debug.LogWarning("There is an alive character with a null current structure! " + currCharacter.name);
                     //UIManager.Instance.Pause();
                 }
-            } else {
-                for (int j = 0; j < currCharacter.marker.hostilesInRange.Count; j++) {
-                    Character hostileInRange = currCharacter.marker.hostilesInRange[j];
-                    if (hostileInRange.isDead) {
-                        Debug.LogWarning("There is a dead character (" + hostileInRange.name + ") in " + currCharacter.name + "'s hostile range!");
+                if (currCharacter.marker != null) {
+                    for (int j = 0; j < currCharacter.marker.hostilesInRange.Count; j++) {
+                        Character hostileInRange = currCharacter.marker.hostilesInRange[j];
+                        if (hostileInRange.isDead) {
+                            Debug.LogWarning("There is a dead character (" + hostileInRange.name + ") in " + currCharacter.name + "'s hostile range!");
+                            UIManager.Instance.Pause();
+                        }
                     }
                 }
+                
             }
         }
     }

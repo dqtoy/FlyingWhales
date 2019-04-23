@@ -13,6 +13,11 @@ public class Corpse : TileObject, IPointOfInterest {
         Initialize(TILE_OBJECT_TYPE.CORPSE);
     }
 
+    public override void OnClickAction() {
+        base.OnClickAction();
+        UIManager.Instance.ShowCharacterInfo(character);
+    }
+
     public override string ToString() {
         return "Corpse of " + character.name;
     }

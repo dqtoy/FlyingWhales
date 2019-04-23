@@ -16,6 +16,7 @@ public class GetSupply : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_SUPPLY, conditionKey = supplyPile.suppliesInPile, targetPOI = actor });
     }
     public override void PerformActualAction() {
+        base.PerformActualAction();
         if (poiTarget.gridTileLocation != null && (actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsAdjacentTo(poiTarget))) {
             SupplyPile supplyPile = poiTarget as SupplyPile;
             if (supplyPile.suppliesInPile > 0) {
@@ -26,7 +27,6 @@ public class GetSupply : GoapAction {
         } else {
             SetState("Target Missing");
         }
-        base.PerformActualAction();
     }
     protected override int GetCost() {
         return 3;

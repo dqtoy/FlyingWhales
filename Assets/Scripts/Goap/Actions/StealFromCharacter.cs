@@ -29,6 +29,7 @@ public class StealFromCharacter : GoapAction {
         //AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, targetPOI = actor });
     }
     public override void PerformActualAction() {
+        base.PerformActualAction();
         if (!isTargetMissing && (actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation))) {
             if (_targetCharacter.isHoldingItem) {
                 SetState("Steal Success");
@@ -38,7 +39,6 @@ public class StealFromCharacter : GoapAction {
         } else {
             SetState("Target Missing");
         }
-        base.PerformActualAction();
     }
     protected override int GetCost() {
         if (actor.GetTrait("Kleptomaniac") != null) {

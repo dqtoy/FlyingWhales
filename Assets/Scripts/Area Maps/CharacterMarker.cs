@@ -55,6 +55,7 @@ public class CharacterMarker : PooledObject {
     public float speedModifier { get; private set; }
     public int useWalkSpeed { get; private set; }
     public int targettedByRemoveNegativeTraitActionsCounter { get; private set; }
+    public int isStoppedByOtherCharacter { get; private set; } //this is increased, when the action of another character stops this characters movement
 
     private bool forceFollowTarget; //If the character should follow the target no matter where they go, must only be used with characters
     private LocationGridTile _previousGridTile;
@@ -101,6 +102,7 @@ public class CharacterMarker : PooledObject {
         Messenger.AddListener<Character, Trait>(Signals.TRAIT_ADDED, OnCharacterGainedTrait);
         Messenger.AddListener<Character, Trait>(Signals.TRAIT_REMOVED, OnCharacterLostTrait);
         Messenger.AddListener<Character, GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
+        Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
 
         PathfindingManager.Instance.AddAgent(pathfindingAI);
         //InteriorMapManager.Instance.AddAgent(rvoController);
@@ -154,7 +156,7 @@ public class CharacterMarker : PooledObject {
         this.gameObject.transform.SetParent(tile.parentAreaMap.objectsParent);
         transform.position = tile.centeredWorldLocation;
         tile.structure.location.AddCharacterToLocation(character);
-        this.gameObject.SetActive(true);
+        SetActiveState(true);
         UpdatePosition();
         UpdateAnimation();
         UpdateActionIcon();
@@ -302,6 +304,22 @@ public class CharacterMarker : PooledObject {
         RemovePOIFromInVisionRange(travellingParty.owner);
 
     }
+    private void OnCharacterDied(Character otherCharacter) {
+        if (otherCharacter != character) {
+            if (hostilesInRange.Contains(otherCharacter)) {
+                //if this character is currently engaging(chasing) the character that died 
+                //and they are not currently in combat, remove the character that died from this characters hostile range
+                if (currentlyEngaging == otherCharacter) {
+                    if (currentlyCombatting != otherCharacter) {
+                        RemoveHostileInRange(otherCharacter);
+                    }
+                } else {
+                    RemoveHostileInRange(otherCharacter);
+                }
+            }
+            
+        }
+    }
     #endregion
 
     #region UI
@@ -407,7 +425,7 @@ public class CharacterMarker : PooledObject {
         //if (currentMoveCoroutine != null) {
         //    StopCoroutine(currentMoveCoroutine);
         //}
-        character = null;
+        //character = null;
         hoverEnterAction = null;
         hoverExitAction = null;
         destinationTile = null;
@@ -424,6 +442,7 @@ public class CharacterMarker : PooledObject {
         if (Messenger.eventTable.ContainsKey(Signals.PARTY_STARTED_TRAVELLING)) {
             Messenger.RemoveListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling);
         }
+        Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
     }
     #endregion
 
@@ -659,13 +678,13 @@ public class CharacterMarker : PooledObject {
     //    //Debug.Log(this.character.name + " is rotating " + angle);
     //}
     public void LookAt(Vector3 target) {
-        //only allow asset rotation if the character is in idle animation
-        if (animator.GetCurrentAnimatorStateInfo(0).IsName("Idle")) {
-            Vector3 diff = target - transform.position;
-            diff.Normalize();
-            float rot_z = Mathf.Atan2(diff.y, diff.x) * Mathf.Rad2Deg;
-            visualsParent.rotation = Quaternion.Euler(0f, 0f, rot_z - 90);
+        if (character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+            return;
         }
+        Vector3 diff = target - transform.position;
+        diff.Normalize();
+        float rot_z = Mathf.Atan2(diff.y, diff.x) * Mathf.Rad2Deg;
+        visualsParent.rotation = Quaternion.Euler(0f, 0f, rot_z - 90);
     }
     //public void ReceivePathFromPathfindingThread(InnerPathfindingThread innerPathfindingThread) {
     //    _currentPath = innerPathfindingThread.path;
@@ -832,9 +851,14 @@ public class CharacterMarker : PooledObject {
         //StartCoroutine(PlayAnimation(animation));
     }
     private void UpdateAnimation() {
+        if (character.isDead) {
+            return;
+        }
         if (character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
             PlaySleepGround();
-        } else if (character.currentParty.icon.isTravelling) {
+        } else if (isStoppedByOtherCharacter > 0) {
+            PlayIdle();
+        } else if (character.currentParty.icon != null && character.currentParty.icon.isTravelling) {
             //|| character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL
             PlayWalkingAnimation();
         } else if (character.currentAction != null && character.currentAction.currentState != null && !string.IsNullOrEmpty(character.currentAction.currentState.animationName)) {
@@ -907,6 +931,13 @@ public class CharacterMarker : PooledObject {
     public void AdjustTargettedByRemoveNegativeTraitActions(int amount) {
         targettedByRemoveNegativeTraitActionsCounter += amount;
         targettedByRemoveNegativeTraitActionsCounter = Mathf.Max(0, targettedByRemoveNegativeTraitActionsCounter);
+    }
+    public void AdjustIsStoppedByOtherCharacter(int amount) {
+        isStoppedByOtherCharacter += amount;
+        UpdateAnimation();
+    }
+    public void SetActiveState(bool state) {
+        this.gameObject.SetActive(state);
     }
     #endregion
 
@@ -998,15 +1029,6 @@ public class CharacterMarker : PooledObject {
     #region Reactions
     private void NormalReactToHostileCharacter(Character otherCharacter, CHARACTER_STATE forcedReaction = CHARACTER_STATE.NONE) {
         string summary = character.name + " will react to hostile " + otherCharacter.name;
-
-        ////- All characters that see another hostile will drop a non-combat action, if doing any.
-        //if (character.IsDoingCombatAction()) {
-        //    summary += "\n" + character.name + " is already doing a combat action. Ignoring " + otherCharacter.name;
-        //    Debug.Log(summary);
-        //    //if currently doing a combat action, do not react to any characters
-        //    return;
-        //}
-
         if (forcedReaction != CHARACTER_STATE.NONE) {
             character.stateComponent.SwitchToState(forcedReaction, otherCharacter);
             summary += "\n" + character.name + " was forced to " + forcedReaction.ToString() + ".";
@@ -1024,6 +1046,7 @@ public class CharacterMarker : PooledObject {
                 summary += "\n" + character.name + " will not do anything.";
             } else if (character.role.roleType == CHARACTER_ROLE.BEAST || character.role.roleType == CHARACTER_ROLE.ADVENTURER
                 || character.role.roleType == CHARACTER_ROLE.SOLDIER) {
+                //- Uninjured Beasts, Adventurers and Soldiers will enter Engage mode.
                 if (otherCharacter.IsDoingCombatActionTowards(this.character) || this.character.IsDoingCombatActionTowards(otherCharacter)) {
                     //if the other character is already going to assault this character, and this character chose to engage, wait for the other characters assault instead
                     summary += "\n" + otherCharacter.name + " is already or will engage with this character (" + this.character.name + "), waiting for that, instead of starting new engage state.";
@@ -1058,8 +1081,21 @@ public class CharacterMarker : PooledObject {
                         return;
                     }
 
-                    //- Uninjured Beasts, Adventurers and Soldiers will enter Engage mode.
-                    character.stateComponent.SwitchToState(CHARACTER_STATE.ENGAGE, otherCharacter);
+                    if (this.character.stateComponent.currentState != null &&
+                        this.character.stateComponent.currentState.characterState == CHARACTER_STATE.ENGAGE) {
+                        //if the character is already in engage mode, check if the other character is nearer than the one that he/she is currently engaging
+                        Character originalTarget = this.character.stateComponent.currentState.targetCharacter;
+                        float distanceToOG = Vector2.Distance(this.transform.position, originalTarget.marker.transform.position);
+                        float distanceToNewTarget = Vector2.Distance(this.transform.position, otherCharacter.marker.transform.position);
+                        if (distanceToNewTarget < distanceToOG) {
+                            //if yes, engage the other character instead, 
+                            character.stateComponent.SwitchToState(CHARACTER_STATE.ENGAGE, otherCharacter);
+                        }
+                        //else, keep chasing the original target
+                    } else {
+                        //if the character is not yet in engage mode, engage the new target
+                        character.stateComponent.SwitchToState(CHARACTER_STATE.ENGAGE, otherCharacter);
+                    }
                     summary += "\n" + character.name + " chose to engage.";
                 }
             }
@@ -1090,7 +1126,8 @@ public class CharacterMarker : PooledObject {
         //Debug.LogWarning(character.name + " is fleeing!");
     }
     private void OnFleePathComputed(Path path) {
-        if (character == null || character.stateComponent.currentState == null || character.stateComponent.currentState.characterState != CHARACTER_STATE.FLEE) {
+        if (character == null || character.stateComponent.currentState == null || character.stateComponent.currentState.characterState != CHARACTER_STATE.FLEE 
+            || character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
             return; //this is for cases that the character is no longer in a flee state, but the pathfinding thread returns a flee path
         }
         //Debug.Log(character.name + " computed a flee path!");
@@ -1124,26 +1161,30 @@ public class CharacterMarker : PooledObject {
 
     #region Engage
     public Character currentlyEngaging { get; private set; }
-    public void OnStartEngage() {
+    public Character currentlyCombatting { get; private set; }
+    private string engageSummary;
+
+    public void OnStartEngage(Character target) {
         //determine nearest hostile in range
-        Character nearestHostile = GetNearestValidHostile();
+        //Character nearestHostile = GetNearestValidHostile();
         //set them as a target
         //SetTargetTransform(nearestHostile.marker.transform);
-        GoTo(nearestHostile, () => OnReachEngageTarget());
-        SetCurrentlyEngaging(nearestHostile);
+        if (currentlyEngaging != null) {
+            engageSummary += this.character.name + " has decided to no longer pursue " + currentlyEngaging.name + "\n";
+        }
+        engageSummary += this.character.name + " will now engage " + target.name + "\n";
+
+        GoTo(target, () => OnReachEngageTarget());
+        SetCurrentlyEngaging(target);
         //StartMovement();
     }
     public void OnReachEngageTarget() {
-        //if (!character.IsNear(currentlyEngaging)) {
-        //    throw new Exception(character.name + " reached engage target " + currentlyEngaging.name + ", but is not near to them!");
-        //}
-
         if (currentlyEngaging == null) {
-            //throw new Exception(this.name + " has reached engage target, but its currently engaging target is null");
             return;
         }
 
-        Debug.Log(character.name + " has reached engage target!");
+        engageSummary += this.character.name + " has reached engage target " + currentlyEngaging.name + "\n";
+
         Character enemy = currentlyEngaging;
         //stop the enemy's movement
         enemy.marker.pathfindingAI.AdjustDoNotMove(1);
@@ -1177,6 +1218,8 @@ public class CharacterMarker : PooledObject {
             enemy.marker.OnFinishCombatWith(this.character);
         }
         enemy.marker.pathfindingAI.AdjustDoNotMove(-1);
+        Debug.Log(engageSummary);
+        engageSummary = string.Empty;
     }
     public void SetCannotCombat(bool state) {
         cannotCombat = state;
@@ -1204,20 +1247,23 @@ public class CharacterMarker : PooledObject {
         currentlyEngaging = character;
         //Debug.Log(GameManager.Instance.TodayLogString() + this.character.name + " set as engaging " + currentlyEngaging?.ToString() ?? "null");
     }
+    public void SetCurrentlyCombatting(Character character) {
+        currentlyCombatting = character;
+        //Debug.Log(GameManager.Instance.TodayLogString() + this.character.name + " set as engaging " + currentlyEngaging?.ToString() ?? "null");
+    }
     /// <summary>
     /// This is called after this character finishes a combat encounter with another character
     /// regardless if he/she started it or not.
     /// </summary>
     /// <param name="otherCharacter">The character this character fought with</param>
     private void OnFinishCombatWith(Character otherCharacter) {
-        if (currentlyEngaging != null && currentlyEngaging == otherCharacter) {
+        if (!this.character.isDead && currentlyCombatting != null && currentlyCombatting == otherCharacter) {
             SetCurrentlyEngaging(null);
+            SetCurrentlyCombatting(null);
             SetTargetTransform(null);
-            if (otherCharacter.isDead) {
+            if (otherCharacter.isDead) { //remove hostile character in range, because the listener for character death is only for characters that did not enter combat with the other character
                 RemoveHostileInRange(otherCharacter);
             }
-            //exit current state, which should be engage state
-            this.character.stateComponent.currentState.OnExitThisState();
         }
     }
     #endregion

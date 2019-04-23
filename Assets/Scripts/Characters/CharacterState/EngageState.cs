@@ -34,7 +34,7 @@ public class EngageState : CharacterState {
     #endregion
 
     private void StartEngageMovement() {
-        stateComponent.character.marker.OnStartEngage();
+        stateComponent.character.marker.OnStartEngage(targetCharacter);
     }
 
     public void CheckForEndState() {
@@ -55,6 +55,8 @@ public class EngageState : CharacterState {
         Character targetCharacter = this.targetCharacter;
         if (CanCombatBeTriggeredBetween(engagerCharacter, targetCharacter)) {
             targetCharacter.marker.SetCannotCombat(true);
+            targetCharacter.marker.SetCurrentlyCombatting(engagerCharacter);
+            engagerCharacter.marker.SetCurrentlyCombatting(targetCharacter);
 
             targetCharacter.AdjustIsWaitingForInteraction(1);
             if (targetCharacter.currentAction != null && !targetCharacter.currentAction.isDone) {

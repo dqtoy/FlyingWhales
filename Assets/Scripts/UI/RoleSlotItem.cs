@@ -47,6 +47,7 @@ public class RoleSlotItem : MonoBehaviour, IDragParentItem {
         Messenger.AddListener<DragObject>(Signals.DRAG_OBJECT_CREATED, OnDragObjectCreated);
         Messenger.AddListener<DragObject>(Signals.DRAG_OBJECT_DESTROYED, OnDragObjectDestroyed);
         Messenger.AddListener<PlayerJobAction>(Signals.JOB_ACTION_COOLDOWN_ACTIVATED, OnJobCooldownActivated);
+        Messenger.AddListener<Intel>(Signals.PLAYER_OBTAINED_INTEL, OnPlayerObtainedIntel);
     }
 
     public void SetCharacter(Character character) {
@@ -200,6 +201,9 @@ public class RoleSlotItem : MonoBehaviour, IDragParentItem {
         } else {
             HideActionButtons();
         }
+    }
+    private void OnPlayerObtainedIntel(Intel intel) {
+        UpdateActionButtons();
     }
     #endregion
 

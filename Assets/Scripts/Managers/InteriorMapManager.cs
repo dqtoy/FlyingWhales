@@ -266,6 +266,15 @@ public class InteriorMapManager : MonoBehaviour {
                 summary += "\n\tCharacter Owner: " + (tile.objHere as SpecialToken).characterOwner?.name ?? "None";
                 summary += "\n\tFaction Owner: " + (tile.objHere as SpecialToken).factionOwner?.name ?? "None";
             }
+            summary += "\n\tTraits: ";
+            if (tile.objHere.traits.Count > 0) {
+                for (int i = 0; i < tile.objHere.traits.Count; i++) {
+                    summary += "\n\t\t- " + tile.objHere.traits[i].name;
+                }
+               
+            } else {
+                summary += "None";
+            }
         }
         summary += "\nCharacters Here: ";
         if (tile.charactersHere.Count > 0) {
@@ -278,6 +287,7 @@ public class InteriorMapManager : MonoBehaviour {
         if (character != null) {
             summary += "\nCharacter: " + character.name;
             summary += "\nDestination: " + (character.marker.destinationTile != null ? character.marker.destinationTile.ToString() : "None");
+            summary += "\nMove Speed: " + character.marker.pathfindingAI.maxSpeed.ToString();
             summary += "\nPOI's in Vision: ";
             if (character.marker.inVisionPOIs.Count > 0) {
                 for (int i = 0; i < character.marker.inVisionPOIs.Count; i++) {

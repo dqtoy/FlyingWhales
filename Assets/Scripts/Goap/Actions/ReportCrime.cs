@@ -28,12 +28,12 @@ public class ReportCrime : GoapAction {
         _requirementAction = Requirement;
     }
     public override void PerformActualAction() {
+        base.PerformActualAction();
         if (!isTargetMissing && (actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation))) {
             SetState("Report Crime Success");
         } else {
             SetState("Target Missing");
         }
-        base.PerformActualAction();
     }
     protected override int GetCost() {
         return 3;

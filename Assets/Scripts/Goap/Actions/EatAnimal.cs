@@ -18,6 +18,7 @@ public class EatAnimal : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = actor });
     }
     public override void PerformActualAction() {
+        base.PerformActualAction();
         if (poiTarget.gridTileLocation != null && (actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsAdjacentTo(poiTarget))) {
             if(poiTarget.state != POI_STATE.INACTIVE) {
                 SetState("Eat Success");
@@ -27,7 +28,6 @@ public class EatAnimal : GoapAction {
         } else {
             SetState("Target Missing");
         }
-        base.PerformActualAction();
     }
     protected override int GetCost() {
         if (actor.GetTrait("Carnivore") != null) {

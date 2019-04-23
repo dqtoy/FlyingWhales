@@ -441,7 +441,6 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
 
     #region Intel
     public void OnClickTileActions(PointerEventData.InputButton inputButton) {
-        Messenger.Broadcast(Signals.HIDE_MENUS);
         //Comment Reason: Used this to quickly set a tiles state from occupied to empty and vice versa.
         //if (inputButton == PointerEventData.InputButton.Right) {
         //    if (tileState == Tile_State.Occupied) {
@@ -455,6 +454,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
             return;
         }
         if (objHere == null) {
+            Messenger.Broadcast(Signals.HIDE_MENUS);
             //if (inputButton == PointerEventData.InputButton.Right) {
             //    if (InteriorMapManager.Instance.IsHoldingPOI()) {
             //        InteriorMapManager.Instance.PlaceHeldPOI(this);
@@ -471,13 +471,18 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
             //} 
             else {
                 //parentAreaMap.ShowIntelItemAt(this, InteractionManager.Instance.CreateNewIntel(objHere));
-                if (objHere is TileObject && (objHere as TileObject).tileObjectType == TILE_OBJECT_TYPE.CORPSE) {
-                    UIManager.Instance.ShowCharacterInfo((objHere as Corpse).character);
+                if (objHere is TileObject) {
+                    (objHere as TileObject).OnClickAction();
+                } else {
+                    Messenger.Broadcast(Signals.HIDE_MENUS);
                 }
             }
-        } else if (objHere is Character) {
-            UIManager.Instance.ShowCharacterInfo((objHere as Character));
         }
+
+        
+        //else if (objHere is Character) {
+        //    UIManager.Instance.ShowCharacterInfo((objHere as Character));
+        //}
         //else if (occupant != null) {
         //    UIManager.Instance.ShowCharacterInfo(occupant);
         //}

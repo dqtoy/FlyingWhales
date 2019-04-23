@@ -150,6 +150,7 @@ public class GoapAction {
             Character targetCharacter = poiTarget as Character;
             if (poiTarget != actor) {
                 targetCharacter.marker.pathfindingAI.AdjustDoNotMove(1);
+                targetCharacter.marker.AdjustIsStoppedByOtherCharacter(1);
                 targetCharacter.FaceTarget(actor);
             }
         }
@@ -266,15 +267,15 @@ public class GoapAction {
         actor.OnCharacterDoAction(this);
         currentState.StopPerTickEffect();
         End();
-
         if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
             if (poiTarget != actor) {
                 Character targetCharacter = poiTarget as Character;
                 targetCharacter.marker.pathfindingAI.AdjustDoNotMove(-1);
+                targetCharacter.marker.AdjustIsStoppedByOtherCharacter(-1);
             }
-            
-        }
 
+        }
+        OnFinishActionTowardsTarget();
         if (endAction != null) {
             endAction(result, this);
         } else {
@@ -312,10 +313,20 @@ public class GoapAction {
                 actor.currentParty.icon.SetOnArriveAction(() => actor.OnArriveAtAreaStopMovement());
             }
         }
+        OnCancelActionTowardsTarget();
         SetIsStopped(true);
         if(isPerformingActualAction && !isDone) {
             //ReturnToActorTheActionResult(InteractionManager.Goap_State_Fail);
             currentState.EndPerTickEffect(false);
+
+            //when the action is ended prematurely, make sure to readjust the target character's do not move values
+            if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+                if (poiTarget != actor) {
+                    Character targetCharacter = poiTarget as Character;
+                    targetCharacter.marker.pathfindingAI.AdjustDoNotMove(-1);
+                    targetCharacter.marker.AdjustIsStoppedByOtherCharacter(-1);
+                }
+            }
         } else {
             //if (action != null && action.poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
             //    Character targetCharacter = action.poiTarget as Character;
@@ -542,6 +553,18 @@ public class GoapAction {
         if (poiTarget is TileObject) {
             TileObject target = poiTarget as TileObject;
             target.OnDoActionToObject(this);
+        }
+    }
+    protected virtual void OnFinishActionTowardsTarget() {
+        if (poiTarget is TileObject) {
+            TileObject target = poiTarget as TileObject;
+            target.OnDoneActionToObject(this);
+        }
+    }
+    protected virtual void OnCancelActionTowardsTarget() {
+        if (poiTarget is TileObject) {
+            TileObject target = poiTarget as TileObject;
+            target.OnCancelActionTowardsObject(this);
         }
     }
     private void OnActorDied(Character character) {

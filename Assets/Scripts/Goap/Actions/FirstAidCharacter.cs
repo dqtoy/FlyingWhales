@@ -22,12 +22,12 @@ public class FirstAidCharacter : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Unconscious", targetPOI = poiTarget });
     }
     public override void PerformActualAction() {
+        base.PerformActualAction();
         if (!isTargetMissing && (poiTarget as Character).IsInOwnParty()) {
             SetState("First Aid Success");
         } else {
             SetState("Target Missing");
         }
-        base.PerformActualAction();
     }
     protected override int GetCost() {
         return 1;

@@ -117,6 +117,6 @@ public class AttributeManager : MonoBehaviour {
         if (traitIconDictionary.ContainsKey(traitName)) {
             return traitIconDictionary[traitName];
         }
-        return null;
+        return traitIconDictionary.Values.First();
     }
 }

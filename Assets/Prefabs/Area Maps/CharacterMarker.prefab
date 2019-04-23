@@ -553,10 +553,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ParentPool: {fileID: 0}
   visualsParent: {fileID: 4833690815638556}
+  nameLbl: {fileID: 114873295937025758}
   mainImg: {fileID: 212044654499763036}
   hoveredImg: {fileID: 212097248544747360}
   clickedImg: {fileID: 212731852412647684}
-  nameLbl: {fileID: 114873295937025758}
   actionIcon: {fileID: 212948007245262788}
   actionIconDictionary:
     m_keys:
@@ -671,7 +671,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   version: 2
-  radius: 0.3
+  radius: 0.15
   height: 2
   repathRate: 0.2
   canSearch: 1
@@ -688,12 +688,12 @@ MonoBehaviour:
   maxAcceleration: 9999
   rotationSpeed: 360
   slowdownDistance: 0
-  pickNextWaypointDist: 0.3
-  endReachedDistance: 0.5
+  pickNextWaypointDist: 0.32
+  endReachedDistance: 0.4
   alwaysDrawGizmos: 1
   slowWhenNotFacingTarget: 1
   whenCloseToDestination: 0
-  constrainInsideGraph: 0
+  constrainInsideGraph: 1
   marker: {fileID: 114379759619008666}
   searchLength: 1000
   spread: 5000

@@ -28,6 +28,7 @@ public class ArgueCharacter : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
     }
     public override void PerformActualAction() {
+        base.PerformActualAction();
         if (!isTargetMissing && actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
             Character target = poiTarget as Character;
             if (IsTargetUnable(target)) {
@@ -38,7 +39,6 @@ public class ArgueCharacter : GoapAction {
         } else {
             SetState("Target Missing");
         }
-        base.PerformActualAction();
     }
     protected override int GetCost() {
         int cost = 5; //Base cost: +5

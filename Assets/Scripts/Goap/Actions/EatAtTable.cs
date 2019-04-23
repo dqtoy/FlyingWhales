@@ -16,6 +16,7 @@ public class EatAtTable : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = actor });
     }
     public override void PerformActualAction() {
+        base.PerformActualAction();
         if (poiTarget.gridTileLocation != null && (actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsAdjacentTo(poiTarget))) {
             poisonedTrait = poiTarget.GetTrait("Poisoned");
             if (poisonedTrait != null) {
@@ -26,7 +27,6 @@ public class EatAtTable : GoapAction {
         } else {
             SetState("Target Missing");
         }
-        base.PerformActualAction();
     }
     protected override int GetCost() {
         LocationGridTile knownLoc = actor.GetAwareness(poiTarget).knownGridLocation;

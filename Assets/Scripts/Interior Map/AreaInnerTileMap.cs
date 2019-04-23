@@ -45,6 +45,10 @@ public class AreaInnerTileMap : MonoBehaviour {
     [SerializeField] private ItemTileBaseDictionary itemTiles;
     [SerializeField] private TileObjectTileBaseDictionary tileObjectTiles;
 
+    //special cases
+    public TileBase bed2SleepingVariant;
+    public TileBase bed1SleepingVariant;
+
     [Header("Structure Tiles")]
     [SerializeField] private TileBase leftWall;
     [SerializeField] private TileBase rightWall;
@@ -121,9 +125,6 @@ public class AreaInnerTileMap : MonoBehaviour {
     public bool isShowing {
         get { return InteriorMapManager.Instance.currentlyShowingMap == this; }
     }
-
-    public enum Cardinal_Direction { North, South, East, West };
-   
 
     #region Map Generation
     public void Initialize(Area area) {
@@ -1289,6 +1290,9 @@ public class AreaInnerTileMap : MonoBehaviour {
                 break;
         }
         objectsTilemap.SetTile(obj.gridTileLocation.localPlace, tileToUse);
+    }
+    public void UpdateTileObjectVisual(TileObject obj, TileBase asset) {
+        objectsTilemap.SetTile(obj.gridTileLocation.localPlace, asset);
     }
     public void OnCharacterMovedTo(Character character, LocationGridTile to, LocationGridTile from) {
         if (from == null) { 

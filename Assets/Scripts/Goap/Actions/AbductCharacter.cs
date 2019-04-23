@@ -19,6 +19,7 @@ public class AbductCharacter : GoapAction {
         //AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", targetPOI = poiTarget });
     }
     public override void PerformActualAction() {
+        base.PerformActualAction();
         if (!isTargetMissing) {
             if (!HasOtherCharacterInRadius()) {
                 SetState("Abduct Success");
@@ -29,7 +30,6 @@ public class AbductCharacter : GoapAction {
         } else {
             SetState("Target Missing");
         }
-        base.PerformActualAction();
     }
     protected override int GetCost() {
         return 3;

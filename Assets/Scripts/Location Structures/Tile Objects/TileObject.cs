@@ -14,7 +14,6 @@ public class  TileObject : IPointOfInterest {
         get { return _traits; }
     }
     public List<Character> awareCharacters { get; private set; } //characters that are aware of this object (Used for checking if a ghost trigger should be destroyed)
-
     public List<string> actionHistory { get; private set; } //list of actions that was done to this object
 
     private LocationGridTile tile;
@@ -45,12 +44,27 @@ public class  TileObject : IPointOfInterest {
         InitializeCollisionTrigger();
     }
 
-	public virtual void OnTargetObject(GoapAction action) {
-        
-    }
+    /// <summary>
+    /// Called when a character starts to do an action towards this object.
+    /// </summary>
+    /// <param name="action">The current action</param>
     public virtual void OnDoActionToObject(GoapAction action) {
         //owner.SetPOIState(POI_STATE.INACTIVE);
         AddActionToHistory(action);
+    }
+    /// <summary>
+    /// Called when a character finished doing an action towards this object.
+    /// </summary>
+    /// <param name="action">The finished action</param>
+    public virtual void OnDoneActionToObject(GoapAction action) {
+       
+    }
+    /// <summary>
+    /// Called when a character cancelled doing an action towards this object.
+    /// </summary>
+    /// <param name="action">The finished action</param>
+    public virtual void OnCancelActionTowardsObject(GoapAction action) {
+
     }
 
     public virtual void SetGridTileLocation(LocationGridTile tile) {
@@ -95,6 +109,16 @@ public class  TileObject : IPointOfInterest {
     public virtual void SetPOIState(POI_STATE state) {
         _state = state;
     }
+    public virtual bool IsAvailable() {
+        return _state != POI_STATE.INACTIVE;
+    }
+    public virtual bool IsOwnedBy(Character character) {
+        return false;
+    }
+    /// <summary>
+    /// Action to do when the player clicks this object on the map.
+    /// </summary>
+    public virtual void OnClickAction() { Messenger.Broadcast(Signals.HIDE_MENUS); }
 
     #region Traits
     public bool AddTrait(string traitName, Character characterResponsible = null, System.Action onRemoveAction = null, GoapAction gainedFromDoing = null, bool triggerOnAdd = true) {
