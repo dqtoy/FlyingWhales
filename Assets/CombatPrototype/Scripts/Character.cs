@@ -4774,7 +4774,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     private void CancelCurrentAction(Character target, string cause) {
         if(this != target && !isDead && currentAction != null && currentAction.poiTarget == target) {
-            Log addLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "plan_cancelled_cause");
+            Log addLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "action_cancelled_cause");
             addLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             addLog.AddToFillers(null, cause, LOG_IDENTIFIER.STRING_1);
             addLog.AddLogToInvolvedObjects();
