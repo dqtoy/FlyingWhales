@@ -200,7 +200,7 @@ public class JobQueue {
                     actor = job.assignedCharacter;
                 }
                 if(actor != null) {
-                    Log addLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "plan_cancelled_cause");
+                    Log addLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "job_cancelled_cause");
                     addLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     addLog.AddToFillers(null, cause, LOG_IDENTIFIER.STRING_1);
                     addLog.AddLogToInvolvedObjects();

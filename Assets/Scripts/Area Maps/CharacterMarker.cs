@@ -18,10 +18,10 @@ public class CharacterMarker : PooledObject {
     public Character character { get; private set; }
 
     public Transform visualsParent;
+    public TextMeshPro nameLbl;
     [SerializeField] private SpriteRenderer mainImg;
     [SerializeField] private SpriteRenderer hoveredImg;
     [SerializeField] private SpriteRenderer clickedImg;
-    [SerializeField] private TextMeshPro nameLbl;
     [SerializeField] private SpriteRenderer actionIcon;
 
     [Header("Actions")]
@@ -157,7 +157,7 @@ public class CharacterMarker : PooledObject {
         transform.position = tile.centeredWorldLocation;
         tile.structure.location.AddCharacterToLocation(character);
         this.gameObject.SetActive(true);
-         UpdatePosition();
+        UpdatePosition();
         UpdateAnimation();
         UpdateActionIcon();
             //tile.SetOccupant(character);

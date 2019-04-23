@@ -17,9 +17,18 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
 
     #region Triggers
     public void OnTriggerEnter2D(Collider2D collision) {
+        if (!parentMarker.character.IsInOwnParty()) {
+            return;
+        }
         POICollisionTrigger collidedWith = collision.gameObject.GetComponent<POICollisionTrigger>();
         if (collidedWith != null && collidedWith.poi != null
             && collidedWith.poi != parentMarker.character) {
+            if (collidedWith.poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+                Character target = collidedWith.poi as Character;
+                if (!target.IsInOwnParty()) {
+                    return;
+                }
+            }
             string collisionSummary = parentMarker.name + " collided with " + collidedWith.poi.name;
             if (collidedWith is GhostCollisionTrigger) {
                 //ignored same structure requirement for ghost collisions
@@ -43,9 +52,18 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
         }
     }
     public void OnTriggerExit2D(Collider2D collision) {
+        if (!parentMarker.character.IsInOwnParty()) {
+            return;
+        }
         POICollisionTrigger collidedWith = collision.gameObject.GetComponent<POICollisionTrigger>();
         if (collidedWith != null && collidedWith.poi != null
             && collidedWith.poi != parentMarker.character) {
+            if (collidedWith.poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+                Character target = collidedWith.poi as Character;
+                if (!target.IsInOwnParty()) {
+                    return;
+                }
+            }
             parentMarker.RemovePOIFromInVisionRange(collidedWith.poi);
             RemovePOIAsInRangeButDifferentStructure(collidedWith.poi);
         }

@@ -71,7 +71,7 @@ public class CharacterAIPath : AIPath {
         }
         marker.UpdatePosition();
         if (doNotMove > 0 || isStopMovement) { return; }
-        if (marker.character.currentParty.icon.isTravelling) { //only rotate if character is travelling
+        if (marker.character.currentParty.icon.isTravelling && marker.character.IsInOwnParty()) { //only rotate if character is travelling
             marker.visualsParent.localRotation = Quaternion.LookRotation(Vector3.forward, this.velocity);
         } else if (marker.character.currentAction != null && marker.character.currentAction.poiTarget != marker.character) {
             marker.LookAt(marker.character.currentAction.poiTarget.gridTileLocation.centeredWorldLocation); //so that the charcter will always face the target, even if it is moving

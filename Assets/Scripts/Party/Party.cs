@@ -246,7 +246,12 @@ public class Party {
             } else {
                 character.SetGridTileLocation(owner.gridTileLocation);
                 character.SetCurrentStructureLocation(owner.currentStructure);
-                character.marker.gameObject.SetActive(false);
+                character.marker.transform.SetParent(_owner.marker.visualsParent);
+                character.marker.transform.localPosition = new Vector3(0f, 0.5f, 0f);
+                character.marker.visualsParent.eulerAngles = Vector3.zero;
+                character.marker.transform.eulerAngles = Vector3.zero;
+                character.marker.nameLbl.gameObject.SetActive(false);
+                character.marker.PlayIdle();
             }
             ApplyCurrentBuffsToCharacter(character);
             Messenger.Broadcast(Signals.CHARACTER_JOINED_PARTY, character, this);
@@ -260,9 +265,11 @@ public class Party {
         }
         if (_characters.Remove(character)) {
             //LocationGridTile gridTile = _owner.gridTileLocation.GetNearestUnoccupiedTileFromThis();
-            _owner.specificLocation.AddCharacterToLocation(character);
+            //_owner.specificLocation.AddCharacterToLocation(character);
             character.OnRemovedFromParty();
             character.marker.PlaceMarkerAt(_owner.gridTileLocation);
+            character.marker.transform.eulerAngles = Vector3.zero;
+            character.marker.nameLbl.gameObject.SetActive(true);
             //character.marker.gameObject.transform.localPosition = gridTile.centeredLocalLocation;
             //character.marker.UpdatePosition();
 

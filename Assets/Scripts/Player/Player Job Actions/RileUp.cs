@@ -65,6 +65,14 @@ public class RileUp : PlayerJobAction {
         _targetCharacter.DropAllPlans();
         _targetCharacter.AdjustIsWaitingForInteraction(-1);
 
+        if(_targetCharacter.stateComponent.currentState != null) {
+            _targetCharacter.stateComponent.currentState.OnExitThisState();
+        }
+        //This is double in case the character is in a minor state and has previous major state, so that the previous major state will end too
+        if (_targetCharacter.stateComponent.currentState != null) {
+            _targetCharacter.stateComponent.currentState.OnExitThisState();
+        }
+
         _targetCharacter.AddTrait("Berserker");
         _targetCharacter.currentParty.GoToLocation(area, PATHFINDING_MODE.NORMAL);
     }
