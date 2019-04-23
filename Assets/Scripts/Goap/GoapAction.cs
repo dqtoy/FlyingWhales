@@ -296,17 +296,23 @@ public class GoapAction {
     }
     public void StopAction() {
         //GoapAction action = actor.currentAction;
-        if(actor.marker.pathfindingThread != null) {
-            actor.marker.pathfindingThread.SetDoNotMove(true);
-        }
+        //if(actor.marker.pathfindingThread != null) {
+        //    actor.marker.pathfindingThread.SetDoNotMove(true);
+        //}
         actor.SetCurrentAction(null);
-        if (actor.currentParty.icon.isTravelling && actor.currentParty.icon.travelLine == null) {
-            //This means that the actor currently travelling to another tile in tilemap
-            actor.marker.StopMovement();
+        if (actor.currentParty.icon.isTravelling) {
+            if(actor.currentParty.icon.travelLine == null) {
+                //This means that the actor currently travelling to another tile in tilemap
+                actor.marker.StopMovement();
+            } else {
+                //This means that the actor is currently travelling to another area
+                actor.currentParty.icon.SetOnArriveAction(() => actor.OnArriveAtAreaStopMovement());
+            }
         }
         SetIsStopped(true);
         if(isPerformingActualAction && !isDone) {
-            ReturnToActorTheActionResult(InteractionManager.Goap_State_Fail);
+            //ReturnToActorTheActionResult(InteractionManager.Goap_State_Fail);
+            currentState.EndPerTickEffect(false);
         } else {
             //if (action != null && action.poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
             //    Character targetCharacter = action.poiTarget as Character;

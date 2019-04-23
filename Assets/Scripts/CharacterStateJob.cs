@@ -12,8 +12,8 @@ public class CharacterStateJob : JobQueueItem {
     }
 
     #region Overrides
-    public override void UnassignJob() {
-        base.UnassignJob();
+    public override void UnassignJob(bool shouldDoAfterEffect = true) {
+        base.UnassignJob(shouldDoAfterEffect);
         if(assignedState != null && assignedCharacter != null) {
             if(assignedCharacter.stateComponent.currentState == assignedState) {
                 assignedCharacter.stateComponent.currentState.OnExitThisState();

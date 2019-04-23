@@ -136,7 +136,7 @@ public class Area {
         possibleSpecialTokenSpawns = new List<SpecialToken>();
         charactersAtLocationHistory = new List<string>();
         structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
-        jobQueue = new JobQueue();
+        jobQueue = new JobQueue(null);
         SetDungeonSupplyRange(0, 0);
         SetMonthlyActions(2);
         SetAreaType(areaType);
@@ -165,7 +165,7 @@ public class Area {
         charactersAtLocationHistory = new List<string>();
         possibleSpecialTokenSpawns = new List<SpecialToken>();
         supplyLog = new List<string>();
-        jobQueue = new JobQueue();
+        jobQueue = new JobQueue(null);
         if (data.raceSetup != null) {
             initialSpawnSetup = new List<InitialRaceSetup>(data.raceSetup);
         } else {

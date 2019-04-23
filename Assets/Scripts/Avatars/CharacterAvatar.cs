@@ -10,6 +10,7 @@ public class CharacterAvatar : MonoBehaviour{
     private Action onPathFinished;
     private Action onPathReceived;
     private Action onPathCancelled;
+    private Action onArriveAction;
 
     private PathFindingThread _currPathfindingRequest; //the current pathfinding request this avatar is waiting for
 
@@ -120,6 +121,12 @@ public class CharacterAvatar : MonoBehaviour{
         targetPOI = poi;
         targetTile = tile;
     }
+    public void SetOnPathFinished(Action action) {
+        onPathFinished = action;
+    }
+    public void SetOnArriveAction(Action action) {
+        onArriveAction = action;
+    }
     public void StartPath(PATHFINDING_MODE pathFindingMode, Action actionOnPathFinished = null, Action actionOnPathReceived = null) {
         //if (smoothMovement.isMoving) {
         //    smoothMovement.ForceStopMovement();
@@ -137,7 +144,7 @@ public class CharacterAvatar : MonoBehaviour{
         Reset();
         if (targetLocation != null) {
             _party.owner.marker.gameObject.SetActive(false);
-            onPathFinished = actionOnPathFinished;
+            SetOnPathFinished(actionOnPathFinished);
             StartTravelling();
         }
     }
@@ -222,13 +229,16 @@ public class CharacterAvatar : MonoBehaviour{
             arriveLog.AddLogToInvolvedObjects();
         }
         Messenger.Broadcast(Signals.PARTY_DONE_TRAVELLING, this.party);
-
+        if(onArriveAction != null) {
+            onArriveAction();
+            SetOnArriveAction(null);
+        }
         if (targetStructure != null) {
             _party.owner.MoveToAnotherStructure(targetStructure, targetTile, targetPOI, onPathFinished);
         } else {
             if(onPathFinished != null) {
                 onPathFinished();
-                onPathFinished = null;
+                SetOnPathFinished(null);
             }
         }
     }
@@ -398,7 +408,7 @@ public class CharacterAvatar : MonoBehaviour{
     public void Reset() {
         //base.Reset();
         smoothMovement.Reset();
-        onPathFinished = null;
+        SetOnPathFinished(null);
         onPathReceived = null;
         direction = DIRECTION.LEFT;
         //targetLocation = null;

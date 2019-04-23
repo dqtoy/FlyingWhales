@@ -171,7 +171,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 return Utilities.NormalizeString(race.ToString()) + " " + role.name;
             }
             //if(role.name == characterClass.className) {
-                return Utilities.GetNormalizedRaceAdjective(race) + " " + characterClass.className;
+            return Utilities.GetNormalizedRaceAdjective(race) + " " + characterClass.className;
             //}
             //return Utilities.GetNormalizedRaceAdjective(race) + " " + role.name + " " + characterClass.className;
         }
@@ -542,7 +542,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         targettedByAction = new List<GoapAction>();
         stateComponent = new CharacterStateComponent(this);
         items = new List<SpecialToken>();
-        jobQueue = new JobQueue();
+        jobQueue = new JobQueue(this);
         allJobsTargettingThis = new List<JobQueueItem>();
         SetPOIState(POI_STATE.ACTIVE);
         SetMoodValue(90);
@@ -595,6 +595,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         Messenger.AddListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
         Messenger.AddListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnLeaveArea);
         Messenger.AddListener<Party>(Signals.PARTY_DONE_TRAVELLING, OnArrivedAtArea);
+        Messenger.AddListener<Character, string>(Signals.CANCEL_CURRENT_ACTION, CancelCurrentAction);
     }
     public void UnsubscribeSignals() {
         Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnOtherCharacterDied);
@@ -605,6 +606,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         Messenger.RemoveListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
         Messenger.RemoveListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnLeaveArea);
         Messenger.RemoveListener<Party>(Signals.PARTY_DONE_TRAVELLING, OnArrivedAtArea);
+        Messenger.RemoveListener<Character, string>(Signals.CANCEL_CURRENT_ACTION, CancelCurrentAction);
     }
     #endregion
 
@@ -690,14 +692,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             if (currentParty.specificLocation == null) {
                 throw new Exception("Specific location of " + this.name + " is null! Please use command /l_character_location_history [Character Name/ID] in console menu to log character's location history. (Use '~' to show console menu)");
             }
-            if(stateComponent.currentState != null) {
+            if (stateComponent.currentState != null) {
                 stateComponent.currentState.OnExitThisState();
             }
+            CancelAllJobsTargettingThisCharacter("target is already dead", false);
+            Messenger.Broadcast(Signals.CANCEL_CURRENT_ACTION, this, "target is already dead");
             if (currentAction != null) {
                 currentAction.StopAction();
             }
-            CancelAllJobsTargettingThisCharacter();
-
             if (ownParty.specificLocation != null && isHoldingItem) {
                 DropAllTokens(ownParty.specificLocation, currentStructure, true);
             }
@@ -1022,11 +1024,11 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         bool wasRoleChanged = false;
         if (_role != null) {
             _role.OnChange(this);
-//#if !WORLD_CREATION_TOOL
-//            Log roleChangeLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "change_role");
-//            roleChangeLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-//            AddHistory(roleChangeLog);
-//#endif
+            //#if !WORLD_CREATION_TOOL
+            //            Log roleChangeLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "change_role");
+            //            roleChangeLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            //            AddHistory(roleChangeLog);
+            //#endif
             wasRoleChanged = true;
         }
         _role = role;
@@ -1074,7 +1076,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 
     #region Character Class
     public void AssignClassByRole(CharacterRole role) {
-        if(role == CharacterRole.BEAST) {
+        if (role == CharacterRole.BEAST) {
             AssignClass(Utilities.GetRespectiveBeastClassNameFromByRace(race));
         } else {
             string className = CharacterManager.Instance.GetRandomClassByIdentifier(role.classNameOrIdentifier);
@@ -1086,7 +1088,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
     }
     public void RemoveClass() {
-        if(_characterClass == null) { return; }
+        if (_characterClass == null) { return; }
         RemoveTraitsFromClass();
         _characterClass = null;
     }
@@ -1179,10 +1181,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         }
     }
-    public void CancelAllJobsTargettingThisCharacter() {
+    public void CancelAllJobsTargettingThisCharacter(string cause = "", bool shouldDoAfterEffect = true) {
         for (int i = 0; i < allJobsTargettingThis.Count; i++) {
             JobQueueItem job = allJobsTargettingThis[0];
-            if (job.jobQueueParent.CancelJob(job)) {
+            if (job.jobQueueParent.CancelJob(job, cause, shouldDoAfterEffect)) {
                 i--;
             }
         }
@@ -1198,7 +1200,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public bool HasJobTargettingThisCharacter(string jobName, object conditionKey) {
         for (int i = 0; i < allJobsTargettingThis.Count; i++) {
-            if(allJobsTargettingThis[i] is GoapPlanJob) {
+            if (allJobsTargettingThis[i] is GoapPlanJob) {
                 GoapPlanJob job = allJobsTargettingThis[i] as GoapPlanJob;
                 if (job.name == jobName && job.targetEffect.conditionKey == conditionKey) {
                     return true;
@@ -1209,11 +1211,11 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     private void CheckApprehendRelatedJobsOnLeaveLocation() {
         CancelAllJobsTargettingThisCharacter("Apprehend");
-        
+
         //All apprehend jobs that are being done by this character must be unassigned
         for (int i = 0; i < allGoapPlans.Count; i++) {
             GoapPlan plan = allGoapPlans[i];
-            if(plan.job != null && plan.job.name == "Apprehend") {
+            if (plan.job != null && plan.job.name == "Apprehend") {
                 plan.job.UnassignJob();
                 i--;
             }
@@ -1271,8 +1273,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                             if (currToken.factionOwner != null && faction.id != currToken.factionOwner.id) {
                                 continue;
                             }
-                            if (currToken.gridTileLocation != null && currToken.gridTileLocation.structure != null 
-                                && currToken.gridTileLocation.structure.structureType == STRUCTURE_TYPE.WAREHOUSE && GetToken(currToken) == null && !currToken.HasJobTargettingThis("Claim Item") 
+                            if (currToken.gridTileLocation != null && currToken.gridTileLocation.structure != null
+                                && currToken.gridTileLocation.structure.structureType == STRUCTURE_TYPE.WAREHOUSE && GetToken(currToken) == null && !currToken.HasJobTargettingThis("Claim Item")
                                 && GetAwareness(currToken) != null) {
                                 tokens.Add(currToken);
                             }
@@ -1293,26 +1295,26 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             int chance = UnityEngine.Random.Range(0, 100);
             int value = 3;
             CHARACTER_MOOD currentMood = currentMoodType;
-            if(currentMood == CHARACTER_MOOD.DARK) {
+            if (currentMood == CHARACTER_MOOD.DARK) {
                 value += 1;
-            }else if (currentMood == CHARACTER_MOOD.GOOD) {
+            } else if (currentMood == CHARACTER_MOOD.GOOD) {
                 value -= 1;
             } else if (currentMood == CHARACTER_MOOD.GREAT) {
                 value -= 3;
             }
-            if(chance < value) {
+            if (chance < value) {
                 List<Character> enemyCharacters = GetCharactersWithRelationship(RELATIONSHIP_TRAIT.ENEMY);
                 Character chosenCharacter = null;
-                while(chosenCharacter == null && enemyCharacters.Count > 0) {
+                while (chosenCharacter == null && enemyCharacters.Count > 0) {
                     int index = UnityEngine.Random.Range(0, enemyCharacters.Count);
                     Character character = enemyCharacters[index];
-                    if(character.HasJobTargettingThisCharacter("Undermine Enemy")) {
+                    if (character.HasJobTargettingThisCharacter("Undermine Enemy")) {
                         enemyCharacters.RemoveAt(index);
                     } else {
                         chosenCharacter = character;
                     }
                 }
-                if(chosenCharacter != null) {
+                if (chosenCharacter != null) {
                     GoapPlanJob job = new GoapPlanJob("Undermine Enemy", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", targetPOI = chosenCharacter });
                     jobQueue.AddJobInQueue(job);
                     Debug.LogWarning(GameManager.Instance.TodayLogString() + "Added an UNDERMINE ENEMY Job to " + this.name + " with target " + chosenCharacter.name);
@@ -1324,7 +1326,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 
     #region Faction
     public void SetFaction(Faction newFaction) {
-        if (_faction != null 
+        if (_faction != null
             && newFaction != null
             && _faction.id == newFaction.id) {
             //ignore change, because character is already part of that faction
@@ -1494,7 +1496,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 //if destination tile is not null, got there, regardless of target poi
                 marker.GoTo(destinationTile, targetPOI, arrivalAction);
             }
-            
+
         }
     }
     public void SetGridTileLocation(LocationGridTile tile) {
@@ -1530,17 +1532,17 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         LocationGridTile nearestEdgeTile = null;
         List<LocationGridTile> neighbours = gridTileLocation.neighbourList;
         for (int i = 0; i < neighbours.Count; i++) {
-            if(neighbours[i].isEdge && neighbours[i].structure != null && !neighbours[i].isOccupied) {
+            if (neighbours[i].isEdge && neighbours[i].structure != null && !neighbours[i].isOccupied) {
                 nearestEdgeTile = neighbours[i];
                 break;
             }
         }
-        if(nearestEdgeTile == null) {
+        if (nearestEdgeTile == null) {
             float nearestDist = -999f;
             for (int i = 0; i < specificLocation.areaMap.allEdgeTiles.Count; i++) {
                 LocationGridTile currTile = specificLocation.areaMap.allEdgeTiles[i];
                 float dist = Vector2.Distance(currTile.localLocation, currentGridTile.localLocation);
-                if(nearestDist == -999f || dist < nearestDist) {
+                if (nearestDist == -999f || dist < nearestDist) {
                     nearestEdgeTile = currTile;
                     nearestDist = dist;
                 }
@@ -1549,14 +1551,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         return nearestEdgeTile;
     }
     private void OnLeaveArea(Party party) {
-        if(currentParty == party) {
+        if (currentParty == party) {
             CheckApprehendRelatedJobsOnLeaveLocation();
             CheckRemoveTraitRelatedJobsOnLeaveLocation();
         }
     }
     private void OnArrivedAtArea(Party party) {
         if (currentParty == party) {
-            if(homeArea.id == specificLocation.id) {
+            if (homeArea.id == specificLocation.id) {
                 if (HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
                     CreateApprehendJob();
                 }
@@ -1568,6 +1570,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 }
             }
         }
+    }
+    public void OnArriveAtAreaStopMovement() {
+        currentParty.icon.SetTarget(null, null, null, null);
+        currentParty.icon.SetOnPathFinished(null);
     }
     #endregion
 
@@ -4462,9 +4468,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if(action.poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
             Character target = action.poiTarget as Character;
             if(IsHostileWith(target) && GetTrait("Injured") != null) {
-                //AdjustIsWaitingForInteraction(1);
+                AdjustIsWaitingForInteraction(1);
                 DropPlan(action.parentPlan);
-                //AdjustIsWaitingForInteraction(-1);
+                AdjustIsWaitingForInteraction(-1);
 
                 Log addLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "plan_cancelled_injury");
                 addLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -4762,6 +4768,18 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     private void OnCharacterFinishedAction(Character character, GoapAction action, string result) {
         RemoveTargettedByAction(action);
+    }
+    private void CancelCurrentAction(Character target, string cause) {
+        if(this != target && !isDead && currentAction != null && currentAction.poiTarget == target) {
+            Log addLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "plan_cancelled_cause");
+            addLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            addLog.AddToFillers(null, cause, LOG_IDENTIFIER.STRING_1);
+            addLog.AddLogToInvolvedObjects();
+            if (PlayerManager.Instance.player.ShouldShowNotificationFrom(this)) {
+                PlayerManager.Instance.player.ShowNotification(addLog);
+            }
+            currentAction.StopAction();
+        }
     }
     #endregion
 

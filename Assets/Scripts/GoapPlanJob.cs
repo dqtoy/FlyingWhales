@@ -39,17 +39,21 @@ public class GoapPlanJob : JobQueueItem {
     }
 
     #region Overrides 
-    public override void UnassignJob() {
-        base.UnassignJob();
+    public override void UnassignJob(bool shouldDoAfterEffect = true) {
+        base.UnassignJob(shouldDoAfterEffect);
         if (assignedPlan != null && assignedCharacter != null) {
             Character character = assignedCharacter;
             character.AdjustIsWaitingForInteraction(1);
             if (character.currentAction != null && character.currentAction.parentPlan == assignedPlan) {
-                if(character.currentParty.icon.isTravelling && character.currentParty.icon.travelLine == null) {
-                    character.marker.StopMovementOnly();
+                if(character.currentParty.icon.isTravelling) {
+                    if(character.currentParty.icon.travelLine == null) {
+                        character.marker.StopMovementOnly();
+                    } else {
+                        character.currentParty.icon.SetOnArriveAction(() => OnArriveAtLocationStopMovement());
+                    }
                 }
                 if (character.currentAction.isPerformingActualAction && !character.currentAction.isDone) {
-                    character.currentAction.currentState.EndPerTickEffect();
+                    character.currentAction.currentState.EndPerTickEffect(shouldDoAfterEffect);
                 } else {
                     character.SetCurrentAction(null);
                     character.DropPlan(assignedPlan);
@@ -105,6 +109,11 @@ public class GoapPlanJob : JobQueueItem {
             plan.SetJob(this);
         }
         assignedPlan = plan;
+    }
+    private void OnArriveAtLocationStopMovement() {
+        if(assignedCharacter != null) {
+            assignedCharacter.OnArriveAtAreaStopMovement();
+        }
     }
 
     #region Forced Actions

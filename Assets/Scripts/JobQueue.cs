@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class JobQueue {
+    public Character character { get; private set; }
 	public List<JobQueueItem> jobsInQueue { get; private set; }
 
-    public JobQueue() {
+    public JobQueue(Character character) {
+        this.character = character;
         jobsInQueue = new List<JobQueueItem>();
     }
 
@@ -188,9 +190,26 @@ public class JobQueue {
         }
         return count;
     }
-    public bool CancelJob(JobQueueItem job) {
+    public bool CancelJob(JobQueueItem job, string cause = "", bool shouldDoAfterEffect = true) {
         if (!job.cannotCancelJob) {
-            job.UnassignJob();
+            if(job is GoapPlanJob && cause != "") {
+                Character actor = null;
+                if(this.character != null) {
+                    actor = this.character;
+                } else if(job.assignedCharacter != null) {
+                    actor = job.assignedCharacter;
+                }
+                if(actor != null) {
+                    Log addLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "plan_cancelled_cause");
+                    addLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    addLog.AddToFillers(null, cause, LOG_IDENTIFIER.STRING_1);
+                    addLog.AddLogToInvolvedObjects();
+                    if (PlayerManager.Instance.player.ShouldShowNotificationFrom(actor)) {
+                        PlayerManager.Instance.player.ShowNotification(addLog);
+                    }
+                }
+            }
+            job.UnassignJob(shouldDoAfterEffect);
             return RemoveJobInQueue(job);
         }
         return false;

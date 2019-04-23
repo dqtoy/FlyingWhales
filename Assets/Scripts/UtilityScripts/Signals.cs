@@ -92,6 +92,7 @@ public static class Signals {
     public static string CHARACTER_ARRIVED_AT_STRUCTURE = "OnCharacterArrivedAtStructure"; //Parameters (Character, LocationStructure); 
     public static string RELATIONSHIP_ADDED = "OnCharacterGainedRelationship"; //Parameters (Character, RelationshipTrait)
     public static string CHARACTER_TRACKED = "OnCharacterTracked"; //Parameters (Character character)
+    public static string CANCEL_CURRENT_ACTION = "OnCancelCurrentAction"; //Parameters (Character target, string cause)
     #endregion
 
     #region UI

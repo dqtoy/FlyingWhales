@@ -72,14 +72,16 @@ public class GoapActionState {
     private void StartPerTickEffect() {
         Messenger.AddListener(Signals.TICK_STARTED, PerTickEffect);
     }
-    public void EndPerTickEffect() {
+    public void EndPerTickEffect(bool shouldDoAfterEffect = true) {
         //Messenger.RemoveListener(Signals.TICK_STARTED, PerTickEffect);
         //if (isDone) {
         //    return;
         //}
         //isDone = true;
-        if (afterEffect != null) {
-            afterEffect();
+        if (shouldDoAfterEffect) {
+            if (afterEffect != null) {
+                afterEffect();
+            }
         }
         if (parentAction.shouldAddLogs && this.shouldAddLogs) { //only add logs if both the parent action and this state should add logs
             descriptionLog.SetDate(GameManager.Instance.Today());

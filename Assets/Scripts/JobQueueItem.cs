@@ -15,7 +15,7 @@ public class JobQueueItem {
     }
 
     #region Virtuals
-    public virtual void UnassignJob() { }
+    public virtual void UnassignJob(bool shouldDoAfterEffect = true) { }
     protected virtual bool CanTakeJob(Character character) {
         return true;
     }

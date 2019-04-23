@@ -690,7 +690,7 @@ public class Player : ILeader {
     #endregion
 
     #region Player Notifications
-    private bool ShouldShowNotificationFrom(Character character) {
+    public bool ShouldShowNotificationFrom(Character character) {
         if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.id == character.id) {
             return true;
         } else if (roleSlots[JOB.SPY].activeAction is Track) {
