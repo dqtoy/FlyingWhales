@@ -111,6 +111,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public JobQueueItem currentJob { get; private set; }
     public List<JobQueueItem> allJobsTargettingThis { get; private set; }
     public int moodValue { get; private set; }
+    public bool isCombatant { get; private set; } //This should only be a getter but since we need to know when the value changes it now has a setter
 
     private LocationGridTile tile; //what tile in the structure is this character currently in.
     private POI_STATE _state;
@@ -1023,54 +1024,21 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public void AssignRole(CharacterRole role) {
         bool wasRoleChanged = false;
         if (_role != null) {
+            if(_role.roleType == role.roleType) {
+                //If character role is being changed to same role, do not change it
+                return;
+            }
             _role.OnChange(this);
-            //#if !WORLD_CREATION_TOOL
-            //            Log roleChangeLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "change_role");
-            //            roleChangeLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            //            AddHistory(roleChangeLog);
-            //#endif
             wasRoleChanged = true;
         }
         _role = role;
-        //switch (role) {
-        //    case CHARACTER_ROLE.NOBLE:
-        //    _role = new Noble(this);
-        //    break;
-        //    case CHARACTER_ROLE.ADVENTURER:
-        //    _role = new Adventurer(this);
-        //    break;
-        //    case CHARACTER_ROLE.CIVILIAN:
-        //    _role = new Civilian(this);
-        //    break;
-        //    case CHARACTER_ROLE.MINION:
-        //    _role = new MinionRole(this);
-        //    break;
-        //    case CHARACTER_ROLE.PLAYER:
-        //    _role = new PlayerRole(this);
-        //    break;
-        //    case CHARACTER_ROLE.SOLDIER:
-        //    _role = new Soldier(this);
-        //    break;
-        //    case CHARACTER_ROLE.BEAST:
-        //    _role = new Beast(this);
-        //    break;
-        //    case CHARACTER_ROLE.LEADER:
-        //    _role = new Leader(this);
-        //    break;
-        //    case CHARACTER_ROLE.BANDIT:
-        //    _role = new Bandit(this);
-        //    break;
-        //    SetName(this.characterClass.className);
-        //    break;
-        //    default:
-        //    break;
-        //}
         if (_role != null) {
             _role.OnAssign(this);
         }
         if (wasRoleChanged) {
             Messenger.Broadcast(Signals.ROLE_CHANGED, this);
         }
+        UpdateIsCombatantState();
     }
     #endregion
 
@@ -1783,6 +1751,18 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public bool IsNear(IPointOfInterest poi) {
         return gridTileLocation == poi.gridTileLocation || gridTileLocation.IsAdjacentTo(poi);
+    }
+    public void UpdateIsCombatantState() {
+        bool state = false;
+        if (_role.roleType == CHARACTER_ROLE.CIVILIAN || _role.roleType == CHARACTER_ROLE.LEADER || _role.roleType == CHARACTER_ROLE.NOBLE) {
+            state = true;
+        } else if(GetTrait("Injured") != null) {
+            state = true;
+        }
+        if(isCombatant != state) {
+            isCombatant = state;
+            //Changed isCombatant value, clear avoid list?
+        }
     }
     #endregion
 
@@ -2689,6 +2669,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             if(trait.effect == TRAIT_EFFECT.NEGATIVE) {
                 AdjustIgnoreHostilities(1);
             }
+            _ownParty.RemoveAllCharacters();
         }
         if(trait.name == "Abducted" || trait.name == "Restrained") {
             AdjustDoNotGetTired(1);

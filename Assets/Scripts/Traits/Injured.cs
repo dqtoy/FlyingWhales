@@ -34,11 +34,13 @@ public class Injured : Trait {
         base.OnAddTrait(sourceCharacter);
         if (sourceCharacter is Character) {
             _sourceCharacter = sourceCharacter as Character;
+            _sourceCharacter.UpdateIsCombatantState();
             _sourceCharacter.marker.AdjustSpeedModifier(-0.15f);
             CheckToApplyRemoveTraitJob();
         }
     }
     public override void OnRemoveTrait(IPointOfInterest sourceCharacter) {
+        _sourceCharacter.UpdateIsCombatantState();
         _sourceCharacter.marker.AdjustSpeedModifier(0.15f);
         if (_removeTraitJob != null) {
             _removeTraitJob.jobQueueParent.CancelJob(_removeTraitJob);

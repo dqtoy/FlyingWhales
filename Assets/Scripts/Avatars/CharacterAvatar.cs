@@ -143,7 +143,6 @@ public class CharacterAvatar : MonoBehaviour{
         //     }
         Reset();
         if (targetLocation != null) {
-            _party.owner.marker.gameObject.SetActive(false);
             SetOnPathFinished(actionOnPathFinished);
             StartTravelling();
         }
@@ -157,8 +156,11 @@ public class CharacterAvatar : MonoBehaviour{
         }
     }
     private void StartTravelling() {
-        SetIsTravelling(true);       
-        
+        SetIsTravelling(true);
+        for (int i = 0; i < _party.characters.Count; i++) {
+            _party.characters[i].SetPOIState(POI_STATE.INACTIVE);
+        }
+        _party.owner.marker.gameObject.SetActive(false);
         _distanceToTarget = PathGenerator.Instance.GetTravelTime(_party.specificLocation.coreTile, targetLocation.coreTile);
         _travelLine = _party.specificLocation.coreTile.CreateTravelLine(targetLocation.coreTile, _distanceToTarget, _party.owner);
         _travelLine.SetActiveMeter(isVisualShowing);
@@ -222,7 +224,8 @@ public class CharacterAvatar : MonoBehaviour{
             Log arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "arrive_location");
             for (int i = 0; i < _party.characters.Count; i++) {
                 Character character = party.characters[i];
-                character.SetDailyInteractionGenerationTick();
+                character.SetPOIState(POI_STATE.ACTIVE);
+                //character.SetDailyInteractionGenerationTick();
                 arriveLog.AddToFillers(character, character.name, LOG_IDENTIFIER.CHARACTER_LIST_1, false);
             }
             arriveLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1);

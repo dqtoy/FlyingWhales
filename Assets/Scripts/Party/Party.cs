@@ -174,14 +174,7 @@ public class Party {
         }
         _isDead = true;
         //For now, when a party dies and there still members besides the owner of this party, kick them out of the party first before applying death
-        if(_characters.Count > 1) {
-            for (int i = 0; i < _characters.Count; i++) {
-                if(_characters[i].id != _owner.id) {
-                    RemoveCharacter(_characters[i]);
-                    i--;
-                }
-            }
-        }
+        RemoveAllCharacters();
 
         Area deathLocation = this.specificLocation;
         LocationStructure deathStructure = owner.currentStructure;
@@ -288,6 +281,17 @@ public class Party {
             //}
         }
     }
+    public void RemoveAllCharacters() {
+        if (_characters.Count > 1) {
+            for (int i = 0; i < _characters.Count; i++) {
+                if (_characters[i].id != _owner.id) {
+                    RemoveCharacter(_characters[i]);
+                    i--;
+                }
+            }
+        }
+    }
+
     public void GoHome(Action doneAction = null, Action actionOnStartOfMovement = null) {
         if (_isDead) { return; }
         GoToLocation(owner.homeArea, PATHFINDING_MODE.PASSABLE, null, doneAction, actionOnStartOfMovement);

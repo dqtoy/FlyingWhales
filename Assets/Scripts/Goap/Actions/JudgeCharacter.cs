@@ -20,7 +20,7 @@ public class JudgeCharacter : GoapAction {
     //    AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.NONE, targetPOI = poiTarget });
     //}
     public override void PerformActualAction() {
-        if (actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
+        if (!isTargetMissing && (actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation))) {
             WeightedDictionary<string> weights = new WeightedDictionary<string>();
             weights.AddElement("Target Executed", 10);
             weights.AddElement("Target Released", 10);

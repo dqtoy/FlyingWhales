@@ -28,7 +28,7 @@ public class ArgueCharacter : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
     }
     public override void PerformActualAction() {
-        if (actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
+        if (!isTargetMissing && actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
             Character target = poiTarget as Character;
             if (IsTargetUnable(target)) {
                 SetState("Argue Fail");

@@ -56,6 +56,9 @@ public class GoapAction {
     public CRIME committedCrime { get; private set; }
     public string result { get; private set; }
     public string animationName { get; protected set; } //what animation should the character be playing while doing this action
+    protected bool isTargetMissing {
+        get { return poiTarget.state == POI_STATE.INACTIVE || actor.specificLocation != poiTarget.gridTileLocation.structure.location; }
+    }
 
     protected Func<bool> _requirementAction;
     protected System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
