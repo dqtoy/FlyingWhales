@@ -124,6 +124,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: dc15f8a61d227e046ab254969592d09d, type: 3}
   - {fileID: 21300000, guid: 00761ba6bb004494db6b4ebd41cb77be, type: 3}
   - {fileID: 21300000, guid: 8c52fab61c7d6d8478dad9cda239a048, type: 3}
+  - {fileID: 21300000, guid: fd2146d69e98e394f8dc1ce405b2ab76, type: 3}
   - {fileID: 21300000, guid: 340e1ae64b6a22f4fbde896f6081c937, type: 3}
   - {fileID: 21300000, guid: 80deb517aa362ca4692d227826ab98d7, type: 3}
   - {fileID: 21300000, guid: be25ca178f757964a966abd43d0701a3, type: 3}
@@ -176,6 +177,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 8debf95aba7782c4ea910165a169f349, type: 3}
   - {fileID: 21300000, guid: b067fd5a80c31c04bae92bd785ac8b74, type: 3}
   - {fileID: 21300000, guid: d683e16aba213c34eb7f2e96f53215eb, type: 3}
+  - {fileID: 21300000, guid: c4fff26a111b1064ba5d9df5e610fd7a, type: 3}
   - {fileID: 21300000, guid: 0b76a99af7ec8fe41b2e18a6048ea684, type: 3}
   - {fileID: 21300000, guid: ac042cba32c8b1440ad910971dccff73, type: 3}
   - {fileID: 21300000, guid: 311d25dabd05b66439498c9eb8694073, type: 3}
@@ -337,6 +339,7 @@ SpriteAtlas:
   - wall0101-02
   - cobble02
   - dirt01
+  - bed01
   - caveWallA-1010-00
   - floorA00
   - barrels01
@@ -389,6 +392,7 @@ SpriteAtlas:
   - character_hover
   - caveWallA-0111-02
   - debrisRocksWood01
+  - bed02
   - tableDecor01
   - caveWallA-1011-00
   - caveWallA-0110-00
