@@ -128,6 +128,7 @@ public class SpecialToken : Token, IPointOfInterest {
     public int craftCost { get { return ItemManager.Instance.itemData[specialTokenType].craftCost; } }
     public int purchaseCost { get { return ItemManager.Instance.itemData[specialTokenType].purchaseCost; } }
     public List<JobQueueItem> allJobsTargettingThis { get; private set; }
+    public Area specificLocation { get { return gridTileLocation.structure.location; } }
     protected List<Trait> _traits;
     private LocationGridTile tile;
     private POI_STATE _state;

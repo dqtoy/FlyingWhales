@@ -205,7 +205,18 @@ public class GoapThread : Multithread {
                     log += ", ";
                 }
                 log += usableActions[i].goapName + " (" + usableActions[i].poiTarget.name + ")";
-                if (usableActions[i].WillEffectsSatisfyPrecondition(goalEffect)) {
+                if (job != null && job.forcedActions.ContainsKey(goalEffect)) {
+                    //if there is a provided job, check if it has any forced actions
+                    //if it does, only allow the action that it allows
+                    if (usableActions[i].goapType == job.forcedActions[goalEffect]) {
+                        GoapPlan plan = actor.planner.PlanActions(target, usableActions[i], usableActions, category, isPersonalPlan, job);
+                        if (plan != null) {
+                            allPlans.Add(plan);
+                            plan.SetListOfCharacterAwareness(characterTargetsAwareness);
+                        }
+                    }
+                    break;
+                } else if (usableActions[i].WillEffectsSatisfyPrecondition(goalEffect)) {
                     GoapPlan plan = actor.planner.PlanActions(target, usableActions[i], usableActions, category, isPersonalPlan, job);
                     if (plan != null) {
                         allPlans.Add(plan);

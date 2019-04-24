@@ -40,8 +40,41 @@ public class GoapPlanner {
     public bool RecalculatePathForPlan(GoapPlan currentPlan, List<GoapAction> usableActions) {
         //List of all starting nodes that can do the goal
         List<GoapNode> startingNodes = new List<GoapNode>();
-
-        bool success = BuildGoapTree(currentPlan.currentNode, startingNodes, usableActions);
+        bool success = false;
+        if (currentPlan.isPersonalPlan) {
+            success = BuildGoapTree(currentPlan.currentNode, startingNodes, usableActions);
+        } else {
+            GoapNode currentLeafNode = null;
+            bool hasUsableAction = false;
+            success = true;
+            for (int i = currentPlan.currentNode.index; i >= 0; i--) {
+                GoapNode failedNode = currentPlan.allNodes[i];
+                hasUsableAction = false;
+                for (int j = 0; j < usableActions.Count; j++) {
+                    GoapAction currentUsableAction = usableActions[j];
+                    if(failedNode.action.goapType == currentUsableAction.goapType && failedNode.action.poiTarget == currentUsableAction.poiTarget) {
+                        hasUsableAction = true;
+                        if(currentLeafNode == null) {
+                            currentLeafNode = new GoapNode(failedNode.parent, failedNode.parent.runningCost + currentUsableAction.cost, currentUsableAction);
+                        } else {
+                            GoapNode leafNode = new GoapNode(currentLeafNode.parent, currentLeafNode.parent.runningCost + currentUsableAction.cost, currentUsableAction);
+                            currentLeafNode = leafNode;
+                        }
+                        break;
+                    }
+                }
+                if (!hasUsableAction) {
+                    //No usable action for the current failed node, fail recalculation
+                    success = false;
+                    break;
+                }
+            }
+            if(currentLeafNode != null) {
+                startingNodes.Add(currentLeafNode);
+            } else {
+                success = false;
+            }
+        }
         if (!success) {
             return false;
         }
@@ -140,6 +173,7 @@ public class GoapPlanner {
 public class GoapNode {
     public GoapNode parent;
     public int runningCost;
+    public int index;
     public GoapAction action;
 
     public GoapNode(GoapNode parent, int runningCost, GoapAction action) {

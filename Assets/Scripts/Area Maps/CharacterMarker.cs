@@ -980,9 +980,9 @@ public class CharacterMarker : PooledObject {
     #endregion
 
     #region Hosility Collision
-    public bool AddHostileInRange(Character poi, CHARACTER_STATE forcedReaction = CHARACTER_STATE.NONE) {
+    public bool AddHostileInRange(Character poi, CHARACTER_STATE forcedReaction = CHARACTER_STATE.NONE, bool checkHostility = true) {
         if (!hostilesInRange.Contains(poi)) {
-            if (this.character.IsHostileWith(poi) 
+            if (!checkHostility || this.character.IsHostileWith(poi) 
                 || forcedReaction != CHARACTER_STATE.NONE) { //if forced reaction is not equal to none, it means that this character must treat the other character as hostile, regardless of conditions
                 hostilesInRange.Add(poi);
                 NormalReactToHostileCharacter(poi, forcedReaction);

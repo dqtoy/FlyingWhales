@@ -42,14 +42,19 @@ public class JobQueue {
                     job.SetAssignedCharacter(characterToDoJob);
                     if(job is GoapPlanJob) {
                         GoapPlanJob goapPlanJob = job as GoapPlanJob;
-                        if (goapPlanJob.targetInteractionType != INTERACTION_TYPE.NONE) {
-                            characterToDoJob.StartGOAP(goapPlanJob.targetInteractionType, goapPlanJob.targetPOI, GOAP_CATEGORY.WORK, false, null, true, goapPlanJob, goapPlanJob.otherData);
+                        if(goapPlanJob.targetPlan != null) {
+                            characterToDoJob.allGoapPlans.Add(goapPlanJob.targetPlan);
+                            goapPlanJob.SetAssignedPlan(goapPlanJob.targetPlan);
                         } else {
-                            characterToDoJob.StartGOAP(goapPlanJob.targetEffect, goapPlanJob.targetPOI, GOAP_CATEGORY.WORK, false, null, true, goapPlanJob);
+                            if (goapPlanJob.targetInteractionType != INTERACTION_TYPE.NONE) {
+                                characterToDoJob.StartGOAP(goapPlanJob.targetInteractionType, goapPlanJob.targetPOI, GOAP_CATEGORY.WORK, false, null, true, goapPlanJob, goapPlanJob.otherData);
+                            } else {
+                                characterToDoJob.StartGOAP(goapPlanJob.targetEffect, goapPlanJob.targetPOI, GOAP_CATEGORY.WORK, false, null, true, goapPlanJob);
+                            }
                         }
                     }else if (job is CharacterStateJob) {
                         CharacterStateJob stateJob = job as CharacterStateJob;
-                        CharacterState newState = characterToDoJob.stateComponent.SwitchToState(stateJob.targetState);
+                        CharacterState newState = characterToDoJob.stateComponent.SwitchToState(stateJob.targetState, null, stateJob.targetArea);
                         if(newState != null) {
                             stateJob.SetAssignedState(newState);
                         } else {

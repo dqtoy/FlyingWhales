@@ -9,6 +9,7 @@ public class  TileObject : IPointOfInterest {
     public TILE_OBJECT_TYPE tileObjectType { get; private set; }
     public Faction factionOwner { get { return null; } }
     public List<INTERACTION_TYPE> poiGoapActions { get; protected set; }
+    public Area specificLocation { get { return gridTileLocation.structure.location; } }
     protected List<Trait> _traits;
     public List<Trait> traits {
         get { return _traits; }
