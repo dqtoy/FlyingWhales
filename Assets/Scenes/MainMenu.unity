@@ -17522,7 +17522,7 @@ MonoBehaviour:
   groundTilemap: {fileID: 970322175}
   wallTilemap: {fileID: 940332613}
   detailsTilemap: {fileID: 2143130468}
-  strcutureTilemap: {fileID: 963118700}
+  structureTilemap: {fileID: 0}
   objectsTilemap: {fileID: 907475411}
   roadTilemap: {fileID: 1771428973}
   outsideTile: {fileID: 11400000, guid: eb3f0a06db068d04f86d266316b14e08, type: 2}
@@ -82234,7 +82234,10 @@ MonoBehaviour:
     type: 2}
   characterCollisionTriggerPrefab: {fileID: 1745477595920248, guid: b561293b149dfb44a8798a971c7596c6,
     type: 2}
-  areaGenerationTilemap: {fileID: 0}
+  agGroundTilemap: {fileID: 0}
+  agStructureTilemap: {fileID: 0}
+  agObjectsTilemap: {fileID: 0}
+  agDetailsTilemap: {fileID: 0}
   pathfinder: {fileID: 1606696816}
 --- !u!4 &1606696818
 Transform:

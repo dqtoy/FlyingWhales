@@ -22,5 +22,8 @@ public class Poisoned : Trait {
             responsibleCharacters.Add(character);
         }
     }
+    public override bool IsResponsibleForTrait(Character character) {
+        return responsibleCharacters.Contains(character);
+    }
     #endregion   
 }

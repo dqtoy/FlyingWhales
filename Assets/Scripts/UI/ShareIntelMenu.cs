@@ -11,6 +11,7 @@ public class ShareIntelMenu : MonoBehaviour {
     [SerializeField] private ScrollRect dialogScrollView;
     [SerializeField] private GameObject dialogItemPrefab;
     [SerializeField] private Button closeBtn;
+    [SerializeField] private TextMeshProUGUI instructionLbl;
 
     [Header("Intel")]
     [SerializeField] private GameObject intelGO;
@@ -28,6 +29,7 @@ public class ShareIntelMenu : MonoBehaviour {
 
         this.targetCharacter = targetCharacter;
         this.actor = actor;
+        instructionLbl.text = "Share Intel with " + targetCharacter.name;
 
         Utilities.DestroyChildren(dialogScrollView.content);
 
@@ -48,12 +50,9 @@ public class ShareIntelMenu : MonoBehaviour {
         for (int i = 0; i < intelItems.Length; i++) {
             IntelItem currItem = intelItems[i];
             Intel intel = PlayerManager.Instance.player.allIntel.ElementAtOrDefault(i);
-            if (intel == null) {
-                currItem.gameObject.SetActive(false);
-            } else {
-                currItem.SetIntel(intel);
+            currItem.SetIntel(intel);
+            if (intel != null) {
                 currItem.SetClickAction(ReactToIntel);
-                currItem.gameObject.SetActive(true);
             }
         }
     }
