@@ -287,6 +287,7 @@ public class InteriorMapManager : MonoBehaviour {
         summary += "\nTile State: " + tile.tileState.ToString();
         summary += "\nTile Access: " + tile.tileAccess.ToString();
         summary += "\nHas Detail: " + tile.hasDetail.ToString();
+        summary += "\nIs Locked: " + tile.isLocked.ToString();
         summary += "\nContent: " + tile.objHere?.ToString() ?? "None";
         if (tile.objHere != null) {
             summary += "\n\tObject State: " + tile.objHere.state.ToString();

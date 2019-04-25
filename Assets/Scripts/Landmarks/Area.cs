@@ -917,6 +917,8 @@ public class Area {
                     } else if (createdCharacter.race == RACE.SPIDER) {
                         choices = GetStructuresAtLocation(true);
                         choices.AddRange(GetStructuresOfType(STRUCTURE_TYPE.WILDERNESS));
+                    } else {
+                        choices = GetStructuresAtLocation(true);
                     }
                     choices = choices.Where(x => x.unoccupiedTiles.Count > 0).ToList();
                     if (choices.Count > 0) {
