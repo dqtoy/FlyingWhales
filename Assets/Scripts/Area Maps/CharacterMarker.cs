@@ -244,6 +244,9 @@ public class CharacterMarker : PooledObject {
             UpdateAnimation();
             UpdateActionIcon();
         }
+        if(trait.type == TRAIT_TYPE.DISABLER && terrifyingCharacters.Count > 0) {
+            RemoveTerrifyingCharacter(character);
+        }
     }
     public void OnCharacterLostTrait(Character character, Trait trait) {
         if (character == this.character) {
