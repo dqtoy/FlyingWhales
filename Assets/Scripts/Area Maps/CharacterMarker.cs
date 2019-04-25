@@ -891,7 +891,7 @@ public class CharacterMarker : PooledObject {
     }
     private float GetSpeed() {
         float speed = character.raceSetting.runSpeed;
-        if(character.stateComponent.currentState == null && targettedByRemoveNegativeTraitActionsCounter > 0) {
+        if(targettedByRemoveNegativeTraitActionsCounter > 0) {
             speed = character.raceSetting.walkSpeed;
         } else {
             if (useWalkSpeed > 0) {
@@ -905,12 +905,12 @@ public class CharacterMarker : PooledObject {
                         speed = character.raceSetting.walkSpeed;
                     }
                 } 
-                //else if (character.currentAction != null) {
-                //    if (character.currentAction.goapType == INTERACTION_TYPE.STROLL) {
-                //        //Walk
-                //        speed = character.raceSetting.walkSpeed;
-                //    }
-                //}
+                if (character.currentAction != null) {
+                    if (character.currentAction.goapType == INTERACTION_TYPE.RETURN_HOME) {
+                        //Walk
+                        speed = character.raceSetting.walkSpeed;
+                    }
+                }
             }
         }
         speed += (speed * speedModifier);
