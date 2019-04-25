@@ -36,6 +36,7 @@ public class CharacterMarker : PooledObject {
     [SerializeField] private Seeker seeker;
     [SerializeField] private Collider2D[] colliders;
     [SerializeField] private RVOController rvoController;
+    [SerializeField] private FleeingRVOController fleeingRVOController;
 
     [Header("For Testing")]
     [SerializeField] private SpriteRenderer colorHighlight;
@@ -56,6 +57,7 @@ public class CharacterMarker : PooledObject {
     public int useWalkSpeed { get; private set; }
     public int targettedByRemoveNegativeTraitActionsCounter { get; private set; }
     public int isStoppedByOtherCharacter { get; private set; } //this is increased, when the action of another character stops this characters movement
+    public List<Character> terrifyingCharacters { get; private set; } //list of characters that this character is terrified of and must avoid
 
     private bool forceFollowTarget; //If the character should follow the target no matter where they go, must only be used with characters
     private LocationGridTile _previousGridTile;
@@ -84,6 +86,7 @@ public class CharacterMarker : PooledObject {
 
         inVisionPOIs = new List<IPointOfInterest>();
         hostilesInRange = new List<Character>();
+        terrifyingCharacters = new List<Character>();
 
         GameObject collisionTriggerGO = GameObject.Instantiate(InteriorMapManager.Instance.characterCollisionTriggerPrefab, this.transform);
         collisionTriggerGO.transform.localPosition = Vector3.zero;
@@ -996,9 +999,9 @@ public class CharacterMarker : PooledObject {
     #endregion
 
     #region Hosility Collision
-    public bool AddHostileInRange(Character poi, CHARACTER_STATE forcedReaction = CHARACTER_STATE.NONE) {
+    public bool AddHostileInRange(Character poi, CHARACTER_STATE forcedReaction = CHARACTER_STATE.NONE, bool checkHostility = true) {
         if (!hostilesInRange.Contains(poi)) {
-            if (this.character.IsHostileWith(poi) 
+            if (!checkHostility || this.character.IsHostileWith(poi) 
                 || forcedReaction != CHARACTER_STATE.NONE) { //if forced reaction is not equal to none, it means that this character must treat the other character as hostile, regardless of conditions
                 hostilesInRange.Add(poi);
                 NormalReactToHostileCharacter(poi, forcedReaction);
@@ -1058,7 +1061,10 @@ public class CharacterMarker : PooledObject {
                 || character.role.roleType == CHARACTER_ROLE.CIVILIAN
                 || character.role.roleType == CHARACTER_ROLE.NOBLE || character.role.roleType == CHARACTER_ROLE.LEADER)) {
                 //- Injured characters, Civilians, Nobles and Faction Leaders always enter Flee mode
-                character.stateComponent.SwitchToState(CHARACTER_STATE.FLEE, otherCharacter);
+                //Check if that character is already in the list of terrifying characters, if it is, do not flee because it will avoid that character already, if not, enter flee mode
+                if (!character.marker.terrifyingCharacters.Contains(otherCharacter)) {
+                    character.stateComponent.SwitchToState(CHARACTER_STATE.FLEE, otherCharacter);
+                }
                 summary += "\n" + character.name + " chose to flee.";
             } else if (character.doNotDisturb > 0 && character.GetTraitOf(TRAIT_TYPE.DISABLER) != null) {
                 //- Disabled characters will not do anything
@@ -1171,10 +1177,34 @@ public class CharacterMarker : PooledObject {
         hasFleePath = false;
         UpdateAnimation();
         (character.stateComponent.currentState as FleeState).CheckForEndState();
-        
     }
+
     public void SetHasFleePath(bool state) {
         hasFleePath = state;
+    }
+    public void AddTerrifyingCharacter(Character character) {
+        //terrifyingCharacters += amount;
+        //terrifyingCharacters = Math.Max(0, terrifyingCharacters);
+        if (!terrifyingCharacters.Contains(character)) {
+            terrifyingCharacters.Add(character);
+            UpdateFleeingRVOController();
+        }
+    }
+    public void RemoveTerrifyingCharacter(Character character) {
+        if (terrifyingCharacters.Remove(character)) {
+            UpdateFleeingRVOController();
+        }
+    }
+    public void ClearTerrifyingCharacters() {
+        terrifyingCharacters.Clear();
+        UpdateFleeingRVOController();
+    }
+    private void UpdateFleeingRVOController() {
+        if (terrifyingCharacters.Count > 0) {
+            rvoController.collidesWith = RVOLayer.DefaultAgent | RVOLayer.DefaultObstacle | RVOLayer.Layer2;
+        } else {
+            rvoController.collidesWith = RVOLayer.DefaultAgent | RVOLayer.DefaultObstacle;
+        }
     }
     #endregion
 

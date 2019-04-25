@@ -52,7 +52,10 @@ public class RileUp : PlayerJobAction {
         UIManager.Instance.HideObjectPicker();
 
         GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = _targetCharacter.homeArea, targetPOI = character };
-        _targetCharacter.StartGOAP(goapEffect, character, GOAP_CATEGORY.REACTION);
+        GoapPlanJob job = new GoapPlanJob("Abduct", goapEffect);
+        job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = character }, INTERACTION_TYPE.ABDUCT_ACTION);
+        _targetCharacter.jobQueue.AddJobInQueue(job);
+        //_targetCharacter.StartGOAP(goapEffect, character, GOAP_CATEGORY.REACTION);
     }
     private void RileUpCharacter(Area area) {
         base.ActivateAction(assignedCharacter, _targetCharacter);
@@ -73,8 +76,10 @@ public class RileUp : PlayerJobAction {
             _targetCharacter.stateComponent.currentState.OnExitThisState();
         }
 
-        _targetCharacter.AddTrait("Berserker");
-        _targetCharacter.currentParty.GoToLocation(area, PATHFINDING_MODE.NORMAL);
+        CharacterStateJob job = new CharacterStateJob("Berserked", CHARACTER_STATE.BERSERKED, area);
+        _targetCharacter.jobQueue.AddJobInQueue(job);
+        //_targetCharacter.AddTrait("Berserker");
+        //_targetCharacter.currentParty.GoToLocation(area, PATHFINDING_MODE.NORMAL);
     }
     private bool CanRileUpCharacter(Character character) {
         if(_targetCharacter == character) {

@@ -8,6 +8,7 @@ public interface IPointOfInterest {
     POINT_OF_INTEREST_TYPE poiType { get; }
     POI_STATE state { get; }
     LocationGridTile gridTileLocation { get; }
+    Area specificLocation { get; }
     List<INTERACTION_TYPE> poiGoapActions { get; }
     List<Trait> traits { get; }
     Faction factionOwner { get; }

@@ -25,7 +25,7 @@ public class AbductCharacter : GoapAction {
                 SetState("Abduct Success");
             } else {
                 parentPlan.SetDoNotRecalculate(true);
-                SetState("Target Missing");
+                SetState("Abduct Fail");
             }
         } else {
             SetState("Target Missing");

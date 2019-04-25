@@ -1418,14 +1418,15 @@ public class Area {
     private void CreatePatrolAndExploreJobs() {
         int patrolChance = UnityEngine.Random.Range(0, 100);
         if(patrolChance < 25 && jobQueue.GetNumberOfJobsWith(CHARACTER_STATE.PATROL) < 2) {
-            CharacterStateJob stateJob = new CharacterStateJob("Patrol", CHARACTER_STATE.PATROL);
+            CharacterStateJob stateJob = new CharacterStateJob("Patrol", CHARACTER_STATE.PATROL, null);
             stateJob.SetCanTakeThisJobChecker(CanDoPatrolAndExplore);
             jobQueue.AddJobInQueue(stateJob);
         }
 
         int exploreChance = UnityEngine.Random.Range(0, 100);
         if (exploreChance < 15 && !jobQueue.HasJobRelatedTo(CHARACTER_STATE.EXPLORE)) {
-            CharacterStateJob stateJob = new CharacterStateJob("Explore", CHARACTER_STATE.EXPLORE);
+            Area dungeon = LandmarkManager.Instance.GetRandomAreaOfType(AREA_TYPE.DUNGEON);
+            CharacterStateJob stateJob = new CharacterStateJob("Explore", CHARACTER_STATE.EXPLORE, dungeon);
             stateJob.SetCanTakeThisJobChecker(CanDoPatrolAndExplore);
             jobQueue.AddJobInQueue(stateJob);
         }

@@ -61,10 +61,12 @@ public class GoapPlan {
         allNodes.Clear();
         GoapNode node = startingNode;
         node.action.SetParentPlan(this);
+        node.index = allNodes.Count;
         allNodes.Add(node);
         while (node.parent != null) {
             node = node.parent;
             node.action.SetParentPlan(this);
+            node.index = allNodes.Count;
             allNodes.Add(node);
         }
         endNode = node;

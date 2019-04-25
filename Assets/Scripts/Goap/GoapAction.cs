@@ -57,7 +57,7 @@ public class GoapAction {
     public string result { get; private set; }
     public string animationName { get; protected set; } //what animation should the character be playing while doing this action
     protected bool isTargetMissing {
-        get { return poiTarget.state == POI_STATE.INACTIVE || actor.specificLocation != poiTarget.gridTileLocation.structure.location; }
+        get { return poiTarget.state == POI_STATE.INACTIVE || actor.specificLocation != poiTarget.specificLocation; }
     }
 
     protected Func<bool> _requirementAction;

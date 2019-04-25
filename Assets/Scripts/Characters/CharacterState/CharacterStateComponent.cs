@@ -32,7 +32,7 @@ public class CharacterStateComponent {
 
     //This switches from one state to another
     //If the character is not in a state right now, this simply starts a new state instead of switching
-    public CharacterState SwitchToState(CHARACTER_STATE state, Character targetCharacter = null) {
+    public CharacterState SwitchToState(CHARACTER_STATE state, Character targetCharacter = null, Area targetArea = null) {
         //Before switching character must end current action first because once a character is in a state in cannot make plans
         character.AdjustIsWaitingForInteraction(1);
         if (character.currentAction != null && !character.currentAction.isDone) {
@@ -72,13 +72,18 @@ public class CharacterStateComponent {
                 //If current state is a minor state, simply end it
                 currentState.ExitState();
             }
+        }else if (stateToDo != null) {
+            if(stateToDo.stateCategory == CHARACTER_STATE_CATEGORY.MAJOR) {
+                previousMajorState = stateToDo;
+            }
+            stateToDo = null;
         }
 
         //Assigns new state as the current state then enter that state
         //newState.SetParentMajorState(previousMajorState);
         //currentState = newState;
         newState.SetTargetCharacter(targetCharacter);
-        newState.EnterState();
+        newState.EnterState(targetArea);
         return newState;
     }
 
@@ -120,18 +125,23 @@ public class CharacterStateComponent {
                 previousMajorState.ExitState();
                 SetCurrentState(null);
             } else {
-                //Resumes previous major state
                 if(character.doNotDisturb > 0) {
                     previousMajorState.ExitState();
                     SetCurrentState(null);
                 } else {
-                    SetCurrentState(previousMajorState);
-                    currentState.ResumeState();
+                    if (previousMajorState.hasStarted) {
+                        //Resumes previous major state
+                        SetCurrentState(previousMajorState);
+                        currentState.ResumeState();
+                    } else {
+                        previousMajorState.EnterState(previousMajorState.targetArea);
+                    }
                 }
             }
             previousMajorState = null;
         } else {
             //This goes back to normal
+            previousMajorState = null;
             SetCurrentState(null);
         }
     }

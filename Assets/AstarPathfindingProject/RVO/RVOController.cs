@@ -40,7 +40,7 @@ namespace Pathfinding.RVO {
 	[HelpURL("http://arongranberg.com/astar/docs/class_pathfinding_1_1_r_v_o_1_1_r_v_o_controller.php")]
 	public class RVOController : VersionedMonoBehaviour {
 		[SerializeField][FormerlySerializedAs("radius")]
-		internal float radiusBackingField = 0.5f;
+        internal float radiusBackingField = 0.5f;
 
 		[SerializeField][FormerlySerializedAs("height")]
 		float heightBackingField = 2;
@@ -52,14 +52,14 @@ namespace Pathfinding.RVO {
 		/// Radius of the agent in world units.
 		/// Note: If a movement script (AIPath/RichAI/AILerp, anything implementing the IAstarAI interface) is attached to the same GameObject, this value will be driven by that script.
 		/// </summary>
-		public float radius {
+		public virtual float radius {
 			get {
-				if (ai != null) return ai.radius;
-				return radiusBackingField;
+                if (ai != null) return ai.radius;
+                return radiusBackingField;
 			}
 			set {
-				if (ai != null) ai.radius = value;
-				radiusBackingField = value;
+                if (ai != null) ai.radius = value;
+                radiusBackingField = value;
 			}
 		}
 

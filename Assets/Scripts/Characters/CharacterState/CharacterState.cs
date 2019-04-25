@@ -10,12 +10,14 @@ public class CharacterState {
     public int duration { get; protected set; } // 0 means infinite
     public int currentDuration { get; protected set; }
     public bool isDone { get; protected set; }
+    public bool hasStarted { get; protected set; }
     public bool isPaused { get; protected set; }
     public Log thoughtBubbleLog { get; protected set; }
     public CharacterStateJob job { get; protected set; }
     public string actionIconString { get; protected set; }
 
     public Character targetCharacter { get; protected set; } //Target character of current state
+    public Area targetArea { get; protected set; }
     //public CharacterState parentMajorState { get; protected set; }
 
     public CharacterState(CharacterStateComponent characterComp) {
@@ -27,6 +29,7 @@ public class CharacterState {
     #region Virtuals
     //Starts a state and its movement behavior, can be overridden
     protected virtual void StartState() {
+        hasStarted = true;
         stateComponent.SetStateToDo(null);
         stateComponent.SetCurrentState(this);
         currentDuration = 0;
@@ -87,26 +90,35 @@ public class CharacterState {
     //    parentMajorState = majorState;
     //}
     //This is the one must be called to enter and start this state, if it is already done, it cannot start again
-    public void EnterState() {
+    public void EnterState(Area area) {
         if (isDone) {
             return;
         }
         stateComponent.SetStateToDo(this);
-        if(characterState == CHARACTER_STATE.EXPLORE) {
-            //There is a special case for explore state, character must travel to a dungeon-type area first
-            Area dungeon = LandmarkManager.Instance.GetRandomAreaOfType(AREA_TYPE.DUNGEON);
-            if(dungeon == stateComponent.character.specificLocation) {
-                Debug.Log(GameManager.Instance.TodayLogString() + "Entering " + stateName + " for " + stateComponent.character.name);
-                StartState();
-            } else {
-                CreateTravellingThoughtBubbleLog(dungeon);
-                Debug.Log(GameManager.Instance.TodayLogString() + "Travelling to " + dungeon.name + " before entering " + stateName + " for " + stateComponent.character.name);
-                stateComponent.character.currentParty.GoToLocation(dungeon, PATHFINDING_MODE.NORMAL, null, () => StartState());
-            }
-        } else {
+        targetArea = area;
+        if(targetArea == null || targetArea == stateComponent.character.specificLocation) {
             Debug.Log(GameManager.Instance.TodayLogString() + "Entering " + stateName + " for " + stateComponent.character.name);
             StartState();
+        } else {
+            CreateTravellingThoughtBubbleLog(targetArea);
+            Debug.Log(GameManager.Instance.TodayLogString() + "Travelling to " + targetArea.name + " before entering " + stateName + " for " + stateComponent.character.name);
+            stateComponent.character.currentParty.GoToLocation(targetArea, PATHFINDING_MODE.NORMAL, null, () => StartState());
         }
+        //if(characterState == CHARACTER_STATE.EXPLORE) {
+        //    //There is a special case for explore state, character must travel to a dungeon-type area first
+        //    Area dungeon = LandmarkManager.Instance.GetRandomAreaOfType(AREA_TYPE.DUNGEON);
+        //    if(dungeon == stateComponent.character.specificLocation) {
+        //        Debug.Log(GameManager.Instance.TodayLogString() + "Entering " + stateName + " for " + stateComponent.character.name);
+        //        StartState();
+        //    } else {
+        //        CreateTravellingThoughtBubbleLog(dungeon);
+        //        Debug.Log(GameManager.Instance.TodayLogString() + "Travelling to " + dungeon.name + " before entering " + stateName + " for " + stateComponent.character.name);
+        //        stateComponent.character.currentParty.GoToLocation(dungeon, PATHFINDING_MODE.NORMAL, null, () => StartState());
+        //    }
+        //} else {
+        //    Debug.Log(GameManager.Instance.TodayLogString() + "Entering " + stateName + " for " + stateComponent.character.name);
+        //    StartState();
+        //}
     }
     //This is the one must be called to exit and end this state
     public void ExitState() {

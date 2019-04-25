@@ -111,7 +111,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public JobQueueItem currentJob { get; private set; }
     public List<JobQueueItem> allJobsTargettingThis { get; private set; }
     public int moodValue { get; private set; }
-    public bool isCombatant { get; private set; } //This should only be a getter but since we need to know when the value changes it now has a setter
 
     private LocationGridTile tile; //what tile in the structure is this character currently in.
     private POI_STATE _state;
@@ -696,9 +695,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             if (stateComponent.currentState != null) {
                 stateComponent.currentState.OnExitThisState();
             }
+<<<<<<< HEAD
             CancelAllJobsTargettingThisCharacter("target is already dead", false);
             Messenger.Broadcast(Signals.CANCEL_CURRENT_ACTION, this, "target is already dead");
+            if (currentAction != null) {
+=======
             if (currentAction != null && cancelCurrentAction) {
+>>>>>>> ebcf501e550c57f14b666e54ef77d72e8a3377f1
                 currentAction.StopAction();
             }
             if (ownParty.specificLocation != null && isHoldingItem) {
@@ -1024,21 +1027,54 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public void AssignRole(CharacterRole role) {
         bool wasRoleChanged = false;
         if (_role != null) {
-            if(_role.roleType == role.roleType) {
-                //If character role is being changed to same role, do not change it
-                return;
-            }
             _role.OnChange(this);
+            //#if !WORLD_CREATION_TOOL
+            //            Log roleChangeLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "change_role");
+            //            roleChangeLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            //            AddHistory(roleChangeLog);
+            //#endif
             wasRoleChanged = true;
         }
         _role = role;
+        //switch (role) {
+        //    case CHARACTER_ROLE.NOBLE:
+        //    _role = new Noble(this);
+        //    break;
+        //    case CHARACTER_ROLE.ADVENTURER:
+        //    _role = new Adventurer(this);
+        //    break;
+        //    case CHARACTER_ROLE.CIVILIAN:
+        //    _role = new Civilian(this);
+        //    break;
+        //    case CHARACTER_ROLE.MINION:
+        //    _role = new MinionRole(this);
+        //    break;
+        //    case CHARACTER_ROLE.PLAYER:
+        //    _role = new PlayerRole(this);
+        //    break;
+        //    case CHARACTER_ROLE.SOLDIER:
+        //    _role = new Soldier(this);
+        //    break;
+        //    case CHARACTER_ROLE.BEAST:
+        //    _role = new Beast(this);
+        //    break;
+        //    case CHARACTER_ROLE.LEADER:
+        //    _role = new Leader(this);
+        //    break;
+        //    case CHARACTER_ROLE.BANDIT:
+        //    _role = new Bandit(this);
+        //    break;
+        //    SetName(this.characterClass.className);
+        //    break;
+        //    default:
+        //    break;
+        //}
         if (_role != null) {
             _role.OnAssign(this);
         }
         if (wasRoleChanged) {
             Messenger.Broadcast(Signals.ROLE_CHANGED, this);
         }
-        UpdateIsCombatantState();
     }
     #endregion
 
@@ -1206,7 +1242,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (!HasJobTargettingThisCharacter("Apprehend")) {
             GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = homeArea, targetPOI = this };
             GoapPlanJob job = new GoapPlanJob("Apprehend", goapEffect);
-            job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = this }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
+            job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained" }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
             job.SetCanTakeThisJobChecker(CanCharacterTakeApprehendJob);
             homeArea.jobQueue.AddJobInQueue(job);
         }
@@ -1290,57 +1326,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         }
     }
-
-    public Character troubledCharacter { get; private set; }
-    public void CreateAskForHelpSaveCharacterJob(Character troubledCharacter) {
-        if(troubledCharacter != null && troubledCharacter != this) {
-            this.troubledCharacter = troubledCharacter;
-            Character targetCharacter = null;
-            List<Character> positiveCharacters = GetCharactersWithRelationship(TRAIT_EFFECT.POSITIVE);
-            if(positiveCharacters.Count > 0) {
-                targetCharacter = positiveCharacters[UnityEngine.Random.Range(0, positiveCharacters.Count)];
-            } else {
-                List<Character> nonEnemyCharacters = GetCharactersWithoutRelationship(RELATIONSHIP_TRAIT.ENEMY).Where(x => x.faction.id == faction.id).ToList();
-                if (nonEnemyCharacters.Count > 0) {
-                    targetCharacter = nonEnemyCharacters[UnityEngine.Random.Range(0, nonEnemyCharacters.Count)];
-                }
-            }
-            if (targetCharacter != null) {
-                GoapPlanJob job = new GoapPlanJob("Ask For Help Save Character", INTERACTION_TYPE.ASK_FOR_HELP_SAVE_CHARACTER, targetCharacter);
-                jobQueue.AddJobInQueue(job);
-            } else {
-                Log addLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "ask_for_help_fail");
-                addLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                addLog.AddToFillers(troubledCharacter, troubledCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                addLog.AddLogToInvolvedObjects();
-                if (PlayerManager.Instance.player.ShouldShowNotificationFrom(this)) {
-                    PlayerManager.Instance.player.ShowNotification(addLog);
-                }
-            }
-        } else {
-            if (troubledCharacter == null) {
-                Debug.LogError(name + " cannot create ask for help save character job because troubled character is null!");
-            } else {
-                Debug.LogError(name + " cannot create ask for help save character job for " + troubledCharacter.name);
-            }
-        }
-    }
-    public void CreateSaveCharacterJob(Character targetCharacter) {
-        if (targetCharacter != null && targetCharacter != this) {
-            GoapPlanJob job = new GoapPlanJob("Save Character", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = targetCharacter.homeArea, targetPOI = targetCharacter });
-            jobQueue.AddJobInQueue(job);
-        } else {
-            if(targetCharacter == null) {
-                Debug.LogError(name + " cannot create save character job because troubled character is null!");
-            } else {
-                Debug.LogError(name + " cannot create save character job for " + targetCharacter.name);
-            }
-        }
-    }
     #endregion
 
-        #region Faction
-        public void SetFaction(Faction newFaction) {
+    #region Faction
+    public void SetFaction(Faction newFaction) {
         if (_faction != null
             && newFaction != null
             && _faction.id == newFaction.id) {
@@ -1569,13 +1558,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (currentParty == party) {
             CheckApprehendRelatedJobsOnLeaveLocation();
             CheckRemoveTraitRelatedJobsOnLeaveLocation();
-            marker.ClearTerrifyingCharacters();
-        } else {
-            if(marker.terrifyingCharacters.Count > 0) {
-                for (int i = 0; i < party.characters.Count; i++) {
-                    marker.RemoveTerrifyingCharacter(party.characters[i]);
-                }
-            }
         }
     }
     private void OnArrivedAtArea(Party party) {
@@ -1806,20 +1788,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public bool IsNear(IPointOfInterest poi) {
         return gridTileLocation == poi.gridTileLocation || gridTileLocation.IsAdjacentTo(poi);
     }
-    public void UpdateIsCombatantState() {
-        bool state = false;
-        if (_role.roleType == CHARACTER_ROLE.CIVILIAN || _role.roleType == CHARACTER_ROLE.LEADER || _role.roleType == CHARACTER_ROLE.NOBLE) {
-            state = true;
-        } else if(GetTrait("Injured") != null) {
-            state = true;
-        }
-        if(isCombatant != state) {
-            isCombatant = state;
-            if (isCombatant && marker != null) {
-                marker.ClearTerrifyingCharacters();
-            }
-        }
-    }
     #endregion
 
     #region Relationships
@@ -1907,24 +1875,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         List<Character> characters = new List<Character>();
         foreach (KeyValuePair<Character, CharacterRelationshipData> kvp in relationships) {
             if (kvp.Value.HasRelationshipTrait(type)) {
-                characters.Add(kvp.Key);
-            }
-        }
-        return characters;
-    }
-    public List<Character> GetCharactersWithoutRelationship(RELATIONSHIP_TRAIT type) {
-        List<Character> characters = new List<Character>();
-        foreach (KeyValuePair<Character, CharacterRelationshipData> kvp in relationships) {
-            if (!kvp.Value.HasRelationshipTrait(type)) {
-                characters.Add(kvp.Key);
-            }
-        }
-        return characters;
-    }
-    public List<Character> GetCharactersWithRelationship(TRAIT_EFFECT effect) {
-        List<Character> characters = new List<Character>();
-        foreach (KeyValuePair<Character, CharacterRelationshipData> kvp in relationships) {
-            if (kvp.Value.HasRelationshipOfEffect(effect)) {
                 characters.Add(kvp.Key);
             }
         }
@@ -2743,7 +2693,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             if(trait.effect == TRAIT_EFFECT.NEGATIVE) {
                 AdjustIgnoreHostilities(1);
             }
-            _ownParty.RemoveAllCharacters();
         }
         if(trait.name == "Abducted" || trait.name == "Restrained") {
             AdjustDoNotGetTired(1);
@@ -4034,64 +3983,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             EventIntel ei = intel as EventIntel;
             if (ei.action.endedAtState != null && ei.action.endedAtState.shareIntelReaction != null) {
                 dialogReactions.AddRange(ei.action.endedAtState.shareIntelReaction.Invoke(this, ei));
-            } else {
-                bool doesNotConcernMe = false;
-                //If the event's actor and target do not have any relationship with the recipient and are not part of his faction, 
-                //and if no item involved is owned by the recipient: "This does not concern me."
-                if (!this.HasRelationshipWith(ei.action.actor) 
-                    && ei.action.actor.faction != this.faction) {
-                    if (ei.action.poiTarget is Character) {
-                        Character otherCharacter = ei.action.poiTarget as Character;
-                        if (!this.HasRelationshipWith(otherCharacter)
-                            && otherCharacter.faction != this.faction) {
-                            doesNotConcernMe = true;
-                        }
-                    } else if (ei.action.poiTarget is TileObject) {
-                        TileObject obj = ei.action.poiTarget as TileObject;
-                        if (!obj.IsOwnedBy(this)) {
-                            doesNotConcernMe = true;
-                        }
-                    } else if (ei.action.poiTarget is SpecialToken) {
-                        SpecialToken obj = ei.action.poiTarget as SpecialToken;
-                        if (obj.characterOwner != this) {
-                            doesNotConcernMe = true;
-                        }
-                    }
-                }
-
-                if (ei.action.actor == this) {
-                    //If the actor and the recipient is the same: "I know what I did."
-                    dialogReactions.Add("I know what I did.");
-                } else {
-                    if (doesNotConcernMe) {
-                        //The following events are too unimportant to merit any meaningful response: "What will I do with this random tidbit?"
-                        //-character picked up an item(not stealing)
-                        //-character prayed, daydreamed, played
-                        //- character slept
-                        //- character mined or chopped wood
-                        switch (ei.action.goapType) {
-                            case INTERACTION_TYPE.PICK_ITEM:
-                            case INTERACTION_TYPE.PRAY:
-                            case INTERACTION_TYPE.DAYDREAM:
-                            case INTERACTION_TYPE.PLAY:
-                            case INTERACTION_TYPE.SLEEP:
-                            case INTERACTION_TYPE.SLEEP_OUTSIDE:
-                            case INTERACTION_TYPE.MINE_ACTION:
-                            case INTERACTION_TYPE.CHOP_WOOD:
-                                dialogReactions.Add("What will I do with this random tidbit?");
-                                break;
-                            default:
-                                dialogReactions.Add("This does not concern me.");
-                                break;
-                        }
-                        
-                    } else {
-                        //Otherwise: "A proper response to this information has not been implemented yet."
-                        dialogReactions.Add("A proper response to this information has not been implemented yet.");
-                    }
-                }
-
-                
             }            
             //Dictionary<ActionEffectReaction, GoapEffect> reactions = new Dictionary<ActionEffectReaction, GoapEffect>();
             //for (int i = 0; i < ei.action.actualEffects.Count; i++) {
@@ -4302,7 +4193,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         poiGoapActions.Add(INTERACTION_TYPE.STEAL_CHARACTER);
         poiGoapActions.Add(INTERACTION_TYPE.JUDGE_CHARACTER);
         poiGoapActions.Add(INTERACTION_TYPE.CURSE_CHARACTER);
-        poiGoapActions.Add(INTERACTION_TYPE.ASK_FOR_HELP_SAVE_CHARACTER);
     }
     public void StartGOAP(GoapEffect goal, IPointOfInterest target, GOAP_CATEGORY category, bool isPriority = false, List<Character> otherCharactePOIs = null, bool isPersonalPlan = true, GoapPlanJob job = null) {
         List<CharacterAwareness> characterTargetsAwareness = new List<CharacterAwareness>();
@@ -4463,17 +4353,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 //    continue; //skip plan
                 //}
                 if (IsPlanCancelledDueToInjury(plan.currentNode.action)) {
-                    log += "\n - Action's plan is cancelled due to injury, dropping plan...";
-                    PrintLogIfActive(log);
-                    if (allGoapPlans.Count == 1) {
-                        DropPlan(plan);
-                        willGoIdleState = false;
-                        break;
-                    } else {
-                        DropPlan(plan);
-                        i--;
-                        continue;
-                    }
+                    i--;
+                    continue;
                 }
                 if (plan.currentNode.action.IsHalted()) {
                     log += "\n - Action " + plan.currentNode.action.goapName + " is waiting, skipping...";
@@ -4545,9 +4426,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         if (actorAllowedActions.Contains(action.goapType) && action.CanSatisfyRequirements()) {
             if (IsPlanCancelledDueToInjury(action)) {
-                log += "\n - Action's plan is cancelled due to injury, dropping plan...";
-                PrintLogIfActive(log);
-                DropPlan(action.parentPlan);
                 return;
             }
             if (action.IsHalted()) {
@@ -4900,7 +4778,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     private void CancelCurrentAction(Character target, string cause) {
         if(this != target && !isDead && currentAction != null && currentAction.poiTarget == target) {
-            Log addLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "action_cancelled_cause");
+            Log addLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "plan_cancelled_cause");
             addLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             addLog.AddToFillers(null, cause, LOG_IDENTIFIER.STRING_1);
             addLog.AddLogToInvolvedObjects();
@@ -5088,7 +4966,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     //only add apprehend job if the criminal is part of this characters faction
                     actor.AddCriminalTrait(committedCrime);
                     job = new GoapPlanJob("Apprehend", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = homeArea, targetPOI = actor });
-                    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = actor }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
+                    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained" }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
                     job.SetCanTakeThisJobChecker(CanCharacterTakeApprehendJob);
                     homeArea.jobQueue.AddJobInQueue(job);
                 }
@@ -5101,7 +4979,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     actor.AddCriminalTrait(committedCrime);
                     //- If the character is a Soldier, he will also create an Apprehend Job Type in his personal job queue.
                     job = new GoapPlanJob("Apprehend", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = homeArea, targetPOI = actor });
-                    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = actor }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
+                    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained" }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
                     job.SetCanTakeThisJobChecker(CanCharacterTakeApprehendJob);
                     homeArea.jobQueue.AddJobInQueue(job);
                     homeArea.jobQueue.AssignCharacterToJob(job, this);
@@ -5122,9 +5000,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 break;
             case CRIME.MURDER:
                 trait = new Murderer();
-                break;
-            case CRIME.ATTEMPTED_MURDER:
-                trait = new AttemptedMurderer();
                 break;
             default:
                 break;
