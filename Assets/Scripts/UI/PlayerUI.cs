@@ -527,7 +527,7 @@ public class PlayerUI : MonoBehaviour {
             rsi.UpdateActionButtons();
             rsi.OverrideDraggableState(true);
         }
-        assignBtn.interactable = true;
+        //assignBtn.interactable = true;
     }
     #endregion
 }

@@ -1669,7 +1669,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     //    return PathGenerator.Instance.GetPath(currLocation, partyToJoin.currLocation, PATHFINDING_MODE.PASSABLE, _faction) != null;
     //}
     public void CenterOnCharacter() {
-        if (!this.isDead) {
+        if (!this.isDead && this.minion == null) {
             if (currentParty.icon.isTravelling) {
                 if(currentParty.icon.travelLine != null) {
                     if (specificLocation.areaMap.isShowing) {

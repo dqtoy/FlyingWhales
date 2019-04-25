@@ -37,6 +37,8 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     public bool isOccupied { get { return tileState == Tile_State.Occupied; } }
     public bool isEdge { get; private set; }
 
+    public bool isLocked { get; private set; } //if a tile is locked, any asset on it should not be replaced.
+
     public List<LocationGridTile> ValidTiles { get { return FourNeighbours().Where(o => o.tileType == Tile_Type.Empty || o.tileType == Tile_Type.Gate || o.tileType == Tile_Type.Road).ToList(); } }
     public List<LocationGridTile> RealisticTiles { get { return FourNeighbours().Where(o => o.tileAccess == Tile_Access.Passable && (o.structure != null || o.tileType == Tile_Type.Road || o.tileType == Tile_Type.Gate)).ToList(); } }
     public List<LocationGridTile> RoadTiles { get { return neighbours.Values.Where(o => o.tileType == Tile_Type.Road).ToList(); } }
@@ -56,6 +58,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         tileState = Tile_State.Empty;
         tileAccess = Tile_Access.Passable;
         charactersHere = new List<Character>();
+        SetLockedState(false);
     }
     public void UpdateWorldLocation() {
         worldLocation = parentTileMap.CellToWorld(localPlace);
@@ -436,6 +439,9 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         vertices[2] = new Vector3(centeredWorldLocation.x + adjustment, centeredWorldLocation.y - adjustment, 0f); //bot right corner
         vertices[3] = new Vector3(centeredWorldLocation.x - adjustment, centeredWorldLocation.y - adjustment, 0f); //bot left corner
         return vertices;
+    }
+    public void SetLockedState(bool state) {
+        isLocked = state;
     }
     #endregion
 

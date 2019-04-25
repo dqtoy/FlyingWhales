@@ -99,6 +99,7 @@ public class EatAtTable : GoapAction {
         }
         log.AddLogToInvolvedObjects();
         currentState.OverrideDescriptionLog(log);
+        currentState.SetIntelReaction(State2Reactions);
         //UIManager.Instance.Pause();
     }
     private void PreTargetMissing() {
@@ -117,6 +118,64 @@ public class EatAtTable : GoapAction {
         }
         LocationGridTile knownLoc = awareness.knownGridLocation;
         return knownLoc.structure.structureType == STRUCTURE_TYPE.DWELLING;
+    }
+    #endregion
+
+    #region Intel Reactions
+    private List<string> State2Reactions(Character recipient, Intel sharedIntel) {
+        List<string> reactions = new List<string>();
+
+        //Recipient and Actor are the same
+        if (recipient == actor) {
+            //- **Recipient Response Text**: "I know what I've done!"
+            reactions.Add(string.Format("I know what I've done!", actor.name));
+            //-**Recipient Effect**:  no effect
+        }
+
+        //Recipient poisoned the table and he has a negative relationship with the Actor:
+        else if (poisonedTrait.IsResponsibleForTrait(recipient) && recipient.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.NEGATIVE)) {
+            //- **Recipient Response Text**: "Yes, I did that. Hahaha!"
+            reactions.Add("Yes, I did that. Hahaha!");
+            //-**Recipient Effect * *: no effect
+        }
+
+        //Recipient has a negative relationship with the Actor:
+        else if (recipient.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.NEGATIVE)) {
+            //- **Recipient Response Text**: "It's what [Actor Name] deserves!"
+            reactions.Add(string.Format("It's what {0} deserves!", actor.name));
+            //-**Recipient Effect**: no effect
+        }
+
+        //Actor became Sick, Recipient has a positive relationship with the Actor but is not part of the same faction:
+        else if (recipient.faction != actor.faction && !recipient.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE, RELATIONSHIP_TRAIT.RELATIVE)
+            && HasActualEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Sick", actor)) {
+            //- **Recipient Response Text**: "Poor [Actor Name]. Maybe I can help!"
+            reactions.Add(string.Format("Poor {0}. Maybe I can help!", actor.name));
+            //-**Recipient Effect * *: Add a Remove[Sick] Job to Actor's personal job queue.
+            GoapPlanJob job = new GoapPlanJob("Remove Sick", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Sick", targetPOI = actor });
+            recipient.jobQueue.AddJobInQueue(job);
+        }
+
+        //Actor became Sick, Recipient does not have a negative relationship with the Actor and is part of the same faction:
+        else if (recipient.faction == actor.faction && !recipient.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.NEGATIVE)
+            && HasActualEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Sick", actor)) {
+            //- **Recipient Response Text**: "Poor [Actor Name]. Maybe I can help!"
+            reactions.Add(string.Format("Poor {0}. Maybe I can help!", actor.name));
+            //-**Recipient Effect * *: Add a Remove[Sick] Job to location job queue and assign it to Recipient.
+            GoapPlanJob job = new GoapPlanJob("Remove Sick", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Sick", targetPOI = actor });
+            recipient.jobQueue.AddJobInQueue(job);
+        }
+
+        //Actor died, Recipient has a positive relationship with the Actor or is part of the same faction and not enemies:
+        else if (HasActualEffect(GOAP_EFFECT_CONDITION.DEATH, null, actor) 
+            && (recipient.faction == actor.faction || recipient.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE, RELATIONSHIP_TRAIT.RELATIVE))
+            && !recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.ENEMY)) {
+            //- **Recipient Response Text**: "Poor [Actor Name]. May [he/she] rest in peace."
+            reactions.Add(string.Format("Poor {0}. May {1} rest in peace.", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
+            //-**Recipient Effect * *: No effect.
+        }
+
+        return reactions;
     }
     #endregion
 }

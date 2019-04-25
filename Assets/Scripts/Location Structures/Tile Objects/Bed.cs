@@ -40,7 +40,11 @@ public class Bed : TileObject, IPointOfInterest {
     public override void SetPOIState(POI_STATE state) {
         base.SetPOIState(state);
         if (state == POI_STATE.ACTIVE) {
-            gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this); //update visual based on state
+            if (GetActiveUserCount() > 0) {
+                UpdateUsedBedAsset();
+            } else {
+                gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this); //update visual based on state
+            }
         }
     }
     public override void OnDoActionToObject(GoapAction action) {

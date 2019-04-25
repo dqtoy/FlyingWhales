@@ -89,6 +89,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 8aeae44373a78434bac8f9df85ccad8e, type: 3}
   - {fileID: 21300000, guid: c8df085379e0e8343b00098c1f91e703, type: 3}
   - {fileID: 21300000, guid: ef02c953443b42a4cac1e4500036e9e9, type: 3}
+  - {fileID: 21300000, guid: c2cb7763df251d542b390ac879cde97e, type: 3}
   - {fileID: 21300000, guid: cb696b73415e2624a867402ebb09e809, type: 3}
   - {fileID: 21300000, guid: aef08e738de7f9144a2bf4587b8b17ec, type: 3}
   - {fileID: 21300000, guid: d8a6fc8357a0c0640a0cf00e1ac188c9, type: 3}
@@ -194,6 +195,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: bc588dc8c48f0ad4caccdcc1960e68d0, type: 3}
   - {fileID: 21300000, guid: 9aab00d80ddd80d43ad852599179a0e7, type: 3}
   - {fileID: 21300000, guid: a44170e88775e56478e09d018e3c13a6, type: 3}
+  - {fileID: 21300000, guid: 2845d2e8bab8ab14da6641fc8d7fcb32, type: 3}
   - {fileID: 21300000, guid: bc6b7be8dcd117c40b523b0c469b914d, type: 3}
   - {fileID: 21300000, guid: b26562098a29bbb4695da637ab5ce5ba, type: 3}
   - {fileID: 21300000, guid: 39fc0a092793d3943833bb3061e7a870, type: 3}
@@ -247,6 +249,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: b801005bb2163be4a97e39745c0198b0, type: 3}
   - {fileID: 21300000, guid: 6e5b3a5ba6344b547a8e1503e7b0040a, type: 3}
   - {fileID: 21300000, guid: 80e51d5bf696e864195e89b5e1151871, type: 3}
+  - {fileID: 21300000, guid: 6dee179b2f90f464ebb1d5f17ea1fa60, type: 3}
   - {fileID: 21300000, guid: 74b9189be27d738418747734597c3914, type: 3}
   - {fileID: 21300000, guid: 68dded9b2946a9346a8043772426280e, type: 3}
   - {fileID: 21300000, guid: c51390ab720dd894e924e4709ac485c1, type: 3}
@@ -278,6 +281,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 62cc391ddf5e0c54b90366603efc2e32, type: 3}
   - {fileID: 21300000, guid: 4e72ca1dca662654c8f2748b29510203, type: 3}
   - {fileID: 21300000, guid: 9d71b66d2e6ae4946b19b0b489663fd3, type: 3}
+  - {fileID: 21300000, guid: dbe0987dc8cc34441938f371b77893c1, type: 3}
   - {fileID: 21300000, guid: ff09ff8d935290549957e2037d5cb0c8, type: 3}
   - {fileID: 21300000, guid: e26dc0ad13ea5214a8bbbca1cfa08889, type: 3}
   - {fileID: 21300000, guid: f52eccad996af5040acdcd7df9507bf9, type: 3}
@@ -393,6 +397,7 @@ SpriteAtlas:
   - minion_icon_diplomat
   - location_ui_bottom_cover_container
   - fyn
+  - share_intel_chat_box
   - location_faction_ui_container_decor
   - interaction_tab_done
   - glow
@@ -498,6 +503,7 @@ SpriteAtlas:
   - log_button_inactive
   - faction_ui_resident_clicked
   - intel_event_type_icon
+  - Share_Intel.JPG
   - assign_minion_list_container
   - minion_icon_debilitator
   - ge_icon-22
@@ -551,6 +557,7 @@ SpriteAtlas:
   - ge_cont-01B
   - player
   - magus
+  - share_intel_divider
   - nameplate
   - tile_log_divider
   - intel_row_clicked
@@ -582,6 +589,7 @@ SpriteAtlas:
   - interaction_tab_unselected
   - location_ui_visitors_icon
   - assault_defense_container
+  - share_intel_container
   - notification_intel_button_default
   - ge_icon-02
   - button_back_clicked

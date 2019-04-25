@@ -25,8 +25,12 @@ public class InteriorMapManager : MonoBehaviour {
         }
     }
 
-    public Tilemap areaGenerationTilemap; //Used for generating the inner map of an area, structure templates are first placed here before generating the actual map
-
+    //Used for generating the inner map of an area, structure templates are first placed here before generating the actual map
+    public Tilemap agGroundTilemap;
+    public Tilemap agStructureTilemap;
+    public Tilemap agObjectsTilemap;
+    public Tilemap agDetailsTilemap;
+    
     [Header("Pathfinding")]
     [SerializeField] private AstarPath pathfinder;
     private const float nodeSize = 0.2f;
@@ -98,6 +102,10 @@ public class InteriorMapManager : MonoBehaviour {
         sim = (FindObjectOfType(typeof(RVOSimulator)) as RVOSimulator).GetSimulator();
     }
     public void ShowAreaMap(Area area) {
+        if (area.areaType == AREA_TYPE.DEMONIC_INTRUSION) {
+            //do not show player area map
+            return;
+        }
         area.areaMap.Open();
         currentlyShowingMap = area.areaMap;
         currentlyShowingArea = area;
@@ -246,13 +254,16 @@ public class InteriorMapManager : MonoBehaviour {
     /// Get Tile asset based on name. NOTE: Should only be used on the start of the game when building the area maps.
     /// </summary>
     /// <param name="name">Name of the asset</param>
-    public TileBase GetTileAsset(string name) {
+    public TileBase GetTileAsset(string name, bool logMissing = false) {
         List<TileBase> allTileAssets = LoadAllTilesAssets();
         for (int i = 0; i < allTileAssets.Count; i++) {
             TileBase currTile = allTileAssets[i];
             if (currTile.name == name) {
                 return currTile;
             }
+        }
+        if (logMissing) {
+            Debug.LogWarning("There is no tilemap asset with name " + name);
         }
         return null;
     }
@@ -377,5 +388,153 @@ public class InteriorMapManager : MonoBehaviour {
         return heldPOI != null;
     }
     #endregion
+
+    #region Town Map Generation
+    public void CleanupForTownGeneration() {
+        agGroundTilemap.ClearAllTiles();
+        agStructureTilemap.ClearAllTiles();
+        agObjectsTilemap.ClearAllTiles();
+        agDetailsTilemap.ClearAllTiles();
+        placedStructures = new Dictionary<STRUCTURE_TYPE, List<StructureSlot>>();
+    }
+    public TownMapSettings GetTownMapSettings() {
+        TownMapSettings s = new TownMapSettings();
+        //visuals
+        agGroundTilemap.CompressBounds();
+        s.size = agGroundTilemap.cellBounds;
+
+        s.groundTiles = GetTileData(agGroundTilemap, agGroundTilemap.cellBounds);
+        s.structureTiles = GetTileData(agStructureTilemap, agGroundTilemap.cellBounds);
+        s.objectTiles = GetTileData(agObjectsTilemap, agGroundTilemap.cellBounds);
+        s.detailTiles = GetTileData(agDetailsTilemap, agGroundTilemap.cellBounds);
+
+        int shiftXBy = 0; //shift x position of all objects by n
+        int shiftYBy = 0;//shift y position of all objects by n
+        if (agGroundTilemap.cellBounds.xMin != 0) { shiftXBy = agGroundTilemap.cellBounds.xMin * -1; }
+        if (agGroundTilemap.cellBounds.yMin != 0) { shiftYBy = agGroundTilemap.cellBounds.yMin * -1; }
+
+        //s.size.xMin += shiftXBy;
+        //s.size.xMax += shiftXBy;
+
+        //s.size.yMin += shiftYBy;
+        //s.size.yMax += shiftYBy;
+
+        //structures
+        s.structureSlots = placedStructures;
+
+        //shift all positions so that the bounds minimum is at 0
+        foreach (KeyValuePair<STRUCTURE_TYPE, List<StructureSlot>> keyValuePair in s.structureSlots) {
+            for (int i = 0; i < keyValuePair.Value.Count; i++) {
+                keyValuePair.Value[i].AdjustStartPos(shiftXBy, shiftYBy);
+            }
+        }
+
+        return s;
+
+    }
+    private Dictionary<STRUCTURE_TYPE, List<StructureSlot>> placedStructures;
+    public void DrawTemplateForGeneration(StructureTemplate template, Vector3Int startPos) {
+        DrawTiles(agGroundTilemap, template.groundTiles, startPos);
+        DrawTiles(agStructureTilemap, template.structureWallTiles, startPos);
+        DrawTiles(agObjectsTilemap, template.objectTiles, startPos);
+        DrawTiles(agDetailsTilemap, template.detailTiles, startPos);
+    }
+    public void DrawTemplateForGeneration(StructureTemplate template, Vector3Int startPos, STRUCTURE_TYPE structureType) {
+        DrawTiles(agGroundTilemap, template.groundTiles, startPos);
+        DrawTiles(agStructureTilemap, template.structureWallTiles, startPos);
+        DrawTiles(agObjectsTilemap, template.objectTiles, startPos);
+        DrawTiles(agDetailsTilemap, template.detailTiles, startPos);
+        AddPlacedStructure(structureType, new StructureSlot() { size = template.size, startPos = startPos });
+    }
+    private void DrawTiles(Tilemap tilemap, TileTemplateData[] data, Vector3Int startPos) {
+        for (int i = 0; i < data.Length; i++) {
+            TileTemplateData currData = data[i];
+            Vector3Int pos = new Vector3Int((int)currData.tilePosition.x, (int)currData.tilePosition.y, 0);
+            pos.x += startPos.x;
+            pos.y += startPos.y;
+            if (tilemap.GetTile(pos) != null) {
+                continue; //skip drawing this tile
+            }
+            if (!string.IsNullOrEmpty(currData.tileAssetName)) {
+                tilemap.SetTile(pos, GetTileAsset(currData.tileAssetName, true));
+            }
+            
+            //else {
+            //    tilemap.SetTile(pos, GetTileAsset(currData.tileAssetName));
+            //}
+            tilemap.SetTransformMatrix(pos, currData.matrix);
+
+        }
+    }
+    private TileTemplateData[] GetTileData(Tilemap tilemap, BoundsInt bounds) {
+        TileTemplateData[] data = new TileTemplateData[bounds.size.x * bounds.size.y];
+        int count = 0;
+
+        for (int x = bounds.xMin; x < bounds.xMax; x++) {
+            for (int y = bounds.yMin; y < bounds.yMax; y++) {
+                Vector3Int pos = new Vector3Int(x, y, 0);
+                TileBase tb = tilemap.GetTile(pos);
+                Matrix4x4 matrix = tilemap.GetTransformMatrix(pos);
+
+                int normalizedX = x;
+                int normalizedY = y;
+
+                if (bounds.xMin != 0) {
+                    if (bounds.xMin < 0) {
+                        //x is negative
+                        normalizedX += Mathf.Abs(bounds.xMin);
+                    } else {
+                        //x is positive
+                        normalizedX -= Mathf.Abs(bounds.xMin);
+                    }
+                }
+
+                if (bounds.yMin != 0) {
+                    if (bounds.yMin < 0) {
+                        //y is negative
+                        normalizedY += Mathf.Abs(bounds.yMin);
+                    } else {
+                        //y is positive
+                        normalizedY -= Mathf.Abs(bounds.yMin);
+                    }
+                }
+
+                data[count] = new TileTemplateData(tb, matrix, new Vector3(normalizedX, normalizedY, 0));
+                count++;
+            }
+        }
+        return data;
+    }
+    private void AddPlacedStructure(STRUCTURE_TYPE type, StructureSlot slot) {
+        if (!placedStructures.ContainsKey(type)) {
+            placedStructures.Add(type, new List<StructureSlot>());
+        }
+        placedStructures[type].Add(slot);
+    }
+    #endregion
+}
+
+public struct TownMapSettings {
+
+    public BoundsInt size;
+    public TileTemplateData[] groundTiles;
+    public TileTemplateData[] structureTiles;
+    public TileTemplateData[] objectTiles;
+    public TileTemplateData[] detailTiles;
+
+    public Dictionary<STRUCTURE_TYPE, List<StructureSlot>> structureSlots;
+
+}
+
+public class StructureSlot {
+    public Vector3Int startPos;
+    public Point size;
+
+    public void AdjustStartPos(int x, int y) {
+        Vector3Int newPos = startPos;
+        newPos.x += x;
+        newPos.y += y;
+        startPos = newPos;
+    }
 }
 

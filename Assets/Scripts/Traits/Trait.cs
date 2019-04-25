@@ -49,6 +49,9 @@ public class Trait {
     public virtual void SetCharacterResponsibleForTrait(Character character) {
         _responsibleCharacter = character;
     }
+    public virtual bool IsResponsibleForTrait(Character character) {
+        return _responsibleCharacter == character;
+    }
     public virtual string GetToolTipText() { return string.Empty; }
     public virtual bool IsUnique() { return true; }
     #endregion

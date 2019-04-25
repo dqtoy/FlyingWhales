@@ -845,7 +845,7 @@ MonoBehaviour:
   groundTilemap: {fileID: 8195094282824495090}
   wallTilemap: {fileID: 8195094279940266850}
   detailsTilemap: {fileID: 8195094281029965638}
-  strcutureTilemap: {fileID: 8195094281757846180}
+  structureTilemap: {fileID: 8195094281757846180}
   objectsTilemap: {fileID: 8195094282159575352}
   roadTilemap: {fileID: 8195094281692177958}
   outsideTile: {fileID: 11400000, guid: eb3f0a06db068d04f86d266316b14e08, type: 2}

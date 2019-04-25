@@ -144,6 +144,7 @@ public class STCManager : MonoBehaviour {
             string dataAsJson = File.ReadAllText(path);
             StructureTemplate loaded = JsonUtility.FromJson<StructureTemplate>(dataAsJson);
             LoadTemplate(loaded);
+            Debug.Log("Loaded " + path);
         }
     }
 
