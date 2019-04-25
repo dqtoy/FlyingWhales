@@ -29,17 +29,23 @@ public class ExploreState : CharacterState {
         StartExploreMovement();
     }
     public override bool OnEnterVisionWith(IPointOfInterest targetPOI) {
-        if(targetPOI is SpecialToken) {
-            GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.PICK_ITEM, stateComponent.character, targetPOI);
-            if(goapAction.targetTile != null) {
-                goapAction.CreateStates();
-                stateComponent.character.SetCurrentAction(goapAction);
-                stateComponent.character.marker.GoTo(goapAction.targetTile, targetPOI, () => OnArriveAtPickUpLocation());
-                PauseState();
-            } else {
-                Debug.LogWarning(GameManager.Instance.TodayLogString() + " " + stateComponent.character.name + " can't pick up item " + targetPOI.name + " because there is no tile to go to!");
-            }
+        if (targetPOI is Character) {
+            stateComponent.character.marker.AddHostileInRange(targetPOI as Character);
             return true;
+        } else if (targetPOI is SpecialToken) {
+            SpecialToken token = targetPOI as SpecialToken;
+            if (token.characterOwner == null) {
+                GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.PICK_ITEM, stateComponent.character, targetPOI);
+                if (goapAction.targetTile != null) {
+                    goapAction.CreateStates();
+                    stateComponent.character.SetCurrentAction(goapAction);
+                    stateComponent.character.marker.GoTo(goapAction.targetTile, targetPOI, () => OnArriveAtPickUpLocation());
+                    PauseState();
+                } else {
+                    Debug.LogWarning(GameManager.Instance.TodayLogString() + " " + stateComponent.character.name + " can't pick up item " + targetPOI.name + " because there is no tile to go to!");
+                }
+                return true;
+            }
         }else if (targetPOI is Character) {
             stateComponent.character.marker.AddHostileInRange(targetPOI as Character);
             return true;

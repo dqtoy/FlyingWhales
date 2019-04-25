@@ -20,6 +20,20 @@ public class PatrolState : CharacterState {
         if(targetPOI is Character) {
             stateComponent.character.marker.AddHostileInRange(targetPOI as Character);
             return true;
+        }else if (targetPOI is SpecialToken) {
+            SpecialToken token = targetPOI as SpecialToken;
+            if(token.characterOwner == null) {
+                GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.PICK_ITEM, stateComponent.character, targetPOI);
+                if (goapAction.targetTile != null) {
+                    goapAction.CreateStates();
+                    stateComponent.character.SetCurrentAction(goapAction);
+                    stateComponent.character.marker.GoTo(goapAction.targetTile, targetPOI, () => OnArriveAtPickUpLocation());
+                    PauseState();
+                } else {
+                    Debug.LogWarning(GameManager.Instance.TodayLogString() + " " + stateComponent.character.name + " can't pick up item " + targetPOI.name + " because there is no tile to go to!");
+                }
+                return true;
+            }
         }
         return base.OnEnterVisionWith(targetPOI);
     }
@@ -33,6 +47,15 @@ public class PatrolState : CharacterState {
         }
     }
     #endregion
+
+    private void OnArriveAtPickUpLocation() {
+        stateComponent.character.currentAction.SetEndAction(PatrolAgain);
+        stateComponent.character.currentAction.PerformActualAction();
+    }
+    private void PatrolAgain(string result, GoapAction goapAction) {
+        stateComponent.character.SetCurrentAction(null);
+        ResumeState();
+    }
 
     private void StartPatrolMovement() {
         stateComponent.character.marker.GoTo(PickRandomTileToGoTo(), stateComponent.character, () => StartPatrolMovement());
