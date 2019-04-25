@@ -8,7 +8,7 @@ public class Corrupt : PlayerJobAction {
     private List<string> _traitNames;
 
     public Corrupt() {
-        actionName = "Corrupt";
+        name = "Corrupt";
         SetDefaultCooldownTime(48);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
         _traitNames = new List<string>() { "Lycanthropy", "Unconscious", "Restrained", "Cursed", "Sick", "Injured", "Kleptomaniac" };

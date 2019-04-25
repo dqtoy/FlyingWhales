@@ -5,7 +5,8 @@ using UnityEngine;
 public class PlayerJobAction {
 
     public PlayerJobData parentData { get; protected set; }
-    public string actionName { get; protected set; }
+    public virtual string actionName { get { return name; } }
+    public string name { get; protected set; }
 	public int cooldown { get; protected set; } //cooldown in ticks
     public Character assignedCharacter { get; protected set; }
     public List<JOB_ACTION_TARGET> targettableTypes { get; protected set; } //what sort of objects can this action target

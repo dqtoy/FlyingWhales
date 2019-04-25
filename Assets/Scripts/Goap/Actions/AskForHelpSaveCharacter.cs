@@ -26,7 +26,7 @@ public class AskForHelpSaveCharacter : GoapAction {
     //}
     public override void PerformActualAction() {
         base.PerformActualAction();
-        if (!isTargetMissing) {
+        if (!isTargetCharacterMissing) {
             SetState("Ask Success");
         } else {
             SetState("Target Missing");

@@ -56,7 +56,7 @@ public class GoapAction {
     public CRIME committedCrime { get; private set; }
     public string result { get; private set; }
     public string animationName { get; protected set; } //what animation should the character be playing while doing this action
-    protected bool isTargetMissing {
+    protected bool isTargetCharacterMissing {
         get { return poiTarget.state == POI_STATE.INACTIVE || actor.specificLocation != poiTarget.specificLocation; }
     }
 

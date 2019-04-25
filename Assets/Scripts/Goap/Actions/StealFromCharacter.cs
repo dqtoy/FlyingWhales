@@ -30,7 +30,7 @@ public class StealFromCharacter : GoapAction {
     }
     public override void PerformActualAction() {
         base.PerformActualAction();
-        if (!isTargetMissing && (actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation))) {
+        if (!isTargetCharacterMissing && (actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation))) {
             if (_targetCharacter.isHoldingItem) {
                 SetState("Steal Success");
             } else {

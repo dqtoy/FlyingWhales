@@ -33,9 +33,9 @@ public class PlayerJobActionButton : MonoBehaviour {
         this.action = action;
         this.character = character;
         this.target = target;
-        btnLbl.text = action.actionName;
         UpdateInteractableState();
         UpdateSubText();
+        UpdateButtonText();
     }
 
     #region Visuals
@@ -47,6 +47,9 @@ public class PlayerJobActionButton : MonoBehaviour {
     }
     private void UpdateSubText() {
         subTextLbl.text = action.btnSubText;
+    }
+    private void UpdateButtonText() {
+        btnLbl.text = action.actionName;
     }
     #endregion
 

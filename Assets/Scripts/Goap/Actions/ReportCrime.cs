@@ -29,7 +29,7 @@ public class ReportCrime : GoapAction {
     }
     public override void PerformActualAction() {
         base.PerformActualAction();
-        if (!isTargetMissing && (actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation))) {
+        if (!isTargetCharacterMissing && (actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation))) {
             SetState("Report Crime Success");
         } else {
             SetState("Target Missing");

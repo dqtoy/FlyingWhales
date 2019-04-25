@@ -31,12 +31,18 @@ public class CharacterStateJob : JobQueueItem {
         }
     }
     protected override bool CanTakeJob(Character character) {
-        if(targetState == CHARACTER_STATE.PATROL && character.role.roleType == CHARACTER_ROLE.SOLDIER) {
-            return true;
-        }else if (targetState == CHARACTER_STATE.EXPLORE && character.role.roleType == CHARACTER_ROLE.ADVENTURER) {
-            return true;
+        if(targetState == CHARACTER_STATE.PATROL) {
+            if(character.role.roleType == CHARACTER_ROLE.SOLDIER) {
+                return true;
+            }
+            return false;
+        } else if (targetState == CHARACTER_STATE.EXPLORE) {
+            if(character.role.roleType == CHARACTER_ROLE.ADVENTURER) {
+                return true;
+            }
+            return false;
         }
-        return false;
+        return base.CanTakeJob(character);
     }
     #endregion
 
