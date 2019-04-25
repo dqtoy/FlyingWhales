@@ -1417,12 +1417,12 @@ public class UIManager : MonoBehaviour {
     }
 
     #region Area Map
-    [SerializeField] private GameObject returnToWorldGO;
+    [SerializeField] private Button returnToWorldBtn;
     private void OnAreaMapOpened(Area area) {
-        returnToWorldGO.SetActive(true);
+        returnToWorldBtn.interactable = true;
     }
     private void OnAreaMapClosed(Area area) {
-        returnToWorldGO.SetActive(false);
+        returnToWorldBtn.interactable = false;
     }
     public void ReturnToWorlMap() {
         InteriorMapManager.Instance.HideAreaMap();
@@ -1443,14 +1443,14 @@ public class UIManager : MonoBehaviour {
         shareIntelMenu.Close();
     }
     private void OnOpenShareIntelMenu() {
-        returnToWorldGO.GetComponent<Button>().interactable = false;
+        returnToWorldBtn.interactable = false;
         SetCoverState(true);
         Pause();
         SetSpeedTogglesState(false);
         playerNotificationParent.SetSiblingIndex(1);
     }
     private void OnCloseShareIntelMenu() {
-        returnToWorldGO.GetComponent<Button>().interactable = true;
+        returnToWorldBtn.interactable = true;
         SetCoverState(false);
         SetSpeedTogglesState(true);
         playerNotificationParent.SetAsLastSibling();

@@ -7,7 +7,7 @@ public class Feed : GoapAction {
 
     public Feed(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.FEED, INTERACTION_ALIGNMENT.GOOD, actor, poiTarget) {
         _target = poiTarget as Character;
-        actionIconString = GoapActionStateDB.Eat_Icon;
+        actionIconString = GoapActionStateDB.FirstAid_Icon;
         validTimeOfDays = new TIME_IN_WORDS[] {
             TIME_IN_WORDS.MORNING,
             TIME_IN_WORDS.AFTERNOON,

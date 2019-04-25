@@ -9,6 +9,7 @@ public class PatrolState : CharacterState {
         characterState = CHARACTER_STATE.PATROL;
         stateCategory = CHARACTER_STATE_CATEGORY.MAJOR;
         duration = 24;
+        actionIconString = GoapActionStateDB.Patrol_Icon;
     }
 
     #region Overrides

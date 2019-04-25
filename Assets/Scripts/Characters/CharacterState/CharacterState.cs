@@ -14,6 +14,7 @@ public class CharacterState {
     public bool isPaused { get; protected set; }
     public Log thoughtBubbleLog { get; protected set; }
     public CharacterStateJob job { get; protected set; }
+    public string actionIconString { get; protected set; }
 
     public Character targetCharacter { get; protected set; } //Target character of current state
     public Area targetArea { get; protected set; }
@@ -21,6 +22,7 @@ public class CharacterState {
 
     public CharacterState(CharacterStateComponent characterComp) {
         this.stateComponent = characterComp;
+        actionIconString = GoapActionStateDB.No_Icon;
         AddDefaultListeners();
     }
 
@@ -35,6 +37,7 @@ public class CharacterState {
 
         CreateThoughtBubbleLog();
         DoMovementBehavior();
+        Messenger.Broadcast(Signals.CHARACTER_STARTED_STATE, stateComponent.character, this);
     }
     //Ends a state, can be overridden
     protected virtual void EndState() {
@@ -46,6 +49,7 @@ public class CharacterState {
             job.SetAssignedCharacter(null);
             job.SetAssignedState(null);
         }
+        Messenger.Broadcast(Signals.CHARACTER_ENDED_STATE, stateComponent.character, this);
     }
     
     //This is called per TICK_ENDED if the state has a duration, can be overriden

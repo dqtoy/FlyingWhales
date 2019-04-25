@@ -9,6 +9,7 @@ public class FleeState : CharacterState {
         characterState = CHARACTER_STATE.FLEE;
         stateCategory = CHARACTER_STATE_CATEGORY.MINOR;
         //duration = 288;
+        actionIconString = GoapActionStateDB.Flee_Icon;
     }
 
     #region Overrides

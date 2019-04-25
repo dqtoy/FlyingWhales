@@ -11,6 +11,12 @@ public static class GoapActionStateDB {
     public static string Sleep_Icon = "Sleep";
     public static string Social_Icon = "Social";
     public static string Work_Icon = "Work";
+    public static string Drink_Icon = "Drink";
+    public static string Entertain_Icon = "Entertain";
+    public static string Explore_Icon = "Explore";
+    public static string FirstAid_Icon = "First Aid";
+    public static string Flee_Icon = "Flee";
+    public static string Patrol_Icon = "Patrol";
 
     public static string GetStateResult(INTERACTION_TYPE goapType, string stateName) {
         if (goapActionStates.ContainsKey(goapType)) {

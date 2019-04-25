@@ -1431,6 +1431,8 @@ public class SubcategoryOf : System.Attribute {
     public CRIME_CATEGORY Category { get; private set; }
 }
 public static class Extensions {
+
+    #region Crimes
     public static bool IsSubcategoryOf(this CRIME sub, CRIME_CATEGORY cat) {
         System.Type t = typeof(CRIME);
         MemberInfo mi = t.GetMember(sub.ToString()).FirstOrDefault(m => m.GetCustomAttribute(typeof(SubcategoryOf)) != null);
@@ -1452,5 +1454,40 @@ public static class Extensions {
     public static bool IsGreaterThanOrEqual(this CRIME_CATEGORY sub, CRIME_CATEGORY other) {
         return sub >= other;
     }
+    #endregion
+
+    #region Structures
+    /// <summary>
+    /// Is this stucture contained within walls?
+    /// </summary>
+    /// <param name="sub"></param>
+    /// <returns></returns>
+    public static bool IsOpenSpace(this STRUCTURE_TYPE sub) {
+        switch (sub) {
+            case STRUCTURE_TYPE.INN:
+            case STRUCTURE_TYPE.WAREHOUSE:
+            case STRUCTURE_TYPE.DWELLING:
+                return false;
+            default:
+                return true;
+        }
+    }
+    #endregion
+
+    #region Misc
+    public static Cardinal_Direction OppositeDirection(this Cardinal_Direction dir) {
+        switch (dir) {
+            case Cardinal_Direction.North:
+                return Cardinal_Direction.South;
+            case Cardinal_Direction.South:
+                return Cardinal_Direction.North;
+            case Cardinal_Direction.East:
+                return Cardinal_Direction.West;
+            case Cardinal_Direction.West:
+                return Cardinal_Direction.East;
+        }
+        throw new System.Exception("No opposite direction for " + dir.ToString());
+    }
+    #endregion
 }
 #endregion

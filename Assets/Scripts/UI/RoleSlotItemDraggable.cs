@@ -12,6 +12,7 @@ public class RoleSlotItemDraggable : DraggableItem {
     #region getters/setters
     public override bool isDraggable {
         get {
+            return false; //Always disabled for now
             if (!isDraggableOverride) {
                 return false; //if the draggable override is set to false, do not allow drag
             }

@@ -567,6 +567,12 @@ MonoBehaviour:
     - Sleep
     - Social
     - Work
+    - Drink
+    - Entertain
+    - Explore
+    - First Aid
+    - Flee
+    - Patrol
     m_values:
     - {fileID: 21300000, guid: 5a786d93d2807cf40b59d2f8e2175578, type: 3}
     - {fileID: 21300000, guid: 95f79231f93a3f0499e46aa40e19fcef, type: 3}
@@ -574,6 +580,12 @@ MonoBehaviour:
     - {fileID: 21300000, guid: a0bf001f1e836dd4fb26d8cdbda6577a, type: 3}
     - {fileID: 21300000, guid: 5a6c315d820be4a47be6b608d557c894, type: 3}
     - {fileID: 21300000, guid: d0440b2a2239fdc4d9c82c807fb76a59, type: 3}
+    - {fileID: 21300000, guid: 8f376b7b2ce182042be10ffc0f1a307b, type: 3}
+    - {fileID: 21300000, guid: 1605f245bccd651418a6da868ce4c504, type: 3}
+    - {fileID: 21300000, guid: abd97990b07f57849b3c5ec8e58ae570, type: 3}
+    - {fileID: 21300000, guid: cf39aa580a482b743bbf80920ec0814c, type: 3}
+    - {fileID: 21300000, guid: b4f2c5f24d7b89045aac39d116bfb8c2, type: 3}
+    - {fileID: 21300000, guid: c84e5847398fb8b4f99cdef74326146b, type: 3}
   animator: {fileID: 95186138413260264}
   pathfindingAI: {fileID: 114720397635659402}
   destinationSetter: {fileID: 114167030245026914}

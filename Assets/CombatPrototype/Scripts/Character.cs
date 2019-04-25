@@ -4059,11 +4059,39 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     }
                 }
 
-                if (doesNotConcernMe) {
-                    dialogReactions.Add("This does not concern me.");
+                if (ei.action.actor == this) {
+                    //If the actor and the recipient is the same: "I know what I did."
+                    dialogReactions.Add("I know what I did.");
                 } else {
-                    dialogReactions.Add("A proper response to this information has not been implemented yet.");
+                    if (doesNotConcernMe) {
+                        //The following events are too unimportant to merit any meaningful response: "What will I do with this random tidbit?"
+                        //-character picked up an item(not stealing)
+                        //-character prayed, daydreamed, played
+                        //- character slept
+                        //- character mined or chopped wood
+                        switch (ei.action.goapType) {
+                            case INTERACTION_TYPE.PICK_ITEM:
+                            case INTERACTION_TYPE.PRAY:
+                            case INTERACTION_TYPE.DAYDREAM:
+                            case INTERACTION_TYPE.PLAY:
+                            case INTERACTION_TYPE.SLEEP:
+                            case INTERACTION_TYPE.SLEEP_OUTSIDE:
+                            case INTERACTION_TYPE.MINE_ACTION:
+                            case INTERACTION_TYPE.CHOP_WOOD:
+                                dialogReactions.Add("What will I do with this random tidbit?");
+                                break;
+                            default:
+                                dialogReactions.Add("This does not concern me.");
+                                break;
+                        }
+                        
+                    } else {
+                        //Otherwise: "A proper response to this information has not been implemented yet."
+                        dialogReactions.Add("A proper response to this information has not been implemented yet.");
+                    }
                 }
+
+                
             }            
             //Dictionary<ActionEffectReaction, GoapEffect> reactions = new Dictionary<ActionEffectReaction, GoapEffect>();
             //for (int i = 0; i < ei.action.actualEffects.Count; i++) {
@@ -5094,6 +5122,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 break;
             case CRIME.MURDER:
                 trait = new Murderer();
+                break;
+            case CRIME.ATTEMPTED_MURDER:
+                trait = new AttemptedMurderer();
                 break;
             default:
                 break;

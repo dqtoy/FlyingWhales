@@ -15,6 +15,7 @@ public class ExploreState : CharacterState {
         duration = 36;
         hasStateStarted = false;
         itemsCollected = new List<SpecialToken>();
+        actionIconString = GoapActionStateDB.Explore_Icon;
     }
 
     #region Overrides

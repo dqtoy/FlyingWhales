@@ -15,23 +15,31 @@ public class IntelItem : MonoBehaviour {
 
     [SerializeField] private TextMeshProUGUI infoLbl;
     [SerializeField] private Button mainBtn;
+    [SerializeField] private Image iconImg;
+
+    [SerializeField] private Sprite eventIntelIcon;
+    [SerializeField] private Sprite objectIntelIcon;
 
     public void SetIntel(Intel intel) {
         this.intel = intel;
         otherClickActions = new List<System.Action>();
         ClearClickActions();
         if (intel != null) {
-            string preText = "TIP: ";
+            //string preText = "TIP: ";
+            iconImg.sprite = objectIntelIcon;
             if (intel is EventIntel) {
-                preText = "EVENT: ";
+                //preText = "EVENT: ";
+                iconImg.sprite = eventIntelIcon;
             } else if (intel is PlanIntel) {
-                preText = "PLAN: ";
+                //preText = "PLAN: ";
             }
-            infoLbl.text = preText +  Utilities.LogReplacer(intel.intelLog);
+            infoLbl.text = Utilities.LogReplacer(intel.intelLog);
             mainBtn.interactable = true;
+            iconImg.gameObject.SetActive(true);
         } else {
-            infoLbl.text = "Get some intel!";
+            infoLbl.text = "";
             mainBtn.interactable = false;
+            iconImg.gameObject.SetActive(false);
         }
     }
     public void ShowLogDebugInfo() {

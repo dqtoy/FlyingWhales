@@ -225,6 +225,65 @@ public class AreaInnerTileMap : MonoBehaviour {
         ClearAllTilemaps();
         eventPopupParent.anchoredPosition = Vector2.zero;
 
+        //if (area.areaType != AREA_TYPE.DUNGEON) {
+        //    List<StructureTemplate> validTownCenters = GetValidTownCenterTemplates();
+        //    if (validTownCenters.Count == 0) {
+        //        throw new System.Exception("There are no valid town center structures for area " + area.name);
+        //    }
+        //    StructureTemplate chosenTownCenter = validTownCenters[Random.Range(0, validTownCenters.Count)];
+        //    DrawTiles(InteriorMapManager.Instance.areaGenerationTilemap, chosenTownCenter.groundTiles, Vector3Int.zero);
+        //    chosenTownCenter.UpdatePositionsGivenOrigin(Vector3Int.zero);
+
+        //    foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in area.structures) {
+        //        if (keyValuePair.Key.IsOpenSpace()) {
+        //            continue; //skip
+        //        }
+
+        //        for (int i = 0; i < keyValuePair.Value.Count; i++) {
+        //            LocationStructure currSturcture = keyValuePair.Value[i];
+        //            List<StructureTemplate> templates = InteriorMapManager.Instance.GetStructureTemplates(keyValuePair.Key); //placed this inside loop so that instance of template is unique per iteration
+        //            List<StructureTemplate> choices = GetTemplatesThatCanConnectTo(chosenTownCenter, templates);
+        //            if (choices.Count == 0) {
+        //                throw new System.Exception("There are no valid " + keyValuePair.Key.ToString() + " templates to connect to town center in area " + area.name);
+        //            }
+        //            StructureTemplate chosenTemplate = choices[Random.Range(0, choices.Count)];
+        //            StructureConnector townCenterConnector;
+        //            StructureConnector chosenTemplateConnector = chosenTemplate.GetValidConnectorTo(chosenTownCenter, out townCenterConnector);
+
+        //            Vector3Int shiftTemplateBy = townCenterConnector.Difference(chosenTemplateConnector);
+        //            switch (townCenterConnector.neededDirection) {
+        //                case Cardinal_Direction.North:
+        //                    shiftTemplateBy.y += 1;
+        //                    break;
+        //                case Cardinal_Direction.South:
+        //                    shiftTemplateBy.y -= 1;
+        //                    break;
+        //                case Cardinal_Direction.East:
+        //                    shiftTemplateBy.x += 1;
+        //                    break;
+        //                case Cardinal_Direction.West:
+        //                    shiftTemplateBy.x -= 1;
+        //                    break;
+        //                default:
+        //                    break;
+        //            }
+        //            townCenterConnector.SetIsOpen(false);
+        //            chosenTemplateConnector.SetIsOpen(false);
+        //            DrawTiles(InteriorMapManager.Instance.areaGenerationTilemap, chosenTemplate.groundTiles, shiftTemplateBy);
+        //        }
+        //    }
+        //}
+
+        ////if this area is not a dungeon type
+        ////first get a town center template that has the needed connections for the structures in the area
+        ////Once a town center is chosen
+        ////Place that template in the area generation tilemap
+        ////then iterate through all the structures in this area, making sure that the chosen template for the structure can connect to the town center
+        ////NOTE: Show a warning log when there are no valid structure templates for the current structure
+        ////once all structures are placed, get the occupied bounds in the area generation tilemap, and use that size to generate the actual grid for this map
+        ////once generated, just copy the generated structures to the actual map.
+        ////else use the old structure generation
+
         Dictionary<LocationStructure, LocationStructureSetting> settings = GenerateStructureSettings(area);
         Point mapSize = GetWidthAndHeightForSettings(settings);
 
@@ -812,7 +871,9 @@ public class AreaInnerTileMap : MonoBehaviour {
             if (tilemap == groundTilemap) {
                 if (!string.IsNullOrEmpty(currData.tileAssetName)) {
                     tilemap.SetTile(pos, InteriorMapManager.Instance.GetTileAsset(currData.tileAssetName));
-                    tiles.Add(map[pos.x, pos.y]);
+                    if (currData.tileAssetName.Contains("floor")) {
+                        tiles.Add(map[pos.x, pos.y]); //only the tiles that use the wooden floor should be set as structures
+                    }
                 }
             } else {
                 tilemap.SetTile(pos, InteriorMapManager.Instance.GetTileAsset(currData.tileAssetName));
@@ -822,7 +883,60 @@ public class AreaInnerTileMap : MonoBehaviour {
         }
         return tiles;
     }
+    private void DrawTiles(Tilemap tilemap, TileTemplateData[] data, Vector3Int startPos) {
+        for (int i = 0; i < data.Length; i++) {
+            TileTemplateData currData = data[i];
+            Vector3Int pos = new Vector3Int((int)currData.tilePosition.x, (int)currData.tilePosition.y, 0);
+            pos.x += startPos.x;
+            pos.y += startPos.y;
+            if (tilemap == groundTilemap) {
+                if (!string.IsNullOrEmpty(currData.tileAssetName)) {
+                    tilemap.SetTile(pos, InteriorMapManager.Instance.GetTileAsset(currData.tileAssetName));
+                }
+            } else {
+                tilemap.SetTile(pos, InteriorMapManager.Instance.GetTileAsset(currData.tileAssetName));
+            }
+            tilemap.SetTransformMatrix(pos, currData.matrix);
+
+        }
+    }
     #endregion
+
+    #region Town Generation
+    private List<StructureTemplate> GetValidTownCenterTemplates() {
+        List<StructureTemplate> valid = new List<StructureTemplate>();
+        List<StructureTemplate> choices = InteriorMapManager.Instance.GetStructureTemplates("TOWN CENTER");
+        for (int i = 0; i < choices.Count; i++) {
+            StructureTemplate currTemplate = choices[i];
+            if (currTemplate.HasConnectorsForStructure(area.structures)) {
+                valid.Add(currTemplate);
+            }
+        }
+
+        return valid;
+    }
+    private List<StructureTemplate> GetTemplatesThatCanConnectTo(StructureTemplate otherTemplate, List<StructureTemplate> choices) {
+        List<StructureTemplate> valid = new List<StructureTemplate>();
+        for (int i = 0; i < choices.Count; i++) {
+            StructureTemplate currTemp = choices[i];
+            if (currTemp.CanConnectTo(otherTemplate)) {
+                valid.Add(currTemp);
+            }
+        }
+
+        return valid;
+    }
+    /// <summary>
+    /// Draw the provided template given 2 connectors that must meet.
+    /// </summary>
+    /// <param name="template">The template to be used.</param>
+    /// <param name="connectorToUse">The connector in the provided template to be used</param>
+    /// <param name="connectTo">The connector in another template to connect to</param>
+    private void DrawTemplateAt(StructureTemplate template, StructureConnector connectorToUse, StructureConnector connectTo, Tilemap tilemap) {
+
+    }
+    #endregion
+
 
     //#region Exit Structure
     //private List<LocationGridTile> GetTilesForExitStructure(List<LocationGridTile> sourceTiles, Point currPoint) {
