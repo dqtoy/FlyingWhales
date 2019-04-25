@@ -608,7 +608,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   version: 2
-  radiusBackingField: 4
+  radiusBackingField: 3
   heightBackingField: 2
   centerBackingField: 1
   locked: 0
@@ -620,8 +620,10 @@ MonoBehaviour:
   collidesWith: 0
   wallAvoidForce: 1
   wallAvoidFalloff: 1
-  priority: 0.5
+  priority: 0.75
   debug: 0
+  agentName: 
+  useAvoidedAgents: 0
 --- !u!114 &114577038380254382
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -643,11 +645,13 @@ MonoBehaviour:
   obstacleTimeHorizon: 1
   maxNeighbours: 10
   layer: 1
-  collidesWith: 3
+  collidesWith: 7
   wallAvoidForce: 1
   wallAvoidFalloff: 1
   priority: 0.75
   debug: 1
+  agentName: 
+  useAvoidedAgents: 1
 --- !u!114 &114578536136533292
 MonoBehaviour:
   m_ObjectHideFlags: 1

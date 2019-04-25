@@ -611,6 +611,10 @@ public struct GoapEffect {
             return (conditionKey as Character).name;
         } else if (conditionKey is Area) {
             return (conditionKey as Area).name;
+        } else if (conditionKey is SpecialToken) {
+            return (conditionKey as SpecialToken).name;
+        } else if (conditionKey is IPointOfInterest) {
+            return (conditionKey as IPointOfInterest).name;
         }
         return string.Empty;
     }
