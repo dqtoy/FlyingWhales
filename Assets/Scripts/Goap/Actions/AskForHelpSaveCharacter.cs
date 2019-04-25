@@ -37,7 +37,9 @@ public class AskForHelpSaveCharacter : GoapAction {
     }
     protected override void AddDefaultObjectsToLog(Log log) {
         base.AddDefaultObjectsToLog(log);
-        log.AddToFillers(troubledCharacter, troubledCharacter.name, LOG_IDENTIFIER.CHARACTER_3);
+        if (troubledCharacter != null) {
+            log.AddToFillers(troubledCharacter, troubledCharacter.name, LOG_IDENTIFIER.CHARACTER_3);
+        }
     }
     #endregion
 

@@ -6,6 +6,7 @@ public class GoapPlanJob : JobQueueItem {
 
     public GoapEffect targetEffect { get; protected set; }
     public GoapPlan assignedPlan { get; protected set; }
+    public GoapPlan targetPlan { get; protected set; }
     public IPointOfInterest targetPOI { get; protected set; }
 
     //interaction type version
@@ -44,6 +45,12 @@ public class GoapPlanJob : JobQueueItem {
         this.otherData = otherData;
         forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
     }
+    //public GoapPlanJob(string name, GoapPlan targetPlan) : base(name) {
+    //    //this.targetEffect = targetEffect;
+    //    this.targetPlan = targetPlan;
+    //    this.targetPOI = targetPlan.target;
+    //    forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
+    //}
 
     #region Overrides 
     public override void UnassignJob(bool shouldDoAfterEffect = true) {
@@ -148,14 +155,23 @@ public class GoapPlanJob : JobQueueItem {
 public class ForcedActionsComparer : IEqualityComparer<GoapEffect> {
 
     public bool Equals(GoapEffect x, GoapEffect y) {
-        if (x.conditionType == y.conditionType) {
-            if (string.IsNullOrEmpty(x.conditionString()) || string.IsNullOrEmpty(y.conditionString())) {
-                return true;
-            } else {
-                return x.conditionString() == y.conditionString();
-            }
+        bool matchKeys = false;
+        if(x.conditionKey is int && y.conditionKey is int) {
+            int effectInt = (int) x.conditionKey;
+            int preconditionInt = (int) y.conditionKey;
+            matchKeys = effectInt >= preconditionInt;
+        } else {
+            matchKeys = x.conditionKey == y.conditionKey;
         }
-        return false;
+        return x.conditionType == y.conditionType && x.targetPOI == y.targetPOI && matchKeys;
+        //if (x.conditionType == y.conditionType) {
+        //    if (string.IsNullOrEmpty(x.conditionString()) || string.IsNullOrEmpty(y.conditionString())) {
+        //        return true;
+        //    } else {
+        //        return x.conditionString() == y.conditionString();
+        //    }
+        //}
+        //return false;
     }
 
     public int GetHashCode(GoapEffect obj) {

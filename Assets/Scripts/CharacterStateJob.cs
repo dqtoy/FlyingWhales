@@ -6,9 +6,11 @@ public class CharacterStateJob : JobQueueItem {
 
     public CHARACTER_STATE targetState { get; protected set; }
     public CharacterState assignedState { get; protected set; }
+    public Area targetArea { get; protected set; }
 
-    public CharacterStateJob(string name, CHARACTER_STATE state) : base(name) {
+    public CharacterStateJob(string name, CHARACTER_STATE state, Area targetArea) : base(name) {
         this.targetState = state;
+        this.targetArea = targetArea;
     }
 
     #region Overrides

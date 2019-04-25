@@ -55,6 +55,7 @@ public class ConsoleMenu : UIMenu {
 
 #if UNITY_EDITOR
         Messenger.AddListener(Signals.TICK_ENDED, CheckForWrongCharacterData);
+        Messenger.AddListener<Character, GoapAction>(Signals.CHARACTER_DOING_ACTION, OnCharacterDoingAction);
 #endif
         InitializeMinion();
     }
@@ -283,6 +284,14 @@ public class ConsoleMenu : UIMenu {
         ShowCommandHistory();
     }
 
+    #region Listeners
+    private void OnCharacterDoingAction(Character character, GoapAction action) {
+        if (typesSubscribedTo.Contains(action.goapType)) {
+            Messenger.Broadcast<string, int, UnityAction>(Signals.SHOW_DEVELOPER_NOTIFICATION, character.name + " is doing " + action.goapType.ToString(),
+                100, () => UIManager.Instance.ShowCharacterInfo(character));
+            UIManager.Instance.Pause();
+        }
+    }
     private void CheckForWrongCharacterData() {
         for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
             Area currArea = LandmarkManager.Instance.allAreas[i];
@@ -325,10 +334,11 @@ public class ConsoleMenu : UIMenu {
                         }
                     }
                 }
-                
+
             }
         }
     }
+    #endregion
 
     #region Misc
     private void ShowHelp(string[] parameters) {
