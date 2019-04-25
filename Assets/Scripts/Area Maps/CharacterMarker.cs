@@ -103,6 +103,8 @@ public class CharacterMarker : PooledObject {
         Messenger.AddListener<Character, Trait>(Signals.TRAIT_REMOVED, OnCharacterLostTrait);
         Messenger.AddListener<Character, GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+        Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
+        Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
 
         PathfindingManager.Instance.AddAgent(pathfindingAI);
         //InteriorMapManager.Instance.AddAgent(rvoController);
@@ -320,6 +322,16 @@ public class CharacterMarker : PooledObject {
             
         }
     }
+    private void OnCharacterStartedState(Character character, CharacterState state) {
+        if (character == this.character) {
+            UpdateActionIcon();
+        }
+    }
+    private void OnCharacterEndedState(Character character, CharacterState state) {
+        if (character == this.character) {
+            UpdateActionIcon();
+        }
+    }
     #endregion
 
     #region UI
@@ -367,6 +379,13 @@ public class CharacterMarker : PooledObject {
             if (character.targettedByAction.Count > 0) {
                 if (character.targettedByAction != null && character.targettedByAction[0].actionIconString != GoapActionStateDB.No_Icon) {
                     actionIcon.sprite = actionIconDictionary[character.targettedByAction[0].actionIconString];
+                    actionIcon.gameObject.SetActive(true);
+                } else {
+                    actionIcon.gameObject.SetActive(false);
+                }
+            } else if (character.stateComponent.currentState != null) {
+                if (character.stateComponent.currentState.actionIconString != GoapActionStateDB.No_Icon) {
+                    actionIcon.sprite = actionIconDictionary[character.stateComponent.currentState.actionIconString];
                     actionIcon.gameObject.SetActive(true);
                 } else {
                     actionIcon.gameObject.SetActive(false);

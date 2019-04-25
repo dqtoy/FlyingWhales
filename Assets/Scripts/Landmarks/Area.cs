@@ -529,7 +529,7 @@ public class Area {
         previousOwner = this.owner;
         this.owner = owner;
         if(areaType != AREA_TYPE.DEMONIC_INTRUSION) {
-            if (this.owner != null && this.owner.id != FactionManager.Instance.neutralFaction.id) {
+            if (this.owner != null &&  this.owner != FactionManager.Instance.neutralFaction) {
                 SubscribeToSignals();
             } else {
                 UnsubscribeToSignals();

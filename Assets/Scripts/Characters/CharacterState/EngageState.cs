@@ -10,6 +10,7 @@ public class EngageState : CharacterState {
         stateCategory = CHARACTER_STATE_CATEGORY.MINOR;
         //duration = 288;
         duration = 12;
+        actionIconString = GoapActionStateDB.Hostile_Icon;
     }
 
     #region Overrides

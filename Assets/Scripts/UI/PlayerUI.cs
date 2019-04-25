@@ -109,6 +109,8 @@ public class PlayerUI : MonoBehaviour {
         LoadRoleSlots();
         LoadAttackSlot();
 
+        UpdateIntel();
+
         Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
         Messenger.AddListener(Signals.UPDATED_CURRENCIES, UpdateUI);

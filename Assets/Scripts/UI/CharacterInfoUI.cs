@@ -313,7 +313,8 @@ public class CharacterInfoUI : UIMenu {
 
         for (int i = 0; i < _activeCharacter.traits.Count; i++) {
             Trait currTrait = _activeCharacter.traits[i];
-            if (currTrait.type == TRAIT_TYPE.ABILITY || currTrait.type == TRAIT_TYPE.ATTACK || currTrait.type == TRAIT_TYPE.COMBAT_POSITION) {
+            if (currTrait.type == TRAIT_TYPE.ABILITY || currTrait.type == TRAIT_TYPE.ATTACK || currTrait.type == TRAIT_TYPE.COMBAT_POSITION
+                || currTrait.name == "Herbivore" || currTrait.name == "Carnivore") {
                 continue; //hide combat traits
             }
             if (currTrait is RelationshipTrait) {

@@ -1129,7 +1129,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 
     #region Monobehaviour Functions
     public void LeftClick() {
-#if !WORLD_CREATION_TOOL
+#if WORLD_CREATION_TOOL
+        Messenger.Broadcast<HexTile>(Signals.TILE_LEFT_CLICKED, this);
+#else
         if (UIManager.Instance.IsMouseOnUI() || UIManager.Instance.IsConsoleShowing()) {
             return;
         }
@@ -1153,7 +1155,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 #endif
     }
     public void RightClick() {
-#if !WORLD_CREATION_TOOL
+#if WORLD_CREATION_TOOL
+        Messenger.Broadcast<HexTile>(Signals.TILE_RIGHT_CLICKED, this);
+#else
         if (UIManager.Instance.IsMouseOnUI() || UIManager.Instance.IsConsoleShowing()) {
             return;
         }
@@ -1166,19 +1170,16 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     private void MouseOver() {
 #if WORLD_CREATION_TOOL
         //Debug.Log("IS MOUSE OVER UI " + worldcreator.WorldCreatorUI.Instance.IsMouseOnUI());
-        if (!worldcreator.WorldCreatorUI.Instance.IsMouseOnUI()) {
-            Messenger.Broadcast<HexTile>(Signals.TILE_HOVERED_OVER, this);
-            //if (WorldCreatorManager.Instance.outerGridList.Contains(this)) {
-            //    SetNeighbourHighlightState(true);
-            //}
-            if (Input.GetMouseButton(0)) {
-                //Debug.Log("MOUSE DOWN!");
-                Messenger.Broadcast<HexTile>(Signals.TILE_LEFT_CLICKED, this);
-            }
-            if (Input.GetMouseButtonUp(1)) {
-                Messenger.Broadcast<HexTile>(Signals.TILE_RIGHT_CLICKED, this);
-            }
-        }
+        Messenger.Broadcast<HexTile>(Signals.TILE_HOVERED_OVER, this);
+        //if (!worldcreator.WorldCreatorUI.Instance.IsMouseOnUI()) {
+        //    Messenger.Broadcast<HexTile>(Signals.TILE_HOVERED_OVER, this);
+        //    if (Input.GetMouseButton(0)) {
+        //        Messenger.Broadcast<HexTile>(Signals.TILE_LEFT_CLICKED, this);
+        //    }
+        //    if (Input.GetMouseButtonUp(1)) {
+        //        Messenger.Broadcast<HexTile>(Signals.TILE_RIGHT_CLICKED, this);
+        //    }
+        //}
         //ShowHexTileInfo();
 #else
         if (this.landmarkOnTile != null) {

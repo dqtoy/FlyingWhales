@@ -19,12 +19,13 @@ public class InteriorMapManager : MonoBehaviour {
 
     private List<AreaInnerTileMap> areaMaps;
     private Vector3 nextMapPos = Vector3.zero;
-
     public bool isAnAreaMapShowing {
         get {
             return currentlyShowingMap != null;
         }
     }
+
+    public Tilemap areaGenerationTilemap; //Used for generating the inner map of an area, structure templates are first placed here before generating the actual map
 
     [Header("Pathfinding")]
     [SerializeField] private AstarPath pathfinder;
@@ -121,12 +122,13 @@ public class InteriorMapManager : MonoBehaviour {
         newMap.UpdateTilesWorldPosition();
     }
 
+    #region Pathfinding
     private void CreatePathfindingGraphForArea(AreaInnerTileMap newMap) {
         GridGraph gg = pathfinder.data.AddGraph(typeof(GridGraph)) as GridGraph;
         gg.cutCorners = false;
         gg.rotation = new Vector3(-90f, 0f, 0f);
         gg.nodeSize = nodeSize;
-        
+
 
         int reducedWidth = newMap.width - (AreaInnerTileMap.eastEdge + AreaInnerTileMap.westEdge);
         int reducedHeight = newMap.height - (AreaInnerTileMap.northEdge + AreaInnerTileMap.southEdge);
@@ -135,7 +137,7 @@ public class InteriorMapManager : MonoBehaviour {
         Vector3 pos = this.transform.position;
         pos.x += ((float)newMap.width / 2f);
         pos.y += ((float)newMap.height / 2f) + newMap.transform.localPosition.y;
-        pos.x += ((AreaInnerTileMap.eastEdge + AreaInnerTileMap.westEdge) / 2 ) - 1;
+        pos.x += ((AreaInnerTileMap.eastEdge + AreaInnerTileMap.westEdge) / 2) - 1;
 
         gg.center = pos;
         gg.collision.use2D = true;
@@ -148,7 +150,9 @@ public class InteriorMapManager : MonoBehaviour {
         gg.collision.mask = LayerMask.GetMask("Unpassable");
         AstarPath.active.Scan(gg);
     }
+    #endregion
 
+    #region UI
     public bool IsMouseOnMarker() {
         PointerEventData pointer = new PointerEventData(EventSystem.current);
         pointer.position = Input.mousePosition;
@@ -167,6 +171,8 @@ public class InteriorMapManager : MonoBehaviour {
         }
         return false;
     }
+    #endregion
+
 
     #region Local Avoidance
     public void RegisterObstacles() {
@@ -205,6 +211,23 @@ public class InteriorMapManager : MonoBehaviour {
     public List<StructureTemplate> GetStructureTemplates(STRUCTURE_TYPE structure) {
         List<StructureTemplate> templates = new List<StructureTemplate>();
         string path = templatePath + structure.ToString() + "/";
+        if (Directory.Exists(path)) {
+            DirectoryInfo info = new DirectoryInfo(path);
+            FileInfo[] files = info.GetFiles();
+            for (int i = 0; i < files.Length; i++) {
+                FileInfo currInfo = files[i];
+                if (currInfo.Extension.Equals(".json")) {
+                    string dataAsJson = File.ReadAllText(currInfo.FullName);
+                    StructureTemplate loaded = JsonUtility.FromJson<StructureTemplate>(dataAsJson);
+                    templates.Add(loaded);
+                }
+            }
+        }
+        return templates;
+    }
+    public List<StructureTemplate> GetStructureTemplates(string folderName) {
+        List<StructureTemplate> templates = new List<StructureTemplate>();
+        string path = templatePath + folderName + "/";
         if (Directory.Exists(path)) {
             DirectoryInfo info = new DirectoryInfo(path);
             FileInfo[] files = info.GetFiles();

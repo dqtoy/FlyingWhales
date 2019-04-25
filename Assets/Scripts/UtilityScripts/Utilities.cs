@@ -1830,7 +1830,11 @@ public class Utilities : MonoBehaviour {
         for (int i = 0; i < children.Length; i++) {
             Transform currTransform = children[i];
             if (currTransform.gameObject.GetComponent<EZObjectPools.PooledObject>() == null) {
-                GameObject.Destroy(currTransform.gameObject);
+                if (Application.isEditor) {
+                    GameObject.DestroyImmediate(currTransform.gameObject);
+                } else {
+                    GameObject.Destroy(currTransform.gameObject);
+                }
             } else {
                 ObjectPoolManager.Instance.DestroyObject(currTransform.gameObject);
             }
