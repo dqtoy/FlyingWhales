@@ -25,7 +25,7 @@ public class ChatCharacter : GoapAction {
     }
     public override void PerformActualAction() {
         base.PerformActualAction();
-        if (!isTargetMissing && actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
+        if (!isTargetCharacterMissing && actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
             Character target = poiTarget as Character;
             if (IsTargetUnable(target)) {
                 SetState("Chat Fail");

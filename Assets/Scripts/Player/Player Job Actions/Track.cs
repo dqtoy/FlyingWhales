@@ -8,7 +8,7 @@ public class Track : PlayerJobAction {
     public Character target { get; private set; }
 
     public Track() {
-        actionName = "Track";
+        name = "Track";
         SetDefaultCooldownTime(48);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
         Messenger.AddListener<EventPopup>(Signals.EVENT_POPPED_UP, OnEventPoppedUp);

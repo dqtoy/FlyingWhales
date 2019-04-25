@@ -20,7 +20,7 @@ public class AbductCharacter : GoapAction {
     }
     public override void PerformActualAction() {
         base.PerformActualAction();
-        if (!isTargetMissing) {
+        if (!isTargetCharacterMissing) {
             if (!HasOtherCharacterInRadius()) {
                 SetState("Abduct Success");
             } else {

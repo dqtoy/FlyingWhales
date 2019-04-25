@@ -5,7 +5,7 @@ using UnityEngine;
 public class Intervene : PlayerJobAction {
 
     public Intervene() {
-        actionName = "Intervene";
+        name = "Intervene";
         SetDefaultCooldownTime(48);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
     }

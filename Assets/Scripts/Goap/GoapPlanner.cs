@@ -112,18 +112,29 @@ public class GoapPlanner {
                     bool canSatisfyAllPreconditions = true;
                     for (int j = 0; j < unsatisfiedPreconditions.Count; j++) {
                         Precondition precon = unsatisfiedPreconditions[j];
-                        if (job != null && job.forcedActions.ContainsKey(precon.goapEffect)) {
-                            //if there is a provided job, check if it has any forced actions
-                            //if it does, only allow the action that it allows
-                            if (usableAction.goapType != job.forcedActions[precon.goapEffect]) {
-                                canSatisfyAllPreconditions = false;
-                                break;
-                            }
-                        } else if (!usableAction.WillEffectsSatisfyPrecondition(precon.goapEffect)) {
+                        if (!usableAction.WillEffectsSatisfyPrecondition(precon.goapEffect)) {
                             canSatisfyAllPreconditions = false;
                             break;
+                        } else {
+                            //if there is a provided job, check if it has any forced actions
+                            //if it does, only allow the action that it allows
+                            if (job != null && job.forcedActions.Count > 0) {
+                                bool satisfiedForcedActions = true;
+                                ForcedActionsComparer comparer = new ForcedActionsComparer();
+                                foreach (KeyValuePair<GoapEffect, INTERACTION_TYPE> kvp in job.forcedActions) {
+                                    if(comparer.Equals(kvp.Key, precon.goapEffect)) {
+                                        if(kvp.Value != usableAction.goapType) {
+                                            satisfiedForcedActions = false;
+                                            break;
+                                        }
+                                    }
+                                }
+                                if (!satisfiedForcedActions) {
+                                    canSatisfyAllPreconditions = false;
+                                    break;
+                                }
+                            }
                         }
-
                     }
                     if (canSatisfyAllPreconditions) {
                         GoapNode leafNode = new GoapNode(parent, parent.runningCost + usableAction.cost, usableAction);

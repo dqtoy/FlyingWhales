@@ -244,6 +244,9 @@ public class CharacterMarker : PooledObject {
             UpdateAnimation();
             UpdateActionIcon();
         }
+        if(trait.type == TRAIT_TYPE.DISABLER && terrifyingCharacters.Count > 0) {
+            RemoveTerrifyingCharacter(character);
+        }
     }
     public void OnCharacterLostTrait(Character character, Trait trait) {
         if (character == this.character) {
@@ -375,20 +378,20 @@ public class CharacterMarker : PooledObject {
             actionIcon.gameObject.SetActive(false);
             return;
         }
-        if (character.isChatting) {
+        if (character.isChatting && (character.stateComponent.currentState == null || (character.stateComponent.currentState.characterState != CHARACTER_STATE.FLEE && character.stateComponent.currentState.characterState != CHARACTER_STATE.ENGAGE))) {
             actionIcon.sprite = actionIconDictionary[GoapActionStateDB.Social_Icon];
             actionIcon.gameObject.SetActive(true);
         } else {
-            if (character.targettedByAction.Count > 0) {
-                if (character.targettedByAction != null && character.targettedByAction[0].actionIconString != GoapActionStateDB.No_Icon) {
-                    actionIcon.sprite = actionIconDictionary[character.targettedByAction[0].actionIconString];
+            if (character.stateComponent.currentState != null) {
+                if (character.stateComponent.currentState.actionIconString != GoapActionStateDB.No_Icon) {
+                    actionIcon.sprite = actionIconDictionary[character.stateComponent.currentState.actionIconString];
                     actionIcon.gameObject.SetActive(true);
                 } else {
                     actionIcon.gameObject.SetActive(false);
                 }
-            } else if (character.stateComponent.currentState != null) {
-                if (character.stateComponent.currentState.actionIconString != GoapActionStateDB.No_Icon) {
-                    actionIcon.sprite = actionIconDictionary[character.stateComponent.currentState.actionIconString];
+            }else if (character.targettedByAction.Count > 0) {
+                if (character.targettedByAction != null && character.targettedByAction[0].actionIconString != GoapActionStateDB.No_Icon) {
+                    actionIcon.sprite = actionIconDictionary[character.targettedByAction[0].actionIconString];
                     actionIcon.gameObject.SetActive(true);
                 } else {
                     actionIcon.gameObject.SetActive(false);

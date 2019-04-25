@@ -1669,7 +1669,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     //    return PathGenerator.Instance.GetPath(currLocation, partyToJoin.currLocation, PATHFINDING_MODE.PASSABLE, _faction) != null;
     //}
     public void CenterOnCharacter() {
-        if (!this.isDead && this.minion == null) {
+        if (!isDead && minion == null) {
             if (currentParty.icon.isTravelling) {
                 if(currentParty.icon.travelLine != null) {
                     if (specificLocation.areaMap.isShowing) {
@@ -3286,9 +3286,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     private bool PlanWorkActions() { //ref bool hasAddedToGoapPlans
         if (GetPlanByCategory(GOAP_CATEGORY.WORK) == null) {
-            if(GetTrait("Berserker") != null) {
-                return false;
-            }
             if (!jobQueue.ProcessFirstJobInQueue(this)) {
                 if (specificLocation.id == homeArea.id && this.faction.id != FactionManager.Instance.neutralFaction.id) {
                     return homeArea.jobQueue.ProcessFirstJobInQueue(this);
@@ -3298,50 +3295,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             } else {
                 return true;
             }
-            //WeightedDictionary<INTERACTION_TYPE> weightedDictionary = new WeightedDictionary<INTERACTION_TYPE>();
-            ////Drop Supply Plan
-            //if (supply > role.reservedSupply) {
-            //    weightedDictionary.AddElement(INTERACTION_TYPE.DROP_SUPPLY, 2);
-            //}
-            ////Obtain Supply Plan
-            //if (role.roleType == CHARACTER_ROLE.CIVILIAN) {
-            //    SupplyPile supplyPile = homeArea.supplyPile;
-            //    if (supplyPile.suppliesInPile < 200) {
-            //        weightedDictionary.AddElement(INTERACTION_TYPE.GET_SUPPLY, 4);
-            //    }
-            //} else {
-            //    if (supply < role.reservedSupply) {
-            //        weightedDictionary.AddElement(INTERACTION_TYPE.GET_SUPPLY, 4);
-            //    }
-            //}
-
-            //role.AddRoleWorkPlansToCharacterWeights(weightedDictionary);
-
-            //if (weightedDictionary.Count > 0) {
-            //    INTERACTION_TYPE result = weightedDictionary.PickRandomElementGivenWeights();
-            //    SupplyPile supplyPile = homeArea.supplyPile;
-            //    if (result == INTERACTION_TYPE.DROP_SUPPLY) {
-            //        StartGOAP(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_SUPPLY, supply, supplyPile), supplyPile, GOAP_CATEGORY.WORK);
-            //    } else if (result == INTERACTION_TYPE.GET_SUPPLY) {
-            //        StartGOAP(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_SUPPLY, supplyPile.suppliesInPile, this), this, GOAP_CATEGORY.WORK);
-            //    } else {
-            //        //Role work plans
-            //        if(result == INTERACTION_TYPE.PATROL) {
-            //            stateComponent.SwitchToState(CHARACTER_STATE.PATROL);
-            //        } else if (result == INTERACTION_TYPE.EXPLORE) {
-            //            stateComponent.SwitchToState(CHARACTER_STATE.EXPLORE);
-            //        } else {
-            //            GoapPlan plan = role.PickRoleWorkPlanFromCharacterWeights(result, this);
-            //            if (plan != null) {
-            //                allGoapPlans.Add(plan);
-            //                hasAddedToGoapPlans = true;
-            //            }
-            //        }
-            //    }
-            //    return true;
-            //} else {
-            //    return false;
-            //}
         }
         return false;
     }
@@ -3607,7 +3560,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
 
         GameDate dueDate = GameManager.Instance.Today();
-        dueDate.AddTicks(4);
+        dueDate.AddTicks(2);
         SchedulingManager.Instance.AddEntry(dueDate, () => EndChatCharacter(targetCharacter));
     }
     private void EndChatCharacter(Character targetCharacter) {

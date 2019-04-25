@@ -205,22 +205,31 @@ public class GoapThread : Multithread {
                     log += ", ";
                 }
                 log += usableActions[i].goapName + " (" + usableActions[i].poiTarget.name + ")";
-                if (job != null && job.forcedActions.ContainsKey(goalEffect)) {
-                    //if there is a provided job, check if it has any forced actions
-                    //if it does, only allow the action that it allows
-                    if (usableActions[i].goapType == job.forcedActions[goalEffect]) {
+                if (usableActions[i].WillEffectsSatisfyPrecondition(goalEffect)) {
+                    if (job != null && job.forcedActions.Count > 0) {
+                        bool satisfiedForcedActions = true;
+                        ForcedActionsComparer comparer = new ForcedActionsComparer();
+                        foreach (KeyValuePair<GoapEffect, INTERACTION_TYPE> kvp in job.forcedActions) {
+                            if (comparer.Equals(kvp.Key, goalEffect)) {
+                                if (kvp.Value != usableActions[i].goapType) {
+                                    satisfiedForcedActions = false;
+                                    break;
+                                }
+                            }
+                        }
+                        if (satisfiedForcedActions) {
+                            GoapPlan plan = actor.planner.PlanActions(target, usableActions[i], usableActions, category, isPersonalPlan, job);
+                            if (plan != null) {
+                                allPlans.Add(plan);
+                                plan.SetListOfCharacterAwareness(characterTargetsAwareness);
+                            }
+                        }
+                    } else {
                         GoapPlan plan = actor.planner.PlanActions(target, usableActions[i], usableActions, category, isPersonalPlan, job);
                         if (plan != null) {
                             allPlans.Add(plan);
                             plan.SetListOfCharacterAwareness(characterTargetsAwareness);
                         }
-                    }
-                    break;
-                } else if (usableActions[i].WillEffectsSatisfyPrecondition(goalEffect)) {
-                    GoapPlan plan = actor.planner.PlanActions(target, usableActions[i], usableActions, category, isPersonalPlan, job);
-                    if (plan != null) {
-                        allPlans.Add(plan);
-                        plan.SetListOfCharacterAwareness(characterTargetsAwareness);
                     }
                 }
             }

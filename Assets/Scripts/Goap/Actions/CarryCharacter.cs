@@ -18,7 +18,7 @@ public class CarryCharacter : GoapAction {
     public override void PerformActualAction() {
         base.PerformActualAction();
         //rather than checking location check if the character is not in anyone elses party and is still active
-        if (!isTargetMissing && (poiTarget as Character).IsInOwnParty()) { 
+        if (!isTargetCharacterMissing && (poiTarget as Character).IsInOwnParty()) { 
             SetState("Carry Success");
         } else {
             SetState("Target Missing");

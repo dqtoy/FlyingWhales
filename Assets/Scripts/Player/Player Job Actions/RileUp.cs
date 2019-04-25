@@ -5,9 +5,8 @@ using UnityEngine;
 public class RileUp : PlayerJobAction {
 
     private Character _targetCharacter;
-
     public RileUp() {
-        actionName = "Rile Up";
+        name = "Rile Up";
         SetDefaultCooldownTime(48);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
     }
@@ -21,6 +20,11 @@ public class RileUp : PlayerJobAction {
     }
 
     protected override bool ShouldButtonBeInteractable(Character character, Character targetCharacter) {
+        if(targetCharacter.role.roleType != CHARACTER_ROLE.BEAST) {
+            name = "Abduct";
+        } else {
+            name = "Rile Up";
+        }
         if (targetCharacter.isDead || character.id == targetCharacter.id) { //|| (!targetCharacter.isTracked && !GameManager.Instance.inspectAll)
             return false;
         }
