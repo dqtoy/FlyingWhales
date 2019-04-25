@@ -72,6 +72,8 @@ public class CharacterMarker : PooledObject {
         this.name = character.name + "'s Marker";
         nameLbl.SetText(character.name);
         this.character = character;
+        rvoController.agentName = character.name;
+        fleeingRVOController.agentName = character.name;
         //_previousGridTile = character.gridTileLocation;
         if (UIManager.Instance.characterInfoUI.isShowing) {
             clickedImg.gameObject.SetActive(UIManager.Instance.characterInfoUI.activeCharacter.id == character.id);
@@ -87,6 +89,7 @@ public class CharacterMarker : PooledObject {
         inVisionPOIs = new List<IPointOfInterest>();
         hostilesInRange = new List<Character>();
         terrifyingCharacters = new List<Character>();
+        rvoController.avoidedAgents = new List<IAgent>();
 
         GameObject collisionTriggerGO = GameObject.Instantiate(InteriorMapManager.Instance.characterCollisionTriggerPrefab, this.transform);
         collisionTriggerGO.transform.localPosition = Vector3.zero;
@@ -1190,17 +1193,17 @@ public class CharacterMarker : PooledObject {
         //terrifyingCharacters = Math.Max(0, terrifyingCharacters);
         if (!terrifyingCharacters.Contains(character)) {
             terrifyingCharacters.Add(character);
-            UpdateFleeingRVOController();
+            rvoController.avoidedAgents.Add(character.marker.fleeingRVOController.rvoAgent);
         }
     }
     public void RemoveTerrifyingCharacter(Character character) {
         if (terrifyingCharacters.Remove(character)) {
-            UpdateFleeingRVOController();
+            rvoController.avoidedAgents.Remove(character.marker.fleeingRVOController.rvoAgent);
         }
     }
     public void ClearTerrifyingCharacters() {
         terrifyingCharacters.Clear();
-        UpdateFleeingRVOController();
+        rvoController.avoidedAgents.Clear();
     }
     private void UpdateFleeingRVOController() {
         if (terrifyingCharacters.Count > 0) {

@@ -20,6 +20,10 @@ namespace Pathfinding.RVO {
 	/// See: RVOSimulator
 	/// </summary>
 	public interface IAgent {
+        string agentName { get; set; }
+        bool useAvoidedAgents { get; set; }
+        List<IAgent> AvoidedAgents { get; set; }
+
 		/// <summary>
 		/// Position of the agent.
 		/// The agent does not move by itself, a movement script has to be responsible for

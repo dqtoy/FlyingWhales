@@ -2676,6 +2676,7 @@ MonoBehaviour:
   - {fileID: 976199697}
   - {fileID: 1169935974}
   rvoController: {fileID: 0}
+  fleeingRVOController: {fileID: 0}
   colorHighlight: {fileID: 1841024975}
 --- !u!114 &92630685
 MonoBehaviour:
@@ -7941,6 +7942,7 @@ MonoBehaviour:
   - {fileID: 639932811}
   - {fileID: 214895377}
   rvoController: {fileID: 0}
+  fleeingRVOController: {fileID: 0}
   colorHighlight: {fileID: 524246521}
 --- !u!114 &253410922
 MonoBehaviour:
@@ -10522,6 +10524,7 @@ MonoBehaviour:
   - {fileID: 1565763491}
   - {fileID: 2008549996}
   rvoController: {fileID: 0}
+  fleeingRVOController: {fileID: 0}
   colorHighlight: {fileID: 940876006}
 --- !u!114 &362231068
 MonoBehaviour:
@@ -12024,6 +12027,7 @@ MonoBehaviour:
   - {fileID: 1547943282}
   - {fileID: 853076063}
   rvoController: {fileID: 0}
+  fleeingRVOController: {fileID: 0}
   colorHighlight: {fileID: 370936221}
 --- !u!114 &396724357
 MonoBehaviour:
@@ -14415,6 +14419,7 @@ MonoBehaviour:
   - {fileID: 956456581}
   - {fileID: 1220094771}
   rvoController: {fileID: 0}
+  fleeingRVOController: {fileID: 0}
   colorHighlight: {fileID: 1292306554}
 --- !u!114 &450537279
 MonoBehaviour:
@@ -18133,6 +18138,7 @@ MonoBehaviour:
   - {fileID: 863191545}
   - {fileID: 1738222904}
   rvoController: {fileID: 0}
+  fleeingRVOController: {fileID: 0}
   colorHighlight: {fileID: 1267262243}
 --- !u!114 &593586478
 MonoBehaviour:
@@ -20585,6 +20591,7 @@ MonoBehaviour:
   - {fileID: 1199221794}
   - {fileID: 673793734}
   rvoController: {fileID: 0}
+  fleeingRVOController: {fileID: 0}
   colorHighlight: {fileID: 1375287701}
 --- !u!114 &720759250
 MonoBehaviour:
@@ -25385,6 +25392,7 @@ MonoBehaviour:
   - {fileID: 742915290}
   - {fileID: 324139744}
   rvoController: {fileID: 0}
+  fleeingRVOController: {fileID: 0}
   colorHighlight: {fileID: 413679473}
 --- !u!114 &886739053
 MonoBehaviour:
@@ -66796,6 +66804,7 @@ MonoBehaviour:
   - {fileID: 2106410438}
   - {fileID: 1952725343}
   rvoController: {fileID: 0}
+  fleeingRVOController: {fileID: 0}
   colorHighlight: {fileID: 1522231541}
 --- !u!114 &1007025358
 MonoBehaviour:
@@ -70311,6 +70320,7 @@ MonoBehaviour:
   - {fileID: 461254042}
   - {fileID: 2059823410}
   rvoController: {fileID: 0}
+  fleeingRVOController: {fileID: 0}
   colorHighlight: {fileID: 787529318}
 --- !u!114 &1124022271
 MonoBehaviour:
@@ -74569,6 +74579,7 @@ MonoBehaviour:
   - {fileID: 1525096432}
   - {fileID: 468236528}
   rvoController: {fileID: 0}
+  fleeingRVOController: {fileID: 0}
   colorHighlight: {fileID: 540201611}
 --- !u!114 &1328773675
 MonoBehaviour:
@@ -84866,6 +84877,7 @@ MonoBehaviour:
   - {fileID: 1569459974}
   - {fileID: 1177484951}
   rvoController: {fileID: 0}
+  fleeingRVOController: {fileID: 0}
   colorHighlight: {fileID: 805666438}
 --- !u!114 &1725801973
 MonoBehaviour:
@@ -85194,6 +85206,7 @@ MonoBehaviour:
   - {fileID: 423834514}
   - {fileID: 1908180854}
   rvoController: {fileID: 0}
+  fleeingRVOController: {fileID: 0}
   colorHighlight: {fileID: 1108410640}
 --- !u!114 &1733846815
 MonoBehaviour:
@@ -90913,6 +90926,7 @@ MonoBehaviour:
   - {fileID: 1390602804}
   - {fileID: 284852221}
   rvoController: {fileID: 0}
+  fleeingRVOController: {fileID: 0}
   colorHighlight: {fileID: 2145895356}
 --- !u!114 &1945197316
 MonoBehaviour:
@@ -91381,6 +91395,7 @@ MonoBehaviour:
   - {fileID: 1320019449}
   - {fileID: 37077230}
   rvoController: {fileID: 0}
+  fleeingRVOController: {fileID: 0}
   colorHighlight: {fileID: 1476837197}
 --- !u!114 &1953033936
 MonoBehaviour:
@@ -93165,6 +93180,7 @@ MonoBehaviour:
   - {fileID: 924354551}
   - {fileID: 826315895}
   rvoController: {fileID: 0}
+  fleeingRVOController: {fileID: 0}
   colorHighlight: {fileID: 180032888}
 --- !u!114 &2024918420
 MonoBehaviour:

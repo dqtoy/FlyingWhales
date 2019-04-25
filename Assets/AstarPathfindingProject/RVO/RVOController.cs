@@ -230,6 +230,10 @@ namespace Pathfinding.RVO {
 		/// <summary>Enables drawing debug information in the scene view</summary>
 		public bool debug;
 
+        public string agentName;
+        public bool useAvoidedAgents;
+        public List<IAgent> avoidedAgents;
+
 		/// <summary>
 		/// Current position of the agent.
 		/// Note that this is only updated every local avoidance simulation step, not every frame.
@@ -410,6 +414,9 @@ namespace Pathfinding.RVO {
 			rvoAgent.Layer = layer;
 			rvoAgent.CollidesWith = collidesWith;
 			rvoAgent.Priority = priority;
+            rvoAgent.agentName = agentName;
+            rvoAgent.useAvoidedAgents = useAvoidedAgents;
+            rvoAgent.AvoidedAgents = avoidedAgents;
 
 			float elevation;
 			// Use the position from the movement script if one is attached
