@@ -12,7 +12,7 @@ public class AreaPickerItem : ObjectPickerItem<Area>, IPointerClickHandler {
 
     private Area area;
 
-    //[SerializeField] private CharacterPortrait portrait;
+    [SerializeField] private LocationPortrait portrait;
     public GameObject portraitCover;
 
     public void SetArea(Area area) {
@@ -26,7 +26,7 @@ public class AreaPickerItem : ObjectPickerItem<Area>, IPointerClickHandler {
     }
 
     private void UpdateVisuals() {
-        //portrait.GeneratePortrait(area);
+        portrait.SetLocation(area);
         mainLbl.text = area.name;
         //subLbl.text = Utilities.GetNormalizedSingularRace(area.race) + " " + area.characterClass.className;
     }

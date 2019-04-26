@@ -11,8 +11,10 @@ public class LocationPortrait : MonoBehaviour, IPointerClickHandler {
     [SerializeField] private Image portrait;
     [SerializeField] private GameObject hoverObj;
 
+    public bool disableInteraction;
+
     public void OnPointerClick(PointerEventData eventData) {
-        if (area != null) {
+        if (!disableInteraction && area != null) {
             UIManager.Instance.ShowAreaInfo(area);
         }
     }
@@ -23,7 +25,9 @@ public class LocationPortrait : MonoBehaviour, IPointerClickHandler {
     }
 
     public void SetHoverHighlightState(bool state) {
-        hoverObj.SetActive(state);
+        if (!disableInteraction) {
+            hoverObj.SetActive(state);
+        }
     }
 
     public void ShowLocationInfo() {
