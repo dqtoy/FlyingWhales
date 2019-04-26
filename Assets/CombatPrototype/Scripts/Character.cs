@@ -4370,6 +4370,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             } else {
                 if (goapThread.job != null) {
                     goapThread.job.SetAssignedCharacter(null);
+                    goapThread.job.AddBlacklistedCharacter(this);
                     if (goapThread.job.cancelJobOnFail) {
                         goapThread.job.jobQueueParent.RemoveJobInQueue(goapThread.job);
                     }
@@ -4724,7 +4725,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 }
                 plan.job.SetAssignedCharacter(null);
                 plan.job.SetAssignedPlan(null);
-                
             }
             if (allGoapPlans.Count <= 0) {
                 PlanGoapActions();

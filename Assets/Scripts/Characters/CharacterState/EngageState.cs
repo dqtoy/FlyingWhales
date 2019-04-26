@@ -61,6 +61,9 @@ public class EngageState : CharacterState {
 
             targetCharacter.AdjustIsWaitingForInteraction(1);
             if (targetCharacter.currentAction != null && !targetCharacter.currentAction.isDone) {
+                if (targetCharacter.currentParty.icon.isTravelling && targetCharacter.currentParty.icon.travelLine == null) {
+                    targetCharacter.marker.StopMovement();
+                }
                 if (!targetCharacter.currentAction.isPerformingActualAction) {
                     targetCharacter.SetCurrentAction(null);
                 } else {

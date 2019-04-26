@@ -56,6 +56,8 @@ public class GoapAction {
     public CRIME committedCrime { get; private set; }
     public string result { get; private set; }
     public string animationName { get; protected set; } //what animation should the character be playing while doing this action
+    public bool doesNotStopTargetCharacter { get; protected set; }
+
     protected bool isTargetCharacterMissing {
         get { return poiTarget.state == POI_STATE.INACTIVE || actor.specificLocation != poiTarget.specificLocation; }
     }
@@ -149,9 +151,31 @@ public class GoapAction {
         if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
             Character targetCharacter = poiTarget as Character;
             if (poiTarget != actor) {
+                if (!doesNotStopTargetCharacter) {
+                    if (targetCharacter.currentAction != null) {
+                        if (targetCharacter.currentParty.icon.isTravelling) {
+                            if (targetCharacter.currentParty.icon.travelLine == null) {
+                                //This means that the actor currently travelling to another tile in tilemap
+                                targetCharacter.marker.StopMovement();
+                            } else {
+                                //This means that the actor is currently travelling to another area
+                                targetCharacter.currentParty.icon.SetOnArriveAction(() => targetCharacter.OnArriveAtAreaStopMovement());
+                            }
+                        }
+                        if (targetCharacter.currentAction.isPerformingActualAction && !targetCharacter.currentAction.isDone) {
+                            targetCharacter.currentAction.currentState.EndPerTickEffect(false);
+                        } else {
+                            targetCharacter.SetCurrentAction(null);
+                        }
+                    }
+                    if (targetCharacter.stateComponent.currentState != null) {
+                        targetCharacter.stateComponent.currentState.PauseState();
+                    }
+                }
                 targetCharacter.marker.pathfindingAI.AdjustDoNotMove(1);
                 targetCharacter.marker.AdjustIsStoppedByOtherCharacter(1);
                 targetCharacter.FaceTarget(actor);
+
             }
         }
     }
@@ -279,10 +303,14 @@ public class GoapAction {
         if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
             if (poiTarget != actor) {
                 Character targetCharacter = poiTarget as Character;
+                if (!doesNotStopTargetCharacter) {
+                    if (targetCharacter.stateComponent.currentState != null) {
+                        targetCharacter.stateComponent.currentState.ResumeState();
+                    }
+                }
                 targetCharacter.marker.pathfindingAI.AdjustDoNotMove(-1);
                 targetCharacter.marker.AdjustIsStoppedByOtherCharacter(-1);
             }
-
         }
         OnFinishActionTowardsTarget();
         if (endAction != null) {
@@ -328,14 +356,14 @@ public class GoapAction {
             //ReturnToActorTheActionResult(InteractionManager.Goap_State_Fail);
             currentState.EndPerTickEffect(false);
 
-            //when the action is ended prematurely, make sure to readjust the target character's do not move values
-            if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-                if (poiTarget != actor) {
-                    Character targetCharacter = poiTarget as Character;
-                    targetCharacter.marker.pathfindingAI.AdjustDoNotMove(-1);
-                    targetCharacter.marker.AdjustIsStoppedByOtherCharacter(-1);
-                }
-            }
+            ////when the action is ended prematurely, make sure to readjust the target character's do not move values
+            //if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+            //    if (poiTarget != actor) {
+            //        Character targetCharacter = poiTarget as Character;
+            //        targetCharacter.marker.pathfindingAI.AdjustDoNotMove(-1);
+            //        targetCharacter.marker.AdjustIsStoppedByOtherCharacter(-1);
+            //    }
+            //}
         } else {
             //if (action != null && action.poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
             //    Character targetCharacter = action.poiTarget as Character;

@@ -39,6 +39,9 @@ public class JobQueue {
             for (int i = 0; i < jobsInQueue.Count; i++) {
                 JobQueueItem job = jobsInQueue[i];
                 if (job.assignedCharacter == null && job.CanCharacterTakeThisJob(characterToDoJob)) {
+                    if (job.blacklistedCharacters.Contains(characterToDoJob)) {
+                        continue;
+                    }
                     job.SetAssignedCharacter(characterToDoJob);
                     if(job is GoapPlanJob) {
                         GoapPlanJob goapPlanJob = job as GoapPlanJob;

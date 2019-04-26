@@ -8,11 +8,13 @@ public class JobQueueItem {
     public string name { get; private set; }
     public bool cannotCancelJob { get; private set; }
     public bool cancelJobOnFail { get; private set; }
+    public List<Character> blacklistedCharacters { get; private set; }
 
     private System.Func<Character, bool> _canTakeThisJob;
 
     public JobQueueItem(string name) {
         this.name = name;
+        this.blacklistedCharacters = new List<Character>();
     }
 
     #region Virtuals
@@ -53,5 +55,13 @@ public class JobQueueItem {
             return false;
         }
         return CanTakeJob(character);
+    }
+    public void AddBlacklistedCharacter(Character character) {
+        if (!blacklistedCharacters.Contains(character)) {
+            blacklistedCharacters.Add(character);
+        }
+    }
+    public void RemoveBlacklistedCharacter(Character character) {
+        blacklistedCharacters.Remove(character);
     }
 }
