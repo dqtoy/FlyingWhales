@@ -34,7 +34,7 @@ public class Pray : GoapAction {
         return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);
     }
     protected override int GetCost() {
-        return Utilities.rng.Next(7, 14);
+        return Utilities.rng.Next(20, 35);
     }
     //public override void FailAction() {
     //    base.FailAction();

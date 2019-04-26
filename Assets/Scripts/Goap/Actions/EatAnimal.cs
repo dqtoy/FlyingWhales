@@ -31,9 +31,9 @@ public class EatAnimal : GoapAction {
     }
     protected override int GetCost() {
         if (actor.GetTrait("Carnivore") != null) {
-            return 3;
-        } else {
             return 12;
+        } else {
+            return 28;
         }
     }
     //public override void FailAction() {

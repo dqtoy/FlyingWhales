@@ -29,7 +29,7 @@ public class SleepOutside : GoapAction {
         return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);
     }
     protected override int GetCost() {
-        return 9;
+        return 18;
     }
     //public override void SetTargetStructure() {
     //    List<LocationStructure> choices = actor.specificLocation.GetStructuresOfType(STRUCTURE_TYPE.WILDERNESS).Where(x => x.unoccupiedTiles.Count > 0).ToList();

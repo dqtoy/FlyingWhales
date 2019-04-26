@@ -37,7 +37,7 @@ public class Daydream : GoapAction {
     }
     protected override int GetCost() {
         //**Cost**: randomize between 5-12
-        return Utilities.rng.Next(7, 14);
+        return Utilities.rng.Next(20, 35);
     }
     //public override void FailAction() {
     //    base.FailAction();
