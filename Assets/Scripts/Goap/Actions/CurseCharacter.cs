@@ -25,7 +25,7 @@ public class CurseCharacter : GoapAction {
     }
     public override void PerformActualAction() {
         base.PerformActualAction();
-        if (!isTargetCharacterMissing && (actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation))) {
+        if (!isTargetCharacterMissing ) {
             SetState("Curse Success");
         } else {
             SetState("Target Missing");
@@ -33,6 +33,14 @@ public class CurseCharacter : GoapAction {
     }
     protected override int GetCost() {
         return 3;
+    }
+    protected override void MoveToDoAction(GoapPlan plan, Character targetCharacter) {
+        if (actor.specificLocation != targetStructure.location) {
+            actor.currentParty.GoToLocation(targetStructure.location, PATHFINDING_MODE.NORMAL, targetStructure, () => actor.PerformGoapAction(plan), null, poiTarget, targetTile);
+        } else {
+            //if the actor is already at the area where the target structure is, immediately do the action, since this action is performed in place
+            actor.PerformGoapAction(plan);
+        }
     }
     #endregion
 

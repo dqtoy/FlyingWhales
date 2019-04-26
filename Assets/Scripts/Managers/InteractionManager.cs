@@ -1093,6 +1093,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.ASK_FOR_HELP_SAVE_CHARACTER:
                 goapAction = new AskForHelpSaveCharacter(actor, target);
                 break;
+            case INTERACTION_TYPE.ASK_FOR_HELP_REMOVE_POISON_TABLE:
+                goapAction = new AskForHelpRemovePoisonTable(actor, target);
+                break;
         }
         if(goapAction != null && willInitialize) {
             goapAction.Initialize();

@@ -8,6 +8,7 @@ public class TablePoison : GoapAction {
     public TablePoison(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.TABLE_POISON, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         this.goapName = "Poison Table";
         actionIconString = GoapActionStateDB.Hostile_Icon;
+        _isStealthAction = true;
     }
 
     #region Overrides
@@ -34,7 +35,12 @@ public class TablePoison : GoapAction {
     }
     public override void PerformActualAction() {
         if (poiTarget.gridTileLocation != null && (actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsAdjacentTo(poiTarget))) {
-            SetState("Poison Success");
+            if (!HasOtherCharacterInRadius()) {
+                SetState("Poison Success");
+            } else {
+                parentPlan.SetDoNotRecalculate(true);
+                SetState("Poison Fail");
+            }
         } else {
             SetState("Target Missing");
         }
@@ -51,6 +57,7 @@ public class TablePoison : GoapAction {
 
     #region State Effects
     public void PrePoisonSuccess() {
+        SetCommittedCrime(CRIME.ASSAULT);
         //**Effect 1**: Add Poisoned Trait to target table
         AddTraitTo(poiTarget, new Poisoned(), actor);
         currentState.AddLogFiller(poiTarget.gridTileLocation.structure.location, poiTarget.gridTileLocation.structure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
@@ -149,7 +156,7 @@ public class TablePoison : GoapAction {
                 CharacterManager.Instance.CreateNewRelationshipBetween(recipient, actor, RELATIONSHIP_TRAIT.ENEMY);
             }
             //Apply Crime System handling as if the Recipient witnessed Actor commit a Murder.
-            recipient.ReactToCrime(CRIME.ASSAULT, actor, null, false);
+            recipient.ReactToCrime(CRIME.MURDER, actor, null, false);
         }
         //Recipient has a negative relationship with a character that has gotten sick by using the Table:
         else if (pti.eatAtTableAction != null && pti.eatAtTableAction.HasActualEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Sick", pti.eatAtTableAction.actor)
@@ -171,7 +178,7 @@ public class TablePoison : GoapAction {
         //Recipient has a positive relationship with owner of the Table and the Table is still currently poisoned:
         else if (tableOwner != null && recipient.HasRelationshipOfEffectWith(tableOwner, TRAIT_EFFECT.POSITIVE, RELATIONSHIP_TRAIT.RELATIVE) && poisonedTrait != null && poisonedTrait.responsibleCharacters.Contains(actor)) {
             //- **Recipient Response Text**: "Thank you for letting me know about this. I've got to find a way to remove that poison to save [Target Name]!
-            reactions.Add(string.Format("Thank you for letting me know about this. I've got to find a way to remove that poison to save {0}!", actor.name));
+            reactions.Add(string.Format("Thank you for letting me know about this. I've got to find a way to remove that poison to save {0}!", tableOwner.name));
             //-**Recipient Effect * *: If Adventurer or Soldier or Unaligned Non - Beast, create a Remove Poison Job.
             if (recipient.role.roleType == CHARACTER_ROLE.ADVENTURER || recipient.role.roleType == CHARACTER_ROLE.SOLDIER || (recipient.role.roleType != CHARACTER_ROLE.BEAST && recipient.isFactionless)) {
                 GoapPlanJob job = new GoapPlanJob("Remove Poison", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Poisoned", targetPOI = poiTarget });
@@ -179,7 +186,7 @@ public class TablePoison : GoapAction {
             }
             //If Civilian, Noble or Faction Leader, create an Ask for Help Remove Poison Job.
             else if (recipient.role.roleType == CHARACTER_ROLE.CIVILIAN || recipient.role.roleType == CHARACTER_ROLE.LEADER) {
-                //TODO
+                recipient.CreateAskForHelpJob(tableOwner, INTERACTION_TYPE.ASK_FOR_HELP_REMOVE_POISON_TABLE, poiTarget);
             }
             //Apply Crime System handling as if the Recipient witnessed Actor commit an Attempted Murder.
             recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, actor, null, false);
@@ -187,7 +194,7 @@ public class TablePoison : GoapAction {
         //Recipient has no relationship with owner of the table but they are from the same faction and the Table is still currently poisoned:
         else if (tableOwner != null && !recipient.HasRelationshipWith(tableOwner) && tableOwner.faction == recipient.faction && poisonedTrait != null && poisonedTrait.responsibleCharacters.Contains(actor)) {
             //- **Recipient Response Text**: "Thank you for letting me know about this. I've got to find a way to remove that poison to save [Target Name]!
-            reactions.Add(string.Format("Thank you for letting me know about this. I've got to find a way to remove that poison to save {0}!", actor.name));
+            reactions.Add(string.Format("Thank you for letting me know about this. I've got to find a way to remove that poison to save {0}!", tableOwner.name));
             //-**Recipient Effect * *: If Adventurer or Soldier or Unaligned Non - Beast, create a Remove Poison Job.
             if (recipient.role.roleType == CHARACTER_ROLE.ADVENTURER || recipient.role.roleType == CHARACTER_ROLE.SOLDIER || (recipient.role.roleType != CHARACTER_ROLE.BEAST && recipient.isFactionless)) {
                 GoapPlanJob job = new GoapPlanJob("Remove Poison", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Poisoned", targetPOI = poiTarget });
@@ -195,7 +202,7 @@ public class TablePoison : GoapAction {
             }
             //If Civilian, Noble or Faction Leader, create an Ask for Help Remove Poison Job.
             else if (recipient.role.roleType == CHARACTER_ROLE.CIVILIAN || recipient.role.roleType == CHARACTER_ROLE.LEADER) {
-                //TODO
+                recipient.CreateAskForHelpJob(tableOwner, INTERACTION_TYPE.ASK_FOR_HELP_REMOVE_POISON_TABLE, poiTarget);
             }
             //Apply Crime System handling as if the Recipient witnessed Actor commit an Attempted Murder.
             recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, actor, null, false);
@@ -218,7 +225,7 @@ public class TablePoison : GoapAction {
             }
             //If Civilian, Noble or Faction Leader, create an Ask for Help Remove Poison Job.
             else if (recipient.role.roleType == CHARACTER_ROLE.CIVILIAN || recipient.role.roleType == CHARACTER_ROLE.LEADER) {
-                //TODO
+                recipient.CreateAskForHelpJob(tableOwner, INTERACTION_TYPE.ASK_FOR_HELP_REMOVE_POISON_TABLE, poiTarget);
             }
         }
         //Recipient and Actor have a positive relationship and the Table already killed the Target. Recipient and Target are not enemies:

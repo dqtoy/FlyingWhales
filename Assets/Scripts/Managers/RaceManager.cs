@@ -116,6 +116,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.DROP_ITEM,
                 INTERACTION_TYPE.DROP_ITEM_WAREHOUSE,
                 INTERACTION_TYPE.ASK_FOR_HELP_SAVE_CHARACTER,
+                INTERACTION_TYPE.ASK_FOR_HELP_REMOVE_POISON_TABLE,
             } },
             { RACE.ELVES, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -194,6 +195,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.DROP_ITEM,
                 INTERACTION_TYPE.DROP_ITEM_WAREHOUSE,
                 INTERACTION_TYPE.ASK_FOR_HELP_SAVE_CHARACTER,
+                INTERACTION_TYPE.ASK_FOR_HELP_REMOVE_POISON_TABLE,
             } },
             { RACE.GOBLIN, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -273,6 +275,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.DROP_ITEM,
                 INTERACTION_TYPE.DROP_ITEM_WAREHOUSE,
                 INTERACTION_TYPE.ASK_FOR_HELP_SAVE_CHARACTER,
+                INTERACTION_TYPE.ASK_FOR_HELP_REMOVE_POISON_TABLE,
             } },
             { RACE.FAERY, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -352,6 +355,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.DROP_ITEM,
                 INTERACTION_TYPE.DROP_ITEM_WAREHOUSE,
                 INTERACTION_TYPE.ASK_FOR_HELP_SAVE_CHARACTER,
+                INTERACTION_TYPE.ASK_FOR_HELP_REMOVE_POISON_TABLE,
             } },
             { RACE.SKELETON, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -429,6 +433,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.DROP_ITEM,
                 INTERACTION_TYPE.DROP_ITEM_WAREHOUSE,
                 INTERACTION_TYPE.ASK_FOR_HELP_SAVE_CHARACTER,
+                INTERACTION_TYPE.ASK_FOR_HELP_REMOVE_POISON_TABLE,
             } },
             { RACE.SPIDER, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,

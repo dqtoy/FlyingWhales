@@ -217,7 +217,7 @@ public class AreaInnerTileMap : MonoBehaviour {
         eventPopupParent.anchoredPosition = Vector2.zero;
         insideTiles = new List<LocationGridTile>();
         outsideTiles = new List<LocationGridTile>();
-        if (area.areaType != AREA_TYPE.DUNGEON) {
+        if (area.areaType != AREA_TYPE.DUNGEON && area.areaType != AREA_TYPE.DEMONIC_INTRUSION) {
             //if this area is not a dungeon type
             //first get a town center template that has the needed connections for the structures in the area
             //Once a town center is chosen

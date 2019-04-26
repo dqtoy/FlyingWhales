@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class AbductCharacter : GoapAction {
-    private int _numOfTries;
     public AbductCharacter(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.ABDUCT_ACTION, INTERACTION_ALIGNMENT.EVIL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Hostile_Icon;
-        _numOfTries = 0;
+        _isStealthAction = true;
     }
 
     #region Overrides
@@ -33,13 +32,6 @@ public class AbductCharacter : GoapAction {
     }
     protected override int GetCost() {
         return 3;
-    }
-    public override bool IsHalted() {
-        if (_numOfTries < 18 && HasOtherCharacterInRadius()) {
-            _numOfTries++;
-            return true;
-        }
-        return base.IsHalted();
     }
     //public override void FailAction() {
     //    base.FailAction();
@@ -87,26 +79,5 @@ public class AbductCharacter : GoapAction {
     }
     #endregion
 
-    #region Special Note: Stealth
-    public bool HasOtherCharacterInRadius() {
-        List<LocationGridTile> tiles = (poiTarget as Character).currentStructure.location.areaMap.GetTilesInRadius(poiTarget.gridTileLocation, 3);
-        for (int i = 0; i < tiles.Count; i++) {
-            //if (tiles[i].occupant != null && tiles[i].occupant != actor && tiles[i].occupant != poiTarget) {
-            //    return true;
-            //}
-            LocationGridTile currTile = tiles[i];
-            List<Character> characters = new List<Character>(currTile.charactersHere);
-            characters.Remove(actor);
-            characters.Remove(poiTarget as Character);
-            for (int j = 0; j < characters.Count; j++) {
-                Character currCharacter = characters[j];
-                //check each character, if a character has a disabler trait, do not consider them as a character that will notice this action
-                if (!currCharacter.HasTraitOf(TRAIT_TYPE.DISABLER)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-    #endregion
+    
 }

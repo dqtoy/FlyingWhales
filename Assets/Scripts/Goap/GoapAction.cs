@@ -60,6 +60,10 @@ public class GoapAction {
         get { return poiTarget.state == POI_STATE.INACTIVE || actor.specificLocation != poiTarget.specificLocation; }
     }
 
+    //Stealth
+    protected int _numOfTries;
+    protected bool _isStealthAction; //Should this action check for characters in radius before performing this action?
+
     protected Func<bool> _requirementAction;
     protected System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
     protected string actionSummary;
@@ -81,6 +85,8 @@ public class GoapAction {
         actualEffects = new List<GoapEffect>();
         committedCrime = CRIME.NONE;
         animationName = string.Empty;
+        _numOfTries = 0;
+        _isStealthAction = false;
         //for testing
         //CRIME[] choices = Utilities.GetEnumValues<CRIME>();
         //committedCrime = choices[Utilities.rng.Next(1, choices.Length)];
@@ -236,6 +242,14 @@ public class GoapAction {
         //if (validTimeOfDays != null && !validTimeOfDays.Contains(GameManager.GetCurrentTimeInWordsOfTick())) {
         //    return true;
         //}
+
+        //if this action is a stealth action, check if there are any characters around, if yes, halt(suspend) this action
+        if (_isStealthAction) {
+            if (_numOfTries < 18 && HasOtherCharacterInRadius()) {
+                _numOfTries++;
+                return true;
+            }
+        }
         return false;
     }
     public virtual void ExecuteTargetMissing() {
@@ -251,6 +265,19 @@ public class GoapAction {
     /// </summary>
     /// <param name="otherData">Array of data</param>
     public virtual void InitializeOtherData(object[] otherData) { }
+    protected virtual void MoveToDoAction(GoapPlan plan, Character targetCharacter) {
+        //if the actor is NOT at the area where the target structure is, make him/her go there first.
+        if (actor.specificLocation != targetStructure.location) {
+            actor.currentParty.GoToLocation(targetStructure.location, PATHFINDING_MODE.NORMAL, targetStructure, () => actor.PerformGoapAction(plan), null, poiTarget, targetTile);
+        } else {
+            //if the actor is already at the area where the target structure is, just make the actor move to the specified target structure (ususally the structure where the poiTarget is at).
+            if (targetTile != null) {
+                actor.marker.GoTo(targetTile, poiTarget, () => actor.PerformGoapAction(plan));
+            } else {
+                actor.marker.GoTo(poiTarget, () => actor.PerformGoapAction(plan));
+            }
+        }
+    }
     #endregion
 
     #region Utilities
@@ -399,30 +426,6 @@ public class GoapAction {
     /// <param name="targetTile">The new target tile.</param>
     public void SetExecutionDate(GameDate date) {
         executionDate = date;
-    }
-    private void MoveToDoAction(GoapPlan plan, Character targetCharacter) {
-        //if(targetCharacter != null) {
-        //    targetCharacter.AdjustIsWaitingForInteraction(1);
-        //    targetCharacter.OnTargettedByAction(this);
-        //    if (targetCharacter.currentAction != null && !targetCharacter.currentAction.isPerformingActualAction && !targetCharacter.currentAction.isDone) {
-        //        targetCharacter.SetCurrentAction(null);
-        //        //log += "\n- " + targetCharacter.name + " is not performing actual action setting current action to null...";
-        //    }
-        //}
-        //if the actor is NOT at the area where the target structure is, make him/her go there first.
-        if (actor.specificLocation != targetStructure.location) {
-            actor.currentParty.GoToLocation(targetStructure.location, PATHFINDING_MODE.NORMAL, targetStructure, () => actor.PerformGoapAction(plan), null, poiTarget, targetTile);
-        } else {
-            //if the actor is already at the area where the target structure is, just make the actor move to the specified target structure (ususally the structure where the poiTarget is at).
-            //actor.MoveToAnotherStructure(targetStructure, targetTile, poiTarget, () => actor.PerformGoapAction(plan));
-            if (targetTile != null) {
-                actor.marker.GoTo(targetTile, poiTarget, () => actor.PerformGoapAction(plan));
-            } else {
-                actor.marker.GoTo(poiTarget, () => actor.PerformGoapAction(plan));
-            }
-
-            //actor.PerformGoapAction(plan);
-        }
     }
     public void FailAction() {
         //if (goapType == INTERACTION_TYPE.SLEEP) {
@@ -589,6 +592,49 @@ public class GoapAction {
         committedCrime = crime;
     }
     #endregion
+
+    #region Special Note: Stealth
+    protected bool HasOtherCharacterInRadius() {
+        if (poiTarget is Character) {
+            List<LocationGridTile> tiles = (poiTarget as Character).currentStructure.location.areaMap.GetTilesInRadius(poiTarget.gridTileLocation, 3, true);
+            for (int i = 0; i < tiles.Count; i++) {
+                //if (tiles[i].occupant != null && tiles[i].occupant != actor && tiles[i].occupant != poiTarget) {
+                //    return true;
+                //}
+                LocationGridTile currTile = tiles[i];
+                List<Character> characters = new List<Character>(currTile.charactersHere);
+                characters.Remove(actor);
+                characters.Remove(poiTarget as Character);
+                for (int j = 0; j < characters.Count; j++) {
+                    Character currCharacter = characters[j];
+                    //check each character, if a character has a disabler trait, do not consider them as a character that will notice this action
+                    if (!currCharacter.HasTraitOf(TRAIT_TYPE.DISABLER)) {
+                        return true;
+                    }
+                }
+            }
+        } else {
+            List<LocationGridTile> tiles = poiTarget.gridTileLocation.structure.location.areaMap.GetTilesInRadius(poiTarget.gridTileLocation, 3, true);
+            for (int i = 0; i < tiles.Count; i++) {
+                //if (tiles[i].occupant != null && tiles[i].occupant != actor && tiles[i].occupant != poiTarget) {
+                //    return true;
+                //}
+                LocationGridTile currTile = tiles[i];
+                List<Character> characters = new List<Character>(currTile.charactersHere);
+                characters.Remove(actor);
+                for (int j = 0; j < characters.Count; j++) {
+                    Character currCharacter = characters[j];
+                    //check each character, if a character has a disabler trait, do not consider them as a character that will notice this action
+                    if (!currCharacter.HasTraitOf(TRAIT_TYPE.DISABLER)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        
+        return false;
+    }
+    #endregion
 }
 
 public struct GoapEffect {
@@ -635,4 +681,6 @@ public struct GoapEffect {
     public override int GetHashCode() {
         return base.GetHashCode();
     }
+
+
 }

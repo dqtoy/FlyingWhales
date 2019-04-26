@@ -545,7 +545,7 @@ public class CharacterManager : MonoBehaviour {
                     WeightedFloatDictionary<Character> relWeights = new WeightedFloatDictionary<Character>();
                     for (int l = 0; l < allCharacters.Count; l++) {
                         Character otherCharacter = allCharacters[l];
-                        if (currCharacter.id != otherCharacter.id) {
+                        if (currCharacter.id != otherCharacter.id && currCharacter.faction == otherCharacter.faction) {
                             List<RELATIONSHIP_TRAIT> existingRels = currCharacter.GetAllRelationshipTraitTypesWith(otherCharacter);
                             float weight = 0;
                             switch (currRel) {

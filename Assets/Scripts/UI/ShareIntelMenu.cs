@@ -77,9 +77,9 @@ public class ShareIntelMenu : MonoBehaviour {
         //HideIntel();
         SetIntelButtonsInteractable(false);
 
-        //GameObject actorDialog = ObjectPoolManager.Instance.InstantiateObjectFromPool(dialogItemPrefab.name, Vector3.zero, Quaternion.identity, dialogScrollView.content);
-        //DialogItem actorItem = actorDialog.GetComponent<DialogItem>();
-        //actorItem.SetData(actor, "You might want to know that, " + Utilities.LogReplacer(intel.intelLog), DialogItem.Position.Right);
+        GameObject actorDialog = ObjectPoolManager.Instance.InstantiateObjectFromPool(dialogItemPrefab.name, Vector3.zero, Quaternion.identity, dialogScrollView.content);
+        DialogItem actorItem = actorDialog.GetComponent<DialogItem>();
+        actorItem.SetData(actor, Utilities.LogReplacer(intel.intelLog), DialogItem.Position.Right);
 
         ShareIntel share = PlayerManager.Instance.player.roleSlots[JOB.DIPLOMAT].GetAction(typeof(ShareIntel)) as ShareIntel;
         share.BaseActivate(targetCharacter);

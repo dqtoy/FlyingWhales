@@ -453,9 +453,17 @@ public class InteriorMapManager : MonoBehaviour {
             Vector3Int pos = new Vector3Int((int)currData.tilePosition.x, (int)currData.tilePosition.y, 0);
             pos.x += startPos.x;
             pos.y += startPos.y;
-            if (tilemap.GetTile(pos) != null) {
-                continue; //skip drawing this tile
+            if (tilemap == agGroundTilemap) {
+                if (tilemap.GetTile(pos) != null && !tilemap.GetTile(pos).name.Contains("Dirt")) {
+                    //if the tile map is the ground tile map, and the tile to be replaced is not dirt, do not draw tile
+                    continue; //skip drawing this tile
+                }
+            } else {
+                if (tilemap.GetTile(pos) != null) {
+                    continue; //skip drawing this tile
+                }
             }
+            
             if (!string.IsNullOrEmpty(currData.tileAssetName)) {
                 tilemap.SetTile(pos, GetTileAsset(currData.tileAssetName, true));
             }
