@@ -32,7 +32,7 @@ public class EatAtTable : GoapAction {
         LocationGridTile knownLoc = actor.GetAwareness(poiTarget).knownGridLocation;
         Dwelling dwelling = knownLoc.structure as Dwelling;
         if (!dwelling.IsOccupied()) {
-            return 10;
+            return 12;
         } else {
             if (dwelling.IsResident(actor)) {
                 return 1;
@@ -42,11 +42,11 @@ public class EatAtTable : GoapAction {
                     CharacterRelationshipData characterRelationshipData = actor.GetCharacterRelationshipData(owner);
                     if (characterRelationshipData != null) {
                         if (characterRelationshipData.HasRelationshipOfEffect(TRAIT_EFFECT.POSITIVE)) {
-                            return 4;
+                            return 18;
                         }
                     }
                 }
-                return 10;
+                return 28;
             }
         }
     }
