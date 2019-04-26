@@ -1251,6 +1251,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     if (tokens.Count > 0) {
                         SpecialToken chosenToken = tokens[UnityEngine.Random.Range(0, tokens.Count)];
                         GoapPlanJob job = new GoapPlanJob("Claim Item", INTERACTION_TYPE.PICK_ITEM, chosenToken);
+                        job.SetCancelOnFail(true);
                         jobQueue.AddJobInQueue(job);
                         //Debug.LogWarning(GameManager.Instance.TodayLogString() + "Added a Claim Item Job to " + this.name + " with target " + chosenToken.name + " in " + chosenToken.gridTileLocation.ToString());
                     }
@@ -1284,6 +1285,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 }
                 if (chosenCharacter != null) {
                     GoapPlanJob job = new GoapPlanJob("Undermine Enemy", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", targetPOI = chosenCharacter });
+                    job.SetCancelOnFail(true);
                     jobQueue.AddJobInQueue(job);
                     Debug.LogWarning(GameManager.Instance.TodayLogString() + "Added an UNDERMINE ENEMY Job to " + this.name + " with target " + chosenCharacter.name);
                 }
@@ -1854,43 +1856,24 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             targetCharacters.RemoveAt(0);
         }
     }
-    public void ReEstablishRelationships(List<RelationshipLycanthropyData> prevRelationships) {
-        for (int i = 0; i < prevRelationships.Count; i++) {
-            RelationshipLycanthropyData relLycanData = prevRelationships[i];
-            if (!relationships.ContainsKey(relLycanData.target)) {
-                relationships.Add(relLycanData.target, relLycanData.characterToTargetRelData);
-            }
-            if (!relLycanData.target.relationships.ContainsKey(this)) {
-                relLycanData.target.relationships.Add(this, relLycanData.targetToCharacterRelData);
-            }
-
-            List<RelationshipTrait> rels = new List<RelationshipTrait>(relLycanData.characterToTargetRelData.rels);
-            relLycanData.characterToTargetRelData.rels.Clear();
-            relLycanData.targetToCharacterRelData.rels.Clear();
-
-            for (int j = 0; j < rels.Count; j++) {
-                CharacterManager.Instance.CreateNewRelationshipBetween(this, relLycanData.target, rels[i].relType, false);
-            }
-        }
-    }
     public RelationshipTrait GetRelationshipTraitWith(Character character, RELATIONSHIP_TRAIT type) {
-        if (relationships.ContainsKey(character)) {
+        if (HasRelationshipWith(character)) {
             return relationships[character].GetRelationshipTrait(type);
         }
         return null;
     }
     public List<RelationshipTrait> GetAllRelationshipTraitWith(Character character) {
-        if (relationships.ContainsKey(character)) {
-            return new List<RelationshipTrait>(relationships[character].rels);
+        if (HasRelationshipWith(character)) {
+            return relationships[character].GetAllRelationshipTraits();
         }
         return null;
     }
     public List<RelationshipTrait> GetAllRelationshipOfEffectWith(Character character, TRAIT_EFFECT effect, RELATIONSHIP_TRAIT include = RELATIONSHIP_TRAIT.NONE) {
         List<RelationshipTrait> rels = new List<RelationshipTrait>();
-        if (relationships.ContainsKey(character)) {
+        if (HasRelationshipWith(character)) {
             for (int i = 0; i < relationships[character].rels.Count; i++) {
                 RelationshipTrait currTrait = relationships[character].rels[i];
-                if (currTrait.effect == effect || currTrait.relType == include) {
+                if ((currTrait.effect == effect || currTrait.relType == include) && !currTrait.isDisabled) {
                     rels.Add(currTrait);
                 }
             }
@@ -1898,15 +1881,15 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         return rels;
     }
     public List<RELATIONSHIP_TRAIT> GetAllRelationshipTraitTypesWith(Character character) {
-        if (relationships.ContainsKey(character)) {
-            return new List<RELATIONSHIP_TRAIT>(relationships[character].rels.Select(x => x.relType));
+        if (HasRelationshipWith(character)) {
+            return new List<RELATIONSHIP_TRAIT>(relationships[character].rels.Where(x => !x.isDisabled).Select(x => x.relType));
         }
         return null;
     }
     public List<Character> GetCharactersWithRelationship(RELATIONSHIP_TRAIT type) {
         List<Character> characters = new List<Character>();
         foreach (KeyValuePair<Character, CharacterRelationshipData> kvp in relationships) {
-            if (kvp.Value.HasRelationshipTrait(type)) {
+            if (!kvp.Value.isDisabled && kvp.Value.HasRelationshipTrait(type)) {
                 characters.Add(kvp.Key);
             }
         }
@@ -1915,7 +1898,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public List<Character> GetCharactersWithoutRelationship(RELATIONSHIP_TRAIT type) {
         List<Character> characters = new List<Character>();
         foreach (KeyValuePair<Character, CharacterRelationshipData> kvp in relationships) {
-            if (!kvp.Value.HasRelationshipTrait(type)) {
+            if (!kvp.Value.isDisabled && !kvp.Value.HasRelationshipTrait(type)) {
                 characters.Add(kvp.Key);
             }
         }
@@ -1924,7 +1907,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public List<Character> GetCharactersWithRelationship(TRAIT_EFFECT effect) {
         List<Character> characters = new List<Character>();
         foreach (KeyValuePair<Character, CharacterRelationshipData> kvp in relationships) {
-            if (kvp.Value.HasRelationshipOfEffect(effect)) {
+            if (!kvp.Value.isDisabled && kvp.Value.HasRelationshipOfEffect(effect)) {
                 characters.Add(kvp.Key);
             }
         }
@@ -1932,7 +1915,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public Character GetCharacterWithRelationship(RELATIONSHIP_TRAIT type) {
         foreach (KeyValuePair<Character, CharacterRelationshipData> kvp in relationships) {
-            if (kvp.Value.HasRelationshipTrait(type)) {
+            if (!kvp.Value.isDisabled && kvp.Value.HasRelationshipTrait(type)) {
                 return kvp.Key;
             }
         }
@@ -2014,10 +1997,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     /// <param name="include">Relationship type to exclude from checking</param>
     /// <returns></returns>
     public bool HasRelationshipOfEffectWith(Character character, TRAIT_EFFECT effect, RELATIONSHIP_TRAIT include = RELATIONSHIP_TRAIT.NONE) {
-        if (relationships.ContainsKey(character)) {
+        if (HasRelationshipWith(character)) {
             for (int i = 0; i < relationships[character].rels.Count; i++) {
                 RelationshipTrait currTrait = relationships[character].rels[i];
-                if (currTrait.effect == effect || currTrait.relType == include) {
+                if ((currTrait.effect == effect || currTrait.relType == include) && !currTrait.isDisabled) {
                     return true;
                 }
             }
@@ -2025,10 +2008,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         return false;
     }
     public bool HasRelationshipOfEffectWith(Character character, List<TRAIT_EFFECT> effect) {
-        if (relationships.ContainsKey(character)) {
+        if (HasRelationshipWith(character)) {
             for (int i = 0; i < relationships[character].rels.Count; i++) {
                 RelationshipTrait currTrait = relationships[character].rels[i];
-                if (effect.Contains(currTrait.effect)) {
+                if (!currTrait.isDisabled && effect.Contains(currTrait.effect)) {
                     return true;
                 }
             }
@@ -2037,9 +2020,11 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public bool HasRelationshipOfEffect(TRAIT_EFFECT effect) {
         foreach (KeyValuePair<Character, CharacterRelationshipData> kvp in relationships) {
-            for (int i = 0; i < kvp.Value.rels.Count; i++) {
-                if (effect == kvp.Value.rels[i].effect) {
-                    return true;
+            if (!kvp.Value.isDisabled) {
+                for (int i = 0; i < kvp.Value.rels.Count; i++) {
+                    if (effect == kvp.Value.rels[i].effect) {
+                        return true;
+                    }
                 }
             }
         }
@@ -2047,19 +2032,21 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public bool HasRelationshipOfEffect(List<TRAIT_EFFECT> effect) {
         foreach (KeyValuePair<Character, CharacterRelationshipData> kvp in relationships) {
-            for (int i = 0; i < kvp.Value.rels.Count; i++) {
-                if (effect.Contains(kvp.Value.rels[i].effect)) {
-                    return true;
+            if (!kvp.Value.isDisabled) {
+                for (int i = 0; i < kvp.Value.rels.Count; i++) {
+                    if (effect.Contains(kvp.Value.rels[i].effect)) {
+                        return true;
+                    }
                 }
             }
         }
         return false;
     }
     public bool HasRelationshipOfTypeWith(Character character, RELATIONSHIP_TRAIT relType) {
-        if (relationships.ContainsKey(character)) {
+        if (HasRelationshipWith(character)) {
             for (int i = 0; i < relationships[character].rels.Count; i++) {
                 RelationshipTrait currTrait = relationships[character].rels[i];
-                if (currTrait.relType == relType) {
+                if (currTrait.relType == relType && !currTrait.isDisabled) {
                     return true;
                 }
             }
@@ -2067,10 +2054,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         return false;
     }
     public bool HasRelationshipOfTypeWith(Character character, RELATIONSHIP_TRAIT relType1, RELATIONSHIP_TRAIT relType2) {
-        if (relationships.ContainsKey(character)) {
+        if (HasRelationshipWith(character)) {
             for (int i = 0; i < relationships[character].rels.Count; i++) {
                 RelationshipTrait currTrait = relationships[character].rels[i];
-                if (currTrait.relType == relType1 || currTrait.relType == relType2) {
+                if ((currTrait.relType == relType1 || currTrait.relType == relType2) && !currTrait.isDisabled) {
                     return true;
                 }
             }
@@ -2078,10 +2065,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         return false;
     }
     public bool HasRelationshipOfTypeWith(Character character, RELATIONSHIP_TRAIT relType1, RELATIONSHIP_TRAIT relType2, RELATIONSHIP_TRAIT relType3) {
-        if (relationships.ContainsKey(character)) {
+        if (HasRelationshipWith(character)) {
             for (int i = 0; i < relationships[character].rels.Count; i++) {
                 RelationshipTrait currTrait = relationships[character].rels[i];
-                if (currTrait.relType == relType1 || currTrait.relType == relType2 || currTrait.relType == relType3) {
+                if ((currTrait.relType == relType1 || currTrait.relType == relType2 || currTrait.relType == relType3) && !currTrait.isDisabled) {
                     return true;
                 }
             }
@@ -2089,13 +2076,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         return false;
     }
     public CharacterRelationshipData GetCharacterRelationshipData(Character character) {
-        if (relationships.ContainsKey(character)) {
+        if (HasRelationshipWith(character)) {
             return relationships[character];
         }
         return null;
     }
     public bool HasRelationshipWith(Character character) {
-        return relationships.ContainsKey(character);
+        return relationships.ContainsKey(character) && !relationships[character].isDisabled;
     }
     public int GetAllRelationshipCount(List<RELATIONSHIP_TRAIT> except = null) {
         int count = 0;
@@ -2629,9 +2616,26 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         }
     }
+    public void RemoveAllNonRelationshipTraits(string traitNameException = "") {
+        if (traitNameException == "") {
+            for (int i = 0; i < traits.Count; i++) {
+                if(!(traits[i] is RelationshipTrait)) {
+                    RemoveTrait(traits[i]);
+                    i--;
+                }
+            }
+        } else {
+            for (int i = 0; i < traits.Count; i++) {
+                if (traits[i].name != traitNameException && !(traits[i] is RelationshipTrait)) {
+                    RemoveTrait(traits[i]);
+                    i--;
+                }
+            }
+        }
+    }
     public Trait GetTrait(string traitName) {
         for (int i = 0; i < _traits.Count; i++) {
-            if (_traits[i].name == traitName) {
+            if (_traits[i].name == traitName && !_traits[i].isDisabled) {
                 return _traits[i];
             }
         }
@@ -2639,7 +2643,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public Trait GetTraitOr(string traitName1, string traitName2) {
         for (int i = 0; i < _traits.Count; i++) {
-            if (_traits[i].name == traitName1 || _traits[i].name == traitName2) {
+            if ((_traits[i].name == traitName1 || _traits[i].name == traitName2) && !_traits[i].isDisabled) {
                 return _traits[i];
             }
         }
@@ -2647,7 +2651,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public Trait GetTraitOr(string traitName1, string traitName2, string traitName3) {
         for (int i = 0; i < _traits.Count; i++) {
-            if (_traits[i].name == traitName1 || _traits[i].name == traitName2 || _traits[i].name == traitName3) {
+            if ((_traits[i].name == traitName1 || _traits[i].name == traitName2 || _traits[i].name == traitName3) && !_traits[i].isDisabled) {
                 return _traits[i];
             }
         }
@@ -2655,7 +2659,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public Trait GetTraitOr(string traitName1, string traitName2, string traitName3, string traitName4) {
         for (int i = 0; i < _traits.Count; i++) {
-            if (_traits[i].name == traitName1 || _traits[i].name == traitName2 || _traits[i].name == traitName3 || _traits[i].name == traitName4) {
+            if ((_traits[i].name == traitName1 || _traits[i].name == traitName2 || _traits[i].name == traitName3 || _traits[i].name == traitName4) && !_traits[i].isDisabled) {
                 return _traits[i];
             }
         }
@@ -2663,7 +2667,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public bool HasTraitOf(TRAIT_TYPE traitType) {
         for (int i = 0; i < _traits.Count; i++) {
-            if (_traits[i].type == traitType) {
+            if (_traits[i].type == traitType && !_traits[i].isDisabled) {
                 return true;
             }
         }
@@ -2672,7 +2676,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public bool HasTraitOf(TRAIT_EFFECT effect, TRAIT_TYPE type) {
         for (int i = 0; i < traits.Count; i++) {
             Trait currTrait = traits[i];
-            if (currTrait.effect == effect && currTrait.type == type) {
+            if (currTrait.effect == effect && currTrait.type == type && !currTrait.isDisabled) {
                 return true;
             }
         }
@@ -2681,7 +2685,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public bool HasTraitOf(TRAIT_EFFECT effect1, TRAIT_EFFECT effect2, TRAIT_TYPE type) {
         for (int i = 0; i < traits.Count; i++) {
             Trait currTrait = traits[i];
-            if ((currTrait.effect == effect1 || currTrait.effect == effect2) && currTrait.type == type) {
+            if ((currTrait.effect == effect1 || currTrait.effect == effect2) && currTrait.type == type && !currTrait.isDisabled) {
                 return true;
             }
         }
@@ -2690,7 +2694,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public bool HasTraitOf(TRAIT_EFFECT effect) {
         for (int i = 0; i < traits.Count; i++) {
             Trait currTrait = traits[i];
-            if (currTrait.effect == effect) {
+            if (currTrait.effect == effect && !currTrait.isDisabled) {
                 return true;
             }
         }
@@ -2699,7 +2703,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public Trait GetTraitOf(TRAIT_EFFECT effect, TRAIT_TYPE type) {
         for (int i = 0; i < traits.Count; i++) {
             Trait currTrait = traits[i];
-            if (currTrait.effect == effect && currTrait.type == type) {
+            if (currTrait.effect == effect && currTrait.type == type && !currTrait.isDisabled) {
                 return currTrait;
             }
         }
@@ -2708,7 +2712,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public Trait GetTraitOf(TRAIT_TYPE type) {
         for (int i = 0; i < traits.Count; i++) {
             Trait currTrait = traits[i];
-            if (currTrait.type == type) {
+            if (currTrait.type == type && !currTrait.isDisabled) {
                 return currTrait;
             }
         }
@@ -2728,7 +2732,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public Trait GetRandomTrait(TRAIT_EFFECT effect) {
         List<Trait> negativeTraits = new List<Trait>();
         for (int i = 0; i < _traits.Count; i++) {
-            if (_traits[i].effect == effect) {
+            if (_traits[i].effect == effect && !_traits[i].isDisabled) {
                 negativeTraits.Add(_traits[i]);
             }
         }
@@ -2927,7 +2931,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public Friend GetFriendTraitWith(Character character) {
         for (int i = 0; i < _traits.Count; i++) {
-            if(_traits[i] is Friend) {
+            if(_traits[i] is Friend && !_traits[i].isDisabled) {
                 Friend friendTrait = _traits[i] as Friend;
                 if(friendTrait.targetCharacter.id == character.id) {
                     return friendTrait;
@@ -2938,7 +2942,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public Enemy GetEnemyTraitWith(Character character) {
         for (int i = 0; i < _traits.Count; i++) {
-            if (_traits[i] is Enemy) {
+            if (_traits[i] is Enemy && !_traits[i].isDisabled) {
                 Enemy enemyTrait = _traits[i] as Enemy;
                 if (enemyTrait.targetCharacter == character) {
                     return enemyTrait;
@@ -2949,7 +2953,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public bool HasRelationshipTraitOf(RELATIONSHIP_TRAIT relType) {
         for (int i = 0; i < _traits.Count; i++) {
-            if (_traits[i] is RelationshipTrait) {
+            if (_traits[i] is RelationshipTrait && !_traits[i].isDisabled) {
                 RelationshipTrait currTrait = _traits[i] as RelationshipTrait;
                 if (currTrait.relType == relType) {
                     return true;
@@ -2960,7 +2964,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public bool HasRelationshipTraitOf(RELATIONSHIP_TRAIT relType, Faction except) {
         for (int i = 0; i < _traits.Count; i++) {
-            if (_traits[i] is RelationshipTrait) {
+            if (_traits[i] is RelationshipTrait && !_traits[i].isDisabled) {
                 RelationshipTrait currTrait = _traits[i] as RelationshipTrait;
                 if (currTrait.relType == relType 
                     && currTrait.targetCharacter.faction.id != except.id) {
@@ -4366,6 +4370,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             } else {
                 if (goapThread.job != null) {
                     goapThread.job.SetAssignedCharacter(null);
+                    if (goapThread.job.cancelJobOnFail) {
+                        goapThread.job.jobQueueParent.RemoveJobInQueue(goapThread.job);
+                    }
                 }
                 if (allGoapPlans.Count <= 0) {
                     //StartDailyGoapPlanGeneration();
@@ -4643,6 +4650,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 plan.job.SetAssignedPlan(null);
             }
             PrintLogIfActive(log);
+            DropPlan(plan);
             return;
         }
         //if (plan == null) {
@@ -4711,8 +4719,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (allGoapPlans.Remove(plan)) {
             plan.EndPlan();
             if(plan.job != null) {
+                if (plan.job.cancelJobOnFail) {
+                    plan.job.jobQueueParent.RemoveJobInQueue(plan.job);
+                }
                 plan.job.SetAssignedCharacter(null);
                 plan.job.SetAssignedPlan(null);
+                
             }
             if (allGoapPlans.Count <= 0) {
                 PlanGoapActions();

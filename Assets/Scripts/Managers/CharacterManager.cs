@@ -487,6 +487,22 @@ public class CharacterManager : MonoBehaviour {
                 return RELATIONSHIP_TRAIT.NONE;
         }
     }
+    public void SetIsDisabledRelationshipBetween(Character character1, Character character2, bool state) {
+        CharacterRelationshipData data1 = null;
+        CharacterRelationshipData data2 = null;
+        if (character1.relationships.ContainsKey(character2)) {
+            data1 = character1.relationships[character2];
+        }
+        if (character2.relationships.ContainsKey(character1)) {
+            data2 = character2.relationships[character1];
+        }
+        if (data1 != null && data2 != null) {
+            data1.SetIsDisabled(state);
+            data2.SetIsDisabled(state);
+        } else {
+            Debug.LogError("Inconsistency! Either " + character1.name + " or " + character2.name + " has no relationship data with the other");
+        }
+    }
     public void GenerateRelationships() {
         int maxInitialRels = 3;
         RELATIONSHIP_TRAIT[] relsInOrder = new RELATIONSHIP_TRAIT[] { RELATIONSHIP_TRAIT.RELATIVE, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.ENEMY, RELATIONSHIP_TRAIT.FRIEND, RELATIONSHIP_TRAIT.PARAMOUR };

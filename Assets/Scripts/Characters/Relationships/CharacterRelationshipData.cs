@@ -15,6 +15,7 @@ public class CharacterRelationshipData {
     public LocationStructure knownStructure { get; private set; }
     public List<Trait> trouble { get; private set; } //Set this to trait for now, but this could change in future iterations
     public List<Character> knownLovedOnes { get; private set; }
+    public bool isDisabled { get; private set; }
 
     public string lastEncounterLog { get; private set; }
 
@@ -91,7 +92,7 @@ public class CharacterRelationshipData {
     }
     public bool HasRelationshipTrait(RELATIONSHIP_TRAIT relType) {
         for (int i = 0; i < rels.Count; i++) {
-            if(rels[i].relType == relType) {
+            if(rels[i].relType == relType && !rels[i].isDisabled) {
                 return true;
             }
         }
@@ -99,7 +100,7 @@ public class CharacterRelationshipData {
     }
     public bool HasRelationshipTrait(RELATIONSHIP_TRAIT relType1, RELATIONSHIP_TRAIT relType2) {
         for (int i = 0; i < rels.Count; i++) {
-            if (rels[i].relType == relType1 || rels[i].relType == relType2) {
+            if ((rels[i].relType == relType1 || rels[i].relType == relType2) && !rels[i].isDisabled) {
                 return true;
             }
         }
@@ -107,11 +108,20 @@ public class CharacterRelationshipData {
     }
     public RelationshipTrait GetRelationshipTrait(RELATIONSHIP_TRAIT relType) {
         for (int i = 0; i < rels.Count; i++) {
-            if (rels[i].relType == relType) {
+            if (rels[i].relType == relType && !rels[i].isDisabled) {
                 return rels[i];
             }
         }
         return null;
+    }
+    public List<RelationshipTrait> GetAllRelationshipTraits() {
+        List<RelationshipTrait> newRels = new List<RelationshipTrait>();
+        for (int i = 0; i < rels.Count; i++) {
+            if (!rels[i].isDisabled) {
+                newRels.Add(rels[i]);
+            }
+        }
+        return newRels;
     }
     public int GetTotalRelationshipWeight() {
         int weight = 0;
@@ -146,6 +156,9 @@ public class CharacterRelationshipData {
             }
         }
         return false;
+    }
+    public void SetIsDisabled(bool state) {
+        isDisabled = state;
     }
     #endregion
 
@@ -273,13 +286,13 @@ public class CharacterRelationshipData {
     #region Known Loved Ones
     private void LoadInitialLovedOnes() {
         knownLovedOnes = new List<Character>();
-        if (targetCharacter.HasRelationshipTraitOf(RELATIONSHIP_TRAIT.RELATIVE)) {
-            foreach (KeyValuePair<Character, CharacterRelationshipData> kvp in targetCharacter.relationships) {
-                if (kvp.Value.HasRelationshipTrait(RELATIONSHIP_TRAIT.RELATIVE)) {
-                    AddKnownLovedOne(kvp.Key);
-                }
-            }
-        }
+        //if (targetCharacter.HasRelationshipTraitOf(RELATIONSHIP_TRAIT.RELATIVE)) {
+        //    foreach (KeyValuePair<Character, CharacterRelationshipData> kvp in targetCharacter.relationships) {
+        //        if (kvp.Value.HasRelationshipTrait(RELATIONSHIP_TRAIT.RELATIVE)) {
+        //            AddKnownLovedOne(kvp.Key);
+        //        }
+        //    }
+        //}
     }
     private void OnCharacterGainedRelationship(Character character, RelationshipTrait rel) {
         if (character.id == targetCharacter.id && rel.relType == RELATIONSHIP_TRAIT.RELATIVE) {

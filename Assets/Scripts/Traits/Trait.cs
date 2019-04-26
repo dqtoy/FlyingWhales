@@ -23,6 +23,7 @@ public class Trait {
     public int daysDuration; //Zero (0) means Permanent
     public List<TraitEffect> effects;
     public GoapAction gainedFromDoing { get; private set; } //what action was this poi involved in that gave it this trait.
+    public bool isDisabled { get; private set; }
 
     private Character _responsibleCharacter;
 
@@ -61,6 +62,9 @@ public class Trait {
     }
     public void SetGainedFromDoing(GoapAction action) {
         gainedFromDoing = action;
+    }
+    public void SetIsDisabled(bool state) {
+        isDisabled = state;
     }
 }
 
