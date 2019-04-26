@@ -3380,10 +3380,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         } else if (homeStructure != null) {
             int chance = UnityEngine.Random.Range(0, 100);
             int returnHomeChance = 0;
-            if(currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS || currentStructure.structureType == STRUCTURE_TYPE.DUNGEON || currentStructure.structureType == STRUCTURE_TYPE.WORK_AREA) {
+            if(specificLocation == homeArea && currentStructure.structureType == STRUCTURE_TYPE.WORK_AREA) {
                 returnHomeChance = 25;
-            }else if (currentStructure.structureType == STRUCTURE_TYPE.WAREHOUSE || currentStructure.structureType == STRUCTURE_TYPE.INN) {
-                returnHomeChance = 75;
+            } else {
+                returnHomeChance = 80;
             }
             if(chance < returnHomeChance) {
                 PlanIdleReturnHome();
