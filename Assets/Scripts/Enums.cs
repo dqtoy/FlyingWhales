@@ -1214,6 +1214,7 @@ public enum TRAIT_TYPE {
     RACIAL,
     EMOTION,
     CRIMINAL,
+    SPECIAL,
 }
 public enum TRAIT_EFFECT {
     NEUTRAL,

@@ -1681,13 +1681,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     CameraMove.Instance.CenterCameraOn(currentParty.icon.travelLine.iconImg.gameObject);
                 } else {
                     if (!specificLocation.areaMap.isShowing) {
-                        InteriorMapManager.Instance.ShowAreaMap(specificLocation);
+                        InteriorMapManager.Instance.ShowAreaMap(specificLocation, false);
                     }
                     AreaMapCameraMove.Instance.CenterCameraOn(marker.gameObject);
                 }
             } else {
                 if (!specificLocation.areaMap.isShowing) {
-                    InteriorMapManager.Instance.ShowAreaMap(specificLocation);
+                    InteriorMapManager.Instance.ShowAreaMap(specificLocation, false);
                 }
                 AreaMapCameraMove.Instance.CenterCameraOn(marker.gameObject);
             }

@@ -101,7 +101,7 @@ public class InteriorMapManager : MonoBehaviour {
         AreaMapCameraMove.Instance.Initialize();
         sim = (FindObjectOfType(typeof(RVOSimulator)) as RVOSimulator).GetSimulator();
     }
-    public void ShowAreaMap(Area area) {
+    public void ShowAreaMap(Area area, bool centerCameraOnMapCenter = true) {
         if (area.areaType == AREA_TYPE.DEMONIC_INTRUSION) {
             //do not show player area map
             return;
@@ -110,6 +110,10 @@ public class InteriorMapManager : MonoBehaviour {
         currentlyShowingMap = area.areaMap;
         currentlyShowingArea = area;
         Messenger.Broadcast(Signals.AREA_MAP_OPENED, area);
+
+        if (centerCameraOnMapCenter) {
+            AreaMapCameraMove.Instance.CenterCameraOn(area.areaMap.gameObject);
+        }
     }
     public void HideAreaMap() {
         if (currentlyShowingMap == null) {

@@ -7,7 +7,7 @@ public class Kleptomaniac : Trait {
         name = "Kleptomaniac";
         description = "This character has irresistible urge to steal.";
         thoughtText = "[Character] has irresistible urge to steal.";
-        type = TRAIT_TYPE.STATUS;
+        type = TRAIT_TYPE.SPECIAL;
         effect = TRAIT_EFFECT.NEGATIVE;
         trigger = TRAIT_TRIGGER.OUTSIDE_COMBAT;
         associatedInteraction = INTERACTION_TYPE.NONE;

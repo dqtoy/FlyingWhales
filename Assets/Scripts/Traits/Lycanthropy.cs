@@ -11,7 +11,7 @@ public class Lycanthropy : Trait {
         name = "Lycanthropy";
         description = "This character can transform into a wolf.";
         thoughtText = "[Character] can transform into a wolf.";
-        type = TRAIT_TYPE.STATUS;
+        type = TRAIT_TYPE.SPECIAL;
         effect = TRAIT_EFFECT.NEUTRAL;
         trigger = TRAIT_TRIGGER.OUTSIDE_COMBAT;
         associatedInteraction = INTERACTION_TYPE.NONE;
