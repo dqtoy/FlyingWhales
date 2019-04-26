@@ -624,7 +624,7 @@ public class GoapAction {
     #region Special Note: Stealth
     protected bool HasOtherCharacterInRadius() {
         if (poiTarget is Character) {
-            List<LocationGridTile> tiles = (poiTarget as Character).currentStructure.location.areaMap.GetTilesInRadius(poiTarget.gridTileLocation, 3, true);
+            List<LocationGridTile> tiles = (poiTarget as Character).currentStructure.location.areaMap.GetTilesInRadius(poiTarget.gridTileLocation, 3, 0, true);
             for (int i = 0; i < tiles.Count; i++) {
                 //if (tiles[i].occupant != null && tiles[i].occupant != actor && tiles[i].occupant != poiTarget) {
                 //    return true;
@@ -642,7 +642,7 @@ public class GoapAction {
                 }
             }
         } else {
-            List<LocationGridTile> tiles = poiTarget.gridTileLocation.structure.location.areaMap.GetTilesInRadius(poiTarget.gridTileLocation, 3, true);
+            List<LocationGridTile> tiles = poiTarget.gridTileLocation.structure.location.areaMap.GetTilesInRadius(poiTarget.gridTileLocation, 3, 0, true);
             for (int i = 0; i < tiles.Count; i++) {
                 //if (tiles[i].occupant != null && tiles[i].occupant != actor && tiles[i].occupant != poiTarget) {
                 //    return true;
