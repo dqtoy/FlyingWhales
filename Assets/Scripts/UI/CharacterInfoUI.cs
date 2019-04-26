@@ -323,7 +323,7 @@ public class CharacterInfoUI : UIMenu {
                     relationshipTraitContainers[lastRelationshipIndex].SetCombatAttribute(currTrait);
                     lastRelationshipIndex++;
                 }
-            } else if (currTrait.type == TRAIT_TYPE.STATUS || currTrait.type == TRAIT_TYPE.DISABLER) {
+            } else if (currTrait.type == TRAIT_TYPE.STATUS || currTrait.type == TRAIT_TYPE.DISABLER || currTrait.type == TRAIT_TYPE.ENCHANTMENT) {
                 //CreateTraitGO(currTrait, statusTraitsScrollView.content);
                 if (lastStatusIndex < statusTraitContainers.Length) {
                     statusTraitContainers[lastStatusIndex].SetCombatAttribute(currTrait);

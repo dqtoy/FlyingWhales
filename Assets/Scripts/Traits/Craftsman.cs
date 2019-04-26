@@ -10,7 +10,7 @@ public class Craftsman : Trait {
         name = "Craftsman";
         craftedItemNames = new SPECIAL_TOKEN[] { SPECIAL_TOKEN.TOOL };
         description = "This character can create items.";
-        type = TRAIT_TYPE.ABILITY;
+        type = TRAIT_TYPE.SPECIAL;
         effect = TRAIT_EFFECT.POSITIVE;
         associatedInteraction = INTERACTION_TYPE.NONE;
         daysDuration = 0;

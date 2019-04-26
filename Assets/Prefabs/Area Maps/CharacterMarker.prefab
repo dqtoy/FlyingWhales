@@ -608,19 +608,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   version: 2
-  radiusBackingField: 3
+  radiusBackingField: 4.6
   heightBackingField: 2
   centerBackingField: 1
   locked: 0
   lockWhenNotMoving: 1
-  agentTimeHorizon: 1
+  agentTimeHorizon: 2
   obstacleTimeHorizon: 1
   maxNeighbours: 10
   layer: 4
-  collidesWith: 0
+  collidesWith: 1
   wallAvoidForce: 1
   wallAvoidFalloff: 1
-  priority: 0.75
+  priority: 1
   debug: 0
   agentName: 
   useAvoidedAgents: 0
@@ -641,14 +641,14 @@ MonoBehaviour:
   centerBackingField: 1
   locked: 0
   lockWhenNotMoving: 1
-  agentTimeHorizon: 1
+  agentTimeHorizon: 2
   obstacleTimeHorizon: 1
   maxNeighbours: 10
   layer: 1
   collidesWith: 7
   wallAvoidForce: 1
   wallAvoidFalloff: 1
-  priority: 0.75
+  priority: 0.8
   debug: 1
   agentName: 
   useAvoidedAgents: 1

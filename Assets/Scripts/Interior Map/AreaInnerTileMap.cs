@@ -108,6 +108,7 @@ public class AreaInnerTileMap : MonoBehaviour {
     public int x;
     public int y;
     public int radius;
+    public int radiusLimit;
 
     public float offsetX;
     public float offsetY;
@@ -732,7 +733,7 @@ public class AreaInnerTileMap : MonoBehaviour {
                         case STRUCTURE_TYPE.WAREHOUSE:
                             groundTilemap.SetTile(currTile.localPlace, floorTile);
                             currTile.SetTileType(LocationGridTile.Tile_Type.Structure);
-                            neighbourTiles = GetTilesInRadius(currTile, 1, false, true);
+                            neighbourTiles = GetTilesInRadius(currTile, 1, 0, false, true);
                             for (int k = 0; k < neighbourTiles.Count; k++) {
                                 elligibleTiles.Remove(neighbourTiles[k]);
                             }
@@ -1582,7 +1583,7 @@ public class AreaInnerTileMap : MonoBehaviour {
         //isHovering = false;
         //SwitchFromPathfindingToEstimatedMovement();
     }
-    public List<LocationGridTile> GetTilesInRadius(LocationGridTile centerTile, int radius, bool includeCenterTile = false, bool includeTilesInDifferentStructure = false) {
+    public List<LocationGridTile> GetTilesInRadius(LocationGridTile centerTile, int radius, int radiusLimit = 0, bool includeCenterTile = false, bool includeTilesInDifferentStructure = false) {
         List<LocationGridTile> tiles = new List<LocationGridTile>();
         int mapSizeX = map.GetUpperBound(0);
         int mapSizeY = map.GetUpperBound(1);
@@ -1591,10 +1592,19 @@ public class AreaInnerTileMap : MonoBehaviour {
         if (includeCenterTile) {
             tiles.Add(centerTile);
         }
+        int xLimitLower = x - radiusLimit;
+        int xLimitUpper = x + radiusLimit;
+        int yLimitLower = y - radiusLimit;
+        int yLimitUpper = y + radiusLimit;
+
+
         for (int dx = x - radius; dx <= x + radius; dx++) {
             for (int dy = y - radius; dy <= y + radius; dy++) {
                 if(dx >= 0 && dx <= mapSizeX && dy >= 0 && dy <= mapSizeY) {
                     if(dx == x && dy == y) {
+                        continue;
+                    }
+                    if(radiusLimit > 0 && dx > xLimitLower && dx < xLimitUpper && dy > yLimitLower && dy < yLimitUpper) {
                         continue;
                     }
                     LocationGridTile result = map[dx, dy];
@@ -1605,7 +1615,7 @@ public class AreaInnerTileMap : MonoBehaviour {
         }
         return tiles;
     }
-    public List<LocationGridTile> GetUnoccupiedTilesInRadius(LocationGridTile centerTile, int radius, bool includeCenterTile = false, bool includeTilesInDifferentStructure = false) {
+    public List<LocationGridTile> GetUnoccupiedTilesInRadius(LocationGridTile centerTile, int radius, int radiusLimit = 0, bool includeCenterTile = false, bool includeTilesInDifferentStructure = false) {
         List<LocationGridTile> tiles = new List<LocationGridTile>();
         int mapSizeX = map.GetUpperBound(0);
         int mapSizeY = map.GetUpperBound(1);
@@ -1614,10 +1624,19 @@ public class AreaInnerTileMap : MonoBehaviour {
         if (includeCenterTile) {
             tiles.Add(centerTile);
         }
+
+        int xLimitLower = x - radiusLimit;
+        int xLimitUpper = x + radiusLimit;
+        int yLimitLower = y - radiusLimit;
+        int yLimitUpper = y + radiusLimit;
+
         for (int dx = x - radius; dx <= x + radius; dx++) {
             for (int dy = y - radius; dy <= y + radius; dy++) {
                 if (dx >= 0 && dx <= mapSizeX && dy >= 0 && dy <= mapSizeY) {
                     if (dx == x && dy == y) {
+                        continue;
+                    }
+                    if (radiusLimit > 0 && dx > xLimitLower && dx < xLimitUpper && dy > yLimitLower && dy < yLimitUpper) {
                         continue;
                     }
                     LocationGridTile result = map[dx, dy];
@@ -1747,7 +1766,7 @@ public class AreaInnerTileMap : MonoBehaviour {
     #region For Testing
     [ContextMenu("Get Radius")]
     public void GetRadius() {
-        List<LocationGridTile> tiles = GetTilesInRadius(map[x, y], radius);
+        List<LocationGridTile> tiles = GetTilesInRadius(map[x, y], radius, radiusLimit);
         for (int i = 0; i < tiles.Count; i++) {
             Debug.Log(tiles[i].localPlace.x + "," + tiles[i].localPlace.y);
         }

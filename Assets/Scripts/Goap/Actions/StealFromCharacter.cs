@@ -15,6 +15,7 @@ public class StealFromCharacter : GoapAction {
         //};
         actionIconString = GoapActionStateDB.Hostile_Icon;
         _targetCharacter = poiTarget as Character;
+        doesNotStopTargetCharacter = true;
     }
 
     #region Overrides
