@@ -332,7 +332,7 @@ public class SpecialToken : Token, IPointOfInterest {
     }
     public Trait GetTrait(string traitName) {
         for (int i = 0; i < _traits.Count; i++) {
-            if (_traits[i].name == traitName) {
+            if (_traits[i].name == traitName && !_traits[i].isDisabled) {
                 return _traits[i];
             }
         }

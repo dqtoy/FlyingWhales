@@ -93,7 +93,7 @@ public class DropCharacter : GoapAction {
             }
         }
         //Recipient and Target have no relationship but from the same faction and Actor is not from the same faction:
-        else if (recipient.relationships.ContainsKey(targetCharacter) && recipient.faction == targetCharacter.faction && recipient.faction != actor.faction) {
+        else if (recipient.HasRelationshipWith(targetCharacter) && recipient.faction == targetCharacter.faction && recipient.faction != actor.faction) {
             //- **Recipient Response Text**: "Thank you for letting me know about this. I've got to find a way to free [Target Name]!
             reactions.Add(string.Format("Thank you for letting me know about this. I've got to find a way to free {0}!", targetCharacter.name));
             //-**Recipient Effect**: If Adventurer or Soldier or Unaligned Non-Beast, create a Save Target plan

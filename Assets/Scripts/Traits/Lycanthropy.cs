@@ -81,8 +81,11 @@ public class Lycanthropy : Trait {
         }
 
         //Copy relationship data then remove them
-        data.SetRelationshipData(_character);
-        _character.RemoveAllRelationships(false);
+        //data.SetRelationshipData(_character);
+        //_character.RemoveAllRelationships(false);
+        foreach (Character target in _character.relationships.Keys) {
+            CharacterManager.Instance.SetIsDisabledRelationshipBetween(_character, target, true);
+        }
 
         //Remove race and class
         //This is done first so that when the traits are copied, it will not copy the traits from the race and class because if it is copied and the race and character is brought back, it will be doubled, which is not what we want
@@ -91,7 +94,7 @@ public class Lycanthropy : Trait {
 
         //Copy traits and then remove them
         data.SetTraits(_character);
-        _character.RemoveAllTraits("Lycanthropy");
+        _character.RemoveAllNonRelationshipTraits("Lycanthropy");
 
         //Change faction and race
         _character.ChangeFactionTo(FactionManager.Instance.neutralFaction);
@@ -129,7 +132,9 @@ public class Lycanthropy : Trait {
         _character.AssignClass(data.characterClass);
 
         //Bring back lost relationships
-        _character.ReEstablishRelationships(data.relationships);
+        foreach (Character target in _character.relationships.Keys) {
+            CharacterManager.Instance.SetIsDisabledRelationshipBetween(_character, target, false);
+        }
 
         //Revert back the traits
         for (int i = 0; i < data.traits.Count; i++) {
@@ -144,7 +149,7 @@ public class LycanthropyData {
     public int happiness { get; private set; }
     public Faction faction { get; private set; }
     public Dictionary<POINT_OF_INTEREST_TYPE, List<IAwareness>> awareness { get; private set; }
-    public List<RelationshipLycanthropyData> relationships { get; private set; }
+    //public List<RelationshipLycanthropyData> relationships { get; private set; }
     public List<Trait> traits { get; set; }
     public Dwelling homeStructure { get; private set; }
     public CharacterClass characterClass { get; private set; }
@@ -163,25 +168,30 @@ public class LycanthropyData {
         this.characterClass = character.characterClass;
     }
 
-    public void SetRelationshipData(Character character) {
-        this.relationships = new List<RelationshipLycanthropyData>();
-        foreach (KeyValuePair<Character, CharacterRelationshipData> kvp in character.relationships) {
-            this.relationships.Add(new RelationshipLycanthropyData(kvp.Key, kvp.Value, kvp.Key.GetCharacterRelationshipData(character)));
+    //public void SetRelationshipData(Character character) {
+    //    this.relationships = new List<RelationshipLycanthropyData>();
+    //    foreach (KeyValuePair<Character, CharacterRelationshipData> kvp in character.relationships) {
+    //        this.relationships.Add(new RelationshipLycanthropyData(kvp.Key, kvp.Value, kvp.Key.GetCharacterRelationshipData(character)));
+    //    }
+    //}
+    public void SetTraits(Character character) {
+        this.traits = new List<Trait>();
+        for (int i = 0; i < character.traits.Count; i++) {
+            if(character.traits[i].name != "Lycanthropy" && !(character.traits[i] is RelationshipTrait)) {
+                this.traits.Add(character.traits[i]);
+            }
         }
     }
-    public void SetTraits(Character character) {
-        this.traits = new List<Trait>(character.traits);
-    }
 }
 
-public class RelationshipLycanthropyData {
-    public Character target { get; private set; }
-    public CharacterRelationshipData characterToTargetRelData { get; private set; }
-    public CharacterRelationshipData targetToCharacterRelData { get; private set; }
+//public class RelationshipLycanthropyData {
+//    public Character target { get; private set; }
+//    public CharacterRelationshipData characterToTargetRelData { get; private set; }
+//    public CharacterRelationshipData targetToCharacterRelData { get; private set; }
 
-    public RelationshipLycanthropyData(Character target, CharacterRelationshipData characterToTargetRelData, CharacterRelationshipData targetToCharacterRelData) {
-        this.target = target;
-        this.characterToTargetRelData = characterToTargetRelData;
-        this.targetToCharacterRelData = targetToCharacterRelData;
-    }
-}
+//    public RelationshipLycanthropyData(Character target, CharacterRelationshipData characterToTargetRelData, CharacterRelationshipData targetToCharacterRelData) {
+//        this.target = target;
+//        this.characterToTargetRelData = characterToTargetRelData;
+//        this.targetToCharacterRelData = targetToCharacterRelData;
+//    }
+//}

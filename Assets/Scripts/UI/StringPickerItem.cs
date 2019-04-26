@@ -6,13 +6,16 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class StringPickerItem : ObjectPickerItem<Area>, IPointerClickHandler {
+public class StringPickerItem : ObjectPickerItem<string>, IPointerClickHandler {
 
     public Action<string> onClickAction;
 
     private string str;
 
     public GameObject portraitCover;
+    public Image iconImg;
+
+    public bool isTrait;
 
     public void SetString(string str) {
         this.str = str;
@@ -26,6 +29,9 @@ public class StringPickerItem : ObjectPickerItem<Area>, IPointerClickHandler {
 
     private void UpdateVisuals() {
         mainLbl.text = str;
+        if (isTrait) {
+            iconImg.sprite = AttributeManager.Instance.GetTraitIcon(str);
+        }
     }
 
     private void OnClick() {

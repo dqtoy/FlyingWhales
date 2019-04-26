@@ -183,6 +183,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: fa5078188beb66d4eb442e984d68938c, type: 3}
   - {fileID: 21300000, guid: defbe3380eec93a469004ccc9b14f200, type: 3}
   - {fileID: 21300000, guid: c20949385ad8bc74e9db9cb78773aa19, type: 3}
+  - {fileID: 21300000, guid: c01396480b0e11e48aec5b89a59ded67, type: 3}
   - {fileID: 21300000, guid: 1300f55860aa36a4787ceced217bec7a, type: 3}
   - {fileID: 21300000, guid: 16fe8168036d48c46a8e8c246960dab0, type: 3}
   - {fileID: 21300000, guid: 8aa19a68d3ea1d54e8ab581e3d5dd5ff, type: 3}
@@ -491,6 +492,7 @@ SpriteAtlas:
   - minion_interaction_widget
   - tile_defender_slot_widget
   - character_ui_location_container
+  - corrupt_rile_up_container
   - ge_cont-04C
   - ge_cont-01A
   - button_back_disabled

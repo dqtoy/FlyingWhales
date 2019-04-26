@@ -68,16 +68,15 @@ public class GoapPlanJob : JobQueueItem {
                 }
                 if (character.currentAction.isPerformingActualAction && !character.currentAction.isDone) {
                     character.currentAction.currentState.EndPerTickEffect(shouldDoAfterEffect);
-                } else {
-                    character.SetCurrentAction(null);
-                    character.DropPlan(assignedPlan);
                 }
+                character.SetCurrentAction(null);
+                character.DropPlan(assignedPlan);
             } else {
                 character.DropPlan(assignedPlan);
             }
             character.AdjustIsWaitingForInteraction(-1);
-            SetAssignedCharacter(null);
-            SetAssignedPlan(null);
+            //SetAssignedCharacter(null);
+            //SetAssignedPlan(null);
         }
     }
     public override void OnAddJobToQueue() {
