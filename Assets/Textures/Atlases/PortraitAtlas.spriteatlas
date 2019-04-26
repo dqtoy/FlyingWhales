@@ -33,6 +33,7 @@ SpriteAtlas:
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
   - {fileID: 21300000, guid: 9cf9fb20030d8b6408dd1563a08e2045, type: 3}
+  - {fileID: 21300000, guid: 51cc2170d7bb77744b58e9a139303d2d, type: 3}
   - {fileID: 21300000, guid: 0ab8f480f0d29324d99829b078321e5b, type: 3}
   - {fileID: 21300000, guid: fd831390331f6a9438bcbbdbc410df2b, type: 3}
   - {fileID: 21300000, guid: 86d8d4b094c10b3429e0cd9d1f5b2784, type: 3}
@@ -126,6 +127,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 3a6d01ffb86405340ba5ded42d392506, type: 3}
   m_PackedSpriteNamesToIndex:
   - location_narris_portrait
+  - portrait_minions
   - skeleton
   - portrait_container_brown_default
   - goblin_m_top

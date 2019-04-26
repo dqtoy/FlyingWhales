@@ -90,7 +90,7 @@ public class CurseCharacter : GoapAction {
             CharacterManager.Instance.RemoveRelationshipBetween(actor, reciepient, RELATIONSHIP_TRAIT.LOVER);
             CharacterManager.Instance.RemoveRelationshipBetween(actor, reciepient, RELATIONSHIP_TRAIT.PARAMOUR);
             //Apply Crime System handling as if the Recipient witnessed Actor commit Assault.
-            reciepient.ReactToCrime(CRIME.ASSAULT, actor, null, false);
+            reciepient.ReactToCrime(CRIME.ASSAULT, actor);
         }
         //Recipient is the actor:
         else if (reciepient == actor) {
@@ -109,14 +109,14 @@ public class CurseCharacter : GoapAction {
             //- **Recipient Response Text**: "[Actor Name] cursed someone!? Why am I not surprised."
             reactions.Add(string.Format("{0} cursed someone!? Why am I not surprised.", actor.name));
             //-**Recipient Effect * *: Apply Crime System handling as if the Recipient witnessed Actor commit Assault.
-            reciepient.ReactToCrime(CRIME.ASSAULT, actor, null, false);
+            reciepient.ReactToCrime(CRIME.ASSAULT, actor);
         }
         //Recipient and Actor have no relationship but are from the same faction:
         else if (!reciepient.HasRelationshipWith(actor) && reciepient.faction == actor.faction) {
             //- **Recipient Response Text**: "[Actor Name] cursed someone!? That's forbidden."
             reactions.Add(string.Format("{0} cursed someone!? That's forbidden.", actor.name));
             //-**Recipient Effect * *: Apply Crime System handling as if the Recipient witnessed Actor commit Assault.
-            reciepient.ReactToCrime(CRIME.ASSAULT, actor, null, false);
+            reciepient.ReactToCrime(CRIME.ASSAULT, actor);
         }
         return reactions;
     }

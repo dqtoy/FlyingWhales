@@ -16,6 +16,7 @@ public class RoleSlotItem : MonoBehaviour, IDragParentItem {
     [SerializeField] private Button assignBtn;
     [SerializeField] private RoleSlotItemDraggable draggable;
     [SerializeField] private Image cooldownProgress;
+    [SerializeField] private UIHoverHandler portraitHover;
 
     [Header("Job Actions")]
     [SerializeField] private GameObject jobActionBtnPrefab;
@@ -95,7 +96,6 @@ public class RoleSlotItem : MonoBehaviour, IDragParentItem {
         PlayerManager.Instance.player.AssignCharacterToJob(slotJob, character);
         //UIManager.Instance.HideObjectPicker();
     }
-
     private void OnCharacterAssignedToJob(JOB job, Character character) {
         if (slotJob == job) {
             SetCharacter(character);
@@ -225,7 +225,6 @@ public class RoleSlotItem : MonoBehaviour, IDragParentItem {
         //cooldownProgress.fillAmount = value;
         StartCoroutine(SmoothProgress(cooldownProgress.fillAmount, destinationValue));
     }
-
     IEnumerator SmoothProgress(float start, float end) {
         float t = 0f;
         while (t < 1) {
@@ -236,13 +235,42 @@ public class RoleSlotItem : MonoBehaviour, IDragParentItem {
             yield return null;
         }
     }
-
     private void OnJobCooldownDone(PlayerJobAction action) {
         if (PlayerManager.Instance.player.roleSlots[slotJob].activeAction == action && !action.isInCooldown) {
             Messenger.RemoveListener(Signals.TICK_ENDED, UpdateCooldownProgress);
             Messenger.RemoveListener<PlayerJobAction>(Signals.JOB_ACTION_COOLDOWN_DONE, OnJobCooldownDone);
             cooldownProgress.fillAmount = 0f;
         }
+    }
+    #endregion
+
+    #region Hover
+    public void ShowHoverTooltip() {
+        string header = Utilities.NormalizeStringUpperCaseFirstLetters(slotJob.ToString()) + ": " + character.name;
+        string message = string.Empty;
+        switch (slotJob) {
+            case JOB.SPY:
+                message = "An agent that gathers information about places and characters.";
+                break;
+            case JOB.RECRUITER:
+                header = "Seducer: " + character.name;
+                message = "An agent that corrupts heroes and recruits new minions.";
+                break;
+            case JOB.DIPLOMAT:
+                message = "An agent that builds relationships with other characters.";
+                break;
+            case JOB.INSTIGATOR:
+                message = "An agent that sows discord and chaos.";
+                break;
+            case JOB.DEBILITATOR:
+                message = "An agent that halts unwanted actions and activities.";
+                break;
+        }
+        //portraitHover.ShowSmallInfoInSpecificPosition(message, header);
+        UIManager.Instance.ShowSmallInfo(message, header);
+    }
+    public void HideTooltip() {
+        UIManager.Instance.HideSmallInfo();
     }
     #endregion
 }

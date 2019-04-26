@@ -148,7 +148,7 @@ public class AssaultCharacter : GoapAction {
             //- **Recipient Response Text**: "[Actor Name] committed an assault!?"
             reactions.Add(string.Format("{0} committed an assault!?", actor.name));
             //-**Recipient Effect**:  Apply Crime System handling as if the Recipient witnessed Actor commit an Assault.
-            recipient.ReactToCrime(CRIME.ASSAULT, actor, null, false);
+            recipient.ReactToCrime(CRIME.ASSAULT, actor);
         }
 
         //Recipient and Actor are from the same faction and they have a positive relationship:
@@ -190,7 +190,7 @@ public class AssaultCharacter : GoapAction {
             //- **Recipient Response Text**: "That despicable [Actor Name] killed [Target Name]! [He/She] is a murderer!"
             reactions.Add(string.Format("That despicable {0} killed {1}, {2} is a murderer!", actor.name, target.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
             //-**Recipient Effect**: Remove any positive relationships between Actor and Recipient. Add Enemy relationship if they are not yet enemies. Apply Crime System handling as if the Recipient witnessed Actor commit a Murder.
-            recipient.ReactToCrime(CRIME.MURDER, actor, null, false); //removal of relationships should be handled by crime system
+            recipient.ReactToCrime(CRIME.MURDER, actor); //removal of relationships should be handled by crime system
             if (!recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.ENEMY)) {
                 CharacterManager.Instance.CreateNewRelationshipBetween(recipient, actor, RELATIONSHIP_TRAIT.ENEMY);
             }
@@ -211,7 +211,7 @@ public class AssaultCharacter : GoapAction {
             //- **Recipient Response Text**: "[Actor Name] killed somebody! This is horrible!"
             reactions.Add(string.Format("{0} killed somebody! This is horrible!", actor.name));
             //-**Recipient Effect**: Apply Crime System handling as if the Recipient witnessed Actor commit a Murder.
-            recipient.ReactToCrime(CRIME.MURDER, actor, null, false);
+            recipient.ReactToCrime(CRIME.MURDER, actor);
         }
 
         //Recipient and Actor are from the same faction and they dont have a positive relationship. 

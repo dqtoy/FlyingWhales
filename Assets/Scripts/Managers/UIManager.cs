@@ -36,6 +36,8 @@ public class UIManager : MonoBehaviour {
     [Header("Small Info")]
     public GameObject smallInfoGO;
     public RectTransform smallInfoRT;
+    public HorizontalLayoutGroup smallInfoBGParentLG;
+
     public TextMeshProUGUI smallInfoLbl;
     public EnvelopContentUnityUI smallInfoEnvelopContent;
     public LocationSmallInfo locationSmallInfo;
@@ -136,51 +138,12 @@ public class UIManager : MonoBehaviour {
                 HideContextMenu();
             }
         }
-        //if (!IsConsoleShowing() && !IsMouseOnInput() && !PlayerManager.Instance.isChoosingStartingTile) {
-        //    if (Input.GetKeyDown(KeyCode.Space)) {
-        //        if (GameManager.Instance.isPaused) {
-        //            //SetProgressionSpeed(currProgressionSpeed);
-        //            //SetPausedState(false);
-        //            if (GameManager.Instance.currProgressionSpeed == PROGRESSION_SPEED.X1) {
-        //                SetProgressionSpeed1X();
-        //            } else if (GameManager.Instance.currProgressionSpeed == PROGRESSION_SPEED.X2) {
-        //                SetProgressionSpeed2X();
-        //            } else if (GameManager.Instance.currProgressionSpeed == PROGRESSION_SPEED.X4) {
-        //                SetProgressionSpeed4X();
-        //            }
-        //        } else {
-        //            //pause
-        //            //SetPausedState(true);
-        //            Pause();
-        //        }
-        //    }
-        //}
         UpdateSpeedToggles(GameManager.Instance.isPaused);
-        //if (currentTileHovered != null) {
-        //    if (previousTileHovered == null || currentTileHovered.id != previousTileHovered.id) {
-        //        //tile hovered changed, reset timer
-        //        timeHovered = 0f;
-        //    } else {
-        //        //previous tile hovered is same as current tile hovered, increment time hovered
-        //        timeHovered += Time.deltaTime;
-        //    }
-        //    if (IsMouseOnUI()) {
-        //        timeHovered = 0f;
-        //        HideDetailedInfo();
-        //    } else {
-        //        if (timeHovered >= hoverThreshold) {
-        //            //show tile info
-        //            ShowDetailedInfo(currentTileHovered);
-        //        } else {
-        //            //hide Tile info
-        //            HideDetailedInfo();
-        //        }
-        //    }
-           
-        //}
-        //if (IsMouseOnUI()) {
-        //    currentTileHovered = null;
-        //}
+        if (isHoveringTile) {
+            if (currentTileHovered.areaOfTile != null && currentTileHovered.areaOfTile.areaType != AREA_TYPE.DEMONIC_INTRUSION) {
+                ShowSmallInfo("Double click to view.", currentTileHovered.areaOfTile.name);
+            }
+        }
     }
     #endregion
 
@@ -450,7 +413,7 @@ public class UIManager : MonoBehaviour {
     #endregion
 
     #region Tooltips
-    public void ShowSmallInfo(string info, string header = "", RectTransform position = null) {
+    public void ShowSmallInfo(string info, string header = "") {
         string message = string.Empty;
         if (!string.IsNullOrEmpty(header)) {
             message = "<font=\"Eczar-Medium\"><line-height=100%><size=18>" + header + "</font>\n";
@@ -462,25 +425,50 @@ public class UIManager : MonoBehaviour {
         smallInfoLbl.text = message;
         if (!IsSmallInfoShowing()) {
             smallInfoGO.SetActive(true);
-            smallInfoEnvelopContent.Execute();
+            //smallInfoEnvelopContent.Execute();
         }
-        if (position == null) {
-            smallInfoRT.SetParent(this.transform);
-            PositionTooltip(smallInfoRT);
-        } else {
-            smallInfoRT.SetParent(position);
-            smallInfoRT.anchoredPosition = Vector2.zero;
-            //smallInfoRT.anchoredPosition = pos;
-            //smallInfoRT.position = new Vector3(pos.x, pos.y, 0f);
-        }
+        //if (position == null) {
+            //smallInfoGO.transform.SetParent(this.transform);
+            PositionTooltip(smallInfoGO, smallInfoRT);
+        //} else {
+        //    smallInfoGO.transform.SetParent(position);
+        //    smallInfoRT.anchoredPosition = Vector2.zero;
+        //    //smallInfoRT.anchoredPosition = pos;
+        //    //smallInfoRT.position = new Vector3(pos.x, pos.y, 0f);
+        //}
         
+        //Debug.Log("Show small info " + info);
+    }
+    public void ShowSmallInfo(string info, Vector3 position, string header = "") {
+        string message = string.Empty;
+        if (!string.IsNullOrEmpty(header)) {
+            message = "<font=\"Eczar-Medium\"><line-height=100%><size=18>" + header + "</font>\n";
+        }
+        message += "<line-height=70%><size=16>" + info;
+
+        message = message.Replace("\\n", "\n");
+
+        smallInfoLbl.text = message;
+        if (!IsSmallInfoShowing()) {
+            smallInfoGO.SetActive(true);
+        }
+        //smallInfoGO.transform.SetParent(this.transform);
+        PositionTooltip(position, smallInfoGO, smallInfoRT);
+        //if (position == null) {
+
+        //} else {
+        //    smallInfoGO.transform.SetParent(position);
+        //    smallInfoRT.anchoredPosition = Vector2.zero;
+        //    //smallInfoRT.anchoredPosition = pos;
+        //    //smallInfoRT.position = new Vector3(pos.x, pos.y, 0f);
+        //}
+
         //Debug.Log("Show small info " + info);
     }
     public void HideSmallInfo() {
         if (IsSmallInfoShowing()) {
             smallInfoGO.SetActive(false);
         }
-        //smallInfoGO.transform.parent = this.transform;
     }
     public bool IsSmallInfoShowing() {
         return smallInfoGO.activeSelf;
@@ -490,65 +478,25 @@ public class UIManager : MonoBehaviour {
         characterPortraitHoverInfoGO.SetActive(true);
 
         characterPortraitHoverInfoRT.SetParent(this.transform);
-        PositionTooltip(characterPortraitHoverInfoRT);
+        PositionTooltip(characterPortraitHoverInfoRT.gameObject, characterPortraitHoverInfoRT);
     }
     public void HideCharacterPortraitHoverInfo() {
         characterPortraitHoverInfoGO.SetActive(false);
     }
-    public void ShowDetailedInfo(Party party) {
-        detailedInfoGO.SetActive(true);
-        detailedInfoRect.sizeDelta = new Vector2(226f, 80f);
-        detailedInfoLbl.alignment = TextAlignmentOptions.Center;
-        detailedInfoLbl.text = party.name;
-        detailedInfoIcon.gameObject.SetActive(false);
-        detailedInfoContentParent.gameObject.SetActive(true);
-        Utilities.DestroyChildren(detailedInfoContentParent);
-        for (int i = 0; i < party.characters.Count; i++) {
-            Character character = party.characters[i];
-            GameObject portraitGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("CharacterPortrait", Vector3.zero, Quaternion.identity, detailedInfoContentParent);
-            CharacterPortrait portrait = portraitGO.GetComponent<CharacterPortrait>();
-            //portrait.SetDimensions(48f);
-            portrait.GeneratePortrait(character);
-        }
-        PositionTooltip(detailedInfoGO.transform as RectTransform);
+    private void PositionTooltip(GameObject tooltipParent, RectTransform rt) {
+        PositionTooltip(Input.mousePosition, tooltipParent, rt);
     }
-    public void ShowDetailedInfo(HexTile tile) {
-        detailedInfoGO.SetActive(true);
-        detailedInfoLbl.alignment = TextAlignmentOptions.TopLeft;
-        detailedInfoLbl.text = Utilities.NormalizeString(tile.biomeType.ToString()) + "(" + Utilities.NormalizeString(tile.elevationType.ToString()) + ")";
-        detailedInfoLbl.text += "\nMana: " + tile.data.manaOnTile.ToString();
-        detailedInfoContentParent.gameObject.SetActive(false);
-        if (tile.landmarkOnTile == null) {
-            detailedInfoRect.sizeDelta = new Vector2(170f, 85f);
-            detailedInfoIcon.gameObject.SetActive(false);
-        } else {
-            detailedInfoRect.sizeDelta = new Vector2(170f, 130f);
-            detailedInfoIcon.gameObject.SetActive(true);
-            detailedInfoIcon.sprite = LandmarkManager.Instance.GetLandmarkData(tile.landmarkOnTile.specificLandmarkType).landmarkTypeIcon;
-        }
-        //Utilities.DestroyChildren(detailedInfoContentParent);
-        //for (int i = 0; i < party.icharacters.Count; i++) {
-        //    ICharacter character = party.icharacters[i];
-        //    GameObject portraitGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("CharacterPortrait", Vector3.zero, Quaternion.identity, detailedInfoContentParent);
-        //    CharacterPortrait portrait = portraitGO.GetComponent<CharacterPortrait>();
-        //    portrait.SetDimensions(48f);
-        //    portrait.GeneratePortrait(character, IMAGE_SIZE.X64, true, true);
-        //}
-        PositionTooltip(detailedInfoGO.transform as RectTransform);
-    }
-    public void HideDetailedInfo() {
-        detailedInfoGO.SetActive(false);
-    }
-    private void PositionTooltip(RectTransform rt) {
-        var v3 = Input.mousePosition;
+    private void PositionTooltip(Vector3 position, GameObject tooltipParent, RectTransform rt) {
+        var v3 = position;
 
-        rt.anchorMin = new Vector2(0f, 1f);
-        rt.anchorMax = new Vector2(0f, 1f);
+        //rt.anchorMin = new Vector2(0f, 1f);
+        //rt.anchorMax = new Vector2(0f, 1f);
         rt.pivot = new Vector2(0f, 1f);
+        smallInfoBGParentLG.childAlignment = TextAnchor.UpperLeft;
 
         v3.x += 25f;
         v3.y -= 25f;
-        rt.position = v3;
+        tooltipParent.transform.position = v3;
 
         Vector3[] corners = new Vector3[4]; //bottom-left, top-left, top-right, bottom-right
         List<int> cornersOutside = new List<int>();
@@ -571,22 +519,25 @@ public class UIManager : MonoBehaviour {
             if (cornersOutside.Contains(2) && cornersOutside.Contains(3)) {
                 if (cornersOutside.Contains(0)) {
                     //bottom side and right side are outside, move anchor to bottom right
-                    rt.anchorMin = new Vector2(1f, 0f);
-                    rt.anchorMax = new Vector2(1f, 0f);
+                    //rt.anchorMin = new Vector2(1f, 0f);
+                    //rt.anchorMax = new Vector2(1f, 0f);
                     rt.pivot = new Vector2(1f, 0f);
+                    smallInfoBGParentLG.childAlignment = TextAnchor.LowerRight;
                 } else {
                     //right side is outside, move anchor to top right side
-                    rt.anchorMin = new Vector2(1f, 1f);
-                    rt.anchorMax = new Vector2(1f, 1f);
+                    //rt.anchorMin = new Vector2(1f, 1f);
+                    //rt.anchorMax = new Vector2(1f, 1f);
                     rt.pivot = new Vector2(1f, 1f);
+                    smallInfoBGParentLG.childAlignment = TextAnchor.UpperRight;
                 }
             } else if (cornersOutside.Contains(0) && cornersOutside.Contains(3)) {
                 //bottom side is outside, move anchor to bottom left
-                rt.anchorMin = new Vector2(0f, 0f);
-                rt.anchorMax = new Vector2(0f, 0f);
+                //rt.anchorMin = new Vector2(0f, 0f);
+                //rt.anchorMax = new Vector2(0f, 0f);
                 rt.pivot = new Vector2(0f, 0f);
+                smallInfoBGParentLG.childAlignment = TextAnchor.LowerLeft;
             }
-            rt.position = Input.mousePosition;
+            rt.localPosition = Vector3.zero;
         }
     }
     public void ShowSmallLocationInfo(Area area, RectTransform initialParent, Vector2 adjustment, string subText = "") {
@@ -1227,7 +1178,7 @@ public class UIManager : MonoBehaviour {
             //Vector2 pos;
             //RectTransformUtility.ScreenPointToLocalPointInRectangle(this.transform as RectTransform, Input.mousePosition, eventSystem.camera, out pos);
             //contextMenu.transform.position = Input.mousePosition;
-            PositionTooltip(contextMenu.transform as RectTransform);
+            PositionTooltip(contextMenu.gameObject, contextMenu.transform as RectTransform);
         }
         
     }
@@ -1257,12 +1208,18 @@ public class UIManager : MonoBehaviour {
     private HexTile currentTileHovered;
     private float timeHovered;
     private const float hoverThreshold = 1.5f;
+    private bool isHoveringTile = false;
     private void OnHoverOverTile(HexTile tile) {
         previousTileHovered = currentTileHovered;
         currentTileHovered = tile;
+        isHoveringTile = true;
     }
     private void OnHoverOutTile(HexTile tile) {
         currentTileHovered = null;
+        isHoveringTile = false;
+        if (tile.areaOfTile != null) {
+            HideSmallInfo();
+        }
     }
     #endregion
 
@@ -1424,9 +1381,21 @@ public class UIManager : MonoBehaviour {
     private void OnAreaMapClosed(Area area) {
         returnToWorldBtn.interactable = false;
     }
+    public void PointerClickWorldMap(BaseEventData bed) {
+        PointerEventData ped = bed as PointerEventData;
+        if (ped.clickCount == 2) {
+            ReturnToWorlMap();
+            HideSmallInfo();
+        }
+    }
     public void ReturnToWorlMap() {
         InteriorMapManager.Instance.HideAreaMap();
         OnCameraOutOfFocus();
+    }
+    public void ReturnToWorldMapHover() {
+        if (InteriorMapManager.Instance.currentlyShowingArea != null) {
+            ShowSmallInfo("Double click to exit " + InteriorMapManager.Instance.currentlyShowingArea.name + ".");
+        }
     }
     #endregion
 

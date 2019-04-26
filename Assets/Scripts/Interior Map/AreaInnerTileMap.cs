@@ -8,10 +8,10 @@ using UnityEngine.Tilemaps;
 
 public class AreaInnerTileMap : MonoBehaviour {
 
-    public static int eastEdge = 7;
+    public static int westEdge = 7;
     public static int northEdge = 1;
     public static int southEdge = 1;
-    public static int westEdge = 1;
+    public static int eastEdge = 2;
 
     public static int eastOutsideTiles = 15;
     public static int westOutsideTiles = 8;
@@ -342,7 +342,7 @@ public class AreaInnerTileMap : MonoBehaviour {
                 }
                 if (currTile.structure == null) {
                     //detailsTilemap.SetTile(currTile.localPlace, outsideDetailTile);
-                    if (!Utilities.IsInRange(currTile.localPlace.x, 0, 7)) {
+                    if (!Utilities.IsInRange(currTile.localPlace.x, 0, 7) && !Utilities.IsInRange(currTile.localPlace.x, width - eastEdge, width)) {
                         currTile.SetStructure(area.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS));
                     }
                 }
@@ -902,6 +902,9 @@ public class AreaInnerTileMap : MonoBehaviour {
             if (!string.IsNullOrEmpty(currData.tileAssetName)) {
                 tilemap.SetTile(pos, InteriorMapManager.Instance.GetTileAsset(currData.tileAssetName, true));
                 map[pos.x, pos.y].SetLockedState(true);
+                if (tilemap == detailsTilemap) {
+                    map[pos.x, pos.y].hasDetail = true;
+                }
             }
             //} else {
             //    tilemap.SetTile(pos, InteriorMapManager.Instance.GetTileAsset(currData.tileAssetName));

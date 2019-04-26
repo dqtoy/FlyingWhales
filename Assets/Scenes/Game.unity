@@ -622,40 +622,6 @@ MonoBehaviour:
   - {fileID: 0}
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!1 &13718488
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 13718489}
-  m_Layer: 5
-  m_Name: WorldMapControls
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &13718489
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 13718488}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 1040506114}
-  m_Father: {fileID: 2094642954}
-  m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &14536940
 GameObject:
   m_ObjectHideFlags: 0
@@ -2223,6 +2189,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPos: {fileID: 0}
   tooltipHeader: 
+  ignoreInteractable: 0
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
@@ -2953,6 +2920,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPos: {fileID: 0}
   tooltipHeader: 
+  ignoreInteractable: 0
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
@@ -5066,6 +5034,12 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 101262434}
+--- !u!114 &102133339 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 114729213006868298, guid: b2759c51bf271794183341425156d63a,
+    type: 2}
+  m_PrefabInternal: {fileID: 1258178465}
+  m_Script: {fileID: -405508275, guid: f70555f144d8491a825f0804e09c671c, type: 3}
 --- !u!224 &104126177 stripped
 RectTransform:
   m_PrefabParentObject: {fileID: 224325019918282922, guid: 6ab55ee3f9f6e1a44ba35e024088b2a8,
@@ -7717,6 +7691,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPos: {fileID: 0}
   tooltipHeader: 
+  ignoreInteractable: 0
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
@@ -8305,6 +8280,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPos: {fileID: 0}
   tooltipHeader: 
+  ignoreInteractable: 0
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
@@ -12110,6 +12086,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPos: {fileID: 0}
   tooltipHeader: Intel
+  ignoreInteractable: 0
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
@@ -14473,6 +14450,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPos: {fileID: 0}
   tooltipHeader: 
+  ignoreInteractable: 0
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
@@ -15489,6 +15467,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPos: {fileID: 0}
   tooltipHeader: 
+  ignoreInteractable: 0
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
@@ -17094,12 +17073,12 @@ CanvasRenderer:
 RectTransform:
   m_PrefabParentObject: {fileID: 224152044067179254, guid: 8373d084f987be54ca83074f42d06b4b,
     type: 2}
-  m_PrefabInternal: {fileID: 1009232733}
+  m_PrefabInternal: {fileID: 1026631232}
 --- !u!114 &431201654 stripped
 MonoBehaviour:
   m_PrefabParentObject: {fileID: 114012132517605418, guid: 8373d084f987be54ca83074f42d06b4b,
     type: 2}
-  m_PrefabInternal: {fileID: 1009232733}
+  m_PrefabInternal: {fileID: 1026631232}
   m_Script: {fileID: 11500000, guid: aa5fc15b61760e24db9020a8d6652342, type: 3}
 --- !u!1 &437508375
 GameObject:
@@ -18578,6 +18557,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPos: {fileID: 0}
   tooltipHeader: 
+  ignoreInteractable: 0
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
@@ -19425,6 +19405,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPos: {fileID: 1119691117}
   tooltipHeader: Tokens
+  ignoreInteractable: 0
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
@@ -19792,6 +19773,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPos: {fileID: 0}
   tooltipHeader: 
+  ignoreInteractable: 0
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
@@ -22737,6 +22719,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPos: {fileID: 0}
   tooltipHeader: 
+  ignoreInteractable: 0
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
@@ -23093,6 +23076,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPos: {fileID: 0}
   tooltipHeader: 
+  ignoreInteractable: 0
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
@@ -24912,6 +24896,11 @@ Prefab:
       propertyPath: m_RootOrder
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 95759216883234714, guid: e8ad7cb09054f7040b035fdb676023f2,
+        type: 2}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: c1094acbda689b743a560588e35f4337, type: 2}
     - target: {fileID: 114341627776737400, guid: e8ad7cb09054f7040b035fdb676023f2,
         type: 2}
       propertyPath: characterIconsParent
@@ -25279,6 +25268,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPos: {fileID: 0}
   tooltipHeader: 
+  ignoreInteractable: 0
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
@@ -25877,6 +25867,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPos: {fileID: 0}
   tooltipHeader: 
+  ignoreInteractable: 0
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
@@ -26519,6 +26510,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPos: {fileID: 0}
   tooltipHeader: 
+  ignoreInteractable: 0
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
@@ -28905,6 +28897,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPos: {fileID: 0}
   tooltipHeader: 
+  ignoreInteractable: 0
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
@@ -30740,6 +30733,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPos: {fileID: 0}
   tooltipHeader: 
+  ignoreInteractable: 0
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
@@ -31096,6 +31090,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPos: {fileID: 0}
   tooltipHeader: 
+  ignoreInteractable: 0
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
@@ -31450,6 +31445,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPos: {fileID: 0}
   tooltipHeader: 
+  ignoreInteractable: 0
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
@@ -31738,7 +31734,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.000061035156, y: -223.10997}
+  m_AnchoredPosition: {x: 0.000061035156, y: -223.11002}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 1, y: 0}
 --- !u!114 &756205912
@@ -34883,11 +34879,11 @@ MonoBehaviour:
     lineCount: 3
     pageCount: 1
     materialCount: 1
-  m_havePropertiesChanged: 0
+  m_havePropertiesChanged: 1
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
-  m_isInputParsingRequired: 0
+  m_isInputParsingRequired: 1
   m_inputSource: 0
   m_hasFontAssetChanged: 0
   m_subTextObjects:
@@ -35374,12 +35370,12 @@ Prefab:
     - target: {fileID: 114339231046893622, guid: 91c7eb690ee4d0344b2e43065dea353a,
         type: 2}
       propertyPath: m_havePropertiesChanged
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114339231046893622, guid: 91c7eb690ee4d0344b2e43065dea353a,
         type: 2}
       propertyPath: m_isInputParsingRequired
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1494071399754690, guid: 91c7eb690ee4d0344b2e43065dea353a, type: 2}
       propertyPath: m_Name
@@ -37402,6 +37398,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPos: {fileID: 0}
   tooltipHeader: 
+  ignoreInteractable: 0
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
@@ -37975,6 +37972,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPos: {fileID: 0}
   tooltipHeader: 
+  ignoreInteractable: 0
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
@@ -38242,7 +38240,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1538653384}
-  m_RootOrder: 24
+  m_RootOrder: 25
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -38781,6 +38779,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPos: {fileID: 0}
   tooltipHeader: 
+  ignoreInteractable: 0
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
@@ -39100,7 +39099,7 @@ RectTransform:
   m_Children:
   - {fileID: 1363332110}
   m_Father: {fileID: 1538653384}
-  m_RootOrder: 23
+  m_RootOrder: 24
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -40932,6 +40931,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPos: {fileID: 0}
   tooltipHeader: 
+  ignoreInteractable: 0
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
@@ -41685,146 +41685,6 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1002760011}
---- !u!1001 &1009232733
-Prefab:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 1538653384}
-    m_Modifications:
-    - target: {fileID: 224152044067179254, guid: 8373d084f987be54ca83074f42d06b4b,
-        type: 2}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 224152044067179254, guid: 8373d084f987be54ca83074f42d06b4b,
-        type: 2}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 224152044067179254, guid: 8373d084f987be54ca83074f42d06b4b,
-        type: 2}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 224152044067179254, guid: 8373d084f987be54ca83074f42d06b4b,
-        type: 2}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 224152044067179254, guid: 8373d084f987be54ca83074f42d06b4b,
-        type: 2}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 224152044067179254, guid: 8373d084f987be54ca83074f42d06b4b,
-        type: 2}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 224152044067179254, guid: 8373d084f987be54ca83074f42d06b4b,
-        type: 2}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 224152044067179254, guid: 8373d084f987be54ca83074f42d06b4b,
-        type: 2}
-      propertyPath: m_RootOrder
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 224152044067179254, guid: 8373d084f987be54ca83074f42d06b4b,
-        type: 2}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 224152044067179254, guid: 8373d084f987be54ca83074f42d06b4b,
-        type: 2}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 224152044067179254, guid: 8373d084f987be54ca83074f42d06b4b,
-        type: 2}
-      propertyPath: m_SizeDelta.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 224152044067179254, guid: 8373d084f987be54ca83074f42d06b4b,
-        type: 2}
-      propertyPath: m_SizeDelta.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 224152044067179254, guid: 8373d084f987be54ca83074f42d06b4b,
-        type: 2}
-      propertyPath: m_AnchorMin.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 224152044067179254, guid: 8373d084f987be54ca83074f42d06b4b,
-        type: 2}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 224152044067179254, guid: 8373d084f987be54ca83074f42d06b4b,
-        type: 2}
-      propertyPath: m_AnchorMax.x
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 224152044067179254, guid: 8373d084f987be54ca83074f42d06b4b,
-        type: 2}
-      propertyPath: m_AnchorMax.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 224152044067179254, guid: 8373d084f987be54ca83074f42d06b4b,
-        type: 2}
-      propertyPath: m_Pivot.x
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 224152044067179254, guid: 8373d084f987be54ca83074f42d06b4b,
-        type: 2}
-      propertyPath: m_Pivot.y
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 114985842356160738, guid: 8373d084f987be54ca83074f42d06b4b,
-        type: 2}
-      propertyPath: m_havePropertiesChanged
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114985842356160738, guid: 8373d084f987be54ca83074f42d06b4b,
-        type: 2}
-      propertyPath: m_isInputParsingRequired
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114861948020167962, guid: 8373d084f987be54ca83074f42d06b4b,
-        type: 2}
-      propertyPath: m_havePropertiesChanged
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114861948020167962, guid: 8373d084f987be54ca83074f42d06b4b,
-        type: 2}
-      propertyPath: m_isInputParsingRequired
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114196221995877306, guid: 8373d084f987be54ca83074f42d06b4b,
-        type: 2}
-      propertyPath: m_havePropertiesChanged
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114196221995877306, guid: 8373d084f987be54ca83074f42d06b4b,
-        type: 2}
-      propertyPath: m_isInputParsingRequired
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114637928645553162, guid: 8373d084f987be54ca83074f42d06b4b,
-        type: 2}
-      propertyPath: m_havePropertiesChanged
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114637928645553162, guid: 8373d084f987be54ca83074f42d06b4b,
-        type: 2}
-      propertyPath: m_isInputParsingRequired
-      value: 1
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_ParentPrefab: {fileID: 100100000, guid: 8373d084f987be54ca83074f42d06b4b, type: 2}
-  m_IsPrefabParent: 0
 --- !u!1 &1009369613
 GameObject:
   m_ObjectHideFlags: 0
@@ -42011,6 +41871,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPos: {fileID: 0}
   tooltipHeader: 
+  ignoreInteractable: 0
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
@@ -42448,6 +42309,146 @@ CanvasRenderer:
     type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1025115209}
+--- !u!1001 &1026631232
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 1538653384}
+    m_Modifications:
+    - target: {fileID: 224152044067179254, guid: 8373d084f987be54ca83074f42d06b4b,
+        type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224152044067179254, guid: 8373d084f987be54ca83074f42d06b4b,
+        type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224152044067179254, guid: 8373d084f987be54ca83074f42d06b4b,
+        type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224152044067179254, guid: 8373d084f987be54ca83074f42d06b4b,
+        type: 2}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224152044067179254, guid: 8373d084f987be54ca83074f42d06b4b,
+        type: 2}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224152044067179254, guid: 8373d084f987be54ca83074f42d06b4b,
+        type: 2}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224152044067179254, guid: 8373d084f987be54ca83074f42d06b4b,
+        type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 224152044067179254, guid: 8373d084f987be54ca83074f42d06b4b,
+        type: 2}
+      propertyPath: m_RootOrder
+      value: 19
+      objectReference: {fileID: 0}
+    - target: {fileID: 224152044067179254, guid: 8373d084f987be54ca83074f42d06b4b,
+        type: 2}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224152044067179254, guid: 8373d084f987be54ca83074f42d06b4b,
+        type: 2}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224152044067179254, guid: 8373d084f987be54ca83074f42d06b4b,
+        type: 2}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224152044067179254, guid: 8373d084f987be54ca83074f42d06b4b,
+        type: 2}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224152044067179254, guid: 8373d084f987be54ca83074f42d06b4b,
+        type: 2}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224152044067179254, guid: 8373d084f987be54ca83074f42d06b4b,
+        type: 2}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224152044067179254, guid: 8373d084f987be54ca83074f42d06b4b,
+        type: 2}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 224152044067179254, guid: 8373d084f987be54ca83074f42d06b4b,
+        type: 2}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 224152044067179254, guid: 8373d084f987be54ca83074f42d06b4b,
+        type: 2}
+      propertyPath: m_Pivot.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 224152044067179254, guid: 8373d084f987be54ca83074f42d06b4b,
+        type: 2}
+      propertyPath: m_Pivot.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 114148351762192546, guid: 8373d084f987be54ca83074f42d06b4b,
+        type: 2}
+      propertyPath: m_havePropertiesChanged
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114148351762192546, guid: 8373d084f987be54ca83074f42d06b4b,
+        type: 2}
+      propertyPath: m_isInputParsingRequired
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114592557674673124, guid: 8373d084f987be54ca83074f42d06b4b,
+        type: 2}
+      propertyPath: m_havePropertiesChanged
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114592557674673124, guid: 8373d084f987be54ca83074f42d06b4b,
+        type: 2}
+      propertyPath: m_isInputParsingRequired
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114637928645553162, guid: 8373d084f987be54ca83074f42d06b4b,
+        type: 2}
+      propertyPath: m_havePropertiesChanged
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114637928645553162, guid: 8373d084f987be54ca83074f42d06b4b,
+        type: 2}
+      propertyPath: m_isInputParsingRequired
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114189703115996524, guid: 8373d084f987be54ca83074f42d06b4b,
+        type: 2}
+      propertyPath: m_havePropertiesChanged
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114189703115996524, guid: 8373d084f987be54ca83074f42d06b4b,
+        type: 2}
+      propertyPath: m_isInputParsingRequired
+      value: 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 100100000, guid: 8373d084f987be54ca83074f42d06b4b, type: 2}
+  m_IsPrefabParent: 0
 --- !u!1 &1028461810
 GameObject:
   m_ObjectHideFlags: 0
@@ -43521,6 +43522,8 @@ GameObject:
   - component: {fileID: 1040506113}
   - component: {fileID: 1040506112}
   - component: {fileID: 1040506111}
+  - component: {fileID: 1040506116}
+  - component: {fileID: 1040506115}
   m_Layer: 5
   m_Name: ReturnToWorldMapBtn
   m_TagString: Untagged
@@ -43567,18 +43570,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1040506112}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1538653385}
-        m_MethodName: ReturnToWorlMap
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &1040506112
@@ -43620,19 +43612,95 @@ RectTransform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1040506110}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 727862830}
-  m_Father: {fileID: 13718489}
-  m_RootOrder: 0
+  m_Father: {fileID: 2094642954}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 1, y: 1}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -45.8, y: -922.4}
+  m_AnchorMin: {x: 1, y: 0.5}
+  m_AnchorMax: {x: 1, y: 0.5}
+  m_AnchoredPosition: {x: -45.8, y: -382.40002}
   m_SizeDelta: {x: 74, y: 74}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1040506115
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1040506110}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be97d49975a8ba24683fa964f9c21b16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipPos: {fileID: 0}
+  tooltipHeader: 
+  ignoreInteractable: 0
+  onHoverOverAction:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1538653385}
+        m_MethodName: ReturnToWorldMapHover
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  onHoverExitAction:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1538653385}
+        m_MethodName: HideSmallInfo
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+--- !u!114 &1040506116
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1040506110}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1862395651, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 4
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1538653385}
+          m_MethodName: PointerClickWorldMap
+          m_Mode: 0
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+      m_TypeName: UnityEngine.EventSystems.EventTrigger+TriggerEvent, UnityEngine.UI,
+        Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+  delegates: []
 --- !u!1 &1044067739
 GameObject:
   m_ObjectHideFlags: 0
@@ -44520,6 +44588,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPos: {fileID: 0}
   tooltipHeader: 
+  ignoreInteractable: 0
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
@@ -46734,6 +46803,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPos: {fileID: 0}
   tooltipHeader: 
+  ignoreInteractable: 0
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
@@ -47581,6 +47651,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPos: {fileID: 0}
   tooltipHeader: 
+  ignoreInteractable: 0
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
@@ -48150,6 +48221,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPos: {fileID: 0}
   tooltipHeader: 
+  ignoreInteractable: 0
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
@@ -49324,6 +49396,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPos: {fileID: 0}
   tooltipHeader: 
+  ignoreInteractable: 0
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
@@ -50867,6 +50940,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPos: {fileID: 0}
   tooltipHeader: 
+  ignoreInteractable: 0
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
@@ -51964,6 +52038,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPos: {fileID: 0}
   tooltipHeader: 
+  ignoreInteractable: 0
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
@@ -52460,7 +52535,7 @@ MonoBehaviour:
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
-  m_isInputParsingRequired: 0
+  m_isInputParsingRequired: 1
   m_inputSource: 0
   m_hasFontAssetChanged: 0
   m_subTextObjects:
@@ -52635,6 +52710,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPos: {fileID: 0}
   tooltipHeader: 
+  ignoreInteractable: 0
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
@@ -53210,6 +53286,106 @@ CanvasRenderer:
     type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1248547778}
+--- !u!1001 &1258178465
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 1538653384}
+    m_Modifications:
+    - target: {fileID: 224945227632504150, guid: b2759c51bf271794183341425156d63a,
+        type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224945227632504150, guid: b2759c51bf271794183341425156d63a,
+        type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224945227632504150, guid: b2759c51bf271794183341425156d63a,
+        type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224945227632504150, guid: b2759c51bf271794183341425156d63a,
+        type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224945227632504150, guid: b2759c51bf271794183341425156d63a,
+        type: 2}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224945227632504150, guid: b2759c51bf271794183341425156d63a,
+        type: 2}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224945227632504150, guid: b2759c51bf271794183341425156d63a,
+        type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 224945227632504150, guid: b2759c51bf271794183341425156d63a,
+        type: 2}
+      propertyPath: m_RootOrder
+      value: 22
+      objectReference: {fileID: 0}
+    - target: {fileID: 224945227632504150, guid: b2759c51bf271794183341425156d63a,
+        type: 2}
+      propertyPath: m_AnchoredPosition.x
+      value: -37.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 224945227632504150, guid: b2759c51bf271794183341425156d63a,
+        type: 2}
+      propertyPath: m_AnchoredPosition.y
+      value: 35.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 224945227632504150, guid: b2759c51bf271794183341425156d63a,
+        type: 2}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224945227632504150, guid: b2759c51bf271794183341425156d63a,
+        type: 2}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224945227632504150, guid: b2759c51bf271794183341425156d63a,
+        type: 2}
+      propertyPath: m_AnchorMin.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 224945227632504150, guid: b2759c51bf271794183341425156d63a,
+        type: 2}
+      propertyPath: m_AnchorMin.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 224945227632504150, guid: b2759c51bf271794183341425156d63a,
+        type: 2}
+      propertyPath: m_AnchorMax.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 224945227632504150, guid: b2759c51bf271794183341425156d63a,
+        type: 2}
+      propertyPath: m_AnchorMax.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 224945227632504150, guid: b2759c51bf271794183341425156d63a,
+        type: 2}
+      propertyPath: m_Pivot.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 224945227632504150, guid: b2759c51bf271794183341425156d63a,
+        type: 2}
+      propertyPath: m_Pivot.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 100100000, guid: b2759c51bf271794183341425156d63a, type: 2}
+  m_IsPrefabParent: 0
 --- !u!1 &1260519533
 GameObject:
   m_ObjectHideFlags: 0
@@ -56503,6 +56679,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPos: {fileID: 0}
   tooltipHeader: 
+  ignoreInteractable: 0
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
@@ -56861,7 +57038,7 @@ RectTransform:
   m_Children:
   - {fileID: 2049767836}
   m_Father: {fileID: 1538653384}
-  m_RootOrder: 22
+  m_RootOrder: 21
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
@@ -57832,6 +58009,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPos: {fileID: 0}
   tooltipHeader: 
+  ignoreInteractable: 0
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
@@ -58011,7 +58189,7 @@ RectTransform:
   m_Children:
   - {fileID: 1803867297}
   m_Father: {fileID: 1538653384}
-  m_RootOrder: 19
+  m_RootOrder: 18
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -58836,6 +59014,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPos: {fileID: 1948209176}
   tooltipHeader: Supplies
+  ignoreInteractable: 0
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
@@ -59532,6 +59711,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPos: {fileID: 0}
   tooltipHeader: 
+  ignoreInteractable: 0
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
@@ -60064,6 +60244,11 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1419872435}
+--- !u!224 &1421381628 stripped
+RectTransform:
+  m_PrefabParentObject: {fileID: 224023144324239886, guid: b2759c51bf271794183341425156d63a,
+    type: 2}
+  m_PrefabInternal: {fileID: 1258178465}
 --- !u!1 &1423520091
 GameObject:
   m_ObjectHideFlags: 0
@@ -60306,6 +60491,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPos: {fileID: 0}
   tooltipHeader: 
+  ignoreInteractable: 0
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
@@ -60718,6 +60904,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPos: {fileID: 0}
   tooltipHeader: 
+  ignoreInteractable: 0
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
@@ -62683,6 +62870,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPos: {fileID: 0}
   tooltipHeader: 
+  ignoreInteractable: 0
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
@@ -64366,6 +64554,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPos: {fileID: 0}
   tooltipHeader: 
+  ignoreInteractable: 0
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
@@ -64490,6 +64679,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPos: {fileID: 2126746669}
   tooltipHeader: Location Intel
+  ignoreInteractable: 0
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
@@ -64781,7 +64971,7 @@ RectTransform:
   - {fileID: 387593216}
   - {fileID: 834807545}
   m_Father: {fileID: 1538653384}
-  m_RootOrder: 18
+  m_RootOrder: 23
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
@@ -66267,11 +66457,12 @@ RectTransform:
   - {fileID: 401963492}
   - {fileID: 104126177}
   - {fileID: 752113108}
-  - {fileID: 1512440212}
   - {fileID: 1372200831}
   - {fileID: 431201650}
   - {fileID: 1819999709}
   - {fileID: 1349046394}
+  - {fileID: 2082434080}
+  - {fileID: 1512440212}
   - {fileID: 936039755}
   - {fileID: 909907522}
   m_Father: {fileID: 0}
@@ -66315,9 +66506,10 @@ MonoBehaviour:
   x4Btn: {fileID: 1963648029}
   dateLbl: {fileID: 739042433}
   timeLbl: {fileID: 1671671427}
-  smallInfoGO: {fileID: 1512440211}
-  smallInfoRT: {fileID: 1512440212}
-  smallInfoLbl: {fileID: 834807548}
+  smallInfoGO: {fileID: 2082434079}
+  smallInfoRT: {fileID: 1421381628}
+  smallInfoBGParentLG: {fileID: 102133339}
+  smallInfoLbl: {fileID: 2041725645}
   smallInfoEnvelopContent: {fileID: 1512440213}
   locationSmallInfo: {fileID: 752113107}
   locationSmallInfoRT: {fileID: 752113108}
@@ -66499,6 +66691,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPos: {fileID: 0}
   tooltipHeader: 
+  ignoreInteractable: 0
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
@@ -67563,6 +67756,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPos: {fileID: 0}
   tooltipHeader: 
+  ignoreInteractable: 0
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
@@ -67826,6 +68020,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPos: {fileID: 0}
   tooltipHeader: 
+  ignoreInteractable: 0
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
@@ -68687,6 +68882,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPos: {fileID: 1410024709}
   tooltipHeader: Mana
+  ignoreInteractable: 0
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
@@ -71019,7 +71215,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -71758,6 +71954,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPos: {fileID: 0}
   tooltipHeader: 
+  ignoreInteractable: 0
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
@@ -72669,6 +72866,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPos: {fileID: 0}
   tooltipHeader: 
+  ignoreInteractable: 0
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
@@ -73571,12 +73769,12 @@ Prefab:
     - target: {fileID: 114339231046893622, guid: 91c7eb690ee4d0344b2e43065dea353a,
         type: 2}
       propertyPath: m_havePropertiesChanged
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114339231046893622, guid: 91c7eb690ee4d0344b2e43065dea353a,
         type: 2}
       propertyPath: m_isInputParsingRequired
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1494071399754690, guid: 91c7eb690ee4d0344b2e43065dea353a, type: 2}
       propertyPath: m_Name
@@ -74681,12 +74879,12 @@ Prefab:
     - target: {fileID: 114339231046893622, guid: 91c7eb690ee4d0344b2e43065dea353a,
         type: 2}
       propertyPath: m_havePropertiesChanged
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114339231046893622, guid: 91c7eb690ee4d0344b2e43065dea353a,
         type: 2}
       propertyPath: m_isInputParsingRequired
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 91c7eb690ee4d0344b2e43065dea353a, type: 2}
@@ -74874,6 +75072,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPos: {fileID: 0}
   tooltipHeader: 
+  ignoreInteractable: 0
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
@@ -75185,6 +75384,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPos: {fileID: 0}
   tooltipHeader: 
+  ignoreInteractable: 0
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
@@ -77777,6 +77977,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPos: {fileID: 0}
   tooltipHeader: 
+  ignoreInteractable: 0
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
@@ -77927,6 +78128,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPos: {fileID: 92587522}
   tooltipHeader: Faction Intel
+  ignoreInteractable: 0
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
@@ -78887,7 +79089,7 @@ Prefab:
     - target: {fileID: 224197028340486728, guid: b2755c072ea3a4849b851e62bdc86755,
         type: 2}
       propertyPath: m_RootOrder
-      value: 21
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 224197028340486728, guid: b2755c072ea3a4849b851e62bdc86755,
         type: 2}
@@ -82760,6 +82962,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPos: {fileID: 0}
   tooltipHeader: 
+  ignoreInteractable: 0
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
@@ -84241,6 +84444,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPos: {fileID: 0}
   tooltipHeader: 
+  ignoreInteractable: 0
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
@@ -86334,6 +86538,12 @@ Transform:
   m_Father: {fileID: 332590748}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2041725645 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 114103124751394746, guid: b2759c51bf271794183341425156d63a,
+    type: 2}
+  m_PrefabInternal: {fileID: 1258178465}
+  m_Script: {fileID: 1453722849, guid: 89f0137620f6af44b9ba852b4190e64e, type: 3}
 --- !u!1 &2042445236
 GameObject:
   m_ObjectHideFlags: 0
@@ -86834,6 +87044,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPos: {fileID: 0}
   tooltipHeader: 
+  ignoreInteractable: 0
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
@@ -87821,6 +88032,16 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2082434079 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1867265464452530, guid: b2759c51bf271794183341425156d63a,
+    type: 2}
+  m_PrefabInternal: {fileID: 1258178465}
+--- !u!224 &2082434080 stripped
+RectTransform:
+  m_PrefabParentObject: {fileID: 224945227632504150, guid: b2759c51bf271794183341425156d63a,
+    type: 2}
+  m_PrefabInternal: {fileID: 1258178465}
 --- !u!1 &2085326602
 GameObject:
   m_ObjectHideFlags: 0
@@ -88330,7 +88551,7 @@ RectTransform:
   m_Children:
   - {fileID: 1657982495}
   - {fileID: 325448239}
-  - {fileID: 13718489}
+  - {fileID: 1040506114}
   - {fileID: 383383860}
   m_Father: {fileID: 1538653384}
   m_RootOrder: 10

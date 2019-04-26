@@ -53,6 +53,8 @@ public class ReportCrime : GoapAction {
         //**Effect 1**: The reported criminal will gain the associated Crime trait
         criminal.AddCriminalTrait(crime);
         currentState.AddLogFiller(criminal, criminal.name, LOG_IDENTIFIER.CHARACTER_3);
+
+        (poiTarget as Character).ReactToCrime(crime, criminal);
     }
     #endregion
 

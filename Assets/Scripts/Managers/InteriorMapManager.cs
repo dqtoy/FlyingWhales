@@ -142,14 +142,14 @@ public class InteriorMapManager : MonoBehaviour {
         gg.nodeSize = nodeSize;
 
 
-        int reducedWidth = newMap.width - (AreaInnerTileMap.eastEdge + AreaInnerTileMap.westEdge);
+        int reducedWidth = newMap.width - (AreaInnerTileMap.westEdge + AreaInnerTileMap.eastEdge);
         int reducedHeight = newMap.height - (AreaInnerTileMap.northEdge + AreaInnerTileMap.southEdge);
 
         gg.SetDimensions(Mathf.FloorToInt((float)reducedWidth / gg.nodeSize), Mathf.FloorToInt((float)reducedHeight / gg.nodeSize), nodeSize);
         Vector3 pos = this.transform.position;
         pos.x += ((float)newMap.width / 2f);
         pos.y += ((float)newMap.height / 2f) + newMap.transform.localPosition.y;
-        pos.x += ((AreaInnerTileMap.eastEdge + AreaInnerTileMap.westEdge) / 2) - 1;
+        pos.x += ((AreaInnerTileMap.westEdge + AreaInnerTileMap.eastEdge) / 2) - 1;
 
         gg.center = pos;
         gg.collision.use2D = true;

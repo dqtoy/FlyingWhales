@@ -50,7 +50,7 @@ Animator:
   m_GameObject: {fileID: 1585311253791458}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: c1094acbda689b743a560588e35f4337, type: 2}
+  m_Controller: {fileID: 0}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -341,7 +341,7 @@ MonoBehaviour:
       frameOutline: {fileID: 21300000, guid: 7cbb3446f1ca8a64b8c1e2f0e6649137, type: 3}
     - baseBG: {fileID: 21300000, guid: b1facc086f831d64990f9d4056411274, type: 3}
       frameOutline: {fileID: 21300000, guid: 7cbb3446f1ca8a64b8c1e2f0e6649137, type: 3}
-    - baseBG: {fileID: 21300000, guid: c18f5d6f944cfbc48819debe987cdaba, type: 3}
+    - baseBG: {fileID: 21300000, guid: 51cc2170d7bb77744b58e9a139303d2d, type: 3}
       frameOutline: {fileID: 21300000, guid: 7cbb3446f1ca8a64b8c1e2f0e6649137, type: 3}
   classPortraits:
     m_keys:

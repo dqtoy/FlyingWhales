@@ -40,6 +40,7 @@ GameObject:
   - component: {fileID: 114841955376083976}
   - component: {fileID: 114899162695370100}
   - component: {fileID: 114281548148286456}
+  - component: {fileID: 114367671946372336}
   m_Layer: 5
   m_Name: PlayerJobActionBtn
   m_TagString: Untagged
@@ -192,6 +193,52 @@ MonoBehaviour:
   btn: {fileID: 114899162695370100}
   btnLbl: {fileID: 114197921141203282}
   subTextLbl: {fileID: 114839885402134232}
+--- !u!114 &114367671946372336
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1407515856224950}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be97d49975a8ba24683fa964f9c21b16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipPos: {fileID: 0}
+  tooltipHeader: 
+  ignoreInteractable: 1
+  onHoverOverAction:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 114281548148286456}
+        m_MethodName: ShowHoverText
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  onHoverExitAction:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 114281548148286456}
+        m_MethodName: HideHoverText
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &114839885402134232
 MonoBehaviour:
   m_ObjectHideFlags: 1

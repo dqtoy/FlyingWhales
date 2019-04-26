@@ -240,7 +240,7 @@ public class  TileObject : IPointOfInterest {
             for (int i = 0; i < awareCharacters.Count; i++) {
                 Character currCharacter = awareCharacters[i];
                 IAwareness awareness = currCharacter.GetAwareness(this);
-                if (!knownLocations.Contains(awareness.knownGridLocation)) {
+                if (awareness != null && !knownLocations.Contains(awareness.knownGridLocation)) {
                     //for each character, store in a list all their known locations of this object
                     knownLocations.Add(awareness.knownGridLocation);
                 }

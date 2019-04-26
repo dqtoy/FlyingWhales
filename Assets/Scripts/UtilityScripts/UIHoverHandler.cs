@@ -9,13 +9,15 @@ public class UIHoverHandler : MonoBehaviour, IPointerEnterHandler, IPointerExitH
 
     protected bool isHovering;
 
-    [SerializeField] protected RectTransform tooltipPos;
+    public RectTransform tooltipPos;
     [SerializeField] protected string tooltipHeader;
+    [SerializeField] protected bool ignoreInteractable = false;
 
     [SerializeField] protected UnityEvent onHoverOverAction;
     [SerializeField] protected UnityEvent onHoverExitAction;
 
     protected Selectable selectable;
+    
 
     private void OnEnable() {
         selectable = this.GetComponent<Selectable>();
@@ -32,7 +34,7 @@ public class UIHoverHandler : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     }
 
     public virtual void OnPointerEnter(PointerEventData eventData) {
-        if (selectable != null) {
+        if (!ignoreInteractable && selectable != null) {
             if (!selectable.IsInteractable()) {
                 return;
             }
@@ -41,7 +43,7 @@ public class UIHoverHandler : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     }
 
     public virtual void OnPointerExit(PointerEventData eventData) {
-        if (selectable != null) {
+        if (!ignoreInteractable && selectable != null) {
             if (!selectable.IsInteractable()) {
                 return;
             }
@@ -61,13 +63,24 @@ public class UIHoverHandler : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     }
 
     public void ShowSmallInfoString(string message) {
-        UIManager.Instance.ShowSmallInfo(message);
+        UIManager.Instance.ShowSmallInfo(message, tooltipHeader);
     }
     public void HideSmallInfoString() {
         UIManager.Instance.HideSmallInfo();
     }
 
     public void ShowSmallInfoInSpecificPosition(string message) {
-        UIManager.Instance.ShowSmallInfo(message, tooltipHeader, tooltipPos);
+        if (tooltipPos != null) {
+            UIManager.Instance.ShowSmallInfo(message, Camera.main.WorldToScreenPoint(tooltipPos.transform.position), tooltipHeader);
+        } else {
+            UIManager.Instance.ShowSmallInfo(message, tooltipHeader);
+        }
+    }
+    public void ShowSmallInfoInSpecificPosition(string message, string header) {
+        if (tooltipPos != null) {
+            UIManager.Instance.ShowSmallInfo(message, Camera.main.WorldToScreenPoint(tooltipPos.transform.position), header);
+        } else {
+            UIManager.Instance.ShowSmallInfo(message, header);
+        }
     }
 }

@@ -94,7 +94,7 @@ public class StealFromCharacter : GoapAction {
             List<RelationshipTrait> traitsToRemove = recipient.GetAllRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE);
             CharacterManager.Instance.RemoveRelationshipBetween(recipient, actor, traitsToRemove);
             //Apply Crime System handling as if the Recipient witnessed Actor commit Theft.
-            recipient.ReactToCrime(CRIME.THEFT, actor, null, false);
+            recipient.ReactToCrime(CRIME.THEFT, actor);
         }
         //Recipient and Actor have a positive relationship:
         else if (recipient.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE, RELATIONSHIP_TRAIT.RELATIVE)) {
@@ -107,14 +107,14 @@ public class StealFromCharacter : GoapAction {
             //- **Recipient Response Text**: "[Actor Name] committed theft!? Why am I not surprised."
             reactions.Add(string.Format("{0} committed theft!? Why am I not surprised.", actor.name));
             //-**Recipient Effect**: Apply Crime System handling as if the Recipient witnessed Actor commit Theft.
-            recipient.ReactToCrime(CRIME.THEFT, actor, null, false);
+            recipient.ReactToCrime(CRIME.THEFT, actor);
         }
         //Recipient and Actor have no relationship but are from the same faction:
         else if (!recipient.HasRelationshipWith(actor) && recipient.faction == actor.faction) {
             //- **Recipient Response Text**: "[Actor Name] committed theft!? That's illegal."
             reactions.Add(string.Format("{0} committed theft!? That's illegal.", actor.name));
             //- **Recipient Effect**: Apply Crime System handling as if the Recipient witnessed Actor commit Theft.
-            recipient.ReactToCrime(CRIME.THEFT, actor, null, false);
+            recipient.ReactToCrime(CRIME.THEFT, actor);
         }
         //Recipient and Actor is the same:
         else if (recipient == actor) {

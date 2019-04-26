@@ -16,6 +16,7 @@ public class IntelItem : MonoBehaviour {
     [SerializeField] private TextMeshProUGUI infoLbl;
     [SerializeField] private Button mainBtn;
     [SerializeField] private Image iconImg;
+    [SerializeField] private Image clickedImg;
 
     [SerializeField] private Sprite eventIntelIcon;
     [SerializeField] private Sprite objectIntelIcon;
@@ -24,6 +25,7 @@ public class IntelItem : MonoBehaviour {
         this.intel = intel;
         otherClickActions = new List<System.Action>();
         ClearClickActions();
+        SetClickedState(false);
         if (intel != null) {
             //string preText = "TIP: ";
             iconImg.sprite = objectIntelIcon;
@@ -70,5 +72,9 @@ public class IntelItem : MonoBehaviour {
     public void ClearClickActions() {
         onClickAction = null;
         otherClickActions.Clear();
+    }
+
+    public void SetClickedState(bool isClicked) {
+        clickedImg.gameObject.SetActive(isClicked);
     }
 }

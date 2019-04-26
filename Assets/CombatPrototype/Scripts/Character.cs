@@ -4980,8 +4980,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     /// </summary>
     /// <param name="witnessedCrime">Witnessed Crime.</param>
     /// <param name="notifyPlayer">Should the player be notified when this happens?</param>
-    public void ReactToCrime(GoapAction witnessedCrime, bool notifyPlayer = true) {
-        ReactToCrime(witnessedCrime.committedCrime, witnessedCrime.actor, witnessedCrime, notifyPlayer);
+    public void ReactToCrime(GoapAction witnessedCrime) {
+        ReactToCrime(witnessedCrime.committedCrime, witnessedCrime.actor, witnessedCrime);
     }
     /// <summary>
     /// Base function for crime reactions
@@ -4990,7 +4990,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     /// <param name="actor">The character that committed the crime</param>
     /// <param name="witnessedCrime">The crime witnessed by this character, if this is null, character was only informed of the crime by someone else.</param>
     /// <param name="notifyPlayer">Should the player be notified when this happens?</param>
-    public void ReactToCrime(CRIME committedCrime, Character actor, GoapAction witnessedCrime = null, bool notifyPlayer = true) {
+    public void ReactToCrime(CRIME committedCrime, Character actor, GoapAction witnessedCrime = null) {
         if (witnessedCrime != null) {
             //if the action that should be considered a crime is part of a job from this character's area, do not consider it a crime
             if (witnessedCrime.parentPlan.job != null 
@@ -5003,9 +5003,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         }
 
-
         string reactSummary = GameManager.Instance.TodayLogString() + this.name + " will react to crime committed by " + actor.name;
         Log witnessLog = null;
+        Log reportLog = null;
         //If character has a positive relationship (Friend, Lover, Paramour) with the criminal
         if (this.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE, RELATIONSHIP_TRAIT.RELATIVE)) {
             reactSummary += "\n" + this.name + " has a positive relationship with " + actor.name;
@@ -5015,6 +5015,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 reactSummary += "\nCrime committed is less than serious, " + this.name + " will not do anything.";
                 //-Witness Log: "[Character Name] saw [Criminal Name] committing [Theft/Assault/Murder] but did not do anything due to their relationship."
                 witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "do_nothing");
+                reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_do_nothing");
             }
             //and crime severity is Serious Crimes or worse:
             else if (category.IsGreaterThanOrEqual(CRIME_CATEGORY.SERIOUS)) {
@@ -5037,9 +5038,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     //if traits were removed, use remove relationship version of log
                     witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "remove_relationship");
                     witnessLog.AddToFillers(null, removedTraitsSummary, LOG_IDENTIFIER.STRING_2);
+
+                    reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_remove_relationship");
+                    reportLog.AddToFillers(null, removedTraitsSummary, LOG_IDENTIFIER.STRING_2);
                 } else {
                     //else use normal witnessed log
                     witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "witnessed");
+                    reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_witnessed");
                 }
                 PerRoleCrimeReaction(committedCrime, actor, witnessedCrime);
             }
@@ -5049,17 +5054,26 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             reactSummary += "\n" + this.name + " does not have a relationship with or is an enemy of " + actor.name;
             //-Witness Log: "[Character Name] saw [Criminal Name] committing [Theft/Assault/Murder]!"
             witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "witnessed");
+            reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_witnessed");
             PerRoleCrimeReaction(committedCrime, actor, witnessedCrime);
         }
 
-        if (witnessLog != null) {
-            witnessLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            witnessLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-            witnessLog.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(committedCrime.ToString()), LOG_IDENTIFIER.STRING_1);
-            if (notifyPlayer) {
+        if (witnessedCrime != null) {
+            if (witnessLog != null) {
+                witnessLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                witnessLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                witnessLog.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(committedCrime.ToString()), LOG_IDENTIFIER.STRING_1);
                 PlayerManager.Instance.player.ShowNotificationFrom(this, witnessLog);
             }
+        } else {
+            if (reportLog != null) {
+                reportLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                reportLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                reportLog.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(committedCrime.ToString()), LOG_IDENTIFIER.STRING_1);
+                PlayerManager.Instance.player.ShowNotificationFrom(this, reportLog);
+            }
         }
+        
         Debug.Log(reactSummary);
     }
     /// <summary>

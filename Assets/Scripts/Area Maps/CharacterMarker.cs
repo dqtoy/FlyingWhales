@@ -303,8 +303,15 @@ public class CharacterMarker : PooledObject {
                     character.currentParty.GoToLocation(travellingParty.icon.targetLocation, PATHFINDING_MODE.NORMAL, travellingParty.icon.targetStructure, _arrivalAction, null, targetPOI);
                 } else {
                     //target character left the area
-                    //go to the characters last tile
-                    GoTo(targetCharacter.gridTileLocation, targetPOI, _arrivalAction);
+                    //end current action
+                    Action action = _arrivalAction;
+                    //set arrival action to null, because some arrival actions set it when executed
+                    _arrivalAction = null;
+                    action?.Invoke();
+
+                    ////go to the characters last tile
+                    //GoTo(targetCharacter.gridTileLocation, targetPOI, _arrivalAction);
+
                 }
                 if (Messenger.eventTable.ContainsKey(Signals.PARTY_STARTED_TRAVELLING)) {
                     Messenger.RemoveListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling);
@@ -327,6 +334,14 @@ public class CharacterMarker : PooledObject {
                 } else {
                     RemoveHostileInRange(otherCharacter);
                 }
+            }
+
+            if (targetPOI == otherCharacter) {
+                //execute the arrival action, the arrival action should handle the cases for when the target is missing
+                Action action = _arrivalAction;
+                //set arrival action to null, because some arrival actions set it when executed
+                _arrivalAction = null;
+                action?.Invoke();
             }
             
         }

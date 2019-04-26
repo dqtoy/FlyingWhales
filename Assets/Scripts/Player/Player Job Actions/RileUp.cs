@@ -34,6 +34,14 @@ public class RileUp : PlayerJobAction {
         return base.ShouldButtonBeInteractable(character, targetCharacter);
     }
 
+    public string GetActionName(Character target) {
+        if (target.role.roleType != CHARACTER_ROLE.BEAST) {
+            return "Abduct";
+        } else {
+            return "Rile Up";
+        }
+    }
+
     #region Area Checkers
     private void OnClickArea(Area area) {
         if(_targetCharacter.role.roleType == CHARACTER_ROLE.BEAST) {
