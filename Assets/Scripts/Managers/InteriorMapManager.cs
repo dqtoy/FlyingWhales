@@ -103,7 +103,7 @@ public class InteriorMapManager : MonoBehaviour {
     }
     public void ShowAreaMap(Area area, bool centerCameraOnMapCenter = true) {
         if (area.areaType == AREA_TYPE.DEMONIC_INTRUSION) {
-            //do not show player area map
+            UIManager.Instance.portalPopup.SetActive(true);
             return;
         }
         area.areaMap.Open();
@@ -112,7 +112,7 @@ public class InteriorMapManager : MonoBehaviour {
         Messenger.Broadcast(Signals.AREA_MAP_OPENED, area);
 
         if (centerCameraOnMapCenter) {
-            AreaMapCameraMove.Instance.CenterCameraOn(area.areaMap.gameObject);
+            AreaMapCameraMove.Instance.JustCenterCamera();
         }
     }
     public void HideAreaMap() {

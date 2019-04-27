@@ -58,6 +58,7 @@ public class UIManager : MonoBehaviour {
     [Space(10)]
     [Header("Area Info")]
     public Sprite[] areaCenterSprites;
+    public GameObject portalPopup;
 
     [Space(10)]
     [Header("Popup Message Box")]
