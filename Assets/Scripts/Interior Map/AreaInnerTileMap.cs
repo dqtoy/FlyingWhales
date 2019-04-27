@@ -911,6 +911,7 @@ public class AreaInnerTileMap : MonoBehaviour {
                 map[pos.x, pos.y].SetLockedState(true);
                 if (tilemap == detailsTilemap) {
                     map[pos.x, pos.y].hasDetail = true;
+                    map[pos.x, pos.y].SetTileState(LocationGridTile.Tile_State.Occupied);
                 }
             }
             //} else {
@@ -1218,10 +1219,10 @@ public class AreaInnerTileMap : MonoBehaviour {
                     groundTilemap.SetTile(currTile.localPlace, snowTile);
                 } else if (sample >= 0.5f && sample < 0.8f) {
                     currTile.groundType = LocationGridTile.Ground_Type.Tundra;
-                    groundTilemap.SetTile(currTile.localPlace, tundraTile);
+                    groundTilemap.SetTile(currTile.localPlace, stoneTile);
                 } else {
                     currTile.groundType = LocationGridTile.Ground_Type.Stone;
-                    groundTilemap.SetTile(currTile.localPlace, snowStoneFloorTile);
+                    groundTilemap.SetTile(currTile.localPlace, tundraTile);
                 }
             } else {
                 if (sample < 0.5f) {
