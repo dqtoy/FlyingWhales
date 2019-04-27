@@ -17,8 +17,7 @@ public class PickItemGoap : GoapAction {
     }
     public override void PerformActualAction() {
         base.PerformActualAction();
-        if (poiTarget.gridTileLocation != null 
-            && (actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsAdjacentTo(poiTarget) || actor.marker.inVisionPOIs.Contains(poiTarget))) {
+        if (!isTargetMissing) {
             SetState("Take Success");
         } else {
             SetState("Target Missing");

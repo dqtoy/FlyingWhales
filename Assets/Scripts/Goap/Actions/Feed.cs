@@ -26,7 +26,7 @@ public class Feed : GoapAction {
     }
     public override void PerformActualAction() {
         base.PerformActualAction();
-        if (!isTargetCharacterMissing && poiTarget.gridTileLocation != null && (actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsAdjacentTo(poiTarget))) {
+        if (!isTargetMissing && (poiTarget as Character).IsInOwnParty()) {
             SetState("Feed Success");
         } else {
             SetState("Target Missing");

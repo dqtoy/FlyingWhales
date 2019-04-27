@@ -25,7 +25,7 @@ public class CurseCharacter : GoapAction {
     }
     public override void PerformActualAction() {
         base.PerformActualAction();
-        if (!isTargetCharacterMissing ) {
+        if (!isTargetMissing && (poiTarget as Character).IsInOwnParty()) {
             SetState("Curse Success");
         } else {
             SetState("Target Missing");

@@ -4282,13 +4282,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         poiGoapActions.Add(INTERACTION_TYPE.ASSAULT_ACTION_NPC);
         poiGoapActions.Add(INTERACTION_TYPE.DROP_CHARACTER);
         poiGoapActions.Add(INTERACTION_TYPE.ABDUCT_ACTION);
+        poiGoapActions.Add(INTERACTION_TYPE.RESTRAIN_CHARACTER);
         //poiGoapActions.Add(INTERACTION_TYPE.STROLL);
         poiGoapActions.Add(INTERACTION_TYPE.DAYDREAM);
         poiGoapActions.Add(INTERACTION_TYPE.SLEEP_OUTSIDE);
         poiGoapActions.Add(INTERACTION_TYPE.PRAY);
         //poiGoapActions.Add(INTERACTION_TYPE.EXPLORE);
         //poiGoapActions.Add(INTERACTION_TYPE.PATROL);
-        poiGoapActions.Add(INTERACTION_TYPE.TRAVEL);
+        //poiGoapActions.Add(INTERACTION_TYPE.TRAVEL);
         poiGoapActions.Add(INTERACTION_TYPE.RETURN_HOME_LOCATION);
         //poiGoapActions.Add(INTERACTION_TYPE.HUNT_ACTION);
         poiGoapActions.Add(INTERACTION_TYPE.PLAY);
@@ -4876,7 +4877,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         _hasAlreadyAskedForPlan = state;
     }
     public void PrintLogIfActive(string log) {
-        if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == this) {
+        if (InteriorMapManager.Instance.currentlyShowingArea == specificLocation) {//UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == this
             Debug.Log(log);
         }
     }

@@ -20,7 +20,7 @@ public class MineGoap : GoapAction {
     }
     public override void PerformActualAction() {
         base.PerformActualAction();
-        if (poiTarget.gridTileLocation != null && (actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsAdjacentTo(poiTarget))) {
+        if (!isTargetMissing) {
             SetState("Mine Success");
         } else {
             SetState("Target Missing");

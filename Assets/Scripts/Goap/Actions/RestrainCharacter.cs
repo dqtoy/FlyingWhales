@@ -17,7 +17,7 @@ public class RestrainCharacter : GoapAction {
     }
     public override void PerformActualAction() {
         base.PerformActualAction();
-        if (!isTargetCharacterMissing && (actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation))) {
+        if (!isTargetMissing && (poiTarget as Character).IsInOwnParty()) {
             SetState("Restrain Success");
         } else {
             SetState("Target Missing");

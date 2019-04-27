@@ -21,7 +21,7 @@ public class JudgeCharacter : GoapAction {
     //}
     public override void PerformActualAction() {
         base.PerformActualAction();
-        if (!isTargetCharacterMissing && (actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation))) {
+        if (!isTargetMissing && (poiTarget as Character).IsInOwnParty()) {
             WeightedDictionary<string> weights = new WeightedDictionary<string>();
             weights.AddElement("Target Executed", 10);
             weights.AddElement("Target Released", 10);

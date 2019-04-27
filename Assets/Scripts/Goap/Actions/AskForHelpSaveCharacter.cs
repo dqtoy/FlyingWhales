@@ -26,7 +26,7 @@ public class AskForHelpSaveCharacter : GoapAction {
     //}
     public override void PerformActualAction() {
         base.PerformActualAction();
-        if (!isTargetCharacterMissing) {
+        if (!isTargetMissing && (poiTarget as Character).IsInOwnParty()) {
             SetState("Ask Success");
         } else {
             SetState("Target Missing");

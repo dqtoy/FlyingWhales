@@ -17,7 +17,7 @@ public class GetSupply : GoapAction {
     }
     public override void PerformActualAction() {
         base.PerformActualAction();
-        if (poiTarget.gridTileLocation != null && (actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsAdjacentTo(poiTarget))) {
+        if (!isTargetMissing) {
             SupplyPile supplyPile = poiTarget as SupplyPile;
             if (supplyPile.suppliesInPile > 0) {
                 SetState("Take Success");

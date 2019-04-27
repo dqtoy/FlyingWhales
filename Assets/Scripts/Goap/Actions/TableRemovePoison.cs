@@ -20,12 +20,12 @@ public class TableRemovePoison : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Poisoned", targetPOI = poiTarget });
     }
     public override void PerformActualAction() {
-        if (actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsAdjacentTo(poiTarget)) {
+        base.PerformActualAction();
+        if (!isTargetMissing) {
             SetState("Remove Poison Success");
         } else {
             SetState("Target Missing");
         }
-        base.PerformActualAction();
     }
     protected override int GetCost() {
         return 4;

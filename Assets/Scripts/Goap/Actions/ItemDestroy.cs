@@ -16,7 +16,7 @@ public class ItemDestroy : GoapAction {
     //}
     public override void PerformActualAction() {
         base.PerformActualAction();
-        if (poiTarget.gridTileLocation != null && (actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsAdjacentTo(poiTarget))) {
+        if (!isTargetMissing) {
             SetState("Destroy Success");
         } else {
             SetState("Target Missing");

@@ -20,12 +20,12 @@ public class Stroll : GoapAction {
     //    AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.NONE, targetPOI = actor });
     //}
     public override void PerformActualAction() {
+        base.PerformActualAction();
         //if (targetTile != null) {
             SetState("Stroll Success");
         //} else {
         //    SetState("Stroll Fail");
         //}
-        base.PerformActualAction();
     }
     protected override int GetCost() {
         return 5;

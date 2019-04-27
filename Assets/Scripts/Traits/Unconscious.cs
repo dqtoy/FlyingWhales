@@ -24,7 +24,7 @@ public class Unconscious : Trait {
         trigger = TRAIT_TRIGGER.OUTSIDE_COMBAT;
         crimeSeverity = CRIME_CATEGORY.NONE;
         daysDuration = 144;
-        advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.FIRST_AID_CHARACTER, };
+        advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.FIRST_AID_CHARACTER };
         effects = new List<TraitEffect>();
     }
 

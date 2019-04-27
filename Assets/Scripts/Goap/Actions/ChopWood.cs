@@ -23,7 +23,7 @@ public class ChopWood : GoapAction {
     }
     public override void PerformActualAction() {
         base.PerformActualAction();
-        if (poiTarget.gridTileLocation != null && poiTarget.gridTileLocation.structure == actor.gridTileLocation.structure && actor.gridTileLocation.IsAdjacentTo(poiTarget)) {
+        if (!isTargetMissing) {
             SetState("Chop Success");
         } else {
             SetState("Target Missing");

@@ -21,7 +21,7 @@ public class Hunt : GoapAction {
         if (target.isDead) {
             SetState("Target Missing");
         } else {
-            if (!isTargetCharacterMissing && actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) {
+            if (!isTargetMissing && (poiTarget as Character).IsInOwnParty()) {
                 List<Character> attackers = new List<Character>();
                 attackers.Add(actor);
 

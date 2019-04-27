@@ -20,7 +20,7 @@ public class Drink : GoapAction {
     }
     public override void PerformActualAction() {
         base.PerformActualAction();
-        if (poiTarget.gridTileLocation != null && (actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation))) {
+        if (!isTargetMissing) {
             //SetState("Drink Success");
             if (poiTarget.GetTrait("Poisoned") != null) {
                 SetState("Drink Poisoned");
