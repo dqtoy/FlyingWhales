@@ -34,6 +34,16 @@ public class RileUp : PlayerJobAction {
         return base.ShouldButtonBeInteractable(character, targetCharacter);
     }
 
+    public override bool CanTarget(Character targetCharacter) {
+        if (targetCharacter.isDead || assignedCharacter == targetCharacter) { //|| (!targetCharacter.isTracked && !GameManager.Instance.inspectAll)
+            return false;
+        }
+        if (targetCharacter.role.roleType != CHARACTER_ROLE.BEAST && targetCharacter.race != RACE.SKELETON && targetCharacter.race != RACE.GOBLIN) {
+            return false;
+        }
+        return base.CanTarget(targetCharacter);
+    }
+
     public string GetActionName(Character target) {
         if (target.role.roleType != CHARACTER_ROLE.BEAST) {
             return "Abduct";

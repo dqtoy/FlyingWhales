@@ -590,12 +590,12 @@ public class Player : ILeader {
     #endregion
 
     #region Role Actions
-    public List<PlayerJobAction> GetJobActionsThatCanTarget(JOB job, JOB_ACTION_TARGET targetType) {
+    public List<PlayerJobAction> GetJobActionsThatCanTarget(JOB job, Character target) {
         List<PlayerJobAction> actions = new List<PlayerJobAction>();
         if (HasCharacterAssignedToJob(job)) {
             for (int i = 0; i < roleSlots[job].jobActions.Count; i++) {
                 PlayerJobAction currAction = roleSlots[job].jobActions[i];
-                if (currAction.targettableTypes.Contains(targetType)) {
+                if (currAction.CanTarget(target)) {
                     actions.Add(currAction);
                 }
             }

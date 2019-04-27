@@ -55,6 +55,21 @@ public class ShareIntel : PlayerJobAction {
         }
         return base.ShouldButtonBeInteractable(character, targetCharacter);
     }
+    public override bool CanTarget(Character targetCharacter) {
+        if (targetCharacter.isDead) {
+            return false;
+        }
+        if (assignedCharacter == targetCharacter) {
+            return false;
+        }
+        if (this.targetCharacter != null && targetCharacter.id == this.targetCharacter.id) {
+            return false;
+        }
+        if (PlayerManager.Instance.player.allIntel.Count == 0) {
+            return false;
+        }
+        return base.CanTarget(targetCharacter);
+    }
     protected override void OnCharacterDied(Character characterThatDied) {
         base.OnCharacterDied(characterThatDied);
         if (!this.isActive) {

@@ -14,7 +14,6 @@ public class PlayerJobActionButton : MonoBehaviour {
     [SerializeField] private Button btn;
     [SerializeField] private TextMeshProUGUI btnLbl;
     [SerializeField] private TextMeshProUGUI subTextLbl;
-
     private Character character;
     private object target;
 
@@ -97,10 +96,10 @@ public class PlayerJobActionButton : MonoBehaviour {
             header = "Debilitator Action.";
         }
 
-        UIManager.Instance.ShowSmallInfo(message, header);
+        PlayerUI.Instance.ShowActionBtnTooltip(message, header);
     }
     public void HideHoverText() {
-        UIManager.Instance.HideSmallInfo();
+        PlayerUI.Instance.HideActionBtnTooltip();
     }
     #endregion
 

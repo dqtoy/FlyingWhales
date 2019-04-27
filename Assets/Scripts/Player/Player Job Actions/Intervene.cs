@@ -27,4 +27,11 @@ public class Intervene : PlayerJobAction {
         }
         return base.ShouldButtonBeInteractable(character, targetCharacter);
     }
+
+    public override bool CanTarget(Character targetCharacter) {
+        if (targetCharacter.isDead || assignedCharacter == targetCharacter || targetCharacter.currentAction == null) {
+            return false;
+        }
+        return base.CanTarget(targetCharacter);
+    }
 }

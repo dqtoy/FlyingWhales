@@ -425,6 +425,7 @@ public class UIManager : MonoBehaviour {
 
         smallInfoLbl.text = message;
         if (!IsSmallInfoShowing()) {
+            smallInfoGO.transform.SetParent(this.transform);
             smallInfoGO.SetActive(true);
             //smallInfoEnvelopContent.Execute();
         }
@@ -440,7 +441,7 @@ public class UIManager : MonoBehaviour {
         
         //Debug.Log("Show small info " + info);
     }
-    public void ShowSmallInfo(string info, Vector3 position, string header = "") {
+    public void ShowSmallInfo(string info, UIHoverPosition pos, string header = "") {
         string message = string.Empty;
         if (!string.IsNullOrEmpty(header)) {
             message = "<font=\"Eczar-Medium\"><line-height=100%><size=18>" + header + "</font>\n";
@@ -453,16 +454,7 @@ public class UIManager : MonoBehaviour {
         if (!IsSmallInfoShowing()) {
             smallInfoGO.SetActive(true);
         }
-        //smallInfoGO.transform.SetParent(this.transform);
-        PositionTooltip(position, smallInfoGO, smallInfoRT);
-        //if (position == null) {
-
-        //} else {
-        //    smallInfoGO.transform.SetParent(position);
-        //    smallInfoRT.anchoredPosition = Vector2.zero;
-        //    //smallInfoRT.anchoredPosition = pos;
-        //    //smallInfoRT.position = new Vector3(pos.x, pos.y, 0f);
-        //}
+        PositionTooltip(pos, smallInfoGO, smallInfoRT);
 
         //Debug.Log("Show small info " + info);
     }
@@ -540,6 +532,12 @@ public class UIManager : MonoBehaviour {
             }
             rt.localPosition = Vector3.zero;
         }
+    }
+    private void PositionTooltip(UIHoverPosition position, GameObject tooltipParent, RectTransform rt) {
+        tooltipParent.transform.SetParent(position.transform);
+        smallInfoBGParentLG.childAlignment = position.anchor;
+        rt.pivot = position.pivot;
+        (tooltipParent.transform as RectTransform).anchoredPosition = Vector2.zero;
     }
     public void ShowSmallLocationInfo(Area area, RectTransform initialParent, Vector2 adjustment, string subText = "") {
         locationSmallInfo.ShowAreaInfo(area, subText);
@@ -1386,7 +1384,6 @@ public class UIManager : MonoBehaviour {
         PointerEventData ped = bed as PointerEventData;
         if (ped.clickCount == 2) {
             ReturnToWorlMap();
-            HideSmallInfo();
         }
     }
     public void ReturnToWorlMap() {

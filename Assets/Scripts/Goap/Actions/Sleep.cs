@@ -41,12 +41,12 @@ public class Sleep : GoapAction {
                     CharacterRelationshipData characterRelationshipData = actor.GetCharacterRelationshipData(resident);
                     if (characterRelationshipData != null) {
                         if (characterRelationshipData.HasRelationshipOfEffect(TRAIT_EFFECT.POSITIVE)) {
-                            return 4;
+                            return 15;
                         }
                     }
                 }
             }
-            return 10;
+            return 30;
         }
     }
     //public override void FailAction() {

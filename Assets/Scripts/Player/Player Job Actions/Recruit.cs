@@ -59,4 +59,7 @@ public class Recruit : PlayerJobAction {
         //target.AddInteraction(interaction);
         //InteractionUI.Instance.OpenInteractionUI(interaction);
     }
+    public override bool CanTarget(Character targetCharacter) {
+        return false;
+    }
 }

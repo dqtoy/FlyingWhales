@@ -41,6 +41,18 @@ public class Track : PlayerJobAction {
         }
         return base.ShouldButtonBeInteractable(character, targetCharacter);
     }
+    public override bool CanTarget(Character targetCharacter) {
+        if (targetCharacter.isDead) {
+            return false;
+        }
+        if (assignedCharacter == targetCharacter) {
+            return false;
+        }
+        if (targetCharacter.isTracked) {
+            return false;
+        }
+        return base.CanTarget(targetCharacter);
+    }
 
     private void OnEventPoppedUp(EventPopup popup) {
         if (target != null) {
