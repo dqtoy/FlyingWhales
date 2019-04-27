@@ -112,6 +112,10 @@ public class AreaMapCameraMove : MonoBehaviour {
         areaMapsCamera.transform.position = newPos;
         ConstrainCameraBounds();
     }
+    public void JustCenterCamera() {
+        Vector3 center = new Vector3((MIN_X + MAX_X) * 0.5f, (MIN_Y + MAX_Y) * 0.5f);
+        areaMapsCamera.transform.position = center;
+    }
     public void CenterCameraOn(GameObject GO) {
         if (GO == null) {
             target = null;

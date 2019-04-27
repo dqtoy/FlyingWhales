@@ -46,14 +46,14 @@ public class PlayGuitar : GoapAction {
                 for (int i = 0; i < dwelling.residents.Count; i++) {
                     Character currResident = dwelling.residents[i];
                     if (currResident.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE)) {
-                        return Utilities.rng.Next(7, 12);
+                        return Utilities.rng.Next(20, 30);
                     }
                 }
                 //the actor does NOT have any positive relations with any resident
                 return 99999; //NOTE: Should never reach here since Requirement prevents this.
             } else {
                 //in cases that the guitar is at a dwelling with no residents, always allow.
-                return Utilities.rng.Next(5, 10);
+                return Utilities.rng.Next(10, 20);
             }
         }
         //return Utilities.rng.Next(3, 10);
