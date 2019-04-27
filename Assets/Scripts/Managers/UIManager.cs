@@ -289,7 +289,7 @@ public class UIManager : MonoBehaviour {
 
     private void UpdateUI() {
         //dateLbl.SetText(GameManager.Instance.continuousDays + "/" + GameManager.ConvertTickToTime(GameManager.Instance.tick));
-        dateLbl.SetText(GameManager.ConvertTickToTime(GameManager.Instance.tick));
+        dateLbl.SetText("Day " + GameManager.Instance.continuousDays + "\n" + GameManager.ConvertTickToTime(GameManager.Instance.tick));
         //timeLbl.SetText(GameManager.GetTimeInWordsOfTick(GameManager.Instance.tick).ToString());
         timeLbl.SetText("");
 
@@ -1380,19 +1380,19 @@ public class UIManager : MonoBehaviour {
     private void OnAreaMapClosed(Area area) {
         returnToWorldBtn.interactable = false;
     }
-    public void PointerClickWorldMap(BaseEventData bed) {
-        PointerEventData ped = bed as PointerEventData;
-        if (ped.clickCount == 2) {
-            ReturnToWorlMap();
-        }
-    }
+    //public void PointerClickWorldMap(BaseEventData bed) {
+    //    //PointerEventData ped = bed as PointerEventData;
+    //    //if (ped.clickCount == 2) {
+    //        ReturnToWorlMap();
+    //    //}
+    //}
     public void ReturnToWorlMap() {
         InteriorMapManager.Instance.HideAreaMap();
         OnCameraOutOfFocus();
     }
     public void ReturnToWorldMapHover() {
         if (InteriorMapManager.Instance.currentlyShowingArea != null) {
-            ShowSmallInfo("Double click to exit " + InteriorMapManager.Instance.currentlyShowingArea.name + ".");
+            ShowSmallInfo("Click to exit " + InteriorMapManager.Instance.currentlyShowingArea.name + ".");
         }
     }
     #endregion

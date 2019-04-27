@@ -674,9 +674,10 @@ public class Player : ILeader {
             && plan.endNode.action.planLog != null) { //do not show notification if plan log of end node is null, usually means that the action is not that important
             showPopup = ShouldShowNotificationFrom(character);
         }
-        //if (showPopup) {
-        //    Messenger.Broadcast<Intel>(Signals.SHOW_INTEL_NOTIFICATION, InteractionManager.Instance.CreateNewIntel(plan, character));
-        //}
+        if (showPopup) {
+            //Messenger.Broadcast<Intel>(Signals.SHOW_INTEL_NOTIFICATION, InteractionManager.Instance.CreateNewIntel(plan, character));
+            ShowNotificationFrom(character, plan.endNode.action.planLog);
+        }
     }
     private void OnCharacterDidAction(Character character, GoapAction action) {
         bool showPopup = false;

@@ -24,6 +24,9 @@ public class RoleSlotItem : MonoBehaviour, IDragParentItem {
 
     [SerializeField] private GameObject validPortraitGO;
     [SerializeField] private GameObject invalidPortraitGO;
+    [SerializeField] private GameObject tooltipGO;
+    [SerializeField] private TextMeshProUGUI tooltipLbl;
+
     public CustomDropZone dropZone;
 
     public System.Type neededType { get; private set; }
@@ -277,6 +280,21 @@ public class RoleSlotItem : MonoBehaviour, IDragParentItem {
     }
     public void HideTooltip() {
         UIManager.Instance.HideSmallInfo();
+    }
+    private void ShowActionBtnTooltip(string message, string header) {
+        string m = string.Empty;   
+        if (!string.IsNullOrEmpty(header)) {
+            m = "<font=\"Eczar-Medium\"><line-height=100%><size=18>" + header + "</font>\n";
+        }
+        m += "<line-height=70%><size=16>" + message;
+
+        m = m.Replace("\\n", "\n");
+
+        //actionBtnTooltipLbl.text = m;
+        //actionBtnTooltipGO.gameObject.SetActive(true);
+    }
+    public void HideActionBtnTooltip() {
+        //actionBtnTooltipGO.gameObject.SetActive(false);
     }
     #endregion
 }

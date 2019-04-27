@@ -24,15 +24,10 @@ public class ItemContainer : PooledObject, IPointerClickHandler {
     }
 
     public void ShowItemInfo() {
-#if UNITY_EDITOR
         string summary = item.name + " at " + item.structureLocation?.ToString() ?? "No Location";
-        string ownerName = item.owner?.ToString() ?? "No one";
+        string ownerName = item.characterOwner?.ToString() ?? "No one";
         summary += "\nOwned by: " + ownerName;
         UIManager.Instance.ShowSmallInfo(summary);
-#else
-        UIManager.Instance.ShowSmallInfo(item.name);
-#endif
-
     }
     public void HideItemInfo() {
         UIManager.Instance.HideSmallInfo();
