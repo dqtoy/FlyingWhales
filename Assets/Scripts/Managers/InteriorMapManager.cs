@@ -112,7 +112,7 @@ public class InteriorMapManager : MonoBehaviour {
         Messenger.Broadcast(Signals.AREA_MAP_OPENED, area);
 
         if (centerCameraOnMapCenter) {
-            AreaMapCameraMove.Instance.CenterCameraOn(area.areaMap.gameObject);
+            AreaMapCameraMove.Instance.JustCenterCamera();
         }
     }
     public void HideAreaMap() {
