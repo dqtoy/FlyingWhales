@@ -36,6 +36,7 @@ public class AreaMapCameraMove : MonoBehaviour {
     private float previousCameraFOV;
 
     [SerializeField] private bool cameraControlEnabled = false;
+    [SerializeField] private float xSeeLimit;
 
     #region getters/setters
     public float currentFOV {
@@ -332,7 +333,7 @@ public class AreaMapCameraMove : MonoBehaviour {
     }
     public bool CanSee(GameObject go) {
         Vector3 viewPos = areaMapsCamera.WorldToViewportPoint(go.transform.position);
-        return viewPos.x >= 0 && viewPos.x <= 1 && viewPos.y >= 0 && viewPos.y <= 1 && viewPos.z >= 0;
+        return viewPos.x >= 0 && viewPos.x <= xSeeLimit && viewPos.y >= 0 && viewPos.y <= 1 && viewPos.z >= 0;
     }
     #endregion
 

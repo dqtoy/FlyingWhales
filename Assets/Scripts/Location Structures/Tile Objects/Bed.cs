@@ -9,7 +9,7 @@ public class Bed : TileObject, IPointOfInterest {
 
     public Bed(LocationStructure location) {
         this.location = location;
-        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.SLEEP, INTERACTION_TYPE.TILE_OBJECT_DESTROY, };
+        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.SLEEP, INTERACTION_TYPE.TILE_OBJECT_DESTROY, INTERACTION_TYPE.NAP };
         Initialize(TILE_OBJECT_TYPE.BED);
         users = new Character[2];
     }
@@ -49,18 +49,18 @@ public class Bed : TileObject, IPointOfInterest {
     }
     public override void OnDoActionToObject(GoapAction action) {
         base.OnDoActionToObject(action);
-        if (action.goapType == INTERACTION_TYPE.SLEEP) {
+        if (action.goapType == INTERACTION_TYPE.SLEEP || action.goapType == INTERACTION_TYPE.NAP) {
             AddUser(action.actor);
         }
     }
     public override void OnDoneActionToObject(GoapAction action) {
         base.OnDoneActionToObject(action);
-        if (action.goapType == INTERACTION_TYPE.SLEEP) {
+        if (action.goapType == INTERACTION_TYPE.SLEEP || action.goapType == INTERACTION_TYPE.NAP) {
             RemoveUser(action.actor);
         }
     }
     public override void OnCancelActionTowardsObject(GoapAction action) {
-        if (action.goapType == INTERACTION_TYPE.SLEEP) {
+        if (action.goapType == INTERACTION_TYPE.SLEEP || action.goapType == INTERACTION_TYPE.NAP) {
             RemoveUser(action.actor);
         }
     }

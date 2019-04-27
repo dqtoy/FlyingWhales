@@ -57,6 +57,7 @@ public class GoapAction {
     public string result { get; private set; }
     public string animationName { get; protected set; } //what animation should the character be playing while doing this action
     public bool doesNotStopTargetCharacter { get; protected set; }
+    public bool cannotCancelAction { get; protected set; }
 
     protected bool isTargetMissing {
         get { return poiTarget.state == POI_STATE.INACTIVE || poiTarget.gridTileLocation == null || actor.specificLocation != poiTarget.specificLocation
@@ -506,6 +507,9 @@ public class GoapAction {
         for (int i = 0; i < removedTraits.Count; i++) {
             AddActualEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = removedTraits[i].name, targetPOI = target });
         }
+    }
+    public void SetCannotCancelAction(bool state) {
+        cannotCancelAction = state;
     }
     #endregion
 

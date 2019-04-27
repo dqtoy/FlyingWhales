@@ -122,6 +122,7 @@ public class Hunt : GoapAction {
         if(parentPlan.job != null) {
             parentPlan.job.SetCannotCancelJob(true);
         }
+        SetCannotCancelAction(true);
         target.Death();
     }
     public void PerTickTargetKilled() {
