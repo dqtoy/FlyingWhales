@@ -44,6 +44,7 @@ public class Unconscious : Trait {
             _sourceCharacter = sourceCharacter as Character;
             CheckToApplyRestrainJob();
             CheckToApplyRemoveTraitJob();
+            _sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, name.ToLower());
         }
     }
     public override void OnRemoveTrait(IPointOfInterest sourceCharacter) {
@@ -53,6 +54,7 @@ public class Unconscious : Trait {
         if (_removeTraitJob != null) {
             _removeTraitJob.jobQueueParent.CancelJob(_removeTraitJob);
         }
+        _sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, name.ToLower());
         base.OnRemoveTrait(sourceCharacter);
     }
     #endregion

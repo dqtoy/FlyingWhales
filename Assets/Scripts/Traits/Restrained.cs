@@ -41,6 +41,7 @@ public class Restrained : Trait {
         if (sourceCharacter is Character) {
             _sourceCharacter = sourceCharacter as Character;
             Messenger.AddListener(Signals.TICK_STARTED, CheckRestrainTrait);
+            _sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_restrained");
         }
     }
     public override void OnRemoveTrait(IPointOfInterest sourceCharacter) {
@@ -48,6 +49,7 @@ public class Restrained : Trait {
             Character character = sourceCharacter as Character;
             character.CancelAllJobsTargettingThisCharacter("Feed");
             Messenger.RemoveListener(Signals.TICK_STARTED, CheckRestrainTrait);
+            _sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, name.ToLower());
         }
         base.OnRemoveTrait(sourceCharacter);
     }

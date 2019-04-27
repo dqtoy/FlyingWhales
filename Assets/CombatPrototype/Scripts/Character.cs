@@ -1313,13 +1313,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 GoapPlanJob job = new GoapPlanJob("Ask For Help Save Character", INTERACTION_TYPE.ASK_FOR_HELP_SAVE_CHARACTER, targetCharacter);
                 jobQueue.AddJobInQueue(job);
             } else {
-                Log addLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "ask_for_help_fail");
-                addLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                addLog.AddToFillers(troubledCharacter, troubledCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                addLog.AddLogToInvolvedObjects();
-                if (PlayerManager.Instance.player.ShouldShowNotificationFrom(this)) {
-                    PlayerManager.Instance.player.ShowNotification(addLog);
-                }
+                RegisterLogAndShowNotifToThisCharacterOnly("Generic", "ask_for_help_fail", troubledCharacter, troubledCharacter.name);
             }
         } else {
             if (troubledCharacter == null) {
@@ -1348,13 +1342,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 GoapPlanJob job = new GoapPlanJob("Ask For Help " + helpType.ToString(), helpType, targetCharacter, otherData);
                 jobQueue.AddJobInQueue(job);
             } else {
-                Log addLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "ask_for_help_fail");
-                addLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                addLog.AddToFillers(troubledCharacter, troubledCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                addLog.AddLogToInvolvedObjects();
-                if (PlayerManager.Instance.player.ShouldShowNotificationFrom(this)) {
-                    PlayerManager.Instance.player.ShowNotification(addLog);
-                }
+                RegisterLogAndShowNotifToThisCharacterOnly("Generic", "ask_for_help_fail", troubledCharacter, troubledCharacter.name);
             }
         } else {
             if (troubledCharacter == null) {
@@ -3375,20 +3363,26 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         return true;
     }
     private void OtherIdlePlans() {
-        if (homeStructure != null && currentStructure.structureType == STRUCTURE_TYPE.DWELLING && currentStructure != homeStructure) {
-            PlanIdleReturnHome();
-        } else if (homeStructure != null) {
-            int chance = UnityEngine.Random.Range(0, 100);
-            int returnHomeChance = 0;
-            if(specificLocation == homeArea && currentStructure.structureType == STRUCTURE_TYPE.WORK_AREA) {
-                returnHomeChance = 25;
+        if (homeStructure != null) {
+            if(currentStructure.structureType == STRUCTURE_TYPE.DWELLING) {
+                if(currentStructure != homeStructure) {
+                    PlanIdleReturnHome();
+                } else {
+                    PlanIdleStroll(currentStructure);
+                }
             } else {
-                returnHomeChance = 80;
-            }
-            if(chance < returnHomeChance) {
-                PlanIdleReturnHome();
-            } else {
-                PlanIdleStroll(currentStructure);
+                int chance = UnityEngine.Random.Range(0, 100);
+                int returnHomeChance = 0;
+                if (specificLocation == homeArea && currentStructure.structureType == STRUCTURE_TYPE.WORK_AREA) {
+                    returnHomeChance = 25;
+                } else {
+                    returnHomeChance = 80;
+                }
+                if (chance < returnHomeChance) {
+                    PlanIdleReturnHome();
+                } else {
+                    PlanIdleStroll(currentStructure);
+                }
             }
         } else {
             PlanIdleStroll(currentStructure);
@@ -3848,8 +3842,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     #region Tiredness
     public void ResetTirednessMeter() {
         tiredness = TIREDNESS_DEFAULT;
-        RemoveTrait("Tired");
-        RemoveTrait("Exhausted");
+        RemoveTiredOrExhausted();
     }
     public void AdjustTiredness(int adjustment) {
         tiredness += adjustment;
@@ -3858,16 +3851,19 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             Death("exhaustion");
         } else if (tiredness <= TIREDNESS_THRESHOLD_2) {
             RemoveTrait("Tired");
-            AddTrait("Exhausted");
+            if (AddTrait("Exhausted")) {
+                RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "exhausted");
+            }
             //PlanTirednessRecoveryActions();
         } else if (tiredness <= TIREDNESS_THRESHOLD_1) {
-            AddTrait("Tired");
             RemoveTrait("Exhausted");
+            if (AddTrait("Tired")) {
+                RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "tired");
+            }
             //PlanTirednessRecoveryActions();
         } else {
             //tiredness is higher than both thresholds
-            RemoveTrait("Tired");
-            RemoveTrait("Exhausted");
+            RemoveTiredOrExhausted();
         }
     }
     public void DecreaseTirednessMeter() { //this is used for when tiredness is only decreased by 1 (I did this for optimization, so as not to check for traits everytime)
@@ -3878,12 +3874,16 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         } else if (tiredness <= TIREDNESS_THRESHOLD_2) {
             if (tiredness == TIREDNESS_THRESHOLD_2) {
                 RemoveTrait("Tired");
-                AddTrait("Exhausted");
+                if (AddTrait("Exhausted")) {
+                    RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "exhausted");
+                }
             }
             //PlanTirednessRecoveryActions();
         } else if (tiredness <= TIREDNESS_THRESHOLD_1) {
             if (tiredness == TIREDNESS_THRESHOLD_1) {
-                AddTrait("Tired");
+                if (AddTrait("Tired")) {
+                    RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "tired");
+                }
             }
             //PlanTirednessRecoveryActions();
         }
@@ -3895,16 +3895,28 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             Death("exhaustion");
         } else if (tiredness <= TIREDNESS_THRESHOLD_2) {
             RemoveTrait("Tired");
-            AddTrait("Exhausted");
+            if (AddTrait("Exhausted")) {
+                RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "exhausted");
+            }
             //PlanTirednessRecoveryActions();
         } else if (tiredness <= TIREDNESS_THRESHOLD_1) {
-            AddTrait("Tired");
             RemoveTrait("Exhausted");
+            if (AddTrait("Tired")) {
+                RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "tired");
+            }
             //PlanTirednessRecoveryActions();
         } else {
             //tiredness is higher than both thresholds
-            RemoveTrait("Tired");
-            RemoveTrait("Exhausted");
+            RemoveTiredOrExhausted();
+        }
+    }
+    private void RemoveTiredOrExhausted() {
+        if (!RemoveTrait("Tired")) {
+            if (RemoveTrait("Exhausted")) {
+                RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, "exhausted");
+            }
+        } else {
+            RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, "tired");
         }
     }
     #endregion
@@ -3912,8 +3924,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     #region Fullness
     public void ResetFullnessMeter() {
         fullness = FULLNESS_DEFAULT;
-        RemoveTrait("Hungry");
-        RemoveTrait("Starving");
+        RemoveHungryOrStarving();
     }
     public void AdjustFullness(int adjustment) {
         fullness += adjustment;
@@ -3922,16 +3933,19 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             Death("starvation");
         } else if (fullness <= FULLNESS_THRESHOLD_2) {
             RemoveTrait("Hungry");
-            AddTrait("Starving");
+            if (AddTrait("Starving")) {
+                RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "starving");
+            }
             //PlanFullnessRecoveryActions();
         } else if (fullness <= FULLNESS_THRESHOLD_1) {
             RemoveTrait("Starving");
-            AddTrait("Hungry");
+            if (AddTrait("Hungry")) {
+                RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "hungry");
+            }
             //PlanFullnessRecoveryActions();
         } else {
             //fullness is higher than both thresholds
-            RemoveTrait("Hungry");
-            RemoveTrait("Starving");
+            RemoveHungryOrStarving();
         }
     }
     public void DecreaseFullnessMeter() { //this is used for when fullness is only decreased by 1 (I did this for optimization, so as not to check for traits everytime)
@@ -3942,12 +3956,16 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         } else if (fullness <= FULLNESS_THRESHOLD_2) {
             if (fullness == FULLNESS_THRESHOLD_2) {
                 RemoveTrait("Hungry");
-                AddTrait("Starving");
+                if (AddTrait("Starving")) {
+                    RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "starving");
+                }
             }
             //PlanFullnessRecoveryActions();
         } else if (fullness <= FULLNESS_THRESHOLD_1) {
             if (fullness == FULLNESS_THRESHOLD_1) {
-                AddTrait("Hungry");
+                if (AddTrait("Hungry")) {
+                    RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "hungry");
+                }
             }
             //PlanFullnessRecoveryActions();
         }
@@ -3959,16 +3977,28 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             Death("starvation");
         } else if (fullness <= FULLNESS_THRESHOLD_2) {
             RemoveTrait("Hungry");
-            AddTrait("Starving");
+            if (AddTrait("Starving")) {
+                RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "starving");
+            }
             //PlanFullnessRecoveryActions();
         } else if (fullness <= FULLNESS_THRESHOLD_1) {
             RemoveTrait("Starving");
-            AddTrait("Hungry");
+            if (AddTrait("Hungry")) {
+                RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "hungry");
+            }
             //PlanFullnessRecoveryActions();
         } else {
             //fullness is higher than both thresholds
-            RemoveTrait("Hungry");
-            RemoveTrait("Starving");
+            RemoveHungryOrStarving();
+        }
+    }
+    private void RemoveHungryOrStarving() {
+        if (!RemoveTrait("Hungry")) {
+            if (RemoveTrait("Starving")) {
+                RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, "starving");
+            }
+        } else {
+            RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, "hungry");
         }
     }
     #endregion
@@ -3976,23 +4006,25 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     #region Happiness
     public void ResetHappinessMeter() {
         happiness = HAPPINESS_DEFAULT;
-        RemoveTrait("Lonely");
-        RemoveTrait("Forlorn");
+        RemoveLonelyOrForlorn();
     }
     public void AdjustHappiness(int adjustment) {
         happiness += adjustment;
         happiness = Mathf.Clamp(happiness, 0, HAPPINESS_DEFAULT);
         if (happiness <= HAPPINESS_THRESHOLD_2) {
             RemoveTrait("Lonely");
-            AddTrait("Forlorn");
+            if (AddTrait("Forlorn")) {
+                RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "depressed");
+            }
             //PlanHappinessRecoveryActions();
         } else if (happiness <= HAPPINESS_THRESHOLD_1) {
-            AddTrait("Lonely");
             RemoveTrait("Forlorn");
+            if (AddTrait("Lonely")) {
+                RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "lonely");
+            }
             //PlanHappinessRecoveryActions();
         } else {
-            RemoveTrait("Lonely");
-            RemoveTrait("Forlorn");
+            RemoveLonelyOrForlorn();
         }
     }
     public void SetHappiness(int amount) {
@@ -4000,15 +4032,27 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         happiness = Mathf.Clamp(happiness, 0, HAPPINESS_DEFAULT);
         if (happiness <= HAPPINESS_THRESHOLD_2) {
             RemoveTrait("Lonely");
-            AddTrait("Forlorn");
+            if (AddTrait("Forlorn")) {
+                RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "depressed");
+            }
             //PlanHappinessRecoveryActions();
         } else if (happiness <= HAPPINESS_THRESHOLD_1) {
-            AddTrait("Lonely");
             RemoveTrait("Forlorn");
+            if (AddTrait("Lonely")) {
+                RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "lonely");
+            }
             //PlanHappinessRecoveryActions();
         } else {
-            RemoveTrait("Lonely");
-            RemoveTrait("Forlorn");
+            RemoveLonelyOrForlorn();
+        }
+    }
+    private void RemoveLonelyOrForlorn() {
+        if (!RemoveTrait("Lonely")) {
+            if (RemoveTrait("Forlorn")) {
+                RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, "depressed");
+            }
+        } else {
+            RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, "lonely");
         }
     }
     #endregion
@@ -4904,13 +4948,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     private void CancelCurrentAction(Character target, string cause) {
         if(this != target && !isDead && currentAction != null && currentAction.poiTarget == target) {
-            Log addLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "action_cancelled_cause");
-            addLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            addLog.AddToFillers(null, cause, LOG_IDENTIFIER.STRING_1);
-            addLog.AddLogToInvolvedObjects();
-            if (PlayerManager.Instance.player.ShouldShowNotificationFrom(this)) {
-                PlayerManager.Instance.player.ShowNotification(addLog);
-            }
+            RegisterLogAndShowNotifToThisCharacterOnly("Generic", "action_cancelled_cause", null, cause);
             currentAction.StopAction();
         }
     }
@@ -5201,6 +5239,23 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (lastExploreState != null && lastExploreState.itemsCollected.Count > 0 && role.roleType == CHARACTER_ROLE.ADVENTURER) {
             //create deliver treasure job that will deposit the items that the character collected during his/her last explore action.
             lastExploreState.CreateDeliverTreasureJob();
+        }
+    }
+    #endregion
+
+    #region Logs
+    public void RegisterLogAndShowNotifToThisCharacterOnly(string fileName, string key, object target = null, string targetName = "") {
+        if (!GameManager.Instance.gameHasStarted) {
+            return;
+        }
+        Log addLog = new Log(GameManager.Instance.Today(), "Character", fileName, key);
+        addLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        if(targetName != "") {
+            addLog.AddToFillers(target, targetName, LOG_IDENTIFIER.TARGET_CHARACTER);
+        }
+        addLog.AddLogToInvolvedObjects();
+        if (PlayerManager.Instance.player.ShouldShowNotificationFrom(this, true)) {
+            PlayerManager.Instance.player.ShowNotification(addLog);
         }
     }
     #endregion
