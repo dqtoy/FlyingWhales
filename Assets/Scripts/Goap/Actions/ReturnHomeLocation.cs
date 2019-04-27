@@ -28,9 +28,9 @@ public class ReturnHomeLocation : GoapAction {
         //if (targetTile.occupant != null && targetTile.occupant != actor) {
         //    SetState("Return Home Failed");
         //} else {
-            SetState("Return Home Success");
         //}
         base.PerformActualAction();
+        SetState("Return Home Success");
     }
     public override LocationGridTile GetTargetLocationTile() {
         return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);

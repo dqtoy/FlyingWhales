@@ -26,9 +26,9 @@ public class Pray : GoapAction {
         //if (targetTile.occupant != null && targetTile.occupant != actor) {
         //    SetState("Pray Failed");
         //} else {
-            SetState("Pray Success");
         //}
         base.PerformActualAction();
+        SetState("Pray Success");
     }
     public override LocationGridTile GetTargetLocationTile() {
         return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);

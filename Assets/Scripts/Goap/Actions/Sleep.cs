@@ -18,18 +18,17 @@ public class Sleep : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = null, targetPOI = actor });
     }
     public override void PerformActualAction() {
-        if (poiTarget.gridTileLocation != null && (actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation))) {
-            TileObject obj = poiTarget as TileObject;
-            if (obj.IsAvailable()) {
-                SetState("Rest Success");
-            } else {
-                //Debug.LogError(actor.name + " failed " + goapName + " action while performing it!");
-                SetState("Rest Fail");
-            }
-        } else {
-            SetState("Target Missing");
-        }
         base.PerformActualAction();
+        if (!isTargetMissing) {
+            SetState("Rest Success");
+        } else {
+            TileObject obj = poiTarget as TileObject;
+            if (!obj.IsAvailable()) {
+                SetState("Rest Fail");
+            } else {
+                SetState("Target Missing");
+            }
+        }
     }
     protected override int GetCost() {
         Dwelling dwelling = targetStructure as Dwelling;

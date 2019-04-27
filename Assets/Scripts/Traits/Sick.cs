@@ -36,6 +36,7 @@ public class Sick : Trait {
             _sourceCharacter = sourceCharacter as Character;
             _sourceCharacter.marker.AdjustSpeedModifier(-0.10f);
             CheckToApplyRemoveTraitJob();
+            _sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, name.ToLower());
         }
     }
     public override void OnRemoveTrait(IPointOfInterest sourceCharacter) {
@@ -43,6 +44,7 @@ public class Sick : Trait {
         if (_removeTraitJob != null) {
             _removeTraitJob.jobQueueParent.CancelJob(_removeTraitJob);
         }
+        _sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, name.ToLower());
         base.OnRemoveTrait(sourceCharacter);
     }
     #endregion

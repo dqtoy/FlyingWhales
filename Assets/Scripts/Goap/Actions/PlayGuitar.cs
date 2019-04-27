@@ -22,16 +22,16 @@ public class PlayGuitar : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
     }
     public override void PerformActualAction() {
-        if (poiTarget.gridTileLocation != null && (actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsAdjacentTo(poiTarget))) {
+        base.PerformActualAction();
+        if (!isTargetMissing) {
+            SetState("Play Success");
+        } else {
             if (poiTarget.state == POI_STATE.INACTIVE) {
                 SetState("Play Fail");
             } else {
-                SetState("Play Success");
+                SetState("Target Missing");
             }
-        } else {
-            SetState("Target Missing");
         }
-        base.PerformActualAction();
     }
     protected override int GetCost() {
         //Cost:

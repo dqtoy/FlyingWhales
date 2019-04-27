@@ -22,11 +22,11 @@ public class ReturnHome : GoapAction {
     //}
     public override void PerformActualAction() {
         //if (targetTile != null) {
-            SetState("Return Home Success");
         //} else {
         //    SetState("Return Home Failed");
         //}
         base.PerformActualAction();
+        SetState("Return Home Success");
     }
     public override LocationGridTile GetTargetLocationTile() {
         return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);

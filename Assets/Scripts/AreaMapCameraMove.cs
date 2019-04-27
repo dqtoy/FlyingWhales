@@ -330,6 +330,10 @@ public class AreaMapCameraMove : MonoBehaviour {
 
         return corners;
     }
+    public bool CanSee(GameObject go) {
+        Vector3 viewPos = areaMapsCamera.WorldToViewportPoint(go.transform.position);
+        return viewPos.x >= 0 && viewPos.x <= 1 && viewPos.y >= 0 && viewPos.y <= 1 && viewPos.z >= 0;
+    }
     #endregion
 
     #region Camera Control

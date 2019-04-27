@@ -23,7 +23,7 @@ public class FirstAidCharacter : GoapAction {
     }
     public override void PerformActualAction() {
         base.PerformActualAction();
-        if (!isTargetCharacterMissing && (poiTarget as Character).IsInOwnParty()) {
+        if (!isTargetMissing && (poiTarget as Character).IsInOwnParty()) {
             SetState("First Aid Success");
         } else {
             SetState("Target Missing");

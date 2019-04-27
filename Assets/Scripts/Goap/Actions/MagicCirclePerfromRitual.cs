@@ -7,11 +7,11 @@ public class MagicCirclePerformRitual : GoapAction {
 
     public MagicCirclePerformRitual(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.MAGIC_CIRCLE_PERFORM_RITUAL, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         this.goapName = "Perform Ritual";
-        validTimeOfDays = new TIME_IN_WORDS[] {
-            TIME_IN_WORDS.EARLY_NIGHT,
-            TIME_IN_WORDS.LATE_NIGHT,
-            TIME_IN_WORDS.AFTER_MIDNIGHT,
-        };
+        //validTimeOfDays = new TIME_IN_WORDS[] {
+        //    TIME_IN_WORDS.EARLY_NIGHT,
+        //    TIME_IN_WORDS.LATE_NIGHT,
+        //    TIME_IN_WORDS.AFTER_MIDNIGHT,
+        //};
         actionIconString = GoapActionStateDB.Hostile_Icon;
     }
 
@@ -23,14 +23,14 @@ public class MagicCirclePerformRitual : GoapAction {
     }
     public override void PerformActualAction() {
         base.PerformActualAction();
-        if (poiTarget.gridTileLocation != null && (actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsAdjacentTo(poiTarget))) {
-            if (poiTarget.state != POI_STATE.INACTIVE) {
-                SetState("Perform Ritual Success");
-            } else {
-                SetState("Perform Ritual Fail");
-            }
+        if (!isTargetMissing) {
+            SetState("Perform Ritual Success");
         } else {
-            SetState("Target Missing");
+            if (poiTarget.state == POI_STATE.INACTIVE) {
+                SetState("Perform Ritual Fail");
+            } else {
+                SetState("Target Missing");
+            }
         }
     }
     protected override int GetCost() {

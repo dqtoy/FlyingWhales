@@ -37,6 +37,7 @@ public class Injured : Trait {
             _sourceCharacter.UpdateIsCombatantState();
             _sourceCharacter.marker.AdjustSpeedModifier(-0.15f);
             CheckToApplyRemoveTraitJob();
+            _sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, name.ToLower());
         }
     }
     public override void OnRemoveTrait(IPointOfInterest sourceCharacter) {
@@ -45,6 +46,7 @@ public class Injured : Trait {
         if (_removeTraitJob != null) {
             _removeTraitJob.jobQueueParent.CancelJob(_removeTraitJob);
         }
+        _sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, name.ToLower());
         base.OnRemoveTrait(sourceCharacter);
     }
     #endregion

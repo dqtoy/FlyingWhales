@@ -24,7 +24,7 @@ public class Unconscious : Trait {
         trigger = TRAIT_TRIGGER.OUTSIDE_COMBAT;
         crimeSeverity = CRIME_CATEGORY.NONE;
         daysDuration = 144;
-        advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.FIRST_AID_CHARACTER, };
+        advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.FIRST_AID_CHARACTER };
         effects = new List<TraitEffect>();
     }
 
@@ -44,6 +44,7 @@ public class Unconscious : Trait {
             _sourceCharacter = sourceCharacter as Character;
             CheckToApplyRestrainJob();
             CheckToApplyRemoveTraitJob();
+            _sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, name.ToLower());
         }
     }
     public override void OnRemoveTrait(IPointOfInterest sourceCharacter) {
@@ -53,6 +54,7 @@ public class Unconscious : Trait {
         if (_removeTraitJob != null) {
             _removeTraitJob.jobQueueParent.CancelJob(_removeTraitJob);
         }
+        _sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, name.ToLower());
         base.OnRemoveTrait(sourceCharacter);
     }
     #endregion

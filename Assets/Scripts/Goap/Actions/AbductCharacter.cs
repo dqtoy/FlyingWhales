@@ -19,7 +19,7 @@ public class AbductCharacter : GoapAction {
     }
     public override void PerformActualAction() {
         base.PerformActualAction();
-        if (!isTargetCharacterMissing) {
+        if (!isTargetMissing && (poiTarget as Character).IsInOwnParty()) {
             if (!HasOtherCharacterInRadius()) {
                 SetState("Abduct Success");
             } else {

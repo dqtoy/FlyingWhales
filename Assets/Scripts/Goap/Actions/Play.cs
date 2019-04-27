@@ -28,12 +28,12 @@ public class Play : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
     }
     public override void PerformActualAction() {
+        base.PerformActualAction();
         //if (targetTile.occupant != null && targetTile.occupant != actor) {
         //    SetState("Play Failed");
         //} else {
             SetState("Play Success");
         //}
-        base.PerformActualAction();
     }
     public override LocationGridTile GetTargetLocationTile() {
         return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);

@@ -14,8 +14,8 @@ public class TransformToWolfForm : GoapAction {
     //    AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.NONE, targetPOI = actor });
     //}
     public override void PerformActualAction() {
-        SetState("Transform Success");
         base.PerformActualAction();
+        SetState("Transform Success");
     }
     protected override int GetCost() {
         return 5;

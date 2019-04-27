@@ -691,8 +691,10 @@ public class Player : ILeader {
     #endregion
 
     #region Player Notifications
-    public bool ShouldShowNotificationFrom(Character character) {
-        if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.id == character.id) {
+    public bool ShouldShowNotificationFrom(Character character, bool onlyClickedCharacter = false) {
+        if (!onlyClickedCharacter && !character.isDead && AreaMapCameraMove.Instance.CanSee(character.marker.gameObject)) {
+            return true;
+        }else if (onlyClickedCharacter && UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.id == character.id) {
             return true;
         } else if (roleSlots[JOB.SPY].activeAction is Track) {
             Track track = roleSlots[JOB.SPY].activeAction as Track;

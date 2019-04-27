@@ -19,14 +19,14 @@ public class EatAnimal : GoapAction {
     }
     public override void PerformActualAction() {
         base.PerformActualAction();
-        if (poiTarget.gridTileLocation != null && (actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsAdjacentTo(poiTarget))) {
-            if(poiTarget.state != POI_STATE.INACTIVE) {
-                SetState("Eat Success");
-            } else {
-                SetState("Eat Fail");
-            }
+        if (!isTargetMissing) {
+            SetState("Eat Success");
         } else {
-            SetState("Target Missing");
+            if (poiTarget.state == POI_STATE.INACTIVE) {
+                SetState("Eat Fail");
+            } else {
+                SetState("Target Missing");
+            }
         }
     }
     protected override int GetCost() {

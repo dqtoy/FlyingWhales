@@ -1833,6 +1833,14 @@ public class AreaInnerTileMap : MonoBehaviour {
         float distance = Vector2.Distance(map[(int)startPos.x, (int)startPos.y].localLocation, map[(int)endPos.x, (int)endPos.y].localLocation);
         Debug.LogWarning(distance);
     }
+    [ContextMenu("Print Characters Seen By Camera")]
+    public void PrintCharactersSeenByCamera() {
+        for (int i = 0; i < area.charactersAtLocation.Count; i++) {
+            if (AreaMapCameraMove.Instance.CanSee(area.charactersAtLocation[i].marker.gameObject)) {
+                Debug.Log(area.charactersAtLocation[i].name);
+            }
+        }
+    }
     public void ShowPath(List<LocationGridTile> path) {
         pathLineRenderer.gameObject.SetActive(true);
         pathLineRenderer.positionCount = path.Count;

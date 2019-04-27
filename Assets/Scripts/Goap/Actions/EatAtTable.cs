@@ -17,7 +17,7 @@ public class EatAtTable : GoapAction {
     }
     public override void PerformActualAction() {
         base.PerformActualAction();
-        if (poiTarget.gridTileLocation != null && (actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsAdjacentTo(poiTarget))) {
+        if (!isTargetMissing) {
             poisonedTrait = poiTarget.GetTrait("Poisoned");
             if (poisonedTrait != null) {
                 SetState("Eat Poisoned");

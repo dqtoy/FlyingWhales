@@ -58,8 +58,9 @@ public class GoapAction {
     public string animationName { get; protected set; } //what animation should the character be playing while doing this action
     public bool doesNotStopTargetCharacter { get; protected set; }
 
-    protected bool isTargetCharacterMissing {
-        get { return poiTarget.state == POI_STATE.INACTIVE || actor.specificLocation != poiTarget.specificLocation; }
+    protected bool isTargetMissing {
+        get { return poiTarget.state == POI_STATE.INACTIVE || poiTarget.gridTileLocation == null || actor.specificLocation != poiTarget.specificLocation
+                || !(actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)); }
     }
 
     //Stealth

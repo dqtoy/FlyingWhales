@@ -22,7 +22,7 @@ public class CureCharacter : GoapAction {
     }
     public override void PerformActualAction() {
         base.PerformActualAction();
-        if (!isTargetCharacterMissing && (actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation))) {
+        if (!isTargetMissing && (poiTarget as Character).IsInOwnParty()) {
             SetState("Cure Success");
         } else {
             SetState("Target Missing");
