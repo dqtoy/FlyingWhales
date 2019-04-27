@@ -121,6 +121,7 @@ public class AssaultCharacter : GoapAction {
         if (parentPlan.job != null) {
             parentPlan.job.SetCannotCancelJob(true);
         }
+        SetCannotCancelAction(true);
         Character target = poiTarget as Character;
         target.Death();
     }

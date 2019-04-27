@@ -680,7 +680,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             _ownParty.ReturnToLife();
         }
     }
-    public void Death(string cause = "normal", bool cancelCurrentAction = true) {
+    public void Death(string cause = "normal") {
         if (!_isDead) {
             //if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.id == this.id) {
             //    UIManager.Instance.characterInfoUI.OnClickCloseMenu();
@@ -698,7 +698,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
             CancelAllJobsTargettingThisCharacter("target is already dead", false);
             Messenger.Broadcast(Signals.CANCEL_CURRENT_ACTION, this, "target is already dead");
-            if (currentAction != null && cancelCurrentAction) {
+            if (currentAction != null && !currentAction.cannotCancelAction) {
                 currentAction.StopAction();
             }
             if (ownParty.specificLocation != null && isHoldingItem) {
@@ -4947,7 +4947,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         RemoveTargettedByAction(action);
     }
     private void CancelCurrentAction(Character target, string cause) {
-        if(this != target && !isDead && currentAction != null && currentAction.poiTarget == target) {
+        if(this != target && !isDead && currentAction != null && currentAction.poiTarget == target && !currentAction.cannotCancelAction) {
             RegisterLogAndShowNotifToThisCharacterOnly("Generic", "action_cancelled_cause", null, cause);
             currentAction.StopAction();
         }

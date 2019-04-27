@@ -1172,6 +1172,9 @@ public enum INTERACTION_TYPE {
     STEAL_CHARACTER,
     DROP_ITEM_WAREHOUSE,
     ASK_FOR_HELP_REMOVE_POISON_TABLE,
+    SIT,
+    STAND,
+    NAP,
 }
 public enum INTERACTION_ALIGNMENT {
     EVIL,
@@ -1363,6 +1366,7 @@ public enum TILE_OBJECT_TYPE {
     ORE,
     TREE,
     FOOD,
+    DESK,
 
 }
 public enum POI_STATE {

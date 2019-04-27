@@ -45,6 +45,7 @@ public class DispelMagic : GoapAction {
         if (parentPlan.job != null) {
             parentPlan.job.SetCannotCancelJob(true);
         }
+        SetCannotCancelAction(true);
         RemoveTraitsOfType(poiTarget, TRAIT_TYPE.ENCHANTMENT);
         //**After Effect 2**: Actor loses Ritualized trait.
         RemoveTraitFrom(actor, "Ritualized");

@@ -1096,6 +1096,15 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.ASK_FOR_HELP_REMOVE_POISON_TABLE:
                 goapAction = new AskForHelpRemovePoisonTable(actor, target);
                 break;
+            case INTERACTION_TYPE.STAND:
+                goapAction = new Stand(actor, target);
+                break;
+            case INTERACTION_TYPE.SIT:
+                goapAction = new Sit(actor, target);
+                break;
+            case INTERACTION_TYPE.NAP:
+                goapAction = new Nap(actor, target);
+                break;
         }
         if(goapAction != null && willInitialize) {
             goapAction.Initialize();

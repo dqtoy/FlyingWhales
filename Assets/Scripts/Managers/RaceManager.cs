@@ -117,6 +117,9 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.DROP_ITEM_WAREHOUSE,
                 INTERACTION_TYPE.ASK_FOR_HELP_SAVE_CHARACTER,
                 INTERACTION_TYPE.ASK_FOR_HELP_REMOVE_POISON_TABLE,
+                INTERACTION_TYPE.STAND,
+                INTERACTION_TYPE.SIT,
+                INTERACTION_TYPE.NAP,
             } },
             { RACE.ELVES, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -196,6 +199,9 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.DROP_ITEM_WAREHOUSE,
                 INTERACTION_TYPE.ASK_FOR_HELP_SAVE_CHARACTER,
                 INTERACTION_TYPE.ASK_FOR_HELP_REMOVE_POISON_TABLE,
+                INTERACTION_TYPE.STAND,
+                INTERACTION_TYPE.SIT,
+                INTERACTION_TYPE.NAP,
             } },
             { RACE.GOBLIN, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -276,6 +282,9 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.DROP_ITEM_WAREHOUSE,
                 INTERACTION_TYPE.ASK_FOR_HELP_SAVE_CHARACTER,
                 INTERACTION_TYPE.ASK_FOR_HELP_REMOVE_POISON_TABLE,
+                INTERACTION_TYPE.STAND,
+                INTERACTION_TYPE.SIT,
+                INTERACTION_TYPE.NAP,
             } },
             { RACE.FAERY, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -356,6 +365,9 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.DROP_ITEM_WAREHOUSE,
                 INTERACTION_TYPE.ASK_FOR_HELP_SAVE_CHARACTER,
                 INTERACTION_TYPE.ASK_FOR_HELP_REMOVE_POISON_TABLE,
+                INTERACTION_TYPE.STAND,
+                INTERACTION_TYPE.SIT,
+                INTERACTION_TYPE.NAP,
             } },
             { RACE.SKELETON, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -434,6 +446,9 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.DROP_ITEM_WAREHOUSE,
                 INTERACTION_TYPE.ASK_FOR_HELP_SAVE_CHARACTER,
                 INTERACTION_TYPE.ASK_FOR_HELP_REMOVE_POISON_TABLE,
+                INTERACTION_TYPE.STAND,
+                INTERACTION_TYPE.SIT,
+                INTERACTION_TYPE.NAP,
             } },
             { RACE.SPIDER, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -491,6 +506,9 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.HUNT_ACTION,
                 INTERACTION_TYPE.PLAY,
                 INTERACTION_TYPE.FEED,
+                INTERACTION_TYPE.STAND,
+                INTERACTION_TYPE.SIT,
+                INTERACTION_TYPE.NAP,
             } },
             { RACE.WOLF, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -549,6 +567,9 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.PLAY,
                 INTERACTION_TYPE.FEED,
                 INTERACTION_TYPE.REVERT_TO_NORMAL,
+                INTERACTION_TYPE.STAND,
+                INTERACTION_TYPE.SIT,
+                INTERACTION_TYPE.NAP,
             } },
             { RACE.DRAGON, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -606,6 +627,9 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.HUNT_ACTION,
                 INTERACTION_TYPE.PLAY,
                 INTERACTION_TYPE.FEED,
+                INTERACTION_TYPE.STAND,
+                INTERACTION_TYPE.SIT,
+                INTERACTION_TYPE.NAP,
             } },
         };
     }

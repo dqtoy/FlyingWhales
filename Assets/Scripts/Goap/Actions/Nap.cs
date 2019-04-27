@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Sleep : GoapAction {
-    protected override string failActionState { get { return "Rest Fail"; } }
+public class Nap : GoapAction {
+    protected override string failActionState { get { return "Nap Fail"; } }
 
-    public Sleep(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.SLEEP, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public Nap(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.NAP, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Sleep_Icon;
     }
 
@@ -19,11 +19,11 @@ public class Sleep : GoapAction {
     public override void PerformActualAction() {
         base.PerformActualAction();
         if (!isTargetMissing) {
-            SetState("Rest Success");
+            SetState("Nap Success");
         } else {
             TileObject obj = poiTarget as TileObject;
             if (!obj.IsAvailable()) {
-                SetState("Rest Fail");
+                SetState("Nap Fail");
             } else {
                 SetState("Target Missing");
             }
@@ -32,27 +32,22 @@ public class Sleep : GoapAction {
     protected override int GetCost() {
         Dwelling dwelling = targetStructure as Dwelling;
         if (dwelling.IsResident(actor)) {
-            return 1;
+            return 8;
         } else {
             for (int i = 0; i < dwelling.residents.Count; i++) {
                 Character resident = dwelling.residents[i];
-                if(resident != actor) {
+                if (resident != actor) {
                     CharacterRelationshipData characterRelationshipData = actor.GetCharacterRelationshipData(resident);
                     if (characterRelationshipData != null) {
                         if (characterRelationshipData.HasRelationshipOfEffect(TRAIT_EFFECT.POSITIVE)) {
-                            return 15;
+                            return 25;
                         }
                     }
                 }
             }
-            return 30;
+            return 45;
         }
     }
-    //public override void FailAction() {
-    //    Debug.LogError(actor.name + " failed " + goapName + " action from recalculate path!");
-    //    base.FailAction();
-    //    SetState("Rest Fail");
-    //}
     #endregion
 
     #region Requirements
@@ -65,40 +60,28 @@ public class Sleep : GoapAction {
         if (targetStructure.structureType == STRUCTURE_TYPE.DWELLING && knownLoc != null) {
             TileObject obj = poiTarget as TileObject;
             return obj.IsAvailable();
-            //if(knownLoc.occupant == null) {
-            //    return true;
-            //} else if (knownLoc.occupant == actor) {
-            //    return true;
-            //}
         }
         return false;
     }
     #endregion
 
     #region State Effects
-    private void PreRestSuccess() {
-        currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
-        //poiTarget.SetPOIState(POI_STATE.INACTIVE);
-        //actor.AdjustDoNotGetTired(1);
+    private void PreNapSuccess() {
+        //currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
         Resting restingTrait = new Resting();
         actor.AddTrait(restingTrait);
     }
-    private void PerTickRestSuccess() {
-        actor.AdjustTiredness(7);
+    private void PerTickNapSuccess() {
+        actor.AdjustTiredness(4);
     }
-    private void AfterRestSuccess() {
-        //poiTarget.SetPOIState(POI_STATE.ACTIVE);
-        //actor.AdjustDoNotGetTired(-1);
+    private void AfterNapSuccess() {
         RemoveTraitFrom(actor, "Resting");
     }
-    private void PreRestFail() {
-        currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
-    }
-    private void PreTargetMissing() {
-        currentState.AddLogFiller(actor.currentStructure.location, actor.currentStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
-    }
-    //private void AfterTargetMissing() {
-    //    actor.RemoveAwareness(poiTarget);
+    //private void PreNapFail() {
+    //    currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
+    //}
+    //private void PreNapMissing() {
+    //    currentState.AddLogFiller(actor.currentStructure.location, actor.currentStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
     //}
     #endregion
 }

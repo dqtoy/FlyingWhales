@@ -41,6 +41,7 @@ public class JudgeCharacter : GoapAction {
         if (parentPlan.job != null) {
             parentPlan.job.SetCannotCancelJob(true);
         }
+        SetCannotCancelAction(true);
         //**Effect 1**: Remove target's Restrained trait
         RemoveTraitFrom(poiTarget, "Restrained");
         //**Effect 2**: Target dies

@@ -53,6 +53,7 @@ public class PlayerUI : MonoBehaviour {
     public ToggleGroup minionSortingToggleGroup;
 
     [Header("Intel")]
+    [SerializeField] private GameObject intelContainer;
     [SerializeField] private IntelItem[] intelItems;
     [SerializeField] private Toggle intelToggle;
 
@@ -610,6 +611,15 @@ public class PlayerUI : MonoBehaviour {
         //assignBtn.interactable = true;
         if (UIManager.Instance.characterInfoUI.isShowing) {
             ShowActionButtonsFor(UIManager.Instance.characterInfoUI.activeCharacter);
+        }
+    }
+    public void ShowPlayerIntels(bool state) {
+        intelContainer.SetActive(state);
+        Vector3 previousPos = UIManager.Instance.playerNotifScrollView.transform.localPosition;
+        if (!state) {
+            UIManager.Instance.playerNotifScrollView.transform.localPosition = new Vector3(320f, previousPos.y, previousPos.z);
+        } else {
+            UIManager.Instance.playerNotifScrollView.transform.localPosition = new Vector3(-180f, previousPos.y, previousPos.z);
         }
     }
     #endregion

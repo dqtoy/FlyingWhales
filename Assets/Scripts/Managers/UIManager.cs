@@ -1429,7 +1429,7 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private RectTransform playerNotificationParent;
     [SerializeField] private GameObject intelPrefab;
     [SerializeField] private GameObject defaultNotificationPrefab;
-    [SerializeField] private ScrollRect playerNotifScrollView;
+    public ScrollRect playerNotifScrollView;
     private void ShowPlayerNotification(Intel intel) {
         GameObject newIntelGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(intelPrefab.name, Vector3.zero, Quaternion.identity, playerNotifScrollView.content);
         newIntelGO.GetComponent<IntelNotificationItem>().Initialize(intel);

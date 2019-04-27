@@ -44,6 +44,7 @@ public class MagicCirclePerformRitual : GoapAction {
 
     #region State Effects
     public void PrePerformRitualSuccess() {
+        currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
         //**Pre Effect 1**: Change Magic Circle's status to Inactive
         poiTarget.SetPOIState(POI_STATE.INACTIVE);
     }
