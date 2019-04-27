@@ -13,7 +13,7 @@ public class Servant : RelationshipTrait {
         description = "This character is a master of " + targetCharacter.name;
         relType = RELATIONSHIP_TRAIT.SERVANT;
         type = TRAIT_TYPE.STATUS;
-        effect = TRAIT_EFFECT.NEUTRAL;
+        effect = TRAIT_EFFECT.POSITIVE;
         associatedInteraction = INTERACTION_TYPE.NONE;
         daysDuration = 0;
         effects = new List<TraitEffect>();

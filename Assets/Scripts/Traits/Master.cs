@@ -11,7 +11,7 @@ public class Master : RelationshipTrait {
         name = "Master";
         description = "This character is a servant of " + targetCharacter.name;
         type = TRAIT_TYPE.STATUS;
-        effect = TRAIT_EFFECT.NEUTRAL;
+        effect = TRAIT_EFFECT.POSITIVE;
         relType = RELATIONSHIP_TRAIT.MASTER;
         associatedInteraction = INTERACTION_TYPE.NONE;
         daysDuration = 0;
