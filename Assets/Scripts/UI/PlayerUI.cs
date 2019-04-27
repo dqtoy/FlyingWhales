@@ -33,6 +33,9 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField] private GameObject roleSlotsParent;
     [SerializeField] private RoleSlotItem[] roleSlots;
     [SerializeField] private Button assignBtn;
+    [SerializeField] private RectTransform jobActionsParent;
+    [SerializeField] private GameObject actionBtnTooltipGO;
+    [SerializeField] private TextMeshProUGUI actionBtnTooltipLbl;
 
     [Header("Attack")]
     public GameObject attackGridGO;
@@ -119,6 +122,14 @@ public class PlayerUI : MonoBehaviour {
 
         Messenger.AddListener(Signals.ON_OPEN_SHARE_INTEL, OnOpenShareIntelMenu);
         Messenger.AddListener(Signals.ON_CLOSE_SHARE_INTEL, OnCloseShareIntelMenu);
+
+        //job action buttons
+        Messenger.AddListener<Intel>(Signals.PLAYER_OBTAINED_INTEL, OnPlayerObtainedIntel);
+        Messenger.AddListener<Character, GoapAction>(Signals.CHARACTER_DOING_ACTION, OnCharacterDoingAction);
+        Messenger.AddListener<Character>(Signals.CHARACTER_TRACKED, OnCharacterTracked);
+        Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_RACE, OnCharacterChangedRace);
+        Messenger.AddListener<Character>(Signals.ROLE_CHANGED, OnCharacterChangedRole);
+        Messenger.AddListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
     }
 
     #region Role Slots
@@ -134,6 +145,64 @@ public class PlayerUI : MonoBehaviour {
             }
             currIndex++;
         }
+    }
+    private void ShowActionButtonsFor(Character character) {
+        Utilities.DestroyChildren(jobActionsParent);
+        for (int i = 0; i < roleSlots.Length; i++) {
+            RoleSlotItem item = roleSlots[i];
+            if (PlayerManager.Instance.player.roleSlots[item.slotJob].assignedCharacter != null) {
+                item.ShowActionButtons(character, jobActionsParent);
+            }
+        }
+        jobActionsParent.gameObject.SetActive(true);
+    }
+    private void HideActionButtons() {
+        jobActionsParent.gameObject.SetActive(false);
+    }
+    private void OnPlayerObtainedIntel(Intel intel) {
+        if (UIManager.Instance.characterInfoUI.isShowing) {
+            ShowActionButtonsFor(UIManager.Instance.characterInfoUI.activeCharacter);
+        }
+    }
+    private void OnCharacterDoingAction(Character character, GoapAction action) {
+        if (UIManager.Instance.characterInfoUI.isShowing && character == UIManager.Instance.characterInfoUI.activeCharacter) {
+            ShowActionButtonsFor(character);
+        }
+    }
+    private void OnCharacterFinishedAction(Character character, GoapAction action, string result) {
+        if (UIManager.Instance.characterInfoUI.isShowing && character == UIManager.Instance.characterInfoUI.activeCharacter) {
+            ShowActionButtonsFor(character);
+        }
+    }
+    private void OnCharacterChangedRace(Character character) {
+        if (UIManager.Instance.characterInfoUI.isShowing && character == UIManager.Instance.characterInfoUI.activeCharacter) {
+            ShowActionButtonsFor(character);
+        }
+    }
+    private void OnCharacterTracked(Character character) {
+        if (UIManager.Instance.characterInfoUI.isShowing && character == UIManager.Instance.characterInfoUI.activeCharacter) {
+            ShowActionButtonsFor(character);
+        }
+    }
+    private void OnCharacterChangedRole(Character character) {
+        if (UIManager.Instance.characterInfoUI.isShowing && character == UIManager.Instance.characterInfoUI.activeCharacter) {
+            ShowActionButtonsFor(character);
+        }
+    }
+    public void ShowActionBtnTooltip(string message, string header) {
+        string m = string.Empty;
+        if (!string.IsNullOrEmpty(header)) {
+            m = "<font=\"Eczar-Medium\"><line-height=100%><size=18>" + header + "</font>\n";
+        }
+        m += "<line-height=70%><size=16>" + message;
+
+        m = m.Replace("\\n", "\n");
+
+        actionBtnTooltipLbl.text = m;
+        actionBtnTooltipGO.gameObject.SetActive(true);
+    }
+    public void HideActionBtnTooltip() {
+        actionBtnTooltipGO.gameObject.SetActive(false);
     }
     #endregion
 
@@ -451,6 +520,8 @@ public class PlayerUI : MonoBehaviour {
     private void OnMenuOpened(UIMenu menu) {
         if (menu is LandmarkInfoUI) {
             UIManager.Instance.ShowMinionsMenu();
+        } else if (menu is CharacterInfoUI) {
+            ShowActionButtonsFor(UIManager.Instance.characterInfoUI.activeCharacter);
         }
     }
     private void OnMenuClosed(UIMenu menu) {
@@ -466,6 +537,8 @@ public class PlayerUI : MonoBehaviour {
             } else if (previousMenu.Equals("faction")) {
                 UIManager.Instance.ShowFactionTokenMenu();
             }
+        } else if (menu is CharacterInfoUI) {
+            HideActionButtons();
         }
     }
 
@@ -524,7 +597,7 @@ public class PlayerUI : MonoBehaviour {
         intelToggle.interactable = true;
         for (int i = 0; i < roleSlots.Length; i++) {
             RoleSlotItem rsi = roleSlots[i];
-            rsi.UpdateActionButtons();
+            //rsi.UpdateActionButtons();
             rsi.OverrideDraggableState(true);
         }
         //assignBtn.interactable = true;

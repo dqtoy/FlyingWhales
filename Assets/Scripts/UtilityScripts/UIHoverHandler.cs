@@ -9,7 +9,7 @@ public class UIHoverHandler : MonoBehaviour, IPointerEnterHandler, IPointerExitH
 
     protected bool isHovering;
 
-    public RectTransform tooltipPos;
+    [SerializeField] private UIHoverPosition tooltipPos;
     [SerializeField] protected string tooltipHeader;
     [SerializeField] protected bool ignoreInteractable = false;
 
@@ -17,7 +17,7 @@ public class UIHoverHandler : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     [SerializeField] protected UnityEvent onHoverExitAction;
 
     protected Selectable selectable;
-    
+
 
     private void OnEnable() {
         selectable = this.GetComponent<Selectable>();
@@ -71,16 +71,9 @@ public class UIHoverHandler : MonoBehaviour, IPointerEnterHandler, IPointerExitH
 
     public void ShowSmallInfoInSpecificPosition(string message) {
         if (tooltipPos != null) {
-            UIManager.Instance.ShowSmallInfo(message, Camera.main.WorldToScreenPoint(tooltipPos.transform.position), tooltipHeader);
+            UIManager.Instance.ShowSmallInfo(message, tooltipPos, tooltipHeader);
         } else {
             UIManager.Instance.ShowSmallInfo(message, tooltipHeader);
-        }
-    }
-    public void ShowSmallInfoInSpecificPosition(string message, string header) {
-        if (tooltipPos != null) {
-            UIManager.Instance.ShowSmallInfo(message, Camera.main.WorldToScreenPoint(tooltipPos.transform.position), header);
-        } else {
-            UIManager.Instance.ShowSmallInfo(message, header);
         }
     }
 }

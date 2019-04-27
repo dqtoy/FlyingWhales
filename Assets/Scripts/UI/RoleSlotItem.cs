@@ -48,7 +48,7 @@ public class RoleSlotItem : MonoBehaviour, IDragParentItem {
         Messenger.AddListener<DragObject>(Signals.DRAG_OBJECT_CREATED, OnDragObjectCreated);
         Messenger.AddListener<DragObject>(Signals.DRAG_OBJECT_DESTROYED, OnDragObjectDestroyed);
         Messenger.AddListener<PlayerJobAction>(Signals.JOB_ACTION_COOLDOWN_ACTIVATED, OnJobCooldownActivated);
-        Messenger.AddListener<Intel>(Signals.PLAYER_OBTAINED_INTEL, OnPlayerObtainedIntel);
+        //Messenger.AddListener<Intel>(Signals.PLAYER_OBTAINED_INTEL, OnPlayerObtainedIntel);
     }
 
     public void SetCharacter(Character character) {
@@ -60,7 +60,7 @@ public class RoleSlotItem : MonoBehaviour, IDragParentItem {
         }
         
         UpdateVisuals();
-        UpdateActionButtons();
+        //UpdateActionButtons();
     }
     private void UpdateVisuals() {
         jobIcon.sprite = CharacterManager.Instance.GetJobSprite(slotJob);
@@ -159,51 +159,57 @@ public class RoleSlotItem : MonoBehaviour, IDragParentItem {
     public void HideActionButtons() {
         jobActionsParent.gameObject.SetActive(false);
     }
-    public void ShowActionButtons(JOB_ACTION_TARGET actionTarget) {
-        Utilities.DestroyChildren(jobActionsParent);
-        List<PlayerJobAction> actions = PlayerManager.Instance.player.GetJobActionsThatCanTarget(slotJob, actionTarget);
+    public void ShowActionButtons(Character target, RectTransform parent) {
+        //Utilities.DestroyChildren(jobActionsParent);
+        string summary = "Showing action buttons from " + slotJob.ToString() + " targetting " + target.name;
+        List<PlayerJobAction> actions = PlayerManager.Instance.player.GetJobActionsThatCanTarget(slotJob, target);
         for (int i = 0; i < actions.Count; i++) {
             PlayerJobAction currAction = actions[i];
-            GameObject buttonGO = UIManager.Instance.InstantiateUIObject(jobActionBtnPrefab.name, jobActionsParent);
+            GameObject buttonGO = UIManager.Instance.InstantiateUIObject(jobActionBtnPrefab.name, parent);
             buttonGO.name = currAction.actionName;
             PlayerJobActionButton btn = buttonGO.GetComponent<PlayerJobActionButton>();
-            switch (actionTarget) {
-                case JOB_ACTION_TARGET.CHARACTER:
-                    btn.SetJobAction(currAction, character, UIManager.Instance.characterInfoUI.activeCharacter);
-                    btn.SetClickAction(() => currAction.ActivateAction(character, UIManager.Instance.characterInfoUI.activeCharacter));
-                    break;
-                case JOB_ACTION_TARGET.AREA:
-                    btn.SetJobAction(currAction, character, UIManager.Instance.areaInfoUI.activeArea);
-                    btn.SetClickAction(() => currAction.ActivateAction(character, UIManager.Instance.areaInfoUI.activeArea));
-                    break;
-                case JOB_ACTION_TARGET.FACTION:
-                    break;
-                default:
-                    break;
-            }
+            btn.SetJobAction(currAction, character, UIManager.Instance.characterInfoUI.activeCharacter);
+            btn.SetClickAction(() => currAction.ActivateAction(character, UIManager.Instance.characterInfoUI.activeCharacter));
+            summary += "\nShowning action " + currAction.actionName; 
+            //switch (actionTarget) {
+            //case JOB_ACTION_TARGET.CHARACTER:
+
+            //        break;
+            //    case JOB_ACTION_TARGET.AREA:
+            //        btn.SetJobAction(currAction, character, UIManager.Instance.areaInfoUI.activeArea);
+            //        btn.SetClickAction(() => currAction.ActivateAction(character, UIManager.Instance.areaInfoUI.activeArea));
+            //        break;
+            //    case JOB_ACTION_TARGET.FACTION:
+            //        break;
+            //    default:
+            //        break;
+            //}
         }
-        jobActionsParent.gameObject.SetActive(true);
+        Debug.Log(summary);
+        //jobActionsParent.gameObject.SetActive(true);
     }
     private void OnMenuOpened(UIMenu menu) {
-        UpdateActionButtons();
+        //UpdateActionButtons();
     }
     private void OnMenuClosed(UIMenu menu) {
-        UpdateActionButtons();
+        //UpdateActionButtons();
     }
     public void UpdateActionButtons() {
         if (UIManager.Instance.IsShareIntelMenuOpen()) {
             return;
         }
-        if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.minion == null) {
-            ShowActionButtons(JOB_ACTION_TARGET.CHARACTER);
-        } else if (UIManager.Instance.areaInfoUI.isShowing && UIManager.Instance.areaInfoUI.activeArea.id != PlayerManager.Instance.player.playerArea.id) {
-            ShowActionButtons(JOB_ACTION_TARGET.AREA);
-        } else {
+        //if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.minion == null) {
+        //    ShowActionButtons(UIManager.Instance.characterInfoUI.activeCharacter);
+        //} 
+        //else if (UIManager.Instance.areaInfoUI.isShowing && UIManager.Instance.areaInfoUI.activeArea.id != PlayerManager.Instance.player.playerArea.id) {
+        //    ShowActionButtons(JOB_ACTION_TARGET.AREA);
+        //} 
+        else {
             HideActionButtons();
         }
     }
     private void OnPlayerObtainedIntel(Intel intel) {
-        UpdateActionButtons();
+        //UpdateActionButtons();
     }
     #endregion
 

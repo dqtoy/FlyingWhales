@@ -79,6 +79,15 @@ public class PlayerJobAction {
     protected virtual bool ShouldButtonBeInteractable(Character character, Area targetCharacter) {
         return ShouldButtonBeInteractable();
     }
+    /// <summary>
+    /// Function that determines whether this action can target the given character or not.
+    /// Regardless of cooldown state.
+    /// </summary>
+    /// <param name="character">The target character</param>
+    /// <returns>true or false</returns>
+    public virtual bool CanTarget(Character character) {
+        return true;
+    }
     #endregion
 
     #region Cooldown
