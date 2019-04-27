@@ -12,7 +12,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     public enum Tile_Type { Empty, Wall, Structure, Gate, Road, Structure_Entrance }
     public enum Tile_State { Empty, Occupied }
     public enum Tile_Access { Passable, Impassable, }
-    public enum Ground_Type { Soil, Grass, Stone }
+    public enum Ground_Type { Soil, Grass, Stone, Snow, Tundra }
 
     public bool hasDetail = false;
 

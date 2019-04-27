@@ -36,18 +36,16 @@ public class AreaInnerTileMap : MonoBehaviour {
     [SerializeField] private Tilemap groundTilemap;
     [SerializeField] private Tilemap wallTilemap;
     [SerializeField] private Tilemap detailsTilemap;
-    public Tilemap structureTilemap;
+    [SerializeField] private Tilemap structureTilemap;
     public Tilemap objectsTilemap;
     [SerializeField] private Tilemap roadTilemap;
 
     [Header("Tiles")]
-    [SerializeField] private RuleTile outsideTile;
+    [SerializeField] private TileBase outsideTile;
+    [SerializeField] private TileBase snowOutsideTile;
     [SerializeField] private TileBase insideTile;
     [SerializeField] private TileBase wallTile;
-    [SerializeField] private TileBase structureTile;
     [SerializeField] private TileBase floorTile;
-    [SerializeField] private TileBase characterTile;
-    [SerializeField] private TileBase roadTile;
     [SerializeField] private ItemTileBaseDictionary itemTiles;
     [SerializeField] private TileObjectTileBaseDictionary tileObjectTiles;
 
@@ -69,7 +67,6 @@ public class AreaInnerTileMap : MonoBehaviour {
     [SerializeField] private TileBase leftDoor;
     [SerializeField] private TileBase rightDoor;
 
-
     [Header("Dungeon Tiles")]
     [SerializeField] private TileBase dungeonWallTile;
     [SerializeField] private TileBase dungeonFloorTile;
@@ -79,6 +76,11 @@ public class AreaInnerTileMap : MonoBehaviour {
     [SerializeField] private TileBase soilTile;
     [SerializeField] private TileBase stoneTile;
 
+    [Header("Snow Outside Tiles")]
+    [SerializeField] private TileBase snowTile;
+    [SerializeField] private TileBase tundraTile;
+    [SerializeField] private TileBase snowStoneFloorTile;
+
     [Header("Oustide Detail Tiles")]
     [SerializeField] private TileBase bigTreeTile;
     [SerializeField] private TileBase treeTile;
@@ -86,6 +88,12 @@ public class AreaInnerTileMap : MonoBehaviour {
     [SerializeField] private TileBase flowerTile;
     [SerializeField] private TileBase rockTile;
     [SerializeField] private TileBase randomGarbTile;
+
+    [Header("Snow Detail Tiles")]
+    [SerializeField] private TileBase snowBigTreeTile;
+    [SerializeField] private TileBase snowTreeTile;
+    [SerializeField] private TileBase snowFlowerTile;
+    [SerializeField] private TileBase snowGarbTile;
 
     [Header("Inside Detail Tiles")]
     [SerializeField] private TileBase crateBarrelTile;
@@ -98,8 +106,6 @@ public class AreaInnerTileMap : MonoBehaviour {
     [SerializeField] private RectTransform eventPopupParent;
 
     [Header("Other")]
-    [SerializeField] private GameObject travelLinePrefab;
-    [SerializeField] private Transform travelLineParent;
     public Vector4 cameraBounds;
 
     [Header("For Testing")]
@@ -154,7 +160,7 @@ public class AreaInnerTileMap : MonoBehaviour {
         allEdgeTiles = new List<LocationGridTile>();
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
-                groundTilemap.SetTile(new Vector3Int(x, y, 0), insideTile);
+                groundTilemap.SetTile(new Vector3Int(x, y, 0), GetOutsideFloorTileForArea(area));
                 LocationGridTile tile = new LocationGridTile(x, y, groundTilemap, this);
                 allTiles.Add(tile);
                 if ((tile.localPlace.x == 7 && tile.localPlace.y > 0 && tile.localPlace.y < (height - 2)) 
@@ -192,12 +198,12 @@ public class AreaInnerTileMap : MonoBehaviour {
                 if (x < eastOutsideTiles || x >= width - westOutsideTiles || y < southOutsideTiles || y >= height - northOutsideTiles) {
                     //outside
                     currTile.SetIsInside(false);
-                    groundTilemap.SetTile(currTile.localPlace, outsideTile);
+                    groundTilemap.SetTile(currTile.localPlace, GetOutsideFloorTileForArea(area));
                     outsideTiles.Add(currTile);
                 } else {
                     //inside
                     currTile.SetIsInside(true);
-                    groundTilemap.SetTile(currTile.localPlace, outsideTile);
+                    groundTilemap.SetTile(currTile.localPlace, GetOutsideFloorTileForArea(area));
                     insideTiles.Add(currTile);
                 }
             }
@@ -229,7 +235,7 @@ public class AreaInnerTileMap : MonoBehaviour {
             //once generated, just copy the generated structures to the actual map.
             //else use the old structure generation
             InteriorMapManager.Instance.CleanupForTownGeneration();
-            List<StructureTemplate> validTownCenters = GetValidTownCenterTemplates();
+            List<StructureTemplate> validTownCenters = GetValidTownCenterTemplates(area);
             if (validTownCenters.Count == 0) {
                 throw new System.Exception("There are no valid town center structures for area " + area.name);
             }
@@ -242,9 +248,12 @@ public class AreaInnerTileMap : MonoBehaviour {
                 if (keyValuePair.Key.IsOpenSpace()) {
                     continue; //skip
                 }
+                int structuresToCreate = keyValuePair.Value.Count;
+                if (area.name == "Gloomhollow") {
+                    structuresToCreate = 5; //hardcoded to 5
+                }
 
-                for (int i = 0; i < keyValuePair.Value.Count; i++) {
-                    LocationStructure currSturcture = keyValuePair.Value[i];
+                for (int i = 0; i < structuresToCreate; i++) {
                     List<StructureTemplate> templates = InteriorMapManager.Instance.GetStructureTemplates(keyValuePair.Key); //placed this inside loop so that instance of template is unique per iteration
                     List<StructureTemplate> choices = GetTemplatesThatCanConnectTo(chosenTownCenter, templates);
                     if (choices.Count == 0) {
@@ -254,23 +263,7 @@ public class AreaInnerTileMap : MonoBehaviour {
                     StructureConnector townCenterConnector;
                     StructureConnector chosenTemplateConnector = chosenTemplate.GetValidConnectorTo(chosenTownCenter, out townCenterConnector);
 
-                    Vector3Int shiftTemplateBy = townCenterConnector.Difference(chosenTemplateConnector);
-                    switch (townCenterConnector.neededDirection) {
-                        case Cardinal_Direction.North:
-                            shiftTemplateBy.y += 1;
-                            break;
-                        case Cardinal_Direction.South:
-                            shiftTemplateBy.y -= 1;
-                            break;
-                        case Cardinal_Direction.East:
-                            shiftTemplateBy.x += 1;
-                            break;
-                        case Cardinal_Direction.West:
-                            shiftTemplateBy.x -= 1;
-                            break;
-                        default:
-                            break;
-                    }
+                    Vector3Int shiftTemplateBy = InteriorMapManager.Instance.GetMoveUnitsOfTemplateGivenConnections(chosenTemplate, chosenTemplateConnector, townCenterConnector);
                     townCenterConnector.SetIsOpen(false);
                     chosenTemplateConnector.SetIsOpen(false);
                     //DrawTiles(InteriorMapManager.Instance.agGroundTilemap, chosenTemplate.groundTiles, shiftTemplateBy);
@@ -284,7 +277,19 @@ public class AreaInnerTileMap : MonoBehaviour {
             SplitMap();
             Vector3Int startPoint = new Vector3Int(eastOutsideTiles, southOutsideTiles, 0);
             DrawTownMap(generatedSettings, startPoint);
-            PlaceStructures(generatedSettings, startPoint);
+            if (area.name == "Gloomhollow") {
+                LocationStructure exploreArea = area.GetRandomStructureOfType(STRUCTURE_TYPE.EXPLORE_AREA);
+                for (int i = 0; i < insideTiles.Count; i++) {
+                    LocationGridTile currTile = insideTiles[i];
+                    TileBase structureAsset = structureTilemap.GetTile(currTile.localPlace);
+                    if (structureAsset == null || !structureAsset.name.Contains("wall")) {
+                        currTile.SetStructure(exploreArea);
+                        currTile.SetTileType(LocationGridTile.Tile_Type.Structure);
+                    }
+                }
+            } else {
+                PlaceStructures(generatedSettings, startPoint);
+            }
             AssignOuterAreas(insideTiles, outsideTiles);
         } else {
             Dictionary<LocationStructure, LocationStructureSetting> settings = GenerateStructureSettings(area);
@@ -604,7 +609,7 @@ public class AreaInnerTileMap : MonoBehaviour {
 
             for (int i = 0; i < keyValuePair.Value.Count; i++) {
                 LocationStructure currStructure = keyValuePair.Value[i];
-                if (templates.Count > 0) {
+                if (templates.Count > 0 && keyValuePair.Key != STRUCTURE_TYPE.EXPLORE_AREA) { //ignore explore area templates when not using town map generation
                     //if the structure type has templates, use those
                     StructureTemplate template = templates[Random.Range(0, templates.Count)];
                     generatedSettings.Add(currStructure, new LocationStructureSetting(template));
@@ -780,7 +785,9 @@ public class AreaInnerTileMap : MonoBehaviour {
         for (int x = startPos.x; x < startPos.x + slot.size.X; x++) {
             for (int y = startPos.y; y < startPos.y + slot.size.Y; y++) {
                 LocationGridTile tile = map[x, y];
-                if (groundTilemap.GetTile(tile.localPlace).name.Contains("floor")) {
+                TileBase tb = groundTilemap.GetTile(tile.localPlace);
+                if (tb != null 
+                    && (tb.name.Contains("floor") || tb.name.Contains("Floor"))) {
                     tile.SetStructure(structure);
                     tile.SetTileType(LocationGridTile.Tile_Type.Structure);
                     //groundTilemap.SetColor(tile.localPlace, Color.red);
@@ -880,7 +887,7 @@ public class AreaInnerTileMap : MonoBehaviour {
             if (tilemap == groundTilemap) {
                 if (!string.IsNullOrEmpty(currData.tileAssetName)) {
                     tilemap.SetTile(pos, InteriorMapManager.Instance.GetTileAsset(currData.tileAssetName));
-                    if (currData.tileAssetName.Contains("floor")) {
+                    if (currData.tileAssetName.Contains("floor") || currData.tileAssetName.Contains("Floor")) {
                         tiles.Add(map[pos.x, pos.y]); //only the tiles that use the wooden floor should be set as structures
                     }
                 }
@@ -916,9 +923,13 @@ public class AreaInnerTileMap : MonoBehaviour {
     #endregion
 
     #region Town Generation
-    private List<StructureTemplate> GetValidTownCenterTemplates() {
+    private List<StructureTemplate> GetValidTownCenterTemplates(Area area) {
         List<StructureTemplate> valid = new List<StructureTemplate>();
-        List<StructureTemplate> choices = InteriorMapManager.Instance.GetStructureTemplates("TOWN CENTER");
+        string extension = "Default";
+        if (area.name == "Gloomhollow") {
+            extension = "Snow";
+        }
+        List<StructureTemplate> choices = InteriorMapManager.Instance.GetStructureTemplates("TOWN CENTER/" + extension);
         for (int i = 0; i < choices.Count; i++) {
             StructureTemplate currTemplate = choices[i];
             if (currTemplate.HasConnectorsForStructure(area.structures)) {
@@ -1159,6 +1170,22 @@ public class AreaInnerTileMap : MonoBehaviour {
                     && !x.isLocked
                     && !x.HasNeighbourOfType(LocationGridTile.Tile_Type.Structure_Entrance)
                     && x.tileType != LocationGridTile.Tile_Type.Gate).ToList());
+            } else if (area.name == "Gloomhollow") {
+                //Generate details for inside map (Trees, shrubs, etc.)
+                MapPerlinDetails(insideTiles
+                    .Where(x => !x.hasDetail && x.tileType != LocationGridTile.Tile_Type.Road
+                    && x.objHere == null && !x.HasNeighbourOfType(LocationGridTile.Tile_Type.Gate)
+                    && !x.isLocked
+                    && !x.HasNeighbourOfType(LocationGridTile.Tile_Type.Structure_Entrance)
+                    && x.tileType != LocationGridTile.Tile_Type.Gate).ToList());
+
+                //Generate details for work area (crates, barrels)
+                WorkAreaDetails(insideTiles
+                    .Where(x => !x.hasDetail && x.tileType != LocationGridTile.Tile_Type.Road
+                    && x.objHere == null && !x.HasNeighbourOfType(LocationGridTile.Tile_Type.Gate)
+                    && !x.isLocked
+                    && !x.HasNeighbourOfType(LocationGridTile.Tile_Type.Structure_Entrance)
+                    && x.tileType != LocationGridTile.Tile_Type.Gate).ToList());
             }
         }
     }
@@ -1185,21 +1212,35 @@ public class AreaInnerTileMap : MonoBehaviour {
             float sampleDetail = Mathf.PerlinNoise(xCoordDetail, yCoordDetail);
 
             //ground
-            if (sample < 0.5f) {
-                currTile.groundType = LocationGridTile.Ground_Type.Grass;
-                groundTilemap.SetTile(currTile.localPlace, grassTile);
-            } else if (sample >= 0.5f && sample < 0.8f) {
-                currTile.groundType = LocationGridTile.Ground_Type.Soil;
-                groundTilemap.SetTile(currTile.localPlace, soilTile);
+            if (area.coreTile.biomeType == BIOMES.SNOW) {
+                if (sample < 0.5f) {
+                    currTile.groundType = LocationGridTile.Ground_Type.Snow;
+                    groundTilemap.SetTile(currTile.localPlace, snowTile);
+                } else if (sample >= 0.5f && sample < 0.8f) {
+                    currTile.groundType = LocationGridTile.Ground_Type.Tundra;
+                    groundTilemap.SetTile(currTile.localPlace, tundraTile);
+                } else {
+                    currTile.groundType = LocationGridTile.Ground_Type.Stone;
+                    groundTilemap.SetTile(currTile.localPlace, snowStoneFloorTile);
+                }
             } else {
-                currTile.groundType = LocationGridTile.Ground_Type.Stone;
-                groundTilemap.SetTile(currTile.localPlace, stoneTile);
+                if (sample < 0.5f) {
+                    currTile.groundType = LocationGridTile.Ground_Type.Grass;
+                    groundTilemap.SetTile(currTile.localPlace, grassTile);
+                } else if (sample >= 0.5f && sample < 0.8f) {
+                    currTile.groundType = LocationGridTile.Ground_Type.Soil;
+                    groundTilemap.SetTile(currTile.localPlace, soilTile);
+                } else {
+                    currTile.groundType = LocationGridTile.Ground_Type.Stone;
+                    groundTilemap.SetTile(currTile.localPlace, stoneTile);
+                }
             }
+            
 
             //trees and shrubs
             if (!currTile.hasDetail) {
                 if (sampleDetail < 0.5f) {
-                    if (currTile.groundType == LocationGridTile.Ground_Type.Grass) {
+                    if (currTile.groundType == LocationGridTile.Ground_Type.Grass || currTile.groundType == LocationGridTile.Ground_Type.Snow) {
                         List<LocationGridTile> overlappedTiles = GetTiles(new Point(2, 2), currTile, tiles);
                         int invalidOverlap = overlappedTiles.Where(t => t.hasDetail || !tiles.Contains(t) || t.objHere != null).Count();
                         if (currTile.IsAdjacentToPasssableTiles(3) && !currTile.IsAtEdgeOfMap() 
@@ -1213,21 +1254,23 @@ public class AreaInnerTileMap : MonoBehaviour {
                                 ovTile.SetTileState(LocationGridTile.Tile_State.Occupied);
                                 //ovTile.SetTileAccess(LocationGridTile.Tile_Access.Impassable);
                             }
-                            objectsTilemap.SetTile(currTile.localPlace, bigTreeTile);
+                            objectsTilemap.SetTile(currTile.localPlace, GetBigTreeTile(area));
                             currTile.SetTileState(LocationGridTile.Tile_State.Occupied);
                             //currTile.SetTileAccess(LocationGridTile.Tile_Access.Impassable);
                         } else {
                             if (Random.Range(0, 100) < 50) {
                                 //shrubs
-                                currTile.hasDetail = true;
-                                detailsTilemap.SetTile(currTile.localPlace, shrubTile);
-                                currTile.SetTileState(LocationGridTile.Tile_State.Empty);
+                                if (area.coreTile.biomeType != BIOMES.SNOW) {
+                                    currTile.hasDetail = true;
+                                    detailsTilemap.SetTile(currTile.localPlace, shrubTile);
+                                    currTile.SetTileState(LocationGridTile.Tile_State.Empty);
+                                }
                             } else {
                                 //Crates, Barrels, Ore, Stone and Tree tiles should be impassable. They should all be placed in spots adjacent to at least three passable tiles.
                                 if (currTile.IsAdjacentToPasssableTiles(3) && !currTile.WillMakeNeighboursPassableTileInvalid(3)) {
                                     //normal tree
                                     currTile.hasDetail = true;
-                                    detailsTilemap.SetTile(currTile.localPlace, treeTile);
+                                    detailsTilemap.SetTile(currTile.localPlace, GetTreeTile(area));
                                     currTile.SetTileState(LocationGridTile.Tile_State.Occupied);
                                     if (currTile.structure != null) {
                                         currTile.structure.AddPOI(new Tree(currTile.structure), currTile);
@@ -1250,7 +1293,7 @@ public class AreaInnerTileMap : MonoBehaviour {
             if (!currTile.hasDetail) {
                 if (Random.Range(0, 100) < 3) {
                     currTile.hasDetail = true;
-                    detailsTilemap.SetTile(currTile.localPlace, flowerTile);
+                    detailsTilemap.SetTile(currTile.localPlace, GetFlowerTile(area));
                     currTile.SetTileState(LocationGridTile.Tile_State.Occupied);
                 } else if (Random.Range(0, 100) < 4) {
                     //Crates, Barrels, Ore, Stone and Tree tiles should be impassable. They should all be placed in spots adjacent to at least three passable tiles.
@@ -1262,7 +1305,7 @@ public class AreaInnerTileMap : MonoBehaviour {
                     }
                 } else if (Random.Range(0, 100) < 3) {
                     currTile.hasDetail = true;
-                    detailsTilemap.SetTile(currTile.localPlace, randomGarbTile);
+                    detailsTilemap.SetTile(currTile.localPlace, GetGarbTile(area));
                 }
             }
         }
@@ -1343,16 +1386,16 @@ public class AreaInnerTileMap : MonoBehaviour {
                 break;
             case POINT_OF_INTEREST_TYPE.TILE_OBJECT:
                 TileObject to = obj as TileObject;
-                tileToUse = tileObjectTiles[to.tileObjectType].activeTile;
+                tileToUse = tileObjectTiles[to.tileObjectType].GetAsset(area.coreTile.biomeType).activeTile;
                 tile.SetObjectHere(obj);
                 objectsTilemap.SetTile(tile.localPlace, tileToUse);
                 detailsTilemap.SetTile(tile.localPlace, null);
                 break;
-            default:
-                tileToUse = characterTile;
-                tile.SetObjectHere(obj);
-                objectsTilemap.SetTile(tile.localPlace, tileToUse);
-                break;
+            //default:
+            //    tileToUse = characterTile;
+            //    tile.SetObjectHere(obj);
+            //    objectsTilemap.SetTile(tile.localPlace, tileToUse);
+            //    break;
         }
     }
     public void RemoveObject(LocationGridTile tile) {
@@ -1411,13 +1454,13 @@ public class AreaInnerTileMap : MonoBehaviour {
         TileBase tileToUse = null;
         switch (obj.state) {
             case POI_STATE.ACTIVE:
-                tileToUse = tileObjectTiles[obj.tileObjectType].activeTile;
+                tileToUse = tileObjectTiles[obj.tileObjectType].GetAsset(area.coreTile.biomeType).activeTile;
                 break;
             case POI_STATE.INACTIVE:
-                tileToUse = tileObjectTiles[obj.tileObjectType].inactiveTile;
+                tileToUse = tileObjectTiles[obj.tileObjectType].GetAsset(area.coreTile.biomeType).inactiveTile;
                 break;
             default:
-                tileToUse = tileObjectTiles[obj.tileObjectType].activeTile;
+                tileToUse = tileObjectTiles[obj.tileObjectType].GetAsset(area.coreTile.biomeType).activeTile;
                 break;
         }
         objectsTilemap.SetTile(obj.gridTileLocation.localPlace, tileToUse);
@@ -1571,6 +1614,51 @@ public class AreaInnerTileMap : MonoBehaviour {
         }
         return walls;
     }
+    public TileBase GetOutsideFloorTileForArea(Area area) {
+        switch (area.coreTile.biomeType) {
+            case BIOMES.SNOW:
+            case BIOMES.TUNDRA:
+                return snowOutsideTile;
+            default:
+                return outsideTile;
+        }
+    }
+    public TileBase GetBigTreeTile(Area area) {
+        switch (area.coreTile.biomeType) {
+            case BIOMES.SNOW:
+            case BIOMES.TUNDRA:
+                return snowBigTreeTile;
+            default:
+                return bigTreeTile;
+        }
+    }
+    public TileBase GetTreeTile(Area area) {
+        switch (area.coreTile.biomeType) {
+            case BIOMES.SNOW:
+            case BIOMES.TUNDRA:
+                return snowTreeTile;
+            default:
+                return treeTile;
+        }
+    }
+    public TileBase GetFlowerTile(Area area) {
+        switch (area.coreTile.biomeType) {
+            case BIOMES.SNOW:
+            case BIOMES.TUNDRA:
+                return snowFlowerTile;
+            default:
+                return flowerTile;
+        }
+    }
+    public TileBase GetGarbTile(Area area) {
+        switch (area.coreTile.biomeType) {
+            case BIOMES.SNOW:
+            case BIOMES.TUNDRA:
+                return snowGarbTile;
+            default:
+                return randomGarbTile;
+        }
+    }
     #endregion
 
     #region Other
@@ -1689,53 +1777,6 @@ public class AreaInnerTileMap : MonoBehaviour {
     }
     #endregion
 
-    #region Travel Lines
-    public void DrawLine(LocationGridTile startTile, LocationGridTile destination, Character character) {
-        GameObject travelLine = ObjectPoolManager.Instance.InstantiateObjectFromPool
-            (travelLinePrefab.name, Vector3.zero, Quaternion.identity, travelLineParent);
-        travelLine.GetComponent<AreaMapTravelLine>().DrawLine(startTile, destination, character, this);
-        
-        Debug.Log(GameManager.Instance.TodayLogString() + "Drawing line at " + area.name + "'s map. From " + startTile.localPlace.ToString() + " to " + destination.localPlace.ToString());
-    }
-    public void DrawLineToExit(LocationGridTile startTile, Character character) {
-        GameObject travelLine = ObjectPoolManager.Instance.InstantiateObjectFromPool
-            (travelLinePrefab.name, Vector3.zero, Quaternion.identity, travelLineParent);
-        LocationGridTile exitTile = area.structures[STRUCTURE_TYPE.EXIT][0].tiles[Random.Range(0, area.structures[STRUCTURE_TYPE.EXIT][0].tiles.Count)];
-        travelLine.GetComponent<AreaMapTravelLine>().DrawLine(startTile, exitTile, character, this);
-        Debug.Log(GameManager.Instance.TodayLogString() + "Drawing line at " + area.name + "'s map. From " + startTile.localPlace.ToString() + " to exit" + exitTile.localPlace.ToString());
-    }
-    [ContextMenu("Draw Line For Testing")]
-    public void DrawLineForTesting() {
-        LocationGridTile startTile = new LocationGridTile(0, 4, groundTilemap, null);
-        LocationGridTile destinationTile = new LocationGridTile(20, 15, groundTilemap, null);
-
-        GameObject travelLine = GameObject.Instantiate(travelLinePrefab, travelLineParent);
-        travelLine.GetComponent<AreaMapTravelLine>().DrawLine(startTile, destinationTile, null, this);
-
-        //(newLine.transform as RectTransform).anchoredPosition = new Vector2(32f * startTile.localPlace.x, 32f * startTile.localPlace.y);
-        //float angle = Mathf.Atan2(destinationTile.worldLocation.y - startTile.worldLocation.y, destinationTile.worldLocation.x - startTile.worldLocation.x) * Mathf.Rad2Deg;
-        //newLine.transform.eulerAngles = new Vector3(newLine.transform.rotation.x, newLine.transform.rotation.y, angle);
-
-        //float distance = Vector3.Distance(startTile.worldLocation, destinationTile.worldLocation);
-        //(newLine.transform as RectTransform).sizeDelta = new Vector2((distance + 1) * 32f, 15f);
-    }
-    [ContextMenu("Move Travel Line Content")]
-    public void MoveTravelLineContent() {
-        Debug.Log(grid.CellToWorld(new Vector3Int(0, 0, 0)).ToString());
-        //(travelLineParent.transform as RectTransform).anchoredPosition = canvas.worldCamera.WorldToViewportPoint();
-    }
-    [ContextMenu("Create Realistic Path")]
-    public void CreateRealisticPath() {
-        List<LocationGridTile> _currentPath = PathGenerator.Instance.GetPath(map[(int) startPos.x, (int)startPos.y], map[(int) endPos.x, (int) endPos.y], GRID_PATHFINDING_MODE.REALISTIC);
-        if (_currentPath != null) {
-            //ShowPath(_currentPath);
-            Debug.LogWarning("Created path from " + map[(int) startPos.x, (int) startPos.y].ToString() + " to " + map[(int) endPos.x, (int) endPos.y].ToString());
-        } else {
-            Debug.LogError("Can't create path from " + map[(int) startPos.x, (int) startPos.y].ToString() + " to " + map[(int) endPos.x, (int) endPos.y].ToString());
-        }
-    }
-    #endregion
-
     #region Events
     public void ShowEventPopupAt(LocationGridTile location, Log log) {
         if (location == null) {
@@ -1838,6 +1879,18 @@ public class AreaInnerTileMap : MonoBehaviour {
 
 [System.Serializable]
 public struct TileObjectTileSetting {
+    public TileObjectBiomeAssetDictionary biomeAssets;
+
+    public BiomeTileObjectTileSetting GetAsset(BIOMES biome) {
+        if (biomeAssets.ContainsKey(biome)) {
+            return biomeAssets[biome];
+        }
+        return biomeAssets[BIOMES.NONE]; //NONE is considered default
+    }
+}
+
+[System.Serializable]
+public struct BiomeTileObjectTileSetting {
     public TileBase activeTile;
     public TileBase inactiveTile;
 }

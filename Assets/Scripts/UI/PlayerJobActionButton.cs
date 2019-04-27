@@ -14,6 +14,7 @@ public class PlayerJobActionButton : MonoBehaviour {
     [SerializeField] private Button btn;
     [SerializeField] private TextMeshProUGUI btnLbl;
     [SerializeField] private TextMeshProUGUI subTextLbl;
+    [SerializeField] private Image jobIcon;
     private Character character;
     private object target;
 
@@ -32,8 +33,9 @@ public class PlayerJobActionButton : MonoBehaviour {
         this.action = action;
         this.character = character;
         this.target = target;
+        jobIcon.sprite = CharacterManager.Instance.GetJobSprite(action.parentData.jobType);
         UpdateInteractableState();
-        UpdateSubText();
+        //UpdateSubText();
         UpdateButtonText();
     }
 
@@ -116,7 +118,7 @@ public class PlayerJobActionButton : MonoBehaviour {
 
     public void OnSubTextChanged(PlayerJobAction jobAction) {
         if (jobAction == action) {
-            UpdateSubText();
+            //UpdateSubText();
         }
     }
 }

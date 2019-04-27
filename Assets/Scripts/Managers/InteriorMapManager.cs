@@ -458,7 +458,7 @@ public class InteriorMapManager : MonoBehaviour {
             pos.x += startPos.x;
             pos.y += startPos.y;
             if (tilemap == agGroundTilemap) {
-                if (tilemap.GetTile(pos) != null && !tilemap.GetTile(pos).name.Contains("Dirt")) {
+                if (tilemap.GetTile(pos) != null && !tilemap.GetTile(pos).name.Contains("Dirt") && !tilemap.GetTile(pos).name.Contains("SnowOutside")) {
                     //if the tile map is the ground tile map, and the tile to be replaced is not dirt, do not draw tile
                     continue; //skip drawing this tile
                 }
@@ -523,6 +523,34 @@ public class InteriorMapManager : MonoBehaviour {
             placedStructures.Add(type, new List<StructureSlot>());
         }
         placedStructures[type].Add(slot);
+    }
+
+    /// <summary>
+    /// Get the units the template needs to move.
+    /// </summary>
+    /// <param name="template">The template that needs to move</param>
+    /// <param name="connection1">The connection from the template</param>
+    /// <param name="connection2">The connection the template will connect to</param>
+    /// <returns></returns>
+    public Vector3Int GetMoveUnitsOfTemplateGivenConnections(StructureTemplate template, StructureConnector connection1, StructureConnector connection2) {
+        Vector3Int shiftTemplateBy = connection2.Difference(connection1);
+        switch (connection2.neededDirection) {
+            case Cardinal_Direction.North:
+                shiftTemplateBy.y += 1;
+                break;
+            case Cardinal_Direction.South:
+                shiftTemplateBy.y -= 1;
+                break;
+            case Cardinal_Direction.East:
+                shiftTemplateBy.x += 1;
+                break;
+            case Cardinal_Direction.West:
+                shiftTemplateBy.x -= 1;
+                break;
+            default:
+                break;
+        }
+        return shiftTemplateBy;
     }
     #endregion
 }

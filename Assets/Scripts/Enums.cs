@@ -1473,6 +1473,7 @@ public static class Extensions {
             case STRUCTURE_TYPE.INN:
             case STRUCTURE_TYPE.WAREHOUSE:
             case STRUCTURE_TYPE.DWELLING:
+            case STRUCTURE_TYPE.EXPLORE_AREA:
                 return false;
             default:
                 return true;

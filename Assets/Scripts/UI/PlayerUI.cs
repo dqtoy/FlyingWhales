@@ -148,6 +148,9 @@ public class PlayerUI : MonoBehaviour {
         }
     }
     private void ShowActionButtonsFor(Character character) {
+        if (UIManager.Instance.IsShareIntelMenuOpen()) {
+            return;
+        }
         Utilities.DestroyChildren(jobActionsParent);
         for (int i = 0; i < roleSlots.Length; i++) {
             RoleSlotItem item = roleSlots[i];
@@ -587,21 +590,28 @@ public class PlayerUI : MonoBehaviour {
     private void OnOpenShareIntelMenu() {
         intelToggle.isOn = false;
         intelToggle.interactable = false;
-        for (int i = 0; i < roleSlots.Length; i++) {
-            RoleSlotItem rsi = roleSlots[i];
-            rsi.HideActionButtons();
-            rsi.OverrideDraggableState(false);
+        //for (int i = 0; i < roleSlots.Length; i++) {
+        //    RoleSlotItem rsi = roleSlots[i];
+        //    rsi.HideActionButtons();
+        //    rsi.OverrideDraggableState(false);
+        //}
+        //assignBtn.interactable = false;
+
+        if (UIManager.Instance.characterInfoUI.isShowing) {
+            HideActionButtons();
         }
-        assignBtn.interactable = false;
     }
     private void OnCloseShareIntelMenu() {
         intelToggle.interactable = true;
-        for (int i = 0; i < roleSlots.Length; i++) {
-            RoleSlotItem rsi = roleSlots[i];
-            //rsi.UpdateActionButtons();
-            rsi.OverrideDraggableState(true);
-        }
+        //for (int i = 0; i < roleSlots.Length; i++) {
+        //    RoleSlotItem rsi = roleSlots[i];
+        //    //rsi.UpdateActionButtons();
+        //    rsi.OverrideDraggableState(true);
+        //}
         //assignBtn.interactable = true;
+        if (UIManager.Instance.characterInfoUI.isShowing) {
+            ShowActionButtonsFor(UIManager.Instance.characterInfoUI.activeCharacter);
+        }
     }
     public void ShowPlayerIntels(bool state) {
         intelContainer.SetActive(state);
