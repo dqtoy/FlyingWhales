@@ -2,14 +2,41 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class Table : TileObject, IPointOfInterest {
     public LocationStructure location { get; private set; }
 
-    public Table(LocationStructure location) {
+    private Character[] users;
+    private TileBase usedAsset;
+
+    private int slots {
+        get { return users.Length;}
+    }
+
+    public Table(LocationStructure location, TileBase usedAsset) {
         this.location = location;
         poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.EAT_DWELLING_TABLE, INTERACTION_TYPE.DRINK, INTERACTION_TYPE.TABLE_REMOVE_POISON, INTERACTION_TYPE.TABLE_POISON, INTERACTION_TYPE.TILE_OBJECT_DESTROY, };
         Initialize(TILE_OBJECT_TYPE.TABLE);
+        this.usedAsset = usedAsset;
+        int slots = 4;
+        if (usedAsset.name.Contains("2")) {
+            slots = 2;
+        } else if (usedAsset.name.Contains("Bartop")) {
+            slots = 1;
+        }
+        users = new Character[slots];
+    }
+
+    public override void SetPOIState(POI_STATE state) {
+        base.SetPOIState(state);
+        if (state == POI_STATE.ACTIVE) {
+            //if (GetActiveUserCount() > 0) {
+                UpdateUsedTableAsset();
+            //} else {
+            //    gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this); //update visual based on state
+            //}
+        }
     }
 
     public override string ToString() {
@@ -21,5 +48,221 @@ public class Table : TileObject, IPointOfInterest {
         //    tile.SetTileAccess(LocationGridTile.Tile_Access.Impassable);
         //}
         base.SetGridTileLocation(tile);
+    }
+
+    public override void OnDoActionToObject(GoapAction action) {
+        base.OnDoActionToObject(action);
+        switch (action.goapType) {
+            case INTERACTION_TYPE.EAT_DWELLING_TABLE:
+            case INTERACTION_TYPE.DRINK:
+                AddUser(action.actor);
+                break;
+            
+        }
+    }
+    public override void OnDoneActionToObject(GoapAction action) {
+        base.OnDoneActionToObject(action);
+        switch (action.goapType) {
+            case INTERACTION_TYPE.EAT_DWELLING_TABLE:
+            case INTERACTION_TYPE.DRINK:
+                RemoveUser(action.actor);
+                break;
+
+        }
+    }
+    public override void OnCancelActionTowardsObject(GoapAction action) {
+        base.OnCancelActionTowardsObject(action);
+        switch (action.goapType) {
+            case INTERACTION_TYPE.EAT_DWELLING_TABLE:
+            case INTERACTION_TYPE.DRINK:
+                RemoveUser(action.actor);
+                break;
+
+        }
+    }
+    public override bool IsAvailable() {
+        for (int i = 0; i < users.Length; i++) {
+            if (users[i] == null) {
+                return true; //there is an available slot
+            }
+        }
+        return false;
+    }
+
+    #region Users
+    private void AddUser(Character character) {
+        for (int i = 0; i < users.Length; i++) {
+            if (users[i] == null) {
+                users[i] = character;
+                UpdateUsedTableAsset();
+                if (!IsAvailable()) {
+                    SetPOIState(POI_STATE.INACTIVE); //if all slots in the table are occupied, set it as inactive
+                }
+                ////disable the character's marker
+                //character.marker.SetActiveState(false);
+                //place the character's marker his/her appropriate slot
+                Vector3 pos = GetPositionForUser(GetActiveUserCount());
+                character.marker.pathfindingAI.AdjustDoNotMove(1);
+
+                Vector3 worldPos = character.marker.transform.TransformPoint(pos);
+                Debug.Log("Setting " + character.marker.name + "'s position to " + pos.ToString() + " world pos: " + worldPos.ToString());
+                character.marker.PlaceMarkerAt(pos, gridTileLocation.centeredWorldLocation);
+                Debug.Log(character.marker.name + "'s position is " + character.marker.transform.position.ToString());
+                //character.marker.LookAt(this.gridTileLocation.worldLocation);
+                break;
+            }
+        }
+    }
+    private void RemoveUser(Character character) {
+        for (int i = 0; i < users.Length; i++) {
+            if (users[i] == character) {
+                users[i] = null;
+                if (IsAvailable()) {
+                    SetPOIState(POI_STATE.ACTIVE); //if a slot in the table is unoccupied, set it as active
+                }
+                character.marker.pathfindingAI.AdjustDoNotMove(-1);
+                ////enable the character's marker
+                //character.marker.SetActiveState(true);
+                if (GetActiveUserCount() > 0) {
+                    UpdateAllActiveUsersPosition();
+                }
+                break;
+            }
+        }
+    }
+    private int GetActiveUserCount() {
+        int count = 0;
+        for (int i = 0; i < users.Length; i++) {
+            if (users[i] != null) {
+                count++;
+            }
+        }
+        return count;
+    }
+    private Vector3 GetPositionForUser(int positionInTable) {
+        Vector3 pos = gridTileLocation.localPlace;
+        if (slots == 1) {
+            //concerned with rotation in the 1 slot variant
+            Matrix4x4 m = location.location.areaMap.objectsTilemap.GetTransformMatrix(gridTileLocation.localPlace);
+            int rotation = (int)m.rotation.eulerAngles.z;
+            //if rotation is 0
+            if (rotation == 0 || rotation == 360) {
+                pos.x += 0.5f;
+                pos.y += 0.3f;
+            } else if (rotation == 90) {
+                pos.x += 0.3f;
+                pos.y += 0.5f;
+            } else if (rotation == 180) {
+                pos.x += 0.5f;
+                pos.y += 0.8f;
+            } else if (rotation == 270) {
+                pos.x += 0.3f;
+                pos.y += 0.5f;
+            }
+        } else if (slots == 2) {
+            //concerned with rotation in the 2 slot variant
+            Matrix4x4 m = location.location.areaMap.objectsTilemap.GetTransformMatrix(gridTileLocation.localPlace);
+            float rotation = m.rotation.eulerAngles.z / 90f;
+            if (Utilities.IsEven((int)rotation)) {
+                //table is vertical, I assume that if the table is vertical, it has a rotation of 0 degrees
+                if (positionInTable == 1) {
+                    pos.x += 0.5f;
+                } else {
+                    pos.x += 0.5f;
+                    pos.y += 1f;
+                }
+            } else {
+                //table is horizontal, I assume that if the table is horizontal, it only has a rotation of 90 degrees
+                if (positionInTable == 1) {
+                    pos.x += 1f;
+                    pos.y += 0.5f;
+                } else {
+                    pos.y += 0.5f;
+                }
+            }
+        } else if (slots == 4) {
+            switch (positionInTable) {
+                case 1:
+                    //left side
+                    pos.y += 0.5f;
+                    break;
+                case 2:
+                    //right side
+                    pos.y += 0.5f;
+                    pos.x += 1f;
+                    break;
+                case 3:
+                    //top
+                    pos.y += 1f;
+                    pos.x += 0.5f;
+                    break;
+                case 4:
+                    //bottom
+                    pos.x += 0.5f;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        pos.z = 0;
+
+        return pos;
+    }
+    private void UpdateAllActiveUsersPosition() {
+        int userCount = 0;
+        for (int i = 0; i < users.Length; i++) {
+            Character currUser = users[i];
+            if (currUser != null) {
+                userCount++;
+                Vector3 pos = GetPositionForUser(userCount);
+                currUser.marker.PlaceMarkerAt(pos, gridTileLocation.centeredWorldLocation);
+                //currUser.marker.LookAt(this.gridTileLocation.worldLocation);
+            }
+        }
+    }
+    #endregion
+
+    private void UpdateUsedTableAsset() {
+        //TODO: Think of a way to unify this
+        int userCount = GetActiveUserCount();
+        if (userCount == 1) {
+            if (usedAsset.name.Contains("0")) {
+                gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this, gridTileLocation.parentAreaMap.table01);
+            } else if (usedAsset.name.Contains("1")) {
+                gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this, gridTileLocation.parentAreaMap.table11);
+            } else if (usedAsset.name.Contains("2")) {
+                gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this, gridTileLocation.parentAreaMap.table21);
+            }
+        } else if (userCount == 2) {
+            if (usedAsset.name.Contains("0")) {
+                gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this, gridTileLocation.parentAreaMap.table02);
+            } else if (usedAsset.name.Contains("1")) {
+                gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this, gridTileLocation.parentAreaMap.table12);
+            } else if (usedAsset.name.Contains("2")) {
+                gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this, gridTileLocation.parentAreaMap.table22);
+            }
+        } else if (userCount == 3) {
+            if (usedAsset.name.Contains("0")) {
+                gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this, gridTileLocation.parentAreaMap.table03);
+            } else if (usedAsset.name.Contains("1")) {
+                gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this, gridTileLocation.parentAreaMap.table13);
+            }
+        } else if (userCount == 4) {
+            if (usedAsset.name.Contains("0")) {
+                gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this, gridTileLocation.parentAreaMap.table04);
+            } else if (usedAsset.name.Contains("1")) {
+                gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this, gridTileLocation.parentAreaMap.table14);
+            }
+        } else {
+            if (usedAsset.name.Contains("0")) {
+                gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this, gridTileLocation.parentAreaMap.table00);
+            } else if (usedAsset.name.Contains("1")) {
+                gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this, gridTileLocation.parentAreaMap.table10);
+            } else if (usedAsset.name.Contains("2")) {
+                gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this, gridTileLocation.parentAreaMap.table20);
+            }
+        }
+        //the asset will revert to no one using once the table is set to active again
     }
 }
