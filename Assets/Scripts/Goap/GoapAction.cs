@@ -172,6 +172,7 @@ public class GoapAction {
                             }
                         }
                         if (targetCharacter.currentAction.isPerformingActualAction && !targetCharacter.currentAction.isDone) {
+                            targetCharacter.currentAction.OnStopActionDuringCurrentState();
                             targetCharacter.currentAction.currentState.EndPerTickEffect(false);
                         } else {
                             targetCharacter.SetCurrentAction(null);

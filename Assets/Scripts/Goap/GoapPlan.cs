@@ -15,6 +15,7 @@ public class GoapPlan {
     public bool isBeingRecalculated { get; private set; }
     public bool isPersonalPlan { get; private set; }
     public bool doNotRecalculate { get; private set; }
+    public bool hasShownNotification { get; private set; }
     public GOAP_PLAN_STATE state { get; private set; }
     public GOAP_CATEGORY category { get; private set; }
     public GoapPlanJob job { get; private set; }
@@ -28,6 +29,7 @@ public class GoapPlan {
         this.isPersonalPlan = isPersonalPlan;
         this.category = category;
         this.doNotRecalculate = false;
+        hasShownNotification = false;
         allNodes = new List<GoapNode>();
         //ConstructAllNodes();
         Messenger.AddListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnActionInPlanFinished);
@@ -36,6 +38,7 @@ public class GoapPlan {
     public void Reset(GoapNode startingNode) {
         this.startingNode = startingNode;
         this.currentNode = startingNode;
+        hasShownNotification = false;
         //ConstructAllNodes();
     }
 
@@ -92,6 +95,9 @@ public class GoapPlan {
     }
     public void SetDoNotRecalculate(bool state) {
         doNotRecalculate = state;
+    }
+    public void SetHasShownNotification(bool state) {
+        hasShownNotification = state;
     }
     public void SetPlanState(GOAP_PLAN_STATE state) {
         this.state = state;

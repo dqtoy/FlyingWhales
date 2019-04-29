@@ -669,6 +669,11 @@ public class Player : ILeader {
         return allIntel.Contains(intel);
     }
     private void OnCharacterWillDoPlan(Character character, GoapPlan plan) {
+        if (!plan.hasShownNotification) {
+            plan.SetHasShownNotification(true);
+        } else {
+            return;
+        }
         bool showPopup = false;
         if (plan.endNode.action.showIntelNotification 
             && plan.endNode.action.planLog != null) { //do not show notification if plan log of end node is null, usually means that the action is not that important
@@ -676,7 +681,11 @@ public class Player : ILeader {
         }
         if (showPopup) {
             //Messenger.Broadcast<Intel>(Signals.SHOW_INTEL_NOTIFICATION, InteractionManager.Instance.CreateNewIntel(plan, character));
-            ShowNotificationFrom(character, plan.endNode.action.planLog);
+            if (plan.endNode.action.shouldIntelNotificationOnlyIfActorIsActive) {
+                ShowNotification(plan.endNode.action.planLog);
+            } else {
+                ShowNotificationFrom(character, plan.endNode.action.planLog);
+            }
         }
     }
     private void OnCharacterDidAction(Character character, GoapAction action) {
