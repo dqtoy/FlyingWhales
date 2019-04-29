@@ -33,9 +33,9 @@ public class AreaInnerTileMap : MonoBehaviour {
     [SerializeField] private Transform tilemapsParent;
 
     [Header("Tile Maps")]
-    [SerializeField] private Tilemap groundTilemap;
+    public Tilemap groundTilemap;
     [SerializeField] private Tilemap wallTilemap;
-    [SerializeField] private Tilemap detailsTilemap;
+    public Tilemap detailsTilemap;
     [SerializeField] private Tilemap structureTilemap;
     public Tilemap objectsTilemap;
     [SerializeField] private Tilemap roadTilemap;
@@ -1240,6 +1240,11 @@ public class AreaInnerTileMap : MonoBehaviour {
                     currTile.groundType = LocationGridTile.Ground_Type.Stone;
                     groundTilemap.SetTile(currTile.localPlace, tundraTile);
                 }
+                //Matrix4x4 m = Matrix4x4.TRS(currTile.localPlace, Quaternion.Euler(0f, 0f, (float)(90 * Random.Range(0, 5))), Vector3.one);
+                //groundTilemap.RemoveTileFlags(currTile.localPlace, TileFlags.LockTransform);
+                //groundTilemap.SetTransformMatrix(currTile.localPlace, m);
+                //Debug.Log("Set rotation of " + currTile.localPlace.ToString() + " at " + area.name + " to " + m.rotation.eulerAngles.ToString());
+                //groundTilemap.AddTileFlags(currTile.localPlace, TileFlags.LockTransform);
             } else {
                 if (sample < 0.5f) {
                     currTile.groundType = LocationGridTile.Ground_Type.Grass;
@@ -1251,9 +1256,13 @@ public class AreaInnerTileMap : MonoBehaviour {
                     currTile.groundType = LocationGridTile.Ground_Type.Stone;
                     groundTilemap.SetTile(currTile.localPlace, stoneTile);
                 }
+                //Matrix4x4 m = Matrix4x4.TRS(currTile.localPlace, Quaternion.Euler(0f, 0f, (float)(90 * Random.Range(0, 5))), Vector3.one);
+                //groundTilemap.RemoveTileFlags(currTile.localPlace, TileFlags.LockTransform);
+                //groundTilemap.SetTransformMatrix(currTile.localPlace, m);
+                //Debug.Log("Set rotation of " + currTile.localPlace.ToString() + " at " + area.name + " to " + m.rotation.eulerAngles.ToString());
+                //groundTilemap.AddTileFlags(currTile.localPlace, TileFlags.LockTransform);
             }
             
-
             //trees and shrubs
             if (!currTile.hasDetail) {
                 if (sampleDetail < 0.5f) {
@@ -1281,6 +1290,9 @@ public class AreaInnerTileMap : MonoBehaviour {
                                     currTile.hasDetail = true;
                                     detailsTilemap.SetTile(currTile.localPlace, shrubTile);
                                     currTile.SetTileState(LocationGridTile.Tile_State.Empty);
+                                    Matrix4x4 m = Matrix4x4.TRS(Vector3.zero, Quaternion.Euler(0f, 0f, Random.Range(0f, 360f)), Vector3.one);
+                                    detailsTilemap.RemoveTileFlags(currTile.localPlace, TileFlags.LockTransform);
+                                    detailsTilemap.SetTransformMatrix(currTile.localPlace, m);
                                 }
                             } else {
                                 //Crates, Barrels, Ore, Stone and Tree tiles should be impassable. They should all be placed in spots adjacent to at least three passable tiles.
@@ -1289,6 +1301,9 @@ public class AreaInnerTileMap : MonoBehaviour {
                                     currTile.hasDetail = true;
                                     detailsTilemap.SetTile(currTile.localPlace, GetTreeTile(area));
                                     currTile.SetTileState(LocationGridTile.Tile_State.Occupied);
+                                    Matrix4x4 m = Matrix4x4.TRS(Vector3.zero, Quaternion.Euler(0f, 0f, Random.Range(0f, 360f)), Vector3.one);
+                                    detailsTilemap.RemoveTileFlags(currTile.localPlace, TileFlags.LockTransform);
+                                    detailsTilemap.SetTransformMatrix(currTile.localPlace, m);
                                     if (currTile.structure != null) {
                                         currTile.structure.AddPOI(new Tree(currTile.structure), currTile);
                                     }
@@ -1324,6 +1339,9 @@ public class AreaInnerTileMap : MonoBehaviour {
                     currTile.hasDetail = true;
                     detailsTilemap.SetTile(currTile.localPlace, GetGarbTile(area));
                 }
+                Matrix4x4 m = Matrix4x4.TRS(Vector3.zero, Quaternion.Euler(0f, 0f, Random.Range(0f, 360f)), Vector3.one);
+                detailsTilemap.RemoveTileFlags(currTile.localPlace, TileFlags.LockTransform);
+                detailsTilemap.SetTransformMatrix(currTile.localPlace, m);
             }
         }
     }

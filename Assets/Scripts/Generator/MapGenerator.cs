@@ -93,7 +93,6 @@ public class MapGenerator : MonoBehaviour {
         Messenger.Broadcast(Signals.GAME_LOADED);
         yield return new WaitForSeconds(1f);
         PlayerManager.Instance.ChooseStartingTile();
-
         //GameManager.Instance.StartProgression();
     }
     private IEnumerator InitializeWorldCoroutine(WorldSaveData data) {
@@ -158,6 +157,8 @@ public class MapGenerator : MonoBehaviour {
         CharacterManager.Instance.GenerateRelationships();
         CharacterManager.Instance.PlaceInitialCharacters();
 
+        AudioManager.Instance.TransitionTo("World Music", 10);
+
         CharacterManager.Instance.GenerateInitialAwareness();
         InteractionManager.Instance.Initialize();
         if (SteamManager.Initialized) {
@@ -168,7 +169,7 @@ public class MapGenerator : MonoBehaviour {
         LevelLoaderManager.SetLoadingState(false);
 
         Messenger.Broadcast(Signals.GAME_LOADED);
-
+        
         yield return new WaitForSeconds(1f);
         PlayerManager.Instance.LoadStartingTile();
     }

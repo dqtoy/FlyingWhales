@@ -285,6 +285,8 @@ public class InteriorMapManager : MonoBehaviour {
         string summary = tile.localPlace.ToString();
         summary += "\nLocal Location: " + tile.localLocation.ToString();
         summary += "\nWorld Location: " + tile.worldLocation.ToString();
+        summary += "\nRotation Ground: " + tile.parentAreaMap.groundTilemap.GetTransformMatrix(tile.localPlace).rotation.eulerAngles.ToString();
+        summary += "\nRotation Detail: " + tile.parentAreaMap.detailsTilemap.GetTransformMatrix(tile.localPlace).rotation.eulerAngles.ToString();
         summary += "\nIs Inside: " + tile.isInside.ToString();
         summary += "\nIs Edge: " + tile.isEdge.ToString();
         summary += "\nTile Type: " + tile.tileType.ToString();

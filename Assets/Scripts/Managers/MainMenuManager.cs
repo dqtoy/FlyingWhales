@@ -39,11 +39,19 @@ public class MainMenuManager : MonoBehaviour {
     public void Awake() {
         LoadNewGameData();
     }
+    private void Start() {
+        AudioManager.Instance.PlayFade("Main Menu", 5, () => MainMenuUI.Instance.ShowMenuButtons());
+    }
     #endregion
 
     public void OnClickPlayGame() {
         //PlayGame();
         //ShowWorldConfigurations();
+        //MainMenuUI.Instance.HideMenuButtons();
+        AudioManager.Instance.TransitionTo("Loading", 10, () => OnFinishMusicTransition());
+    }
+
+    private void OnFinishMusicTransition() {
         WorldConfigManager.Instance.SetDataToUse(newGameData);
         LevelLoaderManager.Instance.LoadLevel("Game");
     }

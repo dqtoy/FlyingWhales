@@ -150,7 +150,7 @@ public class Table : TileObject, IPointOfInterest {
                 pos.x += 0.5f;
                 pos.y += 0.3f;
             } else if (rotation == 90) {
-                pos.x += 0.3f;
+                pos.x += 0.8f;
                 pos.y += 0.5f;
             } else if (rotation == 180) {
                 pos.x += 0.5f;
@@ -222,7 +222,6 @@ public class Table : TileObject, IPointOfInterest {
         }
     }
     #endregion
-
     private void UpdateUsedTableAsset() {
         //TODO: Think of a way to unify this
         int userCount = GetActiveUserCount();
