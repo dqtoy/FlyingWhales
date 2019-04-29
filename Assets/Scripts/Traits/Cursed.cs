@@ -34,7 +34,7 @@ public class Cursed : Trait {
         base.OnAddTrait(sourceCharacter);
         if (sourceCharacter is Character) {
             _sourceCharacter = sourceCharacter as Character;
-            CheckToApplyRemoveTraitJob();
+            _sourceCharacter.CreateRemoveTraitJob(name);
             _sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, name.ToLower());
         }
     }
@@ -46,15 +46,4 @@ public class Cursed : Trait {
         base.OnRemoveTrait(sourceCharacter);
     }
     #endregion
-
-    private void CheckToApplyRemoveTraitJob() {
-        if (_sourceCharacter.homeArea.id == _sourceCharacter.specificLocation.id && _sourceCharacter.faction == _sourceCharacter.specificLocation.owner && !_sourceCharacter.HasJobTargettingThisCharacter("Remove Trait", name)) {
-            _removeTraitJob = new GoapPlanJob("Remove Trait", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = name, targetPOI = _sourceCharacter });
-            _removeTraitJob.SetCanTakeThisJobChecker(CanCharacterTakeRemoveTraitJob);
-            _sourceCharacter.specificLocation.jobQueue.AddJobInQueue(_removeTraitJob);
-        }
-    }
-    private bool CanCharacterTakeRemoveTraitJob(Character character) {
-        return _sourceCharacter != character && !character.HasRelationshipOfTypeWith(_sourceCharacter, RELATIONSHIP_TRAIT.ENEMY);
-    }
 }

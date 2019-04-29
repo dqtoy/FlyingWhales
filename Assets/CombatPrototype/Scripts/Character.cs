@@ -102,6 +102,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public int isWaitingForInteraction { get; private set; }
     public CharacterMarker marker { get; private set; }
     public GoapAction currentAction { get; private set; }
+    public GoapAction previousCurrentAction { get; private set; }
     public bool hasAssaultPlan { get; private set; }
     public Character lastAssaultedCharacter { get; private set; }
     public List<GoapAction> targettedByAction { get; private set; }
@@ -1189,7 +1190,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         }
     }
-    private void CheckRemoveTraitRelatedJobsOnLeaveLocation() {
+    private void CancelOrUnassignRemoveTraitRelatedJobs() {
         CancelAllJobsTargettingThisCharacter("Remove Trait");
 
         //All remove trait jobs that are being done by this character must be unassigned
@@ -1216,7 +1217,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         return character.role.roleType == CHARACTER_ROLE.SOLDIER;
     }
     public void CreateRemoveTraitJob(string traitName) {
-        if (faction == specificLocation.owner && !HasJobTargettingThisCharacter("Remove Trait", traitName)) {
+        if (specificLocation == homeArea && faction == specificLocation.owner && GetTraitOf(TRAIT_TYPE.CRIMINAL) == null && !HasJobTargettingThisCharacter("Remove Trait", traitName)) {
             GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = traitName, targetPOI = this };
             GoapPlanJob job = new GoapPlanJob("Remove Trait", goapEffect);
             job.SetCanTakeThisJobChecker(CanCharacterTakeRemoveTraitJob);
@@ -1595,7 +1596,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     private void OnLeaveArea(Party party) {
         if (currentParty == party) {
             CheckApprehendRelatedJobsOnLeaveLocation();
-            CheckRemoveTraitRelatedJobsOnLeaveLocation();
+            CancelOrUnassignRemoveTraitRelatedJobs();
             marker.ClearTerrifyingCharacters();
         } else {
             if(marker.terrifyingCharacters.Count > 0) {
@@ -2773,8 +2774,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 AdjustIgnoreHostilities(1);
             }
             _ownParty.RemoveAllCharacters();
+        }else if (trait.type == TRAIT_TYPE.CRIMINAL) {
+            CancelOrUnassignRemoveTraitRelatedJobs();
         }
-        if(trait.name == "Abducted" || trait.name == "Restrained") {
+        if (trait.name == "Abducted" || trait.name == "Restrained") {
             AdjustDoNotGetTired(1);
         } else if (trait.name == "Packaged" || trait.name == "Hibernating" || trait.name == "Reanimated") {
             AdjustDoNotGetTired(1);
@@ -2845,6 +2848,15 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             AdjustDoNotDisturb(-1);
             if (trait.effect == TRAIT_EFFECT.NEGATIVE) {
                 AdjustIgnoreHostilities(-1);
+            }
+        } else if(trait.type == TRAIT_TYPE.CRIMINAL) {
+            if(GetTraitOf(TRAIT_TYPE.CRIMINAL) == null) {
+                for (int i = 0; i < traits.Count; i++) {
+                    if (traits[i].name == "Cursed" || traits[i].name == "Sick"
+                        || traits[i].name == "Injured" || traits[i].name == "Unconscious") {
+                        CreateRemoveTraitJob(traits[i].name);
+                    }
+                }
             }
         }
         if (trait.name == "Abducted" || trait.name == "Restrained") {
@@ -3202,15 +3214,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             if (!PlanFullnessRecoveryActions()) {
                 if (!PlanTirednessRecoveryActions()) {
                     if (!PlanHappinessRecoveryActions()) {
-                        //bool hasAddedToGoapPlans = false;
-                        if (!PlanWorkActions()) { //ref hasAddedToGoapPlans
-                            OtherIdlePlans();
+                        if (!PlanWorkActions()) {
+                            string idleLog = OtherIdlePlans();
+                            PrintLogIfActive(idleLog);
                         } 
-                        //else {
-                        //    if (hasAddedToGoapPlans) {
-                        //        PlanGoapActions();
-                        //    }
-                        //}
                     }
                 }
             }
@@ -3348,10 +3355,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         return true;
     }
     public bool PlanIdleReturnHome() {
-        if (GetTrait("Berserker") != null) {
-            //Return home becomes stroll if the character has berserker trait
-            PlanIdleStroll(currentStructure);
-        } else {
+        //if (GetTrait("Berserker") != null) {
+        //    //Return home becomes stroll if the character has berserker trait
+        //    PlanIdleStroll(currentStructure);
+        //} else {
             GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.RETURN_HOME, this, this);
             goapAction.SetTargetStructure();
             GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
@@ -3359,35 +3366,183 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             goapPlan.ConstructAllNodes();
             allGoapPlans.Add(goapPlan);
             PlanGoapActions(goapAction);
-        }
+        //}
         return true;
     }
-    private void OtherIdlePlans() {
-        if (homeStructure != null) {
-            if(currentStructure.structureType == STRUCTURE_TYPE.DWELLING) {
-                if(currentStructure != homeStructure) {
-                    PlanIdleReturnHome();
+    private string OtherIdlePlans() {
+        string log = GameManager.Instance.TodayLogString() + " IDLE PLAN FOR " + name;
+        if(faction.id != FactionManager.Instance.neutralFaction.id) {
+            //NPC with Faction Idle
+            log += "\n-" + name + " has a faction";
+            if (previousCurrentAction != null && previousCurrentAction.goapType == INTERACTION_TYPE.RETURN_HOME && currentStructure == homeStructure) {
+                log += "\n-" + name + " is in home structure and just returned home";
+                TileObject deskOrTable = GetUnoccupiedHomeTileObject(TILE_OBJECT_TYPE.DESK, TILE_OBJECT_TYPE.TABLE);
+                if (deskOrTable != null) {
+                    log += "\n-" + name + " will do action Sit on " + deskOrTable.ToString();
+                    PlanIdle(INTERACTION_TYPE.SIT, deskOrTable);
                 } else {
-                    PlanIdleStroll(currentStructure);
+                    log += "\n-" + name + " will do action Stand";
+                    PlanIdle(INTERACTION_TYPE.STAND, this);
                 }
-            } else {
-                int chance = UnityEngine.Random.Range(0, 100);
-                int returnHomeChance = 0;
-                if (specificLocation == homeArea && currentStructure.structureType == STRUCTURE_TYPE.WORK_AREA) {
-                    returnHomeChance = 25;
-                } else {
-                    returnHomeChance = 80;
+                return log;
+            } else if (currentStructure == homeStructure) {
+                log += "\n-" + name + " is in home structure";
+                TIME_IN_WORDS currentTimeOfDay = GameManager.GetCurrentTimeInWordsOfTick();
+                if (currentTimeOfDay == TIME_IN_WORDS.EARLY_NIGHT) {
+                    int chance = UnityEngine.Random.Range(0, 100);
+                    if(chance < 35) {
+                        log += "\n-Early Night: " + name + " will do action Drink (multithreaded)";
+                        StartGOAP(INTERACTION_TYPE.DRINK, null, GOAP_CATEGORY.IDLE);
+                        return log;
+                    }
                 }
-                if (chance < returnHomeChance) {
-                    PlanIdleReturnHome();
-                } else {
-                    PlanIdleStroll(currentStructure);
+                if (currentTimeOfDay == TIME_IN_WORDS.AFTERNOON) {
+                    int chance = UnityEngine.Random.Range(0, 100);
+                    if (chance < 25) {
+                        TileObject bed = GetUnoccupiedHomeTileObject(TILE_OBJECT_TYPE.BED);
+                        if(bed != null) {
+                            log += "\n-Afternoon: " + name + " will do action Nap on " + bed.ToString();
+                            PlanIdle(INTERACTION_TYPE.NAP, bed);
+                            return log;
+                        }
+                    }
                 }
+                if (currentTimeOfDay == TIME_IN_WORDS.MORNING || currentTimeOfDay == TIME_IN_WORDS.AFTERNOON) {
+                    int chance = UnityEngine.Random.Range(0, 100);
+                    if (chance < 25) {
+                        log += "\n-Morning or Afternoon: " + name + " will do action Daydream";
+                        PlanIdle(INTERACTION_TYPE.DAYDREAM, this);
+                        return log;
+                    }
+                }
+                int guitarChance = UnityEngine.Random.Range(0, 100);
+                if (guitarChance < 25) {
+                    TileObject guitar = GetUnoccupiedHomeTileObject(TILE_OBJECT_TYPE.GUITAR);
+                    if(guitar != null) {
+                        log += "\n-" + name + " will do action Play Guitar on " + guitar.ToString();
+                        PlanIdle(INTERACTION_TYPE.PLAY_GUITAR, guitar);
+                        return log;
+                    }
+                }
+                TileObject deskOrTable = GetUnoccupiedHomeTileObject(TILE_OBJECT_TYPE.DESK, TILE_OBJECT_TYPE.TABLE);
+                if (deskOrTable != null) {
+                    log += "\n-" + name + " will do action Sit on " + deskOrTable.ToString();
+                    PlanIdle(INTERACTION_TYPE.SIT, deskOrTable);
+                    return log;
+                }
+
+                log += "\n-" + name + " will do action Stand";
+                PlanIdle(INTERACTION_TYPE.STAND, this);
+                return log;
+            } else if (currentStructure.structureType == STRUCTURE_TYPE.DWELLING && currentStructure != homeStructure) {
+                log += "\n-" + name + " is in another dwelling and will do action Return Home";
+                PlanIdleReturnHome();
+                return log;
+            } else if (currentStructure.structureType == STRUCTURE_TYPE.WORK_AREA && specificLocation == homeArea) {
+                log += "\n-" + name + " is in the Work Area of home location";
+                TIME_IN_WORDS currentTimeOfDay = GameManager.GetCurrentTimeInWordsOfTick();
+                if (currentTimeOfDay == TIME_IN_WORDS.MORNING || currentTimeOfDay == TIME_IN_WORDS.AFTERNOON) {
+                    int chance = UnityEngine.Random.Range(0, 100);
+                    if (chance < 25) {
+                        log += "\n-Morning or Afternoon: " + name + " will enter Stroll State";
+                        PlanIdleStroll(currentStructure);
+                        return log;
+                    }
+                }
+                if (currentTimeOfDay == TIME_IN_WORDS.EARLY_NIGHT) {
+                    int chance = UnityEngine.Random.Range(0, 100);
+                    if (chance < 35) {
+                        log += "\n-Early Night: " + name + " will do action Drink (multithreaded)";
+                        StartGOAP(INTERACTION_TYPE.DRINK, null, GOAP_CATEGORY.IDLE);
+                        return log;
+                    }
+                }
+                log += "\n-" + name + " will do action Return Home";
+                PlanIdleReturnHome();
+                return log;
+            } else if (currentStructure != homeStructure) {
+                log += "\n-" + name + " is in another area and will do action Return Home";
+                PlanIdleReturnHome();
+                return log;
             }
         } else {
-            PlanIdleStroll(currentStructure);
+            //Unaligned NPC Idle
+            log += "\n-" + name + " has no faction";
+            if (specificLocation != homeArea) {
+                log += "\n-" + name + " is in another area and will do action Return Home";
+                PlanIdleReturnHome();
+                return log;
+            } else {
+                TIME_IN_WORDS currentTimeOfDay = GameManager.GetCurrentTimeInWordsOfTick();
+                if (currentTimeOfDay == TIME_IN_WORDS.MORNING || currentTimeOfDay == TIME_IN_WORDS.AFTERNOON) {
+                    int chance = UnityEngine.Random.Range(0, 100);
+                    if (chance < 25) {
+                        log += "\n-Morning or Afternoon: " + name + " will do action Play";
+                        PlanIdle(INTERACTION_TYPE.PLAY, this);
+                        return log;
+                    }
+                }
+                log += "\n-" + name + " will enter Stroll State";
+                PlanIdleStroll(currentStructure);
+                return log;
+            }
         }
-        //PlanGoapActions();
+        return log;
+
+        //if (homeStructure != null) {
+        //    if(currentStructure.structureType == STRUCTURE_TYPE.DWELLING) {
+        //        if(currentStructure != homeStructure) {
+        //            PlanIdleReturnHome();
+        //        } else {
+        //            PlanIdleStroll(currentStructure);
+        //        }
+        //    } else {
+        //        int chance = UnityEngine.Random.Range(0, 100);
+        //        int returnHomeChance = 0;
+        //        if (specificLocation == homeArea && currentStructure.structureType == STRUCTURE_TYPE.WORK_AREA) {
+        //            returnHomeChance = 25;
+        //        } else {
+        //            returnHomeChance = 80;
+        //        }
+        //        if (chance < returnHomeChance) {
+        //            PlanIdleReturnHome();
+        //        } else {
+        //            PlanIdleStroll(currentStructure);
+        //        }
+        //    }
+        //} else {
+        //    PlanIdleStroll(currentStructure);
+        //}
+    }
+    private void PlanIdle(INTERACTION_TYPE type, IPointOfInterest target) {
+        GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(type, this, target);
+        GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
+        GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.IDLE);
+        goapPlan.ConstructAllNodes();
+        allGoapPlans.Add(goapPlan);
+        PlanGoapActions(goapAction);
+    }
+    private TileObject GetUnoccupiedHomeTileObject(TILE_OBJECT_TYPE type) {
+        for (int i = 0; i < homeStructure.pointsOfInterest.Count; i++) {
+            if(homeStructure.pointsOfInterest[i].state == POI_STATE.ACTIVE && homeStructure.pointsOfInterest[i] is TileObject) {
+                TileObject tileObj = homeStructure.pointsOfInterest[i] as TileObject;
+                if(tileObj.tileObjectType == type) {
+                    return tileObj;
+                }
+            }
+        }
+        return null;
+    }
+    private TileObject GetUnoccupiedHomeTileObject(TILE_OBJECT_TYPE type1, TILE_OBJECT_TYPE type2) {
+        for (int i = 0; i < homeStructure.pointsOfInterest.Count; i++) {
+            if (homeStructure.pointsOfInterest[i].state == POI_STATE.ACTIVE && homeStructure.pointsOfInterest[i] is TileObject) {
+                TileObject tileObj = homeStructure.pointsOfInterest[i] as TileObject;
+                if (tileObj.tileObjectType == type1 || tileObj.tileObjectType == type2) {
+                    return tileObj;
+                }
+            }
+        }
+        return null;
     }
     public bool AssaultCharacter(Character target) {
         //Debug.Log(this.name + " will assault " + target.name);
@@ -4466,9 +4621,11 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
     }
     public bool IsPOIInCharacterAwarenessList(IPointOfInterest poi, List<CharacterAwareness> awarenesses) {
-        for (int i = 0; i < awarenesses.Count; i++) {
-            if (awarenesses[i].poi == poi) {
-                return true;
+        if(awarenesses != null && awarenesses.Count > 0) {
+            for (int i = 0; i < awarenesses.Count; i++) {
+                if (awarenesses[i].poi == poi) {
+                    return true;
+                }
             }
         }
         return false;
@@ -4899,6 +5056,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //        }
         //    }
         //}
+        if(currentAction != null) {
+            previousCurrentAction = currentAction;
+        }
         currentAction = action;
         if (currentAction != null) {
             PrintLogIfActive(GameManager.Instance.TodayLogString() + this.name + " will do action " + action.goapType.ToString() + " to " + action.poiTarget.ToString());

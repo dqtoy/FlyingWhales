@@ -126,7 +126,7 @@ public class GoapThread : Multithread {
                         //kvp.Value.RemoveAt(i);
                         //i--;
                     } else {
-                        if (character.specificLocation == actor.specificLocation || actor.IsPOIInCharacterAwarenessList(character, characterTargetsAwareness)) {
+                        if (character.specificLocation == actor.specificLocation || character == actor || actor.IsPOIInCharacterAwarenessList(character, characterTargetsAwareness)) {
                             List<GoapAction> awarenessActions = kvp.Value[i].poi.AdvertiseActionsToActor(actor, actorAllowedActions);
                             if (awarenessActions != null && awarenessActions.Count > 0) {
                                 usableActions.AddRange(awarenessActions);
@@ -279,7 +279,7 @@ public class GoapThread : Multithread {
                         //kvp.Value.RemoveAt(i);
                         //i--;
                     } else {
-                        if (character.gridTileLocation.structure == actor.currentStructure || actor.IsPOIInCharacterAwarenessList(character, recalculationPlan.goalCharacterTargets)) {
+                        if (character.specificLocation == actor.specificLocation || character == actor || actor.IsPOIInCharacterAwarenessList(character, recalculationPlan.goalCharacterTargets)) {
                             List<GoapAction> awarenessActions = kvp.Value[i].poi.AdvertiseActionsToActor(actor, actorAllowedActions);
                             if (awarenessActions != null && awarenessActions.Count > 0) {
                                 usableActions.AddRange(awarenessActions);

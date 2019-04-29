@@ -43,8 +43,10 @@ namespace Pathfinding.RVO.Sampled {
 
         public List<IAgent> AvoidedAgents { get; set; }
 
-		/// <summary>\copydoc Pathfinding::RVO::IAgent::Position</summary>
-		public Vector2 Position { get; set; }
+        public bool useNoCollisionOnDifferentStructures { get; set; }
+
+        /// <summary>\copydoc Pathfinding::RVO::IAgent::Position</summary>
+        public Vector2 Position { get; set; }
 
 		/// <summary>\copydoc Pathfinding::RVO::IAgent::ElevationCoordinate</summary>
 		public float ElevationCoordinate { get; set; }

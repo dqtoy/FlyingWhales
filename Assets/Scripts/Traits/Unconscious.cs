@@ -43,7 +43,7 @@ public class Unconscious : Trait {
         if(sourceCharacter is Character) {
             _sourceCharacter = sourceCharacter as Character;
             CheckToApplyRestrainJob();
-            CheckToApplyRemoveTraitJob();
+            _sourceCharacter.CreateRemoveTraitJob(name);
             _sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, name.ToLower());
         }
     }
@@ -69,16 +69,5 @@ public class Unconscious : Trait {
     }
     private bool CanCharacterTakeRestrainJob(Character character) {
         return character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.CIVILIAN || character.role.roleType == CHARACTER_ROLE.ADVENTURER;
-    }
-
-    private void CheckToApplyRemoveTraitJob() {
-        if (_sourceCharacter.homeArea.id == _sourceCharacter.specificLocation.id && _sourceCharacter.faction == _sourceCharacter.specificLocation.owner && !_sourceCharacter.HasJobTargettingThisCharacter("Remove Trait", name)) {
-            _removeTraitJob = new GoapPlanJob("Remove Trait", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = name, targetPOI = _sourceCharacter });
-            _removeTraitJob.SetCanTakeThisJobChecker(CanCharacterTakeRemoveTraitJob);
-            _sourceCharacter.specificLocation.jobQueue.AddJobInQueue(_removeTraitJob);
-        }
-    }
-    private bool CanCharacterTakeRemoveTraitJob(Character character) {
-        return _sourceCharacter != character && !character.HasRelationshipOfTypeWith(_sourceCharacter, RELATIONSHIP_TRAIT.ENEMY);
     }
 }

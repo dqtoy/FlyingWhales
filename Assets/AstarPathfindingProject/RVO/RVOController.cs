@@ -233,12 +233,13 @@ namespace Pathfinding.RVO {
         public string agentName;
         public bool useAvoidedAgents;
         public List<IAgent> avoidedAgents;
+        public bool useNoCollisionOnDifferentStructures;
 
-		/// <summary>
-		/// Current position of the agent.
-		/// Note that this is only updated every local avoidance simulation step, not every frame.
-		/// </summary>
-		public Vector3 position {
+        /// <summary>
+        /// Current position of the agent.
+        /// Note that this is only updated every local avoidance simulation step, not every frame.
+        /// </summary>
+        public Vector3 position {
 			get {
 				return To3D(rvoAgent.Position, rvoAgent.ElevationCoordinate);
 			}
@@ -417,8 +418,9 @@ namespace Pathfinding.RVO {
             rvoAgent.agentName = agentName;
             rvoAgent.useAvoidedAgents = useAvoidedAgents;
             rvoAgent.AvoidedAgents = avoidedAgents;
+            rvoAgent.useNoCollisionOnDifferentStructures = useNoCollisionOnDifferentStructures;
 
-			float elevation;
+            float elevation;
 			// Use the position from the movement script if one is attached
 			// as the movement script's position may not be the same as the transform's position
 			// (in particular if IAstarAI.updatePosition is false).
