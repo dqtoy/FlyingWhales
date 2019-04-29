@@ -49,6 +49,11 @@ public class Nap : GoapAction {
             return 45;
         }
     }
+    public override void OnStopActionDuringCurrentState() {
+        if(currentState.name == "Nap Success") {
+            RemoveTraitFrom(actor, "Resting");
+        }
+    }
     #endregion
 
     #region Requirements

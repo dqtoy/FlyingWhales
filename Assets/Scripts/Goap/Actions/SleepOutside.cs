@@ -39,6 +39,11 @@ public class SleepOutside : GoapAction {
     //    _targetStructure = choices[Utilities.rng.Next(0, choices.Count)];
     //    base.SetTargetStructure();
     //}
+    public override void OnStopActionDuringCurrentState() {
+        if (currentState.name == "Rest Success") {
+            RemoveTraitFrom(actor, "Resting");
+        }
+    }
     #endregion
 
     #region Requirements

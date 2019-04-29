@@ -53,6 +53,11 @@ public class Sleep : GoapAction {
     //    base.FailAction();
     //    SetState("Rest Fail");
     //}
+    public override void OnStopActionDuringCurrentState() {
+        if (currentState.name == "Rest Success") {
+            RemoveTraitFrom(actor, "Resting");
+        }
+    }
     #endregion
 
     #region Requirements

@@ -305,6 +305,9 @@ public class GoapAction {
             }
         }
     }
+
+    //If this action's current state is being performed and is stopped abruptly, call this
+    public virtual void OnStopActionDuringCurrentState() { }
     #endregion
 
     #region Utilities
@@ -384,6 +387,7 @@ public class GoapAction {
         SetIsStopped(true);
         if(isPerformingActualAction && !isDone) {
             //ReturnToActorTheActionResult(InteractionManager.Goap_State_Fail);
+            OnStopActionDuringCurrentState();
             currentState.EndPerTickEffect(false);
 
             ////when the action is ended prematurely, make sure to readjust the target character's do not move values

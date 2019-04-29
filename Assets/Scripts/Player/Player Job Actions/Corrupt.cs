@@ -16,7 +16,7 @@ public class Corrupt : PlayerJobAction {
 
     public override void ActivateAction(Character assignedCharacter, Character targetCharacter) {
         _targetCharacter = targetCharacter;
-        UIManager.Instance.ShowClickableObjectPicker(_traitNames, OnClickTrait, null, CanCorruptCharacter);
+        UIManager.Instance.ShowClickableObjectPicker(_traitNames, OnClickTrait, null, CanCorruptCharacter, "Corrupt " + _targetCharacter.name + " with an affliction.");
     }
 
     protected override bool ShouldButtonBeInteractable(Character character, Character targetCharacter) {

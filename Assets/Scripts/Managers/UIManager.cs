@@ -714,11 +714,11 @@ public class UIManager : MonoBehaviour {
     #endregion
 
     #region Object Picker
-    public void ShowClickableObjectPicker<T>(List<T> choices, Action<T> onClickAction, IComparer<T> comparer = null, Func<T, bool> validityChecker = null) {
-        objectPicker.ShowClickable(choices, onClickAction, comparer, validityChecker);
+    public void ShowClickableObjectPicker<T>(List<T> choices, Action<T> onClickAction, IComparer<T> comparer = null, Func<T, bool> validityChecker = null, string title = "") {
+        objectPicker.ShowClickable(choices, onClickAction, comparer, validityChecker, title);
     }
-    public void ShowDraggableObjectPicker<T>(List<T> choices, IComparer<T> comparer = null, Func<T, bool> validityChecker = null) {
-        objectPicker.ShowDraggable(choices, comparer, validityChecker);
+    public void ShowDraggableObjectPicker<T>(List<T> choices, IComparer<T> comparer = null, Func<T, bool> validityChecker = null, string title = "") {
+        objectPicker.ShowDraggable(choices, comparer, validityChecker, title);
     }
     public void HideObjectPicker() {
         objectPicker.Hide();
