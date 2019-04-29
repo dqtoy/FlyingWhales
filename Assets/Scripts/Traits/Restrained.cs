@@ -44,6 +44,7 @@ public class Restrained : Trait {
             _sourceCharacter = sourceCharacter as Character;
             Messenger.AddListener(Signals.TICK_STARTED, CheckRestrainTrait);
             _sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_restrained");
+            _sourceCharacter.RemoveTrait("Unconscious");
         }
     }
     public override void OnRemoveTrait(IPointOfInterest sourceCharacter) {
