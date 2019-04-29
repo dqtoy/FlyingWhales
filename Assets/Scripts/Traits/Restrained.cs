@@ -5,6 +5,7 @@ using UnityEngine;
 public class Restrained : Trait {
     private Character _responsibleCharacter;
     private Character _sourceCharacter;
+    //private bool _createdFeedJob;
 
     public bool isPrisoner { get; private set; }
 
@@ -24,6 +25,7 @@ public class Restrained : Trait {
         advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.FEED, };
         daysDuration = 0;
         effects = new List<TraitEffect>();
+        //_createdFeedJob = false;
     }
 
     #region Overrides

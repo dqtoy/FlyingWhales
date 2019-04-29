@@ -30,6 +30,7 @@ public class Area {
     public int initialResidents { get; private set; }
     public int monthlyActions { get; private set; }
     public JobQueue jobQueue { get; private set; }
+    public LocationStructure prison { get; private set; }
 
     //defenders
     public int maxDefenderGroups { get; private set; }
@@ -176,6 +177,7 @@ public class Area {
         SetInitialResidents(data.initialResidents);
         SetMonthlyActions(data.monthlyActions);
         LoadStructures(data);
+        AssignPrison();
 #if WORLD_CREATION_TOOL
         SetCoreTile(worldcreator.WorldCreatorManager.Instance.GetHexTile(data.coreTileID));
 #else
@@ -1401,6 +1403,27 @@ public class Area {
             return unoccupiedEdgeTiles[UnityEngine.Random.Range(0, unoccupiedEdgeTiles.Count)];
         }
         return null;
+    }
+    private void AssignPrison() {
+        if (areaType == AREA_TYPE.DEMONIC_INTRUSION) {
+            return;
+        }
+        LocationStructure chosenPrison = GetRandomStructureOfType(STRUCTURE_TYPE.WAREHOUSE);
+        if(chosenPrison != null) {
+            prison = chosenPrison;
+        } else {
+            chosenPrison = GetRandomStructureOfType(STRUCTURE_TYPE.EXPLORE_AREA);
+            if (chosenPrison != null) {
+                prison = chosenPrison;
+            } else {
+                chosenPrison = GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA);
+                if (chosenPrison != null) {
+                    prison = chosenPrison;
+                } else {
+                    Debug.LogError("Cannot assign a prison! There is no warehouse, explore area, or work area structure in the location of " + name);
+                }
+            }
+        }
     }
     #endregion
 

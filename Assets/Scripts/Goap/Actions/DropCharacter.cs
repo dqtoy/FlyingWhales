@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class DropCharacter : GoapAction {
-    private LocationStructure _workAreaStructure;
+    private LocationStructure _prison;
 
     public override LocationStructure targetStructure {
-        get { return _workAreaStructure; }
+        get { return _prison; }
     }
 
     public DropCharacter(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.DROP_CHARACTER, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
-        _workAreaStructure = actor.homeArea.GetRandomStructureOfType(STRUCTURE_TYPE.WAREHOUSE);
+        _prison = actor.homeArea.prison;
         actionLocationType = ACTION_LOCATION_TYPE.RANDOM_LOCATION_B;
         actionIconString = GoapActionStateDB.Hostile_Icon;
     }
@@ -62,7 +62,7 @@ public class DropCharacter : GoapAction {
     #region State Effects
     public void PreDropSuccess() {
         //currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        currentState.AddLogFiller(_workAreaStructure.location, _workAreaStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
+        currentState.AddLogFiller(_prison.location, _prison.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
         currentState.SetIntelReaction(DropSuccessIntelReaction);
     }
     public void AfterDropSuccess() {
