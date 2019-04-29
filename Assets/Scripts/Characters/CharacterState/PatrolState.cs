@@ -21,7 +21,7 @@ public class PatrolState : CharacterState {
         if(targetPOI is Character) {
             stateComponent.character.marker.AddHostileInRange(targetPOI as Character);
             return true;
-        }else if (targetPOI is SpecialToken) {
+        }else if (stateComponent.character.role.roleType != CHARACTER_ROLE.BEAST && targetPOI is SpecialToken) {
             SpecialToken token = targetPOI as SpecialToken;
             if(token.characterOwner == null) {
                 GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.PICK_ITEM, stateComponent.character, targetPOI);
