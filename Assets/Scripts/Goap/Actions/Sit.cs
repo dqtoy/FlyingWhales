@@ -5,6 +5,7 @@ using UnityEngine;
 public class Sit : GoapAction {
     public Sit(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.SIT, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.No_Icon;
+        shouldIntelNotificationOnlyIfActorIsActive = true;
     }
 
     #region Overrides

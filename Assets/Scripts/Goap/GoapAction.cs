@@ -49,6 +49,7 @@ public class GoapAction {
     public ACTION_LOCATION_TYPE actionLocationType { get; protected set; } //This is set in every action's constructor
     public bool showIntelNotification { get; protected set; } //should this action show a notification when it is done by its actor or when it recieves a plan with this action as it's end node?
     public bool shouldAddLogs { get; protected set; } //should this action add logs to it's actor?
+    public bool shouldIntelNotificationOnlyIfActorIsActive { get; protected set; } //should this action add logs to it's actor?
     public string actionIconString { get; protected set; }
     public GameDate executionDate { get; protected set; }
     protected virtual string failActionState { get { return "Target Missing"; } }
@@ -304,6 +305,9 @@ public class GoapAction {
             }
         }
     }
+
+    //If this action's current state is being performed and is stopped abruptly, call this
+    public virtual void OnStopActionDuringCurrentState() { }
     #endregion
 
     #region Utilities
@@ -383,6 +387,7 @@ public class GoapAction {
         SetIsStopped(true);
         if(isPerformingActualAction && !isDone) {
             //ReturnToActorTheActionResult(InteractionManager.Goap_State_Fail);
+            OnStopActionDuringCurrentState();
             currentState.EndPerTickEffect(false);
 
             ////when the action is ended prematurely, make sure to readjust the target character's do not move values

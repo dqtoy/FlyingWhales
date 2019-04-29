@@ -23,7 +23,7 @@ public class StrollState : CharacterState {
         }
     }
     public override bool OnEnterVisionWith(IPointOfInterest targetPOI) {
-        if (targetPOI is SpecialToken) {
+        if (stateComponent.character.role.roleType != CHARACTER_ROLE.BEAST && targetPOI is SpecialToken) {
             SpecialToken token = targetPOI as SpecialToken;
             if (token.characterOwner == null) {
                 GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.PICK_ITEM, stateComponent.character, targetPOI);

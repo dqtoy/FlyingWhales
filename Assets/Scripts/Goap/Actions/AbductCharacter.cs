@@ -65,6 +65,9 @@ public class AbductCharacter : GoapAction {
         //currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
     //}
     public void AfterAbductSuccess() {
+        if (parentPlan.job != null) {
+            parentPlan.job.SetCannotCancelJob(true);
+        }
         Character target = poiTarget as Character;
         Restrained restrainedTrait = new Restrained();
         target.AddTrait(restrainedTrait, actor);

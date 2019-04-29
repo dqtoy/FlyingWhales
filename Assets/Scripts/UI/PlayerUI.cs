@@ -615,11 +615,11 @@ public class PlayerUI : MonoBehaviour {
     }
     public void ShowPlayerIntels(bool state) {
         intelContainer.SetActive(state);
-        Vector3 previousPos = UIManager.Instance.playerNotifScrollView.transform.localPosition;
+        Vector3 previousPos = UIManager.Instance.playerNotifGO.transform.localPosition;
         if (!state) {
-            UIManager.Instance.playerNotifScrollView.transform.localPosition = new Vector3(320f, previousPos.y, previousPos.z);
+            UIManager.Instance.playerNotifGO.transform.localPosition = new Vector3(320f, previousPos.y, previousPos.z);
         } else {
-            UIManager.Instance.playerNotifScrollView.transform.localPosition = new Vector3(-180f, previousPos.y, previousPos.z);
+            UIManager.Instance.playerNotifGO.transform.localPosition = new Vector3(-180f, previousPos.y, previousPos.z);
         }
     }
     #endregion

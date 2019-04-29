@@ -35,6 +35,7 @@ public class CharacterState {
         currentDuration = 0;
         StartStatePerTick();
 
+        CreateStartStateLog();
         CreateThoughtBubbleLog();
         DoMovementBehavior();
         Messenger.Broadcast(Signals.CHARACTER_STARTED_STATE, stateComponent.character, this);
@@ -149,6 +150,23 @@ public class CharacterState {
             thoughtBubbleLog.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             if (targetCharacter != null) {
                 thoughtBubbleLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER); //Target character is only the identifier but it doesn't mean that this is a character, it can be item, etc.
+            }
+        }
+    }
+    private void CreateStartStateLog() {
+        if (LocalizationManager.Instance.HasLocalizedValue("CharacterState", this.GetType().ToString(), "start")) {
+            Log log = new Log(GameManager.Instance.Today(), "CharacterState", this.GetType().ToString(), "start");
+            log.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            if (targetCharacter != null) {
+                log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER); //Target character is only the identifier but it doesn't mean that this is a character, it can be item, etc.
+            }
+            if(targetArea != null) {
+                log.AddToFillers(targetArea, targetArea.name, LOG_IDENTIFIER.LANDMARK_1);
+            }
+            log.AddLogToInvolvedObjects();
+
+            if (PlayerManager.Instance.player.ShouldShowNotificationFrom(stateComponent.character)) {
+                PlayerManager.Instance.player.ShowNotification(log);
             }
         }
     }

@@ -7,6 +7,7 @@ public class Nap : GoapAction {
 
     public Nap(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.NAP, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Sleep_Icon;
+        shouldIntelNotificationOnlyIfActorIsActive = true;
     }
 
     #region Overrides
@@ -46,6 +47,11 @@ public class Nap : GoapAction {
                 }
             }
             return 45;
+        }
+    }
+    public override void OnStopActionDuringCurrentState() {
+        if(currentState.name == "Nap Success") {
+            RemoveTraitFrom(actor, "Resting");
         }
     }
     #endregion

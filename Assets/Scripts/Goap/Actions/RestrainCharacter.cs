@@ -29,8 +29,11 @@ public class RestrainCharacter : GoapAction {
     #endregion
 
     #region State Effects
-    public void PreRestrainSuccess() {
+    public void AfterRestrainSuccess() {
         //**Effect 1**: Target gains Restrained trait.
+        if(parentPlan.job != null) {
+            parentPlan.job.SetCannotCancelJob(true);
+        }
         AddTraitTo(poiTarget, "Restrained");
     }
     public void PreTargetMissing() {

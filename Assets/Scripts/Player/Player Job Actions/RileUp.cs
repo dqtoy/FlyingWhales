@@ -16,7 +16,11 @@ public class RileUp : PlayerJobAction {
         //    return;
         //}
         _targetCharacter = targetCharacter;
-        UIManager.Instance.ShowClickableObjectPicker(LandmarkManager.Instance.allAreas, OnClickArea, null, CanClickArea);
+        string titleText = "Select a location.";
+        if(_targetCharacter.role.roleType == CHARACTER_ROLE.BEAST) {
+            titleText = "Select a location and " + _targetCharacter.name + " will run amok there.";
+        }
+        UIManager.Instance.ShowClickableObjectPicker(LandmarkManager.Instance.allAreas, OnClickArea, null, CanClickArea, titleText);
     }
 
     protected override bool ShouldButtonBeInteractable(Character character, Character targetCharacter) {
@@ -57,7 +61,7 @@ public class RileUp : PlayerJobAction {
         if(_targetCharacter.role.roleType == CHARACTER_ROLE.BEAST) {
             RileUpCharacter(area);
         } else {
-            UIManager.Instance.ShowClickableObjectPicker(area.charactersAtLocation, RileUpCharacter, null, CanRileUpCharacter);
+            UIManager.Instance.ShowClickableObjectPicker(area.charactersAtLocation, RileUpCharacter, null, CanRileUpCharacter, "Choose a character to abduct.");
         }
     }
     private bool CanClickArea(Area area) {

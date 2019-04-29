@@ -5,6 +5,7 @@ using UnityEngine;
 public class Restrained : Trait {
     private Character _responsibleCharacter;
     private Character _sourceCharacter;
+    //private bool _createdFeedJob;
 
     public bool isPrisoner { get; private set; }
 
@@ -24,6 +25,7 @@ public class Restrained : Trait {
         advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.FEED, };
         daysDuration = 0;
         effects = new List<TraitEffect>();
+        //_createdFeedJob = false;
     }
 
     #region Overrides
@@ -42,6 +44,7 @@ public class Restrained : Trait {
             _sourceCharacter = sourceCharacter as Character;
             Messenger.AddListener(Signals.TICK_STARTED, CheckRestrainTrait);
             _sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_restrained");
+            _sourceCharacter.RemoveTrait("Unconscious");
         }
     }
     public override void OnRemoveTrait(IPointOfInterest sourceCharacter) {
@@ -87,7 +90,14 @@ public class Restrained : Trait {
         }
     }
     private bool CanCharacterTakeFeedJob(Character character) {
-        return character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.CIVILIAN;
+        if (_sourceCharacter.specificLocation.IsResident(character)) {
+            if(character.faction.id != FactionManager.Instance.neutralFaction.id) {
+                return character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.CIVILIAN;
+            } else {
+                return true;
+            }
+        }
+        return false;
     }
     private void CreateJudgementJob(Character targetCharacter) {
         if (!_sourceCharacter.HasJobTargettingThisCharacter("Judgement")) {

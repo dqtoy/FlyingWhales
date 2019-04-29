@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class ObjectPicker : MonoBehaviour {
 
@@ -13,8 +14,9 @@ public class ObjectPicker : MonoBehaviour {
     [SerializeField] private GameObject objectPickerAreaItemPrefab;
     [SerializeField] private GameObject objectPickerStringItemPrefab;
     [SerializeField] private GameObject objectPickerAttackItemPrefab;
+    [SerializeField] private TextMeshProUGUI titleLbl;
 
-    public void ShowClickable<T>(List<T> items, Action<T> onClickItemAction, IComparer<T> comparer = null, Func<T, bool> validityChecker = null) {
+    public void ShowClickable<T>(List<T> items, Action<T> onClickItemAction, IComparer<T> comparer = null, Func<T, bool> validityChecker = null, string title = "") {
         Utilities.DestroyChildren(objectPickerScrollView.content);
         List<T> validItems;
         List<T> invalidItems;
@@ -27,9 +29,10 @@ public class ObjectPicker : MonoBehaviour {
         } else if (type == typeof(string)) {
             ShowStringItems(validItems.Cast<string>().ToList(), invalidItems.Cast<string>().ToList(), onClickItemAction);
         }
+        titleLbl.text = title;
         this.gameObject.SetActive(true);
     }
-    public void ShowDraggable<T>(List<T> items, IComparer<T> comparer = null, Func<T, bool> validityChecker = null) {
+    public void ShowDraggable<T>(List<T> items, IComparer<T> comparer = null, Func<T, bool> validityChecker = null, string title = "") {
         Utilities.DestroyChildren(objectPickerScrollView.content);
         List<T> validItems;
         List<T> invalidItems;
@@ -38,6 +41,7 @@ public class ObjectPicker : MonoBehaviour {
         if (type == typeof(Character)) {
             ShowDraggableCharacterItems<T>(validItems.Cast<Character>().ToList(), invalidItems.Cast<Character>().ToList());
         }
+        titleLbl.text = title;
         this.gameObject.SetActive(true);
     }
     public void Hide() {

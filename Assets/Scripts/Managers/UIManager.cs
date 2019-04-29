@@ -714,11 +714,11 @@ public class UIManager : MonoBehaviour {
     #endregion
 
     #region Object Picker
-    public void ShowClickableObjectPicker<T>(List<T> choices, Action<T> onClickAction, IComparer<T> comparer = null, Func<T, bool> validityChecker = null) {
-        objectPicker.ShowClickable(choices, onClickAction, comparer, validityChecker);
+    public void ShowClickableObjectPicker<T>(List<T> choices, Action<T> onClickAction, IComparer<T> comparer = null, Func<T, bool> validityChecker = null, string title = "") {
+        objectPicker.ShowClickable(choices, onClickAction, comparer, validityChecker, title);
     }
-    public void ShowDraggableObjectPicker<T>(List<T> choices, IComparer<T> comparer = null, Func<T, bool> validityChecker = null) {
-        objectPicker.ShowDraggable(choices, comparer, validityChecker);
+    public void ShowDraggableObjectPicker<T>(List<T> choices, IComparer<T> comparer = null, Func<T, bool> validityChecker = null, string title = "") {
+        objectPicker.ShowDraggable(choices, comparer, validityChecker, title);
     }
     public void HideObjectPicker() {
         objectPicker.Hide();
@@ -1429,15 +1429,17 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private RectTransform playerNotificationParent;
     [SerializeField] private GameObject intelPrefab;
     [SerializeField] private GameObject defaultNotificationPrefab;
-    public ScrollRect playerNotifScrollView;
+    //public ScrollRect playerNotifScrollView;
+    public GameObject playerNotifGO;
+    public Transform playerNotifContentTransform;
     private void ShowPlayerNotification(Intel intel) {
-        GameObject newIntelGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(intelPrefab.name, Vector3.zero, Quaternion.identity, playerNotifScrollView.content);
+        GameObject newIntelGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(intelPrefab.name, Vector3.zero, Quaternion.identity, playerNotifContentTransform);
         newIntelGO.GetComponent<IntelNotificationItem>().Initialize(intel);
         (newIntelGO.transform as RectTransform).SetAsFirstSibling();
         (newIntelGO.transform as RectTransform).localScale = Vector3.one;
     }
     private void ShowPlayerNotification(Log log) {
-        GameObject newIntelGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(defaultNotificationPrefab.name, Vector3.zero, Quaternion.identity, playerNotifScrollView.content);
+        GameObject newIntelGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(defaultNotificationPrefab.name, Vector3.zero, Quaternion.identity, playerNotifContentTransform);
         newIntelGO.GetComponent<PlayerNotificationItem>().Initialize(log);
         (newIntelGO.transform as RectTransform).SetAsFirstSibling();
         (newIntelGO.transform as RectTransform).localScale = Vector3.one;
