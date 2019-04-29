@@ -5,16 +5,25 @@ using UnityEngine.UI;
 
 public class MainMenuUI : MonoBehaviour {
 
+    public static MainMenuUI Instance = null;
+
     [SerializeField] private EasyTween buttonsTween;
     [SerializeField] private EasyTween titleTween;
 
     [SerializeField] private EasyTween glowTween;
     [SerializeField] private EasyTween glow2Tween;
 
-    public void Start() {
+    private void Awake() {
+        Instance = this;
+    }
+
+    public void ShowMenuButtons() {
         buttonsTween.OnValueChangedAnimation(true);
         titleTween.OnValueChangedAnimation(true);
         glowTween.OnValueChangedAnimation(true);
+    }
+    public void HideMenuButtons() {
+        buttonsTween.OnValueChangedAnimation(false);
     }
 
     public void ExitGame() {

@@ -421,7 +421,7 @@ public class Faction {
                 Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.HUMANS, Utilities.GetRandomGender(),
                     this, _ownedAreas[0]);
                 createdCharacter.LevelUp(citizensLevel - 1);
-                CharacterManager.Instance.CreateNewRelationshipBetween(leader, createdCharacter, RELATIONSHIP_TRAIT.SERVANT);
+                //CharacterManager.Instance.CreateNewRelationshipBetween(leader, createdCharacter, RELATIONSHIP_TRAIT.SERVANT);
             }
 
             /*
@@ -457,7 +457,7 @@ public class Faction {
                 Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.ELVES, Utilities.GetRandomGender(),
                     this, _ownedAreas[0]);
                 createdCharacter.LevelUp(citizensLevel - 1);
-                CharacterManager.Instance.CreateNewRelationshipBetween(leader, createdCharacter, RELATIONSHIP_TRAIT.SERVANT);
+                //CharacterManager.Instance.CreateNewRelationshipBetween(leader, createdCharacter, RELATIONSHIP_TRAIT.SERVANT);
             }
 
             //**2 Elven Nobles**
@@ -505,13 +505,13 @@ public class Faction {
                 Character skeletonSoldier = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.SKELETON, Utilities.GetRandomGender(),
                     this, _ownedAreas[0]);
                 skeletonSoldier.LevelUp(citizensLevel - 1);
-                CharacterManager.Instance.CreateNewRelationshipBetween(leader, skeletonSoldier, RELATIONSHIP_TRAIT.SERVANT);
+                //CharacterManager.Instance.CreateNewRelationshipBetween(leader, skeletonSoldier, RELATIONSHIP_TRAIT.SERVANT);
 
                 if (i == 0) {
                     Character goblinSoldier = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.GOBLIN, Utilities.GetRandomGender(),
                    this, _ownedAreas[0]);
                     goblinSoldier.LevelUp(citizensLevel - 1);
-                    CharacterManager.Instance.CreateNewRelationshipBetween(leader, goblinSoldier, RELATIONSHIP_TRAIT.SERVANT);
+                    //CharacterManager.Instance.CreateNewRelationshipBetween(leader, goblinSoldier, RELATIONSHIP_TRAIT.SERVANT);
                 }
             }
 
@@ -537,7 +537,7 @@ public class Faction {
                 Character goblinSoldier = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.GOBLIN, Utilities.GetRandomGender(),
                     this, _ownedAreas[0]);
                 goblinSoldier.LevelUp(citizensLevel - 1);
-                CharacterManager.Instance.CreateNewRelationshipBetween(leader, goblinSoldier, RELATIONSHIP_TRAIT.SERVANT);
+                //CharacterManager.Instance.CreateNewRelationshipBetween(leader, goblinSoldier, RELATIONSHIP_TRAIT.SERVANT);
             }
 
             //**1 Goblin Noble** with **3 Goblin Soldiers** as servants
@@ -550,7 +550,7 @@ public class Faction {
                     Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.GOBLIN, Utilities.GetRandomGender(),
                    this, _ownedAreas[0]);
                     createdCharacter.LevelUp(citizensLevel - 1);
-                    CharacterManager.Instance.CreateNewRelationshipBetween(noble, createdCharacter, RELATIONSHIP_TRAIT.SERVANT);
+                    //CharacterManager.Instance.CreateNewRelationshipBetween(noble, createdCharacter, RELATIONSHIP_TRAIT.SERVANT);
                 }
             }
 
@@ -566,7 +566,7 @@ public class Faction {
                 Character faerySoldier = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.FAERY, Utilities.GetRandomGender(),
                     this, _ownedAreas[0]);
                 faerySoldier.LevelUp(citizensLevel - 1);
-                CharacterManager.Instance.CreateNewRelationshipBetween(leader, faerySoldier, RELATIONSHIP_TRAIT.SERVANT);
+                //CharacterManager.Instance.CreateNewRelationshipBetween(leader, faerySoldier, RELATIONSHIP_TRAIT.SERVANT);
             }
 
             //**1 Faery Adventurers**
@@ -588,7 +588,7 @@ public class Faction {
                 Character spiderSoldier = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.SPIDER, Utilities.GetRandomGender(),
                     this, _ownedAreas[0]);
                 spiderSoldier.LevelUp(citizensLevel - 1);
-                CharacterManager.Instance.CreateNewRelationshipBetween(leader, spiderSoldier, RELATIONSHIP_TRAIT.SERVANT);
+                //CharacterManager.Instance.CreateNewRelationshipBetween(leader, spiderSoldier, RELATIONSHIP_TRAIT.SERVANT);
             }
 
             //**3 Faery Nobles** with **3 Spider Soldiers** each as their servants
@@ -601,7 +601,7 @@ public class Faction {
                     Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.SPIDER, Utilities.GetRandomGender(),
                    this, _ownedAreas[0]);
                     createdCharacter.LevelUp(citizensLevel - 1);
-                    CharacterManager.Instance.CreateNewRelationshipBetween(noble, createdCharacter, RELATIONSHIP_TRAIT.SERVANT);
+                    //CharacterManager.Instance.CreateNewRelationshipBetween(noble, createdCharacter, RELATIONSHIP_TRAIT.SERVANT);
                 }
             }
 
@@ -622,12 +622,12 @@ public class Faction {
                 Character elfSoldier = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.ELVES, Utilities.GetRandomGender(),
                     this, _ownedAreas[0]);
                 elfSoldier.LevelUp(citizensLevel - 1);
-                CharacterManager.Instance.CreateNewRelationshipBetween(leader, elfSoldier, RELATIONSHIP_TRAIT.SERVANT);
+                //CharacterManager.Instance.CreateNewRelationshipBetween(leader, elfSoldier, RELATIONSHIP_TRAIT.SERVANT);
 
                 Character humanSoldier = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.HUMANS, Utilities.GetRandomGender(),
                    this, _ownedAreas[0]);
                 humanSoldier.LevelUp(citizensLevel - 1);
-                CharacterManager.Instance.CreateNewRelationshipBetween(leader, humanSoldier, RELATIONSHIP_TRAIT.SERVANT);
+                //CharacterManager.Instance.CreateNewRelationshipBetween(leader, humanSoldier, RELATIONSHIP_TRAIT.SERVANT);
             }
 
             //**2 Human Adventurers** and **2 Elven Adventurers**
