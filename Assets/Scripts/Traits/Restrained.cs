@@ -89,7 +89,14 @@ public class Restrained : Trait {
         }
     }
     private bool CanCharacterTakeFeedJob(Character character) {
-        return character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.CIVILIAN;
+        if (_sourceCharacter.specificLocation.IsResident(character)) {
+            if(character.faction.id != FactionManager.Instance.neutralFaction.id) {
+                return character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.CIVILIAN;
+            } else {
+                return true;
+            }
+        }
+        return false;
     }
     private void CreateJudgementJob(Character targetCharacter) {
         if (!_sourceCharacter.HasJobTargettingThisCharacter("Judgement")) {

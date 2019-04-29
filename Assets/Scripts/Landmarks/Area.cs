@@ -657,6 +657,9 @@ public class Area {
     #endregion
 
     #region Characters
+    public bool IsResident(Character character) {
+        return areaResidents.Contains(character);
+    }
     public void AddResident(Character character, Dwelling chosenHome = null, bool ignoreCapacity = true) {
         if (!areaResidents.Contains(character)) {
             if (!ignoreCapacity) {
