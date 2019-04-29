@@ -3359,7 +3359,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         return true;
     }
     private string OtherIdlePlans() {
-        string log = "IDLE PLAN FOR " + name;
+        string log = GameManager.Instance.TodayLogString() + " IDLE PLAN FOR " + name;
         if(faction.id != FactionManager.Instance.neutralFaction.id) {
             //NPC with Faction Idle
             log += "\n-" + name + " has a faction";
@@ -3449,7 +3449,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 log += "\n-" + name + " will do action Return Home";
                 PlanIdleReturnHome();
                 return log;
-            } else if (specificLocation != homeArea) {
+            } else if (currentStructure != homeStructure) {
                 log += "\n-" + name + " is in another area and will do action Return Home";
                 PlanIdleReturnHome();
                 return log;
@@ -3509,6 +3509,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.IDLE);
         goapPlan.ConstructAllNodes();
         allGoapPlans.Add(goapPlan);
+        PlanGoapActions(goapAction);
     }
     private TileObject GetUnoccupiedHomeTileObject(TILE_OBJECT_TYPE type) {
         for (int i = 0; i < homeStructure.pointsOfInterest.Count; i++) {
@@ -4609,9 +4610,11 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
     }
     public bool IsPOIInCharacterAwarenessList(IPointOfInterest poi, List<CharacterAwareness> awarenesses) {
-        for (int i = 0; i < awarenesses.Count; i++) {
-            if (awarenesses[i].poi == poi) {
-                return true;
+        if(awarenesses != null && awarenesses.Count > 0) {
+            for (int i = 0; i < awarenesses.Count; i++) {
+                if (awarenesses[i].poi == poi) {
+                    return true;
+                }
             }
         }
         return false;

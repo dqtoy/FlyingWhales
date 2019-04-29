@@ -23,21 +23,22 @@ namespace Pathfinding.RVO {
         string agentName { get; set; }
         bool useAvoidedAgents { get; set; }
         List<IAgent> AvoidedAgents { get; set; }
+        bool useNoCollisionOnDifferentStructures { get; set; }
 
-		/// <summary>
-		/// Position of the agent.
-		/// The agent does not move by itself, a movement script has to be responsible for
-		/// reading the CalculatedTargetPoint and CalculatedSpeed properties and move towards that point with that speed.
-		/// This property should ideally be set every frame.
-		///
-		/// Note that this is a Vector2, not a Vector3 since the RVO simulates everything internally in 2D. So if your agents move in the
-		/// XZ plane you may have to convert it to a Vector3 like this.
-		///
-		/// <code>
-		/// Vector3 position3D = new Vector3(agent.Position.x, agent.ElevationCoordinate, agent.Position.y);
-		/// </code>
-		/// </summary>
-		Vector2 Position { get; set; }
+        /// <summary>
+        /// Position of the agent.
+        /// The agent does not move by itself, a movement script has to be responsible for
+        /// reading the CalculatedTargetPoint and CalculatedSpeed properties and move towards that point with that speed.
+        /// This property should ideally be set every frame.
+        ///
+        /// Note that this is a Vector2, not a Vector3 since the RVO simulates everything internally in 2D. So if your agents move in the
+        /// XZ plane you may have to convert it to a Vector3 like this.
+        ///
+        /// <code>
+        /// Vector3 position3D = new Vector3(agent.Position.x, agent.ElevationCoordinate, agent.Position.y);
+        /// </code>
+        /// </summary>
+        Vector2 Position { get; set; }
 
 		/// <summary>
 		/// Coordinate which separates characters in the height direction.
