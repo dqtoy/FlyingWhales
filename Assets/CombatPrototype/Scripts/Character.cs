@@ -1190,7 +1190,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         }
     }
-    private void CheckRemoveTraitRelatedJobsOnLeaveLocation() {
+    private void CancelOrUnassignRemoveTraitRelatedJobs() {
         CancelAllJobsTargettingThisCharacter("Remove Trait");
 
         //All remove trait jobs that are being done by this character must be unassigned
@@ -1217,7 +1217,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         return character.role.roleType == CHARACTER_ROLE.SOLDIER;
     }
     public void CreateRemoveTraitJob(string traitName) {
-        if (faction == specificLocation.owner && !HasJobTargettingThisCharacter("Remove Trait", traitName)) {
+        if (specificLocation == homeArea && faction == specificLocation.owner && GetTraitOf(TRAIT_TYPE.CRIMINAL) == null && !HasJobTargettingThisCharacter("Remove Trait", traitName)) {
             GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = traitName, targetPOI = this };
             GoapPlanJob job = new GoapPlanJob("Remove Trait", goapEffect);
             job.SetCanTakeThisJobChecker(CanCharacterTakeRemoveTraitJob);
@@ -1596,7 +1596,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     private void OnLeaveArea(Party party) {
         if (currentParty == party) {
             CheckApprehendRelatedJobsOnLeaveLocation();
-            CheckRemoveTraitRelatedJobsOnLeaveLocation();
+            CancelOrUnassignRemoveTraitRelatedJobs();
             marker.ClearTerrifyingCharacters();
         } else {
             if(marker.terrifyingCharacters.Count > 0) {
@@ -2774,8 +2774,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 AdjustIgnoreHostilities(1);
             }
             _ownParty.RemoveAllCharacters();
+        }else if (trait.type == TRAIT_TYPE.CRIMINAL) {
+            CancelOrUnassignRemoveTraitRelatedJobs();
         }
-        if(trait.name == "Abducted" || trait.name == "Restrained") {
+        if (trait.name == "Abducted" || trait.name == "Restrained") {
             AdjustDoNotGetTired(1);
         } else if (trait.name == "Packaged" || trait.name == "Hibernating" || trait.name == "Reanimated") {
             AdjustDoNotGetTired(1);
@@ -2846,6 +2848,15 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             AdjustDoNotDisturb(-1);
             if (trait.effect == TRAIT_EFFECT.NEGATIVE) {
                 AdjustIgnoreHostilities(-1);
+            }
+        } else if(trait.type == TRAIT_TYPE.CRIMINAL) {
+            if(GetTraitOf(TRAIT_TYPE.CRIMINAL) == null) {
+                for (int i = 0; i < traits.Count; i++) {
+                    if (traits[i].name == "Cursed" || traits[i].name == "Sick"
+                        || traits[i].name == "Injured" || traits[i].name == "Unconscious") {
+                        CreateRemoveTraitJob(traits[i].name);
+                    }
+                }
             }
         }
         if (trait.name == "Abducted" || trait.name == "Restrained") {
