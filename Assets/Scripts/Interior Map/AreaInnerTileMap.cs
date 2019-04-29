@@ -53,6 +53,22 @@ public class AreaInnerTileMap : MonoBehaviour {
     public TileBase bed2SleepingVariant;
     public TileBase bed1SleepingVariant;
 
+    public TileBase table00; //table 0 - 0 user
+    public TileBase table01; //table 0 - 1 user
+    public TileBase table02; //table 0 - 2 user
+    public TileBase table03; //table 0 - 3 user
+    public TileBase table04; //table 0 - 4 user
+
+    public TileBase table10; //table 1 - 0 user
+    public TileBase table11; //table 1 - 1 user
+    public TileBase table12; //table 1 - 2 user
+    public TileBase table13; //table 1 - 3 user
+    public TileBase table14; //table 1 - 4 user
+
+    public TileBase table20; //table 2 - 0 user
+    public TileBase table21; //table 2 - 1 user
+    public TileBase table22; //table 2 - 2 user
+
     [Header("Structure Tiles")]
     [SerializeField] private TileBase leftWall;
     [SerializeField] private TileBase rightWall;
@@ -1373,13 +1389,15 @@ public class AreaInnerTileMap : MonoBehaviour {
     #endregion
 
     #region Points of Interest
-    public void PlaceObject(IPointOfInterest obj, LocationGridTile tile) {
+    public void PlaceObject(IPointOfInterest obj, LocationGridTile tile, bool placeAsset = true) {
         TileBase tileToUse = null;
         switch (obj.poiType) {
             case POINT_OF_INTEREST_TYPE.ITEM:
-                tileToUse = itemTiles[(obj as SpecialToken).specialTokenType];
                 tile.SetObjectHere(obj);
-                objectsTilemap.SetTile(tile.localPlace, tileToUse);
+                if (placeAsset) {
+                    tileToUse = itemTiles[(obj as SpecialToken).specialTokenType];
+                    objectsTilemap.SetTile(tile.localPlace, tileToUse);
+                }
                 break;
             case POINT_OF_INTEREST_TYPE.CHARACTER:
                 OnPlaceCharacterOnTile(obj as Character, tile);
@@ -1387,10 +1405,12 @@ public class AreaInnerTileMap : MonoBehaviour {
                 break;
             case POINT_OF_INTEREST_TYPE.TILE_OBJECT:
                 TileObject to = obj as TileObject;
-                tileToUse = tileObjectTiles[to.tileObjectType].GetAsset(area.coreTile.biomeType).activeTile;
                 tile.SetObjectHere(obj);
-                objectsTilemap.SetTile(tile.localPlace, tileToUse);
-                detailsTilemap.SetTile(tile.localPlace, null);
+                if (placeAsset) {
+                    tileToUse = tileObjectTiles[to.tileObjectType].GetAsset(area.coreTile.biomeType).activeTile;
+                    objectsTilemap.SetTile(tile.localPlace, tileToUse);
+                    detailsTilemap.SetTile(tile.localPlace, null);
+                }
                 break;
             //default:
             //    tileToUse = characterTile;

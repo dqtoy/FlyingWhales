@@ -1268,7 +1268,7 @@ public class Area {
             }
         }
 
-        PlaceBedsAndTables();
+        //PlaceBedsAndTables();
         PlaceOres();
         PlaceSupplyPiles();
         SpawnFoodNow();
@@ -1292,28 +1292,28 @@ public class Area {
         }
 
     }
-    private void PlaceBedsAndTables() {
-        if (structures.ContainsKey(STRUCTURE_TYPE.DWELLING)) {
-            for (int i = 0; i < structures[STRUCTURE_TYPE.DWELLING].Count; i++) {
-                LocationStructure structure = structures[STRUCTURE_TYPE.DWELLING][i];
-                if (!structure.isFromTemplate) {
-                    structure.AddPOI(new Bed(structure));
-                    structure.AddPOI(new Table(structure));
-                }
-            }
-        }
-        if (structures.ContainsKey(STRUCTURE_TYPE.INN)) {
-            int randomInnTables = UnityEngine.Random.Range(2, 5);
-            for (int i = 0; i < structures[STRUCTURE_TYPE.INN].Count; i++) {
-                LocationStructure structure = structures[STRUCTURE_TYPE.INN][i];
-                if (!structure.isFromTemplate) {
-                    for (int j = 0; j < randomInnTables; j++) {
-                        structure.AddPOI(new Table(structure));
-                    }
-                }
-            }
-        }
-    }
+    //private void PlaceBedsAndTables() {
+    //    if (structures.ContainsKey(STRUCTURE_TYPE.DWELLING)) {
+    //        for (int i = 0; i < structures[STRUCTURE_TYPE.DWELLING].Count; i++) {
+    //            LocationStructure structure = structures[STRUCTURE_TYPE.DWELLING][i];
+    //            if (!structure.isFromTemplate) {
+    //                structure.AddPOI(new Bed(structure));
+    //                structure.AddPOI(new Table(structure));
+    //            }
+    //        }
+    //    }
+    //    if (structures.ContainsKey(STRUCTURE_TYPE.INN)) {
+    //        int randomInnTables = UnityEngine.Random.Range(2, 5);
+    //        for (int i = 0; i < structures[STRUCTURE_TYPE.INN].Count; i++) {
+    //            LocationStructure structure = structures[STRUCTURE_TYPE.INN][i];
+    //            if (!structure.isFromTemplate) {
+    //                for (int j = 0; j < randomInnTables; j++) {
+    //                    structure.AddPOI(new Table(structure));
+    //                }
+    //            }
+    //        }
+    //    }
+    //}
     private void PlaceOres() {
         if (structures.ContainsKey(STRUCTURE_TYPE.WILDERNESS)) {
             LocationStructure structure = structures[STRUCTURE_TYPE.WILDERNESS][0];

@@ -103,11 +103,11 @@ public class LocationStructure {
     #endregion
 
     #region Points Of Interest
-    public bool AddPOI(IPointOfInterest poi, LocationGridTile tileLocation = null) {
+    public bool AddPOI(IPointOfInterest poi, LocationGridTile tileLocation = null, bool placeAsset = true) {
         if (!pointsOfInterest.Contains(poi)) {
 #if !WORLD_CREATION_TOOL
             if (poi.poiType != POINT_OF_INTEREST_TYPE.CHARACTER) {
-                if (!PlacePOIAtAppropriateTile(poi, tileLocation)) { return false; }
+                if (!PlacePOIAtAppropriateTile(poi, tileLocation, placeAsset)) { return false; }
             }
 #endif
             pointsOfInterest.Add(poi);
@@ -157,9 +157,9 @@ public class LocationStructure {
         }
         return null;
     }
-    private bool PlacePOIAtAppropriateTile(IPointOfInterest poi, LocationGridTile tile) {
+    private bool PlacePOIAtAppropriateTile(IPointOfInterest poi, LocationGridTile tile, bool placeAsset = true) {
         if (tile != null) {
-            location.areaMap.PlaceObject(poi, tile);
+            location.areaMap.PlaceObject(poi, tile, placeAsset);
             return true;
         } else {
             List<LocationGridTile> tilesToUse;
@@ -368,16 +368,23 @@ public class LocationStructure {
             if (objTile != null) {
                 switch (objTile.name) {
                     case "Bed":
-                        AddPOI(new Bed(this), currTile);
+                        AddPOI(new Bed(this), currTile, false);
                         break;
-                    case "Table":
-                        AddPOI(new Table(this), currTile);
+                    case "Desk":
+                        AddPOI(new Desk(this), currTile, false);
+                        break;
+                    case "Table0":
+                    case "Table1":
+                    case "Table2":
+                    case "Bartop_Left":
+                    case "Bartop_Right":
+                        AddPOI(new Table(this, objTile), currTile, false);
                         break;
                     case "SupplyPile":
-                        AddPOI(new SupplyPile(this), currTile);
+                        AddPOI(new SupplyPile(this), currTile, false);
                         break;
                     case "Guitar":
-                        AddPOI(new Guitar(this), currTile);
+                        AddPOI(new Guitar(this), currTile, false);
                         break;
                     default:
                         break;

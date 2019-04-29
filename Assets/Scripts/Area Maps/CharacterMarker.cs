@@ -171,6 +171,16 @@ public class CharacterMarker : PooledObject {
             //tile.SetOccupant(character);
         //}
     }
+    public void PlaceMarkerAt(Vector3 localPos, Vector3 lookAt) {
+        StartCoroutine(Positioner(localPos, lookAt));
+    }
+
+    private IEnumerator Positioner(Vector3 localPos, Vector3 lookAt) {
+        yield return null;
+        //pathfindingAI.Teleport(localPos);
+        transform.localPosition = localPos;
+        LookAt(lookAt, true);
+    }
 
     #region Pointer Functions
     public void SetHoverAction(HoverMarkerAction hoverEnterAction, System.Action hoverExitAction) {
@@ -539,6 +549,14 @@ public class CharacterMarker : PooledObject {
 
         StartMovement();
     }
+    public void GoTo(Vector3 destination, Action arrivalAction = null) {
+        this.destinationTile = destinationTile;
+        _arrivalAction = arrivalAction;
+        SetTargetTransform(null);
+        SetDestination(destination);
+        StartMovement();
+
+    }
     public void ArrivedAtLocation() {
         StopMovementOnly();
         if (Messenger.eventTable.ContainsKey(Signals.PARTY_STARTED_TRAVELLING)) { Messenger.RemoveListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling); }
@@ -720,10 +738,13 @@ public class CharacterMarker : PooledObject {
     //    //visualsParent.eulerAngles = new Vector3(transform.rotation.x, transform.rotation.y, angle);
     //    //Debug.Log(this.character.name + " is rotating " + angle);
     //}
-    public void LookAt(Vector3 target) {
-        if (character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
-            return;
+    public void LookAt(Vector3 target, bool force = false) {
+        if (!force) {
+            if (character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+                return;
+            }
         }
+        
         Vector3 diff = target - transform.position;
         diff.Normalize();
         float rot_z = Mathf.Atan2(diff.y, diff.x) * Mathf.Rad2Deg;
