@@ -1217,7 +1217,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         return character.role.roleType == CHARACTER_ROLE.SOLDIER;
     }
     public void CreateRemoveTraitJob(string traitName) {
-        if (specificLocation == homeArea && faction == specificLocation.owner && GetTraitOf(TRAIT_TYPE.CRIMINAL) == null && !HasJobTargettingThisCharacter("Remove Trait", traitName)) {
+        if (isAtHomeArea && faction == specificLocation.owner && GetTraitOf(TRAIT_TYPE.CRIMINAL) == null && !HasJobTargettingThisCharacter("Remove Trait", traitName)) {
             GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = traitName, targetPOI = this };
             GoapPlanJob job = new GoapPlanJob("Remove Trait", goapEffect);
             job.SetCanTakeThisJobChecker(CanCharacterTakeRemoveTraitJob);
@@ -1608,7 +1608,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     private void OnArrivedAtArea(Party party) {
         if (currentParty == party) {
-            if (homeArea.id == specificLocation.id) {
+            if (isAtHomeArea) {
                 if (HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
                     CreateApprehendJob();
                 }
@@ -3278,12 +3278,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             if (tiredOrExhausted.name == "Exhausted") {
                 value = 100;
             } else {
-                if (currentTimeInWords == TIME_IN_WORDS.EARLY_NIGHT) {
-                    value = 15;
-                } else if (currentTimeInWords == TIME_IN_WORDS.LATE_NIGHT) {
-                    value = 65;
-                } else if (currentTimeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
-                    value = 65;
+                if (isAtHomeArea) {
+                    if (currentTimeInWords == TIME_IN_WORDS.EARLY_NIGHT) {
+                        value = 15;
+                    } else if (currentTimeInWords == TIME_IN_WORDS.LATE_NIGHT) {
+                        value = 65;
+                    } else if (currentTimeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
+                        value = 65;
+                    }
                 }
             }
             if (chance < value) {
@@ -3323,7 +3325,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     private bool PlanWorkActions() { //ref bool hasAddedToGoapPlans
         if (GetPlanByCategory(GOAP_CATEGORY.WORK) == null) {
             if (!jobQueue.ProcessFirstJobInQueue(this)) {
-                if (specificLocation.id == homeArea.id && this.faction.id != FactionManager.Instance.neutralFaction.id) {
+                if (isAtHomeArea && this.faction.id != FactionManager.Instance.neutralFaction.id) {
                     return homeArea.jobQueue.ProcessFirstJobInQueue(this);
                 } else {
                     return false;
@@ -3468,7 +3470,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         } else {
             //Unaligned NPC Idle
             log += "\n-" + name + " has no faction";
-            if (specificLocation != homeArea) {
+            if (!isAtHomeArea) {
                 log += "\n-" + name + " is in another area and will do action Return Home";
                 PlanIdleReturnHome();
                 return log;

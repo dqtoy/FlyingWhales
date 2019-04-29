@@ -66,7 +66,7 @@ public class LandmarkCharacterItem : PooledObject {
                 arrivedIcon.SetActive(false);
                 coverGO.SetActive(true);
             } else if ((parentMenu as AreaInfoUI).activeArea.areaResidents.Contains(character)) { //only check for arrival icon if the character is a resident of the showing area
-                if (character.specificLocation.id == character.homeArea.id) {
+                if (character.isAtHomeArea) {
                     arrivedIcon.SetActive(false);
                     travellingIcon.SetActive(false);
                     coverGO.SetActive(false);
