@@ -111,6 +111,7 @@ public class CharacterMarker : PooledObject {
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
         Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
+        Messenger.AddListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling);
 
         PathfindingManager.Instance.AddAgent(pathfindingAI);
         //InteriorMapManager.Instance.AddAgent(rvoController);
@@ -323,9 +324,9 @@ public class CharacterMarker : PooledObject {
                     //GoTo(targetCharacter.gridTileLocation, targetPOI, _arrivalAction);
 
                 }
-                if (Messenger.eventTable.ContainsKey(Signals.PARTY_STARTED_TRAVELLING)) {
-                    Messenger.RemoveListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling);
-                }
+                //if (Messenger.eventTable.ContainsKey(Signals.PARTY_STARTED_TRAVELLING)) {
+                //    Messenger.RemoveListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling);
+                //}
             }
         }
         RemoveHostileInRange(travellingParty.owner);
@@ -492,9 +493,9 @@ public class CharacterMarker : PooledObject {
         Messenger.RemoveListener<Character, Trait>(Signals.TRAIT_ADDED, OnCharacterGainedTrait);
         Messenger.RemoveListener<Character, Trait>(Signals.TRAIT_REMOVED, OnCharacterLostTrait);
         Messenger.RemoveListener<Character, GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
-        if (Messenger.eventTable.ContainsKey(Signals.PARTY_STARTED_TRAVELLING)) {
+        //if (Messenger.eventTable.ContainsKey(Signals.PARTY_STARTED_TRAVELLING)) {
             Messenger.RemoveListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling);
-        }
+        //}
         Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
     }
     #endregion
@@ -537,10 +538,11 @@ public class CharacterMarker : PooledObject {
                     _arrivalAction = null;
                 } else if (targetCharacter.currentParty != null && targetCharacter.currentParty.icon != null && targetCharacter.currentParty.icon.isAreaTravelling) {
                     OnCharacterAreaTravelling(targetCharacter.currentParty);
-                } else {
-                    //else, Add listener for when a character starts to leave a location
-                    Messenger.AddListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling);
-                }   
+                } 
+                //else {
+                //    //else, Add listener for when a character starts to leave a location
+                //    Messenger.AddListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling);
+                //}   
                 break;
             default:
                 SetDestination(targetPOI.gridTileLocation.centeredWorldLocation);
@@ -559,7 +561,7 @@ public class CharacterMarker : PooledObject {
     }
     public void ArrivedAtLocation() {
         StopMovementOnly();
-        if (Messenger.eventTable.ContainsKey(Signals.PARTY_STARTED_TRAVELLING)) { Messenger.RemoveListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling); }
+        //if (Messenger.eventTable.ContainsKey(Signals.PARTY_STARTED_TRAVELLING)) { Messenger.RemoveListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling); }
         Action action = _arrivalAction;
         //set arrival action to null, because some arrival actions set 
         _arrivalAction = null;

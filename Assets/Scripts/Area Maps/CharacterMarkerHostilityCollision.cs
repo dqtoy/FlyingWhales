@@ -48,4 +48,25 @@ public class CharacterMarkerHostilityCollision : MonoBehaviour {
     //    }
     //}
     #endregion
+
+    //#region For Testing
+    //private void FixedUpdate() {
+    //    List<Character> charactersInRange = new List<Character>();
+    //    Collider2D[] colliders = Physics2D.OverlapCircleAll(this.transform.position, 5);
+    //    for (int i = 0; i < colliders.Length; i++) {
+    //        Collider2D currCollider = colliders[i];
+    //        CharacterCollisionTrigger cct = currCollider.gameObject.GetComponent<CharacterCollisionTrigger>();
+    //        if (cct != null && cct.poi is Character) {
+    //            charactersInRange.Add(cct.poi as Character);
+    //        }
+    //    }
+    //    for (int i = 0; i < parentMarker.hostilesInRange.Count; i++) {
+    //        Character hostileInRange = parentMarker.hostilesInRange[i];
+    //        if (!charactersInRange.Contains(hostileInRange)) { //there is a hostile in range that is not actually in range
+    //            Debug.LogWarning("Inconsistent characters in range for " + parentMarker.name + " (" + hostileInRange.name + ").");
+    //            UIManager.Instance.Pause();
+    //        }
+    //    }
+    //}
+    //#endregion
 }
