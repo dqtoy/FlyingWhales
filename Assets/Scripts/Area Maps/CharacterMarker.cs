@@ -1117,10 +1117,10 @@ public class CharacterMarker : PooledObject {
                 || character.role.roleType == CHARACTER_ROLE.NOBLE || character.role.roleType == CHARACTER_ROLE.LEADER)) {
                 //- Injured characters, Civilians, Nobles and Faction Leaders always enter Flee mode
                 //Check if that character is already in the list of terrifying characters, if it is, do not flee because it will avoid that character already, if not, enter flee mode
-                if (!character.marker.terrifyingCharacters.Contains(otherCharacter)) {
+                //if (!character.marker.terrifyingCharacters.Contains(otherCharacter)) {
                     character.stateComponent.SwitchToState(CHARACTER_STATE.FLEE, otherCharacter);
-                }
-                summary += "\n" + character.name + " chose to flee.";
+                    summary += "\n" + character.name + " chose to flee.";
+                //}
             } else if (character.doNotDisturb > 0 && character.GetTraitOf(TRAIT_TYPE.DISABLER) != null) {
                 //- Disabled characters will not do anything
                 summary += "\n" + character.name + " will not do anything.";

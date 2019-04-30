@@ -33,7 +33,9 @@ public class FleeState : CharacterState {
         }
         stateComponent.character.currentParty.icon.SetIsTravelling(false);
         stateComponent.character.marker.SetHasFleePath(false);
-        stateComponent.character.marker.AddTerrifyingCharacter(targetCharacter);
+        if (!targetCharacter.HasTraitOf(TRAIT_TYPE.DISABLER)) {
+            stateComponent.character.marker.AddTerrifyingCharacter(targetCharacter);
+        }
         base.OnExitThisState();
     }
     #endregion

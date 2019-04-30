@@ -81,7 +81,9 @@ public class CharacterState {
     }
     //Starts the timer of this state
     public void StartStatePerTick() {
-        Messenger.AddListener(Signals.TICK_ENDED, PerTickInState);
+        //if(duration > 0) {
+            Messenger.AddListener(Signals.TICK_ENDED, PerTickInState);
+        //}
     }
     //Sets the target character of this state, if there's any
     public void SetTargetCharacter(Character target) {

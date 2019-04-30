@@ -133,7 +133,7 @@ public class CharacterInfoUI : UIMenu {
     public override void OpenMenu() {
         _previousCharacter = _activeCharacter;
         _activeCharacter = _data as Character;
-        _activeCharacter.CenterOnCharacter();
+        _activeCharacter.CenterOnCharacter(false);
         base.OpenMenu();
         if (UIManager.Instance.IsShareIntelMenuOpen()) {
             backButton.interactable = false;
@@ -175,7 +175,7 @@ public class CharacterInfoUI : UIMenu {
     }
     public void UpdateBasicInfo() {
         nameLbl.text = _activeCharacter.name;
-        lvlClassLbl.text = _activeCharacter.raceClassName + " (" + _activeCharacter.currentMoodType.ToString() + ")"; // + " " + _activeCharacter.role.name
+        lvlClassLbl.text = _activeCharacter.raceClassName; //+ " (" + _activeCharacter.currentMoodType.ToString() + ")"; // + " " + _activeCharacter.role.name
         supplyLbl.text = _activeCharacter.supply.ToString();
         UpdateThoughtBubble();
     }

@@ -5,7 +5,7 @@ using UnityEngine;
 public class AbductCharacter : GoapAction {
     public AbductCharacter(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.ABDUCT_ACTION, INTERACTION_ALIGNMENT.EVIL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Hostile_Icon;
-        _isStealthAction = true;
+        //_isStealthAction = true;
     }
 
     #region Overrides
@@ -20,12 +20,13 @@ public class AbductCharacter : GoapAction {
     public override void PerformActualAction() {
         base.PerformActualAction();
         if (!isTargetMissing && (poiTarget as Character).IsInOwnParty()) {
-            if (!HasOtherCharacterInRadius()) {
-                SetState("Abduct Success");
-            } else {
-                parentPlan.SetDoNotRecalculate(true);
-                SetState("Abduct Fail");
-            }
+            SetState("Abduct Success");
+            //if (!HasOtherCharacterInRadius()) {
+            //    SetState("Abduct Success");
+            //} else {
+            //    parentPlan.SetDoNotRecalculate(true);
+            //    SetState("Abduct Fail");
+            //}
         } else {
             SetState("Target Missing");
         }

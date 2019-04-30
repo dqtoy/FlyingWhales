@@ -1302,6 +1302,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public void CreatePersonalJobs() {
         //Claim Item Job
+        bool hasCreatedJob = false;
         if (faction.id != FactionManager.Instance.neutralFaction.id && !jobQueue.HasJob("Claim Item")) {
             int numOfItemsOwned = GetNumOfItemsOwned();
             if (numOfItemsOwned < 3) {
@@ -1329,13 +1330,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                         //GameManager.Instance.SetPausedState(true);
                         Debug.LogWarning(GameManager.Instance.TodayLogString() + "Added a Claim Item Job to " + this.name + " with target " + chosenToken.name + " in " + chosenToken.gridTileLocation.ToString());
                         jobQueue.AddJobInQueue(job);
+                        hasCreatedJob = true;
                     }
                 }
             }
         }
 
         //Undermine Enemy Job
-        if (HasRelationshipTraitOf(RELATIONSHIP_TRAIT.ENEMY) && !jobQueue.HasJob("Undermine Enemy")) {
+        if (!hasCreatedJob && HasRelationshipTraitOf(RELATIONSHIP_TRAIT.ENEMY) && !jobQueue.HasJob("Undermine Enemy")) {
             int chance = UnityEngine.Random.Range(0, 100);
             int value = 3;
             CHARACTER_MOOD currentMood = currentMoodType;
@@ -1439,6 +1441,28 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 Debug.LogError(name + " cannot create save character job for " + targetCharacter.name);
             }
         }
+    }
+    public void CancelAllJobsAndPlans() {
+        AdjustIsWaitingForInteraction(1);
+        for (int i = 0; i < jobQueue.jobsInQueue.Count; i++) {
+            if (jobQueue.CancelJob(jobQueue.jobsInQueue[i])) {
+                i--;
+            }
+        }
+
+        if (currentAction != null && !currentAction.isDone) {
+            if (!currentAction.isPerformingActualAction) {
+                SetCurrentAction(null);
+            } else {
+                currentAction.currentState.EndPerTickEffect(false);
+            }
+        }
+        for (int i = 0; i < allGoapPlans.Count; i++) {
+            if (DropPlan(allGoapPlans[i])) {
+                i--;
+            }
+        }
+        AdjustIsWaitingForInteraction(-1);
     }
     #endregion
 
@@ -1771,13 +1795,15 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     //public bool HasPathToParty(Party partyToJoin) {
     //    return PathGenerator.Instance.GetPath(currLocation, partyToJoin.currLocation, PATHFINDING_MODE.PASSABLE, _faction) != null;
     //}
-    public void CenterOnCharacter() {
+    public void CenterOnCharacter(bool clickTravelLine = true) {
         if (!isDead && minion == null) {
             if (currentParty.icon.isTravelling) {
                 if(currentParty.icon.travelLine != null) {
                     if (specificLocation.areaMap.isShowing) {
                         InteriorMapManager.Instance.HideAreaMap();
-                        currentParty.icon.travelLine.OnClickTravelLine();
+                        if (clickTravelLine) {
+                            currentParty.icon.travelLine.OnClickTravelLine();
+                        }
                     }
                     CameraMove.Instance.CenterCameraOn(currentParty.icon.travelLine.iconImg.gameObject);
                 } else {
@@ -3459,6 +3485,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     private string OtherIdlePlans() {
         string log = GameManager.Instance.TodayLogString() + " IDLE PLAN FOR " + name;
         if(faction.id != FactionManager.Instance.neutralFaction.id) {
+            CreatePersonalJobs();
             //NPC with Faction Idle
             log += "\n-" + name + " has a faction";
             if (previousCurrentAction != null && previousCurrentAction.goapType == INTERACTION_TYPE.RETURN_HOME && currentStructure == homeStructure) {
@@ -3610,7 +3637,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.IDLE);
         goapPlan.ConstructAllNodes();
         AddPlan(goapPlan);
-        PlanGoapActions(goapAction);
+        //PlanGoapActions(goapAction);
     }
     private TileObject GetUnoccupiedHomeTileObject(TILE_OBJECT_TYPE type) {
         for (int i = 0; i < homeStructure.pointsOfInterest.Count; i++) {
@@ -5530,6 +5557,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     #region Logs
     public void RegisterLogAndShowNotifToThisCharacterOnly(string fileName, string key, object target = null, string targetName = "") {
         if (!GameManager.Instance.gameHasStarted) {
+            return;
+        }
+        if(key == "remove_trait" && isDead) {
             return;
         }
         Log addLog = new Log(GameManager.Instance.Today(), "Character", fileName, key);

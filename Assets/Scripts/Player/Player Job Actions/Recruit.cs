@@ -9,7 +9,7 @@ public class Recruit : PlayerJobAction {
 
     public Recruit() {
         name = "Corrupt";
-        SetDefaultCooldownTime(48);
+        SetDefaultCooldownTime(24);
         currentTargetType = JOB_ACTION_TARGET.NONE;
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
     }

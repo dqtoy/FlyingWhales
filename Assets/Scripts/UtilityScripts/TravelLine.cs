@@ -102,7 +102,8 @@ public class TravelLine : MonoBehaviour {
     private void OnMenuOpened(UIMenu menu) {
         if(menu is CharacterInfoUI && UIManager.Instance.characterInfoUI.activeCharacter.id == _character.id) {
             iconImg.sprite = clickedSprite;
-            if(UIManager.Instance.characterInfoUI.previousCharacter != null && !UIManager.Instance.characterInfoUI.previousCharacter.isDead && UIManager.Instance.characterInfoUI.previousCharacter.currentParty.icon.isTravelling) {
+            if(UIManager.Instance.characterInfoUI.previousCharacter != null && !UIManager.Instance.characterInfoUI.previousCharacter.isDead && UIManager.Instance.characterInfoUI.previousCharacter.currentParty.icon.isTravelling 
+                && UIManager.Instance.characterInfoUI.previousCharacter.currentParty.icon.travelLine != null) {
                 UIManager.Instance.characterInfoUI.previousCharacter.currentParty.icon.travelLine.iconImg.sprite = UIManager.Instance.characterInfoUI.previousCharacter.currentParty.icon.travelLine.defaultSprite;
             }
         }

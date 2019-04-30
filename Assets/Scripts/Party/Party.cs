@@ -244,7 +244,7 @@ public class Party {
                 character.marker.visualsParent.eulerAngles = Vector3.zero;
                 character.marker.transform.eulerAngles = Vector3.zero;
                 character.marker.nameLbl.gameObject.SetActive(false);
-                character.marker.PlayIdle();
+                //character.marker.PlayIdle();
             }
             ApplyCurrentBuffsToCharacter(character);
             Messenger.Broadcast(Signals.CHARACTER_JOINED_PARTY, character, this);

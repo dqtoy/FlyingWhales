@@ -104,7 +104,7 @@ public class CharacterStateComponent {
             //This ends the current state but I added a checker that the parameter state must be the same as the current state to avoid inconsistencies
             if(currentState != state) {
                 Debug.LogError("Inconsistency! The current state " + currentState.stateName + " of " + character.name + " does not match the state " + state.stateName);
-                return;
+                //return;
             }
             currentState.ExitState();
         }

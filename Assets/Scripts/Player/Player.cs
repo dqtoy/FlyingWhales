@@ -706,14 +706,21 @@ public class Player : ILeader {
             }
         }
         if (showPopup) {
-            Messenger.Broadcast<Intel>(Signals.SHOW_INTEL_NOTIFICATION, InteractionManager.Instance.CreateNewIntel(action, character));
+            if(action.goapType == INTERACTION_TYPE.DRINK || action.goapType == INTERACTION_TYPE.PLAY || action.goapType == INTERACTION_TYPE.DAYDREAM
+                || action.goapType == INTERACTION_TYPE.EAT_DWELLING_TABLE || action.goapType == INTERACTION_TYPE.EAT_EDILBLE_PLANT || action.goapType == INTERACTION_TYPE.EAT_SMALL_ANIMAL
+                || action.goapType == INTERACTION_TYPE.SLEEP || action.goapType == INTERACTION_TYPE.SLEEP_OUTSIDE || action.goapType == INTERACTION_TYPE.NAP
+                || action.goapType == INTERACTION_TYPE.PRAY || action.goapType == INTERACTION_TYPE.PLAY_GUITAR) {
+                Messenger.Broadcast<Log>(Signals.SHOW_PLAYER_NOTIFICATION, action.currentState.descriptionLog);
+            } else {
+                Messenger.Broadcast<Intel>(Signals.SHOW_INTEL_NOTIFICATION, InteractionManager.Instance.CreateNewIntel(action, character));
+            }
         }
     }
     #endregion
 
     #region Player Notifications
     public bool ShouldShowNotificationFrom(Character character, bool onlyClickedCharacter = false) {
-        if (!onlyClickedCharacter && !character.isDead && AreaMapCameraMove.Instance.CanSee(character.marker.gameObject)) {
+        if (!onlyClickedCharacter && !character.isDead && AreaMapCameraMove.Instance.gameObject.activeSelf && AreaMapCameraMove.Instance.CanSee(character.marker.gameObject)) {
             return true;
         }else if (onlyClickedCharacter && UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.id == character.id) {
             return true;
