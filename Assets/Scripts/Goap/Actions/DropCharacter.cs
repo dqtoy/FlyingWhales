@@ -84,7 +84,7 @@ public class DropCharacter : GoapAction {
             //- **Recipient Response Text**: "Thank you for letting me know about this. I've got to find a way to free [Target Name]!
             reactions.Add(string.Format("Thank you for letting me know about this. I've got to find a way to free {0}!", targetCharacter.name));
             //-**Recipient Effect**: If Adventurer or Soldier or Unaligned Non-Beast, create a Save Target plan.
-            if (recipient.role.roleType == CHARACTER_ROLE.ADVENTURER || recipient.role.roleType == CHARACTER_ROLE.SOLDIER || (recipient.isFactionless && recipient.role.roleType != CHARACTER_ROLE.BEAST)) {
+            if (recipient.role.roleType == CHARACTER_ROLE.ADVENTURER || recipient.role.roleType == CHARACTER_ROLE.SOLDIER || recipient.role.roleType == CHARACTER_ROLE.BANDIT || (recipient.isFactionless && recipient.role.roleType != CHARACTER_ROLE.BEAST)) {
                 recipient.CreateSaveCharacterJob(targetCharacter);
             }
             //If Civilian, Noble or Faction Leader, create an Ask for Save Help plan.
@@ -97,7 +97,7 @@ public class DropCharacter : GoapAction {
             //- **Recipient Response Text**: "Thank you for letting me know about this. I've got to find a way to free [Target Name]!
             reactions.Add(string.Format("Thank you for letting me know about this. I've got to find a way to free {0}!", targetCharacter.name));
             //-**Recipient Effect**: If Adventurer or Soldier or Unaligned Non-Beast, create a Save Target plan
-            if (recipient.role.roleType == CHARACTER_ROLE.ADVENTURER || recipient.role.roleType == CHARACTER_ROLE.SOLDIER || (recipient.isFactionless && recipient.role.roleType != CHARACTER_ROLE.BEAST)) {
+            if (recipient.role.roleType == CHARACTER_ROLE.ADVENTURER || recipient.role.roleType == CHARACTER_ROLE.SOLDIER || recipient.role.roleType == CHARACTER_ROLE.BANDIT || (recipient.isFactionless && recipient.role.roleType != CHARACTER_ROLE.BEAST)) {
                 recipient.CreateSaveCharacterJob(targetCharacter);
             }
             //If Civilian, Noble or Faction Leader, create an Ask for Save Help plan.
