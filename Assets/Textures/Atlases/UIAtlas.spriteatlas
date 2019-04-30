@@ -66,6 +66,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 05fa35e1c002cfb4882f1995aa47c30c, type: 3}
   - {fileID: 21300000, guid: e5983af1cfc65ad41a4c806c32124204, type: 3}
   - {fileID: 21300000, guid: 4bdc5012594c6c2428feb60b9110bb6e, type: 3}
+  - {fileID: 21300000, guid: 7d05ce1280838304f97cdd9ecedf9864, type: 3}
   - {fileID: 21300000, guid: d957f022c6a3a184eb3fc7d557e54a09, type: 3}
   - {fileID: 21300000, guid: 0740052277773e24d896e5929351d05a, type: 3}
   - {fileID: 21300000, guid: 32961622a5d8f21419cf1e02fc3f5f74, type: 3}
@@ -375,6 +376,7 @@ SpriteAtlas:
   - rikitik
   - ge_icon-10
   - tab_traits_inactive
+  - minion actions
   - ge_icon-23
   - bottom_right_center_tile
   - tab_relations_inactive
