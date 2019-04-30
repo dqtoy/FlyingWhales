@@ -234,9 +234,9 @@ public class Table : TileObject, IPointOfInterest {
                 gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this, gridTileLocation.parentAreaMap.table11);
             } else if (usedAsset.name.Contains("2")) {
                 gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this, gridTileLocation.parentAreaMap.table21);
-            } else if (usedAsset.name.Contains("left")) {
+            } else if (usedAsset.name.Contains("Left")) {
                 gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this, gridTileLocation.parentAreaMap.bartopLeft1);
-            } else if (usedAsset.name.Contains("right")) {
+            } else if (usedAsset.name.Contains("Right")) {
                 gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this, gridTileLocation.parentAreaMap.bartopRight1);
             }
         } else if (userCount == 2) {
