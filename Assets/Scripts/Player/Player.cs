@@ -705,7 +705,7 @@ public class Player : ILeader {
 
     #region Player Notifications
     public bool ShouldShowNotificationFrom(Character character, bool onlyClickedCharacter = false) {
-        if (!onlyClickedCharacter && !character.isDead && AreaMapCameraMove.Instance.CanSee(character.marker.gameObject)) {
+        if (!onlyClickedCharacter && !character.isDead && AreaMapCameraMove.Instance.gameObject.activeSelf && AreaMapCameraMove.Instance.CanSee(character.marker.gameObject)) {
             return true;
         }else if (onlyClickedCharacter && UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.id == character.id) {
             return true;
