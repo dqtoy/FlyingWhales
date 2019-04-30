@@ -109,19 +109,27 @@ public class AreaMapCameraMove : MonoBehaviour {
         Vector3 initialPos = new Vector3(-200f, 0f, -10f);
         this.transform.position = initialPos;
     }
-    public void MoveCamera(Vector2 newPos) {
-        areaMapsCamera.transform.position = newPos;
-        ConstrainCameraBounds();
+    public void MoveCamera(Vector3 newPos) {
+        //Vector3 point = areaMapsCamera.WorldToViewportPoint(newPos);
+        //Vector3 delta = newPos - areaMapsCamera.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, point.z)); //(new Vector3(0.5, 0.5, point.z));
+        //Vector3 destination = transform.position + delta;
+        transform.position = newPos;
+        //ConstrainCameraBounds();
     }
     public void JustCenterCamera() {
         Vector3 center = new Vector3((MIN_X + MAX_X) * 0.5f, (MIN_Y + MAX_Y) * 0.5f);
-        areaMapsCamera.transform.position = center;
+        transform.position = center;
     }
-    public void CenterCameraOn(GameObject GO) {
+    public void CenterCameraOn(GameObject GO, bool instantCenter = false) {
         if (GO == null) {
             target = null;
         } else {
-            target = GO.transform;
+            if (instantCenter) {
+                MoveCamera(GO.transform.position);
+            } 
+            //else {
+                target = GO.transform;
+            //}
         }
     }
     private void ArrowKeysMovement() {
@@ -176,7 +184,9 @@ public class AreaMapCameraMove : MonoBehaviour {
             Vector3 point = areaMapsCamera.WorldToViewportPoint(target.position);
             Vector3 delta = target.position - areaMapsCamera.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, point.z)); //(new Vector3(0.5, 0.5, point.z));
             Vector3 destination = transform.position + delta;
-            transform.position = Vector3.SmoothDamp(transform.position, destination, ref velocity, dampTime);
+            if (transform.position != destination) {
+                transform.position = Vector3.SmoothDamp(transform.position, destination, ref velocity, dampTime);
+            }
             //if (HasReachedBounds() || (Mathf.Approximately(transform.position.x, destination.x) && Mathf.Approximately(transform.position.y, destination.y))) {
             //    target = null;
             //}
