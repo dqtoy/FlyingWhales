@@ -1706,16 +1706,18 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     }
                     CameraMove.Instance.CenterCameraOn(currentParty.icon.travelLine.iconImg.gameObject);
                 } else {
+                    bool instantCenter = InteriorMapManager.Instance.currentlyShowingArea != specificLocation;
                     if (!specificLocation.areaMap.isShowing) {
                         InteriorMapManager.Instance.ShowAreaMap(specificLocation, false);
                     }
-                    AreaMapCameraMove.Instance.CenterCameraOn(marker.gameObject);
+                    AreaMapCameraMove.Instance.CenterCameraOn(marker.gameObject, instantCenter);
                 }
             } else {
+                bool instantCenter = InteriorMapManager.Instance.currentlyShowingArea != specificLocation;
                 if (!specificLocation.areaMap.isShowing) {
                     InteriorMapManager.Instance.ShowAreaMap(specificLocation, false);
                 }
-                AreaMapCameraMove.Instance.CenterCameraOn(marker.gameObject);
+                AreaMapCameraMove.Instance.CenterCameraOn(marker.gameObject, instantCenter);
             }
         }
     }
@@ -3517,6 +3519,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //}
     }
     private void PlanIdle(INTERACTION_TYPE type, IPointOfInterest target) {
+        if(target != this) {
+            AddAwareness(target);
+        }
         GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(type, this, target);
         GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
         GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.IDLE);
