@@ -7,7 +7,8 @@ public class CharacterAIPath : AIPath {
     public CharacterMarker marker;
     public int doNotMove { get; private set; }
     public bool isStopMovement { get; private set; }
-    public Path currentPath { get; private set; }
+    public ABPath currentPath { get; private set; }
+    public bool hasReachedTarget { get; private set; }
 
     public int searchLength = 1000;
     public int spread = 5000;
@@ -21,21 +22,23 @@ public class CharacterAIPath : AIPath {
     }
     public override void OnTargetReached() {
         base.OnTargetReached();
-        canSearch = true;
-        marker.ArrivedAtLocation();
-        currentPath = null;
-        //TODO: Move these to delegates
-        if (marker.hasFleePath) {
-            marker.OnFinishFleePath();
-        } 
-        //else if (marker.currentlyEngaging != null) {
-        //    marker.OnReachEngageTarget();
-        //}
+        if(currentPath != null && destination == currentPath.originalEndPoint){
+            canSearch = true;
+            marker.ArrivedAtLocation();
+            currentPath = null;
+            //TODO: Move these to delegates
+            if (marker.hasFleePath) {
+                marker.OnFinishFleePath();
+            }
+            //else if (marker.currentlyEngaging != null) {
+            //    marker.OnReachEngageTarget();
+            //}
+        }
     }
 
     protected override void OnPathComplete(Path newPath) {
+        currentPath = newPath as ABPath;
         base.OnPathComplete(newPath);
-        currentPath = newPath;
     }
     //public override void SearchPath() {
     //    if (float.IsPositiveInfinity(destination.x)) return;

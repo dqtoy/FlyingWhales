@@ -87,7 +87,7 @@ public class JudgeCharacter : GoapAction {
         GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
         GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.IDLE);
         goapPlan.ConstructAllNodes();
-        target.AddPlanFromOutside(goapPlan);
+        target.AddPlan(goapPlan);
     }
 
     private void OnEndGoHome(string result, GoapAction action) {

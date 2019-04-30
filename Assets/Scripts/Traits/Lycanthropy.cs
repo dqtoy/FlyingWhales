@@ -39,14 +39,14 @@ public class Lycanthropy : Trait {
         GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
         GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.REACTION);
         goapPlan.ConstructAllNodes();
-        _character.allGoapPlans.Add(goapPlan);
+        _character.AddPlan(goapPlan);
     }
     public void PlanRevertToNormal() {
         GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.REVERT_TO_NORMAL, _character, _character);
         GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
         GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.REACTION);
         goapPlan.ConstructAllNodes();
-        _character.allGoapPlans.Add(goapPlan);
+        _character.AddPlan(goapPlan);
     }
     public void TurnToWolf() {
         //Drop all plans except for the current action

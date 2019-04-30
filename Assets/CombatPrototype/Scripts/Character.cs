@@ -1253,8 +1253,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                         SpecialToken chosenToken = tokens[UnityEngine.Random.Range(0, tokens.Count)];
                         GoapPlanJob job = new GoapPlanJob("Claim Item", INTERACTION_TYPE.PICK_ITEM, chosenToken);
                         job.SetCancelOnFail(true);
+                        //GameManager.Instance.SetPausedState(true);
+                        Debug.LogWarning(GameManager.Instance.TodayLogString() + "Added a Claim Item Job to " + this.name + " with target " + chosenToken.name + " in " + chosenToken.gridTileLocation.ToString());
                         jobQueue.AddJobInQueue(job);
-                        //Debug.LogWarning(GameManager.Instance.TodayLogString() + "Added a Claim Item Job to " + this.name + " with target " + chosenToken.name + " in " + chosenToken.gridTileLocation.ToString());
                     }
                 }
             }
@@ -1287,8 +1288,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 if (chosenCharacter != null) {
                     GoapPlanJob job = new GoapPlanJob("Undermine Enemy", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", targetPOI = chosenCharacter });
                     job.SetCancelOnFail(true);
-                    jobQueue.AddJobInQueue(job);
+                    //GameManager.Instance.SetPausedState(true);
                     Debug.LogWarning(GameManager.Instance.TodayLogString() + "Added an UNDERMINE ENEMY Job to " + this.name + " with target " + chosenCharacter.name);
+                    jobQueue.AddJobInQueue(job);
                 }
             }
         }
@@ -3198,6 +3200,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         if(specificAction != null) {
             WillAboutToDoAction(specificAction);
+            return;
         }
         if(allGoapPlans.Count > 0) {
             //StopDailyGoapPlanGeneration();
@@ -3368,7 +3371,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
             GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.IDLE);
             goapPlan.ConstructAllNodes();
-            allGoapPlans.Add(goapPlan);
+            AddPlan(goapPlan);
             PlanGoapActions(goapAction);
         //}
         return true;
@@ -3526,7 +3529,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
         GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.IDLE);
         goapPlan.ConstructAllNodes();
-        allGoapPlans.Add(goapPlan);
+        AddPlan(goapPlan);
         PlanGoapActions(goapAction);
     }
     private TileObject GetUnoccupiedHomeTileObject(TILE_OBJECT_TYPE type) {
@@ -3564,7 +3567,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.DEATH }, GOAP_CATEGORY.REACTION);
         goapPlan.ConstructAllNodes();
         goapPlan.SetDoNotRecalculate(true);
-        AddPlanAsPriority(goapPlan);
+        AddPlan(goapPlan, true);
         if (currentAction != null) {
             currentAction.StopAction();
         }
@@ -3812,9 +3815,21 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     /// This should only be used for plans that come/constructed from the outside.
     /// </summary>
     /// <param name="plan">Plan to be added</param>
-    public void AddPlanFromOutside(GoapPlan plan) {
+    public void AddPlan(GoapPlan plan, bool isPriority = false) {
         if (!allGoapPlans.Contains(plan)) {
-            allGoapPlans.Add(plan);
+            if (isPriority) {
+                allGoapPlans.Insert(0, plan);
+            } else {
+                allGoapPlans.Add(plan);
+            }
+            //If a character is strolling or idly returning home and a plan is added to this character, end the action/state
+            if(stateComponent.currentState != null && stateComponent.currentState.characterState == CHARACTER_STATE.STROLL) {
+                stateComponent.currentState.OnExitThisState();
+            }else if(currentAction != null && currentAction.goapType == INTERACTION_TYPE.RETURN_HOME) {
+                if(currentAction.parentPlan == null || currentAction.parentPlan.category == GOAP_CATEGORY.IDLE) {
+                    currentAction.StopAction();
+                }
+            }
         }
     }
     #endregion
@@ -4589,14 +4604,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         PrintLogIfActive(goapThread.log);
         if (goapThread.createdPlan != null) {
             if (goapThread.recalculationPlan == null) {
-                if (goapThread.isPriority) {
-                    allGoapPlans.Insert(0, goapThread.createdPlan);
-                } else {
-                    allGoapPlans.Add(goapThread.createdPlan);
-                }
                 if (goapThread.job != null) {
                     goapThread.job.SetAssignedPlan(goapThread.createdPlan);
                 }
+                AddPlan(goapThread.createdPlan, goapThread.isPriority);
                 PlanGoapActions();
             } else {
                 //Receive plan recalculation
@@ -5091,9 +5102,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (InteriorMapManager.Instance.currentlyShowingArea == specificLocation) {//UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == this
             Debug.Log(log);
         }
-    }
-    private void AddPlanAsPriority(GoapPlan plan) {
-        allGoapPlans.Insert(0, plan);
     }
     public void OnTargettedByAction(GoapAction action) {
         targettedByAction.Add(action);

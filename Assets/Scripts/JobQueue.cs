@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class JobQueue {
-    public Character character { get; private set; }
+    public Character character { get; private set; } //If there is character it means that this job queue is a personal job queue
 	public List<JobQueueItem> jobsInQueue { get; private set; }
 
     public JobQueue(Character character) {
@@ -19,6 +19,14 @@ public class JobQueue {
             jobsInQueue.Insert(0, job);
         }
         job.OnAddJobToQueue();
+
+        if(character != null) {
+            if((character.stateComponent.currentState != null && character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL)
+                || (character.currentAction != null && character.currentAction.goapType == INTERACTION_TYPE.RETURN_HOME && 
+                (character.currentAction.parentPlan == null || character.currentAction.parentPlan.category == GOAP_CATEGORY.IDLE))) {
+                character.jobQueue.ProcessFirstJobInQueue(character);
+            }
+        }
     }
     public bool RemoveJobInQueue(JobQueueItem job) {
         if (jobsInQueue.Remove(job)) {
@@ -46,7 +54,7 @@ public class JobQueue {
                     if(job is GoapPlanJob) {
                         GoapPlanJob goapPlanJob = job as GoapPlanJob;
                         if(goapPlanJob.targetPlan != null) {
-                            characterToDoJob.allGoapPlans.Add(goapPlanJob.targetPlan);
+                            characterToDoJob.AddPlan(goapPlanJob.targetPlan);
                             goapPlanJob.SetAssignedPlan(goapPlanJob.targetPlan);
                         } else {
                             if (goapPlanJob.targetInteractionType != INTERACTION_TYPE.NONE) {
