@@ -11,7 +11,7 @@ public class JobQueue {
         jobsInQueue = new List<JobQueueItem>();
     }
 
-    public void AddJobInQueue(JobQueueItem job, bool isPriority = false) {
+    public void AddJobInQueue(JobQueueItem job, bool isPriority = false, bool processLogicForPersonalJob = true) {
         job.SetJobQueueParent(this);
         if (!isPriority) {
             jobsInQueue.Add(job);
@@ -20,7 +20,7 @@ public class JobQueue {
         }
         job.OnAddJobToQueue();
 
-        if(character != null) {
+        if(processLogicForPersonalJob && character != null) {
             if((character.stateComponent.currentState != null && character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL)
                 || (character.currentAction != null && character.currentAction.goapType == INTERACTION_TYPE.RETURN_HOME && 
                 (character.currentAction.parentPlan == null || character.currentAction.parentPlan.category == GOAP_CATEGORY.IDLE))) {

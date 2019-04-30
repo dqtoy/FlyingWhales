@@ -6,7 +6,7 @@ public class Unconscious : Trait {
     private Character _responsibleCharacter;
     private Character _sourceCharacter;
     private GoapPlanJob _restrainJob;
-    private GoapPlanJob _removeTraitJob;
+    //private GoapPlanJob _removeTraitJob;
 
     #region getters/setters
     public override Character responsibleCharacter {
@@ -43,7 +43,8 @@ public class Unconscious : Trait {
         if(sourceCharacter is Character) {
             _sourceCharacter = sourceCharacter as Character;
             CheckToApplyRestrainJob();
-            _sourceCharacter.CreateRemoveTraitJob(name);
+            //_sourceCharacter.CreateRemoveTraitJob(name);
+            _sourceCharacter.AddTraitNeededToBeRemoved(this);
             _sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, name.ToLower());
         }
     }
@@ -51,9 +52,11 @@ public class Unconscious : Trait {
         if (_restrainJob != null) {
             _restrainJob.jobQueueParent.CancelJob(_restrainJob);
         }
-        if (_removeTraitJob != null) {
-            _removeTraitJob.jobQueueParent.CancelJob(_removeTraitJob);
-        }
+        //if (_removeTraitJob != null) {
+        //    _removeTraitJob.jobQueueParent.CancelJob(_removeTraitJob);
+        //}
+        _sourceCharacter.CancelAllJobsTargettingThisCharacter("Remove Trait", name);
+        _sourceCharacter.RemoveTraitNeededToBeRemoved(this);
         _sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, name.ToLower());
         base.OnRemoveTrait(sourceCharacter);
     }

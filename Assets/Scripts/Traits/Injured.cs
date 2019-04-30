@@ -5,7 +5,7 @@ using UnityEngine;
 public class Injured : Trait {
     private Character _responsibleCharacter;
     private Character _sourceCharacter;
-    private GoapPlanJob _removeTraitJob;
+    //private GoapPlanJob _removeTraitJob;
 
     #region getters/setters
     public override Character responsibleCharacter {
@@ -36,16 +36,19 @@ public class Injured : Trait {
             _sourceCharacter = sourceCharacter as Character;
             _sourceCharacter.UpdateIsCombatantState();
             _sourceCharacter.marker.AdjustSpeedModifier(-0.15f);
-            _sourceCharacter.CreateRemoveTraitJob(name);
+            //_sourceCharacter.CreateRemoveTraitJob(name);
+            _sourceCharacter.AddTraitNeededToBeRemoved(this);
             _sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, name.ToLower());
         }
     }
     public override void OnRemoveTrait(IPointOfInterest sourceCharacter) {
         _sourceCharacter.UpdateIsCombatantState();
         _sourceCharacter.marker.AdjustSpeedModifier(0.15f);
-        if (_removeTraitJob != null) {
-            _removeTraitJob.jobQueueParent.CancelJob(_removeTraitJob);
-        }
+        //if (_removeTraitJob != null) {
+        //    _removeTraitJob.jobQueueParent.CancelJob(_removeTraitJob);
+        //}
+        _sourceCharacter.CancelAllJobsTargettingThisCharacter("Remove Trait", name);
+        _sourceCharacter.RemoveTraitNeededToBeRemoved(this);
         _sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, name.ToLower());
         base.OnRemoveTrait(sourceCharacter);
     }
