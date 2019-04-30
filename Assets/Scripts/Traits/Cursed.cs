@@ -5,7 +5,7 @@ using UnityEngine;
 public class Cursed : Trait {
     private Character _responsibleCharacter;
     private Character _sourceCharacter;
-    private GoapPlanJob _removeTraitJob;
+    //private GoapPlanJob _removeTraitJob;
 
     #region getters/setters
     public override Character responsibleCharacter {
@@ -34,14 +34,17 @@ public class Cursed : Trait {
         base.OnAddTrait(sourceCharacter);
         if (sourceCharacter is Character) {
             _sourceCharacter = sourceCharacter as Character;
-            _sourceCharacter.CreateRemoveTraitJob(name);
+            //_sourceCharacter.CreateRemoveTraitJob(name);
+            _sourceCharacter.AddTraitNeededToBeRemoved(this);
             _sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, name.ToLower());
         }
     }
     public override void OnRemoveTrait(IPointOfInterest sourceCharacter) {
-        if (_removeTraitJob != null) {
-            _removeTraitJob.jobQueueParent.CancelJob(_removeTraitJob);
-        }
+        //if (_removeTraitJob != null) {
+        //    _removeTraitJob.jobQueueParent.CancelJob(_removeTraitJob);
+        //}
+        _sourceCharacter.CancelAllJobsTargettingThisCharacter("Remove Trait", name);
+        _sourceCharacter.RemoveTraitNeededToBeRemoved(this);
         _sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, name.ToLower());
         base.OnRemoveTrait(sourceCharacter);
     }

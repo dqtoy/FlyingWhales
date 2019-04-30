@@ -8,6 +8,7 @@ public class GoapPlanJob : JobQueueItem {
     public GoapPlan assignedPlan { get; protected set; }
     public GoapPlan targetPlan { get; protected set; }
     public IPointOfInterest targetPOI { get; protected set; }
+    public bool willImmediatelyBeDoneAfterReceivingPlan { get; protected set; }
 
     //interaction type version
     public INTERACTION_TYPE targetInteractionType { get; protected set; } //Only used if the plan to be created uses interaction type
@@ -127,6 +128,9 @@ public class GoapPlanJob : JobQueueItem {
         if(assignedCharacter != null) {
             assignedCharacter.OnArriveAtAreaStopMovement();
         }
+    }
+    public void SetWillImmediatelyBeDoneAfterReceivingPlan(bool state) {
+        willImmediatelyBeDoneAfterReceivingPlan = state;
     }
 
     #region Forced Actions

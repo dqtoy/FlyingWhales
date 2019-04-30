@@ -113,6 +113,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public List<JobQueueItem> allJobsTargettingThis { get; private set; }
     public int moodValue { get; private set; }
     public bool isCombatant { get; private set; } //This should only be a getter but since we need to know when the value changes it now has a setter
+    public List<Trait> traitsNeededToBeRemoved { get; private set; }
 
     private LocationGridTile tile; //what tile in the structure is this character currently in.
     private POI_STATE _state;
@@ -546,6 +547,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         items = new List<SpecialToken>();
         jobQueue = new JobQueue(this);
         allJobsTargettingThis = new List<JobQueueItem>();
+        traitsNeededToBeRemoved = new List<Trait>();
         SetPOIState(POI_STATE.ACTIVE);
         SetMoodValue(90);
 
@@ -1150,6 +1152,18 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         }
     }
+    public void CancelAllJobsTargettingThisCharacter(string jobName, object conditionKey) {
+        for (int i = 0; i < allJobsTargettingThis.Count; i++) {
+            if(allJobsTargettingThis[i] is GoapPlanJob) {
+                GoapPlanJob job = allJobsTargettingThis[i] as GoapPlanJob;
+                if (job.name == jobName && job.targetEffect.conditionKey == conditionKey) {
+                    if (job.jobQueueParent.CancelJob(job)) {
+                        i--;
+                    }
+                }
+            }
+        }
+    }
     public void CancelAllJobsTargettingThisCharacter(string cause = "", bool shouldDoAfterEffect = true) {
         for (int i = 0; i < allJobsTargettingThis.Count; i++) {
             JobQueueItem job = allJobsTargettingThis[0];
@@ -1177,6 +1191,29 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         }
         return false;
+    }
+    public GoapPlanJob GetJobTargettingThisCharacter(string jobName, object conditionKey) {
+        for (int i = 0; i < allJobsTargettingThis.Count; i++) {
+            if (allJobsTargettingThis[i] is GoapPlanJob) {
+                GoapPlanJob job = allJobsTargettingThis[i] as GoapPlanJob;
+                if (job.name == jobName && job.targetEffect.conditionKey == conditionKey) {
+                    return job;
+                }
+            }
+        }
+        return null;
+    }
+    public List<GoapPlanJob> GetJobsTargettingThisCharacter(string jobName, object conditionKey) {
+        List<GoapPlanJob> jobs = new List<GoapPlanJob>();
+        for (int i = 0; i < allJobsTargettingThis.Count; i++) {
+            if (allJobsTargettingThis[i] is GoapPlanJob) {
+                GoapPlanJob job = allJobsTargettingThis[i] as GoapPlanJob;
+                if (job.name == jobName && job.targetEffect.conditionKey == conditionKey) {
+                    jobs.Add(job);
+                }
+            }
+        }
+        return jobs;
     }
     private void CheckApprehendRelatedJobsOnLeaveLocation() {
         CancelAllJobsTargettingThisCharacter("Apprehend");
@@ -1216,16 +1253,52 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     private bool CanCharacterTakeApprehendJob(Character character) {
         return character.role.roleType == CHARACTER_ROLE.SOLDIER;
     }
-    public void CreateRemoveTraitJob(string traitName) {
-        if (isAtHomeArea && faction == specificLocation.owner && GetTraitOf(TRAIT_TYPE.CRIMINAL) == null && !HasJobTargettingThisCharacter("Remove Trait", traitName)) {
-            GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = traitName, targetPOI = this };
-            GoapPlanJob job = new GoapPlanJob("Remove Trait", goapEffect);
-            job.SetCanTakeThisJobChecker(CanCharacterTakeRemoveTraitJob);
-            homeArea.jobQueue.AddJobInQueue(job);
+    public bool CreateRemoveTraitJobs(Character character) {
+        if(traitsNeededToBeRemoved.Count <= 0) {
+            return false;
         }
+        if (GetTraitOf(TRAIT_TYPE.CRIMINAL) == null && CanCharacterTakeRemoveTraitJob(character)) {
+            bool hasCreatedJob = false;
+            for (int i = 0; i < traitsNeededToBeRemoved.Count; i++) {
+                Trait trait = traitsNeededToBeRemoved[i];
+
+                bool canDoJob = true;
+                List<GoapPlanJob> similarJobs = GetJobsTargettingThisCharacter("Remove Trait", trait.name);
+                for (int j = 0; j < similarJobs.Count; j++) {
+                    GoapPlanJob similarJob = similarJobs[j];
+                    if(similarJob.assignedCharacter != null && similarJob.assignedCharacter.currentAction != null 
+                        && similarJob.assignedCharacter.currentAction.parentPlan != null && similarJob.assignedCharacter.currentAction.parentPlan.job != null
+                        && similarJob.assignedCharacter.currentAction.parentPlan.job == similarJob) {
+                        canDoJob = false;
+                        break;
+                    }
+                }
+
+                if (canDoJob) {
+                    GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = trait.name, targetPOI = this };
+                    GoapPlanJob job = new GoapPlanJob("Remove Trait", goapEffect);
+                    job.SetCancelOnFail(true);
+                    job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
+                    //job.SetCanTakeThisJobChecker(CanCharacterTakeRemoveTraitJob);
+                    character.jobQueue.AddJobInQueue(job, false, false);
+                    hasCreatedJob = true;
+                }
+            }
+            if (hasCreatedJob) {
+                character.jobQueue.ProcessFirstJobInQueue(character);
+            }
+            return hasCreatedJob;
+        }
+        return false;
     }
     private bool CanCharacterTakeRemoveTraitJob(Character character) {
-        return this != character && !character.HasRelationshipOfTypeWith(this, RELATIONSHIP_TRAIT.ENEMY);
+        if (this != character && this.faction.id == character.faction.id) {
+            if(this.faction.id == FactionManager.Instance.neutralFaction.id) {
+                return this.race == character.race && this.homeArea == character.homeArea && !character.HasRelationshipOfTypeWith(this, RELATIONSHIP_TRAIT.ENEMY);
+            }
+            return !character.HasRelationshipOfTypeWith(this, RELATIONSHIP_TRAIT.ENEMY);
+        }
+        return false;
     }
     public void CreatePersonalJobs() {
         //Claim Item Job
@@ -1253,8 +1326,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                         SpecialToken chosenToken = tokens[UnityEngine.Random.Range(0, tokens.Count)];
                         GoapPlanJob job = new GoapPlanJob("Claim Item", INTERACTION_TYPE.PICK_ITEM, chosenToken);
                         job.SetCancelOnFail(true);
+                        //GameManager.Instance.SetPausedState(true);
+                        Debug.LogWarning(GameManager.Instance.TodayLogString() + "Added a Claim Item Job to " + this.name + " with target " + chosenToken.name + " in " + chosenToken.gridTileLocation.ToString());
                         jobQueue.AddJobInQueue(job);
-                        //Debug.LogWarning(GameManager.Instance.TodayLogString() + "Added a Claim Item Job to " + this.name + " with target " + chosenToken.name + " in " + chosenToken.gridTileLocation.ToString());
                     }
                 }
             }
@@ -1287,8 +1361,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 if (chosenCharacter != null) {
                     GoapPlanJob job = new GoapPlanJob("Undermine Enemy", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", targetPOI = chosenCharacter });
                     job.SetCancelOnFail(true);
-                    jobQueue.AddJobInQueue(job);
+                    //GameManager.Instance.SetPausedState(true);
                     Debug.LogWarning(GameManager.Instance.TodayLogString() + "Added an UNDERMINE ENEMY Job to " + this.name + " with target " + chosenCharacter.name);
+                    jobQueue.AddJobInQueue(job);
                 }
             }
         }
@@ -1612,12 +1687,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 if (HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
                     CreateApprehendJob();
                 }
-                for (int i = 0; i < traits.Count; i++) {
-                    if (traits[i].name == "Cursed" || traits[i].name == "Sick"
-                        || traits[i].name == "Injured" || traits[i].name == "Unconscious") {
-                        CreateRemoveTraitJob(traits[i].name);
-                    }
-                }
+                //for (int i = 0; i < traits.Count; i++) {
+                //    if (traits[i].name == "Cursed" || traits[i].name == "Sick"
+                //        || traits[i].name == "Injured" || traits[i].name == "Unconscious") {
+                //        CreateRemoveTraitJob(traits[i].name);
+                //    }
+                //}
             }
         }
     }
@@ -2851,16 +2926,17 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             if (trait.effect == TRAIT_EFFECT.NEGATIVE) {
                 AdjustIgnoreHostilities(-1);
             }
-        } else if(trait.type == TRAIT_TYPE.CRIMINAL) {
-            if(GetTraitOf(TRAIT_TYPE.CRIMINAL) == null) {
-                for (int i = 0; i < traits.Count; i++) {
-                    if (traits[i].name == "Cursed" || traits[i].name == "Sick"
-                        || traits[i].name == "Injured" || traits[i].name == "Unconscious") {
-                        CreateRemoveTraitJob(traits[i].name);
-                    }
-                }
-            }
-        }
+        } 
+        //else if(trait.type == TRAIT_TYPE.CRIMINAL) {
+        //    if(GetTraitOf(TRAIT_TYPE.CRIMINAL) == null) {
+        //        for (int i = 0; i < traits.Count; i++) {
+        //            if (traits[i].name == "Cursed" || traits[i].name == "Sick"
+        //                || traits[i].name == "Injured" || traits[i].name == "Unconscious") {
+        //                CreateRemoveTraitJob(traits[i].name);
+        //            }
+        //        }
+        //    }
+        //}
         if (trait.name == "Abducted" || trait.name == "Restrained") {
             AdjustDoNotGetTired(-1);
         } else if (trait.name == "Packaged" || trait.name == "Hibernating" || trait.name == "Reanimated") {
@@ -3035,6 +3111,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return null;
     }
+    public void AddTraitNeededToBeRemoved(Trait trait) {
+        traitsNeededToBeRemoved.Add(trait);
+    }
+    public void RemoveTraitNeededToBeRemoved(Trait trait) {
+        traitsNeededToBeRemoved.Remove(trait);
+    }
     #endregion
 
     #region Morality
@@ -3198,6 +3280,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         if(specificAction != null) {
             WillAboutToDoAction(specificAction);
+            return;
         }
         if(allGoapPlans.Count > 0) {
             //StopDailyGoapPlanGeneration();
@@ -3368,7 +3451,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
             GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.IDLE);
             goapPlan.ConstructAllNodes();
-            allGoapPlans.Add(goapPlan);
+            AddPlan(goapPlan);
             PlanGoapActions(goapAction);
         //}
         return true;
@@ -3526,7 +3609,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
         GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.IDLE);
         goapPlan.ConstructAllNodes();
-        allGoapPlans.Add(goapPlan);
+        AddPlan(goapPlan);
         PlanGoapActions(goapAction);
     }
     private TileObject GetUnoccupiedHomeTileObject(TILE_OBJECT_TYPE type) {
@@ -3564,7 +3647,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.DEATH }, GOAP_CATEGORY.REACTION);
         goapPlan.ConstructAllNodes();
         goapPlan.SetDoNotRecalculate(true);
-        AddPlanAsPriority(goapPlan);
+        AddPlan(goapPlan, true);
         if (currentAction != null) {
             currentAction.StopAction();
         }
@@ -3812,9 +3895,21 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     /// This should only be used for plans that come/constructed from the outside.
     /// </summary>
     /// <param name="plan">Plan to be added</param>
-    public void AddPlanFromOutside(GoapPlan plan) {
+    public void AddPlan(GoapPlan plan, bool isPriority = false) {
         if (!allGoapPlans.Contains(plan)) {
-            allGoapPlans.Add(plan);
+            if (isPriority) {
+                allGoapPlans.Insert(0, plan);
+            } else {
+                allGoapPlans.Add(plan);
+            }
+            //If a character is strolling or idly returning home and a plan is added to this character, end the action/state
+            if(stateComponent.currentState != null && stateComponent.currentState.characterState == CHARACTER_STATE.STROLL) {
+                stateComponent.currentState.OnExitThisState();
+            }else if(currentAction != null && currentAction.goapType == INTERACTION_TYPE.RETURN_HOME) {
+                if(currentAction.parentPlan == null || currentAction.parentPlan.category == GOAP_CATEGORY.IDLE) {
+                    currentAction.StopAction();
+                }
+            }
         }
     }
     #endregion
@@ -4589,14 +4684,38 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         PrintLogIfActive(goapThread.log);
         if (goapThread.createdPlan != null) {
             if (goapThread.recalculationPlan == null) {
-                if (goapThread.isPriority) {
-                    allGoapPlans.Insert(0, goapThread.createdPlan);
-                } else {
-                    allGoapPlans.Add(goapThread.createdPlan);
-                }
                 if (goapThread.job != null) {
                     goapThread.job.SetAssignedPlan(goapThread.createdPlan);
+                    if (goapThread.job.willImmediatelyBeDoneAfterReceivingPlan) {
+                        AddPlan(goapThread.createdPlan, true);
+
+                        if(stateComponent.currentState != null) {
+                            if(stateComponent.currentState.characterState != CHARACTER_STATE.ENGAGE && stateComponent.currentState.characterState != CHARACTER_STATE.FLEE) {
+                                stateComponent.currentState.OnExitThisState();
+                            }
+                        } else {
+                            if (currentParty.icon.isTravelling) {
+                                if (currentParty.icon.travelLine == null) {
+                                    marker.StopMovement();
+                                } else {
+                                    currentParty.icon.SetOnArriveAction(() => OnArriveAtAreaStopMovement());
+                                }
+                            }
+
+                            AdjustIsWaitingForInteraction(1);
+                            if (currentAction != null && !currentAction.isDone) {
+                                if (!currentAction.isPerformingActualAction) {
+                                    SetCurrentAction(null);
+                                } else {
+                                    currentAction.currentState.EndPerTickEffect(false);
+                                }
+                            }
+                            AdjustIsWaitingForInteraction(-1);
+                        }
+                        return;
+                    }
                 }
+                AddPlan(goapThread.createdPlan, goapThread.isPriority);
                 PlanGoapActions();
             } else {
                 //Receive plan recalculation
@@ -5091,9 +5210,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (InteriorMapManager.Instance.currentlyShowingArea == specificLocation) {//UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == this
             Debug.Log(log);
         }
-    }
-    private void AddPlanAsPriority(GoapPlan plan) {
-        allGoapPlans.Insert(0, plan);
     }
     public void OnTargettedByAction(GoapAction action) {
         targettedByAction.Add(action);
