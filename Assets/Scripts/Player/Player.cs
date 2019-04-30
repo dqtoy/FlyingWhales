@@ -709,7 +709,8 @@ public class Player : ILeader {
             if(action.goapType == INTERACTION_TYPE.DRINK || action.goapType == INTERACTION_TYPE.PLAY || action.goapType == INTERACTION_TYPE.DAYDREAM
                 || action.goapType == INTERACTION_TYPE.EAT_DWELLING_TABLE || action.goapType == INTERACTION_TYPE.EAT_EDILBLE_PLANT || action.goapType == INTERACTION_TYPE.EAT_SMALL_ANIMAL
                 || action.goapType == INTERACTION_TYPE.SLEEP || action.goapType == INTERACTION_TYPE.SLEEP_OUTSIDE || action.goapType == INTERACTION_TYPE.NAP
-                || action.goapType == INTERACTION_TYPE.PRAY || action.goapType == INTERACTION_TYPE.PLAY_GUITAR) {
+                || action.goapType == INTERACTION_TYPE.PRAY || action.goapType == INTERACTION_TYPE.PLAY_GUITAR || action.goapType == INTERACTION_TYPE.SIT
+                || action.goapType == INTERACTION_TYPE.STAND) {
                 Messenger.Broadcast<Log>(Signals.SHOW_PLAYER_NOTIFICATION, action.currentState.descriptionLog);
             } else {
                 Messenger.Broadcast<Intel>(Signals.SHOW_INTEL_NOTIFICATION, InteractionManager.Instance.CreateNewIntel(action, character));
