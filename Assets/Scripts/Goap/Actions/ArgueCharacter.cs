@@ -94,6 +94,12 @@ public class ArgueCharacter : GoapAction {
     //    base.FailAction();
     //    SetState("Target Missing");
     //}
+    public override void OnStopActionDuringCurrentState() {
+        if (currentState.name == "Argue Success") {
+            actor.AdjustDoNotGetLonely(-1);
+            AddTraitTo(poiTarget, "Annoyed");
+        }
+    }
     #endregion
 
     #region Preconditions

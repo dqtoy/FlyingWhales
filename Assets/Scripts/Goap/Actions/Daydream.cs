@@ -56,6 +56,12 @@ public class Daydream : GoapAction {
     public override LocationGridTile GetTargetLocationTile() {
         return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);
     }
+    public override void OnStopActionDuringCurrentState() {
+        if (currentState.name == "Daydream Success") {
+            actor.AdjustDoNotGetLonely(-1);
+            actor.AdjustDoNotGetTired(-1);
+        }
+    }
     #endregion
 
     #region Effects

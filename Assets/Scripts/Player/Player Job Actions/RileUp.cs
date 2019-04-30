@@ -5,10 +5,18 @@ using UnityEngine;
 public class RileUp : PlayerJobAction {
 
     private Character _targetCharacter;
+    private List<Area> _abductAreas;
     public RileUp() {
         name = "Rile Up";
         SetDefaultCooldownTime(24);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
+        _abductAreas = new List<Area>();
+        for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
+            Area area = LandmarkManager.Instance.allAreas[i];
+            if(area.name == "Cardell" || area.name == "Denrio") {
+                _abductAreas.Add(area);
+            }
+        }
     }
 
     public override void ActivateAction(Character assignedCharacter, Character targetCharacter) {
@@ -19,8 +27,10 @@ public class RileUp : PlayerJobAction {
         string titleText = "Select a location.";
         if(_targetCharacter.role.roleType == CHARACTER_ROLE.BEAST) {
             titleText = "Select a location and " + _targetCharacter.name + " will run amok there.";
+            UIManager.Instance.ShowClickableObjectPicker(LandmarkManager.Instance.allAreas, OnClickArea, null, CanClickArea, titleText);
+        } else {
+            UIManager.Instance.ShowClickableObjectPicker(_abductAreas, OnClickArea, null, CanClickArea, titleText);
         }
-        UIManager.Instance.ShowClickableObjectPicker(LandmarkManager.Instance.allAreas, OnClickArea, null, CanClickArea, titleText);
     }
 
     protected override bool ShouldButtonBeInteractable(Character character, Character targetCharacter) {

@@ -39,6 +39,11 @@ public class EatPlant : GoapAction {
     //    base.FailAction();
     //    SetState("Eat Fail");
     //}
+    public override void OnStopActionDuringCurrentState() {
+        if (currentState.name == "Eat Success") {
+            actor.AdjustDoNotGetHungry(-1);
+        }
+    }
     #endregion
 
     #region Effects

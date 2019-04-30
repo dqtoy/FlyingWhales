@@ -67,6 +67,12 @@ public class PlayGuitar : GoapAction {
     //    base.FailAction();
     //    SetState("Play Fail");
     //}
+    public override void OnStopActionDuringCurrentState() {
+        if (currentState.name == "Play Success") {
+            actor.AdjustDoNotGetLonely(-1);
+            poiTarget.SetPOIState(POI_STATE.ACTIVE);
+        }
+    }
     #endregion
 
     #region State Effects

@@ -105,6 +105,12 @@ public class ChatCharacter : GoapAction {
         _targetStructure = poiTarget.gridTileLocation.structure;
         base.SetTargetStructure();
     }
+    public override void OnStopActionDuringCurrentState() {
+        if (currentState.name == "Chat Success") {
+            actor.AdjustDoNotGetLonely(-1);
+            (poiTarget as Character).AdjustDoNotGetLonely(-1);
+        }
+    }
     #endregion
 
     #region State Effects
