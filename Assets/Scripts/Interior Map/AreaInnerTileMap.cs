@@ -1401,6 +1401,7 @@ public class AreaInnerTileMap : MonoBehaviour {
             && UIManager.Instance.characterInfoUI.activeCharacter.specificLocation == this.area
             && !UIManager.Instance.characterInfoUI.activeCharacter.isDead
             && UIManager.Instance.characterInfoUI.activeCharacter.isWaitingForInteraction <= 0
+            && UIManager.Instance.characterInfoUI.activeCharacter.marker != null
             && UIManager.Instance.characterInfoUI.activeCharacter.marker.pathfindingAI.hasPath
             && (UIManager.Instance.characterInfoUI.activeCharacter.stateComponent.currentState == null 
             || (UIManager.Instance.characterInfoUI.activeCharacter.stateComponent.currentState.characterState != CHARACTER_STATE.PATROL 

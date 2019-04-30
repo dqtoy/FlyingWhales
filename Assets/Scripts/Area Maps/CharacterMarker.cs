@@ -1127,7 +1127,7 @@ public class CharacterMarker : PooledObject {
             } else if (character.role.roleType == CHARACTER_ROLE.BEAST || character.role.roleType == CHARACTER_ROLE.ADVENTURER
                 || character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.BANDIT) {
                 //- Uninjured Beasts, Adventurers and Soldiers will enter Engage mode.
-                if (otherCharacter.IsDoingCombatActionTowards(this.character) || this.character.IsDoingCombatActionTowards(otherCharacter)) {
+                if (otherCharacter.IsDoingCombatActionTowards(this.character)) {
                     //if the other character is already going to assault this character, and this character chose to engage, wait for the other characters assault instead
                     summary += "\n" + otherCharacter.name + " is already or will engage with this character (" + this.character.name + "), waiting for that, instead of starting new engage state.";
                 } else {
