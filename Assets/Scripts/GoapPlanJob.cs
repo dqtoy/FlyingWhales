@@ -64,7 +64,7 @@ public class GoapPlanJob : JobQueueItem {
                     if(character.currentParty.icon.travelLine == null) {
                         character.marker.StopMovementOnly();
                     } else {
-                        character.currentParty.icon.SetOnArriveAction(() => OnArriveAtLocationStopMovement());
+                        character.currentParty.icon.SetOnArriveAction(() => character.OnArriveAtAreaStopMovement());
                     }
                 }
                 if (character.currentAction.isPerformingActualAction && !character.currentAction.isDone) {
