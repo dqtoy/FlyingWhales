@@ -4112,7 +4112,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             AdjustTiredness(-10);
         }
         if (_doNotGetLonely <= 0) {
-            AdjustHappiness(-7);
+            AdjustHappiness(-9);
         }
     }
     public string GetNeedsSummary() {

@@ -38,6 +38,11 @@ public class Drink : GoapAction {
     //    base.FailAction();
     //    SetState("Target Missing");
     //}
+    public override void OnStopActionDuringCurrentState() {
+        if (currentState.name == "Drink Success" || currentState.name == "Drink Poisoned") {
+            actor.AdjustDoNotGetLonely(-1);
+        }
+    }
     #endregion
 
     #region State Effects

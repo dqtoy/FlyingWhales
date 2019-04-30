@@ -56,6 +56,12 @@ public class Play : GoapAction {
     //    }
     //    base.SetTargetStructure();
     //}
+    public override void OnStopActionDuringCurrentState() {
+        if (currentState.name == "Play Success") {
+            actor.AdjustDoNotGetLonely(-1);
+            actor.AdjustDoNotGetTired(-1);
+        }
+    }
     #endregion
 
     #region Effects

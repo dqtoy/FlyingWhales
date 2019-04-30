@@ -39,6 +39,11 @@ public class Feed : GoapAction {
         SetTargetStructure();
         base.DoAction(plan);
     }
+    public override void OnStopActionDuringCurrentState() {
+        if (currentState.name == "Feed Success") {
+            _target.AdjustDoNotGetHungry(-1);
+        }
+    }
     #endregion
 
     #region Effects

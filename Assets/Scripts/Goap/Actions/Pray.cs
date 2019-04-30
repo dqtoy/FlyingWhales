@@ -44,6 +44,11 @@ public class Pray : GoapAction {
         _targetStructure = actor.currentStructure;
         base.SetTargetStructure();
     }
+    public override void OnStopActionDuringCurrentState() {
+        if (currentState.name == "Pray Success") {
+            actor.AdjustDoNotGetLonely(-1);
+        }
+    }
     #endregion
 
     #region State Effects

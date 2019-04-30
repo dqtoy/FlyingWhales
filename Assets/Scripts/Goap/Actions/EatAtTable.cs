@@ -54,6 +54,11 @@ public class EatAtTable : GoapAction {
     //    base.FailAction();
     //    SetState("Target Missing");
     //}
+    public override void OnStopActionDuringCurrentState() {
+        if (currentState.name == "Eat Success" || currentState.name == "Eat Poisoned") {
+            actor.AdjustDoNotGetHungry(-1);
+        }
+    }
     #endregion
 
     #region Effects
