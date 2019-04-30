@@ -425,6 +425,16 @@ public class LandmarkManager : MonoBehaviour {
         }
         
     }
+    public List<string> GetUsedTownCenterTemplates() {
+        List<string> templates = new List<string>();
+        for (int i = 0; i < allAreas.Count; i++) {
+            Area currArea = allAreas[i];
+            if (currArea.areaMap != null) {
+                templates.Add(currArea.areaMap.usedTownCenterTemplateName);
+            }
+        }
+        return templates;
+    }
     #endregion
 
     #region Areas

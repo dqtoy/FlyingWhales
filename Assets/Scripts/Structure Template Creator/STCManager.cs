@@ -307,6 +307,7 @@ public class STCManager : MonoBehaviour {
 
 [System.Serializable]
 public class StructureTemplate {
+    public string name;
     public Point size;
     public TileTemplateData[] groundTiles;
     public TileTemplateData[] structureWallTiles;

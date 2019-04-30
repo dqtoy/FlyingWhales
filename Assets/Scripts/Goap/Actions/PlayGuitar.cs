@@ -11,7 +11,7 @@ public class PlayGuitar : GoapAction {
             TIME_IN_WORDS.AFTERNOON,
             TIME_IN_WORDS.EARLY_NIGHT,
         };
-        actionIconString = GoapActionStateDB.Joy_Icon;
+        actionIconString = GoapActionStateDB.Entertain_Icon;
     }
 
     #region Overrides
@@ -41,20 +41,25 @@ public class PlayGuitar : GoapAction {
         if (actor.homeStructure == knownLoc.structure) {
             return Utilities.rng.Next(4, 10);
         } else {
-            Dwelling dwelling = knownLoc.structure as Dwelling;
-            if (dwelling.residents.Count > 0) {
-                for (int i = 0; i < dwelling.residents.Count; i++) {
-                    Character currResident = dwelling.residents[i];
-                    if (currResident.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE)) {
-                        return Utilities.rng.Next(20, 30);
+            if (knownLoc.structure is Dwelling) {
+                Dwelling dwelling = knownLoc.structure as Dwelling;
+                if (dwelling.residents.Count > 0) {
+                    for (int i = 0; i < dwelling.residents.Count; i++) {
+                        Character currResident = dwelling.residents[i];
+                        if (currResident.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE)) {
+                            return Utilities.rng.Next(20, 30);
+                        }
                     }
+                    //the actor does NOT have any positive relations with any resident
+                    return 99999; //NOTE: Should never reach here since Requirement prevents this.
+                } else {
+                    //in cases that the guitar is at a dwelling with no residents, always allow.
+                    return Utilities.rng.Next(10, 20);
                 }
-                //the actor does NOT have any positive relations with any resident
-                return 99999; //NOTE: Should never reach here since Requirement prevents this.
             } else {
-                //in cases that the guitar is at a dwelling with no residents, always allow.
                 return Utilities.rng.Next(10, 20);
             }
+            
         }
         //return Utilities.rng.Next(3, 10);
     }

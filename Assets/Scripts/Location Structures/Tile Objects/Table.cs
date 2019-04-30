@@ -55,6 +55,7 @@ public class Table : TileObject, IPointOfInterest {
         switch (action.goapType) {
             case INTERACTION_TYPE.EAT_DWELLING_TABLE:
             case INTERACTION_TYPE.DRINK:
+            case INTERACTION_TYPE.SIT:
                 AddUser(action.actor);
                 break;
             
@@ -65,6 +66,7 @@ public class Table : TileObject, IPointOfInterest {
         switch (action.goapType) {
             case INTERACTION_TYPE.EAT_DWELLING_TABLE:
             case INTERACTION_TYPE.DRINK:
+            case INTERACTION_TYPE.SIT:
                 RemoveUser(action.actor);
                 break;
 
@@ -75,6 +77,7 @@ public class Table : TileObject, IPointOfInterest {
         switch (action.goapType) {
             case INTERACTION_TYPE.EAT_DWELLING_TABLE:
             case INTERACTION_TYPE.DRINK:
+            case INTERACTION_TYPE.SIT:
                 RemoveUser(action.actor);
                 break;
 
@@ -231,6 +234,10 @@ public class Table : TileObject, IPointOfInterest {
                 gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this, gridTileLocation.parentAreaMap.table11);
             } else if (usedAsset.name.Contains("2")) {
                 gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this, gridTileLocation.parentAreaMap.table21);
+            } else if (usedAsset.name.Contains("left")) {
+                gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this, gridTileLocation.parentAreaMap.bartopLeft1);
+            } else if (usedAsset.name.Contains("right")) {
+                gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this, gridTileLocation.parentAreaMap.bartopRight1);
             }
         } else if (userCount == 2) {
             if (usedAsset.name.Contains("0")) {
@@ -259,6 +266,10 @@ public class Table : TileObject, IPointOfInterest {
                 gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this, gridTileLocation.parentAreaMap.table10);
             } else if (usedAsset.name.Contains("2")) {
                 gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this, gridTileLocation.parentAreaMap.table20);
+            } else if (usedAsset.name.Contains("Left")) {
+                gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this, gridTileLocation.parentAreaMap.bartopLeft0);
+            } else if (usedAsset.name.Contains("Right")) {
+                gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this, gridTileLocation.parentAreaMap.bartopRight0);
             }
         }
         //the asset will revert to no one using once the table is set to active again

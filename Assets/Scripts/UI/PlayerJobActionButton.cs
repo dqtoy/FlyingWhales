@@ -15,6 +15,7 @@ public class PlayerJobActionButton : MonoBehaviour {
     [SerializeField] private TextMeshProUGUI btnLbl;
     [SerializeField] private TextMeshProUGUI subTextLbl;
     [SerializeField] private Image jobIcon;
+    //[SerializeField] private GameObject pointer;
     private Character character;
     private object target;
 
@@ -37,7 +38,13 @@ public class PlayerJobActionButton : MonoBehaviour {
         UpdateInteractableState();
         //UpdateSubText();
         UpdateButtonText();
+        //pointer.SetActive(!PlayerManager.Instance.player.hasSeenActionButtonsOnce);
+        //Messenger.AddListener(Signals.HAS_SEEN_ACTION_BUTTONS, OnSeenActionButtons);
     }
+
+    //private void OnSeenActionButtons() {
+    //    pointer.SetActive(!PlayerManager.Instance.player.hasSeenActionButtonsOnce);
+    //}
 
     #region Visuals
     private void UpdateInteractableState() {
@@ -101,7 +108,7 @@ public class PlayerJobActionButton : MonoBehaviour {
         if (action.isInCooldown) {
             header += " (In Cooldown)";
         }
-
+        PlayerManager.Instance.player.SeenActionButtonsOnce();
         PlayerUI.Instance.ShowActionBtnTooltip(message, header);
     }
     public void HideHoverText() {

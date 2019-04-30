@@ -78,7 +78,7 @@ public class GameManager : MonoBehaviour {
         _gameHasStarted = false;
         CursorManager.Instance.SetCursorToDefault();
 #if !WORLD_CREATION_TOOL
-        Application.logMessageReceived += LogCallback;
+        //Application.logMessageReceived += LogCallback;
 #endif
     }
     private void FixedUpdate() {

@@ -75,9 +75,9 @@ public class CharacterState {
 
     //Stops the timer of this state
     public void StopStatePerTick() {
-        if (Messenger.eventTable.ContainsKey(Signals.TICK_ENDED)) {
+        //if (Messenger.eventTable.ContainsKey(Signals.TICK_ENDED)) {
             Messenger.RemoveListener(Signals.TICK_ENDED, PerTickInState);
-        }
+        //}
     }
     //Starts the timer of this state
     public void StartStatePerTick() {
@@ -123,7 +123,7 @@ public class CharacterState {
     }
     //This is the one must be called to exit and end this state
     public void ExitState() {
-        Debug.Log(GameManager.Instance.TodayLogString() + "Exiting " + stateName + " for " + stateComponent.character.name);
+        Debug.Log(GameManager.Instance.TodayLogString() + "Exiting " + stateName + " for " + stateComponent.character.name + " targetting " + targetCharacter?.name ?? "No One");
         EndState();
     }
     //Pauses this state, used in switching states if this is a major state

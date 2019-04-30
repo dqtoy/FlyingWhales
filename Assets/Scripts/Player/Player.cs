@@ -64,6 +64,8 @@ public class Player : ILeader {
     }
     #endregion
 
+    public bool hasSeenActionButtonsOnce = false;
+
     public Player() {
         playerArea = null;
         _tokens = new List<Token>();
@@ -609,6 +611,12 @@ public class Player : ILeader {
         JOB job = GetCharactersCurrentJob(character);
         if (job != JOB.NONE) {
             UnassignCharacterFromJob(job);
+        }
+    }
+    public void SeenActionButtonsOnce() {
+        if (!hasSeenActionButtonsOnce) {
+            hasSeenActionButtonsOnce = true;
+            Messenger.Broadcast(Signals.HAS_SEEN_ACTION_BUTTONS);
         }
     }
     #endregion

@@ -12,7 +12,7 @@ public class Pray : GoapAction {
     public Pray(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.PRAY, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         this.goapName = "Pray";
         actionLocationType = ACTION_LOCATION_TYPE.NEARBY;
-        actionIconString = GoapActionStateDB.Joy_Icon;
+        actionIconString = GoapActionStateDB.Entertain_Icon;
     }
 
     #region Overrides

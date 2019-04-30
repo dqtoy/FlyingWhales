@@ -1224,6 +1224,11 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         }
     }
     public void OnPointerEnter(BaseEventData bed) {
+        PointerEventData ped = bed as PointerEventData;
+        if (ped.pointerCurrentRaycast.gameObject.tag == "Avatar") {
+            OnPointerExit(bed);
+            return;
+        }
         MouseOver();
     }
     public void OnPointerExit(BaseEventData bed) {

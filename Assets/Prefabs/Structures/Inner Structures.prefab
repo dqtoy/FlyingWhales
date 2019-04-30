@@ -956,6 +956,10 @@ MonoBehaviour:
   table20: {fileID: 11400000, guid: 27ed232101b81ae41a6afe2dc7035f26, type: 2}
   table21: {fileID: 11400000, guid: c2b2b7fde1af8ce46ab3680f28aa0535, type: 2}
   table22: {fileID: 11400000, guid: 6f2f6fdfce1e5d44693bad3423880609, type: 2}
+  bartopLeft0: {fileID: 11400000, guid: 1fb4485b293a8b34c81afc3b4cc73de3, type: 2}
+  bartopLeft1: {fileID: 11400000, guid: c79079d48050ec8438ca2a4ddeb25317, type: 2}
+  bartopRight0: {fileID: 11400000, guid: 531d35881196a184fb1e11115c5609eb, type: 2}
+  bartopRight1: {fileID: 11400000, guid: 85f6d9e952d24484096b308ebc32dcc0, type: 2}
   leftWall: {fileID: 11400000, guid: c05951cff2b0fc7449f72ccebda1c382, type: 2}
   rightWall: {fileID: 11400000, guid: 9c1ad6fdb19ade5428fd7d86124e6aa4, type: 2}
   topWall: {fileID: 11400000, guid: 801dc14b009276d4cb7b1cc2212bceee, type: 2}

@@ -17,7 +17,7 @@ public class Play : GoapAction {
             TIME_IN_WORDS.MORNING,
             TIME_IN_WORDS.AFTERNOON,
         };
-        actionIconString = GoapActionStateDB.Joy_Icon;
+        actionIconString = GoapActionStateDB.Entertain_Icon;
     }
 
     #region Overrides

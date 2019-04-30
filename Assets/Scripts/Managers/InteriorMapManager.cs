@@ -231,13 +231,14 @@ public class InteriorMapManager : MonoBehaviour {
                 if (currInfo.Extension.Equals(".json")) {
                     string dataAsJson = File.ReadAllText(currInfo.FullName);
                     StructureTemplate loaded = JsonUtility.FromJson<StructureTemplate>(dataAsJson);
+                    loaded.name = currInfo.Name;
                     templates.Add(loaded);
                 }
             }
         }
         return templates;
     }
-    public List<StructureTemplate> GetStructureTemplates(string folderName) {
+    public List<StructureTemplate> GetStructureTemplates(string folderName, List<string> except) {
         List<StructureTemplate> templates = new List<StructureTemplate>();
         string path = templatePath + folderName + "/";
         if (Directory.Exists(path)) {
@@ -248,6 +249,10 @@ public class InteriorMapManager : MonoBehaviour {
                 if (currInfo.Extension.Equals(".json")) {
                     string dataAsJson = File.ReadAllText(currInfo.FullName);
                     StructureTemplate loaded = JsonUtility.FromJson<StructureTemplate>(dataAsJson);
+                    loaded.name = currInfo.Name;
+                    if (except.Contains(loaded.name)) {
+                        continue; //skip
+                    }
                     templates.Add(loaded);
                 }
             }

@@ -36,6 +36,7 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField] private RectTransform jobActionsParent;
     [SerializeField] private GameObject actionBtnTooltipGO;
     [SerializeField] private TextMeshProUGUI actionBtnTooltipLbl;
+    [SerializeField] private GameObject actionBtnPointer;
 
     [Header("Attack")]
     public GameObject attackGridGO;
@@ -131,9 +132,13 @@ public class PlayerUI : MonoBehaviour {
         Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_RACE, OnCharacterChangedRace);
         Messenger.AddListener<Character>(Signals.ROLE_CHANGED, OnCharacterChangedRole);
         Messenger.AddListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
+        Messenger.AddListener(Signals.HAS_SEEN_ACTION_BUTTONS, OnSeenActionButtons);
     }
 
     #region Role Slots
+    private void OnSeenActionButtons() {
+        actionBtnPointer.SetActive(!PlayerManager.Instance.player.hasSeenActionButtonsOnce);
+    }
     private void LoadRoleSlots() {
         roleSlots = Utilities.GetComponentsInDirectChildren<RoleSlotItem>(roleSlotsParent);
         int currIndex = 0;
@@ -159,6 +164,7 @@ public class PlayerUI : MonoBehaviour {
             }
         }
         jobActionsParent.gameObject.SetActive(true);
+        actionBtnPointer.SetActive(!PlayerManager.Instance.player.hasSeenActionButtonsOnce);
     }
     private void HideActionButtons() {
         jobActionsParent.gameObject.SetActive(false);

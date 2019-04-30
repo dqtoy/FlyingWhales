@@ -11,6 +11,7 @@ public class MainMenuManager : MonoBehaviour {
 
     [Header("Main Menu")]
     [SerializeField] private Button loadGameButton;
+    [SerializeField] private Button newGameButton;
 
     [Space(10)]
     [Header("World Configurations Menu")]
@@ -48,6 +49,7 @@ public class MainMenuManager : MonoBehaviour {
         //PlayGame();
         //ShowWorldConfigurations();
         //MainMenuUI.Instance.HideMenuButtons();
+        newGameButton.interactable = false;
         AudioManager.Instance.TransitionTo("Loading", 10, () => OnFinishMusicTransition());
     }
 

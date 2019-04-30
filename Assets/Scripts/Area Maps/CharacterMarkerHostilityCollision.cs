@@ -17,18 +17,18 @@ public class CharacterMarkerHostilityCollision : MonoBehaviour {
     //    }
     //}
     public void OnTriggerExit2D(Collider2D collision) {
-        if (!parentMarker.character.IsInOwnParty()) {
-            return;
-        }
+        //if (!parentMarker.character.IsInOwnParty()) {
+        //    return;
+        //}
         POICollisionTrigger collidedWith = collision.gameObject.GetComponent<POICollisionTrigger>();
         if (collidedWith != null 
             && collidedWith.poi != null
             && collidedWith.poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER
             && collidedWith.poi != parentMarker.character) {
             Character target = collidedWith.poi as Character;
-            if (!target.IsInOwnParty()) {
-                return;
-            }
+            //if (!target.IsInOwnParty()) {
+            //    return;
+            //}
             parentMarker.RemoveHostileInRange(collidedWith.poi as Character);
         }
     }

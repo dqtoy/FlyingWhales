@@ -69,6 +69,15 @@ public class AreaInnerTileMap : MonoBehaviour {
     public TileBase table21; //table 2 - 1 user
     public TileBase table22; //table 2 - 2 user
 
+    //bartop left
+    public TileBase bartopLeft0; //0 User
+    public TileBase bartopLeft1; //1 User
+
+    //bartop right
+    public TileBase bartopRight0; //0 User
+    public TileBase bartopRight1; //1 User
+
+
     [Header("Structure Tiles")]
     [SerializeField] private TileBase leftWall;
     [SerializeField] private TileBase rightWall;
@@ -144,6 +153,8 @@ public class AreaInnerTileMap : MonoBehaviour {
     public List<LocationGridTile> allEdgeTiles { get; private set; }
     public List<LocationGridTile> outsideTiles { get; private set; }
     public List<LocationGridTile> insideTiles { get; private set; }
+
+    public string usedTownCenterTemplateName { get; private set; }
 
     public Tilemap charactersTM {
         get { return objectsTilemap; }
@@ -276,6 +287,7 @@ public class AreaInnerTileMap : MonoBehaviour {
                         throw new System.Exception("There are no valid " + keyValuePair.Key.ToString() + " templates to connect to town center in area " + area.name);
                     }
                     StructureTemplate chosenTemplate = choices[Random.Range(0, choices.Count)];
+                    usedTownCenterTemplateName = chosenTemplate.name;
                     StructureConnector townCenterConnector;
                     StructureConnector chosenTemplateConnector = chosenTemplate.GetValidConnectorTo(chosenTownCenter, out townCenterConnector);
 
@@ -946,7 +958,7 @@ public class AreaInnerTileMap : MonoBehaviour {
         if (area.name == "Gloomhollow") {
             extension = "Snow";
         }
-        List<StructureTemplate> choices = InteriorMapManager.Instance.GetStructureTemplates("TOWN CENTER/" + extension);
+        List<StructureTemplate> choices = InteriorMapManager.Instance.GetStructureTemplates("TOWN CENTER/" + extension, LandmarkManager.Instance.GetUsedTownCenterTemplates());
         for (int i = 0; i < choices.Count; i++) {
             StructureTemplate currTemplate = choices[i];
             if (currTemplate.HasConnectorsForStructure(area.structures)) {
@@ -1433,7 +1445,7 @@ public class AreaInnerTileMap : MonoBehaviour {
                     detailsTilemap.SetTile(tile.localPlace, null);
                     if (to.tileObjectType == TILE_OBJECT_TYPE.SMALL_ANIMAL || to.tileObjectType == TILE_OBJECT_TYPE.ORE 
                         || to.tileObjectType == TILE_OBJECT_TYPE.EDIBLE_PLANT) {
-                        Matrix4x4 m = Matrix4x4.TRS(Vector3.zero, Quaternion.Euler(0f, 0f, Random.Range(0f, 360f)), Vector3.one);
+                        Matrix4x4 m = Matrix4x4.TRS(Vector3.zero, Quaternion.Euler(0f, 0f,  (float)(90 * Random.Range(0, 5))), Vector3.one);
                         objectsTilemap.RemoveTileFlags(tile.localPlace, TileFlags.LockTransform);
                         objectsTilemap.SetTransformMatrix(tile.localPlace, m);
                     }

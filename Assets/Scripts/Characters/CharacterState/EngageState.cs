@@ -18,10 +18,6 @@ public class EngageState : CharacterState {
         base.DoMovementBehavior();
         StartEngageMovement();
     }
-    //protected override void PerTickInState() {
-    //    base.PerTickInState();
-    //    stateComponent.character.marker.RedetermineEngage();
-    //}
     //protected override void EndState() {
     //    base.EndState();
     //    OnExitThisState();
