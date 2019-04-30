@@ -168,6 +168,7 @@ public class PlayerUI : MonoBehaviour {
     }
     private void HideActionButtons() {
         jobActionsParent.gameObject.SetActive(false);
+        actionBtnPointer.SetActive(false);
     }
     private void OnPlayerObtainedIntel(Intel intel) {
         if (UIManager.Instance.characterInfoUI.isShowing) {
