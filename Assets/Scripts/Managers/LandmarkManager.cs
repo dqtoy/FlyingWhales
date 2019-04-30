@@ -505,6 +505,7 @@ public class LandmarkManager : MonoBehaviour {
         newArea.SetAreaMap(areaMap);
         newArea.PlaceTileObjects();
         areaMap.GenerateDetails();
+        areaMap.RotateTiles();
         InteriorMapManager.Instance.OnCreateAreaMap(areaMap);
 #endif
         Messenger.Broadcast(Signals.AREA_CREATED, newArea);

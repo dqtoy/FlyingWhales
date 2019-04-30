@@ -1227,7 +1227,6 @@ public class AreaInnerTileMap : MonoBehaviour {
 
             float sample = Mathf.PerlinNoise(xCoord, yCoord);
             float sampleDetail = Mathf.PerlinNoise(xCoordDetail, yCoordDetail);
-
             //ground
             if (area.coreTile.biomeType == BIOMES.SNOW) {
                 if (sample < 0.5f) {
@@ -1240,11 +1239,6 @@ public class AreaInnerTileMap : MonoBehaviour {
                     currTile.groundType = LocationGridTile.Ground_Type.Stone;
                     groundTilemap.SetTile(currTile.localPlace, tundraTile);
                 }
-                Matrix4x4 m = Matrix4x4.TRS(Vector3.zero, Quaternion.Euler(0f, 0f, (float)(90 * Random.Range(0, 5))), Vector3.one);
-                groundTilemap.RemoveTileFlags(currTile.localPlace, TileFlags.LockTransform);
-                groundTilemap.SetTransformMatrix(currTile.localPlace, m);
-                Debug.Log("Set rotation of " + currTile.localPlace.ToString() + " at " + area.name + " to " + m.rotation.eulerAngles.ToString());
-                groundTilemap.AddTileFlags(currTile.localPlace, TileFlags.LockTransform);
             } else {
                 if (sample < 0.5f) {
                     currTile.groundType = LocationGridTile.Ground_Type.Grass;
@@ -1256,11 +1250,7 @@ public class AreaInnerTileMap : MonoBehaviour {
                     currTile.groundType = LocationGridTile.Ground_Type.Stone;
                     groundTilemap.SetTile(currTile.localPlace, stoneTile);
                 }
-                Matrix4x4 m = Matrix4x4.TRS(Vector3.zero, Quaternion.Euler(0f, 0f, (float)(90 * Random.Range(0, 5))), Vector3.one);
-                groundTilemap.RemoveTileFlags(currTile.localPlace, TileFlags.LockTransform);
-                groundTilemap.SetTransformMatrix(currTile.localPlace, m);
-                Debug.Log("Set rotation of " + currTile.localPlace.ToString() + " at " + area.name + " to " + m.rotation.eulerAngles.ToString());
-                groundTilemap.AddTileFlags(currTile.localPlace, TileFlags.LockTransform);
+               
             }
             
             //trees and shrubs
@@ -1376,6 +1366,18 @@ public class AreaInnerTileMap : MonoBehaviour {
                 //3% of tiles should have random garbage
                 currTile.hasDetail = true;
                 detailsTilemap.SetTile(currTile.localPlace, randomGarbTile);
+            }
+        }
+    }
+    public void RotateTiles() {
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                LocationGridTile currTile = map[x, y];
+                if (currTile.structure == null || currTile.structure.structureType.IsOpenSpace() || currTile.structure.structureType == STRUCTURE_TYPE.EXPLORE_AREA) {
+                    Matrix4x4 m = Matrix4x4.TRS(Vector3.zero, Quaternion.Euler(0f, 0f, (float)(90 * Random.Range(0, 5))), Vector3.one);
+                    groundTilemap.RemoveTileFlags(currTile.localPlace, TileFlags.LockTransform);
+                    groundTilemap.SetTransformMatrix(currTile.localPlace, m);
+                }
             }
         }
     }
