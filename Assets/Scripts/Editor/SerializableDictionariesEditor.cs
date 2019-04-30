@@ -1,7 +1,8 @@
-﻿#if UNITY_EDITOR
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 using UnityEngine;
 
 [CustomPropertyDrawer(typeof(PhaseItemDictionary))]
@@ -59,4 +60,4 @@ public class CharacterInteractionWeightListStoragePropertyDrawer : SerializableD
 public class CorruptionObjectsListStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer { }
 [CustomPropertyDrawer(typeof(RaceDefenderListStorage))]
 public class DefenderListStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer { }
-#endif
+

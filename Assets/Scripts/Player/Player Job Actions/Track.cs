@@ -42,6 +42,7 @@ public class Track : PlayerJobAction {
         return base.ShouldButtonBeInteractable(character, targetCharacter);
     }
     public override bool CanTarget(Character targetCharacter) {
+        return false;
         if (targetCharacter.isDead) {
             return false;
         }

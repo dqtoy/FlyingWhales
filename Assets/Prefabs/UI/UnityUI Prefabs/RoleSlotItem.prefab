@@ -728,7 +728,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be97d49975a8ba24683fa964f9c21b16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tooltipPos: {fileID: 224178767773590048}
+  tooltipPos: {fileID: 0}
   tooltipHeader: 
   ignoreInteractable: 0
   onHoverOverAction:
@@ -1263,6 +1263,8 @@ MonoBehaviour:
   jobActionsParent: {fileID: 224105693486312028}
   validPortraitGO: {fileID: 1053127407712162}
   invalidPortraitGO: {fileID: 1643880904136382}
+  tooltipGO: {fileID: 0}
+  tooltipLbl: {fileID: 0}
   dropZone: {fileID: 114285873107019808}
 --- !u!114 &114442782165971760
 MonoBehaviour:
@@ -1664,7 +1666,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ParentPool: {fileID: 0}
-  ignoreInteractions: 0
+  ignoreInteractions: 1
   baseBG: {fileID: 114073248267828214}
   lockedFrame: {fileID: 114543017124413928}
   lvlTxt: {fileID: 114318307518333498}

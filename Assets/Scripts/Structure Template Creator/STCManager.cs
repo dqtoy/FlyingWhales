@@ -1,13 +1,15 @@
-﻿#if UNITY_EDITOR
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-[ExecuteInEditMode]
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
+//[ExecuteInEditMode]
 public class STCManager : MonoBehaviour {
 
     [SerializeField] private Tilemap groundTilemap;
@@ -22,7 +24,9 @@ public class STCManager : MonoBehaviour {
     private string templatePath;
 
     private void Awake() {
+#if UNITY_EDITOR
         templatePath = Application.dataPath + "/StreamingAssets/Structure Templates/";
+#endif
     }
 
     private TileTemplateData[] GetTileData(Tilemap tilemap, BoundsInt bounds) {
@@ -129,16 +133,20 @@ public class STCManager : MonoBehaviour {
             new Point(groundTilemap.cellBounds.size.x, groundTilemap.cellBounds.size.y), connectors);
 
         string dataAsJson = JsonUtility.ToJson(newTemplate);
-        
+
+#if UNITY_EDITOR
+
         string path = EditorUtility.SaveFilePanel("Save Structure Template", templatePath, "Structure_Template", "json");
         if (path == "")
             return;
         File.WriteAllText(path, dataAsJson);
         AssetDatabase.Refresh();
+#endif
     }
 
     [ContextMenu("Load Template")]
     public void LoadTemplate() {
+#if UNITY_EDITOR
         string path = EditorUtility.OpenFilePanel("Load Structure Template", templatePath, "json");
         if (path.Length != 0) {
             string dataAsJson = File.ReadAllText(path);
@@ -146,6 +154,7 @@ public class STCManager : MonoBehaviour {
             LoadTemplate(loaded);
             Debug.Log("Loaded " + path);
         }
+#endif
     }
 
     private void LoadTemplate(StructureTemplate st) {
@@ -303,7 +312,7 @@ public class STCManager : MonoBehaviour {
     }
     #endregion
 }
-#endif
+
 
 [System.Serializable]
 public class StructureTemplate {

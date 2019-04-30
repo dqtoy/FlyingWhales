@@ -41,6 +41,8 @@ public class InteriorMapManager : MonoBehaviour {
     //Local Avoidance
     Pathfinding.RVO.Simulator sim;
 
+    public List<TileBase> allTileAssets;
+
     private void Awake() {
         Instance = this;
         templatePath = Application.dataPath + "/StreamingAssets/Structure Templates/";
@@ -264,7 +266,7 @@ public class InteriorMapManager : MonoBehaviour {
     /// </summary>
     /// <param name="name">Name of the asset</param>
     public TileBase GetTileAsset(string name, bool logMissing = false) {
-        List<TileBase> allTileAssets = LoadAllTilesAssets();
+        //List<TileBase> allTileAssets = LoadAllTilesAssets();
         for (int i = 0; i < allTileAssets.Count; i++) {
             TileBase currTile = allTileAssets[i];
             if (currTile.name == name) {
@@ -278,6 +280,10 @@ public class InteriorMapManager : MonoBehaviour {
     }
     private List<TileBase> LoadAllTilesAssets() {
         return Resources.LoadAll("Tile Map Assets", typeof(TileBase)).Cast<TileBase>().ToList();
+    }
+    [ContextMenu("Load Assets")]
+    public void LoadTileAssets() {
+        allTileAssets = LoadAllTilesAssets();
     }
     #endregion
 
