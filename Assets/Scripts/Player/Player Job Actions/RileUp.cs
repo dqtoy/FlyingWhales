@@ -7,7 +7,7 @@ public class RileUp : PlayerJobAction {
     private Character _targetCharacter;
     public RileUp() {
         name = "Rile Up";
-        SetDefaultCooldownTime(48);
+        SetDefaultCooldownTime(24);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
     }
 

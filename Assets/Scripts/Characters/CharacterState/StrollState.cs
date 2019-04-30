@@ -16,12 +16,12 @@ public class StrollState : CharacterState {
         base.DoMovementBehavior();
         StartStrollMovement();
     }
-    protected override void PerTickInState() {
-        base.PerTickInState();
-        if (!isDone) {
-            stateComponent.character.CreatePersonalJobs();
-        }
-    }
+    //protected override void PerTickInState() {
+    //    base.PerTickInState();
+    //    if (!isDone) {
+    //        stateComponent.character.CreatePersonalJobs();
+    //    }
+    //}
     public override bool OnEnterVisionWith(IPointOfInterest targetPOI) {
         if (stateComponent.character.role.roleType != CHARACTER_ROLE.BEAST && targetPOI is SpecialToken) {
             SpecialToken token = targetPOI as SpecialToken;

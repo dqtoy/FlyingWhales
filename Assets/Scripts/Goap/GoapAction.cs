@@ -499,7 +499,7 @@ public class GoapAction {
     /// </summary>
     /// <param name="target">POI that loses a trait</param>
     /// <param name="traitName">Trait to be lost</param>
-    protected void RemoveTraitFrom(IPointOfInterest target, string traitName) {
+    protected void RemoveTraitFrom(IPointOfInterest target, string traitName, bool showNotif = true) {
         if (target.RemoveTrait(traitName)) {
             AddActualEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = traitName, targetPOI = target });
         }
