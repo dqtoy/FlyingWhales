@@ -15,7 +15,7 @@ public class PlayerNotificationItem : PooledObject {
     [SerializeField] private LogItem logItem;
 
     public void Initialize(Log log, bool hasExpiry = true) {
-        logLbl.SetText(Utilities.LogReplacer(log));
+        logLbl.SetText("[" + GameManager.ConvertTickToTime(GameManager.Instance.tick) + "] " + Utilities.LogReplacer(log));
         logItem.SetLog(log);
         logEnvelopContent.Execute();
         mainEnvelopContent.Execute();
