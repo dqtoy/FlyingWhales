@@ -8,7 +8,7 @@ public class TablePoison : GoapAction {
     public TablePoison(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.TABLE_POISON, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         this.goapName = "Poison Table";
         actionIconString = GoapActionStateDB.Hostile_Icon;
-        _isStealthAction = true;
+        //_isStealthAction = true;
     }
 
     #region Overrides
@@ -36,12 +36,13 @@ public class TablePoison : GoapAction {
     public override void PerformActualAction() {
         base.PerformActualAction();
         if (!isTargetMissing) {
-            if (!HasOtherCharacterInRadius()) {
-                SetState("Poison Success");
-            } else {
-                parentPlan.SetDoNotRecalculate(true);
-                SetState("Poison Fail");
-            }
+            SetState("Poison Success");
+            //if (!HasOtherCharacterInRadius()) {
+            //    SetState("Poison Success");
+            //} else {
+            //    parentPlan.SetDoNotRecalculate(true);
+            //    SetState("Poison Fail");
+            //}
         } else {
             SetState("Target Missing");
         }

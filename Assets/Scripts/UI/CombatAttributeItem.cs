@@ -44,10 +44,16 @@ public class CombatAttributeItem : MonoBehaviour {
             string summary = _combatAttribute.nameInUI;
             if (_combatAttribute is RelationshipTrait) {
                 RelationshipTrait t = _combatAttribute as RelationshipTrait;
-                CharacterRelationshipData rel = UIManager.Instance.characterInfoUI.activeCharacter.relationships[t.targetCharacter];
-                summary += "\n" + rel.GetSummary();
+                if (UIManager.Instance.characterInfoUI.activeCharacter.HasRelationshipWith(t.targetCharacter)) {
+                    CharacterRelationshipData rel = UIManager.Instance.characterInfoUI.activeCharacter.relationships[t.targetCharacter];
+                    summary += "\n" + rel.GetSummary();
+                } else {
+                    summary = string.Empty;
+                }
             }
-            UIManager.Instance.ShowSmallInfo(summary);
+            if(summary != string.Empty) {
+                UIManager.Instance.ShowSmallInfo(summary);
+            }
         }
     }
     public void OnHoverOut() {

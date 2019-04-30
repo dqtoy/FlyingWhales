@@ -133,7 +133,7 @@ public class CharacterInfoUI : UIMenu {
     public override void OpenMenu() {
         _previousCharacter = _activeCharacter;
         _activeCharacter = _data as Character;
-        _activeCharacter.CenterOnCharacter();
+        _activeCharacter.CenterOnCharacter(false);
         base.OpenMenu();
         if (UIManager.Instance.IsShareIntelMenuOpen()) {
             backButton.interactable = false;
