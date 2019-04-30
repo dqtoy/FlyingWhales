@@ -94,6 +94,9 @@ public class PlayGuitar : GoapAction {
 
     #region Requirement
     private bool Requirement() {
+        if(poiTarget.state == POI_STATE.INACTIVE) {
+            return false;
+        }
         IAwareness awareness = actor.GetAwareness(poiTarget);
         if (awareness == null) {
             return false;
