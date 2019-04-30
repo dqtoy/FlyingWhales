@@ -5318,6 +5318,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 
                 break;
             case CHARACTER_ROLE.SOLDIER:
+            case CHARACTER_ROLE.BANDIT:
                 //- If the character is a Soldier, the criminal will gain the relevant Crime-type trait
                 if (this.faction != FactionManager.Instance.neutralFaction && actor.faction == this.faction) {
                     //only add apprehend job if the criminal is part of this characters faction

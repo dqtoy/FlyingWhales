@@ -1125,7 +1125,7 @@ public class CharacterMarker : PooledObject {
                 //- Disabled characters will not do anything
                 summary += "\n" + character.name + " will not do anything.";
             } else if (character.role.roleType == CHARACTER_ROLE.BEAST || character.role.roleType == CHARACTER_ROLE.ADVENTURER
-                || character.role.roleType == CHARACTER_ROLE.SOLDIER) {
+                || character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.BANDIT) {
                 //- Uninjured Beasts, Adventurers and Soldiers will enter Engage mode.
                 if (otherCharacter.IsDoingCombatActionTowards(this.character) || this.character.IsDoingCombatActionTowards(otherCharacter)) {
                     //if the other character is already going to assault this character, and this character chose to engage, wait for the other characters assault instead
@@ -1170,6 +1170,10 @@ public class CharacterMarker : PooledObject {
                         if (distanceToNewTarget < distanceToOG) {
                             //if yes, engage the other character instead, 
                             character.stateComponent.SwitchToState(CHARACTER_STATE.ENGAGE, otherCharacter);
+                        } else {
+                            summary += "\n" + character.name + " is already engaging " + originalTarget.name + " and his/her distance is still nearer than " + otherCharacter.name + ". Keeping " + originalTarget.name + " as engage target.";
+                            Debug.Log(summary);
+                            return;
                         }
                         //else, keep chasing the original target
                     } else {
