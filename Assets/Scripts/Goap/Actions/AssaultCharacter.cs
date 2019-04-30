@@ -169,7 +169,7 @@ public class AssaultCharacter : GoapAction {
 
         //Recipient and Target have a positive relationship or Recipient and Target are from the same faction and they dont have a negative relationship:
         else if (recipient.HasRelationshipOfEffectWith(target, TRAIT_EFFECT.POSITIVE, RELATIONSHIP_TRAIT.RELATIVE) ||
-            (recipient.faction == target.faction !recipient.HasRelationshipOfEffectWith(target, TRAIT_EFFECT.NEGATIVE))) {
+            (recipient.faction == target.faction && !recipient.HasRelationshipOfEffectWith(target, TRAIT_EFFECT.NEGATIVE))) {
             //- **Recipient Response Text**: "Poor [Target Name]! I hope [he/she]'s okay."
             reactions.Add(string.Format("Poor {0}! I hope {1}'s okay.", target.name, Utilities.GetPronounString(target.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
             //-**Recipient Effect**: no effect
