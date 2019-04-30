@@ -244,7 +244,7 @@ public class CameraMove : MonoBehaviour {
                         hasReachedThreshold = true;
                     }
                     if (originMousePos !=  Input.mousePosition) { //check if the mouse has moved position from the origin, only then will it be considered dragging
-                        GameManager.Instance.SetCursorToDrag();
+                        CursorManager.Instance.SetCursorToDrag();
                         isDragging = true;
                     }
                 }
@@ -265,7 +265,7 @@ public class CameraMove : MonoBehaviour {
         }
     }
     private void ResetDragValues() {
-        GameManager.Instance.SetCursorToDefault();
+        CursorManager.Instance.SetCursorToDefault();
         currDragTime = 0f;
         isDragging = false;
         startedOnUI = false;

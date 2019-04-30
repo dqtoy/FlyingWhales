@@ -11,12 +11,13 @@ public class Corrupt : PlayerJobAction {
         name = "Corrupt";
         SetDefaultCooldownTime(48);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
-        _traitNames = new List<string>() { "Lycanthropy", "Unconscious", "Restrained", "Cursed", "Sick", "Injured", "Kleptomaniac" };
+        //"Unconscious", "Restrained", "Cursed", "Sick", "Injured"
+        _traitNames = new List<string>() { "Lycanthropy", "Kleptomaniac", "Violent", "Vampiric", "Unfaithful" };
     }
 
     public override void ActivateAction(Character assignedCharacter, Character targetCharacter) {
         _targetCharacter = targetCharacter;
-        UIManager.Instance.ShowClickableObjectPicker(_traitNames, OnClickTrait, null, CanCorruptCharacter, "Corrupt " + _targetCharacter.name + " with an affliction.");
+        UIManager.Instance.ShowClickableObjectPicker(_traitNames, OnClickTrait, null, CanCorruptCharacter, "Corrupt " + _targetCharacter.name + " with an affliction.", OnHoverTrait);
     }
 
     protected override bool ShouldButtonBeInteractable(Character character, Character targetCharacter) {
@@ -63,7 +64,34 @@ public class Corrupt : PlayerJobAction {
         if (_targetCharacter.GetTrait(traitName) != null) {
             return false;
         }
+        if (traitName == "Violent" || traitName == "Vampiric" || traitName == "Unfaithful") {
+            return false; //disable these for now.
+        }
         return true;
+    }
+    public void OnHoverTrait(string traitName) {
+        string tooltip = string.Empty;
+        string header = traitName;
+        switch (traitName) {
+            case "Lycanthropy":
+                tooltip = "Will sometimes transform into a wild wolf whenever it sleeps.";
+                break;
+            case "Kleptomaniac":
+                tooltip = "Enjoys stealing other people's items.";
+                break;
+            case "Violent":
+                tooltip = "Prone to bouts of violence. Not yet available for this prototype.";
+                break;
+            case "Vampiric":
+                tooltip = "Needs blood for sustenance. Not yet available for this prototype.";
+                break;
+            case "Unfaithful":
+                tooltip = "Prone to affairs. Not yet available for this prototype.";
+                break;
+            default:
+                break;
+        }
+        UIManager.Instance.ShowSmallInfo(tooltip, header);
     }
     #endregion
 }

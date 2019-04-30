@@ -145,19 +145,18 @@ public class Table : TileObject, IPointOfInterest {
             //concerned with rotation in the 1 slot variant
             Matrix4x4 m = location.location.areaMap.objectsTilemap.GetTransformMatrix(gridTileLocation.localPlace);
             int rotation = (int)m.rotation.eulerAngles.z;
-            //if rotation is 0
             if (rotation == 0 || rotation == 360) {
-                pos.x += 0.5f;
-                pos.y += 0.3f;
+                pos.x += 0.49f;
+                pos.y += 0.2f;
             } else if (rotation == 90) {
                 pos.x += 0.8f;
                 pos.y += 0.5f;
             } else if (rotation == 180) {
-                pos.x += 0.5f;
+                pos.x += 0.51f;
                 pos.y += 0.8f;
             } else if (rotation == 270) {
-                pos.x += 0.3f;
-                pos.y += 0.5f;
+                pos.x += 0.2f;
+                pos.y += 0.51f;
             }
         } else if (slots == 2) {
             //concerned with rotation in the 2 slot variant
@@ -166,39 +165,39 @@ public class Table : TileObject, IPointOfInterest {
             if (Utilities.IsEven((int)rotation)) {
                 //table is vertical, I assume that if the table is vertical, it has a rotation of 0 degrees
                 if (positionInTable == 1) {
-                    pos.x += 0.5f;
+                    pos.x += 0.48f;
                 } else {
-                    pos.x += 0.5f;
+                    pos.x += 0.45f;
                     pos.y += 1f;
                 }
             } else {
                 //table is horizontal, I assume that if the table is horizontal, it only has a rotation of 90 degrees
                 if (positionInTable == 1) {
                     pos.x += 1f;
-                    pos.y += 0.5f;
+                    pos.y += 0.45f;
                 } else {
-                    pos.y += 0.5f;
+                    pos.y += 0.48f;
                 }
             }
         } else if (slots == 4) {
             switch (positionInTable) {
                 case 1:
                     //left side
-                    pos.y += 0.5f;
+                    pos.y += 0.53f;
                     break;
                 case 2:
                     //right side
-                    pos.y += 0.5f;
+                    pos.y += 0.53f;
                     pos.x += 1f;
                     break;
                 case 3:
                     //top
                     pos.y += 1f;
-                    pos.x += 0.5f;
+                    pos.x += 0.48f;
                     break;
                 case 4:
                     //bottom
-                    pos.x += 0.5f;
+                    pos.x += 0.48f;
                     break;
                 default:
                     break;

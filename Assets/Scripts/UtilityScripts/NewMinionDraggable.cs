@@ -20,7 +20,7 @@ public class NewMinionDraggable : DraggableItem {
         if (!_isDraggable) {
             return;
         }
-        GameManager.Instance.SetCursorToItemDragClicked();
+        CursorManager.Instance.SetCursorToItemDragClicked();
         //_characterItem = gameObject.GetComponent<PlayerCharacterItem>();
         CharacterPortrait portrait = _characterItem.portrait;
         GameObject clone = (GameObject)Instantiate(portrait.gameObject);
@@ -34,7 +34,7 @@ public class NewMinionDraggable : DraggableItem {
     }
     public override void OnEndDrag(PointerEventData eventData) {
         _isDragging = false;
-        GameManager.Instance.SetCursorToItemDragHover();
+        CursorManager.Instance.SetCursorToItemDragHover();
         if (_characterItem != null && _draggingObject != null) {
             List<RaycastResult> newRaycastResults = new List<RaycastResult>();
             CustomDropZone customDropzone = null;
@@ -47,7 +47,7 @@ public class NewMinionDraggable : DraggableItem {
             }
 
             if (customDropzone != null) {
-                GameManager.Instance.SetCursorToDefault();
+                CursorManager.Instance.SetCursorToDefault();
                 customDropzone.OnDrop(_draggingObject.gameObject);
                 Destroy(_draggingObject.gameObject);
             } else {

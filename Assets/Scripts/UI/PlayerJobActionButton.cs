@@ -74,28 +74,32 @@ public class PlayerJobActionButton : MonoBehaviour {
         if (action is Track) {
             message = "The Spy will keep track of every significant event happening to " + target.name + ". A notification will be displayed " +
                 "for each event related to " + target.name + " even when " + Utilities.GetPronounString(target.gender, PRONOUN_TYPE.SUBJECTIVE, false) + " is not actively selected.";
-            header = "Spy Action.";
+            header = "Spy Action";
         } else if (action is Corrupt) {
             message = "The Seducer will afflict " + target.name + " with a negative Trait.";
-            header = "Seducer Action.";
+            header = "Seducer Action";
         } else if (action is Recruit) {
             message = "The Seducer will attempt to recruit " + target.name + " to your side. This is only possible while " + target.name + " is mentally vulnerable.";
-            header = "Seducer Action.";
+            header = "Seducer Action";
         } else if (action is ShareIntel) {
             message = "The Diplomat will reach out to " + target.name + " and share a piece of information with " + Utilities.GetPronounString(target.gender, PRONOUN_TYPE.REFLEXIVE, false) + ".";
-            header = "Diplomat Action.";
+            header = "Diplomat Action";
         } else if (action is RileUp) {
             RileUp rileUp = action as RileUp;
             if (rileUp.GetActionName(target) == "Abduct") {
                 message = "The Instigator will goad " + target.name + " into abducting a specified character. This action only works on goblins.";
-                header = "Instigator Action.";
+                header = "Instigator Action";
             } else {
                 message = "The Instigator will rile up " + target.name + " and goad him into attacking people in a specified location. This action only works for beasts.";
-                header = "Instigator Action.";
+                header = "Instigator Action";
             }
         } else if (action is Intervene) {
             message = "The Debilitator will convince " + target.name + " to drop his current plans.";
-            header = "Debilitator Action.";
+            header = "Debilitator Action";
+        }
+
+        if (action.isInCooldown) {
+            header += " (In Cooldown)";
         }
 
         PlayerUI.Instance.ShowActionBtnTooltip(message, header);

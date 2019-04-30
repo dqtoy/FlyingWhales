@@ -104,17 +104,17 @@ public class Desk : TileObject, IPointOfInterest {
         int rotation = (int)m.rotation.eulerAngles.z;
         //if rotation is 0
         if (rotation == 0 || rotation == 360) {
-            pos.x += 0.5f;
-            pos.y += 0.3f;
+            pos.x += 0.49f;
+            pos.y += 0.2f;
         } else if (rotation == 90) {
             pos.x += 0.8f;
             pos.y += 0.5f;
         } else if (rotation == 180) {
-            pos.x += 0.5f;
+            pos.x += 0.51f;
             pos.y += 0.8f;
         } else if (rotation == 270) {
-            pos.x += 0.3f;
-            pos.y += 0.5f;
+            pos.x += 0.2f;
+            pos.y += 0.51f;
         }
 
         pos.z = 0;

@@ -30,7 +30,13 @@ public class StringPickerItem : ObjectPickerItem<string>, IPointerClickHandler {
     private void UpdateVisuals() {
         mainLbl.text = str;
         if (isTrait) {
-            iconImg.sprite = AttributeManager.Instance.GetTraitIcon(str);
+            if (AttributeManager.Instance.HasTraitIcon(str)) {
+                iconImg.sprite = AttributeManager.Instance.GetTraitIcon(str);
+                iconImg.gameObject.SetActive(true);
+            } else {
+                iconImg.gameObject.SetActive(false);
+            }
+            
         }
     }
 
@@ -42,5 +48,14 @@ public class StringPickerItem : ObjectPickerItem<string>, IPointerClickHandler {
 
     public void OnPointerClick(PointerEventData eventData) {
         OnClick();
+    }
+    public override void OnHoverEnter() {
+        if (onHoverEnterAction != null) {
+            onHoverEnterAction.Invoke(str);
+        }
+    }
+    public override void OnHoverExit() {
+        //Only set as hide small info for now, but should use on hover exit action
+        UIManager.Instance.HideSmallInfo();
     }
 }

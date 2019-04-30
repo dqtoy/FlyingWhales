@@ -119,4 +119,8 @@ public class AttributeManager : MonoBehaviour {
         }
         return traitIconDictionary.Values.First();
     }
+
+    public bool HasTraitIcon(string traitName) {
+        return traitIconDictionary.ContainsKey(traitName);
+    }
 }

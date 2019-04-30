@@ -11,11 +11,20 @@ public class ObjectPickerItem<T> : MonoBehaviour {
     [SerializeField] protected Button mainBtn;
     [SerializeField] protected NewMinionDraggable draggable;
 
+    public System.Action<T> onHoverEnterAction;
+    public System.Action<T> onHoverExitAction;
 
     public virtual void SetButtonState(bool state) {
         mainBtn.interactable = state;
     }
     public virtual void SetDraggableState(bool state) {
         draggable.SetDraggable(state);
+    }
+
+    public virtual void OnHoverEnter() {
+        
+    }
+    public virtual void OnHoverExit() {
+
     }
 }
