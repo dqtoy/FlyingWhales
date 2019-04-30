@@ -271,7 +271,7 @@ MonoBehaviour:
   m_firstVisibleCharacter: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 6, y: 0, z: 15, w: 0}
+  m_margin: {x: 6, y: 5, z: 15, w: 0}
   m_textInfo:
     textComponent: {fileID: 114574901924631418}
     characterCount: 6
@@ -548,6 +548,6 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 60, y: 15}
-  m_SizeDelta: {x: 257, y: 63.4}
+  m_AnchoredPosition: {x: 60, y: 0.85001}
+  m_SizeDelta: {x: 257, y: 91.7}
   m_Pivot: {x: 0.5, y: 0.5}

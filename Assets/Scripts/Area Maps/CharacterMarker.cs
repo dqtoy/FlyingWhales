@@ -62,6 +62,7 @@ public class CharacterMarker : PooledObject {
     private bool forceFollowTarget; //If the character should follow the target no matter where they go, must only be used with characters
     private LocationGridTile _previousGridTile;
     private float progressionSpeedMultiplier;
+    private string goToStackTrace;
 
     [ContextMenu("Visuals Forward")]
     public void PrintForwardPosition() {
@@ -520,11 +521,9 @@ public class CharacterMarker : PooledObject {
         
     }
     public void GoTo(IPointOfInterest targetPOI, Action arrivalAction = null, bool forceFollow = false) {
-        //if (_arrivalAction != null) {
-        //    throw new Exception(character.name + " already has an arrival action, but it is being overwritten!");
-        //}
         _arrivalAction = arrivalAction;
         this.targetPOI = targetPOI;
+        goToStackTrace = StackTraceUtility.ExtractStackTrace();
         switch (targetPOI.poiType) {
             case POINT_OF_INTEREST_TYPE.CHARACTER:
                 Character targetCharacter = targetPOI as Character;
@@ -561,11 +560,23 @@ public class CharacterMarker : PooledObject {
     }
     public void ArrivedAtLocation() {
         StopMovementOnly();
+
+        //if (targetPOI is Character) {
+        //    //Character targetCharacter = targetPOI as Character;
+        //    //check if target character is actually near the target
+        //    if (!character.IsNear(targetPOI)) {
+        //        Debug.LogWarning(character.name + " reached " + targetPOI.name + " but they are not near.ST " + goToStackTrace);
+        //        UIManager.Instance.Pause();
+        //    }
+        //}
+
         //if (Messenger.eventTable.ContainsKey(Signals.PARTY_STARTED_TRAVELLING)) { Messenger.RemoveListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling); }
         Action action = _arrivalAction;
         //set arrival action to null, because some arrival actions set 
         _arrivalAction = null;
         action?.Invoke();
+
+        targetPOI = null;
     }
     private void StartMovement() {
         UpdateSpeed();
@@ -1127,12 +1138,12 @@ public class CharacterMarker : PooledObject {
                         return;
                     }
 
-                    //- A character that is performing an Action will not trigger combat (but the other side still may)
-                    if (character.currentAction != null && character.currentAction.isPerformingActualAction) {
-                        summary += "\n" + character.name + " is currently performing" + character.currentAction.goapName + ". Ignoring " + otherCharacter.name;
-                        Debug.Log(summary);
-                        return;
-                    }
+                    ////- A character that is performing an Action will not trigger combat (but the other side still may)
+                    //if (character.currentAction != null && character.currentAction.isPerformingActualAction) {
+                    //    summary += "\n" + character.name + " is currently performing" + character.currentAction.goapName + ". Ignoring " + otherCharacter.name;
+                    //    Debug.Log(summary);
+                    //    return;
+                    //}
 
                     //- A character in Combat Recovery will not trigger combat (but the other side still may)
                     //- A character that has a Disabler trait will not trigger combat (but the other side still may)

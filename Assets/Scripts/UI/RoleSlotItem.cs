@@ -188,7 +188,7 @@ public class RoleSlotItem : MonoBehaviour, IDragParentItem {
             //        break;
             //}
         }
-        Debug.Log(summary);
+        //Debug.Log(summary);
         //jobActionsParent.gameObject.SetActive(true);
     }
     private void OnMenuOpened(UIMenu menu) {
