@@ -3523,14 +3523,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 }
                 if (currentTimeOfDay == TIME_IN_WORDS.MORNING || currentTimeOfDay == TIME_IN_WORDS.AFTERNOON) {
                     int chance = UnityEngine.Random.Range(0, 100);
-                    if (chance < 25) {
+                    if (chance < 15) {
                         log += "\n-Morning or Afternoon: " + name + " will do action Daydream";
                         PlanIdle(INTERACTION_TYPE.DAYDREAM, this);
                         return log;
                     }
                 }
                 int guitarChance = UnityEngine.Random.Range(0, 100);
-                if (guitarChance < 25) {
+                if (guitarChance < 15) {
                     TileObject guitar = GetUnoccupiedHomeTileObject(TILE_OBJECT_TYPE.GUITAR);
                     if(guitar != null) {
                         log += "\n-" + name + " will do action Play Guitar on " + guitar.ToString();
@@ -3538,11 +3538,16 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                         return log;
                     }
                 }
-                TileObject deskOrTable = GetUnoccupiedHomeTileObject(TILE_OBJECT_TYPE.DESK, TILE_OBJECT_TYPE.TABLE);
-                if (deskOrTable != null) {
-                    log += "\n-" + name + " will do action Sit on " + deskOrTable.ToString();
-                    PlanIdle(INTERACTION_TYPE.SIT, deskOrTable);
-                    return log;
+
+                int sitChance = UnityEngine.Random.Range(0, 100);
+                if (sitChance < 50) {
+                    TileObject deskOrTable = GetUnoccupiedHomeTileObject(TILE_OBJECT_TYPE.DESK, TILE_OBJECT_TYPE.TABLE);
+                    if (deskOrTable != null)
+                    {
+                        log += "\n-" + name + " will do action Sit on " + deskOrTable.ToString();
+                        PlanIdle(INTERACTION_TYPE.SIT, deskOrTable);
+                        return log;
+                    }
                 }
 
                 log += "\n-" + name + " will do action Stand";
