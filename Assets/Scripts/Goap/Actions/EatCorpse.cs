@@ -35,6 +35,12 @@ public class EatCorpse : GoapAction {
     //    base.FailAction();
     //    SetState("Eat Fail");
     //}
+    public override void OnStopActionDuringCurrentState() {
+        if (currentState.name == "Eat Success") {
+            actor.AdjustDoNotGetHungry(-1);
+            poiTarget.SetPOIState(POI_STATE.ACTIVE);
+        }
+    }
     #endregion
 
     #region Effects
