@@ -107,7 +107,6 @@ GameObject:
   - component: {fileID: 114720397635659402}
   - component: {fileID: 114167030245026914}
   - component: {fileID: 114577038380254382}
-  - component: {fileID: 114468243056313352}
   - component: {fileID: 114343739314239670}
   m_Layer: 14
   m_Name: CharacterMarker
@@ -584,37 +583,7 @@ MonoBehaviour:
   - {fileID: 58282679592281158}
   - {fileID: 58535005990234766}
   rvoController: {fileID: 114577038380254382}
-  fleeingRVOController: {fileID: 114468243056313352}
   colorHighlight: {fileID: 212653369134426336}
---- !u!114 &114468243056313352
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1392417203996010}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 21d9d3034e4d2964e92d6db0e9d7d17b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  version: 2
-  radiusBackingField: 5.8
-  heightBackingField: 2
-  centerBackingField: 1
-  locked: 0
-  lockWhenNotMoving: 1
-  agentTimeHorizon: 2
-  obstacleTimeHorizon: 1
-  maxNeighbours: 10
-  layer: 4
-  collidesWith: 1
-  wallAvoidForce: 1
-  wallAvoidFalloff: 1
-  priority: 1
-  debug: 0
-  agentName: 
-  useAvoidedAgents: 0
-  useNoCollisionOnDifferentStructures: 0
 --- !u!114 &114577038380254382
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -632,17 +601,17 @@ MonoBehaviour:
   centerBackingField: 1
   locked: 0
   lockWhenNotMoving: 1
-  agentTimeHorizon: 2
+  agentTimeHorizon: 1
   obstacleTimeHorizon: 1
   maxNeighbours: 10
   layer: 1
-  collidesWith: 7
+  collidesWith: 3
   wallAvoidForce: 1
   wallAvoidFalloff: 1
   priority: 0.8
   debug: 1
   agentName: 
-  useAvoidedAgents: 1
+  useAvoidedAgents: 0
   useNoCollisionOnDifferentStructures: 0
 --- !u!114 &114578536136533292
 MonoBehaviour:

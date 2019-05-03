@@ -15,10 +15,12 @@ public class CharacterAIPath : AIPath {
     public float aimStrength = 1f;
 
     private float _originalRepathRate;
+    private BlockerTraversalProvider blockerTraversalProvider;
 
     protected override void Start() {
         base.Start();
         _originalRepathRate = repathRate;
+        blockerTraversalProvider = new BlockerTraversalProvider(marker);
     }
     public override void OnTargetReached() {
         base.OnTargetReached();
@@ -38,35 +40,38 @@ public class CharacterAIPath : AIPath {
 
     protected override void OnPathComplete(Path newPath) {
         currentPath = newPath as ABPath;
+        //string pathLog = "PATH FOR " + marker.character.name;
+        //for (int i = 0; i < currentPath.path.Count; i++) {
+        //    pathLog += "\n- " + (Vector3)currentPath.path[i].position;
+        //}
+        //pathLog += "\nVECTOR PATH FOR " + marker.character.name;
+        //for (int i = 0; i < currentPath.vectorPath.Count; i++) {
+        //    pathLog += "\n- " + currentPath.vectorPath[i];
+        //}
+        //Debug.LogWarning(pathLog);
         base.OnPathComplete(newPath);
     }
-    //public override void SearchPath() {
-    //    if (float.IsPositiveInfinity(destination.x)) return;
-    //    if (onSearchPath != null) onSearchPath();
+    public override void SearchPath() {
+        if (float.IsPositiveInfinity(destination.x)) return;
+        if (onSearchPath != null) onSearchPath();
 
-    //    lastRepath = Time.time;
-    //    waitingForPathCalculation = true;
+        lastRepath = Time.time;
+        waitingForPathCalculation = true;
 
-    //    seeker.CancelCurrentPathRequest();
+        seeker.CancelCurrentPathRequest();
 
-    //    Vector3 start, end;
-    //    CalculatePathRequestEndpoints(out start, out end);
+        Vector3 start, end;
+        CalculatePathRequestEndpoints(out start, out end);
 
+        // Alternative way of requesting the path
+        ABPath p = ABPath.Construct(start, end, null);
+        p.traversalProvider = blockerTraversalProvider;
+        seeker.StartPath(p);
 
-    //    if (marker.character.stateComponent.currentState != null && marker.character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL) {
-    //        //Alternative way of requesting the path
-    //        canSearch = false;
-    //        RandomPath rp = RandomPath.Construct(start, searchLength);
-    //        rp.spread = spread;
-    //        rp.aimStrength = aimStrength;
-    //        rp.aim = end;
-    //        seeker.StartPath(rp);
-    //    } else {
-    //        // This is where we should search to
-    //        // Request a path to be calculated from our current position to the destination
-    //        seeker.StartPath(start, end);
-    //    }
-    //}
+        // This is where we should search to
+        // Request a path to be calculated from our current position to the destination
+        //seeker.StartPath(start, end);
+    }
 
     public override void UpdateMe() {
         if (!marker.gameObject.activeSelf) {

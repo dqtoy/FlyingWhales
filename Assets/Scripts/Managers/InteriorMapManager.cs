@@ -295,7 +295,7 @@ public class InteriorMapManager : MonoBehaviour {
         }
         string summary = tile.localPlace.ToString();
         summary += "\nLocal Location: " + tile.localLocation.ToString();
-        summary += "\nWorld Location: " + tile.worldLocation.ToString();
+        summary += "\nWorld Location: " + tile.centeredWorldLocation.ToString();
         summary += "\nRotation Ground: " + tile.parentAreaMap.groundTilemap.GetTransformMatrix(tile.localPlace).rotation.eulerAngles.ToString();
         summary += "\nRotation Detail: " + tile.parentAreaMap.detailsTilemap.GetTransformMatrix(tile.localPlace).rotation.eulerAngles.ToString();
         summary += "\nIs Inside: " + tile.isInside.ToString();
@@ -373,7 +373,7 @@ public class InteriorMapManager : MonoBehaviour {
         //if (tile.structure != null) {
         summary += "\nStructure: " + tile.structure?.ToString() ?? "None";
         //}
-        //UIManager.Instance.ShowSmallInfo(summary);
+        UIManager.Instance.ShowSmallInfo(summary);
     }
     public void ShowTileData(Character character, LocationGridTile tile) {
         //return;
@@ -382,7 +382,7 @@ public class InteriorMapManager : MonoBehaviour {
     }
     public void HideTileData() {
         isShowingMarkerTileData = false;
-        //UIManager.Instance.HideSmallInfo();
+        UIManager.Instance.HideSmallInfo();
     }
 
     private IPointOfInterest heldPOI;
