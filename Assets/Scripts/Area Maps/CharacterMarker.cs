@@ -601,13 +601,13 @@ public class CharacterMarker : PooledObject {
     //    //Messenger.AddListener(Signals.TICK_STARTED, Move);
     //}
     public void StopMovement(Action afterStoppingAction = null) {
-        string log = character.name + " StopMovement function is called!";
         StopMovementOnly();
-        log += "\n- Not moving to another tile, go to checker...";
-        Debug.LogWarning(log);
+        //log += "\n- Not moving to another tile, go to checker...";
         //CheckIfCurrentTileIsOccupiedOnStopMovement(ref log, afterStoppingAction);
     }
     public void StopMovementOnly() {
+        string log = character.name + " StopMovement function is called!";
+        character.PrintLogIfActive(log);
         //_arrivalAction = null;
 
         //if (Messenger.eventTable.ContainsKey(Signals.TILE_OCCUPIED)) {

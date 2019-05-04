@@ -16,6 +16,7 @@ public class CharacterAIPath : AIPath {
 
     private float _originalRepathRate;
     private BlockerTraversalProvider blockerTraversalProvider;
+    private bool _hasReachedTarget;
 
     protected override void Start() {
         base.Start();
@@ -24,7 +25,9 @@ public class CharacterAIPath : AIPath {
     }
     public override void OnTargetReached() {
         base.OnTargetReached();
-        if(currentPath != null && destination == currentPath.originalEndPoint){
+        //if(currentPath != null && destination == currentPath.originalEndPoint){
+        if (!_hasReachedTarget) {
+            _hasReachedTarget = true;
             canSearch = true;
             marker.ArrivedAtLocation();
             currentPath = null;
@@ -36,20 +39,13 @@ public class CharacterAIPath : AIPath {
             //    marker.OnReachEngageTarget();
             //}
         }
+        //}
     }
 
     protected override void OnPathComplete(Path newPath) {
         currentPath = newPath as ABPath;
-        //string pathLog = "PATH FOR " + marker.character.name;
-        //for (int i = 0; i < currentPath.path.Count; i++) {
-        //    pathLog += "\n- " + (Vector3)currentPath.path[i].position;
-        //}
-        //pathLog += "\nVECTOR PATH FOR " + marker.character.name;
-        //for (int i = 0; i < currentPath.vectorPath.Count; i++) {
-        //    pathLog += "\n- " + currentPath.vectorPath[i];
-        //}
-        //Debug.LogWarning(pathLog);
         base.OnPathComplete(newPath);
+        _hasReachedTarget = false;
     }
     public override void SearchPath() {
         if (float.IsPositiveInfinity(destination.x)) return;

@@ -338,6 +338,7 @@ public class InteriorMapManager : MonoBehaviour {
         }
         if (character != null) {
             summary += "\nCharacter: " + character.name;
+            summary += "\nSupply: " + character.supply.ToString();
             summary += "\nDestination: " + (character.marker.destinationTile != null ? character.marker.destinationTile.ToString() : "None");
             summary += "\nMove Speed: " + character.marker.pathfindingAI.maxSpeed.ToString();
             summary += "\nPOI's in Vision: ";

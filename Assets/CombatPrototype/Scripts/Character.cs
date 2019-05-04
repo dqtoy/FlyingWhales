@@ -476,6 +476,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public CHARACTER_MOOD currentMoodType {
         get { return ConvertCurrentMoodValueToType(); }
     }
+    public bool isStarving { get { return fullness <= FULLNESS_THRESHOLD_2; } }
+    public bool isExhausted { get { return tiredness <= TIREDNESS_THRESHOLD_2; } }
+    public bool isForlorn { get { return happiness <= HAPPINESS_THRESHOLD_2; } }
+
     #endregion
 
     public Character(CharacterRole role, RACE race, GENDER gender) : this() {
@@ -3321,7 +3325,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             return;
         }
         SetHasAlreadyAskedForPlan(true);
-        if (!OtherPlanCreations()) {
+        if (!PlanPersonalJobQueueFirst()) {
             if (!PlanFullnessRecoveryActions()) {
                 if (!PlanTirednessRecoveryActions()) {
                     if (!PlanHappinessRecoveryActions()) {
@@ -3436,7 +3440,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     private bool PlanWorkActions() { //ref bool hasAddedToGoapPlans
         if (GetPlanByCategory(GOAP_CATEGORY.WORK) == null) {
             if (!jobQueue.ProcessFirstJobInQueue(this)) {
-                if (isAtHomeArea && this.faction.id != FactionManager.Instance.neutralFaction.id) {
+                if (isAtHomeArea) { //&& this.faction.id != FactionManager.Instance.neutralFaction.id
                     return homeArea.jobQueue.ProcessFirstJobInQueue(this);
                 } else {
                     return false;
@@ -3444,6 +3448,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             } else {
                 return true;
             }
+        }
+        return false;
+    }
+    private bool PlanPersonalJobQueueFirst() {
+        if (GetPlanByCategory(GOAP_CATEGORY.WORK) == null && !isStarving && !isExhausted && !isForlorn) {
+            return jobQueue.ProcessFirstJobInQueue(this);
         }
         return false;
     }
@@ -4138,7 +4148,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         tiredness = Mathf.Clamp(tiredness, 0, TIREDNESS_DEFAULT);
         if (tiredness == 0) {
             Death("exhaustion");
-        } else if (tiredness <= TIREDNESS_THRESHOLD_2) {
+        } else if (isExhausted) {
             RemoveTrait("Tired");
             if (AddTrait("Exhausted")) {
                 RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "exhausted");
@@ -4160,7 +4170,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         tiredness = Mathf.Clamp(tiredness, 0, TIREDNESS_DEFAULT);
         if (tiredness == 0) {
             Death("exhaustion");
-        } else if (tiredness <= TIREDNESS_THRESHOLD_2) {
+        } else if (isExhausted) {
             if (tiredness == TIREDNESS_THRESHOLD_2) {
                 RemoveTrait("Tired");
                 if (AddTrait("Exhausted")) {
@@ -4182,7 +4192,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         tiredness = Mathf.Clamp(tiredness, 0, TIREDNESS_DEFAULT);
         if (tiredness == 0) {
             Death("exhaustion");
-        } else if (tiredness <= TIREDNESS_THRESHOLD_2) {
+        } else if (isExhausted) {
             RemoveTrait("Tired");
             if (AddTrait("Exhausted")) {
                 RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "exhausted");
@@ -4220,7 +4230,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         fullness = Mathf.Clamp(fullness, 0, FULLNESS_DEFAULT);
         if (fullness == 0) {
             Death("starvation");
-        } else if (fullness <= FULLNESS_THRESHOLD_2) {
+        } else if (isStarving) {
             RemoveTrait("Hungry");
             if (AddTrait("Starving")) {
                 RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "starving");
@@ -4242,7 +4252,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         fullness = Mathf.Clamp(fullness, 0, FULLNESS_DEFAULT);
         if (fullness == 0) {
             Death("starvation");
-        } else if (fullness <= FULLNESS_THRESHOLD_2) {
+        } else if (isStarving) {
             if (fullness == FULLNESS_THRESHOLD_2) {
                 RemoveTrait("Hungry");
                 if (AddTrait("Starving")) {
@@ -4264,7 +4274,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         fullness = Mathf.Clamp(fullness, 0, FULLNESS_DEFAULT);
         if (fullness == 0) {
             Death("starvation");
-        } else if (fullness <= FULLNESS_THRESHOLD_2) {
+        } else if (isStarving) {
             RemoveTrait("Hungry");
             if (AddTrait("Starving")) {
                 RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "starving");
@@ -4300,7 +4310,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public void AdjustHappiness(int adjustment) {
         happiness += adjustment;
         happiness = Mathf.Clamp(happiness, 0, HAPPINESS_DEFAULT);
-        if (happiness <= HAPPINESS_THRESHOLD_2) {
+        if (isForlorn) {
             RemoveTrait("Lonely");
             if (AddTrait("Forlorn")) {
                 RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "depressed");
@@ -4319,7 +4329,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public void SetHappiness(int amount) {
         happiness = amount;
         happiness = Mathf.Clamp(happiness, 0, HAPPINESS_DEFAULT);
-        if (happiness <= HAPPINESS_THRESHOLD_2) {
+        if (isForlorn) {
             RemoveTrait("Lonely");
             if (AddTrait("Forlorn")) {
                 RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "depressed");
@@ -4825,11 +4835,11 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     log += "\n - Action's plan is cancelled due to injury, dropping plan...";
                     PrintLogIfActive(log);
                     if (allGoapPlans.Count == 1) {
-                        DropPlan(plan);
+                        DropPlan(plan, true);
                         willGoIdleState = false;
                         break;
                     } else {
-                        DropPlan(plan);
+                        DropPlan(plan, true);
                         i--;
                         continue;
                     }
@@ -4906,7 +4916,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             if (IsPlanCancelledDueToInjury(action)) {
                 log += "\n - Action's plan is cancelled due to injury, dropping plan...";
                 PrintLogIfActive(log);
-                DropPlan(action.parentPlan);
+                DropPlan(action.parentPlan, true);
                 return;
             }
             if (action.IsHalted()) {
@@ -5114,11 +5124,11 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         }
     }
-    public bool DropPlan(GoapPlan plan) {
+    public bool DropPlan(GoapPlan plan, bool forceCancelJob = false) {
         if (allGoapPlans.Remove(plan)) {
             plan.EndPlan();
             if(plan.job != null) {
-                if (plan.job.cancelJobOnFail) {
+                if (plan.job.cancelJobOnFail || forceCancelJob) {
                     plan.job.jobQueueParent.RemoveJobInQueue(plan.job);
                 }
                 plan.job.SetAssignedCharacter(null);

@@ -92,11 +92,13 @@ public class CharacterStateComponent {
     public void ExitCurrentState(CharacterState state, bool stopMovement = true) {
         //Stops movement unless told otherwise
         if (stopMovement) {
-            if (character.currentParty.icon.isTravelling) {
-                if (character.currentParty.icon.travelLine == null) {
-                    character.marker.StopMovementOnly();
-                } else {
-                    //TODO: What if the character travelling to an area
+            if(!(currentState != null && character.currentAction != null && character.currentAction.parentPlan == null)) {
+                if (character.currentParty.icon.isTravelling) {
+                    if (character.currentParty.icon.travelLine == null) {
+                        character.marker.StopMovementOnly();
+                    } else {
+                        //TODO: What if the character travelling to an area
+                    }
                 }
             }
         }
