@@ -34,11 +34,7 @@ public class RileUp : PlayerJobAction {
     }
 
     protected override bool ShouldButtonBeInteractable(Character character, Character targetCharacter) {
-        if(targetCharacter.role.roleType != CHARACTER_ROLE.BEAST) {
-            name = "Abduct";
-        } else {
-            name = "Rile Up";
-        }
+        name = GetActionName(targetCharacter);
         if (targetCharacter.isDead || character.id == targetCharacter.id) { //|| (!targetCharacter.isTracked && !GameManager.Instance.inspectAll)
             return false;
         }

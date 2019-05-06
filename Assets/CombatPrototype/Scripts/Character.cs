@@ -633,7 +633,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         this.marker = marker;
     }
     public void ShowTileData(Character character, LocationGridTile location) {
-        InteriorMapManager.Instance.ShowTileData(this, gridTileLocation);
+        //InteriorMapManager.Instance.ShowTileData(this, gridTileLocation);
     }
     //Changes row number of this character
     public void SetRowNumber(int rowNumber) {

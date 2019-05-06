@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Stand : GoapAction {
     public Stand(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.STAND, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
-        actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
+        actionLocationType = ACTION_LOCATION_TYPE.NEARBY;
         actionIconString = GoapActionStateDB.No_Icon;
         shouldIntelNotificationOnlyIfActorIsActive = true;
     }

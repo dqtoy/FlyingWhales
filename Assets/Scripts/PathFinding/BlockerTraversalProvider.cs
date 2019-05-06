@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Pathfinding;
+using System.Linq;
 
 public class BlockerTraversalProvider : ITraversalProvider {
 
@@ -15,13 +16,13 @@ public class BlockerTraversalProvider : ITraversalProvider {
         // includes the node's tag.
         //return node.Walkable && (path.enabledTags >> (int) node.Tag & 0x1) != 0;
         // alternatively:
-        return DefaultITraversalProvider.CanTraverse(path, node);
+        return DefaultITraversalProvider.CanTraverse(path, node); // && IsNodeWalkable(node)
     }
 
     public uint GetTraversalCost(Path path, GraphNode node) {
         uint additionalPenalty = 0;
         if (!IsNodeWalkable(node)) {
-            additionalPenalty = 1000000;
+            additionalPenalty = 5000000;
         }
 
         // The traversal cost is the sum of the penalty of the node's tag and the node's penalty
@@ -33,13 +34,13 @@ public class BlockerTraversalProvider : ITraversalProvider {
     private bool IsNodeWalkable(GraphNode node) {
         if (_marker.terrifyingCharacters.Count > 0) {
             for (int i = 0; i < _marker.terrifyingCharacters.Count; i++) {
-                Character terrifyingCharacter = _marker.terrifyingCharacters[i];
-                if (terrifyingCharacter.currentParty.icon.isTravelling && terrifyingCharacter.currentParty.icon.travelLine != null && _marker.character.currentStructure != terrifyingCharacter.currentStructure) {
+                Character terrifyingCharacter = _marker.terrifyingCharacters.ElementAtOrDefault(i);
+                if (terrifyingCharacter == null || (terrifyingCharacter.currentParty.icon.isTravelling && terrifyingCharacter.currentParty.icon.travelLine != null && _marker.character.currentStructure != terrifyingCharacter.currentStructure)) {
                     continue;
                 }
                 if (!terrifyingCharacter.isDead) {
                     Vector3 nodePos = (Vector3) node.position;
-                    if(Vector3.Distance(nodePos, terrifyingCharacter.gridTileLocation.centeredWorldLocation) <= 15f) {
+                    if (Vector3.Distance(nodePos, terrifyingCharacter.gridTileLocation.centeredWorldLocation) <= 15f) {
                         return false;
                     }
                 }
