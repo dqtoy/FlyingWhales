@@ -128,8 +128,18 @@ public class CharacterStateComponent {
                 SetCurrentState(null);
             } else {
                 if(character.doNotDisturb > 0) {
-                    previousMajorState.ExitState();
-                    SetCurrentState(null);
+                    if(character.doNotDisturb == 1 && character.GetTrait("Combat Recovery") != null) { //Quick fix only for build, MUST REDO
+                        if (previousMajorState.hasStarted) {
+                            //Resumes previous major state
+                            SetCurrentState(previousMajorState);
+                            currentState.ResumeState();
+                        } else {
+                            previousMajorState.EnterState(previousMajorState.targetArea);
+                        }
+                    } else {
+                        previousMajorState.ExitState();
+                        SetCurrentState(null);
+                    }
                 } else {
                     if (previousMajorState.hasStarted) {
                         //Resumes previous major state

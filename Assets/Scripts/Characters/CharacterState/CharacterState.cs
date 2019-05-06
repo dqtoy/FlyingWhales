@@ -55,9 +55,14 @@ public class CharacterState {
     
     //This is called per TICK_ENDED if the state has a duration, can be overriden
     protected virtual void PerTickInState() {
-        if(currentDuration >= duration || stateComponent.character.doNotDisturb > 0) {
+        if (currentDuration >= duration) {
             StopStatePerTick();
             OnExitThisState();
+        } else if (stateComponent.character.doNotDisturb > 0) {
+            if (!(stateComponent.character.doNotDisturb == 1 && stateComponent.character.GetTrait("Combat Recovery") != null)) {
+                StopStatePerTick();
+                OnExitThisState();
+            }
         }
         currentDuration++;
     }

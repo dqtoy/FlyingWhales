@@ -120,9 +120,9 @@ public class EngageState : CharacterState {
 
         //**Character That Won**
         //Gain Combat Recovery trait(won't initiate combat for a while)
-        if(!(actor.stateComponent.previousMajorState != null && actor.stateComponent.previousMajorState.characterState == CHARACTER_STATE.BERSERKED)) {
+        //if(!(actor.stateComponent.previousMajorState != null && actor.stateComponent.previousMajorState.characterState == CHARACTER_STATE.BERSERKED)) {
             winner.AddTrait("Combat Recovery");
-        }
+        //}
 
         //**Character That Lost**
         //40 Weight: Gain Unconscious trait (reduce to 0 if already Unconscious)
