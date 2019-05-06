@@ -115,6 +115,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public bool isCombatant { get; private set; } //This should only be a getter but since we need to know when the value changes it now has a setter
     public List<Trait> traitsNeededToBeRemoved { get; private set; }
 
+    private List<System.Action> onLeaveAreaActions;
     private LocationGridTile tile; //what tile in the structure is this character currently in.
     private POI_STATE _state;
 
@@ -552,6 +553,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         jobQueue = new JobQueue(this);
         allJobsTargettingThis = new List<JobQueueItem>();
         traitsNeededToBeRemoved = new List<Trait>();
+        onLeaveAreaActions = new List<Action>();
         SetPOIState(POI_STATE.ACTIVE);
         SetMoodValue(90);
 
@@ -633,7 +635,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         this.marker = marker;
     }
     public void ShowTileData(Character character, LocationGridTile location) {
-        //InteriorMapManager.Instance.ShowTileData(this, gridTileLocation);
+        InteriorMapManager.Instance.ShowTileData(this, gridTileLocation);
     }
     //Changes row number of this character
     public void SetRowNumber(int rowNumber) {
@@ -1701,6 +1703,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             CheckApprehendRelatedJobsOnLeaveLocation();
             CancelOrUnassignRemoveTraitRelatedJobs();
             marker.ClearTerrifyingCharacters();
+            ExecuteLeaveAreaActions();
         } else {
             if(marker.terrifyingCharacters.Count > 0) {
                 for (int i = 0; i < party.characters.Count; i++) {
@@ -1727,6 +1730,15 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public void OnArriveAtAreaStopMovement() {
         currentParty.icon.SetTarget(null, null, null, null);
         currentParty.icon.SetOnPathFinished(null);
+    }
+    public void AddOnLeaveAreaAction(System.Action onLeaveAreaAction) {
+        onLeaveAreaActions.Add(onLeaveAreaAction);
+    }
+    private void ExecuteLeaveAreaActions() {
+        for (int i = 0; i < onLeaveAreaActions.Count; i++) {
+            onLeaveAreaActions[i].Invoke();
+        }
+        onLeaveAreaActions.Clear();
     }
     #endregion
 
@@ -5184,6 +5196,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public void OnCharacterDoAction(GoapAction action) {
         Messenger.Broadcast(Signals.CHARACTER_DID_ACTION, this, action);
+        //if (action.goapType.IsCombatAction()) {
+        //    ClearIgnoreHostilities();
+        //}
     }
     public void FaceTarget(IPointOfInterest target) {
         if (this != target && !this.isDead && gridTileLocation != null) {
@@ -5268,6 +5283,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             currentAction.StopAction();
         }
     }
+
     #endregion
 
     #region Supply
@@ -5326,6 +5342,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public void AdjustIgnoreHostilities(int amount) {
         ignoreHostility += amount;
         ignoreHostility = Mathf.Max(0, ignoreHostility);
+    }
+    public void ClearIgnoreHostilities() {
+        ignoreHostility = 0;
     }
     #endregion
 
@@ -5612,6 +5631,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         }
         return tiles;
+    }
+    #endregion
+
+    #region States
+    public void OnCharacterEnteredState(CharacterState state) {
+        if (state.characterState.IsCombatState()) {
+            ClearIgnoreHostilities();
+        }
     }
     #endregion
 }

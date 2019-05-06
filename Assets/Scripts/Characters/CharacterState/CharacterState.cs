@@ -38,6 +38,7 @@ public class CharacterState {
         CreateStartStateLog();
         CreateThoughtBubbleLog();
         DoMovementBehavior();
+        //stateComponent.character.OnCharacterEnteredState(this);
         Messenger.Broadcast(Signals.CHARACTER_STARTED_STATE, stateComponent.character, this);
     }
     //Ends a state, can be overridden
@@ -59,7 +60,7 @@ public class CharacterState {
             StopStatePerTick();
             OnExitThisState();
         } else if (stateComponent.character.doNotDisturb > 0) {
-            if (!(stateComponent.character.doNotDisturb == 1 && stateComponent.character.GetTrait("Combat Recovery") != null)) {
+            if (!(characterState == CHARACTER_STATE.BERSERKED && stateComponent.character.doNotDisturb == 1 && stateComponent.character.GetTrait("Combat Recovery") != null)) {
                 StopStatePerTick();
                 OnExitThisState();
             }

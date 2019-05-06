@@ -84,15 +84,10 @@ public class JudgeCharacter : GoapAction {
         target.AdjustIgnoreHostilities(1); //target should ignore hostilities or be ignored by other hostiles, until it returns home.
         GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.RETURN_HOME, target, poiTarget);
         goapAction.SetTargetStructure();
-        goapAction.SetEndAction(OnEndGoHome);
+        target.AddOnLeaveAreaAction(() => target.AdjustIgnoreHostilities(-1));
         GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
         GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.IDLE);
         goapPlan.ConstructAllNodes();
-        target.AddPlan(goapPlan);
-    }
-
-    private void OnEndGoHome(string result, GoapAction action) {
-        (poiTarget as Character).AdjustIgnoreHostilities(-1);
-        (poiTarget as Character).GoapActionResult(result, action);
+        target.AddPlan(goapPlan, true);
     }
 }

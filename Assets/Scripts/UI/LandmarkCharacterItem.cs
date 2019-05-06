@@ -96,7 +96,8 @@ public class LandmarkCharacterItem : PooledObject {
             if (character.currentParty.icon.targetLocation == null) {
                 return;
             }
-            float x = thisTrans.position.x + thisTrans.sizeDelta.x + 50f;
+            float x = UIManager.Instance.locationSmallInfoRT.position.x;
+            //float x = thisTrans.position.x + thisTrans.sizeDelta.x + 50f;
             UIManager.Instance.ShowSmallLocationInfo(character.currentParty.icon.targetLocation, new Vector3(x, thisTrans.position.y - 15f, 0f), "Travelling to:");
         }
     }

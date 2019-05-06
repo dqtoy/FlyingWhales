@@ -1453,7 +1453,6 @@ public static class Extensions {
         SubcategoryOf subAttr = (SubcategoryOf)mi.GetCustomAttribute(typeof(SubcategoryOf));
         return subAttr.Category;
     }
-
     public static bool IsLessThan(this CRIME_CATEGORY sub, CRIME_CATEGORY other) {
         return sub < other;
     }
@@ -1494,6 +1493,35 @@ public static class Extensions {
                 return Cardinal_Direction.East;
         }
         throw new System.Exception("No opposite direction for " + dir.ToString());
+    }
+    #endregion
+
+    #region Actions
+    public static bool IsCombatAction(this INTERACTION_TYPE type) {
+        switch (type) {
+            case INTERACTION_TYPE.ASSAULT_ACTION_NPC:
+            case INTERACTION_TYPE.STEAL:
+            case INTERACTION_TYPE.STEAL_CHARACTER:
+            case INTERACTION_TYPE.TILE_OBJECT_DESTROY:
+            case INTERACTION_TYPE.CURSE_CHARACTER:
+            case INTERACTION_TYPE.RESTRAIN_CHARACTER:
+                return true;
+            default:
+                return false;
+        }
+    }
+    #endregion
+
+    #region State
+    public static bool IsCombatState(this CHARACTER_STATE type) {
+        switch (type) {
+            case CHARACTER_STATE.BERSERKED:
+            case CHARACTER_STATE.ENGAGE:
+            case CHARACTER_STATE.HUNT:
+                return true;
+            default:
+                return false;
+        }
     }
     #endregion
 }
