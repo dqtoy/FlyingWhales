@@ -5073,47 +5073,66 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
             return;
         }
-        if (result == InteractionManager.Goap_State_Success) {
-            log += "\nAction performed is a success!";
-            plan.SetNextNode();
-            if (plan.currentNode == null) {
-                log += "\nThis action is the end of plan.";
-                if (plan.job != null) {
-                    log += "\nRemoving job in queue...";
-                    plan.job.jobQueueParent.RemoveJobInQueue(plan.job);
-                }
-                PrintLogIfActive(log);
-                //this means that this is the end goal so end this plan now
-                if (!DropPlan(plan)) {
-                    //PlanGoapActions();
-                }
-            } else {
-                log += "\nNext action for this plan: " + plan.currentNode.action.goapName;
-                PrintLogIfActive(log);
+
+        log += "\nPlan is setting next action to be done...";
+        plan.SetNextNode();
+        if (plan.currentNode == null) {
+            log += "\nThis action is the end of plan.";
+            if (plan.job != null) {
+                log += "\nRemoving job in queue...";
+                plan.job.jobQueueParent.RemoveJobInQueue(plan.job);
+            }
+            PrintLogIfActive(log);
+            //this means that this is the end goal so end this plan now
+            if (!DropPlan(plan)) {
                 //PlanGoapActions();
             }
-        } else if(result == InteractionManager.Goap_State_Fail) {
-            if(plan.endNode.action == action) {
-                log += "\nAction performed has failed. Since this action is the end/goal action, it will not recalculate anymore. Dropping plan...";
-                PrintLogIfActive(log);
-                if (!DropPlan(plan)) {
-                    //PlanGoapActions();
-                }
-            } else {
-                log += "\nAction performed has failed. Will try to recalculate plan...";
-                if (plan.doNotRecalculate) {
-                    log += "\n - Action's plan has doNotRecalculate state set to true, dropping plan...";
-                    PrintLogIfActive(log);
-                    if (!DropPlan(plan)) {
-                        //PlanGoapActions();
-                    }
-                } else {
-                    PrintLogIfActive(log);
-                    RecalculatePlan(plan);
-                    //IdlePlans();
-                }
-            }
+        } else {
+            log += "\nNext action for this plan: " + plan.currentNode.action.goapName;
+            PrintLogIfActive(log);
+            //PlanGoapActions();
         }
+        //if (result == InteractionManager.Goap_State_Success) {
+        //    log += "\nAction performed is a success!";
+        //    plan.SetNextNode();
+        //    if (plan.currentNode == null) {
+        //        log += "\nThis action is the end of plan.";
+        //        if (plan.job != null) {
+        //            log += "\nRemoving job in queue...";
+        //            plan.job.jobQueueParent.RemoveJobInQueue(plan.job);
+        //        }
+        //        PrintLogIfActive(log);
+        //        //this means that this is the end goal so end this plan now
+        //        if (!DropPlan(plan)) {
+        //            //PlanGoapActions();
+        //        }
+        //    } else {
+        //        log += "\nNext action for this plan: " + plan.currentNode.action.goapName;
+        //        PrintLogIfActive(log);
+        //        //PlanGoapActions();
+        //    }
+        //} else if(result == InteractionManager.Goap_State_Fail) {
+        //    if(plan.endNode.action == action) {
+        //        log += "\nAction performed has failed. Since this action is the end/goal action, it will not recalculate anymore. Dropping plan...";
+        //        PrintLogIfActive(log);
+        //        if (!DropPlan(plan)) {
+        //            //PlanGoapActions();
+        //        }
+        //    } else {
+        //        log += "\nAction performed has failed. Will try to recalculate plan...";
+        //        if (plan.doNotRecalculate) {
+        //            log += "\n - Action's plan has doNotRecalculate state set to true, dropping plan...";
+        //            PrintLogIfActive(log);
+        //            if (!DropPlan(plan)) {
+        //                //PlanGoapActions();
+        //            }
+        //        } else {
+        //            PrintLogIfActive(log);
+        //            RecalculatePlan(plan);
+        //            //IdlePlans();
+        //        }
+        //    }
+        //}
     }
     public bool DropPlan(GoapPlan plan, bool forceCancelJob = false) {
         if (allGoapPlans.Remove(plan)) {
