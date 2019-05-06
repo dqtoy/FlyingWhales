@@ -405,7 +405,7 @@ public class GoapAction {
             //    targetCharacter.AdjustIsWaitingForInteraction(-1);
             //}
             if (!actor.DropPlan(parentPlan)) {
-                actor.PlanGoapActions();
+                //actor.PlanGoapActions();
             }
         }
         if (UIManager.Instance.characterInfoUI.isShowing) {

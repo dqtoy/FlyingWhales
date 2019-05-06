@@ -293,13 +293,10 @@ public class InteriorMapManager : MonoBehaviour {
         if (tile == null) {
             return;
         }
-        //For build only
+        ////For build only
         //if(tile.objHere != null) {
         //    UIManager.Instance.ShowSmallInfo(tile.objHere.ToString());
         //} 
-        //else {
-        //    UIManager.Instance.HideSmallInfo();
-        //}
 
         string summary = tile.localPlace.ToString();
         summary += "\nLocal Location: " + tile.localLocation.ToString();
