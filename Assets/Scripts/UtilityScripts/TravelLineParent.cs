@@ -7,7 +7,7 @@ public class TravelLineParent : MonoBehaviour {
     public Image bgImage;
     public Color[] _childColors;
 
-    private HexTile _startTile;
+    public HexTile startTile { get; private set; }
     private HexTile _endTile;
     private int _usedColorIndex;
     private int _numOfTicks;
@@ -16,7 +16,7 @@ public class TravelLineParent : MonoBehaviour {
 
     #region getters/setters
     public HexTile startPos {
-        get { return _startTile; }
+        get { return startTile; }
     }
     public HexTile endPos {
         get { return _endTile; }
@@ -28,16 +28,16 @@ public class TravelLineParent : MonoBehaviour {
 
     public void SetStartAndEndPositions(HexTile startTile, HexTile endTile, int numOfTicks) {
         _children = new List<TravelLine>();
-        _startTile = startTile;
+        this.startTile = startTile;
         _endTile = endTile;
         _numOfTicks = numOfTicks;
 
         //Creates travel line
-        float angle = Mathf.Atan2(_endTile.transform.position.y - _startTile.transform.position.y, _endTile.transform.position.x - _startTile.transform.position.x) * Mathf.Rad2Deg;
+        float angle = Mathf.Atan2(_endTile.transform.position.y - this.startTile.transform.position.y, _endTile.transform.position.x - this.startTile.transform.position.x) * Mathf.Rad2Deg;
         transform.eulerAngles = new Vector3(transform.rotation.x, transform.rotation.y, angle);
-        float distance = Vector3.Distance(_startTile.transform.position, _endTile.transform.position);
+        float distance = Vector3.Distance(this.startTile.transform.position, _endTile.transform.position);
         GetComponent<RectTransform>().sizeDelta = new Vector2(distance, 0.2f);
-        gameObject.transform.SetParent(_startTile.UIParent);
+        gameObject.transform.SetParent(this.startTile.UIParent);
         transform.localPosition = Vector3.zero;
 
         BezierCurveManager.Instance.AddTravelLineParent(this);

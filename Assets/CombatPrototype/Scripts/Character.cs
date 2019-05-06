@@ -4371,11 +4371,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             EventIntel ei = intel as EventIntel;
             if (ei.action.endedAtState != null && ei.action.endedAtState.shareIntelReaction != null) {
                 dialogReactions.AddRange(ei.action.endedAtState.shareIntelReaction.Invoke(this, ei));
-            } else {
+            }
+            //if the determined reactions list is empty, check the default reactions
+            if (dialogReactions.Count == 0) {
                 bool doesNotConcernMe = false;
                 //If the event's actor and target do not have any relationship with the recipient and are not part of his faction, 
                 //and if no item involved is owned by the recipient: "This does not concern me."
-                if (!this.HasRelationshipWith(ei.action.actor) 
+                if (!this.HasRelationshipWith(ei.action.actor)
                     && ei.action.actor.faction != this.faction) {
                     if (ei.action.poiTarget is Character) {
                         Character otherCharacter = ei.action.poiTarget as Character;
@@ -4421,25 +4423,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                                 dialogReactions.Add("This does not concern me.");
                                 break;
                         }
-                        
+
                     } else {
                         //Otherwise: "A proper response to this information has not been implemented yet."
                         dialogReactions.Add("A proper response to this information has not been implemented yet.");
                     }
                 }
-
-                
-            }            
-            //Dictionary<ActionEffectReaction, GoapEffect> reactions = new Dictionary<ActionEffectReaction, GoapEffect>();
-            //for (int i = 0; i < ei.action.actualEffects.Count; i++) {
-            //    GoapEffect currEffect = ei.action.actualEffects[i];
-            //    if (ActionEffectReactionDB.eventIntelReactions.ContainsKey(currEffect)) {
-            //        reactions.Add(ActionEffectReactionDB.eventIntelReactions[currEffect], currEffect);
-            //    }
-            //}
-            //foreach (KeyValuePair<ActionEffectReaction, GoapEffect> keyValuePair in reactions) {
-            //    dialogReactions.Add(keyValuePair.Key.GetReactionFrom(this, intel, keyValuePair.Value));
-            //}
+            }
+            
         }
         PlayerManager.Instance.player.RemoveIntel(intel);
         return dialogReactions;
