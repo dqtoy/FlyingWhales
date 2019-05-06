@@ -85,6 +85,10 @@ public class DropCharacter : GoapAction {
         List<string> reactions = new List<string>();
         //Recipient and Target have at least one non-negative relationship and Actor is not from the same faction:
         Character targetCharacter = poiTarget as Character;
+        if (recipient == actor) {
+            return reactions; //return empty list if same actor
+        }
+
         if (recipient.HasRelationshipOfEffectWith(targetCharacter, TRAIT_EFFECT.POSITIVE, RELATIONSHIP_TRAIT.RELATIVE) && actor.faction != recipient.faction) {
             //- **Recipient Response Text**: "Thank you for letting me know about this. I've got to find a way to free [Target Name]!
             reactions.Add(string.Format("Thank you for letting me know about this. I've got to find a way to free {0}!", targetCharacter.name));

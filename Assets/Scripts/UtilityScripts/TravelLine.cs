@@ -45,6 +45,9 @@ public class TravelLine : MonoBehaviour {
             if(iconImg.sprite == defaultSprite) {
                 iconImg.sprite = hoverSprite;
             }
+            if (UIManager.Instance.isShowingAreaTooltip) {
+                UIManager.Instance.OnHoverOutTile(_travelLineParent.startTile);
+            }
         }
     }
     public void OnHoverOutTravelLine() {

@@ -101,8 +101,15 @@ public class TablePoison : GoapAction {
         //NOTE: Poisoned trait has a list of characters that poisoned it. If the poisoned trait that is currently on the table has the actor of this action in it's list
         //this action is still valid for reactions where the table is currently poisoned.
 
+        //Recipient is the same as the actor:
+        if (recipient == actor) {
+            // **Recipient Response Text**: "I know what I've done!"
+            reactions.Add("I know what I've done!");
+            //-**Recipient Effect * *: no effect
+        }
+
         //Recipient is the owner of the Poisoned Table and the Table is still currently poisoned by the actor of this action:
-        if (pti.targetDwelling.IsResident(recipient) && poisonedTrait != null && poisonedTrait.responsibleCharacters.Contains(actor)) {
+        else if (pti.targetDwelling.IsResident(recipient) && poisonedTrait != null && poisonedTrait.responsibleCharacters.Contains(actor)) {
             //- **Recipient Response Text**: "[Actor Name] wants to poison me? I've got to do something about this!"
             reactions.Add(string.Format("{0} wants to poison me? I've got to do something about this!", actor.name));
             //-**Recipient Effect**: Recipient will create a Remove Poison Job to his personal job queue. 
@@ -244,12 +251,6 @@ public class TablePoison : GoapAction {
             reactions.Add(string.Format("{0} is attempting murder!", actor.name));
             //-**Recipient Effect * *: Apply Crime System handling as if the Recipient witnessed Actor commit an Attempted Murder.
             recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, actor);
-        }
-        //Recipient is the same as the actor:
-        else if (recipient == actor) {
-            // **Recipient Response Text**: "I know what I've done!"
-            reactions.Add("I know what I've done!");
-            //-**Recipient Effect * *: no effect
         }
         return reactions;
     }

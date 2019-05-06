@@ -96,6 +96,12 @@ public class StealFromCharacter : GoapAction {
             //Apply Crime System handling as if the Recipient witnessed Actor commit Theft.
             recipient.ReactToCrime(CRIME.THEFT, actor);
         }
+        //Recipient and Actor is the same:
+        else if (recipient == actor) {
+            //- **Recipient Response Text**: "I know what I did."
+            reactions.Add("I know what I did.");
+            //-**Recipient Effect**: no effect
+        }
         //Recipient and Actor have a positive relationship:
         else if (recipient.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE, RELATIONSHIP_TRAIT.RELATIVE)) {
             //- **Recipient Response Text**: "[Actor Name] may have committed theft but I know that [he/she] is a good person."
@@ -116,12 +122,7 @@ public class StealFromCharacter : GoapAction {
             //- **Recipient Effect**: Apply Crime System handling as if the Recipient witnessed Actor commit Theft.
             recipient.ReactToCrime(CRIME.THEFT, actor);
         }
-        //Recipient and Actor is the same:
-        else if (recipient == actor) {
-            //- **Recipient Response Text**: "I know what I did."
-            reactions.Add("I know what I did.");
-            //-**Recipient Effect**: no effect
-        }
+        
         return reactions;
     }
     private List<string> State2Reactions(Character recipient, Intel sharedIntel) {
@@ -134,6 +135,12 @@ public class StealFromCharacter : GoapAction {
             //- **Recipient Effect**: Remove Friend/Lover/Paramour relationship between Actor and Recipient.
             List<RelationshipTrait> traitsToRemove = recipient.GetAllRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE);
             CharacterManager.Instance.RemoveRelationshipBetween(recipient, actor, traitsToRemove);
+        }
+        //Recipient and Actor is the same:
+        else if (recipient == actor) {
+            //- **Recipient Response Text**: "At least I didn't get caught. Too bad I got nothing either."
+            reactions.Add("At least I didn't get caught. Too bad I got nothing either.");
+            //-**Recipient Effect**: no effect
         }
         //Recipient and Actor have a positive relationship:
         else if (recipient.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE, RELATIONSHIP_TRAIT.RELATIVE)) {
@@ -153,12 +160,6 @@ public class StealFromCharacter : GoapAction {
             reactions.Add(string.Format("{0} attempted theft!? I better watch my back around {1}.", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.OBJECTIVE, false)));
             //- **Recipient Effect**: Recipient and Actor are now Enemies.
             CharacterManager.Instance.CreateNewRelationshipBetween(recipient, actor, RELATIONSHIP_TRAIT.ENEMY);
-        }
-        //Recipient and Actor is the same:
-        else if (recipient == actor) {
-            //- **Recipient Response Text**: "At least I didn't get caught. Too bad I got nothing either."
-            reactions.Add("At least I didn't get caught. Too bad I got nothing either.");
-            //-**Recipient Effect**: no effect
         }
         return reactions;
     }

@@ -85,6 +85,8 @@ public class CharacterAvatar : MonoBehaviour{
         SetSprite(_party.mainCharacter.role.roleType);
         SetIsPlaceCharacterAsTileObject(true);
 
+        this.name = party.owner.name + "'s Avatar";
+
 #if !WORLD_CREATION_TOOL
         GameObject portraitGO = UIManager.Instance.InstantiateUIObject(CharacterManager.Instance.characterPortraitPrefab.name, this.transform);
         characterPortrait = portraitGO.GetComponent<CharacterPortrait>();

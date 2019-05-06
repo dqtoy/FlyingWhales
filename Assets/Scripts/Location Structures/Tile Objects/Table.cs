@@ -148,19 +148,42 @@ public class Table : TileObject, IPointOfInterest {
             //concerned with rotation in the 1 slot variant
             Matrix4x4 m = location.location.areaMap.objectsTilemap.GetTransformMatrix(gridTileLocation.localPlace);
             int rotation = (int)m.rotation.eulerAngles.z;
-            if (rotation == 0 || rotation == 360) {
-                pos.x += 0.49f;
-                pos.y += 0.2f;
-            } else if (rotation == 90) {
-                pos.x += 0.8f;
-                pos.y += 0.5f;
-            } else if (rotation == 180) {
-                pos.x += 0.51f;
-                pos.y += 0.8f;
-            } else if (rotation == 270) {
-                pos.x += 0.2f;
-                pos.y += 0.51f;
-            }
+            //if (usedAsset.name.Contains("Bartop")) {
+            //    pos.x += 0.5f;
+            //    pos.y += 0.5f;
+                //if (usedAsset.name.Contains("Left")) {
+
+                //} else {
+
+                //}
+                //if (rotation == 0 || rotation == 360) {
+                   
+                //} else if (rotation == 90) {
+                //    pos.x += 0.8f;
+                //    pos.y += 0.5f;
+                //} else if (rotation == 180) {
+                //    pos.x += 0.51f;
+                //    pos.y += 0.8f;
+                //} else if (rotation == 270) {
+                //    pos.x += 0.2f;
+                //    pos.y += 0.51f;
+                //}
+            //} else {
+                if (rotation == 0 || rotation == 360) {
+                    pos.x += 0.49f;
+                    pos.y += 0.2f;
+                } else if (rotation == 90) {
+                    pos.x += 0.8f;
+                    pos.y += 0.5f;
+                } else if (rotation == 180) {
+                    pos.x += 0.51f;
+                    pos.y += 0.8f;
+                } else if (rotation == 270) {
+                    pos.x += 0.2f;
+                    pos.y += 0.51f;
+                }
+            //}
+            
         } else if (slots == 2) {
             //concerned with rotation in the 2 slot variant
             Matrix4x4 m = location.location.areaMap.objectsTilemap.GetTransformMatrix(gridTileLocation.localPlace);

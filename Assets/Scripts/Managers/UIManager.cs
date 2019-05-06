@@ -115,6 +115,7 @@ public class UIManager : MonoBehaviour {
     [Header("Combat")]
     public CombatUI combatUI;
 
+    public bool isShowingAreaTooltip { get; private set; } //is the tooltip for area double clicks showing?
     internal List<object> eventLogsQueue = new List<object>();
     private UIMenu lastOpenedMenu = null;
     private List<object> _uiMenuHistory;
@@ -143,6 +144,7 @@ public class UIManager : MonoBehaviour {
         if (isHoveringTile) {
             if (currentTileHovered.areaOfTile != null && currentTileHovered.areaOfTile.areaType != AREA_TYPE.DEMONIC_INTRUSION) {
                 ShowSmallInfo("Double click to view.", currentTileHovered.areaOfTile.name);
+                isShowingAreaTooltip = true;
             }
         }
     }
@@ -1213,11 +1215,12 @@ public class UIManager : MonoBehaviour {
         currentTileHovered = tile;
         isHoveringTile = true;
     }
-    private void OnHoverOutTile(HexTile tile) {
+    public void OnHoverOutTile(HexTile tile) {
         currentTileHovered = null;
         isHoveringTile = false;
         if (tile.areaOfTile != null) {
             HideSmallInfo();
+            isShowingAreaTooltip = false;
         }
     }
     #endregion
