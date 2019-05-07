@@ -28,28 +28,26 @@ public class Table : TileObject, IPointOfInterest {
         users = new Character[slots];
     }
 
+    #region Overrides
     public override void SetPOIState(POI_STATE state) {
         base.SetPOIState(state);
         if (state == POI_STATE.ACTIVE) {
             //if (GetActiveUserCount() > 0) {
-                UpdateUsedTableAsset();
+            UpdateUsedTableAsset();
             //} else {
             //    gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this); //update visual based on state
             //}
         }
     }
-
     public override string ToString() {
         return "Table " + id.ToString();
     }
-
     public override void SetGridTileLocation(LocationGridTile tile) {
         //if (tile != null) {
         //    tile.SetTileAccess(LocationGridTile.Tile_Access.Impassable);
         //}
         base.SetGridTileLocation(tile);
     }
-
     public override void OnDoActionToObject(GoapAction action) {
         base.OnDoActionToObject(action);
         switch (action.goapType) {
@@ -58,7 +56,7 @@ public class Table : TileObject, IPointOfInterest {
             case INTERACTION_TYPE.SIT:
                 AddUser(action.actor);
                 break;
-            
+
         }
     }
     public override void OnDoneActionToObject(GoapAction action) {
@@ -91,6 +89,16 @@ public class Table : TileObject, IPointOfInterest {
         }
         return false;
     }
+    //protected override void OnDestroyTileObject() {
+    //    base.OnDestroyTileObject();
+    //    for (int i = 0; i < users.Length; i++) {
+    //        Character character = users[i];
+    //        if (character != null) {
+    //            character.currentAction.StopAction();
+    //        }
+    //    }
+    //}
+    #endregion
 
     #region Users
     private void AddUser(Character character) {
@@ -133,6 +141,7 @@ public class Table : TileObject, IPointOfInterest {
                 if (GetActiveUserCount() > 0) {
                     UpdateAllActiveUsersPosition();
                 }
+                UpdateUsedTableAsset();
                 break;
             }
         }
@@ -248,6 +257,9 @@ public class Table : TileObject, IPointOfInterest {
         return pos;
     }
     private void UpdateAllActiveUsersPosition() {
+        if (gridTileLocation == null) {
+            return;
+        }
         int userCount = 0;
         for (int i = 0; i < users.Length; i++) {
             Character currUser = users[i];
@@ -261,6 +273,9 @@ public class Table : TileObject, IPointOfInterest {
     }
     #endregion
     private void UpdateUsedTableAsset() {
+        if (gridTileLocation == null) {
+            return;
+        }
         //TODO: Think of a way to unify this
         int userCount = GetActiveUserCount();
         if (userCount == 1) {

@@ -14,10 +14,10 @@ public class Bed : TileObject, IPointOfInterest {
         users = new Character[2];
     }
 
+    #region Overrides
     public override string ToString() {
         return "Bed " + id.ToString();
     }
-
     public override void OnClickAction() {
         //base.OnClickAction();
         //cycle through characters in bed, and show the chosen characters ui
@@ -43,7 +43,9 @@ public class Bed : TileObject, IPointOfInterest {
             if (GetActiveUserCount() > 0) {
                 UpdateUsedBedAsset();
             } else {
-                gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this); //update visual based on state
+                if (gridTileLocation != null) {
+                    gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this); //update visual based on state
+                }
             }
         }
     }
@@ -72,6 +74,16 @@ public class Bed : TileObject, IPointOfInterest {
         }
         return false;
     }
+    //protected override void OnDestroyTileObject() {
+    //    base.OnDestroyTileObject();
+    //    for (int i = 0; i < users.Length; i++) {
+    //        Character character = users[i];
+    //        if (character != null) {
+    //            character.currentAction.StopAction();
+    //        }
+    //    }
+    //}
+    #endregion
 
     #region Users
     private void AddUser(Character character) {
@@ -92,6 +104,7 @@ public class Bed : TileObject, IPointOfInterest {
         for (int i = 0; i < users.Length; i++) {
             if (users[i] == character) {
                 users[i] = null;
+                UpdateUsedBedAsset();
                 if (IsAvailable()) {
                     SetPOIState(POI_STATE.ACTIVE); //if a slots in the bed is unoccupied, set it as active
                 }
@@ -147,6 +160,9 @@ public class Bed : TileObject, IPointOfInterest {
     #endregion
 
     private void UpdateUsedBedAsset() {
+        if (gridTileLocation == null) {
+            return;
+        }
         int userCount = GetActiveUserCount();
         if (userCount == 1) {
             gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this, gridTileLocation.parentAreaMap.bed1SleepingVariant);

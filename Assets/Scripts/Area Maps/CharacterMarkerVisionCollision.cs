@@ -136,7 +136,6 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
     //        }
     //    }
     //}
-
     private void NormalEnterHandling(IPointOfInterest poi) {
         parentMarker.AddPOIAsInVisionRange(poi);
         if (GameManager.Instance.gameHasStarted) {
@@ -144,9 +143,11 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
                 if (!parentMarker.character.stateComponent.currentState.OnEnterVisionWith(poi)) {
                     if (poi is Character) {
                         Character targetCharacter = poi as Character;
-                        if (!parentMarker.AddHostileInRange(targetCharacter)) {
-                            if (!targetCharacter.CreateRemoveTraitJobs(parentMarker.character)) {
-                                ChatHandling(targetCharacter);
+                        if (!targetCharacter.isDead) {
+                            if (!parentMarker.AddHostileInRange(targetCharacter)) {
+                                if (!targetCharacter.CreateRemoveTraitJobs(parentMarker.character)) {
+                                    ChatHandling(targetCharacter);
+                                }
                             }
                         }
                     }
@@ -154,9 +155,11 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
             } else {
                 if (poi is Character) {
                     Character targetCharacter = poi as Character;
-                    if (!parentMarker.AddHostileInRange(targetCharacter)) {
-                        if (!targetCharacter.CreateRemoveTraitJobs(parentMarker.character)) {
-                            ChatHandling(targetCharacter);
+                    if (!targetCharacter.isDead) {
+                        if (!parentMarker.AddHostileInRange(targetCharacter)) {
+                            if (!targetCharacter.CreateRemoveTraitJobs(parentMarker.character)) {
+                                ChatHandling(targetCharacter);
+                            }
                         }
                     }
                 }
@@ -199,4 +202,11 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
         }
         Debug.Log(summary);
     }
+
+    #region Utilities
+    public void OnDeath() {
+        poisInRangeButDiffStructure.Clear();
+        OnDisable();
+    }
+    #endregion
 }

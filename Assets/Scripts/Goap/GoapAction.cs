@@ -187,6 +187,8 @@ public class GoapAction {
                 targetCharacter.FaceTarget(actor);
 
             }
+        } else {
+            Messenger.AddListener<TileObject>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
         }
     }
     protected virtual void CreateThoughtBubbleLog() {
@@ -229,14 +231,6 @@ public class GoapAction {
                 targetCharacter = poiTarget as Character;
             }
         }
-
-        //if the specified target tile is null. Use the default means to get the target tile. (Uses Action Location Type)
-        //if (targetTile == null) {
-        //    targetTile = GetTargetLocationTile();
-        //}
-        //if(this.targetTile == null) {
-        //    this.targetTile = targetTile;
-        //}
         MoveToDoAction(plan, targetCharacter);
     }
     public virtual LocationGridTile GetTargetLocationTile() {
@@ -345,6 +339,8 @@ public class GoapAction {
                 targetCharacter.marker.pathfindingAI.AdjustDoNotMove(-1);
                 targetCharacter.marker.AdjustIsStoppedByOtherCharacter(-1);
             }
+        } else {
+            Messenger.RemoveListener<TileObject>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
         }
         OnFinishActionTowardsTarget();
         if (endAction != null) {
@@ -383,6 +379,10 @@ public class GoapAction {
                 //This means that the actor is currently travelling to another area
                 actor.currentParty.icon.SetOnArriveAction(() => actor.OnArriveAtAreaStopMovement());
             }
+        }
+
+        if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+            Messenger.RemoveListener<TileObject>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
         }
         OnCancelActionTowardsTarget();
         SetIsStopped(true);
@@ -593,12 +593,18 @@ public class GoapAction {
 
     #region Tile Objects
     protected virtual void OnPerformActualActionToTarget() {
+        if (GoapActionStateDB.GetStateResult(goapType, currentState.name) != InteractionManager.Goap_State_Success) {
+            return;
+        }
         if (poiTarget is TileObject) {
             TileObject target = poiTarget as TileObject;
             target.OnDoActionToObject(this);
         }
     }
     protected virtual void OnFinishActionTowardsTarget() {
+        if (GoapActionStateDB.GetStateResult(goapType, currentState.name) != InteractionManager.Goap_State_Success) {
+            return;
+        }
         if (poiTarget is TileObject) {
             TileObject target = poiTarget as TileObject;
             target.OnDoneActionToObject(this);
@@ -610,11 +616,10 @@ public class GoapAction {
             target.OnCancelActionTowardsObject(this);
         }
     }
-    private void OnActorDied(Character character) {
-        if (character.id == actor.id) {
-            if (poiTarget is TileObject) {
-                TileObject target = poiTarget as TileObject;
-                target.SetPOIState(POI_STATE.ACTIVE); //this is for when the character that reserved the target object died
+    private void OnTileObjectRemoved(TileObject tileObj) {
+        if (poiTarget == tileObj) {
+            if (isPerformingActualAction) {
+                StopAction(); //when the target object of this action was removed, and the actor is currently performing the action, stop the action
             }
         }
     }

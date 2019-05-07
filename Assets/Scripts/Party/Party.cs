@@ -174,7 +174,7 @@ public class Party {
         }
         _isDead = true;
         //For now, when a party dies and there still members besides the owner of this party, kick them out of the party first before applying death
-        RemoveAllCharacters();
+        RemoveAllOtherCharacters();
 
         Area deathLocation = this.specificLocation;
         LocationStructure deathStructure = owner.currentStructure;
@@ -182,15 +182,15 @@ public class Party {
         SetSpecificLocation(deathLocation); //set the specific location of this party, to the location it died at
         owner.SetCurrentStructureLocation(deathStructure, false);
         RemoveListeners();
-        //DetachActionData();
-        //ObjectState deadState = _icharacterObject.GetState("Dead");
-        //_icharacterObject.ChangeState(deadState);
-        GameObject.Destroy(_icon.gameObject);
-        _icon = null;
+        if (_icon.party.owner.race == RACE.SKELETON) {
+            GameObject.Destroy(_icon.gameObject);
+            _icon = null;
+        } else {
+            _icon.gameObject.SetActive(false);
+        }        
 
         _currentCombat = null;
 
-        //_owner.homeLandmark.RemoveAssaultArmyParty(this);
         Messenger.Broadcast<Party>(Signals.PARTY_DIED, this);
     }
     public void DisbandParty() {
@@ -281,7 +281,10 @@ public class Party {
             //}
         }
     }
-    public void RemoveAllCharacters() {
+    /// <summary>
+    /// Remove every character from this party, except the owner.
+    /// </summary>
+    public void RemoveAllOtherCharacters() {
         if (_characters.Count > 1) {
             for (int i = 0; i < _characters.Count; i++) {
                 if (_characters[i].id != _owner.id) {
