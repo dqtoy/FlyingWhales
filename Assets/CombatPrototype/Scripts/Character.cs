@@ -3337,7 +3337,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             return;
         }
         SetHasAlreadyAskedForPlan(true);
-        if (!PlanPersonalJobQueueFirst()) {
+        if (!PlanJobQueueFirst()) {
             if (!PlanFullnessRecoveryActions()) {
                 if (!PlanTirednessRecoveryActions()) {
                     if (!PlanHappinessRecoveryActions()) {
@@ -3463,9 +3463,17 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return false;
     }
-    private bool PlanPersonalJobQueueFirst() {
+    private bool PlanJobQueueFirst() {
         if (GetPlanByCategory(GOAP_CATEGORY.WORK) == null && !isStarving && !isExhausted && !isForlorn) {
-            return jobQueue.ProcessFirstJobInQueue(this);
+            if (!jobQueue.ProcessFirstJobInQueue(this)) {
+                if (isAtHomeArea) {
+                    return homeArea.jobQueue.ProcessFirstJobInQueue(this);
+                } else {
+                    return false;
+                }
+            } else {
+                return true;
+            }
         }
         return false;
     }
@@ -4779,10 +4787,15 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             } else {
                 if (goapThread.job != null) {
                     goapThread.job.SetAssignedCharacter(null);
-                    goapThread.job.AddBlacklistedCharacter(this);
-                    if (goapThread.job.cancelJobOnFail) {
+                    if(goapThread.job.jobQueueParent.character != null) {
                         goapThread.job.jobQueueParent.RemoveJobInQueue(goapThread.job);
+                        RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "cancel_job_no_plan");
+                    } else {
+                        goapThread.job.AddBlacklistedCharacter(this);
                     }
+                    //if (goapThread.job.cancelJobOnFail) {
+                    //    goapThread.job.jobQueueParent.RemoveJobInQueue(goapThread.job);
+                    //}
                 }
                 //if (allGoapPlans.Count <= 0) {
                 //    //StartDailyGoapPlanGeneration();
