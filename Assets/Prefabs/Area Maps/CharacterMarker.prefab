@@ -584,6 +584,7 @@ MonoBehaviour:
   - {fileID: 58535005990234766}
   rvoController: {fileID: 114577038380254382}
   colorHighlight: {fileID: 212653369134426336}
+  penaltyRadius: 8
 --- !u!114 &114577038380254382
 MonoBehaviour:
   m_ObjectHideFlags: 1

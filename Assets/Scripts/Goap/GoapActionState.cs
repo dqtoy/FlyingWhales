@@ -82,10 +82,12 @@ public class GoapActionState {
             if (afterEffect != null) {
                 afterEffect();
             }
-        }
-        if (parentAction.shouldAddLogs && this.shouldAddLogs) { //only add logs if both the parent action and this state should add logs
-            descriptionLog.SetDate(GameManager.Instance.Today());
-            descriptionLog.AddLogToInvolvedObjects();
+            if (parentAction.shouldAddLogs && this.shouldAddLogs) { //only add logs if both the parent action and this state should add logs
+                descriptionLog.SetDate(GameManager.Instance.Today());
+                descriptionLog.AddLogToInvolvedObjects();
+            }
+        } else {
+            parentAction.SetShowIntelNotification(false);
         }
         parentAction.ReturnToActorTheActionResult(status);
     }

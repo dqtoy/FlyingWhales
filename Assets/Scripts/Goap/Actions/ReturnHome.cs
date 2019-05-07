@@ -10,7 +10,7 @@ public class ReturnHome : GoapAction {
     protected override string failActionState { get { return "Return Home Failed"; } }
 
     public ReturnHome(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.RETURN_HOME, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
-        showIntelNotification = false;
+        SetShowIntelNotification(false);
         shouldAddLogs = false;
         actionLocationType = ACTION_LOCATION_TYPE.RANDOM_LOCATION;
         actionIconString = GoapActionStateDB.No_Icon;

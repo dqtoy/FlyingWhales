@@ -364,6 +364,15 @@ public class InteriorMapManager : MonoBehaviour {
             } else {
                 summary += "None";
             }
+            summary += "\nTerrifying Characters: ";
+            if (character.marker.terrifyingCharacters.Count > 0) {
+                for (int i = 0; i < character.marker.terrifyingCharacters.Count; i++) {
+                    Character currCharacter = character.marker.terrifyingCharacters[i];
+                    summary += currCharacter.name + ", ";
+                }
+            } else {
+                summary += "None";
+            }
             summary += "\nPersonal Job Queue: ";
             if (character.jobQueue.jobsInQueue.Count > 0) {
                 for (int i = 0; i < character.jobQueue.jobsInQueue.Count; i++) {

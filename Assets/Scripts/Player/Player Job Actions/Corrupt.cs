@@ -66,6 +66,9 @@ public class Corrupt : PlayerJobAction {
         if (traitName == "Violent" || traitName == "Vampiric" || traitName == "Unfaithful") {
             return false; //disable these for now.
         }
+        if(traitName == "Lycanthropy" && _targetCharacter.race == RACE.WOLF) {
+            return false;
+        }
         return true;
     }
     public void OnHoverTrait(string traitName) {

@@ -12,7 +12,7 @@ public class Patrol : GoapAction {
     public Patrol(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.PATROL, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionLocationType = ACTION_LOCATION_TYPE.RANDOM_LOCATION;
         actionIconString = GoapActionStateDB.Work_Icon;
-        showIntelNotification = false;
+        SetShowIntelNotification(false);
     }
 
     #region Overrides

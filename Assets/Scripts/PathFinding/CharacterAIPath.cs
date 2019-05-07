@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Pathfinding;
+using System.Linq;
 
 public class CharacterAIPath : AIPath {
     public CharacterMarker marker;
@@ -44,6 +45,23 @@ public class CharacterAIPath : AIPath {
 
     protected override void OnPathComplete(Path newPath) {
         currentPath = newPath as ABPath;
+        if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == marker.character && currentPath.traversalProvider != null && marker.terrifyingCharacters.Count > 0) {
+            string costLog = "PATH FOR " + marker.character.name;
+            uint totalCost = 0;
+            for (int i = 0; i < currentPath.path.Count; i++) {
+                Vector3 nodePos = (Vector3) currentPath.path[i].position;
+                uint currentCost = currentPath.traversalProvider.GetTraversalCost(newPath, currentPath.path[i]);
+                //float dx = (marker.terrifyingCharacters[0].marker.character.gridTileLocation.centeredWorldLocation.x - nodePos.x);
+                //float dz = (marker.terrifyingCharacters[0].marker.character.gridTileLocation.centeredWorldLocation.y - nodePos.y);
+                //float distSqr = dx * dx + dz * dz;
+                //costLog += "\n-> " + nodePos + "(" + currentCost + ")" + "[" + distSqr + "]";
+                Vector3 newNodePos = new Vector3((Mathf.Floor(nodePos.x)) + 0.5f, (Mathf.Floor(nodePos.y)) + 0.5f, Mathf.Floor(nodePos.z));
+                costLog += "\n-> " + newNodePos + "(" + currentCost + ")" + "[" + Vector2.Distance(newNodePos, marker.terrifyingCharacters[0].gridTileLocation.centeredWorldLocation) + "]";
+                totalCost += currentCost;
+            }
+            costLog += "\nTOTAL COST: " + totalCost;
+            Debug.LogWarning(costLog);
+        }
         base.OnPathComplete(newPath);
         _hasReachedTarget = false;
     }
@@ -77,6 +95,11 @@ public class CharacterAIPath : AIPath {
         if (doNotMove > 0 || isStopMovement) { return; }
         if (marker.character.currentParty.icon.isTravelling && marker.character.IsInOwnParty()) { //only rotate if character is travelling
             marker.visualsParent.localRotation = Quaternion.LookRotation(Vector3.forward, this.velocity);
+            //if(marker.character.currentParty.icon.travelLine == null) {
+            //    if (!IsNodeWalkable(destination)) {
+            //        //if(marker.character.currentAction)
+            //    }
+            //}
         } else if (marker.character.currentAction != null && marker.character.currentAction.poiTarget != marker.character) {
             marker.LookAt(marker.character.currentAction.poiTarget.gridTileLocation.centeredWorldLocation); //so that the charcter will always face the target, even if it is moving
         }
@@ -103,4 +126,55 @@ public class CharacterAIPath : AIPath {
         currentPath = null;
     }
 
+    public bool IsNodeWalkable(Vector3 nodePos) {
+        if (marker.terrifyingCharacters.Count > 0) {
+            for (int i = 0; i < marker.terrifyingCharacters.Count; i++) {
+                Character terrifyingCharacter = marker.terrifyingCharacters.ElementAtOrDefault(i);
+                if (terrifyingCharacter == null || (terrifyingCharacter.currentParty.icon.isTravelling && terrifyingCharacter.currentParty.icon.travelLine != null && marker.character.currentStructure != terrifyingCharacter.currentStructure)) {
+                    continue;
+                }
+                if (!terrifyingCharacter.isDead) {
+                    //float dx = (terrifyingCharacter.marker.character.gridTileLocation.centeredWorldLocation.x - nodePos.x);
+                    //float dz = (terrifyingCharacter.marker.character.gridTileLocation.centeredWorldLocation.y - nodePos.y);
+                    //float distSqr = dx * dx + dz * dz;
+                    //if (distSqr <= marker.penaltyRadius) {
+                    //    return false;
+                    //}
+                    Vector3 newNodePos = new Vector3((Mathf.Floor(nodePos.x)) + 0.5f, (Mathf.Floor(nodePos.y)) + 0.5f, Mathf.Floor(nodePos.z));
+                    if (Vector3.Distance(newNodePos, terrifyingCharacter.marker.character.gridTileLocation.centeredWorldLocation) <= marker.penaltyRadius) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+    public uint GetNodePenalty(Vector3 nodePos) {
+        if (marker.terrifyingCharacters.Count > 0) {
+            for (int i = 0; i < marker.terrifyingCharacters.Count; i++) {
+                Character terrifyingCharacter = marker.terrifyingCharacters.ElementAtOrDefault(i);
+                if (terrifyingCharacter == null || terrifyingCharacter.currentParty == null || terrifyingCharacter.currentParty.icon == null || (terrifyingCharacter.currentParty.icon.isTravelling && terrifyingCharacter.currentParty.icon.travelLine != null && marker.character.currentStructure != terrifyingCharacter.currentStructure)) {
+                    continue;
+                }
+                if (!terrifyingCharacter.isDead) {
+                    //float dx = (terrifyingCharacter.marker.character.gridTileLocation.centeredWorldLocation.x - nodePos.x);
+                    //float dz = (terrifyingCharacter.marker.character.gridTileLocation.centeredWorldLocation.y - nodePos.y);
+                    //float distSqr = dx * dx + dz * dz;
+                    //if (distSqr <= marker.penaltyRadius) {
+                    //    return false;
+                    //}
+                    Vector3 newNodePos = new Vector3((Mathf.Floor(nodePos.x)) + 0.5f, (Mathf.Floor(nodePos.y)) + 0.5f, Mathf.Floor(nodePos.z));
+                    float distance = Vector3.Distance(newNodePos, terrifyingCharacter.marker.character.gridTileLocation.centeredWorldLocation);
+                    if (distance <= marker.penaltyRadius) {
+                        uint multiplier = (uint) Mathf.Ceil(marker.penaltyRadius - distance);
+                        if(multiplier <= 0) {
+                            multiplier = 1;
+                        }
+                        return multiplier * 5000000;
+                    }
+                }
+            }
+        }
+        return 0;
+    }
 }

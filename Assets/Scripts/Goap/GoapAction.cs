@@ -83,7 +83,7 @@ public class GoapAction {
         isStopped = false;
         isPerformingActualAction = false;
         isDone = false;
-        showIntelNotification = true;
+        SetShowIntelNotification(true);
         shouldAddLogs = true;
         preconditions = new List<Precondition>();
         expectedEffects = new List<GoapEffect>();
@@ -517,6 +517,9 @@ public class GoapAction {
     }
     public void SetCannotCancelAction(bool state) {
         cannotCancelAction = state;
+    }
+    public void SetShowIntelNotification(bool state) {
+        showIntelNotification = state;
     }
     #endregion
 

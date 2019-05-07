@@ -145,7 +145,7 @@ public class AreaInnerTileMap : MonoBehaviour {
     public float offsetY;
 
     public Vector3 startPos;
-    public Vector3 endPos;   
+    public Vector3 endPos;
 
     public Area area { get; private set; }
     public LocationGridTile[,] map { get; private set; }
@@ -1901,6 +1901,13 @@ public class AreaInnerTileMap : MonoBehaviour {
                 Debug.Log(area.charactersAtLocation[i].name);
             }
         }
+    }
+    [ContextMenu("Print Radius Squared")]
+    public void PrintRadiusSquared() {
+        float dx = (startPos.x - endPos.x);
+        float dz = (startPos.y - endPos.y);
+        float distSqr = dx * dx + dz * dz;
+        Debug.Log("Radius Squared: " + distSqr);
     }
     public void ShowPath(List<LocationGridTile> path) {
         pathLineRenderer.gameObject.SetActive(true);
