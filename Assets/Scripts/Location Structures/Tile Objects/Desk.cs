@@ -13,10 +13,10 @@ public class Desk : TileObject, IPointOfInterest {
         users = new Character[1];
     }
 
+    #region Overrides
     public override string ToString() {
         return "Desk " + id.ToString();
     }
-
     public override void SetGridTileLocation(LocationGridTile tile) {
         //if (tile != null) {
         //    tile.SetTileAccess(LocationGridTile.Tile_Access.Impassable);
@@ -25,7 +25,9 @@ public class Desk : TileObject, IPointOfInterest {
     }
     public override void SetPOIState(POI_STATE state) {
         base.SetPOIState(state);
-        gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this); //update visual based on state
+        if (gridTileLocation != null) {
+            gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this); //update visual based on state
+        }
     }
     public override void OnDoActionToObject(GoapAction action) {
         base.OnDoActionToObject(action);
@@ -62,6 +64,16 @@ public class Desk : TileObject, IPointOfInterest {
         }
         return false;
     }
+    //protected override void OnDestroyTileObject() {
+    //    base.OnDestroyTileObject();
+    //    for (int i = 0; i < users.Length; i++) {
+    //        Character character = users[i];
+    //        if (character != null) {
+    //            character.currentAction.StopAction();
+    //        }
+    //    }
+    //}
+    #endregion
 
     #region Users
     private void AddUser(Character character) {

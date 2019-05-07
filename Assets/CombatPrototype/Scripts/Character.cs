@@ -691,9 +691,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public void Death(string cause = "normal") {
         if (!_isDead) {
-            //if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.id == this.id) {
-            //    UIManager.Instance.characterInfoUI.OnClickCloseMenu();
-            //}
             SetIsDead(true);
             UnsubscribeSignals();
             SetPOIState(POI_STATE.INACTIVE);
@@ -722,9 +719,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
             _ownParty.PartyDeath();
 
-            if (this.race != RACE.SKELETON) {
-                deathLocation.AddCorpse(this, deathStructure, deathTile);
-            }
+            //if (this.race != RACE.SKELETON) {
+            //    deathLocation.AddCorpse(this, deathStructure, deathTile);
+            //}
 
             if (this._faction != null) {
                 this._faction.RemoveCharacter(this); //remove this character from it's factions list of characters
@@ -750,9 +747,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 PlayerManager.Instance.player.RemoveMinion(_minion);
             }
 
-            //gridTileLocation.SetPrefabHere(null);
-            ObjectPoolManager.Instance.DestroyObject(marker.gameObject);
-            deathTile.RemoveCharacterHere(this);
+            //ObjectPoolManager.Instance.DestroyObject(marker.gameObject);
+            //deathTile.RemoveCharacterHere(this);
+
+            marker.OnDeath(deathTile);
 
             if (onCharacterDeath != null) {
                 onCharacterDeath();
@@ -762,24 +760,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 
             Debug.Log(GameManager.Instance.TodayLogString() + this.name + " died of " + cause);
             Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "death_" + cause);
-            //Log log = null;
-            //if (isTracked) {
-            //    log = new Log(GameManager.Instance.Today(), "Character", "Generic", "death_" + cause);
-            //} else {
-            //    log = new Log(GameManager.Instance.Today(), "Character", "Generic", "something_happened");
-            //}
             log.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             AddHistory(log);
             specificLocation.AddHistory(log);
-
-            //switch (cause) {
-            //    case "exhaustion":
-            //    case "starvation":
-            //        //deathLocation.areaMap.ShowEventPopupAt(deathTile, log);
-            //        break;
-            //    default:
-            //        break;
-            //}
 
         }
     }
@@ -2892,7 +2875,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             if(trait.effect == TRAIT_EFFECT.NEGATIVE) {
                 AdjustIgnoreHostilities(1);
             }
-            _ownParty.RemoveAllCharacters();
+            _ownParty.RemoveAllOtherCharacters();
         }else if (trait.type == TRAIT_TYPE.CRIMINAL) {
             CancelOrUnassignRemoveTraitRelatedJobs();
         }
@@ -5229,9 +5212,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public void OnCharacterDoAction(GoapAction action) {
         Messenger.Broadcast(Signals.CHARACTER_DID_ACTION, this, action);
-        //if (action.goapType.IsCombatAction()) {
-        //    ClearIgnoreHostilities();
-        //}
+        if (action.goapType.IsCombatAction()) {
+            ClearIgnoreHostilities();
+        }
     }
     public void FaceTarget(IPointOfInterest target) {
         if (this != target && !this.isDead && gridTileLocation != null) {

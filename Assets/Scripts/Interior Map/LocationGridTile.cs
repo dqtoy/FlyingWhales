@@ -461,21 +461,21 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         }
         if (objHere == null) {
             Messenger.Broadcast(Signals.HIDE_MENUS);
-            //if (inputButton == PointerEventData.InputButton.Right) {
-            //    if (InteriorMapManager.Instance.IsHoldingPOI()) {
-            //        InteriorMapManager.Instance.PlaceHeldPOI(this);
-            //    }
-            //}
+            if (inputButton == PointerEventData.InputButton.Right) {
+                //if (InteriorMapManager.Instance.IsHoldingPOI()) {
+                //    InteriorMapManager.Instance.PlaceHeldPOI(this);
+                //}
+            }
         } else if (objHere is TileObject || objHere is SpecialToken) {
-            if (inputButton == PointerEventData.InputButton.Middle && objHere is TileObject) {
-                (objHere as TileObject).LogActionHistory();
-            } 
-            //else if (inputButton == PointerEventData.InputButton.Right) {
-            //    if (!InteriorMapManager.Instance.IsHoldingPOI()) {
-            //        InteriorMapManager.Instance.HoldPOI(objHere);
-            //    }
-            //} 
-            else {
+            if (inputButton == PointerEventData.InputButton.Middle) {
+                if (objHere is TileObject) {
+                    (objHere as TileObject).LogActionHistory();
+                }
+            } else if (inputButton == PointerEventData.InputButton.Right) {
+                //if (!InteriorMapManager.Instance.IsHoldingPOI()) {
+                //    InteriorMapManager.Instance.HoldPOI(objHere);
+                //}
+            } else {
                 //parentAreaMap.ShowIntelItemAt(this, InteractionManager.Instance.CreateNewIntel(objHere));
                 if (objHere is TileObject) {
                     (objHere as TileObject).OnClickAction();

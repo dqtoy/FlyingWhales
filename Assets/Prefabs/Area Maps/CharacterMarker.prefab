@@ -486,7 +486,7 @@ Animator:
   m_GameObject: {fileID: 1834306330221550}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 22100000, guid: 854a6491febd9814aab3d1926810e193, type: 2}
+  m_Controller: {fileID: 9100000, guid: ffe6e2853385f4440abc8c2b55a9068f, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -582,7 +582,9 @@ MonoBehaviour:
   colliders:
   - {fileID: 58282679592281158}
   - {fileID: 58535005990234766}
+  rgBodies: []
   rvoController: {fileID: 114577038380254382}
+  visionCollision: {fileID: 114699231813471468}
   colorHighlight: {fileID: 212653369134426336}
   penaltyRadius: 8
 --- !u!114 &114577038380254382

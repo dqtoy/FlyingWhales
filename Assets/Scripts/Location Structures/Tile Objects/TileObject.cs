@@ -17,7 +17,7 @@ public class  TileObject : IPointOfInterest {
     public List<Character> awareCharacters { get; private set; } //characters that are aware of this object (Used for checking if a ghost trigger should be destroyed)
     public List<string> actionHistory { get; private set; } //list of actions that was done to this object
 
-    private LocationGridTile tile;
+    protected LocationGridTile tile;
     private POI_STATE _state;
     private POICollisionTrigger _collisionTrigger;
 
@@ -45,6 +45,7 @@ public class  TileObject : IPointOfInterest {
         InitializeCollisionTrigger();
     }
 
+    #region Virtuals
     /// <summary>
     /// Called when a character starts to do an action towards this object.
     /// </summary>
@@ -58,7 +59,7 @@ public class  TileObject : IPointOfInterest {
     /// </summary>
     /// <param name="action">The finished action</param>
     public virtual void OnDoneActionToObject(GoapAction action) {
-       
+
     }
     /// <summary>
     /// Called when a character cancelled doing an action towards this object.
@@ -67,12 +68,12 @@ public class  TileObject : IPointOfInterest {
     public virtual void OnCancelActionTowardsObject(GoapAction action) {
 
     }
-
     public virtual void SetGridTileLocation(LocationGridTile tile) {
         LocationGridTile previousTile = this.tile;
         this.tile = tile;
         if (tile == null) {
             DisableCollisionTrigger();
+            OnRemoveTileObject();
             if (previousTile != null) {
                 PlaceGhostCollisionTriggerAt(previousTile);
             }
@@ -120,6 +121,14 @@ public class  TileObject : IPointOfInterest {
     /// Action to do when the player clicks this object on the map.
     /// </summary>
     public virtual void OnClickAction() { Messenger.Broadcast(Signals.HIDE_MENUS); }
+    /// <summary>
+    /// Triggered when the grid tile location of this object is set to null.
+    /// </summary>
+    protected virtual void OnRemoveTileObject() {
+        Messenger.Broadcast(Signals.TILE_OBJECT_REMOVED, this);
+
+    }
+    #endregion
 
     #region Traits
     public bool AddTrait(string traitName, Character characterResponsible = null, System.Action onRemoveAction = null, GoapAction gainedFromDoing = null, bool triggerOnAdd = true) {

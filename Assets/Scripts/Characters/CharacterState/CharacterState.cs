@@ -38,7 +38,7 @@ public class CharacterState {
         CreateStartStateLog();
         CreateThoughtBubbleLog();
         DoMovementBehavior();
-        //stateComponent.character.OnCharacterEnteredState(this);
+        stateComponent.character.OnCharacterEnteredState(this);
         Messenger.Broadcast(Signals.CHARACTER_STARTED_STATE, stateComponent.character, this);
     }
     //Ends a state, can be overridden

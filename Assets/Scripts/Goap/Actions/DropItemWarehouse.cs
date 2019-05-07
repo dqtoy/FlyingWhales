@@ -14,6 +14,13 @@ public class DropItemWarehouse : GoapAction {
     }
 
     #region Overrides
+    protected override void ConstructRequirement() {
+        _requirementAction = Requirement;
+    }
+    public override void DoAction(GoapPlan plan) {
+        SetTargetStructure();
+        base.DoAction(plan);
+    }
     public override void PerformActualAction() {
         base.PerformActualAction();
         SetState("Drop Success");
@@ -38,6 +45,14 @@ public class DropItemWarehouse : GoapAction {
     private void AfterDropSuccess() {
         //**Effect 1**: Actor loses item, add target item to tile. Clear personal owner of the item.
         actor.DropToken(poiTarget as SpecialToken, actor.specificLocation, actor.currentStructure, actor.gridTileLocation);
+    }
+    #endregion
+
+    #region Requirement
+    private bool Requirement() {
+        //there must still be an unoccupied tile in the target warehouse
+        LocationStructure warehouse = actor.homeArea.GetRandomStructureOfType(STRUCTURE_TYPE.WAREHOUSE);
+        return warehouse.unoccupiedTiles.Count > 0;
     }
     #endregion
 }

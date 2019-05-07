@@ -6,9 +6,6 @@ using UnityEngine;
 public class Guitar : TileObject, IPointOfInterest {
     public LocationStructure location { get; private set; }
 
-    private LocationGridTile tile;
-    private POI_STATE _state;
-
     public Guitar(LocationStructure location) {
         this.location = location;
         poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.PLAY_GUITAR, INTERACTION_TYPE.TILE_OBJECT_DESTROY, };

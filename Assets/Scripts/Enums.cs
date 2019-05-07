@@ -1333,6 +1333,7 @@ public enum STRUCTURE_TYPE {
     WILDERNESS,
     WORK_AREA,
     EXPLORE_AREA,
+    CEMETERY,
 }
 public enum RELATIONSHIP_TRAIT {
     NONE,
@@ -1463,7 +1464,7 @@ public static class Extensions {
 
     #region Structures
     /// <summary>
-    /// Is this stucture contained within walls?
+    /// Is this stucture contained within a rectangle?
     /// </summary>
     /// <param name="sub"></param>
     /// <returns></returns>
@@ -1473,6 +1474,7 @@ public static class Extensions {
             case STRUCTURE_TYPE.WAREHOUSE:
             case STRUCTURE_TYPE.DWELLING:
             case STRUCTURE_TYPE.EXPLORE_AREA:
+            case STRUCTURE_TYPE.CEMETERY:
                 return false;
             default:
                 return true;
