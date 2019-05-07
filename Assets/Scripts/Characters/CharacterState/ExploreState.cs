@@ -112,9 +112,6 @@ public class ExploreState : CharacterState {
             SpecialToken item = itemsCollected[i];
             GoapAction currAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.DROP_ITEM_WAREHOUSE, stateComponent.character, item);
             GoapNode currNode = new GoapNode(previousNode, currAction.cost, currAction);
-            //if (startNode == null) {
-            //    startNode = currNode;
-            //}
             if (i + 1 == itemsCollected.Count) {
                 startNode = currNode;
             }

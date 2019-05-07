@@ -109,7 +109,11 @@ public class Table : TileObject, IPointOfInterest {
 
                 Vector3 worldPos = character.marker.transform.TransformPoint(pos);
                 Debug.Log("Setting " + character.marker.name + "'s position to " + pos.ToString() + " world pos: " + worldPos.ToString());
-                character.marker.PlaceMarkerAt(pos, gridTileLocation.centeredWorldLocation);
+                if (usedAsset.name.Contains("Bartop")) {
+                    character.marker.PlaceMarkerAt(pos, tile.parentAreaMap.objectsTilemap.GetTransformMatrix(tile.localPlace).rotation);
+                } else {
+                    character.marker.PlaceMarkerAt(pos, gridTileLocation.centeredWorldLocation);
+                }
                 Debug.Log(character.marker.name + "'s position is " + character.marker.transform.position.ToString());
                 //character.marker.LookAt(this.gridTileLocation.worldLocation);
                 break;
@@ -148,27 +152,37 @@ public class Table : TileObject, IPointOfInterest {
             //concerned with rotation in the 1 slot variant
             Matrix4x4 m = location.location.areaMap.objectsTilemap.GetTransformMatrix(gridTileLocation.localPlace);
             int rotation = (int)m.rotation.eulerAngles.z;
-            //if (usedAsset.name.Contains("Bartop")) {
-            //    pos.x += 0.5f;
-            //    pos.y += 0.5f;
-                //if (usedAsset.name.Contains("Left")) {
-
-                //} else {
-
-                //}
-                //if (rotation == 0 || rotation == 360) {
-                   
-                //} else if (rotation == 90) {
-                //    pos.x += 0.8f;
-                //    pos.y += 0.5f;
-                //} else if (rotation == 180) {
-                //    pos.x += 0.51f;
-                //    pos.y += 0.8f;
-                //} else if (rotation == 270) {
-                //    pos.x += 0.2f;
-                //    pos.y += 0.51f;
-                //}
-            //} else {
+            if (usedAsset.name.Contains("Bartop")) {
+                if (usedAsset.name.Contains("Left")) {
+                    if (rotation == 0 || rotation == 360) {
+                        pos.x += 0.55f;
+                        pos.y += 0.5f;
+                    } else if (rotation == 90) {
+                        pos.x += 0.5f;
+                        pos.y += 0.55f;
+                    } else if (rotation == 180) {
+                        pos.x += 0.45f;
+                        pos.y += 0.5f;
+                    } else if (rotation == 270 || rotation == -90) {
+                        pos.x += 0.5f;
+                        pos.y += 0.5f;
+                    }
+                } else {
+                    if (rotation == 0 || rotation == 360) {
+                        pos.x += 0.45f;
+                        pos.y += 0.5f;
+                    } else if (rotation == 90) {
+                        pos.x += 0.5f;
+                        pos.y += 0.45f;
+                    } else if (rotation == 180) {
+                        pos.x += 0.55f;
+                        pos.y += 0.5f;
+                    } else if (rotation == 270 || rotation == -90) {
+                        pos.x += 0.5f;
+                        pos.y += 0.55f;
+                    }
+                }
+            } else {
                 if (rotation == 0 || rotation == 360) {
                     pos.x += 0.49f;
                     pos.y += 0.2f;
@@ -182,8 +196,7 @@ public class Table : TileObject, IPointOfInterest {
                     pos.x += 0.2f;
                     pos.y += 0.51f;
                 }
-            //}
-            
+            }
         } else if (slots == 2) {
             //concerned with rotation in the 2 slot variant
             Matrix4x4 m = location.location.areaMap.objectsTilemap.GetTransformMatrix(gridTileLocation.localPlace);

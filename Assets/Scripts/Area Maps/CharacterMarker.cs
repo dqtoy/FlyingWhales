@@ -176,8 +176,17 @@ public class CharacterMarker : PooledObject {
     public void PlaceMarkerAt(Vector3 localPos, Vector3 lookAt) {
         StartCoroutine(Positioner(localPos, lookAt));
     }
+    public void PlaceMarkerAt(Vector3 localPos, Quaternion lookAt) {
+        StartCoroutine(Positioner(localPos, lookAt));
+    }
 
     private IEnumerator Positioner(Vector3 localPos, Vector3 lookAt) {
+        yield return null;
+        //pathfindingAI.Teleport(localPos);
+        transform.localPosition = localPos;
+        LookAt(lookAt, true);
+    }
+    private IEnumerator Positioner(Vector3 localPos, Quaternion lookAt) {
         yield return null;
         //pathfindingAI.Teleport(localPos);
         transform.localPosition = localPos;
@@ -764,7 +773,15 @@ public class CharacterMarker : PooledObject {
         Vector3 diff = target - transform.position;
         diff.Normalize();
         float rot_z = Mathf.Atan2(diff.y, diff.x) * Mathf.Rad2Deg;
-        visualsParent.rotation = Quaternion.Euler(0f, 0f, rot_z - 90);
+        LookAt(Quaternion.Euler(0f, 0f, rot_z - 90), force);
+    }
+    public void LookAt(Quaternion target, bool force = false) {
+        if (!force) {
+            if (character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+                return;
+            }
+        }
+        visualsParent.rotation = target;
     }
     //public void ReceivePathFromPathfindingThread(InnerPathfindingThread innerPathfindingThread) {
     //    _currentPath = innerPathfindingThread.path;

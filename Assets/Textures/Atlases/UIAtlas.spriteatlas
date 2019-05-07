@@ -199,6 +199,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: a44170e88775e56478e09d018e3c13a6, type: 3}
   - {fileID: 21300000, guid: 2845d2e8bab8ab14da6641fc8d7fcb32, type: 3}
   - {fileID: 21300000, guid: bc6b7be8dcd117c40b523b0c469b914d, type: 3}
+  - {fileID: 21300000, guid: 881df7f88b698cd42b4162477176dff0, type: 3}
   - {fileID: 21300000, guid: b26562098a29bbb4695da637ab5ce5ba, type: 3}
   - {fileID: 21300000, guid: 39fc0a092793d3943833bb3061e7a870, type: 3}
   - {fileID: 21300000, guid: 9af2d419485d6ae478889d6d915d2266, type: 3}
@@ -509,6 +510,7 @@ SpriteAtlas:
   - intel_event_type_icon
   - Share_Intel.JPG
   - assign_minion_list_container
+  - checkmark
   - minion_icon_debilitator
   - ge_icon-22
   - neutrals

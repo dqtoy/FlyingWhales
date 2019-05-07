@@ -814,11 +814,20 @@ public class AreaInnerTileMap : MonoBehaviour {
             for (int y = startPos.y; y < startPos.y + slot.size.Y; y++) {
                 LocationGridTile tile = map[x, y];
                 TileBase tb = groundTilemap.GetTile(tile.localPlace);
-                if (tb != null 
-                    && (tb.name.Contains("floor") || tb.name.Contains("Floor"))) {
-                    tile.SetStructure(structure);
-                    tile.SetTileType(LocationGridTile.Tile_Type.Structure);
-                    //groundTilemap.SetColor(tile.localPlace, Color.red);
+                if (tb != null) {
+                    if (structure.structureType == STRUCTURE_TYPE.CEMETERY) {
+                        //if the structure is a cemetery, only set dirt as part of it
+                        if (tb.name.Contains("Dirt")) {
+                            tile.SetStructure(structure);
+                            tile.SetTileType(LocationGridTile.Tile_Type.Structure);
+                        }
+                    } else {
+                        if (tb.name.Contains("floor") || tb.name.Contains("Floor")) {
+                            tile.SetStructure(structure);
+                            tile.SetTileType(LocationGridTile.Tile_Type.Structure);
+                        }
+                    }
+                    
                 }
             }
         }

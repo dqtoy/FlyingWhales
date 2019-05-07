@@ -94,4 +94,9 @@ public class AudioManager : MonoBehaviour {
         }
     }
 
+    public void SetMute(bool state) {
+        AudioListener.pause = state;
+        AudioListener.volume = state ? 0 : 1;
+    }
+
 }

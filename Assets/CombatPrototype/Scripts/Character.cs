@@ -5216,9 +5216,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public void OnCharacterDoAction(GoapAction action) {
         Messenger.Broadcast(Signals.CHARACTER_DID_ACTION, this, action);
-        //if (action.goapType.IsCombatAction()) {
-        //    ClearIgnoreHostilities();
-        //}
+        if (action.goapType.IsCombatAction()) {
+            ClearIgnoreHostilities();
+        }
     }
     public void FaceTarget(IPointOfInterest target) {
         if (this != target && !this.isDead && gridTileLocation != null) {

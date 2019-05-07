@@ -37,6 +37,7 @@ public class UIManager : MonoBehaviour {
     public GameObject smallInfoGO;
     public RectTransform smallInfoRT;
     public HorizontalLayoutGroup smallInfoBGParentLG;
+    public RectTransform smallInfoBGRT;
 
     public TextMeshProUGUI smallInfoLbl;
     public EnvelopContentUnityUI smallInfoEnvelopContent;
@@ -433,7 +434,7 @@ public class UIManager : MonoBehaviour {
         }
         //if (position == null) {
             //smallInfoGO.transform.SetParent(this.transform);
-            PositionTooltip(smallInfoGO, smallInfoRT);
+            PositionTooltip(smallInfoGO, smallInfoRT, smallInfoBGRT);
         //} else {
         //    smallInfoGO.transform.SetParent(position);
         //    smallInfoRT.anchoredPosition = Vector2.zero;
@@ -473,20 +474,18 @@ public class UIManager : MonoBehaviour {
         characterPortraitHoverInfoGO.SetActive(true);
 
         characterPortraitHoverInfoRT.SetParent(this.transform);
-        PositionTooltip(characterPortraitHoverInfoRT.gameObject, characterPortraitHoverInfoRT);
+        PositionTooltip(characterPortraitHoverInfoRT.gameObject, characterPortraitHoverInfoRT, characterPortraitHoverInfoRT);
     }
     public void HideCharacterPortraitHoverInfo() {
         characterPortraitHoverInfoGO.SetActive(false);
     }
-    private void PositionTooltip(GameObject tooltipParent, RectTransform rt) {
-        PositionTooltip(Input.mousePosition, tooltipParent, rt);
+    private void PositionTooltip(GameObject tooltipParent, RectTransform rtToReposition, RectTransform boundsRT) {
+        PositionTooltip(Input.mousePosition, tooltipParent, rtToReposition, boundsRT);
     }
-    private void PositionTooltip(Vector3 position, GameObject tooltipParent, RectTransform rt) {
+    private void PositionTooltip(Vector3 position, GameObject tooltipParent, RectTransform rtToReposition, RectTransform boundsRT) {
         var v3 = position;
 
-        //rt.anchorMin = new Vector2(0f, 1f);
-        //rt.anchorMax = new Vector2(0f, 1f);
-        rt.pivot = new Vector2(0f, 1f);
+        rtToReposition.pivot = new Vector2(0f, 1f);
         smallInfoBGParentLG.childAlignment = TextAnchor.UpperLeft;
 
         v3.x += 25f;
@@ -495,7 +494,7 @@ public class UIManager : MonoBehaviour {
 
         Vector3[] corners = new Vector3[4]; //bottom-left, top-left, top-right, bottom-right
         List<int> cornersOutside = new List<int>();
-        rt.GetWorldCorners(corners);
+        boundsRT.GetWorldCorners(corners);
         for (int i = 0; i < 4; i++) {
             // Backtransform to parent space
             Vector3 localSpacePoint = mainRT.InverseTransformPoint(corners[i]);
@@ -514,25 +513,19 @@ public class UIManager : MonoBehaviour {
             if (cornersOutside.Contains(2) && cornersOutside.Contains(3)) {
                 if (cornersOutside.Contains(0)) {
                     //bottom side and right side are outside, move anchor to bottom right
-                    //rt.anchorMin = new Vector2(1f, 0f);
-                    //rt.anchorMax = new Vector2(1f, 0f);
-                    rt.pivot = new Vector2(1f, 0f);
+                    rtToReposition.pivot = new Vector2(1f, 0f);
                     smallInfoBGParentLG.childAlignment = TextAnchor.LowerRight;
                 } else {
                     //right side is outside, move anchor to top right side
-                    //rt.anchorMin = new Vector2(1f, 1f);
-                    //rt.anchorMax = new Vector2(1f, 1f);
-                    rt.pivot = new Vector2(1f, 1f);
+                    rtToReposition.pivot = new Vector2(1f, 1f);
                     smallInfoBGParentLG.childAlignment = TextAnchor.UpperRight;
                 }
             } else if (cornersOutside.Contains(0) && cornersOutside.Contains(3)) {
                 //bottom side is outside, move anchor to bottom left
-                //rt.anchorMin = new Vector2(0f, 0f);
-                //rt.anchorMax = new Vector2(0f, 0f);
-                rt.pivot = new Vector2(0f, 0f);
+                rtToReposition.pivot = new Vector2(0f, 0f);
                 smallInfoBGParentLG.childAlignment = TextAnchor.LowerLeft;
             }
-            rt.localPosition = Vector3.zero;
+            rtToReposition.localPosition = Vector3.zero;
         }
     }
     private void PositionTooltip(UIHoverPosition position, GameObject tooltipParent, RectTransform rt) {
@@ -1179,7 +1172,7 @@ public class UIManager : MonoBehaviour {
             //Vector2 pos;
             //RectTransformUtility.ScreenPointToLocalPointInRectangle(this.transform as RectTransform, Input.mousePosition, eventSystem.camera, out pos);
             //contextMenu.transform.position = Input.mousePosition;
-            PositionTooltip(contextMenu.gameObject, contextMenu.transform as RectTransform);
+            PositionTooltip(contextMenu.gameObject, contextMenu.transform as RectTransform, contextMenu.transform as RectTransform);
         }
         
     }
@@ -1446,6 +1439,12 @@ public class UIManager : MonoBehaviour {
         newIntelGO.GetComponent<PlayerNotificationItem>().Initialize(log);
         (newIntelGO.transform as RectTransform).SetAsFirstSibling();
         (newIntelGO.transform as RectTransform).localScale = Vector3.one;
+    }
+    #endregion
+
+    #region Audio
+    public void ToggleMute(bool state) {
+        AudioManager.Instance.SetMute(state);
     }
     #endregion
 }
