@@ -14,6 +14,7 @@ public class GoapThread : Multithread {
     public GOAP_CATEGORY category { get; private set; }
     public List<CharacterAwareness> characterTargetsAwareness { get; private set; }
     public GoapPlanJob job { get; private set; }
+    public bool allowDeadTargets { get; private set; }
     //public List<INTERACTION_TYPE> actorAllowedActions { get; private set; }
     //public List<GoapAction> usableActions { get; private set; }
     public string log { get; private set; }
@@ -22,7 +23,7 @@ public class GoapThread : Multithread {
     //For recalculation
     public GoapPlan recalculationPlan;
 
-    public GoapThread(Character actor, IPointOfInterest target, GoapEffect goalEffect, GOAP_CATEGORY category, bool isPriority, List<CharacterAwareness> characterTargetsAwareness, bool isPersonalPlan, GoapPlanJob job) {//, List<INTERACTION_TYPE> actorAllowedActions, List<GoapAction> usableActions
+    public GoapThread(Character actor, IPointOfInterest target, GoapEffect goalEffect, GOAP_CATEGORY category, bool isPriority, List<CharacterAwareness> characterTargetsAwareness, bool isPersonalPlan, GoapPlanJob job, bool allowDeadTargets) {//, List<INTERACTION_TYPE> actorAllowedActions, List<GoapAction> usableActions
         this.createdPlan = null;
         this.recalculationPlan = null;
         this.actor = actor;
@@ -35,8 +36,9 @@ public class GoapThread : Multithread {
         this.isPersonalPlan = isPersonalPlan;
         this.category = category;
         this.job = job;
+        this.allowDeadTargets = allowDeadTargets;
     }
-    public GoapThread(Character actor, IPointOfInterest target, GoapAction goalAction, GOAP_CATEGORY category, bool isPriority, List<CharacterAwareness> characterTargetsAwareness, bool isPersonalPlan, GoapPlanJob job) {//, List<INTERACTION_TYPE> actorAllowedActions, List<GoapAction> usableActions
+    public GoapThread(Character actor, IPointOfInterest target, GoapAction goalAction, GOAP_CATEGORY category, bool isPriority, List<CharacterAwareness> characterTargetsAwareness, bool isPersonalPlan, GoapPlanJob job, bool allowDeadTargets) {//, List<INTERACTION_TYPE> actorAllowedActions, List<GoapAction> usableActions
         this.createdPlan = null;
         this.recalculationPlan = null;
         this.actor = actor;
@@ -49,8 +51,9 @@ public class GoapThread : Multithread {
         this.isPersonalPlan = isPersonalPlan;
         this.category = category;
         this.job = job;
+        this.allowDeadTargets = allowDeadTargets;
     }
-    public GoapThread(Character actor, INTERACTION_TYPE goalType, GOAP_CATEGORY category, bool isPriority, List<CharacterAwareness> characterTargetsAwareness, bool isPersonalPlan, GoapPlanJob job, object[] otherData = null) {//, List<INTERACTION_TYPE> actorAllowedActions, List<GoapAction> usableActions
+    public GoapThread(Character actor, INTERACTION_TYPE goalType, GOAP_CATEGORY category, bool isPriority, List<CharacterAwareness> characterTargetsAwareness, bool isPersonalPlan, GoapPlanJob job, bool allowDeadTargets, object[] otherData = null) {//, List<INTERACTION_TYPE> actorAllowedActions, List<GoapAction> usableActions
         this.createdPlan = null;
         this.recalculationPlan = null;
         this.actor = actor;
@@ -62,9 +65,10 @@ public class GoapThread : Multithread {
         this.isPersonalPlan = isPersonalPlan;
         this.category = category;
         this.job = job;
+        this.allowDeadTargets = allowDeadTargets;
         this.otherData = otherData;
     }
-    public GoapThread(Character actor, INTERACTION_TYPE goalType, IPointOfInterest target, GOAP_CATEGORY category, bool isPriority, List<CharacterAwareness> characterTargetsAwareness, bool isPersonalPlan, GoapPlanJob job, object[] otherData = null) {//, List<INTERACTION_TYPE> actorAllowedActions, List<GoapAction> usableActions
+    public GoapThread(Character actor, INTERACTION_TYPE goalType, IPointOfInterest target, GOAP_CATEGORY category, bool isPriority, List<CharacterAwareness> characterTargetsAwareness, bool isPersonalPlan, GoapPlanJob job, bool allowDeadTargets, object[] otherData = null) {//, List<INTERACTION_TYPE> actorAllowedActions, List<GoapAction> usableActions
         this.createdPlan = null;
         this.recalculationPlan = null;
         this.actor = actor;
@@ -75,6 +79,7 @@ public class GoapThread : Multithread {
         this.isPersonalPlan = isPersonalPlan;
         this.category = category;
         this.job = job;
+        this.allowDeadTargets = allowDeadTargets;
         this.otherData = otherData;
     }
     public GoapThread(Character actor, GoapPlan currentPlan) {//, List<GoapAction> usableActions
@@ -125,9 +130,16 @@ public class GoapThread : Multithread {
                     if (character.isDead) {
                         //kvp.Value.RemoveAt(i);
                         //i--;
+                        if (allowDeadTargets) {
+                            //if dead targets are allowed, advertise actions from dead targets
+                            List<GoapAction> awarenessActions = character.AdvertiseActionsToActorFromDeadCharacter(actor, actorAllowedActions);
+                            if (awarenessActions != null && awarenessActions.Count > 0) {
+                                usableActions.AddRange(awarenessActions);
+                            }
+                        }
                     } else {
                         if (character.specificLocation == actor.specificLocation || character == actor || actor.IsPOIInCharacterAwarenessList(character, characterTargetsAwareness)) {
-                            List<GoapAction> awarenessActions = kvp.Value[i].poi.AdvertiseActionsToActor(actor, actorAllowedActions);
+                            List<GoapAction> awarenessActions = character.AdvertiseActionsToActor(actor, actorAllowedActions);
                             if (awarenessActions != null && awarenessActions.Count > 0) {
                                 usableActions.AddRange(awarenessActions);
                             }

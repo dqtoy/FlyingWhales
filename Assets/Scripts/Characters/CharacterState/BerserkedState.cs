@@ -18,8 +18,8 @@ public class BerserkedState : CharacterState {
     }
     public override bool OnEnterVisionWith(IPointOfInterest targetPOI) {
         if(targetPOI is Character) {
-            stateComponent.character.marker.AddHostileInRange(targetPOI as Character, CHARACTER_STATE.NONE, false);
-            return true;
+            return stateComponent.character.marker.AddHostileInRange(targetPOI as Character, CHARACTER_STATE.NONE, false);
+            //return true;
         }else if (targetPOI is TileObject) {
             TileObject target = targetPOI as TileObject;
             if(target.tileObjectType != TILE_OBJECT_TYPE.TREE) {

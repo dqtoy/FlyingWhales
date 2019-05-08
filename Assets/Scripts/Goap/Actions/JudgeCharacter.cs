@@ -23,7 +23,7 @@ public class JudgeCharacter : GoapAction {
         base.PerformActualAction();
         if (!isTargetMissing && (poiTarget as Character).IsInOwnParty()) {
             WeightedDictionary<string> weights = new WeightedDictionary<string>();
-            //weights.AddElement("Target Executed", 10);
+            weights.AddElement("Target Executed", 10);
             weights.AddElement("Target Released", 10);
             if (poiTarget.factionOwner == actor.faction) {
                 weights.AddElement("Target Exiled", 10);

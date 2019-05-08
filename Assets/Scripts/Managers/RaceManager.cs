@@ -120,6 +120,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.STAND,
                 INTERACTION_TYPE.SIT,
                 INTERACTION_TYPE.NAP,
+                INTERACTION_TYPE.BURY_CHARACTER,
+                INTERACTION_TYPE.CARRY_CORPSE,
             } },
             { RACE.ELVES, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -202,6 +204,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.STAND,
                 INTERACTION_TYPE.SIT,
                 INTERACTION_TYPE.NAP,
+                INTERACTION_TYPE.BURY_CHARACTER,
+                INTERACTION_TYPE.CARRY_CORPSE,
             } },
             { RACE.GOBLIN, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -285,6 +289,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.STAND,
                 INTERACTION_TYPE.SIT,
                 INTERACTION_TYPE.NAP,
+                INTERACTION_TYPE.BURY_CHARACTER,
+                INTERACTION_TYPE.CARRY_CORPSE,
             } },
             { RACE.FAERY, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -368,6 +374,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.STAND,
                 INTERACTION_TYPE.SIT,
                 INTERACTION_TYPE.NAP,
+                INTERACTION_TYPE.BURY_CHARACTER,
+                INTERACTION_TYPE.CARRY_CORPSE,
             } },
             { RACE.SKELETON, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -449,6 +457,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.STAND,
                 INTERACTION_TYPE.SIT,
                 INTERACTION_TYPE.NAP,
+                INTERACTION_TYPE.BURY_CHARACTER,
+                INTERACTION_TYPE.CARRY_CORPSE,
             } },
             { RACE.SPIDER, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,

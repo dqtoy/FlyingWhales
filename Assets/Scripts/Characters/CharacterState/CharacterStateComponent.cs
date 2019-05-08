@@ -90,6 +90,10 @@ public class CharacterStateComponent {
     //This ends the current state
     //This is triggered when the timer is out, or the character simply wants to end its state and go back to normal state
     public void ExitCurrentState(CharacterState state, bool stopMovement = true) {
+        if (currentState == null) {
+            throw new System.Exception(character.name + " is trying to exit his/her current state but it is null, Passed state is " + state?.stateName);
+        }
+
         //Stops movement unless told otherwise
         if (stopMovement) {
             if(!(currentState != null && character.currentAction != null && character.currentAction.parentPlan == null)) {

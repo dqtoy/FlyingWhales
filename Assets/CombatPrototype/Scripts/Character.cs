@@ -480,7 +480,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public bool isStarving { get { return fullness <= FULLNESS_THRESHOLD_2; } }
     public bool isExhausted { get { return tiredness <= TIREDNESS_THRESHOLD_2; } }
     public bool isForlorn { get { return happiness <= HAPPINESS_THRESHOLD_2; } }
-
+    public Tombstone grave { get; private set; }
     #endregion
 
     public Character(CharacterRole role, RACE race, GENDER gender) : this() {
@@ -629,6 +629,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         marker.SetCharacter(this);
         marker.SetHoverAction(ShowTileData, InteriorMapManager.Instance.HideTileData);
     }
+    public void DestroyMarker() {
+        ObjectPoolManager.Instance.DestroyObject(marker.gameObject);
+        gridTileLocation.RemoveCharacterHere(this);
+    }
     #endregion
 
     public void SetCharacterMarker(CharacterMarker marker) {
@@ -775,6 +779,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     internal void RemoveActionOnDeath(OnCharacterDeath onDeathAction) {
         onCharacterDeath -= onDeathAction;
+    }
+    public void SetGrave(Tombstone grave) {
+        this.grave = grave;
     }
 
     #region Items
@@ -1250,6 +1257,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (CreateUndermineJob(targetCharacter)) {
             hasCreatedJob = true;
         }
+        if (CreateBuryJob(targetCharacter)) {
+            hasCreatedJob = true;
+        }
         return hasCreatedJob;
     }
     private bool CreateRemoveTraitJobs(Character targetCharacter) {
@@ -1306,6 +1316,18 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 Debug.LogWarning(GameManager.Instance.TodayLogString() + "Added an UNDERMINE ENEMY Job to " + this.name + " with target " + targetCharacter.name);
                 jobQueue.AddJobInQueue(job, false, false);
                 jobQueue.ProcessFirstJobInQueue(this);
+                return true;
+            }
+        }
+        return false;
+    }
+    private bool CreateBuryJob(Character targetCharacter) {
+        if (targetCharacter.isDead && (role.roleType == CHARACTER_ROLE.SOLDIER || role.roleType == CHARACTER_ROLE.CIVILIAN)) {
+            if (!jobQueue.HasJob("Bury", targetCharacter)) {
+                GoapPlanJob buryJob = new GoapPlanJob("Bury", INTERACTION_TYPE.BURY_CHARACTER, targetCharacter);
+                buryJob.AllowDeadTargets();
+                buryJob.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, conditionKey = this, targetPOI = targetCharacter }, INTERACTION_TYPE.CARRY_CORPSE);
+                jobQueue.AddJobInQueue(buryJob);
                 return true;
             }
         }
@@ -1390,7 +1412,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         }
     }
-
     public Character troubledCharacter { get; private set; }
     public void CreateAskForHelpSaveCharacterJob(Character troubledCharacter) {
         if(troubledCharacter != null && troubledCharacter != this) {
@@ -4638,6 +4659,37 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return null;
     }
+    public List<GoapAction> AdvertiseActionsToActorFromDeadCharacter(Character actor, List<INTERACTION_TYPE> actorAllowedInteractions) {
+        if (poiGoapActions != null && poiGoapActions.Count > 0) {
+            List<GoapAction> usableActions = new List<GoapAction>();
+            for (int i = 0; i < poiGoapActions.Count; i++) {
+                INTERACTION_TYPE currType = poiGoapActions[i];
+                if (actorAllowedInteractions.Contains(currType)) {
+                    if (currType == INTERACTION_TYPE.CRAFT_ITEM) {
+                        Craftsman craftsman = GetTrait("Craftsman") as Craftsman;
+                        for (int j = 0; j < craftsman.craftedItemNames.Length; j++) {
+                            CraftItemGoap goapAction = InteractionManager.Instance.CreateNewGoapInteraction(currType, actor, this, false) as CraftItemGoap;
+                            goapAction.SetCraftedItem(craftsman.craftedItemNames[j]);
+                            goapAction.Initialize();
+                            if (goapAction.CanSatisfyRequirements()) {
+                                usableActions.Add(goapAction);
+                            }
+                        }
+                    } else {
+                        GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(currType, actor, this);
+                        if (goapAction == null) {
+                            throw new Exception("Goap action " + currType.ToString() + " is null!");
+                        }
+                        if (goapAction.CanSatisfyRequirements()) {
+                            usableActions.Add(goapAction);
+                        }
+                    }
+                }
+            }
+            return usableActions;
+        }
+        return null;
+    }
     public void SetPOIState(POI_STATE state) {
         _state = state;
     }
@@ -4667,8 +4719,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         poiGoapActions.Add(INTERACTION_TYPE.CURSE_CHARACTER);
         poiGoapActions.Add(INTERACTION_TYPE.ASK_FOR_HELP_SAVE_CHARACTER);
         poiGoapActions.Add(INTERACTION_TYPE.ASK_FOR_HELP_REMOVE_POISON_TABLE);
+        poiGoapActions.Add(INTERACTION_TYPE.BURY_CHARACTER);
+        poiGoapActions.Add(INTERACTION_TYPE.CARRY_CORPSE);
     }
-    public void StartGOAP(GoapEffect goal, IPointOfInterest target, GOAP_CATEGORY category, bool isPriority = false, List<Character> otherCharactePOIs = null, bool isPersonalPlan = true, GoapPlanJob job = null) {
+    public void StartGOAP(GoapEffect goal, IPointOfInterest target, GOAP_CATEGORY category, bool isPriority = false, List<Character> otherCharactePOIs = null, bool isPersonalPlan = true, GoapPlanJob job = null, bool allowDeadTargets = false) {
         List<CharacterAwareness> characterTargetsAwareness = new List<CharacterAwareness>();
         if (target.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
             CharacterAwareness characterAwareness = AddAwareness(target) as CharacterAwareness;
@@ -4690,9 +4744,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         _numOfWaitingForGoapThread ++;
         //Debug.LogWarning(name + " sent a plan to other thread(" + _numOfWaitingForGoapThread + ")");
-        MultiThreadPool.Instance.AddToThreadPool(new GoapThread(this, target, goal, category, isPriority, characterTargetsAwareness, isPersonalPlan, job));
+        MultiThreadPool.Instance.AddToThreadPool(new GoapThread(this, target, goal, category, isPriority, characterTargetsAwareness, isPersonalPlan, job, allowDeadTargets));
     }
-    public void StartGOAP(GoapAction goal, IPointOfInterest target, GOAP_CATEGORY category, bool isPriority = false, List<Character> otherCharactePOIs = null, bool isPersonalPlan = true, GoapPlanJob job = null) {
+    public void StartGOAP(GoapAction goal, IPointOfInterest target, GOAP_CATEGORY category, bool isPriority = false, List<Character> otherCharactePOIs = null, bool isPersonalPlan = true, GoapPlanJob job = null, bool allowDeadTargets = false) {
         List<CharacterAwareness> characterTargetsAwareness = new List<CharacterAwareness>();
         if (target.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
             CharacterAwareness characterAwareness = AddAwareness(target) as CharacterAwareness;
@@ -4713,9 +4767,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             job.SetAssignedPlan(null);
         }
         _numOfWaitingForGoapThread++;
-        MultiThreadPool.Instance.AddToThreadPool(new GoapThread(this, target, goal, category, isPriority, characterTargetsAwareness, isPersonalPlan, job));
+        MultiThreadPool.Instance.AddToThreadPool(new GoapThread(this, target, goal, category, isPriority, characterTargetsAwareness, isPersonalPlan, job, allowDeadTargets));
     }
-    public void StartGOAP(INTERACTION_TYPE goalType, IPointOfInterest target, GOAP_CATEGORY category, bool isPriority = false, List<Character> otherCharactePOIs = null, bool isPersonalPlan = true, GoapPlanJob job = null, object[] otherData = null) {
+    public void StartGOAP(INTERACTION_TYPE goalType, IPointOfInterest target, GOAP_CATEGORY category, bool isPriority = false, List<Character> otherCharactePOIs = null, bool isPersonalPlan = true, GoapPlanJob job = null, object[] otherData = null, bool allowDeadTargets = false) {
         List<CharacterAwareness> characterTargetsAwareness = new List<CharacterAwareness>();
         if (target != null && target.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
             CharacterAwareness characterAwareness = AddAwareness(target) as CharacterAwareness;
@@ -4727,7 +4781,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             job.SetAssignedPlan(null);
         }
         _numOfWaitingForGoapThread++;
-        MultiThreadPool.Instance.AddToThreadPool(new GoapThread(this, goalType, target, category, isPriority, characterTargetsAwareness, isPersonalPlan, job, otherData));
+        MultiThreadPool.Instance.AddToThreadPool(new GoapThread(this, goalType, target, category, isPriority, characterTargetsAwareness, isPersonalPlan, job, allowDeadTargets, otherData));
     }
     public void RecalculatePlan(GoapPlan currentPlan) {
         currentPlan.SetIsBeingRecalculated(true);
@@ -5243,9 +5297,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public void OnCharacterDoAction(GoapAction action) {
         Messenger.Broadcast(Signals.CHARACTER_DID_ACTION, this, action);
-        if (action.goapType.IsCombatAction()) {
-            ClearIgnoreHostilities();
-        }
     }
     public void FaceTarget(IPointOfInterest target) {
         if (this != target && !this.isDead && gridTileLocation != null) {
@@ -5283,6 +5334,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         currentAction = action;
         if (currentAction != null) {
             PrintLogIfActive(GameManager.Instance.TodayLogString() + this.name + " will do action " + action.goapType.ToString() + " to " + action.poiTarget.ToString());
+            if (currentAction.goapType.IsCombatAction()) { //if the character will do a combat action, remove all ignore hostilities value
+                ClearIgnoreHostilities();
+            }
         }
         string summary = GameManager.Instance.TodayLogString() + "Set current action to ";
         if (currentAction == null) {
@@ -5367,6 +5421,15 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (character.isDead || this.isDead) {
             return false;
         }
+
+        //if (character.ignoreHostility > 0) {
+        //    //if the other character is set to ignore hostilities, check if the character's current action is a combat action or state is a combat state
+        //    //if it is, waive the ignore hostility value
+        //    if (true) {
+
+        //    }
+        //}
+
         if (character.ignoreHostility > 0 || this.ignoreHostility > 0) {
             //if either the character in question or this character should ignore hostility, return false.
             return false;

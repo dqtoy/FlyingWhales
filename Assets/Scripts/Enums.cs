@@ -1175,6 +1175,8 @@ public enum INTERACTION_TYPE {
     SIT,
     STAND,
     NAP,
+    BURY_CHARACTER,
+    CARRY_CORPSE,
 }
 public enum INTERACTION_ALIGNMENT {
     EVIL,
@@ -1368,7 +1370,7 @@ public enum TILE_OBJECT_TYPE {
     TREE,
     FOOD,
     DESK,
-
+    TOMBSTONE,
 }
 public enum POI_STATE {
     ACTIVE,

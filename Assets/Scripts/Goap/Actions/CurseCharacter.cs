@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class CurseCharacter : GoapAction {
 
+    public override LocationStructure targetStructure { get { return _targetStructure; } }
+
+    private LocationStructure _targetStructure;
+
     public CurseCharacter(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.CURSE_CHARACTER, INTERACTION_ALIGNMENT.EVIL, actor, poiTarget) {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         actionIconString = GoapActionStateDB.Hostile_Icon;
@@ -13,6 +17,13 @@ public class CurseCharacter : GoapAction {
     #region Overrides
     protected override void ConstructRequirement() {
         _requirementAction = Requirement;
+    }
+    public override LocationGridTile GetTargetLocationTile() {
+        return actor.gridTileLocation; //in place
+    }
+    public override void SetTargetStructure() {
+        _targetStructure = actor.currentStructure;
+        base.SetTargetStructure();
     }
     protected override void ConstructPreconditionsAndEffects() {
         AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Ritualized", targetPOI = actor }, () => HasTrait(actor, "Ritualized"));
