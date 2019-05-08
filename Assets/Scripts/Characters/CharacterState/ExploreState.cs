@@ -80,10 +80,13 @@ public class ExploreState : CharacterState {
         stateComponent.character.currentAction.PerformActualAction();
     }
     private void ExploreAgain(string result, GoapAction goapAction) {
-        stateComponent.character.SetCurrentAction(null);
         if (result == InteractionManager.Goap_State_Success && goapAction.poiTarget is SpecialToken) {
             itemsCollected.Add(goapAction.poiTarget as SpecialToken);
         }
+        if (stateComponent.currentState != this) {
+            return;
+        }
+        stateComponent.character.SetCurrentAction(null);
         ResumeState();
     }
     private void StartExploreMovement() {

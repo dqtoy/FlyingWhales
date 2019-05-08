@@ -47,6 +47,9 @@ public class StrollState : CharacterState {
         stateComponent.character.currentAction.PerformActualAction();
     }
     private void StrollAgain(string result, GoapAction goapAction) {
+        if (stateComponent.currentState != this) {
+            return;
+        }
         stateComponent.character.SetCurrentAction(null);
         ResumeState();
     }

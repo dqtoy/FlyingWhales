@@ -54,6 +54,9 @@ public class HuntState : CharacterState {
         stateComponent.character.currentAction.PerformActualAction();
     }
     private void HuntAgain(string result, GoapAction goapAction) {
+        if (stateComponent.currentState != this) {
+            return;
+        }
         stateComponent.character.SetCurrentAction(null);
         StartHuntMovement();
     }
