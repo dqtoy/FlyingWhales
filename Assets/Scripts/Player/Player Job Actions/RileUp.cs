@@ -120,6 +120,9 @@ public class RileUp : PlayerJobAction {
         if(_targetCharacter.faction != FactionManager.Instance.neutralFaction && _targetCharacter.faction == character.faction) {
             return false;
         }
+        if(_targetCharacter.state == POI_STATE.INACTIVE) {
+            return false;
+        }
         return true;
     }
     #endregion

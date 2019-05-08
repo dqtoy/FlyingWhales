@@ -1242,17 +1242,27 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     private bool CanCharacterTakeApprehendJob(Character character) {
         return character.role.roleType == CHARACTER_ROLE.SOLDIER;
     }
-    public bool CreateRemoveTraitJobs(Character character) {
-        if(traitsNeededToBeRemoved.Count <= 0) {
+    public bool CreateJobsOnEnterVisionWith(Character targetCharacter) {
+        bool hasCreatedJob = false;
+        if (CreateRemoveTraitJobs(targetCharacter)) {
+            hasCreatedJob = true;
+        }
+        if (CreateUndermineJob(targetCharacter)) {
+            hasCreatedJob = true;
+        }
+        return hasCreatedJob;
+    }
+    private bool CreateRemoveTraitJobs(Character targetCharacter) {
+        if(targetCharacter.traitsNeededToBeRemoved.Count <= 0) {
             return false;
         }
-        if (GetTraitOf(TRAIT_TYPE.CRIMINAL) == null && CanCharacterTakeRemoveTraitJob(character)) {
+        if (targetCharacter.GetTraitOf(TRAIT_TYPE.CRIMINAL) == null && CanThisCharacterTakeRemoveTraitJob(targetCharacter)) {
             bool hasCreatedJob = false;
-            for (int i = 0; i < traitsNeededToBeRemoved.Count; i++) {
-                Trait trait = traitsNeededToBeRemoved[i];
+            for (int i = 0; i < targetCharacter.traitsNeededToBeRemoved.Count; i++) {
+                Trait trait = targetCharacter.traitsNeededToBeRemoved[i];
 
                 bool canDoJob = true;
-                List<GoapPlanJob> similarJobs = GetJobsTargettingThisCharacter("Remove Trait", trait.name);
+                List<GoapPlanJob> similarJobs = targetCharacter.GetJobsTargettingThisCharacter("Remove Trait", trait.name);
                 for (int j = 0; j < similarJobs.Count; j++) {
                     GoapPlanJob similarJob = similarJobs[j];
                     if(similarJob.assignedCharacter != null && similarJob.assignedCharacter.currentAction != null 
@@ -1264,28 +1274,49 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 }
 
                 if (canDoJob) {
-                    GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = trait.name, targetPOI = this };
+                    GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = trait.name, targetPOI = targetCharacter };
                     GoapPlanJob job = new GoapPlanJob("Remove Trait", goapEffect);
                     job.SetCancelOnFail(true);
                     job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
                     //job.SetCanTakeThisJobChecker(CanCharacterTakeRemoveTraitJob);
-                    character.jobQueue.AddJobInQueue(job, false, false);
+                    jobQueue.AddJobInQueue(job, false, false);
                     hasCreatedJob = true;
                 }
             }
             if (hasCreatedJob) {
-                character.jobQueue.ProcessFirstJobInQueue(character);
+                jobQueue.ProcessFirstJobInQueue(this);
             }
             return hasCreatedJob;
         }
         return false;
     }
-    private bool CanCharacterTakeRemoveTraitJob(Character character) {
-        if (this != character && this.faction.id == character.faction.id) {
-            if(this.faction.id == FactionManager.Instance.neutralFaction.id) {
-                return this.race == character.race && this.homeArea == character.homeArea && !character.HasRelationshipOfTypeWith(this, RELATIONSHIP_TRAIT.ENEMY);
+    private bool CreateUndermineJob(Character targetCharacter) {
+        if (HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.ENEMY)) {
+            int chance = UnityEngine.Random.Range(0, 100);
+            int value = 0;
+            CHARACTER_MOOD currentMood = currentMoodType;
+            if (currentMood == CHARACTER_MOOD.DARK) {
+                value = 20;
+            } else if (currentMood == CHARACTER_MOOD.BAD) {
+                value = 10;
             }
-            return !character.HasRelationshipOfTypeWith(this, RELATIONSHIP_TRAIT.ENEMY);
+            if (chance < value) {
+                GoapPlanJob job = new GoapPlanJob("Undermine Enemy", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", targetPOI = targetCharacter });
+                job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
+                Debug.LogWarning(GameManager.Instance.TodayLogString() + "Added an UNDERMINE ENEMY Job to " + this.name + " with target " + targetCharacter.name);
+                jobQueue.AddJobInQueue(job, false, false);
+                jobQueue.ProcessFirstJobInQueue(this);
+                return true;
+            }
+        }
+        return false;
+    }
+    private bool CanThisCharacterTakeRemoveTraitJob(Character targetCharacter) {
+        if (this != targetCharacter && this.faction.id == targetCharacter.faction.id) {
+            if(this.faction.id == FactionManager.Instance.neutralFaction.id) {
+                return this.race == targetCharacter.race && this.homeArea == targetCharacter.homeArea && !targetCharacter.HasRelationshipOfTypeWith(this, RELATIONSHIP_TRAIT.ENEMY);
+            }
+            return !targetCharacter.HasRelationshipOfTypeWith(this, RELATIONSHIP_TRAIT.ENEMY);
         }
         return false;
     }

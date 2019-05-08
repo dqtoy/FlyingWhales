@@ -145,7 +145,7 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
                         Character targetCharacter = poi as Character;
                         if (!targetCharacter.isDead) {
                             if (!parentMarker.AddHostileInRange(targetCharacter)) {
-                                if (!targetCharacter.CreateRemoveTraitJobs(parentMarker.character)) {
+                                if (!parentMarker.character.CreateJobsOnEnterVisionWith(targetCharacter)) {
                                     ChatHandling(targetCharacter);
                                 }
                             }
@@ -157,7 +157,7 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
                     Character targetCharacter = poi as Character;
                     if (!targetCharacter.isDead) {
                         if (!parentMarker.AddHostileInRange(targetCharacter)) {
-                            if (!targetCharacter.CreateRemoveTraitJobs(parentMarker.character)) {
+                            if (!parentMarker.character.CreateJobsOnEnterVisionWith(targetCharacter)) {
                                 ChatHandling(targetCharacter);
                             }
                         }
