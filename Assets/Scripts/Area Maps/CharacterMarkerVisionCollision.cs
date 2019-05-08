@@ -143,11 +143,9 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
                 if (!parentMarker.character.stateComponent.currentState.OnEnterVisionWith(poi)) {
                     if (poi is Character) {
                         Character targetCharacter = poi as Character;
-                        if (!targetCharacter.isDead) {
-                            if (!parentMarker.AddHostileInRange(targetCharacter)) {
-                                if (!parentMarker.character.CreateJobsOnEnterVisionWith(targetCharacter)) {
-                                    ChatHandling(targetCharacter);
-                                }
+                        if (!parentMarker.AddHostileInRange(targetCharacter)) {
+                            if (!parentMarker.character.CreateJobsOnEnterVisionWith(targetCharacter)) {
+                                ChatHandling(targetCharacter);
                             }
                         }
                     }
@@ -155,11 +153,9 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
             } else {
                 if (poi is Character) {
                     Character targetCharacter = poi as Character;
-                    if (!targetCharacter.isDead) {
-                        if (!parentMarker.AddHostileInRange(targetCharacter)) {
-                            if (!parentMarker.character.CreateJobsOnEnterVisionWith(targetCharacter)) {
-                                ChatHandling(targetCharacter);
-                            }
+                    if (!parentMarker.AddHostileInRange(targetCharacter)) {
+                        if (!parentMarker.character.CreateJobsOnEnterVisionWith(targetCharacter)) {
+                            ChatHandling(targetCharacter);
                         }
                     }
                 }

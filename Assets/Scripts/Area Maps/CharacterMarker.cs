@@ -725,11 +725,13 @@ public class CharacterMarker : PooledObject {
             _previousGridTile = character.gridTileLocation;
         }
     }
-    public void PlaceMarkerAt(LocationGridTile tile) {
+    public void PlaceMarkerAt(LocationGridTile tile, bool addToLocation = true) {
         //if(tile != null) {
         this.gameObject.transform.SetParent(tile.parentAreaMap.objectsParent);
         transform.position = tile.centeredWorldLocation;
-        tile.structure.location.AddCharacterToLocation(character);
+        if (addToLocation) {
+            tile.structure.location.AddCharacterToLocation(character);
+        }
         SetActiveState(true);
         UpdatePosition();
         UpdateAnimation();
@@ -757,19 +759,21 @@ public class CharacterMarker : PooledObject {
     }
     public void OnDeath(LocationGridTile deathTileLocation) {
         if (character.race == RACE.SKELETON) {
-            ObjectPoolManager.Instance.DestroyObject(gameObject);
-            deathTileLocation.RemoveCharacterHere(character);
+            //ObjectPoolManager.Instance.DestroyObject(gameObject);
+            //deathTileLocation.RemoveCharacterHere(character);
+            character.DestroyMarker();
         } else {
             for (int i = 0; i < colliders.Length; i++) {
                 colliders[i].enabled = false;
             }
-            //for (int i = 0; i < rgBodies.Length; i++) {
-            //    rgBodies[i].gameObject.SetActive(false);
-            //}
             UpdateAnimation();
             UpdateActionIcon();
             gameObject.transform.SetParent(deathTileLocation.parentAreaMap.objectsParent);
-            transform.position = deathTileLocation.centeredWorldLocation;
+            LocationGridTile placeMarkerAt = deathTileLocation;
+            if (deathTileLocation.isOccupied) {
+                placeMarkerAt = deathTileLocation.GetNearestUnoccupiedTileFromThis();
+            }
+            transform.position = placeMarkerAt.centeredWorldLocation;
             hostilesInRange.Clear();
             inVisionPOIs.Clear();
             visionCollision.OnDeath();
@@ -781,6 +785,9 @@ public class CharacterMarker : PooledObject {
     public void AddPOIAsInVisionRange(IPointOfInterest poi) {
         if (!inVisionPOIs.Contains(poi)) {
             inVisionPOIs.Add(poi);
+            if (poi is Character) {
+                Debug.Log(character.name + " saw " + (poi as Character).name);
+            }
             character.AddAwareness(poi);
         }
     }
@@ -815,8 +822,12 @@ public class CharacterMarker : PooledObject {
     #region Hosility Collision
     public bool AddHostileInRange(Character poi, CHARACTER_STATE forcedReaction = CHARACTER_STATE.NONE, bool checkHostility = true) {
         if (!hostilesInRange.Contains(poi)) {
-            if (!poi.isDead && !checkHostility || this.character.IsHostileWith(poi) 
-                || forcedReaction != CHARACTER_STATE.NONE) { //if forced reaction is not equal to none, it means that this character must treat the other character as hostile, regardless of conditions
+            if (!poi.isDead && 
+                //if the function states that it should not check the normal hostility, always allow
+                (!checkHostility
+                || this.character.IsHostileWith(poi)
+                //if forced reaction is not equal to none, it means that this character must treat the other character as hostile, regardless of conditions
+                || forcedReaction != CHARACTER_STATE.NONE)) { 
                 hostilesInRange.Add(poi);
                 NormalReactToHostileCharacter(poi, forcedReaction);
                 return true;
@@ -871,7 +882,8 @@ public class CharacterMarker : PooledObject {
         } else {
             //- Determine whether to enter Flee mode or Engage mode:
             //if the character will do a combat action towards the other character, do not flee.
-            if (!this.character.IsDoingCombatActionTowards(otherCharacter) && (character.GetTrait("Injured") != null 
+            if (!this.character.IsDoingCombatActionTowards(otherCharacter) 
+                && (character.GetTrait("Injured") != null 
                 || character.role.roleType == CHARACTER_ROLE.CIVILIAN
                 || character.role.roleType == CHARACTER_ROLE.NOBLE || character.role.roleType == CHARACTER_ROLE.LEADER)) {
                 //- Injured characters, Civilians, Nobles and Faction Leaders always enter Flee mode
@@ -999,7 +1011,6 @@ public class CharacterMarker : PooledObject {
         UpdateAnimation();
         (character.stateComponent.currentState as FleeState).CheckForEndState();
     }
-
     public void SetHasFleePath(bool state) {
         hasFleePath = state;
     }

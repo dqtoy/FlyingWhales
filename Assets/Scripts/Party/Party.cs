@@ -252,7 +252,7 @@ public class Party {
         }
         return false;
     }
-    public void RemoveCharacter(Character character) {
+    public void RemoveCharacter(Character character, bool addToLocation = true) {
         if(_owner == character) {
             return;
         }
@@ -260,7 +260,7 @@ public class Party {
             //LocationGridTile gridTile = _owner.gridTileLocation.GetNearestUnoccupiedTileFromThis();
             //_owner.specificLocation.AddCharacterToLocation(character);
             character.OnRemovedFromParty();
-            character.marker.PlaceMarkerAt(_owner.gridTileLocation);
+            character.marker.PlaceMarkerAt(_owner.gridTileLocation, addToLocation);
             character.marker.transform.eulerAngles = Vector3.zero;
             character.marker.nameLbl.gameObject.SetActive(true);
             //character.marker.gameObject.transform.localPosition = gridTile.centeredLocalLocation;

@@ -38,7 +38,7 @@ public class EatCorpse : GoapAction {
     public override void OnStopActionDuringCurrentState() {
         if (currentState.name == "Eat Success") {
             actor.AdjustDoNotGetHungry(-1);
-            poiTarget.SetPOIState(POI_STATE.ACTIVE);
+            //poiTarget.SetPOIState(POI_STATE.ACTIVE);
         }
     }
     #endregion
@@ -46,7 +46,7 @@ public class EatCorpse : GoapAction {
     #region Effects
     private void PreEatSuccess() {
         currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
-        poiTarget.SetPOIState(POI_STATE.INACTIVE);
+        //poiTarget.SetPOIState(POI_STATE.INACTIVE);
         actor.AdjustDoNotGetHungry(1);
     }
     private void PerTickEatSuccess() {
@@ -54,9 +54,10 @@ public class EatCorpse : GoapAction {
     }
     private void AfterEatSuccess() {
         actor.AdjustDoNotGetHungry(-1);
-        poiTarget.SetPOIState(POI_STATE.ACTIVE);
-        Corpse corpse = poiTarget as Corpse;
-        poiTarget.gridTileLocation.structure.RemoveCorpse(corpse.character);
+        //poiTarget.SetPOIState(POI_STATE.ACTIVE);
+        //Corpse corpse = poiTarget as Corpse;
+        //poiTarget.gridTileLocation.structure.RemoveCorpse(corpse.character);
+        (poiTarget as Character).DestroyMarker();
     }
     private void PreEatFail() {
         currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);

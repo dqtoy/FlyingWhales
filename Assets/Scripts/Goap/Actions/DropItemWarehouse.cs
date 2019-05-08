@@ -44,7 +44,11 @@ public class DropItemWarehouse : GoapAction {
     }
     private void AfterDropSuccess() {
         //**Effect 1**: Actor loses item, add target item to tile. Clear personal owner of the item.
-        actor.DropToken(poiTarget as SpecialToken, actor.specificLocation, actor.currentStructure, actor.gridTileLocation);
+        LocationGridTile targetLocation = actor.gridTileLocation;
+        if (targetLocation.isOccupied) {
+            targetLocation = actor.currentStructure.GetRandomUnoccupiedTile();
+        }
+        actor.DropToken(poiTarget as SpecialToken, actor.specificLocation, actor.currentStructure, targetLocation);
     }
     #endregion
 

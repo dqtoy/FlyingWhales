@@ -60,7 +60,7 @@ public class GoapAction {
     public bool doesNotStopTargetCharacter { get; protected set; }
     public bool cannotCancelAction { get; protected set; }
 
-    protected bool isTargetMissing {
+    protected virtual bool isTargetMissing {
         get { return poiTarget.state == POI_STATE.INACTIVE || poiTarget.gridTileLocation == null || actor.specificLocation != poiTarget.specificLocation
                 || !(actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)); }
     }
@@ -331,13 +331,15 @@ public class GoapAction {
         if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
             if (poiTarget != actor) {
                 Character targetCharacter = poiTarget as Character;
-                if (!doesNotStopTargetCharacter) {
-                    if (targetCharacter.stateComponent.currentState != null) {
-                        targetCharacter.stateComponent.currentState.ResumeState();
+                if (!targetCharacter.isDead) {
+                    if (!doesNotStopTargetCharacter) {
+                        if (targetCharacter.stateComponent.currentState != null) {
+                            targetCharacter.stateComponent.currentState.ResumeState();
+                        }
                     }
+                    targetCharacter.marker.pathfindingAI.AdjustDoNotMove(-1);
+                    targetCharacter.marker.AdjustIsStoppedByOtherCharacter(-1);
                 }
-                targetCharacter.marker.pathfindingAI.AdjustDoNotMove(-1);
-                targetCharacter.marker.AdjustIsStoppedByOtherCharacter(-1);
             }
         } else {
             Messenger.RemoveListener<TileObject>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);

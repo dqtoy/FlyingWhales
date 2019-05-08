@@ -20,10 +20,14 @@ public class GoapPlanJob : JobQueueItem {
     //plan constructor
     public System.Func<GoapPlan> planConstructor { get; private set; } //if this is set, the job will execute this when creating a plan instead of using the normal behaviour
 
+    //misc
+    public bool allowDeadTargets { get; private set; }
+
     public GoapPlanJob(string name, GoapEffect targetEffect) : base(name) {
         this.targetEffect = targetEffect;
         this.targetPOI = targetEffect.targetPOI;
         forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
+        allowDeadTargets = false;
     }
     public GoapPlanJob(string name, INTERACTION_TYPE targetInteractionType, object[] otherData) : base(name) {
         //this.targetEffect = targetEffect;
@@ -31,6 +35,7 @@ public class GoapPlanJob : JobQueueItem {
         this.targetInteractionType = targetInteractionType;
         this.otherData = otherData;
         forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
+        allowDeadTargets = false;
     }
     public GoapPlanJob(string name, INTERACTION_TYPE targetInteractionType, IPointOfInterest targetPOI) : base(name) {
         //this.targetEffect = targetEffect;
@@ -38,6 +43,7 @@ public class GoapPlanJob : JobQueueItem {
         this.targetInteractionType = targetInteractionType;
         //this.otherData = otherData;
         forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
+        allowDeadTargets = false;
     }
     public GoapPlanJob(string name, INTERACTION_TYPE targetInteractionType, IPointOfInterest targetPOI, object[] otherData) : base(name) {
         //this.targetEffect = targetEffect;
@@ -45,6 +51,7 @@ public class GoapPlanJob : JobQueueItem {
         this.targetInteractionType = targetInteractionType;
         this.otherData = otherData;
         forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
+        allowDeadTargets = false;
     }
     //public GoapPlanJob(string name, GoapPlan targetPlan) : base(name) {
     //    //this.targetEffect = targetEffect;
@@ -106,8 +113,13 @@ public class GoapPlanJob : JobQueueItem {
         }
         if(targetPOI.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
             Character target = targetPOI as Character;
-            if(target.IsInOwnParty() && !target.isDead) {
-                return true;
+            if(target.IsInOwnParty()) {
+                if (name == "Bury") {
+                    return true; //if the job is a bury job, allow targetting dead character (Think of a better way to do this)
+                } else {
+                    return !target.isDead;
+                }
+               
             }
             return false;
         }
@@ -151,6 +163,12 @@ public class GoapPlanJob : JobQueueItem {
     #region Plan Constructor
     public void SetPlanConstructor(System.Func<GoapPlan> planConstructor) {
         this.planConstructor = planConstructor;
+    }
+    #endregion
+
+    #region Misc
+    public void AllowDeadTargets() {
+        allowDeadTargets = true;
     }
     #endregion
 }

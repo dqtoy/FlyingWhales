@@ -1105,6 +1105,12 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.NAP:
                 goapAction = new Nap(actor, target);
                 break;
+            case INTERACTION_TYPE.BURY_CHARACTER:
+                goapAction = new BuryCharacter(actor, target);
+                break;
+            case INTERACTION_TYPE.CARRY_CORPSE:
+                goapAction = new CarryCorpse(actor, target);
+                break;
         }
         if(goapAction != null && willInitialize) {
             goapAction.Initialize();
