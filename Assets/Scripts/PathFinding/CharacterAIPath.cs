@@ -60,6 +60,11 @@ public class CharacterAIPath : AIPath {
                 totalCost += currentCost;
             }
             costLog += "\nTOTAL COST: " + totalCost;
+
+            costLog += "\n\nVECTOR PATH";
+            for (int i = 0; i < currentPath.vectorPath.Count; i++) {
+                costLog += "\n-> " + currentPath.vectorPath[i] + "[" + Vector2.Distance(currentPath.vectorPath[i], marker.terrifyingCharacters[0].gridTileLocation.centeredWorldLocation) + "]";
+            }
             Debug.LogWarning(costLog);
         }
         base.OnPathComplete(newPath);
