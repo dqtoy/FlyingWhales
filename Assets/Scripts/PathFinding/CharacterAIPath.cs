@@ -163,7 +163,16 @@ public class CharacterAIPath : AIPath {
         if (marker.terrifyingCharacters.Count > 0) {
             for (int i = 0; i < marker.terrifyingCharacters.Count; i++) {
                 Character terrifyingCharacter = marker.terrifyingCharacters.ElementAtOrDefault(i);
-                if (terrifyingCharacter == null || terrifyingCharacter.currentParty == null || terrifyingCharacter.currentParty.icon == null || (terrifyingCharacter.currentParty.icon.isTravelling && terrifyingCharacter.currentParty.icon.travelLine != null && marker.character.currentStructure != terrifyingCharacter.currentStructure)) {
+                if (terrifyingCharacter == null) {
+                    continue;
+                }
+                if(terrifyingCharacter.currentParty == null || terrifyingCharacter.currentParty.icon == null || (terrifyingCharacter.currentParty.icon.isTravelling && terrifyingCharacter.currentParty.icon.travelLine != null && marker.character.currentStructure != terrifyingCharacter.currentStructure)) {
+                    continue;
+                }
+                if(terrifyingCharacter.currentParty.icon == null || (terrifyingCharacter.currentParty.icon.isTravelling && terrifyingCharacter.currentParty.icon.travelLine != null && marker.character.currentStructure != terrifyingCharacter.currentStructure)) {
+                    continue;
+                }
+                if(terrifyingCharacter.currentParty.icon.isTravelling && terrifyingCharacter.currentParty.icon.travelLine != null && marker.character.currentStructure != terrifyingCharacter.currentStructure) {
                     continue;
                 }
                 if (!terrifyingCharacter.isDead) {
