@@ -1900,7 +1900,8 @@ public class AreaInnerTileMap : MonoBehaviour {
     }
     [ContextMenu("Get Distance")]
     public void GetDistance() {
-        float distance = Vector2.Distance(map[(int)startPos.x, (int)startPos.y].localLocation, map[(int)endPos.x, (int)endPos.y].localLocation);
+        //float distance = Vector2.Distance(map[(int)startPos.x, (int)startPos.y].localLocation, map[(int)endPos.x, (int)endPos.y].localLocation);
+        float distance = Vector3.Distance(startPos, endPos);
         Debug.LogWarning(distance);
     }
     [ContextMenu("Print Characters Seen By Camera")]

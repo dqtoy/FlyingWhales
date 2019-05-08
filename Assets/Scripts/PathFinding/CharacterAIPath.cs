@@ -63,7 +63,7 @@ public class CharacterAIPath : AIPath {
 
             costLog += "\n\nVECTOR PATH";
             for (int i = 0; i < currentPath.vectorPath.Count; i++) {
-                costLog += "\n-> " + currentPath.vectorPath[i] + "[" + Vector2.Distance(currentPath.vectorPath[i], marker.terrifyingCharacters[0].gridTileLocation.centeredWorldLocation) + "]";
+                costLog += "\n-> " + currentPath.vectorPath[i] + "(" + GetNodePenalty(currentPath.vectorPath[i]) + ")" + "[" + Vector2.Distance(currentPath.vectorPath[i], marker.terrifyingCharacters[0].gridTileLocation.centeredWorldLocation) + "]";
             }
             Debug.LogWarning(costLog);
         }
@@ -82,6 +82,11 @@ public class CharacterAIPath : AIPath {
         Vector3 start, end;
         CalculatePathRequestEndpoints(out start, out end);
 
+        for (int i = 0; i < marker.terrifyingCharacters.Count; i++) {
+            if (!marker.terrifyingCharacters[i].isDead) {
+                marker.terrifyingCharacters[i].marker.UpdateCenteredWorldPos();
+            }
+        }
         // Alternative way of requesting the path
         ABPath p = ABPath.Construct(start, end, null);
         p.traversalProvider = blockerTraversalProvider;
@@ -169,17 +174,18 @@ public class CharacterAIPath : AIPath {
                     //    return false;
                     //}
                     Vector3 newNodePos = new Vector3((Mathf.Floor(nodePos.x)) + 0.5f, (Mathf.Floor(nodePos.y)) + 0.5f, Mathf.Floor(nodePos.z));
-                    float distance = Vector3.Distance(newNodePos, terrifyingCharacter.marker.character.gridTileLocation.centeredWorldLocation);
+                    float distance = Vector3.Distance(newNodePos, terrifyingCharacter.marker.centeredWorldPos);
                     if (distance <= marker.penaltyRadius) {
-                        uint multiplier = (uint) Mathf.Ceil(marker.penaltyRadius - distance);
-                        if(multiplier <= 0) {
-                            multiplier = 1;
-                        }
-                        return multiplier * 5000000;
+                        return 1000000;
+                        //float multiplier = marker.penaltyRadius - distance;
+                        //if(multiplier <= 0.5f) {
+                        //    multiplier = 1;
+                        //}
+                        //return multiplier * 5000000;
                     }
                 }
             }
         }
-        return 0;
+        return 1000;
     }
 }

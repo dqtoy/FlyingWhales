@@ -53,7 +53,7 @@ public class CharacterMarker : PooledObject {
     public InnerPathfindingThread pathfindingThread { get; private set; }
     public POICollisionTrigger collisionTrigger { get; private set; }
     public Vector2 anchoredPos { get; private set; }
-    public Vector3 worldPos { get; private set; }
+    public Vector3 centeredWorldPos { get; private set; }
     public LocationGridTile destinationTile { get; private set; }
     public bool cannotCombat { get; private set; }
     public float speedModifier { get; private set; }
@@ -718,7 +718,6 @@ public class CharacterMarker : PooledObject {
 
         //I'm keeping a separate field called anchoredPos instead of using the rect transform anchoredPosition directly because the multithread cannot access transform components
         anchoredPos = transform.localPosition;
-        worldPos = transform.position;
 
         if (_previousGridTile != character.gridTileLocation) {
             character.specificLocation.areaMap.OnCharacterMovedTo(character, character.gridTileLocation, _previousGridTile);
@@ -774,6 +773,9 @@ public class CharacterMarker : PooledObject {
             inVisionPOIs.Clear();
             visionCollision.OnDeath();
         }
+    }
+    public void UpdateCenteredWorldPos() {
+        centeredWorldPos = character.gridTileLocation.centeredWorldLocation;
     }
     #endregion
 
