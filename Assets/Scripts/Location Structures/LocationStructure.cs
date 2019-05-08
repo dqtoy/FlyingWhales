@@ -308,6 +308,8 @@ public class LocationStructure {
                 return "the " + location.name + " warehouse";
             case STRUCTURE_TYPE.WILDERNESS:
                 return "the outskirts of " + location.name;
+            case STRUCTURE_TYPE.CEMETERY:
+                return "the cemetery of " + location.name;
             case STRUCTURE_TYPE.DUNGEON:
             case STRUCTURE_TYPE.WORK_AREA:
             case STRUCTURE_TYPE.EXPLORE_AREA:

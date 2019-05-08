@@ -545,7 +545,7 @@ public class CharacterMarker : PooledObject {
         if (character.currentParty.icon != null) {
             character.currentParty.icon.SetIsTravelling(false);
         }
-        hasFleePath = false;
+        //hasFleePath = false;
         pathfindingAI.SetIsStopMovement(true);
         UpdateAnimation();
         //if (playIdle) {
@@ -858,10 +858,11 @@ public class CharacterMarker : PooledObject {
             if (currentlyEngaging == removedCharacter) {
                 (character.stateComponent.currentState as EngageState).CheckForEndState();
             }
-        } else if (character.stateComponent.currentState.characterState == CHARACTER_STATE.FLEE) {
-            removeHostileSummary += "\n" + character.name + "'s current state is flee, checking for end state...";
-            (character.stateComponent.currentState as FleeState).CheckForEndState();
-        }
+        } 
+        //else if (character.stateComponent.currentState.characterState == CHARACTER_STATE.FLEE) {
+        //    removeHostileSummary += "\n" + character.name + "'s current state is flee, checking for end state...";
+        //    (character.stateComponent.currentState as FleeState).CheckForEndState();
+        //}
         character.PrintLogIfActive(removeHostileSummary);
     }
     public void OnOtherCharacterDied(Character otherCharacter) {

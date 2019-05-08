@@ -18,7 +18,7 @@ public class FleeState : CharacterState {
         StartFleeMovement();
     }
     protected override void PerTickInState() {
-        stateComponent.character.marker.RedetermineFlee();
+        //stateComponent.character.marker.RedetermineFlee();
         //base.PerTickInState();
     }
     //protected override void EndState() {
