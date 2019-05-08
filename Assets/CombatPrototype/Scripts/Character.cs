@@ -1291,7 +1291,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         return false;
     }
     private bool CreateUndermineJob(Character targetCharacter) {
-        if (HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.ENEMY)) {
+        if (HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.ENEMY) && !jobQueue.HasJob("Undermine Enemy", targetCharacter)) {
             int chance = UnityEngine.Random.Range(0, 100);
             int value = 0;
             CHARACTER_MOOD currentMood = currentMoodType;
@@ -1357,7 +1357,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
 
         //Undermine Enemy Job
-        if (!hasCreatedJob && HasRelationshipTraitOf(RELATIONSHIP_TRAIT.ENEMY) && !jobQueue.HasJob("Undermine Enemy")) {
+        if (!hasCreatedJob && HasRelationshipTraitOf(RELATIONSHIP_TRAIT.ENEMY)) {
             int chance = UnityEngine.Random.Range(0, 100);
             int value = 3;
             CHARACTER_MOOD currentMood = currentMoodType;
@@ -1374,7 +1374,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 while (chosenCharacter == null && enemyCharacters.Count > 0) {
                     int index = UnityEngine.Random.Range(0, enemyCharacters.Count);
                     Character character = enemyCharacters[index];
-                    if (character.HasJobTargettingThisCharacter("Undermine Enemy")) {
+                    if (character.HasJobTargettingThisCharacter("Undermine Enemy") || jobQueue.HasJob("Undermine Enemy", character)) {
                         enemyCharacters.RemoveAt(index);
                     } else {
                         chosenCharacter = character;

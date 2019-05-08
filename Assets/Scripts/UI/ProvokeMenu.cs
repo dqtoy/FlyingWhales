@@ -1,0 +1,96 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class ProvokeMenu : MonoBehaviour {
+
+    [Header("Main")]
+    [SerializeField] private ScrollRect dialogScrollView;
+    [SerializeField] private GameObject dialogItemPrefab;
+    [SerializeField] private Button closeBtn;
+    [SerializeField] private TextMeshProUGUI instructionLbl;
+
+    private Character targetCharacter;
+    private Character actor;
+
+    public void Open(Character targetCharacter, Character actor) {
+        this.gameObject.SetActive(true);
+
+        this.targetCharacter = targetCharacter;
+        this.actor = actor;
+        instructionLbl.text = "Provoke " + targetCharacter.name;
+
+        Utilities.DestroyChildren(dialogScrollView.content);
+
+        string targetDialogText = string.Empty;
+        string actorDialogText = string.Empty;
+
+        ProvokeAction(ref targetDialogText, ref actorDialogText);
+
+        GameObject actorDialog = ObjectPoolManager.Instance.InstantiateObjectFromPool(dialogItemPrefab.name, Vector3.zero, Quaternion.identity, dialogScrollView.content);
+        DialogItem actorItem = actorDialog.GetComponent<DialogItem>();
+        actorItem.SetData(actor, actorDialogText, DialogItem.Position.Right);
+
+        GameObject targetDialog = ObjectPoolManager.Instance.InstantiateObjectFromPool(dialogItemPrefab.name, Vector3.zero, Quaternion.identity, dialogScrollView.content);
+        DialogItem item = targetDialog.GetComponent<DialogItem>();
+        item.SetData(targetCharacter, targetDialogText);
+    }
+
+    private void ProvokeAction(ref string targetText, ref string actorText) {
+        if (targetCharacter.HasRelationshipTraitOf(RELATIONSHIP_TRAIT.ENEMY)) {
+            CHARACTER_MOOD currentMood = targetCharacter.currentMoodType;
+            if(currentMood == CHARACTER_MOOD.GOOD || currentMood == CHARACTER_MOOD.GREAT) {
+                actorText = "You should take revenge on your enemies.";
+                targetText = "I am too happy right now to even care about my enemies.";
+            } else {
+                List<Character> enemyCharacters = targetCharacter.GetCharactersWithRelationship(RELATIONSHIP_TRAIT.ENEMY);
+                Character chosenCharacter = null;
+                while (chosenCharacter == null && enemyCharacters.Count > 0) {
+                    int index = UnityEngine.Random.Range(0, enemyCharacters.Count);
+                    Character character = enemyCharacters[index];
+                    if (character.HasJobTargettingThisCharacter("Undermine Enemy") || targetCharacter.jobQueue.HasJob("Undermine Enemy", character)) {
+                        enemyCharacters.RemoveAt(index);
+                    } else {
+                        chosenCharacter = character;
+                    }
+                }
+                if(chosenCharacter == null) {
+                    actorText = "You should take revenge on your enemies.";
+                    if (targetCharacter.jobQueue.HasJob("Undermine Enemy")) {
+                        targetText = "That's exactly what I'm doing! Don't tell me what to do!";
+                    } else {
+                        targetText = "I should, but I rather let them fight each other.";
+                    }
+                } else {
+                    actorText = "You look like a loser right now while " + chosenCharacter.name + " is living " + Utilities.GetPronounString(chosenCharacter.gender, PRONOUN_TYPE.POSSESSIVE, false) 
+                        + " best life. Are you just gonna let " + Utilities.GetPronounString(chosenCharacter.gender, PRONOUN_TYPE.OBJECTIVE, false) + " be happy?";
+                    targetText = "I will not allow it! I'll take " + Utilities.GetPronounString(chosenCharacter.gender, PRONOUN_TYPE.OBJECTIVE, false) + " down with me!";
+
+                    GoapPlanJob job = new GoapPlanJob("Undermine Enemy", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", targetPOI = chosenCharacter });
+                    job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
+                    targetCharacter.jobQueue.AddJobInQueue(job, false, false);
+                    targetCharacter.jobQueue.ProcessFirstJobInQueue(targetCharacter);
+
+                    Log addLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "provoke");
+                    addLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    addLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                    addLog.AddLogToInvolvedObjects();
+
+                    PlayerManager.Instance.player.ShowNotification(addLog);
+                }
+            }
+        } else {
+            actorText = "You should take revenge on your enemies.";
+            targetText = "Sorry, I don't have any.";
+        }
+    }
+
+    public void Close() {
+        //UIManager.Instance.SetCoverState(false);
+        //UIManager.Instance.SetSpeedTogglesState(true);
+        this.gameObject.SetActive(false);
+    }
+}

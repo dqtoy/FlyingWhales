@@ -58,6 +58,9 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField] private IntelItem[] intelItems;
     [SerializeField] private Toggle intelToggle;
 
+    [Header("Provoke")]
+    [SerializeField] private ProvokeMenu provokeMenu;
+
     [Header("Miscellaneous")]
     [SerializeField] private Vector3 openPosition;
     [SerializeField] private Vector3 closePosition;
@@ -629,6 +632,12 @@ public class PlayerUI : MonoBehaviour {
         } else {
             rt.anchoredPosition = new Vector3(-1150f, previousPos.y, previousPos.z);
         }
+    }
+    #endregion
+
+    #region Provoke
+    public void OpenProvoke(Character minion, Character target) {
+        provokeMenu.Open(target, minion);
     }
     #endregion
 }

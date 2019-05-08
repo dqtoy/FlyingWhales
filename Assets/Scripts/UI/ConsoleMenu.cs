@@ -51,6 +51,7 @@ public class ConsoleMenu : UIMenu {
             {"/show_full_debug", ShowFullDebug },
             {"/force_action", ForceCharacterInteraction },
             {"/t_freeze_char", ToggleFreezeCharacter },
+            {"/set_mood", SetMoodToCharacter },
         };
 
 #if UNITY_EDITOR
@@ -688,6 +689,30 @@ public class ConsoleMenu : UIMenu {
             character.AdjustDoNotDisturb(-1);
         }
         AddSuccessMessage("Adjusted " + character.name + " do not disturb to " + character.doNotDisturb);
+    }
+    private void SetMoodToCharacter(string[] parameters) {
+        if (parameters.Length != 2) { //parameters command, item
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of SetMoodToCharacter");
+            return;
+        }
+        string characterParameterString = parameters[0];
+
+        Character character = CharacterManager.Instance.GetCharacterByName(characterParameterString);
+
+        if (character == null) {
+            AddErrorMessage("There is no character named " + characterParameterString);
+            return;
+        }
+        string moodParameterString = parameters[1];
+
+        int moodValue = character.moodValue;
+        if(!int.TryParse(moodParameterString, out moodValue)) {
+            AddErrorMessage("Mood value parameter is not an integer: " + moodParameterString);
+            return;
+        }
+        character.SetMoodValue(moodValue);
+        AddSuccessMessage("Set Mood Value of " + character.name + " to " + moodValue);
     }
     #endregion
 

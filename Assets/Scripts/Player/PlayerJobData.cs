@@ -32,6 +32,7 @@ public class PlayerJobData {
                 break;
             case JOB.INSTIGATOR:
                 jobActions.Add(new RileUp());
+                jobActions.Add(new Provoke());
                 break;
         }
         for (int i = 0; i < jobActions.Count; i++) {

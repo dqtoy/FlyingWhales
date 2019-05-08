@@ -207,9 +207,6 @@ public class UIManager : MonoBehaviour {
         if (landmarkInfoUI.isShowing) {
             landmarkInfoUI.CloseMenu();
         }
-        if (monsterInfoUI.isShowing) {
-            monsterInfoUI.CloseMenu();
-        }
         if (partyinfoUI.isShowing) {
             partyinfoUI.CloseMenu();
         }
@@ -307,7 +304,6 @@ public class UIManager : MonoBehaviour {
     private void UpdateInteractableInfoUI() {
         UpdateCharacterInfo();
         UpdateLandmarkInfo();
-        UpdateMonsterInfo();
     }
 
     #region World Controls
@@ -780,9 +776,6 @@ public class UIManager : MonoBehaviour {
         if (partyinfoUI.isShowing) {
             partyinfoUI.CloseMenu();
         }
-        if (monsterInfoUI.isShowing) {
-            monsterInfoUI.CloseMenu();
-        }
         if (playerLandmarkInfoUI.isShowing) {
             playerLandmarkInfoUI.CloseMenu();
         }
@@ -831,9 +824,6 @@ public class UIManager : MonoBehaviour {
         if (partyinfoUI.isShowing) {
             partyinfoUI.CloseMenu();
         }
-        if (monsterInfoUI.isShowing) {
-            monsterInfoUI.CloseMenu();
-        }
         if (playerLandmarkInfoUI.isShowing) {
             playerLandmarkInfoUI.CloseMenu();
         }
@@ -863,9 +853,6 @@ public class UIManager : MonoBehaviour {
         }
         if (partyinfoUI.isShowing) {
             partyinfoUI.CloseMenu();
-        }
-        if (monsterInfoUI.isShowing) {
-            monsterInfoUI.CloseMenu();
         }
         if (landmarkInfoUI.isShowing) {
             landmarkInfoUI.CloseMenu();
@@ -911,9 +898,6 @@ public class UIManager : MonoBehaviour {
         if (partyinfoUI.isShowing) {
             partyinfoUI.CloseMenu();
         }
-        //if (monsterInfoUI.isShowing) {
-        //    monsterInfoUI.HideMenu();
-        //}
         factionInfoUI.SetData(faction);
         factionInfoUI.OpenMenu();
         //		playerActionsUI.ShowPlayerActionsUI ();
@@ -953,9 +937,6 @@ public class UIManager : MonoBehaviour {
         //if (partyinfoUI.isShowing) {
         //    partyinfoUI.CloseMenu();
         //}
-        if (monsterInfoUI.isShowing) {
-            monsterInfoUI.CloseMenu();
-        }
 
         characterInfoUI.SetData(character);
         //if(character.role.roleType != CHARACTER_ROLE.PLAYER) {
@@ -1016,57 +997,12 @@ public class UIManager : MonoBehaviour {
         //if (hexTileInfoUI.isShowing) {
         //    hexTileInfoUI.HideMenu();
         //}
-        if (monsterInfoUI.isShowing) {
-            monsterInfoUI.CloseMenu();
-        }
         partyinfoUI.SetData(party);
         partyinfoUI.OpenMenu();
     }
     public void UpdatePartyInfo() {
         if (partyinfoUI.isShowing) {
             partyinfoUI.UpdatePartyInfo();
-        }
-    }
-    #endregion
-
-    #region Monster Info
-    [Space(10)]
-    [Header("Monster Info")]
-    [SerializeField] internal MonsterInfoUI monsterInfoUI;
-    public void ShowMonsterInfo(Monster monster) {
-        //BeforeOpeningMenu(monsterInfoUI);
-        //HideMainUI();
-        if (landmarkInfoUI.isShowing) {
-            landmarkInfoUI.CloseMenu();
-        }
-        if (playerLandmarkInfoUI.isShowing) {
-            playerLandmarkInfoUI.CloseMenu();
-        }
-        if (areaInfoUI.isShowing) {
-            areaInfoUI.CloseMenu();
-        }
-        //if (factionInfoUI.isShowing) {
-        //    factionInfoUI.HideMenu();
-        //}
-        //if (hexTileInfoUI.isShowing) {
-        //    hexTileInfoUI.HideMenu();
-        //}
-        //if (questInfoUI.isShowing) {
-        //    questInfoUI.HideMenu();
-        //}
-        if (partyinfoUI.isShowing) {
-            partyinfoUI.CloseMenu();
-        }
-        if (characterInfoUI.isShowing) {
-            characterInfoUI.CloseMenu();
-        }
-        monsterInfoUI.SetData(monster);
-        monsterInfoUI.OpenMenu();
-        //		playerActionsUI.ShowPlayerActionsUI ();
-    }
-    public void UpdateMonsterInfo() {
-        if (monsterInfoUI.isShowing) {
-            monsterInfoUI.UpdateMonsterInfo();
         }
     }
     #endregion
