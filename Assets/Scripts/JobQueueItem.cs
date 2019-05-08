@@ -8,6 +8,7 @@ public class JobQueueItem {
     public string name { get; private set; }
     public bool cannotCancelJob { get; private set; }
     public bool cancelJobOnFail { get; private set; }
+    public bool cannotOverrideJob { get; private set; }
     public List<Character> blacklistedCharacters { get; private set; }
 
     private System.Func<Character, bool> _canTakeThisJob;
@@ -46,6 +47,9 @@ public class JobQueueItem {
     }
     public void SetCancelOnFail(bool state) {
         cancelJobOnFail = state;
+    }
+    public void SetCannotOverrideJob(bool state) {
+        cannotOverrideJob = state;
     }
     public bool CanCharacterTakeThisJob(Character character) {
         if(_canTakeThisJob != null) {

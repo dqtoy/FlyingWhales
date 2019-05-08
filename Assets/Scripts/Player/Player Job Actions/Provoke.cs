@@ -6,7 +6,7 @@ public class Provoke : PlayerJobAction {
 
     public Provoke() {
         name = "Provoke";
-        SetDefaultCooldownTime(3);
+        SetDefaultCooldownTime(24);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
     }
 
