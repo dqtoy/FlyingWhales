@@ -286,7 +286,8 @@ public class GoapAction {
     /// Setup other data needed for an action, This is called during plan creation.
     /// </summary>
     /// <param name="otherData">Array of data</param>
-    public virtual void InitializeOtherData(object[] otherData) { }
+    /// <returns>If any other data was initialized</returns>
+    public virtual bool InitializeOtherData(object[] otherData) { return false; }
     protected virtual void MoveToDoAction(GoapPlan plan, Character targetCharacter) {
         //if the actor is NOT at the area where the target structure is, make him/her go there first.
         if (actor.specificLocation != targetStructure.location) {

@@ -8,7 +8,7 @@ public class Craftsman : Trait {
 
     public Craftsman() {
         name = "Craftsman";
-        craftedItemNames = new SPECIAL_TOKEN[] { SPECIAL_TOKEN.TOOL };
+        craftedItemNames = new SPECIAL_TOKEN[] { SPECIAL_TOKEN.TOOL, SPECIAL_TOKEN.HEALING_POTION };
         description = "This character can create items.";
         type = TRAIT_TYPE.SPECIAL;
         effect = TRAIT_EFFECT.POSITIVE;

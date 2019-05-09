@@ -12,9 +12,7 @@ public class LocationStructure {
     [System.NonSerialized]
     private Area _location;
     private List<SpecialToken> _itemsHere;
-    public List<IPointOfInterest> pointsOfInterest { get; private set; }
-    public List<Corpse> corpses { get; private set; }
-   
+    public List<IPointOfInterest> pointsOfInterest { get; private set; }   
     public List<INTERACTION_TYPE> poiGoapActions { get; private set; }
     public POI_STATE state { get; private set; }
 
@@ -46,7 +44,6 @@ public class LocationStructure {
         charactersHere = new List<Character>();
         _itemsHere = new List<SpecialToken>();
         pointsOfInterest = new List<IPointOfInterest>();
-        corpses = new List<Corpse>();
         tiles = new List<LocationGridTile>();
         AddListeners();
         //if (structureType == STRUCTURE_TYPE.DUNGEON || structureType == STRUCTURE_TYPE.WAREHOUSE) {
@@ -99,6 +96,15 @@ public class LocationStructure {
         for (int i = 0; i < _itemsHere.Count; i++) {
             _itemsHere[i].SetOwner(owner);
         }
+    }
+    public int GetItemsOfTypeCount(SPECIAL_TOKEN type) {
+        int count = 0;
+        for (int i = 0; i < _itemsHere.Count; i++) {
+            if (_itemsHere[i].specialTokenType == type) {
+                count++;
+            }
+        }
+        return count;
     }
     #endregion
 
@@ -195,40 +201,7 @@ public class LocationStructure {
         }
     }
     #endregion   
-
-    #region Corpses
-    public void AddCorpse(Character character, LocationGridTile tile) {
-        if (!HasCorpseOf(character)) {
-            Corpse corpse = new Corpse(character, this);
-            corpses.Add(corpse);
-            AddPOI(corpse, tile);
-        }
-    }
-    public bool RemoveCorpse(Character character) {
-        Corpse corpse = GetCorpseOf(character);
-        RemovePOI(corpse);
-        return corpses.Remove(corpse);
-    }
-    public bool HasCorpseOf(Character character) {
-        for (int i = 0; i < corpses.Count; i++) {
-            Corpse currCorpse = corpses[i];
-            if (currCorpse.character.id == character.id) {
-                return true;
-            }
-        }
-        return false;
-    }
-    private Corpse GetCorpseOf(Character character) {
-        for (int i = 0; i < corpses.Count; i++) {
-            Corpse currCorpse = corpses[i];
-            if (currCorpse.character.id == character.id) {
-                return currCorpse;
-            }
-        }
-        return null;
-    }
-    #endregion
-
+    
     #region Tiles
     public void AddTile(LocationGridTile tile) {
         if (!tiles.Contains(tile)) {

@@ -223,6 +223,14 @@ public class JobQueue {
         }
         return null;
     }
+    public JobQueueItem GetJob(string jobName) {
+        for (int i = 0; i < jobsInQueue.Count; i++) {
+            if (jobsInQueue[i].name == jobName) {
+                return jobsInQueue[i];
+            }
+        }
+        return null;
+    }
     public int GetNumberOfJobsWith(CHARACTER_STATE state) {
         int count = 0;
         for (int i = 0; i < jobsInQueue.Count; i++) {

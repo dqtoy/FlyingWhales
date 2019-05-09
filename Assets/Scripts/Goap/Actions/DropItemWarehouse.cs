@@ -5,8 +5,10 @@ using UnityEngine;
 public class DropItemWarehouse : GoapAction {
 
     private LocationStructure _targetStructure;
-
     public override LocationStructure targetStructure { get { return _targetStructure; } }
+
+    private SPECIAL_TOKEN itemTypeToDeposit;
+    private SpecialToken tokenToDeposit;
 
     public DropItemWarehouse(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.DROP_ITEM_WAREHOUSE, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionLocationType = ACTION_LOCATION_TYPE.RANDOM_LOCATION;
@@ -14,6 +16,14 @@ public class DropItemWarehouse : GoapAction {
     }
 
     #region Overrides
+    protected override void AddDefaultObjectsToLog(Log log) {
+        base.AddDefaultObjectsToLog(log);
+        log.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(itemTypeToDeposit.ToString()), LOG_IDENTIFIER.TARGET_CHARACTER); //Target character is only the identifier but it doesn't mean that this is a character, it can be item, etc.
+    }
+    protected override void ConstructPreconditionsAndEffects() {
+        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = itemTypeToDeposit.ToString(), targetPOI = actor }, HasItemTypeInInventory);
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_ITEM, conditionKey = poiTarget, targetPOI = actor });
+    }
     protected override void ConstructRequirement() {
         _requirementAction = Requirement;
     }
@@ -35,11 +45,20 @@ public class DropItemWarehouse : GoapAction {
         _targetStructure = actor.homeArea.GetRandomStructureOfType(STRUCTURE_TYPE.WAREHOUSE);
         base.SetTargetStructure();
     }
+    public override bool InitializeOtherData(object[] otherData) {
+        itemTypeToDeposit = (SPECIAL_TOKEN)otherData[0];
+        preconditions.Clear();
+        expectedEffects.Clear();
+        ConstructPreconditionsAndEffects();
+        CreateThoughtBubbleLog();
+        return true;
+    }
     #endregion
 
     #region State Effects
     private void PreDropSuccess() {
-        currentState.AddLogFiller(poiTarget, poiTarget.name, LOG_IDENTIFIER.ITEM_1);
+        tokenToDeposit = actor.GetToken(itemTypeToDeposit);
+        currentState.AddLogFiller(tokenToDeposit, tokenToDeposit.name, LOG_IDENTIFIER.ITEM_1);
         currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
     }
     private void AfterDropSuccess() {
@@ -48,15 +67,31 @@ public class DropItemWarehouse : GoapAction {
         if (targetLocation.isOccupied) {
             targetLocation = actor.currentStructure.GetRandomUnoccupiedTile();
         }
-        actor.DropToken(poiTarget as SpecialToken, actor.specificLocation, actor.currentStructure, targetLocation);
+        actor.DropToken(tokenToDeposit, actor.specificLocation, actor.currentStructure, targetLocation);
     }
     #endregion
 
     #region Requirement
     private bool Requirement() {
+        if (actor != poiTarget) {
+            return false;
+        }
+        //if (!actor.HasToken(itemTypeToDeposit)) {
+        //    return false;
+        //}
         //there must still be an unoccupied tile in the target warehouse
         LocationStructure warehouse = actor.homeArea.GetRandomStructureOfType(STRUCTURE_TYPE.WAREHOUSE);
+        if (warehouse == null) {
+            return false;
+        }
         return warehouse.unoccupiedTiles.Count > 0;
+    }
+    #endregion
+
+    #region Preconditions
+    private bool HasItemTypeInInventory() {
+        return actor.HasToken(itemTypeToDeposit);
+        //return true;
     }
     #endregion
 }

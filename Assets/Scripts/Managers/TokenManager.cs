@@ -89,6 +89,8 @@ public class TokenManager : MonoBehaviour {
                 return new ScrollOfPower();
             case SPECIAL_TOKEN.ACID_FLASK:
                 return new AcidFlask();
+            case SPECIAL_TOKEN.HEALING_POTION:
+                return new HealingPotion();
             default:
                 return new SpecialToken(tokenType, appearanceWeight);
         }

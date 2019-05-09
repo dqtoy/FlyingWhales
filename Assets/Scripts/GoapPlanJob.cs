@@ -12,7 +12,7 @@ public class GoapPlanJob : JobQueueItem {
 
     //interaction type version
     public INTERACTION_TYPE targetInteractionType { get; protected set; } //Only used if the plan to be created uses interaction type
-    public object[] otherData { get; protected set; } //Only used if the plan to be created uses interaction type
+    public Dictionary<INTERACTION_TYPE, object[]> otherData { get; protected set; } //Only used if the plan to be created uses interaction type
 
     //forced interactions per effect
     public Dictionary<GoapEffect, INTERACTION_TYPE> forcedActions { get; private set; }
@@ -29,7 +29,15 @@ public class GoapPlanJob : JobQueueItem {
         forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
         allowDeadTargets = false;
     }
-    public GoapPlanJob(string name, INTERACTION_TYPE targetInteractionType, object[] otherData) : base(name) {
+    public GoapPlanJob(string name, INTERACTION_TYPE targetInteractionType) : base(name) {
+        //this.targetEffect = targetEffect;
+        //this.targetPOI = targetEffect.targetPOI;
+        this.targetInteractionType = targetInteractionType;
+        this.otherData = null;
+        forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
+        allowDeadTargets = false;
+    }
+    public GoapPlanJob(string name, INTERACTION_TYPE targetInteractionType, Dictionary<INTERACTION_TYPE, object[]> otherData) : base(name) {
         //this.targetEffect = targetEffect;
         //this.targetPOI = targetEffect.targetPOI;
         this.targetInteractionType = targetInteractionType;
@@ -45,7 +53,7 @@ public class GoapPlanJob : JobQueueItem {
         forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
         allowDeadTargets = false;
     }
-    public GoapPlanJob(string name, INTERACTION_TYPE targetInteractionType, IPointOfInterest targetPOI, object[] otherData) : base(name) {
+    public GoapPlanJob(string name, INTERACTION_TYPE targetInteractionType, IPointOfInterest targetPOI, Dictionary<INTERACTION_TYPE, object[]> otherData) : base(name) {
         //this.targetEffect = targetEffect;
         this.targetPOI = targetPOI;
         this.targetInteractionType = targetInteractionType;
@@ -169,6 +177,10 @@ public class GoapPlanJob : JobQueueItem {
     #region Misc
     public void AllowDeadTargets() {
         allowDeadTargets = true;
+    }
+    public bool CanCraftItemChecker(Character character) {
+        SPECIAL_TOKEN token = (SPECIAL_TOKEN)otherData[INTERACTION_TYPE.CRAFT_ITEM][0];
+        return token.CanBeCraftedBy(character);
     }
     #endregion
 }
