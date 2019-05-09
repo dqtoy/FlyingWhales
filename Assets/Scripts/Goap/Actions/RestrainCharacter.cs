@@ -34,7 +34,7 @@ public class RestrainCharacter : GoapAction {
         if(parentPlan.job != null) {
             parentPlan.job.SetCannotCancelJob(true);
         }
-        AddTraitTo(poiTarget, "Restrained");
+        AddTraitTo(poiTarget, new Restrained(), actor);
     }
     public void PreTargetMissing() {
         //**Effect 1**: Remove Target from Actor's Awareness list

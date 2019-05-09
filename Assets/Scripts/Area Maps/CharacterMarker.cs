@@ -167,9 +167,9 @@ public class CharacterMarker : PooledObject {
             }
         }
     }
-    public void OnCharacterGainedTrait(Character character, Trait trait) {
+    public void OnCharacterGainedTrait(Character characterThatGainedTrait, Trait trait) {
         //this will make this character flee when he/she gains an injured trait
-        if (character == this.character) {
+        if (characterThatGainedTrait == this.character) {
             if (trait.type == TRAIT_TYPE.DISABLER) { //if the character gained a disabler trait, hinder movement
                 pathfindingAI.ClearPath();
                 //if (character.currentParty.icon.isTravelling && character.currentParty.icon.travelLine == null) {
@@ -181,20 +181,33 @@ public class CharacterMarker : PooledObject {
             }
             if (trait.name == "Unconscious") {
                 //if the character gained an unconscious trait, exit current state if it is flee
-                if (character.stateComponent.currentState != null && character.stateComponent.currentState.characterState == CHARACTER_STATE.FLEE) {
-                    character.stateComponent.currentState.OnExitThisState();
+                if (characterThatGainedTrait.stateComponent.currentState != null && characterThatGainedTrait.stateComponent.currentState.characterState == CHARACTER_STATE.FLEE) {
+                    characterThatGainedTrait.stateComponent.currentState.OnExitThisState();
                 }
-            } else if (trait.name == "Injured" && trait.responsibleCharacter != null && character.GetTrait("Unconscious") == null) {
+            } else if (trait.name == "Injured" && trait.responsibleCharacter != null && characterThatGainedTrait.GetTrait("Unconscious") == null) {
                 if (hostilesInRange.Contains(trait.responsibleCharacter)) {
-                    Debug.Log(character.name + " gained an injured trait. Reacting...");
+                    Debug.Log(characterThatGainedTrait.name + " gained an injured trait. Reacting...");
                     NormalReactToHostileCharacter(trait.responsibleCharacter, CHARACTER_STATE.FLEE);
                 }
             }
             UpdateAnimation();
             UpdateActionIcon();
+        } else {
+            if(trait.name == "Unconscious") {
+                if (inVisionPOIs.Contains(characterThatGainedTrait)) {
+                    bool overrideCurrentAction = !(this.character.currentAction != null && this.character.currentAction.parentPlan != null && this.character.currentAction.parentPlan.job != null && this.character.currentAction.parentPlan.job.cannotOverrideJob);
+                    GoapPlanJob restrainJob = this.character.CreateRestrainJob(characterThatGainedTrait);
+                    if (restrainJob != null) {
+                        if (overrideCurrentAction) {
+                            restrainJob.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
+                            this.character.homeArea.jobQueue.AssignCharacterToJob(restrainJob, this.character);
+                        }
+                    }
+                }
+            }
         }
         if(trait.type == TRAIT_TYPE.DISABLER && terrifyingCharacters.Count > 0) {
-            RemoveTerrifyingCharacter(character);
+            RemoveTerrifyingCharacter(characterThatGainedTrait);
         }
     }
     public void OnCharacterLostTrait(Character character, Trait trait) {

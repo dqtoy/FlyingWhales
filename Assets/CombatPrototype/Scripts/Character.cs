@@ -1389,7 +1389,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return false;
     }
-    private GoapPlanJob CreateRestrainJob(Character targetCharacter) {
+    public GoapPlanJob CreateRestrainJob(Character targetCharacter) {
         if (isAtHomeArea && !targetCharacter.isAtHomeArea && (role.roleType == CHARACTER_ROLE.SOLDIER || role.roleType == CHARACTER_ROLE.CIVILIAN)) {
             if (targetCharacter.GetTrait("Unconscious") != null && !HasRelationshipOfEffectWith(targetCharacter, TRAIT_EFFECT.POSITIVE) && !targetCharacter.HasJobTargettingThisCharacter("Restrain")) {
                 GoapPlanJob job = new GoapPlanJob("Restrain", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = specificLocation, targetPOI = targetCharacter });

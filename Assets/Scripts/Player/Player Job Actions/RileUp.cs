@@ -118,7 +118,7 @@ public class RileUp : PlayerJobAction {
         if(_targetCharacter == character) {
             return false;
         }
-        if(_targetCharacter.faction != FactionManager.Instance.neutralFaction && _targetCharacter.faction == character.faction) {
+        if(_targetCharacter.faction == character.faction) { //_targetCharacter.faction != FactionManager.Instance.neutralFaction &&
             return false;
         }
         if(_targetCharacter.state == POI_STATE.INACTIVE) {

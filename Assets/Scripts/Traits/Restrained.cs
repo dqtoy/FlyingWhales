@@ -45,7 +45,6 @@ public class Restrained : Trait {
             Messenger.AddListener(Signals.TICK_STARTED, CheckRestrainTrait);
             _sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_restrained");
             _sourceCharacter.RemoveTrait("Unconscious");
-
             _sourceCharacter.CancelAllJobsAndPlans();
         }
     }
@@ -101,9 +100,9 @@ public class Restrained : Trait {
         }
         return false;
     }
-    private void CreateJudgementJob(Character targetCharacter) {
+    private void CreateJudgementJob() {
         if (!_sourceCharacter.HasJobTargettingThisCharacter("Judgement")) {
-            GoapPlanJob job = new GoapPlanJob("Judgement", INTERACTION_TYPE.JUDGE_CHARACTER, targetCharacter);
+            GoapPlanJob job = new GoapPlanJob("Judgement", INTERACTION_TYPE.JUDGE_CHARACTER, _sourceCharacter);
             job.SetCanTakeThisJobChecker(CanDoJudgementJob);
             _sourceCharacter.gridTileLocation.structure.location.jobQueue.AddJobInQueue(job);
         }
@@ -114,7 +113,7 @@ public class Restrained : Trait {
     public void SetIsPrisoner(bool state) {
         isPrisoner = state;
         if(isPrisoner && _sourceCharacter.IsInOwnParty()) {
-            CreateJudgementJob(_sourceCharacter);
+            CreateJudgementJob();
         }
     }
 }

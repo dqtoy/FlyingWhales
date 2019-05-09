@@ -32,6 +32,11 @@ public class Sit : GoapAction {
     }
     #endregion
 
+    #region Effects
+    private void PreTargetMissing() {
+        currentState.AddLogFiller(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+    }
+    #endregion
     #region Requirement
     protected bool Requirement() {
         if(poiTarget.gridTileLocation != null && poiTarget.gridTileLocation.structure.structureType == STRUCTURE_TYPE.DWELLING) {
