@@ -1427,6 +1427,8 @@ public enum CRIME {
     ATTEMPTED_MURDER,
     [SubcategoryOf(CRIME_CATEGORY.SERIOUS)]
     MURDER,
+    [SubcategoryOf(CRIME_CATEGORY.SERIOUS)]
+    ABERRATION,
 }
 public enum CHARACTER_MOOD {
     DARK, BAD, GOOD, GREAT,
@@ -1440,6 +1442,7 @@ public class SubcategoryOf : System.Attribute {
     }
     public CRIME_CATEGORY Category { get; private set; }
 }
+#endregion
 public static class Extensions {
 
     #region Crimes
@@ -1529,5 +1532,17 @@ public static class Extensions {
         }
     }
     #endregion
+
+    #region Tokens
+    public static bool CanBeCraftedBy(this SPECIAL_TOKEN type, Character character) {
+        if (ItemManager.Instance.itemData.ContainsKey(type)) {
+            ItemData data = ItemManager.Instance.itemData[type];
+            if (data.neededTraitType == null) {
+                return true;
+            }
+            return character.HasTraitOf(data.neededTraitType);
+        }
+        return true;
+    }
+    #endregion
 }
-#endregion

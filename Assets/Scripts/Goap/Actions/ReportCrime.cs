@@ -38,13 +38,14 @@ public class ReportCrime : GoapAction {
     protected override int GetCost() {
         return 3;
     }
-    public override void InitializeOtherData(object[] otherData) {
+    public override bool InitializeOtherData(object[] otherData) {
         base.InitializeOtherData(otherData);
         //GoapAction crime = otherData[0] as GoapAction;
         SetCrimeToReport((CRIME)otherData[0], otherData[1] as Character);
         if (thoughtBubbleMovingLog != null) {
             thoughtBubbleMovingLog.AddToFillers(criminal, criminal.name, LOG_IDENTIFIER.CHARACTER_3);
         }
+        return true;
     }
     #endregion
 

@@ -43,12 +43,13 @@ public class AskForHelpRemovePoisonTable : GoapAction {
     //    //    log.AddToFillers(targetTable.gridTileLocation.structure, targetTable.gridTileLocation.structure.name, LOG_IDENTIFIER.LANDMARK_1);
     //    //}
     //}
-    public override void InitializeOtherData(object[] otherData) {
+    public override bool InitializeOtherData(object[] otherData) {
         base.InitializeOtherData(otherData);
         targetTable = otherData[0] as IPointOfInterest;
         if (thoughtBubbleMovingLog != null) {
             thoughtBubbleMovingLog.AddToFillers(targetTable.gridTileLocation.structure, targetTable.gridTileLocation.structure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
         }
+        return true;
     }
     #endregion
 

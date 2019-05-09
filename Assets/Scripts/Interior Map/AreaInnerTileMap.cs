@@ -1473,52 +1473,16 @@ public class AreaInnerTileMap : MonoBehaviour {
         objectsTilemap.SetTile(tile.localPlace, null);
     }
     private void OnPlaceCharacterOnTile(Character character, LocationGridTile tile) {
-        //Vector3 pos = new Vector3(tile.localPlace.x + 0.5f, tile.localPlace.y + 0.5f);
-        //if (character.marker == null) {
-        //    Vector3 pos = tile.centeredLocalLocation;
-        //    GameObject portraitGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("CharacterMarker", pos, Quaternion.identity, objectsParent);
-        //    //RectTransform rect = portraitGO.transform as RectTransform;
-        //    portraitGO.transform.localPosition = pos;
-        //    character.SetCharacterMarker(portraitGO.GetComponent<CharacterMarker>());
-        //    character.marker.SetCharacter(character);
-        //    character.marker.SetHoverAction(character.ShowTileData, InteriorMapManager.Instance.HideTileData);
-        //    //tile.SetOccupant(character);
-        //} else {
-            if (character.marker.gameObject.transform.parent != objectsParent) {
-                //This means that the character travelled to a different area
-                character.marker.gameObject.transform.SetParent(objectsParent);
-                character.marker.gameObject.transform.localPosition = tile.centeredLocalLocation;
-                character.marker.UpdatePosition();
-            }
-        //}
+        if (character.marker.gameObject.transform.parent != objectsParent) {
+            //This means that the character travelled to a different area
+            character.marker.gameObject.transform.SetParent(objectsParent);
+            character.marker.gameObject.transform.localPosition = tile.centeredLocalLocation;
+            character.marker.UpdatePosition();
+        }
 
         if (!character.marker.gameObject.activeSelf) {
             character.marker.gameObject.SetActive(true);
         }
-        //RectTransform rect = character.marker.gameObject.transform as RectTransform;
-        //rect.anchoredPosition = pos;
-        //tile.SetPrefabHere(character.marker.gameObject);
-
-        //if(!character.currentParty.icon.placeCharacterAsTileObject) {
-        //    //tile.charactersHere.Add(character);
-        //    character.SetGridTileLocation(tile);
-        //} else {
-        //    character.currentParty.icon.SetIsPlaceCharacterAsTileObject(false);
-        //    tile.SetOccupant(character);
-        //    //objectsTilemap.SetTile(tile.localPlace, null);
-        //}
-    }
-    private void OnPlaceCorpseOnTile(Corpse corpse, LocationGridTile tile) {
-        Vector3 pos = new Vector3(tile.localPlace.x, tile.localPlace.y);
-        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool("CorpseObject", pos, Quaternion.identity, objectsParent);
-        CorpseObject obj = go.GetComponent<CorpseObject>();
-        obj.SetCorpse(corpse);
-        RectTransform rect = go.transform as RectTransform;
-        rect.anchorMax = Vector2.zero;
-        rect.anchorMin = Vector2.zero;
-        go.layer = LayerMask.NameToLayer("Area Maps");
-        rect.anchoredPosition = pos;
-        //tile.SetPrefabHere(go);
     }
     public void UpdateTileObjectVisual(TileObject obj) {
         TileBase tileToUse = null;

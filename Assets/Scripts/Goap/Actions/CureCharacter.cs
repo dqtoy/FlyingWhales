@@ -17,7 +17,7 @@ public class CureCharacter : GoapAction {
 
     #region Overrides
     protected override void ConstructPreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_SUPPLY, conditionKey = 0, targetPOI = actor }, () => HasSupply(10));
+        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = "Healing Potion", targetPOI = actor }, HasItemInInventory);
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Sick", targetPOI = poiTarget });
     }
     public override void PerformActualAction() {
@@ -46,10 +46,17 @@ public class CureCharacter : GoapAction {
         }
         SetCannotCancelAction(true);
         RemoveTraitFrom(poiTarget, "Sick");
-        //**After Effect 2**: Reduce character's Supply by 10
-        actor.AdjustSupply(-10);
+        //**After Effect 2**: Remove Healing Potion from Actor's Inventory
+        actor.ConsumeToken(actor.GetToken(SPECIAL_TOKEN.HEALING_POTION));
         //**After Effect 3**: Allow movement of Target
         //(poiTarget as Character).marker.pathfindingAI.AdjustDoNotMove(-1);
+    }
+    #endregion
+
+    #region Preconditions
+    private bool HasItemInInventory() {
+        return actor.HasItem("Healing Potion");
+        //return true;
     }
     #endregion
 }

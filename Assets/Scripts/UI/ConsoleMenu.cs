@@ -192,14 +192,6 @@ public class ConsoleMenu : UIMenu {
                 }
             }
         }
-        text += "\n<b>Corpses:</b> ";
-        if (area.corpsesInArea.Count > 0) {
-            for (int i = 0; i < area.corpsesInArea.Count; i++) {
-                text += "\n\t" + area.corpsesInArea[i].character.name;
-            }
-        } else {
-            text += "None";
-        }
         return text;
     }
     private string GetSecondaryAreaInfo() {

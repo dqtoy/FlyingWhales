@@ -1514,7 +1514,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 }
             }
             if (targetCharacter != null) {
-                GoapPlanJob job = new GoapPlanJob("Ask For Help " + helpType.ToString(), helpType, targetCharacter, otherData);
+                GoapPlanJob job = new GoapPlanJob("Ask For Help " + helpType.ToString(), helpType, targetCharacter, new Dictionary<INTERACTION_TYPE, object[]>() {
+                    { helpType, otherData }
+                });
                 jobQueue.AddJobInQueue(job);
             } else {
                 RegisterLogAndShowNotifToThisCharacterOnly("Generic", "ask_for_help_fail", troubledCharacter, troubledCharacter.name);
@@ -2747,9 +2749,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 
         //Random Traits
         int chance = UnityEngine.Random.Range(0, 100);
-        if (chance < 10) {
+        //if (chance < 10) {
             AddTrait(new Craftsman());
-        }
+        //}
     }
     public void CreateInitialTraitsByRace() {
         if (race == RACE.HUMANS) {
@@ -2953,6 +2955,15 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         }
         return null;
+    }
+    public bool HasTraitOf(System.Type traitType) {
+        for (int i = 0; i < _traits.Count; i++) {
+            System.Type type = _traits[i].GetType();
+            if (type == traitType) {
+                return true;
+            }
+        }
+        return false;
     }
     public List<Trait> RemoveAllTraitsByType(TRAIT_TYPE traitType) {
         List<Trait> removedTraits = new List<Trait>();
@@ -3309,7 +3320,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 
     #region Interaction
     public void AddInteractionType(INTERACTION_TYPE type) {
-        currentInteractionTypes.Add(type);
+        if (!currentInteractionTypes.Contains(type)) {
+            currentInteractionTypes.Add(type);
+        }
     }
     public void RemoveInteractionType(INTERACTION_TYPE type) {
         currentInteractionTypes.Remove(type);
@@ -4184,6 +4197,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return null;
     }
+    public SpecialToken GetToken(SPECIAL_TOKEN token) {
+        for (int i = 0; i < items.Count; i++) {
+            if (items[i].specialTokenType == token) {
+                return items[i];
+            }
+        }
+        return null;
+    }
     public SpecialToken GetToken(string tokenName) {
         for (int i = 0; i < items.Count; i++) {
             if (items[i].tokenName.ToLower() == tokenName.ToLower()) {
@@ -4223,6 +4244,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         }
         return count;
+    }
+    public bool HasToken(SPECIAL_TOKEN tokenType) {
+        for (int i = 0; i < items.Count; i++) {
+            if (items[i].specialTokenType == tokenType) {
+                return true;
+            }
+        }
+        return false;
     }
     #endregion
 
@@ -4690,37 +4719,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             for (int i = 0; i < poiGoapActions.Count; i++) {
                 INTERACTION_TYPE currType = poiGoapActions[i];
                 if (actorAllowedInteractions.Contains(currType)){
-                    if(currType == INTERACTION_TYPE.CRAFT_ITEM) {
-                        Craftsman craftsman = GetTrait("Craftsman") as Craftsman;
-                        for (int j = 0; j < craftsman.craftedItemNames.Length; j++) {
-                            CraftItemGoap goapAction = InteractionManager.Instance.CreateNewGoapInteraction(currType, actor, this, false) as CraftItemGoap;
-                            goapAction.SetCraftedItem(craftsman.craftedItemNames[j]);
-                            goapAction.Initialize();
-                            if (goapAction.CanSatisfyRequirements()) {
-                                usableActions.Add(goapAction);
-                            }
-                        }
-                    } else {
-                        GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(currType, actor, this);
-                        if (goapAction == null) {
-                            throw new Exception("Goap action " + currType.ToString() + " is null!");
-                        }
-                        if (goapAction.CanSatisfyRequirements()) {
-                            usableActions.Add(goapAction);
-                        }
-                    } 
-                }
-            }
-            return usableActions;
-        }
-        return null;
-    }
-    public List<GoapAction> AdvertiseActionsToActorFromDeadCharacter(Character actor, List<INTERACTION_TYPE> actorAllowedInteractions) {
-        if (poiGoapActions != null && poiGoapActions.Count > 0) {
-            List<GoapAction> usableActions = new List<GoapAction>();
-            for (int i = 0; i < poiGoapActions.Count; i++) {
-                INTERACTION_TYPE currType = poiGoapActions[i];
-                if (actorAllowedInteractions.Contains(currType)) {
                     if (currType == INTERACTION_TYPE.CRAFT_ITEM) {
                         Craftsman craftsman = GetTrait("Craftsman") as Craftsman;
                         for (int j = 0; j < craftsman.craftedItemNames.Length; j++) {
@@ -4740,6 +4738,38 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                             usableActions.Add(goapAction);
                         }
                     }
+                }
+            }
+            return usableActions;
+        }
+        return null;
+    }
+    public List<GoapAction> AdvertiseActionsToActorFromDeadCharacter(Character actor, List<INTERACTION_TYPE> actorAllowedInteractions) {
+        if (poiGoapActions != null && poiGoapActions.Count > 0) {
+            List<GoapAction> usableActions = new List<GoapAction>();
+            for (int i = 0; i < poiGoapActions.Count; i++) {
+                INTERACTION_TYPE currType = poiGoapActions[i];
+                if (actorAllowedInteractions.Contains(currType)) {
+                    GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(currType, actor, this);
+                    if (goapAction == null) {
+                        throw new Exception("Goap action " + currType.ToString() + " is null!");
+                    }
+                    if (goapAction.CanSatisfyRequirements()) {
+                        usableActions.Add(goapAction);
+                    }
+                    //if (currType == INTERACTION_TYPE.CRAFT_ITEM) {
+                    //    Craftsman craftsman = GetTrait("Craftsman") as Craftsman;
+                    //    for (int j = 0; j < craftsman.craftedItemNames.Length; j++) {
+                    //        CraftItemGoap goapAction = InteractionManager.Instance.CreateNewGoapInteraction(currType, actor, this, false) as CraftItemGoap;
+                    //        goapAction.SetCraftedItem(craftsman.craftedItemNames[j]);
+                    //        goapAction.Initialize();
+                    //        if (goapAction.CanSatisfyRequirements()) {
+                    //            usableActions.Add(goapAction);
+                    //        }
+                    //    }
+                    //} else {
+                        
+                    //}
                 }
             }
             return usableActions;
@@ -4777,6 +4807,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         poiGoapActions.Add(INTERACTION_TYPE.ASK_FOR_HELP_REMOVE_POISON_TABLE);
         poiGoapActions.Add(INTERACTION_TYPE.BURY_CHARACTER);
         poiGoapActions.Add(INTERACTION_TYPE.CARRY_CORPSE);
+        poiGoapActions.Add(INTERACTION_TYPE.DROP_ITEM_WAREHOUSE);
     }
     public void StartGOAP(GoapEffect goal, IPointOfInterest target, GOAP_CATEGORY category, bool isPriority = false, List<Character> otherCharactePOIs = null, bool isPersonalPlan = true, GoapPlanJob job = null, bool allowDeadTargets = false) {
         List<CharacterAwareness> characterTargetsAwareness = new List<CharacterAwareness>();
@@ -4825,7 +4856,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         _numOfWaitingForGoapThread++;
         MultiThreadPool.Instance.AddToThreadPool(new GoapThread(this, target, goal, category, isPriority, characterTargetsAwareness, isPersonalPlan, job, allowDeadTargets));
     }
-    public void StartGOAP(INTERACTION_TYPE goalType, IPointOfInterest target, GOAP_CATEGORY category, bool isPriority = false, List<Character> otherCharactePOIs = null, bool isPersonalPlan = true, GoapPlanJob job = null, object[] otherData = null, bool allowDeadTargets = false) {
+    public void StartGOAP(INTERACTION_TYPE goalType, IPointOfInterest target, GOAP_CATEGORY category, bool isPriority = false, List<Character> otherCharactePOIs = null, bool isPersonalPlan = true, GoapPlanJob job = null, Dictionary<INTERACTION_TYPE, object[]> otherData = null, bool allowDeadTargets = false) {
         List<CharacterAwareness> characterTargetsAwareness = new List<CharacterAwareness>();
         if (target != null && target.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
             CharacterAwareness characterAwareness = AddAwareness(target) as CharacterAwareness;
@@ -5633,7 +5664,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     if (witnessedCrime != null) {
                         this.marker.AddHostileInRange(actor, CHARACTER_STATE.FLEE);
                     }
-                    job = new GoapPlanJob("Report Crime", INTERACTION_TYPE.REPORT_CRIME, new object[] { committedCrime, actor });
+                    job = new GoapPlanJob("Report Crime", INTERACTION_TYPE.REPORT_CRIME, new Dictionary<INTERACTION_TYPE, object[]>() {
+                        { INTERACTION_TYPE.REPORT_CRIME,  new object[] { committedCrime, actor }}
+                    });
                     job.SetCannotOverrideJob(true);
                     jobQueue.AddJobInQueue(job);
                 }
@@ -5688,6 +5721,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 break;
             case CRIME.ATTEMPTED_MURDER:
                 trait = new AttemptedMurderer();
+                break;
+            case CRIME.ABERRATION:
+                trait = new Aberration();
                 break;
             default:
                 break;

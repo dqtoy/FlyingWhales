@@ -103,7 +103,7 @@ public class ExploreState : CharacterState {
     }
 
     public void CreateDeliverTreasureJob() {
-        GoapPlanJob job = new GoapPlanJob("Deliver Treasure", INTERACTION_TYPE.DROP_ITEM_WAREHOUSE, new object[] { });
+        GoapPlanJob job = new GoapPlanJob("Deliver Treasure", INTERACTION_TYPE.DROP_ITEM_WAREHOUSE);
         job.SetPlanConstructor(DeliverTreasureConstructor);
         stateComponent.character.jobQueue.AddJobInQueue(job);
     }
@@ -112,7 +112,8 @@ public class ExploreState : CharacterState {
         GoapNode startNode = null;
         for (int i = 0; i < itemsCollected.Count; i++) {
             SpecialToken item = itemsCollected[i];
-            GoapAction currAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.DROP_ITEM_WAREHOUSE, stateComponent.character, item);
+            GoapAction currAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.DROP_ITEM_WAREHOUSE, stateComponent.character, stateComponent.character);
+            currAction.InitializeOtherData(new object[] { item.specialTokenType });
             GoapNode currNode = new GoapNode(previousNode, currAction.cost, currAction);
             if (i + 1 == itemsCollected.Count) {
                 startNode = currNode;
