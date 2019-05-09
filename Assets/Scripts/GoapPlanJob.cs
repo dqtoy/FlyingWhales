@@ -133,6 +133,20 @@ public class GoapPlanJob : JobQueueItem {
         }
         return base.CanTakeJob(character);
     }
+    public override bool CanCharacterTakeThisJob(Character character) {
+        if (_canTakeThisJob != null) {
+            if (_canTakeThisJob(character)) {
+                return CanTakeJob(character);
+            }
+            return false;
+        } else if (_canTakeThisJobWithTarget != null && targetPOI != null && targetPOI is Character) {
+            if (_canTakeThisJobWithTarget(character, targetPOI as Character)) {
+                return CanTakeJob(character);
+            }
+            return false;
+        }
+        return CanTakeJob(character);
+    }
     #endregion
 
     public void SetAssignedPlan(GoapPlan plan) {

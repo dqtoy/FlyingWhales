@@ -11,7 +11,8 @@ public class JobQueueItem {
     public bool cannotOverrideJob { get; private set; }
     public List<Character> blacklistedCharacters { get; private set; }
 
-    private System.Func<Character, bool> _canTakeThisJob;
+    protected System.Func<Character, bool> _canTakeThisJob;
+    protected System.Func<Character, Character, bool> _canTakeThisJobWithTarget;
 
     public JobQueueItem(string name) {
         this.name = name;
@@ -25,6 +26,15 @@ public class JobQueueItem {
     }
     public virtual void OnAddJobToQueue() { }
     public virtual bool OnRemoveJobFromQueue() { return true; }
+    public virtual bool CanCharacterTakeThisJob(Character character) {
+        if (_canTakeThisJob != null) {
+            if (_canTakeThisJob(character)) {
+                return CanTakeJob(character);
+            }
+            return false;
+        }
+        return CanTakeJob(character);
+    }
     #endregion
 
     public void SetJobQueueParent(JobQueue parent) {
@@ -45,6 +55,9 @@ public class JobQueueItem {
     public void SetCanTakeThisJobChecker(System.Func<Character, bool> function) {
         _canTakeThisJob = function;
     }
+    public void SetCanTakeThisJobChecker(System.Func<Character, Character, bool> function) {
+        _canTakeThisJobWithTarget = function;
+    }
     public void SetCannotCancelJob(bool state) {
         cannotCancelJob = state;
     }
@@ -53,15 +66,6 @@ public class JobQueueItem {
     }
     public void SetCannotOverrideJob(bool state) {
         cannotOverrideJob = state;
-    }
-    public bool CanCharacterTakeThisJob(Character character) {
-        if(_canTakeThisJob != null) {
-            if (_canTakeThisJob(character)) {
-                return CanTakeJob(character);
-            }
-            return false;
-        }
-        return CanTakeJob(character);
     }
     public void AddBlacklistedCharacter(Character character) {
         if (!blacklistedCharacters.Contains(character)) {

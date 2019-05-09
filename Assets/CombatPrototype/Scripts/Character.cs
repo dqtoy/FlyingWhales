@@ -1269,6 +1269,15 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 homeArea.jobQueue.AssignCharacterToJob(restrainJob, this);
             }
         }
+
+        GoapPlanJob assaultJob = CreateAssaultJob(targetCharacter);
+        if (assaultJob != null) {
+            hasCreatedJob = true;
+            if (overrideCurrentAction) {
+                assaultJob.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
+                homeArea.jobQueue.AssignCharacterToJob(assaultJob, this);
+            }
+        }
         return hasCreatedJob;
     }
     private bool CreateRemoveTraitJobs(Character targetCharacter, bool overrideCurrentAction) {
@@ -1313,6 +1322,15 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return false;
     }
+    private bool CanThisCharacterTakeRemoveTraitJob(Character targetCharacter) {
+        if (this != targetCharacter && this.faction.id == targetCharacter.faction.id) {
+            if (this.faction.id == FactionManager.Instance.neutralFaction.id) {
+                return this.race == targetCharacter.race && this.homeArea == targetCharacter.homeArea && !targetCharacter.HasRelationshipOfTypeWith(this, RELATIONSHIP_TRAIT.ENEMY);
+            }
+            return !targetCharacter.HasRelationshipOfTypeWith(this, RELATIONSHIP_TRAIT.ENEMY);
+        }
+        return false;
+    }
     private bool CreateUndermineJob(Character targetCharacter, bool overrideCurrentAction) {
         if (HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.ENEMY) && !jobQueue.HasJob("Undermine Enemy", targetCharacter)) {
             int chance = UnityEngine.Random.Range(0, 100);
@@ -1339,6 +1357,20 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return false;
     }
+    private GoapPlanJob CreateAssaultJob(Character targetCharacter) {
+        if (isAtHomeArea && !targetCharacter.isAtHomeArea && (role.roleType == CHARACTER_ROLE.SOLDIER || role.roleType == CHARACTER_ROLE.ADVENTURER)) {
+            if (IsHostileWith(targetCharacter) && !HasRelationshipOfEffectWith(targetCharacter, TRAIT_EFFECT.POSITIVE) && !targetCharacter.HasJobTargettingThisCharacter("Restrain")) {
+                GoapPlanJob job = new GoapPlanJob("Assault", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", targetPOI = targetCharacter });
+                job.SetCanTakeThisJobChecker(CanCharacterTakeRestrainJob);
+                homeArea.jobQueue.AddJobInQueue(job);
+                return job;
+            }
+        }
+        return null;
+    }
+    private bool CanCharacterTakeAssaultJob(Character character, Character targetCharacter) {
+        return (character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.ADVENTURER) && !HasRelationshipOfEffectWith(targetCharacter, TRAIT_EFFECT.POSITIVE);
+    }
     private bool CreateBuryJob(Character targetCharacter, bool overrideCurrentAction) {
         if (targetCharacter.isDead && (role.roleType == CHARACTER_ROLE.SOLDIER || role.roleType == CHARACTER_ROLE.CIVILIAN)) {
             if (!jobQueue.HasJob("Bury", targetCharacter)) {
@@ -1357,6 +1389,21 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return false;
     }
+    private GoapPlanJob CreateRestrainJob(Character targetCharacter) {
+        if (isAtHomeArea && !targetCharacter.isAtHomeArea && (role.roleType == CHARACTER_ROLE.SOLDIER || role.roleType == CHARACTER_ROLE.CIVILIAN)) {
+            if (targetCharacter.GetTrait("Unconscious") != null && !HasRelationshipOfEffectWith(targetCharacter, TRAIT_EFFECT.POSITIVE) && !targetCharacter.HasJobTargettingThisCharacter("Restrain")) {
+                GoapPlanJob job = new GoapPlanJob("Restrain", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = specificLocation, targetPOI = targetCharacter });
+                job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = targetCharacter }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
+                job.SetCanTakeThisJobChecker(CanCharacterTakeRestrainJob);
+                homeArea.jobQueue.AddJobInQueue(job);
+                return job;
+            }
+        }
+        return null;
+    }
+    private bool CanCharacterTakeRestrainJob(Character character, Character targetCharacter) {
+        return (character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.CIVILIAN) && !HasRelationshipOfEffectWith(targetCharacter, TRAIT_EFFECT.POSITIVE); // || character.role.roleType == CHARACTER_ROLE.ADVENTURER
+    }
     public GoapPlanJob CreateApprehendJobForThisCharacter() {
         //if (homeArea.id == specificLocation.id) {
         if (!HasJobTargettingThisCharacter("Apprehend")) {
@@ -1370,33 +1417,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         return null;
         //}
     }
-    private bool CanCharacterTakeApprehendJob(Character character) {
-        return character.role.roleType == CHARACTER_ROLE.SOLDIER;
+    private bool CanCharacterTakeApprehendJob(Character character, Character targetCharacter) {
+        return character.role.roleType == CHARACTER_ROLE.SOLDIER && !HasRelationshipOfEffectWith(targetCharacter, TRAIT_EFFECT.POSITIVE);
     }
-    private GoapPlanJob CreateRestrainJob(Character targetCharacter) {
-        if (isAtHomeArea && !targetCharacter.isAtHomeArea && (role.roleType == CHARACTER_ROLE.SOLDIER || role.roleType == CHARACTER_ROLE.CIVILIAN)) {
-            if (targetCharacter.GetTrait("Unconscious") != null && !targetCharacter.HasJobTargettingThisCharacter("Restrain")) {
-                GoapPlanJob job = new GoapPlanJob("Restrain", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = specificLocation, targetPOI = targetCharacter });
-                job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = targetCharacter }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
-                job.SetCanTakeThisJobChecker(CanCharacterTakeRestrainJob);
-                homeArea.jobQueue.AddJobInQueue(job);
-                return job;
-            }
-        }
-        return null;
-    }
-    private bool CanCharacterTakeRestrainJob(Character character) {
-        return character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.CIVILIAN; // || character.role.roleType == CHARACTER_ROLE.ADVENTURER
-    }
-    private bool CanThisCharacterTakeRemoveTraitJob(Character targetCharacter) {
-        if (this != targetCharacter && this.faction.id == targetCharacter.faction.id) {
-            if(this.faction.id == FactionManager.Instance.neutralFaction.id) {
-                return this.race == targetCharacter.race && this.homeArea == targetCharacter.homeArea && !targetCharacter.HasRelationshipOfTypeWith(this, RELATIONSHIP_TRAIT.ENEMY);
-            }
-            return !targetCharacter.HasRelationshipOfTypeWith(this, RELATIONSHIP_TRAIT.ENEMY);
-        }
-        return false;
-    }
+
     public void CreatePersonalJobs() {
         //Claim Item Job
         bool hasCreatedJob = false;
