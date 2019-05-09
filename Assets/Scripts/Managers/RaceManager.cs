@@ -122,6 +122,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.NAP,
                 INTERACTION_TYPE.BURY_CHARACTER,
                 INTERACTION_TYPE.CARRY_CORPSE,
+                INTERACTION_TYPE.REMEMBER_FALLEN,
             } },
             { RACE.ELVES, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -206,6 +207,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.NAP,
                 INTERACTION_TYPE.BURY_CHARACTER,
                 INTERACTION_TYPE.CARRY_CORPSE,
+                INTERACTION_TYPE.REMEMBER_FALLEN,
             } },
             { RACE.GOBLIN, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -291,6 +293,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.NAP,
                 INTERACTION_TYPE.BURY_CHARACTER,
                 INTERACTION_TYPE.CARRY_CORPSE,
+                INTERACTION_TYPE.REMEMBER_FALLEN,
             } },
             { RACE.FAERY, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -376,6 +379,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.NAP,
                 INTERACTION_TYPE.BURY_CHARACTER,
                 INTERACTION_TYPE.CARRY_CORPSE,
+                INTERACTION_TYPE.REMEMBER_FALLEN,
             } },
             { RACE.SKELETON, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,

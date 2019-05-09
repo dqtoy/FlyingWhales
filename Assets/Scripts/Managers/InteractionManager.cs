@@ -1111,6 +1111,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.CARRY_CORPSE:
                 goapAction = new CarryCorpse(actor, target);
                 break;
+            case INTERACTION_TYPE.REMEMBER_FALLEN:
+                goapAction = new RememberFallen(actor, target);
+                break;
         }
         if(goapAction != null && willInitialize) {
             goapAction.Initialize();

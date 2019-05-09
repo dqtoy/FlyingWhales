@@ -19,9 +19,15 @@ public class Provoke : PlayerJobAction {
         if (targetCharacter.isDead || character.id == targetCharacter.id) {
             return false;
         }
+        //if (targetCharacter.role.roleType == CHARACTER_ROLE.BEAST || targetCharacter.faction.id == FactionManager.Instance.neutralFaction.id) {
+        //    return false;
+        //}
+        return base.ShouldButtonBeInteractable(character, targetCharacter);
+    }
+    public override bool CanTarget(Character targetCharacter) {
         if (targetCharacter.role.roleType == CHARACTER_ROLE.BEAST || targetCharacter.faction.id == FactionManager.Instance.neutralFaction.id) {
             return false;
         }
-        return base.ShouldButtonBeInteractable(character, targetCharacter);
+        return base.CanTarget(targetCharacter);
     }
 }
