@@ -57,7 +57,6 @@ public class TransformToWolfForm : GoapAction {
             reactions.Add(string.Format("Lycanthropes are not welcome here. {0} must be restrained!", actor.name));
             //-**Recipient Effect**: If soldier, noble or faction leader, brand Actor with Aberration crime (add Apprehend job). Otherwise, add a personal Report Crime job to the Recipient.
             if (recipient.role.roleType == CHARACTER_ROLE.SOLDIER || recipient.role.roleType == CHARACTER_ROLE.NOBLE || recipient.role.roleType == CHARACTER_ROLE.LEADER) {
-                //Add Aberration Crime
                 actor.AddCriminalTrait(CRIME.ABERRATION);
                 GoapPlanJob job = actor.CreateApprehendJobForThisCharacter();
                 //if (job != null) {
@@ -77,7 +76,6 @@ public class TransformToWolfForm : GoapAction {
             reactions.Add(string.Format("Lycanthropes are not welcome here. {0} must be restrained!", actor.name));
             //-**Recipient Effect**: If soldier, noble or faction leader, brand Actor with Aberration crime (add Apprehend job). Otherwise, add a personal Report Crime job to the Recipient.
             if (recipient.role.roleType == CHARACTER_ROLE.SOLDIER || recipient.role.roleType == CHARACTER_ROLE.NOBLE || recipient.role.roleType == CHARACTER_ROLE.LEADER) {
-                //Add Aberration Crime
                 actor.AddCriminalTrait(CRIME.ABERRATION);
                 GoapPlanJob job = actor.CreateApprehendJobForThisCharacter();
                 //if (job != null) {
