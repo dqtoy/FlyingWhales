@@ -5,7 +5,7 @@ using UnityEngine;
 public class Unconscious : Trait {
     private Character _responsibleCharacter;
     private Character _sourceCharacter;
-    private GoapPlanJob _restrainJob;
+    //private GoapPlanJob _restrainJob;
     //private GoapPlanJob _removeTraitJob;
 
     #region getters/setters
@@ -42,35 +42,24 @@ public class Unconscious : Trait {
         base.OnAddTrait(sourceCharacter);
         if(sourceCharacter is Character) {
             _sourceCharacter = sourceCharacter as Character;
-            CheckToApplyRestrainJob();
+            //CheckToApplyRestrainJob();
             //_sourceCharacter.CreateRemoveTraitJob(name);
             _sourceCharacter.AddTraitNeededToBeRemoved(this);
             _sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, name.ToLower());
         }
     }
     public override void OnRemoveTrait(IPointOfInterest sourceCharacter) {
-        if (_restrainJob != null) {
-            _restrainJob.jobQueueParent.CancelJob(_restrainJob);
-        }
+        //if (_restrainJob != null) {
+        //    _restrainJob.jobQueueParent.CancelJob(_restrainJob);
+        //}
         //if (_removeTraitJob != null) {
         //    _removeTraitJob.jobQueueParent.CancelJob(_removeTraitJob);
         //}
+        _sourceCharacter.CancelAllJobsTargettingThisCharacter("Restrain");
         _sourceCharacter.CancelAllJobsTargettingThisCharacter("Remove Trait", name);
         _sourceCharacter.RemoveTraitNeededToBeRemoved(this);
         _sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, name.ToLower());
         base.OnRemoveTrait(sourceCharacter);
     }
     #endregion
-
-    private void CheckToApplyRestrainJob() {
-        if (!_sourceCharacter.isAtHomeArea && !_sourceCharacter.HasJobTargettingThisCharacter("Restrain")) {
-            _restrainJob = new GoapPlanJob("Restrain", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = _sourceCharacter.specificLocation, targetPOI = _sourceCharacter });
-            _restrainJob.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = _sourceCharacter }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
-            _restrainJob.SetCanTakeThisJobChecker(CanCharacterTakeRestrainJob);
-            _sourceCharacter.specificLocation.jobQueue.AddJobInQueue(_restrainJob);
-        }
-    }
-    private bool CanCharacterTakeRestrainJob(Character character) {
-        return character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.CIVILIAN || character.role.roleType == CHARACTER_ROLE.ADVENTURER;
-    }
 }

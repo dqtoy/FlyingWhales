@@ -107,7 +107,6 @@ GameObject:
   - component: {fileID: 114720397635659402}
   - component: {fileID: 114167030245026914}
   - component: {fileID: 114577038380254382}
-  - component: {fileID: 114343739314239670}
   m_Layer: 14
   m_Name: CharacterMarker
   m_TagString: Character Marker
@@ -508,28 +507,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   version: 1
   target: {fileID: 0}
---- !u!114 &114343739314239670
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1392417203996010}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b090bec917bbe4c3bbc612ef13f7c4a1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  version: 1
-  useRaycasting: 0
-  mask:
-    serializedVersion: 2
-    m_Bits: 49152
-  thickRaycast: 0
-  thickRaycastRadius: 0
-  use2DPhysics: 0
-  raycastOffset: {x: 0, y: 0, z: 0}
-  useGraphRaycasting: 1
-  quality: 1
 --- !u!114 &114379759619008666
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -587,6 +564,7 @@ MonoBehaviour:
   visionCollision: {fileID: 114699231813471468}
   colorHighlight: {fileID: 212653369134426336}
   penaltyRadius: 8
+  useCanTraverse: 0
 --- !u!114 &114577038380254382
 MonoBehaviour:
   m_ObjectHideFlags: 1
