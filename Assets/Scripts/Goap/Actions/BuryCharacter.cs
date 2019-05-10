@@ -58,7 +58,14 @@ public class BuryCharacter : GoapAction {
         //**After Effect 2**: Place a Tombstone tile object in adjacent unoccupied tile, link it with Target.
         List<LocationGridTile> choices = actor.gridTileLocation.UnoccupiedNeighbours.Where(x => x.structure == actor.currentStructure).ToList();
         LocationGridTile chosenLocation = choices[Random.Range(0, choices.Count)];
-        actor.currentStructure.AddPOI(new Tombstone(targetCharacter, actor.currentStructure), chosenLocation);
+        Tombstone tombstone = new Tombstone(targetCharacter, actor.currentStructure);
+        actor.currentStructure.AddPOI(tombstone, chosenLocation);
+        List<Character> characters = targetCharacter.GetAllCharactersThatHasRelationship();
+        if(characters != null) {
+            for (int i = 0; i < characters.Count; i++) {
+                characters[i].AddAwareness(tombstone);
+            }
+        }
         //targetCharacter.CancelAllJobsTargettingThisCharacter("target is already buried", false);
     }
     #endregion
