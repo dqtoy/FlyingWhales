@@ -627,7 +627,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //portraitGO.transform.localPosition = pos;
         SetCharacterMarker(portraitGO.GetComponent<CharacterMarker>());
         marker.SetCharacter(this);
-        marker.SetHoverAction(ShowTileData, InteriorMapManager.Instance.HideTileData);
+        //marker.SetHoverAction(ShowTileData, InteriorMapManager.Instance.HideTileData);
     }
     public void DestroyMarker() {
         ObjectPoolManager.Instance.DestroyObject(marker.gameObject);

@@ -103,6 +103,9 @@ public class PlayerJobActionButton : MonoBehaviour {
         } else if (action is Intervene) {
             message = "The Debilitator will convince " + target.name + " to drop his current plans.";
             header = "Debilitator Action";
+        } else if (action is Provoke) {
+            message = "The Instigator will provoke " + target.name + " into attacking one of " + Utilities.GetPronounString(target.gender, PRONOUN_TYPE.POSSESSIVE, false) + " enemies. This is more likely to succeed if " + target.name + " is in a bad mood.";
+            header = "Instigator Action";
         }
 
         if (action.isInCooldown) {
