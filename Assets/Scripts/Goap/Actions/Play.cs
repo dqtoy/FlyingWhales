@@ -12,6 +12,7 @@ public class Play : GoapAction {
     protected override string failActionState { get { return "Play Failed"; } }
 
     public Play(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.PLAY, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+        shouldIntelNotificationOnlyIfActorIsActive = true;
         actionLocationType = ACTION_LOCATION_TYPE.NEARBY;
         //validTimeOfDays = new TIME_IN_WORDS[] {
         //    TIME_IN_WORDS.MORNING,

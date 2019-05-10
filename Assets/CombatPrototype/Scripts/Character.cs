@@ -1294,7 +1294,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //}
         return hasCreatedJob;
     }
-    private bool CreateRemoveTraitJobs(Character targetCharacter, bool overrideCurrentAction) {
+    public bool CreateRemoveTraitJobs(Character targetCharacter, bool overrideCurrentAction) {
         if(targetCharacter.traitsNeededToBeRemoved.Count <= 0 || targetCharacter.isDead) {
             return false;
         }
@@ -5743,8 +5743,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = actor }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
                     //job.SetCanTakeThisJobChecker(CanCharacterTakeApprehendJob);
                     //homeArea.jobQueue.AddJobInQueue(job);
-                    job = actor.CreateApprehendJobForThisCharacter(false);
+                    job = actor.CreateApprehendJobForThisCharacter(true);
                     if(job != null) {
+                        job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
                         homeArea.jobQueue.ForceAssignCharacterToJob(job, this);
                     }
                 }
