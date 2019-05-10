@@ -36,11 +36,11 @@ public class CurseCharacter : GoapAction {
     }
     public override void PerformActualAction() {
         base.PerformActualAction();
-        if (!isTargetMissing && (poiTarget as Character).IsInOwnParty()) {
-            SetState("Curse Success");
-        } else {
-            SetState("Target Missing");
-        }
+        //if (!isTargetMissing && (poiTarget as Character).IsInOwnParty()) {
+        //} else {
+        //    SetState("Target Missing");
+        //}
+        SetState("Curse Success");
     }
     protected override int GetCost() {
         return 3;
