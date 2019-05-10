@@ -37,9 +37,9 @@ public class Steal : GoapAction {
     }
     protected override int GetCost() {
         if (actor.GetTrait("Kleptomaniac") != null) {
-            return 4;
+            return Utilities.rng.Next(5, 46);
         }
-        return 12;
+        return Utilities.rng.Next(35, 56);
     }
     #endregion
 
