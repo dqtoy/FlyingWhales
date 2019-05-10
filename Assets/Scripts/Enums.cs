@@ -1473,7 +1473,7 @@ public static class Extensions {
     /// Is this stucture contained within a rectangle?
     /// </summary>
     /// <param name="sub"></param>
-    /// <returns></returns>
+    /// <returns>True or false</returns>
     public static bool IsOpenSpace(this STRUCTURE_TYPE sub) {
         switch (sub) {
             case STRUCTURE_TYPE.INN:

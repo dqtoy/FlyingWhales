@@ -41,14 +41,25 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
                     collisionSummary += "\n-has same structure as " + parentMarker.character.name + " adding as in range";
                     NormalEnterHandling(collidedWith.poi);
                 } else {
-                    //if it is not, add the poi to the list of pois in different structures instead
+                    //if it is not, check both character's structure types
+
+                    //if both characters are in an open space, add them as normal
+                    if (collidedWith.poi.gridTileLocation != null && collidedWith.poi.gridTileLocation.structure != null 
+                        && parentMarker.character.gridTileLocation != null && parentMarker.character.gridTileLocation.structure != null
+                        && collidedWith.poi.gridTileLocation.structure.structureType.IsOpenSpace() && parentMarker.character.gridTileLocation.structure.structureType.IsOpenSpace()) {
+                        collisionSummary += "\n-has different structure with " + parentMarker.character.name + " but both are in open space, allowing vision collision.";
+                        NormalEnterHandling(collidedWith.poi);
+                    }
+                    //if not, add the poi to the list of pois in different structures instead
                     //once there, it can only be removed from there if the poi exited this trigger or the poi moved 
                     //to the same structure that this character is in
-                    collisionSummary += "\n-has different structure with " + parentMarker.character.name + " queuing...";
-                    AddPOIAsInRangeButDifferentStructure(collidedWith.poi);
+                    else {
+                        collisionSummary += "\n-has different structure with " + parentMarker.character.name + " queuing...";
+                        AddPOIAsInRangeButDifferentStructure(collidedWith.poi);
+                    }
                 }
             }
-            //Debug.Log(collisionSummary);
+            Debug.Log(collisionSummary);
         }
     }
     public void OnTriggerExit2D(Collider2D collision) {

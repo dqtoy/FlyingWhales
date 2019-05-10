@@ -573,6 +573,10 @@ public class CharacterManager : MonoBehaviour {
                         Character otherCharacter = allCharacters[l];
                         if (currCharacter.id != otherCharacter.id) { //&& currCharacter.faction == otherCharacter.faction
                             List<RELATIONSHIP_TRAIT> existingRels = currCharacter.GetAllRelationshipTraitTypesWith(otherCharacter);
+                            //if the current character already has a relationship of the same type with the other character, skip
+                            if (existingRels != null && existingRels.Contains(currRel)) {
+                                continue; //skip
+                            }
                             float weight = 0;
 
                             // Compute the weight that determines how likely this character will have the current relationship type with current character
