@@ -15,7 +15,8 @@ namespace Pathfinding {
 
 			Section("Movement");
 			FloatField("speed", min: 0f);
-			PropertyField("canMove");
+            FloatField("endReachDistance", min: 0.0001f);
+            PropertyField("canMove");
 			if (PropertyField("enableRotation")) {
 				EditorGUI.indentLevel++;
 				Popup("orientation", new [] { new GUIContent("ZAxisForward (for 3D games)"), new GUIContent("YAxisForward (for 2D games)") });

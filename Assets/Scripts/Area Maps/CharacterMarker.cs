@@ -723,7 +723,7 @@ public class CharacterMarker : PooledObject {
         return speed;
     }
     public void UpdateSpeed() {
-        pathfindingAI.maxSpeed = GetSpeed();
+        pathfindingAI.speed = GetSpeed();
     }
     public void AdjustSpeedModifier(float amount) {
         speedModifier += amount;

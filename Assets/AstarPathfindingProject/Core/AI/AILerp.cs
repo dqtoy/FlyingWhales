@@ -54,6 +54,8 @@ namespace Pathfinding {
 		/// <summary>Speed in world units</summary>
 		public float speed = 3;
 
+        public float endReachDistance;
+
 		/// <summary>
 		/// Determines which direction the agent moves in.
 		/// For 3D games you most likely want the ZAxisIsForward option as that is the convention for 3D games.
@@ -475,7 +477,7 @@ namespace Pathfinding {
 			// since the vectorPath list (which the interpolator uses) will be pooled.
 			if (oldPath != null) oldPath.Release(this);
 
-			if (interpolator.remainingDistance < 0.0001f && !reachedEndOfPath) {
+			if (interpolator.remainingDistance <= endReachDistance && !reachedEndOfPath) {
 				reachedEndOfPath = true;
 				OnTargetReached();
 			}
@@ -504,7 +506,7 @@ namespace Pathfinding {
 		}
 
 		protected virtual void ConfigurePathSwitchInterpolation () {
-			bool reachedEndOfPreviousPath = interpolator.valid && interpolator.remainingDistance < 0.0001f;
+			bool reachedEndOfPreviousPath = interpolator.valid && interpolator.remainingDistance < endReachDistance;
 
 			if (interpolator.valid && !reachedEndOfPreviousPath) {
 				previousMovementOrigin = interpolator.position;
@@ -535,17 +537,7 @@ namespace Pathfinding {
 			}
 		}
 
-        //public virtual void UpdateMe() {
-        //    if (shouldRecalculatePath) SearchPath();
-        //    if (canMove) {
-        //        Vector3 nextPosition;
-        //        Quaternion nextRotation;
-        //        MovementUpdate(Time.deltaTime, out nextPosition, out nextRotation);
-        //        FinalizeMovement(nextPosition, nextRotation);
-        //    }
-        //}
-
-        protected virtual void Update() {
+        public virtual void UpdateMe() {
             if (shouldRecalculatePath) SearchPath();
             if (canMove) {
                 Vector3 nextPosition;
@@ -554,6 +546,16 @@ namespace Pathfinding {
                 FinalizeMovement(nextPosition, nextRotation);
             }
         }
+
+        //protected virtual void Update() {
+        //    if (shouldRecalculatePath) SearchPath();
+        //    if (canMove) {
+        //        Vector3 nextPosition;
+        //        Quaternion nextRotation;
+        //        MovementUpdate(Time.deltaTime, out nextPosition, out nextRotation);
+        //        FinalizeMovement(nextPosition, nextRotation);
+        //    }
+        //}
 
         /// <summary>\copydoc Pathfinding::IAstarAI::MovementUpdate</summary>
         public void MovementUpdate (float deltaTime, out Vector3 nextPosition, out Quaternion nextRotation) {
@@ -598,12 +600,15 @@ namespace Pathfinding {
 
 			interpolator.distance += deltaTime * speed;
 
-			if (interpolator.remainingDistance < 0.0001f && !reachedEndOfPath) {
+			if (interpolator.remainingDistance <= endReachDistance && !reachedEndOfPath) {
 				reachedEndOfPath = true;
 				OnTargetReached();
 			}
-
-			direction = interpolator.tangent;
+            if (!interpolator.valid) {
+                direction = Vector3.zero;
+                return simulatedPosition;
+            }
+            direction = interpolator.tangent;
 			pathSwitchInterpolationTime += deltaTime;
 			var alpha = switchPathInterpolationSpeed * pathSwitchInterpolationTime;
 			if (interpolatePathSwitches && alpha < 1f) {

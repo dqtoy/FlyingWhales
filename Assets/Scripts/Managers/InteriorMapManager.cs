@@ -139,7 +139,7 @@ public class InteriorMapManager : MonoBehaviour {
     #region Pathfinding
     private void CreatePathfindingGraphForArea(AreaInnerTileMap newMap) {
         GridGraph gg = pathfinder.data.AddGraph(typeof(GridGraph)) as GridGraph;
-        gg.cutCorners = false;
+        gg.cutCorners = true;
         gg.rotation = new Vector3(-90f, 0f, 0f);
         gg.nodeSize = nodeSize;
 
@@ -159,7 +159,7 @@ public class InteriorMapManager : MonoBehaviour {
         if (newMap.area.areaType == AREA_TYPE.DUNGEON) {
             gg.collision.diameter = 2f;
         } else {
-            gg.collision.diameter = 1f;
+            gg.collision.diameter = 2f;
         }
         gg.collision.mask = LayerMask.GetMask("Unpassable");
         AstarPath.active.Scan(gg);
@@ -346,7 +346,7 @@ public class InteriorMapManager : MonoBehaviour {
             summary += "\nMood: " + character.currentMoodType.ToString();
             summary += "\nSupply: " + character.supply.ToString();
             summary += "\nDestination: " + (character.marker.destinationTile != null ? character.marker.destinationTile.ToString() : "None");
-            summary += "\nMove Speed: " + character.marker.pathfindingAI.maxSpeed.ToString();
+            summary += "\nMove Speed: " + character.marker.pathfindingAI.speed.ToString();
             summary += "\nPOI's in Vision: ";
             if (character.marker.inVisionPOIs.Count > 0) {
                 for (int i = 0; i < character.marker.inVisionPOIs.Count; i++) {

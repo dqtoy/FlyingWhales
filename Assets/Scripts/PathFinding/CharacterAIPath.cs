@@ -4,7 +4,7 @@ using UnityEngine;
 using Pathfinding;
 using System.Linq;
 
-public class CharacterAIPath : AIPath {
+public class CharacterAIPath : AILerp {
     public CharacterMarker marker;
     public int doNotMove { get; private set; }
     public bool isStopMovement { get; private set; }
@@ -75,12 +75,22 @@ public class CharacterAIPath : AIPath {
         if (onSearchPath != null) onSearchPath();
 
         lastRepath = Time.time;
-        waitingForPathCalculation = true;
 
-        seeker.CancelCurrentPathRequest();
+        // This is where the path should start to search from
+        var currentPosition = GetFeetPosition();
 
-        Vector3 start, end;
-        CalculatePathRequestEndpoints(out start, out end);
+        // If we are following a path, start searching from the node we will
+        // reach next this can prevent odd turns right at the start of the path
+        /*if (interpolator.valid) {
+            var prevDist = interpolator.distance;
+            // Move to the end of the current segment
+            interpolator.MoveToSegment(interpolator.segmentIndex, 1);
+            currentPosition = interpolator.position;
+            // Move back to the original position
+            interpolator.distance = prevDist;
+        }*/
+
+        canSearchAgain = false;
 
         for (int i = 0; i < marker.terrifyingCharacters.Count; i++) {
             if (!marker.terrifyingCharacters[i].isDead) {
@@ -88,7 +98,7 @@ public class CharacterAIPath : AIPath {
             }
         }
         // Alternative way of requesting the path
-        ABPath p = ABPath.Construct(start, end, null);
+        ABPath p = ABPath.Construct(currentPosition, destination, null);
         p.traversalProvider = blockerTraversalProvider;
         seeker.StartPath(p);
 
@@ -104,7 +114,13 @@ public class CharacterAIPath : AIPath {
         marker.UpdatePosition();
         if (doNotMove > 0 || isStopMovement) { return; }
         if (marker.character.currentParty.icon.isTravelling && marker.character.IsInOwnParty()) { //only rotate if character is travelling
-            marker.visualsParent.localRotation = Quaternion.LookRotation(Vector3.forward, this.velocity);
+            Vector3 direction;
+            if (!interpolator.valid) {
+                direction = Vector3.zero;
+            } else {
+                direction = interpolator.tangent;
+            }
+            marker.visualsParent.localRotation = Quaternion.LookRotation(Vector3.forward, direction);
             //if(marker.character.currentParty.icon.travelLine == null) {
             //    if (!IsNodeWalkable(destination)) {
             //        //if(marker.character.currentAction)
@@ -114,8 +130,32 @@ public class CharacterAIPath : AIPath {
             marker.LookAt(marker.character.currentAction.poiTarget.gridTileLocation.centeredWorldLocation); //so that the charcter will always face the target, even if it is moving
         }
         base.UpdateMe();
-       
     }
+
+    //protected override void Update() {
+    //    if (!marker.gameObject.activeSelf) {
+    //        return;
+    //    }
+    //    marker.UpdatePosition();
+    //    if (doNotMove > 0 || isStopMovement) { return; }
+    //    if (marker.character.currentParty.icon.isTravelling && marker.character.IsInOwnParty()) { //only rotate if character is travelling
+    //        Vector3 direction;
+    //        if (!interpolator.valid) {
+    //            direction = Vector3.zero;
+    //        } else {
+    //            direction = interpolator.tangent;
+    //        }
+    //        marker.visualsParent.localRotation = Quaternion.LookRotation(Vector3.forward, direction);
+    //        //if(marker.character.currentParty.icon.travelLine == null) {
+    //        //    if (!IsNodeWalkable(destination)) {
+    //        //        //if(marker.character.currentAction)
+    //        //    }
+    //        //}
+    //    } else if (marker.character.currentAction != null && marker.character.currentAction.poiTarget != marker.character) {
+    //        marker.LookAt(marker.character.currentAction.poiTarget.gridTileLocation.centeredWorldLocation); //so that the charcter will always face the target, even if it is moving
+    //    }
+    //    base.Update();
+    //}
     public string lastAdjustDoNotMoveST { get; private set; }
     public void AdjustDoNotMove(int amount) {
         doNotMove += amount;
