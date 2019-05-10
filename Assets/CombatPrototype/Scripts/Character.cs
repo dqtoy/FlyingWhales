@@ -1270,14 +1270,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         }
 
-        GoapPlanJob assaultJob = CreateAssaultJob(targetCharacter);
-        if (assaultJob != null) {
-            hasCreatedJob = true;
-            if (overrideCurrentAction) {
-                assaultJob.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
-                homeArea.jobQueue.AssignCharacterToJob(assaultJob, this);
-            }
-        }
+        //GoapPlanJob assaultJob = CreateAssaultJob(targetCharacter);
+        //if (assaultJob != null) {
+        //    hasCreatedJob = true;
+        //    if (overrideCurrentAction) {
+        //        assaultJob.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
+        //        homeArea.jobQueue.AssignCharacterToJob(assaultJob, this);
+        //    }
+        //}
         return hasCreatedJob;
     }
     private bool CreateRemoveTraitJobs(Character targetCharacter, bool overrideCurrentAction) {
