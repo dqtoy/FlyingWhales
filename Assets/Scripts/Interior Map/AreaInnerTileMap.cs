@@ -1468,8 +1468,8 @@ public class AreaInnerTileMap : MonoBehaviour {
             //    break;
         }
     }
-    public void RemoveObject(LocationGridTile tile) {
-        tile.RemoveObjectHere();
+    public void RemoveObject(LocationGridTile tile, Character removedBy = null) {
+        tile.RemoveObjectHere(removedBy);
         objectsTilemap.SetTile(tile.localPlace, null);
     }
     private void OnPlaceCharacterOnTile(Character character, LocationGridTile tile) {

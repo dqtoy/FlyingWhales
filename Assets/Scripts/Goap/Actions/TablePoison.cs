@@ -54,11 +54,40 @@ public class TablePoison : GoapAction {
     //    base.FailAction();
     //    SetState("Poison Fail");
     //}
+    public override void OnWitnessedBy(Character witness) {
+        base.OnWitnessedBy(witness);
+        //If someone witnesses this, there may be additional things performed aside from Crime Witness handling.
+        Character tableOwner = ((poiTarget as Table).location as Dwelling).owner;
+        //If the witness has a positive relationship with the owner of the table, or he is the owner of the table, or they are from the same faction and are not enemies:
+        if (witness == tableOwner 
+            || witness.HasRelationshipOfEffectWith(tableOwner, TRAIT_EFFECT.POSITIVE, RELATIONSHIP_TRAIT.RELATIVE) 
+            || (witness.faction == tableOwner.faction && !witness.HasRelationshipOfTypeWith(tableOwner, RELATIONSHIP_TRAIT.ENEMY))
+            ) {
+            //-If Civilian, Adventurer or Soldier or Unaligned Non-Beast, create a Remove Poison Job.
+            if (witness.role.roleType == CHARACTER_ROLE.CIVILIAN || witness.role.roleType == CHARACTER_ROLE.ADVENTURER 
+                || witness.role.roleType == CHARACTER_ROLE.SOLDIER || witness.role.roleType == CHARACTER_ROLE.BANDIT 
+                || (witness.role.roleType != CHARACTER_ROLE.BEAST && witness.isFactionless)) {
+                if (!witness.jobQueue.HasJob("Remove Poison", poiTarget)) {
+                    GoapPlanJob job = new GoapPlanJob("Remove Poison", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Poisoned", targetPOI = poiTarget });
+                    witness.jobQueue.AddJobInQueue(job);
+                }
+            }
+            //- If Noble or Faction Leader, create an Ask for Help Remove Poison Job.
+            else if (witness.role.roleType == CHARACTER_ROLE.NOBLE || witness.role.roleType == CHARACTER_ROLE.LEADER) {
+                witness.CreateAskForHelpJob(tableOwner, INTERACTION_TYPE.ASK_FOR_HELP_REMOVE_POISON_TABLE, poiTarget);
+            }
+            //- The witness should not eat at the table until the Poison has been removed
+            //Add character to poisoned trait of table
+            //and when getting the cost of eating at this table, check if the character knows about the poison, if he/she does, increase cost.
+            Poisoned poisonedTrait = poiTarget.GetTrait("Poisoned") as Poisoned;
+            poisonedTrait.AddAwareCharacter(witness);
+        }
+    }
     #endregion
 
     #region State Effects
     public void PrePoisonSuccess() {
-        SetCommittedCrime(CRIME.ASSAULT);
+        SetCommittedCrime(CRIME.ATTEMPTED_MURDER);
         //**Effect 1**: Add Poisoned Trait to target table
         AddTraitTo(poiTarget, new Poisoned(), actor);
         currentState.AddLogFiller(poiTarget.gridTileLocation.structure.location, poiTarget.gridTileLocation.structure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
@@ -188,12 +217,12 @@ public class TablePoison : GoapAction {
             //- **Recipient Response Text**: "Thank you for letting me know about this. I've got to find a way to remove that poison to save [Target Name]!
             reactions.Add(string.Format("Thank you for letting me know about this. I've got to find a way to remove that poison to save {0}!", tableOwner.name));
             //-**Recipient Effect * *: If Adventurer or Soldier or Unaligned Non - Beast, create a Remove Poison Job.
-            if (recipient.role.roleType == CHARACTER_ROLE.ADVENTURER || recipient.role.roleType == CHARACTER_ROLE.SOLDIER || recipient.role.roleType == CHARACTER_ROLE.BANDIT || (recipient.role.roleType != CHARACTER_ROLE.BEAST && recipient.isFactionless)) {
+            if (recipient.role.roleType == CHARACTER_ROLE.CIVILIAN || recipient.role.roleType == CHARACTER_ROLE.ADVENTURER || recipient.role.roleType == CHARACTER_ROLE.SOLDIER || recipient.role.roleType == CHARACTER_ROLE.BANDIT || (recipient.role.roleType != CHARACTER_ROLE.BEAST && recipient.isFactionless)) {
                 GoapPlanJob job = new GoapPlanJob("Remove Poison", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Poisoned", targetPOI = poiTarget });
                 recipient.jobQueue.AddJobInQueue(job);
             }
             //If Civilian, Noble or Faction Leader, create an Ask for Help Remove Poison Job.
-            else if (recipient.role.roleType == CHARACTER_ROLE.CIVILIAN || recipient.role.roleType == CHARACTER_ROLE.LEADER) {
+            else if (recipient.role.roleType == CHARACTER_ROLE.NOBLE || recipient.role.roleType == CHARACTER_ROLE.LEADER) {
                 recipient.CreateAskForHelpJob(tableOwner, INTERACTION_TYPE.ASK_FOR_HELP_REMOVE_POISON_TABLE, poiTarget);
             }
             //Apply Crime System handling as if the Recipient witnessed Actor commit an Attempted Murder.
@@ -204,12 +233,12 @@ public class TablePoison : GoapAction {
             //- **Recipient Response Text**: "Thank you for letting me know about this. I've got to find a way to remove that poison to save [Target Name]!
             reactions.Add(string.Format("Thank you for letting me know about this. I've got to find a way to remove that poison to save {0}!", tableOwner.name));
             //-**Recipient Effect * *: If Adventurer or Soldier or Unaligned Non - Beast, create a Remove Poison Job.
-            if (recipient.role.roleType == CHARACTER_ROLE.ADVENTURER || recipient.role.roleType == CHARACTER_ROLE.SOLDIER || recipient.role.roleType == CHARACTER_ROLE.BANDIT || (recipient.role.roleType != CHARACTER_ROLE.BEAST && recipient.isFactionless)) {
+            if (recipient.role.roleType == CHARACTER_ROLE.CIVILIAN || recipient.role.roleType == CHARACTER_ROLE.ADVENTURER || recipient.role.roleType == CHARACTER_ROLE.SOLDIER || recipient.role.roleType == CHARACTER_ROLE.BANDIT || (recipient.role.roleType != CHARACTER_ROLE.BEAST && recipient.isFactionless)) {
                 GoapPlanJob job = new GoapPlanJob("Remove Poison", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Poisoned", targetPOI = poiTarget });
                 recipient.jobQueue.AddJobInQueue(job);
             }
             //If Civilian, Noble or Faction Leader, create an Ask for Help Remove Poison Job.
-            else if (recipient.role.roleType == CHARACTER_ROLE.CIVILIAN || recipient.role.roleType == CHARACTER_ROLE.LEADER) {
+            else if (recipient.role.roleType == CHARACTER_ROLE.NOBLE || recipient.role.roleType == CHARACTER_ROLE.LEADER) {
                 recipient.CreateAskForHelpJob(tableOwner, INTERACTION_TYPE.ASK_FOR_HELP_REMOVE_POISON_TABLE, poiTarget);
             }
             //Apply Crime System handling as if the Recipient witnessed Actor commit an Attempted Murder.
@@ -227,12 +256,12 @@ public class TablePoison : GoapAction {
             //- **Recipient Response Text**: "[Actor Name] is attempting murder! I've got to put a stop to this."
             reactions.Add(string.Format("{0} is attempting murder! I've got to put a stop to this.", actor.name));
             //-**Recipient Effect * *: If Adventurer or Soldier or Unaligned Non - Beast, create a Remove Poison Job.
-            if (recipient.role.roleType == CHARACTER_ROLE.ADVENTURER || recipient.role.roleType == CHARACTER_ROLE.SOLDIER || recipient.role.roleType == CHARACTER_ROLE.BANDIT || (recipient.role.roleType != CHARACTER_ROLE.BEAST && recipient.isFactionless)) {
+            if (recipient.role.roleType == CHARACTER_ROLE.CIVILIAN || recipient.role.roleType == CHARACTER_ROLE.ADVENTURER || recipient.role.roleType == CHARACTER_ROLE.SOLDIER || recipient.role.roleType == CHARACTER_ROLE.BANDIT || (recipient.role.roleType != CHARACTER_ROLE.BEAST && recipient.isFactionless)) {
                 GoapPlanJob job = new GoapPlanJob("Remove Poison", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Poisoned", targetPOI = poiTarget });
                 recipient.jobQueue.AddJobInQueue(job);
             }
             //If Civilian, Noble or Faction Leader, create an Ask for Help Remove Poison Job.
-            else if (recipient.role.roleType == CHARACTER_ROLE.CIVILIAN || recipient.role.roleType == CHARACTER_ROLE.LEADER) {
+            else if (recipient.role.roleType == CHARACTER_ROLE.NOBLE || recipient.role.roleType == CHARACTER_ROLE.LEADER) {
                 recipient.CreateAskForHelpJob(tableOwner, INTERACTION_TYPE.ASK_FOR_HELP_REMOVE_POISON_TABLE, poiTarget);
             }
         }

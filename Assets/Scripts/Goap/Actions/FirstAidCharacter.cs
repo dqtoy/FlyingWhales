@@ -49,7 +49,13 @@ public class FirstAidCharacter : GoapAction {
         RemoveTraitFrom(poiTarget, "Injured");
         RemoveTraitFrom(poiTarget, "Unconscious");
         //**After Effect 2**: Reduce character's Supply by 10
-        actor.AdjustSupply(-10);
+        //actor.AdjustSupply(-10);
+        if (actor.HasToken(SPECIAL_TOKEN.HEALING_POTION)) {
+            actor.ConsumeToken(actor.GetToken(SPECIAL_TOKEN.HEALING_POTION));
+        } else {
+            //the actor does not have a tool, log for now
+            Debug.LogWarning(actor.name + " does not have a tool for removing poison! Poison was still removed, but thought you should know.");
+        }
         //**After Effect 3**: Allow movement of Target
         //(poiTarget as Character).marker.pathfindingAI.AdjustDoNotMove(-1);
     }

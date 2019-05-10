@@ -207,10 +207,15 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         SetTileState(Tile_State.Occupied);
         Messenger.Broadcast(Signals.OBJECT_PLACED_ON_TILE, this, poi);
     }
-    public IPointOfInterest RemoveObjectHere() {
+    public IPointOfInterest RemoveObjectHere(Character removedBy) {
         if (objHere != null) {
             IPointOfInterest removedObj = objHere;
-            objHere.SetGridTileLocation(null);
+            if (objHere is TileObject && removedBy != null) {
+                //if the object in this tile is a tile object and it was removed by a character, use tile object specific function
+                (objHere as TileObject).RemoveTileObject(removedBy);
+            } else {
+                objHere.SetGridTileLocation(null);
+            }
             objHere = null;
             SetTileState(Tile_State.Empty);
             return removedObj;

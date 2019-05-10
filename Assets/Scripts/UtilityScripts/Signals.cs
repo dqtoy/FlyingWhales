@@ -221,6 +221,6 @@ public static class Signals {
     public static string TILE_OCCUPIED = "OnTileOccupied"; //Parameters (LocationGridTile, IPointOfInterest)
     public static string CHECK_GHOST_COLLIDER_VALIDITY = "CheckGhostColliderValidity"; //Parameters (IPointOfInterest, List<LocationGridTile>)
     public static string OBJECT_PLACED_ON_TILE = "OnObjectPlacedOnTile"; //Parameters (LocationGridTile, IPointOfInterest)
-    public static string TILE_OBJECT_REMOVED = "OnTileObjectDestroyed"; //Parameters (TileObject)
+    public static string TILE_OBJECT_REMOVED = "OnTileObjectDestroyed"; //Parameters (TileObject, Character removedBy)
     #endregion
 }
