@@ -342,7 +342,7 @@ public class InteriorMapManager : MonoBehaviour {
                 summary += "\nMood: " + character.currentMoodType.ToString();
                 summary += "\nSupply: " + character.supply.ToString();
                 summary += "\nDestination: " + (character.marker.destinationTile != null ? character.marker.destinationTile.ToString() : "None");
-                summary += "\nMove Speed: " + character.marker.pathfindingAI.maxSpeed.ToString();
+                summary += "\nMove Speed: " + character.marker.pathfindingAI.speed.ToString();
                 summary += "\nPOI's in Vision: ";
                 if (character.marker.inVisionPOIs.Count > 0) {
                     for (int i = 0; i < character.marker.inVisionPOIs.Count; i++) {
