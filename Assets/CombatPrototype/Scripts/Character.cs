@@ -1411,7 +1411,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public GoapPlanJob CreateRestrainJob(Character targetCharacter, bool overrideCurrentAction) {
         if (isAtHomeArea && !targetCharacter.isDead && !targetCharacter.isAtHomeArea && (role.roleType == CHARACTER_ROLE.SOLDIER || role.roleType == CHARACTER_ROLE.CIVILIAN)) {
-            if (targetCharacter.GetTrait("Unconscious") != null && !HasRelationshipOfEffectWith(targetCharacter, TRAIT_EFFECT.POSITIVE) && !targetCharacter.HasJobTargettingThisCharacter("Restrain")) {
+            if (targetCharacter.GetTrait("Unconscious") != null && targetCharacter.GetTrait("Restrained") == null && !HasRelationshipOfEffectWith(targetCharacter, TRAIT_EFFECT.POSITIVE) && !targetCharacter.HasJobTargettingThisCharacter("Restrain")) {
                 GoapPlanJob job = new GoapPlanJob("Restrain", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = specificLocation, targetPOI = targetCharacter });
                 job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = targetCharacter }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
                 job.SetCanTakeThisJobChecker(CanCharacterTakeRestrainJob);
@@ -1426,7 +1426,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public GoapPlanJob CreateApprehendJobForThisCharacter(bool overrideCurrentAction) {
         //if (homeArea.id == specificLocation.id) {
-        if (!HasJobTargettingThisCharacter("Apprehend")) {
+        if (!HasJobTargettingThisCharacter("Apprehend") && GetTrait("Restrained") == null) {
             GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = homeArea, targetPOI = this };
             GoapPlanJob job = new GoapPlanJob("Apprehend", goapEffect);
             job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = this }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
