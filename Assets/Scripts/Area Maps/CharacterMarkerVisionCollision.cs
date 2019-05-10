@@ -6,7 +6,7 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
 
     public CharacterMarker parentMarker;
 
-    private List<IPointOfInterest> poisInRangeButDiffStructure = new List<IPointOfInterest>();
+    public List<IPointOfInterest> poisInRangeButDiffStructure = new List<IPointOfInterest>();
 
     private void OnEnable() {
         Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
@@ -63,17 +63,17 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
         }
     }
     public void OnTriggerExit2D(Collider2D collision) {
-        if (!parentMarker.character.IsInOwnParty()) {
-            return;
-        }
+        //if (!parentMarker.character.IsInOwnParty()) {
+        //    return;
+        //}
         POICollisionTrigger collidedWith = collision.gameObject.GetComponent<POICollisionTrigger>();
         if (collidedWith != null && collidedWith.poi != null
             && collidedWith.poi != parentMarker.character) {
             if (collidedWith.poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
                 Character target = collidedWith.poi as Character;
-                if (!target.IsInOwnParty()) {
-                    return;
-                }
+                //if (!target.IsInOwnParty()) {
+                //    return;
+                //}
             }
             parentMarker.RemovePOIFromInVisionRange(collidedWith.poi);
             RemovePOIAsInRangeButDifferentStructure(collidedWith.poi);
@@ -120,7 +120,8 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
         Debug.Log(ghostCollisionSummary);
     }
     private bool ChatHandling(Character targetCharacter) {
-        if(targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_EFFECT.NEUTRAL, TRAIT_TYPE.DISABLER) 
+        if(targetCharacter.isDead 
+            || targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_EFFECT.NEUTRAL, TRAIT_TYPE.DISABLER) 
             || parentMarker.character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_EFFECT.NEUTRAL, TRAIT_TYPE.DISABLER)
             || (targetCharacter.stateComponent.currentState != null && (targetCharacter.stateComponent.currentState.characterState == CHARACTER_STATE.FLEE 
             || targetCharacter.stateComponent.currentState.characterState == CHARACTER_STATE.ENGAGE))
@@ -182,20 +183,55 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
         poisInRangeButDiffStructure.Remove(poi);
     }
     private void OnCharacterArrivedAtStructure(Character character, LocationStructure structure) {
+         //if the character that arrived at the new structure is in this character different structure list
+         //check if that character now has the same structure as this character,
         if (poisInRangeButDiffStructure.Contains(character) && structure == parentMarker.character.currentStructure) {
+            //if it does, add as normal
             NormalEnterHandling(character);
             RemovePOIAsInRangeButDifferentStructure(character);
-        } else if (character.id == parentMarker.character.id) {
-            //if the character that changed structure is the one that changed structures
+        }
+        //else if the character that arrived at the new structure is in this character's vision list and the character no longer has the same structure as this character, 
+        else if (parentMarker.inVisionPOIs.Contains(character) && structure != parentMarker.character.currentStructure) {
+            //if both characters are in open space, do not remove from vision
+            if (structure.structureType.IsOpenSpace() && parentMarker.character.currentStructure.structureType.IsOpenSpace()) {
+                return;
+            }
+            //remove from vision and hostile range
+            parentMarker.RemovePOIFromInVisionRange(character);
+            parentMarker.RemoveHostileInRange(character);
+            AddPOIAsInRangeButDifferentStructure(character);
+        }
+        //if the character that changed structures is this character
+        else if (character.id == parentMarker.character.id) {
             //check all pois that were in different structures and revalidate them
             List<IPointOfInterest> pois = new List<IPointOfInterest>(poisInRangeButDiffStructure);
             for (int i = 0; i < pois.Count; i++) {
                 IPointOfInterest poi = pois[i];
-                if (poi.gridTileLocation == null) {
+                if (poi.gridTileLocation == null || poi.gridTileLocation.structure == null) {
                     RemovePOIAsInRangeButDifferentStructure(poi);
-                } else if (poi.gridTileLocation.structure == parentMarker.character.currentStructure) {
+                } else if (poi.gridTileLocation.structure == parentMarker.character.currentStructure
+                    || (poi.gridTileLocation.structure.structureType.IsOpenSpace() && parentMarker.character.currentStructure.structureType.IsOpenSpace())) {
                     NormalEnterHandling(poi);
                     RemovePOIAsInRangeButDifferentStructure(poi);
+                }
+            }
+            //also check all pois in vision
+            pois = new List<IPointOfInterest>(parentMarker.inVisionPOIs);
+            for (int i = 0; i < pois.Count; i++) {
+                IPointOfInterest poi = pois[i];
+                if (poi.gridTileLocation == null || poi.gridTileLocation.structure == null) {
+                    parentMarker.RemovePOIFromInVisionRange(poi);
+                    if (poi is Character) {
+                        parentMarker.RemoveHostileInRange(poi as Character);
+                    }
+                } else if (poi.gridTileLocation.structure != parentMarker.character.currentStructure 
+                    && (!poi.gridTileLocation.structure.structureType.IsOpenSpace() || !parentMarker.character.currentStructure.structureType.IsOpenSpace())) {
+                    //if the character in vision no longer has the same structure as the character, and at least one of them is not in an open space structure
+                    parentMarker.RemovePOIFromInVisionRange(poi);
+                    if (poi is Character) {
+                        parentMarker.RemoveHostileInRange(poi as Character);
+                    }
+                    AddPOIAsInRangeButDifferentStructure(poi);
                 }
             }
         }

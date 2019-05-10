@@ -121,7 +121,7 @@ public class LocationStructure {
         }
         return false;
     }
-    public void RemovePOI(IPointOfInterest poi) {
+    public void RemovePOI(IPointOfInterest poi, Character removedBy = null) {
         if (pointsOfInterest.Remove(poi)) {
 #if !WORLD_CREATION_TOOL
             if (poi.gridTileLocation != null) {
@@ -129,7 +129,7 @@ public class LocationStructure {
                 if(poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
                     //location.areaMap.RemoveCharacter(poi.gridTileLocation, poi as Character);
                 } else {
-                    location.areaMap.RemoveObject(poi.gridTileLocation);
+                    location.areaMap.RemoveObject(poi.gridTileLocation, removedBy);
                 }
                 //throw new System.Exception("Provided tile of " + poi.ToString() + " is null!");
             }

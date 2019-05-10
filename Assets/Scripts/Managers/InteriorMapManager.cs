@@ -356,6 +356,15 @@ public class InteriorMapManager : MonoBehaviour {
             } else {
                 summary += "None";
             }
+            summary += "\nPOI's in Range but different structures: ";
+            if (character.marker.visionCollision.poisInRangeButDiffStructure.Count > 0) {
+                for (int i = 0; i < character.marker.visionCollision.poisInRangeButDiffStructure.Count; i++) {
+                    IPointOfInterest poi = character.marker.visionCollision.poisInRangeButDiffStructure[i];
+                    summary += poi.name + ", ";
+                }
+            } else {
+                summary += "None";
+            }
             summary += "\nHostiles in Range: ";
             if (character.marker.hostilesInRange.Count > 0) {
                 for (int i = 0; i < character.marker.hostilesInRange.Count; i++) {

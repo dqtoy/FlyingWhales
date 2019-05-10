@@ -38,7 +38,7 @@ public class TileObjectDestroy : GoapAction {
     }
     private void AfterDestroySuccess() {
         //**After Effect 1**: Destroy target tile object
-        poiTarget.gridTileLocation.structure.RemovePOI(poiTarget);
+        poiTarget.gridTileLocation.structure.RemovePOI(poiTarget, actor);
     }
     private void PreTargetMissing() {
         currentState.AddLogFiller(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
