@@ -42,11 +42,11 @@ public class Spit : GoapAction {
     #endregion
 
     #region Effects
-    private void PreRememberSuccess() {
+    private void PreSpitSuccess() {
         Tombstone tombstone = poiTarget as Tombstone;
         currentState.AddLogFiller(null, tombstone.character.name, LOG_IDENTIFIER.TARGET_CHARACTER);
     }
-    private void AfterRememberSuccess() {
+    private void AfterSpitSuccess() {
         actor.AdjustHappiness(50);
     }
     private void PreTargetMissing() {
