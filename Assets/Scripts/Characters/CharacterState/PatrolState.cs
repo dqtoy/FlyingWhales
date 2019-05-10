@@ -23,6 +23,11 @@ public class PatrolState : CharacterState {
         }else if (stateComponent.character.role.roleType != CHARACTER_ROLE.BEAST && targetPOI is SpecialToken) {
             SpecialToken token = targetPOI as SpecialToken;
             if(token.characterOwner == null) {
+                //Patrollers should not pick up items from their warehouse
+                if (token.structureLocation != null && token.structureLocation.structureType == STRUCTURE_TYPE.WAREHOUSE 
+                    && token.specificLocation == stateComponent.character.homeArea) {
+                    return false;
+                }
                 GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.PICK_ITEM, stateComponent.character, targetPOI);
                 if (goapAction.targetTile != null) {
                     goapAction.CreateStates();

@@ -204,6 +204,9 @@ public class CharacterMarker : PooledObject {
                         }
                     }
                 }
+                if (hostilesInRange.Contains(characterThatGainedTrait)) {
+                    RemoveHostileInRange(characterThatGainedTrait);
+                }
             }
         }
         if(trait.type == TRAIT_TYPE.DISABLER && terrifyingCharacters.Count > 0) {
@@ -825,6 +828,13 @@ public class CharacterMarker : PooledObject {
         for (int i = 0; i < inVisionPOIs.Count; i++) {
             IPointOfInterest poi = inVisionPOIs[i];
             if (poi.gridTileLocation == null || poi.gridTileLocation.structure != character.currentStructure) {
+                //check if both structures are open spaces, if they are, do not consider vision as invalid
+                if (poi.gridTileLocation != null
+                    && poi.gridTileLocation.structure != null
+                    && character.currentStructure != null
+                    && poi.gridTileLocation.structure.structureType.IsOpenSpace() && character.currentStructure.structureType.IsOpenSpace()) {
+                    continue; //skip
+                }
                 invalid.Add(poi);
             }
         }
