@@ -281,6 +281,15 @@ public class TablePoison : GoapAction {
             //-**Recipient Effect * *: Apply Crime System handling as if the Recipient witnessed Actor commit an Attempted Murder.
             recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, actor);
         }
+
+        //Recipient has no relationship with the Actor but they are from the same faction and a character has been killed by using the Table.
+        else if (!recipient.HasRelationshipWith(actor) && actor.faction == recipient.faction && pti.eatAtTableAction != null
+            && tableOwner != null && pti.eatAtTableAction.HasActualEffect(GOAP_EFFECT_CONDITION.DEATH, null, tableOwner)) {
+            //-**Recipient Response Text**: "[Actor Name] killed somebody! This is horrible!"
+            reactions.Add(string.Format("{0} killed somebody! This is horrible!", actor.name));
+            //- **Recipient Effect * *: Apply Crime System handling as if the Recipient witnessed Actor commit a Murder.
+            recipient.ReactToCrime(CRIME.MURDER, actor);
+        }
         return reactions;
     }
     #endregion
