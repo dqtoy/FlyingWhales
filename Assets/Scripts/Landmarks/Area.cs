@@ -908,10 +908,14 @@ public class Area {
             for (int j = 0; j < charactersToCreate; j++) {
                 chosenRole = CharacterRole.BEAST;
                 if (!isRaceBeast) {
-                    if (UnityEngine.Random.Range(0, 2) == 0) {
+                    if (setup.race.race == RACE.SKELETON) {
                         chosenRole = CharacterRole.BANDIT;
                     } else {
-                        chosenRole = CharacterRole.ADVENTURER;
+                        if (UnityEngine.Random.Range(0, 2) == 0) {
+                            chosenRole = CharacterRole.BANDIT;
+                        } else {
+                            chosenRole = CharacterRole.ADVENTURER;
+                        }
                     }
                 }
                 Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(chosenRole, setup.race.race, Utilities.GetRandomGender(),

@@ -627,7 +627,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //portraitGO.transform.localPosition = pos;
         SetCharacterMarker(portraitGO.GetComponent<CharacterMarker>());
         marker.SetCharacter(this);
-        marker.SetHoverAction(ShowTileData, InteriorMapManager.Instance.HideTileData);
+        //marker.SetHoverAction(ShowTileData, InteriorMapManager.Instance.HideTileData);
     }
     public void DestroyMarker() {
         ObjectPoolManager.Instance.DestroyObject(marker.gameObject);
@@ -1386,7 +1386,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         return character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.ADVENTURER; // && !HasRelationshipOfEffectWith(targetCharacter, TRAIT_EFFECT.POSITIVE)
     }
     private bool CreateBuryJob(Character targetCharacter, bool overrideCurrentAction) {
-        if (targetCharacter.isDead) {
+        if (targetCharacter.isDead && targetCharacter.race != RACE.SKELETON) {
             //check first if the target character already has a bury job in this location
             GoapPlanJob buryJob = homeArea.jobQueue.GetJob("Bury", targetCharacter) as GoapPlanJob;
             if (buryJob == null) {

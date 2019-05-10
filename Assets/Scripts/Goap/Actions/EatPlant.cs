@@ -31,9 +31,9 @@ public class EatPlant : GoapAction {
     }
     protected override int GetCost() {
         if (actor.GetTrait("Herbivore") != null) {
-            return 12;
+            return 25;
         } else {
-            return 28;
+            return 50;
         }
     }
     //public override void FailAction() {

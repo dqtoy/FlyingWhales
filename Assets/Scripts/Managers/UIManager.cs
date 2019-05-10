@@ -141,6 +141,16 @@ public class UIManager : MonoBehaviour {
                 HideContextMenu();
             }
         }
+        if (Input.GetKeyDown(KeyCode.Space)) {
+            if (pauseBtn.IsInteractable()) {
+                if (GameManager.Instance.isPaused) {
+                    Unpause();
+                } else {
+                    Pause();
+                }
+            }
+            
+        }
         UpdateSpeedToggles(GameManager.Instance.isPaused);
         if (isHoveringTile) {
             if (currentTileHovered.areaOfTile != null && currentTileHovered.areaOfTile.areaType != AREA_TYPE.DEMONIC_INTRUSION) {

@@ -10,6 +10,7 @@ public class IntelNotificationItem : PlayerNotificationItem {
     public Intel intel { get; private set; }
 
     [SerializeField] private Button getIntelBtn;
+    [SerializeField] private GameObject convertTooltip;
 
     public void Initialize(Intel intel, bool hasExpiry = true) {
         this.intel = intel;
@@ -26,5 +27,8 @@ public class IntelNotificationItem : PlayerNotificationItem {
         base.OnExpire();
         intel.OnIntelExpire();
     }
-
+    public override void Reset() {
+        base.Reset();
+        convertTooltip.SetActive(false);
+    }
 }
