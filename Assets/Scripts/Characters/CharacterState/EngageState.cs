@@ -145,7 +145,7 @@ public class EngageState : CharacterState {
                 break;
             case "Injured":
                 Injured injured = new Injured();
-                loser.AddTrait(injured);
+                loser.AddTrait(injured, winner);
                 break;
             case "Death":
                 loser.Death("combat");
