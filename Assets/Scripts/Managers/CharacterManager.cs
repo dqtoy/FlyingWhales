@@ -421,12 +421,12 @@ public class CharacterManager : MonoBehaviour {
         //    Debug.LogWarning(currCharacter.name + " and " + targetCharacter.name + " cannot have relationship " + rel.ToString() + " - " + pair.ToString());
         //}
     }
-    public void RemoveRelationshipBetween(Character character, Character targetCharacter, RELATIONSHIP_TRAIT rel, bool triggerOnRemove = true) {
+    public void RemoveRelationshipBetween(Character character, Character targetCharacter, RELATIONSHIP_TRAIT rel, bool triggerOnRemove = true, bool useDisabled = false) {
         if (!character.relationships.ContainsKey(targetCharacter)
             || !targetCharacter.relationships.ContainsKey(character)) {
             return;
         }
-        if (!character.HasRelationshipOfTypeWith(targetCharacter, rel)) {
+        if (!character.HasRelationshipOfTypeWith(targetCharacter, rel, useDisabled)) {
             //the source character does not have that type of relationship with the character
             return;
         }
@@ -434,8 +434,8 @@ public class CharacterManager : MonoBehaviour {
         if (character.relationships[targetCharacter].HasRelationshipTrait(rel)
             && targetCharacter.relationships[character].HasRelationshipTrait(pair)) {
 
-            character.RemoveTrait(character.GetRelationshipTraitWith(targetCharacter, rel), triggerOnRemove);
-            targetCharacter.RemoveTrait(targetCharacter.GetRelationshipTraitWith(character, rel), triggerOnRemove);
+            character.RemoveTrait(character.GetRelationshipTraitWith(targetCharacter, rel, useDisabled), triggerOnRemove);
+            targetCharacter.RemoveTrait(targetCharacter.GetRelationshipTraitWith(character, rel, useDisabled), triggerOnRemove);
         } else {
             Debug.LogWarning(character.name + " and " + targetCharacter.name + " have inconsistent relationships " + rel.ToString() + " - " + pair.ToString() + ". Cannot remove!");
         }

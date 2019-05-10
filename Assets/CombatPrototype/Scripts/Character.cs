@@ -2139,8 +2139,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             targetCharacters.RemoveAt(0);
         }
     }
-    public RelationshipTrait GetRelationshipTraitWith(Character character, RELATIONSHIP_TRAIT type) {
-        if (HasRelationshipWith(character)) {
+    public RelationshipTrait GetRelationshipTraitWith(Character character, RELATIONSHIP_TRAIT type, bool useDisabled = false) {
+        if (HasRelationshipWith(character, useDisabled)) {
             return relationships[character].GetRelationshipTrait(type);
         }
         return null;
@@ -2339,8 +2339,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return false;
     }
-    public bool HasRelationshipOfTypeWith(Character character, RELATIONSHIP_TRAIT relType) {
-        if (HasRelationshipWith(character)) {
+    public bool HasRelationshipOfTypeWith(Character character, RELATIONSHIP_TRAIT relType, bool useDisabled = false) {
+        if (HasRelationshipWith(character, useDisabled)) {
             for (int i = 0; i < relationships[character].rels.Count; i++) {
                 RelationshipTrait currTrait = relationships[character].rels[i];
                 if (currTrait.relType == relType && !currTrait.isDisabled) {
@@ -2378,7 +2378,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return null;
     }
-    public bool HasRelationshipWith(Character character) {
+    public bool HasRelationshipWith(Character character, bool useDisabled = false) {
+        if (useDisabled) {
+            return relationships.ContainsKey(character);
+        }
         return relationships.ContainsKey(character) && !relationships[character].isDisabled;
     }
     public int GetAllRelationshipCount(List<RELATIONSHIP_TRAIT> except = null) {

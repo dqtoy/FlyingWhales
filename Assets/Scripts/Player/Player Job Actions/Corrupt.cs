@@ -29,6 +29,15 @@ public class Corrupt : PlayerJobAction {
         //}
         return base.ShouldButtonBeInteractable(character, targetCharacter);
     }
+    public override bool CanTarget(Character targetCharacter) {
+        if (targetCharacter.isDead) {
+            return false;
+        }
+        if (targetCharacter.race != RACE.HUMANS && targetCharacter.race != RACE.ELVES) {
+            return false;
+        }
+        return base.CanTarget(targetCharacter);
+    }
 
     #region Trait Checkers
     private void OnClickTrait(string traitName) {
