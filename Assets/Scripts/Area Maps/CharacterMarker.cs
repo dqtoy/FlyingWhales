@@ -199,17 +199,31 @@ public class CharacterMarker : PooledObject {
             UpdateActionIcon();
             Debug.Log(gainTraitSummary);
         } else {
-            if(trait.name == "Unconscious") {
-                if (inVisionPOIs.Contains(characterThatGainedTrait)) {
-                    bool overrideCurrentAction = !(this.character.currentAction != null && this.character.currentAction.parentPlan != null && this.character.currentAction.parentPlan.job != null && this.character.currentAction.parentPlan.job.cannotOverrideJob);
-                    GoapPlanJob restrainJob = this.character.CreateRestrainJob(characterThatGainedTrait);
-                    if (restrainJob != null) {
-                        if (overrideCurrentAction) {
-                            restrainJob.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
-                            this.character.homeArea.jobQueue.AssignCharacterToJob(restrainJob, this.character);
+            if (inVisionPOIs.Contains(characterThatGainedTrait)) {
+                bool overrideCurrentAction = !(this.character.currentAction != null && this.character.currentAction.parentPlan != null && this.character.currentAction.parentPlan.job != null && this.character.currentAction.parentPlan.job.cannotOverrideJob);
+                this.character.CreateRemoveTraitJobs(characterThatGainedTrait, overrideCurrentAction);
+                if (this.character.role.roleType == CHARACTER_ROLE.SOLDIER && this.character.isAtHomeArea && characterThatGainedTrait.isAtHomeArea && !characterThatGainedTrait.isDead) {
+                    if (!this.character.HasRelationshipOfEffectWith(characterThatGainedTrait, TRAIT_EFFECT.POSITIVE)) {
+                        if (characterThatGainedTrait.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
+                            GoapPlanJob job = characterThatGainedTrait.CreateApprehendJobForThisCharacter(overrideCurrentAction);
+                            if (job != null) {
+                                if (overrideCurrentAction) {
+                                    job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
+                                    characterThatGainedTrait.homeArea.jobQueue.AssignCharacterToJob(job, this.character);
+                                }
+                            }
                         }
                     }
                 }
+                GoapPlanJob restrainJob = this.character.CreateRestrainJob(characterThatGainedTrait, overrideCurrentAction);
+                if (restrainJob != null) {
+                    if (overrideCurrentAction) {
+                        restrainJob.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
+                        this.character.homeArea.jobQueue.AssignCharacterToJob(restrainJob, this.character);
+                    }
+                }
+            }
+            if (trait.name == "Unconscious") {
                 if (hostilesInRange.Contains(characterThatGainedTrait)) {
                     RemoveHostileInRange(characterThatGainedTrait);
                 }

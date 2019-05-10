@@ -10,6 +10,9 @@ public class RestrainCharacter : GoapAction {
     }
 
     #region Overrides
+    protected override void ConstructRequirement() {
+        _requirementAction = Requirement;
+    }
     protected override void ConstructPreconditionsAndEffects() {
         AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_NON_POSITIVE_TRAIT, conditionKey = "Disabler", targetPOI = poiTarget }, HasNonPositiveDisablerTrait);
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = poiTarget });
@@ -25,6 +28,16 @@ public class RestrainCharacter : GoapAction {
     }
     protected override int GetCost() {
         return 1;
+    }
+    #endregion
+
+    #region Requirements
+    protected bool Requirement() {
+        if (actor != poiTarget) {
+            Character target = poiTarget as Character;
+            return target.GetTrait("Restrained") == null;
+        }
+        return false;
     }
     #endregion
 

@@ -504,8 +504,10 @@ public class CharacterManager : MonoBehaviour {
         }
     }
     public void GenerateRelationships() {
-        int maxInitialRels = 3;
+        int maxInitialRels = 4;
         RELATIONSHIP_TRAIT[] relsInOrder = new RELATIONSHIP_TRAIT[] { RELATIONSHIP_TRAIT.RELATIVE, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.ENEMY, RELATIONSHIP_TRAIT.FRIEND, RELATIONSHIP_TRAIT.PARAMOUR };
+
+        // Loop through all characters in the world
         for (int i = 0; i < allCharacters.Count; i++) {
             Character currCharacter = allCharacters[i];
             int currentRelCount = currCharacter.GetAllRelationshipCount(new List<RELATIONSHIP_TRAIT>() { RELATIONSHIP_TRAIT.MASTER, RELATIONSHIP_TRAIT.SERVANT });
@@ -514,6 +516,8 @@ public class CharacterManager : MonoBehaviour {
             }
             int totalCreatedRels = currentRelCount;
             string summary = currCharacter.name + " relationship generation summary:";
+
+            //  Loop through all relationship types
             for (int k = 0; k < relsInOrder.Length; k++) {
                 RELATIONSHIP_TRAIT currRel = relsInOrder[k];
                 if (totalCreatedRels >= maxInitialRels) {
@@ -522,6 +526,8 @@ public class CharacterManager : MonoBehaviour {
                 }
                 int relsToCreate = 0;
                 int chance = Random.Range(0, 100);
+
+                // Compute the number of relations to create per relationship type
                 switch (currRel) {
                     case RELATIONSHIP_TRAIT.RELATIVE:
                         if (currCharacter.role.roleType == CHARACTER_ROLE.BEAST) { continue; } //a beast character has no relatives
@@ -537,10 +543,10 @@ public class CharacterManager : MonoBehaviour {
                         if (chance < 20) relsToCreate = 1;
                         break;
                     case RELATIONSHIP_TRAIT.ENEMY:
-                        //- a character may have either zero (80%), one (15%) or two (5%) enemies
-                        if (chance < 80) relsToCreate = 0;
-                        else if (chance >= 80 && chance < 95) relsToCreate = 1;
-                        else relsToCreate = 1;
+                        //- a character may have either zero (75%), one (20%) or two (5%) enemies
+                        if (chance < 75) relsToCreate = 0;
+                        else if (chance >= 75 && chance < 95) relsToCreate = 1;
+                        else relsToCreate = 2;
                         break;
                     case RELATIONSHIP_TRAIT.FRIEND:
                         //- a character may have either zero (70%), one (15%) or two (15%) friends
@@ -557,8 +563,12 @@ public class CharacterManager : MonoBehaviour {
                         break;
                 }
                 summary += "\n===========Creating " + relsToCreate + " " + currRel.ToString() + " Relationships...==========";
+
+                
                 if (relsToCreate > 0) {
                     WeightedFloatDictionary<Character> relWeights = new WeightedFloatDictionary<Character>();
+
+                    // Loop through all characters in the world, excluding current character
                     for (int l = 0; l < allCharacters.Count; l++) {
                         Character otherCharacter = allCharacters[l];
                         if (currCharacter.id != otherCharacter.id) { //&& currCharacter.faction == otherCharacter.faction
@@ -568,6 +578,8 @@ public class CharacterManager : MonoBehaviour {
                                 continue; //skip
                             }
                             float weight = 0;
+
+                            // Compute the weight that determines how likely this character will have the current relationship type with current character
                             switch (currRel) {
                                 case RELATIONSHIP_TRAIT.RELATIVE:
                                     if (otherCharacter.role.roleType == CHARACTER_ROLE.BEAST) { continue; } //a beast character has no relatives
@@ -587,8 +599,8 @@ public class CharacterManager : MonoBehaviour {
                                 case RELATIONSHIP_TRAIT.LOVER:
                                     if (currCharacter.CanHaveRelationshipWith(currRel, otherCharacter) && otherCharacter.CanHaveRelationshipWith(currRel, currCharacter)) {
                                         if (currCharacter.role.roleType != CHARACTER_ROLE.BEAST) {
-                                            /*
-                                         - if non beast, from valid characters, choose based on these weights
+                                         /*
+                                          - if non beast, from valid characters, choose based on these weights
                                           - character is in same location: +50 Weight
                                           - character is in different location: +5 Weight
                                           - character is the same race: Weight x5

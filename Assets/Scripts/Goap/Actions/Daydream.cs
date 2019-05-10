@@ -12,6 +12,7 @@ public class Daydream : GoapAction {
     protected override string failActionState { get { return "Daydream Failed"; } }
 
     public Daydream(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.DAYDREAM, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+        shouldIntelNotificationOnlyIfActorIsActive = true;
         actionLocationType = ACTION_LOCATION_TYPE.NEARBY;
         validTimeOfDays = new TIME_IN_WORDS[] {
             TIME_IN_WORDS.MORNING,
@@ -37,7 +38,7 @@ public class Daydream : GoapAction {
     }
     protected override int GetCost() {
         //**Cost**: randomize between 5-12
-        return Utilities.rng.Next(20, 35);
+        return Utilities.rng.Next(25, 35);
     }
     //public override void FailAction() {
     //    base.FailAction();

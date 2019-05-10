@@ -1114,6 +1114,12 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.REMEMBER_FALLEN:
                 goapAction = new RememberFallen(actor, target);
                 break;
+            case INTERACTION_TYPE.SPIT:
+                goapAction = new Spit(actor, target);
+                break;
+            case INTERACTION_TYPE.REPORT_HOSTILE:
+                goapAction = new ReportHostile(actor, target);
+                break;
         }
         if(goapAction != null && willInitialize) {
             goapAction.Initialize();

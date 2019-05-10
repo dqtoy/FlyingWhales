@@ -56,6 +56,7 @@ public class MagicCirclePerformRitual : GoapAction {
         actor.AdjustSupply(-20);
     }
     public void PreTargetMissing() {
+        currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
         actor.RemoveAwareness(poiTarget);
     }
     #endregion

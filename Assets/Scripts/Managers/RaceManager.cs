@@ -123,6 +123,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.BURY_CHARACTER,
                 INTERACTION_TYPE.CARRY_CORPSE,
                 INTERACTION_TYPE.REMEMBER_FALLEN,
+                INTERACTION_TYPE.SPIT,
+                INTERACTION_TYPE.REPORT_HOSTILE,
             } },
             { RACE.ELVES, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -208,6 +210,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.BURY_CHARACTER,
                 INTERACTION_TYPE.CARRY_CORPSE,
                 INTERACTION_TYPE.REMEMBER_FALLEN,
+                INTERACTION_TYPE.SPIT,
+                INTERACTION_TYPE.REPORT_HOSTILE,
             } },
             { RACE.GOBLIN, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -294,6 +298,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.BURY_CHARACTER,
                 INTERACTION_TYPE.CARRY_CORPSE,
                 INTERACTION_TYPE.REMEMBER_FALLEN,
+                INTERACTION_TYPE.SPIT,
+                INTERACTION_TYPE.REPORT_HOSTILE,
             } },
             { RACE.FAERY, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -380,6 +386,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.BURY_CHARACTER,
                 INTERACTION_TYPE.CARRY_CORPSE,
                 INTERACTION_TYPE.REMEMBER_FALLEN,
+                INTERACTION_TYPE.SPIT,
+                INTERACTION_TYPE.REPORT_HOSTILE,
             } },
             { RACE.SKELETON, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -463,6 +471,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.NAP,
                 INTERACTION_TYPE.BURY_CHARACTER,
                 INTERACTION_TYPE.CARRY_CORPSE,
+                INTERACTION_TYPE.REPORT_HOSTILE,
             } },
             { RACE.SPIDER, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,

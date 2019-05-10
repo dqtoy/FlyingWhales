@@ -535,18 +535,28 @@ namespace Pathfinding {
 			}
 		}
 
-		protected virtual void Update () {
-			if (shouldRecalculatePath) SearchPath();
-			if (canMove) {
-				Vector3 nextPosition;
-				Quaternion nextRotation;
-				MovementUpdate(Time.deltaTime, out nextPosition, out nextRotation);
-				FinalizeMovement(nextPosition, nextRotation);
-			}
-		}
+        //public virtual void UpdateMe() {
+        //    if (shouldRecalculatePath) SearchPath();
+        //    if (canMove) {
+        //        Vector3 nextPosition;
+        //        Quaternion nextRotation;
+        //        MovementUpdate(Time.deltaTime, out nextPosition, out nextRotation);
+        //        FinalizeMovement(nextPosition, nextRotation);
+        //    }
+        //}
 
-		/// <summary>\copydoc Pathfinding::IAstarAI::MovementUpdate</summary>
-		public void MovementUpdate (float deltaTime, out Vector3 nextPosition, out Quaternion nextRotation) {
+        protected virtual void Update() {
+            if (shouldRecalculatePath) SearchPath();
+            if (canMove) {
+                Vector3 nextPosition;
+                Quaternion nextRotation;
+                MovementUpdate(Time.deltaTime, out nextPosition, out nextRotation);
+                FinalizeMovement(nextPosition, nextRotation);
+            }
+        }
+
+        /// <summary>\copydoc Pathfinding::IAstarAI::MovementUpdate</summary>
+        public void MovementUpdate (float deltaTime, out Vector3 nextPosition, out Quaternion nextRotation) {
 			if (updatePosition) simulatedPosition = tr.position;
 			if (updateRotation) simulatedRotation = tr.rotation;
 

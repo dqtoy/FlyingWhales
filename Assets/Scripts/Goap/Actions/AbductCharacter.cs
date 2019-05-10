@@ -48,7 +48,7 @@ public class AbductCharacter : GoapAction {
     protected bool Requirement() {
         if(actor != poiTarget) {
             Character target = poiTarget as Character;
-            return target.GetTrait("Abducted") == null;
+            return target.GetTrait("Restrained") == null;
         }
         return false;
     }
