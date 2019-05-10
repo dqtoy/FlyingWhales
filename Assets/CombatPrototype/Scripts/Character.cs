@@ -1371,14 +1371,16 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return false;
     }
-    public GoapPlanJob CreateAssaultJob(Character targetCharacter, bool overrideCurrentAction) {
-        if (isAtHomeArea && !targetCharacter.isDead && !targetCharacter.isAtHomeArea) {
-            GoapPlanJob job = new GoapPlanJob("Assault", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", targetPOI = targetCharacter });
-            job.SetCanTakeThisJobChecker(CanCharacterTakeRestrainJob);
-            homeArea.jobQueue.AddJobInQueue(job, overrideCurrentAction);
-            return job;
+    public void CreateAssaultJobs(Character targetCharacter, bool overrideCurrentAction, int amount) {
+        if (isAtHomeArea && !targetCharacter.isDead && !targetCharacter.isAtHomeArea && targetCharacter.GetTraitOf(TRAIT_TYPE.DISABLER) == null) {
+            for (int i = 0; i < amount; i++) {
+                GoapPlanJob job = new GoapPlanJob("Assault", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", targetPOI = targetCharacter });
+                job.SetCanTakeThisJobChecker(CanCharacterTakeRestrainJob);
+                homeArea.jobQueue.AddJobInQueue(job, overrideCurrentAction);
+            }
+            //return job;
         }
-        return null;
+        //return null;
     }
     private bool CanCharacterTakeAssaultJob(Character character, Character targetCharacter) {
         return character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.ADVENTURER; // && !HasRelationshipOfEffectWith(targetCharacter, TRAIT_EFFECT.POSITIVE)
