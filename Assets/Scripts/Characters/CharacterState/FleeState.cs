@@ -36,6 +36,18 @@ public class FleeState : CharacterState {
         if (!targetCharacter.HasTraitOf(TRAIT_TYPE.DISABLER)) {
             stateComponent.character.marker.AddTerrifyingCharacter(targetCharacter);
         }
+        if(stateComponent.character.role.roleType == CHARACTER_ROLE.LEADER || stateComponent.character.role.roleType == CHARACTER_ROLE.NOBLE || stateComponent.character.role.roleType == CHARACTER_ROLE.SOLDIER) {
+            if (targetCharacter.GetNumOfJobsTargettingThisCharacter("Assault") < 3) {
+                stateComponent.character.CreateAssaultJob(targetCharacter, false);
+            }
+        } else {
+            GoapPlanJob job = new GoapPlanJob("Report Hostile", INTERACTION_TYPE.REPORT_HOSTILE, new Dictionary<INTERACTION_TYPE, object[]>() {
+                    { INTERACTION_TYPE.REPORT_HOSTILE, new object[] { targetCharacter }}
+                });
+            job.SetCannotOverrideJob(true);
+            job.SetCancelOnFail(true);
+            stateComponent.character.jobQueue.AddJobInQueue(job, true, false);
+        }
         base.OnExitThisState();
     }
     #endregion
