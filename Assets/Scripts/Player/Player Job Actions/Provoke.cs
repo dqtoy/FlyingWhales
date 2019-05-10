@@ -25,6 +25,9 @@ public class Provoke : PlayerJobAction {
         return base.ShouldButtonBeInteractable(character, targetCharacter);
     }
     public override bool CanTarget(Character targetCharacter) {
+        if (targetCharacter.isDead) {
+            return false;
+        }
         if (targetCharacter.role.roleType == CHARACTER_ROLE.BEAST || targetCharacter.faction.id == FactionManager.Instance.neutralFaction.id) {
             return false;
         }

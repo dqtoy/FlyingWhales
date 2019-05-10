@@ -2183,6 +2183,15 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return null;
     }
+    public List<Character> GetAllCharactersThatHasRelationship() {
+        List<Character> characters = new List<Character>();
+        foreach (KeyValuePair<Character, CharacterRelationshipData> kvp in relationships) {
+            if (!kvp.Value.isDisabled) {
+                characters.Add(kvp.Key);
+            }
+        }
+        return characters;
+    }
     public bool CanHaveRelationshipWith(RELATIONSHIP_TRAIT type, Character target) {
         //NOTE: This is only one way checking. This character will only check itself, if he/she meets the requirements of a given relationship
         List<RELATIONSHIP_TRAIT> relationshipsWithTarget = GetAllRelationshipTraitTypesWith(target);
