@@ -196,7 +196,7 @@ public class CharacterMarker : PooledObject {
             if(trait.name == "Unconscious") {
                 if (inVisionPOIs.Contains(characterThatGainedTrait)) {
                     bool overrideCurrentAction = !(this.character.currentAction != null && this.character.currentAction.parentPlan != null && this.character.currentAction.parentPlan.job != null && this.character.currentAction.parentPlan.job.cannotOverrideJob);
-                    GoapPlanJob restrainJob = this.character.CreateRestrainJob(characterThatGainedTrait);
+                    GoapPlanJob restrainJob = this.character.CreateRestrainJob(characterThatGainedTrait, overrideCurrentAction);
                     if (restrainJob != null) {
                         if (overrideCurrentAction) {
                             restrainJob.SetWillImmediatelyBeDoneAfterReceivingPlan(true);

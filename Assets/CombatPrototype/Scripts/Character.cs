@@ -5734,7 +5734,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = actor }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
                     //job.SetCanTakeThisJobChecker(CanCharacterTakeApprehendJob);
                     //homeArea.jobQueue.AddJobInQueue(job);
-                    job = actor.CreateApprehendJobForThisCharacter();
+                    job = actor.CreateApprehendJobForThisCharacter(false);
                     if(job != null) {
                         homeArea.jobQueue.ForceAssignCharacterToJob(job, this);
                     }
