@@ -94,7 +94,7 @@ public class ProvokeMenu : MonoBehaviour {
                 GoapPlanJob job = new GoapPlanJob("Undermine Enemy", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", targetPOI = chosenCharacter });
                 job.SetCannotOverrideJob(true);
                 job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
-                targetCharacter.jobQueue.AddJobInQueue(job, false, false);
+                targetCharacter.jobQueue.AddJobInQueue(job, true, false);
                 targetCharacter.jobQueue.ProcessFirstJobInQueue(targetCharacter);
 
                 Log addLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "provoke");
