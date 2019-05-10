@@ -49312,7 +49312,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -125.599976, y: 270.9}
+  m_AnchoredPosition: {x: -125.59985, y: 270.9}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!1 &1287595752
@@ -66104,7 +66104,7 @@ MonoBehaviour:
     - Gloomhollow
   - tokenName: Blighted Potion
     tokenType: 0
-    quantity: 2
+    quantity: 0
     appearanceWeight: 100
     areaLocations:
     - Narris
@@ -66121,7 +66121,7 @@ MonoBehaviour:
     - Lamina
   - tokenName: Fear Spell
     tokenType: 3
-    quantity: 2
+    quantity: 0
     appearanceWeight: 100
     areaLocations:
     - Narris
@@ -66138,7 +66138,7 @@ MonoBehaviour:
     - Lamina
   - tokenName: Charm Spell
     tokenType: 2
-    quantity: 2
+    quantity: 0
     appearanceWeight: 100
     areaLocations:
     - Narris
@@ -66161,7 +66161,7 @@ MonoBehaviour:
     - Tribu
   - tokenName: Secret Scroll
     tokenType: 7
-    quantity: 2
+    quantity: 0
     appearanceWeight: 40
     areaLocations:
     - Cardell
@@ -66195,7 +66195,7 @@ MonoBehaviour:
     - Lamina
   - tokenName: Panacea
     tokenType: 10
-    quantity: 2
+    quantity: 0
     appearanceWeight: 100
     areaLocations:
     - Cardell
@@ -66229,7 +66229,7 @@ MonoBehaviour:
     - Lamina
   - tokenName: Healing Potion
     tokenType: 12
-    quantity: 1
+    quantity: 2
     appearanceWeight: 100
     areaLocations:
     - Cardell
@@ -66289,7 +66289,7 @@ MonoBehaviour:
     - Lamina
   - tokenName: Scroll Of Frenzy
     tokenType: 17
-    quantity: 2
+    quantity: 0
     appearanceWeight: 100
     areaLocations:
     - Cardell
