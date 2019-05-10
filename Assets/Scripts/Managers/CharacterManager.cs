@@ -543,15 +543,15 @@ public class CharacterManager : MonoBehaviour {
                         if (chance < 20) relsToCreate = 1;
                         break;
                     case RELATIONSHIP_TRAIT.ENEMY:
-                        //- a character may have either zero (75%), one (20%) or two (5%) enemies
-                        if (chance < 75) relsToCreate = 0;
-                        else if (chance >= 75 && chance < 95) relsToCreate = 1;
+                        //- a character may have either zero (65%), one (30%) or two (5%) enemies
+                        if (chance < 65) relsToCreate = 0;
+                        else if (chance >= 65 && chance < 95) relsToCreate = 1;
                         else relsToCreate = 2;
                         break;
                     case RELATIONSHIP_TRAIT.FRIEND:
-                        //- a character may have either zero (70%), one (15%) or two (15%) friends
-                        if (chance < 70) relsToCreate = 0;
-                        else if (chance >= 70 && chance < 85) relsToCreate = 1;
+                        //- a character may have either zero (65%), one (25%) or two (10%) friends
+                        if (chance < 65) relsToCreate = 0;
+                        else if (chance >= 65 && chance < 90) relsToCreate = 1;
                         else relsToCreate = 2;
                         break;
                     case RELATIONSHIP_TRAIT.PARAMOUR:
