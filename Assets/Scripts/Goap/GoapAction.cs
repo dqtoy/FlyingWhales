@@ -188,7 +188,7 @@ public class GoapAction {
 
             }
         } else {
-            Messenger.AddListener<TileObject>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
+            Messenger.AddListener<TileObject, Character>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
         }
     }
     protected virtual void CreateThoughtBubbleLog() {
@@ -304,6 +304,12 @@ public class GoapAction {
 
     //If this action's current state is being performed and is stopped abruptly, call this
     public virtual void OnStopActionDuringCurrentState() { }
+    /// <summary>
+    /// What should happen when another character witnesses this action.
+    /// NOTE: This only happens when the character finishes the action. NOT during.
+    /// </summary>
+    /// <param name="witness">The character that witnessed this action</param>
+    public virtual void OnWitnessedBy(Character witness) { }
     #endregion
 
     #region Utilities
@@ -343,7 +349,7 @@ public class GoapAction {
                 }
             }
         } else {
-            Messenger.RemoveListener<TileObject>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
+            Messenger.RemoveListener<TileObject, Character>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
         }
         OnFinishActionTowardsTarget();
         if (endAction != null) {
@@ -385,7 +391,7 @@ public class GoapAction {
         }
 
         if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
-            Messenger.RemoveListener<TileObject>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
+            Messenger.RemoveListener<TileObject, Character>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
         }
         OnCancelActionTowardsTarget();
         SetIsStopped(true);
@@ -622,9 +628,12 @@ public class GoapAction {
             target.OnCancelActionTowardsObject(this);
         }
     }
-    private void OnTileObjectRemoved(TileObject tileObj) {
+    private void OnTileObjectRemoved(TileObject tileObj, Character removedBy) {
         if (poiTarget == tileObj) {
             if (isPerformingActualAction) {
+                if (removedBy != null && removedBy == actor) {
+                    return; //if the object was removed by the actor, do not stop the action
+                }
                 StopAction(); //when the target object of this action was removed, and the actor is currently performing the action, stop the action
             }
         }

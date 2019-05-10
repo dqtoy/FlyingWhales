@@ -37,7 +37,7 @@ public class CharacterMarker : PooledObject {
     [SerializeField] private Collider2D[] colliders;
     [SerializeField] private Rigidbody2D[] rgBodies;
     [SerializeField] private RVOController rvoController;
-    [SerializeField] private CharacterMarkerVisionCollision visionCollision;
+    public CharacterMarkerVisionCollision visionCollision;
     //[SerializeField] private FleeingRVOController fleeingRVOController;
 
     [Header("For Testing")]
@@ -170,6 +170,7 @@ public class CharacterMarker : PooledObject {
     public void OnCharacterGainedTrait(Character characterThatGainedTrait, Trait trait) {
         //this will make this character flee when he/she gains an injured trait
         if (characterThatGainedTrait == this.character) {
+            string gainTraitSummary = characterThatGainedTrait.name + " has gained trait " + trait.name;
             if (trait.type == TRAIT_TYPE.DISABLER) { //if the character gained a disabler trait, hinder movement
                 pathfindingAI.ClearPath();
                 //if (character.currentParty.icon.isTravelling && character.currentParty.icon.travelLine == null) {
@@ -178,20 +179,25 @@ public class CharacterMarker : PooledObject {
                 //rvoController.priority = 0;
                 rvoController.enabled = false;
                 pathfindingAI.AdjustDoNotMove(1);
+                gainTraitSummary += "\nGained trait is a disabler trait, adjusting do not move value.";
             }
             if (trait.name == "Unconscious") {
                 //if the character gained an unconscious trait, exit current state if it is flee
                 if (characterThatGainedTrait.stateComponent.currentState != null && characterThatGainedTrait.stateComponent.currentState.characterState == CHARACTER_STATE.FLEE) {
                     characterThatGainedTrait.stateComponent.currentState.OnExitThisState();
+                    gainTraitSummary += "\nGained trait is unconscious, and characters current state is flee, exiting flee state.";
                 }
             } else if (trait.name == "Injured" && trait.responsibleCharacter != null && characterThatGainedTrait.GetTrait("Unconscious") == null) {
+                gainTraitSummary += "\nGained trait is injured, and character that is responsible for injured trait is " + trait.responsibleCharacter.name;
                 if (hostilesInRange.Contains(trait.responsibleCharacter)) {
+                    gainTraitSummary += trait.responsibleCharacter.name + " is in hostile range. Forcing flee.";
                     Debug.Log(characterThatGainedTrait.name + " gained an injured trait. Reacting...");
                     NormalReactToHostileCharacter(trait.responsibleCharacter, CHARACTER_STATE.FLEE);
                 }
             }
             UpdateAnimation();
             UpdateActionIcon();
+            Debug.Log(gainTraitSummary);
         } else {
             if (inVisionPOIs.Contains(characterThatGainedTrait)) {
                 bool overrideCurrentAction = !(this.character.currentAction != null && this.character.currentAction.parentPlan != null && this.character.currentAction.parentPlan.job != null && this.character.currentAction.parentPlan.job.cannotOverrideJob);
@@ -836,26 +842,26 @@ public class CharacterMarker : PooledObject {
     public void ClearPOIsInVisionRange() {
         inVisionPOIs.Clear();
     }
-    public void RevalidatePOIsInVisionRange() {
-        //check pois in vision to see if they are still valid
-        List<IPointOfInterest> invalid = new List<IPointOfInterest>();
-        for (int i = 0; i < inVisionPOIs.Count; i++) {
-            IPointOfInterest poi = inVisionPOIs[i];
-            if (poi.gridTileLocation == null || poi.gridTileLocation.structure != character.currentStructure) {
-                //check if both structures are open spaces, if they are, do not consider vision as invalid
-                if (poi.gridTileLocation != null
-                    && poi.gridTileLocation.structure != null
-                    && character.currentStructure != null
-                    && poi.gridTileLocation.structure.structureType.IsOpenSpace() && character.currentStructure.structureType.IsOpenSpace()) {
-                    continue; //skip
-                }
-                invalid.Add(poi);
-            }
-        }
-        for (int i = 0; i < invalid.Count; i++) {
-            RemovePOIFromInVisionRange(invalid[i]);
-        }
-    }
+    //public void RevalidatePOIsInVisionRange() {
+    //    //check pois in vision to see if they are still valid
+    //    List<IPointOfInterest> invalid = new List<IPointOfInterest>();
+    //    for (int i = 0; i < inVisionPOIs.Count; i++) {
+    //        IPointOfInterest poi = inVisionPOIs[i];
+    //        if (poi.gridTileLocation == null || poi.gridTileLocation.structure != character.currentStructure) {
+    //            //check if both structures are open spaces, if they are, do not consider vision as invalid
+    //            if (poi.gridTileLocation != null
+    //                && poi.gridTileLocation.structure != null
+    //                && character.currentStructure != null
+    //                && poi.gridTileLocation.structure.structureType.IsOpenSpace() && character.currentStructure.structureType.IsOpenSpace()) {
+    //                continue; //skip
+    //            }
+    //            invalid.Add(poi);
+    //        }
+    //    }
+    //    for (int i = 0; i < invalid.Count; i++) {
+    //        RemovePOIFromInVisionRange(invalid[i]);
+    //    }
+    //}
     #endregion
 
     #region Hosility Collision
@@ -885,7 +891,7 @@ public class CharacterMarker : PooledObject {
         hostilesInRange.Clear();
     }
     private void OnHostileInRangeRemoved(Character removedCharacter) {
-        if (character == null //character died
+        if (character.isDead //character died
             || character.stateComponent.currentState == null) {
             return;
         }
@@ -903,6 +909,9 @@ public class CharacterMarker : PooledObject {
         character.PrintLogIfActive(removeHostileSummary);
     }
     public void OnOtherCharacterDied(Character otherCharacter) {
+        if (inVisionPOIs.Contains(otherCharacter)) {
+            character.CreateJobsOnEnterVisionWith(otherCharacter); //this is used to create jobs that involve characters that died within the character's range of vision
+        }
         RemovePOIFromInVisionRange(otherCharacter);
         //RemoveHostileInRange(otherCharacter);
         if (this.hasFleePath) { //if this character is fleeing, remove the character that died from his/her hostile list

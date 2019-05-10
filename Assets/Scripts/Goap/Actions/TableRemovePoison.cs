@@ -38,8 +38,19 @@ public class TableRemovePoison : GoapAction {
 
     #region State Effects
     public void PreRemovePoisonSuccess() {
+        currentState.AddLogFiller(poiTarget.gridTileLocation.structure.location, poiTarget.gridTileLocation.structure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
+    }
+    public void AfterRemovePoisonSuccess() {
         //**Effect 1**: Remove Poisoned Trait from target table
         RemoveTraitFrom(poiTarget, "Poisoned");
+        //**Effect 2**: Remove Tool from Actor's inventory
+        if (actor.HasToken(SPECIAL_TOKEN.TOOL)) {
+            actor.ConsumeToken(actor.GetToken(SPECIAL_TOKEN.TOOL));
+        } else {
+            //the actor does not have a tool, log for now
+            Debug.LogWarning(actor.name + " does not have a tool for removing poison! Poison was still removed, but thought you should know.");
+        }
+       
     }
     #endregion
 
@@ -52,7 +63,7 @@ public class TableRemovePoison : GoapAction {
 
     #region Preconditions
     private bool HasItemTool() {
-        return actor.isHoldingItem && actor.GetToken("Tool") != null;
+        return actor.GetToken("Tool") != null;
     }
     #endregion
 }

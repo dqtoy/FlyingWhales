@@ -73,12 +73,21 @@ public class  TileObject : IPointOfInterest {
         this.tile = tile;
         if (tile == null) {
             DisableCollisionTrigger();
-            OnRemoveTileObject();
+            OnRemoveTileObject(null);
             if (previousTile != null) {
                 PlaceGhostCollisionTriggerAt(previousTile);
             }
         } else {
             PlaceCollisionTriggerAt(tile);
+        }
+    }
+    public void RemoveTileObject(Character removedBy) {
+        LocationGridTile previousTile = this.tile;
+        this.tile = null;
+        DisableCollisionTrigger();
+        OnRemoveTileObject(removedBy);
+        if (previousTile != null) {
+            PlaceGhostCollisionTriggerAt(previousTile);
         }
     }
     public virtual LocationGridTile GetNearestUnoccupiedTileFromThis() {
@@ -124,9 +133,8 @@ public class  TileObject : IPointOfInterest {
     /// <summary>
     /// Triggered when the grid tile location of this object is set to null.
     /// </summary>
-    protected virtual void OnRemoveTileObject() {
-        Messenger.Broadcast(Signals.TILE_OBJECT_REMOVED, this);
-
+    protected virtual void OnRemoveTileObject(Character removedBy) {
+        Messenger.Broadcast(Signals.TILE_OBJECT_REMOVED, this, removedBy);
     }
     #endregion
 

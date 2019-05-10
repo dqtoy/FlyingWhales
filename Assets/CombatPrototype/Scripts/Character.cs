@@ -1386,20 +1386,26 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         return character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.ADVENTURER; // && !HasRelationshipOfEffectWith(targetCharacter, TRAIT_EFFECT.POSITIVE)
     }
     private bool CreateBuryJob(Character targetCharacter, bool overrideCurrentAction) {
-        if (targetCharacter.isDead && (role.roleType == CHARACTER_ROLE.SOLDIER || role.roleType == CHARACTER_ROLE.CIVILIAN)) {
-            if (!jobQueue.HasJob("Bury", targetCharacter)) {
-                GoapPlanJob buryJob = new GoapPlanJob("Bury", INTERACTION_TYPE.BURY_CHARACTER, targetCharacter);
+        if (targetCharacter.isDead) {
+            //check first if the target character already has a bury job in this location
+            GoapPlanJob buryJob = homeArea.jobQueue.GetJob("Bury", targetCharacter) as GoapPlanJob;
+            if (buryJob == null) {
+                //if none, create one
+                buryJob = new GoapPlanJob("Bury", INTERACTION_TYPE.BURY_CHARACTER, targetCharacter);
                 buryJob.AllowDeadTargets();
                 buryJob.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, conditionKey = this, targetPOI = targetCharacter }, INTERACTION_TYPE.CARRY_CORPSE);
+                homeArea.jobQueue.AddJobInQueue(buryJob, false, false);
+            } 
+            //if the character is a soldier or civilian, and the bury job is currently unassigned, take the job
+            if (buryJob.assignedCharacter == null && (role.roleType == CHARACTER_ROLE.SOLDIER || role.roleType == CHARACTER_ROLE.CIVILIAN)) {
                 if (overrideCurrentAction) {
                     buryJob.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
-                    jobQueue.AddJobInQueue(buryJob, true, false);
-                    jobQueue.ProcessFirstJobInQueue(this);
+                    homeArea.jobQueue.AssignCharacterToJob(buryJob, this);
                 } else {
-                    jobQueue.AddJobInQueue(buryJob);
+                    homeArea.jobQueue.AssignCharacterToJob(buryJob, this);
                 }
-                return true;
             }
+            return true;
         }
         return false;
     }
@@ -1537,7 +1543,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
     }
     public void CreateAskForHelpJob(Character troubledCharacter, INTERACTION_TYPE helpType, params object[] otherData) {
-        if (troubledCharacter != null && troubledCharacter != this) {
+        //&& troubledCharacter != this
+        if (troubledCharacter != null) {
             this.troubledCharacter = troubledCharacter;
             Character targetCharacter = null;
             List<Character> positiveCharacters = GetCharactersWithRelationship(TRAIT_EFFECT.POSITIVE);
@@ -1712,9 +1719,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         LocationStructure previousStructure = this.currentStructure;
         this.currentStructure = currentStructure;
-        if (marker != null && currentStructure != null) {
-            marker.RevalidatePOIsInVisionRange(); //when the character changes structures, revalidate pois in range
-        }
+        //if (marker != null && currentStructure != null) {
+        //    marker.RevalidatePOIsInVisionRange(); //when the character changes structures, revalidate pois in range
+        //}
         string summary = string.Empty;
         if (currentStructure != null) {
             summary = GameManager.Instance.TodayLogString() + "Arrived at <color=\"green\">" + currentStructure.ToString() + "</color>";
@@ -2240,6 +2247,11 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 if (relationshipsWithTarget!= null && relationshipsWithTarget.Contains(RELATIONSHIP_TRAIT.LOVER)) {
                     return false;
                 }
+                //one of the characters must have a lover
+                if (!target.HasRelationshipTraitOf(RELATIONSHIP_TRAIT.LOVER) && !HasRelationshipTraitOf(RELATIONSHIP_TRAIT.LOVER)) {
+                    return false;
+                }
+
                 return true;
                 //if (GetCharacterWithRelationship(type) == null 
                 //    && !relationshipsWithTarget.Contains(RELATIONSHIP_TRAIT.LOVER)) { 
@@ -5598,9 +5610,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     /// Make this character react to a crime that he/she witnessed.
     /// </summary>
     /// <param name="witnessedCrime">Witnessed Crime.</param>
-    /// <param name="notifyPlayer">Should the player be notified when this happens?</param>
     public void ReactToCrime(GoapAction witnessedCrime) {
         ReactToCrime(witnessedCrime.committedCrime, witnessedCrime.actor, witnessedCrime);
+        witnessedCrime.OnWitnessedBy(this);
     }
     /// <summary>
     /// Base function for crime reactions
@@ -5608,7 +5620,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     /// <param name="committedCrime">The type of crime that was committed.</param>
     /// <param name="actor">The character that committed the crime</param>
     /// <param name="witnessedCrime">The crime witnessed by this character, if this is null, character was only informed of the crime by someone else.</param>
-    /// <param name="notifyPlayer">Should the player be notified when this happens?</param>
     public void ReactToCrime(CRIME committedCrime, Character actor, GoapAction witnessedCrime = null) {
         if (witnessedCrime != null) {
             //if the action that should be considered a crime is part of a job from this character's area, do not consider it a crime

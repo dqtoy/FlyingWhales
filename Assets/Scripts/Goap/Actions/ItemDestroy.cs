@@ -38,7 +38,7 @@ public class ItemDestroy : GoapAction {
     }
     private void AfterDestroySuccess() {
         //**After Effect 1**: Destroy target item
-        poiTarget.gridTileLocation.structure.RemovePOI(poiTarget);
+        poiTarget.gridTileLocation.structure.RemovePOI(poiTarget, actor);
     }
     private void PreTargetMissing() {
         currentState.AddLogFiller(null, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);

@@ -6,6 +6,8 @@ public class Poisoned : Trait {
 
     public List<Character> responsibleCharacters { get; private set; }
 
+    public List<Character> awareCharacters { get; private set; } //characters that know about this trait
+
     public Poisoned() {
         name = "Poisoned";
         description = "This character is poisoned.";
@@ -14,6 +16,7 @@ public class Poisoned : Trait {
         daysDuration = 0;
         effects = new List<TraitEffect>();
         responsibleCharacters = new List<Character>();
+        awareCharacters = new List<Character>();
     }
 
     #region Overrides
@@ -25,5 +28,21 @@ public class Poisoned : Trait {
     public override bool IsResponsibleForTrait(Character character) {
         return responsibleCharacters.Contains(character);
     }
-    #endregion   
+    public override void OnRemoveTrait(IPointOfInterest sourceCharacter) {
+        base.OnRemoveTrait(sourceCharacter);
+        awareCharacters.Clear();
+        responsibleCharacters.Clear(); //Cleared list, for garbage collection
+    }
+    #endregion
+
+    #region Aware Characters
+    public void AddAwareCharacter(Character character) {
+        if (awareCharacters.Contains(character)) {
+            awareCharacters.Add(character);
+        }
+    }
+    public void RemoveAwareCharacter(Character character) {
+        awareCharacters.Remove(character);
+    }
+    #endregion
 }

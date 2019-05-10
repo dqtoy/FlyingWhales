@@ -32,6 +32,15 @@ public class EatAtTable : GoapAction {
     protected override int GetCost() {
         LocationGridTile knownLoc = actor.GetAwareness(poiTarget).knownGridLocation;
         Dwelling dwelling = knownLoc.structure as Dwelling;
+
+        //if the table is poisoned, check if the actor knows about it, if he/she does, increase cost
+        Poisoned poisoned = poiTarget.GetTrait("Poisoned") as Poisoned;
+        if (poisoned != null) {
+            if (poisoned.awareCharacters.Contains(actor)) {
+                return 50;
+            }
+        }
+
         if (!dwelling.IsOccupied()) {
             return 12;
         } else {
