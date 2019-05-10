@@ -43,8 +43,8 @@ public class AssaultCharacter : GoapAction {
 
         //string nextState = resultWeights.PickRandomElementGivenWeights();
         //SetState(nextState);
-
-        if (!isTargetMissing && (poiTarget as Character).IsInOwnParty()) {
+        Character targetCharacter = poiTarget as Character;
+        if (!isTargetMissing && targetCharacter.IsInOwnParty() && !targetCharacter.isDead) {
             WeightedDictionary<string> resultWeights = new WeightedDictionary<string>();
             resultWeights.AddElement("Target Injured", 10);
             resultWeights.AddElement("Target Knocked Out", 40);

@@ -1181,6 +1181,16 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return false;
     }
+    public int GetNumOfJobsTargettingThisCharacter(string jobName) {
+        int count = 0;
+        for (int i = 0; i < allJobsTargettingThis.Count; i++) {
+            JobQueueItem job = allJobsTargettingThis[i];
+            if (job.name == jobName) {
+                count++;
+            }
+        }
+        return count;
+    }
     public bool HasJobTargettingThisCharacter(string jobName, object conditionKey) {
         for (int i = 0; i < allJobsTargettingThis.Count; i++) {
             if (allJobsTargettingThis[i] is GoapPlanJob) {
@@ -1361,19 +1371,17 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return false;
     }
-    private GoapPlanJob CreateAssaultJob(Character targetCharacter, bool overrideCurrentAction) {
-        if (isAtHomeArea && !targetCharacter.isDead && !targetCharacter.isAtHomeArea && (role.roleType == CHARACTER_ROLE.SOLDIER || role.roleType == CHARACTER_ROLE.ADVENTURER)) {
-            if (IsHostileWith(targetCharacter) && !HasRelationshipOfEffectWith(targetCharacter, TRAIT_EFFECT.POSITIVE) && !targetCharacter.HasJobTargettingThisCharacter("Restrain")) {
-                GoapPlanJob job = new GoapPlanJob("Assault", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", targetPOI = targetCharacter });
-                job.SetCanTakeThisJobChecker(CanCharacterTakeRestrainJob);
-                homeArea.jobQueue.AddJobInQueue(job, overrideCurrentAction);
-                return job;
-            }
+    public GoapPlanJob CreateAssaultJob(Character targetCharacter, bool overrideCurrentAction) {
+        if (isAtHomeArea && !targetCharacter.isDead && !targetCharacter.isAtHomeArea) {
+            GoapPlanJob job = new GoapPlanJob("Assault", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", targetPOI = targetCharacter });
+            job.SetCanTakeThisJobChecker(CanCharacterTakeRestrainJob);
+            homeArea.jobQueue.AddJobInQueue(job, overrideCurrentAction);
+            return job;
         }
         return null;
     }
     private bool CanCharacterTakeAssaultJob(Character character, Character targetCharacter) {
-        return (character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.ADVENTURER) && !HasRelationshipOfEffectWith(targetCharacter, TRAIT_EFFECT.POSITIVE);
+        return character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.ADVENTURER; // && !HasRelationshipOfEffectWith(targetCharacter, TRAIT_EFFECT.POSITIVE)
     }
     private bool CreateBuryJob(Character targetCharacter, bool overrideCurrentAction) {
         if (targetCharacter.isDead && (role.roleType == CHARACTER_ROLE.SOLDIER || role.roleType == CHARACTER_ROLE.CIVILIAN)) {
@@ -4837,6 +4845,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //poiGoapActions.Add(INTERACTION_TYPE.HUNT_ACTION);
         poiGoapActions.Add(INTERACTION_TYPE.PLAY);
         poiGoapActions.Add(INTERACTION_TYPE.REPORT_CRIME);
+        poiGoapActions.Add(INTERACTION_TYPE.REPORT_HOSTILE);
         poiGoapActions.Add(INTERACTION_TYPE.STEAL_CHARACTER);
         poiGoapActions.Add(INTERACTION_TYPE.JUDGE_CHARACTER);
         poiGoapActions.Add(INTERACTION_TYPE.CURSE_CHARACTER);
