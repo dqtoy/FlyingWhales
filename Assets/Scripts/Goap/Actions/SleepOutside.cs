@@ -8,6 +8,7 @@ public class SleepOutside : GoapAction {
         actionLocationType = ACTION_LOCATION_TYPE.NEARBY;
         actionIconString = GoapActionStateDB.Sleep_Icon;
         //animationName = "Sleep Ground";
+        shouldIntelNotificationOnlyIfActorIsActive = true;
     }
 
     #region Overrides

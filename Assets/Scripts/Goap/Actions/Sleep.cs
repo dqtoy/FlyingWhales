@@ -7,6 +7,7 @@ public class Sleep : GoapAction {
 
     public Sleep(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.SLEEP, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Sleep_Icon;
+        shouldIntelNotificationOnlyIfActorIsActive = true;
     }
 
     #region Overrides

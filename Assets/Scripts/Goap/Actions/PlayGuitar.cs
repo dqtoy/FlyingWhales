@@ -12,6 +12,7 @@ public class PlayGuitar : GoapAction {
             TIME_IN_WORDS.EARLY_NIGHT,
         };
         actionIconString = GoapActionStateDB.Entertain_Icon;
+        shouldIntelNotificationOnlyIfActorIsActive = true;
     }
 
     #region Overrides

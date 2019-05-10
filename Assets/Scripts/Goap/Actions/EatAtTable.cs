@@ -6,6 +6,7 @@ public class EatAtTable : GoapAction {
 
     public EatAtTable(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.EAT_DWELLING_TABLE, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Eat_Icon;
+        shouldIntelNotificationOnlyIfActorIsActive = true;
     }
 
     #region Overrides

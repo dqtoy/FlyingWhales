@@ -322,7 +322,7 @@ public class GoapAction {
         if(_requirementAction != null) {
             requirementActionSatisfied = _requirementAction();
         }
-        return requirementActionSatisfied && (validTimeOfDays == null || validTimeOfDays.Contains(GameManager.GetCurrentTimeInWordsOfTick()));
+        return requirementActionSatisfied; //&& (validTimeOfDays == null || validTimeOfDays.Contains(GameManager.GetCurrentTimeInWordsOfTick()));
     }
     public void ReturnToActorTheActionResult(string result) {
         this.result = result;
