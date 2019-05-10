@@ -3057,6 +3057,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 AdjustIgnoreHostilities(1);
             }
             _ownParty.RemoveAllOtherCharacters();
+            CancelAllJobsTargettingThisCharacter("Assault");
         }else if (trait.type == TRAIT_TYPE.CRIMINAL) {
             CancelOrUnassignRemoveTraitRelatedJobs();
         }
