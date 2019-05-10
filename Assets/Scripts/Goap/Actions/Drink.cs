@@ -33,7 +33,7 @@ public class Drink : GoapAction {
         }
     }
     protected override int GetCost() {
-        return Utilities.rng.Next(7, 10);
+        return Utilities.rng.Next(15, 26);
     }
     //public override void FailAction() {
     //    base.FailAction();
