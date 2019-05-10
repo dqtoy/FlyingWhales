@@ -36,7 +36,7 @@ public class DropItemWarehouse : GoapAction {
         SetState("Drop Success");
     }
     public override LocationGridTile GetTargetLocationTile() {
-        return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);
+        return InteractionManager.Instance.GetTargetLocationTile(ACTION_LOCATION_TYPE.RANDOM_LOCATION, actor, null, targetStructure);
     }
     protected override int GetCost() {
         return 1;
