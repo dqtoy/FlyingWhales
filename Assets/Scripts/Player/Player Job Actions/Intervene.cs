@@ -18,7 +18,7 @@ public class Intervene : PlayerJobAction {
         if (targetCharacter.isDead || targetCharacter.currentAction == null) {
             return;
         }
-        targetCharacter.currentAction.StopAction();
+        targetCharacter.currentAction.StopAction(true);
     }
 
     protected override bool ShouldButtonBeInteractable(Character character, Character targetCharacter) {

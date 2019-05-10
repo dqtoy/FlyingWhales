@@ -25,8 +25,8 @@ public class Spit : GoapAction {
         }
     }
     protected override int GetCost() {
-        //**Cost**: randomize between 15-25
-        return Utilities.rng.Next(15, 26);
+        //**Cost**: randomize between 5-35
+        return Utilities.rng.Next(5, 36);
     }
     #endregion
 

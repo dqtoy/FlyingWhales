@@ -374,7 +374,7 @@ public class GoapAction {
     public void SetEndAction(System.Action<string, GoapAction> endAction) {
         this.endAction = endAction;
     }
-    public void StopAction() {
+    public void StopAction(bool removeJobInQueue = false) {
         //GoapAction action = actor.currentAction;
         //if(actor.marker.pathfindingThread != null) {
         //    actor.marker.pathfindingThread.SetDoNotMove(true);
@@ -395,7 +395,10 @@ public class GoapAction {
         }
         OnCancelActionTowardsTarget();
         SetIsStopped(true);
-        if(isPerformingActualAction && !isDone) {
+
+        JobQueueItem job = parentPlan.job;
+
+        if (isPerformingActualAction && !isDone) {
             //ReturnToActorTheActionResult(InteractionManager.Goap_State_Fail);
             OnStopActionDuringCurrentState();
             currentState.EndPerTickEffect(false);
@@ -416,6 +419,9 @@ public class GoapAction {
             if (!actor.DropPlan(parentPlan)) {
                 //actor.PlanGoapActions();
             }
+        }
+        if(removeJobInQueue && job != null && job.jobQueueParent.character != null) {
+            job.jobQueueParent.RemoveJobInQueue(job);
         }
         if (UIManager.Instance.characterInfoUI.isShowing) {
             UIManager.Instance.characterInfoUI.UpdateBasicInfo();
