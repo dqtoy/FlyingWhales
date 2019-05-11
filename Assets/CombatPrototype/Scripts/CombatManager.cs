@@ -87,7 +87,7 @@ public class CombatManager : MonoBehaviour {
     public void GetCombatChanceOfTwoLists(List<Character> allies, List<Character> enemies, out float allyChance, out float enemyChance) {
         int sideAWeight = 0;
         int sideBWeight = 0;
-        CombatManager.Instance.GetCombatWeightsOfTwoLists(allies, enemies, out sideAWeight, out sideBWeight);
+        GetCombatWeightsOfTwoLists(allies, enemies, out sideAWeight, out sideBWeight);
         int totalWeight = sideAWeight + sideBWeight;
         
         allyChance = (sideAWeight / (float) totalWeight) * 100f;

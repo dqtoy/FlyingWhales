@@ -26,7 +26,7 @@ public class EngageState : CharacterState {
         stateComponent.character.marker.SetCurrentlyEngaging(null);
         stateComponent.character.marker.SetTargetTransform(null);
         stateComponent.character.marker.pathfindingAI.ClearPath();
-        stateComponent.character.marker.ClearArrivalAction();
+        //stateComponent.character.marker.ClearArrivalAction();
         stateComponent.character.currentParty.icon.SetIsTravelling(false);
         base.OnExitThisState();
     }
@@ -107,7 +107,7 @@ public class EngageState : CharacterState {
                 //Target Win
                 //resultWeights.AddElement("Hunter Killed", 5);
                 //resultWeights.AddElement("Hunter Injured", 40);
-                CombatEncounterEvents(targetCharacter, engagerCharacter, false);
+                CombatEncounterEvents(engagerCharacter, targetCharacter, false);
             }
         }
     }

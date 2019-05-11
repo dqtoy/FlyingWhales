@@ -21,10 +21,11 @@ public class CharacterStateJob : JobQueueItem {
                 assignedCharacter.stateComponent.currentState.OnExitThisState();
             } else {
                 if(assignedCharacter.stateComponent.previousMajorState == assignedState) {
-                    assignedCharacter.stateComponent.currentState.OnExitThisState();
-                    if(assignedCharacter.stateComponent.currentState != null) {
+                    Character character = assignedCharacter;
+                    character.stateComponent.currentState.OnExitThisState();
+                    if(character.stateComponent.currentState != null) {
                         //This happens because the character switched back to the previous major state
-                        assignedCharacter.stateComponent.currentState.OnExitThisState();
+                        character.stateComponent.currentState.OnExitThisState();
                     }
                 }
             }
