@@ -108,6 +108,9 @@ public class AssaultCharacter : GoapAction {
         currentState.SetIntelReaction(State1And2Reactions);
     }
     public void AfterTargetKnockedOut() {
+        if(parentPlan.job != null) {
+            parentPlan.job.SetCannotCancelJob(true);
+        }
         resumeTargetCharacterState = false; //do not resume the target character's current state after being knocked out
         Character target = poiTarget as Character;
         Unconscious unconscious = new Unconscious();

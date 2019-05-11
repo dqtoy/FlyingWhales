@@ -1385,7 +1385,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (isAtHomeArea && !targetCharacter.isDead && !targetCharacter.isAtHomeArea && targetCharacter.GetTraitOf(TRAIT_TYPE.DISABLER) == null) {
             for (int i = 0; i < amount; i++) {
                 GoapPlanJob job = new GoapPlanJob("Assault", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", targetPOI = targetCharacter });
-                job.SetCanTakeThisJobChecker(CanCharacterTakeRestrainJob);
+                job.SetCanTakeThisJobChecker(CanCharacterTakeAssaultJob);
                 homeArea.jobQueue.AddJobInQueue(job, overrideCurrentAction);
             }
             //return job;

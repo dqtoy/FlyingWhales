@@ -604,6 +604,7 @@ namespace Pathfinding {
 				reachedEndOfPath = true;
 				OnTargetReached();
 			}
+
             if (!interpolator.valid) {
                 direction = Vector3.zero;
                 return simulatedPosition;
