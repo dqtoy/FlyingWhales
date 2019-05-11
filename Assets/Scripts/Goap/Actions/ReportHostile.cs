@@ -57,7 +57,10 @@ public class ReportHostile : GoapAction {
         currentState.AddLogFiller(hostile, hostile.name, LOG_IDENTIFIER.CHARACTER_3);
         currentState.AddLogFiller(actor.specificLocation, actor.specificLocation.name, LOG_IDENTIFIER.LANDMARK_1);
         Character targetCharacter = poiTarget as Character;
-        targetCharacter.CreateAssaultJobs(hostile, false, 3);
+        int numOfJobs = 3 - hostile.GetNumOfJobsTargettingThisCharacter("Assault");
+        if (numOfJobs > 0) {
+            targetCharacter.CreateAssaultJobs(hostile, false, numOfJobs);
+        }
     }
     private void PreReportHostileFail() {
         currentState.AddLogFiller(hostile, hostile.name, LOG_IDENTIFIER.CHARACTER_3);

@@ -37,8 +37,9 @@ public class FleeState : CharacterState {
             stateComponent.character.marker.AddTerrifyingCharacter(targetCharacter);
         }
         if(stateComponent.character.role.roleType == CHARACTER_ROLE.LEADER || stateComponent.character.role.roleType == CHARACTER_ROLE.NOBLE || stateComponent.character.role.roleType == CHARACTER_ROLE.SOLDIER) {
-            if (targetCharacter.GetNumOfJobsTargettingThisCharacter("Assault") < 3) {
-                stateComponent.character.CreateAssaultJobs(targetCharacter, false, 3);
+            int numOfJobs = 3 - targetCharacter.GetNumOfJobsTargettingThisCharacter("Assault");
+            if (numOfJobs > 0) {
+                stateComponent.character.CreateAssaultJobs(targetCharacter, false, numOfJobs);
             }
         } else {
             GoapPlanJob job = new GoapPlanJob("Report Hostile", INTERACTION_TYPE.REPORT_HOSTILE, new Dictionary<INTERACTION_TYPE, object[]>() {
