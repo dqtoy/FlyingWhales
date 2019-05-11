@@ -19,6 +19,7 @@ public class Tombstone : TileObject {
         if (tile != null) {
             //when a tombstone of a character has been placed, assume that his/her marker needs to be disabled
             character.DestroyMarker();
+            character.CancelAllJobsTargettingThisCharacter("Bury");
             character.SetGrave(this);
         }
     }

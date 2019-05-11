@@ -35,7 +35,7 @@ public class BuryCharacter : GoapAction {
         base.SetTargetStructure();
     }
     protected override void ConstructPreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, conditionKey = actor, targetPOI = poiTarget }, IsInActorParty);
+        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, targetPOI = poiTarget }, IsInActorParty);
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = actor.homeArea, targetPOI = poiTarget });
     }
     public override void PerformActualAction() {
@@ -52,6 +52,11 @@ public class BuryCharacter : GoapAction {
        
     }
     private void AfterBurySuccess() {
+        if (parentPlan.job != null) {
+            parentPlan.job.SetCannotCancelJob(true);
+        }
+        SetCannotCancelAction(true);
+
         Character targetCharacter = poiTarget as Character;
         //**After Effect 1**: Remove Target from Actor's Party.
         actor.ownParty.RemoveCharacter(targetCharacter, false);
@@ -60,7 +65,6 @@ public class BuryCharacter : GoapAction {
         LocationGridTile chosenLocation = choices[Random.Range(0, choices.Count)];
         Tombstone tombstone = new Tombstone(targetCharacter, actor.currentStructure);
         actor.currentStructure.AddPOI(tombstone, chosenLocation);
-        targetCharacter.CancelAllJobsTargettingThisCharacter("Bury", this.parentPlan.job);
         List<Character> characters = targetCharacter.GetAllCharactersThatHasRelationship();
         if(characters != null) {
             for (int i = 0; i < characters.Count; i++) {

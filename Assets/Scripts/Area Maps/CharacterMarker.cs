@@ -507,13 +507,13 @@ public class CharacterMarker : PooledObject {
             Debug.Log(character.name + " arrived at location, executing arrival action None");
         }
 
-        if (targetPOI is Character && this.arrivalAction != null) {
-            //check if target character is actually near the target
-            if (!character.IsNear(targetPOI)) {
-                Debug.LogWarning(character.name + " reached " + targetPOI.name + " but they are not near.");
-                UIManager.Instance.Pause();
-            }
-        }
+        //if (targetPOI is Character && this.arrivalAction != null) {
+        //    //check if target character is actually near the target
+        //    if (!character.IsNear(targetPOI)) {
+        //        Debug.LogWarning(character.name + " reached " + targetPOI.name + " but they are not near.");
+        //        UIManager.Instance.Pause();
+        //    }
+        //}
 
         Action action = arrivalAction;
         //set arrival action to null, because some arrival actions set it

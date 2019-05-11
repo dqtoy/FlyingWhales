@@ -293,134 +293,134 @@ public class InteriorMapManager : MonoBehaviour {
         if (tile == null) {
             return;
         }
-        //if (GameManager.showAllTilesTooltip) {
-        string summary = tile.localPlace.ToString();
-        summary += "\nLocal Location: " + tile.localLocation.ToString();
-        summary += "\nWorld Location: " + tile.centeredWorldLocation.ToString();
-        //summary += "\nRotation Ground: " + tile.parentAreaMap.groundTilemap.GetTransformMatrix(tile.localPlace).rotation.eulerAngles.ToString();
-        //summary += "\nRotation Detail: " + tile.parentAreaMap.detailsTilemap.GetTransformMatrix(tile.localPlace).rotation.eulerAngles.ToString();
-        //summary += "\nIs Inside: " + tile.isInside.ToString();
-        //summary += "\nIs Edge: " + tile.isEdge.ToString();
-        summary += "\nTile Type: " + tile.tileType.ToString();
-        summary += "\nTile State: " + tile.tileState.ToString();
-        summary += "\nTile Access: " + tile.tileAccess.ToString();
-        //summary += "\nHas Detail: " + tile.hasDetail.ToString();
-        //summary += "\nIs Locked: " + tile.isLocked.ToString();
-        summary += "\nContent: " + tile.objHere?.ToString() ?? "None";
-        if (tile.objHere != null) {
-            summary += "\n\tObject State: " + tile.objHere.state.ToString();
-            if (tile.objHere is Tree) {
-                summary += "\n\tYield: " + (tile.objHere as Tree).yield.ToString();
-            } else if (tile.objHere is Ore) {
-                summary += "\n\tYield: " + (tile.objHere as Ore).yield.ToString();
-            } else if (tile.objHere is SupplyPile) {
-                summary += "\n\tSupplies in Pile: " + (tile.objHere as SupplyPile).suppliesInPile.ToString();
-            } else if (tile.objHere is SpecialToken) {
-                summary += "\n\tCharacter Owner: " + (tile.objHere as SpecialToken).characterOwner?.name ?? "None";
-                summary += "\n\tFaction Owner: " + (tile.objHere as SpecialToken).factionOwner?.name ?? "None";
-            }
-            summary += "\n\tTraits: ";
-            if (tile.objHere.traits.Count > 0) {
-                for (int i = 0; i < tile.objHere.traits.Count; i++) {
-                    summary += "\n\t\t- " + tile.objHere.traits[i].name;
+        if (GameManager.showAllTilesTooltip) {
+            string summary = tile.localPlace.ToString();
+            summary += "\nLocal Location: " + tile.localLocation.ToString();
+            summary += "\nWorld Location: " + tile.centeredWorldLocation.ToString();
+            //summary += "\nRotation Ground: " + tile.parentAreaMap.groundTilemap.GetTransformMatrix(tile.localPlace).rotation.eulerAngles.ToString();
+            //summary += "\nRotation Detail: " + tile.parentAreaMap.detailsTilemap.GetTransformMatrix(tile.localPlace).rotation.eulerAngles.ToString();
+            //summary += "\nIs Inside: " + tile.isInside.ToString();
+            //summary += "\nIs Edge: " + tile.isEdge.ToString();
+            summary += "\nTile Type: " + tile.tileType.ToString();
+            summary += "\nTile State: " + tile.tileState.ToString();
+            summary += "\nTile Access: " + tile.tileAccess.ToString();
+            //summary += "\nHas Detail: " + tile.hasDetail.ToString();
+            //summary += "\nIs Locked: " + tile.isLocked.ToString();
+            summary += "\nContent: " + tile.objHere?.ToString() ?? "None";
+            if (tile.objHere != null) {
+                summary += "\n\tObject State: " + tile.objHere.state.ToString();
+                if (tile.objHere is Tree) {
+                    summary += "\n\tYield: " + (tile.objHere as Tree).yield.ToString();
+                } else if (tile.objHere is Ore) {
+                    summary += "\n\tYield: " + (tile.objHere as Ore).yield.ToString();
+                } else if (tile.objHere is SupplyPile) {
+                    summary += "\n\tSupplies in Pile: " + (tile.objHere as SupplyPile).suppliesInPile.ToString();
+                } else if (tile.objHere is SpecialToken) {
+                    summary += "\n\tCharacter Owner: " + (tile.objHere as SpecialToken).characterOwner?.name ?? "None";
+                    summary += "\n\tFaction Owner: " + (tile.objHere as SpecialToken).factionOwner?.name ?? "None";
                 }
+                summary += "\n\tTraits: ";
+                if (tile.objHere.traits.Count > 0) {
+                    for (int i = 0; i < tile.objHere.traits.Count; i++) {
+                        summary += "\n\t\t- " + tile.objHere.traits[i].name;
+                    }
 
+                } else {
+                    summary += "None";
+                }
+            }
+            summary += "\nCharacters Here: ";
+            if (tile.charactersHere.Count > 0) {
+                for (int i = 0; i < tile.charactersHere.Count; i++) {
+                    summary += "\n\t- " + tile.charactersHere[i].name;
+                }
             } else {
                 summary += "None";
             }
-        }
-        summary += "\nCharacters Here: ";
-        if (tile.charactersHere.Count > 0) {
-            for (int i = 0; i < tile.charactersHere.Count; i++) {
-                summary += "\n\t- " + tile.charactersHere[i].name;
+            if (character != null) {
+                summary += "\nCharacter: " + character.name;
+                summary += "\nMood: " + character.currentMoodType.ToString();
+                summary += "\nSupply: " + character.supply.ToString();
+                summary += "\nDestination: " + (character.marker.destinationTile != null ? character.marker.destinationTile.ToString() : "None");
+                summary += "\nMove Speed: " + character.marker.pathfindingAI.speed.ToString();
+                summary += "\nTarget POI: " + character.marker.targetPOI?.ToString() ?? "None";
+                summary += "\nDestination Tile: ";
+                if (character.marker.destinationTile == null) {
+                    summary += "None";
+                } else {
+                    summary += character.marker.destinationTile.ToString() + " at " + character.marker.destinationTile.parentAreaMap.area.name; 
+                }
+                summary += "\nArrival Action: " + character.marker.arrivalAction?.Method.Name ?? "None";
+                summary += "\nPOI's in Vision: ";
+                if (character.marker.inVisionPOIs.Count > 0) {
+                    for (int i = 0; i < character.marker.inVisionPOIs.Count; i++) {
+                        IPointOfInterest poi = character.marker.inVisionPOIs.ElementAt(i);
+                        summary += poi.name + ", ";
+                    }
+                } else {
+                    summary += "None";
+                }
+                summary += "\nPOI's in Range but different structures: ";
+                if (character.marker.visionCollision.poisInRangeButDiffStructure.Count > 0) {
+                    for (int i = 0; i < character.marker.visionCollision.poisInRangeButDiffStructure.Count; i++) {
+                        IPointOfInterest poi = character.marker.visionCollision.poisInRangeButDiffStructure[i];
+                        summary += poi.name + ", ";
+                    }
+                } else {
+                    summary += "None";
+                }
+                summary += "\nHostiles in Range: ";
+                if (character.marker.hostilesInRange.Count > 0) {
+                    for (int i = 0; i < character.marker.hostilesInRange.Count; i++) {
+                        Character poi = character.marker.hostilesInRange.ElementAt(i);
+                        summary += poi.name + ", ";
+                    }
+                } else {
+                    summary += "None";
+                }
+                summary += "\nTerrifying Characters: ";
+                if (character.marker.terrifyingCharacters.Count > 0) {
+                    for (int i = 0; i < character.marker.terrifyingCharacters.Count; i++) {
+                        Character currCharacter = character.marker.terrifyingCharacters[i];
+                        summary += currCharacter.name + ", ";
+                    }
+                } else {
+                    summary += "None";
+                }
+                summary += "\nPersonal Job Queue: ";
+                if (character.jobQueue.jobsInQueue.Count > 0) {
+                    for (int i = 0; i < character.jobQueue.jobsInQueue.Count; i++) {
+                        JobQueueItem poi = character.jobQueue.jobsInQueue[i];
+                        summary += poi.name + ", ";
+                    }
+                } else {
+                    summary += "None";
+                }
             }
+            //summary += "\nOccupant: " + tile.occupant?.name ?? "None";        
+
+            //if (tile.structure != null) {
+            summary += "\nStructure: " + tile.structure?.ToString() ?? "None";
+            //}
+            UIManager.Instance.ShowSmallInfo(summary);
         } else {
-            summary += "None";
-        }
-        if (character != null) {
-            summary += "\nCharacter: " + character.name;
-            summary += "\nMood: " + character.currentMoodType.ToString();
-            summary += "\nSupply: " + character.supply.ToString();
-            summary += "\nDestination: " + (character.marker.destinationTile != null ? character.marker.destinationTile.ToString() : "None");
-            summary += "\nMove Speed: " + character.marker.pathfindingAI.speed.ToString();
-            summary += "\nTarget POI: " + character.marker.targetPOI?.ToString() ?? "None";
-            summary += "\nDestination Tile: ";
-            if (character.marker.destinationTile == null) {
-                summary += "None";
-            } else {
-                summary += character.marker.destinationTile.ToString() + " at " + character.marker.destinationTile.parentAreaMap.area.name; 
-            }
-            summary += "\nArrival Action: " + character.marker.arrivalAction?.Method.Name ?? "None";
-            summary += "\nPOI's in Vision: ";
-            if (character.marker.inVisionPOIs.Count > 0) {
-                for (int i = 0; i < character.marker.inVisionPOIs.Count; i++) {
-                    IPointOfInterest poi = character.marker.inVisionPOIs.ElementAt(i);
-                    summary += poi.name + ", ";
-                }
-            } else {
-                summary += "None";
-            }
-            summary += "\nPOI's in Range but different structures: ";
-            if (character.marker.visionCollision.poisInRangeButDiffStructure.Count > 0) {
-                for (int i = 0; i < character.marker.visionCollision.poisInRangeButDiffStructure.Count; i++) {
-                    IPointOfInterest poi = character.marker.visionCollision.poisInRangeButDiffStructure[i];
-                    summary += poi.name + ", ";
-                }
-            } else {
-                summary += "None";
-            }
-            summary += "\nHostiles in Range: ";
-            if (character.marker.hostilesInRange.Count > 0) {
-                for (int i = 0; i < character.marker.hostilesInRange.Count; i++) {
-                    Character poi = character.marker.hostilesInRange.ElementAt(i);
-                    summary += poi.name + ", ";
-                }
-            } else {
-                summary += "None";
-            }
-            summary += "\nTerrifying Characters: ";
-            if (character.marker.terrifyingCharacters.Count > 0) {
-                for (int i = 0; i < character.marker.terrifyingCharacters.Count; i++) {
-                    Character currCharacter = character.marker.terrifyingCharacters[i];
-                    summary += currCharacter.name + ", ";
-                }
-            } else {
-                summary += "None";
-            }
-            summary += "\nPersonal Job Queue: ";
-            if (character.jobQueue.jobsInQueue.Count > 0) {
-                for (int i = 0; i < character.jobQueue.jobsInQueue.Count; i++) {
-                    JobQueueItem poi = character.jobQueue.jobsInQueue[i];
-                    summary += poi.name + ", ";
-                }
-            } else {
-                summary += "None";
+            //For build only
+            if (tile.objHere != null) {
+                UIManager.Instance.ShowSmallInfo(tile.objHere.ToString());
             }
         }
-        //summary += "\nOccupant: " + tile.occupant?.name ?? "None";        
-
-        //if (tile.structure != null) {
-        summary += "\nStructure: " + tile.structure?.ToString() ?? "None";
-        //}
-        UIManager.Instance.ShowSmallInfo(summary);
-        //} else {
-        //    For build only
-        //    if (tile.objHere != null) {
-        //        UIManager.Instance.ShowSmallInfo(tile.objHere.ToString());
-        //    }
-        //}
     }
     public void ShowTileData(Character character, LocationGridTile tile) {
-        //if (GameManager.showAllTilesTooltip) {
+        if (GameManager.showAllTilesTooltip) {
             isShowingMarkerTileData = true;
             ShowTileData(tile, character);
-        //}
+        }
     }
     public void HideTileData() {
-        //if (GameManager.showAllTilesTooltip) {
+        if (GameManager.showAllTilesTooltip) {
             isShowingMarkerTileData = false;
             UIManager.Instance.HideSmallInfo();
-        //}
+        }
     }
 
     private IPointOfInterest heldPOI;

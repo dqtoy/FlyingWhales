@@ -627,7 +627,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //portraitGO.transform.localPosition = pos;
         SetCharacterMarker(portraitGO.GetComponent<CharacterMarker>());
         marker.SetCharacter(this);
-        marker.SetHoverAction(ShowTileData, InteriorMapManager.Instance.HideTileData);
+        //marker.SetHoverAction(ShowTileData, InteriorMapManager.Instance.HideTileData);
     }
     public void DestroyMarker() {
         ObjectPoolManager.Instance.DestroyObject(marker.gameObject);
@@ -1402,9 +1402,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             if (buryJob == null) {
                 //if none, create one
                 buryJob = new GoapPlanJob("Bury", INTERACTION_TYPE.BURY_CHARACTER, targetCharacter);
+                buryJob.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, targetPOI = targetCharacter }, INTERACTION_TYPE.CARRY_CORPSE);
                 buryJob.SetCanTakeThisJobChecker(CanTakeBuryJob);
                 buryJob.AllowDeadTargets();
-                buryJob.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, conditionKey = this, targetPOI = targetCharacter }, INTERACTION_TYPE.CARRY_CORPSE);
                 homeArea.jobQueue.AddJobInQueue(buryJob, false, false);
             } 
             //if the character is a soldier or civilian, and the bury job is currently unassigned, take the job
