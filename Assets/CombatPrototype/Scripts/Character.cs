@@ -4960,7 +4960,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     if (goapThread.job.willImmediatelyBeDoneAfterReceivingPlan) {
                         AddPlan(goapThread.createdPlan, true);
 
-                        if(stateComponent.currentState != null) {
+                        if (stateComponent.currentState != null) {
                             if(stateComponent.currentState.characterState != CHARACTER_STATE.ENGAGE && stateComponent.currentState.characterState != CHARACTER_STATE.FLEE) {
                                 stateComponent.currentState.OnExitThisState();
                             }
@@ -5487,6 +5487,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             if (currentAction.goapType.IsCombatAction()) { //if the character will do a combat action, remove all ignore hostilities value
                 ClearIgnoreHostilities();
             }
+            stateComponent.SetStateToDo(null);
         }
         string summary = GameManager.Instance.TodayLogString() + "Set current action to ";
         if (currentAction == null) {

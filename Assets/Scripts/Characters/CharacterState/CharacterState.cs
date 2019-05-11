@@ -30,7 +30,7 @@ public class CharacterState {
     //Starts a state and its movement behavior, can be overridden
     protected virtual void StartState() {
         hasStarted = true;
-        stateComponent.SetStateToDo(null);
+        stateComponent.SetStateToDo(null, false);
         stateComponent.SetCurrentState(this);
         currentDuration = 0;
         StartStatePerTick();
