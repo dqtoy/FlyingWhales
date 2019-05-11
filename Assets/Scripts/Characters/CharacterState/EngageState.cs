@@ -91,8 +91,13 @@ public class EngageState : CharacterState {
 
             CombatManager.Instance.GetCombatChanceOfTwoLists(attackers, defenders, out attackersChance, out defendersChance);
 
+            
+
             //WeightedDictionary<string> resultWeights = new WeightedDictionary<string>();
             int chance = UnityEngine.Random.Range(0, 100);
+
+            Debug.Log("Attackers Chance: " + attackersChance + "! Chance: " + chance);
+
             if (chance < attackersChance) {
                 //Hunter Win
                 //resultWeights.AddElement("Target Killed", 5);
@@ -102,7 +107,7 @@ public class EngageState : CharacterState {
                 //Target Win
                 //resultWeights.AddElement("Hunter Killed", 5);
                 //resultWeights.AddElement("Hunter Injured", 40);
-                CombatEncounterEvents(targetCharacter, engagerCharacter, false);
+                CombatEncounterEvents(engagerCharacter, targetCharacter, false);
             }
         }
     }
