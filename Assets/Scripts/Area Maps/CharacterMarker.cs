@@ -917,7 +917,7 @@ public class CharacterMarker : PooledObject {
                     character.stateComponent.SwitchToState(CHARACTER_STATE.FLEE, otherCharacter);
                     summary += "\n" + character.name + " chose to flee.";
                 //}
-            } else if (character.doNotDisturb > 0 && character.GetTraitOf(TRAIT_TYPE.DISABLER) != null) {
+            } else if (character.doNotDisturb > 0 && character.HasTraitOf(TRAIT_TYPE.DISABLER)) {
                 //- Disabled characters will not do anything
                 summary += "\n" + character.name + " will not do anything.";
             } else if (character.role.roleType == CHARACTER_ROLE.BEAST || character.role.roleType == CHARACTER_ROLE.ADVENTURER

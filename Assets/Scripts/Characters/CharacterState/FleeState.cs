@@ -33,7 +33,7 @@ public class FleeState : CharacterState {
         }
         stateComponent.character.currentParty.icon.SetIsTravelling(false);
         stateComponent.character.marker.SetHasFleePath(false);
-        if (!targetCharacter.HasTraitOf(TRAIT_TYPE.DISABLER)) {
+        if (!targetCharacter.HasTraitOf(TRAIT_TYPE.DISABLER, "Combat Recovery")) {
             stateComponent.character.marker.AddTerrifyingCharacter(targetCharacter);
         }
         if(stateComponent.character.role.roleType == CHARACTER_ROLE.LEADER || stateComponent.character.role.roleType == CHARACTER_ROLE.NOBLE || stateComponent.character.role.roleType == CHARACTER_ROLE.SOLDIER) {
@@ -42,12 +42,16 @@ public class FleeState : CharacterState {
                 stateComponent.character.CreateAssaultJobs(targetCharacter, false, numOfJobs);
             }
         } else {
-            GoapPlanJob job = new GoapPlanJob("Report Hostile", INTERACTION_TYPE.REPORT_HOSTILE, new Dictionary<INTERACTION_TYPE, object[]>() {
+            if(!(targetCharacter.isDead || targetCharacter.HasTraitOf(TRAIT_TYPE.DISABLER, "Combat Recovery") || targetCharacter.isAtHomeArea)) {
+                if (stateComponent.character.isAtHomeArea) {
+                    GoapPlanJob job = new GoapPlanJob("Report Hostile", INTERACTION_TYPE.REPORT_HOSTILE, new Dictionary<INTERACTION_TYPE, object[]>() {
                     { INTERACTION_TYPE.REPORT_HOSTILE, new object[] { targetCharacter }}
                 });
-            job.SetCannotOverrideJob(true);
-            job.SetCancelOnFail(true);
-            stateComponent.character.jobQueue.AddJobInQueue(job, true, false);
+                    job.SetCannotOverrideJob(true);
+                    job.SetCancelOnFail(true);
+                    stateComponent.character.jobQueue.AddJobInQueue(job, true, false);
+                }
+            }
         }
         base.OnExitThisState();
     }
