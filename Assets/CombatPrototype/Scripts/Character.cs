@@ -5487,6 +5487,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             if (currentAction.goapType.IsCombatAction()) { //if the character will do a combat action, remove all ignore hostilities value
                 ClearIgnoreHostilities();
             }
+            stateComponent.SetStateToDo(null);
         }
         string summary = GameManager.Instance.TodayLogString() + "Set current action to ";
         if (currentAction == null) {

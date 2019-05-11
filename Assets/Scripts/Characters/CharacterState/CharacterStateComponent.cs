@@ -76,7 +76,7 @@ public class CharacterStateComponent {
             if(stateToDo.stateCategory == CHARACTER_STATE_CATEGORY.MAJOR) {
                 previousMajorState = stateToDo;
             }
-            stateToDo = null;
+            SetStateToDo(null);
         }
 
         //Assigns new state as the current state then enter that state
