@@ -25,6 +25,8 @@ public class EngageState : CharacterState {
     public override void OnExitThisState() {
         stateComponent.character.marker.SetCurrentlyEngaging(null);
         stateComponent.character.marker.SetTargetTransform(null);
+        stateComponent.character.marker.pathfindingAI.ClearPath();
+        stateComponent.character.marker.ClearArrivalAction();
         stateComponent.character.currentParty.icon.SetIsTravelling(false);
         base.OnExitThisState();
     }
@@ -42,6 +44,7 @@ public class EngageState : CharacterState {
             //engage another hostile
             stateComponent.character.marker.SetCurrentlyEngaging(null);
             stateComponent.character.marker.SetTargetTransform(null);
+            stateComponent.character.marker.pathfindingAI.ClearPath();
             Character hostile = stateComponent.character.marker.GetNearestValidHostile();
             stateComponent.SwitchToState(CHARACTER_STATE.ENGAGE, hostile);
             //stateComponent.character.marker.RedetermineEngage();

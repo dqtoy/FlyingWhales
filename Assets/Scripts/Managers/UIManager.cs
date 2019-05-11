@@ -141,7 +141,7 @@ public class UIManager : MonoBehaviour {
                 HideContextMenu();
             }
         }
-        if (Input.GetKeyDown(KeyCode.Space)) {
+        if (Input.GetKeyDown(KeyCode.Space) && !IsMouseOnInput()) {
             if (pauseBtn.IsInteractable()) {
                 if (GameManager.Instance.isPaused) {
                     Unpause();

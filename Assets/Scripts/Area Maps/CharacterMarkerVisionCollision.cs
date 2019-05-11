@@ -13,6 +13,12 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
     }
     private void OnDisable() {
         Messenger.RemoveListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+        if (parentMarker.inVisionPOIs != null) {
+            parentMarker.ClearPOIsInVisionRange();
+        }
+        if (parentMarker.hostilesInRange != null) {
+            parentMarker.ClearHostilesInRange();
+        }
     }
 
     #region Triggers
@@ -59,7 +65,7 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
                     }
                 }
             }
-            Debug.Log(collisionSummary);
+            //Debug.Log(collisionSummary);
         }
     }
     public void OnTriggerExit2D(Collider2D collision) {
@@ -176,10 +182,10 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
     }
 
     #region Different Structure Handling
-    private void AddPOIAsInRangeButDifferentStructure(IPointOfInterest poi) {
+    public void AddPOIAsInRangeButDifferentStructure(IPointOfInterest poi) {
         poisInRangeButDiffStructure.Add(poi);
     }
-    private void RemovePOIAsInRangeButDifferentStructure(IPointOfInterest poi) {
+    public void RemovePOIAsInRangeButDifferentStructure(IPointOfInterest poi) {
         poisInRangeButDiffStructure.Remove(poi);
     }
     private void OnCharacterArrivedAtStructure(Character character, LocationStructure structure) {

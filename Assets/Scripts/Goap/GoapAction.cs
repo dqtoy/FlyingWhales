@@ -58,6 +58,7 @@ public class GoapAction {
     public string result { get; private set; }
     public string animationName { get; protected set; } //what animation should the character be playing while doing this action
     public bool doesNotStopTargetCharacter { get; protected set; }
+    public bool resumeTargetCharacterState { get; protected set; } //used to determine whether or not the target character's current state should be resumed after this action is performed towards him
     public bool cannotCancelAction { get; protected set; }
 
     protected virtual bool isTargetMissing {
@@ -92,6 +93,7 @@ public class GoapAction {
         animationName = string.Empty;
         _numOfTries = 0;
         _isStealthAction = false;
+        resumeTargetCharacterState = true;
         //for testing
         //CRIME[] choices = Utilities.GetEnumValues<CRIME>();
         //committedCrime = choices[Utilities.rng.Next(1, choices.Length)];
@@ -288,16 +290,18 @@ public class GoapAction {
     /// <param name="otherData">Array of data</param>
     /// <returns>If any other data was initialized</returns>
     public virtual bool InitializeOtherData(object[] otherData) { return false; }
+    private GoapPlan plan;
     protected virtual void MoveToDoAction(GoapPlan plan, Character targetCharacter) {
+        this.plan = plan;
         //if the actor is NOT at the area where the target structure is, make him/her go there first.
         if (actor.specificLocation != targetStructure.location) {
-            actor.currentParty.GoToLocation(targetStructure.location, PATHFINDING_MODE.NORMAL, targetStructure, () => actor.PerformGoapAction(plan), null, poiTarget, targetTile);
+            actor.currentParty.GoToLocation(targetStructure.location, PATHFINDING_MODE.NORMAL, targetStructure, OnArriveAtTargetLocation, null, poiTarget, targetTile);
         } else {
             //if the actor is already at the area where the target structure is, just make the actor move to the specified target structure (ususally the structure where the poiTarget is at).
             if (targetTile != null) {
-                actor.marker.GoTo(targetTile, poiTarget, () => actor.PerformGoapAction(plan));
+                actor.marker.GoTo(targetTile, poiTarget, OnArriveAtTargetLocation);
             } else {
-                actor.marker.GoTo(poiTarget, () => actor.PerformGoapAction(plan));
+                actor.marker.GoTo(poiTarget, OnArriveAtTargetLocation);
             }
         }
     }
@@ -313,6 +317,9 @@ public class GoapAction {
     #endregion
 
     #region Utilities
+    private void OnArriveAtTargetLocation() {
+        actor.PerformGoapAction(plan);
+    }
     public void Initialize() {
         SetTargetStructure();
         ConstructRequirement();
@@ -339,7 +346,7 @@ public class GoapAction {
             if (poiTarget != actor) {
                 Character targetCharacter = poiTarget as Character;
                 if (!targetCharacter.isDead) {
-                    if (!doesNotStopTargetCharacter) {
+                    if (!doesNotStopTargetCharacter && resumeTargetCharacterState) {
                         if (targetCharacter.stateComponent.currentState != null) {
                             targetCharacter.stateComponent.currentState.ResumeState();
                         }

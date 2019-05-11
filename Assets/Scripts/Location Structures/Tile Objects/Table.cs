@@ -116,13 +116,13 @@ public class Table : TileObject, IPointOfInterest {
                 character.marker.pathfindingAI.AdjustDoNotMove(1);
 
                 Vector3 worldPos = character.marker.transform.TransformPoint(pos);
-                Debug.Log("Setting " + character.marker.name + "'s position to " + pos.ToString() + " world pos: " + worldPos.ToString());
+                //Debug.Log("Setting " + character.marker.name + "'s position to " + pos.ToString() + " world pos: " + worldPos.ToString());
                 if (usedAsset.name.Contains("Bartop")) {
                     character.marker.PlaceMarkerAt(pos, tile.parentAreaMap.objectsTilemap.GetTransformMatrix(tile.localPlace).rotation);
                 } else {
                     character.marker.PlaceMarkerAt(pos, gridTileLocation.centeredWorldLocation);
                 }
-                Debug.Log(character.marker.name + "'s position is " + character.marker.transform.position.ToString());
+                //Debug.Log(character.marker.name + "'s position is " + character.marker.transform.position.ToString());
                 //character.marker.LookAt(this.gridTileLocation.worldLocation);
                 break;
             }

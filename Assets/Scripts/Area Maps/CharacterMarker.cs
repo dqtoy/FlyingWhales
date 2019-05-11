@@ -47,6 +47,20 @@ public class CharacterMarker : PooledObject {
     public List<IPointOfInterest> inVisionPOIs { get; private set; } //POI's in this characters vision collider
     public List<Character> hostilesInRange { get; private set; } //POI's in this characters hostility collider
 
+
+    public Action arrivalAction {
+        get { return _arrivalAction; }
+        private set {
+            _arrivalAction = value;
+            if (_arrivalAction == null) {
+                Debug.Log("Set arrival action of " + character.name + " to null" + " ST: " + StackTraceUtility.ExtractStackTrace());
+            } else {
+                Debug.Log("Set arrival action of " + character.name + " to " + _arrivalAction.Method.Name + " ST: " + StackTraceUtility.ExtractStackTrace());
+            }
+            
+        }
+    }
+
     //movement
     private Action _arrivalAction;
     public IPointOfInterest targetPOI { get; private set; }
@@ -109,7 +123,6 @@ public class CharacterMarker : PooledObject {
         Messenger.AddListener<Character, Trait>(Signals.TRAIT_ADDED, OnCharacterGainedTrait);
         Messenger.AddListener<Character, Trait>(Signals.TRAIT_REMOVED, OnCharacterLostTrait);
         Messenger.AddListener<Character, GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
-        Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
         Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
         Messenger.AddListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling);
@@ -173,10 +186,7 @@ public class CharacterMarker : PooledObject {
             string gainTraitSummary = characterThatGainedTrait.name + " has gained trait " + trait.name;
             if (trait.type == TRAIT_TYPE.DISABLER) { //if the character gained a disabler trait, hinder movement
                 pathfindingAI.ClearPath();
-                //if (character.currentParty.icon.isTravelling && character.currentParty.icon.travelLine == null) {
-                //    StopMovementOnly();
-                //}
-                //rvoController.priority = 0;
+                pathfindingAI.canSearch = false;
                 rvoController.enabled = false;
                 pathfindingAI.AdjustDoNotMove(1);
                 gainTraitSummary += "\nGained trait is a disabler trait, adjusting do not move value.";
@@ -282,52 +292,28 @@ public class CharacterMarker : PooledObject {
                 }
                 if (forceFollowTarget) {
                     //if this character must follow the target wherever, and the target started travelling to another area, make this character travel to that area too
-                    character.currentParty.GoToLocation(travellingParty.icon.targetLocation, PATHFINDING_MODE.NORMAL, travellingParty.icon.targetStructure, _arrivalAction, null, targetPOI);
+                    character.currentParty.GoToLocation(travellingParty.icon.targetLocation, PATHFINDING_MODE.NORMAL, travellingParty.icon.targetStructure, this.arrivalAction, null, targetPOI);
                 } else {
                     //target character left the area
                     //end current action
-                    Action action = _arrivalAction;
+                    if (this.arrivalAction != null) {
+                        Debug.Log(targetCharacter.name + " started travelling to another location, executing arrival action " + this.arrivalAction.Method.Name);
+                    } else {
+                        Debug.Log(targetCharacter.name + " started travelling to another location, executing arrival action None");
+                    }
+                    Action action = this.arrivalAction;
                     //set arrival action to null, because some arrival actions set it when executed
-                    _arrivalAction = null;
+                    ClearArrivalAction();
                     action?.Invoke();
 
-                    ////go to the characters last tile
-                    //GoTo(targetCharacter.gridTileLocation, targetPOI, _arrivalAction);
-
                 }
-                //if (Messenger.eventTable.ContainsKey(Signals.PARTY_STARTED_TRAVELLING)) {
-                //    Messenger.RemoveListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling);
-                //}
             }
         }
         RemoveHostileInRange(travellingParty.owner);
         RemovePOIFromInVisionRange(travellingParty.owner);
 
     }
-    private void OnCharacterDied(Character otherCharacter) {
-        if (otherCharacter != character) {
-            if (hostilesInRange.Contains(otherCharacter)) {
-                //if this character is currently engaging(chasing) the character that died 
-                //and they are not currently in combat, remove the character that died from this characters hostile range
-                if (currentlyEngaging == otherCharacter) {
-                    if (currentlyCombatting != otherCharacter) {
-                        RemoveHostileInRange(otherCharacter);
-                    }
-                } else {
-                    RemoveHostileInRange(otherCharacter);
-                }
-            }
-
-            if (targetPOI == otherCharacter) {
-                //execute the arrival action, the arrival action should handle the cases for when the target is missing
-                Action action = _arrivalAction;
-                //set arrival action to null, because some arrival actions set it when executed
-                _arrivalAction = null;
-                action?.Invoke();
-            }
-            
-        }
-    }
+   
     private void OnCharacterStartedState(Character character, CharacterState state) {
         if (character == this.character) {
             UpdateActionIcon();
@@ -467,7 +453,6 @@ public class CharacterMarker : PooledObject {
         //if (Messenger.eventTable.ContainsKey(Signals.PARTY_STARTED_TRAVELLING)) {
             Messenger.RemoveListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling);
         //}
-        Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
 
@@ -480,13 +465,19 @@ public class CharacterMarker : PooledObject {
         //if (_arrivalAction != null) {
         //    throw new Exception(character.name + " already has an arrival action, but it is being overwritten!");
         //}
-        _arrivalAction = arrivalAction;
+        this.arrivalAction = arrivalAction;
         this.targetPOI = targetPOI;
         SetTargetTransform(null);
+        pathfindingAI.ClearPath();
         if (destinationTile == character.gridTileLocation) {
-            Debug.Log(character.name + " is already at " + destinationTile.ToString() + " executing action...");
-            _arrivalAction?.Invoke();
-            _arrivalAction = null;
+            if (this.arrivalAction != null) {
+                Debug.Log(character.name + " is already at " + destinationTile.ToString() + " executing action " + this.arrivalAction.Method.Name);
+            } else {
+                Debug.Log(character.name + " is already at " + destinationTile.ToString() + " executing action null.");
+            }
+            
+            this.arrivalAction?.Invoke();
+            ClearArrivalAction();
         } else {
             SetDestination(destinationTile.centeredWorldLocation);
             StartMovement();
@@ -494,7 +485,7 @@ public class CharacterMarker : PooledObject {
         
     }
     public void GoTo(IPointOfInterest targetPOI, Action arrivalAction = null, bool forceFollow = false) {
-        _arrivalAction = arrivalAction;
+        this.arrivalAction = arrivalAction;
         this.targetPOI = targetPOI;
         goToStackTrace = StackTraceUtility.ExtractStackTrace();
         switch (targetPOI.poiType) {
@@ -506,8 +497,13 @@ public class CharacterMarker : PooledObject {
                 //check first if he/she is still at the location, 
                 if (targetCharacter.specificLocation != character.specificLocation) {
                     //if not, execute the arrival action
-                    _arrivalAction?.Invoke();
-                    _arrivalAction = null;
+                    if (this.arrivalAction != null) {
+                        Debug.Log(targetCharacter.name + " is no longer at " + character.specificLocation.name + " executing action " + this.arrivalAction.Method.Name);
+                    } else {
+                        Debug.Log(targetCharacter.name + " is no longer at " + character.specificLocation.name + " executing action null");
+                    }
+                    this.arrivalAction?.Invoke();
+                    ClearArrivalAction();
                 } else if (targetCharacter.currentParty != null && targetCharacter.currentParty.icon != null && targetCharacter.currentParty.icon.isAreaTravelling) {
                     OnCharacterAreaTravelling(targetCharacter.currentParty);
                 } 
@@ -525,28 +521,34 @@ public class CharacterMarker : PooledObject {
     }
     public void GoTo(Vector3 destination, Action arrivalAction = null) {
         this.destinationTile = destinationTile;
-        _arrivalAction = arrivalAction;
+        this.arrivalAction = arrivalAction;
         SetTargetTransform(null);
+        pathfindingAI.ClearPath();
         SetDestination(destination);
         StartMovement();
 
     }
-    public void ArrivedAtLocation() {
+    public void ArrivedAtTarget() {
         StopMovementOnly();
 
-        //if (targetPOI is Character) {
-        //    //Character targetCharacter = targetPOI as Character;
-        //    //check if target character is actually near the target
-        //    if (!character.IsNear(targetPOI)) {
-        //        Debug.LogWarning(character.name + " reached " + targetPOI.name + " but they are not near.ST " + goToStackTrace);
-        //        UIManager.Instance.Pause();
-        //    }
-        //}
+        
+        if (this.arrivalAction != null) {
+            Debug.Log(character.name + " arrived at location, executing arrival action " + this.arrivalAction.Method.Name);
+        } else {
+            Debug.Log(character.name + " arrived at location, executing arrival action None");
+        }
 
-        //if (Messenger.eventTable.ContainsKey(Signals.PARTY_STARTED_TRAVELLING)) { Messenger.RemoveListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling); }
-        Action action = _arrivalAction;
-        //set arrival action to null, because some arrival actions set 
-        _arrivalAction = null;
+        if (targetPOI is Character && this.arrivalAction != null) {
+            //check if target character is actually near the target
+            if (!character.IsNear(targetPOI)) {
+                Debug.LogWarning(character.name + " reached " + targetPOI.name + " but they are not near.");
+                //UIManager.Instance.Pause();
+            }
+        }
+
+        Action action = arrivalAction;
+        //set arrival action to null, because some arrival actions set it
+        ClearArrivalAction();
         action?.Invoke();
 
         targetPOI = null;
@@ -559,36 +561,15 @@ public class CharacterMarker : PooledObject {
     }
     public void StopMovement(Action afterStoppingAction = null) {
         StopMovementOnly();
-        //log += "\n- Not moving to another tile, go to checker...";
-        //CheckIfCurrentTileIsOccupiedOnStopMovement(ref log, afterStoppingAction);
     }
     public void StopMovementOnly() {
         string log = character.name + " StopMovement function is called!";
         character.PrintLogIfActive(log);
-        //_arrivalAction = null;
-
-        //if (Messenger.eventTable.ContainsKey(Signals.TILE_OCCUPIED)) {
-        //    Messenger.RemoveListener<LocationGridTile, IPointOfInterest>(Signals.TILE_OCCUPIED, OnTileOccupied);
-        //}
-        //if (!isStillMovingToAnotherTile) {
-        //    log += "\n- Not moving to another tile, go to checker...";
-        //    CheckIfCurrentTileIsOccupiedOnStopMovement(ref log, afterStoppingAction);
-        //} else {
-        //    log += "\n- Still moving to another tile, wait until tile arrival...";
-        //    SetOnArriveAtTileAction(() => CheckIfCurrentTileIsOccupiedOnStopMovement(ref log, afterStoppingAction));
-        //}
-        //destinationSetter.ClearPath();
         if (character.currentParty.icon != null) {
             character.currentParty.icon.SetIsTravelling(false);
         }
-        //hasFleePath = false;
         pathfindingAI.SetIsStopMovement(true);
         UpdateAnimation();
-        //if (playIdle) {
-        //    PlayIdle();
-        //}
-        //log += "\n- Not moving to another tile, go to checker...";
-        //CheckIfCurrentTileIsOccupiedOnStopMovement(ref log, afterStoppingAction);
     }
     public void LookAt(Vector3 target, bool force = false) {
         if (!force) {
@@ -612,11 +593,25 @@ public class CharacterMarker : PooledObject {
     }
     public void SetDestination(Vector3 destination) {
         pathfindingAI.destination = destination;
-        pathfindingAI.canSearch = true;
+        if (!float.IsPositiveInfinity(destination.x)) {
+            pathfindingAI.canSearch = true;
+            pathfindingAI.SearchPath();
+        } else {
+            pathfindingAI.canSearch = false;
+        }
+        
     }
     public void SetTargetTransform(Transform target) {
         destinationSetter.target = target;
-        pathfindingAI.canSearch = true;
+        if (target != null) {
+            pathfindingAI.canSearch = true;
+            pathfindingAI.SearchPath();
+        } else {
+            pathfindingAI.canSearch = false;
+        }
+    }
+    public void ClearArrivalAction() {
+        arrivalAction = null;
     }
     #endregion
 
@@ -824,7 +819,7 @@ public class CharacterMarker : PooledObject {
         if (!inVisionPOIs.Contains(poi)) {
             inVisionPOIs.Add(poi);
             if (poi is Character) {
-                Debug.Log(character.name + " saw " + (poi as Character).name);
+                //Debug.Log(character.name + " saw " + (poi as Character).name);
             }
             character.AddAwareness(poi);
         }
@@ -842,26 +837,6 @@ public class CharacterMarker : PooledObject {
     public void ClearPOIsInVisionRange() {
         inVisionPOIs.Clear();
     }
-    //public void RevalidatePOIsInVisionRange() {
-    //    //check pois in vision to see if they are still valid
-    //    List<IPointOfInterest> invalid = new List<IPointOfInterest>();
-    //    for (int i = 0; i < inVisionPOIs.Count; i++) {
-    //        IPointOfInterest poi = inVisionPOIs[i];
-    //        if (poi.gridTileLocation == null || poi.gridTileLocation.structure != character.currentStructure) {
-    //            //check if both structures are open spaces, if they are, do not consider vision as invalid
-    //            if (poi.gridTileLocation != null
-    //                && poi.gridTileLocation.structure != null
-    //                && character.currentStructure != null
-    //                && poi.gridTileLocation.structure.structureType.IsOpenSpace() && character.currentStructure.structureType.IsOpenSpace()) {
-    //                continue; //skip
-    //            }
-    //            invalid.Add(poi);
-    //        }
-    //    }
-    //    for (int i = 0; i < invalid.Count; i++) {
-    //        RemovePOIFromInVisionRange(invalid[i]);
-    //    }
-    //}
     #endregion
 
     #region Hosility Collision
@@ -913,11 +888,38 @@ public class CharacterMarker : PooledObject {
             character.CreateJobsOnEnterVisionWith(otherCharacter); //this is used to create jobs that involve characters that died within the character's range of vision
         }
         RemovePOIFromInVisionRange(otherCharacter);
+        visionCollision.RemovePOIAsInRangeButDifferentStructure(otherCharacter);
         //RemoveHostileInRange(otherCharacter);
-        if (this.hasFleePath) { //if this character is fleeing, remove the character that died from his/her hostile list
-            //this is for cases when this character is fleeing from a character that died because another character assaulted them,
-            //and so, the character that died was not removed from this character's hostile list
-            hostilesInRange.Remove(otherCharacter);
+
+        //if (this.hasFleePath) { //if this character is fleeing, remove the character that died from his/her hostile list
+        //    //this is for cases when this character is fleeing from a character that died because another character assaulted them,
+        //    //and so, the character that died was not removed from this character's hostile list
+        //    hostilesInRange.Remove(otherCharacter);
+        //}
+
+        if (hostilesInRange.Contains(otherCharacter)) {
+            //if this character is currently engaging(chasing) the character that died 
+            //and they are not currently in combat, remove the character that died from this characters hostile range
+            if (currentlyEngaging == otherCharacter) {
+                if (currentlyCombatting != otherCharacter) {
+                    RemoveHostileInRange(otherCharacter);
+                }
+            } else {
+                RemoveHostileInRange(otherCharacter);
+            }
+        }
+
+        if (targetPOI == otherCharacter) {
+            if (this.arrivalAction != null) {
+                Debug.Log(otherCharacter.name + " died, executing arrival action " + this.arrivalAction.Method.Name);
+            } else {
+                Debug.Log(otherCharacter.name + " died, executing arrival action None");
+            }
+            //execute the arrival action, the arrival action should handle the cases for when the target is missing
+            Action action = arrivalAction;
+            //set arrival action to null, because some arrival actions set it when executed
+            ClearArrivalAction();
+            action?.Invoke();
         }
     }
     #endregion
@@ -1014,23 +1016,17 @@ public class CharacterMarker : PooledObject {
     #region Flee
     public bool hasFleePath { get; private set; }
     public void OnStartFlee() {
-        //if (hasFleePath) {
-        //    return;
-        //}
         if (hostilesInRange.Count == 0) {
             return;
         }
-        //if (character.currentAction != null) {
-        //    character.currentAction.StopAction();
-        //}
+        pathfindingAI.ClearPath();
         hasFleePath = true;
         pathfindingAI.canSearch = false; //set to false, because if this is true and a destination has been set in the ai path, the ai will still try and go to that point instead of the computed flee path
         FleeMultiplePath fleePath = FleeMultiplePath.Construct(this.transform.position, hostilesInRange.Select(x => x.marker.transform.position).ToArray(), 10000);
         fleePath.aimStrength = 1;
         fleePath.spread = 4000;
         seeker.StartPath(fleePath, OnFleePathComputed);
-        //UIManager.Instance.Pause();
-        //Debug.LogWarning(character.name + " is fleeing!");
+        ClearArrivalAction();
     }
     private void OnFleePathComputed(Path path) {
         if (character == null || character.stateComponent.currentState == null || character.stateComponent.currentState.characterState != CHARACTER_STATE.FLEE 
@@ -1054,11 +1050,12 @@ public class CharacterMarker : PooledObject {
         fleePath.spread = 4000;
         seeker.StartPath(fleePath, OnFleePathComputed);
     }
-    public void OnFinishFleePath() {
+    public void OnFinishedTraversingFleePath() {
         Debug.Log(name + " has finished traversing flee path.");
         hasFleePath = false;
-        UpdateAnimation();
         (character.stateComponent.currentState as FleeState).CheckForEndState();
+        UpdateAnimation();
+        UpdateActionIcon();
     }
     public void SetHasFleePath(bool state) {
         hasFleePath = state;
@@ -1105,7 +1102,7 @@ public class CharacterMarker : PooledObject {
         }
         engageSummary += this.character.name + " will now engage " + target.name + "\n";
 
-        GoTo(target, () => OnReachEngageTarget());
+        GoTo(target, OnReachEngageTarget);
         SetCurrentlyEngaging(target);
         //StartMovement();
     }
@@ -1191,6 +1188,7 @@ public class CharacterMarker : PooledObject {
         if (!this.character.isDead && currentlyCombatting != null && currentlyCombatting == otherCharacter) {
             SetCurrentlyEngaging(null);
             SetCurrentlyCombatting(null);
+            pathfindingAI.ClearPath();
             SetTargetTransform(null);
             if (otherCharacter.isDead) { //remove hostile character in range, because the listener for character death is only for characters that did not enter combat with the other character
                 RemoveHostileInRange(otherCharacter);

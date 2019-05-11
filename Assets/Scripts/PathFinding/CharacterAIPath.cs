@@ -26,24 +26,25 @@ public class CharacterAIPath : AILerp {
     }
     public override void OnTargetReached() {
         base.OnTargetReached();
-        //if(currentPath != null && destination == currentPath.originalEndPoint){
-        if (!_hasReachedTarget) {
+        if (!_hasReachedTarget && !pathPending && reachedEndOfPath &&
+            //only execute target reach if the agent has a destination transform, vector or has a flee path
+            (marker.destinationSetter.target != null || !float.IsPositiveInfinity(destination.x) || marker.hasFleePath)) { 
             _hasReachedTarget = true;
             canSearch = true;
-            marker.ArrivedAtLocation();
-            currentPath = null;
-            //TODO: Move these to delegates
             if (marker.hasFleePath) {
-                marker.OnFinishFleePath();
+                marker.OnFinishedTraversingFleePath();
+            } else {
+                marker.ArrivedAtTarget();
             }
-            //else if (marker.currentlyEngaging != null) {
-            //    marker.OnReachEngageTarget();
-            //}
+            currentPath = null;
+            
         }
-        //}
     }
 
     protected override void OnPathComplete(Path newPath) {
+        if (newPath.CompleteState == PathCompleteState.Error) {
+            Debug.LogWarning(marker.character.name + " path request returned a path with errors!");
+        }
         currentPath = newPath as ABPath;
         if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == marker.character && currentPath.traversalProvider != null && marker.terrifyingCharacters.Count > 0) {
             string costLog = "PATH FOR " + marker.character.name;
@@ -72,6 +73,7 @@ public class CharacterAIPath : AILerp {
     }
     public override void SearchPath() {
         if (float.IsPositiveInfinity(destination.x)) return;
+        _hasReachedTarget = false;
         if (onSearchPath != null) onSearchPath();
 
         lastRepath = Time.time;
@@ -177,6 +179,10 @@ public class CharacterAIPath : AILerp {
 
     public void ClearPath() {
         currentPath = null;
+        path = null; //located at AILerp base class. Reference https://forum.arongranberg.com/t/how-to-stop-a-path-prematurely/1321/2
+        _hasReachedTarget = false;
+        marker.SetTargetTransform(null);
+        marker.SetDestination(Vector3.positiveInfinity);
     }
 
     public bool IsNodeWalkable(Vector3 nodePos) {

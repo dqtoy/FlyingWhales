@@ -627,7 +627,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //portraitGO.transform.localPosition = pos;
         SetCharacterMarker(portraitGO.GetComponent<CharacterMarker>());
         marker.SetCharacter(this);
-        //marker.SetHoverAction(ShowTileData, InteriorMapManager.Instance.HideTileData);
+        marker.SetHoverAction(ShowTileData, InteriorMapManager.Instance.HideTileData);
     }
     public void DestroyMarker() {
         ObjectPoolManager.Instance.DestroyObject(marker.gameObject);
@@ -2089,6 +2089,11 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         return false;
     }
     public bool IsNear(IPointOfInterest poi) {
+        if (poi is Character) {
+            if (ownParty.characters.Contains(poi as Character)) {
+                return true;
+            }
+        }
         return gridTileLocation == poi.gridTileLocation || gridTileLocation.IsAdjacentTo(poi);
     }
     public void UpdateIsCombatantState() {
