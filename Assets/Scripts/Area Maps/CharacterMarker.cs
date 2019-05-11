@@ -498,9 +498,9 @@ public class CharacterMarker : PooledObject {
                 if (targetCharacter.specificLocation != character.specificLocation) {
                     //if not, execute the arrival action
                     if (this.arrivalAction != null) {
-                        Debug.Log(targetCharacter.name + " is no longer at " + character.specificLocation.name + " executing action " + this.arrivalAction.Method.Name);
+                        Debug.Log(character.name + "'s target " + targetCharacter.name + " is no longer at " + character.specificLocation.name + " executing action " + this.arrivalAction.Method.Name);
                     } else {
-                        Debug.Log(targetCharacter.name + " is no longer at " + character.specificLocation.name + " executing action null");
+                        Debug.Log(character.name + "'s target " + targetCharacter.name + " is no longer at " + character.specificLocation.name + " executing action null");
                     }
                     this.arrivalAction?.Invoke();
                     ClearArrivalAction();

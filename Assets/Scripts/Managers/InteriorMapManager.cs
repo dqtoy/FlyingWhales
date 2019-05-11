@@ -344,7 +344,12 @@ public class InteriorMapManager : MonoBehaviour {
             summary += "\nDestination: " + (character.marker.destinationTile != null ? character.marker.destinationTile.ToString() : "None");
             summary += "\nMove Speed: " + character.marker.pathfindingAI.speed.ToString();
             summary += "\nTarget POI: " + character.marker.targetPOI?.ToString() ?? "None";
-            summary += "\nDestination Tile: " + character.marker.destinationTile?.ToString() ?? "None";
+            summary += "\nDestination Tile: ";
+            if (character.marker.destinationTile == null) {
+                summary += "None";
+            } else {
+                summary += character.marker.destinationTile.ToString() + " at " + character.marker.destinationTile.parentAreaMap.area.name; 
+            }
             summary += "\nArrival Action: " + character.marker.arrivalAction?.Method.Name ?? "None";
             summary += "\nPOI's in Vision: ";
             if (character.marker.inVisionPOIs.Count > 0) {

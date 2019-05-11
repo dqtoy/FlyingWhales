@@ -1152,6 +1152,16 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         }
     }
+    public void CancelAllJobsTargettingThisCharacter(string jobName, JobQueueItem except) {
+        for (int i = 0; i < allJobsTargettingThis.Count; i++) {
+            JobQueueItem job = allJobsTargettingThis[i];
+            if (job.name == jobName && job != except) {
+                if (job.jobQueueParent.CancelJob(job)) {
+                    i--;
+                }
+            }
+        }
+    }
     public void CancelAllJobsTargettingThisCharacter(string jobName, object conditionKey) {
         for (int i = 0; i < allJobsTargettingThis.Count; i++) {
             if(allJobsTargettingThis[i] is GoapPlanJob) {
