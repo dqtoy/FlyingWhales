@@ -1402,6 +1402,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             if (buryJob == null) {
                 //if none, create one
                 buryJob = new GoapPlanJob("Bury", INTERACTION_TYPE.BURY_CHARACTER, targetCharacter);
+                buryJob.SetCanTakeThisJobChecker(CanTakeBuryJob);
                 buryJob.AllowDeadTargets();
                 buryJob.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, conditionKey = this, targetPOI = targetCharacter }, INTERACTION_TYPE.CARRY_CORPSE);
                 homeArea.jobQueue.AddJobInQueue(buryJob, false, false);
@@ -1418,6 +1419,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             return true;
         }
         return false;
+    }
+    private bool CanTakeBuryJob(Character character) {
+        return character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.CIVILIAN;
     }
     public GoapPlanJob CreateRestrainJob(Character targetCharacter, bool overrideCurrentAction) {
         if (isAtHomeArea && !targetCharacter.isDead && !targetCharacter.isAtHomeArea && (role.roleType == CHARACTER_ROLE.SOLDIER || role.roleType == CHARACTER_ROLE.CIVILIAN)) {

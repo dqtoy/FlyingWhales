@@ -1172,7 +1172,7 @@ public class CharacterMarker : PooledObject {
     /// <param name="otherCharacter">The character this character fought with</param>
     private void OnFinishCombatWith(Character otherCharacter) {
         if (!this.character.isDead && currentlyCombatting != null && currentlyCombatting == otherCharacter) {
-            pathfindingAI.ClearPath();
+            //pathfindingAI.ClearPath();
             SetCurrentlyEngaging(null);
             SetCurrentlyCombatting(null);
             SetTargetTransform(null);
