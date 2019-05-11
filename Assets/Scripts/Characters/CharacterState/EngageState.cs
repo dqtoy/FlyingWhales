@@ -102,7 +102,7 @@ public class EngageState : CharacterState {
                 //Target Win
                 //resultWeights.AddElement("Hunter Killed", 5);
                 //resultWeights.AddElement("Hunter Injured", 40);
-                CombatEncounterEvents(targetCharacter, engagerCharacter, false);
+                CombatEncounterEvents(engagerCharacter, targetCharacter, false);
             }
         }
     }
