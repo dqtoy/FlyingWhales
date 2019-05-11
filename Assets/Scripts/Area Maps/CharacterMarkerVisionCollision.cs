@@ -8,17 +8,21 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
 
     public List<IPointOfInterest> poisInRangeButDiffStructure = new List<IPointOfInterest>();
 
-    private void OnEnable() {
-        Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
-    }
     private void OnDisable() {
-        Messenger.RemoveListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
         if (parentMarker.inVisionPOIs != null) {
             parentMarker.ClearPOIsInVisionRange();
         }
         if (parentMarker.hostilesInRange != null) {
             parentMarker.ClearHostilesInRange();
         }
+    }
+
+    public void Initialize() {
+        Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+    }
+    public void Reset() {
+        Messenger.RemoveListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+        OnDisable();
     }
 
     #region Triggers
@@ -35,11 +39,12 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
                     return;
                 }
             }
-            string collisionSummary = parentMarker.name + " collided with " + collidedWith.poi.name;
+            
             if (collidedWith is GhostCollisionTrigger) {
                 //ignored same structure requirement for ghost collisions
                 GhostCollisionHandling(collidedWith as GhostCollisionTrigger);
             } else {
+                string collisionSummary = parentMarker.name + " collided with " + collidedWith.poi.name;
                 //when this collides with a poi trigger
                 //check if the poi trigger is in the same structure as this
                 if (collidedWith.poi.gridTileLocation.structure == parentMarker.character.gridTileLocation.structure) {
@@ -64,8 +69,11 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
                         AddPOIAsInRangeButDifferentStructure(collidedWith.poi);
                     }
                 }
+                if (collidedWith.poi is Character) {
+                    Debug.Log(collisionSummary);
+                }
             }
-            //Debug.Log(collisionSummary);
+            
         }
     }
     public void OnTriggerExit2D(Collider2D collision) {

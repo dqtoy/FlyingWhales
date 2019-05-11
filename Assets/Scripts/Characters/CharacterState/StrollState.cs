@@ -30,7 +30,7 @@ public class StrollState : CharacterState {
                 if (goapAction.targetTile != null) {
                     goapAction.CreateStates();
                     stateComponent.character.SetCurrentAction(goapAction);
-                    stateComponent.character.marker.GoTo(goapAction.targetTile, targetPOI, () => OnArriveAtPickUpLocation());
+                    stateComponent.character.marker.GoTo(goapAction.targetTile, OnArriveAtPickUpLocation);
                     PauseState();
                 } else {
                     Debug.LogWarning(GameManager.Instance.TodayLogString() + " " + stateComponent.character.name + " can't pick up item " + targetPOI.name + " because there is no tile to go to!");
@@ -56,7 +56,7 @@ public class StrollState : CharacterState {
 
     private void StartStrollMovement() {
         LocationGridTile target = PickRandomTileToGoTo();
-        stateComponent.character.marker.GoTo(target, stateComponent.character, () => StartStrollMovement());
+        stateComponent.character.marker.GoTo(target, StartStrollMovement);
         //Debug.Log(stateComponent.character.name + " will stroll to " + target.ToString());
     }
     private LocationGridTile PickRandomTileToGoTo() {

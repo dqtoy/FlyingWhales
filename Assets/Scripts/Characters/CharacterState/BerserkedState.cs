@@ -30,7 +30,7 @@ public class BerserkedState : CharacterState {
                     if (goapAction.targetTile != null) {
                         goapAction.CreateStates();
                         stateComponent.character.SetCurrentAction(goapAction);
-                        stateComponent.character.marker.GoTo(goapAction.targetTile, targetPOI, () => OnArriveAtLocation());
+                        stateComponent.character.marker.GoTo(goapAction.targetTile, OnArriveAtLocation);
                         PauseState();
                     } else {
                         Debug.LogWarning(GameManager.Instance.TodayLogString() + " " + stateComponent.character.name + " can't destroy tile object " + targetPOI.name + " because there is no tile to go to!");
@@ -46,7 +46,7 @@ public class BerserkedState : CharacterState {
                 if (goapAction.targetTile != null) {
                     goapAction.CreateStates();
                     stateComponent.character.SetCurrentAction(goapAction);
-                    stateComponent.character.marker.GoTo(goapAction.targetTile, targetPOI, () => OnArriveAtLocation());
+                    stateComponent.character.marker.GoTo(goapAction.targetTile, OnArriveAtLocation);
                     PauseState();
                 } else {
                     Debug.LogWarning(GameManager.Instance.TodayLogString() + " " + stateComponent.character.name + " can't destroy item " + targetPOI.name + " because there is no tile to go to!");
@@ -79,7 +79,7 @@ public class BerserkedState : CharacterState {
         ResumeState();
     }
     private void StartBerserkedMovement() {
-        stateComponent.character.marker.GoTo(PickRandomTileToGoTo(), stateComponent.character, () => StartBerserkedMovement());
+        stateComponent.character.marker.GoTo(PickRandomTileToGoTo(), StartBerserkedMovement);
     }
     private LocationGridTile PickRandomTileToGoTo() {
         LocationStructure chosenStructure = stateComponent.character.specificLocation.GetRandomStructure();

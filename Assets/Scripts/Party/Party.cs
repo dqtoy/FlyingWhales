@@ -332,7 +332,7 @@ public class Party {
         } else {
             //_icon.SetActionOnTargetReached(doneAction);
             LocationGridTile exitTile = owner.GetNearestUnoccupiedEdgeTileFromThis();
-            owner.marker.GoTo(exitTile, null, () => MoveToAnotherArea(targetLocation, pathfindingMode, targetStructure, doneAction, actionOnStartOfMovement, targetPOI, targetTile));
+            owner.marker.GoTo(exitTile, () => MoveToAnotherArea(targetLocation, pathfindingMode, targetStructure, doneAction, actionOnStartOfMovement, targetPOI, targetTile));
         }
     }
     private void MoveToAnotherArea(Area targetLocation, PATHFINDING_MODE pathfindingMode, LocationStructure targetStructure = null,

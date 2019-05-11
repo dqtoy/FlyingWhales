@@ -39,7 +39,7 @@ public class ExploreState : CharacterState {
                 if (goapAction.targetTile != null) {
                     goapAction.CreateStates();
                     stateComponent.character.SetCurrentAction(goapAction);
-                    stateComponent.character.marker.GoTo(goapAction.targetTile, targetPOI, () => OnArriveAtPickUpLocation());
+                    stateComponent.character.marker.GoTo(goapAction.targetTile, OnArriveAtPickUpLocation);
                     PauseState();
                 } else {
                     Debug.LogWarning(GameManager.Instance.TodayLogString() + " " + stateComponent.character.name + " can't pick up item " + targetPOI.name + " because there is no tile to go to!");
@@ -90,7 +90,7 @@ public class ExploreState : CharacterState {
         ResumeState();
     }
     private void StartExploreMovement() {
-        stateComponent.character.marker.GoTo(PickRandomTileToGoTo(), stateComponent.character, () => StartExploreMovement());
+        stateComponent.character.marker.GoTo(PickRandomTileToGoTo(), StartExploreMovement);
     }
     private LocationGridTile PickRandomTileToGoTo() {
         LocationStructure chosenStructure = stateComponent.character.specificLocation.GetRandomStructure();

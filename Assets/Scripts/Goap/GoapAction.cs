@@ -299,7 +299,7 @@ public class GoapAction {
         } else {
             //if the actor is already at the area where the target structure is, just make the actor move to the specified target structure (ususally the structure where the poiTarget is at).
             if (targetTile != null) {
-                actor.marker.GoTo(targetTile, poiTarget, OnArriveAtTargetLocation);
+                actor.marker.GoTo(targetTile, OnArriveAtTargetLocation);
             } else {
                 actor.marker.GoTo(poiTarget, OnArriveAtTargetLocation);
             }

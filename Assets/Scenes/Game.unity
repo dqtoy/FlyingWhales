@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.1273174, g: 0.13414761, b: 0.12107885, a: 1}
+  m_IndirectSpecularColor: {r: 0.12731749, g: 0.13414757, b: 0.1210787, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -59662,8 +59662,6 @@ GameObject:
   - component: {fileID: 1536722383}
   - component: {fileID: 1536722384}
   - component: {fileID: 1536722385}
-  - component: {fileID: 1536722386}
-  - component: {fileID: 1536722387}
   m_Layer: 14
   m_Name: InteriorAreaMaps
   m_TagString: Untagged
@@ -59942,40 +59940,6 @@ MonoBehaviour:
     pivotPointRoot: {fileID: 0}
     spreadOutCount: 1
   showGraphs: 1
---- !u!114 &1536722386
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1536722382}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1764de1de43cc4d19af52679d3eaae06, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  version: 1
-  desiredSimulationFPS: 10
-  workerThreads: 3
-  doubleBuffering: 0
-  symmetryBreakingBias: 0.15
-  movementPlane: 1
-  drawObstacles: 1
---- !u!114 &1536722387
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1536722382}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2c90433f0d0d5c44e8047373b3259051, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  version: 1
-  uniqueID: 464651394080995133
-  wallHeight: 5
-  drawGizmosWhenNotSelected: 0
-  drawDirectionOnGizmos: 0
 --- !u!1 &1538310601
 GameObject:
   m_ObjectHideFlags: 0

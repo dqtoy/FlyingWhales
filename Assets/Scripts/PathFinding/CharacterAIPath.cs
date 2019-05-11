@@ -43,7 +43,7 @@ public class CharacterAIPath : AILerp {
 
     protected override void OnPathComplete(Path newPath) {
         if (newPath.CompleteState == PathCompleteState.Error) {
-            Debug.LogWarning(marker.character.name + " path request returned a path with errors!");
+            Debug.LogWarning(marker.character.name + " path request returned a path with errors! Arrival action is: " + marker.arrivalAction?.Method.Name ?? "None" + "Destination is " + destination.ToString());
         }
         currentPath = newPath as ABPath;
         if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == marker.character && currentPath.traversalProvider != null && marker.terrifyingCharacters.Count > 0) {
@@ -92,7 +92,7 @@ public class CharacterAIPath : AILerp {
             interpolator.distance = prevDist;
         }*/
 
-        canSearchAgain = false;
+        //canSearchAgain = false;
 
         for (int i = 0; i < marker.terrifyingCharacters.Count; i++) {
             if (!marker.terrifyingCharacters[i].isDead) {
@@ -183,6 +183,7 @@ public class CharacterAIPath : AILerp {
         _hasReachedTarget = false;
         marker.SetTargetTransform(null);
         marker.SetDestination(Vector3.positiveInfinity);
+        marker.ClearArrivalAction();
     }
 
     public bool IsNodeWalkable(Vector3 nodePos) {

@@ -37,7 +37,7 @@ public class JudgeCharacter : GoapAction {
     #endregion
 
     #region State Effects
-    public void PreTargetExecuted() {
+    public void AfterTargetExecuted() {
         if (parentPlan.job != null) {
             parentPlan.job.SetCannotCancelJob(true);
         }
@@ -48,7 +48,7 @@ public class JudgeCharacter : GoapAction {
 
         RemoveTraitFrom(poiTarget, "Restrained");
     }
-    public void PreTargetReleased() {
+    public void AfterTargetReleased() {
         //**Effect 1**: Remove target's Restrained trait
         RemoveTraitFrom(poiTarget, "Restrained");
         //**Effect 2**: If target is from a different faction or unaligned, target is not hostile with characters from the Actor's faction until Target leaves the location. Target is forced to create a Return Home plan
@@ -60,7 +60,7 @@ public class JudgeCharacter : GoapAction {
             RemoveTraitsOfType(poiTarget, TRAIT_TYPE.CRIMINAL);
         }
     }
-    public void PreTargetExiled() {
+    public void AfterTargetExiled() {
         //**Effect 1**: Remove target's Restrained trait
         RemoveTraitFrom(poiTarget, "Restrained");
         //**Effect 2**: Target becomes unaligned and will have his Home Location set to a random different location
