@@ -1009,6 +1009,12 @@ public class CharacterMarker : PooledObject {
                 }
             }
         }
+        if(character.stateComponent.currentState == null || character.stateComponent.currentState.characterState == CHARACTER_STATE.ENGAGE) {
+            summary += "\n" + character.name + " is engaging, creating assault jobs for the target: " + otherCharacter.name;
+            if (otherCharacter.GetNumOfJobsTargettingThisCharacter("Assault") < 3) {
+                character.CreateAssaultJobs(otherCharacter, false, 3);
+            }
+        }
         Debug.Log(summary);
     }
     #endregion
