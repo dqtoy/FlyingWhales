@@ -131,7 +131,7 @@ public class InteriorMapManager : MonoBehaviour {
         areaMaps.Add(newMap);
         newMap.transform.localPosition = nextMapPos;
         //set the next map position based on the new maps height
-        nextMapPos = new Vector3(nextMapPos.x, nextMapPos.y + newMap.height + 1, nextMapPos.z);
+        nextMapPos = new Vector3(nextMapPos.x, nextMapPos.y + newMap.height + 10, nextMapPos.z);
         CreatePathfindingGraphForArea(newMap);
         newMap.UpdateTilesWorldPosition();
     }

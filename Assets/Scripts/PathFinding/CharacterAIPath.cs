@@ -92,7 +92,7 @@ public class CharacterAIPath : AILerp {
             interpolator.distance = prevDist;
         }*/
 
-        //canSearchAgain = false;
+        canSearchAgain = false;
 
         for (int i = 0; i < marker.terrifyingCharacters.Count; i++) {
             if (!marker.terrifyingCharacters[i].isDead) {
