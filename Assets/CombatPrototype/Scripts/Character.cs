@@ -1176,7 +1176,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public void CancelAllJobsTargettingThisCharacter(string cause = "", bool shouldDoAfterEffect = true) {
         for (int i = 0; i < allJobsTargettingThis.Count; i++) {
-            JobQueueItem job = allJobsTargettingThis[0];
+            JobQueueItem job = allJobsTargettingThis[i];
             if (job.jobQueueParent.CancelJob(job, cause, shouldDoAfterEffect)) {
                 i--;
             }
