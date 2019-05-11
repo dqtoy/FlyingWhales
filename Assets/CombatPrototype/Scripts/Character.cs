@@ -1421,7 +1421,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         return false;
     }
     private bool CanTakeBuryJob(Character character) {
-        return role.roleType == CHARACTER_ROLE.SOLDIER || role.roleType == CHARACTER_ROLE.CIVILIAN;
+        return character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.CIVILIAN;
     }
     public GoapPlanJob CreateRestrainJob(Character targetCharacter, bool overrideCurrentAction) {
         if (isAtHomeArea && !targetCharacter.isDead && !targetCharacter.isAtHomeArea && (role.roleType == CHARACTER_ROLE.SOLDIER || role.roleType == CHARACTER_ROLE.CIVILIAN)) {
