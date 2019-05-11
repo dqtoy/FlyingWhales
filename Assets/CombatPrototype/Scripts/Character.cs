@@ -1382,7 +1382,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         return false;
     }
     public void CreateAssaultJobs(Character targetCharacter, bool overrideCurrentAction, int amount) {
-        if (isAtHomeArea && !targetCharacter.isDead && !targetCharacter.isAtHomeArea && targetCharacter.GetTraitOf(TRAIT_TYPE.DISABLER) == null) {
+        if (isAtHomeArea && !targetCharacter.isDead && !targetCharacter.isAtHomeArea && !targetCharacter.HasTraitOf(TRAIT_TYPE.DISABLER, "Combat Recovery")) {
             for (int i = 0; i < amount; i++) {
                 GoapPlanJob job = new GoapPlanJob("Assault", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", targetPOI = targetCharacter });
                 job.SetCanTakeThisJobChecker(CanCharacterTakeAssaultJob);
@@ -2957,8 +2957,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return null;
     }
-    public bool HasTraitOf(TRAIT_TYPE traitType) {
+    public bool HasTraitOf(TRAIT_TYPE traitType, string traitException = "") {
         for (int i = 0; i < _traits.Count; i++) {
+            if(traitException != "" && _traits[i].name == traitException) { continue; }
             if (_traits[i].type == traitType && !_traits[i].isDisabled) {
                 return true;
             }
