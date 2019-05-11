@@ -101,7 +101,7 @@ public class InteriorMapManager : MonoBehaviour {
     public void Initialize() {
         areaMaps = new List<AreaInnerTileMap>();
         AreaMapCameraMove.Instance.Initialize();
-        sim = (FindObjectOfType(typeof(RVOSimulator)) as RVOSimulator).GetSimulator();
+        //sim = (FindObjectOfType(typeof(RVOSimulator)) as RVOSimulator).GetSimulator();
     }
     public void ShowAreaMap(Area area, bool centerCameraOnMapCenter = true) {
         if (area.areaType == AREA_TYPE.DEMONIC_INTRUSION) {
@@ -189,35 +189,35 @@ public class InteriorMapManager : MonoBehaviour {
 
 
     #region Local Avoidance
-    public void RegisterObstacles() {
-        for (int i = 0; i < areaMaps.Count; i++) {
-            AreaInnerTileMap map = areaMaps[i];
-            //get all wall tiles
-            List<LocationGridTile> walls = map.GetAllWallTiles();
-            for (int j = 0; j < walls.Count; j++) {
-                LocationGridTile wall = walls[j];
-                Vector3[] verts = wall.GetVertices();
-                for (int k = 0; k < verts.Length; k++) {
-                    Vector3 currVert = verts[k];
-                    int nextVertIndex = k + 1;
-                    if (nextVertIndex == verts.Length) {
-                        nextVertIndex = 0;
-                    }
-                    sim.AddObstacle(currVert, verts[nextVertIndex], 1f);
-                }
+    //public void RegisterObstacles() {
+    //    for (int i = 0; i < areaMaps.Count; i++) {
+    //        AreaInnerTileMap map = areaMaps[i];
+    //        //get all wall tiles
+    //        List<LocationGridTile> walls = map.GetAllWallTiles();
+    //        for (int j = 0; j < walls.Count; j++) {
+    //            LocationGridTile wall = walls[j];
+    //            Vector3[] verts = wall.GetVertices();
+    //            for (int k = 0; k < verts.Length; k++) {
+    //                Vector3 currVert = verts[k];
+    //                int nextVertIndex = k + 1;
+    //                if (nextVertIndex == verts.Length) {
+    //                    nextVertIndex = 0;
+    //                }
+    //                sim.AddObstacle(currVert, verts[nextVertIndex], 1f);
+    //            }
 
-                //sim.AddObstacle(verts, 2);
-            }
-        }
-        List<Pathfinding.RVO.Sampled.Agent> agents = sim.GetAgents();
-        Debug.Log(agents.Count + " agents!");
-    }
-    public void AddAgent(IAgent agent) {
-        sim.AddAgent(agent);
-    }
-    public void RemoveAgent(IAgent agent) {
-        sim.RemoveAgent(agent);
-    }
+    //            //sim.AddObstacle(verts, 2);
+    //        }
+    //    }
+    //    List<Pathfinding.RVO.Sampled.Agent> agents = sim.GetAgents();
+    //    Debug.Log(agents.Count + " agents!");
+    //}
+    //public void AddAgent(IAgent agent) {
+    //    sim.AddAgent(agent);
+    //}
+    //public void RemoveAgent(IAgent agent) {
+    //    sim.RemoveAgent(agent);
+    //}
     #endregion
 
 

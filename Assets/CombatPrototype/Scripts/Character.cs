@@ -1755,29 +1755,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     /// <param name="targetPOI">The Point of Interest this character will interact with</param>
     /// <param name="arrivalAction">What should this character do when it reaches its target tile?</param>
     public void MoveToAnotherStructure(LocationStructure newStructure, LocationGridTile destinationTile, IPointOfInterest targetPOI = null, Action arrivalAction = null) {
-        //if the destination tile is null
-        //if (destinationTile == null) {
-        //    if (currentStructure != null) {
-        //        List<LocationGridTile> tilesToUse;
-        //        if (newStructure.location.areaType == AREA_TYPE.DEMONIC_INTRUSION) { //player area
-        //            tilesToUse = newStructure.tiles;
-        //        } else {
-        //            tilesToUse = newStructure.unoccupiedTiles;
-        //        }
-        //        if (tilesToUse.Count > 0) {
-        //            destinationTile = tilesToUse[UnityEngine.Random.Range(0, tilesToUse.Count)];
-        //        } else {
-        //            throw new Exception ("There are no tiles at " + newStructure.structureType.ToString() + " at " + newStructure.location.name + " for " + name);
-        //        }
-        //    } else {
-        //        newStructure.AddCharacterAtLocation(this, destinationTile);
-        //        if (arrivalAction != null) {
-        //            arrivalAction();
-        //        }
-        //        return;
-        //    }
-        //}
-
         //if the character is already at the destination tile, just do the specified arrival action, if any.
         if (gridTileLocation == destinationTile) {
             if (arrivalAction != null) {
@@ -1790,7 +1767,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 marker.GoTo(targetPOI, arrivalAction);
             } else {
                 //if destination tile is not null, got there, regardless of target poi
-                marker.GoTo(destinationTile, targetPOI, arrivalAction);
+                marker.GoTo(destinationTile, arrivalAction);
             }
 
         }

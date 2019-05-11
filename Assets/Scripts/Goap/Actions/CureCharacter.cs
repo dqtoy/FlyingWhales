@@ -55,7 +55,7 @@ public class CureCharacter : GoapAction {
 
     #region Preconditions
     private bool HasItemInInventory() {
-        return actor.HasItem("Healing Potion");
+        return actor.HasToken(SPECIAL_TOKEN.HEALING_POTION);
         //return true;
     }
     #endregion

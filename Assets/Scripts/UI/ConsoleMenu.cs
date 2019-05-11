@@ -47,6 +47,7 @@ public class ConsoleMenu : UIMenu {
             {"/get_characters_with_item", GetCharactersWithItem },
             {"/i_toggle_sub", ToggleSubscriptionToInteraction },
             {"/add_trait_character", AddTraitToCharacter },
+            {"/remove_trait_character", RemoveTraitToCharacter },
             {"/transfer_character_faction", TransferCharacterToFaction },
             {"/show_full_debug", ShowFullDebug },
             {"/force_action", ForceCharacterInteraction },
@@ -612,6 +613,30 @@ public class ConsoleMenu : UIMenu {
             }
         }
         AddSuccessMessage("Added " + traitParameterString + " to " + character.name);
+    }
+    private void RemoveTraitToCharacter(string[] parameters) {
+        if (parameters.Length != 2) { //parameters command, item
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of AddTraitToCharacter");
+            return;
+        }
+        string characterParameterString = parameters[0];
+        string traitParameterString = parameters[1];
+
+        Character character = CharacterManager.Instance.GetCharacterByName(characterParameterString);
+
+        if (character == null) {
+            AddErrorMessage("There is no character named " + characterParameterString);
+            return;
+        }
+
+        if (character.RemoveTrait(traitParameterString)) {
+            AddSuccessMessage("Removed " + traitParameterString + " to " + character.name);
+        } else {
+            AddErrorMessage(character.name +  " has no trait named " + traitParameterString);
+        }
+       
+        
     }
     private void TransferCharacterToFaction(string[] parameters) {
         if (parameters.Length != 2) { //parameters command, item
