@@ -26,7 +26,13 @@ public class CharacterStateComponent {
     public void SetCurrentState(CharacterState state) {
         currentState = state;
     }
-    public void SetStateToDo(CharacterState state) {
+    public void SetStateToDo(CharacterState state, bool unassignJob = true) {
+        if(unassignJob && state == null && stateToDo != null) {
+            if(stateToDo.job != null) {
+                stateToDo.job.SetAssignedCharacter(null);
+                stateToDo.job.SetAssignedState(null);
+            }
+        }
         stateToDo = state;
     }
 
@@ -76,7 +82,7 @@ public class CharacterStateComponent {
             if(stateToDo.stateCategory == CHARACTER_STATE_CATEGORY.MAJOR) {
                 previousMajorState = stateToDo;
             }
-            SetStateToDo(null);
+            SetStateToDo(null, false);
         }
 
         //Assigns new state as the current state then enter that state

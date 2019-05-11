@@ -4960,7 +4960,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     if (goapThread.job.willImmediatelyBeDoneAfterReceivingPlan) {
                         AddPlan(goapThread.createdPlan, true);
 
-                        if(stateComponent.currentState != null) {
+                        if (stateComponent.currentState != null) {
                             if(stateComponent.currentState.characterState != CHARACTER_STATE.ENGAGE && stateComponent.currentState.characterState != CHARACTER_STATE.FLEE) {
                                 stateComponent.currentState.OnExitThisState();
                             }
