@@ -3057,8 +3057,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 AdjustIgnoreHostilities(1);
             }
             _ownParty.RemoveAllOtherCharacters();
-            CancelAllJobsTargettingThisCharacter("Assault");
-        }else if (trait.type == TRAIT_TYPE.CRIMINAL) {
+            if(trait.name != "Combat Recovery") {
+                CancelAllJobsTargettingThisCharacter("Assault");
+            }
+        } else if (trait.type == TRAIT_TYPE.CRIMINAL) {
             CancelOrUnassignRemoveTraitRelatedJobs();
         }
         if (trait.name == "Abducted" || trait.name == "Restrained") {
