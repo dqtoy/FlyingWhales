@@ -796,6 +796,7 @@ public class CharacterMarker : PooledObject {
                 Debug.Log(character.name + " saw " + (poi as Character).name);
             }
             character.AddAwareness(poi);
+            OnAddPOIAsInVisionRange(poi);
         }
     }
     public void RemovePOIFromInVisionRange(IPointOfInterest poi) {
@@ -810,6 +811,12 @@ public class CharacterMarker : PooledObject {
     }
     public void ClearPOIsInVisionRange() {
         inVisionPOIs.Clear();
+    }
+    private void OnAddPOIAsInVisionRange(IPointOfInterest poi) {
+        if(poi is Character) {
+            Character target = poi as Character;
+            character.ThisCharacterSaw(target);
+        }
     }
     #endregion
 

@@ -8,6 +8,8 @@ public class CharacterManager : MonoBehaviour {
 
     public static CharacterManager Instance = null;
 
+    public const int CHARACTER_MAX_MEMORY = 20;
+
     public GameObject characterIconPrefab;
     public Transform characterIconsParent;
 

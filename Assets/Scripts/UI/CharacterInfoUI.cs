@@ -60,6 +60,13 @@ public class CharacterInfoUI : UIMenu {
     [SerializeField] private ScrollRect itemsScrollView;
     [SerializeField] private GameObject combatAttributePrefab;
 
+    [Space(10)]
+    [Header("Memories")]
+    [SerializeField] private GameObject memoriesGO;
+    [SerializeField] private GameObject memoryItemPrefab;
+    [SerializeField] private ScrollRect memoriesScrollView;
+    public MemoryItem[] memoryItems { get; private set; }
+
     private CombatAttributeItem[] statusTraitContainers;
     private CombatAttributeItem[] normalTraitContainers;
     private CombatAttributeItem[] relationshipTraitContainers;
@@ -97,6 +104,8 @@ public class CharacterInfoUI : UIMenu {
         normalTraitContainers = Utilities.GetComponentsInDirectChildren<CombatAttributeItem>(normalTraitsScrollView.content.gameObject);
         relationshipTraitContainers = Utilities.GetComponentsInDirectChildren<CombatAttributeItem>(relationshipTraitsScrollView.content.gameObject);
         inventoryItemContainers = Utilities.GetComponentsInDirectChildren<ItemContainer>(itemsScrollView.content.gameObject);
+
+        InitializeMemoryUI();
 
         InitializeLogsMenu();
     }
@@ -168,6 +177,7 @@ public class CharacterInfoUI : UIMenu {
         UpdateStatInfo();
         UpdateLocationInfo();
         UpdateAllHistoryInfo();
+        UpdateMemories();
     }
     private void UpdatePortrait() {
         characterPortrait.GeneratePortrait(_activeCharacter);
@@ -499,6 +509,31 @@ public class CharacterInfoUI : UIMenu {
         //    _activeCharacter.party.currentCombat.CharacterDeath(_activeCharacter, null);
         //}
         _activeCharacter.Death();
+    }
+    #endregion
+
+    #region Memories
+    private void InitializeMemoryUI() {
+        memoryItems = new MemoryItem[CharacterManager.CHARACTER_MAX_MEMORY];
+        for (int i = 0; i < CharacterManager.CHARACTER_MAX_MEMORY; i++) {
+            GameObject go = GameObject.Instantiate(memoryItemPrefab, memoriesScrollView.content);
+            memoryItems[i] = go.GetComponent<MemoryItem>();
+        }
+    }
+    private void UpdateMemories() {
+        if (memoriesGO.activeSelf) {
+            for (int i = 0; i < memoryItems.Length; i++) {
+                if(i < _activeCharacter.memories.memoryList.Count) {
+                    memoryItems[i].SetMemory(_activeCharacter.memories.memoryList[(_activeCharacter.memories.memoryList.Count - 1) - i]);
+                } else {
+                    memoryItems[i].SetMemory(null);
+                }
+            }
+        }
+    }
+    public void OpenMemories() {
+        memoriesGO.SetActive(true);
+        UpdateMemories();
     }
     #endregion
 
