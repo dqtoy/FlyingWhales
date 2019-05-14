@@ -47,7 +47,6 @@ public class CharacterMarker : PooledObject {
     public List<IPointOfInterest> inVisionPOIs { get; private set; } //POI's in this characters vision collider
     public List<Character> hostilesInRange { get; private set; } //POI's in this characters hostility collider
 
-
     public Action arrivalAction {
         get { return _arrivalAction; }
         private set {
@@ -121,6 +120,12 @@ public class CharacterMarker : PooledObject {
         visionCollision.Initialize();
     }
 
+    private void OnEnable() {
+        if (character != null) {
+            UpdateAnimation();
+        }
+    }
+
     #region Pointer Functions
     public void SetHoverAction(HoverMarkerAction hoverEnterAction, System.Action hoverExitAction) {
         this.hoverEnterAction = hoverEnterAction;
@@ -180,7 +185,7 @@ public class CharacterMarker : PooledObject {
                 pathfindingAI.AdjustDoNotMove(1);
                 gainTraitSummary += "\nGained trait is a disabler trait, adjusting do not move value.";
             }
-            if (trait.name == "Unconscious") {
+            if (trait is Unconscious || trait is Restrained) {
                 //if the character gained an unconscious trait, exit current state if it is flee
                 if (characterThatGainedTrait.stateComponent.currentState != null && characterThatGainedTrait.stateComponent.currentState.characterState == CHARACTER_STATE.FLEE) {
                     characterThatGainedTrait.stateComponent.currentState.OnExitThisState();
@@ -234,25 +239,36 @@ public class CharacterMarker : PooledObject {
     }
     public void OnCharacterLostTrait(Character character, Trait trait) {
         if (character == this.character) {
+            string lostTraitSummary = character.name + " has lost trait " + trait.name;
             if (trait.type == TRAIT_TYPE.DISABLER) { //if the character lost a disabler trait, adjust hinder movement value
                 pathfindingAI.AdjustDoNotMove(-1);
+                lostTraitSummary += "\nLost trait is a disabler trait, adjusting do not move value.";
             }
-            //after this character loses combat recovery trait or unconscious trait, check if he or she can still react to another character, if yes, react.
-            switch (trait.name) {
-                case "Combat Recovery":
-                case "Unconscious":
-                    if (character.GetTrait("Unconscious") == null && character.GetTrait("Combat Recovery") == null) {
-                        if (hostilesInRange.Count > 0) {
-                            Character nearestHostile = GetNearestValidHostile();
-                            if (nearestHostile != null) {
-                                NormalReactToHostileCharacter(nearestHostile);
+            //if the character does not have any other negative disabler trait
+            //check for reactions.
+            if (!character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+                //after this character loses combat recovery trait or unconscious trait, check if he or she can still react to another character, if yes, react.
+                lostTraitSummary += "\n" + character.name + " doesn't have any other negative disabler traits.";
+                switch (trait.name) {
+                    case "Combat Recovery":
+                    case "Unconscious":
+                        if (character.GetTrait("Unconscious") == null && character.GetTrait("Combat Recovery") == null) {
+                            if (hostilesInRange.Count > 0) {
+                                Character nearestHostile = GetNearestValidHostile();
+                                if (nearestHostile != null) {
+                                    lostTraitSummary += "\n" + character.name + " will react to nearest hostile " + nearestHostile.name + " after losing trait " + trait.name;
+                                    NormalReactToHostileCharacter(nearestHostile);
+                                }
                             }
                         }
-                    }
-                    break;
-                default:
-                    break;
+                        break;
+                    default:
+                        break;
+                }
+            } else {
+                lostTraitSummary += "\n" + character.name + " has other negative disabler traits. Not doing anything.";
             }
+            Debug.Log(lostTraitSummary);
             UpdateAnimation();
             UpdateActionIcon();
         } else if (hostilesInRange.Contains(character)) {
@@ -292,7 +308,6 @@ public class CharacterMarker : PooledObject {
         RemovePOIFromInVisionRange(travellingParty.owner);
 
     }
-   
     private void OnCharacterStartedState(Character character, CharacterState state) {
         if (character == this.character) {
             UpdateActionIcon();
@@ -729,9 +744,7 @@ public class CharacterMarker : PooledObject {
         }
     }
     public void PlaceMarkerAt(LocationGridTile tile, bool addToLocation = true) {
-        //if(tile != null) {
         this.gameObject.transform.SetParent(tile.parentAreaMap.objectsParent);
-        //transform.position = tile.centeredWorldLocation;
         pathfindingAI.Teleport(tile.centeredWorldLocation);
         if (addToLocation) {
             tile.structure.location.AddCharacterToLocation(character);
@@ -740,8 +753,6 @@ public class CharacterMarker : PooledObject {
         UpdatePosition();
         UpdateAnimation();
         UpdateActionIcon();
-        //tile.SetOccupant(character);
-        //}
     }
     public void PlaceMarkerAt(Vector3 localPos, Vector3 lookAt) {
         StartCoroutine(Positioner(localPos, lookAt));
@@ -751,20 +762,16 @@ public class CharacterMarker : PooledObject {
     }
     private IEnumerator Positioner(Vector3 localPos, Vector3 lookAt) {
         yield return null;
-        //pathfindingAI.Teleport(localPos);
         transform.localPosition = localPos;
         LookAt(lookAt, true);
     }
     private IEnumerator Positioner(Vector3 localPos, Quaternion lookAt) {
         yield return null;
-        //pathfindingAI.Teleport(localPos);
         transform.localPosition = localPos;
         LookAt(lookAt, true);
     }
     public void OnDeath(LocationGridTile deathTileLocation) {
         if (character.race == RACE.SKELETON) {
-            //ObjectPoolManager.Instance.DestroyObject(gameObject);
-            //deathTileLocation.RemoveCharacterHere(character);
             character.DestroyMarker();
         } else {
             for (int i = 0; i < colliders.Length; i++) {
@@ -851,10 +858,11 @@ public class CharacterMarker : PooledObject {
                 (character.stateComponent.currentState as EngageState).CheckForEndState();
             }
         } 
-        //else if (character.stateComponent.currentState.characterState == CHARACTER_STATE.FLEE) {
-        //    removeHostileSummary += "\n" + character.name + "'s current state is flee, checking for end state...";
-        //    (character.stateComponent.currentState as FleeState).CheckForEndState();
-        //}
+        //if the removed character was removed from this characters hostile range because that character died, check if this character is fleeing, if yes, check for end state
+        else if (character.stateComponent.currentState.characterState == CHARACTER_STATE.FLEE && removedCharacter.isDead) {
+            removeHostileSummary += "\n" + character.name + "'s current state is flee, checking for end state...";
+            (character.stateComponent.currentState as FleeState).CheckForEndState();
+        }
         character.PrintLogIfActive(removeHostileSummary);
     }
     public void OnOtherCharacterDied(Character otherCharacter) {
@@ -905,6 +913,9 @@ public class CharacterMarker : PooledObject {
             character.stateComponent.SwitchToState(forcedReaction, otherCharacter);
             summary += "\n" + character.name + " was forced to " + forcedReaction.ToString() + ".";
         } else {
+
+            //character.stateComponent.SwitchToState(CHARACTER_STATE.FLEE, otherCharacter);
+            //return;
             //- Determine whether to enter Flee mode or Engage mode:
             //if the character will do a combat action towards the other character, do not flee.
             if (!this.character.IsDoingCombatActionTowards(otherCharacter) 
@@ -1007,23 +1018,20 @@ public class CharacterMarker : PooledObject {
         fleePath.aimStrength = 1;
         fleePath.spread = 4000;
         seeker.StartPath(fleePath, OnFleePathComputed);
-        ClearArrivalAction();
     }
-    private void OnFleePathComputed(Path path) {
+    public void OnFleePathComputed(Path path) {
         if (character == null || character.stateComponent.currentState == null || character.stateComponent.currentState.characterState != CHARACTER_STATE.FLEE 
             || character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
             return; //this is for cases that the character is no longer in a flee state, but the pathfinding thread returns a flee path
         }
-        //Debug.Log(character.name + " computed a flee path!");
+        Debug.Log(character.name + " computed flee path");
+        arrivalAction = OnFinishedTraversingFleePath;
         StartMovement();
     }
     public void RedetermineFlee() {
         if (hostilesInRange.Count == 0) {
             return;
         }
-        //if (character.currentAction != null) {
-        //    character.currentAction.StopAction();
-        //}
         hasFleePath = true;
         pathfindingAI.canSearch = false; //set to false, because if this is true and a destination has been set in the ai path, the ai will still try and go to that point instead of the computed flee path
         FleeMultiplePath fleePath = FleeMultiplePath.Construct(this.transform.position, hostilesInRange.Select(x => x.marker.transform.position).ToArray(), 10000);
@@ -1153,6 +1161,21 @@ public class CharacterMarker : PooledObject {
         }
         return nearest;
     }
+    public float GetNearestValidHostileDistance() {
+        Character nearest = null;
+        float nearestDist = 9999f;
+        for (int i = 0; i < hostilesInRange.Count; i++) {
+            Character currHostile = hostilesInRange.ElementAt(i);
+            if (IsValidCombatTarget(currHostile)) {
+                float dist = Vector2.Distance(this.transform.position, currHostile.marker.transform.position);
+                if (nearest == null || dist < nearestDist) {
+                    nearest = currHostile;
+                    nearestDist = dist;
+                }
+            }
+        }
+        return nearestDist;
+    }
     private bool IsValidCombatTarget(Character otherCharacter) {
         //- If the other character has a Negative Disabler trait, this character will not trigger combat
         return !otherCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER);
@@ -1172,7 +1195,6 @@ public class CharacterMarker : PooledObject {
     /// <param name="otherCharacter">The character this character fought with</param>
     private void OnFinishCombatWith(Character otherCharacter) {
         if (!this.character.isDead && currentlyCombatting != null && currentlyCombatting == otherCharacter) {
-            //pathfindingAI.ClearPath();
             SetCurrentlyEngaging(null);
             SetCurrentlyCombatting(null);
             SetTargetTransform(null);

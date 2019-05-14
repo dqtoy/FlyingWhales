@@ -1405,7 +1405,7 @@ public class AreaInnerTileMap : MonoBehaviour {
     #endregion
 
     #region Movement & Mouse Interaction
-    public void LateUpdate() {
+    public void Update() {
         if (UIManager.Instance.characterInfoUI.isShowing 
             && UIManager.Instance.characterInfoUI.activeCharacter.specificLocation == this.area
             && !UIManager.Instance.characterInfoUI.activeCharacter.isDead
@@ -1420,7 +1420,7 @@ public class AreaInnerTileMap : MonoBehaviour {
 
             if (UIManager.Instance.characterInfoUI.activeCharacter.marker.pathfindingAI.currentPath != null) {
                 //ShowPath(UIManager.Instance.characterInfoUI.activeCharacter.marker.currentPath);
-                ShowPath(UIManager.Instance.characterInfoUI.activeCharacter.marker.pathfindingAI.currentPath);
+                ShowPath(UIManager.Instance.characterInfoUI.activeCharacter);
                 UIManager.Instance.characterInfoUI.activeCharacter.marker.HighlightHostilesInRange();
             } else {
                 HidePath();
@@ -1883,17 +1883,11 @@ public class AreaInnerTileMap : MonoBehaviour {
         float distSqr = dx * dx + dz * dz;
         Debug.Log("Radius Squared: " + distSqr);
     }
-    public void ShowPath(List<LocationGridTile> path) {
-        pathLineRenderer.gameObject.SetActive(true);
-        pathLineRenderer.positionCount = path.Count;
-        Vector3[] positions = new Vector3[path.Count];
-        for (int i = 0; i < path.Count; i++) {
-            positions[i] = new Vector3(path[i].localPlace.x + 0.5f, path[i].localPlace.y + 0.5f);
-        }
-        pathLineRenderer.SetPositions(positions);
-    }
     public void ShowPath(Path path) {
         List<Vector3> points = path.vectorPath;
+        ShowPath(points);
+    }
+    public void ShowPath(List<Vector3> points) {
         pathLineRenderer.gameObject.SetActive(true);
         pathLineRenderer.positionCount = points.Count;
         Vector3[] positions = new Vector3[points.Count];
@@ -1901,6 +1895,28 @@ public class AreaInnerTileMap : MonoBehaviour {
             positions[i] = points[i];
         }
         pathLineRenderer.SetPositions(positions);
+    }
+    public void ShowPath(Character character) {
+        List<Vector3> points = new List<Vector3>(character.marker.pathfindingAI.currentPath.vectorPath);
+        int indexAt = 0; //the index that the character is at.
+        float nearestDistance = 9999f;
+        //refine the current path to remove points that the character has passed.
+        //to do that, get the point in the list that the character is nearest to, then remove all other points before that point
+        for (int i = 0; i < points.Count; i++) {
+            Vector3 currPoint = points[i];
+            float distance = Vector3.Distance(character.marker.transform.position, currPoint);
+            if (distance < nearestDistance) {
+                indexAt = i;
+                nearestDistance = distance;
+            }
+        }
+        //Debug.Log(character.name + " is at index " + indexAt.ToString() + ". current path length is " + points.Count);
+        for (int i = 0; i <= indexAt; i++) {
+            points.RemoveAt(0);
+        }
+        //points.Insert(0, character.marker.transform.position);
+        //Debug.Log(character.name + " new path length is " + points.Count);
+        ShowPath(points);
     }
     public void HidePath() {
         pathLineRenderer.gameObject.SetActive(false);
@@ -1914,6 +1930,27 @@ public class AreaInnerTileMap : MonoBehaviour {
         yield return new WaitForSeconds(1f);
 
         groundTilemap.SetColor(tile.localPlace, Color.white);
+    }
+   private bool IsBetween(Vector3 point1, Vector3 point2, Vector3 currPoint) {
+       float dxc = currPoint.x - point1.x;
+        float dyc = currPoint.y - point1.y;
+
+        float dxl = point2.x - point1.x;
+        float dyl = point2.y - point1.y;
+
+        float cross = dxc * dyl - dyc * dxl;
+
+        if (cross != 0)
+            return false;
+
+        if (Mathf.Abs(dxl) >= Mathf.Abs(dyl))
+            return dxl > 0 ?
+              point1.x <= currPoint.x && currPoint.x <= point2.x :
+              point2.x <= currPoint.x && currPoint.x <= point1.x;
+        else
+            return dyl > 0 ?
+              point1.y <= currPoint.y && currPoint.y <= point2.y :
+              point2.y <= currPoint.y && currPoint.y <= point1.y;
     }
     #endregion
 

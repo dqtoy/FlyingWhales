@@ -31,11 +31,11 @@ public class CharacterAIPath : AILerp {
             (marker.destinationSetter.target != null || !float.IsPositiveInfinity(destination.x) || marker.hasFleePath)) { 
             _hasReachedTarget = true;
             canSearch = true;
-            if (marker.hasFleePath) {
-                marker.OnFinishedTraversingFleePath();
-            } else {
+            //if (marker.hasFleePath) {
+            //    marker.OnFinishedTraversingFleePath();
+            //} else {
                 marker.ArrivedAtTarget();
-            }
+            //}
             currentPath = null;
             
         }
@@ -184,8 +184,8 @@ public class CharacterAIPath : AILerp {
         marker.SetTargetTransform(null);
         marker.SetDestination(Vector3.positiveInfinity);
         marker.ClearArrivalAction();
+        interpolator.SetPath(null);
     }
-
     public bool IsNodeWalkable(Vector3 nodePos) {
         if (marker.terrifyingCharacters.Count > 0) {
             for (int i = 0; i < marker.terrifyingCharacters.Count; i++) {
@@ -246,5 +246,11 @@ public class CharacterAIPath : AILerp {
             }
         }
         return 1000;
+    }
+    public Vector3 GetTangent() {
+        if (interpolator.valid) {
+            return interpolator.tangent;
+        }
+        return Vector3.zero;
     }
 }

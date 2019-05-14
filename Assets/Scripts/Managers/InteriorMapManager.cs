@@ -293,19 +293,13 @@ public class InteriorMapManager : MonoBehaviour {
         if (tile == null) {
             return;
         }
-        if (GameManager.showAllTilesTooltip) {
+        //if (GameManager.showAllTilesTooltip) {
             string summary = tile.localPlace.ToString();
             summary += "\nLocal Location: " + tile.localLocation.ToString();
             summary += "\nWorld Location: " + tile.centeredWorldLocation.ToString();
-            //summary += "\nRotation Ground: " + tile.parentAreaMap.groundTilemap.GetTransformMatrix(tile.localPlace).rotation.eulerAngles.ToString();
-            //summary += "\nRotation Detail: " + tile.parentAreaMap.detailsTilemap.GetTransformMatrix(tile.localPlace).rotation.eulerAngles.ToString();
-            //summary += "\nIs Inside: " + tile.isInside.ToString();
-            //summary += "\nIs Edge: " + tile.isEdge.ToString();
             summary += "\nTile Type: " + tile.tileType.ToString();
             summary += "\nTile State: " + tile.tileState.ToString();
             summary += "\nTile Access: " + tile.tileAccess.ToString();
-            //summary += "\nHas Detail: " + tile.hasDetail.ToString();
-            //summary += "\nIs Locked: " + tile.isLocked.ToString();
             summary += "\nContent: " + tile.objHere?.ToString() ?? "None";
             if (tile.objHere != null) {
                 summary += "\n\tObject State: " + tile.objHere.state.ToString();
@@ -343,6 +337,7 @@ public class InteriorMapManager : MonoBehaviour {
                 summary += "\nSupply: " + character.supply.ToString();
                 summary += "\nDestination: " + (character.marker.destinationTile != null ? character.marker.destinationTile.ToString() : "None");
                 summary += "\nMove Speed: " + character.marker.pathfindingAI.speed.ToString();
+                summary += "\nTangent: " + character.marker.pathfindingAI.GetTangent().ToString();
                 summary += "\nTarget POI: " + character.marker.targetPOI?.ToString() ?? "None";
                 summary += "\nDestination Tile: ";
                 if (character.marker.destinationTile == null) {
@@ -403,24 +398,24 @@ public class InteriorMapManager : MonoBehaviour {
             summary += "\nStructure: " + tile.structure?.ToString() ?? "None";
             //}
             UIManager.Instance.ShowSmallInfo(summary);
-        } else {
-            //For build only
-            if (tile.objHere != null) {
-                UIManager.Instance.ShowSmallInfo(tile.objHere.ToString());
-            }
-        }
+        //} else {
+        //    //For build only
+        //    if (tile.objHere != null) {
+        //        UIManager.Instance.ShowSmallInfo(tile.objHere.ToString());
+        //    }
+        //}
     }
     public void ShowTileData(Character character, LocationGridTile tile) {
-        if (GameManager.showAllTilesTooltip) {
+        //if (GameManager.showAllTilesTooltip) {
             isShowingMarkerTileData = true;
             ShowTileData(tile, character);
-        }
+        //}
     }
     public void HideTileData() {
-        if (GameManager.showAllTilesTooltip) {
+        //if (GameManager.showAllTilesTooltip) {
             isShowingMarkerTileData = false;
             UIManager.Instance.HideSmallInfo();
-        }
+        //}
     }
 
     private IPointOfInterest heldPOI;

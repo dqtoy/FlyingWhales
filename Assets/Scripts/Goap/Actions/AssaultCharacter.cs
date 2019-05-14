@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class AssaultCharacter : GoapAction {
+
+    private Character winner;
+    private Character loser;
+
     public AssaultCharacter(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.ASSAULT_ACTION_NPC, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Hostile_Icon;
     }
@@ -17,41 +21,16 @@ public class AssaultCharacter : GoapAction {
     }
     public override void PerformActualAction() {
         base.PerformActualAction();
-        //List<Character> attackers = new List<Character>();
-        //attackers.Add(actor);
-
-        //List<Character> defenders = new List<Character>();
-        //defenders.Add(poiTarget as Character);
-
-        //float attackersChance = 0f;
-        //float defendersChance = 0f;
-
-        //CombatManager.Instance.GetCombatChanceOfTwoLists(attackers, defenders, out attackersChance, out defendersChance);
-
-        //WeightedDictionary<string> resultWeights = new WeightedDictionary<string>();
-        //int chance = UnityEngine.Random.Range(0, 100);
-        //if (chance < attackersChance) {
-        //    //Actor Win
-        //    resultWeights.AddElement("Target Injured", 30);
-        //    resultWeights.AddElement("Target Knocked Out", 20);
-        //    resultWeights.AddElement("Target Killed", 5);
-        //} else {
-        //    //Target Win
-        //    resultWeights.AddElement(Character_Killed_Hunter, 20);
-        //    resultWeights.AddElement(Character_Injured_Hunter, 40);
-        //}
-
-        //string nextState = resultWeights.PickRandomElementGivenWeights();
-        //SetState(nextState);
         Character targetCharacter = poiTarget as Character;
         if (!isTargetMissing && targetCharacter.IsInOwnParty() && !targetCharacter.isDead) {
-            WeightedDictionary<string> resultWeights = new WeightedDictionary<string>();
-            resultWeights.AddElement("Target Injured", 10);
-            resultWeights.AddElement("Target Knocked Out", 40);
-            resultWeights.AddElement("Target Killed", 5);
 
-            string nextState = resultWeights.PickRandomElementGivenWeights();
-            if(nextState == "Target Killed") {
+            float attackersChance = 0f;
+            float defendersChance = 0f;
+
+            CombatManager.Instance.GetCombatChanceOfTwoLists(new List<Character>() { actor }, new List<Character>() { targetCharacter }, out attackersChance, out defendersChance);
+
+            string nextState = CombatEncounterEvents(actor, targetCharacter, UnityEngine.Random.Range(0, 100) < attackersChance);
+            if (nextState == "Target Killed") {
                 parentPlan.SetDoNotRecalculate(true);
             }
             SetState(nextState);
@@ -87,14 +66,22 @@ public class AssaultCharacter : GoapAction {
            && (parentPlan.job == null || parentPlan.job.name != "Apprehend")) {
             SetCommittedCrime(CRIME.MURDER);
         }
-        //currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        AddTraitTo(actor, "Combat Recovery");
+        currentState.AddLogFiller(loser, loser.name, LOG_IDENTIFIER.CHARACTER_3);
+        AddTraitTo(winner, "Combat Recovery");
+        Injured injured = new Injured();
+        AddTraitTo(loser, injured, winner);
         currentState.SetIntelReaction(State1And2Reactions);
     }
     public void AfterTargetInjured() {
-        Character target = poiTarget as Character;
-        Injured injured = new Injured();
-        AddTraitTo(target, injured, actor);
+        //moved this to pre effect, because if put here, will cause infinite loop:
+        // - loser will gain injured trait
+        // - if the loser is the actor of this action
+        // - will switch to flee state
+        // - which will then stop the current action which is this, but still perform the after action
+        // - so this loop will never end.
+
+        //Injured injured = new Injured();
+        //AddTraitTo(loser, injured, winner);
     }
     public void PreTargetKnockedOut() {
         //**Note**: If the actor is from the same faction as the witness and the target is not considered hostile, this is an Assault crime
@@ -103,8 +90,8 @@ public class AssaultCharacter : GoapAction {
             && (parentPlan.job == null || parentPlan.job.name != "Apprehend")) {
             SetCommittedCrime(CRIME.ASSAULT);
         }
-        //currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        AddTraitTo(actor, "Combat Recovery");
+        currentState.AddLogFiller(loser, loser.name, LOG_IDENTIFIER.CHARACTER_3);
+        AddTraitTo(winner, "Combat Recovery");
         currentState.SetIntelReaction(State1And2Reactions);
     }
     public void AfterTargetKnockedOut() {
@@ -114,7 +101,7 @@ public class AssaultCharacter : GoapAction {
         resumeTargetCharacterState = false; //do not resume the target character's current state after being knocked out
         Character target = poiTarget as Character;
         Unconscious unconscious = new Unconscious();
-        AddTraitTo(target, unconscious, actor);
+        AddTraitTo(loser, unconscious, winner);
     }
     public void PreTargetKilled() {
         //**Note**: If the actor is from the same faction as the witness and the target is not considered hostile, this is a Murder crime
@@ -123,8 +110,8 @@ public class AssaultCharacter : GoapAction {
             && (parentPlan.job == null || parentPlan.job.name != "Apprehend")) { 
             SetCommittedCrime(CRIME.MURDER);
         }
-        //currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        AddTraitTo(actor, "Combat Recovery");
+        currentState.AddLogFiller(loser, loser.name, LOG_IDENTIFIER.CHARACTER_3);
+        AddTraitTo(winner, "Combat Recovery");
         currentState.SetIntelReaction(State3Reactions);
     }
     public void AfterTargetKilled() {
@@ -132,12 +119,49 @@ public class AssaultCharacter : GoapAction {
             parentPlan.job.SetCannotCancelJob(true);
         }
         SetCannotCancelAction(true);
-        Character target = poiTarget as Character;
-        target.Death();
+        loser.Death();
     }
     //public void PreTargetMissing() {
     //    currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
     //}
+    #endregion
+
+    #region Combat
+    private string CombatEncounterEvents(Character actor, Character target, bool actorWon) {
+        //Reference: https://trello.com/c/uY7JokJn/1573-combat-encounter-event
+
+        if (actorWon) {
+            winner = actor;
+            loser = target;
+        } else {
+            winner = target;
+            loser = actor;
+        }
+
+        //**Character That Lost**
+        //40 Weight: Gain Unconscious trait (reduce to 0 if already Unconscious)
+        //10 Weight: Gain Injured trait and enter Flee mode (reduce to 0 if already Injured)
+        //5 Weight: death
+        WeightedDictionary<string> loserResults = new WeightedDictionary<string>();
+        if (loser.GetTrait("Unconscious") == null) {
+            loserResults.AddElement("Unconscious", 40);
+        }
+        if (loser.GetTrait("Injured") == null) {
+            loserResults.AddElement("Injured", 10);
+        }
+        loserResults.AddElement("Death", 5);
+
+        string result = loserResults.PickRandomElementGivenWeights();
+        switch (result) {
+            case "Unconscious":
+                return "Target Knocked Out";
+            case "Injured":
+                return "Target Injured";
+            case "Death":
+                return "Target Killed";
+        }
+        throw new System.Exception("No state for result " + result);
+    }
     #endregion
 
     #region Intel Reactions

@@ -33,6 +33,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     protected bool _hasAlreadyAskedForPlan;
     protected bool _isChatting;
     protected GENDER _gender;
+    public SEXUALITY sexuality { get; private set; }
     protected MODE _currentMode;
     protected CharacterClass _characterClass;
     protected RaceSetting _raceSetting;
@@ -487,45 +488,36 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         _id = Utilities.SetID(this);
         _gender = gender;
         SetRace(race);
-        //_raceSetting = RaceManager.Instance.racesDictionary[race.ToString()].CreateNewCopy();
         AssignRole(role);
         AssignClassByRole(role);
         SetName(RandomNameGenerator.Instance.GenerateRandomName(_raceSetting.race, _gender));
-        //_portraitSettings = CharacterManager.Instance.GenerateRandomPortrait(race, gender);
         AssignRandomJob();
         SetMorality(MORALITY.GOOD);
-        //SetTraitsFromRace();
+        GenerateSexuality();
         ResetToFullHP();
     }
     public Character(CharacterRole role, string className, RACE race, GENDER gender) : this() {
         _id = Utilities.SetID(this);
         _gender = gender;
         SetRace(race);
-        //_raceSetting = RaceManager.Instance.racesDictionary[race.ToString()].CreateNewCopy();
         AssignRole(role);
         AssignClass(className);
         SetName(RandomNameGenerator.Instance.GenerateRandomName(_raceSetting.race, _gender));
-        //_portraitSettings = CharacterManager.Instance.GenerateRandomPortrait(race, gender);
         AssignRandomJob();
         SetMorality(MORALITY.GOOD);
-        //SetTraitsFromRace();
+        GenerateSexuality();
         ResetToFullHP();
     }
     public Character(CharacterSaveData data) : this() {
         _id = Utilities.SetID(this, data.id);
         _gender = data.gender;
         SetRace(race);
-        //_raceSetting = RaceManager.Instance.racesDictionary[data.race.ToString()].CreateNewCopy();
         AssignRole(data.role);
         AssignClass(data.className);
         SetName(data.name);
-        //_portraitSettings = CharacterManager.Instance.GenerateRandomPortrait(race, gender);
-        //if (_characterClass.roleType != CHARACTER_ROLE.NONE) {
-        //    AssignRole(_characterClass.roleType);
-        //}
         AssignRandomJob();
         SetMorality(data.morality);
-        //SetTraitsFromRace();
+        GenerateSexuality();
         ResetToFullHP();
     }
     public Character() {
@@ -566,18 +558,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         hSkinColor = UnityEngine.Random.Range(-360f, 360f);
         hHairColor = UnityEngine.Random.Range(-360f, 360f);
         demonColor = UnityEngine.Random.Range(-144f, 144f);
-
         //for testing
         locationHistory = new List<string>();
         actionHistory = new List<string>();
-
         //If this is a minion, this should not be initiated
         awareness = new Dictionary<POINT_OF_INTEREST_TYPE, List<IAwareness>>();
         planner = new GoapPlanner(this);
-
         //supply
         SetSupply(UnityEngine.Random.Range(10, 61)); //Randomize initial supply per character (Random amount between 10 to 60.)
-
         //hostiltiy
         ignoreHostility = 0;
 
@@ -620,6 +608,29 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     #endregion
 
+    #region Sexuality
+    private void GenerateSexuality() {
+        if (role.roleType == CHARACTER_ROLE.BEAST) {
+            //For beasts:
+            //100 % straight
+            sexuality = SEXUALITY.STRAIGHT;
+        } else {
+            //For sapient creatures:
+            //80 % straight
+            //10 % bisexual
+            //10 % gay
+            int chance = UnityEngine.Random.Range(0, 100);
+            if (chance < 80) {
+                sexuality = SEXUALITY.STRAIGHT;
+            } else if (chance >= 80 && chance < 90) {
+                sexuality = SEXUALITY.BISEXUAL;
+            } else {
+                sexuality = SEXUALITY.GAY;
+            }
+        }
+    }
+    #endregion
+
     #region Marker
     public void CreateMarker() {
         GameObject portraitGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("CharacterMarker", Vector3.zero, Quaternion.identity, InteriorMapManager.Instance.transform);
@@ -627,7 +638,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //portraitGO.transform.localPosition = pos;
         SetCharacterMarker(portraitGO.GetComponent<CharacterMarker>());
         marker.SetCharacter(this);
-        //marker.SetHoverAction(ShowTileData, InteriorMapManager.Instance.HideTileData);
+        marker.SetHoverAction(ShowTileData, InteriorMapManager.Instance.HideTileData);
     }
     public void DestroyMarker() {
         ObjectPoolManager.Instance.DestroyObject(marker.gameObject);
@@ -1742,7 +1753,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         } else {
             summary = GameManager.Instance.TodayLogString() + "Left <color=\"red\">" + previousStructure.ToString() + "</color>";
         }
-        locationHistory.Add(summary + "\n" + StackTraceUtility.ExtractStackTrace());
+        locationHistory.Add(summary);
         if (locationHistory.Count > 80) {
             locationHistory.RemoveAt(0);
         }
@@ -1784,7 +1795,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         } else {
             summary = GameManager.Instance.TodayLogString() + "Set tile location to " + tile.localPlace.ToString();
         }
-        locationHistory.Add(summary + "\n" + StackTraceUtility.ExtractStackTrace());
+        locationHistory.Add(summary);
         if (locationHistory.Count > 80) {
             locationHistory.RemoveAt(0);
         }
