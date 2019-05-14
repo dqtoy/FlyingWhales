@@ -1361,6 +1361,7 @@ public class UIManager : MonoBehaviour {
     private void OnCloseShareIntelMenu() {
         returnToWorldBtn.interactable = true;
         SetCoverState(false);
+        Unpause();
         SetSpeedTogglesState(true);
         playerNotificationParent.SetAsLastSibling();
     }

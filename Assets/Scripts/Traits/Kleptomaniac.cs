@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Kleptomaniac : Trait {
+    public List<Character> noItemCharacters { get; private set; }
+
     public Kleptomaniac() {
         name = "Kleptomaniac";
         description = "This character has irresistible urge to steal.";
@@ -14,6 +16,7 @@ public class Kleptomaniac : Trait {
         crimeSeverity = CRIME_CATEGORY.NONE;
         daysDuration = 0;
         effects = new List<TraitEffect>();
+        noItemCharacters = new List<Character>();
         //advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.TRANSFORM_TO_WOLF, INTERACTION_TYPE.REVERT_TO_NORMAL };
     }
 
@@ -23,4 +26,11 @@ public class Kleptomaniac : Trait {
         base.OnAddTrait(sourceCharacter);
     }
     #endregion
+
+    public void AddNoItemCharacter(Character character) {
+        noItemCharacters.Add(character);
+    }
+    public void RemoveNoItemCharacter(Character character) {
+        noItemCharacters.Remove(character);
+    }
 }
