@@ -1424,7 +1424,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         return character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.CIVILIAN;
     }
     public GoapPlanJob CreateRestrainJob(Character targetCharacter, bool overrideCurrentAction) {
-        if (isAtHomeArea && !targetCharacter.isDead && !targetCharacter.isAtHomeArea && (role.roleType == CHARACTER_ROLE.SOLDIER || role.roleType == CHARACTER_ROLE.CIVILIAN)) {
+        if (isAtHomeArea && !targetCharacter.isDead && !targetCharacter.isAtHomeArea && (role.roleType == CHARACTER_ROLE.SOLDIER || role.roleType == CHARACTER_ROLE.CIVILIAN || role.roleType == CHARACTER_ROLE.ADVENTURER)) {
             if (targetCharacter.GetTrait("Unconscious") != null && targetCharacter.GetTrait("Restrained") == null && !HasRelationshipOfEffectWith(targetCharacter, TRAIT_EFFECT.POSITIVE) && !targetCharacter.HasJobTargettingThisCharacter("Restrain")) {
                 GoapPlanJob job = new GoapPlanJob("Restrain", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = specificLocation, targetPOI = targetCharacter });
                 job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = targetCharacter }, INTERACTION_TYPE.RESTRAIN_CHARACTER);

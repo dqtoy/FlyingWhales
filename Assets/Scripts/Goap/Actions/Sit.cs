@@ -33,6 +33,9 @@ public class Sit : GoapAction {
     #endregion
 
     #region Effects
+    private void PreSitFail() {
+        currentState.AddLogFiller(null, poiTarget.name, LOG_IDENTIFIER.STRING_1);
+    }
     private void PreTargetMissing() {
         currentState.AddLogFiller(null, poiTarget.name, LOG_IDENTIFIER.STRING_1);
     }
