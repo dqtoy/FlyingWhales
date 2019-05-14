@@ -44,12 +44,14 @@ public class FleeState : CharacterState {
         } else {
             if(!(targetCharacter.isDead || targetCharacter.HasTraitOf(TRAIT_TYPE.DISABLER, "Combat Recovery") || targetCharacter.isAtHomeArea)) {
                 if (stateComponent.character.isAtHomeArea) {
-                    GoapPlanJob job = new GoapPlanJob("Report Hostile", INTERACTION_TYPE.REPORT_HOSTILE, new Dictionary<INTERACTION_TYPE, object[]>() {
-                    { INTERACTION_TYPE.REPORT_HOSTILE, new object[] { targetCharacter }}
-                });
-                    job.SetCannotOverrideJob(true);
-                    job.SetCancelOnFail(true);
-                    stateComponent.character.jobQueue.AddJobInQueue(job, true, false);
+                    if(!stateComponent.character.jobQueue.HasJobWithOtherData("Report Hostile", targetCharacter)) {
+                        GoapPlanJob job = new GoapPlanJob("Report Hostile", INTERACTION_TYPE.REPORT_HOSTILE, new Dictionary<INTERACTION_TYPE, object[]>() {
+                            { INTERACTION_TYPE.REPORT_HOSTILE, new object[] { targetCharacter }}
+                        });
+                        job.SetCannotOverrideJob(true);
+                        job.SetCancelOnFail(true);
+                        stateComponent.character.jobQueue.AddJobInQueue(job, true, false);
+                    }
                 }
             }
         }

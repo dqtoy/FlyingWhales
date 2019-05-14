@@ -30,6 +30,14 @@ public class JobQueue {
     }
     public bool RemoveJobInQueue(JobQueueItem job) {
         if (jobsInQueue.Remove(job)) {
+            string removeLog = job.name + " has been removed from its job queue.";
+            removeLog += "\nIs Personal: " + (character != null ? character.name : "False");
+            removeLog += "\nAssigned Character: " + (job.assignedCharacter != null ? job.assignedCharacter.name : "None");
+            if(job is GoapPlanJob) {
+                GoapPlanJob planJob = job as GoapPlanJob;
+                removeLog += "\nAssigned Plan: " + (planJob.assignedPlan != null);
+            }
+            Debug.Log(GameManager.Instance.TodayLogString() + removeLog);
             return job.OnRemoveJobFromQueue();
         }
         return false;
@@ -174,6 +182,22 @@ public class JobQueue {
                 GoapPlanJob job = jobsInQueue[i] as GoapPlanJob;
                 if (job.targetPOI == targetPOI) {
                     return true;
+                }
+            }
+        }
+        return false;
+    }
+    public bool HasJobWithOtherData(string jobName, object otherData) {
+        for (int i = 0; i < jobsInQueue.Count; i++) {
+            if (jobsInQueue[i].name == jobName && jobsInQueue[i] is GoapPlanJob) {
+                GoapPlanJob job = jobsInQueue[i] as GoapPlanJob;
+                if(job.allOtherData != null) {
+                    for (int j = 0; j < job.allOtherData.Count; j++) {
+                        object data = job.allOtherData[j];
+                        if(data == otherData) {
+                            return true;
+                        }
+                    }
                 }
             }
         }

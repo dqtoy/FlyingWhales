@@ -78,6 +78,11 @@ public class StealFromCharacter : GoapAction {
         }
     }
     private void PreStealFail() {
+        Trait trait = actor.GetTrait("Kleptomaniac");
+        if (trait != null) {
+            Kleptomaniac kleptomaniac = trait as Kleptomaniac;
+            kleptomaniac.AddNoItemCharacter(poiTarget as Character);
+        }
         currentState.SetIntelReaction(State2Reactions);
     }
     #endregion

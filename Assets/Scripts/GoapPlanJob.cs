@@ -23,6 +23,8 @@ public class GoapPlanJob : JobQueueItem {
     //misc
     public bool allowDeadTargets { get; private set; }
 
+    public List<object> allOtherData { get; private set; }
+
     public GoapPlanJob(string name, GoapEffect targetEffect) : base(name) {
         this.targetEffect = targetEffect;
         this.targetPOI = targetEffect.targetPOI;
@@ -44,6 +46,16 @@ public class GoapPlanJob : JobQueueItem {
         this.otherData = otherData;
         forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
         allowDeadTargets = false;
+        if(otherData != null) {
+            allOtherData = new List<object>();
+            foreach (object[] data in otherData.Values) {
+                if(data != null) {
+                    for (int i = 0; i < data.Length; i++) {
+                        allOtherData.Add(data[i]);
+                    }
+                }
+            }
+        }
     }
     public GoapPlanJob(string name, INTERACTION_TYPE targetInteractionType, IPointOfInterest targetPOI) : base(name) {
         //this.targetEffect = targetEffect;
@@ -60,6 +72,16 @@ public class GoapPlanJob : JobQueueItem {
         this.otherData = otherData;
         forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
         allowDeadTargets = false;
+        if (otherData != null) {
+            allOtherData = new List<object>();
+            foreach (object[] data in otherData.Values) {
+                if (data != null) {
+                    for (int i = 0; i < data.Length; i++) {
+                        allOtherData.Add(data[i]);
+                    }
+                }
+            }
+        }
     }
     //public GoapPlanJob(string name, GoapPlan targetPlan) : base(name) {
     //    //this.targetEffect = targetEffect;

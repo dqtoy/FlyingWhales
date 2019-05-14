@@ -919,7 +919,7 @@ public class CharacterMarker : PooledObject {
             //- Determine whether to enter Flee mode or Engage mode:
             //if the character will do a combat action towards the other character, do not flee.
             if (!this.character.IsDoingCombatActionTowards(otherCharacter) 
-                && (character.GetTrait("Injured") != null 
+                && ((character.GetTrait("Injured") != null && (character.stateComponent.currentState == null || character.stateComponent.currentState.characterState != CHARACTER_STATE.BERSERKED) && (character.stateComponent.previousMajorState == null || character.stateComponent.previousMajorState.characterState != CHARACTER_STATE.BERSERKED))
                 || character.role.roleType == CHARACTER_ROLE.CIVILIAN
                 || character.role.roleType == CHARACTER_ROLE.NOBLE || character.role.roleType == CHARACTER_ROLE.LEADER)) {
                 //- Injured characters, Civilians, Nobles and Faction Leaders always enter Flee mode
