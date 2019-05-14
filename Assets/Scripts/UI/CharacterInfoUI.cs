@@ -576,7 +576,9 @@ public class CharacterInfoUI : UIMenu {
     public void ShowCharacterTestingInfo() {
         string summary = "Home structure: " + activeCharacter.homeStructure?.ToString() ?? "None";
         summary += "\nCurrent structure: " + activeCharacter.currentStructure?.ToString() ?? "None";
-        summary += "\nRole: " + activeCharacter.role.roleType.ToString(); 
+        summary += "\nRole: " + activeCharacter.role.roleType.ToString();
+        summary += "\nSexuality: " + activeCharacter.sexuality.ToString();
+        summary += "\nCurrent State: " + activeCharacter.stateComponent.currentState?.ToString() ?? "None";
         summary += "\n" + activeCharacter.GetNeedsSummary();
         UIManager.Instance.ShowSmallInfo(summary);
     }

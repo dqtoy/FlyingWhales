@@ -517,7 +517,7 @@ public class CharacterManager : MonoBehaviour {
                 continue; //skip
             }
             int totalCreatedRels = currentRelCount;
-            string summary = currCharacter.name + " relationship generation summary:";
+            string summary = currCharacter.name + "(" + currCharacter.sexuality.ToString() + ") relationship generation summary:";
 
             //  Loop through all relationship types
             for (int k = 0; k < relsInOrder.Length; k++) {
@@ -569,7 +569,6 @@ public class CharacterManager : MonoBehaviour {
                 
                 if (relsToCreate > 0) {
                     WeightedFloatDictionary<Character> relWeights = new WeightedFloatDictionary<Character>();
-
                     // Loop through all characters in the world, excluding current character
                     for (int l = 0; l < allCharacters.Count; l++) {
                         Character otherCharacter = allCharacters[l];
@@ -586,11 +585,17 @@ public class CharacterManager : MonoBehaviour {
                                 case RELATIONSHIP_TRAIT.RELATIVE:
                                     if (otherCharacter.role.roleType == CHARACTER_ROLE.BEAST) { continue; } //a beast character has no relatives
                                     else {
-                                        if (otherCharacter.specificLocation.id == currCharacter.specificLocation.id) weight += 50; // character is in same location: +50 Weight
-                                        else weight += 10; //character is in different location: +10 Weight
+                                        if (otherCharacter.specificLocation.id == currCharacter.specificLocation.id) {
+                                            // character is in same location: +50 Weight
+                                            weight += 50;
+                                        } else {
+                                            //character is in different location: +10 Weight
+                                            weight += 10;
+                                        }
 
                                         if (currCharacter.race != otherCharacter.race) weight *= 0; //character is a different race: Weight x0
                                         if (existingRels != null && existingRels.Contains(RELATIONSHIP_TRAIT.FRIEND)) {
+                                            //Disabled possiblity that relatives can be friends
                                             weight *= 0;
                                         }
                                         if (currCharacter.faction != otherCharacter.faction) {
@@ -601,52 +606,48 @@ public class CharacterManager : MonoBehaviour {
                                 case RELATIONSHIP_TRAIT.LOVER:
                                     if (currCharacter.CanHaveRelationshipWith(currRel, otherCharacter) && otherCharacter.CanHaveRelationshipWith(currRel, currCharacter)) {
                                         if (currCharacter.role.roleType != CHARACTER_ROLE.BEAST) {
-                                         /*
-                                          - if non beast, from valid characters, choose based on these weights
-                                          - character is in same location: +50 Weight
-                                          - character is in different location: +5 Weight
-                                          - character is the same race: Weight x5
-                                          - character is the opposite gender: Weight x6
-                                          - character is a beast: Weight x0
-                                          - character is a relative: Weight x0.1    
-                                         */
+                                            //- if non beast, from valid characters, choose based on these weights
                                             if (otherCharacter.specificLocation.id == currCharacter.specificLocation.id) {
-                                                weight += 50;
+                                                //- character is in same location: +500 Weight
+                                                weight += 500;
                                             } else {
+                                                //- character is in different location: +5 Weight
                                                 weight += 5;
                                             }
                                             if (currCharacter.race == otherCharacter.race) {
+                                                //- character is the same race: Weight x5
                                                 weight *= 5;
                                             }
-                                            if (currCharacter.gender != otherCharacter.gender) {
-                                                weight *= 6;
+                                            if (!IsSexuallyCompatible(currCharacter, otherCharacter)) {
+                                                //- character is sexually incompatible: Weight x0.1
+                                                weight *= 0.1f;
                                             }
                                             if (otherCharacter.role.roleType == CHARACTER_ROLE.BEAST) {
+                                                //- character is a beast: Weight x0
                                                 weight *= 0;
                                             }
                                             if (existingRels != null && existingRels.Contains(RELATIONSHIP_TRAIT.RELATIVE)) {
+                                                //- character is a relative: Weight x0.1    
                                                 weight *= 0.1f;
                                             }
                                             if (currCharacter.faction != otherCharacter.faction) {
                                                 weight *= 0; //disabled different faction positive relationships
                                             }
                                         } else {
-                                            /*
-                                         - if beast, from valid characters, choose based on these weights
-                                          - character is in same location: +50 Weight
-                                          - character is in different location: +5 Weight
-                                          - character is a different race: Weight x0
-                                          - character is the opposite gender: Weight x6
-                                         */
+                                            //- if beast, from valid characters, choose based on these weights
                                             if (otherCharacter.specificLocation.id == currCharacter.specificLocation.id) {
+                                                //- character is in same location: +50 Weight
                                                 weight += 50;
                                             } else {
+                                                // - character is in different location: +5 Weight
                                                 weight += 5;
                                             }
                                             if (currCharacter.race != otherCharacter.race) {
+                                                //- character is a different race: Weight x0
                                                 weight *= 0;
                                             }
                                             if (currCharacter.gender != otherCharacter.gender) {
+                                                //- character is the opposite gender: Weight x6
                                                 weight *= 6;
                                             }
                                         }
@@ -655,29 +656,31 @@ public class CharacterManager : MonoBehaviour {
                                 case RELATIONSHIP_TRAIT.ENEMY:
                                     if (currCharacter.CanHaveRelationshipWith(currRel, otherCharacter) && otherCharacter.CanHaveRelationshipWith(currRel, currCharacter)) {
                                         if (currCharacter.role.roleType != CHARACTER_ROLE.BEAST) {
-                                            /*
-                                         - if non beast, from valid characters, choose based on these weights
-                                           - character is non-beast: +50 Weight
-                                           - character is a beast: +5 Weight
-                                           - character is from same faction: Weight x6
-                                           - character is a relative: Weight x0.5
-                                           - character is a different race: Weight x2
-                                           - character is a lover: Weight x0
-                                         */
+                                            //- if non beast, from valid characters, choose based on these weights
                                             if (otherCharacter.role.roleType != CHARACTER_ROLE.BEAST) {
+                                                // - character is non-beast: +50 Weight
                                                 weight += 50;
                                             } else {
+                                                //- character is a beast: +5 Weight
                                                 weight += 5;
                                             }
                                             if (currCharacter.faction.id == otherCharacter.faction.id) {
+                                                //- character is from same faction: Weight x6
                                                 weight *= 6;
                                             }
                                             if (currCharacter.race != otherCharacter.race) {
+                                                //- character is a different race: Weight x2
                                                 weight *= 2;
                                             }
 
                                             if (existingRels != null) {
+                                                //DISABLED, because of Ask for Help
+                                                //if (existingRels.Contains(RELATIONSHIP_TRAIT.RELATIVE)) {
+                                                //    //- character is a relative: Weight x0.5
+                                                //    weight *= 0.5f;
+                                                //}
                                                 if (existingRels.Contains(RELATIONSHIP_TRAIT.LOVER)) {
+                                                    //- character is a lover: Weight x0
                                                     weight *= 0;
                                                 }
                                             }
@@ -710,31 +713,29 @@ public class CharacterManager : MonoBehaviour {
                                 case RELATIONSHIP_TRAIT.FRIEND:
                                     if (currCharacter.CanHaveRelationshipWith(currRel, otherCharacter) && otherCharacter.CanHaveRelationshipWith(currRel, currCharacter)) {
                                         if (currCharacter.role.roleType != CHARACTER_ROLE.BEAST) {
-                                            /*
-                                         - if non beast, from valid characters, choose based on these weights
-                                           - character is non-beast: +50 Weight
-                                           - character is a beast: +5 Weight
-                                           - character is from same faction: Weight x6
-                                           - character is from same race: Weight x2
-                                           - character is a relative: Weight x0
-                                           - character is a lover: Weight x0
-                                           - character is an enemy: Weight x0
-                                         */
+                                            //- if non beast, from valid characters, choose based on these weights:
                                             if (otherCharacter.role.roleType != CHARACTER_ROLE.BEAST) {
+                                                //- character is non-beast: +50 Weight
                                                 weight += 50;
                                             } else {
+                                                //- character is a beast: +5 Weight
                                                 weight += 5;
                                             }
                                             if (currCharacter.faction.id == otherCharacter.faction.id) {
+                                                // - character is from same faction: Weight x6
                                                 weight *= 6;
                                             }
                                             if (currCharacter.race == otherCharacter.race) {
+                                                //- character is from same race: Weight x2
                                                 weight *= 2;
                                             }
                                             if (existingRels != null) {
                                                 if (existingRels.Contains(RELATIONSHIP_TRAIT.RELATIVE)
                                                     || existingRels.Contains(RELATIONSHIP_TRAIT.LOVER)
                                                     || existingRels.Contains(RELATIONSHIP_TRAIT.ENEMY)) {
+                                                    //- character is a relative: Weight x0
+                                                    //- character is a lover: Weight x0
+                                                    //-character is an enemy: Weight x0
                                                     weight *= 0;
                                                 }
                                             }
@@ -784,39 +785,36 @@ public class CharacterManager : MonoBehaviour {
                                 case RELATIONSHIP_TRAIT.PARAMOUR:
                                     if (otherCharacter.role.roleType == CHARACTER_ROLE.BEAST) { continue; } //a beast character has no paramours
                                     if (currCharacter.CanHaveRelationshipWith(currRel, otherCharacter) && otherCharacter.CanHaveRelationshipWith(currRel, currCharacter)) {
-                                        /*
-                                        - if non beast, from valid characters, choose based on these weights
-                                           - character is non-beast: +50 Weight
-                                           - character is same gender of lover: Weight x6
-                                           - character is from same race: Weight x5
-                                           - character is from same faction: Weight x3
-                                           - character is a relative: Weight x0.1
-                                           - character is a lover: Weight x0
-                                           - character is a master/servant: Weight x0
-                                           - character is an enemy: Weight x0
-                                        */
+                                        //- if non beast, from valid characters, choose based on these weights:
                                         if (otherCharacter.role.roleType != CHARACTER_ROLE.BEAST) {
-                                            weight += 50;
+                                            //- character is non-beast: +500 Weight
+                                            weight += 500;
                                         }
-                                        Character lover = currCharacter.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.LOVER);
-                                        if (otherCharacter.gender == lover.gender) {
-                                            weight *= 6;
+                                        if (!IsSexuallyCompatible(currCharacter, otherCharacter)) {
+                                            //- character is sexually incompatible: Weight x0.1
+                                            weight *= 0.1f;
                                         }
                                         if (currCharacter.race == otherCharacter.race) {
+                                            // - character is from same race: Weight x5
                                             weight *= 5;
                                         }
                                         if (currCharacter.faction.id == otherCharacter.faction.id) {
+                                            //- character is from same faction: Weight x3
                                             weight *= 3;
                                         }
                                         
                                         if (existingRels != null) {
                                             if (existingRels.Contains(RELATIONSHIP_TRAIT.RELATIVE)) {
+                                                //- character is a relative: Weight x0.1
                                                 weight *= 0.1f;
                                             }
                                             if (existingRels.Contains(RELATIONSHIP_TRAIT.LOVER)
                                                 || existingRels.Contains(RELATIONSHIP_TRAIT.ENEMY)) {
+                                                //- character is a lover: Weight x0
+                                                //- character is an enemy: Weight x0
                                                 weight *= 0;
                                             }
+                                            //REMOVED - character is a master/servant: Weight x0
                                         }
                                         if (currCharacter.faction != otherCharacter.faction) {
                                             weight *= 0; //disabled different faction positive relationships
@@ -854,6 +852,18 @@ public class CharacterManager : MonoBehaviour {
                 }
             }
             Debug.Log(summary);
+        }
+    }
+    public bool IsSexuallyCompatible(Character character1, Character character2) {
+        switch (character1.sexuality) {
+            case SEXUALITY.STRAIGHT:
+                return character1.gender != character2.gender;
+            case SEXUALITY.BISEXUAL:
+                return true; //because bisexuals are attracted to both genders.
+            case SEXUALITY.GAY:
+                return character1.gender == character2.gender; 
+            default:
+                return false;
         }
     }
     #endregion
