@@ -7,6 +7,8 @@ public class CurseCharacter : GoapAction {
     public override LocationStructure targetStructure { get { return _targetStructure; } }
 
     private LocationStructure _targetStructure;
+    private Log actorLog;
+    private Log targetLog;
 
     public CurseCharacter(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.CURSE_CHARACTER, INTERACTION_ALIGNMENT.EVIL, actor, poiTarget) {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
@@ -59,6 +61,15 @@ public class CurseCharacter : GoapAction {
     #region State Effects
     public void PreCurseSuccess() {
         currentState.SetIntelReaction(CurseSuccessReactions);
+
+        actorLog = new Log(GameManager.Instance.Today(), "GoapAction", this.GetType().ToString(), currentState.name.ToLower() + "_description_actor");
+        actorLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        actorLog.AddToFillers(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+
+        targetLog = new Log(GameManager.Instance.Today(), "GoapAction", this.GetType().ToString(), currentState.name.ToLower() + "_description_target");
+        targetLog.AddToFillers(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+
+        currentState.OverrideDescriptionLog(actorLog);
         //(poiTarget as Character).marker.pathfindingAI.AdjustDoNotMove(1);
     }
     public void AfterCurseSuccess() {
@@ -68,17 +79,8 @@ public class CurseCharacter : GoapAction {
         //**After Effect 2**: Actor loses Ritualized trait.
         RemoveTraitFrom(actor, "Ritualized");
 
-        Log actorLog = new Log(GameManager.Instance.Today(), "GoapAction", this.GetType().ToString(), currentState.name.ToLower() + "_description_actor");
-        actorLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        actorLog.AddToFillers(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-
-        Log targetLog = new Log(GameManager.Instance.Today(), "GoapAction", this.GetType().ToString(), currentState.name.ToLower() + "_description_target");
-        targetLog.AddToFillers(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-
         actor.AddHistory(actorLog);
         (poiTarget as Character).AddHistory(targetLog);
-        currentState.OverrideDescriptionLog(actorLog);
-
         //(poiTarget as Character).marker.pathfindingAI.AdjustDoNotMove(-1);
     }
     #endregion
