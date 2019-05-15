@@ -140,7 +140,9 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
             || (targetCharacter.stateComponent.currentState != null && (targetCharacter.stateComponent.currentState.characterState == CHARACTER_STATE.FLEE 
             || targetCharacter.stateComponent.currentState.characterState == CHARACTER_STATE.ENGAGE))
             || (parentMarker.character.stateComponent.currentState != null && (parentMarker.character.stateComponent.currentState.characterState == CHARACTER_STATE.FLEE
-            || parentMarker.character.stateComponent.currentState.characterState == CHARACTER_STATE.ENGAGE))) {
+            || parentMarker.character.stateComponent.currentState.characterState == CHARACTER_STATE.ENGAGE))
+            || targetCharacter.role.roleType == CHARACTER_ROLE.BEAST
+            || parentMarker.character.role.roleType == CHARACTER_ROLE.BEAST) {
             return false;
         }
         if(!parentMarker.character.IsHostileWith(targetCharacter)) {

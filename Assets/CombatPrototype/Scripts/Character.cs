@@ -1783,8 +1783,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             //marker.PlayIdle();
         } else {
             if (destinationTile == null) {
-                //if destination tile is null, make the charater marker use target poi logic (Usually used for moving targets)
-                marker.GoTo(targetPOI, arrivalAction);
+                if (targetPOI != null) {
+                    //if destination tile is null, make the charater marker use target poi logic (Usually used for moving targets)
+                    marker.GoTo(targetPOI, arrivalAction);
+                } else {
+                    if (arrivalAction != null) {
+                        arrivalAction();
+                    }
+                }
             } else {
                 //if destination tile is not null, got there, regardless of target poi
                 marker.GoTo(destinationTile, arrivalAction);
