@@ -688,7 +688,8 @@ public class CharacterMarker : PooledObject {
                 if (character.stateComponent.currentState != null) {
                     if (character.stateComponent.currentState.characterState == CHARACTER_STATE.EXPLORE 
                         || character.stateComponent.currentState.characterState == CHARACTER_STATE.PATROL
-                        || character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL) {
+                        || character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL
+                        || character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL_OUTSIDE) {
                         //Walk
                         speed = character.raceSetting.walkSpeed;
                     }

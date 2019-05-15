@@ -189,6 +189,9 @@ public class CharacterStateComponent {
             case CHARACTER_STATE.STROLL:
                 newState = new StrollState(this);
                 break;
+            case CHARACTER_STATE.STROLL_OUTSIDE:
+                newState = new StrollOutsideState(this);
+                break;
             case CHARACTER_STATE.BERSERKED:
                 newState = new BerserkedState(this);
                 break;

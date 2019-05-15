@@ -296,7 +296,8 @@ public class InteriorMapManager : MonoBehaviour {
         //if (GameManager.showAllTilesTooltip) {
             string summary = tile.localPlace.ToString();
             summary += "\nLocal Location: " + tile.localLocation.ToString();
-            summary += "\nWorld Location: " + tile.centeredWorldLocation.ToString();
+            summary += "\nWorld Location: " + tile.worldLocation.ToString();
+            summary += "\nCentered World Location: " + tile.centeredWorldLocation.ToString();
             summary += "\nTile Type: " + tile.tileType.ToString();
             summary += "\nTile State: " + tile.tileState.ToString();
             summary += "\nTile Access: " + tile.tileAccess.ToString();
