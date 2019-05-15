@@ -8,7 +8,7 @@ public class CharacterAIPath : AILerp {
     public CharacterMarker marker;
     public int doNotMove { get; private set; }
     public bool isStopMovement { get; private set; }
-    public ABPath currentPath { get; private set; }
+    public CustomABPath currentPath { get; private set; }
     public bool hasReachedTarget { get; private set; }
 
     public int searchLength = 1000;
@@ -18,6 +18,9 @@ public class CharacterAIPath : AILerp {
     private float _originalRepathRate;
     private BlockerTraversalProvider blockerTraversalProvider;
     private bool _hasReachedTarget;
+
+    public STRUCTURE_TYPE[] onlyAllowedStructures { get; private set; }
+    public STRUCTURE_TYPE[] notAllowedStructures { get; private set; }
 
     protected override void Start() {
         base.Start();
@@ -34,7 +37,7 @@ public class CharacterAIPath : AILerp {
             //if (marker.hasFleePath) {
             //    marker.OnFinishedTraversingFleePath();
             //} else {
-                marker.ArrivedAtTarget();
+            marker.ArrivedAtTarget();
             //}
             currentPath = null;
             
@@ -45,7 +48,7 @@ public class CharacterAIPath : AILerp {
         if (newPath.CompleteState == PathCompleteState.Error) {
             Debug.LogWarning(marker.character.name + " path request returned a path with errors! Arrival action is: " + marker.arrivalAction?.Method.Name ?? "None" + "Destination is " + destination.ToString());
         }
-        currentPath = newPath as ABPath;
+        currentPath = newPath as CustomABPath;
         if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == marker.character && currentPath.traversalProvider != null && marker.terrifyingCharacters.Count > 0) {
             string costLog = "PATH FOR " + marker.character.name;
             uint totalCost = 0;
@@ -100,8 +103,11 @@ public class CharacterAIPath : AILerp {
             }
         }
         // Alternative way of requesting the path
-        ABPath p = ABPath.Construct(currentPosition, destination, null);
+        CustomABPath p = CustomABPath.Construct(currentPosition, destination, null);
         p.traversalProvider = blockerTraversalProvider;
+        p.SetArea(marker.character.specificLocation);
+        p.SetNotAllowedStructures(notAllowedStructures);
+        p.SetOnlyAllowedStructures(onlyAllowedStructures);
         seeker.StartPath(p);
 
         // This is where we should search to
@@ -186,6 +192,11 @@ public class CharacterAIPath : AILerp {
         marker.ClearArrivalAction();
         interpolator.SetPath(null);
     }
+
+    public void SetNotAllowedStructures(STRUCTURE_TYPE[] notAllowedStructures) {
+        this.notAllowedStructures = notAllowedStructures;
+    }
+
     public bool IsNodeWalkable(Vector3 nodePos) {
         if (marker.terrifyingCharacters.Count > 0) {
             for (int i = 0; i < marker.terrifyingCharacters.Count; i++) {
@@ -246,6 +257,45 @@ public class CharacterAIPath : AILerp {
             }
         }
         return 1000;
+    }
+    public uint GetNodePenaltyForStructures(Path path, Vector3 nodePos) {
+        if(path is CustomABPath) {
+            CustomABPath customPath = path as CustomABPath;
+            if(customPath.notAllowedStructures == null && customPath.onlyAllowedStructures == null) {
+                return 0;
+            }
+            if (customPath.area == null) {
+                return 0;
+            }
+            Vector3 newNodePos = new Vector3(Mathf.Floor(nodePos.x), Mathf.Floor(nodePos.y), Mathf.Floor(nodePos.z));
+            Vector3Int localPlace = customPath.area.areaMap.groundTilemap.WorldToCell(newNodePos);
+            LocationGridTile nodeGridTile = null;
+            if (Utilities.IsInRange(localPlace.x, 0, customPath.area.areaMap.map.GetUpperBound(0) + 1) &&
+                    Utilities.IsInRange(localPlace.y, 0, customPath.area.areaMap.map.GetUpperBound(1) + 1)) {
+                nodeGridTile = customPath.area.areaMap.map[localPlace.x, localPlace.y];
+            }
+            if(nodeGridTile != null && nodeGridTile.structure != null) {
+                if (customPath.notAllowedStructures != null) {
+                    for (int i = 0; i < customPath.notAllowedStructures.Length; i++) {
+                        if (customPath.notAllowedStructures[i] == nodeGridTile.structure.structureType) {
+                            return 1000000;
+                        }
+                    }
+                }else if(customPath.onlyAllowedStructures != null) {
+                    bool isAllowed = false;
+                    for (int i = 0; i < customPath.onlyAllowedStructures.Length; i++) {
+                        if(customPath.onlyAllowedStructures[i] == nodeGridTile.structure.structureType) {
+                            isAllowed = true;
+                            break;
+                        }
+                    }
+                    if (!isAllowed) {
+                        return 1000000;
+                    }
+                } 
+            }
+        }
+        return 0;
     }
     public Vector3 GetTangent() {
         if (interpolator.valid) {

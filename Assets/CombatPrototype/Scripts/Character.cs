@@ -5001,7 +5001,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                         return;
                     }
                 }
-                AddPlan(goapThread.createdPlan, goapThread.isPriority);
+                bool isPriority = goapThread.isPriority || (goapThread.job != null ? goapThread.job.isPriority : false);
+                AddPlan(goapThread.createdPlan, isPriority);
                 //PlanGoapActions();
             } else {
                 //Receive plan recalculation

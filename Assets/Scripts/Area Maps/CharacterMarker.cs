@@ -453,8 +453,9 @@ public class CharacterMarker : PooledObject {
     #endregion
 
     #region Pathfinding Movement
-    public void GoTo(LocationGridTile destinationTile, Action arrivalAction = null) {
+    public void GoTo(LocationGridTile destinationTile, Action arrivalAction = null, STRUCTURE_TYPE[] notAllowedStructures = null) {
         pathfindingAI.ClearPath();
+        pathfindingAI.SetNotAllowedStructures(notAllowedStructures);
         this.destinationTile = destinationTile;
         this.arrivalAction = arrivalAction;
         this.targetPOI = null;
@@ -473,8 +474,9 @@ public class CharacterMarker : PooledObject {
         }
         
     }
-    public void GoTo(IPointOfInterest targetPOI, Action arrivalAction = null) {
+    public void GoTo(IPointOfInterest targetPOI, Action arrivalAction = null, STRUCTURE_TYPE[] notAllowedStructures = null) {
         pathfindingAI.ClearPath();
+        pathfindingAI.SetNotAllowedStructures(notAllowedStructures);
         this.arrivalAction = arrivalAction;
         this.targetPOI = targetPOI;
         switch (targetPOI.poiType) {
@@ -503,8 +505,9 @@ public class CharacterMarker : PooledObject {
 
         StartMovement();
     }
-    public void GoTo(Vector3 destination, Action arrivalAction = null) {
+    public void GoTo(Vector3 destination, Action arrivalAction = null, STRUCTURE_TYPE[] notAllowedStructures = null) {
         pathfindingAI.ClearPath();
+        pathfindingAI.SetNotAllowedStructures(notAllowedStructures);
         this.destinationTile = destinationTile;
         this.arrivalAction = arrivalAction;
         SetTargetTransform(null);

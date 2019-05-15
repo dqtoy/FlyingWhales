@@ -13,6 +13,7 @@ public class JobQueue {
 
     public void AddJobInQueue(JobQueueItem job, bool isPriority = false, bool processLogicForPersonalJob = true) {
         job.SetJobQueueParent(this);
+        job.SetIsPriority(isPriority);
         if (!isPriority) {
             jobsInQueue.Add(job);
         } else {
