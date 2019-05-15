@@ -9,6 +9,7 @@ public class EatAnimal : GoapAction {
         actionLocationType = ACTION_LOCATION_TYPE.ON_TARGET;
         actionIconString = GoapActionStateDB.Eat_Icon;
         shouldIntelNotificationOnlyIfActorIsActive = true;
+        isNotificationAnIntel = false;
     }
 
     #region Overrides

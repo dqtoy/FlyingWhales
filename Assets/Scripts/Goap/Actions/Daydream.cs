@@ -19,6 +19,7 @@ public class Daydream : GoapAction {
             TIME_IN_WORDS.AFTERNOON,
         };
         actionIconString = GoapActionStateDB.Entertain_Icon;
+        isNotificationAnIntel = false;
     }
 
     #region Overrides
