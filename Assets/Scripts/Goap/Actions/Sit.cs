@@ -7,6 +7,7 @@ public class Sit : GoapAction {
         actionIconString = GoapActionStateDB.No_Icon;
         shouldIntelNotificationOnlyIfActorIsActive = true;
         isNotificationAnIntel = false;
+        canBeAddedToMemory = false;
     }
 
     #region Overrides

@@ -10,6 +10,7 @@ public class Memories {
     }
 
     public void AddMemory(GoapAction action) {
+        if (!action.canBeAddedToMemory) { return; }
         if (!HasMemoryOf(action)) {
             memoryList.Add(new Memory(action));
             if (memoryList.Count > CharacterManager.CHARACTER_MAX_MEMORY) {
