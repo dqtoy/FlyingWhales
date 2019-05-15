@@ -29,6 +29,9 @@ public class ReturnHome : GoapAction {
         SetState("Return Home Success");
     }
     public override LocationGridTile GetTargetLocationTile() {
+        if(targetStructure.structureType == STRUCTURE_TYPE.WILDERNESS) {
+            return null;
+        }
         return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);
     }
     protected override int GetCost() {

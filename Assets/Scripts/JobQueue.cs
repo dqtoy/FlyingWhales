@@ -22,7 +22,7 @@ public class JobQueue {
         job.OnAddJobToQueue();
 
         if(processLogicForPersonalJob && character != null) {
-            if((character.stateComponent.currentState != null && character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL)
+            if((character.stateComponent.currentState != null && (character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL || character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL_OUTSIDE))
                 || (character.currentAction != null && character.currentAction.goapType == INTERACTION_TYPE.RETURN_HOME && 
                 (character.currentAction.parentPlan == null || character.currentAction.parentPlan.category == GOAP_CATEGORY.IDLE))) {
                 character.jobQueue.ProcessFirstJobInQueue(character);

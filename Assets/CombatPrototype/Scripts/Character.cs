@@ -1786,8 +1786,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             //marker.PlayIdle();
         } else {
             if (destinationTile == null) {
-                //if destination tile is null, make the charater marker use target poi logic (Usually used for moving targets)
-                marker.GoTo(targetPOI, arrivalAction);
+                if (targetPOI != null) {
+                    //if destination tile is null, make the charater marker use target poi logic (Usually used for moving targets)
+                    marker.GoTo(targetPOI, arrivalAction);
+                } else {
+                    if (arrivalAction != null) {
+                        arrivalAction();
+                    }
+                }
             } else {
                 //if destination tile is not null, got there, regardless of target poi
                 marker.GoTo(destinationTile, arrivalAction);
@@ -3687,23 +3693,24 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         return false;
     }
     public bool PlanIdleStroll(LocationStructure targetStructure, LocationGridTile targetTile = null) {
-        //if (stateComponent.stateToDo != null && stateComponent.stateToDo.characterState == CHARACTER_STATE.EXPLORE) {
-        //    if (!(stateComponent.stateToDo as ExploreState).hasStateStarted) {
-        //        //if the character will be doing explore state, but is currently travelling to anotehr area, do not stroll
-        //        return false;
-        //    }
-        //}
         if (currentStructure == targetStructure) {
             stateComponent.SwitchToState(CHARACTER_STATE.STROLL);
         } else {
             MoveToAnotherStructure(targetStructure, targetTile, null, () => stateComponent.SwitchToState(CHARACTER_STATE.STROLL));
         }
-        //Stroll goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.STROLL, this, this) as Stroll;
-        //goapAction.SetTargetStructure(targetStructure);
-        //GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
-        //GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.IDLE);
-        //allGoapPlans.Add(goapPlan);
-        //PlanGoapActions(goapAction);
+        //if (race == RACE.HUMANS) {
+        //    if (currentStructure == targetStructure) {
+        //        stateComponent.SwitchToState(CHARACTER_STATE.STROLL_OUTSIDE);
+        //    } else {
+        //        MoveToAnotherStructure(targetStructure, targetTile, null, () => stateComponent.SwitchToState(CHARACTER_STATE.STROLL_OUTSIDE));
+        //    }
+        //} else {
+        //    if (currentStructure == targetStructure) {
+        //        stateComponent.SwitchToState(CHARACTER_STATE.STROLL);
+        //    } else {
+        //        MoveToAnotherStructure(targetStructure, targetTile, null, () => stateComponent.SwitchToState(CHARACTER_STATE.STROLL));
+        //    }
+        //}
         return true;
     }
     public bool PlanIdleReturnHome() {
@@ -3790,6 +3797,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 
                 log += "\n-" + name + " will do action Stand";
                 PlanIdle(INTERACTION_TYPE.STAND, this);
+                //PlanIdleStroll(currentStructure);
                 return log;
             } else if (currentStructure.structureType == STRUCTURE_TYPE.DWELLING && currentStructure != homeStructure) {
                 log += "\n-" + name + " is in another dwelling and will do action Return Home";
@@ -4173,7 +4181,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 allGoapPlans.Add(plan);
             }
             //If a character is strolling or idly returning home and a plan is added to this character, end the action/state
-            if (stateComponent.currentState != null && stateComponent.currentState.characterState == CHARACTER_STATE.STROLL) {
+            if (stateComponent.currentState != null && (stateComponent.currentState.characterState == CHARACTER_STATE.STROLL || stateComponent.currentState.characterState == CHARACTER_STATE.STROLL_OUTSIDE)) {
                 stateComponent.currentState.OnExitThisState();
             } else if (currentAction != null && currentAction.goapType == INTERACTION_TYPE.RETURN_HOME) {
                 if (currentAction.parentPlan == null || currentAction.parentPlan.category == GOAP_CATEGORY.IDLE) {

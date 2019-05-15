@@ -274,7 +274,9 @@ public class CharacterAIPath : AILerp {
                 return 0;
             }
             Vector3 newNodePos = new Vector3(Mathf.Floor(nodePos.x), Mathf.Floor(nodePos.y), Mathf.Floor(nodePos.z));
-            Vector3Int localPlace = customPath.area.areaMap.groundTilemap.WorldToCell(newNodePos);
+            Vector3 localPos = customPath.area.areaMap.worldPos - newNodePos;
+            Vector3Int localPlace = Vector3Int.FloorToInt(localPos);
+            //Vector3Int localPlace = customPath.area.areaMap.groundTilemap.WorldToCell(newNodePos);
             LocationGridTile nodeGridTile = null;
             if (Utilities.IsInRange(localPlace.x, 0, customPath.area.areaMap.map.GetUpperBound(0) + 1) &&
                     Utilities.IsInRange(localPlace.y, 0, customPath.area.areaMap.map.GetUpperBound(1) + 1)) {

@@ -154,6 +154,8 @@ public class AreaInnerTileMap : MonoBehaviour {
     public List<LocationGridTile> outsideTiles { get; private set; }
     public List<LocationGridTile> insideTiles { get; private set; }
 
+    public Vector3 worldPos { get; private set; }
+
     public string usedTownCenterTemplateName { get; private set; }
 
     public Tilemap charactersTM {
@@ -242,6 +244,9 @@ public class AreaInnerTileMap : MonoBehaviour {
                 map[x, y].UpdateWorldLocation();
             }
         }
+    }
+    public void SetWorldPosition() {
+        worldPos = transform.position;
     }
     #endregion
 
@@ -1415,6 +1420,7 @@ public class AreaInnerTileMap : MonoBehaviour {
             && (UIManager.Instance.characterInfoUI.activeCharacter.stateComponent.currentState == null 
             || (UIManager.Instance.characterInfoUI.activeCharacter.stateComponent.currentState.characterState != CHARACTER_STATE.PATROL 
             && UIManager.Instance.characterInfoUI.activeCharacter.stateComponent.currentState.characterState != CHARACTER_STATE.STROLL
+            //&& UIManager.Instance.characterInfoUI.activeCharacter.stateComponent.currentState.characterState != CHARACTER_STATE.STROLL_OUTSIDE
             && UIManager.Instance.characterInfoUI.activeCharacter.stateComponent.currentState.characterState != CHARACTER_STATE.EXPLORE
             && UIManager.Instance.characterInfoUI.activeCharacter.stateComponent.currentState.characterState != CHARACTER_STATE.BERSERKED))) {
 
@@ -1882,6 +1888,11 @@ public class AreaInnerTileMap : MonoBehaviour {
         float dz = (startPos.y - endPos.y);
         float distSqr = dx * dx + dz * dz;
         Debug.Log("Radius Squared: " + distSqr);
+    }
+    [ContextMenu("Print Tilemap World And Local Pos")]
+    public void PrintWorldAndLocalPos() {
+        Debug.Log("World Pos: " + transform.position);
+        Debug.Log("Local Pos: " + transform.localPosition);
     }
     public void ShowPath(Path path) {
         List<Vector3> points = path.vectorPath;
