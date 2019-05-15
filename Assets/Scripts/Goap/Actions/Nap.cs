@@ -8,6 +8,7 @@ public class Nap : GoapAction {
     public Nap(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.NAP, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Sleep_Icon;
         shouldIntelNotificationOnlyIfActorIsActive = true;
+        isNotificationAnIntel = false;
     }
 
     #region Overrides

@@ -9,6 +9,7 @@ public class SleepOutside : GoapAction {
         actionIconString = GoapActionStateDB.Sleep_Icon;
         //animationName = "Sleep Ground";
         shouldIntelNotificationOnlyIfActorIsActive = true;
+        isNotificationAnIntel = false;
     }
 
     #region Overrides
