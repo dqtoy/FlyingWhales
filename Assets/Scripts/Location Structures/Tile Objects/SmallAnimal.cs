@@ -3,14 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class SmallAnimal : TileObject, IPointOfInterest {
+public class SmallAnimal : TileObject {
 
     private const int Replenishment_Countdown = 96;
 
-    public LocationStructure location { get; private set; }
-
     public SmallAnimal(LocationStructure location) {
-        this.location = location;
+        this.structureLocation = location;
         poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.EAT_SMALL_ANIMAL, INTERACTION_TYPE.TILE_OBJECT_DESTROY, };
         Initialize(TILE_OBJECT_TYPE.SMALL_ANIMAL);
     }

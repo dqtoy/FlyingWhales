@@ -125,6 +125,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.REMEMBER_FALLEN,
                 INTERACTION_TYPE.SPIT,
                 INTERACTION_TYPE.REPORT_HOSTILE,
+                INTERACTION_TYPE.INVITE_TO_MAKE_LOVE,
+                INTERACTION_TYPE.MAKE_LOVE,
             } },
             { RACE.ELVES, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -212,6 +214,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.REMEMBER_FALLEN,
                 INTERACTION_TYPE.SPIT,
                 INTERACTION_TYPE.REPORT_HOSTILE,
+                INTERACTION_TYPE.INVITE_TO_MAKE_LOVE,
+                INTERACTION_TYPE.MAKE_LOVE,
             } },
             { RACE.GOBLIN, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -300,6 +304,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.REMEMBER_FALLEN,
                 INTERACTION_TYPE.SPIT,
                 INTERACTION_TYPE.REPORT_HOSTILE,
+                INTERACTION_TYPE.INVITE_TO_MAKE_LOVE,
+                INTERACTION_TYPE.MAKE_LOVE,
             } },
             { RACE.FAERY, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -388,6 +394,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.REMEMBER_FALLEN,
                 INTERACTION_TYPE.SPIT,
                 INTERACTION_TYPE.REPORT_HOSTILE,
+                INTERACTION_TYPE.INVITE_TO_MAKE_LOVE,
+                INTERACTION_TYPE.MAKE_LOVE,
             } },
             { RACE.SKELETON, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,

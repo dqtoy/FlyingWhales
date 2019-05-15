@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class Guitar : TileObject, IPointOfInterest {
-    public LocationStructure location { get; private set; }
+public class Guitar : TileObject {
 
     public Guitar(LocationStructure location) {
-        this.location = location;
+        this.structureLocation = location;
         poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.PLAY_GUITAR, INTERACTION_TYPE.TILE_OBJECT_DESTROY, };
         Initialize(TILE_OBJECT_TYPE.GUITAR);
     }

@@ -40,6 +40,7 @@ public class GoapAction {
     public Log thoughtBubbleLog { get; protected set; } //used if the current state of this action has a duration
     public Log thoughtBubbleMovingLog { get; protected set; } //used when the actor is moving with this as his/her current action
     public Log planLog { get; protected set; } //used for notification when a character starts this action. NOTE: Do not show notification if this is null
+    public Log targetLog { get; protected set; }
     public GoapActionState currentState { get; private set; }
     public GoapActionState endedAtState { get; private set; } //the state this action ended at
     public GoapPlan parentPlan { get; private set; }
@@ -162,6 +163,7 @@ public class GoapAction {
         if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
             Character targetCharacter = poiTarget as Character;
             if (poiTarget != actor) {
+                targetCharacter.OnTargettedByAction(this);
                 if (!doesNotStopTargetCharacter) {
                     if (targetCharacter.currentAction != null) {
                         if (targetCharacter.currentParty.icon.isTravelling) {
@@ -205,6 +207,10 @@ public class GoapAction {
         if (LocalizationManager.Instance.HasLocalizedValue("GoapAction", this.GetType().ToString(), "plan_log")) {
             planLog = new Log(GameManager.Instance.Today(), "GoapAction", this.GetType().ToString(), "plan_log");
             AddDefaultObjectsToLog(planLog);
+        }
+        if (LocalizationManager.Instance.HasLocalizedValue("GoapAction", this.GetType().ToString(), "target_log")) {
+            targetLog = new Log(GameManager.Instance.Today(), "GoapAction", this.GetType().ToString(), "target_log");
+            AddDefaultObjectsToLog(targetLog);
         }
     }
     protected virtual void AddDefaultObjectsToLog(Log log) {
@@ -305,7 +311,6 @@ public class GoapAction {
             }
         }
     }
-
     //If this action's current state is being performed and is stopped abruptly, call this
     public virtual void OnStopActionDuringCurrentState() { }
     /// <summary>
@@ -314,6 +319,9 @@ public class GoapAction {
     /// </summary>
     /// <param name="witness">The character that witnessed this action</param>
     public virtual void OnWitnessedBy(Character witness) { }
+    public virtual void OnResultReturnedToActor() {
+
+    }
     #endregion
 
     #region Utilities

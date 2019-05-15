@@ -57,7 +57,7 @@ public class TablePoison : GoapAction {
     public override void OnWitnessedBy(Character witness) {
         base.OnWitnessedBy(witness);
         //If someone witnesses this, there may be additional things performed aside from Crime Witness handling.
-        Character tableOwner = ((poiTarget as Table).location as Dwelling).owner;
+        Character tableOwner = ((poiTarget as Table).structureLocation as Dwelling).owner;
         //If the witness has a positive relationship with the owner of the table, or he is the owner of the table, or they are from the same faction and are not enemies:
         if (witness == tableOwner 
             || witness.HasRelationshipOfEffectWith(tableOwner, TRAIT_EFFECT.POSITIVE, RELATIONSHIP_TRAIT.RELATIVE) 

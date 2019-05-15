@@ -1120,6 +1120,12 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.REPORT_HOSTILE:
                 goapAction = new ReportHostile(actor, target);
                 break;
+            case INTERACTION_TYPE.INVITE_TO_MAKE_LOVE:
+                goapAction = new InviteToMakeLove(actor, target);
+                break;
+            case INTERACTION_TYPE.MAKE_LOVE:
+                goapAction = new MakeLove(actor, target);
+                break;
         }
         if(goapAction != null && willInitialize) {
             goapAction.Initialize();

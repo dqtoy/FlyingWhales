@@ -201,10 +201,12 @@ public class CharacterInfoUI : UIMenu {
             if (disablerTrait != null) {
                 if (disablerTrait.thoughtText != null && disablerTrait.thoughtText != string.Empty) {
                     plansLbl.text = disablerTrait.thoughtText.Replace("[Character]", _activeCharacter.name);
-                } else {
-                    plansLbl.text = _activeCharacter.name + " has a disabler trait: " + disablerTrait.name + ".";
-                }
-                return;
+                    return;
+                } 
+                //else {
+                //    plansLbl.text = _activeCharacter.name + " has a disabler trait: " + disablerTrait.name + ".";
+                //}
+                //return;
             }
         }
 
@@ -213,6 +215,23 @@ public class CharacterInfoUI : UIMenu {
             plansLblLogItem.SetLog(_activeCharacter.stateComponent.currentState.thoughtBubbleLog);
             plansLbl.text = Utilities.LogReplacer(_activeCharacter.stateComponent.currentState.thoughtBubbleLog);
             return;
+        }
+
+        //targetted by action
+        if (_activeCharacter.targettedByAction.Count > 0) {
+            //character is targetted by an action
+            Log targetLog = null;
+            for (int i = 0; i < _activeCharacter.targettedByAction.Count; i++) {
+                GoapAction action = _activeCharacter.targettedByAction[i];
+                if (action.isPerformingActualAction && action.targetLog != null) {
+                    targetLog = action.targetLog;
+                    break;
+                }
+            }
+            if (targetLog != null) {
+                plansLbl.text = Utilities.LogReplacer(targetLog);
+                return;
+            }
         }
 
         //Action
@@ -247,25 +266,6 @@ public class CharacterInfoUI : UIMenu {
         if (_activeCharacter.stateComponent.stateToDo != null) {
             plansLblLogItem.SetLog(_activeCharacter.stateComponent.stateToDo.thoughtBubbleLog);
             plansLbl.text = Utilities.LogReplacer(_activeCharacter.stateComponent.stateToDo.thoughtBubbleLog);
-            return;
-        }
-
-        //Waiting
-        if (_activeCharacter.isWaitingForInteraction > 0) {
-            //character is targetted by an action
-            bool isPerformingActualAction = false;
-            for (int i = 0; i < _activeCharacter.targettedByAction.Count; i++) {
-                GoapAction action = _activeCharacter.targettedByAction[i];
-                if (action.isPerformingActualAction) {
-                    isPerformingActualAction = true;
-                    break;
-                }
-            }
-            if (isPerformingActualAction) {
-                plansLbl.text =  _activeCharacter.name + " interacting with someone";
-            } else {
-                plansLbl.text =  _activeCharacter.name + " is waiting for someone.";
-            }
             return;
         }
 
@@ -579,6 +579,14 @@ public class CharacterInfoUI : UIMenu {
         summary += "\nRole: " + activeCharacter.role.roleType.ToString();
         summary += "\nSexuality: " + activeCharacter.sexuality.ToString();
         summary += "\nCurrent State: " + activeCharacter.stateComponent.currentState?.ToString() ?? "None";
+        summary += "\nActions targetting this character: ";
+        if (activeCharacter.targettedByAction.Count > 0) {
+            for (int i = 0; i < activeCharacter.targettedByAction.Count; i++) {
+                summary += "\n" + activeCharacter.targettedByAction[i].goapName + " done by " + activeCharacter.targettedByAction[i].actor.name;
+            }
+        } else {
+            summary += "None";
+        }
         summary += "\n" + activeCharacter.GetNeedsSummary();
         UIManager.Instance.ShowSmallInfo(summary);
     }

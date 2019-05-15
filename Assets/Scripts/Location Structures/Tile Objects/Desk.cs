@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class Desk : TileObject, IPointOfInterest {
-    public LocationStructure location { get; private set; }
+public class Desk : TileObject {
     private Character[] users;
     public Desk(LocationStructure location) {
-        this.location = location;
+        this.structureLocation = location;
         poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.TILE_OBJECT_DESTROY, };
         Initialize(TILE_OBJECT_TYPE.DESK);
         users = new Character[1];
@@ -112,7 +111,7 @@ public class Desk : TileObject, IPointOfInterest {
     private Vector3 GetPositionForUser() {
         Vector3 pos = gridTileLocation.localPlace;
         //concerned with rotation in the 1 slot variant
-        Matrix4x4 m = location.location.areaMap.objectsTilemap.GetTransformMatrix(gridTileLocation.localPlace);
+        Matrix4x4 m = structureLocation.location.areaMap.objectsTilemap.GetTransformMatrix(gridTileLocation.localPlace);
         int rotation = (int)m.rotation.eulerAngles.z;
         //if rotation is 0
         if (rotation == 0 || rotation == 360) {

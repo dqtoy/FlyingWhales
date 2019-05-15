@@ -69,9 +69,9 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
                         AddPOIAsInRangeButDifferentStructure(collidedWith.poi);
                     }
                 }
-                if (collidedWith.poi is Character) {
-                    Debug.Log(collisionSummary);
-                }
+                //if (collidedWith.poi is Character) {
+                //    Debug.Log(collisionSummary);
+                //}
             }
             
         }

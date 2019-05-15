@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class EdiblePlant : TileObject, IPointOfInterest {
+public class EdiblePlant : TileObject {
 
     private const int Replenishment_Countdown = 96;
-    public LocationStructure location { get; private set; }
 
     public EdiblePlant(LocationStructure location) {
-        this.location = location;
+        this.structureLocation = location;
         poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.EAT_PLANT, INTERACTION_TYPE.TILE_OBJECT_DESTROY, };
         Initialize(TILE_OBJECT_TYPE.EDIBLE_PLANT);
     }

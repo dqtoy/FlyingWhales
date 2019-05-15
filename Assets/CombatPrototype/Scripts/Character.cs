@@ -1732,6 +1732,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return false;
     }
+    public bool HasOtherCharacterInParty() {
+        return ownParty.characters.Count > 1;
+    }
     #endregion
 
     #region Location
@@ -2344,6 +2347,27 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             if (!kvp.Value.isDisabled) {
                 for (int i = 0; i < kvp.Value.rels.Count; i++) {
                     if (effect.Contains(kvp.Value.rels[i].effect)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    /// <summary>
+    /// Does this character have any relationship type with a target character among the given relationship types.
+    /// </summary>
+    /// <param name="character">The target character.</param>
+    /// <param name="useDisabled">Use disabled relationships?</param>
+    /// <param name="objs">The list of relationships.</param>
+    /// <returns>true or false.</returns>
+    public bool HasAnyRelationshipOfTypeWith(Character character, bool useDisabled = false, params RELATIONSHIP_TRAIT[] objs) {
+        if (HasRelationshipWith(character, useDisabled)) {
+            List<RELATIONSHIP_TRAIT> rels = objs.ToList();
+            for (int i = 0; i < relationships[character].rels.Count; i++) {
+                RelationshipTrait currTrait = relationships[character].rels[i];
+                if (rels.Contains(currTrait.relType)) {
+                    if (!currTrait.isDisabled || (currTrait.isDisabled && useDisabled)) {
                         return true;
                     }
                 }
@@ -3288,10 +3312,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return null;
     }
-    public bool HasRelationshipTraitOf(RELATIONSHIP_TRAIT relType) {
+    public bool HasRelationshipTraitOf(RELATIONSHIP_TRAIT relType, bool includeDead = true) {
         for (int i = 0; i < _traits.Count; i++) {
             if (_traits[i] is RelationshipTrait && !_traits[i].isDisabled) {
                 RelationshipTrait currTrait = _traits[i] as RelationshipTrait;
+                if (currTrait.targetCharacter.isDead && !includeDead) {
+                    continue; //skip dead characters
+                }
                 if (currTrait.relType == relType) {
                     return true;
                 }
@@ -4886,6 +4913,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         poiGoapActions.Add(INTERACTION_TYPE.BURY_CHARACTER);
         poiGoapActions.Add(INTERACTION_TYPE.CARRY_CORPSE);
         poiGoapActions.Add(INTERACTION_TYPE.DROP_ITEM_WAREHOUSE);
+        poiGoapActions.Add(INTERACTION_TYPE.INVITE_TO_MAKE_LOVE);
     }
     public void StartGOAP(GoapEffect goal, IPointOfInterest target, GOAP_CATEGORY category, bool isPriority = false, List<Character> otherCharactePOIs = null, bool isPersonalPlan = true, GoapPlanJob job = null, bool allowDeadTargets = false) {
         List<CharacterAwareness> characterTargetsAwareness = new List<CharacterAwareness>();
@@ -5294,6 +5322,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             Character targetCharacter = action.poiTarget as Character;
             targetCharacter.RemoveTargettedByAction(action);
         }
+        action.OnResultReturnedToActor();
         GoapPlan plan = action.parentPlan;
         if (isDead) {
             log += "\n" + name + " is dead!";
@@ -5529,21 +5558,19 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public void OnTargettedByAction(GoapAction action) {
         targettedByAction.Add(action);
-        //targettedByAction = action;
         if (marker != null) {
             marker.OnCharacterTargettedByAction(action);
         }
     }
     public void RemoveTargettedByAction(GoapAction action) {
         if (targettedByAction.Remove(action)) {
-            //targettedByAction = null;
             if (marker != null) {
                 marker.OnCharacterRemovedTargettedByAction(action);
             }
         }
     }
     private void OnCharacterFinishedAction(Character character, GoapAction action, string result) {
-        RemoveTargettedByAction(action);
+        
     }
     private void CancelCurrentAction(Character target, string cause) {
         if (this != target && !isDead && currentAction != null && currentAction.poiTarget == target && !currentAction.cannotCancelAction) {

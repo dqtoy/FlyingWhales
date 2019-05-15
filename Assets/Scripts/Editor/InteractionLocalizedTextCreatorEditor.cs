@@ -119,6 +119,11 @@ public class InteractionLocalizedTextCreatorEditor : EditorWindow {
                             key = "thought_bubble_m",
                             value = log,
                         });
+                    } else if (currChecklistItem.name.Contains("Target:")) {
+                        localizationData.items.Add(new LocalizationItem() {
+                            key = "target_log",
+                            value = log,
+                        });
                     } else {
                         localizationData.items.Add(new LocalizationItem() {
                             key = "thought_bubble",

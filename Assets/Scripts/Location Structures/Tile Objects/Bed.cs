@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class Bed : TileObject, IPointOfInterest {
-    public LocationStructure location { get; private set; }
+public class Bed : TileObject {
     private Character[] users; //array of characters, currently using the bed
 
     public Bed(LocationStructure location) {
-        this.location = location;
+        this.structureLocation = location;
         poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.SLEEP, INTERACTION_TYPE.TILE_OBJECT_DESTROY, INTERACTION_TYPE.NAP };
         Initialize(TILE_OBJECT_TYPE.BED);
         users = new Character[2];
@@ -51,19 +50,44 @@ public class Bed : TileObject, IPointOfInterest {
     }
     public override void OnDoActionToObject(GoapAction action) {
         base.OnDoActionToObject(action);
-        if (action.goapType == INTERACTION_TYPE.SLEEP || action.goapType == INTERACTION_TYPE.NAP) {
-            AddUser(action.actor);
+        switch (action.goapType) {
+            case INTERACTION_TYPE.SLEEP:
+            case INTERACTION_TYPE.NAP:
+                AddUser(action.actor);
+                break;
+            case INTERACTION_TYPE.MAKE_LOVE:
+                MakeLove makeLove = action as MakeLove;
+                AddUser(makeLove.actor);
+                AddUser(makeLove.targetCharacter);
+                break;
         }
     }
     public override void OnDoneActionToObject(GoapAction action) {
         base.OnDoneActionToObject(action);
-        if (action.goapType == INTERACTION_TYPE.SLEEP || action.goapType == INTERACTION_TYPE.NAP) {
-            RemoveUser(action.actor);
+        switch (action.goapType) {
+            case INTERACTION_TYPE.SLEEP:
+            case INTERACTION_TYPE.NAP:
+                RemoveUser(action.actor);
+                break;
+            case INTERACTION_TYPE.MAKE_LOVE:
+                MakeLove makeLove = action as MakeLove;
+                RemoveUser(makeLove.actor);
+                RemoveUser(makeLove.targetCharacter);
+                break;
         }
     }
     public override void OnCancelActionTowardsObject(GoapAction action) {
-        if (action.goapType == INTERACTION_TYPE.SLEEP || action.goapType == INTERACTION_TYPE.NAP) {
-            RemoveUser(action.actor);
+        base.OnCancelActionTowardsObject(action);
+        switch (action.goapType) {
+            case INTERACTION_TYPE.SLEEP:
+            case INTERACTION_TYPE.NAP:
+                RemoveUser(action.actor);
+                break;
+            case INTERACTION_TYPE.MAKE_LOVE:
+                MakeLove makeLove = action as MakeLove;
+                RemoveUser(makeLove.actor);
+                RemoveUser(makeLove.targetCharacter);
+                break;
         }
     }
     public override bool IsAvailable() {

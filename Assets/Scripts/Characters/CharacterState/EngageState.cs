@@ -25,7 +25,7 @@ public class EngageState : CharacterState {
     public override void OnExitThisState() {
         stateComponent.character.marker.SetCurrentlyEngaging(null);
         stateComponent.character.marker.SetTargetTransform(null);
-        stateComponent.character.marker.pathfindingAI.ClearPath();
+        stateComponent.character.marker.pathfindingAI.ClearAllCurrentPathData();
         //stateComponent.character.marker.ClearArrivalAction();
         stateComponent.character.currentParty.icon.SetIsTravelling(false);
         base.OnExitThisState();

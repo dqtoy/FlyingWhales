@@ -36,6 +36,11 @@ public class MagicCirclePerformRitual : GoapAction {
     protected override int GetCost() {
         return 3;
     }
+    public override void OnStopActionDuringCurrentState() {
+        if (currentState.name == "Perform Ritual Success") {
+            poiTarget.SetPOIState(POI_STATE.ACTIVE);
+        }
+    }
     //public override void FailAction() {
     //    base.FailAction();
     //    SetState("Perform Ritual Fail");
