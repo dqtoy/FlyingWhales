@@ -4,9 +4,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public class Table : TileObject, IPointOfInterest {
-    public LocationStructure location { get; private set; }
-
+public class Table : TileObject {
     private Character[] users;
     private TileBase usedAsset;
 
@@ -15,7 +13,7 @@ public class Table : TileObject, IPointOfInterest {
     }
 
     public Table(LocationStructure location, TileBase usedAsset) {
-        this.location = location;
+        this.structureLocation = location;
         poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.EAT_DWELLING_TABLE, INTERACTION_TYPE.DRINK, INTERACTION_TYPE.TABLE_REMOVE_POISON, INTERACTION_TYPE.TABLE_POISON, INTERACTION_TYPE.TILE_OBJECT_DESTROY, };
         Initialize(TILE_OBJECT_TYPE.TABLE);
         this.usedAsset = usedAsset;
@@ -159,7 +157,7 @@ public class Table : TileObject, IPointOfInterest {
         Vector3 pos = gridTileLocation.localPlace;
         if (slots == 1) {
             //concerned with rotation in the 1 slot variant
-            Matrix4x4 m = location.location.areaMap.objectsTilemap.GetTransformMatrix(gridTileLocation.localPlace);
+            Matrix4x4 m = structureLocation.location.areaMap.objectsTilemap.GetTransformMatrix(gridTileLocation.localPlace);
             int rotation = (int)m.rotation.eulerAngles.z;
             if (usedAsset.name.Contains("Bartop")) {
                 if (usedAsset.name.Contains("Left")) {
@@ -208,7 +206,7 @@ public class Table : TileObject, IPointOfInterest {
             }
         } else if (slots == 2) {
             //concerned with rotation in the 2 slot variant
-            Matrix4x4 m = location.location.areaMap.objectsTilemap.GetTransformMatrix(gridTileLocation.localPlace);
+            Matrix4x4 m = structureLocation.location.areaMap.objectsTilemap.GetTransformMatrix(gridTileLocation.localPlace);
             float rotation = m.rotation.eulerAngles.z / 90f;
             if (Utilities.IsEven((int)rotation)) {
                 //table is vertical, I assume that if the table is vertical, it has a rotation of 0 degrees

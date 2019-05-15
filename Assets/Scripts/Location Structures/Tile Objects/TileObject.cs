@@ -17,6 +17,8 @@ public class  TileObject : IPointOfInterest {
     public List<Character> awareCharacters { get; private set; } //characters that are aware of this object (Used for checking if a ghost trigger should be destroyed)
     public List<string> actionHistory { get; private set; } //list of actions that was done to this object
 
+    public LocationStructure structureLocation { get; protected set; }
+
     protected LocationGridTile tile;
     private POI_STATE _state;
     private POICollisionTrigger _collisionTrigger;

@@ -154,6 +154,18 @@ public class LocationStructure {
         }
         return pois;
     }
+    public List<TileObject> GetTileObjectsOfType(TILE_OBJECT_TYPE type) {
+        List<TileObject> objs = new List<TileObject>();
+        for (int i = 0; i < pointsOfInterest.Count; i++) {
+            if (pointsOfInterest[i] is TileObject) {
+                TileObject obj = pointsOfInterest[i] as TileObject;
+                if (obj.tileObjectType == type) {
+                    objs.Add(obj);
+                }
+            }
+        }
+        return objs;
+    }
     public SupplyPile GetSupplyPile() {
         for (int i = 0; i < pointsOfInterest.Count; i++) {
             IPointOfInterest poi = pointsOfInterest[i];

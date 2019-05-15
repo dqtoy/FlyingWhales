@@ -855,16 +855,33 @@ public class CharacterManager : MonoBehaviour {
         }
     }
     public bool IsSexuallyCompatible(Character character1, Character character2) {
+        bool sexuallyCompatible = true;
         switch (character1.sexuality) {
             case SEXUALITY.STRAIGHT:
-                return character1.gender != character2.gender;
+                sexuallyCompatible = character1.gender != character2.gender;
+                break;
             case SEXUALITY.BISEXUAL:
-                return true; //because bisexuals are attracted to both genders.
+                sexuallyCompatible = true; //because bisexuals are attracted to both genders.
+                break;
             case SEXUALITY.GAY:
-                return character1.gender == character2.gender; 
-            default:
-                return false;
+                sexuallyCompatible = character1.gender == character2.gender;
+                break;
         }
+        if (!sexuallyCompatible) {
+            return false; //if they are already sexually incompatible, return false
+        }
+        switch (character2.sexuality) {
+            case SEXUALITY.STRAIGHT:
+                sexuallyCompatible = character2.gender != character1.gender;
+                break;
+            case SEXUALITY.BISEXUAL:
+                sexuallyCompatible = true; //because bisexuals are attracted to both genders.
+                break;
+            case SEXUALITY.GAY:
+                sexuallyCompatible = character2.gender == character1.gender;
+                break;
+        }
+        return sexuallyCompatible;
     }
     #endregion
 

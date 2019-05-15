@@ -37,6 +37,9 @@ public class JudgeCharacter : GoapAction {
     #endregion
 
     #region State Effects
+    private void PreTargetExecuted() {
+        currentState.SetIntelReaction(EndState1Reactions);
+    }
     public void AfterTargetExecuted() {
         if (parentPlan.job != null) {
             parentPlan.job.SetCannotCancelJob(true);
@@ -47,6 +50,9 @@ public class JudgeCharacter : GoapAction {
         (poiTarget as Character).Death();
 
         RemoveTraitFrom(poiTarget, "Restrained");
+    }
+    private void PreTargetReleased() {
+        currentState.SetIntelReaction(EndState2Reactions);
     }
     public void AfterTargetReleased() {
         //**Effect 1**: Remove target's Restrained trait
@@ -59,6 +65,9 @@ public class JudgeCharacter : GoapAction {
         else {
             RemoveTraitsOfType(poiTarget, TRAIT_TYPE.CRIMINAL);
         }
+    }
+    private void PreTargetExiled() {
+        currentState.SetIntelReaction(EndState3Reactions);
     }
     public void AfterTargetExiled() {
         //**Effect 1**: Remove target's Restrained trait
@@ -90,4 +99,136 @@ public class JudgeCharacter : GoapAction {
         goapPlan.ConstructAllNodes();
         target.AddPlan(goapPlan, true);
     }
+
+    #region Intel Reactions
+    private List<string> EndState1Reactions(Character recipient, Intel intel) {
+        List<string> reactions = new List<string>();
+        Character target = poiTarget as Character;
+
+        //Recipient and Actor are the same
+        if (recipient == actor) {
+            //- **Recipient Response Text**: "I know what I've done!"
+            reactions.Add(string.Format("I know what I've done!", actor.name));
+            //-**Recipient Effect**:  no effect
+        }
+        //Recipient considers Target a personal Enemy:
+        else if (recipient.HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.ENEMY)) {
+            //- **Recipient Response Text**: "[Target Name] deserves that!"
+            reactions.Add(string.Format("{0} deserves that!", target.name));
+            //-**Recipient Effect * *: no effect
+        }
+        //Recipient considers Actor a personal Enemy:
+         else if (recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.ENEMY)) {
+            //- **Recipient Response Text**: "[Actor Name] is truly ruthless."
+            reactions.Add(string.Format("{0} is truly ruthless.", actor.name));
+            //-**Recipient Effect * *: no effect
+        }
+        //Recipient considers Target a personal Friend, Paramour, Lover or Relative:
+        else if (recipient.HasAnyRelationshipOfTypeWith(target, false, RELATIONSHIP_TRAIT.FRIEND, RELATIONSHIP_TRAIT.PARAMOUR, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.RELATIVE)) {
+            //- **Recipient Response Text**: "I cannot forgive [Actor Name] for executing [Target Name]!"
+            reactions.Add(string.Format("I cannot forgive {0} for executing {1}!", actor.name, target.name));
+            //-**Recipient Effect * *:  Recipient will consider Actor an Enemy
+            if (!recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.ENEMY, true)) {
+                CharacterManager.Instance.CreateNewRelationshipBetween(recipient, actor, RELATIONSHIP_TRAIT.ENEMY);
+            }
+        }
+        //Recipient and Target have no relationship but are from the same faction:
+        else if (!recipient.HasRelationshipWith(target, true) && recipient.faction == target.faction) {
+            //- **Recipient Response Text**: "That is sad but I trust that it was a just judgment."
+            reactions.Add("That is sad but I trust that it was a just judgment.");
+            //-**Recipient Effect * *: no effect
+        }
+        return reactions;
+    }
+    private List<string> EndState2Reactions(Character recipient, Intel intel) {
+        List<string> reactions = new List<string>();
+        Character target = poiTarget as Character;
+
+        //Recipient and Actor are the same
+        if (recipient == actor) {
+            //- **Recipient Response Text**: "I know what I've done!"
+            reactions.Add(string.Format("I know what I've done!", actor.name));
+            //-**Recipient Effect**:  no effect
+        }
+        //Recipient and Target are the same
+        else if (recipient == target) {
+            //- **Recipient Response Text**: "I am relieved that I was released."
+            reactions.Add("I am relieved that I was released.");
+            //-**Recipient Effect**:  no effect
+        }
+        //Recipient considers Target a personal Enemy:
+        else if (recipient.HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.ENEMY)) {
+            //- **Recipient Response Text**: "[Target Name] shouldn't have been let go so easily!"
+            reactions.Add(string.Format("{0} shouldn't have been let go so easily!", target.name));
+            //- **Recipient Effect**: If they don't have any relationship yet, Recipient will consider Actor an Enemy
+            if (!recipient.HasRelationshipWith(actor, true)) {
+                CharacterManager.Instance.CreateNewRelationshipBetween(recipient, actor, RELATIONSHIP_TRAIT.ENEMY);
+            }
+        }
+        //Recipient considers Actor a personal Enemy:
+         else if (recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.ENEMY)) {
+            //- **Recipient Response Text**: "[Actor Name] is simply naive."
+            reactions.Add(string.Format("{0} is simply naive.", actor.name));
+            //-**Recipient Effect * *: no effect
+        }
+        //Recipient considers Target a personal Friend, Paramour, Lover or Relative:
+        else if (recipient.HasAnyRelationshipOfTypeWith(target, false, RELATIONSHIP_TRAIT.FRIEND, RELATIONSHIP_TRAIT.PARAMOUR, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.RELATIVE)) {
+            //- **Recipient Response Text**: "I am grateful that [Actor Name] released [Target Name] unharmed."
+            reactions.Add(string.Format("I am grateful that {0} released {1} unharmed.", actor.name, target.name));
+            //- **Recipient Effect**:  If they don't have any relationship yet, Recipient will consider Actor a Friend
+            if (!recipient.HasRelationshipWith(actor, true)) {
+                CharacterManager.Instance.CreateNewRelationshipBetween(recipient, actor, RELATIONSHIP_TRAIT.FRIEND);
+            }
+        }
+        //Recipient and Target have no relationship but are from the same faction:
+        else if (!recipient.HasRelationshipWith(target, true) && recipient.faction == target.faction) {
+            //- **Recipient Response Text**: "I trust that it was a just judgment."
+            reactions.Add("I trust that it was a just judgment.");
+            //-**Recipient Effect * *: no effect
+        }
+        return reactions;
+    }
+    private List<string> EndState3Reactions(Character recipient, Intel intel) {
+        List<string> reactions = new List<string>();
+        Character target = poiTarget as Character;
+
+        //Recipient and Actor are the same
+        if (recipient == actor) {
+            //- **Recipient Response Text**: "I know what I've done!"
+            reactions.Add(string.Format("I know what I've done!", actor.name));
+            //-**Recipient Effect**:  no effect
+        }
+        //Recipient and Target are the same
+        else if (recipient == target) {
+            //- **Recipient Response Text**: "I am sad that I was exiled but at least I am still alive."
+            reactions.Add("I am sad that I was exiled but at least I am still alive.");
+            //-**Recipient Effect**:  no effect
+        }
+        //Recipient considers Target a personal Enemy:
+        else if (recipient.HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.ENEMY)) {
+            //- **Recipient Response Text**: "[Target Name] shouldn't have been let go so easily!"
+            reactions.Add(string.Format("{0} shouldn't have been let go so easily!", target.name));
+            //- **Recipient Effect**: no effect
+        }
+        //Recipient considers Actor a personal Enemy:
+         else if (recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.ENEMY)) {
+            //- **Recipient Response Text**: "[Actor Name] is simply naive."
+            reactions.Add(string.Format("{0} is irrational.", actor.name));
+            //-**Recipient Effect * *: no effect
+        }
+        //Recipient considers Target a personal Friend, Paramour, Lover or Relative:
+        else if (recipient.HasAnyRelationshipOfTypeWith(target, false, RELATIONSHIP_TRAIT.FRIEND, RELATIONSHIP_TRAIT.PARAMOUR, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.RELATIVE)) {
+            //- **Recipient Response Text**: "I am grateful that [Actor Name] exiled [Target Name] unharmed."
+            reactions.Add(string.Format("I am grateful that {0} exiled {1} unharmed.", actor.name, target.name));
+            //- **Recipient Effect**:  no effect
+        }
+        //Recipient and Target have no relationship but are from the same faction:
+        else if (!recipient.HasRelationshipWith(target, true) && recipient.faction == target.faction) {
+            //- **Recipient Response Text**: "I trust that it was a just judgment."
+            reactions.Add("I trust that it was a just judgment.");
+            //-**Recipient Effect * *: no effect
+        }
+        return reactions;
+    }
+    #endregion
 }

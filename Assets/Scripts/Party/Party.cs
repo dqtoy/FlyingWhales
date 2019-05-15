@@ -237,6 +237,7 @@ public class Party {
                     owner.specificLocation.AddCharacterToLocation(character);
                 }
             } else {
+                //character.marker.pathfindingAI.ClearAllCurrentPathData();
                 character.SetGridTileLocation(owner.gridTileLocation);
                 character.SetCurrentStructureLocation(owner.currentStructure);
                 character.marker.transform.SetParent(_owner.marker.visualsParent);

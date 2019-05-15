@@ -5,11 +5,9 @@ using UnityEngine;
 
 public class Tombstone : TileObject {
     public Character character { get; private set; }
-    public LocationStructure location { get; private set; }
-
     public Tombstone(Character character, LocationStructure structure) {
         this.character = character;
-        location = structure;
+        structureLocation = structure;
         poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.REMEMBER_FALLEN, INTERACTION_TYPE.SPIT };
         Initialize(TILE_OBJECT_TYPE.TOMBSTONE);
     }

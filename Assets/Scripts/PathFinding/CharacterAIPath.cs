@@ -48,29 +48,35 @@ public class CharacterAIPath : AILerp {
         if (newPath.CompleteState == PathCompleteState.Error) {
             Debug.LogWarning(marker.character.name + " path request returned a path with errors! Arrival action is: " + marker.arrivalAction?.Method.Name ?? "None" + "Destination is " + destination.ToString());
         }
-        currentPath = newPath as CustomABPath;
-        if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == marker.character && currentPath.traversalProvider != null && marker.terrifyingCharacters.Count > 0) {
-            string costLog = "PATH FOR " + marker.character.name;
-            uint totalCost = 0;
-            for (int i = 0; i < currentPath.path.Count; i++) {
-                Vector3 nodePos = (Vector3) currentPath.path[i].position;
-                uint currentCost = currentPath.traversalProvider.GetTraversalCost(newPath, currentPath.path[i]);
-                //float dx = (marker.terrifyingCharacters[0].marker.character.gridTileLocation.centeredWorldLocation.x - nodePos.x);
-                //float dz = (marker.terrifyingCharacters[0].marker.character.gridTileLocation.centeredWorldLocation.y - nodePos.y);
-                //float distSqr = dx * dx + dz * dz;
-                //costLog += "\n-> " + nodePos + "(" + currentCost + ")" + "[" + distSqr + "]";
-                Vector3 newNodePos = new Vector3((Mathf.Floor(nodePos.x)) + 0.5f, (Mathf.Floor(nodePos.y)) + 0.5f, Mathf.Floor(nodePos.z));
-                costLog += "\n-> " + newNodePos + "(" + currentCost + ")" + "[" + Vector2.Distance(newNodePos, marker.terrifyingCharacters[0].gridTileLocation.centeredWorldLocation) + "]";
-                totalCost += currentCost;
-            }
-            costLog += "\nTOTAL COST: " + totalCost;
+        if (newPath is FleeMultiplePath) {
+            marker.OnFleePathComputed(newPath);
+        } else {
+            currentPath = newPath as CustomABPath;
+            //if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == marker.character && currentPath.traversalProvider != null && marker.terrifyingCharacters.Count > 0) {
+            //    string costLog = "PATH FOR " + marker.character.name;
+            //    uint totalCost = 0;
+            //    for (int i = 0; i < currentPath.path.Count; i++) {
+            //        Vector3 nodePos = (Vector3) currentPath.path[i].position;
+            //        uint currentCost = currentPath.traversalProvider.GetTraversalCost(newPath, currentPath.path[i]);
+            //        //float dx = (marker.terrifyingCharacters[0].marker.character.gridTileLocation.centeredWorldLocation.x - nodePos.x);
+            //        //float dz = (marker.terrifyingCharacters[0].marker.character.gridTileLocation.centeredWorldLocation.y - nodePos.y);
+            //        //float distSqr = dx * dx + dz * dz;
+            //        //costLog += "\n-> " + nodePos + "(" + currentCost + ")" + "[" + distSqr + "]";
+            //        Vector3 newNodePos = new Vector3((Mathf.Floor(nodePos.x)) + 0.5f, (Mathf.Floor(nodePos.y)) + 0.5f, Mathf.Floor(nodePos.z));
+            //        costLog += "\n-> " + newNodePos + "(" + currentCost + ")" + "[" + Vector2.Distance(newNodePos, marker.terrifyingCharacters[0].gridTileLocation.centeredWorldLocation) + "]";
+            //        totalCost += currentCost;
+            //    }
+            //    costLog += "\nTOTAL COST: " + totalCost;
 
-            costLog += "\n\nVECTOR PATH";
-            for (int i = 0; i < currentPath.vectorPath.Count; i++) {
-                costLog += "\n-> " + currentPath.vectorPath[i] + "(" + GetNodePenalty(currentPath.vectorPath[i]) + ")" + "[" + Vector2.Distance(currentPath.vectorPath[i], marker.terrifyingCharacters[0].gridTileLocation.centeredWorldLocation) + "]";
-            }
-            Debug.LogWarning(costLog);
+            //    costLog += "\n\nVECTOR PATH";
+            //    for (int i = 0; i < currentPath.vectorPath.Count; i++) {
+            //        costLog += "\n-> " + currentPath.vectorPath[i] + "(" + GetNodePenalty(currentPath.vectorPath[i]) + ")" + "[" + Vector2.Distance(currentPath.vectorPath[i], marker.terrifyingCharacters[0].gridTileLocation.centeredWorldLocation) + "]";
+            //    }
+            //    Debug.LogWarning(costLog);
+            //}
         }
+
+
         base.OnPathComplete(newPath);
         _hasReachedTarget = false;
     }
@@ -183,7 +189,7 @@ public class CharacterAIPath : AILerp {
         }
     }
 
-    public void ClearPath() {
+    public void ClearAllCurrentPathData() {
         currentPath = null;
         path = null; //located at AILerp base class. Reference https://forum.arongranberg.com/t/how-to-stop-a-path-prematurely/1321/2
         _hasReachedTarget = false;

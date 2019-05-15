@@ -34,6 +34,7 @@ public class InteriorMapManager : MonoBehaviour {
     [Header("Pathfinding")]
     [SerializeField] private AstarPath pathfinder;
     private const float nodeSize = 0.2f;
+    public const int Default_Character_Sorting_Order = 20;
 
     //structure templates
     private string templatePath;
@@ -143,7 +144,6 @@ public class InteriorMapManager : MonoBehaviour {
         gg.rotation = new Vector3(-90f, 0f, 0f);
         gg.nodeSize = nodeSize;
 
-
         int reducedWidth = newMap.width - (AreaInnerTileMap.westEdge + AreaInnerTileMap.eastEdge);
         int reducedHeight = newMap.height - (AreaInnerTileMap.northEdge + AreaInnerTileMap.southEdge);
 
@@ -151,7 +151,7 @@ public class InteriorMapManager : MonoBehaviour {
         Vector3 pos = this.transform.position;
         pos.x += ((float)newMap.width / 2f);
         pos.y += ((float)newMap.height / 2f) + newMap.transform.localPosition.y;
-        pos.x += ((AreaInnerTileMap.westEdge + AreaInnerTileMap.eastEdge) / 2) - 1;
+        pos.x += (AreaInnerTileMap.westEdge / 2) - 0.5f;
 
         gg.center = pos;
         gg.collision.use2D = true;
