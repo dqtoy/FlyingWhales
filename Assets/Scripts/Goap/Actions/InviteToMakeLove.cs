@@ -33,7 +33,12 @@ public class InviteToMakeLove : GoapAction {
         }
     }
     protected override int GetCost() {
-        return 10;
+        TIME_IN_WORDS currentTime = GameManager.GetCurrentTimeInWordsOfTick();
+        if (currentTime == TIME_IN_WORDS.EARLY_NIGHT || currentTime == TIME_IN_WORDS.LATE_NIGHT)
+        {
+            return Utilities.rng.Next(15, 36);
+        }
+        return Utilities.rng.Next(30, 56);
     }
     #endregion
 
