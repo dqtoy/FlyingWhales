@@ -248,11 +248,11 @@ public class CharacterMarker : PooledObject {
             //if the character does not have any other negative disabler trait
             //check for reactions.
             if (!character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
-                //after this character loses combat recovery trait or unconscious trait, check if he or she can still react to another character, if yes, react.
                 lostTraitSummary += "\n" + character.name + " doesn't have any other negative disabler traits.";
                 switch (trait.name) {
                     case "Combat Recovery":
                     case "Unconscious":
+                        //after this character loses combat recovery trait or unconscious trait, check if he or she can still react to another character, if yes, react.
                         if (character.GetTrait("Unconscious") == null && character.GetTrait("Combat Recovery") == null) {
                             if (hostilesInRange.Count > 0) {
                                 Character nearestHostile = GetNearestValidHostile();
@@ -268,8 +268,6 @@ public class CharacterMarker : PooledObject {
                                 }
                             }
                         }
-                        break;
-                    default:
                         break;
                 }
             } else {
@@ -1098,7 +1096,6 @@ public class CharacterMarker : PooledObject {
     public Character currentlyEngaging { get; private set; }
     public Character currentlyCombatting { get; private set; }
     private string engageSummary;
-
     public void OnStartEngage(Character target) {
         //determine nearest hostile in range
         //Character nearestHostile = GetNearestValidHostile();

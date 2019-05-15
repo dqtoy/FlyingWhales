@@ -8,7 +8,7 @@ public class CharacterAIPath : AILerp {
     public CharacterMarker marker;
     public int doNotMove { get; private set; }
     public bool isStopMovement { get; private set; }
-    public CustomABPath currentPath { get; private set; }
+    public Path currentPath { get; private set; }
     public bool hasReachedTarget { get; private set; }
 
     public int searchLength = 1000;
@@ -49,6 +49,7 @@ public class CharacterAIPath : AILerp {
             Debug.LogWarning(marker.character.name + " path request returned a path with errors! Arrival action is: " + marker.arrivalAction?.Method.Name ?? "None" + "Destination is " + destination.ToString());
         }
         if (newPath is FleeMultiplePath) {
+            currentPath = newPath;
             marker.OnFleePathComputed(newPath);
         } else {
             currentPath = newPath as CustomABPath;
@@ -197,6 +198,7 @@ public class CharacterAIPath : AILerp {
         marker.SetDestination(Vector3.positiveInfinity);
         marker.ClearArrivalAction();
         interpolator.SetPath(null);
+        marker.StopMovementOnly();
     }
 
     public void SetNotAllowedStructures(STRUCTURE_TYPE[] notAllowedStructures) {
