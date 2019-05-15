@@ -676,26 +676,26 @@ public class Player : ILeader {
     public bool AlreadyHasIntel(Intel intel) {
         return allIntel.Contains(intel);
     }
-    private void OnCharacterWillDoPlan(Character character, GoapPlan plan) {
-        if (!plan.hasShownNotification) {
-            plan.SetHasShownNotification(true);
-        } else {
-            return;
-        }
-        bool showPopup = false;
-        if (plan.endNode.action.showIntelNotification 
-            && plan.endNode.action.planLog != null) { //do not show notification if plan log of end node is null, usually means that the action is not that important
-            showPopup = ShouldShowNotificationFrom(character, plan.endNode.action.shouldIntelNotificationOnlyIfActorIsActive);
-        }
-        if (showPopup) {
-            //Messenger.Broadcast<Intel>(Signals.SHOW_INTEL_NOTIFICATION, InteractionManager.Instance.CreateNewIntel(plan, character));
-            if (plan.endNode.action.shouldIntelNotificationOnlyIfActorIsActive) {
-                ShowNotification(plan.endNode.action.planLog);
-            } else {
-                ShowNotificationFrom(character, plan.endNode.action.planLog);
-            }
-        }
-    }
+    //private void OnCharacterWillDoPlan(Character character, GoapPlan plan) {
+        //if (!plan.hasShownNotification) {
+        //    plan.SetHasShownNotification(true);
+        //} else {
+        //    return;
+        //}
+        //bool showPopup = false;
+        //if (plan.endNode.action.showIntelNotification 
+        //    && plan.endNode.action.planLog != null) { //do not show notification if plan log of end node is null, usually means that the action is not that important
+        //    showPopup = ShouldShowNotificationFrom(character, plan.endNode.action.shouldIntelNotificationOnlyIfActorIsActive);
+        //}
+        //if (showPopup) {
+        //    //Messenger.Broadcast<Intel>(Signals.SHOW_INTEL_NOTIFICATION, InteractionManager.Instance.CreateNewIntel(plan, character));
+        //    if (plan.endNode.action.shouldIntelNotificationOnlyIfActorIsActive) {
+        //        ShowNotification(plan.endNode.action.planLog);
+        //    } else {
+        //        ShowNotificationFrom(character, plan.endNode.action.planLog);
+        //    }
+        //}
+    //}
     private void OnCharacterDidAction(Character character, GoapAction action) {
         bool showPopup = false;
         if (action.showIntelNotification) {
@@ -706,11 +706,7 @@ public class Player : ILeader {
             }
         }
         if (showPopup) {
-            if(action.goapType == INTERACTION_TYPE.DRINK || action.goapType == INTERACTION_TYPE.PLAY || action.goapType == INTERACTION_TYPE.DAYDREAM
-                || action.goapType == INTERACTION_TYPE.EAT_DWELLING_TABLE || action.goapType == INTERACTION_TYPE.EAT_PLANT || action.goapType == INTERACTION_TYPE.EAT_SMALL_ANIMAL
-                || action.goapType == INTERACTION_TYPE.SLEEP || action.goapType == INTERACTION_TYPE.SLEEP_OUTSIDE || action.goapType == INTERACTION_TYPE.NAP
-                || action.goapType == INTERACTION_TYPE.PRAY || action.goapType == INTERACTION_TYPE.PLAY_GUITAR || action.goapType == INTERACTION_TYPE.SIT
-                || action.goapType == INTERACTION_TYPE.STAND) {
+            if(!action.isNotificationAnIntel) {
                 Messenger.Broadcast<Log>(Signals.SHOW_PLAYER_NOTIFICATION, action.currentState.descriptionLog);
             } else {
                 Messenger.Broadcast<Intel>(Signals.SHOW_INTEL_NOTIFICATION, InteractionManager.Instance.CreateNewIntel(action, character));

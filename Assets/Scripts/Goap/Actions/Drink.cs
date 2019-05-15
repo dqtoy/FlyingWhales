@@ -10,6 +10,7 @@ public class Drink : GoapAction {
             TIME_IN_WORDS.LATE_NIGHT,
         };
         actionIconString = GoapActionStateDB.Drink_Icon;
+        isNotificationAnIntel = false;
     }
 
     #region Overrides

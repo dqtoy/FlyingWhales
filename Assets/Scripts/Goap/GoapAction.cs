@@ -61,6 +61,8 @@ public class GoapAction {
     public bool doesNotStopTargetCharacter { get; protected set; }
     public bool resumeTargetCharacterState { get; protected set; } //used to determine whether or not the target character's current state should be resumed after this action is performed towards him
     public bool cannotCancelAction { get; protected set; }
+    public bool isNotificationAnIntel { get; protected set; }
+    public bool canBeAddedToMemory { get; protected set; }
 
     protected virtual bool isTargetMissing {
         get { return poiTarget.state == POI_STATE.INACTIVE || poiTarget.gridTileLocation == null || actor.specificLocation != poiTarget.specificLocation
@@ -95,6 +97,8 @@ public class GoapAction {
         _numOfTries = 0;
         _isStealthAction = false;
         resumeTargetCharacterState = true;
+        isNotificationAnIntel = true;
+        canBeAddedToMemory = true;
         //for testing
         //CRIME[] choices = Utilities.GetEnumValues<CRIME>();
         //committedCrime = choices[Utilities.rng.Next(1, choices.Length)];

@@ -7,6 +7,8 @@ public class Stand : GoapAction {
         actionLocationType = ACTION_LOCATION_TYPE.NEARBY;
         actionIconString = GoapActionStateDB.No_Icon;
         shouldIntelNotificationOnlyIfActorIsActive = true;
+        isNotificationAnIntel = false;
+        canBeAddedToMemory = false;
     }
 
     #region Overrides

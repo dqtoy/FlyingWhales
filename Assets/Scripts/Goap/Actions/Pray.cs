@@ -14,6 +14,7 @@ public class Pray : GoapAction {
         actionLocationType = ACTION_LOCATION_TYPE.NEARBY;
         actionIconString = GoapActionStateDB.Entertain_Icon;
         shouldIntelNotificationOnlyIfActorIsActive = true;
+        isNotificationAnIntel = false;
     }
 
     #region Overrides

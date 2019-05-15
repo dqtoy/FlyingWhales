@@ -8,6 +8,7 @@ public class EatPlant : GoapAction {
     public EatPlant(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.EAT_PLANT, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Eat_Icon;
         shouldIntelNotificationOnlyIfActorIsActive = true;
+        isNotificationAnIntel = false;
     }
 
     #region Overrides
