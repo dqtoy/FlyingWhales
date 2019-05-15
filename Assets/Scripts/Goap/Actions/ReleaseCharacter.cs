@@ -59,12 +59,58 @@ public class ReleaseCharacter : GoapAction {
         Character target = poiTarget as Character;
         RemoveTraitFrom(target, "Restrained");
         RemoveTraitFrom(target, "Abducted");
+        currentState.SetIntelReaction(ReleaseSuccessIntelReaction);
     }
     //public void PreTargetMissing() {
     //    currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
     //}
     public void AfterTargetMissing() {
         actor.RemoveAwareness(poiTarget);
+    }
+    #endregion
+
+    #region Intel Reactions
+    private List<string> ReleaseSuccessIntelReaction(Character recipient, Intel sharedIntel) {
+        List<string> reactions = new List<string>();
+        Character target = poiTarget as Character;
+
+        //Recipient and Actor are the same
+        if (recipient == actor) {
+            //- **Recipient Response Text**: "I know what I've done!"
+            reactions.Add("I know what I've done!");
+            //- **Recipient Effect**:  no effect
+        }
+        //Recipient considers Target a personal Enemy:
+        else if (recipient.HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.ENEMY)) {
+            //- **Recipient Response Text**: "[Target Name] should not have been released!"
+            reactions.Add(string.Format("{0} should not have been released!", target.name));
+            //- **Recipient Effect**: If Recipient have no relationship with Actor, he will now consider that Actor an Enemy
+            if (!recipient.HasRelationshipWith(actor)) {
+                CharacterManager.Instance.CreateNewRelationshipBetween(recipient, actor, RELATIONSHIP_TRAIT.ENEMY);
+            }
+        }
+        //Recipient considers Actor a personal Enemy:
+        else if (recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.ENEMY)) {
+            //- **Recipient Response Text**: "[Actor Name] probably has an ulterior motive for doing that."
+            reactions.Add(string.Format("{0} probably has an ulterior motive for doing that.", actor.name));
+            //- **Recipient Effect**:  no effect
+        }
+        //Recipient has a positive relationship with the target:
+        else if (recipient.HasRelationshipOfEffectWith(target, TRAIT_EFFECT.POSITIVE)) {
+            //- **Recipient Response Text**: "I am relieved that [Target Name] has been released."
+            reactions.Add(string.Format("I am relieved that {0} has been released.", target.name));
+            //- **Recipient Effect**:  If Recipient have no relationship with Actor, Recipient will consider Actor a Friend
+            if (!recipient.HasRelationshipWith(actor)) {
+                CharacterManager.Instance.CreateNewRelationshipBetween(recipient, actor, RELATIONSHIP_TRAIT.FRIEND);
+            }
+        }
+        //Recipient and Target have no relationship but are from the same faction:
+        else if (!recipient.HasRelationshipWith(target) && recipient.faction == target.faction) {
+            //- **Recipient Response Text**: "I am relieved that [Target Name] has been released."
+            reactions.Add(string.Format("I am relieved that {0} has been released.", target.name));
+            //- **Recipient Effect**:  no effect
+        }
+        return reactions;
     }
     #endregion
 }

@@ -463,7 +463,7 @@ public class GoapAction {
         }
         try {
             int distance = Mathf.RoundToInt(Vector2.Distance(actor.gridTileLocation.centeredWorldLocation, tile.centeredWorldLocation));
-            distance = (int)(distance * 0.5f);
+            distance = (int)(distance * 0.25f);
             if (actor.specificLocation != targetStructure.location) {
                 return distance + 10;
             }
