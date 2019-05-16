@@ -127,6 +127,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.REPORT_HOSTILE,
                 INTERACTION_TYPE.INVITE_TO_MAKE_LOVE,
                 INTERACTION_TYPE.MAKE_LOVE,
+                INTERACTION_TYPE.DRINK_BLOOD,
             } },
             { RACE.ELVES, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -216,6 +217,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.REPORT_HOSTILE,
                 INTERACTION_TYPE.INVITE_TO_MAKE_LOVE,
                 INTERACTION_TYPE.MAKE_LOVE,
+                INTERACTION_TYPE.DRINK_BLOOD,
             } },
             { RACE.GOBLIN, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -306,6 +308,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.REPORT_HOSTILE,
                 INTERACTION_TYPE.INVITE_TO_MAKE_LOVE,
                 INTERACTION_TYPE.MAKE_LOVE,
+                INTERACTION_TYPE.DRINK_BLOOD,
             } },
             { RACE.FAERY, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -396,6 +399,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.REPORT_HOSTILE,
                 INTERACTION_TYPE.INVITE_TO_MAKE_LOVE,
                 INTERACTION_TYPE.MAKE_LOVE,
+                INTERACTION_TYPE.DRINK_BLOOD,
             } },
             { RACE.SKELETON, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -480,6 +484,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.BURY_CHARACTER,
                 INTERACTION_TYPE.CARRY_CORPSE,
                 INTERACTION_TYPE.REPORT_HOSTILE,
+                INTERACTION_TYPE.DRINK_BLOOD,
             } },
             { RACE.SPIDER, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -540,6 +545,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.STAND,
                 INTERACTION_TYPE.SIT,
                 INTERACTION_TYPE.NAP,
+                INTERACTION_TYPE.DRINK_BLOOD,
             } },
             { RACE.WOLF, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -601,6 +607,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.STAND,
                 INTERACTION_TYPE.SIT,
                 INTERACTION_TYPE.NAP,
+                INTERACTION_TYPE.DRINK_BLOOD,
             } },
             { RACE.DRAGON, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -661,6 +668,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.STAND,
                 INTERACTION_TYPE.SIT,
                 INTERACTION_TYPE.NAP,
+                INTERACTION_TYPE.DRINK_BLOOD,
             } },
         };
     }

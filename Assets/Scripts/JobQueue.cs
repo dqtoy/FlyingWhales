@@ -87,10 +87,10 @@ public class JobQueue {
         }
         return false;
     }
-    public void AssignCharacterToJob(JobQueueItem job, Character characterToDoJob) {
+    public bool AssignCharacterToJob(JobQueueItem job, Character characterToDoJob) {
         if (job.assignedCharacter == null && job.CanCharacterTakeThisJob(characterToDoJob)) {
             if (job.blacklistedCharacters.Contains(characterToDoJob)) {
-                return;
+                return false;
             }
             job.SetAssignedCharacter(characterToDoJob);
             if (job is GoapPlanJob) {
@@ -114,7 +114,9 @@ public class JobQueue {
                     throw new System.Exception(characterToDoJob.name + " tried doing state " + stateJob.targetState.ToString() + " but was unable to do so! This must not happen!");
                 }
             }
+            return true;
         }
+        return false;
     }
     public void ForceAssignCharacterToJob(JobQueueItem job, Character characterToDoJob) {
         if (job.assignedCharacter == null) {
@@ -267,6 +269,15 @@ public class JobQueue {
             }
         }
         return count;
+    }
+    public void CancelAllJobs(string jobName) {
+        for (int i = 0; i < jobsInQueue.Count; i++) {
+            if(jobsInQueue[i].name == jobName) {
+                if (CancelJob(jobsInQueue[i])) {
+                    i--;
+                }
+            }
+        }
     }
     public bool CancelJob(JobQueueItem job, string cause = "", bool shouldDoAfterEffect = true) {
         if (!job.cannotCancelJob) {

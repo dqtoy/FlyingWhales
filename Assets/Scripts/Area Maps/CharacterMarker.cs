@@ -205,28 +205,15 @@ public class CharacterMarker : PooledObject {
             Debug.Log(gainTraitSummary);
         } else {
             if (inVisionPOIs.Contains(characterThatGainedTrait)) {
-                bool overrideCurrentAction = !(this.character.currentAction != null && this.character.currentAction.parentPlan != null && this.character.currentAction.parentPlan.job != null && this.character.currentAction.parentPlan.job.cannotOverrideJob);
-                this.character.CreateRemoveTraitJobs(characterThatGainedTrait, overrideCurrentAction);
+                this.character.CreateRemoveTraitJobs(characterThatGainedTrait);
                 if (this.character.role.roleType == CHARACTER_ROLE.SOLDIER && this.character.isAtHomeArea && characterThatGainedTrait.isAtHomeArea && !characterThatGainedTrait.isDead) {
                     if (!this.character.HasRelationshipOfEffectWith(characterThatGainedTrait, TRAIT_EFFECT.POSITIVE)) {
                         if (characterThatGainedTrait.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
-                            GoapPlanJob job = characterThatGainedTrait.CreateApprehendJobForThisCharacter(overrideCurrentAction);
-                            if (job != null) {
-                                if (overrideCurrentAction) {
-                                    job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
-                                    characterThatGainedTrait.homeArea.jobQueue.AssignCharacterToJob(job, this.character);
-                                }
-                            }
+                            GoapPlanJob job = characterThatGainedTrait.CreateApprehendJobForThisCharacter(this.character);
                         }
                     }
                 }
-                GoapPlanJob restrainJob = this.character.CreateRestrainJob(characterThatGainedTrait, overrideCurrentAction);
-                if (restrainJob != null) {
-                    if (overrideCurrentAction) {
-                        restrainJob.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
-                        this.character.homeArea.jobQueue.AssignCharacterToJob(restrainJob, this.character);
-                    }
-                }
+                GoapPlanJob restrainJob = this.character.CreateRestrainJob(characterThatGainedTrait);
             }
             if (trait.name == "Unconscious") {
                 if (hostilesInRange.Contains(characterThatGainedTrait)) {
@@ -1014,7 +1001,7 @@ public class CharacterMarker : PooledObject {
             summary += "\n" + character.name + " is engaging, creating assault jobs for the target: " + otherCharacter.name;
             int numOfJobs = 3 - otherCharacter.GetNumOfJobsTargettingThisCharacter("Assault");
             if (numOfJobs > 0) {
-                character.CreateAssaultJobs(otherCharacter, false, numOfJobs);
+                character.CreateAssaultJobs(otherCharacter, numOfJobs);
             }
         }
         Debug.Log(summary);

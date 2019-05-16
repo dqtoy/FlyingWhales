@@ -59,7 +59,7 @@ public class ReportHostile : GoapAction {
         Character targetCharacter = poiTarget as Character;
         int numOfJobs = 3 - hostile.GetNumOfJobsTargettingThisCharacter("Assault");
         if (numOfJobs > 0) {
-            targetCharacter.CreateAssaultJobs(hostile, false, numOfJobs);
+            targetCharacter.CreateAssaultJobs(hostile, numOfJobs);
         }
     }
     private void PreReportHostileFail() {

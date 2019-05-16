@@ -18,6 +18,7 @@ public class Resting : Trait {
         crimeSeverity = CRIME_CATEGORY.NONE;
         daysDuration = 0;
         effects = new List<TraitEffect>();
+        //advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.DRINK_BLOOD };
     }
 
     #region Overrides

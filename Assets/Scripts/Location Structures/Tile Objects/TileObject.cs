@@ -109,7 +109,7 @@ public class  TileObject : IPointOfInterest {
             for (int i = 0; i < poiGoapActions.Count; i++) {
                 if (actorAllowedInteractions.Contains(poiGoapActions[i])) {
                     GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(poiGoapActions[i], actor, this);
-                    if (goapAction.CanSatisfyRequirements()) {
+                    if (goapAction.CanSatisfyRequirements() && goapAction.CanSatisfyRequirementOnBuildGoapTree()) {
                         usableActions.Add(goapAction);
                     }
                 }

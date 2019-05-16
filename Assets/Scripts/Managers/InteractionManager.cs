@@ -1126,6 +1126,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.MAKE_LOVE:
                 goapAction = new MakeLove(actor, target);
                 break;
+            case INTERACTION_TYPE.DRINK_BLOOD:
+                goapAction = new DrinkBlood(actor, target);
+                break;
         }
         if(goapAction != null && willInitialize) {
             goapAction.Initialize();

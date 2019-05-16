@@ -164,7 +164,7 @@ public class GoapThread : Multithread {
                 if (otherData.ContainsKey(currAction.goapType)) {
                     if (currAction.InitializeOtherData(otherData[currAction.goapType])) {
                         //if other data was initialized, check if the action still meets the needed requirements
-                        if (!currAction.CanSatisfyRequirements()) {
+                        if (!currAction.CanSatisfyRequirements() || !currAction.CanSatisfyRequirementOnBuildGoapTree()) {
                             //if it no longer does, add as invalid
                             invalidActions.Add(currAction);
                         }

@@ -87,14 +87,9 @@ public class RileUp : PlayerJobAction {
         GoapPlanJob job = new GoapPlanJob("Abduct", goapEffect);
         job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = character }, INTERACTION_TYPE.ABDUCT_ACTION);
         job.SetCannotOverrideJob(true);
-        bool overrideCurrentAction = !(_targetCharacter.currentAction != null && _targetCharacter.currentAction.parentPlan != null && _targetCharacter.currentAction.parentPlan.job != null && _targetCharacter.currentAction.parentPlan.job.cannotOverrideJob);
-        if (overrideCurrentAction) {
-            job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
-            _targetCharacter.jobQueue.AddJobInQueue(job, true, false);
-            _targetCharacter.jobQueue.ProcessFirstJobInQueue(_targetCharacter);
-        } else {
-            _targetCharacter.jobQueue.AddJobInQueue(job, true);
-        }
+        job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
+        _targetCharacter.jobQueue.AddJobInQueue(job, true, false);
+        _targetCharacter.jobQueue.ProcessFirstJobInQueue(_targetCharacter);
         //_targetCharacter.StartGOAP(goapEffect, character, GOAP_CATEGORY.REACTION);
     }
     private void RileUpCharacter(Area area) {

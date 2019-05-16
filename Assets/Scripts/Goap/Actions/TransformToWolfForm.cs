@@ -60,7 +60,7 @@ public class TransformToWolfForm : GoapAction {
             //-**Recipient Effect**: If soldier, noble or faction leader, brand Actor with Aberration crime (add Apprehend job). Otherwise, add a personal Report Crime job to the Recipient.
             if (recipient.role.roleType == CHARACTER_ROLE.SOLDIER || recipient.role.roleType == CHARACTER_ROLE.NOBLE || recipient.role.roleType == CHARACTER_ROLE.LEADER) {
                 actor.AddCriminalTrait(CRIME.ABERRATION);
-                GoapPlanJob job = actor.CreateApprehendJobForThisCharacter(false);
+                GoapPlanJob job = actor.CreateApprehendJobForThisCharacter(null);
                 //if (job != null) {
                 //    recipient.homeArea.jobQueue.AssignCharacterToJob(job, this);
                 //}
@@ -79,7 +79,7 @@ public class TransformToWolfForm : GoapAction {
             //-**Recipient Effect**: If soldier, noble or faction leader, brand Actor with Aberration crime (add Apprehend job). Otherwise, add a personal Report Crime job to the Recipient.
             if (recipient.role.roleType == CHARACTER_ROLE.SOLDIER || recipient.role.roleType == CHARACTER_ROLE.NOBLE || recipient.role.roleType == CHARACTER_ROLE.LEADER) {
                 actor.AddCriminalTrait(CRIME.ABERRATION);
-                GoapPlanJob job = actor.CreateApprehendJobForThisCharacter(false);
+                GoapPlanJob job = actor.CreateApprehendJobForThisCharacter(null);
                 //if (job != null) {
                 //    recipient.homeArea.jobQueue.AssignCharacterToJob(job, this);
                 //}

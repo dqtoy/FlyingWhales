@@ -74,6 +74,7 @@ public class GoapAction {
     protected bool _isStealthAction; //Should this action check for characters in radius before performing this action?
 
     protected Func<bool> _requirementAction;
+    protected Func<bool> _requirementOnBuildGoapTreeAction; //This particular requirement will only be called when building the goap tree in multithread
     protected System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
     protected string actionSummary;
     protected TIME_IN_WORDS[] validTimeOfDays;
@@ -159,6 +160,7 @@ public class GoapAction {
     }
     protected virtual void ConstructPreconditionsAndEffects() { }
     protected virtual void ConstructRequirement() { }
+    protected virtual void ConstructRequirementOnBuildGoapTree() { }
     protected virtual int GetCost() {
         return 0;
     }
@@ -335,6 +337,7 @@ public class GoapAction {
     public void Initialize() {
         SetTargetStructure();
         ConstructRequirement();
+        ConstructRequirementOnBuildGoapTree();
         ConstructPreconditionsAndEffects();
         CreateThoughtBubbleLog();
     }
@@ -348,6 +351,13 @@ public class GoapAction {
             requirementActionSatisfied = _requirementAction();
         }
         return requirementActionSatisfied; //&& (validTimeOfDays == null || validTimeOfDays.Contains(GameManager.GetCurrentTimeInWordsOfTick()));
+    }
+    public bool CanSatisfyRequirementOnBuildGoapTree() {
+        bool requirementActionSatisfied = true;
+        if (_requirementOnBuildGoapTreeAction != null) {
+            requirementActionSatisfied = _requirementOnBuildGoapTreeAction();
+        }
+        return requirementActionSatisfied;
     }
     public void ReturnToActorTheActionResult(string result) {
         this.result = result;
