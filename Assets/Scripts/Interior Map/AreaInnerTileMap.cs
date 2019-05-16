@@ -1922,8 +1922,10 @@ public class AreaInnerTileMap : MonoBehaviour {
             }
         }
         //Debug.Log(character.name + " is at index " + indexAt.ToString() + ". current path length is " + points.Count);
-        for (int i = 0; i <= indexAt; i++) {
-            points.RemoveAt(0);
+        if (points.Count > 0) {
+            for (int i = 0; i <= indexAt; i++) {
+                points.RemoveAt(0);
+            }
         }
         //points.Insert(0, character.marker.transform.position);
         //Debug.Log(character.name + " new path length is " + points.Count);

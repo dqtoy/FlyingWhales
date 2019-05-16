@@ -6,6 +6,9 @@ public class JobQueue {
     public Character character { get; private set; } //If there is character it means that this job queue is a personal job queue
 	public List<JobQueueItem> jobsInQueue { get; private set; }
 
+    public bool isAreaJobQueue {
+        get { return character == null; }
+    }
     public JobQueue(Character character) {
         this.character = character;
         jobsInQueue = new List<JobQueueItem>();
@@ -296,5 +299,21 @@ public class JobQueue {
             return RemoveJobInQueue(job);
         }
         return false;
+    }
+    /// <summary>
+    /// Unassign all jobs that a certain character has taken.
+    /// </summary>
+    /// <param name="character">The character in question.</param>
+    public void UnassignAllJobsTakenBy(Character character) {
+        string summary = "Unassigning all jobs taken by " + character.name;
+        List<JobQueueItem> allJobs = new List<JobQueueItem>(jobsInQueue);
+        for (int i = 0; i < allJobs.Count; i++) {
+            JobQueueItem currJob = allJobs[i];
+            if (currJob.assignedCharacter == character) {
+                summary += "\nUnassigned " + character.name + " from job " + currJob.name; 
+                currJob.UnassignJob(false);
+            }
+        }
+        character.PrintLogIfActive(summary);
     }
 }

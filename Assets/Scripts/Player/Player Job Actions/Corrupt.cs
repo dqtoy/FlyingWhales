@@ -12,7 +12,7 @@ public class Corrupt : PlayerJobAction {
         SetDefaultCooldownTime(24);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
         //"Unconscious", "Restrained", "Cursed", "Sick", "Injured"
-        _traitNames = new List<string>() { "Lycanthropy", "Kleptomaniac", "Vampiric", "Violent", "Unfaithful" }; //, "Unconscious", "Injured", "Sick", "Cursed", "Death"
+        _traitNames = new List<string>() { "Lycanthropy", "Kleptomaniac", "Vampiric", "Unfaithful", "Violent" }; //, "Unconscious", "Injured", "Sick", "Cursed", "Death"
     }
 
     public override void ActivateAction(Character assignedCharacter, Character targetCharacter) {
@@ -64,6 +64,9 @@ public class Corrupt : PlayerJobAction {
         } else if (traitName == "Kleptomaniac") {
             Kleptomaniac newTrait = new Kleptomaniac();
             _targetCharacter.AddTrait(newTrait);
+        } else if (traitName == "Unfaithful") {
+            Unfaithful newTrait = new Unfaithful();
+            _targetCharacter.AddTrait(newTrait);
         } else if (traitName == "Death") {
             _targetCharacter.Death();
         } else if (traitName == "Vampiric") {
@@ -75,7 +78,7 @@ public class Corrupt : PlayerJobAction {
         if (_targetCharacter.GetTrait(traitName) != null) {
             return false;
         }
-        if (traitName == "Violent" || traitName == "Unfaithful") {
+        if (traitName == "Violent") {
             return false; //disable these for now.
         }
         if(traitName == "Lycanthropy" && _targetCharacter.race == RACE.WOLF) {
