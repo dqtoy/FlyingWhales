@@ -24,6 +24,7 @@ public class Trait {
     public List<TraitEffect> effects;
     public GoapAction gainedFromDoing { get; private set; } //what action was this poi involved in that gave it this trait.
     public bool isDisabled { get; private set; }
+    public virtual bool broadcastDuplicates { get { return false; } }
 
     private Character _responsibleCharacter;
 

@@ -23,6 +23,10 @@ public class JobQueueItem {
     #region Virtuals
     public virtual void UnassignJob(bool shouldDoAfterEffect = true) { }
     protected virtual bool CanTakeJob(Character character) {
+        if (jobQueueParent.isAreaJobQueue) {
+            //Criminals should no longer create and take Location Jobs
+            return !character.HasTraitOf(TRAIT_TYPE.CRIMINAL);
+        }
         return true;
     }
     public virtual void OnAddJobToQueue() { }

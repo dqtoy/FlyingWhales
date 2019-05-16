@@ -11,6 +11,9 @@ public class Injured : Trait {
     public override Character responsibleCharacter {
         get { return _responsibleCharacter; }
     }
+    public override bool broadcastDuplicates {
+        get { return true; }
+    }
     #endregion
 
     public Injured() {

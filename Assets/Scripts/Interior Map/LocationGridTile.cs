@@ -452,6 +452,13 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     public void SetLockedState(bool state) {
         isLocked = state;
     }
+    public bool IsAtEdgeOfWalkableMap() {
+        if (localPlace.y == AreaInnerTileMap.southEdge || localPlace.y == parentAreaMap.height - AreaInnerTileMap.northEdge - 1 
+            || localPlace.x == AreaInnerTileMap.westEdge || localPlace.x == parentAreaMap.width - AreaInnerTileMap.eastEdge - 1) {
+            return true;
+        }
+        return false;
+    }
     #endregion
 
     #region Intel

@@ -20,6 +20,12 @@ public class FleeState : CharacterState {
     protected override void PerTickInState() {
         //stateComponent.character.marker.RedetermineFlee();
         //base.PerTickInState();
+        //if the character is away from home and is at an edge tile, go to home location
+        if (stateComponent.character.homeArea != null && stateComponent.character.homeArea != stateComponent.character.specificLocation && stateComponent.character.gridTileLocation.IsAtEdgeOfWalkableMap()) {
+            OnExitThisState();
+            stateComponent.character.currentParty.GoToLocation(stateComponent.character.homeArea, PATHFINDING_MODE.NORMAL, stateComponent.character.homeArea.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS), null, null, null, null);
+        }
+        
     }
     //protected override void EndState() {
     //    base.EndState();

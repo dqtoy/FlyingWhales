@@ -16,6 +16,7 @@ public class CharacterRelationshipData {
     public List<Trait> trouble { get; private set; } //Set this to trait for now, but this could change in future iterations
     public List<Character> knownLovedOnes { get; private set; }
     public bool isDisabled { get; private set; }
+    public int flirtationCount { get; private set; }//the number of times the owner and target character flirted with each other.
 
     public string lastEncounterLog { get; private set; }
 
@@ -306,6 +307,12 @@ public class CharacterRelationshipData {
     }
     public void RemoveKnownLovedOne(Character character) {
         knownLovedOnes.Remove(character);
+    }
+    #endregion
+
+    #region Flirtation
+    public void IncreaseFlirtationCount() {
+        flirtationCount += 1;
     }
     #endregion
 

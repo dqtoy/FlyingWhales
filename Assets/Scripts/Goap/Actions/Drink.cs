@@ -56,6 +56,7 @@ public class Drink : GoapAction {
     }
     public void AfterDrinkSuccess() {
         actor.AdjustDoNotGetLonely(-1);
+        AddTraitTo(actor, "Drunk");
     }
     public void PreDrinkPoisoned() {
         actor.AdjustDoNotGetLonely(1);

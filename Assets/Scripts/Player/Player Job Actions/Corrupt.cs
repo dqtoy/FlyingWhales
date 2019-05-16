@@ -64,6 +64,9 @@ public class Corrupt : PlayerJobAction {
         } else if (traitName == "Kleptomaniac") {
             Kleptomaniac newTrait = new Kleptomaniac();
             _targetCharacter.AddTrait(newTrait);
+        } else if (traitName == "Unfaithful") {
+            Unfaithful newTrait = new Unfaithful();
+            _targetCharacter.AddTrait(newTrait);
         } else if (traitName == "Death") {
             _targetCharacter.Death();
         }
@@ -72,7 +75,7 @@ public class Corrupt : PlayerJobAction {
         if (_targetCharacter.GetTrait(traitName) != null) {
             return false;
         }
-        if (traitName == "Violent" || traitName == "Vampiric" || traitName == "Unfaithful") {
+        if (traitName == "Violent" || traitName == "Vampiric") {
             return false; //disable these for now.
         }
         if(traitName == "Lycanthropy" && _targetCharacter.race == RACE.WOLF) {
