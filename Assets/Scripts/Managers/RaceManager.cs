@@ -128,6 +128,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.INVITE_TO_MAKE_LOVE,
                 INTERACTION_TYPE.MAKE_LOVE,
                 INTERACTION_TYPE.DRINK_BLOOD,
+                INTERACTION_TYPE.REPLACE_TILE_OBJECT,
             } },
             { RACE.ELVES, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -218,6 +219,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.INVITE_TO_MAKE_LOVE,
                 INTERACTION_TYPE.MAKE_LOVE,
                 INTERACTION_TYPE.DRINK_BLOOD,
+                INTERACTION_TYPE.REPLACE_TILE_OBJECT,
             } },
             { RACE.GOBLIN, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -309,6 +311,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.INVITE_TO_MAKE_LOVE,
                 INTERACTION_TYPE.MAKE_LOVE,
                 INTERACTION_TYPE.DRINK_BLOOD,
+                INTERACTION_TYPE.REPLACE_TILE_OBJECT,
             } },
             { RACE.FAERY, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -400,6 +403,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.INVITE_TO_MAKE_LOVE,
                 INTERACTION_TYPE.MAKE_LOVE,
                 INTERACTION_TYPE.DRINK_BLOOD,
+                INTERACTION_TYPE.REPLACE_TILE_OBJECT,
             } },
             { RACE.SKELETON, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,

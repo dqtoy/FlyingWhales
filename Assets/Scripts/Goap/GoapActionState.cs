@@ -38,6 +38,12 @@ public class GoapActionState {
         shareIntelReaction = intelReaction;
     }
 
+    #region Duration
+    public void OverrideDuration(int newDuration) {
+        this.duration = newDuration;
+    }
+    #endregion
+
     #region Logs
     private void CreateLog() {
         descriptionLog = new Log(GameManager.Instance.Today(), "GoapAction", parentAction.GetType().ToString(), name.ToLower() + "_description");

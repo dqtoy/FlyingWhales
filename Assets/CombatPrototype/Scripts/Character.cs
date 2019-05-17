@@ -4397,8 +4397,18 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     /// <param name="plan">Plan to be added</param>
     public void AddPlan(GoapPlan plan, bool isPriority = false) {
         if (!allGoapPlans.Contains(plan)) {
+            plan.SetPriorityState(isPriority);
             if (isPriority) {
-                allGoapPlans.Insert(0, plan);
+                //if the plan is a priority, place it after all other plans that are a priority
+                int indexToInsert = 0;
+                for (int i = 0; i < allGoapPlans.Count; i++) {
+                    GoapPlan currPlan = allGoapPlans[i];
+                    if (!currPlan.isPriority) {
+                        indexToInsert = i; //this is the first plan in the list that is not a priority, place the priority plan before the current item.
+                        break;
+                    }
+                }
+                allGoapPlans.Insert(indexToInsert, plan);
             } else {
                 allGoapPlans.Add(plan);
             }
@@ -5145,6 +5155,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         poiGoapActions.Add(INTERACTION_TYPE.DROP_ITEM_WAREHOUSE);
         poiGoapActions.Add(INTERACTION_TYPE.INVITE_TO_MAKE_LOVE);
         poiGoapActions.Add(INTERACTION_TYPE.DRINK_BLOOD);
+        poiGoapActions.Add(INTERACTION_TYPE.REPLACE_TILE_OBJECT);
     }
     public void StartGOAP(GoapEffect goal, IPointOfInterest target, GOAP_CATEGORY category, bool isPriority = false, List<Character> otherCharactePOIs = null, bool isPersonalPlan = true, GoapPlanJob job = null, bool allowDeadTargets = false) {
         List<CharacterAwareness> characterTargetsAwareness = new List<CharacterAwareness>();

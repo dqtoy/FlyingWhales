@@ -40,9 +40,13 @@ public class InteriorMapManager : MonoBehaviour {
     private string templatePath;
 
     //Local Avoidance
-    Pathfinding.RVO.Simulator sim;
-
+    private Pathfinding.RVO.Simulator sim;
     public List<TileBase> allTileAssets;
+
+    //tile objects
+    private Dictionary<TILE_OBJECT_TYPE, TileObjectData> tileObjectData = new Dictionary<TILE_OBJECT_TYPE, TileObjectData>() {
+        { TILE_OBJECT_TYPE.SUPPLY_PILE, new TileObjectData() { constructionCost = 10, constructionTime = 12 } }
+    };
 
     private void Awake() {
         Instance = this;
@@ -301,6 +305,7 @@ public class InteriorMapManager : MonoBehaviour {
             summary += "\nTile Type: " + tile.tileType.ToString();
             summary += "\nTile State: " + tile.tileState.ToString();
             summary += "\nTile Access: " + tile.tileAccess.ToString();
+            summary += "\nReserved Tile Object Type: " + tile.reservedObjectType.ToString();
             summary += "\nContent: " + tile.objHere?.ToString() ?? "None";
             if (tile.objHere != null) {
                 summary += "\n\tObject State: " + tile.objHere.state.ToString();
@@ -571,7 +576,6 @@ public class InteriorMapManager : MonoBehaviour {
         }
         placedStructures[type].Add(slot);
     }
-
     /// <summary>
     /// Get the units the template needs to move.
     /// </summary>
@@ -600,8 +604,18 @@ public class InteriorMapManager : MonoBehaviour {
         return shiftTemplateBy;
     }
     #endregion
+
+    #region Tile Objects
+    public TileObjectData GetTileObjectData(TILE_OBJECT_TYPE objType) {
+        if (tileObjectData.ContainsKey(objType)) {
+            return tileObjectData[objType];
+        }
+        throw new System.Exception("No tile data for type " + objType.ToString());
+    }
+    #endregion
 }
 
+#region Templates
 public struct TownMapSettings {
 
     public BoundsInt size;
@@ -609,15 +623,12 @@ public struct TownMapSettings {
     public TileTemplateData[] structureTiles;
     public TileTemplateData[] objectTiles;
     public TileTemplateData[] detailTiles;
-
     public Dictionary<STRUCTURE_TYPE, List<StructureSlot>> structureSlots;
 
 }
-
 public class StructureSlot {
     public Vector3Int startPos;
     public Point size;
-
     public void AdjustStartPos(int x, int y) {
         Vector3Int newPos = startPos;
         newPos.x += x;
@@ -625,4 +636,13 @@ public class StructureSlot {
         startPos = newPos;
     }
 }
+#endregion
+
+#region Tile Objects
+public struct TileObjectData {
+    public int constructionCost;
+    public int constructionTime; //in ticks
+}
+#endregion
+
 

@@ -16,7 +16,6 @@ public class  TileObject : IPointOfInterest {
     }
     public List<Character> awareCharacters { get; private set; } //characters that are aware of this object (Used for checking if a ghost trigger should be destroyed)
     public List<string> actionHistory { get; private set; } //list of actions that was done to this object
-
     public LocationStructure structureLocation { get; protected set; }
 
     protected LocationGridTile tile;
@@ -75,22 +74,25 @@ public class  TileObject : IPointOfInterest {
         this.tile = tile;
         if (tile == null) {
             DisableCollisionTrigger();
-            OnRemoveTileObject(null);
+            OnRemoveTileObject(null, previousTile);
             if (previousTile != null) {
                 PlaceGhostCollisionTriggerAt(previousTile);
             }
+            SetPOIState(POI_STATE.INACTIVE);
         } else {
             PlaceCollisionTriggerAt(tile);
+            SetPOIState(POI_STATE.ACTIVE);
         }
     }
     public void RemoveTileObject(Character removedBy) {
         LocationGridTile previousTile = this.tile;
         this.tile = null;
         DisableCollisionTrigger();
-        OnRemoveTileObject(removedBy);
+        OnRemoveTileObject(removedBy, previousTile);
         if (previousTile != null) {
             PlaceGhostCollisionTriggerAt(previousTile);
         }
+        SetPOIState(POI_STATE.INACTIVE);
     }
     public virtual LocationGridTile GetNearestUnoccupiedTileFromThis() {
         if (gridTileLocation != null) {
@@ -135,8 +137,11 @@ public class  TileObject : IPointOfInterest {
     /// <summary>
     /// Triggered when the grid tile location of this object is set to null.
     /// </summary>
-    protected virtual void OnRemoveTileObject(Character removedBy) {
-        Messenger.Broadcast(Signals.TILE_OBJECT_REMOVED, this, removedBy);
+    protected virtual void OnRemoveTileObject(Character removedBy, LocationGridTile removedFrom) {
+        Messenger.Broadcast(Signals.TILE_OBJECT_REMOVED, this, removedBy, removedFrom);
+    }
+    public virtual bool CanBeReplaced() {
+        return false;
     }
     #endregion
 

@@ -69,4 +69,7 @@ public class SupplyPile : TileObject, IPointOfInterest {
         //}
         base.SetGridTileLocation(tile);
     }
+    public override bool CanBeReplaced() {
+        return true;
+    }
 }

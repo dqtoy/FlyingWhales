@@ -1183,6 +1183,7 @@ public enum INTERACTION_TYPE {
     MAKE_LOVE,
     INVITE_TO_MAKE_LOVE,
     DRINK_BLOOD,
+    REPLACE_TILE_OBJECT,
 }
 public enum INTERACTION_ALIGNMENT {
     EVIL,
@@ -1377,6 +1378,7 @@ public enum TILE_OBJECT_TYPE {
     FOOD,
     DESK,
     TOMBSTONE,
+    NONE,
 }
 public enum POI_STATE {
     ACTIVE,

@@ -198,7 +198,7 @@ public class GoapAction {
 
             }
         } else {
-            Messenger.AddListener<TileObject, Character>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
+            Messenger.AddListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
         }
     }
     protected virtual void CreateThoughtBubbleLog() {
@@ -234,7 +234,7 @@ public class GoapAction {
     ///</summary>
     ///<param name="plan">Plan where this action came from.</param>
     public virtual void DoAction(GoapPlan plan) {
-        CreateStates(); //Not sure if this is the best place for this.
+        //CreateStates(); //Not sure if this is the best place for this.
         actor.SetCurrentAction(this);
         plan.SetPlanState(GOAP_PLAN_STATE.IN_PROGRESS);
         Messenger.Broadcast(Signals.CHARACTER_DOING_ACTION, actor, this);
@@ -340,6 +340,7 @@ public class GoapAction {
         ConstructRequirementOnBuildGoapTree();
         ConstructPreconditionsAndEffects();
         CreateThoughtBubbleLog();
+        CreateStates();
     }
     public bool IsThisPartOfActorActionPool(Character actor) {
         List<INTERACTION_TYPE> actorInteractions = RaceManager.Instance.GetNPCInteractionsOfRace(actor);
@@ -378,7 +379,7 @@ public class GoapAction {
                 }
             }
         } else {
-            Messenger.RemoveListener<TileObject, Character>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
+            Messenger.RemoveListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
         }
         OnFinishActionTowardsTarget();
         if (endAction != null) {
@@ -420,7 +421,7 @@ public class GoapAction {
         }
 
         if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
-            Messenger.RemoveListener<TileObject, Character>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
+            Messenger.RemoveListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
         }
         OnCancelActionTowardsTarget();
         SetIsStopped(true);
@@ -663,7 +664,7 @@ public class GoapAction {
             target.OnCancelActionTowardsObject(this);
         }
     }
-    private void OnTileObjectRemoved(TileObject tileObj, Character removedBy) {
+    private void OnTileObjectRemoved(TileObject tileObj, Character removedBy, LocationGridTile removedFrom) {
         if (poiTarget == tileObj) {
             if (isPerformingActualAction) {
                 if (removedBy != null && removedBy == actor) {

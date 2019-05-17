@@ -62,6 +62,10 @@ public class DropItemWarehouse : GoapAction {
         currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
     }
     private void AfterDropSuccess() {
+        if (parentPlan.job != null) {
+            parentPlan.job.SetCannotCancelJob(true);
+        }
+        SetCannotCancelAction(true);
         //**Effect 1**: Actor loses item, add target item to tile. Clear personal owner of the item.
         LocationGridTile targetLocation = actor.gridTileLocation;
         if (targetLocation.isOccupied) {

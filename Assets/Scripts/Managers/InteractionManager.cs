@@ -1129,6 +1129,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.DRINK_BLOOD:
                 goapAction = new DrinkBlood(actor, target);
                 break;
+            case INTERACTION_TYPE.REPLACE_TILE_OBJECT:
+                goapAction = new ReplaceTileObject(actor, target);
+                break;
         }
         if(goapAction != null && willInitialize) {
             goapAction.Initialize();
@@ -2281,7 +2284,7 @@ public class InteractionManager : MonoBehaviour {
             case ACTION_LOCATION_TYPE.RANDOM_LOCATION:
                 //**Random Location**: chooses a random unoccupied tile in the specified structure
                 specifiedStructure = other[0] as LocationStructure;
-                choices = specifiedStructure.unoccupiedTiles;
+                choices = specifiedStructure.unoccupiedTiles.Where(x => x.reservedObjectType == TILE_OBJECT_TYPE.NONE).ToList();
                 if (choices.Count > 0) {
                     chosenTile = choices[Utilities.rng.Next(0, choices.Count)];
                 }
@@ -2289,7 +2292,7 @@ public class InteractionManager : MonoBehaviour {
             case ACTION_LOCATION_TYPE.RANDOM_LOCATION_B:
                 //**Random Location B**: chooses a random unoccupied tile in the specified structure that is also adjacent to one other unoccupied tile
                 specifiedStructure = other[0] as LocationStructure;
-                choices = specifiedStructure.unoccupiedTiles.Where(x => x.UnoccupiedNeighbours.Count > 0).ToList();
+                choices = specifiedStructure.unoccupiedTiles.Where(x => x.UnoccupiedNeighbours.Count > 0 && x.reservedObjectType == TILE_OBJECT_TYPE.NONE).ToList();
                 if (choices.Count > 0) {
                     chosenTile = choices[Utilities.rng.Next(0, choices.Count)];
                 }

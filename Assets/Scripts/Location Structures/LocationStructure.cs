@@ -356,9 +356,11 @@ public class LocationStructure {
                 switch (objTile.name) {
                     case "Bed":
                         AddPOI(new Bed(this), currTile, false);
+                        currTile.SetReservedType(TILE_OBJECT_TYPE.BED);
                         break;
                     case "Desk":
                         AddPOI(new Desk(this), currTile, false);
+                        currTile.SetReservedType(TILE_OBJECT_TYPE.DESK);
                         break;
                     case "Table0":
                     case "Table1":
@@ -366,12 +368,15 @@ public class LocationStructure {
                     case "Bartop_Left":
                     case "Bartop_Right":
                         AddPOI(new Table(this, objTile), currTile, false);
+                        currTile.SetReservedType(TILE_OBJECT_TYPE.TABLE);
                         break;
                     case "SupplyPile":
                         AddPOI(new SupplyPile(this), currTile, false);
+                        currTile.SetReservedType(TILE_OBJECT_TYPE.SUPPLY_PILE);
                         break;
                     case "Guitar":
                         AddPOI(new Guitar(this), currTile, false);
+                        currTile.SetReservedType(TILE_OBJECT_TYPE.GUITAR);
                         break;
                     default:
                         break;
@@ -388,6 +393,45 @@ public class LocationStructure {
             }
         }
         return null;
+    }
+    #endregion
+
+    #region Tile Objects
+    public void AddTileObject(TILE_OBJECT_TYPE objType, LocationGridTile tile = null, bool placeAsset = true) {
+        switch (objType) {
+            case TILE_OBJECT_TYPE.SUPPLY_PILE:
+                AddPOI(new SupplyPile(this), tile, placeAsset);
+                break; ;
+            case TILE_OBJECT_TYPE.SMALL_ANIMAL:
+                AddPOI(new SmallAnimal(this), tile, placeAsset);
+                break;
+            case TILE_OBJECT_TYPE.EDIBLE_PLANT:
+                AddPOI(new EdiblePlant(this), tile, placeAsset);
+                break;
+            case TILE_OBJECT_TYPE.GUITAR:
+                AddPOI(new Guitar(this), tile, placeAsset);
+                break;
+            case TILE_OBJECT_TYPE.MAGIC_CIRCLE:
+                AddPOI(new MagicCircle(this), tile, placeAsset);
+                break;
+            //case TILE_OBJECT_TYPE.TABLE:
+            //    AddPOI(new Table(this), tile, placeAsset);
+            //    break;
+            case TILE_OBJECT_TYPE.BED:
+                AddPOI(new Bed(this), tile, placeAsset);
+                break;
+            case TILE_OBJECT_TYPE.ORE:
+                AddPOI(new Ore(this), tile, placeAsset);
+                break;
+            case TILE_OBJECT_TYPE.TREE:
+                AddPOI(new Tree(this), tile, placeAsset);
+                break;
+            case TILE_OBJECT_TYPE.DESK:
+                AddPOI(new Desk(this), tile, placeAsset);
+                break;
+            default:
+                break;
+        }
     }
     #endregion
     public override string ToString() {

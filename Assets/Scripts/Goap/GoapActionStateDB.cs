@@ -309,6 +309,9 @@ public static class GoapActionStateDB {
             new StateNameAndDuration(){ name = "Drink Fail", status = InteractionManager.Goap_State_Fail, duration = 0 },
             new StateNameAndDuration(){ name = "Target Missing", status = InteractionManager.Goap_State_Fail, duration = 0 },
         } },
+        {INTERACTION_TYPE.REPLACE_TILE_OBJECT, new StateNameAndDuration[]{
+            new StateNameAndDuration(){ name = "Replace Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        } },
     };
 }
 

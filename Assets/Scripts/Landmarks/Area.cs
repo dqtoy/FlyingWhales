@@ -190,20 +190,31 @@ public class Area {
         nameplatePos = LandmarkManager.Instance.GetAreaNameplatePosition(this);
     }
 
+    #region Listeners
     private void SubscribeToSignals() {
         Messenger.AddListener(Signals.HOUR_STARTED, CreatePatrolAndExploreJobs);
         Messenger.AddListener(Signals.GAME_LOADED, OnGameLoaded);
+        Messenger.AddListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
     }
     private void UnsubscribeToSignals() {
         if (Messenger.eventTable.ContainsKey(Signals.HOUR_STARTED)) {
             Messenger.RemoveListener(Signals.HOUR_STARTED, CreatePatrolAndExploreJobs);
         }
         Messenger.RemoveListener(Signals.GAME_LOADED, OnGameLoaded);
+        Messenger.RemoveListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
     }
     private void OnGameLoaded() {
         LocationStructure warehouse = GetRandomStructureOfType(STRUCTURE_TYPE.WAREHOUSE);
         CheckAreaInventoryJobs(warehouse);
     }
+    private void OnTileObjectRemoved(TileObject removedObj, Character character, LocationGridTile removedFrom) {
+        if (removedFrom.parentAreaMap.area.id == this.id) {
+            if (removedObj.CanBeReplaced()) {
+                CreateReplaceTileObjectJob(removedObj, removedFrom);
+            }
+        }
+    }
+    #endregion
 
     #region Area Details
     public void SetName(string name) {
@@ -902,7 +913,8 @@ public class Area {
         //InitialRaceSetup setup = GetRaceSetup(defaultRace);
         for (int i = 0; i < raceSetups.Count; i++) {
             InitialRaceSetup setup = raceSetups[i];
-            int charactersToCreate = UnityEngine.Random.Range(setup.spawnRange.lowerBound, setup.spawnRange.upperBound + 1);
+            int charactersToCreate = 10;
+            //int charactersToCreate = UnityEngine.Random.Range(setup.spawnRange.lowerBound, setup.spawnRange.upperBound + 1);
             bool isRaceBeast = Utilities.IsRaceBeast(setup.race.race);
             CharacterRole chosenRole = CharacterRole.BEAST;
             for (int j = 0; j < charactersToCreate; j++) {
@@ -1465,8 +1477,8 @@ public class Area {
     private bool CanDoPatrolAndExplore(Character character) {
         return character.GetTrait("Injured") == null;
     }
-    private bool alreadyHasCancelBrew = false;
-    private bool alreadyHasCancelTool = false;
+    //private bool alreadyHasCancelBrew = false;
+    //private bool alreadyHasCancelTool = false;
     private void CheckAreaInventoryJobs(LocationStructure affectedStructure) {
         if (affectedStructure.structureType == STRUCTURE_TYPE.WAREHOUSE) {
             //brew potion
@@ -1479,17 +1491,18 @@ public class Area {
                     GoapPlanJob job = new GoapPlanJob("Brew Potion", INTERACTION_TYPE.DROP_ITEM_WAREHOUSE, new Dictionary<INTERACTION_TYPE, object[]>() {
                         { INTERACTION_TYPE.DROP_ITEM_WAREHOUSE, new object[]{ SPECIAL_TOKEN.HEALING_POTION } },
                     });
-                    //job.SetCanTakeThisJobChecker(job.CanCraftItemChecker);
+                    job.SetCanTakeThisJobChecker(CanBrewPotion);
                     job.SetCannotOverrideJob(false);
                     jobQueue.AddJobInQueue(job);
                 }
             } else {
-                if (!alreadyHasCancelBrew) {
-                    //schedule cancel of job next tick
-                    GameDate next = GameManager.Instance.Today().AddTicks(1);
-                    SchedulingManager.Instance.AddEntry(next, () => CancelBrewPotion());
-                    alreadyHasCancelBrew = true;
-                }
+                //if (!alreadyHasCancelBrew) {
+                //    //schedule cancel of job next tick
+                //    GameDate next = GameManager.Instance.Today().AddTicks(1);
+                //    SchedulingManager.Instance.AddEntry(next, () => CancelBrewPotion());
+                //    alreadyHasCancelBrew = true;
+                //}
+                CancelBrewPotion();
             }
 
             //craft tool
@@ -1498,19 +1511,26 @@ public class Area {
                     GoapPlanJob job = new GoapPlanJob("Craft Tool", INTERACTION_TYPE.DROP_ITEM_WAREHOUSE, new Dictionary<INTERACTION_TYPE, object[]>() {
                         { INTERACTION_TYPE.DROP_ITEM_WAREHOUSE, new object[]{ SPECIAL_TOKEN.TOOL } },
                     });
-                    //job.SetCanTakeThisJobChecker(job.CanCraftItemChecker);
+                    job.SetCanTakeThisJobChecker(CanCraftTool);
                     job.SetCannotOverrideJob(false);
                     jobQueue.AddJobInQueue(job);
                 }
             } else {
-                if (!alreadyHasCancelTool) {
-                    //schedule cancel of job next tick
-                    GameDate next = GameManager.Instance.Today().AddTicks(1);
-                    SchedulingManager.Instance.AddEntry(next, () => CancelCraftTool());
-                    alreadyHasCancelTool = true;
-                }
+                CancelCraftTool();
+                //if (!alreadyHasCancelTool) {
+                //    //schedule cancel of job next tick
+                //    GameDate next = GameManager.Instance.Today().AddTicks(1);
+                //    SchedulingManager.Instance.AddEntry(next, () => CancelCraftTool());
+                //    alreadyHasCancelTool = true;
+                //}
             }
         }        
+    }
+    private bool CanCraftTool(Character character) {
+        return SPECIAL_TOKEN.TOOL.CanBeCraftedBy(character);
+    }
+    private bool CanBrewPotion(Character character) {
+        return SPECIAL_TOKEN.HEALING_POTION.CanBeCraftedBy(character);
     }
     private void CancelBrewPotion() {
         //warehouse has 2 or more healing potions
@@ -1518,7 +1538,7 @@ public class Area {
             JobQueueItem brewJob = jobQueue.GetJob("Brew Potion");
             jobQueue.CancelJob(brewJob);
         }
-        alreadyHasCancelBrew = false;
+        //alreadyHasCancelBrew = false;
     }
     private void CancelCraftTool() {
         //warehouse has 2 or more healing potions
@@ -1526,7 +1546,15 @@ public class Area {
             JobQueueItem craftTool = jobQueue.GetJob("Craft Tool");
             jobQueue.CancelJob(craftTool);
         }
-        alreadyHasCancelTool = false;
+        //alreadyHasCancelTool = false;
+    }
+    private void CreateReplaceTileObjectJob(TileObject removedObj, LocationGridTile removedFrom) {
+        GoapPlanJob job = new GoapPlanJob("Replace " + removedObj.tileObjectType.ToString() , INTERACTION_TYPE.REPLACE_TILE_OBJECT, new Dictionary<INTERACTION_TYPE, object[]>() {
+                        { INTERACTION_TYPE.REPLACE_TILE_OBJECT, new object[]{ removedObj, removedFrom } },
+                    });
+        //job.SetCanTakeThisJobChecker(job.CanCraftItemChecker);
+        job.SetCannotOverrideJob(false);
+        jobQueue.AddJobInQueue(job);
     }
     #endregion
 

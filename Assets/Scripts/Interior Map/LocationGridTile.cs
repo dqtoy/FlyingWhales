@@ -33,11 +33,10 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     public List<LocationGridTile> neighbourList { get; private set; }
     public IPointOfInterest objHere { get; private set; }
     public List<Character> charactersHere { get; private set; }
-    //public Character occupant { get; private set; }
     public bool isOccupied { get { return tileState == Tile_State.Occupied; } }
     public bool isEdge { get; private set; }
-
     public bool isLocked { get; private set; } //if a tile is locked, any asset on it should not be replaced.
+    public TILE_OBJECT_TYPE reservedObjectType { get; private set; } //the only type of tile object that can be placed here
 
     public List<LocationGridTile> ValidTiles { get { return FourNeighbours().Where(o => o.tileType == Tile_Type.Empty || o.tileType == Tile_Type.Gate || o.tileType == Tile_Type.Road).ToList(); } }
     public List<LocationGridTile> RealisticTiles { get { return FourNeighbours().Where(o => o.tileAccess == Tile_Access.Passable && (o.structure != null || o.tileType == Tile_Type.Road || o.tileType == Tile_Type.Gate)).ToList(); } }
@@ -60,6 +59,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         tileAccess = Tile_Access.Passable;
         charactersHere = new List<Character>();
         SetLockedState(false);
+        SetReservedType(TILE_OBJECT_TYPE.NONE);
     }
     public void UpdateWorldLocation() {
         worldLocation = parentTileMap.CellToWorld(localPlace);
@@ -268,9 +268,6 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     public override string ToString() {
         return localPlace.ToString();
     }
-    //public void SetPrefabHere(GameObject obj) {
-    //    prefabHere = obj;
-    //}
     public float GetDistanceTo(LocationGridTile tile) {
         return Vector2.Distance(this.localLocation, tile.localLocation);
     }
@@ -461,7 +458,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     }
     #endregion
 
-    #region Intel
+    #region Mouse Actions
     public void OnClickTileActions(PointerEventData.InputButton inputButton) {
         //Comment Reason: Used this to quickly set a tiles state from occupied to empty and vice versa.
         //if (inputButton == PointerEventData.InputButton.Right) {
@@ -478,9 +475,9 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         if (objHere == null) {
             Messenger.Broadcast(Signals.HIDE_MENUS);
             if (inputButton == PointerEventData.InputButton.Right) {
-                //if (InteriorMapManager.Instance.IsHoldingPOI()) {
-                //    InteriorMapManager.Instance.PlaceHeldPOI(this);
-                //}
+                if (InteriorMapManager.Instance.IsHoldingPOI()) {
+                    InteriorMapManager.Instance.PlaceHeldPOI(this);
+                }
             }
         } else if (objHere is TileObject || objHere is SpecialToken) {
             if (inputButton == PointerEventData.InputButton.Middle) {
@@ -488,9 +485,9 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
                     (objHere as TileObject).LogActionHistory();
                 }
             } else if (inputButton == PointerEventData.InputButton.Right) {
-                //if (!InteriorMapManager.Instance.IsHoldingPOI()) {
-                //    InteriorMapManager.Instance.HoldPOI(objHere);
-                //}
+                if (!InteriorMapManager.Instance.IsHoldingPOI()) {
+                    InteriorMapManager.Instance.HoldPOI(objHere);
+                }
             } else {
                 //parentAreaMap.ShowIntelItemAt(this, InteractionManager.Instance.CreateNewIntel(objHere));
                 if (objHere is TileObject) {
@@ -509,7 +506,13 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         //    UIManager.Instance.ShowCharacterInfo(occupant);
         //}
     }
-    #endregion    
+    #endregion
+
+    #region Tile Objects
+    public void SetReservedType(TILE_OBJECT_TYPE reservedType) {
+        reservedObjectType = reservedType;
+    }
+    #endregion
 }
 
 [System.Serializable]

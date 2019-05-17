@@ -18,7 +18,12 @@ public class DropSupply : GoapAction {
     }
     public override void PerformActualAction() {
         base.PerformActualAction();
-        SetState("Drop Success");
+        if (!isTargetMissing) {
+            SetState("Drop Success");
+        } else {
+            SetState("Target Missing");
+        }
+        
     }
     protected override int GetCost() {
         return 3;

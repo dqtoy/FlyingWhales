@@ -214,10 +214,6 @@ public class GoapPlanJob : JobQueueItem {
     public void AllowDeadTargets() {
         allowDeadTargets = true;
     }
-    public bool CanCraftItemChecker(Character character) {
-        SPECIAL_TOKEN token = (SPECIAL_TOKEN)otherData[INTERACTION_TYPE.CRAFT_ITEM][0];
-        return token.CanBeCraftedBy(character);
-    }
     #endregion
 }
 

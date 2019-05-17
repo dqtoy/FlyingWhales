@@ -19,6 +19,7 @@ public class GoapPlan {
     public GOAP_PLAN_STATE state { get; private set; }
     public GOAP_CATEGORY category { get; private set; }
     public GoapPlanJob job { get; private set; }
+    public bool isPriority { get; private set; }
 
     public string dropPlanCallStack;
 
@@ -41,12 +42,10 @@ public class GoapPlan {
         hasShownNotification = false;
         //ConstructAllNodes();
     }
-
     public void SetNextNode() {
         previousNode = currentNode;
         currentNode = currentNode.parent;
     }
-
     public void EndPlan() {
         isEnd = true;
         startingNode = null;
@@ -112,16 +111,15 @@ public class GoapPlan {
         }
         return log;
     }
-
     public string GetPlanSummary() {
         string summary = GetGoalSummary();
+        summary += "\nis Priority?: " + isPriority.ToString();
         summary += "\nPlanned Actions are: ";
         for (int i = 0; i < allNodes.Count; i++) {
             summary += "\n" + (i + 1) + ". " + allNodes[i].action.goapName + " - " + allNodes[i].action.poiTarget.name;
         }
         return summary;
     }
-
     public string GetGoalSummary() {
         string summary = "Plan with goal: ";
         for (int i = 0; i < goalEffects.Length; i++) {
@@ -129,7 +127,6 @@ public class GoapPlan {
         }
         return summary;
     }
-
     public void OnActionInPlanFinished(Character actor, GoapAction action, string result) {
         if (endNode == null || action == endNode.action) {
             if (result == InteractionManager.Goap_State_Success) {
@@ -138,5 +135,9 @@ public class GoapPlan {
                 SetPlanState(GOAP_PLAN_STATE.FAILED);
             }
         }
+    }
+
+    public void SetPriorityState(bool state) {
+        isPriority = state;
     }
 }
