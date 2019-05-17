@@ -1288,8 +1288,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         if (role.roleType == CHARACTER_ROLE.SOLDIER && isAtHomeArea && targetCharacter.isAtHomeArea && !targetCharacter.isDead) {
             if (!HasRelationshipOfEffectWith(targetCharacter, TRAIT_EFFECT.POSITIVE)) {
-                if (CreateApprehendJobFor(targetCharacter) != null) {
-                    hasCreatedJob = true;
+                if (targetCharacter.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
+                    if (CreateApprehendJobFor(targetCharacter) != null) {
+                        hasCreatedJob = true;
+                    }
                 }
             }
         }
