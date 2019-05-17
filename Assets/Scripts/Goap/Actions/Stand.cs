@@ -9,6 +9,7 @@ public class Stand : GoapAction {
         shouldIntelNotificationOnlyIfActorIsActive = true;
         isNotificationAnIntel = false;
         canBeAddedToMemory = false;
+        shouldAddLogs = false;
     }
 
     #region Overrides
