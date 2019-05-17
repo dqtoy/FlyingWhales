@@ -21,7 +21,9 @@ public class Ore : TileObject {
     }
     public override void SetPOIState(POI_STATE state) {
         base.SetPOIState(state);
-        gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this); //update visual based on state
+        if (gridTileLocation != null) {
+            gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this); //update visual based on state
+        }
     }
     public override void SetGridTileLocation(LocationGridTile tile) {
         //if (tile != null) {

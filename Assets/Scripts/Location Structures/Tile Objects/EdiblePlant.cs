@@ -27,11 +27,14 @@ public class EdiblePlant : TileObject {
     //}
     public override void SetPOIState(POI_STATE state) {
         base.SetPOIState(state);
-        //Debug.Log(GameManager.Instance.TodayLogString() + "Set " + this.ToString() + "' state to " + state.ToString());
-        gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this); //update visual based on state
-        if (state == POI_STATE.INACTIVE) {
-            ScheduleCooldown();
+        if (gridTileLocation != null) {
+            //Debug.Log(GameManager.Instance.TodayLogString() + "Set " + this.ToString() + "' state to " + state.ToString());
+            gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this); //update visual based on state
+            if (state == POI_STATE.INACTIVE) {
+                ScheduleCooldown();
+            }
         }
+        
     }
     public override string ToString() {
         return "Edible Plant " + id.ToString();

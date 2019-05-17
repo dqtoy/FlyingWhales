@@ -1380,7 +1380,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         return character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.ADVENTURER; // && !HasRelationshipOfEffectWith(targetCharacter, TRAIT_EFFECT.POSITIVE)
     }
     private bool CreateBuryJob(Character targetCharacter) {
-        if (targetCharacter.isDead && targetCharacter.race != RACE.SKELETON && !HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
+        if (targetCharacter.isDead && targetCharacter.race != RACE.SKELETON && !HasTraitOf(TRAIT_TYPE.CRIMINAL) && this.isAtHomeArea) {
             //check first if the target character already has a bury job in this location
             GoapPlanJob buryJob = homeArea.jobQueue.GetJob("Bury", targetCharacter) as GoapPlanJob;
             if (buryJob == null) {
@@ -2914,6 +2914,19 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         Messenger.Broadcast(Signals.TRAIT_ADDED, this, trait);
 
+        if (GameManager.Instance.gameHasStarted) {
+            if (trait.name == "Hungry" || trait.name == "Starving") {
+                Debug.Log("Planning fullness recovery from gain trait");
+                PlanFullnessRecoveryActions();
+            } else if (trait.name == "Lonely" || trait.name == "Forlorn") {
+                Debug.Log("Planning happiness recovery from gain trait");
+                PlanHappinessRecoveryActions();
+            } else if (trait.name == "Tired" || trait.name == "Exhausted") {
+                Debug.Log("Planning tiredness recovery from gain trait");
+                PlanTirednessRecoveryActions();
+            }
+        }
+        
         if (trait is RelationshipTrait) {
             RelationshipTrait rel = trait as RelationshipTrait;
             AddRelationship(rel.targetCharacter, rel);
@@ -4822,7 +4835,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (isForlorn) {
             RemoveTrait("Lonely");
             if (AddTrait("Forlorn")) {
-                RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "depressed");
+                RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "forlorn");
             }
             //PlanHappinessRecoveryActions();
         } else if (happiness <= HAPPINESS_THRESHOLD_1) {

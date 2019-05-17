@@ -106,7 +106,7 @@ public class CharacterState {
         stateComponent.SetStateToDo(this);
         targetArea = area;
         if(targetArea == null || targetArea == stateComponent.character.specificLocation) {
-            Debug.Log(GameManager.Instance.TodayLogString() + "Entering " + stateName + " for " + stateComponent.character.name);
+            Debug.Log(GameManager.Instance.TodayLogString() + "Entering " + stateName + " for " + stateComponent.character.name + " targetting " + targetCharacter?.name);
             StartState();
         } else {
             CreateTravellingThoughtBubbleLog(targetArea);
