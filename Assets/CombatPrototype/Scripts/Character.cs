@@ -1288,10 +1288,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         if (role.roleType == CHARACTER_ROLE.SOLDIER && isAtHomeArea && targetCharacter.isAtHomeArea && !targetCharacter.isDead) {
             if (!HasRelationshipOfEffectWith(targetCharacter, TRAIT_EFFECT.POSITIVE)) {
-                if (targetCharacter.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
-                    if (targetCharacter.CreateApprehendJobForThisCharacter(this) != null) {
-                        hasCreatedJob = true;
-                    }
+                if (CreateApprehendJobFor(targetCharacter) != null) {
+                    hasCreatedJob = true;
                 }
             }
         }
@@ -1426,23 +1424,45 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     private bool CanCharacterTakeRestrainJob(Character character, Character targetCharacter) {
         return (character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.CIVILIAN) && !HasRelationshipOfEffectWith(targetCharacter, TRAIT_EFFECT.POSITIVE); // || character.role.roleType == CHARACTER_ROLE.ADVENTURER
     }
-    public GoapPlanJob CreateApprehendJobForThisCharacter(Character actor) {
+    /// <summary>
+    /// Make this character create an apprehend job at his home location targetting a specific character.
+    /// </summary>
+    /// <param name="targetCharacter">The character to be apprehended.</param>
+    /// <returns>The created job.</returns>
+    public GoapPlanJob CreateApprehendJobFor(Character targetCharacter, bool assignSelfToJob = false) {
         //if (homeArea.id == specificLocation.id) {
-        if (!HasJobTargettingThisCharacter("Apprehend") && GetTrait("Restrained") == null && !this.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
+        if (!targetCharacter.HasJobTargettingThisCharacter("Apprehend") && targetCharacter.GetTrait("Restrained") == null && !this.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
             GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = homeArea, targetPOI = this };
             GoapPlanJob job = new GoapPlanJob("Apprehend", goapEffect);
             job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = this }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
             job.SetCanTakeThisJobChecker(CanCharacterTakeApprehendJob);
             job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
             homeArea.jobQueue.AddJobInQueue(job, true);
-            if(actor != null) {
-                homeArea.jobQueue.AssignCharacterToJob(job, actor);
+            if(assignSelfToJob) {
+                homeArea.jobQueue.AssignCharacterToJob(job, this);
             }
             return job;
         }
         return null;
         //}
     }
+    //public GoapPlanJob CreateApprehendJobForThisCharacter(Character actor) {
+    //    //if (homeArea.id == specificLocation.id) {
+    //    if (!HasJobTargettingThisCharacter("Apprehend") && GetTrait("Restrained") == null && !this.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
+    //        GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = homeArea, targetPOI = this };
+    //        GoapPlanJob job = new GoapPlanJob("Apprehend", goapEffect);
+    //        job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = this }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
+    //        job.SetCanTakeThisJobChecker(CanCharacterTakeApprehendJob);
+    //        job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
+    //        homeArea.jobQueue.AddJobInQueue(job, true);
+    //        if (actor != null) {
+    //            homeArea.jobQueue.AssignCharacterToJob(job, actor);
+    //        }
+    //        return job;
+    //    }
+    //    return null;
+    //    //}
+    //}
     private bool CanCharacterTakeApprehendJob(Character character, Character targetCharacter) {
         return character.role.roleType == CHARACTER_ROLE.SOLDIER && !HasRelationshipOfEffectWith(targetCharacter, TRAIT_EFFECT.POSITIVE);
     }
@@ -6027,7 +6047,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 if (this.faction != FactionManager.Instance.neutralFaction && actor.faction == this.faction) {
                     //only add apprehend job if the criminal is part of this characters faction
                     actor.AddCriminalTrait(committedCrime);
-                    actor.CreateApprehendJobForThisCharacter(null);
+                    CreateApprehendJobFor(actor);
                     //job = new GoapPlanJob("Apprehend", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = homeArea, targetPOI = actor });
                     //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = actor }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
                     //job.SetCanTakeThisJobChecker(CanCharacterTakeApprehendJob);
@@ -6046,7 +6066,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = actor }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
                     //job.SetCanTakeThisJobChecker(CanCharacterTakeApprehendJob);
                     //homeArea.jobQueue.AddJobInQueue(job);
-                    job = actor.CreateApprehendJobForThisCharacter(null);
+                    job = CreateApprehendJobFor(actor);
                     if (job != null) {
                         homeArea.jobQueue.ForceAssignCharacterToJob(job, this);
                     }

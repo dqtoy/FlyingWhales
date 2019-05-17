@@ -209,7 +209,7 @@ public class CharacterMarker : PooledObject {
                 if (this.character.role.roleType == CHARACTER_ROLE.SOLDIER && this.character.isAtHomeArea && characterThatGainedTrait.isAtHomeArea && !characterThatGainedTrait.isDead) {
                     if (!this.character.HasRelationshipOfEffectWith(characterThatGainedTrait, TRAIT_EFFECT.POSITIVE)) {
                         if (characterThatGainedTrait.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
-                            GoapPlanJob job = characterThatGainedTrait.CreateApprehendJobForThisCharacter(this.character);
+                            GoapPlanJob job = this.character.CreateApprehendJobFor(characterThatGainedTrait, true);
                         }
                     }
                 }
