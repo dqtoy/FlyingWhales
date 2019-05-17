@@ -310,6 +310,10 @@ public class JobQueue {
         for (int i = 0; i < allJobs.Count; i++) {
             JobQueueItem currJob = allJobs[i];
             if (currJob.assignedCharacter == character) {
+                if (character.currentAction != null && character.currentAction.parentPlan.job != null && character.currentAction.parentPlan.job == currJob) {
+                    //skip
+                    continue;
+                }
                 summary += "\nUnassigned " + character.name + " from job " + currJob.name; 
                 currJob.UnassignJob(false);
             }

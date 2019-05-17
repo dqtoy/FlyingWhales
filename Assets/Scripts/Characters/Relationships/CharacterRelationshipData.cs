@@ -343,6 +343,7 @@ public class CharacterRelationshipData {
         } else {
             text += "None";
         }
+        text += "\n\t<b>Flirtation Count:</b> " + flirtationCount.ToString();
         return text;
     }
     #endregion

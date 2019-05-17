@@ -1389,7 +1389,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 buryJob.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, targetPOI = targetCharacter }, INTERACTION_TYPE.CARRY_CORPSE);
                 buryJob.SetCanTakeThisJobChecker(CanTakeBuryJob);
                 buryJob.AllowDeadTargets();
-                homeArea.jobQueue.AddJobInQueue(buryJob, false, false);
+                homeArea.jobQueue.AddJobInQueue(buryJob, true, false);
             }
             //if the character is a soldier or civilian, and the bury job is currently unassigned, take the job
             if (buryJob.assignedCharacter == null && (role.roleType == CHARACTER_ROLE.SOLDIER || role.roleType == CHARACTER_ROLE.CIVILIAN)) {
@@ -2914,18 +2914,18 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         Messenger.Broadcast(Signals.TRAIT_ADDED, this, trait);
 
-        if (GameManager.Instance.gameHasStarted) {
-            if (trait.name == "Hungry" || trait.name == "Starving") {
-                Debug.Log("Planning fullness recovery from gain trait");
-                PlanFullnessRecoveryActions();
-            } else if (trait.name == "Lonely" || trait.name == "Forlorn") {
-                Debug.Log("Planning happiness recovery from gain trait");
-                PlanHappinessRecoveryActions();
-            } else if (trait.name == "Tired" || trait.name == "Exhausted") {
-                Debug.Log("Planning tiredness recovery from gain trait");
-                PlanTirednessRecoveryActions();
-            }
-        }
+        //if (GameManager.Instance.gameHasStarted) {
+        //    if (trait.name == "Hungry" || trait.name == "Starving") {
+        //        Debug.Log("Planning fullness recovery from gain trait");
+        //        PlanFullnessRecoveryActions();
+        //    } else if (trait.name == "Lonely" || trait.name == "Forlorn") {
+        //        Debug.Log("Planning happiness recovery from gain trait");
+        //        PlanHappinessRecoveryActions();
+        //    } else if (trait.name == "Tired" || trait.name == "Exhausted") {
+        //        Debug.Log("Planning tiredness recovery from gain trait");
+        //        PlanTirednessRecoveryActions();
+        //    }
+        //}
         
         if (trait is RelationshipTrait) {
             RelationshipTrait rel = trait as RelationshipTrait;
@@ -3840,23 +3840,23 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                         }
                     }
                 }
-                if (currentTimeOfDay == TIME_IN_WORDS.MORNING || currentTimeOfDay == TIME_IN_WORDS.AFTERNOON) {
-                    int chance = UnityEngine.Random.Range(0, 100);
-                    if (chance < 15) {
-                        log += "\n-Morning or Afternoon: " + name + " will do action Daydream";
-                        PlanIdle(INTERACTION_TYPE.DAYDREAM, this);
-                        return log;
-                    }
-                }
-                int guitarChance = UnityEngine.Random.Range(0, 100);
-                if (guitarChance < 15) {
-                    TileObject guitar = GetUnoccupiedHomeTileObject(TILE_OBJECT_TYPE.GUITAR);
-                    if (guitar != null) {
-                        log += "\n-" + name + " will do action Play Guitar on " + guitar.ToString();
-                        PlanIdle(INTERACTION_TYPE.PLAY_GUITAR, guitar);
-                        return log;
-                    }
-                }
+                //if (currentTimeOfDay == TIME_IN_WORDS.MORNING || currentTimeOfDay == TIME_IN_WORDS.AFTERNOON) {
+                //    int chance = UnityEngine.Random.Range(0, 100);
+                //    if (chance < 15) {
+                //        log += "\n-Morning or Afternoon: " + name + " will do action Daydream";
+                //        PlanIdle(INTERACTION_TYPE.DAYDREAM, this);
+                //        return log;
+                //    }
+                //}
+                //int guitarChance = UnityEngine.Random.Range(0, 100);
+                //if (guitarChance < 15) {
+                //    TileObject guitar = GetUnoccupiedHomeTileObject(TILE_OBJECT_TYPE.GUITAR);
+                //    if (guitar != null) {
+                //        log += "\n-" + name + " will do action Play Guitar on " + guitar.ToString();
+                //        PlanIdle(INTERACTION_TYPE.PLAY_GUITAR, guitar);
+                //        return log;
+                //    }
+                //}
 
                 int sitChance = UnityEngine.Random.Range(0, 100);
                 if (sitChance < 50) {
