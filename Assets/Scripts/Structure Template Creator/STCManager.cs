@@ -17,7 +17,9 @@ public class STCManager : MonoBehaviour {
     [SerializeField] private Tilemap objectsTilemap;
     [SerializeField] private Tilemap detailsTilemap;
     [SerializeField] private Transform connectorsParent;
+    [SerializeField] private Transform furnitureParent;
     [SerializeField] private GameObject connectorPrefab;
+    [SerializeField] private GameObject furnitureSpotPrefab;
 
     [SerializeField] private List<TileBase> allTileAssets;
 
@@ -100,6 +102,15 @@ public class STCManager : MonoBehaviour {
             Vector3 newPos = new Vector3(currPos.x + shiftBy.x, currPos.y + shiftBy.y, 0f);
             connectors[i].transform.localPosition = newPos;
         }
+
+        //shift Furniture spots
+        FurnitureSpotMono[] furnitureSpots = connectorsParent.GetComponentsInChildren<FurnitureSpotMono>();
+        for (int i = 0; i < furnitureSpots.Length; i++) {
+            Vector3 currPos = furnitureSpots[i].transform.localPosition;
+            //Vector3 actualPos = new Vector3(currPos.x - 0.5f, currPos.y - 0.5f, 0f);
+            Vector3 newPos = new Vector3(currPos.x + shiftBy.x, currPos.y + shiftBy.y, 0f);
+            furnitureSpots[i].transform.localPosition = newPos;
+        }
     }
 
     private void ShiftTilemapPosition(Tilemap map, BoundsInt bounds) {
@@ -126,11 +137,12 @@ public class STCManager : MonoBehaviour {
         TileTemplateData[] detailTiles = GetTileData(detailsTilemap, groundTilemap.cellBounds);
 
         ConnectorMono[] connectors = Utilities.GetComponentsInDirectChildren<ConnectorMono>(connectorsParent.gameObject);
+        FurnitureSpotMono[] furnitureSpots = Utilities.GetComponentsInDirectChildren<FurnitureSpotMono>(furnitureParent.gameObject);
 
         Debug.Log("Got " + groundTiles.Length + " tiles");
 
         StructureTemplate newTemplate = new StructureTemplate(groundTiles, wallTiles, objectTiles, detailTiles,
-            new Point(groundTilemap.cellBounds.size.x, groundTilemap.cellBounds.size.y), connectors);
+            new Point(groundTilemap.cellBounds.size.x, groundTilemap.cellBounds.size.y), connectors, furnitureSpots);
 
         string dataAsJson = JsonUtility.ToJson(newTemplate);
 
@@ -176,6 +188,18 @@ public class STCManager : MonoBehaviour {
                 cm.allowedStructureType = connector.allowedStructureType;
             }
         }
+
+        //furniture spots
+        Utilities.DestroyChildren(furnitureParent);
+        if (st.furnitureSpots != null) {
+            for (int i = 0; i < st.furnitureSpots.Length; i++) {
+                FurnitureSpot spot = st.furnitureSpots[i];
+                GameObject newSpot = GameObject.Instantiate(furnitureSpotPrefab, furnitureParent);
+                newSpot.transform.localPosition = new Vector3(spot.location.x + 0.5f, spot.location.y + 0.5f, 0);
+                FurnitureSpotMono cm = newSpot.GetComponent<FurnitureSpotMono>();
+                cm.allowedFurnitureTypes = spot.allowedFurnitureTypes;
+            }
+        }
     }
 
     private void DrawTiles(Tilemap tilemap, TileTemplateData[] data) {
@@ -217,6 +241,7 @@ public class STCManager : MonoBehaviour {
         //    Debug.Log(t.name);
     }
 
+    #region Connectors
     public void CreateNewConnector() {
         GameObject newConnector = GameObject.Instantiate(connectorPrefab, connectorsParent);
         newConnector.transform.localPosition = Vector3.zero;
@@ -224,6 +249,50 @@ public class STCManager : MonoBehaviour {
         //cm.connectionDirection = connector.neededDirection;
         //cm.connectionType = connector.allowedStructureType;
     }
+    #endregion
+
+    #region Furniture Spots
+    public FurnitureSpotMono CreateNewFurnitureSpot() {
+        GameObject newConnector = GameObject.Instantiate(furnitureSpotPrefab, furnitureParent);
+        newConnector.transform.localPosition = Vector3.zero;
+        return newConnector.GetComponent<FurnitureSpotMono>();
+        //ConnectorMono cm = newConnector.GetComponent<ConnectorMono>();
+        //cm.connectionDirection = connector.neededDirection;
+        //cm.connectionType = connector.allowedStructureType;
+    }
+    public FurnitureSpotMono CreateNewFurnitureSpot(Vector3 position) {
+        GameObject newConnector = GameObject.Instantiate(furnitureSpotPrefab, furnitureParent);
+        newConnector.transform.localPosition = position;
+        return newConnector.GetComponent<FurnitureSpotMono>();
+        //ConnectorMono cm = newConnector.GetComponent<ConnectorMono>();
+        //cm.connectionDirection = connector.neededDirection;
+        //cm.connectionType = connector.allowedStructureType;
+    }
+    public void CreateFurnitureSpotsFromPlacedObjects() {
+        groundTilemap.CompressBounds();
+        PlaceAtOrigin();
+        TileTemplateData[] data = GetTileData(objectsTilemap, groundTilemap.cellBounds);
+        for (int i = 0; i < data.Length; i++) {
+            TileTemplateData currData = data[i];
+            if (!string.IsNullOrEmpty(currData.tileAssetName)) {
+                List<FURNITURE_TYPE> allowedFurnitureTypes = new List<FURNITURE_TYPE>();
+                if (currData.tileAssetName.Contains("Bed")) {
+                    allowedFurnitureTypes.Add(FURNITURE_TYPE.BED);
+                } else if (currData.tileAssetName.Contains("Table")) {
+                    allowedFurnitureTypes.Add(FURNITURE_TYPE.TABLE);
+                } else if (currData.tileAssetName.Contains("Desk")) {
+                    allowedFurnitureTypes.Add(FURNITURE_TYPE.DESK);
+                } else if (currData.tileAssetName.Contains("Guitar")) {
+                    allowedFurnitureTypes.Add(FURNITURE_TYPE.GUITAR);
+                }
+                FurnitureSpotMono mono = CreateNewFurnitureSpot(currData.centeredTilePosition);
+                mono.allowedFurnitureTypes = allowedFurnitureTypes;
+            }
+        }
+
+    }
+    #endregion
+
 
     #region For Testing
     private Dictionary<STRUCTURE_TYPE, int> testingStructures = new Dictionary<STRUCTURE_TYPE, int>() {
@@ -323,15 +392,17 @@ public class StructureTemplate {
     public TileTemplateData[] objectTiles;
     public TileTemplateData[] detailTiles;
     public StructureConnector[] connectors;
+    public FurnitureSpot[] furnitureSpots;
 
     public StructureTemplate(TileTemplateData[] ground, TileTemplateData[] walls,
-        TileTemplateData[] objects, TileTemplateData[] details, Point size, ConnectorMono[] connectorMonos) {
+        TileTemplateData[] objects, TileTemplateData[] details, Point size, ConnectorMono[] connectorMonos, FurnitureSpotMono[] furnitureMonos) {
         this.size = size;
         groundTiles = ground;
         structureWallTiles = walls;
         objectTiles = objects;
         detailTiles = details;
         connectors = ConvertToStructureConnectors(connectorMonos);
+        furnitureSpots = ConvertToFurnitureSpots(furnitureMonos);
 
         //groundTiles = Convert(ground);
         //structureWallTiles = Convert(walls);
@@ -352,7 +423,17 @@ public class StructureTemplate {
         }
         return sc;
     }
-
+    private FurnitureSpot[] ConvertToFurnitureSpots(FurnitureSpotMono[] monos) {
+        FurnitureSpot[] sc = new FurnitureSpot[monos.Length];
+        for (int i = 0; i < sc.Length; i++) {
+            FurnitureSpotMono fs = monos[i];
+            sc[i] = new FurnitureSpot() {
+                allowedFurnitureTypes = fs.allowedFurnitureTypes,
+                location = new Vector3Int((int)(fs.transform.localPosition.x - 0.5f), (int)(fs.transform.localPosition.y - 0.5f), 0)
+            };
+        }
+        return sc;
+    }
 
     #region Utilities
     public bool HasConnectorsForStructure(Dictionary<STRUCTURE_TYPE, List<LocationStructure>> structures) {
@@ -470,6 +551,10 @@ public class TileTemplateData {
     public Vector3 tilePosition;
     public string tileAssetName;
     public Matrix4x4 matrix;
+
+    public Vector3 centeredTilePosition {
+        get { return new Vector3(tilePosition.x + 0.5f, tilePosition.y + 0.5f, tilePosition.z); }
+    }
     public TileTemplateData(TileBase tb, Matrix4x4 m, Vector3 pos) {
         if (tb == null) {
             tileAssetName = string.Empty;

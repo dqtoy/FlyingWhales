@@ -401,10 +401,20 @@ public class CharacterManager : MonoBehaviour {
         }
         return null;
     }
+    /// <summary>
+    /// Add a one way relationship to a character.
+    /// </summary>
+    /// <param name="currCharacter">The character that will gain the relationship.</param>
+    /// <param name="targetCharacter">The character that the new relationship is targetting.</param>
+    /// <param name="rel">The type of relationship to create.</param>
+    /// <param name="triggerOnAdd">Should this trigger the trait's OnAdd Function.</param>
+    /// <returns>The created relationship data.</returns>
+    public CharacterRelationshipData CreateNewOneWayRelationship(Character currCharacter, Character targetCharacter, RELATIONSHIP_TRAIT rel, bool triggerOnAdd = true) {
+        currCharacter.AddTrait(CreateRelationshipTrait(rel, targetCharacter), null, null, null, triggerOnAdd);
+        return currCharacter.GetCharacterRelationshipData(targetCharacter);
+    }
     public CharacterRelationshipData CreateNewRelationshipBetween(Character currCharacter, Character targetCharacter, RELATIONSHIP_TRAIT rel, bool triggerOnAdd = true) {
         RELATIONSHIP_TRAIT pair = GetPairedRelationship(rel);
-        //if (currCharacter.CanHaveRelationshipWith(rel, targetCharacter)
-        //    && targetCharacter.CanHaveRelationshipWith(pair, currCharacter)) {
 
         currCharacter.AddTrait(CreateRelationshipTrait(rel, targetCharacter), null, null, null, triggerOnAdd);
         targetCharacter.AddTrait(CreateRelationshipTrait(pair, currCharacter), null, null, null, triggerOnAdd);
@@ -415,13 +425,6 @@ public class CharacterManager : MonoBehaviour {
         }
 
         return currCharacter.GetCharacterRelationshipData(targetCharacter);
-            //else {
-            //    Debug.Log(currCharacter.name + " and " + targetCharacter.name + " became " + rel.ToString() + " - " + pair.ToString());
-            //}
-
-        //} else {
-        //    Debug.LogWarning(currCharacter.name + " and " + targetCharacter.name + " cannot have relationship " + rel.ToString() + " - " + pair.ToString());
-        //}
     }
     public void RemoveRelationshipBetween(Character character, Character targetCharacter, RELATIONSHIP_TRAIT rel, bool triggerOnRemove = true, bool useDisabled = false) {
         if (!character.relationships.ContainsKey(targetCharacter)

@@ -5,7 +5,10 @@ using UnityEngine;
 
 public class Dwelling : LocationStructure {
 
+    
+
     public List<Character> residents { get; private set; }
+    public Dictionary<FACILITY_TYPE, int> facilities { get; private set; }
 
     public Character owner {
         get { return residents.ElementAtOrDefault(0); }
@@ -14,8 +17,10 @@ public class Dwelling : LocationStructure {
     public Dwelling(Area location, bool isInside) 
         : base(STRUCTURE_TYPE.DWELLING, location, isInside) {
         residents = new List<Character>();
+        InitializeFacilities();
     }
 
+    #region Residents
     public void AddResident(Character character) {
         if (!residents.Contains(character)) {
             residents.Add(character);
@@ -36,11 +41,9 @@ public class Dwelling : LocationStructure {
         //}
         //return false;
     }
-
     public override bool IsOccupied() {
         return residents.Count > 0;
     }
-
     public bool CanBeResidentHere(Character character) {
         if (this.IsFull()) {
             return false;
@@ -58,7 +61,9 @@ public class Dwelling : LocationStructure {
         }
         return false;
     }
+    #endregion
 
+    #region Misc
     public override string GetNameRelativeTo(Character character) {
         if (character.homeStructure == this) {
             //- Dwelling where Actor Resides: "at [his/her] home"
@@ -83,4 +88,63 @@ public class Dwelling : LocationStructure {
             return "an empty house";
         }
     }
+    #endregion
+
+    #region Overrides
+    public override bool AddPOI(IPointOfInterest poi, LocationGridTile tileLocation = null, bool placeAsset = true) {
+        if(base.AddPOI(poi, tileLocation, placeAsset)) {
+            if (poi is TileObject) {
+                UpdateFacilityValues();
+            }
+            return true;
+        }
+        return false;
+    }
+    public override bool RemovePOI(IPointOfInterest poi, Character removedBy = null) {
+        if (base.RemovePOI(poi, removedBy)) {
+            if (poi is TileObject) {
+                UpdateFacilityValues();
+            }
+            return true;
+        }
+        return false;
+    }
+    #endregion
+
+    #region Facilities
+    private void InitializeFacilities() {
+        facilities = new Dictionary<FACILITY_TYPE, int>();
+        FACILITY_TYPE[] facilityTypes = Utilities.GetEnumValues<FACILITY_TYPE>();
+        for (int i = 0; i < facilityTypes.Length; i++) {
+            facilities.Add(facilityTypes[i], 0);
+        }
+    }
+    private void UpdateFacilityValues() {
+        FACILITY_TYPE[] facilityTypes = Utilities.GetEnumValues<FACILITY_TYPE>();
+        for (int i = 0; i < facilityTypes.Length; i++) {
+            facilities[facilityTypes[i]] = 0;
+        }
+        List<TileObject> objects = GetTileObjects();
+        for (int i = 0; i < objects.Count; i++) {
+            TileObject currObj = objects[i];
+            switch (currObj.tileObjectType) {
+                case TILE_OBJECT_TYPE.GUITAR:
+                    facilities[FACILITY_TYPE.HAPPINESS_RECOVERY] += 10;
+                    break;
+                case TILE_OBJECT_TYPE.TABLE:
+                    facilities[FACILITY_TYPE.FULLNESS_RECOVERY] += 20;
+                    facilities[FACILITY_TYPE.SIT_DOWN_SPOT] += 5;
+                    break;
+                case TILE_OBJECT_TYPE.BED:
+                    facilities[FACILITY_TYPE.TIREDNESS_RECOVERY] += 20;
+                    break;
+                case TILE_OBJECT_TYPE.DESK:
+                    facilities[FACILITY_TYPE.SIT_DOWN_SPOT] += 5;
+                    break;
+            }
+        }
+
+    }
+    #endregion
+
 }

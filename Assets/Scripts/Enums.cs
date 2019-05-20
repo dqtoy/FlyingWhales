@@ -1436,6 +1436,8 @@ public enum CRIME {
     MURDER,
     [SubcategoryOf(CRIME_CATEGORY.SERIOUS)]
     ABERRATION,
+    [SubcategoryOf(CRIME_CATEGORY.INFRACTIONS)]
+    INFIDELITY,
 }
 public enum CHARACTER_MOOD {
     DARK, BAD, GOOD, GREAT,
@@ -1443,6 +1445,8 @@ public enum CHARACTER_MOOD {
 public enum SEXUALITY {
     STRAIGHT, BISEXUAL, GAY
 }
+public enum FACILITY_TYPE { HAPPINESS_RECOVERY, FULLNESS_RECOVERY, TIREDNESS_RECOVERY, SIT_DOWN_SPOT }
+public enum FURNITURE_TYPE { BED, TABLE, DESK, GUITAR, }
 
 #region Crime Subcategories
 [System.AttributeUsage(System.AttributeTargets.Field)]
@@ -1523,6 +1527,16 @@ public static class Extensions {
             case INTERACTION_TYPE.TILE_OBJECT_DESTROY:
             case INTERACTION_TYPE.CURSE_CHARACTER:
             case INTERACTION_TYPE.RESTRAIN_CHARACTER:
+                return true;
+            default:
+                return false;
+        }
+    }
+    public static bool CanBeReplaced(this INTERACTION_TYPE type) {
+        switch (type) {
+            case INTERACTION_TYPE.DRINK:
+            case INTERACTION_TYPE.EAT_DWELLING_TABLE:
+            case INTERACTION_TYPE.SIT:
                 return true;
             default:
                 return false;

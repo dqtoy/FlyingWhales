@@ -29,9 +29,15 @@ public class STCManagerEditor : Editor {
         if (GUILayout.Button("Create Connector")) {
             stc.CreateNewConnector();
         }
-        if (GUILayout.Button("Generate Test Town")) {
-            stc.GenerateTestTown();
+        if (GUILayout.Button("Create Furniture Spot")) {
+            stc.CreateNewFurnitureSpot();
         }
+        if (GUILayout.Button("Create Furniture Spots From Placed Objects")) {
+            stc.CreateFurnitureSpotsFromPlacedObjects();
+        }
+        //if (GUILayout.Button("Generate Test Town")) {
+        //    stc.GenerateTestTown();
+        //}
     }
 }
 #endif

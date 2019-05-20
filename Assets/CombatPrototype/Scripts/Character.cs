@@ -5643,6 +5643,24 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             return;
         }
 
+        //if (result == InteractionManager.Goap_State_Fail) {
+        //    //if the last action of the plan failed and that action type can be replaced
+        //    if (action.goapType.CanBeReplaced()) {
+        //        //find a similar action that is advertised by another object, in the same structure
+        //        //if there is any, insert that action into the current plan, then do that next
+        //        List<TileObject> objs = currentStructure.GetTileObjectsThatAdvertise(action.goapType);
+        //        if (objs.Count > 0) {
+        //            TileObject chosenObject = objs[UnityEngine.Random.Range(0, objs.Count)];
+        //            GoapAction newAction = chosenObject.Advertise(action.goapType, this);
+        //            if (newAction != null) {
+        //                plan.InsertAction(newAction);
+        //            } else {
+        //                Debug.LogWarning(chosenObject.ToString() + " did not return an action of type " + action.goapType.ToString());
+        //            }
+        //        }
+        //    }
+        //}
+
         log += "\nPlan is setting next action to be done...";
         plan.SetNextNode();
         if (plan.currentNode == null) {
