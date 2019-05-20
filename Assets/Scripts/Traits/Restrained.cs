@@ -32,6 +32,9 @@ public class Restrained : Trait {
     public override void SetCharacterResponsibleForTrait(Character character) {
         _responsibleCharacter = character;
     }
+    public override bool IsResponsibleForTrait(Character character) {
+        return _responsibleCharacter == character;
+    }
     public override string GetToolTipText() {
         if (_responsibleCharacter == null) {
             return description;
@@ -90,7 +93,7 @@ public class Restrained : Trait {
             _sourceCharacter.specificLocation.jobQueue.AddJobInQueue(job, true);
         }
     }
-    private bool CanCharacterTakeFeedJob(Character character) {
+    private bool CanCharacterTakeFeedJob(Character character, JobQueueItem job) {
         if (_sourceCharacter.specificLocation.IsResident(character)) {
             if(character.faction.id != FactionManager.Instance.neutralFaction.id) {
                 return character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.CIVILIAN;
@@ -107,7 +110,7 @@ public class Restrained : Trait {
             _sourceCharacter.gridTileLocation.structure.location.jobQueue.AddJobInQueue(job);
         }
     }
-    private bool CanDoJudgementJob(Character character) {
+    private bool CanDoJudgementJob(Character character, JobQueueItem job) {
         return character.role.roleType == CHARACTER_ROLE.NOBLE || character.role.roleType == CHARACTER_ROLE.LEADER;
     }
     public void SetIsPrisoner(bool state) {

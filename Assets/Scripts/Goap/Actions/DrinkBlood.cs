@@ -8,6 +8,7 @@ public class DrinkBlood : GoapAction {
     public DrinkBlood(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.DRINK_BLOOD, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         //actionLocationType = ACTION_LOCATION_TYPE.ON_TARGET;
         actionIconString = GoapActionStateDB.Eat_Icon;
+        doesNotStopTargetCharacter = true;
     }
 
     #region Overrides
@@ -82,10 +83,10 @@ public class DrinkBlood : GoapAction {
         int chance = UnityEngine.Random.Range(0, 100);
         if(chance < 95) {
             Lethargic lethargic = new Lethargic();
-            AddTraitTo(poiTarget, lethargic);
+            AddTraitTo(poiTarget, lethargic, actor);
         } else {
             Vampiric vampiric = new Vampiric();
-            AddTraitTo(poiTarget, vampiric);
+            AddTraitTo(poiTarget, vampiric, actor);
         }
     }
     //private void PreDrinkFail() {

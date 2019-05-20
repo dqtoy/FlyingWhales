@@ -31,9 +31,9 @@ public class CarryCharacter : GoapAction {
     //    base.FailAction();
     //    SetState("Target Missing");
     //}
-    public override void DoAction(GoapPlan plan) {
+    public override void DoAction() {
         SetTargetStructure();
-        base.DoAction(plan);
+        base.DoAction();
     }
     #endregion
 

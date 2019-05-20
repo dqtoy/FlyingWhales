@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Drink : GoapAction {
+    public Trait poisonedTrait { get; private set; }
+
     public Drink(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.DRINK, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         shouldIntelNotificationOnlyIfActorIsActive = true;
         validTimeOfDays = new TIME_IN_WORDS[] {
@@ -24,7 +26,8 @@ public class Drink : GoapAction {
         base.PerformActualAction();
         if (!isTargetMissing) {
             //SetState("Drink Success");
-            if (poiTarget.GetTrait("Poisoned") != null) {
+            poisonedTrait = poiTarget.GetTrait("Poisoned");
+            if (poisonedTrait != null) {
                 SetState("Drink Poisoned");
             } else {
                 SetState("Drink Success");
@@ -56,7 +59,7 @@ public class Drink : GoapAction {
     }
     public void AfterDrinkSuccess() {
         actor.AdjustDoNotGetLonely(-1);
-        AddTraitTo(actor, "Drunk");
+        AddTraitTo(actor, "Drunk", actor);
     }
     public void PreDrinkPoisoned() {
         actor.AdjustDoNotGetLonely(1);
@@ -70,7 +73,9 @@ public class Drink : GoapAction {
         int chance = UnityEngine.Random.Range(0, 2);
         if (chance == 0) {
             Sick sick = new Sick();
-            AddTraitTo(actor, sick);
+            for (int i = 0; i < poisonedTrait.responsibleCharacters.Count; i++) {
+                AddTraitTo(actor, sick, poisonedTrait.responsibleCharacters[i]);
+            }
         } else {
             if (parentPlan.job != null) {
                 parentPlan.job.SetCannotCancelJob(true);

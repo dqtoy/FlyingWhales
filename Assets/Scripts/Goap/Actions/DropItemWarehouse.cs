@@ -27,9 +27,9 @@ public class DropItemWarehouse : GoapAction {
     protected override void ConstructRequirement() {
         _requirementAction = Requirement;
     }
-    public override void DoAction(GoapPlan plan) {
+    public override void DoAction() {
         SetTargetStructure();
-        base.DoAction(plan);
+        base.DoAction();
     }
     public override void PerformActualAction() {
         base.PerformActualAction();

@@ -35,9 +35,9 @@ public class CarryCorpse : GoapAction {
     protected override int GetCost() {
         return 1;
     }
-    public override void DoAction(GoapPlan plan) {
+    public override void DoAction() {
         SetTargetStructure();
-        base.DoAction(plan);
+        base.DoAction();
     }
     #endregion
 

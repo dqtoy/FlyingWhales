@@ -1474,7 +1474,7 @@ public class Area {
             jobQueue.AddJobInQueue(stateJob);
         }
     }
-    private bool CanDoPatrolAndExplore(Character character) {
+    private bool CanDoPatrolAndExplore(Character character, JobQueueItem job) {
         return character.GetTrait("Injured") == null;
     }
     //private bool alreadyHasCancelBrew = false;
@@ -1526,10 +1526,10 @@ public class Area {
             }
         }        
     }
-    private bool CanCraftTool(Character character) {
+    private bool CanCraftTool(Character character, JobQueueItem job) {
         return SPECIAL_TOKEN.TOOL.CanBeCraftedBy(character);
     }
-    private bool CanBrewPotion(Character character) {
+    private bool CanBrewPotion(Character character, JobQueueItem job) {
         return SPECIAL_TOKEN.HEALING_POTION.CanBeCraftedBy(character);
     }
     private void CancelBrewPotion() {

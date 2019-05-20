@@ -32,6 +32,9 @@ public class Unconscious : Trait {
     public override void SetCharacterResponsibleForTrait(Character character) {
         _responsibleCharacter = character;
     }
+    public override bool IsResponsibleForTrait(Character character) {
+        return _responsibleCharacter == character;
+    }
     public override string GetToolTipText() {
         if (_responsibleCharacter == null) {
             return description;

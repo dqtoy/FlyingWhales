@@ -47,9 +47,9 @@ public class AssaultCharacter : GoapAction {
     //    base.FailAction();
     //    SetState("Target Missing");
     //}
-    public override void DoAction(GoapPlan plan) {
+    public override void DoAction() {
         SetTargetStructure();
-        base.DoAction(plan);
+        base.DoAction();
     }
     #endregion
 
@@ -68,7 +68,7 @@ public class AssaultCharacter : GoapAction {
             SetCommittedCrime(CRIME.MURDER);
         }
         currentState.AddLogFiller(loser, loser.name, LOG_IDENTIFIER.CHARACTER_3);
-        AddTraitTo(winner, "Combat Recovery");
+        AddTraitTo(winner, "Combat Recovery", loser);
         Injured injured = new Injured();
         AddTraitTo(loser, injured, winner);
         currentState.SetIntelReaction(State1And2Reactions);
@@ -92,7 +92,7 @@ public class AssaultCharacter : GoapAction {
             SetCommittedCrime(CRIME.ASSAULT);
         }
         currentState.AddLogFiller(loser, loser.name, LOG_IDENTIFIER.CHARACTER_3);
-        AddTraitTo(winner, "Combat Recovery");
+        AddTraitTo(winner, "Combat Recovery", loser);
         currentState.SetIntelReaction(State1And2Reactions);
     }
     public void AfterTargetKnockedOut() {
@@ -112,7 +112,7 @@ public class AssaultCharacter : GoapAction {
             SetCommittedCrime(CRIME.MURDER);
         }
         currentState.AddLogFiller(loser, loser.name, LOG_IDENTIFIER.CHARACTER_3);
-        AddTraitTo(winner, "Combat Recovery");
+        AddTraitTo(winner, "Combat Recovery", loser);
         currentState.SetIntelReaction(State3Reactions);
     }
     public void AfterTargetKilled() {

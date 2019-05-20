@@ -87,9 +87,9 @@ public class Hunt : GoapAction {
     //    base.FailAction();
     //    SetState("Target Missing");
     //}
-    public override void DoAction(GoapPlan plan) {
+    public override void DoAction() {
         SetTargetStructure();
-        base.DoAction(plan);
+        base.DoAction();
     }
     #endregion
 
@@ -113,8 +113,8 @@ public class Hunt : GoapAction {
     public void AfterTargetInjured() {
         Character target = poiTarget as Character;
         Injured injured = new Injured();
-        AddTraitTo(target, injured);
-        AddTraitTo(actor, "Combat Recovery");
+        AddTraitTo(target, injured, actor);
+        AddTraitTo(actor, "Combat Recovery", target);
     }
     public void PreTargetKilled() {
         Character target = poiTarget as Character;
@@ -130,7 +130,7 @@ public class Hunt : GoapAction {
     }
     public void PreTargetWon() {
         //currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        AddTraitTo(actor, "Combat Recovery");
+        AddTraitTo(actor, "Combat Recovery", poiTarget as Character);
     }
     //public void PreTargetMissing() {
     //    currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);

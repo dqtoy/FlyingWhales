@@ -86,7 +86,7 @@ public class ChatCharacter : GoapAction {
     //    }
     //    return false;
     //}
-    public override void DoAction(GoapPlan plan) {
+    public override void DoAction() {
         //CharacterRelationshipData relData = actor.GetCharacterRelationshipData(poiTarget as Character);
         //if (relData != null && relData.knownStructure != null) {
         //    _targetStructure = relData.knownStructure;
@@ -95,7 +95,7 @@ public class ChatCharacter : GoapAction {
         //}
         //_targetStructure = poiTarget.gridTileLocation.structure;
         SetTargetStructure();
-        base.DoAction(plan);
+        base.DoAction();
     }
     //public override void FailAction() {
     //    base.FailAction();

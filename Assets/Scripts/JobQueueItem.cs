@@ -12,8 +12,8 @@ public class JobQueueItem {
     public bool isPriority { get; private set; }
     public List<Character> blacklistedCharacters { get; private set; }
 
-    protected System.Func<Character, bool> _canTakeThisJob;
-    protected System.Func<Character, Character, bool> _canTakeThisJobWithTarget;
+    protected System.Func<Character, JobQueueItem, bool> _canTakeThisJob;
+    protected System.Func<Character, Character, JobQueueItem, bool> _canTakeThisJobWithTarget;
 
     public JobQueueItem(string name) {
         this.name = name;
@@ -33,7 +33,7 @@ public class JobQueueItem {
     public virtual bool OnRemoveJobFromQueue() { return true; }
     public virtual bool CanCharacterTakeThisJob(Character character) {
         if (_canTakeThisJob != null) {
-            if (_canTakeThisJob(character)) {
+            if (_canTakeThisJob(character, this)) {
                 return CanTakeJob(character);
             }
             return false;
@@ -57,10 +57,10 @@ public class JobQueueItem {
         
         assignedCharacter = character;
     }
-    public void SetCanTakeThisJobChecker(System.Func<Character, bool> function) {
+    public void SetCanTakeThisJobChecker(System.Func<Character, JobQueueItem, bool> function) {
         _canTakeThisJob = function;
     }
-    public void SetCanTakeThisJobChecker(System.Func<Character, Character, bool> function) {
+    public void SetCanTakeThisJobChecker(System.Func<Character, Character, JobQueueItem, bool> function) {
         _canTakeThisJobWithTarget = function;
     }
     public void SetCannotCancelJob(bool state) {

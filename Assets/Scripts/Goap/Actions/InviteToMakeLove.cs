@@ -107,7 +107,7 @@ public class InviteToMakeLove : GoapAction {
     }
     private void PreInviteFail() {
         //**After Effect 1**: Actor gains Annoyed trait.
-        AddTraitTo(actor, "Annoyed");
+        AddTraitTo(actor, "Annoyed", actor);
     }
     #endregion
 
