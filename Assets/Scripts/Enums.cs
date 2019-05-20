@@ -1443,6 +1443,11 @@ public enum CHARACTER_MOOD {
 public enum SEXUALITY {
     STRAIGHT, BISEXUAL, GAY
 }
+public enum RELATIONSHIP_TYPE {
+    NONE,
+    POSITIVE,
+    NEGATIVE,
+}
 
 #region Crime Subcategories
 [System.AttributeUsage(System.AttributeTargets.Field)]

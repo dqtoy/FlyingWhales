@@ -545,9 +545,9 @@ public class CharacterManager : MonoBehaviour {
                         if (chance < 20) relsToCreate = 1;
                         break;
                     case RELATIONSHIP_TRAIT.ENEMY:
-                        //- a character may have either zero (65%), one (30%) or two (5%) enemies
-                        if (chance < 65) relsToCreate = 0;
-                        else if (chance >= 65 && chance < 95) relsToCreate = 1;
+                        //- a character may have either zero (75%), one (20%) or two (5%) enemies
+                        if (chance < 75) relsToCreate = 0;
+                        else if (chance >= 75 && chance < 95) relsToCreate = 1;
                         else relsToCreate = 2;
                         break;
                     case RELATIONSHIP_TRAIT.FRIEND:
@@ -573,9 +573,10 @@ public class CharacterManager : MonoBehaviour {
                     for (int l = 0; l < allCharacters.Count; l++) {
                         Character otherCharacter = allCharacters[l];
                         if (currCharacter.id != otherCharacter.id) { //&& currCharacter.faction == otherCharacter.faction
-                            List<RELATIONSHIP_TRAIT> existingRels = currCharacter.GetAllRelationshipTraitTypesWith(otherCharacter);
+                            List<RELATIONSHIP_TRAIT> existingRelsOfCurrentCharacter = currCharacter.GetAllRelationshipTraitTypesWith(otherCharacter);
+                            List<RELATIONSHIP_TRAIT> existingRelsOfOtherCharacter = otherCharacter.GetAllRelationshipTraitTypesWith(currCharacter);
                             //if the current character already has a relationship of the same type with the other character, skip
-                            if (existingRels != null && existingRels.Contains(currRel)) {
+                            if (existingRelsOfCurrentCharacter != null && existingRelsOfCurrentCharacter.Contains(currRel)) {
                                 continue; //skip
                             }
                             float weight = 0;
@@ -594,7 +595,7 @@ public class CharacterManager : MonoBehaviour {
                                         }
 
                                         if (currCharacter.race != otherCharacter.race) weight *= 0; //character is a different race: Weight x0
-                                        if (existingRels != null && existingRels.Contains(RELATIONSHIP_TRAIT.FRIEND)) {
+                                        if (existingRelsOfCurrentCharacter != null && existingRelsOfCurrentCharacter.Contains(RELATIONSHIP_TRAIT.FRIEND)) {
                                             //Disabled possiblity that relatives can be friends
                                             weight *= 0;
                                         }
@@ -626,7 +627,7 @@ public class CharacterManager : MonoBehaviour {
                                                 //- character is a beast: Weight x0
                                                 weight *= 0;
                                             }
-                                            if (existingRels != null && existingRels.Contains(RELATIONSHIP_TRAIT.RELATIVE)) {
+                                            if (existingRelsOfCurrentCharacter != null && existingRelsOfCurrentCharacter.Contains(RELATIONSHIP_TRAIT.RELATIVE)) {
                                                 //- character is a relative: Weight x0.1    
                                                 weight *= 0.1f;
                                             }
@@ -673,15 +674,25 @@ public class CharacterManager : MonoBehaviour {
                                                 weight *= 2;
                                             }
 
-                                            if (existingRels != null) {
+                                            if (existingRelsOfCurrentCharacter != null) {
                                                 //DISABLED, because of Ask for Help
                                                 //if (existingRels.Contains(RELATIONSHIP_TRAIT.RELATIVE)) {
                                                 //    //- character is a relative: Weight x0.5
                                                 //    weight *= 0.5f;
                                                 //}
-                                                if (existingRels.Contains(RELATIONSHIP_TRAIT.LOVER)) {
+                                                if (existingRelsOfCurrentCharacter.Contains(RELATIONSHIP_TRAIT.LOVER)) {
                                                     //- character is a lover: Weight x0
                                                     weight *= 0;
+                                                }
+                                            }
+                                            if (existingRelsOfOtherCharacter != null) {
+                                                //- character considers this one as an Enemy: Weight x6
+                                                if (existingRelsOfOtherCharacter.Contains(RELATIONSHIP_TRAIT.ENEMY)) {
+                                                    weight *= 6;
+                                                }
+                                                //- character considers this one as a Friend: Weight x0.3
+                                                if (existingRelsOfOtherCharacter.Contains(RELATIONSHIP_TRAIT.FRIEND)) {
+                                                    weight *= 0.3f;
                                                 }
                                             }
                                         } 
@@ -729,14 +740,24 @@ public class CharacterManager : MonoBehaviour {
                                                 //- character is from same race: Weight x2
                                                 weight *= 2;
                                             }
-                                            if (existingRels != null) {
-                                                if (existingRels.Contains(RELATIONSHIP_TRAIT.RELATIVE)
-                                                    || existingRels.Contains(RELATIONSHIP_TRAIT.LOVER)
-                                                    || existingRels.Contains(RELATIONSHIP_TRAIT.ENEMY)) {
+                                            if (existingRelsOfCurrentCharacter != null) {
+                                                if (existingRelsOfCurrentCharacter.Contains(RELATIONSHIP_TRAIT.RELATIVE)
+                                                    || existingRelsOfCurrentCharacter.Contains(RELATIONSHIP_TRAIT.LOVER)
+                                                    || existingRelsOfCurrentCharacter.Contains(RELATIONSHIP_TRAIT.ENEMY)) {
                                                     //- character is a relative: Weight x0
                                                     //- character is a lover: Weight x0
-                                                    //-character is an enemy: Weight x0
+                                                    //- this one considers the character an enemy: Weight x0
                                                     weight *= 0;
+                                                }
+                                            }
+                                            if (existingRelsOfOtherCharacter != null) {
+                                                //- character considers this one as an Enemy: Weight x0.3
+                                                if (existingRelsOfOtherCharacter.Contains(RELATIONSHIP_TRAIT.ENEMY)) {
+                                                    weight *= 0.3f;
+                                                }
+                                                //- character considers this one as a Friend: Weight x6
+                                                if (existingRelsOfOtherCharacter.Contains(RELATIONSHIP_TRAIT.FRIEND)) {
+                                                    weight *= 6;
                                                 }
                                             }
                                             if (currCharacter.faction != otherCharacter.faction) {
@@ -803,13 +824,13 @@ public class CharacterManager : MonoBehaviour {
                                             weight *= 3;
                                         }
                                         
-                                        if (existingRels != null) {
-                                            if (existingRels.Contains(RELATIONSHIP_TRAIT.RELATIVE)) {
+                                        if (existingRelsOfCurrentCharacter != null) {
+                                            if (existingRelsOfCurrentCharacter.Contains(RELATIONSHIP_TRAIT.RELATIVE)) {
                                                 //- character is a relative: Weight x0.1
                                                 weight *= 0.1f;
                                             }
-                                            if (existingRels.Contains(RELATIONSHIP_TRAIT.LOVER)
-                                                || existingRels.Contains(RELATIONSHIP_TRAIT.ENEMY)) {
+                                            if (existingRelsOfCurrentCharacter.Contains(RELATIONSHIP_TRAIT.LOVER)
+                                                || existingRelsOfCurrentCharacter.Contains(RELATIONSHIP_TRAIT.ENEMY)) {
                                                 //- character is a lover: Weight x0
                                                 //- character is an enemy: Weight x0
                                                 weight *= 0;

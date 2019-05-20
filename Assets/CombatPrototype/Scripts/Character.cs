@@ -1357,7 +1357,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             if (character.faction.id == FactionManager.Instance.neutralFaction.id) {
                 return character.race == targetCharacter.race && character.homeArea == targetCharacter.homeArea && !targetCharacter.HasRelationshipOfTypeWith(character, RELATIONSHIP_TRAIT.ENEMY);
             }
-            return !targetCharacter.HasRelationshipOfTypeWith(character, RELATIONSHIP_TRAIT.ENEMY);
+            return !character.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.ENEMY);
         }
         return false;
     }
@@ -2467,6 +2467,24 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             relationships.Add(otherCharacter, new CharacterRelationshipData(this, otherCharacter));
         }
         relationships[otherCharacter].IncreaseFlirtationCount();
+    }
+    /// <summary>
+    /// Get the type of relationship that this character has with the other character.
+    /// </summary>
+    /// <param name="otherCharacter">Character to check</param>
+    /// <param name="useDisabled">Should this checking use disabled relationships?</param>
+    /// <returns>POSITIVE, NEGATIVE, NONE</returns>
+    public RELATIONSHIP_TYPE GetRelationshipTypeWith(Character otherCharacter, bool useDisabled = false) {
+        if (HasRelationshipWith(otherCharacter, useDisabled)) {
+            for (int i = 0; i < relationships[otherCharacter].rels.Count; i++) {
+                RelationshipTrait currTrait = relationships[otherCharacter].rels[i];
+                if (currTrait.effect == TRAIT_EFFECT.NEGATIVE) {
+                    return RELATIONSHIP_TYPE.NEGATIVE;
+                }
+            }
+            return RELATIONSHIP_TYPE.POSITIVE;
+        }
+        return RELATIONSHIP_TYPE.NONE;
     }
     #endregion
 
