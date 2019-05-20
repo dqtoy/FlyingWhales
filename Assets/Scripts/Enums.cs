@@ -1447,6 +1447,11 @@ public enum SEXUALITY {
 }
 public enum FACILITY_TYPE { HAPPINESS_RECOVERY, FULLNESS_RECOVERY, TIREDNESS_RECOVERY, SIT_DOWN_SPOT }
 public enum FURNITURE_TYPE { BED, TABLE, DESK, GUITAR, }
+public enum RELATIONSHIP_TYPE {
+    NONE,
+    POSITIVE,
+    NEGATIVE,
+}
 
 #region Crime Subcategories
 [System.AttributeUsage(System.AttributeTargets.Field)]

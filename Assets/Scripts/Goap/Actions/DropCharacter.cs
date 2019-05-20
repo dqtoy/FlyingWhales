@@ -34,9 +34,9 @@ public class DropCharacter : GoapAction {
     //    base.FailAction();
     //    SetState("Target Missing");
     //}
-    public override void DoAction(GoapPlan plan) {
+    public override void DoAction() {
         SetTargetStructure();
-        base.DoAction(plan);
+        base.DoAction();
     }
     public override LocationGridTile GetTargetLocationTile() {
         return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);

@@ -102,7 +102,9 @@ public class EatAtTable : GoapAction {
             log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(poiTarget.gridTileLocation.structure.location, poiTarget.gridTileLocation.structure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
             Sick sick = new Sick();
-            AddTraitTo(actor, sick);
+            for (int i = 0; i < poisonedTrait.responsibleCharacters.Count; i++) {
+                AddTraitTo(actor, sick, poisonedTrait.responsibleCharacters[i]);
+            }
         } else {
             if (parentPlan.job != null) {
                 parentPlan.job.SetCannotCancelJob(true);

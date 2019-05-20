@@ -4,10 +4,13 @@ using UnityEngine;
 
 public class Poisoned : Trait {
 
-    public List<Character> responsibleCharacters { get; private set; }
+    public override List<Character> responsibleCharacters {
+        get { return _responsibleCharacters; }
+    }
 
     public List<Character> awareCharacters { get; private set; } //characters that know about this trait
 
+    private List<Character> _responsibleCharacters;
     public Poisoned() {
         name = "Poisoned";
         description = "This character is poisoned.";
@@ -15,14 +18,14 @@ public class Poisoned : Trait {
         effect = TRAIT_EFFECT.NEGATIVE;
         daysDuration = 0;
         effects = new List<TraitEffect>();
-        responsibleCharacters = new List<Character>();
+        _responsibleCharacters = new List<Character>();
         awareCharacters = new List<Character>();
     }
 
     #region Overrides
-    public override void SetCharacterResponsibleForTrait(Character character) {
-        if (!responsibleCharacters.Contains(character)) {
-            responsibleCharacters.Add(character);
+    public override void AddCharacterResponsibleForTrait(Character character) {
+        if (!_responsibleCharacters.Contains(character)) {
+            _responsibleCharacters.Add(character);
         }
     }
     public override bool IsResponsibleForTrait(Character character) {

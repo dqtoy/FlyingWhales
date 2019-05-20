@@ -49,7 +49,7 @@ public class SupplyPile : TileObject, IPointOfInterest {
         suppliesInPile = Mathf.Max(0, suppliesInPile);
     }
 
-    private bool CanCharacterTakeThisJob(Character character) {
+    private bool CanCharacterTakeThisJob(Character character, JobQueueItem job) {
         return character.role.roleType == CHARACTER_ROLE.CIVILIAN;
     }
     public bool HasSupply() {

@@ -157,12 +157,12 @@ public class GoapPlanJob : JobQueueItem {
     }
     public override bool CanCharacterTakeThisJob(Character character) {
         if (_canTakeThisJob != null) {
-            if (_canTakeThisJob(character)) {
+            if (_canTakeThisJob(character, this)) {
                 return CanTakeJob(character);
             }
             return false;
         } else if (_canTakeThisJobWithTarget != null && targetPOI != null && targetPOI is Character) {
-            if (_canTakeThisJobWithTarget(character, targetPOI as Character)) {
+            if (_canTakeThisJobWithTarget(character, targetPOI as Character, this)) {
                 return CanTakeJob(character);
             }
             return false;

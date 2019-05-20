@@ -82,9 +82,9 @@ public class ArgueCharacter : GoapAction {
         cost += Utilities.rng.Next(0, 4); //Then add a random cost between 0 to 4.
         return cost;
     }
-    public override void DoAction(GoapPlan plan) {
+    public override void DoAction() {
         SetTargetStructure();
-        base.DoAction(plan);
+        base.DoAction();
     }
     public override void SetTargetStructure() {
         _targetStructure = poiTarget.gridTileLocation.structure;
@@ -97,7 +97,7 @@ public class ArgueCharacter : GoapAction {
     public override void OnStopActionDuringCurrentState() {
         if (currentState.name == "Argue Success") {
             actor.AdjustDoNotGetLonely(-1);
-            AddTraitTo(poiTarget, "Annoyed");
+            AddTraitTo(poiTarget, "Annoyed", actor);
         }
     }
     #endregion
@@ -128,7 +128,7 @@ public class ArgueCharacter : GoapAction {
     }
     private void AfterArgueSuccess() {
         actor.AdjustDoNotGetLonely(-1);
-        AddTraitTo(poiTarget, "Annoyed");
+        AddTraitTo(poiTarget, "Annoyed", actor);
     }
     //private void PreArgueFail() {
         //currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);

@@ -61,11 +61,11 @@ public class MakeLove : GoapAction {
     private void AfterMakeLoveSuccess() {
         //**After Effect 1**: If Actor and Target are Lovers, they both gain Cheery trait. If Actor and Target are Paramours, they both gain Ashamed trait.
         if (actor.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.LOVER)) {
-            AddTraitTo(actor, "Cheery");
-            AddTraitTo(targetCharacter, "Cheery");
+            AddTraitTo(actor, "Cheery", targetCharacter);
+            AddTraitTo(targetCharacter, "Cheery", actor);
         } else {
-            AddTraitTo(actor, "Ashamed");
-            AddTraitTo(targetCharacter, "Ashamed");
+            AddTraitTo(actor, "Ashamed", targetCharacter);
+            AddTraitTo(targetCharacter, "Ashamed", actor);
         }
 
         actor.ownParty.RemoveCharacter(targetCharacter);
@@ -76,7 +76,7 @@ public class MakeLove : GoapAction {
     }
     private void AfterMakeLoveFail() {
         //**After Effect 1**: Actor gains Annoyed trait.
-        AddTraitTo(actor, "Annoyed");
+        AddTraitTo(actor, "Annoyed", actor);
         actor.ownParty.RemoveCharacter(targetCharacter);
     }
     private void PreTargetMissing() {

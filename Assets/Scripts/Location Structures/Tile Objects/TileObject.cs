@@ -150,14 +150,20 @@ public class  TileObject : IPointOfInterest {
         return AddTrait(AttributeManager.Instance.allTraits[traitName], characterResponsible, onRemoveAction, gainedFromDoing, triggerOnAdd);
     }
     public bool AddTrait(Trait trait, Character characterResponsible = null, System.Action onRemoveAction = null, GoapAction gainedFromDoing = null, bool triggerOnAdd = true) {
-        if (trait.IsUnique() && GetTrait(trait.name) != null) {
-            trait.SetCharacterResponsibleForTrait(characterResponsible);
+        if (trait.IsUnique()) {
+            Trait oldTrait = GetTrait(trait.name);
+            if (oldTrait != null) {
+                oldTrait.SetCharacterResponsibleForTrait(characterResponsible);
+                oldTrait.AddCharacterResponsibleForTrait(characterResponsible);
+                return false;
+            }
             return false;
         }
         _traits.Add(trait);
         trait.SetGainedFromDoing(gainedFromDoing);
         trait.SetOnRemoveAction(onRemoveAction);
         trait.SetCharacterResponsibleForTrait(characterResponsible);
+        trait.AddCharacterResponsibleForTrait(characterResponsible);
         //ApplyTraitEffects(trait);
         //ApplyPOITraitInteractions(trait);
         if (trait.daysDuration > 0) {

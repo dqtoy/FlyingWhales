@@ -232,11 +232,10 @@ public class GoapAction {
     ///This is called when the actor decides to do this specific action.
     ///All movement related actions should be done here.
     ///</summary>
-    ///<param name="plan">Plan where this action came from.</param>
-    public virtual void DoAction(GoapPlan plan) {
+    public virtual void DoAction() {
         //CreateStates(); //Not sure if this is the best place for this.
         actor.SetCurrentAction(this);
-        plan.SetPlanState(GOAP_PLAN_STATE.IN_PROGRESS);
+        parentPlan.SetPlanState(GOAP_PLAN_STATE.IN_PROGRESS);
         Messenger.Broadcast(Signals.CHARACTER_DOING_ACTION, actor, this);
 
         Character targetCharacter = null;
@@ -245,7 +244,7 @@ public class GoapAction {
                 targetCharacter = poiTarget as Character;
             }
         }
-        MoveToDoAction(plan, targetCharacter);
+        MoveToDoAction(targetCharacter);
     }
     public virtual LocationGridTile GetTargetLocationTile() {
         LocationGridTile knownTargetLocation = null;
@@ -302,9 +301,7 @@ public class GoapAction {
     /// <param name="otherData">Array of data</param>
     /// <returns>If any other data was initialized</returns>
     public virtual bool InitializeOtherData(object[] otherData) { return false; }
-    private GoapPlan plan;
-    protected virtual void MoveToDoAction(GoapPlan plan, Character targetCharacter) {
-        this.plan = plan;
+    protected virtual void MoveToDoAction(Character targetCharacter) {
         //if the actor is NOT at the area where the target structure is, make him/her go there first.
         if (actor.specificLocation != targetStructure.location) {
             actor.currentParty.GoToLocation(targetStructure.location, PATHFINDING_MODE.NORMAL, targetStructure, OnArriveAtTargetLocation, null, poiTarget, targetTile);
@@ -332,7 +329,7 @@ public class GoapAction {
 
     #region Utilities
     private void OnArriveAtTargetLocation() {
-        actor.PerformGoapAction(plan);
+        actor.PerformGoapAction();
     }
     public void Initialize() {
         SetTargetStructure();

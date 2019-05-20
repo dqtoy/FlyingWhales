@@ -31,9 +31,9 @@ public class PatrolRoam : GoapAction {
     //    base.FailAction();
     //    SetState("Stroll Fail");
     //}
-    public override void DoAction(GoapPlan plan) {
+    public override void DoAction() {
         SetTargetStructure();
-        base.DoAction(plan);
+        base.DoAction();
     }
     #endregion
 

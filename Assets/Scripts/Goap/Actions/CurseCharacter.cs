@@ -48,12 +48,12 @@ public class CurseCharacter : GoapAction {
     protected override int GetCost() {
         return 3;
     }
-    protected override void MoveToDoAction(GoapPlan plan, Character targetCharacter) {
+    protected override void MoveToDoAction(Character targetCharacter) {
         if (actor.specificLocation != targetStructure.location) {
-            actor.currentParty.GoToLocation(targetStructure.location, PATHFINDING_MODE.NORMAL, targetStructure, () => actor.PerformGoapAction(plan), null, poiTarget, targetTile);
+            actor.currentParty.GoToLocation(targetStructure.location, PATHFINDING_MODE.NORMAL, targetStructure, () => actor.PerformGoapAction(), null, poiTarget, targetTile);
         } else {
             //if the actor is already at the area where the target structure is, immediately do the action, since this action is performed in place
-            actor.PerformGoapAction(plan);
+            actor.PerformGoapAction();
         }
     }
     #endregion
@@ -75,7 +75,7 @@ public class CurseCharacter : GoapAction {
     public void AfterCurseSuccess() {
         //**After Effect 1**: Target gains Cursed trait.
         Cursed cursed = new Cursed();
-        AddTraitTo(poiTarget, cursed);
+        AddTraitTo(poiTarget, cursed, actor);
         //**After Effect 2**: Actor loses Ritualized trait.
         RemoveTraitFrom(actor, "Ritualized");
 

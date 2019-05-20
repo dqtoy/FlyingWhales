@@ -9,7 +9,10 @@ public class Trait {
         get { return name; }
     }
     public virtual Character responsibleCharacter {
-        get { return _responsibleCharacter; }
+        get { return null; }
+    }
+    public virtual List<Character> responsibleCharacters {
+        get { return null; }
     }
     public string name;
     public string description;
@@ -26,7 +29,7 @@ public class Trait {
     public bool isDisabled { get; private set; }
     public virtual bool broadcastDuplicates { get { return false; } }
 
-    private Character _responsibleCharacter;
+    //private Character _responsibleCharacter;
 
     private System.Action onRemoveAction;
 
@@ -49,10 +52,13 @@ public class Trait {
         }
     }
     public virtual void SetCharacterResponsibleForTrait(Character character) {
-        _responsibleCharacter = character;
+        //_responsibleCharacter = character;
+    }
+    public virtual void AddCharacterResponsibleForTrait(Character character) {
     }
     public virtual bool IsResponsibleForTrait(Character character) {
-        return _responsibleCharacter == character;
+        return false;
+        //return _responsibleCharacter == character;
     }
     public virtual string GetToolTipText() { return string.Empty; }
     public virtual bool IsUnique() { return true; }
