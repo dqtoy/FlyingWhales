@@ -77,6 +77,10 @@ public class ExploreState : CharacterState {
     #endregion
 
     private void OnArriveAtPickUpLocation() {
+        if (stateComponent.character.currentAction == null) {
+            Debug.LogWarning(GameManager.Instance.TodayLogString() + stateComponent.character.name + " arrived at pick up location of item during " + stateName + ", but current action is null");
+            return;
+        }
         stateComponent.character.currentAction.SetEndAction(ExploreAgain);
         stateComponent.character.currentAction.PerformActualAction();
     }

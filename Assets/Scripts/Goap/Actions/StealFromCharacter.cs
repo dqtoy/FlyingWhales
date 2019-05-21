@@ -51,7 +51,10 @@ public class StealFromCharacter : GoapAction {
 
     #region Requirements
     protected bool Requirement() {
-        if(poiTarget != actor) {
+        if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
+            return false;
+        }
+        if (poiTarget != actor) {
             return true;
             //if (poiTarget.factionOwner.id != actor.faction.id) {
             //    return true;

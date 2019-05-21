@@ -8,7 +8,7 @@ public class StrollState : CharacterState {
         stateName = "Stroll State";
         characterState = CHARACTER_STATE.STROLL;
         stateCategory = CHARACTER_STATE_CATEGORY.MAJOR;
-        duration = 12;
+        duration = GameManager.ticksPerHour;
     }
 
     #region Overrides
@@ -44,6 +44,10 @@ public class StrollState : CharacterState {
     #endregion
 
     private void OnArriveAtPickUpLocation() {
+        if (stateComponent.character.currentAction == null) {
+            Debug.LogWarning(GameManager.Instance.TodayLogString() + stateComponent.character.name + " arrived at pick up location of item during " + stateName + ", but current action is null");
+            return;
+        }
         stateComponent.character.currentAction.SetEndAction(StrollAgain);
         stateComponent.character.currentAction.PerformActualAction();
     }

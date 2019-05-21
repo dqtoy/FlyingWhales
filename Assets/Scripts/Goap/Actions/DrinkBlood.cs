@@ -52,6 +52,12 @@ public class DrinkBlood : GoapAction {
     #endregion
 
     #region Requirements
+    protected bool Requirement() {
+        if (actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
+            return false;
+        }
+        return true;
+    }
     protected bool RequirementOnBuildGoapTree() {
         if (!actor.isStarving) {
             Character target = poiTarget as Character;

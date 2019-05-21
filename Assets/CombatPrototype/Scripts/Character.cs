@@ -116,6 +116,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public bool isCombatant { get; private set; } //This should only be a getter but since we need to know when the value changes it now has a setter
     public List<Trait> traitsNeededToBeRemoved { get; private set; }
     public Memories memories { get; private set; }
+    public TrapStructure trapStructure { get; private set; }
 
     private List<System.Action> onLeaveAreaActions;
     private LocationGridTile tile; //what tile in the structure is this character currently in.
@@ -548,6 +549,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         traitsNeededToBeRemoved = new List<Trait>();
         onLeaveAreaActions = new List<Action>();
         memories = new Memories();
+        trapStructure = new TrapStructure();
         SetPOIState(POI_STATE.ACTIVE);
         SetMoodValue(90);
 
@@ -3545,23 +3547,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public void SetDailyInteractionGenerationTick(int tick) {
         _currentInteractionTick = tick;
     }
-    //public void StartDailyGoapPlanGeneration() {
-    //    if (!_activateDailyGoapPlanInteraction) {
-    //        _activateDailyGoapPlanInteraction = true;
-    //        PlanGoapActions();
-    //        //SetDailyGoapGenerationTick();
-    //        //Messenger.AddListener(Signals.TICK_STARTED, DailyGoapPlanGeneration);
-    //    }
-    //    //_currentInteractionTick = GameManager.Instance.tick;
-    //    //DailyGoapPlanGeneration();
-    //}
-    public void StopDailyGoapPlanGeneration() {
-        if (_activateDailyGoapPlanInteraction) {
-            _activateDailyGoapPlanInteraction = false;
-            //Messenger.RemoveListener(Signals.TICK_STARTED, DailyGoapPlanGeneration);
-        }
-    }
     private void DailyGoapPlanGeneration() {
+        //Check Trap Structure
+        trapStructure.IncrementCurrentDuration(1);
+
         //This is to ensure that this character will not be idle forever
         //If at the start of the tick, the character is not currently doing any action, and is not waiting for any new plans, it means that the character will no longer perform any actions
         //so start doing actions again
@@ -3569,10 +3558,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (currentAction == null && _numOfWaitingForGoapThread <= 0) {
             PlanGoapActions();
         }
-        //if(_currentInteractionTick == GameManager.Instance.tick) {
-        //    PlanGoapActions();
-        //    SetDailyGoapGenerationTick();
-        //}
     }
     public void SetDailyGoapGenerationTick() {
         int remainingDaysInWeek = 6 - (GameManager.Instance.tick % 6);
@@ -3805,19 +3790,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         } else {
             MoveToAnotherStructure(targetStructure, targetTile, null, () => stateComponent.SwitchToState(CHARACTER_STATE.STROLL));
         }
-        //if (race == RACE.HUMANS) {
-        //    if (currentStructure == targetStructure) {
-        //        stateComponent.SwitchToState(CHARACTER_STATE.STROLL_OUTSIDE);
-        //    } else {
-        //        MoveToAnotherStructure(targetStructure, targetTile, null, () => stateComponent.SwitchToState(CHARACTER_STATE.STROLL_OUTSIDE));
-        //    }
-        //} else {
-        //    if (currentStructure == targetStructure) {
-        //        stateComponent.SwitchToState(CHARACTER_STATE.STROLL);
-        //    } else {
-        //        MoveToAnotherStructure(targetStructure, targetTile, null, () => stateComponent.SwitchToState(CHARACTER_STATE.STROLL));
-        //    }
-        //}
+        return true;
+    }
+    public bool PlanIdleStrollOutside(LocationStructure targetStructure, LocationGridTile targetTile = null) {
+        if (currentStructure == targetStructure) {
+            stateComponent.SwitchToState(CHARACTER_STATE.STROLL_OUTSIDE);
+        } else {
+            MoveToAnotherStructure(targetStructure, targetTile, null, () => stateComponent.SwitchToState(CHARACTER_STATE.STROLL_OUTSIDE));
+        }
         return true;
     }
     public bool PlanIdleReturnHome() {
@@ -3844,7 +3824,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             log += "\n-" + name + " has a faction";
             if (previousCurrentAction != null && previousCurrentAction.goapType == INTERACTION_TYPE.RETURN_HOME && currentStructure == homeStructure) {
                 log += "\n-" + name + " is in home structure and just returned home";
-                TileObject deskOrTable = GetUnoccupiedHomeTileObject(TILE_OBJECT_TYPE.DESK, TILE_OBJECT_TYPE.TABLE);
+                TileObject deskOrTable = currentStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.DESK, TILE_OBJECT_TYPE.TABLE);
                 if (deskOrTable != null) {
                     log += "\n-" + name + " will do action Sit on " + deskOrTable.ToString();
                     PlanIdle(INTERACTION_TYPE.SIT, deskOrTable);
@@ -3859,20 +3839,49 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 if (currentTimeOfDay == TIME_IN_WORDS.EARLY_NIGHT) {
                     int chance = UnityEngine.Random.Range(0, 100);
                     if (chance < 35) {
-                        log += "\n-Early Night: " + name + " will do action Drink (multithreaded)";
-                        StartGOAP(INTERACTION_TYPE.DRINK, null, GOAP_CATEGORY.IDLE);
-                        return log;
+                        log += "\n-Early Night: " + name + " will go to Inn and set Base Structure for 2.5 hours";
+                        //StartGOAP(INTERACTION_TYPE.DRINK, null, GOAP_CATEGORY.IDLE);
+                        LocationStructure structure = specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.INN);
+                        if(structure != null) {
+                            LocationGridTile gridTile = structure.GetRandomUnoccupiedTile();
+                            marker.GoTo(gridTile, () => trapStructure.SetStructureAndDuration(structure, GameManager.Instance.GetTicksBasedOnHour(2) + GameManager.Instance.GetTicksBasedOnMinutes(30)));
+                            return log;
+                        }
                     }
                 }
                 if (currentTimeOfDay == TIME_IN_WORDS.AFTERNOON) {
                     int chance = UnityEngine.Random.Range(0, 100);
                     if (chance < 25) {
-                        TileObject bed = GetUnoccupiedHomeTileObject(TILE_OBJECT_TYPE.BED);
+                        TileObject bed = currentStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.BED);
                         if (bed != null) {
                             log += "\n-Afternoon: " + name + " will do action Nap on " + bed.ToString();
                             PlanIdle(INTERACTION_TYPE.NAP, bed);
                             return log;
                         }
+                    }
+                }
+                if (currentTimeOfDay == TIME_IN_WORDS.MORNING || currentTimeOfDay == TIME_IN_WORDS.AFTERNOON || currentTimeOfDay == TIME_IN_WORDS.EARLY_NIGHT) {
+                    int chance = UnityEngine.Random.Range(0, 100);
+                    if (chance < 25) {
+                        log += "\n-Morning, Afternoon, or Early Night: " + name + " will enter Stroll Outside State ";
+                        PlanIdleStrollOutside(currentStructure);
+                        return log;
+                    }
+                }
+                if (currentTimeOfDay == TIME_IN_WORDS.MORNING || currentTimeOfDay == TIME_IN_WORDS.AFTERNOON) {
+                    int chance = UnityEngine.Random.Range(0, 100);
+                    if (chance < 25) {
+                        log += "\n-Morning or Afternoon: " + name + " will go to dwelling of character with positive relationship and set Base Structure for 2.5 hours";
+                        List<Character> positiveCharacters = GetCharactersWithRelationship(TRAIT_EFFECT.POSITIVE);
+                        if(positiveCharacters.Count > 0) {
+                            Character chosenCharacter = positiveCharacters[UnityEngine.Random.Range(0, positiveCharacters.Count)];
+                            if (chosenCharacter.homeStructure != null) {
+                                LocationGridTile gridTile = chosenCharacter.homeStructure.GetRandomUnoccupiedTile();
+                                marker.GoTo(gridTile, () => trapStructure.SetStructureAndDuration(chosenCharacter.homeStructure, GameManager.Instance.GetTicksBasedOnHour(2) + GameManager.Instance.GetTicksBasedOnMinutes(30)));
+                                return log;
+                            }
+                        }
+                        return log;
                     }
                 }
                 //if (currentTimeOfDay == TIME_IN_WORDS.MORNING || currentTimeOfDay == TIME_IN_WORDS.AFTERNOON) {
@@ -3893,23 +3902,16 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 //    }
                 //}
 
-                int sitChance = UnityEngine.Random.Range(0, 100);
-                if (sitChance < 50) {
-                    TileObject deskOrTable = GetUnoccupiedHomeTileObject(TILE_OBJECT_TYPE.DESK, TILE_OBJECT_TYPE.TABLE);
-                    if (deskOrTable != null) {
-                        log += "\n-" + name + " will do action Sit on " + deskOrTable.ToString();
-                        PlanIdle(INTERACTION_TYPE.SIT, deskOrTable);
-                        return log;
-                    }
+                TileObject deskOrTable = currentStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.DESK, TILE_OBJECT_TYPE.TABLE);
+                if (deskOrTable != null) {
+                    log += "\n-" + name + " will do action Sit on " + deskOrTable.ToString();
+                    PlanIdle(INTERACTION_TYPE.SIT, deskOrTable);
+                    return log;
                 }
 
                 log += "\n-" + name + " will do action Stand";
                 PlanIdle(INTERACTION_TYPE.STAND, this);
                 //PlanIdleStroll(currentStructure);
-                return log;
-            } else if (currentStructure.structureType == STRUCTURE_TYPE.DWELLING && currentStructure != homeStructure) {
-                log += "\n-" + name + " is in another dwelling and will do action Return Home";
-                PlanIdleReturnHome();
                 return log;
             } else if (currentStructure.structureType == STRUCTURE_TYPE.WORK_AREA && specificLocation == homeArea) {
                 log += "\n-" + name + " is in the Work Area of home location";
@@ -3917,8 +3919,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 if (currentTimeOfDay == TIME_IN_WORDS.MORNING || currentTimeOfDay == TIME_IN_WORDS.AFTERNOON) {
                     int chance = UnityEngine.Random.Range(0, 100);
                     if (chance < 25) {
-                        log += "\n-Morning or Afternoon: " + name + " will enter Stroll State";
-                        PlanIdleStroll(currentStructure);
+                        log += "\n-Morning or Afternoon: " + name + " will enter Stroll Outside State";
+                        PlanIdleStrollOutside(currentStructure);
                         return log;
                     }
                 }
@@ -3933,8 +3935,40 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 log += "\n-" + name + " will do action Return Home";
                 PlanIdleReturnHome();
                 return log;
-            } else if (currentStructure != homeStructure) {
-                log += "\n-" + name + " is in another area and will do action Return Home";
+            } else if (trapStructure.structure != null && currentStructure == trapStructure.structure) {
+                log += "\n-" + name + "'s Base Structure is not empty and current structure is the base structure";
+                int chance = UnityEngine.Random.Range(0, 100);
+                if (chance < 15) {
+                    bool hasForcedChat = false;
+                    for (int i = 0; i < marker.inVisionPOIs.Count; i++) {
+                        if(marker.inVisionPOIs[i] is Character) {
+                            Character targetCharacter = marker.inVisionPOIs[i] as Character;
+                            if (marker.visionCollision.ForceChatHandling(targetCharacter)) {
+                                log += "\n-Force chat with anyone in range";
+                                hasForcedChat = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (hasForcedChat) {
+                        return log;
+                    }
+                }
+                TileObject deskOrTable = currentStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.DESK, TILE_OBJECT_TYPE.TABLE);
+                if (deskOrTable != null) {
+                    log += "\n-" + name + " will do action Sit on " + deskOrTable.ToString();
+                    PlanIdle(INTERACTION_TYPE.SIT, deskOrTable);
+                    return log;
+                }
+                log += "\n-" + name + " will do action Stand";
+                PlanIdle(INTERACTION_TYPE.STAND, this);
+                return log;
+            } else if (currentStructure.structureType == STRUCTURE_TYPE.DWELLING && currentStructure != homeStructure && trapStructure.structure == null) {
+                log += "\n-" + name + " is in another dwelling and Base Structure is empty. Will do action Return Home";
+                PlanIdleReturnHome();
+                return log;
+            } else if (specificLocation != homeArea && trapStructure.structure == null) {
+                log += "\n-" + name + " is in another area and Base Structure is empty. Will do action Return Home";
                 PlanIdleReturnHome();
                 return log;
             }
@@ -3997,28 +4031,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         goapPlan.ConstructAllNodes();
         AddPlan(goapPlan);
         //PlanGoapActions(goapAction);
-    }
-    private TileObject GetUnoccupiedHomeTileObject(TILE_OBJECT_TYPE type) {
-        for (int i = 0; i < homeStructure.pointsOfInterest.Count; i++) {
-            if (homeStructure.pointsOfInterest[i].state == POI_STATE.ACTIVE && homeStructure.pointsOfInterest[i] is TileObject) {
-                TileObject tileObj = homeStructure.pointsOfInterest[i] as TileObject;
-                if (tileObj.tileObjectType == type) {
-                    return tileObj;
-                }
-            }
-        }
-        return null;
-    }
-    private TileObject GetUnoccupiedHomeTileObject(TILE_OBJECT_TYPE type1, TILE_OBJECT_TYPE type2) {
-        for (int i = 0; i < homeStructure.pointsOfInterest.Count; i++) {
-            if (homeStructure.pointsOfInterest[i].state == POI_STATE.ACTIVE && homeStructure.pointsOfInterest[i] is TileObject) {
-                TileObject tileObj = homeStructure.pointsOfInterest[i] as TileObject;
-                if (tileObj.tileObjectType == type1 || tileObj.tileObjectType == type2) {
-                    return tileObj;
-                }
-            }
-        }
-        return null;
     }
     public bool AssaultCharacter(Character target) {
         //Debug.Log(this.name + " will assault " + target.name);

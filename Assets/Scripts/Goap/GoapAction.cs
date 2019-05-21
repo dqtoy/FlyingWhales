@@ -363,7 +363,7 @@ public class GoapAction {
                 Character targetCharacter = poiTarget as Character;
                 if (!targetCharacter.isDead) {
                     if (!doesNotStopTargetCharacter && resumeTargetCharacterState) {
-                        if (targetCharacter.stateComponent.currentState != null) {
+                        if (targetCharacter.stateComponent.currentState != null && targetCharacter.stateComponent.currentState.isPaused) {
                             targetCharacter.stateComponent.currentState.ResumeState();
                         }
                     }

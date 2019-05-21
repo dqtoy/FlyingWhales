@@ -56,7 +56,10 @@ public class Steal : GoapAction {
         //        return true;
         //    }
         //}
-        if(poiTarget.gridTileLocation != null) {
+        if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
+            return false;
+        }
+        if (poiTarget.gridTileLocation != null) {
             //return true;
             SpecialToken token = poiTarget as SpecialToken;
             return token.characterOwner != null && token.characterOwner != actor;

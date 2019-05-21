@@ -10,7 +10,7 @@ public class StrollOutsideState : CharacterState {
         stateName = "Stroll Outside State";
         characterState = CHARACTER_STATE.STROLL_OUTSIDE;
         stateCategory = CHARACTER_STATE_CATEGORY.MAJOR;
-        duration = 100;
+        duration = GameManager.ticksPerHour;
         _notAllowedStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.INN, STRUCTURE_TYPE.DWELLING, STRUCTURE_TYPE.WAREHOUSE };
     }
 
@@ -47,6 +47,10 @@ public class StrollOutsideState : CharacterState {
     #endregion
 
     private void OnArriveAtPickUpLocation() {
+        if (stateComponent.character.currentAction == null) {
+            Debug.LogWarning(GameManager.Instance.TodayLogString() + stateComponent.character.name + " arrived at pick up location of item during " + stateName + ", but current action is null");
+            return;
+        }
         stateComponent.character.currentAction.SetEndAction(StrollAgain);
         stateComponent.character.currentAction.PerformActualAction();
     }

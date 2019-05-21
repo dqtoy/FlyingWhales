@@ -95,7 +95,10 @@ public class Hunt : GoapAction {
 
     #region Requirements
     protected bool Requirement() {
-        if(actor != poiTarget) {
+        if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
+            return false;
+        }
+        if (actor != poiTarget) {
             Character target = poiTarget as Character;
             if(actor.specificLocation == target.specificLocation && actor.faction == FactionManager.Instance.neutralFaction && target.race != RACE.SKELETON 
                 && actor.GetTrait("Injured") == null) { //added checking for injured so that characters that are injured won't keep trying to hunt a character, then flee after seeing the target

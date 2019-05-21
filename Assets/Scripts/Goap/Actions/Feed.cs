@@ -17,9 +17,9 @@ public class Feed : GoapAction {
     }
 
     #region Overrides
-    //protected override void ConstructRequirement() {
-    //    _requirementAction = Requirement;
-    //}
+    protected override void ConstructRequirement() {
+        _requirementAction = Requirement;
+    }
     protected override void ConstructPreconditionsAndEffects() {
         AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_SUPPLY, conditionKey = 0, targetPOI = actor }, () => HasSupply(10));
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = poiTarget });
@@ -64,11 +64,14 @@ public class Feed : GoapAction {
     //}
     #endregion
 
-    //#region Requirements
-    //protected bool Requirement() {
-    //    return poiTarget.state != POI_STATE.INACTIVE;
-    //}
-    //#endregion
+    #region Requirements
+    protected bool Requirement() {
+        if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
+            return false;
+        }
+        return true;
+    }
+    #endregion
 
     #region Intel Reactions
     private List<string> State1Reactions(Character recipient, Intel sharedIntel) {

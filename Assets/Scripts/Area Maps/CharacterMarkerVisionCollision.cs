@@ -133,7 +133,7 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
         }
         Debug.Log(ghostCollisionSummary);
     }
-    private bool ChatHandling(Character targetCharacter) {
+    public bool ChatHandling(Character targetCharacter) {
         if(targetCharacter.isDead 
             || targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_EFFECT.NEUTRAL, TRAIT_TYPE.DISABLER) 
             || parentMarker.character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_EFFECT.NEUTRAL, TRAIT_TYPE.DISABLER)
@@ -152,6 +152,26 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
                     parentMarker.character.ChatCharacter(targetCharacter);
                     return true;
                 }
+            }
+        }
+        return false;
+    }
+    public bool ForceChatHandling(Character targetCharacter) {
+        if (targetCharacter.isDead
+            || targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_EFFECT.NEUTRAL, TRAIT_TYPE.DISABLER)
+            || parentMarker.character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_EFFECT.NEUTRAL, TRAIT_TYPE.DISABLER)
+            || (targetCharacter.stateComponent.currentState != null && (targetCharacter.stateComponent.currentState.characterState == CHARACTER_STATE.FLEE
+            || targetCharacter.stateComponent.currentState.characterState == CHARACTER_STATE.ENGAGE))
+            || (parentMarker.character.stateComponent.currentState != null && (parentMarker.character.stateComponent.currentState.characterState == CHARACTER_STATE.FLEE
+            || parentMarker.character.stateComponent.currentState.characterState == CHARACTER_STATE.ENGAGE))
+            || targetCharacter.role.roleType == CHARACTER_ROLE.BEAST
+            || parentMarker.character.role.roleType == CHARACTER_ROLE.BEAST) {
+            return false;
+        }
+        if (!parentMarker.character.IsHostileWith(targetCharacter)) {
+            if (!parentMarker.character.isChatting && !targetCharacter.isChatting) {
+                parentMarker.character.ChatCharacter(targetCharacter);
+                return true;
             }
         }
         return false;

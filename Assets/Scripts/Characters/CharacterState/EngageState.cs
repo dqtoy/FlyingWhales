@@ -9,7 +9,7 @@ public class EngageState : CharacterState {
         characterState = CHARACTER_STATE.ENGAGE;
         stateCategory = CHARACTER_STATE_CATEGORY.MINOR;
         //duration = 288;
-        duration = 12;
+        duration = GameManager.ticksPerHour;
         actionIconString = GoapActionStateDB.Hostile_Icon;
     }
 

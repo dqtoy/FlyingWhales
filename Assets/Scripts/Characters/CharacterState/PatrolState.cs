@@ -55,6 +55,10 @@ public class PatrolState : CharacterState {
     #endregion
 
     private void OnArriveAtPickUpLocation() {
+        if (stateComponent.character.currentAction == null) {
+            Debug.LogWarning(GameManager.Instance.TodayLogString() + stateComponent.character.name + " arrived at pick up location of item during " + stateName + ", but current action is null");
+            return;
+        }
         stateComponent.character.currentAction.SetEndAction(PatrolAgain);
         stateComponent.character.currentAction.PerformActualAction();
     }

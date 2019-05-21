@@ -51,6 +51,10 @@ public class HuntState : CharacterState {
     #endregion
 
     private void OnArriveAtCorpseLocation() {
+        if (stateComponent.character.currentAction == null) {
+            Debug.LogWarning(GameManager.Instance.TodayLogString() + stateComponent.character.name + " arrived at corpse location during " + stateName + ", but current action is null");
+            return;
+        }
         stateComponent.character.currentAction.SetEndAction(HuntAgain);
         stateComponent.character.currentAction.PerformActualAction();
     }

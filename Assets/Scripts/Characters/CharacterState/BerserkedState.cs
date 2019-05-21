@@ -69,6 +69,10 @@ public class BerserkedState : CharacterState {
     #endregion
 
     private void OnArriveAtLocation() {
+        if (stateComponent.character.currentAction == null) {
+            Debug.LogWarning(GameManager.Instance.TodayLogString() + stateComponent.character.name + " arrived at location of item/tile object to be destroyed during " + stateName + ", but current action is null");
+            return;
+        }
         stateComponent.character.currentAction.SetEndAction(BerserkAgain);
         stateComponent.character.currentAction.PerformActualAction();
     }
