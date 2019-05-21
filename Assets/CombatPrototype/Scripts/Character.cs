@@ -5317,6 +5317,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             if (goapThread.recalculationPlan == null) {
                 if (goapThread.job != null) {
                     goapThread.job.SetAssignedPlan(goapThread.createdPlan);
+                    for (int i = 0; i < goapThread.createdPlan.allNodes.Count; i++) {
+                        if(goapThread.createdPlan.allNodes[i].action.goapType == INTERACTION_TYPE.CARRY_CHARACTER) {
+                            goapThread.createdPlan.job.SetCannotOverrideJob(true);
+                            break;
+                        }
+                    }
                     bool overrideCurrentAction = !(currentAction != null && currentAction.parentPlan != null && currentAction.parentPlan.job != null && currentAction.parentPlan.job.cannotOverrideJob);
                     if (goapThread.job.willImmediatelyBeDoneAfterReceivingPlan && overrideCurrentAction) {
                         AddPlan(goapThread.createdPlan, true);
