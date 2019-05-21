@@ -63,6 +63,7 @@ public class GoapAction {
     public bool cannotCancelAction { get; protected set; }
     public bool isNotificationAnIntel { get; protected set; }
     public bool canBeAddedToMemory { get; protected set; }
+    public CharacterState characterState { get; protected set; }
 
     protected virtual bool isTargetMissing {
         get { return poiTarget.state == POI_STATE.INACTIVE || poiTarget.gridTileLocation == null || actor.specificLocation != poiTarget.specificLocation
@@ -181,12 +182,7 @@ public class GoapAction {
                                 targetCharacter.currentParty.icon.SetOnArriveAction(() => targetCharacter.OnArriveAtAreaStopMovement());
                             }
                         }
-                        if (targetCharacter.currentAction.isPerformingActualAction && !targetCharacter.currentAction.isDone) {
-                            targetCharacter.currentAction.OnStopActionDuringCurrentState();
-                            targetCharacter.currentAction.currentState.EndPerTickEffect(false);
-                        } else {
-                            targetCharacter.SetCurrentAction(null);
-                        }
+                        targetCharacter.StopCurrentAction(false);
                     }
                     if (targetCharacter.stateComponent.currentState != null) {
                         targetCharacter.stateComponent.currentState.PauseState();
@@ -367,7 +363,7 @@ public class GoapAction {
                 Character targetCharacter = poiTarget as Character;
                 if (!targetCharacter.isDead) {
                     if (!doesNotStopTargetCharacter && resumeTargetCharacterState) {
-                        if (targetCharacter.stateComponent.currentState != null) {
+                        if (targetCharacter.stateComponent.currentState != null && targetCharacter.stateComponent.currentState.isPaused) {
                             targetCharacter.stateComponent.currentState.ResumeState();
                         }
                     }

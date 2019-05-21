@@ -446,6 +446,10 @@ public class CharacterMarker : PooledObject {
 
     #region Pathfinding Movement
     public void GoTo(LocationGridTile destinationTile, Action arrivalAction = null, STRUCTURE_TYPE[] notAllowedStructures = null) {
+        //If any time a character goes to a structure outside the trap structure, the trap structure data will be cleared out
+        if (character.trapStructure.structure != null && character.trapStructure.structure != destinationTile.structure) {
+            character.trapStructure.SetStructureAndDuration(null, 0);
+        }
         pathfindingAI.ClearAllCurrentPathData();
         pathfindingAI.SetNotAllowedStructures(notAllowedStructures);
         this.destinationTile = destinationTile;
@@ -1127,13 +1131,7 @@ public class CharacterMarker : PooledObject {
 
             //remove enemy's current action
             enemy.AdjustIsWaitingForInteraction(1);
-            if (enemy.currentAction != null && !enemy.currentAction.isDone) {
-                if (!enemy.currentAction.isPerformingActualAction) {
-                    enemy.SetCurrentAction(null);
-                } else {
-                    enemy.currentAction.currentState.EndPerTickEffect();
-                }
-            }
+            enemy.StopCurrentAction();
             enemy.AdjustIsWaitingForInteraction(-1);
 
             engageState.CombatOnEngage();

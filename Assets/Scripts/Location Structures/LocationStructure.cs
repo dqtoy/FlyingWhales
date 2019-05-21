@@ -459,6 +459,28 @@ public class LocationStructure {
         }
         return objs;
     }
+    public TileObject GetUnoccupiedTileObject(TILE_OBJECT_TYPE type) {
+        for (int i = 0; i < pointsOfInterest.Count; i++) {
+            if (pointsOfInterest[i].state == POI_STATE.ACTIVE && pointsOfInterest[i] is TileObject) {
+                TileObject tileObj = pointsOfInterest[i] as TileObject;
+                if (tileObj.tileObjectType == type) {
+                    return tileObj;
+                }
+            }
+        }
+        return null;
+    }
+    public TileObject GetUnoccupiedTileObject(TILE_OBJECT_TYPE type1, TILE_OBJECT_TYPE type2) {
+        for (int i = 0; i < pointsOfInterest.Count; i++) {
+            if (pointsOfInterest[i].state == POI_STATE.ACTIVE && pointsOfInterest[i] is TileObject) {
+                TileObject tileObj = pointsOfInterest[i] as TileObject;
+                if (tileObj.tileObjectType == type1 || tileObj.tileObjectType == type2) {
+                    return tileObj;
+                }
+            }
+        }
+        return null;
+    }
     #endregion
     public override string ToString() {
         return structureType.ToString() + " " + location.structures[structureType].IndexOf(this).ToString() + " at " + location.name;

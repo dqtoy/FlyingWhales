@@ -59,6 +59,9 @@ public class Nap : GoapAction {
 
     #region Requirements
     protected bool Requirement() {
+        if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
+            return false;
+        }
         IAwareness awareness = actor.GetAwareness(poiTarget);
         if (awareness == null) {
             return false;

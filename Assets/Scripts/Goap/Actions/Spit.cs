@@ -32,7 +32,10 @@ public class Spit : GoapAction {
 
     #region Requirement
     protected bool Requirement() {
-        if(poiTarget is Tombstone) {
+        if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
+            return false;
+        }
+        if (poiTarget is Tombstone) {
             Tombstone tombstone = poiTarget as Tombstone;
             Character target = tombstone.character;
             return actor.HasRelationshipOfEffectWith(target, TRAIT_EFFECT.NEGATIVE);

@@ -340,6 +340,7 @@ public class InteriorMapManager : MonoBehaviour {
             summary += "\nMove Speed: " + character.marker.pathfindingAI.speed.ToString();
             summary += "\nTangent: " + character.marker.pathfindingAI.GetTangent().ToString();
             summary += "\nTarget POI: " + character.marker.targetPOI?.ToString() ?? "None";
+            summary += "\nBase Structure: " + character.trapStructure.structure?.ToString() ?? "None";
             summary += "\nDestination Tile: ";
             if (character.marker.destinationTile == null) {
                 summary += "None";

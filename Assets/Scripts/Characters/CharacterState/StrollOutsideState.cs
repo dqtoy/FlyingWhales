@@ -10,7 +10,7 @@ public class StrollOutsideState : CharacterState {
         stateName = "Stroll Outside State";
         characterState = CHARACTER_STATE.STROLL_OUTSIDE;
         stateCategory = CHARACTER_STATE_CATEGORY.MAJOR;
-        duration = 100;
+        duration = GameManager.ticksPerHour;
         _notAllowedStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.INN, STRUCTURE_TYPE.DWELLING, STRUCTURE_TYPE.WAREHOUSE };
     }
 
@@ -31,6 +31,7 @@ public class StrollOutsideState : CharacterState {
             if (token.characterOwner == null) {
                 GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.PICK_ITEM, stateComponent.character, targetPOI);
                 if (goapAction.targetTile != null) {
+                    SetCurrentlyDoingAction(goapAction);
                     goapAction.CreateStates();
                     stateComponent.character.SetCurrentAction(goapAction);
                     stateComponent.character.marker.GoTo(goapAction.targetTile, OnArriveAtPickUpLocation);
@@ -46,10 +47,15 @@ public class StrollOutsideState : CharacterState {
     #endregion
 
     private void OnArriveAtPickUpLocation() {
+        if (stateComponent.character.currentAction == null) {
+            Debug.LogWarning(GameManager.Instance.TodayLogString() + stateComponent.character.name + " arrived at pick up location of item during " + stateName + ", but current action is null");
+            return;
+        }
         stateComponent.character.currentAction.SetEndAction(StrollAgain);
         stateComponent.character.currentAction.PerformActualAction();
     }
     private void StrollAgain(string result, GoapAction goapAction) {
+        SetCurrentlyDoingAction(null);
         if (stateComponent.currentState != this) {
             return;
         }

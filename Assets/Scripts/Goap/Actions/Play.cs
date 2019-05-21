@@ -82,6 +82,9 @@ public class Play : GoapAction {
 
     #region Requirement
     protected bool Requirement() {
+        if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
+            return false;
+        }
         return actor == poiTarget;
     }
     #endregion
