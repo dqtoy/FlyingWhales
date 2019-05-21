@@ -1640,13 +1640,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         }
 
-        if (currentAction != null && !currentAction.isDone) {
-            if (!currentAction.isPerformingActualAction) {
-                SetCurrentAction(null);
-            } else {
-                currentAction.currentState.EndPerTickEffect(false);
-            }
-        }
+        StopCurrentAction(false);
         for (int i = 0; i < allGoapPlans.Count; i++) {
             if (DropPlan(allGoapPlans[i])) {
                 i--;
@@ -4492,7 +4486,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 allGoapPlans.Add(plan);
             }
             //If a character is strolling or idly returning home and a plan is added to this character, end the action/state
-            if (stateComponent.currentState != null && (stateComponent.currentState.characterState == CHARACTER_STATE.STROLL || stateComponent.currentState.characterState == CHARACTER_STATE.STROLL_OUTSIDE)) {
+            if (stateComponent.currentState != null && (stateComponent.currentState.characterState == CHARACTER_STATE.STROLL 
+                || stateComponent.currentState.characterState == CHARACTER_STATE.STROLL_OUTSIDE 
+                || stateComponent.currentState.characterState == CHARACTER_STATE.PATROL)) {
                 stateComponent.currentState.OnExitThisState();
             } else if (currentAction != null && currentAction.goapType == INTERACTION_TYPE.RETURN_HOME) {
                 if (currentAction.parentPlan == null || currentAction.parentPlan.category == GOAP_CATEGORY.IDLE) {
@@ -5339,13 +5335,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                             }
 
                             AdjustIsWaitingForInteraction(1);
-                            if (currentAction != null && !currentAction.isDone) {
-                                if (!currentAction.isPerformingActualAction) {
-                                    SetCurrentAction(null);
-                                } else {
-                                    currentAction.currentState.EndPerTickEffect(false);
-                                }
-                            }
+                            StopCurrentAction(false);
                             AdjustIsWaitingForInteraction(-1);
                         }
                         return;
@@ -5504,64 +5494,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             IdlePlans();
         }
     }
-    //private void WillAboutToDoAction(GoapAction action) {
-    //    string log = GameManager.Instance.TodayLogString() + "PERFORMING GOAP PLANS OF " + name;
-    //    List<INTERACTION_TYPE> actorAllowedActions = RaceManager.Instance.GetNPCInteractionsOfRace(this);
-    //    bool willGoIdleState = true;
-    //    if (action.parentPlan.isBeingRecalculated) {
-    //        log += "\n - Plan is currently being recalculated, skipping...";
-    //        return; //skip plan
-    //    }
-    //    if (actorAllowedActions.Contains(action.goapType) && action.CanSatisfyRequirements()) {
-    //        if (IsPlanCancelledDueToInjury(action)) {
-    //            log += "\n - Action's plan is cancelled due to injury, dropping plan...";
-    //            PrintLogIfActive(log);
-    //            DropPlan(action.parentPlan, true);
-    //            return;
-    //        }
-    //        if (action.IsHalted()) {
-    //            log += "\n - Action " + action.goapName + " is waiting, skipping...";
-    //            return;
-    //        }
-    //        bool preconditionsSatisfied = action.CanSatisfyAllPreconditions();
-    //        if (!preconditionsSatisfied) {
-    //            log += "\n - Action's preconditions are not all satisfied, trying to recalculate plan...";
-    //            if (action.parentPlan.doNotRecalculate) {
-    //                log += "\n - Action's plan has doNotRecalculate state set to true, dropping plan...";
-    //                PrintLogIfActive(log);
-    //                DropPlan(action.parentPlan);
-    //            } else {
-    //                PrintLogIfActive(log);
-    //                RecalculatePlan(action.parentPlan);
-    //            }
-    //            willGoIdleState = false;
-    //        } else {
-    //            if (action.poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-    //                Character targetCharacter = action.poiTarget as Character;
-    //                if (!targetCharacter.IsInOwnParty() && targetCharacter.currentParty != _ownParty) {
-    //                    log += "\n - " + targetCharacter.name + " is not in its own party, waiting and skipping...";
-    //                    PrintLogIfActive(log);
-    //                    return;
-    //                }
-    //            }
-    //            log += "\n - Action's preconditions are all satisfied, doing action...";
-    //            PrintLogIfActive(log);
-    //            Messenger.Broadcast(Signals.CHARACTER_WILL_DO_PLAN, this, action.parentPlan);
-    //            action.DoAction(action.parentPlan);
-    //            willGoIdleState = false;
-    //        }
-    //    } else {
-    //        log += "\n - Action did not meet current requirements and allowed actions, dropping plan...";
-    //        PrintLogIfActive(log);
-    //        DropPlan(action.parentPlan);
-    //        willGoIdleState = false;
-    //    }
-    //    if (willGoIdleState) {
-    //        log += "\n - Character will go into idle state";
-    //        PrintLogIfActive(log);
-    //        IdlePlans();
-    //    }
-    //}
     private bool IsPlanCancelledDueToInjury(GoapAction action) {
         if (action.poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
             Character target = action.poiTarget as Character;
@@ -5920,7 +5852,20 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             currentAction.StopAction();
         }
     }
-
+    //This will only stop the current action of this character, this is different from StopAction because this will not drop the plan if the actor is not performing it but is on the way
+    //This does not stop the movement of this character, call StopMovement separately to stop movement
+    public void StopCurrentAction(bool shouldDoAfterEffect = true) {
+        if(currentAction != null) {
+            if (currentAction.isPerformingActualAction && !currentAction.isDone) {
+                if (!shouldDoAfterEffect) {
+                    currentAction.OnStopActionDuringCurrentState();
+                }
+                currentAction.currentState.EndPerTickEffect(shouldDoAfterEffect);
+            } else {
+                SetCurrentAction(null);
+            }
+        }
+    }
     #endregion
 
     #region Supply

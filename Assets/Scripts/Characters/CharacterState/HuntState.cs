@@ -22,6 +22,7 @@ public class HuntState : CharacterState {
             if (targetCharacter.isDead) {
                 GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.EAT_CORPSE, stateComponent.character, targetPOI);
                 if (goapAction.targetTile != null) {
+                    SetCurrentlyDoingAction(goapAction);
                     goapAction.CreateStates();
                     stateComponent.character.SetCurrentAction(goapAction);
                     stateComponent.character.marker.GoTo(goapAction.targetTile, OnArriveAtCorpseLocation);
@@ -54,6 +55,7 @@ public class HuntState : CharacterState {
         stateComponent.character.currentAction.PerformActualAction();
     }
     private void HuntAgain(string result, GoapAction goapAction) {
+        SetCurrentlyDoingAction(null);
         if (stateComponent.currentState != this) {
             return;
         }

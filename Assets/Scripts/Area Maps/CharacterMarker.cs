@@ -1127,13 +1127,7 @@ public class CharacterMarker : PooledObject {
 
             //remove enemy's current action
             enemy.AdjustIsWaitingForInteraction(1);
-            if (enemy.currentAction != null && !enemy.currentAction.isDone) {
-                if (!enemy.currentAction.isPerformingActualAction) {
-                    enemy.SetCurrentAction(null);
-                } else {
-                    enemy.currentAction.currentState.EndPerTickEffect();
-                }
-            }
+            enemy.StopCurrentAction();
             enemy.AdjustIsWaitingForInteraction(-1);
 
             engageState.CombatOnEngage();

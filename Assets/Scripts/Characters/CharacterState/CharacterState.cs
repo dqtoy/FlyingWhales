@@ -15,6 +15,7 @@ public class CharacterState {
     public Log thoughtBubbleLog { get; protected set; }
     public CharacterStateJob job { get; protected set; }
     public string actionIconString { get; protected set; }
+    public GoapAction currentlyDoingAction { get; protected set; }
 
     public Character targetCharacter { get; protected set; } //Target character of current state
     public Area targetArea { get; protected set; }
@@ -43,6 +44,14 @@ public class CharacterState {
     }
     //Ends a state, can be overridden
     protected virtual void EndState() {
+        if (currentlyDoingAction != null) {
+            if (currentlyDoingAction.isPerformingActualAction && !currentlyDoingAction.isDone) {
+                currentlyDoingAction.SetEndAction(FakeEndAction);
+                currentlyDoingAction.currentState.EndPerTickEffect(false);
+            }
+            stateComponent.character.SetCurrentAction(null);
+            SetCurrentlyDoingAction(null);
+        }
         isDone = true;
         StopStatePerTick();
         RemoveDefaultListeners();
@@ -79,6 +88,11 @@ public class CharacterState {
     }
     #endregion
 
+    private void FakeEndAction(string str, GoapAction action) {
+        //This is just a fake holder end action so that the currently doing action will not go to its actual end action (ex. PatrolAgain)
+        //This is done because we don't want the GoapActionResult to be called as well as the actual end action
+    }
+
     //Stops the timer of this state
     public void StopStatePerTick() {
         //if (Messenger.eventTable.ContainsKey(Signals.TICK_ENDED)) {
@@ -94,6 +108,10 @@ public class CharacterState {
     //Sets the target character of this state, if there's any
     public void SetTargetCharacter(Character target) {
         targetCharacter = target;
+    }
+    //This is the action that is currently being done while in this state, ex. pick up item
+    public void SetCurrentlyDoingAction(GoapAction action) {
+        currentlyDoingAction = action;
     }
     //public void SetParentMajorState(CharacterState majorState) {
     //    parentMajorState = majorState;

@@ -28,6 +28,7 @@ public class StrollState : CharacterState {
             if (token.characterOwner == null) {
                 GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.PICK_ITEM, stateComponent.character, targetPOI);
                 if (goapAction.targetTile != null) {
+                    SetCurrentlyDoingAction(goapAction);
                     goapAction.CreateStates();
                     stateComponent.character.SetCurrentAction(goapAction);
                     stateComponent.character.marker.GoTo(goapAction.targetTile, OnArriveAtPickUpLocation);
@@ -47,6 +48,7 @@ public class StrollState : CharacterState {
         stateComponent.character.currentAction.PerformActualAction();
     }
     private void StrollAgain(string result, GoapAction goapAction) {
+        SetCurrentlyDoingAction(null);
         if (stateComponent.currentState != this) {
             return;
         }

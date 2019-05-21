@@ -41,13 +41,7 @@ public class CharacterStateComponent {
     public CharacterState SwitchToState(CHARACTER_STATE state, Character targetCharacter = null, Area targetArea = null) {
         //Before switching character must end current action first because once a character is in a state in cannot make plans
         character.AdjustIsWaitingForInteraction(1);
-        if (character.currentAction != null && !character.currentAction.isDone) {
-            if (!character.currentAction.isPerformingActualAction) {
-                character.SetCurrentAction(null);
-            } else {
-                character.currentAction.currentState.EndPerTickEffect();
-            }
-        }
+        character.StopCurrentAction();
         character.AdjustIsWaitingForInteraction(-1);
 
         //Stop the movement of character because the new state probably has different movement behavior

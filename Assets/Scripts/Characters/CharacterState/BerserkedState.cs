@@ -28,6 +28,7 @@ public class BerserkedState : CharacterState {
                 if (chance < 20) {
                     GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.TILE_OBJECT_DESTROY, stateComponent.character, targetPOI);
                     if (goapAction.targetTile != null) {
+                        SetCurrentlyDoingAction(goapAction);
                         goapAction.CreateStates();
                         stateComponent.character.SetCurrentAction(goapAction);
                         stateComponent.character.marker.GoTo(goapAction.targetTile, OnArriveAtLocation);
@@ -72,7 +73,8 @@ public class BerserkedState : CharacterState {
         stateComponent.character.currentAction.PerformActualAction();
     }
     private void BerserkAgain(string result, GoapAction goapAction) {
-        if(stateComponent.currentState != this) {
+        SetCurrentlyDoingAction(null);
+        if (stateComponent.currentState != this) {
             return;
         }
         stateComponent.character.SetCurrentAction(null);

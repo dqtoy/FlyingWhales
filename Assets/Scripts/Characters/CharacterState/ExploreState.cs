@@ -37,6 +37,7 @@ public class ExploreState : CharacterState {
             if (token.characterOwner == null) {
                 GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.PICK_ITEM, stateComponent.character, targetPOI);
                 if (goapAction.targetTile != null) {
+                    SetCurrentlyDoingAction(goapAction);
                     goapAction.CreateStates();
                     stateComponent.character.SetCurrentAction(goapAction);
                     stateComponent.character.marker.GoTo(goapAction.targetTile, OnArriveAtPickUpLocation);
@@ -80,6 +81,7 @@ public class ExploreState : CharacterState {
         stateComponent.character.currentAction.PerformActualAction();
     }
     private void ExploreAgain(string result, GoapAction goapAction) {
+        SetCurrentlyDoingAction(null);
         if (result == InteractionManager.Goap_State_Success && goapAction.poiTarget is SpecialToken) {
             itemsCollected.Add(goapAction.poiTarget as SpecialToken);
         }

@@ -62,22 +62,12 @@ public class EngageState : CharacterState {
                 if (targetCharacter.currentParty.icon.isTravelling && targetCharacter.currentParty.icon.travelLine == null) {
                     targetCharacter.marker.StopMovement();
                 }
-                if (!targetCharacter.currentAction.isPerformingActualAction) {
-                    targetCharacter.SetCurrentAction(null);
-                } else {
-                    targetCharacter.currentAction.currentState.EndPerTickEffect();
-                }
+                targetCharacter.StopCurrentAction();
             }
             targetCharacter.AdjustIsWaitingForInteraction(-1);
 
             engagerCharacter.AdjustIsWaitingForInteraction(1);
-            if (engagerCharacter.currentAction != null && !engagerCharacter.currentAction.isDone) {
-                if (!engagerCharacter.currentAction.isPerformingActualAction) {
-                    engagerCharacter.SetCurrentAction(null);
-                } else {
-                    engagerCharacter.currentAction.currentState.EndPerTickEffect();
-                }
-            }
+            engagerCharacter.StopCurrentAction();
             engagerCharacter.AdjustIsWaitingForInteraction(-1);
 
             List<Character> attackers = new List<Character>();
