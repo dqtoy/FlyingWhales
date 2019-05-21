@@ -519,6 +519,19 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     public void SetFurnitureSpot(FurnitureSpot spot) {
         furnitureSpot = spot;
     }
+    public FURNITURE_TYPE GetFurnitureThatCanProvide(FACILITY_TYPE facility) {
+        List<FURNITURE_TYPE> choices = new List<FURNITURE_TYPE>();
+        for (int i = 0; i < furnitureSpot.allowedFurnitureTypes.Length; i++) {
+            FURNITURE_TYPE currType = furnitureSpot.allowedFurnitureTypes[i];
+            if (currType.ConvertFurnitureToTileObject().CanProvideFacility(facility)) {
+                choices.Add(currType);
+            }
+        }
+        if (choices.Count > 0) {
+            return choices[UnityEngine.Random.Range(0, choices.Count)];
+        }
+        throw new System.Exception("Furniture spot at " + this.ToString() + " cannot provide facility " + facility.ToString() + "! Should not reach this point if that is the case!");
+    }
     #endregion
 }
 

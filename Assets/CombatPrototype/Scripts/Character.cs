@@ -1287,7 +1287,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             hasCreatedJob = true;
         }
         if (role.roleType == CHARACTER_ROLE.SOLDIER && isAtHomeArea && targetCharacter.isAtHomeArea && !targetCharacter.isDead) {
-            if (!HasRelationshipOfEffectWith(targetCharacter, TRAIT_EFFECT.POSITIVE)) {
+            if (GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.POSITIVE) {
                 if (targetCharacter.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
                     if (CreateApprehendJobFor(targetCharacter) != null) {
                         hasCreatedJob = true;
@@ -1383,6 +1383,23 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return false;
     }
+    /// <summary>
+    /// Force this character to create an undermine job towards the target character.
+    /// Only cases that this will not happen is:
+    /// - if target character is already dead
+    /// - this character already has an undermine job in his/her job queue
+    /// </summary>
+    /// <param name="targetCharacter">The character to undermine.</param>
+    public void ForceCreateUndermineJob(Character targetCharacter) {
+        if (!targetCharacter.isDead && !jobQueue.HasJob("Undermine Enemy", targetCharacter)) {
+            GoapPlanJob job = new GoapPlanJob("Undermine Enemy", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", targetPOI = targetCharacter });
+            job.SetCannotOverrideJob(true);
+            Debug.LogWarning(GameManager.Instance.TodayLogString() + "Added an UNDERMINE ENEMY Job to " + this.name + " with target " + targetCharacter.name);
+            job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
+            jobQueue.AddJobInQueue(job, true, false);
+            jobQueue.ProcessFirstJobInQueue(this);
+        }
+    }
     public void CreateAssaultJobs(Character targetCharacter, int amount) {
         if (isAtHomeArea && !targetCharacter.isDead && !targetCharacter.isAtHomeArea && !targetCharacter.HasTraitOf(TRAIT_TYPE.DISABLER, "Combat Recovery") && !this.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
             for (int i = 0; i < amount; i++) {
@@ -1429,7 +1446,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public GoapPlanJob CreateRestrainJob(Character targetCharacter) {
         if (isAtHomeArea && !targetCharacter.isDead && !targetCharacter.isAtHomeArea && !this.HasTraitOf(TRAIT_TYPE.CRIMINAL) && (role.roleType == CHARACTER_ROLE.SOLDIER || role.roleType == CHARACTER_ROLE.CIVILIAN || role.roleType == CHARACTER_ROLE.ADVENTURER)) {
-            if (targetCharacter.GetTrait("Unconscious") != null && targetCharacter.GetTrait("Restrained") == null && !HasRelationshipOfEffectWith(targetCharacter, TRAIT_EFFECT.POSITIVE) && !targetCharacter.HasJobTargettingThisCharacter("Restrain")) {
+            if (targetCharacter.GetTrait("Unconscious") != null && targetCharacter.GetTrait("Restrained") == null && GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.POSITIVE && !targetCharacter.HasJobTargettingThisCharacter("Restrain")) {
                 GoapPlanJob job = new GoapPlanJob("Restrain", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = specificLocation, targetPOI = targetCharacter });
                 job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = targetCharacter }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
                 job.SetCanTakeThisJobChecker(CanCharacterTakeRestrainJob);
@@ -1442,7 +1459,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         return null;
     }
     private bool CanCharacterTakeRestrainJob(Character character, Character targetCharacter, JobQueueItem job) {
-        return (character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.CIVILIAN) && !HasRelationshipOfEffectWith(targetCharacter, TRAIT_EFFECT.POSITIVE); // || character.role.roleType == CHARACTER_ROLE.ADVENTURER
+        return (character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.CIVILIAN) && character.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.POSITIVE; // || character.role.roleType == CHARACTER_ROLE.ADVENTURER
     }
     /// <summary>
     /// Make this character create an apprehend job at his home location targetting a specific character.
@@ -1484,7 +1501,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     //    //}
     //}
     private bool CanCharacterTakeApprehendJob(Character character, Character targetCharacter, JobQueueItem job) {
-        return character.role.roleType == CHARACTER_ROLE.SOLDIER && !HasRelationshipOfEffectWith(targetCharacter, TRAIT_EFFECT.POSITIVE);
+        return character.role.roleType == CHARACTER_ROLE.SOLDIER && character.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.POSITIVE;
     }
 
     public void CreatePersonalJobs() {
@@ -1554,6 +1571,33 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     //GameManager.Instance.SetPausedState(true);
                     Debug.LogWarning(GameManager.Instance.TodayLogString() + "Added an UNDERMINE ENEMY Job to " + this.name + " with target " + chosenCharacter.name);
                     jobQueue.AddJobInQueue(job);
+                    hasCreatedJob = true;
+                }
+            }
+        }
+
+        if (!hasCreatedJob && currentStructure is Dwelling) {
+            Dwelling dwelling = currentStructure as Dwelling;
+            if (dwelling.HasPositiveRelationshipWithAnyResident(this) && dwelling.HasUnoccupiedFurnitureSpot() && poiGoapActions.Contains(INTERACTION_TYPE.CRAFT_FURNITURE)) {
+                //- if the character is in a Dwelling structure and he or someone he has a positive relationship with owns it, 
+                //and the Dwelling still has an unoccupied Furniture Spot, 5% chance to add a Build Furniture Job.
+                if (UnityEngine.Random.Range(0, 100) < 5) {
+                    FACILITY_TYPE mostNeededFacility = dwelling.GetMostNeededValidFacility();
+                    if (mostNeededFacility != FACILITY_TYPE.NONE) {
+                        List<LocationGridTile> validSpots = dwelling.GetUnoccupiedFurnitureSpotsThatCanProvide(mostNeededFacility);
+                        LocationGridTile chosenTile = validSpots[UnityEngine.Random.Range(0, validSpots.Count)];
+                        FURNITURE_TYPE furnitureToCreate = chosenTile.GetFurnitureThatCanProvide(mostNeededFacility);
+                        //check first if the character can build that specific type of furniture
+                        if (furnitureToCreate.ConvertFurnitureToTileObject().CanBeCraftedBy(this)) {
+                            GoapPlanJob job = new GoapPlanJob("Build Furniture", INTERACTION_TYPE.CRAFT_FURNITURE, this, new Dictionary<INTERACTION_TYPE, object[]>() {
+                            { INTERACTION_TYPE.CRAFT_FURNITURE, new object[] { chosenTile, furnitureToCreate } }
+                        });
+                            job.SetCancelOnFail(true);
+                            job.SetCannotOverrideJob(true);
+                            jobQueue.AddJobInQueue(job);
+                            Debug.Log(this.name + " created a new build furniture job targetting tile " + chosenTile.ToString() + " with furniture type " + furnitureToCreate.ToString());
+                        }
+                    }
                 }
             }
         }
@@ -2474,17 +2518,17 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     /// <param name="otherCharacter">Character to check</param>
     /// <param name="useDisabled">Should this checking use disabled relationships?</param>
     /// <returns>POSITIVE, NEGATIVE, NONE</returns>
-    public RELATIONSHIP_TYPE GetRelationshipTypeWith(Character otherCharacter, bool useDisabled = false) {
+    public RELATIONSHIP_EFFECT GetRelationshipEffectWith(Character otherCharacter, bool useDisabled = false) {
         if (HasRelationshipWith(otherCharacter, useDisabled)) {
             for (int i = 0; i < relationships[otherCharacter].rels.Count; i++) {
                 RelationshipTrait currTrait = relationships[otherCharacter].rels[i];
                 if (currTrait.effect == TRAIT_EFFECT.NEGATIVE) {
-                    return RELATIONSHIP_TYPE.NEGATIVE;
+                    return RELATIONSHIP_EFFECT.NEGATIVE;
                 }
             }
-            return RELATIONSHIP_TYPE.POSITIVE;
+            return RELATIONSHIP_EFFECT.POSITIVE;
         }
-        return RELATIONSHIP_TYPE.NONE;
+        return RELATIONSHIP_EFFECT.NONE;
     }
     #endregion
 
@@ -2898,9 +2942,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 
         //Random Traits
         int chance = UnityEngine.Random.Range(0, 100);
-        if (chance < 10) {
+        //if (chance < 10) {
             AddTrait(new Craftsman());
-        }
+        //}
     }
     public void CreateInitialTraitsByRace() {
         if (race == RACE.HUMANS) {
@@ -4119,7 +4163,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         weights.AddElement("normal", 400);
 
         CharacterRelationshipData relData = GetCharacterRelationshipData(targetCharacter);
-
+        RELATIONSHIP_EFFECT relationshipEffectWithTarget = GetRelationshipEffectWith(targetCharacter);
         //**if no relationship yet, may become friends**
         if (relData == null) {
             int weight = 0;
@@ -4173,12 +4217,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
 
             //**if already has a positive relationship, knowledge may be transferred**
-            if (HasRelationshipOfEffectWith(targetCharacter, TRAIT_EFFECT.POSITIVE)) {
+            if (relationshipEffectWithTarget == RELATIONSHIP_EFFECT.POSITIVE) {
                 weights.AddElement("knowledge transfer", 200);
             }
 
             //**if already has a negative relationship, argument may occur**
-            if (HasRelationshipOfEffectWith(targetCharacter, TRAIT_EFFECT.NEGATIVE)) {
+            if (relationshipEffectWithTarget == RELATIONSHIP_EFFECT.NEGATIVE) {
                 weights.AddElement("argument", 500);
 
                 //**if already has a negative relationship, relationship may be resolved**
@@ -4238,7 +4282,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             //relationship may be resolved
             List<RelationshipTrait> negativeTraits = GetAllRelationshipOfEffectWith(targetCharacter, TRAIT_EFFECT.NEGATIVE);
             RelationshipTrait chosenTrait = negativeTraits[UnityEngine.Random.Range(0, negativeTraits.Count)];
-            CharacterManager.Instance.RemoveRelationshipBetween(this, targetCharacter, chosenTrait.relType);
+            CharacterManager.Instance.RemoveOneWayRelationship(this, targetCharacter, chosenTrait.relType);
         } else if (result == "flirt") {
             //store flirtation count in both characters
             //Log: "[Character Name 1] and [Character Name 2] flirted."
@@ -4302,9 +4346,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (targetCharacter.GetTrait("Drunk") != null) {
             positiveFlirtationWeight *= 2;
         }
-        if (HasRelationshipOfEffectWith(targetCharacter, TRAIT_EFFECT.NEGATIVE)) {
-            //x0.3 all positive modifiers if they have a negative relationship
-            positiveFlirtationWeight *= 0.3f;
+        //x0.5 all positive modifiers per negative relationship
+        if (GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.NEGATIVE) {
+            positiveFlirtationWeight *= 0.5f;
+        }
+        if (targetCharacter.GetRelationshipEffectWith(this) == RELATIONSHIP_EFFECT.NEGATIVE) {
+            positiveFlirtationWeight *= 0.5f;
         }
         //x0.1 all positive modifiers per sexually incompatible
         if (!CharacterManager.Instance.IsSexuallyCompatibleOneSided(this, targetCharacter)) {
@@ -4318,7 +4365,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     private float GetBecomeLoversWeightWith(Character targetCharacter, CharacterRelationshipData relData, params CHARACTER_MOOD[] moods) {
         float positiveWeight = 0;
         float negativeWeight = 0;
-        if (!HasRelationshipOfEffectWith(targetCharacter, TRAIT_EFFECT.NEGATIVE) && !targetCharacter.HasRelationshipOfEffectWith(targetCharacter, TRAIT_EFFECT.NEGATIVE)
+        if (GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.NEGATIVE && targetCharacter.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.NEGATIVE
             && CanHaveRelationshipWith(RELATIONSHIP_TRAIT.LOVER, targetCharacter) && targetCharacter.CanHaveRelationshipWith(RELATIONSHIP_TRAIT.LOVER, this)
             && role.roleType != CHARACTER_ROLE.BEAST && targetCharacter.role.roleType != CHARACTER_ROLE.BEAST) {
             for (int i = 0; i < moods.Length; i++) {
@@ -4369,7 +4416,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //**if they dont have a negative relationship and at least one of them has a lover, they may become paramours**
         float positiveWeight = 0;
         float negativeWeight = 0;
-        if (!HasRelationshipOfEffectWith(targetCharacter, TRAIT_EFFECT.NEGATIVE) && !targetCharacter.HasRelationshipOfEffectWith(targetCharacter, TRAIT_EFFECT.NEGATIVE)
+        if (GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.NEGATIVE && targetCharacter.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.NEGATIVE
             && CanHaveRelationshipWith(RELATIONSHIP_TRAIT.PARAMOUR, targetCharacter) && targetCharacter.CanHaveRelationshipWith(RELATIONSHIP_TRAIT.PARAMOUR, this)
             && role.roleType != CHARACTER_ROLE.BEAST && targetCharacter.role.roleType != CHARACTER_ROLE.BEAST) {
             for (int i = 0; i < moods.Length; i++) {
@@ -4411,6 +4458,11 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             if (!CharacterManager.Instance.IsSexuallyCompatibleOneSided(targetCharacter, this)) {
                 positiveWeight *= 0.1f;
             }
+            Character lover = GetCharacterWithRelationship(RELATIONSHIP_TRAIT.LOVER);
+            //x3 all positive modifiers if character considers lover as Enemy
+            if (lover != null && HasRelationshipOfTypeWith(lover, RELATIONSHIP_TRAIT.ENEMY)) {
+                positiveWeight *= 3f;
+            }
             //x0 if a character has a lover and does not have the Unfaithful trait
             if ((HasRelationshipTraitOf(RELATIONSHIP_TRAIT.LOVER, false) && GetTrait("Unfaithful") == null) 
                 || (targetCharacter.HasRelationshipTraitOf(RELATIONSHIP_TRAIT.LOVER, false) && targetCharacter.GetTrait("Unfaithful") == null)) {
@@ -4446,11 +4498,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             default:
                 break;
         }
-    }
-    public void AssignQueueActionsToCharacter(Character targetCharacter) {
-        INTERACTION_TYPE chosenInteractionType = INTERACTION_TYPE.NONE; //TODO
-        //_goapInteractions.Clear();
-
     }
     public void AssignGoapInteractionsRecursively(INTERACTION_TYPE type, Character targetCharacter) {
         InteractionAttributes attributes = InteractionManager.Instance.GetCategoryAndAlignment(type, this);
@@ -5686,23 +5733,24 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             return;
         }
 
-        //if (result == InteractionManager.Goap_State_Fail) {
-        //    //if the last action of the plan failed and that action type can be replaced
-        //    if (action.goapType.CanBeReplaced()) {
-        //        //find a similar action that is advertised by another object, in the same structure
-        //        //if there is any, insert that action into the current plan, then do that next
-        //        List<TileObject> objs = currentStructure.GetTileObjectsThatAdvertise(action.goapType);
-        //        if (objs.Count > 0) {
-        //            TileObject chosenObject = objs[UnityEngine.Random.Range(0, objs.Count)];
-        //            GoapAction newAction = chosenObject.Advertise(action.goapType, this);
-        //            if (newAction != null) {
-        //                plan.InsertAction(newAction);
-        //            } else {
-        //                Debug.LogWarning(chosenObject.ToString() + " did not return an action of type " + action.goapType.ToString());
-        //            }
-        //        }
-        //    }
-        //}
+        //Reason: https://trello.com/c/58aGENsO/1867-attempt-to-find-another-nearby-chair-first-instead-of-dropping-drink-eat-sit-down-actions
+        if (result == InteractionManager.Goap_State_Fail) {
+            //if the last action of the plan failed and that action type can be replaced
+            if (action.goapType.CanBeReplaced()) {
+                //find a similar action that is advertised by another object, in the same structure
+                //if there is any, insert that action into the current plan, then do that next
+                List<TileObject> objs = currentStructure.GetTileObjectsThatAdvertise(action.goapType);
+                if (objs.Count > 0) {
+                    TileObject chosenObject = objs[UnityEngine.Random.Range(0, objs.Count)];
+                    GoapAction newAction = chosenObject.Advertise(action.goapType, this);
+                    if (newAction != null) {
+                        plan.InsertAction(newAction);
+                    } else {
+                        Debug.LogWarning(chosenObject.ToString() + " did not return an action of type " + action.goapType.ToString());
+                    }
+                }
+            }
+        }
 
         log += "\nPlan is setting next action to be done...";
         plan.SetNextNode();
@@ -6025,8 +6073,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         string reactSummary = GameManager.Instance.TodayLogString() + this.name + " will react to crime committed by " + criminal.name;
         Log witnessLog = null;
         Log reportLog = null;
+        RELATIONSHIP_EFFECT relationshipEfffectWithCriminal = GetRelationshipEffectWith(criminal);
         //If character has a positive relationship (Friend, Lover, Paramour) with the criminal
-        if (this.HasRelationshipOfEffectWith(criminal, TRAIT_EFFECT.POSITIVE, RELATIONSHIP_TRAIT.RELATIVE)) {
+        if (relationshipEfffectWithCriminal == RELATIONSHIP_EFFECT.POSITIVE) {
             reactSummary += "\n" + this.name + " has a positive relationship with " + criminal.name;
             CRIME_CATEGORY category = committedCrime.GetCategory();
             //and crime severity is less than Serious Crimes:
@@ -6040,38 +6089,46 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             else if (category.IsGreaterThanOrEqual(CRIME_CATEGORY.SERIOUS)) {
                 reactSummary += "\nCrime committed is serious or worse. Removing positive relationships.";
                 //- Witness Log: "[Character Name] saw [Criminal Name] committing [Theft/Assault/Murder]! They are no longer [Friends/Lovers/Paramours]."
-                List<RelationshipTrait> traitsToRemove = GetAllRelationshipOfEffectWith(criminal, TRAIT_EFFECT.POSITIVE);
-                CharacterManager.Instance.RemoveRelationshipBetween(this, criminal, traitsToRemove);
+                //- Relationship Degradation between Character and Criminal
+                CharacterManager.Instance.RelationshipDegradation(this, criminal);
 
-                string removedTraitsSummary = string.Empty;
-                for (int i = 0; i < traitsToRemove.Count; i++) {
-                    RelationshipTrait currTrait = traitsToRemove[i];
-                    if (i + 1 == traitsToRemove.Count && traitsToRemove.Count != 1) removedTraitsSummary += " and ";  //this is the last element
-                    else if (i > 0) removedTraitsSummary += ", ";
+                //List<RelationshipTrait> traitsToRemove = GetAllRelationshipOfEffectWith(criminal, TRAIT_EFFECT.POSITIVE);
+                //CharacterManager.Instance.RemoveRelationshipBetween(this, criminal, traitsToRemove);
 
-                    removedTraitsSummary += Utilities.GetRelationshipPlural(currTrait.relType);
-                }
-                reactSummary += "\nRemoved relationships: " + removedTraitsSummary;
+                //string removedTraitsSummary = string.Empty;
+                //for (int i = 0; i < traitsToRemove.Count; i++) {
+                //    RelationshipTrait currTrait = traitsToRemove[i];
+                //    if (i + 1 == traitsToRemove.Count && traitsToRemove.Count != 1) removedTraitsSummary += " and ";  //this is the last element
+                //    else if (i > 0) removedTraitsSummary += ", ";
 
-                if (traitsToRemove.Count > 0) {
-                    //if traits were removed, use remove relationship version of log
-                    witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "remove_relationship");
-                    witnessLog.AddToFillers(null, removedTraitsSummary, LOG_IDENTIFIER.STRING_2);
+                //    removedTraitsSummary += Utilities.GetRelationshipPlural(currTrait.relType);
+                //}
+                //reactSummary += "\nRemoved relationships: " + removedTraitsSummary;
 
-                    reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_remove_relationship");
-                    reportLog.AddToFillers(null, removedTraitsSummary, LOG_IDENTIFIER.STRING_2);
-                } else {
-                    //else use normal witnessed log
-                    witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "witnessed");
-                    reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_witnessed");
-                }
+                //if (traitsToRemove.Count > 0) {
+                //    //if traits were removed, use remove relationship version of log
+                //    witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "remove_relationship");
+                //    witnessLog.AddToFillers(null, removedTraitsSummary, LOG_IDENTIFIER.STRING_2);
+
+                //    reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_remove_relationship");
+                //    reportLog.AddToFillers(null, removedTraitsSummary, LOG_IDENTIFIER.STRING_2);
+                //} else {
+                //    //else use normal witnessed log
+                //    witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "witnessed");
+                //    reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_witnessed");
+                //}
+
+                witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "witnessed");
+                reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_witnessed");
                 PerRoleCrimeReaction(committedCrime, criminal, witnessedCrime);
             }
         }
         //If character has no relationships with the criminal or they are enemies:
         else if (!this.HasRelationshipWith(criminal) || this.HasRelationshipOfTypeWith(criminal, RELATIONSHIP_TRAIT.ENEMY)) {
             reactSummary += "\n" + this.name + " does not have a relationship with or is an enemy of " + criminal.name;
-            //-Witness Log: "[Character Name] saw [Criminal Name] committing [Theft/Assault/Murder]!"
+            //- Relationship Degradation between Character and Criminal
+            CharacterManager.Instance.RelationshipDegradation(this, criminal);
+            //- Witness Log: "[Character Name] saw [Criminal Name] committing [Theft/Assault/Murder]!"
             witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "witnessed");
             reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_witnessed");
             PerRoleCrimeReaction(committedCrime, criminal, witnessedCrime);

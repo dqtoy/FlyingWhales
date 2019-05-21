@@ -913,8 +913,8 @@ public class Area {
         //InitialRaceSetup setup = GetRaceSetup(defaultRace);
         for (int i = 0; i < raceSetups.Count; i++) {
             InitialRaceSetup setup = raceSetups[i];
-            int charactersToCreate = 10;
-            //int charactersToCreate = UnityEngine.Random.Range(setup.spawnRange.lowerBound, setup.spawnRange.upperBound + 1);
+            //int charactersToCreate = 10;
+            int charactersToCreate = UnityEngine.Random.Range(setup.spawnRange.lowerBound, setup.spawnRange.upperBound + 1);
             bool isRaceBeast = Utilities.IsRaceBeast(setup.race.race);
             CharacterRole chosenRole = CharacterRole.BEAST;
             for (int j = 0; j < charactersToCreate; j++) {

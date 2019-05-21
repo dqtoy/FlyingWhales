@@ -410,7 +410,9 @@ public class CharacterManager : MonoBehaviour {
     /// <param name="triggerOnAdd">Should this trigger the trait's OnAdd Function.</param>
     /// <returns>The created relationship data.</returns>
     public CharacterRelationshipData CreateNewOneWayRelationship(Character currCharacter, Character targetCharacter, RELATIONSHIP_TRAIT rel, bool triggerOnAdd = true) {
-        currCharacter.AddTrait(CreateRelationshipTrait(rel, targetCharacter), null, null, null, triggerOnAdd);
+        if (!currCharacter.HasRelationshipOfTypeWith(targetCharacter, rel)) {
+            currCharacter.AddTrait(CreateRelationshipTrait(rel, targetCharacter), null, null, null, triggerOnAdd);
+        }
         return currCharacter.GetCharacterRelationshipData(targetCharacter);
     }
     public CharacterRelationshipData CreateNewRelationshipBetween(Character currCharacter, Character targetCharacter, RELATIONSHIP_TRAIT rel, bool triggerOnAdd = true) {
@@ -425,6 +427,9 @@ public class CharacterManager : MonoBehaviour {
         }
 
         return currCharacter.GetCharacterRelationshipData(targetCharacter);
+    }
+    public void RemoveOneWayRelationship(Character currCharacter, Character targetCharacter, RELATIONSHIP_TRAIT rel, bool triggerOnRemove = true, bool useDisabled = false) {
+        currCharacter.RemoveTrait(currCharacter.GetRelationshipTraitWith(targetCharacter, rel, useDisabled), triggerOnRemove);
     }
     public void RemoveRelationshipBetween(Character character, Character targetCharacter, RELATIONSHIP_TRAIT rel, bool triggerOnRemove = true, bool useDisabled = false) {
         if (!character.relationships.ContainsKey(targetCharacter)
@@ -897,6 +902,47 @@ public class CharacterManager : MonoBehaviour {
             default:
                 return false;
         }
+    }
+    public void RelationshipImprovement(Character actor, Character target) {
+        if (target.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.ENEMY)) {
+            //If Actor and Target are Enemies, 25% chance to remove Enemy relationship. If so, Target now considers Actor a Friend.
+            if (UnityEngine.Random.Range(0, 100) < 25) {
+                RemoveOneWayRelationship(target, actor, RELATIONSHIP_TRAIT.ENEMY);
+                CreateNewOneWayRelationship(target, actor, RELATIONSHIP_TRAIT.FRIEND);
+            }
+        } else if (!target.HasRelationshipWith(actor)) {
+            //If Target has no relationship with Actor, Target now considers Actor a Friend.
+            CreateNewOneWayRelationship(target, actor, RELATIONSHIP_TRAIT.FRIEND);
+        }
+        //TODO: - Add relevant logs
+    }
+    public void RelationshipDegradation(Character actor, Character target) {
+        //If Actor and Target are Lovers, 20% chance to remove Lover relationship. If so, Target now considers Actor an Enemy.
+        if (target.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.LOVER)) {
+            if (UnityEngine.Random.Range(0, 100) < 20) {
+                RemoveRelationshipBetween(target, actor, RELATIONSHIP_TRAIT.LOVER);
+                CreateNewOneWayRelationship(target, actor, RELATIONSHIP_TRAIT.ENEMY);
+            }
+        }
+        //If Actor and Target are Paramours, 20 % chance to remove Paramour relationship. If so, Target now considers Actor an Enemy.
+        if (target.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.PARAMOUR)) {
+            if (UnityEngine.Random.Range(0, 100) < 20) {
+                RemoveRelationshipBetween(target, actor, RELATIONSHIP_TRAIT.PARAMOUR);
+                CreateNewOneWayRelationship(target, actor, RELATIONSHIP_TRAIT.ENEMY);
+            }
+        }
+        //If Target considers Actor a Friend, remove that.Target now considers Actor an Enemy.
+        if (target.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.FRIEND)) {
+            RemoveOneWayRelationship(target, actor, RELATIONSHIP_TRAIT.FRIEND);
+            CreateNewOneWayRelationship(target, actor, RELATIONSHIP_TRAIT.ENEMY);
+        }
+        //If Target is only Relative of Actor(no other relationship) or has no relationship with Actor, Target now considers Actor an Enemy.
+        if (!target.HasRelationshipWith(actor) || (target.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.RELATIVE) && target.GetCharacterRelationshipData(actor).rels.Count == 1)) {
+            CreateNewOneWayRelationship(target, actor, RELATIONSHIP_TRAIT.ENEMY);
+        }
+
+
+        //TODO: - Add relevant logs
     }
     #endregion
 

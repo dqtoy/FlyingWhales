@@ -286,7 +286,7 @@ public class STCManager : MonoBehaviour {
                     allowedFurnitureTypes.Add(FURNITURE_TYPE.GUITAR);
                 }
                 FurnitureSpotMono mono = CreateNewFurnitureSpot(currData.centeredTilePosition);
-                mono.allowedFurnitureTypes = allowedFurnitureTypes;
+                mono.allowedFurnitureTypes = allowedFurnitureTypes.ToArray();
             }
         }
 

@@ -25,7 +25,7 @@ public class ReplaceTileObject : GoapAction {
     }
     protected override void ConstructPreconditionsAndEffects() {
         if (tileObjectToReplace != null) {
-            TileObjectData data = InteriorMapManager.Instance.GetTileObjectData(tileObjectToReplace.tileObjectType);
+            TileObjectData data = TileObjectDB.GetTileObjectData(tileObjectToReplace.tileObjectType);
             AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_SUPPLY, conditionKey = data.constructionCost, targetPOI = actor }, () => HasSupply(data.constructionCost));
         }
         //AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION., conditionKey = poiTarget, targetPOI = actor });
@@ -56,7 +56,7 @@ public class ReplaceTileObject : GoapAction {
         expectedEffects.Clear();
         ConstructPreconditionsAndEffects();
         CreateThoughtBubbleLog();
-        states["Replace Success"].OverrideDuration(InteriorMapManager.Instance.GetTileObjectData(tileObjectToReplace.tileObjectType).constructionTime);
+        states["Replace Success"].OverrideDuration(TileObjectDB.GetTileObjectData(tileObjectToReplace.tileObjectType).constructionTime);
         return true;
     }
     #endregion
@@ -72,7 +72,7 @@ public class ReplaceTileObject : GoapAction {
         SetCannotCancelAction(true);
         //place the tile object at the specified location.
         targetStructure.AddPOI(tileObjectToReplace, whereToPlace);
-        actor.AdjustSupply(-InteriorMapManager.Instance.GetTileObjectData(tileObjectToReplace.tileObjectType).constructionCost);
+        actor.AdjustSupply(-TileObjectDB.GetTileObjectData(tileObjectToReplace.tileObjectType).constructionCost);
         //make all residents aware of supply pile, just in case it was ever removed because of ghost collision
         for (int i = 0; i < whereToPlace.parentAreaMap.area.areaResidents.Count; i++) {
             whereToPlace.parentAreaMap.area.areaResidents[i].AddAwareness(tileObjectToReplace);

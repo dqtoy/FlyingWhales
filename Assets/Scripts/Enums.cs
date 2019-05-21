@@ -1184,6 +1184,7 @@ public enum INTERACTION_TYPE {
     INVITE_TO_MAKE_LOVE,
     DRINK_BLOOD,
     REPLACE_TILE_OBJECT,
+    CRAFT_FURNITURE,
 }
 public enum INTERACTION_ALIGNMENT {
     EVIL,
@@ -1445,9 +1446,9 @@ public enum CHARACTER_MOOD {
 public enum SEXUALITY {
     STRAIGHT, BISEXUAL, GAY
 }
-public enum FACILITY_TYPE { HAPPINESS_RECOVERY, FULLNESS_RECOVERY, TIREDNESS_RECOVERY, SIT_DOWN_SPOT }
+public enum FACILITY_TYPE { NONE, HAPPINESS_RECOVERY, FULLNESS_RECOVERY, TIREDNESS_RECOVERY, SIT_DOWN_SPOT  }
 public enum FURNITURE_TYPE { BED, TABLE, DESK, GUITAR, }
-public enum RELATIONSHIP_TYPE {
+public enum RELATIONSHIP_EFFECT {
     NONE,
     POSITIVE,
     NEGATIVE,
@@ -1572,6 +1573,39 @@ public static class Extensions {
             return character.HasTraitOf(data.neededTraitType);
         }
         return true;
+    }
+    #endregion
+
+    #region Furniture
+    public static TILE_OBJECT_TYPE ConvertFurnitureToTileObject(this FURNITURE_TYPE type) {
+        TILE_OBJECT_TYPE to;
+        if (System.Enum.TryParse<TILE_OBJECT_TYPE>(type.ToString(), out to)) {
+            return to;
+        }
+        return TILE_OBJECT_TYPE.NONE;
+    }
+    public static bool CanBeCraftedBy(this TILE_OBJECT_TYPE type, Character character) {
+        if (type == TILE_OBJECT_TYPE.NONE) {
+            return false;
+        }
+        TileObjectData data;
+        if (TileObjectDB.TryGetTileObjectData(type, out data)) {
+            if (data.neededTraitType == null) {
+                return true;
+            }
+            return character.HasTraitOf(data.neededTraitType);
+        }
+        return true;
+    }
+    #endregion
+
+    #region Tile Objects
+    public static bool CanProvideFacility(this TILE_OBJECT_TYPE tileObj, FACILITY_TYPE facility) {
+        TileObjectData data;
+        if (TileObjectDB.TryGetTileObjectData(tileObj, out data)) {
+            return data.CanProvideFacility(facility);
+        }
+        return false;
     }
     #endregion
 }

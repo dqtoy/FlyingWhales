@@ -41,12 +41,7 @@ public class InteriorMapManager : MonoBehaviour {
 
     //Local Avoidance
     private Pathfinding.RVO.Simulator sim;
-    public List<TileBase> allTileAssets;
-
-    //tile objects
-    private Dictionary<TILE_OBJECT_TYPE, TileObjectData> tileObjectData = new Dictionary<TILE_OBJECT_TYPE, TileObjectData>() {
-        { TILE_OBJECT_TYPE.SUPPLY_PILE, new TileObjectData() { constructionCost = 10, constructionTime = 12 } }
-    };
+    public List<TileBase> allTileAssets;    
 
     private void Awake() {
         Instance = this;
@@ -604,15 +599,6 @@ public class InteriorMapManager : MonoBehaviour {
         return shiftTemplateBy;
     }
     #endregion
-
-    #region Tile Objects
-    public TileObjectData GetTileObjectData(TILE_OBJECT_TYPE objType) {
-        if (tileObjectData.ContainsKey(objType)) {
-            return tileObjectData[objType];
-        }
-        throw new System.Exception("No tile data for type " + objType.ToString());
-    }
-    #endregion
 }
 
 #region Templates
@@ -645,13 +631,6 @@ public class StructureSlot {
         }
         return null;
     }
-}
-#endregion
-
-#region Tile Objects
-public struct TileObjectData {
-    public int constructionCost;
-    public int constructionTime; //in ticks
 }
 #endregion
 
