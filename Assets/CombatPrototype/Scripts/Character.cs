@@ -4065,8 +4065,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 log += "\n  -" + name + " will do action Stand";
                 PlanIdle(INTERACTION_TYPE.STAND, this);
                 return log;
-            } else if (currentStructure.structureType == STRUCTURE_TYPE.DWELLING && currentStructure != homeStructure && trapStructure.structure == null) {
-                log += "\n-" + name + " is in another dwelling and Base Structure is empty";
+            } else if (((currentStructure.structureType == STRUCTURE_TYPE.DWELLING && currentStructure != homeStructure) 
+                || currentStructure.structureType == STRUCTURE_TYPE.INN 
+                || currentStructure.structureType == STRUCTURE_TYPE.WAREHOUSE 
+                || currentStructure.structureType == STRUCTURE_TYPE.CEMETERY) 
+                && trapStructure.structure == null) {
+                log += "\n-" + name + " is in another Dwelling/Inn/Warehouse/Cemetery and Base Structure is empty";
                 log += "\n-100% chance to return home";
                 PlanIdleReturnHome();
                 return log;

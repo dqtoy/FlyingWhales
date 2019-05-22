@@ -103,7 +103,7 @@ public class InteriorMapManager : MonoBehaviour {
         AreaMapCameraMove.Instance.Initialize();
         //sim = (FindObjectOfType(typeof(RVOSimulator)) as RVOSimulator).GetSimulator();
     }
-    public void ShowAreaMap(Area area, bool centerCameraOnMapCenter = true) {
+    public void ShowAreaMap(Area area, bool centerCameraOnMapCenter = true, bool instantCenter = true) {
         if (area.areaType == AREA_TYPE.DEMONIC_INTRUSION) {
             UIManager.Instance.portalPopup.SetActive(true);
             return;
@@ -114,7 +114,7 @@ public class InteriorMapManager : MonoBehaviour {
         Messenger.Broadcast(Signals.AREA_MAP_OPENED, area);
 
         if (centerCameraOnMapCenter) {
-            AreaMapCameraMove.Instance.JustCenterCamera();
+            AreaMapCameraMove.Instance.JustCenterCamera(instantCenter);
         }
     }
     public void HideAreaMap() {
@@ -340,7 +340,7 @@ public class InteriorMapManager : MonoBehaviour {
             summary += "\nMove Speed: " + character.marker.pathfindingAI.speed.ToString();
             summary += "\nTangent: " + character.marker.pathfindingAI.GetTangent().ToString();
             summary += "\nTarget POI: " + character.marker.targetPOI?.ToString() ?? "None";
-            summary += "\nBase Structure: " + character.trapStructure.structure?.ToString() ?? "None";
+            summary += "\nBase Structure: " + (character.trapStructure.structure != null ? character.trapStructure.structure.ToString() : "None");
             summary += "\nDestination Tile: ";
             if (character.marker.destinationTile == null) {
                 summary += "None";

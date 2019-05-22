@@ -1009,6 +1009,8 @@ MonoBehaviour:
     type: 2}
   eventPopupParent: {fileID: 224053078617451378}
   cameraBounds: {x: 0, y: 0, z: 0, w: 0}
+  centerGOPrefab: {fileID: 1235531871457826, guid: 2b36a36d8ac855246b9993705d70c259,
+    type: 2}
   pathLineRenderer: {fileID: 120984747812472938}
   x: 0
   y: 0
@@ -1018,10 +1020,6 @@ MonoBehaviour:
   offsetY: 0
   startPos: {x: 0, y: 0, z: 0}
   endPos: {x: 0, y: 0, z: 0}
-  intelPrefab: {fileID: 1520246901535660, guid: 31553687798ac7f4f8153f94dc861add,
-    type: 2}
-  xLocation: 0
-  yLocation: 0
 --- !u!114 &114419090812351620
 MonoBehaviour:
   m_ObjectHideFlags: 1

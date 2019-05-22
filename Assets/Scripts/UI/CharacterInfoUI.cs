@@ -269,7 +269,7 @@ public class CharacterInfoUI : UIMenu {
             return;
         }
 
-        
+
 
         ////Travel Thought
         //if (!_activeCharacter.isDead && _activeCharacter.currentParty.icon.isTravelling) {
@@ -282,7 +282,15 @@ public class CharacterInfoUI : UIMenu {
         //        plansLbl.text = _activeCharacter.name + " is travelling.";
         //    }
         //    return;
-        //}        
+        //} 
+
+        //Travelling
+        if (_activeCharacter.currentParty.icon.isTravelling) {
+            if(_activeCharacter.currentParty.owner.marker.destinationTile != null) {
+                plansLbl.text = _activeCharacter.name + " is going to " + _activeCharacter.currentParty.owner.marker.destinationTile.structure.GetNameRelativeTo(_activeCharacter);
+                return;
+            }
+        }
 
         //Default - Do nothing/Idle
         if (_activeCharacter.currentStructure != null) {

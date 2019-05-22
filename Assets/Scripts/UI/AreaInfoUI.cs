@@ -108,9 +108,10 @@ public class AreaInfoUI : UIMenu {
         }
 
         if (InteriorMapManager.Instance.isAnAreaMapShowing) {
+            bool instantCenter = InteriorMapManager.Instance.currentlyShowingArea != activeArea;
             InteriorMapManager.Instance.HideAreaMap();
             hideOnShowAreaMap = false;
-            InteriorMapManager.Instance.ShowAreaMap(activeArea);
+            InteriorMapManager.Instance.ShowAreaMap(activeArea, true, instantCenter);
             hideOnShowAreaMap = true;
         }
     }

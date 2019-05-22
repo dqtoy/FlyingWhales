@@ -132,6 +132,7 @@ public class AreaInnerTileMap : MonoBehaviour {
 
     [Header("Other")]
     public Vector4 cameraBounds;
+    public GameObject centerGOPrefab;
 
     [Header("For Testing")]
     [SerializeField] private LineRenderer pathLineRenderer;
@@ -155,6 +156,7 @@ public class AreaInnerTileMap : MonoBehaviour {
     public List<LocationGridTile> insideTiles { get; private set; }
     public Vector3 worldPos { get; private set; }
     public string usedTownCenterTemplateName { get; private set; }
+    public GameObject centerGO { get; private set; }
     public Tilemap charactersTM {
         get { return objectsTilemap; }
     }
@@ -177,6 +179,11 @@ public class AreaInnerTileMap : MonoBehaviour {
         cameraBounds.y = AreaMapCameraMove.Instance.areaMapsCamera.orthographicSize;
         cameraBounds.z = (cameraBounds.x + width) - 28.5f;
         cameraBounds.w = height - AreaMapCameraMove.Instance.areaMapsCamera.orthographicSize;
+        SpawnCenterGO();
+    }
+    private void SpawnCenterGO() {
+        centerGO = GameObject.Instantiate(centerGOPrefab, transform);
+        centerGO.transform.position = new Vector3((cameraBounds.x + cameraBounds.z) * 0.5f, (cameraBounds.y + cameraBounds.w) * 0.5f);
     }
     private void GenerateGrid() {
         map = new LocationGridTile[width, height];
