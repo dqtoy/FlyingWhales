@@ -45,11 +45,12 @@ public class Sit : GoapAction {
     #endregion
     #region Requirement
     protected bool Requirement() {
-        if(poiTarget.gridTileLocation != null && poiTarget.gridTileLocation.structure.structureType == STRUCTURE_TYPE.DWELLING) {
-            Dwelling dwelling = poiTarget.gridTileLocation.structure as Dwelling;
-            if (dwelling.IsResident(actor)) {
-                return true;
-            }
+        if(poiTarget.gridTileLocation != null) { //&& poiTarget.gridTileLocation.structure.structureType == STRUCTURE_TYPE.DWELLING
+            return true;
+            //Dwelling dwelling = poiTarget.gridTileLocation.structure as Dwelling;
+            //if (dwelling.IsResident(actor)) {
+            //    return true;
+            //}
         }
         return false;
     }
