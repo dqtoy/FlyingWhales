@@ -56,7 +56,7 @@ public class EatPlant : GoapAction {
         //actor.AddTrait("Eating");
     }
     private void PerTickEatSuccess() {
-        actor.AdjustFullness(8);
+        actor.AdjustFullness(10);
     }
     private void AfterEatSuccess() {
         actor.AdjustDoNotGetHungry(-1);

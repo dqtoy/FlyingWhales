@@ -72,7 +72,7 @@ public class Daydream : GoapAction {
         actor.AdjustDoNotGetTired(1);
     }
     private void PerTickDaydreamSuccess() {
-        actor.AdjustHappiness(5);
+        actor.AdjustHappiness(9);
     }
     private void AfterDaydreamSuccess() {
         actor.AdjustDoNotGetLonely(-1);

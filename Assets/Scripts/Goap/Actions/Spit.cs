@@ -50,7 +50,7 @@ public class Spit : GoapAction {
         currentState.AddLogFiller(null, tombstone.character.name, LOG_IDENTIFIER.TARGET_CHARACTER);
     }
     private void AfterSpitSuccess() {
-        actor.AdjustHappiness(50);
+        actor.AdjustHappiness(75);
     }
     private void PreTargetMissing() {
         Tombstone tombstone = poiTarget as Tombstone;

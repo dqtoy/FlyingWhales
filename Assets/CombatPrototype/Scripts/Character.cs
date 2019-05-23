@@ -4495,7 +4495,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //**if they dont have a negative relationship and at least one of them has a lover, they may become paramours**
         float positiveWeight = 0;
         float negativeWeight = 0;
-        if (GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.NEGATIVE && targetCharacter.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.NEGATIVE
+        if (GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.NEGATIVE && targetCharacter.GetRelationshipEffectWith(this) != RELATIONSHIP_EFFECT.NEGATIVE
             && CanHaveRelationshipWith(RELATIONSHIP_TRAIT.PARAMOUR, targetCharacter) && targetCharacter.CanHaveRelationshipWith(RELATIONSHIP_TRAIT.PARAMOUR, this)
             && role.roleType != CHARACTER_ROLE.BEAST && targetCharacter.role.roleType != CHARACTER_ROLE.BEAST) {
             for (int i = 0; i < moods.Length; i++) {
@@ -4515,20 +4515,20 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                         break;
                     case CHARACTER_MOOD.GREAT:
                         //+10 Weight per Great Mood
-                        positiveWeight += 10;
+                        positiveWeight += 20;
                         break;
                 }
             }
             if (relData != null) {
                 //+30 Weight per previous flirtation
-                positiveWeight += 30 * relData.flirtationCount;
+                positiveWeight += 50 * relData.flirtationCount;
             }
             //x2 all positive modifiers per Drunk
             if (GetTrait("Drunk") != null) {
-                positiveWeight *= 2;
+                positiveWeight *= 2.5f;
             }
             if (targetCharacter.GetTrait("Drunk") != null) {
-                positiveWeight *= 2;
+                positiveWeight *= 2.5f;
             }
             //x0.1 all positive modifiers per sexually incompatible
             if (!CharacterManager.Instance.IsSexuallyCompatibleOneSided(this, targetCharacter)) {
