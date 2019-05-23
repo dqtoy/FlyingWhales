@@ -187,11 +187,10 @@ public class GoapAction {
                     if (targetCharacter.stateComponent.currentState != null) {
                         targetCharacter.stateComponent.currentState.PauseState();
                     }
+                    targetCharacter.marker.pathfindingAI.AdjustDoNotMove(1);
+                    targetCharacter.marker.AdjustIsStoppedByOtherCharacter(1);
+                    targetCharacter.FaceTarget(actor);
                 }
-                targetCharacter.marker.pathfindingAI.AdjustDoNotMove(1);
-                targetCharacter.marker.AdjustIsStoppedByOtherCharacter(1);
-                targetCharacter.FaceTarget(actor);
-
             }
         } else {
             Messenger.AddListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
@@ -362,13 +361,15 @@ public class GoapAction {
             if (poiTarget != actor) {
                 Character targetCharacter = poiTarget as Character;
                 if (!targetCharacter.isDead) {
-                    if (!doesNotStopTargetCharacter && resumeTargetCharacterState) {
-                        if (targetCharacter.stateComponent.currentState != null && targetCharacter.stateComponent.currentState.isPaused) {
-                            targetCharacter.stateComponent.currentState.ResumeState();
+                    if (!doesNotStopTargetCharacter) {
+                        if (resumeTargetCharacterState) {
+                            if (targetCharacter.stateComponent.currentState != null && targetCharacter.stateComponent.currentState.isPaused) {
+                                targetCharacter.stateComponent.currentState.ResumeState();
+                            }
                         }
+                        targetCharacter.marker.pathfindingAI.AdjustDoNotMove(-1);
+                        targetCharacter.marker.AdjustIsStoppedByOtherCharacter(-1);
                     }
-                    targetCharacter.marker.pathfindingAI.AdjustDoNotMove(-1);
-                    targetCharacter.marker.AdjustIsStoppedByOtherCharacter(-1);
                 }
             }
         } else {

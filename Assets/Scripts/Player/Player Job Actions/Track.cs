@@ -14,12 +14,16 @@ public class Track : PlayerJobAction {
         Messenger.AddListener<EventPopup>(Signals.EVENT_POPPED_UP, OnEventPoppedUp);
     }
 
-    public override void ActivateAction(Character assignedCharacter, Character targetCharacter) {
+    public override void ActivateAction(Character assignedCharacter, IPointOfInterest targetPOI) {
+        if (!(targetPOI is Character)) {
+            return;
+        }
+        Character targetCharacter = targetPOI as Character;
         base.ActivateAction(assignedCharacter, targetCharacter);
         target = targetCharacter;
         target.SetTracked(true);
-        Debug.Log(GameManager.Instance.TodayLogString() + assignedCharacter.name + " is now tracking " + targetCharacter.name);
-        SetSubText("Tracking " + targetCharacter.name);
+        Debug.Log(GameManager.Instance.TodayLogString() + assignedCharacter.name + " is now tracking " + target.name);
+        SetSubText("Tracking " + target.name);
     }
     public override void DeactivateAction() {
         base.DeactivateAction();
@@ -41,8 +45,12 @@ public class Track : PlayerJobAction {
         }
         return base.ShouldButtonBeInteractable(character, targetCharacter);
     }
-    public override bool CanTarget(Character targetCharacter) {
+    public override bool CanTarget(IPointOfInterest targetPOI) {
         return false;
+        if (!(targetPOI is Character)) {
+            return false;
+        }
+        Character targetCharacter = targetPOI as Character;
         if (targetCharacter.isDead) {
             return false;
         }

@@ -57,7 +57,7 @@ public class UIManager : MonoBehaviour {
     public CharacterPortrait[] detailedInfoPortraits;
 
     [Space(10)]
-    [Header("Area Info")]
+    [Header("Other Area Info")]
     public Sprite[] areaCenterSprites;
     public GameObject portalPopup;
 
@@ -792,6 +792,9 @@ public class UIManager : MonoBehaviour {
         if (landmarkInfoUI.isShowing) {
             landmarkInfoUI.CloseMenu();
         }
+        if (tileObjectInfoUI.isShowing) {
+            tileObjectInfoUI.CloseMenu();
+        }
         areaInfoUI.SetData(area);
         areaInfoUI.OpenMenu();
         //areaInfoUI.UpdateInvestigation(indexToggleToBeActivated);
@@ -840,6 +843,9 @@ public class UIManager : MonoBehaviour {
         if (areaInfoUI.isShowing) {
             areaInfoUI.CloseMenu();
         }
+        if (tileObjectInfoUI.isShowing) {
+            tileObjectInfoUI.CloseMenu();
+        }
         landmarkInfoUI.SetData(landmark);
         landmarkInfoUI.OpenMenu();
         landmark.CenterOnLandmark();
@@ -873,6 +879,9 @@ public class UIManager : MonoBehaviour {
         if (factionInfoUI.isShowing) {
             factionInfoUI.CloseMenu();
         }
+        if (tileObjectInfoUI.isShowing) {
+            tileObjectInfoUI.CloseMenu();
+        }
         playerLandmarkInfoUI.SetData(landmark);
         playerLandmarkInfoUI.OpenMenu();
         playerLandmarkInfoUI.CenterOnLandmark();
@@ -898,6 +907,9 @@ public class UIManager : MonoBehaviour {
         }
         if (characterInfoUI.isShowing) {
             characterInfoUI.CloseMenu();
+        }
+        if (tileObjectInfoUI.isShowing) {
+            tileObjectInfoUI.CloseMenu();
         }
         //if (hexTileInfoUI.isShowing) {
         //    hexTileInfoUI.HideMenu();
@@ -937,6 +949,9 @@ public class UIManager : MonoBehaviour {
         }
         if (factionInfoUI.isShowing) {
             factionInfoUI.CloseMenu();
+        }
+        if (tileObjectInfoUI.isShowing) {
+            tileObjectInfoUI.CloseMenu();
         }
         //if (hexTileInfoUI.isShowing) {
         //    hexTileInfoUI.HideMenu();
@@ -979,6 +994,42 @@ public class UIManager : MonoBehaviour {
     }
     #endregion
 
+    #region Tile Object Info
+    [Space(10)]
+    [Header("Tile Object Info")]
+    [SerializeField]
+    internal TileObjectInfoUI tileObjectInfoUI;
+    public void ShowTileObjectInfo(TileObject tileObject) {
+        //BeforeOpeningMenu(areaInfoUI);
+        //HideMainUI();
+        if (factionInfoUI.isShowing) {
+            factionInfoUI.CloseMenu();
+        }
+        if (characterInfoUI.isShowing) {
+            characterInfoUI.CloseMenu();
+        }
+        if (partyinfoUI.isShowing) {
+            partyinfoUI.CloseMenu();
+        }
+        if (playerLandmarkInfoUI.isShowing) {
+            playerLandmarkInfoUI.CloseMenu();
+        }
+        if (landmarkInfoUI.isShowing) {
+            landmarkInfoUI.CloseMenu();
+        }
+        if (areaInfoUI.isShowing) {
+            areaInfoUI.CloseMenu();
+        }
+        tileObjectInfoUI.SetData(tileObject);
+        tileObjectInfoUI.OpenMenu();
+    }
+    public void UpdateTileObjectInfo() {
+        if (tileObjectInfoUI.isShowing) {
+            tileObjectInfoUI.UpdateTileObjectInfo();
+        }
+    }
+    #endregion
+
     #region Party Info
     [Space(10)]
     [Header("Party Info")]
@@ -994,6 +1045,9 @@ public class UIManager : MonoBehaviour {
         }
         if (areaInfoUI.isShowing) {
             areaInfoUI.CloseMenu();
+        }
+        if (tileObjectInfoUI.isShowing) {
+            tileObjectInfoUI.CloseMenu();
         }
         //if (factionInfoUI.isShowing) {
         //    factionInfoUI.HideMenu();

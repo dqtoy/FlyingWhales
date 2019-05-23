@@ -155,7 +155,7 @@ public class PlayerUI : MonoBehaviour {
             currIndex++;
         }
     }
-    private void ShowActionButtonsFor(Character character) {
+    private void ShowActionButtonsFor(IPointOfInterest poi) {
         if (UIManager.Instance.IsShareIntelMenuOpen()) {
             return;
         }
@@ -163,7 +163,7 @@ public class PlayerUI : MonoBehaviour {
         for (int i = 0; i < roleSlots.Length; i++) {
             RoleSlotItem item = roleSlots[i];
             if (PlayerManager.Instance.player.roleSlots[item.slotJob].assignedCharacter != null) {
-                item.ShowActionButtons(character, jobActionsParent);
+                item.ShowActionButtons(poi, jobActionsParent);
             }
         }
         jobActionsParent.gameObject.SetActive(true);
@@ -536,6 +536,8 @@ public class PlayerUI : MonoBehaviour {
             UIManager.Instance.ShowMinionsMenu();
         } else if (menu is CharacterInfoUI) {
             ShowActionButtonsFor(UIManager.Instance.characterInfoUI.activeCharacter);
+        } else if (menu is TileObjectInfoUI) {
+            ShowActionButtonsFor(UIManager.Instance.tileObjectInfoUI.activeTileObject);
         }
     }
     private void OnMenuClosed(UIMenu menu) {

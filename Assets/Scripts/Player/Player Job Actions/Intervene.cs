@@ -10,8 +10,12 @@ public class Intervene : PlayerJobAction {
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
     }
 
-    public override void ActivateAction(Character assignedCharacter, Character targetCharacter) {
-        base.ActivateAction(assignedCharacter, targetCharacter);
+    public override void ActivateAction(Character assignedCharacter, IPointOfInterest targetPOI) {
+        if (!(targetPOI is Character)) {
+            return;
+        }
+        Character targetCharacter = targetPOI as Character;
+        base.ActivateAction(assignedCharacter, targetPOI);
         //targetCharacter.plannedInteraction.SetIsPrevented(true);
         //targetCharacter.OnInteractionEnded(targetCharacter.plannedInteraction);
         //UIManager.Instance.characterInfoUI.UpdateBasicInfo();
@@ -28,7 +32,11 @@ public class Intervene : PlayerJobAction {
         return base.ShouldButtonBeInteractable(character, targetCharacter);
     }
 
-    public override bool CanTarget(Character targetCharacter) {
+    public override bool CanTarget(IPointOfInterest targetPOI) {
+        if (!(targetPOI is Character)) {
+            return false;
+        }
+        Character targetCharacter = targetPOI as Character;
         if (targetCharacter.isDead || assignedCharacter == targetCharacter || targetCharacter.currentAction == null) {
             return false;
         }

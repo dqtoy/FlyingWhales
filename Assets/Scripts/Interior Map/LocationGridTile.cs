@@ -490,12 +490,13 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
                     InteriorMapManager.Instance.HoldPOI(objHere);
                 }
             } else {
-                //parentAreaMap.ShowIntelItemAt(this, InteractionManager.Instance.CreateNewIntel(objHere));
-                if (objHere is TileObject) {
-                    (objHere as TileObject).OnClickAction();
-                } else {
-                    Messenger.Broadcast(Signals.HIDE_MENUS);
-                }
+                ////parentAreaMap.ShowIntelItemAt(this, InteractionManager.Instance.CreateNewIntel(objHere));
+                //if (objHere is TileObject) {
+                //    (objHere as TileObject).OnClickAction();
+                //} else {
+                //    Messenger.Broadcast(Signals.HIDE_MENUS);
+                //}
+                UIManager.Instance.ShowTileObjectInfo(objHere as TileObject);
             }
         }
 

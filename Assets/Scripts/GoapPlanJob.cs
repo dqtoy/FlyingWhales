@@ -143,15 +143,14 @@ public class GoapPlanJob : JobQueueItem {
         }
         if(targetPOI.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
             Character target = targetPOI as Character;
-            if(target.IsInOwnParty()) {
-                if (name == "Bury") {
-                    return true; //if the job is a bury job, allow targetting dead character (Think of a better way to do this)
-                } else {
-                    return !target.isDead;
+            if (target.IsInOwnParty()) {
+                if (!allowDeadTargets && target.isDead) {
+                    return false;
                 }
-               
+            } else {
+                //Must not take job if the target is in another party
+                return false;
             }
-            return false;
         }
         //if(character.HasTraitOf(TRAIT_TYPE.CRIMINAL) || character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
         //    return false;
