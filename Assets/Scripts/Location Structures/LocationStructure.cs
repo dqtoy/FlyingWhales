@@ -263,6 +263,12 @@ public class LocationStructure {
         }
         return unoccupiedTiles[Random.Range(0, unoccupiedTiles.Count)];
     }
+    public LocationGridTile GetRandomTile() {
+        if (tiles.Count <= 0) {
+            return null;
+        }
+        return tiles[Random.Range(0, tiles.Count)];
+    }
     public void SetEntranceTile(LocationGridTile tile) {
         entranceTile = tile;
     }

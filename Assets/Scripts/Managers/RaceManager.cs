@@ -489,6 +489,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.CARRY_CORPSE,
                 INTERACTION_TYPE.REPORT_HOSTILE,
                 INTERACTION_TYPE.DRINK_BLOOD,
+                INTERACTION_TYPE.PLAY,
             } },
             { RACE.SPIDER, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,

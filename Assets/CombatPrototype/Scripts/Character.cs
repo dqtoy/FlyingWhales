@@ -3893,7 +3893,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                         LocationStructure structure = specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.INN);
                         if(structure != null) {
                             log += "\n  -Early Night: " + name + " will go to Inn and set Base Structure for 2.5 hours";
-                            LocationGridTile gridTile = structure.GetRandomUnoccupiedTile();
+                            LocationGridTile gridTile = structure.GetRandomTile();
                             marker.GoTo(gridTile, () => trapStructure.SetStructureAndDuration(structure, GameManager.Instance.GetTicksBasedOnHour(2) + GameManager.Instance.GetTicksBasedOnMinutes(30)));
                             return log;
                         } else {
@@ -3945,7 +3945,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                             Character chosenCharacter = positiveCharacters[UnityEngine.Random.Range(0, positiveCharacters.Count)];
                             if (chosenCharacter.homeStructure != null) {
                                 log += "\n  -Morning or Afternoon: " + name + " will go to dwelling of character with positive relationship and set Base Structure for 2.5 hours";
-                                LocationGridTile gridTile = chosenCharacter.homeStructure.GetRandomUnoccupiedTile();
+                                LocationGridTile gridTile = chosenCharacter.homeStructure.GetRandomTile();
                                 marker.GoTo(gridTile, () => trapStructure.SetStructureAndDuration(chosenCharacter.homeStructure, GameManager.Instance.GetTicksBasedOnHour(2) + GameManager.Instance.GetTicksBasedOnMinutes(30)));
                                 return log;
                             } else {
