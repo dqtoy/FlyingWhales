@@ -924,6 +924,11 @@ public class CharacterManager : MonoBehaviour {
             CreateNewOneWayRelationship(target, actor, RELATIONSHIP_TRAIT.FRIEND);
         }
         Debug.Log(summary);
+        if (log != null) {
+            log.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            PlayerManager.Instance.player.ShowNotificationFrom(log, target, actor);
+        }
         //TODO: - Add relevant logs
     }
     public void RelationshipDegradation(Character actor, Character target, GoapAction cause = null) {

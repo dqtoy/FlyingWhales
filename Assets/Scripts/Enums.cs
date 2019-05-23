@@ -1332,7 +1332,8 @@ public enum JOB_ACTION_TARGET {
     NONE,
     CHARACTER,
     AREA,
-    FACTION
+    FACTION,
+    TILE_OBJECT,
 }
 public enum STRUCTURE_TYPE {
     EXIT,

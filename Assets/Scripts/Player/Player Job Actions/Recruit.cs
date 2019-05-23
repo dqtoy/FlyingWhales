@@ -14,10 +14,14 @@ public class Recruit : PlayerJobAction {
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
     }
 
-    public override void ActivateAction(Character assignedCharacter, Character targetCharacter) {
-        base.ActivateAction(assignedCharacter, targetCharacter);
+    public override void ActivateAction(Character assignedCharacter, IPointOfInterest targetPOI) {
+        if (!(targetPOI is Character)) {
+            return;
+        }
+        base.ActivateAction(assignedCharacter, targetPOI);
+        Character targetCharacter = targetPOI as Character;
         currentTargetType = JOB_ACTION_TARGET.CHARACTER;
-        target = targetCharacter;
+        target = targetPOI;
         Debug.Log(GameManager.Instance.TodayLogString() + assignedCharacter.name + " is now recruiting " + targetCharacter.name);
         SetSubText(string.Empty);
         CreateRecruitInteraction(targetCharacter);
@@ -59,7 +63,7 @@ public class Recruit : PlayerJobAction {
         //target.AddInteraction(interaction);
         //InteractionUI.Instance.OpenInteractionUI(interaction);
     }
-    public override bool CanTarget(Character targetCharacter) {
+    public override bool CanTarget(IPointOfInterest targetPOI) {
         return false;
     }
 }

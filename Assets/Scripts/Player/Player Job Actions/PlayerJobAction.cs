@@ -35,7 +35,7 @@ public class PlayerJobAction {
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         Messenger.AddListener<JOB, Character>(Signals.CHARACTER_UNASSIGNED_FROM_JOB, OnCharacterUnassignedFromJob);
     }
-    public virtual void ActivateAction(Character assignedCharacter, Character targetCharacter) { //this is called when the actions button is pressed
+    public virtual void ActivateAction(Character assignedCharacter, IPointOfInterest targetPOI) { //this is called when the actions button is pressed
         ActivateAction(assignedCharacter);
     }
     public virtual void ActivateAction(Character assignedCharacter, Area targetArea) { //this is called when the actions button is pressed
@@ -70,6 +70,8 @@ public class PlayerJobAction {
             return ShouldButtonBeInteractable(character, obj as Character);
         } else if (obj is Area) {
             return ShouldButtonBeInteractable(character, obj as Area);
+        } else if (obj is IPointOfInterest) {
+            return ShouldButtonBeInteractable(character, obj as IPointOfInterest);
         }
         return ShouldButtonBeInteractable();
     }
@@ -79,13 +81,16 @@ public class PlayerJobAction {
     protected virtual bool ShouldButtonBeInteractable(Character character, Area targetCharacter) {
         return ShouldButtonBeInteractable();
     }
+    protected virtual bool ShouldButtonBeInteractable(Character character, IPointOfInterest targetPOI) {
+        return ShouldButtonBeInteractable();
+    }
     /// <summary>
     /// Function that determines whether this action can target the given character or not.
     /// Regardless of cooldown state.
     /// </summary>
     /// <param name="character">The target character</param>
     /// <returns>true or false</returns>
-    public virtual bool CanTarget(Character character) {
+    public virtual bool CanTarget(IPointOfInterest poi) {
         return true;
     }
     #endregion

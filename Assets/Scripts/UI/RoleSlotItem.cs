@@ -162,7 +162,7 @@ public class RoleSlotItem : MonoBehaviour, IDragParentItem {
     public void HideActionButtons() {
         jobActionsParent.gameObject.SetActive(false);
     }
-    public void ShowActionButtons(Character target, RectTransform parent) {
+    public void ShowActionButtons(IPointOfInterest target, RectTransform parent) {
         //Utilities.DestroyChildren(jobActionsParent);
         string summary = "Showing action buttons from " + slotJob.ToString() + " targetting " + target.name;
         List<PlayerJobAction> actions = PlayerManager.Instance.player.GetJobActionsThatCanTarget(slotJob, target);
@@ -171,9 +171,9 @@ public class RoleSlotItem : MonoBehaviour, IDragParentItem {
             GameObject buttonGO = UIManager.Instance.InstantiateUIObject(jobActionBtnPrefab.name, parent);
             buttonGO.name = currAction.actionName;
             PlayerJobActionButton btn = buttonGO.GetComponent<PlayerJobActionButton>();
-            btn.SetJobAction(currAction, character, UIManager.Instance.characterInfoUI.activeCharacter);
-            btn.SetClickAction(() => currAction.ActivateAction(character, UIManager.Instance.characterInfoUI.activeCharacter));
-            summary += "\nShowning action " + currAction.actionName; 
+            btn.SetJobAction(currAction, character, target);
+            btn.SetClickAction(() => currAction.ActivateAction(character, target));
+            summary += "\nShowing action " + currAction.actionName; 
             //switch (actionTarget) {
             //case JOB_ACTION_TARGET.CHARACTER:
 

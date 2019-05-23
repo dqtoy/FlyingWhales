@@ -153,6 +153,12 @@ public class CharacterInfoUI : UIMenu {
         UpdateInventoryInfo();
         ResetAllScrollPositions();
     }
+    public override void SetData(object data) {
+        base.SetData(data);
+        //if (isShowing) {
+        //    UpdateCharacterInfo();
+        //}
+    }
     #endregion
 
     public void ResetAllScrollPositions() {
@@ -160,12 +166,6 @@ public class CharacterInfoUI : UIMenu {
         relationshipTraitsScrollView.verticalNormalizedPosition = 1;
         statusTraitsScrollView.verticalNormalizedPosition = 1;
         normalTraitsScrollView.verticalNormalizedPosition = 1;
-    }
-    public override void SetData(object data) {
-        base.SetData(data);
-        //if (isShowing) {
-        //    UpdateCharacterInfo();
-        //}
     }
 
     public void UpdateCharacterInfo() {

@@ -5261,6 +5261,15 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public void CopyAwareness(Dictionary<POINT_OF_INTEREST_TYPE, List<IAwareness>> newAwareness) {
         this.awareness = newAwareness;
     }
+    public Dictionary<POINT_OF_INTEREST_TYPE, List<IAwareness>> OrderAwarenessByStructure() {
+        Dictionary<POINT_OF_INTEREST_TYPE, List<IAwareness>> orderedAwareness = new Dictionary<POINT_OF_INTEREST_TYPE, List<IAwareness>>();
+        foreach (KeyValuePair<POINT_OF_INTEREST_TYPE, List<IAwareness>> keyValuePair in this.awareness) {
+            List<IAwareness> ordered = new List<IAwareness>(keyValuePair.Value);
+            ordered = ordered.OrderBy(x => x.knownGridLocation.structure.id).ToList();
+            orderedAwareness.Add(keyValuePair.Key, ordered);
+        }
+        return orderedAwareness;
+    }
     #endregion
 
     #region Point Of Interest

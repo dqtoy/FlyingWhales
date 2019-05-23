@@ -12,8 +12,12 @@ public class ShareIntel : PlayerJobAction {
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
     }
 
-    public override void ActivateAction(Character assignedCharacter, Character targetCharacter) {
+    public override void ActivateAction(Character assignedCharacter, IPointOfInterest targetPOI) {
         //base.ActivateAction(assignedCharacter, targetCharacter);
+        if (!(targetPOI is Character)) {
+            return;
+        }
+        Character targetCharacter = targetPOI as Character;
         SetSubText("Pick intel to share with " +  targetCharacter.name);
         UIManager.Instance.OpenShareIntelMenu(targetCharacter, assignedCharacter);
         
@@ -55,7 +59,11 @@ public class ShareIntel : PlayerJobAction {
         }
         return base.ShouldButtonBeInteractable(character, targetCharacter);
     }
-    public override bool CanTarget(Character targetCharacter) {
+    public override bool CanTarget(IPointOfInterest targetPOI) {
+        if (!(targetPOI is Character)) {
+            return false;
+        }
+        Character targetCharacter = targetPOI as Character;
         if (targetCharacter.isDead) {
             return false;
         }
