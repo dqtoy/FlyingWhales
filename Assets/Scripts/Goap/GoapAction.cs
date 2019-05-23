@@ -559,6 +559,13 @@ public class GoapAction {
     public void SetShowIntelNotification(bool state) {
         showIntelNotification = state;
     }
+    public bool IsFromApprehendJob() {
+        if (parentPlan != null && parentPlan.job != null && 
+            (parentPlan.job.name == "Assault" || parentPlan.job.name == "Apprehend")) {
+            return true;
+        }
+        return false;
+    }
     #endregion
 
     #region Preconditions

@@ -198,6 +198,7 @@ public class STCManager : MonoBehaviour {
                 newSpot.transform.localPosition = new Vector3(spot.location.x + 0.5f, spot.location.y + 0.5f, 0);
                 FurnitureSpotMono cm = newSpot.GetComponent<FurnitureSpotMono>();
                 cm.allowedFurnitureTypes = spot.allowedFurnitureTypes;
+                cm.furnitureSettings = spot.furnitureSettings;
             }
         }
     }
@@ -429,7 +430,8 @@ public class StructureTemplate {
             FurnitureSpotMono fs = monos[i];
             sc[i] = new FurnitureSpot() {
                 allowedFurnitureTypes = fs.allowedFurnitureTypes,
-                location = new Vector3Int((int)(fs.transform.localPosition.x - 0.5f), (int)(fs.transform.localPosition.y - 0.5f), 0)
+                location = new Vector3Int((int)(fs.transform.localPosition.x - 0.5f), (int)(fs.transform.localPosition.y - 0.5f), 0),
+                furnitureSettings = fs.furnitureSettings
             };
         }
         return sc;

@@ -629,7 +629,7 @@ public class CharacterManager : MonoBehaviour {
                                             }
                                             if (!IsSexuallyCompatible(currCharacter, otherCharacter)) {
                                                 //- character is sexually incompatible: Weight x0.1
-                                                weight *= 0.1f;
+                                                weight *= 0.05f;
                                             }
                                             if (otherCharacter.role.roleType == CHARACTER_ROLE.BEAST) {
                                                 //- character is a beast: Weight x0
@@ -904,43 +904,83 @@ public class CharacterManager : MonoBehaviour {
         }
     }
     public void RelationshipImprovement(Character actor, Character target) {
+        string summary = "Relationship improvement between " + actor.name + " and " + target.name;
+        Log log = null;
         if (target.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.ENEMY)) {
             //If Actor and Target are Enemies, 25% chance to remove Enemy relationship. If so, Target now considers Actor a Friend.
-            if (UnityEngine.Random.Range(0, 100) < 25) {
+            summary += "\n" + target.name + " considers " + actor.name + " an enemy. Rolling for chance to consider as a friend...";
+            int roll = UnityEngine.Random.Range(0, 100);
+            summary += "\nRoll is " + roll.ToString();
+            if (roll < 25) {
+                log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "enemy_now_friend");
+                summary += target.name + " now considers " + actor.name + " an enemy.";
                 RemoveOneWayRelationship(target, actor, RELATIONSHIP_TRAIT.ENEMY);
                 CreateNewOneWayRelationship(target, actor, RELATIONSHIP_TRAIT.FRIEND);
             }
         } else if (!target.HasRelationshipWith(actor)) {
+            log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "now_friend");
+            summary += "\n" + target.name + " has no relationship with " + actor.name + ". " + target.name + " now considers " + actor.name + " a friend.";
             //If Target has no relationship with Actor, Target now considers Actor a Friend.
             CreateNewOneWayRelationship(target, actor, RELATIONSHIP_TRAIT.FRIEND);
         }
+        Debug.Log(summary);
         //TODO: - Add relevant logs
     }
-    public void RelationshipDegradation(Character actor, Character target) {
+    public void RelationshipDegradation(Character actor, Character target, GoapAction cause = null) {
+        string summary = "Relationship degradation between " + actor.name + " and " + target.name;
+        if (cause != null && cause.IsFromApprehendJob()) {
+            //If this has been triggered by an Action's End Result that is part of an Apprehend Job, skip processing.
+            summary += "Relationship degradation was caused by an action in an apprehend job. Skipping degredation...";
+            Debug.Log(summary); 
+            return;
+        }
+        Log log = null;
         //If Actor and Target are Lovers, 20% chance to remove Lover relationship. If so, Target now considers Actor an Enemy.
         if (target.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.LOVER)) {
-            if (UnityEngine.Random.Range(0, 100) < 20) {
+            summary += "\n" + actor.name + " and " + target.name + " are  lovers. Rolling for chance to remove lovers and consider as enemy...";
+            int roll = UnityEngine.Random.Range(0, 100);
+            summary += "\nRoll is " + roll.ToString(); 
+            if (roll < 20) {
+                log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "lover_now_enemy");
+                summary += "\nRemoving lover relationship. " + target.name + " now considers " + actor.name + " an enemy.";
                 RemoveRelationshipBetween(target, actor, RELATIONSHIP_TRAIT.LOVER);
                 CreateNewOneWayRelationship(target, actor, RELATIONSHIP_TRAIT.ENEMY);
             }
         }
         //If Actor and Target are Paramours, 20 % chance to remove Paramour relationship. If so, Target now considers Actor an Enemy.
         if (target.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.PARAMOUR)) {
-            if (UnityEngine.Random.Range(0, 100) < 20) {
+            summary += "\n" + actor.name + " and " + target.name + " are  paramours. Rolling for chance to remove paramour and consider as enemy...";
+            int roll = UnityEngine.Random.Range(0, 100);
+            summary += "\nRoll is " + roll.ToString();
+            if (roll < 20) {
+                log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "paramour_now_enemy");
+                summary += "\nRemoving paramour relationship. " + target.name + " now considers " + actor.name + " an enemy.";
                 RemoveRelationshipBetween(target, actor, RELATIONSHIP_TRAIT.PARAMOUR);
                 CreateNewOneWayRelationship(target, actor, RELATIONSHIP_TRAIT.ENEMY);
             }
         }
         //If Target considers Actor a Friend, remove that.Target now considers Actor an Enemy.
         if (target.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.FRIEND)) {
+            log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "friend_now_enemy");
+            summary += "\n" + target.name + " considers " + actor.name + " as a friend. Removing friend and replacing with enemy";
             RemoveOneWayRelationship(target, actor, RELATIONSHIP_TRAIT.FRIEND);
             CreateNewOneWayRelationship(target, actor, RELATIONSHIP_TRAIT.ENEMY);
         }
         //If Target is only Relative of Actor(no other relationship) or has no relationship with Actor, Target now considers Actor an Enemy.
         if (!target.HasRelationshipWith(actor) || (target.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.RELATIVE) && target.GetCharacterRelationshipData(actor).rels.Count == 1)) {
+            log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "now_enemy");
+            summary += "\n" + target.name + " and " + actor.name + " has no relationship or only has relative relationship. " + target.name + " now considers " + actor.name + " an enemy." ;
             CreateNewOneWayRelationship(target, actor, RELATIONSHIP_TRAIT.ENEMY);
         }
 
+        Debug.Log(summary);
+        if (log != null) {
+            log.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            PlayerManager.Instance.player.ShowNotificationFrom(log, target, actor);
+        }
+
+        //PlayerManager.Instance.player.ShowNotification()
 
         //TODO: - Add relevant logs
     }

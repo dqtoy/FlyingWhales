@@ -119,7 +119,7 @@ public class Bed : TileObject {
                     SetPOIState(POI_STATE.INACTIVE); //if all slots in the bed are occupied, set it as inactive
                 }
                 //disable the character's marker
-                character.marker.SetActiveState(false);
+                character.marker.SetVisualState(false);
                 break;
             }
         }
@@ -133,7 +133,7 @@ public class Bed : TileObject {
                     SetPOIState(POI_STATE.ACTIVE); //if a slots in the bed is unoccupied, set it as active
                 }
                 //enable the character's marker
-                character.marker.SetActiveState(true);
+                character.marker.SetVisualState(true);
                 break;
             }
         }
