@@ -67,11 +67,13 @@ public class Nap : GoapAction {
             return false;
         }
         LocationGridTile knownLoc = awareness.knownGridLocation;
-        if (targetStructure.structureType == STRUCTURE_TYPE.DWELLING && knownLoc != null) {
-            TileObject obj = poiTarget as TileObject;
-            return obj.IsAvailable();
-        }
-        return false;
+        //if (targetStructure.structureType == STRUCTURE_TYPE.DWELLING && knownLoc != null) {
+        //    TileObject obj = poiTarget as TileObject;
+        //    return obj.IsAvailable();
+        //}
+        //return false;
+
+        return knownLoc != null && poiTarget.IsAvailable() && poiTarget.gridTileLocation != null;
     }
     #endregion
 

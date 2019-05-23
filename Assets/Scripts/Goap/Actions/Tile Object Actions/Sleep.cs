@@ -77,16 +77,17 @@ public class Sleep : GoapAction {
             return false;
         }
         LocationGridTile knownLoc = awareness.knownGridLocation;
-        if (knownLoc != null) { //targetStructure.structureType == STRUCTURE_TYPE.DWELLING && 
-            TileObject obj = poiTarget as TileObject;
-            return obj.IsAvailable();
-            //if(knownLoc.occupant == null) {
-            //    return true;
-            //} else if (knownLoc.occupant == actor) {
-            //    return true;
-            //}
-        }
-        return false;
+        //if (targetStructure.structureType == STRUCTURE_TYPE.DWELLING && knownLoc != null) {
+        //    TileObject obj = poiTarget as TileObject;
+        //    return obj.IsAvailable();
+        //    //if(knownLoc.occupant == null) {
+        //    //    return true;
+        //    //} else if (knownLoc.occupant == actor) {
+        //    //    return true;
+        //    //}
+        //}
+        //return false;
+        return knownLoc != null && poiTarget.IsAvailable() && poiTarget.gridTileLocation != null;
     }
     #endregion
 

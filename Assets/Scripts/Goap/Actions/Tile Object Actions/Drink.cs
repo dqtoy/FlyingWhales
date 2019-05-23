@@ -94,7 +94,7 @@ public class Drink : GoapAction {
         if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
             return false;
         }
-        return targetStructure.structureType == STRUCTURE_TYPE.INN;
+        return targetStructure.structureType == STRUCTURE_TYPE.INN && poiTarget.IsAvailable() && poiTarget.gridTileLocation != null;
     }
     #endregion
 }

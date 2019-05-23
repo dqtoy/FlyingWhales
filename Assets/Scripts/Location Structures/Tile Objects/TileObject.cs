@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class  TileObject : IPointOfInterest {
+public class TileObject : IPointOfInterest {
 
     public string name { get { return ToString(); } }
     public int id { get; private set; }

@@ -5265,7 +5265,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 
     #region Point Of Interest
     public List<GoapAction> AdvertiseActionsToActor(Character actor, List<INTERACTION_TYPE> actorAllowedInteractions) {
-        if (poiGoapActions != null && poiGoapActions.Count > 0 && state == POI_STATE.ACTIVE && !isDead) {
+        if (poiGoapActions != null && poiGoapActions.Count > 0 && IsAvailable() && !isDead) {
             List<GoapAction> usableActions = new List<GoapAction>();
             for (int i = 0; i < poiGoapActions.Count; i++) {
                 INTERACTION_TYPE currType = poiGoapActions[i];
@@ -5329,6 +5329,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public void SetPOIState(POI_STATE state) {
         _state = state;
+    }
+    public bool IsAvailable() {
+        return _state != POI_STATE.INACTIVE;
     }
     #endregion
 

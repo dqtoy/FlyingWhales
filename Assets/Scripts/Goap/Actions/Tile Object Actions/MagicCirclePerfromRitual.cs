@@ -16,6 +16,9 @@ public class MagicCirclePerformRitual : GoapAction {
     }
 
     #region Overrides
+    protected override void ConstructRequirement() {
+        _requirementAction = Requirement;
+    }
     protected override void ConstructPreconditionsAndEffects() {
         AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_SUPPLY, conditionKey = 0, targetPOI = actor }, () => HasSupply(20));
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Ritualized", targetPOI = actor });
@@ -26,7 +29,7 @@ public class MagicCirclePerformRitual : GoapAction {
         if (!isTargetMissing) {
             SetState("Perform Ritual Success");
         } else {
-            if (poiTarget.state == POI_STATE.INACTIVE) {
+            if (!poiTarget.IsAvailable()) {
                 SetState("Perform Ritual Fail");
             } else {
                 SetState("Target Missing");
@@ -45,6 +48,12 @@ public class MagicCirclePerformRitual : GoapAction {
     //    base.FailAction();
     //    SetState("Perform Ritual Fail");
     //}
+    #endregion
+
+    #region Requirement
+    private bool Requirement() {
+        return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null;
+    }
     #endregion
 
     #region State Effects

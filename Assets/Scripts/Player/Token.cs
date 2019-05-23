@@ -269,6 +269,9 @@ public class SpecialToken : Token, IPointOfInterest {
     public void SetPOIState(POI_STATE state) {
         _state = state;
     }
+    public bool IsAvailable() {
+        return _state != POI_STATE.INACTIVE;
+    }
     #endregion
 
     #region Traits

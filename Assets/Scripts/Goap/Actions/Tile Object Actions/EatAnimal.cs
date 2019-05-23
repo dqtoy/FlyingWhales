@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EatPlant : GoapAction {
+public class EatAnimal : GoapAction {
     protected override string failActionState { get { return "Eat Fail"; } }
 
-    public EatPlant(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.EAT_PLANT, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public EatAnimal(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.EAT_SMALL_ANIMAL, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+        actionLocationType = ACTION_LOCATION_TYPE.ON_TARGET;
         actionIconString = GoapActionStateDB.Eat_Icon;
         shouldIntelNotificationOnlyIfActorIsActive = true;
         isNotificationAnIntel = false;
@@ -23,7 +24,7 @@ public class EatPlant : GoapAction {
         if (!isTargetMissing) {
             SetState("Eat Success");
         } else {
-            if (poiTarget.state == POI_STATE.INACTIVE) {
+            if (!poiTarget.IsAvailable()) {
                 SetState("Eat Fail");
             } else {
                 SetState("Target Missing");
@@ -31,7 +32,7 @@ public class EatPlant : GoapAction {
         }
     }
     protected override int GetCost() {
-        if (actor.GetTrait("Herbivore") != null) {
+        if (actor.GetTrait("Carnivore") != null) {
             return 25;
         } else {
             return 50;
@@ -42,7 +43,7 @@ public class EatPlant : GoapAction {
     //    SetState("Eat Fail");
     //}
     public override void OnStopActionDuringCurrentState() {
-        if (currentState.name == "Eat Success") {
+        if(currentState.name == "Eat Success") {
             actor.AdjustDoNotGetHungry(-1);
         }
     }
@@ -56,7 +57,7 @@ public class EatPlant : GoapAction {
         //actor.AddTrait("Eating");
     }
     private void PerTickEatSuccess() {
-        actor.AdjustFullness(8);
+        actor.AdjustFullness(10);
     }
     private void AfterEatSuccess() {
         actor.AdjustDoNotGetHungry(-1);
@@ -75,10 +76,26 @@ public class EatPlant : GoapAction {
 
     #region Requirements
     protected bool Requirement() {
+        if (!poiTarget.IsAvailable()) {
+            return false;
+        }
         if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
             return false;
         }
-        return poiTarget.state != POI_STATE.INACTIVE;
+        IAwareness awareness = actor.GetAwareness(poiTarget);
+        if (awareness == null) {
+            return false;
+        }
+        LocationGridTile knownLoc = awareness.knownGridLocation;
+        if (knownLoc != null) {
+            //if (knownLoc.occupant == null) {
+            //    return true;
+            //} else if (knownLoc.occupant == actor) {
+            //    return true;
+            //}
+            return true;
+        }
+        return false;
     }
     #endregion
 }

@@ -20,7 +20,7 @@ public class Sit : GoapAction {
         if (!isTargetMissing) {
             SetState("Sit Success");
         } else {
-            if(poiTarget.state == POI_STATE.INACTIVE) {
+            if(!poiTarget.IsAvailable()) {
                 SetState("Sit Fail");
             } else {
                 SetState("Target Missing");
@@ -43,10 +43,11 @@ public class Sit : GoapAction {
         currentState.AddLogFiller(null, poiTarget.name, LOG_IDENTIFIER.STRING_1);
     }
     #endregion
+
     #region Requirement
     protected bool Requirement() {
         if(poiTarget.gridTileLocation != null) { //&& poiTarget.gridTileLocation.structure.structureType == STRUCTURE_TYPE.DWELLING
-            return true;
+            return poiTarget.IsAvailable();
             //Dwelling dwelling = poiTarget.gridTileLocation.structure as Dwelling;
             //if (dwelling.IsResident(actor)) {
             //    return true;

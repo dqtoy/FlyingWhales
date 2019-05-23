@@ -139,13 +139,12 @@ public class EatAtTable : GoapAction {
         if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
             return false;
         }
-        return true;
-        //IAwareness awareness = actor.GetAwareness(poiTarget);
-        //if (awareness == null) {
-        //    return false;
-        //}
-        //LocationGridTile knownLoc = awareness.knownGridLocation;
-        //return knownLoc.structure.structureType == STRUCTURE_TYPE.DWELLING;
+        IAwareness awareness = actor.GetAwareness(poiTarget);
+        if (awareness == null) {
+            return false;
+        }
+        LocationGridTile knownLoc = awareness.knownGridLocation;
+        return knownLoc != null && poiTarget.IsAvailable() && poiTarget.gridTileLocation != null;
     }
     #endregion
 

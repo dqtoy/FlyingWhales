@@ -19,6 +19,7 @@ public interface IPointOfInterest {
     LocationGridTile GetNearestUnoccupiedTileFromThis();
 
     void SetPOIState(POI_STATE state);
+    bool IsAvailable();
 
     #region Traits
     bool AddTrait(string traitName, Character characterResponsible = null, System.Action onRemoveAction = null, GoapAction gainedFromDoing = null, bool triggerOnAdd = true);

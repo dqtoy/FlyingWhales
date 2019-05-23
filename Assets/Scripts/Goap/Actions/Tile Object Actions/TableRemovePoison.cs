@@ -57,6 +57,9 @@ public class TableRemovePoison : GoapAction {
     #region Requirement
     private bool Requirement() {
         //**Advertiser**: All Tables with Poisoned trait
+        if (!poiTarget.IsAvailable() || poiTarget.gridTileLocation == null) {
+            return false;
+        }
         return poiTarget.GetTrait("Poisoned") != null;
     }
     #endregion

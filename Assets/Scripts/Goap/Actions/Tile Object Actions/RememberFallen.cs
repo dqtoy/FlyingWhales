@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Spit : GoapAction {
+public class RememberFallen : GoapAction {
     protected override string failActionState { get { return "Target Missing"; } }
 
-    public Spit(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.SPIT, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public RememberFallen(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.REMEMBER_FALLEN, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Entertain_Icon;
     }
 
@@ -19,7 +19,7 @@ public class Spit : GoapAction {
     public override void PerformActualAction() {
         base.PerformActualAction();
         if (!isTargetMissing) {
-            SetState("Spit Success");
+            SetState("Remember Success");
         } else {
             SetState("Target Missing");
         }
@@ -32,25 +32,28 @@ public class Spit : GoapAction {
 
     #region Requirement
     protected bool Requirement() {
+        if (!poiTarget.IsAvailable() || poiTarget.gridTileLocation == null) {
+            return false;
+        }
         if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
             return false;
         }
         if (poiTarget is Tombstone) {
             Tombstone tombstone = poiTarget as Tombstone;
             Character target = tombstone.character;
-            return actor.HasRelationshipOfEffectWith(target, TRAIT_EFFECT.NEGATIVE);
+            return actor.HasRelationshipOfEffectWith(target, TRAIT_EFFECT.POSITIVE);
         }
         return false;
     }
     #endregion
 
     #region Effects
-    private void PreSpitSuccess() {
+    private void PreRememberSuccess() {
         Tombstone tombstone = poiTarget as Tombstone;
         currentState.AddLogFiller(null, tombstone.character.name, LOG_IDENTIFIER.TARGET_CHARACTER);
     }
-    private void AfterSpitSuccess() {
-        actor.AdjustHappiness(50);
+    private void PerTickRememberSuccess() {
+        actor.AdjustHappiness(8);
     }
     private void PreTargetMissing() {
         Tombstone tombstone = poiTarget as Tombstone;
