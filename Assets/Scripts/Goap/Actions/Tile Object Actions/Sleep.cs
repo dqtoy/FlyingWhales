@@ -32,23 +32,28 @@ public class Sleep : GoapAction {
         }
     }
     protected override int GetCost() {
-        Dwelling dwelling = targetStructure as Dwelling;
-        if (dwelling.IsResident(actor)) {
-            return 1;
-        } else {
-            for (int i = 0; i < dwelling.residents.Count; i++) {
-                Character resident = dwelling.residents[i];
-                if(resident != actor) {
-                    CharacterRelationshipData characterRelationshipData = actor.GetCharacterRelationshipData(resident);
-                    if (characterRelationshipData != null) {
-                        if (characterRelationshipData.HasRelationshipOfEffect(TRAIT_EFFECT.POSITIVE)) {
-                            return 15;
+        if (targetStructure.structureType == STRUCTURE_TYPE.DWELLING) {
+            Dwelling dwelling = targetStructure as Dwelling;
+            if (dwelling.IsResident(actor)) {
+                return 1;
+            } else {
+                for (int i = 0; i < dwelling.residents.Count; i++) {
+                    Character resident = dwelling.residents[i];
+                    if (resident != actor) {
+                        CharacterRelationshipData characterRelationshipData = actor.GetCharacterRelationshipData(resident);
+                        if (characterRelationshipData != null) {
+                            if (characterRelationshipData.HasRelationshipOfEffect(TRAIT_EFFECT.POSITIVE)) {
+                                return 15;
+                            }
                         }
                     }
                 }
+                return 30;
             }
+        } else if (targetStructure.structureType == STRUCTURE_TYPE.INN) {
             return 30;
         }
+        return 100;
     }
     //public override void FailAction() {
     //    Debug.LogError(actor.name + " failed " + goapName + " action from recalculate path!");
@@ -72,16 +77,17 @@ public class Sleep : GoapAction {
             return false;
         }
         LocationGridTile knownLoc = awareness.knownGridLocation;
-        if (targetStructure.structureType == STRUCTURE_TYPE.DWELLING && knownLoc != null) {
-            TileObject obj = poiTarget as TileObject;
-            return obj.IsAvailable();
-            //if(knownLoc.occupant == null) {
-            //    return true;
-            //} else if (knownLoc.occupant == actor) {
-            //    return true;
-            //}
-        }
-        return false;
+        //if (targetStructure.structureType == STRUCTURE_TYPE.DWELLING && knownLoc != null) {
+        //    TileObject obj = poiTarget as TileObject;
+        //    return obj.IsAvailable();
+        //    //if(knownLoc.occupant == null) {
+        //    //    return true;
+        //    //} else if (knownLoc.occupant == actor) {
+        //    //    return true;
+        //    //}
+        //}
+        //return false;
+        return knownLoc != null && poiTarget.IsAvailable() && poiTarget.gridTileLocation != null;
     }
     #endregion
 

@@ -23,7 +23,7 @@ public class EatPlant : GoapAction {
         if (!isTargetMissing) {
             SetState("Eat Success");
         } else {
-            if (poiTarget.state == POI_STATE.INACTIVE) {
+            if (!poiTarget.IsAvailable()) {
                 SetState("Eat Fail");
             } else {
                 SetState("Target Missing");
@@ -78,7 +78,7 @@ public class EatPlant : GoapAction {
         if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
             return false;
         }
-        return poiTarget.state != POI_STATE.INACTIVE;
+        return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null;
     }
     #endregion
 }

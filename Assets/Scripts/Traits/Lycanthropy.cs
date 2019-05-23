@@ -111,7 +111,7 @@ public class Lycanthropy : Trait {
         Messenger.Broadcast(Signals.CANCEL_CURRENT_ACTION, _character, "target is not found");
         //Plan idle stroll to the wilderness
         LocationStructure wilderness = _character.specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
-        LocationGridTile targetTile = wilderness.GetRandomUnoccupiedTile();
+        LocationGridTile targetTile = wilderness.GetRandomTile();
         _character.PlanIdleStroll(wilderness, targetTile);
     }
 

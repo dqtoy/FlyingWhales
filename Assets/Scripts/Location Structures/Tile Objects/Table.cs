@@ -29,7 +29,7 @@ public class Table : TileObject {
     #region Overrides
     public override void SetPOIState(POI_STATE state) {
         base.SetPOIState(state);
-        if (state == POI_STATE.ACTIVE) {
+        if (IsAvailable()) {
             //if (GetActiveUserCount() > 0) {
             UpdateUsedTableAsset();
             //} else {

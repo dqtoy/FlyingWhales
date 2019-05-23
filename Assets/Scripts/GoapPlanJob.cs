@@ -153,9 +153,9 @@ public class GoapPlanJob : JobQueueItem {
             }
             return false;
         }
-        if(character.HasTraitOf(TRAIT_TYPE.CRIMINAL) || character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
-            return false;
-        }
+        //if(character.HasTraitOf(TRAIT_TYPE.CRIMINAL) || character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+        //    return false;
+        //}
         return base.CanTakeJob(character);
     }
     public override bool CanCharacterTakeThisJob(Character character) {

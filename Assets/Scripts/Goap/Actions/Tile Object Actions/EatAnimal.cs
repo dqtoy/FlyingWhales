@@ -24,7 +24,7 @@ public class EatAnimal : GoapAction {
         if (!isTargetMissing) {
             SetState("Eat Success");
         } else {
-            if (poiTarget.state == POI_STATE.INACTIVE) {
+            if (!poiTarget.IsAvailable()) {
                 SetState("Eat Fail");
             } else {
                 SetState("Target Missing");
@@ -76,6 +76,9 @@ public class EatAnimal : GoapAction {
 
     #region Requirements
     protected bool Requirement() {
+        if (!poiTarget.IsAvailable()) {
+            return false;
+        }
         if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
             return false;
         }
@@ -84,7 +87,7 @@ public class EatAnimal : GoapAction {
             return false;
         }
         LocationGridTile knownLoc = awareness.knownGridLocation;
-        if (poiTarget.state != POI_STATE.INACTIVE && knownLoc != null) {
+        if (knownLoc != null) {
             //if (knownLoc.occupant == null) {
             //    return true;
             //} else if (knownLoc.occupant == actor) {

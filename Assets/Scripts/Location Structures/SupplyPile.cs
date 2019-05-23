@@ -18,7 +18,7 @@ public class SupplyPile : TileObject, IPointOfInterest {
     #region Overrides
     public override void SetPOIState(POI_STATE state) {
         if(this.state != state) {
-            if (state == POI_STATE.INACTIVE) {
+            if (!IsAvailable()) {
                 Messenger.RemoveListener(Signals.TICK_STARTED, CheckSupply);
             } else {
                 Messenger.AddListener(Signals.TICK_STARTED, CheckSupply);

@@ -123,7 +123,7 @@ public class RileUp : PlayerJobAction {
         if(_targetCharacter.faction == character.faction) { //_targetCharacter.faction != FactionManager.Instance.neutralFaction &&
             return false;
         }
-        if(_targetCharacter.state == POI_STATE.INACTIVE) {
+        if(!_targetCharacter.IsAvailable()) {
             return false;
         }
         return true;
