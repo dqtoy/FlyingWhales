@@ -49,6 +49,8 @@ public class TileObjectTileBaseDictionaryPropertyDrawer : SerializableDictionary
 public class ItemSpriteDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(TileObjectBiomeAssetDictionary))]
 public class TileObjectBiomeAssetDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(TileObjectSlotDictionary))]
+public class TileObjectSlotDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 
 [CustomPropertyDrawer(typeof(CharacterTagListStorage))]
 public class CharacterTagListStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer { }
@@ -60,4 +62,6 @@ public class CharacterInteractionWeightListStoragePropertyDrawer : SerializableD
 public class CorruptionObjectsListStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer { }
 [CustomPropertyDrawer(typeof(RaceDefenderListStorage))]
 public class DefenderListStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer { }
+[CustomPropertyDrawer(typeof(TileObjectSlotListStorage))]
+public class TileObjectSlotListStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer { }
 

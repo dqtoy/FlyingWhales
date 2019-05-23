@@ -2,15 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TileObjectSlot : MonoBehaviour {
+public class TileObjectSlot {
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+	public Vector3 userPosition { get; private set; } //where should the user be placed, relative to the parent Tile Object
 }

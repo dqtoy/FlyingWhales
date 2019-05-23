@@ -17,6 +17,7 @@ public class TileObject : IPointOfInterest {
     public List<Character> awareCharacters { get; private set; } //characters that are aware of this object (Used for checking if a ghost trigger should be destroyed)
     public List<string> actionHistory { get; private set; } //list of actions that was done to this object
     public LocationStructure structureLocation { get; protected set; }
+    public TileObjectSlot[] slots { get; protected set; } //for users
 
     protected LocationGridTile tile;
     private POI_STATE _state;
@@ -349,4 +350,9 @@ public class TileObject : IPointOfInterest {
         return null;
     }
     #endregion
+}
+
+[System.Serializable]
+public struct TileObjectSlotSetting {
+
 }

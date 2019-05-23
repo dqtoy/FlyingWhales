@@ -47,6 +47,8 @@ public class TileObjectTileBaseDictionary : SerializableDictionary<TILE_OBJECT_T
 public class ItemSpriteDictionary : SerializableDictionary<SPECIAL_TOKEN, Sprite> { }
 [System.Serializable]
 public class TileObjectBiomeAssetDictionary : SerializableDictionary<BIOMES, BiomeTileObjectTileSetting> { }
+[System.Serializable]
+public class TileObjectSlotDictionary : SerializableDictionary<TileBase, List<TileObjectSlotSetting>, TileObjectSlotListStorage> { }
 
 [System.Serializable]
 public class CharacterTagListStorage : SerializableDictionary.Storage<List<CharacterActionTagRequirement>> { }
@@ -58,3 +60,5 @@ public class CharacterInteractionWeightListStorage : SerializableDictionary.Stor
 public class CorruptionObjectsListStorage : SerializableDictionary.Storage<List<GameObject>> { }
 [System.Serializable]
 public class RaceDefenderListStorage : SerializableDictionary.Storage<List<RaceAreaDefenderSetting>> { }
+[System.Serializable]
+public class TileObjectSlotListStorage : SerializableDictionary.Storage<List<TileObjectSlotSetting>> { }
