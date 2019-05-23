@@ -6100,8 +6100,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 && homeArea.jobQueue.jobsInQueue.Contains(witnessedCrime.parentPlan.job)) {
                 return;
             }
-            //if the witnessed crime is targetting this character, this character should not react to the crime
-            if (witnessedCrime.poiTarget == this) {
+            //if the witnessed crime is targetting this character, this character should not react to the crime if the crime's doesNotStopTargetCharacter is true
+            if (witnessedCrime.poiTarget == this && witnessedCrime.doesNotStopTargetCharacter) {
                 return;
             }
         }
