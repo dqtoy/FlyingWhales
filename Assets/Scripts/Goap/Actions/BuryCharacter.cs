@@ -93,9 +93,9 @@ public class BuryCharacter : GoapAction {
         if (targetCharacter.grave != null) {
             return false;
         }
-        if(targetCharacter.IsInOwnParty() || targetCharacter.currentParty != actor.ownParty) {
-            return false;
-        }
+        //if(targetCharacter.IsInOwnParty() || targetCharacter.currentParty != actor.ownParty) {
+        //    return false;
+        //}
         return true;
     }
     #endregion

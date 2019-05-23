@@ -29,6 +29,7 @@ public class Utilities : MonoBehaviour {
     public static int lastCharacterSimID = 0;
     //public static int lastInteractionID = 0;
     public static int lastTileObjectID = 0;
+    public static int lastStructureID = 0;
 
     public static float defenseBuff = 1.20f;
     public static int defaultCityHP = 300;
@@ -94,6 +95,9 @@ public class Utilities : MonoBehaviour {
         else if (obj is TileObject) {
             lastTileObjectID += 1;
             return lastTileObjectID;
+        } else if (obj is LocationStructure) {
+            lastStructureID += 1;
+            return lastStructureID;
         }
         return 0;
     }
@@ -120,7 +124,9 @@ public class Utilities : MonoBehaviour {
             lastSquadID = idToUse;
         } else if (obj is CharacterSim) {
             lastCharacterSimID = idToUse;
-        } 
+        } else if (obj is LocationStructure) {
+            lastStructureID = idToUse;
+        }
         //else if (obj is Interaction) {
         //    lastInteractionID = idToUse;
         //}
