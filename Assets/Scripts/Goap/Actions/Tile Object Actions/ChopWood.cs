@@ -17,6 +17,9 @@ public class ChopWood : GoapAction {
     }
 
     #region Overrides
+    protected override void ConstructRequirement() {
+        _requirementAction = Requirement;
+    }
     protected override void ConstructPreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_SUPPLY, conditionKey = MAX_SUPPLY, targetPOI = actor });
         //AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
@@ -36,6 +39,12 @@ public class ChopWood : GoapAction {
     //    base.FailAction();
     //    SetState("Target Missing");
     //}
+    #endregion
+
+    #region Requirements
+    protected bool Requirement() {
+        return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null;
+    }
     #endregion
 
     #region State Effects

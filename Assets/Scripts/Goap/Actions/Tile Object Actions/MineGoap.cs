@@ -37,7 +37,7 @@ public class MineGoap : GoapAction {
 
     #region Requirements
     protected bool Requirement() {
-        return poiTarget.state != POI_STATE.INACTIVE;
+        return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null;
     }
     #endregion
 

@@ -28,7 +28,7 @@ public class PlayGuitar : GoapAction {
         if (!isTargetMissing) {
             SetState("Play Success");
         } else {
-            if (poiTarget.state == POI_STATE.INACTIVE) {
+            if (!poiTarget.IsAvailable()) {
                 SetState("Play Fail");
             } else {
                 SetState("Target Missing");
@@ -83,7 +83,7 @@ public class PlayGuitar : GoapAction {
         poiTarget.SetPOIState(POI_STATE.INACTIVE);
     }
     public void PerTickPlaySuccess() {
-        actor.AdjustHappiness(12);
+        actor.AdjustHappiness(18);
     }
     public void AfterPlaySuccess() {
         actor.AdjustDoNotGetLonely(-1);
@@ -96,7 +96,7 @@ public class PlayGuitar : GoapAction {
 
     #region Requirement
     private bool Requirement() {
-        if(poiTarget.state == POI_STATE.INACTIVE) {
+        if(!poiTarget.IsAvailable() || poiTarget.gridTileLocation == null) {
             return false;
         }
         if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {

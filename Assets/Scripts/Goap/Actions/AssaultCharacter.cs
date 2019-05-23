@@ -55,7 +55,13 @@ public class AssaultCharacter : GoapAction {
 
     #region Requirements
     protected bool Requirement() {
-        return actor != poiTarget;
+        if(poiTarget is Character && actor != poiTarget) {
+            Character target = poiTarget as Character;
+            if(!target.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_EFFECT.NEUTRAL, TRAIT_TYPE.DISABLER)) {
+                return true;
+            }
+        }
+        return false;
     }
     #endregion
 

@@ -47,7 +47,7 @@ public class ItemDestroy : GoapAction {
 
     #region Requirement
     protected bool Requirement() {
-        return poiTarget.state == POI_STATE.ACTIVE;
+        return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null;
     }
     #endregion
 }

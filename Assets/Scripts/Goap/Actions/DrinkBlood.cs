@@ -34,7 +34,7 @@ public class DrinkBlood : GoapAction {
                 SetState("Drink Fail");
             }
         } else {
-            if (poiTarget.state == POI_STATE.INACTIVE) {
+            if (!poiTarget.IsAvailable()) {
                 SetState("Drink Fail");
             } else {
                 SetState("Target Missing");

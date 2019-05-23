@@ -70,7 +70,7 @@ public class StrollOutsideState : CharacterState {
     }
     private LocationGridTile PickRandomTileToGoTo() {
         LocationStructure structure = stateComponent.character.specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA);
-        LocationGridTile tile = structure.GetRandomUnoccupiedTile();
+        LocationGridTile tile = structure.GetRandomTile();
         if(tile != null) {
             return tile;
         } else {

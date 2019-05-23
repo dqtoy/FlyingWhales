@@ -105,6 +105,9 @@ public class TablePoison : GoapAction {
     #region Requirement
     private bool Requirement() {
         //**Advertiser**: All Tables inside Dwellings
+        if (!poiTarget.IsAvailable() || poiTarget.gridTileLocation == null) {
+            return false;
+        }
         LocationGridTile knownLoc = actor.GetAwareness(poiTarget).knownGridLocation;
         if (knownLoc.structure is Dwelling) {
             Dwelling d = knownLoc.structure as Dwelling;

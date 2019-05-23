@@ -3893,7 +3893,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                         LocationStructure structure = specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.INN);
                         if(structure != null) {
                             log += "\n  -Early Night: " + name + " will go to Inn and set Base Structure for 2.5 hours";
-                            LocationGridTile gridTile = structure.GetRandomUnoccupiedTile();
+                            LocationGridTile gridTile = structure.GetRandomTile();
                             marker.GoTo(gridTile, () => trapStructure.SetStructureAndDuration(structure, GameManager.Instance.GetTicksBasedOnHour(2) + GameManager.Instance.GetTicksBasedOnMinutes(30)));
                             return log;
                         } else {
@@ -3945,7 +3945,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                             Character chosenCharacter = positiveCharacters[UnityEngine.Random.Range(0, positiveCharacters.Count)];
                             if (chosenCharacter.homeStructure != null) {
                                 log += "\n  -Morning or Afternoon: " + name + " will go to dwelling of character with positive relationship and set Base Structure for 2.5 hours";
-                                LocationGridTile gridTile = chosenCharacter.homeStructure.GetRandomUnoccupiedTile();
+                                LocationGridTile gridTile = chosenCharacter.homeStructure.GetRandomTile();
                                 marker.GoTo(gridTile, () => trapStructure.SetStructureAndDuration(chosenCharacter.homeStructure, GameManager.Instance.GetTicksBasedOnHour(2) + GameManager.Instance.GetTicksBasedOnMinutes(30)));
                                 return log;
                             } else {
@@ -4495,7 +4495,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //**if they dont have a negative relationship and at least one of them has a lover, they may become paramours**
         float positiveWeight = 0;
         float negativeWeight = 0;
-        if (GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.NEGATIVE && targetCharacter.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.NEGATIVE
+        if (GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.NEGATIVE && targetCharacter.GetRelationshipEffectWith(this) != RELATIONSHIP_EFFECT.NEGATIVE
             && CanHaveRelationshipWith(RELATIONSHIP_TRAIT.PARAMOUR, targetCharacter) && targetCharacter.CanHaveRelationshipWith(RELATIONSHIP_TRAIT.PARAMOUR, this)
             && role.roleType != CHARACTER_ROLE.BEAST && targetCharacter.role.roleType != CHARACTER_ROLE.BEAST) {
             for (int i = 0; i < moods.Length; i++) {
@@ -4515,20 +4515,20 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                         break;
                     case CHARACTER_MOOD.GREAT:
                         //+10 Weight per Great Mood
-                        positiveWeight += 10;
+                        positiveWeight += 20;
                         break;
                 }
             }
             if (relData != null) {
                 //+30 Weight per previous flirtation
-                positiveWeight += 30 * relData.flirtationCount;
+                positiveWeight += 50 * relData.flirtationCount;
             }
             //x2 all positive modifiers per Drunk
             if (GetTrait("Drunk") != null) {
-                positiveWeight *= 2;
+                positiveWeight *= 2.5f;
             }
             if (targetCharacter.GetTrait("Drunk") != null) {
-                positiveWeight *= 2;
+                positiveWeight *= 2.5f;
             }
             //x0.1 all positive modifiers per sexually incompatible
             if (!CharacterManager.Instance.IsSexuallyCompatibleOneSided(this, targetCharacter)) {
@@ -5265,7 +5265,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 
     #region Point Of Interest
     public List<GoapAction> AdvertiseActionsToActor(Character actor, List<INTERACTION_TYPE> actorAllowedInteractions) {
-        if (poiGoapActions != null && poiGoapActions.Count > 0 && state == POI_STATE.ACTIVE && !isDead) {
+        if (poiGoapActions != null && poiGoapActions.Count > 0 && IsAvailable() && !isDead) {
             List<GoapAction> usableActions = new List<GoapAction>();
             for (int i = 0; i < poiGoapActions.Count; i++) {
                 INTERACTION_TYPE currType = poiGoapActions[i];
@@ -5329,6 +5329,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public void SetPOIState(POI_STATE state) {
         _state = state;
+    }
+    public bool IsAvailable() {
+        return _state != POI_STATE.INACTIVE;
     }
     #endregion
 
@@ -6100,8 +6103,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 && homeArea.jobQueue.jobsInQueue.Contains(witnessedCrime.parentPlan.job)) {
                 return;
             }
-            //if the witnessed crime is targetting this character, this character should not react to the crime
-            if (witnessedCrime.poiTarget == this) {
+            //if the witnessed crime is targetting this character, this character should not react to the crime if the crime's doesNotStopTargetCharacter is true
+            if (witnessedCrime.poiTarget == this && witnessedCrime.doesNotStopTargetCharacter) {
                 return;
             }
         }

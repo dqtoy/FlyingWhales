@@ -38,7 +38,7 @@ public class Bed : TileObject {
     }
     public override void SetPOIState(POI_STATE state) {
         base.SetPOIState(state);
-        if (state == POI_STATE.ACTIVE) {
+        if (IsAvailable()) {
             if (GetActiveUserCount() > 0) {
                 UpdateUsedBedAsset();
             } else {

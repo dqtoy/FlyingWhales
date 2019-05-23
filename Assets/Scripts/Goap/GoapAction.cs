@@ -66,7 +66,7 @@ public class GoapAction {
     public CharacterState characterState { get; protected set; }
 
     protected virtual bool isTargetMissing {
-        get { return poiTarget.state == POI_STATE.INACTIVE || poiTarget.gridTileLocation == null || actor.specificLocation != poiTarget.specificLocation
+        get { return !poiTarget.IsAvailable() || poiTarget.gridTileLocation == null || actor.specificLocation != poiTarget.specificLocation
                 || !(actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)); }
     }
 

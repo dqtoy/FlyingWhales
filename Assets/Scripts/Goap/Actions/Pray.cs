@@ -58,7 +58,7 @@ public class Pray : GoapAction {
         actor.AdjustDoNotGetLonely(1);
     }
     public void PerTickPraySuccess() {
-        actor.AdjustHappiness(8);
+        actor.AdjustHappiness(13);
     }
     public void AfterPraySuccess() {
         actor.AdjustDoNotGetLonely(-1);

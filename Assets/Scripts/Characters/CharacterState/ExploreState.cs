@@ -100,11 +100,11 @@ public class ExploreState : CharacterState {
     }
     private LocationGridTile PickRandomTileToGoTo() {
         LocationStructure chosenStructure = stateComponent.character.specificLocation.GetRandomStructure();
-        LocationGridTile chosenTile = chosenStructure.GetRandomUnoccupiedTile();
+        LocationGridTile chosenTile = chosenStructure.GetRandomTile();
         if(chosenTile != null) {
             return chosenTile;
         } else {
-            throw new System.Exception("No unoccupied tile in " + chosenStructure.name + " for " + stateComponent.character.name + " to go to in " + stateName);
+            throw new System.Exception("No tile in " + chosenStructure.name + " for " + stateComponent.character.name + " to go to in " + stateName);
         }
     }
 

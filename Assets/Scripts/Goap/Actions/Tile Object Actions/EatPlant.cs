@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EatAnimal : GoapAction {
+public class EatPlant : GoapAction {
     protected override string failActionState { get { return "Eat Fail"; } }
 
-    public EatAnimal(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.EAT_SMALL_ANIMAL, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
-        actionLocationType = ACTION_LOCATION_TYPE.ON_TARGET;
+    public EatPlant(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.EAT_PLANT, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Eat_Icon;
         shouldIntelNotificationOnlyIfActorIsActive = true;
         isNotificationAnIntel = false;
@@ -24,7 +23,7 @@ public class EatAnimal : GoapAction {
         if (!isTargetMissing) {
             SetState("Eat Success");
         } else {
-            if (poiTarget.state == POI_STATE.INACTIVE) {
+            if (!poiTarget.IsAvailable()) {
                 SetState("Eat Fail");
             } else {
                 SetState("Target Missing");
@@ -32,7 +31,7 @@ public class EatAnimal : GoapAction {
         }
     }
     protected override int GetCost() {
-        if (actor.GetTrait("Carnivore") != null) {
+        if (actor.GetTrait("Herbivore") != null) {
             return 25;
         } else {
             return 50;
@@ -43,7 +42,7 @@ public class EatAnimal : GoapAction {
     //    SetState("Eat Fail");
     //}
     public override void OnStopActionDuringCurrentState() {
-        if(currentState.name == "Eat Success") {
+        if (currentState.name == "Eat Success") {
             actor.AdjustDoNotGetHungry(-1);
         }
     }
@@ -79,20 +78,7 @@ public class EatAnimal : GoapAction {
         if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
             return false;
         }
-        IAwareness awareness = actor.GetAwareness(poiTarget);
-        if (awareness == null) {
-            return false;
-        }
-        LocationGridTile knownLoc = awareness.knownGridLocation;
-        if (poiTarget.state != POI_STATE.INACTIVE && knownLoc != null) {
-            //if (knownLoc.occupant == null) {
-            //    return true;
-            //} else if (knownLoc.occupant == actor) {
-            //    return true;
-            //}
-            return true;
-        }
-        return false;
+        return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null;
     }
     #endregion
 }
