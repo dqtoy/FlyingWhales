@@ -75,7 +75,8 @@ public class JudgeCharacter : GoapAction {
         //**Effect 2**: Target becomes unaligned and will have his Home Location set to a random different location
         Character target = poiTarget as Character;
         target.ChangeFactionTo(FactionManager.Instance.neutralFaction);
-        List<Area> choices = new List<Area>(LandmarkManager.Instance.allAreas);
+        List<Area> choices = new List<Area>(LandmarkManager.Instance.allNonPlayerAreas);
+        choices.Remove(target.homeArea);
         choices.Remove(target.homeArea);
         Area newHome = choices[Random.Range(0, choices.Count)];
         target.MigrateHomeTo(newHome);
