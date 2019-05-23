@@ -258,7 +258,8 @@ public class AreaInnerTileMap : MonoBehaviour {
         eventPopupParent.anchoredPosition = Vector2.zero;
         insideTiles = new List<LocationGridTile>();
         outsideTiles = new List<LocationGridTile>();
-        if (area.areaType != AREA_TYPE.DUNGEON && area.areaType != AREA_TYPE.DEMONIC_INTRUSION) {
+        if ((area.areaType == AREA_TYPE.DUNGEON && area.name == "Gloomhollow") 
+            || (area.areaType != AREA_TYPE.DUNGEON && area.areaType != AREA_TYPE.DEMONIC_INTRUSION)) {
             //if this area is not a dungeon type
             InteriorMapManager.Instance.CleanupForTownGeneration();
             //first get a town center template that has the needed connections for the structures in the area

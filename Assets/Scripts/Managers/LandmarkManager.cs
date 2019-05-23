@@ -16,6 +16,9 @@ public class LandmarkManager : MonoBehaviour {
     public int corruptedLandmarksCount;
 
     public List<Area> allAreas;
+    public List<Area> allNonPlayerAreas {
+        get { return allAreas.Where(x => x != PlayerManager.Instance.player.playerArea).ToList(); }
+    }
 
     public Sprite ancientRuinTowerSprite;
     public Sprite ancientRuinBlockerSprite;
