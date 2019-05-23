@@ -592,7 +592,7 @@ public class Player : ILeader {
     #endregion
 
     #region Role Actions
-    public List<PlayerJobAction> GetJobActionsThatCanTarget(JOB job, Character target) {
+    public List<PlayerJobAction> GetJobActionsThatCanTarget(JOB job, IPointOfInterest target) {
         List<PlayerJobAction> actions = new List<PlayerJobAction>();
         if (HasCharacterAssignedToJob(job)) {
             for (int i = 0; i < roleSlots[job].jobActions.Count; i++) {

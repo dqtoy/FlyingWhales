@@ -29,10 +29,12 @@ public class PlayerJobData {
                 break;
             case JOB.DEBILITATOR:
                 jobActions.Add(new Intervene());
+                jobActions.Add(new Disable());
                 break;
             case JOB.INSTIGATOR:
                 jobActions.Add(new RileUp());
                 jobActions.Add(new Provoke());
+                jobActions.Add(new Destroy());
                 break;
         }
         for (int i = 0; i < jobActions.Count; i++) {

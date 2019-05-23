@@ -71,7 +71,7 @@ public class AssaultCharacter : GoapAction {
         if (!actor.IsHostileWith(poiTarget as Character)
            //Assaulting a criminal as part of apprehending him should not be considered a crime
            && !IsFromApprehendJob()) {
-            SetCommittedCrime(CRIME.MURDER);
+            SetCommittedCrime(CRIME.ASSAULT);
         }
         currentState.AddLogFiller(loser, loser.name, LOG_IDENTIFIER.CHARACTER_3);
         AddTraitTo(winner, "Combat Recovery", loser);

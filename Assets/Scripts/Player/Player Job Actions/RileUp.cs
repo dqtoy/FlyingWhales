@@ -19,11 +19,14 @@ public class RileUp : PlayerJobAction {
         }
     }
 
-    public override void ActivateAction(Character assignedCharacter, Character targetCharacter) {
+    public override void ActivateAction(Character assignedCharacter, IPointOfInterest targetPOI) {
         //if (targetCharacter.role.roleType == CHARACTER_ROLE.BEAST) {
         //    return;
         //}
-        _targetCharacter = targetCharacter;
+        if (!(targetPOI is Character)) {
+            return;
+        }
+        _targetCharacter = targetPOI as Character;
         string titleText = "Select a location.";
         if(_targetCharacter.role.roleType == CHARACTER_ROLE.BEAST) {
             titleText = "Select a location and " + _targetCharacter.name + " will run amok there.";
@@ -44,7 +47,11 @@ public class RileUp : PlayerJobAction {
         return base.ShouldButtonBeInteractable(character, targetCharacter);
     }
 
-    public override bool CanTarget(Character targetCharacter) {
+    public override bool CanTarget(IPointOfInterest targetPOI) {
+        if (!(targetPOI is Character)) {
+            return false;
+        }
+        Character targetCharacter = targetPOI as Character;
         if (targetCharacter.isDead || assignedCharacter == targetCharacter) { //|| (!targetCharacter.isTracked && !GameManager.Instance.inspectAll)
             return false;
         }

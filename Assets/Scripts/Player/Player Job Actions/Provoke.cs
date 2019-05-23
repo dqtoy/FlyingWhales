@@ -10,7 +10,11 @@ public class Provoke : PlayerJobAction {
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
     }
 
-    public override void ActivateAction(Character assignedCharacter, Character targetCharacter) {
+    public override void ActivateAction(Character assignedCharacter, IPointOfInterest targetPOI) {
+        if (!(targetPOI is Character)) {
+            return;
+        }
+        Character targetCharacter = targetPOI as Character;
         PlayerUI.Instance.OpenProvoke(assignedCharacter, targetCharacter);
         base.ActivateAction(assignedCharacter, targetCharacter);
     }
@@ -24,7 +28,11 @@ public class Provoke : PlayerJobAction {
         //}
         return base.ShouldButtonBeInteractable(character, targetCharacter);
     }
-    public override bool CanTarget(Character targetCharacter) {
+    public override bool CanTarget(IPointOfInterest targetPOI) {
+        if (!(targetPOI is Character)) {
+            return false;
+        }
+        Character targetCharacter = targetPOI as Character;
         if (targetCharacter.isDead) {
             return false;
         }

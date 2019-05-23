@@ -2938,7 +2938,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 
         //Random Traits
         int chance = UnityEngine.Random.Range(0, 100);
-        if (chance < 10) {
+        if (chance < 35) {
             AddTrait(new Craftsman());
         }
     }

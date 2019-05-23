@@ -32,23 +32,28 @@ public class Nap : GoapAction {
         }
     }
     protected override int GetCost() {
-        Dwelling dwelling = targetStructure as Dwelling;
-        if (dwelling.IsResident(actor)) {
-            return 8;
-        } else {
-            for (int i = 0; i < dwelling.residents.Count; i++) {
-                Character resident = dwelling.residents[i];
-                if (resident != actor) {
-                    CharacterRelationshipData characterRelationshipData = actor.GetCharacterRelationshipData(resident);
-                    if (characterRelationshipData != null) {
-                        if (characterRelationshipData.HasRelationshipOfEffect(TRAIT_EFFECT.POSITIVE)) {
-                            return 25;
+        if(targetStructure.structureType == STRUCTURE_TYPE.DWELLING) {
+            Dwelling dwelling = targetStructure as Dwelling;
+            if (dwelling.IsResident(actor)) {
+                return 8;
+            } else {
+                for (int i = 0; i < dwelling.residents.Count; i++) {
+                    Character resident = dwelling.residents[i];
+                    if (resident != actor) {
+                        CharacterRelationshipData characterRelationshipData = actor.GetCharacterRelationshipData(resident);
+                        if (characterRelationshipData != null) {
+                            if (characterRelationshipData.HasRelationshipOfEffect(TRAIT_EFFECT.POSITIVE)) {
+                                return 25;
+                            }
                         }
                     }
                 }
+                return 45;
             }
+        } else if(targetStructure.structureType == STRUCTURE_TYPE.INN) {
             return 45;
         }
+        return 100;
     }
     public override void OnStopActionDuringCurrentState() {
         if(currentState.name == "Nap Success") {

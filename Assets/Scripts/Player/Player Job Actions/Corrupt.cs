@@ -15,8 +15,12 @@ public class Corrupt : PlayerJobAction {
         _traitNames = new List<string>() { "Lycanthropy", "Kleptomaniac", "Vampiric", "Unfaithful", "Violent" }; //, "Unconscious", "Injured", "Sick", "Cursed", "Death"
     }
 
-    public override void ActivateAction(Character assignedCharacter, Character targetCharacter) {
-        _targetCharacter = targetCharacter;
+    public override void ActivateAction(Character assignedCharacter, IPointOfInterest targetPOI) {
+        if(targetPOI is Character) {
+            _targetCharacter = targetPOI as Character;
+        } else {
+            return;
+        }
         UIManager.Instance.ShowClickableObjectPicker(_traitNames, OnClickTrait, null, CanCorruptCharacter, "Corrupt " + _targetCharacter.name + " with an affliction.", OnHoverTrait);
     }
 
@@ -29,7 +33,11 @@ public class Corrupt : PlayerJobAction {
         //}
         return base.ShouldButtonBeInteractable(character, targetCharacter);
     }
-    public override bool CanTarget(Character targetCharacter) {
+    public override bool CanTarget(IPointOfInterest targetPOI) {
+        if(!(targetPOI is Character)) {
+            return false;
+        }
+        Character targetCharacter = targetPOI as Character;
         if (targetCharacter.isDead) {
             return false;
         }
