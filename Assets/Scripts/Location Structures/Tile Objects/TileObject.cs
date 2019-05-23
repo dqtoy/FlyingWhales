@@ -300,4 +300,53 @@ public class  TileObject : IPointOfInterest {
         Debug.Log(summary);
     }
     #endregion
+
+    #region GOAP
+    /// <summary>
+    /// Does this tile object advertise a given action type.
+    /// </summary>
+    /// <param name="type">The action type that need to be advertised.</param>
+    /// <returns>If this tile object advertises the given action.</returns>
+    public bool Advertises(INTERACTION_TYPE type) {
+        return poiGoapActions.Contains(type);
+    }
+    /// <summary>
+    /// Does this tile object advertise all of the given actions.
+    /// </summary>
+    /// <param name="types">The action types that need to be advertised.</param>
+    /// <returns>If this tile object meets all the requirements.</returns>
+    public bool AdvertisesAll(params INTERACTION_TYPE[] types) {
+        for (int i = 0; i < types.Length; i++) {
+            if (!(Advertises(types[i]))) {
+                return false;
+            }
+        }
+        return true;
+    }
+    /// <summary>
+    /// Does this tile object advertise a number of types from the given list.
+    /// </summary>
+    /// <param name="count">The number of valid types to consider.</param>
+    /// <param name="types">The list of types to check.</param>
+    /// <returns>If this tile object can meet the needed requirements.</returns>
+    public bool AdvertisesAny(int count = 1, params INTERACTION_TYPE[] types) {
+        int validCount = 0;
+        for (int i = 0; i < types.Length; i++) {
+            if ((Advertises(types[i]))) {
+                validCount++;
+                if (validCount >= count) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    public GoapAction Advertise(INTERACTION_TYPE type, Character actor) {
+        GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(type, actor, this);
+        if (goapAction.CanSatisfyRequirements() && goapAction.CanSatisfyRequirementOnBuildGoapTree()) {
+            return goapAction;
+        }
+        return null;
+    }
+    #endregion
 }

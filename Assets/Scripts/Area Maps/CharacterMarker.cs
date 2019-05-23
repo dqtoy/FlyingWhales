@@ -207,7 +207,7 @@ public class CharacterMarker : PooledObject {
             if (inVisionPOIs.Contains(characterThatGainedTrait)) {
                 this.character.CreateRemoveTraitJobs(characterThatGainedTrait);
                 if (this.character.role.roleType == CHARACTER_ROLE.SOLDIER && this.character.isAtHomeArea && characterThatGainedTrait.isAtHomeArea && !characterThatGainedTrait.isDead) {
-                    if (!this.character.HasRelationshipOfEffectWith(characterThatGainedTrait, TRAIT_EFFECT.POSITIVE)) {
+                    if (this.character.GetRelationshipEffectWith(characterThatGainedTrait) != RELATIONSHIP_EFFECT.POSITIVE) {
                         if (characterThatGainedTrait.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
                             GoapPlanJob job = this.character.CreateApprehendJobFor(characterThatGainedTrait, true);
                         }
@@ -446,6 +446,10 @@ public class CharacterMarker : PooledObject {
 
     #region Pathfinding Movement
     public void GoTo(LocationGridTile destinationTile, Action arrivalAction = null, STRUCTURE_TYPE[] notAllowedStructures = null) {
+        //If any time a character goes to a structure outside the trap structure, the trap structure data will be cleared out
+        if (character.trapStructure.structure != null && character.trapStructure.structure != destinationTile.structure) {
+            character.trapStructure.SetStructureAndDuration(null, 0);
+        }
         pathfindingAI.ClearAllCurrentPathData();
         pathfindingAI.SetNotAllowedStructures(notAllowedStructures);
         this.destinationTile = destinationTile;
@@ -1127,13 +1131,7 @@ public class CharacterMarker : PooledObject {
 
             //remove enemy's current action
             enemy.AdjustIsWaitingForInteraction(1);
-            if (enemy.currentAction != null && !enemy.currentAction.isDone) {
-                if (!enemy.currentAction.isPerformingActualAction) {
-                    enemy.SetCurrentAction(null);
-                } else {
-                    enemy.currentAction.currentState.EndPerTickEffect();
-                }
-            }
+            enemy.StopCurrentAction();
             enemy.AdjustIsWaitingForInteraction(-1);
 
             engageState.CombatOnEngage();

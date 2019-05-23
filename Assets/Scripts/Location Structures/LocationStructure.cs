@@ -109,7 +109,7 @@ public class LocationStructure {
     #endregion
 
     #region Points Of Interest
-    public bool AddPOI(IPointOfInterest poi, LocationGridTile tileLocation = null, bool placeAsset = true) {
+    public virtual bool AddPOI(IPointOfInterest poi, LocationGridTile tileLocation = null, bool placeAsset = true) {
         if (!pointsOfInterest.Contains(poi)) {
 #if !WORLD_CREATION_TOOL
             if (poi.poiType != POINT_OF_INTEREST_TYPE.CHARACTER) {
@@ -121,7 +121,7 @@ public class LocationStructure {
         }
         return false;
     }
-    public void RemovePOI(IPointOfInterest poi, Character removedBy = null) {
+    public virtual bool RemovePOI(IPointOfInterest poi, Character removedBy = null) {
         if (pointsOfInterest.Remove(poi)) {
 #if !WORLD_CREATION_TOOL
             if (poi.gridTileLocation != null) {
@@ -133,9 +133,11 @@ public class LocationStructure {
                 }
                 //throw new System.Exception("Provided tile of " + poi.ToString() + " is null!");
             }
-            
-#endif  
+
+#endif
+            return true;
         }
+        return false;
     }
     public bool HasPOIOfType(POINT_OF_INTEREST_TYPE type) {
         for (int i = 0; i < pointsOfInterest.Count; i++) {
@@ -432,6 +434,52 @@ public class LocationStructure {
             default:
                 break;
         }
+    }
+    protected List<TileObject> GetTileObjects() {
+        List<TileObject> objs = new List<TileObject>();
+        for (int i = 0; i < pointsOfInterest.Count; i++) {
+            IPointOfInterest currPOI = pointsOfInterest[i];
+            if (currPOI is TileObject) {
+                objs.Add(currPOI as TileObject);
+            }
+        }
+        return objs;
+    }
+    public List<TileObject> GetTileObjectsThatAdvertise(params INTERACTION_TYPE[] types) {
+        List<INTERACTION_TYPE> t = types.ToList();
+        List<TileObject> objs = new List<TileObject>();
+        for (int i = 0; i < pointsOfInterest.Count; i++) {
+            IPointOfInterest currPOI = pointsOfInterest[i];
+            if (currPOI is TileObject) {
+                TileObject obj = currPOI as TileObject;
+                if (obj.state == POI_STATE.ACTIVE && obj.AdvertisesAll(types)) {
+                    objs.Add(obj);
+                }
+            }
+        }
+        return objs;
+    }
+    public TileObject GetUnoccupiedTileObject(TILE_OBJECT_TYPE type) {
+        for (int i = 0; i < pointsOfInterest.Count; i++) {
+            if (pointsOfInterest[i].state == POI_STATE.ACTIVE && pointsOfInterest[i] is TileObject) {
+                TileObject tileObj = pointsOfInterest[i] as TileObject;
+                if (tileObj.tileObjectType == type) {
+                    return tileObj;
+                }
+            }
+        }
+        return null;
+    }
+    public TileObject GetUnoccupiedTileObject(TILE_OBJECT_TYPE type1, TILE_OBJECT_TYPE type2) {
+        for (int i = 0; i < pointsOfInterest.Count; i++) {
+            if (pointsOfInterest[i].state == POI_STATE.ACTIVE && pointsOfInterest[i] is TileObject) {
+                TileObject tileObj = pointsOfInterest[i] as TileObject;
+                if (tileObj.tileObjectType == type1 || tileObj.tileObjectType == type2) {
+                    return tileObj;
+                }
+            }
+        }
+        return null;
     }
     #endregion
     public override string ToString() {

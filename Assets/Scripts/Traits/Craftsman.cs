@@ -5,17 +5,19 @@ using UnityEngine;
 public class Craftsman : Trait {
 
 	public SPECIAL_TOKEN[] craftedItemNames { get; private set; }
+    public FURNITURE_TYPE[] craftedFurnitureNames { get; private set; }
 
     public Craftsman() {
         name = "Craftsman";
         craftedItemNames = new SPECIAL_TOKEN[] { SPECIAL_TOKEN.TOOL, SPECIAL_TOKEN.HEALING_POTION };
+        //craftedFurnitureNames = new FURNITURE_TYPE[] { FURNITURE_TYPE.BED, FURNITURE_TYPE.DESK, FURNITURE_TYPE.GUITAR, FURNITURE_TYPE.TABLE };
         description = "This character can create items.";
         type = TRAIT_TYPE.SPECIAL;
         effect = TRAIT_EFFECT.POSITIVE;
         associatedInteraction = INTERACTION_TYPE.NONE;
         daysDuration = 0;
         effects = new List<TraitEffect>();
-        advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.CRAFT_ITEM };
+        advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.CRAFT_ITEM, INTERACTION_TYPE.CRAFT_FURNITURE };
     }
 
     #region Overrides
@@ -30,12 +32,18 @@ public class Craftsman : Trait {
         //    craftedItemName = SPECIAL_TOKEN.JUNK;
         //}
         if (sourcePOI is Character) {
-            (sourcePOI as Character).AddInteractionType(INTERACTION_TYPE.CRAFT_ITEM);
+            Character character = sourcePOI as Character;
+            for (int i = 0; i < advertisedInteractions.Count; i++) {
+                character.AddInteractionType(advertisedInteractions[i]);
+            }
         }
     }
     public override void OnRemoveTrait(IPointOfInterest sourcePOI) {
         if (sourcePOI is Character) {
-            (sourcePOI as Character).RemoveInteractionType(INTERACTION_TYPE.CRAFT_ITEM);
+            Character character = sourcePOI as Character;
+            for (int i = 0; i < advertisedInteractions.Count; i++) {
+                character.RemoveInteractionType(advertisedInteractions[i]);
+            }
         }
     }
     #endregion

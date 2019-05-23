@@ -99,6 +99,9 @@ public class PlayGuitar : GoapAction {
         if(poiTarget.state == POI_STATE.INACTIVE) {
             return false;
         }
+        if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
+            return false;
+        }
         IAwareness awareness = actor.GetAwareness(poiTarget);
         if (awareness == null) {
             return false;

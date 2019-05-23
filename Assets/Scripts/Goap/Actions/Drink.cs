@@ -91,6 +91,9 @@ public class Drink : GoapAction {
 
     #region Requirements
     protected bool Requirement() {
+        if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
+            return false;
+        }
         return targetStructure.structureType == STRUCTURE_TYPE.INN;
     }
     #endregion

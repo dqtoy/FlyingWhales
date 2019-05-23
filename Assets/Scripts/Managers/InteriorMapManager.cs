@@ -41,12 +41,7 @@ public class InteriorMapManager : MonoBehaviour {
 
     //Local Avoidance
     private Pathfinding.RVO.Simulator sim;
-    public List<TileBase> allTileAssets;
-
-    //tile objects
-    private Dictionary<TILE_OBJECT_TYPE, TileObjectData> tileObjectData = new Dictionary<TILE_OBJECT_TYPE, TileObjectData>() {
-        { TILE_OBJECT_TYPE.SUPPLY_PILE, new TileObjectData() { constructionCost = 10, constructionTime = 12 } }
-    };
+    public List<TileBase> allTileAssets;    
 
     private void Awake() {
         Instance = this;
@@ -108,7 +103,7 @@ public class InteriorMapManager : MonoBehaviour {
         AreaMapCameraMove.Instance.Initialize();
         //sim = (FindObjectOfType(typeof(RVOSimulator)) as RVOSimulator).GetSimulator();
     }
-    public void ShowAreaMap(Area area, bool centerCameraOnMapCenter = true) {
+    public void ShowAreaMap(Area area, bool centerCameraOnMapCenter = true, bool instantCenter = true) {
         if (area.areaType == AREA_TYPE.DEMONIC_INTRUSION) {
             UIManager.Instance.portalPopup.SetActive(true);
             return;
@@ -119,7 +114,7 @@ public class InteriorMapManager : MonoBehaviour {
         Messenger.Broadcast(Signals.AREA_MAP_OPENED, area);
 
         if (centerCameraOnMapCenter) {
-            AreaMapCameraMove.Instance.JustCenterCamera();
+            AreaMapCameraMove.Instance.JustCenterCamera(instantCenter);
         }
     }
     public void HideAreaMap() {
@@ -297,119 +292,126 @@ public class InteriorMapManager : MonoBehaviour {
         if (tile == null) {
             return;
         }
-        //if (GameManager.showAllTilesTooltip) {
-            string summary = tile.localPlace.ToString();
-            summary += "\nLocal Location: " + tile.localLocation.ToString();
-            summary += "\nWorld Location: " + tile.worldLocation.ToString();
-            summary += "\nCentered World Location: " + tile.centeredWorldLocation.ToString();
-            summary += "\nTile Type: " + tile.tileType.ToString();
-            summary += "\nTile State: " + tile.tileState.ToString();
-            summary += "\nTile Access: " + tile.tileAccess.ToString();
-            summary += "\nReserved Tile Object Type: " + tile.reservedObjectType.ToString();
-            summary += "\nContent: " + tile.objHere?.ToString() ?? "None";
-            if (tile.objHere != null) {
-                summary += "\n\tObject State: " + tile.objHere.state.ToString();
-                if (tile.objHere is Tree) {
-                    summary += "\n\tYield: " + (tile.objHere as Tree).yield.ToString();
-                } else if (tile.objHere is Ore) {
-                    summary += "\n\tYield: " + (tile.objHere as Ore).yield.ToString();
-                } else if (tile.objHere is SupplyPile) {
-                    summary += "\n\tSupplies in Pile: " + (tile.objHere as SupplyPile).suppliesInPile.ToString();
-                } else if (tile.objHere is SpecialToken) {
-                    summary += "\n\tCharacter Owner: " + (tile.objHere as SpecialToken).characterOwner?.name ?? "None";
-                    summary += "\n\tFaction Owner: " + (tile.objHere as SpecialToken).factionOwner?.name ?? "None";
-                }
-                summary += "\n\tTraits: ";
-                if (tile.objHere.traits.Count > 0) {
-                    for (int i = 0; i < tile.objHere.traits.Count; i++) {
-                        summary += "\n\t\t- " + tile.objHere.traits[i].name;
-                    }
-
-                } else {
-                    summary += "None";
-                }
+        string summary = tile.localPlace.ToString();
+        summary += "\nLocal Location: " + tile.localLocation.ToString();
+        summary += "\nWorld Location: " + tile.worldLocation.ToString();
+        summary += "\nCentered World Location: " + tile.centeredWorldLocation.ToString();
+        summary += "\nTile Type: " + tile.tileType.ToString();
+        summary += "\nTile State: " + tile.tileState.ToString();
+        summary += "\nTile Access: " + tile.tileAccess.ToString();
+        summary += "\nReserved Tile Object Type: " + tile.reservedObjectType.ToString();
+        summary += "\nFurniture Spot: " + tile.furnitureSpot?.ToString() ?? "None";
+        summary += "\nContent: " + tile.objHere?.ToString() ?? "None";
+        if (tile.objHere != null) {
+            summary += "\n\tObject State: " + tile.objHere.state.ToString();
+            if (tile.objHere is Tree) {
+                summary += "\n\tYield: " + (tile.objHere as Tree).yield.ToString();
+            } else if (tile.objHere is Ore) {
+                summary += "\n\tYield: " + (tile.objHere as Ore).yield.ToString();
+            } else if (tile.objHere is SupplyPile) {
+                summary += "\n\tSupplies in Pile: " + (tile.objHere as SupplyPile).suppliesInPile.ToString();
+            } else if (tile.objHere is SpecialToken) {
+                summary += "\n\tCharacter Owner: " + (tile.objHere as SpecialToken).characterOwner?.name ?? "None";
+                summary += "\n\tFaction Owner: " + (tile.objHere as SpecialToken).factionOwner?.name ?? "None";
             }
-            summary += "\nCharacters Here: ";
-            if (tile.charactersHere.Count > 0) {
-                for (int i = 0; i < tile.charactersHere.Count; i++) {
-                    summary += "\n\t- " + tile.charactersHere[i].name;
+            summary += "\n\tTraits: ";
+            if (tile.objHere.traits.Count > 0) {
+                for (int i = 0; i < tile.objHere.traits.Count; i++) {
+                    summary += "\n\t\t- " + tile.objHere.traits[i].name;
+                }
+
+            } else {
+                summary += "None";
+            }
+        }
+        summary += "\nCharacters Here: ";
+        if (tile.charactersHere.Count > 0) {
+            for (int i = 0; i < tile.charactersHere.Count; i++) {
+                summary += "\n\t- " + tile.charactersHere[i].name;
+            }
+        } else {
+            summary += "None";
+        }
+        if (character != null) {
+            summary += "\nCharacter: " + character.name;
+            summary += "\nMood: " + character.currentMoodType.ToString();
+            summary += "\nSupply: " + character.supply.ToString();
+            summary += "\nDestination: " + (character.marker.destinationTile != null ? character.marker.destinationTile.ToString() : "None");
+            summary += "\nMove Speed: " + character.marker.pathfindingAI.speed.ToString();
+            summary += "\nTangent: " + character.marker.pathfindingAI.GetTangent().ToString();
+            summary += "\nTarget POI: " + character.marker.targetPOI?.ToString() ?? "None";
+            summary += "\nBase Structure: " + (character.trapStructure.structure != null ? character.trapStructure.structure.ToString() : "None");
+            summary += "\nDestination Tile: ";
+            if (character.marker.destinationTile == null) {
+                summary += "None";
+            } else {
+                summary += character.marker.destinationTile.ToString() + " at " + character.marker.destinationTile.parentAreaMap.area.name; 
+            }
+            summary += "\nArrival Action: " + character.marker.arrivalAction?.Method.Name ?? "None";
+            summary += "\nPOI's in Vision: ";
+            if (character.marker.inVisionPOIs.Count > 0) {
+                for (int i = 0; i < character.marker.inVisionPOIs.Count; i++) {
+                    IPointOfInterest poi = character.marker.inVisionPOIs.ElementAt(i);
+                    summary += poi.name + ", ";
                 }
             } else {
                 summary += "None";
             }
-            if (character != null) {
-                summary += "\nCharacter: " + character.name;
-                summary += "\nMood: " + character.currentMoodType.ToString();
-                summary += "\nSupply: " + character.supply.ToString();
-                summary += "\nDestination: " + (character.marker.destinationTile != null ? character.marker.destinationTile.ToString() : "None");
-                summary += "\nMove Speed: " + character.marker.pathfindingAI.speed.ToString();
-                summary += "\nTangent: " + character.marker.pathfindingAI.GetTangent().ToString();
-                summary += "\nTarget POI: " + character.marker.targetPOI?.ToString() ?? "None";
-                summary += "\nDestination Tile: ";
-                if (character.marker.destinationTile == null) {
-                    summary += "None";
-                } else {
-                    summary += character.marker.destinationTile.ToString() + " at " + character.marker.destinationTile.parentAreaMap.area.name; 
+            summary += "\nPOI's in Range but different structures: ";
+            if (character.marker.visionCollision.poisInRangeButDiffStructure.Count > 0) {
+                for (int i = 0; i < character.marker.visionCollision.poisInRangeButDiffStructure.Count; i++) {
+                    IPointOfInterest poi = character.marker.visionCollision.poisInRangeButDiffStructure[i];
+                    summary += poi.name + ", ";
                 }
-                summary += "\nArrival Action: " + character.marker.arrivalAction?.Method.Name ?? "None";
-                summary += "\nPOI's in Vision: ";
-                if (character.marker.inVisionPOIs.Count > 0) {
-                    for (int i = 0; i < character.marker.inVisionPOIs.Count; i++) {
-                        IPointOfInterest poi = character.marker.inVisionPOIs.ElementAt(i);
-                        summary += poi.name + ", ";
-                    }
-                } else {
-                    summary += "None";
+            } else {
+                summary += "None";
+            }
+            summary += "\nHostiles in Range: ";
+            if (character.marker.hostilesInRange.Count > 0) {
+                for (int i = 0; i < character.marker.hostilesInRange.Count; i++) {
+                    Character poi = character.marker.hostilesInRange.ElementAt(i);
+                    summary += poi.name + ", ";
                 }
-                summary += "\nPOI's in Range but different structures: ";
-                if (character.marker.visionCollision.poisInRangeButDiffStructure.Count > 0) {
-                    for (int i = 0; i < character.marker.visionCollision.poisInRangeButDiffStructure.Count; i++) {
-                        IPointOfInterest poi = character.marker.visionCollision.poisInRangeButDiffStructure[i];
-                        summary += poi.name + ", ";
-                    }
-                } else {
-                    summary += "None";
+            } else {
+                summary += "None";
+            }
+            summary += "\nTerrifying Characters: ";
+            if (character.marker.terrifyingCharacters.Count > 0) {
+                for (int i = 0; i < character.marker.terrifyingCharacters.Count; i++) {
+                    Character currCharacter = character.marker.terrifyingCharacters[i];
+                    summary += currCharacter.name + ", ";
                 }
-                summary += "\nHostiles in Range: ";
-                if (character.marker.hostilesInRange.Count > 0) {
-                    for (int i = 0; i < character.marker.hostilesInRange.Count; i++) {
-                        Character poi = character.marker.hostilesInRange.ElementAt(i);
-                        summary += poi.name + ", ";
-                    }
-                } else {
-                    summary += "None";
+            } else {
+                summary += "None";
+            }
+            summary += "\nPersonal Job Queue: ";
+            if (character.jobQueue.jobsInQueue.Count > 0) {
+                for (int i = 0; i < character.jobQueue.jobsInQueue.Count; i++) {
+                    JobQueueItem poi = character.jobQueue.jobsInQueue[i];
+                    summary += poi.name + ", ";
                 }
-                summary += "\nTerrifying Characters: ";
-                if (character.marker.terrifyingCharacters.Count > 0) {
-                    for (int i = 0; i < character.marker.terrifyingCharacters.Count; i++) {
-                        Character currCharacter = character.marker.terrifyingCharacters[i];
-                        summary += currCharacter.name + ", ";
-                    }
-                } else {
-                    summary += "None";
-                }
-                summary += "\nPersonal Job Queue: ";
-                if (character.jobQueue.jobsInQueue.Count > 0) {
-                    for (int i = 0; i < character.jobQueue.jobsInQueue.Count; i++) {
-                        JobQueueItem poi = character.jobQueue.jobsInQueue[i];
-                        summary += poi.name + ", ";
-                    }
-                } else {
-                    summary += "None";
+            } else {
+                summary += "None";
+            }
+        }
+
+        if (tile.structure != null) {
+            summary += "\nStructure: " + tile.structure.ToString();
+            if (tile.structure is Dwelling) {
+                Dwelling dwelling = tile.structure as Dwelling;
+                summary += "\n\tFacilities: ";
+                foreach (KeyValuePair<FACILITY_TYPE, int> keyValuePair in dwelling.facilities) {
+                    summary += "\n\t\t- " + keyValuePair.Key.ToString() + " - " + keyValuePair.Value.ToString();
                 }
             }
-            //summary += "\nOccupant: " + tile.occupant?.name ?? "None";        
-
-            //if (tile.structure != null) {
-            summary += "\nStructure: " + tile.structure?.ToString() ?? "None";
-            //}
-            UIManager.Instance.ShowSmallInfo(summary);
-        //} else {
-        //    //For build only
-        //    if (tile.objHere != null) {
-        //        UIManager.Instance.ShowSmallInfo(tile.objHere.ToString());
-        //    }
-        //}
+        } else {
+            summary += "\nStructure: None";
+        }
+        UIManager.Instance.ShowSmallInfo(summary);
+    //    //For build only
+    //    if (tile.objHere != null) {
+    //        UIManager.Instance.ShowSmallInfo(tile.objHere.ToString());
+    //    }
     }
     public void ShowTileData(Character character, LocationGridTile tile) {
         //if (GameManager.showAllTilesTooltip) {
@@ -470,12 +472,6 @@ public class InteriorMapManager : MonoBehaviour {
         if (agGroundTilemap.cellBounds.xMin != 0) { shiftXBy = agGroundTilemap.cellBounds.xMin * -1; }
         if (agGroundTilemap.cellBounds.yMin != 0) { shiftYBy = agGroundTilemap.cellBounds.yMin * -1; }
 
-        //s.size.xMin += shiftXBy;
-        //s.size.xMax += shiftXBy;
-
-        //s.size.yMin += shiftYBy;
-        //s.size.yMax += shiftYBy;
-
         //structures
         s.structureSlots = placedStructures;
 
@@ -490,18 +486,18 @@ public class InteriorMapManager : MonoBehaviour {
 
     }
     private Dictionary<STRUCTURE_TYPE, List<StructureSlot>> placedStructures;
-    public void DrawTemplateForGeneration(StructureTemplate template, Vector3Int startPos) {
+    public void DrawTownCenterTemplateForGeneration(StructureTemplate template, Vector3Int startPos) {
         DrawTiles(agGroundTilemap, template.groundTiles, startPos);
         DrawTiles(agStructureTilemap, template.structureWallTiles, startPos);
         DrawTiles(agObjectsTilemap, template.objectTiles, startPos);
         DrawTiles(agDetailsTilemap, template.detailTiles, startPos);
     }
-    public void DrawTemplateForGeneration(StructureTemplate template, Vector3Int startPos, STRUCTURE_TYPE structureType) {
+    public void DrawStructureTemplateForGeneration(StructureTemplate template, Vector3Int startPos, STRUCTURE_TYPE structureType) {
         DrawTiles(agGroundTilemap, template.groundTiles, startPos);
         DrawTiles(agStructureTilemap, template.structureWallTiles, startPos);
         DrawTiles(agObjectsTilemap, template.objectTiles, startPos);
         DrawTiles(agDetailsTilemap, template.detailTiles, startPos);
-        AddPlacedStructure(structureType, new StructureSlot() { size = template.size, startPos = startPos });
+        AddPlacedStructure(structureType, new StructureSlot() { size = template.size, startPos = startPos, furnitureSpots = template.furnitureSpots});
     }
     private void DrawTiles(Tilemap tilemap, TileTemplateData[] data, Vector3Int startPos) {
         for (int i = 0; i < data.Length; i++) {
@@ -604,15 +600,6 @@ public class InteriorMapManager : MonoBehaviour {
         return shiftTemplateBy;
     }
     #endregion
-
-    #region Tile Objects
-    public TileObjectData GetTileObjectData(TILE_OBJECT_TYPE objType) {
-        if (tileObjectData.ContainsKey(objType)) {
-            return tileObjectData[objType];
-        }
-        throw new System.Exception("No tile data for type " + objType.ToString());
-    }
-    #endregion
 }
 
 #region Templates
@@ -629,19 +616,22 @@ public struct TownMapSettings {
 public class StructureSlot {
     public Vector3Int startPos;
     public Point size;
+    public FurnitureSpot[] furnitureSpots;
     public void AdjustStartPos(int x, int y) {
         Vector3Int newPos = startPos;
         newPos.x += x;
         newPos.y += y;
         startPos = newPos;
     }
-}
-#endregion
-
-#region Tile Objects
-public struct TileObjectData {
-    public int constructionCost;
-    public int constructionTime; //in ticks
+    public FurnitureSpot GetFurnitureSpot(Vector3Int location) {
+        for (int i = 0; i < furnitureSpots.Length; i++) {
+            FurnitureSpot spot = furnitureSpots[i];
+            if (spot.location == location) {
+                return spot;
+            }
+        }
+        return null;
+    }
 }
 #endregion
 

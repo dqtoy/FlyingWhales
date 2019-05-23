@@ -116,9 +116,14 @@ public class AreaMapCameraMove : MonoBehaviour {
         transform.position = newPos;
         //ConstrainCameraBounds();
     }
-    public void JustCenterCamera() {
-        Vector3 center = new Vector3((MIN_X + MAX_X) * 0.5f, (MIN_Y + MAX_Y) * 0.5f);
-        transform.position = center;
+    public void JustCenterCamera(bool instantCenter) {
+        if (instantCenter) {
+            Vector3 center = new Vector3((MIN_X + MAX_X) * 0.5f, (MIN_Y + MAX_Y) * 0.5f);
+            MoveCamera(center);
+        } else {
+            InteriorMapManager.Instance.currentlyShowingMap.centerGO.transform.position = new Vector3((MIN_X + MAX_X) * 0.5f, (MIN_Y + MAX_Y) * 0.5f);
+            target = InteriorMapManager.Instance.currentlyShowingMap.centerGO.transform;
+        }
     }
     public void CenterCameraOn(GameObject GO, bool instantCenter = false) {
         if (GO == null) {

@@ -37,6 +37,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     public bool isEdge { get; private set; }
     public bool isLocked { get; private set; } //if a tile is locked, any asset on it should not be replaced.
     public TILE_OBJECT_TYPE reservedObjectType { get; private set; } //the only type of tile object that can be placed here
+    public FurnitureSpot furnitureSpot { get; private set; }
 
     public List<LocationGridTile> ValidTiles { get { return FourNeighbours().Where(o => o.tileType == Tile_Type.Empty || o.tileType == Tile_Type.Gate || o.tileType == Tile_Type.Road).ToList(); } }
     public List<LocationGridTile> RealisticTiles { get { return FourNeighbours().Where(o => o.tileAccess == Tile_Access.Passable && (o.structure != null || o.tileType == Tile_Type.Road || o.tileType == Tile_Type.Gate)).ToList(); } }
@@ -511,6 +512,25 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     #region Tile Objects
     public void SetReservedType(TILE_OBJECT_TYPE reservedType) {
         reservedObjectType = reservedType;
+    }
+    #endregion
+
+    #region Furniture Spots
+    public void SetFurnitureSpot(FurnitureSpot spot) {
+        furnitureSpot = spot;
+    }
+    public FURNITURE_TYPE GetFurnitureThatCanProvide(FACILITY_TYPE facility) {
+        List<FURNITURE_TYPE> choices = new List<FURNITURE_TYPE>();
+        for (int i = 0; i < furnitureSpot.allowedFurnitureTypes.Length; i++) {
+            FURNITURE_TYPE currType = furnitureSpot.allowedFurnitureTypes[i];
+            if (currType.ConvertFurnitureToTileObject().CanProvideFacility(facility)) {
+                choices.Add(currType);
+            }
+        }
+        if (choices.Count > 0) {
+            return choices[UnityEngine.Random.Range(0, choices.Count)];
+        }
+        throw new System.Exception("Furniture spot at " + this.ToString() + " cannot provide facility " + facility.ToString() + "! Should not reach this point if that is the case!");
     }
     #endregion
 }

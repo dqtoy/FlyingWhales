@@ -104,10 +104,10 @@ public class GoapPlanJob : JobQueueItem {
                         character.currentParty.icon.SetOnArriveAction(() => character.OnArriveAtAreaStopMovement());
                     }
                 }
-                if (character.currentAction.isPerformingActualAction && !character.currentAction.isDone) {
-                    character.currentAction.currentState.EndPerTickEffect(shouldDoAfterEffect);
+                character.StopCurrentAction(shouldDoAfterEffect);
+                if(character.currentAction != null) {
+                    character.SetCurrentAction(null);
                 }
-                character.SetCurrentAction(null);
                 character.DropPlan(assignedPlan);
             } else {
                 character.DropPlan(assignedPlan);

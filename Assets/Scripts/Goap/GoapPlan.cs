@@ -58,6 +58,16 @@ public class GoapPlan {
         Messenger.RemoveListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnActionInPlanFinished);
         dropPlanCallStack = StackTraceUtility.ExtractStackTrace();
     }
+    public void InsertAction(GoapAction action) {
+        if (currentNode != null) {
+            GoapNode nextNode = currentNode.parent;
+            GoapNode newNode = new GoapNode(nextNode, action.cost, action);
+            currentNode.parent = newNode;
+            newNode.index = currentNode.index;
+            newNode.action.SetParentPlan(this);
+            Debug.Log(action.actor.name + " inserted new action " + action.goapName + " to replace action that returned fail. New plan is\n" + GetPlanSummary());
+        }
+    }
 
     public void ConstructAllNodes() {
         allNodes.Clear();
