@@ -54,10 +54,10 @@ public class MakeLove : GoapAction {
         currentState.SetIntelReaction(State1And2Reactions);
     }
     private void PerTickMakeLoveSuccess() {
-        //**Per Tick Effect 1 * *: Actor's Happiness Meter +6
-        actor.AdjustHappiness(6);
-        //**Per Tick Effect 2**: Target's Happiness Meter +6
-        targetCharacter.AdjustHappiness(6);
+        //**Per Tick Effect 1 * *: Actor's Happiness Meter +10
+        actor.AdjustHappiness(10);
+        //**Per Tick Effect 2**: Target's Happiness Meter +10
+        targetCharacter.AdjustHappiness(10);
     }
     private void AfterMakeLoveSuccess() {
         //**After Effect 1**: If Actor and Target are Lovers, they both gain Cheery trait. If Actor and Target are Paramours, they both gain Ashamed trait.

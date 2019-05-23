@@ -53,7 +53,7 @@ public class RememberFallen : GoapAction {
         currentState.AddLogFiller(null, tombstone.character.name, LOG_IDENTIFIER.TARGET_CHARACTER);
     }
     private void PerTickRememberSuccess() {
-        actor.AdjustHappiness(8);
+        actor.AdjustHappiness(16);
     }
     private void PreTargetMissing() {
         Tombstone tombstone = poiTarget as Tombstone;

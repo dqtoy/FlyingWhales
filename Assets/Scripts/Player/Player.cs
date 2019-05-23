@@ -733,19 +733,19 @@ public class Player : ILeader {
         if (ShouldShowNotificationFrom(character)) {
             return true;
         } else {
-            return ShouldShowNotificationFrom(log.fillers.Where(x => x.obj is Character).Select(x => x.obj as Character).ToList());
+            return ShouldShowNotificationFrom(log.fillers.Where(x => x.obj is Character).Select(x => x.obj as Character).ToArray());
         }
     }
-    private bool ShouldShowNotificationFrom(List<Character> characters) {
-        for (int i = 0; i < characters.Count; i++) {
+    private bool ShouldShowNotificationFrom(Character[] characters) {
+        for (int i = 0; i < characters.Length; i++) {
             if (ShouldShowNotificationFrom(characters[i])) {
                 return true;
             }
         }
         return false;
     }
-    private bool ShouldShowNotificationFrom(List<Character> characters, Log log) {
-        for (int i = 0; i < characters.Count; i++) {
+    private bool ShouldShowNotificationFrom(Character[] characters, Log log) {
+        for (int i = 0; i < characters.Length; i++) {
             if (ShouldShowNotificationFrom(characters[i], log)) {
                 return true;
             }
@@ -759,7 +759,7 @@ public class Player : ILeader {
         }
         return false;
     }
-    public void ShowNotificationFrom(List<Character> characters, Log log) {
+    public void ShowNotificationFrom(Log log, params Character[] characters) {
         if (ShouldShowNotificationFrom(characters, log)) {
             ShowNotification(log);
         }

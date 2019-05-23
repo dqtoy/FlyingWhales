@@ -157,7 +157,7 @@ public class TileObject : IPointOfInterest {
                 oldTrait.AddCharacterResponsibleForTrait(characterResponsible);
                 return false;
             }
-            return false;
+            //return false;
         }
         _traits.Add(trait);
         trait.SetGainedFromDoing(gainedFromDoing);

@@ -1592,8 +1592,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                         //check first if the character can build that specific type of furniture
                         if (furnitureToCreate.ConvertFurnitureToTileObject().CanBeCraftedBy(this)) {
                             GoapPlanJob job = new GoapPlanJob("Build Furniture", INTERACTION_TYPE.CRAFT_FURNITURE, this, new Dictionary<INTERACTION_TYPE, object[]>() {
-                            { INTERACTION_TYPE.CRAFT_FURNITURE, new object[] { chosenTile, furnitureToCreate } }
-                        });
+                                { INTERACTION_TYPE.CRAFT_FURNITURE, new object[] { chosenTile, furnitureToCreate } }
+                            });
                             job.SetCancelOnFail(true);
                             job.SetCannotOverrideJob(true);
                             jobQueue.AddJobInQueue(job);
@@ -2938,9 +2938,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 
         //Random Traits
         int chance = UnityEngine.Random.Range(0, 100);
-        //if (chance < 10) {
+        if (chance < 10) {
             AddTrait(new Craftsman());
-        //}
+        }
     }
     public void CreateInitialTraitsByRace() {
         if (race == RACE.HUMANS) {
@@ -4495,7 +4495,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //**if they dont have a negative relationship and at least one of them has a lover, they may become paramours**
         float positiveWeight = 0;
         float negativeWeight = 0;
-        if (GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.NEGATIVE && targetCharacter.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.NEGATIVE
+        if (GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.NEGATIVE && targetCharacter.GetRelationshipEffectWith(this) != RELATIONSHIP_EFFECT.NEGATIVE
             && CanHaveRelationshipWith(RELATIONSHIP_TRAIT.PARAMOUR, targetCharacter) && targetCharacter.CanHaveRelationshipWith(RELATIONSHIP_TRAIT.PARAMOUR, this)
             && role.roleType != CHARACTER_ROLE.BEAST && targetCharacter.role.roleType != CHARACTER_ROLE.BEAST) {
             for (int i = 0; i < moods.Length; i++) {
@@ -4515,20 +4515,20 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                         break;
                     case CHARACTER_MOOD.GREAT:
                         //+10 Weight per Great Mood
-                        positiveWeight += 10;
+                        positiveWeight += 20;
                         break;
                 }
             }
             if (relData != null) {
                 //+30 Weight per previous flirtation
-                positiveWeight += 30 * relData.flirtationCount;
+                positiveWeight += 50 * relData.flirtationCount;
             }
             //x2 all positive modifiers per Drunk
             if (GetTrait("Drunk") != null) {
-                positiveWeight *= 2;
+                positiveWeight *= 2.5f;
             }
             if (targetCharacter.GetTrait("Drunk") != null) {
-                positiveWeight *= 2;
+                positiveWeight *= 2.5f;
             }
             //x0.1 all positive modifiers per sexually incompatible
             if (!CharacterManager.Instance.IsSexuallyCompatibleOneSided(this, targetCharacter)) {
@@ -5260,6 +5260,15 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public void CopyAwareness(Dictionary<POINT_OF_INTEREST_TYPE, List<IAwareness>> newAwareness) {
         this.awareness = newAwareness;
+    }
+    public Dictionary<POINT_OF_INTEREST_TYPE, List<IAwareness>> OrderAwarenessByStructure() {
+        Dictionary<POINT_OF_INTEREST_TYPE, List<IAwareness>> orderedAwareness = new Dictionary<POINT_OF_INTEREST_TYPE, List<IAwareness>>();
+        foreach (KeyValuePair<POINT_OF_INTEREST_TYPE, List<IAwareness>> keyValuePair in this.awareness) {
+            List<IAwareness> ordered = new List<IAwareness>(keyValuePair.Value);
+            ordered = ordered.OrderBy(x => x.knownGridLocation.structure.id).ToList();
+            orderedAwareness.Add(keyValuePair.Key, ordered);
+        }
+        return orderedAwareness;
     }
     #endregion
 
@@ -6129,7 +6138,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 reactSummary += "\nCrime committed is serious or worse. Removing positive relationships.";
                 //- Witness Log: "[Character Name] saw [Criminal Name] committing [Theft/Assault/Murder]! They are no longer [Friends/Lovers/Paramours]."
                 //- Relationship Degradation between Character and Criminal
-                CharacterManager.Instance.RelationshipDegradation(this, criminal);
+                CharacterManager.Instance.RelationshipDegradation(criminal, this, witnessedCrime);
 
                 //List<RelationshipTrait> traitsToRemove = GetAllRelationshipOfEffectWith(criminal, TRAIT_EFFECT.POSITIVE);
                 //CharacterManager.Instance.RemoveRelationshipBetween(this, criminal, traitsToRemove);
@@ -6166,7 +6175,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         else if (!this.HasRelationshipWith(criminal) || this.HasRelationshipOfTypeWith(criminal, RELATIONSHIP_TRAIT.ENEMY)) {
             reactSummary += "\n" + this.name + " does not have a relationship with or is an enemy of " + criminal.name;
             //- Relationship Degradation between Character and Criminal
-            CharacterManager.Instance.RelationshipDegradation(this, criminal);
+            CharacterManager.Instance.RelationshipDegradation(criminal, this, witnessedCrime);
             //- Witness Log: "[Character Name] saw [Criminal Name] committing [Theft/Assault/Murder]!"
             witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "witnessed");
             reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_witnessed");

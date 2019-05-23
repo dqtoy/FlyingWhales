@@ -70,14 +70,14 @@ public class AssaultCharacter : GoapAction {
         //**Note**: If the actor is from the same faction as the witness and the target is not considered hostile, this is an Assault crime
         if (!actor.IsHostileWith(poiTarget as Character)
            //Assaulting a criminal as part of apprehending him should not be considered a crime
-           && (parentPlan.job == null || parentPlan.job.name != "Apprehend")) {
+           && !IsFromApprehendJob()) {
             SetCommittedCrime(CRIME.ASSAULT);
         }
         currentState.AddLogFiller(loser, loser.name, LOG_IDENTIFIER.CHARACTER_3);
         AddTraitTo(winner, "Combat Recovery", loser);
         Injured injured = new Injured();
         AddTraitTo(loser, injured, winner);
-        CharacterManager.Instance.RelationshipDegradation(actor, poiTarget as Character);
+        CharacterManager.Instance.RelationshipDegradation(actor, poiTarget as Character, this);
         currentState.SetIntelReaction(State1And2Reactions);
     }
     public void AfterTargetInjured() {
@@ -95,12 +95,12 @@ public class AssaultCharacter : GoapAction {
         //**Note**: If the actor is from the same faction as the witness and the target is not considered hostile, this is an Assault crime
         if (!actor.IsHostileWith(poiTarget as Character)
             //Assaulting a criminal as part of apprehending him should not be considered a crime
-            && (parentPlan.job == null || parentPlan.job.name != "Apprehend")) {
+            && !IsFromApprehendJob()) {
             SetCommittedCrime(CRIME.ASSAULT);
         }
         currentState.AddLogFiller(loser, loser.name, LOG_IDENTIFIER.CHARACTER_3);
         AddTraitTo(winner, "Combat Recovery", loser);
-        CharacterManager.Instance.RelationshipDegradation(actor, poiTarget as Character);
+        CharacterManager.Instance.RelationshipDegradation(actor, poiTarget as Character, this);
         currentState.SetIntelReaction(State1And2Reactions);
     }
     public void AfterTargetKnockedOut() {
@@ -116,7 +116,7 @@ public class AssaultCharacter : GoapAction {
         //**Note**: If the actor is from the same faction as the witness and the target is not considered hostile, this is a Murder crime
         if (!actor.IsHostileWith(poiTarget as Character)
             //Assaulting a criminal as part of apprehending him should not be considered a crime
-            && (parentPlan.job == null || parentPlan.job.name != "Apprehend")) { 
+            && !IsFromApprehendJob()) {
             SetCommittedCrime(CRIME.MURDER);
         }
         currentState.AddLogFiller(loser, loser.name, LOG_IDENTIFIER.CHARACTER_3);

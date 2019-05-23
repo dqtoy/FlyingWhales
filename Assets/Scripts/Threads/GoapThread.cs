@@ -123,6 +123,7 @@ public class GoapThread : Multithread {
 
         List<INTERACTION_TYPE> actorAllowedActions = RaceManager.Instance.GetNPCInteractionsOfRace(actor);
         List<GoapAction> usableActions = new List<GoapAction>();
+        //Dictionary<POINT_OF_INTEREST_TYPE, List<IAwareness>> orderedAwareness = actor.OrderAwarenessByStructure();
         foreach (KeyValuePair<POINT_OF_INTEREST_TYPE, List<IAwareness>> kvp in actor.awareness) {
             if (kvp.Key == POINT_OF_INTEREST_TYPE.CHARACTER) {
                 for (int i = 0; i < kvp.Value.Count; i++) {
@@ -143,6 +144,36 @@ public class GoapThread : Multithread {
                             if (awarenessActions != null && awarenessActions.Count > 0) {
                                 usableActions.AddRange(awarenessActions);
                             }
+                        }
+                    }
+                }
+            } else if (kvp.Key == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+                //NOTE: Not happy about this, very unoptimized. Need to think of a way to make this more performant.
+                Dictionary<LocationStructure, Dictionary<INTERACTION_TYPE, List<GoapAction>>> filtered = new Dictionary<LocationStructure, Dictionary<INTERACTION_TYPE, List<GoapAction>>>();
+                for (int i = 0; i < kvp.Value.Count; i++) {
+                    IAwareness currAwareness = kvp.Value[i];
+                    if (currAwareness.poi.gridTileLocation.structure != null) {
+                        LocationStructure objStructure = currAwareness.poi.gridTileLocation.structure;
+                        if (!filtered.ContainsKey(objStructure)) {
+                            filtered.Add(objStructure, new Dictionary<INTERACTION_TYPE, List<GoapAction>>());
+                        }
+                        List<GoapAction> awarenessActions = currAwareness.poi.AdvertiseActionsToActor(actor, actorAllowedActions);
+                        for (int j = 0; j < awarenessActions.Count; j++) {
+                            GoapAction currAction = awarenessActions[j];
+                            if (!filtered[objStructure].ContainsKey(currAction.goapType)) {
+                                filtered[objStructure].Add(currAction.goapType, new List<GoapAction>());
+                            }
+                            filtered[objStructure][currAction.goapType].Add(currAction);
+                        }
+                    }
+                }
+                foreach (KeyValuePair<LocationStructure, Dictionary<INTERACTION_TYPE, List<GoapAction>>> keyValuePair in filtered) {
+                    foreach (KeyValuePair<INTERACTION_TYPE, List<GoapAction>> keyValuePair2 in keyValuePair.Value) {
+                        if (keyValuePair2.Value.Count > 1) {
+                            GoapAction chosenAction = keyValuePair2.Value[Utilities.rng.Next(0, keyValuePair2.Value.Count)];
+                            usableActions.Add(chosenAction);
+                        } else if (keyValuePair2.Value.Count == 1) {
+                            usableActions.Add(keyValuePair2.Value[0]);
                         }
                     }
                 }

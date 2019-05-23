@@ -7,6 +7,7 @@ public class FurnitureSpot {
 
     public Vector3Int location; //where in the template grid is this furniture spot placed
     public FURNITURE_TYPE[] allowedFurnitureTypes;
+    public List<FurnitureSetting> furnitureSettings;
 
     public override string ToString() {
         string summary = string.Empty;
@@ -14,5 +15,15 @@ public class FurnitureSpot {
             summary += "|" + allowedFurnitureTypes[i].ToString() + "|";
         }
         return summary;
+    }
+
+    public FurnitureSetting GetFurnitureSettings(FURNITURE_TYPE type) {
+        for (int i = 0; i < furnitureSettings.Count; i++) {
+            FurnitureSetting currSetting = furnitureSettings[i];
+            if (currSetting.type == type) {
+                return currSetting;
+            }
+        }
+        return null;
     }
 }

@@ -5,6 +5,8 @@ using UnityEngine;
 
 [System.Serializable]
 public class LocationStructure {
+
+    public int id { get; private set; }
     public string name { get; private set; }
     public STRUCTURE_TYPE structureType { get; private set; }
     public bool isInside { get; private set; }
@@ -37,6 +39,7 @@ public class LocationStructure {
     #endregion
 
     public LocationStructure(STRUCTURE_TYPE structureType, Area location, bool isInside) {
+        id = Utilities.SetID(this);
         this.structureType = structureType;
         this.name = Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString());
         this.isInside = isInside;

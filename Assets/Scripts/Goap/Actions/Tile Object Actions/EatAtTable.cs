@@ -84,7 +84,7 @@ public class EatAtTable : GoapAction {
         //actor.AddTrait("Eating");
     }
     private void PerTickEatSuccess() {
-        actor.AdjustFullness(12);
+        actor.AdjustFullness(18);
     }
     private void AfterEatSuccess() {
         actor.AdjustDoNotGetHungry(-1);
@@ -96,7 +96,7 @@ public class EatAtTable : GoapAction {
         RemoveTraitFrom(poiTarget, "Poisoned");
     }
     private void PerTickEatPoisoned() {
-        actor.AdjustFullness(12);
+        actor.AdjustFullness(18);
     }
     private void AfterEatPoisoned() {
         actor.AdjustDoNotGetHungry(-1);

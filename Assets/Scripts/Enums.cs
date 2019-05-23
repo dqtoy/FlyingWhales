@@ -1448,7 +1448,7 @@ public enum SEXUALITY {
     STRAIGHT, BISEXUAL, GAY
 }
 public enum FACILITY_TYPE { NONE, HAPPINESS_RECOVERY, FULLNESS_RECOVERY, TIREDNESS_RECOVERY, SIT_DOWN_SPOT  }
-public enum FURNITURE_TYPE { BED, TABLE, DESK, GUITAR, }
+public enum FURNITURE_TYPE { NONE, BED, TABLE, DESK, GUITAR, }
 public enum RELATIONSHIP_EFFECT {
     NONE,
     POSITIVE,
@@ -1601,6 +1601,13 @@ public static class Extensions {
     #endregion
 
     #region Tile Objects
+    public static FURNITURE_TYPE ConvertTileObjectToFurniture(this TILE_OBJECT_TYPE type) {
+        FURNITURE_TYPE to;
+        if (System.Enum.TryParse<FURNITURE_TYPE>(type.ToString(), out to)) {
+            return to;
+        }
+        return FURNITURE_TYPE.NONE;
+    }
     public static bool CanProvideFacility(this TILE_OBJECT_TYPE tileObj, FACILITY_TYPE facility) {
         TileObjectData data;
         if (TileObjectDB.TryGetTileObjectData(tileObj, out data)) {

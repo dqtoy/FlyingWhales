@@ -80,6 +80,9 @@ public class TablePoison : GoapAction {
             //Add character to poisoned trait of table
             //and when getting the cost of eating at this table, check if the character knows about the poison, if he/she does, increase cost.
             Poisoned poisonedTrait = poiTarget.GetTrait("Poisoned") as Poisoned;
+            if (poisonedTrait == null) {
+                throw new System.Exception("Poisoned trait of " + poiTarget.ToString() + " is null! But it was just poisoned by " + actor.name);
+            }
             poisonedTrait.AddAwareCharacter(witness);
         }
     }

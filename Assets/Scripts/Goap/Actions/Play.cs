@@ -72,7 +72,7 @@ public class Play : GoapAction {
         actor.AdjustDoNotGetTired(1);
     }
     private void PerTickPlaySuccess() {
-        actor.AdjustHappiness(12);
+        actor.AdjustHappiness(18);
     }
     private void AfterPlaySuccess() {
         actor.AdjustDoNotGetLonely(-1);

@@ -84,10 +84,8 @@ public class ReleaseCharacter : GoapAction {
         else if (recipient.HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.ENEMY)) {
             //- **Recipient Response Text**: "[Target Name] should not have been released!"
             reactions.Add(string.Format("{0} should not have been released!", target.name));
-            //- **Recipient Effect**: If Recipient have no relationship with Actor, he will now consider that Actor an Enemy
-            if (!recipient.HasRelationshipWith(actor)) {
-                CharacterManager.Instance.CreateNewRelationshipBetween(recipient, actor, RELATIONSHIP_TRAIT.ENEMY);
-            }
+            //- **Recipient Effect**: https://trello.com/c/mqor1Ddv/1884-relationship-degradation between Recipient and Actor
+            CharacterManager.Instance.RelationshipDegradation(actor, recipient);
         }
         //Recipient considers Actor a personal Enemy:
         else if (recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.ENEMY)) {
@@ -99,10 +97,8 @@ public class ReleaseCharacter : GoapAction {
         else if (recipient.HasRelationshipOfEffectWith(target, TRAIT_EFFECT.POSITIVE)) {
             //- **Recipient Response Text**: "I am relieved that [Target Name] has been released."
             reactions.Add(string.Format("I am relieved that {0} has been released.", target.name));
-            //- **Recipient Effect**:  If Recipient have no relationship with Actor, Recipient will consider Actor a Friend
-            if (!recipient.HasRelationshipWith(actor)) {
-                CharacterManager.Instance.CreateNewRelationshipBetween(recipient, actor, RELATIONSHIP_TRAIT.FRIEND);
-            }
+            //- **Recipient Effect**: https://trello.com/c/mqor1Ddv/1884-relationship-degradation between Recipient and Actor
+            CharacterManager.Instance.RelationshipDegradation(actor, recipient);
         }
         //Recipient and Target have no relationship but are from the same faction:
         else if (!recipient.HasRelationshipWith(target) && recipient.faction == target.faction) {

@@ -83,7 +83,7 @@ public class PlayGuitar : GoapAction {
         poiTarget.SetPOIState(POI_STATE.INACTIVE);
     }
     public void PerTickPlaySuccess() {
-        actor.AdjustHappiness(12);
+        actor.AdjustHappiness(18);
     }
     public void AfterPlaySuccess() {
         actor.AdjustDoNotGetLonely(-1);

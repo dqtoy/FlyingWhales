@@ -9,6 +9,7 @@ public class FurnitureSpotMono : MonoBehaviour {
     [SerializeField] private TextMeshPro furnitureSummary;
 
     public FURNITURE_TYPE[] allowedFurnitureTypes;
+    public List<FurnitureSetting> furnitureSettings;
 
     private void Update() {
         string summary = string.Empty;
@@ -18,4 +19,11 @@ public class FurnitureSpotMono : MonoBehaviour {
         this.name = summary;
         furnitureSummary.text = summary;
     }
+}
+
+[System.Serializable]
+public class FurnitureSetting {
+    public FURNITURE_TYPE type;
+    public Vector3 rotation;
+    public string tileAssetName;
 }

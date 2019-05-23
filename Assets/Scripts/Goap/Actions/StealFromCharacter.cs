@@ -98,9 +98,6 @@ public class StealFromCharacter : GoapAction {
         if (recipient == targetCharacter) {
             //- **Recipient Response Text**: "[Actor Name] stole from me? What a horrible person."
             reactions.Add(string.Format("{0} stole from me? What a horrible person.", actor.name));
-            //- **Recipient Effect**: Remove Friend/Lover/Paramour relationship between Actor and Recipient.
-            List<RelationshipTrait> traitsToRemove = recipient.GetAllRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE);
-            CharacterManager.Instance.RemoveRelationshipBetween(recipient, actor, traitsToRemove);
             //Apply Crime System handling as if the Recipient witnessed Actor commit Theft.
             recipient.ReactToCrime(CRIME.THEFT, actor);
         }
@@ -140,9 +137,8 @@ public class StealFromCharacter : GoapAction {
         if (recipient == targetCharacter) {
             //- **Recipient Response Text**: "Hahaha! Good thing I'm not carrying anything with me at that time. What a loser."
             reactions.Add("Hahaha! Good thing I'm not carrying anything with me at that time. What a loser.");
-            //- **Recipient Effect**: Remove Friend/Lover/Paramour relationship between Actor and Recipient.
-            List<RelationshipTrait> traitsToRemove = recipient.GetAllRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE);
-            CharacterManager.Instance.RemoveRelationshipBetween(recipient, actor, traitsToRemove);
+            //- **Recipient Effect**: https://trello.com/c/mqor1Ddv/1884-relationship-degradation between Recipient and Actor
+            CharacterManager.Instance.RelationshipDegradation(actor, recipient);
         }
         //Recipient and Actor is the same:
         else if (recipient == actor) {

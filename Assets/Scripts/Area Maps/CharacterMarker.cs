@@ -326,7 +326,7 @@ public class CharacterMarker : PooledObject {
     private void OnMenuClosed(UIMenu menu) {
         if (menu is CharacterInfoUI) {
             clickedImg.gameObject.SetActive(false);
-            UnhighlightMarker();
+            //UnhighlightMarker();
         }
     }
     private void OnProgressionSpeedChanged(PROGRESSION_SPEED progSpeed) {
@@ -727,6 +727,17 @@ public class CharacterMarker : PooledObject {
     public void SetActiveState(bool state) {
         this.gameObject.SetActive(state);
     }
+    /// <summary>
+    /// Set the state of all visual aspects of this marker.
+    /// </summary>
+    /// <param name="state">The state the visuals should be in (active or inactive)</param>
+    public void SetVisualState(bool state) {
+        mainImg.gameObject.SetActive(state);
+        nameLbl.gameObject.SetActive(state);
+        actionIcon.enabled = state;
+        hoveredImg.enabled = state;
+        clickedImg.enabled = state;
+    }
     public void UpdateMarkerVisuals() {
         MarkerAsset assets = CharacterManager.Instance.GetMarkerAsset(character.race, character.gender);
         mainImg.sprite = assets.defaultSprite;
@@ -846,7 +857,7 @@ public class CharacterMarker : PooledObject {
     public void RemoveHostileInRange(Character poi) {
         if (hostilesInRange.Remove(poi)) {
             Debug.Log("Removed hostile in range " + poi.name + " from " + this.character.name);
-            UnhighlightMarker(); //This is for testing only!
+            //UnhighlightMarker(); //This is for testing only!
             OnHostileInRangeRemoved(poi);
         }
     }
@@ -925,7 +936,10 @@ public class CharacterMarker : PooledObject {
             //return;
             //- Determine whether to enter Flee mode or Engage mode:
             //if the character will do a combat action towards the other character, do not flee.
-            if (!this.character.IsDoingCombatActionTowards(otherCharacter) 
+            if (character.doNotDisturb > 0 && character.HasTraitOf(TRAIT_TYPE.DISABLER)) {
+                //- Disabled characters will not do anything
+                summary += "\n" + character.name + " will not do anything.";
+            } else if (!this.character.IsDoingCombatActionTowards(otherCharacter) 
                 && ((character.GetTrait("Injured") != null && (character.stateComponent.currentState == null || character.stateComponent.currentState.characterState != CHARACTER_STATE.BERSERKED) && (character.stateComponent.previousMajorState == null || character.stateComponent.previousMajorState.characterState != CHARACTER_STATE.BERSERKED))
                 || character.role.roleType == CHARACTER_ROLE.CIVILIAN
                 || character.role.roleType == CHARACTER_ROLE.NOBLE || character.role.roleType == CHARACTER_ROLE.LEADER)) {
@@ -935,9 +949,6 @@ public class CharacterMarker : PooledObject {
                     character.stateComponent.SwitchToState(CHARACTER_STATE.FLEE, otherCharacter);
                     summary += "\n" + character.name + " chose to flee.";
                 //}
-            } else if (character.doNotDisturb > 0 && character.HasTraitOf(TRAIT_TYPE.DISABLER)) {
-                //- Disabled characters will not do anything
-                summary += "\n" + character.name + " will not do anything.";
             } else if (character.role.roleType == CHARACTER_ROLE.BEAST || character.role.roleType == CHARACTER_ROLE.ADVENTURER
                 || character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.BANDIT) {
                 //- Uninjured Beasts, Adventurers and Soldiers will enter Engage mode.
