@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 
 public class Desk : TileObject {
-    private Character[] users;
+    //private Character[] users;
     public Desk(LocationStructure location) {
         this.structureLocation = location;
         poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.TILE_OBJECT_DESTROY, };

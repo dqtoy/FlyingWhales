@@ -123,6 +123,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: c99104d4f7e23ed49acd0e41e2e431e9, type: 3}
   - {fileID: 21300000, guid: c4b3d4f4942a74149a645c288ecb200d, type: 3}
   - {fileID: 21300000, guid: cbf26805df91346489f4518d29e928dc, type: 3}
+  - {fileID: 21300000, guid: f9e8e0558698ab8479c47e4de6b0c285, type: 3}
   - {fileID: 21300000, guid: aff42a55af40efc469e2645796b04de4, type: 3}
   - {fileID: 21300000, guid: 6059fe555d11c4143bcf1bb8806f1702, type: 3}
   - {fileID: 21300000, guid: 98381b75e2162b84b949aba1a7d10260, type: 3}
@@ -434,6 +435,7 @@ SpriteAtlas:
   - bottom_goals1
   - minion_create_army_on
   - scroll_button_right_invalid
+  - empty_basic_info_box
   - ge_icon-29
   - world_button_clicked
   - bottom_factions0

@@ -22,7 +22,7 @@ public class Disable : PlayerJobAction {
     }
 
     protected override bool ShouldButtonBeInteractable(Character character, IPointOfInterest targetPOI) {
-        if (!targetPOI.IsAvailable()) {
+        if (targetPOI.isDisabledByPlayer) {
             return false;
         }
         return base.ShouldButtonBeInteractable(character, targetPOI);

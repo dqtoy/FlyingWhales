@@ -553,7 +553,7 @@ public class PlayerUI : MonoBehaviour {
             } else if (previousMenu.Equals("faction")) {
                 UIManager.Instance.ShowFactionTokenMenu();
             }
-        } else if (menu is CharacterInfoUI) {
+        } else if (menu is CharacterInfoUI || menu is TileObjectInfoUI) {
             HideActionButtons();
         }
     }
@@ -609,7 +609,7 @@ public class PlayerUI : MonoBehaviour {
         //}
         //assignBtn.interactable = false;
 
-        if (UIManager.Instance.characterInfoUI.isShowing) {
+        if (UIManager.Instance.characterInfoUI.isShowing || UIManager.Instance.tileObjectInfoUI.isShowing) {
             HideActionButtons();
         }
     }
@@ -623,6 +623,8 @@ public class PlayerUI : MonoBehaviour {
         //assignBtn.interactable = true;
         if (UIManager.Instance.characterInfoUI.isShowing) {
             ShowActionButtonsFor(UIManager.Instance.characterInfoUI.activeCharacter);
+        }else if (UIManager.Instance.tileObjectInfoUI.isShowing) {
+            ShowActionButtonsFor(UIManager.Instance.tileObjectInfoUI.activeTileObject);
         }
     }
     public void ShowPlayerIntels(bool state) {

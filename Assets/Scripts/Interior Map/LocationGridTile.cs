@@ -516,7 +516,9 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
                 //} else {
                 //    Messenger.Broadcast(Signals.HIDE_MENUS);
                 //}
-                UIManager.Instance.ShowTileObjectInfo(objHere as TileObject);
+                if(objHere is TileObject) {
+                    UIManager.Instance.ShowTileObjectInfo(objHere as TileObject);
+                }
             }
         }
 

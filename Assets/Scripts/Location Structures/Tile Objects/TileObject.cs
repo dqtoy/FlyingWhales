@@ -19,6 +19,7 @@ public class TileObject : IPointOfInterest {
     public LocationStructure structureLocation { get; protected set; }
     public bool isDisabledByPlayer { get; protected set; }
     public TileObjectSlot[] slots { get; protected set; } //for users
+    public Character[] users { get; protected set; } //array of characters, currently using the tile object
 
     protected LocationGridTile tile;
     private POI_STATE _state;

@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 
 public class Bed : TileObject {
-    private Character[] users; //array of characters, currently using the bed
+    //private Character[] users; //array of characters, currently using the bed
 
     public Bed(LocationStructure location) {
         this.structureLocation = location;

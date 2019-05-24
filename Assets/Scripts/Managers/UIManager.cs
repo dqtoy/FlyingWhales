@@ -229,6 +229,9 @@ public class UIManager : MonoBehaviour {
         if (areaInfoUI.isShowing) {
             areaInfoUI.CloseMenu();
         }
+        if (tileObjectInfoUI.isShowing) {
+            tileObjectInfoUI.CloseMenu();
+        }
         if (objectPicker.gameObject.activeSelf) {
             HideObjectPicker();
         }

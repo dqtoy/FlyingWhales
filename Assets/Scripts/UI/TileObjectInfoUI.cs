@@ -11,6 +11,11 @@ public class TileObjectInfoUI : UIMenu {
     [Header("Basic Info")]
     [SerializeField] private TextMeshProUGUI nameLbl;
 
+    [Space(10)]
+    [Header("Users")]
+    [SerializeField] private GameObject landmarkCharacterPrefab;
+    [SerializeField] private ScrollRect charactersScrollView;
+
     public TileObject activeTileObject { get; private set; }
 
     #region Overrides
@@ -33,8 +38,22 @@ public class TileObjectInfoUI : UIMenu {
         if(activeTileObject == null) {
             return;
         }
+        UpdateCharacters();
     }
     private void UpdateBasicInfo() {
         nameLbl.text = activeTileObject.name;
+    }
+    private void UpdateCharacters() {
+        Utilities.DestroyChildren(charactersScrollView.content);
+        if (activeTileObject.users != null && activeTileObject.users.Length > 0) {
+            for (int i = 0; i < activeTileObject.users.Length; i++) {
+                Character character = activeTileObject.users[i];
+                if(character != null) {
+                    GameObject characterGO = UIManager.Instance.InstantiateUIObject(landmarkCharacterPrefab.name, charactersScrollView.content);
+                    LandmarkCharacterItem item = characterGO.GetComponent<LandmarkCharacterItem>();
+                    item.SetCharacter(character, this);
+                }
+            }
+        }
     }
 }

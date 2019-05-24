@@ -290,7 +290,18 @@ public class CharacterMarker : PooledObject {
                 //} else {
                 //    Debug.Log(targetCharacter.name + " started travelling to another location, executing arrival action None");
                 //}
+
+
                 Action action = this.arrivalAction;
+                if(action != null) {
+                    if (character.currentParty.icon.isTravelling) {
+                        if(character.currentParty.icon.travelLine != null) {
+                            character.currentParty.icon.SetOnArriveAction(() => character.OnArriveAtAreaStopMovement());
+                        } else {
+                            StopMovement();
+                        }
+                    }
+                }
                 //set arrival action to null, because some arrival actions set it when executed
                 ClearArrivalAction();
                 action?.Invoke();

@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 
 public class Table : TileObject {
-    private Character[] users;
+    //private Character[] users;
     private TileBase usedAsset;
 
     private int slots {
