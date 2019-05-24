@@ -58,7 +58,7 @@ GameObject:
   - component: {fileID: 114484066573578444}
   m_Layer: 5
   m_Name: TileObjectInfoUI
-  m_TagString: CharacterInfoUI
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -995,6 +995,6 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -740.5, y: 49.900024}
-  m_SizeDelta: {x: 438.9, y: 555.8}
+  m_AnchoredPosition: {x: -740.5, y: 71}
+  m_SizeDelta: {x: 438.9, y: 513}
   m_Pivot: {x: 0.5, y: 0.5}
