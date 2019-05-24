@@ -53,6 +53,7 @@ public class ConsoleMenu : UIMenu {
             {"/force_action", ForceCharacterInteraction },
             {"/t_freeze_char", ToggleFreezeCharacter },
             {"/set_mood", SetMoodToCharacter },
+            {"/log_awareness", LogAwareness },
         };
 
 #if UNITY_EDITOR
@@ -730,6 +731,24 @@ public class ConsoleMenu : UIMenu {
         }
         character.SetMoodValue(moodValue);
         AddSuccessMessage("Set Mood Value of " + character.name + " to " + moodValue);
+    }
+    private void LogAwareness(string[] parameters) {
+        if (parameters.Length != 1) { //parameters command, item
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of LogAwareness");
+            return;
+        }
+        string characterParameterString = parameters[0];
+
+        Character character = CharacterManager.Instance.GetCharacterByName(characterParameterString);
+
+        if (character == null) {
+            AddErrorMessage("There is no character named " + characterParameterString);
+            return;
+        }
+
+        character.LogAwarenessList();
+        //AddSuccessMessage("Set Mood Value of " + character.name + " to " + moodValue);
     }
     #endregion
 

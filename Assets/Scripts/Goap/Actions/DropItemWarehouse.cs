@@ -53,6 +53,12 @@ public class DropItemWarehouse : GoapAction {
         CreateThoughtBubbleLog();
         return true;
     }
+    public override void OnResultReturnedToActor() {
+        base.OnResultReturnedToActor();
+        if (_targetStructure.structureType == STRUCTURE_TYPE.WAREHOUSE) {
+            _targetStructure.location.CheckAreaInventoryJobs(_targetStructure);
+        }
+    }
     #endregion
 
     #region State Effects
