@@ -1479,7 +1479,7 @@ public class Area {
     }
     //private bool alreadyHasCancelBrew = false;
     //private bool alreadyHasCancelTool = false;
-    private void CheckAreaInventoryJobs(LocationStructure affectedStructure) {
+    public void CheckAreaInventoryJobs(LocationStructure affectedStructure) {
         if (affectedStructure.structureType == STRUCTURE_TYPE.WAREHOUSE) {
             //brew potion
             //- If there are less than 2 Healing Potions in the Warehouse, it will create a Brew Potion job

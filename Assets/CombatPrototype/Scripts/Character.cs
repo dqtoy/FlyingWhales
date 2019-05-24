@@ -5755,7 +5755,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             Character targetCharacter = action.poiTarget as Character;
             targetCharacter.RemoveTargettedByAction(action);
         }
-        action.OnResultReturnedToActor();
         GoapPlan plan = action.parentPlan;
         if (isDead) {
             log += "\n" + name + " is dead!";
@@ -5873,6 +5872,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //        }
         //    }
         //}
+        action.OnResultReturnedToActor();
     }
     public bool DropPlan(GoapPlan plan, bool forceCancelJob = false) {
         if (allGoapPlans.Remove(plan)) {
@@ -6248,7 +6248,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                         { INTERACTION_TYPE.REPORT_CRIME,  new object[] { committedCrime, criminal }}
                     });
                     job.SetCannotOverrideJob(true);
-                    jobQueue.AddJobInQueue(job);
+                    jobQueue.AddJobInQueue(job, true);
                 }
                 break;
             case CHARACTER_ROLE.LEADER:
