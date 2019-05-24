@@ -55,7 +55,7 @@ public class Desk : TileObject {
 
         }
     }
-    public override bool IsAvailable() {
+    private bool IsSlotAvailable() {
         for (int i = 0; i < users.Length; i++) {
             if (users[i] == null) {
                 return true; //there is an available slot
@@ -79,7 +79,7 @@ public class Desk : TileObject {
         for (int i = 0; i < users.Length; i++) {
             if (users[i] == null) {
                 users[i] = character;
-                if (!IsAvailable()) {
+                if (!IsSlotAvailable()) {
                     SetPOIState(POI_STATE.INACTIVE); //if all slots in the table are occupied, set it as inactive
                 }
                 ////disable the character's marker
@@ -98,7 +98,7 @@ public class Desk : TileObject {
         for (int i = 0; i < users.Length; i++) {
             if (users[i] == character) {
                 users[i] = null;
-                if (IsAvailable()) {
+                if (IsSlotAvailable()) {
                     SetPOIState(POI_STATE.ACTIVE); //if a slot in the table is unoccupied, set it as active
                 }
                 character.marker.pathfindingAI.AdjustDoNotMove(-1);

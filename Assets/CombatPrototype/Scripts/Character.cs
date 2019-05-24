@@ -117,6 +117,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public List<Trait> traitsNeededToBeRemoved { get; private set; }
     public Memories memories { get; private set; }
     public TrapStructure trapStructure { get; private set; }
+    public bool isDisabledByPlayer { get; protected set; }
 
     private List<System.Action> onLeaveAreaActions;
     private LocationGridTile tile; //what tile in the structure is this character currently in.
@@ -3183,7 +3184,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         for (int i = 0; i < _traits.Count; i++) {
             if (_traits[i].type == traitType) {
                 removedTraits.Add(_traits[i]);
-                _traits.RemoveAt(i);
+                RemoveTrait(_traits[i]);
                 i--;
             }
         }
@@ -5340,7 +5341,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         _state = state;
     }
     public bool IsAvailable() {
-        return _state != POI_STATE.INACTIVE;
+        return _state != POI_STATE.INACTIVE && !isDisabledByPlayer;
+    }
+    public void SetIsDisabledByPlayer(bool state) {
+        isDisabledByPlayer = state;
     }
     #endregion
 
@@ -5460,9 +5464,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (goapThread.createdPlan != null) {
             if (goapThread.recalculationPlan == null) {
                 if (goapThread.job != null) {
+                    if (goapThread.job.assignedCharacter != this) {
+                        PrintLogIfActive(GameManager.Instance.TodayLogString() + name + " is scrapping plan since " + goapThread.createdPlan.job.name + " job's assigned character is no longer him/her. New assigned character is " + (goapThread.job.assignedCharacter != null ? goapThread.job.assignedCharacter.name : "None"));
+                        return;
+                    }
                     goapThread.job.SetAssignedPlan(goapThread.createdPlan);
                     for (int i = 0; i < goapThread.createdPlan.allNodes.Count; i++) {
-                        if(goapThread.createdPlan.allNodes[i].action.goapType == INTERACTION_TYPE.CARRY_CHARACTER) {
+                        if (goapThread.createdPlan.allNodes[i].action.goapType == INTERACTION_TYPE.CARRY_CHARACTER) {
                             goapThread.createdPlan.job.SetCannotOverrideJob(true);
                             break;
                         }
@@ -5497,6 +5505,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             } else {
                 //Receive plan recalculation
                 goapThread.createdPlan.SetIsBeingRecalculated(false);
+                if (goapThread.createdPlan.job != null) {
+                    if (goapThread.createdPlan.job.assignedCharacter != this) {
+                        PrintLogIfActive(GameManager.Instance.TodayLogString() + name + " is scrapping recalculated plan since " + goapThread.createdPlan.job.name + " job's assigned character is no longer him/her. New assigned character is " + (goapThread.job.assignedCharacter != null ? goapThread.job.assignedCharacter.name : "None"));
+                        DropPlan(goapThread.recalculationPlan);
+                        return;
+                    }
+                }
             }
             //if (allGoapPlans.Count == 1) {
             //    //Start this plan immediately since this is the only plan

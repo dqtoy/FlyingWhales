@@ -13,12 +13,14 @@ public interface IPointOfInterest {
     List<Trait> traits { get; }
     Faction factionOwner { get; }
     POICollisionTrigger collisionTrigger { get; } //Each poi must only hav 1 at a time.
+    bool isDisabledByPlayer { get; }
 
     void SetGridTileLocation(LocationGridTile tile);
     List<GoapAction> AdvertiseActionsToActor(Character actor, List<INTERACTION_TYPE> actorAllowedInteractions);
     LocationGridTile GetNearestUnoccupiedTileFromThis();
 
     void SetPOIState(POI_STATE state);
+    void SetIsDisabledByPlayer(bool state);
     bool IsAvailable();
 
     #region Traits

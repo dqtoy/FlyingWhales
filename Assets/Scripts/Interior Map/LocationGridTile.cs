@@ -449,6 +449,13 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         }
         return null;
     }
+    public LocationGridTile GetRandomUnoccupiedNeighbor() {
+        List<LocationGridTile> unoccupiedNeighbours = UnoccupiedNeighbours;
+        if (unoccupiedNeighbours.Count > 0) {
+            return unoccupiedNeighbours[Random.Range(0, unoccupiedNeighbours.Count)];
+        }
+        return null;
+    }
     public Vector3[] GetVertices() {
         Vector3[] vertices = new Vector3[4];
         float allowance = 0.15f;

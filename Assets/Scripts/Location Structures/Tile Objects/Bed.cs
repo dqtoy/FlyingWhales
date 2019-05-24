@@ -38,7 +38,7 @@ public class Bed : TileObject {
     }
     public override void SetPOIState(POI_STATE state) {
         base.SetPOIState(state);
-        if (IsAvailable()) {
+        if (IsSlotAvailable()) {
             if (GetActiveUserCount() > 0) {
                 UpdateUsedBedAsset();
             } else {
@@ -90,7 +90,7 @@ public class Bed : TileObject {
                 break;
         }
     }
-    public override bool IsAvailable() {
+    private bool IsSlotAvailable() {
         for (int i = 0; i < users.Length; i++) {
             if (users[i] == null) {
                 return true; //there is an available slot
@@ -115,7 +115,7 @@ public class Bed : TileObject {
             if (users[i] == null) {
                 users[i] = character;
                 UpdateUsedBedAsset();
-                if (!IsAvailable()) {
+                if (!IsSlotAvailable()) {
                     SetPOIState(POI_STATE.INACTIVE); //if all slots in the bed are occupied, set it as inactive
                 }
                 //disable the character's marker
@@ -129,7 +129,7 @@ public class Bed : TileObject {
             if (users[i] == character) {
                 users[i] = null;
                 UpdateUsedBedAsset();
-                if (IsAvailable()) {
+                if (IsSlotAvailable()) {
                     SetPOIState(POI_STATE.ACTIVE); //if a slots in the bed is unoccupied, set it as active
                 }
                 //enable the character's marker

@@ -132,6 +132,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: d1e20ae58b832e7478ae889735dce36b, type: 3}
   - {fileID: 21300000, guid: db8a44165c5814d4b871f608a71d4db2, type: 3}
   - {fileID: 21300000, guid: 15a00226e41e6bb449bc595e7eebe398, type: 3}
+  - {fileID: 21300000, guid: ef9922262d513cc43927866d6d2450f5, type: 3}
   - {fileID: 21300000, guid: 56be2c264d164374aa09a794d74609a5, type: 3}
   - {fileID: 21300000, guid: 9de8c836e25ccc6498e2c9aa0ffb01ac, type: 3}
   - {fileID: 21300000, guid: ca31f54654a09c944a0c69d60e1f03ca, type: 3}
@@ -195,6 +196,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 786662298ba3abc42a2f77b77bf0bd21, type: 3}
   - {fileID: 21300000, guid: d7be454900d271e4d8754f7e8e54c843, type: 3}
   - {fileID: 21300000, guid: 3bd628492c8a332458462e1a732aa1e4, type: 3}
+  - {fileID: 21300000, guid: fe44eb493c3bcf5469fa584116794486, type: 3}
   - {fileID: 21300000, guid: b826fa597d3a712419ec98bb28518ef0, type: 3}
   - {fileID: 21300000, guid: 2f82f9790a9c8d44ea9f052678a65e14, type: 3}
   - {fileID: 21300000, guid: ffd7ab79c60f4bd48a80b50626c56326, type: 3}
@@ -290,6 +292,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: acd0388ed4c272f4e8c094ab07ec4cba, type: 3}
   - {fileID: 21300000, guid: b5c02b9ef4f2108498c7ba82f044151c, type: 3}
   - {fileID: 21300000, guid: f6ac7caed00cf71478c14b1e19a1572d, type: 3}
+  - {fileID: 21300000, guid: f6a5febe714d1e446ad84ab66890939a, type: 3}
   - {fileID: 21300000, guid: ecf702ce7dcbb76498e6c9f447be1c4f, type: 3}
   - {fileID: 21300000, guid: 79440dcec49fd98499b6dadc5725faca, type: 3}
   - {fileID: 21300000, guid: 3c153beeb29c1854db47e9bf536f443b, type: 3}
@@ -405,6 +408,7 @@ SpriteAtlas:
   - flowers02
   - wall1111-00
   - caveWallA-1001-02
+  - chair01
   - rabbit00
   - wall1010-00
   - floorStone02
@@ -468,6 +472,7 @@ SpriteAtlas:
   - caveWallA-1101-00
   - caveWallA-0001-00
   - rug02
+  - tableDecor00
   - wall0101-door00
   - statue00
   - debrisBones03
@@ -563,6 +568,7 @@ SpriteAtlas:
   - floorStone03
   - caveWallA-0011-00
   - pineSnowBig00
+  - tableDecor01
   - femaleAvatar_clicked
   - wallA-0101-wall1010
   - wall1101-00

@@ -97,15 +97,15 @@ public class GoapPlanJob : JobQueueItem {
             Character character = assignedCharacter;
             character.AdjustIsWaitingForInteraction(1);
             if (character.currentAction != null && character.currentAction.parentPlan == assignedPlan) {
-                if(character.currentParty.icon.isTravelling) {
-                    if(character.currentParty.icon.travelLine == null) {
+                if (character.currentParty.icon.isTravelling) {
+                    if (character.currentParty.icon.travelLine == null) {
                         character.marker.StopMovementOnly();
                     } else {
                         character.currentParty.icon.SetOnArriveAction(() => character.OnArriveAtAreaStopMovement());
                     }
                 }
                 character.StopCurrentAction(shouldDoAfterEffect);
-                if(character.currentAction != null) {
+                if (character.currentAction != null) {
                     character.SetCurrentAction(null);
                 }
                 character.DropPlan(assignedPlan);
@@ -115,6 +115,11 @@ public class GoapPlanJob : JobQueueItem {
             character.AdjustIsWaitingForInteraction(-1);
             //SetAssignedCharacter(null);
             //SetAssignedPlan(null);
+        } else if (assignedCharacter != null) {
+            //Has assigned character but has no plan yet, the assumption for this is that the assigned character is still processing the plan for this job
+            /*Just remove the assigned character and when the plan is received from goap thread, there is a checker there that will check if the assigned character is no longer he/she,
+            /that character will scrap the plan that was made*/
+            SetAssignedCharacter(null);
         }
     }
     public override void OnAddJobToQueue() {

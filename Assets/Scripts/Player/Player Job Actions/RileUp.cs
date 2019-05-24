@@ -119,7 +119,7 @@ public class RileUp : PlayerJobAction {
         }
 
         CharacterStateJob job = new CharacterStateJob("Berserked", CHARACTER_STATE.BERSERKED, area);
-        _targetCharacter.jobQueue.AddJobInQueue(job);
+        _targetCharacter.jobQueue.AddJobInQueue(job, true);
         //_targetCharacter.AddTrait("Berserker");
         //_targetCharacter.currentParty.GoToLocation(area, PATHFINDING_MODE.NORMAL);
     }

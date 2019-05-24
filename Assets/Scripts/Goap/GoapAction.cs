@@ -194,6 +194,7 @@ public class GoapAction {
             }
         } else {
             Messenger.AddListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
+            Messenger.AddListener<TileObject, Character>(Signals.TILE_OBJECT_DISABLED, OnTileObjectDisabled);
         }
     }
     protected virtual void CreateThoughtBubbleLog() {
@@ -374,6 +375,7 @@ public class GoapAction {
             }
         } else {
             Messenger.RemoveListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
+            Messenger.RemoveListener<TileObject, Character>(Signals.TILE_OBJECT_DISABLED, OnTileObjectDisabled);
         }
         OnFinishActionTowardsTarget();
         if (endAction != null) {
@@ -416,6 +418,7 @@ public class GoapAction {
 
         if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
             Messenger.RemoveListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
+            Messenger.RemoveListener<TileObject, Character>(Signals.TILE_OBJECT_DISABLED, OnTileObjectDisabled);
         }
         OnCancelActionTowardsTarget();
         SetIsStopped(true);
@@ -672,6 +675,16 @@ public class GoapAction {
                     return; //if the object was removed by the actor, do not stop the action
                 }
                 StopAction(); //when the target object of this action was removed, and the actor is currently performing the action, stop the action
+            }
+        }
+    }
+    private void OnTileObjectDisabled(TileObject tileObj, Character disabledBy) {
+        if (poiTarget == tileObj) {
+            if (isPerformingActualAction) {
+                if (disabledBy != null && disabledBy == actor) {
+                    return; //if the object was disabled by the actor, do not stop the action
+                }
+                StopAction(); //when the target object of this action was disabled, and the actor is currently performing the action, stop the action
             }
         }
     }

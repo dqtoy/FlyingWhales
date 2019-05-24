@@ -17,6 +17,7 @@ public class TileObject : IPointOfInterest {
     public List<Character> awareCharacters { get; private set; } //characters that are aware of this object (Used for checking if a ghost trigger should be destroyed)
     public List<string> actionHistory { get; private set; } //list of actions that was done to this object
     public LocationStructure structureLocation { get; protected set; }
+    public bool isDisabledByPlayer { get; protected set; }
 
     protected LocationGridTile tile;
     private POI_STATE _state;
@@ -124,9 +125,6 @@ public class TileObject : IPointOfInterest {
     public virtual void SetPOIState(POI_STATE state) {
         _state = state;
     }
-    public virtual bool IsAvailable() {
-        return _state != POI_STATE.INACTIVE;
-    }
     public virtual bool IsOwnedBy(Character character) {
         return false;
     }
@@ -142,6 +140,21 @@ public class TileObject : IPointOfInterest {
     }
     public virtual bool CanBeReplaced() {
         return false;
+    }
+    #endregion
+
+    #region IPointOfInterest
+    public bool IsAvailable() {
+        return _state != POI_STATE.INACTIVE && !isDisabledByPlayer;
+    }
+    public void SetIsDisabledByPlayer(bool state) {
+        if(isDisabledByPlayer != state) {
+            isDisabledByPlayer = state;
+            if (isDisabledByPlayer) {
+                Character character = null;
+                Messenger.Broadcast(Signals.TILE_OBJECT_DISABLED, this, character);
+            }
+        }
     }
     #endregion
 

@@ -152,7 +152,7 @@ public class GoapThread : Multithread {
                 Dictionary<LocationStructure, Dictionary<INTERACTION_TYPE, List<GoapAction>>> filtered = new Dictionary<LocationStructure, Dictionary<INTERACTION_TYPE, List<GoapAction>>>();
                 for (int i = 0; i < kvp.Value.Count; i++) {
                     IAwareness currAwareness = kvp.Value[i];
-                    if (currAwareness.poi.gridTileLocation.structure != null) {
+                    if (currAwareness.poi.gridTileLocation != null && currAwareness.poi.gridTileLocation.structure != null) {
                         LocationStructure objStructure = currAwareness.poi.gridTileLocation.structure;
                         if (!filtered.ContainsKey(objStructure)) {
                             filtered.Add(objStructure, new Dictionary<INTERACTION_TYPE, List<GoapAction>>());

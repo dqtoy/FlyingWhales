@@ -129,6 +129,7 @@ public class SpecialToken : Token, IPointOfInterest {
     public int purchaseCost { get { return ItemManager.Instance.itemData[specialTokenType].purchaseCost; } }
     public List<JobQueueItem> allJobsTargettingThis { get; private set; }
     public Area specificLocation { get { return gridTileLocation.structure.location; } }
+    public bool isDisabledByPlayer { get; protected set; }
     protected List<Trait> _traits;
     private LocationGridTile tile;
     private POI_STATE _state;
@@ -270,7 +271,10 @@ public class SpecialToken : Token, IPointOfInterest {
         _state = state;
     }
     public bool IsAvailable() {
-        return _state != POI_STATE.INACTIVE;
+        return _state != POI_STATE.INACTIVE && !isDisabledByPlayer;
+    }
+    public void SetIsDisabledByPlayer(bool state) {
+        isDisabledByPlayer = state;
     }
     #endregion
 

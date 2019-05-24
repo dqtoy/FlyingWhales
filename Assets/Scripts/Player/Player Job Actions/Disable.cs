@@ -14,10 +14,10 @@ public class Disable : PlayerJobAction {
         if (!(targetPOI is TileObject)) {
             return;
         }
-        targetPOI.SetPOIState(POI_STATE.INACTIVE);
+        targetPOI.SetIsDisabledByPlayer(true);
         GameDate dueDate = GameManager.Instance.Today();
         dueDate.AddTicks(GameManager.Instance.GetTicksBasedOnHour(4));
-        SchedulingManager.Instance.AddEntry(dueDate, () => targetPOI.SetPOIState(POI_STATE.ACTIVE));
+        SchedulingManager.Instance.AddEntry(dueDate, () => targetPOI.SetIsDisabledByPlayer(false));
         base.ActivateAction(assignedCharacter, targetPOI);
     }
 

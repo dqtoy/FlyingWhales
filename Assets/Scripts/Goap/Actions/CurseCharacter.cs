@@ -73,14 +73,17 @@ public class CurseCharacter : GoapAction {
         //(poiTarget as Character).marker.pathfindingAI.AdjustDoNotMove(1);
     }
     public void AfterCurseSuccess() {
+        actorLog.SetDate(GameManager.Instance.Today());
+        targetLog.SetDate(GameManager.Instance.Today());
+
+        actor.AddHistory(actorLog);
+        (poiTarget as Character).AddHistory(targetLog);
+
         //**After Effect 1**: Target gains Cursed trait.
         Cursed cursed = new Cursed();
         AddTraitTo(poiTarget, cursed, actor);
         //**After Effect 2**: Actor loses Ritualized trait.
         RemoveTraitFrom(actor, "Ritualized");
-
-        actor.AddHistory(actorLog);
-        (poiTarget as Character).AddHistory(targetLog);
         //(poiTarget as Character).marker.pathfindingAI.AdjustDoNotMove(-1);
     }
     #endregion
