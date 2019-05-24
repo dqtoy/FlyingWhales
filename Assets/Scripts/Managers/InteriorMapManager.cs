@@ -36,6 +36,9 @@ public class InteriorMapManager : MonoBehaviour {
     private const float nodeSize = 0.2f;
     public const int Default_Character_Sorting_Order = 20;
 
+    [Header("Tile Object Slots")]
+    [SerializeField] private TileObjectSlotDictionary tileObjectSlotSettings;
+
     //structure templates
     private string templatePath;
 

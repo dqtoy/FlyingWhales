@@ -18,6 +18,7 @@ public class TileObject : IPointOfInterest {
     public List<string> actionHistory { get; private set; } //list of actions that was done to this object
     public LocationStructure structureLocation { get; protected set; }
     public bool isDisabledByPlayer { get; protected set; }
+    public TileObjectSlot[] slots { get; protected set; } //for users
 
     protected LocationGridTile tile;
     private POI_STATE _state;
@@ -362,4 +363,9 @@ public class TileObject : IPointOfInterest {
         return null;
     }
     #endregion
+}
+
+[System.Serializable]
+public struct TileObjectSlotSetting {
+
 }
