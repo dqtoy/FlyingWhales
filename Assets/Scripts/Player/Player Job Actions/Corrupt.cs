@@ -12,7 +12,7 @@ public class Corrupt : PlayerJobAction {
         SetDefaultCooldownTime(24);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
         //"Unconscious", "Restrained", "Cursed", "Sick", "Injured"
-        _traitNames = new List<string>() { "Lycanthropy", "Kleptomaniac", "Vampiric", "Unfaithful", "Violent" }; //, "Unconscious", "Injured", "Sick", "Cursed", "Death"
+        _traitNames = new List<string>() { "Lycanthropy", "Kleptomaniac", "Vampiric", "Unfaithful", "Violent"}; //, "Unconscious", "Injured", "Sick", "Cursed", "Death", "Restrained" 
     }
 
     public override void ActivateAction(Character assignedCharacter, IPointOfInterest targetPOI) {

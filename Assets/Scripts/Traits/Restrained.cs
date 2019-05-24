@@ -22,7 +22,7 @@ public class Restrained : Trait {
         type = TRAIT_TYPE.DISABLER;
         effect = TRAIT_EFFECT.NEGATIVE;
         associatedInteraction = INTERACTION_TYPE.NONE;
-        advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.FEED, };
+        advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.FEED, INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION };
         daysDuration = 0;
         effects = new List<TraitEffect>();
         //_createdFeedJob = false;
@@ -49,6 +49,7 @@ public class Restrained : Trait {
             _sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_restrained");
             _sourceCharacter.RemoveTrait("Unconscious");
             _sourceCharacter.CancelAllJobsAndPlans();
+            _sourceCharacter.AddTraitNeededToBeRemoved(this);
         }
     }
     public override void OnRemoveTrait(IPointOfInterest sourceCharacter) {
@@ -57,6 +58,7 @@ public class Restrained : Trait {
             character.CancelAllJobsTargettingThisCharacter("Feed");
             Messenger.RemoveListener(Signals.TICK_STARTED, CheckRestrainTrait);
             _sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, name.ToLower());
+            _sourceCharacter.RemoveTraitNeededToBeRemoved(this);
         }
         base.OnRemoveTrait(sourceCharacter);
     }

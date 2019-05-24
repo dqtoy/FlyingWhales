@@ -1319,23 +1319,30 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             bool hasAssignedJob = false;
             for (int i = 0; i < targetCharacter.traitsNeededToBeRemoved.Count; i++) {
                 Trait trait = targetCharacter.traitsNeededToBeRemoved[i];
-                if (!targetCharacter.HasJobTargettingThisCharacter("Remove Trait", trait.name)) {
-                    if (trait.responsibleCharacter != null && trait.responsibleCharacter == this) {
-                        continue;
+                if(trait.name == "Restrained" && !targetCharacter.isAtHomeArea) {
+                    GoapPlanJob job = CreateSaveCharacterJob(targetCharacter, true, false);
+                    if (job != null && !hasAssignedJob) {
+                        hasAssignedJob = jobQueue.ProcessFirstJobInQueue(this);
                     }
-                    if (trait.responsibleCharacters != null && trait.responsibleCharacters.Contains(this)) {
-                        continue;
+                } else {
+                    if (!targetCharacter.HasJobTargettingThisCharacter("Remove Trait", trait.name)) {
+                        if (trait.responsibleCharacter != null && trait.responsibleCharacter == this) {
+                            continue;
+                        }
+                        if (trait.responsibleCharacters != null && trait.responsibleCharacters.Contains(this)) {
+                            continue;
+                        }
+                        GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = trait.name, targetPOI = targetCharacter };
+                        GoapPlanJob job = new GoapPlanJob("Remove Trait", goapEffect);
+                        job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
+                        job.SetCanTakeThisJobChecker(CanCharacterTakeRemoveTraitJob);
+                        homeArea.jobQueue.AddJobInQueue(job, true);
+                        //job.SetCancelOnFail(true);
+                        if (!hasAssignedJob) {
+                            hasAssignedJob = homeArea.jobQueue.AssignCharacterToJob(job, this);
+                        }
+                        hasCreatedJob = true;
                     }
-                    GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = trait.name, targetPOI = targetCharacter };
-                    GoapPlanJob job = new GoapPlanJob("Remove Trait", goapEffect);
-                    job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
-                    job.SetCanTakeThisJobChecker(CanCharacterTakeRemoveTraitJob);
-                    homeArea.jobQueue.AddJobInQueue(job, true);
-                    //job.SetCancelOnFail(true);
-                    if (!hasAssignedJob) {
-                        hasAssignedJob = homeArea.jobQueue.AssignCharacterToJob(job, this);
-                    }
-                    hasCreatedJob = true;
                 }
             }
             return hasCreatedJob;
@@ -1667,10 +1674,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         }
     }
-    public void CreateSaveCharacterJob(Character targetCharacter) {
+    public GoapPlanJob CreateSaveCharacterJob(Character targetCharacter, bool isPriority = false, bool processLogicForPersonalJob = true) {
         if (targetCharacter != null && targetCharacter != this) {
-            GoapPlanJob job = new GoapPlanJob("Save Character", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = targetCharacter.homeArea, targetPOI = targetCharacter });
-            jobQueue.AddJobInQueue(job);
+            if (!targetCharacter.HasJobTargettingThisCharacter("Save Character")) {
+                GoapPlanJob job = new GoapPlanJob("Save Character", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = targetCharacter.homeArea, targetPOI = targetCharacter });
+                jobQueue.AddJobInQueue(job, isPriority, processLogicForPersonalJob);
+                return job;
+            }
         } else {
             if (targetCharacter == null) {
                 Debug.LogError(name + " cannot create save character job because troubled character is null!");
@@ -1678,6 +1688,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 Debug.LogError(name + " cannot create save character job for " + targetCharacter.name);
             }
         }
+        return null;
     }
     public void CancelAllJobsAndPlans() {
         AdjustIsWaitingForInteraction(1);
@@ -5465,7 +5476,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             if (goapThread.recalculationPlan == null) {
                 if (goapThread.job != null) {
                     if (goapThread.job.assignedCharacter != this) {
-                        PrintLogIfActive(GameManager.Instance.TodayLogString() + name + " is scrapping plan since " + goapThread.createdPlan.job.name + " job's assigned character is no longer him/her. New assigned character is " + (goapThread.job.assignedCharacter != null ? goapThread.job.assignedCharacter.name : "None"));
+                        PrintLogIfActive(GameManager.Instance.TodayLogString() + name + " is scrapping plan since " + goapThread.job.name + " job's assigned character is no longer him/her. New assigned character is " + (goapThread.job.assignedCharacter != null ? goapThread.job.assignedCharacter.name : "None"));
                         return;
                     }
                     goapThread.job.SetAssignedPlan(goapThread.createdPlan);
@@ -5507,7 +5518,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 goapThread.createdPlan.SetIsBeingRecalculated(false);
                 if (goapThread.createdPlan.job != null) {
                     if (goapThread.createdPlan.job.assignedCharacter != this) {
-                        PrintLogIfActive(GameManager.Instance.TodayLogString() + name + " is scrapping recalculated plan since " + goapThread.createdPlan.job.name + " job's assigned character is no longer him/her. New assigned character is " + (goapThread.job.assignedCharacter != null ? goapThread.job.assignedCharacter.name : "None"));
+                        PrintLogIfActive(GameManager.Instance.TodayLogString() + name + " is scrapping recalculated plan since " + goapThread.createdPlan.job.name + " job's assigned character is no longer him/her. New assigned character is " + (goapThread.createdPlan.job.assignedCharacter != null ? goapThread.createdPlan.job.assignedCharacter.name : "None"));
                         DropPlan(goapThread.recalculationPlan);
                         return;
                     }
