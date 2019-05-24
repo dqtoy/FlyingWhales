@@ -4,13 +4,17 @@ using System.Linq;
 using UnityEngine;
 
 public class Bed : TileObject {
-    //private Character[] users; //array of characters, currently using the bed
+    private Character[] bedUsers; //array of characters, currently using the bed
+
+    public override Character[] users {
+        get { return bedUsers; }
+    }
 
     public Bed(LocationStructure location) {
         this.structureLocation = location;
         poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.SLEEP, INTERACTION_TYPE.TILE_OBJECT_DESTROY, INTERACTION_TYPE.NAP };
         Initialize(TILE_OBJECT_TYPE.BED);
-        users = new Character[2];
+        bedUsers = new Character[2];
     }
 
     #region Overrides
@@ -91,8 +95,8 @@ public class Bed : TileObject {
         }
     }
     private bool IsSlotAvailable() {
-        for (int i = 0; i < users.Length; i++) {
-            if (users[i] == null) {
+        for (int i = 0; i < bedUsers.Length; i++) {
+            if (bedUsers[i] == null) {
                 return true; //there is an available slot
             }
         }
@@ -111,9 +115,9 @@ public class Bed : TileObject {
 
     #region Users
     protected override void AddUser(Character character) {
-        for (int i = 0; i < users.Length; i++) {
-            if (users[i] == null) {
-                users[i] = character;
+        for (int i = 0; i < bedUsers.Length; i++) {
+            if (bedUsers[i] == null) {
+                bedUsers[i] = character;
                 UpdateUsedBedAsset();
                 if (!IsSlotAvailable()) {
                     SetPOIState(POI_STATE.INACTIVE); //if all slots in the bed are occupied, set it as inactive
@@ -125,9 +129,9 @@ public class Bed : TileObject {
         }
     }
     protected override void RemoveUser(Character character) {
-        for (int i = 0; i < users.Length; i++) {
-            if (users[i] == character) {
-                users[i] = null;
+        for (int i = 0; i < bedUsers.Length; i++) {
+            if (bedUsers[i] == character) {
+                bedUsers[i] = null;
                 UpdateUsedBedAsset();
                 if (IsSlotAvailable()) {
                     SetPOIState(POI_STATE.ACTIVE); //if a slots in the bed is unoccupied, set it as active
@@ -140,16 +144,16 @@ public class Bed : TileObject {
     }
     private int GetActiveUserCount() {
         int count = 0;
-        for (int i = 0; i < users.Length; i++) {
-            if (users[i] != null) {
+        for (int i = 0; i < bedUsers.Length; i++) {
+            if (bedUsers[i] != null) {
                 count++;
             }
         }
         return count;
     }
     private bool IsInThisBed(Character character) {
-        for (int i = 0; i < users.Length; i++) {
-            if (users[i] == character) {
+        for (int i = 0; i < bedUsers.Length; i++) {
+            if (bedUsers[i] == character) {
                 return true;
             }
         }
@@ -159,8 +163,8 @@ public class Bed : TileObject {
         int startingIndex = 0;
         int currIndex = 0;
         if (startingPoint != null) {
-            for (int i = 0; i < users.Length; i++) {
-                Character currUser = users[i];
+            for (int i = 0; i < bedUsers.Length; i++) {
+                Character currUser = bedUsers[i];
                 if (currUser == startingPoint) {
                     startingIndex = i;
                     break;
@@ -171,11 +175,11 @@ public class Bed : TileObject {
        
         
         while (true) {
-            if (currIndex == users.Length) {
+            if (currIndex == bedUsers.Length) {
                 currIndex = 0;
             }
-            if (users[currIndex] != null) {
-                return users[currIndex];
+            if (bedUsers[currIndex] != null) {
+                return bedUsers[currIndex];
             }
             currIndex++;
         }

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class TileObject : IPointOfInterest {
@@ -18,7 +19,15 @@ public class TileObject : IPointOfInterest {
     public List<string> actionHistory { get; private set; } //list of actions that was done to this object
     public LocationStructure structureLocation { get; protected set; }
     public bool isDisabledByPlayer { get; protected set; }
-    public Character[] users { get; protected set; } //array of characters, currently using the tile object
+    public virtual Character[] users {
+        get {
+            if (slots == null) {
+                return null;
+            }
+            return slots.Where(x => x != null && x.user != null).Select(x => x.user).ToArray();
+        }
+    }//array of characters, currently using the tile object
+
 
     //tile slots
     public TileObjectSlotItem[] slots { get; protected set; } //for users
