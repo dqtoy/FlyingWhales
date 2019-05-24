@@ -372,14 +372,16 @@ public class CharacterMarker : PooledObject {
                 } else {
                     actionIcon.gameObject.SetActive(false);
                 }
-            }else if (character.targettedByAction.Count > 0) {
-                if (character.targettedByAction != null && character.targettedByAction[0].actionIconString != GoapActionStateDB.No_Icon) {
-                    actionIcon.sprite = actionIconDictionary[character.targettedByAction[0].actionIconString];
-                    actionIcon.gameObject.SetActive(true);
-                } else {
-                    actionIcon.gameObject.SetActive(false);
-                }
-            } else {
+            }
+            //else if (character.targettedByAction.Count > 0) {
+            //    if (character.targettedByAction != null && character.targettedByAction[0].actionIconString != GoapActionStateDB.No_Icon) {
+            //        actionIcon.sprite = actionIconDictionary[character.targettedByAction[0].actionIconString];
+            //        actionIcon.gameObject.SetActive(true);
+            //    } else {
+            //        actionIcon.gameObject.SetActive(false);
+            //    }
+            //} 
+            else {
                 if (character.currentAction != null && character.currentAction.actionIconString != GoapActionStateDB.No_Icon) {
                     actionIcon.sprite = actionIconDictionary[character.currentAction.actionIconString];
                     actionIcon.gameObject.SetActive(true);

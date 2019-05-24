@@ -317,6 +317,7 @@ public class UIManager : MonoBehaviour {
     private void UpdateInteractableInfoUI() {
         UpdateCharacterInfo();
         UpdateLandmarkInfo();
+        UpdateTileObjectInfo();
     }
 
     #region World Controls

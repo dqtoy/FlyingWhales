@@ -79,19 +79,19 @@ public class InviteToMakeLove : GoapAction {
                     validBeds.AddRange(target.homeStructure.GetTileObjectsOfType(TILE_OBJECT_TYPE.BED));
                 }
             }
-
-            //if no beds are valid from the above logic.
-            if (validBeds.Count == 0) {
-                //pick a random bed in a structure that is unowned (No residents)
-                List<LocationStructure> unownedStructures = actor.homeArea.GetStructuresAtLocation(true).Where(x => (x is Dwelling && (x as Dwelling).residents.Count == 0)
-                || x.structureType == STRUCTURE_TYPE.INN).ToList();
-
-                for (int i = 0; i < unownedStructures.Count; i++) {
-                    validBeds.AddRange(unownedStructures[i].GetTileObjectsOfType(TILE_OBJECT_TYPE.BED));
-                }
-            }
         } else {
             validBeds.AddRange(actor.homeStructure.GetTileObjectsOfType(TILE_OBJECT_TYPE.BED));
+        }
+
+        //if no beds are valid from the above logic.
+        if (validBeds.Count == 0) {
+            //pick a random bed in a structure that is unowned (No residents)
+            List<LocationStructure> unownedStructures = actor.homeArea.GetStructuresAtLocation(true).Where(x => (x is Dwelling && (x as Dwelling).residents.Count == 0)
+            || x.structureType == STRUCTURE_TYPE.INN).ToList();
+
+            for (int i = 0; i < unownedStructures.Count; i++) {
+                validBeds.AddRange(unownedStructures[i].GetTileObjectsOfType(TILE_OBJECT_TYPE.BED));
+            }
         }
         IPointOfInterest chosenBed = validBeds[Random.Range(0, validBeds.Count)];
 

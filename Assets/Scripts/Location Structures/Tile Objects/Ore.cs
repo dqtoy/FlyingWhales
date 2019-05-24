@@ -25,12 +25,6 @@ public class Ore : TileObject {
             gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this); //update visual based on state
         }
     }
-    public override void SetGridTileLocation(LocationGridTile tile) {
-        //if (tile != null) {
-        //    tile.SetTileAccess(LocationGridTile.Tile_Access.Impassable);
-        //}
-        base.SetGridTileLocation(tile);
-    }
     #endregion
 
     public int GetSupplyPerMine() {
