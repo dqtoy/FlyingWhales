@@ -37,6 +37,10 @@ public class Daydream : GoapAction {
         SetState("Daydream Success");
         //}
     }
+    public override void DoAction() {
+        SetTargetStructure();
+        base.DoAction();
+    }
     protected override int GetCost() {
         //**Cost**: randomize between 5-12
         return Utilities.rng.Next(25, 35);

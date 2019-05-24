@@ -53,7 +53,7 @@ public class LandmarkCharacterItem : PooledObject {
     }
 
     private void UpdateLocationIcons() {
-        if (parentMenu is AreaInfoUI) {
+        if (parentMenu is AreaInfoUI || parentMenu is TileObjectInfoUI) {
             if(character.GetTraitOr("Abducted", "Restrained") != null) {
                 restrainedIcon.SetActive(true);
                 unrestrainedGO.SetActive(false);

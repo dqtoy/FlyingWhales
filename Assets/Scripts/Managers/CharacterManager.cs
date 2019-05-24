@@ -506,11 +506,12 @@ public class CharacterManager : MonoBehaviour {
         if (character2.relationships.ContainsKey(character1)) {
             data2 = character2.relationships[character1];
         }
-        if (data1 != null && data2 != null) {
+        if (data1 != null) {
             data1.SetIsDisabled(state);
+            //data2.SetIsDisabled(state);
+        }
+        if(data2 != null) {
             data2.SetIsDisabled(state);
-        } else {
-            Debug.LogError("Inconsistency! Either " + character1.name + " or " + character2.name + " has no relationship data with the other");
         }
     }
     public void GenerateRelationships() {

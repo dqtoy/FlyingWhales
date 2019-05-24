@@ -27,6 +27,10 @@ public class Stroll : GoapAction {
         //    SetState("Stroll Fail");
         //}
     }
+    public override void DoAction() {
+        SetTargetStructure();
+        base.DoAction();
+    }
     protected override int GetCost() {
         return 5;
     }

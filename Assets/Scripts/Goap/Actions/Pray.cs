@@ -32,6 +32,10 @@ public class Pray : GoapAction {
         base.PerformActualAction();
         SetState("Pray Success");
     }
+    public override void DoAction() {
+        SetTargetStructure();
+        base.DoAction();
+    }
     public override LocationGridTile GetTargetLocationTile() {
         return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);
     }

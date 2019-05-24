@@ -230,6 +230,7 @@ public class GoapAction {
     ///</summary>
     public virtual void DoAction() {
         //CreateStates(); //Not sure if this is the best place for this.
+        //SetTargetStructure(); //Update target tile and structure so that the character will not go to the target tile that is calculated during the initialization of this action, so the character will move precisely to the intended target
         actor.SetCurrentAction(this);
         parentPlan.SetPlanState(GOAP_PLAN_STATE.IN_PROGRESS);
         Messenger.Broadcast(Signals.CHARACTER_DOING_ACTION, actor, this);

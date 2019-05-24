@@ -27,6 +27,10 @@ public class SleepOutside : GoapAction {
         //    SetState("Rest Fail");
         //}
     }
+    public override void DoAction() {
+        SetTargetStructure();
+        base.DoAction();
+    }
     public override LocationGridTile GetTargetLocationTile() {
         return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);
     }

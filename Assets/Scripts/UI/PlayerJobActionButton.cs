@@ -120,7 +120,7 @@ public class PlayerJobActionButton : MonoBehaviour {
         }
         
         if (action.isInCooldown) {
-            header += " (In Cooldown)";
+            header += " (On Cooldown)";
         }
         PlayerManager.Instance.player.SeenActionButtonsOnce();
         PlayerUI.Instance.ShowActionBtnTooltip(message, header);
