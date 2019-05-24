@@ -29,7 +29,7 @@ public class TileObjectInfoUI : UIMenu {
         AreaMapCameraMove.Instance.CenterCameraOn(activeTileObject.collisionTrigger.gameObject, instantCenter);
         base.OpenMenu();
         UIManager.Instance.HideObjectPicker();
-        UpdateBasicInfo();
+        //UpdateBasicInfo();
         UpdateTileObjectInfo();
     }
     #endregion
@@ -38,10 +38,14 @@ public class TileObjectInfoUI : UIMenu {
         if(activeTileObject == null) {
             return;
         }
+        UpdateBasicInfo();
         UpdateCharacters();
     }
     private void UpdateBasicInfo() {
         nameLbl.text = activeTileObject.name;
+        if (activeTileObject.isDisabledByPlayer) {
+            nameLbl.text += " (Disabled)";
+        }
     }
     private void UpdateCharacters() {
         Utilities.DestroyChildren(charactersScrollView.content);
