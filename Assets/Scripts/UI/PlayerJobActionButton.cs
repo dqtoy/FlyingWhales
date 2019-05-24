@@ -110,7 +110,13 @@ public class PlayerJobActionButton : MonoBehaviour {
                 header = "Instigator Action";
             }
         } else if (poi is TileObject) {
-
+            if (action is Destroy) {
+                message = "Remove this object from the world.";
+                header = "Instigator Action";
+            } else if (action is Disable) {
+                message = "Prevent characters from using this object for 4 hours.";
+                header = "Debilitator Action";
+            }
         }
         
         if (action.isInCooldown) {

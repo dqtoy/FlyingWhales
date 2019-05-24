@@ -5481,7 +5481,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     }
                     goapThread.job.SetAssignedPlan(goapThread.createdPlan);
                     for (int i = 0; i < goapThread.createdPlan.allNodes.Count; i++) {
-                        if (goapThread.createdPlan.allNodes[i].action.goapType == INTERACTION_TYPE.CARRY_CHARACTER) {
+                        if (goapThread.createdPlan.allNodes[i].action.goapType == INTERACTION_TYPE.CARRY_CHARACTER
+                            || goapThread.createdPlan.allNodes[i].action.goapType == INTERACTION_TYPE.CARRY_CORPSE) {
                             goapThread.createdPlan.job.SetCannotOverrideJob(true);
                             break;
                         }

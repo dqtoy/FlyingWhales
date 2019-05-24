@@ -13411,16 +13411,6 @@ Prefab:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
-    - target: {fileID: 114600104926183544, guid: c38c7e75a0c6c0e46888d93ecdc69be4,
-        type: 2}
-      propertyPath: onHoverOverAction.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 114600104926183544, guid: c38c7e75a0c6c0e46888d93ecdc69be4,
-        type: 2}
-      propertyPath: onHoverExitAction.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 114410965962002904, guid: c38c7e75a0c6c0e46888d93ecdc69be4,
         type: 2}
       propertyPath: m_havePropertiesChanged
@@ -13434,6 +13424,11 @@ Prefab:
     - target: {fileID: 1642837813464840, guid: c38c7e75a0c6c0e46888d93ecdc69be4, type: 2}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224533063268042974, guid: c38c7e75a0c6c0e46888d93ecdc69be4,
+        type: 2}
+      propertyPath: m_SizeDelta.x
+      value: -412.58
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: c38c7e75a0c6c0e46888d93ecdc69be4, type: 2}
