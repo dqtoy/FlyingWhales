@@ -4,6 +4,11 @@ using System.Linq;
 using UnityEngine;
 
 public class Tombstone : TileObject {
+
+    public override Character[] users {
+        get { return new Character[] { this.character }; }
+    }
+
     public Character character { get; private set; }
     public Tombstone(Character character, LocationStructure structure) {
         this.character = character;

@@ -6426,6 +6426,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (state.characterState.IsCombatState()) {
             ClearIgnoreHostilities();
         }
+        marker.UpdateActionIcon();
     }
     #endregion
 
