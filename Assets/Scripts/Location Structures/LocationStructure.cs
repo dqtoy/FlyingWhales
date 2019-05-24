@@ -363,6 +363,7 @@ public class LocationStructure {
         for (int i = 0; i < tiles.Count; i++) {
             LocationGridTile currTile = tiles[i];
             UnityEngine.Tilemaps.TileBase objTile = currTile.parentAreaMap.objectsTilemap.GetTile(currTile.localPlace);
+            //TODO: Make this better! because this does not scale well.
             if (objTile != null) {
                 switch (objTile.name) {
                     case "Bed":
@@ -376,9 +377,12 @@ public class LocationStructure {
                     case "Table0":
                     case "Table1":
                     case "Table2":
+                    case "tableDecor00":
                     case "Bartop_Left":
                     case "Bartop_Right":
-                        AddPOI(new Table(this, objTile), currTile, false);
+                        Table table = new Table(this);
+                        table.SetUsedAsset(objTile);
+                        AddPOI(table, currTile, false);
                         currTile.SetReservedType(TILE_OBJECT_TYPE.TABLE);
                         break;
                     case "SupplyPile":
@@ -425,9 +429,9 @@ public class LocationStructure {
             case TILE_OBJECT_TYPE.MAGIC_CIRCLE:
                 AddPOI(new MagicCircle(this), tile, placeAsset);
                 break;
-            //case TILE_OBJECT_TYPE.TABLE:
-            //    AddPOI(new Table(this), tile, placeAsset);
-            //    break;
+            case TILE_OBJECT_TYPE.TABLE:
+                AddPOI(new Table(this), tile, placeAsset);
+                break;
             case TILE_OBJECT_TYPE.BED:
                 AddPOI(new Bed(this), tile, placeAsset);
                 break;

@@ -208,21 +208,24 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     #region Points of Interest
     public void SetObjectHere(IPointOfInterest poi) {
         objHere = poi;
-        poi.SetGridTileLocation(this);
-        SetTileState(Tile_State.Occupied);
         if (furnitureSpot != null && poi is TileObject) {
             FURNITURE_TYPE furnitureType = (poi as TileObject).tileObjectType.ConvertTileObjectToFurniture();
             if (furnitureType != FURNITURE_TYPE.NONE) {
                 FurnitureSetting settings = furnitureSpot.GetFurnitureSettings(furnitureType);
                 if (settings != null) {
-                    parentAreaMap.objectsTilemap.SetTile(localPlace, InteriorMapManager.Instance.GetTileAsset(settings.tileAssetName));
+                    TileBase usedAsset = InteriorMapManager.Instance.GetTileAsset(settings.tileAssetName);
+                    parentAreaMap.objectsTilemap.SetTile(localPlace, usedAsset);
                     Matrix4x4 m = parentAreaMap.objectsTilemap.GetTransformMatrix(localPlace);
                     m.SetTRS(Vector3.zero, Quaternion.Euler(settings.rotation), Vector3.one);
                     parentAreaMap.objectsTilemap.SetTransformMatrix(localPlace, m);
+                    if (poi is Table) {
+                        (poi as Table).SetUsedAsset(usedAsset);
+                    }
                 }
             }
-            
         }
+        poi.SetGridTileLocation(this);
+        SetTileState(Tile_State.Occupied);
         Messenger.Broadcast(Signals.OBJECT_PLACED_ON_TILE, this, poi);
     }
     public IPointOfInterest RemoveObjectHere(Character removedBy) {

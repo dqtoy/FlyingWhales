@@ -17,13 +17,17 @@ public class TileObject : IPointOfInterest {
     public List<Character> awareCharacters { get; private set; } //characters that are aware of this object (Used for checking if a ghost trigger should be destroyed)
     public List<string> actionHistory { get; private set; } //list of actions that was done to this object
     public LocationStructure structureLocation { get; protected set; }
+<<<<<<< Updated upstream
     public bool isDisabledByPlayer { get; protected set; }
+    public TileObjectSlot[] slots { get; protected set; } //for users
+=======
 
     //tile slots
     public TileObjectSlotItem[] slots { get; protected set; } //for users
     private GameObject slotsParent;
     private bool hasCreatedSlots;
     private UnityEngine.Tilemaps.TileBase usedAsset;
+>>>>>>> Stashed changes
 
     protected LocationGridTile tile;
     private POI_STATE _state;
@@ -411,9 +415,6 @@ public class TileObject : IPointOfInterest {
         }
     }
     private void DestroyTileSlots() {
-        if (slots == null) {
-            return;
-        }
         for (int i = 0; i < slots.Length; i++) {
             GameObject.Destroy(slots[i].gameObject);
         }

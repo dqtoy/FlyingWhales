@@ -62,13 +62,6 @@ public class SupplyPile : TileObject, IPointOfInterest {
     public override string ToString() {
         return "Supply Pile " + id.ToString();
     }
-
-    public override void SetGridTileLocation(LocationGridTile tile) {
-        //if (tile != null) {
-        //    tile.SetTileAccess(LocationGridTile.Tile_Access.Impassable);
-        //}
-        base.SetGridTileLocation(tile);
-    }
     public override bool CanBeReplaced() {
         return true;
     }

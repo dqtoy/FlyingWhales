@@ -38,6 +38,8 @@ public class InteriorMapManager : MonoBehaviour {
 
     [Header("Tile Object Slots")]
     [SerializeField] private TileObjectSlotDictionary tileObjectSlotSettings;
+    public GameObject tileObjectSlotsParentPrefab;
+    public GameObject tileObjectSlotPrefab;
 
     //structure templates
     private string templatePath;
@@ -601,6 +603,21 @@ public class InteriorMapManager : MonoBehaviour {
                 break;
         }
         return shiftTemplateBy;
+    }
+    #endregion
+
+    #region Tile Object Settings
+    public bool HasSettingForTileObjectAsset(TileBase asset) {
+        return tileObjectSlotSettings.ContainsKey(asset);
+    }
+    /// <summary>
+    /// Get the slot settings for a given tile object asset.
+    /// NOTE: should be used in conjunction with <see cref="HasSettingForTileObjectAsset"/> to check if any settings are available, since TileObjectSettings cannot be null.
+    /// </summary>
+    /// <param name="asset">The asset used by the tile object.</param>
+    /// <returns>The list of slot settings</returns>
+    public List<TileObjectSlotSetting> GetTileObjectSlotSettings(TileBase asset) {
+        return tileObjectSlotSettings[asset];
     }
     #endregion
 }

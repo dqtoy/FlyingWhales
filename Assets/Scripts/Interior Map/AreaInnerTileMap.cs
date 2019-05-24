@@ -1383,11 +1383,11 @@ public class AreaInnerTileMap : MonoBehaviour {
         TileBase tileToUse = null;
         switch (obj.poiType) {
             case POINT_OF_INTEREST_TYPE.ITEM:
-                tile.SetObjectHere(obj);
                 if (placeAsset) {
                     tileToUse = itemTiles[(obj as SpecialToken).specialTokenType];
                     objectsTilemap.SetTile(tile.localPlace, tileToUse);
                 }
+                tile.SetObjectHere(obj);
                 break;
             case POINT_OF_INTEREST_TYPE.CHARACTER:
                 OnPlaceCharacterOnTile(obj as Character, tile);
@@ -1395,7 +1395,6 @@ public class AreaInnerTileMap : MonoBehaviour {
                 break;
             case POINT_OF_INTEREST_TYPE.TILE_OBJECT:
                 TileObject to = obj as TileObject;
-                tile.SetObjectHere(obj);
                 if (placeAsset) {
                     tileToUse = tileObjectTiles[to.tileObjectType].GetAsset(area.coreTile.biomeType).activeTile;
                     objectsTilemap.SetTile(tile.localPlace, tileToUse);
@@ -1407,6 +1406,7 @@ public class AreaInnerTileMap : MonoBehaviour {
                         objectsTilemap.SetTransformMatrix(tile.localPlace, m);
                     }
                 }
+                tile.SetObjectHere(obj);
                 break;
             //default:
             //    tileToUse = characterTile;

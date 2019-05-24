@@ -19,13 +19,6 @@ public class Tree : TileObject {
         return "Tree " + id.ToString();
     }
 
-    public override void SetGridTileLocation(LocationGridTile tile) {
-        //if (tile != null) {
-        //    tile.SetTileAccess(LocationGridTile.Tile_Access.Impassable);
-        //}
-        base.SetGridTileLocation(tile);
-    }
-
     public int GetSupplyPerMine() {
         if (yield < Supply_Per_Mine) {
             return yield;

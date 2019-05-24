@@ -110,7 +110,7 @@ public class Bed : TileObject {
     #endregion
 
     #region Users
-    private void AddUser(Character character) {
+    protected override void AddUser(Character character) {
         for (int i = 0; i < users.Length; i++) {
             if (users[i] == null) {
                 users[i] = character;
@@ -124,7 +124,7 @@ public class Bed : TileObject {
             }
         }
     }
-    private void RemoveUser(Character character) {
+    protected override void RemoveUser(Character character) {
         for (int i = 0; i < users.Length; i++) {
             if (users[i] == character) {
                 users[i] = null;
@@ -194,12 +194,5 @@ public class Bed : TileObject {
             gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this, gridTileLocation.parentAreaMap.bed2SleepingVariant);
         }
         //the asset will revert to no one sleeping once the bed is set to active again
-    }
-
-    public override void SetGridTileLocation(LocationGridTile tile) {
-        //if (tile != null) {
-        //    tile.SetTileAccess(LocationGridTile.Tile_Access.Impassable);
-        //}
-        base.SetGridTileLocation(tile);
     }
 }
