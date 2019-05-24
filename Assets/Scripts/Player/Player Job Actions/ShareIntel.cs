@@ -64,6 +64,9 @@ public class ShareIntel : PlayerJobAction {
             return false;
         }
         Character targetCharacter = targetPOI as Character;
+        if(targetCharacter.race != RACE.HUMANS && targetCharacter.race != RACE.ELVES) {
+            return false;
+        }
         if (targetCharacter.isDead) {
             return false;
         }
