@@ -31,6 +31,7 @@ public class TileObjectInfoUI : UIMenu {
         UIManager.Instance.HideObjectPicker();
         //UpdateBasicInfo();
         UpdateTileObjectInfo();
+        UpdateCharacters();
     }
     #endregion
 
@@ -39,7 +40,7 @@ public class TileObjectInfoUI : UIMenu {
             return;
         }
         UpdateBasicInfo();
-        UpdateCharacters();
+        //UpdateCharacters();
     }
     private void UpdateBasicInfo() {
         nameLbl.text = activeTileObject.name;

@@ -53,7 +53,7 @@ public class LandmarkCharacterItem : PooledObject {
     }
 
     private void UpdateLocationIcons() {
-        if (parentMenu is AreaInfoUI || parentMenu is TileObjectInfoUI) {
+        if (parentMenu is AreaInfoUI) {
             if(character.GetTraitOr("Abducted", "Restrained") != null) {
                 restrainedIcon.SetActive(true);
                 unrestrainedGO.SetActive(false);
@@ -81,6 +81,23 @@ public class LandmarkCharacterItem : PooledObject {
                 coverGO.SetActive(false);
             }
             (parentMenu as AreaInfoUI).OrderCharacterItems();
+        } else if (parentMenu is TileObjectInfoUI) {
+            if (character.GetTraitOr("Abducted", "Restrained") != null) {
+                restrainedIcon.SetActive(true);
+                unrestrainedGO.SetActive(false);
+            } else {
+                restrainedIcon.SetActive(false);
+                unrestrainedGO.SetActive(true);
+            }
+            if (character.currentParty.icon.isTravelling && character.currentParty.icon.travelLine != null) {
+                travellingIcon.SetActive(true);
+                arrivedIcon.SetActive(false);
+                coverGO.SetActive(true);
+            }  else {
+                travellingIcon.SetActive(false);
+                arrivedIcon.SetActive(false);
+                coverGO.SetActive(false);
+            }
         } else {
             travellingIcon.SetActive(false);
             arrivedIcon.SetActive(false);
