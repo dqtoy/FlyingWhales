@@ -62,7 +62,6 @@ public interface ICharacter {
     Party currentParty { get; }
     Dictionary<STAT, float> buffs { get; }
     PlayerCharacterItem playerCharacterItem { get; }
-    WeightedDictionary<INTERACTION_TYPE> interactionWeights { get; }
     CharacterToken characterToken { get; }
 
     //functions

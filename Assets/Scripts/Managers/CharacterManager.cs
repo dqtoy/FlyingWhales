@@ -48,8 +48,8 @@ public class CharacterManager : MonoBehaviour {
     
 
     public Dictionary<Character, List<string>> allCharacterLogs { get; private set; }
-    public Dictionary<INTERACTION_TYPE, int> awayFromHomeInteractionWeights { get; private set; }
-    public Dictionary<INTERACTION_TYPE, int> atHomeInteractionWeights { get; private set; }
+    //public Dictionary<INTERACTION_TYPE, int> awayFromHomeInteractionWeights { get; private set; }
+    //public Dictionary<INTERACTION_TYPE, int> atHomeInteractionWeights { get; private set; }
     public Dictionary<CHARACTER_ROLE, INTERACTION_TYPE[]> characterRoleInteractions { get; private set; }
     public Dictionary<string, CharacterClass> classesDictionary { get; private set; }
     public Dictionary<string, CharacterClass> uniqueClasses { get; private set; }
@@ -86,8 +86,8 @@ public class CharacterManager : MonoBehaviour {
     public void Initialize() {
         ConstructAllClasses();
         ConstructElementChanceDictionary();
-        ConstructAwayFromHomeInteractionWeights();
-        ConstructAtHomeInteractionWeights();
+        //ConstructAwayFromHomeInteractionWeights();
+        //ConstructAtHomeInteractionWeights();
         //ConstructRoleInteractions();
         //ConstructPortraitDictionaries();
     }
@@ -1220,23 +1220,23 @@ public class CharacterManager : MonoBehaviour {
             } },
         };
     }
-    private void ConstructAwayFromHomeInteractionWeights() {
-        awayFromHomeInteractionWeights = new Dictionary<INTERACTION_TYPE, int> {
-            { INTERACTION_TYPE.MOVE_TO_RETURN_HOME, 100 },
-            { INTERACTION_TYPE.FOUND_LUCARETH, 50 },
-            //{ INTERACTION_TYPE.FOUND_BESTALIA, 50 },
-            { INTERACTION_TYPE.FOUND_MAGUS, 50 },
-            { INTERACTION_TYPE.FOUND_ZIRANNA, 50 },
-            //{ INTERACTION_TYPE.CHANCE_ENCOUNTER, 2 },
-            { INTERACTION_TYPE.TRANSFER_HOME, 50 },
-        };
-    }
-    private void ConstructAtHomeInteractionWeights() {
-        atHomeInteractionWeights = new Dictionary<INTERACTION_TYPE, int> {
-            //{ INTERACTION_TYPE.CHANCE_ENCOUNTER, 2 },
-            { INTERACTION_TYPE.STEAL_ACTION, 10 },
-        };
-    }
+    //private void ConstructAwayFromHomeInteractionWeights() {
+    //    awayFromHomeInteractionWeights = new Dictionary<INTERACTION_TYPE, int> {
+    //        //{ INTERACTION_TYPE.MOVE_TO_RETURN_HOME, 100 },
+    //        //{ INTERACTION_TYPE.FOUND_LUCARETH, 50 },
+    //        //{ INTERACTION_TYPE.FOUND_BESTALIA, 50 },
+    //        //{ INTERACTION_TYPE.FOUND_MAGUS, 50 },
+    //        //{ INTERACTION_TYPE.FOUND_ZIRANNA, 50 },
+    //        //{ INTERACTION_TYPE.CHANCE_ENCOUNTER, 2 },
+    //        //{ INTERACTION_TYPE.TRANSFER_HOME, 50 },
+    //    };
+    //}
+    //private void ConstructAtHomeInteractionWeights() {
+    //    atHomeInteractionWeights = new Dictionary<INTERACTION_TYPE, int> {
+    //        //{ INTERACTION_TYPE.CHANCE_ENCOUNTER, 2 },
+    //        //{ INTERACTION_TYPE.STEAL_ACTION, 10 },
+    //    };
+    //}
     #endregion
 
     #region Animator

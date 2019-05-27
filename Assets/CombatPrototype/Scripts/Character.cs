@@ -92,7 +92,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public Area defendingArea { get; private set; }
     public MORALITY morality { get; private set; }
     public CharacterToken characterToken { get; private set; }
-    public WeightedDictionary<INTERACTION_TYPE> interactionWeights { get; private set; }
     public Dictionary<Character, CharacterRelationshipData> relationships { get; private set; }
     public List<INTERACTION_TYPE> currentInteractionTypes { get; private set; }
     public Dictionary<POINT_OF_INTEREST_TYPE, List<IAwareness>> awareness { get; private set; }
@@ -537,7 +536,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         combatHistory = new Dictionary<int, Combat>();
         currentInteractionTypes = new List<INTERACTION_TYPE>();
         characterToken = new CharacterToken(this);
-        interactionWeights = new WeightedDictionary<INTERACTION_TYPE>();
         relationships = new Dictionary<Character, CharacterRelationshipData>();
         poiGoapActions = new List<INTERACTION_TYPE>();
         allGoapPlans = new List<GoapPlan>();
@@ -3566,12 +3564,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         int startDay = GameManager.Instance.continuousDays + remainingDaysInMonth + 1;
         return UnityEngine.Random.Range(startDay, startDay + daysInMonth);
     }
-    public void AddInteractionWeight(INTERACTION_TYPE type, int weight) {
-        interactionWeights.AddElement(type, weight);
-    }
-    public void RemoveInteractionFromWeights(INTERACTION_TYPE type, int weight) {
-        interactionWeights.RemoveElement(type);
-    }
     public void SetDailyInteractionGenerationTick() {
         //if(specificLocation == null || specificLocation.id == homeArea.id) {
         //    _currentInteractionTick = GetMonthInteractionTick();
@@ -4593,15 +4585,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 break;
             default:
                 break;
-        }
-    }
-    public void AssignGoapInteractionsRecursively(INTERACTION_TYPE type, Character targetCharacter) {
-        InteractionAttributes attributes = InteractionManager.Instance.GetCategoryAndAlignment(type, this);
-        //use came_from to track down the path
-        if (attributes.preconditions != null && attributes.preconditions.Length > 0) {
-
-        } else {
-            //_goapInteractions.Add(type);
         }
     }
     public bool HasPlanWithType(INTERACTION_TYPE type) {
