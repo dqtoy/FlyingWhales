@@ -4554,6 +4554,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             if (lover != null && HasRelationshipOfTypeWith(lover, RELATIONSHIP_TRAIT.ENEMY)) {
                 positiveWeight *= 3f;
             }
+            if (HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.RELATIVE)) {
+                positiveWeight *= 0.01f;
+            }
             //x0 if a character has a lover and does not have the Unfaithful trait
             if ((HasRelationshipTraitOf(RELATIONSHIP_TRAIT.LOVER, false) && GetTrait("Unfaithful") == null) 
                 || (targetCharacter.HasRelationshipTraitOf(RELATIONSHIP_TRAIT.LOVER, false) && targetCharacter.GetTrait("Unfaithful") == null)) {

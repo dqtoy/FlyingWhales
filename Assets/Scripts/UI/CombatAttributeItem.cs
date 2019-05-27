@@ -44,7 +44,7 @@ public class CombatAttributeItem : MonoBehaviour {
             string summary = _combatAttribute.nameInUI;
             if (_combatAttribute is RelationshipTrait) {
                 RelationshipTrait t = _combatAttribute as RelationshipTrait;
-                if (UIManager.Instance.characterInfoUI.activeCharacter.HasRelationshipWith(t.targetCharacter)) {
+                if (UIManager.Instance.characterInfoUI.activeCharacter.HasRelationshipWith(t.targetCharacter, true)) {
                     CharacterRelationshipData rel = UIManager.Instance.characterInfoUI.activeCharacter.relationships[t.targetCharacter];
                     summary += "\n" + rel.GetSummary();
                 } else {

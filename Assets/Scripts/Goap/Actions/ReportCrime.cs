@@ -64,6 +64,9 @@ public class ReportCrime : GoapAction {
         //**Advertiser**: All Faction Leaders, Nobles and Soldiers
         if (poiTarget is Character && poiTarget != actor && poiTarget != criminal) {
             Character character = poiTarget as Character;
+            if (character.GetTrait("Restrained") != null) {
+                return false; //do not allow restrained
+            }
             if (character.role.roleType == CHARACTER_ROLE.LEADER || character.role.roleType == CHARACTER_ROLE.NOBLE || character.role.roleType == CHARACTER_ROLE.SOLDIER) {
                 return true;
             }

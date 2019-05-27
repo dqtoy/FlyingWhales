@@ -105,6 +105,9 @@ public class ReleaseCharacter : GoapAction {
             //- **Recipient Response Text**: "I am relieved that [Target Name] has been released."
             reactions.Add(string.Format("I am relieved that {0} has been released.", target.name));
             //- **Recipient Effect**:  no effect
+        } 
+        else {
+            reactions.Add("This does not concern me.");
         }
         return reactions;
     }
