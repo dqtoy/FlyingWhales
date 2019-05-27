@@ -4045,19 +4045,19 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 } else {
                     log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
                 }
-                log += "\n-Otherwise, if it is Early Night, 35% chance to drink at the Inn";
-                if (currentTimeOfDay == TIME_IN_WORDS.EARLY_NIGHT) {
-                    log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
-                    int chance = UnityEngine.Random.Range(0, 100);
-                    log += "\n  -RNG roll: " + chance;
-                    if (chance < 35) {
-                        log += "\n  -Early Night: " + name + " will do action Drink (multithreaded)";
-                        StartGOAP(INTERACTION_TYPE.DRINK, null, GOAP_CATEGORY.IDLE);
-                        return log;
-                    }
-                } else {
-                    log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
-                }
+                //log += "\n-Otherwise, if it is Early Night, 35% chance to drink at the Inn";
+                //if (currentTimeOfDay == TIME_IN_WORDS.EARLY_NIGHT) {
+                //    log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
+                //    int chance = UnityEngine.Random.Range(0, 100);
+                //    log += "\n  -RNG roll: " + chance;
+                //    if (chance < 35) {
+                //        log += "\n  -Early Night: " + name + " will do action Drink (multithreaded)";
+                //        StartGOAP(INTERACTION_TYPE.DRINK, null, GOAP_CATEGORY.IDLE);
+                //        return log;
+                //    }
+                //} else {
+                //    log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
+                //}
                 log += "\n-Otherwise, return home";
                 log += "\n  -" + name + " will do action Return Home";
                 PlanIdleReturnHome();
