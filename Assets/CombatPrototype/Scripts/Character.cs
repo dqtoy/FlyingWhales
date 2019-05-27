@@ -3275,25 +3275,31 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             AdjustDoNotGetTired(1);
             AdjustDoNotGetLonely(1);
         } else if (trait.name == "Forlorn") {
-            AdjustMoodValue(-35);
+            AdjustMoodValue(-35, trait.gainedFromDoing);
         } else if (trait.name == "Lonely") {
-            AdjustMoodValue(-20);
+            AdjustMoodValue(-20, trait.gainedFromDoing);
         } else if (trait.name == "Exhausted") {
             marker.AdjustUseWalkSpeed(1);
-            AdjustMoodValue(-35);
+            AdjustMoodValue(-35, trait.gainedFromDoing);
         } else if (trait.name == "Tired") {
             marker.AdjustSpeedModifier(-0.2f);
-            AdjustMoodValue(-10);
+            AdjustMoodValue(-10, trait.gainedFromDoing);
         } else if (trait.name == "Starving") {
-            AdjustMoodValue(-25);
+            AdjustMoodValue(-25, trait.gainedFromDoing);
         } else if (trait.name == "Hungry") {
-            AdjustMoodValue(-10);
+            AdjustMoodValue(-10, trait.gainedFromDoing);
         } else if (trait.name == "Injured") {
-            AdjustMoodValue(-15);
+            AdjustMoodValue(-15, trait.gainedFromDoing);
         } else if (trait.name == "Cursed") {
-            AdjustMoodValue(-25);
+            AdjustMoodValue(-25, trait.gainedFromDoing);
         } else if (trait.name == "Sick") {
-            AdjustMoodValue(-15);
+            AdjustMoodValue(-15, trait.gainedFromDoing);
+        } else if (trait.name == "Cheery") {
+            AdjustMoodValue(15, trait.gainedFromDoing);
+        } else if (trait.name == "Annoyed") {
+            AdjustMoodValue(-15, trait.gainedFromDoing);
+        } else if (trait.name == "Lethargic") {
+            AdjustMoodValue(-20, trait.gainedFromDoing);
         }
         //else if (trait.name == "Hungry") {
         //    CreateFeedJob();
@@ -3358,25 +3364,31 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             AdjustDoNotGetTired(-1);
             AdjustDoNotGetLonely(-1);
         } else if (trait.name == "Forlorn") {
-            AdjustMoodValue(35);
+            AdjustMoodValue(35, trait.gainedFromDoing);
         } else if (trait.name == "Lonely") {
-            AdjustMoodValue(20);
+            AdjustMoodValue(20, trait.gainedFromDoing);
         } else if (trait.name == "Exhausted") {
             marker.AdjustUseWalkSpeed(-1);
-            AdjustMoodValue(35);
+            AdjustMoodValue(35, trait.gainedFromDoing);
         } else if (trait.name == "Tired") {
             marker.AdjustSpeedModifier(0.2f);
-            AdjustMoodValue(10);
+            AdjustMoodValue(10, trait.gainedFromDoing);
         } else if (trait.name == "Starving") {
-            AdjustMoodValue(25);
+            AdjustMoodValue(25, trait.gainedFromDoing);
         } else if (trait.name == "Hungry") {
-            AdjustMoodValue(10);
+            AdjustMoodValue(10, trait.gainedFromDoing);
         } else if (trait.name == "Injured") {
-            AdjustMoodValue(15);
+            AdjustMoodValue(15, trait.gainedFromDoing);
         } else if (trait.name == "Cursed") {
-            AdjustMoodValue(25);
+            AdjustMoodValue(25, trait.gainedFromDoing);
         } else if (trait.name == "Sick") {
-            AdjustMoodValue(15);
+            AdjustMoodValue(15, trait.gainedFromDoing);
+        } else if (trait.name == "Cheery") {
+            AdjustMoodValue(-15, trait.gainedFromDoing);
+        } else if (trait.name == "Annoyed") {
+            AdjustMoodValue(15, trait.gainedFromDoing);
+        } else if (trait.name == "Lethargic") {
+            AdjustMoodValue(20, trait.gainedFromDoing);
         }
         for (int i = 0; i < trait.effects.Count; i++) {
             TraitEffect traitEffect = trait.effects[i];
@@ -4045,19 +4057,19 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 } else {
                     log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
                 }
-                log += "\n-Otherwise, if it is Early Night, 35% chance to drink at the Inn";
-                if (currentTimeOfDay == TIME_IN_WORDS.EARLY_NIGHT) {
-                    log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
-                    int chance = UnityEngine.Random.Range(0, 100);
-                    log += "\n  -RNG roll: " + chance;
-                    if (chance < 35) {
-                        log += "\n  -Early Night: " + name + " will do action Drink (multithreaded)";
-                        StartGOAP(INTERACTION_TYPE.DRINK, null, GOAP_CATEGORY.IDLE);
-                        return log;
-                    }
-                } else {
-                    log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
-                }
+                //log += "\n-Otherwise, if it is Early Night, 35% chance to drink at the Inn";
+                //if (currentTimeOfDay == TIME_IN_WORDS.EARLY_NIGHT) {
+                //    log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
+                //    int chance = UnityEngine.Random.Range(0, 100);
+                //    log += "\n  -RNG roll: " + chance;
+                //    if (chance < 35) {
+                //        log += "\n  -Early Night: " + name + " will do action Drink (multithreaded)";
+                //        StartGOAP(INTERACTION_TYPE.DRINK, null, GOAP_CATEGORY.IDLE);
+                //        return log;
+                //    }
+                //} else {
+                //    log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
+                //}
                 log += "\n-Otherwise, return home";
                 log += "\n  -" + name + " will do action Return Home";
                 PlanIdleReturnHome();
@@ -5505,6 +5517,16 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         PrintLogIfActive(goapThread.log);
         if (goapThread.createdPlan != null) {
             if (goapThread.recalculationPlan == null) {
+                if (HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+                    PrintLogIfActive(GameManager.Instance.TodayLogString() + name + " is scrapping plan since " + name + " has a negative disabler trait. " + goapThread.job.name + " is the job.");
+                    if (goapThread.job != null) {
+                        if (goapThread.job.assignedCharacter == this) {
+                            goapThread.job.SetAssignedCharacter(null);
+                            goapThread.job.SetAssignedPlan(null);
+                        }
+                    }
+                    return;
+                }
                 if (goapThread.job != null) {
                     if (goapThread.job.assignedCharacter != this) {
                         PrintLogIfActive(GameManager.Instance.TodayLogString() + name + " is scrapping plan since " + goapThread.job.name + " job's assigned character is no longer him/her. New assigned character is " + (goapThread.job.assignedCharacter != null ? goapThread.job.assignedCharacter.name : "None"));
@@ -5548,10 +5570,15 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             } else {
                 //Receive plan recalculation
                 goapThread.createdPlan.SetIsBeingRecalculated(false);
+                if (HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+                    PrintLogIfActive(GameManager.Instance.TodayLogString() + name + " is scrapping recalculated plan since " + name + " has a negative disabler trait. " + goapThread.job.name + " is the job.");
+                    DropPlan(goapThread.recalculationPlan, true);
+                    return;
+                }
                 if (goapThread.createdPlan.job != null) {
                     if (goapThread.createdPlan.job.assignedCharacter != this) {
                         PrintLogIfActive(GameManager.Instance.TodayLogString() + name + " is scrapping recalculated plan since " + goapThread.createdPlan.job.name + " job's assigned character is no longer him/her. New assigned character is " + (goapThread.createdPlan.job.assignedCharacter != null ? goapThread.createdPlan.job.assignedCharacter.name : "None"));
-                        DropPlan(goapThread.recalculationPlan);
+                        DropPlan(goapThread.recalculationPlan, true);
                         return;
                     }
                 }
@@ -6344,9 +6371,20 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         moodValue = amount;
         moodValue = Mathf.Clamp(moodValue, 1, 100);
     }
-    public void AdjustMoodValue(int amount) {
+    public void AdjustMoodValue(int amount, GoapAction triggerAction = null) {
         moodValue += amount;
         moodValue = Mathf.Clamp(moodValue, 1, 100);
+        if(triggerAction != null) {
+            if(amount < 0) {
+                if(currentAction != null && currentAction.goapType == INTERACTION_TYPE.TANTRUM) {
+                    return;
+                }
+                int chance = UnityEngine.Random.Range(0, 100);
+                if(chance < 20) {
+                    //Create Tantrum action
+                }
+            }
+        }
     }
     public CHARACTER_MOOD ConvertCurrentMoodValueToType() {
         return ConvertMoodValueToType(moodValue);

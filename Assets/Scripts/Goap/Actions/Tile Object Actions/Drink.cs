@@ -6,7 +6,7 @@ public class Drink : GoapAction {
     public Trait poisonedTrait { get; private set; }
 
     public Drink(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.DRINK, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
-        shouldIntelNotificationOnlyIfActorIsActive = true;
+        //shouldIntelNotificationOnlyIfActorIsActive = true;
         validTimeOfDays = new TIME_IN_WORDS[] {
             TIME_IN_WORDS.EARLY_NIGHT,
             TIME_IN_WORDS.LATE_NIGHT,
