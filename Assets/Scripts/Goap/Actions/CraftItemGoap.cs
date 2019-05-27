@@ -6,6 +6,10 @@ public class CraftItemGoap : GoapAction {
     public SPECIAL_TOKEN craftedItem { get; private set; }
     private bool hasSetCraftedItem;
 
+    public override LocationStructure targetStructure {
+        get { return actor.currentStructure; }
+    }
+
     public CraftItemGoap(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.CRAFT_ITEM, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         actionIconString = GoapActionStateDB.Work_Icon;

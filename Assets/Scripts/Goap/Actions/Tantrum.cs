@@ -6,14 +6,14 @@ using UnityEngine;
 public class Tantrum : GoapAction {
 
     public Tantrum(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.TANTRUM, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
-        shouldIntelNotificationOnlyIfActorIsActive = true;
+        //shouldIntelNotificationOnlyIfActorIsActive = true;
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         validTimeOfDays = new TIME_IN_WORDS[] {
             TIME_IN_WORDS.MORNING,
             TIME_IN_WORDS.AFTERNOON,
         };
         actionIconString = GoapActionStateDB.Hostile_Icon;
-        isNotificationAnIntel = false;
+        //isNotificationAnIntel = false;
     }
 
     #region Overrides
