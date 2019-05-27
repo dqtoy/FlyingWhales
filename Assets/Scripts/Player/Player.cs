@@ -94,7 +94,7 @@ public class Player : ILeader {
         //goap
         //Messenger.AddListener<Character, GoapPlan>(Signals.CHARACTER_WILL_DO_PLAN, OnCharacterWillDoPlan);
         Messenger.AddListener<Character, GoapAction>(Signals.CHARACTER_DID_ACTION, OnCharacterDidAction);
-        Messenger.AddListener<Character, GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
+        Messenger.AddListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
     }
 
     #region ILeader
@@ -714,13 +714,13 @@ public class Player : ILeader {
             }
         }
     }
-    private void OnActionStateSet(Character character, GoapAction action, GoapActionState state) {
+    private void OnActionStateSet(GoapAction action, GoapActionState state) {
         bool showPopup = false;
         if (action.showIntelNotification && state.duration > 0) { //added checking for duration because this notification should only show for actions that have durations.
             if (action.shouldIntelNotificationOnlyIfActorIsActive) {
-                showPopup = ShouldShowNotificationFrom(character, true);
+                showPopup = ShouldShowNotificationFrom(action.actor, true);
             } else {
-                showPopup = ShouldShowNotificationFrom(character, action.GetCurrentLog());
+                showPopup = ShouldShowNotificationFrom(action.actor, action.GetCurrentLog());
             }
         }
         if (showPopup) {
