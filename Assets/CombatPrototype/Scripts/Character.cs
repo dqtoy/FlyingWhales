@@ -3275,25 +3275,31 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             AdjustDoNotGetTired(1);
             AdjustDoNotGetLonely(1);
         } else if (trait.name == "Forlorn") {
-            AdjustMoodValue(-35);
+            AdjustMoodValue(-35, trait.gainedFromDoing);
         } else if (trait.name == "Lonely") {
-            AdjustMoodValue(-20);
+            AdjustMoodValue(-20, trait.gainedFromDoing);
         } else if (trait.name == "Exhausted") {
             marker.AdjustUseWalkSpeed(1);
-            AdjustMoodValue(-35);
+            AdjustMoodValue(-35, trait.gainedFromDoing);
         } else if (trait.name == "Tired") {
             marker.AdjustSpeedModifier(-0.2f);
-            AdjustMoodValue(-10);
+            AdjustMoodValue(-10, trait.gainedFromDoing);
         } else if (trait.name == "Starving") {
-            AdjustMoodValue(-25);
+            AdjustMoodValue(-25, trait.gainedFromDoing);
         } else if (trait.name == "Hungry") {
-            AdjustMoodValue(-10);
+            AdjustMoodValue(-10, trait.gainedFromDoing);
         } else if (trait.name == "Injured") {
-            AdjustMoodValue(-15);
+            AdjustMoodValue(-15, trait.gainedFromDoing);
         } else if (trait.name == "Cursed") {
-            AdjustMoodValue(-25);
+            AdjustMoodValue(-25, trait.gainedFromDoing);
         } else if (trait.name == "Sick") {
-            AdjustMoodValue(-15);
+            AdjustMoodValue(-15, trait.gainedFromDoing);
+        } else if (trait.name == "Cheery") {
+            AdjustMoodValue(15, trait.gainedFromDoing);
+        } else if (trait.name == "Annoyed") {
+            AdjustMoodValue(-15, trait.gainedFromDoing);
+        } else if (trait.name == "Lethargic") {
+            AdjustMoodValue(-20, trait.gainedFromDoing);
         }
         //else if (trait.name == "Hungry") {
         //    CreateFeedJob();
@@ -3358,25 +3364,31 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             AdjustDoNotGetTired(-1);
             AdjustDoNotGetLonely(-1);
         } else if (trait.name == "Forlorn") {
-            AdjustMoodValue(35);
+            AdjustMoodValue(35, trait.gainedFromDoing);
         } else if (trait.name == "Lonely") {
-            AdjustMoodValue(20);
+            AdjustMoodValue(20, trait.gainedFromDoing);
         } else if (trait.name == "Exhausted") {
             marker.AdjustUseWalkSpeed(-1);
-            AdjustMoodValue(35);
+            AdjustMoodValue(35, trait.gainedFromDoing);
         } else if (trait.name == "Tired") {
             marker.AdjustSpeedModifier(0.2f);
-            AdjustMoodValue(10);
+            AdjustMoodValue(10, trait.gainedFromDoing);
         } else if (trait.name == "Starving") {
-            AdjustMoodValue(25);
+            AdjustMoodValue(25, trait.gainedFromDoing);
         } else if (trait.name == "Hungry") {
-            AdjustMoodValue(10);
+            AdjustMoodValue(10, trait.gainedFromDoing);
         } else if (trait.name == "Injured") {
-            AdjustMoodValue(15);
+            AdjustMoodValue(15, trait.gainedFromDoing);
         } else if (trait.name == "Cursed") {
-            AdjustMoodValue(25);
+            AdjustMoodValue(25, trait.gainedFromDoing);
         } else if (trait.name == "Sick") {
-            AdjustMoodValue(15);
+            AdjustMoodValue(15, trait.gainedFromDoing);
+        } else if (trait.name == "Cheery") {
+            AdjustMoodValue(-15, trait.gainedFromDoing);
+        } else if (trait.name == "Annoyed") {
+            AdjustMoodValue(15, trait.gainedFromDoing);
+        } else if (trait.name == "Lethargic") {
+            AdjustMoodValue(20, trait.gainedFromDoing);
         }
         for (int i = 0; i < trait.effects.Count; i++) {
             TraitEffect traitEffect = trait.effects[i];
@@ -6359,9 +6371,20 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         moodValue = amount;
         moodValue = Mathf.Clamp(moodValue, 1, 100);
     }
-    public void AdjustMoodValue(int amount) {
+    public void AdjustMoodValue(int amount, GoapAction triggerAction = null) {
         moodValue += amount;
         moodValue = Mathf.Clamp(moodValue, 1, 100);
+        if(triggerAction != null) {
+            if(amount < 0) {
+                if(currentAction != null && currentAction.goapType == INTERACTION_TYPE.TANTRUM) {
+                    return;
+                }
+                int chance = UnityEngine.Random.Range(0, 100);
+                if(chance < 20) {
+                    //Create Tantrum action
+                }
+            }
+        }
     }
     public CHARACTER_MOOD ConvertCurrentMoodValueToType() {
         return ConvertMoodValueToType(moodValue);
