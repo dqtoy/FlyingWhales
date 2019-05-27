@@ -26,7 +26,7 @@ public class RevertToNormalForm : GoapAction {
     //}
     protected override void CreateThoughtBubbleLog() {
         Lycanthropy lycanthropy = actor.GetTrait("Lycanthropy") as Lycanthropy;
-        thoughtBubbleLog = new Log(GameManager.Instance.Today(), "GoapAction", this.GetType().ToString(), "thought_bubble");
+        thoughtBubbleLog = new Log(GameManager.Instance.Today(), "GoapAction", this.GetType().ToString(), "thought_bubble", this);
         if (thoughtBubbleLog != null) {
             thoughtBubbleLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             thoughtBubbleLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(lycanthropy.data.race), LOG_IDENTIFIER.STRING_1);

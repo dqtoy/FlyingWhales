@@ -43,12 +43,12 @@ public class GoapPlanner {
         bool success = false;
         if (currentPlan.isPersonalPlan) {
             string log = string.Empty;
-            success = BuildGoapTree(currentPlan.currentNode, startingNodes, usableActions, ref log);
+            success = BuildGoapTree(currentPlan.endNode, startingNodes, usableActions, ref log);
         } else {
             GoapNode currentLeafNode = null;
             bool hasUsableAction = false;
             success = true;
-            for (int i = currentPlan.currentNode.index; i >= 0; i--) {
+            for (int i = currentPlan.endNode.index; i >= 0; i--) {
                 GoapNode failedNode = currentPlan.allNodes[i];
                 hasUsableAction = false;
                 for (int j = 0; j < usableActions.Count; j++) {
