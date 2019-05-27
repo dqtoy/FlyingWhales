@@ -4462,6 +4462,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (targetCharacter.GetTrait("Drunk") != null) {
             positiveFlirtationWeight *= 2;
         }
+
         //x0.5 all positive modifiers per negative relationship
         if (GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.NEGATIVE) {
             positiveFlirtationWeight *= 0.5f;
@@ -4472,6 +4473,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //x0.1 all positive modifiers per sexually incompatible
         if (!CharacterManager.Instance.IsSexuallyCompatibleOneSided(this, targetCharacter)) {
             positiveFlirtationWeight *= 0.1f;
+        } 
+        // x6 if initiator is Unfaithful and already has a lover
+        else if ((GetTrait("Unfaithful") != null) && (relData == null || !relData.HasRelationshipTrait(RELATIONSHIP_TRAIT.LOVER))) {
+            positiveFlirtationWeight *= 6f;
         }
         if (!CharacterManager.Instance.IsSexuallyCompatibleOneSided(targetCharacter, this)) {
             positiveFlirtationWeight *= 0.1f;
@@ -4571,6 +4576,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             if (!CharacterManager.Instance.IsSexuallyCompatibleOneSided(this, targetCharacter)) {
                 positiveWeight *= 0.1f;
             }
+            // x4 if initiator is Unfaithful and already has a lover
+            else if ((GetTrait("Unfaithful") != null) && (relData == null || !relData.HasRelationshipTrait(RELATIONSHIP_TRAIT.LOVER)))
+            {
+                positiveWeight *= 4f;
+            }
+
             if (!CharacterManager.Instance.IsSexuallyCompatibleOneSided(targetCharacter, this)) {
                 positiveWeight *= 0.1f;
             }
