@@ -777,6 +777,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             //ObjectPoolManager.Instance.DestroyObject(marker.gameObject);
             //deathTile.RemoveCharacterHere(this);
 
+            for (int i = 0; i < traits.Count; i++) {
+                traits[i].OnDeath();
+            }
+
             marker.OnDeath(deathTile);
 
             if (onCharacterDeath != null) {
@@ -2320,9 +2324,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             case RELATIONSHIP_TRAIT.LOVER:
                 //- **Lover:** Positive, Permanent (Can only have 1)
                 //check if this character already has a lover and that the target character is not his/her paramour
-                if (GetCharacterWithRelationship(type) != null) {
-                    return false;
-                }
+                //Comment Reason: Allowed multiple paramours
+                //if (GetCharacterWithRelationship(type) != null) {
+                //    return false;
+                //}
                 if (relationshipsWithTarget != null && relationshipsWithTarget.Contains(RELATIONSHIP_TRAIT.PARAMOUR)) {
                     return false;
                 }
@@ -4457,6 +4462,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (targetCharacter.GetTrait("Drunk") != null) {
             positiveFlirtationWeight *= 2;
         }
+
         //x0.5 all positive modifiers per negative relationship
         if (GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.NEGATIVE) {
             positiveFlirtationWeight *= 0.5f;
@@ -4467,6 +4473,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //x0.1 all positive modifiers per sexually incompatible
         if (!CharacterManager.Instance.IsSexuallyCompatibleOneSided(this, targetCharacter)) {
             positiveFlirtationWeight *= 0.1f;
+        } 
+        // x6 if initiator is Unfaithful and already has a lover
+        else if ((GetTrait("Unfaithful") != null) && (relData == null || !relData.HasRelationshipTrait(RELATIONSHIP_TRAIT.LOVER))) {
+            positiveFlirtationWeight *= 6f;
         }
         if (!CharacterManager.Instance.IsSexuallyCompatibleOneSided(targetCharacter, this)) {
             positiveFlirtationWeight *= 0.1f;
@@ -4566,6 +4576,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             if (!CharacterManager.Instance.IsSexuallyCompatibleOneSided(this, targetCharacter)) {
                 positiveWeight *= 0.1f;
             }
+            // x4 if initiator is Unfaithful and already has a lover
+            else if ((GetTrait("Unfaithful") != null) && (relData == null || !relData.HasRelationshipTrait(RELATIONSHIP_TRAIT.LOVER)))
+            {
+                positiveWeight *= 4f;
+            }
+
             if (!CharacterManager.Instance.IsSexuallyCompatibleOneSided(targetCharacter, this)) {
                 positiveWeight *= 0.1f;
             }
@@ -5404,6 +5420,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         poiGoapActions.Add(INTERACTION_TYPE.INVITE_TO_MAKE_LOVE);
         poiGoapActions.Add(INTERACTION_TYPE.DRINK_BLOOD);
         poiGoapActions.Add(INTERACTION_TYPE.REPLACE_TILE_OBJECT);
+        poiGoapActions.Add(INTERACTION_TYPE.TANTRUM);
     }
     public void StartGOAP(GoapEffect goal, IPointOfInterest target, GOAP_CATEGORY category, bool isPriority = false, List<Character> otherCharactePOIs = null, bool isPersonalPlan = true, GoapPlanJob job = null, bool allowDeadTargets = false) {
         List<CharacterAwareness> characterTargetsAwareness = new List<CharacterAwareness>();
@@ -6178,58 +6195,42 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         Log witnessLog = null;
         Log reportLog = null;
         RELATIONSHIP_EFFECT relationshipEfffectWithCriminal = GetRelationshipEffectWith(criminal);
+        CRIME_CATEGORY category = committedCrime.GetCategory();
+
+        //If character witnessed an Infraction crime:
+        if (category == CRIME_CATEGORY.INFRACTIONS) {
+            //-Witness Log: "[Character Name] saw [Criminal Name] committing [Theft/Assault/Murder]."
+            //- Report / Share Intel Log: "[Character Name] saw [Criminal Name] committing [Theft/Assault/Murder]."
+            //- no additional response
+            reactSummary += "\nCrime committed is infraction.";
+            witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "witnessed");
+            reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "witnessed");
+        }
         //If character has a positive relationship (Friend, Lover, Paramour) with the criminal
-        if (relationshipEfffectWithCriminal == RELATIONSHIP_EFFECT.POSITIVE) {
+        else if (relationshipEfffectWithCriminal == RELATIONSHIP_EFFECT.POSITIVE) {
             reactSummary += "\n" + this.name + " has a positive relationship with " + criminal.name;
-            CRIME_CATEGORY category = committedCrime.GetCategory();
-            //and crime severity is less than Serious Crimes:
-            if (category.IsLessThan(CRIME_CATEGORY.SERIOUS)) {
-                reactSummary += "\nCrime committed is less than serious, " + this.name + " will not do anything.";
-                //-Witness Log: "[Character Name] saw [Criminal Name] committing [Theft/Assault/Murder] but did not do anything due to their relationship."
+            //and crime severity is a Misdemeanor:
+            if (category == CRIME_CATEGORY.MISDEMEANOR) {
+                reactSummary += "\nCrime committed is misdemeanor.";
+                //- Witness Log: "[Character Name] saw [Criminal Name] committing [Theft/Assault/Murder] but did not do anything due to their relationship."
+                //-Report / Share Intel Log: "[Character Name] was informed that [Criminal Name] committed [Theft/Assault/Murder] but did not do anything due to their relationship."
                 witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "do_nothing");
                 reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_do_nothing");
             }
             //and crime severity is Serious Crimes or worse:
             else if (category.IsGreaterThanOrEqual(CRIME_CATEGORY.SERIOUS)) {
                 reactSummary += "\nCrime committed is serious or worse. Removing positive relationships.";
-                //- Witness Log: "[Character Name] saw [Criminal Name] committing [Theft/Assault/Murder]! They are no longer [Friends/Lovers/Paramours]."
                 //- Relationship Degradation between Character and Criminal
                 CharacterManager.Instance.RelationshipDegradation(criminal, this, witnessedCrime);
-
-                //List<RelationshipTrait> traitsToRemove = GetAllRelationshipOfEffectWith(criminal, TRAIT_EFFECT.POSITIVE);
-                //CharacterManager.Instance.RemoveRelationshipBetween(this, criminal, traitsToRemove);
-
-                //string removedTraitsSummary = string.Empty;
-                //for (int i = 0; i < traitsToRemove.Count; i++) {
-                //    RelationshipTrait currTrait = traitsToRemove[i];
-                //    if (i + 1 == traitsToRemove.Count && traitsToRemove.Count != 1) removedTraitsSummary += " and ";  //this is the last element
-                //    else if (i > 0) removedTraitsSummary += ", ";
-
-                //    removedTraitsSummary += Utilities.GetRelationshipPlural(currTrait.relType);
-                //}
-                //reactSummary += "\nRemoved relationships: " + removedTraitsSummary;
-
-                //if (traitsToRemove.Count > 0) {
-                //    //if traits were removed, use remove relationship version of log
-                //    witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "remove_relationship");
-                //    witnessLog.AddToFillers(null, removedTraitsSummary, LOG_IDENTIFIER.STRING_2);
-
-                //    reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_remove_relationship");
-                //    reportLog.AddToFillers(null, removedTraitsSummary, LOG_IDENTIFIER.STRING_2);
-                //} else {
-                //    //else use normal witnessed log
-                //    witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "witnessed");
-                //    reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_witnessed");
-                //}
-
                 witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "witnessed");
                 reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_witnessed");
                 PerRoleCrimeReaction(committedCrime, criminal, witnessedCrime);
             }
         }
-        //If character has no relationships with the criminal or they are enemies:
-        else if (!this.HasRelationshipWith(criminal) || this.HasRelationshipOfTypeWith(criminal, RELATIONSHIP_TRAIT.ENEMY)) {
-            reactSummary += "\n" + this.name + " does not have a relationship with or is an enemy of " + criminal.name;
+        //If character has no relationships with the criminal or they are enemies and the crime is a Misdemeanor or worse:
+        else if ((!this.HasRelationshipWith(criminal) || this.HasRelationshipOfTypeWith(criminal, RELATIONSHIP_TRAIT.ENEMY)) 
+            && category.IsGreaterThanOrEqual(CRIME_CATEGORY.MISDEMEANOR)) {
+            reactSummary += "\n" + this.name + " does not have a relationship with or is an enemy of " + criminal.name + " and the committed crime is misdemeanor or worse";
             //- Relationship Degradation between Character and Criminal
             CharacterManager.Instance.RelationshipDegradation(criminal, this, witnessedCrime);
             //- Witness Log: "[Character Name] saw [Criminal Name] committing [Theft/Assault/Murder]!"

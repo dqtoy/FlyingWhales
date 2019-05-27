@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Kleptomaniac : Trait {
     public List<Character> noItemCharacters { get; private set; }
+    private Character owner;
 
     public Kleptomaniac() {
         name = "Kleptomaniac";
@@ -23,7 +24,25 @@ public class Kleptomaniac : Trait {
     #region Overrides
     public override void OnAddTrait(IPointOfInterest sourceCharacter) {
         (sourceCharacter as Character).RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "afflicted", null, "Kleptomania");
+        owner = sourceCharacter as Character;
         base.OnAddTrait(sourceCharacter);
+        Messenger.AddListener(Signals.DAY_STARTED, CheckForClearNoItemsList);
+    }
+    public override void OnRemoveTrait(IPointOfInterest sourceCharacter) {
+        base.OnRemoveTrait(sourceCharacter);
+        Messenger.RemoveListener(Signals.DAY_STARTED, CheckForClearNoItemsList);
+    }
+    public override void OnDeath() {
+        base.OnDeath();
+        Messenger.RemoveListener(Signals.DAY_STARTED, CheckForClearNoItemsList);
+    }
+    public override string GetTestingData() {
+        string testingData = string.Empty;
+        testingData += "Known character's with no items: \n";
+        for (int i = 0; i < noItemCharacters.Count; i++) {
+            testingData += noItemCharacters[i].name + ", ";
+        }
+        return testingData;
     }
     #endregion
 
@@ -32,5 +51,18 @@ public class Kleptomaniac : Trait {
     }
     public void RemoveNoItemCharacter(Character character) {
         noItemCharacters.Remove(character);
+    }
+
+    private void ClearNoItemsList() {
+        noItemCharacters.Clear();
+        Debug.Log(GameManager.Instance.TodayLogString() + "Cleared " + owner.name + "'s Kleptomaniac list of character's with no items.");
+    }
+
+    private void CheckForClearNoItemsList() {
+        //Store the character into the Kleptomaniac trait if it does not have any items. 
+        //Exclude all characters listed in Kleptomaniac trait from Steal actions. Clear out the list at the start of every even day.
+        if (Utilities.IsEven(GameManager.Instance.days)) {
+            ClearNoItemsList();
+        }
     }
 }

@@ -1470,6 +1470,7 @@ public class Area {
         if (exploreChance < 15 && !jobQueue.HasJobRelatedTo(CHARACTER_STATE.EXPLORE)) {
             Area dungeon = LandmarkManager.Instance.GetRandomAreaOfType(AREA_TYPE.DUNGEON);
             CharacterStateJob stateJob = new CharacterStateJob("Explore", CHARACTER_STATE.EXPLORE, dungeon);
+            //stateJob.SetOnTakeJobAction(OnTakeExploreJob);
             stateJob.SetCanTakeThisJobChecker(CanDoPatrolAndExplore);
             jobQueue.AddJobInQueue(stateJob);
         }
@@ -1477,8 +1478,13 @@ public class Area {
     private bool CanDoPatrolAndExplore(Character character, JobQueueItem job) {
         return character.GetTrait("Injured") == null;
     }
-    //private bool alreadyHasCancelBrew = false;
-    //private bool alreadyHasCancelTool = false;
+    //private void OnTakeExploreJob(Character character) {
+    //    //Explorers should pick up a Tool and a Healing Potion before leaving
+    //    GoapPlanJob toolJob = new GoapPlanJob("Get Tool", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = SPECIAL_TOKEN.TOOL.ToString(), targetPOI = character });
+    //    character.jobQueue.AddJobInQueue(toolJob, true);
+    //    GoapPlanJob potionJob = new GoapPlanJob("Get Potion", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = SPECIAL_TOKEN.HEALING_POTION.ToString(), targetPOI = character });
+    //    character.jobQueue.AddJobInQueue(potionJob, true);
+    //}
     public void CheckAreaInventoryJobs(LocationStructure affectedStructure) {
         if (affectedStructure.structureType == STRUCTURE_TYPE.WAREHOUSE) {
             //brew potion
@@ -1496,12 +1502,6 @@ public class Area {
                     jobQueue.AddJobInQueue(job);
                 }
             } else {
-                //if (!alreadyHasCancelBrew) {
-                //    //schedule cancel of job next tick
-                //    GameDate next = GameManager.Instance.Today().AddTicks(1);
-                //    SchedulingManager.Instance.AddEntry(next, () => CancelBrewPotion());
-                //    alreadyHasCancelBrew = true;
-                //}
                 CancelBrewPotion();
             }
 
@@ -1517,12 +1517,6 @@ public class Area {
                 }
             } else {
                 CancelCraftTool();
-                //if (!alreadyHasCancelTool) {
-                //    //schedule cancel of job next tick
-                //    GameDate next = GameManager.Instance.Today().AddTicks(1);
-                //    SchedulingManager.Instance.AddEntry(next, () => CancelCraftTool());
-                //    alreadyHasCancelTool = true;
-                //}
             }
         }        
     }
@@ -1538,7 +1532,6 @@ public class Area {
             JobQueueItem brewJob = jobQueue.GetJob("Brew Potion");
             jobQueue.CancelJob(brewJob);
         }
-        //alreadyHasCancelBrew = false;
     }
     private void CancelCraftTool() {
         //warehouse has 2 or more healing potions
@@ -1546,7 +1539,6 @@ public class Area {
             JobQueueItem craftTool = jobQueue.GetJob("Craft Tool");
             jobQueue.CancelJob(craftTool);
         }
-        //alreadyHasCancelTool = false;
     }
     private void CreateReplaceTileObjectJob(TileObject removedObj, LocationGridTile removedFrom) {
         GoapPlanJob job = new GoapPlanJob("Replace " + removedObj.tileObjectType.ToString() , INTERACTION_TYPE.REPLACE_TILE_OBJECT, new Dictionary<INTERACTION_TYPE, object[]>() {

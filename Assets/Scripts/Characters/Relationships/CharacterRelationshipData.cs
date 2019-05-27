@@ -89,7 +89,9 @@ public class CharacterRelationshipData {
         }
     }
     public void RemoveRelationship(RelationshipTrait newRel) {
-        rels.Remove(newRel);
+        if (rels.Remove(newRel)) {
+            Debug.Log("Removed " + newRel.name + " from " + owner.name + "'s relationship data with " + targetCharacter.name);
+        }
     }
     public bool HasRelationshipTrait(RELATIONSHIP_TRAIT relType) {
         for (int i = 0; i < rels.Count; i++) {

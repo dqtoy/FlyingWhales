@@ -50,6 +50,8 @@ public class CombatAttributeItem : MonoBehaviour {
                 } else {
                     summary = string.Empty;
                 }
+            } else {
+                summary += "\n" + _combatAttribute.GetTestingData();
             }
             if(summary != string.Empty) {
                 UIManager.Instance.ShowSmallInfo(summary);

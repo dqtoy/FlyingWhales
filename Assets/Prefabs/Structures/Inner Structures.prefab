@@ -876,7 +876,7 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 75978c68bd2afdf498ce5b98995c6524, type: 2}
     - {fileID: 11400000, guid: 75978c68bd2afdf498ce5b98995c6524, type: 2}
   tileObjectTiles:
-    m_keys: 0000000001000000020000000300000004000000050000000b000000070000000800000009000000060000000c000000
+    m_keys: 0000000001000000020000000300000004000000050000000b000000070000000800000009000000060000000c0000000e000000
     m_values:
     - biomeAssets:
         m_keys: 06000000
@@ -951,6 +951,12 @@ MonoBehaviour:
         m_values:
         - activeTile: {fileID: 11400000, guid: 6da8b5efaf9a78f4e92e27d71b9892d6, type: 2}
           inactiveTile: {fileID: 11400000, guid: 6da8b5efaf9a78f4e92e27d71b9892d6,
+            type: 2}
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile: {fileID: 11400000, guid: a4383e48cdad05843ae8ce38ef3d6827, type: 2}
+          inactiveTile: {fileID: 11400000, guid: c1cec5292a540bc4bb2c4cb3fba26d68,
             type: 2}
   bed2SleepingVariant: {fileID: 11400000, guid: 07fbfb0f04b704441990560e16face2b,
     type: 2}
