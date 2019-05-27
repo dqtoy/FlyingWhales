@@ -108,7 +108,6 @@ public class GoapAction {
         actionIconString = GoapActionStateDB.Entertain_Icon;
         actionSummary = GameManager.Instance.TodayLogString() + actor.name + " created " + goapType.ToString() + " action, targetting " + poiTarget?.ToString() ?? "Nothing";
     }
-
     public void SetParentPlan(GoapPlan plan) {
         parentPlan = plan;
     }
@@ -116,7 +115,7 @@ public class GoapAction {
     #region States
     public void SetState(string stateName) {
         currentState = states[stateName];
-        AddActionLog(GameManager.Instance.TodayLogString() + " Set state to " + currentState.name);
+        AddActionDebugLog(GameManager.Instance.TodayLogString() + " Set state to " + currentState.name);
         OnPerformActualActionToTarget();
         currentState.Execute();
         Messenger.Broadcast(Signals.ACTION_STATE_SET, actor, this, currentState);
@@ -284,6 +283,12 @@ public class GoapAction {
         }
         return false;
     }
+    /// <summary>
+    /// Used for Ghost collision handling, when a character sees a ghost collider of a POI
+    /// and that POI is the target of this action, this will execute this actions target missing state.
+    /// If none will execute whatever fail state this action has.
+    /// NOTE: can override state to execute. <see cref="failActionState"/>
+    /// </summary>
     public virtual void ExecuteTargetMissing() {
         if (states.ContainsKey("Target Missing")) {
             SetState("Target Missing");
@@ -319,6 +324,10 @@ public class GoapAction {
     /// </summary>
     /// <param name="witness">The character that witnessed this action</param>
     public virtual void OnWitnessedBy(Character witness) { }
+    /// <summary>
+    /// This is called when this actions result has been FULLY processed by the actor.
+    /// This should be the last thing that is called in the action flow.
+    /// </summary>
     public virtual void OnResultReturnedToActor() {
 
     }
@@ -386,7 +395,7 @@ public class GoapAction {
         }
         Messenger.Broadcast(Signals.CHARACTER_FINISHED_ACTION, actor, this, result);
     }
-    protected void AddActionLog(string log) {
+    protected void AddActionDebugLog(string log) {
         actionSummary += "\n" + log;
     }
     public void End() {
@@ -519,6 +528,48 @@ public class GoapAction {
         }
         //Set state to failed after this (in overrides)
     }
+    public void SetCannotCancelAction(bool state) {
+        cannotCancelAction = state;
+    }
+    public void SetShowIntelNotification(bool state) {
+        showIntelNotification = state;
+    }
+    public bool IsFromApprehendJob() {
+        if (parentPlan != null && parentPlan.job != null && 
+            (parentPlan.job.name == "Assault" || parentPlan.job.name == "Apprehend")) {
+            return true;
+        }
+        return false;
+    }
+    /// <summary>
+    /// Return the log that best describes the state of this current action.
+    /// e.g. Actor is travelling towards target, Actor is currently doing the action, Actor is done doing action
+    /// </summary>
+    /// <returns>Chosen log.</returns>
+    public Log GetCurrentLog() {
+        if (actor.currentParty.icon.isTravelling) {
+            //character is travelling
+            return thoughtBubbleMovingLog;
+        } else {
+            //character is not travelling
+            if (this.isDone) {
+                //action is already done
+               return this.currentState.descriptionLog;
+            } else {
+                //action is not yet done
+                if (currentState == null) {
+                    //if the actions' current state is null, Use moving log
+                    return thoughtBubbleMovingLog;
+                } else {
+                    //if the actions current state has a duration
+                   return thoughtBubbleLog;
+                }
+            }
+        }
+    }
+    #endregion
+
+    #region Trait Utilities
     protected bool HasTrait(Character character, string traitName) {
         return character.GetTrait(traitName) != null;
     }
@@ -557,19 +608,6 @@ public class GoapAction {
         for (int i = 0; i < removedTraits.Count; i++) {
             AddActualEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = removedTraits[i].name, targetPOI = target });
         }
-    }
-    public void SetCannotCancelAction(bool state) {
-        cannotCancelAction = state;
-    }
-    public void SetShowIntelNotification(bool state) {
-        showIntelNotification = state;
-    }
-    public bool IsFromApprehendJob() {
-        if (parentPlan != null && parentPlan.job != null && 
-            (parentPlan.job.name == "Assault" || parentPlan.job.name == "Apprehend")) {
-            return true;
-        }
-        return false;
     }
     #endregion
 

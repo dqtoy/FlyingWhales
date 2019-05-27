@@ -112,6 +112,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.MAKE_LOVE,
                 INTERACTION_TYPE.DRINK_BLOOD,
                 INTERACTION_TYPE.REPLACE_TILE_OBJECT,
+                INTERACTION_TYPE.TANTRUM,
+                INTERACTION_TYPE.EAT_MUSHROOM,
             } },
             { RACE.ELVES, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -186,6 +188,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.MAKE_LOVE,
                 INTERACTION_TYPE.DRINK_BLOOD,
                 INTERACTION_TYPE.REPLACE_TILE_OBJECT,
+                INTERACTION_TYPE.TANTRUM,
+                INTERACTION_TYPE.EAT_MUSHROOM,
             } },
             { RACE.GOBLIN, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -261,6 +265,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.MAKE_LOVE,
                 INTERACTION_TYPE.DRINK_BLOOD,
                 INTERACTION_TYPE.REPLACE_TILE_OBJECT,
+                INTERACTION_TYPE.TANTRUM,
+                INTERACTION_TYPE.EAT_MUSHROOM,
             } },
             { RACE.FAERY, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -336,6 +342,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.MAKE_LOVE,
                 INTERACTION_TYPE.DRINK_BLOOD,
                 INTERACTION_TYPE.REPLACE_TILE_OBJECT,
+                INTERACTION_TYPE.TANTRUM,
+                INTERACTION_TYPE.EAT_MUSHROOM,
             } },
             { RACE.SKELETON, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -404,6 +412,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.REPORT_HOSTILE,
                 INTERACTION_TYPE.DRINK_BLOOD,
                 INTERACTION_TYPE.PLAY,
+                INTERACTION_TYPE.TANTRUM,
+                INTERACTION_TYPE.EAT_MUSHROOM,
             } },
             { RACE.SPIDER, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -448,6 +458,7 @@ public class RaceManager : MonoBehaviour {
                 //INTERACTION_TYPE.SIT,
                 //INTERACTION_TYPE.NAP,
                 INTERACTION_TYPE.DRINK_BLOOD,
+                INTERACTION_TYPE.EAT_MUSHROOM,
             } },
             { RACE.WOLF, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -493,6 +504,7 @@ public class RaceManager : MonoBehaviour {
                 //INTERACTION_TYPE.SIT,
                 //INTERACTION_TYPE.NAP,
                 INTERACTION_TYPE.DRINK_BLOOD,
+                INTERACTION_TYPE.EAT_MUSHROOM,
             } },
             { RACE.DRAGON, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -537,6 +549,7 @@ public class RaceManager : MonoBehaviour {
                 //INTERACTION_TYPE.SIT,
                 //INTERACTION_TYPE.NAP,
                 INTERACTION_TYPE.DRINK_BLOOD,
+                INTERACTION_TYPE.EAT_MUSHROOM,
             } },
         };
     }

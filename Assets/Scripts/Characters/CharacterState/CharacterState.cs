@@ -165,11 +165,9 @@ public class CharacterState {
         StartStatePerTick();
         DoMovementBehavior();
     }
-
     public void SetJob(CharacterStateJob job) {
         this.job = job;
     }
-
     private void CreateThoughtBubbleLog() {
         if(LocalizationManager.Instance.HasLocalizedValue("CharacterState", this.GetType().ToString(), "thought_bubble")) {
             thoughtBubbleLog = new Log(GameManager.Instance.Today(), "CharacterState", this.GetType().ToString(), "thought_bubble");
@@ -202,6 +200,9 @@ public class CharacterState {
             thoughtBubbleLog.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             thoughtBubbleLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1);
         }
+    }
+    internal void ChangeDuration(int newDuration) {
+        duration = newDuration;
     }
 
     #region Listeners

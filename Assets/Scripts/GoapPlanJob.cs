@@ -176,6 +176,10 @@ public class GoapPlanJob : JobQueueItem {
         }
         return CanTakeJob(character);
     }
+    public override void OnCharacterAssignedToJob(Character character) {
+        base.OnCharacterAssignedToJob(character);
+        
+    }
     #endregion
 
     public void SetAssignedPlan(GoapPlan plan) {

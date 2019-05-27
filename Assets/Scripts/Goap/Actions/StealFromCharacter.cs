@@ -54,13 +54,13 @@ public class StealFromCharacter : GoapAction {
         if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
             return false;
         }
+        //exclude characters that the actor knows has no items.
+        Kleptomaniac kleptomaniacTrait = actor.GetTrait("Kleptomaniac") as Kleptomaniac;
+        if (kleptomaniacTrait != null && kleptomaniacTrait.noItemCharacters.Contains(poiTarget as Character)) {
+            return false;
+        }
         if (poiTarget != actor) {
             return true;
-            //if (poiTarget.factionOwner.id != actor.faction.id) {
-            //    return true;
-            //} else if (actor.faction.id == FactionManager.Instance.neutralFaction.id) {
-            //    return true;
-            //}
         }
         return false;
     }

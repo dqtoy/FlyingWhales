@@ -62,6 +62,13 @@ public class Trait {
     }
     public virtual string GetToolTipText() { return string.Empty; }
     public virtual bool IsUnique() { return true; }
+    /// <summary>
+    /// Only used for characters, since traits aren't removed when a character dies.
+    /// This function will be called to ensure that any unneeded resources in traits can be freed up when a character dies.
+    /// <see cref="Character.Death(string)"/>
+    /// </summary>
+    public virtual void OnDeath() { }
+    public virtual string GetTestingData() { return string.Empty; }
     #endregion
 
     public void SetOnRemoveAction(System.Action onRemoveAction) {

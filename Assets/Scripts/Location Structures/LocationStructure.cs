@@ -444,6 +444,9 @@ public class LocationStructure {
             case TILE_OBJECT_TYPE.DESK:
                 AddPOI(new Desk(this), tile, placeAsset);
                 break;
+            case TILE_OBJECT_TYPE.MUSHROOM:
+                AddPOI(new Mushroom(this), tile, placeAsset);
+                break;
             default:
                 break;
         }

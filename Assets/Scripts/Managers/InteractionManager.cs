@@ -22,12 +22,7 @@ public class InteractionManager : MonoBehaviour {
 
     public static readonly int Character_Action_Delay = 5;
 
-    //public Queue<Interaction> interactionUIQueue { get; private set; }
-
     private string dailyInteractionSummary;
-    //private ObjectActivator<GoapAction> goapActionCreator;
-
-    //public Dictionary<INTERACTION_TYPE, InteractionAttributes> interactionCategoryAndAlignment { get; private set; }
 
     public Dictionary<string, RewardConfig> rewardConfig = new Dictionary<string, RewardConfig>(){
         { Supply_Cache_Reward_1, new RewardConfig(){ rewardType = REWARD.SUPPLY, lowerRange = 50, higherRange = 250 } },
@@ -40,10 +35,6 @@ public class InteractionManager : MonoBehaviour {
     private void Awake() {
         Instance = this;
     }
-    //private void Start() {
-    //    interactionUIQueue = new Queue<Interaction>();
-    //    Messenger.AddListener<Interaction>(Signals.CLICKED_INTERACTION_BUTTON, OnClickInteraction);
-    //}
     public void Initialize() {
         //Messenger.AddListener(Signals.TICK_ENDED_2, ExecuteInteractionsDefault); //TryExecuteInteractionsDefault
 
@@ -51,12 +42,6 @@ public class InteractionManager : MonoBehaviour {
         //goapActionCreator = GetActivator<GoapAction>(ctor);
     }
 
-    public T CreateNewGoapInteraction<T>(Character actor, IPointOfInterest target) { //TODO: Need to test performance of this
-        ConstructorInfo ctor = typeof(T).GetConstructors().First();
-        ObjectActivator<T> goapActionCreator = GetActivator<T>(ctor);
-        T goapAction = goapActionCreator(actor, target);
-        return goapAction;
-    }
     public GoapAction CreateNewGoapInteraction(INTERACTION_TYPE type, Character actor, IPointOfInterest target, bool willInitialize = true) {
         GoapAction goapAction = null;
         switch (type) {
@@ -261,43 +246,17 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.CRAFT_FURNITURE:
                 goapAction = new CraftFurniture(actor, target);
                 break;
+            case INTERACTION_TYPE.TANTRUM:
+                goapAction = new Tantrum(actor, target);
+                break;
+            case INTERACTION_TYPE.EAT_MUSHROOM:
+                goapAction = new EatMushroom(actor, target);
+                break;
         }
         if(goapAction != null && willInitialize) {
             goapAction.Initialize();
         }
         return goapAction;
-    }
-    private Area GetAttackTarget(Area areaToAttack) {
-        Area targetArea = null;
-        List<Area> enemyAreas = new List<Area>();
-        if(areaToAttack.owner != null) {
-            foreach (KeyValuePair<Faction, FactionRelationship> kvp in areaToAttack.owner.relationships) {
-                FactionRelationship factionRelationship = kvp.Value;
-                if (kvp.Key.isActive && factionRelationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.AT_WAR) {
-                    enemyAreas.AddRange(kvp.Key.ownedAreas);
-                }
-            }
-        } else {
-            //Neutral Area will act as if its at war with all areas, meaning all other areas can be a target
-            for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
-                Area area = LandmarkManager.Instance.allAreas[i];
-                if(area.id != areaToAttack.id 
-                    && PlayerManager.Instance.player.playerArea.id != area.id) {
-                    enemyAreas.Add(area);
-                }
-            }
-        }
-       
-        if(enemyAreas.Count > 0) {
-            targetArea = enemyAreas[UnityEngine.Random.Range(0, enemyAreas.Count)];
-            List<Character> attackers = areaToAttack.FormCombatCharacters();
-            if(attackers.Count > 0) {
-                areaToAttack.SetAttackTargetAndCharacters(targetArea, attackers);
-            } else {
-                return null;
-            }
-        }
-        return targetArea;
     }
     public Reward GetReward(string rewardName) {
         if (rewardConfig.ContainsKey(rewardName)) {
@@ -306,183 +265,6 @@ public class InteractionManager : MonoBehaviour {
         }
         throw new System.Exception("There is no reward configuration with name " + rewardName);
     }
-    //public void OnClickInteraction(Interaction interaction) {
-    //    if(interaction != null) {
-    //        interaction.CancelSecondTimeOut();
-    //        InteractionUI.Instance.OpenInteractionUI(interaction);
-    //    }
-    //}
-    //public void AddToInteractionQueue(Interaction interaction) {
-    //    interactionUIQueue.Enqueue(interaction);
-    //}
-
-    //private void TryExecuteInteractionsDefault() {
-    //    List<Character> trackedCharacters = PlayerManager.Instance.player.GetTrackedCharacters();
-    //    if (trackedCharacters.Count > 0) {
-    //        for (int i = 0; i < trackedCharacters.Count; i++) {
-    //            Character currCharacter = trackedCharacters[i];
-    //            List<Interaction> interactionsInvolved = GetAllValidInteractionsInvolving(currCharacter);
-    //            for (int j = 0; j < interactionsInvolved.Count; j++) {
-    //                Interaction interaction = interactionsInvolved[j];
-    //                if (!interactionUIQueue.Contains(interaction)) {
-    //                    AddToInteractionQueue(interaction);
-    //                    Debug.Log(GameManager.Instance.TodayLogString() + " Added " + interaction.name + " from " + currCharacter.name + " to execute interactions queue.");
-    //                }
-    //            }
-    //        }
-    //    }
-
-    //    List<Area> trackedAreas = PlayerManager.Instance.player.GetTrackedAreas();
-    //    if (trackedAreas.Count > 0) {
-    //        for (int i = 0; i < trackedAreas.Count; i++) {
-    //            Area currArea = trackedAreas[i];
-    //            List<Interaction> interactionsInvolved = GetAllValidInteractionsInvolving(currArea).Where(x => !interactionUIQueue.Contains(x)).ToList();
-    //            if (interactionsInvolved.Count > 0) {
-    //                Interaction chosen = interactionsInvolved[UnityEngine.Random.Range(0, interactionsInvolved.Count)];
-    //                AddToInteractionQueue(chosen);
-    //                Debug.Log(GameManager.Instance.TodayLogString() + " Added " + chosen.name + " from " + currArea.name + " to execute interactions queue.");
-    //            }
-    //        }
-    //    }
-
-    //    if (interactionUIQueue.Count > 0) {
-    //        //set the last interaction to execute all defaults after it
-    //        Interaction lastInteraction = interactionUIQueue.Last();
-    //        lastInteraction.AddEndInteractionAction(() => ExecuteInteractionsDefault());
-    //        //then show the first interaction, that will then start the line of queues
-    //        Interaction interactionToShow = interactionUIQueue.Dequeue();
-    //        InteractionUI.Instance.OpenInteractionUI(interactionToShow);
-    //        GameManager.Instance.pauseTickEnded2 = true;
-    //    } else {
-    //        ExecuteInteractionsDefault();
-    //    }
-    //}
-
-    //private List<Interaction> GetAllValidInteractionsInvolving(Character character) {
-    //    List<Interaction> interactions = new List<Interaction>();
-    //    for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
-    //        Area currArea = LandmarkManager.Instance.allAreas[i];
-    //        for (int j = 0; j < currArea.currentInteractions.Count; j++) {
-    //            Interaction currInteraction = currArea.currentInteractions[j];
-    //            if (currInteraction.type == INTERACTION_TYPE.MOVE_TO_RETURN_HOME
-    //                || currInteraction.type == INTERACTION_TYPE.CHARACTER_FLEES 
-    //                || !currInteraction.CanInteractionBeDoneBy(currInteraction.characterInvolved)) {
-    //                continue;
-    //            }
-    //            if ((currInteraction.targetCharacter != null && currInteraction.targetCharacter.id == character.id)
-    //                || (currInteraction.characterInvolved != null && currInteraction.characterInvolved.id == character.id)) {
-    //                interactions.Add(currInteraction);
-    //            }
-    //        }
-    //    }
-    //    return interactions;
-    //}
-    //private List<Interaction> GetAllValidInteractionsInvolving(Area currArea) {
-    //    List<Interaction> interactions = new List<Interaction>();
-    //    for (int i = 0; i < currArea.currentInteractions.Count; i++) {
-    //        Interaction currInteraction = currArea.currentInteractions[i];
-    //        if (currInteraction.type == INTERACTION_TYPE.MOVE_TO_RETURN_HOME
-    //            || currInteraction.type == INTERACTION_TYPE.CHARACTER_FLEES
-    //            || !currInteraction.CanInteractionBeDoneBy(currInteraction.characterInvolved)) {
-    //            continue;
-    //        }
-    //        interactions.Add(currInteraction);
-    //    }
-    //    return interactions;
-    //}
-
-    //private void ExecuteInteractionsDefault() {
-    //    GameManager.Instance.pauseTickEnded2 = false;
-    //    dailyInteractionSummary = GameManager.Instance.TodayLogString() + "Scheduling interactions";
-    //    for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
-    //        Area currArea = LandmarkManager.Instance.allAreas[i];
-    //        ScheduleDefaultInteractionsInArea(currArea, ref dailyInteractionSummary);
-    //        //StartCoroutine(DefaultInteractionsInAreaCoroutine(currArea, AddToDailySummary));
-    //    }
-    //    dailyInteractionSummary += "\n==========Done==========";
-    //    //Debug.Log(dailyInteractionSummary);
-    //}
-    //public void ScheduleDefaultInteractionsInArea(Area area, ref string log) {
-    //    if (area.currentInteractions.Count <= 0) {
-    //        log += "\nNo interactions in " + area.name;
-    //        return;
-    //    }
-    //    GameDate scheduledDate = GameManager.Instance.Today();
-    //    scheduledDate.AddTicks(Character_Action_Delay);
-    //    log += "\n==========Scheduling <b>" + area.name + "'s</b> interactions on " + scheduledDate.ConvertToContinuousDays()  + "==========";
-    //    List<Interaction> interactionsInArea = new List<Interaction>();
-    //    for (int j = 0; j < area.currentInteractions.Count; j++) {
-    //        Interaction currInteraction = area.currentInteractions[j];
-    //        Character character = currInteraction.characterInvolved;
-    //        if (!currInteraction.hasActivatedTimeOut) {
-    //            if (character == null || (!character.isDead && currInteraction.CanInteractionBeDoneBy(character))) {
-    //                currInteraction.PreLoad();
-    //                log += "\nScheduling interaction " + currInteraction.type.ToString();
-    //                if (character != null) {
-    //                    log += " Involving <b><color=green>" + character.name + "</color></b>";
-    //                    character.OnForcedInteractionSubmitted(currInteraction);
-    //                    character.SetPlannedAction(currInteraction);
-    //                }
-    //                interactionsInArea.Add(currInteraction);
-    //                log += "\n";
-    //            } else {
-    //                //area.RemoveInteraction(currInteraction);
-    //                currInteraction.EndInteraction(false);
-    //                log += "\n<color=red>" + character.name + " is unable to perform " + currInteraction.name + "!</color>";
-    //                //Unable to perform
-    //                UnableToPerform unable = CreateNewInteraction(INTERACTION_TYPE.UNABLE_TO_PERFORM, area) as UnableToPerform;
-    //                unable.SetActionNameThatCannotBePerformed(currInteraction.name);
-    //                unable.SetCharacterInvolved(character);
-    //                unable.PreLoad();
-    //                unable.TimedOutRunDefault(ref log);
-    //                log += "\n";
-    //            }
-    //        }
-    //    }
-    //    if(interactionsInArea.Count > 0) {
-    //        SchedulingManager.Instance.AddEntry(scheduledDate, () => DefaultInteractionsInArea(interactionsInArea, area));
-    //    }
-    //    area.currentInteractions.Clear();
-    //}
-    //private void DefaultInteractionsInArea(List<Interaction> interactions, Area area) {
-    //    string log = "\n==========" + GameManager.Instance.TodayLogString() + "Executing Scheduled <b>" + area.name + "'s</b> interactions==========";
-    //    //if (area.stopDefaultAllExistingInteractions) {
-    //    //    log += "\nCannot run areas default interactions because area interactions have been disabled";
-    //    //    return; //skip
-    //    //}
-    //    for (int j = 0; j < interactions.Count; j++) {
-    //        Interaction currInteraction = interactions[j];
-    //        Character character = currInteraction.characterInvolved;
-    //        if (character != null) {
-    //            log += "\n<b><color=green>" + character.name + "</color></b> triggered his/her day tick to perform <b>" + currInteraction.name + "</b>";
-    //        }
-    //    }
-
-    //    for (int j = 0; j < interactions.Count; j++) {
-    //        Interaction currInteraction = interactions[j];
-    //        Character character = currInteraction.characterInvolved;
-    //        if (!currInteraction.hasActivatedTimeOut) {
-    //            if (character == null || currInteraction.CanStillDoInteraction(character)) {
-    //                log += "\nRunning interaction default " + currInteraction.type.ToString();
-    //                if (character != null) {
-    //                    log += " Involving <b><color=green>" + character.name + "</color></b>";
-    //                }
-    //                if(character.currentInteractionTick <= GameManager.Instance.tick) {
-    //                    character.AdjustDailyInteractionGenerationTick();
-    //                }
-    //                currInteraction.TimedOutRunDefault(ref log);
-    //                log += "\n";
-    //            } else {
-    //                //area.RemoveInteraction(currInteraction);
-    //                currInteraction.EndInteraction(false);
-    //                log += "\n<color=red>" + currInteraction.name + " can no longer be done by " + character.name + "!</color>";
-    //                log += "\n";
-    //            }
-    //        }
-    //    }
-    //    log += "\n==========Done==========";
-    //    //Debug.Log(log);
-    //}
     public void UnlockAllTokens() {
         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
             Character currCharacter = CharacterManager.Instance.allCharacters[i];
@@ -624,46 +406,6 @@ public class InteractionManager : MonoBehaviour {
         return chosenTile;
     }
     #endregion
-
-    public ObjectActivator<T> GetActivator<T> (ConstructorInfo ctor) {
-        Type type = ctor.DeclaringType;
-        ParameterInfo[] paramsInfo = ctor.GetParameters();
-
-        //create a single param of type object[]
-        ParameterExpression param =
-            Expression.Parameter(typeof(object[]), "args");
-
-        Expression[] argsExp =
-            new Expression[paramsInfo.Length];
-
-        //pick each arg from the params array 
-        //and create a typed expression of them
-        for (int i = 0; i < paramsInfo.Length; i++) {
-            Expression index = Expression.Constant(i);
-            Type paramType = paramsInfo[i].ParameterType;
-
-            Expression paramAccessorExp =
-                Expression.ArrayIndex(param, index);
-
-            Expression paramCastExp =
-                Expression.Convert(paramAccessorExp, paramType);
-
-            argsExp[i] = paramCastExp;
-        }
-
-        //make a NewExpression that calls the
-        //ctor with the args we just created
-        NewExpression newExp = Expression.New(ctor, argsExp);
-
-        //create a lambda with the New
-        //Expression as body and our param object[] as arg
-        LambdaExpression lambda =
-            Expression.Lambda(typeof(ObjectActivator<T>), newExp, param);
-
-        //compile it
-        ObjectActivator<T> compiled = (ObjectActivator<T>)lambda.Compile();
-        return compiled;
-    }
 }
 
 public struct RewardConfig {
