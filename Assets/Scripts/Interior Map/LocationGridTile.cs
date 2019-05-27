@@ -484,34 +484,31 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
 
     #region Mouse Actions
     public void OnClickTileActions(PointerEventData.InputButton inputButton) {
-        //Comment Reason: Used this to quickly set a tiles state from occupied to empty and vice versa.
-        //if (inputButton == PointerEventData.InputButton.Right) {
-        //    if (tileState == Tile_State.Occupied) {
-        //        SetTileState(Tile_State.Empty);
-        //    } else {
-        //        SetTileState(Tile_State.Occupied);
-        //    }
-        //    return;
-        //}
         if (InteriorMapManager.Instance.IsMouseOnMarker()) {
             return;
         }
         if (objHere == null) {
             Messenger.Broadcast(Signals.HIDE_MENUS);
             if (inputButton == PointerEventData.InputButton.Right) {
+#if UNITY_EDITOR
                 if (InteriorMapManager.Instance.IsHoldingPOI()) {
                     InteriorMapManager.Instance.PlaceHeldPOI(this);
                 }
+#endif
             }
         } else if (objHere is TileObject || objHere is SpecialToken) {
             if (inputButton == PointerEventData.InputButton.Middle) {
+#if UNITY_EDITOR
                 if (objHere is TileObject) {
                     (objHere as TileObject).LogActionHistory();
                 }
+#endif
             } else if (inputButton == PointerEventData.InputButton.Right) {
+#if UNITY_EDITOR
                 if (!InteriorMapManager.Instance.IsHoldingPOI()) {
                     InteriorMapManager.Instance.HoldPOI(objHere);
                 }
+#endif
             } else {
                 ////parentAreaMap.ShowIntelItemAt(this, InteractionManager.Instance.CreateNewIntel(objHere));
                 //if (objHere is TileObject) {

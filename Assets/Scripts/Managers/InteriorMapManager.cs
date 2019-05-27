@@ -191,7 +191,6 @@ public class InteriorMapManager : MonoBehaviour {
     }
     #endregion
 
-
     #region Local Avoidance
     //public void RegisterObstacles() {
     //    for (int i = 0; i < areaMaps.Count; i++) {
@@ -223,7 +222,6 @@ public class InteriorMapManager : MonoBehaviour {
     //    sim.RemoveAgent(agent);
     //}
     #endregion
-
 
     #region Structure Templates
     public List<StructureTemplate> GetStructureTemplates(STRUCTURE_TYPE structure) {
@@ -297,6 +295,7 @@ public class InteriorMapManager : MonoBehaviour {
         if (tile == null) {
             return;
         }
+#if UNITY_EDITOR
         string summary = tile.localPlace.ToString();
         summary += "\nLocal Location: " + tile.localLocation.ToString();
         summary += "\nWorld Location: " + tile.worldLocation.ToString();
@@ -350,7 +349,7 @@ public class InteriorMapManager : MonoBehaviour {
             if (character.marker.destinationTile == null) {
                 summary += "None";
             } else {
-                summary += character.marker.destinationTile.ToString() + " at " + character.marker.destinationTile.parentAreaMap.area.name; 
+                summary += character.marker.destinationTile.ToString() + " at " + character.marker.destinationTile.parentAreaMap.area.name;
             }
             summary += "\nArrival Action: " + character.marker.arrivalAction?.Method.Name ?? "None";
             summary += "\nPOI's in Vision: ";
@@ -413,22 +412,21 @@ public class InteriorMapManager : MonoBehaviour {
             summary += "\nStructure: None";
         }
         UIManager.Instance.ShowSmallInfo(summary);
-    //    //For build only
-    //    if (tile.objHere != null) {
-    //        UIManager.Instance.ShowSmallInfo(tile.objHere.ToString());
-    //    }
+#else
+         //For build only
+        if (tile.objHere != null) {
+            UIManager.Instance.ShowSmallInfo(tile.objHere.ToString());
+        }
+#endif
+
     }
     public void ShowTileData(Character character, LocationGridTile tile) {
-        //if (GameManager.showAllTilesTooltip) {
-            isShowingMarkerTileData = true;
-            ShowTileData(tile, character);
-        //}
+        isShowingMarkerTileData = true;
+        ShowTileData(tile, character);
     }
     public void HideTileData() {
-        //if (GameManager.showAllTilesTooltip) {
-            isShowingMarkerTileData = false;
-            UIManager.Instance.HideSmallInfo();
-        //}
+        isShowingMarkerTileData = false;
+        UIManager.Instance.HideSmallInfo();
     }
 
     private IPointOfInterest heldPOI;

@@ -82,11 +82,13 @@ public class GameManager : MonoBehaviour {
 #endif
     }
     private void FixedUpdate() {
+#if UNITY_EDITOR
         if (Input.GetKeyDown(KeyCode.BackQuote)) {
             if (allowConsole) {
                 UIManager.Instance.ToggleConsole();
             }
         }
+#endif
         if (_gameHasStarted && !isPaused) {
             if (this.timeElapsed == 0f) {
                 this.TickStarted();

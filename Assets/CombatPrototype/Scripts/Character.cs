@@ -646,7 +646,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //portraitGO.transform.localPosition = pos;
         SetCharacterMarker(portraitGO.GetComponent<CharacterMarker>());
         marker.SetCharacter(this);
+#if UNITY_EDITOR
         marker.SetHoverAction(ShowTileData, InteriorMapManager.Instance.HideTileData);
+#endif
     }
     public void DestroyMarker() {
         ObjectPoolManager.Instance.DestroyObject(marker.gameObject);
