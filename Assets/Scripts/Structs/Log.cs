@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
+//Log and Memory are the same now so assume that this class will have data that the Memory uses
 public class Log {
 
     public int id;
@@ -25,7 +26,14 @@ public class Log {
         get { return new GameDate((int)month, day, year, tick); }
     }
 
-    public Log(int month, int day, int year, int tick, string category, string file, string key){
+    //When this log is processed through the LogReplacer for the first time, the resulting text will be stored in this so that every time the text of this log is needed,
+    //it will not go through the LogReplacer processing again, which saves cpu power
+    public string logText { get; private set; }
+
+    //Memory data
+    public GoapAction goapAction { get; private set; }
+
+    public Log(int month, int day, int year, int tick, string category, string file, string key, GoapAction goapAction = null){
         this.id = Utilities.SetID<Log>(this);
 		this.month = (MONTH)month;
 		this.day = day;
@@ -34,11 +42,13 @@ public class Log {
         this.category = category;
 		this.file = file;
 		this.key = key;
+        this.goapAction = goapAction;
 		this.fillers = new List<LogFiller>();
         this.lockFillers = false;
+        logText = string.Empty;
         logCallStack = StackTraceUtility.ExtractStackTrace();
 	}
-    public Log(GameDate date, string category, string file, string key) {
+    public Log(GameDate date, string category, string file, string key, GoapAction goapAction = null) {
         this.id = Utilities.SetID<Log>(this);
         this.month = (MONTH)date.month;
         this.day = date.day;
@@ -47,8 +57,10 @@ public class Log {
         this.category = category;
         this.file = file;
         this.key = key;
+        this.goapAction = goapAction;
         this.fillers = new List<LogFiller>();
         this.lockFillers = false;
+        logText = string.Empty;
         logCallStack = StackTraceUtility.ExtractStackTrace();
     }
 
@@ -137,6 +149,9 @@ public class Log {
         this.day = date.day;
         this.year = date.year;
         this.tick = date.tick;
+    }
+    public void SetLogText(string text) {
+        this.logText = text;
     }
     #endregion
 }

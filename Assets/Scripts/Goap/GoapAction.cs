@@ -119,7 +119,7 @@ public class GoapAction {
         AddActionLog(GameManager.Instance.TodayLogString() + " Set state to " + currentState.name);
         OnPerformActualActionToTarget();
         currentState.Execute();
-        Messenger.Broadcast(Signals.ACTION_STATE_SET, actor, this, currentState);
+        Messenger.Broadcast(Signals.ACTION_STATE_SET, this, currentState);
     }
     #endregion
 
@@ -199,19 +199,19 @@ public class GoapAction {
     }
     protected virtual void CreateThoughtBubbleLog() {
         if (LocalizationManager.Instance.HasLocalizedValue("GoapAction", this.GetType().ToString(), "thought_bubble")) {
-            thoughtBubbleLog = new Log(GameManager.Instance.Today(), "GoapAction", this.GetType().ToString(), "thought_bubble");
+            thoughtBubbleLog = new Log(GameManager.Instance.Today(), "GoapAction", this.GetType().ToString(), "thought_bubble", this);
             AddDefaultObjectsToLog(thoughtBubbleLog);
         }
         if (LocalizationManager.Instance.HasLocalizedValue("GoapAction", this.GetType().ToString(), "thought_bubble_m")) {
-            thoughtBubbleMovingLog = new Log(GameManager.Instance.Today(), "GoapAction", this.GetType().ToString(), "thought_bubble_m");
+            thoughtBubbleMovingLog = new Log(GameManager.Instance.Today(), "GoapAction", this.GetType().ToString(), "thought_bubble_m", this);
             AddDefaultObjectsToLog(thoughtBubbleMovingLog);
         }
         if (LocalizationManager.Instance.HasLocalizedValue("GoapAction", this.GetType().ToString(), "plan_log")) {
-            planLog = new Log(GameManager.Instance.Today(), "GoapAction", this.GetType().ToString(), "plan_log");
+            planLog = new Log(GameManager.Instance.Today(), "GoapAction", this.GetType().ToString(), "plan_log", this);
             AddDefaultObjectsToLog(planLog);
         }
         if (LocalizationManager.Instance.HasLocalizedValue("GoapAction", this.GetType().ToString(), "target_log")) {
-            targetLog = new Log(GameManager.Instance.Today(), "GoapAction", this.GetType().ToString(), "target_log");
+            targetLog = new Log(GameManager.Instance.Today(), "GoapAction", this.GetType().ToString(), "target_log", this);
             AddDefaultObjectsToLog(targetLog);
         }
     }

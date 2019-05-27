@@ -114,7 +114,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public int moodValue { get; private set; }
     public bool isCombatant { get; private set; } //This should only be a getter but since we need to know when the value changes it now has a setter
     public List<Trait> traitsNeededToBeRemoved { get; private set; }
-    public Memories memories { get; private set; }
+    //public Memories memories { get; private set; }
     public TrapStructure trapStructure { get; private set; }
     public bool isDisabledByPlayer { get; protected set; }
 
@@ -547,7 +547,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         allJobsTargettingThis = new List<JobQueueItem>();
         traitsNeededToBeRemoved = new List<Trait>();
         onLeaveAreaActions = new List<Action>();
-        memories = new Memories();
+        //memories = new Memories();
         trapStructure = new TrapStructure();
         SetPOIState(POI_STATE.ACTIVE);
         SetMoodValue(90);
@@ -597,7 +597,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         Messenger.AddListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnLeaveArea);
         Messenger.AddListener<Party>(Signals.PARTY_DONE_TRAVELLING, OnArrivedAtArea);
         Messenger.AddListener<Character, string>(Signals.CANCEL_CURRENT_ACTION, CancelCurrentAction);
-        Messenger.AddListener<Character, GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
+        Messenger.AddListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
 
     }
     public void UnsubscribeSignals() {
@@ -610,7 +610,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         Messenger.RemoveListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnLeaveArea);
         Messenger.RemoveListener<Party>(Signals.PARTY_DONE_TRAVELLING, OnArrivedAtArea);
         Messenger.RemoveListener<Character, string>(Signals.CANCEL_CURRENT_ACTION, CancelCurrentAction);
-        Messenger.RemoveListener<Character, GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
+        Messenger.RemoveListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
     }
     #endregion
 
@@ -2552,7 +2552,28 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
             Messenger.Broadcast(Signals.HISTORY_ADDED, this as object);
         }
-
+    }
+    private void OnActionStateSet(GoapAction action, GoapActionState state) {
+        if (action.actor != this && action.poiTarget != this) {
+            if (marker.inVisionPOIs.Contains(action.actor)) {
+                Log witnessLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "witness_event", action);
+                witnessLog.AddToFillers(marker.character, marker.character.name, LOG_IDENTIFIER.OTHER);
+                witnessLog.AddToFillers(null, Utilities.LogDontReplace(state.descriptionLog), LOG_IDENTIFIER.APPEND);
+                witnessLog.AddToFillers(state.descriptionLog.fillers);
+                AddHistory(witnessLog);
+            }
+        }
+    }
+    public void ThisCharacterSaw(Character target) {
+        if (target.currentAction != null && target.currentAction.isPerformingActualAction && !target.currentAction.isDone) {
+            if(target.currentAction.actor != this && target.currentAction.poiTarget != this) {
+                Log witnessLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "witness_event", target.currentAction);
+                witnessLog.AddToFillers(marker.character, marker.character.name, LOG_IDENTIFIER.OTHER);
+                witnessLog.AddToFillers(null, Utilities.LogDontReplace(target.currentAction.currentState.descriptionLog), LOG_IDENTIFIER.APPEND);
+                witnessLog.AddToFillers(target.currentAction.currentState.descriptionLog.fillers);
+                AddHistory(witnessLog);
+            }
+        }
     }
     #endregion
 
@@ -6355,14 +6376,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     #endregion
 
     #region Logs
-    public void RegisterLogAndShowNotifToThisCharacterOnly(string fileName, string key, object target = null, string targetName = "") {
+    public void RegisterLogAndShowNotifToThisCharacterOnly(string fileName, string key, object target = null, string targetName = "", GoapAction goapAction = null) {
         if (!GameManager.Instance.gameHasStarted) {
             return;
         }
         if (key == "remove_trait" && isDead) {
             return;
         }
-        Log addLog = new Log(GameManager.Instance.Today(), "Character", fileName, key);
+        Log addLog = new Log(GameManager.Instance.Today(), "Character", fileName, key, goapAction);
         addLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         if (targetName != "") {
             addLog.AddToFillers(target, targetName, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -6415,23 +6436,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             ClearIgnoreHostilities();
         }
         marker.UpdateActionIcon();
-    }
-    #endregion
-
-    #region Memories
-    private void OnActionStateSet(Character actor, GoapAction action, GoapActionState state) {
-        if (actor == this) {
-            memories.AddMemory(action);
-        } else {
-            if (marker.inVisionPOIs.Contains(actor)) {
-                memories.AddMemory(action);
-            }
-        }
-    }
-    public void ThisCharacterSaw(Character target) {
-        if(target.currentAction != null && target.currentAction.isPerformingActualAction && !target.currentAction.isDone) {
-            memories.AddMemory(target.currentAction);
-        }
     }
     #endregion
 }

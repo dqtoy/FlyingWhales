@@ -246,6 +246,7 @@ public enum LOG_IDENTIFIER{
     STRUCTURE_1,
     STRUCTURE_2,
     STRUCTURE_3,
+    APPEND,
 }
 public enum STRUCTURE_STATE {
     NORMAL,
