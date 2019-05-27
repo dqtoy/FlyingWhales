@@ -5488,6 +5488,16 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         PrintLogIfActive(goapThread.log);
         if (goapThread.createdPlan != null) {
             if (goapThread.recalculationPlan == null) {
+                if (HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+                    PrintLogIfActive(GameManager.Instance.TodayLogString() + name + " is scrapping plan since " + name + " has a negative disabler trait. " + goapThread.job.name + " is the job.");
+                    if (goapThread.job != null) {
+                        if (goapThread.job.assignedCharacter == this) {
+                            goapThread.job.SetAssignedCharacter(null);
+                            goapThread.job.SetAssignedPlan(null);
+                        }
+                    }
+                    return;
+                }
                 if (goapThread.job != null) {
                     if (goapThread.job.assignedCharacter != this) {
                         PrintLogIfActive(GameManager.Instance.TodayLogString() + name + " is scrapping plan since " + goapThread.job.name + " job's assigned character is no longer him/her. New assigned character is " + (goapThread.job.assignedCharacter != null ? goapThread.job.assignedCharacter.name : "None"));
@@ -5531,10 +5541,15 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             } else {
                 //Receive plan recalculation
                 goapThread.createdPlan.SetIsBeingRecalculated(false);
+                if (HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+                    PrintLogIfActive(GameManager.Instance.TodayLogString() + name + " is scrapping recalculated plan since " + name + " has a negative disabler trait. " + goapThread.job.name + " is the job.");
+                    DropPlan(goapThread.recalculationPlan, true);
+                    return;
+                }
                 if (goapThread.createdPlan.job != null) {
                     if (goapThread.createdPlan.job.assignedCharacter != this) {
                         PrintLogIfActive(GameManager.Instance.TodayLogString() + name + " is scrapping recalculated plan since " + goapThread.createdPlan.job.name + " job's assigned character is no longer him/her. New assigned character is " + (goapThread.createdPlan.job.assignedCharacter != null ? goapThread.createdPlan.job.assignedCharacter.name : "None"));
-                        DropPlan(goapThread.recalculationPlan);
+                        DropPlan(goapThread.recalculationPlan, true);
                         return;
                     }
                 }
