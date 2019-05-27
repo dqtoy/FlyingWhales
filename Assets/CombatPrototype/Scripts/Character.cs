@@ -1388,6 +1388,11 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
                 jobQueue.AddJobInQueue(job, true, false);
                 jobQueue.ProcessFirstJobInQueue(this);
+
+                Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "saw_and_undermine");
+                log.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                AddHistory(log);
                 return true;
             }
         }
@@ -3705,7 +3710,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return false;
     }
-    private bool PlanFullnessRecoveryActions() {
+    public bool PlanFullnessRecoveryActions() {
         TIME_IN_WORDS currentTimeInWords = GameManager.GetCurrentTimeInWordsOfTick();
         Trait hungryOrStarving = GetTraitOr("Starving", "Hungry");
 
@@ -3745,7 +3750,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return false;
     }
-    private bool PlanTirednessRecoveryActions() {
+    public bool PlanTirednessRecoveryActions() {
         TIME_IN_WORDS currentTimeInWords = GameManager.GetCurrentTimeInWordsOfTick();
         Trait tiredOrExhausted = GetTraitOr("Exhausted", "Tired");
 
@@ -3786,7 +3791,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return false;
     }
-    private bool PlanHappinessRecoveryActions() {
+    public bool PlanHappinessRecoveryActions() {
         TIME_IN_WORDS currentTimeInWords = GameManager.GetCurrentTimeInWordsOfTick();
         Trait lonelyOrForlorn = GetTraitOr("Forlorn", "Lonely");
 
@@ -6376,6 +6381,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     #endregion
 
     #region Logs
+    //Add log to this character and show notif of that log only if this character is clicked or tracked, otherwise, add log only
     public void RegisterLogAndShowNotifToThisCharacterOnly(string fileName, string key, object target = null, string targetName = "", GoapAction goapAction = null) {
         if (!GameManager.Instance.gameHasStarted) {
             return;
