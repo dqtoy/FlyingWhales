@@ -6,7 +6,7 @@ using System;
 public class SchedulingManager : MonoBehaviour {
 	public static SchedulingManager Instance;
 
-	private Dictionary<GameDate, List<Action>> schedules = new Dictionary<GameDate, List<Action>> (new GameDateComparer());
+	private Dictionary<GameDate, List<ScheduledAction>> schedules = new Dictionary<GameDate, List<ScheduledAction>> (new GameDateComparer());
 	private GameDate checkGameDate;
 
 	void Awake(){
@@ -26,59 +26,73 @@ public class SchedulingManager : MonoBehaviour {
 			RemoveEntry (this.checkGameDate);
 		}
 	}
-
-	//internal void AddEntry(int month, int day, int year, int hour, Action act){
-	//	GameDate gameDate = new GameDate (month, day, year, hour);
-	//	if(this.schedules.ContainsKey(gameDate)){
-	//		this.schedules [gameDate].Add (act);
-	//	}else{
-	//		List<Action> acts = new List<Action> ();
-	//		acts.Add (act);
-	//		this.schedules.Add (gameDate, acts);
-	//	}
-	//}
-	internal void AddEntry(GameDate gameDate, Action act){
-		if(this.schedules.ContainsKey(gameDate)){
-			this.schedules [gameDate].Add (act);
-		}else{
-			List<Action> acts = new List<Action> ();
-			acts.Add (act);
-			this.schedules.Add (gameDate, acts);
-		}
+	internal string AddEntry(GameDate gameDate, Action act){
+        if (!this.schedules.ContainsKey(gameDate)) {
+            this.schedules.Add(gameDate, new List<ScheduledAction>());
+        }
+        string newID = GenerateScheduleID();
+        this.schedules[gameDate].Add(new ScheduledAction() { scheduleID = newID, action = act });
+        return newID;
 	}
 	internal void RemoveEntry(GameDate gameDate){
 		this.schedules.Remove (gameDate);
 	}
-	internal void RemoveSpecificEntry(int month, int day, int year, int hour, int continuousDays, Action act){
-		GameDate gameDate = new GameDate (month, day, year, hour);
-		if(this.schedules.ContainsKey(gameDate)){
-			List<Action> acts = this.schedules[gameDate];
-			for (int i = 0; i < acts.Count; i++) {
-				if(acts[i].Target == act.Target){
-					this.schedules[gameDate].RemoveAt(i);
-					break;
-				}
-			}
-		}
-	}
+    internal void RemoveSpecificEntry(int month, int day, int year, int hour, int continuousDays, Action act) {
+        GameDate gameDate = new GameDate(month, day, year, hour);
+        if (this.schedules.ContainsKey(gameDate)) {
+            List<ScheduledAction> acts = this.schedules[gameDate];
+            for (int i = 0; i < acts.Count; i++) {
+                if (acts[i].action.Target == act.Target) {
+                    this.schedules[gameDate].RemoveAt(i);
+                    break;
+                }
+            }
+        }
+    }
     internal void RemoveSpecificEntry(GameDate date, Action act) {
         if (this.schedules.ContainsKey(date)) {
-            List<Action> acts = this.schedules[date];
+            List<ScheduledAction> acts = this.schedules[date];
             for (int i = 0; i < acts.Count; i++) {
-                if (acts[i].Target == act.Target) {
+                if (acts[i].action.Target == act.Target) {
                     this.schedules[date].RemoveAt(i);
                     break;
                 }
             }
         }
     }
-    private void DoAsScheduled(List<Action> acts){
+    public bool RemoveSpecificEntry(GameDate date, string id) {
+        if (this.schedules.ContainsKey(date)) {
+            List<ScheduledAction> acts = this.schedules[date];
+            for (int i = 0; i < acts.Count; i++) {
+                ScheduledAction action = acts[i];
+                if (action.scheduleID == id) {
+                    this.schedules[date].RemoveAt(i);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    public bool RemoveSpecificEntry(string id) {
+        foreach (KeyValuePair<GameDate, List<ScheduledAction>> keyValuePair in schedules) {
+            if (RemoveSpecificEntry(keyValuePair.Key, id)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    private void DoAsScheduled(List<ScheduledAction> acts){
 		for (int i = 0; i < acts.Count; i++) {
-			if(acts[i].Target != null){
-				acts [i] ();
+			if(acts[i].action.Target != null){
+				acts [i].action ();
 			}
 		}
 	}
+
+    public string GenerateScheduleID() {
+        //Reference: https://stackoverflow.com/questions/11313205/generate-a-unique-id
+        return Guid.NewGuid().ToString("N");
+    }
 }
 
 public class GameDateComparer : IEqualityComparer<GameDate> {
@@ -92,4 +106,9 @@ public class GameDateComparer : IEqualityComparer<GameDate> {
     public int GetHashCode(GameDate obj) {
         return obj.GetHashCode();
     }
+}
+
+public struct ScheduledAction {
+    public string scheduleID;
+    public Action action;
 }

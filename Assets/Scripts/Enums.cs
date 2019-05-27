@@ -246,6 +246,7 @@ public enum LOG_IDENTIFIER{
     STRUCTURE_1,
     STRUCTURE_2,
     STRUCTURE_3,
+    APPEND,
 }
 public enum STRUCTURE_STATE {
     NORMAL,
@@ -1036,6 +1037,8 @@ public enum INTERACTION_TYPE {
     DRINK_BLOOD,
     REPLACE_TILE_OBJECT,
     CRAFT_FURNITURE,
+    TANTRUM,
+    EAT_MUSHROOM,
 }
 public enum INTERACTION_ALIGNMENT {
     EVIL,
@@ -1232,6 +1235,7 @@ public enum TILE_OBJECT_TYPE {
     DESK,
     TOMBSTONE,
     NONE,
+    MUSHROOM,
 }
 public enum POI_STATE {
     ACTIVE,

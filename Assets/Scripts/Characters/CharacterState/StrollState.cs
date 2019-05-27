@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class StrollState : CharacterState {
+    private int _currentDuration;
 
     public StrollState(CharacterStateComponent characterComp) : base(characterComp) {
         stateName = "Stroll State";
@@ -16,12 +17,21 @@ public class StrollState : CharacterState {
         base.DoMovementBehavior();
         StartStrollMovement();
     }
-    //protected override void PerTickInState() {
-    //    base.PerTickInState();
-    //    if (!isDone) {
-    //        stateComponent.character.CreatePersonalJobs();
-    //    }
-    //}
+    protected override void PerTickInState() {
+        base.PerTickInState();
+        if (!isDone) {
+            if (_currentDuration >= 4) {
+                _currentDuration = 0;
+                if (!stateComponent.character.PlanFullnessRecoveryActions()) {
+                    if (!stateComponent.character.PlanTirednessRecoveryActions()) {
+                        stateComponent.character.PlanHappinessRecoveryActions();
+                    }
+                }
+            } else {
+                _currentDuration++;
+            }
+        }
+    }
     public override bool OnEnterVisionWith(IPointOfInterest targetPOI) {
         if (stateComponent.character.role.roleType != CHARACTER_ROLE.BEAST && targetPOI is SpecialToken) {
             SpecialToken token = targetPOI as SpecialToken;

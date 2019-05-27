@@ -94,6 +94,7 @@ public class Player : ILeader {
         //goap
         //Messenger.AddListener<Character, GoapPlan>(Signals.CHARACTER_WILL_DO_PLAN, OnCharacterWillDoPlan);
         Messenger.AddListener<Character, GoapAction>(Signals.CHARACTER_DID_ACTION, OnCharacterDidAction);
+        Messenger.AddListener<Character, GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
     }
 
     #region ILeader
@@ -713,13 +714,28 @@ public class Player : ILeader {
             }
         }
     }
+    private void OnActionStateSet(Character character, GoapAction action, GoapActionState state) {
+        bool showPopup = false;
+        if (action.showIntelNotification && state.duration > 0) { //added checking for duration because this notification should only show for actions that have durations.
+            if (action.shouldIntelNotificationOnlyIfActorIsActive) {
+                showPopup = ShouldShowNotificationFrom(character, true);
+            } else {
+                showPopup = ShouldShowNotificationFrom(character, action.GetCurrentLog());
+            }
+        }
+        if (showPopup) {
+            Messenger.Broadcast<Log>(Signals.SHOW_PLAYER_NOTIFICATION, action.GetCurrentLog());
+        }
+    }
     #endregion
 
     #region Player Notifications
     public bool ShouldShowNotificationFrom(Character character, bool onlyClickedCharacter = false) {
-        if (!onlyClickedCharacter && !character.isDead && AreaMapCameraMove.Instance.gameObject.activeSelf && AreaMapCameraMove.Instance.CanSee(character.marker.gameObject)) {
-            return true;
-        }else if (onlyClickedCharacter && UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.id == character.id) {
+        if (!onlyClickedCharacter && !character.isDead && AreaMapCameraMove.Instance.gameObject.activeSelf) {
+            if((UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.id == character.id) || AreaMapCameraMove.Instance.CanSee(character.marker.gameObject)) {
+                return true;
+            }
+        } else if (onlyClickedCharacter && UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.id == character.id) {
             return true;
         } else if (roleSlots[JOB.SPY].activeAction is Track) {
             Track track = roleSlots[JOB.SPY].activeAction as Track;

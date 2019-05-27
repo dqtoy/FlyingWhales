@@ -105,7 +105,7 @@ public class CharacterInfoUI : UIMenu {
         relationshipTraitContainers = Utilities.GetComponentsInDirectChildren<CombatAttributeItem>(relationshipTraitsScrollView.content.gameObject);
         inventoryItemContainers = Utilities.GetComponentsInDirectChildren<ItemContainer>(itemsScrollView.content.gameObject);
 
-        InitializeMemoryUI();
+        //InitializeMemoryUI();
 
         InitializeLogsMenu();
     }
@@ -177,7 +177,7 @@ public class CharacterInfoUI : UIMenu {
         UpdateStatInfo();
         UpdateLocationInfo();
         UpdateAllHistoryInfo();
-        UpdateMemories();
+        //UpdateMemories();
     }
     private void UpdatePortrait() {
         characterPortrait.GeneratePortrait(_activeCharacter);
@@ -236,29 +236,32 @@ public class CharacterInfoUI : UIMenu {
 
         //Action
         if (_activeCharacter.currentAction != null && !_activeCharacter.currentAction.isStopped) {
-            if (_activeCharacter.currentParty.icon.isTravelling) {
-                //character is travelling
-                plansLblLogItem.SetLog(_activeCharacter.currentAction.thoughtBubbleMovingLog);
-                plansLbl.text = Utilities.LogReplacer(_activeCharacter.currentAction.thoughtBubbleMovingLog);
-            } else {
-                //character is not travelling
-                if (_activeCharacter.currentAction.isDone) {
-                    //action is already done
-                    plansLblLogItem.SetLog(_activeCharacter.currentAction.currentState.descriptionLog);
-                    plansLbl.text = Utilities.LogReplacer(_activeCharacter.currentAction.currentState.descriptionLog);
-                } else {
-                    //action is not yet done
-                    if (activeCharacter.currentAction.currentState == null) {
-                        //if the actions' current state is null, Use moving log
-                        plansLblLogItem.SetLog(_activeCharacter.currentAction.thoughtBubbleMovingLog);
-                        plansLbl.text = Utilities.LogReplacer(_activeCharacter.currentAction.thoughtBubbleMovingLog);
-                    } else {
-                        //if the actions current state has a duration
-                        plansLblLogItem.SetLog(_activeCharacter.currentAction.thoughtBubbleLog);
-                        plansLbl.text = Utilities.LogReplacer(_activeCharacter.currentAction.thoughtBubbleLog);
-                    }
-                }
-            }
+            Log currentLog = _activeCharacter.currentAction.GetCurrentLog();
+            plansLblLogItem.SetLog(currentLog);
+            plansLbl.text = Utilities.LogReplacer(currentLog);
+            //if (_activeCharacter.currentParty.icon.isTravelling) {
+            //    //character is travelling
+            //    plansLblLogItem.SetLog(_activeCharacter.currentAction.thoughtBubbleMovingLog);
+            //    plansLbl.text = Utilities.LogReplacer(_activeCharacter.currentAction.thoughtBubbleMovingLog);
+            //} else {
+            //    //character is not travelling
+            //    if (_activeCharacter.currentAction.isDone) {
+            //        //action is already done
+            //        plansLblLogItem.SetLog(_activeCharacter.currentAction.currentState.descriptionLog);
+            //        plansLbl.text = Utilities.LogReplacer(_activeCharacter.currentAction.currentState.descriptionLog);
+            //    } else {
+            //        //action is not yet done
+            //        if (activeCharacter.currentAction.currentState == null) {
+            //            //if the actions' current state is null, Use moving log
+            //            plansLblLogItem.SetLog(_activeCharacter.currentAction.thoughtBubbleMovingLog);
+            //            plansLbl.text = Utilities.LogReplacer(_activeCharacter.currentAction.thoughtBubbleMovingLog);
+            //        } else {
+            //            //if the actions current state has a duration
+            //            plansLblLogItem.SetLog(_activeCharacter.currentAction.thoughtBubbleLog);
+            //            plansLbl.text = Utilities.LogReplacer(_activeCharacter.currentAction.thoughtBubbleLog);
+            //        }
+            //    }
+            //}
             return;
         }
 
@@ -520,30 +523,30 @@ public class CharacterInfoUI : UIMenu {
     }
     #endregion
 
-    #region Memories
-    private void InitializeMemoryUI() {
-        memoryItems = new MemoryItem[CharacterManager.CHARACTER_MAX_MEMORY];
-        for (int i = 0; i < CharacterManager.CHARACTER_MAX_MEMORY; i++) {
-            GameObject go = GameObject.Instantiate(memoryItemPrefab, memoriesScrollView.content);
-            memoryItems[i] = go.GetComponent<MemoryItem>();
-        }
-    }
-    private void UpdateMemories() {
-        if (memoriesGO.activeSelf) {
-            for (int i = 0; i < memoryItems.Length; i++) {
-                if(i < _activeCharacter.memories.memoryList.Count) {
-                    memoryItems[i].SetMemory(_activeCharacter.memories.memoryList[(_activeCharacter.memories.memoryList.Count - 1) - i]);
-                } else {
-                    memoryItems[i].SetMemory(null);
-                }
-            }
-        }
-    }
-    public void OpenMemories() {
-        memoriesGO.SetActive(true);
-        UpdateMemories();
-    }
-    #endregion
+    //#region Memories
+    //private void InitializeMemoryUI() {
+    //    memoryItems = new MemoryItem[CharacterManager.CHARACTER_MAX_MEMORY];
+    //    for (int i = 0; i < CharacterManager.CHARACTER_MAX_MEMORY; i++) {
+    //        GameObject go = GameObject.Instantiate(memoryItemPrefab, memoriesScrollView.content);
+    //        memoryItems[i] = go.GetComponent<MemoryItem>();
+    //    }
+    //}
+    //private void UpdateMemories() {
+    //    if (memoriesGO.activeSelf) {
+    //        for (int i = 0; i < memoryItems.Length; i++) {
+    //            if(i < _activeCharacter.memories.memoryList.Count) {
+    //                memoryItems[i].SetMemory(_activeCharacter.memories.memoryList[(_activeCharacter.memories.memoryList.Count - 1) - i]);
+    //            } else {
+    //                memoryItems[i].SetMemory(null);
+    //            }
+    //        }
+    //    }
+    //}
+    //public void OpenMemories() {
+    //    memoriesGO.SetActive(true);
+    //    UpdateMemories();
+    //}
+    //#endregion
 
     #region Listeners
     private void OnCharacterTracked(Character character) {

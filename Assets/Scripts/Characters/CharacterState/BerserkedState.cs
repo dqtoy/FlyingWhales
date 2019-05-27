@@ -12,6 +12,20 @@ public class BerserkedState : CharacterState {
     }
 
     #region Overrides
+    protected override void StartState() {
+        base.StartState();
+        stateComponent.character.AdjustDoNotGetHungry(1);
+        stateComponent.character.AdjustDoNotGetLonely(1);
+        stateComponent.character.AdjustDoNotGetTired(1);
+    }
+    protected override void EndState() {
+        base.EndState();
+        stateComponent.character.AdjustDoNotGetHungry(-1);
+        stateComponent.character.AdjustDoNotGetLonely(-1);
+        stateComponent.character.AdjustDoNotGetTired(-1);
+        stateComponent.character.AdjustHappiness(50);
+        stateComponent.character.AdjustTiredness(50);
+    }
     protected override void DoMovementBehavior() {
         base.DoMovementBehavior();
         StartBerserkedMovement();

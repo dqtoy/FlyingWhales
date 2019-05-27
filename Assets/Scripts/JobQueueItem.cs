@@ -14,6 +14,7 @@ public class JobQueueItem {
 
     protected System.Func<Character, JobQueueItem, bool> _canTakeThisJob;
     protected System.Func<Character, Character, JobQueueItem, bool> _canTakeThisJobWithTarget;
+    protected System.Action<Character> _onTakeJobAction;
 
     public JobQueueItem(string name) {
         this.name = name;
@@ -40,6 +41,9 @@ public class JobQueueItem {
         }
         return CanTakeJob(character);
     }
+    public virtual void OnCharacterAssignedToJob(Character character) {
+        _onTakeJobAction?.Invoke(character);
+    }
     #endregion
 
     public void SetJobQueueParent(JobQueue parent) {
@@ -56,12 +60,18 @@ public class JobQueueItem {
         }
         
         assignedCharacter = character;
+        if (assignedCharacter != null) {
+            OnCharacterAssignedToJob(assignedCharacter);
+        }
     }
     public void SetCanTakeThisJobChecker(System.Func<Character, JobQueueItem, bool> function) {
         _canTakeThisJob = function;
     }
     public void SetCanTakeThisJobChecker(System.Func<Character, Character, JobQueueItem, bool> function) {
         _canTakeThisJobWithTarget = function;
+    }
+    public void SetOnTakeJobAction(System.Action<Character> action) {
+        _onTakeJobAction = action;
     }
     public void SetCannotCancelJob(bool state) {
         cannotCancelJob = state;

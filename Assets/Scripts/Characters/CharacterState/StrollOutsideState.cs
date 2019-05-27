@@ -5,12 +5,14 @@ using UnityEngine;
 public class StrollOutsideState : CharacterState {
 
     private STRUCTURE_TYPE[] _notAllowedStructures;
+    private int _currentDuration;
 
     public StrollOutsideState(CharacterStateComponent characterComp) : base(characterComp) {
         stateName = "Stroll Outside State";
         characterState = CHARACTER_STATE.STROLL_OUTSIDE;
         stateCategory = CHARACTER_STATE_CATEGORY.MAJOR;
         duration = GameManager.ticksPerHour;
+        _currentDuration = 0;
         _notAllowedStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.INN, STRUCTURE_TYPE.DWELLING, STRUCTURE_TYPE.WAREHOUSE };
     }
 
@@ -19,12 +21,21 @@ public class StrollOutsideState : CharacterState {
         base.DoMovementBehavior();
         StartStrollMovement();
     }
-    //protected override void PerTickInState() {
-    //    base.PerTickInState();
-    //    if (!isDone) {
-    //        stateComponent.character.CreatePersonalJobs();
-    //    }
-    //}
+    protected override void PerTickInState() {
+        base.PerTickInState();
+        if (!isDone) {
+            if(_currentDuration >= 4) {
+                _currentDuration = 0;
+                if (!stateComponent.character.PlanFullnessRecoveryActions()) {
+                    if (!stateComponent.character.PlanTirednessRecoveryActions()) {
+                        stateComponent.character.PlanHappinessRecoveryActions();
+                    }
+                }
+            } else {
+                _currentDuration++;
+            }
+        }
+    }
     public override bool OnEnterVisionWith(IPointOfInterest targetPOI) {
         if (stateComponent.character.role.roleType != CHARACTER_ROLE.BEAST && targetPOI is SpecialToken) {
             SpecialToken token = targetPOI as SpecialToken;

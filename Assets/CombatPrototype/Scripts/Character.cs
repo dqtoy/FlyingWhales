@@ -114,7 +114,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public int moodValue { get; private set; }
     public bool isCombatant { get; private set; } //This should only be a getter but since we need to know when the value changes it now has a setter
     public List<Trait> traitsNeededToBeRemoved { get; private set; }
-    public Memories memories { get; private set; }
+    //public Memories memories { get; private set; }
     public TrapStructure trapStructure { get; private set; }
     public bool isDisabledByPlayer { get; protected set; }
 
@@ -547,7 +547,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         allJobsTargettingThis = new List<JobQueueItem>();
         traitsNeededToBeRemoved = new List<Trait>();
         onLeaveAreaActions = new List<Action>();
-        memories = new Memories();
+        //memories = new Memories();
         trapStructure = new TrapStructure();
         SetPOIState(POI_STATE.ACTIVE);
         SetMoodValue(90);
@@ -597,7 +597,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         Messenger.AddListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnLeaveArea);
         Messenger.AddListener<Party>(Signals.PARTY_DONE_TRAVELLING, OnArrivedAtArea);
         Messenger.AddListener<Character, string>(Signals.CANCEL_CURRENT_ACTION, CancelCurrentAction);
-        Messenger.AddListener<Character, GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
+        Messenger.AddListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
 
     }
     public void UnsubscribeSignals() {
@@ -610,7 +610,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         Messenger.RemoveListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnLeaveArea);
         Messenger.RemoveListener<Party>(Signals.PARTY_DONE_TRAVELLING, OnArrivedAtArea);
         Messenger.RemoveListener<Character, string>(Signals.CANCEL_CURRENT_ACTION, CancelCurrentAction);
-        Messenger.RemoveListener<Character, GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
+        Messenger.RemoveListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
     }
     #endregion
 
@@ -776,6 +776,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 
             //ObjectPoolManager.Instance.DestroyObject(marker.gameObject);
             //deathTile.RemoveCharacterHere(this);
+
+            for (int i = 0; i < traits.Count; i++) {
+                traits[i].OnDeath();
+            }
 
             marker.OnDeath(deathTile);
 
@@ -1388,6 +1392,11 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
                 jobQueue.AddJobInQueue(job, true, false);
                 jobQueue.ProcessFirstJobInQueue(this);
+
+                Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "saw_and_undermine");
+                log.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                AddHistory(log);
                 return true;
             }
         }
@@ -2315,9 +2324,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             case RELATIONSHIP_TRAIT.LOVER:
                 //- **Lover:** Positive, Permanent (Can only have 1)
                 //check if this character already has a lover and that the target character is not his/her paramour
-                if (GetCharacterWithRelationship(type) != null) {
-                    return false;
-                }
+                //Comment Reason: Allowed multiple paramours
+                //if (GetCharacterWithRelationship(type) != null) {
+                //    return false;
+                //}
                 if (relationshipsWithTarget != null && relationshipsWithTarget.Contains(RELATIONSHIP_TRAIT.PARAMOUR)) {
                     return false;
                 }
@@ -2552,7 +2562,28 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
             Messenger.Broadcast(Signals.HISTORY_ADDED, this as object);
         }
-
+    }
+    private void OnActionStateSet(GoapAction action, GoapActionState state) {
+        if (action.actor != this && action.poiTarget != this) {
+            if (marker.inVisionPOIs.Contains(action.actor)) {
+                Log witnessLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "witness_event", action);
+                witnessLog.AddToFillers(marker.character, marker.character.name, LOG_IDENTIFIER.OTHER);
+                witnessLog.AddToFillers(null, Utilities.LogDontReplace(state.descriptionLog), LOG_IDENTIFIER.APPEND);
+                witnessLog.AddToFillers(state.descriptionLog.fillers);
+                AddHistory(witnessLog);
+            }
+        }
+    }
+    public void ThisCharacterSaw(Character target) {
+        if (target.currentAction != null && target.currentAction.isPerformingActualAction && !target.currentAction.isDone) {
+            if(target.currentAction.actor != this && target.currentAction.poiTarget != this) {
+                Log witnessLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "witness_event", target.currentAction);
+                witnessLog.AddToFillers(marker.character, marker.character.name, LOG_IDENTIFIER.OTHER);
+                witnessLog.AddToFillers(null, Utilities.LogDontReplace(target.currentAction.currentState.descriptionLog), LOG_IDENTIFIER.APPEND);
+                witnessLog.AddToFillers(target.currentAction.currentState.descriptionLog.fillers);
+                AddHistory(witnessLog);
+            }
+        }
     }
     #endregion
 
@@ -3684,7 +3715,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return false;
     }
-    private bool PlanFullnessRecoveryActions() {
+    public bool PlanFullnessRecoveryActions() {
         TIME_IN_WORDS currentTimeInWords = GameManager.GetCurrentTimeInWordsOfTick();
         Trait hungryOrStarving = GetTraitOr("Starving", "Hungry");
 
@@ -3724,7 +3755,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return false;
     }
-    private bool PlanTirednessRecoveryActions() {
+    public bool PlanTirednessRecoveryActions() {
         TIME_IN_WORDS currentTimeInWords = GameManager.GetCurrentTimeInWordsOfTick();
         Trait tiredOrExhausted = GetTraitOr("Exhausted", "Tired");
 
@@ -3765,7 +3796,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return false;
     }
-    private bool PlanHappinessRecoveryActions() {
+    public bool PlanHappinessRecoveryActions() {
         TIME_IN_WORDS currentTimeInWords = GameManager.GetCurrentTimeInWordsOfTick();
         Trait lonelyOrForlorn = GetTraitOr("Forlorn", "Lonely");
 
@@ -5389,6 +5420,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         poiGoapActions.Add(INTERACTION_TYPE.INVITE_TO_MAKE_LOVE);
         poiGoapActions.Add(INTERACTION_TYPE.DRINK_BLOOD);
         poiGoapActions.Add(INTERACTION_TYPE.REPLACE_TILE_OBJECT);
+        poiGoapActions.Add(INTERACTION_TYPE.TANTRUM);
     }
     public void StartGOAP(GoapEffect goal, IPointOfInterest target, GOAP_CATEGORY category, bool isPriority = false, List<Character> otherCharactePOIs = null, bool isPersonalPlan = true, GoapPlanJob job = null, bool allowDeadTargets = false) {
         List<CharacterAwareness> characterTargetsAwareness = new List<CharacterAwareness>();
@@ -6148,58 +6180,42 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         Log witnessLog = null;
         Log reportLog = null;
         RELATIONSHIP_EFFECT relationshipEfffectWithCriminal = GetRelationshipEffectWith(criminal);
+        CRIME_CATEGORY category = committedCrime.GetCategory();
+
+        //If character witnessed an Infraction crime:
+        if (category == CRIME_CATEGORY.INFRACTIONS) {
+            //-Witness Log: "[Character Name] saw [Criminal Name] committing [Theft/Assault/Murder]."
+            //- Report / Share Intel Log: "[Character Name] saw [Criminal Name] committing [Theft/Assault/Murder]."
+            //- no additional response
+            reactSummary += "\nCrime committed is infraction.";
+            witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "witnessed");
+            reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "witnessed");
+        }
         //If character has a positive relationship (Friend, Lover, Paramour) with the criminal
-        if (relationshipEfffectWithCriminal == RELATIONSHIP_EFFECT.POSITIVE) {
+        else if (relationshipEfffectWithCriminal == RELATIONSHIP_EFFECT.POSITIVE) {
             reactSummary += "\n" + this.name + " has a positive relationship with " + criminal.name;
-            CRIME_CATEGORY category = committedCrime.GetCategory();
-            //and crime severity is less than Serious Crimes:
-            if (category.IsLessThan(CRIME_CATEGORY.SERIOUS)) {
-                reactSummary += "\nCrime committed is less than serious, " + this.name + " will not do anything.";
-                //-Witness Log: "[Character Name] saw [Criminal Name] committing [Theft/Assault/Murder] but did not do anything due to their relationship."
+            //and crime severity is a Misdemeanor:
+            if (category == CRIME_CATEGORY.MISDEMEANOR) {
+                reactSummary += "\nCrime committed is misdemeanor.";
+                //- Witness Log: "[Character Name] saw [Criminal Name] committing [Theft/Assault/Murder] but did not do anything due to their relationship."
+                //-Report / Share Intel Log: "[Character Name] was informed that [Criminal Name] committed [Theft/Assault/Murder] but did not do anything due to their relationship."
                 witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "do_nothing");
                 reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_do_nothing");
             }
             //and crime severity is Serious Crimes or worse:
             else if (category.IsGreaterThanOrEqual(CRIME_CATEGORY.SERIOUS)) {
                 reactSummary += "\nCrime committed is serious or worse. Removing positive relationships.";
-                //- Witness Log: "[Character Name] saw [Criminal Name] committing [Theft/Assault/Murder]! They are no longer [Friends/Lovers/Paramours]."
                 //- Relationship Degradation between Character and Criminal
                 CharacterManager.Instance.RelationshipDegradation(criminal, this, witnessedCrime);
-
-                //List<RelationshipTrait> traitsToRemove = GetAllRelationshipOfEffectWith(criminal, TRAIT_EFFECT.POSITIVE);
-                //CharacterManager.Instance.RemoveRelationshipBetween(this, criminal, traitsToRemove);
-
-                //string removedTraitsSummary = string.Empty;
-                //for (int i = 0; i < traitsToRemove.Count; i++) {
-                //    RelationshipTrait currTrait = traitsToRemove[i];
-                //    if (i + 1 == traitsToRemove.Count && traitsToRemove.Count != 1) removedTraitsSummary += " and ";  //this is the last element
-                //    else if (i > 0) removedTraitsSummary += ", ";
-
-                //    removedTraitsSummary += Utilities.GetRelationshipPlural(currTrait.relType);
-                //}
-                //reactSummary += "\nRemoved relationships: " + removedTraitsSummary;
-
-                //if (traitsToRemove.Count > 0) {
-                //    //if traits were removed, use remove relationship version of log
-                //    witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "remove_relationship");
-                //    witnessLog.AddToFillers(null, removedTraitsSummary, LOG_IDENTIFIER.STRING_2);
-
-                //    reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_remove_relationship");
-                //    reportLog.AddToFillers(null, removedTraitsSummary, LOG_IDENTIFIER.STRING_2);
-                //} else {
-                //    //else use normal witnessed log
-                //    witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "witnessed");
-                //    reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_witnessed");
-                //}
-
                 witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "witnessed");
                 reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_witnessed");
                 PerRoleCrimeReaction(committedCrime, criminal, witnessedCrime);
             }
         }
-        //If character has no relationships with the criminal or they are enemies:
-        else if (!this.HasRelationshipWith(criminal) || this.HasRelationshipOfTypeWith(criminal, RELATIONSHIP_TRAIT.ENEMY)) {
-            reactSummary += "\n" + this.name + " does not have a relationship with or is an enemy of " + criminal.name;
+        //If character has no relationships with the criminal or they are enemies and the crime is a Misdemeanor or worse:
+        else if ((!this.HasRelationshipWith(criminal) || this.HasRelationshipOfTypeWith(criminal, RELATIONSHIP_TRAIT.ENEMY)) 
+            && category.IsGreaterThanOrEqual(CRIME_CATEGORY.MISDEMEANOR)) {
+            reactSummary += "\n" + this.name + " does not have a relationship with or is an enemy of " + criminal.name + " and the committed crime is misdemeanor or worse";
             //- Relationship Degradation between Character and Criminal
             CharacterManager.Instance.RelationshipDegradation(criminal, this, witnessedCrime);
             //- Witness Log: "[Character Name] saw [Criminal Name] committing [Theft/Assault/Murder]!"
@@ -6366,14 +6382,15 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     #endregion
 
     #region Logs
-    public void RegisterLogAndShowNotifToThisCharacterOnly(string fileName, string key, object target = null, string targetName = "") {
+    //Add log to this character and show notif of that log only if this character is clicked or tracked, otherwise, add log only
+    public void RegisterLogAndShowNotifToThisCharacterOnly(string fileName, string key, object target = null, string targetName = "", GoapAction goapAction = null) {
         if (!GameManager.Instance.gameHasStarted) {
             return;
         }
         if (key == "remove_trait" && isDead) {
             return;
         }
-        Log addLog = new Log(GameManager.Instance.Today(), "Character", fileName, key);
+        Log addLog = new Log(GameManager.Instance.Today(), "Character", fileName, key, goapAction);
         addLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         if (targetName != "") {
             addLog.AddToFillers(target, targetName, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -6426,23 +6443,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             ClearIgnoreHostilities();
         }
         marker.UpdateActionIcon();
-    }
-    #endregion
-
-    #region Memories
-    private void OnActionStateSet(Character actor, GoapAction action, GoapActionState state) {
-        if (actor == this) {
-            memories.AddMemory(action);
-        } else {
-            if (marker.inVisionPOIs.Contains(actor)) {
-                memories.AddMemory(action);
-            }
-        }
-    }
-    public void ThisCharacterSaw(Character target) {
-        if(target.currentAction != null && target.currentAction.isPerformingActualAction && !target.currentAction.isDone) {
-            memories.AddMemory(target.currentAction);
-        }
     }
     #endregion
 }

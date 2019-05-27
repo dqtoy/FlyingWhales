@@ -278,19 +278,22 @@ public class Utilities : MonoBehaviour {
         if (log == null) {
             return string.Empty;
         }
+        if(log.logText != string.Empty) {
+            return log.logText;
+        }
         string replacedWord = string.Empty;
         List<int> specificWordIndexes = new List<int>();
         string newText = LocalizationManager.Instance.GetLocalizedValue(log.category, log.file, log.key);
-        bool hasPeriod = newText.EndsWith(".");
+        //bool hasPeriod = newText.EndsWith(".");
 
         if (!string.IsNullOrEmpty(newText)) {
-            string[] words = Utilities.SplitAndKeepDelimiters(newText, new char[] { ' ', '.', ',', '\'', '!', });
+            string[] words = SplitAndKeepDelimiters(newText, new char[] { ' ', '.', ',', '\'', '!', });
             for (int i = 0; i < words.Length; i++) {
                 replacedWord = string.Empty;
                 if (words[i].StartsWith("%") && (words[i].EndsWith("%") || words[i].EndsWith("@"))) { //OBJECT
-                    replacedWord = Utilities.CustomStringReplacer(words[i], ref log.fillers);
+                    replacedWord = CustomStringReplacer(words[i], log.fillers);
                 } else if (words[i].StartsWith("%") && (words[i].EndsWith("a") || words[i].EndsWith("b"))) { //PRONOUN
-                    replacedWord = Utilities.CustomPronounReplacer(words[i], log.fillers);
+                    replacedWord = CustomPronounReplacer(words[i], log.fillers);
                 }
                 if (!string.IsNullOrEmpty(replacedWord)) {
                     words[i] = replacedWord;
@@ -302,7 +305,44 @@ public class Utilities : MonoBehaviour {
             }
             newText = newText.Trim(' ');
         }
+        log.SetLogText(newText);
+        return newText;
+    }
+    public static string StringReplacer(string text, List<LogFiller> fillers) {
+        if (string.IsNullOrEmpty(text)) {
+            return string.Empty;
+        }
+        string replacedWord = string.Empty;
+        List<int> specificWordIndexes = new List<int>();
+        string newText = text;
+        //bool hasPeriod = newText.EndsWith(".");
 
+        if (!string.IsNullOrEmpty(newText)) {
+            string[] words = SplitAndKeepDelimiters(newText, new char[] { ' ', '.', ',', '\'', '!', });
+            for (int i = 0; i < words.Length; i++) {
+                replacedWord = string.Empty;
+                if (words[i].StartsWith("%") && (words[i].EndsWith("%") || words[i].EndsWith("@"))) { //OBJECT
+                    replacedWord = CustomStringReplacer(words[i], fillers);
+                } else if (words[i].StartsWith("%") && (words[i].EndsWith("a") || words[i].EndsWith("b"))) { //PRONOUN
+                    replacedWord = CustomPronounReplacer(words[i], fillers);
+                }
+                if (!string.IsNullOrEmpty(replacedWord)) {
+                    words[i] = replacedWord;
+                }
+            }
+            newText = string.Empty;
+            for (int i = 0; i < words.Length; i++) {
+                newText += words[i];
+            }
+            newText = newText.Trim(' ');
+        }
+        return newText;
+    }
+    public static string LogDontReplace(Log log) {
+        if (log == null) {
+            return string.Empty;
+        }
+        string newText = LocalizationManager.Instance.GetLocalizedValue(log.category, log.file, log.key);
         return newText;
     }
     public static string CustomPronounReplacer(string wordToBeReplaced, List<LogFiller> objectLog) {
@@ -336,7 +376,7 @@ public class Utilities : MonoBehaviour {
         return wordToReplace;
 
     }
-    public static string CustomStringReplacer(string wordToBeReplaced, ref List<LogFiller> objectLog) {
+    public static string CustomStringReplacer(string wordToBeReplaced, List<LogFiller> objectLog) {
         string wordToReplace = string.Empty;
         string strLogIdentifier = wordToBeReplaced.Substring(1, wordToBeReplaced.Length - 2);
         //strLogIdentifier = strLogIdentifier.Remove((strLogIdentifier.Length - 1), 1);
@@ -360,6 +400,13 @@ public class Utilities : MonoBehaviour {
                 //Add 'and' after last comma
                 int commaLastIndex = wordToReplace.LastIndexOf(',');
                 wordToReplace = wordToReplace.Insert(commaLastIndex + 1, " and");
+            }
+        } else if (identifier == LOG_IDENTIFIER.APPEND) {
+            for (int i = 0; i < objectLog.Count; i++) {
+                if (objectLog[i].identifier == identifier) {
+                    wordToReplace = StringReplacer(objectLog[i].value, objectLog);
+                    break;
+                }
             }
         } else {
             for (int i = 0; i < objectLog.Count; i++) {
@@ -490,6 +537,7 @@ public class Utilities : MonoBehaviour {
         {"122", LOG_IDENTIFIER.MINION_2_PRONOUN_R},
         {"123", LOG_IDENTIFIER.CHARACTER_LIST_1},
         {"124", LOG_IDENTIFIER.CHARACTER_LIST_2},
+        {"125", LOG_IDENTIFIER.APPEND},
 		//{"111", LOG_IDENTIFIER.PARTY_NAME},
 	};
     public static string GetStringForIdentifier(LOG_IDENTIFIER identifier) {

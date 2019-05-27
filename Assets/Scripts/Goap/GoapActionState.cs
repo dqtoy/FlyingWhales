@@ -8,7 +8,7 @@ public class GoapActionState {
     public GoapAction parentAction { get; private set; }
 	public string name { get; private set; }
     public int duration { get; private set; } //if 0, go instantly to after effect
-    public Log descriptionLog { get; private set; }
+    public Log descriptionLog { get; private set; } //Always set/create description logs on Pre effect because description logs are used in Memories and Memories are stored on start of the GoapActionState
     public Action preEffect { get; private set; }
     public Action perTickEffect { get; private set; }
     public Action afterEffect { get; private set; }
@@ -46,7 +46,7 @@ public class GoapActionState {
 
     #region Logs
     private void CreateLog() {
-        descriptionLog = new Log(GameManager.Instance.Today(), "GoapAction", parentAction.GetType().ToString(), name.ToLower() + "_description");
+        descriptionLog = new Log(GameManager.Instance.Today(), "GoapAction", parentAction.GetType().ToString(), name.ToLower() + "_description", parentAction);
         AddLogFiller(parentAction.actor, parentAction.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         if(parentAction.poiTarget is Character) {
             AddLogFiller(parentAction.poiTarget as Character, parentAction.poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);

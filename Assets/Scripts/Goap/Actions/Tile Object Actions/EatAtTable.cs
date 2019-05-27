@@ -103,7 +103,7 @@ public class EatAtTable : GoapAction {
         int chance = UnityEngine.Random.Range(0, 2);
         Log log = null;
         if(chance == 0) {
-            log = new Log(GameManager.Instance.Today(), "GoapAction", "EatAtTable", "eat poisoned_sick");
+            log = new Log(GameManager.Instance.Today(), "GoapAction", "EatAtTable", "eat poisoned_sick", this);
             log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(poiTarget.gridTileLocation.structure.location, poiTarget.gridTileLocation.structure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
             Sick sick = new Sick();
@@ -115,7 +115,7 @@ public class EatAtTable : GoapAction {
                 parentPlan.job.SetCannotCancelJob(true);
             }
             SetCannotCancelAction(true);
-            log = new Log(GameManager.Instance.Today(), "GoapAction", "EatAtTable", "eat poisoned_killed");
+            log = new Log(GameManager.Instance.Today(), "GoapAction", "EatAtTable", "eat poisoned_killed", this);
             log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(poiTarget.gridTileLocation.structure.location, poiTarget.gridTileLocation.structure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
             actor.Death("normal");
