@@ -2324,26 +2324,25 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             case RELATIONSHIP_TRAIT.LOVER:
                 //- **Lover:** Positive, Permanent (Can only have 1)
                 //check if this character already has a lover and that the target character is not his/her paramour
-                //Comment Reason: Allowed multiple paramours
-                //if (GetCharacterWithRelationship(type) != null) {
-                //    return false;
-                //}
+                if (GetCharacterWithRelationship(type) != null) {
+                    return false;
+                }
                 if (relationshipsWithTarget != null && relationshipsWithTarget.Contains(RELATIONSHIP_TRAIT.PARAMOUR)) {
                     return false;
                 }
                 return true;
-
-            //if (GetCharacterWithRelationship(type) == null
-            //    && !relationshipsWithTarget.Contains(RELATIONSHIP_TRAIT.PARAMOUR)) {
-            //    return true;
-            //}
-            //return false;
+                //if (GetCharacterWithRelationship(type) == null
+                //    && !relationshipsWithTarget.Contains(RELATIONSHIP_TRAIT.PARAMOUR)) {
+                //    return true;
+                //}
+                //return false;
             case RELATIONSHIP_TRAIT.PARAMOUR:
                 //- **Paramour:** Positive, Transient (Can only have 1)
                 //check if this character already has a paramour and that the target character is not his/her lover
-                if (GetCharacterWithRelationship(type) != null) {
-                    return false;
-                }
+                //Comment Reason: Allowed multiple paramours
+                //if (GetCharacterWithRelationship(type) != null) {
+                //    return false;
+                //}
                 if (relationshipsWithTarget != null && relationshipsWithTarget.Contains(RELATIONSHIP_TRAIT.LOVER)) {
                     return false;
                 }
@@ -2353,11 +2352,11 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 }
 
                 return true;
-            //if (GetCharacterWithRelationship(type) == null 
-            //    && !relationshipsWithTarget.Contains(RELATIONSHIP_TRAIT.LOVER)) { 
-            //    return true;
-            //}
-            //return false;
+                //if (GetCharacterWithRelationship(type) == null 
+                //    && !relationshipsWithTarget.Contains(RELATIONSHIP_TRAIT.LOVER)) { 
+                //    return true;
+                //}
+                //return false;
             case RELATIONSHIP_TRAIT.MASTER:
                 //this means that the target character will be this characters master, therefore making this character his/her servant
                 //so check if this character isn't already serving a master, or that this character is not a master himself
@@ -6381,7 +6380,17 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 }
                 int chance = UnityEngine.Random.Range(0, 100);
                 if(chance < 20) {
+                    CancelAllJobsAndPlans();
                     //Create Tantrum action
+                    GoapPlanJob tantrum = new GoapPlanJob("Tantrum", INTERACTION_TYPE.TANTRUM, this, new Dictionary<INTERACTION_TYPE, object[]>() {
+                        { INTERACTION_TYPE.TANTRUM, new object[] { triggerAction } }
+                    });
+                    tantrum.SetCannotOverrideJob(true);
+                    tantrum.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
+                    tantrum.SetIsPriority(true);
+                    jobQueue.AddJobInQueue(tantrum, true);
+                    jobQueue.ProcessFirstJobInQueue(this);
+                    Debug.Log(this.name + " is started having a tantrum!");
                 }
             }
         }

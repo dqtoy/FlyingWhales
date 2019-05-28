@@ -567,6 +567,9 @@ public class GoapAction {
             }
         }
     }
+    public bool IsActorAtTargetTile() {
+        return actor.gridTileLocation == targetTile;
+    }
     #endregion
 
     #region Trait Utilities

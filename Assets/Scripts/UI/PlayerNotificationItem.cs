@@ -9,21 +9,28 @@ public class PlayerNotificationItem : PooledObject {
     private const int Expiration_Ticks = 10;
     private int ticksAlive = 0;
 
-    [SerializeField] private EnvelopContentUnityUI mainEnvelopContent;
-    [SerializeField] private EnvelopContentUnityUI logEnvelopContent;
+    public Log shownLog { get; private set; }
+
+    //[SerializeField] private EnvelopContentUnityUI mainEnvelopContent;
+    //[SerializeField] private EnvelopContentUnityUI logEnvelopContent;
     [SerializeField] private TextMeshProUGUI logLbl;
     [SerializeField] private LogItem logItem;
 
-    public void Initialize(Log log, bool hasExpiry = true) {
+    private System.Action<PlayerNotificationItem> onDestroyAction;
+
+    public void Initialize(Log log, bool hasExpiry = true, System.Action<PlayerNotificationItem> onDestroyAction = null) {
+        shownLog = log;
         logLbl.SetText("[" + GameManager.ConvertTickToTime(GameManager.Instance.tick) + "] " + Utilities.LogReplacer(log));
         logItem.SetLog(log);
-        logEnvelopContent.Execute();
-        mainEnvelopContent.Execute();
+        //logEnvelopContent.Execute();
+        //mainEnvelopContent.Execute();
 
         if (hasExpiry) {
             //schedule expiry
             Messenger.AddListener(Signals.TICK_ENDED, CheckForExpiry);
         }
+
+        this.onDestroyAction = onDestroyAction;
     }
     private void CheckForExpiry() {
         if (ticksAlive == Expiration_Ticks) {
@@ -46,6 +53,7 @@ public class PlayerNotificationItem : PooledObject {
         if (Messenger.eventTable.ContainsKey(Signals.TICK_ENDED)) {
             Messenger.RemoveListener(Signals.TICK_ENDED, CheckForExpiry);
         }
+        onDestroyAction?.Invoke(this);
         ObjectPoolManager.Instance.DestroyObject(this.gameObject);
     }
 }
