@@ -6375,7 +6375,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         moodValue += amount;
         moodValue = Mathf.Clamp(moodValue, 1, 100);
         if(triggerAction != null) {
-            if(amount < 0) {
+            if(amount < 0 && currentMoodType == CHARACTER_MOOD.DARK) {
                 if(currentAction != null && currentAction.goapType == INTERACTION_TYPE.TANTRUM) {
                     return;
                 }
