@@ -92,10 +92,9 @@ public class Player : ILeader {
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
 
         //goap
-        //Messenger.AddListener<Character, GoapPlan>(Signals.CHARACTER_WILL_DO_PLAN, OnCharacterWillDoPlan);
         Messenger.AddListener<Character, GoapAction>(Signals.CHARACTER_DID_ACTION, OnCharacterDidAction);
         Messenger.AddListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
-        //Messenger.AddListener<Character, GoapAction>(Signals.CHARACTER_DOING_ACTION, OnCharacterDoingAction);
+        Messenger.AddListener<Character, GoapAction>(Signals.CHARACTER_DOING_ACTION, OnCharacterDoingAction);
     }
 
     #region ILeader
@@ -678,26 +677,11 @@ public class Player : ILeader {
     public bool AlreadyHasIntel(Intel intel) {
         return allIntel.Contains(intel);
     }
-    //private void OnCharacterWillDoPlan(Character character, GoapPlan plan) {
-        //if (!plan.hasShownNotification) {
-        //    plan.SetHasShownNotification(true);
-        //} else {
-        //    return;
-        //}
-        //bool showPopup = false;
-        //if (plan.endNode.action.showIntelNotification 
-        //    && plan.endNode.action.planLog != null) { //do not show notification if plan log of end node is null, usually means that the action is not that important
-        //    showPopup = ShouldShowNotificationFrom(character, plan.endNode.action.shouldIntelNotificationOnlyIfActorIsActive);
-        //}
-        //if (showPopup) {
-        //    //Messenger.Broadcast<Intel>(Signals.SHOW_INTEL_NOTIFICATION, InteractionManager.Instance.CreateNewIntel(plan, character));
-        //    if (plan.endNode.action.shouldIntelNotificationOnlyIfActorIsActive) {
-        //        ShowNotification(plan.endNode.action.planLog);
-        //    } else {
-        //        ShowNotificationFrom(character, plan.endNode.action.planLog);
-        //    }
-        //}
-    //}
+    /// <summary>
+    /// Listener for when a character has finished doing an action.
+    /// </summary>
+    /// <param name="character">The character that finished the action.</param>
+    /// <param name="action">The action that was finished.</param>
     private void OnCharacterDidAction(Character character, GoapAction action) {
         bool showPopup = false;
         if (action.showIntelNotification) {
@@ -715,9 +699,15 @@ public class Player : ILeader {
             }
         }
     }
+    /// <summary>
+    /// Listener for when a character starts an action.
+    /// Character will go to target location. <see cref="GoapAction.DoAction"/>
+    /// </summary>
+    /// <param name="character">The character that will do the action.</param>
+    /// <param name="action">The action that will be performed.</param>
     private void OnCharacterDoingAction(Character character, GoapAction action) {
         bool showPopup = false;
-        if (action.showIntelNotification) {
+        if (action.showIntelNotification && !action.IsActorAtTargetTile()) { //added checking if actor is already at target tile. So that travelling notification won't show if that is the case.
             if (action.shouldIntelNotificationOnlyIfActorIsActive) {
                 showPopup = ShouldShowNotificationFrom(action.actor, true);
             } else {
@@ -728,6 +718,12 @@ public class Player : ILeader {
             Messenger.Broadcast<Log>(Signals.SHOW_PLAYER_NOTIFICATION, action.GetCurrentLog());
         }
     }
+    /// <summary>
+    /// Listener for when an action's state is set. Always means that the character has
+    /// started performing the action.
+    /// </summary>
+    /// <param name="action">The action that is being performed.</param>
+    /// <param name="state">The state that the action is in.</param>
     private void OnActionStateSet(GoapAction action, GoapActionState state) {
         bool showPopup = false;
         if (action.showIntelNotification && state.duration > 0) { //added checking for duration because this notification should only show for actions that have durations.

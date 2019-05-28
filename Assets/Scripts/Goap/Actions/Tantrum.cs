@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class Tantrum : GoapAction {
 
+    private GoapAction reason;
+
     public Tantrum(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.TANTRUM, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         //shouldIntelNotificationOnlyIfActorIsActive = true;
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
@@ -44,11 +46,15 @@ public class Tantrum : GoapAction {
         base.OnResultReturnedToActor();
         actor.stateComponent.SwitchToState(CHARACTER_STATE.BERSERKED, null, actor.specificLocation, GameManager.Instance.GetTicksBasedOnHour(2));
     }
+    public override bool InitializeOtherData(object[] otherData) {
+        reason = otherData[0] as GoapAction;
+        return base.InitializeOtherData(otherData);
+    }
     #endregion
 
     #region Effects
-    private void AfterTantrumSuccess() {
-       
+    private void PreTantrumSuccess() {
+        currentState.AddLogFiller(null, reason?.goapName ?? "None", LOG_IDENTIFIER.STRING_1);
     }
     #endregion
 

@@ -12,9 +12,9 @@ public class IntelNotificationItem : PlayerNotificationItem {
     [SerializeField] private Button getIntelBtn;
     [SerializeField] private GameObject convertTooltip;
 
-    public void Initialize(Intel intel, bool hasExpiry = true) {
+    public void Initialize(Intel intel, bool hasExpiry = true, System.Action<PlayerNotificationItem> onDestroyAction = null) {
         this.intel = intel;
-        base.Initialize(intel.intelLog, hasExpiry);
+        base.Initialize(intel.intelLog, hasExpiry, onDestroyAction);
     }
    
     public void GetIntel() {

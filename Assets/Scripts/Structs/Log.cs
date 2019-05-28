@@ -116,7 +116,7 @@ public class Log {
         }
         return false;
     }
-    private LogFiller GetFillerForIdentifier(LOG_IDENTIFIER identifier) {
+    public LogFiller GetFillerForIdentifier(LOG_IDENTIFIER identifier) {
         for (int i = 0; i < fillers.Count; i++) {
             LogFiller currFiller = fillers[i];
             if (currFiller.identifier == identifier) {

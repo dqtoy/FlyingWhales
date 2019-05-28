@@ -1433,17 +1433,49 @@ public class UIManager : MonoBehaviour {
     //public ScrollRect playerNotifScrollView;
     public GameObject playerNotifGO;
     public Transform playerNotifContentTransform;
+    private List<PlayerNotificationItem> activeNotifications = new List<PlayerNotificationItem>(); //notifications that are currently being shown.
     private void ShowPlayerNotification(Intel intel) {
         GameObject newIntelGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(intelPrefab.name, Vector3.zero, Quaternion.identity, playerNotifContentTransform);
-        newIntelGO.GetComponent<IntelNotificationItem>().Initialize(intel);
-        (newIntelGO.transform as RectTransform).SetAsFirstSibling();
-        (newIntelGO.transform as RectTransform).localScale = Vector3.one;
+        IntelNotificationItem newItem = newIntelGO.GetComponent<IntelNotificationItem>();
+        newItem.Initialize(intel, true, OnNotificationDestroyed);
+        newIntelGO.transform.localScale = Vector3.one;
+        PlaceNewNotificaton(newItem);
     }
     private void ShowPlayerNotification(Log log) {
         GameObject newIntelGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(defaultNotificationPrefab.name, Vector3.zero, Quaternion.identity, playerNotifContentTransform);
-        newIntelGO.GetComponent<PlayerNotificationItem>().Initialize(log);
-        (newIntelGO.transform as RectTransform).SetAsFirstSibling();
-        (newIntelGO.transform as RectTransform).localScale = Vector3.one;
+        PlayerNotificationItem newItem = newIntelGO.GetComponent<PlayerNotificationItem>();
+        newItem.Initialize(log, true, OnNotificationDestroyed);
+        newIntelGO.transform.localScale = Vector3.one;
+        PlaceNewNotificaton(newItem);        
+    }
+    private void PlaceNewNotificaton(PlayerNotificationItem newNotif) {
+        //check if the log used is from a GoapAction
+        //then check all other currently showing notifications, if it is from the same goap action and the active character of both logs are the same.
+        //replace that log with this new one
+        PlayerNotificationItem itemToReplace = null;
+        if (newNotif.shownLog.category == "GoapAction") {
+            for (int i = 0; i < activeNotifications.Count; i++) {
+                PlayerNotificationItem currItem = activeNotifications[i];
+                if (currItem.shownLog.category == "GoapAction" && currItem.shownLog.file == newNotif.shownLog.file
+                    && currItem.shownLog.HasFillerForIdentifier(LOG_IDENTIFIER.ACTIVE_CHARACTER) && newNotif.shownLog.HasFillerForIdentifier(LOG_IDENTIFIER.ACTIVE_CHARACTER)
+                    && currItem.shownLog.GetFillerForIdentifier(LOG_IDENTIFIER.ACTIVE_CHARACTER).obj == newNotif.shownLog.GetFillerForIdentifier(LOG_IDENTIFIER.ACTIVE_CHARACTER).obj) {
+                    itemToReplace = currItem;
+                    break;
+                }
+            }
+        }
+
+        if (itemToReplace != null) {
+            int index = (itemToReplace.transform as RectTransform).GetSiblingIndex();
+            itemToReplace.DeleteNotification();
+            (newNotif.gameObject.transform as RectTransform).SetSiblingIndex(index);
+        } else {
+            (newNotif.gameObject.transform as RectTransform).SetAsFirstSibling();
+        }
+        activeNotifications.Add(newNotif);
+    }
+    private void OnNotificationDestroyed(PlayerNotificationItem item) {
+        activeNotifications.Remove(item);
     }
     #endregion
 
