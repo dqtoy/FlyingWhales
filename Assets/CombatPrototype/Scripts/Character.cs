@@ -5174,7 +5174,11 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     }
                 }
             }
-
+            Log informedLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "informed_event", intel.intelLog.goapAction);
+            informedLog.AddToFillers(this, this.name, LOG_IDENTIFIER.OTHER);
+            informedLog.AddToFillers(null, Utilities.LogDontReplace(intel.intelLog), LOG_IDENTIFIER.APPEND);
+            informedLog.AddToFillers(intel.intelLog.fillers);
+            AddHistory(informedLog);
         }
         PlayerManager.Instance.player.RemoveIntel(intel);
         return dialogReactions;
@@ -6374,7 +6378,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         moodValue += amount;
         moodValue = Mathf.Clamp(moodValue, 1, 100);
         if(triggerAction != null) {
-            if(amount < 0) {
+            if(amount < 0 && currentMoodType == CHARACTER_MOOD.DARK) {
                 if(currentAction != null && currentAction.goapType == INTERACTION_TYPE.TANTRUM) {
                     return;
                 }
