@@ -2539,13 +2539,21 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return false;
     }
-    public bool HasRelationshipOfTypeWith(Character character, RELATIONSHIP_TRAIT relType1, RELATIONSHIP_TRAIT relType2, RELATIONSHIP_TRAIT relType3, RELATIONSHIP_TRAIT relType4) {
+    public bool HasRelationshipOfTypeWith(Character character, params RELATIONSHIP_TRAIT[] rels) {
         if (HasRelationshipWith(character)) {
             for (int i = 0; i < relationships[character].rels.Count; i++) {
                 RelationshipTrait currTrait = relationships[character].rels[i];
-                if ((currTrait.relType == relType1 || currTrait.relType == relType2 || currTrait.relType == relType3 || currTrait.relType == relType4) && !currTrait.isDisabled) {
-                    return true;
+                if (currTrait.isDisabled) {
+                    continue; //skip
                 }
+                for (int j = 0; j < rels.Length; j++) {
+                    if (rels[j] == currTrait.relType && !currTrait.isDisabled) {
+                        return true;
+                    }
+                }
+                //if ((currTrait.relType == relType1 || currTrait.relType == relType2 || currTrait.relType == relType3 || currTrait.relType == relType4) && !currTrait.isDisabled) {
+                //    return true;
+                //}
             }
         }
         return false;

@@ -1090,7 +1090,7 @@ public class Utilities : MonoBehaviour {
     //}
     #endregion
 
-    #region List Utilities
+    #region Collection Utilities
     public static bool ContainsRange<T>(List<T> sourceList, List<T> otherList) {
         //this is used to check whether a list has all the values in another list
         for (int i = 0; i < otherList.Count; i++) {
