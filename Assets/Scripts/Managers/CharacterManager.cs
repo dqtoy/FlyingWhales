@@ -45,7 +45,9 @@ public class CharacterManager : MonoBehaviour {
 
     [Header("Job Icons")]
     [SerializeField] private JobIconsDictionary jobIcons;
-    
+
+    //alter egos
+    public const string Original_Alter_Ego = "Original";
 
     public Dictionary<Character, List<string>> allCharacterLogs { get; private set; }
     //public Dictionary<INTERACTION_TYPE, int> awayFromHomeInteractionWeights { get; private set; }

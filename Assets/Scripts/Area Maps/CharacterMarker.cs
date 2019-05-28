@@ -170,6 +170,7 @@ public class CharacterMarker : PooledObject {
             //check if that character is in this characters vision 
             //and that this character can react to a crime (not in flee or engage mode)
             if (action.IsConsideredACrimeBy(this.character)
+                && action.CanReactToThisCrime(this.character)
                 && inVisionPOIs.Contains(character)
                 && this.character.CanReactToCrime()) {
                 this.character.ReactToCrime(action);

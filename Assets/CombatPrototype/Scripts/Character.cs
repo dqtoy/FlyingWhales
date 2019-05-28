@@ -92,7 +92,15 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public Area defendingArea { get; private set; }
     public MORALITY morality { get; private set; }
     public CharacterToken characterToken { get; private set; }
-    public Dictionary<Character, CharacterRelationshipData> relationships { get; private set; }
+    public Dictionary<Character, CharacterRelationshipData> relationships {
+        get {
+            if (alterEgos == null || !alterEgos.ContainsKey(currentAlterEgo)) {
+                Debug.LogWarning(this.name + " Alter Ego Relationship Problem! Current alter ego is: " + currentAlterEgo);
+                return null;
+            }
+            return alterEgos[currentAlterEgo].relationships;
+        }
+    }
     public List<INTERACTION_TYPE> currentInteractionTypes { get; private set; }
     public Dictionary<POINT_OF_INTEREST_TYPE, List<IAwareness>> awareness { get; private set; }
     public List<INTERACTION_TYPE> poiGoapActions { get; private set; }
@@ -146,6 +154,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 
     //hostility
     public int ignoreHostility { get; private set; }
+
+    //alter egos
+    public string currentAlterEgo { get; private set; } //this character's currently active alter ego. Usually just Original.
+    private Dictionary<string, AlterEgoData> alterEgos;
 
     //For Testing
     public List<string> locationHistory { get; private set; }
@@ -536,7 +548,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         combatHistory = new Dictionary<int, Combat>();
         currentInteractionTypes = new List<INTERACTION_TYPE>();
         characterToken = new CharacterToken(this);
-        relationships = new Dictionary<Character, CharacterRelationshipData>();
         poiGoapActions = new List<INTERACTION_TYPE>();
         allGoapPlans = new List<GoapPlan>();
         hasAssaultPlan = false;
@@ -576,6 +587,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 #if !WORLD_CREATION_TOOL
         //SetDailyInteractionGenerationTick(); //UnityEngine.Random.Range(1, 13)
 #endif
+        InitializeAlterEgos();
         ConstructInitialGoapAdvertisementActions();
         SubscribeToSignals();
         //StartDailyGoapPlanGeneration();
@@ -2404,41 +2416,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return false;
     }
-    public bool HasRelationshipOfEffectWith(Character character, List<TRAIT_EFFECT> effect) {
-        if (HasRelationshipWith(character)) {
-            for (int i = 0; i < relationships[character].rels.Count; i++) {
-                RelationshipTrait currTrait = relationships[character].rels[i];
-                if (!currTrait.isDisabled && effect.Contains(currTrait.effect)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-    public bool HasRelationshipOfEffect(TRAIT_EFFECT effect) {
-        foreach (KeyValuePair<Character, CharacterRelationshipData> kvp in relationships) {
-            if (!kvp.Value.isDisabled) {
-                for (int i = 0; i < kvp.Value.rels.Count; i++) {
-                    if (effect == kvp.Value.rels[i].effect) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-    public bool HasRelationshipOfEffect(List<TRAIT_EFFECT> effect) {
-        foreach (KeyValuePair<Character, CharacterRelationshipData> kvp in relationships) {
-            if (!kvp.Value.isDisabled) {
-                for (int i = 0; i < kvp.Value.rels.Count; i++) {
-                    if (effect.Contains(kvp.Value.rels[i].effect)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
     /// <summary>
     /// Does this character have any relationship type with a target character among the given relationship types.
     /// </summary>
@@ -2465,28 +2442,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             for (int i = 0; i < relationships[character].rels.Count; i++) {
                 RelationshipTrait currTrait = relationships[character].rels[i];
                 if (currTrait.relType == relType && !currTrait.isDisabled) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-    public bool HasRelationshipOfTypeWith(Character character, RELATIONSHIP_TRAIT relType1, RELATIONSHIP_TRAIT relType2) {
-        if (HasRelationshipWith(character)) {
-            for (int i = 0; i < relationships[character].rels.Count; i++) {
-                RelationshipTrait currTrait = relationships[character].rels[i];
-                if ((currTrait.relType == relType1 || currTrait.relType == relType2) && !currTrait.isDisabled) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-    public bool HasRelationshipOfTypeWith(Character character, RELATIONSHIP_TRAIT relType1, RELATIONSHIP_TRAIT relType2, RELATIONSHIP_TRAIT relType3) {
-        if (HasRelationshipWith(character)) {
-            for (int i = 0; i < relationships[character].rels.Count; i++) {
-                RelationshipTrait currTrait = relationships[character].rels[i];
-                if ((currTrait.relType == relType1 || currTrait.relType == relType2 || currTrait.relType == relType3) && !currTrait.isDisabled) {
                     return true;
                 }
             }
@@ -5760,6 +5715,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             PrintLogIfActive(log);
             //PlanGoapActions();
         }
+        
         //if (result == InteractionManager.Goap_State_Success) {
         //    log += "\nAction performed is a success!";
         //    plan.SetNextNode();
@@ -6062,17 +6018,18 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     /// <param name="criminal">The character that committed the crime</param>
     /// <param name="witnessedCrime">The crime witnessed by this character, if this is null, character was only informed of the crime by someone else.</param>
     public void ReactToCrime(CRIME committedCrime, Character criminal, GoapAction witnessedCrime = null) {
-        if (witnessedCrime != null) {
-            //if the action that should be considered a crime is part of a job from this character's area, do not consider it a crime
-            if (witnessedCrime.parentPlan.job != null
-                && homeArea.jobQueue.jobsInQueue.Contains(witnessedCrime.parentPlan.job)) {
-                return;
-            }
-            //if the witnessed crime is targetting this character, this character should not react to the crime if the crime's doesNotStopTargetCharacter is true
-            if (witnessedCrime.poiTarget == this && witnessedCrime.doesNotStopTargetCharacter) {
-                return;
-            }
-        }
+        //NOTE: Moved this to be per action specific. See GoapAction.IsConsideredACrimeBy and GoapAction.CanReactToThisCrime for necessary mechanics.
+        //if (witnessedCrime != null) {
+        //    //if the action that should be considered a crime is part of a job from this character's area, do not consider it a crime
+        //    if (witnessedCrime.parentPlan.job != null
+        //        && homeArea.jobQueue.jobsInQueue.Contains(witnessedCrime.parentPlan.job)) {
+        //        return;
+        //    }
+        //    //if the witnessed crime is targetting this character, this character should not react to the crime if the crime's doesNotStopTargetCharacter is true
+        //    if (witnessedCrime.poiTarget == this && witnessedCrime.doesNotStopTargetCharacter) {
+        //        return;
+        //    }
+        //}
 
         string reactSummary = GameManager.Instance.TodayLogString() + this.name + " will react to crime committed by " + criminal.name;
         Log witnessLog = null;
@@ -6362,6 +6319,20 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             ClearIgnoreHostilities();
         }
         marker.UpdateActionIcon();
+    }
+    #endregion
+
+    #region Alter Egos
+    private void InitializeAlterEgos() {
+        alterEgos = new Dictionary<string, AlterEgoData>();
+        alterEgos.Add(CharacterManager.Original_Alter_Ego, new AlterEgoData(this));
+        currentAlterEgo = CharacterManager.Original_Alter_Ego;
+    }
+    public void CreateNewAlterEgo(string alterEgoName) {
+        if (alterEgos.ContainsKey(alterEgoName)) {
+            throw new Exception(this.name + " already has an alter ego named " + alterEgoName + " but something is trying to create a new one!");
+        }
+        alterEgos.Add(alterEgoName, new AlterEgoData(this));
     }
     #endregion
 }

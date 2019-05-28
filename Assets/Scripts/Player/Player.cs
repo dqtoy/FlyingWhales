@@ -707,15 +707,16 @@ public class Player : ILeader {
     /// <param name="action">The action that will be performed.</param>
     private void OnCharacterDoingAction(Character character, GoapAction action) {
         bool showPopup = false;
-        if (action.showIntelNotification && !action.IsActorAtTargetTile()) { //added checking if actor is already at target tile. So that travelling notification won't show if that is the case.
+        Log log = action.GetCurrentLog();
+        if (action.showIntelNotification && !action.IsActorAtTargetTile() && log != null) { //added checking if actor is already at target tile. So that travelling notification won't show if that is the case.
             if (action.shouldIntelNotificationOnlyIfActorIsActive) {
                 showPopup = ShouldShowNotificationFrom(action.actor, true);
             } else {
-                showPopup = ShouldShowNotificationFrom(action.actor, action.GetCurrentLog());
+                showPopup = ShouldShowNotificationFrom(action.actor, log);
             }
         }
         if (showPopup) {
-            Messenger.Broadcast<Log>(Signals.SHOW_PLAYER_NOTIFICATION, action.GetCurrentLog());
+            Messenger.Broadcast<Log>(Signals.SHOW_PLAYER_NOTIFICATION, log);
         }
     }
     /// <summary>
@@ -726,15 +727,16 @@ public class Player : ILeader {
     /// <param name="state">The state that the action is in.</param>
     private void OnActionStateSet(GoapAction action, GoapActionState state) {
         bool showPopup = false;
-        if (action.showIntelNotification && state.duration > 0) { //added checking for duration because this notification should only show for actions that have durations.
+        Log log = action.GetCurrentLog();
+        if (action.showIntelNotification && state.duration > 0 && log != null) { //added checking for duration because this notification should only show for actions that have durations.
             if (action.shouldIntelNotificationOnlyIfActorIsActive) {
                 showPopup = ShouldShowNotificationFrom(action.actor, true);
             } else {
-                showPopup = ShouldShowNotificationFrom(action.actor, action.GetCurrentLog());
+                showPopup = ShouldShowNotificationFrom(action.actor, log);
             }
         }
         if (showPopup) {
-            Messenger.Broadcast<Log>(Signals.SHOW_PLAYER_NOTIFICATION, action.GetCurrentLog());
+            Messenger.Broadcast<Log>(Signals.SHOW_PLAYER_NOTIFICATION, log);
         }
     }
     #endregion

@@ -332,6 +332,18 @@ public class GoapAction {
     public virtual void OnResultReturnedToActor() {
 
     }
+    /// <summary>
+    /// If this action is a crime. Should the given character be allowed to react to it?
+    /// </summary>
+    /// <param name="character">The character in question.</param>
+    /// <returns>If the character is allowed to react or not.</returns>
+    public virtual bool CanReactToThisCrime(Character character) {
+        //if the witnessed crime is targetting this character, this character should not react to the crime if the crime's doesNotStopTargetCharacter is true
+        if (poiTarget == character && doesNotStopTargetCharacter) {
+            return false;
+        }
+        return true;
+    }
     #endregion
 
     #region Utilities
@@ -743,6 +755,10 @@ public class GoapAction {
     public bool IsConsideredACrimeBy(Character reacting) {
         if (actor.faction == FactionManager.Instance.neutralFaction 
             || reacting.faction == FactionManager.Instance.neutralFaction) {
+            return false;
+        }
+        if (parentPlan != null && parentPlan.job != null
+                && reacting.homeArea.jobQueue.jobsInQueue.Contains(parentPlan.job)) {
             return false;
         }
         return reacting.faction == actor.faction && committedCrime != CRIME.NONE;

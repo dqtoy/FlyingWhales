@@ -45,6 +45,10 @@ public class MakeLove : GoapAction {
             targetCharacter.SetCurrentAction(null);
         }
     }
+    public override bool CanReactToThisCrime(Character character) {
+        //do not allow actor and target character to react
+        return character != actor && character != targetCharacter;
+    }
     #endregion
 
     #region Effects

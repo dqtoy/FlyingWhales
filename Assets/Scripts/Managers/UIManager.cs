@@ -1453,7 +1453,7 @@ public class UIManager : MonoBehaviour {
         //then check all other currently showing notifications, if it is from the same goap action and the active character of both logs are the same.
         //replace that log with this new one
         PlayerNotificationItem itemToReplace = null;
-        if (newNotif.shownLog.category == "GoapAction") {
+        if (newNotif.shownLog != null && newNotif.shownLog.category == "GoapAction") {
             for (int i = 0; i < activeNotifications.Count; i++) {
                 PlayerNotificationItem currItem = activeNotifications[i];
                 if (currItem.shownLog.category == "GoapAction" && currItem.shownLog.file == newNotif.shownLog.file
