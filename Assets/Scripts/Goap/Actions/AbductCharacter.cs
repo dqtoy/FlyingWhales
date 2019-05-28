@@ -73,6 +73,8 @@ public class AbductCharacter : GoapAction {
         Restrained restrainedTrait = new Restrained();
         target.AddTrait(restrainedTrait, actor);
 
+        currentState.SetIntelReaction(AbductSuccessIntelReaction);
+
         AddActualEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = poiTarget });
     }
     //public void PreTargetMissing() {
@@ -83,5 +85,42 @@ public class AbductCharacter : GoapAction {
     }
     #endregion
 
-    
+    #region Intel Reactions
+    private List<string> AbductSuccessIntelReaction(Character recipient, Intel sharedIntel) {
+        List<string> reactions = new List<string>();
+        Character target = poiTarget as Character;
+
+        //Recipient and Actor are the same
+        if (recipient == actor) {
+            //- **Recipient Response Text**: "I know what I've done!"
+            reactions.Add("I know what I've done!");
+            //- **Recipient Effect**: no effect
+        }
+        //Recipient considers Target a personal Enemy:
+        else if (recipient.HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.ENEMY)) {
+            //- **Recipient Response Text**: "[Target Name] deserves that!"
+            reactions.Add(string.Format("{0} deserves that!", target.name));
+            //- **Recipient Effect**: no effect
+        }
+        //Recipient considers Target a personal Friend, Paramour, Lover or Relative:
+        else if (recipient.HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.FRIEND, RELATIONSHIP_TRAIT.PARAMOUR, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.RELATIVE)) {
+            //- **Recipient Response Text**: "Where is [Actor Name] taking [Target Name]!? Please let me know if you find out."
+            reactions.Add(string.Format("Where is {0} taking {1}!? Please let me know if you find out.", actor.name, target.name));
+            //- **Recipient Effect**: no effect
+        }
+        //Recipient considers Actor a personal Enemy:
+        else if (recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.ENEMY)) {
+            //- **Recipient Response Text**: "[Actor Name] is truly ruthless."
+            reactions.Add(string.Format("{0} is truly ruthless.", actor.name));
+            //- **Recipient Effect**: no effect
+        }
+        //Recipient and Target have no relationship but are from the same faction:
+        else if (!recipient.HasRelationshipWith(target) && !target.HasRelationshipWith(recipient) && recipient.faction.id == target.faction.id) {
+            //- **Recipient Response Text**: "Where is [Actor Name] taking [Target Name]!? Please let me know if you find out."
+            reactions.Add(string.Format("Where is {0} taking {1}!? Please let me know if you find out.", actor.name, target.name));
+            //- **Recipient Effect**: no effect
+        }
+        return reactions;
+    }
+    #endregion
 }
