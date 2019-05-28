@@ -5854,6 +5854,18 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
             return;
         }
+        if (plan.state == GOAP_PLAN_STATE.CANCELLED) {
+            log += "\nPlan was cancelled.";
+            if (plan.job != null) {
+                log += "\nRemoving job in queue...";
+                plan.job.jobQueueParent.RemoveJobInQueue(plan.job);
+            }
+            PrintLogIfActive(log);
+            if (!DropPlan(plan)) {
+                //PlanGoapActions();
+            }
+            return;
+        }
 
         //Reason: https://trello.com/c/58aGENsO/1867-attempt-to-find-another-nearby-chair-first-instead-of-dropping-drink-eat-sit-down-actions
         if (result == InteractionManager.Goap_State_Fail) {
