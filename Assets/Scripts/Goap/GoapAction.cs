@@ -65,6 +65,7 @@ public class GoapAction {
     public bool canBeAddedToMemory { get; protected set; }
     public bool onlyShowNotifOfDescriptionLog { get; protected set; }
     public CharacterState characterState { get; protected set; }
+    public Character[] crimeCommitters { get; protected set; }
 
     protected virtual bool isTargetMissing {
         get { return !poiTarget.IsAvailable() || poiTarget.gridTileLocation == null || actor.specificLocation != poiTarget.specificLocation
@@ -747,8 +748,9 @@ public class GoapAction {
         }
         return reacting.faction == actor.faction && committedCrime != CRIME.NONE;
     }
-    protected void SetCommittedCrime(CRIME crime) {
+    protected void SetCommittedCrime(CRIME crime, Character[] crimeCommitters) {
         committedCrime = crime;
+        this.crimeCommitters = crimeCommitters;
     }
     #endregion
 

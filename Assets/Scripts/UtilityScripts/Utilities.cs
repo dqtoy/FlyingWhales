@@ -287,7 +287,7 @@ public class Utilities : MonoBehaviour {
         //bool hasPeriod = newText.EndsWith(".");
 
         if (!string.IsNullOrEmpty(newText)) {
-            string[] words = SplitAndKeepDelimiters(newText, new char[] { ' ', '.', ',', '\'', '!', });
+            string[] words = SplitAndKeepDelimiters(newText, new char[] { ' ', '.', ',', '\'', '!', '"' });
             for (int i = 0; i < words.Length; i++) {
                 replacedWord = string.Empty;
                 if (words[i].StartsWith("%") && (words[i].EndsWith("%") || words[i].EndsWith("@"))) { //OBJECT

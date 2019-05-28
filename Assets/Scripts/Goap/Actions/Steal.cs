@@ -71,7 +71,7 @@ public class Steal : GoapAction {
     #region State Effects
     private void PreStealSuccess() {
         //**Note**: This is a Theft crime
-        SetCommittedCrime(CRIME.THEFT);
+        SetCommittedCrime(CRIME.THEFT, new Character[] { actor });
         currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
         currentState.AddLogFiller(poiTarget as SpecialToken, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         currentState.SetIntelReaction(State1Reactions);

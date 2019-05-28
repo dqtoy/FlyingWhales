@@ -76,7 +76,7 @@ public class DrinkBlood : GoapAction {
 
     #region Effects
     private void PreDrinkSuccess() {
-        SetCommittedCrime(CRIME.ABERRATION);
+        SetCommittedCrime(CRIME.ABERRATION, new Character[] { actor });
         //poiTarget.SetPOIState(POI_STATE.INACTIVE);
         actor.AdjustDoNotGetHungry(1);
     }

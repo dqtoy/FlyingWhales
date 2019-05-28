@@ -30,7 +30,7 @@ public class TransformToWolfForm : GoapAction {
     public void AfterTransformSuccess() {
         Lycanthropy lycanthropy = actor.GetTrait("Lycanthropy") as Lycanthropy;
         lycanthropy.TurnToWolf();
-        SetCommittedCrime(CRIME.ABERRATION);
+        SetCommittedCrime(CRIME.ABERRATION, new Character[] { actor });
         currentState.SetIntelReaction(TransformSuccessIntelReaction);
     }
     #endregion

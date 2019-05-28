@@ -93,6 +93,15 @@ public class CharacterRelationshipData {
             Debug.Log("Removed " + newRel.name + " from " + owner.name + "'s relationship data with " + targetCharacter.name);
         }
     }
+    public void RemoveRelationship(RELATIONSHIP_TRAIT newRel) {
+        for (int i = 0; i < rels.Count; i++) {
+            if(rels[i].relType == newRel) {
+                Debug.Log("Removed " + rels[i].name + " from " + owner.name + "'s relationship data with " + targetCharacter.name);
+                rels.RemoveAt(i);
+                break;
+            }
+        }
+    }
     public bool HasRelationshipTrait(RELATIONSHIP_TRAIT relType) {
         for (int i = 0; i < rels.Count; i++) {
             if(rels[i].relType == relType && !rels[i].isDisabled) {

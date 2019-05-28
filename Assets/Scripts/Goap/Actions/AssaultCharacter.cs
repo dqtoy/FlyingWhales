@@ -71,7 +71,7 @@ public class AssaultCharacter : GoapAction {
         if (!actor.IsHostileWith(poiTarget as Character)
            //Assaulting a criminal as part of apprehending him should not be considered a crime
            && !IsFromApprehendJob()) {
-            SetCommittedCrime(CRIME.ASSAULT);
+            SetCommittedCrime(CRIME.ASSAULT, new Character[] { actor });
         }
         currentState.AddLogFiller(loser, loser.name, LOG_IDENTIFIER.CHARACTER_3);
         AddTraitTo(winner, "Combat Recovery", loser);
@@ -96,7 +96,7 @@ public class AssaultCharacter : GoapAction {
         if (!actor.IsHostileWith(poiTarget as Character)
             //Assaulting a criminal as part of apprehending him should not be considered a crime
             && !IsFromApprehendJob()) {
-            SetCommittedCrime(CRIME.ASSAULT);
+            SetCommittedCrime(CRIME.ASSAULT, new Character[] { actor });
         }
         currentState.AddLogFiller(loser, loser.name, LOG_IDENTIFIER.CHARACTER_3);
         AddTraitTo(winner, "Combat Recovery", loser);
@@ -117,7 +117,7 @@ public class AssaultCharacter : GoapAction {
         if (!actor.IsHostileWith(poiTarget as Character)
             //Assaulting a criminal as part of apprehending him should not be considered a crime
             && !IsFromApprehendJob()) {
-            SetCommittedCrime(CRIME.MURDER);
+            SetCommittedCrime(CRIME.MURDER, new Character[] { actor });
         }
         currentState.AddLogFiller(loser, loser.name, LOG_IDENTIFIER.CHARACTER_3);
         AddTraitTo(winner, "Combat Recovery", loser);

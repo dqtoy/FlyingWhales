@@ -189,7 +189,6 @@ public class GoapThread : Multithread {
 
         //other data handling
         if (otherData != null) {
-            List<GoapAction> invalidActions = new List<GoapAction>();
             for (int i = 0; i < usableActions.Count; i++) {
                 GoapAction currAction = usableActions[i];
                 if (otherData.ContainsKey(currAction.goapType)) {
@@ -197,14 +196,22 @@ public class GoapThread : Multithread {
                         //if other data was initialized, check if the action still meets the needed requirements
                         if (!currAction.CanSatisfyRequirements() || !currAction.CanSatisfyRequirementOnBuildGoapTree()) {
                             //if it no longer does, add as invalid
-                            invalidActions.Add(currAction);
+                            usableActions.RemoveAt(i);
+                            i--;
+                            continue;
                         }
                     }
                 }
-            }
-
-            for (int i = 0; i < invalidActions.Count; i++) {
-                usableActions.Remove(invalidActions[i]);
+                if (otherData.ContainsKey(INTERACTION_TYPE.NONE)) {
+                    if (currAction.InitializeOtherData(otherData[INTERACTION_TYPE.NONE])) {
+                        //if other data was initialized, check if the action still meets the needed requirements
+                        if (!currAction.CanSatisfyRequirements() || !currAction.CanSatisfyRequirementOnBuildGoapTree()) {
+                            //if it no longer does, add as invalid
+                            usableActions.RemoveAt(i);
+                            i--;
+                        }
+                    }
+                }
             }
         }
        
