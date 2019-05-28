@@ -12,7 +12,7 @@ public class GoapAction {
     public string goapName { get; protected set; }
     public IPointOfInterest poiTarget { get; private set; }
     public Character actor { get; private set; }
-    public int cost { get { return GetCost() + GetDistanceCost(); } }
+    public int cost { get { return (GetCost() * CostMultiplier()) + GetDistanceCost(); } }
     public List<Precondition> preconditions { get; private set; }
     public List<GoapEffect> expectedEffects { get; private set; }
     public virtual LocationStructure targetStructure {
@@ -65,6 +65,7 @@ public class GoapAction {
     public bool canBeAddedToMemory { get; protected set; }
     public bool onlyShowNotifOfDescriptionLog { get; protected set; }
     public CharacterState characterState { get; protected set; }
+    public Character[] crimeCommitters { get; protected set; }
 
     protected virtual bool isTargetMissing {
         get { return !poiTarget.IsAvailable() || poiTarget.gridTileLocation == null || actor.specificLocation != poiTarget.specificLocation
@@ -589,6 +590,12 @@ public class GoapAction {
     public bool IsActorAtTargetTile() {
         return actor.gridTileLocation == targetTile;
     }
+    public int CostMultiplier() {
+        if(validTimeOfDays == null || validTimeOfDays.Contains(GameManager.GetCurrentTimeInWordsOfTick())){
+            return 1;
+        }
+        return 3;
+    }
     #endregion
 
     #region Trait Utilities
@@ -763,8 +770,9 @@ public class GoapAction {
         }
         return reacting.faction == actor.faction && committedCrime != CRIME.NONE;
     }
-    protected void SetCommittedCrime(CRIME crime) {
+    protected void SetCommittedCrime(CRIME crime, Character[] crimeCommitters) {
         committedCrime = crime;
+        this.crimeCommitters = crimeCommitters;
     }
     #endregion
 

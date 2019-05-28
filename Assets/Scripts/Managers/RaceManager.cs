@@ -114,6 +114,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.REPLACE_TILE_OBJECT,
                 INTERACTION_TYPE.TANTRUM,
                 INTERACTION_TYPE.EAT_MUSHROOM,
+                INTERACTION_TYPE.SPREAD_RUMOR_REMOVE_FRIENDSHIP,
+                INTERACTION_TYPE.SPREAD_RUMOR_REMOVE_LOVE,
             } },
             { RACE.ELVES, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -190,6 +192,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.REPLACE_TILE_OBJECT,
                 INTERACTION_TYPE.TANTRUM,
                 INTERACTION_TYPE.EAT_MUSHROOM,
+                INTERACTION_TYPE.SPREAD_RUMOR_REMOVE_FRIENDSHIP,
+                INTERACTION_TYPE.SPREAD_RUMOR_REMOVE_LOVE,
             } },
             { RACE.GOBLIN, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -267,6 +271,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.REPLACE_TILE_OBJECT,
                 INTERACTION_TYPE.TANTRUM,
                 INTERACTION_TYPE.EAT_MUSHROOM,
+                INTERACTION_TYPE.SPREAD_RUMOR_REMOVE_FRIENDSHIP,
+                INTERACTION_TYPE.SPREAD_RUMOR_REMOVE_LOVE,
             } },
             { RACE.FAERY, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -344,6 +350,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.REPLACE_TILE_OBJECT,
                 INTERACTION_TYPE.TANTRUM,
                 INTERACTION_TYPE.EAT_MUSHROOM,
+                INTERACTION_TYPE.SPREAD_RUMOR_REMOVE_FRIENDSHIP,
+                INTERACTION_TYPE.SPREAD_RUMOR_REMOVE_LOVE,
             } },
             { RACE.SKELETON, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,

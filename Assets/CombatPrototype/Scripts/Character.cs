@@ -1398,9 +1398,52 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 value = 10;
             }
             if (chance < value) {
-                GoapPlanJob job = new GoapPlanJob("Undermine Enemy", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", targetPOI = targetCharacter });
+                WeightedDictionary<string> undermineWeights = new WeightedDictionary<string>();
+                undermineWeights.AddElement("negative trait", 50);
+
+                bool hasFriend = false;
+                for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+                    Character currCharacter = CharacterManager.Instance.allCharacters[i];
+                    if(currCharacter != targetCharacter && currCharacter != this) {
+                        if(currCharacter.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.FRIEND)) {
+                            hasFriend = true;
+                            break;
+                        }
+                    }
+                }
+                if (hasFriend) {
+                    undermineWeights.AddElement("destroy friendship", 20);
+                }
+
+                bool hasLoverOrParamour = false;
+                for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+                    Character currCharacter = CharacterManager.Instance.allCharacters[i];
+                    if (currCharacter != targetCharacter && currCharacter != this) {
+                        if (currCharacter.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR)) {
+                            hasLoverOrParamour = true;
+                            break;
+                        }
+                    }
+                }
+                if (hasLoverOrParamour) {
+                    undermineWeights.AddElement("destroy love", 20);
+                }
+
+
+                string result = undermineWeights.PickRandomElementGivenWeights();
+                GoapPlanJob job = null;
+                if(result == "negative trait") {
+                    job = new GoapPlanJob("Undermine Enemy", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", targetPOI = targetCharacter });
+                }else if (result == "destroy friendship") {
+                    job = new GoapPlanJob("Undermine Enemy", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TARGET_REMOVE_RELATIONSHIP, conditionKey = "Friend", targetPOI = targetCharacter },
+                        new Dictionary<INTERACTION_TYPE, object[]>() { { INTERACTION_TYPE.NONE, new object[] { targetCharacter } }, });
+                } else if (result == "destroy love") {
+                    job = new GoapPlanJob("Undermine Enemy", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TARGET_REMOVE_RELATIONSHIP, conditionKey = "Lover", targetPOI = targetCharacter },
+                        new Dictionary<INTERACTION_TYPE, object[]>() { { INTERACTION_TYPE.NONE, new object[] { targetCharacter } }, });
+                }
+
                 job.SetCannotOverrideJob(true);
-                Debug.LogWarning(GameManager.Instance.TodayLogString() + "Added an UNDERMINE ENEMY Job to " + this.name + " with target " + targetCharacter.name);
+                Debug.LogWarning(GameManager.Instance.TodayLogString() + "Added an UNDERMINE ENEMY Job: " + result + " to " + this.name + " with target " + targetCharacter.name);
                 job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
                 jobQueue.AddJobInQueue(job, true, false);
                 jobQueue.ProcessFirstJobInQueue(this);
@@ -1423,9 +1466,52 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     /// <param name="targetCharacter">The character to undermine.</param>
     public void ForceCreateUndermineJob(Character targetCharacter) {
         if (!targetCharacter.isDead && !jobQueue.HasJob("Undermine Enemy", targetCharacter)) {
-            GoapPlanJob job = new GoapPlanJob("Undermine Enemy", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", targetPOI = targetCharacter });
+            WeightedDictionary<string> undermineWeights = new WeightedDictionary<string>();
+            undermineWeights.AddElement("negative trait", 50);
+
+            bool hasFriend = false;
+            for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+                Character currCharacter = CharacterManager.Instance.allCharacters[i];
+                if (currCharacter != targetCharacter && currCharacter != this) {
+                    if (currCharacter.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.FRIEND)) {
+                        hasFriend = true;
+                        break;
+                    }
+                }
+            }
+            if (hasFriend) {
+                undermineWeights.AddElement("destroy friendship", 20);
+            }
+
+            bool hasLoverOrParamour = false;
+            for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+                Character currCharacter = CharacterManager.Instance.allCharacters[i];
+                if (currCharacter != targetCharacter && currCharacter != this) {
+                    if (currCharacter.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR)) {
+                        hasLoverOrParamour = true;
+                        break;
+                    }
+                }
+            }
+            if (hasLoverOrParamour) {
+                undermineWeights.AddElement("destroy love", 20);
+            }
+
+
+            string result = undermineWeights.PickRandomElementGivenWeights();
+            GoapPlanJob job = null;
+            if (result == "negative trait") {
+                job = new GoapPlanJob("Undermine Enemy", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", targetPOI = targetCharacter });
+            } else if (result == "destroy friendship") {
+                job = new GoapPlanJob("Undermine Enemy", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TARGET_REMOVE_RELATIONSHIP, conditionKey = "Friend", targetPOI = targetCharacter },
+                    new Dictionary<INTERACTION_TYPE, object[]>() { { INTERACTION_TYPE.NONE, new object[] { targetCharacter } }, });
+            } else if (result == "destroy love") {
+                job = new GoapPlanJob("Undermine Enemy", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TARGET_REMOVE_RELATIONSHIP, conditionKey = "Lover", targetPOI = targetCharacter },
+                    new Dictionary<INTERACTION_TYPE, object[]>() { { INTERACTION_TYPE.NONE, new object[] { targetCharacter } }, });
+            }
+
             job.SetCannotOverrideJob(true);
-            Debug.LogWarning(GameManager.Instance.TodayLogString() + "Added an UNDERMINE ENEMY Job to " + this.name + " with target " + targetCharacter.name);
+            Debug.LogWarning(GameManager.Instance.TodayLogString() + "Added an UNDERMINE ENEMY Job: " + result + " to " + this.name + " with target " + targetCharacter.name);
             job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
             jobQueue.AddJobInQueue(job, true, false);
             jobQueue.ProcessFirstJobInQueue(this);
@@ -2243,6 +2329,11 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             //}
         }
     }
+    public void RemoveRelationship(Character character, RELATIONSHIP_TRAIT rel) {
+        if (relationships.ContainsKey(character)) {
+            relationships[character].RemoveRelationship(rel);
+        }
+    }
     public void RemoveAllRelationships(bool triggerOnRemove = true) {
         List<Character> targetCharacters = relationships.Keys.ToList();
         while (targetCharacters.Count > 0) {
@@ -2550,6 +2641,59 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 AddHistory(witnessLog);
             }
         }
+    }
+    public List<Log> GetMemories(int dayFrom, int dayTo, bool eventMemoriesOnly = false){
+        List<Log> memories = new List<Log>();
+        if (eventMemoriesOnly) {
+            for (int i = 0; i < _history.Count; i++) {
+                if (_history[i].goapAction != null) {
+                    if (_history[i].day >= dayFrom && _history[i].day <= dayTo) {
+                        memories.Add(_history[i]);
+                    }
+                }
+            }
+        } else {
+            for (int i = 0; i < _history.Count; i++) {
+                if(_history[i].day >= dayFrom && _history[i].day <= dayTo) {
+                    memories.Add(_history[i]);
+                }
+            }
+        }
+        return memories;
+    }
+    public List<Log> GetWitnessOrInformedMemories(int dayFrom, int dayTo) {
+        List<Log> memories = new List<Log>();
+        for (int i = 0; i < _history.Count; i++) {
+            Log historyLog = _history[i];
+            if (historyLog.goapAction != null && (historyLog.key == "witness_event" || historyLog.key == "informed_event")) {
+                if (historyLog.day >= dayFrom && historyLog.day <= dayTo) {
+                    memories.Add(historyLog);
+                }
+            }
+        }
+        return memories;
+    }
+    public List<Log> GetCrimeMemories(int dayFrom, int dayTo, Character involvedCharacter = null) {
+        List<Log> memories = new List<Log>();
+        for (int i = 0; i < _history.Count; i++) {
+            Log historyLog = _history[i];
+            if (historyLog.goapAction != null && historyLog.goapAction.committedCrime != CRIME.NONE) {
+                if (historyLog.day >= dayFrom && historyLog.day <= dayTo) {
+                    if(involvedCharacter != null) {
+                        for (int j = 0; j < historyLog.goapAction.crimeCommitters.Length; j++) {
+                            Character criminal = historyLog.goapAction.crimeCommitters[j];
+                            if (criminal == involvedCharacter) {
+                                memories.Add(historyLog);
+                                break;
+                            }
+                        }
+                    } else {
+                        memories.Add(historyLog);
+                    }
+                }
+            }
+        }
+        return memories;
     }
     #endregion
 

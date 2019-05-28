@@ -17,7 +17,7 @@ public class GameManager : MonoBehaviour {
 
 
     public int month;
-	public int days;
+	public static int days;
 	public int year;
     public int tick;
     public int continuousDays;
@@ -165,7 +165,7 @@ public class GameManager : MonoBehaviour {
     }
 
     public GameDate Today() {
-        return new GameDate(this.month, this.days, this.year, this.tick);
+        return new GameDate(this.month, days, this.year, this.tick);
     }
     public string TodayLogString() {
         return "[" + continuousDays + " - " + ConvertTickToTime(tick) + "] ";
@@ -251,11 +251,11 @@ public class GameManager : MonoBehaviour {
         this.tick += 1;
         if (this.tick > ticksPerDay) {
             this.tick = 1;
-            this.days += 1;
+            days += 1;
             this.continuousDays += 1;
             Messenger.Broadcast(Signals.DAY_STARTED);
             if (days > daysPerMonth) {
-                this.days = 1;
+                days = 1;
                 this.month += 1;
                 if (this.month > 12) {
                     this.month = 1;

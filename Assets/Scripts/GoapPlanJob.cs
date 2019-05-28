@@ -12,6 +12,8 @@ public class GoapPlanJob : JobQueueItem {
 
     //interaction type version
     public INTERACTION_TYPE targetInteractionType { get; protected set; } //Only used if the plan to be created uses interaction type
+
+    //if INTERACTION_TYPE is NONE, it means that it is used by all
     public Dictionary<INTERACTION_TYPE, object[]> otherData { get; protected set; } //Only used if the plan to be created uses interaction type
 
     //forced interactions per effect
@@ -30,6 +32,23 @@ public class GoapPlanJob : JobQueueItem {
         this.targetPOI = targetEffect.targetPOI;
         forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
         allowDeadTargets = false;
+    }
+    public GoapPlanJob(string name, GoapEffect targetEffect, Dictionary<INTERACTION_TYPE, object[]> otherData) : base(name) {
+        this.targetEffect = targetEffect;
+        this.targetPOI = targetEffect.targetPOI;
+        forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
+        allowDeadTargets = false;
+        this.otherData = otherData;
+        if (otherData != null) {
+            allOtherData = new List<object>();
+            foreach (object[] data in otherData.Values) {
+                if (data != null) {
+                    for (int i = 0; i < data.Length; i++) {
+                        allOtherData.Add(data[i]);
+                    }
+                }
+            }
+        }
     }
     public GoapPlanJob(string name, INTERACTION_TYPE targetInteractionType) : base(name) {
         //this.targetEffect = targetEffect;

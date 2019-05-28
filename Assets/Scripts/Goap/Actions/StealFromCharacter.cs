@@ -70,7 +70,7 @@ public class StealFromCharacter : GoapAction {
     private void PreStealSuccess() {
         _targetItem = _targetCharacter.items[UnityEngine.Random.Range(0, _targetCharacter.items.Count)];
         //**Note**: This is a Theft crime
-        SetCommittedCrime(CRIME.THEFT);
+        SetCommittedCrime(CRIME.THEFT, new Character[] { actor });
         currentState.AddLogFiller(_targetItem, _targetItem.name, LOG_IDENTIFIER.ITEM_1);
         currentState.SetIntelReaction(State1Reactions);
     }

@@ -13,12 +13,12 @@ public class SchedulingManager : MonoBehaviour {
 		Instance = this;
 	}
 	public void StartScheduleCalls(){
-		this.checkGameDate = new GameDate (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, GameManager.Instance.tick);
+		this.checkGameDate = new GameDate (GameManager.Instance.month, GameManager.days, GameManager.Instance.year, GameManager.Instance.tick);
 		Messenger.AddListener (Signals.TICK_ENDED, CheckSchedule);
 	}
 	private void CheckSchedule(){
 		this.checkGameDate.month = GameManager.Instance.month;
-		this.checkGameDate.day = GameManager.Instance.days;
+		this.checkGameDate.day = GameManager.days;
 		this.checkGameDate.year = GameManager.Instance.year;
         this.checkGameDate.tick = GameManager.Instance.tick;
 		if(this.schedules.ContainsKey(this.checkGameDate)){

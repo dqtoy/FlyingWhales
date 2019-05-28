@@ -71,7 +71,7 @@ public class MakeLove : GoapAction {
         } else {
             AddTraitTo(actor, "Ashamed", targetCharacter);
             AddTraitTo(targetCharacter, "Ashamed", actor);
-            SetCommittedCrime(CRIME.INFIDELITY);
+            SetCommittedCrime(CRIME.INFIDELITY, new Character[] { actor, targetCharacter });
         }
 
         actor.ownParty.RemoveCharacter(targetCharacter);

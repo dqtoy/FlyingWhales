@@ -252,6 +252,12 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.EAT_MUSHROOM:
                 goapAction = new EatMushroom(actor, target);
                 break;
+            case INTERACTION_TYPE.SPREAD_RUMOR_REMOVE_FRIENDSHIP:
+                goapAction = new SpreadRumorRemoveFriendship(actor, target);
+                break;
+            case INTERACTION_TYPE.SPREAD_RUMOR_REMOVE_LOVE:
+                goapAction = new SpreadRumorRemoveLove(actor, target);
+                break;
         }
         if(goapAction != null && willInitialize) {
             goapAction.Initialize();
