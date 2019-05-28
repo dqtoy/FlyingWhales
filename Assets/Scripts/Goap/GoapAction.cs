@@ -12,7 +12,7 @@ public class GoapAction {
     public string goapName { get; protected set; }
     public IPointOfInterest poiTarget { get; private set; }
     public Character actor { get; private set; }
-    public int cost { get { return GetCost() + GetDistanceCost(); } }
+    public int cost { get { return (GetCost() * CostMultiplier()) + GetDistanceCost(); } }
     public List<Precondition> preconditions { get; private set; }
     public List<GoapEffect> expectedEffects { get; private set; }
     public virtual LocationStructure targetStructure {
@@ -577,6 +577,12 @@ public class GoapAction {
     }
     public bool IsActorAtTargetTile() {
         return actor.gridTileLocation == targetTile;
+    }
+    public int CostMultiplier() {
+        if(validTimeOfDays == null || validTimeOfDays.Contains(GameManager.GetCurrentTimeInWordsOfTick())){
+            return 1;
+        }
+        return 3;
     }
     #endregion
 
