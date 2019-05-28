@@ -45,6 +45,9 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
                 GhostCollisionHandling(collidedWith as GhostCollisionTrigger);
             } else {
                 string collisionSummary = parentMarker.name + " collided with " + collidedWith.poi.name;
+                if (collidedWith.poi.gridTileLocation == null) {
+                    return; //ignore, Usually happens if an item is picked up just as this character sees it.
+                }
                 //when this collides with a poi trigger
                 //check if the poi trigger is in the same structure as this
                 if (collidedWith.poi.gridTileLocation.structure == parentMarker.character.gridTileLocation.structure) {
