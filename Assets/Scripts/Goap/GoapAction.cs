@@ -63,6 +63,7 @@ public class GoapAction {
     public bool cannotCancelAction { get; protected set; }
     public bool isNotificationAnIntel { get; protected set; }
     public bool canBeAddedToMemory { get; protected set; }
+    public bool onlyShowNotifOfDescriptionLog { get; protected set; }
     public CharacterState characterState { get; protected set; }
 
     protected virtual bool isTargetMissing {
@@ -391,7 +392,10 @@ public class GoapAction {
         if (endAction != null) {
             endAction(result, this);
         } else {
-            actor.GoapActionResult(result, this);
+            if(parentPlan != null) {
+                //Do not go to result if there is no parent plan, this might mean that the action is just a forced action
+                actor.GoapActionResult(result, this);
+            }
         }
         Messenger.Broadcast(Signals.CHARACTER_FINISHED_ACTION, actor, this, result);
     }
@@ -547,6 +551,9 @@ public class GoapAction {
     /// </summary>
     /// <returns>Chosen log.</returns>
     public Log GetCurrentLog() {
+        if (onlyShowNotifOfDescriptionLog) {
+            return this.currentState.descriptionLog;
+        }
         if (actor.currentParty.icon.isTravelling) {
             //character is travelling
             return thoughtBubbleMovingLog;
@@ -554,7 +561,7 @@ public class GoapAction {
             //character is not travelling
             if (this.isDone) {
                 //action is already done
-               return this.currentState.descriptionLog;
+                return this.currentState.descriptionLog;
             } else {
                 //action is not yet done
                 if (currentState == null) {
@@ -562,7 +569,7 @@ public class GoapAction {
                     return thoughtBubbleMovingLog;
                 } else {
                     //if the actions current state has a duration
-                   return thoughtBubbleLog;
+                    return thoughtBubbleLog;
                 }
             }
         }

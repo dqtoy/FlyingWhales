@@ -2524,7 +2524,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return count;
     }
-    private void FlirtWith(Character otherCharacter) {
+    public void FlirtWith(Character otherCharacter) {
         if (!relationships.ContainsKey(otherCharacter)) {
             relationships.Add(otherCharacter, new CharacterRelationshipData(this, otherCharacter));
         }
@@ -4280,166 +4280,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //}
     }
     public void ChatCharacter(Character targetCharacter) {
-        SetIsChatting(true);
-        targetCharacter.SetIsChatting(true);
-        marker.UpdateActionIcon();
-        targetCharacter.marker.UpdateActionIcon();
-        CHARACTER_MOOD thisCharacterMood = currentMoodType;
-        CHARACTER_MOOD targetCharacterMood = targetCharacter.currentMoodType;
-
-        WeightedFloatDictionary<string> weights = new WeightedFloatDictionary<string>();
-        weights.AddElement("normal", 400);
-
-        CharacterRelationshipData relData = GetCharacterRelationshipData(targetCharacter);
-        RELATIONSHIP_EFFECT relationshipEffectWithTarget = GetRelationshipEffectWith(targetCharacter);
-        //**if no relationship yet, may become friends**
-        if (relData == null) {
-            int weight = 0;
-            if (thisCharacterMood == CHARACTER_MOOD.DARK) {
-                weight += -50;
-            } else if (thisCharacterMood == CHARACTER_MOOD.BAD) {
-                weight += -20;
-            } else if (thisCharacterMood == CHARACTER_MOOD.GOOD) {
-                weight += 20;
-            } else if (thisCharacterMood == CHARACTER_MOOD.GREAT) {
-                weight += 50;
-            }
-            if (targetCharacterMood == CHARACTER_MOOD.DARK) {
-                weight += -50;
-            } else if (targetCharacterMood == CHARACTER_MOOD.BAD) {
-                weight += -20;
-            } else if (targetCharacterMood == CHARACTER_MOOD.GOOD) {
-                weight += 20;
-            } else if (targetCharacterMood == CHARACTER_MOOD.GREAT) {
-                weight += 50;
-            }
-            if (weight > 0) {
-                weights.AddElement("no rel", weight);
-            }
-        } else {
-            //**if no relationship other than relative, may become enemies**
-            List<RelationshipTrait> relTraits = GetAllRelationshipTraitWith(targetCharacter);
-            if (relTraits.Count == 1 && relTraits[0] is Relative) {
-                int weight = 0;
-                if (thisCharacterMood == CHARACTER_MOOD.DARK) {
-                    weight += 50;
-                } else if (thisCharacterMood == CHARACTER_MOOD.BAD) {
-                    weight += 20;
-                } else if (thisCharacterMood == CHARACTER_MOOD.GOOD) {
-                    weight += -20;
-                } else if (thisCharacterMood == CHARACTER_MOOD.GREAT) {
-                    weight += -50;
-                }
-                if (targetCharacterMood == CHARACTER_MOOD.DARK) {
-                    weight += 50;
-                } else if (targetCharacterMood == CHARACTER_MOOD.BAD) {
-                    weight += 20;
-                } else if (targetCharacterMood == CHARACTER_MOOD.GOOD) {
-                    weight += -20;
-                } else if (targetCharacterMood == CHARACTER_MOOD.GREAT) {
-                    weight += -50;
-                }
-                if (weight > 0) {
-                    weights.AddElement("no rel relative", weight);
-                }
-            }
-
-            //**if already has a positive relationship, knowledge may be transferred**
-            if (relationshipEffectWithTarget == RELATIONSHIP_EFFECT.POSITIVE) {
-                weights.AddElement("knowledge transfer", 200);
-            }
-
-            //**if already has a negative relationship, argument may occur**
-            if (relationshipEffectWithTarget == RELATIONSHIP_EFFECT.NEGATIVE) {
-                weights.AddElement("argument", 500);
-
-                //**if already has a negative relationship, relationship may be resolved**
-                int weight = 0;
-                if (thisCharacterMood == CHARACTER_MOOD.DARK) {
-                    weight += -50;
-                } else if (thisCharacterMood == CHARACTER_MOOD.BAD) {
-                    weight += -20;
-                } else if (thisCharacterMood == CHARACTER_MOOD.GOOD) {
-                    weight += 20;
-                } else if (thisCharacterMood == CHARACTER_MOOD.GREAT) {
-                    weight += 50;
-                }
-                if (targetCharacterMood == CHARACTER_MOOD.DARK) {
-                    weight += -50;
-                } else if (targetCharacterMood == CHARACTER_MOOD.BAD) {
-                    weight += -20;
-                } else if (targetCharacterMood == CHARACTER_MOOD.GOOD) {
-                    weight += 20;
-                } else if (targetCharacterMood == CHARACTER_MOOD.GREAT) {
-                    weight += 50;
-                }
-                if (weight > 0) {
-                    weights.AddElement("resolve", weight);
-                }
-            }
-        }
-
-        //flirtation
-        float flirtationWeight = GetFlirtationWeightWith(targetCharacter, relData, thisCharacterMood, targetCharacterMood);
-        if (flirtationWeight > 0f) {
-            weights.AddElement("flirt", flirtationWeight);
-        }
-
-        //become lovers weight
-        float becomeLoversWeight = GetBecomeLoversWeightWith(targetCharacter, relData, thisCharacterMood, targetCharacterMood);
-        if (becomeLoversWeight > 0f) {
-            weights.AddElement("become lovers", becomeLoversWeight);
-        }
-
-        //become paramours
-        float becomeParamoursWeight = GetBecomeParamoursWeightWith(targetCharacter, relData, thisCharacterMood, targetCharacterMood);
-        if (becomeParamoursWeight > 0f) {
-            weights.AddElement("become paramours", becomeParamoursWeight);
-        }
-
-        string result = weights.PickRandomElementGivenWeights();
-        if (result == "no rel") {
-            //may become friends
-            CharacterManager.Instance.CreateNewRelationshipBetween(this, targetCharacter, RELATIONSHIP_TRAIT.FRIEND);
-        } else if (result == "no rel relative") {
-            //may become enemies
-            CharacterManager.Instance.CreateNewRelationshipBetween(this, targetCharacter, RELATIONSHIP_TRAIT.ENEMY);
-        } else if (result == "knowledge transfer") {
-            //TODO: mechanics to be added later
-        } else if (result == "resolve") {
-            //relationship may be resolved
-            List<RelationshipTrait> negativeTraits = GetAllRelationshipOfEffectWith(targetCharacter, TRAIT_EFFECT.NEGATIVE);
-            RelationshipTrait chosenTrait = negativeTraits[UnityEngine.Random.Range(0, negativeTraits.Count)];
-            CharacterManager.Instance.RemoveOneWayRelationship(this, targetCharacter, chosenTrait.relType);
-        } else if (result == "flirt") {
-            //store flirtation count in both characters
-            //Log: "[Character Name 1] and [Character Name 2] flirted."
-            FlirtWith(targetCharacter);
-        } else if (result == "become lovers") {
-            //Log: "[Character Name 1] and [Character Name 2] have become lovers."
-            CharacterManager.Instance.CreateNewRelationshipBetween(this, targetCharacter, RELATIONSHIP_TRAIT.LOVER);
-        } else if (result == "become paramours") {
-            //Log: "[Character Name 1] and [Character Name 2] have developed an affair!"
-            CharacterManager.Instance.CreateNewRelationshipBetween(this, targetCharacter, RELATIONSHIP_TRAIT.PARAMOUR);
-        }
-
-        Log chatLog = new Log(GameManager.Instance.Today(), "GoapAction", "ChatCharacter", result);
-        chatLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        chatLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        chatLog.AddLogToInvolvedObjects();
-
-        if (!PlayerManager.Instance.player.ShowNotificationFrom(this, chatLog)) {
-            PlayerManager.Instance.player.ShowNotificationFrom(targetCharacter, chatLog);
-        }
-
-        weights.LogDictionaryValues("Chat Weights of " + this.name + " and " + targetCharacter.name);
-        Debug.Log(this.name + " and " + targetCharacter.name + "'s chat result is " + result);
-
-        GameDate dueDate = GameManager.Instance.Today();
-        dueDate.AddTicks(2);
-        SchedulingManager.Instance.AddEntry(dueDate, () => EndChatCharacter(targetCharacter));
+        ChatCharacter chatAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.CHAT_CHARACTER, this, targetCharacter) as ChatCharacter;
+        chatAction.PerformActualAction();
     }
-    private float GetFlirtationWeightWith(Character targetCharacter, CharacterRelationshipData relData, params CHARACTER_MOOD[] moods) {
+    public float GetFlirtationWeightWith(Character targetCharacter, CharacterRelationshipData relData, params CHARACTER_MOOD[] moods) {
         float positiveFlirtationWeight = 0;
         float negativeFlirtationWeight = 0;
         for (int i = 0; i < moods.Length; i++) {
@@ -4495,7 +4339,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return positiveFlirtationWeight + negativeFlirtationWeight;
     }
-    private float GetBecomeLoversWeightWith(Character targetCharacter, CharacterRelationshipData relData, params CHARACTER_MOOD[] moods) {
+    public float GetBecomeLoversWeightWith(Character targetCharacter, CharacterRelationshipData relData, params CHARACTER_MOOD[] moods) {
         float positiveWeight = 0;
         float negativeWeight = 0;
         if (GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.NEGATIVE && targetCharacter.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.NEGATIVE
@@ -4545,7 +4389,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return positiveWeight + negativeWeight;
     }
-    private float GetBecomeParamoursWeightWith(Character targetCharacter, CharacterRelationshipData relData, params CHARACTER_MOOD[] moods) {
+    public float GetBecomeParamoursWeightWith(Character targetCharacter, CharacterRelationshipData relData, params CHARACTER_MOOD[] moods) {
         //**if they dont have a negative relationship and at least one of them has a lover, they may become paramours**
         float positiveWeight = 0;
         float negativeWeight = 0;
@@ -4616,7 +4460,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return positiveWeight + negativeWeight;
     }
-    private void EndChatCharacter(Character targetCharacter) {
+    public void EndChatCharacter(Character targetCharacter) {
         SetIsChatting(false);
         targetCharacter.SetIsChatting(false);
         marker.UpdateActionIcon();
