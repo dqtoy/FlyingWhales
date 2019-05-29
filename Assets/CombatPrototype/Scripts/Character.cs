@@ -4667,7 +4667,15 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public void DropToken(SpecialToken token, Area location, LocationStructure structure, LocationGridTile gridTile = null, bool clearOwner = true) {
         if (UnobtainToken(token)) {
-            location.AddSpecialTokenToLocation(token, structure, gridTile);
+            if(location.AddSpecialTokenToLocation(token, structure, gridTile)) {
+                //When items are dropped into the warehouse, make all residents aware of it.
+                if (structure.structureType == STRUCTURE_TYPE.WAREHOUSE) {
+                    for (int i = 0; i < structure.location.areaResidents.Count; i++) {
+                        Character resident = structure.location.areaResidents[i];
+                        resident.AddAwareness(token);
+                    }
+                }
+            }
             //if (structure != homeStructure) {
             //    //if this character drops this at a structure that is not his/her home structure, set the owner of the item to null
             //    token.SetCharacterOwner(null);
