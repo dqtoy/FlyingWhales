@@ -74,7 +74,7 @@ public class SpreadRumorRemoveLove : GoapAction {
     protected bool Requirement() {
         if (rumoredCharacter != null) {
             Character target = poiTarget as Character;
-            if (target.HasRelationshipOfTypeWith(rumoredCharacter, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR)) {
+            if (target.HasRelationshipOfTypeWith(rumoredCharacter, false, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR)) {
                 return actor != poiTarget && actor != rumoredCharacter && affairMemoriesInvolvingRumoredCharacter.Count > 0;
             }
             return false;

@@ -89,7 +89,7 @@ public interface ICharacter {
     bool IsInOwnParty();
     bool RemoveTrait(Trait combatAttribute, bool triggerOnRemove = true);
     Party CreateOwnParty();
-    Trait GetTrait(string name);
+    Trait GetTrait(params string[] name);
     void ConstructBuffs();
     void AddBuff(Buff buff);
     void RemoveBuff(Buff buff);

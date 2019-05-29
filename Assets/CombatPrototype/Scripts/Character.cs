@@ -1437,7 +1437,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
             Character currCharacter = CharacterManager.Instance.allCharacters[i];
             if (currCharacter != targetCharacter && currCharacter != this) {
-                if (currCharacter.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR)) {
+                if (currCharacter.HasRelationshipOfTypeWith(targetCharacter, false, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR)) {
                     hasLoverOrParamour = true;
                     break;
                 }
@@ -2498,15 +2498,15 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return false;
     }
-    public bool HasRelationshipOfTypeWith(Character character, params RELATIONSHIP_TRAIT[] rels) {
+    public bool HasRelationshipOfTypeWith(Character character, bool useDisabled = false, params RELATIONSHIP_TRAIT[] rels) {
         if (HasRelationshipWith(character)) {
             for (int i = 0; i < relationships[character].rels.Count; i++) {
                 RelationshipTrait currTrait = relationships[character].rels[i];
-                if (currTrait.isDisabled) {
+                if (useDisabled && currTrait.isDisabled) {
                     continue; //skip
                 }
                 for (int j = 0; j < rels.Length; j++) {
-                    if (rels[j] == currTrait.relType && !currTrait.isDisabled) {
+                    if (rels[j] == currTrait.relType) {
                         return true;
                     }
                 }
@@ -2608,7 +2608,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     private void OnActionStateSet(GoapAction action, GoapActionState state) {
         if (action.actor != this && action.poiTarget != this) {
             if (marker.inVisionPOIs.Contains(action.actor)) {
-                if (GetTraitOr("Unconscious", "Resting") != null) {
+                if (GetTrait("Unconscious", "Resting") != null) {
                     return;
                 }
                 CreateWitnessedEventLog(action);
@@ -2618,7 +2618,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public void ThisCharacterSaw(Character target) {
         if (target.currentAction != null && target.currentAction.isPerformingActualAction && !target.currentAction.isDone) {
             if(target.currentAction.actor != this && target.currentAction.poiTarget != this) {
-                if(GetTraitOr("Unconscious", "Resting") != null) {
+                if(GetTrait("Unconscious", "Resting") != null) {
                     return;
                 }
                 CreateWitnessedEventLog(target.currentAction);
@@ -3287,34 +3287,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         }
     }
-    public Trait GetTrait(string traitName) {
+    public Trait GetTrait(params string[] traitNames) {
         for (int i = 0; i < _traits.Count; i++) {
-            if (_traits[i].name == traitName && !_traits[i].isDisabled) {
-                return _traits[i];
-            }
-        }
-        return null;
-    }
-    public Trait GetTraitOr(string traitName1, string traitName2) {
-        for (int i = 0; i < _traits.Count; i++) {
-            if ((_traits[i].name == traitName1 || _traits[i].name == traitName2) && !_traits[i].isDisabled) {
-                return _traits[i];
-            }
-        }
-        return null;
-    }
-    public Trait GetTraitOr(string traitName1, string traitName2, string traitName3) {
-        for (int i = 0; i < _traits.Count; i++) {
-            if ((_traits[i].name == traitName1 || _traits[i].name == traitName2 || _traits[i].name == traitName3) && !_traits[i].isDisabled) {
-                return _traits[i];
-            }
-        }
-        return null;
-    }
-    public Trait GetTraitOr(string traitName1, string traitName2, string traitName3, string traitName4) {
-        for (int i = 0; i < _traits.Count; i++) {
-            if ((_traits[i].name == traitName1 || _traits[i].name == traitName2 || _traits[i].name == traitName3 || _traits[i].name == traitName4) && !_traits[i].isDisabled) {
-                return _traits[i];
+            Trait trait = _traits[i];
+
+            for (int j = 0; j < traitNames.Length; j++) {
+                if (trait.name == traitNames[j] && !trait.isDisabled) {
+                    return trait;
+                }
             }
         }
         return null;
@@ -3890,7 +3870,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public bool PlanFullnessRecoveryActions() {
         TIME_IN_WORDS currentTimeInWords = GameManager.GetCurrentTimeInWordsOfTick();
-        Trait hungryOrStarving = GetTraitOr("Starving", "Hungry");
+        Trait hungryOrStarving = GetTrait("Starving", "Hungry");
 
         if (hungryOrStarving != null) {
             if (!jobQueue.HasJob("Fullness")) {
@@ -3930,7 +3910,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public bool PlanTirednessRecoveryActions() {
         TIME_IN_WORDS currentTimeInWords = GameManager.GetCurrentTimeInWordsOfTick();
-        Trait tiredOrExhausted = GetTraitOr("Exhausted", "Tired");
+        Trait tiredOrExhausted = GetTrait("Exhausted", "Tired");
 
         if (tiredOrExhausted != null) {
             if (!jobQueue.HasJob("Tiredness")) {
@@ -3971,7 +3951,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public bool PlanHappinessRecoveryActions() {
         TIME_IN_WORDS currentTimeInWords = GameManager.GetCurrentTimeInWordsOfTick();
-        Trait lonelyOrForlorn = GetTraitOr("Forlorn", "Lonely");
+        Trait lonelyOrForlorn = GetTrait("Forlorn", "Lonely");
 
         if (lonelyOrForlorn != null) {
             if (!jobQueue.HasJob("Happiness")) {

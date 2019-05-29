@@ -342,10 +342,14 @@ public class SpecialToken : Token, IPointOfInterest {
         }
         return removedTraits;
     }
-    public Trait GetTrait(string traitName) {
+    public Trait GetTrait(params string[] traitNames) {
         for (int i = 0; i < _traits.Count; i++) {
-            if (_traits[i].name == traitName && !_traits[i].isDisabled) {
-                return _traits[i];
+            Trait trait = _traits[i];
+
+            for (int j = 0; j < traitNames.Length; j++) {
+                if (trait.name == traitNames[j] && !trait.isDisabled) {
+                    return trait;
+                }
             }
         }
         return null;

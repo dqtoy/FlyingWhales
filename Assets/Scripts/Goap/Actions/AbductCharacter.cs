@@ -103,7 +103,7 @@ public class AbductCharacter : GoapAction {
             //- **Recipient Effect**: no effect
         }
         //Recipient considers Target a personal Friend, Paramour, Lover or Relative:
-        else if (recipient.HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.FRIEND, RELATIONSHIP_TRAIT.PARAMOUR, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.RELATIVE)) {
+        else if (recipient.HasRelationshipOfTypeWith(target, false, RELATIONSHIP_TRAIT.FRIEND, RELATIONSHIP_TRAIT.PARAMOUR, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.RELATIVE)) {
             //- **Recipient Response Text**: "Where is [Actor Name] taking [Target Name]!? Please let me know if you find out."
             reactions.Add(string.Format("Where is {0} taking {1}!? Please let me know if you find out.", actor.name, target.name));
             //- **Recipient Effect**: no effect
