@@ -1438,61 +1438,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 value = 10;
             }
             if (chance < value) {
-                WeightedDictionary<string> undermineWeights = new WeightedDictionary<string>();
-                undermineWeights.AddElement("negative trait", 50);
-
-                bool hasFriend = false;
-                for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
-                    Character currCharacter = CharacterManager.Instance.allCharacters[i];
-                    if(currCharacter != targetCharacter && currCharacter != this) {
-                        if(currCharacter.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.FRIEND)) {
-                            hasFriend = true;
-                            break;
-                        }
-                    }
-                }
-                if (hasFriend) {
-                    undermineWeights.AddElement("destroy friendship", 20);
-                }
-
-                bool hasLoverOrParamour = false;
-                for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
-                    Character currCharacter = CharacterManager.Instance.allCharacters[i];
-                    if (currCharacter != targetCharacter && currCharacter != this) {
-                        if (currCharacter.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR)) {
-                            hasLoverOrParamour = true;
-                            break;
-                        }
-                    }
-                }
-                if (hasLoverOrParamour) {
-                    undermineWeights.AddElement("destroy love", 20);
-                }
-
-
-                string result = undermineWeights.PickRandomElementGivenWeights();
-                GoapPlanJob job = null;
-                if(result == "negative trait") {
-                    job = new GoapPlanJob("Undermine Enemy", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", targetPOI = targetCharacter });
-                }else if (result == "destroy friendship") {
-                    job = new GoapPlanJob("Undermine Enemy", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TARGET_REMOVE_RELATIONSHIP, conditionKey = "Friend", targetPOI = targetCharacter },
-                        new Dictionary<INTERACTION_TYPE, object[]>() { { INTERACTION_TYPE.NONE, new object[] { targetCharacter } }, });
-                } else if (result == "destroy love") {
-                    job = new GoapPlanJob("Undermine Enemy", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TARGET_REMOVE_RELATIONSHIP, conditionKey = "Lover", targetPOI = targetCharacter },
-                        new Dictionary<INTERACTION_TYPE, object[]>() { { INTERACTION_TYPE.NONE, new object[] { targetCharacter } }, });
-                }
-
-                job.SetCannotOverrideJob(true);
-                Debug.LogWarning(GameManager.Instance.TodayLogString() + "Added an UNDERMINE ENEMY Job: " + result + " to " + this.name + " with target " + targetCharacter.name);
-                job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
-                jobQueue.AddJobInQueue(job, true, false);
-                jobQueue.ProcessFirstJobInQueue(this);
-
-                Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "saw_and_undermine");
-                log.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                AddHistory(log);
-                return true;
+                return CreateUndermineJobOnly(targetCharacter);
             }
         }
         return false;
@@ -1506,38 +1452,42 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     /// <param name="targetCharacter">The character to undermine.</param>
     public void ForceCreateUndermineJob(Character targetCharacter) {
         if (!targetCharacter.isDead && !jobQueue.HasJob("Undermine Enemy", targetCharacter)) {
-            WeightedDictionary<string> undermineWeights = new WeightedDictionary<string>();
-            undermineWeights.AddElement("negative trait", 50);
+            CreateUndermineJobOnly(targetCharacter);
+        }
+    }
+    public bool CreateUndermineJobOnly(Character targetCharacter) {
+        WeightedDictionary<string> undermineWeights = new WeightedDictionary<string>();
+        undermineWeights.AddElement("negative trait", 50);
 
-            bool hasFriend = false;
-            for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
-                Character currCharacter = CharacterManager.Instance.allCharacters[i];
-                if (currCharacter != targetCharacter && currCharacter != this) {
-                    if (currCharacter.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.FRIEND)) {
-                        hasFriend = true;
-                        break;
-                    }
+        bool hasFriend = false;
+        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+            Character currCharacter = CharacterManager.Instance.allCharacters[i];
+            if (currCharacter != targetCharacter && currCharacter != this) {
+                if (currCharacter.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.FRIEND)) {
+                    hasFriend = true;
+                    break;
                 }
             }
-            if (hasFriend) {
-                undermineWeights.AddElement("destroy friendship", 20);
-            }
+        }
+        if (hasFriend) {
+            undermineWeights.AddElement("destroy friendship", 20);
+        }
 
-            bool hasLoverOrParamour = false;
-            for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
-                Character currCharacter = CharacterManager.Instance.allCharacters[i];
-                if (currCharacter != targetCharacter && currCharacter != this) {
-                    if (currCharacter.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR)) {
-                        hasLoverOrParamour = true;
-                        break;
-                    }
+        bool hasLoverOrParamour = false;
+        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+            Character currCharacter = CharacterManager.Instance.allCharacters[i];
+            if (currCharacter != targetCharacter && currCharacter != this) {
+                if (currCharacter.HasRelationshipOfTypeWith(targetCharacter, false, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR)) {
+                    hasLoverOrParamour = true;
+                    break;
                 }
             }
-            if (hasLoverOrParamour) {
-                undermineWeights.AddElement("destroy love", 20);
-            }
+        }
+        if (hasLoverOrParamour) {
+            undermineWeights.AddElement("destroy love", 20);
+        }
 
-
+        if (undermineWeights.Count > 0) {
             string result = undermineWeights.PickRandomElementGivenWeights();
             GoapPlanJob job = null;
             if (result == "negative trait") {
@@ -1555,7 +1505,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
             jobQueue.AddJobInQueue(job, true, false);
             jobQueue.ProcessFirstJobInQueue(this);
+
+            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "saw_and_undermine");
+            log.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            AddHistory(log);
+            return true;
         }
+        return false;
     }
     public void CreateAssaultJobs(Character targetCharacter, int amount) {
         if (isAtHomeArea && !targetCharacter.isDead && !targetCharacter.isAtHomeArea && !targetCharacter.HasTraitOf(TRAIT_TYPE.DISABLER, "Combat Recovery") && !this.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
@@ -2042,14 +1999,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public LocationGridTile GetNearestUnoccupiedEdgeTileFromThis() {
         LocationGridTile currentGridTile = gridTileLocation;
-        if (currentGridTile.isEdge && currentGridTile.structure != null) {
+        if (currentGridTile.IsAtEdgeOfWalkableMap() && currentGridTile.structure != null) {
             return currentGridTile;
         }
 
         LocationGridTile nearestEdgeTile = null;
         List<LocationGridTile> neighbours = gridTileLocation.neighbourList;
         for (int i = 0; i < neighbours.Count; i++) {
-            if (neighbours[i].isEdge && neighbours[i].structure != null && !neighbours[i].isOccupied) {
+            if (neighbours[i].IsAtEdgeOfWalkableMap() && neighbours[i].structure != null && !neighbours[i].isOccupied) {
                 nearestEdgeTile = neighbours[i];
                 break;
             }
@@ -2060,8 +2017,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 LocationGridTile currTile = specificLocation.areaMap.allEdgeTiles[i];
                 float dist = Vector2.Distance(currTile.localLocation, currentGridTile.localLocation);
                 if (nearestDist == -999f || dist < nearestDist) {
-                    nearestEdgeTile = currTile;
-                    nearestDist = dist;
+                    if(currTile.structure != null) {
+                        nearestEdgeTile = currTile;
+                        nearestDist = dist;
+                    }
                 }
             }
         }
@@ -2623,18 +2582,17 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return false;
     }
-    public bool HasRelationshipOfTypeWith(Character character, params RELATIONSHIP_TRAIT[] rels) {
+    public bool HasRelationshipOfTypeWith(Character character, bool useDisabled = false, params RELATIONSHIP_TRAIT[] rels) {
         return HasRelationshipOfTypeWith(character.currentAlterEgo, rels);
     }
     public bool HasRelationshipOfTypeWith(AlterEgoData alterEgo, params RELATIONSHIP_TRAIT[] rels) {
         if (HasRelationshipWith(alterEgo)) {
             for (int i = 0; i < relationships[alterEgo].rels.Count; i++) {
                 RelationshipTrait currTrait = relationships[alterEgo].rels[i];
-                if (currTrait.isDisabled) {
                     continue; //skip
                 }
                 for (int j = 0; j < rels.Length; j++) {
-                    if (rels[j] == currTrait.relType && !currTrait.isDisabled) {
+                    if (rels[j] == currTrait.relType) {
                         return true;
                     }
                 }
@@ -2701,7 +2659,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     #endregion
 
-    #region History
+    #region History/Logs
     public void AddHistory(Log log) {
         if (!_history.Contains(log)) {
             _history.Add(log);
@@ -2714,25 +2672,41 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             Messenger.Broadcast(Signals.HISTORY_ADDED, this as object);
         }
     }
+    //Add log to this character and show notif of that log only if this character is clicked or tracked, otherwise, add log only
+    public void RegisterLogAndShowNotifToThisCharacterOnly(string fileName, string key, object target = null, string targetName = "", GoapAction goapAction = null) {
+        if (!GameManager.Instance.gameHasStarted) {
+            return;
+        }
+        if (key == "remove_trait" && isDead) {
+            return;
+        }
+        Log addLog = new Log(GameManager.Instance.Today(), "Character", fileName, key, goapAction);
+        addLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        if (targetName != "") {
+            addLog.AddToFillers(target, targetName, LOG_IDENTIFIER.TARGET_CHARACTER);
+        }
+        addLog.AddLogToInvolvedObjects();
+        if (PlayerManager.Instance.player.ShouldShowNotificationFrom(this, true)) {
+            PlayerManager.Instance.player.ShowNotification(addLog);
+        }
+    }
     private void OnActionStateSet(GoapAction action, GoapActionState state) {
         if (action.actor != this && action.poiTarget != this) {
             if (marker.inVisionPOIs.Contains(action.actor)) {
-                Log witnessLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "witness_event", action);
-                witnessLog.AddToFillers(marker.character, marker.character.name, LOG_IDENTIFIER.OTHER);
-                witnessLog.AddToFillers(null, Utilities.LogDontReplace(state.descriptionLog), LOG_IDENTIFIER.APPEND);
-                witnessLog.AddToFillers(state.descriptionLog.fillers);
-                AddHistory(witnessLog);
+                if (GetTrait("Unconscious", "Resting") != null) {
+                    return;
+                }
+                CreateWitnessedEventLog(action);
             }
         }
     }
     public void ThisCharacterSaw(Character target) {
         if (target.currentAction != null && target.currentAction.isPerformingActualAction && !target.currentAction.isDone) {
             if(target.currentAction.actor != this && target.currentAction.poiTarget != this) {
-                Log witnessLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "witness_event", target.currentAction);
-                witnessLog.AddToFillers(marker.character, marker.character.name, LOG_IDENTIFIER.OTHER);
-                witnessLog.AddToFillers(null, Utilities.LogDontReplace(target.currentAction.currentState.descriptionLog), LOG_IDENTIFIER.APPEND);
-                witnessLog.AddToFillers(target.currentAction.currentState.descriptionLog.fillers);
-                AddHistory(witnessLog);
+                if(GetTrait("Unconscious", "Resting") != null) {
+                    return;
+                }
+                CreateWitnessedEventLog(target.currentAction);
             }
         }
     }
@@ -2788,6 +2762,74 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         }
         return memories;
+    }
+    public void CreateInformedEventLog(GoapAction eventToBeInformed) {
+        Log informedLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "informed_event", eventToBeInformed);
+        informedLog.AddToFillers(eventToBeInformed.currentState.descriptionLog.fillers);
+        informedLog.AddToFillers(this, this.name, LOG_IDENTIFIER.OTHER);
+        informedLog.AddToFillers(null, Utilities.LogDontReplace(eventToBeInformed.currentState.descriptionLog), LOG_IDENTIFIER.APPEND);
+        AddHistory(informedLog);
+
+        //If a character sees or informed about a lover performing Making Love or Ask to Make Love, they will feel Betrayed
+        if (eventToBeInformed.actor != this && eventToBeInformed.poiTarget != this) {
+            Character target = eventToBeInformed.poiTarget as Character;
+            if (eventToBeInformed.goapType == INTERACTION_TYPE.MAKE_LOVE) {
+                if (HasRelationshipOfTypeWith(eventToBeInformed.actor, RELATIONSHIP_TRAIT.LOVER) || HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.LOVER)) {
+                    Betrayed betrayed = new Betrayed();
+                    AddTrait(betrayed);
+                    CharacterManager.Instance.RelationshipDegradation(eventToBeInformed.actor, this, eventToBeInformed);
+                    CharacterManager.Instance.RelationshipDegradation(target, this, eventToBeInformed);
+                }
+            } else if (eventToBeInformed.goapType == INTERACTION_TYPE.INVITE_TO_MAKE_LOVE) {
+                if (HasRelationshipOfTypeWith(eventToBeInformed.actor, RELATIONSHIP_TRAIT.LOVER)) {
+                    Betrayed betrayed = new Betrayed();
+                    AddTrait(betrayed);
+                    CharacterManager.Instance.RelationshipDegradation(eventToBeInformed.actor, this, eventToBeInformed);
+                    CharacterManager.Instance.RelationshipDegradation(target, this, eventToBeInformed);
+                } else if (HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.LOVER)) {
+                    if (eventToBeInformed.currentState.name == "Invite Success") {
+                        Betrayed betrayed = new Betrayed();
+                        AddTrait(betrayed);
+                        CharacterManager.Instance.RelationshipDegradation(eventToBeInformed.actor, this, eventToBeInformed);
+                        CharacterManager.Instance.RelationshipDegradation(target, this, eventToBeInformed);
+                    }
+                }
+            }
+        }
+    }
+    public void CreateWitnessedEventLog(GoapAction witnessedEvent) {
+        Log witnessLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "witness_event", witnessedEvent);
+        witnessLog.AddToFillers(marker.character, marker.character.name, LOG_IDENTIFIER.OTHER);
+        witnessLog.AddToFillers(null, Utilities.LogDontReplace(witnessedEvent.currentState.descriptionLog), LOG_IDENTIFIER.APPEND);
+        witnessLog.AddToFillers(witnessedEvent.currentState.descriptionLog.fillers);
+        AddHistory(witnessLog);
+
+        //If a character sees or informed about a lover performing Making Love or Ask to Make Love, they will feel Betrayed
+        if (witnessedEvent.actor != this && witnessedEvent.poiTarget != this) {
+            Character target = witnessedEvent.poiTarget as Character;
+            if (witnessedEvent.goapType == INTERACTION_TYPE.MAKE_LOVE) {
+                if (HasRelationshipOfTypeWith(witnessedEvent.actor, RELATIONSHIP_TRAIT.LOVER) || HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.LOVER)) {
+                    Betrayed betrayed = new Betrayed();
+                    AddTrait(betrayed);
+                    CharacterManager.Instance.RelationshipDegradation(witnessedEvent.actor, this, witnessedEvent);
+                    CharacterManager.Instance.RelationshipDegradation(target, this, witnessedEvent);
+                } 
+            } else if (witnessedEvent.goapType == INTERACTION_TYPE.INVITE_TO_MAKE_LOVE) {
+                if (HasRelationshipOfTypeWith(witnessedEvent.actor, RELATIONSHIP_TRAIT.LOVER)) {
+                    Betrayed betrayed = new Betrayed();
+                    AddTrait(betrayed);
+                    CharacterManager.Instance.RelationshipDegradation(witnessedEvent.actor, this, witnessedEvent);
+                    CharacterManager.Instance.RelationshipDegradation(target, this, witnessedEvent);
+                } else if (HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.LOVER)) {
+                    if (witnessedEvent.currentState.name == "Invite Success") {
+                        Betrayed betrayed = new Betrayed();
+                        AddTrait(betrayed);
+                        CharacterManager.Instance.RelationshipDegradation(witnessedEvent.actor, this, witnessedEvent);
+                        CharacterManager.Instance.RelationshipDegradation(target, this, witnessedEvent);
+                    }
+                }
+            }
+        }
     }
     #endregion
 
@@ -3341,6 +3383,18 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         }
     }
+    public Trait GetTrait(params string[] traitNames) {
+    	for (int i = 0; i < _traits.Count; i++) {
+            Trait trait = _traits[i];
+            for (int j = 0; j < traitNames.Length; j++) {
+                if (trait.name == traitNames[j] && !trait.isDisabled) {
+                    return trait;
+                }
+            }
+        }
+        return null;
+    }
+
     /// <summary>
     /// Remove all traits that are not persistent.
     /// NOTE: This does NOT remove relationships!
@@ -3365,6 +3419,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return null;
     }
+
     public Trait GetTraitOr(string traitName1, string traitName2) {
         for (int i = 0; i < allTraits.Count; i++) {
             if ((allTraits[i].name == traitName1 || allTraits[i].name == traitName2) && !allTraits[i].isDisabled) {
@@ -3373,17 +3428,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return null;
     }
+
     public Trait GetTraitOr(string traitName1, string traitName2, string traitName3) {
-        for (int i = 0; i < allTraits.Count; i++) {
+	for (int i = 0; i < allTraits.Count; i++) {
             if ((allTraits[i].name == traitName1 || allTraits[i].name == traitName2 || allTraits[i].name == traitName3) && !allTraits[i].isDisabled) {
-                return allTraits[i];
-            }
-        }
-        return null;
-    }
-    public Trait GetTraitOr(string traitName1, string traitName2, string traitName3, string traitName4) {
-        for (int i = 0; i < allTraits.Count; i++) {
-            if ((allTraits[i].name == traitName1 || allTraits[i].name == traitName2 || allTraits[i].name == traitName3 || allTraits[i].name == traitName4) && !allTraits[i].isDisabled) {
                 return allTraits[i];
             }
         }
@@ -3938,7 +3986,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public bool PlanFullnessRecoveryActions() {
         TIME_IN_WORDS currentTimeInWords = GameManager.GetCurrentTimeInWordsOfTick();
-        Trait hungryOrStarving = GetTraitOr("Starving", "Hungry");
+        Trait hungryOrStarving = GetTrait("Starving", "Hungry");
 
         if (hungryOrStarving != null) {
             if (!jobQueue.HasJob("Fullness")) {
@@ -3978,7 +4026,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public bool PlanTirednessRecoveryActions() {
         TIME_IN_WORDS currentTimeInWords = GameManager.GetCurrentTimeInWordsOfTick();
-        Trait tiredOrExhausted = GetTraitOr("Exhausted", "Tired");
+        Trait tiredOrExhausted = GetTrait("Exhausted", "Tired");
 
         if (tiredOrExhausted != null) {
             if (!jobQueue.HasJob("Tiredness")) {
@@ -4019,7 +4067,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public bool PlanHappinessRecoveryActions() {
         TIME_IN_WORDS currentTimeInWords = GameManager.GetCurrentTimeInWordsOfTick();
-        Trait lonelyOrForlorn = GetTraitOr("Forlorn", "Lonely");
+        Trait lonelyOrForlorn = GetTrait("Forlorn", "Lonely");
 
         if (lonelyOrForlorn != null) {
             if (!jobQueue.HasJob("Happiness")) {
@@ -4793,7 +4841,15 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public void DropToken(SpecialToken token, Area location, LocationStructure structure, LocationGridTile gridTile = null, bool clearOwner = true) {
         if (UnobtainToken(token)) {
-            location.AddSpecialTokenToLocation(token, structure, gridTile);
+            if(location.AddSpecialTokenToLocation(token, structure, gridTile)) {
+                //When items are dropped into the warehouse, make all residents aware of it.
+                if (structure.structureType == STRUCTURE_TYPE.WAREHOUSE) {
+                    for (int i = 0; i < structure.location.areaResidents.Count; i++) {
+                        Character resident = structure.location.areaResidents[i];
+                        resident.AddAwareness(token);
+                    }
+                }
+            }
             //if (structure != homeStructure) {
             //    //if this character drops this at a structure that is not his/her home structure, set the owner of the item to null
             //    token.SetCharacterOwner(null);
@@ -5228,11 +5284,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     }
                 }
             }
-            Log informedLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "informed_event", intel.intelLog.goapAction);
-            informedLog.AddToFillers(this, this.name, LOG_IDENTIFIER.OTHER);
-            informedLog.AddToFillers(null, Utilities.LogDontReplace(intel.intelLog), LOG_IDENTIFIER.APPEND);
-            informedLog.AddToFillers(intel.intelLog.fillers);
-            AddHistory(informedLog);
+            CreateInformedEventLog(intel.intelLog.goapAction);
         }
         PlayerManager.Instance.player.RemoveIntel(intel);
         return dialogReactions;
@@ -5472,8 +5524,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         poiGoapActions.Add(INTERACTION_TYPE.DRINK_BLOOD);
         poiGoapActions.Add(INTERACTION_TYPE.REPLACE_TILE_OBJECT);
         poiGoapActions.Add(INTERACTION_TYPE.TANTRUM);
+        poiGoapActions.Add(INTERACTION_TYPE.SPREAD_RUMOR_REMOVE_FRIENDSHIP);
+        poiGoapActions.Add(INTERACTION_TYPE.SPREAD_RUMOR_REMOVE_LOVE);
     }
-    public void StartGOAP(GoapEffect goal, IPointOfInterest target, GOAP_CATEGORY category, bool isPriority = false, List<Character> otherCharactePOIs = null, bool isPersonalPlan = true, GoapPlanJob job = null, bool allowDeadTargets = false) {
+    public void StartGOAP(GoapEffect goal, IPointOfInterest target, GOAP_CATEGORY category, bool isPriority = false, List<Character> otherCharactePOIs = null, bool isPersonalPlan = true, GoapPlanJob job = null, Dictionary<INTERACTION_TYPE, object[]> otherData = null, bool allowDeadTargets = false) {
         List<CharacterAwareness> characterTargetsAwareness = new List<CharacterAwareness>();
         if (target.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
             CharacterAwareness characterAwareness = AddAwareness(target) as CharacterAwareness;
@@ -5495,7 +5549,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         _numOfWaitingForGoapThread++;
         //Debug.LogWarning(name + " sent a plan to other thread(" + _numOfWaitingForGoapThread + ")");
-        MultiThreadPool.Instance.AddToThreadPool(new GoapThread(this, target, goal, category, isPriority, characterTargetsAwareness, isPersonalPlan, job, allowDeadTargets));
+        MultiThreadPool.Instance.AddToThreadPool(new GoapThread(this, target, goal, category, isPriority, characterTargetsAwareness, isPersonalPlan, job, allowDeadTargets, otherData));
     }
     public void StartGOAP(GoapAction goal, IPointOfInterest target, GOAP_CATEGORY category, bool isPriority = false, List<Character> otherCharactePOIs = null, bool isPersonalPlan = true, GoapPlanJob job = null, bool allowDeadTargets = false) {
         List<CharacterAwareness> characterTargetsAwareness = new List<CharacterAwareness>();
@@ -5562,6 +5616,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                         if (goapThread.job.assignedCharacter == this) {
                             goapThread.job.SetAssignedCharacter(null);
                             goapThread.job.SetAssignedPlan(null);
+                            goapThread.job.jobQueueParent.RemoveJobInQueue(goapThread.job);
                         }
                     }
                     return;
@@ -6478,27 +6533,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (lastExploreState != null && lastExploreState.itemsCollected.Count > 0 && role.roleType == CHARACTER_ROLE.ADVENTURER) {
             //create deliver treasure job that will deposit the items that the character collected during his/her last explore action.
             lastExploreState.CreateDeliverTreasureJob();
-        }
-    }
-    #endregion
-
-    #region Logs
-    //Add log to this character and show notif of that log only if this character is clicked or tracked, otherwise, add log only
-    public void RegisterLogAndShowNotifToThisCharacterOnly(string fileName, string key, object target = null, string targetName = "", GoapAction goapAction = null) {
-        if (!GameManager.Instance.gameHasStarted) {
-            return;
-        }
-        if (key == "remove_trait" && isDead) {
-            return;
-        }
-        Log addLog = new Log(GameManager.Instance.Today(), "Character", fileName, key, goapAction);
-        addLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        if (targetName != "") {
-            addLog.AddToFillers(target, targetName, LOG_IDENTIFIER.TARGET_CHARACTER);
-        }
-        addLog.AddLogToInvolvedObjects();
-        if (PlayerManager.Instance.player.ShouldShowNotificationFrom(this, true)) {
-            PlayerManager.Instance.player.ShowNotification(addLog);
         }
     }
     #endregion

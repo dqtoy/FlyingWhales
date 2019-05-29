@@ -38,13 +38,21 @@ public class TransformToWolfForm : GoapAction {
     #region Intel Reactions
     private List<string> TransformSuccessIntelReaction(Character recipient, Intel sharedIntel) {
         List<string> reactions = new List<string>();
-        if (recipient == actor) {
-            return reactions; //return empty list if same actor
-        }
         //Lycanthropy lycanthropy = actor.GetTrait("Lycanthropy") as Lycanthropy;
         //Faction actorOrigFaction = lycanthropy.data.faction;
-        //TODO: Recipient and Actor are from the same faction and are lovers or paramours
 
+        //Recipient and Actor is the same:
+        if (recipient == actor) {
+            //- **Recipient Response Text**: Please do not tell anyone else about this. I beg you!
+            reactions.Add("Please do not tell anyone else about this. I beg you!");
+            //-**Recipient Effect * *: no effect
+        }
+        //Recipient and Actor are from the same faction and are lovers or paramours
+        else if (actorOrigFaction == recipient.faction && recipient.HasRelationshipOfTypeWith(actor, true, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR)) {
+            //- **Recipient Response Text**: [Actor Name] may be a monster, but I love [him/her] still!
+            reactions.Add(string.Format("{0} may be a monster, but I love {1} still!", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.OBJECTIVE, false)));
+            //- **Recipient Effect**: no effect
+        }
         //Recipient and Actor are from the same faction and are friends:
         if (actorAlterEgo.faction == recipient.faction && recipient.HasRelationshipOfTypeWith(actorAlterEgo, RELATIONSHIP_TRAIT.FRIEND)) {
             //- **Recipient Response Text**: I cannot be friends with a lycanthrope but I will not report this to the others as my last act of friendship.

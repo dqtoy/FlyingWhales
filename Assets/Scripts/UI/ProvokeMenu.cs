@@ -42,26 +42,27 @@ public class ProvokeMenu : MonoBehaviour {
     private void ProvokeAction(ref string targetText, ref string actorText) {
         bool succeedProvoke = false;
         if (targetCharacter.HasRelationshipTraitOf(RELATIONSHIP_TRAIT.ENEMY)) {
-            CHARACTER_MOOD currentMood = targetCharacter.currentMoodType;
-            if(currentMood == CHARACTER_MOOD.GREAT) {
-                int chance = UnityEngine.Random.Range(0, 100);
-                if(chance < 70) {
-                    actorText = "You should take revenge on your enemies.";
-                    targetText = "I am too happy right now to even care about my enemies.";
-                } else {
-                    succeedProvoke = true;
-                }
-            } else if (currentMood == CHARACTER_MOOD.GOOD) {
-                int chance = UnityEngine.Random.Range(0, 2);
-                if (chance == 0) {
-                    actorText = "You should take revenge on your enemies.";
-                    targetText = "I am too happy right now to even care about my enemies.";
-                } else {
-                    succeedProvoke = true;
-                }
-            } else {
-                succeedProvoke = true;
-            }
+            succeedProvoke = true;
+            //CHARACTER_MOOD currentMood = targetCharacter.currentMoodType;
+            //if(currentMood == CHARACTER_MOOD.GREAT) {
+            //    int chance = UnityEngine.Random.Range(0, 100);
+            //    if(chance < 70) {
+            //        actorText = "You should take revenge on your enemies.";
+            //        targetText = "I am too happy right now to even care about my enemies.";
+            //    } else {
+            //        succeedProvoke = true;
+            //    }
+            //} else if (currentMood == CHARACTER_MOOD.GOOD) {
+            //    int chance = UnityEngine.Random.Range(0, 2);
+            //    if (chance == 0) {
+            //        actorText = "You should take revenge on your enemies.";
+            //        targetText = "I am too happy right now to even care about my enemies.";
+            //    } else {
+            //        succeedProvoke = true;
+            //    }
+            //} else {
+            //    succeedProvoke = true;
+            //}
         } else {
             actorText = "You should take revenge on your enemies.";
             targetText = "Sorry, I don't have any.";
@@ -91,11 +92,13 @@ public class ProvokeMenu : MonoBehaviour {
                     + " best life. Are you just gonna let your enemy be happy?";
                 targetText = "I will not allow it! I'll take " + Utilities.GetPronounString(chosenCharacter.gender, PRONOUN_TYPE.OBJECTIVE, false) + " down with me!";
 
-                GoapPlanJob job = new GoapPlanJob("Undermine Enemy", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", targetPOI = chosenCharacter });
-                job.SetCannotOverrideJob(true);
-                job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
-                targetCharacter.jobQueue.AddJobInQueue(job, true, false);
-                targetCharacter.jobQueue.ProcessFirstJobInQueue(targetCharacter);
+                //GoapPlanJob job = new GoapPlanJob("Undermine Enemy", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", targetPOI = chosenCharacter });
+                //job.SetCannotOverrideJob(true);
+                //job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
+                //targetCharacter.jobQueue.AddJobInQueue(job, true, false);
+                //targetCharacter.jobQueue.ProcessFirstJobInQueue(targetCharacter);
+
+                targetCharacter.CreateUndermineJobOnly(chosenCharacter);
 
                 Log addLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "provoke");
                 addLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

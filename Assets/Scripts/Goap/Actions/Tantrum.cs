@@ -47,7 +47,9 @@ public class Tantrum : GoapAction {
         actor.stateComponent.SwitchToState(CHARACTER_STATE.BERSERKED, null, actor.specificLocation, GameManager.Instance.GetTicksBasedOnHour(2));
     }
     public override bool InitializeOtherData(object[] otherData) {
-        reason = otherData[0] as GoapAction;
+        if (otherData.Length == 1 && otherData[0] is GoapAction) {
+            reason = otherData[0] as GoapAction;
+        }
         return base.InitializeOtherData(otherData);
     }
     #endregion

@@ -127,6 +127,7 @@ public class GameManager : MonoBehaviour {
     [ContextMenu("Start Progression")]
 	public void StartProgression(){
         _gameHasStarted = true;
+        days = 1;
         //SetPausedState(false);
         UIManager.Instance.SetProgressionSpeed1X();
         UIManager.Instance.Pause();

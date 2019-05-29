@@ -42,13 +42,15 @@ public class ReportHostile : GoapAction {
         return 3;
     }
     public override bool InitializeOtherData(object[] otherData) {
-        base.InitializeOtherData(otherData);
-        //GoapAction crime = otherData[0] as GoapAction;
-        SetHostileToReport(otherData[0] as Character);
-        if (thoughtBubbleMovingLog != null) {
-            thoughtBubbleMovingLog.AddToFillers(hostile, hostile.name, LOG_IDENTIFIER.CHARACTER_3);
+        if (otherData.Length == 1 && otherData[0] is Character) {
+            //GoapAction crime = otherData[0] as GoapAction;
+            SetHostileToReport(otherData[0] as Character);
+            if (thoughtBubbleMovingLog != null) {
+                thoughtBubbleMovingLog.AddToFillers(hostile, hostile.name, LOG_IDENTIFIER.CHARACTER_3);
+            }
+            return true;
         }
-        return true;
+        return base.InitializeOtherData(otherData);
     }
     #endregion
 

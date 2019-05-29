@@ -23,7 +23,7 @@ public class Kleptomaniac : Trait {
 
     #region Overrides
     public override void OnAddTrait(IPointOfInterest sourceCharacter) {
-        (sourceCharacter as Character).RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "afflicted", null, "Kleptomania");
+        //(sourceCharacter as Character).RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "afflicted", null, "Kleptomania");
         owner = sourceCharacter as Character;
         base.OnAddTrait(sourceCharacter);
         Messenger.AddListener(Signals.DAY_STARTED, CheckForClearNoItemsList);

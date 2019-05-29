@@ -98,6 +98,7 @@ public class AttributeManager : MonoBehaviour {
             new Sick(),
             new Thief(),
             new Unconscious(),
+            new Betrayed(),
         };
         for (int i = 0; i < specialTraits.Length; i++) {
             CategorizeTrait(specialTraits[i]);

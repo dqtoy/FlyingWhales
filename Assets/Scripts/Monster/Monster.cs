@@ -755,7 +755,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
         //Not applicable
         return false;
     }
-    public Trait GetTrait(string name) {
+    public Trait GetTrait(params string[] name) {
         return null;
     }
 

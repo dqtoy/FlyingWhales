@@ -39,13 +39,15 @@ public class ReportCrime : GoapAction {
         return 3;
     }
     public override bool InitializeOtherData(object[] otherData) {
-        base.InitializeOtherData(otherData);
-        //GoapAction crime = otherData[0] as GoapAction;
-        SetCrimeToReport((CRIME)otherData[0], otherData[1] as AlterEgoData);
-        if (thoughtBubbleMovingLog != null) {
-            thoughtBubbleMovingLog.AddToFillers(criminal, criminal.name, LOG_IDENTIFIER.CHARACTER_3);
+        if (otherData.Length == 2 && otherData[0] is CRIME && otherData[1] is Character) {
+            //GoapAction crime = otherData[0] as GoapAction;
+            SetCrimeToReport((CRIME)otherData[0], otherData[1] as AlterEgoData);
+            if (thoughtBubbleMovingLog != null) {
+                thoughtBubbleMovingLog.AddToFillers(criminal, criminal.name, LOG_IDENTIFIER.CHARACTER_3);
+            }
+            return true;
         }
-        return true;
+        return base.InitializeOtherData(otherData);
     }
     #endregion
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PatrolState : CharacterState {
+    private int _currentDuration;
 
     public PatrolState(CharacterStateComponent characterComp) : base(characterComp) {
         stateName = "Patrol State";
@@ -10,6 +11,7 @@ public class PatrolState : CharacterState {
         stateCategory = CHARACTER_STATE_CATEGORY.MAJOR;
         duration = 24;
         actionIconString = GoapActionStateDB.Patrol_Icon;
+        _currentDuration = 0;
     }
 
     #region Overrides
@@ -49,6 +51,17 @@ public class PatrolState : CharacterState {
             if(stateComponent.character.GetTrait("Injured") != null) {
                 StopStatePerTick();
                 OnExitThisState();
+                return;
+            }
+            if (_currentDuration >= 4) {
+                _currentDuration = 0;
+                if (!stateComponent.character.PlanFullnessRecoveryActions()) {
+                    if (!stateComponent.character.PlanTirednessRecoveryActions()) {
+                        stateComponent.character.PlanHappinessRecoveryActions();
+                    }
+                }
+            } else {
+                _currentDuration++;
             }
         }
     }

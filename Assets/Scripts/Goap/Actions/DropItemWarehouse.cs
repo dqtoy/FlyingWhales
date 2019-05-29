@@ -46,12 +46,15 @@ public class DropItemWarehouse : GoapAction {
         base.SetTargetStructure();
     }
     public override bool InitializeOtherData(object[] otherData) {
-        itemTypeToDeposit = (SPECIAL_TOKEN)otherData[0];
-        preconditions.Clear();
-        expectedEffects.Clear();
-        ConstructPreconditionsAndEffects();
-        CreateThoughtBubbleLog();
-        return true;
+        if (otherData.Length == 1 && otherData[0] is SPECIAL_TOKEN) {
+            itemTypeToDeposit = (SPECIAL_TOKEN) otherData[0];
+            preconditions.Clear();
+            expectedEffects.Clear();
+            ConstructPreconditionsAndEffects();
+            CreateThoughtBubbleLog();
+            return true;
+        }
+        return base.InitializeOtherData(otherData);
     }
     public override void OnResultReturnedToActor() {
         base.OnResultReturnedToActor();

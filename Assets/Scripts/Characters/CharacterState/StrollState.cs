@@ -10,6 +10,7 @@ public class StrollState : CharacterState {
         characterState = CHARACTER_STATE.STROLL;
         stateCategory = CHARACTER_STATE_CATEGORY.MAJOR;
         duration = GameManager.ticksPerHour;
+        _currentDuration = 0;
     }
 
     #region Overrides
