@@ -88,7 +88,7 @@ public class SpreadRumorRemoveLove : GoapAction {
         Character target = poiTarget as Character;
         _chosenMemory = affairMemoriesInvolvingRumoredCharacter[UnityEngine.Random.Range(0, affairMemoriesInvolvingRumoredCharacter.Count)];
         currentState.AddLogFiller(rumoredCharacter, rumoredCharacter.name, LOG_IDENTIFIER.CHARACTER_3);
-        currentState.AddLogFiller(null, Utilities.LogReplacer(_chosenMemory), LOG_IDENTIFIER.STRING_1);
+        currentState.AddLogFiller(null, Utilities.LogReplacer(_chosenMemory.goapAction.currentState.descriptionLog), LOG_IDENTIFIER.STRING_1);
     }
     public void AfterBreakLoveSuccess() {
         Character target = poiTarget as Character;
@@ -97,26 +97,28 @@ public class SpreadRumorRemoveLove : GoapAction {
         CharacterManager.Instance.RemoveRelationshipBetween(target, rumoredCharacter, RELATIONSHIP_TRAIT.PARAMOUR);
 
         //**Effect 2**: Target - Add shared event to Target's memory
-        Log informedLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "informed_event", _chosenMemory.goapAction);
-        informedLog.AddToFillers(target, target.name, LOG_IDENTIFIER.OTHER);
-        informedLog.AddToFillers(null, Utilities.LogDontReplace(_chosenMemory), LOG_IDENTIFIER.APPEND);
-        informedLog.AddToFillers(_chosenMemory.fillers);
-        target.AddHistory(informedLog);
+        target.CreateInformedEventLog(_chosenMemory.goapAction);
+        //Log informedLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "informed_event", _chosenMemory.goapAction);
+        //informedLog.AddToFillers(target, target.name, LOG_IDENTIFIER.OTHER);
+        //informedLog.AddToFillers(null, Utilities.LogDontReplace(_chosenMemory), LOG_IDENTIFIER.APPEND);
+        //informedLog.AddToFillers(_chosenMemory.fillers);
+        //target.AddHistory(informedLog);
     }
     public void PreBreakLoveFail() {
         Character target = poiTarget as Character;
         _chosenMemory = affairMemoriesInvolvingRumoredCharacter[UnityEngine.Random.Range(0, affairMemoriesInvolvingRumoredCharacter.Count)];
-        currentState.AddLogFiller(null, Utilities.LogReplacer(_chosenMemory), LOG_IDENTIFIER.STRING_1);
+        currentState.AddLogFiller(null, Utilities.LogReplacer(_chosenMemory.goapAction.currentState.descriptionLog), LOG_IDENTIFIER.STRING_1);
     }
     public void AfterBreakLoveFail() {
         Character target = poiTarget as Character;
 
         //**Effect 2**: Target - Add shared event to Target's memory
-        Log informedLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "informed_event", _chosenMemory.goapAction);
-        informedLog.AddToFillers(target, target.name, LOG_IDENTIFIER.OTHER);
-        informedLog.AddToFillers(null, Utilities.LogDontReplace(_chosenMemory), LOG_IDENTIFIER.APPEND);
-        informedLog.AddToFillers(_chosenMemory.fillers);
-        target.AddHistory(informedLog);
+        target.CreateInformedEventLog(_chosenMemory.goapAction);
+        //Log informedLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "informed_event", _chosenMemory.goapAction);
+        //informedLog.AddToFillers(target, target.name, LOG_IDENTIFIER.OTHER);
+        //informedLog.AddToFillers(null, Utilities.LogDontReplace(_chosenMemory), LOG_IDENTIFIER.APPEND);
+        //informedLog.AddToFillers(_chosenMemory.fillers);
+        //target.AddHistory(informedLog);
     }
     public void PreTargetMissing() {
         currentState.AddLogFiller(rumoredCharacter, rumoredCharacter.name, LOG_IDENTIFIER.CHARACTER_3);

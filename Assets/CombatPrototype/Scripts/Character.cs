@@ -5102,11 +5102,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     }
                 }
             }
-            Log informedLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "informed_event", intel.intelLog.goapAction);
-            informedLog.AddToFillers(this, this.name, LOG_IDENTIFIER.OTHER);
-            informedLog.AddToFillers(null, Utilities.LogDontReplace(intel.intelLog), LOG_IDENTIFIER.APPEND);
-            informedLog.AddToFillers(intel.intelLog.fillers);
-            AddHistory(informedLog);
+            CreateInformedEventLog(intel.intelLog.goapAction);
         }
         PlayerManager.Instance.player.RemoveIntel(intel);
         return dialogReactions;
@@ -6395,6 +6391,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (PlayerManager.Instance.player.ShouldShowNotificationFrom(this, true)) {
             PlayerManager.Instance.player.ShowNotification(addLog);
         }
+    }
+    public void CreateInformedEventLog(GoapAction eventToBeInformed){
+        Log informedLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "informed_event", eventToBeInformed);
+        informedLog.AddToFillers(eventToBeInformed.currentState.descriptionLog.fillers);
+        informedLog.AddToFillers(this, this.name, LOG_IDENTIFIER.OTHER);
+        informedLog.AddToFillers(null, Utilities.LogDontReplace(eventToBeInformed.currentState.descriptionLog), LOG_IDENTIFIER.APPEND);
+        AddHistory(informedLog);
     }
     #endregion
 
