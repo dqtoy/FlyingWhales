@@ -34,7 +34,6 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     public IPointOfInterest objHere { get; private set; }
     public List<Character> charactersHere { get; private set; }
     public bool isOccupied { get { return tileState == Tile_State.Occupied; } }
-    public bool isEdge { get; private set; }
     public bool isLocked { get; private set; } //if a tile is locked, any asset on it should not be replaced.
     public TILE_OBJECT_TYPE reservedObjectType { get; private set; } //the only type of tile object that can be placed here
     public FurnitureSpot furnitureSpot { get; private set; }
@@ -140,9 +139,6 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     }
     public void SetIsInside(bool isInside) {
         this.isInside = isInside;
-    }
-    public void SetIsEdge(bool state) {
-        isEdge = state;
     }
     public void SetTileType(Tile_Type tileType) {
         this.tileType = tileType;
@@ -474,8 +470,10 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         isLocked = state;
     }
     public bool IsAtEdgeOfWalkableMap() {
-        if (localPlace.y == AreaInnerTileMap.southEdge || localPlace.y == parentAreaMap.height - AreaInnerTileMap.northEdge - 1 
-            || localPlace.x == AreaInnerTileMap.westEdge || localPlace.x == parentAreaMap.width - AreaInnerTileMap.eastEdge - 1) {
+        if ((localPlace.y == AreaInnerTileMap.southEdge && localPlace.x >= AreaInnerTileMap.westEdge && localPlace.x <= parentAreaMap.width - AreaInnerTileMap.eastEdge - 1)
+            || (localPlace.y == parentAreaMap.height - AreaInnerTileMap.northEdge - 1 && localPlace.x >= AreaInnerTileMap.westEdge && localPlace.x <= parentAreaMap.width - AreaInnerTileMap.eastEdge - 1)
+            || (localPlace.x == AreaInnerTileMap.westEdge && localPlace.y >= AreaInnerTileMap.southEdge && localPlace.y <= parentAreaMap.height - AreaInnerTileMap.northEdge - 1) 
+            || (localPlace.x == parentAreaMap.width - AreaInnerTileMap.eastEdge - 1 && localPlace.y >= AreaInnerTileMap.southEdge && localPlace.y <= parentAreaMap.height - AreaInnerTileMap.northEdge - 1)) {
             return true;
         }
         return false;

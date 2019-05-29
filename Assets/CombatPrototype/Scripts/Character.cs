@@ -1959,14 +1959,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public LocationGridTile GetNearestUnoccupiedEdgeTileFromThis() {
         LocationGridTile currentGridTile = gridTileLocation;
-        if (currentGridTile.isEdge && currentGridTile.structure != null) {
+        if (currentGridTile.IsAtEdgeOfWalkableMap() && currentGridTile.structure != null) {
             return currentGridTile;
         }
 
         LocationGridTile nearestEdgeTile = null;
         List<LocationGridTile> neighbours = gridTileLocation.neighbourList;
         for (int i = 0; i < neighbours.Count; i++) {
-            if (neighbours[i].isEdge && neighbours[i].structure != null && !neighbours[i].isOccupied) {
+            if (neighbours[i].IsAtEdgeOfWalkableMap() && neighbours[i].structure != null && !neighbours[i].isOccupied) {
                 nearestEdgeTile = neighbours[i];
                 break;
             }
@@ -1977,8 +1977,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 LocationGridTile currTile = specificLocation.areaMap.allEdgeTiles[i];
                 float dist = Vector2.Distance(currTile.localLocation, currentGridTile.localLocation);
                 if (nearestDist == -999f || dist < nearestDist) {
-                    nearestEdgeTile = currTile;
-                    nearestDist = dist;
+                    if(currTile.structure != null) {
+                        nearestEdgeTile = currTile;
+                        nearestDist = dist;
+                    }
                 }
             }
         }
