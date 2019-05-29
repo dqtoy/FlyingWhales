@@ -23,7 +23,8 @@ public class GoapThread : Multithread {
     //For recalculation
     public GoapPlan recalculationPlan;
 
-    public GoapThread(Character actor, IPointOfInterest target, GoapEffect goalEffect, GOAP_CATEGORY category, bool isPriority, List<CharacterAwareness> characterTargetsAwareness, bool isPersonalPlan, GoapPlanJob job, bool allowDeadTargets) {//, List<INTERACTION_TYPE> actorAllowedActions, List<GoapAction> usableActions
+    public GoapThread(Character actor, IPointOfInterest target, GoapEffect goalEffect, GOAP_CATEGORY category, bool isPriority, List<CharacterAwareness> characterTargetsAwareness
+        , bool isPersonalPlan, GoapPlanJob job, bool allowDeadTargets) {//, List<INTERACTION_TYPE> actorAllowedActions, List<GoapAction> usableActions
         this.createdPlan = null;
         this.recalculationPlan = null;
         this.actor = actor;
@@ -38,7 +39,25 @@ public class GoapThread : Multithread {
         this.job = job;
         this.allowDeadTargets = allowDeadTargets;
     }
-    public GoapThread(Character actor, IPointOfInterest target, GoapAction goalAction, GOAP_CATEGORY category, bool isPriority, List<CharacterAwareness> characterTargetsAwareness, bool isPersonalPlan, GoapPlanJob job, bool allowDeadTargets) {//, List<INTERACTION_TYPE> actorAllowedActions, List<GoapAction> usableActions
+    public GoapThread(Character actor, IPointOfInterest target, GoapEffect goalEffect, GOAP_CATEGORY category, bool isPriority, List<CharacterAwareness> characterTargetsAwareness
+        , bool isPersonalPlan, GoapPlanJob job, bool allowDeadTargets, Dictionary<INTERACTION_TYPE, object[]> otherData = null) {//, List<INTERACTION_TYPE> actorAllowedActions, List<GoapAction> usableActions
+        this.createdPlan = null;
+        this.recalculationPlan = null;
+        this.actor = actor;
+        this.target = target;
+        this.goalEffect = goalEffect;
+        this.isPriority = isPriority;
+        this.characterTargetsAwareness = characterTargetsAwareness;
+        //this.actorAllowedActions = actorAllowedActions;
+        //this.usableActions = usableActions;
+        this.isPersonalPlan = isPersonalPlan;
+        this.category = category;
+        this.job = job;
+        this.allowDeadTargets = allowDeadTargets;
+        this.otherData = otherData;
+    }
+    public GoapThread(Character actor, IPointOfInterest target, GoapAction goalAction, GOAP_CATEGORY category, bool isPriority, List<CharacterAwareness> characterTargetsAwareness
+        , bool isPersonalPlan, GoapPlanJob job, bool allowDeadTargets) {//, List<INTERACTION_TYPE> actorAllowedActions, List<GoapAction> usableActions
         this.createdPlan = null;
         this.recalculationPlan = null;
         this.actor = actor;
@@ -53,7 +72,8 @@ public class GoapThread : Multithread {
         this.job = job;
         this.allowDeadTargets = allowDeadTargets;
     }
-    public GoapThread(Character actor, INTERACTION_TYPE goalType, GOAP_CATEGORY category, bool isPriority, List<CharacterAwareness> characterTargetsAwareness, bool isPersonalPlan, GoapPlanJob job, bool allowDeadTargets, Dictionary<INTERACTION_TYPE, object[]> otherData = null) {//, List<INTERACTION_TYPE> actorAllowedActions, List<GoapAction> usableActions
+    public GoapThread(Character actor, INTERACTION_TYPE goalType, GOAP_CATEGORY category, bool isPriority, List<CharacterAwareness> characterTargetsAwareness
+        , bool isPersonalPlan, GoapPlanJob job, bool allowDeadTargets, Dictionary<INTERACTION_TYPE, object[]> otherData = null) {//, List<INTERACTION_TYPE> actorAllowedActions, List<GoapAction> usableActions
         this.createdPlan = null;
         this.recalculationPlan = null;
         this.actor = actor;
@@ -68,7 +88,8 @@ public class GoapThread : Multithread {
         this.allowDeadTargets = allowDeadTargets;
         this.otherData = otherData;
     }
-    public GoapThread(Character actor, INTERACTION_TYPE goalType, IPointOfInterest target, GOAP_CATEGORY category, bool isPriority, List<CharacterAwareness> characterTargetsAwareness, bool isPersonalPlan, GoapPlanJob job, bool allowDeadTargets, Dictionary<INTERACTION_TYPE, object[]> otherData = null) {//, List<INTERACTION_TYPE> actorAllowedActions, List<GoapAction> usableActions
+    public GoapThread(Character actor, INTERACTION_TYPE goalType, IPointOfInterest target, GOAP_CATEGORY category, bool isPriority, List<CharacterAwareness> characterTargetsAwareness
+        , bool isPersonalPlan, GoapPlanJob job, bool allowDeadTargets, Dictionary<INTERACTION_TYPE, object[]> otherData = null) {//, List<INTERACTION_TYPE> actorAllowedActions, List<GoapAction> usableActions
         this.createdPlan = null;
         this.recalculationPlan = null;
         this.actor = actor;
@@ -189,30 +210,41 @@ public class GoapThread : Multithread {
 
         //other data handling
         if (otherData != null) {
+            log += "\nOTHER DATA: ";
             for (int i = 0; i < usableActions.Count; i++) {
                 GoapAction currAction = usableActions[i];
                 if (otherData.ContainsKey(currAction.goapType)) {
+                    log += currAction.goapName + " (" + currAction.poiTarget.name + ")";
                     if (currAction.InitializeOtherData(otherData[currAction.goapType])) {
+                        log += ": Initialized!";
                         //if other data was initialized, check if the action still meets the needed requirements
                         if (!currAction.CanSatisfyRequirements() || !currAction.CanSatisfyRequirementOnBuildGoapTree()) {
                             //if it no longer does, add as invalid
+                            log += " Removing!, ";
                             usableActions.RemoveAt(i);
                             i--;
                             continue;
                         }
                     }
+                    log += ", ";
                 }
                 if (otherData.ContainsKey(INTERACTION_TYPE.NONE)) {
+                    log += "Universal " + currAction.goapName + " (" + currAction.poiTarget.name + ")";
                     if (currAction.InitializeOtherData(otherData[INTERACTION_TYPE.NONE])) {
+                        log += ": Initialized!";
                         //if other data was initialized, check if the action still meets the needed requirements
                         if (!currAction.CanSatisfyRequirements() || !currAction.CanSatisfyRequirementOnBuildGoapTree()) {
                             //if it no longer does, add as invalid
+                            log += " Removing!";
                             usableActions.RemoveAt(i);
                             i--;
                         }
                     }
+                    log += ", ";
                 }
             }
+        } else {
+            log += "\nNO OTHER DATA";
         }
        
 
@@ -282,6 +314,7 @@ public class GoapThread : Multithread {
                 }
                 log += usableActions[i].goapName + " (" + usableActions[i].poiTarget.name + ")";
                 if (usableActions[i].WillEffectsSatisfyPrecondition(goalEffect)) {
+                    log += "(GOAL EFFECT SATISFIED!)";
                     if (job != null && job.forcedActions.Count > 0) {
                         bool satisfiedForcedActions = true;
                         ForcedActionsComparer comparer = new ForcedActionsComparer();

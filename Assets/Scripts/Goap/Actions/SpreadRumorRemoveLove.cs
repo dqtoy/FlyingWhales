@@ -35,36 +35,38 @@ public class SpreadRumorRemoveLove : GoapAction {
         return 15;
     }
     public override bool InitializeOtherData(object[] otherData) {
-        base.InitializeOtherData(otherData);
-        rumoredCharacter = otherData[0] as Character;
-        int dayTo = GameManager.days;
-        int dayFrom = dayTo - 3;
-        if (dayFrom < 1) {
-            dayFrom = 1;
-        }
-        List<Log> memories = actor.GetWitnessOrInformedMemories(dayFrom, dayTo);
-        affairMemoriesInvolvingRumoredCharacter = new List<Log>();
-        for (int i = 0; i < memories.Count; i++) {
-            Log memory = memories[i];
-            if (memory.goapAction.actor == rumoredCharacter && memory.goapAction.poiTarget != poiTarget) {
-                //if the event means Character 2 flirted, asked to make love or made love with another character other than Target, include it
-                if (memory.goapAction.goapType == INTERACTION_TYPE.CHAT_CHARACTER) {
-                    ChatCharacter chatAction = memory.goapAction as ChatCharacter;
-                    if (chatAction.chatResult == "flirt") {
+        if (otherData.Length == 1 && otherData[0] is Character) {
+            rumoredCharacter = otherData[0] as Character;
+            int dayTo = GameManager.days;
+            int dayFrom = dayTo - 3;
+            if (dayFrom < 1) {
+                dayFrom = 1;
+            }
+            List<Log> memories = actor.GetWitnessOrInformedMemories(dayFrom, dayTo);
+            affairMemoriesInvolvingRumoredCharacter = new List<Log>();
+            for (int i = 0; i < memories.Count; i++) {
+                Log memory = memories[i];
+                if (memory.goapAction.actor == rumoredCharacter && memory.goapAction.poiTarget != poiTarget) {
+                    //if the event means Character 2 flirted, asked to make love or made love with another character other than Target, include it
+                    if (memory.goapAction.goapType == INTERACTION_TYPE.CHAT_CHARACTER) {
+                        ChatCharacter chatAction = memory.goapAction as ChatCharacter;
+                        if (chatAction.chatResult == "flirt") {
+                            affairMemoriesInvolvingRumoredCharacter.Add(memory);
+                        }
+                    } else if (memory.goapAction.goapType == INTERACTION_TYPE.INVITE_TO_MAKE_LOVE || memory.goapAction.goapType == INTERACTION_TYPE.MAKE_LOVE) {
                         affairMemoriesInvolvingRumoredCharacter.Add(memory);
                     }
-                }else if (memory.goapAction.goapType == INTERACTION_TYPE.INVITE_TO_MAKE_LOVE || memory.goapAction.goapType == INTERACTION_TYPE.MAKE_LOVE) {
-                    affairMemoriesInvolvingRumoredCharacter.Add(memory);
                 }
             }
+            preconditions.Clear();
+            expectedEffects.Clear();
+            ConstructPreconditionsAndEffects();
+            if (thoughtBubbleMovingLog != null) {
+                thoughtBubbleMovingLog.AddToFillers(rumoredCharacter, rumoredCharacter.name, LOG_IDENTIFIER.CHARACTER_3);
+            }
+            return true;
         }
-        preconditions.Clear();
-        expectedEffects.Clear();
-        ConstructPreconditionsAndEffects();
-        if (thoughtBubbleMovingLog != null) {
-            thoughtBubbleMovingLog.AddToFillers(rumoredCharacter, rumoredCharacter.name, LOG_IDENTIFIER.CHARACTER_3);
-        }
-        return true;
+        return base.InitializeOtherData(otherData);
     }
     #endregion
 

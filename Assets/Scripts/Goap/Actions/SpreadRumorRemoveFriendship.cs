@@ -34,21 +34,23 @@ public class SpreadRumorRemoveFriendship : GoapAction {
         return 15;
     }
     public override bool InitializeOtherData(object[] otherData) {
-        base.InitializeOtherData(otherData);
-        rumoredCharacter = otherData[0] as Character;
-        int dayTo = GameManager.days;
-        int dayFrom = dayTo - 3;
-        if(dayFrom < 1) {
-            dayFrom = 1;
+        if (otherData.Length == 1 && otherData[0] is Character) {
+            rumoredCharacter = otherData[0] as Character;
+            int dayTo = GameManager.days;
+            int dayFrom = dayTo - 3;
+            if (dayFrom < 1) {
+                dayFrom = 1;
+            }
+            crimeMemoriesInvolvingRumoredCharacter = actor.GetCrimeMemories(dayFrom, dayTo, rumoredCharacter);
+            preconditions.Clear();
+            expectedEffects.Clear();
+            ConstructPreconditionsAndEffects();
+            if (thoughtBubbleMovingLog != null) {
+                thoughtBubbleMovingLog.AddToFillers(rumoredCharacter, rumoredCharacter.name, LOG_IDENTIFIER.CHARACTER_3);
+            }
+            return true;
         }
-        crimeMemoriesInvolvingRumoredCharacter = actor.GetCrimeMemories(dayFrom, dayTo, rumoredCharacter);
-        preconditions.Clear();
-        expectedEffects.Clear();
-        ConstructPreconditionsAndEffects();
-        if (thoughtBubbleMovingLog != null) {
-            thoughtBubbleMovingLog.AddToFillers(rumoredCharacter, rumoredCharacter.name, LOG_IDENTIFIER.CHARACTER_3);
-        }
-        return true;
+        return base.InitializeOtherData(otherData);
     }
     #endregion
 
@@ -74,8 +76,8 @@ public class SpreadRumorRemoveFriendship : GoapAction {
     }
     public void AfterBreakFriendshipSuccess() {
         Character target = poiTarget as Character;
-        //**Effect 1**: Target - Remove Friend relationship with Character 2 
-        target.RemoveRelationship(rumoredCharacter, RELATIONSHIP_TRAIT.FRIEND);
+        //**Effect 1**: Target - Remove Friend relationship with Character 2
+        CharacterManager.Instance.RemoveOneWayRelationship(target, rumoredCharacter, RELATIONSHIP_TRAIT.FRIEND);
 
         //**Effect 2**: Target - Add shared event to Target's memory
         Log informedLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "informed_event", _chosenMemory.goapAction);

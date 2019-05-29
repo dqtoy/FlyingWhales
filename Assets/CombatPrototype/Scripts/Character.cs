@@ -1429,30 +1429,31 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     undermineWeights.AddElement("destroy love", 20);
                 }
 
+                if(undermineWeights.Count > 0) {
+                    string result = undermineWeights.PickRandomElementGivenWeights();
+                    GoapPlanJob job = null;
+                    if (result == "negative trait") {
+                        job = new GoapPlanJob("Undermine Enemy", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", targetPOI = targetCharacter });
+                    } else if (result == "destroy friendship") {
+                        job = new GoapPlanJob("Undermine Enemy", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TARGET_REMOVE_RELATIONSHIP, conditionKey = "Friend", targetPOI = targetCharacter },
+                            new Dictionary<INTERACTION_TYPE, object[]>() { { INTERACTION_TYPE.NONE, new object[] { targetCharacter } }, });
+                    } else if (result == "destroy love") {
+                        job = new GoapPlanJob("Undermine Enemy", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TARGET_REMOVE_RELATIONSHIP, conditionKey = "Lover", targetPOI = targetCharacter },
+                            new Dictionary<INTERACTION_TYPE, object[]>() { { INTERACTION_TYPE.NONE, new object[] { targetCharacter } }, });
+                    }
 
-                string result = undermineWeights.PickRandomElementGivenWeights();
-                GoapPlanJob job = null;
-                if(result == "negative trait") {
-                    job = new GoapPlanJob("Undermine Enemy", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", targetPOI = targetCharacter });
-                }else if (result == "destroy friendship") {
-                    job = new GoapPlanJob("Undermine Enemy", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TARGET_REMOVE_RELATIONSHIP, conditionKey = "Friend", targetPOI = targetCharacter },
-                        new Dictionary<INTERACTION_TYPE, object[]>() { { INTERACTION_TYPE.NONE, new object[] { targetCharacter } }, });
-                } else if (result == "destroy love") {
-                    job = new GoapPlanJob("Undermine Enemy", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TARGET_REMOVE_RELATIONSHIP, conditionKey = "Lover", targetPOI = targetCharacter },
-                        new Dictionary<INTERACTION_TYPE, object[]>() { { INTERACTION_TYPE.NONE, new object[] { targetCharacter } }, });
+                    job.SetCannotOverrideJob(true);
+                    Debug.LogWarning(GameManager.Instance.TodayLogString() + "Added an UNDERMINE ENEMY Job: " + result + " to " + this.name + " with target " + targetCharacter.name);
+                    job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
+                    jobQueue.AddJobInQueue(job, true, false);
+                    jobQueue.ProcessFirstJobInQueue(this);
+
+                    Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "saw_and_undermine");
+                    log.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                    AddHistory(log);
+                    return true;
                 }
-
-                job.SetCannotOverrideJob(true);
-                Debug.LogWarning(GameManager.Instance.TodayLogString() + "Added an UNDERMINE ENEMY Job: " + result + " to " + this.name + " with target " + targetCharacter.name);
-                job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
-                jobQueue.AddJobInQueue(job, true, false);
-                jobQueue.ProcessFirstJobInQueue(this);
-
-                Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "saw_and_undermine");
-                log.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                AddHistory(log);
-                return true;
             }
         }
         return false;
@@ -2631,6 +2632,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     private void OnActionStateSet(GoapAction action, GoapActionState state) {
         if (action.actor != this && action.poiTarget != this) {
             if (marker.inVisionPOIs.Contains(action.actor)) {
+                if (GetTraitOr("Unconscious", "Resting") != null) {
+                    return;
+                }
                 Log witnessLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "witness_event", action);
                 witnessLog.AddToFillers(marker.character, marker.character.name, LOG_IDENTIFIER.OTHER);
                 witnessLog.AddToFillers(null, Utilities.LogDontReplace(state.descriptionLog), LOG_IDENTIFIER.APPEND);
@@ -2642,6 +2646,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public void ThisCharacterSaw(Character target) {
         if (target.currentAction != null && target.currentAction.isPerformingActualAction && !target.currentAction.isDone) {
             if(target.currentAction.actor != this && target.currentAction.poiTarget != this) {
+                if(GetTraitOr("Unconscious", "Resting") != null) {
+                    return;
+                }
                 Log witnessLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "witness_event", target.currentAction);
                 witnessLog.AddToFillers(marker.character, marker.character.name, LOG_IDENTIFIER.OTHER);
                 witnessLog.AddToFillers(null, Utilities.LogDontReplace(target.currentAction.currentState.descriptionLog), LOG_IDENTIFIER.APPEND);
@@ -5399,8 +5406,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         poiGoapActions.Add(INTERACTION_TYPE.DRINK_BLOOD);
         poiGoapActions.Add(INTERACTION_TYPE.REPLACE_TILE_OBJECT);
         poiGoapActions.Add(INTERACTION_TYPE.TANTRUM);
+        poiGoapActions.Add(INTERACTION_TYPE.SPREAD_RUMOR_REMOVE_FRIENDSHIP);
+        poiGoapActions.Add(INTERACTION_TYPE.SPREAD_RUMOR_REMOVE_LOVE);
     }
-    public void StartGOAP(GoapEffect goal, IPointOfInterest target, GOAP_CATEGORY category, bool isPriority = false, List<Character> otherCharactePOIs = null, bool isPersonalPlan = true, GoapPlanJob job = null, bool allowDeadTargets = false) {
+    public void StartGOAP(GoapEffect goal, IPointOfInterest target, GOAP_CATEGORY category, bool isPriority = false, List<Character> otherCharactePOIs = null, bool isPersonalPlan = true, GoapPlanJob job = null, Dictionary<INTERACTION_TYPE, object[]> otherData = null, bool allowDeadTargets = false) {
         List<CharacterAwareness> characterTargetsAwareness = new List<CharacterAwareness>();
         if (target.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
             CharacterAwareness characterAwareness = AddAwareness(target) as CharacterAwareness;
@@ -5422,7 +5431,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         _numOfWaitingForGoapThread++;
         //Debug.LogWarning(name + " sent a plan to other thread(" + _numOfWaitingForGoapThread + ")");
-        MultiThreadPool.Instance.AddToThreadPool(new GoapThread(this, target, goal, category, isPriority, characterTargetsAwareness, isPersonalPlan, job, allowDeadTargets));
+        MultiThreadPool.Instance.AddToThreadPool(new GoapThread(this, target, goal, category, isPriority, characterTargetsAwareness, isPersonalPlan, job, allowDeadTargets, otherData));
     }
     public void StartGOAP(GoapAction goal, IPointOfInterest target, GOAP_CATEGORY category, bool isPriority = false, List<Character> otherCharactePOIs = null, bool isPersonalPlan = true, GoapPlanJob job = null, bool allowDeadTargets = false) {
         List<CharacterAwareness> characterTargetsAwareness = new List<CharacterAwareness>();
@@ -5489,6 +5498,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                         if (goapThread.job.assignedCharacter == this) {
                             goapThread.job.SetAssignedCharacter(null);
                             goapThread.job.SetAssignedPlan(null);
+                            goapThread.job.jobQueueParent.RemoveJobInQueue(goapThread.job);
                         }
                     }
                     return;

@@ -44,12 +44,14 @@ public class AskForHelpRemovePoisonTable : GoapAction {
     //    //}
     //}
     public override bool InitializeOtherData(object[] otherData) {
-        base.InitializeOtherData(otherData);
-        targetTable = otherData[0] as IPointOfInterest;
-        if (thoughtBubbleMovingLog != null) {
-            thoughtBubbleMovingLog.AddToFillers(targetTable.gridTileLocation.structure, targetTable.gridTileLocation.structure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
+        if(otherData.Length == 1 && otherData[0] is IPointOfInterest) {
+            targetTable = otherData[0] as IPointOfInterest;
+            if (thoughtBubbleMovingLog != null) {
+                thoughtBubbleMovingLog.AddToFillers(targetTable.gridTileLocation.structure, targetTable.gridTileLocation.structure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
+            }
+            return true;
         }
-        return true;
+        return base.InitializeOtherData(otherData);
     }
     #endregion
 

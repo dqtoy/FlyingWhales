@@ -48,16 +48,19 @@ public class ReplaceTileObject : GoapAction {
         return 1;
     }
     public override bool InitializeOtherData(object[] otherData) {
-        tileObjectToReplace = (TileObject)otherData[0];
-        whereToPlace = (LocationGridTile)otherData[1];
-        _targetStructure = whereToPlace.structure;
-        SetTargetStructure();
-        preconditions.Clear();
-        expectedEffects.Clear();
-        ConstructPreconditionsAndEffects();
-        CreateThoughtBubbleLog();
-        states["Replace Success"].OverrideDuration(TileObjectDB.GetTileObjectData(tileObjectToReplace.tileObjectType).constructionTime);
-        return true;
+        if (otherData.Length == 2 && otherData[0] is TileObject && otherData[1] is LocationGridTile) {
+            tileObjectToReplace = (TileObject) otherData[0];
+            whereToPlace = (LocationGridTile) otherData[1];
+            _targetStructure = whereToPlace.structure;
+            SetTargetStructure();
+            preconditions.Clear();
+            expectedEffects.Clear();
+            ConstructPreconditionsAndEffects();
+            CreateThoughtBubbleLog();
+            states["Replace Success"].OverrideDuration(TileObjectDB.GetTileObjectData(tileObjectToReplace.tileObjectType).constructionTime);
+            return true;
+        }
+        return base.InitializeOtherData(otherData);
     }
     #endregion
 

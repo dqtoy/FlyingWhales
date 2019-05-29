@@ -51,16 +51,18 @@ public class CraftFurniture : GoapAction {
         }
     }
     public override bool InitializeOtherData(object[] otherData) {
-        base.InitializeOtherData(otherData);
-        SetTargetSpot(otherData[0] as LocationGridTile);
-        SetFurnitureToCraft((FURNITURE_TYPE)otherData[1]);
-        hasSetOtherData = true;
-        preconditions.Clear();
-        expectedEffects.Clear();
-        ConstructPreconditionsAndEffects();
-        CreateThoughtBubbleLog();
-        SetTargetStructure();
-        return true;
+        if (otherData.Length == 2 && otherData[0] is LocationGridTile && otherData[1] is FURNITURE_TYPE) {
+            SetTargetSpot(otherData[0] as LocationGridTile);
+            SetFurnitureToCraft((FURNITURE_TYPE) otherData[1]);
+            hasSetOtherData = true;
+            preconditions.Clear();
+            expectedEffects.Clear();
+            ConstructPreconditionsAndEffects();
+            CreateThoughtBubbleLog();
+            SetTargetStructure();
+            return true;
+        }
+        return base.InitializeOtherData(otherData);
     }
     #endregion
 
