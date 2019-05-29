@@ -2687,19 +2687,26 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 
         //If a character sees or informed about a lover performing Making Love or Ask to Make Love, they will feel Betrayed
         if (eventToBeInformed.actor != this && eventToBeInformed.poiTarget != this) {
+            Character target = eventToBeInformed.poiTarget as Character;
             if (eventToBeInformed.goapType == INTERACTION_TYPE.MAKE_LOVE) {
-                if (HasRelationshipOfTypeWith(eventToBeInformed.actor, RELATIONSHIP_TRAIT.LOVER) || HasRelationshipOfTypeWith(eventToBeInformed.poiTarget as Character, RELATIONSHIP_TRAIT.LOVER)) {
+                if (HasRelationshipOfTypeWith(eventToBeInformed.actor, RELATIONSHIP_TRAIT.LOVER) || HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.LOVER)) {
                     Betrayed betrayed = new Betrayed();
                     AddTrait(betrayed);
+                    CharacterManager.Instance.RelationshipDegradation(eventToBeInformed.actor, this, eventToBeInformed);
+                    CharacterManager.Instance.RelationshipDegradation(target, this, eventToBeInformed);
                 }
             } else if (eventToBeInformed.goapType == INTERACTION_TYPE.INVITE_TO_MAKE_LOVE) {
                 if (HasRelationshipOfTypeWith(eventToBeInformed.actor, RELATIONSHIP_TRAIT.LOVER)) {
                     Betrayed betrayed = new Betrayed();
                     AddTrait(betrayed);
-                } else if (HasRelationshipOfTypeWith(eventToBeInformed.poiTarget as Character, RELATIONSHIP_TRAIT.LOVER)) {
+                    CharacterManager.Instance.RelationshipDegradation(eventToBeInformed.actor, this, eventToBeInformed);
+                    CharacterManager.Instance.RelationshipDegradation(target, this, eventToBeInformed);
+                } else if (HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.LOVER)) {
                     if (eventToBeInformed.currentState.name == "Invite Success") {
                         Betrayed betrayed = new Betrayed();
                         AddTrait(betrayed);
+                        CharacterManager.Instance.RelationshipDegradation(eventToBeInformed.actor, this, eventToBeInformed);
+                        CharacterManager.Instance.RelationshipDegradation(target, this, eventToBeInformed);
                     }
                 }
             }
@@ -2714,19 +2721,26 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 
         //If a character sees or informed about a lover performing Making Love or Ask to Make Love, they will feel Betrayed
         if (witnessedEvent.actor != this && witnessedEvent.poiTarget != this) {
+            Character target = witnessedEvent.poiTarget as Character;
             if (witnessedEvent.goapType == INTERACTION_TYPE.MAKE_LOVE) {
-                if (HasRelationshipOfTypeWith(witnessedEvent.actor, RELATIONSHIP_TRAIT.LOVER) || HasRelationshipOfTypeWith(witnessedEvent.poiTarget as Character, RELATIONSHIP_TRAIT.LOVER)) {
+                if (HasRelationshipOfTypeWith(witnessedEvent.actor, RELATIONSHIP_TRAIT.LOVER) || HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.LOVER)) {
                     Betrayed betrayed = new Betrayed();
                     AddTrait(betrayed);
-                }
+                    CharacterManager.Instance.RelationshipDegradation(witnessedEvent.actor, this, witnessedEvent);
+                    CharacterManager.Instance.RelationshipDegradation(target, this, witnessedEvent);
+                } 
             } else if (witnessedEvent.goapType == INTERACTION_TYPE.INVITE_TO_MAKE_LOVE) {
                 if (HasRelationshipOfTypeWith(witnessedEvent.actor, RELATIONSHIP_TRAIT.LOVER)) {
                     Betrayed betrayed = new Betrayed();
                     AddTrait(betrayed);
-                }else if(HasRelationshipOfTypeWith(witnessedEvent.poiTarget as Character, RELATIONSHIP_TRAIT.LOVER)) {
-                    if(witnessedEvent.currentState.name == "Invite Success") {
+                    CharacterManager.Instance.RelationshipDegradation(witnessedEvent.actor, this, witnessedEvent);
+                    CharacterManager.Instance.RelationshipDegradation(target, this, witnessedEvent);
+                } else if (HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.LOVER)) {
+                    if (witnessedEvent.currentState.name == "Invite Success") {
                         Betrayed betrayed = new Betrayed();
                         AddTrait(betrayed);
+                        CharacterManager.Instance.RelationshipDegradation(witnessedEvent.actor, this, witnessedEvent);
+                        CharacterManager.Instance.RelationshipDegradation(target, this, witnessedEvent);
                     }
                 }
             }
