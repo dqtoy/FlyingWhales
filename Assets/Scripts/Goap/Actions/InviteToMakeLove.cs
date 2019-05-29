@@ -120,6 +120,12 @@ public class InviteToMakeLove : GoapAction {
         if (target == actor) {
             return false;
         }
+        if (target.currentAlterEgoName != CharacterManager.Original_Alter_Ego) {
+            return false;
+        }
+        if (target.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+            return false;
+        }
         if (!actor.HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.LOVER) && !actor.HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.PARAMOUR)) {
             return false; //only lovers and paramours can make love
         }

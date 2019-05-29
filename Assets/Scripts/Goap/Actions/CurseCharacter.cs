@@ -98,16 +98,19 @@ public class CurseCharacter : GoapAction {
     public List<string> CurseSuccessReactions(Character reciepient, Intel sharedIntel) {
         List<string> reactions = new List<string>();
         Character target = poiTarget as Character;
+
+        RELATIONSHIP_EFFECT relWithActor = reciepient.GetRelationshipEffectWith(actorAlterEgo);
+
         //Recipient is the target:
         if (reciepient == poiTarget) {
             //- **Recipient Response Text**:  "[Actor Name] cursed me? What a horrible person."
             reactions.Add(string.Format("{0} cursed me? What a horrible person.", actor.name));
             //-**Recipient Effect * *: Remove Friend/ Lover / Paramour relationship between Actor and Recipient.
-            CharacterManager.Instance.RemoveRelationshipBetween(actor, reciepient, RELATIONSHIP_TRAIT.FRIEND);
-            CharacterManager.Instance.RemoveRelationshipBetween(actor, reciepient, RELATIONSHIP_TRAIT.LOVER);
-            CharacterManager.Instance.RemoveRelationshipBetween(actor, reciepient, RELATIONSHIP_TRAIT.PARAMOUR);
+            CharacterManager.Instance.RemoveRelationshipBetween(reciepient, actorAlterEgo, RELATIONSHIP_TRAIT.FRIEND);
+            CharacterManager.Instance.RemoveRelationshipBetween(reciepient, actorAlterEgo, RELATIONSHIP_TRAIT.LOVER);
+            CharacterManager.Instance.RemoveRelationshipBetween(reciepient, actorAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR);
             //Apply Crime System handling as if the Recipient witnessed Actor commit Assault.
-            reciepient.ReactToCrime(CRIME.ASSAULT, actor);
+            reciepient.ReactToCrime(CRIME.ASSAULT, actorAlterEgo);
         }
         //Recipient is the actor:
         else if (reciepient == actor) {
@@ -116,24 +119,24 @@ public class CurseCharacter : GoapAction {
             //- **Recipient Effect * *: no effect
         }
         //Recipient and Actor have a positive relationship:
-        else if (reciepient.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE, RELATIONSHIP_TRAIT.RELATIVE)) {
+        else if (relWithActor == RELATIONSHIP_EFFECT.POSITIVE) {
             //-**Recipient Response Text**: "[Actor Name] may have cursed somebody but I know that [he/she] is a good person."
             reactions.Add(string.Format("{0} may have cursed somebody but I know that {1} is a good person.", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
             //- **Recipient Effect * *: no effect
         }
         //Recipient and Actor have a negative relationship:
-        else if (reciepient.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.NEGATIVE)) {
+        else if (relWithActor == RELATIONSHIP_EFFECT.NEGATIVE) {
             //- **Recipient Response Text**: "[Actor Name] cursed someone!? Why am I not surprised."
             reactions.Add(string.Format("{0} cursed someone!? Why am I not surprised.", actor.name));
             //-**Recipient Effect * *: Apply Crime System handling as if the Recipient witnessed Actor commit Assault.
-            reciepient.ReactToCrime(CRIME.ASSAULT, actor);
+            reciepient.ReactToCrime(CRIME.ASSAULT, actorAlterEgo);
         }
         //Recipient and Actor have no relationship but are from the same faction:
-        else if (!reciepient.HasRelationshipWith(actor) && reciepient.faction == actor.faction) {
+        else if (relWithActor == RELATIONSHIP_EFFECT.NONE && reciepient.faction == actorAlterEgo.faction) {
             //- **Recipient Response Text**: "[Actor Name] cursed someone!? That's forbidden."
             reactions.Add(string.Format("{0} cursed someone!? That's forbidden.", actor.name));
             //-**Recipient Effect * *: Apply Crime System handling as if the Recipient witnessed Actor commit Assault.
-            reciepient.ReactToCrime(CRIME.ASSAULT, actor);
+            reciepient.ReactToCrime(CRIME.ASSAULT, actorAlterEgo);
         }
         return reactions;
     }

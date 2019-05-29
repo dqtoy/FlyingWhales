@@ -27,7 +27,7 @@ public interface ICharacterSim {
     CharacterBattleOnlyTracker battleOnlyTracker { get; }
     CharacterClass characterClass { get; }
     List<Skill> skills { get; }
-    List<Trait> traits { get; }
+    List<Trait> allTraits { get; }
     //List<BodyPart> bodyParts { get; }
     Dictionary<ELEMENT, float> elementalWeaknesses { get; }
     Dictionary<ELEMENT, float> elementalResistances { get; }

@@ -5,7 +5,7 @@ using UnityEngine;
 public class ReportCrime : GoapAction {
 
     private CRIME crime;
-    private Character criminal;
+    private AlterEgoData criminal;
 
     public ReportCrime(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.REPORT_CRIME, INTERACTION_ALIGNMENT.GOOD, actor, poiTarget) {
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
@@ -18,7 +18,7 @@ public class ReportCrime : GoapAction {
         };
     }
 
-    public void SetCrimeToReport(CRIME crime, Character criminal) {
+    public void SetCrimeToReport(CRIME crime, AlterEgoData criminal) {
         this.crime = crime;
         this.criminal = criminal;
     }
@@ -41,7 +41,7 @@ public class ReportCrime : GoapAction {
     public override bool InitializeOtherData(object[] otherData) {
         base.InitializeOtherData(otherData);
         //GoapAction crime = otherData[0] as GoapAction;
-        SetCrimeToReport((CRIME)otherData[0], otherData[1] as Character);
+        SetCrimeToReport((CRIME)otherData[0], otherData[1] as AlterEgoData);
         if (thoughtBubbleMovingLog != null) {
             thoughtBubbleMovingLog.AddToFillers(criminal, criminal.name, LOG_IDENTIFIER.CHARACTER_3);
         }
@@ -52,7 +52,7 @@ public class ReportCrime : GoapAction {
     #region State Effects
     public void PreReportCrimeSuccess() {
         //**Effect 1**: The reported criminal will gain the associated Crime trait
-        criminal.AddCriminalTrait(crime);
+        criminal.owner.AddCriminalTrait(crime);
         currentState.AddLogFiller(criminal, criminal.name, LOG_IDENTIFIER.CHARACTER_3);
 
         (poiTarget as Character).ReactToCrime(crime, criminal);

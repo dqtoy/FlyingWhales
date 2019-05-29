@@ -41,20 +41,20 @@ public class TransformToWolfForm : GoapAction {
         if (recipient == actor) {
             return reactions; //return empty list if same actor
         }
-        Lycanthropy lycanthropy = actor.GetTrait("Lycanthropy") as Lycanthropy;
-        Faction actorOrigFaction = lycanthropy.data.faction;
+        //Lycanthropy lycanthropy = actor.GetTrait("Lycanthropy") as Lycanthropy;
+        //Faction actorOrigFaction = lycanthropy.data.faction;
         //TODO: Recipient and Actor are from the same faction and are lovers or paramours
 
         //Recipient and Actor are from the same faction and are friends:
-        if (actorOrigFaction == recipient.faction && actor.HasRelationshipOfTypeWith(recipient, RELATIONSHIP_TRAIT.FRIEND, true)) {
+        if (actorAlterEgo.faction == recipient.faction && recipient.HasRelationshipOfTypeWith(actorAlterEgo, RELATIONSHIP_TRAIT.FRIEND)) {
             //- **Recipient Response Text**: I cannot be friends with a lycanthrope but I will not report this to the others as my last act of friendship.
             reactions.Add("I cannot be friends with a lycanthrope but I will not report this to the others as my last act of friendship.");
             //- **Recipient Effect**: Recipient and actor will no longer be friends
-            CharacterManager.Instance.RemoveRelationshipBetween(actor, recipient, RELATIONSHIP_TRAIT.FRIEND, true, true);
+            CharacterManager.Instance.RemoveRelationshipBetween(recipient, actorAlterEgo, RELATIONSHIP_TRAIT.FRIEND);
         }
         //Recipient and Actor are from the same faction and have no relationship or are enemies:
         //Ask Marvin if actor and recipient must also have the same home location and they must be both at their home location
-        else if (actorOrigFaction == recipient.faction && (!actor.HasRelationshipWith(recipient, true) || actor.HasRelationshipOfTypeWith(recipient, RELATIONSHIP_TRAIT.ENEMY, true))) {
+        else if (actorAlterEgo.faction == recipient.faction && (!recipient.HasRelationshipWith(actorAlterEgo, true) || recipient.HasRelationshipOfTypeWith(actorAlterEgo, RELATIONSHIP_TRAIT.ENEMY, true))) {
             //- **Recipient Response Text**: Lycanthropes are not welcome here. [Actor Name] must be restrained!
             reactions.Add(string.Format("Lycanthropes are not welcome here. {0} must be restrained!", actor.name));
             //-**Recipient Effect**: If soldier, noble or faction leader, brand Actor with Aberration crime (add Apprehend job). Otherwise, add a personal Report Crime job to the Recipient.
@@ -66,14 +66,14 @@ public class TransformToWolfForm : GoapAction {
                 //}
             } else {
                 GoapPlanJob job = new GoapPlanJob("Report Crime", INTERACTION_TYPE.REPORT_CRIME, new Dictionary<INTERACTION_TYPE, object[]>() {
-                    { INTERACTION_TYPE.REPORT_CRIME, new object[] { committedCrime, actor }}
+                    { INTERACTION_TYPE.REPORT_CRIME, new object[] { committedCrime, actorAlterEgo }}
                 });
                 job.SetCannotOverrideJob(true);
                 recipient.jobQueue.AddJobInQueue(job);
             }
         }
         //Recipient and Actor are from the same faction (catches all other situations):
-        else if (actorOrigFaction == recipient.faction) {
+        else if (actorAlterEgo.faction == recipient.faction) {
             //- **Recipient Response Text**: Lycanthropes are not welcome here. [Actor Name] must be restrained!
             reactions.Add(string.Format("Lycanthropes are not welcome here. {0} must be restrained!", actor.name));
             //-**Recipient Effect**: If soldier, noble or faction leader, brand Actor with Aberration crime (add Apprehend job). Otherwise, add a personal Report Crime job to the Recipient.
@@ -85,21 +85,21 @@ public class TransformToWolfForm : GoapAction {
                 //}
             } else {
                 GoapPlanJob job = new GoapPlanJob("Report Crime", INTERACTION_TYPE.REPORT_CRIME, new Dictionary<INTERACTION_TYPE, object[]>() {
-                    { INTERACTION_TYPE.REPORT_CRIME, new object[] { committedCrime, actor }}
+                    { INTERACTION_TYPE.REPORT_CRIME, new object[] { committedCrime, actorAlterEgo }}
                 });
                 job.SetCannotOverrideJob(true);
                 recipient.jobQueue.AddJobInQueue(job);
             }
         }
         //Recipient and Actor are from a different faction and have a positive relationship:
-        else if (recipient.faction != actorOrigFaction && actor.HasRelationshipOfTypeWith(recipient, RELATIONSHIP_TRAIT.FRIEND, true)) {
+        else if (recipient.faction != actorAlterEgo.faction && recipient.HasRelationshipOfTypeWith(actorAlterEgo, RELATIONSHIP_TRAIT.FRIEND, true)) {
             //- **Recipient Response Text**: I cannot be friends with a lycanthrope.
             reactions.Add("I cannot be friends with a lycanthrope.");
             //- **Recipient Effect**: Recipient and actor will no longer be friends
-            CharacterManager.Instance.RemoveRelationshipBetween(actor, recipient, RELATIONSHIP_TRAIT.FRIEND, true);
+            CharacterManager.Instance.RemoveRelationshipBetween(recipient, actorAlterEgo, RELATIONSHIP_TRAIT.FRIEND);
         }
         //Recipient and Actor are from a different faction and are enemies:
-        else if (recipient.faction != actorOrigFaction && actor.HasRelationshipOfTypeWith(recipient, RELATIONSHIP_TRAIT.FRIEND, true)) {
+        else if (recipient.faction != actorAlterEgo.faction && recipient.HasRelationshipOfTypeWith(actorAlterEgo, RELATIONSHIP_TRAIT.FRIEND, true)) {
             //- **Recipient Response Text**: I knew there was something impure about [Actor Name]!
             reactions.Add(string.Format("I knew there was something impure about {0}!", actor.name));
             //- **Recipient Effect**: no effect

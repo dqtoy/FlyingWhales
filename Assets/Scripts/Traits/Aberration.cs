@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 
 public class Aberration : Trait {
-
+    public override bool isPersistent { get { return true; } }
     public Aberration() {
         name = "Aberration";
         description = "This character has been branded as an Aberration by his/her own faction.";

@@ -175,6 +175,7 @@ public class CharacterManager : MonoBehaviour {
         } else {
             newCharacter = new Character(role, race, gender);
         }
+        newCharacter.Initialize();
         Party party = newCharacter.CreateOwnParty();
         if (faction != null) {
             faction.AddNewCharacter(newCharacter);
@@ -202,6 +203,7 @@ public class CharacterManager : MonoBehaviour {
     public Character CreateNewCharacter(CharacterRole role, string className, RACE race, GENDER gender, Faction faction = null, 
         Area homeLocation = null, Dwelling homeStructure = null) {
         Character newCharacter = new Character(role, className, race, gender);
+        newCharacter.Initialize();
         Party party = newCharacter.CreateOwnParty();
         if (faction != null) {
             faction.AddNewCharacter(newCharacter);
@@ -225,6 +227,7 @@ public class CharacterManager : MonoBehaviour {
     }
     public Character CreateNewCharacter(CharacterSaveData data) {
         Character newCharacter = new Character(data);
+        newCharacter.Initialize();
         allCharacterLogs.Add(newCharacter, new List<string>());
 
         if (data.homeAreaID != -1) {
@@ -294,6 +297,12 @@ public class CharacterManager : MonoBehaviour {
             }
         }
         identifierClasses.Add("All", classesDictionary);
+    }
+    public CharacterClass CreateNewCharacterClass(string className) {
+        if (classesDictionary.ContainsKey(className)) {
+            return classesDictionary[className].CreateNewCopy();
+        }
+        return null;
     }
     public string GetDeadlySinsClassNameFromRotation() {
         if (deadlySinsRotation.Count == 0) {
@@ -380,7 +389,7 @@ public class CharacterManager : MonoBehaviour {
     #endregion
 
     #region Relationships
-    public Trait CreateRelationshipTrait(RELATIONSHIP_TRAIT type, Character targetCharacter) {
+    public RelationshipTrait CreateRelationshipTrait(RELATIONSHIP_TRAIT type, Character targetCharacter) {
         switch (type) {
             case RELATIONSHIP_TRAIT.ENEMY:
                 return new Enemy(targetCharacter);
@@ -411,17 +420,23 @@ public class CharacterManager : MonoBehaviour {
     /// <param name="rel">The type of relationship to create.</param>
     /// <param name="triggerOnAdd">Should this trigger the trait's OnAdd Function.</param>
     /// <returns>The created relationship data.</returns>
-    public CharacterRelationshipData CreateNewOneWayRelationship(Character currCharacter, Character targetCharacter, RELATIONSHIP_TRAIT rel, bool triggerOnAdd = true) {
+    public CharacterRelationshipData CreateNewOneWayRelationship(Character currCharacter, Character targetCharacter, RELATIONSHIP_TRAIT rel) {
         if (!currCharacter.HasRelationshipOfTypeWith(targetCharacter, rel)) {
-            currCharacter.AddTrait(CreateRelationshipTrait(rel, targetCharacter), null, null, null, triggerOnAdd);
+            currCharacter.AddRelationship(targetCharacter, CreateRelationshipTrait(rel, targetCharacter));
         }
         return currCharacter.GetCharacterRelationshipData(targetCharacter);
     }
-    public CharacterRelationshipData CreateNewRelationshipBetween(Character currCharacter, Character targetCharacter, RELATIONSHIP_TRAIT rel, bool triggerOnAdd = true) {
+    public CharacterRelationshipData CreateNewOneWayRelationship(Character currCharacter, AlterEgoData alterEgo, RELATIONSHIP_TRAIT rel) {
+        if (!currCharacter.HasRelationshipOfTypeWith(alterEgo, rel)) {
+            currCharacter.AddRelationship(alterEgo, CreateRelationshipTrait(rel, alterEgo.owner));
+        }
+        return currCharacter.GetCharacterRelationshipData(alterEgo);
+    }
+    public CharacterRelationshipData CreateNewRelationshipBetween(Character currCharacter, Character targetCharacter, RELATIONSHIP_TRAIT rel) {
         RELATIONSHIP_TRAIT pair = GetPairedRelationship(rel);
 
-        currCharacter.AddTrait(CreateRelationshipTrait(rel, targetCharacter), null, null, null, triggerOnAdd);
-        targetCharacter.AddTrait(CreateRelationshipTrait(pair, currCharacter), null, null, null, triggerOnAdd);
+        currCharacter.AddRelationship(targetCharacter, CreateRelationshipTrait(rel, targetCharacter));
+        targetCharacter.AddRelationship(currCharacter, CreateRelationshipTrait(pair, currCharacter));
 
         if (currCharacter.GetRelationshipTraitWith(targetCharacter, rel) == null
             || targetCharacter.GetRelationshipTraitWith(currCharacter, pair) == null) {
@@ -430,46 +445,65 @@ public class CharacterManager : MonoBehaviour {
 
         return currCharacter.GetCharacterRelationshipData(targetCharacter);
     }
-    public void RemoveOneWayRelationship(Character currCharacter, Character targetCharacter, RELATIONSHIP_TRAIT rel, bool triggerOnRemove = true, bool useDisabled = false) {
-        currCharacter.RemoveTrait(currCharacter.GetRelationshipTraitWith(targetCharacter, rel, useDisabled), triggerOnRemove);
-    }
-    public void RemoveRelationshipBetween(Character character, Character targetCharacter, RELATIONSHIP_TRAIT rel, bool triggerOnRemove = true, bool useDisabled = false) {
-        if (!character.relationships.ContainsKey(targetCharacter)
-            || !targetCharacter.relationships.ContainsKey(character)) {
-            return;
-        }
-        if (!character.HasRelationshipOfTypeWith(targetCharacter, rel, useDisabled)) {
-            //the source character does not have that type of relationship with the character
-            return;
-        }
+    public CharacterRelationshipData CreateNewRelationshipBetween(Character currCharacter, AlterEgoData alterEgo, RELATIONSHIP_TRAIT rel) {
         RELATIONSHIP_TRAIT pair = GetPairedRelationship(rel);
-        if (character.relationships[targetCharacter].HasRelationshipTrait(rel)
-            && targetCharacter.relationships[character].HasRelationshipTrait(pair)) {
 
-            character.RemoveTrait(character.GetRelationshipTraitWith(targetCharacter, rel, useDisabled), triggerOnRemove);
-            targetCharacter.RemoveTrait(targetCharacter.GetRelationshipTraitWith(character, rel, useDisabled), triggerOnRemove);
+        currCharacter.AddRelationship(alterEgo, CreateRelationshipTrait(rel, alterEgo.owner));
+        alterEgo.AddRelationship(currCharacter.currentAlterEgo, CreateRelationshipTrait(pair, currCharacter));
+
+        if (currCharacter.GetRelationshipTraitWith(alterEgo, rel) == null
+            || alterEgo.GetRelationshipTraitWith(currCharacter.currentAlterEgo, pair) == null) {
+            Debug.LogWarning(currCharacter.name + " and " + alterEgo.name + " have inconsistent relationships: " + rel.ToString() + " - " + pair.ToString());
+        }
+
+        return currCharacter.GetCharacterRelationshipData(alterEgo);
+    }
+    public void RemoveOneWayRelationship(Character currCharacter, Character targetCharacter, RELATIONSHIP_TRAIT rel) {
+        RemoveOneWayRelationship(currCharacter, targetCharacter.currentAlterEgo, rel);
+    }
+    public void RemoveOneWayRelationship(Character currCharacter, AlterEgoData targetCharacter, RELATIONSHIP_TRAIT rel) {
+        currCharacter.RemoveRelationshipWith(targetCharacter, rel);
+    }
+    public void RemoveRelationshipBetween(Character character, AlterEgoData alterEgo, RELATIONSHIP_TRAIT rel) {
+        if (!character.relationships.ContainsKey(alterEgo)
+            || !alterEgo.relationships.ContainsKey(character.currentAlterEgo)) {
+            return;
+        }
+        //if (!character.HasRelationshipOfTypeWith(targetCharacter, rel)) {
+        //    //the source character does not have that type of relationship with the character
+        //    return;
+        //}
+        RELATIONSHIP_TRAIT pair = GetPairedRelationship(rel);
+        if (character.relationships[alterEgo].HasRelationshipTrait(rel)
+            && alterEgo.relationships[character.currentAlterEgo].HasRelationshipTrait(pair)) {
+
+            character.RemoveRelationshipWith(alterEgo, rel);
+            alterEgo.RemoveRelationship(character.currentAlterEgo, pair);
         } else {
-            Debug.LogWarning(character.name + " and " + targetCharacter.name + " have inconsistent relationships " + rel.ToString() + " - " + pair.ToString() + ". Cannot remove!");
+            Debug.LogWarning(character.name + " and " + alterEgo.name + " have inconsistent relationships " + rel.ToString() + " - " + pair.ToString() + ". Cannot remove!");
         }
     }
-    public void RemoveRelationshipBetween(Character character, Character targetCharacter, List<RelationshipTrait> rels, bool triggerOnRemove = true) {
-        if (!character.relationships.ContainsKey(targetCharacter)
-            || !targetCharacter.relationships.ContainsKey(character)) {
+    public void RemoveRelationshipBetween(Character character, Character targetCharacter, RELATIONSHIP_TRAIT rel) {
+        RemoveRelationshipBetween(character, targetCharacter.currentAlterEgo, rel);
+    }
+    public void RemoveRelationshipBetween(Character character, Character targetCharacter, List<RelationshipTrait> rels) {
+        if (!character.relationships.ContainsKey(targetCharacter.currentAlterEgo)
+            || !targetCharacter.relationships.ContainsKey(character.currentAlterEgo)) {
             return;
         }
         for (int i = 0; i < rels.Count; i++) {
             RelationshipTrait currRel = rels[i];
-            RemoveRelationshipBetween(character, targetCharacter, currRel.relType, triggerOnRemove);
+            RemoveRelationshipBetween(character, targetCharacter, currRel.relType);
         }
     }
-    public void RemoveRelationshipBetween(Character character, Character targetCharacter, bool triggerOnRemove = true) {
-        if (!character.relationships.ContainsKey(targetCharacter)
-            || !targetCharacter.relationships.ContainsKey(character)) {
+    public void RemoveRelationshipBetween(Character character, Character targetCharacter) {
+        if (!character.relationships.ContainsKey(targetCharacter.currentAlterEgo)
+            || !targetCharacter.relationships.ContainsKey(character.currentAlterEgo)) {
             return;
         }
         List<RELATIONSHIP_TRAIT> rels = character.GetAllRelationshipTraitTypesWith(targetCharacter);
         for (int i = 0; i < rels.Count; i++) {
-            RemoveRelationshipBetween(character, targetCharacter, rels[i], triggerOnRemove);
+            RemoveRelationshipBetween(character, targetCharacter, rels[i]);
         }
 
         //character.RemoveRelationship(targetCharacter);
@@ -502,11 +536,11 @@ public class CharacterManager : MonoBehaviour {
     public void SetIsDisabledRelationshipBetween(Character character1, Character character2, bool state) {
         CharacterRelationshipData data1 = null;
         CharacterRelationshipData data2 = null;
-        if (character1.relationships.ContainsKey(character2)) {
-            data1 = character1.relationships[character2];
+        if (character1.relationships.ContainsKey(character2.currentAlterEgo)) {
+            data1 = character1.relationships[character2.currentAlterEgo];
         }
-        if (character2.relationships.ContainsKey(character1)) {
-            data2 = character2.relationships[character1];
+        if (character2.relationships.ContainsKey(character1.currentAlterEgo)) {
+            data2 = character2.relationships[character1.currentAlterEgo];
         }
         if (data1 != null) {
             data1.SetIsDisabled(state);
@@ -523,7 +557,7 @@ public class CharacterManager : MonoBehaviour {
         // Loop through all characters in the world
         for (int i = 0; i < allCharacters.Count; i++) {
             Character currCharacter = allCharacters[i];
-            int currentRelCount = currCharacter.GetAllRelationshipCount(new List<RELATIONSHIP_TRAIT>() { RELATIONSHIP_TRAIT.MASTER, RELATIONSHIP_TRAIT.SERVANT });
+            int currentRelCount = currCharacter.GetAllRelationshipCountExcept(new List<RELATIONSHIP_TRAIT>() { RELATIONSHIP_TRAIT.MASTER, RELATIONSHIP_TRAIT.SERVANT });
             if (currentRelCount >= maxInitialRels) {
                 continue; //skip
             }
@@ -934,58 +968,67 @@ public class CharacterManager : MonoBehaviour {
         }
         //TODO: - Add relevant logs
     }
+    /// <summary>
+    /// Unified way of degrading a relationship of a character with a target character.
+    /// </summary>
+    /// <param name="actor">The character that did something to degrade the relationship.</param>
+    /// <param name="target">The character that will change their relationship with the actor.</param>
+    /// <param name="cause">The action that caused of the degradation. Can be null.</param>
     public void RelationshipDegradation(Character actor, Character target, GoapAction cause = null) {
-        string summary = "Relationship degradation between " + actor.name + " and " + target.name;
+        RelationshipDegradation(actor.currentAlterEgo, target, cause);
+    }
+    public void RelationshipDegradation(AlterEgoData actorAlterEgo, Character target, GoapAction cause = null) {
+        string summary = "Relationship degradation between " + actorAlterEgo.owner.name + " and " + target.name;
         if (cause != null && cause.IsFromApprehendJob()) {
             //If this has been triggered by an Action's End Result that is part of an Apprehend Job, skip processing.
             summary += "Relationship degradation was caused by an action in an apprehend job. Skipping degredation...";
-            Debug.Log(summary); 
+            Debug.Log(summary);
             return;
         }
         Log log = null;
         //If Actor and Target are Lovers, 20% chance to remove Lover relationship. If so, Target now considers Actor an Enemy.
-        if (target.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.LOVER)) {
-            summary += "\n" + actor.name + " and " + target.name + " are  lovers. Rolling for chance to remove lovers and consider as enemy...";
+        if (target.HasRelationshipOfTypeWith(actorAlterEgo, RELATIONSHIP_TRAIT.LOVER)) {
+            summary += "\n" + actorAlterEgo.name + " and " + target.name + " are  lovers. Rolling for chance to remove lovers and consider as enemy...";
             int roll = UnityEngine.Random.Range(0, 100);
-            summary += "\nRoll is " + roll.ToString(); 
+            summary += "\nRoll is " + roll.ToString();
             if (roll < 20) {
                 log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "lover_now_enemy");
-                summary += "\nRemoving lover relationship. " + target.name + " now considers " + actor.name + " an enemy.";
-                RemoveRelationshipBetween(target, actor, RELATIONSHIP_TRAIT.LOVER);
-                CreateNewOneWayRelationship(target, actor, RELATIONSHIP_TRAIT.ENEMY);
+                summary += "\nRemoving lover relationship. " + target.name + " now considers " + actorAlterEgo.name + " an enemy.";
+                RemoveRelationshipBetween(target, actorAlterEgo, RELATIONSHIP_TRAIT.LOVER);
+                CreateNewOneWayRelationship(target, actorAlterEgo, RELATIONSHIP_TRAIT.ENEMY);
             }
         }
         //If Actor and Target are Paramours, 20 % chance to remove Paramour relationship. If so, Target now considers Actor an Enemy.
-        if (target.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.PARAMOUR)) {
-            summary += "\n" + actor.name + " and " + target.name + " are  paramours. Rolling for chance to remove paramour and consider as enemy...";
+        if (target.HasRelationshipOfTypeWith(actorAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR)) {
+            summary += "\n" + actorAlterEgo.name + " and " + target.name + " are  paramours. Rolling for chance to remove paramour and consider as enemy...";
             int roll = UnityEngine.Random.Range(0, 100);
             summary += "\nRoll is " + roll.ToString();
             if (roll < 20) {
                 log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "paramour_now_enemy");
-                summary += "\nRemoving paramour relationship. " + target.name + " now considers " + actor.name + " an enemy.";
-                RemoveRelationshipBetween(target, actor, RELATIONSHIP_TRAIT.PARAMOUR);
-                CreateNewOneWayRelationship(target, actor, RELATIONSHIP_TRAIT.ENEMY);
+                summary += "\nRemoving paramour relationship. " + target.name + " now considers " + actorAlterEgo.name + " an enemy.";
+                RemoveRelationshipBetween(target, actorAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR);
+                CreateNewOneWayRelationship(target, actorAlterEgo, RELATIONSHIP_TRAIT.ENEMY);
             }
         }
         //If Target considers Actor a Friend, remove that.Target now considers Actor an Enemy.
-        if (target.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.FRIEND)) {
+        if (target.HasRelationshipOfTypeWith(actorAlterEgo, RELATIONSHIP_TRAIT.FRIEND)) {
             log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "friend_now_enemy");
-            summary += "\n" + target.name + " considers " + actor.name + " as a friend. Removing friend and replacing with enemy";
-            RemoveOneWayRelationship(target, actor, RELATIONSHIP_TRAIT.FRIEND);
-            CreateNewOneWayRelationship(target, actor, RELATIONSHIP_TRAIT.ENEMY);
+            summary += "\n" + target.name + " considers " + actorAlterEgo.name + " as a friend. Removing friend and replacing with enemy";
+            RemoveOneWayRelationship(target, actorAlterEgo, RELATIONSHIP_TRAIT.FRIEND);
+            CreateNewOneWayRelationship(target, actorAlterEgo, RELATIONSHIP_TRAIT.ENEMY);
         }
         //If Target is only Relative of Actor(no other relationship) or has no relationship with Actor, Target now considers Actor an Enemy.
-        if (!target.HasRelationshipWith(actor) || (target.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.RELATIVE) && target.GetCharacterRelationshipData(actor).rels.Count == 1)) {
+        if (!target.HasRelationshipWith(actorAlterEgo) || (target.HasRelationshipOfTypeWith(actorAlterEgo, RELATIONSHIP_TRAIT.RELATIVE) && target.GetCharacterRelationshipData(actorAlterEgo).rels.Count == 1)) {
             log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "now_enemy");
-            summary += "\n" + target.name + " and " + actor.name + " has no relationship or only has relative relationship. " + target.name + " now considers " + actor.name + " an enemy." ;
-            CreateNewOneWayRelationship(target, actor, RELATIONSHIP_TRAIT.ENEMY);
+            summary += "\n" + target.name + " and " + actorAlterEgo.name + " has no relationship or only has relative relationship. " + target.name + " now considers " + actorAlterEgo.name + " an enemy.";
+            CreateNewOneWayRelationship(target, actorAlterEgo, RELATIONSHIP_TRAIT.ENEMY);
         }
 
         Debug.Log(summary);
         if (log != null) {
             log.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-            PlayerManager.Instance.player.ShowNotificationFrom(log, target, actor);
+            log.AddToFillers(actorAlterEgo, actorAlterEgo.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            PlayerManager.Instance.player.ShowNotificationFrom(log, target, actorAlterEgo.owner);
         }
 
         //PlayerManager.Instance.player.ShowNotification()

@@ -54,7 +54,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     protected PairCombatStats[] _pairCombatStats;
     protected List<Skill> _skills;
     protected List<Log> _history;
-    protected List<Trait> _traits;
+    protected List<Trait> _normalTraits; //List of traits that are just normal Traits (Not including relationships)
     protected Dictionary<ELEMENT, float> _elementalWeaknesses;
     protected Dictionary<ELEMENT, float> _elementalResistances;
     protected PlayerCharacterItem _playerCharacterItem;
@@ -92,17 +92,17 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public Area defendingArea { get; private set; }
     public MORALITY morality { get; private set; }
     public CharacterToken characterToken { get; private set; }
-    public Dictionary<Character, CharacterRelationshipData> relationships {
+    public Dictionary<AlterEgoData, CharacterRelationshipData> relationships {
         get {
-            if (alterEgos == null || !alterEgos.ContainsKey(currentAlterEgo)) {
-                Debug.LogWarning(this.name + " Alter Ego Relationship Problem! Current alter ego is: " + currentAlterEgo);
-                return null;
-            }
-            return alterEgos[currentAlterEgo].relationships;
+            return currentAlterEgo?.relationships ?? null;
         }
     }
     public List<INTERACTION_TYPE> currentInteractionTypes { get; private set; }
-    public Dictionary<POINT_OF_INTEREST_TYPE, List<IAwareness>> awareness { get; private set; }
+    public Dictionary<POINT_OF_INTEREST_TYPE, List<IAwareness>> awareness {
+        get {
+            return currentAlterEgo.awareness;
+        }
+    }
     public List<INTERACTION_TYPE> poiGoapActions { get; private set; }
     public List<GoapPlan> allGoapPlans { get; private set; }
     public GoapPlanner planner { get; set; }
@@ -156,8 +156,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public int ignoreHostility { get; private set; }
 
     //alter egos
-    public string currentAlterEgo { get; private set; } //this character's currently active alter ego. Usually just Original.
-    private Dictionary<string, AlterEgoData> alterEgos;
+    public string currentAlterEgoName { get; private set; } //this character's currently active alter ego. Usually just Original.
+    public Dictionary<string, AlterEgoData> alterEgos { get; private set; }
 
     //For Testing
     public List<string> locationHistory { get; private set; }
@@ -336,7 +336,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public int speed {
         get {
-            int total = (int) ((_characterClass.baseSpeed + _speedMod) * (1f + ((_raceSetting.speedModifier + _speedPercentMod) / 100f)));
+            int total = (int)((_characterClass.baseSpeed + _speedMod) * (1f + ((_raceSetting.speedModifier + _speedPercentMod) / 100f)));
             if (total < 0) {
                 return 1;
             }
@@ -345,7 +345,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public int attackPower {
         get {
-            int total = (int) ((_characterClass.baseAttackPower + _attackPowerMod) * (1f + ((_raceSetting.attackPowerModifier + _attackPowerPercentMod) / 100f)));
+            int total = (int)((_characterClass.baseAttackPower + _attackPowerMod) * (1f + ((_raceSetting.attackPowerModifier + _attackPowerPercentMod) / 100f)));
             if (total < 0) {
                 return 1;
             }
@@ -354,7 +354,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public int maxHP {
         get {
-            int total = (int) ((_characterClass.baseHP + _maxHPMod) * (1f + ((_raceSetting.hpModifier + _maxHPPercentMod) / 100f)));
+            int total = (int)((_characterClass.baseHP + _maxHPMod) * (1f + ((_raceSetting.hpModifier + _maxHPPercentMod) / 100f)));
             if (total < 0) {
                 return 1;
             }
@@ -452,8 +452,20 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public bool isDefender {
         get { return defendingArea != null; }
     }
-    public List<Trait> traits {
-        get { return _traits; }
+    //returns all traits, including relationships from this character's current alter ego
+    public List<Trait> allTraits {
+        get {
+            List<Trait> combined = new List<Trait>(_normalTraits);
+            for (int i = 0; i < relationships.Values.Count; i++) {
+                combined.AddRange(relationships.Values.ElementAt(i).rels);
+            }
+            return combined;
+        }
+    }
+    public List<Trait> normalTraits {
+        get {
+            return _normalTraits;
+        }
     }
     public Dictionary<STAT, float> buffs {
         get { return _buffs; }
@@ -496,49 +508,64 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public bool isExhausted { get { return tiredness <= TIREDNESS_THRESHOLD_2; } }
     public bool isForlorn { get { return happiness <= HAPPINESS_THRESHOLD_2; } }
     public Tombstone grave { get; private set; }
+    public AlterEgoData currentAlterEgo {
+        get {
+            if (alterEgos == null || !alterEgos.ContainsKey(currentAlterEgoName)) {
+                Debug.LogWarning(this.name + " Alter Ego Relationship Problem! Current alter ego is: " + currentAlterEgoName);
+                return null;
+            }
+            return alterEgos[currentAlterEgoName];
+        }
+    }
     #endregion
 
     public Character(CharacterRole role, RACE race, GENDER gender) : this() {
         _id = Utilities.SetID(this);
         _gender = gender;
-        SetRace(race);
-        AssignRole(role);
-        AssignClassByRole(role);
+        RaceSetting raceSetting = RaceManager.Instance.racesDictionary[race.ToString()];
+        _raceSetting = raceSetting.CreateNewCopy();
+        AssignRole(role, false);
+        _characterClass = CharacterManager.Instance.CreateNewCharacterClass(GetClassForRole(role));
         SetName(RandomNameGenerator.Instance.GenerateRandomName(_raceSetting.race, _gender));
         AssignRandomJob();
         SetMorality(MORALITY.GOOD);
         GenerateSexuality();
         ResetToFullHP();
+        InitializeAlterEgos();
     }
     public Character(CharacterRole role, string className, RACE race, GENDER gender) : this() {
         _id = Utilities.SetID(this);
         _gender = gender;
-        SetRace(race);
-        AssignRole(role);
-        AssignClass(className);
+        RaceSetting raceSetting = RaceManager.Instance.racesDictionary[race.ToString()];
+        _raceSetting = raceSetting.CreateNewCopy();
+        AssignRole(role, false);
+        _characterClass = CharacterManager.Instance.CreateNewCharacterClass(className);
         SetName(RandomNameGenerator.Instance.GenerateRandomName(_raceSetting.race, _gender));
         AssignRandomJob();
         SetMorality(MORALITY.GOOD);
         GenerateSexuality();
         ResetToFullHP();
+        InitializeAlterEgos();
     }
     public Character(CharacterSaveData data) : this() {
         _id = Utilities.SetID(this, data.id);
         _gender = data.gender;
-        SetRace(race);
-        AssignRole(data.role);
-        AssignClass(data.className);
+        RaceSetting raceSetting = RaceManager.Instance.racesDictionary[race.ToString()];
+        _raceSetting = raceSetting.CreateNewCopy();
+        AssignRole(data.role, false);
+        _characterClass = CharacterManager.Instance.CreateNewCharacterClass(data.className);
         SetName(data.name);
         AssignRandomJob();
         SetMorality(data.morality);
         GenerateSexuality();
         ResetToFullHP();
+        InitializeAlterEgos();
     }
     public Character() {
         SetIsDead(false);
         _isFainted = false;
         _history = new List<Log>();
-        _traits = new List<Trait>();
+        _normalTraits = new List<Trait>();
 
         //RPG
         _level = 1;
@@ -561,6 +588,26 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //memories = new Memories();
         trapStructure = new TrapStructure();
         SetPOIState(POI_STATE.ACTIVE);
+        
+        //for testing
+        locationHistory = new List<string>();
+        actionHistory = new List<string>();
+        //If this is a minion, this should not be initiated
+        //awareness = new Dictionary<POINT_OF_INTEREST_TYPE, List<IAwareness>>();
+        planner = new GoapPlanner(this);
+       
+        //hostiltiy
+        ignoreHostility = 0;
+    }
+    /// <summary>
+    /// Initialize data for this character that is not safe to put in the constructor.
+    /// Usually this is data that is dependent on the character being fully constructed.
+    /// </summary>
+    public void Initialize() {
+        OnUpdateRace();
+        OnUpdateCharacterClass();
+        UpdateIsCombatantState();
+
         SetMoodValue(90);
 
         tiredness = TIREDNESS_DEFAULT;
@@ -572,30 +619,16 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         hSkinColor = UnityEngine.Random.Range(-360f, 360f);
         hHairColor = UnityEngine.Random.Range(-360f, 360f);
         demonColor = UnityEngine.Random.Range(-144f, 144f);
-        //for testing
-        locationHistory = new List<string>();
-        actionHistory = new List<string>();
-        //If this is a minion, this should not be initiated
-        awareness = new Dictionary<POINT_OF_INTEREST_TYPE, List<IAwareness>>();
-        planner = new GoapPlanner(this);
+
         //supply
         SetSupply(UnityEngine.Random.Range(10, 61)); //Randomize initial supply per character (Random amount between 10 to 60.)
-        //hostiltiy
-        ignoreHostility = 0;
-
         GetRandomCharacterColor();
-#if !WORLD_CREATION_TOOL
-        //SetDailyInteractionGenerationTick(); //UnityEngine.Random.Range(1, 13)
-#endif
-        InitializeAlterEgos();
+
         ConstructInitialGoapAdvertisementActions();
         SubscribeToSignals();
-        //StartDailyGoapPlanGeneration();
         GameDate gameDate = GameManager.Instance.Today();
         gameDate.AddTicks(1);
         SchedulingManager.Instance.AddEntry(gameDate, () => PlanGoapActions());
-    }
-    public void Initialize() {
     }
 
     #region Signals
@@ -789,8 +822,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             //ObjectPoolManager.Instance.DestroyObject(marker.gameObject);
             //deathTile.RemoveCharacterHere(this);
 
-            for (int i = 0; i < traits.Count; i++) {
-                traits[i].OnDeath();
+            for (int i = 0; i < allTraits.Count; i++) {
+                allTraits[i].OnDeath();
             }
 
             marker.OnDeath(deathTile);
@@ -830,7 +863,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             EquipItem(item);
         }
     }
-
     /*
         this is the real way to equip an item
         this will return a boolean whether the character successfully equipped
@@ -1059,7 +1091,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     #endregion
 
     #region Roles
-    public void AssignRole(CharacterRole role) {
+    public void AssignRole(CharacterRole role, bool updateCombatantState = true) {
         bool wasRoleChanged = false;
         if (_role != null) {
             if (_role.roleType == role.roleType) {
@@ -1076,22 +1108,27 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (wasRoleChanged) {
             Messenger.Broadcast(Signals.ROLE_CHANGED, this);
         }
-        UpdateIsCombatantState();
+        if (updateCombatantState) {
+            UpdateIsCombatantState();
+        }
     }
     #endregion
 
     #region Character Class
-    public void AssignClassByRole(CharacterRole role) {
+    private string GetClassForRole(CharacterRole role) {
         if (role == CharacterRole.BEAST) {
-            AssignClass(Utilities.GetRespectiveBeastClassNameFromByRace(race));
+            return Utilities.GetRespectiveBeastClassNameFromByRace(race);
         } else {
             string className = CharacterManager.Instance.GetRandomClassByIdentifier(role.classNameOrIdentifier);
             if (className != string.Empty) {
-                AssignClass(className);
+                return className;
             } else {
-                AssignClass(role.classNameOrIdentifier);
+                return role.classNameOrIdentifier;
             }
         }
+    }
+    public void AssignClassByRole(CharacterRole role) {
+        AssignClass(GetClassForRole(role));
     }
     public void RemoveClass() {
         if (_characterClass == null) { return; }
@@ -1104,14 +1141,17 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 //This means that the character currently has a class and it will be replaced with a new class
                 RemoveTraitsFromClass();
             }
-            _characterClass = CharacterManager.Instance.classesDictionary[className].CreateNewCopy();
+            _characterClass = CharacterManager.Instance.CreateNewCharacterClass(className);
             //_skills = new List<Skill>();
             //_skills.Add(_characterClass.skill);
             //EquipItemsByClass();
-            SetTraitsFromClass();
+            OnUpdateCharacterClass();
         } else {
             throw new Exception("There is no class named " + className + " but it is being assigned to " + this.name);
         }
+    }
+    private void OnUpdateCharacterClass() {
+        SetTraitsFromClass();
     }
     public void AssignClass(CharacterClass characterClass) {
         if (_characterClass != null) {
@@ -1119,7 +1159,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             RemoveTraitsFromClass();
         }
         _characterClass = characterClass;
-        SetTraitsFromClass();
+        OnUpdateCharacterClass();
     }
     #endregion
 
@@ -1620,7 +1660,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     private bool CanCharacterTakeApprehendJob(Character character, Character targetCharacter, JobQueueItem job) {
         return character.role.roleType == CHARACTER_ROLE.SOLDIER && character.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.POSITIVE;
     }
-
     public void CreatePersonalJobs() {
         //Claim Item Job
         bool hasCreatedJob = false;
@@ -1824,6 +1863,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             return;
         }
         _faction = newFaction;
+        currentAlterEgo.SetFaction(faction);
         OnChangeFaction();
         UpdateTokenOwner();
         if (_faction != null) {
@@ -2085,13 +2125,16 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         RaceSetting raceSetting = RaceManager.Instance.racesDictionary[race.ToString()];
         _raceSetting = raceSetting.CreateNewCopy();
+        OnUpdateRace();
+        Messenger.Broadcast(Signals.CHARACTER_CHANGED_RACE, this);
+    }
+    private void OnUpdateRace() {
         SetTraitsFromRace();
         //Update Portrait to use new race
         _portraitSettings = CharacterManager.Instance.GenerateRandomPortrait(race, gender);
         if (marker != null) {
             marker.UpdateMarkerVisuals();
         }
-        Messenger.Broadcast(Signals.CHARACTER_CHANGED_RACE, this);
     }
     public void RemoveRace() {
         if (_raceSetting == null) {
@@ -2103,12 +2146,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public void SetRace(RACE race) {
         RaceSetting raceSetting = RaceManager.Instance.racesDictionary[race.ToString()];
         _raceSetting = raceSetting.CreateNewCopy();
-        SetTraitsFromRace();
-        //Update Portrait to use new race
-        _portraitSettings = CharacterManager.Instance.GenerateRandomPortrait(race, gender);
-        if (marker != null) {
-            marker.UpdateMarkerVisuals();
-        }
+        OnUpdateRace();
     }
     public void ChangeClass(string className) {
         string previousClassName = _characterClass.className;
@@ -2304,61 +2342,83 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     #endregion
 
     #region Relationships
-    private void AddRelationship(Character character, RelationshipTrait newRel) {
-        if (!relationships.ContainsKey(character)) {
-            relationships.Add(character, new CharacterRelationshipData(this, character));
-        }
-        relationships[character].AddRelationship(newRel);
-        OnRelationshipWithCharacterAdded(character, newRel);
-        Messenger.Broadcast(Signals.RELATIONSHIP_ADDED, this, newRel);
+    public void AddRelationship(Character character, RelationshipTrait newRel) {
+        AddRelationship(character.currentAlterEgo, newRel);
     }
-    public void RemoveRelationship(Character character) {
-        if (relationships.ContainsKey(character)) {
-            List<Trait> traits = relationships[character].rels.Select(x => x as Trait).ToList();
-            relationships[character].RemoveListeners();
-            relationships.Remove(character);
-            RemoveTrait(traits);
-        }
+    public void AddRelationship(AlterEgoData alterEgo, RelationshipTrait newRel) {
+        currentAlterEgo.AddRelationship(alterEgo, newRel);
+
+        //if (!relationships.ContainsKey(alterEgo)) {
+        //    relationships.Add(alterEgo, new CharacterRelationshipData(this, alterEgo.owner, alterEgo));
+        //}
+        //relationships[alterEgo].AddRelationship(newRel);
+        //OnRelationshipWithCharacterAdded(alterEgo.owner, newRel);
+        //Messenger.Broadcast(Signals.RELATIONSHIP_ADDED, this, newRel);
     }
-    public void RemoveRelationship(Character character, RelationshipTrait rel) {
-        if (relationships.ContainsKey(character)) {
-            relationships[character].RemoveRelationship(rel);
-            //not removing relationship data now when rel count is 0. Because relationship data can contain other data that is still valid even without relationships
-            //if (relationships[character].rels.Count == 0) {
-            //    RemoveRelationship(character);
-            //}
-        }
+    //public void RemoveRelationship(Character character) {
+    //    if (relationships.ContainsKey(character.currentAlterEgo)) {
+    //        List<Trait> traits = relationships[character.currentAlterEgo].rels.Select(x => x as Trait).ToList();
+    //        relationships[character.currentAlterEgo].RemoveListeners();
+    //        relationships.Remove(character.currentAlterEgo);
+    //        RemoveTrait(traits);
+    //    }
+    //}
+    //public bool RemoveRelationship(Character character, RelationshipTrait rel) {
+    //    if (relationships.ContainsKey(character.currentAlterEgo)) {
+    //        return relationships[character.currentAlterEgo].RemoveRelationship(rel);
+    //        //not removing relationship data now when rel count is 0. Because relationship data can contain other data that is still valid even without relationships
+    //        //if (relationships[character].rels.Count == 0) {
+    //        //    RemoveRelationship(character);
+    //        //}
+    //    }
+    //    return false;
+    //}
+    public void RemoveRelationshipWith(Character character, RELATIONSHIP_TRAIT rel) {
+        //if (relationships.ContainsKey(character.currentAlterEgo)) {
+        //    relationships[character.currentAlterEgo].RemoveRelationship(rel);
+        //}
+        RemoveRelationshipWith(character.currentAlterEgo, rel);
     }
-    public void RemoveRelationship(Character character, RELATIONSHIP_TRAIT rel) {
-        if (relationships.ContainsKey(character)) {
-            relationships[character].RemoveRelationship(rel);
-        }
+    public void RemoveRelationshipWith(AlterEgoData alterEgo, RELATIONSHIP_TRAIT rel) {
+        //if (relationships.ContainsKey(alterEgo)) {
+        //    relationships[alterEgo].RemoveRelationship(rel);
+        //}
+        currentAlterEgo.RemoveRelationship(alterEgo, rel);
     }
-    public void RemoveAllRelationships(bool triggerOnRemove = true) {
-        List<Character> targetCharacters = relationships.Keys.ToList();
-        while (targetCharacters.Count > 0) {
-            CharacterManager.Instance.RemoveRelationshipBetween(this, targetCharacters[0], triggerOnRemove);
-            targetCharacters.RemoveAt(0);
-        }
-    }
+    //public void RemoveAllRelationships(bool triggerOnRemove = true) {
+    //    List<Character> targetCharacters = relationships.Keys.Select(x => x.owner).ToList();
+    //    while (targetCharacters.Count > 0) {
+    //        CharacterManager.Instance.RemoveRelationshipBetween(this, targetCharacters[0], triggerOnRemove);
+    //        targetCharacters.RemoveAt(0);
+    //    }
+    //}
     public RelationshipTrait GetRelationshipTraitWith(Character character, RELATIONSHIP_TRAIT type, bool useDisabled = false) {
-        if (HasRelationshipWith(character, useDisabled)) {
-            return relationships[character].GetRelationshipTrait(type);
+        return GetRelationshipTraitWith(character.currentAlterEgo, type, useDisabled);
+    }
+    public RelationshipTrait GetRelationshipTraitWith(AlterEgoData alterEgo, RELATIONSHIP_TRAIT type, bool useDisabled = false) {
+        if (HasRelationshipWith(alterEgo, useDisabled)) {
+            return relationships[alterEgo].GetRelationshipTrait(type);
         }
         return null;
     }
     public List<RelationshipTrait> GetAllRelationshipTraitWith(Character character) {
-        if (HasRelationshipWith(character)) {
-            return relationships[character].GetAllRelationshipTraits();
+        return GetAllRelationshipTraitWith(character.currentAlterEgo);
+    }
+    public List<RelationshipTrait> GetAllRelationshipTraitWith(AlterEgoData alterEgo) {
+        if (HasRelationshipWith(alterEgo)) {
+            return relationships[alterEgo].GetAllRelationshipTraits();
         }
         return null;
     }
-    public List<RelationshipTrait> GetAllRelationshipOfEffectWith(Character character, TRAIT_EFFECT effect, RELATIONSHIP_TRAIT include = RELATIONSHIP_TRAIT.NONE) {
+    public List<RelationshipTrait> GetAllRelationshipOfEffectWith(Character character, TRAIT_EFFECT effect) {
+        return GetAllRelationshipOfEffectWith(character.currentAlterEgo, effect);
+    }
+    public List<RelationshipTrait> GetAllRelationshipOfEffectWith(AlterEgoData alterEgo, TRAIT_EFFECT effect) {
         List<RelationshipTrait> rels = new List<RelationshipTrait>();
-        if (HasRelationshipWith(character)) {
-            for (int i = 0; i < relationships[character].rels.Count; i++) {
-                RelationshipTrait currTrait = relationships[character].rels[i];
-                if ((currTrait.effect == effect || currTrait.relType == include) && !currTrait.isDisabled) {
+        if (HasRelationshipWith(alterEgo)) {
+            for (int i = 0; i < relationships[alterEgo].rels.Count; i++) {
+                RelationshipTrait currTrait = relationships[alterEgo].rels[i];
+                if (currTrait.effect == effect && !currTrait.isDisabled) {
                     rels.Add(currTrait);
                 }
             }
@@ -2366,51 +2426,66 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         return rels;
     }
     public List<RELATIONSHIP_TRAIT> GetAllRelationshipTraitTypesWith(Character character) {
-        if (HasRelationshipWith(character)) {
-            return new List<RELATIONSHIP_TRAIT>(relationships[character].rels.Where(x => !x.isDisabled).Select(x => x.relType));
+        return GetAllRelationshipTraitTypesWith(character.currentAlterEgo);
+    }
+    public List<RELATIONSHIP_TRAIT> GetAllRelationshipTraitTypesWith(AlterEgoData alterEgo) {
+        if (HasRelationshipWith(alterEgo)) {
+            return new List<RELATIONSHIP_TRAIT>(relationships[alterEgo].rels.Where(x => !x.isDisabled).Select(x => x.relType));
         }
         return null;
     }
     public List<Character> GetCharactersWithRelationship(RELATIONSHIP_TRAIT type) {
         List<Character> characters = new List<Character>();
-        foreach (KeyValuePair<Character, CharacterRelationshipData> kvp in relationships) {
+        foreach (KeyValuePair<AlterEgoData, CharacterRelationshipData> kvp in relationships) {
             if (!kvp.Value.isDisabled && kvp.Value.HasRelationshipTrait(type)) {
-                characters.Add(kvp.Key);
+                if (characters.Contains(kvp.Key.owner)) {
+                    continue;
+                }
+                characters.Add(kvp.Key.owner);
             }
         }
         return characters;
     }
     public List<Character> GetCharactersWithoutRelationship(RELATIONSHIP_TRAIT type) {
         List<Character> characters = new List<Character>();
-        foreach (KeyValuePair<Character, CharacterRelationshipData> kvp in relationships) {
+        foreach (KeyValuePair<AlterEgoData, CharacterRelationshipData> kvp in relationships) {
             if (!kvp.Value.isDisabled && !kvp.Value.HasRelationshipTrait(type)) {
-                characters.Add(kvp.Key);
+                if (characters.Contains(kvp.Key.owner)) {
+                    continue;
+                }
+                characters.Add(kvp.Key.owner);
             }
         }
         return characters;
     }
     public List<Character> GetCharactersWithRelationship(TRAIT_EFFECT effect) {
         List<Character> characters = new List<Character>();
-        foreach (KeyValuePair<Character, CharacterRelationshipData> kvp in relationships) {
+        foreach (KeyValuePair<AlterEgoData, CharacterRelationshipData> kvp in relationships) {
             if (!kvp.Value.isDisabled && kvp.Value.HasRelationshipOfEffect(effect)) {
-                characters.Add(kvp.Key);
+                if (characters.Contains(kvp.Key.owner)) {
+                    continue;
+                }
+                characters.Add(kvp.Key.owner);
             }
         }
         return characters;
     }
     public Character GetCharacterWithRelationship(RELATIONSHIP_TRAIT type) {
-        foreach (KeyValuePair<Character, CharacterRelationshipData> kvp in relationships) {
+        foreach (KeyValuePair<AlterEgoData, CharacterRelationshipData> kvp in relationships) {
             if (!kvp.Value.isDisabled && kvp.Value.HasRelationshipTrait(type)) {
-                return kvp.Key;
+                return kvp.Key.owner;
             }
         }
         return null;
     }
     public List<Character> GetAllCharactersThatHasRelationship() {
         List<Character> characters = new List<Character>();
-        foreach (KeyValuePair<Character, CharacterRelationshipData> kvp in relationships) {
+        foreach (KeyValuePair<AlterEgoData, CharacterRelationshipData> kvp in relationships) {
             if (!kvp.Value.isDisabled) {
-                characters.Add(kvp.Key);
+                if (characters.Contains(kvp.Key.owner)) {
+                    continue;
+                }
+                characters.Add(kvp.Key.owner);
             }
         }
         return characters;
@@ -2479,7 +2554,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return true;
     }
-    private void OnRelationshipWithCharacterAdded(Character targetCharacter, RelationshipTrait newRel) {
+    internal void OnRelationshipWithCharacterAdded(Character targetCharacter, RelationshipTrait newRel) {
         //check if they share the same home, then migrate them accordingly
         if (newRel.relType == RELATIONSHIP_TRAIT.LOVER
             && this.homeArea.id == targetCharacter.homeArea.id
@@ -2497,9 +2572,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     /// <param name="include">Relationship type to exclude from checking</param>
     /// <returns></returns>
     public bool HasRelationshipOfEffectWith(Character character, TRAIT_EFFECT effect, RELATIONSHIP_TRAIT include = RELATIONSHIP_TRAIT.NONE) {
-        if (HasRelationshipWith(character)) {
-            for (int i = 0; i < relationships[character].rels.Count; i++) {
-                RelationshipTrait currTrait = relationships[character].rels[i];
+        return HasRelationshipOfEffectWith(character.currentAlterEgo, effect, include);
+    }
+    public bool HasRelationshipOfEffectWith(AlterEgoData alterEgo, TRAIT_EFFECT effect, RELATIONSHIP_TRAIT include = RELATIONSHIP_TRAIT.NONE) {
+        if (HasRelationshipWith(alterEgo)) {
+            for (int i = 0; i < relationships[alterEgo].rels.Count; i++) {
+                RelationshipTrait currTrait = relationships[alterEgo].rels[i];
                 if ((currTrait.effect == effect || currTrait.relType == include) && !currTrait.isDisabled) {
                     return true;
                 }
@@ -2515,10 +2593,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     /// <param name="objs">The list of relationships.</param>
     /// <returns>true or false.</returns>
     public bool HasAnyRelationshipOfTypeWith(Character character, bool useDisabled = false, params RELATIONSHIP_TRAIT[] objs) {
-        if (HasRelationshipWith(character, useDisabled)) {
+        return HasAnyRelationshipOfTypeWith(character.currentAlterEgo, useDisabled, objs);
+    }
+    public bool HasAnyRelationshipOfTypeWith(AlterEgoData alterEgo, bool useDisabled = false, params RELATIONSHIP_TRAIT[] objs) {
+        if (HasRelationshipWith(alterEgo, useDisabled)) {
             List<RELATIONSHIP_TRAIT> rels = objs.ToList();
-            for (int i = 0; i < relationships[character].rels.Count; i++) {
-                RelationshipTrait currTrait = relationships[character].rels[i];
+            for (int i = 0; i < relationships[alterEgo].rels.Count; i++) {
+                RelationshipTrait currTrait = relationships[alterEgo].rels[i];
                 if (rels.Contains(currTrait.relType)) {
                     if (!currTrait.isDisabled || (currTrait.isDisabled && useDisabled)) {
                         return true;
@@ -2529,9 +2610,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         return false;
     }
     public bool HasRelationshipOfTypeWith(Character character, RELATIONSHIP_TRAIT relType, bool useDisabled = false) {
-        if (HasRelationshipWith(character, useDisabled)) {
-            for (int i = 0; i < relationships[character].rels.Count; i++) {
-                RelationshipTrait currTrait = relationships[character].rels[i];
+        return HasRelationshipOfTypeWith(character.currentAlterEgo, relType, useDisabled);
+    }
+    public bool HasRelationshipOfTypeWith(AlterEgoData alterEgo, RELATIONSHIP_TRAIT relType, bool useDisabled = false) {
+        if (HasRelationshipWith(alterEgo, useDisabled)) {
+            for (int i = 0; i < relationships[alterEgo].rels.Count; i++) {
+                RelationshipTrait currTrait = relationships[alterEgo].rels[i];
                 if (currTrait.relType == relType && !currTrait.isDisabled) {
                     return true;
                 }
@@ -2540,9 +2624,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         return false;
     }
     public bool HasRelationshipOfTypeWith(Character character, params RELATIONSHIP_TRAIT[] rels) {
-        if (HasRelationshipWith(character)) {
-            for (int i = 0; i < relationships[character].rels.Count; i++) {
-                RelationshipTrait currTrait = relationships[character].rels[i];
+        return HasRelationshipOfTypeWith(character.currentAlterEgo, rels);
+    }
+    public bool HasRelationshipOfTypeWith(AlterEgoData alterEgo, params RELATIONSHIP_TRAIT[] rels) {
+        if (HasRelationshipWith(alterEgo)) {
+            for (int i = 0; i < relationships[alterEgo].rels.Count; i++) {
+                RelationshipTrait currTrait = relationships[alterEgo].rels[i];
                 if (currTrait.isDisabled) {
                     continue; //skip
                 }
@@ -2551,34 +2638,30 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                         return true;
                     }
                 }
-                //if ((currTrait.relType == relType1 || currTrait.relType == relType2 || currTrait.relType == relType3 || currTrait.relType == relType4) && !currTrait.isDisabled) {
-                //    return true;
-                //}
             }
         }
         return false;
     }
     public CharacterRelationshipData GetCharacterRelationshipData(Character character) {
-        if (HasRelationshipWith(character)) {
-            return relationships[character];
+        return GetCharacterRelationshipData(character.currentAlterEgo);
+    }
+    public CharacterRelationshipData GetCharacterRelationshipData(AlterEgoData alterEgo) {
+        if (HasRelationshipWith(alterEgo)) {
+            return relationships[alterEgo];
         }
         return null;
     }
     public bool HasRelationshipWith(Character character, bool useDisabled = false) {
-        if (useDisabled) {
-            if (relationships.ContainsKey(character)) {
-                //if there is relationship data present, check if there are actual relationships in their data
-                return relationships[character].rels.Count > 0;
-            }
-            return false;
-        }
-        return relationships.ContainsKey(character) && relationships[character].rels.Count > 0 && !relationships[character].isDisabled;
+        return HasRelationshipWith(character.currentAlterEgo);
     }
-    public int GetAllRelationshipCount(List<RELATIONSHIP_TRAIT> except = null) {
+    public bool HasRelationshipWith(AlterEgoData alterEgo, bool useDisabled = false) {
+        return currentAlterEgo.HasRelationshipWith(alterEgo, useDisabled);
+    }
+    public int GetAllRelationshipCountExcept(List<RELATIONSHIP_TRAIT> except = null) {
         int count = 0;
-        for (int i = 0; i < traits.Count; i++) {
-            if (traits[i] is RelationshipTrait) {
-                RelationshipTrait relTrait = traits[i] as RelationshipTrait;
+        for (int i = 0; i < allTraits.Count; i++) {
+            if (allTraits[i] is RelationshipTrait) {
+                RelationshipTrait relTrait = allTraits[i] as RelationshipTrait;
                 if (except != null) {
                     if (except.Contains(relTrait.relType)) {
                         continue; //skip
@@ -2590,10 +2673,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         return count;
     }
     public void FlirtWith(Character otherCharacter) {
-        if (!relationships.ContainsKey(otherCharacter)) {
-            relationships.Add(otherCharacter, new CharacterRelationshipData(this, otherCharacter));
+        if (!relationships.ContainsKey(otherCharacter.currentAlterEgo)) {
+            relationships.Add(otherCharacter.currentAlterEgo, new CharacterRelationshipData(this, otherCharacter, otherCharacter.currentAlterEgo));
         }
-        relationships[otherCharacter].IncreaseFlirtationCount();
+        relationships[otherCharacter.currentAlterEgo].IncreaseFlirtationCount();
     }
     /// <summary>
     /// Get the type of relationship that this character has with the other character.
@@ -2602,9 +2685,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     /// <param name="useDisabled">Should this checking use disabled relationships?</param>
     /// <returns>POSITIVE, NEGATIVE, NONE</returns>
     public RELATIONSHIP_EFFECT GetRelationshipEffectWith(Character otherCharacter, bool useDisabled = false) {
-        if (HasRelationshipWith(otherCharacter, useDisabled)) {
-            for (int i = 0; i < relationships[otherCharacter].rels.Count; i++) {
-                RelationshipTrait currTrait = relationships[otherCharacter].rels[i];
+        return GetRelationshipEffectWith(otherCharacter.currentAlterEgo, useDisabled);
+    }
+    public RELATIONSHIP_EFFECT GetRelationshipEffectWith(AlterEgoData alterEgo, bool useDisabled = false) {
+        if (HasRelationshipWith(alterEgo, useDisabled)) {
+            for (int i = 0; i < relationships[alterEgo].rels.Count; i++) {
+                RelationshipTrait currTrait = relationships[alterEgo].rels[i];
                 if (currTrait.effect == TRAIT_EFFECT.NEGATIVE) {
                     return RELATIONSHIP_EFFECT.NEGATIVE;
                 }
@@ -2977,6 +3063,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public void SetHomeStructure(Dwelling homeStructure) {
         this.homeStructure = homeStructure;
+        currentAlterEgo.SetHomeStructure(homeStructure);
     }
     public bool IsLivingWith(RELATIONSHIP_TRAIT type) {
         if (homeStructure != null && homeStructure.residents.Count > 1) {
@@ -3139,7 +3226,11 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 return false;
             }
         }
-        _traits.Add(trait);
+        if (!(trait is RelationshipTrait)) {
+            //Not adding relationship traits to the list of traits, since the getter will combine the traits list from this list and the relationships dictionary.
+            //Did this so that relationships can be swappable without having to call RemoveTrait.
+            _normalTraits.Add(trait); 
+        }
         trait.SetGainedFromDoing(gainedFromDoing);
         trait.SetOnRemoveAction(onRemoveAction);
         trait.SetCharacterResponsibleForTrait(characterResponsible);
@@ -3169,10 +3260,11 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         }
 
-        if (trait is RelationshipTrait) {
-            RelationshipTrait rel = trait as RelationshipTrait;
-            AddRelationship(rel.targetCharacter, rel);
-        } else if (trait.type == TRAIT_TYPE.CRIMINAL 
+        //if (trait is RelationshipTrait) {
+        //    RelationshipTrait rel = trait as RelationshipTrait;
+        //    AddRelationship(rel.targetCharacter, rel);
+        //} else 
+        if (trait.type == TRAIT_TYPE.CRIMINAL 
             || (trait.effect == TRAIT_EFFECT.NEGATIVE && trait.type == TRAIT_TYPE.DISABLER)) {
             //when a character gains a criminal trait, drop all location jobs that this character is assigned to
             homeArea.jobQueue.UnassignAllJobsTakenBy(this);
@@ -3186,20 +3278,25 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         return RemoveTrait(trait, triggerOnRemove);
     }
     public bool RemoveTrait(Trait trait, bool triggerOnRemove = true) {
-        if (_traits.Remove(trait)) {
+        bool removed = false;
+        if (trait is RelationshipTrait) {
+            removed = true;
+        } else {
+            removed = _normalTraits.Remove(trait);
+        } 
+        if (removed) {
             UnapplyTraitEffects(trait);
             UnapplyPOITraitInteractions(trait);
             if (triggerOnRemove) {
                 trait.OnRemoveTrait(this);
             }
             Messenger.Broadcast(Signals.TRAIT_REMOVED, this, trait);
-            if (trait is RelationshipTrait) {
-                RelationshipTrait rel = trait as RelationshipTrait;
-                RemoveRelationship(rel.targetCharacter, rel);
-            }
-            return true;
+            //if (trait is RelationshipTrait) {
+            //    RelationshipTrait rel = trait as RelationshipTrait;
+            //    RemoveRelationship(rel.targetCharacter, rel);
+            //}
         }
-        return false;
+        return removed;
     }
     public bool RemoveTrait(string traitName, bool triggerOnRemove = true) {
         Trait trait = GetTrait(traitName);
@@ -3215,13 +3312,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public void RemoveAllTraits(string traitNameException = "") {
         if (traitNameException == "") {
-            while (traits.Count > 0) {
-                RemoveTrait(traits[0]);
+            while (allTraits.Count > 0) {
+                RemoveTrait(allTraits[0]);
             }
         } else {
-            for (int i = 0; i < traits.Count; i++) {
-                if (traits[i].name != traitNameException) {
-                    RemoveTrait(traits[i]);
+            for (int i = 0; i < allTraits.Count; i++) {
+                if (allTraits[i].name != traitNameException) {
+                    RemoveTrait(allTraits[i]);
                     i--;
                 }
             }
@@ -3229,65 +3326,81 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public void RemoveAllNonRelationshipTraits(string traitNameException = "") {
         if (traitNameException == "") {
-            for (int i = 0; i < traits.Count; i++) {
-                if (!(traits[i] is RelationshipTrait)) {
-                    RemoveTrait(traits[i]);
+            for (int i = 0; i < allTraits.Count; i++) {
+                if (!(allTraits[i] is RelationshipTrait)) {
+                    RemoveTrait(allTraits[i]);
                     i--;
                 }
             }
         } else {
-            for (int i = 0; i < traits.Count; i++) {
-                if (traits[i].name != traitNameException && !(traits[i] is RelationshipTrait)) {
-                    RemoveTrait(traits[i]);
+            for (int i = 0; i < allTraits.Count; i++) {
+                if (allTraits[i].name != traitNameException && !(allTraits[i] is RelationshipTrait)) {
+                    RemoveTrait(allTraits[i]);
                     i--;
                 }
             }
         }
     }
+    /// <summary>
+    /// Remove all traits that are not persistent.
+    /// NOTE: This does NOT remove relationships!
+    /// </summary>
+    public void RemoveAllNonPersistentTraits() {
+        List<Trait> allTraits = new List<Trait>(this.allTraits);
+        for (int i = 0; i < allTraits.Count; i++) {
+            Trait currTrait = allTraits[i];
+            if (currTrait is RelationshipTrait) {
+                continue; //skip
+            }
+            if (!currTrait.isPersistent) {
+                RemoveTrait(currTrait);
+            }
+        }
+    }
     public Trait GetTrait(string traitName) {
-        for (int i = 0; i < _traits.Count; i++) {
-            if (_traits[i].name == traitName && !_traits[i].isDisabled) {
-                return _traits[i];
+        for (int i = 0; i < allTraits.Count; i++) {
+            if (allTraits[i].name == traitName && !allTraits[i].isDisabled) {
+                return allTraits[i];
             }
         }
         return null;
     }
     public Trait GetTraitOr(string traitName1, string traitName2) {
-        for (int i = 0; i < _traits.Count; i++) {
-            if ((_traits[i].name == traitName1 || _traits[i].name == traitName2) && !_traits[i].isDisabled) {
-                return _traits[i];
+        for (int i = 0; i < allTraits.Count; i++) {
+            if ((allTraits[i].name == traitName1 || allTraits[i].name == traitName2) && !allTraits[i].isDisabled) {
+                return allTraits[i];
             }
         }
         return null;
     }
     public Trait GetTraitOr(string traitName1, string traitName2, string traitName3) {
-        for (int i = 0; i < _traits.Count; i++) {
-            if ((_traits[i].name == traitName1 || _traits[i].name == traitName2 || _traits[i].name == traitName3) && !_traits[i].isDisabled) {
-                return _traits[i];
+        for (int i = 0; i < allTraits.Count; i++) {
+            if ((allTraits[i].name == traitName1 || allTraits[i].name == traitName2 || allTraits[i].name == traitName3) && !allTraits[i].isDisabled) {
+                return allTraits[i];
             }
         }
         return null;
     }
     public Trait GetTraitOr(string traitName1, string traitName2, string traitName3, string traitName4) {
-        for (int i = 0; i < _traits.Count; i++) {
-            if ((_traits[i].name == traitName1 || _traits[i].name == traitName2 || _traits[i].name == traitName3 || _traits[i].name == traitName4) && !_traits[i].isDisabled) {
-                return _traits[i];
+        for (int i = 0; i < allTraits.Count; i++) {
+            if ((allTraits[i].name == traitName1 || allTraits[i].name == traitName2 || allTraits[i].name == traitName3 || allTraits[i].name == traitName4) && !allTraits[i].isDisabled) {
+                return allTraits[i];
             }
         }
         return null;
     }
     public bool HasTraitOf(TRAIT_TYPE traitType, string traitException = "") {
-        for (int i = 0; i < _traits.Count; i++) {
-            if (traitException != "" && _traits[i].name == traitException) { continue; }
-            if (_traits[i].type == traitType && !_traits[i].isDisabled) {
+        for (int i = 0; i < allTraits.Count; i++) {
+            if (traitException != "" && allTraits[i].name == traitException) { continue; }
+            if (allTraits[i].type == traitType && !allTraits[i].isDisabled) {
                 return true;
             }
         }
         return false;
     }
     public bool HasTraitOf(TRAIT_EFFECT effect, TRAIT_TYPE type) {
-        for (int i = 0; i < traits.Count; i++) {
-            Trait currTrait = traits[i];
+        for (int i = 0; i < allTraits.Count; i++) {
+            Trait currTrait = allTraits[i];
             if (currTrait.effect == effect && currTrait.type == type && !currTrait.isDisabled) {
                 return true;
             }
@@ -3295,8 +3408,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         return false;
     }
     public bool HasTraitOf(TRAIT_EFFECT effect1, TRAIT_EFFECT effect2, TRAIT_TYPE type) {
-        for (int i = 0; i < traits.Count; i++) {
-            Trait currTrait = traits[i];
+        for (int i = 0; i < allTraits.Count; i++) {
+            Trait currTrait = allTraits[i];
             if ((currTrait.effect == effect1 || currTrait.effect == effect2) && currTrait.type == type && !currTrait.isDisabled) {
                 return true;
             }
@@ -3304,8 +3417,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         return false;
     }
     public bool HasTraitOf(TRAIT_EFFECT effect) {
-        for (int i = 0; i < traits.Count; i++) {
-            Trait currTrait = traits[i];
+        for (int i = 0; i < allTraits.Count; i++) {
+            Trait currTrait = allTraits[i];
             if (currTrait.effect == effect && !currTrait.isDisabled) {
                 return true;
             }
@@ -3313,8 +3426,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         return false;
     }
     public Trait GetTraitOf(TRAIT_EFFECT effect, TRAIT_TYPE type) {
-        for (int i = 0; i < traits.Count; i++) {
-            Trait currTrait = traits[i];
+        for (int i = 0; i < allTraits.Count; i++) {
+            Trait currTrait = allTraits[i];
             if (currTrait.effect == effect && currTrait.type == type && !currTrait.isDisabled) {
                 return currTrait;
             }
@@ -3322,8 +3435,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         return null;
     }
     public Trait GetTraitOf(TRAIT_TYPE type) {
-        for (int i = 0; i < traits.Count; i++) {
-            Trait currTrait = traits[i];
+        for (int i = 0; i < allTraits.Count; i++) {
+            Trait currTrait = allTraits[i];
             if (currTrait.type == type && !currTrait.isDisabled) {
                 return currTrait;
             }
@@ -3331,8 +3444,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         return null;
     }
     public bool HasTraitOf(System.Type traitType) {
-        for (int i = 0; i < _traits.Count; i++) {
-            System.Type type = _traits[i].GetType();
+        for (int i = 0; i < allTraits.Count; i++) {
+            System.Type type = allTraits[i].GetType();
             if (type == traitType) {
                 return true;
             }
@@ -3341,10 +3454,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public List<Trait> RemoveAllTraitsByType(TRAIT_TYPE traitType) {
         List<Trait> removedTraits = new List<Trait>();
-        for (int i = 0; i < _traits.Count; i++) {
-            if (_traits[i].type == traitType) {
-                removedTraits.Add(_traits[i]);
-                RemoveTrait(_traits[i]);
+        for (int i = 0; i < allTraits.Count; i++) {
+            if (allTraits[i].type == traitType) {
+                removedTraits.Add(allTraits[i]);
+                RemoveTrait(allTraits[i]);
                 i--;
             }
         }
@@ -3352,9 +3465,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public Trait GetRandomTrait(TRAIT_EFFECT effect) {
         List<Trait> negativeTraits = new List<Trait>();
-        for (int i = 0; i < _traits.Count; i++) {
-            if (_traits[i].effect == effect && !_traits[i].isDisabled) {
-                negativeTraits.Add(_traits[i]);
+        for (int i = 0; i < allTraits.Count; i++) {
+            if (allTraits[i].effect == effect && !allTraits[i].isDisabled) {
+                negativeTraits.Add(allTraits[i]);
             }
         }
         if (negativeTraits.Count > 0) {
@@ -3577,32 +3690,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         }
     }
-    public Friend GetFriendTraitWith(Character character) {
-        for (int i = 0; i < _traits.Count; i++) {
-            if (_traits[i] is Friend && !_traits[i].isDisabled) {
-                Friend friendTrait = _traits[i] as Friend;
-                if (friendTrait.targetCharacter.id == character.id) {
-                    return friendTrait;
-                }
-            }
-        }
-        return null;
-    }
-    public Enemy GetEnemyTraitWith(Character character) {
-        for (int i = 0; i < _traits.Count; i++) {
-            if (_traits[i] is Enemy && !_traits[i].isDisabled) {
-                Enemy enemyTrait = _traits[i] as Enemy;
-                if (enemyTrait.targetCharacter == character) {
-                    return enemyTrait;
-                }
-            }
-        }
-        return null;
-    }
     public bool HasRelationshipTraitOf(RELATIONSHIP_TRAIT relType, bool includeDead = true) {
-        for (int i = 0; i < _traits.Count; i++) {
-            if (_traits[i] is RelationshipTrait && !_traits[i].isDisabled) {
-                RelationshipTrait currTrait = _traits[i] as RelationshipTrait;
+        for (int i = 0; i < allTraits.Count; i++) {
+            if (allTraits[i] is RelationshipTrait && !allTraits[i].isDisabled) {
+                RelationshipTrait currTrait = allTraits[i] as RelationshipTrait;
                 if (currTrait.targetCharacter.isDead && !includeDead) {
                     continue; //skip dead characters
                 }
@@ -3614,9 +3705,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         return false;
     }
     public bool HasRelationshipTraitOf(RELATIONSHIP_TRAIT relType, Faction except) {
-        for (int i = 0; i < _traits.Count; i++) {
-            if (_traits[i] is RelationshipTrait && !_traits[i].isDisabled) {
-                RelationshipTrait currTrait = _traits[i] as RelationshipTrait;
+        for (int i = 0; i < allTraits.Count; i++) {
+            if (allTraits[i] is RelationshipTrait && !allTraits[i].isDisabled) {
+                RelationshipTrait currTrait = allTraits[i] as RelationshipTrait;
                 if (currTrait.relType == relType
                     && currTrait.targetCharacter.faction.id != except.id) {
                     return true;
@@ -5169,63 +5260,66 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 
     #region Awareness
     public IAwareness AddAwareness(IPointOfInterest pointOfInterest) {
-        IAwareness iawareness = GetAwareness(pointOfInterest);
-        if (iawareness == null) {
-            iawareness = CreateNewAwareness(pointOfInterest);
-            if (iawareness != null) {
-                if (!awareness.ContainsKey(pointOfInterest.poiType)) {
-                    awareness.Add(pointOfInterest.poiType, new List<IAwareness>());
-                }
-                awareness[pointOfInterest.poiType].Add(iawareness);
-                iawareness.OnAddAwareness(this);
-            }
-        } else {
-            if (pointOfInterest.gridTileLocation != null) {
-                //if already has awareness for that poi, just update it's known location. 
-                //Except if it's null, because if it's null, it ususally means the poi is travelling 
-                //and setting it's location to null should be ignored to prevent unexpected behaviour.
-                iawareness.SetKnownGridLocation(pointOfInterest.gridTileLocation);
-            }
+        return currentAlterEgo.AddAwareness(pointOfInterest);
+        //IAwareness iawareness = GetAwareness(pointOfInterest);
+        //if (iawareness == null) {
+        //    iawareness = CreateNewAwareness(pointOfInterest);
+        //    if (iawareness != null) {
+        //        if (!awareness.ContainsKey(pointOfInterest.poiType)) {
+        //            awareness.Add(pointOfInterest.poiType, new List<IAwareness>());
+        //        }
+        //        awareness[pointOfInterest.poiType].Add(iawareness);
+        //        iawareness.OnAddAwareness(this);
+        //    }
+        //} else {
+        //    if (pointOfInterest.gridTileLocation != null) {
+        //        //if already has awareness for that poi, just update it's known location. 
+        //        //Except if it's null, because if it's null, it ususally means the poi is travelling 
+        //        //and setting it's location to null should be ignored to prevent unexpected behaviour.
+        //        iawareness.SetKnownGridLocation(pointOfInterest.gridTileLocation);
+        //    }
 
-        }
-        return iawareness;
+        //}
+        //return iawareness;
     }
     public void RemoveAwareness(IPointOfInterest pointOfInterest) {
-        if (awareness.ContainsKey(pointOfInterest.poiType)) {
-            List<IAwareness> awarenesses = awareness[pointOfInterest.poiType];
-            for (int i = 0; i < awarenesses.Count; i++) {
-                IAwareness iawareness = awarenesses[i];
-                if (iawareness.poi == pointOfInterest) {
-                    awarenesses.RemoveAt(i);
-                    iawareness.OnRemoveAwareness(this);
-                    break;
-                }
-            }
-        }
+        currentAlterEgo.RemoveAwareness(pointOfInterest);
+        //if (awareness.ContainsKey(pointOfInterest.poiType)) {
+        //    List<IAwareness> awarenesses = awareness[pointOfInterest.poiType];
+        //    for (int i = 0; i < awarenesses.Count; i++) {
+        //        IAwareness iawareness = awarenesses[i];
+        //        if (iawareness.poi == pointOfInterest) {
+        //            awarenesses.RemoveAt(i);
+        //            iawareness.OnRemoveAwareness(this);
+        //            break;
+        //        }
+        //    }
+        //}
     }
     public IAwareness GetAwareness(IPointOfInterest poi) {
-        if (awareness.ContainsKey(poi.poiType)) {
-            List<IAwareness> awarenesses = awareness[poi.poiType];
-            for (int i = 0; i < awarenesses.Count; i++) {
-                IAwareness iawareness = awarenesses[i];
-                if (iawareness.poi == poi) {
-                    return iawareness;
-                }
-            }
-            return null;
-        }
-        return null;
+        return currentAlterEgo.GetAwareness(poi);
+        //if (awareness.ContainsKey(poi.poiType)) {
+        //    List<IAwareness> awarenesses = awareness[poi.poiType];
+        //    for (int i = 0; i < awarenesses.Count; i++) {
+        //        IAwareness iawareness = awarenesses[i];
+        //        if (iawareness.poi == poi) {
+        //            return iawareness;
+        //        }
+        //    }
+        //    return null;
+        //}
+        //return null;
     }
-    private IAwareness CreateNewAwareness(IPointOfInterest poi) {
-        if (poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-            return new CharacterAwareness(poi as Character);
-        } else if (poi.poiType == POINT_OF_INTEREST_TYPE.ITEM) {
-            return new ItemAwareness(poi as SpecialToken);
-        } else if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
-            return new TileObjectAwareness(poi);
-        }//TODO: Structure Awareness
-        return null;
-    }
+    //private IAwareness CreateNewAwareness(IPointOfInterest poi) {
+    //    if (poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+    //        return new CharacterAwareness(poi as Character);
+    //    } else if (poi.poiType == POINT_OF_INTEREST_TYPE.ITEM) {
+    //        return new ItemAwareness(poi as SpecialToken);
+    //    } else if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+    //        return new TileObjectAwareness(poi);
+    //    }//TODO: Structure Awareness
+    //    return null;
+    //}
     public void AddInitialAwareness() {
         AddAwareness(this);
         if (faction == FactionManager.Instance.neutralFaction) {
@@ -5251,18 +5345,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     }
                 }
             }
-
-            //foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in specificLocation.structures) {
-            //    for (int i = 0; i < keyValuePair.Value.Count; i++) {
-            //        LocationStructure structure = keyValuePair.Value[i];
-            //        for (int j = 0; j < structure.pointsOfInterest.Count; j++) {
-            //            IPointOfInterest poi = structure.pointsOfInterest[j];
-            //            if (poi != this) {
-            //                AddAwareness(poi);
-            //            }
-            //        }
-            //    }
-            //}
         }
     }
     public void LogAwarenessList() {
@@ -5279,16 +5361,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         Debug.Log(log);
     }
     public void CopyAwareness(Dictionary<POINT_OF_INTEREST_TYPE, List<IAwareness>> newAwareness) {
-        this.awareness = newAwareness;
-    }
-    public Dictionary<POINT_OF_INTEREST_TYPE, List<IAwareness>> OrderAwarenessByStructure() {
-        Dictionary<POINT_OF_INTEREST_TYPE, List<IAwareness>> orderedAwareness = new Dictionary<POINT_OF_INTEREST_TYPE, List<IAwareness>>();
-        foreach (KeyValuePair<POINT_OF_INTEREST_TYPE, List<IAwareness>> keyValuePair in this.awareness) {
-            List<IAwareness> ordered = new List<IAwareness>(keyValuePair.Value);
-            ordered = ordered.OrderBy(x => x.knownGridLocation.structure.id).ToList();
-            orderedAwareness.Add(keyValuePair.Key, ordered);
-        }
-        return orderedAwareness;
+        currentAlterEgo.SetAwareness(newAwareness);
     }
     #endregion
 
@@ -6160,7 +6233,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     /// </summary>
     /// <param name="witnessedCrime">Witnessed Crime.</param>
     public void ReactToCrime(GoapAction witnessedCrime) {
-        ReactToCrime(witnessedCrime.committedCrime, witnessedCrime.actor, witnessedCrime);
+        ReactToCrime(witnessedCrime.committedCrime, witnessedCrime.actorAlterEgo, witnessedCrime);
         witnessedCrime.OnWitnessedBy(this);
     }
     /// <summary>
@@ -6169,7 +6242,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     /// <param name="committedCrime">The type of crime that was committed.</param>
     /// <param name="criminal">The character that committed the crime</param>
     /// <param name="witnessedCrime">The crime witnessed by this character, if this is null, character was only informed of the crime by someone else.</param>
-    public void ReactToCrime(CRIME committedCrime, Character criminal, GoapAction witnessedCrime = null) {
+    public void ReactToCrime(CRIME committedCrime, AlterEgoData criminal, GoapAction witnessedCrime = null) {
         //NOTE: Moved this to be per action specific. See GoapAction.IsConsideredACrimeBy and GoapAction.CanReactToThisCrime for necessary mechanics.
         //if (witnessedCrime != null) {
         //    //if the action that should be considered a crime is part of a job from this character's area, do not consider it a crime
@@ -6183,7 +6256,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //    }
         //}
 
-        string reactSummary = GameManager.Instance.TodayLogString() + this.name + " will react to crime committed by " + criminal.name;
+        string reactSummary = GameManager.Instance.TodayLogString() + this.name + " will react to crime committed by " + criminal.owner.name;
         Log witnessLog = null;
         Log reportLog = null;
         RELATIONSHIP_EFFECT relationshipEfffectWithCriminal = GetRelationshipEffectWith(criminal);
@@ -6213,7 +6286,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             else if (category.IsGreaterThanOrEqual(CRIME_CATEGORY.SERIOUS)) {
                 reactSummary += "\nCrime committed is serious or worse. Removing positive relationships.";
                 //- Relationship Degradation between Character and Criminal
-                CharacterManager.Instance.RelationshipDegradation(criminal, this, witnessedCrime);
+                CharacterManager.Instance.RelationshipDegradation(criminal.owner, this, witnessedCrime);
                 witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "witnessed");
                 reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_witnessed");
                 PerRoleCrimeReaction(committedCrime, criminal, witnessedCrime);
@@ -6224,7 +6297,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             && category.IsGreaterThanOrEqual(CRIME_CATEGORY.MISDEMEANOR)) {
             reactSummary += "\n" + this.name + " does not have a relationship with or is an enemy of " + criminal.name + " and the committed crime is misdemeanor or worse";
             //- Relationship Degradation between Character and Criminal
-            CharacterManager.Instance.RelationshipDegradation(criminal, this, witnessedCrime);
+            CharacterManager.Instance.RelationshipDegradation(criminal.owner, this, witnessedCrime);
             //- Witness Log: "[Character Name] saw [Criminal Name] committing [Theft/Assault/Murder]!"
             witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "witnessed");
             reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_witnessed");
@@ -6255,7 +6328,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     /// <param name="committedCrime">The type of crime that was committed.</param>
     /// <param name="criminal">The character that committed the crime</param>
     /// <param name="witnessedCrime">The crime witnessed by this character, if this is null, character was only informed of the crime by someone else.</param>
-    private void PerRoleCrimeReaction(CRIME committedCrime, Character criminal, GoapAction witnessedCrime = null) {
+    private void PerRoleCrimeReaction(CRIME committedCrime, AlterEgoData criminal, GoapAction witnessedCrime = null) {
         GoapPlanJob job = null;
         switch (role.roleType) {
             case CHARACTER_ROLE.CIVILIAN:
@@ -6264,7 +6337,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 if (this.faction != FactionManager.Instance.neutralFaction && criminal.faction == this.faction) {
                     //only make character flee, if he/she actually witnessed the crime (not share intel)
                     if (witnessedCrime != null) {
-                        this.marker.AddHostileInRange(criminal, CHARACTER_STATE.FLEE);
+                        this.marker.AddHostileInRange(criminal.owner, CHARACTER_STATE.FLEE);
                     }
                     job = new GoapPlanJob("Report Crime", INTERACTION_TYPE.REPORT_CRIME, new Dictionary<INTERACTION_TYPE, object[]>() {
                         { INTERACTION_TYPE.REPORT_CRIME,  new object[] { committedCrime, criminal }}
@@ -6279,8 +6352,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 //If he is a Noble or Faction Leader, he will create the Apprehend Job Type in the Location job queue instead.
                 if (this.faction != FactionManager.Instance.neutralFaction && criminal.faction == this.faction) {
                     //only add apprehend job if the criminal is part of this characters faction
-                    criminal.AddCriminalTrait(committedCrime);
-                    CreateApprehendJobFor(criminal);
+                    criminal.owner.AddCriminalTrait(committedCrime);
+                    CreateApprehendJobFor(criminal.owner);
                     //job = new GoapPlanJob("Apprehend", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = homeArea, targetPOI = actor });
                     //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = actor }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
                     //job.SetCanTakeThisJobChecker(CanCharacterTakeApprehendJob);
@@ -6293,13 +6366,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 //- If the character is a Soldier, the criminal will gain the relevant Crime-type trait
                 if (this.faction != FactionManager.Instance.neutralFaction && criminal.faction == this.faction) {
                     //only add apprehend job if the criminal is part of this characters faction
-                    criminal.AddCriminalTrait(committedCrime);
+                    criminal.owner.AddCriminalTrait(committedCrime);
                     //- If the character is a Soldier, he will also create an Apprehend Job Type in his personal job queue.
                     //job = new GoapPlanJob("Apprehend", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = homeArea, targetPOI = actor });
                     //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = actor }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
                     //job.SetCanTakeThisJobChecker(CanCharacterTakeApprehendJob);
                     //homeArea.jobQueue.AddJobInQueue(job);
-                    job = CreateApprehendJobFor(criminal);
+                    job = CreateApprehendJobFor(criminal.owner);
                     if (job != null) {
                         homeArea.jobQueue.ForceAssignCharacterToJob(job, this);
                     }
@@ -6477,14 +6550,79 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     #region Alter Egos
     private void InitializeAlterEgos() {
         alterEgos = new Dictionary<string, AlterEgoData>();
-        alterEgos.Add(CharacterManager.Original_Alter_Ego, new AlterEgoData(this));
-        currentAlterEgo = CharacterManager.Original_Alter_Ego;
+        alterEgos.Add(CharacterManager.Original_Alter_Ego, new AlterEgoData(this, CharacterManager.Original_Alter_Ego));
+        currentAlterEgoName = CharacterManager.Original_Alter_Ego;
+        currentAlterEgo.SetFaction(faction);
+        currentAlterEgo.SetCharacterClass(characterClass);
+        currentAlterEgo.SetRace(race);
+        currentAlterEgo.SetRole(role);
+        currentAlterEgo.SetHomeStructure(homeStructure);
     }
-    public void CreateNewAlterEgo(string alterEgoName) {
+    public AlterEgoData CreateNewAlterEgo(string alterEgoName) {
         if (alterEgos.ContainsKey(alterEgoName)) {
             throw new Exception(this.name + " already has an alter ego named " + alterEgoName + " but something is trying to create a new one!");
         }
-        alterEgos.Add(alterEgoName, new AlterEgoData(this));
+        AlterEgoData newData = new AlterEgoData(this, alterEgoName);
+        alterEgos.Add(alterEgoName, newData);
+        return newData;
+    }
+    public void RemoveAlterEgo(string alterEgoName) {
+        if (alterEgoName == CharacterManager.Original_Alter_Ego) {
+            throw new Exception("Something is trying to remove " + this.name + "'s original alter ego! This should not happen!");
+        }
+        if (currentAlterEgoName == alterEgoName) {
+            //switch to the original alter ego
+            SwitchAlterEgo(CharacterManager.Original_Alter_Ego);
+        }
+        if (alterEgos.ContainsKey(alterEgoName)) {
+            alterEgos.Remove(alterEgoName);
+        }
+    }
+    public bool isSwitchingAlterEgo { get; private set; } //is this character in the process of switching alter egos?
+    public void SwitchAlterEgo(string alterEgoName) {
+        if (currentAlterEgoName == alterEgoName) {
+            return; //ignore change
+        }
+        if (alterEgos.ContainsKey(alterEgoName)) {
+            isSwitchingAlterEgo = true;
+            //apply all alter ego changes here
+            AlterEgoData alterEgoData = alterEgos[alterEgoName];
+            currentAlterEgo.CopySpecialTraits();
+
+            //Drop all plans except for the current action
+            AdjustIsWaitingForInteraction(1);
+            DropAllPlans(currentAction.parentPlan);
+            AdjustIsWaitingForInteraction(-1);
+
+            ResetFullnessMeter();
+            ResetHappinessMeter();
+            ResetTirednessMeter();
+            RemoveAllNonPersistentTraits();
+
+            SetHomeStructure(alterEgoData.homeSturcture);
+            ChangeFactionTo(alterEgoData.faction);
+            ChangeRace(alterEgoData.race);
+            AssignRole(alterEgoData.role);
+            AssignClass(alterEgoData.characterClass);
+
+            CancelAllJobsTargettingThisCharacter("target is not found", false);
+            Messenger.Broadcast(Signals.CANCEL_CURRENT_ACTION, this, "target is not found");
+
+            for (int i = 0; i < alterEgoData.traits.Count; i++) {
+                AddTrait(alterEgoData.traits[i]);
+            }
+            currentAlterEgoName = alterEgoName;
+            isSwitchingAlterEgo = false;
+            Messenger.Broadcast(Signals.CHARACTER_SWITCHED_ALTER_EGO, this);
+        } else {
+            throw new Exception(this.name + " is trying to switch to alter ego " + alterEgoName + " but doesn't have an alter ego of that name!");
+        }
+    }
+    public AlterEgoData GetAlterEgoData(string alterEgoName) {
+        if (alterEgos.ContainsKey(alterEgoName)) {
+            return alterEgos[alterEgoName];
+        }
+        return null;
     }
     #endregion
 }

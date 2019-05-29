@@ -155,7 +155,7 @@ public class TablePoison : GoapAction {
                 CharacterManager.Instance.CreateNewRelationshipBetween(recipient, actor, RELATIONSHIP_TRAIT.ENEMY);
             }
             //Apply Crime System handling as if the Recipient witnessed Actor commit an Attempted Murder.
-            recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, actor);
+            recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, actorAlterEgo);
         }
         //Recipient is the owner of the Poisoned Table and have gained Sick trait by using the Table:
         else if (pti.targetDwelling.IsResident(recipient) && pti.eatAtTableAction != null && pti.eatAtTableAction.HasActualEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Sick", recipient)) {
@@ -169,7 +169,7 @@ public class TablePoison : GoapAction {
                 CharacterManager.Instance.CreateNewRelationshipBetween(recipient, actor, RELATIONSHIP_TRAIT.ENEMY);
             }
             //Apply Crime System handling as if the Recipient witnessed Actor commit an Assault.
-            recipient.ReactToCrime(CRIME.ASSAULT, actor);
+            recipient.ReactToCrime(CRIME.ASSAULT, actorAlterEgo);
         }
         //Recipient has a positive relationship with a character that became Sick by using the Table:
         else if (pti.eatAtTableAction != null && pti.eatAtTableAction.HasActualEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Sick", pti.eatAtTableAction.actor)
@@ -184,7 +184,7 @@ public class TablePoison : GoapAction {
                 CharacterManager.Instance.CreateNewRelationshipBetween(recipient, actor, RELATIONSHIP_TRAIT.ENEMY);
             }
             //Apply Crime System handling as if the Recipient witnessed Actor commit an Assault.
-            recipient.ReactToCrime(CRIME.ASSAULT, actor);
+            recipient.ReactToCrime(CRIME.ASSAULT, actorAlterEgo);
         }
         //Recipient has a positive relationship with a character killed by using the Table:
         else if (pti.eatAtTableAction != null && pti.eatAtTableAction.HasActualEffect(GOAP_EFFECT_CONDITION.DEATH, null, pti.eatAtTableAction.actor)
@@ -199,7 +199,7 @@ public class TablePoison : GoapAction {
                 CharacterManager.Instance.CreateNewRelationshipBetween(recipient, actor, RELATIONSHIP_TRAIT.ENEMY);
             }
             //Apply Crime System handling as if the Recipient witnessed Actor commit a Murder.
-            recipient.ReactToCrime(CRIME.MURDER, actor);
+            recipient.ReactToCrime(CRIME.MURDER, actorAlterEgo);
         }
         //Recipient has a negative relationship with a character that has gotten sick by using the Table:
         else if (pti.eatAtTableAction != null && pti.eatAtTableAction.HasActualEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Sick", pti.eatAtTableAction.actor)
@@ -232,7 +232,7 @@ public class TablePoison : GoapAction {
                 recipient.CreateAskForHelpJob(tableOwner, INTERACTION_TYPE.ASK_FOR_HELP_REMOVE_POISON_TABLE, poiTarget);
             }
             //Apply Crime System handling as if the Recipient witnessed Actor commit an Attempted Murder.
-            recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, actor);
+            recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, actorAlterEgo);
         }
         //Recipient has no relationship with owner of the table but they are from the same faction and the Table is still currently poisoned:
         else if (tableOwner != null && !recipient.HasRelationshipWith(tableOwner) && tableOwner.faction == recipient.faction && poisonedTrait != null && poisonedTrait.responsibleCharacters.Contains(actor)) {
@@ -248,7 +248,7 @@ public class TablePoison : GoapAction {
                 recipient.CreateAskForHelpJob(tableOwner, INTERACTION_TYPE.ASK_FOR_HELP_REMOVE_POISON_TABLE, poiTarget);
             }
             //Apply Crime System handling as if the Recipient witnessed Actor commit an Attempted Murder.
-            recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, actor);
+            recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, actorAlterEgo);
         }
         //Recipient and Target are enemies and the Table is still currently poisoned:
         else if (tableOwner != null && recipient.HasRelationshipOfTypeWith(tableOwner, RELATIONSHIP_TRAIT.ENEMY) && poisonedTrait != null && poisonedTrait.responsibleCharacters.Contains(actor)) {
@@ -277,7 +277,7 @@ public class TablePoison : GoapAction {
             //- **Recipient Response Text**: "[Actor Name] killed somebody! This is horrible!"
             reactions.Add(string.Format("{0} killed somebody! This is horrible!", actor.name));
             //-**Recipient Effect * *: Apply Crime System handling as if the Recipient witnessed Actor commit a Murder.
-            recipient.ReactToCrime(CRIME.MURDER, actor);
+            recipient.ReactToCrime(CRIME.MURDER, actorAlterEgo);
         }
         //Recipient and Actor have no positive relationship but are from the same faction and the Table is still currently poisoned. Recipient and Target have no relationship:
         else if (!recipient.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE, RELATIONSHIP_TRAIT.RELATIVE) && recipient.faction == actor.faction && poisonedTrait != null
@@ -285,7 +285,7 @@ public class TablePoison : GoapAction {
             //- **Recipient Response Text**: "[Actor Name] is attempting murder!"
             reactions.Add(string.Format("{0} is attempting murder!", actor.name));
             //-**Recipient Effect * *: Apply Crime System handling as if the Recipient witnessed Actor commit an Attempted Murder.
-            recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, actor);
+            recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, actorAlterEgo);
         }
 
         //Recipient has no relationship with the Actor but they are from the same faction and a character has been killed by using the Table.
@@ -294,7 +294,7 @@ public class TablePoison : GoapAction {
             //-**Recipient Response Text**: "[Actor Name] killed somebody! This is horrible!"
             reactions.Add(string.Format("{0} killed somebody! This is horrible!", actor.name));
             //- **Recipient Effect * *: Apply Crime System handling as if the Recipient witnessed Actor commit a Murder.
-            recipient.ReactToCrime(CRIME.MURDER, actor);
+            recipient.ReactToCrime(CRIME.MURDER, actorAlterEgo);
         }
         return reactions;
     }

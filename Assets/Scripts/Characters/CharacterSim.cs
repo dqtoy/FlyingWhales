@@ -167,7 +167,7 @@ public class CharacterSim : ICharacterSim {
     public List<Skill> skills {
         get { return _skills; }
     }
-    public List<Trait> traits {
+    public List<Trait> allTraits {
         get { return _combatAttributes; }
     }
     public Dictionary<ELEMENT, float> elementalWeaknesses {

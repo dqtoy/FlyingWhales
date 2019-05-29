@@ -7,6 +7,8 @@ public class Lycanthropy : Trait {
     private Character _character;
     public LycanthropyData data { get; private set; }
 
+    public override bool isPersistent { get { return true; } }
+
     public Lycanthropy() {
         name = "Lycanthropy";
         description = "This character can transform into a wolf.";
@@ -26,9 +28,31 @@ public class Lycanthropy : Trait {
         _character = sourceCharacter as Character;
         data = new LycanthropyData();
         _character.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "afflicted", null, name);
+        AlterEgoData lycanthropeAlterEgo = _character.CreateNewAlterEgo("Lycanthrope");
+
+        //setup all alter ego data
+        lycanthropeAlterEgo.SetFaction(FactionManager.Instance.neutralFaction);
+        lycanthropeAlterEgo.SetRace(RACE.WOLF);
+        lycanthropeAlterEgo.SetRole(CharacterRole.BEAST);
+        lycanthropeAlterEgo.SetCharacterClass(CharacterManager.Instance.CreateNewCharacterClass(Utilities.GetRespectiveBeastClassNameFromByRace(RACE.WOLF)));
+        foreach (List<LocationStructure> structures in _character.specificLocation.structures.Values) {
+            for (int i = 0; i < structures.Count; i++) {
+                for (int j = 0; j < structures[i].pointsOfInterest.Count; j++) {
+                    IPointOfInterest poi = structures[i].pointsOfInterest[j];
+                    if (poi is TileObject) {
+                        TileObject tileObj = poi as TileObject;
+                        if (tileObj.tileObjectType == TILE_OBJECT_TYPE.SMALL_ANIMAL || tileObj.tileObjectType == TILE_OBJECT_TYPE.EDIBLE_PLANT) {
+                            lycanthropeAlterEgo.AddAwareness(tileObj);
+                        }
+                    }
+                }
+            }
+        }
+
         base.OnAddTrait(sourceCharacter);
     }
     public override void OnRemoveTrait(IPointOfInterest sourceCharacter) {
+        _character.RemoveAlterEgo("Lycanthrope");
         _character = null;
         base.OnRemoveTrait(sourceCharacter);
     }
@@ -49,66 +73,68 @@ public class Lycanthropy : Trait {
         _character.AddPlan(goapPlan);
     }
     public void TurnToWolf() {
-        //Drop all plans except for the current action
-        _character.AdjustIsWaitingForInteraction(1);
-        _character.DropAllPlans(_character.currentAction.parentPlan);
-        _character.AdjustIsWaitingForInteraction(-1);
+        ////Drop all plans except for the current action
+        //_character.AdjustIsWaitingForInteraction(1);
+        //_character.DropAllPlans(_character.currentAction.parentPlan);
+        //_character.AdjustIsWaitingForInteraction(-1);
 
-        //Copy non delicate data
-        data.SetData(_character);
+        ////Copy non delicate data
+        //data.SetData(_character);
 
-        _character.SetHomeStructure(null);
+        //_character.SetHomeStructure(null);
 
-        //Reset needs
-        _character.ResetFullnessMeter();
-        _character.ResetHappinessMeter();
-        _character.ResetTirednessMeter();
+        ////Reset needs
+        //_character.ResetFullnessMeter();
+        //_character.ResetHappinessMeter();
+        //_character.ResetTirednessMeter();
 
 
-        //Remove all awareness then add all edible plants and small animals of current location to awareness
-        _character.awareness.Clear();
-        foreach (List<LocationStructure> structures in _character.specificLocation.structures.Values) {
-            for (int i = 0; i < structures.Count; i++) {
-                for (int j = 0; j < structures[i].pointsOfInterest.Count; j++) {
-                    IPointOfInterest poi = structures[i].pointsOfInterest[j];
-                    if(poi is TileObject) {
-                        TileObject tileObj = poi as TileObject;
-                        if(tileObj.tileObjectType == TILE_OBJECT_TYPE.SMALL_ANIMAL || tileObj.tileObjectType == TILE_OBJECT_TYPE.EDIBLE_PLANT) {
-                            _character.AddAwareness(tileObj);
-                        }
-                    }
-                }
-            }
-        }
+        ////Remove all awareness then add all edible plants and small animals of current location to awareness
+        //_character.awareness.Clear();
+        //foreach (List<LocationStructure> structures in _character.specificLocation.structures.Values) {
+        //    for (int i = 0; i < structures.Count; i++) {
+        //        for (int j = 0; j < structures[i].pointsOfInterest.Count; j++) {
+        //            IPointOfInterest poi = structures[i].pointsOfInterest[j];
+        //            if(poi is TileObject) {
+        //                TileObject tileObj = poi as TileObject;
+        //                if(tileObj.tileObjectType == TILE_OBJECT_TYPE.SMALL_ANIMAL || tileObj.tileObjectType == TILE_OBJECT_TYPE.EDIBLE_PLANT) {
+        //                    _character.AddAwareness(tileObj);
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
 
-        //Copy relationship data then remove them
-        //data.SetRelationshipData(_character);
-        //_character.RemoveAllRelationships(false);
-        foreach (Character target in _character.relationships.Keys) {
-            CharacterManager.Instance.SetIsDisabledRelationshipBetween(_character, target, true);
-        }
+        ////Copy relationship data then remove them
+        ////data.SetRelationshipData(_character);
+        ////_character.RemoveAllRelationships(false);
+        //foreach (Character target in _character.relationships.Keys) {
+        //    CharacterManager.Instance.SetIsDisabledRelationshipBetween(_character, target, true);
+        //}
 
-        //Remove race and class
-        //This is done first so that when the traits are copied, it will not copy the traits from the race and class because if it is copied and the race and character is brought back, it will be doubled, which is not what we want
-        _character.RemoveRace();
-        _character.RemoveClass();
+        ////Remove race and class
+        ////This is done first so that when the traits are copied, it will not copy the traits from the race and class because if it is copied and the race and character is brought back, it will be doubled, which is not what we want
+        //_character.RemoveRace();
+        //_character.RemoveClass();
 
-        //Copy traits and then remove them
-        data.SetTraits(_character);
-        _character.RemoveAllNonRelationshipTraits("Lycanthropy");
+        ////Copy traits and then remove them
+        //data.SetTraits(_character);
+        //_character.RemoveAllNonRelationshipTraits("Lycanthropy");
 
-        //Change faction and race
-        _character.ChangeFactionTo(FactionManager.Instance.neutralFaction);
-        _character.SetRace(RACE.WOLF);
+        ////Change faction and race
+        //_character.ChangeFactionTo(FactionManager.Instance.neutralFaction);
+        //_character.SetRace(RACE.WOLF);
 
-        //Change class and role
-        _character.AssignRole(CharacterRole.BEAST);
-        _character.AssignClassByRole(_character.role);
+        ////Change class and role
+        //_character.AssignRole(CharacterRole.BEAST);
+        //_character.AssignClassByRole(_character.role);
 
-        Messenger.Broadcast(Signals.CHARACTER_CHANGED_RACE, _character);
+        //Messenger.Broadcast(Signals.CHARACTER_CHANGED_RACE, _character);
 
-        _character.CancelAllJobsTargettingThisCharacter("target is not found", false);
-        Messenger.Broadcast(Signals.CANCEL_CURRENT_ACTION, _character, "target is not found");
+        //_character.CancelAllJobsTargettingThisCharacter("target is not found", false);
+        //Messenger.Broadcast(Signals.CANCEL_CURRENT_ACTION, _character, "target is not found");
+
+        _character.SwitchAlterEgo("Lycanthrope");
         //Plan idle stroll to the wilderness
         LocationStructure wilderness = _character.specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
         LocationGridTile targetTile = wilderness.GetRandomTile();
@@ -116,31 +142,33 @@ public class Lycanthropy : Trait {
     }
 
     public void RevertToNormal() {
-        //Drop all plans except for the current action
-        _character.AdjustIsWaitingForInteraction(1);
-        _character.DropAllPlans(_character.currentAction.parentPlan);
-        _character.AdjustIsWaitingForInteraction(-1);
+        ////Drop all plans except for the current action
+        //_character.AdjustIsWaitingForInteraction(1);
+        //_character.DropAllPlans(_character.currentAction.parentPlan);
+        //_character.AdjustIsWaitingForInteraction(-1);
 
-        //Revert back data including awareness
-        _character.SetFullness(data.fullness);
-        _character.SetTiredness(data.tiredness);
-        _character.SetHappiness(data.happiness);
-        _character.CopyAwareness(data.awareness);
-        _character.SetHomeStructure(data.homeStructure);
-        _character.ChangeFactionTo(data.faction);
-        _character.ChangeRace(data.race);
-        _character.AssignRole(data.role);
-        _character.AssignClass(data.characterClass);
+        ////Revert back data including awareness
+        //_character.SetFullness(data.fullness);
+        //_character.SetTiredness(data.tiredness);
+        //_character.SetHappiness(data.happiness);
+        //_character.CopyAwareness(data.awareness);
+        //_character.SetHomeStructure(data.homeStructure);
+        //_character.ChangeFactionTo(data.faction);
+        //_character.ChangeRace(data.race);
+        //_character.AssignRole(data.role);
+        //_character.AssignClass(data.characterClass);
 
-        //Bring back lost relationships
-        foreach (Character target in _character.relationships.Keys) {
-            CharacterManager.Instance.SetIsDisabledRelationshipBetween(_character, target, false);
-        }
+        ////Bring back lost relationships
+        //foreach (Character target in _character.relationships.Keys) {
+        //    CharacterManager.Instance.SetIsDisabledRelationshipBetween(_character, target, false);
+        //}
 
-        //Revert back the traits
-        for (int i = 0; i < data.traits.Count; i++) {
-            _character.AddTrait(data.traits[i]);
-        }
+        ////Revert back the traits
+        //for (int i = 0; i < data.traits.Count; i++) {
+        //    _character.AddTrait(data.traits[i]);
+        //}
+
+        _character.SwitchAlterEgo(CharacterManager.Original_Alter_Ego);
     }
 }
 
@@ -177,9 +205,9 @@ public class LycanthropyData {
     //}
     public void SetTraits(Character character) {
         this.traits = new List<Trait>();
-        for (int i = 0; i < character.traits.Count; i++) {
-            if(character.traits[i].name != "Lycanthropy" && !(character.traits[i] is RelationshipTrait)) {
-                this.traits.Add(character.traits[i]);
+        for (int i = 0; i < character.allTraits.Count; i++) {
+            if(character.allTraits[i].name != "Lycanthropy" && !(character.allTraits[i] is RelationshipTrait)) {
+                this.traits.Add(character.allTraits[i]);
             }
         }
     }

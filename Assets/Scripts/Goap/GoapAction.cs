@@ -11,7 +11,9 @@ public class GoapAction {
     public INTERACTION_ALIGNMENT alignment { get; private set; }
     public string goapName { get; protected set; }
     public IPointOfInterest poiTarget { get; private set; }
+    public AlterEgoData poiTargetAlterEgo { get; private set; } //The alter ego the target was using while doing this action. only occupied if target is a character
     public Character actor { get; private set; }
+    public AlterEgoData actorAlterEgo { get; private set; } //The alter ego the character was using while doing this action.
     public int cost { get { return (GetCost() * CostMultiplier()) + GetDistanceCost(); } }
     public List<Precondition> preconditions { get; private set; }
     public List<GoapEffect> expectedEffects { get; private set; }
@@ -168,8 +170,10 @@ public class GoapAction {
     }
     public virtual void PerformActualAction() {
         isPerformingActualAction = true;
+        actorAlterEgo = actor.currentAlterEgo;
         if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
             Character targetCharacter = poiTarget as Character;
+            poiTargetAlterEgo = targetCharacter.currentAlterEgo;
             if (poiTarget != actor) {
                 targetCharacter.OnTargettedByAction(this);
                 if (!doesNotStopTargetCharacter) {

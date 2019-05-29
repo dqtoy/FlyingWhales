@@ -95,6 +95,7 @@ public static class Signals {
     public static string CANCEL_CURRENT_ACTION = "OnCancelCurrentAction"; //Parameters (Character target, string cause)
     public static string CHARACTER_STARTED_STATE = "OnCharacterStartedState"; //Parameters (Character character, CharacterState state)
     public static string CHARACTER_ENDED_STATE = "OnCharacterEndedState"; //Parameters (Character character, CharacterState state)
+    public static string CHARACTER_SWITCHED_ALTER_EGO = "OnCharacterSwitchedAlterEgo"; //Parameters (Character character)
     #endregion
 
     #region UI

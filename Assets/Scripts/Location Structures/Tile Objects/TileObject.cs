@@ -12,7 +12,7 @@ public class TileObject : IPointOfInterest {
     public List<INTERACTION_TYPE> poiGoapActions { get; protected set; }
     public Area specificLocation { get { return gridTileLocation.structure.location; } }
     protected List<Trait> _traits;
-    public List<Trait> traits {
+    public List<Trait> allTraits {
         get { return _traits; }
     }
     public List<Character> awareCharacters { get; private set; } //characters that are aware of this object (Used for checking if a ghost trigger should be destroyed)

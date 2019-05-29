@@ -85,11 +85,14 @@ public class DropCharacter : GoapAction {
         List<string> reactions = new List<string>();
         //Recipient and Target have at least one non-negative relationship and Actor is not from the same faction:
         Character targetCharacter = poiTarget as Character;
+
+        RELATIONSHIP_EFFECT relWithTarget = recipient.GetRelationshipEffectWith(poiTargetAlterEgo);
+
         if (recipient == actor) {
             return reactions; //return empty list if same actor
         }
 
-        if (recipient.HasRelationshipOfEffectWith(targetCharacter, TRAIT_EFFECT.POSITIVE, RELATIONSHIP_TRAIT.RELATIVE) && actor.faction != recipient.faction) {
+        if (relWithTarget == RELATIONSHIP_EFFECT.POSITIVE && actorAlterEgo.faction != recipient.faction) {
             //- **Recipient Response Text**: "Thank you for letting me know about this. I've got to find a way to free [Target Name]!
             reactions.Add(string.Format("Thank you for letting me know about this. I've got to find a way to free {0}!", targetCharacter.name));
             //-**Recipient Effect**: If Adventurer or Soldier or Unaligned Non-Beast, create a Save Target plan.
@@ -102,7 +105,7 @@ public class DropCharacter : GoapAction {
             }
         }
         //Recipient and Target have no relationship but from the same faction and Actor is not from the same faction:
-        else if (!recipient.HasRelationshipWith(targetCharacter) && recipient.faction == targetCharacter.faction && recipient.faction != actor.faction) {
+        else if (relWithTarget == RELATIONSHIP_EFFECT.NONE && recipient.faction == poiTargetAlterEgo.faction && recipient.faction != actorAlterEgo.faction) {
             //- **Recipient Response Text**: "Thank you for letting me know about this. I've got to find a way to free [Target Name]!
             reactions.Add(string.Format("Thank you for letting me know about this. I've got to find a way to free {0}!", targetCharacter.name));
             //-**Recipient Effect**: If Adventurer or Soldier or Unaligned Non-Beast, create a Save Target plan
@@ -115,13 +118,13 @@ public class DropCharacter : GoapAction {
             }
         }
         //Recipient and Target are enemies:
-        else if (recipient.GetRelationshipTraitWith(targetCharacter, RELATIONSHIP_TRAIT.ENEMY) != null) {
+        else if (recipient.HasRelationshipOfTypeWith(poiTargetAlterEgo, RELATIONSHIP_TRAIT.ENEMY)) {
             //- **Recipient Response Text**: "[Target Name] got abducted? That's what [he/she] deserves."
             reactions.Add(string.Format("{0} got abducted? That's what {1} deserves.", targetCharacter.name, Utilities.GetPronounString(targetCharacter.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
             //-**Recipient Effect**: no effect
         }
         //Recipient, Actor and Target are from the same faction and Target has Criminal Trait:
-        if (recipient.faction == actor.faction && recipient.faction == targetCharacter.faction && targetCharacter.GetTrait("Criminal") != null) {
+        if (recipient.faction == actorAlterEgo.faction && recipient.faction == poiTargetAlterEgo.faction && targetCharacter.GetTrait("Criminal") != null) {
             //- **Recipient Response Text**: "[Target Name] is a criminal. I cannot do anything for [him/her]."
             reactions.Add(string.Format("{0} is a criminal. I cannot do anything for {1}.", targetCharacter.name, Utilities.GetPronounString(targetCharacter.gender, PRONOUN_TYPE.OBJECTIVE, false)));
             //-**Recipient Effect**: no effect

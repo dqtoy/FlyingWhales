@@ -28,6 +28,7 @@ public class Trait {
     public GoapAction gainedFromDoing { get; private set; } //what action was this poi involved in that gave it this trait.
     public bool isDisabled { get; private set; }
     public virtual bool broadcastDuplicates { get { return false; } }
+    public virtual bool isPersistent { get { return false; } } //should this trait persist through all the character's alter egos
 
     //private Character _responsibleCharacter;
 

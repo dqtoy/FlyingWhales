@@ -56,7 +56,7 @@ public interface ICharacter {
     Dictionary<ELEMENT, float> elementalResistances { get; }
     List<Skill> skills { get; }
     List<Log> history { get; }
-    List<Trait> traits { get; }
+    List<Trait> allTraits { get; }
     PortraitSettings portraitSettings { get; }
     Party ownParty { get; }
     Party currentParty { get; }

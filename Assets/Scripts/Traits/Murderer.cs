@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Murderer : Trait {
-
+    public override bool isPersistent { get { return true; } }
     public Murderer() {
         name = "Murderer";
         description = "This character has been branded as a Murderer by his/her own faction.";

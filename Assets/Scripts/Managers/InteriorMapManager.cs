@@ -319,9 +319,9 @@ public class InteriorMapManager : MonoBehaviour {
                 summary += "\n\tFaction Owner: " + (tile.objHere as SpecialToken).factionOwner?.name ?? "None";
             }
             summary += "\n\tTraits: ";
-            if (tile.objHere.traits.Count > 0) {
-                for (int i = 0; i < tile.objHere.traits.Count; i++) {
-                    summary += "\n\t\t- " + tile.objHere.traits[i].name;
+            if (tile.objHere.allTraits.Count > 0) {
+                for (int i = 0; i < tile.objHere.allTraits.Count; i++) {
+                    summary += "\n\t\t- " + tile.objHere.allTraits[i].name;
                 }
 
             } else {

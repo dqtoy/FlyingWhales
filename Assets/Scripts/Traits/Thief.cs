@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Thief : Trait {
 
+    public override bool isPersistent { get { return true; } }
+
     public Thief() {
         name = "Thief";
         description = "This character has been branded as a Thief by his/her own faction.";

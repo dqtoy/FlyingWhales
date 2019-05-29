@@ -10,7 +10,7 @@ public interface IPointOfInterest {
     LocationGridTile gridTileLocation { get; }
     Area specificLocation { get; }
     List<INTERACTION_TYPE> poiGoapActions { get; }
-    List<Trait> traits { get; }
+    List<Trait> allTraits { get; }
     Faction factionOwner { get; }
     POICollisionTrigger collisionTrigger { get; } //Each poi must only hav 1 at a time.
     bool isDisabledByPlayer { get; }

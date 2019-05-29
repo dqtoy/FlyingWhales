@@ -99,6 +99,7 @@ public class CharacterInfoUI : UIMenu {
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         Messenger.AddListener<SpecialToken, Character>(Signals.CHARACTER_OBTAINED_ITEM, UpdateInventoryInfoFromSignal);
         Messenger.AddListener<SpecialToken, Character>(Signals.CHARACTER_LOST_ITEM, UpdateInventoryInfoFromSignal);
+        Messenger.AddListener<Character>(Signals.CHARACTER_SWITCHED_ALTER_EGO, OnCharacterChangedAlterEgo);
 
         statusTraitContainers = Utilities.GetComponentsInDirectChildren<CombatAttributeItem>(statusTraitsScrollView.content.gameObject);
         normalTraitContainers = Utilities.GetComponentsInDirectChildren<CombatAttributeItem>(normalTraitsScrollView.content.gameObject);
@@ -336,8 +337,8 @@ public class CharacterInfoUI : UIMenu {
         int lastNormalIndex = 0;
         int lastRelationshipIndex = 0;
 
-        for (int i = 0; i < _activeCharacter.traits.Count; i++) {
-            Trait currTrait = _activeCharacter.traits[i];
+        for (int i = 0; i < _activeCharacter.allTraits.Count; i++) {
+            Trait currTrait = _activeCharacter.allTraits[i];
             if (currTrait.type == TRAIT_TYPE.ABILITY || currTrait.type == TRAIT_TYPE.ATTACK || currTrait.type == TRAIT_TYPE.COMBAT_POSITION
                 || currTrait.name == "Herbivore" || currTrait.name == "Carnivore") {
                 continue; //hide combat traits
@@ -574,7 +575,14 @@ public class CharacterInfoUI : UIMenu {
     private void OnCloseShareIntelMenu() {
         backButton.interactable = UIManager.Instance.GetLastUIMenuHistory() != null;
     }
+    private void OnCharacterChangedAlterEgo(Character character) {
+        if (isShowing && activeCharacter == character) {
+            UpdateCharacterInfo();
+            UpdateTraits();
+        }
+    }
     #endregion
+
     private void CheckIfMenuShouldBeHidden() {
         if (UIManager.Instance.partyinfoUI.isShowing) {
             logParentGO.SetActive(false);
@@ -599,6 +607,10 @@ public class CharacterInfoUI : UIMenu {
             summary += "None";
         }
         summary += "\n" + activeCharacter.GetNeedsSummary();
+        summary += "\n\nAlter Egos: ";
+        for (int i = 0; i < activeCharacter.alterEgos.Values.Count; i++) {
+            summary += "\n" + activeCharacter.alterEgos.Values.ElementAt(i).GetAlterEgoSummary();
+        }
         UIManager.Instance.ShowSmallInfo(summary);
     }
 

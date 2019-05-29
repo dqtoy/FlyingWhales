@@ -74,6 +74,8 @@ public class ReleaseCharacter : GoapAction {
         List<string> reactions = new List<string>();
         Character target = poiTarget as Character;
 
+        RELATIONSHIP_EFFECT relWithTarget = recipient.GetRelationshipEffectWith(poiTargetAlterEgo);
+
         //Recipient and Actor are the same
         if (recipient == actor) {
             //- **Recipient Response Text**: "I know what I've done!"
@@ -81,27 +83,27 @@ public class ReleaseCharacter : GoapAction {
             //- **Recipient Effect**:  no effect
         }
         //Recipient considers Target a personal Enemy:
-        else if (recipient.HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.ENEMY)) {
+        else if (recipient.HasRelationshipOfTypeWith(poiTargetAlterEgo, RELATIONSHIP_TRAIT.ENEMY)) {
             //- **Recipient Response Text**: "[Target Name] should not have been released!"
             reactions.Add(string.Format("{0} should not have been released!", target.name));
             //- **Recipient Effect**: https://trello.com/c/mqor1Ddv/1884-relationship-degradation between Recipient and Actor
-            CharacterManager.Instance.RelationshipDegradation(actor, recipient);
+            CharacterManager.Instance.RelationshipDegradation(actorAlterEgo, recipient);
         }
         //Recipient considers Actor a personal Enemy:
-        else if (recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.ENEMY)) {
+        else if (recipient.HasRelationshipOfTypeWith(actorAlterEgo, RELATIONSHIP_TRAIT.ENEMY)) {
             //- **Recipient Response Text**: "[Actor Name] probably has an ulterior motive for doing that."
             reactions.Add(string.Format("{0} probably has an ulterior motive for doing that.", actor.name));
             //- **Recipient Effect**:  no effect
         }
         //Recipient has a positive relationship with the target:
-        else if (recipient.HasRelationshipOfEffectWith(target, TRAIT_EFFECT.POSITIVE)) {
+        else if (relWithTarget == RELATIONSHIP_EFFECT.POSITIVE) {
             //- **Recipient Response Text**: "I am relieved that [Target Name] has been released."
             reactions.Add(string.Format("I am relieved that {0} has been released.", target.name));
             //- **Recipient Effect**: https://trello.com/c/mqor1Ddv/1884-relationship-degradation between Recipient and Actor
-            CharacterManager.Instance.RelationshipDegradation(actor, recipient);
+            CharacterManager.Instance.RelationshipDegradation(actorAlterEgo, recipient);
         }
         //Recipient and Target have no relationship but are from the same faction:
-        else if (!recipient.HasRelationshipWith(target) && recipient.faction == target.faction) {
+        else if (relWithTarget == RELATIONSHIP_EFFECT.NONE && recipient.faction == poiTargetAlterEgo.faction) {
             //- **Recipient Response Text**: "I am relieved that [Target Name] has been released."
             reactions.Add(string.Format("I am relieved that {0} has been released.", target.name));
             //- **Recipient Effect**:  no effect

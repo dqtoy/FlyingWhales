@@ -25,19 +25,19 @@ public class RevertToNormalForm : GoapAction {
     //    SetState("Stroll Fail");
     //}
     protected override void CreateThoughtBubbleLog() {
-        Lycanthropy lycanthropy = actor.GetTrait("Lycanthropy") as Lycanthropy;
+        AlterEgoData ogData = actor.GetAlterEgoData(CharacterManager.Original_Alter_Ego);
         thoughtBubbleLog = new Log(GameManager.Instance.Today(), "GoapAction", this.GetType().ToString(), "thought_bubble", this);
         if (thoughtBubbleLog != null) {
             thoughtBubbleLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            thoughtBubbleLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(lycanthropy.data.race), LOG_IDENTIFIER.STRING_1);
+            thoughtBubbleLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(ogData.race), LOG_IDENTIFIER.STRING_1);
         }
     }
     #endregion
 
     #region State Effects
     public void PreTransformSuccess() {
-        Lycanthropy lycanthropy = actor.GetTrait("Lycanthropy") as Lycanthropy;
-        currentState.AddLogFiller(null, Utilities.GetNormalizedSingularRace(lycanthropy.data.race), LOG_IDENTIFIER.STRING_1);
+        AlterEgoData ogData = actor.GetAlterEgoData(CharacterManager.Original_Alter_Ego);
+        currentState.AddLogFiller(null, Utilities.GetNormalizedSingularRace(ogData.race), LOG_IDENTIFIER.STRING_1);
     }
     public void AfterTransformSuccess() {
         Lycanthropy lycanthropy = actor.GetTrait("Lycanthropy") as Lycanthropy;
@@ -46,8 +46,8 @@ public class RevertToNormalForm : GoapAction {
         currentState.SetIntelReaction(TransformSuccessIntelReaction);
     }
     public void PreTargetMissing() {
-        Lycanthropy lycanthropy = actor.GetTrait("Lycanthropy") as Lycanthropy;
-        currentState.AddLogFiller(null, Utilities.GetNormalizedSingularRace(lycanthropy.data.race), LOG_IDENTIFIER.STRING_1);
+        AlterEgoData ogData = actor.GetAlterEgoData(CharacterManager.Original_Alter_Ego);
+        currentState.AddLogFiller(null, Utilities.GetNormalizedSingularRace(ogData.race), LOG_IDENTIFIER.STRING_1);
     }
     #endregion
 
@@ -57,15 +57,15 @@ public class RevertToNormalForm : GoapAction {
         //TODO: Recipient and Actor are from the same faction and are lovers or paramours
 
         //Recipient and Actor are from the same faction and are friends:
-        if (actor.faction == recipient.faction && actor.HasRelationshipOfTypeWith(recipient, RELATIONSHIP_TRAIT.FRIEND)) {
+        if (actor.faction == recipient.faction && recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.FRIEND)) {
             //- **Recipient Response Text**: I cannot be friends with a lycanthrope but I will not report this to the others as my last act of friendship.
             reactions.Add("I cannot be friends with a lycanthrope but I will not report this to the others as my last act of friendship.");
             //- **Recipient Effect**: Recipient and actor will no longer be friends
-            CharacterManager.Instance.RemoveRelationshipBetween(actor, recipient, RELATIONSHIP_TRAIT.FRIEND);
+            CharacterManager.Instance.RemoveRelationshipBetween(recipient, actor, RELATIONSHIP_TRAIT.FRIEND);
         }
         //Recipient and Actor are from the same faction and have no relationship or are enemies:
         //Ask Marvin if actor and recipient must also have the same home location and they must be both at their home location
-        else if (actor.faction == recipient.faction && (!actor.HasRelationshipWith(recipient) || actor.HasRelationshipOfTypeWith(recipient, RELATIONSHIP_TRAIT.ENEMY))) {
+        else if (actor.faction == recipient.faction && (!recipient.HasRelationshipWith(actor) || recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.ENEMY))) {
             //- **Recipient Response Text**: Lycanthropes are not welcome here. [Actor Name] must be restrained!
             reactions.Add(string.Format("Lycanthropes are not welcome here. {0} must be restrained!", actor.name));
             //-**Recipient Effect**: If soldier, noble or faction leader, brand Actor with Aberration crime (add Apprehend job). Otherwise, add a personal Report Crime job to the Recipient.
@@ -77,7 +77,7 @@ public class RevertToNormalForm : GoapAction {
                 //}
             } else {
                 GoapPlanJob job = new GoapPlanJob("Report Crime", INTERACTION_TYPE.REPORT_CRIME, new Dictionary<INTERACTION_TYPE, object[]>() {
-                    { INTERACTION_TYPE.REPORT_CRIME, new object[] { committedCrime, actor }}
+                    { INTERACTION_TYPE.REPORT_CRIME, new object[] { committedCrime, actorAlterEgo }}
                 });
                 job.SetCannotOverrideJob(true);
                 recipient.jobQueue.AddJobInQueue(job);
@@ -96,7 +96,7 @@ public class RevertToNormalForm : GoapAction {
                 //}
             } else {
                 GoapPlanJob job = new GoapPlanJob("Report Crime", INTERACTION_TYPE.REPORT_CRIME, new Dictionary<INTERACTION_TYPE, object[]>() {
-                    { INTERACTION_TYPE.REPORT_CRIME, new object[] { committedCrime, actor }}
+                    { INTERACTION_TYPE.REPORT_CRIME, new object[] { committedCrime, actorAlterEgo }}
                 });
                 job.SetCannotOverrideJob(true);
                 recipient.jobQueue.AddJobInQueue(job);

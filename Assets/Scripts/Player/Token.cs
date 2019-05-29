@@ -163,7 +163,7 @@ public class SpecialToken : Token, IPointOfInterest {
     public POI_STATE state {
         get { return _state; }
     }
-    public List<Trait> traits {
+    public List<Trait> allTraits {
         get { return _traits; }
     }
     public Faction factionOwner {

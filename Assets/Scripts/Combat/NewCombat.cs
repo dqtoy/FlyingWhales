@@ -423,10 +423,10 @@ public class NewCombat : MonoBehaviour {
     private void ApplyStartCombatTraits() {
         for (int i = 0; i < _combatOrder.Count; i++) {
             CombatCharacter combatCharacter = _combatOrder[i];
-            for (int j = 0; j < combatCharacter.character.traits.Count; j++) {
-                if(combatCharacter.character.traits[j].trigger == TRAIT_TRIGGER.START_OF_COMBAT) {
-                    for (int k = 0; k < combatCharacter.character.traits[j].effects.Count; k++) {
-                        TraitEffect traitEffect = combatCharacter.character.traits[j].effects[k];
+            for (int j = 0; j < combatCharacter.character.allTraits.Count; j++) {
+                if(combatCharacter.character.allTraits[j].trigger == TRAIT_TRIGGER.START_OF_COMBAT) {
+                    for (int k = 0; k < combatCharacter.character.allTraits[j].effects.Count; k++) {
+                        TraitEffect traitEffect = combatCharacter.character.allTraits[j].effects[k];
                         if (combatCharacter.side == SIDES.A) {
                             ApplyTraitEffectsOfStartCombat(combatCharacter, _leftSideCombatOrder, _rightSideCombatOrder, traitEffect);
                         } else {
@@ -797,8 +797,8 @@ public class NewCombat : MonoBehaviour {
         //TODO: Currently, only percentage amounts are implemented, if there will flat amounts in the future, add it here
         int finalAttack = sourceCombatCharacter.attack;
         float damageIncreasePercentage = 0f;
-        for (int i = 0; i < sourceCombatCharacter.character.traits.Count; i++) {
-            Trait trait = sourceCombatCharacter.character.traits[i];
+        for (int i = 0; i < sourceCombatCharacter.character.allTraits.Count; i++) {
+            Trait trait = sourceCombatCharacter.character.allTraits[i];
             if(trait.trigger == TRAIT_TRIGGER.DURING_COMBAT) {
                 for (int j = 0; j < trait.effects.Count; j++) {
                     TraitEffect traitEffect = trait.effects[j];
@@ -815,8 +815,8 @@ public class NewCombat : MonoBehaviour {
                 }
             }
         }
-        for (int i = 0; i < specificTarget.character.traits.Count; i++) {
-            Trait trait = specificTarget.character.traits[i];
+        for (int i = 0; i < specificTarget.character.allTraits.Count; i++) {
+            Trait trait = specificTarget.character.allTraits[i];
             if (trait.trigger == TRAIT_TRIGGER.DURING_COMBAT) {
                 for (int j = 0; j < trait.effects.Count; j++) {
                     TraitEffect traitEffect = trait.effects[j];

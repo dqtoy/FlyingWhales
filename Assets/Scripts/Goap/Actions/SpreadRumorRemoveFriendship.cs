@@ -75,7 +75,7 @@ public class SpreadRumorRemoveFriendship : GoapAction {
     public void AfterBreakFriendshipSuccess() {
         Character target = poiTarget as Character;
         //**Effect 1**: Target - Remove Friend relationship with Character 2 
-        target.RemoveRelationship(rumoredCharacter, RELATIONSHIP_TRAIT.FRIEND);
+        target.RemoveRelationshipWith(rumoredCharacter, RELATIONSHIP_TRAIT.FRIEND);
 
         //**Effect 2**: Target - Add shared event to Target's memory
         Log informedLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "informed_event", _chosenMemory.goapAction);

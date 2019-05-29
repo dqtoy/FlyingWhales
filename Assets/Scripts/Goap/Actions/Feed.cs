@@ -82,8 +82,10 @@ public class Feed : GoapAction {
             return reactions; //return empty list if same actor
         }
 
+        RELATIONSHIP_EFFECT relWithTarget = recipient.GetRelationshipEffectWith(poiTargetAlterEgo);
+
         //Recipient and Target have at least one non-negative relationship and Actor is not from the same faction:
-        if (recipient.HasRelationshipOfEffectWith(target, TRAIT_EFFECT.POSITIVE, RELATIONSHIP_TRAIT.RELATIVE) && actor.faction != recipient.faction) {
+        if (relWithTarget == RELATIONSHIP_EFFECT.POSITIVE && actorAlterEgo.faction != recipient.faction) {
             //- **Recipient Response Text**: "Thank you for letting me know where [Target Name] is! I've got to find a way to free [him/her]!
             reactions.Add(string.Format("Thank you for letting me know where {0} is! I've got to find a way to free {1}", target.name, Utilities.GetPronounString(target.gender, PRONOUN_TYPE.OBJECTIVE, false)));
             //-**Recipient Effect * *: If Adventurer or Soldier or Unaligned Non - Beast, create a https://trello.com/c/aQPY0gej/1657-save-troubled-character-job. 
@@ -99,7 +101,7 @@ public class Feed : GoapAction {
         }
 
         //Recipient and Target have no relationship but from the same faction and Actor is not from the same faction:
-        else if (!recipient.HasRelationshipWith(target) && recipient.faction == target.faction && recipient.faction != actor.faction) {
+        else if (relWithTarget == RELATIONSHIP_EFFECT.NONE && recipient.faction == poiTargetAlterEgo.faction && recipient.faction != actorAlterEgo.faction) {
             //- **Recipient Response Text**: "Thank you for letting me know where [Target Name] is! I've got to find a way to free [him/her]!
             reactions.Add(string.Format("Thank you for letting me know where {0} is! I've got to find a way to free {1}", target.name, Utilities.GetPronounString(target.gender, PRONOUN_TYPE.OBJECTIVE, false)));
             //-**Recipient Effect * *: If Adventurer or Soldier or Unaligned Non - Beast, create a https://trello.com/c/aQPY0gej/1657-save-troubled-character-job. 
@@ -115,14 +117,14 @@ public class Feed : GoapAction {
         }
 
         //Recipient and Target are enemies:
-        else if (recipient.HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.ENEMY)) {
+        else if (recipient.HasRelationshipOfTypeWith(poiTargetAlterEgo, RELATIONSHIP_TRAIT.ENEMY)) {
             //- **Recipient Response Text**: "I don't really care what happens to [Target Name]. I hope they stop feeding [him/her]."
             reactions.Add(string.Format("I don't really care what happens to {0}. I hope they stop feeding {1}", target.name, Utilities.GetPronounString(target.gender, PRONOUN_TYPE.OBJECTIVE, false)));
             //-**Recipient Effect * *: no effect
         }
 
         //Recipient, Actor and Target are from the same faction and Target has Criminal Trait:
-        else if (recipient.faction == actor.faction && recipient.faction == target.faction && target.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
+        else if (recipient.faction == actorAlterEgo.faction && recipient.faction == poiTargetAlterEgo.faction && target.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
             //- **Recipient Response Text**: "Though [Target Name] is a criminal, it's only fair that [he/she] gets to eat sometimes."
             reactions.Add(string.Format("Though {0} is a criminal, it's only fair that {1} gets to eat sometimes.", target.name, Utilities.GetPronounString(target.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
             //-**Recipient Effect * *: no effect

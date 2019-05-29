@@ -6,6 +6,7 @@ public class CharacterRelationshipData {
 
     public Character owner { get; private set; }
     public Character targetCharacter { get; private set; }
+    public AlterEgoData targetCharacterAlterEgo { get; private set; }
 
     public List<RelationshipTrait> rels { get; private set; }
     public int lastEncounter { get; private set; } //counts up
@@ -20,9 +21,10 @@ public class CharacterRelationshipData {
 
     public string lastEncounterLog { get; private set; }
 
-    public CharacterRelationshipData(Character owner, Character targetCharacter) {
+    public CharacterRelationshipData(Character owner, Character targetCharacter, AlterEgoData targetCharacterAlterEgo) {
         this.owner = owner;
         this.targetCharacter = targetCharacter;
+        this.targetCharacterAlterEgo = targetCharacterAlterEgo;
         rels = new List<RelationshipTrait>();
         lastEncounter = 0;
         encounterMultiplier = 0f;
@@ -86,18 +88,21 @@ public class CharacterRelationshipData {
     public void AddRelationship(RelationshipTrait newRel) {
         if (!rels.Contains(newRel)) {
             rels.Add(newRel);
+            owner.AddTrait(newRel);
         }
     }
-    public void RemoveRelationship(RelationshipTrait newRel) {
+    public bool RemoveRelationship(RelationshipTrait newRel) {
         if (rels.Remove(newRel)) {
             Debug.Log("Removed " + newRel.name + " from " + owner.name + "'s relationship data with " + targetCharacter.name);
+            owner.RemoveTrait(newRel);
+            return true;
         }
+        return false;
     }
     public void RemoveRelationship(RELATIONSHIP_TRAIT newRel) {
         for (int i = 0; i < rels.Count; i++) {
             if(rels[i].relType == newRel) {
-                Debug.Log("Removed " + rels[i].name + " from " + owner.name + "'s relationship data with " + targetCharacter.name);
-                rels.RemoveAt(i);
+                RemoveRelationship(rels[i]);
                 break;
             }
         }
