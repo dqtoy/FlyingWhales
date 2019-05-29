@@ -25,7 +25,7 @@ public class Lycanthropy : Trait {
     public override void OnAddTrait(IPointOfInterest sourceCharacter) {
         _character = sourceCharacter as Character;
         data = new LycanthropyData();
-        _character.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "afflicted", null, name);
+        //_character.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "afflicted", null, name);
         base.OnAddTrait(sourceCharacter);
     }
     public override void OnRemoveTrait(IPointOfInterest sourceCharacter) {

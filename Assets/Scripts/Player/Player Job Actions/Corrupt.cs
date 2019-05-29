@@ -51,35 +51,39 @@ public class Corrupt : PlayerJobAction {
     private void OnClickTrait(string traitName) {
         base.ActivateAction(assignedCharacter, _targetCharacter);
         UIManager.Instance.HideObjectPicker();
+        Trait newTrait = null;
         if (traitName == "Lycanthropy") {
-            Lycanthropy newTrait = new Lycanthropy();
+            newTrait = new Lycanthropy();
             _targetCharacter.AddTrait(newTrait);
         }else if (traitName == "Unconscious") {
-            Unconscious newTrait = new Unconscious();
+            newTrait = new Unconscious();
             _targetCharacter.AddTrait(newTrait);
         } else if (traitName == "Restrained") {
-            Restrained newTrait = new Restrained();
+            newTrait = new Restrained();
             _targetCharacter.AddTrait(newTrait);
         } else if (traitName == "Cursed") {
-            Cursed newTrait = new Cursed();
+            newTrait = new Cursed();
             _targetCharacter.AddTrait(newTrait);
         } else if (traitName == "Sick") {
-            Sick newTrait = new Sick();
+            newTrait = new Sick();
             _targetCharacter.AddTrait(newTrait);
         } else if (traitName == "Injured") {
-            Injured newTrait = new Injured();
+            newTrait = new Injured();
             _targetCharacter.AddTrait(newTrait);
         } else if (traitName == "Kleptomaniac") {
-            Kleptomaniac newTrait = new Kleptomaniac();
+            newTrait = new Kleptomaniac();
             _targetCharacter.AddTrait(newTrait);
         } else if (traitName == "Unfaithful") {
-            Unfaithful newTrait = new Unfaithful();
+            newTrait = new Unfaithful();
             _targetCharacter.AddTrait(newTrait);
         } else if (traitName == "Death") {
             _targetCharacter.Death();
         } else if (traitName == "Vampiric") {
-            Vampiric newTrait = new Vampiric();
+            newTrait = new Vampiric();
             _targetCharacter.AddTrait(newTrait);
+        }
+        if (newTrait != null) {
+            _targetCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "afflicted", null, newTrait.name);
         }
     }
     private bool CanCorruptCharacter(string traitName) {

@@ -2574,7 +2574,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     #endregion
 
-    #region History
+    #region History/Logs
     public void AddHistory(Log log) {
         if (!_history.Contains(log)) {
             _history.Add(log);
@@ -2587,17 +2587,31 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             Messenger.Broadcast(Signals.HISTORY_ADDED, this as object);
         }
     }
+    //Add log to this character and show notif of that log only if this character is clicked or tracked, otherwise, add log only
+    public void RegisterLogAndShowNotifToThisCharacterOnly(string fileName, string key, object target = null, string targetName = "", GoapAction goapAction = null) {
+        if (!GameManager.Instance.gameHasStarted) {
+            return;
+        }
+        if (key == "remove_trait" && isDead) {
+            return;
+        }
+        Log addLog = new Log(GameManager.Instance.Today(), "Character", fileName, key, goapAction);
+        addLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        if (targetName != "") {
+            addLog.AddToFillers(target, targetName, LOG_IDENTIFIER.TARGET_CHARACTER);
+        }
+        addLog.AddLogToInvolvedObjects();
+        if (PlayerManager.Instance.player.ShouldShowNotificationFrom(this, true)) {
+            PlayerManager.Instance.player.ShowNotification(addLog);
+        }
+    }
     private void OnActionStateSet(GoapAction action, GoapActionState state) {
         if (action.actor != this && action.poiTarget != this) {
             if (marker.inVisionPOIs.Contains(action.actor)) {
                 if (GetTraitOr("Unconscious", "Resting") != null) {
                     return;
                 }
-                Log witnessLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "witness_event", action);
-                witnessLog.AddToFillers(marker.character, marker.character.name, LOG_IDENTIFIER.OTHER);
-                witnessLog.AddToFillers(null, Utilities.LogDontReplace(state.descriptionLog), LOG_IDENTIFIER.APPEND);
-                witnessLog.AddToFillers(state.descriptionLog.fillers);
-                AddHistory(witnessLog);
+                CreateWitnessedEventLog(action);
             }
         }
     }
@@ -2607,11 +2621,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 if(GetTraitOr("Unconscious", "Resting") != null) {
                     return;
                 }
-                Log witnessLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "witness_event", target.currentAction);
-                witnessLog.AddToFillers(marker.character, marker.character.name, LOG_IDENTIFIER.OTHER);
-                witnessLog.AddToFillers(null, Utilities.LogDontReplace(target.currentAction.currentState.descriptionLog), LOG_IDENTIFIER.APPEND);
-                witnessLog.AddToFillers(target.currentAction.currentState.descriptionLog.fillers);
-                AddHistory(witnessLog);
+                CreateWitnessedEventLog(target.currentAction);
             }
         }
     }
@@ -2667,6 +2677,60 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         }
         return memories;
+    }
+    public void CreateInformedEventLog(GoapAction eventToBeInformed) {
+        Log informedLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "informed_event", eventToBeInformed);
+        informedLog.AddToFillers(eventToBeInformed.currentState.descriptionLog.fillers);
+        informedLog.AddToFillers(this, this.name, LOG_IDENTIFIER.OTHER);
+        informedLog.AddToFillers(null, Utilities.LogDontReplace(eventToBeInformed.currentState.descriptionLog), LOG_IDENTIFIER.APPEND);
+        AddHistory(informedLog);
+
+        //If a character sees or informed about a lover performing Making Love or Ask to Make Love, they will feel Betrayed
+        if (eventToBeInformed.actor != this && eventToBeInformed.poiTarget != this) {
+            if (eventToBeInformed.goapType == INTERACTION_TYPE.MAKE_LOVE) {
+                if (HasRelationshipOfTypeWith(eventToBeInformed.actor, RELATIONSHIP_TRAIT.LOVER) || HasRelationshipOfTypeWith(eventToBeInformed.poiTarget as Character, RELATIONSHIP_TRAIT.LOVER)) {
+                    Betrayed betrayed = new Betrayed();
+                    AddTrait(betrayed);
+                }
+            } else if (eventToBeInformed.goapType == INTERACTION_TYPE.INVITE_TO_MAKE_LOVE) {
+                if (HasRelationshipOfTypeWith(eventToBeInformed.actor, RELATIONSHIP_TRAIT.LOVER)) {
+                    Betrayed betrayed = new Betrayed();
+                    AddTrait(betrayed);
+                } else if (HasRelationshipOfTypeWith(eventToBeInformed.poiTarget as Character, RELATIONSHIP_TRAIT.LOVER)) {
+                    if (eventToBeInformed.currentState.name == "Invite Success") {
+                        Betrayed betrayed = new Betrayed();
+                        AddTrait(betrayed);
+                    }
+                }
+            }
+        }
+    }
+    public void CreateWitnessedEventLog(GoapAction witnessedEvent) {
+        Log witnessLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "witness_event", witnessedEvent);
+        witnessLog.AddToFillers(marker.character, marker.character.name, LOG_IDENTIFIER.OTHER);
+        witnessLog.AddToFillers(null, Utilities.LogDontReplace(witnessedEvent.currentState.descriptionLog), LOG_IDENTIFIER.APPEND);
+        witnessLog.AddToFillers(witnessedEvent.currentState.descriptionLog.fillers);
+        AddHistory(witnessLog);
+
+        //If a character sees or informed about a lover performing Making Love or Ask to Make Love, they will feel Betrayed
+        if (witnessedEvent.actor != this && witnessedEvent.poiTarget != this) {
+            if (witnessedEvent.goapType == INTERACTION_TYPE.MAKE_LOVE) {
+                if (HasRelationshipOfTypeWith(witnessedEvent.actor, RELATIONSHIP_TRAIT.LOVER) || HasRelationshipOfTypeWith(witnessedEvent.poiTarget as Character, RELATIONSHIP_TRAIT.LOVER)) {
+                    Betrayed betrayed = new Betrayed();
+                    AddTrait(betrayed);
+                }
+            } else if (witnessedEvent.goapType == INTERACTION_TYPE.INVITE_TO_MAKE_LOVE) {
+                if (HasRelationshipOfTypeWith(witnessedEvent.actor, RELATIONSHIP_TRAIT.LOVER)) {
+                    Betrayed betrayed = new Betrayed();
+                    AddTrait(betrayed);
+                }else if(HasRelationshipOfTypeWith(witnessedEvent.poiTarget as Character, RELATIONSHIP_TRAIT.LOVER)) {
+                    if(witnessedEvent.currentState.name == "Invite Success") {
+                        Betrayed betrayed = new Betrayed();
+                        AddTrait(betrayed);
+                    }
+                }
+            }
+        }
     }
     #endregion
 
@@ -6378,34 +6442,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             //create deliver treasure job that will deposit the items that the character collected during his/her last explore action.
             lastExploreState.CreateDeliverTreasureJob();
         }
-    }
-    #endregion
-
-    #region Logs
-    //Add log to this character and show notif of that log only if this character is clicked or tracked, otherwise, add log only
-    public void RegisterLogAndShowNotifToThisCharacterOnly(string fileName, string key, object target = null, string targetName = "", GoapAction goapAction = null) {
-        if (!GameManager.Instance.gameHasStarted) {
-            return;
-        }
-        if (key == "remove_trait" && isDead) {
-            return;
-        }
-        Log addLog = new Log(GameManager.Instance.Today(), "Character", fileName, key, goapAction);
-        addLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        if (targetName != "") {
-            addLog.AddToFillers(target, targetName, LOG_IDENTIFIER.TARGET_CHARACTER);
-        }
-        addLog.AddLogToInvolvedObjects();
-        if (PlayerManager.Instance.player.ShouldShowNotificationFrom(this, true)) {
-            PlayerManager.Instance.player.ShowNotification(addLog);
-        }
-    }
-    public void CreateInformedEventLog(GoapAction eventToBeInformed){
-        Log informedLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "informed_event", eventToBeInformed);
-        informedLog.AddToFillers(eventToBeInformed.currentState.descriptionLog.fillers);
-        informedLog.AddToFillers(this, this.name, LOG_IDENTIFIER.OTHER);
-        informedLog.AddToFillers(null, Utilities.LogDontReplace(eventToBeInformed.currentState.descriptionLog), LOG_IDENTIFIER.APPEND);
-        AddHistory(informedLog);
     }
     #endregion
 
