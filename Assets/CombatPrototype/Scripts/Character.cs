@@ -2583,12 +2583,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         return false;
     }
     public bool HasRelationshipOfTypeWith(Character character, bool useDisabled = false, params RELATIONSHIP_TRAIT[] rels) {
-        return HasRelationshipOfTypeWith(character.currentAlterEgo, rels);
+        return HasRelationshipOfTypeWith(character.currentAlterEgo, useDisabled, rels);
     }
-    public bool HasRelationshipOfTypeWith(AlterEgoData alterEgo, params RELATIONSHIP_TRAIT[] rels) {
+    public bool HasRelationshipOfTypeWith(AlterEgoData alterEgo, bool useDisabled = false, params RELATIONSHIP_TRAIT[] rels) {
         if (HasRelationshipWith(alterEgo)) {
             for (int i = 0; i < relationships[alterEgo].rels.Count; i++) {
                 RelationshipTrait currTrait = relationships[alterEgo].rels[i];
+                if (!useDisabled && currTrait.isDisabled) {
                     continue; //skip
                 }
                 for (int j = 0; j < rels.Length; j++) {
@@ -2808,6 +2809,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (witnessedEvent.actor != this && witnessedEvent.poiTarget != this) {
             Character target = witnessedEvent.poiTarget as Character;
             if (witnessedEvent.goapType == INTERACTION_TYPE.MAKE_LOVE) {
+                target = (witnessedEvent as MakeLove).targetCharacter;
                 if (HasRelationshipOfTypeWith(witnessedEvent.actor, RELATIONSHIP_TRAIT.LOVER) || HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.LOVER)) {
                     Betrayed betrayed = new Betrayed();
                     AddTrait(betrayed);
@@ -3384,8 +3386,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
     }
     public Trait GetTrait(params string[] traitNames) {
-    	for (int i = 0; i < _traits.Count; i++) {
-            Trait trait = _traits[i];
+    	for (int i = 0; i < allTraits.Count; i++) {
+            Trait trait = allTraits[i];
             for (int j = 0; j < traitNames.Length; j++) {
                 if (trait.name == traitNames[j] && !trait.isDisabled) {
                     return trait;
