@@ -1398,62 +1398,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 value = 10;
             }
             if (chance < value) {
-                WeightedDictionary<string> undermineWeights = new WeightedDictionary<string>();
-                undermineWeights.AddElement("negative trait", 50);
-
-                bool hasFriend = false;
-                for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
-                    Character currCharacter = CharacterManager.Instance.allCharacters[i];
-                    if(currCharacter != targetCharacter && currCharacter != this) {
-                        if(currCharacter.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.FRIEND)) {
-                            hasFriend = true;
-                            break;
-                        }
-                    }
-                }
-                if (hasFriend) {
-                    undermineWeights.AddElement("destroy friendship", 20);
-                }
-
-                bool hasLoverOrParamour = false;
-                for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
-                    Character currCharacter = CharacterManager.Instance.allCharacters[i];
-                    if (currCharacter != targetCharacter && currCharacter != this) {
-                        if (currCharacter.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR)) {
-                            hasLoverOrParamour = true;
-                            break;
-                        }
-                    }
-                }
-                if (hasLoverOrParamour) {
-                    undermineWeights.AddElement("destroy love", 20);
-                }
-
-                if(undermineWeights.Count > 0) {
-                    string result = undermineWeights.PickRandomElementGivenWeights();
-                    GoapPlanJob job = null;
-                    if (result == "negative trait") {
-                        job = new GoapPlanJob("Undermine Enemy", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", targetPOI = targetCharacter });
-                    } else if (result == "destroy friendship") {
-                        job = new GoapPlanJob("Undermine Enemy", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TARGET_REMOVE_RELATIONSHIP, conditionKey = "Friend", targetPOI = targetCharacter },
-                            new Dictionary<INTERACTION_TYPE, object[]>() { { INTERACTION_TYPE.NONE, new object[] { targetCharacter } }, });
-                    } else if (result == "destroy love") {
-                        job = new GoapPlanJob("Undermine Enemy", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TARGET_REMOVE_RELATIONSHIP, conditionKey = "Lover", targetPOI = targetCharacter },
-                            new Dictionary<INTERACTION_TYPE, object[]>() { { INTERACTION_TYPE.NONE, new object[] { targetCharacter } }, });
-                    }
-
-                    job.SetCannotOverrideJob(true);
-                    Debug.LogWarning(GameManager.Instance.TodayLogString() + "Added an UNDERMINE ENEMY Job: " + result + " to " + this.name + " with target " + targetCharacter.name);
-                    job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
-                    jobQueue.AddJobInQueue(job, true, false);
-                    jobQueue.ProcessFirstJobInQueue(this);
-
-                    Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "saw_and_undermine");
-                    log.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                    log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                    AddHistory(log);
-                    return true;
-                }
+                return CreateUndermineJobOnly(targetCharacter);
             }
         }
         return false;
@@ -1467,38 +1412,42 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     /// <param name="targetCharacter">The character to undermine.</param>
     public void ForceCreateUndermineJob(Character targetCharacter) {
         if (!targetCharacter.isDead && !jobQueue.HasJob("Undermine Enemy", targetCharacter)) {
-            WeightedDictionary<string> undermineWeights = new WeightedDictionary<string>();
-            undermineWeights.AddElement("negative trait", 50);
+            CreateUndermineJobOnly(targetCharacter);
+        }
+    }
+    public bool CreateUndermineJobOnly(Character targetCharacter) {
+        WeightedDictionary<string> undermineWeights = new WeightedDictionary<string>();
+        undermineWeights.AddElement("negative trait", 50);
 
-            bool hasFriend = false;
-            for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
-                Character currCharacter = CharacterManager.Instance.allCharacters[i];
-                if (currCharacter != targetCharacter && currCharacter != this) {
-                    if (currCharacter.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.FRIEND)) {
-                        hasFriend = true;
-                        break;
-                    }
+        bool hasFriend = false;
+        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+            Character currCharacter = CharacterManager.Instance.allCharacters[i];
+            if (currCharacter != targetCharacter && currCharacter != this) {
+                if (currCharacter.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.FRIEND)) {
+                    hasFriend = true;
+                    break;
                 }
             }
-            if (hasFriend) {
-                undermineWeights.AddElement("destroy friendship", 20);
-            }
+        }
+        if (hasFriend) {
+            undermineWeights.AddElement("destroy friendship", 20);
+        }
 
-            bool hasLoverOrParamour = false;
-            for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
-                Character currCharacter = CharacterManager.Instance.allCharacters[i];
-                if (currCharacter != targetCharacter && currCharacter != this) {
-                    if (currCharacter.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR)) {
-                        hasLoverOrParamour = true;
-                        break;
-                    }
+        bool hasLoverOrParamour = false;
+        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+            Character currCharacter = CharacterManager.Instance.allCharacters[i];
+            if (currCharacter != targetCharacter && currCharacter != this) {
+                if (currCharacter.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR)) {
+                    hasLoverOrParamour = true;
+                    break;
                 }
             }
-            if (hasLoverOrParamour) {
-                undermineWeights.AddElement("destroy love", 20);
-            }
+        }
+        if (hasLoverOrParamour) {
+            undermineWeights.AddElement("destroy love", 20);
+        }
 
-
+        if (undermineWeights.Count > 0) {
             string result = undermineWeights.PickRandomElementGivenWeights();
             GoapPlanJob job = null;
             if (result == "negative trait") {
@@ -1516,7 +1465,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
             jobQueue.AddJobInQueue(job, true, false);
             jobQueue.ProcessFirstJobInQueue(this);
+
+            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "saw_and_undermine");
+            log.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            AddHistory(log);
+            return true;
         }
+        return false;
     }
     public void CreateAssaultJobs(Character targetCharacter, int amount) {
         if (isAtHomeArea && !targetCharacter.isDead && !targetCharacter.isAtHomeArea && !targetCharacter.HasTraitOf(TRAIT_TYPE.DISABLER, "Combat Recovery") && !this.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
