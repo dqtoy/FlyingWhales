@@ -8,6 +8,8 @@ public class ExploreState : CharacterState {
 
     public bool hasStateStarted { get; private set; }
 
+    private int _currentDuration;
+
     public ExploreState(CharacterStateComponent characterComp) : base (characterComp) {
         stateName = "Explore State";
         characterState = CHARACTER_STATE.EXPLORE;
@@ -16,6 +18,7 @@ public class ExploreState : CharacterState {
         hasStateStarted = false;
         itemsCollected = new List<SpecialToken>();
         actionIconString = GoapActionStateDB.Explore_Icon;
+        _currentDuration = 0;
     }
 
     #region Overrides
@@ -71,6 +74,17 @@ public class ExploreState : CharacterState {
             if (stateComponent.character.GetTrait("Injured") != null) {
                 StopStatePerTick();
                 OnExitThisState();
+                return;
+            }
+            if (_currentDuration >= 4) {
+                _currentDuration = 0;
+                if (!stateComponent.character.PlanFullnessRecoveryActions()) {
+                    if (!stateComponent.character.PlanTirednessRecoveryActions()) {
+                        stateComponent.character.PlanHappinessRecoveryActions();
+                    }
+                }
+            } else {
+                _currentDuration++;
             }
         }
     }
