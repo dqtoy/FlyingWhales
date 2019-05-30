@@ -18,6 +18,7 @@ public class MakeLove : GoapAction {
         base.PerformActualAction();
         targetCharacter.OnTargettedByAction(this);
         if (!isTargetMissing) {
+            poiTargetAlterEgo = targetCharacter.currentAlterEgo;
             if (targetCharacter.currentParty == actor.ownParty && !targetCharacter.isStarving && !targetCharacter.isExhausted 
                 && targetCharacter.GetTrait("Annoyed") == null) {
                 SetState("Make Love Success");
@@ -55,7 +56,7 @@ public class MakeLove : GoapAction {
     private void PreMakeLoveSuccess() {
         targetCharacter.SetCurrentAction(this);
         currentState.AddLogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        currentState.SetIntelReaction(State1And2Reactions);
+        currentState.SetIntelReaction(State1Reactions);
     }
     private void PerTickMakeLoveSuccess() {
         //**Per Tick Effect 1 * *: Actor's Happiness Meter +10
@@ -101,7 +102,7 @@ public class MakeLove : GoapAction {
     }
 
     #region Intel Reactions
-    private List<string> State1And2Reactions(Character recipient, Intel sharedIntel) {
+    private List<string> State1Reactions(Character recipient, Intel sharedIntel) {
         List<string> reactions = new List<string>();
         Character target = targetCharacter;
 
@@ -117,62 +118,76 @@ public class MakeLove : GoapAction {
             //-**Recipient Effect**:  no effect
         }
         //Recipient considers Actor as a Lover:
-        else if (recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.LOVER)) {
+        else if (recipient.HasRelationshipOfTypeWith(actorAlterEgo, RELATIONSHIP_TRAIT.LOVER)) {
             //- **Recipient Response Text**: "[Actor Name] is cheating on me!?"
             reactions.Add(string.Format("{0} is cheating on me!?", actor.name));
-            //- **Recipient Effect**: Recipient will no longer consider Target as a Friend if it applies and Recipient will now consider Target as an Enemy. 
-            if (recipient.HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.FRIEND)) {
-                CharacterManager.Instance.RemoveOneWayRelationship(recipient, target, RELATIONSHIP_TRAIT.FRIEND);
-            }
-            CharacterManager.Instance.CreateNewOneWayRelationship(recipient, target, RELATIONSHIP_TRAIT.ENEMY);
-            //Add an Undermine Job to Recipient versus Actor or Target (choose at random).
-            Character randomTarget = actor;
-            if (UnityEngine.Random.Range(0, 2) == 1) {
-                randomTarget = targetCharacter;
-            }
-            recipient.ForceCreateUndermineJob(randomTarget);
+            //- **Recipient Effect**: https://trello.com/c/mqor1Ddv/1884-relationship-degradation between and Recipient and Target. 
+            CharacterManager.Instance.RelationshipDegradation(poiTargetAlterEgo, recipient, this);
+            //Add an Undermine Job to Recipient versus Target (choose at random). 
+            recipient.ForceCreateUndermineJob(target);
+            //Add a Breakup Job to Recipient versus Actor.
+            recipient.CreateBreakupJob(actor);
         }
         //Recipient considers Target as a Lover:
         else if (recipient.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.LOVER)) {
             //- **Recipient Response Text**: "[Target Name] is cheating on me!?"
             reactions.Add(string.Format("{0} is cheating on me!?", targetCharacter.name));
-            //-**Recipient Effect * *: Recipient will no longer consider Actor as a Friend if it applies and Recipient will now consider Actor as an Enemy.
-            if (recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.FRIEND)) {
-                CharacterManager.Instance.RemoveOneWayRelationship(recipient, actor, RELATIONSHIP_TRAIT.FRIEND);
-            }
-            CharacterManager.Instance.CreateNewOneWayRelationship(recipient, actor, RELATIONSHIP_TRAIT.ENEMY);
-            //Add an Undermine Job to Recipient versus Actor or Target(choose at random).
-            Character randomTarget = actor;
-            if (UnityEngine.Random.Range(0, 2) == 1) {
-                randomTarget = targetCharacter;
-            }
-            recipient.ForceCreateUndermineJob(randomTarget);
+            //- **Recipient Effect**: https://trello.com/c/mqor1Ddv/1884-relationship-degradation between Recipient and Actor. 
+            CharacterManager.Instance.RelationshipDegradation(actorAlterEgo, recipient, this);
+            //Add an Undermine Job to Recipient versus Actor.
+            recipient.ForceCreateUndermineJob(actor);
+            //Add a Breakup Job to Recipient versus Target.
+            recipient.CreateBreakupJob(target);
         }
         //Recipient considers Actor as a Paramour and Actor and Target are Lovers:
         else if (recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.PARAMOUR) && actor.HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.LOVER)) {
             //- **Recipient Response Text**: "I will make sure that [Actor Name] leaves [Target Name] soon!"
             reactions.Add(string.Format("I will make sure that {0} leaves {1} soon!", actor.name, targetCharacter.name));
-            //-**Recipient Effect * *: Add a Destroy Love Job to Recipient versus Actor or Target(choose at random). TODO
+            //-**Recipient Effect * *: Add a Destroy Love Job to Recipient versus Actor or Target(choose at random).
+            Character randomTarget = actor;
+            if (Random.Range(0, 2) == 1) {
+                randomTarget = target;
+            }
+            GoapPlanJob job = new GoapPlanJob("Destroy Love", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TARGET_REMOVE_RELATIONSHIP, conditionKey = "Lover", targetPOI = randomTarget },
+                    new Dictionary<INTERACTION_TYPE, object[]>() { { INTERACTION_TYPE.NONE, new object[] { randomTarget } }, });
+            job.SetCannotOverrideJob(true);
+            job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
+            recipient.jobQueue.AddJobInQueue(job, true, false);
         }
         //Recipient considers Target as a Paramour and Actor and Target are Lovers:
         else if (recipient.HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.PARAMOUR) && actor.HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.LOVER)) {
             //- **Recipient Response Text**: "I will make sure that [Target Name] leaves [Actor Name] soon!"
             reactions.Add(string.Format("I will make sure that {0} leaves {1} soon!", targetCharacter.name, actor.name));
-            //-**Recipient Effect * *: Add a Destroy Love Job to Recipient versus Actor or Target(choose at random). TODO
+            //-**Recipient Effect * *: Add a Destroy Love Job to Recipient versus Actor or Target(choose at random).
+            Character randomTarget = actor;
+            if (Random.Range(0, 2) == 1) {
+                randomTarget = target;
+            }
+            GoapPlanJob job = new GoapPlanJob("Destroy Love", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TARGET_REMOVE_RELATIONSHIP, conditionKey = "Lover", targetPOI = randomTarget },
+                    new Dictionary<INTERACTION_TYPE, object[]>() { { INTERACTION_TYPE.NONE, new object[] { randomTarget } }, });
+            job.SetCannotOverrideJob(true);
+            job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
+            recipient.jobQueue.AddJobInQueue(job, true, false);
         }
         //Actor and Target are Paramours. Recipient has no positive relationship with either of them. Actor has a Lover and Recipient has a positive relationship with Actor's Lover:
         else if (actor.HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.PARAMOUR) && recipientWithActor != RELATIONSHIP_EFFECT.POSITIVE && recipientWithTarget != RELATIONSHIP_EFFECT.POSITIVE
             && actorLover != null && recipient.GetRelationshipEffectWith(actorLover) == RELATIONSHIP_EFFECT.POSITIVE) {
             //- **Recipient Response Text**: "[Actor's Lover Name] must know about [Actor Name]'s affair with [Target Name]!"
             reactions.Add(string.Format("{0} must know about {1}'s affair with {2}!", actorLover.name, actor.name, targetCharacter.name));
-            //-**Recipient Effect * *: Add a Report Affair Job to Recipient targeting Actor's Lover. TODO
+            //- **Recipient Effect**: Add a Report Crime Job to Recipient targeting Actor's Lover.
+            GoapPlanJob job = new GoapPlanJob("Report Crime", INTERACTION_TYPE.REPORT_CRIME, actorLover, new Dictionary<INTERACTION_TYPE, object[]>() {
+                    { INTERACTION_TYPE.REPORT_CRIME, new object[] { committedCrime, actorAlterEgo, this }}
+            });
         }
         //Actor and Target are Paramours. Recipient has no positive relationship with either of them. Target has a Lover and Recipient has a positive relationship with Target's Lover:
         else if (actor.HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.PARAMOUR) && recipientWithActor != RELATIONSHIP_EFFECT.POSITIVE && recipientWithTarget != RELATIONSHIP_EFFECT.POSITIVE
             && targetLover != null && recipient.GetRelationshipEffectWith(targetLover) == RELATIONSHIP_EFFECT.POSITIVE) {
             //- **Recipient Response Text**: "[Target's Lover Name] must know about [Target Name]'s affair with [Actor Name]!"
             reactions.Add(string.Format("{0} must know about {1}'s affair with {2}!", targetLover.name, targetCharacter.name, actor.name));
-            //-**Recipient Effect * *: Add a Report Affair Job to Recipient targeting Target's Lover. TODO
+            //- **Recipient Effect**: Add a Report Crime Job to Recipient targeting Target's Lover.
+            GoapPlanJob job = new GoapPlanJob("Report Crime", INTERACTION_TYPE.REPORT_CRIME, targetLover, new Dictionary<INTERACTION_TYPE, object[]>() {
+                    { INTERACTION_TYPE.REPORT_CRIME, new object[] { committedCrime, poiTargetAlterEgo, this }}
+            });
         }
         //Actor and Target are Paramours. Recipient has no positive relationship with either of them. Recipient is from the same faction as either one of them.
         else if (actor.HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.PARAMOUR) && recipientWithActor != RELATIONSHIP_EFFECT.POSITIVE && recipientWithTarget != RELATIONSHIP_EFFECT.POSITIVE 
@@ -186,14 +201,20 @@ public class MakeLove : GoapAction {
             && !recipient.HasRelationshipOfTypeWith(actorLover, RELATIONSHIP_TRAIT.ENEMY)) {
             //- **Recipient Response Text**: "I can't wait to let [Actor's Lover's Name] find out about this affair."
             reactions.Add(string.Format("I can't wait to let {0} find out about this affair.", actorLover.name));
-            //-**Recipient Effect * *: Add a Report Affair Job to Recipient targeting Actor's Lover. TODO
+            //- **Recipient Effect**: Add a Report Crime Job to Recipient targeting Actor's Lover.
+            GoapPlanJob job = new GoapPlanJob("Report Crime", INTERACTION_TYPE.REPORT_CRIME, actorLover, new Dictionary<INTERACTION_TYPE, object[]>() {
+                    { INTERACTION_TYPE.REPORT_CRIME, new object[] { committedCrime, actorAlterEgo, this }}
+            });
         }
         //Actor and Target are Paramours. Recipient considers Target as an Enemy. Target has a Lover and Recipient does not consider Target's Lover an Enemy.
         else if (actor.HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.PARAMOUR) && recipient.HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.ENEMY) && targetLover != null
             && !recipient.HasRelationshipOfTypeWith(targetLover, RELATIONSHIP_TRAIT.ENEMY)) {
             //- **Recipient Response Text**: "I can't wait to let [Target's Lover's Name] find out about this affair."
             reactions.Add(string.Format("I can't wait to let {0} find out about this affair.", targetLover.name));
-            //-**Recipient Effect * *: Add a Report Affair Job to Recipient targeting Target's Lover. TODO
+            //- **Recipient Effect**: Add a Report Crime Job to Recipient targeting Target's Lover.
+            GoapPlanJob job = new GoapPlanJob("Report Crime", INTERACTION_TYPE.REPORT_CRIME, targetLover, new Dictionary<INTERACTION_TYPE, object[]>() {
+                    { INTERACTION_TYPE.REPORT_CRIME, new object[] { committedCrime, poiTargetAlterEgo, this }}
+            });
         }
         return reactions;
     }
