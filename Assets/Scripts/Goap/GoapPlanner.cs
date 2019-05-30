@@ -43,7 +43,7 @@ public class GoapPlanner {
         bool success = false;
         if (currentPlan.isPersonalPlan) {
             string log = string.Empty;
-            success = BuildGoapTree(currentPlan.endNode, startingNodes, usableActions, ref log);
+            success = BuildGoapTree(currentPlan.endNode, startingNodes, usableActions, ref log, currentPlan.job);
         } else {
             GoapNode currentLeafNode = null;
             bool hasUsableAction = false;

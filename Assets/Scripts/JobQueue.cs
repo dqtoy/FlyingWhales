@@ -312,6 +312,7 @@ public class JobQueue {
             if (currJob.assignedCharacter == character) {
                 if (character.currentAction != null && character.currentAction.parentPlan.job != null && character.currentAction.parentPlan.job == currJob) {
                     //skip
+                    character.currentAction.parentPlan.job.SetAssignedCharacter(null);
                     continue;
                 }
                 summary += "\nUnassigned " + character.name + " from job " + currJob.name; 

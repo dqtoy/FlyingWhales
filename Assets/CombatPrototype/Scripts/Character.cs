@@ -5988,7 +5988,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 }
             }
         }
-
         log += "\nPlan is setting next action to be done...";
         plan.SetNextNode();
         if (plan.currentNode == null) {
@@ -6004,6 +6003,11 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         } else {
             log += "\nNext action for this plan: " + plan.currentNode.action.goapName;
+            if (plan.job != null) {
+                log += "\nPlan has a job: " + plan.job.name + ". Assigned character " + (plan.job.assignedCharacter != null ? plan.job.assignedCharacter.name : "None") + " does not match with " + name + ".";
+                log += "Drop plan because this character is no longer the one assigned";
+                DropPlan(plan);
+            }
             PrintLogIfActive(log);
             //PlanGoapActions();
         }
