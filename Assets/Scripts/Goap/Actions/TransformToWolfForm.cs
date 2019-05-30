@@ -54,7 +54,7 @@ public class TransformToWolfForm : GoapAction {
             //- **Recipient Effect**: no effect
         }
         //Recipient and Actor are from the same faction and are friends:
-        if (actorAlterEgo.faction == recipient.faction && recipient.HasRelationshipOfTypeWith(actorAlterEgo, RELATIONSHIP_TRAIT.FRIEND)) {
+        else if (actorAlterEgo.faction == recipient.faction && recipient.HasRelationshipOfTypeWith(actorAlterEgo, RELATIONSHIP_TRAIT.FRIEND)) {
             //- **Recipient Response Text**: I cannot be friends with a lycanthrope but I will not report this to the others as my last act of friendship.
             reactions.Add("I cannot be friends with a lycanthrope but I will not report this to the others as my last act of friendship.");
             //- **Recipient Effect**: Recipient and actor will no longer be friends

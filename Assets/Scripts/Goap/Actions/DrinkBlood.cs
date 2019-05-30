@@ -94,6 +94,7 @@ public class DrinkBlood : GoapAction {
             Vampiric vampiric = new Vampiric();
             AddTraitTo(poiTarget, vampiric, actor);
         }
+        currentState.SetIntelReaction(DrinkBloodSuccessIntelReaction);
     }
     //private void PreDrinkFail() {
     //    currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
@@ -106,4 +107,82 @@ public class DrinkBlood : GoapAction {
     //}
     #endregion
 
+    #region Intel Reactions
+    private List<string> DrinkBloodSuccessIntelReaction(Character recipient, Intel sharedIntel) {
+        List<string> reactions = new List<string>();
+
+        //Recipient and Actor is the same:
+        if (recipient == actor) {
+            //- **Recipient Response Text**: Please do not tell anyone else about this. I beg you!
+            reactions.Add("Please do not tell anyone else about this. I beg you!");
+            //-**Recipient Effect * *: no effect
+        }
+        //Recipient and Actor are from the same faction and are lovers or paramours
+        else if (actor.faction == recipient.faction && recipient.HasRelationshipOfTypeWith(actor, false, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR)) {
+            //- **Recipient Response Text**: [Actor Name] may be a monster, but I love [him/her] still!
+            reactions.Add(string.Format("{0} may be a monster, but I love {1} still!", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.OBJECTIVE, false)));
+            //- **Recipient Effect**: no effect
+        }
+        //Recipient and Actor are from the same faction and are friends:
+        else if (actor.faction == recipient.faction && recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.FRIEND)) {
+            //- **Recipient Response Text**: I cannot be friends with a vampire but I will not report this to the others as my last act of friendship.
+            reactions.Add("I cannot be friends with a vampire but I will not report this to the others as my last act of friendship.");
+            //- **Recipient Effect**: Recipient and actor will no longer be friends
+            CharacterManager.Instance.RemoveRelationshipBetween(recipient, actor, RELATIONSHIP_TRAIT.FRIEND);
+        }
+        //Recipient and Actor are from the same faction and have no relationship or are enemies:
+        //Ask Marvin if actor and recipient must also have the same home location and they must be both at their home location
+        else if (actor.faction == recipient.faction && (!recipient.HasRelationshipWith(actor, true) || recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.ENEMY))) {
+            //- **Recipient Response Text**: Vampires are not welcome here. [Actor Name] must be restrained!
+            reactions.Add(string.Format("Vampires are not welcome here. {0} must be restrained!", actor.name));
+            //-**Recipient Effect**: If soldier, noble or faction leader, brand Actor with Aberration crime (add Apprehend job). Otherwise, add a personal Report Crime job to the Recipient.
+            if (recipient.role.roleType == CHARACTER_ROLE.SOLDIER || recipient.role.roleType == CHARACTER_ROLE.NOBLE || recipient.role.roleType == CHARACTER_ROLE.LEADER) {
+                actor.AddCriminalTrait(CRIME.ABERRATION);
+                GoapPlanJob job = recipient.CreateApprehendJobFor(actor);
+                //if (job != null) {
+                //    recipient.homeArea.jobQueue.AssignCharacterToJob(job, this);
+                //}
+            } else {
+                GoapPlanJob job = new GoapPlanJob("Report Crime", INTERACTION_TYPE.REPORT_CRIME, new Dictionary<INTERACTION_TYPE, object[]>() {
+                    { INTERACTION_TYPE.REPORT_CRIME, new object[] { committedCrime, actor }}
+                });
+                job.SetCannotOverrideJob(true);
+                recipient.jobQueue.AddJobInQueue(job);
+            }
+        }
+        //Recipient and Actor are from the same faction (catches all other situations):
+        else if (actor.faction == recipient.faction) {
+            //- **Recipient Response Text**: Vampires are not welcome here. [Actor Name] must be restrained!
+            reactions.Add(string.Format("Vampires are not welcome here. {0} must be restrained!", actor.name));
+            //-**Recipient Effect**: If soldier, noble or faction leader, brand Actor with Aberration crime (add Apprehend job). Otherwise, add a personal Report Crime job to the Recipient.
+            if (recipient.role.roleType == CHARACTER_ROLE.SOLDIER || recipient.role.roleType == CHARACTER_ROLE.NOBLE || recipient.role.roleType == CHARACTER_ROLE.LEADER) {
+                actor.AddCriminalTrait(CRIME.ABERRATION);
+                GoapPlanJob job = recipient.CreateApprehendJobFor(actor);
+                //if (job != null) {
+                //    recipient.homeArea.jobQueue.AssignCharacterToJob(job, this);
+                //}
+            } else {
+                GoapPlanJob job = new GoapPlanJob("Report Crime", INTERACTION_TYPE.REPORT_CRIME, new Dictionary<INTERACTION_TYPE, object[]>() {
+                    { INTERACTION_TYPE.REPORT_CRIME, new object[] { committedCrime, actor }}
+                });
+                job.SetCannotOverrideJob(true);
+                recipient.jobQueue.AddJobInQueue(job);
+            }
+        }
+        //Recipient and Actor are from a different faction and have a positive relationship:
+        else if (recipient.faction != actor.faction && recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.FRIEND)) {
+            //- **Recipient Response Text**: I cannot be friends with a vampire.
+            reactions.Add("I cannot be friends with a vampire.");
+            //- **Recipient Effect**: Recipient and actor will no longer be friends
+            CharacterManager.Instance.RemoveRelationshipBetween(recipient, actor, RELATIONSHIP_TRAIT.FRIEND);
+        }
+        //Recipient and Actor are from a different faction and are enemies:
+        else if (recipient.faction != actor.faction && recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.FRIEND)) {
+            //- **Recipient Response Text**: I knew there was something unnatural about [Actor Name]!
+            reactions.Add(string.Format("I knew there was something unnatural about {0}!", actor.name));
+            //- **Recipient Effect**: no effect
+        }
+        return reactions;
+    }
+    #endregion
 }
