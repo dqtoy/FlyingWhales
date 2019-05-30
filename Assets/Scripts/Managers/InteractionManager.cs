@@ -261,6 +261,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.BREAK_UP:
                 goapAction = new BreakUp(actor, target);
                 break;
+            case INTERACTION_TYPE.SHARE_INFORMATION:
+                goapAction = new ShareInformation(actor, target);
+                break;
         }
         if(goapAction != null && willInitialize) {
             goapAction.Initialize();

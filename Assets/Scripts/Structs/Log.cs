@@ -31,7 +31,10 @@ public class Log {
     public string logText { get; private set; }
 
     //Memory data
-    public GoapAction goapAction { get; private set; }
+    private GoapAction _goapAction;
+    public GoapAction goapAction {
+        get { return GetGoapActionAssociatedWithThisLog(); }
+    }
 
     public Log(int month, int day, int year, int tick, string category, string file, string key, GoapAction goapAction = null){
         this.id = Utilities.SetID<Log>(this);
@@ -42,7 +45,7 @@ public class Log {
         this.category = category;
 		this.file = file;
 		this.key = key;
-        this.goapAction = goapAction;
+        this._goapAction = goapAction;
 		this.fillers = new List<LogFiller>();
         this.lockFillers = false;
         logText = string.Empty;
@@ -57,7 +60,7 @@ public class Log {
         this.category = category;
         this.file = file;
         this.key = key;
-        this.goapAction = goapAction;
+        this._goapAction = goapAction;
         this.fillers = new List<LogFiller>();
         this.lockFillers = false;
         logText = string.Empty;
@@ -132,6 +135,12 @@ public class Log {
             }
         }
         return false;
+    }
+    private GoapAction GetGoapActionAssociatedWithThisLog() {
+        if(_goapAction != null && _goapAction.goapType == INTERACTION_TYPE.SHARE_INFORMATION) {
+            return (_goapAction as ShareInformation).eventToBeShared;
+        }
+        return _goapAction;
     }
 
     #region Utilities

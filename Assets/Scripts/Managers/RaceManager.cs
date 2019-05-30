@@ -117,6 +117,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.SPREAD_RUMOR_REMOVE_FRIENDSHIP,
                 INTERACTION_TYPE.SPREAD_RUMOR_REMOVE_LOVE,
                 INTERACTION_TYPE.BREAK_UP,
+                INTERACTION_TYPE.SHARE_INFORMATION,
             } },
             { RACE.ELVES, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -196,6 +197,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.SPREAD_RUMOR_REMOVE_FRIENDSHIP,
                 INTERACTION_TYPE.SPREAD_RUMOR_REMOVE_LOVE,
                 INTERACTION_TYPE.BREAK_UP,
+                INTERACTION_TYPE.SHARE_INFORMATION,
             } },
             { RACE.GOBLIN, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -276,6 +278,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.SPREAD_RUMOR_REMOVE_FRIENDSHIP,
                 INTERACTION_TYPE.SPREAD_RUMOR_REMOVE_LOVE,
                 INTERACTION_TYPE.BREAK_UP,
+                INTERACTION_TYPE.SHARE_INFORMATION,
             } },
             { RACE.FAERY, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -356,6 +359,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.SPREAD_RUMOR_REMOVE_FRIENDSHIP,
                 INTERACTION_TYPE.SPREAD_RUMOR_REMOVE_LOVE,
                 INTERACTION_TYPE.BREAK_UP,
+                INTERACTION_TYPE.SHARE_INFORMATION,
             } },
             { RACE.SKELETON, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -427,6 +431,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.TANTRUM,
                 INTERACTION_TYPE.EAT_MUSHROOM,
                 INTERACTION_TYPE.BREAK_UP,
+                INTERACTION_TYPE.SHARE_INFORMATION,
             } },
             { RACE.SPIDER, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
