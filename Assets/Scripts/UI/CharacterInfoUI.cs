@@ -191,7 +191,7 @@ public class CharacterInfoUI : UIMenu {
         UpdateThoughtBubble();
     }
 
-    private void UpdateThoughtBubble() {
+    public void UpdateThoughtBubble() {
         if (_activeCharacter.isDead) {
             plansLbl.text = _activeCharacter.name + " has died.";
             return;

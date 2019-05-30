@@ -200,6 +200,16 @@ public class CharacterMarker : PooledObject {
                     Debug.Log(characterThatGainedTrait.name + " gained an injured trait. Reacting...");
                     NormalReactToHostileCharacter(trait.responsibleCharacter, CHARACTER_STATE.FLEE);
                 }
+            } else if (trait.name == "Spooked" && characterThatGainedTrait.GetTrait("Unconscious") == null) {
+                gainTraitSummary += "\nGained trait is spooked, character will flee is there are characters in vision";
+                if (inVisionPOIs.Count > 0) {
+                    for (int i = 0; i < inVisionPOIs.Count; i++) {
+                        if(inVisionPOIs[i] is Character) {
+                            NormalReactToHostileCharacter(inVisionPOIs[i] as Character, CHARACTER_STATE.FLEE);
+                            break;
+                        }
+                    }
+                }
             }
             UpdateAnimation();
             UpdateActionIcon();
@@ -963,6 +973,9 @@ public class CharacterMarker : PooledObject {
                     character.stateComponent.SwitchToState(CHARACTER_STATE.FLEE, otherCharacter);
                     summary += "\n" + character.name + " chose to flee.";
                 //}
+            } else if (character.GetTrait("Spooked") != null) {
+                character.stateComponent.SwitchToState(CHARACTER_STATE.FLEE, otherCharacter);
+                summary += "\n" + character.name + " is spooked. Chose to flee.";
             } else if (character.role.roleType == CHARACTER_ROLE.BEAST || character.role.roleType == CHARACTER_ROLE.ADVENTURER
                 || character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.BANDIT) {
                 //- Uninjured Beasts, Adventurers and Soldiers will enter Engage mode.

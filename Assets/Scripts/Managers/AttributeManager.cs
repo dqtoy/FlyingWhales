@@ -99,6 +99,9 @@ public class AttributeManager : MonoBehaviour {
             new Thief(),
             new Unconscious(),
             new Betrayed(),
+            new Zapped(),
+            new Spooked(),
+            new Jolted(),
         };
         for (int i = 0; i < specialTraits.Length; i++) {
             CategorizeTrait(specialTraits[i]);
