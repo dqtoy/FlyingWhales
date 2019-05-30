@@ -47,7 +47,7 @@ public class GoapAction {
     public GoapActionState endedAtState { get; private set; } //the state this action ended at
     public GoapPlan parentPlan { get; private set; }
     public bool isStopped { get; private set; }
-    public bool isPerformingActualAction { get; private set; }
+    public bool isPerformingActualAction { get; protected set; }
     public bool isDone { get; private set; }
     public ACTION_LOCATION_TYPE actionLocationType { get; protected set; } //This is set in every action's constructor
     public bool showIntelNotification { get; protected set; } //should this action show a notification when it is done by its actor or when it recieves a plan with this action as it's end node?
