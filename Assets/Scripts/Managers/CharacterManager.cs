@@ -868,7 +868,7 @@ public class CharacterManager : MonoBehaviour {
                                 //            //- character is from same faction: Weight x3
                                 //            weight *= 3;
                                 //        }
-                                        
+
                                 //        if (existingRelsOfCurrentCharacter != null) {
                                 //            if (existingRelsOfCurrentCharacter.Contains(RELATIONSHIP_TRAIT.RELATIVE)) {
                                 //                //- character is a relative: Weight x0.1
@@ -978,6 +978,10 @@ public class CharacterManager : MonoBehaviour {
         RelationshipDegradation(actor.currentAlterEgo, target, cause);
     }
     public void RelationshipDegradation(AlterEgoData actorAlterEgo, Character target, GoapAction cause = null) {
+        if (actorAlterEgo.owner == target) {
+            Debug.LogWarning("Relationship degredation was called and provided same characters " + target.name);
+            return;
+        }
         string summary = "Relationship degradation between " + actorAlterEgo.owner.name + " and " + target.name;
         if (cause != null && cause.IsFromApprehendJob()) {
             //If this has been triggered by an Action's End Result that is part of an Apprehend Job, skip processing.
@@ -988,7 +992,7 @@ public class CharacterManager : MonoBehaviour {
         Log log = null;
         //If Actor and Target are Lovers, 20% chance to remove Lover relationship. If so, Target now considers Actor an Enemy.
         if (target.HasRelationshipOfTypeWith(actorAlterEgo, RELATIONSHIP_TRAIT.LOVER)) {
-            summary += "\n" + actorAlterEgo.name + " and " + target.name + " are  lovers. Rolling for chance to remove lovers and consider as enemy...";
+            summary += "\n" + actorAlterEgo.owner.name + " and " + target.name + " are  lovers. Rolling for chance to remove lovers and consider as enemy...";
             int roll = UnityEngine.Random.Range(0, 100);
             summary += "\nRoll is " + roll.ToString();
             if (roll < 20) {
@@ -1000,7 +1004,7 @@ public class CharacterManager : MonoBehaviour {
         }
         //If Actor and Target are Paramours, 20 % chance to remove Paramour relationship. If so, Target now considers Actor an Enemy.
         if (target.HasRelationshipOfTypeWith(actorAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR)) {
-            summary += "\n" + actorAlterEgo.name + " and " + target.name + " are  paramours. Rolling for chance to remove paramour and consider as enemy...";
+            summary += "\n" + actorAlterEgo.owner.name + " and " + target.name + " are  paramours. Rolling for chance to remove paramour and consider as enemy...";
             int roll = UnityEngine.Random.Range(0, 100);
             summary += "\nRoll is " + roll.ToString();
             if (roll < 20) {
@@ -1027,7 +1031,7 @@ public class CharacterManager : MonoBehaviour {
         Debug.Log(summary);
         if (log != null) {
             log.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            log.AddToFillers(actorAlterEgo, actorAlterEgo.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            log.AddToFillers(actorAlterEgo.owner, actorAlterEgo.owner.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             PlayerManager.Instance.player.ShowNotificationFrom(log, target, actorAlterEgo.owner);
         }
 

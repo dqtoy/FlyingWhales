@@ -145,7 +145,8 @@ public class GoapThread : Multithread {
         List<INTERACTION_TYPE> actorAllowedActions = RaceManager.Instance.GetNPCInteractionsOfRace(actor);
         List<GoapAction> usableActions = new List<GoapAction>();
         //Dictionary<POINT_OF_INTEREST_TYPE, List<IAwareness>> orderedAwareness = actor.OrderAwarenessByStructure();
-        foreach (KeyValuePair<POINT_OF_INTEREST_TYPE, List<IAwareness>> kvp in actor.awareness) {
+        Dictionary<POINT_OF_INTEREST_TYPE, List<IAwareness>> awareness = new Dictionary<POINT_OF_INTEREST_TYPE, List<IAwareness>>(actor.awareness);
+        foreach (KeyValuePair<POINT_OF_INTEREST_TYPE, List<IAwareness>> kvp in awareness) {
             if (kvp.Key == POINT_OF_INTEREST_TYPE.CHARACTER) {
                 for (int i = 0; i < kvp.Value.Count; i++) {
                     Character character = kvp.Value[i].poi as Character;

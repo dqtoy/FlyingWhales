@@ -6,6 +6,7 @@ public class ReportCrime : GoapAction {
 
     private CRIME crime;
     private AlterEgoData criminal;
+    private GoapAction crimeAction;
 
     public ReportCrime(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.REPORT_CRIME, INTERACTION_ALIGNMENT.GOOD, actor, poiTarget) {
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
@@ -18,9 +19,10 @@ public class ReportCrime : GoapAction {
         };
     }
 
-    public void SetCrimeToReport(CRIME crime, AlterEgoData criminal) {
+    public void SetCrimeToReport(CRIME crime, AlterEgoData criminal, GoapAction crimeAction) {
         this.crime = crime;
         this.criminal = criminal;
+        this.crimeAction = crimeAction;
     }
 
     #region Overrides
@@ -39,11 +41,11 @@ public class ReportCrime : GoapAction {
         return 3;
     }
     public override bool InitializeOtherData(object[] otherData) {
-        if (otherData.Length == 2 && otherData[0] is CRIME && otherData[1] is Character) {
+        if (otherData.Length == 3 && otherData[0] is CRIME && otherData[1] is AlterEgoData && otherData[2] is GoapAction) {
             //GoapAction crime = otherData[0] as GoapAction;
-            SetCrimeToReport((CRIME)otherData[0], otherData[1] as AlterEgoData);
+            SetCrimeToReport((CRIME)otherData[0], otherData[1] as AlterEgoData, otherData[2] as GoapAction);
             if (thoughtBubbleMovingLog != null) {
-                thoughtBubbleMovingLog.AddToFillers(criminal, criminal.name, LOG_IDENTIFIER.CHARACTER_3);
+                thoughtBubbleMovingLog.AddToFillers(criminal.owner, criminal.owner.name, LOG_IDENTIFIER.CHARACTER_3);
             }
             return true;
         }
@@ -56,8 +58,15 @@ public class ReportCrime : GoapAction {
         //**Effect 1**: The reported criminal will gain the associated Crime trait
         criminal.owner.AddCriminalTrait(crime);
         currentState.AddLogFiller(criminal, criminal.name, LOG_IDENTIFIER.CHARACTER_3);
+        Character target = poiTarget as Character;
 
-        (poiTarget as Character).ReactToCrime(crime, criminal);
+        //**Effect 2**: Share event related to the Crime to the Target's memories
+        if (crimeAction != null) {
+            target.CreateInformedEventLog(crimeAction);
+        }
+        target.ReactToCrime(crime, criminal);
+
+        
     }
     #endregion
 

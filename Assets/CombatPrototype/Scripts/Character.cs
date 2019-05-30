@@ -1793,6 +1793,11 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return null;
     }
+    public GoapPlanJob CreateBreakupJob(Character targetCharacter) {
+        GoapPlanJob job = new GoapPlanJob("Break Up with " + targetCharacter.name, INTERACTION_TYPE.BREAK_UP, targetCharacter);
+        jobQueue.AddJobInQueue(job);
+        return job;
+    }
     public void CancelAllJobsAndPlans() {
         AdjustIsWaitingForInteraction(1);
         for (int i = 0; i < jobQueue.jobsInQueue.Count; i++) {
@@ -2775,6 +2780,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (eventToBeInformed.actor != this && eventToBeInformed.poiTarget != this) {
             Character target = eventToBeInformed.poiTarget as Character;
             if (eventToBeInformed.goapType == INTERACTION_TYPE.MAKE_LOVE) {
+                target = (eventToBeInformed as MakeLove).targetCharacter;
                 if (HasRelationshipOfTypeWith(eventToBeInformed.actor, RELATIONSHIP_TRAIT.LOVER) || HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.LOVER)) {
                     Betrayed betrayed = new Betrayed();
                     AddTrait(betrayed);
@@ -3581,6 +3587,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             AdjustMoodValue(-15, trait.gainedFromDoing);
         } else if (trait.name == "Lethargic") {
             AdjustMoodValue(-20, trait.gainedFromDoing);
+        } else if (trait.name == "Heartbroken") {
+            AdjustMoodValue(-35, trait.gainedFromDoing);
         }
         //else if (trait.name == "Hungry") {
         //    CreateFeedJob();
@@ -5528,6 +5536,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         poiGoapActions.Add(INTERACTION_TYPE.TANTRUM);
         poiGoapActions.Add(INTERACTION_TYPE.SPREAD_RUMOR_REMOVE_FRIENDSHIP);
         poiGoapActions.Add(INTERACTION_TYPE.SPREAD_RUMOR_REMOVE_LOVE);
+        poiGoapActions.Add(INTERACTION_TYPE.BREAK_UP);
     }
     public void StartGOAP(GoapEffect goal, IPointOfInterest target, GOAP_CATEGORY category, bool isPriority = false, List<Character> otherCharactePOIs = null, bool isPersonalPlan = true, GoapPlanJob job = null, Dictionary<INTERACTION_TYPE, object[]> otherData = null, bool allowDeadTargets = false) {
         List<CharacterAwareness> characterTargetsAwareness = new List<CharacterAwareness>();
@@ -6299,7 +6308,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     /// <param name="committedCrime">The type of crime that was committed.</param>
     /// <param name="criminal">The character that committed the crime</param>
     /// <param name="witnessedCrime">The crime witnessed by this character, if this is null, character was only informed of the crime by someone else.</param>
-    public void ReactToCrime(CRIME committedCrime, AlterEgoData criminal, GoapAction witnessedCrime = null) {
+    /// <param name="informedCrime">The crime this character was informed of. NOTE: Should only have value if Share Intel</param>
+    public void ReactToCrime(CRIME committedCrime, AlterEgoData criminal, GoapAction witnessedCrime = null, GoapAction informedCrime = null) {
         //NOTE: Moved this to be per action specific. See GoapAction.IsConsideredACrimeBy and GoapAction.CanReactToThisCrime for necessary mechanics.
         //if (witnessedCrime != null) {
         //    //if the action that should be considered a crime is part of a job from this character's area, do not consider it a crime
@@ -6330,7 +6340,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         //If character has a positive relationship (Friend, Lover, Paramour) with the criminal
         else if (relationshipEfffectWithCriminal == RELATIONSHIP_EFFECT.POSITIVE) {
-            reactSummary += "\n" + this.name + " has a positive relationship with " + criminal.name;
+            reactSummary += "\n" + this.name + " has a positive relationship with " + criminal.owner.name;
             //and crime severity is a Misdemeanor:
             if (category == CRIME_CATEGORY.MISDEMEANOR) {
                 reactSummary += "\nCrime committed is misdemeanor.";
@@ -6346,7 +6356,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 CharacterManager.Instance.RelationshipDegradation(criminal.owner, this, witnessedCrime);
                 witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "witnessed");
                 reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_witnessed");
-                PerRoleCrimeReaction(committedCrime, criminal, witnessedCrime);
+                PerRoleCrimeReaction(committedCrime, criminal, witnessedCrime, informedCrime);
             }
         }
         //If character has no relationships with the criminal or they are enemies and the crime is a Misdemeanor or worse:
@@ -6358,20 +6368,20 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             //- Witness Log: "[Character Name] saw [Criminal Name] committing [Theft/Assault/Murder]!"
             witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "witnessed");
             reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_witnessed");
-            PerRoleCrimeReaction(committedCrime, criminal, witnessedCrime);
+            PerRoleCrimeReaction(committedCrime, criminal, witnessedCrime, informedCrime);
         }
 
         if (witnessedCrime != null) {
             if (witnessLog != null) {
                 witnessLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                witnessLog.AddToFillers(criminal, criminal.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                witnessLog.AddToFillers(criminal.owner, criminal.owner.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 witnessLog.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(committedCrime.ToString()), LOG_IDENTIFIER.STRING_1);
                 PlayerManager.Instance.player.ShowNotificationFrom(this, witnessLog);
             }
         } else {
             if (reportLog != null) {
                 reportLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                reportLog.AddToFillers(criminal, criminal.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                reportLog.AddToFillers(criminal.owner, criminal.owner.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 reportLog.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(committedCrime.ToString()), LOG_IDENTIFIER.STRING_1);
                 PlayerManager.Instance.player.ShowNotificationFrom(this, reportLog);
             }
@@ -6385,7 +6395,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     /// <param name="committedCrime">The type of crime that was committed.</param>
     /// <param name="criminal">The character that committed the crime</param>
     /// <param name="witnessedCrime">The crime witnessed by this character, if this is null, character was only informed of the crime by someone else.</param>
-    private void PerRoleCrimeReaction(CRIME committedCrime, AlterEgoData criminal, GoapAction witnessedCrime = null) {
+    /// <param name="informedCrime">The crime this character was informed of. NOTE: Should only have value if Share Intel</param>
+    private void PerRoleCrimeReaction(CRIME committedCrime, AlterEgoData criminal, GoapAction witnessedCrime = null, GoapAction informedCrime = null) {
         GoapPlanJob job = null;
         switch (role.roleType) {
             case CHARACTER_ROLE.CIVILIAN:
@@ -6393,11 +6404,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 //- If the character is a Civilian or Adventurer, he will enter Flee mode (fleeing the criminal) and will create a Report Crime Job Type in his personal job queue
                 if (this.faction != FactionManager.Instance.neutralFaction && criminal.faction == this.faction) {
                     //only make character flee, if he/she actually witnessed the crime (not share intel)
+                    GoapAction crimeToReport = informedCrime;
                     if (witnessedCrime != null) {
+                        crimeToReport = witnessedCrime;
                         this.marker.AddHostileInRange(criminal.owner, CHARACTER_STATE.FLEE);
                     }
                     job = new GoapPlanJob("Report Crime", INTERACTION_TYPE.REPORT_CRIME, new Dictionary<INTERACTION_TYPE, object[]>() {
-                        { INTERACTION_TYPE.REPORT_CRIME,  new object[] { committedCrime, criminal }}
+                        { INTERACTION_TYPE.REPORT_CRIME,  new object[] { committedCrime, criminal, crimeToReport }}
                     });
                     job.SetCannotOverrideJob(true);
                     jobQueue.AddJobInQueue(job, true);

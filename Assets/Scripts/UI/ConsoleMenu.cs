@@ -54,6 +54,7 @@ public class ConsoleMenu : UIMenu {
             {"/t_freeze_char", ToggleFreezeCharacter },
             {"/set_mood", SetMoodToCharacter },
             {"/log_awareness", LogAwareness },
+            {"/add_rel", AddRelationship },
         };
 
 #if UNITY_EDITOR
@@ -749,6 +750,31 @@ public class ConsoleMenu : UIMenu {
 
         character.LogAwarenessList();
         //AddSuccessMessage("Set Mood Value of " + character.name + " to " + moodValue);
+    }
+    private void AddRelationship(string[] parameters) {
+        if (parameters.Length != 3) { //parameters: RELATIONSHIP_TRAIT, Character, Character
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of AddRelationship");
+            return;
+        }
+        string typeParameterString = parameters[0];
+        RELATIONSHIP_TRAIT rel;
+        if (!Enum.TryParse<RELATIONSHIP_TRAIT>(typeParameterString, out rel)) {
+            AddErrorMessage("There is no relationship of type " + typeParameterString);
+        }
+        string character1ParameterString = parameters[1];
+        string character2ParameterString = parameters[2];
+
+        Character character1 = CharacterManager.Instance.GetCharacterByName(character1ParameterString);
+        if (character1 == null) {
+            AddErrorMessage("There is no character with name " + character1ParameterString);
+        }
+        Character character2 = CharacterManager.Instance.GetCharacterByName(character2ParameterString);
+        if (character2 == null) {
+            AddErrorMessage("There is no character with name " + character2ParameterString);
+        }
+        CharacterManager.Instance.CreateNewRelationshipBetween(character1, character2, rel);
+        AddSuccessMessage(character1.name + " and " + character2.name + " now have relationship " + rel.ToString());
     }
     #endregion
 
