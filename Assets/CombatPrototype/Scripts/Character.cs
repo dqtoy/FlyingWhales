@@ -455,11 +455,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     //returns all traits, including relationships from this character's current alter ego
     public List<Trait> allTraits {
         get {
-            List<Trait> combined = new List<Trait>(_normalTraits);
-            for (int i = 0; i < relationships.Values.Count; i++) {
-                combined.AddRange(relationships.Values.ElementAt(i).rels);
-            }
-            return combined;
+            return GetAllTraits();
         }
     }
     public List<Trait> normalTraits {
@@ -3863,6 +3859,15 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public void RemoveTraitNeededToBeRemoved(Trait trait) {
         traitsNeededToBeRemoved.Remove(trait);
+    }
+    private List<Trait> GetAllTraits() {
+        //NOTE: Need to optimize this.
+        List<Trait> combined = new List<Trait>();
+        combined.AddRange(_normalTraits);
+        for (int i = 0; i < relationships.Values.Count; i++) {
+            combined.AddRange(relationships.Values.ElementAt(i).rels);
+        }
+        return combined;
     }
     #endregion
 
