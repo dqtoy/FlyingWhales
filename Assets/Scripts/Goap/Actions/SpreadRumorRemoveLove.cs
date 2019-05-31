@@ -35,29 +35,9 @@ public class SpreadRumorRemoveLove : GoapAction {
         return 15;
     }
     public override bool InitializeOtherData(object[] otherData) {
-        if (otherData.Length == 1 && otherData[0] is Character) {
+        if (otherData.Length == 2 && otherData[0] is Character && otherData[1] is List<Log>) {
             rumoredCharacter = otherData[0] as Character;
-            int dayTo = GameManager.days;
-            int dayFrom = dayTo - 3;
-            if (dayFrom < 1) {
-                dayFrom = 1;
-            }
-            List<Log> memories = actor.GetWitnessOrInformedMemories(dayFrom, dayTo);
-            affairMemoriesInvolvingRumoredCharacter = new List<Log>();
-            for (int i = 0; i < memories.Count; i++) {
-                Log memory = memories[i];
-                if (memory.goapAction.actor == rumoredCharacter && !memory.goapAction.IsTarget(poiTarget)) {
-                    //if the event means Character 2 flirted, asked to make love or made love with another character other than Target, include it
-                    if (memory.goapAction.goapType == INTERACTION_TYPE.CHAT_CHARACTER) {
-                        ChatCharacter chatAction = memory.goapAction as ChatCharacter;
-                        if (chatAction.chatResult == "flirt") {
-                            affairMemoriesInvolvingRumoredCharacter.Add(memory);
-                        }
-                    } else if (memory.goapAction.goapType == INTERACTION_TYPE.INVITE_TO_MAKE_LOVE || memory.goapAction.goapType == INTERACTION_TYPE.MAKE_LOVE) {
-                        affairMemoriesInvolvingRumoredCharacter.Add(memory);
-                    }
-                }
-            }
+            affairMemoriesInvolvingRumoredCharacter = otherData[1] as List<Log>;
             preconditions.Clear();
             expectedEffects.Clear();
             ConstructPreconditionsAndEffects();

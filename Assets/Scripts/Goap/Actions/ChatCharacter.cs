@@ -190,6 +190,9 @@ public class ChatCharacter : GoapAction {
     #endregion
 
     #region State Effects
+    private void AfterQuickChat() {
+        currentState.SetIntelReaction(QuickChatIntelReaction);
+    }
     private void AfterFlirt() {
         currentState.SetIntelReaction(FlirtIntelReaction);
     }
@@ -362,6 +365,37 @@ public class ChatCharacter : GoapAction {
         else {
             //- **Recipient Response Text**: I don't care what those two do with their personal lives.
             reactions.Add("I don't care what those two do with their personal lives.");
+            //- **Recipient Effect**: no effect
+        }
+        return reactions;
+    }
+
+    private List<string> QuickChatIntelReaction(Character recipient, Intel sharedIntel) {
+        List<string> reactions = new List<string>();
+        Character target = poiTarget as Character;
+
+        //Recipient and Actor is the same or Recipient and Target is the same:
+        if (recipient == actor || recipient == target) {
+            //- **Recipient Response Text**: I know what I did.
+            reactions.Add("I know what I did.");
+            //-**Recipient Effect * *: no effect
+        }
+        //Recipient considers Actor as enemy:
+        else if (recipient.HasRelationshipOfTypeWith(actor, false, RELATIONSHIP_TRAIT.ENEMY)) {
+            //- **Recipient Response Text**: Is [Actor Name] talking trash about me again?
+            reactions.Add(string.Format("Is {0} talking trash about me again?", actor.name));
+            //- **Recipient Effect**: no effect
+        }
+        //Recipient considers Target as enemy:
+        else if (recipient.HasRelationshipOfTypeWith(target, false, RELATIONSHIP_TRAIT.ENEMY)) {
+            //- **Recipient Response Text**: Is [Target Name] talking trash about me again?
+            reactions.Add(string.Format("Is {0} talking trash about me again?", target.name));
+            //- **Recipient Effect**: no effect
+        }
+        //Else:
+        else {
+            //- **Recipient Response Text**: This isn't relevant to me.
+            reactions.Add("This isn't relevant to me.");
             //- **Recipient Effect**: no effect
         }
         return reactions;
