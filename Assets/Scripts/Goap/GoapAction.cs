@@ -612,7 +612,7 @@ public class GoapAction {
 
     #region Trait Utilities
     protected bool HasTrait(Character character, string traitName) {
-        return character.GetTrait(traitName) != null;
+        return character.GetNormalTrait(traitName) != null;
     }
     /// <summary>
     /// Helper function to encapsulate adding a trait to a poi and adding actual effect data based on the added trait.

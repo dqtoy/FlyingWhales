@@ -203,14 +203,14 @@ public class LycanthropyData {
     //        this.relationships.Add(new RelationshipLycanthropyData(kvp.Key, kvp.Value, kvp.Key.GetCharacterRelationshipData(character)));
     //    }
     //}
-    public void SetTraits(Character character) {
-        this.traits = new List<Trait>();
-        for (int i = 0; i < character.allTraits.Count; i++) {
-            if(character.allTraits[i].name != "Lycanthropy" && !(character.allTraits[i] is RelationshipTrait)) {
-                this.traits.Add(character.allTraits[i]);
-            }
-        }
-    }
+    //public void SetTraits(Character character) {
+    //    this.traits = new List<Trait>();
+    //    for (int i = 0; i < character.allTraits.Count; i++) {
+    //        if(character.allTraits[i].name != "Lycanthropy" && !(character.allTraits[i] is RelationshipTrait)) {
+    //            this.traits.Add(character.allTraits[i]);
+    //        }
+    //    }
+    //}
 }
 
 //public class RelationshipLycanthropyData {

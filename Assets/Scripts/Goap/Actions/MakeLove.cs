@@ -20,7 +20,7 @@ public class MakeLove : GoapAction {
         if (!isTargetMissing) {
             poiTargetAlterEgo = targetCharacter.currentAlterEgo;
             if (targetCharacter.currentParty == actor.ownParty && !targetCharacter.isStarving && !targetCharacter.isExhausted 
-                && targetCharacter.GetTrait("Annoyed") == null) {
+                && targetCharacter.GetNormalTrait("Annoyed") == null) {
                 SetState("Make Love Success");
             } else {
                 SetState("Make Love Fail");

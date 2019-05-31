@@ -74,7 +74,7 @@ public class DropCharacter : GoapAction {
         if(parentPlan != null && parentPlan.job != null && parentPlan.job.name == "Save Character") {
             RemoveTraitFrom(target, "Restrained");
         } else {
-            Restrained restrainedTrait = target.GetTrait("Restrained") as Restrained;
+            Restrained restrainedTrait = target.GetNormalTrait("Restrained") as Restrained;
             restrainedTrait.SetIsPrisoner(true);
         }
     }
@@ -124,7 +124,7 @@ public class DropCharacter : GoapAction {
             //-**Recipient Effect**: no effect
         }
         //Recipient, Actor and Target are from the same faction and Target has Criminal Trait:
-        if (recipient.faction == actorAlterEgo.faction && recipient.faction == poiTargetAlterEgo.faction && targetCharacter.GetTrait("Criminal") != null) {
+        if (recipient.faction == actorAlterEgo.faction && recipient.faction == poiTargetAlterEgo.faction && targetCharacter.GetNormalTrait("Criminal") != null) {
             //- **Recipient Response Text**: "[Target Name] is a criminal. I cannot do anything for [him/her]."
             reactions.Add(string.Format("{0} is a criminal. I cannot do anything for {1}.", targetCharacter.name, Utilities.GetPronounString(targetCharacter.gender, PRONOUN_TYPE.OBJECTIVE, false)));
             //-**Recipient Effect**: no effect

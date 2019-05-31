@@ -20,7 +20,7 @@ public class EatAtTable : GoapAction {
     public override void PerformActualAction() {
         base.PerformActualAction();
         if (!isTargetMissing) {
-            poisonedTrait = poiTarget.GetTrait("Poisoned");
+            poisonedTrait = poiTarget.GetNormalTrait("Poisoned");
             if (poisonedTrait != null) {
                 SetState("Eat Poisoned");
             } else {
@@ -34,7 +34,7 @@ public class EatAtTable : GoapAction {
         LocationGridTile knownLoc = actor.GetAwareness(poiTarget).knownGridLocation;
 
         //if the table is poisoned, check if the actor knows about it, if he/she does, increase cost
-        Poisoned poisoned = poiTarget.GetTrait("Poisoned") as Poisoned;
+        Poisoned poisoned = poiTarget.GetNormalTrait("Poisoned") as Poisoned;
         if (poisoned != null) {
             if (poisoned.awareCharacters.Contains(actor)) {
                 return 50;

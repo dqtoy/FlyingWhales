@@ -1476,7 +1476,7 @@ public class Area {
         }
     }
     private bool CanDoPatrolAndExplore(Character character, JobQueueItem job) {
-        return character.GetTrait("Injured") == null;
+        return character.GetNormalTrait("Injured") == null;
     }
     //private void OnTakeExploreJob(Character character) {
     //    //Explorers should pick up a Tool and a Healing Potion before leaving

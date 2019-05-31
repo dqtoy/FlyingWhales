@@ -10,7 +10,7 @@ public class Master : RelationshipTrait {
     public Master(Character target) : base (target){
         name = "Master";
         description = "This character is a servant of " + targetCharacter.name;
-        type = TRAIT_TYPE.STATUS;
+        type = TRAIT_TYPE.RELATIONSHIP;
         effect = TRAIT_EFFECT.POSITIVE;
         relType = RELATIONSHIP_TRAIT.MASTER;
         associatedInteraction = INTERACTION_TYPE.NONE;

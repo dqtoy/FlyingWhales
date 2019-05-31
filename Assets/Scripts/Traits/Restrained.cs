@@ -66,9 +66,9 @@ public class Restrained : Trait {
 
     private void CheckRestrainTrait() {
         if (isPrisoner && _sourceCharacter.IsInOwnParty()) {
-            if(_sourceCharacter.GetTrait("Hungry") != null) {
+            if(_sourceCharacter.GetNormalTrait("Hungry") != null) {
                 CreateFeedJob();
-            }else if (_sourceCharacter.GetTrait("Starving") != null) {
+            }else if (_sourceCharacter.GetNormalTrait("Starving") != null) {
                 MoveFeedJobToTopPriority();
             }
         }

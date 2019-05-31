@@ -15,7 +15,7 @@ public class RelationshipTrait : Trait {
         targetCharacter = target;
         name = "Relationship";
         description = "This character has a relationship with " + targetCharacter.name;
-        type = TRAIT_TYPE.STATUS;
+        type = TRAIT_TYPE.RELATIONSHIP;
         effect = TRAIT_EFFECT.POSITIVE;
         associatedInteraction = INTERACTION_TYPE.NONE;
         daysDuration = 0;

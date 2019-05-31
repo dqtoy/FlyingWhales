@@ -46,7 +46,7 @@ public class CarryCharacter : GoapAction {
     #region Preconditions
     private bool HasAbductedOrRestrainedTrait() {
         Character target = poiTarget as Character;
-        return target.GetTrait("Restrained") != null;
+        return target.GetNormalTrait("Restrained") != null;
     }
     #endregion
 

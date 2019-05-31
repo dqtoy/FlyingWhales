@@ -12,7 +12,7 @@ public class TileObject : IPointOfInterest {
     public List<INTERACTION_TYPE> poiGoapActions { get; protected set; }
     public Area specificLocation { get { return gridTileLocation.structure.location; } }
     protected List<Trait> _traits;
-    public List<Trait> allTraits {
+    public List<Trait> normalTraits {
         get { return _traits; }
     }
     public List<Character> awareCharacters { get; private set; } //characters that are aware of this object (Used for checking if a ghost trigger should be destroyed)
@@ -184,7 +184,7 @@ public class TileObject : IPointOfInterest {
     }
     public bool AddTrait(Trait trait, Character characterResponsible = null, System.Action onRemoveAction = null, GoapAction gainedFromDoing = null, bool triggerOnAdd = true) {
         if (trait.IsUnique()) {
-            Trait oldTrait = GetTrait(trait.name);
+            Trait oldTrait = GetNormalTrait(trait.name);
             if (oldTrait != null) {
                 oldTrait.SetCharacterResponsibleForTrait(characterResponsible);
                 oldTrait.AddCharacterResponsibleForTrait(characterResponsible);
@@ -221,7 +221,7 @@ public class TileObject : IPointOfInterest {
         return false;
     }
     public bool RemoveTrait(string traitName, bool triggerOnRemove = true) {
-        Trait trait = GetTrait(traitName);
+        Trait trait = GetNormalTrait(traitName);
         if (trait != null) {
             return RemoveTrait(trait, triggerOnRemove);
         }
@@ -243,7 +243,7 @@ public class TileObject : IPointOfInterest {
         }
         return removedTraits;
     }
-    public Trait GetTrait(params string[] traitNames) {
+    public Trait GetNormalTrait(params string[] traitNames) {
         for (int i = 0; i < _traits.Count; i++) {
             Trait trait = _traits[i];
 

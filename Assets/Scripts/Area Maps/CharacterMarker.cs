@@ -193,14 +193,14 @@ public class CharacterMarker : PooledObject {
                     characterThatGainedTrait.stateComponent.currentState.OnExitThisState();
                     gainTraitSummary += "\nGained trait is unconscious, and characters current state is flee, exiting flee state.";
                 }
-            } else if (trait.name == "Injured" && trait.responsibleCharacter != null && characterThatGainedTrait.GetTrait("Unconscious") == null) {
+            } else if (trait.name == "Injured" && trait.responsibleCharacter != null && characterThatGainedTrait.GetNormalTrait("Unconscious") == null) {
                 gainTraitSummary += "\nGained trait is injured, and character that is responsible for injured trait is " + trait.responsibleCharacter.name;
                 if (hostilesInRange.Contains(trait.responsibleCharacter)) {
                     gainTraitSummary += trait.responsibleCharacter.name + " is in hostile range. Forcing flee.";
                     Debug.Log(characterThatGainedTrait.name + " gained an injured trait. Reacting...");
                     NormalReactToHostileCharacter(trait.responsibleCharacter, CHARACTER_STATE.FLEE);
                 }
-            } else if (trait.name == "Spooked" && characterThatGainedTrait.GetTrait("Unconscious") == null) {
+            } else if (trait.name == "Spooked" && characterThatGainedTrait.GetNormalTrait("Unconscious") == null) {
                 gainTraitSummary += "\nGained trait is spooked, character will flee is there are characters in vision";
                 if (inVisionPOIs.Count > 0) {
                     Spooked spooked = trait as Spooked;
@@ -255,7 +255,7 @@ public class CharacterMarker : PooledObject {
                     case "Combat Recovery":
                     case "Unconscious":
                         //after this character loses combat recovery trait or unconscious trait, check if he or she can still react to another character, if yes, react.
-                        if (character.GetTrait("Unconscious") == null && character.GetTrait("Combat Recovery") == null) {
+                        if (character.GetNormalTrait("Unconscious") == null && character.GetNormalTrait("Combat Recovery") == null) {
                             if (hostilesInRange.Count > 0) {
                                 Character nearestHostile = GetNearestValidHostile();
                                 if (nearestHostile != null) {
@@ -993,7 +993,7 @@ public class CharacterMarker : PooledObject {
                 //- Disabled characters will not do anything
                 summary += "\n" + character.name + " will not do anything.";
             } else if (!this.character.IsDoingCombatActionTowards(otherCharacter) && (character.stateComponent.currentState == null || character.stateComponent.currentState.characterState != CHARACTER_STATE.BERSERKED) && (character.stateComponent.previousMajorState == null || character.stateComponent.previousMajorState.characterState != CHARACTER_STATE.BERSERKED)
-                && (character.GetTrait("Injured") != null
+                && (character.GetNormalTrait("Injured") != null
                 || character.role.roleType == CHARACTER_ROLE.CIVILIAN
                 || character.role.roleType == CHARACTER_ROLE.NOBLE || character.role.roleType == CHARACTER_ROLE.LEADER)) {
                 //- Injured characters, Civilians, Nobles and Faction Leaders always enter Flee mode
@@ -1064,7 +1064,7 @@ public class CharacterMarker : PooledObject {
                     }
                     summary += "\n" + character.name + " chose to engage.";
                 }
-            } else if (character.GetTrait("Spooked") != null) {
+            } else if (character.GetNormalTrait("Spooked") != null) {
                 character.stateComponent.SwitchToState(CHARACTER_STATE.FLEE, otherCharacter);
                 summary += "\n" + character.name + " is spooked. Chose to flee.";
             }

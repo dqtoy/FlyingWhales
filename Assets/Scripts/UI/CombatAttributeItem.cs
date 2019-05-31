@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Linq;
 
 public class CombatAttributeItem : MonoBehaviour {
     public TextMeshProUGUI nameText;
@@ -44,12 +45,20 @@ public class CombatAttributeItem : MonoBehaviour {
             string summary = _combatAttribute.nameInUI;
             if (_combatAttribute is RelationshipTrait) {
                 RelationshipTrait t = _combatAttribute as RelationshipTrait;
-                if (UIManager.Instance.characterInfoUI.activeCharacter.HasRelationshipWith(t.targetCharacter, true)) {
-                    CharacterRelationshipData rel = UIManager.Instance.characterInfoUI.activeCharacter.relationships[t.targetCharacter.currentAlterEgo];
-                    summary += "\n" + rel.GetSummary();
-                } else {
-                    summary = string.Empty;
+                for (int i = 0; i < t.targetCharacter.alterEgos.Values.Count; i++) {
+                    AlterEgoData currAlterEgo = t.targetCharacter.alterEgos.Values.ElementAt(i);
+                    if (UIManager.Instance.characterInfoUI.activeCharacter.HasRelationshipWith(currAlterEgo, true)) {
+                        CharacterRelationshipData rel = UIManager.Instance.characterInfoUI.activeCharacter.relationships[currAlterEgo];
+                        summary += "\n" + rel.GetSummary();
+                        break;
+                    }
                 }
+                //if (UIManager.Instance.characterInfoUI.activeCharacter.HasRelationshipWith(t.targetCharacter, true)) {
+                //CharacterRelationshipData rel = UIManager.Instance.characterInfoUI.activeCharacter.relationships[t.targetCharacter.currentAlterEgo];
+                //summary += "\n" + rel.GetSummary();
+                //} else {
+                //    summary = string.Empty;
+                //}
             } else {
                 summary += "\n" + _combatAttribute.GetTestingData();
             }

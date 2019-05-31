@@ -338,6 +338,7 @@ public class CharacterRelationshipData {
         for (int i = 0; i < rels.Count; i++) {
             text += "|" + rels[i].name + "(" + rels[i].severity.ToString() + ")"+ "|";
         }
+        text += "\nAlter Ego: " + targetCharacterAlterEgo.name;
         text += "\n\t<b>Last Encounter:</b> " + lastEncounter.ToString() + " (" + lastEncounterLog + ")";
         text += "\n\t<b>Encounter Multiplier:</b> " + encounterMultiplier.ToString();
         text += "\n\t<b>Is Missing?:</b> " + isCharacterMissing.ToString();

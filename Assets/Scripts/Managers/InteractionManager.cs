@@ -307,7 +307,7 @@ public class InteractionManager : MonoBehaviour {
                 Area currArea = otherAreas[i];
                 for (int j = 0; j < currArea.charactersAtLocation.Count; j++) {
                     Character currCharacter = currArea.charactersAtLocation[j];
-                    Abducted abductedTrait = currCharacter.GetTrait("Abducted") as Abducted;
+                    Abducted abductedTrait = currCharacter.GetNormalTrait("Abducted") as Abducted;
                     if (abductedTrait != null && currArea.owner.id != currCharacter.faction.id) { //check if character is abducted and that the area he/she is in is not owned by their faction
                         if (currCharacter.faction.id == character.faction.id) {
                             return true;

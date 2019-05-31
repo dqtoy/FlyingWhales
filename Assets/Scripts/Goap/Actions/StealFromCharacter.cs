@@ -23,7 +23,7 @@ public class StealFromCharacter : GoapAction {
         _requirementAction = Requirement;
     }
     protected override void ConstructPreconditionsAndEffects() {
-        if (actor.GetTrait("Kleptomaniac") != null) {
+        if (actor.GetNormalTrait("Kleptomaniac") != null) {
             AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
         }
         //AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, targetPOI = actor });
@@ -42,7 +42,7 @@ public class StealFromCharacter : GoapAction {
         }
     }
     protected override int GetCost() {
-        if (actor.GetTrait("Kleptomaniac") != null) {
+        if (actor.GetNormalTrait("Kleptomaniac") != null) {
             return Utilities.rng.Next(5, 46);
         }
         return Utilities.rng.Next(35, 56);
@@ -55,7 +55,7 @@ public class StealFromCharacter : GoapAction {
             return false;
         }
         //exclude characters that the actor knows has no items.
-        Kleptomaniac kleptomaniacTrait = actor.GetTrait("Kleptomaniac") as Kleptomaniac;
+        Kleptomaniac kleptomaniacTrait = actor.GetNormalTrait("Kleptomaniac") as Kleptomaniac;
         if (kleptomaniacTrait != null && kleptomaniacTrait.noItemCharacters.Contains(poiTarget as Character)) {
             return false;
         }
@@ -76,12 +76,12 @@ public class StealFromCharacter : GoapAction {
     }
     private void AfterStealSuccess() {
         actor.ObtainTokenFrom(_targetCharacter, _targetItem, false);
-        if (actor.GetTrait("Kleptomaniac") != null) {
+        if (actor.GetNormalTrait("Kleptomaniac") != null) {
             actor.AdjustHappiness(60);
         }
     }
     private void PreStealFail() {
-        Trait trait = actor.GetTrait("Kleptomaniac");
+        Trait trait = actor.GetNormalTrait("Kleptomaniac");
         if (trait != null) {
             Kleptomaniac kleptomaniac = trait as Kleptomaniac;
             kleptomaniac.AddNoItemCharacter(poiTarget as Character);

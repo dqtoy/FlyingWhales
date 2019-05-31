@@ -135,7 +135,7 @@ public class CharacterStateComponent {
                 SetCurrentState(null);
             } else {
                 if(character.doNotDisturb > 0) {
-                    if(previousMajorState.characterState == CHARACTER_STATE.BERSERKED && character.doNotDisturb == 1 && character.GetTrait("Combat Recovery") != null) { //Quick fix only for build, MUST REDO
+                    if(previousMajorState.characterState == CHARACTER_STATE.BERSERKED && character.doNotDisturb == 1 && character.GetNormalTrait("Combat Recovery") != null) { //Quick fix only for build, MUST REDO
                         if (previousMajorState.hasStarted) {
                             //Resumes previous major state
                             SetCurrentState(previousMajorState);

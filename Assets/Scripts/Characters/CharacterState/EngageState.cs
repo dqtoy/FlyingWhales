@@ -120,10 +120,10 @@ public class EngageState : CharacterState {
         //10 Weight: Gain Injured trait and enter Flee mode (reduce to 0 if already Injured)
         //5 Weight: death
         WeightedDictionary<string> loserResults = new WeightedDictionary<string>();
-        if (loser.GetTrait("Unconscious") == null) {
+        if (loser.GetNormalTrait("Unconscious") == null) {
             loserResults.AddElement("Unconscious", 40);
         }
-        if (loser.GetTrait("Injured") == null) {
+        if (loser.GetNormalTrait("Injured") == null) {
             loserResults.AddElement("Injured", 10);
         }
         loserResults.AddElement("Death", 5);
@@ -155,7 +155,7 @@ public class EngageState : CharacterState {
     }
 
     private bool CanCombatBeTriggeredBetween(Character engagerCharacter, Character targetCharacter) {
-        if (engagerCharacter.GetTrait("Combat Recovery") != null) {
+        if (engagerCharacter.GetNormalTrait("Combat Recovery") != null) {
             return false;
         }
         if (engagerCharacter.stateComponent.currentState.characterState == CHARACTER_STATE.FLEE) {

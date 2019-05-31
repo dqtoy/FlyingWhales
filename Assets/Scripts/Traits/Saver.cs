@@ -12,7 +12,7 @@ public class Saver : RelationshipTrait {
         name = "Saver";
         description = "This character is a Saver of " + targetCharacter.name;
         relType = RELATIONSHIP_TRAIT.SAVER;
-        type = TRAIT_TYPE.STATUS;
+        type = TRAIT_TYPE.RELATIONSHIP;
         effect = TRAIT_EFFECT.NEUTRAL;
         associatedInteraction = INTERACTION_TYPE.NONE;
         daysDuration = 0;

@@ -32,7 +32,7 @@ public class EatAnimal : GoapAction {
         }
     }
     protected override int GetCost() {
-        if (actor.GetTrait("Carnivore") != null) {
+        if (actor.GetNormalTrait("Carnivore") != null) {
             return 25;
         } else {
             return 50;

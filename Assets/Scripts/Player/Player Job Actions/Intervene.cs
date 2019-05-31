@@ -67,7 +67,7 @@ public class Intervene : PlayerJobAction {
         }
     }
     private bool CanInterveneCharacter(string traitName) {
-        if (_targetCharacter.GetTrait(traitName) != null) {
+        if (_targetCharacter.GetNormalTrait(traitName) != null) {
             return false;
         }
         return true;

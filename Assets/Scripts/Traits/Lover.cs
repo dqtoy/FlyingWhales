@@ -11,7 +11,7 @@ public class Lover : RelationshipTrait {
     public Lover(Character target) : base(target){
         name = "Lover";
         description = "This character is a lover of " + targetCharacter.name;
-        type = TRAIT_TYPE.STATUS;
+        type = TRAIT_TYPE.RELATIONSHIP;
         effect = TRAIT_EFFECT.POSITIVE;
         relType = RELATIONSHIP_TRAIT.LOVER;
         associatedInteraction = INTERACTION_TYPE.NONE;

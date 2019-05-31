@@ -21,7 +21,7 @@ public class Steal : GoapAction {
         SpecialToken token = poiTarget as SpecialToken;
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = poiTarget, targetPOI = actor });
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = token.specialTokenType.ToString(), targetPOI = actor });
-        if (actor.GetTrait("Kleptomaniac") != null) {
+        if (actor.GetNormalTrait("Kleptomaniac") != null) {
             AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
         }
         //AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, targetPOI = actor });
@@ -36,7 +36,7 @@ public class Steal : GoapAction {
         }
     }
     protected override int GetCost() {
-        if (actor.GetTrait("Kleptomaniac") != null) {
+        if (actor.GetNormalTrait("Kleptomaniac") != null) {
             return Utilities.rng.Next(5, 46);
         }
         return Utilities.rng.Next(35, 56);
@@ -78,7 +78,7 @@ public class Steal : GoapAction {
     }
     private void AfterStealSuccess() {
         actor.PickUpToken(poiTarget as SpecialToken, false);
-        if (actor.GetTrait("Kleptomaniac") != null) {
+        if (actor.GetNormalTrait("Kleptomaniac") != null) {
             actor.AdjustHappiness(75);
         }
     }
