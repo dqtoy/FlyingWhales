@@ -5,15 +5,11 @@ using UnityEngine;
 
 public class Tantrum : GoapAction {
 
-    private GoapAction reason;
+    private string reason;
 
     public Tantrum(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.TANTRUM, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         //shouldIntelNotificationOnlyIfActorIsActive = true;
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
-        validTimeOfDays = new TIME_IN_WORDS[] {
-            TIME_IN_WORDS.MORNING,
-            TIME_IN_WORDS.AFTERNOON,
-        };
         actionIconString = GoapActionStateDB.Hostile_Icon;
         //isNotificationAnIntel = false;
     }
@@ -47,8 +43,8 @@ public class Tantrum : GoapAction {
         actor.stateComponent.SwitchToState(CHARACTER_STATE.BERSERKED, null, actor.specificLocation, GameManager.Instance.GetTicksBasedOnHour(2));
     }
     public override bool InitializeOtherData(object[] otherData) {
-        if (otherData.Length == 1 && otherData[0] is GoapAction) {
-            reason = otherData[0] as GoapAction;
+        if (otherData.Length == 1 && otherData[0] is string) {
+            reason = otherData[0] as string;
         }
         return base.InitializeOtherData(otherData);
     }
@@ -56,7 +52,7 @@ public class Tantrum : GoapAction {
 
     #region Effects
     private void PreTantrumSuccess() {
-        currentState.AddLogFiller(null, reason?.goapName ?? "None", LOG_IDENTIFIER.STRING_1);
+        currentState.AddLogFiller(null, reason, LOG_IDENTIFIER.STRING_1);
     }
     #endregion
 
