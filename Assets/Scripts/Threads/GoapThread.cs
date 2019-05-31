@@ -377,11 +377,12 @@ public class GoapThread : Multithread {
         }
     }
     private void RecalculatePlan() {
+        if (recalculationPlan.isEnd) {
+            log = "-----------------RECALCULATING PLAN OF " + actor.name;
+            log += "\nPlan has already ended! Cannot recalculate!";
+            return;
+        }
         log = "-----------------RECALCULATING PLAN OF " + actor.name + " WITH TARGET " + recalculationPlan.target.name + " (" + actor.specificLocation.name + ")-----------------------";
-        //if (recalculationPlan.isEnd) {
-        //    log += "\nPlan has already ended! Cannot recalculate!";
-        //    return;
-        //}
         log += "\nGOAL ACTION: " + recalculationPlan.endNode.action.goapName + " - " + recalculationPlan.endNode.action.poiTarget.name;
         List<GoapAction> usableActions = new List<GoapAction>();
         List<INTERACTION_TYPE> actorAllowedActions = RaceManager.Instance.GetNPCInteractionsOfRace(actor);
