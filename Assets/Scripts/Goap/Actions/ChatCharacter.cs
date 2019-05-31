@@ -38,22 +38,22 @@ public class ChatCharacter : GoapAction {
         if (relData == null) {
             int weight = 0;
             if (thisCharacterMood == CHARACTER_MOOD.DARK) {
-                weight += -50;
+                weight += -30;
             } else if (thisCharacterMood == CHARACTER_MOOD.BAD) {
-                weight += -20;
+                weight += -10;
             } else if (thisCharacterMood == CHARACTER_MOOD.GOOD) {
-                weight += 20;
+                weight += 10;
             } else if (thisCharacterMood == CHARACTER_MOOD.GREAT) {
-                weight += 50;
+                weight += 30;
             }
             if (targetCharacterMood == CHARACTER_MOOD.DARK) {
-                weight += -50;
+                weight += -30;
             } else if (targetCharacterMood == CHARACTER_MOOD.BAD) {
-                weight += -20;
+                weight += -10;
             } else if (targetCharacterMood == CHARACTER_MOOD.GOOD) {
-                weight += 20;
+                weight += 10;
             } else if (targetCharacterMood == CHARACTER_MOOD.GREAT) {
-                weight += 50;
+                weight += 30;
             }
             if (weight > 0) {
                 weights.AddElement("Become Friends", weight);
@@ -64,22 +64,22 @@ public class ChatCharacter : GoapAction {
             if (relTraits.Count == 1 && relTraits[0] is Relative) {
                 int weight = 0;
                 if (thisCharacterMood == CHARACTER_MOOD.DARK) {
-                    weight += 50;
+                    weight += 30;
                 } else if (thisCharacterMood == CHARACTER_MOOD.BAD) {
-                    weight += 20;
+                    weight += 10;
                 } else if (thisCharacterMood == CHARACTER_MOOD.GOOD) {
-                    weight += -20;
+                    weight += -10;
                 } else if (thisCharacterMood == CHARACTER_MOOD.GREAT) {
-                    weight += -50;
+                    weight += -30;
                 }
                 if (targetCharacterMood == CHARACTER_MOOD.DARK) {
-                    weight += 50;
+                    weight += 30;
                 } else if (targetCharacterMood == CHARACTER_MOOD.BAD) {
-                    weight += 20;
+                    weight += 10;
                 } else if (targetCharacterMood == CHARACTER_MOOD.GOOD) {
-                    weight += -20;
+                    weight += -10;
                 } else if (targetCharacterMood == CHARACTER_MOOD.GREAT) {
-                    weight += -50;
+                    weight += -30;
                 }
                 if (weight > 0) {
                     weights.AddElement("Become Enemies", weight);
