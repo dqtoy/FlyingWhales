@@ -220,7 +220,7 @@ public class ChatCharacter : GoapAction {
             reactions.Add(string.Format("{0} is a cur!", actor.name));
             //- **Recipient Effect**: Add Annoyed trait to Recipient. Recipient will have https://trello.com/c/mqor1Ddv/1884-relationship-degradation with Actor.
             AddTraitTo(recipient, "Annoyed", actor);
-            CharacterManager.Instance.RelationshipDegradation(recipient, actor, this);
+            CharacterManager.Instance.RelationshipDegradation(actor, recipient, this);
         }
         //Recipient is the lover or paramour of Target and Recipient is not Actor:
         else if (recipient != actor && target.HasRelationshipOfTypeWith(recipient, false, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR)) {
@@ -228,7 +228,7 @@ public class ChatCharacter : GoapAction {
             reactions.Add(string.Format("{0} is a snake!", actor.name));
             //- **Recipient Effect**: Add Annoyed trait to Recipient. Recipient will have https://trello.com/c/mqor1Ddv/1884-relationship-degradation with Actor.
             AddTraitTo(recipient, "Annoyed", actor);
-            CharacterManager.Instance.RelationshipDegradation(recipient, actor, this);
+            CharacterManager.Instance.RelationshipDegradation(actor, recipient, this);
         }
         //Actor has a Lover. Actor's Lover is not the Target. Recipient does not have a positive relationship with Actor. Recipient has a relationship (positive or negative) with Actor's Lover.
         else if (recipient != actor && recipient != target && actorLover != null && actorLover != target
@@ -247,7 +247,7 @@ public class ChatCharacter : GoapAction {
                 recipient.jobQueue.AddJobInQueue(job, true, false);
             }
 
-            CharacterManager.Instance.RelationshipDegradation(recipient, actor, this);
+            CharacterManager.Instance.RelationshipDegradation(actor, recipient, this);
         }
         //Target has a Lover. Target's Lover is not the Actor. Recipient does not have a positive relationship with Target. Recipient has a positive relationship with Target's Lover.
         else if (recipient != actor && recipient != target && targetLover != null && targetLover != actor
@@ -266,14 +266,14 @@ public class ChatCharacter : GoapAction {
                 recipient.jobQueue.AddJobInQueue(job, true, false);
             }
 
-            CharacterManager.Instance.RelationshipDegradation(recipient, actor, this);
+            CharacterManager.Instance.RelationshipDegradation(actor, recipient, this);
         }
         //Recipient and Actor are from the same faction and Actor has a Lover. Actor's Lover is not the Target.
         else if (recipient.faction == actor.faction && actorLover != null && actorLover != target) {
             //- **Recipient Response Text**: [Actor Name] is playing with fire.
             reactions.Add(string.Format("{0} is playing with fire.", actor.name));
             //- **Recipient Effect**: Recipient will have https://trello.com/c/mqor1Ddv/1884-relationship-degradation with Actor.
-            CharacterManager.Instance.RelationshipDegradation(recipient, actor, this);
+            CharacterManager.Instance.RelationshipDegradation(actor, recipient, this);
         }
         //Else Catcher:
         else {
@@ -302,7 +302,7 @@ public class ChatCharacter : GoapAction {
             reactions.Add(string.Format("{0} is cheating on me!?", actor.name));
             //- **Recipient Effect**: https://trello.com/c/mqor1Ddv/1884-relationship-degradation between and Recipient and Target.
             //Add an Undermine Job to Recipient versus Target (choose at random). Add a Breakup Job to Recipient versus Actor.
-            CharacterManager.Instance.RelationshipDegradation(recipient, target, this);
+            CharacterManager.Instance.RelationshipDegradation(target, recipient, this);
             recipient.ForceCreateUndermineJob(target);
             recipient.CreateBreakupJob(actor);
         }
@@ -312,7 +312,7 @@ public class ChatCharacter : GoapAction {
             reactions.Add(string.Format("{0} is cheating on me!?", target.name));
             //- **Recipient Effect**: https://trello.com/c/mqor1Ddv/1884-relationship-degradation between and Recipient and Actor.
             //Add an Undermine Job to Recipient versus Actor (choose at random). Add a Breakup Job to Recipient versus Target.
-            CharacterManager.Instance.RelationshipDegradation(recipient, actor, this);
+            CharacterManager.Instance.RelationshipDegradation(actor, recipient, this);
             recipient.ForceCreateUndermineJob(actor);
             recipient.CreateBreakupJob(target);
         }
@@ -333,7 +333,7 @@ public class ChatCharacter : GoapAction {
                 recipient.jobQueue.AddJobInQueue(job, true, false);
             }
 
-            CharacterManager.Instance.RelationshipDegradation(recipient, actor, this);
+            CharacterManager.Instance.RelationshipDegradation(actor, recipient, this);
         }
         //Target has a Lover. Target's Lover is not the Actor. Recipient does not have a positive relationship with Target. Recipient has a positive relationship with Target's Lover.
         else if (recipient != actor && recipient != target && targetLover != null && targetLover != actor
@@ -352,14 +352,14 @@ public class ChatCharacter : GoapAction {
                 recipient.jobQueue.AddJobInQueue(job, true, false);
             }
 
-            CharacterManager.Instance.RelationshipDegradation(recipient, actor, this);
+            CharacterManager.Instance.RelationshipDegradation(actor, recipient, this);
         }
         //Recipient and Actor are from the same faction and Actor has a Lover. Actor's Lover is not the Target.
         else if (recipient.faction == actor.faction && actorLover != null && actorLover != target) {
             //- **Recipient Response Text**: [Actor Name] is playing with fire.
             reactions.Add(string.Format("{0} is playing with fire.", actor.name));
             //- **Recipient Effect**: Recipient will have https://trello.com/c/mqor1Ddv/1884-relationship-degradation with Actor.
-            CharacterManager.Instance.RelationshipDegradation(recipient, actor, this);
+            CharacterManager.Instance.RelationshipDegradation(actor, recipient, this);
         }
         //Else Catcher:
         else {
