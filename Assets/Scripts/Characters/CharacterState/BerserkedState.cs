@@ -17,6 +17,7 @@ public class BerserkedState : CharacterState {
         stateComponent.character.AdjustDoNotGetHungry(1);
         stateComponent.character.AdjustDoNotGetLonely(1);
         stateComponent.character.AdjustDoNotGetTired(1);
+        stateComponent.character.AddTrait("Berserked");
     }
     protected override void EndState() {
         base.EndState();
@@ -25,6 +26,7 @@ public class BerserkedState : CharacterState {
         stateComponent.character.AdjustDoNotGetTired(-1);
         stateComponent.character.AdjustHappiness(50);
         stateComponent.character.AdjustTiredness(50);
+        stateComponent.character.RemoveTrait("Berserked");
     }
     protected override void DoMovementBehavior() {
         base.DoMovementBehavior();
