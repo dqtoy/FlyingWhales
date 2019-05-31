@@ -64,12 +64,12 @@ public class LocationStructure {
     public void AddCharacterAtLocation(Character character, LocationGridTile tile = null) {
         if (!charactersHere.Contains(character)) {
             charactersHere.Add(character);
-            character.SetCurrentStructureLocation(this);
             //location.AddCharacterToLocation(character);
             AddPOI(character, tile);
         } else {
             //Debug.LogWarning(GameManager.Instance.TodayLogString() + " " + character.name + " can't be added to " + ToString() + " because it is already there!");
         }
+        character.SetCurrentStructureLocation(this);
     }
     public void RemoveCharacterAtLocation(Character character) {
         if (charactersHere.Remove(character)) {

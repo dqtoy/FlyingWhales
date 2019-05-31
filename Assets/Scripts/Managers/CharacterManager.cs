@@ -386,6 +386,21 @@ public class CharacterManager : MonoBehaviour {
             }
         }
     }
+    public void GiveInitialItems() {
+        List<SPECIAL_TOKEN> choices = Utilities.GetEnumValues<SPECIAL_TOKEN>().ToList();
+        choices.Remove(SPECIAL_TOKEN.HEALING_POTION);
+        choices.Remove(SPECIAL_TOKEN.TOOL);
+        for (int i = 0; i < allCharacters.Count; i++) {
+            Character character = allCharacters[i];
+            if (character.minion == null) {
+                if (Random.Range(0, 2) == 0) {
+                    SPECIAL_TOKEN randomItem = choices[UnityEngine.Random.Range(0, choices.Count)];
+                    SpecialToken token = TokenManager.Instance.CreateSpecialToken(randomItem);
+                    character.ObtainToken(token);
+                }
+            }
+        }
+    }
     #endregion
 
     #region Relationships
