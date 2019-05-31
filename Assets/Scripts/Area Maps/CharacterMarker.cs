@@ -220,15 +220,16 @@ public class CharacterMarker : PooledObject {
             Debug.Log(gainTraitSummary);
         } else {
             if (inVisionPOIs.Contains(characterThatGainedTrait)) {
-                this.character.CreateRemoveTraitJobs(characterThatGainedTrait);
-                if (this.character.role.roleType == CHARACTER_ROLE.SOLDIER && this.character.isAtHomeArea && characterThatGainedTrait.isAtHomeArea && !characterThatGainedTrait.isDead) {
-                    if (this.character.GetRelationshipEffectWith(characterThatGainedTrait) != RELATIONSHIP_EFFECT.POSITIVE) {
-                        if (characterThatGainedTrait.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
-                            GoapPlanJob job = this.character.CreateApprehendJobFor(characterThatGainedTrait, true);
-                        }
-                    }
-                }
-                GoapPlanJob restrainJob = this.character.CreateRestrainJob(characterThatGainedTrait);
+                character.CreateJobsOnEnterVisionWith(characterThatGainedTrait);
+                //this.character.CreateRemoveTraitJobs(characterThatGainedTrait);
+                //if (this.character.role.roleType == CHARACTER_ROLE.SOLDIER && this.character.isAtHomeArea && characterThatGainedTrait.isAtHomeArea && !characterThatGainedTrait.isDead) {
+                //    if (this.character.GetRelationshipEffectWith(characterThatGainedTrait) != RELATIONSHIP_EFFECT.POSITIVE) {
+                //        if (characterThatGainedTrait.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
+                //            GoapPlanJob job = this.character.CreateApprehendJobFor(characterThatGainedTrait, true);
+                //        }
+                //    }
+                //}
+                //GoapPlanJob restrainJob = this.character.CreateRestrainJob(characterThatGainedTrait);
             }
             if (trait.name == "Unconscious") {
                 if (hostilesInRange.Contains(characterThatGainedTrait)) {

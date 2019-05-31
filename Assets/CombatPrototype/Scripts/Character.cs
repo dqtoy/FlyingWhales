@@ -1331,6 +1331,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
     }
     public bool CreateJobsOnEnterVisionWith(Character targetCharacter) {
+        if((stateComponent.currentState != null && stateComponent.currentState.characterState == CHARACTER_STATE.BERSERKED) 
+            || (stateComponent.previousMajorState != null && stateComponent.previousMajorState.characterState == CHARACTER_STATE.BERSERKED)) {
+            return false;
+        }
         bool hasCreatedJob = false;
         if (CreateRemoveTraitJobs(targetCharacter)) {
             hasCreatedJob = true;
