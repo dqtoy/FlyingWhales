@@ -135,6 +135,9 @@ public class MakeLove : GoapAction {
             recipient.ForceCreateUndermineJob(target);
             //Add a Breakup Job to Recipient versus Actor.
             recipient.CreateBreakupJob(actor);
+            //Add Heartbroken and Betrayed trait to Recipient.
+            recipient.AddTrait("Betrayed", actor);
+            recipient.AddTrait("Heartbroken", actor);
         }
         //Recipient considers Target as a Lover:
         else if (recipient.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.LOVER)) {
@@ -146,6 +149,9 @@ public class MakeLove : GoapAction {
             recipient.ForceCreateUndermineJob(actor);
             //Add a Breakup Job to Recipient versus Target.
             recipient.CreateBreakupJob(target);
+            //Add Heartbroken and Betrayed trait to Recipient.
+            recipient.AddTrait("Betrayed", actor);
+            recipient.AddTrait("Heartbroken", actor);
         }
         //Recipient considers Actor as a Paramour and Actor and Target are Lovers:
         else if (recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.PARAMOUR) && actor.HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.LOVER)) {

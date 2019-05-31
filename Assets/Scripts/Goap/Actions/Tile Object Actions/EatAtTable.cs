@@ -3,7 +3,7 @@
 public class EatAtTable : GoapAction {
 
     public Trait poisonedTrait { get; private set; }
-
+    private string poisonedResult;
     public EatAtTable(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.EAT_DWELLING_TABLE, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Eat_Icon;
         shouldIntelNotificationOnlyIfActorIsActive = true;
@@ -90,22 +90,35 @@ public class EatAtTable : GoapAction {
         actor.AdjustDoNotGetHungry(-1);
     }
     private void PreEatPoisoned() {
-        currentState.SetShouldAddLogs(false);
+        //currentState.SetShouldAddLogs(false);
         //currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
         actor.AdjustDoNotGetHungry(1);
         RemoveTraitFrom(poiTarget, "Poisoned");
+        Log log = null;
+        int chance = UnityEngine.Random.Range(0, 2);
+        if (chance == 0) {
+            log = new Log(GameManager.Instance.Today(), "GoapAction", "EatAtTable", "eat poisoned_sick", this);
+            log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            log.AddToFillers(poiTarget.gridTileLocation.structure.location, poiTarget.gridTileLocation.structure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
+            poisonedResult = "Sick";
+        } else {
+            log = new Log(GameManager.Instance.Today(), "GoapAction", "EatAtTable", "eat poisoned_killed", this);
+            log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            log.AddToFillers(poiTarget.gridTileLocation.structure.location, poiTarget.gridTileLocation.structure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
+            poisonedResult = "Death";
+        }
+        //log.AddLogToInvolvedObjects();
+        currentState.OverrideDescriptionLog(log);
+        currentState.SetIntelReaction(State2Reactions);
     }
     private void PerTickEatPoisoned() {
         actor.AdjustFullness(18);
     }
+   
     private void AfterEatPoisoned() {
         actor.AdjustDoNotGetHungry(-1);
-        int chance = UnityEngine.Random.Range(0, 2);
-        Log log = null;
-        if(chance == 0) {
-            log = new Log(GameManager.Instance.Today(), "GoapAction", "EatAtTable", "eat poisoned_sick", this);
-            log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            log.AddToFillers(poiTarget.gridTileLocation.structure.location, poiTarget.gridTileLocation.structure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
+        //UIManager.Instance.Pause();
+        if (poisonedResult == "Sick") {
             Sick sick = new Sick();
             for (int i = 0; i < poisonedTrait.responsibleCharacters.Count; i++) {
                 AddTraitTo(actor, sick, poisonedTrait.responsibleCharacters[i]);
@@ -115,16 +128,9 @@ public class EatAtTable : GoapAction {
                 parentPlan.job.SetCannotCancelJob(true);
             }
             SetCannotCancelAction(true);
-            log = new Log(GameManager.Instance.Today(), "GoapAction", "EatAtTable", "eat poisoned_killed", this);
-            log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            log.AddToFillers(poiTarget.gridTileLocation.structure.location, poiTarget.gridTileLocation.structure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
             actor.Death("normal");
             AddActualEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.DEATH, targetPOI = actor });
         }
-        log.AddLogToInvolvedObjects();
-        currentState.OverrideDescriptionLog(log);
-        currentState.SetIntelReaction(State2Reactions);
-        //UIManager.Instance.Pause();
     }
     private void PreTargetMissing() {
         currentState.AddLogFiller(actor.currentStructure.location, actor.currentStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);

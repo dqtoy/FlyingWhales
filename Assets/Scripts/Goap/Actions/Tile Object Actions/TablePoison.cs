@@ -56,6 +56,19 @@ public class TablePoison : GoapAction {
     //}
     public override void OnWitnessedBy(Character witness) {
         base.OnWitnessedBy(witness);
+
+        //Dwelling dwelling = (poiTarget as Table).structureLocation as Dwelling;
+
+        //bool isTableOwner = dwelling.IsResident(witness);
+        //bool hasPositiveRelWithOwner = false;
+        //for (int i = 0; i < dwelling.residents.Count; i++) {
+        //    Character resident = dwelling.residents[i];
+        //    if (witness.HasRelationshipOfEffectWith(resident, TRAIT_EFFECT.POSITIVE, RELATIONSHIP_TRAIT.RELATIVE)) {
+        //        hasPositiveRelWithOwner = true;
+        //        break;
+        //    }
+        //}
+
         //If someone witnesses this, there may be additional things performed aside from Crime Witness handling.
         Character tableOwner = ((poiTarget as Table).structureLocation as Dwelling).owner;
         //If the witness has a positive relationship with the owner of the table, or he is the owner of the table, or they are from the same faction and are not enemies:
@@ -76,15 +89,15 @@ public class TablePoison : GoapAction {
             else if (witness.role.roleType == CHARACTER_ROLE.NOBLE || witness.role.roleType == CHARACTER_ROLE.LEADER) {
                 witness.CreateAskForHelpJob(tableOwner, INTERACTION_TYPE.ASK_FOR_HELP_REMOVE_POISON_TABLE, poiTarget);
             }
-            //- The witness should not eat at the table until the Poison has been removed
-            //Add character to poisoned trait of table
-            //and when getting the cost of eating at this table, check if the character knows about the poison, if he/she does, increase cost.
-            Poisoned poisonedTrait = poiTarget.GetNormalTrait("Poisoned") as Poisoned;
-            if (poisonedTrait == null) {
-                throw new System.Exception("Poisoned trait of " + poiTarget.ToString() + " is null! But it was just poisoned by " + actor.name);
-            }
-            poisonedTrait.AddAwareCharacter(witness);
         }
+        //- The witness should not eat at the table until the Poison has been removed
+        //Add character to poisoned trait of table
+        //and when getting the cost of eating at this table, check if the character knows about the poison, if he/she does, increase cost.
+        Poisoned poisonedTrait = poiTarget.GetNormalTrait("Poisoned") as Poisoned;
+        if (poisonedTrait == null) {
+            throw new System.Exception("Poisoned trait of " + poiTarget.ToString() + " is null! But it was just poisoned by " + actor.name);
+        }
+        poisonedTrait.AddAwareCharacter(witness);
     }
     #endregion
 

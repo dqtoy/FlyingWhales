@@ -38,7 +38,7 @@ public class Kleptomaniac : Trait {
     }
     public override string GetTestingData() {
         string testingData = string.Empty;
-        testingData += "Known character's with no items: \n";
+        testingData += "Known character'S with no items: \n";
         for (int i = 0; i < noItemCharacters.Count; i++) {
             testingData += noItemCharacters[i].name + ", ";
         }
