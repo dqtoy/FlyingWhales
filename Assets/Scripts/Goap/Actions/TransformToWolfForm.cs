@@ -28,7 +28,7 @@ public class TransformToWolfForm : GoapAction {
 
     #region State Effects
     public void AfterTransformSuccess() {
-        Lycanthropy lycanthropy = actor.GetTrait("Lycanthropy") as Lycanthropy;
+        Lycanthropy lycanthropy = actor.GetNormalTrait("Lycanthropy") as Lycanthropy;
         lycanthropy.TurnToWolf();
         SetCommittedCrime(CRIME.ABERRATION, new Character[] { actor });
         currentState.SetIntelReaction(TransformSuccessIntelReaction);

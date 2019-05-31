@@ -76,8 +76,6 @@ public class CharacterAIPath : AILerp {
             //    Debug.LogWarning(costLog);
             //}
         }
-
-
         base.OnPathComplete(newPath);
         _hasReachedTarget = false;
     }

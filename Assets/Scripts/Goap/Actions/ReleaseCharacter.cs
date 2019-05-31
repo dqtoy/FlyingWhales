@@ -45,7 +45,7 @@ public class ReleaseCharacter : GoapAction {
         if (poiTarget is Character) {
             Character target = poiTarget as Character;
             //return target.GetTraitOr("Abducted", "Restrained") != null;
-            return target.GetTrait("Restrained") != null;
+            return target.GetNormalTrait("Restrained") != null;
         }
         return false;
     }

@@ -11,7 +11,7 @@ public class Friend : RelationshipTrait {
         name = "Friend";
         description = "This character is a friend of " + targetCharacter.name;
         relType = RELATIONSHIP_TRAIT.FRIEND;
-        type = TRAIT_TYPE.STATUS;
+        type = TRAIT_TYPE.RELATIONSHIP;
         effect = TRAIT_EFFECT.POSITIVE;
         associatedInteraction = INTERACTION_TYPE.NONE;
         daysDuration = 0;

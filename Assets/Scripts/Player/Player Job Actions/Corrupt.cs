@@ -87,7 +87,7 @@ public class Corrupt : PlayerJobAction {
         }
     }
     private bool CanCorruptCharacter(string traitName) {
-        if (_targetCharacter.GetTrait(traitName) != null) {
+        if (_targetCharacter.GetNormalTrait(traitName) != null) {
             return false;
         }
         if (traitName == "Violent") {

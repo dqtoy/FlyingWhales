@@ -23,7 +23,7 @@ public class InviteToMakeLove : GoapAction {
         Character targetCharacter = poiTarget as Character;
         if (!isTargetMissing && targetCharacter.IsInOwnParty()) {
             if (!targetCharacter.isStarving && !targetCharacter.isExhausted
-                && targetCharacter.GetTrait("Annoyed") == null && !targetCharacter.HasOtherCharacterInParty()) {
+                && targetCharacter.GetNormalTrait("Annoyed") == null && !targetCharacter.HasOtherCharacterInParty()) {
                 SetState("Invite Success");
             } else {
                 SetState("Invite Fail");

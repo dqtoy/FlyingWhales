@@ -40,8 +40,8 @@ public class CharacterUIData {
         maxHP = character.maxHP;
 
         combatAttributes.Clear();
-        if (character.allTraits != null) {
-            combatAttributes.AddRange(character.allTraits);
+        if (character.normalTraits != null) {
+            combatAttributes.AddRange(character.normalTraits);
         }
 
         equippedWeapon = character.equippedWeapon;

@@ -10,7 +10,7 @@ public interface IPointOfInterest {
     LocationGridTile gridTileLocation { get; }
     Area specificLocation { get; }
     List<INTERACTION_TYPE> poiGoapActions { get; }
-    List<Trait> allTraits { get; }
+    List<Trait> normalTraits { get; }
     Faction factionOwner { get; }
     POICollisionTrigger collisionTrigger { get; } //Each poi must only hav 1 at a time.
     bool isDisabledByPlayer { get; }
@@ -30,7 +30,7 @@ public interface IPointOfInterest {
     bool RemoveTrait(string traitName, bool triggerOnRemove = true);
     void RemoveTrait(List<Trait> traits);
     List<Trait> RemoveAllTraitsByType(TRAIT_TYPE traitType);
-    Trait GetTrait(params string[] traitName);
+    Trait GetNormalTrait(params string[] traitName);
     #endregion
 
     #region Collision

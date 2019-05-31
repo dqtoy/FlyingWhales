@@ -24,7 +24,7 @@ public class Resting : Trait {
     #region Overrides
     public override void OnAddTrait(IPointOfInterest sourceCharacter) {
         _character = sourceCharacter as Character;
-        _lycanthropyTrait = _character.GetTrait("Lycanthropy") as Lycanthropy;
+        _lycanthropyTrait = _character.GetNormalTrait("Lycanthropy") as Lycanthropy;
         if(_lycanthropyTrait != null) {
             Messenger.AddListener(Signals.HOUR_STARTED, CheckForLycanthropy);
         }

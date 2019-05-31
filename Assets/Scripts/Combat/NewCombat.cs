@@ -423,10 +423,10 @@ public class NewCombat : MonoBehaviour {
     private void ApplyStartCombatTraits() {
         for (int i = 0; i < _combatOrder.Count; i++) {
             CombatCharacter combatCharacter = _combatOrder[i];
-            for (int j = 0; j < combatCharacter.character.allTraits.Count; j++) {
-                if(combatCharacter.character.allTraits[j].trigger == TRAIT_TRIGGER.START_OF_COMBAT) {
-                    for (int k = 0; k < combatCharacter.character.allTraits[j].effects.Count; k++) {
-                        TraitEffect traitEffect = combatCharacter.character.allTraits[j].effects[k];
+            for (int j = 0; j < combatCharacter.character.normalTraits.Count; j++) {
+                if(combatCharacter.character.normalTraits[j].trigger == TRAIT_TRIGGER.START_OF_COMBAT) {
+                    for (int k = 0; k < combatCharacter.character.normalTraits[j].effects.Count; k++) {
+                        TraitEffect traitEffect = combatCharacter.character.normalTraits[j].effects[k];
                         if (combatCharacter.side == SIDES.A) {
                             ApplyTraitEffectsOfStartCombat(combatCharacter, _leftSideCombatOrder, _rightSideCombatOrder, traitEffect);
                         } else {
@@ -579,14 +579,14 @@ public class NewCombat : MonoBehaviour {
                 //if there is one mismatch, return false already because the separator is AND, otherwise, return true
                 if (traitEffect.isNot) {
                     for (int i = 0; i < traitEffect.requirements.Count; i++) {
-                        if (checkedCharacter.character.GetTrait(traitEffect.requirements[i]) != null) {
+                        if (checkedCharacter.character.GetNormalTrait(traitEffect.requirements[i]) != null) {
                             return false;
                         }
                     }
                     return true;
                 } else {
                     for (int i = 0; i < traitEffect.requirements.Count; i++) {
-                        if (checkedCharacter.character.GetTrait(traitEffect.requirements[i]) == null) {
+                        if (checkedCharacter.character.GetNormalTrait(traitEffect.requirements[i]) == null) {
                             return false;
                         }
                     }
@@ -596,14 +596,14 @@ public class NewCombat : MonoBehaviour {
                 //if there is one match, return true already because the separator is OR, otherwise, return false   
                 if (traitEffect.isNot) {
                     for (int i = 0; i < traitEffect.requirements.Count; i++) {
-                        if (checkedCharacter.character.GetTrait(traitEffect.requirements[i]) == null) {
+                        if (checkedCharacter.character.GetNormalTrait(traitEffect.requirements[i]) == null) {
                             return true;
                         }
                     }
                     return false;
                 } else {
                     for (int i = 0; i < traitEffect.requirements.Count; i++) {
-                        if (checkedCharacter.character.GetTrait(traitEffect.requirements[i]) != null) {
+                        if (checkedCharacter.character.GetNormalTrait(traitEffect.requirements[i]) != null) {
                             return true;
                         }
                     }
@@ -797,8 +797,8 @@ public class NewCombat : MonoBehaviour {
         //TODO: Currently, only percentage amounts are implemented, if there will flat amounts in the future, add it here
         int finalAttack = sourceCombatCharacter.attack;
         float damageIncreasePercentage = 0f;
-        for (int i = 0; i < sourceCombatCharacter.character.allTraits.Count; i++) {
-            Trait trait = sourceCombatCharacter.character.allTraits[i];
+        for (int i = 0; i < sourceCombatCharacter.character.normalTraits.Count; i++) {
+            Trait trait = sourceCombatCharacter.character.normalTraits[i];
             if(trait.trigger == TRAIT_TRIGGER.DURING_COMBAT) {
                 for (int j = 0; j < trait.effects.Count; j++) {
                     TraitEffect traitEffect = trait.effects[j];
@@ -815,8 +815,8 @@ public class NewCombat : MonoBehaviour {
                 }
             }
         }
-        for (int i = 0; i < specificTarget.character.allTraits.Count; i++) {
-            Trait trait = specificTarget.character.allTraits[i];
+        for (int i = 0; i < specificTarget.character.normalTraits.Count; i++) {
+            Trait trait = specificTarget.character.normalTraits[i];
             if (trait.trigger == TRAIT_TRIGGER.DURING_COMBAT) {
                 for (int j = 0; j < trait.effects.Count; j++) {
                     TraitEffect traitEffect = trait.effects[j];

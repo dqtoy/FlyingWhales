@@ -337,19 +337,13 @@ public class CharacterInfoUI : UIMenu {
         int lastNormalIndex = 0;
         int lastRelationshipIndex = 0;
 
-        for (int i = 0; i < _activeCharacter.allTraits.Count; i++) {
-            Trait currTrait = _activeCharacter.allTraits[i];
+        for (int i = 0; i < _activeCharacter.normalTraits.Count; i++) {
+            Trait currTrait = _activeCharacter.normalTraits[i];
             if (currTrait.type == TRAIT_TYPE.ABILITY || currTrait.type == TRAIT_TYPE.ATTACK || currTrait.type == TRAIT_TYPE.COMBAT_POSITION
                 || currTrait.name == "Herbivore" || currTrait.name == "Carnivore") {
                 continue; //hide combat traits
             }
-            if (currTrait is RelationshipTrait) {
-                //CreateTraitGO(currTrait, relationshipTraitsScrollView.content);
-                if (lastRelationshipIndex < relationshipTraitContainers.Length) {
-                    relationshipTraitContainers[lastRelationshipIndex].SetCombatAttribute(currTrait);
-                    lastRelationshipIndex++;
-                }
-            } else if (currTrait.type == TRAIT_TYPE.STATUS || currTrait.type == TRAIT_TYPE.DISABLER || currTrait.type == TRAIT_TYPE.ENCHANTMENT) {
+            if (currTrait.type == TRAIT_TYPE.STATUS || currTrait.type == TRAIT_TYPE.DISABLER || currTrait.type == TRAIT_TYPE.ENCHANTMENT) {
                 //CreateTraitGO(currTrait, statusTraitsScrollView.content);
                 if (lastStatusIndex < statusTraitContainers.Length) {
                     statusTraitContainers[lastStatusIndex].SetCombatAttribute(currTrait);
@@ -362,6 +356,15 @@ public class CharacterInfoUI : UIMenu {
                     lastNormalIndex++;
                 }
             }
+        }
+        for (int i = 0; i < _activeCharacter.relationshipTraits.Count; i++) {
+            Trait currTrait = _activeCharacter.relationshipTraits[i];
+            //CreateTraitGO(currTrait, relationshipTraitsScrollView.content);
+            if (lastRelationshipIndex < relationshipTraitContainers.Length) {
+                relationshipTraitContainers[lastRelationshipIndex].SetCombatAttribute(currTrait);
+                lastRelationshipIndex++;
+            }
+            
         }
 
         if (lastRelationshipIndex < relationshipTraitContainers.Length) {

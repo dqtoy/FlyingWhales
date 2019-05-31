@@ -60,7 +60,7 @@ public class TableRemovePoison : GoapAction {
         if (!poiTarget.IsAvailable() || poiTarget.gridTileLocation == null) {
             return false;
         }
-        return poiTarget.GetTrait("Poisoned") != null;
+        return poiTarget.GetNormalTrait("Poisoned") != null;
     }
     #endregion
 

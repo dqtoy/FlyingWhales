@@ -35,7 +35,7 @@ public class RestrainCharacter : GoapAction {
     protected bool Requirement() {
         if (actor != poiTarget) {
             Character target = poiTarget as Character;
-            return target.GetTrait("Restrained") == null;
+            return target.GetNormalTrait("Restrained") == null;
         }
         return false;
     }

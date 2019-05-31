@@ -31,7 +31,7 @@ public class EatMushroom : GoapAction {
         }
     }
     protected override int GetCost() {
-        if (actor.GetTrait("Herbivore") != null) {
+        if (actor.GetNormalTrait("Herbivore") != null) {
             return 25;
         } else {
             return 50;

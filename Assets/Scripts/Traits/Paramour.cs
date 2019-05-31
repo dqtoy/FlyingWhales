@@ -11,7 +11,7 @@ public class Paramour : RelationshipTrait {
     public Paramour(Character target) : base(target) {
         name = "Paramour";
         description = "This character is a paramour of " + targetCharacter.name;
-        type = TRAIT_TYPE.STATUS;
+        type = TRAIT_TYPE.RELATIONSHIP;
         effect = TRAIT_EFFECT.POSITIVE;
         relType = RELATIONSHIP_TRAIT.PARAMOUR;
         associatedInteraction = INTERACTION_TYPE.NONE;

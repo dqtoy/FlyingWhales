@@ -56,7 +56,7 @@ public interface ICharacter {
     Dictionary<ELEMENT, float> elementalResistances { get; }
     List<Skill> skills { get; }
     List<Log> history { get; }
-    List<Trait> allTraits { get; }
+    List<Trait> normalTraits { get; }
     PortraitSettings portraitSettings { get; }
     Party ownParty { get; }
     Party currentParty { get; }
@@ -89,7 +89,7 @@ public interface ICharacter {
     bool IsInOwnParty();
     bool RemoveTrait(Trait combatAttribute, bool triggerOnRemove = true);
     Party CreateOwnParty();
-    Trait GetTrait(params string[] name);
+    Trait GetNormalTrait(params string[] name);
     void ConstructBuffs();
     void AddBuff(Buff buff);
     void RemoveBuff(Buff buff);

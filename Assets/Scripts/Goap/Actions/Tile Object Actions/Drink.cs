@@ -26,7 +26,7 @@ public class Drink : GoapAction {
         base.PerformActualAction();
         if (!isTargetMissing) {
             //SetState("Drink Success");
-            poisonedTrait = poiTarget.GetTrait("Poisoned");
+            poisonedTrait = poiTarget.GetNormalTrait("Poisoned");
             if (poisonedTrait != null) {
                 SetState("Drink Poisoned");
             } else {

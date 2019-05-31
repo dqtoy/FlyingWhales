@@ -11,7 +11,7 @@ public class Enemy : RelationshipTrait {
         name = "Enemy";
         description = "This character is an enemy of " + targetCharacter.name;
         relType = RELATIONSHIP_TRAIT.ENEMY;
-        type = TRAIT_TYPE.STATUS;
+        type = TRAIT_TYPE.RELATIONSHIP;
         effect = TRAIT_EFFECT.NEGATIVE;
         associatedInteraction = INTERACTION_TYPE.NONE;
         daysDuration = 0;

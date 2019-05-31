@@ -288,7 +288,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     public List<Log> history {
         get { return null; }
     }
-    public List<Trait> allTraits {
+    public List<Trait> normalTraits {
         get { return null; }
     }
     public Dictionary<ELEMENT, float> elementalWeaknesses {
@@ -755,7 +755,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
         //Not applicable
         return false;
     }
-    public Trait GetTrait(params string[] name) {
+    public Trait GetNormalTrait(params string[] name) {
         return null;
     }
 

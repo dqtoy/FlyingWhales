@@ -19,7 +19,7 @@ public class DrinkBlood : GoapAction {
         if (actor.isStarving) {
             AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Unconscious", targetPOI = poiTarget }, HasUnconsciousOrRestingTarget);
         }
-        if (actor.GetTrait("Vampiric") != null) {
+        if (actor.GetNormalTrait("Vampiric") != null) {
             AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = actor });
         }
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Lethargic", targetPOI = poiTarget });
@@ -28,7 +28,7 @@ public class DrinkBlood : GoapAction {
         base.PerformActualAction();
         if (!isTargetMissing) {
             Character target = poiTarget as Character;
-            if(target.GetTrait("Unconscious", "Resting") != null) {
+            if(target.GetNormalTrait("Unconscious", "Resting") != null) {
                 SetState("Drink Success");
             } else {
                 SetState("Drink Fail");
@@ -61,7 +61,7 @@ public class DrinkBlood : GoapAction {
     protected bool RequirementOnBuildGoapTree() {
         if (!actor.isStarving) {
             Character target = poiTarget as Character;
-            return target.GetTrait("Unconscious", "Resting") != null;
+            return target.GetNormalTrait("Unconscious", "Resting") != null;
         }
         return true;
     }
@@ -70,7 +70,7 @@ public class DrinkBlood : GoapAction {
     #region Preconditions
     private bool HasUnconsciousOrRestingTarget() {
         Character target = poiTarget as Character;
-        return target.GetTrait("Unconscious", "Resting") != null;
+        return target.GetNormalTrait("Unconscious", "Resting") != null;
     }
     #endregion
 

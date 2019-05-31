@@ -79,7 +79,7 @@ public class TablePoison : GoapAction {
             //- The witness should not eat at the table until the Poison has been removed
             //Add character to poisoned trait of table
             //and when getting the cost of eating at this table, check if the character knows about the poison, if he/she does, increase cost.
-            Poisoned poisonedTrait = poiTarget.GetTrait("Poisoned") as Poisoned;
+            Poisoned poisonedTrait = poiTarget.GetNormalTrait("Poisoned") as Poisoned;
             if (poisonedTrait == null) {
                 throw new System.Exception("Poisoned trait of " + poiTarget.ToString() + " is null! But it was just poisoned by " + actor.name);
             }
@@ -114,7 +114,7 @@ public class TablePoison : GoapAction {
             if (d.residents.Count == 0) {
                 return false;
             }
-            Poisoned poisonedTrait = poiTarget.GetTrait("Poisoned") as Poisoned;
+            Poisoned poisonedTrait = poiTarget.GetNormalTrait("Poisoned") as Poisoned;
             if (poisonedTrait != null && poisonedTrait.responsibleCharacters.Contains(actor)) {
                 return false; //to prevent poisoning a table that has been already poisoned by this character
             }
@@ -130,7 +130,7 @@ public class TablePoison : GoapAction {
         List<string> reactions = new List<string>();
 
         PoisonTableIntel pti = sharedIntel as PoisonTableIntel;
-        Poisoned poisonedTrait = poiTarget.GetTrait("Poisoned") as Poisoned;
+        Poisoned poisonedTrait = poiTarget.GetNormalTrait("Poisoned") as Poisoned;
         Character tableOwner = pti.targetDwelling.owner;
         //NOTE: If the eat at table action of the intel is null, nobody has eaten at this table yet.
         //NOTE: Poisoned trait has a list of characters that poisoned it. If the poisoned trait that is currently on the table has the actor of this action in it's list
