@@ -378,16 +378,16 @@ public class Faction {
     private void OnLeaderDied() {
         Debug.Log(this.name + "'s leader died");
         SetLeader(null);
-        //kill all characters in faction and un own all areas
-        List<Character> remainingCharacters = new List<Character>(characters);
-        for (int i = 0; i < remainingCharacters.Count; i++) {
-            remainingCharacters[i].ChangeFactionTo(FactionManager.Instance.neutralFaction);
-        }
-        List<Area> areasToUnown = new List<Area>(ownedAreas);
-        for (int i = 0; i < areasToUnown.Count; i++) {
-            LandmarkManager.Instance.UnownArea(areasToUnown[i]);
-            FactionManager.Instance.neutralFaction.AddToOwnedAreas(areasToUnown[i]);
-        }
+        ////kill all characters in faction and un own all areas
+        //List<Character> remainingCharacters = new List<Character>(characters);
+        //for (int i = 0; i < remainingCharacters.Count; i++) {
+        //    remainingCharacters[i].ChangeFactionTo(FactionManager.Instance.neutralFaction);
+        //}
+        //List<Area> areasToUnown = new List<Area>(ownedAreas);
+        //for (int i = 0; i < areasToUnown.Count; i++) {
+        //    LandmarkManager.Instance.UnownArea(areasToUnown[i]);
+        //    FactionManager.Instance.neutralFaction.AddToOwnedAreas(areasToUnown[i]);
+        //}
         Messenger.Broadcast(Signals.FACTION_LEADER_DIED, this);
         Messenger.Broadcast(Signals.FACTION_DIED, this);
     }

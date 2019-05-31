@@ -6602,6 +6602,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 
             if (chance < 20) {
                 CancelAllJobsAndPlans();
+                homeArea.jobQueue.UnassignAllJobsTakenBy(this);
                 //Create Tantrum action
                 GoapPlanJob tantrum = new GoapPlanJob("Tantrum", INTERACTION_TYPE.TANTRUM, this, new Dictionary<INTERACTION_TYPE, object[]>() {
                     { INTERACTION_TYPE.TANTRUM, new object[] { tantrumReason } }
