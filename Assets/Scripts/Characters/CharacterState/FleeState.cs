@@ -40,7 +40,9 @@ public class FleeState : CharacterState {
         stateComponent.character.currentParty.icon.SetIsTravelling(false);
         stateComponent.character.marker.SetHasFleePath(false);
         if (!targetCharacter.HasTraitOf(TRAIT_TYPE.DISABLER, "Combat Recovery")) {
-            stateComponent.character.marker.AddTerrifyingCharacter(targetCharacter);
+            if(stateComponent.character.IsHostileWith(targetCharacter)){
+                stateComponent.character.marker.AddTerrifyingCharacter(targetCharacter);
+            }
         }
         if(stateComponent.character.role.roleType == CHARACTER_ROLE.LEADER || stateComponent.character.role.roleType == CHARACTER_ROLE.NOBLE || stateComponent.character.role.roleType == CHARACTER_ROLE.SOLDIER) {
             int numOfJobs = 3 - targetCharacter.GetNumOfJobsTargettingThisCharacter("Assault");
