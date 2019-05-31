@@ -30,7 +30,7 @@ public class ChatCharacter : GoapAction {
         CHARACTER_MOOD targetCharacterMood = targetCharacter.currentMoodType;
 
         WeightedFloatDictionary<string> weights = new WeightedFloatDictionary<string>();
-        weights.AddElement("Quick Chat", 400);
+        weights.AddElement("Quick Chat", 250);
 
         CharacterRelationshipData relData = actor.GetCharacterRelationshipData(targetCharacter);
         RELATIONSHIP_EFFECT relationshipEffectWithTarget = actor.GetRelationshipEffectWith(targetCharacter);
