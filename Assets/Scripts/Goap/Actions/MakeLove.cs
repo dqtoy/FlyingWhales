@@ -41,6 +41,17 @@ public class MakeLove : GoapAction {
     }
     public override void OnResultReturnedToActor() {
         base.OnResultReturnedToActor();
+        if (endedAtState.name == "Make Love Success") {
+            if (actor.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.LOVER)) {
+                AddTraitTo(actor, "Cheery", targetCharacter);
+                AddTraitTo(targetCharacter, "Cheery", actor);
+            } else if (actor.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.PARAMOUR)) {
+                AddTraitTo(actor, "Ashamed", targetCharacter);
+                AddTraitTo(targetCharacter, "Ashamed", actor);
+            }
+            actor.ownParty.RemoveCharacter(targetCharacter);
+            RemoveTraitFrom(targetCharacter, "Wooed");
+        }
         targetCharacter.RemoveTargettedByAction(this);
         if (targetCharacter.currentAction == this) {
             targetCharacter.SetCurrentAction(null);
@@ -69,15 +80,9 @@ public class MakeLove : GoapAction {
     }
     private void AfterMakeLoveSuccess() {
         //**After Effect 1**: If Actor and Target are Lovers, they both gain Cheery trait. If Actor and Target are Paramours, they both gain Ashamed trait.
-        if (actor.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.LOVER)) {
-            AddTraitTo(actor, "Cheery", targetCharacter);
-            AddTraitTo(targetCharacter, "Cheery", actor);
-        } else {
-            AddTraitTo(actor, "Ashamed", targetCharacter);
-            AddTraitTo(targetCharacter, "Ashamed", actor);
+        if (actor.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.PARAMOUR)) {
             SetCommittedCrime(CRIME.INFIDELITY, new Character[] { actor, targetCharacter });
         }
-
         actor.ownParty.RemoveCharacter(targetCharacter);
         RemoveTraitFrom(targetCharacter, "Wooed");
     }

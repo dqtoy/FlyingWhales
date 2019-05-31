@@ -57,14 +57,14 @@ public class ReportCrime : GoapAction {
     public void PreReportCrimeSuccess() {
         //**Effect 1**: The reported criminal will gain the associated Crime trait
         criminal.owner.AddCriminalTrait(crime);
-        currentState.AddLogFiller(criminal, criminal.name, LOG_IDENTIFIER.CHARACTER_3);
+        currentState.AddLogFiller(criminal, criminal.owner.name, LOG_IDENTIFIER.CHARACTER_3);
         Character target = poiTarget as Character;
 
         //**Effect 2**: Share event related to the Crime to the Target's memories
         if (crimeAction != null) {
             target.CreateInformedEventLog(crimeAction);
         }
-        target.ReactToCrime(crime, criminal);
+        target.ReactToCrime(crime, criminal, null, crimeAction);
 
         
     }
@@ -73,7 +73,7 @@ public class ReportCrime : GoapAction {
     #region Requirements
     private bool Requirement() {
         //**Advertiser**: All Faction Leaders, Nobles and Soldiers
-        if (poiTarget is Character && poiTarget != actor && poiTarget != criminal) {
+        if (poiTarget is Character && poiTarget != actor && (criminal == null || poiTarget != criminal.owner)) {
             Character character = poiTarget as Character;
             if (character.GetTrait("Restrained") != null) {
                 return false; //do not allow restrained
