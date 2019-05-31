@@ -41,6 +41,7 @@ public class CharacterState {
         DoMovementBehavior();
         stateComponent.character.OnCharacterEnteredState(this);
         Messenger.Broadcast(Signals.CHARACTER_STARTED_STATE, stateComponent.character, this);
+        InVisionPOIsOnStartState();
     }
     //Ends a state, can be overridden
     protected virtual void EndState() {
@@ -81,6 +82,14 @@ public class CharacterState {
 
     //What happens when you see another point of interest (character, tile objects, etc)
     public virtual bool OnEnterVisionWith(IPointOfInterest targetPOI) { return false; }
+
+    //What happens if there are already point of interest in your vision upon entering the state
+    public virtual bool InVisionPOIsOnStartState() {
+        if(stateComponent.character.marker.inVisionPOIs.Count > 0) {
+            return true;
+        }
+        return false;
+    }
 
     //This is called for exiting current state, I made it a virtual because some states still requires something before exiting current state
     public virtual void OnExitThisState() {

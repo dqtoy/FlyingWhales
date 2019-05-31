@@ -71,6 +71,17 @@ public class BerserkedState : CharacterState {
         }
         return base.OnEnterVisionWith(targetPOI);
     }
+    public override bool InVisionPOIsOnStartState() {
+        if (base.InVisionPOIsOnStartState()) {
+            for (int i = 0; i < stateComponent.character.marker.inVisionPOIs.Count; i++) {
+                IPointOfInterest poi = stateComponent.character.marker.inVisionPOIs[i];
+                if (OnEnterVisionWith(poi)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     //protected override void PerTickInState() {
     //    base.PerTickInState();
     //    if (!isDone) {

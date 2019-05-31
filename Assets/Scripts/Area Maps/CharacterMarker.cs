@@ -203,11 +203,15 @@ public class CharacterMarker : PooledObject {
             } else if (trait.name == "Spooked" && characterThatGainedTrait.GetTrait("Unconscious") == null) {
                 gainTraitSummary += "\nGained trait is spooked, character will flee is there are characters in vision";
                 if (inVisionPOIs.Count > 0) {
+                    Spooked spooked = trait as Spooked;
                     for (int i = 0; i < inVisionPOIs.Count; i++) {
                         if(inVisionPOIs[i] is Character) {
-                            NormalReactToHostileCharacter(inVisionPOIs[i] as Character, CHARACTER_STATE.FLEE);
-                            break;
+                            Character characterInVision = inVisionPOIs[i] as Character;
+                            spooked.AddTerrifyingCharacter(characterInVision);
                         }
+                    }
+                    if(spooked.terrifyingCharacters.Count > 0) {
+                        AddHostilesInRange(spooked.terrifyingCharacters, CHARACTER_STATE.FLEE);
                     }
                 }
             }
@@ -868,13 +872,38 @@ public class CharacterMarker : PooledObject {
             if (!poi.isDead && 
                 //if the function states that it should not check the normal hostility, always allow
                 (!checkHostility
-                || this.character.IsHostileWith(poi)
                 //if forced reaction is not equal to none, it means that this character must treat the other character as hostile, regardless of conditions
-                || forcedReaction != CHARACTER_STATE.NONE)) { 
+                || forcedReaction != CHARACTER_STATE.NONE)
+                || this.character.IsHostileWith(poi)) { 
                 hostilesInRange.Add(poi);
                 NormalReactToHostileCharacter(poi, forcedReaction);
                 return true;
             }
+        }
+        return false;
+    }
+    public bool AddHostilesInRange(List<Character> pois, CHARACTER_STATE forcedReaction = CHARACTER_STATE.NONE, bool checkHostility = true) {
+        //Only react to the first hostile that is added
+        Character otherPOI = null;
+        for (int i = 0; i < pois.Count; i++) {
+            Character poi = pois[i];
+            if (!hostilesInRange.Contains(poi)) {
+                if (!poi.isDead &&
+                    //if the function states that it should not check the normal hostility, always allow
+                    (!checkHostility
+                    //if forced reaction is not equal to none, it means that this character must treat the other character as hostile, regardless of conditions
+                    || forcedReaction != CHARACTER_STATE.NONE)
+                    || this.character.IsHostileWith(poi)) {
+                    hostilesInRange.Add(poi);
+                    if(otherPOI == null) {
+                        otherPOI = poi;
+                    }
+                }
+            }
+        }
+        if(otherPOI != null) {
+            NormalReactToHostileCharacter(otherPOI, forcedReaction);
+            return true;
         }
         return false;
     }
@@ -963,8 +992,8 @@ public class CharacterMarker : PooledObject {
             if (character.doNotDisturb > 0 && character.HasTraitOf(TRAIT_TYPE.DISABLER)) {
                 //- Disabled characters will not do anything
                 summary += "\n" + character.name + " will not do anything.";
-            } else if (!this.character.IsDoingCombatActionTowards(otherCharacter) 
-                && ((character.GetTrait("Injured") != null && (character.stateComponent.currentState == null || character.stateComponent.currentState.characterState != CHARACTER_STATE.BERSERKED) && (character.stateComponent.previousMajorState == null || character.stateComponent.previousMajorState.characterState != CHARACTER_STATE.BERSERKED))
+            } else if (!this.character.IsDoingCombatActionTowards(otherCharacter) && (character.stateComponent.currentState == null || character.stateComponent.currentState.characterState != CHARACTER_STATE.BERSERKED) && (character.stateComponent.previousMajorState == null || character.stateComponent.previousMajorState.characterState != CHARACTER_STATE.BERSERKED)
+                && (character.GetTrait("Injured") != null
                 || character.role.roleType == CHARACTER_ROLE.CIVILIAN
                 || character.role.roleType == CHARACTER_ROLE.NOBLE || character.role.roleType == CHARACTER_ROLE.LEADER)) {
                 //- Injured characters, Civilians, Nobles and Faction Leaders always enter Flee mode
@@ -973,11 +1002,9 @@ public class CharacterMarker : PooledObject {
                     character.stateComponent.SwitchToState(CHARACTER_STATE.FLEE, otherCharacter);
                     summary += "\n" + character.name + " chose to flee.";
                 //}
-            } else if (character.GetTrait("Spooked") != null) {
-                character.stateComponent.SwitchToState(CHARACTER_STATE.FLEE, otherCharacter);
-                summary += "\n" + character.name + " is spooked. Chose to flee.";
             } else if (character.role.roleType == CHARACTER_ROLE.BEAST || character.role.roleType == CHARACTER_ROLE.ADVENTURER
-                || character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.BANDIT) {
+                || character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.BANDIT 
+                || (character.stateComponent.currentState != null && character.stateComponent.currentState.characterState == CHARACTER_STATE.BERSERKED)) {
                 //- Uninjured Beasts, Adventurers and Soldiers will enter Engage mode.
                 //if (otherCharacter.IsDoingCombatActionTowards(this.character)) {
                 //    summary += "\n" + otherCharacter.name + " is already or will engage with this character (" + this.character.name + "), waiting for that, instead of starting new engage state.";
@@ -1037,6 +1064,9 @@ public class CharacterMarker : PooledObject {
                     }
                     summary += "\n" + character.name + " chose to engage.";
                 }
+            } else if (character.GetTrait("Spooked") != null) {
+                character.stateComponent.SwitchToState(CHARACTER_STATE.FLEE, otherCharacter);
+                summary += "\n" + character.name + " is spooked. Chose to flee.";
             }
         }
         if(character.stateComponent.currentState == null || character.stateComponent.currentState.characterState == CHARACTER_STATE.ENGAGE) {
