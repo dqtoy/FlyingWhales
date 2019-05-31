@@ -46,7 +46,7 @@ public class SpreadRumorRemoveLove : GoapAction {
             affairMemoriesInvolvingRumoredCharacter = new List<Log>();
             for (int i = 0; i < memories.Count; i++) {
                 Log memory = memories[i];
-                if (memory.goapAction.actor == rumoredCharacter && memory.goapAction.poiTarget != poiTarget) {
+                if (memory.goapAction.actor == rumoredCharacter && !memory.goapAction.IsTarget(poiTarget)) {
                     //if the event means Character 2 flirted, asked to make love or made love with another character other than Target, include it
                     if (memory.goapAction.goapType == INTERACTION_TYPE.CHAT_CHARACTER) {
                         ChatCharacter chatAction = memory.goapAction as ChatCharacter;

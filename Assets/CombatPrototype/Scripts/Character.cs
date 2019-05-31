@@ -2815,7 +2815,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         AddHistory(witnessLog);
 
         //If a character sees or informed about a lover performing Making Love or Ask to Make Love, they will feel Betrayed
-        if (witnessedEvent.actor != this && witnessedEvent.poiTarget != this) {
+        if (witnessedEvent.actor != this && !witnessedEvent.IsTarget(this)) {
             Character target = witnessedEvent.poiTarget as Character;
             if (witnessedEvent.goapType == INTERACTION_TYPE.MAKE_LOVE) {
                 target = (witnessedEvent as MakeLove).targetCharacter;
