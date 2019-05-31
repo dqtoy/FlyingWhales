@@ -35,7 +35,10 @@ public class ShareInformation : GoapAction {
         if (otherData.Length == 1 && otherData[0] is GoapAction) {
             eventToBeShared = otherData[0] as GoapAction;
             if (thoughtBubbleMovingLog != null) {
-                thoughtBubbleMovingLog.AddToFillers(null, Utilities.LogReplacer(eventToBeShared.currentState.descriptionLog), LOG_IDENTIFIER.STRING_1);
+                thoughtBubbleMovingLog.AddToFillers(null, Utilities.LogDontReplace(eventToBeShared.currentState.descriptionLog), LOG_IDENTIFIER.APPEND);
+                thoughtBubbleMovingLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.OTHER);
+                thoughtBubbleMovingLog.AddToFillers(poiTarget, poiTarget.name, LOG_IDENTIFIER.OTHER_2);
+                thoughtBubbleMovingLog.AddToFillers(eventToBeShared.currentState.descriptionLog.fillers);
             }
             return true;
         }
@@ -46,10 +49,13 @@ public class ShareInformation : GoapAction {
     #region State Effects
     private void PreShareSuccess() {
         currentState.AddLogFiller(null, Utilities.LogDontReplace(eventToBeShared.currentState.descriptionLog), LOG_IDENTIFIER.APPEND);
+        currentState.AddLogFiller(actor, actor.name, LOG_IDENTIFIER.OTHER);
+        currentState.AddLogFiller(poiTarget, poiTarget.name, LOG_IDENTIFIER.OTHER_2);
+        currentState.AddLogFillers(eventToBeShared.currentState.descriptionLog.fillers);
     }
     private void AfterShareSuccess() {
-        if(currentState.shareIntelReaction != null) {
-            currentState.shareIntelReaction.Invoke(poiTarget as Character, null);
+        if(eventToBeShared.currentState.shareIntelReaction != null) {
+            eventToBeShared.currentState.shareIntelReaction.Invoke(poiTarget as Character, null);
         }
     }
     #endregion
