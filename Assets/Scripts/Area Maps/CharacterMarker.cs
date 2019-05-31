@@ -787,6 +787,7 @@ public class CharacterMarker : PooledObject {
         pathfindingAI.Teleport(tile.centeredWorldLocation);
         if (addToLocation) {
             tile.structure.location.AddCharacterToLocation(character);
+            tile.structure.AddCharacterAtLocation(character, tile);
         }
         SetActiveState(true);
         UpdatePosition();

@@ -49,7 +49,7 @@ public class FleeState : CharacterState {
             }
         } else {
             if(!(targetCharacter.isDead || targetCharacter.HasTraitOf(TRAIT_TYPE.DISABLER, "Combat Recovery") || targetCharacter.isAtHomeArea)) {
-                if (stateComponent.character.isAtHomeArea) {
+                if (stateComponent.character.isAtHomeArea && stateComponent.character.IsHostileOutsider(targetCharacter)) {
                     if(!stateComponent.character.jobQueue.HasJobWithOtherData("Report Hostile", targetCharacter)) {
                         GoapPlanJob job = new GoapPlanJob("Report Hostile", INTERACTION_TYPE.REPORT_HOSTILE, new Dictionary<INTERACTION_TYPE, object[]>() {
                             { INTERACTION_TYPE.REPORT_HOSTILE, new object[] { targetCharacter }}

@@ -32,7 +32,11 @@ public class ReportCrime : GoapAction {
     public override void PerformActualAction() {
         base.PerformActualAction();
         if (!isTargetMissing && (poiTarget as Character).IsInOwnParty()) {
-            SetState("Report Crime Success");
+            if (crimeAction.hasCrimeBeenReported) {
+                SetState("Report Crime Fail");
+            } else {
+                SetState("Report Crime Success");
+            }
         } else {
             SetState("Target Missing");
         }
@@ -65,8 +69,9 @@ public class ReportCrime : GoapAction {
             target.CreateInformedEventLog(crimeAction);
         }
         target.ReactToCrime(crime, criminal, null, crimeAction);
-
-        
+    }
+    public void PreReportCrimeFail() {
+        currentState.AddLogFiller(criminal, criminal.owner.name, LOG_IDENTIFIER.CHARACTER_3);
     }
     #endregion
 

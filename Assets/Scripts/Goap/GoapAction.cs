@@ -58,6 +58,7 @@ public class GoapAction {
     protected virtual string failActionState { get { return "Target Missing"; } }
     private System.Action<string, GoapAction> endAction; //if this is not null, this action will return result here, instead of the default actor.GoapActionResult
     public CRIME committedCrime { get; private set; }
+    public bool hasCrimeBeenReported { get; private set; }
     public string result { get; private set; }
     public string animationName { get; protected set; } //what animation should the character be playing while doing this action
     public bool doesNotStopTargetCharacter { get; protected set; }
@@ -785,6 +786,9 @@ public class GoapAction {
     protected void SetCommittedCrime(CRIME crime, Character[] crimeCommitters) {
         committedCrime = crime;
         this.crimeCommitters = crimeCommitters;
+    }
+    public void OnReportCrime() {
+        hasCrimeBeenReported = true;
     }
     #endregion
 

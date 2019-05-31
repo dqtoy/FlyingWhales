@@ -58,6 +58,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     protected Dictionary<ELEMENT, float> _elementalWeaknesses;
     protected Dictionary<ELEMENT, float> _elementalResistances;
     protected PlayerCharacterItem _playerCharacterItem;
+    private LocationStructure _currentStructure; //what structure is this character currently in.
 
     //Stats
     protected SIDES _currentSide;
@@ -88,7 +89,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 
     public Area homeArea { get; protected set; }
     public Dwelling homeStructure { get; protected set; }
-    public LocationStructure currentStructure { get; private set; } //what structure is this character currently in.
     public Area defendingArea { get; private set; }
     public MORALITY morality { get; private set; }
     public CharacterToken characterToken { get; private set; }
@@ -480,6 +480,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public LocationGridTile gridTileLocation {
         get {
+            if (!IsInOwnParty()) {
+                return currentParty.owner.gridTileLocation;
+            }
             return GetLocationGridTileByXY(gridTilePosition.x, gridTilePosition.y);
             //if (tile == null) {
             //    LocationGridTile gridTile = specificLocation.areaMap.map[(int) marker.anchoredPos.x, (int) marker.anchoredPos.y];
@@ -511,6 +514,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 return null;
             }
             return alterEgos[currentAlterEgoName];
+        }
+    }
+    public LocationStructure currentStructure {
+        get {
+            if (!IsInOwnParty()) {
+                return currentParty.owner.currentStructure;
+            }
+            return _currentStructure;
         }
     }
     #endregion
@@ -1971,7 +1982,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             return; //ignore change;
         }
         LocationStructure previousStructure = this.currentStructure;
-        this.currentStructure = currentStructure;
+        _currentStructure = currentStructure;
         //if (marker != null && currentStructure != null) {
         //    marker.RevalidatePOIsInVisionRange(); //when the character changes structures, revalidate pois in range
         //}
@@ -5718,7 +5729,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     goapThread.job.SetAssignedPlan(goapThread.createdPlan);
                     for (int i = 0; i < goapThread.createdPlan.allNodes.Count; i++) {
                         if (goapThread.createdPlan.allNodes[i].action.goapType == INTERACTION_TYPE.CARRY_CHARACTER
-                            || goapThread.createdPlan.allNodes[i].action.goapType == INTERACTION_TYPE.CARRY_CORPSE) {
+                            || goapThread.createdPlan.allNodes[i].action.goapType == INTERACTION_TYPE.CARRY_CORPSE
+                            || goapThread.createdPlan.allNodes[i].action.goapType == INTERACTION_TYPE.INVITE_TO_MAKE_LOVE) {
                             goapThread.createdPlan.job.SetCannotOverrideJob(true);
                             break;
                         }
@@ -6373,6 +6385,18 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public void ClearIgnoreHostilities() {
         ignoreHostility = 0;
     }
+    /// <summary>
+    /// Is the other character an outsider. (Not part of this character's faction)
+    /// </summary>
+    /// <param name="otherCharacter"></param>
+    /// <returns></returns>
+    public bool IsHostileOutsider(Character otherCharacter) {
+        //return true;
+        if (otherCharacter.isDead || this.isDead) {
+            return false;
+        }
+        return this.faction.id != otherCharacter.faction.id;
+    }
     #endregion
 
     #region Crime System
@@ -6489,7 +6513,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     GoapAction crimeToReport = informedCrime;
                     if (witnessedCrime != null) {
                         crimeToReport = witnessedCrime;
-                        this.marker.AddHostileInRange(criminal.owner, CHARACTER_STATE.FLEE);
+                        //if a character has no negative disabler traits. Do not Flee. This is so that the character will not also add a Report hostile job
+                        if (!this.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) { 
+                            this.marker.AddHostileInRange(criminal.owner, CHARACTER_STATE.FLEE);
+                        }
                     }
                     job = new GoapPlanJob("Report Crime", INTERACTION_TYPE.REPORT_CRIME, new Dictionary<INTERACTION_TYPE, object[]>() {
                         { INTERACTION_TYPE.REPORT_CRIME,  new object[] { committedCrime, criminal, crimeToReport }}

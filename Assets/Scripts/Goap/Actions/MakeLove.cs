@@ -49,9 +49,10 @@ public class MakeLove : GoapAction {
                 AddTraitTo(actor, "Ashamed", targetCharacter);
                 AddTraitTo(targetCharacter, "Ashamed", actor);
             }
-            actor.ownParty.RemoveCharacter(targetCharacter);
-            RemoveTraitFrom(targetCharacter, "Wooed");
         }
+        actor.ownParty.RemoveCharacter(targetCharacter);
+        RemoveTraitFrom(targetCharacter, "Wooed");
+
         targetCharacter.RemoveTargettedByAction(this);
         if (targetCharacter.currentAction == this) {
             targetCharacter.SetCurrentAction(null);
