@@ -81,6 +81,13 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler{
                         } else if (party.characters.Count == 1) {
                             UIManager.Instance.ShowCharacterInfo(party.mainCharacter);
                         }
+                    } else if (lf.obj is IPointOfInterest) {
+                        IPointOfInterest poi = lf.obj as IPointOfInterest;
+                        if(poi is Character) {
+                            UIManager.Instance.ShowCharacterInfo(poi as Character);
+                        }else if (poi is TileObject) {
+                            UIManager.Instance.ShowTileObjectInfo(poi as TileObject);
+                        }
                     }
                 }
             }

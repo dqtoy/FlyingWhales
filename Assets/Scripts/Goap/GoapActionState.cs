@@ -58,6 +58,9 @@ public class GoapActionState {
     public void AddLogFiller(object obj, string value, LOG_IDENTIFIER identifier) {
         descriptionLog.AddToFillers(obj, value, identifier);
     }
+    public void AddLogFillers(List<LogFiller> fillers, bool replaceExisting = true) {
+        descriptionLog.AddToFillers(fillers, replaceExisting);
+    }
     public void SetShouldAddLogs(bool state) {
         shouldAddLogs = state;
     }

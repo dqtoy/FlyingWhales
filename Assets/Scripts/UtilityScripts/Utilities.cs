@@ -538,6 +538,7 @@ public class Utilities : MonoBehaviour {
         {"123", LOG_IDENTIFIER.CHARACTER_LIST_1},
         {"124", LOG_IDENTIFIER.CHARACTER_LIST_2},
         {"125", LOG_IDENTIFIER.APPEND},
+        {"126", LOG_IDENTIFIER.OTHER_2},
 		//{"111", LOG_IDENTIFIER.PARTY_NAME},
 	};
     public static string GetStringForIdentifier(LOG_IDENTIFIER identifier) {
