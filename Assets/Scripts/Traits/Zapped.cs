@@ -18,20 +18,29 @@ public class Zapped : Trait {
     public override void OnAddTrait(IPointOfInterest sourcePOI) {
         if (sourcePOI is Character) {
             Character character = sourcePOI as Character;
-            if (character.stateComponent.currentState != null) {
-                character.stateComponent.currentState.OnExitThisState();
-                if (character.stateComponent.currentState != null) {
-                    character.stateComponent.currentState.OnExitThisState();
-                }
-            } else if(character.currentAction != null) {
-                character.currentAction.StopAction();
-            }else if (character.currentParty.icon.isTravelling) {
+            if (character.currentParty.icon.isTravelling) {
                 if (character.currentParty.icon.travelLine == null) {
                     character.marker.StopMovement();
                 } else {
                     character.currentParty.icon.SetOnArriveAction(() => character.OnArriveAtAreaStopMovement());
                 }
             }
+            if (character.stateComponent.currentState != null) {
+                character.stateComponent.currentState.OnExitThisState();
+                if (character.stateComponent.currentState != null) {
+                    character.stateComponent.currentState.OnExitThisState();
+                }
+            }
+            character.CancelAllJobsAndPlans();
+            //else if(character.currentAction != null) {
+            //    character.currentAction.StopAction();
+            //} else if (character.currentParty.icon.isTravelling) {
+            //    if (character.currentParty.icon.travelLine == null) {
+            //        character.marker.StopMovement();
+            //    } else {
+            //        character.currentParty.icon.SetOnArriveAction(() => character.OnArriveAtAreaStopMovement());
+            //    }
+            //}
             character.AdjustDoNotDisturb(1);
         }
     }

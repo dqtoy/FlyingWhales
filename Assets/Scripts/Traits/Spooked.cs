@@ -45,6 +45,7 @@ public class Spooked : Trait {
                 if (!character.IsHostileWith(terrifyingCharacters[i])) {
                     character.marker.RemoveHostileInRange(terrifyingCharacters[i]);
                 }
+                character.marker.RemoveTerrifyingCharacter(terrifyingCharacters[i]);
             }
             ClearTerrifyingCharacters();
         }

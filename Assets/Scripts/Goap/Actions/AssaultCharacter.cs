@@ -57,7 +57,7 @@ public class AssaultCharacter : GoapAction {
     protected bool Requirement() {
         if(poiTarget is Character && actor != poiTarget) {
             Character target = poiTarget as Character;
-            if(!target.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_EFFECT.NEUTRAL, TRAIT_TYPE.DISABLER)) {
+            if(!target.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
                 return true;
             }
         }

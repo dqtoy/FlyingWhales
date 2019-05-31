@@ -11,7 +11,7 @@ public class Intervene : PlayerJobAction {
         name = "Intervene";
         SetDefaultCooldownTime(3);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
-        _traitNames = new List<string>() { "Zap", "Spook", "Jolt", "Enrage", "Fumble"};
+        _traitNames = new List<string>() { "Zap", "Spook", "Jolt", "Enrage"}; //, "Fumble"
     }
 
     public override void ActivateAction(Character assignedCharacter, IPointOfInterest targetPOI) {

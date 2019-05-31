@@ -1342,6 +1342,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
     }
     public bool CreateJobsOnEnterVisionWith(Character targetCharacter) {
+        if((stateComponent.currentState != null && stateComponent.currentState.characterState == CHARACTER_STATE.BERSERKED) 
+            || (stateComponent.previousMajorState != null && stateComponent.previousMajorState.characterState == CHARACTER_STATE.BERSERKED)) {
+            return false;
+        }
         bool hasCreatedJob = false;
         if (CreateRemoveTraitJobs(targetCharacter)) {
             hasCreatedJob = true;
@@ -1859,6 +1863,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 i--;
             }
         }
+        homeArea.jobQueue.UnassignAllJobsTakenBy(this);
 
         StopCurrentAction(false);
         for (int i = 0; i < allGoapPlans.Count; i++) {
@@ -5103,13 +5108,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         } else if (isExhausted) {
             RemoveTrait("Tired");
             if (AddTrait("Exhausted")) {
-                RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "exhausted");
+                //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "exhausted");
             }
             //PlanTirednessRecoveryActions();
         } else if (tiredness <= TIREDNESS_THRESHOLD_1) {
             RemoveTrait("Exhausted");
             if (AddTrait("Tired")) {
-                RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "tired");
+                //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "tired");
             }
             //PlanTirednessRecoveryActions();
         } else {
@@ -5126,14 +5131,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             if (tiredness == TIREDNESS_THRESHOLD_2) {
                 RemoveTrait("Tired");
                 if (AddTrait("Exhausted")) {
-                    RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "exhausted");
+                    //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "exhausted");
                 }
             }
             //PlanTirednessRecoveryActions();
         } else if (tiredness <= TIREDNESS_THRESHOLD_1) {
             if (tiredness == TIREDNESS_THRESHOLD_1) {
                 if (AddTrait("Tired")) {
-                    RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "tired");
+                    //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "tired");
                 }
             }
             //PlanTirednessRecoveryActions();
@@ -5147,13 +5152,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         } else if (isExhausted) {
             RemoveTrait("Tired");
             if (AddTrait("Exhausted")) {
-                RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "exhausted");
+                //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "exhausted");
             }
             //PlanTirednessRecoveryActions();
         } else if (tiredness <= TIREDNESS_THRESHOLD_1) {
             RemoveTrait("Exhausted");
             if (AddTrait("Tired")) {
-                RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "tired");
+                //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "tired");
             }
             //PlanTirednessRecoveryActions();
         } else {
@@ -5164,10 +5169,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     private void RemoveTiredOrExhausted() {
         if (!RemoveTrait("Tired")) {
             if (RemoveTrait("Exhausted")) {
-                RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, "exhausted");
+                //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, "exhausted");
             }
         } else {
-            RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, "tired");
+            //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, "tired");
         }
     }
     #endregion
@@ -5185,13 +5190,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         } else if (isStarving) {
             RemoveTrait("Hungry");
             if (AddTrait("Starving")) {
-                RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "starving");
+                //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "starving");
             }
             //PlanFullnessRecoveryActions();
         } else if (fullness <= FULLNESS_THRESHOLD_1) {
             RemoveTrait("Starving");
             if (AddTrait("Hungry")) {
-                RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "hungry");
+                //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "hungry");
             }
             //PlanFullnessRecoveryActions();
         } else {
@@ -5208,14 +5213,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             if (fullness == FULLNESS_THRESHOLD_2) {
                 RemoveTrait("Hungry");
                 if (AddTrait("Starving")) {
-                    RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "starving");
+                    //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "starving");
                 }
             }
             //PlanFullnessRecoveryActions();
         } else if (fullness <= FULLNESS_THRESHOLD_1) {
             if (fullness == FULLNESS_THRESHOLD_1) {
                 if (AddTrait("Hungry")) {
-                    RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "hungry");
+                    //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "hungry");
                 }
             }
             //PlanFullnessRecoveryActions();
@@ -5229,13 +5234,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         } else if (isStarving) {
             RemoveTrait("Hungry");
             if (AddTrait("Starving")) {
-                RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "starving");
+                //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "starving");
             }
             //PlanFullnessRecoveryActions();
         } else if (fullness <= FULLNESS_THRESHOLD_1) {
             RemoveTrait("Starving");
             if (AddTrait("Hungry")) {
-                RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "hungry");
+                //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "hungry");
             }
             //PlanFullnessRecoveryActions();
         } else {
@@ -5246,10 +5251,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     private void RemoveHungryOrStarving() {
         if (!RemoveTrait("Hungry")) {
             if (RemoveTrait("Starving")) {
-                RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, "starving");
+                //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, "starving");
             }
         } else {
-            RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, "hungry");
+            //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, "hungry");
         }
     }
     #endregion
@@ -5265,13 +5270,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (isForlorn) {
             RemoveTrait("Lonely");
             if (AddTrait("Forlorn")) {
-                RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "forlorn");
+                //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "forlorn");
             }
             //PlanHappinessRecoveryActions();
         } else if (happiness <= HAPPINESS_THRESHOLD_1) {
             RemoveTrait("Forlorn");
             if (AddTrait("Lonely")) {
-                RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "lonely");
+                //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "lonely");
             }
             //PlanHappinessRecoveryActions();
         } else {
@@ -5284,13 +5289,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (isForlorn) {
             RemoveTrait("Lonely");
             if (AddTrait("Forlorn")) {
-                RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "depressed");
+                //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "depressed");
             }
             //PlanHappinessRecoveryActions();
         } else if (happiness <= HAPPINESS_THRESHOLD_1) {
             RemoveTrait("Forlorn");
             if (AddTrait("Lonely")) {
-                RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "lonely");
+                //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "lonely");
             }
             //PlanHappinessRecoveryActions();
         } else {
@@ -5300,10 +5305,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     private void RemoveLonelyOrForlorn() {
         if (!RemoveTrait("Lonely")) {
             if (RemoveTrait("Forlorn")) {
-                RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, "depressed");
+                //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, "depressed");
             }
         } else {
-            RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, "lonely");
+            //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, "lonely");
         }
     }
     #endregion
@@ -6625,7 +6630,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 
             if (chance < 20) {
                 CancelAllJobsAndPlans();
-                homeArea.jobQueue.UnassignAllJobsTakenBy(this);
                 //Create Tantrum action
                 GoapPlanJob tantrum = new GoapPlanJob("Tantrum", INTERACTION_TYPE.TANTRUM, this, new Dictionary<INTERACTION_TYPE, object[]>() {
                     { INTERACTION_TYPE.TANTRUM, new object[] { tantrumReason } }
