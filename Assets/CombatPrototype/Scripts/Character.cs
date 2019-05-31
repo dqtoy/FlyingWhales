@@ -1794,6 +1794,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         return null;
     }
     public GoapPlanJob CreateBreakupJob(Character targetCharacter) {
+        if (jobQueue.HasJob("Break Up with " + targetCharacter.name)) {
+            return null; //already has break up job targetting targetCharacter
+        }
         GoapPlanJob job = new GoapPlanJob("Break Up with " + targetCharacter.name, INTERACTION_TYPE.BREAK_UP, targetCharacter);
         jobQueue.AddJobInQueue(job);
         return job;
