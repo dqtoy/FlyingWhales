@@ -79,6 +79,9 @@ public class ShareIntel : PlayerJobAction {
         if (PlayerManager.Instance.player.allIntel.Count == 0) {
             return false;
         }
+        if(targetCharacter.GetTrait("Unconscious", "Resting") != null) {
+            return false;
+        }
         return base.CanTarget(targetCharacter);
     }
     protected override void OnCharacterDied(Character characterThatDied) {

@@ -1460,6 +1460,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         undermineWeights.AddElement("negative trait", 50);
 
         bool hasFriend = false;
+        List<Log> crimeMemories = null;
         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
             Character currCharacter = CharacterManager.Instance.allCharacters[i];
             if (currCharacter != targetCharacter && currCharacter != this) {
@@ -1470,10 +1471,19 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         }
         if (hasFriend) {
-            undermineWeights.AddElement("destroy friendship", 20);
+            int dayTo = GameManager.days;
+            int dayFrom = dayTo - 3;
+            if (dayFrom < 1) {
+                dayFrom = 1;
+            }
+            crimeMemories = GetCrimeMemories(dayFrom, dayTo, targetCharacter);
+            if (crimeMemories.Count > 0) {
+                undermineWeights.AddElement("destroy friendship", 20);
+            }
         }
 
         bool hasLoverOrParamour = false;
+        List<Log> affairMemoriesInvolvingRumoredCharacter = null;
         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
             Character currCharacter = CharacterManager.Instance.allCharacters[i];
             if (currCharacter != targetCharacter && currCharacter != this) {
@@ -1484,7 +1494,41 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         }
         if (hasLoverOrParamour) {
-            undermineWeights.AddElement("destroy love", 20);
+            List<Character> loversOrParamours = targetCharacter.GetCharactersWithRelationship(RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR);
+            Character chosenLoverOrParamour = loversOrParamours[UnityEngine.Random.Range(0, loversOrParamours.Count)];
+            if(chosenLoverOrParamour != null) {
+                int dayTo = GameManager.days;
+                int dayFrom = dayTo - 3;
+                if (dayFrom < 1) {
+                    dayFrom = 1;
+                }
+                List<Log> memories = GetWitnessOrInformedMemories(dayFrom, dayTo, targetCharacter);
+                affairMemoriesInvolvingRumoredCharacter = new List<Log>();
+                for (int i = 0; i < memories.Count; i++) {
+                    Log memory = memories[i];
+                    //if the event means Character 2 flirted, asked to make love or made love with another character other than Target, include it
+                    if (memory.goapAction.actor != chosenLoverOrParamour && !memory.goapAction.IsTarget(chosenLoverOrParamour)) {
+                        if (memory.goapAction.goapType == INTERACTION_TYPE.CHAT_CHARACTER) {
+                            ChatCharacter chatAction = memory.goapAction as ChatCharacter;
+                            if (chatAction.chatResult == "flirt") {
+                                affairMemoriesInvolvingRumoredCharacter.Add(memory);
+
+                            }
+                        } else if (memory.goapAction.goapType == INTERACTION_TYPE.MAKE_LOVE) {
+                            affairMemoriesInvolvingRumoredCharacter.Add(memory);
+                        } else if (memory.goapAction.goapType == INTERACTION_TYPE.INVITE_TO_MAKE_LOVE) {
+                            if(memory.goapAction.actor == targetCharacter) {
+                                affairMemoriesInvolvingRumoredCharacter.Add(memory);
+                            }else if (memory.goapAction.IsTarget(targetCharacter) && memory.goapAction.currentState.name == "Invite Success") {
+                                affairMemoriesInvolvingRumoredCharacter.Add(memory);
+                            }
+                        }
+                    }
+                }
+                if(affairMemoriesInvolvingRumoredCharacter.Count > 0) {
+                    undermineWeights.AddElement("destroy love", 20);
+                }
+            }
         }
 
         if (undermineWeights.Count > 0) {
@@ -1494,10 +1538,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 job = new GoapPlanJob("Undermine Enemy", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", targetPOI = targetCharacter });
             } else if (result == "destroy friendship") {
                 job = new GoapPlanJob("Undermine Enemy", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TARGET_REMOVE_RELATIONSHIP, conditionKey = "Friend", targetPOI = targetCharacter },
-                    new Dictionary<INTERACTION_TYPE, object[]>() { { INTERACTION_TYPE.NONE, new object[] { targetCharacter } }, });
+                    new Dictionary<INTERACTION_TYPE, object[]>() { { INTERACTION_TYPE.NONE, new object[] { targetCharacter, crimeMemories } }, });
             } else if (result == "destroy love") {
                 job = new GoapPlanJob("Undermine Enemy", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TARGET_REMOVE_RELATIONSHIP, conditionKey = "Lover", targetPOI = targetCharacter },
-                    new Dictionary<INTERACTION_TYPE, object[]>() { { INTERACTION_TYPE.NONE, new object[] { targetCharacter } }, });
+                    new Dictionary<INTERACTION_TYPE, object[]>() { { INTERACTION_TYPE.NONE, new object[] { targetCharacter, affairMemoriesInvolvingRumoredCharacter } }, });
             }
 
             job.SetCannotOverrideJob(true);
@@ -2401,14 +2445,16 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return null;
     }
-    public List<Character> GetCharactersWithRelationship(RELATIONSHIP_TRAIT type) {
+    public List<Character> GetCharactersWithRelationship(params RELATIONSHIP_TRAIT[] type) {
         List<Character> characters = new List<Character>();
         foreach (KeyValuePair<AlterEgoData, CharacterRelationshipData> kvp in relationships) {
-            if (!kvp.Value.isDisabled && kvp.Value.HasRelationshipTrait(type)) {
-                if (characters.Contains(kvp.Key.owner)) {
-                    continue;
+            for (int i = 0; i < type.Length; i++) {
+                if (!kvp.Value.isDisabled && kvp.Value.HasRelationshipTrait(type[i])) {
+                    if (characters.Contains(kvp.Key.owner)) {
+                        continue;
+                    }
+                    characters.Add(kvp.Key.owner);
                 }
-                characters.Add(kvp.Key.owner);
             }
         }
         return characters;
@@ -2437,10 +2483,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return characters;
     }
-    public Character GetCharacterWithRelationship(RELATIONSHIP_TRAIT type) {
+    public Character GetCharacterWithRelationship(params RELATIONSHIP_TRAIT[] type) {
         foreach (KeyValuePair<AlterEgoData, CharacterRelationshipData> kvp in relationships) {
-            if (!kvp.Value.isDisabled && kvp.Value.HasRelationshipTrait(type)) {
-                return kvp.Key.owner;
+            for (int i = 0; i < type.Length; i++) {
+                if (!kvp.Value.isDisabled && kvp.Value.HasRelationshipTrait(type[i])) {
+                    return kvp.Key.owner;
+                }
             }
         }
         return null;
@@ -2743,13 +2791,19 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return memories;
     }
-    public List<Log> GetWitnessOrInformedMemories(int dayFrom, int dayTo) {
+    public List<Log> GetWitnessOrInformedMemories(int dayFrom, int dayTo, Character involvedCharacter = null) {
         List<Log> memories = new List<Log>();
         for (int i = 0; i < _history.Count; i++) {
             Log historyLog = _history[i];
             if (historyLog.goapAction != null && (historyLog.key == "witness_event" || historyLog.key == "informed_event")) {
                 if (historyLog.day >= dayFrom && historyLog.day <= dayTo) {
-                    memories.Add(historyLog);
+                    if(involvedCharacter != null) {
+                        if (historyLog.goapAction.actor == involvedCharacter || historyLog.goapAction.IsTarget(involvedCharacter)) {
+                            memories.Add(historyLog);
+                        }
+                    } else {
+                        memories.Add(historyLog);
+                    }
                 }
             }
         }
@@ -2784,33 +2838,33 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         informedLog.AddToFillers(null, Utilities.LogDontReplace(eventToBeInformed.currentState.descriptionLog), LOG_IDENTIFIER.APPEND);
         AddHistory(informedLog);
 
-        //If a character sees or informed about a lover performing Making Love or Ask to Make Love, they will feel Betrayed
-        if (eventToBeInformed.actor != this && !eventToBeInformed.IsTarget(this)) {
-            Character target = eventToBeInformed.poiTarget as Character;
-            if (eventToBeInformed.goapType == INTERACTION_TYPE.MAKE_LOVE) {
-                target = (eventToBeInformed as MakeLove).targetCharacter; //NOTE: Changed this, because technically the Make Love Action targets the bed, and the target character is stored in the event itself.
-                if (HasRelationshipOfTypeWith(eventToBeInformed.actor, RELATIONSHIP_TRAIT.LOVER) || HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.LOVER)) {
-                    Betrayed betrayed = new Betrayed();
-                    AddTrait(betrayed);
-                    CharacterManager.Instance.RelationshipDegradation(eventToBeInformed.actor, this, eventToBeInformed);
-                    CharacterManager.Instance.RelationshipDegradation(target, this, eventToBeInformed);
-                }
-            } else if (eventToBeInformed.goapType == INTERACTION_TYPE.INVITE_TO_MAKE_LOVE) {
-                if (HasRelationshipOfTypeWith(eventToBeInformed.actor, RELATIONSHIP_TRAIT.LOVER)) {
-                    Betrayed betrayed = new Betrayed();
-                    AddTrait(betrayed);
-                    CharacterManager.Instance.RelationshipDegradation(eventToBeInformed.actor, this, eventToBeInformed);
-                    CharacterManager.Instance.RelationshipDegradation(target, this, eventToBeInformed);
-                } else if (HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.LOVER)) {
-                    if (eventToBeInformed.currentState.name == "Invite Success") {
-                        Betrayed betrayed = new Betrayed();
-                        AddTrait(betrayed);
-                        CharacterManager.Instance.RelationshipDegradation(eventToBeInformed.actor, this, eventToBeInformed);
-                        CharacterManager.Instance.RelationshipDegradation(target, this, eventToBeInformed);
-                    }
-                }
-            }
-        }
+        ////If a character sees or informed about a lover performing Making Love or Ask to Make Love, they will feel Betrayed
+        //if (eventToBeInformed.actor != this && !eventToBeInformed.IsTarget(this)) {
+        //    Character target = eventToBeInformed.poiTarget as Character;
+        //    if (eventToBeInformed.goapType == INTERACTION_TYPE.MAKE_LOVE) {
+        //        target = (eventToBeInformed as MakeLove).targetCharacter; //NOTE: Changed this, because technically the Make Love Action targets the bed, and the target character is stored in the event itself.
+        //        if (HasRelationshipOfTypeWith(eventToBeInformed.actor, RELATIONSHIP_TRAIT.LOVER) || HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.LOVER)) {
+        //            Betrayed betrayed = new Betrayed();
+        //            AddTrait(betrayed);
+        //            CharacterManager.Instance.RelationshipDegradation(eventToBeInformed.actor, this, eventToBeInformed);
+        //            CharacterManager.Instance.RelationshipDegradation(target, this, eventToBeInformed);
+        //        }
+        //    } else if (eventToBeInformed.goapType == INTERACTION_TYPE.INVITE_TO_MAKE_LOVE) {
+        //        if (HasRelationshipOfTypeWith(eventToBeInformed.actor, RELATIONSHIP_TRAIT.LOVER)) {
+        //            Betrayed betrayed = new Betrayed();
+        //            AddTrait(betrayed);
+        //            CharacterManager.Instance.RelationshipDegradation(eventToBeInformed.actor, this, eventToBeInformed);
+        //            CharacterManager.Instance.RelationshipDegradation(target, this, eventToBeInformed);
+        //        } else if (HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.LOVER)) {
+        //            if (eventToBeInformed.currentState.name == "Invite Success") {
+        //                Betrayed betrayed = new Betrayed();
+        //                AddTrait(betrayed);
+        //                CharacterManager.Instance.RelationshipDegradation(eventToBeInformed.actor, this, eventToBeInformed);
+        //                CharacterManager.Instance.RelationshipDegradation(target, this, eventToBeInformed);
+        //            }
+        //        }
+        //    }
+        //}
     }
     public void CreateWitnessedEventLog(GoapAction witnessedEvent) {
         Log witnessLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "witness_event", witnessedEvent);

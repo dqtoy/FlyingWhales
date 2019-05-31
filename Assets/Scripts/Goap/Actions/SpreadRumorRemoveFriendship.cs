@@ -34,14 +34,15 @@ public class SpreadRumorRemoveFriendship : GoapAction {
         return 15;
     }
     public override bool InitializeOtherData(object[] otherData) {
-        if (otherData.Length == 1 && otherData[0] is Character) {
+        if (otherData.Length == 2 && otherData[0] is Character && otherData[1] is List<Log>) {
             rumoredCharacter = otherData[0] as Character;
-            int dayTo = GameManager.days;
-            int dayFrom = dayTo - 3;
-            if (dayFrom < 1) {
-                dayFrom = 1;
-            }
-            crimeMemoriesInvolvingRumoredCharacter = actor.GetCrimeMemories(dayFrom, dayTo, rumoredCharacter);
+            //int dayTo = GameManager.days;
+            //int dayFrom = dayTo - 3;
+            //if (dayFrom < 1) {
+            //    dayFrom = 1;
+            //}
+            //crimeMemoriesInvolvingRumoredCharacter = actor.GetCrimeMemories(dayFrom, dayTo, rumoredCharacter);
+            crimeMemoriesInvolvingRumoredCharacter = otherData[1] as List<Log>;
             preconditions.Clear();
             expectedEffects.Clear();
             ConstructPreconditionsAndEffects();
