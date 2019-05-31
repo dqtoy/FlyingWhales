@@ -2718,6 +2718,11 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 CreateWitnessedEventLog(target.currentAction);
             }
         }
+        Spooked spooked = GetTrait("Spooked") as Spooked;
+        if (spooked != null) {
+            marker.AddHostileInRange(target, CHARACTER_STATE.FLEE);
+            spooked.AddTerrifyingCharacter(target);
+        }
     }
     public List<Log> GetMemories(int dayFrom, int dayTo, bool eventMemoriesOnly = false){
         List<Log> memories = new List<Log>();

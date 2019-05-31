@@ -20,7 +20,7 @@ public class Intervene : PlayerJobAction {
         } else {
             return;
         }
-        UIManager.Instance.ShowClickableObjectPicker(_traitNames, OnClickTrait, null, CanInterveneCharacter, "Intervene " + _targetCharacter.name + " with a status."); //, OnHoverTrait
+        UIManager.Instance.ShowClickableObjectPicker(_traitNames, OnClickTrait, null, CanInterveneCharacter, "Intervene " + _targetCharacter.name + " with a status.", OnHoverTrait);
     }
 
     protected override bool ShouldButtonBeInteractable(Character character, Character targetCharacter) {
@@ -72,29 +72,29 @@ public class Intervene : PlayerJobAction {
         }
         return true;
     }
-    //public void OnHoverTrait(string traitName) {
-    //    string tooltip = string.Empty;
-    //    string header = traitName;
-    //    switch (traitName) {
-    //        case "Zap":
-    //            tooltip = "Will sometimes transform into a wild wolf whenever it sleeps.";
-    //            break;
-    //        case "Spook":
-    //            tooltip = "Enjoys stealing other people's items.";
-    //            break;
-    //        case "Jolt":
-    //            tooltip = "Prone to bouts of violence. Not yet available for this prototype.";
-    //            break;
-    //        case "Enrage":
-    //            tooltip = "Needs blood for sustenance. Not yet available for this prototype.";
-    //            break;
-    //        case "Fumble":
-    //            tooltip = "Prone to affairs. Not yet available for this prototype.";
-    //            break;
-    //        default:
-    //            break;
-    //    }
-    //    UIManager.Instance.ShowSmallInfo(tooltip, header);
-    //}
+    public void OnHoverTrait(string traitName) {
+        string tooltip = string.Empty;
+        string header = traitName;
+        switch (traitName) {
+            case "Zap":
+                tooltip = string.Format("Temporarily prevents {0} from moving for 30 minutes.", _targetCharacter.name);
+                break;
+            case "Spook":
+                tooltip = string.Format("Temporarily forces {0} to flee from all other nearby characters.", _targetCharacter.name);
+                break;
+            case "Jolt":
+                tooltip = string.Format("Temporarily speeds up {0}'s movement.", _targetCharacter.name);
+                break;
+            case "Enrage":
+                tooltip = string.Format("Temporarily enrages {0}.", _targetCharacter.name);
+                break;
+            case "Fumble":
+                tooltip = string.Format("Forces {0} to drop current action and all other existing plans.", _targetCharacter.name);
+                break;
+            default:
+                break;
+        }
+        UIManager.Instance.ShowSmallInfo(tooltip, header);
+    }
     #endregion
 }

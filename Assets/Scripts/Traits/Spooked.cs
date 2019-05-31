@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Spooked : Trait {
+    public List<Character> terrifyingCharacters { get; private set; }
+
     public Spooked() {
         name = "Spooked";
         description = "This character fears anything.";
@@ -11,6 +13,7 @@ public class Spooked : Trait {
         associatedInteraction = INTERACTION_TYPE.NONE;
         daysDuration = GameManager.Instance.GetTicksBasedOnMinutes(30);
         effects = new List<TraitEffect>();
+        terrifyingCharacters = new List<Character>();
     }
 
     #region Overrides
@@ -38,7 +41,20 @@ public class Spooked : Trait {
         if (sourcePOI is Character) {
             Character character = sourcePOI as Character;
             character.AdjustDoNotDisturb(-1);
+            for (int i = 0; i < terrifyingCharacters.Count; i++) {
+                if (!character.IsHostileWith(terrifyingCharacters[i])) {
+                    character.marker.RemoveHostileInRange(terrifyingCharacters[i]);
+                }
+            }
+            ClearTerrifyingCharacters();
         }
     }
     #endregion
+
+    public void AddTerrifyingCharacter(Character character) {
+        terrifyingCharacters.Add(character);
+    }
+    public void ClearTerrifyingCharacters() {
+        terrifyingCharacters.Clear();
+    }
 }
