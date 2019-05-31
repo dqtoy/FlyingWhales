@@ -2777,10 +2777,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         AddHistory(informedLog);
 
         //If a character sees or informed about a lover performing Making Love or Ask to Make Love, they will feel Betrayed
-        if (eventToBeInformed.actor != this && eventToBeInformed.poiTarget != this) {
+        if (eventToBeInformed.actor != this && !eventToBeInformed.IsTarget(this)) {
             Character target = eventToBeInformed.poiTarget as Character;
             if (eventToBeInformed.goapType == INTERACTION_TYPE.MAKE_LOVE) {
-                target = (eventToBeInformed as MakeLove).targetCharacter;
+                target = (eventToBeInformed as MakeLove).targetCharacter; //NOTE: Changed this, because technically the Make Love Action targets the bed, and the target character is stored in the event itself.
                 if (HasRelationshipOfTypeWith(eventToBeInformed.actor, RELATIONSHIP_TRAIT.LOVER) || HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.LOVER)) {
                     Betrayed betrayed = new Betrayed();
                     AddTrait(betrayed);

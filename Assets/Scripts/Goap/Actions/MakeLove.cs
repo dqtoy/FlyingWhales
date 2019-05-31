@@ -50,6 +50,9 @@ public class MakeLove : GoapAction {
         //do not allow actor and target character to react
         return character != actor && character != targetCharacter;
     }
+=    public override bool IsTarget(IPointOfInterest poi) {
+        return targetCharacter == poi || poiTarget == poi;
+    }
     #endregion
 
     #region Effects

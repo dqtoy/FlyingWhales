@@ -349,6 +349,14 @@ public class GoapAction {
         }
         return true;
     }
+    /// <summary>
+    /// Does this action target the provided POI?
+    /// </summary>
+    /// <param name="poi">The POI in question.</param>
+    /// <returns>True or false.</returns>
+    public virtual bool IsTarget(IPointOfInterest poi) {
+        return poiTarget == poi;
+    }
     #endregion
 
     #region Utilities
