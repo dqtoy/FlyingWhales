@@ -301,7 +301,7 @@ public class ChatCharacter : GoapAction {
             //Add an Undermine Job to Recipient versus Target (choose at random). Add a Breakup Job to Recipient versus Actor.
             CharacterManager.Instance.RelationshipDegradation(recipient, target, this);
             recipient.ForceCreateUndermineJob(target);
-            //TODO: Breakup Job
+            recipient.CreateBreakupJob(actor);
         }
         //Recipient considers Target as a Lover:
         else if (recipient.HasRelationshipOfTypeWith(target, false, RELATIONSHIP_TRAIT.LOVER)) {
@@ -311,7 +311,7 @@ public class ChatCharacter : GoapAction {
             //Add an Undermine Job to Recipient versus Actor (choose at random). Add a Breakup Job to Recipient versus Target.
             CharacterManager.Instance.RelationshipDegradation(recipient, actor, this);
             recipient.ForceCreateUndermineJob(actor);
-            //TODO: Breakup Job
+            recipient.CreateBreakupJob(target);
         }
         //Actor has a Lover. Actor's Lover is not the Target. Recipient does not have a positive relationship with Actor. Recipient has a relationship (positive or negative) with Actor's Lover.
         else if (recipient != actor && recipient != target && actorLover != null && actorLover != target
