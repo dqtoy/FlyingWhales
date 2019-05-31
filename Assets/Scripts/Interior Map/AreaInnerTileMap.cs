@@ -1258,7 +1258,7 @@ public class AreaInnerTileMap : MonoBehaviour {
                                     detailsTilemap.RemoveTileFlags(currTile.localPlace, TileFlags.LockTransform);
                                     detailsTilemap.SetTransformMatrix(currTile.localPlace, m);
                                     if (currTile.structure != null) {
-                                        currTile.structure.AddPOI(new Tree(currTile.structure), currTile);
+                                        currTile.structure.AddPOI(new TreeObject(currTile.structure), currTile);
                                     }
                                 }
                             }

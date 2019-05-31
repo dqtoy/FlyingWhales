@@ -8,11 +8,11 @@ public class ChopWood : GoapAction {
 
     private int _gainedSupply;
     public ChopWood(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.CHOP_WOOD, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
-        validTimeOfDays = new TIME_IN_WORDS[] {
-            TIME_IN_WORDS.MORNING,
-            TIME_IN_WORDS.AFTERNOON,
-            TIME_IN_WORDS.EARLY_NIGHT,
-        };
+        //validTimeOfDays = new TIME_IN_WORDS[] {
+        //    TIME_IN_WORDS.MORNING,
+        //    TIME_IN_WORDS.AFTERNOON,
+        //    TIME_IN_WORDS.EARLY_NIGHT,
+        //};
         actionIconString = GoapActionStateDB.Work_Icon;
     }
 
@@ -21,7 +21,7 @@ public class ChopWood : GoapAction {
         _requirementAction = Requirement;
     }
     protected override void ConstructPreconditionsAndEffects() {
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_SUPPLY, conditionKey = 0, targetPOI = actor });
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_SUPPLY, conditionKey = MAX_SUPPLY, targetPOI = actor });
         //AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
     }
     public override void PerformActualAction() {
@@ -49,16 +49,16 @@ public class ChopWood : GoapAction {
 
     #region State Effects
     public void PreChopSuccess() {
-        if (poiTarget is Tree) {
-            Tree tree = poiTarget as Tree;
+        if (poiTarget is TreeObject) {
+            TreeObject tree = poiTarget as TreeObject;
             _gainedSupply = tree.GetSupplyPerMine();
         }
         currentState.AddLogFiller(null, _gainedSupply.ToString(), LOG_IDENTIFIER.STRING_1);
         currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
     }
     public void AfterChopSuccess() {
-        if (poiTarget is Tree) {
-            Tree tree = poiTarget as Tree;
+        if (poiTarget is TreeObject) {
+            TreeObject tree = poiTarget as TreeObject;
             actor.AdjustSupply(_gainedSupply);
             tree.AdjustYield(-1);
         }

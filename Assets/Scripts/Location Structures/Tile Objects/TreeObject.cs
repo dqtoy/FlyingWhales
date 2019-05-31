@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class Tree : TileObject {
+public class TreeObject : TileObject {
     public int yield { get; private set; }
 
     private const int Supply_Per_Mine = 25;
 
-    public Tree(LocationStructure location) {
+    public TreeObject(LocationStructure location) {
         this.structureLocation = location;
         poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.CHOP_WOOD, INTERACTION_TYPE.TILE_OBJECT_DESTROY, };
         Initialize(TILE_OBJECT_TYPE.TREE);

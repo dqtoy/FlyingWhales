@@ -309,8 +309,8 @@ public class InteriorMapManager : MonoBehaviour {
         summary += "\nContent: " + tile.objHere?.ToString() ?? "None";
         if (tile.objHere != null) {
             summary += "\n\tObject State: " + tile.objHere.state.ToString();
-            if (tile.objHere is Tree) {
-                summary += "\n\tYield: " + (tile.objHere as Tree).yield.ToString();
+            if (tile.objHere is TreeObject) {
+                summary += "\n\tYield: " + (tile.objHere as TreeObject).yield.ToString();
             } else if (tile.objHere is Ore) {
                 summary += "\n\tYield: " + (tile.objHere as Ore).yield.ToString();
             } else if (tile.objHere is SupplyPile) {

@@ -439,7 +439,7 @@ public class LocationStructure {
                 AddPOI(new Ore(this), tile, placeAsset);
                 break;
             case TILE_OBJECT_TYPE.TREE:
-                AddPOI(new Tree(this), tile, placeAsset);
+                AddPOI(new TreeObject(this), tile, placeAsset);
                 break;
             case TILE_OBJECT_TYPE.DESK:
                 AddPOI(new Desk(this), tile, placeAsset);
