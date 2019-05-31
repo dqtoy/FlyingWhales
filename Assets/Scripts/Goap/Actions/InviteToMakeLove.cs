@@ -102,8 +102,8 @@ public class InviteToMakeLove : GoapAction {
         GoapPlan makeLovePlan = new GoapPlan(startNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY }, GOAP_CATEGORY.HAPPINESS);
         makeLovePlan.ConstructAllNodes();
         actor.AddPlan(makeLovePlan, true);
-        actor.ownParty.AddCharacter(target);
         AddTraitTo(target, "Wooed", actor);
+        actor.ownParty.AddCharacter(target);
     }
     private void PreInviteFail() {
         //**After Effect 1**: Actor gains Annoyed trait.

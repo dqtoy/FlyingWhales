@@ -3570,33 +3570,33 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             AdjustDoNotGetTired(1);
             AdjustDoNotGetLonely(1);
         } else if (trait.name == "Forlorn") {
-            AdjustMoodValue(-35, trait.gainedFromDoing);
+            AdjustMoodValue(-35, trait, trait.gainedFromDoing);
         } else if (trait.name == "Lonely") {
-            AdjustMoodValue(-20, trait.gainedFromDoing);
+            AdjustMoodValue(-20, trait, trait.gainedFromDoing);
         } else if (trait.name == "Exhausted") {
             marker.AdjustUseWalkSpeed(1);
-            AdjustMoodValue(-35, trait.gainedFromDoing);
+            AdjustMoodValue(-35, trait, trait.gainedFromDoing);
         } else if (trait.name == "Tired") {
             marker.AdjustSpeedModifier(-0.2f);
-            AdjustMoodValue(-10, trait.gainedFromDoing);
+            AdjustMoodValue(-10, trait, trait.gainedFromDoing);
         } else if (trait.name == "Starving") {
-            AdjustMoodValue(-25, trait.gainedFromDoing);
+            AdjustMoodValue(-25, trait, trait.gainedFromDoing);
         } else if (trait.name == "Hungry") {
-            AdjustMoodValue(-10, trait.gainedFromDoing);
+            AdjustMoodValue(-10, trait, trait.gainedFromDoing);
         } else if (trait.name == "Injured") {
-            AdjustMoodValue(-15, trait.gainedFromDoing);
+            AdjustMoodValue(-15, trait, trait.gainedFromDoing);
         } else if (trait.name == "Cursed") {
-            AdjustMoodValue(-25, trait.gainedFromDoing);
+            AdjustMoodValue(-25, trait, trait.gainedFromDoing);
         } else if (trait.name == "Sick") {
-            AdjustMoodValue(-15, trait.gainedFromDoing);
+            AdjustMoodValue(-15, trait, trait.gainedFromDoing);
         } else if (trait.name == "Cheery") {
-            AdjustMoodValue(15, trait.gainedFromDoing);
+            AdjustMoodValue(15, trait, trait.gainedFromDoing);
         } else if (trait.name == "Annoyed") {
-            AdjustMoodValue(-15, trait.gainedFromDoing);
+            AdjustMoodValue(-15, trait, trait.gainedFromDoing);
         } else if (trait.name == "Lethargic") {
-            AdjustMoodValue(-20, trait.gainedFromDoing);
+            AdjustMoodValue(-20, trait, trait.gainedFromDoing);
         } else if (trait.name == "Heartbroken") {
-            AdjustMoodValue(-35, trait.gainedFromDoing);
+            AdjustMoodValue(-35, trait, trait.gainedFromDoing);
         }
         //else if (trait.name == "Hungry") {
         //    CreateFeedJob();
@@ -3661,31 +3661,31 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             AdjustDoNotGetTired(-1);
             AdjustDoNotGetLonely(-1);
         } else if (trait.name == "Forlorn") {
-            AdjustMoodValue(35, trait.gainedFromDoing);
+            AdjustMoodValue(35, trait, trait.gainedFromDoing);
         } else if (trait.name == "Lonely") {
-            AdjustMoodValue(20, trait.gainedFromDoing);
+            AdjustMoodValue(20, trait, trait.gainedFromDoing);
         } else if (trait.name == "Exhausted") {
             marker.AdjustUseWalkSpeed(-1);
-            AdjustMoodValue(35, trait.gainedFromDoing);
+            AdjustMoodValue(35, trait, trait.gainedFromDoing);
         } else if (trait.name == "Tired") {
             marker.AdjustSpeedModifier(0.2f);
-            AdjustMoodValue(10, trait.gainedFromDoing);
+            AdjustMoodValue(10, trait, trait.gainedFromDoing);
         } else if (trait.name == "Starving") {
-            AdjustMoodValue(25, trait.gainedFromDoing);
+            AdjustMoodValue(25, trait, trait.gainedFromDoing);
         } else if (trait.name == "Hungry") {
-            AdjustMoodValue(10, trait.gainedFromDoing);
+            AdjustMoodValue(10, trait, trait.gainedFromDoing);
         } else if (trait.name == "Injured") {
-            AdjustMoodValue(15, trait.gainedFromDoing);
+            AdjustMoodValue(15, trait, trait.gainedFromDoing);
         } else if (trait.name == "Cursed") {
-            AdjustMoodValue(25, trait.gainedFromDoing);
+            AdjustMoodValue(25, trait, trait.gainedFromDoing);
         } else if (trait.name == "Sick") {
-            AdjustMoodValue(15, trait.gainedFromDoing);
+            AdjustMoodValue(15, trait, trait.gainedFromDoing);
         } else if (trait.name == "Cheery") {
-            AdjustMoodValue(-15, trait.gainedFromDoing);
+            AdjustMoodValue(-15, trait, trait.gainedFromDoing);
         } else if (trait.name == "Annoyed") {
-            AdjustMoodValue(15, trait.gainedFromDoing);
+            AdjustMoodValue(15, trait, trait.gainedFromDoing);
         } else if (trait.name == "Lethargic") {
-            AdjustMoodValue(20, trait.gainedFromDoing);
+            AdjustMoodValue(20, trait, trait.gainedFromDoing);
         }
         for (int i = 0; i < trait.effects.Count; i++) {
             TraitEffect traitEffect = trait.effects[i];
@@ -5409,7 +5409,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     LocationStructure structure = keyValuePair.Value[i];
                     for (int j = 0; j < structure.pointsOfInterest.Count; j++) {
                         IPointOfInterest poi = structure.pointsOfInterest[j];
-                        if (poi != this && !(poi is Tree)) {
+                        if (poi != this && !(poi is TreeObject)) {
                             AddAwareness(poi);
                         }
                     }
@@ -6011,7 +6011,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         } else {
             log += "\nNext action for this plan: " + plan.currentNode.action.goapName;
-            if (plan.job != null) {
+            if (plan.job != null && plan.job.assignedCharacter != this) {
                 log += "\nPlan has a job: " + plan.job.name + ". Assigned character " + (plan.job.assignedCharacter != null ? plan.job.assignedCharacter.name : "None") + " does not match with " + name + ".";
                 log += "Drop plan because this character is no longer the one assigned";
                 DropPlan(plan);
@@ -6507,29 +6507,40 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         moodValue = amount;
         moodValue = Mathf.Clamp(moodValue, 1, 100);
     }
-    public void AdjustMoodValue(int amount, GoapAction triggerAction = null) {
+    public void AdjustMoodValue(int amount, Trait fromTrait, GoapAction triggerAction = null) {
         moodValue += amount;
         moodValue = Mathf.Clamp(moodValue, 1, 100);
-        if(triggerAction != null) {
-            if(amount < 0 && currentMoodType == CHARACTER_MOOD.DARK) {
-                if(currentAction != null && currentAction.goapType == INTERACTION_TYPE.TANTRUM) {
-                    return;
-                }
-                int chance = UnityEngine.Random.Range(0, 100);
-                if(chance < 20) {
-                    CancelAllJobsAndPlans();
-                    //Create Tantrum action
-                    GoapPlanJob tantrum = new GoapPlanJob("Tantrum", INTERACTION_TYPE.TANTRUM, this, new Dictionary<INTERACTION_TYPE, object[]>() {
-                        { INTERACTION_TYPE.TANTRUM, new object[] { triggerAction } }
-                    });
-                    tantrum.SetCannotOverrideJob(true);
-                    tantrum.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
-                    tantrum.SetIsPriority(true);
-                    jobQueue.AddJobInQueue(tantrum, true);
-                    jobQueue.ProcessFirstJobInQueue(this);
-                    Debug.Log(this.name + " is started having a tantrum!");
-                }
+        if(amount < 0 && currentMoodType == CHARACTER_MOOD.DARK) {
+            if(currentAction != null && currentAction.goapType == INTERACTION_TYPE.TANTRUM) {
+                return;
             }
+            string tantrumReason = "Became " +  fromTrait.nameInUI;
+            if (triggerAction != null) {
+                tantrumReason = Utilities.LogReplacer(triggerAction.currentState.descriptionLog);
+            }
+
+            string tantrumLog = this.name + "'s mood was adjusted by " + amount.ToString() + " and current mood is " + currentMoodType.ToString() + ".";
+            tantrumLog += "Reason: " + tantrumReason;
+            tantrumLog += "\nRolling for Tantrum..."; 
+
+            int chance = UnityEngine.Random.Range(0, 100);
+
+            tantrumLog += "\nRolled: " + chance.ToString();
+
+            if (chance < 20) {
+                CancelAllJobsAndPlans();
+                //Create Tantrum action
+                GoapPlanJob tantrum = new GoapPlanJob("Tantrum", INTERACTION_TYPE.TANTRUM, this, new Dictionary<INTERACTION_TYPE, object[]>() {
+                    { INTERACTION_TYPE.TANTRUM, new object[] { tantrumReason } }
+                });
+                tantrum.SetCannotOverrideJob(true);
+                tantrum.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
+                tantrum.SetIsPriority(true);
+                jobQueue.AddJobInQueue(tantrum, true);
+                jobQueue.ProcessFirstJobInQueue(this);
+                tantrumLog += "\n" + this.name + " started having a tantrum!";
+            }
+            Debug.Log(tantrumLog);
         }
     }
     public CHARACTER_MOOD ConvertCurrentMoodValueToType() {
