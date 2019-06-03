@@ -9,7 +9,7 @@ public class Intervene : PlayerJobAction {
 
     public Intervene() {
         name = "Intervene";
-        SetDefaultCooldownTime(3);
+        SetDefaultCooldownTime(24);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
         _traitNames = new List<string>() { "Zap", "Spook", "Jolt", "Enrage"}; //, "Fumble"
     }
