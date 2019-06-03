@@ -133,7 +133,7 @@ public class MakeLove : GoapAction {
             //- **Recipient Effect**: https://trello.com/c/mqor1Ddv/1884-relationship-degradation between and Recipient and Target. 
             CharacterManager.Instance.RelationshipDegradation(poiTargetAlterEgo, recipient, this);
             //Add an Undermine Job to Recipient versus Target (choose at random). 
-            recipient.ForceCreateUndermineJob(target);
+            recipient.ForceCreateUndermineJob(target, "cheated");
             //Add a Breakup Job to Recipient versus Actor.
             recipient.CreateBreakupJob(actor);
             //Add Heartbroken and Betrayed trait to Recipient.
@@ -147,7 +147,7 @@ public class MakeLove : GoapAction {
             //- **Recipient Effect**: https://trello.com/c/mqor1Ddv/1884-relationship-degradation between Recipient and Actor. 
             CharacterManager.Instance.RelationshipDegradation(actorAlterEgo, recipient, this);
             //Add an Undermine Job to Recipient versus Actor.
-            recipient.ForceCreateUndermineJob(actor);
+            recipient.ForceCreateUndermineJob(actor, "cheated");
             //Add a Breakup Job to Recipient versus Target.
             recipient.CreateBreakupJob(target);
             //Add Heartbroken and Betrayed trait to Recipient.

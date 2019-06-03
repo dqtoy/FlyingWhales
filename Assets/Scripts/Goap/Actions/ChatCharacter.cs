@@ -303,7 +303,7 @@ public class ChatCharacter : GoapAction {
             //- **Recipient Effect**: https://trello.com/c/mqor1Ddv/1884-relationship-degradation between and Recipient and Target.
             //Add an Undermine Job to Recipient versus Target (choose at random). Add a Breakup Job to Recipient versus Actor.
             CharacterManager.Instance.RelationshipDegradation(target, recipient, this);
-            recipient.ForceCreateUndermineJob(target);
+            recipient.ForceCreateUndermineJob(target, "cheated");
             recipient.CreateBreakupJob(actor);
         }
         //Recipient considers Target as a Lover:
@@ -313,7 +313,7 @@ public class ChatCharacter : GoapAction {
             //- **Recipient Effect**: https://trello.com/c/mqor1Ddv/1884-relationship-degradation between and Recipient and Actor.
             //Add an Undermine Job to Recipient versus Actor (choose at random). Add a Breakup Job to Recipient versus Target.
             CharacterManager.Instance.RelationshipDegradation(actor, recipient, this);
-            recipient.ForceCreateUndermineJob(actor);
+            recipient.ForceCreateUndermineJob(actor, "cheated");
             recipient.CreateBreakupJob(target);
         }
         //Actor has a Lover. Actor's Lover is not the Target. Recipient does not have a positive relationship with Actor. Recipient has a relationship (positive or negative) with Actor's Lover.

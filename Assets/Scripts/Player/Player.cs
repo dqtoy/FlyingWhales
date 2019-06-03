@@ -792,6 +792,11 @@ public class Player : ILeader {
             ShowNotification(log);
         }
     }
+    public void ShowNotificationFrom(Log log, Character character, bool onlyClickedCharacter) {
+        if (ShouldShowNotificationFrom(character, onlyClickedCharacter)) {
+            ShowNotification(log);
+        }
+    }
     public void ShowNotification(Log log) {
         Messenger.Broadcast<Log>(Signals.SHOW_PLAYER_NOTIFICATION, log);
     }
