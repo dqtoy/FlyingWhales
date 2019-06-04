@@ -226,7 +226,6 @@ public class Player : ILeader {
 
     #region Minions
     public void CreateInitialMinions() {
-        PlayerUI.Instance.ResetAllMinionItems();
         _minions = new List<Minion>();
         for (int i = 0; i < 20; i++) {
             AddMinion(CreateNewMinion(RACE.DEMON));
@@ -238,8 +237,6 @@ public class Player : ILeader {
         //AddMinion(CreateNewMinion(CharacterManager.Instance.GetRandomDeadlySinsClassName(), RACE.DEMON, false));
 
         //UpdateMinions();
-        PlayerUI.Instance.minionsScrollRect.verticalNormalizedPosition = 1f;
-        PlayerUI.Instance.OnStartMinionUI();
     }
     public Minion CreateNewMinion(Character character) {
         return new Minion(character, true);
@@ -253,62 +250,13 @@ public class Player : ILeader {
         Minion minion = new Minion(CharacterManager.Instance.CreateNewCharacter(CharacterRole.MINION, className, race, GENDER.MALE, playerFaction, playerArea), false);
         return minion;
     }
-    public void UpdateMinions() {
-        for (int i = 0; i < _minions.Count; i++) {
-            RearrangeMinionItem(_minions[i].minionItem, i);
-        }
-    }
-    private void RearrangeMinionItem(PlayerCharacterItem minionItem, int index) {
-        //if (minionItem.transform.GetSiblingIndex() != index) {
-            //minionItem.transform.SetSiblingIndex(index);
-            minionItem.supposedIndex = index;
-            Vector3 to = PlayerUI.Instance.minionsContentTransform.GetChild(index).transform.localPosition;
-            Vector3 from = minionItem.transform.localPosition;
-            minionItem.tweenPos.from = from;
-            minionItem.tweenPos.to = to;
-            minionItem.tweenPos.ResetToBeginning();
-            minionItem.tweenPos.PlayForward();
-        //}
-    }
-    public void SortByLevel() {
-        _minions = _minions.OrderBy(x => x.lvl).ToList();
-        //for (int i = 0; i < PlayerUI.Instance.minionItems.Length; i++) {
-        //    MinionItem minionItem = PlayerUI.Instance.minionItems[i];
-        //    if (i < _minions.Count) {
-        //        minionItem.SetMinion(_minions[i]);
-        //    } else {
-        //        minionItem.SetMinion(null);
-        //    }
-        //}
-        UpdateMinions();
-    }
-    public void SortByClass() {
-        _minions = _minions.OrderBy(x => x.character.characterClass.className).ToList();
-        //for (int i = 0; i < PlayerUI.Instance.minionItems.Length; i++) {
-        //    MinionItem minionItem = PlayerUI.Instance.minionItems[i];
-        //    if (i < _minions.Count) {
-        //        minionItem.SetMinion(_minions[i]);
-        //    } else {
-        //        minionItem.SetMinion(null);
-        //    }
-        //}
-        UpdateMinions();
-    }
-    public void SortByDefault() {
-        _minions = _minions.OrderBy(x => x.indexDefaultSort.ToString()).ToList();
-        UpdateMinions();
-    }
     public void AddMinion(Minion minion) {
         minion.SetIndexDefaultSort(_minions.Count);
-        //MinionItem minionItem = PlayerUI.Instance.minionItems[_minions.Count];
-        PlayerCharacterItem item = PlayerUI.Instance.CreateMinionItem();
-        item.SetCharacter(minion.character);
 
         if (PlayerUI.Instance.minionSortType == MINIONS_SORT_TYPE.LEVEL) {
             for (int i = 0; i < _minions.Count; i++) {
                 if (minion.lvl <= _minions[i].lvl) {
                     _minions.Insert(i, minion);
-                    item.transform.SetSiblingIndex(i);
                     break;
                 }
             }
@@ -318,7 +266,6 @@ public class Player : ILeader {
                 int compareResult = string.Compare(strMinionType, minion.character.characterClass.className);
                 if (compareResult == -1 || compareResult == 0) {
                     _minions.Insert(i, minion);
-                    item.transform.SetSiblingIndex(i);
                     break;
                 }
             }
@@ -327,26 +274,8 @@ public class Player : ILeader {
         }
     }
     public void RemoveMinion(Minion minion) {
-        if(_minions.Remove(minion)){
-            PlayerUI.Instance.RemoveCharacterItem(minion.minionItem);
-            //if (minion.currentlyExploringArea != null) {
-            //    minion.currentlyExploringArea.areaInvestigation.CancelInvestigation("explore");
-            //}
-            //if (minion.currentlyAttackingArea != null) {
-            //    minion.currentlyAttackingArea.areaInvestigation.CancelInvestigation("attack");
-            //}
-        }
+        _minions.Remove(minion);
     }
-    //public void AdjustMaxMinions(int adjustment) {
-    //    _maxMinions += adjustment;
-    //    _maxMinions = Mathf.Max(0, _maxMinions);
-    //    PlayerUI.Instance.OnMaxMinionsChanged();
-    //}
-    //public void SetMaxMinions(int value) {
-    //    _maxMinions = value;
-    //    _maxMinions = Mathf.Max(0, _maxMinions);
-    //    PlayerUI.Instance.OnMaxMinionsChanged();
-    //}
     #endregion
 
     #region Currencies

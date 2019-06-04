@@ -16,27 +16,15 @@ public class PlayerUI : MonoBehaviour {
     public TextMeshProUGUI suppliesText;
     public TextMeshProUGUI impsText;
 
-    [Header("Minions")]
-    public ScrollRect minionsScrollRect;
-    public RectTransform minionsScrollRectTransform;
-    public LayoutElement minionsScrollRectLE;
-    public GameObject minionPrefab;
-    public GameObject minionsHolderGO;
-    public RectTransform minionsContentTransform;
-    public TweenPosition minionContentTweenPos;
-    public Button upScrollButton;
-    public Button downScrollButton;
-    public List<PlayerCharacterItem> minionItems;
-    public bool isMinionsMenuShowing;
-
     [Header("Role Slots")]
-    [SerializeField] private GameObject roleSlotsParent;
+    [SerializeField] private RectTransform roleSlotsParent;
     [SerializeField] private RoleSlotItem[] roleSlots;
-    [SerializeField] private Button assignBtn;
-    [SerializeField] private RectTransform jobActionsParent;
+    [SerializeField] private GameObject roleSlotItemPrefab;
     [SerializeField] private GameObject actionBtnTooltipGO;
     [SerializeField] private TextMeshProUGUI actionBtnTooltipLbl;
     [SerializeField] private GameObject actionBtnPointer;
+    [SerializeField] private TextMeshProUGUI activeMinionTypeLbl;
+    [SerializeField] private RectTransform activeMinionActionsParent;    
 
     [Header("Attack")]
     public GameObject attackGridGO;
@@ -112,7 +100,6 @@ public class PlayerUI : MonoBehaviour {
             //currSlot.SetItemDroppedCallback(OnDropOnAttackGrid);
             //currSlot.SetItemDroppedOutCallback(OnDroppedOutFromAttackGrid);
         }
-        minionItems = new List<PlayerCharacterItem>();
 
         LoadRoleSlots();
         LoadAttackSlot();
@@ -129,12 +116,6 @@ public class PlayerUI : MonoBehaviour {
         Messenger.AddListener(Signals.ON_CLOSE_SHARE_INTEL, OnCloseShareIntelMenu);
 
         //job action buttons
-        Messenger.AddListener<Intel>(Signals.PLAYER_OBTAINED_INTEL, OnPlayerObtainedIntel);
-        Messenger.AddListener<Character, GoapAction>(Signals.CHARACTER_DOING_ACTION, OnCharacterDoingAction);
-        Messenger.AddListener<Character>(Signals.CHARACTER_TRACKED, OnCharacterTracked);
-        Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_RACE, OnCharacterChangedRace);
-        Messenger.AddListener<Character>(Signals.ROLE_CHANGED, OnCharacterChangedRole);
-        Messenger.AddListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
         Messenger.AddListener(Signals.HAS_SEEN_ACTION_BUTTONS, OnSeenActionButtons);
     }
 
@@ -143,65 +124,32 @@ public class PlayerUI : MonoBehaviour {
         actionBtnPointer.SetActive(!PlayerManager.Instance.player.hasSeenActionButtonsOnce);
     }
     private void LoadRoleSlots() {
-        roleSlots = Utilities.GetComponentsInDirectChildren<RoleSlotItem>(roleSlotsParent);
         int currIndex = 0;
+        roleSlots = new RoleSlotItem[PlayerManager.Instance.player.roleSlots.Count];
         foreach (KeyValuePair<JOB, PlayerJobData> keyValuePair in PlayerManager.Instance.player.roleSlots) {
-            RoleSlotItem item = roleSlots.ElementAtOrDefault(currIndex);
-            if (item != null) {
-                item.SetSlotJob(keyValuePair.Key);
-            } else {
-                Debug.LogWarning("There is no slot item for job " + keyValuePair.Key.ToString());
-            }
+            GameObject roleSlotGO = UIManager.Instance.InstantiateUIObject(roleSlotItemPrefab.name, roleSlotsParent);
+            RoleSlotItem roleSlot = roleSlotGO.GetComponent<RoleSlotItem>();
+            roleSlot.SetSlotJob(keyValuePair.Key);
+            roleSlots[currIndex] = roleSlot;
             currIndex++;
         }
     }
-    private void ShowActionButtonsFor(IPointOfInterest poi) {
-        if (UIManager.Instance.IsShareIntelMenuOpen()) {
-            return;
-        }
-        Utilities.DestroyChildren(jobActionsParent);
-        for (int i = 0; i < roleSlots.Length; i++) {
-            RoleSlotItem item = roleSlots[i];
-            if (PlayerManager.Instance.player.roleSlots[item.slotJob].assignedCharacter != null) {
-                item.ShowActionButtons(poi, jobActionsParent);
-            }
-        }
-        jobActionsParent.gameObject.SetActive(true);
-        actionBtnPointer.SetActive(!PlayerManager.Instance.player.hasSeenActionButtonsOnce);
-    }
+    //private void ShowActionButtonsFor(IPointOfInterest poi) {
+    //    if (UIManager.Instance.IsShareIntelMenuOpen()) {
+    //        return;
+    //    }
+    //    Utilities.DestroyChildren(jobActionsParent);
+    //    for (int i = 0; i < roleSlots.Length; i++) {
+    //        RoleSlotItem item = roleSlots[i];
+    //        if (PlayerManager.Instance.player.roleSlots[item.slotJob].assignedCharacter != null) {
+    //            item.ShowActionButtons(poi, jobActionsParent);
+    //        }
+    //    }
+    //    jobActionsParent.gameObject.SetActive(true);
+    //    actionBtnPointer.SetActive(!PlayerManager.Instance.player.hasSeenActionButtonsOnce);
+    //}
     private void HideActionButtons() {
-        jobActionsParent.gameObject.SetActive(false);
         actionBtnPointer.SetActive(false);
-    }
-    private void OnPlayerObtainedIntel(Intel intel) {
-        if (UIManager.Instance.characterInfoUI.isShowing) {
-            ShowActionButtonsFor(UIManager.Instance.characterInfoUI.activeCharacter);
-        }
-    }
-    private void OnCharacterDoingAction(Character character, GoapAction action) {
-        if (UIManager.Instance.characterInfoUI.isShowing && character == UIManager.Instance.characterInfoUI.activeCharacter) {
-            ShowActionButtonsFor(character);
-        }
-    }
-    private void OnCharacterFinishedAction(Character character, GoapAction action, string result) {
-        if (UIManager.Instance.characterInfoUI.isShowing && character == UIManager.Instance.characterInfoUI.activeCharacter) {
-            ShowActionButtonsFor(character);
-        }
-    }
-    private void OnCharacterChangedRace(Character character) {
-        if (UIManager.Instance.characterInfoUI.isShowing && character == UIManager.Instance.characterInfoUI.activeCharacter) {
-            ShowActionButtonsFor(character);
-        }
-    }
-    private void OnCharacterTracked(Character character) {
-        if (UIManager.Instance.characterInfoUI.isShowing && character == UIManager.Instance.characterInfoUI.activeCharacter) {
-            ShowActionButtonsFor(character);
-        }
-    }
-    private void OnCharacterChangedRole(Character character) {
-        if (UIManager.Instance.characterInfoUI.isShowing && character == UIManager.Instance.characterInfoUI.activeCharacter) {
-            ShowActionButtonsFor(character);
-        }
     }
     public void ShowActionBtnTooltip(string message, string header) {
         string m = string.Empty;
@@ -344,184 +292,6 @@ public class PlayerUI : MonoBehaviour {
         factionToggle.isOn = isOn;
     }
     #endregion
-
-    #region Minions
-    public void OnStartMinionUI() {
-        StartCoroutine(StartMinionUICoroutine());
-    }
-    private IEnumerator StartMinionUICoroutine() {
-        yield return null;
-        OnScroll(Vector2.zero);
-    }
-    public void MinionDragged(ReorderableList.ReorderableListEventStruct reorderableListEventStruct) {
-        PlayerCharacterItem minionItem = reorderableListEventStruct.SourceObject.GetComponent<PlayerCharacterItem>();
-        //minionItem.portrait.SetBorderState(true);
-    }
-    public void MinionCancel(ReorderableList.ReorderableListEventStruct reorderableListEventStruct) {
-        PlayerCharacterItem minionItem = reorderableListEventStruct.SourceObject.GetComponent<PlayerCharacterItem>();
-        //minionItem.portrait.SetBorderState(false);
-        //minionItem.SetEnabledState(false);
-    }
-    public void ScrollUp() {
-        if (!_isScrollingUp) {
-            _isScrollingUp = true;
-            float y = minionsContentTransform.localPosition.y - 115f;
-            if (y < 0f) {
-                y = 0f;
-                upScrollButton.gameObject.SetActive(false);
-            }
-            //minionsContentTransform.localPosition = new Vector3(minionsContentTransform.localPosition.x, y, minionsContentTransform.localPosition.z);
-            minionContentTweenPos.from = minionsContentTransform.localPosition;
-            minionContentTweenPos.to = new Vector3(minionsContentTransform.localPosition.x, y, minionsContentTransform.localPosition.z);
-            minionContentTweenPos.SetOnFinished(OnFinishedScrollUp);
-            minionContentTweenPos.ResetToBeginning();
-            minionContentTweenPos.PlayForward();
-        }
-    }
-    private void OnFinishedScrollUp() {
-        _isScrollingUp = false;
-    }
-    public void ScrollDown() {
-        if (!_isScrollingDown) {
-            _isScrollingDown = true;
-            float y = minionsContentTransform.localPosition.y + 115f;
-            float height = minionsScrollRectLE.preferredHeight;
-            if (y > height) {
-                y = height;
-            }
-            //if((y + minionsScrollRectLE.preferredHeight) == minionsContentTransform.rect.height) {
-            //    downScrollButton.gameObject.SetActive(false);
-            //}
-            //minionsContentTransform.localPosition = new Vector3(minionsContentTransform.localPosition.x, y, minionsContentTransform.localPosition.z);
-            minionContentTweenPos.from = minionsContentTransform.localPosition;
-            minionContentTweenPos.to = new Vector3(minionsContentTransform.localPosition.x, y, minionsContentTransform.localPosition.z);
-            minionContentTweenPos.SetOnFinished(OnFinishedScrollDown);
-            minionContentTweenPos.ResetToBeginning();
-            minionContentTweenPos.PlayForward();
-        }
-    }
-    private void OnFinishedScrollDown() {
-        _isScrollingDown = false;
-    }
-    public void SortByLvlMinions() {
-        _minionSortType = MINIONS_SORT_TYPE.LEVEL;
-        PlayerManager.Instance.player.SortByLevel();
-    }
-    public void SortByClassMinions() {
-        _minionSortType = MINIONS_SORT_TYPE.TYPE;
-        PlayerManager.Instance.player.SortByClass();
-    }
-    public void SortByDefaultMinions() {
-        _minionSortType = MINIONS_SORT_TYPE.DEFAULT;
-        PlayerManager.Instance.player.SortByDefault();
-    }
-    public void OnToggleSortLvlMinions(bool state) {
-        if (state) {
-            SortByLvlMinions();
-        } else {
-            if (!minionSortingToggleGroup.AnyTogglesOn()) {
-                SortByDefaultMinions();
-            }
-        }
-    }
-    public void OnToggleSortTypeMinions(bool state) {
-        if (state) {
-            SortByClassMinions();
-        } else {
-            if (!minionSortingToggleGroup.AnyTogglesOn()) {
-                SortByDefaultMinions();
-            }
-        }
-    }
-    public void OnScroll(Vector2 vector2) {
-        if (minionsContentTransform.localPosition.y == 0f) {
-            //on top
-            if (upScrollButton.gameObject.activeSelf) {
-                upScrollButton.gameObject.SetActive(false);
-            }
-            //downScrollButton.gameObject.SetActive(true);
-        } else {
-            if (!upScrollButton.gameObject.activeSelf) {
-                upScrollButton.gameObject.SetActive(true);
-            }
-        }
-        if ((minionsContentTransform.localPosition.y + minionsScrollRectLE.preferredHeight) < minionsContentTransform.rect.height) {
-            //on bottom
-            //upScrollButton.gameObject.SetActive(true);
-            if (!downScrollButton.gameObject.activeSelf) {
-                downScrollButton.gameObject.SetActive(true);
-            }
-        } else {
-            if (downScrollButton.gameObject.activeSelf) {
-                downScrollButton.gameObject.SetActive(false);
-            }
-        }
-    }
-    public void ResetAllMinionItems() {
-        for (int i = 0; i < minionItems.Count; i++) {
-            minionItems[i].SetCharacter(null);
-        }
-    }
-    //public void OnMaxMinionsChanged() {
-    //    //load the number of minion slots the player has
-    //    if (minionItems.Count > PlayerManager.Instance.player.maxMinions) {
-    //        //if the current number of minion items is greater than the slots that the player has
-    //        int excess = minionItems.Count - PlayerManager.Instance.player.maxMinions; //check the number of excess items
-    //        List<PlayerCharacterItem> unoccupiedItems = GetUnoccupiedCharacterItems(); //check the number of items that are unoccupied
-    //        if (excess > 0 && unoccupiedItems.Count > 0) { //if there are unoccupied items
-    //            for (int i = 0; i < excess; i++) { //loop through the number of excess items, then destroy any unoccupied items
-    //                PlayerCharacterItem item = unoccupiedItems.ElementAtOrDefault(i);
-    //                if (item != null) {
-    //                    RemoveCharacterItem(item);
-    //                }
-    //            }
-    //        }
-    //    } else {
-    //        //if the current number of minion items is less than the slots the player has, instantiate the new slots
-    //        int remainingSlots = PlayerManager.Instance.player.maxMinions - minionItems.Count;
-    //        for (int i = 0; i < remainingSlots; i++) {
-    //            CreateMinionItem().SetCharacter(null);
-    //        }
-    //    }
-    //}
-    public PlayerCharacterItem GetUnoccupiedCharacterItem() {
-        for (int i = 0; i < minionItems.Count; i++) {
-            PlayerCharacterItem item = minionItems[i];
-            if (item.character == null) {
-                return item;
-            }
-        }
-        return null;
-    }
-    private List<PlayerCharacterItem> GetUnoccupiedCharacterItems() {
-        List<PlayerCharacterItem> items = new List<PlayerCharacterItem>();
-        for (int i = 0; i < minionItems.Count; i++) {
-            PlayerCharacterItem item = minionItems[i];
-            if (item.character == null) {
-                items.Add(item);
-            }
-        }
-        return items;
-    }
-    public PlayerCharacterItem CreateMinionItem() {
-        GameObject minionItemGO = UIManager.Instance.InstantiateUIObject(minionPrefab.name, minionsContentTransform);
-        PlayerCharacterItem minionItem = minionItemGO.GetComponent<PlayerCharacterItem>();
-        minionItems.Add(minionItem);
-        return minionItem;
-    }
-    public void RemoveCharacterItem(PlayerCharacterItem item) {
-        minionItems.Remove(item);
-        ObjectPoolManager.Instance.DestroyObject(item.gameObject);
-    }
-    public void OnClickAssign() {
-        UIManager.Instance.ShowDraggableObjectPicker(PlayerManager.Instance.player.allOwnedCharacters, new CharacterLevelComparer());
-    }
-    #endregion
-
-    public void SetMinionsMenuShowing(bool state) {
-        isMinionsMenuShowing = state;
-    }
-
     public void CreateNewParty() {
         if (!UIManager.Instance.partyinfoUI.isShowing) {
             UIManager.Instance.partyinfoUI.ShowCreatePartyUI();
@@ -534,10 +304,6 @@ public class PlayerUI : MonoBehaviour {
     private void OnMenuOpened(UIMenu menu) {
         if (menu is LandmarkInfoUI) {
             UIManager.Instance.ShowMinionsMenu();
-        } else if (menu is CharacterInfoUI) {
-            ShowActionButtonsFor(UIManager.Instance.characterInfoUI.activeCharacter);
-        } else if (menu is TileObjectInfoUI) {
-            ShowActionButtonsFor(UIManager.Instance.tileObjectInfoUI.activeTileObject);
         }
     }
     private void OnMenuClosed(UIMenu menu) {
@@ -553,9 +319,10 @@ public class PlayerUI : MonoBehaviour {
             } else if (previousMenu.Equals("faction")) {
                 UIManager.Instance.ShowFactionTokenMenu();
             }
-        } else if (menu is CharacterInfoUI || menu is TileObjectInfoUI) {
-            HideActionButtons();
-        }
+        } 
+        //else if (menu is CharacterInfoUI || menu is TileObjectInfoUI) {
+        //    HideActionButtons();
+        //}
     }
 
     #region Intel
@@ -609,9 +376,9 @@ public class PlayerUI : MonoBehaviour {
         //}
         //assignBtn.interactable = false;
 
-        if (UIManager.Instance.characterInfoUI.isShowing || UIManager.Instance.tileObjectInfoUI.isShowing) {
-            HideActionButtons();
-        }
+        //if (UIManager.Instance.characterInfoUI.isShowing || UIManager.Instance.tileObjectInfoUI.isShowing) {
+        //    HideActionButtons();
+        //}
     }
     private void OnCloseShareIntelMenu() {
         intelToggle.interactable = true;
@@ -621,11 +388,11 @@ public class PlayerUI : MonoBehaviour {
         //    rsi.OverrideDraggableState(true);
         //}
         //assignBtn.interactable = true;
-        if (UIManager.Instance.characterInfoUI.isShowing) {
-            ShowActionButtonsFor(UIManager.Instance.characterInfoUI.activeCharacter);
-        }else if (UIManager.Instance.tileObjectInfoUI.isShowing) {
-            ShowActionButtonsFor(UIManager.Instance.tileObjectInfoUI.activeTileObject);
-        }
+        //if (UIManager.Instance.characterInfoUI.isShowing) {
+        //    ShowActionButtonsFor(UIManager.Instance.characterInfoUI.activeCharacter);
+        //}else if (UIManager.Instance.tileObjectInfoUI.isShowing) {
+        //    ShowActionButtonsFor(UIManager.Instance.tileObjectInfoUI.activeTileObject);
+        //}
     }
     public void ShowPlayerIntels(bool state) {
         intelContainer.SetActive(state);
