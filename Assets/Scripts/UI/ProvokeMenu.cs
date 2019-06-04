@@ -98,14 +98,14 @@ public class ProvokeMenu : MonoBehaviour {
                 //targetCharacter.jobQueue.AddJobInQueue(job, true, false);
                 //targetCharacter.jobQueue.ProcessFirstJobInQueue(targetCharacter);
 
-                targetCharacter.CreateUndermineJobOnly(chosenCharacter);
+                targetCharacter.CreateUndermineJobOnly(chosenCharacter, "provoke");
 
-                Log addLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "provoke");
-                addLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                addLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                addLog.AddLogToInvolvedObjects();
+                //Log addLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "provoke");
+                //addLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                //addLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                //addLog.AddLogToInvolvedObjects();
 
-                PlayerManager.Instance.player.ShowNotification(addLog);
+                //PlayerManager.Instance.player.ShowNotification(addLog);
             }
         }
     }

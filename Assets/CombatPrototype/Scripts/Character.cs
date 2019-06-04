@@ -1355,7 +1355,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (CreateRemoveTraitJobs(targetCharacter)) {
             hasCreatedJob = true;
         }
-        if (CreateUndermineJob(targetCharacter)) {
+        if (CreateUndermineJob(targetCharacter, "saw")) {
             hasCreatedJob = true;
         }
         if (CreateBuryJob(targetCharacter)) {
@@ -1443,7 +1443,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return false;
     }
-    private bool CreateUndermineJob(Character targetCharacter) {
+    private bool CreateUndermineJob(Character targetCharacter, string reason) {
         if (!targetCharacter.isDead && HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.ENEMY) && !jobQueue.HasJob("Undermine Enemy", targetCharacter)) {
             int chance = UnityEngine.Random.Range(0, 100);
             int value = 0;
@@ -1454,7 +1454,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 value = 10;
             }
             if (chance < value) {
-                return CreateUndermineJobOnly(targetCharacter);
+                return CreateUndermineJobOnly(targetCharacter, reason);
             }
         }
         return false;
@@ -1466,12 +1466,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     /// - this character already has an undermine job in his/her job queue
     /// </summary>
     /// <param name="targetCharacter">The character to undermine.</param>
-    public void ForceCreateUndermineJob(Character targetCharacter) {
+    public void ForceCreateUndermineJob(Character targetCharacter, string reason) {
         if (!targetCharacter.isDead && !jobQueue.HasJob("Undermine Enemy", targetCharacter)) {
-            CreateUndermineJobOnly(targetCharacter);
+            CreateUndermineJobOnly(targetCharacter, reason);
         }
     }
-    public bool CreateUndermineJobOnly(Character targetCharacter) {
+    public bool CreateUndermineJobOnly(Character targetCharacter, string reason) {
         WeightedDictionary<string> undermineWeights = new WeightedDictionary<string>();
         undermineWeights.AddElement("negative trait", 50);
 
@@ -1566,10 +1566,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             jobQueue.AddJobInQueue(job, true, false);
             jobQueue.ProcessFirstJobInQueue(this);
 
-            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "saw_and_undermine");
+            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", reason + "_and_undermine");
             log.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            log.AddToFillers(null, currentMoodType.ToString().ToLower(), LOG_IDENTIFIER.STRING_1);
             AddHistory(log);
+
+            PlayerManager.Instance.player.ShowNotificationFrom(log, this, false);
             return true;
         }
         return false;
@@ -1738,13 +1741,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     }
                 }
                 if (chosenCharacter != null) {
-                    GoapPlanJob job = new GoapPlanJob("Undermine Enemy", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", targetPOI = chosenCharacter });
-                    job.SetCancelOnFail(true);
-                    job.SetCannotOverrideJob(true);
-                    //GameManager.Instance.SetPausedState(true);
-                    Debug.LogWarning(GameManager.Instance.TodayLogString() + "Added an UNDERMINE ENEMY Job to " + this.name + " with target " + chosenCharacter.name);
-                    jobQueue.AddJobInQueue(job);
-                    hasCreatedJob = true;
+                    hasCreatedJob = CreateUndermineJobOnly(chosenCharacter, "idle");
+                    //GoapPlanJob job = new GoapPlanJob("Undermine Enemy", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", targetPOI = chosenCharacter });
+                    //job.SetCancelOnFail(true);
+                    //job.SetCannotOverrideJob(true);
+                    ////GameManager.Instance.SetPausedState(true);
+                    //Debug.LogWarning(GameManager.Instance.TodayLogString() + "Added an UNDERMINE ENEMY Job to " + this.name + " with target " + chosenCharacter.name);
+                    //jobQueue.AddJobInQueue(job);
+                    //hasCreatedJob = true;
                 }
             }
         }
@@ -2759,9 +2763,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             addLog.AddToFillers(target, targetName, LOG_IDENTIFIER.TARGET_CHARACTER);
         }
         addLog.AddLogToInvolvedObjects();
-        if (PlayerManager.Instance.player.ShouldShowNotificationFrom(this, true)) {
-            PlayerManager.Instance.player.ShowNotification(addLog);
-        }
+        PlayerManager.Instance.player.ShowNotificationFrom(addLog, this, true);
     }
     private void OnActionStateSet(GoapAction action, GoapActionState state) {
         if (action.actor != this && action.poiTarget != this) {
@@ -5764,7 +5766,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                         AddPlan(goapThread.createdPlan, true);
 
                         if (stateComponent.currentState != null) {
-                            if (stateComponent.currentState.characterState != CHARACTER_STATE.ENGAGE && stateComponent.currentState.characterState != CHARACTER_STATE.FLEE) {
+                            if (stateComponent.currentState.characterState != CHARACTER_STATE.ENGAGE && stateComponent.currentState.characterState != CHARACTER_STATE.FLEE && stateComponent.currentState.characterState != CHARACTER_STATE.BERSERKED) {
                                 stateComponent.currentState.OnExitThisState();
                             }
                         } else {
@@ -6506,7 +6508,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 witnessLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 witnessLog.AddToFillers(criminal.owner, criminal.owner.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 witnessLog.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(committedCrime.ToString()), LOG_IDENTIFIER.STRING_1);
-                PlayerManager.Instance.player.ShowNotificationFrom(this, witnessLog);
+                if (this != witnessedCrime.poiTarget) {
+                    PlayerManager.Instance.player.ShowNotificationFrom(this, witnessLog);
+                }
             }
         } else {
             if (reportLog != null) {
