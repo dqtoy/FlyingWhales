@@ -40,7 +40,9 @@ public class AttributeManager : MonoBehaviour {
             Trait attribute = JsonUtility.FromJson<Trait>(System.IO.File.ReadAllText(files[i]));
             CategorizeTrait(attribute);
         }
+#if !WORLD_CREATION_TOOL
         AddSpecialTraits();
+#endif
         //foreach (Trait trait in _allPositiveTraits.Values) {
         //    if (trait.type == TRAIT_TYPE.DISABLER) {
         //        Debug.Log(trait.name);

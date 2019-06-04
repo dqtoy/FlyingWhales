@@ -99,13 +99,13 @@ public class CharacterRelationshipData {
         }
         return false;
     }
-    public void RemoveRelationship(RELATIONSHIP_TRAIT newRel) {
+    public bool RemoveRelationship(RELATIONSHIP_TRAIT newRel) {
         for (int i = 0; i < rels.Count; i++) {
             if(rels[i].relType == newRel) {
-                RemoveRelationship(rels[i]);
-                break;
+                return RemoveRelationship(rels[i]);
             }
         }
+        return false;
     }
     public bool HasRelationshipTrait(RELATIONSHIP_TRAIT relType) {
         for (int i = 0; i < rels.Count; i++) {

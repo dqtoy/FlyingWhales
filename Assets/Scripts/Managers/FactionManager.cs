@@ -100,11 +100,11 @@ public class FactionManager : MonoBehaviour {
         List<Faction> minorChoices = GetFactionsOfSize(FACTION_SIZE.MINOR);
 
         Faction goodMajor = goodMajorChoices[Random.Range(0, goodMajorChoices.Count)];
-        Faction evilMajor = evilMajorChoices[Random.Range(0, evilMajorChoices.Count)];
-        List<Faction> startFactions = new List<Faction>() { goodMajor, evilMajor }; //
+        //Faction evilMajor = evilMajorChoices[Random.Range(0, evilMajorChoices.Count)];
+        List<Faction> startFactions = new List<Faction>() { goodMajor }; //
 
         log += "\nGood Major: " + goodMajor.name;
-        log += "\nEvil Major: " + evilMajor.name;
+        //log += "\nEvil Major: " + evilMajor.name;
 
         //for (int i = 0; i < 1; i++) {
         //    Faction chosenMinorFaction = minorChoices[Random.Range(0, minorChoices.Count)];
@@ -117,37 +117,14 @@ public class FactionManager : MonoBehaviour {
             Faction faction = startFactions[i];
             if (!faction.isActive) {
                 OwnInitialAreasOfFaction(data.areaData, faction);
-                faction.GenerateStartingCitizens(9, 7);
+                //faction.GenerateStartingCitizens(9, 7);
                 faction.SetFactionActiveState(true);
             }
         }
 
         //Debug.Log(log);
 
-        /*
-         If both Factions are opposing alignment, -1 to relationship.
-         If both Factions have shared alignment, +1 to relationship.
-         If both Faction's faction leaders have same race, +1 to relationship.
-         */
-        //Generate Faction Relationships
-        for (int i = 0; i < startFactions.Count; i++) {
-            Faction currFaction = startFactions[i];
-            for (int j = i; j < startFactions.Count; j++) {
-                Faction otherFaction = startFactions[j];
-                if (currFaction.id != otherFaction.id) {
-                    FactionRelationship rel = currFaction.GetRelationshipWith(otherFaction);
-                    if (currFaction.morality == otherFaction.morality) {
-                        rel.AdjustRelationshipStatus(1);
-                    } else if (currFaction.morality != MORALITY.NEUTRAL 
-                        && otherFaction.morality != MORALITY.NEUTRAL) {
-                        rel.AdjustRelationshipStatus(-1);
-                    }
-                    if (currFaction.leader.race == otherFaction.leader.race) {
-                        rel.AdjustRelationshipStatus(1);
-                    }
-                }
-            }
-        }
+       
 
         ////First random faction
         //int index1 = UnityEngine.Random.Range(0, factions.Count);
@@ -169,6 +146,38 @@ public class FactionManager : MonoBehaviour {
         //    secondRandomFaction.ownedAreas[0].GenerateStartingFollowers(3);
         //    secondRandomFaction.SetFactionActiveState(true);
         //}
+    }
+
+    public void GenerateStartingFactionData() {
+        Faction[] startingFactions = allFactions.Where(x => x.isActive).ToArray();
+        for (int i = 0; i < startingFactions.Length; i++) {
+            Faction currFaction = startingFactions[i];
+            currFaction.GenerateStartingCitizens(9, 7);
+        }
+        /*
+        If both Factions are opposing alignment, -1 to relationship.
+        If both Factions have shared alignment, +1 to relationship.
+        If both Faction's faction leaders have same race, +1 to relationship.
+        */
+        //Generate Faction Relationships
+        for (int i = 0; i < startingFactions.Length; i++) {
+            Faction currFaction = startingFactions[i];
+            for (int j = i; j < startingFactions.Length; j++) {
+                Faction otherFaction = startingFactions[j];
+                if (currFaction.id != otherFaction.id) {
+                    FactionRelationship rel = currFaction.GetRelationshipWith(otherFaction);
+                    if (currFaction.morality == otherFaction.morality) {
+                        rel.AdjustRelationshipStatus(1);
+                    } else if (currFaction.morality != MORALITY.NEUTRAL
+                        && otherFaction.morality != MORALITY.NEUTRAL) {
+                        rel.AdjustRelationshipStatus(-1);
+                    }
+                    if (currFaction.leader.race == otherFaction.leader.race) {
+                        rel.AdjustRelationshipStatus(1);
+                    }
+                }
+            }
+        }
     }
     private List<Faction> GetFactionsOfMoralityAndSize(MORALITY morality, FACTION_SIZE size) {
         List<Faction> factions = new List<Faction>();

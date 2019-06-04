@@ -1,16 +1,17 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [System.Serializable]
 public class RelationshipSaveData {
     public int sourceCharacterID;
     public int targetCharacterID;
-    public List<CHARACTER_RELATIONSHIP> relationshipStatuses;
+    public List<RELATIONSHIP_TRAIT> rels;
 
-    public RelationshipSaveData(Relationship rel) {
-        sourceCharacterID = rel.sourceCharacter.id;
+    public RelationshipSaveData(CharacterRelationshipData rel) {
+        sourceCharacterID = rel.owner.id;
         targetCharacterID = rel.targetCharacter.id;
-        relationshipStatuses = new List<CHARACTER_RELATIONSHIP>(rel.relationshipStatuses);
+        rels = new List<RELATIONSHIP_TRAIT>(rel.rels.Select(x => x.relType).ToList());
     }
 }

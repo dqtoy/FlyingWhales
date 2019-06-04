@@ -91,6 +91,8 @@ public static class Signals {
     public static string CHARACTER_CHANGED_RACE = "OnCharacterChangedRace"; //Parameters (Character); 
     public static string CHARACTER_ARRIVED_AT_STRUCTURE = "OnCharacterArrivedAtStructure"; //Parameters (Character, LocationStructure); 
     public static string RELATIONSHIP_ADDED = "OnCharacterGainedRelationship"; //Parameters (Character, RelationshipTrait)
+    public static string RELATIONSHIP_REMOVED = "OnCharacterRemovedRelationship"; //Parameters (Character, RELATIONSHIP_TRAIT, AlterEgoData)
+    public static string ALL_RELATIONSHIP_REMOVED = "OnCharacterRemovedAllRelationship"; //Parameters (Character, Character)
     public static string CHARACTER_TRACKED = "OnCharacterTracked"; //Parameters (Character character)
     public static string CANCEL_CURRENT_ACTION = "OnCancelCurrentAction"; //Parameters (Character target, string cause)
     public static string CHARACTER_STARTED_STATE = "OnCharacterStartedState"; //Parameters (Character character, CharacterState state)

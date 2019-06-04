@@ -116,9 +116,6 @@ public class Faction {
     public List<RACE> startingFollowers {
         get { return _startingFollowers; }
     }
-    public bool isNeutral {
-        get { return this.id == FactionManager.Instance.neutralFaction.id; }
-    }
     #endregion
 
     public Faction(bool isPlayerFaction = false) {
@@ -248,7 +245,7 @@ public class Faction {
         if (!_characters.Contains(character)) {
             _characters.Add(character);
             character.SetFaction(this);
-            if(this.id != FactionManager.Instance.neutralFaction.id && character.role == CharacterRole.BANDIT) {
+            if(this != FactionManager.Instance.neutralFaction && character.role == CharacterRole.BANDIT) {
                 if(UnityEngine.Random.Range(0, 2) == 0) {
                     character.AssignRole(CharacterRole.SOLDIER);
                 } else {
@@ -417,7 +414,7 @@ public class Faction {
 
         if (_name == "Fyn") {
             //Male Human King with **4 Human Soldiers** as his servants
-            for (int i = 0; i < 4; i++) {
+            for (int i = 0; i < 1; i++) {
                 Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.HUMANS, Utilities.GetRandomGender(),
                     this, _ownedAreas[0]);
                 createdCharacter.LevelUp(citizensLevel - 1);
@@ -426,7 +423,7 @@ public class Faction {
 
             //**3 Human Adventurers**
             //**3 Human Civilians**
-            for (int i = 0; i < 3; i++) {
+            for (int i = 0; i < 1; i++) {
                 Character adventurer = CharacterManager.Instance.CreateNewCharacter(CharacterRole.ADVENTURER, RACE.HUMANS, Utilities.GetRandomGender(),
                     this, _ownedAreas[0]);
                 adventurer.LevelUp(citizensLevel - 1);

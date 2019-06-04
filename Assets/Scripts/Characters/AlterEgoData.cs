@@ -164,11 +164,13 @@ public class AlterEgoData {
         }
         relationships[alterEgo].AddRelationship(newRel);
         owner.OnRelationshipWithCharacterAdded(alterEgo.owner, newRel);
-        Messenger.Broadcast(Signals.RELATIONSHIP_ADDED, this, newRel);
+        Messenger.Broadcast(Signals.RELATIONSHIP_ADDED, this.owner, newRel);
     }
     public void RemoveRelationship(AlterEgoData alterEgo, RELATIONSHIP_TRAIT rel) {
         if (relationships.ContainsKey(alterEgo)) {
-            relationships[alterEgo].RemoveRelationship(rel);
+            if (relationships[alterEgo].RemoveRelationship(rel)) {
+                Messenger.Broadcast(Signals.RELATIONSHIP_REMOVED, this, rel, alterEgo);
+            }
         }
     }
     public RelationshipTrait GetRelationshipTraitWith(AlterEgoData alterEgo, RELATIONSHIP_TRAIT type, bool useDisabled = false) {

@@ -211,7 +211,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public bool isFactionless { //is the character part of the neutral faction? or no faction?
         get {
-            if (faction == null || FactionManager.Instance.neutralFaction.id == faction.id) {
+            if (faction == null || FactionManager.Instance.neutralFaction == faction) {
                 return true;
             } else {
                 return false;
@@ -557,7 +557,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public Character(CharacterSaveData data) : this() {
         _id = Utilities.SetID(this, data.id);
         _gender = data.gender;
-        RaceSetting raceSetting = RaceManager.Instance.racesDictionary[race.ToString()];
+        RaceSetting raceSetting = RaceManager.Instance.racesDictionary[data.race.ToString()];
         _raceSetting = raceSetting.CreateNewCopy();
         AssignRole(data.role, false);
         _characterClass = CharacterManager.Instance.CreateNewCharacterClass(data.className);
@@ -629,13 +629,15 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 
         //supply
         SetSupply(UnityEngine.Random.Range(10, 61)); //Randomize initial supply per character (Random amount between 10 to 60.)
-        GetRandomCharacterColor();
 
         ConstructInitialGoapAdvertisementActions();
         SubscribeToSignals();
+#if !WORLD_CREATION_TOOL
+        GetRandomCharacterColor();
         GameDate gameDate = GameManager.Instance.Today();
         gameDate.AddTicks(1);
         SchedulingManager.Instance.AddEntry(gameDate, () => PlanGoapActions());
+#endif
     }
 
     #region Signals
@@ -686,6 +688,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 sexuality = SEXUALITY.GAY;
             }
         }
+    }
+    public void SetSexuality(SEXUALITY sexuality) {
+        this.sexuality = sexuality;
     }
     #endregion
 
@@ -2591,13 +2596,15 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         return true;
     }
     internal void OnRelationshipWithCharacterAdded(Character targetCharacter, RelationshipTrait newRel) {
-        //check if they share the same home, then migrate them accordingly
+#if !WORLD_CREATION_TOOL
+         //check if they share the same home, then migrate them accordingly
         if (newRel.relType == RELATIONSHIP_TRAIT.LOVER
             && this.homeArea.id == targetCharacter.homeArea.id
             && this.homeStructure != targetCharacter.homeStructure) {
             //Lover conquers all, even if one character is factionless they will be together, meaning the factionless character will still have home structure
             homeArea.AssignCharacterToDwellingInArea(this, targetCharacter.homeStructure);
         }
+#endif
     }
     /// <summary>
     /// Does this character have a relationship of effect with the provided character?
@@ -3227,7 +3234,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             //Added checking, because character can sometimes change home from dwelling to nothing.
             dwelling.AddResident(this);
         }
+#if !WORLD_CREATION_TOOL
         Debug.Log(GameManager.Instance.TodayLogString() + this.name + " changed home structure to " + dwelling?.ToString() ?? "None");
+#endif
     }
     //private void OnCharacterMigratedHome(Character character, Area previousHome, Area homeArea) {
     //    if (character.id != this.id && this.homeArea.id == homeArea.id) {
@@ -3381,6 +3390,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         Messenger.Broadcast(Signals.TRAIT_ADDED, this, trait);
 
+#if !WORLD_CREATION_TOOL
         if (GameManager.Instance.gameHasStarted) {
             if (trait.name == "Hungry" || trait.name == "Starving") {
                 Debug.Log("Planning fullness recovery from gain trait");
@@ -3393,7 +3403,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 PlanTirednessRecoveryActions();
             }
         }
-
+#endif
         //if (trait is RelationshipTrait) {
         //    RelationshipTrait rel = trait as RelationshipTrait;
         //    AddRelationship(rel.targetCharacter, rel);

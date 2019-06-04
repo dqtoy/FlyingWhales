@@ -684,23 +684,25 @@ public class Area {
             character.SetHome(this);
             areaResidents.Add(character);
             //if (PlayerManager.Instance.player == null || PlayerManager.Instance.player.playerArea.id != this.id) {
+#if !WORLD_CREATION_TOOL
             AssignCharacterToDwellingInArea(character, chosenHome);
+#endif
             //}
             //Messenger.Broadcast(Signals.AREA_RESIDENT_ADDED, this, character);
         }
     }
     public void AssignCharacterToDwellingInArea(Character character, Dwelling dwellingOverride = null) {
-        if (character.faction.id != FactionManager.Instance.neutralFaction.id && !structures.ContainsKey(STRUCTURE_TYPE.DWELLING)) {
+        if (character.faction != FactionManager.Instance.neutralFaction && !structures.ContainsKey(STRUCTURE_TYPE.DWELLING)) {
             Debug.LogWarning(this.name + " doesn't have any dwellings for " + character.name);
             return;
         }
-        if (character.faction.id == FactionManager.Instance.neutralFaction.id) {
+        if (character.faction == FactionManager.Instance.neutralFaction) {
             character.SetHomeStructure(null);
             return;
         }
         Dwelling chosenDwelling = dwellingOverride;
         if (chosenDwelling == null) {
-            if (PlayerManager.Instance.player != null && this.id == PlayerManager.Instance.player.playerArea.id) {
+            if (PlayerManager.Instance != null && PlayerManager.Instance.player != null && this.id == PlayerManager.Instance.player.playerArea.id) {
                 chosenDwelling = structures[STRUCTURE_TYPE.DWELLING][0] as Dwelling; //to avoid errors, residents in player area will all share the same dwelling
             } else {
                 Character lover = character.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.LOVER);

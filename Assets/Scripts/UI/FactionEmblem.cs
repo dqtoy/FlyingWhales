@@ -37,7 +37,9 @@ public class FactionEmblem : MonoBehaviour, IPointerClickHandler{
         if (this.faction == null) {
             return;
         }
+#if !WORLD_CREATION_TOOL
         UIManager.Instance.HideSmallInfo();
+#endif
     }
 
     private void UpdateEmblem() {

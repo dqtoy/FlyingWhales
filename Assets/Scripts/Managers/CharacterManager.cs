@@ -104,10 +104,10 @@ public class CharacterManager : MonoBehaviour {
                 if (characterFaction != null) {
                     //currCharacter.SetFaction(characterFaction);
                     characterFaction.AddNewCharacter(currCharacter);
-                    FactionSaveData factionData = data.GetFactionData(characterFaction.id);
-                    if (factionData.leaderID != -1 && factionData.leaderID == currCharacter.id) {
-                        characterFaction.SetLeader(currCharacter);
-                    }
+                    //FactionSaveData factionData = data.GetFactionData(characterFaction.id);
+                    //if (factionData.leaderID != -1 && factionData.leaderID == currCharacter.id) {
+                    //    characterFaction.SetLeader(currCharacter);
+                    //}
                 }
 #if !WORLD_CREATION_TOOL
                 else {
@@ -179,17 +179,15 @@ public class CharacterManager : MonoBehaviour {
         Party party = newCharacter.CreateOwnParty();
         if (faction != null) {
             faction.AddNewCharacter(newCharacter);
-        } else {
-            FactionManager.Instance.neutralFaction.AddNewCharacter(newCharacter);
         }
 #if !WORLD_CREATION_TOOL
+        else {
+            FactionManager.Instance.neutralFaction.AddNewCharacter(newCharacter);
+        }
         party.CreateIcon();
         if(homeLocation != null) {
             party.icon.SetPosition(homeLocation.coreTile.transform.position);
             newCharacter.MigrateHomeTo(homeLocation, homeStructure, false);
-            //if (homeStructure != null) {
-            //    newCharacter.MigrateHomeStructureTo(homeStructure);
-            //}
             homeLocation.AddCharacterToLocation(party.owner, null, true);
         }
         //newCharacter.AddAwareness(newCharacter);
@@ -230,21 +228,16 @@ public class CharacterManager : MonoBehaviour {
         newCharacter.Initialize();
         allCharacterLogs.Add(newCharacter, new List<string>());
 
+        Party party = newCharacter.CreateOwnParty();
         if (data.homeAreaID != -1) {
             Area homeArea = LandmarkManager.Instance.GetAreaByID(data.homeAreaID);
             if (homeArea != null) {
-                homeArea.AddResident(newCharacter, null, true);
-            }
-        }
-        Party party = newCharacter.CreateOwnParty();
-        if (data.locationID != -1) {
-            Area currentLocation = LandmarkManager.Instance.GetAreaByID(data.locationID);
-            if (currentLocation != null) {
 #if !WORLD_CREATION_TOOL
                 party.CreateIcon();
-                party.icon.SetPosition(currentLocation.coreTile.transform.position);
+                party.icon.SetPosition(homeArea.coreTile.transform.position);
+                newCharacter.MigrateHomeTo(homeArea, null, false);
+                homeArea.AddCharacterToLocation(party.owner, null, true);
 #endif
-                currentLocation.AddCharacterToLocation(party.owner, null, true);
             }
         }
         //newCharacter.AddAwareness(newCharacter);
@@ -404,6 +397,24 @@ public class CharacterManager : MonoBehaviour {
     #endregion
 
     #region Relationships
+    public void LoadRelationships(WorldSaveData data) {
+        if (data.charactersData != null) {
+            for (int i = 0; i < data.charactersData.Count; i++) {
+                CharacterSaveData currData = data.charactersData[i];
+                Character currCharacter = GetCharacterByID(currData.id);
+                for (int j = 0; j < currData.relationshipsData.Count; j++) {
+                    RelationshipSaveData relData = currData.relationshipsData[j];
+                    for (int k = 0; k < relData.rels.Count; k++) {
+                        RELATIONSHIP_TRAIT currRel = relData.rels[k];
+                        Character target = GetCharacterByID(relData.targetCharacterID);
+                        if (!currCharacter.HasRelationshipOfTypeWith(target, currRel)) {
+                            CreateNewRelationshipBetween(currCharacter, target, currRel);
+                        }
+                    }
+                }
+            }
+        }
+    }
     public RelationshipTrait CreateRelationshipTrait(RELATIONSHIP_TRAIT type, Character targetCharacter) {
         switch (type) {
             case RELATIONSHIP_TRAIT.ENEMY:
@@ -520,7 +531,7 @@ public class CharacterManager : MonoBehaviour {
         for (int i = 0; i < rels.Count; i++) {
             RemoveRelationshipBetween(character, targetCharacter, rels[i]);
         }
-
+        Messenger.Broadcast(Signals.ALL_RELATIONSHIP_REMOVED, character, targetCharacter);
         //character.RemoveRelationship(targetCharacter);
         //targetCharacter.RemoveRelationship(character);
     }
@@ -601,8 +612,9 @@ public class CharacterManager : MonoBehaviour {
                         }
                         break;
                     case RELATIONSHIP_TRAIT.LOVER:
+                        if (currCharacter.name == "Fiona") { relsToCreate = 0; } //For Trailer Map Only
                         //- a character has a 20% chance to have a lover
-                        if (chance < 20) relsToCreate = 1;
+                        else if (chance < 20) relsToCreate = 1;
                         break;
                     case RELATIONSHIP_TRAIT.ENEMY:
                         //- a character may have either zero (75%), one (20%) or two (5%) enemies
@@ -665,7 +677,9 @@ public class CharacterManager : MonoBehaviour {
                                     }
                                     break;
                                 case RELATIONSHIP_TRAIT.LOVER:
-                                    if (currCharacter.CanHaveRelationshipWith(currRel, otherCharacter) && otherCharacter.CanHaveRelationshipWith(currRel, currCharacter)) {
+                                    if (otherCharacter.name == "Fiona") { //For Trailer Map Only
+                                        weight = 0;
+                                    } else if (currCharacter.CanHaveRelationshipWith(currRel, otherCharacter) && otherCharacter.CanHaveRelationshipWith(currRel, currCharacter)) {
                                         if (currCharacter.role.roleType != CHARACTER_ROLE.BEAST) {
                                             //- if non beast, from valid characters, choose based on these weights
                                             if (otherCharacter.specificLocation.id == currCharacter.specificLocation.id) {
