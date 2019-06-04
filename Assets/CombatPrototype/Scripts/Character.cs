@@ -697,7 +697,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         SetCharacterMarker(portraitGO.GetComponent<CharacterMarker>());
         marker.SetCharacter(this);
 #if UNITY_EDITOR
-        marker.SetHoverAction(ShowTileData, InteriorMapManager.Instance.HideTileData);
+        marker.SetHoverAction(OnHoverMarker, OnHoverExit);
 #endif
     }
     public void DestroyMarker() {
@@ -709,8 +709,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public void SetCharacterMarker(CharacterMarker marker) {
         this.marker = marker;
     }
-    public void ShowTileData(Character character, LocationGridTile location) {
-        InteriorMapManager.Instance.ShowTileData(this, gridTileLocation);
+    private void OnHoverMarker(Character character, LocationGridTile location) {
+        //InteriorMapManager.Instance.ShowTileData(this, gridTileLocation);
+        location.parentAreaMap.SetHoveredCharacter(character);
+    }
+    private void OnHoverExit(Character character, LocationGridTile location) {
+        //InteriorMapManager.Instance.ShowTileData(this, gridTileLocation);
+        location.parentAreaMap.SetHoveredCharacter(null);
     }
     //Changes row number of this character
     public void SetRowNumber(int rowNumber) {
@@ -1584,7 +1589,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         return character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.ADVENTURER; // && !HasRelationshipOfEffectWith(targetCharacter, TRAIT_EFFECT.POSITIVE)
     }
     private bool CreateBuryJob(Character targetCharacter) {
-        if (targetCharacter.isDead && targetCharacter.race != RACE.SKELETON && !HasTraitOf(TRAIT_TYPE.CRIMINAL) && this.isAtHomeArea) {
+        if (targetCharacter.isDead && targetCharacter.race != RACE.SKELETON && !HasTraitOf(TRAIT_TYPE.CRIMINAL) && this.isAtHomeArea && this.role.roleType != CHARACTER_ROLE.BEAST) {
             //check first if the target character already has a bury job in this location
             GoapPlanJob buryJob = homeArea.jobQueue.GetJob("Bury", targetCharacter) as GoapPlanJob;
             if (buryJob == null) {
@@ -2588,7 +2593,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             && this.homeStructure != targetCharacter.homeStructure) {
             //Lover conquers all, even if one character is factionless they will be together, meaning the factionless character will still have home structure
             homeArea.AssignCharacterToDwellingInArea(this, targetCharacter.homeStructure);
-            //homeArea.AssignCharacterToDwellingInArea(targetCharacter);
         }
     }
     /// <summary>
@@ -3217,7 +3221,11 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             //remove character from his/her old home
             this.homeStructure.RemoveResident(this);
         }
-        dwelling.AddResident(this);
+        if (dwelling != null) {
+            //Added checking, because character can sometimes change home from dwelling to nothing.
+            dwelling.AddResident(this);
+        }
+        Debug.Log(GameManager.Instance.TodayLogString() + this.name + " changed home structure to " + dwelling?.ToString() ?? "None");
     }
     //private void OnCharacterMigratedHome(Character character, Area previousHome, Area homeArea) {
     //    if (character.id != this.id && this.homeArea.id == homeArea.id) {
@@ -5517,6 +5525,17 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public void CopyAwareness(Dictionary<POINT_OF_INTEREST_TYPE, List<IAwareness>> newAwareness) {
         currentAlterEgo.SetAwareness(newAwareness);
+    }
+    public void ClearAllAwareness() {
+        currentAlterEgo.ClearAllAwareness();
+        Debug.Log("Cleared all awareness of " + this.name);
+    }
+    public void ClearAllAwarenessOfType(params POINT_OF_INTEREST_TYPE[] types) {
+        for (int i = 0; i < types.Length; i++) {
+            POINT_OF_INTEREST_TYPE currType = types[i];
+            currentAlterEgo.RemoveAwareness(currType);
+            Debug.Log("Cleared all awareness of type " + currType.ToString() + " of " + this.name);
+        }
     }
     #endregion
 

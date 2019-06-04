@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class JudgeCharacter : GoapAction {
@@ -75,7 +76,7 @@ public class JudgeCharacter : GoapAction {
         //**Effect 2**: Target becomes unaligned and will have his Home Location set to a random different location
         Character target = poiTarget as Character;
         target.ChangeFactionTo(FactionManager.Instance.neutralFaction);
-        List<Area> choices = new List<Area>(LandmarkManager.Instance.allNonPlayerAreas);
+        List<Area> choices = new List<Area>(LandmarkManager.Instance.allNonPlayerAreas.Where(x => x.owner == null)); //limited choices to only use un owned areas
         choices.Remove(target.homeArea);
         Area newHome = choices[Random.Range(0, choices.Count)];
         target.MigrateHomeTo(newHome);
@@ -94,6 +95,7 @@ public class JudgeCharacter : GoapAction {
         GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.RETURN_HOME, target, poiTarget);
         goapAction.SetTargetStructure();
         target.AddOnLeaveAreaAction(() => target.AdjustIgnoreHostilities(-1));
+        target.AddOnLeaveAreaAction(() => target.ClearAllAwarenessOfType(POINT_OF_INTEREST_TYPE.ITEM, POINT_OF_INTEREST_TYPE.TILE_OBJECT));
         GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
         GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.IDLE);
         goapPlan.ConstructAllNodes();

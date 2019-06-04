@@ -55,6 +55,7 @@ public class ConsoleMenu : UIMenu {
             {"/set_mood", SetMoodToCharacter },
             {"/log_awareness", LogAwareness },
             {"/add_rel", AddRelationship },
+            {"/rel_deg", ForcedRelationshipDegradation },
         };
 
 #if UNITY_EDITOR
@@ -775,6 +776,26 @@ public class ConsoleMenu : UIMenu {
         }
         CharacterManager.Instance.CreateNewRelationshipBetween(character1, character2, rel);
         AddSuccessMessage(character1.name + " and " + character2.name + " now have relationship " + rel.ToString());
+    }
+    private void ForcedRelationshipDegradation(string[] parameters) {
+        if (parameters.Length != 2) { //parameters: Character, Character
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of ForcedRelationshipDegradation");
+            return;
+        }
+        string character1ParameterString = parameters[0];
+        string character2ParameterString = parameters[1];
+
+        Character character1 = CharacterManager.Instance.GetCharacterByName(character1ParameterString);
+        if (character1 == null) {
+            AddErrorMessage("There is no character with name " + character1ParameterString);
+        }
+        Character character2 = CharacterManager.Instance.GetCharacterByName(character2ParameterString);
+        if (character2 == null) {
+            AddErrorMessage("There is no character with name " + character2ParameterString);
+        }
+        CharacterManager.Instance.RelationshipDegradation(character1, character2);
+        AddSuccessMessage("Relationship degradation between " + character1.name + " and " + character2.name + " has been executed.");
     }
     #endregion
 

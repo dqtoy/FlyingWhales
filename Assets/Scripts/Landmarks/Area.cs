@@ -696,13 +696,6 @@ public class Area {
         }
         if (character.faction.id == FactionManager.Instance.neutralFaction.id) {
             character.SetHomeStructure(null);
-            //if (character.specificLocation != null
-            //    && character.specificLocation.id == this.id) { //if the character is currently at his home area, and his home was changed, relocate him
-            //    if (character.currentStructure != null) {
-            //        character.currentStructure.RemoveCharacterAtLocation(character);
-            //    }
-            //    //AddCharacterToAppropriateStructure(character);
-            //}
             return;
         }
         Dwelling chosenDwelling = dwellingOverride;
@@ -715,7 +708,6 @@ public class Area {
                     chosenDwelling = lover.homeStructure;
                 }
             }
-
             if (chosenDwelling == null && (character.homeStructure == null || character.homeStructure.location.id != this.id)) { //else, find an unoccupied dwelling (also check if the character doesn't already live in this area)
                 for (int i = 0; i < structures[STRUCTURE_TYPE.DWELLING].Count; i++) {
                     Dwelling currDwelling = structures[STRUCTURE_TYPE.DWELLING][i] as Dwelling;
@@ -730,16 +722,8 @@ public class Area {
         if (chosenDwelling == null) {
             //if the code reaches here, it means that the area could not find a dwelling for the character
             Debug.LogWarning(GameManager.Instance.TodayLogString() + "Could not find a dwelling for " + character.name + " at " + this.name);
-        } else {
-            character.MigrateHomeStructureTo(chosenDwelling);
-            //if (character.specificLocation != null
-            //    && character.specificLocation.id == this.id) { //if the character is currently at his home area, and his home was changed, relocate him
-            //    if (character.currentStructure != null) {
-            //        character.currentStructure.RemoveCharacterAtLocation(character);
-            //    }
-            //    //AddCharacterToAppropriateStructure(character);
-            //}
         }
+        character.MigrateHomeStructureTo(chosenDwelling);
     }
     public void RemoveResident(Character character) {
         if (areaResidents.Remove(character)) {

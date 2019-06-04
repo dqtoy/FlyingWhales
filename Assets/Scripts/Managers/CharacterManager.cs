@@ -981,7 +981,6 @@ public class CharacterManager : MonoBehaviour {
             log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             PlayerManager.Instance.player.ShowNotificationFrom(log, target, actor);
         }
-        //TODO: - Add relevant logs
     }
     /// <summary>
     /// Unified way of degrading a relationship of a character with a target character.
@@ -1004,55 +1003,67 @@ public class CharacterManager : MonoBehaviour {
             Debug.Log(summary);
             return;
         }
-        Log log = null;
-        //If Actor and Target are Lovers, 20% chance to remove Lover relationship. If so, Target now considers Actor an Enemy.
+        //If Actor and Target are Lovers, 25% chance to create a Break Up Job with the Lover.
         if (target.HasRelationshipOfTypeWith(actorAlterEgo, RELATIONSHIP_TRAIT.LOVER)) {
-            summary += "\n" + actorAlterEgo.owner.name + " and " + target.name + " are  lovers. Rolling for chance to remove lovers and consider as enemy...";
+            summary += "\n" + actorAlterEgo.owner.name + " and " + target.name + " are  lovers. Rolling for chance to create break up job...";
             int roll = UnityEngine.Random.Range(0, 100);
             summary += "\nRoll is " + roll.ToString();
-            if (roll < 20) {
-                log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "lover_now_enemy");
-                summary += "\nRemoving lover relationship. " + target.name + " now considers " + actorAlterEgo.name + " an enemy.";
-                RemoveRelationshipBetween(target, actorAlterEgo, RELATIONSHIP_TRAIT.LOVER);
-                CreateNewOneWayRelationship(target, actorAlterEgo, RELATIONSHIP_TRAIT.ENEMY);
+            if (roll < 25) {
+                summary += "\n" + target.name + " created break up job targetting " + actorAlterEgo.owner.name;
+                target.CreateBreakupJob(actorAlterEgo.owner);
+
+                Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "break_up");
+                log.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                log.AddToFillers(actorAlterEgo.owner, actorAlterEgo.owner.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                PlayerManager.Instance.player.ShowNotificationFrom(log, target, actorAlterEgo.owner);
             }
         }
-        //If Actor and Target are Paramours, 20 % chance to remove Paramour relationship. If so, Target now considers Actor an Enemy.
-        if (target.HasRelationshipOfTypeWith(actorAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR)) {
-            summary += "\n" + actorAlterEgo.owner.name + " and " + target.name + " are  paramours. Rolling for chance to remove paramour and consider as enemy...";
+        //If Actor and Target are Paramours, 25% chance to create a Break Up Job with the Paramour.
+        else if (target.HasRelationshipOfTypeWith(actorAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR)) {
+            summary += "\n" + actorAlterEgo.owner.name + " and " + target.name + " are  paramours. Rolling for chance to create break up job...";
             int roll = UnityEngine.Random.Range(0, 100);
             summary += "\nRoll is " + roll.ToString();
-            if (roll < 20) {
-                log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "paramour_now_enemy");
-                summary += "\nRemoving paramour relationship. " + target.name + " now considers " + actorAlterEgo.name + " an enemy.";
-                RemoveRelationshipBetween(target, actorAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR);
-                CreateNewOneWayRelationship(target, actorAlterEgo, RELATIONSHIP_TRAIT.ENEMY);
+            if (roll < 25) {
+                summary += "\n" + target.name + " created break up job targetting " + actorAlterEgo.owner.name;
+                target.CreateBreakupJob(actorAlterEgo.owner);
+
+                Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "break_up");
+                log.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                log.AddToFillers(actorAlterEgo.owner, actorAlterEgo.owner.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                PlayerManager.Instance.player.ShowNotificationFrom(log, target, actorAlterEgo.owner);
+
             }
-        }
-        //If Target considers Actor a Friend, remove that.Target now considers Actor an Enemy.
-        if (target.HasRelationshipOfTypeWith(actorAlterEgo, RELATIONSHIP_TRAIT.FRIEND)) {
-            log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "friend_now_enemy");
-            summary += "\n" + target.name + " considers " + actorAlterEgo.name + " as a friend. Removing friend and replacing with enemy";
-            RemoveOneWayRelationship(target, actorAlterEgo, RELATIONSHIP_TRAIT.FRIEND);
-            CreateNewOneWayRelationship(target, actorAlterEgo, RELATIONSHIP_TRAIT.ENEMY);
-        }
-        //If Target is only Relative of Actor(no other relationship) or has no relationship with Actor, Target now considers Actor an Enemy.
-        if (!target.HasRelationshipWith(actorAlterEgo) || (target.HasRelationshipOfTypeWith(actorAlterEgo, RELATIONSHIP_TRAIT.RELATIVE) && target.GetCharacterRelationshipData(actorAlterEgo).rels.Count == 1)) {
-            log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "now_enemy");
-            summary += "\n" + target.name + " and " + actorAlterEgo.name + " has no relationship or only has relative relationship. " + target.name + " now considers " + actorAlterEgo.name + " an enemy.";
-            CreateNewOneWayRelationship(target, actorAlterEgo, RELATIONSHIP_TRAIT.ENEMY);
         }
 
-        Debug.Log(summary);
-        if (log != null) {
+        //If Target considers Actor a Friend, remove that. If Target is in Bad or Dark Mood, Target now considers Actor an Enemy. Otherwise, they are just no longer friends.
+        if (target.HasRelationshipOfTypeWith(actorAlterEgo, RELATIONSHIP_TRAIT.FRIEND)) {
+            summary += "\n" + target.name + " considers " + actorAlterEgo.name + " as a friend. Removing friend and replacing with enemy";
+            RemoveOneWayRelationship(target, actorAlterEgo, RELATIONSHIP_TRAIT.FRIEND);
+            if (target.currentMoodType == CHARACTER_MOOD.BAD || target.currentMoodType == CHARACTER_MOOD.DARK) {
+                CreateNewOneWayRelationship(target, actorAlterEgo, RELATIONSHIP_TRAIT.ENEMY);
+                Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "friend_now_enemy");
+                log.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                log.AddToFillers(actorAlterEgo.owner, actorAlterEgo.owner.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                PlayerManager.Instance.player.ShowNotificationFrom(log, target, actorAlterEgo.owner);
+            } else {
+                Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "no_longer_friend");
+                log.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                log.AddToFillers(actorAlterEgo.owner, actorAlterEgo.owner.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                PlayerManager.Instance.player.ShowNotificationFrom(log, target, actorAlterEgo.owner);
+            }
+        }
+        //If Target is only Relative of Actor(no other relationship) or has no relationship with Actor, Target now considers Actor an Enemy.
+        else if (!target.HasRelationshipWith(actorAlterEgo) || (target.HasRelationshipOfTypeWith(actorAlterEgo, RELATIONSHIP_TRAIT.RELATIVE) && target.GetCharacterRelationshipData(actorAlterEgo).rels.Count == 1)) {
+            summary += "\n" + target.name + " and " + actorAlterEgo.name + " has no relationship or only has relative relationship. " + target.name + " now considers " + actorAlterEgo.name + " an enemy.";
+            CreateNewOneWayRelationship(target, actorAlterEgo, RELATIONSHIP_TRAIT.ENEMY);
+
+            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "now_enemy");
             log.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(actorAlterEgo.owner, actorAlterEgo.owner.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             PlayerManager.Instance.player.ShowNotificationFrom(log, target, actorAlterEgo.owner);
         }
 
-        //PlayerManager.Instance.player.ShowNotification()
-
-        //TODO: - Add relevant logs
+        Debug.Log(summary);
     }
     #endregion
 

@@ -43,9 +43,9 @@ public class Dwelling : LocationStructure {
         return residents.Count > 0;
     }
     public bool CanBeResidentHere(Character character) {
-        if (this.IsFull()) {
-            return false;
-        }
+        //if (this.IsFull()) {
+        //    return false;
+        //}
         if (residents.Count == 0) {
             return true;
         } else {
@@ -60,7 +60,6 @@ public class Dwelling : LocationStructure {
         return false;
     }
     public bool HasPositiveRelationshipWithAnyResident(Character character) {
-        return true;
         if (residents.Contains(character)) {
             return true; //if the provided character is a resident of this dwelling, then yes, consider relationship as positive
         }

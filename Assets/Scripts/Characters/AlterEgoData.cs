@@ -109,6 +109,17 @@ public class AlterEgoData {
             }
         }
     }
+    public void RemoveAwareness(POINT_OF_INTEREST_TYPE poiType) {
+        if (awareness.ContainsKey(poiType)) {
+            List<IAwareness> awarenesses = new List<IAwareness>(awareness[poiType]);
+            for (int i = 0; i < awarenesses.Count; i++) {
+                IAwareness iawareness = awarenesses[i];
+                awareness[poiType].Remove(iawareness);
+                iawareness.OnRemoveAwareness(owner);
+            }
+            awareness.Remove(poiType);
+        }
+    }
     public IAwareness GetAwareness(IPointOfInterest poi) {
         if (awareness.ContainsKey(poi.poiType)) {
             List<IAwareness> awarenesses = awareness[poi.poiType];
@@ -131,6 +142,12 @@ public class AlterEgoData {
             return new TileObjectAwareness(poi);
         }//TODO: Structure Awareness
         return null;
+    }
+    public void ClearAllAwareness() {
+        POINT_OF_INTEREST_TYPE[] types = Utilities.GetEnumValues<POINT_OF_INTEREST_TYPE>();
+        for (int i = 0; i < types.Length; i++) {
+            RemoveAwareness(types[i]);
+        }
     }
     #endregion
 

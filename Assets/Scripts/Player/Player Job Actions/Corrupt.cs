@@ -112,10 +112,10 @@ public class Corrupt : PlayerJobAction {
                 tooltip = "Prone to bouts of violence. Not yet available for this prototype.";
                 break;
             case "Vampiric":
-                tooltip = "Needs blood for sustenance. Not yet available for this prototype.";
+                tooltip = "Needs blood for sustenance.";
                 break;
             case "Unfaithful":
-                tooltip = "Prone to affairs. Not yet available for this prototype.";
+                tooltip = "Prone to affairs.";
                 break;
             default:
                 break;

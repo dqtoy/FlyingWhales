@@ -18,27 +18,23 @@ public class AreaInnerTileMap : MonoBehaviour {
     public static int northOutsideTiles = 8;
     public static int southOutsideTiles = 8;
 
-
     public int width;
     public int height;
-    private const float cellSize = 64f;
 
     private LocationGridTile westGate;
     private LocationGridTile eastGate;
-    private Cardinal_Direction outsideDirection;
 
     public Grid grid;
-    [SerializeField] private Canvas canvas;
     public Canvas worldUICanvas;
-    [SerializeField] private Transform tilemapsParent;
+    [SerializeField] private Canvas canvas;
 
     [Header("Tile Maps")]
     public Tilemap groundTilemap;
-    [SerializeField] private Tilemap wallTilemap;
+    public Tilemap wallTilemap;
     public Tilemap detailsTilemap;
-    [SerializeField] private Tilemap structureTilemap;
+    public Tilemap structureTilemap;
     public Tilemap objectsTilemap;
-    [SerializeField] private Tilemap roadTilemap;
+    public Tilemap roadTilemap;
 
     [Header("Tiles")]
     [SerializeField] private TileBase outsideTile;
@@ -49,34 +45,10 @@ public class AreaInnerTileMap : MonoBehaviour {
     [SerializeField] private ItemTileBaseDictionary itemTiles;
     [SerializeField] private TileObjectTileBaseDictionary tileObjectTiles;
 
-    //special cases
+    [Header("Special Cases")]
+    //bed
     public TileBase bed2SleepingVariant;
-    public TileBase bed1SleepingVariant;
-
-    public TileBase table00; //table 0 - 0 user
-    public TileBase table01; //table 0 - 1 user
-    public TileBase table02; //table 0 - 2 user
-    public TileBase table03; //table 0 - 3 user
-    public TileBase table04; //table 0 - 4 user
-
-    public TileBase table10; //table 1 - 0 user
-    public TileBase table11; //table 1 - 1 user
-    public TileBase table12; //table 1 - 2 user
-    public TileBase table13; //table 1 - 3 user
-    public TileBase table14; //table 1 - 4 user
-
-    public TileBase table20; //table 2 - 0 user
-    public TileBase table21; //table 2 - 1 user
-    public TileBase table22; //table 2 - 2 user
-
-    //bartop left
-    public TileBase bartopLeft0; //0 User
-    public TileBase bartopLeft1; //1 User
-
-    //bartop right
-    public TileBase bartopRight0; //0 User
-    public TileBase bartopRight1; //1 User
-
+    public TileBase bed1SleepingVariant;   
 
     [Header("Structure Tiles")]
     [SerializeField] private TileBase leftWall;
@@ -126,28 +98,22 @@ public class AreaInnerTileMap : MonoBehaviour {
     [Header("Objects")]
     public Transform objectsParent;
 
-    [Header("Events")]
-    [SerializeField] private GameObject eventPopupPrefab;
-    [SerializeField] private RectTransform eventPopupParent;
-
     [Header("Other")]
     public Vector4 cameraBounds;
     public GameObject centerGOPrefab;
 
     [Header("For Testing")]
     [SerializeField] private LineRenderer pathLineRenderer;
+    [SerializeField] private int radius;
+    [SerializeField] private int radiusLimit;
+    [SerializeField] private int x;
+    [SerializeField] private int y;
 
-    public int x;
-    public int y;
-    public int radius;
-    public int radiusLimit;
+    [Header("Perlin Noise")]
+    [SerializeField] private float offsetX;
+    [SerializeField] private float offsetY;
 
-    public float offsetX;
-    public float offsetY;
-
-    public Vector3 startPos;
-    public Vector3 endPos;
-
+    public Character hoveredCharacter { get; private set; }
     public Area area { get; private set; }
     public LocationGridTile[,] map { get; private set; }
     public List<LocationGridTile> allTiles { get; private set; }
@@ -157,10 +123,6 @@ public class AreaInnerTileMap : MonoBehaviour {
     public Vector3 worldPos { get; private set; }
     public string usedTownCenterTemplateName { get; private set; }
     public GameObject centerGO { get; private set; }
-    public Tilemap charactersTM {
-        get { return objectsTilemap; }
-    }
-    private bool isHovering;
     public bool isShowing {
         get { return InteriorMapManager.Instance.currentlyShowingMap == this; }
     }
@@ -175,7 +137,6 @@ public class AreaInnerTileMap : MonoBehaviour {
         //camera bounds
         cameraBounds = new Vector4(); //x - minX, y - minY, z - maxX, w - maxY 
         cameraBounds.x = -185.8f; //constant
-        //cameraBounds.y = 8f; //constant
         cameraBounds.y = AreaMapCameraMove.Instance.areaMapsCamera.orthographicSize;
         cameraBounds.z = (cameraBounds.x + width) - 28.5f;
         cameraBounds.w = height - AreaMapCameraMove.Instance.areaMapsCamera.orthographicSize;
@@ -251,7 +212,6 @@ public class AreaInnerTileMap : MonoBehaviour {
     #region Structures
     public void GenerateInnerStructures() {
         ClearAllTilemaps();
-        eventPopupParent.anchoredPosition = Vector2.zero;
         insideTiles = new List<LocationGridTile>();
         outsideTiles = new List<LocationGridTile>();
         if ((area.areaType == AREA_TYPE.DUNGEON && area.name == "Gloomhollow") 
@@ -1704,6 +1664,9 @@ public class AreaInnerTileMap : MonoBehaviour {
         }
         return tiles;
     }
+    public void SetHoveredCharacter(Character character) {
+        hoveredCharacter = character;
+    }
     #endregion
 
     #region For Testing
@@ -1727,12 +1690,6 @@ public class AreaInnerTileMap : MonoBehaviour {
         }
 
     }
-    [ContextMenu("Get Distance")]
-    public void GetDistance() {
-        float distance = Vector2.Distance(map[(int) startPos.x, (int) startPos.y].centeredWorldLocation, map[(int) endPos.x, (int) endPos.y].centeredWorldLocation);
-        //float distance = Vector3.Distance(startPos, endPos);
-        Debug.LogWarning(distance);
-    }
     [ContextMenu("Print Characters Seen By Camera")]
     public void PrintCharactersSeenByCamera() {
         for (int i = 0; i < area.charactersAtLocation.Count; i++) {
@@ -1740,13 +1697,6 @@ public class AreaInnerTileMap : MonoBehaviour {
                 Debug.Log(area.charactersAtLocation[i].name);
             }
         }
-    }
-    [ContextMenu("Print Radius Squared")]
-    public void PrintRadiusSquared() {
-        float dx = (startPos.x - endPos.x);
-        float dz = (startPos.y - endPos.y);
-        float distSqr = dx * dx + dz * dz;
-        Debug.Log("Radius Squared: " + distSqr);
     }
     [ContextMenu("Print Tilemap World And Local Pos")]
     public void PrintWorldAndLocalPos() {

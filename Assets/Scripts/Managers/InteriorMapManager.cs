@@ -78,7 +78,7 @@ public class InteriorMapManager : MonoBehaviour {
                     }
                 }
             } else {
-                if (hoveredTile.objHere != null) {
+                if (hoveredTile.objHere != null || hoveredTile.parentAreaMap.hoveredCharacter != null) {
                     ShowTileData(hoveredTile);
                     if (Input.GetMouseButtonDown(0)) {
                         hoveredTile.OnClickTileActions(PointerEventData.InputButton.Left);
@@ -91,9 +91,7 @@ public class InteriorMapManager : MonoBehaviour {
                     } else if (Input.GetMouseButtonDown(1)) {
                         hoveredTile.OnClickTileActions(PointerEventData.InputButton.Right);
                     }
-                    if (!isShowingMarkerTileData) {
-                        UIManager.Instance.HideSmallInfo();
-                    }
+                    UIManager.Instance.HideSmallInfo();
                    
                 }
             }
@@ -290,8 +288,7 @@ public class InteriorMapManager : MonoBehaviour {
     #endregion
 
     #region For Testing
-    bool isShowingMarkerTileData = false;
-    private void ShowTileData(LocationGridTile tile, Character character = null) {
+    private void ShowTileData(LocationGridTile tile) {
         if (tile == null) {
             return;
         }
@@ -329,77 +326,6 @@ public class InteriorMapManager : MonoBehaviour {
                 summary += "None";
             }
         }
-        summary += "\nCharacters Here: ";
-        if (tile.charactersHere.Count > 0) {
-            for (int i = 0; i < tile.charactersHere.Count; i++) {
-                summary += "\n\t- " + tile.charactersHere[i].name;
-            }
-        } else {
-            summary += "None";
-        }
-        if (character != null) {
-            summary += "\nCharacter: " + character.name;
-            summary += "\nMood: " + character.currentMoodType.ToString();
-            summary += "\nSupply: " + character.supply.ToString();
-            summary += "\nDestination: " + (character.marker.destinationTile != null ? character.marker.destinationTile.ToString() : "None");
-            summary += "\nMove Speed: " + character.marker.pathfindingAI.speed.ToString();
-            summary += "\nTangent: " + character.marker.pathfindingAI.GetTangent().ToString();
-            summary += "\nTarget POI: " + character.marker.targetPOI?.ToString() ?? "None";
-            summary += "\nBase Structure: " + (character.trapStructure.structure != null ? character.trapStructure.structure.ToString() : "None");
-            summary += "\nDestination Tile: ";
-            if (character.marker.destinationTile == null) {
-                summary += "None";
-            } else {
-                summary += character.marker.destinationTile.ToString() + " at " + character.marker.destinationTile.parentAreaMap.area.name;
-            }
-            summary += "\nArrival Action: " + character.marker.arrivalAction?.Method.Name ?? "None";
-            summary += "\nPOI's in Vision: ";
-            if (character.marker.inVisionPOIs.Count > 0) {
-                for (int i = 0; i < character.marker.inVisionPOIs.Count; i++) {
-                    IPointOfInterest poi = character.marker.inVisionPOIs.ElementAt(i);
-                    summary += poi.name + ", ";
-                }
-            } else {
-                summary += "None";
-            }
-            summary += "\nPOI's in Range but different structures: ";
-            if (character.marker.visionCollision.poisInRangeButDiffStructure.Count > 0) {
-                for (int i = 0; i < character.marker.visionCollision.poisInRangeButDiffStructure.Count; i++) {
-                    IPointOfInterest poi = character.marker.visionCollision.poisInRangeButDiffStructure[i];
-                    summary += poi.name + ", ";
-                }
-            } else {
-                summary += "None";
-            }
-            summary += "\nHostiles in Range: ";
-            if (character.marker.hostilesInRange.Count > 0) {
-                for (int i = 0; i < character.marker.hostilesInRange.Count; i++) {
-                    Character poi = character.marker.hostilesInRange.ElementAt(i);
-                    summary += poi.name + ", ";
-                }
-            } else {
-                summary += "None";
-            }
-            summary += "\nTerrifying Characters: ";
-            if (character.marker.terrifyingCharacters.Count > 0) {
-                for (int i = 0; i < character.marker.terrifyingCharacters.Count; i++) {
-                    Character currCharacter = character.marker.terrifyingCharacters[i];
-                    summary += currCharacter.name + ", ";
-                }
-            } else {
-                summary += "None";
-            }
-            summary += "\nPersonal Job Queue: ";
-            if (character.jobQueue.jobsInQueue.Count > 0) {
-                for (int i = 0; i < character.jobQueue.jobsInQueue.Count; i++) {
-                    JobQueueItem poi = character.jobQueue.jobsInQueue[i];
-                    summary += poi.name + ", ";
-                }
-            } else {
-                summary += "None";
-            }
-        }
-
         if (tile.structure != null) {
             summary += "\nStructure: " + tile.structure.ToString();
             if (tile.structure is Dwelling) {
@@ -409,6 +335,21 @@ public class InteriorMapManager : MonoBehaviour {
                     summary += "\n\t\t- " + keyValuePair.Key.ToString() + " - " + keyValuePair.Value.ToString();
                 }
             }
+            summary += "\nCharacters Here: ";
+            if (tile.structure.charactersHere.Count > 0) {
+                for (int i = 0; i < tile.structure.charactersHere.Count; i++) {
+                    Character currCharacter = tile.structure.charactersHere[i];
+                    if (tile.parentAreaMap.hoveredCharacter == currCharacter) {
+                        summary += "\n<b>" + currCharacter.name + "</b>";
+                        summary += "\n\t" + GetCharacterHoverData(currCharacter) + "\n";
+                    } else {
+                        summary += currCharacter.name + ",";
+                    }
+                }
+            } else {
+                summary += "None";
+            }
+            
         } else {
             summary += "\nStructure: None";
         }
@@ -419,15 +360,69 @@ public class InteriorMapManager : MonoBehaviour {
             UIManager.Instance.ShowSmallInfo(tile.objHere.ToString());
         }
 #endif
-
     }
-    public void ShowTileData(Character character, LocationGridTile tile) {
-        isShowingMarkerTileData = true;
-        ShowTileData(tile, character);
-    }
-    public void HideTileData() {
-        isShowingMarkerTileData = false;
-        UIManager.Instance.HideSmallInfo();
+    private string GetCharacterHoverData(Character character) {
+        string summary = "Character: " + character.name;
+        summary += "\n\tMood: " + character.currentMoodType.ToString();
+        summary += "\n\tSupply: " + character.supply.ToString();
+        summary += "\n\tDestination: " + (character.marker.destinationTile != null ? character.marker.destinationTile.ToString() : "None");
+        summary += "\n\tMove Speed: " + character.marker.pathfindingAI.speed.ToString();
+        summary += "\n\tTangent: " + character.marker.pathfindingAI.GetTangent().ToString();
+        summary += "\n\tTarget POI: " + character.marker.targetPOI?.ToString() ?? "None";
+        summary += "\n\tBase Structure: " + (character.trapStructure.structure != null ? character.trapStructure.structure.ToString() : "None");
+        summary += "\n\tDestination Tile: ";
+        if (character.marker.destinationTile == null) {
+            summary += "None";
+        } else {
+            summary += character.marker.destinationTile.ToString() + " at " + character.marker.destinationTile.parentAreaMap.area.name;
+        }
+        summary += "\n\tArrival Action: " + character.marker.arrivalAction?.Method.Name ?? "None";
+        summary += "\n\tPOI's in Vision: ";
+        if (character.marker.inVisionPOIs.Count > 0) {
+            for (int i = 0; i < character.marker.inVisionPOIs.Count; i++) {
+                IPointOfInterest poi = character.marker.inVisionPOIs.ElementAt(i);
+                summary += poi.name + ", ";
+            }
+        } else {
+            summary += "None";
+        }
+        summary += "\n\tPOI's in Range but different structures: ";
+        if (character.marker.visionCollision.poisInRangeButDiffStructure.Count > 0) {
+            for (int i = 0; i < character.marker.visionCollision.poisInRangeButDiffStructure.Count; i++) {
+                IPointOfInterest poi = character.marker.visionCollision.poisInRangeButDiffStructure[i];
+                summary += poi.name + ", ";
+            }
+        } else {
+            summary += "None";
+        }
+        summary += "\n\tHostiles in Range: ";
+        if (character.marker.hostilesInRange.Count > 0) {
+            for (int i = 0; i < character.marker.hostilesInRange.Count; i++) {
+                Character poi = character.marker.hostilesInRange.ElementAt(i);
+                summary += poi.name + ", ";
+            }
+        } else {
+            summary += "None";
+        }
+        summary += "\n\tTerrifying Characters: ";
+        if (character.marker.terrifyingCharacters.Count > 0) {
+            for (int i = 0; i < character.marker.terrifyingCharacters.Count; i++) {
+                Character currCharacter = character.marker.terrifyingCharacters[i];
+                summary += currCharacter.name + ", ";
+            }
+        } else {
+            summary += "None";
+        }
+        summary += "\n\tPersonal Job Queue: ";
+        if (character.jobQueue.jobsInQueue.Count > 0) {
+            for (int i = 0; i < character.jobQueue.jobsInQueue.Count; i++) {
+                JobQueueItem poi = character.jobQueue.jobsInQueue[i];
+                summary += poi.name + ", ";
+            }
+        } else {
+            summary += "None";
+        }
+        return summary;
     }
 
     private IPointOfInterest heldPOI;

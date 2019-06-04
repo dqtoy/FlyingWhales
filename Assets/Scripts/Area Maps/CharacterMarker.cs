@@ -14,7 +14,7 @@ public class CharacterMarker : PooledObject {
 
     public delegate void HoverMarkerAction(Character character, LocationGridTile location);
     public HoverMarkerAction hoverEnterAction;
-    public System.Action hoverExitAction;
+    public HoverMarkerAction hoverExitAction;
     public Character character { get; private set; }
 
     public Transform visualsParent;
@@ -128,7 +128,7 @@ public class CharacterMarker : PooledObject {
     }
 
     #region Pointer Functions
-    public void SetHoverAction(HoverMarkerAction hoverEnterAction, System.Action hoverExitAction) {
+    public void SetHoverAction(HoverMarkerAction hoverEnterAction, HoverMarkerAction hoverExitAction) {
         this.hoverEnterAction = hoverEnterAction;
         this.hoverExitAction = hoverExitAction;
     }
@@ -141,7 +141,7 @@ public class CharacterMarker : PooledObject {
     }
     public void HoverExitAction() {
         if (hoverExitAction != null) {
-            hoverExitAction();
+            hoverExitAction.Invoke(character, character.gridTileLocation);
         }
         //hide hovered image
         hoveredImg.gameObject.SetActive(false);
