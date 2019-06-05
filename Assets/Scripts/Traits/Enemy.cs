@@ -46,5 +46,22 @@ public class Enemy : RelationshipTrait {
     public override bool IsUnique() {
         return false;
     }
+    public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
+        //In relationships, the trait owner is not the usual target because the trait owner is also the character that will do job, instead use the target character that is stored in it
+        if (!targetCharacter.isDead && !characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.UNDERMINE_ENEMY, targetCharacter)) {
+            int chance = UnityEngine.Random.Range(0, 100);
+            int value = 0;
+            CHARACTER_MOOD currentMood = characterThatWillDoJob.currentMoodType;
+            if (currentMood == CHARACTER_MOOD.DARK) {
+                value = 20;
+            } else if (currentMood == CHARACTER_MOOD.BAD) {
+                value = 10;
+            }
+            if (chance < value) {
+                return characterThatWillDoJob.CreateUndermineJobOnly(targetCharacter, "saw", false);
+            }
+        }
+        return base.CreateJobsOnEnterVisionBasedOnTrait(traitOwner, characterThatWillDoJob);
+    }
     #endregion
 }

@@ -201,7 +201,7 @@ public class AssaultCharacter : GoapAction {
             //- **Recipient Response Text**: "[Actor Name] committed an assault!?"
             reactions.Add(string.Format("{0} committed an assault!?", actor.name));
             //-**Recipient Effect**:  Apply Crime System handling as if the Recipient witnessed Actor commit an Assault.
-            recipient.ReactToCrime(CRIME.ASSAULT, actorAlterEgo, null, this);
+            recipient.ReactToCrime(CRIME.ASSAULT, this, actorAlterEgo, null, this);
         }
 
         //Recipient and Actor are from the same faction and they have a positive relationship:
@@ -248,7 +248,7 @@ public class AssaultCharacter : GoapAction {
             //- **Recipient Response Text**: "That despicable [Actor Name] killed [Target Name]! [He/She] is a murderer!"
             reactions.Add(string.Format("That despicable {0} killed {1}, {2} is a murderer!", actor.name, target.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
             //-**Recipient Effect**: Remove any positive relationships between Actor and Recipient. Apply Crime System handling as if the Recipient witnessed Actor commit a Murder.
-            recipient.ReactToCrime(CRIME.MURDER, actorAlterEgo, null, this); //removal of relationships should be handled by crime system
+            recipient.ReactToCrime(CRIME.MURDER, this, actorAlterEgo, null, this); //removal of relationships should be handled by crime system
         }
 
         //Recipient and Target have a negative relationship:
@@ -266,7 +266,7 @@ public class AssaultCharacter : GoapAction {
             //- **Recipient Response Text**: "[Actor Name] killed somebody! This is horrible!"
             reactions.Add(string.Format("{0} killed somebody! This is horrible!", actor.name));
             //-**Recipient Effect**: Apply Crime System handling as if the Recipient witnessed Actor commit a Murder.
-            recipient.ReactToCrime(CRIME.MURDER, actorAlterEgo, null, this);
+            recipient.ReactToCrime(CRIME.MURDER, this, actorAlterEgo, null, this);
         }
 
         //Recipient and Actor are from the same faction and they dont have a positive relationship. 
@@ -283,7 +283,7 @@ public class AssaultCharacter : GoapAction {
                 //- **Recipient Response Text**: "[Actor Name] killed somebody! This is horrible!"
                 reactions.Add(string.Format("{0} killed somebody! This is horrible!", actor.name));
                 //-**Recipient Effect**: Apply Crime System handling as if the Recipient witnessed Actor commit a Murder.
-                recipient.ReactToCrime(CRIME.MURDER, actorAlterEgo, null, this);
+                recipient.ReactToCrime(CRIME.MURDER, this, actorAlterEgo, null, this);
             }
         }
         

@@ -62,6 +62,27 @@ public class Restrained : Trait {
         }
         base.OnRemoveTrait(sourceCharacter);
     }
+    public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
+        Character targetCharacter = traitOwner as Character;
+        if (targetCharacter.isDead || !characterThatWillDoJob.isAtHomeArea) {
+            return false;
+        }
+        if (targetCharacter.GetTraitOf(TRAIT_TYPE.CRIMINAL) == null && CanCharacterTakeRemoveTraitJob(characterThatWillDoJob, targetCharacter, null)) {
+            if (!targetCharacter.isAtHomeArea) {
+                GoapPlanJob job = characterThatWillDoJob.CreateSaveCharacterJob(targetCharacter, false);
+                return true;
+            } else {
+                if (!targetCharacter.HasJobTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT, name)) {
+                    GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = name, targetPOI = targetCharacter };
+                    GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REMOVE_TRAIT, goapEffect);
+                    job.SetCanTakeThisJobChecker(CanCharacterTakeRemoveTraitJob);
+                    characterThatWillDoJob.jobQueue.AddJobInQueue(job);
+                    return true;
+                }
+            }
+        }
+        return base.CreateJobsOnEnterVisionBasedOnTrait(traitOwner, characterThatWillDoJob);
+    }
     #endregion
 
     private void CheckRestrainTrait() {

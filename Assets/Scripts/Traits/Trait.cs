@@ -70,6 +70,7 @@ public class Trait {
     /// </summary>
     public virtual void OnDeath() { }
     public virtual string GetTestingData() { return string.Empty; }
+    public virtual bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) { return false; }
     #endregion
 
     public void SetOnRemoveAction(System.Action onRemoveAction) {
@@ -81,6 +82,33 @@ public class Trait {
     public void SetIsDisabled(bool state) {
         isDisabled = state;
     }
+
+    #region Jobs
+    protected bool CanCharacterTakeRemoveTraitJob(Character character, Character targetCharacter, JobQueueItem job) {
+        if (character != targetCharacter && character.faction.id == targetCharacter.faction.id) {
+            if (responsibleCharacter != null && responsibleCharacter == character) {
+                return false;
+            }
+            if (responsibleCharacters != null && responsibleCharacters.Contains(character)) {
+                return false;
+            }
+            if (character.faction.id == FactionManager.Instance.neutralFaction.id) {
+                return character.race == targetCharacter.race && character.homeArea == targetCharacter.homeArea && !targetCharacter.HasRelationshipOfTypeWith(character, RELATIONSHIP_TRAIT.ENEMY);
+            }
+            return !character.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.ENEMY);
+        }
+        return false;
+    }
+    protected bool CanTakeBuryJob(Character character, JobQueueItem job) {
+        return character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.CIVILIAN;
+    }
+    protected bool CanCharacterTakeApprehendJob(Character character, Character targetCharacter, JobQueueItem job) {
+        return character.role.roleType == CHARACTER_ROLE.SOLDIER && character.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.POSITIVE;
+    }
+    protected bool CanCharacterTakeRestrainJob(Character character, Character targetCharacter, JobQueueItem job) {
+        return (character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.CIVILIAN) && character.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.POSITIVE; // || character.role.roleType == CHARACTER_ROLE.ADVENTURER
+    }
+    #endregion
 }
 
 [System.Serializable]
