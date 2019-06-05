@@ -86,7 +86,7 @@ public class RevertToNormalForm : GoapAction {
                 //    recipient.homeArea.jobQueue.AssignCharacterToJob(job, this);
                 //}
             } else {
-                GoapPlanJob job = new GoapPlanJob("Report Crime", INTERACTION_TYPE.REPORT_CRIME, new Dictionary<INTERACTION_TYPE, object[]>() {
+                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REPORT_CRIME, INTERACTION_TYPE.REPORT_CRIME, new Dictionary<INTERACTION_TYPE, object[]>() {
                     { INTERACTION_TYPE.REPORT_CRIME, new object[] { committedCrime, actorAlterEgo, this }}
                 });
                 job.SetCannotOverrideJob(true);
@@ -105,7 +105,7 @@ public class RevertToNormalForm : GoapAction {
                 //    recipient.homeArea.jobQueue.AssignCharacterToJob(job, this);
                 //}
             } else {
-                GoapPlanJob job = new GoapPlanJob("Report Crime", INTERACTION_TYPE.REPORT_CRIME, new Dictionary<INTERACTION_TYPE, object[]>() {
+                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REPORT_CRIME, INTERACTION_TYPE.REPORT_CRIME, new Dictionary<INTERACTION_TYPE, object[]>() {
                     { INTERACTION_TYPE.REPORT_CRIME, new object[] { committedCrime, actorAlterEgo, this }}
                 });
                 job.SetCannotOverrideJob(true);

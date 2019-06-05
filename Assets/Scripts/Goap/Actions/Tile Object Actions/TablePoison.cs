@@ -80,8 +80,8 @@ public class TablePoison : GoapAction {
             if (witness.role.roleType == CHARACTER_ROLE.CIVILIAN || witness.role.roleType == CHARACTER_ROLE.ADVENTURER 
                 || witness.role.roleType == CHARACTER_ROLE.SOLDIER || witness.role.roleType == CHARACTER_ROLE.BANDIT 
                 || (witness.role.roleType != CHARACTER_ROLE.BEAST && witness.isFactionless)) {
-                if (!witness.jobQueue.HasJob("Remove Poison", poiTarget)) {
-                    GoapPlanJob job = new GoapPlanJob("Remove Poison", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Poisoned", targetPOI = poiTarget });
+                if (!witness.jobQueue.HasJob(JOB_TYPE.REMOVE_POISON, poiTarget)) {
+                    GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REMOVE_POISON, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Poisoned", targetPOI = poiTarget });
                     witness.jobQueue.AddJobInQueue(job);
                 }
             }
@@ -161,7 +161,7 @@ public class TablePoison : GoapAction {
             //- **Recipient Response Text**: "[Actor Name] wants to poison me? I've got to do something about this!"
             reactions.Add(string.Format("{0} wants to poison me? I've got to do something about this!", actor.name));
             //-**Recipient Effect**: Recipient will create a Remove Poison Job to his personal job queue. 
-            GoapPlanJob job = new GoapPlanJob("Remove Poison", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Poisoned", targetPOI = poiTarget });
+            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REMOVE_POISON, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Poisoned", targetPOI = poiTarget });
             recipient.jobQueue.AddJobInQueue(job);
             //Add Enemy relationship if they are not yet enemies. 
             if (!recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.ENEMY)) {
@@ -237,7 +237,7 @@ public class TablePoison : GoapAction {
             reactions.Add(string.Format("Thank you for letting me know about this. I've got to find a way to remove that poison to save {0}!", tableOwner.name));
             //-**Recipient Effect * *: If Adventurer or Soldier or Unaligned Non - Beast, create a Remove Poison Job.
             if (recipient.role.roleType == CHARACTER_ROLE.CIVILIAN || recipient.role.roleType == CHARACTER_ROLE.ADVENTURER || recipient.role.roleType == CHARACTER_ROLE.SOLDIER || recipient.role.roleType == CHARACTER_ROLE.BANDIT || (recipient.role.roleType != CHARACTER_ROLE.BEAST && recipient.isFactionless)) {
-                GoapPlanJob job = new GoapPlanJob("Remove Poison", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Poisoned", targetPOI = poiTarget });
+                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REMOVE_POISON, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Poisoned", targetPOI = poiTarget });
                 recipient.jobQueue.AddJobInQueue(job);
             }
             //If Civilian, Noble or Faction Leader, create an Ask for Help Remove Poison Job.
@@ -253,7 +253,7 @@ public class TablePoison : GoapAction {
             reactions.Add(string.Format("Thank you for letting me know about this. I've got to find a way to remove that poison to save {0}!", tableOwner.name));
             //-**Recipient Effect * *: If Adventurer or Soldier or Unaligned Non - Beast, create a Remove Poison Job.
             if (recipient.role.roleType == CHARACTER_ROLE.CIVILIAN || recipient.role.roleType == CHARACTER_ROLE.ADVENTURER || recipient.role.roleType == CHARACTER_ROLE.SOLDIER || recipient.role.roleType == CHARACTER_ROLE.BANDIT || (recipient.role.roleType != CHARACTER_ROLE.BEAST && recipient.isFactionless)) {
-                GoapPlanJob job = new GoapPlanJob("Remove Poison", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Poisoned", targetPOI = poiTarget });
+                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REMOVE_POISON, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Poisoned", targetPOI = poiTarget });
                 recipient.jobQueue.AddJobInQueue(job);
             }
             //If Civilian, Noble or Faction Leader, create an Ask for Help Remove Poison Job.
@@ -276,7 +276,7 @@ public class TablePoison : GoapAction {
             reactions.Add(string.Format("{0} is attempting murder! I've got to put a stop to this.", actor.name));
             //-**Recipient Effect * *: If Adventurer or Soldier or Unaligned Non - Beast, create a Remove Poison Job.
             if (recipient.role.roleType == CHARACTER_ROLE.CIVILIAN || recipient.role.roleType == CHARACTER_ROLE.ADVENTURER || recipient.role.roleType == CHARACTER_ROLE.SOLDIER || recipient.role.roleType == CHARACTER_ROLE.BANDIT || (recipient.role.roleType != CHARACTER_ROLE.BEAST && recipient.isFactionless)) {
-                GoapPlanJob job = new GoapPlanJob("Remove Poison", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Poisoned", targetPOI = poiTarget });
+                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REMOVE_POISON, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Poisoned", targetPOI = poiTarget });
                 recipient.jobQueue.AddJobInQueue(job);
             }
             //If Civilian, Noble or Faction Leader, create an Ask for Help Remove Poison Job.

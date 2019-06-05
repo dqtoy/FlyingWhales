@@ -46,7 +46,7 @@ public class Cursed : Trait {
         //if (_removeTraitJob != null) {
         //    _removeTraitJob.jobQueueParent.CancelJob(_removeTraitJob);
         //}
-        _sourceCharacter.CancelAllJobsTargettingThisCharacter("Remove Trait", name);
+        _sourceCharacter.CancelAllJobsTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT, name);
         _sourceCharacter.RemoveTraitNeededToBeRemoved(this);
         _sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, name.ToLower());
         base.OnRemoveTrait(sourceCharacter);

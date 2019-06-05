@@ -75,24 +75,24 @@ public class Restrained : Trait {
     }
 
     private void CreateFeedJob() {
-        if (!_sourceCharacter.HasJobTargettingThisCharacter("Feed")) {
+        if (!_sourceCharacter.HasJobTargettingThisCharacter(JOB_TYPE.FEED)) {
             GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, targetPOI = _sourceCharacter };
-            GoapPlanJob job = new GoapPlanJob("Feed", goapEffect);
+            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.FEED, goapEffect);
             job.SetCanTakeThisJobChecker(CanCharacterTakeFeedJob);
             _sourceCharacter.specificLocation.jobQueue.AddJobInQueue(job);
         }
     }
     private void MoveFeedJobToTopPriority() {
-        JobQueueItem feedJob = _sourceCharacter.specificLocation.jobQueue.GetJob("Feed", _sourceCharacter);
+        JobQueueItem feedJob = _sourceCharacter.specificLocation.jobQueue.GetJob(JOB_TYPE.FEED, _sourceCharacter);
         if (feedJob != null) {
             if (!_sourceCharacter.specificLocation.jobQueue.IsJobInTopPriority(feedJob)) {
                 _sourceCharacter.specificLocation.jobQueue.MoveJobToTopPriority(feedJob);
             }
         } else {
             GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, targetPOI = _sourceCharacter };
-            GoapPlanJob job = new GoapPlanJob("Feed", goapEffect);
+            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.FEED, goapEffect);
             job.SetCanTakeThisJobChecker(CanCharacterTakeFeedJob);
-            _sourceCharacter.specificLocation.jobQueue.AddJobInQueue(job, true);
+            _sourceCharacter.specificLocation.jobQueue.AddJobInQueue(job);
         }
     }
     private bool CanCharacterTakeFeedJob(Character character, JobQueueItem job) {
@@ -106,8 +106,8 @@ public class Restrained : Trait {
         return false;
     }
     private void CreateJudgementJob() {
-        if (!_sourceCharacter.HasJobTargettingThisCharacter("Judgement")) {
-            GoapPlanJob job = new GoapPlanJob("Judgement", INTERACTION_TYPE.JUDGE_CHARACTER, _sourceCharacter);
+        if (!_sourceCharacter.HasJobTargettingThisCharacter(JOB_TYPE.JUDGEMENT)) {
+            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.JUDGEMENT, INTERACTION_TYPE.JUDGE_CHARACTER, _sourceCharacter);
             job.SetCanTakeThisJobChecker(CanDoJudgementJob);
             _sourceCharacter.gridTileLocation.structure.location.jobQueue.AddJobInQueue(job);
         }

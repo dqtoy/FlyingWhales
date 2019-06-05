@@ -185,7 +185,7 @@ public class EatAtTable : GoapAction {
             //- **Recipient Response Text**: "Poor [Actor Name]. Maybe I can help!"
             reactions.Add(string.Format("Poor {0}. Maybe I can help!", actor.name));
             //-**Recipient Effect * *: Add a Remove[Sick] Job to Actor's personal job queue.
-            GoapPlanJob job = new GoapPlanJob("Remove Sick", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Sick", targetPOI = actor });
+            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REMOVE_TRAIT, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Sick", targetPOI = actor });
             recipient.jobQueue.AddJobInQueue(job);
         }
 
@@ -195,7 +195,7 @@ public class EatAtTable : GoapAction {
             //- **Recipient Response Text**: "Poor [Actor Name]. Maybe I can help!"
             reactions.Add(string.Format("Poor {0}. Maybe I can help!", actor.name));
             //-**Recipient Effect * *: Add a Remove[Sick] Job to location job queue and assign it to Recipient.
-            GoapPlanJob job = new GoapPlanJob("Remove Sick", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Sick", targetPOI = actor });
+            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REMOVE_TRAIT, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Sick", targetPOI = actor });
             recipient.jobQueue.AddJobInQueue(job);
         }
 

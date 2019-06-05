@@ -71,7 +71,7 @@ public class DropCharacter : GoapAction {
         //target.MoveToAnotherStructure(_workAreaStructure);
         AddActualEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = actor.homeArea, targetPOI = poiTarget });
 
-        if(parentPlan != null && parentPlan.job != null && parentPlan.job.name == "Save Character") {
+        if(parentPlan != null && parentPlan.job != null && parentPlan.job.jobType == JOB_TYPE.SAVE_CHARACTER) {
             RemoveTraitFrom(target, "Restrained");
         } else {
             Restrained restrainedTrait = target.GetNormalTrait("Restrained") as Restrained;

@@ -1073,7 +1073,7 @@ public class CharacterMarker : PooledObject {
         }
         if(character.stateComponent.currentState == null || character.stateComponent.currentState.characterState == CHARACTER_STATE.ENGAGE) {
             summary += "\n" + character.name + " is engaging, creating assault jobs for the target: " + otherCharacter.name;
-            int numOfJobs = 3 - otherCharacter.GetNumOfJobsTargettingThisCharacter("Assault");
+            int numOfJobs = 3 - otherCharacter.GetNumOfJobsTargettingThisCharacter(JOB_TYPE.ASSAULT);
             if (numOfJobs > 0) {
                 character.CreateAssaultJobs(otherCharacter, numOfJobs);
             }

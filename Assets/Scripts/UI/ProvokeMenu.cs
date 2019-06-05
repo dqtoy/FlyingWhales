@@ -74,7 +74,7 @@ public class ProvokeMenu : MonoBehaviour {
             while (chosenCharacter == null && enemyCharacters.Count > 0) {
                 int index = UnityEngine.Random.Range(0, enemyCharacters.Count);
                 Character character = enemyCharacters[index];
-                if (character.HasJobTargettingThisCharacter("Undermine Enemy") || targetCharacter.jobQueue.HasJob("Undermine Enemy", character)) {
+                if (character.HasJobTargettingThisCharacter(JOB_TYPE.UNDERMINE_ENEMY) || targetCharacter.jobQueue.HasJob(JOB_TYPE.UNDERMINE_ENEMY, character)) {
                     enemyCharacters.RemoveAt(index);
                 } else {
                     chosenCharacter = character;
@@ -82,7 +82,7 @@ public class ProvokeMenu : MonoBehaviour {
             }
             if (chosenCharacter == null) {
                 actorText = "You should take revenge on your enemies.";
-                if (targetCharacter.jobQueue.HasJob("Undermine Enemy")) {
+                if (targetCharacter.jobQueue.HasJob(JOB_TYPE.UNDERMINE_ENEMY)) {
                     targetText = "That's exactly what I'm doing!"; //Don't tell me what to do!
                 } else {
                     targetText = "I should, but I rather let them fight each other.";
@@ -95,7 +95,7 @@ public class ProvokeMenu : MonoBehaviour {
                 //GoapPlanJob job = new GoapPlanJob("Undermine Enemy", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", targetPOI = chosenCharacter });
                 //job.SetCannotOverrideJob(true);
                 //job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
-                //targetCharacter.jobQueue.AddJobInQueue(job, true, false);
+                //targetCharacter.jobQueue.AddJobInQueue(job, false);
                 //targetCharacter.jobQueue.ProcessFirstJobInQueue(targetCharacter);
 
                 targetCharacter.CreateUndermineJobOnly(chosenCharacter, "provoke");

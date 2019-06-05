@@ -14,13 +14,18 @@ public class JobQueue {
         jobsInQueue = new List<JobQueueItem>();
     }
 
-    public void AddJobInQueue(JobQueueItem job, bool isPriority = false, bool processLogicForPersonalJob = true) {
+    public void AddJobInQueue(JobQueueItem job, bool processLogicForPersonalJob = true) {
         job.SetJobQueueParent(this);
-        job.SetIsPriority(isPriority);
-        if (!isPriority) {
+        bool hasBeenInserted = false;
+        for (int i = 0; i < jobsInQueue.Count; i++) {
+            if(job.priority < jobsInQueue[i].priority) {
+                jobsInQueue.Insert(i, job);
+                hasBeenInserted = true;
+                break;
+            }
+        }
+        if (!hasBeenInserted) {
             jobsInQueue.Add(job);
-        } else {
-            jobsInQueue.Insert(0, job);
         }
         job.OnAddJobToQueue();
 
@@ -174,17 +179,19 @@ public class JobQueue {
         }
         return false;
     }
-    public bool HasJob(string jobName) {
+    public bool HasJob(params JOB_TYPE[] jobTypes) {
         for (int i = 0; i < jobsInQueue.Count; i++) {
-            if (jobsInQueue[i].name == jobName) {
-                return true;
+            for (int j = 0; j < jobTypes.Length; j++) {
+                if (jobsInQueue[i].jobType == jobTypes[j]) {
+                    return true;
+                }
             }
         }
         return false;
     }
-    public bool HasJob(string jobName, IPointOfInterest targetPOI) {
+    public bool HasJob(JOB_TYPE jobType, IPointOfInterest targetPOI) {
         for (int i = 0; i < jobsInQueue.Count; i++) {
-            if(jobsInQueue[i].name == jobName && jobsInQueue[i] is GoapPlanJob) {
+            if(jobsInQueue[i].jobType == jobType && jobsInQueue[i] is GoapPlanJob) {
                 GoapPlanJob job = jobsInQueue[i] as GoapPlanJob;
                 if (job.targetPOI == targetPOI) {
                     return true;
@@ -193,9 +200,9 @@ public class JobQueue {
         }
         return false;
     }
-    public bool HasJobWithOtherData(string jobName, object otherData) {
+    public bool HasJobWithOtherData(JOB_TYPE jobType, object otherData) {
         for (int i = 0; i < jobsInQueue.Count; i++) {
-            if (jobsInQueue[i].name == jobName && jobsInQueue[i] is GoapPlanJob) {
+            if (jobsInQueue[i].jobType == jobType && jobsInQueue[i] is GoapPlanJob) {
                 GoapPlanJob job = jobsInQueue[i] as GoapPlanJob;
                 if(job.allOtherData != null) {
                     for (int j = 0; j < job.allOtherData.Count; j++) {
@@ -242,9 +249,9 @@ public class JobQueue {
         }
         return false;
     }
-    public JobQueueItem GetJob(string jobName, IPointOfInterest targetPOI) {
+    public JobQueueItem GetJob(JOB_TYPE jobType, IPointOfInterest targetPOI) {
         for (int i = 0; i < jobsInQueue.Count; i++) {
-            if (jobsInQueue[i].name == jobName && jobsInQueue[i] is GoapPlanJob) {
+            if (jobsInQueue[i].jobType == jobType && jobsInQueue[i] is GoapPlanJob) {
                 GoapPlanJob job = jobsInQueue[i] as GoapPlanJob;
                 if (job.targetPOI == targetPOI) {
                     return job;
@@ -253,10 +260,12 @@ public class JobQueue {
         }
         return null;
     }
-    public JobQueueItem GetJob(string jobName) {
+    public JobQueueItem GetJob(params JOB_TYPE[] jobTypes) {
         for (int i = 0; i < jobsInQueue.Count; i++) {
-            if (jobsInQueue[i].name == jobName) {
-                return jobsInQueue[i];
+            for (int j = 0; j < jobTypes.Length; j++) {
+                if (jobsInQueue[i].jobType == jobTypes[j]) {
+                    return jobsInQueue[i];
+                }
             }
         }
         return null;
@@ -273,9 +282,9 @@ public class JobQueue {
         }
         return count;
     }
-    public void CancelAllJobs(string jobName) {
+    public void CancelAllJobs(JOB_TYPE jobType) {
         for (int i = 0; i < jobsInQueue.Count; i++) {
-            if(jobsInQueue[i].name == jobName) {
+            if(jobsInQueue[i].jobType == jobType) {
                 if (CancelJob(jobsInQueue[i])) {
                     i--;
                 }

@@ -1445,7 +1445,7 @@ public class Area {
     private void CreatePatrolAndExploreJobs() {
         int patrolChance = UnityEngine.Random.Range(0, 100);
         if(patrolChance < 25 && jobQueue.GetNumberOfJobsWith(CHARACTER_STATE.PATROL) < 2) {
-            CharacterStateJob stateJob = new CharacterStateJob("Patrol", CHARACTER_STATE.PATROL, null);
+            CharacterStateJob stateJob = new CharacterStateJob(JOB_TYPE.PATROL, CHARACTER_STATE.PATROL, null);
             stateJob.SetCanTakeThisJobChecker(CanDoPatrolAndExplore);
             jobQueue.AddJobInQueue(stateJob);
         }
@@ -1453,7 +1453,7 @@ public class Area {
         int exploreChance = UnityEngine.Random.Range(0, 100);
         if (exploreChance < 15 && !jobQueue.HasJobRelatedTo(CHARACTER_STATE.EXPLORE)) {
             Area dungeon = LandmarkManager.Instance.GetRandomAreaOfType(AREA_TYPE.DUNGEON);
-            CharacterStateJob stateJob = new CharacterStateJob("Explore", CHARACTER_STATE.EXPLORE, dungeon);
+            CharacterStateJob stateJob = new CharacterStateJob(JOB_TYPE.EXPLORE, CHARACTER_STATE.EXPLORE, dungeon);
             //stateJob.SetOnTakeJobAction(OnTakeExploreJob);
             stateJob.SetCanTakeThisJobChecker(CanDoPatrolAndExplore);
             jobQueue.AddJobInQueue(stateJob);
@@ -1477,8 +1477,8 @@ public class Area {
             //- any character that can produce this item may take this Job
             //- cancel Brew Potion job whenever inventory check occurs and it specified that there are enough Healing Potions already
             if (affectedStructure.GetItemsOfTypeCount(SPECIAL_TOKEN.HEALING_POTION) < 2) {
-                if (!jobQueue.HasJob("Brew Potion")) {
-                    GoapPlanJob job = new GoapPlanJob("Brew Potion", INTERACTION_TYPE.DROP_ITEM_WAREHOUSE, new Dictionary<INTERACTION_TYPE, object[]>() {
+                if (!jobQueue.HasJob(JOB_TYPE.BREW_POTION)) {
+                    GoapPlanJob job = new GoapPlanJob(JOB_TYPE.BREW_POTION, INTERACTION_TYPE.DROP_ITEM_WAREHOUSE, new Dictionary<INTERACTION_TYPE, object[]>() {
                         { INTERACTION_TYPE.DROP_ITEM_WAREHOUSE, new object[]{ SPECIAL_TOKEN.HEALING_POTION } },
                     });
                     job.SetCanTakeThisJobChecker(CanBrewPotion);
@@ -1491,8 +1491,8 @@ public class Area {
 
             //craft tool
             if (affectedStructure.GetItemsOfTypeCount(SPECIAL_TOKEN.TOOL) < 2) {
-                if (!jobQueue.HasJob("Craft Tool")) {
-                    GoapPlanJob job = new GoapPlanJob("Craft Tool", INTERACTION_TYPE.DROP_ITEM_WAREHOUSE, new Dictionary<INTERACTION_TYPE, object[]>() {
+                if (!jobQueue.HasJob(JOB_TYPE.CRAFT_TOOL)) {
+                    GoapPlanJob job = new GoapPlanJob(JOB_TYPE.CRAFT_TOOL, INTERACTION_TYPE.DROP_ITEM_WAREHOUSE, new Dictionary<INTERACTION_TYPE, object[]>() {
                         { INTERACTION_TYPE.DROP_ITEM_WAREHOUSE, new object[]{ SPECIAL_TOKEN.TOOL } },
                     });
                     job.SetCanTakeThisJobChecker(CanCraftTool);
@@ -1512,20 +1512,20 @@ public class Area {
     }
     private void CancelBrewPotion() {
         //warehouse has 2 or more healing potions
-        if (jobQueue.HasJob("Brew Potion")) {
-            JobQueueItem brewJob = jobQueue.GetJob("Brew Potion");
+        if (jobQueue.HasJob(JOB_TYPE.BREW_POTION)) {
+            JobQueueItem brewJob = jobQueue.GetJob(JOB_TYPE.BREW_POTION);
             jobQueue.CancelJob(brewJob);
         }
     }
     private void CancelCraftTool() {
         //warehouse has 2 or more healing potions
-        if (jobQueue.HasJob("Craft Tool")) {
-            JobQueueItem craftTool = jobQueue.GetJob("Craft Tool");
+        if (jobQueue.HasJob(JOB_TYPE.CRAFT_TOOL)) {
+            JobQueueItem craftTool = jobQueue.GetJob(JOB_TYPE.CRAFT_TOOL);
             jobQueue.CancelJob(craftTool);
         }
     }
     private void CreateReplaceTileObjectJob(TileObject removedObj, LocationGridTile removedFrom) {
-        GoapPlanJob job = new GoapPlanJob("Replace " + removedObj.tileObjectType.ToString() , INTERACTION_TYPE.REPLACE_TILE_OBJECT, new Dictionary<INTERACTION_TYPE, object[]>() {
+        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REPLACE_TILE_OBJECT, INTERACTION_TYPE.REPLACE_TILE_OBJECT, new Dictionary<INTERACTION_TYPE, object[]>() {
                         { INTERACTION_TYPE.REPLACE_TILE_OBJECT, new object[]{ removedObj, removedFrom } },
                     });
         //job.SetCanTakeThisJobChecker(job.CanCraftItemChecker);

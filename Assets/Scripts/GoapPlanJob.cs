@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class GoapPlanJob : JobQueueItem {
-
     public GoapEffect targetEffect { get; protected set; }
     public GoapPlan assignedPlan { get; protected set; }
     public GoapPlan targetPlan { get; protected set; }
     public IPointOfInterest targetPOI { get; protected set; }
-    public bool willImmediatelyBeDoneAfterReceivingPlan { get; protected set; }
+    //public bool willImmediatelyBeDoneAfterReceivingPlan { get; protected set; }
 
     //interaction type version
     public INTERACTION_TYPE targetInteractionType { get; protected set; } //Only used if the plan to be created uses interaction type
@@ -27,13 +26,13 @@ public class GoapPlanJob : JobQueueItem {
 
     public List<object> allOtherData { get; private set; }
 
-    public GoapPlanJob(string name, GoapEffect targetEffect) : base(name) {
+    public GoapPlanJob(JOB_TYPE jobType, GoapEffect targetEffect) : base(jobType) {
         this.targetEffect = targetEffect;
         this.targetPOI = targetEffect.targetPOI;
         forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
         allowDeadTargets = false;
     }
-    public GoapPlanJob(string name, GoapEffect targetEffect, Dictionary<INTERACTION_TYPE, object[]> otherData) : base(name) {
+    public GoapPlanJob(JOB_TYPE jobType, GoapEffect targetEffect, Dictionary<INTERACTION_TYPE, object[]> otherData) : base(jobType) {
         this.targetEffect = targetEffect;
         this.targetPOI = targetEffect.targetPOI;
         forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
@@ -50,7 +49,7 @@ public class GoapPlanJob : JobQueueItem {
             }
         }
     }
-    public GoapPlanJob(string name, INTERACTION_TYPE targetInteractionType) : base(name) {
+    public GoapPlanJob(JOB_TYPE jobType, INTERACTION_TYPE targetInteractionType) : base(jobType) {
         //this.targetEffect = targetEffect;
         //this.targetPOI = targetEffect.targetPOI;
         this.targetInteractionType = targetInteractionType;
@@ -58,7 +57,7 @@ public class GoapPlanJob : JobQueueItem {
         forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
         allowDeadTargets = false;
     }
-    public GoapPlanJob(string name, INTERACTION_TYPE targetInteractionType, Dictionary<INTERACTION_TYPE, object[]> otherData) : base(name) {
+    public GoapPlanJob(JOB_TYPE jobType, INTERACTION_TYPE targetInteractionType, Dictionary<INTERACTION_TYPE, object[]> otherData) : base(jobType) {
         //this.targetEffect = targetEffect;
         //this.targetPOI = targetEffect.targetPOI;
         this.targetInteractionType = targetInteractionType;
@@ -76,7 +75,7 @@ public class GoapPlanJob : JobQueueItem {
             }
         }
     }
-    public GoapPlanJob(string name, INTERACTION_TYPE targetInteractionType, IPointOfInterest targetPOI) : base(name) {
+    public GoapPlanJob(JOB_TYPE jobType, INTERACTION_TYPE targetInteractionType, IPointOfInterest targetPOI) : base(jobType) {
         //this.targetEffect = targetEffect;
         this.targetPOI = targetPOI;
         this.targetInteractionType = targetInteractionType;
@@ -84,7 +83,7 @@ public class GoapPlanJob : JobQueueItem {
         forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
         allowDeadTargets = false;
     }
-    public GoapPlanJob(string name, INTERACTION_TYPE targetInteractionType, IPointOfInterest targetPOI, Dictionary<INTERACTION_TYPE, object[]> otherData) : base(name) {
+    public GoapPlanJob(JOB_TYPE jobType, INTERACTION_TYPE targetInteractionType, IPointOfInterest targetPOI, Dictionary<INTERACTION_TYPE, object[]> otherData) : base(jobType) {
         //this.targetEffect = targetEffect;
         this.targetPOI = targetPOI;
         this.targetInteractionType = targetInteractionType;
@@ -215,9 +214,9 @@ public class GoapPlanJob : JobQueueItem {
             assignedCharacter.OnArriveAtAreaStopMovement();
         }
     }
-    public void SetWillImmediatelyBeDoneAfterReceivingPlan(bool state) {
-        willImmediatelyBeDoneAfterReceivingPlan = state;
-    }
+    //public void SetWillImmediatelyBeDoneAfterReceivingPlan(bool state) {
+    //    willImmediatelyBeDoneAfterReceivingPlan = state;
+    //}
 
     #region Forced Actions
     /// <summary>

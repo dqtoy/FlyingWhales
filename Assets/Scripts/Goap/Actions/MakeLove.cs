@@ -163,11 +163,11 @@ public class MakeLove : GoapAction {
             if (Random.Range(0, 2) == 1) {
                 randomTarget = target;
             }
-            GoapPlanJob job = new GoapPlanJob("Destroy Love", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TARGET_REMOVE_RELATIONSHIP, conditionKey = "Lover", targetPOI = randomTarget },
+            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.DESTROY_LOVE, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TARGET_REMOVE_RELATIONSHIP, conditionKey = "Lover", targetPOI = randomTarget },
                     new Dictionary<INTERACTION_TYPE, object[]>() { { INTERACTION_TYPE.NONE, new object[] { randomTarget } }, });
             job.SetCannotOverrideJob(true);
-            job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
-            recipient.jobQueue.AddJobInQueue(job, true, false);
+            //job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
+            recipient.jobQueue.AddJobInQueue(job, false);
         }
         //Recipient considers Target as a Paramour and Actor and Target are Lovers:
         else if (recipient.HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.PARAMOUR) && actor.HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.LOVER)) {
@@ -178,11 +178,11 @@ public class MakeLove : GoapAction {
             if (Random.Range(0, 2) == 1) {
                 randomTarget = target;
             }
-            GoapPlanJob job = new GoapPlanJob("Destroy Love", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TARGET_REMOVE_RELATIONSHIP, conditionKey = "Lover", targetPOI = randomTarget },
+            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.DESTROY_LOVE, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TARGET_REMOVE_RELATIONSHIP, conditionKey = "Lover", targetPOI = randomTarget },
                     new Dictionary<INTERACTION_TYPE, object[]>() { { INTERACTION_TYPE.NONE, new object[] { randomTarget } }, });
             job.SetCannotOverrideJob(true);
-            job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
-            recipient.jobQueue.AddJobInQueue(job, true, false);
+            //job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
+            recipient.jobQueue.AddJobInQueue(job, false);
         }
         //Actor and Target are Paramours. Recipient has no positive relationship with either of them. Actor has a Lover and Recipient has a positive relationship with Actor's Lover:
         else if (actor.HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.PARAMOUR) && recipientWithActor != RELATIONSHIP_EFFECT.POSITIVE && recipientWithTarget != RELATIONSHIP_EFFECT.POSITIVE
@@ -193,13 +193,13 @@ public class MakeLove : GoapAction {
             //GoapPlanJob job = new GoapPlanJob("Report Crime", INTERACTION_TYPE.REPORT_CRIME, actorLover, new Dictionary<INTERACTION_TYPE, object[]>() {
             //        { INTERACTION_TYPE.REPORT_CRIME, new object[] { committedCrime, actorAlterEgo, this }}
             //});
-            if (!recipient.jobQueue.HasJobWithOtherData("Share Information", this)) {
-                GoapPlanJob job = new GoapPlanJob("Share Information", INTERACTION_TYPE.SHARE_INFORMATION, actorLover, new Dictionary<INTERACTION_TYPE, object[]>() {
+            if (!recipient.jobQueue.HasJobWithOtherData(JOB_TYPE.SHARE_INFORMATION, this)) {
+                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.SHARE_INFORMATION, INTERACTION_TYPE.SHARE_INFORMATION, actorLover, new Dictionary<INTERACTION_TYPE, object[]>() {
                             { INTERACTION_TYPE.SHARE_INFORMATION, new object[] { this }}
                         });
                 //job.SetCannotOverrideJob(true);
                 job.SetCancelOnFail(true);
-                recipient.jobQueue.AddJobInQueue(job, true, false);
+                recipient.jobQueue.AddJobInQueue(job, false);
             }
         }
         //Actor and Target are Paramours. Recipient has no positive relationship with either of them. Target has a Lover and Recipient has a positive relationship with Target's Lover:
@@ -211,13 +211,13 @@ public class MakeLove : GoapAction {
             //GoapPlanJob job = new GoapPlanJob("Report Crime", INTERACTION_TYPE.REPORT_CRIME, targetLover, new Dictionary<INTERACTION_TYPE, object[]>() {
             //        { INTERACTION_TYPE.REPORT_CRIME, new object[] { committedCrime, poiTargetAlterEgo, this }}
             //});
-            if (!recipient.jobQueue.HasJobWithOtherData("Share Information", this)) {
-                GoapPlanJob job = new GoapPlanJob("Share Information", INTERACTION_TYPE.SHARE_INFORMATION, targetLover, new Dictionary<INTERACTION_TYPE, object[]>() {
+            if (!recipient.jobQueue.HasJobWithOtherData(JOB_TYPE.SHARE_INFORMATION, this)) {
+                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.SHARE_INFORMATION, INTERACTION_TYPE.SHARE_INFORMATION, targetLover, new Dictionary<INTERACTION_TYPE, object[]>() {
                             { INTERACTION_TYPE.SHARE_INFORMATION, new object[] { this }}
                         });
                 //job.SetCannotOverrideJob(true);
                 job.SetCancelOnFail(true);
-                recipient.jobQueue.AddJobInQueue(job, true, false);
+                recipient.jobQueue.AddJobInQueue(job, false);
             }
         }
         //Actor and Target are Paramours. Recipient has no positive relationship with either of them. Recipient is from the same faction as either one of them.
@@ -236,13 +236,13 @@ public class MakeLove : GoapAction {
             //GoapPlanJob job = new GoapPlanJob("Report Crime", INTERACTION_TYPE.REPORT_CRIME, actorLover, new Dictionary<INTERACTION_TYPE, object[]>() {
             //        { INTERACTION_TYPE.REPORT_CRIME, new object[] { committedCrime, actorAlterEgo, this }}
             //});
-            if (!recipient.jobQueue.HasJobWithOtherData("Share Information", this)) {
-                GoapPlanJob job = new GoapPlanJob("Share Information", INTERACTION_TYPE.SHARE_INFORMATION, actorLover, new Dictionary<INTERACTION_TYPE, object[]>() {
+            if (!recipient.jobQueue.HasJobWithOtherData(JOB_TYPE.SHARE_INFORMATION, this)) {
+                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.SHARE_INFORMATION, INTERACTION_TYPE.SHARE_INFORMATION, actorLover, new Dictionary<INTERACTION_TYPE, object[]>() {
                             { INTERACTION_TYPE.SHARE_INFORMATION, new object[] { this }}
                         });
                 //job.SetCannotOverrideJob(true);
                 job.SetCancelOnFail(true);
-                recipient.jobQueue.AddJobInQueue(job, true, false);
+                recipient.jobQueue.AddJobInQueue(job, false);
             }
         }
         //Actor and Target are Paramours. Recipient considers Target as an Enemy. Target has a Lover and Recipient does not consider Target's Lover an Enemy.
@@ -254,13 +254,13 @@ public class MakeLove : GoapAction {
             //GoapPlanJob job = new GoapPlanJob("Report Crime", INTERACTION_TYPE.REPORT_CRIME, targetLover, new Dictionary<INTERACTION_TYPE, object[]>() {
             //        { INTERACTION_TYPE.REPORT_CRIME, new object[] { committedCrime, poiTargetAlterEgo, this }}
             //});
-            if (!recipient.jobQueue.HasJobWithOtherData("Share Information", this)) {
-                GoapPlanJob job = new GoapPlanJob("Share Information", INTERACTION_TYPE.SHARE_INFORMATION, targetLover, new Dictionary<INTERACTION_TYPE, object[]>() {
+            if (!recipient.jobQueue.HasJobWithOtherData(JOB_TYPE.SHARE_INFORMATION, this)) {
+                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.SHARE_INFORMATION, INTERACTION_TYPE.SHARE_INFORMATION, targetLover, new Dictionary<INTERACTION_TYPE, object[]>() {
                             { INTERACTION_TYPE.SHARE_INFORMATION, new object[] { this }}
                         });
                 //job.SetCannotOverrideJob(true);
                 job.SetCancelOnFail(true);
-                recipient.jobQueue.AddJobInQueue(job, true, false);
+                recipient.jobQueue.AddJobInQueue(job, false);
             }
         }
         return reactions;

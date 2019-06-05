@@ -24,7 +24,8 @@ public class Vampiric : Trait {
         base.OnAddTrait(sourceCharacter);
         if (sourceCharacter is Character) {
             Character character = sourceCharacter as Character;
-            character.jobQueue.CancelAllJobs("Fullness");
+            character.jobQueue.CancelAllJobs(JOB_TYPE.FULLNESS_RECOVERY);
+            character.jobQueue.CancelAllJobs(JOB_TYPE.FULLNESS_RECOVERY_STARVING);
             character.AdjustDoNotGetTired(1);
             character.ResetTirednessMeter();
         }
@@ -32,7 +33,8 @@ public class Vampiric : Trait {
     public override void OnRemoveTrait(IPointOfInterest sourceCharacter) {
         if (sourceCharacter is Character) {
             Character character = sourceCharacter as Character;
-            character.jobQueue.CancelAllJobs("Fullness");
+            character.jobQueue.CancelAllJobs(JOB_TYPE.FULLNESS_RECOVERY);
+            character.jobQueue.CancelAllJobs(JOB_TYPE.FULLNESS_RECOVERY_STARVING);
             character.AdjustDoNotGetTired(-1);
         }
         base.OnRemoveTrait(sourceCharacter);

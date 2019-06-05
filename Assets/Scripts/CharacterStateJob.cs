@@ -8,7 +8,7 @@ public class CharacterStateJob : JobQueueItem {
     public CharacterState assignedState { get; protected set; }
     public Area targetArea { get; protected set; }
 
-    public CharacterStateJob(string name, CHARACTER_STATE state, Area targetArea) : base(name) {
+    public CharacterStateJob(JOB_TYPE jobType, CHARACTER_STATE state, Area targetArea) : base(jobType) {
         this.targetState = state;
         this.targetArea = targetArea;
     }
