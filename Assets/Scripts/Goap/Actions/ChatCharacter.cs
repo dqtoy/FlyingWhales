@@ -190,19 +190,19 @@ public class ChatCharacter : GoapAction {
     #endregion
 
     #region State Effects
-    private void AfterQuickChat() {
+    private void PreQuickChat() {
         currentState.SetIntelReaction(QuickChatIntelReaction);
     }
-    private void AfterFlirt() {
+    private void PreFlirt() {
         currentState.SetIntelReaction(FlirtIntelReaction);
     }
-    private void AfterBecomeParamours() {
+    private void PreBecomeParamours() {
         currentState.SetIntelReaction(BecomeParamoursIntelReaction);
     }
     #endregion
 
     #region Intel Reactions
-    private List<string> FlirtIntelReaction(Character recipient, Intel sharedIntel) {
+    private List<string> FlirtIntelReaction(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
         List<string> reactions = new List<string>();
         Character target = poiTarget as Character;
         Character actorLover = actor.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.LOVER);
@@ -284,7 +284,7 @@ public class ChatCharacter : GoapAction {
         return reactions;
     }
 
-    private List<string> BecomeParamoursIntelReaction(Character recipient, Intel sharedIntel) {
+    private List<string> BecomeParamoursIntelReaction(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
         List<string> reactions = new List<string>();
         Character target = poiTarget as Character;
         Character actorLover = actor.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.LOVER);
@@ -370,7 +370,7 @@ public class ChatCharacter : GoapAction {
         return reactions;
     }
 
-    private List<string> QuickChatIntelReaction(Character recipient, Intel sharedIntel) {
+    private List<string> QuickChatIntelReaction(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
         List<string> reactions = new List<string>();
         Character target = poiTarget as Character;
 

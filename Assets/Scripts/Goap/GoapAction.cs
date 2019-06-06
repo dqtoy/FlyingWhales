@@ -70,6 +70,8 @@ public class GoapAction {
     public CharacterState characterState { get; protected set; }
     public Character[] crimeCommitters { get; protected set; }
     public List<Character> awareCharactersOfThisAction { get; protected set; } //all characters that witnessed/aware of this action
+    public bool isOldNews { get; protected set; }
+    public int referenceCount { get; protected set; }
 
     protected virtual bool isTargetMissing {
         get { return !poiTarget.IsAvailable() || poiTarget.gridTileLocation == null || actor.specificLocation != poiTarget.specificLocation
@@ -614,6 +616,16 @@ public class GoapAction {
     public void AddAwareCharacter(Character character) {
         if (!awareCharactersOfThisAction.Contains(character)) {
             awareCharactersOfThisAction.Add(character);
+        }
+    }
+    public void SetIsOldNews(bool state) {
+        isOldNews = state;
+    }
+    public void AdjustReferenceCount(int amount) {
+        referenceCount += amount;
+        referenceCount = Mathf.Max(0, referenceCount);
+        if(referenceCount == 0) {
+            SetIsOldNews(true);
         }
     }
     #endregion

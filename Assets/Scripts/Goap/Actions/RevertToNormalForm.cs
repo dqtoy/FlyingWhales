@@ -38,12 +38,12 @@ public class RevertToNormalForm : GoapAction {
     public void PreTransformSuccess() {
         AlterEgoData ogData = actor.GetAlterEgoData(CharacterManager.Original_Alter_Ego);
         currentState.AddLogFiller(null, Utilities.GetNormalizedSingularRace(ogData.race), LOG_IDENTIFIER.STRING_1);
+        currentState.SetIntelReaction(TransformSuccessIntelReaction);
     }
     public void AfterTransformSuccess() {
         Lycanthropy lycanthropy = actor.GetNormalTrait("Lycanthropy") as Lycanthropy;
         lycanthropy.RevertToNormal();
         SetCommittedCrime(CRIME.ABERRATION, new Character[] { actor });
-        currentState.SetIntelReaction(TransformSuccessIntelReaction);
     }
     public void PreTargetMissing() {
         AlterEgoData ogData = actor.GetAlterEgoData(CharacterManager.Original_Alter_Ego);
@@ -52,7 +52,7 @@ public class RevertToNormalForm : GoapAction {
     #endregion
 
     #region Intel Reactions
-    private List<string> TransformSuccessIntelReaction(Character recipient, Intel sharedIntel) {
+    private List<string> TransformSuccessIntelReaction(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
         List<string> reactions = new List<string>();
         //Recipient and Actor is the same:
         if (recipient == actor) {

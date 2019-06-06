@@ -95,7 +95,7 @@ public class CurseCharacter : GoapAction {
     #endregion
 
     #region Intel Reactions
-    public List<string> CurseSuccessReactions(Character reciepient, Intel sharedIntel) {
+    public List<string> CurseSuccessReactions(Character reciepient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
         List<string> reactions = new List<string>();
         Character target = poiTarget as Character;
 

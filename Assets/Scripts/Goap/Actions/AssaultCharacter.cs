@@ -174,7 +174,7 @@ public class AssaultCharacter : GoapAction {
     #endregion
 
     #region Intel Reactions
-    private List<string> State1And2Reactions(Character recipient, Intel sharedIntel) {
+    private List<string> State1And2Reactions(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
         List<string> reactions = new List<string>();
         Character target = poiTarget as Character;
 
@@ -229,7 +229,7 @@ public class AssaultCharacter : GoapAction {
         }
         return reactions;
     }
-    private List<string> State3Reactions(Character recipient, Intel sharedIntel) {
+    private List<string> State3Reactions(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
         List<string> reactions = new List<string>();
         Character target = poiTarget as Character;
 

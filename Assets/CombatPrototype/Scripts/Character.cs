@@ -1387,7 +1387,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             CreateUndermineJobOnly(targetCharacter, reason);
         }
     }
-    public bool CreateUndermineJobOnly(Character targetCharacter, string reason, bool processJobQueue = true) {
+    public bool CreateUndermineJobOnly(Character targetCharacter, string reason, bool processJobQueue = true, SHARE_INTEL_STATUS status = SHARE_INTEL_STATUS.INFORMED) {
+        if(jobQueue.HasJob(JOB_TYPE.UNDERMINE_ENEMY, targetCharacter)) {
+            return false;
+        }
+        if(status == SHARE_INTEL_STATUS.WITNESSED) {
+            return CreateAssaultUndermineJobOnly(targetCharacter, reason, processJobQueue);
+        }
         WeightedDictionary<string> undermineWeights = new WeightedDictionary<string>();
         undermineWeights.AddElement("negative trait", 50);
 
@@ -1494,6 +1500,25 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             return true;
         }
         return false;
+    }
+    private bool CreateAssaultUndermineJobOnly(Character targetCharacter, string reason, bool processJobQueue = true) {
+        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.UNDERMINE_ENEMY, INTERACTION_TYPE.ASSAULT_ACTION_NPC, targetCharacter);
+        job.SetCannotOverrideJob(true);
+        Debug.LogWarning(GameManager.Instance.TodayLogString() + "Added an UNDERMINE ENEMY Job: " + job.targetInteractionType.ToString() + " to " + this.name + " with target " + targetCharacter.name);
+        //job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
+        jobQueue.AddJobInQueue(job, false);
+        if (processJobQueue) {
+            jobQueue.ProcessFirstJobInQueue(this);
+        }
+
+        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", reason + "_and_undermine");
+        log.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        log.AddToFillers(null, currentMoodType.ToString().ToLower(), LOG_IDENTIFIER.STRING_1);
+        AddHistory(log);
+
+        PlayerManager.Instance.player.ShowNotificationFrom(log, this, false);
+        return true;
     }
     public void CreateAssaultJobs(Character targetCharacter, int amount) {
         if (isAtHomeArea && !targetCharacter.isDead && !targetCharacter.isAtHomeArea && !targetCharacter.HasTraitOf(TRAIT_TYPE.DISABLER, "Combat Recovery") && !this.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
@@ -2542,10 +2567,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         return null;
     }
     public bool HasRelationshipWith(Character character, bool useDisabled = false) {
-        return HasRelationshipWith(character.currentAlterEgo);
+        return HasRelationshipWith(character.currentAlterEgo, useDisabled);
     }
     public bool HasRelationshipWith(AlterEgoData alterEgo, bool useDisabled = false) {
         return currentAlterEgo.HasRelationshipWith(alterEgo, useDisabled);
+    }
+    public bool HasTwoWayRelationshipWith(Character character, bool useDisabled = false) {
+        return HasRelationshipWith(character.currentAlterEgo, useDisabled) && character.HasRelationshipWith(this.currentAlterEgo, useDisabled);
     }
     public int GetAllRelationshipCountExcept(List<RELATIONSHIP_TRAIT> except = null) {
         int count = 0;
@@ -2740,6 +2768,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //}
     }
     public void ThisCharacterWitnessedEvent(GoapAction witnessedEvent) {
+        if (witnessedEvent.currentState.shareIntelReaction != null) {
+            witnessedEvent.currentState.shareIntelReaction.Invoke(this, null, SHARE_INTEL_STATUS.WITNESSED);
+        }
+
         witnessedEvent.AddAwareCharacter(this);
 
         Log witnessLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "witness_event", witnessedEvent);
@@ -5201,7 +5233,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         } else if (intel is EventIntel) {
             EventIntel ei = intel as EventIntel;
             if (ei.action.endedAtState != null && ei.action.endedAtState.shareIntelReaction != null) {
-                dialogReactions.AddRange(ei.action.endedAtState.shareIntelReaction.Invoke(this, ei));
+                dialogReactions.AddRange(ei.action.endedAtState.shareIntelReaction.Invoke(this, ei, SHARE_INTEL_STATUS.INFORMED));
             }
             //if the determined reactions list is empty, check the default reactions
             if (dialogReactions.Count == 0) {

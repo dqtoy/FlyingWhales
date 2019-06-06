@@ -36,6 +36,7 @@ public class Spooked : Trait {
             }
             character.AdjustDoNotDisturb(1);
         }
+        base.OnAddTrait(sourcePOI);
     }
     public override void OnRemoveTrait(IPointOfInterest sourcePOI) {
         if (sourcePOI is Character) {
@@ -49,6 +50,7 @@ public class Spooked : Trait {
             }
             ClearTerrifyingCharacters();
         }
+        base.OnRemoveTrait(sourcePOI);
     }
     #endregion
 

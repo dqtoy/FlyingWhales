@@ -12,7 +12,7 @@ public class GoapActionState {
     public Action preEffect { get; private set; }
     public Action perTickEffect { get; private set; }
     public Action afterEffect { get; private set; }
-    public Func<Character, Intel, List<string>> shareIntelReaction { get; private set; }
+    public Func<Character, Intel, SHARE_INTEL_STATUS, List<string>> shareIntelReaction { get; private set; }
     public string status { get; private set; }
     public bool shouldAddLogs { get; private set; }
     public bool isDone { get; private set; }
@@ -34,7 +34,7 @@ public class GoapActionState {
         CreateLog();
     }
 
-    public void SetIntelReaction(Func<Character, Intel, List<string>> intelReaction) {
+    public void SetIntelReaction(Func<Character, Intel, SHARE_INTEL_STATUS, List<string>> intelReaction) {
         shareIntelReaction = intelReaction;
     }
 

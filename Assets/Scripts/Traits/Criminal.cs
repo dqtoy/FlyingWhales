@@ -28,7 +28,6 @@ public class Criminal : Trait {
         
     }
     public override void OnRemoveTrait(IPointOfInterest sourcePOI) {
-        base.OnRemoveTrait(sourcePOI);
         if (sourcePOI is Character) {
             Character sourceCharacter = sourcePOI as Character;
             //When a character loses this Trait, add this log to the location and the character:
@@ -37,7 +36,7 @@ public class Criminal : Trait {
             sourceCharacter.AddHistory(addLog);
             sourceCharacter.specificLocation.AddHistory(addLog);
         }
-        
+        base.OnRemoveTrait(sourcePOI);
     }
     /// <summary>
     /// Make this character create an apprehend job at his home location targetting a specific character.

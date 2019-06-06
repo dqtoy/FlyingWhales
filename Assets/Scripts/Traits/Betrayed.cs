@@ -17,8 +17,10 @@ public class Betrayed : Trait {
 
     #region Overrides
     public override void OnAddTrait(IPointOfInterest sourcePOI) {
+        base.OnAddTrait(sourcePOI);
     }
     public override void OnRemoveTrait(IPointOfInterest sourcePOI) {
+        base.OnRemoveTrait(sourcePOI);
     }
     #endregion
 }

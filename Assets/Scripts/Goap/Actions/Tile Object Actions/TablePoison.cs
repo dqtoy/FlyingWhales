@@ -139,7 +139,7 @@ public class TablePoison : GoapAction {
     #endregion
 
     #region Intel Reactions
-    private List<string> PoisonSuccessReactions(Character recipient, Intel sharedIntel) {
+    private List<string> PoisonSuccessReactions(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
         List<string> reactions = new List<string>();
 
         PoisonTableIntel pti = sharedIntel as PoisonTableIntel;

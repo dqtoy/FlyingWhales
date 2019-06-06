@@ -27,16 +27,18 @@ public class TransformToWolfForm : GoapAction {
     #endregion
 
     #region State Effects
+    public void PreTransformSuccess() {
+        currentState.SetIntelReaction(TransformSuccessIntelReaction);
+    }
     public void AfterTransformSuccess() {
         Lycanthropy lycanthropy = actor.GetNormalTrait("Lycanthropy") as Lycanthropy;
         lycanthropy.TurnToWolf();
         SetCommittedCrime(CRIME.ABERRATION, new Character[] { actor });
-        currentState.SetIntelReaction(TransformSuccessIntelReaction);
     }
     #endregion
 
     #region Intel Reactions
-    private List<string> TransformSuccessIntelReaction(Character recipient, Intel sharedIntel) {
+    private List<string> TransformSuccessIntelReaction(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
         List<string> reactions = new List<string>();
         //Lycanthropy lycanthropy = actor.GetTrait("Lycanthropy") as Lycanthropy;
         //Faction actorOrigFaction = lycanthropy.data.faction;

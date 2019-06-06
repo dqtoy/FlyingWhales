@@ -108,7 +108,7 @@ public class DrinkBlood : GoapAction {
     #endregion
 
     #region Intel Reactions
-    private List<string> DrinkBloodSuccessIntelReaction(Character recipient, Intel sharedIntel) {
+    private List<string> DrinkBloodSuccessIntelReaction(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
         List<string> reactions = new List<string>();
 
         //Recipient and Actor is the same:

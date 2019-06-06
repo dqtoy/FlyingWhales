@@ -92,7 +92,7 @@ public class Steal : GoapAction {
     #endregion
 
     #region Intel Reactions
-    private List<string> State1Reactions(Character recipient, Intel sharedIntel) {
+    private List<string> State1Reactions(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
         List<string> reactions = new List<string>();
         SpecialToken stolenItem = poiTarget as SpecialToken;
         //Recipient is the owner of the item:

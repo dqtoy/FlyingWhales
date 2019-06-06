@@ -29,7 +29,7 @@ public class Trait {
     public bool isDisabled { get; private set; }
     public virtual bool broadcastDuplicates { get { return false; } }
     public virtual bool isPersistent { get { return false; } } //should this trait persist through all the character's alter egos
-
+    public GameDate dateEstablished { get; protected set; }
     //private Character _responsibleCharacter;
 
     private System.Action onRemoveAction;
@@ -40,6 +40,7 @@ public class Trait {
         //    Character character = sourceCharacter as Character;
         //    character.CreateApprehendJob();
         //}
+        dateEstablished = GameManager.Instance.Today();
     }
     public virtual void OnRemoveTrait(IPointOfInterest sourceCharacter) {
         if (onRemoveAction != null) {

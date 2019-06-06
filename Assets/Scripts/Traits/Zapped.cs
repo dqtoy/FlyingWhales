@@ -43,12 +43,14 @@ public class Zapped : Trait {
             //}
             character.AdjustDoNotDisturb(1);
         }
+        base.OnAddTrait(sourcePOI);
     }
     public override void OnRemoveTrait(IPointOfInterest sourcePOI) {
         if (sourcePOI is Character) {
             Character character = sourcePOI as Character;
             character.AdjustDoNotDisturb(-1);
         }
+        base.OnRemoveTrait(sourcePOI);
     }
     #endregion
 }

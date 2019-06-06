@@ -62,9 +62,10 @@ public class AbductCharacter : GoapAction {
     //#endregion
 
     #region State Effects
-    //public void PreAbductSuccess() {
+    public void PreAbductSuccess() {
         //currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-    //}
+        currentState.SetIntelReaction(AbductSuccessIntelReaction);
+    }
     public void AfterAbductSuccess() {
         if (parentPlan.job != null) {
             parentPlan.job.SetCannotCancelJob(true);
@@ -72,8 +73,6 @@ public class AbductCharacter : GoapAction {
         Character target = poiTarget as Character;
         Restrained restrainedTrait = new Restrained();
         target.AddTrait(restrainedTrait, actor);
-
-        currentState.SetIntelReaction(AbductSuccessIntelReaction);
 
         AddActualEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = poiTarget });
     }
@@ -86,7 +85,7 @@ public class AbductCharacter : GoapAction {
     #endregion
 
     #region Intel Reactions
-    private List<string> AbductSuccessIntelReaction(Character recipient, Intel sharedIntel) {
+    private List<string> AbductSuccessIntelReaction(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
         List<string> reactions = new List<string>();
         Character target = poiTarget as Character;
 

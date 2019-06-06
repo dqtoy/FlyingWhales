@@ -1321,6 +1321,7 @@ public enum RELATIONSHIP_EFFECT {
     POSITIVE,
     NEGATIVE,
 }
+public enum SHARE_INTEL_STATUS { NONE, WITNESSED, INFORMED,}
 
 #region Crime Subcategories
 [System.AttributeUsage(System.AttributeTargets.Field)]
