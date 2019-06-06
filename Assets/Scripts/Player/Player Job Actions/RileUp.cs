@@ -61,7 +61,7 @@ public class RileUp : PlayerJobAction {
         return base.CanTarget(targetCharacter);
     }
 
-    public string GetActionName(Character target) {
+    public override string GetActionName(Character target) {
         if (target.role.roleType != CHARACTER_ROLE.BEAST) {
             return "Abduct";
         } else {

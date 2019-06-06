@@ -495,9 +495,6 @@ public class Player : ILeader {
     public bool HasCharacterAssignedToJob(JOB job) {
         return roleSlots[job].assignedCharacter != null;
     }
-    public Character GetCharacterAssignedToJob(JOB job) {
-        return roleSlots[job].assignedCharacter;
-    }
     private List<Character> GetValidCharactersForJob(JOB job) {
         List<Character> valid = new List<Character>();
         for (int i = 0; i < minions.Count; i++) {
@@ -534,6 +531,40 @@ public class Player : ILeader {
         }
         return actions;
     }
+    public PlayerJobAction currentActivePlayerJobAction { get; private set; }
+    public void SetCurrentlyActivePlayerJobAction(PlayerJobAction action) {
+        currentActivePlayerJobAction = action;
+        //change the cursor
+        CursorManager.Instance.SetCursorToTarget();
+        CursorManager.Instance.AddLeftClickAction(TryExecuteCurrentActiveAction);
+    }
+    private void TryExecuteCurrentActiveAction() {
+        string summary = "Mouse was clicked. Will try to execute " + currentActivePlayerJobAction.name;
+        if (InteriorMapManager.Instance.currentlyShowingMap != null && InteriorMapManager.Instance.currentlyShowingMap.hoveredCharacter != null) {
+            summary += " targetting " + InteriorMapManager.Instance.currentlyShowingMap.hoveredCharacter.name;
+            if (currentActivePlayerJobAction.ShouldButtonBeInteractable(currentActivePlayerJobAction.parentData.assignedCharacter, InteriorMapManager.Instance.currentlyShowingMap.hoveredCharacter)) {
+                summary += "\nActivated action!";
+                currentActivePlayerJobAction.ActivateAction(currentActivePlayerJobAction.parentData.assignedCharacter, InteriorMapManager.Instance.currentlyShowingMap.hoveredCharacter);
+            } else {
+                summary += "\nDid not activate action! Did not meet requirements";
+            }
+        } else {
+            LocationGridTile hoveredTile = InteriorMapManager.Instance.GetTileFromMousePosition();
+            if (hoveredTile != null && hoveredTile.objHere != null) {
+                summary += " targetting " + hoveredTile.objHere.name;
+                if (currentActivePlayerJobAction.ShouldButtonBeInteractable(currentActivePlayerJobAction.parentData.assignedCharacter, hoveredTile.objHere)) {
+                    summary += "\nActivated action!";
+                    currentActivePlayerJobAction.ActivateAction(currentActivePlayerJobAction.parentData.assignedCharacter, hoveredTile.objHere);
+                } else {
+                    summary += "\nDid not activate action! Did not meet requirements";
+                }
+            } else {
+                summary += "\nNo Target!";
+            }
+        }
+        CursorManager.Instance.SetCursorToDefault();
+        Debug.Log(GameManager.Instance.TodayLogString() + summary);
+    }
     #endregion
 
     #region Utilities
@@ -548,37 +579,6 @@ public class Player : ILeader {
             hasSeenActionButtonsOnce = true;
             Messenger.Broadcast(Signals.HAS_SEEN_ACTION_BUTTONS);
         }
-    }
-    #endregion
-
-    #region Tracking
-    public List<Character> GetTrackedCharacters() {
-        List<Character> characters = new List<Character>();
-        //foreach (KeyValuePair<JOB, PlayerJobData> keyValuePair in roleSlots) {
-        //    if (keyValuePair.Value.activeAction != null) {
-        //        if (keyValuePair.Value.activeAction is Track) {
-        //            Track track = keyValuePair.Value.activeAction as Track;
-        //            if (track.currentTargetType == JOB_ACTION_TARGET.CHARACTER) {
-        //                characters.Add(track.target as Character);
-        //            }
-        //        }
-        //    }
-        //}
-        return characters;
-    }
-    public List<Area> GetTrackedAreas() {
-        List<Area> characters = new List<Area>();
-        //foreach (KeyValuePair<JOB, PlayerJobData> keyValuePair in roleSlots) {
-        //    if (keyValuePair.Value.activeAction != null) {
-        //        if (keyValuePair.Value.activeAction is Track) {
-        //            Track track = keyValuePair.Value.activeAction as Track;
-        //            if (track.currentTargetType == JOB_ACTION_TARGET.AREA) {
-        //                characters.Add(track.target as Area);
-        //            }
-        //        }
-        //    }
-        //}
-        return characters;
     }
     #endregion
 

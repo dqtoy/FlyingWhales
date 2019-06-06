@@ -22,10 +22,6 @@ public class RoleSlotItem : MonoBehaviour, IDragParentItem {
     [SerializeField] private GameObject tooltipGO;
     [SerializeField] private TextMeshProUGUI tooltipLbl;
 
-    public CustomDropZone dropZone;
-
-    public System.Type neededType { get; private set; }
-
     public object associatedObj {
         get { return character; }
     }
@@ -34,16 +30,12 @@ public class RoleSlotItem : MonoBehaviour, IDragParentItem {
         slotJob = job;
         UpdateVisuals();
         AddListeners();
-        neededType = typeof(Character);
     }
 
     private void AddListeners() {
         Messenger.AddListener<JOB, Character>(Signals.CHARACTER_ASSIGNED_TO_JOB, OnCharacterAssignedToJob);
         Messenger.AddListener<JOB, Character>(Signals.CHARACTER_UNASSIGNED_FROM_JOB, OnCharacterUnassignedFromJob);
-        Messenger.AddListener<DragObject>(Signals.DRAG_OBJECT_CREATED, OnDragObjectCreated);
-        Messenger.AddListener<DragObject>(Signals.DRAG_OBJECT_DESTROYED, OnDragObjectDestroyed);
         Messenger.AddListener<PlayerJobAction>(Signals.JOB_ACTION_COOLDOWN_ACTIVATED, OnJobCooldownActivated);
-        //Messenger.AddListener<Intel>(Signals.PLAYER_OBTAINED_INTEL, OnPlayerObtainedIntel);
     }
 
     public void SetCharacter(Character character) {
@@ -66,31 +58,7 @@ public class RoleSlotItem : MonoBehaviour, IDragParentItem {
             portrait.GeneratePortrait(character);
             portrait.gameObject.SetActive(true);
         }
-    }
-	
-    public void OnClickAssign() {
-        UIManager.Instance.ShowClickableObjectPicker(PlayerManager.Instance.player.allOwnedCharacters, AssignCharacterToJob, new CharacterLevelComparer(), CanAssignCharacterToJob);
-    }
-    private bool CanAssignCharacterToJob(Character character) {
-        if (this.character != null && this.character.id == character.id) {
-            return false; //This means that the character is already assigned to this job
-        }
-        if (PlayerManager.Instance.player.roleSlots[slotJob].isSlotLocked) {
-            return false;
-        }
-        JOB charactersJob = PlayerManager.Instance.player.GetCharactersCurrentJob(character);
-        if (charactersJob != JOB.NONE 
-            && PlayerManager.Instance.player.roleSlots[charactersJob].activeAction != null
-            && PlayerManager.Instance.player.roleSlots[charactersJob].activeAction.isInCooldown) {
-            return false;
-        }
-        return PlayerManager.Instance.player.CanAssignCharacterToJob(slotJob, character);
-    }
-    private void AssignCharacterToJob(Character character) {
-        Debug.Log("Assigning " + character.name + " to job " + slotJob.ToString());
-        PlayerManager.Instance.player.AssignCharacterToJob(slotJob, character);
-        //UIManager.Instance.HideObjectPicker();
-    }
+    }    
     private void OnCharacterAssignedToJob(JOB job, Character character) {
         if (slotJob == job) {
             SetCharacter(character);
@@ -101,43 +69,6 @@ public class RoleSlotItem : MonoBehaviour, IDragParentItem {
             SetCharacter(null);
         }
     }
-
-    #region Drag
-    private void OnDragObjectCreated(DragObject obj) {
-        if (dropZone != null && dropZone.isEnabled && neededType != null && CanAssignCharacter(obj.parentItem.associatedObj)) {
-            //glowGO.SetActive(true);
-            validPortraitGO.SetActive(true);
-            invalidPortraitGO.SetActive(false);
-        } else {
-            validPortraitGO.SetActive(false);
-            invalidPortraitGO.SetActive(true);
-        }
-    }
-    private void OnDragObjectDestroyed(DragObject obj) {
-        //glowGO.SetActive(false);
-        validPortraitGO.SetActive(false);
-        invalidPortraitGO.SetActive(false);
-    }
-    private bool CanAssignCharacter(object obj) {
-        if(obj is Character) {
-            Character character = obj as Character;
-            return CanAssignCharacterToJob(character);
-        }
-        return false;
-    }
-    public void OnDropItemAtDropZone(GameObject go) { //this is used to filter if the dragged object is valid for this slot
-        DragObject dragObj = go.GetComponent<DragObject>();
-        if (dragObj == null) {
-            return;
-        }
-        IDragParentItem parentItem = dragObj.parentItem;
-        if (parentItem != null) {
-            if (CanAssignCharacter(parentItem.associatedObj)) {
-                AssignCharacterToJob(parentItem.associatedObj as Character);
-            }
-        }
-    }
-    #endregion
 
     #region Cooldown
     private void OnJobCooldownActivated(PlayerJobAction action) {
@@ -202,7 +133,9 @@ public class RoleSlotItem : MonoBehaviour, IDragParentItem {
         UIManager.Instance.ShowSmallInfo(message, header);
     }
     public void HideTooltip() {
-        UIManager.Instance.HideSmallInfo();
+        if (UIManager.Instance != null) {
+            UIManager.Instance.HideSmallInfo();
+        }
     }
     private void ShowActionBtnTooltip(string message, string header) {
         string m = string.Empty;   

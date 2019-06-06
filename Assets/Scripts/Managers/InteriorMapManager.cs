@@ -52,16 +52,22 @@ public class InteriorMapManager : MonoBehaviour {
         Instance = this;
         templatePath = Application.dataPath + "/StreamingAssets/Structure Templates/";
     }
-    public void LateUpdate() {
-        if (UIManager.Instance.IsMouseOnUI() || currentlyShowingMap == null) {
-            return;
-        }
+    public LocationGridTile GetTileFromMousePosition() {
         Vector3 mouseWorldPos = (currentlyShowingMap.worldUICanvas.worldCamera.ScreenToWorldPoint(Input.mousePosition));
         Vector3 localPos = currentlyShowingMap.grid.WorldToLocal(mouseWorldPos);
         Vector3Int coordinate = currentlyShowingMap.grid.LocalToCell(localPos);
         if (coordinate.x >= 0 && coordinate.x < currentlyShowingMap.width
             && coordinate.y >= 0 && coordinate.y < currentlyShowingMap.height) {
-            LocationGridTile hoveredTile = currentlyShowingMap.map[coordinate.x, coordinate.y];
+           return currentlyShowingMap.map[coordinate.x, coordinate.y];
+        }
+        return null;
+    }
+    public void LateUpdate() {
+        if (UIManager.Instance.IsMouseOnUI() || currentlyShowingMap == null) {
+            return;
+        }
+        LocationGridTile hoveredTile = GetTileFromMousePosition();
+        if (hoveredTile != null) {
             if (GameManager.showAllTilesTooltip) {
                 ShowTileData(hoveredTile);
                 if (hoveredTile.objHere != null) {

@@ -20,11 +20,13 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField] private RectTransform roleSlotsParent;
     [SerializeField] private RoleSlotItem[] roleSlots;
     [SerializeField] private GameObject roleSlotItemPrefab;
+    [SerializeField] private GameObject actionBtnPrefab;
     [SerializeField] private GameObject actionBtnTooltipGO;
     [SerializeField] private TextMeshProUGUI actionBtnTooltipLbl;
     [SerializeField] private GameObject actionBtnPointer;
     [SerializeField] private TextMeshProUGUI activeMinionTypeLbl;
-    [SerializeField] private RectTransform activeMinionActionsParent;    
+    [SerializeField] private RectTransform activeMinionActionsParent;
+    [SerializeField] private HorizontalScrollSnap roleSlotsScrollSnap;
 
     [Header("Attack")]
     public GameObject attackGridGO;
@@ -131,8 +133,10 @@ public class PlayerUI : MonoBehaviour {
             RoleSlotItem roleSlot = roleSlotGO.GetComponent<RoleSlotItem>();
             roleSlot.SetSlotJob(keyValuePair.Key);
             roleSlots[currIndex] = roleSlot;
+            roleSlotsScrollSnap.AddChild(roleSlotGO);
             currIndex++;
         }
+        OnChangeRoleSlotPage(roleSlotsScrollSnap.CurrentPage);
     }
     //private void ShowActionButtonsFor(IPointOfInterest poi) {
     //    if (UIManager.Instance.IsShareIntelMenuOpen()) {
@@ -165,6 +169,24 @@ public class PlayerUI : MonoBehaviour {
     }
     public void HideActionBtnTooltip() {
         actionBtnTooltipGO.gameObject.SetActive(false);
+    }
+    public void OnStartChangeRoleSlotPage() {
+        Utilities.DestroyChildren(activeMinionActionsParent);
+    }
+    public void OnChangeRoleSlotPage(int page) {
+        RoleSlotItem slot = roleSlots[page];
+        activeMinionTypeLbl.text = Utilities.NormalizeString(slot.slotJob.ToString());
+        LoadActionButtonsForActiveJob(slot);
+    }
+    private void LoadActionButtonsForActiveJob(RoleSlotItem active) {
+        PlayerJobData jobData = PlayerManager.Instance.player.roleSlots[active.slotJob];
+        for (int i = 0; i < jobData.jobActions.Count; i++) {
+            PlayerJobAction jobAction = jobData.jobActions[i];
+            GameObject jobGO = UIManager.Instance.InstantiateUIObject(actionBtnPrefab.name, activeMinionActionsParent);
+            PlayerJobActionButton actionBtn = jobGO.GetComponent<PlayerJobActionButton>();
+            actionBtn.SetJobAction(jobAction, jobData.assignedCharacter);
+            actionBtn.SetClickAction(() => PlayerManager.Instance.player.SetCurrentlyActivePlayerJobAction(jobAction));
+        }
     }
     #endregion
 

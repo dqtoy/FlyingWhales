@@ -5,14 +5,12 @@ using UnityEngine;
 public class PlayerJobAction {
 
     public PlayerJobData parentData { get; protected set; }
-    public virtual string actionName { get { return name; } }
     public string name { get; protected set; }
 	public int cooldown { get; protected set; } //cooldown in ticks
     public Character assignedCharacter { get; protected set; }
     public List<JOB_ACTION_TARGET> targettableTypes { get; protected set; } //what sort of objects can this action target
     public bool isActive { get; protected set; }
     public string btnSubText { get; protected set; }
-
     public int ticksInCooldown { get; private set; } //how many ticks has this action been in cooldown?
 
     public bool isInCooldown {
@@ -88,10 +86,13 @@ public class PlayerJobAction {
     /// Function that determines whether this action can target the given character or not.
     /// Regardless of cooldown state.
     /// </summary>
-    /// <param name="character">The target character</param>
+    /// <param name="character">The target poi</param>
     /// <returns>true or false</returns>
     public virtual bool CanTarget(IPointOfInterest poi) {
         return true;
+    }
+    public virtual string GetActionName(Character target) {
+        return name;
     }
     #endregion
 

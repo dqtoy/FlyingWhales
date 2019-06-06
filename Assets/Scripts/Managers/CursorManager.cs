@@ -15,6 +15,9 @@ public class CursorManager : MonoBehaviour {
     [SerializeField] private CursorMode cursorMode = CursorMode.Auto;
     [SerializeField] private Vector2 hotSpot = Vector2.zero;
 
+    private List<System.Action> leftClickActions = new List<System.Action>();
+
+    #region Monobehaviours
     private void Awake() {
         if (Instance == null) {
             Instance = this;
@@ -24,6 +27,15 @@ public class CursorManager : MonoBehaviour {
             Destroy(this.gameObject);
         }
     }
+    private void LateUpdate() {
+        if (Input.GetMouseButtonDown(0)) {
+            //left click
+            ExecuteLeftClickActions();
+            ClearLeftClickActions();
+        }
+    }
+    #endregion
+
 
     public void SetCursorToDefault() {
         isDraggingItem = false;
@@ -43,4 +55,20 @@ public class CursorManager : MonoBehaviour {
         isDraggingItem = true;
         Cursor.SetCursor(dragItemClickedCursorTexture, hotSpot, cursorMode);
     }
+
+
+    #region Click Actions
+    public void AddLeftClickAction(System.Action action) {
+        leftClickActions.Add(action);
+    }
+    private void ExecuteLeftClickActions() {
+        for (int i = 0; i < leftClickActions.Count; i++) {
+            leftClickActions[i]();
+        }
+    }
+    private void ClearLeftClickActions() {
+        leftClickActions.Clear();
+    }
+    #endregion
+
 }
