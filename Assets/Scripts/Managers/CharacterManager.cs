@@ -375,6 +375,11 @@ public class CharacterManager : MonoBehaviour {
                     List<LocationGridTile> choices = character.homeStructure.unoccupiedTiles;
                     LocationGridTile chosenTile = choices[UnityEngine.Random.Range(0, choices.Count)];
                     character.marker.PlaceMarkerAt(chosenTile);
+
+                    ////if character is fiona, force her to stay at her home, forever (For Trailer Build Only)
+                    //if (character.name == "Fiona") {
+                    //    character.trapStructure.SetStructureAndDuration(character.currentStructure, 0);
+                    //}
                 }
             }
         }
@@ -583,6 +588,10 @@ public class CharacterManager : MonoBehaviour {
         // Loop through all characters in the world
         for (int i = 0; i < allCharacters.Count; i++) {
             Character currCharacter = allCharacters[i];
+            if (currCharacter.name == "Jamie" || currCharacter.name == "Audrey" || currCharacter.name == "Fiona") {
+                continue; //skip main cast (For Trailer Only)
+            }
+
             int currentRelCount = currCharacter.GetAllRelationshipCountExcept(new List<RELATIONSHIP_TRAIT>() { RELATIONSHIP_TRAIT.MASTER, RELATIONSHIP_TRAIT.SERVANT });
             if (currentRelCount >= maxInitialRels) {
                 continue; //skip
@@ -644,6 +653,9 @@ public class CharacterManager : MonoBehaviour {
                     // Loop through all characters in the world, excluding current character
                     for (int l = 0; l < allCharacters.Count; l++) {
                         Character otherCharacter = allCharacters[l];
+                        if (otherCharacter.name == "Jamie" || otherCharacter.name == "Audrey" || otherCharacter.name == "Fiona") {
+                            continue; //skip main cast (For Trailer Only)
+                        }
                         if (currCharacter.id != otherCharacter.id) { //&& currCharacter.faction == otherCharacter.faction
                             List<RELATIONSHIP_TRAIT> existingRelsOfCurrentCharacter = currCharacter.GetAllRelationshipTraitTypesWith(otherCharacter);
                             List<RELATIONSHIP_TRAIT> existingRelsOfOtherCharacter = otherCharacter.GetAllRelationshipTraitTypesWith(currCharacter);
@@ -677,9 +689,7 @@ public class CharacterManager : MonoBehaviour {
                                     }
                                     break;
                                 case RELATIONSHIP_TRAIT.LOVER:
-                                    if (otherCharacter.name == "Fiona") { //For Trailer Map Only
-                                        weight = 0;
-                                    } else if (currCharacter.CanHaveRelationshipWith(currRel, otherCharacter) && otherCharacter.CanHaveRelationshipWith(currRel, currCharacter)) {
+                                    if (currCharacter.CanHaveRelationshipWith(currRel, otherCharacter) && otherCharacter.CanHaveRelationshipWith(currRel, currCharacter)) {
                                         if (currCharacter.role.roleType != CHARACTER_ROLE.BEAST) {
                                             //- if non beast, from valid characters, choose based on these weights
                                             if (otherCharacter.specificLocation.id == currCharacter.specificLocation.id) {

@@ -577,7 +577,7 @@ public class GoapAction {
     /// </summary>
     /// <returns>Chosen log.</returns>
     public Log GetCurrentLog() {
-        if (onlyShowNotifOfDescriptionLog) {
+        if (onlyShowNotifOfDescriptionLog && currentState != null) {
             return this.currentState.descriptionLog;
         }
         if (actor.currentParty.icon.isTravelling) {

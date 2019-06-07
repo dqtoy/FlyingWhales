@@ -26,6 +26,7 @@ public class ChatCharacter : GoapAction {
         targetCharacter.SetIsChatting(true);
         actor.marker.UpdateActionIcon();
         targetCharacter.marker.UpdateActionIcon();
+
         CHARACTER_MOOD thisCharacterMood = actor.currentMoodType;
         CHARACTER_MOOD targetCharacterMood = targetCharacter.currentMoodType;
 
@@ -140,6 +141,9 @@ public class ChatCharacter : GoapAction {
         }
 
         chatResult = weights.PickRandomElementGivenWeights();
+        if (actor.name == "Jamie" && targetCharacter.name == "Fiona") {
+            chatResult = "Flirt"; //For Trailer Only
+        }
         if (chatResult == "Become Friends") {
             //may become friends
             CharacterManager.Instance.CreateNewRelationshipBetween(actor, targetCharacter, RELATIONSHIP_TRAIT.FRIEND);
@@ -207,6 +211,17 @@ public class ChatCharacter : GoapAction {
         Character target = poiTarget as Character;
         Character actorLover = actor.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.LOVER);
         Character targetLover = target.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.LOVER);
+
+        if (recipient.name == "Audrey" && actor.name == "Jamie" && target.name == "Fiona") {
+            reactions.Add(string.Format("{0} is a cur!", actor.name));
+            IPointOfInterest targetTable = target.homeStructure.GetTileObjectsOfType(TILE_OBJECT_TYPE.TABLE)[0];
+            GoapPlanJob job = new GoapPlanJob("Poison Table", INTERACTION_TYPE.TABLE_POISON, targetTable);
+            job.SetCannotOverrideJob(true);
+            job.SetCannotCancelJob(true);
+            job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
+            recipient.jobQueue.AddJobInQueue(job, true);
+            return reactions;
+        }
 
         //Recipient and Actor is the same:
         if (recipient == actor) {

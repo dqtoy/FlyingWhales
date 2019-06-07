@@ -3412,6 +3412,16 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             || (trait.effect == TRAIT_EFFECT.NEGATIVE && trait.type == TRAIT_TYPE.DISABLER)) {
             //when a character gains a criminal trait, drop all location jobs that this character is assigned to
             homeArea.jobQueue.UnassignAllJobsTakenBy(this);
+        } else if (trait.name == "Unfaithful" && this.name == "Jamie") {
+            CancelAllJobsAndPlans();
+            //force Jamie to drop all plans, then go to fiona to chat.
+            //StartGOAP(INTERACTION_TYPE.CHAT_CHARACTER, CharacterManager.Instance.GetCharacterByName("Fiona"), GOAP_CATEGORY.HAPPINESS, true);
+            GoapAction chatCharacter = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.CHAT_CHARACTER, this, CharacterManager.Instance.GetCharacterByName("Fiona"));
+            GoapNode node = new GoapNode(null, chatCharacter.cost, chatCharacter);
+            GoapPlan plan = new GoapPlan(node, new GOAP_EFFECT_CONDITION[] { }, GOAP_CATEGORY.IDLE);
+            plan.ConstructAllNodes();
+            AddPlan(plan, true);
+            
         }
         return true;
     }
@@ -4059,12 +4069,17 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //    WillAboutToDoAction(specificAction);
         //    return;
         //}
-        if (allGoapPlans.Count > 0) {
-            //StopDailyGoapPlanGeneration();
-            PerformGoapPlans();
-            //SchedulePerformGoapPlans();
-        } else {
+        if (name == "Fiona") {
+            //only Idle Actions
             IdlePlans();
+        } else {
+            if (allGoapPlans.Count > 0) {
+                //StopDailyGoapPlanGeneration();
+                PerformGoapPlans();
+                //SchedulePerformGoapPlans();
+            } else {
+                IdlePlans();
+            }
         }
     }
     private void IdlePlans() {
@@ -4355,7 +4370,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
                     int chance = UnityEngine.Random.Range(0, 100);
                     log += "\n  -RNG roll: " + chance;
-                    if (chance < 25) {
+                    if (chance < 25 && name != "Fiona") { //For Trailer Build Only
                         log += "\n  -Morning, Afternoon, or Early Night: " + name + " will enter Stroll Outside Mode";
                         PlanIdleStrollOutside(currentStructure);
                         return log;
@@ -4429,7 +4444,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
                     int chance = UnityEngine.Random.Range(0, 100);
                     log += "\n  -RNG roll: " + chance;
-                    if (chance < 25) {
+                    if (chance < 25 && name != "Fiona") { //For Trailer Build Only
                         log += "\n  -Morning or Afternoon: " + name + " will enter Stroll Outside State";
                         PlanIdleStrollOutside(currentStructure);
                         return log;
