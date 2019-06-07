@@ -4070,17 +4070,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //    WillAboutToDoAction(specificAction);
         //    return;
         //}
-        if (name == "Fiona") {
-            //only Idle Actions
-            IdlePlans();
+        if (allGoapPlans.Count > 0) {
+            //StopDailyGoapPlanGeneration();
+            PerformGoapPlans();
+            //SchedulePerformGoapPlans();
         } else {
-            if (allGoapPlans.Count > 0) {
-                //StopDailyGoapPlanGeneration();
-                PerformGoapPlans();
-                //SchedulePerformGoapPlans();
-            } else {
-                IdlePlans();
-            }
+            IdlePlans();
         }
     }
     private void IdlePlans() {

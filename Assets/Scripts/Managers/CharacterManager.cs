@@ -1429,18 +1429,56 @@ public class CharacterManager : MonoBehaviour {
         Character jamie = GetCharacterByName("Jamie");
         Character audrey = GetCharacterByName("Audrey");
 
-        int logCount = 50;
+        List<INTERACTION_TYPE> interactions = new List<INTERACTION_TYPE>();
+        interactions.Add(INTERACTION_TYPE.EAT_DWELLING_TABLE);
+        interactions.Add(INTERACTION_TYPE.SLEEP);
+        interactions.Add(INTERACTION_TYPE.DAYDREAM);
+        interactions.Add(INTERACTION_TYPE.PRAY);
+        interactions.Add(INTERACTION_TYPE.SIT);
+
+        int argumentCount = 4;
+        int logCount = argumentCount * 8;
         for (int i = 0; i < logCount; i++) {
             startDate.AddTicks(Random.Range(11, 21));
-            Log argumentLog = new Log(startDate, "GoapAction", "ChatCharacter", "argument_description");
-            if (Random.Range(0, 2) == 0) {
-                argumentLog.AddToFillers(jamie, jamie.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                argumentLog.AddToFillers(audrey, audrey.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            if (i % argumentCount == 0) {
+                Log argumentLog = new Log(startDate, "GoapAction", "ChatCharacter", "argument_description");
+                if (Random.Range(0, 2) == 0) {
+                    argumentLog.AddToFillers(jamie, jamie.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    argumentLog.AddToFillers(audrey, audrey.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                } else {
+                    argumentLog.AddToFillers(jamie, jamie.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                    argumentLog.AddToFillers(audrey, audrey.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                }
+                argumentLog.AddLogToInvolvedObjects();
             } else {
-                argumentLog.AddToFillers(jamie, jamie.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                argumentLog.AddToFillers(audrey, audrey.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                INTERACTION_TYPE randomInteraction = interactions[Random.Range(0, interactions.Count)];
+                string file = Utilities.NormalizeString(randomInteraction.ToString());
+                IPointOfInterest target = null;
+                switch (randomInteraction) {
+                    case INTERACTION_TYPE.EAT_DWELLING_TABLE:
+                        target = jamie.homeStructure.GetTileObjectsOfType(TILE_OBJECT_TYPE.TABLE)[0];
+                        file = "EatAtTable";
+                        break;
+                    case INTERACTION_TYPE.SIT:
+                        target = jamie.homeStructure.GetTileObjectsOfType(TILE_OBJECT_TYPE.TABLE)[0];
+                        break;
+                    case INTERACTION_TYPE.SLEEP:
+                        target = jamie.homeStructure.GetTileObjectsOfType(TILE_OBJECT_TYPE.BED)[0];
+                        break;
+                }
+                Log log = new Log(startDate, "GoapAction", file,  GoapActionStateDB.goapActionStates[randomInteraction][0].name.ToLower() + "_description");
+                Character actor = jamie;
+                if (Random.Range(0, 2) == 0) {
+                    actor = audrey;
+                }
+                log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                if (target != null) {
+                    log.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                    log.AddToFillers(target.gridTileLocation.parentAreaMap.area, target.gridTileLocation.structure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
+                }
+                
+                log.AddLogToInvolvedObjects();
             }
-            argumentLog.AddLogToInvolvedObjects();
         }
         GameManager.Instance.SetStartDate(startDate);
     }
