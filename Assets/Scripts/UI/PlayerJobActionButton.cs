@@ -9,7 +9,7 @@ public class PlayerJobActionButton : MonoBehaviour {
 
     private Action clickAction;
 
-    private PlayerJobAction action;
+    public PlayerJobAction action { get; private set; }
 
     [SerializeField] private Button btn;
     [SerializeField] private TextMeshProUGUI btnLbl;
@@ -46,8 +46,12 @@ public class PlayerJobActionButton : MonoBehaviour {
     //}
 
     #region Visuals
-    private void UpdateInteractableState() {
-        SetInteractableState(!action.parentData.hasActionInCooldown && InteriorMapManager.Instance.isAnAreaMapShowing);
+    public void UpdateInteractableState() {
+        SetInteractableState(
+            !action.parentData.hasActionInCooldown 
+            && InteriorMapManager.Instance.isAnAreaMapShowing 
+            && PlayerManager.Instance.player.currentActivePlayerJobAction != this.action
+        );
     }
     private void SetInteractableState(bool state) {
         btn.interactable = state;

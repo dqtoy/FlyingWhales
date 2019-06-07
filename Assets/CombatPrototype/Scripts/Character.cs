@@ -2207,6 +2207,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public void SetName(string newName) {
         _name = newName;
         _firstName = _name.Split(' ')[0];
+        RandomNameGenerator.Instance.RemoveNameAsAvailable(this.gender, this.race, newName);
     }
     //If true, character can't do daily action (onDailyAction), i.e. actions, needs
     //public void SetIsIdle(bool state) {

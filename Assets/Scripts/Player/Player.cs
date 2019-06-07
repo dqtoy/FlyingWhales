@@ -533,9 +533,12 @@ public class Player : ILeader {
     }
     public PlayerJobAction currentActivePlayerJobAction { get; private set; }
     public void SetCurrentlyActivePlayerJobAction(PlayerJobAction action) {
+        PlayerJobAction previousActiveAction = currentActivePlayerJobAction;
         currentActivePlayerJobAction = action;
         if (currentActivePlayerJobAction == null) {
             CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
+            PlayerJobActionButton jobActionButton = PlayerUI.Instance.GetPlayerJobActionButton(previousActiveAction);
+            jobActionButton?.UpdateInteractableState();
         } else {
             //change the cursor
             CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Target);

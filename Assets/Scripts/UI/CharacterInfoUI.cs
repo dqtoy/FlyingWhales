@@ -148,6 +148,7 @@ public class CharacterInfoUI : UIMenu {
         if (UIManager.Instance.IsShareIntelMenuOpen()) {
             backButton.interactable = false;
         }
+        SetLogMenuState(false); //always close Logs menu first when opening this menu
         UIManager.Instance.HideObjectPicker();
         UpdateCharacterInfo();
         UpdateTraits();

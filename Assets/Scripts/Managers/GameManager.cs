@@ -366,5 +366,12 @@ public class GameManager : MonoBehaviour {
         }
         return false;
     }
+    public void SetStartDate(GameDate date) {
+        month = date.month;
+        days = date.day;
+        tick = date.tick;
+        year = date.year;
+        continuousDays = date.ConvertToContinuousDays();
+    }
     #endregion
 }

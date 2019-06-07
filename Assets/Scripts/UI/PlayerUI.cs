@@ -221,6 +221,16 @@ public class PlayerUI : MonoBehaviour {
             actionBtn.SetClickAction(() => PlayerManager.Instance.player.SetCurrentlyActivePlayerJobAction(jobAction));
         }
     }
+    public PlayerJobActionButton GetPlayerJobActionButton(PlayerJobAction action) {
+        PlayerJobActionButton[] buttons = Utilities.GetComponentsInDirectChildren<PlayerJobActionButton>(activeMinionActionsParent.gameObject);
+        for (int i = 0; i < buttons.Length; i++) {
+            PlayerJobActionButton currButton = buttons[i];
+            if (currButton.action == action) {
+                return currButton;
+            }
+        }
+        return null;
+    }
     #endregion
 
     #region Attack UI

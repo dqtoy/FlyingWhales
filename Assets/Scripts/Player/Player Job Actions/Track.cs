@@ -44,7 +44,7 @@ public class Track : PlayerJobAction {
         return base.CanPerformActionTowards(character, targetCharacter);
     }
     public override bool CanTarget(IPointOfInterest targetPOI) {
-        return false;
+        //return false;
         if (!(targetPOI is Character)) {
             return false;
         }

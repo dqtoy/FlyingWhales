@@ -372,7 +372,7 @@ public class CharacterManager : MonoBehaviour {
                 character.CreateMarker();
                 if (character.homeStructure != null) {
                     //place the character at a random unoccupied tile in his/her home
-                    List<LocationGridTile> choices = character.homeStructure.unoccupiedTiles;
+                    List<LocationGridTile> choices = character.homeStructure.unoccupiedTiles.Where(x => x.charactersHere.Count == 0).ToList();
                     LocationGridTile chosenTile = choices[UnityEngine.Random.Range(0, choices.Count)];
                     character.marker.PlaceMarkerAt(chosenTile);
 
@@ -1423,12 +1423,25 @@ public class CharacterManager : MonoBehaviour {
         return relWeights.PickRandomElementGivenWeights();
     }
     public void GenerateInitialLogs() {
-        GameDate startDate = new GameDate(1, 1, 79, 1);
+        GameDate startDate = new GameDate(1, 1, 80, 1);
+
+        Character jamie = GetCharacterByName("Jamie");
+        Character audrey = GetCharacterByName("Audrey");
 
         int logCount = 50;
         for (int i = 0; i < logCount; i++) {
-
+            startDate.AddTicks(Random.Range(11, 21));
+            Log argumentLog = new Log(startDate, "GoapAction", "ChatCharacter", "argument_description");
+            if (Random.Range(0, 2) == 0) {
+                argumentLog.AddToFillers(jamie, jamie.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                argumentLog.AddToFillers(audrey, audrey.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            } else {
+                argumentLog.AddToFillers(jamie, jamie.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                argumentLog.AddToFillers(audrey, audrey.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            }
+            argumentLog.AddLogToInvolvedObjects();
         }
+        GameManager.Instance.SetStartDate(startDate);
     }
     #endregion
 }
