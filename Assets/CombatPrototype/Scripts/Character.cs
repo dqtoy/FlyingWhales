@@ -2727,7 +2727,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         Spooked spooked = GetNormalTrait("Spooked") as Spooked;
         if (spooked != null) {
             spooked.AddTerrifyingCharacter(target);
-            marker.AddHostileInRange(target, CHARACTER_STATE.FLEE);
+            marker.AddAvoidInRange(target);
         }
     }
     public List<Log> GetMemories(int dayFrom, int dayTo, bool eventMemoriesOnly = false){

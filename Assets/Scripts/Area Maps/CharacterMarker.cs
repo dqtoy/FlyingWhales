@@ -46,6 +46,7 @@ public class CharacterMarker : PooledObject {
     //vision colliders
     public List<IPointOfInterest> inVisionPOIs { get; private set; } //POI's in this characters vision collider
     public List<Character> hostilesInRange { get; private set; } //POI's in this characters hostility collider
+    public List<Character> avoidInRange { get; private set; } //POI's in this characters hostility collider
 
     public Action arrivalAction {
         get { return _arrivalAction; }
@@ -94,6 +95,7 @@ public class CharacterMarker : PooledObject {
         inVisionPOIs = new List<IPointOfInterest>();
         hostilesInRange = new List<Character>();
         terrifyingCharacters = new List<Character>();
+        avoidInRange = new List<Character>();
         //rvoController.avoidedAgents = new List<IAgent>();
 
         GameObject collisionTriggerGO = GameObject.Instantiate(InteriorMapManager.Instance.characterCollisionTriggerPrefab, this.transform);
@@ -211,7 +213,7 @@ public class CharacterMarker : PooledObject {
                         }
                     }
                     if(spooked.terrifyingCharacters.Count > 0) {
-                        AddHostilesInRange(spooked.terrifyingCharacters, CHARACTER_STATE.FLEE);
+                        AddAvoidsInRange(spooked.terrifyingCharacters);
                     }
                 }
             }
@@ -232,9 +234,8 @@ public class CharacterMarker : PooledObject {
                 //GoapPlanJob restrainJob = this.character.CreateRestrainJob(characterThatGainedTrait);
             }
             if (trait.name == "Unconscious") {
-                if (hostilesInRange.Contains(characterThatGainedTrait)) {
-                    RemoveHostileInRange(characterThatGainedTrait);
-                }
+                RemoveHostileInRange(characterThatGainedTrait);
+                RemoveAvoidInRange(characterThatGainedTrait);
             }
         }
         if(trait.type == TRAIT_TYPE.DISABLER && terrifyingCharacters.Count > 0) {
@@ -262,6 +263,12 @@ public class CharacterMarker : PooledObject {
                                 if (nearestHostile != null) {
                                     lostTraitSummary += "\n" + character.name + " will react to nearest hostile " + nearestHostile.name + " after losing trait " + trait.name;
                                     NormalReactToHostileCharacter(nearestHostile);
+                                }
+                            } else if (avoidInRange.Count > 0) {
+                                Character nearestAvoid = GetNearestValidAvoid();
+                                if (nearestAvoid != null) {
+                                    lostTraitSummary += "\n" + character.name + " will react to nearest avoid " + nearestAvoid.name + " after losing trait " + trait.name;
+                                    NormalReactToHostileCharacter(nearestAvoid, CHARACTER_STATE.FLEE);
                                 }
                             } else {
                                 lostTraitSummary += "\n" + character.name + " has no more hostiles in range.";
@@ -324,6 +331,7 @@ public class CharacterMarker : PooledObject {
             }
         }
         RemoveHostileInRange(travellingParty.owner);
+        RemoveAvoidInRange(travellingParty.owner);
         RemovePOIFromInVisionRange(travellingParty.owner);
 
     }
@@ -963,6 +971,7 @@ public class CharacterMarker : PooledObject {
                 RemoveHostileInRange(otherCharacter);
             }
         }
+        RemoveAvoidInRange(otherCharacter);
 
         if (targetPOI == otherCharacter) {
             //if (this.arrivalAction != null) {
@@ -976,6 +985,48 @@ public class CharacterMarker : PooledObject {
             ClearArrivalAction();
             action?.Invoke();
         }
+    }
+    #endregion
+
+    #region Avoid In Range
+    public bool AddAvoidInRange(Character poi) {
+        if (!poi.isDead) {
+            if (!avoidInRange.Contains(poi)) {
+                avoidInRange.Add(poi);
+                NormalReactToHostileCharacter(poi, CHARACTER_STATE.FLEE);
+                return true;
+            }
+        }
+        return false;
+    }
+    public bool AddAvoidsInRange(List<Character> pois) {
+        //Only react to the first hostile that is added
+        Character otherPOI = null;
+        for (int i = 0; i < pois.Count; i++) {
+            Character poi = pois[i];
+            if (!poi.isDead) {
+                if (!avoidInRange.Contains(poi)) {
+                    avoidInRange.Add(poi);
+                    if (otherPOI == null) {
+                        otherPOI = poi;
+                    }
+                    return true;
+                }
+            }
+        }
+        if (otherPOI != null) {
+            NormalReactToHostileCharacter(otherPOI, CHARACTER_STATE.FLEE);
+            return true;
+        }
+        return false;
+    }
+    public void RemoveAvoidInRange(Character poi) {
+        if (avoidInRange.Remove(poi)) {
+            Debug.Log("Removed avoid in range " + poi.name + " from " + this.character.name);
+        }
+    }
+    public void ClearAvoidInRange() {
+        avoidInRange.Clear();
     }
     #endregion
 
@@ -1091,7 +1142,7 @@ public class CharacterMarker : PooledObject {
         pathfindingAI.ClearAllCurrentPathData();
         hasFleePath = true;
         pathfindingAI.canSearch = false; //set to false, because if this is true and a destination has been set in the ai path, the ai will still try and go to that point instead of the computed flee path
-        FleeMultiplePath fleePath = FleeMultiplePath.Construct(this.transform.position, hostilesInRange.Select(x => x.marker.transform.position).ToArray(), 10000);
+        FleeMultiplePath fleePath = FleeMultiplePath.Construct(this.transform.position, avoidInRange.Concat(hostilesInRange).Select(x => x.marker.transform.position).ToArray(), 10000);
         fleePath.aimStrength = 1;
         fleePath.spread = 4000;
         seeker.StartPath(fleePath);
@@ -1106,12 +1157,12 @@ public class CharacterMarker : PooledObject {
         StartMovement();
     }
     public void RedetermineFlee() {
-        if (hostilesInRange.Count == 0) {
+        if (hostilesInRange.Count == 0 && avoidInRange.Count == 0) {
             return;
         }
         hasFleePath = true;
         pathfindingAI.canSearch = false; //set to false, because if this is true and a destination has been set in the ai path, the ai will still try and go to that point instead of the computed flee path
-        FleeMultiplePath fleePath = FleeMultiplePath.Construct(this.transform.position, hostilesInRange.Select(x => x.marker.transform.position).ToArray(), 10000);
+        FleeMultiplePath fleePath = FleeMultiplePath.Construct(this.transform.position, avoidInRange.Concat(hostilesInRange).Select(x => x.marker.transform.position).ToArray(), 10000);
         fleePath.aimStrength = 1;
         fleePath.spread = 4000;
         seeker.StartPath(fleePath, OnFleePathComputed);
@@ -1225,6 +1276,21 @@ public class CharacterMarker : PooledObject {
                 float dist = Vector2.Distance(this.transform.position, currHostile.marker.transform.position);
                 if (nearest == null || dist < nearestDist) {
                     nearest = currHostile;
+                    nearestDist = dist;
+                }
+            }
+        }
+        return nearest;
+    }
+    public Character GetNearestValidAvoid() {
+        Character nearest = null;
+        float nearestDist = 9999f;
+        for (int i = 0; i < avoidInRange.Count; i++) {
+            Character currAvoid = avoidInRange.ElementAt(i);
+            if (IsValidCombatTarget(currAvoid)) {
+                float dist = Vector2.Distance(this.transform.position, currAvoid.marker.transform.position);
+                if (nearest == null || dist < nearestDist) {
+                    nearest = currAvoid;
                     nearestDist = dist;
                 }
             }

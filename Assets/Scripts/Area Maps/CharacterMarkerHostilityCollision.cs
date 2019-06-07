@@ -30,6 +30,7 @@ public class CharacterMarkerHostilityCollision : MonoBehaviour {
             //    return;
             //}
             parentMarker.RemoveHostileInRange(collidedWith.poi as Character);
+            parentMarker.RemoveAvoidInRange(collidedWith.poi as Character);
         }
     }
     //public void OnTriggerStay2D(Collider2D collision) {
