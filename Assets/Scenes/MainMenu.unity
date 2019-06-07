@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.12731749, g: 0.13414757, b: 0.1210787, a: 1}
+  m_IndirectSpecularColor: {r: 0.1273174, g: 0.13414761, b: 0.12107885, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -4106,7 +4106,15 @@ MonoBehaviour:
   dragItemClickedCursorTexture: {fileID: 2800000, guid: 75069d9bb4ffcc24bac92b65ce01788c,
     type: 3}
   cursorMode: 0
-  hotSpot: {x: 0, y: 0}
+  cursors:
+    m_keys: 000000000100000002000000030000000400000005000000
+    m_values:
+    - {fileID: 2800000, guid: e139e92190d431d4a85b50db3bbc175e, type: 3}
+    - {fileID: 2800000, guid: 311558d663a1b434da71198ded51ad58, type: 3}
+    - {fileID: 2800000, guid: dacb59acfc7b3d34a99f4168a675d4b6, type: 3}
+    - {fileID: 2800000, guid: 75069d9bb4ffcc24bac92b65ce01788c, type: 3}
+    - {fileID: 2800000, guid: 4069e73d7a3056849a345a0d5914020c, type: 3}
+    - {fileID: 2800000, guid: 54833bae3fb27e545ba15519a4d073ca, type: 3}
 --- !u!4 &910776552
 Transform:
   m_ObjectHideFlags: 0

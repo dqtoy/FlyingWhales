@@ -140,8 +140,7 @@ public class UIManager : MonoBehaviour {
             if (contextMenu.gameObject.activeSelf) {
                 HideContextMenu();
             }
-        }
-        if (Input.GetKeyDown(KeyCode.Space) && !IsMouseOnInput()) {
+        } else if (Input.GetKeyDown(KeyCode.Space) && !IsMouseOnInput()) {
             if (pauseBtn.IsInteractable()) {
                 if (GameManager.Instance.isPaused) {
                     Unpause();
@@ -149,7 +148,16 @@ public class UIManager : MonoBehaviour {
                     Pause();
                 }
             }
-            
+        } else if (Input.GetKeyDown(KeyCode.Alpha1)) {
+            PlayerUI.Instance.ScrollRoleSlotTo(0);
+        } else if (Input.GetKeyDown(KeyCode.Alpha2)) {
+            PlayerUI.Instance.ScrollRoleSlotTo(1);
+        } else if (Input.GetKeyDown(KeyCode.Alpha3)) {
+            PlayerUI.Instance.ScrollRoleSlotTo(2);
+        } else if (Input.GetKeyDown(KeyCode.Alpha4)) {
+            PlayerUI.Instance.ScrollRoleSlotTo(3);
+        } else if (Input.GetKeyDown(KeyCode.Alpha5)) {
+            PlayerUI.Instance.ScrollRoleSlotTo(4);
         }
         UpdateSpeedToggles(GameManager.Instance.isPaused);
         if (isHoveringTile) {
@@ -427,6 +435,7 @@ public class UIManager : MonoBehaviour {
     #endregion
 
     #region Tooltips
+    public string smallInfoShownFrom { get; private set; }
     public void ShowSmallInfo(string info, string header = "") {
         string message = string.Empty;
         if (!string.IsNullOrEmpty(header)) {
@@ -442,16 +451,11 @@ public class UIManager : MonoBehaviour {
             smallInfoGO.SetActive(true);
             //smallInfoEnvelopContent.Execute();
         }
-        //if (position == null) {
-            //smallInfoGO.transform.SetParent(this.transform);
-            PositionTooltip(smallInfoGO, smallInfoRT, smallInfoBGRT);
-        //} else {
-        //    smallInfoGO.transform.SetParent(position);
-        //    smallInfoRT.anchoredPosition = Vector2.zero;
-        //    //smallInfoRT.anchoredPosition = pos;
-        //    //smallInfoRT.position = new Vector3(pos.x, pos.y, 0f);
-        //}
-        
+        PositionTooltip(smallInfoGO, smallInfoRT, smallInfoBGRT);
+        System.Diagnostics.StackTrace stackTrace = new System.Diagnostics.StackTrace();
+        // get calling method name
+        smallInfoShownFrom = stackTrace.GetFrame(1).GetMethod().Name;
+        //Debug.Log(smallInfoShownFrom);
         //Debug.Log("Show small info " + info);
     }
     public void ShowSmallInfo(string info, UIHoverPosition pos, string header = "") {
@@ -468,11 +472,15 @@ public class UIManager : MonoBehaviour {
             smallInfoGO.SetActive(true);
         }
         PositionTooltip(pos, smallInfoGO, smallInfoRT);
-
+        System.Diagnostics.StackTrace stackTrace = new System.Diagnostics.StackTrace();
+        // get calling method name
+        smallInfoShownFrom = stackTrace.GetFrame(1).GetMethod().Name;
+        //Debug.Log(smallInfoShownFrom);
         //Debug.Log("Show small info " + info);
     }
     public void HideSmallInfo() {
         if (IsSmallInfoShowing()) {
+            smallInfoShownFrom = string.Empty;
             smallInfoGO.SetActive(false);
         }
     }

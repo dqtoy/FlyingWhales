@@ -376,7 +376,7 @@ public class Player : ILeader {
     public void ConstructRoleSlots() {
         roleSlots = new Dictionary<JOB, PlayerJobData>();
         roleSlots.Add(JOB.SPY, new PlayerJobData(JOB.SPY));
-        roleSlots.Add(JOB.RECRUITER, new PlayerJobData(JOB.RECRUITER));
+        roleSlots.Add(JOB.SEDUCER, new PlayerJobData(JOB.SEDUCER));
         roleSlots.Add(JOB.DIPLOMAT, new PlayerJobData(JOB.DIPLOMAT));
         roleSlots.Add(JOB.INSTIGATOR, new PlayerJobData(JOB.INSTIGATOR));
         roleSlots.Add(JOB.DEBILITATOR, new PlayerJobData(JOB.DEBILITATOR));
@@ -387,11 +387,11 @@ public class Player : ILeader {
             switch (character.characterClass.className) {
                 case "Envy":
                     validJobs.Add(JOB.SPY);
-                    validJobs.Add(JOB.RECRUITER);
+                    validJobs.Add(JOB.SEDUCER);
                     break;
                 case "Lust":
                     validJobs.Add(JOB.DIPLOMAT);
-                    validJobs.Add(JOB.RECRUITER);
+                    validJobs.Add(JOB.SEDUCER);
                     break;
                 case "Pride":
                     validJobs.Add(JOB.DIPLOMAT);
@@ -403,7 +403,7 @@ public class Player : ILeader {
                     break;
                 case "Guttony":
                     validJobs.Add(JOB.SPY);
-                    validJobs.Add(JOB.RECRUITER);
+                    validJobs.Add(JOB.SEDUCER);
                     break;
                 case "Wrath":
                     validJobs.Add(JOB.INSTIGATOR);
@@ -418,7 +418,7 @@ public class Player : ILeader {
             switch (character.race) {
                 case RACE.HUMANS:
                     validJobs.Add(JOB.DIPLOMAT);
-                    validJobs.Add(JOB.RECRUITER);
+                    validJobs.Add(JOB.SEDUCER);
                     break;
                 case RACE.ELVES:
                     validJobs.Add(JOB.SPY);
@@ -426,7 +426,7 @@ public class Player : ILeader {
                     break;
                 case RACE.GOBLIN:
                     validJobs.Add(JOB.INSTIGATOR);
-                    validJobs.Add(JOB.RECRUITER);
+                    validJobs.Add(JOB.SEDUCER);
                     break;
                 case RACE.FAERY:
                     validJobs.Add(JOB.SPY);
@@ -534,15 +534,21 @@ public class Player : ILeader {
     public PlayerJobAction currentActivePlayerJobAction { get; private set; }
     public void SetCurrentlyActivePlayerJobAction(PlayerJobAction action) {
         currentActivePlayerJobAction = action;
-        //change the cursor
-        CursorManager.Instance.SetCursorToTarget();
-        CursorManager.Instance.AddLeftClickAction(TryExecuteCurrentActiveAction);
+        if (currentActivePlayerJobAction == null) {
+            CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
+        } else {
+            //change the cursor
+            CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Target);
+            CursorManager.Instance.AddLeftClickAction(TryExecuteCurrentActiveAction);
+            CursorManager.Instance.AddLeftClickAction(() => SetCurrentlyActivePlayerJobAction(null));
+        }
+        
     }
     private void TryExecuteCurrentActiveAction() {
         string summary = "Mouse was clicked. Will try to execute " + currentActivePlayerJobAction.name;
         if (InteriorMapManager.Instance.currentlyShowingMap != null && InteriorMapManager.Instance.currentlyShowingMap.hoveredCharacter != null) {
             summary += " targetting " + InteriorMapManager.Instance.currentlyShowingMap.hoveredCharacter.name;
-            if (currentActivePlayerJobAction.ShouldButtonBeInteractable(currentActivePlayerJobAction.parentData.assignedCharacter, InteriorMapManager.Instance.currentlyShowingMap.hoveredCharacter)) {
+            if (currentActivePlayerJobAction.CanPerformActionTowards(currentActivePlayerJobAction.parentData.assignedCharacter, InteriorMapManager.Instance.currentlyShowingMap.hoveredCharacter)) {
                 summary += "\nActivated action!";
                 currentActivePlayerJobAction.ActivateAction(currentActivePlayerJobAction.parentData.assignedCharacter, InteriorMapManager.Instance.currentlyShowingMap.hoveredCharacter);
             } else {
@@ -552,7 +558,7 @@ public class Player : ILeader {
             LocationGridTile hoveredTile = InteriorMapManager.Instance.GetTileFromMousePosition();
             if (hoveredTile != null && hoveredTile.objHere != null) {
                 summary += " targetting " + hoveredTile.objHere.name;
-                if (currentActivePlayerJobAction.ShouldButtonBeInteractable(currentActivePlayerJobAction.parentData.assignedCharacter, hoveredTile.objHere)) {
+                if (currentActivePlayerJobAction.CanPerformActionTowards(currentActivePlayerJobAction.parentData.assignedCharacter, hoveredTile.objHere)) {
                     summary += "\nActivated action!";
                     currentActivePlayerJobAction.ActivateAction(currentActivePlayerJobAction.parentData.assignedCharacter, hoveredTile.objHere);
                 } else {
@@ -562,7 +568,7 @@ public class Player : ILeader {
                 summary += "\nNo Target!";
             }
         }
-        CursorManager.Instance.SetCursorToDefault();
+        CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
         Debug.Log(GameManager.Instance.TodayLogString() + summary);
     }
     #endregion

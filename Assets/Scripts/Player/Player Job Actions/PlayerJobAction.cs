@@ -10,7 +10,6 @@ public class PlayerJobAction {
     public Character assignedCharacter { get; protected set; }
     public List<JOB_ACTION_TARGET> targettableTypes { get; protected set; } //what sort of objects can this action target
     public bool isActive { get; protected set; }
-    public string btnSubText { get; protected set; }
     public int ticksInCooldown { get; private set; } //how many ticks has this action been in cooldown?
 
     public bool isInCooldown {
@@ -57,30 +56,34 @@ public class PlayerJobAction {
             DeactivateAction();
         }
     }
-    public virtual bool ShouldButtonBeInteractable() {
+    /// <summary>
+    /// Can this action currently be performed.
+    /// </summary>
+    /// <returns>True or False</returns>
+    public virtual bool CanPerformAction() {
         if (isInCooldown) {
             return false;
         }
         return true;
     }
-    public virtual bool ShouldButtonBeInteractable(Character character, object obj) {
+    public virtual bool CanPerformActionTowards(Character character, object obj) {
         if (obj is Character) {
-            return ShouldButtonBeInteractable(character, obj as Character);
+            return CanPerformActionTowards(character, obj as Character);
         } else if (obj is Area) {
-            return ShouldButtonBeInteractable(character, obj as Area);
+            return CanPerformActionTowards(character, obj as Area);
         } else if (obj is IPointOfInterest) {
-            return ShouldButtonBeInteractable(character, obj as IPointOfInterest);
+            return CanPerformActionTowards(character, obj as IPointOfInterest);
         }
-        return ShouldButtonBeInteractable();
+        return CanPerformAction();
     }
-    protected virtual bool ShouldButtonBeInteractable(Character character, Character targetCharacter) {
-        return ShouldButtonBeInteractable();
+    protected virtual bool CanPerformActionTowards(Character character, Character targetCharacter) {
+        return CanPerformAction();
     }
-    protected virtual bool ShouldButtonBeInteractable(Character character, Area targetCharacter) {
-        return ShouldButtonBeInteractable();
+    protected virtual bool CanPerformActionTowards(Character character, Area targetCharacter) {
+        return CanPerformAction();
     }
-    protected virtual bool ShouldButtonBeInteractable(Character character, IPointOfInterest targetPOI) {
-        return ShouldButtonBeInteractable();
+    protected virtual bool CanPerformActionTowards(Character character, IPointOfInterest targetPOI) {
+        return CanPerformAction();
     }
     /// <summary>
     /// Function that determines whether this action can target the given character or not.
@@ -123,13 +126,6 @@ public class PlayerJobAction {
     private void ResetCooldown() {
         ticksInCooldown = cooldown;
         parentData.SetLockedState(false);
-    }
-    #endregion
-
-    #region Utilities
-    public void SetSubText(string subText) {
-        btnSubText = subText;
-        Messenger.Broadcast(Signals.JOB_ACTION_SUB_TEXT_CHANGED, this);
     }
     #endregion
 }

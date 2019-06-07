@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.12731749, g: 0.13414757, b: 0.1210787, a: 1}
+  m_IndirectSpecularColor: {r: 0.1273174, g: 0.13414761, b: 0.12107885, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -12150,11 +12150,22 @@ MonoBehaviour:
     m_HighlightedTrigger: Highlighted
     m_PressedTrigger: Pressed
     m_DisabledTrigger: Disabled
-  m_Interactable: 0
+  m_Interactable: 1
   m_TargetGraphic: {fileID: 349290111}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 606078598}
+        m_MethodName: ScrollPrevious
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &349290111
@@ -13785,6 +13796,26 @@ Prefab:
       propertyPath: m_SizeDelta.x
       value: -418.94998
       objectReference: {fileID: 0}
+    - target: {fileID: 224495179341188064, guid: c38c7e75a0c6c0e46888d93ecdc69be4,
+        type: 2}
+      propertyPath: m_AnchoredPosition.x
+      value: 386.69922
+      objectReference: {fileID: 0}
+    - target: {fileID: 224676650572342148, guid: c38c7e75a0c6c0e46888d93ecdc69be4,
+        type: 2}
+      propertyPath: m_AnchoredPosition.x
+      value: 219.60156
+      objectReference: {fileID: 0}
+    - target: {fileID: 224233901819511956, guid: c38c7e75a0c6c0e46888d93ecdc69be4,
+        type: 2}
+      propertyPath: m_AnchoredPosition.x
+      value: 433.80078
+      objectReference: {fileID: 0}
+    - target: {fileID: 224960627714622616, guid: c38c7e75a0c6c0e46888d93ecdc69be4,
+        type: 2}
+      propertyPath: m_AnchoredPosition.x
+      value: 209.51953
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: c38c7e75a0c6c0e46888d93ecdc69be4, type: 2}
   m_IsPrefabParent: 0
@@ -14333,6 +14364,36 @@ Prefab:
         type: 2}
       propertyPath: m_isInputParsingRequired
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 224160609241346954, guid: 806752206f775b240af4069999713824,
+        type: 2}
+      propertyPath: m_AnchoredPosition.x
+      value: 433.80078
+      objectReference: {fileID: 0}
+    - target: {fileID: 224070165142830236, guid: 806752206f775b240af4069999713824,
+        type: 2}
+      propertyPath: m_AnchoredPosition.x
+      value: 718.10156
+      objectReference: {fileID: 0}
+    - target: {fileID: 224932646788116824, guid: 806752206f775b240af4069999713824,
+        type: 2}
+      propertyPath: m_AnchoredPosition.x
+      value: 1044.1484
+      objectReference: {fileID: 0}
+    - target: {fileID: 224127998466900868, guid: 806752206f775b240af4069999713824,
+        type: 2}
+      propertyPath: m_AnchoredPosition.x
+      value: 386.69922
+      objectReference: {fileID: 0}
+    - target: {fileID: 224123032393650398, guid: 806752206f775b240af4069999713824,
+        type: 2}
+      propertyPath: m_AnchoredPosition.x
+      value: 718.10156
+      objectReference: {fileID: 0}
+    - target: {fileID: 224834489613421672, guid: 806752206f775b240af4069999713824,
+        type: 2}
+      propertyPath: m_AnchoredPosition.x
+      value: 219.60156
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 806752206f775b240af4069999713824, type: 2}
@@ -22548,7 +22609,8 @@ MonoBehaviour:
   actionBtnPointer: {fileID: 1014198297}
   activeMinionTypeLbl: {fileID: 17810100}
   activeMinionActionsParent: {fileID: 471264973}
-  roleSlotsScrollSnap: {fileID: 1354872783}
+  roleSlotsInfiniteScroll: {fileID: 1354872787}
+  roleSlotsScrollRect: {fileID: 1354872784}
   attackGridGO: {fileID: 218371648}
   attackGridIconSprite: {fileID: 21300000, guid: 87bb45208dd227c4692921a192026acb,
     type: 3}
@@ -35443,6 +35505,26 @@ Prefab:
       propertyPath: m_Value
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 224548703842286836, guid: 6ab55ee3f9f6e1a44ba35e024088b2a8,
+        type: 2}
+      propertyPath: m_AnchoredPosition.x
+      value: 718.10156
+      objectReference: {fileID: 0}
+    - target: {fileID: 224018610790939362, guid: 6ab55ee3f9f6e1a44ba35e024088b2a8,
+        type: 2}
+      propertyPath: m_AnchoredPosition.x
+      value: 433.80078
+      objectReference: {fileID: 0}
+    - target: {fileID: 224380865415704762, guid: 6ab55ee3f9f6e1a44ba35e024088b2a8,
+        type: 2}
+      propertyPath: m_AnchoredPosition.x
+      value: 422.39844
+      objectReference: {fileID: 0}
+    - target: {fileID: 224935185342663414, guid: 6ab55ee3f9f6e1a44ba35e024088b2a8,
+        type: 2}
+      propertyPath: m_AnchoredPosition.x
+      value: 386.69922
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 6ab55ee3f9f6e1a44ba35e024088b2a8, type: 2}
   m_IsPrefabParent: 0
@@ -38374,6 +38456,11 @@ Prefab:
       propertyPath: m_AnchoredPosition.y
       value: -145
       objectReference: {fileID: 0}
+    - target: {fileID: 224942998950162062, guid: 8373d084f987be54ca83074f42d06b4b,
+        type: 2}
+      propertyPath: m_AnchoredPosition.x
+      value: 947.4492
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 8373d084f987be54ca83074f42d06b4b, type: 2}
   m_IsPrefabParent: 0
@@ -39349,7 +39436,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -45.80005, y: -382.40002}
+  m_AnchoredPosition: {x: -45.80078, y: -382.40002}
   m_SizeDelta: {x: 74, y: 74}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1040506115
@@ -39840,11 +39927,22 @@ MonoBehaviour:
     m_HighlightedTrigger: Highlighted
     m_PressedTrigger: Pressed
     m_DisabledTrigger: Disabled
-  m_Interactable: 0
+  m_Interactable: 1
   m_TargetGraphic: {fileID: 1058686944}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 606078598}
+        m_MethodName: ScrollNext
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &1058686944
@@ -40857,6 +40955,26 @@ Prefab:
         type: 2}
       propertyPath: m_SizeDelta.x
       value: -412.58
+      objectReference: {fileID: 0}
+    - target: {fileID: 224001773078073152, guid: 92d03677d05ecec4ba3a597bfa1ae2ad,
+        type: 2}
+      propertyPath: m_AnchoredPosition.x
+      value: 433.80078
+      objectReference: {fileID: 0}
+    - target: {fileID: 224743100901024578, guid: 92d03677d05ecec4ba3a597bfa1ae2ad,
+        type: 2}
+      propertyPath: m_AnchoredPosition.x
+      value: 422.39844
+      objectReference: {fileID: 0}
+    - target: {fileID: 224904392352186774, guid: 92d03677d05ecec4ba3a597bfa1ae2ad,
+        type: 2}
+      propertyPath: m_AnchoredPosition.x
+      value: 386.69922
+      objectReference: {fileID: 0}
+    - target: {fileID: 224064602057521992, guid: 92d03677d05ecec4ba3a597bfa1ae2ad,
+        type: 2}
+      propertyPath: m_AnchoredPosition.x
+      value: 975.60156
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 92d03677d05ecec4ba3a597bfa1ae2ad, type: 2}
@@ -49559,7 +49677,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -125.59985, y: 270.9}
+  m_AnchoredPosition: {x: -125.60156, y: 270.9}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!1 &1287595752
@@ -51929,7 +52047,7 @@ GameObject:
   - component: {fileID: 1354872786}
   - component: {fileID: 1354872785}
   - component: {fileID: 1354872784}
-  - component: {fileID: 1354872783}
+  - component: {fileID: 1354872787}
   m_Layer: 5
   m_Name: Horizontal Scroll Snap
   m_TagString: Untagged
@@ -51953,72 +52071,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 3}
+  m_AnchoredPosition: {x: 4, y: -4}
   m_SizeDelta: {x: 110, y: 110}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1354872783
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1354872781}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 609dcc22aadcc16418bfac22716ee9a6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  StartingScreen: 0
-  PageStep: 1
-  Pagination: {fileID: 0}
-  PrevButton: {fileID: 349290108}
-  NextButton: {fileID: 1058686941}
-  transitionSpeed: 7.5
-  UseFastSwipe: 0
-  FastSwipeThreshold: 100
-  SwipeVelocityThreshold: 100
-  MaskArea: {fileID: 0}
-  MaskBuffer: 1
-  JumpOnEnable: 0
-  RestartOnEnable: 0
-  UseParentTransform: 1
-  ChildObjects: []
-  m_OnSelectionChangeStartEvent:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 606078598}
-        m_MethodName: OnStartChangeRoleSlotPage
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_TypeName: UnityEngine.UI.Extensions.ScrollSnapBase+SelectionChangeStartEvent,
-      Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_OnSelectionPageChangedEvent:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: UnityEngine.UI.Extensions.ScrollSnapBase+SelectionPageChangedEvent,
-      Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_OnSelectionChangeEndEvent:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 606078598}
-        m_MethodName: OnChangeRoleSlotPage
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_TypeName: UnityEngine.UI.Extensions.ScrollSnapBase+SelectionChangeEndEvent,
-      Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
 --- !u!114 &1354872784
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -52036,7 +52091,7 @@ MonoBehaviour:
   m_MovementType: 1
   m_Elasticity: 0.1
   m_Inertia: 1
-  m_DecelerationRate: 0.135
+  m_DecelerationRate: 0.137
   m_ScrollSensitivity: 1
   m_Viewport: {fileID: 0}
   m_HorizontalScrollbar: {fileID: 0}
@@ -52083,6 +52138,18 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1354872781}
+--- !u!114 &1354872787
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1354872781}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61fe0f6272fa94d4eb3dafc6aecd50ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  InitByUser: 1
 --- !u!1001 &1356511783
 Prefab:
   m_ObjectHideFlags: 0
@@ -54238,6 +54305,15 @@ MonoBehaviour:
     - Provoke
     - Destroy
     - Disable
+    - Access Memories
+    - Zap
+    - Jolt
+    - Spook
+    - Enrage
+    - Inflict Lycanthropy
+    - Inflict Kleptomania
+    - Inflict Vampirism
+    - Inflict Unfaithfulness
     m_values:
     - {fileID: 21300000, guid: 360bd7c134b76554488e42b1b995ce62, type: 3}
     - {fileID: 21300000, guid: 7cfbe25a31be2aa4c909bf1a7c6742a4, type: 3}
@@ -54249,6 +54325,15 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 8d5d07972a054c648a726e3008902938, type: 3}
     - {fileID: 21300000, guid: b657484a4dbd1c34d9511855a8a101af, type: 3}
     - {fileID: 21300000, guid: 88e35ef856bf3404fb43ebc852f031a7, type: 3}
+    - {fileID: 21300000, guid: 257cb5c595824e446984088e48242b6b, type: 3}
+    - {fileID: 21300000, guid: 257cb5c595824e446984088e48242b6b, type: 3}
+    - {fileID: 21300000, guid: 257cb5c595824e446984088e48242b6b, type: 3}
+    - {fileID: 21300000, guid: 257cb5c595824e446984088e48242b6b, type: 3}
+    - {fileID: 21300000, guid: 257cb5c595824e446984088e48242b6b, type: 3}
+    - {fileID: 21300000, guid: 257cb5c595824e446984088e48242b6b, type: 3}
+    - {fileID: 21300000, guid: 257cb5c595824e446984088e48242b6b, type: 3}
+    - {fileID: 21300000, guid: 257cb5c595824e446984088e48242b6b, type: 3}
+    - {fileID: 21300000, guid: 257cb5c595824e446984088e48242b6b, type: 3}
 --- !u!1 &1400982520
 GameObject:
   m_ObjectHideFlags: 0
@@ -65019,7 +65104,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 0
+  m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -74363,6 +74448,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 1929403610}
+  - component: {fileID: 1929403611}
   m_Layer: 5
   m_Name: Content
   m_TagString: Untagged
@@ -74385,9 +74471,31 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.00005340576, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1929403611
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1929403609}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -405508275, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Padding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
+  m_ChildAlignment: 4
+  m_Spacing: 0
+  m_ChildForceExpandWidth: 0
+  m_ChildForceExpandHeight: 0
+  m_ChildControlWidth: 0
+  m_ChildControlHeight: 0
 --- !u!1 &1929733036
 GameObject:
   m_ObjectHideFlags: 0
@@ -76208,7 +76316,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: 11.400024, y: 9.56}
+  m_AnchoredPosition: {x: 11.3984375, y: 9.56}
   m_SizeDelta: {x: 135.3, y: 699.98}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!114 &1976319750

@@ -115,8 +115,7 @@ public class RoleSlotItem : MonoBehaviour, IDragParentItem {
             case JOB.SPY:
                 message = "An agent that gathers information about places and characters.";
                 break;
-            case JOB.RECRUITER:
-                header = "Seducer: " + character.name;
+            case JOB.SEDUCER:
                 message = "An agent that corrupts heroes and recruits new minions.";
                 break;
             case JOB.DIPLOMAT:

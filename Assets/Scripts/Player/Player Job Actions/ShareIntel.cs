@@ -18,7 +18,6 @@ public class ShareIntel : PlayerJobAction {
             return;
         }
         Character targetCharacter = targetPOI as Character;
-        SetSubText("Pick intel to share with " +  targetCharacter.name);
         UIManager.Instance.OpenShareIntelMenu(targetCharacter, assignedCharacter);
         
         //PlayerUI.Instance.SetIntelMenuState(true);
@@ -30,7 +29,6 @@ public class ShareIntel : PlayerJobAction {
     }
     public void BaseActivate(Character targetCharacter) {
         base.ActivateAction(assignedCharacter, targetCharacter);
-        SetSubText(string.Empty);
         SetTargetCharacter(targetCharacter);
     }
     public override void DeactivateAction() {
@@ -39,9 +37,8 @@ public class ShareIntel : PlayerJobAction {
         Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         Messenger.RemoveListener<JOB, Character>(Signals.CHARACTER_UNASSIGNED_FROM_JOB, OnCharacterUnassignedFromJob);
         targetCharacter = null;
-        SetSubText(string.Empty);
     }
-    protected override bool ShouldButtonBeInteractable(Character character, Character targetCharacter) {
+    protected override bool CanPerformActionTowards(Character character, Character targetCharacter) {
         if (targetCharacter.isDead) {
             return false;
         }
@@ -57,7 +54,7 @@ public class ShareIntel : PlayerJobAction {
         if (UIManager.Instance.IsShareIntelMenuOpen()) {
             return false;
         }
-        return base.ShouldButtonBeInteractable(character, targetCharacter);
+        return base.CanPerformActionTowards(character, targetCharacter);
     }
     public override bool CanTarget(IPointOfInterest targetPOI) {
         if (!(targetPOI is Character)) {

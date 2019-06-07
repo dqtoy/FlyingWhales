@@ -1185,7 +1185,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (CharacterManager.Instance.IsClassADeadlySin(_characterClass.className)) {
             AssignJob(_characterClass.jobType);
         } else {
-            JOB[] jobs = new JOB[] { JOB.DIPLOMAT, JOB.DEBILITATOR, JOB.EXPLORER, JOB.INSTIGATOR, JOB.RAIDER, JOB.RECRUITER, JOB.SPY };
+            JOB[] jobs = new JOB[] { JOB.DIPLOMAT, JOB.DEBILITATOR, JOB.EXPLORER, JOB.INSTIGATOR, JOB.RAIDER, JOB.SEDUCER, JOB.SPY };
             AssignJob(jobs[UnityEngine.Random.Range(0, jobs.Length)]);
             //AssignJob(JOB.RAIDER);
         }
@@ -1210,7 +1210,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             case JOB.DIPLOMAT:
                 _job = new Diplomat(this);
                 break;
-            case JOB.RECRUITER:
+            case JOB.SEDUCER:
                 _job = new Recruiter(this);
                 break;
             case JOB.LEADER:

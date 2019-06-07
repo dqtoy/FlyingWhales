@@ -36,7 +36,7 @@ public class RoleSlotItemDraggable : DraggableItem {
         if (!isDraggable) {
             return;
         }
-        CursorManager.Instance.SetCursorToItemDragClicked();
+        CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Drag_Clicked);
         //_characterItem = gameObject.GetComponent<PlayerCharacterItem>();
         CharacterPortrait portrait = roleSlotItem.portrait;
         GameObject clone = (GameObject)Instantiate(portrait.gameObject);
@@ -53,7 +53,7 @@ public class RoleSlotItemDraggable : DraggableItem {
             return;
         }
         _isDragging = false;
-        CursorManager.Instance.SetCursorToItemDragHover();
+        CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Drag_Hover);
         if (roleSlotItem != null && _draggingObject != null) {
             List<RaycastResult> newRaycastResults = new List<RaycastResult>();
             CustomDropZone customDropzone = null;
@@ -66,11 +66,11 @@ public class RoleSlotItemDraggable : DraggableItem {
             }
 
             if (customDropzone != null) {
-                CursorManager.Instance.SetCursorToDefault();
+                CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
                 customDropzone.OnDrop(_draggingObject.gameObject);
                 Destroy(_draggingObject.gameObject);
             } else {
-                CursorManager.Instance.SetCursorToDefault();
+                CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
                 PlayerManager.Instance.player.UnassignCharacterFromJob(roleSlotItem.slotJob);
                 CancelDrag();
             }

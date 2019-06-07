@@ -1422,6 +1422,14 @@ public class CharacterManager : MonoBehaviour {
         //RELATIONSHIP_TRAIT[] choices = Utilities.GetEnumValues<RELATIONSHIP_TRAIT>();
         return relWeights.PickRandomElementGivenWeights();
     }
+    public void GenerateInitialLogs() {
+        GameDate startDate = new GameDate(1, 1, 79, 1);
+
+        int logCount = 50;
+        for (int i = 0; i < logCount; i++) {
+
+        }
+    }
     #endregion
 }
 

@@ -157,6 +157,7 @@ public class MapGenerator : MonoBehaviour {
         CharacterManager.Instance.GenerateRelationships();
         CharacterManager.Instance.PlaceInitialCharacters();
         CharacterManager.Instance.GiveInitialItems();
+        CharacterManager.Instance.GenerateInitialLogs();
 
         AudioManager.Instance.TransitionTo("World Music", 10);
 

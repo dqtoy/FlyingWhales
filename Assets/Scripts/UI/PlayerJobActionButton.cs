@@ -23,12 +23,14 @@ public class PlayerJobActionButton : MonoBehaviour {
     private void OnEnable() {
         Messenger.AddListener<PlayerJobAction>(Signals.JOB_ACTION_COOLDOWN_ACTIVATED, OnJobActionCooldownActivated);
         Messenger.AddListener<PlayerJobAction>(Signals.JOB_ACTION_COOLDOWN_DONE, OnJobActionCooldownDone);
-        Messenger.AddListener<PlayerJobAction>(Signals.JOB_ACTION_SUB_TEXT_CHANGED, OnSubTextChanged);
+        Messenger.AddListener<Area>(Signals.AREA_MAP_OPENED, OnAreaMapOpened);
+        Messenger.AddListener<Area>(Signals.AREA_MAP_CLOSED, OnAreaMapClosed);
     }
     private void OnDisable() {
         Messenger.RemoveListener<PlayerJobAction>(Signals.JOB_ACTION_COOLDOWN_ACTIVATED, OnJobActionCooldownActivated);
         Messenger.RemoveListener<PlayerJobAction>(Signals.JOB_ACTION_COOLDOWN_DONE, OnJobActionCooldownDone);
-        Messenger.RemoveListener<PlayerJobAction>(Signals.JOB_ACTION_SUB_TEXT_CHANGED, OnSubTextChanged);
+        Messenger.RemoveListener<Area>(Signals.AREA_MAP_OPENED, OnAreaMapOpened);
+        Messenger.RemoveListener<Area>(Signals.AREA_MAP_CLOSED, OnAreaMapClosed);
     }
 
     public void SetJobAction(PlayerJobAction action, Character character) {
@@ -45,14 +47,11 @@ public class PlayerJobActionButton : MonoBehaviour {
 
     #region Visuals
     private void UpdateInteractableState() {
-        SetInteractableState(action.ShouldButtonBeInteractable());
+        SetInteractableState(!action.parentData.hasActionInCooldown && InteriorMapManager.Instance.isAnAreaMapShowing);
     }
     private void SetInteractableState(bool state) {
         btn.interactable = state;
         cover.SetActive(!state);
-    }
-    private void UpdateSubText() {
-        subTextLbl.text = action.btnSubText;
     }
     private void UpdateButtonText() {
         btnLbl.text = action.name;
@@ -89,14 +88,8 @@ public class PlayerJobActionButton : MonoBehaviour {
             message = "The Diplomat will reach out to a character and share a piece of information with them.";
             header += "(Diplomat Action)";
         } else if (action is RileUp) {
-            RileUp rileUp = action as RileUp;
-            //if (rileUp.GetActionName(target) == "Abduct") {
-            //    message = "The Instigator will goad " + target.name + " into abducting a specified character. This action only works on goblins.";
-            //    header = "Instigator Action";
-            //} else {
-                message = "The Instigator will rile up a character and goad him into attacking people in a specified location. This action only works for beasts.";
-                header += "(Instigator Action)";
-            //}
+            message = "The Instigator will rile up a character and goad him into attacking people in a specified location. This action only works for beasts.";
+            header += "(Instigator Action)";
         } else if (action is Intervene) {
             message = "The Debilitator will convince a character to drop his current plans.";
             header += "(Debilitator Action)";
@@ -109,9 +102,39 @@ public class PlayerJobActionButton : MonoBehaviour {
         } else if (action is Disable) {
             message = "Prevent characters from using this object for 4 hours.";
             header += "(Debilitator Action)";
+        } else if (action is AccessMemories) {
+            message = "Access the memories of a character.";
+            header += "(Spy Action)";
+        } else if (action is Abduct) {
+            message = "The Instigator will goad a character into abducting a specified character. This action only works on goblins and skeletons.";
+            header += "(Instigator Action)";
+        } else if (action is Zap) {
+            message = "Temporarily prevents a character from moving for 30 minutes.";
+            header += "(Debilitator Action)";
+        } else if (action is Jolt) {
+            message = "Temporarily speeds up the movement of a character.";
+            header += "(Debilitator Action)";
+        } else if (action is Spook) {
+            message = "Temporarily forces a character to flee from all other nearby characters.";
+            header += "(Debilitator Action)";
+        } else if (action is Enrage) {
+            message = "Temporarily enrages a character.";
+            header += "(Debilitator Action)";
+        } else if (action is CorruptLycanthropy) {
+            message = "Inflict a character with Lycanthropy, which gives a character a chance to transform into a wild wolf whenever he/she sleeps.";
+            header += "(Seducer Action)";
+        } else if (action is CorruptKleptomaniac) {
+            message = "Inflict a character with Kleptomania, which will make that character enjoy stealing other people's items.";
+            header += "(Seducer Action)";
+        } else if (action is CorruptVampiric) {
+            message = "Inflict a character with Vampirism, which will make that character need blood for sustenance.";
+            header += "(Seducer Action)";
+        } else if (action is CorruptUnfaithful) {
+            message = "Make a character prone to have affairs.";
+            header += "(Seducer Action)";
         }
-        
-        if (action.isInCooldown) {
+
+        if (action.parentData.hasActionInCooldown) {
             header += " (On Cooldown)";
         }
         PlayerManager.Instance.player.SeenActionButtonsOnce();
@@ -122,20 +145,23 @@ public class PlayerJobActionButton : MonoBehaviour {
     }
     #endregion
 
+    #region Listeners
     private void OnJobActionCooldownActivated(PlayerJobAction jobAction) {
-        if (jobAction == action) {
+        if (jobAction.parentData == this.action.parentData) {
             UpdateInteractableState();
         }
     }
     private void OnJobActionCooldownDone(PlayerJobAction jobAction) {
-        if (jobAction == action) {
+        if (jobAction.parentData == this.action.parentData) {
             UpdateInteractableState();
         }
     }
-
-    public void OnSubTextChanged(PlayerJobAction jobAction) {
-        if (jobAction == action) {
-            //UpdateSubText();
-        }
+    private void OnAreaMapOpened(Area area) {
+        UpdateInteractableState();
     }
+    private void OnAreaMapClosed(Area area) {
+        UpdateInteractableState();
+    }
+    #endregion
+
 }

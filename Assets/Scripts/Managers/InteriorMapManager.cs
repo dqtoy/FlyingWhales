@@ -24,6 +24,19 @@ public class InteriorMapManager : MonoBehaviour {
             return currentlyShowingMap != null;
         }
     }
+    public IPointOfInterest currentlyHoveredPOI {
+        get {
+            if (isAnAreaMapShowing) {
+                if (currentlyShowingMap.hoveredCharacter != null) {
+                    return currentlyShowingMap.hoveredCharacter;
+                } else if (GetTileFromMousePosition() != null) {
+                    LocationGridTile hoveredTile = GetTileFromMousePosition();
+                    return hoveredTile.objHere;
+                }
+            }
+            return null;
+        }
+    }
 
     //Used for generating the inner map of an area, structure templates are first placed here before generating the actual map
     public Tilemap agGroundTilemap;
@@ -64,6 +77,9 @@ public class InteriorMapManager : MonoBehaviour {
     }
     public void LateUpdate() {
         if (UIManager.Instance.IsMouseOnUI() || currentlyShowingMap == null) {
+            if (UIManager.Instance.IsSmallInfoShowing() && UIManager.Instance.smallInfoShownFrom == "ShowTileData") {
+                UIManager.Instance.HideSmallInfo();
+            }
             return;
         }
         LocationGridTile hoveredTile = GetTileFromMousePosition();
@@ -131,10 +147,12 @@ public class InteriorMapManager : MonoBehaviour {
             return;
         }
         currentlyShowingMap.Close();
-        Messenger.Broadcast(Signals.AREA_MAP_CLOSED, currentlyShowingArea);
+        Area closedArea = currentlyShowingArea;
         AreaMapCameraMove.Instance.CenterCameraOn(null);
         currentlyShowingMap = null;
         currentlyShowingArea = null;
+        PlayerManager.Instance.player.SetCurrentlyActivePlayerJobAction(null);
+        Messenger.Broadcast(Signals.AREA_MAP_CLOSED, closedArea);
     }
     public void OnCreateAreaMap(AreaInnerTileMap newMap) {
         areaMaps.Add(newMap);

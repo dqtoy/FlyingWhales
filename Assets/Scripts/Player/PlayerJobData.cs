@@ -10,6 +10,18 @@ public class PlayerJobData {
     public PlayerJobAction activeAction { get; private set; }
     public bool isSlotLocked { get; private set; } //this says whether the job slot can be assigned to.
 
+    public bool hasActionInCooldown {
+        get {
+            for (int i = 0; i < jobActions.Count; i++) {
+                PlayerJobAction currAction = jobActions[i];
+                if (currAction.isInCooldown) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
     public PlayerJobData(JOB jobType) {
         this.jobType = jobType;
         isSlotLocked = false;
@@ -20,19 +32,29 @@ public class PlayerJobData {
         switch (jobType) {
             case JOB.SPY:
                 jobActions.Add(new Track());
+                jobActions.Add(new AccessMemories());
                 break;
-            case JOB.RECRUITER:
-                jobActions.Add(new Corrupt());
+            case JOB.SEDUCER:
+                //jobActions.Add(new Corrupt());
+                jobActions.Add(new CorruptLycanthropy());
+                jobActions.Add(new CorruptKleptomaniac());
+                jobActions.Add(new CorruptVampiric());
+                jobActions.Add(new CorruptUnfaithful());
                 break;
             case JOB.DIPLOMAT:
                 jobActions.Add(new ShareIntel());
                 break;
             case JOB.DEBILITATOR:
-                jobActions.Add(new Intervene());
+                //jobActions.Add(new Intervene());
+                jobActions.Add(new Zap());
+                jobActions.Add(new Jolt());
+                jobActions.Add(new Spook());
+                jobActions.Add(new Enrage());
                 jobActions.Add(new Disable());
                 break;
             case JOB.INSTIGATOR:
                 jobActions.Add(new RileUp());
+                jobActions.Add(new Abduct());
                 jobActions.Add(new Provoke());
                 jobActions.Add(new Destroy());
                 break;

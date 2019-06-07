@@ -223,7 +223,7 @@ public class AreaMapCameraMove : MonoBehaviour {
                         hasReachedThreshold = true;
                     }
                     if (originMousePos !=  Input.mousePosition) { //check if the mouse has moved position from the origin, only then will it be considered dragging
-                        CursorManager.Instance.SetCursorToDrag();
+                        CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Drag_Clicked);
                         isDragging = true;
                     }
                 }
@@ -241,7 +241,7 @@ public class AreaMapCameraMove : MonoBehaviour {
         }
     }
     private void ResetDragValues() {
-        CursorManager.Instance.SetCursorToDefault();
+        CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
         currDragTime = 0f;
         isDragging = false;
         startedOnUI = false;

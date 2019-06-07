@@ -26,7 +26,8 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField] private GameObject actionBtnPointer;
     [SerializeField] private TextMeshProUGUI activeMinionTypeLbl;
     [SerializeField] private RectTransform activeMinionActionsParent;
-    [SerializeField] private HorizontalScrollSnap roleSlotsScrollSnap;
+    [SerializeField] private UI_InfiniteScroll roleSlotsInfiniteScroll;
+    [SerializeField] private ScrollRect roleSlotsScrollRect;
 
     [Header("Attack")]
     public GameObject attackGridGO;
@@ -125,6 +126,7 @@ public class PlayerUI : MonoBehaviour {
     private void OnSeenActionButtons() {
         actionBtnPointer.SetActive(!PlayerManager.Instance.player.hasSeenActionButtonsOnce);
     }
+    int currentlyeShowingSlotIndex = 0;
     private void LoadRoleSlots() {
         int currIndex = 0;
         roleSlots = new RoleSlotItem[PlayerManager.Instance.player.roleSlots.Count];
@@ -133,11 +135,41 @@ public class PlayerUI : MonoBehaviour {
             RoleSlotItem roleSlot = roleSlotGO.GetComponent<RoleSlotItem>();
             roleSlot.SetSlotJob(keyValuePair.Key);
             roleSlots[currIndex] = roleSlot;
-            roleSlotsScrollSnap.AddChild(roleSlotGO);
             currIndex++;
         }
-        OnChangeRoleSlotPage(roleSlotsScrollSnap.CurrentPage);
+        roleSlotsInfiniteScroll.Init();
+        //LoadActionButtonsForActiveJob(roleSlots[currentlyeShowingSlotIndex]);
+        UpdateRoleSlotScroll();
     }
+
+    public void ScrollNext() {
+        currentlyeShowingSlotIndex += 1;
+        if (currentlyeShowingSlotIndex == roleSlots.Length) {
+            currentlyeShowingSlotIndex = 0;
+        }
+        UpdateRoleSlotScroll();
+    }
+    public void ScrollPrevious() {
+        currentlyeShowingSlotIndex -= 1;
+        if (currentlyeShowingSlotIndex < 0) {
+            currentlyeShowingSlotIndex = roleSlots.Length - 1;
+        }
+        UpdateRoleSlotScroll();
+    }
+    public void ScrollRoleSlotTo(int index) {
+        if (currentlyeShowingSlotIndex == index) {
+            return;
+        }
+        currentlyeShowingSlotIndex = index;
+        UpdateRoleSlotScroll();
+    }
+    private void UpdateRoleSlotScroll() {
+        RoleSlotItem slotToShow = roleSlots[currentlyeShowingSlotIndex];
+        activeMinionTypeLbl.text = Utilities.NormalizeString(slotToShow.slotJob.ToString());
+        Utilities.ScrolRectSnapTo(roleSlotsScrollRect, slotToShow.GetComponent<RectTransform>());
+        LoadActionButtonsForActiveJob(slotToShow);
+    }
+
     //private void ShowActionButtonsFor(IPointOfInterest poi) {
     //    if (UIManager.Instance.IsShareIntelMenuOpen()) {
     //        return;
@@ -170,15 +202,16 @@ public class PlayerUI : MonoBehaviour {
     public void HideActionBtnTooltip() {
         actionBtnTooltipGO.gameObject.SetActive(false);
     }
-    public void OnStartChangeRoleSlotPage() {
-        Utilities.DestroyChildren(activeMinionActionsParent);
-    }
-    public void OnChangeRoleSlotPage(int page) {
-        RoleSlotItem slot = roleSlots[page];
-        activeMinionTypeLbl.text = Utilities.NormalizeString(slot.slotJob.ToString());
-        LoadActionButtonsForActiveJob(slot);
-    }
+    //public void OnStartChangeRoleSlotPage() {
+    //    Utilities.DestroyChildren(activeMinionActionsParent);
+    //}
+    //public void OnChangeRoleSlotPage(int page) {
+    //    RoleSlotItem slot = roleSlots[page];
+    //    activeMinionTypeLbl.text = Utilities.NormalizeString(slot.slotJob.ToString());
+    //    LoadActionButtonsForActiveJob(slot);
+    //}
     private void LoadActionButtonsForActiveJob(RoleSlotItem active) {
+        Utilities.DestroyChildren(activeMinionActionsParent);
         PlayerJobData jobData = PlayerManager.Instance.player.roleSlots[active.slotJob];
         for (int i = 0; i < jobData.jobActions.Count; i++) {
             PlayerJobAction jobAction = jobData.jobActions[i];

@@ -392,10 +392,10 @@ public class CharacterInfoUI : UIMenu {
 
     #region Buttons
     public void OnClickLogButton() {
-        logParentGO.SetActive(!logParentGO.activeSelf);
+        SetLogMenuState(!logParentGO.activeSelf);
     }
     public void OnCloseLog() {
-        logParentGO.SetActive(false);
+        SetLogMenuState(false);
     }
     #endregion
 
@@ -448,6 +448,9 @@ public class CharacterInfoUI : UIMenu {
             }
         }
         return false;
+    }
+    public void SetLogMenuState(bool state) {
+        logParentGO.SetActive(state);
     }
     #endregion
 

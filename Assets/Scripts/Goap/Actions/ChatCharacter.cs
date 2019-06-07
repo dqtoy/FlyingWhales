@@ -144,6 +144,9 @@ public class ChatCharacter : GoapAction {
         if (actor.name == "Jamie" && targetCharacter.name == "Fiona") {
             chatResult = "Flirt"; //For Trailer Only
         }
+        if (actor.name == "Jamie" && targetCharacter.name == "Audrey") {
+            chatResult = "Argument"; //For Trailer Only
+        }
         if (chatResult == "Become Friends") {
             //may become friends
             CharacterManager.Instance.CreateNewRelationshipBetween(actor, targetCharacter, RELATIONSHIP_TRAIT.FRIEND);
@@ -298,7 +301,6 @@ public class ChatCharacter : GoapAction {
         }
         return reactions;
     }
-
     private List<string> BecomeParamoursIntelReaction(Character recipient, Intel sharedIntel) {
         List<string> reactions = new List<string>();
         Character target = poiTarget as Character;
@@ -384,7 +386,6 @@ public class ChatCharacter : GoapAction {
         }
         return reactions;
     }
-
     private List<string> QuickChatIntelReaction(Character recipient, Intel sharedIntel) {
         List<string> reactions = new List<string>();
         Character target = poiTarget as Character;

@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Provoke : PlayerJobAction {
+public class AccessMemories : PlayerJobAction {
 
-    public Provoke() {
-        name = "Provoke";
+    public AccessMemories() {
+        name = "Access Memories";
         SetDefaultCooldownTime(24);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
     }
@@ -15,17 +15,14 @@ public class Provoke : PlayerJobAction {
             return;
         }
         Character targetCharacter = targetPOI as Character;
-        PlayerUI.Instance.OpenProvoke(assignedCharacter, targetCharacter);
         base.ActivateAction(assignedCharacter, targetCharacter);
+        UIManager.Instance.ShowCharacterInfo(targetCharacter);
+        UIManager.Instance.characterInfoUI.SetLogMenuState(true);
     }
-
     protected override bool CanPerformActionTowards(Character character, Character targetCharacter) {
-        if (targetCharacter.isDead || character.id == targetCharacter.id) {
+        if (character.id == targetCharacter.id) {
             return false;
         }
-        //if (targetCharacter.role.roleType == CHARACTER_ROLE.BEAST || targetCharacter.faction.id == FactionManager.Instance.neutralFaction.id) {
-        //    return false;
-        //}
         return base.CanPerformActionTowards(character, targetCharacter);
     }
     public override bool CanTarget(IPointOfInterest targetPOI) {
@@ -36,7 +33,7 @@ public class Provoke : PlayerJobAction {
         if (targetCharacter.isDead) {
             return false;
         }
-        if (targetCharacter.role.roleType == CHARACTER_ROLE.BEAST || targetCharacter.faction.id == FactionManager.Instance.neutralFaction.id) {
+        if (assignedCharacter == targetCharacter) {
             return false;
         }
         return base.CanTarget(targetCharacter);
