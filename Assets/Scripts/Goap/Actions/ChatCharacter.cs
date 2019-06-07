@@ -193,93 +193,190 @@ public class ChatCharacter : GoapAction {
     private void PreQuickChat() {
         currentState.SetIntelReaction(QuickChatIntelReaction);
     }
+    private void PreShareInformation() {
+        currentState.SetIntelReaction(ShareInformationIntelReaction);
+    }
+    private void PreBecomeFriends() {
+        currentState.SetIntelReaction(BecomeFriendsIntelReaction);
+    }
+    private void PreArgument() {
+        currentState.SetIntelReaction(ArgumentIntelReaction);
+    }
     private void PreFlirt() {
         currentState.SetIntelReaction(FlirtIntelReaction);
+    }
+    private void PreBecomeLovers() {
+        currentState.SetIntelReaction(BecomeLoversIntelReaction);
     }
     private void PreBecomeParamours() {
         currentState.SetIntelReaction(BecomeParamoursIntelReaction);
     }
+    private void PreResolveEnmity() {
+        currentState.SetIntelReaction(ResolveEnmityIntelReaction);
+    }
     #endregion
 
     #region Intel Reactions
+    private List<string> QuickChatIntelReaction(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
+        List<string> reactions = new List<string>();
+        Character target = poiTarget as Character;
+
+        //Recipient and Actor is the same or Recipient and Target is the same:
+        if (recipient == actor || recipient == target) {
+            //- **Recipient Response Text**: I know what I did.
+            reactions.Add("I know what I did.");
+            //-**Recipient Effect * *: no effect
+        } 
+        else if(recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.PARAMOUR) || recipient.HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.PARAMOUR)) {
+            reactions.Add("Wait what?! What were they talking about?!");
+        } 
+        else if (recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.LOVER) || recipient.HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.LOVER)) {
+            reactions.Add("Huh? What were they talking about?");
+        }
+        return reactions;
+    }
+    private List<string> ShareInformationIntelReaction(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
+        List<string> reactions = new List<string>();
+        Character target = poiTarget as Character;
+
+        //Recipient and Actor is the same or Recipient and Target is the same:
+        if (recipient == actor || recipient == target) {
+            //- **Recipient Response Text**: I know what I did.
+            reactions.Add("I know what I did.");
+            //-**Recipient Effect * *: no effect
+        } 
+        else {
+            reactions.Add("I wonder what they discussed.");
+        }
+        return reactions;
+    }
+    private List<string> BecomeFriendsIntelReaction(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
+        List<string> reactions = new List<string>();
+        Character target = poiTarget as Character;
+
+        //Recipient and Actor is the same or Recipient and Target is the same:
+        if (recipient == actor || recipient == target) {
+            //- **Recipient Response Text**: I know what I did.
+            reactions.Add("I know what I did.");
+            //-**Recipient Effect * *: no effect
+        } 
+        else if (recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.ENEMY) && recipient.HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.ENEMY)) {
+            reactions.Add("Are they conspiring against me?!");
+        } 
+        else if (recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.ENEMY)) {
+            reactions.Add(string.Format("So {0} is gathering allies, huh?", actor.name));
+        } 
+        else if (recipient.HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.ENEMY)) {
+            reactions.Add(string.Format("So {0} is gathering allies, huh?", target.name));
+        }
+        else {
+            reactions.Add("Is this important?");
+        }
+        return reactions;
+    }
+    private List<string> ArgumentIntelReaction(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
+        List<string> reactions = new List<string>();
+        Character target = poiTarget as Character;
+
+        //Recipient and Actor is the same or Recipient and Target is the same:
+        if (recipient == actor || recipient == target) {
+            //- **Recipient Response Text**: I know what I did.
+            reactions.Add("I know what I did.");
+            //-**Recipient Effect * *: no effect
+        }
+        else {
+            reactions.Add("I wonder what they argued about.");
+        }
+        return reactions;
+    }
     private List<string> FlirtIntelReaction(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
         List<string> reactions = new List<string>();
         Character target = poiTarget as Character;
         Character actorLover = actor.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.LOVER);
+        Character actorParamour = actor.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.PARAMOUR);
         Character targetLover = target.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.LOVER);
+        Character targetParamour = target.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.PARAMOUR);
 
         //Recipient and Actor is the same:
         if (recipient == actor) {
-            //- **Recipient Response Text**: Please do not tell anyone else about this. I beg you!
-            reactions.Add("Please do not tell anyone else about this. I beg you!");
-            //-**Recipient Effect * *: no effect
-        }
-        //Recipient is the lover or paramour of Actor and Recipient is not Target:
-        else if (recipient != target && actor.HasRelationshipOfTypeWith(recipient, false, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR)) {
-            //- **Recipient Response Text**: [Actor Name] is a cur!
-            reactions.Add(string.Format("{0} is a cur!", actor.name));
-            //- **Recipient Effect**: Add Annoyed trait to Recipient. Recipient will have https://trello.com/c/mqor1Ddv/1884-relationship-degradation with Actor.
-            AddTraitTo(recipient, "Annoyed", actor);
-            CharacterManager.Instance.RelationshipDegradation(actor, recipient, this);
-        }
-        //Recipient is the lover or paramour of Target and Recipient is not Actor:
-        else if (recipient != actor && target.HasRelationshipOfTypeWith(recipient, false, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR)) {
-            //- **Recipient Response Text**: [Actor Name] is a snake!
-            reactions.Add(string.Format("{0} is a snake!", actor.name));
-            //- **Recipient Effect**: Add Annoyed trait to Recipient. Recipient will have https://trello.com/c/mqor1Ddv/1884-relationship-degradation with Actor.
-            AddTraitTo(recipient, "Annoyed", actor);
-            CharacterManager.Instance.RelationshipDegradation(actor, recipient, this);
-        }
-        //Actor has a Lover. Actor's Lover is not the Target. Recipient does not have a positive relationship with Actor. Recipient has a relationship (positive or negative) with Actor's Lover.
-        else if (recipient != actor && recipient != target && actorLover != null && actorLover != target
-            && recipient.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.NEGATIVE && recipient.HasRelationshipWith(actorLover)) {
-            //- **Recipient Response Text**: I should let [Actor's Lover's Name] know about this.
-            reactions.Add(string.Format("I should let {0} know about this.", actorLover.name));
-            //- **Recipient Effect**: Recipient will perform Share Information Job targeting Actor's Lover using this event as the information.
-            //Recipient will have https://trello.com/c/mqor1Ddv/1884-relationship-degradation with Actor.
-
-            if (!recipient.jobQueue.HasJobWithOtherData(JOB_TYPE.SHARE_INFORMATION, this)) {
-                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.SHARE_INFORMATION, INTERACTION_TYPE.SHARE_INFORMATION, actorLover, new Dictionary<INTERACTION_TYPE, object[]>() {
-                            { INTERACTION_TYPE.SHARE_INFORMATION, new object[] { this }}
-                        });
-                //job.SetCannotOverrideJob(true);
-                job.SetCancelOnFail(true);
-                recipient.jobQueue.AddJobInQueue(job, false);
+            if (recipient == targetLover) {
+                reactions.Add("Hey! That's private!");
+            } else if (recipient == targetParamour) {
+                reactions.Add("Don't tell anyone. *wink**wink*");
             }
-
-            CharacterManager.Instance.RelationshipDegradation(actor, recipient, this);
-        }
-        //Target has a Lover. Target's Lover is not the Actor. Recipient does not have a positive relationship with Target. Recipient has a positive relationship with Target's Lover.
-        else if (recipient != actor && recipient != target && targetLover != null && targetLover != actor
-            && recipient.GetRelationshipEffectWith(target) == RELATIONSHIP_EFFECT.NEGATIVE && recipient.GetRelationshipEffectWith(targetLover) == RELATIONSHIP_EFFECT.POSITIVE) {
-            //- **Recipient Response Text**: I should let [Target's Lover's Name] know about this.
-            reactions.Add(string.Format("I should let {0} know about this.", targetLover.name));
-            //- **Recipient Effect**: Recipient will perform Share Information Job targeting Target's Lover using this event as the information.
-            //Recipient will have https://trello.com/c/mqor1Ddv/1884-relationship-degradation with Actor.
-
-            if (!recipient.jobQueue.HasJobWithOtherData(JOB_TYPE.SHARE_INFORMATION, this)) {
-                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.SHARE_INFORMATION, INTERACTION_TYPE.SHARE_INFORMATION, targetLover, new Dictionary<INTERACTION_TYPE, object[]>() {
-                            { INTERACTION_TYPE.SHARE_INFORMATION, new object[] { this }}
-                        });
-                //job.SetCannotOverrideJob(true);
-                job.SetCancelOnFail(true);
-                recipient.jobQueue.AddJobInQueue(job, false);
+        } 
+        else if (recipient == target) {
+            if (recipient == actorLover) {
+                reactions.Add("Hey! That's private!");
+            } else if (recipient == actorParamour) {
+                reactions.Add("Don't you dare judge me!");
             }
-
-            CharacterManager.Instance.RelationshipDegradation(actor, recipient, this);
-        }
-        //Recipient and Actor are from the same faction and Actor has a Lover. Actor's Lover is not the Target.
-        else if (recipient.faction == actor.faction && actorLover != null && actorLover != target) {
-            //- **Recipient Response Text**: [Actor Name] is playing with fire.
-            reactions.Add(string.Format("{0} is playing with fire.", actor.name));
-            //- **Recipient Effect**: Recipient will have https://trello.com/c/mqor1Ddv/1884-relationship-degradation with Actor.
-            CharacterManager.Instance.RelationshipDegradation(actor, recipient, this);
-        }
-        //Else Catcher:
+        } 
+        else if (recipient == actorLover) {
+            if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
+                reactions.Add(string.Format("I've had enough of {0}'s shenanigans!", actor.name));
+            } else {
+                reactions.Add("It's just harmless flirtation.");
+            }
+        } 
+        else if (recipient == targetLover) {
+            if (CharacterManager.Instance.RelationshipDegradation(target, recipient, this)) {
+                reactions.Add(string.Format("I've had enough of {0}'s shenanigans!", target.name));
+            } else {
+                reactions.Add("It's just harmless flirtation.");
+            }
+        } 
+        else if (recipient == actorParamour || recipient == targetParamour) {
+            reactions.Add("I thought I was the only snake in town.");
+            AddTraitTo(recipient, "Annoyed");
+        } 
         else {
-            //- **Recipient Response Text**: I don't care what those two do with their personal lives.
-            reactions.Add("I don't care what those two do with their personal lives.");
-            //- **Recipient Effect**: no effect
+            reactions.Add("This isn't relevant to me..");
+        }
+        return reactions;
+    }
+    private List<string> BecomeLoversIntelReaction(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
+        List<string> reactions = new List<string>();
+        Character target = poiTarget as Character;
+        Character actorParamour = actor.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.PARAMOUR);
+        Character targetParamour = target.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.PARAMOUR);
+
+        if (recipient == actor) {
+            if(recipient == targetParamour) {
+                reactions.Add(string.Format("Yes that's true! I am so happy {0} finally chose me. This is what I've been dreaming for and at last, it came true!", target.name));
+            } else {
+                reactions.Add("Yes that's true and I am very happy. I hope we can be happy together, forever.");
+            }
+        }
+        else if (recipient == target) {
+            if (recipient == actorParamour) {
+                reactions.Add(string.Format("Yes that's true! I am so happy {0} finally chose me. This is what I've been dreaming for and at last, it came true!", actor.name));
+            } else {
+                reactions.Add("Yes that's true and I am very happy. I hope we can be happy together, forever.");
+            }
+        } 
+        else if (recipient == actorParamour) {
+            if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
+                reactions.Add(string.Format("I'm done being the appetizer in {0}'s full course meal!", actor.name));
+            } else {
+                reactions.Add(string.Format("Why can't I let {0} go? Perhaps, I'm truly, madly, deeply in love with {0}.", Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.OBJECTIVE, false)));
+            }
+            AddTraitTo(recipient, "Heartbroken");
+        } 
+        else if (recipient == targetParamour) {
+            if (CharacterManager.Instance.RelationshipDegradation(target, recipient, this)) {
+                reactions.Add(string.Format("I'm done being the appetizer in {0}'s full course meal!", target.name));
+            } else {
+                reactions.Add(string.Format("Why can't I let {0} go? Perhaps, I'm truly, madly, deeply in love with {0}.", Utilities.GetPronounString(target.gender, PRONOUN_TYPE.OBJECTIVE, false)));
+            }
+            AddTraitTo(recipient, "Heartbroken");
+        } 
+        else if (recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.ENEMY) || recipient.HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.ENEMY)) {
+            reactions.Add("That won't last. Mark my words!");
+            AddTraitTo(recipient, "Annoyed");
+        }
+        else {
+            reactions.Add("I guess there are two less lonely people in the world.");
         }
         return reactions;
     }
@@ -370,33 +467,29 @@ public class ChatCharacter : GoapAction {
         return reactions;
     }
 
-    private List<string> QuickChatIntelReaction(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
+    private List<string> ResolveEnmityIntelReaction(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
         List<string> reactions = new List<string>();
         Character target = poiTarget as Character;
+        Character actorParamour = actor.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.PARAMOUR);
+        Character targetParamour = target.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.PARAMOUR);
 
         //Recipient and Actor is the same or Recipient and Target is the same:
         if (recipient == actor || recipient == target) {
             //- **Recipient Response Text**: I know what I did.
-            reactions.Add("I know what I did.");
+            reactions.Add("I'm thankful we cleared that out.");
             //-**Recipient Effect * *: no effect
-        }
-        //Recipient considers Actor as enemy:
-        else if (recipient.HasRelationshipOfTypeWith(actor, false, RELATIONSHIP_TRAIT.ENEMY)) {
-            //- **Recipient Response Text**: Is [Actor Name] talking trash about me again?
-            reactions.Add(string.Format("Is {0} talking trash about me again?", actor.name));
-            //- **Recipient Effect**: no effect
-        }
-        //Recipient considers Target as enemy:
-        else if (recipient.HasRelationshipOfTypeWith(target, false, RELATIONSHIP_TRAIT.ENEMY)) {
-            //- **Recipient Response Text**: Is [Target Name] talking trash about me again?
-            reactions.Add(string.Format("Is {0} talking trash about me again?", target.name));
-            //- **Recipient Effect**: no effect
-        }
-        //Else:
+        } 
+        else if (recipient.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.POSITIVE || recipient.GetRelationshipEffectWith(target) == RELATIONSHIP_EFFECT.POSITIVE) {
+            reactions.Add("I'm glad they cleared things out.");
+        } 
+        else if (recipient.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.NEGATIVE) {
+            reactions.Add(string.Format("{0} has tricked another one.", actor.name));
+        } 
+        else if (recipient.GetRelationshipEffectWith(target) == RELATIONSHIP_EFFECT.NEGATIVE) {
+            reactions.Add(string.Format("{0} has tricked another one.", target.name));
+        } 
         else {
-            //- **Recipient Response Text**: This isn't relevant to me.
-            reactions.Add("This isn't relevant to me.");
-            //- **Recipient Effect**: no effect
+            reactions.Add("Good for them.");
         }
         return reactions;
     }
