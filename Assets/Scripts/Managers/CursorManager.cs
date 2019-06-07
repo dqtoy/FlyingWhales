@@ -34,7 +34,7 @@ public class CursorManager : MonoBehaviour {
             Destroy(this.gameObject);
         }
     }
-    private void LateUpdate() {
+    private void Update() {
         if (PlayerManager.Instance != null && PlayerManager.Instance.player != null && PlayerManager.Instance.player.currentActivePlayerJobAction != null) {
             IPointOfInterest hoveredPOI = InteriorMapManager.Instance.currentlyHoveredPOI;
             if (hoveredPOI != null) {

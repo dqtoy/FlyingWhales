@@ -135,6 +135,7 @@ public class CharacterInfoUI : UIMenu {
         base.CloseMenu();
         _activeCharacter = null;
         AreaMapCameraMove.Instance.CenterCameraOn(null);
+        
         //UIManager.Instance.SetCoverState(false);
         //PlayerAbilitiesUI.Instance.HidePlayerAbilitiesUI();
         //PlayerUI.Instance.CollapseMinionHolder();
@@ -143,12 +144,12 @@ public class CharacterInfoUI : UIMenu {
     public override void OpenMenu() {
         _previousCharacter = _activeCharacter;
         _activeCharacter = _data as Character;
+        SetLogMenuState(false);
         _activeCharacter.CenterOnCharacter(false);
         base.OpenMenu();
         if (UIManager.Instance.IsShareIntelMenuOpen()) {
             backButton.interactable = false;
         }
-        SetLogMenuState(false); //always close Logs menu first when opening this menu
         UIManager.Instance.HideObjectPicker();
         UpdateCharacterInfo();
         UpdateTraits();
