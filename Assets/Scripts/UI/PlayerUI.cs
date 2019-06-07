@@ -52,6 +52,14 @@ public class PlayerUI : MonoBehaviour {
     [Header("Provoke")]
     [SerializeField] private ProvokeMenu provokeMenu;
 
+    [Header("Memories")]
+    [SerializeField] private GameObject logItemPrefab;
+    [SerializeField] private RectTransform memoriesParent;
+    [SerializeField] private GameObject memoriesGO;
+    [SerializeField] private Color evenLogColor;
+    [SerializeField] private Color oddLogColor;
+    private LogHistoryItem[] logHistoryItems;
+
     [Header("Miscellaneous")]
     [SerializeField] private Vector3 openPosition;
     [SerializeField] private Vector3 closePosition;
@@ -108,6 +116,7 @@ public class PlayerUI : MonoBehaviour {
         LoadAttackSlot();
 
         UpdateIntel();
+        InitializeMemoriesMenu();
 
         Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
@@ -474,6 +483,41 @@ public class PlayerUI : MonoBehaviour {
     #region Provoke
     public void OpenProvoke(Character minion, Character target) {
         provokeMenu.Open(target, minion);
+    }
+    #endregion
+
+    #region Memories
+    public void ShowMemories(Character character) {
+        memoriesGO.SetActive(true);
+        List<Log> characterHistory = new List<Log>(character.history.OrderByDescending(x => x.date.year).ThenByDescending(x => x.date.month).ThenByDescending(x => x.date.day).ThenByDescending(x => x.date.tick));
+        for (int i = 0; i < logHistoryItems.Length; i++) {
+            LogHistoryItem currItem = logHistoryItems[i];
+            Log currLog = characterHistory.ElementAtOrDefault(i);
+            if (currLog != null) {
+                currItem.gameObject.SetActive(true);
+                currItem.SetLog(currLog);
+                if (Utilities.IsEven(i)) {
+                    currItem.SetLogColor(evenLogColor);
+                } else {
+                    currItem.SetLogColor(oddLogColor);
+                }
+            } else {
+                currItem.gameObject.SetActive(false);
+            }
+        }
+    }
+    private void InitializeMemoriesMenu() {
+        logHistoryItems = new LogHistoryItem[CharacterManager.MAX_HISTORY_LOGS];
+        //populate history logs table
+        for (int i = 0; i < CharacterManager.MAX_HISTORY_LOGS; i++) {
+            GameObject newLogItem = ObjectPoolManager.Instance.InstantiateObjectFromPool(logItemPrefab.name, Vector3.zero, Quaternion.identity, memoriesParent);
+            logHistoryItems[i] = newLogItem.GetComponent<LogHistoryItem>();
+            newLogItem.transform.localScale = Vector3.one;
+            newLogItem.SetActive(true);
+        }
+        for (int i = 0; i < logHistoryItems.Length; i++) {
+            logHistoryItems[i].gameObject.SetActive(false);
+        }
     }
     #endregion
 }

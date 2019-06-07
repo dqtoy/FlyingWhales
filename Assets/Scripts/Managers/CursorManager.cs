@@ -19,7 +19,7 @@ public class CursorManager : MonoBehaviour {
     [SerializeField] private CursorTextureDictionary cursors;
 
     public enum Cursor_Type {
-        Default, Target, Drag_Hover, Drag_Clicked, Check, Cross
+        None, Default, Target, Drag_Hover, Drag_Clicked, Check, Cross
     }
     private Cursor_Type currentCursorType;
 
@@ -56,6 +56,9 @@ public class CursorManager : MonoBehaviour {
     #endregion
 
     public void SetCursorTo(Cursor_Type type) {
+        if (currentCursorType == type) {
+            return; //ignore 
+        }
         Vector2 hotSpot = Vector2.zero;
         switch (type) {
             case Cursor_Type.Drag_Clicked:

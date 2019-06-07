@@ -215,6 +215,10 @@ public class UIManager : MonoBehaviour {
 
         Messenger.AddListener(Signals.ON_OPEN_SHARE_INTEL, OnOpenShareIntelMenu);
         Messenger.AddListener(Signals.ON_CLOSE_SHARE_INTEL, OnCloseShareIntelMenu);
+        Messenger.AddListener(Signals.GAME_LOADED, OnGameLoaded);
+        UpdateUI();
+    }
+    private void OnGameLoaded() {
         UpdateUI();
     }
     private void HideMenus() {

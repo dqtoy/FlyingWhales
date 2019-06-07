@@ -8,6 +8,7 @@ public class CharacterManager : MonoBehaviour {
 
     public static CharacterManager Instance = null;
 
+    public const int MAX_HISTORY_LOGS = 300;
     public const int CHARACTER_MAX_MEMORY = 20;
 
     public GameObject characterIconPrefab;

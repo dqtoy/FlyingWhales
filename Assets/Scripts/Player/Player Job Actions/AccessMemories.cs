@@ -17,7 +17,7 @@ public class AccessMemories : PlayerJobAction {
         Character targetCharacter = targetPOI as Character;
         base.ActivateAction(assignedCharacter, targetCharacter);
         UIManager.Instance.ShowCharacterInfo(targetCharacter);
-        UIManager.Instance.characterInfoUI.SetLogMenuState(true);
+        PlayerUI.Instance.ShowMemories(targetCharacter);
     }
     protected override bool CanPerformActionTowards(Character character, Character targetCharacter) {
         if (character.id == targetCharacter.id) {

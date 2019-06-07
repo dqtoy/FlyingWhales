@@ -31,7 +31,7 @@ public class CorruptUnfaithful : PlayerJobAction {
         //if (targetCharacter.role.roleType == CHARACTER_ROLE.BEAST || targetCharacter.race == RACE.SKELETON) {
         //    return false;
         //}
-        if (_targetCharacter.GetNormalTrait("Unfaithful") != null) {
+        if (targetCharacter.GetNormalTrait("Unfaithful") != null) {
             return false;
         }
         return base.CanPerformActionTowards(character, targetCharacter);
@@ -47,7 +47,7 @@ public class CorruptUnfaithful : PlayerJobAction {
         if (targetCharacter.race != RACE.HUMANS && targetCharacter.race != RACE.ELVES) {
             return false;
         }
-        if (_targetCharacter.GetNormalTrait("Unfaithful") != null) {
+        if (targetCharacter.GetNormalTrait("Unfaithful") != null) {
             return false;
         }
         return base.CanTarget(targetCharacter);

@@ -9,7 +9,6 @@ using System;
 
 public class CharacterInfoUI : UIMenu {
 
-    private const int MAX_HISTORY_LOGS = 300;
     public bool isWaitingForAttackTarget;
     public bool isWaitingForJoinBattleTarget;
 
@@ -36,7 +35,6 @@ public class CharacterInfoUI : UIMenu {
     [SerializeField] private ScrollRect historyScrollView;
     [SerializeField] private Color evenLogColor;
     [SerializeField] private Color oddLogColor;
-    [SerializeField] private GameObject logsMenuCover;
 
     [Space(10)]
     [Header("Character")]
@@ -111,9 +109,9 @@ public class CharacterInfoUI : UIMenu {
         InitializeLogsMenu();
     }
     private void InitializeLogsMenu() {
-        logHistoryItems = new LogHistoryItem[MAX_HISTORY_LOGS];
+        logHistoryItems = new LogHistoryItem[CharacterManager.MAX_HISTORY_LOGS];
         //populate history logs table
-        for (int i = 0; i < MAX_HISTORY_LOGS; i++) {
+        for (int i = 0; i < CharacterManager.MAX_HISTORY_LOGS; i++) {
             GameObject newLogItem = ObjectPoolManager.Instance.InstantiateObjectFromPool(logHistoryPrefab.name, Vector3.zero, Quaternion.identity, historyScrollView.content);
             logHistoryItems[i] = newLogItem.GetComponent<LogHistoryItem>();
             newLogItem.transform.localScale = Vector3.one;
