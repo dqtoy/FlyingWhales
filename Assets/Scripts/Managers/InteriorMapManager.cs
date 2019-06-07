@@ -398,7 +398,16 @@ public class InteriorMapManager : MonoBehaviour {
         summary += "\n\tHostiles in Range: ";
         if (character.marker.hostilesInRange.Count > 0) {
             for (int i = 0; i < character.marker.hostilesInRange.Count; i++) {
-                Character poi = character.marker.hostilesInRange.ElementAt(i);
+                Character poi = character.marker.hostilesInRange[i];
+                summary += poi.name + ", ";
+            }
+        } else {
+            summary += "None";
+        }
+        summary += "\n\tAvoid in Range: ";
+        if (character.marker.avoidInRange.Count > 0) {
+            for (int i = 0; i < character.marker.avoidInRange.Count; i++) {
+                Character poi = character.marker.avoidInRange[i];
                 summary += poi.name + ", ";
             }
         } else {

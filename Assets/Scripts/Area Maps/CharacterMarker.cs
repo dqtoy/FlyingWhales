@@ -834,8 +834,9 @@ public class CharacterMarker : PooledObject {
                 placeMarkerAt = deathTileLocation.GetNearestUnoccupiedTileFromThis();
             }
             transform.position = placeMarkerAt.centeredWorldLocation;
-            hostilesInRange.Clear();
-            inVisionPOIs.Clear();
+            ClearHostilesInRange();
+            ClearPOIsInVisionRange();
+            ClearAvoidInRange();
             visionCollision.OnDeath();
         }
     }
@@ -1136,7 +1137,7 @@ public class CharacterMarker : PooledObject {
     #region Flee
     public bool hasFleePath { get; private set; }
     public void OnStartFlee() {
-        if (hostilesInRange.Count == 0) {
+        if (hostilesInRange.Count == 0 && avoidInRange.Count == 0) {
             return;
         }
         pathfindingAI.ClearAllCurrentPathData();
