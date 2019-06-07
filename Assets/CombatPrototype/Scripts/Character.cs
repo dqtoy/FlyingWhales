@@ -2678,7 +2678,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             //    Debug.Log("Added log to history of " + this.name + ". " + log.isInspected);
             //}
             if (this._history.Count > 300) {
+                if (this._history[0].goapAction != null) {
+                    this._history[0].goapAction.AdjustReferenceCount(-1);
+                }
                 this._history.RemoveAt(0);
+            }
+            if(log.goapAction != null) {
+                log.goapAction.AdjustReferenceCount(1);
             }
             Messenger.Broadcast(Signals.HISTORY_ADDED, this as object);
         }

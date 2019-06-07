@@ -176,6 +176,7 @@ public class GoapAction {
     public virtual void PerformActualAction() {
         isPerformingActualAction = true;
         actorAlterEgo = actor.currentAlterEgo;
+        //Messenger.AddListener<IPointOfInterest>(Signals.OLD_NEWS_TRIGGER, OldNewsTrigger);
         if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
             Character targetCharacter = poiTarget as Character;
             poiTargetAlterEgo = targetCharacter.currentAlterEgo;
@@ -362,6 +363,11 @@ public class GoapAction {
     public virtual bool IsTarget(IPointOfInterest poi) {
         return poiTarget == poi;
     }
+
+    /// <summary>
+    /// This might change the value of isOldNews to true if the conditions are met
+    /// </summary>
+    protected virtual void OldNewsTrigger(IPointOfInterest poi) { }
     #endregion
 
     #region Utilities
@@ -619,7 +625,14 @@ public class GoapAction {
         }
     }
     public void SetIsOldNews(bool state) {
-        isOldNews = state;
+        if(isOldNews != state) {
+            isOldNews = state;
+            if (isOldNews) {
+                if (Messenger.eventTable.ContainsKey(Signals.OLD_NEWS_TRIGGER)) {
+                    Messenger.RemoveListener<IPointOfInterest>(Signals.OLD_NEWS_TRIGGER, OldNewsTrigger);
+                }
+            }
+        }
     }
     public void AdjustReferenceCount(int amount) {
         referenceCount += amount;

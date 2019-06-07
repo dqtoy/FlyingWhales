@@ -267,7 +267,7 @@ public class MakeLove : GoapAction {
                 AddTraitTo(recipient, "Heartbroken");
             }
             //- Recipient has a positive relationship with Actor's Lover and Actor's Lover is not the Target
-            else if (recipient.GetRelationshipEffectWith(actorLover) == RELATIONSHIP_EFFECT.POSITIVE || actorLover != target) {
+            else if (recipient.GetRelationshipEffectWith(actorLover) == RELATIONSHIP_EFFECT.POSITIVE && actorLover != target) {
                 if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
                     reactions.Add(string.Format("{0} is cheating on {1}?! I must let {2} know.", actor.name, actorLover.name, Utilities.GetPronounString(actorLover.gender, PRONOUN_TYPE.OBJECTIVE, false)));
                     recipient.CreateShareInformationJob(actorLover, this);
@@ -279,7 +279,7 @@ public class MakeLove : GoapAction {
                 }
             }
             //- Recipient has a positive relationship with Target's Lover and Target's Lover is not the Actor
-            else if (recipient.GetRelationshipEffectWith(targetLover) == RELATIONSHIP_EFFECT.POSITIVE || targetLover != actor) {
+            else if (recipient.GetRelationshipEffectWith(targetLover) == RELATIONSHIP_EFFECT.POSITIVE && targetLover != actor) {
                 if (CharacterManager.Instance.RelationshipDegradation(target, recipient, this)) {
                     reactions.Add(string.Format("{0} is cheating on {1}?! I must let {2} know.", target.name, targetLover.name, Utilities.GetPronounString(targetLover.gender, PRONOUN_TYPE.OBJECTIVE, false)));
                     recipient.CreateShareInformationJob(targetLover, this);
@@ -291,26 +291,26 @@ public class MakeLove : GoapAction {
                 }
             }
             //- Recipient has a negative relationship with Actor's Lover and Actor's Lover is not the Target
-            else if (recipient.GetRelationshipEffectWith(actorLover) == RELATIONSHIP_EFFECT.NEGATIVE || actorLover != target) {
+            else if (recipient.GetRelationshipEffectWith(actorLover) == RELATIONSHIP_EFFECT.NEGATIVE && actorLover != target) {
                 reactions.Add(string.Format("{0} is cheating on {1}? {2} got what {3} deserves.", actor.name, actorLover.name, Utilities.GetPronounString(actorLover.gender, PRONOUN_TYPE.SUBJECTIVE, true), Utilities.GetPronounString(actorLover.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
                 if (status == SHARE_INTEL_STATUS.WITNESSED) {
                     recipient.stateComponent.SwitchToState(CHARACTER_STATE.FLEE, actor);
                 }
             }
             //- Recipient has a negative relationship with Target's Lover and Target's Lover is not the Actor
-            else if (recipient.GetRelationshipEffectWith(targetLover) == RELATIONSHIP_EFFECT.NEGATIVE || targetLover != actor) {
-                reactions.Add(string.Format("{0} is cheating on {1}? {2} got what {3} deserves.", actor.name, targetLover.name, Utilities.GetPronounString(targetLover.gender, PRONOUN_TYPE.SUBJECTIVE, true), Utilities.GetPronounString(targetLover.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
+            else if (recipient.GetRelationshipEffectWith(targetLover) == RELATIONSHIP_EFFECT.NEGATIVE && targetLover != actor) {
+                reactions.Add(string.Format("{0} is cheating on {1}? {2} got what {3} deserves.", target.name, targetLover.name, Utilities.GetPronounString(targetLover.gender, PRONOUN_TYPE.SUBJECTIVE, true), Utilities.GetPronounString(targetLover.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
                 if (status == SHARE_INTEL_STATUS.WITNESSED) {
                     recipient.stateComponent.SwitchToState(CHARACTER_STATE.FLEE, target);
                 }
             }
             //- Recipient has a no relationship with Actor's Lover and Actor's Lover is not the Target
-            else if (recipient.GetRelationshipEffectWith(actorLover) == RELATIONSHIP_EFFECT.NONE || actorLover != target) {
+            else if (recipient.GetRelationshipEffectWith(actorLover) == RELATIONSHIP_EFFECT.NONE && actorLover != target) {
                 reactions.Add(string.Format("{0} is cheating on {1}? I don't want to get involved.", actor.name, actorLover.name));
                 CharacterManager.Instance.RelationshipDegradation(actor, recipient, this);
             }
             //- Recipient has no relationship with Target's Lover and Target's Lover is not the Actor
-            else if (recipient.GetRelationshipEffectWith(targetLover) == RELATIONSHIP_EFFECT.NONE || targetLover != actor) {
+            else if (recipient.GetRelationshipEffectWith(targetLover) == RELATIONSHIP_EFFECT.NONE && targetLover != actor) {
                 reactions.Add(string.Format("{0} is cheating on {1}? I don't want to get involved.", target.name, targetLover.name));
                 CharacterManager.Instance.RelationshipDegradation(target, recipient, this);
             }

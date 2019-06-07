@@ -102,6 +102,10 @@ public class TablePoison : GoapAction {
         }
         poisonedTrait.AddAwareCharacter(witness);
     }
+    protected override void OldNewsTrigger(IPointOfInterest poi) {
+        base.OldNewsTrigger(poi);
+
+    }
     #endregion
 
     #region State Effects

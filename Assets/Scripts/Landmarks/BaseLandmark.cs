@@ -363,7 +363,13 @@ public class BaseLandmark : ILocation {
         if (!_history.Contains(log)) {
             _history.Add(log);
             if (this._history.Count > 60) {
+                if (this._history[0].goapAction != null) {
+                    this._history[0].goapAction.AdjustReferenceCount(-1);
+                }
                 this._history.RemoveAt(0);
+            }
+            if (log.goapAction != null) {
+                log.goapAction.AdjustReferenceCount(1);
             }
             //tileLocation.areaOfTile.AddHistory(log);
             Messenger.Broadcast(Signals.HISTORY_ADDED, this as object);
