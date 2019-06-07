@@ -66,7 +66,7 @@ public class ReportCrime : GoapAction {
 
         //**Effect 2**: Share event related to the Crime to the Target's memories
         if (crimeAction != null) {
-            target.CreateInformedEventLog(crimeAction);
+            target.CreateInformedEventLog(crimeAction, true);
         }
         target.ReactToCrime(crime, crimeAction, criminal, null, crimeAction);
     }

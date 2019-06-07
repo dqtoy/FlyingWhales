@@ -67,7 +67,7 @@ public interface ICharacter {
     //functions
     void SetName(string name);
     void Initialize();
-    void Death(string cause = "normal");
+    void Death(string cause = "normal", GoapAction deathFromAction = null);
     void LevelUp();
     void OnRemovedFromParty();
     void OnAddedToParty();

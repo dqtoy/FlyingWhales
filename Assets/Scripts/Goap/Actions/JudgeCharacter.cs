@@ -48,7 +48,7 @@ public class JudgeCharacter : GoapAction {
         SetCannotCancelAction(true);
         //**Effect 1**: Remove target's Restrained trait
         //**Effect 2**: Target dies
-        (poiTarget as Character).Death();
+        (poiTarget as Character).Death(deathFromAction: this);
 
         RemoveTraitFrom(poiTarget, "Restrained");
     }

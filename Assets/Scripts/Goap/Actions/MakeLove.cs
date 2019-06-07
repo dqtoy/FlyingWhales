@@ -270,13 +270,7 @@ public class MakeLove : GoapAction {
             else if (recipient.GetRelationshipEffectWith(actorLover) == RELATIONSHIP_EFFECT.POSITIVE || actorLover != target) {
                 if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
                     reactions.Add(string.Format("{0} is cheating on {1}?! I must let {2} know.", actor.name, actorLover.name, Utilities.GetPronounString(actorLover.gender, PRONOUN_TYPE.OBJECTIVE, false)));
-                    if (!recipient.jobQueue.HasJobWithOtherData(JOB_TYPE.SHARE_INFORMATION, this)) {
-                        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.SHARE_INFORMATION, INTERACTION_TYPE.SHARE_INFORMATION, actorLover, new Dictionary<INTERACTION_TYPE, object[]>() {
-                            { INTERACTION_TYPE.SHARE_INFORMATION, new object[] { this }}
-                        });
-                        job.SetCancelOnFail(true);
-                        recipient.jobQueue.AddJobInQueue(job, false);
-                    }
+                    recipient.CreateShareInformationJob(actorLover, this);
                 } else {
                     reactions.Add(string.Format("{0} is cheating on {1}? I don't want to get involved.", actor.name, actorLover.name));
                     if (status == SHARE_INTEL_STATUS.WITNESSED) {
@@ -288,13 +282,7 @@ public class MakeLove : GoapAction {
             else if (recipient.GetRelationshipEffectWith(targetLover) == RELATIONSHIP_EFFECT.POSITIVE || targetLover != actor) {
                 if (CharacterManager.Instance.RelationshipDegradation(target, recipient, this)) {
                     reactions.Add(string.Format("{0} is cheating on {1}?! I must let {2} know.", target.name, targetLover.name, Utilities.GetPronounString(targetLover.gender, PRONOUN_TYPE.OBJECTIVE, false)));
-                    if (!recipient.jobQueue.HasJobWithOtherData(JOB_TYPE.SHARE_INFORMATION, this)) {
-                        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.SHARE_INFORMATION, INTERACTION_TYPE.SHARE_INFORMATION, targetLover, new Dictionary<INTERACTION_TYPE, object[]>() {
-                            { INTERACTION_TYPE.SHARE_INFORMATION, new object[] { this }}
-                        });
-                        job.SetCancelOnFail(true);
-                        recipient.jobQueue.AddJobInQueue(job, false);
-                    }
+                    recipient.CreateShareInformationJob(targetLover, this);
                 } else {
                     reactions.Add(string.Format("{0} is cheating on {1}? I don't want to get involved.", target.name, targetLover.name));
                     if (status == SHARE_INTEL_STATUS.WITNESSED) {

@@ -101,7 +101,11 @@ public class StealFromCharacter : GoapAction {
             //Not Yet Old News
             if (awareCharactersOfThisAction.Contains(recipient)) {
                 //- If Recipient is Aware
-                reactions.Add(string.Format("I already know that {0} stole from me.", actor.name));
+                if (recipient == actor) {
+                    reactions.Add("Yes, I did that.");
+                } else {
+                    reactions.Add(string.Format("I already know that {0} stole from me.", actor.name));
+                }
             } else {
                 //- If Recipient is Not Aware
                 //- Recipient is Actor

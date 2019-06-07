@@ -137,7 +137,7 @@ public class EatAtTable : GoapAction {
                 parentPlan.job.SetCannotCancelJob(true);
             }
             SetCannotCancelAction(true);
-            actor.Death("normal");
+            actor.Death(deathFromAction: this);
             AddActualEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.DEATH, targetPOI = actor });
         }
     }

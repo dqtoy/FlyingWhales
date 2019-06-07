@@ -769,7 +769,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             _ownParty.ReturnToLife();
         }
     }
-    public void Death(string cause = "normal") {
+    public void Death(string cause = "normal", GoapAction deathFromAction = null) {
         if (!_isDead) {
             SetIsDead(true);
             UnsubscribeSignals();
@@ -846,7 +846,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             onCharacterDeath = null;
 
             Dead dead = new Dead();
-            AddTrait(dead);
+            AddTrait(dead, gainedFromDoing: deathFromAction);
             Messenger.Broadcast(Signals.CHARACTER_DEATH, this);
 
             Debug.Log(GameManager.Instance.TodayLogString() + this.name + " died of " + cause);
@@ -1735,6 +1735,16 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         GoapPlanJob job = new GoapPlanJob(JOB_TYPE.BREAK_UP, INTERACTION_TYPE.BREAK_UP, targetCharacter);
         jobQueue.AddJobInQueue(job);
         return job;
+    }
+    public void CreateShareInformationJob(Character targetCharacter, GoapAction info) {
+        if (!jobQueue.HasJobWithOtherData(JOB_TYPE.SHARE_INFORMATION, info)) {
+            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.SHARE_INFORMATION, INTERACTION_TYPE.SHARE_INFORMATION, targetCharacter, new Dictionary<INTERACTION_TYPE, object[]>() {
+                            { INTERACTION_TYPE.SHARE_INFORMATION, new object[] { info }}
+                        });
+            //job.SetCannotOverrideJob(true);
+            job.SetCancelOnFail(true);
+            jobQueue.AddJobInQueue(job, false);
+        }
     }
     public void CancelAllJobsAndPlans() {
         AdjustIsWaitingForInteraction(1);
@@ -2773,12 +2783,19 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return memories;
     }
-    public void CreateInformedEventLog(GoapAction eventToBeInformed) {
+    public void CreateInformedEventLog(GoapAction eventToBeInformed, bool invokeShareIntelReaction) {
         Log informedLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "informed_event", eventToBeInformed);
         informedLog.AddToFillers(eventToBeInformed.currentState.descriptionLog.fillers);
         informedLog.AddToFillers(this, this.name, LOG_IDENTIFIER.OTHER);
         informedLog.AddToFillers(null, Utilities.LogDontReplace(eventToBeInformed.currentState.descriptionLog), LOG_IDENTIFIER.APPEND);
         AddHistory(informedLog);
+
+        if (invokeShareIntelReaction) {
+            if (eventToBeInformed.currentState.shareIntelReaction != null) {
+                eventToBeInformed.currentState.shareIntelReaction.Invoke(this, null, SHARE_INTEL_STATUS.INFORMED);
+            }
+        }
+        eventToBeInformed.AddAwareCharacter(this);
 
         ////If a character sees or informed about a lover performing Making Love or Ask to Make Love, they will feel Betrayed
         //if (eventToBeInformed.actor != this && !eventToBeInformed.IsTarget(this)) {
@@ -5334,7 +5351,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     }
                 }
             }
-            CreateInformedEventLog(intel.intelLog.goapAction);
+            CreateInformedEventLog(intel.intelLog.goapAction, false);
         }
         PlayerManager.Instance.player.RemoveIntel(intel);
         return dialogReactions;

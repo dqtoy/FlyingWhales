@@ -421,14 +421,7 @@ public class ChatCharacter : GoapAction {
             //- **Recipient Effect**: Recipient will perform Share Information Job targeting Actor's Lover using this event as the information.
             //Recipient will have https://trello.com/c/mqor1Ddv/1884-relationship-degradation with Actor.
 
-            if (!recipient.jobQueue.HasJobWithOtherData(JOB_TYPE.SHARE_INFORMATION, this)) {
-                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.SHARE_INFORMATION, INTERACTION_TYPE.SHARE_INFORMATION, actorLover, new Dictionary<INTERACTION_TYPE, object[]>() {
-                            { INTERACTION_TYPE.SHARE_INFORMATION, new object[] { this }}
-                        });
-                //job.SetCannotOverrideJob(true);
-                job.SetCancelOnFail(true);
-                recipient.jobQueue.AddJobInQueue(job, false);
-            }
+            recipient.CreateShareInformationJob(actorLover, this);
 
             CharacterManager.Instance.RelationshipDegradation(actor, recipient, this);
         }
@@ -440,14 +433,7 @@ public class ChatCharacter : GoapAction {
             //- **Recipient Effect**: Recipient will perform Share Information Job targeting Target's Lover using this event as the information.
             //Recipient will have https://trello.com/c/mqor1Ddv/1884-relationship-degradation with Actor.
 
-            if (!recipient.jobQueue.HasJobWithOtherData(JOB_TYPE.SHARE_INFORMATION, this)) {
-                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.SHARE_INFORMATION, INTERACTION_TYPE.SHARE_INFORMATION, targetLover, new Dictionary<INTERACTION_TYPE, object[]>() {
-                            { INTERACTION_TYPE.SHARE_INFORMATION, new object[] { this }}
-                        });
-                //job.SetCannotOverrideJob(true);
-                job.SetCancelOnFail(true);
-                recipient.jobQueue.AddJobInQueue(job, false);
-            }
+            recipient.CreateShareInformationJob(targetLover, this);
 
             CharacterManager.Instance.RelationshipDegradation(actor, recipient, this);
         }

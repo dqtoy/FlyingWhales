@@ -128,7 +128,7 @@ public class AssaultCharacter : GoapAction {
             parentPlan.job.SetCannotCancelJob(true);
         }
         SetCannotCancelAction(true);
-        loser.Death();
+        loser.Death(deathFromAction: this);
     }
     //public void PreTargetMissing() {
     //    currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
