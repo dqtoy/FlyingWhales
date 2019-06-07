@@ -29,12 +29,24 @@ public class JobQueue {
         }
         job.OnAddJobToQueue();
 
-        if(processLogicForPersonalJob && character != null) {
-            if((character.stateComponent.currentState != null && (character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL || character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL_OUTSIDE))
-                || (character.currentAction != null && character.currentAction.goapType == INTERACTION_TYPE.RETURN_HOME && 
-                (character.currentAction.parentPlan == null || character.currentAction.parentPlan.category == GOAP_CATEGORY.IDLE))) {
-                character.jobQueue.ProcessFirstJobInQueue(character);
+        if(character != null) {
+            //bool hasProcessed = false;
+            //If the current action's job of the character is overridable and the added job has higher priority than it,
+            //then process the first job in queue if the first job is the added job
+            if (character.CanCurrentJobBeOverridenByJob(job)) {
+                JobQueueItem firstJob = GetFirstUnassignedJobInQueue(character);
+                if(firstJob != null && firstJob == job) {
+                    character.jobQueue.ProcessFirstJobInQueue(character);
+                    //hasProcessed = true;
+                }
             }
+            //if (processLogicForPersonalJob && !hasProcessed) {
+            //    if ((character.stateComponent.currentState != null && (character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL || character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL_OUTSIDE))
+            //        || (character.currentAction != null && character.currentAction.goapType == INTERACTION_TYPE.RETURN_HOME &&
+            //        (character.currentAction.parentPlan == null || character.currentAction.parentPlan.category == GOAP_CATEGORY.IDLE))) {
+            //        character.jobQueue.ProcessFirstJobInQueue(character);
+            //    }
+            //}
         }
     }
     public bool RemoveJobInQueue(JobQueueItem job) {
@@ -58,6 +70,20 @@ public class JobQueue {
     }
     public bool IsJobInTopPriority(JobQueueItem job) {
         return jobsInQueue.Count > 0 && jobsInQueue[0] == job;
+    }
+    public JobQueueItem GetFirstUnassignedJobInQueue(Character characterToDoJob) {
+        if (jobsInQueue.Count > 0) {
+            for (int i = 0; i < jobsInQueue.Count; i++) {
+                JobQueueItem job = jobsInQueue[i];
+                if (job.assignedCharacter == null && job.CanCharacterTakeThisJob(characterToDoJob)) {
+                    if (job.blacklistedCharacters.Contains(characterToDoJob)) {
+                        continue;
+                    }
+                    return job;
+                }
+            }
+        }
+        return null;
     }
     public bool ProcessFirstJobInQueue(Character characterToDoJob) {
         if(jobsInQueue.Count > 0) {

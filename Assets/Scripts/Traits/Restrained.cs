@@ -55,7 +55,7 @@ public class Restrained : Trait {
     public override void OnRemoveTrait(IPointOfInterest sourceCharacter) {
         if(sourceCharacter is Character) {
             Character character = sourceCharacter as Character;
-            character.CancelAllJobsTargettingThisCharacter("Feed");
+            character.CancelAllJobsTargettingThisCharacter(JOB_TYPE.FEED);
             Messenger.RemoveListener(Signals.TICK_STARTED, CheckRestrainTrait);
             //_sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, name.ToLower());
             _sourceCharacter.RemoveTraitNeededToBeRemoved(this);

@@ -1350,16 +1350,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
     }
     public bool CreateJobsOnEnterVisionWith(Character targetCharacter) {
-        if(stateComponent.currentState != null) {
-            if(stateComponent.currentState.characterState == CHARACTER_STATE.FLEE || stateComponent.currentState.characterState == CHARACTER_STATE.ENGAGE) {
-                //Character must not react if he/she is in flee or engage state
-                return true;
-            }
-        }
-        if((stateComponent.currentState != null && stateComponent.currentState.characterState == CHARACTER_STATE.BERSERKED) 
-            || (stateComponent.previousMajorState != null && stateComponent.previousMajorState.characterState == CHARACTER_STATE.BERSERKED)) {
-            //Character must not react if he/she is in berserked state
-            //Returns true so that it will create an impression that the character actually created a job even if he/she didn't, so that the character will not chat, etc.
+        if (!CanCharacterReact()) {
             return true;
         }
         bool hasCreatedJob = false;
@@ -1383,16 +1374,16 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     /// </summary>
     /// <param name="targetCharacter">The character to undermine.</param>
     public void ForceCreateUndermineJob(Character targetCharacter, string reason) {
-        if (!targetCharacter.isDead && !jobQueue.HasJob(JOB_TYPE.UNDERMINE_ENEMY, targetCharacter)) {
+        if (!targetCharacter.isDead) {
             CreateUndermineJobOnly(targetCharacter, reason);
         }
     }
-    public bool CreateUndermineJobOnly(Character targetCharacter, string reason, bool processJobQueue = true, SHARE_INTEL_STATUS status = SHARE_INTEL_STATUS.INFORMED) {
+    public bool CreateUndermineJobOnly(Character targetCharacter, string reason, SHARE_INTEL_STATUS status = SHARE_INTEL_STATUS.INFORMED) {
         if(jobQueue.HasJob(JOB_TYPE.UNDERMINE_ENEMY, targetCharacter)) {
             return false;
         }
         if(status == SHARE_INTEL_STATUS.WITNESSED) {
-            return CreateAssaultUndermineJobOnly(targetCharacter, reason, processJobQueue);
+            return CreateAssaultUndermineJobOnly(targetCharacter, reason);
         }
         WeightedDictionary<string> undermineWeights = new WeightedDictionary<string>();
         undermineWeights.AddElement("negative trait", 50);
@@ -1486,9 +1477,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             Debug.LogWarning(GameManager.Instance.TodayLogString() + "Added an UNDERMINE ENEMY Job: " + result + " to " + this.name + " with target " + targetCharacter.name);
             //job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
             jobQueue.AddJobInQueue(job, false);
-            if (processJobQueue) {
-                jobQueue.ProcessFirstJobInQueue(this);
-            }
+            //if (processJobQueue) {
+            //    jobQueue.ProcessFirstJobInQueue(this);
+            //}
 
             Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", reason + "_and_undermine");
             log.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -1501,15 +1492,15 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return false;
     }
-    private bool CreateAssaultUndermineJobOnly(Character targetCharacter, string reason, bool processJobQueue = true) {
+    private bool CreateAssaultUndermineJobOnly(Character targetCharacter, string reason) {
         GoapPlanJob job = new GoapPlanJob(JOB_TYPE.UNDERMINE_ENEMY, INTERACTION_TYPE.ASSAULT_ACTION_NPC, targetCharacter);
         job.SetCannotOverrideJob(true);
         Debug.LogWarning(GameManager.Instance.TodayLogString() + "Added an UNDERMINE ENEMY Job: " + job.targetInteractionType.ToString() + " to " + this.name + " with target " + targetCharacter.name);
         //job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
         jobQueue.AddJobInQueue(job, false);
-        if (processJobQueue) {
-            jobQueue.ProcessFirstJobInQueue(this);
-        }
+        //if (processJobQueue) {
+        //    jobQueue.ProcessFirstJobInQueue(this);
+        //}
 
         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", reason + "_and_undermine");
         log.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -1761,6 +1752,41 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         }
         AdjustIsWaitingForInteraction(-1);
+    }
+    public bool CanCurrentJobBeOverridenByJob(JobQueueItem job) {
+        if ((stateComponent.currentState != null && stateComponent.currentState.characterState == CHARACTER_STATE.BERSERKED)
+            || (stateComponent.previousMajorState != null && stateComponent.previousMajorState.characterState == CHARACTER_STATE.BERSERKED)) {
+            //Berserked state cannot be overriden
+            return false;
+        }
+        if (stateComponent.currentState != null) {
+            if (stateComponent.currentState.characterState == CHARACTER_STATE.FLEE || stateComponent.currentState.characterState == CHARACTER_STATE.ENGAGE) {
+                //Only override flee or engage state if the job is Berserked State, Berserk overrides all
+                if (job is CharacterStateJob) {
+                    CharacterStateJob stateJob = job as CharacterStateJob;
+                    if (stateJob.targetState == CHARACTER_STATE.BERSERKED) {
+                        return true;
+                    }
+                }
+                return false;
+            } else {
+                //If current state is not Flee or Engage, it is certainly one of the major states since the only minor states are Flee and Engage
+                //If current state has no job, it is automatically overridable, otherwise, if the current state's job has a lower job priority (higher number) than the parameter job, it is overridable
+                if(stateComponent.currentState.job != null && !stateComponent.currentState.job.cannotOverrideJob && job.priority < stateComponent.currentState.job.priority) {
+                    return true;
+                }else if(stateComponent.currentState.job == null) {
+                    return true;
+                }
+                return false;
+            }
+        }
+        //If there is no current state then check the current action
+        //Same process applies that if the current action's job has a lower job priority (higher number) than the parameter job, it is overridable
+        if (currentAction != null && currentAction.parentPlan != null && currentAction.parentPlan.job != null && !currentAction.parentPlan.job.cannotOverrideJob
+                       && job.priority < currentAction.parentPlan.job.priority) {
+            return true;
+        }
+        return false;
     }
     #endregion
 
@@ -2250,6 +2276,21 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 marker.ClearTerrifyingCharacters();
             }
         }
+    }
+    public bool CanCharacterReact() {
+        if (stateComponent.currentState != null) {
+            if (stateComponent.currentState.characterState == CHARACTER_STATE.FLEE || stateComponent.currentState.characterState == CHARACTER_STATE.ENGAGE) {
+                //Character must not react if he/she is in flee or engage state
+                return false;
+            }
+        }
+        if ((stateComponent.currentState != null && stateComponent.currentState.characterState == CHARACTER_STATE.BERSERKED)
+            || (stateComponent.previousMajorState != null && stateComponent.previousMajorState.characterState == CHARACTER_STATE.BERSERKED)) {
+            //Character must not react if he/she is in berserked state
+            //Returns true so that it will create an impression that the character actually created a job even if he/she didn't, so that the character will not chat, etc.
+            return false;
+        }
+        return true;
     }
     #endregion
 
@@ -3524,7 +3565,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
             _ownParty.RemoveAllOtherCharacters();
             if (trait.name != "Combat Recovery") {
-                CancelAllJobsTargettingThisCharacter("Assault");
+                CancelAllJobsTargettingThisCharacter(JOB_TYPE.ASSAULT);
             }
         } else if (trait.type == TRAIT_TYPE.CRIMINAL) {
             CancelOrUnassignRemoveTraitRelatedJobs();
@@ -4015,7 +4056,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                         //job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
                     }
                     jobQueue.AddJobInQueue(job, false);
-                    jobQueue.ProcessFirstJobInQueue(this);
+                    //jobQueue.ProcessFirstJobInQueue(this);
                     //StartGOAP(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, this, GOAP_CATEGORY.FULLNESS, true);
                     return true;
                 }
@@ -4058,7 +4099,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                         //job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
                     }
                     jobQueue.AddJobInQueue(job, false);
-                    jobQueue.ProcessFirstJobInQueue(this);
+                    //jobQueue.ProcessFirstJobInQueue(this);
                     //StartGOAP(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = null, targetPOI = this }, this, GOAP_CATEGORY.TIREDNESS, true);
                     return true;
                 }
@@ -4101,7 +4142,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                         //job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
                     }
                     jobQueue.AddJobInQueue(job, false);
-                    jobQueue.ProcessFirstJobInQueue(this);
+                    //jobQueue.ProcessFirstJobInQueue(this);
                     //StartGOAP(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = null, targetPOI = this }, this, GOAP_CATEGORY.HAPPINESS, true);
                     return true;
                 }
@@ -5657,8 +5698,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                             break;
                         }
                     }
-                    if (currentAction != null && currentAction.parentPlan != null && currentAction.parentPlan.job != null && !currentAction.parentPlan.job.cannotOverrideJob 
-                        && goapThread.job.priority < currentAction.parentPlan.job.priority) {
+                    if (CanCurrentJobBeOverridenByJob(goapThread.job)) {
                         AddPlan(goapThread.createdPlan, true);
 
                         if (stateComponent.currentState != null) {
@@ -6549,7 +6589,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 tantrum.SetCannotOverrideJob(true);
                 //tantrum.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
                 jobQueue.AddJobInQueue(tantrum);
-                jobQueue.ProcessFirstJobInQueue(this);
+                //jobQueue.ProcessFirstJobInQueue(this);
                 tantrumLog += "\n" + this.name + " started having a tantrum!";
             }
             Debug.Log(tantrumLog);

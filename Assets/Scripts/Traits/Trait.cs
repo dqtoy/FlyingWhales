@@ -49,7 +49,7 @@ public class Trait {
         if (type == TRAIT_TYPE.CRIMINAL && sourceCharacter is Character) {
             Character character = sourceCharacter as Character;
             if (!character.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
-                character.CancelAllJobsTargettingThisCharacter("Apprehend");
+                character.CancelAllJobsTargettingThisCharacter(JOB_TYPE.APPREHEND);
             }
         }
     }

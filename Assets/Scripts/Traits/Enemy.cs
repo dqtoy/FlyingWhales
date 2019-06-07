@@ -58,7 +58,7 @@ public class Enemy : RelationshipTrait {
                 value = 10;
             }
             if (chance < value) {
-                return characterThatWillDoJob.CreateUndermineJobOnly(targetCharacter, "saw", false);
+                return characterThatWillDoJob.CreateUndermineJobOnly(targetCharacter, "saw");
             }
         }
         return base.CreateJobsOnEnterVisionBasedOnTrait(traitOwner, characterThatWillDoJob);

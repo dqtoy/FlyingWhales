@@ -106,6 +106,7 @@ public class JobQueueItem {
         int priority = 0;
         switch (jobType) {
             case JOB_TYPE.BERSERK:
+            case JOB_TYPE.TANTRUM:
                 priority = 10;
                 break;
             case JOB_TYPE.ASSAULT:

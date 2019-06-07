@@ -96,7 +96,7 @@ public class RileUp : PlayerJobAction {
         job.SetCannotOverrideJob(true);
         //job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
         _targetCharacter.jobQueue.AddJobInQueue(job, false);
-        _targetCharacter.jobQueue.ProcessFirstJobInQueue(_targetCharacter);
+        //_targetCharacter.jobQueue.ProcessFirstJobInQueue(_targetCharacter);
         //_targetCharacter.StartGOAP(goapEffect, character, GOAP_CATEGORY.REACTION);
     }
     private void RileUpCharacter(Area area) {
